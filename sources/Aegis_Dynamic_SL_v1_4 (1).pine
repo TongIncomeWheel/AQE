@@ -1,0 +1,454 @@
+//@version=6
+indicator("Aegis Dynamic SL v1.4", overlay=true, precision=2, max_bars_back=500)
+// ============================================================================
+// AEGIS DYNAMIC STOP LOSS v1.4
+// DSG-10: R-Tiered Trail System — AIC Charter v1.7 §7.1
+//
+// SUPERSEDES: DSL v1.3. Remove ALL prior versions from TradingView.
+//
+// ARCHITECTURAL CHANGE from v1.3:
+//   v1.3 used Chandelier trail (highest high − ATR×mult, tightening as R grows).
+//   v1.4 uses Session/Weekly LOW − ATR×mult, WIDENING as R grows.
+//   The trail widens to let confirmed winners breathe on their earned timeframe.
+//
+// TRAIL TIER TABLE (§7.1):
+//   Tier 1 (0–1R):  Session low − 1.0× ATR(14), Daily    — Prove the thesis
+//   Tier 2 (1–2R):  Session low − 1.5× ATR(14), Daily    — Give room for leg 2
+//   Tier 3 (2–4R):  Weekly low  − 2.0× ATR(14), Weekly   — Winner confirmed
+//   Tier 4 (4R+):   Max(WkLow − 2.5×ATR, T1−1×ATR), Wk  — Runner protection
+//
+// RULES:
+//   - Trail ratchets upward only (never lowers)
+//   - Daily→Weekly transition at +2R is ONE-WAY (never reverts)
+//   - Highest tier reached locks (if +2.5R drops to +1.8R, stays Tier 3)
+//   - PM may tighten but never widen beyond tier prescription
+//   - T1 interaction at +4R: T1 target − 1×ATR as secondary floor
+//
+// RETAINED from v1.3:
+//   - Dual profiles (Tactical/Core) for INITIAL stop computation
+//   - Screener export plots
+//   - VIX regime display (informational, not applied to trail tiers)
+//   - Elder Impulse embedded (for exit signals at Tier 1 only)
+//   - Gap detection
+//
+// REFERENCE CASES (v1.7):
+//   JBL: +5.66R peak, trailed at +3.73R → DSG-10 saves ~$920
+//   VRT: +1.72R peak, DSG-10 holds through daily noise dip
+//   AVT: +2.76R peak, DSG-10 weekly trail holds, still running
+// ============================================================================
+
+// ==================== USER INPUTS ====================
+
+// Trade Management
+sl_profile       = input.string("Tactical", "SL Profile (Display)", options=["Tactical", "Core"], group="Trade Management", tooltip="Controls initial stop display. Both profiles compute every bar. Trail system (DSG-10) is unified.")
+entry_price_in   = input.float(0.0, "Entry Price (0 = scanning mode)", group="Trade Management", tooltip="Set to your entry price for active position tracking. Leave 0 for scanning.")
+risk_per_share   = input.float(0.0, "Risk Per Share ($)", group="Trade Management", tooltip="Entry price minus initial stop. Defines 1R. REQUIRED for trail tier system. If 0 when entry is set, falls back to computed initial stop distance.")
+t1_target        = input.float(0.0, "T1 Target Price ($)", group="Trade Management", tooltip="Committee-designated T1 target. Used at Tier 4 (+4R) as secondary floor: T1 − 1×ATR. Leave 0 if no target set.")
+entry_bar_offset = input.int(0, "Bars Since Entry (manual)", minval=0, maxval=120, group="Trade Management", tooltip="Bars since entry. Extended to 120 for core positions.")
+
+// Phase 1: Initial Stop (Tactical)
+struct_lookback  = input.int(5, "Structure Lookback (bars)", minval=3, maxval=15, group="Initial Stop", tooltip="Bars to look back for structural low.")
+struct_buffer    = input.float(0.5, "ATR Buffer Below Structure", minval=0.1, maxval=1.5, step=0.1, group="Initial Stop", tooltip="ATR multiple added below structure low as noise buffer.")
+max_stop_mult    = input.float(2.0, "Max SL Distance (ATR mult) [Tactical]", minval=1.0, maxval=4.0, step=0.25, group="Initial Stop")
+min_stop_mult    = input.float(0.75, "Min SL Distance (ATR mult) [Tactical]", minval=0.3, maxval=1.5, step=0.1, group="Initial Stop")
+
+// Phase 1: Initial Stop (Core)
+core_max_stop_mult = input.float(3.0, "Max SL Distance (ATR mult) [Core]", minval=1.5, maxval=5.0, step=0.25, group="Core Initial Stop")
+core_min_stop_mult = input.float(1.0, "Min SL Distance (ATR mult) [Core]", minval=0.5, maxval=2.0, step=0.1, group="Core Initial Stop")
+
+// Regime (informational display — not applied to trail)
+use_regime       = input.bool(true, "Show VIX Regime", group="Regime", tooltip="Display regime status. Informational only — DSG-10 trail tiers are regime-independent.")
+vix_sym          = input.symbol("CBOE:VIX", "VIX Symbol", group="Regime")
+
+// Gap Detection
+gap_threshold    = input.float(2.0, "Gap-Up Threshold %", minval=0.5, maxval=5.0, step=0.5, group="Gap Detection", tooltip="If today's low > yesterday's high by this %, use gap-day low as structure anchor.")
+
+// Display
+show_initial     = input.bool(true, "Show Initial Stop Line", group="Display")
+show_trail       = input.bool(true, "Show Trail Stop Line", group="Display")
+show_table       = input.bool(true, "Show Dashboard Table", group="Display")
+show_tier_labels = input.bool(true, "Show Tier Transition Labels", group="Display", tooltip="Show labels when trail tier advances.")
+tbl_pos          = input.string("Top Center", "Table Position", options=["Top Left", "Top Center", "Top Right", "Middle Right", "Bottom Right", "Bottom Left"], group="Display")
+
+// ==================== DISPLAY PROFILE FLAG ====================
+is_core_display = sl_profile == "Core"
+
+// ==================== CORE CALCULATIONS (SHARED) ====================
+
+// --- ATR ---
+atr_14 = ta.atr(14)
+
+// --- Weekly Low (for Tier 3/4) ---
+// request.security returns the weekly candle's low (updates as week progresses)
+weekly_low_raw = request.security(syminfo.tickerid, "W", low, lookahead=barmerge.lookahead_off)
+weekly_low_fallback = ta.lowest(low, 5)
+weekly_low = not na(weekly_low_raw) ? weekly_low_raw : weekly_low_fallback
+
+// --- Elder Impulse (embedded — mirrors Impulse v1) ---
+ema_13 = ta.ema(close, 13)
+macd_fast = ta.ema(close, 12)
+macd_slow = ta.ema(close, 26)
+macd_line = macd_fast - macd_slow
+macd_signal = ta.sma(macd_line, 9)
+macd_hist = macd_line - macd_signal
+
+impulse_bull = ema_13 > ema_13[1] and macd_hist > macd_hist[1]
+impulse_bear = ema_13 < ema_13[1] and macd_hist < macd_hist[1]
+impulse_state = impulse_bull ? 1 : impulse_bear ? -1 : 0
+
+// --- VIX Regime (informational) ---
+vix_close = request.security(vix_sym, "D", close)
+vix_val = not na(vix_close) ? vix_close : 18.0
+regime_id = vix_val < 18.0 ? 1 : vix_val < 25.0 ? 2 : vix_val < 30.0 ? 3 : 4
+string regime_label = regime_id == 1 ? "GREEN" : regime_id == 2 ? "YELLOW" : regime_id == 3 ? "ORANGE" : "RED"
+color regime_color = regime_id == 1 ? color.green : regime_id == 2 ? color.yellow : regime_id == 3 ? color.orange : color.red
+
+// --- Trade State ---
+in_trade = entry_price_in > 0
+ref_price = entry_price_in > 0 ? entry_price_in : close
+bars_in_trade = in_trade ? entry_bar_offset : 0
+
+// --- Gap Detection ---
+is_gap_up = low > high[1] * (1.0 + gap_threshold / 100.0)
+
+// --- Structure Low ---
+lowest_struct = ta.lowest(low, struct_lookback)
+structure_low = is_gap_up ? low : lowest_struct
+
+// ==================== TACTICAL INITIAL STOP ====================
+
+tact_buffered_stop = structure_low - (atr_14 * struct_buffer)
+tact_raw_distance = ref_price - tact_buffered_stop
+tact_max_distance = atr_14 * max_stop_mult
+tact_min_distance = atr_14 * min_stop_mult
+tact_clamped_distance = math.max(math.min(tact_raw_distance, tact_max_distance), tact_min_distance)
+tact_initial_stop = ref_price - tact_clamped_distance
+tact_stop_qualifies = tact_raw_distance <= tact_max_distance and tact_raw_distance >= tact_min_distance * 0.5
+tact_r_distance_pct = ref_price != 0 ? (tact_clamped_distance / ref_price) * 100 : 0
+
+// --- Tactical Frozen R (BUG-4 FIX preserved) ---
+var float tact_frozen_R = na
+var float tact_frozen_stop = na
+if in_trade and na(tact_frozen_R)
+    tact_frozen_R := tact_clamped_distance
+    tact_frozen_stop := tact_initial_stop
+else if not in_trade
+    tact_frozen_R := na
+    tact_frozen_stop := na
+
+// ==================== CORE INITIAL STOP ====================
+
+core_base_atr_mult = 1.5
+core_buffered_stop = structure_low - (atr_14 * struct_buffer * core_base_atr_mult)
+core_raw_distance = ref_price - core_buffered_stop
+core_max_distance = atr_14 * core_max_stop_mult
+core_min_distance = atr_14 * core_min_stop_mult
+core_clamped_distance = math.max(math.min(core_raw_distance, core_max_distance), core_min_distance)
+core_initial_stop = ref_price - core_clamped_distance
+core_stop_qualifies = core_raw_distance <= core_max_distance and core_raw_distance >= core_min_distance * 0.5
+core_r_distance_pct = ref_price != 0 ? (core_clamped_distance / ref_price) * 100 : 0
+
+// --- Core Frozen R ---
+var float core_frozen_R = na
+var float core_frozen_stop = na
+if in_trade and na(core_frozen_R)
+    core_frozen_R := core_clamped_distance
+    core_frozen_stop := core_initial_stop
+else if not in_trade
+    core_frozen_R := na
+    core_frozen_stop := na
+
+// ==================== DSG-10: R-TIERED TRAIL SYSTEM (UNIFIED) ====================
+// This trail system applies to BOTH profiles. The initial stop differs by profile,
+// but the trail mechanism is unified per Charter v1.7 §7.1.
+
+// --- Determine Risk Per Share (1R) ---
+// Priority: manual input > computed from profile-selected initial stop
+disp_initial_stop = is_core_display ? core_initial_stop : tact_initial_stop
+disp_frozen_R = is_core_display ? core_frozen_R : tact_frozen_R
+disp_stop_qualifies = is_core_display ? core_stop_qualifies : tact_stop_qualifies
+disp_r_distance_pct = is_core_display ? core_r_distance_pct : tact_r_distance_pct
+
+// Frozen risk per share: set once at trade entry, never changes
+var float frozen_risk = na
+if in_trade and na(frozen_risk)
+    frozen_risk := risk_per_share > 0 ? risk_per_share : (not na(disp_frozen_R) ? disp_frozen_R : (is_core_display ? core_clamped_distance : tact_clamped_distance))
+else if not in_trade
+    frozen_risk := na
+
+// Current risk reference for display
+float active_risk = in_trade and not na(frozen_risk) ? frozen_risk : (risk_per_share > 0 ? risk_per_share : (is_core_display ? core_clamped_distance : tact_clamped_distance))
+
+// --- R-Multiple Calculation ---
+float current_r = in_trade and active_risk > 0 ? (close - entry_price_in) / active_risk : 0.0
+
+// --- Tier Tracking (ratchet — never decreases) ---
+var int highest_tier = 0
+var bool weekly_mode = false
+
+if in_trade
+    if current_r >= 4.0
+        highest_tier := math.max(highest_tier, 4)
+    else if current_r >= 2.0
+        highest_tier := math.max(highest_tier, 3)
+    else if current_r >= 1.0
+        highest_tier := math.max(highest_tier, 2)
+    else
+        highest_tier := math.max(highest_tier, 1)
+
+    // One-way daily → weekly transition at Tier 3+
+    if highest_tier >= 3
+        weekly_mode := true
+else
+    highest_tier := 0
+    weekly_mode := false
+
+// --- Trail Computation Per Tier ---
+// Tier 1: session low − 1.0× ATR, daily
+float tier1_trail = low - (1.0 * atr_14)
+
+// Tier 2: session low − 1.5× ATR, daily
+float tier2_trail = low - (1.5 * atr_14)
+
+// Tier 3: weekly low − 2.0× ATR, weekly
+float tier3_trail = weekly_low - (2.0 * atr_14)
+
+// Tier 4: max(weekly low − 2.5× ATR, T1 − 1× ATR), weekly
+float tier4_base = weekly_low - (2.5 * atr_14)
+float tier4_t1_floor = t1_target > 0 ? t1_target - (1.0 * atr_14) : 0.0
+float tier4_trail = math.max(tier4_base, tier4_t1_floor)
+
+// --- Select Active Tier Trail ---
+float tier_trail_value = highest_tier >= 4 ? tier4_trail : highest_tier >= 3 ? tier3_trail : highest_tier >= 2 ? tier2_trail : tier1_trail
+
+// --- Level Floors (R-based minimum — ensures trail captures earned gains) ---
+// These prevent the trail from ever being below a meaningful profit level
+float r_floor = in_trade and not na(frozen_risk) ? (highest_tier >= 4 ? entry_price_in + (frozen_risk * 3.0) : highest_tier >= 3 ? entry_price_in + (frozen_risk * 1.5) : highest_tier >= 2 ? entry_price_in : na) : na
+
+// --- Ratcheting Trail Stop ---
+var float trailing_stop = na
+var int prev_tier = 0
+
+if in_trade
+    // Compute candidate trail: max of tier trail and R-floor
+    float candidate = not na(r_floor) ? math.max(tier_trail_value, r_floor) : tier_trail_value
+
+    // Ratchet: trail only moves UP
+    trailing_stop := na(trailing_stop) ? candidate : math.max(trailing_stop, candidate)
+
+    // Detect tier advancement for labels
+    if highest_tier > prev_tier and prev_tier > 0
+        prev_tier := highest_tier
+    else if prev_tier == 0
+        prev_tier := highest_tier
+else
+    trailing_stop := na
+    prev_tier := 0
+
+// --- Tier Advancement Detection (for labels and alerts) ---
+bool tier2_crossed = in_trade and highest_tier >= 2 and (na(highest_tier[1]) or highest_tier[1] < 2)
+bool tier3_crossed = in_trade and highest_tier >= 3 and (na(highest_tier[1]) or highest_tier[1] < 3)
+bool tier4_crossed = in_trade and highest_tier >= 4 and (na(highest_tier[1]) or highest_tier[1] < 4)
+
+// --- Scanning Mode Trail (when not in trade) ---
+// Show Tier 1 default trail for scanning: session low − 1.0× ATR
+float scan_trail = low - (1.0 * atr_14)
+
+// ==================== EXIT SIGNALS ====================
+
+// Trail exit: close below trailing stop
+bool trail_exit = in_trade and not na(trailing_stop) and close < trailing_stop
+
+// Impulse exit: RED impulse at Tier 1 only (unproven position)
+// At Tier 2+ the position has earned the right to survive impulse shifts
+bool impulse_exit = in_trade and highest_tier <= 1 and impulse_state == -1
+
+// Combined exit signal
+bool exit_signal = trail_exit or impulse_exit
+
+// ==================== ATR FLOOR DIAGNOSTIC (DSG-08 — preserved) ====================
+// ATR floor levels for committee visibility
+float atrf_2x = close - (2.0 * atr_14)
+float atrf_2_5x = close - (2.5 * atr_14)
+bool sl_tight = in_trade and not na(trailing_stop) and trailing_stop > atrf_2x
+string sl_diag = sl_tight ? "SL TIGHT" : "SL VIABLE"
+
+// ==================== VISUALISATION ====================
+
+// Tier colors
+color tier_color = highest_tier >= 4 ? color.new(#00FF88, 0) : highest_tier >= 3 ? color.new(#00CC66, 10) : highest_tier >= 2 ? color.new(#00AAFF, 10) : highest_tier >= 1 ? color.new(#FF8800, 20) : color.new(color.gray, 40)
+
+string tier_label_text = highest_tier >= 4 ? "T4 RUNNER" : highest_tier >= 3 ? "T3 WINNER" : highest_tier >= 2 ? "T2 DEVELOP" : highest_tier >= 1 ? "T1 PROVE" : "-"
+
+string timeframe_label = weekly_mode ? "WEEKLY" : "DAILY"
+
+// --- Lines and Labels ---
+var line line_initial = na
+var line line_scan    = na
+var line line_active  = na
+var line line_entry   = na
+var line line_t1      = na
+
+if barstate.islast
+    // Initial stop line
+    if show_initial
+        line.delete(line_initial)
+        line_initial := line.new(bar_index - 10, disp_initial_stop, bar_index + 30, disp_initial_stop,
+             extend=extend.right, color=color.new(color.red, 20), width=2, style=line.style_dashed)
+        label.new(bar_index + 1, disp_initial_stop - (atr_14 * 0.4),
+             "SL  $" + str.tostring(disp_initial_stop, format.mintick),
+             style=label.style_label_up, color=color.new(color.red, 80), textcolor=color.red, size=size.small)
+
+    // Scanning mode trail
+    if show_trail and not in_trade
+        line.delete(line_scan)
+        line_scan := line.new(bar_index - 10, scan_trail, bar_index + 30, scan_trail,
+             extend=extend.right, color=color.new(color.teal, 30), width=2)
+        label.new(bar_index + 1, scan_trail - (atr_14 * 0.4),
+             "Trail T1  $" + str.tostring(scan_trail, format.mintick),
+             style=label.style_label_up, color=color.new(color.gray, 80), textcolor=color.teal, size=size.small)
+
+    // Active trade trail
+    if in_trade and not na(trailing_stop)
+        line.delete(line_active)
+        line_active := line.new(bar_index - 10, trailing_stop, bar_index + 30, trailing_stop,
+             extend=extend.right, color=tier_color, width=3)
+        label.new(bar_index + 1, trailing_stop - (atr_14 * 0.4),
+             tier_label_text + "  $" + str.tostring(trailing_stop, format.mintick) + "  [" + timeframe_label + "]",
+             style=label.style_label_up, color=color.new(color.gray, 80), textcolor=tier_color, size=size.small)
+
+    // Entry price reference line
+    if in_trade
+        line.delete(line_entry)
+        line_entry := line.new(bar_index - 10, entry_price_in, bar_index + 30, entry_price_in,
+             extend=extend.right, color=color.new(color.white, 50), width=1, style=line.style_dotted)
+
+    // T1 target line (if set)
+    if t1_target > 0
+        line.delete(line_t1)
+        line_t1 := line.new(bar_index - 10, t1_target, bar_index + 30, t1_target,
+             extend=extend.right, color=color.new(color.lime, 40), width=1, style=line.style_dotted)
+        label.new(bar_index + 1, t1_target + (atr_14 * 0.3),
+             "T1  $" + str.tostring(t1_target, format.mintick),
+             style=label.style_label_down, color=color.new(color.gray, 80), textcolor=color.lime, size=size.small)
+
+// --- Tier Transition Markers ---
+plotshape(show_tier_labels and tier2_crossed, "Tier 2 Entry", shape.triangleup, location.belowbar, color.new(#00AAFF, 0), size=size.small, text="+1R T2")
+plotshape(show_tier_labels and tier3_crossed, "Tier 3 Entry", shape.triangleup, location.belowbar, color.new(#00CC66, 0), size=size.small, text="+2R T3 WK")
+plotshape(show_tier_labels and tier4_crossed, "Tier 4 Entry", shape.triangleup, location.belowbar, color.new(#00FF88, 0), size=size.small, text="+4R T4")
+
+// --- Exit Signals ---
+plotshape(trail_exit, "Trail Exit", shape.triangledown, location.abovebar, color.red, size=size.small)
+plotshape(impulse_exit and not impulse_exit[1], "Impulse Exit (T1 only)", shape.triangledown, location.abovebar, color.fuchsia, size=size.small)
+plotshape(is_gap_up and not is_gap_up[1], "Gap-Up", shape.diamond, location.belowbar, color.aqua, size=size.small)
+
+// ==================== DASHBOARD TABLE ====================
+
+var pos = tbl_pos == "Top Left" ? position.top_left : tbl_pos == "Top Center" ? position.top_center : tbl_pos == "Top Right" ? position.top_right : tbl_pos == "Middle Right" ? position.middle_right : tbl_pos == "Bottom Right" ? position.bottom_right : position.bottom_left
+
+var table tbl = table.new(pos, 3, 12, bgcolor=color.new(color.black, 80), border_width=1)
+
+if barstate.islast and show_table
+    // Header
+    string profile_tag = is_core_display ? "[C]" : "[T]"
+    color profile_hdr = is_core_display ? color.new(#2a4420, 30) : color.new(#1a2744, 30)
+    table.cell(tbl, 0, 0, "AEGIS DSL v1.4 " + profile_tag, bgcolor=profile_hdr, text_color=color.white, text_size=size.normal)
+    table.cell(tbl, 1, 0, "DSG-10", bgcolor=profile_hdr, text_color=color.white, text_size=size.normal)
+    table.cell(tbl, 2, 0, "RISK", bgcolor=profile_hdr, text_color=color.white, text_size=size.normal)
+
+    // Row 1: Initial SL
+    string init_qual = disp_stop_qualifies ? "QUAL" : "WIDE"
+    color init_clr = disp_stop_qualifies ? color.lime : color.red
+    table.cell(tbl, 0, 1, "Initial SL", text_color=color.gray, text_size=size.normal)
+    table.cell(tbl, 1, 1, str.tostring(disp_initial_stop, format.mintick), text_color=init_clr, text_size=size.large)
+    table.cell(tbl, 2, 1, str.tostring(disp_r_distance_pct, "#.1") + "%", text_color=init_clr, text_size=size.normal)
+
+    // Row 2: Trail Stop
+    string trail_val = in_trade and not na(trailing_stop) ? str.tostring(trailing_stop, format.mintick) : "—"
+    string trail_status = in_trade ? tier_label_text : "SET ENTRY"
+    table.cell(tbl, 0, 2, "Trail SL", text_color=color.gray, text_size=size.normal)
+    table.cell(tbl, 1, 2, trail_val, text_color=in_trade ? tier_color : color.gray, text_size=size.large)
+    table.cell(tbl, 2, 2, trail_status, text_color=in_trade ? tier_color : color.gray, text_size=size.normal)
+
+    // Row 3: R-Multiple + Timeframe
+    if in_trade
+        string r_text = str.tostring(current_r, "#.2") + "R"
+        color r_clr = current_r >= 4.0 ? color.new(#00FF88, 0) : current_r >= 2.0 ? color.lime : current_r >= 1.0 ? color.green : current_r >= 0 ? color.yellow : color.red
+        table.cell(tbl, 0, 3, "R-Multiple", text_color=color.gray, text_size=size.normal)
+        table.cell(tbl, 1, 3, r_text, text_color=r_clr, text_size=size.normal)
+        table.cell(tbl, 2, 3, timeframe_label, text_color=weekly_mode ? color.new(#00CC66, 0) : color.new(#FF8800, 0), text_size=size.normal)
+
+    // Row 4: Risk Per Share (1R value)
+    if in_trade and not na(frozen_risk)
+        table.cell(tbl, 0, 4, "1R Value", text_color=color.gray, text_size=size.normal)
+        table.cell(tbl, 1, 4, "$" + str.tostring(frozen_risk, "#.2"), text_color=color.white, text_size=size.normal)
+        table.cell(tbl, 2, 4, risk_per_share > 0 ? "MANUAL" : "AUTO", text_color=color.gray, text_size=size.small)
+
+    // Row 5: Regime (informational)
+    table.cell(tbl, 0, 5, "Regime", text_color=color.gray, text_size=size.normal)
+    table.cell(tbl, 1, 5, regime_label, text_color=regime_color, text_size=size.normal)
+    table.cell(tbl, 2, 5, "VIX " + str.tostring(vix_val, "#.1"), text_color=regime_color, text_size=size.normal)
+
+    // Row 6: ATR Floor Diagnostic (DSG-08)
+    if in_trade
+        color diag_clr = sl_tight ? color.orange : color.green
+        table.cell(tbl, 0, 6, "ATR Floor", text_color=color.gray, text_size=size.small)
+        table.cell(tbl, 1, 6, sl_diag, text_color=diag_clr, text_size=size.small)
+        table.cell(tbl, 2, 6, "2x=" + str.tostring(atrf_2x, format.mintick), text_color=color.gray, text_size=size.small)
+
+    // Row 7: Tier breakdown (all four trail values for reference)
+    if in_trade
+        table.cell(tbl, 0, 7, "Tier Trails", text_color=color.gray, text_size=size.small)
+        table.cell(tbl, 1, 7, "T1:" + str.tostring(tier1_trail, "#.1") + " T2:" + str.tostring(tier2_trail, "#.1"), text_color=color.gray, text_size=size.small)
+        table.cell(tbl, 2, 7, "T3:" + str.tostring(tier3_trail, "#.1") + " T4:" + str.tostring(tier4_trail, "#.1"), text_color=color.gray, text_size=size.small)
+
+    // Row 8: T1 Target (if set)
+    if t1_target > 0
+        float dist_to_t1 = in_trade ? ((t1_target - close) / close) * 100 : 0.0
+        table.cell(tbl, 0, 8, "T1 Target", text_color=color.gray, text_size=size.small)
+        table.cell(tbl, 1, 8, "$" + str.tostring(t1_target, format.mintick), text_color=color.lime, text_size=size.small)
+        table.cell(tbl, 2, 8, in_trade ? str.tostring(dist_to_t1, "#.1") + "% away" : "", text_color=color.gray, text_size=size.small)
+
+    // Row 9: Profile comparison (both initial stops)
+    table.cell(tbl, 0, 9, "T/C Init", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 9, str.tostring(tact_initial_stop, format.mintick), text_color=color.new(color.blue, 30), text_size=size.small)
+    table.cell(tbl, 2, 9, str.tostring(core_initial_stop, format.mintick), text_color=color.new(color.green, 30), text_size=size.small)
+
+    // Row 10: Impulse state
+    string imp_text = impulse_state == 1 ? "BULL" : impulse_state == -1 ? "BEAR" : "NEUTRAL"
+    color imp_clr = impulse_state == 1 ? color.lime : impulse_state == -1 ? color.red : color.gray
+    table.cell(tbl, 0, 10, "Impulse", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 10, imp_text, text_color=imp_clr, text_size=size.small)
+    table.cell(tbl, 2, 10, highest_tier <= 1 ? "EXIT ACTIVE" : "TIER 2+ IMMUNE", text_color=highest_tier <= 1 ? color.orange : color.green, text_size=size.small)
+
+// ==================== SCREENER EXPORT PLOTS ====================
+
+// Initial stops (both profiles)
+plot(tact_initial_stop, "SL_TACT_INITIAL", display=display.none)
+plot(core_initial_stop, "SL_CORE_INITIAL", display=display.none)
+
+// Active trail (unified DSG-10)
+plot(in_trade and not na(trailing_stop) ? trailing_stop : scan_trail, "SL_TRAIL", display=display.none)
+
+// Diagnostics
+plot(current_r,                            "SL_R_MULTIPLE",    display=display.none)
+plot(float(highest_tier),                  "SL_TIER",          display=display.none)
+plot(weekly_mode ? 1.0 : 0.0,             "SL_WEEKLY_MODE",   display=display.none)
+plot(disp_r_distance_pct,                  "SL_R_DIST_PCT",    display=display.none)
+plot(float(regime_id),                     "SL_REGIME",        display=display.none)
+plot(float(impulse_state),                 "SL_IMPULSE",       display=display.none)
+plot(disp_stop_qualifies ? 1.0 : 0.0,     "SL_QUALIFIES",     display=display.none)
+plot(exit_signal ? 1.0 : 0.0,             "SL_EXIT_SIGNAL",   display=display.none)
+plot(not na(frozen_risk) ? frozen_risk : 0,"SL_R_VALUE",       display=display.none)
+plot(is_gap_up ? 1.0 : 0.0,               "SL_GAP_UP",        display=display.none)
+plot(sl_tight ? 1.0 : 0.0,                "SL_ATR_TIGHT",     display=display.none)
+
+// ==================== ALERTS ====================
+
+alertcondition(exit_signal, "DSG-10 Trail Exit", "TRAIL EXIT: Price closed below DSG-10 trailing stop")
+alertcondition(impulse_exit and not impulse_exit[1], "Impulse Exit (Tier 1)", "IMPULSE EXIT: RED impulse at Tier 1 — exit unproven position")
+alertcondition(tier2_crossed, "Tier 2 Reached (+1R)", "+1R REACHED: Trail widens to Tier 2 (1.5× ATR). Steenbarger review trigger.")
+alertcondition(tier3_crossed, "Tier 3 Reached (+2R)", "+2R REACHED: Trail switches to WEEKLY timeframe (Tier 3, 2× ATR). DeMark auto-activates.")
+alertcondition(tier4_crossed, "Tier 4 Reached (+4R)", "+4R REACHED: Runner status. T1 floor engaged. Trail = max(WkLow−2.5×ATR, T1−1×ATR).")
+alertcondition(is_gap_up and not is_gap_up[1], "Gap-Up Detected", "Episodic gap-up — using gap-day low as structure anchor")
+alertcondition(sl_tight, "SL TIGHT Warning", "Trail stop is within 2× ATR of current price — elevated shakeout risk")

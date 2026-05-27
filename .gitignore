@@ -1,0 +1,80 @@
+# --- Secrets ----------------------------------------------------------------
+.env
+.env.*
+.streamlit/secrets.toml
+
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Heavy caches that don't belong in git ---------------------------------
+# 150MB+ scores + 17MB panel -- locally rebuilt
+data/*.parquet
+# SQLite state, populated at runtime
+data/aqe.db
+data/*.db-wal
+data/*.db-shm
+
+# --- Real-money / private operational data ---------------------------------
+# PM's actual portfolio
+data/open_positions.json
+# daily picks (the canonical record is aqe_daily_export.json which IS committed)
+output/shortlist.json
+output/calibration_report_*.txt
+output/dashboard.txt
+
+# --- Backtest artefacts not needed by the cloud (Math Lab is disabled there)
+data/optimizer_results.json
+data/subcomp_optimizer_results.json
+data/optimizer_targets.json
+data/portfolio_sim_results.json
+data/portfolio_sizing_example.txt
+data/precision_walkforward.json
+data/precision_validation.json
+data/independent_validation.json
+data/walkforward_results.json
+data/validation_results.json
+data/engine_sensitivity.json
+
+# --- Archives + handoffs ---------------------------------------------------
+handoff/
+*.zip
+
+# --- Scheduler local state (Windows Task Scheduler artefacts) --------------
+scheduler/
+
+# --- AIC (Aegis Investment Committee) secrets + local state ----------------
+src/aic/config/credentials.py
+src/aic/state/*.db
+src/aic/state/*.db-wal
+src/aic/state/*.db-shm
+src/aic/state/telegram_alerts.log.jsonl
+src/aic/prompts/_compiled/
+
+# --- Separate sibling project (not part of AQE deploy) ---------------------
+spend-agent/
+
+# --- Misc local ------------------------------------------------------------
+*.log
+.idea/
+.vscode/
+.claude/
+
+# --- KEEP these (negate the broader rules above) ---------------------------
+# The cloud Scanner reads only these committed JSONs:
+!output/aqe_daily_export.json
+!output/recipes.json
+!data/active_recipe.json
+!data/sector_map.json
+!data/universe.txt
+!data/earnings_calendar.json

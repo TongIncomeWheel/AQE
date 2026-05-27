@@ -1,0 +1,361 @@
+//@version=6
+indicator("Structure v1.5.0 (Aegis)", overlay=false)
+// ============================================================================
+// STRUCTURE v1.5.0 — DSG-08 SPRINT RELEASE
+//
+// SUPERSEDES: v1.4.2, v1.4.3. Remove ALL prior versions from TradingView.
+//
+// CHANGELOG from v1.4.2:
+//   v1.4.3 (DSG-06 prep): Minor alignment fixes (not separately released).
+//   v1.5.0 (DSG-08): 3-mode BD counting aligned with Scoring v1.6.0.
+//     Mode 1: VCP/flat base (10-bar range ≤ 15%) — unchanged
+//     Mode 2: DSG-04 Staircase — REVISED: now requires SMA50 uptrend (not EMA20)
+//       + ≥2 higher lows in 5 bars (staircase structure proof). Aligned to
+//       Scoring v1.6.0 exactly.
+//     Mode 3: DSG-06 Smooth trend — NEW: close within 1× ATR of rising EMA20,
+//       above SMA50. Trend IS the consolidation.
+//     BD mode diagnostic: table shows which mode triggered (VCP/STAIR/SMOOTH/MULTI).
+//     ATR compression ratio displayed for committee reference.
+//
+// RETAINED: DSG-02 latch + decay. DSG-03 15% threshold. All scoring curves.
+//           Diagnostic components (pullback, pivot, ATR risk) unchanged.
+//           NR7/NR4 contraction diagnostics unchanged.
+//
+// ONE CALCULATION, ONE NUMBER, EVERYWHERE — BD logic matches Scoring v1.6.0.
+// ============================================================================
+
+benchmark_sym = input.symbol("SPY", "Benchmark", group="Benchmark")
+pb_swing_lookback = input.int(20, "Pullback Swing Lookback", minval=10, maxval=40, group="Diagnostics")
+pivot_timeframe = input.timeframe("W", "Pivot Timeframe", group="Diagnostics")
+
+// ==================== 1. RS vs SPY — 15 pts (60-bar lookback) ====================
+ms_rl = 60
+stock_perf = (close - close[ms_rl]) / close[ms_rl] * 100
+bench_close = request.security(benchmark_sym, timeframe.period, close)
+bench_perf = (bench_close - bench_close[ms_rl]) / bench_close[ms_rl] * 100
+rs_vs_spy = stock_perf - bench_perf
+rs_spy_score = rs_vs_spy > 10 ? 15.0 : rs_vs_spy > 5 ? 12.0 : rs_vs_spy > 2 ? 10.0 : rs_vs_spy > 0 ? 6.0 : rs_vs_spy > -3 ? 3.0 : 0.0
+
+// ==================== 2. RS ACCELERATION — 15 pts ====================
+rs_short = (close-close[20])/close[20]*100 - (bench_close-bench_close[20])/bench_close[20]*100
+rs_accel = rs_short - rs_vs_spy
+rs_accel_score = rs_accel > 5 ? 15.0 : rs_accel > 2 ? 12.0 : rs_accel > 0 ? 9.0 : rs_accel > -2 ? 6.0 : rs_accel > -5 ? 3.0 : 0.0
+
+// ==================== 3. BASE DURATION — 15 pts (3-MODE SYSTEM, DSG-04/06/08) ====================
+// Aligned to Scoring v1.6.0 — ONE calculation, ONE number, everywhere.
+
+atr_val = ta.atr(20)
+range_10 = ta.highest(high, 10) - ta.lowest(low, 10)
+range_pct = close != 0 ? range_10 / close * 100 : 100
+range_pct_threshold = 15.0
+
+// --- Mode 1: VCP/flat base (unchanged) ---
+mode1_vcp = range_pct <= range_pct_threshold
+
+// --- Mode 2: DSG-04 Staircase (REVISED — aligned to Scoring v1.6.0) ---
+// Requires: SMA50 uptrend (not EMA20), shallow pullback 1.5–8%, ≥2 higher lows in 5 bars
+sma_50 = ta.sma(close, 50)
+uptrend_sma50 = close > sma_50 and sma_50 > sma_50[5]
+local_high_10 = ta.highest(high, 10)
+pullback_from_high = local_high_10 != 0 ? (local_high_10 - close) / local_high_10 * 100 : 100
+shallow_pullback = pullback_from_high >= 1.5 and pullback_from_high < 8.0
+stair_hl_count = 0
+for i = 1 to 5
+    if low[i-1] > low[i]
+        stair_hl_count := stair_hl_count + 1
+has_staircase = stair_hl_count >= 2
+mode2_staircase = uptrend_sma50 and shallow_pullback and has_staircase
+
+// --- Mode 3: DSG-06 Smooth trend (NEW) ---
+// Close within 1× ATR of rising EMA20, above SMA50. Trend IS the consolidation.
+ema_20_struct = ta.ema(close, 20)
+ema20_rising = ema_20_struct > ema_20_struct[3]
+near_ema20 = atr_val != 0 ? math.abs(close - ema_20_struct) <= atr_val * 1.0 : false
+mode3_smooth = ema20_rising and near_ema20 and close > sma_50
+
+// --- Combined base detection ---
+in_base = mode1_vcp or mode2_staircase or mode3_smooth
+
+// BD mode diagnostic (for table and export)
+mode_count = (mode1_vcp ? 1 : 0) + (mode2_staircase ? 1 : 0) + (mode3_smooth ? 1 : 0)
+bd_mode = mode_count >= 2 ? 4 : mode3_smooth ? 3 : mode2_staircase ? 2 : mode1_vcp ? 1 : 0
+
+// Phase 1: Raw accumulation counter
+var int raw_base_count = 0
+if in_base
+    raw_base_count := raw_base_count + 1
+else
+    raw_base_count := 0
+
+// Phase 2: Breakout detection — manual loop for consolidation_high
+min_base_days_param = 3
+vol_sma20 = ta.sma(volume, 20)
+
+prev_base_len = math.max(raw_base_count[1], 1)
+capped_len = math.min(prev_base_len, 60)
+float consolidation_high_val = high[1]
+for i = 1 to 60
+    if i <= capped_len
+        if high[i] > consolidation_high_val
+            consolidation_high_val := high[i]
+
+breakout_bar = close > consolidation_high_val and not in_base and raw_base_count[1] >= min_base_days_param and volume > vol_sma20
+
+// Phase 3: Latch (DSG-02)
+var int latched_base_days = 0
+var int bars_since_breakout = 999
+if breakout_bar
+    latched_base_days := raw_base_count[1]
+    bars_since_breakout := 0
+else
+    bars_since_breakout := bars_since_breakout + 1
+
+// Phase 4: Reported value with decay
+decay_window = 10
+base_days = bars_since_breakout <= decay_window ? latched_base_days : raw_base_count
+
+// Scoring curve (unchanged tiers)
+base_raw = base_days < 3 ? 0.0 : base_days < 5 ? 3.0 : base_days < 7 ? 6.0 : base_days < 10 ? 10.0 : base_days <= 25 ? 15.0 : base_days <= 30 ? 12.0 : base_days <= 35 ? 8.0 : 5.0
+
+// Higher-Lows quality multiplier
+hl_lookback = math.min(base_days, 10)
+hl_in_base = 0
+for i = 1 to 10
+    if i <= hl_lookback
+        if low[i] > low[i + 1]
+            hl_in_base := hl_in_base + 1
+base_quality_mult = hl_in_base >= 4 ? 1.0 : hl_in_base >= 2 ? 0.8 : 0.6
+base_score = math.min(base_raw * base_quality_mult, 15.0)
+
+// NR7/NR4 contraction diagnostics (Collin Seow — Joint Convene, not in scoring)
+daily_range = high - low
+is_nr7 = daily_range <= ta.lowest(daily_range, 7)
+is_nr4 = daily_range <= ta.lowest(daily_range, 4)
+nr_in_base = in_base and is_nr7
+
+// ATR compression ratio (Raschke — committee reference)
+atr_comp_ratio = atr_val != 0 ? ta.atr(5) / atr_val : 1.0
+
+// ==================== 4. RANGE POSITION — 15 pts (50-bar) ====================
+ms_h50 = ta.highest(high, 50)
+ms_l50 = ta.lowest(low, 50)
+ms_r50 = ms_h50 - ms_l50
+ms_p50 = ms_r50 != 0 ? (close - ms_l50) / ms_r50 * 100 : 50
+ms_pos = ms_p50 >= 95 ? 15.0 : ms_p50 >= 85 ? 13.0 : ms_p50 >= 75 ? 10.0 : ms_p50 >= 60 ? 7.0 : ms_p50 >= 45 ? 4.0 : 0.0
+
+// 252-bar (annual) reference — diagnostic only
+high_52w = ta.highest(high, 252)
+low_52w = ta.lowest(low, 252)
+range_52w = high_52w - low_52w
+pct_in_52w = range_52w != 0 ? (close - low_52w) / range_52w * 100 : 50
+pct_from_52w_high = high_52w != 0 ? (high_52w - close) / high_52w * 100 : 0
+
+// ==================== 5. RESISTANCE CLEARANCE — 10 pts ====================
+ms_nr = ms_h50
+dist_to_resist = close != 0 ? (ms_nr - close) / close * 100 : 0
+resist_score = dist_to_resist <= 0 ? 7.0 : dist_to_resist <= 3 ? 10.0 : dist_to_resist <= 8 ? 5.0 : dist_to_resist <= 15 ? 3.0 : 0.0
+
+// ==================== 6. WEEKLY TREND — 15 pts ====================
+wk_sma10 = request.security(syminfo.tickerid, "W", ta.sma(close, 10)[1], barmerge.gaps_off, barmerge.lookahead_on)
+wk_sma10_prev = request.security(syminfo.tickerid, "W", ta.sma(close, 10)[2], barmerge.gaps_off, barmerge.lookahead_on)
+wk_close = request.security(syminfo.tickerid, "W", close[1], barmerge.gaps_off, barmerge.lookahead_on)
+wk_rising = wk_sma10 > wk_sma10_prev
+wk_score = na(wk_sma10) or na(wk_close) or na(wk_sma10_prev) ? 7.5 : wk_close > wk_sma10 and wk_rising ? 15.0 : wk_close > wk_sma10 ? 10.0 : wk_close > wk_sma10 * 0.97 ? 5.0 : wk_close > wk_sma10 * 0.93 ? 2.0 : 0.0
+
+// ==================== 7. EARNINGS — 10 pts ====================
+ms_et = request.security(syminfo.tickerid, timeframe.period, earnings.future_time, barmerge.gaps_on, barmerge.lookahead_on, ignore_invalid_symbol=true)
+days_to_earnings = na(ms_et) ? 999 : math.max(math.round((ms_et - time) / (24 * 60 * 60 * 1000)), 0)
+earnings_warn = days_to_earnings <= 5
+earn_score = days_to_earnings <= 5 ? 0.0 : days_to_earnings <= 10 ? 4.0 : days_to_earnings <= 20 ? 7.0 : 10.0
+
+// ==================== HEADLINE SCORE ====================
+ms_raw = rs_spy_score + rs_accel_score + base_score + ms_pos + resist_score + wk_score + earn_score
+structure_100 = math.max(math.min(ms_raw / 95.0 * 100.0, 100), 0)
+
+// ==================== DIAGNOSTIC COMPONENTS ====================
+
+// DIAG 1: Pullback Quality
+swing_high = ta.highest(high, pb_swing_lookback)
+pullback_pct = swing_high != 0 ? (swing_high - close) / swing_high * 100 : 0
+vol_recent = ta.sma(volume, 5)
+vol_prior = ta.sma(volume[10], 5)
+vol_ratio_pb = vol_prior != 0 ? vol_recent / vol_prior : 1.0
+ema_5 = ta.ema(close, 5)
+is_turning = close > close[1] and close > ema_5
+pb_depth = pullback_pct >= 3 and pullback_pct <= 10 ? 5.0 : pullback_pct < 1 ? 2.0 : pullback_pct < 3 ? 3.5 : pullback_pct <= 15 ? 2.0 : 0.0
+pb_vol = vol_ratio_pb < 0.8 ? 3.0 : vol_ratio_pb < 1.0 ? 2.0 : 1.0
+pb_turn = is_turning ? 4.0 : close > ema_5 ? 2.5 : 0.0
+pullback_diag = math.min(pb_depth + pb_vol + pb_turn, 12.0)
+
+// DIAG 2: Pivot Position
+[pivot_h, pivot_l, pivot_c] = request.security(syminfo.tickerid, pivot_timeframe, [high[1], low[1], close[1]], lookahead=barmerge.lookahead_on)
+pp = (pivot_h + pivot_l + pivot_c) / 3.0
+r1 = 2.0 * pp - pivot_l
+r2 = pp + (pivot_h - pivot_l)
+s1 = 2.0 * pp - pivot_h
+pivot_diag = close >= r2 ? 8.0 : close >= r1 ? 7.0 : close >= pp ? 5.0 : close >= s1 ? 2.0 : 0.0
+
+// DIAG 3: ATR Risk Profile
+atr_pct = close != 0 ? atr_val / close * 100 : 0
+atr_risk_diag = atr_pct < 2.0 ? 5.0 : atr_pct < 3.5 ? 4.0 : atr_pct < 5.0 ? 3.0 : atr_pct < 7.5 ? 2.0 : 0.0
+
+// ==================== VISUALIZATION ====================
+sc = structure_100
+topped_out = sc >= 75 and ms_p50 >= 90
+bar_color = topped_out ? color.new(#2196F3, 0) : sc >= 75 ? color.new(color.lime, 0) : sc >= 55 ? color.new(color.green, 0) : sc >= 40 ? color.new(color.yellow, 0) : color.new(color.red, 0)
+
+plot(sc, "Structure v1.5.0", color=bar_color, style=plot.style_histogram, linewidth=4)
+plot(ms_p50, "Range 50d", color=color.new(color.aqua, 30), linewidth=2)
+plot(pct_in_52w, "Range 252d", color=color.new(color.gray, 50), linewidth=1, style=plot.style_circles)
+hline(75, "Strong", color=color.green, linestyle=hline.style_dotted)
+hline(55, "Qualified", color=color.yellow, linestyle=hline.style_dotted)
+bgcolor(earnings_warn ? color.new(color.fuchsia, 85) : topped_out ? color.new(#2196F3, 90) : sc >= 75 ? color.new(color.green, 92) : sc < 55 ? color.new(color.red, 95) : na)
+
+// ==================== TABLE ====================
+var table tbl = table.new(position.top_right, 3, 16, bgcolor=color.new(color.black, 80), border_width=1)
+
+if barstate.islast
+    table.cell(tbl, 0, 0, "STRUCTURE", bgcolor=color.new(color.teal, 30), text_color=color.white, text_size=size.small)
+    table.cell(tbl, 1, 0, "VALUE", bgcolor=color.new(color.teal, 30), text_color=color.white, text_size=size.small)
+    table.cell(tbl, 2, 0, "SCORE", bgcolor=color.new(color.teal, 30), text_color=color.white, text_size=size.small)
+
+    // 1. RS vs SPY
+    c1 = rs_vs_spy > 2 ? color.lime : rs_vs_spy > 0 ? color.yellow : color.red
+    table.cell(tbl, 0, 1, "RS vs SPY", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 1, str.tostring(rs_vs_spy, "#.1") + "%", text_color=c1, text_size=size.small)
+    table.cell(tbl, 2, 1, str.tostring(rs_spy_score, "#") + "/15", text_color=c1, text_size=size.small)
+
+    // 2. RS Acceleration
+    c2 = rs_accel > 2 ? color.lime : rs_accel > 0 ? color.yellow : color.red
+    table.cell(tbl, 0, 2, "RS Accel", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 2, str.tostring(rs_accel, "#.1"), text_color=c2, text_size=size.small)
+    table.cell(tbl, 2, 2, str.tostring(rs_accel_score, "#") + "/15", text_color=c2, text_size=size.small)
+
+    // 3. Base Duration (3-mode system)
+    is_latched = bars_since_breakout <= decay_window
+    c3 = base_days >= 10 ? color.lime : base_days >= 5 ? color.yellow : color.red
+    bd_mode_txt = bd_mode == 4 ? "MULTI" : bd_mode == 3 ? "SMTH" : bd_mode == 2 ? "STAIR" : bd_mode == 1 ? "VCP" : "---"
+    bd_txt = str.tostring(base_days) + "d" + (is_latched ? " L" : "") + " " + bd_mode_txt
+    table.cell(tbl, 0, 3, "Base Days", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 3, bd_txt, text_color=c3, text_size=size.small)
+    table.cell(tbl, 2, 3, str.tostring(base_score, "#") + "/15", text_color=c3, text_size=size.small)
+
+    // 4. Range Position
+    c4 = ms_p50 >= 75 ? color.lime : ms_p50 >= 50 ? color.yellow : color.red
+    table.cell(tbl, 0, 4, "Range 50d", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 4, str.tostring(ms_p50, "#") + "% | 52W:" + str.tostring(pct_in_52w, "#") + "%", text_color=c4, text_size=size.small)
+    table.cell(tbl, 2, 4, str.tostring(ms_pos, "#") + "/15", text_color=c4, text_size=size.small)
+
+    // 5. Resistance
+    c5 = dist_to_resist <= 3 ? color.lime : dist_to_resist <= 8 ? color.yellow : color.red
+    r_txt = dist_to_resist <= 0 ? "ABOVE" : str.tostring(dist_to_resist, "#.1") + "% below"
+    table.cell(tbl, 0, 5, "Resistance", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 5, r_txt, text_color=c5, text_size=size.small)
+    table.cell(tbl, 2, 5, str.tostring(resist_score, "#") + "/10", text_color=c5, text_size=size.small)
+
+    // 6. Weekly Trend
+    c6 = wk_score >= 15 ? color.lime : wk_score >= 10 ? color.green : wk_score >= 5 ? color.yellow : color.red
+    wk_txt = na(wk_sma10) or na(wk_close) ? "N/A" : wk_close > wk_sma10 and wk_rising ? "UP+RISE" : wk_close > wk_sma10 ? "ABOVE" : "BELOW"
+    table.cell(tbl, 0, 6, "Weekly Trend", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 6, wk_txt, text_color=c6, text_size=size.small)
+    table.cell(tbl, 2, 6, str.tostring(wk_score, "#") + "/15", text_color=c6, text_size=size.small)
+
+    // 7. Earnings
+    e_txt = days_to_earnings >= 999 ? "N/A" : str.tostring(days_to_earnings) + "d"
+    ce = earnings_warn ? color.fuchsia : days_to_earnings <= 10 ? color.orange : color.lime
+    table.cell(tbl, 0, 7, "Earnings", text_color=color.gray, text_size=size.small)
+    table.cell(tbl, 1, 7, e_txt, text_color=ce, text_size=size.small)
+    table.cell(tbl, 2, 7, str.tostring(earn_score, "#") + "/10", text_color=ce, text_size=size.small)
+
+    // Headline total
+    t_bg = topped_out ? #2196F3 : sc >= 75 ? color.green : sc >= 55 ? color.new(color.yellow, 40) : color.red
+    t_lbl = earnings_warn ? "EARN!" : topped_out ? "TOPPED" : sc >= 75 ? "STRONG" : sc >= 55 ? "QUAL" : "WEAK"
+    table.cell(tbl, 0, 8, "STRUCTURE", bgcolor=t_bg, text_color=color.white, text_size=size.small)
+    table.cell(tbl, 1, 8, str.tostring(sc, "#") + "/100", bgcolor=t_bg, text_color=color.white, text_size=size.normal)
+    table.cell(tbl, 2, 8, t_lbl, bgcolor=earnings_warn ? color.fuchsia : t_bg, text_color=color.white, text_size=size.small)
+
+    // --- DIAGNOSTIC ROWS ---
+    table.cell(tbl, 0, 9, "", text_size=size.tiny)
+    table.cell(tbl, 1, 9, "DIAGNOSTICS", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 2, 9, "", text_size=size.tiny)
+
+    // Pullback
+    cp = pullback_diag >= 9 ? color.lime : pullback_diag >= 6 ? color.yellow : color.red
+    table.cell(tbl, 0, 10, "Pullback", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 1, 10, str.tostring(pullback_pct, "#.1") + "%", text_color=cp, text_size=size.tiny)
+    table.cell(tbl, 2, 10, str.tostring(pullback_diag, "#") + "/12", text_color=cp, text_size=size.tiny)
+
+    // Pivot
+    pv_txt = close >= r2 ? ">R2" : close >= r1 ? ">R1" : close >= pp ? ">PP" : close >= s1 ? ">S1" : "<S1"
+    cpv = close >= r1 ? color.lime : close >= pp ? color.yellow : color.red
+    table.cell(tbl, 0, 11, "Pivot", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 1, 11, pv_txt, text_color=cpv, text_size=size.tiny)
+    table.cell(tbl, 2, 11, str.tostring(pivot_diag, "#") + "/8", text_color=cpv, text_size=size.tiny)
+
+    // ATR Risk
+    ca = atr_pct < 3.5 ? color.lime : atr_pct < 5 ? color.yellow : color.red
+    table.cell(tbl, 0, 12, "ATR Risk", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 1, 12, str.tostring(atr_pct, "#.1") + "%", text_color=ca, text_size=size.tiny)
+    table.cell(tbl, 2, 12, str.tostring(atr_risk_diag, "#") + "/5", text_color=ca, text_size=size.tiny)
+
+    // ATR Compression Ratio (v1.5.0 — Raschke committee reference)
+    c_atr_comp = atr_comp_ratio < 0.7 ? color.lime : atr_comp_ratio < 0.9 ? color.yellow : color.gray
+    table.cell(tbl, 0, 13, "ATR Comp", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 1, 13, str.tostring(atr_comp_ratio, "#.##"), text_color=c_atr_comp, text_size=size.tiny)
+    table.cell(tbl, 2, 13, atr_comp_ratio < 0.7 ? "COIL" : atr_comp_ratio < 0.9 ? "NORM" : "WIDE", text_color=c_atr_comp, text_size=size.tiny)
+
+    // BD Mode detail (v1.5.0)
+    c_mode = bd_mode >= 1 ? color.lime : color.gray
+    mode_detail = mode1_vcp ? "M1" : ""
+    mode_detail := mode_detail + (mode2_staircase ? (str.length(mode_detail) > 0 ? "+" : "") + "M2" : "")
+    mode_detail := mode_detail + (mode3_smooth ? (str.length(mode_detail) > 0 ? "+" : "") + "M3" : "")
+    mode_detail := str.length(mode_detail) == 0 ? "---" : mode_detail
+    table.cell(tbl, 0, 14, "BD Mode", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 1, 14, mode_detail, text_color=c_mode, text_size=size.tiny)
+    table.cell(tbl, 2, 14, str.tostring(pullback_from_high, "#.1") + "% PB", text_color=shallow_pullback ? color.lime : color.gray, text_size=size.tiny)
+
+    // NR diagnostic
+    c_nr = is_nr7 ? color.lime : color.gray
+    table.cell(tbl, 0, 15, "NR", text_color=color.gray, text_size=size.tiny)
+    table.cell(tbl, 1, 15, is_nr4 ? "NR4" : is_nr7 ? "NR7" : "---", text_color=c_nr, text_size=size.tiny)
+    table.cell(tbl, 2, 15, nr_in_base ? "IN BASE" : "", text_color=color.lime, text_size=size.tiny)
+
+// ==================== SCREENER EXPORT PLOTS ====================
+plot(structure_100,     "STRUCT_SCORE",     display=display.none)
+plot(rs_spy_score,      "STRUCT_RS_SPY",    display=display.none)
+plot(rs_accel_score,    "STRUCT_RS_ACCEL",  display=display.none)
+plot(base_score,        "STRUCT_BASE",      display=display.none)
+plot(ms_pos,            "STRUCT_RANGE50",   display=display.none)
+plot(resist_score,      "STRUCT_RESIST",    display=display.none)
+plot(wk_score,          "STRUCT_WEEKLY",    display=display.none)
+plot(earn_score,        "STRUCT_EARN",      display=display.none)
+plot(pct_in_52w,        "STRUCT_52W_PCT",   display=display.none)
+plot(pullback_diag,     "STRUCT_PULLBACK",  display=display.none)
+plot(pivot_diag,        "STRUCT_PIVOT",     display=display.none)
+plot(atr_risk_diag,     "STRUCT_ATR_RISK",  display=display.none)
+plot(topped_out ? 1:0,  "STRUCT_TOPPED",    display=display.none)
+// DSG-02 latch diagnostics
+plot(float(base_days),          "STRUCT_BD_REPORTED",  display=display.none)
+plot(float(raw_base_count),     "STRUCT_BD_RAW",       display=display.none)
+plot(float(latched_base_days),  "STRUCT_BD_LATCHED",   display=display.none)
+plot(float(bars_since_breakout <= decay_window ? 1 : 0), "STRUCT_BD_IS_LATCHED", display=display.none)
+// v1.5.0 3-mode diagnostics
+plot(float(bd_mode),                "STRUCT_BD_MODE",       display=display.none)
+plot(mode1_vcp ? 1:0,               "STRUCT_MODE1_VCP",     display=display.none)
+plot(mode2_staircase ? 1:0,         "STRUCT_MODE2_STAIR",   display=display.none)
+plot(mode3_smooth ? 1:0,            "STRUCT_MODE3_SMOOTH",  display=display.none)
+plot(atr_comp_ratio,                "STRUCT_ATR_COMP",      display=display.none)
+plot(pullback_from_high,            "STRUCT_PULLBACK_PCT",  display=display.none)
+plot(uptrend_sma50 ? 1:0,           "STRUCT_UPTREND",       display=display.none)
+// NR7/NR4
+plot(is_nr7 ? 1:0,     "STRUCT_NR7",          display=display.none)
+plot(is_nr4 ? 1:0,     "STRUCT_NR4",          display=display.none)
+plot(nr_in_base ? 1:0, "STRUCT_NR7_IN_BASE",  display=display.none)
+
+// ALERTS
+alertcondition(earnings_warn, "Earnings Warning", "Earnings approaching")
+alertcondition(sc >= 75, "Structure Strong", "Structure >= 75")
+alertcondition(sc < 55, "Structure Weak", "Structure < 55")
+alertcondition(breakout_bar, "Base Breakout Latched", "DSG-02: Base days latched on breakout")
+alertcondition(mode2_staircase and not mode2_staircase[1], "Staircase Detected", "DSG-04: Mode 2 staircase active")
+alertcondition(mode3_smooth and not mode3_smooth[1], "Smooth Trend Detected", "DSG-06: Mode 3 smooth trend active")

@@ -1,0 +1,40 @@
+{
+  "longlist": {
+    "name": "Aggregate Longlist",
+    "sc_mom_min": 75,
+    "flow_min": 80,
+    "energy_min": 64,
+    "structure_min": 60,
+    "mp_min": 60,
+    "elder_min": 7,
+    "fip_min": 0,
+    "phase_filter": "ANY",
+    "squeeze_min": 0
+  },
+  "watchlist": {
+    "name": "Watchlist (Near-Miss)",
+    "sc_raw_min": 68,
+    "flow_min": 55,
+    "energy_min": 50,
+    "structure_min": 45,
+    "mp_min": 45,
+    "_note": "No Elder gate — timing unconfirmed is the whole point. Uses sc_momentum_raw (ungated)."
+  },
+  "precision": {
+    "name": "Precision Edge",
+    "sc_mom_min": 50,
+    "subcomp_filters": {
+      "roc_zscore": {"threshold": 1.94, "engine": "Energy", "label": "ROC Z-Score", "meaning": "Momentum 2sigma above normal"},
+      "k39_value": {"threshold": 50.0, "engine": "Scoring", "label": "K39 Gate", "meaning": "Composite gate confirmed"},
+      "pr_rsi_score": {"threshold": 20.0, "engine": "PipeRank", "label": "Relative RSI", "meaning": "RSI outperforms peer universe"},
+      "rel_mom_score": {"threshold": 18.0, "engine": "Scoring", "label": "Relative Momentum", "meaning": "Trend strength confirmed"}
+    },
+    "_backtest": {
+      "win_rate": 37.2,
+      "trades": 2031,
+      "per_week": 7.1,
+      "expectancy_r": 0.64,
+      "period": "Sep 2020 - May 2026"
+    }
+  }
+}
