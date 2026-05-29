@@ -99,7 +99,10 @@ with st.sidebar:
             # Env vars AQE cares about
             env_rows = []
             for key in ("FMP_API_KEY", "AQE_DATA_DIR", "AQE_OUTPUT_DIR",
-                        "ANTHROPIC_API_KEY"):
+                        "ANTHROPIC_API_KEY",
+                        "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET",
+                        "GOOGLE_OAUTH_REFRESH_TOKEN",
+                        "GDRIVE_FOLDER_ID", "GDRIVE_FOLDER_PATH"):
                 val = _os.environ.get(key)
                 if val:
                     masked = (val[:4] + "..." + val[-4:]) if len(val) > 12 else "set"
@@ -115,6 +118,29 @@ with st.sidebar:
             out_writable = _writable(OUTPUT_DIR)
             st.text(f"DATA_DIR writable:    {data_writable}")
             st.text(f"OUTPUT_DIR writable:  {out_writable}")
+
+            # --- Drive sync status ---
+            st.text("")
+            st.text("Google Drive sync (cloud → your Drive):")
+            try:
+                from src.data import gdrive_uploader as _gd
+                if not _gd.is_libs_installed():
+                    st.text("  status: libs not installed (will install on next deploy)")
+                elif not _gd.is_configured():
+                    st.text("  status: OAuth env vars not set -- see DEPLOY.md")
+                else:
+                    if st.button("Test Drive credentials",
+                                 key="drive_test_btn", help="Mints an access token + reads your Drive identity"):
+                        with st.spinner("Validating Drive OAuth..."):
+                            res = _gd.test_credentials()
+                            if res.get("ok"):
+                                st.success(f"Drive OK -- auth'd as {res.get('user', '?')}")
+                            else:
+                                st.error(f"Drive failed: {res.get('reason')}")
+                    else:
+                        st.text("  status: configured (click button to validate)")
+            except Exception as exc:                                            # noqa: BLE001
+                st.text(f"  status: error: {exc}")
 
         if not FMP_KEY_SET:
             if CLOUD_HOST == "huggingface":

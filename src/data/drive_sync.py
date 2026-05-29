@@ -333,9 +333,24 @@ def build_export(shortlist: dict | None = None) -> dict:
 
 
 def export_to_drive(shortlist: dict | None = None) -> dict:
-    """Build export JSON and write to local output + Google Drive mount.
+    """Build export JSON and publish it.
 
-    Returns dict with status and paths written.
+    Three publishing paths, in order of preference:
+      1. ALWAYS: write the JSON to the local OUTPUT_DIR so the rest of AQE
+         can read it (Scanner, Math Lab, AIC, etc.).
+      2. IF G:\\My Drive\\... is mounted (local Windows PC with Google Drive
+         Desktop), write the JSON to that mount -- Drive sync handles the
+         upload automatically.
+      3. IF the Google Drive OAuth env vars are set (HF / Streamlit Cloud /
+         any Linux container), upload via the Drive REST API. Same target
+         folder by name as the desktop sync uses.
+
+    Paths 2 and 3 are independent and both can run on the same call -- the
+    local PC could push to both its local mount AND the cloud Drive folder
+    if the user wants that.
+
+    Returns dict with status, the local + remote paths/file_ids touched, and
+    a `reason` string when something didn't run.
     """
     export = build_export(shortlist)
     if not export:
@@ -344,31 +359,56 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     date_str = export.get("date", "unknown")
     content = json.dumps(export, indent=2)
     written: list[str] = []
+    drive_results: list[dict] = []
 
-    # Always write locally — erase then write for clean overwrite
+    # Path 1: Always write locally — erase then write for clean overwrite
     local_path = OUTPUT_DIR / EXPORT_FILENAME
     if local_path.exists():
         local_path.unlink()
     local_path.write_text(content, encoding="utf-8")
     written.append(str(local_path))
 
-    # Write to Google Drive local mount if available — same erase-then-write
+    # Path 2: Local Drive mount (Windows PC only)
     if DRIVE_EXPORT_DIR.exists():
         drive_path = DRIVE_EXPORT_DIR / EXPORT_FILENAME
         if drive_path.exists():
             drive_path.unlink()
         drive_path.write_text(content, encoding="utf-8")
         written.append(str(drive_path))
-        return {"status": "ok", "date": date_str,
-                "exported_at": export.get("exported_at", ""),
-                "written": written}
-    else:
-        return {
-            "status": "partial",
-            "date": date_str,
-            "written": written,
-            "reason": f"Drive mount not found at {DRIVE_EXPORT_DIR}",
-        }
+
+    # Path 3: Drive REST API (cloud-friendly)
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            result = gdrive_uploader.upload_or_replace(
+                EXPORT_FILENAME, content, mime="application/json",
+            )
+            drive_results.append(result)
+            if result.get("ok"):
+                written.append(f"gdrive:{result.get('file_id', '?')}")
+    except Exception as exc:                                                    # noqa: BLE001
+        drive_results.append({"ok": False, "reason": f"uploader error: {exc}"})
+
+    # Status: ok if anything beyond the local file was written
+    status = "ok" if len(written) > 1 else "partial"
+    reason = None
+    if status == "partial":
+        if not DRIVE_EXPORT_DIR.exists():
+            reason = (
+                "Drive not published. Local mount not found at "
+                f"{DRIVE_EXPORT_DIR} and cloud OAuth env vars not set."
+            )
+        else:
+            reason = "Drive mount not found"
+
+    return {
+        "status": status,
+        "date": date_str,
+        "exported_at": export.get("exported_at", ""),
+        "written": written,
+        "drive_api_results": drive_results,
+        **({"reason": reason} if reason else {}),
+    }
 
 
 # Legacy — keep for backward compat

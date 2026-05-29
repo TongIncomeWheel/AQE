@@ -106,6 +106,77 @@ If you enabled persistent storage with `AQE_DATA_DIR=/data`, the parquets
 land in `/data/` and survive restarts indefinitely. Cold start after sleep
 is then a sub-30-second event (just re-reads from disk).
 
+### Cloud → Google Drive sync (optional but recommended)
+
+Locally AQE writes `aqe_daily_export.json` to `G:\My Drive\Trading Strategy\AQE\`
+where Google Drive Desktop picks it up. On HF the cloud container has no `G:`
+drive — you wire OAuth so the cloud uploads the JSON via Drive's REST API into
+the same Drive folder. The result is your Claude native (or anything else that
+reads from Drive) sees the same file regardless of whether AQE ran locally or
+in the cloud.
+
+#### Step-by-step (one-time, ~10 min)
+
+1. **Create a Google Cloud project** (free):
+   <https://console.cloud.google.com/projectcreate> — any name, no billing.
+
+2. **Enable Google Drive API**:
+   GCP Console → **APIs & Services → Library** → search "Google Drive API"
+   → **Enable**.
+
+3. **Configure the OAuth consent screen**:
+   **APIs & Services → OAuth consent screen** → choose **External** → fill
+   only the required app-name/email fields → **Save**.
+   Add your own Google email under **Test users** (only Test users can grant
+   consent while the app is in "Testing" mode, which is fine for personal use).
+
+4. **Create the OAuth Client ID**:
+   **APIs & Services → Credentials → Create Credentials → OAuth Client ID**
+   - Application type: **Desktop app**
+   - Name: e.g. "AQE Drive uploader"
+   - Click **Create** → **Download JSON**.
+   - Save the downloaded file as `client_secret.json` in the project root
+     (`C:\Users\ashtz\Backtest Engine\client_secret.json`). It's already
+     gitignored.
+
+5. **Run the one-time setup helper**:
+   Double-click **`setup_gdrive.bat`** at the project root. A browser tab
+   opens → click **Allow** to grant Drive access to your AQE app. The helper
+   then prints THREE secrets you paste into HF Space settings.
+
+6. **Paste secrets into HF**:
+   <https://huggingface.co/spaces/AQE-Aegis/aqe/settings> → **Variables and secrets**:
+
+   | Type | Name | Value |
+   |---|---|---|
+   | Secret | `GOOGLE_OAUTH_CLIENT_ID` | from helper output |
+   | Secret | `GOOGLE_OAUTH_CLIENT_SECRET` | from helper output |
+   | Secret | `GOOGLE_OAUTH_REFRESH_TOKEN` | from helper output |
+   | Variable | `GDRIVE_FOLDER_PATH` | `Trading Strategy/AQE` |
+
+   (Use `GDRIVE_FOLDER_ID` instead of `GDRIVE_FOLDER_PATH` if you know the
+   folder ID — last URL segment when you open the folder in Drive's web UI.)
+
+7. **Restart the Space**: any push triggers a rebuild, OR Settings → **Factory rebuild**.
+
+8. **Verify**: open the Scanner sidebar → **Cloud diagnostics** → scroll to
+   "Google Drive sync" → click **Test Drive credentials**. Should print
+   `Drive OK -- auth'd as <your email>`.
+
+#### Behaviour after setup
+
+- Local PC + cloud both export to `Trading Strategy/AQE/aqe_daily_export.json`.
+- The cloud always uses the same file ID (replaces in place), so Claude native
+  doesn't see broken links between exports.
+- If the OAuth token is ever revoked or expires (very rare for refresh tokens),
+  re-run `setup_gdrive.bat` to capture a fresh one.
+
+#### What this does NOT do
+
+- Doesn't sync the local data parquets to Drive — only the export JSON.
+- Doesn't read FROM Drive — the cloud doesn't pull anything from your account.
+- Doesn't affect AIC / NiceGUI briefs (those don't write to Drive).
+
 ---
 
 ## Streamlit Community Cloud (alternative)
