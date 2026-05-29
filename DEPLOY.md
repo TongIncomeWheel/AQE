@@ -1,160 +1,175 @@
 # AQE Cloud Deployment
 
-This document covers deploying the AQE Streamlit Scanner to **Streamlit
-Community Cloud** as a phone-accessible, read-only mirror of your local
-scanner.
+This is the active-cloud setup: the **Streamlit Cloud app runs the daily
+pipeline itself** so it works even when your laptop is off. Free tier, single
+public-URL endpoint, your FMP key as the only secret.
 
 ## Architecture
 
 ```
-LOCAL (your Windows PC)               GITHUB (private repo)            STREAMLIT CLOUD
-─────────────────────────             ─────────────────────            ─────────────────
-run_daily.bat                                                          streamlit_app.py
-  → src.pipeline.daily_orchestrator                                      → src/ui/1_Scanner.py
-    writes data/*.parquet  ←(stays local, 150MB)                          (auto-detects "cloud mode"
-    writes output/aqe_daily_export.json  ─push_aqe.bat─►  git push  ───► reads only the JSON,
-                                                                          no parquet ever ships)
+LOCAL (your Windows PC)             GITHUB (private repo)         STREAMLIT CLOUD (free)
+─────────────────────────           ─────────────────────         ─────────────────────────
+run_app.bat                         streamlit_app.py              streamlit_app.py
+  → desktop Streamlit                 + src/ (engines, scanner,     → bridges st.secrets
+  → reads/writes local                  pipeline, analyzer, ui)       to os.environ
+    data/*.parquet                                                  → runs Scanner page
+                                                                    → "Run daily pipeline"
+                                                                       button kicks off
+                                                                       FMP fetch + scoring
+                                                                       in the cloud container
+                                                                  
+                                                                  Cold start: ~3-5 min
+                                                                    (490 tickers × FMP)
+                                                                  Subsequent same-session:
+                                                                    seconds (incremental)
+                                                                  Container idle ~30 min
+                                                                    → cold again next visit
 ```
 
-The Scanner detects cloud mode by checking whether
-`data/scores_daily.parquet` exists. On the cloud it doesn't (gitignored),
-so the page renders entirely from the committed `aqe_daily_export.json`.
+The cloud is **stateful per session** but the container's filesystem is
+ephemeral. When Streamlit's auto-sleep fires (~30 min idle) the cached
+parquets disappear; the next visit needs another pipeline run. With <5
+visits/day you'll typically pay one ~3-5 min wait per day.
 
-Other pages:
-- **Page 2 Math Lab** — disabled in cloud mode (needs panel/score parquets).
-- **Page 3 Positions** — disabled in cloud mode (sensitive + needs parquets).
-- **Page 4 Scheduler** — disabled on Linux (uses Windows Task Scheduler).
-- **Page 5 AIC** — works (reads SQLite + export JSON).
+## Page behaviour on the cloud
+
+| Page | Cloud behaviour |
+|---|---|
+| **1 Scanner** | Full functionality. Sidebar shows "Cloud mode" + a `Bootstrap + run daily pipeline` button. After it runs, every section (regime, SRM, Precision Edge, longlist, watchlist, ad-hoc scorer) works normally. |
+| **2 Math Lab** | Works AFTER you've run the pipeline at least once in the session. Asks you to run Scanner first if parquets aren't built yet. |
+| **3 Positions** | Disabled on cloud. Needs `data/open_positions.json` which is gitignored (stays on your local PC). |
+| **4 Scheduler** | Errors gracefully — uses Windows Task Scheduler, not available on Linux. |
+| **5 AIC** | UAT page for the AIC committee — works (reads SQLite + export JSON). |
 
 ## One-time setup
 
-### 1. Create the private GitHub repo
+### 1. Push the repo to GitHub
+
+Already done if you've reached this point: <https://github.com/TongIncomeWheel/AQE>.
+For a fresh clone:
 
 ```bash
-# from the project root
 git init -b main
 git add .
 git commit -m "Initial AQE commit"
-
-# Either via the GitHub CLI (auth required):
-gh repo create <username>/aqe --private --source=. --remote=origin --push
-
-# Or manually: create at https://github.com/new (private), then:
-git remote add origin https://github.com/<username>/aqe.git
+git remote add origin https://github.com/<user>/<repo>.git
 git push -u origin main
 ```
 
-The `.gitignore` is already wired to keep parquets, SQLite, real positions
-and `.env` out of the repo. Verify before pushing with:
+`.gitignore` is wired to keep parquets, SQLite, real positions and `.env`
+out of git. Verify:
 
 ```bash
-git status              # should NOT list scores_daily.parquet or .env
+git status              # should not list scores_daily.parquet or .env
 git ls-files | head     # should list streamlit_app.py + src/ + output/aqe_daily_export.json
 ```
 
-### 2. Connect Streamlit Community Cloud
+### 2. Deploy to Streamlit Community Cloud
 
 1. Sign in at <https://share.streamlit.io> with the GitHub account that owns
    the private repo.
 2. Click **"New app"**.
-3. Pick your `aqe` repo → branch `main` → main file `streamlit_app.py`.
-4. **Advanced settings → Python version**: 3.11 or 3.12 (both work).
-5. Hit **Deploy**.
+3. Pick your repo → branch `main` → main file `streamlit_app.py`.
+4. **Advanced settings**:
+   - **Python version**: 3.11 or 3.12.
+   - **App URL** (optional): pick a slug like `aqe`.
+5. **Don't deploy yet** — set secrets first (next step), then deploy.
 
-First boot takes ~3 minutes (installs `requirements.txt`). Subsequent
-auto-deploys (after each `push_aqe.bat`) take ~30 seconds.
+### 3. Add your FMP key as a Streamlit secret
 
-### 3. (Optional) Set Streamlit secrets
+1. In the new-app dialog (or after, via **Settings → Secrets**), paste:
 
-Currently the cloud read-only mode needs **no secrets** — it reads the
-committed JSON. If you later re-enable interactive features:
+   ```toml
+   FMP_API_KEY = "fmp_xxx_your_real_key_here"
+   ```
 
-```toml
-# Paste this in Streamlit Cloud → Settings → Secrets
-FMP_API_KEY = "fmp_xxx"            # only if cloud-side FMP fetches are re-enabled
-ANTHROPIC_API_KEY = "sk-ant-xxx"   # only if AIC LLM features are re-enabled
-```
+   Replace with the value from your local `.env` file.
 
-A template lives at `.streamlit/secrets.toml.example`.
+2. Save. Streamlit redeploys automatically.
+
+That's the only secret AQE itself needs. AIC LLM features (Anthropic key)
+are optional and stay disabled on cloud unless you also add `ANTHROPIC_API_KEY`.
+
+### 4. First run
+
+1. Open the app URL (e.g. `https://aqe.streamlit.app`).
+2. Sidebar shows "Cloud mode" badge.
+3. Click **Bootstrap + run daily pipeline**.
+4. Live log stream appears. You'll see lines like `[daily] 1/491 AAPL`.
+5. After ~3-5 min the page refreshes with regime, SRM, longlist, etc.
 
 ## Daily workflow
 
 ```
-Step 1. Run your daily pipeline locally (as you do today)
-            → double-click run_daily.bat
-            → writes data/panel_daily.parquet + output/aqe_daily_export.json
-
-Step 2. Publish to the cloud
-            → double-click push_aqe.bat
-            → commits aqe_daily_export.json + small configs, pushes to GitHub
-            → Streamlit Cloud auto-redeploys in ~30s
-
-Step 3. Open the cloud app on your phone
-            → https://<your-app-slug>.streamlit.app
-            → "Cloud read-only mode" banner confirms you're on the remote
+You open the app URL on phone or laptop.
+   ↓
+If first visit of the day (or container slept):
+   → click "Run daily pipeline" → wait 3-5 min → done for the day
+If you used it within ~30 min before:
+   → already warm, click "Run daily pipeline" → seconds (incremental)
+   → or just read the current data, no re-run needed
 ```
 
-### What `push_aqe.bat` stages
+## Universe management
 
-Only these files:
+The universe lives in `data/universe.txt` and IS committed. To change the
+universe:
 
-```
-output/aqe_daily_export.json      ← the canonical cloud-mode source (~140KB)
-output/recipes.json               ← recipe configs
-data/active_recipe.json           ← active recipe thresholds
-data/sector_map.json              ← ticker → GICS ETF mapping
-data/universe.txt                 ← universe list
-data/earnings_calendar.json       ← earnings dates
-```
+**From local PC** (recommended):
+1. Edit `data/universe.txt` or upload a new CSV via the desktop AQE app.
+2. Commit + push the change.
+3. Cloud will pick it up on next deploy. Next pipeline run uses the new universe.
 
-Everything else (positions, SQLite, parquets, recipes, calibration reports)
-is gitignored. To verify: `python -m scripts.push_to_cloud --dry-run`.
+**From cloud directly**:
+- The Scanner sidebar's **Universe Upload** works on cloud too — but the
+  change only lives in the cloud container's ephemeral disk. When the
+  container restarts, it reverts to whatever is in git.
 
-## Adding a new dependency
+## Secrets you might add later
 
-If you `import` something new in code that runs on the cloud:
+These are NOT required for the AQE scanner; only if you re-enable specific features:
 
-1. `pip install <pkg>` locally.
-2. Add it to `requirements.txt` (pin to a major version).
-3. Commit + push. Streamlit Cloud reinstalls on next deploy.
+| Secret | Enables |
+|---|---|
+| `ANTHROPIC_API_KEY` | AIC LLM committee (Page 5 in deeper modes) |
 
-If the new dep is **only** used on the local desktop side (e.g. you add a
-Windows-only library), guard the import in a try/except so the cloud import
-chain doesn't break.
+A template lives at `.streamlit/secrets.toml.example`.
 
-## Cloud detection logic
+## RAM, CPU and rate-limit reality
 
-`src/ui/shared.py`:
-
-```python
-def is_cloud_mode() -> bool:
-    return not SCORES_DAILY.exists()
-```
-
-Every page that touches parquets checks this and either:
-- (Scanner) substitutes the export JSON, or
-- (Math Lab, Positions) shows a "this page is local-only" message and stops.
+- **RAM**: Streamlit free tier is 1 GB. After a full pipeline run, the panel
+  + scores DataFrames hold ~300-400 MB. Headroom is tight but OK for one user.
+- **CPU**: 1 CPU. Pipeline takes ~3-5 min wall-clock against FMP's rate limit.
+- **FMP**: Starter plan = 300 calls/min. AQE caps itself at 250 to leave headroom.
+  Same key on cloud + local is fine for personal use; you'll never come close
+  to the per-day cap.
 
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Cloud shows "No shortlist.json found" | First push didn't include the export | Run `push_aqe.bat` |
-| Cloud watchlist is empty | Export was pushed but watchlist field is empty | Rerun `run_daily.bat` locally then `push_aqe.bat` |
-| Cloud build fails on `import nicegui` | NiceGUI optional dep | Already in `requirements.txt`; if pruning, only the Scanner import path runs on cloud |
-| Cloud build fails on `zoneinfo("Asia/Singapore")` | Linux needs `tzdata` | Already in `requirements.txt` |
-| You accidentally committed `.env` | Secret leak | `git rm --cached .env`, force-rotate the FMP key |
-| Cloud app says "Cloud read-only mode" locally | `data/scores_daily.parquet` missing on your local PC | Rebuild via `run_app.bat` → sidebar → Rebuild scores |
+| "FMP_API_KEY is not set in Streamlit secrets" | Secret not configured | Settings → Secrets → paste `FMP_API_KEY = "..."` |
+| Pipeline exits with FMPError | Wrong key, expired key, or hit rate limit | Verify key in FMP dashboard; copy fresh into Streamlit secrets |
+| App boots but Scanner shows "Cold start" | Container was asleep; parquets gone | Click **Bootstrap + run daily pipeline** |
+| Cloud OOM (Streamlit restarts) | 1 GB cap exceeded | Cut universe size or remove unused engines; surface to dev |
+| Cloud app sleeps too aggressively | Streamlit's idle policy | Bookmark + visit it once a few times a day; or click any button to keep warm |
+| Push fails on `git push` | Credentials not cached | Run `first_push.bat` once in a real cmd window |
 
-## What's NOT on the cloud (by design)
+## Adding a new dependency
 
-- The 137MB `scores_daily.parquet` — too big for git, too slow to rebuild on
-  the cloud's RAM cap.
-- Your real `open_positions.json` — Positions page would expose it.
-- The AIC SQLite + Anthropic key — LLM committee runs locally only.
-- The NiceGUI brief frontend (`src/aic/web/`) — separate process, not a
-  Streamlit app. If you want briefs on your phone too, deploy that one
-  separately on Render/Railway/Fly.io.
+If you `import` something new that runs on cloud:
+
+1. `pip install <pkg>` locally.
+2. Add it to `requirements.txt` (pin to a major version).
+3. Commit + push. Streamlit Cloud reinstalls on next deploy (~30s for small deps).
+
+## What stays local-only (by design)
+
+- Your real `data/open_positions.json` — Position Manager only on desktop.
+- The full `data/scores_daily.parquet` (137 MB) — too big for git; cloud
+  rebuilds it from FMP on demand.
+- AIC SQLite + Anthropic key — LLM committee runs locally unless you wire it.
+- The NiceGUI brief frontend (`src/aic/web/`) — separate process, not Streamlit.
 
 ## Rollback
 
@@ -165,4 +180,4 @@ git revert <bad-commit-sha>
 git push
 ```
 
-Streamlit Cloud will redeploy the reverted state in ~30s.
+Streamlit Cloud auto-redeploys the reverted state in ~30 s.

@@ -53,11 +53,12 @@ from src.scanner.score_runner import SCORES_DAILY
 
 st.title("Math Lab")
 
-if is_cloud_mode():
+# Math Lab needs the full panel + score parquets. In cloud mode they only
+# exist AFTER the user has run the daily pipeline at least once this session.
+if is_cloud_mode() and (not PANEL_DAILY.exists() or not SCORES_DAILY.exists()):
     st.info(
-        "**Cloud read-only mode.** Math Lab runs validation tests against the "
-        "full panel/score parquets (~150MB total) that don't ship to the cloud. "
-        "Open the desktop AQE app to use this page."
+        "Math Lab needs the panel + score parquets. Open the **Scanner** page "
+        "and click **Bootstrap + run daily pipeline** first (3-5 min)."
     )
     st.stop()
 

@@ -37,12 +37,17 @@ from src.scanner.score_runner import SCORES_DAILY
 
 st.title("Position Manager")
 
+# Positions need the parquets and the open_positions.json (gitignored, lives
+# only on the local PC). The page is therefore desktop-only on the cloud
+# deploy unless the user uploads open_positions.json via Universe upload (not
+# supported today). Keep it disabled in cloud mode to avoid leaking position
+# data and to keep the cloud's ephemeral RAM lean.
 if is_cloud_mode():
     st.info(
-        "**Cloud read-only mode.** Position Manager enriches each ticker with "
-        "live engine scores from `data/scores_daily.parquet` (137MB) and "
-        "`data/panel_daily.parquet`, neither of which ships to the cloud. "
-        "Open the desktop AQE app to view live positions."
+        "Position Manager is desktop-only. It reads `data/open_positions.json` "
+        "which lives on your local PC (gitignored) and enriches each ticker with "
+        "scores from the panel + score parquets. Open the desktop AQE app for "
+        "this page."
     )
     st.stop()
 

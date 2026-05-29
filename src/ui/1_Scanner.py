@@ -49,48 +49,61 @@ st.title("AQE Scanner")
 # Sidebar — data refresh only
 # ---------------------------------------------------------------------------
 CLOUD_MODE = is_cloud_mode()
+import os as _os
+FMP_KEY_SET = bool(_os.environ.get("FMP_API_KEY"))
 
 with st.sidebar:
     prog = st.empty()
     stat = st.empty()
 
     if CLOUD_MODE:
-        st.info(
-            "**Cloud read-only mode.**\n\n"
-            "The daily pipeline runs on the user's local PC and publishes the "
-            "export JSON to this app via GitHub. Refresh actions are disabled here."
+        st.markdown("### Cloud mode")
+        st.caption(
+            "Running on Streamlit Cloud. First pipeline run pulls 6yr of bars "
+            "from FMP (~3-5 min). Subsequent runs are incremental."
         )
-    else:
-        if st.button("Run daily pipeline", type="primary", use_container_width=True):
-            run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline", prog, stat)
+        if not FMP_KEY_SET:
+            st.error(
+                "FMP_API_KEY is not set in Streamlit secrets. "
+                "Add it under app **Settings -> Secrets** before running the pipeline."
+            )
+
+    pipeline_btn_label = "Run daily pipeline"
+    if CLOUD_MODE and not (PANEL_DAILY.exists() and SCORES_DAILY.exists()):
+        pipeline_btn_label = "Bootstrap + run daily pipeline (3-5 min)"
+    if st.button(pipeline_btn_label, type="primary", use_container_width=True,
+                 disabled=(CLOUD_MODE and not FMP_KEY_SET)):
+        run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline", prog, stat)
+        st.rerun()
+
+    with st.expander("Data Refresh", expanded=False):
+        if st.button("Rebuild prices",
+                     disabled=(CLOUD_MODE and not FMP_KEY_SET)):
+            run_module_streaming("src.data.panel_builder", "Panel builder", prog, stat)
             st.rerun()
 
-        with st.expander("Data Refresh", expanded=False):
-            if st.button("Rebuild prices"):
-                run_module_streaming("src.data.panel_builder", "Panel builder", prog, stat)
+        if st.button("Rebuild scores"):
+            run_module_streaming("src.scanner.score_runner", "Score runner", prog, stat)
+            st.rerun()
+
+    with st.expander("Universe Upload", expanded=False):
+        csv_file = st.file_uploader(
+            "Upload screener CSV",
+            type=["csv"],
+            help="CSV with a 'Symbol' column (e.g. TradingView screener export)",
+        )
+        if csv_file is not None:
+            if st.button("Apply universe", type="secondary", use_container_width=True):
+                from src.data.universe import upload_universe
+
+                result = upload_universe(csv_file)
+                st.success(
+                    f"Universe updated: {result['count']} tickers "
+                    f"(was {result['previous_count']})"
+                )
                 st.rerun()
 
-            if st.button("Rebuild scores"):
-                run_module_streaming("src.scanner.score_runner", "Score runner", prog, stat)
-                st.rerun()
-
-        with st.expander("Universe Upload", expanded=False):
-            csv_file = st.file_uploader(
-                "Upload screener CSV",
-                type=["csv"],
-                help="CSV with a 'Symbol' column (e.g. TradingView screener export)",
-            )
-            if csv_file is not None:
-                if st.button("Apply universe", type="secondary", use_container_width=True):
-                    from src.data.universe import upload_universe
-
-                    result = upload_universe(csv_file)
-                    st.success(
-                        f"Universe updated: {result['count']} tickers "
-                        f"(was {result['previous_count']})"
-                    )
-                    st.rerun()
-
+    if not CLOUD_MODE:
         if st.button("Export to Drive", use_container_width=True):
             from src.data.drive_sync import export_to_drive
 
@@ -104,21 +117,49 @@ with st.sidebar:
                 st.error(result.get("reason", "No data"))
 
 # ---------------------------------------------------------------------------
-# Onboarding check (skipped in cloud read-only mode -- export JSON is enough)
+# Onboarding check
 # ---------------------------------------------------------------------------
-if not CLOUD_MODE and (not PANEL_DAILY.exists() or not SCORES_DAILY.exists()):
-    st.warning(
-        "Price panel or score cache not found. "
-        "Open the sidebar and click **Rebuild prices**, then **Rebuild scores** to get started."
-    )
-    st.stop()
+if not PANEL_DAILY.exists() or not SCORES_DAILY.exists():
+    if CLOUD_MODE:
+        # On a freshly-woken Streamlit Cloud container the parquet caches are
+        # absent until the first pipeline run rebuilds them. Either the bundled
+        # export JSON is good enough to render the read-only view OR the user
+        # needs to bootstrap.
+        sl_preview = load_shortlist()
+        if sl_preview is not None:
+            st.info(
+                "Showing the latest committed snapshot. "
+                "Open the sidebar and click **Bootstrap + run daily pipeline** "
+                "to refresh against live FMP data (3-5 min)."
+            )
+        else:
+            st.warning(
+                "**Cold start.** The price + score caches haven't been built yet "
+                "on this Streamlit container.\n\n"
+                "Open the sidebar and click **Bootstrap + run daily pipeline**. "
+                "First run pulls 6yr of bars from FMP (~3-5 min); the page will "
+                "refresh automatically when it finishes."
+            )
+            st.stop()
+    else:
+        st.warning(
+            "Price panel or score cache not found. "
+            "Open the sidebar and click **Rebuild prices**, then **Rebuild scores** to get started."
+        )
+        st.stop()
 
 # ---------------------------------------------------------------------------
 # Load shortlist
 # ---------------------------------------------------------------------------
 sl = load_shortlist()
 if sl is None:
-    st.info("No shortlist.json found. Click **Run daily pipeline** in the sidebar first.")
+    if CLOUD_MODE:
+        st.info(
+            "No shortlist.json yet. Click **Run daily pipeline** in the sidebar "
+            "to produce one against live FMP data."
+        )
+    else:
+        st.info("No shortlist.json found. Click **Run daily pipeline** in the sidebar first.")
     st.stop()
 
 # Show refresh timestamp (SGT) — main page + sidebar
@@ -737,10 +778,10 @@ st.divider()
 # ---------------------------------------------------------------------------
 st.subheader("Ad-hoc Ticker Scorer")
 
-if CLOUD_MODE:
+if CLOUD_MODE and not FMP_KEY_SET:
     st.info(
-        "Ad-hoc scoring needs the FMP API key and ~10s per ticker. "
-        "Available on the local desktop app — not on this cloud read-only view."
+        "Ad-hoc scoring needs FMP. Set **FMP_API_KEY** in Streamlit secrets "
+        "(app **Settings -> Secrets**) and reload to enable this section."
     )
     st.stop()
 
