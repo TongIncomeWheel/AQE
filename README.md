@@ -3,9 +3,12 @@ title: AQE Scanner
 emoji: 📈
 colorFrom: yellow
 colorTo: blue
-sdk: streamlit
-sdk_version: 1.57.0
-app_file: streamlit_app.py
+sdk: docker
+app_port: 8501
+tags:
+  - streamlit
+  - finance
+  - quant
 pinned: false
 short_description: Aegis Quant Engine — daily US equity scanner
 ---

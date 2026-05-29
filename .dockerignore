@@ -1,0 +1,38 @@
+# Keep Docker builds lean and safe -- mirrors .gitignore.
+.git
+.gitignore
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+.streamlit/secrets.toml
+
+# Heavy caches (would balloon the image)
+data/*.parquet
+data/*.db*
+
+# Real-money / private
+data/open_positions.json
+
+# Sibling project
+spend-agent/
+
+# Archives + handoffs
+*.zip
+handoff/
+
+# AIC local state
+src/aic/state/*.db*
+src/aic/state/telegram_alerts.log.jsonl
+src/aic/config/credentials.py
+src/aic/prompts/_compiled/
+
+# Misc
+*.log
+.idea/
+.vscode/
+.claude/
+scheduler/
