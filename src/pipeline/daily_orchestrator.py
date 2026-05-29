@@ -31,17 +31,21 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data.earnings import load_earnings, pull_earnings_calendar, save_earnings
 from src.data.fmp_client import FMPClient, FMPError
-from src.data.panel_builder import PANEL_DAILY, PANEL_WEEKLY, SPY_DAILY, DATA_DIR
+from src.data.paths import (
+    DATA_DIR,
+    OUTPUT_DIR,
+    PANEL_DAILY,
+    PANEL_WEEKLY,
+    SPY_DAILY,
+    SHORTLIST_PATH,
+    DASHBOARD_PATH,
+)
 from src.data.universe import load_universe
 from src.engines import pipeline_rank, srm
 from src.engines.srm import GICS_ETFS, TICKER_TO_SECTOR, grade_all_sectors, get_sector_health, GRADE_TO_SH
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
 from src.analyzer.ptrs import compute_ptrs, classify_vix_regime
 from src.analyzer.regime import compute_regime
-
-OUTPUT_DIR = PROJECT_ROOT / "output"
-SHORTLIST_PATH = OUTPUT_DIR / "shortlist.json"
-DASHBOARD_PATH = OUTPUT_DIR / "dashboard.txt"
 
 STAGE2_MAX = 50
 PIPE_RANK_CUTOFF = 60

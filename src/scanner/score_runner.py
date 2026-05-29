@@ -23,11 +23,9 @@ import pandas as pd
 
 from src.data.earnings import load_earnings
 from src.data.fmp_client import iter_with_progress
-from src.data.panel_builder import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SPY_DAILY
+from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
 from src.engines import bq, elder, energy, flow, k39, mp, pipeline_rank, scoring, structure
 from src.engines.utils import atr
-
-SCORES_DAILY = DATA_DIR / "scores_daily.parquet"
 
 
 SCORE_COLUMNS = [

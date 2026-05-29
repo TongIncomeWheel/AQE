@@ -18,8 +18,8 @@ from src.engines.srm import GICS_ETFS, get_sector_health, grade_all_sectors
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-OUTPUT_DIR = PROJECT_ROOT / "output"
+from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
+
 DRIVE_EXPORT_DIR = Path(r"G:\My Drive\Trading Strategy\AQE")
 EXPORT_FILENAME = "aqe_daily_export.json"
 

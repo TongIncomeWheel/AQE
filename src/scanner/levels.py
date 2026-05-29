@@ -18,10 +18,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.data.panel_builder import DATA_DIR, PANEL_DAILY
+from src.data.paths import DATA_DIR, PANEL_DAILY, SCORES_DAILY
 from src.scanner.dsl import compute_initial_stop
-
-SCORES_DAILY = DATA_DIR / "scores_daily.parquet"
 
 CAPITAL = 70_000
 RISK_PCT = 0.03

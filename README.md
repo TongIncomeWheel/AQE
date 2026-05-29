@@ -1,3 +1,15 @@
+---
+title: AQE Scanner
+emoji: 📈
+colorFrom: yellow
+colorTo: blue
+sdk: streamlit
+sdk_version: 1.57.0
+app_file: streamlit_app.py
+pinned: false
+short_description: Aegis Quant Engine — daily US equity scanner
+---
+
 # Aegis Backtest Engine
 
 Local Streamlit app that answers two empirical questions over the user's tradeable universe and 5+ years of FMP daily bars:

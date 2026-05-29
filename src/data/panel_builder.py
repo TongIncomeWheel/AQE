@@ -18,13 +18,13 @@ from pathlib import Path
 import pandas as pd
 
 from .fmp_client import FMPClient, FMPError, iter_with_progress, resample_to_weekly
+from .paths import (
+    DATA_DIR,
+    PANEL_DAILY,
+    PANEL_WEEKLY,
+    SPY_DAILY,
+)
 from .universe import BENCHMARK, PROJECT_ROOT, load_universe
-
-
-DATA_DIR = PROJECT_ROOT / "data"
-PANEL_DAILY = DATA_DIR / "panel_daily.parquet"
-PANEL_WEEKLY = DATA_DIR / "panel_weekly.parquet"
-SPY_DAILY = DATA_DIR / "spy_daily.parquet"
 
 DEFAULT_HISTORY_YEARS = 6  # pulls 6yr so we have 5yr of warm scores after engine warmup
 

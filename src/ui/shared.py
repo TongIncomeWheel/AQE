@@ -24,12 +24,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.data.panel_builder import PANEL_DAILY, SPY_DAILY
-from src.scanner.score_runner import SCORES_DAILY
-
-OUTPUT_DIR = PROJECT_ROOT / "output"
-DATA_DIR = PROJECT_ROOT / "data"
-EXPORT_JSON = OUTPUT_DIR / "aqe_daily_export.json"
+from src.data.paths import (
+    DATA_DIR,
+    OUTPUT_DIR,
+    EXPORT_JSON,
+    PANEL_DAILY,
+    SCORES_DAILY,
+    SPY_DAILY,
+)
 
 
 # ---------------------------------------------------------------------------

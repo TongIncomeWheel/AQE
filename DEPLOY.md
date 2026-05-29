@@ -1,10 +1,120 @@
 # AQE Cloud Deployment
 
-This is the active-cloud setup: the **Streamlit Cloud app runs the daily
-pipeline itself** so it works even when your laptop is off. Free tier, single
-public-URL endpoint, your FMP key as the only secret.
+Two free-tier targets are supported. Same source code, same `streamlit_app.py`
+entrypoint, different host trade-offs:
 
-## Architecture
+| Host | Sleep timeout | RAM | Disk persistence | Recommended for |
+|---|---|---|---|---|
+| **Hugging Face Spaces (free)** | ~48 hr idle | **16 GB** | Ephemeral (5 GB persistent = $5/mo upgrade) | Single-user, infrequent visits — **best free option** |
+| Streamlit Community Cloud | ~12-24 hr idle | 1 GB | Ephemeral | Quick prototypes |
+
+Both run the daily pipeline themselves so the app works even when your laptop
+is off.
+
+Jump to:
+- [Hugging Face Spaces (recommended)](#hugging-face-spaces-recommended)
+- [Streamlit Community Cloud (alternative)](#streamlit-community-cloud-alternative)
+
+---
+
+## Hugging Face Spaces (recommended)
+
+### Why HF over Streamlit
+
+- **48-hour idle window** (vs Streamlit's ~12-24h) — single visit every two
+  days keeps the container warm.
+- **16 GB RAM** (vs 1 GB) — pandas pipeline has 40× headroom.
+- **2 vCPU** (vs 1) — pipeline rebuilds faster.
+- **50 GB ephemeral disk** — parquet caches sit easily.
+
+The trade-off: HF's free tier ephemeral disk wipes when the Space is asleep
+or rebuilt, exactly like Streamlit. On a cold start the pipeline has to
+refetch from FMP (3-5 min). But with the longer sleep window you hit this
+less often. Add HF's $5/month persistent storage (5 GB at `/data`) and the
+cache survives restarts forever; AQE auto-picks it up via `AQE_DATA_DIR`.
+
+#### One-time setup
+
+1. **Sign up for Hugging Face** at <https://huggingface.co/join> (free, takes
+   30 seconds — email + password).
+2. **Create a new Space**:
+   - <https://huggingface.co/new-space>
+   - Owner: your account
+   - Space name: e.g. `aqe-scanner`
+   - License: pick one (MIT is fine for personal use)
+   - SDK: **Streamlit**
+   - Hardware: **CPU basic — free**
+   - **Visibility**: Private (recommended) or Public — your choice
+   - Click **Create Space**.
+3. **Set your FMP secret**:
+   - In the new Space, click **Settings** (top right) → **Variables and
+     secrets** → **New secret**.
+   - Name: `FMP_API_KEY`
+   - Value: paste from your local `.env`.
+   - Save.
+4. **(Optional) Enable persistent storage** if you want the cache to survive
+   sleeps. **Settings → Variables and secrets → Persistent storage** → enable
+   5 GB ($5/month). Then add two more *variables* (NOT secrets — variables
+   are visible to the app at boot):
+   - `AQE_DATA_DIR` = `/data`
+   - `AQE_OUTPUT_DIR` = `/data/output`
+5. **Push the code to your HF Space**:
+   - Each Space has a git remote URL shown at the top of the Space page,
+     usually `https://huggingface.co/spaces/<your-user>/<space-name>`.
+   - From your local repo:
+     ```bash
+     git remote add hf https://huggingface.co/spaces/<your-user>/<space-name>
+     git push hf main
+     ```
+   - HF asks for an access token (not your password). Generate one at
+     <https://huggingface.co/settings/tokens> with **write** scope. Use it
+     as the password when git prompts.
+
+### Daily push workflow
+
+After the first push, your local repo has two remotes:
+
+```bash
+git remote -v
+# origin    https://github.com/TongIncomeWheel/AQE.git   (private GitHub)
+# hf        https://huggingface.co/spaces/<user>/<space> (HF Space)
+
+# After making changes locally:
+git add <files>
+git commit -m "..."
+git push                # pushes to origin (default = GitHub)
+git push hf main        # pushes to HF, which redeploys the Space
+```
+
+Or push to both in one command:
+```bash
+git push origin main && git push hf main
+```
+
+### What you'll see on HF
+
+After `git push hf main` triggers a deploy, the Space rebuilds (~2-4 min for
+first build, ~30s on code-only updates). Visit `https://<user>-<space>.hf.space`
+(URL shown on the Space page).
+
+The Scanner page renders identically to your local app. Cloud-mode detection
+(`is_cloud_mode()`) still fires because the parquets aren't in the repo. The
+sidebar shows "Cloud mode" + the bootstrap button. Click it → 3-5 min FMP
+fetch → done.
+
+If you enabled persistent storage with `AQE_DATA_DIR=/data`, the parquets
+land in `/data/` and survive restarts indefinitely. Cold start after sleep
+is then a sub-30-second event (just re-reads from disk).
+
+---
+
+## Streamlit Community Cloud (alternative)
+
+This is the **active-cloud setup**: the Streamlit Cloud app runs the daily
+pipeline itself. Free tier, single public-URL endpoint, your FMP key as the
+only secret.
+
+### Architecture
 
 ```
 LOCAL (your Windows PC)             GITHUB (private repo)         STREAMLIT CLOUD (free)
@@ -31,7 +141,7 @@ ephemeral. When Streamlit's auto-sleep fires (~30 min idle) the cached
 parquets disappear; the next visit needs another pipeline run. With <5
 visits/day you'll typically pay one ~3-5 min wait per day.
 
-## Page behaviour on the cloud
+### Page behaviour on the cloud
 
 | Page | Cloud behaviour |
 |---|---|
@@ -41,9 +151,9 @@ visits/day you'll typically pay one ~3-5 min wait per day.
 | **4 Scheduler** | Errors gracefully — uses Windows Task Scheduler, not available on Linux. |
 | **5 AIC** | UAT page for the AIC committee — works (reads SQLite + export JSON). |
 
-## One-time setup
+### One-time setup
 
-### 1. Push the repo to GitHub
+#### 1. Push the repo to GitHub
 
 Already done if you've reached this point: <https://github.com/TongIncomeWheel/AQE>.
 For a fresh clone:
@@ -64,7 +174,7 @@ git status              # should not list scores_daily.parquet or .env
 git ls-files | head     # should list streamlit_app.py + src/ + output/aqe_daily_export.json
 ```
 
-### 2. Deploy to Streamlit Community Cloud
+#### 2. Deploy to Streamlit Community Cloud
 
 1. Sign in at <https://share.streamlit.io> with the GitHub account that owns
    the private repo.
@@ -75,7 +185,7 @@ git ls-files | head     # should list streamlit_app.py + src/ + output/aqe_daily
    - **App URL** (optional): pick a slug like `aqe`.
 5. **Don't deploy yet** — set secrets first (next step), then deploy.
 
-### 3. Add your FMP key as a Streamlit secret
+#### 3. Add your FMP key as a Streamlit secret
 
 1. In the new-app dialog (or after, via **Settings → Secrets**), paste:
 
@@ -90,7 +200,7 @@ git ls-files | head     # should list streamlit_app.py + src/ + output/aqe_daily
 That's the only secret AQE itself needs. AIC LLM features (Anthropic key)
 are optional and stay disabled on cloud unless you also add `ANTHROPIC_API_KEY`.
 
-### 4. First run
+#### 4. First run
 
 1. Open the app URL (e.g. `https://aqe.streamlit.app`).
 2. Sidebar shows "Cloud mode" badge.
@@ -98,7 +208,7 @@ are optional and stay disabled on cloud unless you also add `ANTHROPIC_API_KEY`.
 4. Live log stream appears. You'll see lines like `[daily] 1/491 AAPL`.
 5. After ~3-5 min the page refreshes with regime, SRM, longlist, etc.
 
-## Daily workflow
+### Daily workflow
 
 ```
 You open the app URL on phone or laptop.
@@ -110,7 +220,7 @@ If you used it within ~30 min before:
    → or just read the current data, no re-run needed
 ```
 
-## Universe management
+### Universe management
 
 The universe lives in `data/universe.txt` and IS committed. To change the
 universe:
@@ -125,7 +235,7 @@ universe:
   change only lives in the cloud container's ephemeral disk. When the
   container restarts, it reverts to whatever is in git.
 
-## Secrets you might add later
+### Secrets you might add later
 
 These are NOT required for the AQE scanner; only if you re-enable specific features:
 
@@ -135,7 +245,7 @@ These are NOT required for the AQE scanner; only if you re-enable specific featu
 
 A template lives at `.streamlit/secrets.toml.example`.
 
-## RAM, CPU and rate-limit reality
+### RAM, CPU and rate-limit reality
 
 - **RAM**: Streamlit free tier is 1 GB. After a full pipeline run, the panel
   + scores DataFrames hold ~300-400 MB. Headroom is tight but OK for one user.
@@ -144,7 +254,7 @@ A template lives at `.streamlit/secrets.toml.example`.
   Same key on cloud + local is fine for personal use; you'll never come close
   to the per-day cap.
 
-## Troubleshooting
+### Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
@@ -155,7 +265,7 @@ A template lives at `.streamlit/secrets.toml.example`.
 | Cloud app sleeps too aggressively | Streamlit's idle policy | Bookmark + visit it once a few times a day; or click any button to keep warm |
 | Push fails on `git push` | Credentials not cached | Run `first_push.bat` once in a real cmd window |
 
-## Adding a new dependency
+### Adding a new dependency
 
 If you `import` something new that runs on cloud:
 
@@ -163,7 +273,7 @@ If you `import` something new that runs on cloud:
 2. Add it to `requirements.txt` (pin to a major version).
 3. Commit + push. Streamlit Cloud reinstalls on next deploy (~30s for small deps).
 
-## What stays local-only (by design)
+### What stays local-only (by design)
 
 - Your real `data/open_positions.json` — Position Manager only on desktop.
 - The full `data/scores_daily.parquet` (137 MB) — too big for git; cloud
@@ -171,7 +281,7 @@ If you `import` something new that runs on cloud:
 - AIC SQLite + Anthropic key — LLM committee runs locally unless you wire it.
 - The NiceGUI brief frontend (`src/aic/web/`) — separate process, not Streamlit.
 
-## Rollback
+### Rollback
 
 If something on `main` breaks the cloud app:
 
