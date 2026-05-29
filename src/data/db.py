@@ -21,8 +21,9 @@ from pathlib import Path
 
 import pandas as pd
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DB_PATH = PROJECT_ROOT / "data" / "aqe.db"
+from src.data.paths import DATA_DIR, PROJECT_ROOT
+
+DB_PATH = DATA_DIR / "aqe.db"
 
 
 @contextmanager

@@ -193,7 +193,7 @@ def _compute_recommendations(
 
 def save_calibration_report(report: str) -> Path:
     """Save report to output/ directory."""
-    output_dir = PROJECT_ROOT / "output"
+    from src.data.paths import OUTPUT_DIR as output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
     path = output_dir / f"calibration_report_{date.today()}.txt"
     with open(path, "w", encoding="utf-8") as f:

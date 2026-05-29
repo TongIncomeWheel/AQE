@@ -10,8 +10,9 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_UNIVERSE_FILE = PROJECT_ROOT / "data" / "universe.txt"
+from src.data.paths import DATA_DIR, PROJECT_ROOT
+
+DEFAULT_UNIVERSE_FILE = DATA_DIR / "universe.txt"
 BENCHMARK = "SPY"
 
 UNIVERSE_MIN_MCAP = 1_000_000_000
@@ -157,4 +158,5 @@ def _write_universe(tickers: list[str]) -> None:
     ]
     lines.extend(tickers)
     lines.append("")
+    DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
     DEFAULT_UNIVERSE_FILE.write_text("\n".join(lines), encoding="utf-8")

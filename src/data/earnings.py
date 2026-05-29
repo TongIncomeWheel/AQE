@@ -20,9 +20,9 @@ from pathlib import Path
 import pandas as pd
 
 from .fmp_client import FMPClient
+from .paths import DATA_DIR, PROJECT_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-EARNINGS_PATH = PROJECT_ROOT / "data" / "earnings_calendar.json"
+EARNINGS_PATH = DATA_DIR / "earnings_calendar.json"
 
 FMP_STABLE = "https://financialmodelingprep.com/stable"
 
@@ -143,7 +143,7 @@ def build_earnings_series(
 
 def _load_universe() -> set[str]:
     """Load universe tickers for filtering (strips comments and blanks)."""
-    path = PROJECT_ROOT / "data" / "universe.txt"
+    path = DATA_DIR / "universe.txt"
     if not path.exists():
         return set()
     tickers: set[str] = set()

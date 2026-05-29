@@ -352,7 +352,7 @@ def format_position_report(positions: list[dict]) -> str:
 
 def _add_from_shortlist(ticker: str) -> dict | None:
     """Add position using entry data from today's shortlist."""
-    shortlist_path = PROJECT_ROOT / "output" / "shortlist.json"
+    from src.data.paths import SHORTLIST_PATH as shortlist_path
     if not shortlist_path.exists():
         print(f"[pos] No shortlist found. Run run_daily.bat first.")
         return None

@@ -10,8 +10,9 @@ from typing import Any
 import pandas as pd
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-RECIPES_FILE = PROJECT_ROOT / "output" / "recipes.json"
+from src.data.paths import OUTPUT_DIR, PROJECT_ROOT
+
+RECIPES_FILE = OUTPUT_DIR / "recipes.json"
 
 
 @dataclass

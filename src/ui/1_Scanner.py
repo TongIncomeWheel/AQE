@@ -20,6 +20,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.ui.shared import (
+    DATA_DIR,
     ETF_NAMES,
     OUTPUT_DIR,
     file_hash,
@@ -28,6 +29,18 @@ from src.ui.shared import (
     load_shortlist,
     run_module_streaming,
 )
+
+
+def _writable(p) -> str:
+    """Return 'yes' / 'no <reason>' for a path -- used by the cloud diagnostic."""
+    try:
+        p.mkdir(parents=True, exist_ok=True)
+        test = p / ".aqe_write_probe"
+        test.write_text("ok", encoding="utf-8")
+        test.unlink()
+        return "yes"
+    except Exception as exc:
+        return f"no ({type(exc).__name__})"
 from src.data.panel_builder import PANEL_DAILY
 from src.scanner.score_runner import SCORES_DAILY
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
@@ -52,21 +65,74 @@ CLOUD_MODE = is_cloud_mode()
 import os as _os
 FMP_KEY_SET = bool(_os.environ.get("FMP_API_KEY"))
 
+# Detect which cloud host we're on so the diagnostic + error messages can be
+# precise (HF Space Secrets UI vs Streamlit Cloud Secrets UI live in different
+# places and have different gotchas).
+def _detect_cloud_host() -> str:
+    """Return 'huggingface', 'streamlit', or 'local' based on host env vars."""
+    if _os.environ.get("SPACE_ID") or _os.environ.get("SPACE_HOST"):
+        return "huggingface"
+    if _os.environ.get("STREAMLIT_SERVER_PORT") and CLOUD_MODE:
+        return "streamlit"
+    return "local"
+
+CLOUD_HOST = _detect_cloud_host() if CLOUD_MODE else "local"
+
 with st.sidebar:
     prog = st.empty()
     stat = st.empty()
 
     if CLOUD_MODE:
         st.markdown("### Cloud mode")
+        host_label = {"huggingface": "Hugging Face Space",
+                      "streamlit":   "Streamlit Cloud",
+                      "local":       "Cloud (unknown host)"}[CLOUD_HOST]
         st.caption(
-            "Running on Streamlit Cloud. First pipeline run pulls 6yr of bars "
-            "from FMP (~3-5 min). Subsequent runs are incremental."
+            f"Running on **{host_label}**. First pipeline run pulls 6yr of "
+            "bars from FMP (~3-5 min). Subsequent runs are incremental."
         )
+
+        # Diagnostic panel: shows env-var presence (NEVER the values) and
+        # effective storage paths. Most cloud setup mistakes are visible here
+        # at a glance.
+        with st.expander("Cloud diagnostics", expanded=not FMP_KEY_SET):
+            # Env vars AQE cares about
+            env_rows = []
+            for key in ("FMP_API_KEY", "AQE_DATA_DIR", "AQE_OUTPUT_DIR",
+                        "ANTHROPIC_API_KEY"):
+                val = _os.environ.get(key)
+                if val:
+                    masked = (val[:4] + "..." + val[-4:]) if len(val) > 12 else "set"
+                    env_rows.append(("✅ " + key, masked))
+                else:
+                    env_rows.append(("⚠️ " + key, "(not set)"))
+            for k, v in env_rows:
+                st.text(f"{k}: {v}")
+            st.text("")
+            st.text(f"DATA_DIR effective:   {DATA_DIR}")
+            st.text(f"OUTPUT_DIR effective: {OUTPUT_DIR}")
+            data_writable = _writable(DATA_DIR)
+            out_writable = _writable(OUTPUT_DIR)
+            st.text(f"DATA_DIR writable:    {data_writable}")
+            st.text(f"OUTPUT_DIR writable:  {out_writable}")
+
         if not FMP_KEY_SET:
-            st.error(
-                "FMP_API_KEY is not set in Streamlit secrets. "
-                "Add it under app **Settings -> Secrets** before running the pipeline."
-            )
+            if CLOUD_HOST == "huggingface":
+                st.error(
+                    "**FMP_API_KEY not detected in this container.**\n\n"
+                    "On Hugging Face: open the Space → **Settings** → "
+                    "**Variables and secrets** → **New secret** "
+                    "(not Variable). Name it exactly `FMP_API_KEY`. Paste "
+                    "the value from your local `.env`. Then **restart the "
+                    "Space** (Settings → Factory rebuild, or just push any "
+                    "commit) before the secret reaches the container."
+                )
+            else:
+                st.error(
+                    "FMP_API_KEY is not set. On Streamlit Cloud add it under "
+                    "app **Settings → Secrets**. Format: "
+                    "`FMP_API_KEY = \"your_key\"`"
+                )
 
     pipeline_btn_label = "Run daily pipeline"
     if CLOUD_MODE and not (PANEL_DAILY.exists() and SCORES_DAILY.exists()):

@@ -18,10 +18,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data.fmp_client import FMPClient, FMPError
+from src.data.paths import DATA_DIR
 from src.data.universe import load_universe
 from src.engines.srm import GICS_ETFS
 
-SECTOR_MAP_PATH = PROJECT_ROOT / "data" / "sector_map.json"
+SECTOR_MAP_PATH = DATA_DIR / "sector_map.json"
 
 SECTOR_TO_ETF = {
     "Technology": "XLK",

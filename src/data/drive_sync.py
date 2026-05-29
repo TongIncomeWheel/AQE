@@ -63,8 +63,8 @@ def _build_srm_table() -> list[dict]:
     a one-day snapshot. One row per sector, sorted DEPLOY -> AVOID.
     """
     import pandas as pd
+    from src.data.paths import PANEL_DAILY as panel_path
 
-    panel_path = PROJECT_ROOT / "data" / "panel_daily.parquet"
     if not panel_path.exists():
         return []
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "close"])
@@ -234,8 +234,8 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # --- Watchlist: full universe above raw SC_MOM >= 70 ---
     import pandas as pd
+    from src.data.paths import SCORES_DAILY as scores_path
 
-    scores_path = PROJECT_ROOT / "data" / "scores_daily.parquet"
     if scores_path.exists():
         wl_df = pd.read_parquet(scores_path)
         wl_df["date"] = pd.to_datetime(wl_df["date"]).dt.normalize()
