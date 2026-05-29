@@ -108,3 +108,48 @@ PTRS disposition (ticker quality) x Regime max_new_size (VIX macro) = final posi
 - Drive mount: `G:\My Drive\Trading Strategy\AQE\`
 - UI launcher: `run_app.bat`
 - Pipeline: `python -m src.pipeline.daily_orchestrator` (or in-app button)
+
+---
+
+## Deploy targets + iteration workflow (Claude operating manual)
+
+### Git remotes
+- `origin` -> `https://github.com/TongIncomeWheel/AQE.git` (private GitHub, source of truth)
+- `hf`     -> `https://huggingface.co/spaces/AQE-Aegis/aqe` (HuggingFace Space, Docker SDK, auto-redeploys on push)
+
+Both auths are persisted on this PC:
+- GitHub: Git Credential Manager has cached the token
+- HuggingFace: `huggingface_hub.login(token=..., add_to_git_credential=True)` ran once, lives in `~/.cache/huggingface/token` + Credential Manager
+
+Either remote can be pushed to from any bash shell on this PC without an interactive prompt. Claude can do this directly.
+
+### Standard iteration loop
+1. Edit code locally (any file under `src/`, `streamlit_app.py`, `Dockerfile`, etc.).
+2. Run a smoke test that matches the change:
+   - Streamlit UI changes -> `python -c "from streamlit.testing.v1 import AppTest; print(AppTest.from_file('streamlit_app.py').run(timeout=60).exception)"`
+   - AIC layer changes -> `python -m src.aic.web.smoke_test`
+   - Engine math changes -> targeted import + scalar check
+3. `git add` only the touched files (NEVER `git add .` without a staging audit -- AQE has real-money JSON that could leak).
+4. `git commit -m "..."` -- conventional message describing intent.
+5. `python -m scripts.push_both` (or double-click `push_both.bat`) -- this pushes to `origin` then `hf`.
+6. Surface to the user: GitHub commit URL + HuggingFace Space URL for UAT.
+
+### When NOT to dual-push
+- `--no-hf` for changes that don't affect the cloud deploy (e.g. updates to AIC NiceGUI which doesn't run on HF, or scripts/ helpers).
+- `--no-origin` for HF-only debugging (rare).
+
+### What lives where after each push
+- **GitHub** = full source of truth, including DEPLOY.md, CLAUDE.md, the AIC docs, and the committed export JSON
+- **HuggingFace** = Docker image built from the same source; runtime parquets live in the container's `/data` (ephemeral) or `AQE_DATA_DIR` (if persistent storage is enabled)
+
+### Credential security posture
+- `.env` is gitignored. The local FMP key never leaves the PC via git.
+- HF secret store holds the cloud copy of `FMP_API_KEY`. Set once in the HF UI; Docker injects it into the container env at start.
+- HF access tokens live in `~/.cache/huggingface/token` (file-permission protected) and Windows Credential Manager. If a token is ever leaked, rotate at <https://huggingface.co/settings/tokens>.
+- `src/aic/config/credentials.py` (Anthropic, Telegram, etc.) is gitignored. Cloud doesn't need these unless AIC LLM features are explicitly enabled.
+
+### Reference scripts
+- `push_both.bat` -- dual-push helper
+- `push_aqe.bat` -- legacy single-push helper (origin only, for read-only Streamlit Cloud workflow)
+- `scripts/push_to_cloud.py` -- the small-file-only refresh helper (used when only the daily JSON changed)
+- `scripts/push_both.py` -- the engine behind push_both.bat
