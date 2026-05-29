@@ -119,6 +119,26 @@ with st.sidebar:
             st.text(f"DATA_DIR writable:    {data_writable}")
             st.text(f"OUTPUT_DIR writable:  {out_writable}")
 
+            # --- FMP key validation (one-shot test, no pipeline burn) ---
+            st.text("")
+            st.text("FMP API key (single-call test):")
+            if FMP_KEY_SET:
+                if st.button("Test FMP key", key="fmp_test_btn",
+                             help="One SPY history call. Cheapest possible validation."):
+                    with st.spinner("Calling FMP..."):
+                        from src.data.fmp_client import test_api_key
+                        res = test_api_key()
+                        if res.get("ok"):
+                            st.success(res["message"])
+                        else:
+                            st.error(res["message"])
+                            if res.get("plan_hint"):
+                                st.info(res["plan_hint"])
+                else:
+                    st.text("  click button above to validate key")
+            else:
+                st.text("  FMP_API_KEY not set -- can't test")
+
             # --- Drive sync status ---
             st.text("")
             st.text("Google Drive sync (cloud → your Drive):")

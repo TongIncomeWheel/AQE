@@ -142,8 +142,11 @@ class FMPClient:
             resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
         if resp.status_code in (401, 403):
             raise FMPError(
-                "FMP rejected the API key. Open .env and confirm FMP_API_KEY is set correctly, "
-                "and that your plan covers /historical-price-full. Response: " + resp.text[:200]
+                "FMP rejected the API key. Possible causes: "
+                "(a) FMP_API_KEY value is wrong / has a typo, "
+                "(b) free plan doesn't cover /stable/historical-price-eod/full -- needs Starter+, "
+                "(c) FMP abuse detection triggered by concurrent use from multiple IPs (same key "
+                "used from local PC AND cloud at the same time). Response: " + resp.text[:200]
             )
         if not resp.ok:
             raise FMPError(f"FMP HTTP {resp.status_code} for {url}: {resp.text[:200]}")
@@ -151,9 +154,18 @@ class FMPClient:
             payload = resp.json()
         except ValueError as exc:
             raise FMPError(f"FMP non-JSON response for {url}: {exc}") from exc
-        # FMP sometimes returns 200 OK with an error body for invalid tickers or plan limits.
+        # FMP sometimes returns 200 OK with an error body. "Invalid API KEY" mid-run is
+        # almost always concurrent-IP abuse-detection (NOT a wrong-key issue, since the
+        # first N calls succeeded). See https://site.financialmodelingprep.com/faqs
         if isinstance(payload, dict) and "Error Message" in payload:
-            raise FMPError(f"FMP error: {payload['Error Message']}")
+            msg = payload["Error Message"]
+            if "Invalid API KEY" in msg:
+                raise FMPError(
+                    f"FMP 'Invalid API KEY' mid-run. If earlier calls succeeded, this is "
+                    f"almost certainly concurrent-use abuse detection. Check: is a local "
+                    f"pipeline run also happening right now? Original message: {msg}"
+                )
+            raise FMPError(f"FMP error: {msg}")
         return payload
 
     def _throttle(self) -> None:
@@ -168,6 +180,67 @@ class FMPClient:
 
 
 # ---------- helpers ----------
+
+
+def test_api_key() -> dict:
+    """One-shot FMP key validation. Returns {ok, message, plan_hint}.
+
+    Calls the cheapest possible authenticated endpoint (a 5-bar SPY pull) and
+    inspects the response. Used by the cloud diagnostic so the user can verify
+    the key without burning a 5-minute pipeline run on a bad key.
+
+    Never raises -- always returns a dict with `ok` boolean and a human message.
+    """
+    import os
+    key = os.environ.get("FMP_API_KEY")
+    if not key:
+        return {"ok": False, "message": "FMP_API_KEY not set in environment.",
+                "plan_hint": None}
+    url = f"{FMP_BASE_STABLE}/historical-price-eod/full"
+    params = {"symbol": "SPY", "apikey": key}
+    try:
+        resp = requests.get(url, params=params, timeout=15)
+    except requests.RequestException as exc:
+        return {"ok": False, "message": f"Network error: {exc}", "plan_hint": None}
+
+    if resp.status_code in (401, 403):
+        return {"ok": False,
+                "message": f"FMP rejected the key (HTTP {resp.status_code}). "
+                           f"Body: {resp.text[:160]}",
+                "plan_hint": "Verify the key at https://site.financialmodelingprep.com/dashboard"}
+    if not resp.ok:
+        return {"ok": False,
+                "message": f"HTTP {resp.status_code} from FMP: {resp.text[:160]}",
+                "plan_hint": None}
+
+    try:
+        payload = resp.json()
+    except ValueError:
+        return {"ok": False, "message": f"Non-JSON response from FMP",
+                "plan_hint": None}
+
+    if isinstance(payload, dict) and "Error Message" in payload:
+        msg = payload["Error Message"]
+        plan_hint = None
+        if "Invalid API KEY" in msg:
+            plan_hint = ("FMP says 'Invalid API KEY' on a SINGLE test call. "
+                         "Either the key value is wrong (typo / wrong key pasted), "
+                         "or the key was revoked. Visit "
+                         "https://site.financialmodelingprep.com/dashboard "
+                         "to verify it's listed as active.")
+        elif "Plan" in msg or "Subscription" in msg.lower():
+            plan_hint = ("Your plan doesn't cover this endpoint. Starter plan "
+                         "($14/mo) is the minimum that includes "
+                         "/stable/historical-price-eod/full.")
+        return {"ok": False, "message": f"FMP error: {msg}", "plan_hint": plan_hint}
+
+    if isinstance(payload, list) and payload:
+        return {"ok": True,
+                "message": f"OK -- received {len(payload)} bars for SPY (most "
+                           f"recent: {payload[0].get('date', '?')})",
+                "plan_hint": None}
+
+    return {"ok": False, "message": "Unexpected empty response.", "plan_hint": None}
 
 
 def resample_to_weekly(daily: pd.DataFrame) -> pd.DataFrame:
