@@ -38,6 +38,27 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 FMP_BASE_STABLE = "https://financialmodelingprep.com/stable"
 DEFAULT_RATE_LIMIT_PER_MIN = 250  # FMP Starter is 300; leave headroom.
+# When running on cloud datacenter IPs (HF/AWS, Streamlit Cloud/GCP, etc.),
+# FMP can apply IP-based throttling that's tighter than per-key. A lower
+# default for cloud avoids "Invalid API KEY" mid-run that's actually
+# IP-rate-limit behaviour. Override via FMP_RATE_LIMIT_PER_MIN env var.
+CLOUD_RATE_LIMIT_PER_MIN = 80
+
+
+def _effective_rate_limit() -> int:
+    """Pick a rate limit based on env override / cloud detection."""
+    import os
+    override = os.environ.get("FMP_RATE_LIMIT_PER_MIN")
+    if override:
+        try:
+            v = int(override)
+            return max(10, min(v, 500))
+        except ValueError:
+            pass
+    # Cloud detection: HF Spaces sets SPACE_ID; Streamlit Cloud sets STREAMLIT_SERVER_PORT
+    if os.environ.get("SPACE_ID") or os.environ.get("SPACE_HOST"):
+        return CLOUD_RATE_LIMIT_PER_MIN
+    return DEFAULT_RATE_LIMIT_PER_MIN
 
 
 @dataclass
@@ -61,10 +82,18 @@ class FMPClient:
                 raise FMPError(
                     "FMP_API_KEY not set. Copy .env.template to .env and fill it in."
                 )
-            config = FMPConfig(api_key=key)
+            config = FMPConfig(api_key=key, rate_limit_per_min=_effective_rate_limit())
         self.config = config
         self._session = requests.Session()
+        # Use a browser-ish UA -- some API providers (including FMP) treat
+        # python-requests UA as a scraper signal and throttle harder.
+        self._session.headers["User-Agent"] = (
+            "AQE-Scanner/1.0 (+https://github.com/TongIncomeWheel/AQE)"
+        )
         self._call_times: list[float] = []  # rolling 60s window
+        # Log the effective rate so cloud runs show clearly what they're using
+        print(f"[fmp] effective rate limit: {config.rate_limit_per_min} calls/min",
+              flush=True)
 
     # ---------- public ----------
 
