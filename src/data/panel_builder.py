@@ -36,6 +36,16 @@ def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
     earliest = today - timedelta(days=int(history_years * 365.25))
     tickers = load_universe(include_benchmark=True)
 
+    # Always pull GICS sector ETFs for SRM grading — they are excluded from
+    # scoring but grade_all_sectors() and _build_srm_table() need them in the
+    # panel. Without this, every SRM grade defaults to WATCH (empty frame).
+    from src.engines.srm import GICS_ETFS as _GICS_ETFS
+    _seen = set(tickers)
+    for _etf in _GICS_ETFS:
+        if _etf not in _seen:
+            tickers.append(_etf)
+            _seen.add(_etf)
+
     client = FMPClient()
 
     existing_daily = _load_existing(PANEL_DAILY)

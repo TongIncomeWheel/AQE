@@ -417,9 +417,13 @@ def _full_scoring(
     return scores
 
 
-def _compute_srm(panel: pd.DataFrame) -> dict:
-    """Grade all sectors using SRM."""
-    return grade_all_sectors(panel)
+def _compute_srm(panel: pd.DataFrame, trend_days: int = 10) -> dict:
+    """Grade all sectors using SRM.
+
+    trend_days=10 adds sh_trend + grade_trend (10-bar history) so PTRS
+    context and the export JSON show momentum direction, not just today's grade.
+    """
+    return grade_all_sectors(panel, trend_days=trend_days)
 
 
 def _compute_regime(spy: pd.DataFrame) -> dict:

@@ -21,10 +21,18 @@ from . import utils as U
 def compute_k39_gate(
     weekly: pd.DataFrame,
     daily_dates: pd.Series,
-) -> pd.Series:
-    """Return a boolean Series aligned to daily_dates: True where K39 gate passes."""
+) -> tuple[pd.Series, pd.Series]:
+    """Return (gate_series, k39_value_series) aligned to daily_dates.
+
+    gate_series  -- boolean Series, True where K39 gate passes.
+    k39_value_series -- float Series of the raw K39 stochastic value (NaN when
+        insufficient history). Callers unpack as: k39_gate_s, k39_val = ...
+    """
     if weekly is None or weekly.empty or len(weekly) < 39:
-        return pd.Series(False, index=daily_dates.index)
+        return (
+            pd.Series(False, index=daily_dates.index),
+            pd.Series(np.nan, index=daily_dates.index),
+        )
 
     wk = weekly.sort_values("date").reset_index(drop=True)
     wk_close = wk["close"].astype(float)

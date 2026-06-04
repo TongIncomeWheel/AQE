@@ -117,14 +117,19 @@ def levels_for_ticker(
     highs: np.ndarray,
     lows: np.ndarray,
     dates: np.ndarray,
+    beta: float | None = None,
 ) -> dict | None:
     """Full level bundle for one ticker from its OHLC arrays.
 
     close, atr14 -- latest values. highs, lows, dates -- full-history arrays
-    in ascending date order. Returns the levels dict {entry, stop, risk,
-    tp_1r, tp_2r, tp_3r, be, shares, rr_pct, rr_est, fib}, or None when the
-    inputs are invalid (non-finite price/ATR, fewer than 5 bars, or
-    non-positive risk). `rr_est` and `fib` are None if no swing can be anchored.
+    in ascending date order.
+    beta -- optional 30-day beta vs SPY; passed to compute_initial_stop for
+        β-adjusted ATR clamp (high-β names get wider initial stop room).
+
+    Returns the levels dict {entry, stop, risk, tp_1r, tp_2r, tp_3r, be,
+    shares, rr_pct, rr_est, fib}, or None when inputs are invalid (non-finite
+    price/ATR, fewer than 5 bars, or non-positive risk). `rr_est` and `fib`
+    are None if no swing can be anchored.
     """
     if not (np.isfinite(close) and close > 0
             and np.isfinite(atr14) and atr14 > 0):
@@ -132,7 +137,7 @@ def levels_for_ticker(
     if len(lows) < 5:
         return None
 
-    stop, risk = compute_initial_stop(close, atr14, lows[-5:])
+    stop, risk = compute_initial_stop(close, atr14, lows[-5:], beta=beta)
     if risk <= 0:
         return None
 
@@ -165,11 +170,19 @@ def levels_for_ticker(
     return levels
 
 
-def compute_trade_levels(panel: pd.DataFrame, scores: pd.DataFrame) -> dict[str, dict]:
+def compute_trade_levels(
+    panel: pd.DataFrame,
+    scores: pd.DataFrame,
+    betas: dict | None = None,
+) -> dict[str, dict]:
     """Per-ticker level bundle for the latest scored date.
 
     panel  -- daily OHLC panel with columns date, ticker, high, low.
     scores -- scores_daily with columns date, ticker, close, atr14.
+    betas  -- optional {ticker: {30: float, 60: float}} from load_betas().
+        When provided, uses 30-day beta for β-adjusted initial stop so
+        high-β names (>1.5) get a wider ATR clamp and are not stopped
+        out by normal intraday volatility.
 
     Returns {ticker: levels_for_ticker(...)} for every ticker that scores.
     """
@@ -190,12 +203,17 @@ def compute_trade_levels(panel: pd.DataFrame, scores: pd.DataFrame) -> dict[str,
         grp = panel_groups.get(ticker)
         if grp is None or len(grp) < 5:
             continue
+        # Resolve 30-day beta for this ticker (None = standard clamp)
+        beta: float | None = None
+        if betas is not None:
+            beta = (betas.get(ticker) or {}).get(30)
         levels = levels_for_ticker(
             float(row["close"]),
             float(row["atr14"]),
             grp["high"].astype(float).to_numpy(),
             grp["low"].astype(float).to_numpy(),
             grp["date"].to_numpy(),
+            beta=beta,
         )
         if levels is not None:
             out[ticker] = levels
@@ -225,13 +243,18 @@ def compute_elder_history(
 # Parquet loaders — the standard cached panel + scores files
 # ---------------------------------------------------------------------------
 
-def load_trade_levels() -> dict[str, dict]:
-    """Compute trade levels from the cached panel + scores parquet files."""
+def load_trade_levels(betas: dict | None = None) -> dict[str, dict]:
+    """Compute trade levels from the cached panel + scores parquet files.
+
+    betas -- optional pre-loaded {ticker: {30: float, 60: float}} dict.
+        Pass the result of load_betas() to enable β-adjusted initial stops.
+        When None, standard ATR clamp is used (backward-compatible).
+    """
     if not PANEL_DAILY.exists() or not SCORES_DAILY.exists():
         return {}
     panel = pd.read_parquet(PANEL_DAILY, columns=["date", "ticker", "high", "low"])
     scores = pd.read_parquet(SCORES_DAILY, columns=["date", "ticker", "close", "atr14"])
-    return compute_trade_levels(panel, scores)
+    return compute_trade_levels(panel, scores, betas=betas)
 
 
 def load_elder_history(n: int = ELDER_HISTORY_DAYS) -> dict[str, list[int]]:

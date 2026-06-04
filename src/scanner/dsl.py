@@ -1,22 +1,34 @@
-"""DSL v2.0 — Dynamic Stop Loss with R-tiered trailing + flow-based take-profit.
+"""DSL v2.1 — Dynamic Stop Loss with β-adjusted stops, MP-gated trails,
+minimum hold period, flow-based take-profit, and R-tiered trailing.
 
-Initial stop: tactical profile.
+Initial stop: tactical profile (β-adjusted).
     struct_low = lowest(low, 5)
     buffered_stop = struct_low - 0.5 * ATR(14)
     raw_distance = entry - buffered_stop
-    clamped = clamp(raw_distance, 0.75 * ATR, 2.0 * ATR)
+    upper_clamp:
+        β ≥ 2.0  →  2.5 × ATR   (wider room for high-β names)
+        β ≥ 1.5  →  2.25 × ATR  (intermediate)
+        default  →  2.0 × ATR
+    clamped = clamp(raw_distance, 0.75 * ATR, upper_clamp)
     initial_stop = entry - clamped
 
-Tiers (trail WIDENS as position proves itself):
-    T1  (0-0.5R):   session_low - 1.0 * ATR  (daily)
-    T1b (0.5-1R):   session_low - 1.0 * ATR  (daily), floor = entry (breakeven)
-    T2  (1-2R):     session_low - 1.5 * ATR  (daily), floor = entry
-    T3  (2-4R):     weekly_low  - 2.0 * ATR  (weekly), floor = entry + 1.5R
-    T4  (4R+):      max(weekly_low - 2.5*ATR, T1_target - 1*ATR), floor = entry + 3R
+Trail ATR multiplier (applied to all tier formulas):
+    FADING mp_state              →  0.85× (tighten when momentum decays)
+    β ≥ 2.0 and NOT FADING       →  1.25× (high-β in good momentum = wider)
+    1.5 ≤ β < 2.0 and NOT FADING →  1.10×
+    default                      →  1.00×
 
-v1.5 change: breakeven trigger at +0.5R. Once price reaches +0.5R profit,
-the stop floor is raised to entry price. This converts Tier 1 near-miss
-trades from small losses into breakeven exits.
+Minimum hold period (default 3 bars):
+    Trail stop does not ratchet upward during the first min_hold_bars bars,
+    preventing an early intraday sweep from raising the stop against us
+    before the trade has had a chance to develop.
+
+Tiers (trail WIDENS as position proves itself, using atr_eff = ATR × trail_mult):
+    T1  (0-0.5R):   session_low - 1.0 * atr_eff  (daily)
+    T1b (0.5-1R):   session_low - 1.0 * atr_eff  (daily), floor = entry (BE)
+    T2  (1-2R):     session_low - 1.5 * atr_eff  (daily), floor = entry
+    T3  (2-4R):     weekly_low  - 2.0 * atr_eff  (weekly), floor = entry + 1.5R
+    T4  (4R+):      max(weekly_low - 2.5*atr_eff, T1_target - 1*atr_eff), floor = entry + 3R
 
 v2.0 change: flow-based take-profit. While in Tier 1, if the trade is
 profitable (R > 0.2) and flow_100 drops below 65, exit at close. Flow
@@ -35,19 +47,55 @@ import pandas as pd
 from src.engines.utils import atr as compute_atr, lowest
 
 
+def _upper_atr_clamp(atr14: float, beta: float | None) -> float:
+    """β-adjusted upper clamp for the initial stop distance.
+
+    High-β names have wider intraday swings, so a tighter ATR clamp causes
+    premature stop-outs on normal volatility rather than genuine reversals.
+        β ≥ 2.0  →  2.5 × ATR
+        β ≥ 1.5  →  2.25 × ATR
+        default  →  2.0 × ATR (unchanged from DSL v2.0)
+    """
+    if beta is not None and beta >= 2.0:
+        return atr14 * 2.5
+    if beta is not None and beta >= 1.5:
+        return atr14 * 2.25
+    return atr14 * 2.0
+
+
+def _trail_mult(beta: float | None, mp_state: str | None) -> float:
+    """ATR multiplier applied to all trail-tier ATR terms.
+
+    FADING momentum always tightens regardless of beta — don't give room
+    to a name that's losing its edge. High-beta in good momentum gets wider
+    trail room to survive normal volatility without early exit.
+    """
+    if mp_state is not None and mp_state.upper() == "FADING":
+        return 0.85
+    if beta is not None and beta >= 2.0:
+        return 1.25
+    if beta is not None and beta >= 1.5:
+        return 1.10
+    return 1.0
+
+
 def compute_initial_stop(
     entry_price: float,
     atr14: float,
     recent_lows: np.ndarray,
+    beta: float | None = None,
 ) -> tuple[float, float]:
     """Return (initial_stop_price, risk_per_share = 1R).
 
     recent_lows: the last 5 low values up to and including the entry bar.
+    beta: optional 30-day beta vs SPY. When ≥ 1.5, widens the upper ATR
+        clamp so high-volatility names are not stopped out by normal swings.
     """
     struct_low = float(np.nanmin(recent_lows[-5:])) if len(recent_lows) >= 5 else float(np.nanmin(recent_lows))
     buffered_stop = struct_low - 0.5 * atr14
     raw_distance = entry_price - buffered_stop
-    clamped = max(min(raw_distance, atr14 * 2.0), atr14 * 0.75)
+    upper = _upper_atr_clamp(atr14, beta)
+    clamped = max(min(raw_distance, upper), atr14 * 0.75)
     initial_stop = entry_price - clamped
     risk = clamped  # 1R = distance from entry to initial stop
     return initial_stop, risk
@@ -67,8 +115,12 @@ def simulate_dsl_trade(
     tp_flow_floor: float = 65.0,
     tp_min_r: float = 0.2,
     tp_grace_bars: int = 2,
+    # v2.1 additions
+    beta: float | None = None,
+    mp_state: str | None = None,
+    min_hold_bars: int = 3,
 ) -> dict:
-    """Walk forward from entry+1, applying DSL v2.0 tiered trailing + flow TP.
+    """Walk forward from entry+1, applying DSL v2.1 tiered trailing + flow TP.
 
     Parameters
     ----------
@@ -80,6 +132,12 @@ def simulate_dsl_trade(
     tp_flow_floor : flow_100 level below which TP fires (default 65).
     tp_min_r : minimum R-multiple before TP can fire (default 0.2).
     tp_grace_bars : don't fire TP in first N bars (default 2).
+    beta : 30-day beta vs SPY. Widens trail ATR multiplier for high-β names.
+    mp_state : 'STRONG' / 'BUILDING' / 'FADING'. FADING tightens trail
+        multiplier regardless of beta — don't hold a fading name loosely.
+    min_hold_bars : trail stop does not ratchet upward during the first N bars
+        (default 3). Prevents early sweeps from raising the stop into the
+        trade before it has a chance to develop.
 
     Returns a dict with:
         exit_bar, exit_price, exit_type, peak_tier, r_realized, peak_r,
@@ -95,6 +153,10 @@ def simulate_dsl_trade(
     highest_tier = 1
     be_triggered = False
     peak_r = 0.0
+
+    # v2.1: effective ATR for trail formulas, adjusted for beta and MP state
+    mult = _trail_mult(beta, mp_state)
+    atr_eff = atr14 * mult
 
     for i in range(min(n, max_bars)):
         bar_open = float(bars_open[i])
@@ -171,20 +233,27 @@ def simulate_dsl_trade(
                     "tp_fired": True,
                 }
 
-        # Compute new trail based on current tier
+        # --- v2.1: Minimum hold period ---
+        # Don't ratchet the trail upward in the first min_hold_bars bars.
+        # The initial stop still protects against gap-downs and intraday sweeps
+        # (checked above), but we don't tighten until the trade has developed.
+        if i < min_hold_bars:
+            continue
+
+        # Compute new trail based on current tier (using β/MP-adjusted atr_eff)
         if highest_tier == 1:
-            new_trail = bar_low - 1.0 * atr14
+            new_trail = bar_low - 1.0 * atr_eff
             if be_triggered:
                 new_trail = max(new_trail, entry_price)  # BE floor after +0.5R
         elif highest_tier == 2:
-            new_trail = bar_low - 1.5 * atr14
+            new_trail = bar_low - 1.5 * atr_eff
             new_trail = max(new_trail, entry_price)  # T2+ floor: breakeven
         elif highest_tier == 3:
-            new_trail = bar_low - 2.0 * atr14
+            new_trail = bar_low - 2.0 * atr_eff
             new_trail = max(new_trail, entry_price + 1.5 * risk)  # T3+ floor
         else:  # T4
-            trail_a = bar_low - 2.5 * atr14
-            trail_b = target_2r - 1.0 * atr14
+            trail_a = bar_low - 2.5 * atr_eff
+            trail_b = target_2r - 1.0 * atr_eff
             new_trail = max(trail_a, trail_b)
             new_trail = max(new_trail, entry_price + 3.0 * risk)  # T4+ floor
 
@@ -212,13 +281,18 @@ def compute_dsl_outcomes(
     max_bars: int = 63,
     scores_daily: pd.DataFrame | None = None,
     tp_flow_floor: float = 65.0,
+    betas: dict | None = None,
 ) -> pd.DataFrame:
-    """Add DSL v2.0 columns to signals frame.
+    """Add DSL v2.1 columns to signals frame.
 
     Requires signals to have: date, ticker, atr14_at_entry (or atr14).
     panel_daily: full daily OHLCV.
     scores_daily: optional — when provided, enables flow-based TP.
         Must contain columns: ticker, date, flow_100.
+    betas: optional {ticker: {30: float, 60: float}} from load_betas().
+        When provided, uses 30-day beta for β-adjusted initial stop and
+        trail multiplier. If signals already have a beta_30d column, that
+        takes precedence.
 
     Adds columns: dsl_exit_bar, dsl_exit_price, dsl_exit_type,
                   dsl_peak_tier, dsl_r_realized, dsl_peak_r,
@@ -274,7 +348,17 @@ def compute_dsl_outcomes(
         low_start = max(0, entry_idx - 4)
         recent_lows = bars["low"].iloc[low_start:entry_idx + 1].astype(float).to_numpy()
 
-        initial_stop, risk = compute_initial_stop(entry_price, atr14, recent_lows)
+        # v2.1: resolve beta + mp_state for this ticker
+        # Row-level columns take precedence; fall back to betas dict.
+        beta = None
+        if "beta_30d" in row.index and pd.notna(row["beta_30d"]):
+            beta = float(row["beta_30d"])
+        elif betas is not None:
+            beta = (betas.get(ticker) or {}).get(30)
+
+        mp_state = str(row["mp_state"]) if "mp_state" in row.index and pd.notna(row.get("mp_state")) else None
+
+        initial_stop, risk = compute_initial_stop(entry_price, atr14, recent_lows, beta=beta)
 
         # Forward bars (entry+1 onward)
         fwd_start = entry_idx + 1
@@ -305,6 +389,8 @@ def compute_dsl_outcomes(
             initial_stop, max_bars,
             bar_flow=bar_flow,
             tp_flow_floor=tp_flow_floor,
+            beta=beta,
+            mp_state=mp_state,
         )
         trade["dsl_initial_stop"] = initial_stop
         trade["dsl_risk"] = risk

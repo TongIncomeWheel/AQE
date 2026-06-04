@@ -181,7 +181,8 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     sm = load_sector_map()
     betas = load_betas()
-    dsl_all = load_trade_levels()
+    # Pass betas so high-β tickers get β-adjusted initial stops (DSL v2.1)
+    dsl_all = load_trade_levels(betas=betas)
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
     longlist_tickers: set[str] = set()

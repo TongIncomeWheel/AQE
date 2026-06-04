@@ -542,7 +542,7 @@ if CLOUD_MODE:
 
     _betas, _dsl, _elder5 = _build_cloud_lookups(_export)
 else:
-    _betas = _load_betas(file_hash(PANEL_DAILY))  # 60d beta vs SPY
+    _betas = _load_betas(file_hash(PANEL_DAILY))  # 30d beta vs SPY (primary display)
     _dsl = _compute_dsl_levels(file_hash(PANEL_DAILY) + ":" + file_hash(SCORES_DAILY))
     _elder5 = _elder_history(file_hash(SCORES_DAILY))  # last 5 Elder scores per ticker
 
@@ -641,7 +641,7 @@ st.caption(
     "TP 1/2/3 = +1R/+2R/+3R | R% = risk/price | "
     "R/R = reward to 1.618 Fib extension / risk | "
     "Fib = 0.618 retracement / 1.618 extension | Elder5d = last 5 sessions | "
-    "Beta30/60 = 30/60-day rolling beta vs SPY"
+    "Beta30 = 30-day rolling beta vs SPY"
 )
 
 # recipe_matches now includes both aggregate qualifiers AND PE picks
@@ -676,7 +676,6 @@ if recipe_matches:
             "PTRS": _fmt(ptrs_val, ".1f"),
             "PipeRk": _fmt(rm.get("pipe_rank"), ".1f"),
             "Floor": _fmt(floor, ".1f"),
-            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
             "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
             "Flow": _fmt(eng.get("flow"), ".0f"),
             "Energy": _fmt(eng.get("energy"), ".0f"),
@@ -845,7 +844,6 @@ if _have_scan:
                 "PTRS": _fmt(float(row["_ptrs"]), ".1f"),
                 "PipeRk": _fmt(float(row.get("pipe_rank", 0)), ".1f"),
                 "Floor": _fmt(float(row["_floor"]), ".1f"),
-                "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
                 "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
                 "Flow": _fmt(float(row.get("flow_100", 0)), ".0f"),
                 "Energy": _fmt(float(row.get("energy_100", 0)), ".0f"),
@@ -954,7 +952,6 @@ if _adhoc_results:
                 "Elder5d": _elder5_str(r.get("elder_5d")),
                 "BQ": _fmt(r.get("bq"), ".0f"),
                 "PipeRk": _fmt(r.get("pipe_rank"), ".1f"),
-                "Beta60": _fmt(r.get("beta_60d"), ".2f"),
                 "Beta30": _fmt(r.get("beta_30d"), ".2f"),
                 "Entry": _fmt(lv.get("entry"), ".2f"),
                 "DSL": _fmt(lv.get("stop"), ".2f"),
