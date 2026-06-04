@@ -187,7 +187,11 @@ def build_export(shortlist: dict | None = None) -> dict:
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
     longlist_tickers: set[str] = set()
     sorted_rm = sorted(sl.get("recipe_matches", []),
-                       key=lambda rm: (rm.get("pipe_rank", 0), _floor(rm)),
+                       key=lambda rm: (
+                           _ptrs(rm.get("sc_momentum", 0) or 0, rm["ticker"]),
+                           rm.get("pipe_rank", 0),
+                           _floor(rm),
+                       ),
                        reverse=True)
     for i, rm in enumerate(sorted_rm, 1):
         e = rm["engines"]
@@ -203,7 +207,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "ptrs": _ptrs(sc_val, rm["ticker"]),
             "pipe_rank": round(rm.get("pipe_rank", 0), 1),
             "floor": floor,
-            "beta_60d": (betas.get(rm["ticker"]) or {}).get(60),
             "beta_30d": (betas.get(rm["ticker"]) or {}).get(30),
             "flow": round(e["flow"], 1),
             "energy": round(e["energy"], 1),
@@ -221,6 +224,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_be": d.get("be"),
             "dsl_shares": d.get("shares"),
             "dsl_rr_pct": d.get("rr_pct"),
+            "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(rm["ticker"]),
@@ -275,7 +279,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ).round(1)
 
             wl_df = wl_df.sort_values(
-                ["pipe_rank", "_floor"], ascending=[False, False]
+                ["_ptrs", "pipe_rank", "_floor"], ascending=[False, False, False]
             ).reset_index(drop=True)
 
             for wi, (_, wr) in enumerate(wl_df.iterrows(), 1):
@@ -294,7 +298,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "ptrs": round(float(wr["_ptrs"]), 1),
                     "pipe_rank": round(wpr, 1),
                     "floor": wfl,
-                    "beta_60d": (betas.get(tk) or {}).get(60),
                     "beta_30d": (betas.get(tk) or {}).get(30),
                     "flow": round(float(wr.get("flow_100", 0)), 1),
                     "energy": round(float(wr.get("energy_100", 0)), 1),
@@ -311,6 +314,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "dsl_be": d.get("be"),
                     "dsl_shares": d.get("shares"),
                     "dsl_rr_pct": d.get("rr_pct"),
+                    "dsl_atr_ratio": d.get("dsl_atr_ratio"),
                     "rr_est": d.get("rr_est"),
                     "fib": d.get("fib"),
                     "elder_5d": elder5.get(tk),

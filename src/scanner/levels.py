@@ -151,6 +151,8 @@ def levels_for_ticker(
         "be": round(close + 0.5 * risk, 2),
         "shares": int(RISK_BUDGET / risk),
         "rr_pct": round(risk / close * 100, 1),
+        "atr14": round(atr14, 3),
+        "dsl_atr_ratio": round(risk / atr14, 2),   # how many ATRs of room the stop gives
         "rr_est": None,
         "fib": None,
     }

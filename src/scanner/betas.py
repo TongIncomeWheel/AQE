@@ -1,14 +1,15 @@
-"""Rolling beta vs SPY — 30-day and 60-day market sensitivity per ticker.
+"""Rolling beta vs SPY — 30-day market sensitivity per ticker.
 
     beta = Cov(stock daily returns, SPY daily returns) / Var(SPY daily returns)
 
-over a trailing window of N trading days. Computed from the cached price
+over a trailing window of 30 trading days. Computed from the cached price
 panel + SPY series — no extra FMP calls, the prices were already pulled.
 
-The committee uses the 30-day reading for portfolio-level review (recent
-market sensitivity); the 60-day reading is the steadier baseline. One shared
-module so the Scanner tables, the ad-hoc scorer, and the Drive export all
-compute beta the same way.
+30-day beta captures recent market sensitivity and is used for β-adjusted
+DSL stops (DSL v2.1): high-β names (≥1.5) get a wider ATR clamp so normal
+intraday volatility doesn't sweep the initial stop. One shared module so the
+Scanner tables, the ad-hoc scorer, and the Drive export all compute beta the
+same way.
 """
 
 from __future__ import annotations
@@ -17,7 +18,7 @@ import pandas as pd
 
 from src.data.panel_builder import PANEL_DAILY, SPY_DAILY
 
-BETA_WINDOWS = (30, 60)          # trailing trading days
+BETA_WINDOWS = (30,)             # trailing trading days (30d only; used for DSL v2.1 β-adjusted stops)
 
 
 def compute_betas(

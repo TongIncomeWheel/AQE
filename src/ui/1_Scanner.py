@@ -523,7 +523,7 @@ if CLOUD_MODE:
             tk = r.get("ticker")
             if not tk or tk in dsl:
                 continue
-            betas[tk] = {30: r.get("beta_30d"), 60: r.get("beta_60d")}
+            betas[tk] = {30: r.get("beta_30d")}
             dsl[tk] = {
                 "entry": r.get("entry"),
                 "stop": r.get("dsl_stop"),
@@ -534,6 +534,7 @@ if CLOUD_MODE:
                 "be":    r.get("dsl_be"),
                 "shares": r.get("dsl_shares"),
                 "rr_pct": r.get("dsl_rr_pct"),
+                "dsl_atr_ratio": r.get("dsl_atr_ratio"),
                 "rr_est": r.get("rr_est"),
                 "fib":    r.get("fib"),
             }
@@ -640,6 +641,7 @@ st.caption(
     "Sorted by Pipeline Rank + Floor | DSL = structural stop | "
     "TP 1/2/3 = +1R/+2R/+3R | R% = risk/price | "
     "R/R = reward to 1.618 Fib extension / risk | "
+    "R/ATR = stop distance in ATR units (≤1 tight, ≥2 wide/high-β) | "
     "Fib = 0.618 retracement / 1.618 extension | Elder5d = last 5 sessions | "
     "Beta30 = 30-day rolling beta vs SPY"
 )
@@ -688,6 +690,7 @@ if recipe_matches:
             "TP 1/2/3": _tp_str(dsl, lvl),
             "R%": _fmt(dsl.get("rr_pct"), ".1f"),
             "R/R": _fmt(dsl.get("rr_est"), ".1f"),
+            "R/ATR": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
             "Fib": _fib_str(dsl.get("fib")),
             "QTY": _fmt(dsl.get("shares", lvl.get("shares")), ".0f"),
             "Why": _rank_explain(
@@ -856,6 +859,7 @@ if _have_scan:
                 "TP 1/2/3": _tp_str(dsl),
                 "R%": _fmt(dsl.get("rr_pct"), ".1f"),
                 "R/R": _fmt(dsl.get("rr_est"), ".1f"),
+                "R/ATR": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(dsl.get("fib")),
                 "QTY": _fmt(dsl.get("shares"), ".0f"),
                 "Why": _rank_explain(
@@ -958,6 +962,7 @@ if _adhoc_results:
                 "TP 1/2/3": _tp_str(lv),
                 "R%": _fmt(lv.get("rr_pct"), ".1f"),
                 "R/R": _fmt(lv.get("rr_est"), ".1f"),
+                "R/ATR": _fmt(lv.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(lv.get("fib")),
                 "QTY": _fmt(lv.get("shares"), ".0f"),
             })
