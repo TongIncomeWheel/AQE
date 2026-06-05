@@ -210,6 +210,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "structure": round(e["structure"], 1),
             "mp": round(e["mp"], 1),
             "elder": e["elder"],
+            "mp_state": c.get("mp_state", ""),
             "entry": c["levels"].get("entry"),
             "stop": c["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
@@ -224,6 +225,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(tk),
+            "pe": tk in pe_tickers,
         })
 
     # Edge List = Precision Edge — full schema
@@ -248,6 +250,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "structure": round(eng["structure"], 1),
             "mp": round(eng["mp"], 1),
             "elder": eng["elder"],
+            "mp_state": pe.get("mp_state", ""),
             "entry": pe["levels"].get("entry"),
             "stop": pe["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
@@ -262,6 +265,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(tk),
+            "pe": True,
         })
     longlist_tickers: set[str] = set()
     sorted_rm = sorted(sl.get("recipe_matches", []),
