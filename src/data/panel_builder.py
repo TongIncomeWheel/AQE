@@ -12,8 +12,9 @@ Run from a fresh shell:
 from __future__ import annotations
 
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -29,10 +30,24 @@ from .universe import BENCHMARK, PROJECT_ROOT, load_universe
 DEFAULT_HISTORY_YEARS = 6  # pulls 6yr so we have 5yr of warm scores after engine warmup
 
 
+def _us_market_date() -> date:
+    """Latest US trading date — avoids requesting bars for a session that hasn't happened.
+
+    Uses America/New_York wall clock: before 4:30 PM ET (market close + 30 min
+    settlement buffer), today's bars don't exist yet, so we use yesterday's date.
+    This matters when the caller is in SGT (UTC+8) where date.today() can be
+    one calendar day ahead of the US date.
+    """
+    now_et = datetime.now(ZoneInfo("America/New_York"))
+    if now_et.hour < 16 or (now_et.hour == 16 and now_et.minute < 30):
+        return (now_et - timedelta(days=1)).date()
+    return now_et.date()
+
+
 def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    today = date.today()
+    today = _us_market_date()
     earliest = today - timedelta(days=int(history_years * 365.25))
     tickers = load_universe(include_benchmark=True)
 
