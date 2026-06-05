@@ -570,62 +570,44 @@ if bt:
 if not pe_signals:
     st.info("No Precision Edge signals today.")
 else:
-    for sig in pe_signals:
-        ticker = sig.get("ticker", "???")
-        disp = sig.get("disposition", "---")
-        note = sig.get("note", "")
-        ctx = sig.get("context", {})
-        sector = _sector_label(ctx.get("sector", ""))
-        grade = ctx.get("sector_grade", "")
-        lvl = sig.get("levels", {})
+    pe_rows = []
+    for i, sig in enumerate(pe_signals, 1):
+        ticker = sig.get("ticker", "")
         eng = sig.get("engines", {})
-
-        # Header line
-        header = f"**{ticker}**"
-        if sector:
-            header += f" | {sector}"
-        if grade:
-            header += f" ({grade})"
-        header += f" | {disp}"
-        if note:
-            header += f" | {note}"
-        st.markdown(header)
-
-        # Levels — two rows of 4 for readability
-        r1 = st.columns(4)
-        r1[0].metric("Entry", _fmt(lvl.get("entry"), ".2f"))
-        r1[1].metric("Stop", _fmt(lvl.get("stop"), ".2f"))
-        r1[2].metric("R-size", _fmt(lvl.get("r_size"), ".2f"))
-        r1[3].metric("QTY", _fmt(lvl.get("shares"), ".0f"))
-        r2 = st.columns(4)
-        r2[0].metric("+1R", _fmt(lvl.get("target_1r"), ".2f"))
-        r2[1].metric("+2R", _fmt(lvl.get("target_2r"), ".2f"))
-        r2[2].metric("+3R", _fmt(lvl.get("target_3r"), ".2f"))
-        r2[3].metric("Risk $", _fmt(lvl.get("risk_dollars"), ".0f"))
-
-        # Voice breakdown — sub-component values
-        subcomps = sig.get("subcomp_values", {})
-        if subcomps:
-            parts_sc = []
-            for _key, sc in subcomps.items():
-                check = "PASS" if sc.get("pass") else "FAIL"
-                parts_sc.append(
-                    f"{sc.get('label', _key)}: {_fmt(sc.get('value'), '.2f')} "
-                    f"vs {_fmt(sc.get('threshold'), '.2f')} "
-                    f"[{sc.get('engine', '')}] {check}"
-                )
-            st.caption(" --- ".join(parts_sc))
-
-        # Engine scores
-        eng_parts = []
-        for ename in ("flow", "energy", "structure", "mp", "elder"):
-            v = eng.get(ename)
-            if v is not None:
-                eng_parts.append(f"{ename.title()}: {_fmt(v, '.1f')}")
-        if eng_parts:
-            st.caption("Engines: " + " | ".join(eng_parts))
-
-        st.markdown("---")
+        lvl = sig.get("levels", {})
+        sc_val = sig.get("sc_momentum") or round(
+            eng.get("flow", 0) * 0.30 + eng.get("energy", 0) * 0.30
+            + eng.get("structure", 0) * 0.20 + eng.get("mp", 0) * 0.20, 1
+        )
+        floor = min(eng.get("flow", 0), eng.get("energy", 0),
+                    eng.get("structure", 0), eng.get("mp", 0))
+        ptrs_val = _quick_ptrs(sc_val, ticker, _sector_grades)
+        dsl = _dsl.get(ticker, {})
+        pe_rows.append({
+            "#": i,
+            "Ticker": ticker,
+            "Sector": _ticker_sector(ticker),
+            "Score": _fmt(sc_val, ".1f"),
+            "Raw": _fmt(sig.get("sc_momentum_raw", sc_val), ".1f"),
+            "PTRS": _fmt(ptrs_val, ".1f"),
+            "PipeRk": _fmt(sig.get("pipe_rank"), ".1f"),
+            "Floor": _fmt(floor, ".1f"),
+            "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
+            "Flow": _fmt(eng.get("flow"), ".0f"),
+            "Energy": _fmt(eng.get("energy"), ".0f"),
+            "Struct": _fmt(eng.get("structure"), ".0f"),
+            "MP": _fmt(eng.get("mp"), ".0f"),
+            "Elder": _fmt(eng.get("elder"), ".1f"),
+            "Elder5d": _elder5_str(_elder5.get(ticker)),
+            "Entry": _fmt(dsl.get("entry", lvl.get("entry")), ".2f"),
+            "DSL": _fmt(dsl.get("stop", lvl.get("stop")), ".2f"),
+            "TP 1/2/3": _tp_str(dsl, lvl),
+            "Distance to SL": _fmt(dsl.get("rr_pct"), ".1f"),
+            "R/R": _fmt(dsl.get("rr_est"), ".1f"),
+            "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
+            "Fib": _fib_str(dsl.get("fib")),
+        })
+    st.dataframe(pd.DataFrame(pe_rows), use_container_width=True, hide_index=True)
 
 st.divider()
 
@@ -638,8 +620,8 @@ active_recipe = sl.get("active_recipe", {})
 recipe_str = _recipe_label(active_recipe)
 st.caption(f"Aggregate recipe: {recipe_str}")
 st.caption(
-    "Sorted by Pipeline Rank + Floor | DSL = structural stop | "
-    "TP 1/2/3 = +1R/+2R/+3R | R% = risk/price | "
+    "Sorted by PTRS → Pipeline Rank → Floor | DSL = structural stop | "
+    "TP 1/2/3 = +1R/+2R/+3R | "
     "Distance to SL = (entry − DSL stop) ÷ entry, expressed as %; how far price must fall before the stop is hit | "
     "ATR Width = (entry − DSL stop) ÷ ATR14; how many average true range units the stop sits below entry "
     "(1.0 = stop is exactly 1 ATR below entry; ≤1.5 tight stop, 2.0 standard, ≥2.0 wide/high-β name) | "
@@ -662,7 +644,6 @@ if recipe_matches:
     for i, rm in enumerate(recipe_matches, 1):
         lvl = rm.get("levels", {})
         eng = rm.get("engines", {})
-        source = "PE" if rm.get("pe_qualified") else ""
         ticker = rm.get("ticker", "")
 
         floor = min(eng.get("flow", 0), eng.get("energy", 0),
@@ -675,7 +656,6 @@ if recipe_matches:
             "#": i,
             "Ticker": ticker,
             "Sector": _ticker_sector(ticker),
-            "Source": source,
             "Score": _fmt(rm.get("sc_momentum"), ".1f"),
             "Raw": _fmt(rm.get("sc_momentum_raw"), ".1f"),
             "PTRS": _fmt(ptrs_val, ".1f"),
@@ -695,11 +675,6 @@ if recipe_matches:
             "R/R": _fmt(dsl.get("rr_est"), ".1f"),
             "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
             "Fib": _fib_str(dsl.get("fib")),
-            "Why": _rank_explain(
-                rm.get("pipe_rank", 0), floor, sc_val,
-                rm.get("pe_qualified", False), ticker,
-                _sector_map_raw, _sector_grades,
-            ),
         })
 
     df = pd.DataFrame(rows)
@@ -863,11 +838,6 @@ if _have_scan:
                 "R/R": _fmt(dsl.get("rr_est"), ".1f"),
                 "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(dsl.get("fib")),
-                "Why": _rank_explain(
-                    float(row.get("pipe_rank", 0)), float(row["_floor"]),
-                    float(row["sc_momentum"]), False, ticker,
-                    _sector_map_raw, _sector_grades,
-                ),
             })
 
         df_scan = pd.DataFrame(scan_rows)
