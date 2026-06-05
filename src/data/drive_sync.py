@@ -188,6 +188,18 @@ def build_export(shortlist: dict | None = None) -> dict:
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
 
+    # mp_state lookup from scores_daily.parquet — authoritative source.
+    # shortlist.json nests mp_state inside "diagnostics" for candidates and
+    # omits it entirely from precision_edge, so we derive from the parquet.
+    import pandas as pd
+    from src.data.paths import SCORES_DAILY as _scores_path
+    _mp_states: dict[str, str] = {}
+    if _scores_path.exists():
+        _sc = pd.read_parquet(_scores_path, columns=["date", "ticker", "mp_state"])
+        _sc["date"] = pd.to_datetime(_sc["date"]).dt.normalize()
+        _latest = _sc[_sc["date"] == _sc["date"].max()]
+        _mp_states = dict(zip(_latest["ticker"], _latest["mp_state"].astype(str)))
+
     # Top Picks = candidates (PTRS-ranked shortlist) — SAME schema as longlist
     for c in sl.get("candidates", []):
         tk = c["ticker"]
@@ -210,7 +222,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "structure": round(e["structure"], 1),
             "mp": round(e["mp"], 1),
             "elder": e["elder"],
-            "mp_state": c.get("mp_state", ""),
+            "mp_state": _mp_states.get(tk, c.get("mp_state", "")),
             "entry": c["levels"].get("entry"),
             "stop": c["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
@@ -256,7 +268,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "structure": round(eng["structure"], 1),
             "mp": round(eng["mp"], 1),
             "elder": eng["elder"],
-            "mp_state": pe.get("mp_state", ""),
+            "mp_state": _mp_states.get(tk, pe.get("mp_state", "")),
             "entry": pe["levels"].get("entry"),
             "stop": pe["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
@@ -306,7 +318,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "structure": round(e["structure"], 1),
             "mp": round(e["mp"], 1),
             "elder": e["elder"],
-            "mp_state": rm.get("mp_state", ""),
+            "mp_state": _mp_states.get(rm["ticker"], rm.get("mp_state", "")),
             "entry": rm["levels"].get("entry"),
             "stop": rm["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
@@ -399,6 +411,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     ),
                     "mp": round(float(wr.get("mp_100", 0)), 1),
                     "elder": round(float(wr.get("elder_score", 0)), 1),
+                    "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                     "dsl_stop": d.get("stop"),
                     "dsl_risk": d.get("risk"),
                     "dsl_tp_1r": d.get("tp_1r"),
