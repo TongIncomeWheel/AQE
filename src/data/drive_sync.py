@@ -160,51 +160,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "watchlist": [],
     }
 
-    # Top Picks = candidates (PTRS-ranked shortlist)
-    for c in sl.get("candidates", []):
-        export["top_picks"].append({
-            "rank": c["rank"],
-            "ticker": c["ticker"],
-            "sc_momentum": round(c.get("sc_momentum", 0), 1),
-            "ptrs": round(c.get("ptrs", 0), 1),
-            "disposition": c.get("disposition", ""),
-            "flow": round(c["engines"]["flow"], 1),
-            "energy": round(c["engines"]["energy"], 1),
-            "structure": round(c["engines"]["structure"], 1),
-            "mp": round(c["engines"]["mp"], 1),
-            "elder": c["engines"]["elder"],
-            "entry": c["levels"].get("entry"),
-            "stop": c["levels"].get("stop"),
-        })
-
-    # Edge List = Precision Edge
-    def _sc_from_engines(eng):
-        """SC_MOM = Flow×0.30 + Energy×0.30 + Structure×0.20 + MP×0.20."""
-        return round(
-            eng.get("flow", 0) * 0.30 + eng.get("energy", 0) * 0.30
-            + eng.get("structure", 0) * 0.20 + eng.get("mp", 0) * 0.20, 1
-        )
-
-    for pe in sl.get("precision_edge", []):
-        eng = pe["engines"]
-        pe_sc = pe.get("sc_momentum") or _sc_from_engines(eng)
-        pe_raw = pe.get("sc_momentum_raw") or pe_sc
-        export["edge_list"].append({
-            "ticker": pe["ticker"],
-            "disposition": pe.get("disposition", ""),
-            "sc_momentum": round(pe_sc, 1),
-            "sc_momentum_raw": round(pe_raw, 1),
-            "flow": round(eng["flow"], 1),
-            "energy": round(eng["energy"], 1),
-            "structure": round(eng["structure"], 1),
-            "mp": round(eng["mp"], 1),
-            "elder": eng["elder"],
-            "entry": pe["levels"].get("entry"),
-            "stop": pe["levels"].get("stop"),
-        })
-
+    # ---- Shared helpers (loaded once, used by all four lists) ----
     # PTRS = SC_MOM + SH (sector only). Regime handles VIX sizing separately.
-    # Build sector_grades dict from freshly computed srm_gics (not shortlist.json)
     sector_grades = {r["etf"]: {"grade": r["grade"], "sh": r["sh_value"]} for r in srm_gics} if srm_gics else sl.get("srm_detail", {})
 
     def _ptrs(sc_mom, ticker):
@@ -213,18 +170,99 @@ def build_export(shortlist: dict | None = None) -> dict:
         v = r.get("ptrs")
         return round(v, 1) if v is not None and v == v else 0.0
 
-    # Longlist = recipe matches (sorted by pipe_rank desc, floor tiebreak)
     def _floor(rm):
         e = rm.get("engines", {})
         return min(e.get("flow", 0), e.get("energy", 0),
                    e.get("structure", 0), e.get("mp", 0))
 
+    def _sc_from_engines(eng):
+        """SC_MOM = Flow×0.30 + Energy×0.30 + Structure×0.20 + MP×0.20."""
+        return round(
+            eng.get("flow", 0) * 0.30 + eng.get("energy", 0) * 0.30
+            + eng.get("structure", 0) * 0.20 + eng.get("mp", 0) * 0.20, 1
+        )
+
     sm = load_sector_map()
     betas = load_betas()
-    # Pass betas so high-β tickers get β-adjusted initial stops (DSL v2.1)
     dsl_all = load_trade_levels(betas=betas)
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
+
+    # Top Picks = candidates (PTRS-ranked shortlist) — full schema
+    for c in sl.get("candidates", []):
+        tk = c["ticker"]
+        e = c["engines"]
+        d = dsl_all.get(tk, {})
+        sc_val = c.get("sc_momentum", 0) or 0
+        floor = round(min(e["flow"], e["energy"], e["structure"], e["mp"]), 1)
+        export["top_picks"].append({
+            "rank": c["rank"],
+            "ticker": tk,
+            "sc_momentum": round(sc_val, 1),
+            "sc_momentum_raw": round(c.get("sc_momentum_raw", sc_val), 1),
+            "ptrs": round(c.get("ptrs", 0), 1),
+            "pipe_rank": round(c.get("pipe_rank", 0), 1),
+            "floor": floor,
+            "disposition": c.get("disposition", ""),
+            "beta_30d": (betas.get(tk) or {}).get(30),
+            "flow": round(e["flow"], 1),
+            "energy": round(e["energy"], 1),
+            "structure": round(e["structure"], 1),
+            "mp": round(e["mp"], 1),
+            "elder": e["elder"],
+            "entry": c["levels"].get("entry"),
+            "stop": c["levels"].get("stop"),
+            "dsl_stop": d.get("stop"),
+            "dsl_risk": d.get("risk"),
+            "dsl_tp_1r": d.get("tp_1r"),
+            "dsl_tp_2r": d.get("tp_2r"),
+            "dsl_tp_3r": d.get("tp_3r"),
+            "dsl_be": d.get("be"),
+            "dsl_shares": d.get("shares"),
+            "dsl_rr_pct": d.get("rr_pct"),
+            "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+            "rr_est": d.get("rr_est"),
+            "fib": d.get("fib"),
+            "elder_5d": elder5.get(tk),
+        })
+
+    # Edge List = Precision Edge — full schema
+    for pe in sl.get("precision_edge", []):
+        eng = pe["engines"]
+        tk = pe["ticker"]
+        d = dsl_all.get(tk, {})
+        pe_sc = pe.get("sc_momentum") or _sc_from_engines(eng)
+        pe_raw = pe.get("sc_momentum_raw") or pe_sc
+        floor = round(min(eng["flow"], eng["energy"], eng["structure"], eng["mp"]), 1)
+        export["edge_list"].append({
+            "ticker": tk,
+            "sc_momentum": round(pe_sc, 1),
+            "sc_momentum_raw": round(pe_raw, 1),
+            "ptrs": _ptrs(pe_sc, tk),
+            "pipe_rank": round(pe.get("pipe_rank", 0), 1),
+            "floor": floor,
+            "disposition": pe.get("disposition", ""),
+            "beta_30d": (betas.get(tk) or {}).get(30),
+            "flow": round(eng["flow"], 1),
+            "energy": round(eng["energy"], 1),
+            "structure": round(eng["structure"], 1),
+            "mp": round(eng["mp"], 1),
+            "elder": eng["elder"],
+            "entry": pe["levels"].get("entry"),
+            "stop": pe["levels"].get("stop"),
+            "dsl_stop": d.get("stop"),
+            "dsl_risk": d.get("risk"),
+            "dsl_tp_1r": d.get("tp_1r"),
+            "dsl_tp_2r": d.get("tp_2r"),
+            "dsl_tp_3r": d.get("tp_3r"),
+            "dsl_be": d.get("be"),
+            "dsl_shares": d.get("shares"),
+            "dsl_rr_pct": d.get("rr_pct"),
+            "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+            "rr_est": d.get("rr_est"),
+            "fib": d.get("fib"),
+            "elder_5d": elder5.get(tk),
+        })
     longlist_tickers: set[str] = set()
     sorted_rm = sorted(sl.get("recipe_matches", []),
                        key=lambda rm: (
