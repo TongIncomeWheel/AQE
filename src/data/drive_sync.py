@@ -188,7 +188,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
 
-    # Top Picks = candidates (PTRS-ranked shortlist) — full schema
+    # Top Picks = candidates (PTRS-ranked shortlist) — SAME schema as longlist
     for c in sl.get("candidates", []):
         tk = c["ticker"]
         e = c["engines"]
@@ -225,11 +225,16 @@ def build_export(shortlist: dict | None = None) -> dict:
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(tk),
+            "rank_explain": _rank_explain(
+                c.get("pipe_rank", 0), floor, sc_val,
+                tk in pe_tickers, tk, sm, sector_grades,
+            ),
+            "source": "top_picks",
             "pe": tk in pe_tickers,
         })
 
-    # Edge List = Precision Edge — full schema
-    for pe in sl.get("precision_edge", []):
+    # Edge List = Precision Edge — SAME schema as longlist
+    for ei, pe in enumerate(sl.get("precision_edge", []), 1):
         eng = pe["engines"]
         tk = pe["ticker"]
         d = dsl_all.get(tk, {})
@@ -237,6 +242,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         pe_raw = pe.get("sc_momentum_raw") or pe_sc
         floor = round(min(eng["flow"], eng["energy"], eng["structure"], eng["mp"]), 1)
         export["edge_list"].append({
+            "rank": ei,
             "ticker": tk,
             "sc_momentum": round(pe_sc, 1),
             "sc_momentum_raw": round(pe_raw, 1),
@@ -265,6 +271,11 @@ def build_export(shortlist: dict | None = None) -> dict:
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(tk),
+            "rank_explain": _rank_explain(
+                pe.get("pipe_rank", 0), floor, pe_sc,
+                True, tk, sm, sector_grades,
+            ),
+            "source": "edge_list",
             "pe": True,
         })
     longlist_tickers: set[str] = set()
@@ -415,6 +426,24 @@ def build_export(shortlist: dict | None = None) -> dict:
         "longlist_count": len(export["longlist"]),
         "watchlist_count": len(export["watchlist"]),
     }
+
+    # ---- Permanent schema validation — BLOCKS export on missing fields ----
+    _REQUIRED_FIELDS = [
+        "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
+        "mp", "elder", "entry", "stop",
+        "dsl_stop", "dsl_be", "dsl_risk", "dsl_rr_pct", "dsl_shares",
+        "dsl_atr_ratio", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
+        "beta_30d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",
+        "fib", "floor", "rank_explain",
+    ]
+    for _tier_name in ("top_picks", "edge_list", "longlist"):
+        for _rec in export[_tier_name]:
+            _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
+            if _missing:
+                raise ValueError(
+                    f"SCHEMA VIOLATION: {_tier_name} record "
+                    f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
+                )
 
     return export
 
