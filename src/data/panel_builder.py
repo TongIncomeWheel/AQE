@@ -18,7 +18,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from .fmp_client import FMPClient, FMPError, iter_with_progress, resample_to_weekly
+from .fmp_client import FMPClient, FMPError, FMPQuotaError, iter_with_progress, resample_to_weekly
 from .paths import (
     DATA_DIR,
     PANEL_DAILY,
@@ -27,7 +27,18 @@ from .paths import (
 )
 from .universe import BENCHMARK, PROJECT_ROOT, load_universe
 
-DEFAULT_HISTORY_YEARS = 6  # pulls 6yr so we have 5yr of warm scores after engine warmup
+# Engines need at most 252 trading days (Pipeline Rank 12-month return).
+# Cloud uses 2yr to cover warmup; local keeps 6yr for recipe optimizer backtests.
+LOCAL_HISTORY_YEARS = 6
+CLOUD_HISTORY_YEARS = 2
+
+
+def _default_history_years() -> int:
+    """2yr on cloud (engines need ~1yr max), 6yr locally (for recipe optimizer)."""
+    import os
+    if os.environ.get("SPACE_ID") or os.environ.get("SPACE_HOST"):
+        return CLOUD_HISTORY_YEARS
+    return LOCAL_HISTORY_YEARS
 
 
 def _us_market_date() -> date:
@@ -44,7 +55,9 @@ def _us_market_date() -> date:
     return now_et.date()
 
 
-def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
+def build_panel(history_years: int | None = None) -> None:
+    if history_years is None:
+        history_years = _default_history_years()
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     today = _us_market_date()
@@ -52,7 +65,7 @@ def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
     tickers = load_universe(include_benchmark=True)
 
     # Always pull GICS sector ETFs for SRM grading — they are excluded from
-    # scoring but grade_all_sectors() and _build_srm_table() need them in the
+    # scoring but grade_all_sectors() and _build_srm_gics() need them in the
     # panel. Without this, every SRM grade defaults to WATCH (empty frame).
     from src.engines.srm import GICS_ETFS as _GICS_ETFS
     _seen = set(tickers)
@@ -61,17 +74,37 @@ def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
             tickers.append(_etf)
             _seen.add(_etf)
 
+    # Prioritize critical tickers so they get pulled before any quota cap:
+    # 1) SPY (benchmark), 2) GICS sector ETFs (SRM), 3) everything else.
+    priority = {BENCHMARK} | set(_GICS_ETFS)
+    tickers = sorted(tickers, key=lambda t: (0 if t in priority else 1, t))
+
+    print(f"[panel] pulling {len(tickers)} tickers, {history_years}yr lookback, "
+          f"earliest={earliest}", flush=True)
+
     client = FMPClient()
 
     existing_daily = _load_existing(PANEL_DAILY)
     daily_rows: list[pd.DataFrame] = [] if existing_daily.empty else [existing_daily]
+    pulled = 0
+    skipped_current = 0
+    quota_hit = False
 
     for ticker in iter_with_progress(tickers, label="daily"):
         from_dt = _next_pull_start(existing_daily, ticker, earliest)
         if from_dt > today:
+            skipped_current += 1
             continue  # already current
         try:
             df = client.get_daily_bars(ticker, from_date=from_dt, to_date=today)
+        except FMPQuotaError as exc:
+            print(f"\n  *** FMP QUOTA REACHED at ticker {pulled + skipped_current + 1}/"
+                  f"{len(tickers)}: {exc}", file=sys.stderr)
+            print(f"  *** Saving {pulled} newly pulled tickers + cached data. "
+                  f"Run pipeline again to pull remaining tickers.\n",
+                  file=sys.stderr)
+            quota_hit = True
+            break
         except FMPError as exc:
             print(f"  !! {ticker}: {exc}", file=sys.stderr)
             continue
@@ -80,6 +113,10 @@ def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
             continue
         df["ticker"] = ticker
         daily_rows.append(df[["date", "ticker", "open", "high", "low", "close", "volume"]])
+        pulled += 1
+
+    print(f"[panel] pulled={pulled}, cached/current={skipped_current}, "
+          f"total_tickers={len(tickers)}, quota_hit={quota_hit}", flush=True)
 
     if not daily_rows:
         print("No data pulled. Aborting.", file=sys.stderr)
@@ -92,7 +129,8 @@ def build_panel(history_years: int = DEFAULT_HISTORY_YEARS) -> None:
         .reset_index(drop=True)
     )
     daily.to_parquet(PANEL_DAILY, index=False)
-    print(f"Wrote {PANEL_DAILY.name}: {len(daily):,} rows across {daily['ticker'].nunique()} tickers")
+    print(f"Wrote {PANEL_DAILY.name}: {len(daily):,} rows across "
+          f"{daily['ticker'].nunique()} tickers")
 
     # Weekly resample per ticker.
     weekly_rows: list[pd.DataFrame] = []

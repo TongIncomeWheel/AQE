@@ -72,6 +72,10 @@ class FMPError(RuntimeError):
     """Raised on any non-2xx response from FMP or unexpected payload shape."""
 
 
+class FMPQuotaError(FMPError):
+    """Raised when FMP returns 'Invalid API KEY' mid-run (daily quota hit)."""
+
+
 class FMPClient:
     """Synchronous client. Single-threaded use — we don't need parallel pulls."""
 
@@ -91,6 +95,7 @@ class FMPClient:
             "AQE-Scanner/1.0 (+https://github.com/TongIncomeWheel/AQE)"
         )
         self._call_times: list[float] = []  # rolling 60s window
+        self._ok_count: int = 0  # track successful calls (for quota detection)
         # Log the effective rate so cloud runs show clearly what they're using
         print(f"[fmp] effective rate limit: {config.rate_limit_per_min} calls/min",
               flush=True)
@@ -170,6 +175,12 @@ class FMPClient:
             time.sleep(60)
             resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
         if resp.status_code in (401, 403):
+            if self._ok_count > 0:
+                # Key worked before → likely daily quota, not bad key
+                raise FMPQuotaError(
+                    f"FMP daily quota likely reached after {self._ok_count} successful calls. "
+                    f"Run the pipeline again later to pull remaining tickers (incremental)."
+                )
             raise FMPError(
                 "FMP rejected the API key. Possible causes: "
                 "(a) FMP_API_KEY value is wrong / has a typo, "
@@ -183,18 +194,33 @@ class FMPClient:
             payload = resp.json()
         except ValueError as exc:
             raise FMPError(f"FMP non-JSON response for {url}: {exc}") from exc
-        # FMP sometimes returns 200 OK with an error body. "Invalid API KEY" mid-run is
-        # almost always concurrent-IP abuse-detection (NOT a wrong-key issue, since the
-        # first N calls succeeded). See https://site.financialmodelingprep.com/faqs
+        # FMP sometimes returns 200 OK with an error body
         if isinstance(payload, dict) and "Error Message" in payload:
             msg = payload["Error Message"]
             if "Invalid API KEY" in msg:
+                if self._ok_count > 0:
+                    # Key worked before → daily quota exhausted, not bad key.
+                    # Wait 30s and retry once in case it was transient.
+                    time.sleep(30)
+                    resp2 = self._session.get(url, params=params,
+                                              timeout=self.config.timeout_seconds)
+                    try:
+                        p2 = resp2.json()
+                    except ValueError:
+                        p2 = {}
+                    if isinstance(p2, list) and p2:
+                        self._ok_count += 1
+                        return p2  # retry succeeded
+                    raise FMPQuotaError(
+                        f"FMP daily quota reached after {self._ok_count} successful calls. "
+                        f"Run the pipeline again later to pull remaining tickers."
+                    )
                 raise FMPError(
-                    f"FMP 'Invalid API KEY' mid-run. If earlier calls succeeded, this is "
-                    f"almost certainly concurrent-use abuse detection. Check: is a local "
-                    f"pipeline run also happening right now? Original message: {msg}"
+                    f"FMP 'Invalid API KEY' on first call — the key is wrong or "
+                    f"the plan doesn't cover this endpoint. Message: {msg}"
                 )
             raise FMPError(f"FMP error: {msg}")
+        self._ok_count += 1
         return payload
 
     def _throttle(self) -> None:

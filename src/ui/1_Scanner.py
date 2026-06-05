@@ -88,8 +88,9 @@ with st.sidebar:
                       "streamlit":   "Streamlit Cloud",
                       "local":       "Cloud (unknown host)"}[CLOUD_HOST]
         st.caption(
-            f"Running on **{host_label}**. First pipeline run pulls 6yr of "
-            "bars from FMP (~3-5 min). Subsequent runs are incremental."
+            f"Running on **{host_label}**. First pipeline run pulls 2yr of "
+            "bars from FMP (~2 min). Subsequent runs are incremental. "
+            "If FMP quota caps mid-run, run again to pull remaining tickers."
         )
 
         # Diagnostic panel: shows env-var presence (NEVER the values) and
@@ -182,7 +183,7 @@ with st.sidebar:
 
     pipeline_btn_label = "Run daily pipeline"
     if CLOUD_MODE and not (PANEL_DAILY.exists() and SCORES_DAILY.exists()):
-        pipeline_btn_label = "Bootstrap + run daily pipeline (3-5 min)"
+        pipeline_btn_label = "Bootstrap + run daily pipeline (~2 min)"
     if st.button(pipeline_btn_label, type="primary", use_container_width=True,
                  disabled=(CLOUD_MODE and not FMP_KEY_SET)):
         run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline", prog, stat)
@@ -242,15 +243,16 @@ if not PANEL_DAILY.exists() or not SCORES_DAILY.exists():
             st.info(
                 "Showing the latest committed snapshot. "
                 "Open the sidebar and click **Bootstrap + run daily pipeline** "
-                "to refresh against live FMP data (3-5 min)."
+                "to refresh against live FMP data (~2 min)."
             )
         else:
             st.warning(
                 "**Cold start.** The price + score caches haven't been built yet "
                 "on this Streamlit container.\n\n"
                 "Open the sidebar and click **Bootstrap + run daily pipeline**. "
-                "First run pulls 6yr of bars from FMP (~3-5 min); the page will "
-                "refresh automatically when it finishes."
+                "First run pulls 2yr of bars from FMP (~2 min); the page will "
+                "refresh automatically when it finishes. If FMP quota caps "
+                "mid-run, click again to pull remaining tickers."
             )
             st.stop()
     else:
