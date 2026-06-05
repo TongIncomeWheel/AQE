@@ -1,4 +1,11 @@
-"""DSL v2.1 — Dynamic Stop Loss with β-adjusted stops, MP-gated trails,
+"""DSL v2.1 + v1.5 — Dynamic Stop Loss.
+
+v2.1: β-adjusted stops, MP-gated trails, min hold period, flow TP,
+      R-tiered trailing. Used by the backtest simulator.
+v1.5: Dynamic ATR ratio driven by regime + elder + whippiness.
+      Used by the Scanner export (levels_for_ticker path).
+
+DSL v2.1 — Dynamic Stop Loss with β-adjusted stops, MP-gated trails,
 minimum hold period, flow-based take-profit, and R-tiered trailing.
 
 Initial stop: tactical profile (β-adjusted).
@@ -99,6 +106,126 @@ def compute_initial_stop(
     initial_stop = entry_price - clamped
     risk = clamped  # 1R = distance from entry to initial stop
     return initial_stop, risk
+
+
+# ---------------------------------------------------------------------------
+# DSL v1.5 — Dynamic ATR ratio (regime + elder + whippiness)
+# ---------------------------------------------------------------------------
+
+_REGIME_RATIO: dict[str, float] = {
+    "GREEN":  1.5,
+    "YELLOW": 2.0,
+    "ORANGE": 2.5,
+    # RED excluded — RED = hard stop, no new entries allowed
+}
+
+_RATIO_FLOOR = 1.0
+_RATIO_CEIL  = 3.5
+
+
+def compute_dynamic_atr_ratio(
+    regime_level: str | None,
+    elder_score: float | None,
+    highs_14: np.ndarray,
+    lows_14: np.ndarray,
+    atr14: float,
+) -> tuple[float, float]:
+    """DSL v1.5 dynamic ATR ratio — the INPUT that drives stop width.
+
+    Three additive components:
+      1. Regime base: GREEN=1.5, YELLOW=2.0, ORANGE=2.5.
+         RED defaults to GREEN (hard stop — no new entries). Missing → GREEN.
+      2. Elder impulse: ≥8 tightens by -0.25 (strong momentum, tighter OK).
+         ≤4 widens by +0.50 (weak impulse, needs room). Else 0.
+      3. Whippiness proxy: avg(high-low, 14 bars) / atr_14d.
+         Measures intraday range vs total volatility (including gaps).
+         >0.85 → +0.50 (very whippy, intraday noise sweeps stops).
+         >0.70 → +0.25 (moderately whippy).
+         Else 0.
+
+    Returns (clamped_ratio, daily_range_proxy).
+    """
+    # 1. Regime base
+    level = (regime_level or "GREEN").upper()
+    if level == "RED":
+        level = "GREEN"
+    base = _REGIME_RATIO.get(level, 1.5)
+
+    # 2. Elder adjustment
+    elder_adj = 0.0
+    if elder_score is not None and np.isfinite(elder_score):
+        if elder_score >= 8.0:
+            elder_adj = -0.25
+        elif elder_score <= 4.0:
+            elder_adj = 0.50
+
+    # 3. Whippiness (daily range proxy for atr_1h / atr_14d)
+    whip_adj = 0.0
+    daily_range_proxy = 0.0
+    if (len(highs_14) >= 14 and len(lows_14) >= 14
+            and atr14 > 0 and np.isfinite(atr14)):
+        avg_range = float(np.nanmean(highs_14[-14:] - lows_14[-14:]))
+        daily_range_proxy = avg_range / atr14
+        if daily_range_proxy > 0.85:
+            whip_adj = 0.50
+        elif daily_range_proxy > 0.70:
+            whip_adj = 0.25
+
+    raw = base + elder_adj + whip_adj
+    return float(np.clip(raw, _RATIO_FLOOR, _RATIO_CEIL)), round(daily_range_proxy, 3)
+
+
+def compute_initial_stop_v15(
+    entry_price: float,
+    atr14: float,
+    recent_lows: np.ndarray,
+    highs: np.ndarray,
+    lows: np.ndarray,
+    regime_level: str | None = None,
+    elder_score: float | None = None,
+    beta: float | None = None,
+) -> tuple[float, float, float, float]:
+    """DSL v1.5 dynamic stop with regime/elder/whippiness-driven ATR ratio.
+
+    Returns (initial_stop, risk, dynamic_ratio, daily_range_proxy).
+      - dynamic_ratio: the clamped [1.0, 3.5] ATR multiplier
+      - daily_range_proxy: avg(H-L, 14) / ATR (whippiness, for export)
+
+    Stop = entry - (dynamic_ratio × atr_14d), optionally widened to
+    the structural swing low (from fractal pivot detection) if that sits
+    further below entry. Final distance clamped to [1.0, 3.5] × ATR.
+    """
+    # 1. Dynamic ratio
+    dynamic_ratio, daily_range_proxy = compute_dynamic_atr_ratio(
+        regime_level, elder_score, highs, lows, atr14,
+    )
+
+    # 2. Dynamic stop from ratio
+    dynamic_distance = dynamic_ratio * atr14
+    dynamic_stop = entry_price - dynamic_distance
+
+    # 3. Structural swing low widening — use existing fractal detector
+    from src.scanner.levels import find_swing  # local import avoids circular
+    swing = find_swing(highs, lows)
+    if swing is not None:
+        swing_stop = swing["low"] - 0.5 * atr14  # buffer below support
+        if swing_stop < dynamic_stop:
+            # Swing low is further away — widen to structural support
+            dynamic_stop = swing_stop
+            dynamic_distance = entry_price - dynamic_stop
+
+    # 4. Final clamp: distance must stay in [1.0, 3.5] × ATR
+    min_distance = _RATIO_FLOOR * atr14
+    max_distance = _RATIO_CEIL * atr14
+    clamped_distance = max(min(dynamic_distance, max_distance), min_distance)
+    final_stop = entry_price - clamped_distance
+    risk = clamped_distance
+
+    # Recompute the effective ratio for export (may differ from dynamic_ratio
+    # if swing widening or clamping changed the distance)
+    effective_ratio = round(clamped_distance / atr14, 2) if atr14 > 0 else dynamic_ratio
+
+    return final_stop, risk, effective_ratio, daily_range_proxy
 
 
 def simulate_dsl_trade(

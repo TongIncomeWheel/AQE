@@ -182,9 +182,12 @@ def build_export(shortlist: dict | None = None) -> dict:
             + eng.get("structure", 0) * 0.20 + eng.get("mp", 0) * 0.20, 1
         )
 
+    # Extract regime level for DSL v1.5 dynamic stop width
+    regime_level = (sl.get("regime", {}).get("level") or "GREEN").upper()
+
     sm = load_sector_map()
     betas = load_betas()
-    dsl_all = load_trade_levels(betas=betas)
+    dsl_all = load_trade_levels(betas=betas, regime_level=regime_level)
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
 
@@ -235,6 +238,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_shares": d.get("shares"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+            "atr_14d": d.get("atr14"),
+            "daily_range_proxy": d.get("daily_range_proxy"),
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(tk),
@@ -282,6 +287,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_shares": d.get("shares"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+            "atr_14d": d.get("atr14"),
+            "daily_range_proxy": d.get("daily_range_proxy"),
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(tk),
@@ -333,6 +340,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_shares": d.get("shares"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+            "atr_14d": d.get("atr14"),
+            "daily_range_proxy": d.get("daily_range_proxy"),
             "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
             "elder_5d": elder5.get(rm["ticker"]),
@@ -425,6 +434,8 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "dsl_shares": d.get("shares"),
                     "dsl_rr_pct": d.get("rr_pct"),
                     "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+            "atr_14d": d.get("atr14"),
+            "daily_range_proxy": d.get("daily_range_proxy"),
                     "rr_est": d.get("rr_est"),
                     "fib": d.get("fib"),
                     "elder_5d": elder5.get(tk),
@@ -449,7 +460,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
         "mp", "elder", "entry", "stop",
         "dsl_stop", "dsl_be", "dsl_risk", "dsl_rr_pct", "dsl_shares",
-        "dsl_atr_ratio", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
+        "dsl_atr_ratio", "atr_14d", "daily_range_proxy",
+        "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
         "beta_30d", "beta_60d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",
         "fib", "floor", "rank_explain",
     ]

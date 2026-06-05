@@ -169,6 +169,7 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
             d["high"].astype(float).to_numpy(),
             d["low"].astype(float).to_numpy(),
             d["date"].to_numpy(),
+            elder_score=eld,  # DSL v1.5: elder impulse adjustment
         )
     elder_5d = [int(round(v)) for v in elder_df["elder_score"].tail(ELDER_HISTORY_DAYS)
                 if pd.notna(v)]
