@@ -692,7 +692,6 @@ if recipe_matches:
             "R/R": _fmt(dsl.get("rr_est"), ".1f"),
             "R/ATR": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
             "Fib": _fib_str(dsl.get("fib")),
-            "QTY": _fmt(dsl.get("shares", lvl.get("shares")), ".0f"),
             "Why": _rank_explain(
                 rm.get("pipe_rank", 0), floor, sc_val,
                 rm.get("pe_qualified", False), ticker,
@@ -861,7 +860,6 @@ if _have_scan:
                 "R/R": _fmt(dsl.get("rr_est"), ".1f"),
                 "R/ATR": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(dsl.get("fib")),
-                "QTY": _fmt(dsl.get("shares"), ".0f"),
                 "Why": _rank_explain(
                     float(row.get("pipe_rank", 0)), float(row["_floor"]),
                     float(row["sc_momentum"]), False, ticker,
@@ -964,7 +962,6 @@ if _adhoc_results:
                 "R/R": _fmt(lv.get("rr_est"), ".1f"),
                 "R/ATR": _fmt(lv.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(lv.get("fib")),
-                "QTY": _fmt(lv.get("shares"), ".0f"),
             })
         st.dataframe(pd.DataFrame(_adhoc_rows), use_container_width=True, hide_index=True)
 
