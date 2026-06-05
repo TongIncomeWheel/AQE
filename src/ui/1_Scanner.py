@@ -640,10 +640,13 @@ st.caption(f"Aggregate recipe: {recipe_str}")
 st.caption(
     "Sorted by Pipeline Rank + Floor | DSL = structural stop | "
     "TP 1/2/3 = +1R/+2R/+3R | R% = risk/price | "
-    "R/R = reward to 1.618 Fib extension / risk | "
-    "R/ATR = stop distance in ATR units (≤1 tight, ≥2 wide/high-β) | "
-    "Fib = 0.618 retracement / 1.618 extension | Elder5d = last 5 sessions | "
-    "Beta30 = 30-day rolling beta vs SPY"
+    "Distance to SL = (entry − DSL stop) ÷ entry, expressed as %; how far price must fall before the stop is hit | "
+    "ATR Width = (entry − DSL stop) ÷ ATR14; how many average true range units the stop sits below entry "
+    "(1.0 = stop is exactly 1 ATR below entry; ≤1.5 tight stop, 2.0 standard, ≥2.0 wide/high-β name) | "
+    "R/R = estimated reward ÷ risk: (1.618 Fib extension − entry) ÷ (entry − DSL stop) | "
+    "Fib = Fibonacci levels anchored on most recent swing low→high (0.618 retracement / 1.618 extension) | "
+    "Elder5d = Elder Impulse score for each of the last 5 trading sessions (1–10 scale, ≥7 = bullish impulse) | "
+    "Beta30 = 30-day rolling beta vs SPY (sensitivity to broad market moves; ≥1.5 = high-β, gets wider DSL stop)"
 )
 
 # recipe_matches now includes both aggregate qualifiers AND PE picks
@@ -688,9 +691,9 @@ if recipe_matches:
             "Entry": _fmt(dsl.get("entry", lvl.get("entry")), ".2f"),
             "DSL": _fmt(dsl.get("stop", lvl.get("stop")), ".2f"),
             "TP 1/2/3": _tp_str(dsl, lvl),
-            "R%": _fmt(dsl.get("rr_pct"), ".1f"),
+            "Distance to SL": _fmt(dsl.get("rr_pct"), ".1f"),
             "R/R": _fmt(dsl.get("rr_est"), ".1f"),
-            "R/ATR": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
+            "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
             "Fib": _fib_str(dsl.get("fib")),
             "Why": _rank_explain(
                 rm.get("pipe_rank", 0), floor, sc_val,
@@ -856,9 +859,9 @@ if _have_scan:
                 "Entry": _fmt(dsl.get("entry"), ".2f"),
                 "DSL": _fmt(dsl.get("stop"), ".2f"),
                 "TP 1/2/3": _tp_str(dsl),
-                "R%": _fmt(dsl.get("rr_pct"), ".1f"),
+                "Distance to SL": _fmt(dsl.get("rr_pct"), ".1f"),
                 "R/R": _fmt(dsl.get("rr_est"), ".1f"),
-                "R/ATR": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
+                "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(dsl.get("fib")),
                 "Why": _rank_explain(
                     float(row.get("pipe_rank", 0)), float(row["_floor"]),
@@ -958,9 +961,9 @@ if _adhoc_results:
                 "Entry": _fmt(lv.get("entry"), ".2f"),
                 "DSL": _fmt(lv.get("stop"), ".2f"),
                 "TP 1/2/3": _tp_str(lv),
-                "R%": _fmt(lv.get("rr_pct"), ".1f"),
+                "Distance to SL": _fmt(lv.get("rr_pct"), ".1f"),
                 "R/R": _fmt(lv.get("rr_est"), ".1f"),
-                "R/ATR": _fmt(lv.get("dsl_atr_ratio"), ".2f"),
+                "ATR Width": _fmt(lv.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(lv.get("fib")),
             })
         st.dataframe(pd.DataFrame(_adhoc_rows), use_container_width=True, hide_index=True)
