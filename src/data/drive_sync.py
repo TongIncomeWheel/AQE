@@ -217,6 +217,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "floor": floor,
             "disposition": c.get("disposition", ""),
             "beta_30d": (betas.get(tk) or {}).get(30),
+            "beta_60d": (betas.get(tk) or {}).get(60),
             "flow": round(e["flow"], 1),
             "energy": round(e["energy"], 1),
             "structure": round(e["structure"], 1),
@@ -263,6 +264,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "floor": floor,
             "disposition": pe.get("disposition", ""),
             "beta_30d": (betas.get(tk) or {}).get(30),
+            "beta_60d": (betas.get(tk) or {}).get(60),
             "flow": round(eng["flow"], 1),
             "energy": round(eng["energy"], 1),
             "structure": round(eng["structure"], 1),
@@ -313,6 +315,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "pipe_rank": round(rm.get("pipe_rank", 0), 1),
             "floor": floor,
             "beta_30d": (betas.get(rm["ticker"]) or {}).get(30),
+            "beta_60d": (betas.get(rm["ticker"]) or {}).get(60),
             "flow": round(e["flow"], 1),
             "energy": round(e["energy"], 1),
             "structure": round(e["structure"], 1),
@@ -404,6 +407,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "pipe_rank": round(wpr, 1),
                     "floor": wfl,
                     "beta_30d": (betas.get(tk) or {}).get(30),
+            "beta_60d": (betas.get(tk) or {}).get(60),
                     "flow": round(float(wr.get("flow_100", 0)), 1),
                     "energy": round(float(wr.get("energy_100", 0)), 1),
                     "structure": round(
@@ -446,7 +450,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         "mp", "elder", "entry", "stop",
         "dsl_stop", "dsl_be", "dsl_risk", "dsl_rr_pct", "dsl_shares",
         "dsl_atr_ratio", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
-        "beta_30d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",
+        "beta_30d", "beta_60d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",
         "fib", "floor", "rank_explain",
     ]
     for _tier_name in ("top_picks", "edge_list", "longlist"):
