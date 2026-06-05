@@ -65,28 +65,17 @@ def grade_sector_etf(etf_daily: pd.DataFrame) -> dict:
     roc5 = (latest - close.iloc[-6]) / close.iloc[-6] * 100.0 if len(close) >= 6 else 0.0
     above_sma20 = bool(latest > sma20.iloc[-1]) if sma20.notna().iloc[-1] else False
 
-    pct_above = float(above_sma20)  # single ETF → 0 or 1
-    divergence = roc5 - (roc20 / 4.0)  # 5d acceleration vs 20d trend
+    divergence = roc5 - roc20  # positive = 5d momentum recovering vs 20d trend
 
-    if pct_above >= 0.8 and roc20 > 5.0:
-        grade = "DEPLOY"
-    elif pct_above >= 0.6 and roc20 > 0.0:
-        grade = "HOLD"
-    elif pct_above < 0.6 and divergence > 0:
-        grade = "TURNING"
-    elif pct_above >= 0.4:
-        grade = "WATCH"
-    else:
-        grade = "AVOID"
-
-    # Simplified: use ETF itself as single-constituent breadth proxy
+    # Canonical SRM grading — must match live /SRM output exactly.
+    # Evaluate top-to-bottom, first match wins.
     if above_sma20 and roc20 > 5.0:
         grade = "DEPLOY"
-    elif above_sma20 and roc20 > 0:
+    elif above_sma20 and roc20 > 0.0:
         grade = "HOLD"
-    elif not above_sma20 and roc5 > roc20 / 4.0:
+    elif not above_sma20 and divergence > 0.0:
         grade = "TURNING"
-    elif roc20 > -3.0:
+    elif above_sma20 and roc20 <= 0.0:
         grade = "WATCH"
     else:
         grade = "AVOID"
@@ -95,6 +84,7 @@ def grade_sector_etf(etf_daily: pd.DataFrame) -> dict:
         "grade": grade,
         "roc20": round(roc20, 2),
         "roc5": round(roc5, 2),
+        "divergence": round(divergence, 2),
         "above_sma20": above_sma20,
         "sh": GRADE_TO_SH[grade],
     }

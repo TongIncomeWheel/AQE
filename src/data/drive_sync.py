@@ -56,40 +56,72 @@ def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
     return "; ".join(parts) if parts else ""
 
 
-def _build_srm_table() -> list[dict]:
-    """SRM grade + 10-day SH/grade trend for every GICS sector (tabulated).
+def _build_srm_gics() -> tuple[list[dict], dict]:
+    """Full 11-sector SRM grading with trend data.
 
-    Recomputed from the cached price panel so the committee sees a trend, not
-    a one-day snapshot. One row per sector, sorted DEPLOY -> AVOID.
+    Returns (srm_gics_array, srm_signals_dict).
+    srm_gics: one row per sector (sorted DEPLOY→AVOID) with grade, sh_value,
+              roc20, roc5, divergence, above_sma20, sh_trend, grade_trend.
+    srm_signals: {deploy, hold, turning, watch, avoid, blocked} ETF lists.
     """
     import pandas as pd
     from src.data.paths import PANEL_DAILY as panel_path
 
+    empty_signals = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
+
     if not panel_path.exists():
-        return []
+        return [], empty_signals
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "close"])
     panel = panel[panel["ticker"].isin(GICS_ETFS)]
     if panel.empty:
-        return []
+        return [], empty_signals
 
     graded = grade_all_sectors(panel, trend_days=10)
     grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
-    rows = [
-        {
-            "etf": etf,
-            "sector": ETF_TO_NAME.get(etf, etf),
-            "grade": info.get("grade", "WATCH"),
-            "sh": info.get("sh", 0),
-            "roc20": info.get("roc20", 0.0),
-            "roc5": info.get("roc5", 0.0),
-            "above_sma20": info.get("above_sma20", False),
-            "sh_trend": info.get("sh_trend", []),
-            "grade_trend": info.get("grade_trend", []),
-        }
-        for etf, info in graded.items()
-    ]
+
+    # Ensure all 11 sectors present (NO_DATA fallback for missing)
+    rows = []
+    for etf in GICS_ETFS:
+        if etf in graded:
+            info = graded[etf]
+            rows.append({
+                "etf": etf,
+                "sector": ETF_TO_NAME.get(etf, etf),
+                "grade": info.get("grade", "WATCH"),
+                "sh_value": info.get("sh", 0),
+                "roc20": info.get("roc20", 0.0),
+                "roc5": info.get("roc5", 0.0),
+                "divergence": info.get("divergence", 0.0),
+                "above_sma20": info.get("above_sma20", False),
+                "sh_trend": info.get("sh_trend", []),
+                "grade_trend": info.get("grade_trend", []),
+            })
+        else:
+            rows.append({
+                "etf": etf,
+                "sector": ETF_TO_NAME.get(etf, etf),
+                "grade": "NO_DATA",
+                "sh_value": -5,
+                "roc20": 0.0,
+                "roc5": 0.0,
+                "divergence": 0.0,
+                "above_sma20": False,
+                "sh_trend": [],
+                "grade_trend": [],
+            })
+
     rows.sort(key=lambda r: grade_order.get(r["grade"], 3))
-    return rows
+
+    # Build srm_signals summary
+    signals: dict[str, list[str]] = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
+    for r in rows:
+        g = r["grade"].lower()
+        if g in signals:
+            signals[g].append(r["etf"])
+        if g == "avoid" or g == "no_data":
+            signals["blocked"].append(r["etf"])
+
+    return rows, signals
 
 
 def build_export(shortlist: dict | None = None) -> dict:
@@ -107,14 +139,21 @@ def build_export(shortlist: dict | None = None) -> dict:
     sl = shortlist
     sgt = ZoneInfo("Asia/Singapore")
     now_sgt = datetime.now(sgt)
+
+    # Full 11-sector SRM grading (spec §2)
+    srm_gics, srm_signals = _build_srm_gics()
+
     export: dict = {
         "date": sl.get("date", ""),
         "exported_at": now_sgt.strftime("%Y-%m-%d %H:%M:%S SGT"),
         "market": "US equities — close-of-day scan",
         "regime": sl.get("regime", {}),
-        "srm_deploy": sl.get("srm_summary", {}).get("DEPLOY", []),
-        "srm_avoid": sl.get("srm_summary", {}).get("AVOID", []),
-        "srm": _build_srm_table(),
+        # Full SRM schema — canonical source for sector grading
+        "srm_gics": srm_gics,
+        "srm_signals": srm_signals,
+        # Backward compat — derived from computed grades, not shortlist.json
+        "srm_deploy": srm_signals.get("deploy", []),
+        "srm_avoid": srm_signals.get("avoid", []),
         "top_picks": [],
         "edge_list": [],
         "longlist": [],
@@ -165,7 +204,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         })
 
     # PTRS = SC_MOM + SH (sector only). Regime handles VIX sizing separately.
-    sector_grades = sl.get("srm_detail", {})
+    # Build sector_grades dict from freshly computed srm_gics (not shortlist.json)
+    sector_grades = {r["etf"]: {"grade": r["grade"], "sh": r["sh_value"]} for r in srm_gics} if srm_gics else sl.get("srm_detail", {})
 
     def _ptrs(sc_mom, ticker):
         sh = get_sector_health(ticker, sector_grades)
