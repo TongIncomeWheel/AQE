@@ -1,11 +1,14 @@
-"""Google Drive sync — export daily outputs to local Drive mount.
+"""Google Drive sync — export the daily scan to one AQE folder.
 
-Three target directories under G:\\My Drive\\Trading Strategy\\:
-  AQE/                    → aqe_daily_export.json (scores, longlist, watchlist)
-  SRM Daily/              → aegis_srm_snapshot_{date}.json (sector grading)
-  AEGIS Trade Journal/    → aegis_trade_journal_{date} (positions + pipeline)
+Single target directory under G:\\My Drive\\Trading Strategy\\:
+  AQE/  → aqe_daily_export.json  (scan + SRM combined, overwritten each run)
 
-The AIC (Aegis Investment Committee) reads all three for daily analysis.
+The committee reads this one file. SRM grading is embedded as the export's
+`srm` / `srm_gics` / `srm_signals` sections, so there is no separate SRM file.
+The pre-trade journal (open positions, closed trades) is written to the local
+OUTPUT_DIR only — it is intentionally NOT published to Drive.
+
+Each run overwrites the same filename so the Drive folder never clutters.
 Google Drive for Desktop syncs automatically to cloud.
 """
 
@@ -25,16 +28,12 @@ from src.scanner.levels import load_elder_history, load_trade_levels
 
 from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 
-# --- Drive directories (local mount paths) ---
+# --- Drive directory (local mount path) — single AQE folder ---
 DRIVE_ROOT = Path(r"G:\My Drive\Trading Strategy")
 DRIVE_EXPORT_DIR = DRIVE_ROOT / "AQE"
-DRIVE_SRM_DIR = DRIVE_ROOT / "SRM Daily"
-DRIVE_PTJ_DIR = DRIVE_ROOT / "AEGIS Trade Journal"
 
-# --- Drive paths for cloud REST API (relative to My Drive root) ---
+# --- Drive path for cloud REST API (relative to My Drive root) ---
 CLOUD_AQE_PATH = "Trading Strategy/AQE"
-CLOUD_SRM_PATH = "Trading Strategy/SRM Daily"
-CLOUD_PTJ_PATH = "Trading Strategy/AEGIS Trade Journal"
 
 EXPORT_FILENAME = "aqe_daily_export.json"
 
@@ -163,7 +162,10 @@ def build_export(shortlist: dict | None = None) -> dict:
         "exported_at": now_sgt.strftime("%Y-%m-%d %H:%M:%S SGT"),
         "market": "US equities — close-of-day scan",
         "regime": sl.get("regime", {}),
-        # Full SRM schema — canonical source for sector grading
+        # Full SRM schema — combined into this one file (no separate SRM file).
+        # `srm` is the list the AIC reader + protocols consume; `srm_gics` is
+        # kept as an alias for existing callers.
+        "srm": srm_gics,
         "srm_gics": srm_gics,
         "srm_signals": srm_signals,
         # Backward compat — derived from computed grades, not shortlist.json
@@ -492,25 +494,11 @@ def build_export(shortlist: dict | None = None) -> dict:
     return export
 
 
-def _build_srm_snapshot(srm_gics: list[dict], date_str: str) -> dict:
-    """Build standalone SRM snapshot for the SRM Daily directory.
-
-    Matches the format the AIC reads:
-    {snapshot_date, generated_at, gics_floor: [...]}
-    """
-    sgt = ZoneInfo("Asia/Singapore")
-    return {
-        "snapshot_date": date_str,
-        "generated_at": datetime.now(sgt).strftime("%Y-%m-%dT%H:%M:%S SGT"),
-        "gics_floor": srm_gics,
-    }
-
-
 def _build_ptj(export: dict, date_str: str) -> dict:
-    """Build the Pre-Trade Journal for the AEGIS Trade Journal directory.
+    """Build the Pre-Trade Journal (local-only artifact).
 
     Combines AQE pipeline data (positions, regime, sector health) with the
-    scored lists so the AIC has a single consolidated file for daily reads.
+    scored lists. Written to the local OUTPUT_DIR only — not published to Drive.
     Manual PM notes are NOT included — the PM appends them via Claude.
     """
     from src.pipeline.position_tracker import load_positions, load_closed
@@ -628,17 +616,19 @@ def _upload_file(filename: str, content: str, folder_path: str) -> dict:
 
 
 def export_to_drive(shortlist: dict | None = None) -> dict:
-    """Build export JSON and publish to all three Drive directories.
+    """Build the combined export JSON and publish it to the AQE Drive folder.
 
-    Publishes:
-      1. AQE/aqe_daily_export.json — full scored lists
-      2. SRM Daily/aegis_srm_snapshot_{date}.json — sector grading
-      3. AEGIS Trade Journal/aegis_trade_journal_{date} — positions + pipeline
+    Publishes ONE file, overwriting it each run so the folder never clutters:
+      AQE/aqe_daily_export.json — scan + SRM combined (the committee's read)
 
-    Each file is written via three paths:
+    written via:
       - Local OUTPUT_DIR (always)
-      - Local Drive mount G:\\My Drive\\... (if present)
+      - Local Drive mount G:\\My Drive\\Trading Strategy\\AQE (if present)
       - Drive REST API (if OAuth configured)
+
+    The pre-trade journal (positions) is written to the local OUTPUT_DIR only —
+    it is intentionally NOT published to Drive. The old SRM Daily and AEGIS
+    Trade Journal folders are no longer written.
 
     Returns dict with status and per-file results.
     """
@@ -647,7 +637,6 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
         return {"status": "skipped", "reason": "No shortlist data"}
 
     date_str = export.get("date", "unknown")
-    sgt = ZoneInfo("Asia/Singapore")
     written: list[str] = []
     drive_results: list[dict] = []
 
@@ -667,53 +656,18 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     if r.get("ok"):
         written.append(f"gdrive:AQE/{EXPORT_FILENAME}")
 
-    # ---- 2. SRM snapshot ----
-    srm_gics = export.get("srm_gics", [])
-    if srm_gics:
-        srm_snapshot = _build_srm_snapshot(srm_gics, date_str)
-        srm_filename = f"aegis_srm_snapshot_{date_str}.json"
-        srm_content = json.dumps(srm_snapshot, indent=2)
-
-        # Local output
-        srm_local = OUTPUT_DIR / srm_filename
-        if srm_local.exists():
-            srm_local.unlink()
-        srm_local.write_text(srm_content, encoding="utf-8")
-        written.append(str(srm_local))
-
-        # Drive mount
-        result = _write_file(DRIVE_SRM_DIR, srm_filename, srm_content)
-        if result:
-            written.append(result)
-
-        # Drive REST API
-        r = _upload_file(srm_filename, srm_content, CLOUD_SRM_PATH)
-        drive_results.append({"file": srm_filename, "target": "SRM Daily", **r})
-        if r.get("ok"):
-            written.append(f"gdrive:SRM Daily/{srm_filename}")
-
-    # ---- 3. PTJ (Pre-Trade Journal) ----
+    # ---- 2. Pre-Trade Journal — LOCAL ONLY (never published to Drive) ----
+    # Positions/closed trades stay on the local machine. The old SRM Daily and
+    # AEGIS Trade Journal Drive folders are no longer written; SRM grading now
+    # rides inside the combined AQE export above.
     ptj = _build_ptj(export, date_str)
     ptj_filename = f"aegis_trade_journal_{date_str}"
     ptj_content = json.dumps(ptj, indent=2)
-
-    # Local output
     ptj_local = OUTPUT_DIR / ptj_filename
     if ptj_local.exists():
         ptj_local.unlink()
     ptj_local.write_text(ptj_content, encoding="utf-8")
     written.append(str(ptj_local))
-
-    # Drive mount
-    result = _write_file(DRIVE_PTJ_DIR, ptj_filename, ptj_content)
-    if result:
-        written.append(result)
-
-    # Drive REST API
-    r = _upload_file(ptj_filename, ptj_content, CLOUD_PTJ_PATH)
-    drive_results.append({"file": ptj_filename, "target": "AEGIS Trade Journal", **r})
-    if r.get("ok"):
-        written.append(f"gdrive:AEGIS Trade Journal/{ptj_filename}")
 
     # Status: ok if anything beyond local OUTPUT_DIR was written
     drive_written = [w for w in written if "G:\\" in w or "gdrive:" in w]

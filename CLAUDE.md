@@ -81,13 +81,20 @@ Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Precision Edge, longlis
 - `_rank_explain()` — 1-liner ranking explanation
 
 ### Drive export (`src/data/drive_sync.py`)
-JSON export to Google Drive for committee consumption. Contains:
+ONE combined JSON for committee consumption — `aqe_daily_export.json` in a single
+`AQE/` folder, overwritten every run (no date-stamped clutter). Contains:
 - `top_picks` (PTRS-ranked shortlist), `edge_list` (Precision Edge), `longlist`, `watchlist`
 - Every ticker tagged with: `source` (longlist/watchlist), `pe` (bool), `on_longlist` (bool)
 - DSL fields: `dsl_stop`, `dsl_risk`, `dsl_tp_2r`, `dsl_shares`, `dsl_rr_pct`
 - `beta_60d`, `rank_explain` per ticker
-- `exported_at` (SGT timestamp), `market`, `regime`, `srm_deploy`, `srm_avoid`
-- Erase-then-write to both `output/` and `G:\My Drive\Trading Strategy\AQE\`
+- `exported_at` (SGT timestamp), `market`, `regime`
+- **SRM is combined in-file** (no separate SRM file): `srm` (list the AIC reader +
+  protocols consume), plus `srm_gics`/`srm_signals`/`srm_deploy`/`srm_avoid` aliases
+- Erase-then-write to `output/`, the `G:\My Drive\Trading Strategy\AQE\` mount, and
+  the Drive REST API (cloud) — all the same single filename
+- **Trade journal is local-only:** `aegis_trade_journal_{date}` is written to `output/`
+  and NOT published to Drive. The old `SRM Daily/` and `AEGIS Trade Journal/` Drive
+  folders are no longer written.
 
 ### Active recipe thresholds
 Longlist: SC >= 75, Flow >= 80, Energy >= 64, Structure >= 60, MP >= 60, Elder >= 7, Phase = ANY
