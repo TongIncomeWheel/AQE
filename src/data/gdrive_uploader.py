@@ -87,12 +87,18 @@ def is_libs_installed() -> bool:
 # ---------------------------------------------------------------------------
 
 def upload_or_replace(filename: str, content: str | bytes,
-                      mime: str = "application/json") -> dict[str, Any]:
-    """Upload `content` to the configured Drive folder as `filename`.
+                      mime: str = "application/json",
+                      folder_path: str | None = None) -> dict[str, Any]:
+    """Upload `content` to a Drive folder as `filename`.
 
     If a file with that name already exists in the folder, REPLACE it in
     place (same file ID, so downstream consumers don't get a broken link
     on every export).
+
+    folder_path -- optional override. When provided, resolves this path
+        (e.g. "Trading Strategy/SRM Daily") instead of the env-configured
+        GDRIVE_FOLDER_PATH. This lets a single OAuth config push files to
+        multiple sibling Drive folders.
 
     Returns a dict:
       {"ok": True, "file_id": "...", "filename": "...", "replaced": bool}
@@ -109,10 +115,23 @@ def upload_or_replace(filename: str, content: str | bytes,
 
     try:
         service = _build_service(cfg)
-        folder_id = _resolve_folder_id(service, cfg)
-        if not folder_id:
-            return {"ok": False, "reason":
-                    f"Drive folder not found (path={cfg.folder_path!r})"}
+
+        # Resolve folder — override path wins, then configured path/id
+        if folder_path:
+            override_cfg = DriveConfig(
+                client_id=cfg.client_id, client_secret=cfg.client_secret,
+                refresh_token=cfg.refresh_token,
+                folder_id=None, folder_path=folder_path,
+            )
+            folder_id = _resolve_folder_id(service, override_cfg)
+            if not folder_id:
+                return {"ok": False, "reason":
+                        f"Drive folder not found (path={folder_path!r})"}
+        else:
+            folder_id = _resolve_folder_id(service, cfg)
+            if not folder_id:
+                return {"ok": False, "reason":
+                        f"Drive folder not found (path={cfg.folder_path!r})"}
 
         existing = _find_file(service, folder_id, filename)
         body = content if isinstance(content, (bytes, bytearray)) else content.encode("utf-8")

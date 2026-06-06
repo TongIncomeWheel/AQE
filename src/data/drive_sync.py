@@ -1,14 +1,19 @@
 """Google Drive sync — export daily outputs to local Drive mount.
 
-Writes aqe_daily_export.json to G:\\My Drive\\Trading Strategy\\AQE\\
-(Google Drive for Desktop syncs automatically to cloud).
+Three target directories under G:\\My Drive\\Trading Strategy\\:
+  AQE/                    → aqe_daily_export.json (scores, longlist, watchlist)
+  SRM Daily/              → aegis_srm_snapshot_{date}.json (sector grading)
+  AEGIS Trade Journal/    → aegis_trade_journal_{date} (positions + pipeline)
+
+The AIC (Aegis Investment Committee) reads all three for daily analysis.
+Google Drive for Desktop syncs automatically to cloud.
 """
 
 from __future__ import annotations
 
 import json
 import shutil
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -20,7 +25,17 @@ from src.scanner.levels import load_elder_history, load_trade_levels
 
 from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 
-DRIVE_EXPORT_DIR = Path(r"G:\My Drive\Trading Strategy\AQE")
+# --- Drive directories (local mount paths) ---
+DRIVE_ROOT = Path(r"G:\My Drive\Trading Strategy")
+DRIVE_EXPORT_DIR = DRIVE_ROOT / "AQE"
+DRIVE_SRM_DIR = DRIVE_ROOT / "SRM Daily"
+DRIVE_PTJ_DIR = DRIVE_ROOT / "AEGIS Trade Journal"
+
+# --- Drive paths for cloud REST API (relative to My Drive root) ---
+CLOUD_AQE_PATH = "Trading Strategy/AQE"
+CLOUD_SRM_PATH = "Trading Strategy/SRM Daily"
+CLOUD_PTJ_PATH = "Trading Strategy/AEGIS Trade Journal"
+
 EXPORT_FILENAME = "aqe_daily_export.json"
 
 
@@ -477,74 +492,238 @@ def build_export(shortlist: dict | None = None) -> dict:
     return export
 
 
+def _build_srm_snapshot(srm_gics: list[dict], date_str: str) -> dict:
+    """Build standalone SRM snapshot for the SRM Daily directory.
+
+    Matches the format the AIC reads:
+    {snapshot_date, generated_at, gics_floor: [...]}
+    """
+    sgt = ZoneInfo("Asia/Singapore")
+    return {
+        "snapshot_date": date_str,
+        "generated_at": datetime.now(sgt).strftime("%Y-%m-%dT%H:%M:%S SGT"),
+        "gics_floor": srm_gics,
+    }
+
+
+def _build_ptj(export: dict, date_str: str) -> dict:
+    """Build the Pre-Trade Journal for the AEGIS Trade Journal directory.
+
+    Combines AQE pipeline data (positions, regime, sector health) with the
+    scored lists so the AIC has a single consolidated file for daily reads.
+    Manual PM notes are NOT included — the PM appends them via Claude.
+    """
+    from src.pipeline.position_tracker import load_positions, load_closed
+
+    sgt = ZoneInfo("Asia/Singapore")
+    regime = export.get("regime", {})
+    positions = load_positions()
+    closed = load_closed()
+
+    # Build open positions with latest AQE data
+    open_pos = []
+    # Quick lookup for longlist/watchlist tickers for sector + scores
+    ticker_data: dict[str, dict] = {}
+    for tier in ("top_picks", "edge_list", "longlist", "watchlist"):
+        for rec in export.get(tier, []):
+            ticker_data.setdefault(rec["ticker"], rec)
+
+    for p in positions:
+        tk = p["ticker"]
+        td = ticker_data.get(tk, {})
+        open_pos.append({
+            "ticker": tk,
+            "qty": p.get("shares", 0),
+            "entry": p.get("entry_price", 0),
+            "close": p.get("last_close", p.get("entry_price", 0)),
+            "sl": p.get("current_stop", 0),
+            "tier": p.get("current_tier", 1),
+            "current_r": p.get("current_r", 0),
+            "pnl_usd": p.get("pnl_dollars", 0),
+            "days_held": p.get("days_held", 0),
+            "be_triggered": p.get("be_triggered", False),
+            "flow": td.get("flow", p.get("current_flow", 0)),
+            "tp_warning": p.get("tp_warning", False),
+            "alerts": p.get("alerts", []),
+            "entry_date": p.get("entry_date", ""),
+        })
+
+    # Recent closed trades (last 30 days)
+    recent_closed = []
+    cutoff = str((datetime.now(sgt) - __import__("datetime").timedelta(days=30)).date())
+    for c in closed:
+        if c.get("exit_date", "") >= cutoff:
+            recent_closed.append({
+                "ticker": c.get("ticker"),
+                "entry": c.get("entry_price"),
+                "exit": c.get("exit_price"),
+                "exit_date": c.get("exit_date"),
+                "final_r": c.get("final_r", 0),
+                "pnl_usd": round(
+                    (c.get("exit_price", 0) - c.get("entry_price", 0))
+                    * c.get("shares", 0), 2
+                ) if c.get("exit_price") and c.get("entry_price") else 0,
+                "exit_reason": c.get("exit_reason", ""),
+            })
+
+    total_unrealised = sum(p.get("pnl_usd") or 0 for p in open_pos)
+    total_realised_30d = sum(c.get("pnl_usd") or 0 for c in recent_closed)
+
+    return {
+        "version": "2.1-auto",
+        "snapshot_date": date_str,
+        "generated_at": datetime.now(sgt).strftime("%Y-%m-%d %H:%M:%S SGT"),
+        "regime": {
+            "level": regime.get("level", ""),
+            "vix": regime.get("vix"),
+            "hurst": regime.get("hurst"),
+            "max_new_size": regime.get("max_new_size", ""),
+        },
+        "capital": {
+            "base": 70_000,
+            "risk_pct": 0.03,
+            "risk_budget": 2100,
+        },
+        "open_positions": open_pos,
+        "closed_trades_30d": recent_closed,
+        "pipeline_top_picks": [
+            {"ticker": r["ticker"], "sc_momentum": r["sc_momentum"],
+             "ptrs": r["ptrs"], "disposition": r.get("disposition", "")}
+            for r in export.get("top_picks", [])
+        ],
+        "srm_signals": export.get("srm_signals", {}),
+        "metrics": {
+            "open_count": len(open_pos),
+            "open_unrealised": round(total_unrealised, 2),
+            "closed_30d_count": len(recent_closed),
+            "realised_30d": round(total_realised_30d, 2),
+        },
+        "summary": export.get("summary", {}),
+    }
+
+
+def _write_file(directory: Path, filename: str, content: str) -> str | None:
+    """Write a file to a local directory. Returns path or None if dir missing."""
+    if not directory.exists():
+        return None
+    path = directory / filename
+    if path.exists():
+        path.unlink()
+    path.write_text(content, encoding="utf-8")
+    return str(path)
+
+
+def _upload_file(filename: str, content: str, folder_path: str) -> dict:
+    """Upload via Drive REST API. Returns result dict."""
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            return gdrive_uploader.upload_or_replace(
+                filename, content, mime="application/json",
+                folder_path=folder_path,
+            )
+        return {"ok": False, "reason": "not configured"}
+    except Exception as exc:                                                    # noqa: BLE001
+        return {"ok": False, "reason": f"uploader error: {exc}"}
+
+
 def export_to_drive(shortlist: dict | None = None) -> dict:
-    """Build export JSON and publish it.
+    """Build export JSON and publish to all three Drive directories.
 
-    Three publishing paths, in order of preference:
-      1. ALWAYS: write the JSON to the local OUTPUT_DIR so the rest of AQE
-         can read it (Scanner, Math Lab, AIC, etc.).
-      2. IF G:\\My Drive\\... is mounted (local Windows PC with Google Drive
-         Desktop), write the JSON to that mount -- Drive sync handles the
-         upload automatically.
-      3. IF the Google Drive OAuth env vars are set (HF / Streamlit Cloud /
-         any Linux container), upload via the Drive REST API. Same target
-         folder by name as the desktop sync uses.
+    Publishes:
+      1. AQE/aqe_daily_export.json — full scored lists
+      2. SRM Daily/aegis_srm_snapshot_{date}.json — sector grading
+      3. AEGIS Trade Journal/aegis_trade_journal_{date} — positions + pipeline
 
-    Paths 2 and 3 are independent and both can run on the same call -- the
-    local PC could push to both its local mount AND the cloud Drive folder
-    if the user wants that.
+    Each file is written via three paths:
+      - Local OUTPUT_DIR (always)
+      - Local Drive mount G:\\My Drive\\... (if present)
+      - Drive REST API (if OAuth configured)
 
-    Returns dict with status, the local + remote paths/file_ids touched, and
-    a `reason` string when something didn't run.
+    Returns dict with status and per-file results.
     """
     export = build_export(shortlist)
     if not export:
         return {"status": "skipped", "reason": "No shortlist data"}
 
     date_str = export.get("date", "unknown")
-    content = json.dumps(export, indent=2)
+    sgt = ZoneInfo("Asia/Singapore")
     written: list[str] = []
     drive_results: list[dict] = []
 
-    # Path 1: Always write locally — erase then write for clean overwrite
-    local_path = OUTPUT_DIR / EXPORT_FILENAME
-    if local_path.exists():
-        local_path.unlink()
-    local_path.write_text(content, encoding="utf-8")
-    written.append(str(local_path))
+    # ---- 1. AQE export ----
+    aqe_content = json.dumps(export, indent=2)
+    local_aqe = OUTPUT_DIR / EXPORT_FILENAME
+    if local_aqe.exists():
+        local_aqe.unlink()
+    local_aqe.write_text(aqe_content, encoding="utf-8")
+    written.append(str(local_aqe))
 
-    # Path 2: Local Drive mount (Windows PC only)
-    if DRIVE_EXPORT_DIR.exists():
-        drive_path = DRIVE_EXPORT_DIR / EXPORT_FILENAME
-        if drive_path.exists():
-            drive_path.unlink()
-        drive_path.write_text(content, encoding="utf-8")
-        written.append(str(drive_path))
+    result = _write_file(DRIVE_EXPORT_DIR, EXPORT_FILENAME, aqe_content)
+    if result:
+        written.append(result)
+    r = _upload_file(EXPORT_FILENAME, aqe_content, CLOUD_AQE_PATH)
+    drive_results.append({"file": EXPORT_FILENAME, "target": "AQE", **r})
+    if r.get("ok"):
+        written.append(f"gdrive:AQE/{EXPORT_FILENAME}")
 
-    # Path 3: Drive REST API (cloud-friendly)
-    try:
-        from src.data import gdrive_uploader
-        if gdrive_uploader.is_configured():
-            result = gdrive_uploader.upload_or_replace(
-                EXPORT_FILENAME, content, mime="application/json",
-            )
-            drive_results.append(result)
-            if result.get("ok"):
-                written.append(f"gdrive:{result.get('file_id', '?')}")
-    except Exception as exc:                                                    # noqa: BLE001
-        drive_results.append({"ok": False, "reason": f"uploader error: {exc}"})
+    # ---- 2. SRM snapshot ----
+    srm_gics = export.get("srm_gics", [])
+    if srm_gics:
+        srm_snapshot = _build_srm_snapshot(srm_gics, date_str)
+        srm_filename = f"aegis_srm_snapshot_{date_str}.json"
+        srm_content = json.dumps(srm_snapshot, indent=2)
 
-    # Status: ok if anything beyond the local file was written
-    status = "ok" if len(written) > 1 else "partial"
+        # Local output
+        srm_local = OUTPUT_DIR / srm_filename
+        if srm_local.exists():
+            srm_local.unlink()
+        srm_local.write_text(srm_content, encoding="utf-8")
+        written.append(str(srm_local))
+
+        # Drive mount
+        result = _write_file(DRIVE_SRM_DIR, srm_filename, srm_content)
+        if result:
+            written.append(result)
+
+        # Drive REST API
+        r = _upload_file(srm_filename, srm_content, CLOUD_SRM_PATH)
+        drive_results.append({"file": srm_filename, "target": "SRM Daily", **r})
+        if r.get("ok"):
+            written.append(f"gdrive:SRM Daily/{srm_filename}")
+
+    # ---- 3. PTJ (Pre-Trade Journal) ----
+    ptj = _build_ptj(export, date_str)
+    ptj_filename = f"aegis_trade_journal_{date_str}"
+    ptj_content = json.dumps(ptj, indent=2)
+
+    # Local output
+    ptj_local = OUTPUT_DIR / ptj_filename
+    if ptj_local.exists():
+        ptj_local.unlink()
+    ptj_local.write_text(ptj_content, encoding="utf-8")
+    written.append(str(ptj_local))
+
+    # Drive mount
+    result = _write_file(DRIVE_PTJ_DIR, ptj_filename, ptj_content)
+    if result:
+        written.append(result)
+
+    # Drive REST API
+    r = _upload_file(ptj_filename, ptj_content, CLOUD_PTJ_PATH)
+    drive_results.append({"file": ptj_filename, "target": "AEGIS Trade Journal", **r})
+    if r.get("ok"):
+        written.append(f"gdrive:AEGIS Trade Journal/{ptj_filename}")
+
+    # Status: ok if anything beyond local OUTPUT_DIR was written
+    drive_written = [w for w in written if "G:\\" in w or "gdrive:" in w]
+    status = "ok" if drive_written else "partial"
     reason = None
     if status == "partial":
-        if not DRIVE_EXPORT_DIR.exists():
-            reason = (
-                "Drive not published. Local mount not found at "
-                f"{DRIVE_EXPORT_DIR} and cloud OAuth env vars not set."
-            )
-        else:
-            reason = "Drive mount not found"
+        reason = (
+            "Drive not published. Local mount not found and "
+            "cloud OAuth env vars not set."
+        )
 
     return {
         "status": status,
