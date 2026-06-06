@@ -52,6 +52,19 @@ cache survives restarts forever; AQE auto-picks it up via `AQE_DATA_DIR`.
    - Name: `FMP_API_KEY`
    - Value: paste from your local `.env`.
    - Save.
+3b. **Set the write password (REQUIRED if the Space is Public)**:
+   - The Space's "Run daily pipeline" / "Rebuild" / "Export to Drive" buttons
+     write to your real Google Drive. On a public Space, anyone could click
+     them. Protect them with a password.
+   - **Settings → Variables and secrets → New secret**.
+   - Name: `AQE_WRITE_PASSWORD`
+   - Value: any password you choose.
+   - Save, then restart the Space.
+   - Effect: when this secret is present, the sidebar shows a **Write access**
+     box. Until you enter the password, every write/refresh button is disabled
+     and the Drive uploader refuses to write. Read-only viewing stays open for
+     the committee. Locally (no secret) nothing is gated — the PC works as
+     before.
 4. **(Optional) Enable persistent storage** if you want the cache to survive
    sleeps. **Settings → Variables and secrets → Persistent storage** → enable
    5 GB ($5/month). Then add two more *variables* (NOT secrets — variables

@@ -88,7 +88,8 @@ def is_libs_installed() -> bool:
 
 def upload_or_replace(filename: str, content: str | bytes,
                       mime: str = "application/json",
-                      folder_path: str | None = None) -> dict[str, Any]:
+                      folder_path: str | None = None,
+                      auth_token: str | None = None) -> dict[str, Any]:
     """Upload `content` to a Drive folder as `filename`.
 
     If a file with that name already exists in the folder, REPLACE it in
@@ -100,6 +101,10 @@ def upload_or_replace(filename: str, content: str | bytes,
         GDRIVE_FOLDER_PATH. This lets a single OAuth config push files to
         multiple sibling Drive folders.
 
+    auth_token -- write password forwarded from the UI. On the public Space
+        (AQE_WRITE_PASSWORD set) the write is refused unless this — or the
+        AQE_WRITE_TOKEN env var — matches. Locally it is ignored.
+
     Returns a dict:
       {"ok": True, "file_id": "...", "filename": "...", "replaced": bool}
       {"ok": False, "reason": "<short message>"}
@@ -107,6 +112,12 @@ def upload_or_replace(filename: str, content: str | bytes,
     Never raises. The caller is the daily orchestrator, which has to keep
     going even if Drive is broken.
     """
+    # Single authorization chokepoint: protect the public Space from writing
+    # to the user's real Google Drive without the password.
+    from src.data import write_guard
+    if not write_guard.is_write_authorized(auth_token):
+        return {"ok": False, "reason": "Drive write locked — password required"}
+
     if not _GOOGLE_LIBS_OK:
         return {"ok": False, "reason": "google-api-python-client not installed"}
     cfg = DriveConfig.from_env()

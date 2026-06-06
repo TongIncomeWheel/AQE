@@ -107,10 +107,21 @@ def load_json(filename: str) -> dict | list | None:
 
 # ---------- subprocess runner ----------
 
-def run_module_streaming(module: str, label: str, progress_placeholder, status_placeholder) -> int:
-    """Run `python -m <module>` and stream stdout to a Streamlit placeholder."""
+def run_module_streaming(module: str, label: str, progress_placeholder, status_placeholder,
+                         extra_env: dict | None = None) -> int:
+    """Run `python -m <module>` and stream stdout to a Streamlit placeholder.
+
+    extra_env -- optional env vars merged into the subprocess environment for
+        this run only (e.g. the AQE_WRITE_TOKEN that authorizes the pipeline's
+        Drive export on the public Space). Never mutates the parent process.
+    """
+    import os
     from datetime import datetime
     from zoneinfo import ZoneInfo
+
+    env = os.environ.copy()
+    if extra_env:
+        env.update({k: v for k, v in extra_env.items() if v is not None})
 
     proc = subprocess.Popen(
         [sys.executable, "-u", "-m", module],
@@ -119,6 +130,7 @@ def run_module_streaming(module: str, label: str, progress_placeholder, status_p
         stderr=subprocess.STDOUT,
         text=True,
         bufsize=1,
+        env=env,
     )
     buf: list[str] = []
     assert proc.stdout is not None

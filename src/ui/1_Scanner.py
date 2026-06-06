@@ -82,6 +82,41 @@ with st.sidebar:
     prog = st.empty()
     stat = st.empty()
 
+    # --- Write-access gate ----------------------------------------------------
+    # The Hugging Face Space is public. Protection turns ON automatically when
+    # the AQE_WRITE_PASSWORD secret is set, locking every action that can write
+    # to the user's Google Drive (or burn FMP quota) until the password is
+    # entered. Locally the secret is absent, so nothing is gated.
+    from src.data import write_guard
+
+    WRITE_PROTECTED = write_guard.is_protected()
+    if WRITE_PROTECTED:
+        st.markdown("### Write access")
+        if st.session_state.get("write_unlocked"):
+            st.success("🔓 Unlocked for this session")
+            if st.button("Lock again", use_container_width=True):
+                st.session_state.pop("write_unlocked", None)
+                st.session_state.pop("write_pw", None)
+                st.rerun()
+        else:
+            st.warning(
+                "🔒 Locked. Enter the password to run the pipeline, rebuild "
+                "data, or export to Google Drive."
+            )
+            _pw_try = st.text_input(
+                "Write password", type="password", key="write_pw_input"
+            )
+            if st.button("Unlock", type="primary", use_container_width=True):
+                if write_guard.verify(_pw_try):
+                    st.session_state["write_unlocked"] = True
+                    st.session_state["write_pw"] = _pw_try
+                    st.rerun()
+                else:
+                    st.error("Incorrect password.")
+    WRITE_UNLOCKED = (not WRITE_PROTECTED) or bool(
+        st.session_state.get("write_unlocked")
+    )
+
     if CLOUD_MODE:
         st.markdown("### Cloud mode")
         host_label = {"huggingface": "Hugging Face Space",
@@ -99,14 +134,18 @@ with st.sidebar:
         with st.expander("Cloud diagnostics", expanded=not FMP_KEY_SET):
             # Env vars AQE cares about
             env_rows = []
-            for key in ("FMP_API_KEY", "AQE_DATA_DIR", "AQE_OUTPUT_DIR",
-                        "ANTHROPIC_API_KEY",
+            for key in ("FMP_API_KEY", "AQE_WRITE_PASSWORD", "AQE_DATA_DIR",
+                        "AQE_OUTPUT_DIR", "ANTHROPIC_API_KEY",
                         "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET",
                         "GOOGLE_OAUTH_REFRESH_TOKEN",
                         "GDRIVE_FOLDER_ID", "GDRIVE_FOLDER_PATH"):
                 val = _os.environ.get(key)
                 if val:
-                    masked = (val[:4] + "..." + val[-4:]) if len(val) > 12 else "set"
+                    # Never reveal any part of the write password.
+                    if key == "AQE_WRITE_PASSWORD":
+                        masked = "set"
+                    else:
+                        masked = (val[:4] + "..." + val[-4:]) if len(val) > 12 else "set"
                     env_rows.append(("✅ " + key, masked))
                 else:
                     env_rows.append(("⚠️ " + key, "(not set)"))
@@ -184,18 +223,26 @@ with st.sidebar:
     pipeline_btn_label = "Run daily pipeline"
     if CLOUD_MODE and not (PANEL_DAILY.exists() and SCORES_DAILY.exists()):
         pipeline_btn_label = "Bootstrap + run daily pipeline (~2 min)"
+    # Token forwarded into the pipeline subprocess so its Drive export is
+    # authorized for this one run (never set on the parent process).
+    _write_env = (
+        {"AQE_WRITE_TOKEN": st.session_state.get("write_pw", "")}
+        if WRITE_PROTECTED else None
+    )
+
     if st.button(pipeline_btn_label, type="primary", use_container_width=True,
-                 disabled=(CLOUD_MODE and not FMP_KEY_SET)):
-        run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline", prog, stat)
+                 disabled=(CLOUD_MODE and not FMP_KEY_SET) or not WRITE_UNLOCKED):
+        run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline",
+                             prog, stat, extra_env=_write_env)
         st.rerun()
 
     with st.expander("Data Refresh", expanded=False):
         if st.button("Rebuild prices",
-                     disabled=(CLOUD_MODE and not FMP_KEY_SET)):
+                     disabled=(CLOUD_MODE and not FMP_KEY_SET) or not WRITE_UNLOCKED):
             run_module_streaming("src.data.panel_builder", "Panel builder", prog, stat)
             st.rerun()
 
-        if st.button("Rebuild scores"):
+        if st.button("Rebuild scores", disabled=not WRITE_UNLOCKED):
             run_module_streaming("src.scanner.score_runner", "Score runner", prog, stat)
             st.rerun()
 
@@ -206,7 +253,8 @@ with st.sidebar:
             help="CSV with a 'Symbol' column (e.g. TradingView screener export)",
         )
         if csv_file is not None:
-            if st.button("Apply universe", type="secondary", use_container_width=True):
+            if st.button("Apply universe", type="secondary", use_container_width=True,
+                         disabled=not WRITE_UNLOCKED):
                 from src.data.universe import upload_universe
 
                 result = upload_universe(csv_file)
@@ -217,10 +265,11 @@ with st.sidebar:
                 st.rerun()
 
     if not CLOUD_MODE:
-        if st.button("Export to Drive", use_container_width=True):
+        if st.button("Export to Drive", use_container_width=True,
+                     disabled=not WRITE_UNLOCKED):
             from src.data.drive_sync import export_to_drive
 
-            result = export_to_drive()
+            result = export_to_drive(auth_token=st.session_state.get("write_pw"))
             if result["status"] == "ok":
                 ts = result.get("exported_at", result["date"])
                 st.success(f"Exported to Drive — {ts}")
