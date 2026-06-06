@@ -245,26 +245,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     print(f"  Shortlist: {SHORTLIST_PATH}")
     print(f"  Dashboard: {DASHBOARD_PATH}")
 
-    # Step 8: Update open positions (trade management)
-    try:
-        from src.pipeline.position_tracker import update_all_positions, format_position_report
-        positions = update_all_positions(panel=panel, scores=None)
-        if positions:
-            print(f"[daily] Step 8: Position tracker — {len(positions)} open positions updated")
-            pos_report = format_position_report(positions)
-            # Append to dashboard
-            with open(DASHBOARD_PATH, "a", encoding="utf-8") as f:
-                f.write("\n\n" + pos_report)
-            # Check for alerts
-            for p in positions:
-                for alert in p.get("alerts", []):
-                    print(f"  !! {p['ticker']}: {alert}")
-        else:
-            print("[daily] Step 8: No open positions")
-    except Exception as exc:
-        print(f"  [WARN] Position tracker: {exc}")
-
-    # Step 9: Export to Google Drive
+    # Step 8: Export to Google Drive
     try:
         from src.data.drive_sync import export_to_drive
         drive_result = export_to_drive()

@@ -2,7 +2,6 @@
 
 Morning dashboard: regime context, sector health, Precision Edge signals,
 and aggregate longlist. Reads shortlist.json only.
-Open positions live on Page 3 (Position Manager).
 
 Launched via run_app.bat. No terminal interaction.
 """
@@ -864,8 +863,6 @@ else:
     else:
         st.warning("scores_daily.parquet not found. Rebuild scores first.")
 
-
-# Open positions live on Page 3 (Position Manager) — no duplication here.
 
 st.divider()
 

@@ -494,102 +494,6 @@ def build_export(shortlist: dict | None = None) -> dict:
     return export
 
 
-def _build_ptj(export: dict, date_str: str) -> dict:
-    """Build the Pre-Trade Journal (local-only artifact).
-
-    Combines AQE pipeline data (positions, regime, sector health) with the
-    scored lists. Written to the local OUTPUT_DIR only — not published to Drive.
-    Manual PM notes are NOT included — the PM appends them via Claude.
-    """
-    from src.pipeline.position_tracker import load_positions, load_closed
-
-    sgt = ZoneInfo("Asia/Singapore")
-    regime = export.get("regime", {})
-    positions = load_positions()
-    closed = load_closed()
-
-    # Build open positions with latest AQE data
-    open_pos = []
-    # Quick lookup for longlist/watchlist tickers for sector + scores
-    ticker_data: dict[str, dict] = {}
-    for tier in ("top_picks", "edge_list", "longlist", "watchlist"):
-        for rec in export.get(tier, []):
-            ticker_data.setdefault(rec["ticker"], rec)
-
-    for p in positions:
-        tk = p["ticker"]
-        td = ticker_data.get(tk, {})
-        open_pos.append({
-            "ticker": tk,
-            "qty": p.get("shares", 0),
-            "entry": p.get("entry_price", 0),
-            "close": p.get("last_close", p.get("entry_price", 0)),
-            "sl": p.get("current_stop", 0),
-            "tier": p.get("current_tier", 1),
-            "current_r": p.get("current_r", 0),
-            "pnl_usd": p.get("pnl_dollars", 0),
-            "days_held": p.get("days_held", 0),
-            "be_triggered": p.get("be_triggered", False),
-            "flow": td.get("flow", p.get("current_flow", 0)),
-            "tp_warning": p.get("tp_warning", False),
-            "alerts": p.get("alerts", []),
-            "entry_date": p.get("entry_date", ""),
-        })
-
-    # Recent closed trades (last 30 days)
-    recent_closed = []
-    cutoff = str((datetime.now(sgt) - __import__("datetime").timedelta(days=30)).date())
-    for c in closed:
-        if c.get("exit_date", "") >= cutoff:
-            recent_closed.append({
-                "ticker": c.get("ticker"),
-                "entry": c.get("entry_price"),
-                "exit": c.get("exit_price"),
-                "exit_date": c.get("exit_date"),
-                "final_r": c.get("final_r", 0),
-                "pnl_usd": round(
-                    (c.get("exit_price", 0) - c.get("entry_price", 0))
-                    * c.get("shares", 0), 2
-                ) if c.get("exit_price") and c.get("entry_price") else 0,
-                "exit_reason": c.get("exit_reason", ""),
-            })
-
-    total_unrealised = sum(p.get("pnl_usd") or 0 for p in open_pos)
-    total_realised_30d = sum(c.get("pnl_usd") or 0 for c in recent_closed)
-
-    return {
-        "version": "2.1-auto",
-        "snapshot_date": date_str,
-        "generated_at": datetime.now(sgt).strftime("%Y-%m-%d %H:%M:%S SGT"),
-        "regime": {
-            "level": regime.get("level", ""),
-            "vix": regime.get("vix"),
-            "hurst": regime.get("hurst"),
-            "max_new_size": regime.get("max_new_size", ""),
-        },
-        "capital": {
-            "base": 70_000,
-            "risk_pct": 0.03,
-            "risk_budget": 2100,
-        },
-        "open_positions": open_pos,
-        "closed_trades_30d": recent_closed,
-        "pipeline_top_picks": [
-            {"ticker": r["ticker"], "sc_momentum": r["sc_momentum"],
-             "ptrs": r["ptrs"], "disposition": r.get("disposition", "")}
-            for r in export.get("top_picks", [])
-        ],
-        "srm_signals": export.get("srm_signals", {}),
-        "metrics": {
-            "open_count": len(open_pos),
-            "open_unrealised": round(total_unrealised, 2),
-            "closed_30d_count": len(recent_closed),
-            "realised_30d": round(total_realised_30d, 2),
-        },
-        "summary": export.get("summary", {}),
-    }
-
-
 def _write_file(directory: Path, filename: str, content: str) -> str | None:
     """Write a file to a local directory. Returns path or None if dir missing."""
     if not directory.exists():
@@ -655,19 +559,6 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     drive_results.append({"file": EXPORT_FILENAME, "target": "AQE", **r})
     if r.get("ok"):
         written.append(f"gdrive:AQE/{EXPORT_FILENAME}")
-
-    # ---- 2. Pre-Trade Journal — LOCAL ONLY (never published to Drive) ----
-    # Positions/closed trades stay on the local machine. The old SRM Daily and
-    # AEGIS Trade Journal Drive folders are no longer written; SRM grading now
-    # rides inside the combined AQE export above.
-    ptj = _build_ptj(export, date_str)
-    ptj_filename = f"aegis_trade_journal_{date_str}"
-    ptj_content = json.dumps(ptj, indent=2)
-    ptj_local = OUTPUT_DIR / ptj_filename
-    if ptj_local.exists():
-        ptj_local.unlink()
-    ptj_local.write_text(ptj_content, encoding="utf-8")
-    written.append(str(ptj_local))
 
     # Status: ok if anything beyond local OUTPUT_DIR was written
     drive_written = [w for w in written if "G:\\" in w or "gdrive:" in w]

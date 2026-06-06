@@ -361,11 +361,9 @@ If you `import` something new that runs on cloud:
 
 ### What stays local-only (by design)
 
-- Your real `data/open_positions.json` — Position Manager only on desktop.
 - The full `data/scores_daily.parquet` (137 MB) — too big for git; cloud
   rebuilds it from FMP on demand.
-- AIC SQLite + Anthropic key — LLM committee runs locally unless you wire it.
-- The NiceGUI brief frontend (`src/aic/web/`) — separate process, not Streamlit.
+- The Scheduler page (Windows Task Scheduler) — desktop-only automation.
 
 ### Rollback
 

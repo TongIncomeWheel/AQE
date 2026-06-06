@@ -69,7 +69,7 @@ JOBS: list[Job] = [
         "Daily AQE Scan",
         "Full daily pipeline: incremental bar pull, Pipeline Rank screen, full "
         "scoring, SRM grading, regime, PTRS, recipe + Precision Edge screens, "
-        "position tracker, and Google Drive export.",
+        "and Google Drive export.",
         ("-m", "src.pipeline.daily_orchestrator"),
     ),
     Job(

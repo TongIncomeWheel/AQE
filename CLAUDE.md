@@ -2,7 +2,7 @@
 
 ## What this is
 
-Production daily scanner for US equities. Scores 600+ tickers nightly through 5 proprietary engines (Flow, Energy, Structure, MP, Elder Impulse), composites (SC_MOMENTUM, SC_POSITION), Pipeline Rank, and PTRS. Outputs a ranked shortlist, longlist, and watchlist with backtested DSL stops and take-profit levels. An LLM committee ("Aegis Committee") consumes the export JSON for downstream analysis.
+Production daily scanner for US equities. Scores 600+ tickers nightly through 5 proprietary engines (Flow, Energy, Structure, MP, Elder Impulse), composites (SC_MOMENTUM, SC_POSITION), Pipeline Rank, and PTRS. Outputs a ranked shortlist, longlist, and watchlist with backtested DSL stops and take-profit levels. The export JSON (`aqe_daily_export.json`) is the downstream read interface for future analysis layers (phase 2).
 
 **This is NOT a portfolio backtester.** It is a signal-accuracy and scoring system for real-money deployment.
 
@@ -70,7 +70,7 @@ Dynamic Stop Loss with R-tiered trailing + flow-based take-profit.
 - Both Scanner UI tables and Drive export show DSL-based stops (not the naive 2xATR).
 
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
-Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export -> position tracker update.
+Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export.
 
 ### Scanner UI (`src/ui/1_Scanner.py`)
 Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Precision Edge, longlist, watchlist).
@@ -88,8 +88,8 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
 - DSL fields: `dsl_stop`, `dsl_risk`, `dsl_tp_2r`, `dsl_shares`, `dsl_rr_pct`
 - `beta_60d`, `rank_explain` per ticker
 - `exported_at` (SGT timestamp), `market`, `regime`
-- **SRM is combined in-file** (no separate SRM file): `srm` (list the AIC reader +
-  protocols consume), plus `srm_gics`/`srm_signals`/`srm_deploy`/`srm_avoid` aliases
+- **SRM is combined in-file** (no separate SRM file): `srm` (canonical sector-grade
+  list for downstream readers), plus `srm_gics`/`srm_signals`/`srm_deploy`/`srm_avoid` aliases
 - Erase-then-write to `output/`, the `G:\My Drive\Trading Strategy\AQE\` mount, and
   the Drive REST API (cloud) — all the same single filename
 - **Trade journal is local-only:** `aegis_trade_journal_{date}` is written to `output/`
@@ -134,7 +134,6 @@ Either remote can be pushed to from any bash shell on this PC without an interac
 1. Edit code locally (any file under `src/`, `streamlit_app.py`, `Dockerfile`, etc.).
 2. Run a smoke test that matches the change:
    - Streamlit UI changes -> `python -c "from streamlit.testing.v1 import AppTest; print(AppTest.from_file('streamlit_app.py').run(timeout=60).exception)"`
-   - AIC layer changes -> `python -m src.aic.web.smoke_test`
    - Engine math changes -> targeted import + scalar check
 3. `git add` only the touched files (NEVER `git add .` without a staging audit -- AQE has real-money JSON that could leak).
 4. `git commit -m "..."` -- conventional message describing intent.
@@ -142,11 +141,11 @@ Either remote can be pushed to from any bash shell on this PC without an interac
 6. Surface to the user: GitHub commit URL + HuggingFace Space URL for UAT.
 
 ### When NOT to dual-push
-- `--no-hf` for changes that don't affect the cloud deploy (e.g. updates to AIC NiceGUI which doesn't run on HF, or scripts/ helpers).
+- `--no-hf` for changes that don't affect the cloud deploy (e.g. scripts/ helpers, local-only `.bat` files).
 - `--no-origin` for HF-only debugging (rare).
 
 ### What lives where after each push
-- **GitHub** = full source of truth, including DEPLOY.md, CLAUDE.md, the AIC docs, and the committed export JSON
+- **GitHub** = full source of truth, including DEPLOY.md, CLAUDE.md, and the committed export JSON
 - **HuggingFace** = Docker image built from the same source; runtime parquets live in the container's `/data` (ephemeral) or `AQE_DATA_DIR` (if persistent storage is enabled)
 
 ### Credential security posture
@@ -154,7 +153,6 @@ Either remote can be pushed to from any bash shell on this PC without an interac
 - HF secret store holds the cloud copy of `FMP_API_KEY`. Set once in the HF UI; Docker injects it into the container env at start.
 - **`AQE_APP_PASSWORD`** (HF secret) password-gates the whole app at the front door on the public Space. When set, every page calls `require_login()` (in `src/ui/shared.py`) and halts with a sign-in form until authenticated; auth is per browser session, shared across pages. Unset locally → app opens with no friction. This gate is UI-only and deliberately does NOT touch the Drive write path, so the scheduled 9am `daily_orchestrator` run writes to Drive unattended.
 - HF access tokens live in `~/.cache/huggingface/token` (file-permission protected) and Windows Credential Manager. If a token is ever leaked, rotate at <https://huggingface.co/settings/tokens>.
-- `src/aic/config/credentials.py` (Anthropic, Telegram, etc.) is gitignored. Cloud doesn't need these unless AIC LLM features are explicitly enabled.
 
 ### Reference scripts
 - `push_both.bat` -- dual-push helper
