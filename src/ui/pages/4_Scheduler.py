@@ -20,6 +20,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from src.ui.shared import require_login
+
+# Password gate — halts with a sign-in form until authenticated (public Space).
+require_login()
+
 from src.pipeline import scheduler as sch
 
 st.title("Scheduler")

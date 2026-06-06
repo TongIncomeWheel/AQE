@@ -39,10 +39,15 @@ from src.ui.shared import (
     is_cloud_mode,
     load_active_recipe,
     load_json,
+    require_login,
     run_module_streaming,
     fmt_pct,
     fmt_num,
 )
+
+# Password gate — halts with a sign-in form until authenticated (public Space).
+require_login()
+
 from src.data.panel_builder import PANEL_DAILY, SPY_DAILY
 from src.scanner.score_runner import SCORES_DAILY
 

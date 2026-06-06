@@ -145,7 +145,7 @@ Either remote can be pushed to from any bash shell on this PC without an interac
 ### Credential security posture
 - `.env` is gitignored. The local FMP key never leaves the PC via git.
 - HF secret store holds the cloud copy of `FMP_API_KEY`. Set once in the HF UI; Docker injects it into the container env at start.
-- **`AQE_WRITE_PASSWORD`** (HF secret) gates all write actions on the public Space. When set, the sidebar "Write access" box must be unlocked before the pipeline, data rebuilds, or Drive export run; `src/data/write_guard.py` is the single chokepoint and the Drive uploader refuses unauthorized writes. Unset locally → no gating.
+- **`AQE_APP_PASSWORD`** (HF secret) password-gates the whole app at the front door on the public Space. When set, every page calls `require_login()` (in `src/ui/shared.py`) and halts with a sign-in form until authenticated; auth is per browser session, shared across pages. Unset locally → app opens with no friction. This gate is UI-only and deliberately does NOT touch the Drive write path, so the scheduled 9am `daily_orchestrator` run writes to Drive unattended.
 - HF access tokens live in `~/.cache/huggingface/token` (file-permission protected) and Windows Credential Manager. If a token is ever leaked, rotate at <https://huggingface.co/settings/tokens>.
 - `src/aic/config/credentials.py` (Anthropic, Telegram, etc.) is gitignored. Cloud doesn't need these unless AIC LLM features are explicitly enabled.
 

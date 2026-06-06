@@ -613,23 +613,21 @@ def _write_file(directory: Path, filename: str, content: str) -> str | None:
     return str(path)
 
 
-def _upload_file(filename: str, content: str, folder_path: str,
-                 auth_token: str | None = None) -> dict:
+def _upload_file(filename: str, content: str, folder_path: str) -> dict:
     """Upload via Drive REST API. Returns result dict."""
     try:
         from src.data import gdrive_uploader
         if gdrive_uploader.is_configured():
             return gdrive_uploader.upload_or_replace(
                 filename, content, mime="application/json",
-                folder_path=folder_path, auth_token=auth_token,
+                folder_path=folder_path,
             )
         return {"ok": False, "reason": "not configured"}
     except Exception as exc:                                                    # noqa: BLE001
         return {"ok": False, "reason": f"uploader error: {exc}"}
 
 
-def export_to_drive(shortlist: dict | None = None,
-                    auth_token: str | None = None) -> dict:
+def export_to_drive(shortlist: dict | None = None) -> dict:
     """Build export JSON and publish to all three Drive directories.
 
     Publishes:
@@ -664,7 +662,7 @@ def export_to_drive(shortlist: dict | None = None,
     result = _write_file(DRIVE_EXPORT_DIR, EXPORT_FILENAME, aqe_content)
     if result:
         written.append(result)
-    r = _upload_file(EXPORT_FILENAME, aqe_content, CLOUD_AQE_PATH, auth_token)
+    r = _upload_file(EXPORT_FILENAME, aqe_content, CLOUD_AQE_PATH)
     drive_results.append({"file": EXPORT_FILENAME, "target": "AQE", **r})
     if r.get("ok"):
         written.append(f"gdrive:AQE/{EXPORT_FILENAME}")
@@ -689,7 +687,7 @@ def export_to_drive(shortlist: dict | None = None,
             written.append(result)
 
         # Drive REST API
-        r = _upload_file(srm_filename, srm_content, CLOUD_SRM_PATH, auth_token)
+        r = _upload_file(srm_filename, srm_content, CLOUD_SRM_PATH)
         drive_results.append({"file": srm_filename, "target": "SRM Daily", **r})
         if r.get("ok"):
             written.append(f"gdrive:SRM Daily/{srm_filename}")
@@ -712,7 +710,7 @@ def export_to_drive(shortlist: dict | None = None,
         written.append(result)
 
     # Drive REST API
-    r = _upload_file(ptj_filename, ptj_content, CLOUD_PTJ_PATH, auth_token)
+    r = _upload_file(ptj_filename, ptj_content, CLOUD_PTJ_PATH)
     drive_results.append({"file": ptj_filename, "target": "AEGIS Trade Journal", **r})
     if r.get("ok"):
         written.append(f"gdrive:AEGIS Trade Journal/{ptj_filename}")

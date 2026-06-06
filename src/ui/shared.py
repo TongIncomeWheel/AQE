@@ -57,6 +57,55 @@ def load_export() -> dict | None:
     with open(EXPORT_JSON) as f:
         return json.load(f)
 
+
+# ---------------------------------------------------------------------------
+# App login gate
+# ---------------------------------------------------------------------------
+
+APP_PASSWORD_ENV = "AQE_APP_PASSWORD"
+
+
+def require_login() -> None:
+    """Password-gate the whole app at the front door.
+
+    The Hugging Face Space is public, so we lock the UI behind a single
+    password. This protects *viewing and operating* the app — it deliberately
+    does NOT touch the Drive write path, so a scheduled 9am job that runs
+    `daily_orchestrator` directly (Claude dispatch, cron, or an app call) keeps
+    working unattended.
+
+    The gate is active only when ``AQE_APP_PASSWORD`` is set in the environment
+    (an HF Space secret). Locally the var is unset, so the app opens with no
+    friction. Auth is per browser session (``st.session_state``), shared across
+    all pages, so the user signs in once.
+
+    Call this at the top of every page, right after ``st.set_page_config`` and
+    before any other rendering or data loading. When not authenticated it
+    renders the sign-in form and halts the page with ``st.stop()``.
+    """
+    import hmac
+    import os
+
+    import streamlit as st
+
+    expected = os.environ.get(APP_PASSWORD_ENV)
+    if not expected:
+        return  # no password configured -> app is open (local use)
+    if st.session_state.get("aqe_authenticated"):
+        return  # already signed in this session
+
+    st.title("AQE — sign in")
+    st.caption("This deployment is password-protected.")
+    pw = st.text_input("Password", type="password", key="_aqe_login_pw")
+    if st.button("Sign in", type="primary"):
+        if hmac.compare_digest(pw or "", expected):
+            st.session_state["aqe_authenticated"] = True
+            st.session_state.pop("_aqe_login_pw", None)  # don't retain plaintext
+            st.rerun()
+        else:
+            st.error("Incorrect password.")
+    st.stop()
+
 CAPITAL = 70_000
 RISK_PCT = 0.03
 RISK_BUDGET = CAPITAL * RISK_PCT  # 2100
@@ -107,21 +156,10 @@ def load_json(filename: str) -> dict | list | None:
 
 # ---------- subprocess runner ----------
 
-def run_module_streaming(module: str, label: str, progress_placeholder, status_placeholder,
-                         extra_env: dict | None = None) -> int:
-    """Run `python -m <module>` and stream stdout to a Streamlit placeholder.
-
-    extra_env -- optional env vars merged into the subprocess environment for
-        this run only (e.g. the AQE_WRITE_TOKEN that authorizes the pipeline's
-        Drive export on the public Space). Never mutates the parent process.
-    """
-    import os
+def run_module_streaming(module: str, label: str, progress_placeholder, status_placeholder) -> int:
+    """Run `python -m <module>` and stream stdout to a Streamlit placeholder."""
     from datetime import datetime
     from zoneinfo import ZoneInfo
-
-    env = os.environ.copy()
-    if extra_env:
-        env.update({k: v for k, v in extra_env.items() if v is not None})
 
     proc = subprocess.Popen(
         [sys.executable, "-u", "-m", module],
@@ -130,7 +168,6 @@ def run_module_streaming(module: str, label: str, progress_placeholder, status_p
         stderr=subprocess.STDOUT,
         text=True,
         bufsize=1,
-        env=env,
     )
     buf: list[str] = []
     assert proc.stdout is not None

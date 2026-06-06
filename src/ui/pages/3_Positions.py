@@ -31,7 +31,12 @@ from src.ui.shared import (
     RISK_PCT,
     file_hash,
     is_cloud_mode,
+    require_login,
 )
+
+# Password gate — halts with a sign-in form until authenticated (public Space).
+require_login()
+
 from src.data.panel_builder import PANEL_DAILY
 from src.scanner.score_runner import SCORES_DAILY
 

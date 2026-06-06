@@ -52,19 +52,21 @@ cache survives restarts forever; AQE auto-picks it up via `AQE_DATA_DIR`.
    - Name: `FMP_API_KEY`
    - Value: paste from your local `.env`.
    - Save.
-3b. **Set the write password (REQUIRED if the Space is Public)**:
-   - The Space's "Run daily pipeline" / "Rebuild" / "Export to Drive" buttons
-     write to your real Google Drive. On a public Space, anyone could click
-     them. Protect them with a password.
+3b. **Set the app password (REQUIRED if the Space is Public)**:
+   - The Space is public, so lock the whole app behind a single password at
+     the front door. Nothing loads until the password is entered.
    - **Settings → Variables and secrets → New secret**.
-   - Name: `AQE_WRITE_PASSWORD`
+   - Name: `AQE_APP_PASSWORD`
    - Value: any password you choose.
    - Save, then restart the Space.
-   - Effect: when this secret is present, the sidebar shows a **Write access**
-     box. Until you enter the password, every write/refresh button is disabled
-     and the Drive uploader refuses to write. Read-only viewing stays open for
-     the committee. Locally (no secret) nothing is gated — the PC works as
-     before.
+   - Effect: when this secret is present, every page shows a sign-in screen
+     first; after one correct entry the session is unlocked (all pages).
+     Locally (no secret) the app opens with no friction — `run_app.bat` is
+     unchanged.
+   - **Automation is unaffected.** The 9am scheduled job runs the pipeline
+     directly (`python -m src.pipeline.daily_orchestrator`, or via Claude
+     dispatch / a scheduled app call) and never goes through this UI gate, so
+     Drive writes keep working unattended.
 4. **(Optional) Enable persistent storage** if you want the cache to survive
    sleeps. **Settings → Variables and secrets → Persistent storage** → enable
    5 GB ($5/month). Then add two more *variables* (NOT secrets — variables
