@@ -4,6 +4,11 @@
 headless = true
 runOnSave = false
 maxUploadSize = 50
+# Disable XSRF + CORS so file uploads work behind HF's reverse proxy.
+# Without this, Streamlit rejects uploads with 403 because the origin
+# header (hf.space) doesn't match the server's own address.
+enableXsrfProtection = false
+enableCORS = false
 
 [browser]
 gatherUsageStats = false
