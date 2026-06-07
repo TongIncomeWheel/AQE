@@ -156,8 +156,13 @@ in the cloud.
 
 5. **Run the one-time setup helper**:
    Double-click **`setup_gdrive.bat`** at the project root. A browser tab
-   opens → click **Allow** to grant Drive access to your AQE app. The helper
-   then prints THREE secrets you paste into HF Space settings.
+   opens → click **Allow** to grant **full Drive** access to your AQE app
+   (needed to write into a folder you created by hand). The helper then prints
+   THREE secrets you paste into HF Space settings.
+
+   > Already authorised with the old `drive.file` scope? Revoke the previous
+   > grant at <https://myaccount.google.com/permissions>, then re-run the
+   > helper so the new refresh token carries the wider scope.
 
 6. **Paste secrets into HF**:
    <https://huggingface.co/spaces/AQE-Aegis/aqe/settings> → **Variables and secrets**:
@@ -167,10 +172,10 @@ in the cloud.
    | Secret | `GOOGLE_OAUTH_CLIENT_ID` | from helper output |
    | Secret | `GOOGLE_OAUTH_CLIENT_SECRET` | from helper output |
    | Secret | `GOOGLE_OAUTH_REFRESH_TOKEN` | from helper output |
-   | Variable | `GDRIVE_FOLDER_PATH` | `Trading Strategy/AQE` |
 
-   (Use `GDRIVE_FOLDER_ID` instead of `GDRIVE_FOLDER_PATH` if you know the
-   folder ID — last URL segment when you open the folder in Drive's web UI.)
+   The destination folder is **pinned in code** (`gdrive_uploader.DEFAULT_FOLDER_ID`
+   → the linked Drive folder), so no `GDRIVE_FOLDER_ID/PATH` is required. Set
+   `GDRIVE_FOLDER_ID` only if you want to override the pinned folder.
 
 7. **Restart the Space**: any push triggers a rebuild, OR Settings → **Factory rebuild**.
 
@@ -180,9 +185,11 @@ in the cloud.
 
 #### Behaviour after setup
 
-- Local PC + cloud both export to `Trading Strategy/AQE/aqe_daily_export.json`.
-- The cloud always uses the same file ID (replaces in place), so Claude native
-  doesn't see broken links between exports.
+- The export is written to the pinned Drive folder via the REST API as
+  `aqe_daily_export.json`, plus a local working copy in `output/`. There is no
+  local `G:` Drive-mount write.
+- The cloud always uses the same file ID (replaces in place), so readers don't
+  see broken links between exports.
 - If the OAuth token is ever revoked or expires (very rare for refresh tokens),
   re-run `setup_gdrive.bat` to capture a fresh one.
 

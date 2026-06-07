@@ -28,7 +28,7 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - `fmp_client.py` — FMP REST client
 - `panel_builder.py` — builds `data/panel_daily.parquet`, `panel_weekly.parquet`, `spy_daily.parquet`
 - `scores_daily.parquet` — lives in `data/` (NOT `output/`)
-- `drive_sync.py` — exports `aqe_daily_export.json` to `output/` + `G:\My Drive\Trading Strategy\AQE\`
+- `drive_sync.py` — exports `aqe_daily_export.json` to `output/` (local working copy) + the pinned Google Drive folder via REST (no local `G:` mount)
 - `sector_mapper.py` — maps tickers to GICS sector ETFs
 - `universe.py` — manages the 600+ ticker universe
 - `earnings.py` — pulls/stores earnings calendar from FMP
@@ -90,8 +90,9 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
 - `exported_at` (SGT timestamp), `market`, `regime`
 - **SRM is combined in-file** (no separate SRM file): `srm` (canonical sector-grade
   list for downstream readers), plus `srm_gics`/`srm_signals`/`srm_deploy`/`srm_avoid` aliases
-- Erase-then-write to `output/`, the `G:\My Drive\Trading Strategy\AQE\` mount, and
-  the Drive REST API (cloud) — all the same single filename
+- Erase-then-write to `output/` (local working copy) and the pinned Google Drive
+  folder via the REST API (folder ID in `gdrive_uploader.DEFAULT_FOLDER_ID`,
+  override with `GDRIVE_FOLDER_ID`). Scope is full `drive`. No local `G:` mount.
 - **Trade journal is local-only:** `aegis_trade_journal_{date}` is written to `output/`
   and NOT published to Drive. The old `SRM Daily/` and `AEGIS Trade Journal/` Drive
   folders are no longer written.
@@ -112,7 +113,7 @@ PTRS disposition (ticker quality) x Regime max_new_size (VIX macro) = final posi
 - Project root: `C:\Users\ashtz\Backtest Engine`
 - Data: `data/panel_daily.parquet`, `data/scores_daily.parquet` (in `data/`, NOT `output/`)
 - Output: `output/shortlist.json`, `output/aqe_daily_export.json`
-- Drive mount: `G:\My Drive\Trading Strategy\AQE\`
+- Drive destination: pinned Google Drive folder via REST (`gdrive_uploader.DEFAULT_FOLDER_ID`)
 - UI launcher: `run_app.bat`
 - Pipeline: `python -m src.pipeline.daily_orchestrator` (or in-app button)
 

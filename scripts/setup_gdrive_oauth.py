@@ -29,9 +29,15 @@ Output is three values to paste into HF Space settings:
     GOOGLE_OAUTH_CLIENT_SECRET      (Secret)
     GOOGLE_OAUTH_REFRESH_TOKEN      (Secret)
 
-Plus you'll add one Variable (not Secret):
-    GDRIVE_FOLDER_PATH = "Trading Strategy/AQE"   (or set GDRIVE_FOLDER_ID
-                                                   if you know it)
+The destination folder is pinned in code (gdrive_uploader.DEFAULT_FOLDER_ID),
+so you do NOT need to set GDRIVE_FOLDER_ID/PATH. Only set GDRIVE_FOLDER_ID if
+you want to override the pinned folder.
+
+NOTE: the scope is full Drive (auth/drive), required to write into a folder
+created in the Drive UI by ID. If you previously authorised with the narrower
+drive.file scope, revoke the old grant at
+https://myaccount.google.com/permissions and re-run this script so the new
+refresh token carries the wider scope.
 """
 
 from __future__ import annotations
@@ -45,7 +51,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CLIENT_SECRET_PATH = PROJECT_ROOT / "client_secret.json"
 TOKEN_CACHE_PATH = PROJECT_ROOT / "gdrive_token_cache.json"
 
-SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
 def main() -> int:
@@ -140,10 +146,9 @@ def main() -> int:
     print(f"GOOGLE_OAUTH_REFRESH_TOKEN")
     print(f"    {creds.refresh_token}")
     print()
-    print("--- VARIABLE (mark 'New variable' in HF UI; visible to operators) ---")
-    print()
-    print(f"GDRIVE_FOLDER_PATH")
-    print(f'    Trading Strategy/AQE')
+    print("The destination folder is pinned in code (DEFAULT_FOLDER_ID), so no")
+    print("GDRIVE_FOLDER_ID/PATH is required. Set GDRIVE_FOLDER_ID only to")
+    print("override the pinned folder.")
     print()
     print("=" * 70)
     print("After setting, restart the HF Space.")

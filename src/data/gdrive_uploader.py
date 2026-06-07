@@ -1,9 +1,9 @@
-"""Google Drive uploader for headless cloud environments.
+"""Google Drive uploader — the REST write path for AQE.
 
-The local PC writes export JSON directly to the Google Drive Desktop sync
-folder (`G:\\My Drive\\Trading Strategy\\AQE\\` -- handled by drive_sync.py).
-Cloud containers (HF, Streamlit Cloud, etc.) have no Drive mount, so they
-have to use the REST API. This module is that REST path.
+Both local and cloud runs publish the export to one pinned Google Drive folder
+(`DEFAULT_FOLDER_ID`, override with `GDRIVE_FOLDER_ID`) via this REST path.
+There is no local Drive-mount write; `drive_sync.py` keeps only a working copy
+in `output/`.
 
 **Auth model:** personal OAuth 2.0 with refresh token. The user runs
 `scripts/setup_gdrive_oauth.py` ONCE on their PC to capture a refresh token,
@@ -13,13 +13,15 @@ then pastes three values into Hugging Face Space secrets:
     GOOGLE_OAUTH_CLIENT_SECRET     -- OAuth Client Secret from GCP
     GOOGLE_OAUTH_REFRESH_TOKEN     -- refresh token from the consent flow
 
-Plus one variable to pin the target folder:
+The target folder is pinned in code (`DEFAULT_FOLDER_ID`), so no folder env var
+is required. Optional overrides:
 
-    GDRIVE_FOLDER_ID               -- the Drive folder ID (last URL segment)
+    GDRIVE_FOLDER_ID               -- a different Drive folder ID to write to
                                        OR
     GDRIVE_FOLDER_PATH             -- a forward-slash path like
-                                       "Trading Strategy/AQE" -- we'll resolve
-                                       it to a folder ID at runtime.
+                                       "Trading Strategy/AQE" -- resolved to a
+                                       folder ID at runtime (only used when no
+                                       folder ID is in effect).
 
 Import safety: the module imports without google-api-python-client installed.
 `upload_or_replace()` simply returns `{"ok": False, "reason": "not configured"}`
@@ -45,8 +47,17 @@ except ImportError:
     pass
 
 
-SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+# Full Drive scope — required to write into a pre-existing folder (created in
+# the Drive UI) by ID. `drive.file` only grants access to app-created files and
+# cannot see the linked folder below. Changing this requires re-running
+# scripts/setup_gdrive_oauth.py to mint a new refresh token under the new scope.
+SCOPES = ["https://www.googleapis.com/auth/drive"]
 TOKEN_URI = "https://oauth2.googleapis.com/token"
+
+# The pinned destination folder (your shared Drive link). Override per-deploy
+# with the GDRIVE_FOLDER_ID env var / HF secret if you ever move it.
+#   https://drive.google.com/drive/folders/1CJMoI19Zf_ZFeU5_5uhW9l92IB8fVger
+DEFAULT_FOLDER_ID = "1CJMoI19Zf_ZFeU5_5uhW9l92IB8fVger"
 
 
 @dataclass
@@ -62,11 +73,11 @@ class DriveConfig:
         cid = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
         csec = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
         rtok = os.environ.get("GOOGLE_OAUTH_REFRESH_TOKEN")
-        fid = os.environ.get("GDRIVE_FOLDER_ID")
+        # Folder is pinned by default; env var overrides if set.
+        fid = os.environ.get("GDRIVE_FOLDER_ID") or DEFAULT_FOLDER_ID
         fpath = os.environ.get("GDRIVE_FOLDER_PATH")
+        # Only the OAuth credentials are mandatory — the folder always resolves.
         if not (cid and csec and rtok):
-            return None
-        if not (fid or fpath):
             return None
         return cls(client_id=cid, client_secret=csec, refresh_token=rtok,
                    folder_id=fid, folder_path=fpath)

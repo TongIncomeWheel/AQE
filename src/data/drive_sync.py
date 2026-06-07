@@ -1,21 +1,22 @@
-"""Google Drive sync — export the daily scan to one AQE folder.
+"""Google Drive sync — export the daily scan to one Google Drive folder.
 
-Single target directory under G:\\My Drive\\Trading Strategy\\:
-  AQE/  → aqe_daily_export.json  (scan + SRM combined, overwritten each run)
+Single destination: the Drive folder pinned by ID in `gdrive_uploader.py`
+(GDRIVE_FOLDER_ID, default = the linked AQE folder). Written via the Drive
+REST API only — there are NO local Drive-mount writes.
+
+  aqe_daily_export.json  (scan + SRM combined, overwritten each run)
 
 The committee reads this one file. SRM grading is embedded as the export's
 `srm` / `srm_gics` / `srm_signals` sections, so there is no separate SRM file.
-The pre-trade journal (open positions, closed trades) is written to the local
-OUTPUT_DIR only — it is intentionally NOT published to Drive.
+A copy is also written to the local OUTPUT_DIR — that is the app's own working
+file (read by the UI in cloud mode), not a user-facing Drive folder.
 
 Each run overwrites the same filename so the Drive folder never clutters.
-Google Drive for Desktop syncs automatically to cloud.
 """
 
 from __future__ import annotations
 
 import json
-import shutil
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -28,13 +29,8 @@ from src.scanner.levels import load_elder_history, load_trade_levels
 
 from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 
-# --- Drive directory (local mount path) — single AQE folder ---
-DRIVE_ROOT = Path(r"G:\My Drive\Trading Strategy")
-DRIVE_EXPORT_DIR = DRIVE_ROOT / "AQE"
-
-# --- Drive path for cloud REST API (relative to My Drive root) ---
-CLOUD_AQE_PATH = "Trading Strategy/AQE"
-
+# Drive destination is the folder pinned in gdrive_uploader (by ID), reached
+# via the REST API. No local Drive-mount path.
 EXPORT_FILENAME = "aqe_daily_export.json"
 
 
@@ -494,25 +490,17 @@ def build_export(shortlist: dict | None = None) -> dict:
     return export
 
 
-def _write_file(directory: Path, filename: str, content: str) -> str | None:
-    """Write a file to a local directory. Returns path or None if dir missing."""
-    if not directory.exists():
-        return None
-    path = directory / filename
-    if path.exists():
-        path.unlink()
-    path.write_text(content, encoding="utf-8")
-    return str(path)
+def _upload_file(filename: str, content: str) -> dict:
+    """Upload to the pinned Drive folder via REST API. Returns result dict.
 
-
-def _upload_file(filename: str, content: str, folder_path: str) -> dict:
-    """Upload via Drive REST API. Returns result dict."""
+    Destination is the folder ID configured in gdrive_uploader
+    (GDRIVE_FOLDER_ID, default = the linked AQE folder).
+    """
     try:
         from src.data import gdrive_uploader
         if gdrive_uploader.is_configured():
             return gdrive_uploader.upload_or_replace(
                 filename, content, mime="application/json",
-                folder_path=folder_path,
             )
         return {"ok": False, "reason": "not configured"}
     except Exception as exc:                                                    # noqa: BLE001
@@ -520,19 +508,14 @@ def _upload_file(filename: str, content: str, folder_path: str) -> dict:
 
 
 def export_to_drive(shortlist: dict | None = None) -> dict:
-    """Build the combined export JSON and publish it to the AQE Drive folder.
+    """Build the combined export JSON and publish it to the Drive folder.
 
     Publishes ONE file, overwriting it each run so the folder never clutters:
-      AQE/aqe_daily_export.json — scan + SRM combined (the committee's read)
+      aqe_daily_export.json — scan + SRM combined (the committee's read)
 
     written via:
-      - Local OUTPUT_DIR (always)
-      - Local Drive mount G:\\My Drive\\Trading Strategy\\AQE (if present)
-      - Drive REST API (if OAuth configured)
-
-    The pre-trade journal (positions) is written to the local OUTPUT_DIR only —
-    it is intentionally NOT published to Drive. The old SRM Daily and AEGIS
-    Trade Journal folders are no longer written.
+      - Local OUTPUT_DIR (the app's own working copy — always)
+      - Drive REST API into the pinned folder (if OAuth configured)
 
     Returns dict with status and per-file results.
     """
@@ -544,7 +527,7 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     written: list[str] = []
     drive_results: list[dict] = []
 
-    # ---- 1. AQE export ----
+    # ---- AQE export ----
     aqe_content = json.dumps(export, indent=2)
     local_aqe = OUTPUT_DIR / EXPORT_FILENAME
     if local_aqe.exists():
@@ -552,23 +535,17 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     local_aqe.write_text(aqe_content, encoding="utf-8")
     written.append(str(local_aqe))
 
-    result = _write_file(DRIVE_EXPORT_DIR, EXPORT_FILENAME, aqe_content)
-    if result:
-        written.append(result)
-    r = _upload_file(EXPORT_FILENAME, aqe_content, CLOUD_AQE_PATH)
+    r = _upload_file(EXPORT_FILENAME, aqe_content)
     drive_results.append({"file": EXPORT_FILENAME, "target": "AQE", **r})
     if r.get("ok"):
-        written.append(f"gdrive:AQE/{EXPORT_FILENAME}")
+        written.append(f"gdrive:{EXPORT_FILENAME}")
 
-    # Status: ok if anything beyond local OUTPUT_DIR was written
-    drive_written = [w for w in written if "G:\\" in w or "gdrive:" in w]
+    # Status: ok if the file reached Drive (beyond the local working copy)
+    drive_written = [w for w in written if "gdrive:" in w]
     status = "ok" if drive_written else "partial"
     reason = None
     if status == "partial":
-        reason = (
-            "Drive not published. Local mount not found and "
-            "cloud OAuth env vars not set."
-        )
+        reason = drive_results[0].get("reason") if drive_results else "Drive not published"
 
     return {
         "status": status,
