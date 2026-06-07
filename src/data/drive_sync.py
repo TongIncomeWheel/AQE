@@ -17,6 +17,7 @@ Each run overwrites the same filename so the Drive folder never clutters.
 from __future__ import annotations
 
 import json
+import os
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -32,6 +33,15 @@ from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 # Drive destination is the folder pinned in gdrive_uploader (by ID), reached
 # via the REST API. No local Drive-mount path.
 EXPORT_FILENAME = "aqe_daily_export.json"
+
+# Sector RAG map (AQE Data Schema Spec v1.0 §6) — published to a dedicated
+# Drive subfolder inside the AQE folder. Override with GDRIVE_SECTOR_FOLDER_ID.
+SECTOR_MAP_FILENAME = "aqe_sector_map.json"
+SECTOR_MAP_FOLDER_ID = (
+    os.environ.get("GDRIVE_SECTOR_FOLDER_ID")
+    or "1CKhgB_wjtZipC8TdagIGN0dINiwhk6Ul"
+)
+SECTOR_MAP_VERSION = "2026-06-08"
 
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
@@ -134,6 +144,114 @@ def _build_srm_gics() -> tuple[list[dict], dict]:
     return rows, signals
 
 
+def _compute_v21_lookups(sm: dict) -> dict:
+    """Per-ticker lookups for AQE v2.1 fields. Defensive — returns {} on any error.
+
+    Returns {rvol, rs, sma, corr, spy_roc_20d} where rvol/rs/sma are
+    {ticker: float} and corr is {ticker: (corr, class)}.
+    """
+    out = {"rvol": {}, "rs": {}, "sma": {}, "corr": {}, "spy_roc_20d": None}
+    try:
+        import numpy as np
+        import pandas as pd
+        from src.data.paths import PANEL_DAILY, SPY_DAILY
+
+        if not PANEL_DAILY.exists():
+            return out
+        p = pd.read_parquet(PANEL_DAILY, columns=["date", "ticker", "close", "volume"])
+        p["date"] = pd.to_datetime(p["date"]).dt.normalize()
+        p = p.sort_values(["ticker", "date"])
+
+        spy_roc = None
+        if SPY_DAILY.exists():
+            spy = pd.read_parquet(SPY_DAILY, columns=["date", "close"]).sort_values("date")
+            if len(spy) >= 21 and float(spy["close"].iloc[-21]) > 0:
+                spy_roc = (float(spy["close"].iloc[-1]) / float(spy["close"].iloc[-21]) - 1) * 100
+        out["spy_roc_20d"] = round(float(spy_roc), 2) if spy_roc is not None else None
+
+        # Daily returns pivot for sector correlation
+        close_piv = p.pivot_table(index="date", columns="ticker", values="close")
+        rets = close_piv.pct_change()
+
+        for tk, g in p.groupby("ticker", sort=False):
+            cl = g["close"].to_numpy(dtype=float)
+            vol = g["volume"].to_numpy(dtype=float)
+            # rvol = today / 20-day prior average
+            if len(vol) >= 21:
+                avg20 = float(np.nanmean(vol[-21:-1]))
+                if avg20 > 0:
+                    out["rvol"][tk] = round(float(vol[-1]) / avg20, 2)
+            # sma_distance_pct vs 50D SMA
+            if len(cl) >= 50:
+                sma50 = float(np.nanmean(cl[-50:]))
+                if sma50 > 0:
+                    out["sma"][tk] = round((float(cl[-1]) / sma50 - 1) * 100, 2)
+            # rs_spy_20d = stock 20d ROC − SPY 20d ROC
+            if len(cl) >= 21 and spy_roc is not None and cl[-21] > 0:
+                roc = (float(cl[-1]) / float(cl[-21]) - 1) * 100
+                out["rs"][tk] = round(roc - spy_roc, 2)
+            # sector_corr = 60d Pearson corr of daily returns vs parent ETF
+            etf = sm.get(tk)
+            if etf and etf in rets.columns and tk in rets.columns:
+                pair = rets[[tk, etf]].dropna().tail(60)
+                if len(pair) >= 30:
+                    c = float(pair[tk].corr(pair[etf]))
+                    if np.isfinite(c):
+                        cls = ("IDIOSYNCRATIC" if c < 0.30
+                               else "MIXED" if c < 0.70 else "SECTOR_DEPENDENT")
+                        out["corr"][tk] = (round(c, 2), cls)
+    except Exception:  # noqa: BLE001 — never let enrichment break the export
+        pass
+    return out
+
+
+def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
+                       sector_grades: dict) -> dict:
+    """AQE v2.1 / Data-Schema-v1.0 per-record fields. Bulletproof: returns a
+    full key set with null values on any error, so the schema is always present.
+    """
+    fields = {
+        "gics_sector": None, "gics_sector_name": None, "gics_gate": "CHECK",
+        "sector_corr": None, "sector_corr_class": None,
+        "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+        "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
+        "held": False, "atr_1h": None, "breakout_stop": None,
+    }
+    try:
+        etf = sm.get(tk)
+        fields["gics_sector"] = etf
+        fields["gics_sector_name"] = ETF_TO_NAME.get(etf) if etf else None
+        grade = sector_grades.get(etf, {}).get("grade") if etf else None
+        if grade in ("DEPLOY", "HOLD"):
+            fields["gics_gate"] = "PASS"
+        elif grade == "AVOID":
+            fields["gics_gate"] = "BLOCKED"
+        elif grade:
+            fields["gics_gate"] = "WATCH"
+        else:
+            fields["gics_gate"] = "CHECK"
+
+        corr = (lk.get("corr") or {}).get(tk)
+        if corr:
+            fields["sector_corr"], fields["sector_corr_class"] = corr[0], corr[1]
+        fields["rvol"] = (lk.get("rvol") or {}).get(tk)
+        fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
+        fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
+
+        # R:R to each DSL target, measured from the bracket entry (dsl_be).
+        be, stop = d.get("be"), d.get("stop")
+        if be is not None and stop is not None and (be - stop) > 0:
+            risk = be - stop
+            for key, tp in (("rr_tp1", d.get("tp_1r")),
+                            ("rr_tp2", d.get("tp_2r")),
+                            ("rr_tp3", d.get("tp_3r"))):
+                if tp is not None:
+                    fields[key] = round((tp - be) / risk, 2)
+    except Exception:  # noqa: BLE001
+        pass
+    return fields
+
+
 def build_export(shortlist: dict | None = None) -> dict:
     """Build export from shortlist.json + scores_daily.parquet.
 
@@ -204,6 +322,17 @@ def build_export(shortlist: dict | None = None) -> dict:
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
 
+    # ---- AQE v2.1 enrichment (rvol, rs_spy, sma_distance, sector_corr) ----
+    _v21_lk = _compute_v21_lookups(sm)
+    export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
+    export["sector_map_version"] = SECTOR_MAP_VERSION
+    try:
+        from src.data.universe import load_universe
+        _univ = load_universe(include_benchmark=False)
+        export["sector_map_gaps"] = sorted([t for t in _univ if t not in sm])
+    except Exception:  # noqa: BLE001
+        export["sector_map_gaps"] = []
+
     # mp_state lookup from scores_daily.parquet — authoritative source.
     # shortlist.json nests mp_state inside "diagnostics" for candidates and
     # omits it entirely from precision_edge, so we derive from the parquet.
@@ -262,6 +391,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "top_picks",
             "pe": tk in pe_tickers,
+            **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
         })
 
     # Edge List = Precision Edge — SAME schema as longlist
@@ -311,6 +441,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "edge_list",
             "pe": True,
+            **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
         })
     longlist_tickers: set[str] = set()
     sorted_rm = sorted(sl.get("recipe_matches", []),
@@ -365,6 +496,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "longlist",
             "pe": bool(rm.get("pe_qualified")),
+            **_v21_record_fields(rm["ticker"], d, _v21_lk, sm, sector_grades),
         })
 
     # --- Watchlist: full universe above raw SC_MOM >= 70 ---
@@ -459,6 +591,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "source": "watchlist",
                     "pe": tk in pe_tickers,
                     "on_longlist": tk in longlist_tickers,
+                    **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
                 })
 
     export["summary"] = {
@@ -507,6 +640,59 @@ def _upload_file(filename: str, content: str) -> dict:
         return {"ok": False, "reason": f"uploader error: {exc}"}
 
 
+def _upload_file_to_folder(filename: str, content: str, folder_id: str) -> dict:
+    """Upload to a specific Drive folder ID via REST API. Returns result dict."""
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            return gdrive_uploader.upload_or_replace(
+                filename, content, mime="application/json", folder_id=folder_id,
+            )
+        return {"ok": False, "reason": "not configured"}
+    except Exception as exc:                                                    # noqa: BLE001
+        return {"ok": False, "reason": f"uploader error: {exc}"}
+
+
+def _build_sector_map_rich() -> dict:
+    """Build the rich sector RAG map (Data Schema Spec v1.0 §6.2) for Drive.
+
+    {version, ticker_count, tickers: {tk: {gics_etf, gics_sector_name,
+    thematic_basket, source, confirmed_date}}, gaps}.
+    """
+    sm = load_sector_map()
+    try:
+        from src.data.universe import load_universe
+        univ = load_universe(include_benchmark=False)
+    except Exception:  # noqa: BLE001
+        univ = list(sm.keys())
+
+    tickers: dict[str, dict] = {}
+    gaps: list[str] = []
+    for t in sorted(set(univ) | set(sm.keys())):
+        etf = sm.get(t)
+        if etf:
+            tickers[t] = {
+                "gics_etf": etf,
+                "gics_sector_name": ETF_TO_NAME.get(etf),
+                "thematic_basket": None,
+                "source": "AUTO",
+                "confirmed_date": SECTOR_MAP_VERSION,
+            }
+        else:
+            tickers[t] = {
+                "gics_etf": None, "gics_sector_name": None,
+                "thematic_basket": None, "source": "UNKNOWN",
+                "confirmed_date": None,
+            }
+            gaps.append(t)
+    return {
+        "version": SECTOR_MAP_VERSION,
+        "ticker_count": len(tickers),
+        "tickers": tickers,
+        "gaps": gaps,
+    }
+
+
 def export_to_drive(shortlist: dict | None = None) -> dict:
     """Build the combined export JSON and publish it to the Drive folder.
 
@@ -539,6 +725,22 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     drive_results.append({"file": EXPORT_FILENAME, "target": "AQE", **r})
     if r.get("ok"):
         written.append(f"gdrive:{EXPORT_FILENAME}")
+
+    # ---- Sector RAG map → dedicated Drive subfolder (Schema v1.0 §6) ----
+    # Best-effort; never affects the primary AQE export status.
+    try:
+        sector_rich = json.dumps(_build_sector_map_rich(), indent=2)
+        sm_local = OUTPUT_DIR / SECTOR_MAP_FILENAME
+        if sm_local.exists():
+            sm_local.unlink()
+        sm_local.write_text(sector_rich, encoding="utf-8")
+        written.append(str(sm_local))
+        rs = _upload_file_to_folder(SECTOR_MAP_FILENAME, sector_rich, SECTOR_MAP_FOLDER_ID)
+        drive_results.append({"file": SECTOR_MAP_FILENAME, "target": "SectorMap", **rs})
+        if rs.get("ok"):
+            written.append(f"gdrive:{SECTOR_MAP_FILENAME}")
+    except Exception as exc:                                                    # noqa: BLE001
+        drive_results.append({"file": SECTOR_MAP_FILENAME, "ok": False, "reason": str(exc)})
 
     # Status: ok if the file reached Drive (beyond the local working copy)
     drive_written = [w for w in written if "gdrive:" in w]

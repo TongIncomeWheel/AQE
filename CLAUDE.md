@@ -101,6 +101,25 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
   and NOT published to Drive. The old `SRM Daily/` and `AEGIS Trade Journal/` Drive
   folders are no longer written.
 
+### AQE v2.1 schema (charter v1.9.2 / Data Schema Spec v1.0)
+Per-record additions on all four tiers (`_v21_record_fields` in `drive_sync.py`):
+`gics_sector`, `gics_sector_name`, `gics_gate` (PASS/BLOCKED/WATCH/CHECK from SRM grade),
+`sector_corr` + `sector_corr_class` (60d Pearson vs parent ETF), `rvol` (vol/20d-avg),
+`rs_spy_20d` (20d ROC − SPY 20d ROC), `sma_distance_pct` (vs 50D SMA),
+`rr_tp1/2/3` (R:R to each DSL target from `dsl_be`), `held` (false — positions decommissioned),
+`atr_1h`/`breakout_stop` (null — intraday rejected, DSG-12 pending). Top-level:
+`spy_roc_20d`, `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to
+null, never break the export; new fields are NOT in the blocking `_REQUIRED_FIELDS`.
+- **DSL bracket already conforms** to Schema §5.5 geometry (`dsl_be−dsl_stop = 1.5·dsl_risk`,
+  `tp_N = be + 0.5/1.5/2.5·dsl_risk`); no stop-math change. The dynamic ATR ratio matches the
+  spec on regime+Elder; it uses a daily-range whippiness proxy where the spec's (rejected)
+  intraday `atr_1h` term would sit.
+- **Sector RAG map** (`aqe_sector_map.json`, rich format per §6.2) published to a dedicated
+  Drive subfolder `SECTOR_MAP_FOLDER_ID` (override `GDRIVE_SECTOR_FOLDER_ID`). Source of truth =
+  `data/sector_map.json` (flat {ticker: ETF}); gaps surfaced, filled manually (no daily FMP).
+- **`disposition` kept as the sizing field** (FULL/HALF/QUARTER) per binding Schema §5.3 — the
+  v2.1 qualification-flag rewrite was NOT applied (conflicts + needs removed stop-history state).
+
 ### Active recipe thresholds
 Longlist: SC >= 75, Flow >= 80, Energy >= 64, Structure >= 60, MP >= 60, Elder >= 7, Phase = ANY
 Stored in `data/active_recipe.json` (dual format: `longlist` + `precision` sections).
