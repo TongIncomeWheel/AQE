@@ -62,6 +62,8 @@ require_login()
 
 st.title("AQE Scanner")
 
+st.caption("🔄 deploy sync test #1 — if you can see this line on HF, GitHub→HF auto-deploy works. (safe to remove)")
+
 # ---------------------------------------------------------------------------
 # Daily auto-run status bar (08:30 SGT, Tue–Sat)
 # ---------------------------------------------------------------------------
