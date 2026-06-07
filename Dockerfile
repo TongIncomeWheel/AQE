@@ -29,9 +29,12 @@ EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
-# Use the project-root streamlit_app.py (it bridges st.secrets -> os.environ
-# and then runs src/ui/1_Scanner.py via runpy).
-ENTRYPOINT ["streamlit", "run", "streamlit_app.py", \
+# Run the Scanner page directly so Streamlit's multipage nav discovers
+# src/ui/pages/ (Math Lab, Scheduler). Streamlit looks for the pages/ folder
+# next to the script passed to `streamlit run`; streamlit_app.py at the repo
+# root has no sibling pages/, which hid the pages on HF. On HF, secrets arrive
+# as env vars, so the streamlit_app.py st.secrets->env bridge isn't needed here.
+ENTRYPOINT ["streamlit", "run", "src/ui/1_Scanner.py", \
             "--server.port=8501", \
             "--server.address=0.0.0.0", \
             "--server.headless=true", \
