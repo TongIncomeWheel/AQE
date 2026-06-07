@@ -60,6 +60,16 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     print(f"[daily] AQE Daily Pipeline - {run_date}")
     print("=" * 60)
 
+    # Step 0a: Restore universe from Drive if container has no local copy
+    # (HF containers have ephemeral filesystems — this recovers the universe
+    # from the last Drive backup so we don't need a full FMP screener pull)
+    try:
+        from src.data.universe import restore_universe_from_drive
+        if restore_universe_from_drive():
+            print("[daily] Step 0a: Restored universe.txt from Drive")
+    except Exception as exc:
+        print(f"  [WARN] Drive universe restore: {exc}")
+
     # Step 0: Universe refresh on Sundays
     if run_date.strftime("%A") == "Sunday":
         print("[daily] Step 0: Universe refresh (Sunday)...")

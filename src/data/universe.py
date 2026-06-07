@@ -150,7 +150,13 @@ def upload_universe(csv_path_or_bytes) -> dict:
 
 
 def _write_universe(tickers: list[str]) -> None:
-    """Write universe.txt with header comment."""
+    """Write universe.txt locally AND back up to Google Drive for persistence.
+
+    The local file is the runtime read path. The Drive copy survives container
+    restarts on HuggingFace (ephemeral filesystem). On next startup,
+    ``restore_universe_from_drive()`` pulls it back before the first
+    ``load_universe()`` call.
+    """
     lines = [
         f"# AQE Universe — updated {date.today()}",
         f"# {len(tickers)} tickers",
@@ -158,5 +164,53 @@ def _write_universe(tickers: list[str]) -> None:
     ]
     lines.extend(tickers)
     lines.append("")
+    content = "\n".join(lines)
     DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DEFAULT_UNIVERSE_FILE.write_text("\n".join(lines), encoding="utf-8")
+    DEFAULT_UNIVERSE_FILE.write_text(content, encoding="utf-8")
+
+    # Back up to Drive (best-effort — never blocks the pipeline)
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            gdrive_uploader.upload_or_replace(
+                "universe.txt", content, mime="text/plain",
+            )
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def restore_universe_from_drive() -> bool:
+    """Pull universe.txt from Drive if the local copy is missing.
+
+    Called once at container startup (from the orchestrator or app entry)
+    so that a fresh HF container recovers the universe without needing a
+    full FMP screener pull. Returns True if a restore happened.
+    """
+    if DEFAULT_UNIVERSE_FILE.exists():
+        return False  # already have one — nothing to do
+
+    try:
+        from src.data import gdrive_uploader
+        if not gdrive_uploader.is_configured():
+            return False
+
+        cfg = gdrive_uploader.DriveConfig.from_env()
+        if cfg is None:
+            return False
+        service = gdrive_uploader._build_service(cfg)
+        folder_id = gdrive_uploader._resolve_folder_id(service, cfg)
+        if not folder_id:
+            return False
+        found = gdrive_uploader._find_file(service, folder_id, "universe.txt")
+        if not found:
+            return False
+
+        # Download file content
+        content = service.files().get_media(fileId=found["id"]).execute()
+        if isinstance(content, bytes):
+            content = content.decode("utf-8")
+        DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        DEFAULT_UNIVERSE_FILE.write_text(content, encoding="utf-8")
+        return True
+    except Exception:  # noqa: BLE001
+        return False

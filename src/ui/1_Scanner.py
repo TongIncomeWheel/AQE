@@ -101,21 +101,31 @@ with st.sidebar:
         # effective storage paths. Most cloud setup mistakes are visible here
         # at a glance.
         with st.expander("Cloud diagnostics", expanded=not FMP_KEY_SET):
-            # Env vars AQE cares about
+            # Env vars AQE cares about.
+            # Keys with valid coded defaults show ✅ even when unset.
+            _HAS_DEFAULT = {
+                "AQE_DATA_DIR": str(DATA_DIR),
+                "AQE_OUTPUT_DIR": str(OUTPUT_DIR),
+                "GDRIVE_FOLDER_ID": "(pinned in code)",
+            }
+            _REQUIRED = (
+                "FMP_API_KEY", "AQE_APP_PASSWORD",
+                "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET",
+                "GOOGLE_OAUTH_REFRESH_TOKEN",
+            )
+            _OPTIONAL_WITH_DEFAULT = ("AQE_DATA_DIR", "AQE_OUTPUT_DIR",
+                                      "GDRIVE_FOLDER_ID", "GDRIVE_FOLDER_PATH")
             env_rows = []
-            for key in ("FMP_API_KEY", "AQE_APP_PASSWORD", "AQE_DATA_DIR",
-                        "AQE_OUTPUT_DIR", "ANTHROPIC_API_KEY",
-                        "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET",
-                        "GOOGLE_OAUTH_REFRESH_TOKEN",
-                        "GDRIVE_FOLDER_ID", "GDRIVE_FOLDER_PATH"):
+            for key in (*_REQUIRED, *_OPTIONAL_WITH_DEFAULT):
                 val = _os.environ.get(key)
                 if val:
-                    # Never reveal any part of the app password.
                     if key == "AQE_APP_PASSWORD":
                         masked = "set"
                     else:
                         masked = (val[:4] + "..." + val[-4:]) if len(val) > 12 else "set"
                     env_rows.append(("✅ " + key, masked))
+                elif key in _HAS_DEFAULT:
+                    env_rows.append(("✅ " + key, f"default: {_HAS_DEFAULT[key]}"))
                 else:
                     env_rows.append(("⚠️ " + key, "(not set)"))
             for k, v in env_rows:
