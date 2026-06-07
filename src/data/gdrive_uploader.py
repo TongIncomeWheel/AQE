@@ -99,17 +99,19 @@ def is_libs_installed() -> bool:
 
 def upload_or_replace(filename: str, content: str | bytes,
                       mime: str = "application/json",
-                      folder_path: str | None = None) -> dict[str, Any]:
+                      folder_path: str | None = None,
+                      folder_id: str | None = None) -> dict[str, Any]:
     """Upload `content` to a Drive folder as `filename`.
 
     If a file with that name already exists in the folder, REPLACE it in
     place (same file ID, so downstream consumers don't get a broken link
     on every export).
 
-    folder_path -- optional override. When provided, resolves this path
-        (e.g. "Trading Strategy/SRM Daily") instead of the env-configured
-        GDRIVE_FOLDER_PATH. This lets a single OAuth config push files to
-        multiple sibling Drive folders.
+    folder_id -- optional explicit destination folder ID. Highest precedence;
+        used to push to a sibling folder (e.g. the universe folder) without
+        touching the configured default.
+    folder_path -- optional path override (e.g. "Trading Strategy/AQE"),
+        resolved to a folder ID at runtime. Used only when folder_id is absent.
 
     Returns a dict:
       {"ok": True, "file_id": "...", "filename": "...", "replaced": bool}
@@ -127,8 +129,10 @@ def upload_or_replace(filename: str, content: str | bytes,
     try:
         service = _build_service(cfg)
 
-        # Resolve folder — override path wins, then configured path/id
-        if folder_path:
+        # Resolve folder — explicit folder_id wins, then path, then configured.
+        if folder_id:
+            pass  # use as-is
+        elif folder_path:
             override_cfg = DriveConfig(
                 client_id=cfg.client_id, client_secret=cfg.client_secret,
                 refresh_token=cfg.refresh_token,

@@ -30,7 +30,11 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - `scores_daily.parquet` — lives in `data/` (NOT `output/`)
 - `drive_sync.py` — exports `aqe_daily_export.json` to `output/` (local working copy) + the pinned Google Drive folder via REST (no local `G:` mount)
 - `sector_mapper.py` — maps tickers to GICS sector ETFs
-- `universe.py` — fixed, manually-curated ticker universe (the "fishing net"). Auto-refresh from the FMP screener is DISABLED (it ballooned to ~1800). Source of truth = `universe.txt` (or `universe.csv`) in the pinned Drive folder; `restore_universe_from_drive()` overwrites the local copy from Drive on every pipeline startup. Update it by overwriting that Drive file or via the app's Universe Upload.
+- `universe.py` — fixed, manually-curated ticker universe (the "fishing net"). Auto-refresh from the FMP screener is DISABLED (it ballooned to ~1800). Source of truth = a single CSV in a **dedicated Drive subfolder** (`UNIVERSE_FOLDER_ID`, override `GDRIVE_UNIVERSE_FOLDER_ID`); `restore_universe_from_drive()` overwrites the local `universe.txt` from it on every pipeline startup. Update via the app's Universe panel (overwrites the canonical `universe.csv`) or by replacing the file in that folder. `get_drive_universe_status()` powers the in-app date/count display.
+
+### Cloud uptime + daily auto-run (HF Space)
+- `src/ui/keepalive.py` — in-app daemon pings the Space's own public URL (`KEEPALIVE_MINUTES`, default 90) so HF doesn't sleep. Paired with an external UptimeRobot monitor (every 30 min). Both no-op locally; both work behind the `AQE_APP_PASSWORD` gate (started in `require_login()` before `st.stop()`; HF counts any HTTP hit).
+- `src/ui/daily_job.py` — in-app scheduler thread runs the full pipeline at **08:30 SGT, Tue–Sat** (skips Sun/Mon — US markets shut Sat/Sun), exporting to the AQE Drive folder. Writes a `aqe_last_run.json` marker (local + Drive) that drives the Scanner's status bar (last run time / success / push). Needs the container awake (UptimeRobot). HF-only unless `AQE_ENABLE_SCHEDULER=1`.
 - `earnings.py` — pulls/stores earnings calendar from FMP
 - `db.py` — SQLite state store (7 tables)
 

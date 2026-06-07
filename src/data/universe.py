@@ -1,12 +1,18 @@
-"""Universe management — load, refresh, and persist the ticker list.
+"""Universe management — load + persist the curated ticker list (the "fishing net").
 
-data/universe.txt is the canonical source. refresh_universe() pulls from the FMP
-screener to catch new listings meeting the criteria ($1B+ mcap, $5+ price,
-500K+ daily volume, NYSE/NASDAQ only).
+The universe is a FIXED, manually-curated list. It lives as a single CSV in a
+dedicated Google Drive folder (`UNIVERSE_FOLDER_ID`), which is the source of
+truth. On startup `restore_universe_from_drive()` overwrites the local
+`universe.txt` from that folder. Update it by uploading a new CSV via the app
+(overwrites the canonical file) or by replacing the file directly in Drive.
+
+`refresh_universe()` (FMP screener) is retained for MANUAL use only — it is no
+longer called by the daily pipeline (it ballooned the list to ~1800 tickers).
 """
 
 from __future__ import annotations
 
+import os
 from datetime import date
 from pathlib import Path
 
@@ -14,6 +20,15 @@ from src.data.paths import DATA_DIR, PROJECT_ROOT
 
 DEFAULT_UNIVERSE_FILE = DATA_DIR / "universe.txt"
 BENCHMARK = "SPY"
+
+# Dedicated Drive folder holding the universe CSV (a subfolder of the AQE
+# folder). Override per-deploy with GDRIVE_UNIVERSE_FOLDER_ID.
+UNIVERSE_FOLDER_ID = (
+    os.environ.get("GDRIVE_UNIVERSE_FOLDER_ID")
+    or "16wAS7Xsn6h8bHQRcWxFgq7bXPVd2jQhA"
+)
+# Canonical filename the app writes — single file, overwritten each upload.
+UNIVERSE_DRIVE_FILENAME = "universe.csv"
 
 UNIVERSE_MIN_MCAP = 1_000_000_000
 UNIVERSE_MIN_PRICE = 5.0
@@ -96,87 +111,68 @@ def refresh_universe(dry_run: bool = False) -> dict:
     }
 
 
-def upload_universe(csv_path_or_bytes) -> dict:
-    """Replace universe.txt from a CSV upload (e.g. TradingView screener export).
-
-    Accepts either a file path (str/Path) or an UploadedFile (BytesIO) from
-    Streamlit's file_uploader. Looks for a 'Symbol' column, extracts tickers,
-    filters junk, writes universe.txt.
-
-    Returns dict with: tickers (list), count (int), previous_count (int).
-    """
-    import pandas as pd
-
+def _read_text(csv_path_or_bytes) -> str:
+    """Read CSV text from a path, a Streamlit UploadedFile, or raw bytes/str."""
     if isinstance(csv_path_or_bytes, (str, Path)):
-        df = pd.read_csv(csv_path_or_bytes)
-    else:
-        # Streamlit UploadedFile (BytesIO-like)
-        df = pd.read_csv(csv_path_or_bytes)
+        return Path(csv_path_or_bytes).read_text(encoding="utf-8-sig")
+    data = (csv_path_or_bytes.getvalue() if hasattr(csv_path_or_bytes, "getvalue")
+            else csv_path_or_bytes.read())
+    return data.decode("utf-8-sig") if isinstance(data, bytes) else data
 
-    # Find the Symbol column (case-insensitive)
-    sym_col = None
-    for col in df.columns:
-        if col.strip().lower() == "symbol":
-            sym_col = col
-            break
-    if sym_col is None:
-        raise ValueError(
-            f"CSV has no 'Symbol' column. Found columns: {list(df.columns)}"
-        )
 
-    raw = df[sym_col].dropna().astype(str).str.strip().str.upper().tolist()
+def upload_universe(csv_path_or_bytes) -> dict:
+    """Set the universe from a screener CSV (with a Symbol column).
 
-    # Filter: skip warrants/units, tickers with dots/spaces
-    tickers: list[str] = []
-    seen: set[str] = set()
-    for sym in raw:
-        if not sym or sym in seen:
-            continue
-        if any(sym.endswith(s) for s in EXCLUDED_SUFFIXES):
-            continue
-        if "." in sym or " " in sym:
-            continue
-        seen.add(sym)
-        tickers.append(sym)
+    Writes the parsed tickers to the local universe.txt AND uploads the raw CSV
+    to the universe Drive folder as the canonical file (overwriting it), so the
+    new list persists across container restarts. Accepts a path or a Streamlit
+    UploadedFile.
 
-    previous = load_universe(include_benchmark=False)
-    _write_universe(tickers)
+    Returns: {tickers, count, previous_count, drive_ok, drive_reason}.
+    """
+    raw = _read_text(csv_path_or_bytes)
+    universe_txt = _csv_to_universe_text(raw)
+    if universe_txt is None:
+        raise ValueError("CSV has no recognisable 'Symbol' column.")
+
+    try:
+        previous = load_universe(include_benchmark=False)
+    except Exception:  # noqa: BLE001
+        previous = []
+
+    DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    DEFAULT_UNIVERSE_FILE.write_text(universe_txt, encoding="utf-8")
+    tickers = [ln for ln in universe_txt.splitlines() if ln and not ln.startswith("#")]
+
+    # Overwrite the canonical CSV in the universe Drive folder.
+    drive_ok, drive_reason = False, "not configured"
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            r = gdrive_uploader.upload_or_replace(
+                UNIVERSE_DRIVE_FILENAME, raw, mime="text/csv",
+                folder_id=UNIVERSE_FOLDER_ID,
+            )
+            drive_ok = bool(r.get("ok"))
+            drive_reason = r.get("reason", "ok" if drive_ok else "failed")
+    except Exception as exc:  # noqa: BLE001
+        drive_reason = f"{type(exc).__name__}: {exc}"
 
     return {
         "tickers": tickers,
         "count": len(tickers),
         "previous_count": len(previous),
+        "drive_ok": drive_ok,
+        "drive_reason": drive_reason,
     }
 
 
 def _write_universe(tickers: list[str]) -> None:
-    """Write universe.txt locally AND back up to Google Drive for persistence.
-
-    The local file is the runtime read path. The Drive copy survives container
-    restarts on HuggingFace (ephemeral filesystem). On next startup,
-    ``restore_universe_from_drive()`` pulls it back before the first
-    ``load_universe()`` call.
-    """
-    lines = [
-        f"# AQE Universe — updated {date.today()}",
-        f"# {len(tickers)} tickers",
-        "",
-    ]
-    lines.extend(tickers)
-    lines.append("")
-    content = "\n".join(lines)
+    """Write universe.txt locally (used by the manual refresh path only)."""
+    lines = [f"# AQE Universe — updated {date.today()}",
+             f"# {len(tickers)} tickers", "", *tickers, ""]
     DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DEFAULT_UNIVERSE_FILE.write_text(content, encoding="utf-8")
-
-    # Back up to Drive (best-effort — never blocks the pipeline)
-    try:
-        from src.data import gdrive_uploader
-        if gdrive_uploader.is_configured():
-            gdrive_uploader.upload_or_replace(
-                "universe.txt", content, mime="text/plain",
-            )
-    except Exception:  # noqa: BLE001
-        pass
+    DEFAULT_UNIVERSE_FILE.write_text("\n".join(lines), encoding="utf-8")
 
 
 def _csv_to_universe_text(content: str) -> str | None:
@@ -216,48 +212,83 @@ def _csv_to_universe_text(content: str) -> str | None:
                       f"# {len(tickers)} tickers", "", *tickers, ""])
 
 
-def restore_universe_from_drive() -> bool:
-    """Pull the universe from the pinned Drive folder and overwrite the local copy.
+def _drive_service():
+    """Return (service, universe_folder_id), or (None, None) if Drive isn't set up."""
+    from src.data import gdrive_uploader
+    if not gdrive_uploader.is_configured():
+        return None, None
+    cfg = gdrive_uploader.DriveConfig.from_env()
+    if cfg is None:
+        return None, None
+    return gdrive_uploader._build_service(cfg), UNIVERSE_FOLDER_ID
 
-    Drive is the single source of truth for the universe (the "fishing net").
-    Looks for `universe.txt` first, then `universe.csv` (a screener export with a
-    Symbol column). Runs on every startup so a fresh HF container — or one with a
-    stale baked-in universe.txt — always reflects what you put in Drive.
-    Returns True if a restore happened.
+
+def _active_universe_file(service, folder_id) -> dict | None:
+    """The canonical universe.csv if present, else the newest CSV in the folder."""
+    q = f"'{folder_id}' in parents and trashed = false"
+    res = service.files().list(
+        q=q, orderBy="modifiedTime desc",
+        fields="files(id,name,modifiedTime,mimeType)",
+    ).execute()
+    files = [f for f in (res.get("files") or [])
+             if f.get("name", "").lower().endswith(".csv")
+             or f.get("mimeType") == "text/csv"]
+    if not files:
+        return None
+    for f in files:
+        if f.get("name", "").lower() == UNIVERSE_DRIVE_FILENAME:
+            return f
+    return files[0]  # newest by modifiedTime
+
+
+def restore_universe_from_drive() -> bool:
+    """Overwrite the local universe.txt from the universe Drive folder.
+
+    Drive is the single source of truth. Reads the canonical universe.csv (or the
+    newest CSV in the folder), parses the Symbol column, and writes universe.txt.
+    Runs on every pipeline startup so a fresh/ephemeral container always reflects
+    what's in Drive. Returns True if a restore happened.
     """
     try:
-        from src.data import gdrive_uploader
-        if not gdrive_uploader.is_configured():
+        service, folder_id = _drive_service()
+        if not service:
             return False
-
-        cfg = gdrive_uploader.DriveConfig.from_env()
-        if cfg is None:
+        f = _active_universe_file(service, folder_id)
+        if not f:
             return False
-        service = gdrive_uploader._build_service(cfg)
-        folder_id = gdrive_uploader._resolve_folder_id(service, cfg)
-        if not folder_id:
-            return False
-
-        # Prefer a plain universe.txt; fall back to a universe.csv export.
-        found = gdrive_uploader._find_file(service, folder_id, "universe.txt")
-        as_csv = False
-        if not found:
-            found = gdrive_uploader._find_file(service, folder_id, "universe.csv")
-            as_csv = True
-        if not found:
-            return False
-
-        content = service.files().get_media(fileId=found["id"]).execute()
+        content = service.files().get_media(fileId=f["id"]).execute()
         if isinstance(content, bytes):
             content = content.decode("utf-8")
-        if as_csv:
-            converted = _csv_to_universe_text(content)
-            if converted is None:
-                return False
-            content = converted
-
+        txt = _csv_to_universe_text(content)
+        if txt is None:  # not a Symbol-column CSV — treat as a plain ticker list
+            txt = content if content.strip() else None
+        if txt is None:
+            return False
         DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        DEFAULT_UNIVERSE_FILE.write_text(content, encoding="utf-8")
+        DEFAULT_UNIVERSE_FILE.write_text(txt, encoding="utf-8")
         return True
     except Exception:  # noqa: BLE001
         return False
+
+
+def get_drive_universe_status() -> dict | None:
+    """Metadata for the active universe file in Drive: {name, modified, count}.
+
+    None when Drive isn't configured or the folder has no CSV. Downloads the file
+    to count tickers, so callers should cache the result.
+    """
+    try:
+        service, folder_id = _drive_service()
+        if not service:
+            return None
+        f = _active_universe_file(service, folder_id)
+        if not f:
+            return None
+        content = service.files().get_media(fileId=f["id"]).execute()
+        if isinstance(content, bytes):
+            content = content.decode("utf-8")
+        txt = _csv_to_universe_text(content) or ""
+        count = len([ln for ln in txt.splitlines() if ln and not ln.startswith("#")])
+        return {"name": f.get("name"), "modified": f.get("modifiedTime"), "count": count}
+    except Exception:  # noqa: BLE001
+        return None

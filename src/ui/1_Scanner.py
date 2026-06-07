@@ -63,6 +63,30 @@ require_login()
 st.title("AQE Scanner")
 
 # ---------------------------------------------------------------------------
+# Daily auto-run status bar (08:30 SGT, Tue–Sat)
+# ---------------------------------------------------------------------------
+try:
+    from src.ui.daily_job import last_run_status, next_run_hint
+    _lr = last_run_status()
+    if _lr is None:
+        st.info(f"⏱️ Auto-run scheduled {next_run_hint()}. No run recorded yet.")
+    elif _lr.get("status") == "success":
+        _picks = _lr.get("top_picks")
+        _pk = f" · {_picks} top picks" if _picks is not None else ""
+        st.success(
+            f"✅ Last auto-run {_lr.get('finished_at', '?')} — pushed to Drive"
+            f"{_pk}. Next: {next_run_hint()}."
+        )
+    else:
+        _why = _lr.get("reason") or f"exit code {_lr.get('rc', '?')}"
+        st.warning(
+            f"⚠️ Last auto-run {_lr.get('finished_at', _lr.get('started_at','?'))} "
+            f"FAILED ({_why}). Next: {next_run_hint()}."
+        )
+except Exception:  # noqa: BLE001
+    pass
+
+# ---------------------------------------------------------------------------
 # Sidebar — data refresh only
 # ---------------------------------------------------------------------------
 CLOUD_MODE = is_cloud_mode()
@@ -217,21 +241,43 @@ with st.sidebar:
             run_module_streaming("src.scanner.score_runner", "Score runner", prog, stat)
             st.rerun()
 
-    with st.expander("Universe Upload", expanded=False):
+    with st.expander("Universe", expanded=False):
+        @st.cache_data(ttl=300, show_spinner=False)
+        def _universe_status():
+            from src.data.universe import get_drive_universe_status, load_universe
+            info = get_drive_universe_status()
+            if info:
+                return {"source": "Drive", **info}
+            try:
+                n = len(load_universe(include_benchmark=False))
+            except Exception:  # noqa: BLE001
+                n = 0
+            return {"source": "local", "name": "universe.txt", "count": n, "modified": None}
+
+        _u = _universe_status()
+        _when = (_u.get("modified") or "")[:10] or "—"
+        st.caption(
+            f"📋 **{_u['count']} tickers** · `{_u['name']}` · updated {_when} "
+            f"· {_u['source']}"
+        )
         csv_file = st.file_uploader(
-            "Upload screener CSV",
+            "Upload screener CSV (overwrites the Drive universe file)",
             type=["csv"],
-            help="CSV with a 'Symbol' column (e.g. TradingView screener export)",
+            help="CSV with a 'Symbol' column (e.g. TradingView screener export). "
+                 "Written to the dedicated universe folder in Drive.",
         )
         if csv_file is not None:
             if st.button("Apply universe", type="secondary", use_container_width=True):
                 from src.data.universe import upload_universe
 
                 result = upload_universe(csv_file)
-                st.success(
-                    f"Universe updated: {result['count']} tickers "
-                    f"(was {result['previous_count']})"
-                )
+                msg = (f"Universe updated: {result['count']} tickers "
+                       f"(was {result['previous_count']})")
+                if result.get("drive_ok"):
+                    st.success(msg + " — saved to Drive ✓")
+                else:
+                    st.warning(msg + f" — Drive save failed: {result.get('drive_reason')}")
+                _universe_status.clear()
                 st.rerun()
 
     if not CLOUD_MODE:

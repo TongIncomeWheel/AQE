@@ -88,11 +88,14 @@ def require_login() -> None:
 
     import streamlit as st
 
-    # Start the HF keep-alive pinger once per process (no-op locally). Placed
-    # here because every page calls require_login() right after set_page_config.
+    # Start the HF keep-alive pinger + daily scheduler once per process (no-ops
+    # locally). Placed here because every page calls require_login() right after
+    # set_page_config.
     try:
         from src.ui.keepalive import start_keepalive
         start_keepalive()
+        from src.ui.daily_job import start_daily_job
+        start_daily_job()
     except Exception:  # noqa: BLE001
         pass
 
