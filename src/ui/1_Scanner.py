@@ -1009,3 +1009,38 @@ if _adhoc_results:
 
     for r in _err:
         st.warning(f"**{r['ticker']}** — {r['error']}")
+
+
+# ---------------------------------------------------------------------------
+# Full AQE export viewer — the exact AIC schema (all v2.1 fields, uniform tiers)
+# ---------------------------------------------------------------------------
+st.divider()
+with st.expander("Full AQE export (AIC schema — every field, identical across tiers)", expanded=False):
+    _exp_full = load_export() or {}
+    if not _exp_full:
+        st.info("No export yet. Run the daily pipeline, then refresh.")
+    else:
+        st.caption(
+            f"Exported: {_exp_full.get('exported_at', '—')}  ·  "
+            f"spy_roc_20d: {_exp_full.get('spy_roc_20d')}  ·  "
+            f"sector_map_version: {_exp_full.get('sector_map_version', '—')}  ·  "
+            f"sector_map_gaps: {len(_exp_full.get('sector_map_gaps') or [])}"
+        )
+        _tier_sel = st.radio(
+            "Tier", ["top_picks", "edge_list", "longlist", "watchlist"],
+            horizontal=True, key="export_schema_tier",
+        )
+        _tier_recs = _exp_full.get(_tier_sel) or []
+        if _tier_recs:
+            _tdf = pd.DataFrame(_tier_recs)
+            # show dict columns (e.g. fib) as compact strings so the grid stays readable
+            for _c in _tdf.columns:
+                if _tdf[_c].apply(lambda v: isinstance(v, (dict, list))).any():
+                    _tdf[_c] = _tdf[_c].apply(lambda v: "{…}" if isinstance(v, dict) else (str(v) if isinstance(v, list) else v))
+            st.caption(f"{len(_tier_recs)} rows × {len(_tdf.columns)} columns "
+                       "(same column set in every tier)")
+            st.dataframe(_tdf, use_container_width=True, hide_index=True)
+            with st.popover("Show all field names"):
+                st.write(sorted(_tdf.columns.tolist()))
+        else:
+            st.info(f"No records in `{_tier_sel}` today.")
