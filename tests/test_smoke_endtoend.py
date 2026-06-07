@@ -303,27 +303,33 @@ def test_vix_regime_classification():
 
 
 def test_ptrs_disposition_bands():
-    # High engine score + positive context → FULL
-    r = compute_ptrs(engine_score=65.0, sh=3.0, ra=0.0, vix=15.0)
+    # PTRS = engine_score + SH only (no VIX/RA — regime handles macro separately)
+
+    # High engine score + positive sector → FULL
+    r = compute_ptrs(engine_score=65.0, sh=3.0)
     assert r["disposition"] == "FULL"
-    assert r["ptrs"] == 70.0  # 65 + 3 + 0 + 2
+    assert r["ptrs"] == 68.0  # 65 + 3
 
     # Mediocre score → HALF
-    r2 = compute_ptrs(engine_score=52.0, sh=0.0, ra=0.0, vix=15.0)
+    r2 = compute_ptrs(engine_score=52.0, sh=0.0)
     assert r2["disposition"] == "HALF"
+    assert r2["ptrs"] == 52.0
 
     # Below threshold → REJECT
-    r3 = compute_ptrs(engine_score=35.0, sh=-5.0, ra=0.0, vix=15.0)
+    r3 = compute_ptrs(engine_score=35.0, sh=-5.0)
     assert r3["disposition"] == "REJECT"
+    assert r3["ptrs"] == 30.0
 
-    # RED regime → PARKED regardless of score
-    r4 = compute_ptrs(engine_score=90.0, sh=3.0, ra=5.0, vix=35.0)
-    assert r4["disposition"] == "PARKED"
-    assert r4["max_size"] == 0.0
+    # Borderline QUARTER
+    r4 = compute_ptrs(engine_score=48.0, sh=0.0)
+    assert r4["disposition"] == "QUARTER"
+    assert r4["max_size"] == 0.25
 
-    # YELLOW regime caps at quarter size
-    r5 = compute_ptrs(engine_score=70.0, sh=3.0, ra=0.0, vix=20.0)
-    assert r5["max_size"] == 0.25
+    # VIX regime is separate from PTRS (tested via classify_vix_regime)
+    assert classify_vix_regime(15.0) == "GREEN"
+    assert classify_vix_regime(20.0) == "YELLOW"
+    assert classify_vix_regime(28.0) == "ORANGE"
+    assert classify_vix_regime(35.0) == "RED"
 
 
 def test_srm_grade_basic():
@@ -341,8 +347,17 @@ def test_srm_grade_basic():
     assert result["grade"] in ("DEPLOY", "HOLD")
     assert result["sh"] >= 0
 
-    # Downtrending ETF
-    close_down = np.linspace(100, 80, n)
+    # Downtrending ETF — a linear decline has divergence > 0 (5d % loss
+    # is less than 20d % loss), which the SRM correctly reads as TURNING
+    # (deceleration). For AVOID we need an accelerating crash where 5d ROC
+    # is MORE negative than 20d ROC (divergence < 0). A brief rally followed
+    # by a sharp crash achieves this: price 5d ago was higher than 20d ago,
+    # so the recent crash looks worse.
+    close_down = np.concatenate([
+        np.linspace(100, 90, 30),      # slow decline for 30 bars
+        np.linspace(90, 110, 15),      # brief rally (dead-cat bounce)
+        np.linspace(110, 70, 5),       # crash in last 5 bars
+    ])
     etf_down = pd.DataFrame({
         "date": dates, "ticker": "XLE",
         "open": close_down + 0.3, "high": close_down + 0.5,
