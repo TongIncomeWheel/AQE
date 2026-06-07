@@ -62,14 +62,6 @@ require_login()
 
 st.title("AQE Scanner")
 
-# --- deploy/diagnostic marker: proves which build is live + what pages it has ---
-try:
-    _pages_dir = PROJECT_ROOT / "src" / "ui" / "pages"
-    _pages = sorted(p.stem for p in _pages_dir.glob("*.py"))
-    st.caption(f"🔄 sync test #2 · build pages present: {', '.join(_pages)} (safe to remove)")
-except Exception as _e:  # noqa: BLE001
-    st.caption(f"🔄 sync test #2 · pages check error: {_e}")
-
 # ---------------------------------------------------------------------------
 # Daily auto-run status bar (08:30 SGT, Tue–Sat)
 # ---------------------------------------------------------------------------
