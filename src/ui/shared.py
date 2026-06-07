@@ -88,6 +88,14 @@ def require_login() -> None:
 
     import streamlit as st
 
+    # Start the HF keep-alive pinger once per process (no-op locally). Placed
+    # here because every page calls require_login() right after set_page_config.
+    try:
+        from src.ui.keepalive import start_keepalive
+        start_keepalive()
+    except Exception:  # noqa: BLE001
+        pass
+
     expected = os.environ.get(APP_PASSWORD_ENV)
     if not expected:
         return  # no password configured -> app is open (local use)

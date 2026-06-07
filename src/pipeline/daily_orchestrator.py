@@ -70,18 +70,10 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive universe restore: {exc}")
 
-    # Step 0: Universe refresh on Sundays
-    if run_date.strftime("%A") == "Sunday":
-        print("[daily] Step 0: Universe refresh (Sunday)...")
-        try:
-            from src.data.universe import refresh_universe
-            result = refresh_universe()
-            if result["unchanged"]:
-                print("  Universe unchanged")
-            else:
-                print(f"  Added {len(result['added'])}, removed {len(result['removed'])}, total {result['total']}")
-        except Exception as exc:
-            print(f"  [WARN] Universe refresh failed: {exc}")
+    # Step 0: Universe is a FIXED, manually-curated list (the "fishing net").
+    # Auto-refresh from the FMP screener is intentionally disabled — it ballooned
+    # the list to ~1800 tickers. To change the universe, overwrite universe.txt
+    # (or universe.csv) in the Drive folder, or use the app's Universe Upload.
 
     # Step 1: Load cached data (incremental pull handled by panel_builder)
     if not skip_pull:

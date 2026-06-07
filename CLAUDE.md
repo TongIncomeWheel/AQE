@@ -30,7 +30,7 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - `scores_daily.parquet` — lives in `data/` (NOT `output/`)
 - `drive_sync.py` — exports `aqe_daily_export.json` to `output/` (local working copy) + the pinned Google Drive folder via REST (no local `G:` mount)
 - `sector_mapper.py` — maps tickers to GICS sector ETFs
-- `universe.py` — manages the 600+ ticker universe
+- `universe.py` — fixed, manually-curated ticker universe (the "fishing net"). Auto-refresh from the FMP screener is DISABLED (it ballooned to ~1800). Source of truth = `universe.txt` (or `universe.csv`) in the pinned Drive folder; `restore_universe_from_drive()` overwrites the local copy from Drive on every pipeline startup. Update it by overwriting that Drive file or via the app's Universe Upload.
 - `earnings.py` — pulls/stores earnings calendar from FMP
 - `db.py` — SQLite state store (7 tables)
 

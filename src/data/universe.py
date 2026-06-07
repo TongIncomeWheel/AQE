@@ -179,16 +179,52 @@ def _write_universe(tickers: list[str]) -> None:
         pass
 
 
-def restore_universe_from_drive() -> bool:
-    """Pull universe.txt from Drive if the local copy is missing.
+def _csv_to_universe_text(content: str) -> str | None:
+    """Extract tickers from a screener CSV (Symbol column) → universe.txt text.
 
-    Called once at container startup (from the orchestrator or app entry)
-    so that a fresh HF container recovers the universe without needing a
-    full FMP screener pull. Returns True if a restore happened.
+    Returns None if there is no recognisable Symbol column.
     """
-    if DEFAULT_UNIVERSE_FILE.exists():
-        return False  # already have one — nothing to do
+    import csv
+    import io
 
+    reader = csv.reader(io.StringIO(content))
+    rows = [r for r in reader if any(c.strip() for c in r)]
+    if not rows:
+        return None
+    header = [h.strip().lower() for h in rows[0]]
+    try:
+        sym_idx = next(i for i, h in enumerate(header)
+                       if h in ("symbol", "ticker", "symbols", "tickers"))
+    except StopIteration:
+        return None
+
+    tickers: list[str] = []
+    seen: set[str] = set()
+    for r in rows[1:]:
+        if len(r) <= sym_idx:
+            continue
+        sym = r[sym_idx].strip().upper()
+        if not sym or sym in seen:
+            continue
+        if any(sym.endswith(s) for s in EXCLUDED_SUFFIXES) or "." in sym or " " in sym:
+            continue
+        seen.add(sym)
+        tickers.append(sym)
+    if not tickers:
+        return None
+    return "\n".join([f"# AQE Universe — restored from Drive CSV ({date.today()})",
+                      f"# {len(tickers)} tickers", "", *tickers, ""])
+
+
+def restore_universe_from_drive() -> bool:
+    """Pull the universe from the pinned Drive folder and overwrite the local copy.
+
+    Drive is the single source of truth for the universe (the "fishing net").
+    Looks for `universe.txt` first, then `universe.csv` (a screener export with a
+    Symbol column). Runs on every startup so a fresh HF container — or one with a
+    stale baked-in universe.txt — always reflects what you put in Drive.
+    Returns True if a restore happened.
+    """
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
@@ -201,14 +237,25 @@ def restore_universe_from_drive() -> bool:
         folder_id = gdrive_uploader._resolve_folder_id(service, cfg)
         if not folder_id:
             return False
+
+        # Prefer a plain universe.txt; fall back to a universe.csv export.
         found = gdrive_uploader._find_file(service, folder_id, "universe.txt")
+        as_csv = False
+        if not found:
+            found = gdrive_uploader._find_file(service, folder_id, "universe.csv")
+            as_csv = True
         if not found:
             return False
 
-        # Download file content
         content = service.files().get_media(fileId=found["id"]).execute()
         if isinstance(content, bytes):
             content = content.decode("utf-8")
+        if as_csv:
+            converted = _csv_to_universe_text(content)
+            if converted is None:
+                return False
+            content = converted
+
         DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
         DEFAULT_UNIVERSE_FILE.write_text(content, encoding="utf-8")
         return True
