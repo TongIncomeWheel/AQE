@@ -589,7 +589,7 @@ if CLOUD_MODE:
             tk = r.get("ticker")
             if not tk or tk in dsl:
                 continue
-            betas[tk] = {30: r.get("beta_30d")}
+            betas[tk] = {30: r.get("beta_30d"), 60: r.get("beta_60d")}
             dsl[tk] = {
                 "entry": r.get("entry"),
                 "stop": r.get("dsl_stop"),
@@ -659,6 +659,7 @@ else:
             "PipeRk": _fmt(sig.get("pipe_rank"), ".1f"),
             "Floor": _fmt(floor, ".1f"),
             "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
+            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
             "Flow": _fmt(eng.get("flow"), ".0f"),
             "Energy": _fmt(eng.get("energy"), ".0f"),
             "Struct": _fmt(eng.get("structure"), ".0f"),
@@ -694,7 +695,8 @@ st.caption(
     "R/R = estimated reward ÷ risk: (1.618 Fib extension − entry) ÷ (entry − DSL stop) | "
     "Fib = Fibonacci levels anchored on most recent swing low→high (0.618 retracement / 1.618 extension) | "
     "Elder5d = Elder Impulse score for each of the last 5 trading sessions (1–10 scale, ≥7 = bullish impulse) | "
-    "Beta30 = 30-day rolling beta vs SPY (sensitivity to broad market moves; ≥1.5 = high-β, gets wider DSL stop)"
+    "Beta30 = 30-day rolling beta vs SPY (sensitivity to broad market moves; ≥1.5 = high-β, gets wider DSL stop) | "
+    "Beta60 = 60-day rolling beta vs SPY (smoother, less noisy market sensitivity for committee analysis)"
 )
 
 # recipe_matches now includes both aggregate qualifiers AND PE picks
@@ -728,6 +730,7 @@ if recipe_matches:
             "PipeRk": _fmt(rm.get("pipe_rank"), ".1f"),
             "Floor": _fmt(floor, ".1f"),
             "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
+            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
             "Flow": _fmt(eng.get("flow"), ".0f"),
             "Energy": _fmt(eng.get("energy"), ".0f"),
             "Struct": _fmt(eng.get("structure"), ".0f"),
@@ -891,6 +894,7 @@ if _have_scan:
                 "PipeRk": _fmt(float(row.get("pipe_rank", 0)), ".1f"),
                 "Floor": _fmt(float(row["_floor"]), ".1f"),
                 "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
+            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
                 "Flow": _fmt(float(row.get("flow_100", 0)), ".0f"),
                 "Energy": _fmt(float(row.get("energy_100", 0)), ".0f"),
                 "Struct": _fmt(float(row.get("structure_100", 0)), ".0f"),
@@ -992,6 +996,7 @@ if _adhoc_results:
                 "BQ": _fmt(r.get("bq"), ".0f"),
                 "PipeRk": _fmt(r.get("pipe_rank"), ".1f"),
                 "Beta30": _fmt(r.get("beta_30d"), ".2f"),
+                "Beta60": _fmt(r.get("beta_60d"), ".2f"),
                 "Entry": _fmt(lv.get("entry"), ".2f"),
                 "DSL": _fmt(lv.get("stop"), ".2f"),
                 "TP 1/2/3": _tp_str(lv),
