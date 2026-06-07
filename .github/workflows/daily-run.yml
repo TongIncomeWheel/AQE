@@ -1,0 +1,35 @@
+name: AQE daily backstop
+
+# Backstop for the in-app HF scheduler. The Space runs the pipeline at 08:30 SGT
+# (Tue–Sat); this fires ~1h later (09:30 SGT = 01:30 UTC) and only runs the
+# pipeline if the Space hasn't already done today's run. Catches days the Space
+# was asleep or restarted. SGT = UTC+8, so 09:30 SGT Tue–Sat == 01:30 UTC Tue–Sat.
+on:
+  schedule:
+    - cron: "30 1 * * 2-6"   # 01:30 UTC = 09:30 SGT, Tue–Sat
+  workflow_dispatch: {}        # manual "Run workflow" button
+
+# Avoid overlapping runs.
+concurrency:
+  group: aqe-daily
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Daily backstop (runs only if the Space hasn't already)
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+        run: python -m scripts.daily_backstop
