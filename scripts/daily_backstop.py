@@ -14,6 +14,7 @@ Needs env: FMP_API_KEY, GOOGLE_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN
 
 from __future__ import annotations
 
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -32,19 +33,21 @@ from src.ui.daily_job import (  # noqa: E402
 def main() -> int:
     now = datetime.now(ZoneInfo("Asia/Singapore"))
     stamp = now.strftime("%Y-%m-%d %a %H:%M SGT")
+    force = os.environ.get("AQE_FORCE", "").strip().lower() == "true"
 
-    if not _is_run_day(now.date()):
-        print(f"[backstop] {stamp}: Sun/Mon — US market was closed, skipping.")
-        return 0
-
-    lr = last_run_status()
-    if (lr and lr.get("date_sgt") == now.date().isoformat()
-            and lr.get("status") == "success"):
-        print(f"[backstop] {stamp}: today already ran via the Space "
-              f"({lr.get('finished_at')}) — skipping.")
-        return 0
-
-    print(f"[backstop] {stamp}: no successful run today — running pipeline now.")
+    if force:
+        print(f"[backstop] {stamp}: FORCE run requested — ignoring day/already-ran checks.")
+    else:
+        if not _is_run_day(now.date()):
+            print(f"[backstop] {stamp}: Sun/Mon — US market was closed, skipping.")
+            return 0
+        lr = last_run_status()
+        if (lr and lr.get("date_sgt") == now.date().isoformat()
+                and lr.get("status") == "success"):
+            print(f"[backstop] {stamp}: today already ran via the Space "
+                  f"({lr.get('finished_at')}) — skipping.")
+            return 0
+        print(f"[backstop] {stamp}: no successful run today — running pipeline now.")
     marker = _run_pipeline_and_record(now)
     print(f"[backstop] result: status={marker.get('status')} "
           f"picks={marker.get('top_picks')} exported_at={marker.get('exported_at')}")
