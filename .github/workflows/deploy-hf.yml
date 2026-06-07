@@ -1,0 +1,36 @@
+name: Deploy to HuggingFace Space
+
+# Mirrors GitHub `main` to the HF Space (AQE-Aegis/aqe) on every push, which
+# triggers HF to rebuild the Docker image — i.e. the auto version of `push_both`.
+# Requires a GitHub Actions secret HF_TOKEN (a HuggingFace *write* token).
+# Optional secret HF_USERNAME (defaults to the AQE-Aegis namespace).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-hf
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history so the push isn't rejected
+      - name: Push main to the HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "HF_TOKEN secret not set — skipping deploy. Add it in"
+            echo "Settings → Secrets and variables → Actions to enable auto-deploy."
+            exit 0
+          fi
+          USER="${HF_USERNAME:-AQE-Aegis}"
+          echo "Pushing $(git rev-parse --short HEAD) to HF Space..."
+          git push "https://${USER}:${HF_TOKEN}@huggingface.co/spaces/AQE-Aegis/aqe" HEAD:main
+          echo "Pushed. HF will rebuild the Docker image (~30s for code-only changes)."
