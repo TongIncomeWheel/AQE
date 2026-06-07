@@ -570,6 +570,8 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "mp": round(float(wr.get("mp_100", 0)), 1),
                     "elder": round(float(wr.get("elder_score", 0)), 1),
                     "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
+                    "entry": d.get("entry"),
+                    "stop": d.get("stop"),
                     "dsl_stop": d.get("stop"),
                     "dsl_risk": d.get("risk"),
                     "dsl_tp_1r": d.get("tp_1r"),
@@ -600,6 +602,26 @@ def build_export(shortlist: dict | None = None) -> dict:
         "longlist_count": len(export["longlist"]),
         "watchlist_count": len(export["watchlist"]),
     }
+
+    # ---- Uniform schema across all four tiers (Data Schema Spec v1.0 §2.2) ----
+    # "All four tiers carry an identical field set. Missing values are null."
+    # Fill cross-tier fields, then rebuild every record with the SAME ordered
+    # key set (canonical order = the richest tier's record), null-filling gaps.
+    _tiers = [export["top_picks"], export["edge_list"],
+              export["longlist"], export["watchlist"]]
+    for _tier in _tiers:
+        for _rec in _tier:
+            if "on_longlist" not in _rec:
+                _rec["on_longlist"] = _rec.get("ticker") in longlist_tickers
+    _all_keys: set[str] = set()
+    for _tier in _tiers:
+        for _rec in _tier:
+            _all_keys.update(_rec.keys())
+    _canonical = (list(export["top_picks"][0].keys())
+                  if export["top_picks"] else sorted(_all_keys))
+    _order = _canonical + [k for k in sorted(_all_keys) if k not in _canonical]
+    for _tier in _tiers:
+        _tier[:] = [{k: _rec.get(k) for k in _order} for _rec in _tier]
 
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
