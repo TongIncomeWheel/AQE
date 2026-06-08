@@ -144,13 +144,14 @@ def levels_for_ticker(
     if len(lows) < 5:
         return None
 
-    # DSL v1.5: dynamic ratio → stop → risk
-    stop, risk, dynamic_ratio, daily_range_proxy = compute_initial_stop_v15(
-        close, atr14, lows[-5:], highs, lows,
-        regime_level=regime_level, elder_score=elder_score, beta=beta,
-    )
+    # DSL v2.1: β-adjusted structural stop. Recent 5-session low − 0.5·ATR,
+    # clamped to [0.75, upper] × ATR where upper = 2.5 / 2.25 / 2.0 for
+    # β ≥ 2.0 / ≥ 1.5 / else. Wider room for high-β names so normal volatility
+    # doesn't sweep the stop ahead of the move (charter-updated behaviour).
+    stop, risk = compute_initial_stop(close, atr14, lows[-5:], beta=beta)
     if risk <= 0:
         return None
+    atr_ratio = round(risk / atr14, 2) if atr14 > 0 else None
 
     levels = {
         "entry": round(close, 2),
@@ -160,11 +161,9 @@ def levels_for_ticker(
         "tp_2r": round(close + 2 * risk, 2),
         "tp_3r": round(close + 3 * risk, 2),
         "be": round(close + 0.5 * risk, 2),
-        "shares": int(RISK_BUDGET / risk),
         "rr_pct": round(risk / close * 100, 1),
         "atr14": round(atr14, 3),
-        "dsl_atr_ratio": dynamic_ratio,           # v1.5: the dynamic INPUT ratio
-        "daily_range_proxy": daily_range_proxy,    # v1.5: whippiness for export
+        "dsl_atr_ratio": atr_ratio,   # effective stop width in ATRs (β-capped 2.0–2.5)
         "rr_est": None,
         "fib": None,
     }

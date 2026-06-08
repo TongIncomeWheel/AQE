@@ -1015,7 +1015,10 @@ if _adhoc_results:
 # Full AQE export viewer — the exact AIC schema (all v2.1 fields, uniform tiers)
 # ---------------------------------------------------------------------------
 st.divider()
-with st.expander("Full AQE export (AIC schema — every field, identical across tiers)", expanded=False):
+st.subheader("AQE export — exactly what AIC receives")
+st.caption("Every field in the daily export JSON, identical schema across all tiers. "
+           "This is the source of truth the committee reads.")
+with st.expander("Show full export table", expanded=True):
     _exp_full = load_export() or {}
     if not _exp_full:
         st.info("No export yet. Run the daily pipeline, then refresh.")

@@ -102,23 +102,30 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
   folders are no longer written.
 
 ### AQE v2.1 schema (charter v1.9.2 / Data Schema Spec v1.0)
-Per-record additions on all four tiers (`_v21_record_fields` in `drive_sync.py`):
-`gics_sector`, `gics_sector_name`, `gics_gate` (PASS/BLOCKED/WATCH/CHECK from SRM grade),
-`sector_corr` + `sector_corr_class` (60d Pearson vs parent ETF), `rvol` (vol/20d-avg),
-`rs_spy_20d` (20d ROC − SPY 20d ROC), `sma_distance_pct` (vs 50D SMA),
-`rr_tp1/2/3` (R:R to each DSL target from `dsl_be`), `held` (false — positions decommissioned),
-`atr_1h`/`breakout_stop` (null — intraday rejected, DSG-12 pending). Top-level:
-`spy_roc_20d`, `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to
-null, never break the export; new fields are NOT in the blocking `_REQUIRED_FIELDS`.
-- **DSL bracket already conforms** to Schema §5.5 geometry (`dsl_be−dsl_stop = 1.5·dsl_risk`,
-  `tp_N = be + 0.5/1.5/2.5·dsl_risk`); no stop-math change. The dynamic ATR ratio matches the
-  spec on regime+Elder; it uses a daily-range whippiness proxy where the spec's (rejected)
-  intraday `atr_1h` term would sit.
-- **Sector RAG map** (`aqe_sector_map.json`, rich format per §6.2) published to a dedicated
-  Drive subfolder `SECTOR_MAP_FOLDER_ID` (override `GDRIVE_SECTOR_FOLDER_ID`). Source of truth =
-  `data/sector_map.json` (flat {ticker: ETF}); gaps surfaced, filled manually (no daily FMP).
-- **`disposition` kept as the sizing field** (FULL/HALF/QUARTER) per binding Schema §5.3 — the
-  v2.1 qualification-flag rewrite was NOT applied (conflicts + needs removed stop-history state).
+**Principle: AQE exports DATA + computed LEVELS only — no decisions, no sizing.**
+Per-record fields on all four tiers (uniform; `_v21_record_fields` + a normalization
+pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
+(PASS/BLOCKED/WATCH/CHECK from SRM grade), `sector_corr` + `sector_corr_class`
+(60d Pearson vs parent ETF), `rvol` (vol/20d-avg), `rs_spy_20d` (20d ROC − SPY 20d ROC),
+`sma_distance_pct` (vs 50D SMA), `rr_tp1/2/3` (R:R to each DSL target from `dsl_be`),
+`held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
+`sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
+- **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
+  (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
+  `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).
+- **DSL stop = β-adjusted v2.1** (`compute_initial_stop`): recent 5-session low − 0.5·ATR,
+  clamped to [0.75, upper]×ATR, upper = 2.5/2.25/2.0 for β≥2.0/≥1.5/else. Wider room for
+  high-β names (charter-updated to stop early stop-outs). Bracket geometry holds
+  (`dsl_be−dsl_stop = 1.5·dsl_risk`; `tp_N = be + 0.5/1.5/2.5·dsl_risk`). `dsl_atr_ratio` =
+  effective stop width in ATRs (β-capped 2.0–2.5; no more 3.5 pegging).
+- **PTRS** = engine score + SH (sector health); Alfred reads `ptrs` verbatim, computes no
+  CM/SH/RA/RL. SRM `TURNING` SH = **−3** in AQE (PM "early signal" ruling; charter §4.3 says
+  −5 — charter to be amended to −3 to match).
+- **Sector RAG map** (`aqe_sector_map.json`, rich §6.2 format) published to a dedicated Drive
+  subfolder `SECTOR_MAP_FOLDER_ID` (override `GDRIVE_SECTOR_FOLDER_ID`). Source of truth =
+  `data/sector_map.json` (flat {ticker: ETF}); gaps surfaced, filled manually.
+- UI: the Scanner page shows a **"AQE export — exactly what AIC receives"** panel rendering
+  the verbatim export per tier (parity with the JSON).
 
 ### Active recipe thresholds
 Longlist: SC >= 75, Flow >= 80, Energy >= 64, Structure >= 60, MP >= 60, Elder >= 7, Phase = ANY
