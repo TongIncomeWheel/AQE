@@ -125,16 +125,37 @@ def _label(tk: str) -> str:
 _default = export["top_picks"][0].get("ticker") if export.get("top_picks") else None
 default_idx = tickers.index(_default) if _default in tickers else 0
 
-c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
-with c1:
-    sel = st.selectbox(f"Ticker ({len(tickers)} match)", tickers,
-                       index=default_idx, format_func=_label)
+# Every ticker that has price history (the chartable universe — wider than today's
+# lists). Powers the free-text search so any name can be pulled up directly.
+panel_tickers = set(panel["ticker"].unique())
+
+s1, s2 = st.columns([1, 2])
+with s1:
+    search = st.text_input("🔎 Search ticker", value="",
+                           placeholder="e.g. NVDA",
+                           help="Type any ticker in the price panel — overrides "
+                                "the dropdown. Leave blank to browse today's lists.").strip().upper()
+with s2:
+    sel_dd = st.selectbox(f"…or pick from today's lists ({len(tickers)} match)",
+                          tickers, index=default_idx, format_func=_label)
+
+if search:
+    if search in panel_tickers:
+        sel = search
+    else:
+        st.warning(f"No price history for **{search}** — it isn't in the panel "
+                   "(only the scanned universe is charted). Showing the dropdown pick instead.")
+        sel = sel_dd
+else:
+    sel = sel_dd
+
+c2, c3, c4 = st.columns(3)
 with c2:
-    lookback = st.slider("Bars shown", 60, 500, 250, step=10)
+    lookback = c2.slider("Bars shown", 60, 500, 250, step=10)
 with c3:
-    log_y = st.toggle("Log scale", value=False)
+    log_y = c3.toggle("Log scale", value=False)
 with c4:
-    show_live = st.toggle("Live 15-min", value=True,
+    show_live = c4.toggle("Live 15-min", value=True,
                           help="Stamp the latest 15-min-delayed FMP price onto "
                                "the chart (forming candle + live line).")
 
