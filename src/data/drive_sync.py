@@ -150,7 +150,7 @@ def _compute_v21_lookups(sm: dict) -> dict:
     Returns {rvol, rs, sma, corr, spy_roc_20d} where rvol/rs/sma are
     {ticker: float} and corr is {ticker: (corr, class)}.
     """
-    out = {"rvol": {}, "rs": {}, "sma": {}, "corr": {}, "spy_roc_20d": None}
+    out = {"rvol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {}, "spy_roc_20d": None}
     try:
         import numpy as np
         import pandas as pd
@@ -186,6 +186,15 @@ def _compute_v21_lookups(sm: dict) -> dict:
                 sma50 = float(np.nanmean(cl[-50:]))
                 if sma50 > 0:
                     out["sma"][tk] = round((float(cl[-1]) / sma50 - 1) * 100, 2)
+            # absolute MA ladder (20/50/100/200) — for live MA-support alerts
+            ma = {}
+            for w in (20, 50, 100, 200):
+                if len(cl) >= w:
+                    m = float(np.nanmean(cl[-w:]))
+                    if m > 0:
+                        ma[w] = round(m, 2)
+            if ma:
+                out["ma"][tk] = ma
             # rs_spy_20d = stock 20d ROC − SPY 20d ROC
             if len(cl) >= 21 and spy_roc is not None and cl[-21] > 0:
                 roc = (float(cl[-1]) / float(cl[-21]) - 1) * 100
@@ -214,6 +223,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "gics_sector": None, "gics_sector_name": None, "gics_gate": "CHECK",
         "sector_corr": None, "sector_corr_class": None,
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+        "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
         "held": False,
     }
@@ -237,6 +247,10 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
+        _ma = (lk.get("ma") or {}).get(tk) or {}
+        for w in (20, 50, 100, 200):
+            if _ma.get(w) is not None:
+                fields[f"ma_{w}"] = _ma[w]
         fields["held"] = tk in (lk.get("held") or set())
 
         # R:R to each DSL target, measured from the bracket entry (dsl_be).
@@ -330,6 +344,11 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
             "sector_corr": v21["sector_corr"], "sector_corr_class": v21["sector_corr_class"],
             "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
             "rvol": v21["rvol"], "rr_tp1": v21["rr_tp1"], "rr_tp2": v21["rr_tp2"], "rr_tp3": v21["rr_tp3"],
+            # absolute MA ladder + fib — so the live alert engine can evaluate
+            # MA/Fib support on held names uniformly with candidates.
+            "ma_20": v21["ma_20"], "ma_50": v21["ma_50"],
+            "ma_100": v21["ma_100"], "ma_200": v21["ma_200"],
+            "fib": d.get("fib"),
         })
     return out
 

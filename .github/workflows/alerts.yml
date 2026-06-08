@@ -1,0 +1,51 @@
+name: AQE live alerts
+
+# Backstop for the in-app 15-min alert poller. Fires every 15 min during US cash
+# hours so level alerts still reach the PM if the HF Space is asleep. Shares the
+# Drive dedup state with the in-app poller, so the two never double-email.
+#
+# US market 09:30–16:00 ET. ET is UTC-4 (EDT) most of the trading year. To cover
+# both EDT and EST without DST math, we run 13:00–21:00 UTC every 15 min, Mon–Fri;
+# the engine's own market-hours gate (America/New_York, DST-aware) suppresses any
+# off-session ticks, so the extra UTC padding is harmless.
+on:
+  schedule:
+    - cron: "*/15 13-21 * * 1-5"   # every 15 min, 13:00–21:00 UTC, Mon–Fri
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Run one cycle now, ignoring the market-hours gate"
+        type: boolean
+        default: false
+
+concurrency:
+  group: aqe-alerts
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Poll live levels + email digest
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          AQE_SMTP_USER: ${{ secrets.AQE_SMTP_USER }}
+          AQE_SMTP_PASSWORD: ${{ secrets.AQE_SMTP_PASSWORD }}
+          AQE_ALERT_TO: ${{ secrets.AQE_ALERT_TO }}
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            python -m scripts.alert_poll --force
+          else
+            python -m scripts.alert_poll
+          fi

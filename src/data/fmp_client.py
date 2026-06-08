@@ -134,6 +134,43 @@ class FMPClient:
         df["volume"] = df["volume"].fillna(0).astype("int64")
         return df[["date", "open", "high", "low", "close", "volume"]]
 
+    def get_quotes(self, tickers: list[str]) -> dict[str, dict]:
+        """Fetch live (15-min-delayed on Starter) quotes for a set of tickers.
+
+        Returns {ticker: {price, volume, avg_volume, ma_50, ma_200, day_low,
+        day_high, prev_close, ts}}. Each ticker is one throttled call to
+        /stable/quote. Failures on a single ticker degrade to skipping it — the
+        alert engine simply won't evaluate names it has no quote for.
+        """
+        out: dict[str, dict] = {}
+        url = f"{FMP_BASE_STABLE}/quote"
+        for tk in tickers:
+            try:
+                payload = self._get_json(url, params={"symbol": tk,
+                                                       "apikey": self.config.api_key})
+            except FMPQuotaError:
+                raise  # daily quota — let the caller email what it has so far
+            except FMPError:
+                continue  # single-name hiccup — skip it
+            row = payload[0] if isinstance(payload, list) and payload else None
+            if not isinstance(row, dict):
+                continue
+            price = row.get("price")
+            if price is None:
+                continue
+            out[tk] = {
+                "price": _f(price),
+                "volume": _f(row.get("volume")),
+                "avg_volume": _f(row.get("avgVolume")),
+                "ma_50": _f(row.get("priceAvg50")),
+                "ma_200": _f(row.get("priceAvg200")),
+                "day_low": _f(row.get("dayLow")),
+                "day_high": _f(row.get("dayHigh")),
+                "prev_close": _f(row.get("previousClose")),
+                "ts": row.get("timestamp"),
+            }
+        return out
+
     def get_screener(
         self,
         min_mcap: int = 1_000_000_000,
@@ -317,6 +354,16 @@ def resample_to_weekly(daily: pd.DataFrame) -> pd.DataFrame:
     })
     weekly = weekly.dropna(subset=["close"]).reset_index()
     return weekly[["date", "open", "high", "low", "close", "volume"]]
+
+
+def _f(v) -> float | None:
+    """Best-effort float coercion — None/blank/non-numeric → None."""
+    try:
+        if v is None or v == "":
+            return None
+        return float(v)
+    except (TypeError, ValueError):
+        return None
 
 
 def _as_iso(d: str | date) -> str:

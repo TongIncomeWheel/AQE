@@ -39,6 +39,35 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - `earnings.py` — pulls/stores earnings calendar from FMP
 - `db.py` — SQLite state store (7 tables)
 
+### Live alerts — "Trade Entry Menu" (`src/alerts/` + `src/ui/pages/4_Trade_Entry_Menu.py`)
+The PM's level-watch + 2-system AIC loop. AQE polls FMP for **15-min-delayed**
+quotes every `AQE_ALERT_MINUTES` (default 15, matching FMP Starter's delay) and
+emails a digest when a monitored ticker hits a key level. AQE has **no AI inside** —
+each alert carries a ready-to-paste "engage AIC via Claude" prompt, so the PM runs
+the committee decision externally (data ping → human → AIC).
+- Monitored set = every ticker across `top_picks`/`edge_list`/`longlist`/`watchlist`
+  + `held_positions` (held names win; else richest tier: PE > top > longlist > watchlist).
+- Levels checked (all from the export's **absolute** prices, so the engine is
+  panel-free and runs identically in-app and in CI): **Entry — pullback** (`dsl_stop
+  < live ≤ dsl_be`) + **Entry — breakout** (`live ≥ entry·(1+BREAKOUT_PCT)`); **near
+  stop** (`stop < live ≤ stop·(1+NEAR_STOP_PCT)`, uses `held_sl` for held); **TP1/2/3**;
+  **RVol spike** (`volume/avgVolume ≥ RVOL_SPIKE`); **MA support** (within `MA_TOL_PCT`
+  of `ma_20/50/100/200`); **Fib support** (within `FIB_TOL_PCT` of fib 0.382/0.5/0.618).
+- `engine.py` — `run_alert_cycle()` (load export → fetch quotes → `evaluate()` per
+  ticker → dedup → email → save state); never raises. `config.py` — thresholds via
+  `AQE_ALERT_*` env. `state.py` — dedup once-per-(ticker,level)-per-US-trading-day in a
+  shared Drive file `aqe_alert_state.json` (both pollers share it; last-writer-wins).
+  `emailer.py` — Gmail SMTP digest (`AQE_SMTP_USER`/`AQE_SMTP_PASSWORD`/`AQE_ALERT_TO`),
+  grouped by ticker, each section = live engine read + AIC prompt.
+- Export now carries absolute `ma_20/50/100/200` + `fib` on every record (incl. held)
+  so alerts are export-driven. `fmp_client.get_quotes()` adds the 15-min quote fetch
+  (`/stable/quote`: price, volume, avgVolume, priceAvg50/200).
+- Pollers: in-app thread `src/ui/alert_job.py` (HF-only unless `AQE_ENABLE_ALERTS=1`;
+  emails gated to US cash hours 09:45–16:15 ET; doubles as keep-warm) + GitHub Actions
+  backstop `scripts/alert_poll.py` / `.github/workflows/alerts.yml` (cron `*/15 13-21 * *
+  1-5`, pulls export from Drive, shares the dedup state). Page 4 = live cockpit
+  (per-ticker distance to each level, "Refresh live levels", "Send test email").
+
 ### Engines (`src/engines/`)
 - `flow.py` — Flow v1.3 (accumulation, volume, skew, extension, MFI, CMF, HA quality)
 - `energy.py` — Energy v1.3.1 (VP position, price action, squeeze, exhaustion, ATR)

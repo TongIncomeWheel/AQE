@@ -96,6 +96,8 @@ def require_login() -> None:
         start_keepalive()
         from src.ui.daily_job import start_daily_job
         start_daily_job()
+        from src.ui.alert_job import start_alert_job
+        start_alert_job()
     except Exception:  # noqa: BLE001
         pass
 
