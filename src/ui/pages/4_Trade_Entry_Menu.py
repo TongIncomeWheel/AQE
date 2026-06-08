@@ -81,6 +81,36 @@ if do_test:
     else:
         st.error(f"Test email failed: {res.get('reason')}")
 
+# --- persistent 36-hour alert feed (always on screen) ------------------
+st.subheader("📜 Alerts — last 36 hours")
+try:
+    from src.alerts import state as _S
+    feed = _S.recent_history(36)
+except Exception as exc:  # noqa: BLE001
+    feed = []
+    st.caption(f"history unavailable: {exc}")
+
+if feed:
+    st.caption(f"{len(feed)} alert(s) fired in the last 36h "
+               f"across {len({e.get('ticker') for e in feed})} ticker(s). Newest first.")
+    feed_rows = [{
+        "time (SGT)": e.get("ts_sgt"),
+        "ticker": e.get("ticker"),
+        "src": "HELD" if e.get("is_held") else e.get("source"),
+        "level": e.get("label"),
+        "level px": e.get("level_price"),
+        "live px": e.get("live_px"),
+        "detail": e.get("note"),
+    } for e in feed]
+    st.dataframe(feed_rows, use_container_width=True, hide_index=True, height=320)
+else:
+    st.caption(
+        "No alerts logged yet. The history fills as the 15-min background poller "
+        "(or the GitHub Actions backstop) fires level alerts during US market hours."
+    )
+
+st.divider()
+
 # --- live evaluation (on demand) ---------------------------------------
 if "tem_quotes" not in st.session_state or do_refresh:
     with st.spinner("Fetching 15-min quotes from FMP…"):

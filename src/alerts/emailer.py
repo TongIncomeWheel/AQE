@@ -27,9 +27,14 @@ DEFAULT_USER = "ash.tzl@gmail.com"
 
 def _cfg() -> dict:
     user = os.environ.get("AQE_SMTP_USER") or DEFAULT_USER
+    # Gmail shows App Passwords as "abcd efgh ijkl mnop" — strip spaces so a
+    # verbatim paste still authenticates.
+    pw = os.environ.get("AQE_SMTP_PASSWORD")
+    if pw:
+        pw = pw.replace(" ", "").strip()
     return {
         "user": user,
-        "password": os.environ.get("AQE_SMTP_PASSWORD"),
+        "password": pw or None,
         "to": os.environ.get("AQE_ALERT_TO") or user,
         "host": os.environ.get("AQE_SMTP_HOST") or "smtp.gmail.com",
         "port": int(os.environ.get("AQE_SMTP_PORT") or 465),

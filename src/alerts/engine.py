@@ -218,6 +218,13 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     summary["new_triggers"] = len(fresh)
     summary["triggers"] = fresh
 
+    # Log every fired trigger to the rolling history (powers the 36h on-screen feed).
+    if fresh:
+        try:
+            S.append_history(fresh)
+        except Exception:  # noqa: BLE001
+            pass
+
     if fresh and send_email:
         try:
             from src.alerts.emailer import send_digest

@@ -86,3 +86,87 @@ def mark_fired(state: dict, ticker: str, level: str) -> None:
     k = fired_key(ticker, level)
     if k not in (state.get("fired") or []):
         state.setdefault("fired", []).append(k)
+
+
+# ---------------------------------------------------------------------------
+# Alert history — a rolling log of every fired trigger (for the on-screen feed)
+# ---------------------------------------------------------------------------
+
+HISTORY_FILENAME = "aqe_alert_history.json"
+LOCAL_HISTORY = OUTPUT_DIR / HISTORY_FILENAME
+HISTORY_KEEP_HOURS = 24 * 7  # prune anything older than a week
+
+
+def load_history() -> list[dict]:
+    """Full alert history (newest entries last) — Drive first, then local."""
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            txt = gdrive_uploader.download_text(HISTORY_FILENAME)
+            if txt:
+                return json.loads(txt) or []
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        if LOCAL_HISTORY.exists():
+            return json.loads(LOCAL_HISTORY.read_text(encoding="utf-8")) or []
+    except Exception:  # noqa: BLE001
+        pass
+    return []
+
+
+def append_history(triggers: list[dict]) -> None:
+    """Append newly-fired triggers (timestamped) to the rolling history."""
+    if not triggers:
+        return
+    now_utc = datetime.now(ZoneInfo("UTC"))
+    now_sgt = now_utc.astimezone(ZoneInfo("Asia/Singapore"))
+    stamped = []
+    for t in triggers:
+        e = dict(t)
+        e["ts_utc"] = now_utc.isoformat(timespec="seconds")
+        e["ts_sgt"] = now_sgt.strftime("%Y-%m-%d %H:%M SGT")
+        stamped.append(e)
+
+    hist = load_history()
+    hist.extend(stamped)
+
+    # Prune entries older than the keep window.
+    cutoff = now_utc.timestamp() - HISTORY_KEEP_HOURS * 3600
+    pruned = []
+    for e in hist:
+        try:
+            ts = datetime.fromisoformat(e.get("ts_utc")).timestamp()
+        except (TypeError, ValueError):
+            ts = now_utc.timestamp()  # keep undated entries
+        if ts >= cutoff:
+            pruned.append(e)
+
+    payload = json.dumps(pruned, indent=2)
+    try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        LOCAL_HISTORY.write_text(payload, encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            gdrive_uploader.upload_or_replace(HISTORY_FILENAME, payload,
+                                              mime="application/json")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def recent_history(hours: int = 36) -> list[dict]:
+    """Triggers fired in the last `hours`, newest first."""
+    cutoff = datetime.now(ZoneInfo("UTC")).timestamp() - hours * 3600
+    out = []
+    for e in load_history():
+        try:
+            ts = datetime.fromisoformat(e.get("ts_utc")).timestamp()
+        except (TypeError, ValueError):
+            continue
+        if ts >= cutoff:
+            out.append(e)
+    out.sort(key=lambda e: e.get("ts_utc", ""), reverse=True)
+    return out
