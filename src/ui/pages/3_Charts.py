@@ -57,34 +57,85 @@ def _load_panel(_hash: str) -> pd.DataFrame:
 
 panel = _load_panel(str(PANEL_DAILY.stat().st_mtime_ns))
 
-# The dropdown is restricted to TODAY'S scanned names only — top_picks / edge
-# (PE) / longlist / watchlist from the export — not the whole price universe.
 export = load_export() or {}
-aqe_lookup: dict[str, dict] = {}
-for _tier in ("top_picks", "edge_list", "longlist", "watchlist"):
-    for _rec in export.get(_tier, []) or []:
-        aqe_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": _tier})
+held_positions = export.get("held_positions") or []
+held_lookup = {h.get("ticker"): h for h in held_positions if h.get("ticker")}
 
-tickers = sorted(aqe_lookup.keys())
-if not tickers:
-    st.info("No tickers on today's lists yet. Run the daily pipeline on the "
+# Category sets (which list each ticker belongs to).
+cat_sets = {
+    "Top picks": {r.get("ticker") for r in (export.get("top_picks") or [])},
+    "PE": {r.get("ticker") for r in (export.get("edge_list") or [])},
+    "Longlist": {r.get("ticker") for r in (export.get("longlist") or [])},
+    "Watchlist": {r.get("ticker") for r in (export.get("watchlist") or [])},
+    "Held": set(held_lookup.keys()),
+}
+
+# One record per ticker: tier record preferred; held positions also add their
+# engine read for names that aren't on a list today.
+rec_lookup: dict[str, dict] = {}
+for _tier in ("top_picks", "edge_list", "longlist", "watchlist"):
+    for _rec in (export.get(_tier) or []):
+        rec_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": _tier})
+for _h in held_positions:
+    rec_lookup.setdefault(_h.get("ticker"), {**_h, "_tier": "held"})
+
+if not rec_lookup:
+    st.info("No tickers in today's export yet. Run the daily pipeline on the "
             "Scanner page, then come back.")
     st.stop()
 
-# Default to the first top pick if present, else the first listed name.
+# --- Filters: easy list management (mobile-friendly) ---
+fa, fb = st.columns([1, 2])
+with fa:
+    category = st.selectbox("List", ["All", "Top picks", "PE", "Longlist",
+                                     "Watchlist", "Held"])
+with fb:
+    mp_filter = st.multiselect("MP state", ["STRONG", "BUILDING", "FADING"], default=[])
+g1, g2, g3 = st.columns(3)
+sc_min = g1.slider("Raw SC ≥", 0, 100, 0, step=5)
+ptrs_min = g2.slider("PTRS ≥", 0, 100, 0, step=5)
+pr_min = g3.slider("PipeRank ≥", 0, 100, 0, step=5)
+
+
+def _keep(tk: str) -> bool:
+    if category != "All" and tk not in cat_sets.get(category, set()):
+        return False
+    r = rec_lookup.get(tk, {})
+    if sc_min and (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < sc_min:
+        return False
+    if ptrs_min and (r.get("ptrs") or 0) < ptrs_min:
+        return False
+    if pr_min and (r.get("pipe_rank") or 0) < pr_min:
+        return False
+    if mp_filter and str(r.get("mp_state") or "") not in mp_filter:
+        return False
+    return True
+
+
+tickers = sorted(tk for tk in rec_lookup if _keep(tk))
+if not tickers:
+    st.info("No tickers match the filters — loosen them above.")
+    st.stop()
+
+
+def _label(tk: str) -> str:
+    return f"⭐ {tk} (held)" if tk in held_lookup else tk
+
+
 _default = export["top_picks"][0].get("ticker") if export.get("top_picks") else None
 default_idx = tickers.index(_default) if _default in tickers else 0
 
 c1, c2, c3 = st.columns([2, 1, 1])
 with c1:
-    sel = st.selectbox("Ticker (today's PE / longlist / watchlist)", tickers,
-                       index=default_idx)
+    sel = st.selectbox(f"Ticker ({len(tickers)} match)", tickers,
+                       index=default_idx, format_func=_label)
 with c2:
     lookback = st.slider("Bars shown", 60, 500, 250, step=10)
 with c3:
     log_y = st.toggle("Log scale", value=False)
 
-rec = aqe_lookup.get(sel)
+rec = rec_lookup.get(sel)
+held = held_lookup.get(sel)
 
 g = panel[panel["ticker"] == sel].sort_values("date").reset_index(drop=True)
 if g.empty or len(g) < 2:
@@ -152,11 +203,25 @@ if _be and _stop:
                           annotation_text=f"{_lab} {_tp:.2f}",
                           annotation_position="top left", row=1, col=1)
             _prev = _tp
-    # Keep the whole bracket in view (linear scale only).
-    if not log_y:
-        _levels = [v for v in ([_stop, _be] + [t for t, _ in _tps]) if v]
-        _ylo = min([float(disp["low"].min())] + _levels)
-        _yhi = max([float(disp["high"].max())] + _levels)
+
+# --- "Where we bought" overlay for held names ---
+_ent = held.get("entry") if held else None
+_hsl = held.get("held_sl") if held else None
+if _ent:
+    fig.add_hline(y=_ent, line=dict(color="#FFFFFF", width=1.8, dash="dot"),
+                  annotation_text=f"Bought {_ent:.2f}",
+                  annotation_position="bottom left", row=1, col=1)
+if _hsl:
+    fig.add_hline(y=_hsl, line=dict(color="#FF8C00", width=1.2, dash="dashdot"),
+                  annotation_text=f"Held SL {_hsl:.2f}",
+                  annotation_position="bottom left", row=1, col=1)
+
+# Single y-range covering candles + every drawn level (linear scale only).
+if not log_y:
+    _allv = [v for v in ([_stop, _be, _ent, _hsl] + [t for t, _ in _tps]) if v]
+    if _allv:
+        _ylo = min([float(disp["low"].min())] + _allv)
+        _yhi = max([float(disp["high"].max())] + _allv)
         _pad = (_yhi - _ylo) * 0.04 or 1.0
         fig.update_yaxes(range=[_ylo - _pad, _yhi + _pad], row=1, col=1)
 
@@ -172,6 +237,15 @@ fig.update_yaxes(title_text="Price", type="log" if log_y else "linear", row=1, c
 fig.update_yaxes(title_text="Vol", row=2, col=1)
 
 st.plotly_chart(fig, use_container_width=True)
+
+if held:
+    _e, _lp, _u, _q = held.get("entry"), held.get("live_px"), held.get("unreal_usd"), held.get("qty")
+    _mv = f"{((_lp / _e - 1) * 100):+.1f}%" if (_e and _lp) else "—"
+    _u_s = f"${_u:,.0f}" if _u is not None else "—"
+    st.info(
+        f"📌 **HELD** — bought **{_e}** × {_q} on {held.get('trade_date', '?')}  ·  "
+        f"live {_lp} ({_mv})  ·  unrealised {_u_s}  ·  held SL {held.get('held_sl')}"
+    )
 
 # Zone summary: prices, % moves from buy, and R:R to each target.
 if rec and _be and _stop:

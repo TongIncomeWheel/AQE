@@ -237,6 +237,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
+        fields["held"] = tk in (lk.get("held") or set())
 
         # R:R to each DSL target, measured from the bracket entry (dsl_be).
         be, stop = d.get("be"), d.get("stop")
@@ -250,6 +251,87 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
     except Exception:  # noqa: BLE001
         pass
     return fields
+
+
+def _num(v):
+    """Return a clean float or None (drops NaN / non-numeric)."""
+    try:
+        if v is None:
+            return None
+        f = float(v)
+        return None if f != f else f
+    except (TypeError, ValueError):
+        return None
+
+
+def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
+    """Merge each PTJ held position with AQE's current engine read on it.
+
+    Gives AIC, in one place: the trade (entry/qty/SL/TP/unrealised from the PTJ)
+    + what the engine now says (scores, MP state, DSL bracket, sector, RS, …).
+    """
+    if not held:
+        return []
+    import pandas as pd
+    from src.data.paths import SCORES_DAILY
+    sc_lookup: dict = {}
+    try:
+        if SCORES_DAILY.exists():
+            df = pd.read_parquet(SCORES_DAILY)
+            df["date"] = pd.to_datetime(df["date"]).dt.normalize()
+            latest = df[df["date"] == df["date"].max()]
+            sc_lookup = {r["ticker"]: r for _, r in latest.iterrows()}
+    except Exception:  # noqa: BLE001
+        sc_lookup = {}
+
+    out = []
+    for p in held:
+        tk = p.get("ticker")
+        if not tk:
+            continue
+        d = dsl_all.get(tk, {})
+        s = sc_lookup.get(tk)
+        sg = (lambda k: _num(s.get(k)) if s is not None else None)
+        sc = sg("sc_momentum")
+        v21 = _v21_record_fields(tk, d, lk, sm, sector_grades)
+        out.append({
+            "ticker": tk,
+            # --- the trade (from PTJ) ---
+            "qty": p.get("qty"),
+            "entry": _num(p.get("entry")),
+            "live_px": _num(p.get("livePx")),
+            "held_sl": _num(p.get("sl")),
+            "held_tp1": _num(p.get("tp1")),
+            "held_tp2": _num(p.get("tp2")),
+            "trade_date": p.get("tradeDate") or p.get("entryDate"),
+            "unreal_usd": _num(p.get("unrealUsd")),
+            "exposure": _num(p.get("exposure")),
+            "ptj_sector": p.get("sector"),
+            "ptj_srm_grade": p.get("srmGrade"),
+            "notes": p.get("notes"),
+            "held": True,
+            # --- AQE engine read ---
+            "sc_momentum": round(sc, 1) if sc is not None else None,
+            "sc_momentum_raw": round(sg("sc_momentum_raw") or sc, 1) if (sg("sc_momentum_raw") or sc) is not None else None,
+            "ptrs": ptrs_fn(sc, tk) if sc is not None else None,
+            "pipe_rank": round(sg("pipe_rank"), 1) if sg("pipe_rank") is not None else None,
+            "flow": round(sg("flow_100"), 0) if sg("flow_100") is not None else None,
+            "energy": round(sg("energy_100"), 0) if sg("energy_100") is not None else None,
+            "structure": round(sg("structure_100"), 0) if sg("structure_100") is not None else None,
+            "mp": round(sg("mp_100"), 0) if sg("mp_100") is not None else None,
+            "mp_state": (str(s.get("mp_state")) if s is not None and pd.notna(s.get("mp_state")) else None),
+            "elder": round(sg("elder_score"), 1) if sg("elder_score") is not None else None,
+            "beta_30d": (betas.get(tk) or {}).get(30),
+            "beta_60d": (betas.get(tk) or {}).get(60),
+            "dsl_stop": d.get("stop"), "dsl_be": d.get("be"), "dsl_risk": d.get("risk"),
+            "dsl_tp_1r": d.get("tp_1r"), "dsl_tp_2r": d.get("tp_2r"), "dsl_tp_3r": d.get("tp_3r"),
+            "dsl_atr_ratio": d.get("dsl_atr_ratio"), "atr_14d": d.get("atr14"),
+            "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
+            "sector_corr": v21["sector_corr"], "sector_corr_class": v21["sector_corr_class"],
+            "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
+            "rvol": v21["rvol"], "rr_tp1": v21["rr_tp1"], "rr_tp2": v21["rr_tp2"], "rr_tp3": v21["rr_tp3"],
+        })
+    return out
 
 
 def build_export(shortlist: dict | None = None) -> dict:
@@ -332,6 +414,16 @@ def build_export(shortlist: dict | None = None) -> dict:
         export["sector_map_gaps"] = sorted([t for t in _univ if t not in sm])
     except Exception:  # noqa: BLE001
         export["sector_map_gaps"] = []
+
+    # ---- Held positions (from the daily PTJ) + AQE engine read ----
+    try:
+        from src.data.ptj import load_held_positions
+        _held = load_held_positions()
+    except Exception:  # noqa: BLE001
+        _held = []
+    _v21_lk["held"] = {h.get("ticker") for h in _held if h.get("ticker")}
+    export["held_positions"] = _build_held_positions(
+        _held, dsl_all, betas, _v21_lk, sm, sector_grades, _ptrs)
 
     # mp_state lookup from scores_daily.parquet — authoritative source.
     # shortlist.json nests mp_state inside "diagnostics" for candidates and

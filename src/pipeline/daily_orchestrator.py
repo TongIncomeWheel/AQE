@@ -70,6 +70,15 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive universe restore: {exc}")
 
+    # Step 0b: Pull the latest held-positions journal (PTJ) from Drive so the
+    # export can flag held names and attach the engine's read on them.
+    try:
+        from src.data.ptj import refresh_held_positions
+        _held = refresh_held_positions()
+        print(f"[daily] Step 0b: Held positions from PTJ — {len(_held)}")
+    except Exception as exc:
+        print(f"  [WARN] PTJ fetch: {exc}")
+
     # Step 0: Universe is a FIXED, manually-curated list (the "fishing net").
     # Auto-refresh from the FMP screener is intentionally disabled — it ballooned
     # the list to ~1800 tickers. To change the universe, overwrite universe.txt

@@ -655,6 +655,33 @@ def _export_table(records):
 
 
 # ---------------------------------------------------------------------------
+# Held positions (from the daily PTJ) — the trade + AQE's current engine read
+# ---------------------------------------------------------------------------
+_held = _ex.get("held_positions") or []
+if _held:
+    st.subheader(f"Held positions ({len(_held)})")
+    st.caption(
+        "From the latest trade journal (PTJ) on Drive. `entry`/`qty`/`held_sl`/"
+        "`unreal_usd` = your trade; `sc_momentum`/`mp_state`/`flow…`/`dsl_*` = "
+        "what the engine says about it now."
+    )
+    _HELD_COLS = [
+        "ticker", "qty", "entry", "live_px", "unreal_usd", "held_sl", "held_tp1",
+        "held_tp2", "trade_date", "ptj_sector", "gics_gate",
+        "sc_momentum", "ptrs", "pipe_rank", "flow", "energy", "structure", "mp",
+        "mp_state", "elder", "beta_30d", "beta_60d", "rvol", "rs_spy_20d",
+        "sma_distance_pct", "sector_corr", "dsl_stop", "dsl_be", "dsl_tp_1r",
+        "dsl_tp_2r", "dsl_tp_3r", "dsl_atr_ratio", "atr_14d",
+        "rr_tp1", "rr_tp2", "rr_tp3", "notes",
+    ]
+    _hdf = pd.DataFrame(_held)
+    _hcols = [c for c in _HELD_COLS if c in _hdf.columns]
+    _hcols += [c for c in _hdf.columns if c not in _hcols and not c.startswith("_")]
+    st.dataframe(_hdf[_hcols], use_container_width=True, hide_index=True)
+    st.divider()
+
+
+# ---------------------------------------------------------------------------
 # 3. Precision Edge
 # ---------------------------------------------------------------------------
 st.subheader("Precision Edge")
