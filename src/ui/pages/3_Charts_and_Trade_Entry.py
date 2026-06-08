@@ -647,3 +647,79 @@ with left:
                        "every name by design — the TP *prices* vary because 1R is "
                        "β-adjusted, but the ratio doesn't.")
         d4.metric("ATR(14d)", _f(r.get("atr_14d")))
+
+    # ── AIC commentary prompt ─────────────────────────────────────────────
+    # One-click: assembles everything AQE knows about this ticker into a
+    # ready-to-paste prompt for the AI committee. Click the button once to
+    # generate; the text box below it has browser-native copy (Ctrl+A, Ctrl+C).
+    _aic_key = f"aic_prompt_{sel}"
+    if st.button("📋 AIC commentary requested", key=f"aic_btn_{sel}",
+                 use_container_width=False):
+        _lc = float(last["close"])
+        _lpx = f"{live_px:.2f}" if live_px else "—"
+        _asof_ts = export.get("exported_at") or export.get("date") or "last pipeline run"
+        _tier = r.get("_tier", "—")
+        _regime = export.get("regime") or {}
+        _regime_txt = _regime.get("level") if isinstance(_regime, dict) else str(_regime or "—")
+
+        _lines = [
+            f"AIC — {sel} commentary requested.",
+            f"",
+            f"PRICE  Last close {_lc:.2f} | Live (15-min delayed) {_lpx} | "
+            f"Export as of {_asof_ts} | Tier: {_tier} | Regime: {_regime_txt}",
+            f"",
+            f"SCORES  SC_MOM {_f(r.get('sc_momentum'), '.1f')} "
+            f"(raw {_f(r.get('sc_momentum_raw'), '.1f')}) | "
+            f"PTRS {_f(r.get('ptrs'), '.1f')} | "
+            f"Flow {_f(r.get('flow'), '.0f')} | Energy {_f(r.get('energy'), '.0f')} | "
+            f"Structure {_f(r.get('structure'), '.0f')} | MP {_f(r.get('mp'), '.0f')} | "
+            f"Elder {_f(r.get('elder'), '.1f')} | MP state {r.get('mp_state') or '—'}",
+            f"",
+            f"CONTEXT  RVOL {_f(r.get('rvol'))} | RS vs SPY 20d {_f(r.get('rs_spy_20d'))} | "
+            f"Dist 50DMA {_f(r.get('sma_distance_pct'))}% | "
+            f"Beta 30d/60d {_f(r.get('beta_30d'))}/{_f(r.get('beta_60d'))} | "
+            f"Sector {r.get('gics_sector') or '—'} ({r.get('gics_sector_name') or '—'}) | "
+            f"Gate {r.get('gics_gate') or '—'}",
+            f"",
+            f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | Buy/BE {_f(r.get('dsl_be'))} | "
+            f"TP1 {_f(r.get('dsl_tp_1r'))} | TP2 {_f(r.get('dsl_tp_2r'))} | "
+            f"TP3 {_f(r.get('dsl_tp_3r'))} | "
+            f"R:R est {_f(r.get('rr_est'), '.2f')} | ATR ratio {_f(r.get('dsl_atr_ratio'))}",
+        ]
+
+        # Volume context if we have it
+        if _sofar_vol is not None and _avg_vol:
+            if _proj_vol:
+                _rvol_x = _proj_vol / _avg_vol
+                _vol_txt = (f"Vol so far {_sofar_vol/1e6:.2f}M ({_sess_frac*100:.0f}% session) · "
+                            f"proj {_proj_vol/1e6:.2f}M · RVOL {_rvol_x:.2f}x 20d-avg")
+            else:
+                _vol_txt = f"Vol so far {_sofar_vol/1e6:.2f}M (too early to project)"
+            _lines += ["", f"VOLUME  {_vol_txt}"]
+
+        # Held position context
+        if held:
+            _lines += [
+                "",
+                f"HELD  Entry {_f(held.get('entry'))} × {held.get('qty')} | "
+                f"Held SL {_f(held.get('held_sl'))} | "
+                f"Unrealised ${held.get('unreal_usd') or '—'} | "
+                f"Trade date {held.get('trade_date', '?')}",
+            ]
+
+        _lines += [
+            "",
+            "Advise: entry/add/hold/trim/exit decision + sizing per PTRS × regime. "
+            "Charter v1.9.2. Risk 3% ($2,100) FULL / $1,050 HALF / $525 QUARTER.",
+        ]
+
+        st.session_state[_aic_key] = "\n".join(_lines)
+
+    if st.session_state.get(_aic_key):
+        st.text_area(
+            "Copy and paste into AIC:",
+            value=st.session_state[_aic_key],
+            height=220,
+            key=f"aic_ta_{sel}",
+            label_visibility="collapsed",
+        )
