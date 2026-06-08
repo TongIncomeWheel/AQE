@@ -39,7 +39,7 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - `earnings.py` — pulls/stores earnings calendar from FMP
 - `db.py` — SQLite state store (7 tables)
 
-### Live alerts — "Trade Entry Menu" (`src/alerts/` + `src/ui/pages/4_Trade_Entry_Menu.py`)
+### Live alerts — "Trade Entry Menu" (`src/alerts/` + `src/ui/pages/3_Charts_and_Trade_Entry.py`)
 The PM's level-watch + 2-system AIC loop. AQE polls FMP for **15-min-delayed**
 quotes every `AQE_ALERT_MINUTES` (default 15, matching FMP Starter's delay) and
 emails a digest when a monitored ticker hits a key level. AQE has **no AI inside** —
@@ -69,11 +69,16 @@ the committee decision externally (data ping → human → AIC).
   thread `src/ui/alert_job.py` is **off on HF** (only runs with `AQE_ENABLE_ALERTS=1`,
   e.g. local dev where SMTP works) so it can't corrupt the shared dedup state. Keep-warm
   is handled separately by `keepalive.py` + UptimeRobot.
-- Page 4 = live cockpit: a **2×2 category grid** (Entry-pullback / Approaching-stop on
-  the top row, Breakout / Key-levels-hit on the bottom) of flashing cards (`★ HELD`
-  pulses red), a **36h alert history grouped by SGT day** (read from Drive's
-  `aqe_alert_history.json`), "Refresh live levels", and a "Send test email" button
-  (warns on HF that email runs via GH Actions). Test email from GitHub:
+- **Charts + Trade Entry are ONE page** (`3_Charts_and_Trade_Entry.py`; the old
+  separate `3_Charts.py`/`4_Trade_Entry_Menu.py` were merged). Left (majority) = the
+  price chart (EOD candles + 20/50/100/200 MAs + live 15-min forming candle/line + DSL
+  buy/stop/TP zones + held "Bought @" overlay + AQE numbers); a **free-text ticker
+  search** + filtered dropdown drive it. Right rail = the Trade Entry Menu with a
+  **Latest ↔ Cards** toggle: *Latest* = chronological 36h feed grouped by SGT day (from
+  Drive's `aqe_alert_history.json`, no FMP calls); *Cards* = live triggers grouped into
+  the four categories (Entry-pullback / Approaching-stop / Breakout / Key-levels, needs
+  a quote refresh). **Every alert is a button — click it to load that ticker's chart**;
+  `★ HELD` buttons render red + flashing and sort first. Test email from GitHub:
   **Actions → AQE live alerts → Run workflow → tick `test`**.
 
 ### Engines (`src/engines/`)
