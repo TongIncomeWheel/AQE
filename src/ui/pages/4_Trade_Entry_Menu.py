@@ -92,17 +92,43 @@ except Exception as exc:  # noqa: BLE001
 
 if feed:
     st.caption(f"{len(feed)} alert(s) fired in the last 36h "
-               f"across {len({e.get('ticker') for e in feed})} ticker(s). Newest first.")
-    feed_rows = [{
-        "time (SGT)": e.get("ts_sgt"),
-        "ticker": e.get("ticker"),
-        "src": "HELD" if e.get("is_held") else e.get("source"),
-        "level": e.get("label"),
-        "level px": e.get("level_price"),
-        "live px": e.get("live_px"),
-        "detail": e.get("note"),
-    } for e in feed]
-    st.dataframe(feed_rows, use_container_width=True, hide_index=True, height=320)
+               f"across {len({e.get('ticker') for e in feed})} ticker(s). "
+               "Newest day first; times are SGT.")
+
+    from datetime import datetime as _dt
+
+    def _day_key(e):
+        return (e.get("ts_sgt") or "")[:10]  # 'YYYY-MM-DD'
+
+    def _day_label(key):
+        try:
+            return _dt.strptime(key, "%Y-%m-%d").strftime("%a %d %b %Y")
+        except ValueError:
+            return key or "—"
+
+    def _hhmm(e):
+        s = e.get("ts_sgt") or ""
+        return s[11:16] if len(s) >= 16 else s  # 'HH:MM'
+
+    # feed is already newest-first; preserve that order while grouping by day.
+    days: list[str] = []
+    for e in feed:
+        k = _day_key(e)
+        if k not in days:
+            days.append(k)
+
+    for k in days:
+        day_rows = [e for e in feed if _day_key(e) == k]
+        st.markdown(f"**{_day_label(k)}** · {len(day_rows)} alert(s)")
+        st.dataframe([{
+            "time": _hhmm(e),
+            "ticker": e.get("ticker"),
+            "src": "HELD" if e.get("is_held") else e.get("source"),
+            "level": e.get("label"),
+            "level px": e.get("level_price"),
+            "live px": e.get("live_px"),
+            "detail": e.get("note"),
+        } for e in day_rows], use_container_width=True, hide_index=True)
 else:
     st.caption(
         "No alerts logged yet. The history fills as the 15-min background poller "
