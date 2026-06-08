@@ -444,6 +444,9 @@ with left:
     # --- AQE numbers ---
     last = g.iloc[-1]
     st.subheader(f"{sel} — AQE numbers")
+    _asof = export.get("exported_at") or export.get("date") or "last run"
+    st.caption(f"📅 Engine read **as of {_asof}** (end-of-day, last pipeline run) — "
+               "these are NOT intraday; only the price / Live line moves during the day.")
     if rec is None:
         st.caption("Not in today's lists (top_picks / edge / longlist / watchlist).")
     else:
@@ -456,9 +459,17 @@ with left:
         return "—" if v is None or (isinstance(v, float) and v != v) else format(v, spec)
 
     r = rec or {}
+    _scc = r.get("sc_momentum")
+    _scr = r.get("sc_momentum_raw")
+    _gated = (_scc is not None and _scr is not None and float(_scr) > float(_scc))
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Last close", _f(float(last["close"])))
-    m1.metric("SC_MOM", _f(r.get("sc_momentum"), ".1f"))
+    m1.metric("SC_MOM", _f(_scc, ".1f"),
+              delta=(f"raw {float(_scr):.1f}" if _gated else None), delta_color="off",
+              help="Gate-capped composite. **49 = a gate failed** (Elder/Flow/Energy/"
+                   "Structure/MP under threshold) so the composite is hard-capped at "
+                   "49.0; the true uncapped score shows as 'raw'. End-of-day, from the "
+                   "last pipeline run.")
     m1.metric("PTRS", _f(r.get("ptrs"), ".1f"))
     m2.metric("Flow", _f(r.get("flow"), ".0f"))
     m2.metric("Energy", _f(r.get("energy"), ".0f"))
