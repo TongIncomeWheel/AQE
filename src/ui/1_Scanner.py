@@ -616,6 +616,45 @@ else:
 st.divider()
 
 # ---------------------------------------------------------------------------
+# Export-driven tables: the sections below render the EXACT export records
+# (the AIC schema), so the screen always matches the JSON the committee reads.
+# Out-of-scope fields (disposition, dsl_shares, atr_1h, …) are absent from the
+# export, so they simply don't appear.
+# ---------------------------------------------------------------------------
+_ex = load_export() or {}
+
+_EXPORT_COL_ORDER = [
+    "rank", "ticker", "source", "pe", "on_longlist",
+    "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
+    "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
+    "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
+    "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
+    "entry", "stop", "dsl_stop", "dsl_be", "dsl_risk", "dsl_rr_pct",
+    "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
+    "rr_est", "rr_tp1", "rr_tp2", "rr_tp3", "held", "fib", "rank_explain",
+]
+
+
+def _export_table(records):
+    """DataFrame of export records with the full uniform schema, ordered."""
+    if not records:
+        return pd.DataFrame()
+    edf = pd.DataFrame(records)
+    if "elder_5d" in edf.columns:
+        edf["elder_5d"] = edf["elder_5d"].apply(
+            lambda v: ",".join(str(int(x)) for x in v) if isinstance(v, list)
+            else ("" if v is None else v)
+        )
+    if "fib" in edf.columns:
+        edf["fib"] = edf["fib"].apply(
+            lambda v: "✓" if isinstance(v, dict) else ("" if v is None else v)
+        )
+    cols = [c for c in _EXPORT_COL_ORDER if c in edf.columns]
+    cols += [c for c in edf.columns if c not in cols]
+    return edf[cols]
+
+
+# ---------------------------------------------------------------------------
 # 3. Precision Edge
 # ---------------------------------------------------------------------------
 st.subheader("Precision Edge")
@@ -674,7 +713,7 @@ else:
             "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
             "Fib": _fib_str(dsl.get("fib")),
         })
-    st.dataframe(pd.DataFrame(pe_rows), use_container_width=True, hide_index=True)
+    st.dataframe(_export_table(_ex.get("edge_list")), use_container_width=True, hide_index=True)
 
 st.divider()
 
@@ -687,16 +726,9 @@ active_recipe = sl.get("active_recipe", {})
 recipe_str = _recipe_label(active_recipe)
 st.caption(f"Aggregate recipe: {recipe_str}")
 st.caption(
-    "Sorted by PTRS → Pipeline Rank → Floor | DSL = structural stop | "
-    "TP 1/2/3 = +1R/+2R/+3R | "
-    "Distance to SL = (entry − DSL stop) ÷ entry, expressed as %; how far price must fall before the stop is hit | "
-    "ATR Width = (entry − DSL stop) ÷ ATR14; how many average true range units the stop sits below entry "
-    "(1.0 = stop is exactly 1 ATR below entry; ≤1.5 tight stop, 2.0 standard, ≥2.0 wide/high-β name) | "
-    "R/R = estimated reward ÷ risk: (1.618 Fib extension − entry) ÷ (entry − DSL stop) | "
-    "Fib = Fibonacci levels anchored on most recent swing low→high (0.618 retracement / 1.618 extension) | "
-    "Elder5d = Elder Impulse score for each of the last 5 trading sessions (1–10 scale, ≥7 = bullish impulse) | "
-    "Beta30 = 30-day rolling beta vs SPY (sensitivity to broad market moves; ≥1.5 = high-β, gets wider DSL stop) | "
-    "Beta60 = 60-day rolling beta vs SPY (smoother, less noisy market sensitivity for committee analysis)"
+    "Full export schema (exactly what AIC receives). DSL bracket: `dsl_be` = entry, "
+    "`dsl_stop` = SL, `dsl_tp_1r/2r/3r` = targets, `rr_tp1/2/3` = R:R to each, "
+    "`dsl_atr_ratio` = stop width in ATRs."
 )
 
 # recipe_matches now includes both aggregate qualifiers AND PE picks
@@ -746,8 +778,7 @@ if recipe_matches:
             "Fib": _fib_str(dsl.get("fib")),
         })
 
-    df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(_export_table(_ex.get("longlist")), use_container_width=True, hide_index=True)
 
     # Earnings warnings
     earn_warned = []
@@ -910,8 +941,9 @@ if _have_scan:
                 "Fib": _fib_str(dsl.get("fib")),
             })
 
-        df_scan = pd.DataFrame(scan_rows)
-        st.dataframe(df_scan, use_container_width=True, hide_index=True)
+        _wl_recs = [r for r in (_ex.get("watchlist") or [])
+                    if (r.get("sc_momentum_raw") or 0) >= scan_threshold]
+        st.dataframe(_export_table(_wl_recs), use_container_width=True, hide_index=True)
     else:
         st.info(f"No tickers above raw SC >= {scan_threshold} today.")
 else:
@@ -1009,41 +1041,3 @@ if _adhoc_results:
 
     for r in _err:
         st.warning(f"**{r['ticker']}** — {r['error']}")
-
-
-# ---------------------------------------------------------------------------
-# Full AQE export viewer — the exact AIC schema (all v2.1 fields, uniform tiers)
-# ---------------------------------------------------------------------------
-st.divider()
-st.subheader("AQE export — exactly what AIC receives")
-st.caption("Every field in the daily export JSON, identical schema across all tiers. "
-           "This is the source of truth the committee reads.")
-with st.expander("Show full export table", expanded=True):
-    _exp_full = load_export() or {}
-    if not _exp_full:
-        st.info("No export yet. Run the daily pipeline, then refresh.")
-    else:
-        st.caption(
-            f"Exported: {_exp_full.get('exported_at', '—')}  ·  "
-            f"spy_roc_20d: {_exp_full.get('spy_roc_20d')}  ·  "
-            f"sector_map_version: {_exp_full.get('sector_map_version', '—')}  ·  "
-            f"sector_map_gaps: {len(_exp_full.get('sector_map_gaps') or [])}"
-        )
-        _tier_sel = st.radio(
-            "Tier", ["top_picks", "edge_list", "longlist", "watchlist"],
-            horizontal=True, key="export_schema_tier",
-        )
-        _tier_recs = _exp_full.get(_tier_sel) or []
-        if _tier_recs:
-            _tdf = pd.DataFrame(_tier_recs)
-            # show dict columns (e.g. fib) as compact strings so the grid stays readable
-            for _c in _tdf.columns:
-                if _tdf[_c].apply(lambda v: isinstance(v, (dict, list))).any():
-                    _tdf[_c] = _tdf[_c].apply(lambda v: "{…}" if isinstance(v, dict) else (str(v) if isinstance(v, list) else v))
-            st.caption(f"{len(_tier_recs)} rows × {len(_tdf.columns)} columns "
-                       "(same column set in every tier)")
-            st.dataframe(_tdf, use_container_width=True, hide_index=True)
-            with st.popover("Show all field names"):
-                st.write(sorted(_tdf.columns.tolist()))
-        else:
-            st.info(f"No records in `{_tier_sel}` today.")
