@@ -241,6 +241,41 @@ with st.sidebar:
             run_module_streaming("src.scanner.score_runner", "Score runner", prog, stat)
             st.rerun()
 
+    with st.expander("💾 Daily Persist", expanded=False):
+        from src.data.persist import save_snapshot, load_snapshot, snapshot_status
+
+        _snap = snapshot_status()
+        if _snap:
+            st.caption(f"Last saved: **{_snap.get('saved_at', '?')}** · "
+                       f"{len(_snap.get('files', []))} files · "
+                       f"{(_snap.get('bytes', 0) / 1e6):.1f} MB")
+        else:
+            st.caption("No snapshot on Drive yet.")
+
+        pc1, pc2 = st.columns(2)
+        if pc1.button("💾 Save run", use_container_width=True,
+                      help="Zip the current panel/scores/export to Drive."):
+            with st.spinner("Saving snapshot to Drive…"):
+                _r = save_snapshot()
+            if _r.get("ok"):
+                st.success(f"Saved {len(_r.get('files', []))} files "
+                           f"({(_r.get('bytes', 0) / 1e6):.1f} MB).")
+            else:
+                st.error(f"Save failed: {_r.get('reason')}")
+        if pc2.button("📥 Load run", use_container_width=True,
+                      help="Restore the last saved run — skips the full pipeline."):
+            with st.spinner("Restoring snapshot from Drive…"):
+                _r = load_snapshot()
+            if _r.get("ok"):
+                st.cache_data.clear()
+                st.success(f"Restored {_r.get('count')} files "
+                           f"(saved {_r.get('saved_at')}). Reloading…")
+                st.rerun()
+            else:
+                st.error(f"Load failed: {_r.get('reason')}")
+        st.caption("Persists the runtime parquets + export so a merge/restart "
+                   "skips the full AQE re-run.")
+
     with st.expander("Universe", expanded=False):
         @st.cache_data(ttl=300, show_spinner=False)
         def _universe_status():

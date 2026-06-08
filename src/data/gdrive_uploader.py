@@ -196,6 +196,31 @@ def download_text(filename: str, folder_id: str | None = None) -> str | None:
         return None
 
 
+def download_bytes(filename: str, folder_id: str | None = None) -> bytes | None:
+    """Read a file's raw bytes from a Drive folder by name. None if absent.
+
+    Binary counterpart of download_text — used for the daily-persist snapshot zip.
+    Never raises.
+    """
+    if not _GOOGLE_LIBS_OK:
+        return None
+    cfg = DriveConfig.from_env()
+    if cfg is None:
+        return None
+    try:
+        service = _build_service(cfg)
+        fid = folder_id or _resolve_folder_id(service, cfg)
+        if not fid:
+            return None
+        existing = _find_file(service, fid, filename)
+        if not existing:
+            return None
+        content = service.files().get_media(fileId=existing["id"]).execute()
+        return content if isinstance(content, (bytes, bytearray)) else str(content).encode()
+    except Exception:                                                           # noqa: BLE001
+        return None
+
+
 def test_credentials() -> dict[str, Any]:
     """Validate that the OAuth refresh token can mint an access token.
 

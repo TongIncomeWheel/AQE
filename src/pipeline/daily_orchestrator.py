@@ -269,6 +269,19 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive export failed: {exc}")
 
+    # Step 8b: Daily-persist snapshot — zip the runtime parquets/outputs to Drive
+    # so a restart can restore the last run without a full re-pull.
+    try:
+        from src.data.persist import save_snapshot
+        snap = save_snapshot()
+        if snap.get("ok"):
+            print(f"  Persist snapshot: {len(snap.get('files', []))} files "
+                  f"({snap.get('bytes', 0) / 1e6:.1f} MB) -> Drive")
+        else:
+            print(f"  Persist snapshot: skipped ({snap.get('reason')})")
+    except Exception as exc:
+        print(f"  [WARN] Persist snapshot failed: {exc}")
+
     print("=" * 60)
     print(f"[daily] Done. {len(shortlist)} candidates on today's shortlist.")
 
