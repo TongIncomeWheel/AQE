@@ -165,10 +165,131 @@ else:
 
 
 # ===================================================================
-# Section 2: Walk-Forward Analysis
+# Section 2: Recipe Optimizer
 # ===================================================================
 
-st.header("Section 2: Walk-Forward Analysis")
+st.header("Section 2: Recipe Optimizer")
+st.caption(
+    "Grid-search all threshold combinations (~7,800 combos full / ~500 quick). "
+    "Finds the recipe closest to your targets. Set targets + click Search in the sidebar."
+)
+
+opt_results = load_json("optimizer_results.json")
+opt_sensitivity = load_json("engine_sensitivity.json")
+
+if opt_results:
+    # Engine sensitivity table
+    if opt_sensitivity:
+        st.subheader("Engine Sensitivity")
+        st.caption("Which engines actually predict trade outcomes? Lift = top-25% avg R minus bottom-25% avg R.")
+        sens_df = pd.DataFrame(opt_sensitivity)
+        sens_df["lift"] = sens_df["lift"].apply(lambda x: f"{x:+.4f}")
+        sens_df["correlation"] = sens_df["correlation"].apply(lambda x: f"{x:+.3f}")
+        sens_df["avg_r_top_quartile"] = sens_df["avg_r_top_quartile"].apply(lambda x: f"{x:+.4f}")
+        sens_df["avg_r_bottom_quartile"] = sens_df["avg_r_bottom_quartile"].apply(lambda x: f"{x:+.4f}")
+        st.dataframe(sens_df, use_container_width=True, hide_index=True)
+        st.divider()
+
+    # Summarise what ranges are achievable
+    all_wr = [r["win_rate"] for r in opt_results]
+    all_nlr = [r["non_loss_rate"] for r in opt_results]
+    all_r = [r["avg_r"] for r in opt_results]
+    all_tpw = [r["trades_per_week"] for r in opt_results]
+    ra1, ra2, ra3, ra4 = st.columns(4)
+    ra1.metric("Win rate range", f"{min(all_wr)*100:.0f}% – {max(all_wr)*100:.0f}%")
+    ra2.metric("Non-loss range", f"{min(all_nlr)*100:.0f}% – {max(all_nlr)*100:.0f}%")
+    ra3.metric("Avg R range", f"{min(all_r):+.2f} – {max(all_r):+.2f}")
+    ra4.metric("Trades/wk range", f"{min(all_tpw):.1f} – {max(all_tpw):.1f}")
+
+    # Top-20 table
+    st.subheader(f"Top recipes (of {len(opt_results)} tested)")
+    cols_wanted = ["sc_mom_min", "flow_min", "energy_min", "structure_min", "mp_min",
+                   "elder_min", "phase_filter", "n_trades", "trades_per_week",
+                   "win_rate", "non_loss_rate", "avg_r", "oos_avg_r", "wfer", "dsr_pass", "score"]
+    opt_df = pd.DataFrame(opt_results[:20])[[c for c in cols_wanted if c in pd.DataFrame(opt_results[:20]).columns]]
+    opt_df["win_rate"] = (opt_df["win_rate"] * 100).round(1).astype(str) + "%"
+    opt_df["non_loss_rate"] = (opt_df["non_loss_rate"] * 100).round(1).astype(str) + "%"
+    st.dataframe(opt_df, use_container_width=True, hide_index=True)
+
+    # Recommended recipe — best WFER-validated, else top by score
+    _validated = [r for r in opt_results if r.get("wfer", 0) >= 0.30 and r.get("oos_avg_r", 0) > 0]
+    best_opt = _validated[0] if _validated else opt_results[0]
+    st.subheader("Recommended recipe")
+    _wfer_ok = best_opt.get("wfer", 0) >= 0.30
+    if _wfer_ok:
+        st.success(
+            f"WFER {best_opt['wfer']:.2f} ≥ 0.30 — edge survives out-of-sample. "
+            f"Win {best_opt['win_rate']*100:.1f}% | Non-loss {best_opt['non_loss_rate']*100:.1f}% | "
+            f"Avg R {best_opt['avg_r']:+.3f} | OOS R {best_opt.get('oos_avg_r',0):+.3f} | "
+            f"{best_opt['n_trades']} trades ({best_opt['trades_per_week']:.1f}/wk)"
+        )
+    else:
+        st.warning(
+            f"WFER {best_opt.get('wfer',0):.2f} < 0.30 — weak OOS validation. "
+            f"Win {best_opt['win_rate']*100:.1f}% | Avg R {best_opt['avg_r']:+.3f}. "
+            "Trade with caution until walk-forward passes."
+        )
+
+    bc1, bc2 = st.columns(2)
+    with bc1:
+        thresholds_text = (
+            f"SC≥{best_opt['sc_mom_min']:.0f} | Flow≥{best_opt['flow_min']:.0f} | "
+            f"Energy≥{best_opt['energy_min']:.0f} | Structure≥{best_opt['structure_min']:.0f} | "
+            f"MP≥{best_opt['mp_min']:.0f} | Elder≥{best_opt['elder_min']:.0f} | "
+            f"Phase={best_opt.get('phase_filter','ANY')}"
+        )
+        st.caption(thresholds_text)
+        if st.button("📥 Load into sliders", key="ml_opt_load_sliders", use_container_width=True):
+            st.session_state["ml_sl_sc_mom"] = float(best_opt["sc_mom_min"])
+            st.session_state["ml_sl_flow"] = float(best_opt["flow_min"])
+            st.session_state["ml_sl_energy"] = float(best_opt["energy_min"])
+            st.session_state["ml_sl_structure"] = float(best_opt["structure_min"])
+            st.session_state["ml_sl_mp"] = float(best_opt["mp_min"])
+            st.session_state["ml_sl_elder"] = float(best_opt["elder_min"])
+            st.rerun()
+    with bc2:
+        if st.button("💾 Promote to active recipe (longlist)", key="ml_opt_promote",
+                     use_container_width=True,
+                     help="Writes this recipe into active_recipe.json's 'longlist' key. "
+                          "The daily pipeline reads this on next run."):
+            _ar_path = DATA_DIR / "active_recipe.json"
+            import json as _json
+            _ar = {}
+            if _ar_path.exists():
+                try:
+                    _ar = _json.loads(_ar_path.read_text())
+                except Exception:
+                    _ar = {}
+            _ar["longlist"] = {
+                "name": f"Optimizer pick (Win {best_opt['win_rate']*100:.0f}% "
+                        f"AvgR {best_opt['avg_r']:+.2f} WFER {best_opt.get('wfer',0):.2f})",
+                "sc_mom_min": best_opt["sc_mom_min"],
+                "flow_min": best_opt["flow_min"],
+                "energy_min": best_opt["energy_min"],
+                "structure_min": best_opt["structure_min"],
+                "mp_min": best_opt["mp_min"],
+                "elder_min": best_opt["elder_min"],
+                "fip_min": best_opt.get("fip_min", 0),
+                "phase_filter": best_opt.get("phase_filter", "ANY"),
+                "squeeze_min": best_opt.get("squeeze_min", 0),
+            }
+            _ar_path.write_text(_json.dumps(_ar, indent=2))
+            st.success("Promoted to active_recipe.json → longlist. Reload Section 1 to confirm.")
+            st.rerun()
+else:
+    st.info(
+        "No optimizer results yet. Set your targets in the sidebar and click "
+        "**Quick search** (~30s) or **Full search** (~2 min)."
+    )
+
+st.divider()
+
+
+# ===================================================================
+# Section 3: Walk-Forward Analysis
+# ===================================================================
+
+st.header("Section 3: Walk-Forward Analysis")
 st.caption("Does the Precision Edge recipe from Section 1 survive on data it was never trained on?")
 
 wf_raw = walkforward_data
@@ -338,7 +459,7 @@ else:
 # Section 3: Independent Validation
 # ===================================================================
 
-st.header("Section 3: Independent Validation")
+st.header("Section 4: Independent Validation")
 st.caption(
     "3 statistical proofs (Jim Simons-grade rigour). Each answers a different question."
 )
@@ -517,7 +638,7 @@ else:
 # Section 4: Portfolio Simulation
 # ===================================================================
 
-st.header("Section 4: Portfolio Simulation")
+st.header("Section 5: Portfolio Simulation")
 
 if sim_data is not None and isinstance(sim_data, dict):
     sim_recipe = sim_data.get("recipe", {})
@@ -806,6 +927,56 @@ with st.sidebar:
             save_recipes(updated)
             st.success(f"Saved recipe '{name}'.")
             st.rerun()
+
+    st.divider()
+
+    # ── Optimizer targets ──────────────────────────────────────────
+    st.subheader("Optimizer targets")
+    st.caption("What performance do you want? The optimizer finds the closest recipe.")
+    target_nlr = st.slider(
+        "Target non-loss rate %", 40, 80, 55, step=5, key="ml_target_nlr",
+        help="% of trades that finish at break-even or better (win + scratch).",
+    )
+    target_r = st.slider(
+        "Target avg R", 0.05, 0.50, 0.15, step=0.05, format="%.2f", key="ml_target_r",
+        help="Average R-multiple per trade (expectancy). 0.15 = 15% of 1R stop size.",
+    )
+    target_tpw = st.slider(
+        "Target trades/week", 2, 20, 10, step=1, key="ml_target_tpw",
+        help="Signals per week. Too high = over-trading; too low = small sample.",
+    )
+    run_opt_quick = st.button(
+        "⚡ Quick search (~30s)", use_container_width=True, key="ml_opt_quick",
+        help="Reduced grid ~500 combos. Good for a first pass.",
+    )
+    run_opt_full = st.button(
+        "🔍 Full search (~2 min)", use_container_width=True, key="ml_opt_full",
+        help="All ~7,800 combinations. Use after Quick to confirm.",
+    )
+
+    if run_opt_quick or run_opt_full:
+        import subprocess as _sp
+        _args = [sys.executable, "-u", "-m", "src.calibration.run_optimizer"]
+        if run_opt_quick:
+            _args.append("--quick")
+        _log = st.empty()
+        _status = st.empty()
+        with st.spinner("Running optimizer…"):
+            _proc = _sp.Popen(
+                _args, cwd=str(PROJECT_ROOT),
+                stdout=_sp.PIPE, stderr=_sp.STDOUT, text=True, bufsize=1,
+            )
+            _buf: list[str] = []
+            assert _proc.stdout is not None
+            for _line in _proc.stdout:
+                _buf.append(_line.rstrip())
+                _log.code("\n".join(_buf[-20:]))
+            _rc = _proc.wait()
+            if _rc == 0:
+                _status.success("Optimizer finished.")
+            else:
+                _status.error(f"Optimizer exited {_rc}:\n" + "\n".join(_buf[-5:]))
+        st.rerun()
 
     st.divider()
 
