@@ -159,25 +159,7 @@ except Exception:  # noqa: BLE001
     pass
 
 # --- controls -----------------------------------------------------------
-b1, b2, _ = st.columns([1, 1, 4])
-do_refresh = b1.button("🔄 Refresh live levels", type="primary")
-do_test = b2.button("✉️ Send test email")
-
-if do_test:
-    res = emailer.send_test()
-    if res.get("ok"):
-        st.success(f"Test email sent to {res.get('to')}.")
-    else:
-        reason = str(res.get("reason"))
-        if "unreachable" in reason or "Errno 101" in reason or "timed out" in reason:
-            st.warning(
-                "HF Spaces **block outbound email (SMTP)** — emails can't be sent "
-                "from this app. That's expected: the **GitHub Actions backstop** "
-                "sends all alert emails (its runners allow SMTP). Test it there: "
-                "**Actions → AQE live alerts → Run workflow → tick `test`**."
-            )
-        else:
-            st.error(f"Test email failed: {reason}")
+do_refresh = st.button("🔄 Refresh live levels", type="primary")
 
 # --- persistent 36-hour alert feed (always on screen) ------------------
 st.subheader("📜 Alerts — last 36 hours")
