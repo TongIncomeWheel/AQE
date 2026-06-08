@@ -174,6 +174,46 @@ st.caption(
     "Set **min trades/week** in the sidebar (your frequency floor), then click Search."
 )
 
+_opt_run_mode = st.session_state.pop("_opt_run", None)
+_opt_tpw_pending = st.session_state.pop("_opt_tpw", None)
+
+if _opt_run_mode:
+    import json as _json
+    import subprocess as _sp
+    _tgt_path = DATA_DIR / "optimizer_targets.json"
+    _tgt_path.write_text(_json.dumps({
+        "non_loss_rate": 0.99,
+        "avg_r": 1.0,
+        "trades_per_week": float(_opt_tpw_pending or 10),
+    }, indent=2))
+    _args = [sys.executable, "-u", "-m", "src.calibration.run_optimizer"]
+    if _opt_run_mode == "quick":
+        _args.append("--quick")
+    _log_ph = st.empty()
+    _status_ph = st.empty()
+    with st.spinner(f"Running {'quick' if _opt_run_mode == 'quick' else 'full'} optimizer search…"):
+        try:
+            _proc = _sp.Popen(
+                _args, cwd=str(PROJECT_ROOT),
+                stdout=_sp.PIPE, stderr=_sp.STDOUT, text=True, bufsize=1,
+            )
+            _buf: list[str] = []
+            assert _proc.stdout is not None
+            for _line in _proc.stdout:
+                _buf.append(_line.rstrip())
+                _log_ph.code("\n".join(_buf[-25:]))
+            _rc = _proc.wait()
+            if _rc == 0:
+                _status_ph.success("Optimizer finished — results below.")
+            else:
+                _status_ph.error(
+                    f"Optimizer exited with code {_rc}. Full output:\n\n"
+                    + "\n".join(_buf)
+                )
+        except Exception as _ex:
+            _status_ph.error(f"Failed to launch optimizer: {_ex}")
+    st.rerun()
+
 opt_results = load_json("optimizer_results.json")
 opt_sensitivity = load_json("engine_sensitivity.json")
 _opt_tgt = load_json("optimizer_targets.json") or {}
@@ -959,48 +999,15 @@ with st.sidebar:
         help="Recipes with fewer signals than this are ignored. "
              "Lower = tighter filters, fewer but higher-quality signals.",
     )
-    run_opt_quick = st.button(
-        "⚡ Quick search (~30s)", use_container_width=True, key="ml_opt_quick",
-        help="Reduced grid ~500 combos. Good for a first pass.",
-    )
-    run_opt_full = st.button(
-        "🔍 Full search (~2 min)", use_container_width=True, key="ml_opt_full",
-        help="All ~7,800 combinations. Use after Quick to confirm.",
-    )
-
-    if run_opt_quick or run_opt_full:
-        import json as _json
-        import subprocess as _sp
-        # Write targets so the optimizer maximises win rate + R automatically.
-        # Setting non_loss_rate=0.99 and avg_r=1.0 (both unachievable) means the
-        # scoring naturally ranks recipes by who comes closest to those maximums —
-        # i.e. highest win rate and highest R. Trades/week enforces the floor.
-        _tgt_path = DATA_DIR / "optimizer_targets.json"
-        _tgt_path.write_text(_json.dumps({
-            "non_loss_rate": 0.99,
-            "avg_r": 1.0,
-            "trades_per_week": float(min_tpw),
-        }, indent=2))
-        _args = [sys.executable, "-u", "-m", "src.calibration.run_optimizer"]
-        if run_opt_quick:
-            _args.append("--quick")
-        _log = st.empty()
-        _status = st.empty()
-        with st.spinner("Running optimizer…"):
-            _proc = _sp.Popen(
-                _args, cwd=str(PROJECT_ROOT),
-                stdout=_sp.PIPE, stderr=_sp.STDOUT, text=True, bufsize=1,
-            )
-            _buf: list[str] = []
-            assert _proc.stdout is not None
-            for _line in _proc.stdout:
-                _buf.append(_line.rstrip())
-                _log.code("\n".join(_buf[-20:]))
-            _rc = _proc.wait()
-            if _rc == 0:
-                _status.success("Optimizer finished.")
-            else:
-                _status.error(f"Optimizer exited {_rc}:\n" + "\n".join(_buf[-5:]))
+    if st.button("⚡ Quick search (~30s)", use_container_width=True, key="ml_opt_quick",
+                 help="Reduced grid ~500 combos. Good for a first pass."):
+        st.session_state["_opt_run"] = "quick"
+        st.session_state["_opt_tpw"] = float(min_tpw)
+        st.rerun()
+    if st.button("🔍 Full search (~2 min)", use_container_width=True, key="ml_opt_full",
+                 help="All ~7,800 combinations. Use after Quick to confirm."):
+        st.session_state["_opt_run"] = "full"
+        st.session_state["_opt_tpw"] = float(min_tpw)
         st.rerun()
 
     st.divider()
