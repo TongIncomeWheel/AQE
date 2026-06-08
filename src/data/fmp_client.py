@@ -160,6 +160,7 @@ class FMPClient:
                 continue
             out[tk] = {
                 "price": _f(price),
+                "open": _f(row.get("open")),
                 "volume": _f(row.get("volume")),
                 "avg_volume": _f(row.get("avgVolume")),
                 "ma_50": _f(row.get("priceAvg50")),

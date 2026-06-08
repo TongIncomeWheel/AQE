@@ -112,9 +112,12 @@ def _line_html(t: dict) -> str:
                  f'{(t.get("source") or "").upper()}</span>')
     lp = t.get("level_price")
     lp_txt = f" @ {lp}" if lp is not None else ""
+    tm = t.get("pull")
+    tm_txt = f'<span class="aqe-time">{tm}</span>' if tm else ""
     return (
         f'<div class="aqe-line {"held" if held else ""}">'
-        f'{badge}<span class="ltkr">{t.get("ticker")}</span> '
+        f'<div class="aqe-top">{badge}<span class="ltkr">{t.get("ticker")}</span>'
+        f'{tm_txt}</div>'
         f'<span class="lpx">{t.get("label")}{lp_txt} · live {t.get("live_px")}</span>'
         f'<div class="lnote">{t.get("note") or ""}</div></div>'
     )
@@ -236,8 +239,21 @@ def _pct(a, b):
         return None
 
 
+def _q_time(q) -> str | None:
+    """Quote's last-trade time → 'HH:MM SGT' (15-min delayed)."""
+    ts = q.get("ts")
+    try:
+        from datetime import datetime as _d
+        from zoneinfo import ZoneInfo as _Z
+        return (_d.fromtimestamp(int(ts), _Z("Asia/Singapore")).strftime("%H:%M")
+                + " SGT") if ts else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 rows = []
 hot = []
+_pull_times = []
 for m in mon:
     tk, rec, is_held = m["ticker"], m["record"], m["is_held"]
     q = quotes.get(tk)
@@ -246,7 +262,12 @@ for m in mon:
     live = float(q["price"])
     stop = rec.get("held_sl") if is_held else rec.get("dsl_stop")
     tp1 = rec.get("held_tp1") if is_held else rec.get("dsl_tp_1r")
+    _qt = _q_time(q)
+    if _qt:
+        _pull_times.append(_qt)
     trigs = evaluate(tk, m["source"], is_held, rec, q)
+    for _t in trigs:
+        _t["pull"] = _qt
     rvol = None
     if q.get("volume") and q.get("avg_volume"):
         try:
@@ -272,6 +293,9 @@ for m in mon:
 
 # --- live cockpit: 2×2 category cards ----------------------------------
 st.subheader(f"🔔 Triggering now ({len({t['ticker'] for t in hot})} tickers)")
+if _pull_times:
+    st.caption(f"Quotes as of ~{max(_pull_times)} (15-min delayed). "
+               "Times shown on each card are that quote's last-trade time.")
 
 # Bucket each live trigger into one of the four quadrants.
 cat = {"entry": [], "breakout": [], "sl": [], "key": []}

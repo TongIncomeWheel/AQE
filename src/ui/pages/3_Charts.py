@@ -125,7 +125,7 @@ def _label(tk: str) -> str:
 _default = export["top_picks"][0].get("ticker") if export.get("top_picks") else None
 default_idx = tickers.index(_default) if _default in tickers else 0
 
-c1, c2, c3 = st.columns([2, 1, 1])
+c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
 with c1:
     sel = st.selectbox(f"Ticker ({len(tickers)} match)", tickers,
                        index=default_idx, format_func=_label)
@@ -133,6 +133,10 @@ with c2:
     lookback = st.slider("Bars shown", 60, 500, 250, step=10)
 with c3:
     log_y = st.toggle("Log scale", value=False)
+with c4:
+    show_live = st.toggle("Live 15-min", value=True,
+                          help="Stamp the latest 15-min-delayed FMP price onto "
+                               "the chart (forming candle + live line).")
 
 rec = rec_lookup.get(sel)
 held = held_lookup.get(sel)
@@ -148,6 +152,42 @@ for w in (20, 50, 100, 200):
     g[f"ma{w}"] = g["close"].rolling(w).mean()
 
 disp = g.tail(lookback).copy()
+
+# --- Live 15-min price: append today's forming candle + keep a live marker ---
+# Since the alert engine already pulls 15-min quotes, stamp the latest price onto
+# the chart so the last bar reflects "now" instead of the prior EOD close.
+live_px = None
+live_time = None
+if show_live:
+    try:
+        from datetime import datetime as _dt
+        from zoneinfo import ZoneInfo as _ZI
+        from src.data.fmp_client import FMPClient
+        _q = (FMPClient().get_quotes([sel]) or {}).get(sel)
+        if _q and _q.get("price"):
+            live_px = float(_q["price"])
+            _ts = _q.get("ts")
+            if _ts:
+                live_time = _dt.fromtimestamp(int(_ts), _ZI("Asia/Singapore")).strftime("%Y-%m-%d %H:%M SGT")
+                et_date = pd.Timestamp(_dt.fromtimestamp(int(_ts), _ZI("America/New_York")).date())
+                last_bar = pd.Timestamp(disp["date"].iloc[-1]).normalize()
+                # New session beyond the last EOD bar → draw the forming candle.
+                if et_date > last_bar and _q.get("day_high") and _q.get("day_low"):
+                    _closes = g["close"].tolist() + [live_px]
+                    _row = {
+                        "date": et_date,
+                        "open": _q.get("open") or live_px,
+                        "high": max(float(_q["day_high"]), live_px),
+                        "low": min(float(_q["day_low"]), live_px),
+                        "close": live_px,
+                        "volume": _q.get("volume") or 0,
+                    }
+                    for _w in (20, 50, 100, 200):
+                        _row[f"ma{_w}"] = (float(np.mean(_closes[-_w:]))
+                                           if len(_closes) >= _w else np.nan)
+                    disp = pd.concat([disp, pd.DataFrame([_row])], ignore_index=True)
+    except Exception:  # noqa: BLE001 — chart must still render on any quote failure
+        live_px = live_px if live_px else None
 
 _MA_COLORS = {20: "#F0A500", 50: "#3BA3FF", 100: "#B36BFF", 200: "#FF5C8A"}
 
@@ -216,9 +256,15 @@ if _hsl:
                   annotation_text=f"Held SL {_hsl:.2f}",
                   annotation_position="bottom left", row=1, col=1)
 
+# --- Live 15-min price marker ---
+if live_px:
+    fig.add_hline(y=live_px, line=dict(color="#00E5FF", width=1.5, dash="dot"),
+                  annotation_text=f"Live {live_px:.2f}",
+                  annotation_position="right", row=1, col=1)
+
 # Single y-range covering candles + every drawn level (linear scale only).
 if not log_y:
-    _allv = [v for v in ([_stop, _be, _ent, _hsl] + [t for t, _ in _tps]) if v]
+    _allv = [v for v in ([_stop, _be, _ent, _hsl, live_px] + [t for t, _ in _tps]) if v]
     if _allv:
         _ylo = min([float(disp["low"].min())] + _allv)
         _yhi = max([float(disp["high"].max())] + _allv)
@@ -237,6 +283,16 @@ fig.update_yaxes(title_text="Price", type="log" if log_y else "linear", row=1, c
 fig.update_yaxes(title_text="Vol", row=2, col=1)
 
 st.plotly_chart(fig, use_container_width=True)
+
+if live_px:
+    _eod = pd.Timestamp(g["date"].iloc[-1]).date()
+    _mv = f" ({((live_px / float(g['close'].iloc[-1]) - 1) * 100):+.1f}% vs last close)" \
+        if float(g["close"].iloc[-1]) else ""
+    st.caption(f"🔵 Live **{live_px:.2f}**{_mv} as of {live_time or '—'} "
+               f"(15-min delayed) · last EOD bar {_eod}")
+elif show_live:
+    st.caption("Live price unavailable right now — showing EOD bars only "
+               "(needs FMP_API_KEY; quote may be empty outside market data hours).")
 
 if held:
     _e, _lp, _u, _q = held.get("entry"), held.get("live_px"), held.get("unreal_usd"), held.get("qty")
