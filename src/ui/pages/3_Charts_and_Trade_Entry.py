@@ -393,6 +393,11 @@ with left:
     for w in (20, 50, 100, 200):
         g[f"ma{w}"] = g["close"].rolling(w).mean()
     disp = g.tail(lookback).copy()
+    disp["_forming"] = False
+    _avg_vol = float(np.nanmean(g["volume"].tail(20))) if len(g) >= 5 else None
+    if not _avg_vol or _avg_vol <= 0:
+        _avg_vol = None
+    _sofar_vol = _proj_vol = _sess_frac = None
 
     # --- live 15-min price: forming candle + marker ---
     live_px = None
@@ -409,15 +414,27 @@ with left:
                 live_px = float(_q["price"])
                 _ts = _q.get("ts")
                 if _ts:
+                    _et = _dt.fromtimestamp(int(_ts), _ZI("America/New_York"))
                     live_time = _dt.fromtimestamp(int(_ts), _ZI("Asia/Singapore")).strftime("%Y-%m-%d %H:%M SGT")
-                    et_date = pd.Timestamp(_dt.fromtimestamp(int(_ts), _ZI("America/New_York")).date())
+                    et_date = pd.Timestamp(_et.date())
                     last_bar = pd.Timestamp(disp["date"].iloc[-1]).normalize()
                     if et_date > last_bar and _q.get("day_high") and _q.get("day_low"):
+                        # FMP's forming-candle volume is CUMULATIVE-so-far, so mid-session
+                        # it reads far below the completed full-day history bars (always
+                        # "looks low"). Pace-project to a full-day estimate via the fraction
+                        # of the 9:30–16:00 ET regular session elapsed (volume + ts are both
+                        # 15-min delayed, so the ratio is self-consistent). <10% elapsed →
+                        # don't extrapolate. Drives the RVOL readout under the chart.
+                        _sofar_vol = float(_q.get("volume") or 0)
+                        _smin = _et.hour * 60 + _et.minute - (9 * 60 + 30)
+                        _sess_frac = max(0.0, min(1.0, _smin / 390.0))
+                        _proj_vol = (_sofar_vol / _sess_frac
+                                     if _sess_frac >= 0.10 else None)
                         _cl = g["close"].tolist() + [live_px]
                         _row = {"date": et_date, "open": _q.get("open") or live_px,
                                 "high": max(float(_q["day_high"]), live_px),
                                 "low": min(float(_q["day_low"]), live_px),
-                                "close": live_px, "volume": _q.get("volume") or 0}
+                                "close": live_px, "volume": _sofar_vol, "_forming": True}
                         for _w in (20, 50, 100, 200):
                             _row[f"ma{_w}"] = (float(np.mean(_cl[-_w:]))
                                                if len(_cl) >= _w else np.nan)
@@ -436,9 +453,31 @@ with left:
         fig.add_trace(go.Scatter(x=disp["date"], y=disp[f"ma{w}"], name=f"MA{w}",
                                  line=dict(width=1.3, color=color), connectgaps=True),
                       row=1, col=1)
-    vol_colors = np.where(disp["close"] >= disp["open"], "#26A69A", "#EF5350")
-    fig.add_trace(go.Bar(x=disp["date"], y=disp["volume"], name="Volume",
+    # Volume: completed full-day bars + a 20d-avg reference line. The forming
+    # candle is drawn as its own bar so the realized-so-far volume (solid) and the
+    # pace-projected full-day cap (faded outline) are distinct and comparable to
+    # the completed bars — see the RVOL caption under the chart.
+    _hist = disp[~disp["_forming"].astype(bool)]
+    vol_colors = np.where(_hist["close"] >= _hist["open"], "#26A69A", "#EF5350")
+    fig.add_trace(go.Bar(x=_hist["date"], y=_hist["volume"], name="Volume",
                          marker_color=vol_colors, opacity=0.6), row=2, col=1)
+    if _avg_vol:
+        fig.add_hline(y=_avg_vol, line=dict(color="#AAAAAA", width=1, dash="dot"),
+                      annotation_text=f"20d avg {_avg_vol/1e6:.1f}M",
+                      annotation_position="top left", row=2, col=1)
+    if _sofar_vol is not None:
+        _fdate = disp["date"].iloc[-1]
+        _fup = bool(live_px is not None
+                    and live_px >= float(disp["open"].iloc[-1] or live_px))
+        _fcol = "#26A69A" if _fup else "#EF5350"
+        fig.add_trace(go.Bar(x=[_fdate], y=[_sofar_vol], name="Vol so far",
+                             marker_color=_fcol, opacity=0.95), row=2, col=1)
+        if _proj_vol and _proj_vol > _sofar_vol:
+            fig.add_trace(go.Bar(x=[_fdate], y=[_proj_vol - _sofar_vol],
+                                 base=[_sofar_vol], name="Vol (proj. full-day)",
+                                 marker_color=_fcol, opacity=0.18,
+                                 marker_line=dict(color=_fcol, width=1)),
+                          row=2, col=1)
 
     # --- DSL buy/stop/TP zones ---
     _be = rec.get("dsl_be") if rec else None
@@ -488,7 +527,7 @@ with left:
         _pad = (_yhi - _ylo) * 0.04 or 1.0
         fig.update_yaxes(range=[_ylo - _pad, _yhi + _pad], row=1, col=1)
 
-    fig.update_layout(template="plotly_dark", height=640,
+    fig.update_layout(template="plotly_dark", height=640, barmode="overlay",
                       margin=dict(l=10, r=10, t=24, b=10),
                       xaxis_rangeslider_visible=False, showlegend=True,
                       legend=dict(orientation="h", yanchor="bottom", y=1.0,
@@ -505,6 +544,23 @@ with left:
                if float(g["close"].iloc[-1]) else "")
         st.caption(f"🔵 Live **{live_px:.2f}**{_mv} as of {live_time or '—'} "
                    f"(15-min delayed) · last EOD bar {_eod}")
+
+    # Volume confirmation — projected full-day RVOL so a breakout on below-average
+    # pace is flagged BEFORE buying (the raw forming bar is only cumulative-so-far).
+    if _sofar_vol is not None and _avg_vol:
+        _now_x = _sofar_vol / _avg_vol
+        if _proj_vol:
+            _rvol = _proj_vol / _avg_vol
+            _flag = ("🟢 above-avg pace" if _rvol >= 1.0
+                     else "🔴 BELOW-avg pace — weak breakout confirmation")
+            st.caption(
+                f"📊 Vol so far **{_sofar_vol/1e6:.2f}M** "
+                f"({_sess_frac*100:.0f}% of session, {_now_x:.2f}× avg so far) · "
+                f"on pace for **~{_proj_vol/1e6:.2f}M** · projected RVOL "
+                f"**{_rvol:.2f}× 20d-avg** ({_avg_vol/1e6:.2f}M) — {_flag}")
+        else:
+            st.caption(f"📊 Vol so far **{_sofar_vol/1e6:.2f}M** — too early in the "
+                       "session to project full-day volume reliably.")
 
     if held:
         _e, _lp, _u, _q2 = (held.get("entry"), held.get("live_px"),
