@@ -716,10 +716,4 @@ with left:
         st.session_state[_aic_key] = "\n".join(_lines)
 
     if st.session_state.get(_aic_key):
-        st.text_area(
-            "Copy and paste into AIC:",
-            value=st.session_state[_aic_key],
-            height=220,
-            key=f"aic_ta_{sel}",
-            label_visibility="collapsed",
-        )
+        st.code(st.session_state[_aic_key], language=None)
