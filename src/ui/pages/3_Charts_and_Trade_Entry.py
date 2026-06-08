@@ -95,11 +95,13 @@ div[data-testid="stButton"] button[kind="primary"]{
 </style>""", unsafe_allow_html=True)
 
 _LEVEL_SHORT = {
+    # Current engine levels (the only three that fire post-43f2761).
+    "BUY_ZONE": "Hit buy price", "BREAKOUT": "Breakout", "NEAR_STOP": "Near stop",
+    # Legacy names — kept so old entries in the 36h history still render nicely.
     "ENTRY_PULLBACK": "Pullback→buy", "ENTRY_BREAKOUT": "Breakout",
-    "NEAR_STOP": "Near stop", "TP1": "TP1", "TP2": "TP2", "TP3": "TP3",
-    "RVOL": "RVol", "MA_20": "MA20", "MA_50": "MA50", "MA_100": "MA100",
-    "MA_200": "MA200", "FIB_0.382": "Fib .382", "FIB_0.5": "Fib .5",
-    "FIB_0.618": "Fib .618",
+    "TP1": "TP1", "TP2": "TP2", "TP3": "TP3", "RVOL": "RVol",
+    "MA_20": "MA20", "MA_50": "MA50", "MA_100": "MA100", "MA_200": "MA200",
+    "FIB_0.382": "Fib .382", "FIB_0.5": "Fib .5", "FIB_0.618": "Fib .618",
 }
 
 
@@ -165,6 +167,27 @@ with right:
     mkt = "🟢 OPEN" if in_market_window() else "⚪ closed"
     st.caption(f"US market {mkt} · {len(mon)} monitored · "
                f"{sum(1 for m in mon if m['is_held'])} held · emails every 15 min (Resend)")
+
+    # In-app email self-test — verify RESEND_API_KEY end-to-end without GitHub.
+    with st.expander("📧 Email setup / test", expanded=False):
+        from src.alerts import emailer as _EM  # noqa: E402
+        _cfg = _EM._cfg()
+        if _cfg["resend_key"]:
+            st.caption(f"✅ Resend key set · sending to **{_cfg['to']}**")
+        elif _cfg["smtp_pw"]:
+            st.caption(f"✅ SMTP fallback set · sending to **{_cfg['to']}**")
+        else:
+            st.caption("⚠️ No email backend — set **RESEND_API_KEY** in HF "
+                       "Settings → Variables and secrets, then restart the Space.")
+        if st.button("Send test email now", use_container_width=True,
+                     disabled=not _EM.is_configured()):
+            with st.spinner("Sending test digest…"):
+                _res = _EM.send_test()
+            if _res.get("ok"):
+                st.success(f"Sent via {_res.get('via')} to {_res.get('to')} — "
+                           "check your inbox (and spam).")
+            else:
+                st.error(f"Failed: {_res.get('reason')}")
 
     # Quotes power BOTH views — fetch once on first load, cache, manual refresh.
     _need = "tem_quotes" not in st.session_state
@@ -246,19 +269,22 @@ with right:
                           on_click=_chart, args=(it["tk"],))
 
     # ---- Cards: pick a category, see just those triggers (no scrolling) ----
+    # Buckets mirror the THREE actionable levels the engine now emits
+    # (BUY_ZONE / BREAKOUT / NEAR_STOP) — same grouping as the email digest.
     else:
-        cat = {"entry": [], "breakout": [], "sl": [], "key": []}
+        cat = {"buy": [], "breakout": [], "sl": []}
         for t in live_trigs:
             lv = t.get("level", "")
-            bucket = ("entry" if lv == "ENTRY_PULLBACK"
-                      else "breakout" if lv == "ENTRY_BREAKOUT"
-                      else "sl" if lv == "NEAR_STOP" else "key")
-            cat[bucket].append(t)
+            bucket = ("buy" if lv == "BUY_ZONE"
+                      else "breakout" if lv == "BREAKOUT"
+                      else "sl" if lv == "NEAR_STOP" else None)
+            if bucket:
+                cat[bucket].append(t)
         for b in cat.values():
             b.sort(key=lambda t: (not t.get("is_held"), t.get("ticker")))
 
-        _LABELS = [("🎯 Entry — pullback", "entry"), ("🛑 Approaching stop", "sl"),
-                   ("🚀 Breakout", "breakout"), ("📍 Key levels (MA/Fib/TP/RVol)", "key")]
+        _LABELS = [("🟢 Hit buy price", "buy"), ("🚀 Breakout", "breakout"),
+                   ("🛑 Approaching stop", "sl")]
         opts = [f"{title} ({len(cat[b])})" for title, b in _LABELS]
         pick = st.selectbox("Category", opts, label_visibility="collapsed")
         b = _LABELS[opts.index(pick)][1]
