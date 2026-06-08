@@ -19,7 +19,7 @@ from src.data.paths import OUTPUT_DIR
 
 PTJ_FOLDER_ID = (
     os.environ.get("GDRIVE_PTJ_FOLDER_ID")
-    or "1AUWXhE50XyfOC3XlTfxf3Au2UT8n23I8"
+    or "15PR74ws_kTXTqCcEfRGga_jjHrMvbCEM"
 )
 PTJ_CACHE = OUTPUT_DIR / "held_positions.json"
 
