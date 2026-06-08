@@ -170,14 +170,30 @@ else:
 
 st.header("Section 2: Recipe Optimizer")
 st.caption(
-    "Grid-search all threshold combinations (~7,800 combos full / ~500 quick). "
-    "Finds the recipe closest to your targets. Set targets + click Search in the sidebar."
+    "Auto-maximises win rate + avg R across all threshold combinations. "
+    "Set **min trades/week** in the sidebar (your frequency floor), then click Search."
 )
 
 opt_results = load_json("optimizer_results.json")
 opt_sensitivity = load_json("engine_sensitivity.json")
+_opt_tgt = load_json("optimizer_targets.json") or {}
+_min_tpw_used = float(_opt_tgt.get("trades_per_week", 0))
 
 if opt_results:
+    # Apply trades/week floor and re-sort by win_rate × avg_r (highest first).
+    # The score field from the optimizer is target-distance based; re-ranking here
+    # ensures the display always shows "best by win rate and R" regardless of
+    # what targets were written at run time.
+    _filtered = [r for r in opt_results if r.get("trades_per_week", 0) >= _min_tpw_used]
+    if not _filtered:
+        _filtered = opt_results  # floor too tight — show all
+    _filtered.sort(key=lambda r: r.get("win_rate", 0) * max(r.get("avg_r", 0), 0), reverse=True)
+
+    if _min_tpw_used > 0:
+        st.caption(f"Results filtered to ≥ {_min_tpw_used:.0f} trades/week · "
+                   f"{len(_filtered)} of {len(opt_results)} recipes qualify · "
+                   "ranked by win rate × avg R")
+
     # Engine sensitivity table
     if opt_sensitivity:
         st.subheader("Engine Sensitivity")
@@ -190,43 +206,45 @@ if opt_results:
         st.dataframe(sens_df, use_container_width=True, hide_index=True)
         st.divider()
 
-    # Summarise what ranges are achievable
-    all_wr = [r["win_rate"] for r in opt_results]
-    all_nlr = [r["non_loss_rate"] for r in opt_results]
-    all_r = [r["avg_r"] for r in opt_results]
-    all_tpw = [r["trades_per_week"] for r in opt_results]
+    # Achievable ranges (within the trades/week floor)
+    all_wr = [r["win_rate"] for r in _filtered]
+    all_nlr = [r["non_loss_rate"] for r in _filtered]
+    all_r = [r["avg_r"] for r in _filtered]
+    all_tpw = [r["trades_per_week"] for r in _filtered]
     ra1, ra2, ra3, ra4 = st.columns(4)
     ra1.metric("Win rate range", f"{min(all_wr)*100:.0f}% – {max(all_wr)*100:.0f}%")
     ra2.metric("Non-loss range", f"{min(all_nlr)*100:.0f}% – {max(all_nlr)*100:.0f}%")
     ra3.metric("Avg R range", f"{min(all_r):+.2f} – {max(all_r):+.2f}")
     ra4.metric("Trades/wk range", f"{min(all_tpw):.1f} – {max(all_tpw):.1f}")
 
-    # Top-20 table
-    st.subheader(f"Top recipes (of {len(opt_results)} tested)")
+    # Top-20 table sorted by win_rate × avg_r
+    st.subheader(f"Top recipes — ranked by win rate × avg R")
     cols_wanted = ["sc_mom_min", "flow_min", "energy_min", "structure_min", "mp_min",
                    "elder_min", "phase_filter", "n_trades", "trades_per_week",
-                   "win_rate", "non_loss_rate", "avg_r", "oos_avg_r", "wfer", "dsr_pass", "score"]
-    opt_df = pd.DataFrame(opt_results[:20])[[c for c in cols_wanted if c in pd.DataFrame(opt_results[:20]).columns]]
-    opt_df["win_rate"] = (opt_df["win_rate"] * 100).round(1).astype(str) + "%"
-    opt_df["non_loss_rate"] = (opt_df["non_loss_rate"] * 100).round(1).astype(str) + "%"
-    st.dataframe(opt_df, use_container_width=True, hide_index=True)
+                   "win_rate", "non_loss_rate", "avg_r", "oos_avg_r", "wfer", "dsr_pass"]
+    _top20_df = pd.DataFrame(_filtered[:20])
+    _top20_df = _top20_df[[c for c in cols_wanted if c in _top20_df.columns]].copy()
+    _top20_df["win_rate"] = (_top20_df["win_rate"] * 100).round(1).astype(str) + "%"
+    _top20_df["non_loss_rate"] = (_top20_df["non_loss_rate"] * 100).round(1).astype(str) + "%"
+    st.dataframe(_top20_df, use_container_width=True, hide_index=True)
 
-    # Recommended recipe — best WFER-validated, else top by score
-    _validated = [r for r in opt_results if r.get("wfer", 0) >= 0.30 and r.get("oos_avg_r", 0) > 0]
-    best_opt = _validated[0] if _validated else opt_results[0]
+    # Recommended recipe — highest win_rate × avg_r that also passes WFER, else just top
+    _validated = [r for r in _filtered if r.get("wfer", 0) >= 0.30 and r.get("oos_avg_r", 0) > 0]
+    best_opt = _validated[0] if _validated else _filtered[0]
     st.subheader("Recommended recipe")
     _wfer_ok = best_opt.get("wfer", 0) >= 0.30
     if _wfer_ok:
         st.success(
-            f"WFER {best_opt['wfer']:.2f} ≥ 0.30 — edge survives out-of-sample. "
-            f"Win {best_opt['win_rate']*100:.1f}% | Non-loss {best_opt['non_loss_rate']*100:.1f}% | "
+            f"Win {best_opt['win_rate']*100:.1f}% | "
+            f"Non-loss {best_opt['non_loss_rate']*100:.1f}% | "
             f"Avg R {best_opt['avg_r']:+.3f} | OOS R {best_opt.get('oos_avg_r',0):+.3f} | "
-            f"{best_opt['n_trades']} trades ({best_opt['trades_per_week']:.1f}/wk)"
+            f"{best_opt['n_trades']} trades ({best_opt['trades_per_week']:.1f}/wk) | "
+            f"WFER {best_opt['wfer']:.2f} ✓"
         )
     else:
         st.warning(
+            f"Win {best_opt['win_rate']*100:.1f}% | Avg R {best_opt['avg_r']:+.3f} | "
             f"WFER {best_opt.get('wfer',0):.2f} < 0.30 — weak OOS validation. "
-            f"Win {best_opt['win_rate']*100:.1f}% | Avg R {best_opt['avg_r']:+.3f}. "
             "Trade with caution until walk-forward passes."
         )
 
@@ -930,20 +948,16 @@ with st.sidebar:
 
     st.divider()
 
-    # ── Optimizer targets ──────────────────────────────────────────
-    st.subheader("Optimizer targets")
-    st.caption("What performance do you want? The optimizer finds the closest recipe.")
-    target_nlr = st.slider(
-        "Target non-loss rate %", 40, 80, 55, step=5, key="ml_target_nlr",
-        help="% of trades that finish at break-even or better (win + scratch).",
+    # ── Optimizer ─────────────────────────────────────────────────
+    st.subheader("Find optimal recipe")
+    st.caption(
+        "One input: minimum signals per week (your liquidity floor). "
+        "The optimizer auto-maximises win rate + avg R across all threshold combos."
     )
-    target_r = st.slider(
-        "Target avg R", 0.05, 0.50, 0.15, step=0.05, format="%.2f", key="ml_target_r",
-        help="Average R-multiple per trade (expectancy). 0.15 = 15% of 1R stop size.",
-    )
-    target_tpw = st.slider(
-        "Target trades/week", 2, 20, 10, step=1, key="ml_target_tpw",
-        help="Signals per week. Too high = over-trading; too low = small sample.",
+    min_tpw = st.slider(
+        "Min trades/week", 2, 20, 10, step=1, key="ml_min_tpw",
+        help="Recipes with fewer signals than this are ignored. "
+             "Lower = tighter filters, fewer but higher-quality signals.",
     )
     run_opt_quick = st.button(
         "⚡ Quick search (~30s)", use_container_width=True, key="ml_opt_quick",
@@ -955,7 +969,18 @@ with st.sidebar:
     )
 
     if run_opt_quick or run_opt_full:
+        import json as _json
         import subprocess as _sp
+        # Write targets so the optimizer maximises win rate + R automatically.
+        # Setting non_loss_rate=0.99 and avg_r=1.0 (both unachievable) means the
+        # scoring naturally ranks recipes by who comes closest to those maximums —
+        # i.e. highest win rate and highest R. Trades/week enforces the floor.
+        _tgt_path = DATA_DIR / "optimizer_targets.json"
+        _tgt_path.write_text(_json.dumps({
+            "non_loss_rate": 0.99,
+            "avg_r": 1.0,
+            "trades_per_week": float(min_tpw),
+        }, indent=2))
         _args = [sys.executable, "-u", "-m", "src.calibration.run_optimizer"]
         if run_opt_quick:
             _args.append("--quick")
