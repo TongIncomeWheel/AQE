@@ -56,30 +56,35 @@ def _load_panel(_hash: str) -> pd.DataFrame:
 
 
 panel = _load_panel(str(PANEL_DAILY.stat().st_mtime_ns))
-tickers = sorted(panel["ticker"].unique().tolist())
-if "SPY" in tickers:
-    tickers.remove("SPY")
 
-# Build a lookup of each ticker's AQE record from the export (any tier).
+# The dropdown is restricted to TODAY'S scanned names only — top_picks / edge
+# (PE) / longlist / watchlist from the export — not the whole price universe.
 export = load_export() or {}
 aqe_lookup: dict[str, dict] = {}
 for _tier in ("top_picks", "edge_list", "longlist", "watchlist"):
     for _rec in export.get(_tier, []) or []:
         aqe_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": _tier})
 
-# Default to the first top pick if present, else first ticker.
-_default = None
-if export.get("top_picks"):
-    _default = export["top_picks"][0].get("ticker")
+tickers = sorted(aqe_lookup.keys())
+if not tickers:
+    st.info("No tickers on today's lists yet. Run the daily pipeline on the "
+            "Scanner page, then come back.")
+    st.stop()
+
+# Default to the first top pick if present, else the first listed name.
+_default = export["top_picks"][0].get("ticker") if export.get("top_picks") else None
 default_idx = tickers.index(_default) if _default in tickers else 0
 
 c1, c2, c3 = st.columns([2, 1, 1])
 with c1:
-    sel = st.selectbox("Ticker", tickers, index=default_idx)
+    sel = st.selectbox("Ticker (today's PE / longlist / watchlist)", tickers,
+                       index=default_idx)
 with c2:
     lookback = st.slider("Bars shown", 60, 500, 250, step=10)
 with c3:
     log_y = st.toggle("Log scale", value=False)
+
+rec = aqe_lookup.get(sel)
 
 g = panel[panel["ticker"] == sel].sort_values("date").reset_index(drop=True)
 if g.empty or len(g) < 2:
@@ -122,6 +127,39 @@ fig.add_trace(
     row=2, col=1,
 )
 
+# --- Buy / Stop / TP zones from the DSL bracket ---
+_be = rec.get("dsl_be") if rec else None
+_stop = rec.get("dsl_stop") if rec else None
+_tps = ([(rec.get("dsl_tp_1r"), "TP1"), (rec.get("dsl_tp_2r"), "TP2"),
+         (rec.get("dsl_tp_3r"), "TP3")] if rec else [])
+if _be and _stop:
+    # Risk zone (red): stop → buy
+    fig.add_hrect(y0=_stop, y1=_be, line_width=0, fillcolor="#EF5350",
+                  opacity=0.12, row=1, col=1)
+    fig.add_hline(y=_stop, line=dict(color="#EF5350", width=1.2, dash="dash"),
+                  annotation_text=f"Stop {_stop:.2f}",
+                  annotation_position="top left", row=1, col=1)
+    fig.add_hline(y=_be, line=dict(color="#FFD24A", width=1.6),
+                  annotation_text=f"Buy {_be:.2f}",
+                  annotation_position="top left", row=1, col=1)
+    # Reward zones (green): buy → TP1 → TP2 → TP3
+    _prev = _be
+    for _tp, _lab in _tps:
+        if _tp and _prev:
+            fig.add_hrect(y0=_prev, y1=_tp, line_width=0, fillcolor="#26A69A",
+                          opacity=0.09, row=1, col=1)
+            fig.add_hline(y=_tp, line=dict(color="#26A69A", width=1, dash="dot"),
+                          annotation_text=f"{_lab} {_tp:.2f}",
+                          annotation_position="top left", row=1, col=1)
+            _prev = _tp
+    # Keep the whole bracket in view (linear scale only).
+    if not log_y:
+        _levels = [v for v in ([_stop, _be] + [t for t, _ in _tps]) if v]
+        _ylo = min([float(disp["low"].min())] + _levels)
+        _yhi = max([float(disp["high"].max())] + _levels)
+        _pad = (_yhi - _ylo) * 0.04 or 1.0
+        fig.update_yaxes(range=[_ylo - _pad, _yhi + _pad], row=1, col=1)
+
 fig.update_layout(
     template="plotly_dark", height=720, margin=dict(l=10, r=10, t=30, b=10),
     xaxis_rangeslider_visible=False, showlegend=True,
@@ -135,10 +173,20 @@ fig.update_yaxes(title_text="Vol", row=2, col=1)
 
 st.plotly_chart(fig, use_container_width=True)
 
+# Zone summary: prices, % moves from buy, and R:R to each target.
+if rec and _be and _stop:
+    _risk_pct = (_be - _stop) / _be * 100
+    _segs = [f"🟥 Stop **{_stop:.2f}** (−{_risk_pct:.1f}%)", f"🟨 Buy **{_be:.2f}**"]
+    for (_tp, _lab), _rr in zip(_tps, [rec.get("rr_tp1"), rec.get("rr_tp2"), rec.get("rr_tp3")]):
+        if _tp:
+            _p = (_tp - _be) / _be * 100
+            _rrs = f", R:R {_rr}" if _rr is not None else ""
+            _segs.append(f"🟩 {_lab} **{_tp:.2f}** (+{_p:.1f}%{_rrs})")
+    st.caption("  ·  ".join(_segs))
+
 # ---------------------------------------------------------------------------
 # AQE numbers for the selected ticker (read from the export — the AIC schema)
 # ---------------------------------------------------------------------------
-rec = aqe_lookup.get(sel)
 last = g.iloc[-1]
 st.subheader(f"{sel} — AQE numbers")
 if rec is None:
