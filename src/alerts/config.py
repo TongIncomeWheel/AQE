@@ -16,17 +16,13 @@ def _f(env: str, default: float) -> float:
         return default
 
 
-# --- level tolerances ---
-NEAR_STOP_PCT = _f("AQE_ALERT_NEAR_STOP_PCT", 5.0)   # within X% ABOVE the stop
-BREAKOUT_PCT = _f("AQE_ALERT_BREAKOUT_PCT", 2.0)     # X% ABOVE the scan entry
-MA_TOL_PCT = _f("AQE_ALERT_MA_TOL_PCT", 0.5)         # within X% of any MA
-FIB_TOL_PCT = _f("AQE_ALERT_FIB_TOL_PCT", 1.0)       # within X% of a fib level
-RVOL_SPIKE = _f("AQE_ALERT_RVOL_SPIKE", 2.0)         # volume / avgVolume >=
+# --- level tolerances (only Buy / Breakout / Approaching-stop are emailed) ---
+NEAR_STOP_PCT = _f("AQE_ALERT_NEAR_STOP_PCT", 5.0)    # within X% ABOVE the stop
+BREAKOUT_PCT = _f("AQE_ALERT_BREAKOUT_PCT", 2.0)      # breakout starts X% over entry
+BREAKOUT_MAX_PCT = _f("AQE_ALERT_BREAKOUT_MAX_PCT", 8.0)  # …and only up to X% (fresh)
 
-# Fibonacci retracements treated as "support" worth flagging.
-FIB_KEYS = ("0.382", "0.5", "0.618")
-# Moving averages in the support ladder.
-MA_WINDOWS = (20, 50, 100, 200)
+# Refuse to email off an export older than this many calendar days (stale levels).
+MAX_EXPORT_AGE_DAYS = int(_f("AQE_ALERT_MAX_EXPORT_AGE_DAYS", 4))
 
 # --- cadence ---
 ALERT_MINUTES = int(_f("AQE_ALERT_MINUTES", 15))     # FMP Starter = 15-min delay

@@ -105,52 +105,30 @@ def evaluate(ticker: str, source: str, is_held: bool,
             "live_px": round(live, 2), "note": note,
         })
 
-    # --- Entry (candidates only — held names are already in) ---
-    if not is_held:
-        if stop is not None and be is not None and stop < live <= be:
-            add("ENTRY_PULLBACK", "Entry — pullback to buy zone", be,
-                f"price in DSL buy zone [{stop:.2f}–{be:.2f}]")
-        if entry is not None and live >= entry * (1 + C.BREAKOUT_PCT / 100):
-            add("ENTRY_BREAKOUT", "Entry — breakout above trigger",
-                entry * (1 + C.BREAKOUT_PCT / 100),
-                f"+{C.BREAKOUT_PCT:.0f}% above scan entry {entry:.2f}")
+    # Only THREE actionable, non-stale level events are emailed (PM ruling):
+    #   Hit-buy / buy-zone, fresh Breakout, Approaching-stop. TP-hit / Fib / MA /
+    #   RVol were removed — they fired on names long past the level (stale noise).
+    # Every condition is a BOUNDED band, so a name far past a level never fires.
 
-    # --- Approaching stop (within X% above it) ---
+    # --- Hit buy price / in buy zone (candidates only — held are already in) ---
+    if not is_held and stop is not None and be is not None and stop < live <= be:
+        add("BUY_ZONE", "Hit buy price / in buy zone", be,
+            f"at/under buy {be:.2f} — in DSL zone [{stop:.2f}–{be:.2f}]")
+
+    # --- Fresh breakout (bounded: only just-broken-out names, never extended) ---
+    if not is_held and entry is not None and entry > 0:
+        lo = entry * (1 + C.BREAKOUT_PCT / 100)
+        hi = entry * (1 + C.BREAKOUT_MAX_PCT / 100)
+        if lo <= live <= hi:
+            add("BREAKOUT", "Breakout (fresh)", lo,
+                f"+{(live / entry - 1) * 100:.1f}% over entry {entry:.2f} "
+                f"(fresh, ≤{C.BREAKOUT_MAX_PCT:.0f}%)")
+
+    # --- Approaching stop (within X% above it; held uses its own SL) ---
     if stop is not None and stop > 0 and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100):
         cushion = (live / stop - 1) * 100
         add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
             stop, f"{cushion:.1f}% above stop {stop:.2f}")
-
-    # --- Take-profit ladder ---
-    for key, label, tp in (("TP1", "TP1 hit", tp1),
-                           ("TP2", "TP2 hit", tp2),
-                           ("TP3", "TP3 hit", tp3)):
-        if tp is not None and live >= tp:
-            add(key, label, tp, f"price reached {tp:.2f}")
-
-    # --- RVol spike ---
-    vol, avgv = _n(quote.get("volume")), _n(quote.get("avg_volume"))
-    if vol is not None and avgv and avgv > 0:
-        rv = vol / avgv
-        if rv >= C.RVOL_SPIKE:
-            add("RVOL", f"RVol spike {rv:.1f}×", None,
-                f"volume {vol:,.0f} vs avg {avgv:,.0f}")
-
-    # --- MA support (within tolerance of any MA in the ladder) ---
-    for w in C.MA_WINDOWS:
-        ma = _n(rec.get(f"ma_{w}"))
-        if ma and ma > 0 and abs(live / ma - 1) * 100 <= C.MA_TOL_PCT:
-            add(f"MA_{w}", f"At MA{w} support", ma,
-                f"{(live / ma - 1) * 100:+.2f}% vs MA{w} {ma:.2f}")
-
-    # --- Fib support (within tolerance of a key retracement) ---
-    fib = rec.get("fib") or {}
-    retr = (fib.get("retracements") or {}) if isinstance(fib, dict) else {}
-    for key in C.FIB_KEYS:
-        lvl = _n(retr.get(key))
-        if lvl and lvl > 0 and abs(live / lvl - 1) * 100 <= C.FIB_TOL_PCT:
-            add(f"FIB_{key}", f"At Fib {key} support", lvl,
-                f"{(live / lvl - 1) * 100:+.2f}% vs fib {key} {lvl:.2f}")
 
     return trig
 
@@ -169,13 +147,23 @@ def in_market_window() -> bool:
             <= mins <= C.MARKET_CLOSE[0] * 60 + C.MARKET_CLOSE[1])
 
 
+def _export_age_days(export: dict):
+    """Calendar days between the export's scan date and today (None if unknown)."""
+    try:
+        d = (export.get("date") or "")[:10]
+        scan = datetime.strptime(d, "%Y-%m-%d").date()
+        return (datetime.now(ZoneInfo("America/New_York")).date() - scan).days
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     """One poll cycle. Returns a summary dict; never raises.
 
     force=True bypasses the market-hours gate (used by the UI "Refresh now").
     """
     summary = {"ok": False, "checked": 0, "new_triggers": 0,
-               "emailed": False, "reason": None, "triggers": []}
+               "emailed": False, "reason": None, "triggers": [], "export_date": None}
 
     if not force and not in_market_window():
         summary["reason"] = "outside US market hours"
@@ -184,6 +172,14 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     export = load_export()
     if not export:
         summary["reason"] = "no export available"
+        return summary
+    summary["export_date"] = export.get("date")
+
+    # Freshness guard — never blast stale levels (e.g. the pipeline didn't run).
+    age = _export_age_days(export)
+    if age is not None and age > C.MAX_EXPORT_AGE_DAYS and not force:
+        summary["reason"] = (f"export is {age}d old (> {C.MAX_EXPORT_AGE_DAYS}) — "
+                             "skipping to avoid stale alerts")
         return summary
 
     mon = monitored(export)

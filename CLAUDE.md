@@ -47,28 +47,32 @@ each alert carries a ready-to-paste "engage AIC via Claude" prompt, so the PM ru
 the committee decision externally (data ping → human → AIC).
 - Monitored set = every ticker across `top_picks`/`edge_list`/`longlist`/`watchlist`
   + `held_positions` (held names win; else richest tier: PE > top > longlist > watchlist).
-- Levels checked (all from the export's **absolute** prices, so the engine is
-  panel-free and runs identically in-app and in CI): **Entry — pullback** (`dsl_stop
-  < live ≤ dsl_be`) + **Entry — breakout** (`live ≥ entry·(1+BREAKOUT_PCT)`); **near
-  stop** (`stop < live ≤ stop·(1+NEAR_STOP_PCT)`, uses `held_sl` for held); **TP1/2/3**;
-  **RVol spike** (`volume/avgVolume ≥ RVOL_SPIKE`); **MA support** (within `MA_TOL_PCT`
-  of `ma_20/50/100/200`); **Fib support** (within `FIB_TOL_PCT` of fib 0.382/0.5/0.618).
+- **Only THREE actionable, bounded level events are emailed** (PM ruling — TP-hit /
+  Fib / MA / RVol were removed as stale noise): **Hit-buy / buy-zone** (`dsl_stop <
+  live ≤ dsl_be`), **fresh Breakout** (`entry·(1+BREAKOUT_PCT) ≤ live ≤
+  entry·(1+BREAKOUT_MAX_PCT)` — bounded so already-extended names never fire), and
+  **Approaching-stop** (`stop < live ≤ stop·(1+NEAR_STOP_PCT)`, `held_sl` for held).
+  Every condition is a bounded band, so a name far past a level can't re-fire.
+- **Freshness guard**: `run_alert_cycle` refuses to email off an export older than
+  `MAX_EXPORT_AGE_DAYS` (default 4) — no more blasting stale levels if the pipeline
+  didn't run. Export date is shown in the email header.
 - `engine.py` — `run_alert_cycle()` (load export → fetch quotes → `evaluate()` per
   ticker → dedup → email → save state); never raises. `config.py` — thresholds via
   `AQE_ALERT_*` env. `state.py` — dedup once-per-(ticker,level)-per-US-trading-day in a
   shared Drive file `aqe_alert_state.json` (both pollers share it; last-writer-wins).
-  `emailer.py` — Gmail SMTP digest (`AQE_SMTP_USER`/`AQE_SMTP_PASSWORD`/`AQE_ALERT_TO`),
-  grouped by ticker, each section = live engine read + AIC prompt.
+  `emailer.py` — digest via **Resend HTTP** (`RESEND_API_KEY`, works on HF over HTTPS)
+  with **Gmail SMTP fallback** (`AQE_SMTP_PASSWORD`, GitHub-only). Layout: **HELD
+  section first, then grouped by type (Buy / Breakout / Approaching-stop), ranked by
+  SC_MOM within each group**, compact, each row carrying a one-line AIC prompt.
 - Export now carries absolute `ma_20/50/100/200` + `fib` on every record (incl. held)
   so alerts are export-driven. `fmp_client.get_quotes()` adds the 15-min quote fetch
   (`/stable/quote`: price, volume, avgVolume, priceAvg50/200).
-- **Email is sent ONLY by GitHub Actions** — HF Spaces block outbound SMTP (465/587)
-  (`OSError: Errno 101 Network unreachable`). So the GH Actions cron `alerts.yml`
-  (`*/15 13-21 * * 1-5`, pulls export from Drive) owns the whole poll→dedup→email→
-  history pipeline; `scripts/alert_poll.py` (`--force` / `--test-email`). The in-app
-  thread `src/ui/alert_job.py` is **off on HF** (only runs with `AQE_ENABLE_ALERTS=1`,
-  e.g. local dev where SMTP works) so it can't corrupt the shared dedup state. Keep-warm
-  is handled separately by `keepalive.py` + UptimeRobot.
+- **Primary emailer = the in-app HF thread `src/ui/alert_job.py`** (every 15 min,
+  sends via Resend HTTPS — reliable cadence, which GitHub's throttled `*/15` cron is
+  NOT). HF blocks SMTP but allows HTTPS, so Resend works in-app. The GH Actions cron
+  `alerts.yml` (`*/15 13-21 * * 1-5`) stays as a **backstop** sharing the Drive dedup
+  state (`aqe_alert_state.json`) so the two never double-email; `scripts/alert_poll.py`
+  (`--force` / `--test-email`). Both read `RESEND_API_KEY` then fall back to SMTP.
 - **Charts + Trade Entry are ONE page** (`3_Charts_and_Trade_Entry.py`; the old
   separate `3_Charts.py`/`4_Trade_Entry_Menu.py` were merged). Left (majority) = the
   price chart (EOD candles + 20/50/100/200 MAs + live 15-min forming candle/line + DSL

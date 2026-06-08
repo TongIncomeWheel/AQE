@@ -9,7 +9,7 @@ by category: Entry-pullback / Approaching-stop / Breakout / Key-levels) and **La
 (one chronological mixed feed). Every alert is a button — click it to load that ticker
 into the chart on the left. ★ HELD names lead and flash.
 
-Emails are sent by the GitHub Actions poller (HF blocks SMTP); this page is the live
+Emails are sent every 15 min by the in-app poller via Resend (HTTPS); this page is the live
 read + the history GitHub logs to Drive.
 """
 
@@ -164,7 +164,7 @@ with right:
     st.markdown("#### 🔔 Trade Entry")
     mkt = "🟢 OPEN" if in_market_window() else "⚪ closed"
     st.caption(f"US market {mkt} · {len(mon)} monitored · "
-               f"{sum(1 for m in mon if m['is_held'])} held · emails via GitHub Actions")
+               f"{sum(1 for m in mon if m['is_held'])} held · emails every 15 min (Resend)")
 
     # Quotes power BOTH views — fetch once on first load, cache, manual refresh.
     _need = "tem_quotes" not in st.session_state
@@ -490,12 +490,18 @@ with left:
 
     if rec and _be and _stop:
         _risk_pct = (_be - _stop) / _be * 100
+        # TP prices are dynamic (scale with the β-adjusted 1R). The TP ladder is
+        # fixed R-multiples, so R:R-to-each-TP is a constant by construction —
+        # we show % move (which IS per-ticker) and the dynamic rr_est (reward to
+        # the Fib-1.618 extension ÷ risk) as the real per-name R:R.
         _segs = [f"🟥 Stop **{_stop:.2f}** (−{_risk_pct:.1f}%)", f"🟨 Buy **{_be:.2f}**"]
-        for (_tp, _lab), _rr in zip(_tps, [rec.get("rr_tp1"), rec.get("rr_tp2"), rec.get("rr_tp3")]):
+        for _tp, _lab in _tps:
             if _tp:
                 _p = (_tp - _be) / _be * 100
-                _rrs = f", R:R {_rr}" if _rr is not None else ""
-                _segs.append(f"🟩 {_lab} **{_tp:.2f}** (+{_p:.1f}%{_rrs})")
+                _segs.append(f"🟩 {_lab} **{_tp:.2f}** (+{_p:.1f}%)")
+        _est = rec.get("rr_est")
+        if _est is not None:
+            _segs.append(f"🎯 R:R **{_est}** (to Fib 1.618)")
         st.caption("  ·  ".join(_segs))
 
     # --- AQE numbers ---
@@ -552,6 +558,10 @@ with left:
         d2.metric("TP2", _f(r.get("dsl_tp_2r")))
         d3.metric("TP3", _f(r.get("dsl_tp_3r")))
         d3.metric("ATR ratio", _f(r.get("dsl_atr_ratio")))
-        d4.metric("R:R tp1/2/3",
-                  f"{_f(r.get('rr_tp1'))} / {_f(r.get('rr_tp2'))} / {_f(r.get('rr_tp3'))}")
+        d4.metric("R:R (Fib 1.618)", _f(r.get("rr_est"), ".2f"),
+                  help="The per-ticker R:R = reward to the Fib-1.618 extension ÷ 1R "
+                       "risk. This is the DYNAMIC one. The TP1/2/3 ladder is fixed "
+                       "R-multiples (+1R/+2R/+3R), so its R:R is a constant 1/2/3 for "
+                       "every name by design — the TP *prices* vary because 1R is "
+                       "β-adjusted, but the ratio doesn't.")
         d4.metric("ATR(14d)", _f(r.get("atr_14d")))
