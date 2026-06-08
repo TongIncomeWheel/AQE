@@ -132,91 +132,115 @@ with right:
     st.caption(f"US market {mkt} · {len(mon)} monitored · "
                f"{sum(1 for m in mon if m['is_held'])} held · emails via GitHub Actions")
 
+    # Quotes power BOTH views — fetch once on first load, cache, manual refresh.
+    _need = "tem_quotes" not in st.session_state
+    _refresh = st.button("🔄 Refresh live levels", use_container_width=True)
+    if _need or _refresh:
+        with st.spinner("Fetching 15-min quotes…"):
+            try:
+                from src.data.fmp_client import FMPClient
+                st.session_state["tem_quotes"] = FMPClient().get_quotes(
+                    [m["ticker"] for m in mon])
+            except Exception as exc:  # noqa: BLE001
+                st.session_state["tem_quotes"] = {}
+                st.error(f"Quote fetch failed: {exc}")
+    quotes = st.session_state.get("tem_quotes") or {}
+
+    from datetime import datetime as _dt  # noqa: E402
+    from zoneinfo import ZoneInfo as _ZI  # noqa: E402
+
+    def _qt(q):
+        ts = q.get("ts")
+        try:
+            return (_dt.fromtimestamp(int(ts), _ZI("Asia/Singapore")).strftime("%H:%M")
+                    if ts else None)
+        except Exception:  # noqa: BLE001
+            return None
+
+    # Evaluate every monitored ticker once → live triggers (with quote time).
+    live_trigs = []
+    for m in mon:
+        q = quotes.get(m["ticker"])
+        if not q or q.get("price") is None:
+            continue
+        _t = _qt(q)
+        for t in evaluate(m["ticker"], m["source"], m["is_held"], m["record"], q):
+            t["pull"] = _t
+            try:
+                t["_when"] = int(q.get("ts") or 0)
+            except (TypeError, ValueError):
+                t["_when"] = 0
+            live_trigs.append(t)
+
     view = st.radio("View", ["Latest", "Cards"], horizontal=True,
                     label_visibility="collapsed")
 
-    # ---- Latest: chronological mixed feed from the logged 36h history ----
+    # ---- Latest: live triggers + logged history, chronological (newest first) ----
     if view == "Latest":
+        items = []
+        for t in live_trigs:
+            lp = f" @{t['level_price']}" if t.get("level_price") is not None else ""
+            items.append({"tk": t["ticker"], "held": bool(t["is_held"]),
+                          "lbl": f"{_short(t['level'])}{lp}",
+                          "time": (t.get("pull") or "live"), "when": t.get("_when") or 0})
         try:
             from src.alerts import state as _S
-            feed = _S.recent_history(36)
-        except Exception as exc:  # noqa: BLE001
-            feed, _ = [], st.caption(f"history unavailable: {exc}")
-        if not feed:
-            st.caption("No alerts logged in 36h yet. They appear as the GitHub "
-                       "poller fires level hits during US market hours.")
+            for e in _S.recent_history(36):
+                try:
+                    w = int(_dt.fromisoformat(e.get("ts_utc")).timestamp())
+                except Exception:  # noqa: BLE001
+                    w = 0
+                items.append({"tk": e.get("ticker"), "held": bool(e.get("is_held")),
+                              "lbl": _short(e.get("level", "")),
+                              "time": (e.get("ts_sgt") or "")[11:16], "when": w})
+        except Exception:  # noqa: BLE001
+            pass
+        items.sort(key=lambda x: x["when"], reverse=True)
+
+        if not items:
+            if not quotes:
+                st.caption("Hit **Refresh live levels** to pull quotes.")
+            else:
+                st.caption("Nothing triggering now, and nothing logged in 36h.")
         else:
-            def _dk(e):
-                return (e.get("ts_sgt") or "")[:10]
-            from datetime import datetime as _dt
-            days = []
-            for e in feed:
-                if _dk(e) not in days:
-                    days.append(_dk(e))
-            for k in days:
-                try:
-                    lbl = _dt.strptime(k, "%Y-%m-%d").strftime("%a %d %b")
-                except ValueError:
-                    lbl = k or "—"
-                rows = [e for e in feed if _dk(e) == k]
-                st.markdown(f'<div class="aqe-day">{lbl} · {len(rows)}</div>',
-                            unsafe_allow_html=True)
-                for i, e in enumerate(rows):
-                    held = bool(e.get("is_held"))
-                    tm = (e.get("ts_sgt") or "")[11:16]
-                    tk = e.get("ticker")
-                    star = "★ " if held else ""
-                    st.button(f"{star}{tk} · {_short(e.get('level',''))} · {tm}",
-                              key=f"h_{k}_{i}", use_container_width=True,
-                              type="primary" if held else "secondary",
-                              on_click=_chart, args=(tk,))
+            st.caption(f"{len(items)} highlights · newest first")
+            for i, it in enumerate(items):
+                star = "★ " if it["held"] else ""
+                st.button(f"{star}{it['tk']} · {it['lbl']} · {it['time']}",
+                          key=f"l_{i}", use_container_width=True,
+                          type="primary" if it["held"] else "secondary",
+                          on_click=_chart, args=(it["tk"],))
 
-    # ---- Cards: live triggers grouped by category ----
+    # ---- Cards: pick a category, see just those triggers (no scrolling) ----
     else:
-        _need = "tem_quotes" not in st.session_state
-        _refresh = st.button("🔄 Refresh live levels", use_container_width=True)
-        if _need or _refresh:
-            with st.spinner("Fetching 15-min quotes…"):
-                try:
-                    from src.data.fmp_client import FMPClient
-                    st.session_state["tem_quotes"] = FMPClient().get_quotes(
-                        [m["ticker"] for m in mon])
-                except Exception as exc:  # noqa: BLE001
-                    st.session_state["tem_quotes"] = {}
-                    st.error(f"Quote fetch failed: {exc}")
-        quotes = st.session_state.get("tem_quotes") or {}
-
         cat = {"entry": [], "breakout": [], "sl": [], "key": []}
-        for m in mon:
-            q = quotes.get(m["ticker"])
-            if not q or q.get("price") is None:
-                continue
-            for t in evaluate(m["ticker"], m["source"], m["is_held"], m["record"], q):
-                lv = t.get("level", "")
-                bucket = ("entry" if lv == "ENTRY_PULLBACK"
-                          else "breakout" if lv == "ENTRY_BREAKOUT"
-                          else "sl" if lv == "NEAR_STOP" else "key")
-                cat[bucket].append(t)
+        for t in live_trigs:
+            lv = t.get("level", "")
+            bucket = ("entry" if lv == "ENTRY_PULLBACK"
+                      else "breakout" if lv == "ENTRY_BREAKOUT"
+                      else "sl" if lv == "NEAR_STOP" else "key")
+            cat[bucket].append(t)
         for b in cat.values():
             b.sort(key=lambda t: (not t.get("is_held"), t.get("ticker")))
 
-        _SECT = [("🎯 Entry — pullback", "entry"), ("🛑 Approaching stop", "sl"),
-                 ("🚀 Breakout", "breakout"), ("📍 Key levels (MA/Fib/TP/RVol)", "key")]
-        any_hit = any(cat[b] for _, b in _SECT)
+        _LABELS = [("🎯 Entry — pullback", "entry"), ("🛑 Approaching stop", "sl"),
+                   ("🚀 Breakout", "breakout"), ("📍 Key levels (MA/Fib/TP/RVol)", "key")]
+        opts = [f"{title} ({len(cat[b])})" for title, b in _LABELS]
+        pick = st.selectbox("Category", opts, label_visibility="collapsed")
+        b = _LABELS[opts.index(pick)][1]
+        items = cat[b]
+
         if not quotes:
-            st.caption("Click **Refresh live levels** to pull 15-min quotes.")
-        elif not any_hit:
-            st.caption("No levels triggering at the current 15-min prices.")
-        for title, b in _SECT:
-            st.markdown(f"**{title}** · {len(cat[b])}")
-            for i, t in enumerate(cat[b]):
-                held = bool(t.get("is_held"))
-                star = "★ " if held else ""
-                lp = f" @{t['level_price']}" if t.get("level_price") is not None else ""
-                st.button(f"{star}{t['ticker']} · {_short(t['level'])}{lp} · {t['live_px']}",
-                          key=f"c_{b}_{i}", use_container_width=True,
-                          type="primary" if held else "secondary",
-                          on_click=_chart, args=(t["ticker"],))
+            st.caption("Hit **Refresh live levels** to pull quotes.")
+        elif not items:
+            st.caption("Nothing triggering in this category.")
+        for i, t in enumerate(items):
+            star = "★ " if t["is_held"] else ""
+            lp = f" @{t['level_price']}" if t.get("level_price") is not None else ""
+            st.button(f"{star}{t['ticker']} · {_short(t['level'])}{lp} · {t['live_px']}",
+                      key=f"c_{b}_{i}", use_container_width=True,
+                      type="primary" if t["is_held"] else "secondary",
+                      on_click=_chart, args=(t["ticker"],))
 
 # ===========================================================================
 # LEFT — the chart
