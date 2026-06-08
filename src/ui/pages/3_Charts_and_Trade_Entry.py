@@ -119,6 +119,40 @@ def _chart(tk: str):
     st.session_state["sel_ticker"] = tk
 
 
+def _rec_from_adhoc(a: dict) -> dict:
+    """Shape an ad-hoc score_tickers() result like an export record so the chart
+    panel + DSL zones render identically for off-list tickers. PTRS/RVol/RS/sector
+    need the full pipeline, so they stay null (shown as — and noted)."""
+    lv = a.get("levels") or {}
+    be, stop = lv.get("be"), lv.get("stop")
+    bracket = (be - stop) if (be is not None and stop is not None) else None
+
+    def _rr(tp):
+        if tp is not None and bracket and bracket > 0:
+            return round((tp - be) / bracket, 2)
+        return None
+
+    return {
+        "_tier": "ad-hoc (freshly scored)", "_adhoc": True, "_as_of": a.get("as_of"),
+        "sc_momentum": a.get("sc_momentum"), "sc_momentum_raw": a.get("sc_momentum_raw"),
+        "ptrs": None,
+        "flow": a.get("flow"), "energy": a.get("energy"),
+        "structure": a.get("structure"), "mp": a.get("mp"),
+        "elder": a.get("elder"), "mp_state": a.get("mp_state"),
+        "beta_30d": a.get("beta_30d"), "beta_60d": a.get("beta_60d"),
+        "pipe_rank": a.get("pipe_rank"),
+        "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+        "gics_sector": None, "gics_sector_name": None, "gics_gate": None,
+        "dsl_be": be, "dsl_stop": stop, "dsl_risk": lv.get("risk"),
+        "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
+        "dsl_tp_3r": lv.get("tp_3r"),
+        "dsl_atr_ratio": lv.get("dsl_atr_ratio"), "atr_14d": lv.get("atr14"),
+        "rr_tp1": _rr(lv.get("tp_1r")), "rr_tp2": _rr(lv.get("tp_2r")),
+        "rr_tp3": _rr(lv.get("tp_3r")),
+        "fib": lv.get("fib"),
+    }
+
+
 st.title("Charts + Trade Entry")
 
 left, right = st.columns([3, 1.35], gap="medium")
@@ -302,6 +336,29 @@ with left:
     rec = rec_lookup.get(sel)
     held = held_lookup.get(sel)
 
+    # Ad-hoc scoring — any ticker not in today's export can be scored on demand
+    # (same engine path as the Scanner's Ad-hoc Scorer). Cached per session.
+    adhoc_cache = st.session_state.setdefault("chart_adhoc", {})
+    if rec is None:
+        if sel in adhoc_cache:
+            rec = _rec_from_adhoc(adhoc_cache[sel])
+        else:
+            ac1, ac2 = st.columns([3, 1])
+            ac1.caption(f"**{sel}** isn't in today's lists — not scored in the export.")
+            if ac2.button("🧮 Calculate", use_container_width=True, key="adhoc_calc"):
+                with st.spinner(f"Scoring {sel} from FMP…"):
+                    try:
+                        from src.scanner.adhoc import score_tickers
+                        _res = score_tickers([sel])
+                    except Exception as exc:  # noqa: BLE001
+                        _res = [{"ticker": sel, "error": str(exc)}]
+                if _res and not _res[0].get("error"):
+                    adhoc_cache[sel] = _res[0]
+                    st.rerun()
+                else:
+                    st.error(f"Could not score {sel}: "
+                             f"{_res[0].get('error') if _res else 'unknown error'}")
+
     g = panel[panel["ticker"] == sel].sort_values("date").reset_index(drop=True)
     if g.empty or len(g) < 2:
         st.warning(f"No price history for {sel}.")
@@ -444,9 +501,14 @@ with left:
     # --- AQE numbers ---
     last = g.iloc[-1]
     st.subheader(f"{sel} — AQE numbers")
-    _asof = export.get("exported_at") or export.get("date") or "last run"
-    st.caption(f"📅 Engine read **as of {_asof}** (end-of-day, last pipeline run) — "
-               "these are NOT intraday; only the price / Live line moves during the day.")
+    if rec and rec.get("_adhoc"):
+        st.caption(f"🧮 **Freshly scored** on the latest FMP bar ({rec.get('_as_of')}) "
+                   "— full engine suite, but PTRS / RVol / RS / sector need the daily "
+                   "pipeline so they show as —.")
+    else:
+        _asof = export.get("exported_at") or export.get("date") or "last run"
+        st.caption(f"📅 Engine read **as of {_asof}** (end-of-day, last pipeline run) — "
+                   "these are NOT intraday; only the price / Live line moves during the day.")
     if rec is None:
         st.caption("Not in today's lists (top_picks / edge / longlist / watchlist).")
     else:
