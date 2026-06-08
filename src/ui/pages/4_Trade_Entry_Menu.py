@@ -41,28 +41,31 @@ st.caption(
 
 # --- alert card styling -------------------------------------------------
 st.markdown("""<style>
+/* Cards force a light background, so ALL text inside is pinned dark for
+   readability regardless of the app's light/dark theme. */
 .aqe-card{border-radius:8px;padding:8px 12px;margin:6px 0;background:#f7f9fc;
-  border-left:5px solid #06c;}
+  border-left:5px solid #06c;color:#1a1a1a;}
 .aqe-card.held{border-left-color:#d00;background:#fff5f5;
   animation:aqepulse 1.5s ease-in-out infinite;}
 @keyframes aqepulse{0%,100%{box-shadow:0 0 0 0 rgba(208,0,0,0);}
   50%{box-shadow:0 0 0 5px rgba(208,0,0,.20);}}
 .aqe-top{display:flex;align-items:center;gap:8px;}
 .aqe-badge{color:#fff;font-weight:700;font-size:11px;padding:1px 8px;border-radius:10px;}
-.aqe-tkr{font-weight:700;font-size:16px;}
-.aqe-time{margin-left:auto;color:#888;font-size:12px;font-variant-numeric:tabular-nums;}
-.aqe-level{font-weight:600;margin-top:3px;}
-.aqe-detail{color:#555;font-size:12px;}
-.aqe-day{font-weight:700;font-size:14px;margin:14px 0 2px;color:#333;}
+.aqe-tkr{font-weight:800;font-size:16px;color:#0d0d0d;}
+.aqe-time{margin-left:auto;color:#555;font-size:12px;font-variant-numeric:tabular-nums;}
+.aqe-level{font-weight:700;margin-top:3px;}
+.aqe-detail{color:#444;font-size:12px;}
+.aqe-day{display:inline-block;font-weight:700;font-size:13px;margin:14px 0 4px;
+  color:#fff;background:#334;padding:3px 12px;border-radius:12px;}
 .aqe-line{padding:5px 8px;margin:4px 0;border-radius:6px;background:#f4f6fa;
-  border-left:4px solid #0a66cc;font-size:13px;}
+  border-left:4px solid #0a66cc;font-size:13px;color:#1a1a1a;}
 .aqe-line.held{border-left-color:#d00;background:#fff2f2;
   animation:aqepulse 1.5s ease-in-out infinite;}
 .aqe-line .lbadge{color:#fff;font-weight:700;font-size:10px;padding:0 6px;
   border-radius:9px;margin-right:6px;}
-.aqe-line .ltkr{font-weight:700;}
-.aqe-line .lpx{color:#555;}
-.aqe-line .lnote{color:#888;font-size:11px;margin-top:1px;}
+.aqe-line .ltkr{font-weight:800;color:#0d0d0d;}
+.aqe-line .lpx{color:#333;}
+.aqe-line .lnote{color:#666;font-size:11px;margin-top:1px;}
 </style>""", unsafe_allow_html=True)
 
 _LEVEL_ACCENT = {
