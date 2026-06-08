@@ -62,11 +62,19 @@ the committee decision externally (data ping → human → AIC).
 - Export now carries absolute `ma_20/50/100/200` + `fib` on every record (incl. held)
   so alerts are export-driven. `fmp_client.get_quotes()` adds the 15-min quote fetch
   (`/stable/quote`: price, volume, avgVolume, priceAvg50/200).
-- Pollers: in-app thread `src/ui/alert_job.py` (HF-only unless `AQE_ENABLE_ALERTS=1`;
-  emails gated to US cash hours 09:45–16:15 ET; doubles as keep-warm) + GitHub Actions
-  backstop `scripts/alert_poll.py` / `.github/workflows/alerts.yml` (cron `*/15 13-21 * *
-  1-5`, pulls export from Drive, shares the dedup state). Page 4 = live cockpit
-  (per-ticker distance to each level, "Refresh live levels", "Send test email").
+- **Email is sent ONLY by GitHub Actions** — HF Spaces block outbound SMTP (465/587)
+  (`OSError: Errno 101 Network unreachable`). So the GH Actions cron `alerts.yml`
+  (`*/15 13-21 * * 1-5`, pulls export from Drive) owns the whole poll→dedup→email→
+  history pipeline; `scripts/alert_poll.py` (`--force` / `--test-email`). The in-app
+  thread `src/ui/alert_job.py` is **off on HF** (only runs with `AQE_ENABLE_ALERTS=1`,
+  e.g. local dev where SMTP works) so it can't corrupt the shared dedup state. Keep-warm
+  is handled separately by `keepalive.py` + UptimeRobot.
+- Page 4 = live cockpit: a **2×2 category grid** (Entry-pullback / Approaching-stop on
+  the top row, Breakout / Key-levels-hit on the bottom) of flashing cards (`★ HELD`
+  pulses red), a **36h alert history grouped by SGT day** (read from Drive's
+  `aqe_alert_history.json`), "Refresh live levels", and a "Send test email" button
+  (warns on HF that email runs via GH Actions). Test email from GitHub:
+  **Actions → AQE live alerts → Run workflow → tick `test`**.
 
 ### Engines (`src/engines/`)
 - `flow.py` — Flow v1.3 (accumulation, volume, skew, extension, MFI, CMF, HA quality)

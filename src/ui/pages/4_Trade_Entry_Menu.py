@@ -54,6 +54,15 @@ st.markdown("""<style>
 .aqe-level{font-weight:600;margin-top:3px;}
 .aqe-detail{color:#555;font-size:12px;}
 .aqe-day{font-weight:700;font-size:14px;margin:14px 0 2px;color:#333;}
+.aqe-line{padding:5px 8px;margin:4px 0;border-radius:6px;background:#f4f6fa;
+  border-left:4px solid #0a66cc;font-size:13px;}
+.aqe-line.held{border-left-color:#d00;background:#fff2f2;
+  animation:aqepulse 1.5s ease-in-out infinite;}
+.aqe-line .lbadge{color:#fff;font-weight:700;font-size:10px;padding:0 6px;
+  border-radius:9px;margin-right:6px;}
+.aqe-line .ltkr{font-weight:700;}
+.aqe-line .lpx{color:#555;}
+.aqe-line .lnote{color:#888;font-size:11px;margin-top:1px;}
 </style>""", unsafe_allow_html=True)
 
 _LEVEL_ACCENT = {
@@ -89,6 +98,24 @@ def _card_html(e: dict, time_str: str) -> str:
         f'</div>'
     )
 
+
+def _line_html(t: dict) -> str:
+    """Compact one-liner for a 2×2 category quadrant."""
+    held = bool(t.get("is_held"))
+    if held:
+        badge = '<span class="lbadge" style="background:#d00">★HELD</span>'
+    else:
+        badge = (f'<span class="lbadge" style="background:#0a66cc">'
+                 f'{(t.get("source") or "").upper()}</span>')
+    lp = t.get("level_price")
+    lp_txt = f" @ {lp}" if lp is not None else ""
+    return (
+        f'<div class="aqe-line {"held" if held else ""}">'
+        f'{badge}<span class="ltkr">{t.get("ticker")}</span> '
+        f'<span class="lpx">{t.get("label")}{lp_txt} · live {t.get("live_px")}</span>'
+        f'<div class="lnote">{t.get("note") or ""}</div></div>'
+    )
+
 export = load_export() or {}
 if not export:
     st.info("No export found yet. Run the daily pipeline on the **Scanner** page first.")
@@ -100,11 +127,20 @@ if not mon:
     st.stop()
 
 # --- status row ---------------------------------------------------------
+import os as _os  # noqa: E402
+_on_hf = bool(_os.environ.get("SPACE_HOST") or _os.environ.get("SPACE_ID"))
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Monitored", len(mon))
 c2.metric("Held", sum(1 for m in mon if m["is_held"]))
 c3.metric("Market window", "OPEN" if in_market_window() else "closed")
-c4.metric("Email", "ready" if emailer.is_configured() else "no SMTP secret")
+c4.metric("Email engine", "GitHub Actions" if _on_hf
+          else ("local SMTP" if emailer.is_configured() else "no SMTP secret"))
+if _on_hf:
+    st.caption(
+        "📧 Emails are sent by the **GitHub Actions** poller (every 15 min in US "
+        "market hours) — HF blocks outbound SMTP, so the app itself can't email. "
+        "This page is the live cockpit + the alert history that GitHub logs to Drive."
+    )
 
 try:
     from src.ui.alert_job import last_cycle
@@ -129,7 +165,16 @@ if do_test:
     if res.get("ok"):
         st.success(f"Test email sent to {res.get('to')}.")
     else:
-        st.error(f"Test email failed: {res.get('reason')}")
+        reason = str(res.get("reason"))
+        if "unreachable" in reason or "Errno 101" in reason or "timed out" in reason:
+            st.warning(
+                "HF Spaces **block outbound email (SMTP)** — emails can't be sent "
+                "from this app. That's expected: the **GitHub Actions backstop** "
+                "sends all alert emails (its runners allow SMTP). Test it there: "
+                "**Actions → AQE live alerts → Run workflow → tick `test`**."
+            )
+        else:
+            st.error(f"Test email failed: {reason}")
 
 # --- persistent 36-hour alert feed (always on screen) ------------------
 st.subheader("📜 Alerts — last 36 hours")
@@ -240,15 +285,42 @@ for m in mon:
     for t in trigs:
         hot.append(t)
 
-# --- hot list (anything triggering right now) --------------------------
+# --- live cockpit: 2×2 category cards ----------------------------------
 st.subheader(f"🔔 Triggering now ({len({t['ticker'] for t in hot})} tickers)")
-if hot:
-    # held names first so flashing cards lead.
-    hot.sort(key=lambda t: (not t.get("is_held"), t.get("ticker")))
-    st.markdown("\n".join(_card_html(t, "live") for t in hot),
-                unsafe_allow_html=True)
-else:
-    st.caption("No levels triggering at the current 15-min prices.")
+
+# Bucket each live trigger into one of the four quadrants.
+cat = {"entry": [], "breakout": [], "sl": [], "key": []}
+for t in hot:
+    lv = t.get("level", "")
+    if lv == "ENTRY_PULLBACK":
+        cat["entry"].append(t)
+    elif lv == "ENTRY_BREAKOUT":
+        cat["breakout"].append(t)
+    elif lv == "NEAR_STOP":
+        cat["sl"].append(t)
+    else:  # MA_*, FIB_*, TP1/2/3, RVOL
+        cat["key"].append(t)
+for bucket in cat.values():
+    bucket.sort(key=lambda t: (not t.get("is_held"), t.get("ticker")))
+
+
+def _quad(col, icon, title, items):
+    with col:
+        with st.container(border=True):
+            st.markdown(f"**{icon} {title}** · {len(items)}")
+            if items:
+                st.markdown("\n".join(_line_html(t) for t in items),
+                            unsafe_allow_html=True)
+            else:
+                st.caption("— none —")
+
+
+_r1 = st.columns(2)
+_quad(_r1[0], "🎯", "Entry — pullback to buy zone", cat["entry"])
+_quad(_r1[1], "🛑", "Approaching stop (SL)", cat["sl"])
+_r2 = st.columns(2)
+_quad(_r2[0], "🚀", "Breakout above trigger", cat["breakout"])
+_quad(_r2[1], "📍", "Key levels hit (MA / Fib / TP / RVol)", cat["key"])
 
 # --- full monitor table -------------------------------------------------
 st.subheader("All monitored tickers")

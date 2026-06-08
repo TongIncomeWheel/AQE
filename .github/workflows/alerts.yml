@@ -17,6 +17,10 @@ on:
         description: "Run one cycle now, ignoring the market-hours gate"
         type: boolean
         default: false
+      test:
+        description: "Send a TEST email only (verifies SMTP from GitHub's network)"
+        type: boolean
+        default: false
 
 concurrency:
   group: aqe-alerts
@@ -44,7 +48,9 @@ jobs:
           AQE_SMTP_PASSWORD: ${{ secrets.AQE_SMTP_PASSWORD }}
           AQE_ALERT_TO: ${{ secrets.AQE_ALERT_TO }}
         run: |
-          if [ "${{ inputs.force }}" = "true" ]; then
+          if [ "${{ inputs.test }}" = "true" ]; then
+            python -m scripts.alert_poll --test-email
+          elif [ "${{ inputs.force }}" = "true" ]; then
             python -m scripts.alert_poll --force
           else
             python -m scripts.alert_poll

@@ -20,6 +20,13 @@ from src.alerts.engine import run_alert_cycle
 
 
 def main() -> int:
+    if "--test-email" in sys.argv:
+        from src.alerts.emailer import send_test
+        res = send_test()
+        print("[alert_poll] test email:", "OK ->" + str(res.get("to"))
+              if res.get("ok") else "FAILED -> " + str(res.get("reason")))
+        return 0 if res.get("ok") else 1
+
     force = "--force" in sys.argv or "-f" in sys.argv
     summary = run_alert_cycle(send_email=True, force=force)
     print("[alert_poll]", summary.get("reason") or "ok",

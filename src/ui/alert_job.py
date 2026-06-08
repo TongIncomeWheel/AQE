@@ -51,11 +51,18 @@ def _loop() -> None:
 
 
 def start_alert_job() -> bool:
-    """Start the alert poller once per process. Returns True if it started."""
+    """Start the alert poller once per process. Returns True if it started.
+
+    IMPORTANT: HF Spaces block outbound SMTP, so the *email* path cannot run on
+    HF — and if this poller marked the shared Drive dedup state, it would suppress
+    the GitHub Actions backstop (the real emailer) from sending. So on HF this is
+    intentionally a no-op: the GH Actions cron owns the poll→dedup→email→history
+    pipeline. This thread only runs when explicitly forced (AQE_ENABLE_ALERTS=1),
+    e.g. local dev where SMTP works.
+    """
     global _started
-    on_hf = bool(os.environ.get("SPACE_HOST") or os.environ.get("SPACE_ID"))
     forced = os.environ.get("AQE_ENABLE_ALERTS") == "1"
-    if not (on_hf or forced):
+    if not forced:
         return False
     with _lock:
         if _started:
