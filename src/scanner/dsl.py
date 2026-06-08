@@ -151,27 +151,26 @@ def compute_dynamic_atr_ratio(
         level = "GREEN"
     base = _REGIME_RATIO.get(level, 1.5)
 
-    # 2. Elder adjustment
+    # 2. Elder adjustment (Schema §5.5.4): >=8 tightens, <5 widens, 5-7 neutral.
     elder_adj = 0.0
     if elder_score is not None and np.isfinite(elder_score):
         if elder_score >= 8.0:
             elder_adj = -0.25
-        elif elder_score <= 4.0:
+        elif elder_score < 5.0:
             elder_adj = 0.50
 
-    # 3. Whippiness (daily range proxy for atr_1h / atr_14d)
-    whip_adj = 0.0
+    # 3. Intraday range adjustment — Schema §5.5.4 defines this as
+    #    atr_1h / atr_14d. AQE is end-of-day (no atr_1h), so the intraday term is
+    #    0 per spec. We still compute a daily-range proxy for the export
+    #    (informational only — it is NOT added to the ratio; doing so previously
+    #    inflated stops toward the 3.5 ATR ceiling).
     daily_range_proxy = 0.0
     if (len(highs_14) >= 14 and len(lows_14) >= 14
             and atr14 > 0 and np.isfinite(atr14)):
         avg_range = float(np.nanmean(highs_14[-14:] - lows_14[-14:]))
         daily_range_proxy = avg_range / atr14
-        if daily_range_proxy > 0.85:
-            whip_adj = 0.50
-        elif daily_range_proxy > 0.70:
-            whip_adj = 0.25
 
-    raw = base + elder_adj + whip_adj
+    raw = base + elder_adj   # intraday_adj = 0 (no atr_1h in an EOD system)
     return float(np.clip(raw, _RATIO_FLOOR, _RATIO_CEIL)), round(daily_range_proxy, 3)
 
 
@@ -195,24 +194,25 @@ def compute_initial_stop_v15(
     the structural swing low (from fractal pivot detection) if that sits
     further below entry. Final distance clamped to [1.0, 3.5] × ATR.
     """
-    # 1. Dynamic ratio
+    # 1. Dynamic ratio (regime + Elder; intraday term is 0 in an EOD system)
     dynamic_ratio, daily_range_proxy = compute_dynamic_atr_ratio(
         regime_level, elder_score, highs, lows, atr14,
     )
 
-    # 2. Dynamic stop from ratio
-    dynamic_distance = dynamic_ratio * atr14
-    dynamic_stop = entry_price - dynamic_distance
+    # 2. ATR stop from the ratio
+    atr_stop = entry_price - dynamic_ratio * atr14
 
-    # 3. Structural swing low widening — use existing fractal detector
-    from src.scanner.levels import find_swing  # local import avoids circular
-    swing = find_swing(highs, lows)
-    if swing is not None:
-        swing_stop = swing["low"] - 0.5 * atr14  # buffer below support
-        if swing_stop < dynamic_stop:
-            # Swing low is further away — widen to structural support
-            dynamic_stop = swing_stop
-            dynamic_distance = entry_price - dynamic_stop
+    # 3. Structural stop = most recent tested low (last 5 sessions), per Data
+    #    Schema Spec §5.5.3:  dsl_stop = min(atr_stop, min(last 5 lows)) — the
+    #    WIDER (further-below-entry) of the two.
+    #    Previously this widened to a 120-bar fractal swing low (the base of the
+    #    whole advance), which for extended momentum names sat far below price and
+    #    pinned the stop at the 3.5 ATR ceiling. The recent 5-session low keeps
+    #    the stop anchored to genuine near-term support instead.
+    recent5 = recent_lows[-5:]
+    struct_stop = float(np.nanmin(recent5)) if len(recent5) else atr_stop
+    dsl_stop = min(atr_stop, struct_stop)
+    dynamic_distance = entry_price - dsl_stop
 
     # 4. Final clamp: distance must stay in [1.0, 3.5] × ATR
     min_distance = _RATIO_FLOOR * atr14
@@ -221,8 +221,7 @@ def compute_initial_stop_v15(
     final_stop = entry_price - clamped_distance
     risk = clamped_distance
 
-    # Recompute the effective ratio for export (may differ from dynamic_ratio
-    # if swing widening or clamping changed the distance)
+    # Effective ATR ratio actually used (post structural widening + clamp), for export.
     effective_ratio = round(clamped_distance / atr14, 2) if atr14 > 0 else dynamic_ratio
 
     return final_stop, risk, effective_ratio, daily_range_proxy
