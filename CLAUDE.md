@@ -48,8 +48,10 @@ the committee decision externally (data ping → human → AIC).
 - Monitored set = every ticker across `top_picks`/`edge_list`/`longlist`/`watchlist`
   + `held_positions` (held names win; else richest tier: PE > top > longlist > watchlist).
 - **Only THREE actionable, bounded level events are emailed** (PM ruling — TP-hit /
-  Fib / MA / RVol were removed as stale noise): **Hit-buy / buy-zone** (`dsl_stop <
-  live ≤ dsl_be`), **fresh Breakout** (`entry·(1+BREAKOUT_PCT) ≤ live ≤
+  Fib / MA / RVol were removed as stale noise): **Hit buy price** — today's
+  intraday candle traded THROUGH the buy line (`day_low ≤ dsl_be ≤ day_high`),
+  not a proximity-to-buy check; naturally bounded (a name that gapped above and
+  held, or never reached it, doesn't fire), **fresh Breakout** (`entry·(1+BREAKOUT_PCT) ≤ live ≤
   entry·(1+BREAKOUT_MAX_PCT)` — bounded so already-extended names never fire), and
   **Approaching-stop** (`stop < live ≤ stop·(1+NEAR_STOP_PCT)`, `held_sl` for held).
   Every condition is a bounded band, so a name far past a level can't re-fire.

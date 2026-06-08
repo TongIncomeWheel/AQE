@@ -88,6 +88,8 @@ def evaluate(ticker: str, source: str, is_held: bool,
     if live is None or live <= 0:
         return []
 
+    day_hi = _n(quote.get("day_high"))
+    day_lo = _n(quote.get("day_low"))
     entry = _n(rec.get("entry"))
     stop = _n(rec.get("held_sl")) if is_held else _n(rec.get("dsl_stop"))
     be = _n(rec.get("dsl_be"))
@@ -110,10 +112,17 @@ def evaluate(ticker: str, source: str, is_held: bool,
     #   RVol were removed — they fired on names long past the level (stale noise).
     # Every condition is a BOUNDED band, so a name far past a level never fires.
 
-    # --- Hit buy price / in buy zone (candidates only — held are already in) ---
-    if not is_held and stop is not None and be is not None and stop < live <= be:
-        add("BUY_ZONE", "Hit buy price / in buy zone", be,
-            f"at/under buy {be:.2f} — in DSL zone [{stop:.2f}–{be:.2f}]")
+    # --- Hit buy price: TODAY's candle must trade THROUGH the buy line, i.e. the
+    # buy price lies inside today's intraday range [day_low, day_high]. Not a
+    # "near the buy" proximity check — the price has to have actually touched it
+    # today. Naturally bounded: a name that gapped above and held (day_low > be)
+    # or never reached it (day_high < be) does not fire. Held names are already in.
+    if (not is_held and be is not None
+            and day_hi is not None and day_lo is not None
+            and day_lo <= be <= day_hi):
+        add("BUY_ZONE", "Hit buy price", be,
+            f"today's range [{day_lo:.2f}–{day_hi:.2f}] crossed buy {be:.2f} "
+            f"(live {live:.2f})")
 
     # --- Fresh breakout (bounded: only just-broken-out names, never extended) ---
     if not is_held and entry is not None and entry > 0:

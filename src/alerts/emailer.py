@@ -30,7 +30,7 @@ DEFAULT_FROM = "AQE Alerts <onboarding@resend.dev>"
 
 # Sections in render order. HELD floats above all of these.
 _SECTIONS = [
-    ("BUY_ZONE", "🟢 Hit buy price / buy zone", "#0a8a3a"),
+    ("BUY_ZONE", "🟢 Hit buy price", "#0a8a3a"),
     ("BREAKOUT", "🚀 Breakout (fresh)", "#0a66cc"),
     ("NEAR_STOP", "🛑 Approaching stop", "#d33"),
 ]
@@ -245,8 +245,9 @@ def send_test() -> dict:
     """Fire a one-off test digest so the PM can verify the email backend."""
     sample = [
         {"ticker": "TEST1", "source": "longlist", "is_held": False,
-         "level": "BUY_ZONE", "label": "Hit buy price / in buy zone",
-         "level_price": 101.5, "live_px": 100.8, "note": "at/under buy 101.50"},
+         "level": "BUY_ZONE", "label": "Hit buy price",
+         "level_price": 101.5, "live_px": 101.6,
+         "note": "today's range [100.40–102.10] crossed buy 101.50 (live 101.60)"},
         {"ticker": "ODFL", "source": "held", "is_held": True,
          "level": "NEAR_STOP", "label": "Approaching stop (SL)",
          "level_price": 230.0, "live_px": 235.0, "note": "2.2% above stop 230.00"},
