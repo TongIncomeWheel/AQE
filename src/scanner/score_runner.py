@@ -36,6 +36,7 @@ SCORE_COLUMNS = [
     "bq_100", "k39_value",
     "mp_state", "impulse_state",
     "sc_momentum", "sc_momentum_raw", "sc_position", "sc_position_raw",
+    "sc_m_gates", "sc_p_gates",
     "pipe_rank", "fip_quality",
     # ── Flow sub-components ──
     "flow_score", "accum_score", "volume_score", "skew_score", "ext_score",
@@ -144,6 +145,24 @@ def build_scores() -> None:
             bq_score=bq_df["bq_100"],
         )
 
+        # v1.8.0 gate flags (Pine SC_M_GATES / SC_P_GATES) — qualification
+        # booleans, NOT score caps. sc_momentum/sc_position above are uncapped.
+        sc_m_gates = scoring.gates_momentum(
+            flow_score=flow_df["flow_100"],
+            energy_score=energy_df["energy_100"],
+            structure_score=structure_df["structure_100"],
+            mp_score=mp_df["mp_score"],
+            elder_score=elder_df["elder_score"],
+        )
+        sc_p_gates = scoring.gates_position(
+            flow_score=flow_df["flow_100"],
+            energy_score=energy_df["energy_100"],
+            structure_score=structure_df["structure_100"],
+            mp_score=mp_df["mp_score"],
+            bq_score=bq_df["bq_100"],
+            k39_gate=k39_gate_s,
+        )
+
         atr14 = atr(d["high"].astype(float), d["low"].astype(float), d["close"].astype(float), n=14)
 
         if len(d) >= 252:
@@ -173,6 +192,8 @@ def build_scores() -> None:
             "sc_momentum_raw": sc_m_raw,
             "sc_position": sc_p,
             "sc_position_raw": sc_p_raw,
+            "sc_m_gates": sc_m_gates,
+            "sc_p_gates": sc_p_gates,
             "pipe_rank": pr_pipe,
             "fip_quality": pr_fip,
             # Flow sub-components

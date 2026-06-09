@@ -131,28 +131,41 @@ def test_bq_in_range():
     assert late.notna().mean() > 0.8
 
 
-def test_scoring_gate_enforcement():
-    """If any engine floor fails, SC_MOMENTUM must be capped at 49.0."""
+def test_scoring_v180_uncapped_with_gate_flags():
+    """v1.8.0: composite is UNCAPPED; gates are a separate boolean flag.
+
+    Parity with Pine `Scoring v1.8.0` — `sc_momentum = sc_m_raw` (no 49 cap),
+    `SC_M_GATES` is a separate qualification boolean.
+    """
     n = 10
-    # All engines at 80 → raw = 80, all gates pass → should be 80.
     high_all = pd.Series([80.0] * n)
     elder_high = pd.Series([8.0] * n)
+
+    # All engines pass → score = raw = 80, gate flag True.
     sc = scoring.compute(high_all, high_all, high_all, high_all, elder_high)
     assert (sc == 80.0).all()
+    assert scoring.gates_momentum(high_all, high_all, high_all, high_all, elder_high).all()
 
-    # Flow drops to 50 (below 60 floor) → cap at 49.
+    # Flow below the 60 floor → score STILL the raw weighted avg (uncapped),
+    # but the gate flag is False.
     flow_low = pd.Series([50.0] * n)
-    sc_capped = scoring.compute(flow_low, high_all, high_all, high_all, elder_high)
-    assert (sc_capped <= 49.0).all()
+    sc_uncapped = scoring.compute(flow_low, high_all, high_all, high_all, elder_high)
+    expected = 50.0 * 0.30 + 80.0 * 0.30 + 80.0 * 0.20 + 80.0 * 0.20  # = 71.0
+    assert (sc_uncapped == expected).all()
+    assert not scoring.gates_momentum(flow_low, high_all, high_all, high_all, elder_high).any()
 
-    # Elder drops to 5.0 (below 6.5 gate) → cap at 49.
+    # Elder below 6.5 → score unaffected (uncapped), gate flag False.
     elder_low = pd.Series([5.0] * n)
     sc_elder = scoring.compute(high_all, high_all, high_all, high_all, elder_low)
-    assert (sc_elder <= 49.0).all()
+    assert (sc_elder == 80.0).all()
+    assert not scoring.gates_momentum(high_all, high_all, high_all, high_all, elder_low).any()
 
-    # All engines below all floors — raw is low anyway, cap still applies.
-    low_all = pd.Series([30.0] * n)
-    elder_ok = pd.Series([7.0] * n)
-    sc_low = scoring.compute(low_all, low_all, low_all, low_all, elder_ok)
-    assert (sc_low <= 49.0).all()
-    assert (sc_low == 30.0).all()  # raw=30 < 49, so min(30, 49) = 30
+    # SC_POSITION mirrors the same contract.
+    bq_high = pd.Series([80.0] * n)
+    k39_pass = pd.Series([True] * n)
+    scp = scoring.compute_position(high_all, high_all, high_all, high_all, bq_high, k39_pass)
+    assert (scp == 80.0).all()
+    assert scoring.gates_position(high_all, high_all, high_all, high_all, bq_high, k39_pass).all()
+    # K39 fails → score unaffected, gate flag False.
+    k39_fail = pd.Series([False] * n)
+    assert not scoring.gates_position(high_all, high_all, high_all, high_all, bq_high, k39_fail).any()

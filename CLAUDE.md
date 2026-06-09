@@ -99,14 +99,23 @@ the committee decision externally (data ping → human → AIC).
 - `scoring.py` — SC_MOMENTUM + SC_POSITION composites with gate enforcement
 - `srm.py` — Sector Rotation Model (GICS ETF grading: DEPLOY/HOLD/TURNING/WATCH/AVOID)
 
-### Scoring composites (`src/engines/scoring.py`)
+### Scoring composites (`src/engines/scoring.py`) — v1.8.0
+**Parity with TradingView `Scoring v1.8.0`: composites are UNCAPPED.** The raw
+weighted average flows straight through (`sc_momentum = sc_m_raw`); sub-component
+floors and the Elder/K39 gates are NOT a score cap. They're exported as separate
+qualification booleans `sc_m_gates` / `sc_p_gates` (Pine `SC_M_GATES` / `SC_P_GATES`).
+The longlist/PE recipe screens enforce engine floors independently downstream, so
+list membership is unchanged — only gated *watchlist-tier* names (and their PTRS)
+now read their true composite instead of being pinned at 49.
+
 **SC_MOMENTUM** = Flow(30%) + Energy(30%) + Structure(20%) + MP(20%)
-- Gates: Elder >= 6.5, Flow >= 60, Energy >= 60, Structure >= 55, MP >= 55
-- If ANY gate fails: composite hard-capped at 49.0 (`GATE_CAP`). Raw score preserved in `sc_momentum_raw`.
+- Gate flag (`sc_m_gates`): Elder >= 6.5, Flow >= 60, Energy >= 60, Structure >= 55, MP >= 55
 
 **SC_POSITION** = Flow(10%) + Energy(30%) + Structure(20%) + MP(5%) + BQ(35%)
-- Gates: Flow >= 40, Energy >= 60, Structure >= 65, MP >= 40, BQ >= 60, K39 gate
-- Same 49.0 cap on gate failure.
+- Gate flag (`sc_p_gates`): Flow >= 40, Energy >= 60, Structure >= 65, MP >= 40, BQ >= 60, K39 gate
+
+> History: v1.6.0 hard-capped a gate-failing composite at 49.0 (`GATE_CAP`). v1.8.0
+> removed that cap to match the canonical chart (AIC-approved, 8 Jun 2026).
 
 ### PTRS (`src/analyzer/ptrs.py`)
 PTRS = SC_MOM + SH (sector health only). No VIX (RL) or Regime Alignment (RA).
