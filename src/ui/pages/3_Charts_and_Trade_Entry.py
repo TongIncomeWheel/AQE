@@ -306,11 +306,20 @@ with right:
 # LEFT — the chart
 # ===========================================================================
 with left:
+    # Sector options = the distinct GICS sectors actually present in the export
+    # (name if we have it, else the ETF symbol). Built once per render.
+    def _sector_of(tk: str) -> str:
+        r = rec_lookup.get(tk, {})
+        return (r.get("gics_sector_name") or r.get("gics_sector") or "")
+
+    _sectors = sorted({s for tk in rec_lookup if (s := _sector_of(tk))})
+
     # Filters that scope the dropdown to manageable subsets (mobile list mgmt).
     with st.expander("Filters", expanded=False):
-        fa, fb = st.columns([1, 2])
+        fa, fs, fb = st.columns([1, 1.2, 1.6])
         category = fa.selectbox("List", ["All", "Top picks", "PE", "Longlist",
                                          "Watchlist", "Held"])
+        sector = fs.selectbox("Sector", ["All", *_sectors])
         mp_filter = fb.multiselect("MP state", ["STRONG", "BUILDING", "FADING"], default=[])
         g1, g2, g3 = st.columns(3)
         sc_min = g1.slider("Raw SC ≥", 0, 100, 0, step=5)
@@ -319,6 +328,8 @@ with left:
 
     def _keep(tk: str) -> bool:
         if category != "All" and tk not in cat_sets.get(category, set()):
+            return False
+        if sector != "All" and _sector_of(tk) != sector:
             return False
         r = rec_lookup.get(tk, {})
         if sc_min and (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < sc_min:
