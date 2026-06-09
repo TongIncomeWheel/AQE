@@ -328,6 +328,47 @@ with st.sidebar:
             else:
                 st.error(result.get("reason", "No data"))
 
+    # IBKR held-positions sync (local only — gateway runs on user's PC)
+    with st.expander("IBKR positions sync", expanded=False):
+        st.caption(
+            "Reads open positions + stop orders from the **IBKR Client Portal "
+            "Web API** running locally (https://localhost:5000). Overwrites "
+            "`held_positions.json` so the Charts overlay and HELD alerts see "
+            "live broker data instead of the manual trade journal."
+        )
+        _ibkr_status_ph = st.empty()
+        try:
+            from src.data.ibkr_sync import is_configured as _ibkr_ok, load_ibkr_cache
+            _icache = load_ibkr_cache()
+            _isrc = _icache.get("source", "")
+            _imod = (_icache.get("modified") or "")[:19].replace("T", " ")
+            _ipos = len(_icache.get("positions") or [])
+            if _isrc == "ibkr" and _ipos:
+                _ibkr_status_ph.caption(f"Last sync: {_imod} · {_ipos} position(s)")
+            elif _ipos:
+                _ibkr_status_ph.caption(f"{_ipos} position(s) from manual PTJ (not IBKR)")
+            else:
+                _ibkr_status_ph.caption("No cached positions yet.")
+        except Exception:  # noqa: BLE001
+            pass
+
+        if st.button("Sync from IBKR", use_container_width=True, key="ibkr_sync_btn"):
+            from src.data.ibkr_sync import is_configured as _ibkr_ok, refresh_held_positions as _ibkr_refresh
+            with st.spinner("Connecting to IBKR gateway…"):
+                if not _ibkr_ok():
+                    st.error(
+                        "IBKR gateway not reachable. Make sure the **Client Portal "
+                        "Web API** gateway is running and you are logged in at "
+                        "https://localhost:5000"
+                    )
+                else:
+                    _pos = _ibkr_refresh()
+                    if _pos:
+                        st.success(f"Synced {len(_pos)} position(s) from IBKR. Reload the page to refresh Held positions.")
+                        st.cache_data.clear()
+                    else:
+                        st.warning("Gateway reachable but no open stock positions found.")
+
 # ---------------------------------------------------------------------------
 # Onboarding check
 # ---------------------------------------------------------------------------
@@ -690,15 +731,24 @@ def _export_table(records):
 
 
 # ---------------------------------------------------------------------------
-# Held positions (from the daily PTJ) — the trade + AQE's current engine read
+# Held positions (from IBKR live sync or the manual PTJ on Drive)
 # ---------------------------------------------------------------------------
 _held = _ex.get("held_positions") or []
 if _held:
+    try:
+        from src.data.ibkr_sync import load_ibkr_cache as _load_icache
+        _ic = _load_icache()
+        _held_src = "IBKR live" if _ic.get("source") == "ibkr" else "manual PTJ (Drive)"
+        _held_mod = (_ic.get("modified") or "")[:19].replace("T", " ")
+    except Exception:  # noqa: BLE001
+        _held_src = "trade journal"
+        _held_mod = ""
     st.subheader(f"Held positions ({len(_held)})")
     st.caption(
-        "From the latest trade journal (PTJ) on Drive. `entry`/`qty`/`held_sl`/"
-        "`unreal_usd` = your trade; `sc_momentum`/`mp_state`/`flow…`/`dsl_*` = "
-        "what the engine says about it now."
+        f"Source: **{_held_src}**"
+        + (f" · as of {_held_mod}" if _held_mod else "")
+        + " · `entry`/`qty`/`held_sl`/`unreal_usd` = your trade; "
+        "`sc_momentum`/`mp_state`/`flow…`/`dsl_*` = what the engine says now."
     )
     _HELD_COLS = [
         "ticker", "qty", "entry", "live_px", "unreal_usd", "held_sl", "held_tp1",
