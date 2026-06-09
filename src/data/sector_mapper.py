@@ -104,6 +104,64 @@ def load_sector_map() -> dict[str, str]:
     return {}
 
 
+def get_sector_map_gaps(tickers: list[str] | None = None) -> list[str]:
+    """Universe tickers with no GICS ETF mapping (blank sector). Sorted."""
+    sm = load_sector_map()
+    if tickers is None:
+        try:
+            tickers = load_universe(include_benchmark=False)
+        except Exception:  # noqa: BLE001
+            tickers = list(sm.keys())
+    return sorted(
+        t for t in set(tickers)
+        if t not in sm and t not in GICS_ETFS and t != "SPY"
+    )
+
+
+def probe_profiles(tickers: list[str]) -> list[dict]:
+    """Fetch FMP sector/industry for each ticker so the PM can resolve blanks.
+
+    Returns [{ticker, fmp_sector, fmp_industry, suggested_etf}, ...]. The
+    suggested_etf is filled when FMP's sector maps cleanly via SECTOR_TO_ETF;
+    otherwise it's blank and needs a manual call (e.g. TradingView 'Commercial
+    services' → XLK). Never raises — failures degrade to blank rows.
+    """
+    out: list[dict] = []
+    try:
+        client = FMPClient()
+    except Exception:  # noqa: BLE001
+        return [{"ticker": t, "fmp_sector": "", "fmp_industry": "",
+                 "suggested_etf": ""} for t in tickers]
+    for t in tickers:
+        sector = industry = ""
+        try:
+            url = "https://financialmodelingprep.com/stable/profile"
+            resp = client._get_json(url, {"symbol": t, "apikey": client.config.api_key})
+            if isinstance(resp, list) and resp:
+                sector = resp[0].get("sector", "") or ""
+                industry = resp[0].get("industry", "") or ""
+        except Exception:  # noqa: BLE001
+            pass
+        out.append({
+            "ticker": t,
+            "fmp_sector": sector,
+            "fmp_industry": industry,
+            "suggested_etf": SECTOR_TO_ETF.get(sector, ""),
+        })
+    return out
+
+
+def add_sector_mappings(mapping: dict[str, str]) -> dict[str, str]:
+    """Merge {ticker: ETF} into the canonical sector_map.json and save it.
+
+    Only non-empty ETF values are written. Returns the full updated map.
+    """
+    existing = load_sector_map()
+    existing.update({k.upper().strip(): v for k, v in mapping.items() if v})
+    _save_sector_map(existing)
+    return existing
+
+
 def _save_sector_map(mapping: dict[str, str]) -> None:
     """Save sector map to disk."""
     SECTOR_MAP_PATH.parent.mkdir(parents=True, exist_ok=True)

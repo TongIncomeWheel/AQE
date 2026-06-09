@@ -651,6 +651,57 @@ else:
 st.divider()
 
 # ---------------------------------------------------------------------------
+# GICS sector gaps — the RAG-maintenance panel. Lists universe tickers with no
+# sector mapping (blank gics_sector) and probes FMP so the PM can fill them.
+# ---------------------------------------------------------------------------
+with st.expander("🗂️ GICS sector gaps (RAG maintenance)", expanded=False):
+    from src.data.sector_mapper import (
+        get_sector_map_gaps, probe_profiles, add_sector_mappings,
+    )
+    _gaps = get_sector_map_gaps()
+    if not _gaps:
+        st.success("No sector-map gaps — every universe ticker has a GICS ETF. ✓")
+    else:
+        st.caption(
+            f"**{len(_gaps)} ticker(s)** have a blank GICS sector. Fill them in the "
+            "canonical `sector_map.json` (the RAG). Plain list below; click **Probe "
+            "FMP** to get each name's sector/industry + a suggested ETF."
+        )
+        st.code(" ".join(_gaps), language=None)
+
+        if st.button("Probe FMP for these blanks", key="sector_probe_btn",
+                     disabled=(CLOUD_MODE and not FMP_KEY_SET)):
+            with st.spinner(f"Fetching FMP profiles for {len(_gaps)} ticker(s)…"):
+                st.session_state["_sector_probe"] = probe_profiles(_gaps)
+
+        _probe = st.session_state.get("_sector_probe")
+        if _probe:
+            _pdf = pd.DataFrame(_probe)
+            st.dataframe(_pdf, use_container_width=True, hide_index=True)
+
+            # Paste-ready JSON of the auto-mappable rows (FMP sector → ETF).
+            _auto = {r["ticker"]: r["suggested_etf"] for r in _probe if r["suggested_etf"]}
+            _manual = [r["ticker"] for r in _probe if not r["suggested_etf"]]
+            if _auto:
+                st.caption(f"✅ {len(_auto)} auto-mappable — paste into `sector_map.json`:")
+                import json as _json
+                st.code(_json.dumps(_auto, indent=2, sort_keys=True), language="json")
+                if not CLOUD_MODE:
+                    if st.button(f"Merge {len(_auto)} into sector_map.json",
+                                 key="sector_merge_btn"):
+                        add_sector_mappings(_auto)
+                        st.success(f"Merged {len(_auto)} mappings. "
+                                   "Re-run the pipeline + export to publish to Drive.")
+                        st.session_state.pop("_sector_probe", None)
+                        st.rerun()
+            if _manual:
+                st.caption(
+                    f"⚠️ {len(_manual)} need a manual ETF call (FMP sector didn't map "
+                    "cleanly — e.g. 'Commercial services' → XLK):"
+                )
+                st.code(" ".join(_manual), language=None)
+
+# ---------------------------------------------------------------------------
 # Export-driven tables: the sections below render the EXACT export records
 # (the AIC schema), so the screen always matches the JSON the committee reads.
 # Out-of-scope fields (disposition, dsl_shares, atr_1h, …) are absent from the
