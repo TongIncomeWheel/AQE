@@ -145,7 +145,7 @@ def _rec_from_adhoc(a: dict) -> dict:
         "pipe_rank": a.get("pipe_rank"),
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "gics_sector": None, "gics_sector_name": None, "gics_gate": None,
-        "dsl_be": be, "dsl_stop": stop, "dsl_risk": lv.get("risk"),
+        "dsl_buy": be, "dsl_stop": stop, "dsl_risk": lv.get("risk"),
         "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
         "dsl_tp_3r": lv.get("tp_3r"),
         "dsl_atr_ratio": lv.get("dsl_atr_ratio"), "atr_14d": lv.get("atr14"),
@@ -491,7 +491,7 @@ with left:
                           row=2, col=1)
 
     # --- DSL buy/stop/TP zones ---
-    _be = rec.get("dsl_be") if rec else None
+    _be = (rec.get("dsl_buy") if rec.get("dsl_buy") is not None else rec.get("dsl_be")) if rec else None
     _stop = rec.get("dsl_stop") if rec else None
     _tps = ([(rec.get("dsl_tp_1r"), "TP1"), (rec.get("dsl_tp_2r"), "TP2"),
              (rec.get("dsl_tp_3r"), "TP3")] if rec else [])
@@ -645,7 +645,7 @@ with left:
     if rec is not None:
         st.markdown("**DSL bracket**")
         d1, d2, d3, d4 = st.columns(4)
-        d1.metric("Entry (be)", _f(r.get("dsl_be")))
+        d1.metric("Buy", _f(r.get("dsl_buy") if r.get("dsl_buy") is not None else r.get("dsl_be")))
         d1.metric("Stop", _f(r.get("dsl_stop")))
         d2.metric("TP1", _f(r.get("dsl_tp_1r")))
         d2.metric("TP2", _f(r.get("dsl_tp_2r")))
@@ -692,7 +692,7 @@ with left:
             f"Sector {r.get('gics_sector') or '—'} ({r.get('gics_sector_name') or '—'}) | "
             f"Gate {r.get('gics_gate') or '—'}",
             f"",
-            f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | Buy/BE {_f(r.get('dsl_be'))} | "
+            f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | Buy {_f(r.get('dsl_buy') if r.get('dsl_buy') is not None else r.get('dsl_be'))} | "
             f"TP1 {_f(r.get('dsl_tp_1r'))} | TP2 {_f(r.get('dsl_tp_2r'))} | "
             f"TP3 {_f(r.get('dsl_tp_3r'))} | "
             f"R:R est {_f(r.get('rr_est'), '.2f')} | ATR ratio {_f(r.get('dsl_atr_ratio'))}",

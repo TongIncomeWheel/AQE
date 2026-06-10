@@ -92,7 +92,7 @@ def evaluate(ticker: str, source: str, is_held: bool,
     day_lo = _n(quote.get("day_low"))
     entry = _n(rec.get("entry"))
     stop = _n(rec.get("held_sl")) if is_held else _n(rec.get("dsl_stop"))
-    be = _n(rec.get("dsl_be"))
+    be = _n(rec.get("dsl_buy") if rec.get("dsl_buy") is not None else rec.get("dsl_be"))
     tp1 = _n(rec.get("held_tp1")) if is_held else _n(rec.get("dsl_tp_1r"))
     tp2 = _n(rec.get("held_tp2")) if is_held else _n(rec.get("dsl_tp_2r"))
     tp3 = _n(rec.get("dsl_tp_3r"))

@@ -93,7 +93,7 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
             f"PTRS {_fmt(g('ptrs'), 1)} · MP {g('mp_state') or '—'} · "
             f"Flow {_fmt(g('flow'), 0)} En {_fmt(g('energy'), 0)} "
             f"St {_fmt(g('structure'), 0)} MP {_fmt(g('mp'), 0)} Eld {_fmt(g('elder'), 1)} · "
-            f"DSL stop {_fmt(g('dsl_stop'))} buy {_fmt(g('dsl_be'))} "
+            f"DSL stop {_fmt(g('dsl_stop'))} buy {_fmt(g('dsl_buy') if g('dsl_buy') is not None else g('dsl_be'))} "
             f"TP {_fmt(g('dsl_tp_1r'))}/{_fmt(g('dsl_tp_2r'))}/{_fmt(g('dsl_tp_3r'))} "
             f"(rr_est {_fmt(g('rr_est'), 2)}) · β {_fmt(g('beta_30d'), 2)} · "
             f"sector {g('gics_sector') or '—'} {g('gics_gate') or '—'}.")
@@ -256,11 +256,11 @@ def send_test() -> dict:
               "longlist": [{"ticker": "TEST1", "sc_momentum": 78, "sc_momentum_raw": 78,
                             "ptrs": 64, "mp_state": "STRONG", "flow": 82, "energy": 70,
                             "structure": 62, "mp": 60, "elder": 8, "beta_30d": 1.4,
-                            "dsl_stop": 95, "dsl_be": 101.5, "dsl_tp_1r": 103,
+                            "dsl_stop": 95, "dsl_buy": 101.5, "dsl_tp_1r": 103,
                             "dsl_tp_2r": 106, "dsl_tp_3r": 109, "rr_est": 2.1,
                             "gics_sector": "XLK", "gics_gate": "PASS"}],
               "held_positions": [{"ticker": "ODFL", "sc_momentum": 62, "ptrs": 58,
                                   "mp_state": "BUILDING", "entry": 239.45, "qty": 65,
                                   "held_sl": 230, "unreal_usd": 317, "beta_30d": 1.17,
-                                  "dsl_stop": 228, "dsl_be": 240}]}
+                                  "dsl_stop": 228, "dsl_buy": 240}]}
     return send_digest(sample, export)
