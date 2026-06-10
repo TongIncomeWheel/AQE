@@ -51,11 +51,29 @@ GRADE_TO_SH = {
     "AVOID": -8,
 }
 
+# Action-state labels: each encodes the market condition AND the implied posture
+# for a momentum book, so Alfred/committee read a directive, not a raw signal.
+# Derived from the two signals SRM already computes — price vs 20D SMA (trend
+# direction) and divergence = roc5 − roc20 (momentum accelerating vs decelerating).
+TREND_STATE = {
+    (True, True):   "Momentum Building — Add",
+    (True, False):  "Momentum Fading — Hold, Don't Add",
+    (False, True):  "Recovering From Weakness — Watch for Entry",
+    (False, False): "Declining — Avoid",
+}
+
+
+def _trend_state(above_sma20: bool, divergence: float) -> str:
+    """Map (trend direction, momentum slope) to a directive action-state label."""
+    return TREND_STATE[(bool(above_sma20), divergence > 0.0)]
+
+
 
 def grade_sector_etf(etf_daily: pd.DataFrame) -> dict:
     """Grade a single sector ETF's daily bars. Returns latest grade + metrics."""
     if etf_daily.empty or len(etf_daily) < 25:
-        return {"grade": "WATCH", "roc20": 0.0, "roc5": 0.0, "above_sma20": False, "sh": -5}
+        return {"grade": "WATCH", "roc20": 0.0, "roc5": 0.0, "above_sma20": False,
+                "sh": -5, "trend_state": _trend_state(False, 0.0)}
 
     close = etf_daily["close"].astype(float)
     sma20 = U.sma(close, 20)
@@ -87,6 +105,7 @@ def grade_sector_etf(etf_daily: pd.DataFrame) -> dict:
         "divergence": round(divergence, 2),
         "above_sma20": above_sma20,
         "sh": GRADE_TO_SH[grade],
+        "trend_state": _trend_state(above_sma20, divergence),
     }
 
 

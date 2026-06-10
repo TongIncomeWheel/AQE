@@ -946,6 +946,7 @@ def _build_output(
     for etf, gdata in sector_grades.items():
         srm_detail[etf] = {
             "grade": gdata.get("grade", "WATCH"),
+            "trend_state": gdata.get("trend_state", ""),
             "sh": gdata.get("sh", -5),
             "roc20": round(gdata.get("roc20", 0.0), 2),
             "roc5": round(gdata.get("roc5", 0.0), 2),

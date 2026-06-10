@@ -98,7 +98,13 @@ the committee decision externally (data ping → human → AIC).
 - `k39.py` — K39 gate (weekly confirmation)
 - `pipeline_rank.py` — Pipeline Rank v1.0 (12mo return, ADX, RSI, vol, MA alignment)
 - `scoring.py` — SC_MOMENTUM + SC_POSITION composites with gate enforcement
-- `srm.py` — Sector Rotation Model (GICS ETF grading: DEPLOY/HOLD/TURNING/WATCH/AVOID)
+- `srm.py` — Sector Rotation Model (GICS ETF grading: DEPLOY/HOLD/TURNING/WATCH/AVOID).
+  Also emits `trend_state` — a directive action-state label alongside the grade,
+  encoding condition + posture for a momentum book (additive, doesn't touch grade/sh):
+  above-SMA20 & accelerating (divergence>0) → "Momentum Building — Add"; above &
+  decelerating → "Momentum Fading — Hold, Don't Add"; below & recovering → "Recovering
+  From Weakness — Watch for Entry"; below & deteriorating → "Declining — Avoid".
+  Propagated to `srm_detail`, the Scanner SRM table, and the Drive export `srm` block.
 
 ### Scoring composites (`src/engines/scoring.py`) — v1.8.0
 **Parity with TradingView `Scoring v1.8.0`: composites are UNCAPPED.** The raw

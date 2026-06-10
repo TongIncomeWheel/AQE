@@ -581,13 +581,12 @@ if srm_detail:
     for etf, d in sorted(srm_detail.items(), key=lambda x: grade_order.get(x[1].get("grade", "WATCH"), 3)):
         roc20 = d.get("roc20", 0)
         roc5 = d.get("roc5", 0)
-        trend = "Accelerating" if roc5 > roc20 / 4 else ("Slowing" if roc5 < 0 else "Steady")
         srm_rows.append({
             "Sector": _sector_label(etf),
             "Grade": d.get("grade", "---"),
+            "Action state": d.get("trend_state", "---"),
             "20d Chg%": _fmt(roc20, "+.1f"),
             "5d Chg%": _fmt(roc5, "+.1f"),
-            "Trend": trend,
             "Above SMA20": "Yes" if d.get("above_sma20") else "No",
         })
     df_srm = pd.DataFrame(srm_rows)

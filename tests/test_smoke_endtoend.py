@@ -368,6 +368,23 @@ def test_srm_grade_basic():
     assert result_down["grade"] in ("WATCH", "AVOID")
     assert result_down["sh"] <= 0
 
+    # trend_state is additive (alongside grade) and present on every reading.
+    assert result["trend_state"] in (
+        "Momentum Building — Add", "Momentum Fading — Hold, Don't Add",
+        "Recovering From Weakness — Watch for Entry", "Declining — Avoid",
+    )
+
+
+def test_srm_trend_state_mapping():
+    """The four action-states encode (trend direction × momentum slope)."""
+    from src.engines.srm import _trend_state
+    assert _trend_state(True, 1.2) == "Momentum Building — Add"
+    assert _trend_state(True, -0.5) == "Momentum Fading — Hold, Don't Add"   # XLV case
+    assert _trend_state(False, 0.8) == "Recovering From Weakness — Watch for Entry"
+    assert _trend_state(False, -2.0) == "Declining — Avoid"
+    # Boundary: flat divergence reads as decelerating (not accelerating).
+    assert _trend_state(True, 0.0) == "Momentum Fading — Hold, Don't Add"
+
 
 def test_non_monotonic_dates_raise_or_handle():
     """Engines accept a single-ticker frame; if dates are out of order they should not produce garbage."""
