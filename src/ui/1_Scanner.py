@@ -632,7 +632,6 @@ if CLOUD_MODE:
                 "tp_1r": r.get("dsl_tp_1r"),
                 "tp_2r": r.get("dsl_tp_2r"),
                 "tp_3r": r.get("dsl_tp_3r"),
-                "be":    r.get("dsl_buy") if r.get("dsl_buy") is not None else r.get("dsl_be"),
                 "shares": r.get("dsl_shares"),
                 "rr_pct": r.get("dsl_rr_pct"),
                 "dsl_atr_ratio": r.get("dsl_atr_ratio"),
@@ -715,7 +714,7 @@ _EXPORT_COL_ORDER = [
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
-    "entry", "stop", "dsl_stop", "dsl_buy", "dsl_risk", "dsl_rr_pct",
+    "entry", "stop", "dsl_stop", "dsl_risk", "dsl_rr_pct",
     "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
     "rr_est", "rr_tp1", "rr_tp2", "rr_tp3", "held", "fib", "rank_explain",
 ]
@@ -756,7 +755,7 @@ if _held:
         "held_tp2", "trade_date", "ptj_sector", "gics_gate",
         "sc_momentum", "ptrs", "pipe_rank", "flow", "energy", "structure", "mp",
         "mp_state", "elder", "beta_30d", "beta_60d", "rvol", "rs_spy_20d",
-        "sma_distance_pct", "sector_corr", "dsl_stop", "dsl_buy", "dsl_tp_1r",
+        "sma_distance_pct", "sector_corr", "dsl_stop", "dsl_tp_1r",
         "dsl_tp_2r", "dsl_tp_3r", "dsl_atr_ratio", "atr_14d",
         "rr_tp1", "rr_tp2", "rr_tp3", "notes",
     ]
@@ -839,7 +838,7 @@ active_recipe = sl.get("active_recipe", {})
 recipe_str = _recipe_label(active_recipe)
 st.caption(f"Aggregate recipe: {recipe_str}")
 st.caption(
-    "Full export schema (exactly what AIC receives). DSL bracket: `dsl_buy` = entry/buy line, "
+    "Full export schema (exactly what AIC receives). DSL bracket: "
     "`dsl_stop` = SL, `dsl_tp_1r/2r/3r` = targets, `rr_tp1/2/3` = R:R to each, "
     "`dsl_atr_ratio` = stop width in ATRs."
 )

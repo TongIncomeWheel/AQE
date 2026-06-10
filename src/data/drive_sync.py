@@ -253,7 +253,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                 fields[f"ma_{w}"] = _ma[w]
         fields["held"] = tk in (lk.get("held") or set())
 
-        # R:R to each DSL target, measured from the bracket entry (dsl_buy).
+        # R:R to each DSL target, measured from the internal +0.5R bracket point.
         be, stop = d.get("be"), d.get("stop")
         if be is not None and stop is not None and (be - stop) > 0:
             risk = be - stop
@@ -337,7 +337,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
             "elder": round(sg("elder_score"), 1) if sg("elder_score") is not None else None,
             "beta_30d": (betas.get(tk) or {}).get(30),
             "beta_60d": (betas.get(tk) or {}).get(60),
-            "dsl_stop": d.get("stop"), "dsl_buy": d.get("be"), "dsl_risk": d.get("risk"),
+            "dsl_stop": d.get("stop"), "dsl_risk": d.get("risk"),
             "dsl_tp_1r": d.get("tp_1r"), "dsl_tp_2r": d.get("tp_2r"), "dsl_tp_3r": d.get("tp_3r"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"), "atr_14d": d.get("atr14"),
             "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
@@ -486,7 +486,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_1r": d.get("tp_1r"),
             "dsl_tp_2r": d.get("tp_2r"),
             "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_buy": d.get("be"),            "dsl_rr_pct": d.get("rr_pct"),
+            "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "atr_14d": d.get("atr14"),            "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
@@ -531,7 +531,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_1r": d.get("tp_1r"),
             "dsl_tp_2r": d.get("tp_2r"),
             "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_buy": d.get("be"),            "dsl_rr_pct": d.get("rr_pct"),
+            "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "atr_14d": d.get("atr14"),            "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
@@ -581,7 +581,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_1r": d.get("tp_1r"),
             "dsl_tp_2r": d.get("tp_2r"),
             "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_buy": d.get("be"),            "dsl_rr_pct": d.get("rr_pct"),
+            "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "atr_14d": d.get("atr14"),            "rr_est": d.get("rr_est"),
             "fib": d.get("fib"),
@@ -674,7 +674,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "dsl_tp_1r": d.get("tp_1r"),
                     "dsl_tp_2r": d.get("tp_2r"),
                     "dsl_tp_3r": d.get("tp_3r"),
-                    "dsl_buy": d.get("be"),                    "dsl_rr_pct": d.get("rr_pct"),
+                    "dsl_rr_pct": d.get("rr_pct"),
                     "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "atr_14d": d.get("atr14"),                    "rr_est": d.get("rr_est"),
                     "fib": d.get("fib"),
@@ -720,7 +720,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
         "mp", "elder", "entry", "stop",
-        "dsl_stop", "dsl_buy", "dsl_risk", "dsl_rr_pct",
+        "dsl_stop", "dsl_risk", "dsl_rr_pct",
         "dsl_atr_ratio", "atr_14d",
         "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
         "beta_30d", "beta_60d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",

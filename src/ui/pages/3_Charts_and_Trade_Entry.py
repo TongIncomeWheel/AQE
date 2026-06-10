@@ -145,7 +145,7 @@ def _rec_from_adhoc(a: dict) -> dict:
         "pipe_rank": a.get("pipe_rank"),
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "gics_sector": None, "gics_sector_name": None, "gics_gate": None,
-        "dsl_buy": be, "dsl_stop": stop, "dsl_risk": lv.get("risk"),
+        "dsl_stop": stop, "dsl_risk": lv.get("risk"),
         "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
         "dsl_tp_3r": lv.get("tp_3r"),
         "dsl_atr_ratio": lv.get("dsl_atr_ratio"), "atr_14d": lv.get("atr14"),
@@ -490,21 +490,16 @@ with left:
                                  marker_line=dict(color=_fcol, width=1)),
                           row=2, col=1)
 
-    # --- DSL buy/stop/TP zones ---
-    _be = (rec.get("dsl_buy") if rec.get("dsl_buy") is not None else rec.get("dsl_be")) if rec else None
+    # --- DSL stop / TP zones (buy line removed — it was a confusing +0.5R
+    # derived level; TP zones now anchor off the stop) ---
     _stop = rec.get("dsl_stop") if rec else None
     _tps = ([(rec.get("dsl_tp_1r"), "TP1"), (rec.get("dsl_tp_2r"), "TP2"),
              (rec.get("dsl_tp_3r"), "TP3")] if rec else [])
-    if _be and _stop:
-        fig.add_hrect(y0=_stop, y1=_be, line_width=0, fillcolor="#EF5350",
-                      opacity=0.12, row=1, col=1)
+    if _stop:
         fig.add_hline(y=_stop, line=dict(color="#EF5350", width=1.2, dash="dash"),
                       annotation_text=f"Stop {_stop:.2f}",
                       annotation_position="top left", row=1, col=1)
-        fig.add_hline(y=_be, line=dict(color="#FFD24A", width=1.6),
-                      annotation_text=f"Buy {_be:.2f}",
-                      annotation_position="top left", row=1, col=1)
-        _prev = _be
+        _prev = _stop
         for _tp, _lab in _tps:
             if _tp and _prev:
                 fig.add_hrect(y0=_prev, y1=_tp, line_width=0, fillcolor="#26A69A",
@@ -531,7 +526,7 @@ with left:
                       annotation_position="right", row=1, col=1)
 
     # Single y-range covering candles + every drawn level (linear scale).
-    _allv = [v for v in ([_stop, _be, _ent, _hsl, live_px] + [t for t, _ in _tps]) if v]
+    _allv = [v for v in ([_stop, _ent, _hsl, live_px] + [t for t, _ in _tps]) if v]
     if _allv:
         _ylo = min([float(disp["low"].min())] + _allv)
         _yhi = max([float(disp["high"].max())] + _allv)
@@ -645,7 +640,6 @@ with left:
     if rec is not None:
         st.markdown("**DSL bracket**")
         d1, d2, d3, d4 = st.columns(4)
-        d1.metric("Buy", _f(r.get("dsl_buy") if r.get("dsl_buy") is not None else r.get("dsl_be")))
         d1.metric("Stop", _f(r.get("dsl_stop")))
         d2.metric("TP1", _f(r.get("dsl_tp_1r")))
         d2.metric("TP2", _f(r.get("dsl_tp_2r")))
@@ -692,7 +686,7 @@ with left:
             f"Sector {r.get('gics_sector') or '—'} ({r.get('gics_sector_name') or '—'}) | "
             f"Gate {r.get('gics_gate') or '—'}",
             f"",
-            f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | Buy {_f(r.get('dsl_buy') if r.get('dsl_buy') is not None else r.get('dsl_be'))} | "
+            f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | "
             f"TP1 {_f(r.get('dsl_tp_1r'))} | TP2 {_f(r.get('dsl_tp_2r'))} | "
             f"TP3 {_f(r.get('dsl_tp_3r'))} | "
             f"R:R est {_f(r.get('rr_est'), '.2f')} | ATR ratio {_f(r.get('dsl_atr_ratio'))}",

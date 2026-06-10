@@ -49,7 +49,8 @@ the committee decision externally (data ping → human → AIC).
   + `held_positions` (held names win; else richest tier: PE > top > longlist > watchlist).
 - **Only THREE actionable, bounded level events are emailed** (PM ruling — TP-hit /
   Fib / MA / RVol were removed as stale noise): **Hit buy price** — today's
-  intraday candle traded THROUGH the buy line (`day_low ≤ dsl_buy ≤ day_high`),
+  intraday candle traded THROUGH the buy trigger (the +0.5R level, re-derived
+  internally as `dsl_stop + 1.5·dsl_risk` — `day_low ≤ trigger ≤ day_high`),
   not a proximity-to-buy check; naturally bounded (a name that gapped above and
   held, or never reached it, doesn't fire), **fresh Breakout** (`entry·(1+BREAKOUT_PCT) ≤ live ≤
   entry·(1+BREAKOUT_MAX_PCT)` — bounded so already-extended names never fire), and
@@ -165,7 +166,7 @@ Per-record fields on all four tiers (uniform; `_v21_record_fields` + a normaliza
 pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 (PASS/BLOCKED/WATCH/CHECK from SRM grade), `sector_corr` + `sector_corr_class`
 (60d Pearson vs parent ETF), `rvol` (vol/20d-avg), `rs_spy_20d` (20d ROC − SPY 20d ROC),
-`sma_distance_pct` (vs 50D SMA), `rr_tp1/2/3` (R:R to each DSL target from `dsl_buy`),
+`sma_distance_pct` (vs 50D SMA), `rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
 `held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
 `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
@@ -174,7 +175,7 @@ pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 - **DSL stop = β-adjusted v2.1** (`compute_initial_stop`): recent 5-session low − 0.5·ATR,
   clamped to [0.75, upper]×ATR, upper = 2.5/2.25/2.0 for β≥2.0/≥1.5/else. Wider room for
   high-β names (charter-updated to stop early stop-outs). Bracket geometry holds
-  (`dsl_buy−dsl_stop = 1.5·dsl_risk`; `tp_N = dsl_buy + 0.5/1.5/2.5·dsl_risk`). `dsl_atr_ratio` =
+  (internal +0.5R point = `dsl_stop + 1.5·dsl_risk`; `tp_N = entry + 1/2/3·dsl_risk`). `dsl_atr_ratio` =
   effective stop width in ATRs (β-capped 2.0–2.5; no more 3.5 pegging).
 - **PTRS** = engine score + SH (sector health); Alfred reads `ptrs` verbatim, computes no
   CM/SH/RA/RL. SRM `TURNING` SH = **−3** in AQE (PM "early signal" ruling; charter §4.3 says
