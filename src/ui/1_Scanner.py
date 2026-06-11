@@ -1271,7 +1271,9 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
         f"beta {_fmt(r.get('beta_60d'), '.2f')}",
         f"Sector: {sector_name} ({etf}) {grade} · RRG {rrg_q} · Macro {macro_f} · Gate {entry_gate}",
         f"Regime: VIX {_fmt(vix, '.1f')} ({regime_lvl}) · "
-        f"PipeRank {_fmt(r.get('pipe_rank'), '.1f')}",
+        f"PipeRank {_fmt(r.get('pipe_rank'), '.1f')}"
+        + (f"  [FIP spike-excluded, {r.get('fip_window_effective', 252)}d window]"
+           if r.get("fip_spike_excluded") else ""),
         "Advise: entry decision + size per PTRS x regime. Charter v1.9.3.",
     ]
     return "\n".join(lines)

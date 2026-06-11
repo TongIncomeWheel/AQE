@@ -96,7 +96,11 @@ the committee decision externally (data ping → human → AIC).
 - `elder.py` — Elder Impulse engine
 - `bq.py` — Base Quality sub-engine
 - `k39.py` — K39 gate (weekly confirmation)
-- `pipeline_rank.py` — Pipeline Rank v1.0 (12mo return, ADX, RSI, vol, MA alignment)
+- `pipeline_rank.py` — Pipeline Rank v1.0 (12mo return, ADX, RSI, vol, MA alignment).
+  **DSG-20 FIP Spike Exclusion**: prior speculative spikes (>30% 21-day return, >126
+  bars ago, confirmed by ≥30% drawdown) are excluded from the FIP 252-bar window.
+  Exports `fip_spike_excluded` (bool) and `fip_window_effective` (int) on every record.
+  The 5-day recent spike penalty (>8% → -30) is unchanged.
 - `scoring.py` — SC_MOMENTUM + SC_POSITION composites with gate enforcement
 - `srm.py` — Sector Rotation Model (GICS ETF grading: DEPLOY/HOLD/TURNING/WATCH/AVOID).
   Also emits `trend_state` — a directive action-state label alongside the grade,

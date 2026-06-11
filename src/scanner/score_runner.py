@@ -37,7 +37,7 @@ SCORE_COLUMNS = [
     "mp_state", "impulse_state",
     "sc_momentum", "sc_momentum_raw", "sc_position", "sc_position_raw",
     "sc_m_gates", "sc_p_gates",
-    "pipe_rank", "fip_quality",
+    "pipe_rank", "fip_quality", "fip_raw", "fip_spike_excluded", "fip_window_effective",
     # ── Flow sub-components ──
     "flow_score", "accum_score", "volume_score", "skew_score", "ext_score",
     "mfi", "cmf", "ha_quality_count",
@@ -169,9 +169,15 @@ def build_scores() -> None:
             pr_df = pipeline_rank.compute(d)
             pr_pipe = pr_df["pipe_rank"]
             pr_fip = pr_df["fip_quality"]
+            pr_fip_raw = pr_df["fip_raw"]
+            pr_fip_spike = pr_df["fip_spike_excluded"]
+            pr_fip_window = pr_df["fip_window_effective"]
         else:
             pr_pipe = pd.Series(np.nan, index=d.index)
             pr_fip = pd.Series(np.nan, index=d.index)
+            pr_fip_raw = pd.Series(np.nan, index=d.index)
+            pr_fip_spike = pd.Series(False, index=d.index)
+            pr_fip_window = pd.Series(252, index=d.index, dtype=int)
 
         row = pd.DataFrame({
             "date": d["date"],
@@ -196,6 +202,9 @@ def build_scores() -> None:
             "sc_p_gates": sc_p_gates,
             "pipe_rank": pr_pipe,
             "fip_quality": pr_fip,
+            "fip_raw": pr_fip_raw,
+            "fip_spike_excluded": pr_fip_spike,
+            "fip_window_effective": pr_fip_window,
             # Flow sub-components
             "flow_score": flow_df["flow_score"],
             "accum_score": flow_df["accum_score"],
