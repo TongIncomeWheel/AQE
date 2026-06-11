@@ -231,7 +231,9 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
     present (e.g. constituents not yet in the universe) grades NO_DATA.
 
     Returns {basket: {grade, raw_grade, parent_gics, parent_grade, roc20, roc5,
-    above_sma20, coverage, constituents_used}}. Pure panel math — 0 FMP calls.
+    above_sma20, coverage, constituents_used, rrg_rs_ratio, rrg_rs_momentum,
+    rrg_quadrant, rrg_direction}}. Pure panel math — 0 FMP calls. RRG is the
+    basket's equal-weight index vs SPY (same method as the GICS sector RRG).
     """
     out: dict[str, dict] = {}
     try:
@@ -253,6 +255,7 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
                 "roc20": None, "roc5": None, "above_sma20": None,
                 "coverage": f"{len(present)}/{len(cons)}",
                 "constituents_used": present,
+                **_rrg_no_data(),
             }
             continue
 
@@ -265,6 +268,17 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
 
         g = grade_sector_etf(basket_df)
         capped = _cap_grade(g["grade"], parent_grade)
+
+        # RRG: the basket index vs SPY, aligned on the index's own dates.
+        rrg = _rrg_no_data()
+        try:
+            if piv is not None and "SPY" in piv.columns:
+                spy_aligned = piv["SPY"].reindex(idx.index).to_numpy(dtype=float)
+                if not np.isnan(spy_aligned).any():
+                    rrg = compute_rrg(idx.to_numpy(dtype=float), spy_aligned)
+        except Exception:  # noqa: BLE001
+            rrg = _rrg_no_data()
+
         out[name] = {
             "grade": capped,
             "raw_grade": g["grade"],
@@ -274,6 +288,7 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
             "above_sma20": g.get("above_sma20"),
             "coverage": f"{len(present)}/{len(cons)}",
             "constituents_used": present,
+            **rrg,
         }
     return out
 

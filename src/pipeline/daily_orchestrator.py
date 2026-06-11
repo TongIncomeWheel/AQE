@@ -1030,6 +1030,17 @@ def _build_output(
             "entry_gate_reason": gdata.get("entry_gate_reason"),
         }
 
+    # Thematic basket grades — the SAME SRM/RRG method run against deterministic
+    # constituent sets (a context/sentiment layer, separate from the GICS
+    # sectors). Read the panel directly so this stays self-contained.
+    thematic_baskets = {}
+    try:
+        _ptb = pd.read_parquet(PANEL_DAILY, columns=["date", "ticker", "close"])
+        _ptb["date"] = pd.to_datetime(_ptb["date"]).dt.normalize()
+        thematic_baskets = srm.grade_thematic_baskets(_ptb, sector_grades)
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] Thematic basket grading: {exc}")
+
     # Recipe signal matches with levels
     recipe_out = []
     for rm in (recipe_matches or []):
@@ -1191,6 +1202,7 @@ def _build_output(
         "active_recipe": active_recipe or {},
         "srm_summary": srm_summary,
         "srm_detail": srm_detail,
+        "thematic_baskets": thematic_baskets,
         "macro_weather": {k: v for k, v in sector_grades.get("_macro_weather", {}).items()} if sector_grades.get("_macro_weather") else {},
         "meta": {
             "total_universe": len(load_universe()),

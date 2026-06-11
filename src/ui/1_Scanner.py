@@ -753,6 +753,121 @@ else:
             sector_parts.append(f"**{bucket}:** {names}")
     st.markdown(" | ".join(sector_parts))
 
+# ---------------------------------------------------------------------------
+# 2b. Thematic Rotation — the SAME SRM/RRG method on deterministic basket
+#     constituent sets (a context/sentiment layer, SEPARATE from GICS sectors).
+# ---------------------------------------------------------------------------
+st.subheader("Thematic Rotation")
+st.caption(
+    "Catalyst baskets graded by the SRM method (equal-weight constituent index, "
+    "capped at the parent GICS grade). A context/sentiment read — these names are "
+    "**not** added to the scan universe."
+)
+
+_thematic = sl.get("thematic_baskets", {})
+if _thematic:
+    _basket_short = {
+        "Infra_Power": "InfraPwr", "Space_eVTOL": "Space",
+        "AI_Infrastructure": "AI-Infra", "Semiconductors": "Semis",
+        "Cybersecurity": "Cyber", "Defense_Tech": "Defense",
+        "Crypto_Digital": "Crypto",
+    }
+    _grade_color = {
+        "DEPLOY": "#2ca02c", "HOLD": "#1f9e5a", "TURNING": "#ff7f0e",
+        "WATCH": "#d4a017", "AVOID": "#d62728", "NO_DATA": "#999999",
+    }
+
+    _t_has_rrg = any(d.get("rrg_rs_ratio") is not None for d in _thematic.values())
+    if _t_has_rrg:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        _tpts = []
+        for _b, _d in _thematic.items():
+            _r = _d.get("rrg_rs_ratio")
+            _m = _d.get("rrg_rs_momentum")
+            if _r is not None and _m is not None:
+                _tpts.append((_b, _r, _m, _d.get("grade", "NO_DATA"),
+                              _d.get("rrg_direction", "STABLE")))
+
+        if _tpts:
+            _ratios = [p[1] for p in _tpts]
+            _moms = [p[2] for p in _tpts]
+            _pad = max(1.5, (max(_ratios) - min(_ratios)) * 0.2,
+                       (max(_moms) - min(_moms)) * 0.2)
+            _xlo, _xhi = min(min(_ratios), 98) - _pad, max(max(_ratios), 102) + _pad
+            _ylo, _yhi = min(min(_moms), 98) - _pad, max(max(_moms), 102) + _pad
+
+            _fig, _ax = plt.subplots(figsize=(5.4, 2.1))
+            _ax.fill_between([100, _xhi], 100, _yhi, alpha=0.06, color="#2ca02c")
+            _ax.fill_between([_xlo, 100], 100, _yhi, alpha=0.06, color="#1f77b4")
+            _ax.fill_between([100, _xhi], _ylo, 100, alpha=0.06, color="#ff7f0e")
+            _ax.fill_between([_xlo, 100], _ylo, 100, alpha=0.06, color="#d62728")
+            _ax.axhline(100, color="#888", lw=0.7, ls="--", alpha=0.5)
+            _ax.axvline(100, color="#888", lw=0.7, ls="--", alpha=0.5)
+
+            _lbl = dict(fontsize=6, alpha=0.35, weight="bold")
+            _ax.text(_xhi - _pad * 0.15, _yhi - _pad * 0.15, "LEADING",
+                     ha="right", va="top", color="#2ca02c", **_lbl)
+            _ax.text(_xlo + _pad * 0.15, _yhi - _pad * 0.15, "IMPROVING",
+                     ha="left", va="top", color="#1f77b4", **_lbl)
+            _ax.text(_xhi - _pad * 0.15, _ylo + _pad * 0.15, "WEAKENING",
+                     ha="right", va="bottom", color="#ff7f0e", **_lbl)
+            _ax.text(_xlo + _pad * 0.15, _ylo + _pad * 0.15, "LAGGING",
+                     ha="left", va="bottom", color="#d62728", **_lbl)
+
+            _dir_arrow = {"ENTERING": " *", "DEEPENING": "", "EXITING": "", "STABLE": ""}
+            for _b, _r, _m, _grade, _ddir in _tpts:
+                _c = _grade_color.get(_grade, "#555")
+                _ax.scatter(_r, _m, color=_c, s=28, zorder=5,
+                            edgecolors="white", linewidth=0.6)
+                _ax.annotate(
+                    _basket_short.get(_b, _b) + _dir_arrow.get(_ddir, ""),
+                    (_r, _m), textcoords="offset points",
+                    xytext=(4, 3), fontsize=5, fontweight="bold", color=_c,
+                )
+
+            _ax.set_xlabel("RS-Ratio vs SPY", fontsize=6)
+            _ax.set_ylabel("RS-Momentum", fontsize=6)
+            _ax.set_title("Thematic Relative Rotation Graph", fontsize=7,
+                          fontweight="bold", pad=3)
+            _ax.set_xlim(_xlo, _xhi)
+            _ax.set_ylim(_ylo, _yhi)
+            _ax.tick_params(labelsize=5)
+            _fig.tight_layout(pad=0.5)
+            st.pyplot(_fig, use_container_width=False)
+            plt.close(_fig)
+            st.caption(
+                "Dot color = basket grade: green DEPLOY/HOLD · amber TURNING/WATCH · "
+                "red AVOID · grey NO_DATA. \\* = basket just **entering** its quadrant. "
+                "Axes normalised to SPY = 100."
+            )
+
+    # ── Thematic Table ──
+    _grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3,
+                    "AVOID": 4, "NO_DATA": 5}
+    _trows = []
+    for _b, _d in sorted(_thematic.items(),
+                         key=lambda x: _grade_order.get(x[1].get("grade", "NO_DATA"), 5)):
+        _trows.append({
+            "Basket": _b.replace("_", " "),
+            "Grade": _d.get("grade", "---"),
+            "Raw": _d.get("raw_grade", "---"),
+            "Parent": f'{_d.get("parent_gics", "—")} ({_d.get("parent_grade", "—")})',
+            "RRG": _d.get("rrg_quadrant", "---"),
+            "RRG Dir": _d.get("rrg_direction", "---"),
+            "20d%": _fmt(_d.get("roc20"), "+.1f"),
+            "5d%": _fmt(_d.get("roc5"), "+.1f"),
+            "Coverage": _d.get("coverage", "—"),
+        })
+    st.dataframe(pd.DataFrame(_trows), use_container_width=True, hide_index=True)
+else:
+    st.info(
+        "No thematic basket grades yet — run the daily pipeline to populate "
+        "thematic rotation (grades + RRG)."
+    )
+
 # PTRS context — used by longlist and watchlist tables below
 # PTRS = SC_MOM + SH (sector only). Regime handles VIX sizing separately.
 _sector_grades = sl.get("srm_detail", {})

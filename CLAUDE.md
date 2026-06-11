@@ -224,10 +224,15 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   (PRIMARY basket, backward compat) **plus** a per-record `thematic_baskets` list
   (every basket the ticker maps to, each with grade/parent_gics/parent_grade) so
   the committee sees both angles, + a top-level `thematic_baskets` block (grade,
-  raw_grade, coverage, constituents_used). **DATA only — the gate is unchanged.**
-  Pure panel math (0 FMP calls for grading); baskets with <2 constituents present
-  grade NO_DATA. The primary `thematic_basket` is also stamped on every record in
-  the Drive sector RAG.
+  raw_grade, coverage, constituents_used, **+ RRG: `rrg_rs_ratio`/`rrg_rs_momentum`/
+  `rrg_quadrant`/`rrg_direction`** — the basket's equal-weight index vs SPY, same
+  RRG method as the GICS sectors). **DATA only — the gate is unchanged.** Pure
+  panel math (0 FMP calls for grading); baskets with <2 constituents present grade
+  NO_DATA. The primary `thematic_basket` is also stamped on every record in the
+  Drive sector RAG. The Scanner renders a **"Thematic Rotation"** panel (separate
+  from SRM Sector Health) — a thematic RRG scatter (dot colour = basket grade) +
+  a grade/RRG/coverage table; `daily_orchestrator` writes `thematic_baskets`
+  (with RRG) into `shortlist.json` so the UI reads it like `srm_detail`.
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
   (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
   `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).

@@ -548,8 +548,14 @@ def test_thematic_baskets():
     assert bg["Semiconductors"]["parent_grade"] == "HOLD"
     assert GRADE_ORDER[bg["Semiconductors"]["grade"]] >= GRADE_ORDER["HOLD"]
 
+    # RRG schema keys are always present (for the Thematic Rotation UI panel).
+    for _k in ("rrg_rs_ratio", "rrg_rs_momentum", "rrg_quadrant", "rrg_direction"):
+        assert _k in bg["Semiconductors"]
+        assert _k in bg["Defense_Tech"]
+
     # Baskets with no constituents in the panel degrade to NO_DATA (no crash).
     assert bg["Defense_Tech"]["grade"] == "NO_DATA"
+    assert bg["Defense_Tech"]["rrg_quadrant"] == "NO_DATA"
     assert bg["Defense_Tech"]["coverage"] == "0/13"
 
     # Cap helper edge cases.
