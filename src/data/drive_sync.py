@@ -37,14 +37,15 @@ from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 # via the REST API. No local Drive-mount path.
 EXPORT_FILENAME = "aqe_daily_export.json"
 
-# Sector RAG map (AQE Data Schema Spec v1.0 §6) — published to a dedicated
-# Drive subfolder inside the AQE folder. Override with GDRIVE_SECTOR_FOLDER_ID.
+# Sector RAG map (AQE Data Schema Spec v1.0 §6) — published as a SINGLE file to
+# a dedicated Drive subfolder inside the AQE folder. AQE auto-sources GICS for
+# any blank and overwrites the one file each run (no duplicates).
+# Override with GDRIVE_SECTOR_FOLDER_ID. Version stamps the run date.
 SECTOR_MAP_FILENAME = "aqe_sector_map.json"
 SECTOR_MAP_FOLDER_ID = (
     os.environ.get("GDRIVE_SECTOR_FOLDER_ID")
     or "1CKhgB_wjtZipC8TdagIGN0dINiwhk6Ul"
 )
-SECTOR_MAP_VERSION = "2026-06-08"
 
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
@@ -418,6 +419,16 @@ def build_export(shortlist: dict | None = None) -> dict:
     sgt = ZoneInfo("Asia/Singapore")
     now_sgt = datetime.now(sgt)
 
+    # Auto-source GICS for any universe ticker missing from the map (via FMP),
+    # up front, so BOTH the export's sector_map_gaps field and the published RAG
+    # reflect the filled map — AIC should never see blanks AQE could resolve.
+    try:
+        from src.data.sector_mapper import build_sector_map, get_sector_map_gaps
+        if get_sector_map_gaps():
+            build_sector_map()
+    except Exception:  # noqa: BLE001
+        pass
+
     # Full 11-sector SRM grading + DSG-18/19 intermarket (spec §2)
     srm_gics, srm_signals, macro_weather, intermarket = _build_srm_gics()
 
@@ -479,7 +490,8 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- AQE v2.1 enrichment (rvol, rs_spy, sma_distance, sector_corr) ----
     _v21_lk = _compute_v21_lookups(sm)
     export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
-    export["sector_map_version"] = SECTOR_MAP_VERSION
+    from datetime import date as _date
+    export["sector_map_version"] = _date.today().isoformat()
     try:
         from src.data.universe import load_universe
         _univ = load_universe(include_benchmark=False)
@@ -834,7 +846,23 @@ def _build_sector_map_rich() -> dict:
 
     {version, ticker_count, tickers: {tk: {gics_etf, gics_sector_name,
     thematic_basket, source, confirmed_date}}, gaps}.
+
+    AQE auto-sources GICS for any universe ticker missing from the map (via
+    FMP profiles) BEFORE serializing, so the published RAG has no blanks — the
+    user does not curate by hand; AQE fills the gaps.
     """
+    from datetime import date as _date
+    _ver = _date.today().isoformat()
+
+    # Auto-fill blanks: resolve GICS for unmapped universe tickers via FMP
+    # (incremental — only the gaps are fetched). Best-effort.
+    try:
+        from src.data.sector_mapper import build_sector_map, get_sector_map_gaps
+        if get_sector_map_gaps():
+            build_sector_map()
+    except Exception:  # noqa: BLE001
+        pass
+
     sm = load_sector_map()
     try:
         from src.data.universe import load_universe
@@ -852,7 +880,7 @@ def _build_sector_map_rich() -> dict:
                 "gics_sector_name": ETF_TO_NAME.get(etf),
                 "thematic_basket": None,
                 "source": "AUTO",
-                "confirmed_date": SECTOR_MAP_VERSION,
+                "confirmed_date": _ver,
             }
         else:
             tickers[t] = {
@@ -862,7 +890,7 @@ def _build_sector_map_rich() -> dict:
             }
             gaps.append(t)
     return {
-        "version": SECTOR_MAP_VERSION,
+        "version": _ver,
         "ticker_count": len(tickers),
         "tickers": tickers,
         "gaps": gaps,
@@ -915,6 +943,13 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
         drive_results.append({"file": SECTOR_MAP_FILENAME, "target": "SectorMap", **rs})
         if rs.get("ok"):
             written.append(f"gdrive:{SECTOR_MAP_FILENAME}")
+            # Keep the dedicated sector folder to a single file — trash any
+            # duplicate/stale copies so AIC always reads exactly one RAG.
+            try:
+                from src.data import gdrive_uploader
+                gdrive_uploader.keep_only_file(SECTOR_MAP_FOLDER_ID, rs.get("file_id"))
+            except Exception:                                                   # noqa: BLE001
+                pass
     except Exception as exc:                                                    # noqa: BLE001
         drive_results.append({"file": SECTOR_MAP_FILENAME, "ok": False, "reason": str(exc)})
 

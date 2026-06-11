@@ -211,9 +211,13 @@ pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 - **PTRS** = engine score + SH (sector health); Alfred reads `ptrs` verbatim, computes no
   CM/SH/RA/RL. SRM `TURNING` SH = **−3** in AQE (PM "early signal" ruling; charter §4.3 says
   −5 — charter to be amended to −3 to match).
-- **Sector RAG map** (`aqe_sector_map.json`, rich §6.2 format) published to a dedicated Drive
-  subfolder `SECTOR_MAP_FOLDER_ID` (override `GDRIVE_SECTOR_FOLDER_ID`). Source of truth =
-  `data/sector_map.json` (flat {ticker: ETF}); gaps surfaced, filled manually.
+- **Sector RAG map** (`aqe_sector_map.json`, rich §6.2 format) published as ONE file to a
+  dedicated Drive subfolder `SECTOR_MAP_FOLDER_ID` (override `GDRIVE_SECTOR_FOLDER_ID`).
+  **AQE auto-fills the blanks** — before publishing, `build_export` resolves GICS via FMP
+  profiles for any universe ticker missing from `data/sector_map.json` (incremental, only
+  gaps fetched), so AIC never reads a blank AQE could source. After upload,
+  `gdrive_uploader.keep_only_file()` trashes any other file in that folder so it always holds
+  exactly one RAG (no duplicates/stale copies). `version`/`confirmed_date` stamp the run date.
 - UI: the Scanner page shows a **"AQE export — exactly what AIC receives"** panel rendering
   the verbatim export per tier (parity with the JSON).
 

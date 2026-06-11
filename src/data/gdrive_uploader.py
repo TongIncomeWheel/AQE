@@ -169,6 +169,39 @@ def upload_or_replace(filename: str, content: str | bytes,
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
+def keep_only_file(folder_id: str, keep_file_id: str) -> dict[str, Any]:
+    """Trash every non-folder file in `folder_id` except keep_file_id.
+
+    Guarantees a dedicated folder holds a single file (the canonical one just
+    written) — removes same-name duplicates and stale artifacts so the folder
+    never accumulates multiples. Subfolders are never touched. Files are trashed
+    (recoverable), not hard-deleted. Best-effort; never raises.
+    """
+    if not _GOOGLE_LIBS_OK:
+        return {"ok": False, "reason": "google libs missing"}
+    cfg = DriveConfig.from_env()
+    if cfg is None:
+        return {"ok": False, "reason": "OAuth env vars not set"}
+    try:
+        service = _build_service(cfg)
+        q = f"'{folder_id}' in parents and trashed = false"
+        res = service.files().list(q=q, fields="files(id,name,mimeType)").execute()
+        trashed: list[str] = []
+        for f in (res.get("files") or []):
+            if f.get("id") == keep_file_id:
+                continue
+            if f.get("mimeType") == "application/vnd.google-apps.folder":
+                continue  # never touch subfolders
+            try:
+                service.files().update(fileId=f["id"], body={"trashed": True}).execute()
+                trashed.append(f.get("name", f["id"]))
+            except Exception:                                                   # noqa: BLE001
+                continue
+        return {"ok": True, "trashed": trashed}
+    except Exception as exc:                                                     # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
 def download_text(filename: str, folder_id: str | None = None) -> str | None:
     """Read a file's text content from a Drive folder by name. None if absent.
 
