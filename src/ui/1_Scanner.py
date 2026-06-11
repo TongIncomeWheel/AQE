@@ -606,7 +606,7 @@ if srm_detail:
                 _ylo = min(min(_moms), 98) - _pad
                 _yhi = max(max(_moms), 102) + _pad
 
-                _fig, _ax = plt.subplots(figsize=(2.7, 2.1))
+                _fig, _ax = plt.subplots(figsize=(5.4, 2.1))
 
                 _ax.fill_between([100, _xhi], 100, _yhi, alpha=0.06, color="#2ca02c")
                 _ax.fill_between([_xlo, 100], 100, _yhi, alpha=0.06, color="#1f77b4")
