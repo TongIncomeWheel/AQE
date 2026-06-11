@@ -575,20 +575,37 @@ st.subheader("SRM Sector Health")
 
 srm_detail = sl.get("srm_detail", {})
 if srm_detail:
+    # Macro weather banner (DSG-19)
+    _mw_data = {etf: d for etf, d in srm_detail.items()
+                if d.get("macro_headwind_flag") and d["macro_headwind_flag"] != "NO_DATA"}
+    if _mw_data:
+        _hw_count = sum(1 for d in _mw_data.values() if d.get("macro_headwind_flag") == "HEADWIND")
+        _tw_count = sum(1 for d in _mw_data.values() if d.get("macro_headwind_flag") == "TAILWIND")
+        _gate_blocked = sum(1 for d in srm_detail.values() if d.get("entry_gate") == "BLOCKED")
+        _gate_pass = sum(1 for d in srm_detail.values() if d.get("entry_gate") == "PASS")
+        st.caption(
+            f"Macro overlay: {_hw_count} sector(s) HEADWIND · {_tw_count} TAILWIND · "
+            f"Entry gate: {_gate_pass} PASS · {_gate_blocked} BLOCKED"
+        )
+
     # Build table sorted by grade rank
     grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
     srm_rows = []
     for etf, d in sorted(srm_detail.items(), key=lambda x: grade_order.get(x[1].get("grade", "WATCH"), 3)):
         roc20 = d.get("roc20", 0)
         roc5 = d.get("roc5", 0)
-        srm_rows.append({
+        row = {
             "Sector": _sector_label(etf),
             "Grade": d.get("grade", "---"),
             "Action state": d.get("trend_state", "---"),
-            "20d Chg%": _fmt(roc20, "+.1f"),
-            "5d Chg%": _fmt(roc5, "+.1f"),
-            "Above SMA20": "Yes" if d.get("above_sma20") else "No",
-        })
+            "RRG": d.get("rrg_quadrant", "---"),
+            "RRG Dir": d.get("rrg_direction", "---"),
+            "Macro": d.get("macro_headwind_flag", "---"),
+            "Gate": d.get("entry_gate", "---"),
+            "20d%": _fmt(roc20, "+.1f"),
+            "5d%": _fmt(roc5, "+.1f"),
+        }
+        srm_rows.append(row)
     df_srm = pd.DataFrame(srm_rows)
     st.dataframe(df_srm, use_container_width=True, hide_index=True)
 else:

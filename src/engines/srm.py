@@ -161,3 +161,389 @@ def _dynamic_sector_lookup(ticker: str) -> str | None:
         return mapping.get(ticker)
     except Exception:
         return None
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# DSG-18 — RRG Sector Relative Strength Layer
+# ═══════════════════════════════════════════════════════════════════════
+
+RRG_WINDOW = 42          # ~42 trading days for the RS normalisation window
+RRG_MOM_PERIOD = 10      # RS-Momentum = 10-bar ROC of the RS line
+RRG_DIR_LOOKBACK = 5     # direction compares to 5 bars ago
+
+
+def compute_rrg(sector_closes: np.ndarray, spy_closes: np.ndarray) -> dict:
+    """Compute RS-Ratio and RS-Momentum for a sector ETF vs SPY.
+
+    Both arrays must be sorted ascending by date with matching alignment.
+    Uses the tail of each array (last RRG_WINDOW bars).
+    """
+    n = min(len(sector_closes), len(spy_closes))
+    if n < RRG_WINDOW:
+        return _rrg_no_data()
+
+    sc = sector_closes[-RRG_WINDOW:].astype(float)
+    sp = spy_closes[-RRG_WINDOW:].astype(float)
+
+    if sp[0] == 0 or np.any(sp == 0):
+        return _rrg_no_data()
+
+    rs_line = sc / sp
+    rs_norm = rs_line / rs_line[0] * 100.0
+
+    rs_ratio = float(rs_norm[-1])
+
+    if len(rs_norm) >= RRG_MOM_PERIOD + 1 and rs_norm[-(RRG_MOM_PERIOD + 1)] != 0:
+        rs_momentum = float(
+            (rs_norm[-1] / rs_norm[-(RRG_MOM_PERIOD + 1)] - 1) * 100 + 100
+        )
+    else:
+        rs_momentum = 100.0
+
+    quadrant = _rrg_quadrant(rs_ratio, rs_momentum)
+
+    lb = RRG_DIR_LOOKBACK
+    if len(rs_norm) >= lb + RRG_MOM_PERIOD + 2:
+        ratio_prev = float(rs_norm[-(lb + 1)])
+        mom_denom = rs_norm[-(lb + RRG_MOM_PERIOD + 1)]
+        if mom_denom != 0:
+            mom_prev = float((rs_norm[-(lb + 1)] / mom_denom - 1) * 100 + 100)
+        else:
+            mom_prev = 100.0
+        quad_prev = _rrg_quadrant(ratio_prev, mom_prev)
+        direction = _rrg_direction(
+            quadrant, quad_prev, rs_ratio, rs_momentum, ratio_prev, mom_prev
+        )
+    else:
+        direction = "STABLE"
+
+    return {
+        "rrg_rs_ratio": round(rs_ratio, 2),
+        "rrg_rs_momentum": round(rs_momentum, 2),
+        "rrg_quadrant": quadrant,
+        "rrg_direction": direction,
+    }
+
+
+def _rrg_no_data() -> dict:
+    return {
+        "rrg_rs_ratio": None,
+        "rrg_rs_momentum": None,
+        "rrg_quadrant": "NO_DATA",
+        "rrg_direction": "STABLE",
+    }
+
+
+def _rrg_quadrant(rs_ratio: float, rs_momentum: float) -> str:
+    if rs_ratio >= 100 and rs_momentum >= 100:
+        return "LEADING"
+    if rs_ratio < 100 and rs_momentum >= 100:
+        return "IMPROVING"
+    if rs_ratio >= 100 and rs_momentum < 100:
+        return "WEAKENING"
+    return "LAGGING"
+
+
+def _rrg_direction(q_now: str, q_prev: str,
+                   ratio: float, mom: float,
+                   ratio_prev: float, mom_prev: float) -> str:
+    if q_now != q_prev:
+        return "ENTERING"
+    dist_now = ((ratio - 100) ** 2 + (mom - 100) ** 2) ** 0.5
+    dist_prev = ((ratio_prev - 100) ** 2 + (mom_prev - 100) ** 2) ** 0.5
+    if dist_prev == 0:
+        return "STABLE"
+    if dist_now > dist_prev * 1.02:
+        return "DEEPENING"
+    if dist_now < dist_prev * 0.98:
+        return "EXITING"
+    return "STABLE"
+
+
+def rrg_grade_override(grade: str, quadrant: str) -> str | None:
+    """DSG-18 grade override flag based on RRG quadrant."""
+    if grade == "AVOID" or quadrant == "NO_DATA":
+        return None
+    if grade == "DEPLOY":
+        if quadrant == "WEAKENING":
+            return "HOLD_FLAG"
+        if quadrant == "LAGGING":
+            return "AVOID_FLAG"
+    if grade == "HOLD":
+        if quadrant == "LEADING":
+            return "WATCH_UP"
+        if quadrant == "WEAKENING":
+            return "CAUTION"
+        if quadrant == "LAGGING":
+            return "AVOID_FLAG"
+    return None
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# DSG-19 — Risk Weather Macro Overlay
+# ═══════════════════════════════════════════════════════════════════════
+
+MACRO_INSTRUMENTS = ["TLT", "UUP", "HYG", "IWM"]
+
+SENSITIVITY = {
+    "XLK":  [+1, -1, +1, +1],
+    "XLC":  [+1, -1, +1, +1],
+    "XLY":  [+1,  0, +1, +1],
+    "XLF":  [ 0, +1, +1,  0],
+    "XLI":  [ 0,  0, +1, +1],
+    "XLB":  [+1, -1, +1, +1],
+    "XLE":  [ 0, -1,  0,  0],
+    "XLV":  [+1,  0,  0,  0],
+    "XLP":  [+1,  0,  0, -1],
+    "XLRE": [+1, -1,  0,  0],
+    "XLU":  [+1,  0,  0, -1],
+}
+
+MACRO_WEIGHTS = [0.30, 0.25, 0.25, 0.20]
+
+
+def macro_direction_score(closes: np.ndarray) -> tuple[int, float, float]:
+    """Direction score for a macro instrument: -2 (strong down) to +2 (strong up).
+
+    Returns (score, roc5, roc20).
+    """
+    closes = np.asarray(closes, dtype=float)
+    if len(closes) < 21:
+        return 0, 0.0, 0.0
+
+    roc5 = (closes[-1] / closes[-6] - 1) * 100 if closes[-6] != 0 else 0.0
+    roc20 = (closes[-1] / closes[-21] - 1) * 100 if closes[-21] != 0 else 0.0
+
+    score = 0
+    if roc5 > 0:
+        score += 1
+    elif roc5 < 0:
+        score -= 1
+    if roc20 > 0:
+        score += 1
+    elif roc20 < 0:
+        score -= 1
+
+    return score, round(float(roc5), 2), round(float(roc20), 2)
+
+
+def compute_macro_headwind(etf: str, tlt_score: int, uup_score: int,
+                           hyg_score: int, iwm_score: int) -> tuple[float, str]:
+    """Weighted macro headwind score + flag for a sector ETF.
+
+    Score range depends on sector sensitivity (roughly -2 to +2).
+    Flag: TAILWIND / NEUTRAL / CAUTION / HEADWIND.
+    """
+    sens = SENSITIVITY.get(etf, [0, 0, 0, 0])
+    scores = [tlt_score, uup_score, hyg_score, iwm_score]
+    raw = sum(w * s * se for w, s, se in zip(MACRO_WEIGHTS, scores, sens))
+    score = round(raw, 2)
+
+    if score >= 0.5:
+        flag = "TAILWIND"
+    elif score >= -0.2:
+        flag = "NEUTRAL"
+    elif score >= -0.5:
+        flag = "CAUTION"
+    else:
+        flag = "HEADWIND"
+
+    return score, flag
+
+
+def compute_macro_weather(macro_data: dict[str, np.ndarray]) -> dict:
+    """Global macro weather summary from instrument close arrays."""
+    weather: dict = {}
+    for inst in MACRO_INSTRUMENTS:
+        closes = macro_data.get(inst)
+        if closes is None or len(closes) < 21:
+            weather[inst] = {"score": 0, "roc5": 0.0, "roc20": 0.0, "direction": "FLAT"}
+            continue
+        score, roc5, roc20 = macro_direction_score(closes)
+        if roc5 > 0.1:
+            direction = "RISING"
+        elif roc5 < -0.1:
+            direction = "FALLING"
+        else:
+            direction = "FLAT"
+        weather[inst] = {"score": score, "roc5": roc5, "roc20": roc20, "direction": direction}
+
+    return weather
+
+
+def _format_macro_weather(weather_raw: dict) -> dict:
+    """Format macro weather for the export JSON."""
+    from datetime import date as _date
+
+    tlt = weather_raw.get("TLT", {})
+    uup = weather_raw.get("UUP", {})
+    hyg = weather_raw.get("HYG", {})
+    iwm = weather_raw.get("IWM", {})
+
+    parts: list[str] = []
+    if tlt.get("direction") == "FALLING":
+        parts.append("Rising rates")
+    elif tlt.get("direction") == "RISING":
+        parts.append("Falling rates")
+    if uup.get("direction") == "RISING":
+        parts.append("dollar bid")
+    elif uup.get("direction") == "FALLING":
+        parts.append("dollar weak")
+    if hyg.get("direction") == "FALLING":
+        parts.append("credit softening")
+    elif hyg.get("direction") == "RISING":
+        parts.append("credit tightening")
+    if iwm.get("direction") == "FALLING":
+        parts.append("narrow tape")
+    elif iwm.get("direction") == "RISING":
+        parts.append("broad tape")
+
+    desc = ", ".join(parts) + "." if parts else "No strong macro signal."
+
+    return {
+        "tlt_direction": tlt.get("direction", "FLAT"),
+        "tlt_roc5": tlt.get("roc5", 0.0),
+        "uup_direction": uup.get("direction", "FLAT"),
+        "uup_roc5": uup.get("roc5", 0.0),
+        "hyg_direction": hyg.get("direction", "FLAT"),
+        "hyg_roc5": hyg.get("roc5", 0.0),
+        "iwm_direction": iwm.get("direction", "FLAT"),
+        "iwm_roc5": iwm.get("roc5", 0.0),
+        "regime_description": desc,
+        "snapshot_date": str(_date.today()),
+    }
+
+
+# ── Combined entry gate (DSG-18 + DSG-19) ──────────────────────────
+
+def sector_entry_gate(grade: str, rrg_quadrant: str,
+                      macro_flag: str) -> tuple[str, str]:
+    """Combined sector entry gate: grade + RRG + macro.
+
+    Returns (gate, reason) where gate is PASS / WATCH / CAUTION / BLOCKED.
+    """
+    if grade == "AVOID":
+        return "BLOCKED", "AVOID grade"
+    if macro_flag == "HEADWIND" and rrg_quadrant == "LAGGING":
+        return "BLOCKED", "HEADWIND macro + LAGGING RRG"
+    if macro_flag == "HEADWIND":
+        return "CAUTION", "Macro headwind"
+    if rrg_quadrant in ("LAGGING", "WEAKENING") and macro_flag == "CAUTION":
+        return "CAUTION", f"RRG {rrg_quadrant} + macro caution"
+    if (grade in ("DEPLOY", "HOLD")
+            and rrg_quadrant in ("LEADING", "IMPROVING")
+            and macro_flag in ("TAILWIND", "NEUTRAL")):
+        return "PASS", "Grade + RRG + macro aligned"
+    return "WATCH", f"Grade {grade} / RRG {rrg_quadrant} / Macro {macro_flag}"
+
+
+# ── Enrichment orchestrator ─────────────────────────────────────────
+
+def enrich_sectors_intermarket(
+    sector_grades: dict[str, dict],
+    panel: pd.DataFrame,
+    macro_data: dict[str, np.ndarray] | None = None,
+) -> dict[str, dict]:
+    """Add DSG-18 RRG + DSG-19 macro overlay to sector_grades (in-place).
+
+    panel must contain SPY + sector ETF rows with [date, ticker, close].
+    macro_data: {instrument: closes_array} for TLT/UUP/HYG/IWM (optional).
+    """
+    spy_data = panel.loc[panel["ticker"] == "SPY"].sort_values("date")
+    if spy_data.empty:
+        return sector_grades
+    spy_closes = spy_data["close"].astype(float).to_numpy()
+
+    macro_scores: dict[str, int] = {}
+    macro_weather_raw: dict = {}
+    if macro_data:
+        macro_weather_raw = compute_macro_weather(macro_data)
+        for inst in MACRO_INSTRUMENTS:
+            macro_scores[inst] = macro_weather_raw.get(inst, {}).get("score", 0)
+
+    tlt_sc = macro_scores.get("TLT", 0)
+    uup_sc = macro_scores.get("UUP", 0)
+    hyg_sc = macro_scores.get("HYG", 0)
+    iwm_sc = macro_scores.get("IWM", 0)
+
+    for etf in GICS_ETFS:
+        info = sector_grades.get(etf)
+        if info is None:
+            continue
+
+        etf_data = panel.loc[panel["ticker"] == etf].sort_values("date")
+        if not etf_data.empty:
+            etf_closes = etf_data["close"].astype(float).to_numpy()
+            rrg = compute_rrg(etf_closes, spy_closes)
+        else:
+            rrg = _rrg_no_data()
+
+        info.update(rrg)
+        info["rrg_grade_override"] = rrg_grade_override(
+            info.get("grade", "WATCH"), rrg.get("rrg_quadrant", "NO_DATA")
+        )
+
+        if macro_data:
+            hw_score, hw_flag = compute_macro_headwind(
+                etf, tlt_sc, uup_sc, hyg_sc, iwm_sc
+            )
+            info["macro_headwind_score"] = hw_score
+            info["macro_headwind_flag"] = hw_flag
+        else:
+            info["macro_headwind_score"] = None
+            info["macro_headwind_flag"] = "NO_DATA"
+
+        gate, reason = sector_entry_gate(
+            info.get("grade", "WATCH"),
+            rrg.get("rrg_quadrant", "NO_DATA"),
+            info.get("macro_headwind_flag", "NEUTRAL"),
+        )
+        info["entry_gate"] = gate
+        info["entry_gate_reason"] = reason
+
+    sector_grades["_macro_weather"] = _format_macro_weather(macro_weather_raw)
+    return sector_grades
+
+
+def save_intermarket_cache(sector_grades: dict[str, dict], run_date) -> None:
+    """Persist enriched SRM + macro weather to a small JSON cache."""
+    import json
+    from pathlib import Path
+
+    cache_path = Path(__file__).resolve().parents[2] / "data" / "srm_intermarket_cache.json"
+    cache: dict = {"date": str(run_date), "macro_weather": {}, "sectors": {}}
+    mw = sector_grades.get("_macro_weather")
+    if mw:
+        cache["macro_weather"] = mw
+    for etf in GICS_ETFS:
+        info = sector_grades.get(etf)
+        if info is None:
+            continue
+        cache["sectors"][etf] = {
+            k: v for k, v in info.items()
+            if k in (
+                "rrg_rs_ratio", "rrg_rs_momentum", "rrg_quadrant",
+                "rrg_direction", "rrg_grade_override",
+                "macro_headwind_score", "macro_headwind_flag",
+                "entry_gate", "entry_gate_reason",
+            )
+        }
+    try:
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        cache_path.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+
+def load_intermarket_cache() -> dict | None:
+    """Load the DSG-18/19 cache written by the orchestrator."""
+    import json
+    from pathlib import Path
+
+    cache_path = Path(__file__).resolve().parents[2] / "data" / "srm_intermarket_cache.json"
+    if not cache_path.exists():
+        return None
+    try:
+        return json.loads(cache_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None

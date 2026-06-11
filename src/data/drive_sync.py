@@ -24,7 +24,10 @@ from zoneinfo import ZoneInfo
 
 from src.analyzer.ptrs import compute_ptrs
 from src.data.sector_mapper import ETF_TO_NAME, load_sector_map
-from src.engines.srm import GICS_ETFS, get_sector_health, grade_all_sectors
+from src.engines.srm import (
+    GICS_ETFS, get_sector_health, grade_all_sectors,
+    enrich_sectors_intermarket, load_intermarket_cache,
+)
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
 
@@ -76,13 +79,15 @@ def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
     return "; ".join(parts) if parts else ""
 
 
-def _build_srm_gics() -> tuple[list[dict], dict]:
-    """Full 11-sector SRM grading with trend data.
+def _build_srm_gics() -> tuple[list[dict], dict, dict]:
+    """Full 11-sector SRM grading with trend data + DSG-18/19 intermarket.
 
-    Returns (srm_gics_array, srm_signals_dict).
+    Returns (srm_gics_array, srm_signals_dict, macro_weather_dict).
     srm_gics: one row per sector (sorted DEPLOY→AVOID) with grade, sh_value,
-              roc20, roc5, divergence, above_sma20, sh_trend, grade_trend.
+              roc20, roc5, divergence, above_sma20, sh_trend, grade_trend,
+              + DSG-18 RRG fields + DSG-19 macro fields + combined gate.
     srm_signals: {deploy, hold, turning, watch, avoid, blocked} ETF lists.
+    macro_weather: global macro weather summary.
     """
     import pandas as pd
     from src.data.paths import PANEL_DAILY as panel_path
@@ -90,16 +95,34 @@ def _build_srm_gics() -> tuple[list[dict], dict]:
     empty_signals = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
 
     if not panel_path.exists():
-        return [], empty_signals
+        return [], empty_signals, {}
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "close"])
-    panel = panel[panel["ticker"].isin(GICS_ETFS)]
+    etfs_plus = set(GICS_ETFS) | {"SPY"}
+    panel = panel[panel["ticker"].isin(etfs_plus)]
     if panel.empty:
-        return [], empty_signals
+        return [], empty_signals, {}
 
     graded = grade_all_sectors(panel, trend_days=10)
+
+    # DSG-18: RRG from panel (SPY + sectors are in the panel)
+    # DSG-19: macro from the intermarket cache saved by the orchestrator
+    cache = load_intermarket_cache()
+    macro_data_for_enrich = None  # we don't re-fetch; use cached results instead
+    enrich_sectors_intermarket(graded, panel, macro_data_for_enrich)
+
+    # Overlay cached macro results (orchestrator had the FMP macro data)
+    if cache and cache.get("sectors"):
+        for etf, cached_fields in cache["sectors"].items():
+            if etf in graded:
+                for k in ("macro_headwind_score", "macro_headwind_flag",
+                          "entry_gate", "entry_gate_reason"):
+                    if k in cached_fields:
+                        graded[etf][k] = cached_fields[k]
+
+    macro_weather = (cache or {}).get("macro_weather", {})
+
     grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 
-    # Ensure all 11 sectors present (NO_DATA fallback for missing)
     rows = []
     for etf in GICS_ETFS:
         if etf in graded:
@@ -116,6 +139,15 @@ def _build_srm_gics() -> tuple[list[dict], dict]:
                 "above_sma20": info.get("above_sma20", False),
                 "sh_trend": info.get("sh_trend", []),
                 "grade_trend": info.get("grade_trend", []),
+                "rrg_rs_ratio": info.get("rrg_rs_ratio"),
+                "rrg_rs_momentum": info.get("rrg_rs_momentum"),
+                "rrg_quadrant": info.get("rrg_quadrant"),
+                "rrg_direction": info.get("rrg_direction"),
+                "rrg_grade_override": info.get("rrg_grade_override"),
+                "macro_headwind_score": info.get("macro_headwind_score"),
+                "macro_headwind_flag": info.get("macro_headwind_flag"),
+                "entry_gate": info.get("entry_gate"),
+                "entry_gate_reason": info.get("entry_gate_reason"),
             })
         else:
             rows.append({
@@ -130,11 +162,19 @@ def _build_srm_gics() -> tuple[list[dict], dict]:
                 "above_sma20": False,
                 "sh_trend": [],
                 "grade_trend": [],
+                "rrg_rs_ratio": None,
+                "rrg_rs_momentum": None,
+                "rrg_quadrant": "NO_DATA",
+                "rrg_direction": "STABLE",
+                "rrg_grade_override": None,
+                "macro_headwind_score": None,
+                "macro_headwind_flag": "NO_DATA",
+                "entry_gate": "WATCH",
+                "entry_gate_reason": "No data",
             })
 
     rows.sort(key=lambda r: grade_order.get(r["grade"], 3))
 
-    # Build srm_signals summary
     signals: dict[str, list[str]] = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
     for r in rows:
         g = r["grade"].lower()
@@ -142,8 +182,10 @@ def _build_srm_gics() -> tuple[list[dict], dict]:
             signals[g].append(r["etf"])
         if g == "avoid" or g == "no_data":
             signals["blocked"].append(r["etf"])
+        if r.get("entry_gate") == "BLOCKED" and r["etf"] not in signals["blocked"]:
+            signals["blocked"].append(r["etf"])
 
-    return rows, signals
+    return rows, signals, macro_weather
 
 
 def _compute_v21_lookups(sm: dict) -> dict:
@@ -234,7 +276,10 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["gics_sector"] = etf
         fields["gics_sector_name"] = ETF_TO_NAME.get(etf) if etf else None
         grade = sector_grades.get(etf, {}).get("grade") if etf else None
-        if grade in ("DEPLOY", "HOLD"):
+        entry_gate = sector_grades.get(etf, {}).get("entry_gate") if etf else None
+        if entry_gate:
+            fields["gics_gate"] = entry_gate
+        elif grade in ("DEPLOY", "HOLD"):
             fields["gics_gate"] = "PASS"
         elif grade == "AVOID":
             fields["gics_gate"] = "BLOCKED"
@@ -371,8 +416,8 @@ def build_export(shortlist: dict | None = None) -> dict:
     sgt = ZoneInfo("Asia/Singapore")
     now_sgt = datetime.now(sgt)
 
-    # Full 11-sector SRM grading (spec §2)
-    srm_gics, srm_signals = _build_srm_gics()
+    # Full 11-sector SRM grading + DSG-18/19 intermarket (spec §2)
+    srm_gics, srm_signals, macro_weather = _build_srm_gics()
 
     export: dict = {
         "date": sl.get("date", ""),
@@ -388,6 +433,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         # Backward compat — derived from computed grades, not shortlist.json
         "srm_deploy": srm_signals.get("deploy", []),
         "srm_avoid": srm_signals.get("avoid", []),
+        "macro_weather": macro_weather,
         "top_picks": [],
         "edge_list": [],
         "longlist": [],

@@ -386,6 +386,87 @@ def test_srm_trend_state_mapping():
     assert _trend_state(True, 0.0) == "Momentum Fading — Hold, Don't Add"
 
 
+def test_rrg_quadrant_classification():
+    """DSG-18: RRG quadrant and direction from synthetic sector vs SPY."""
+    from src.engines.srm import compute_rrg, _rrg_quadrant, rrg_grade_override
+
+    # Sector outperforming SPY (rising RS) -> LEADING or IMPROVING
+    spy = np.linspace(100, 110, 50)
+    sector_strong = np.linspace(100, 130, 50)  # outperforming
+    result = compute_rrg(sector_strong, spy)
+    assert result["rrg_quadrant"] in ("LEADING", "IMPROVING")
+    assert result["rrg_rs_ratio"] is not None
+    assert result["rrg_rs_ratio"] > 100
+
+    # Sector underperforming SPY -> LAGGING or WEAKENING
+    sector_weak = np.linspace(100, 95, 50)  # underperforming
+    result2 = compute_rrg(sector_weak, spy)
+    assert result2["rrg_quadrant"] in ("LAGGING", "WEAKENING")
+    assert result2["rrg_rs_ratio"] < 100
+
+    # Quadrant logic
+    assert _rrg_quadrant(102, 101) == "LEADING"
+    assert _rrg_quadrant(98, 101) == "IMPROVING"
+    assert _rrg_quadrant(102, 99) == "WEAKENING"
+    assert _rrg_quadrant(98, 99) == "LAGGING"
+
+    # Grade overrides
+    assert rrg_grade_override("DEPLOY", "LAGGING") == "AVOID_FLAG"
+    assert rrg_grade_override("DEPLOY", "WEAKENING") == "HOLD_FLAG"
+    assert rrg_grade_override("HOLD", "LEADING") == "WATCH_UP"
+    assert rrg_grade_override("HOLD", "LAGGING") == "AVOID_FLAG"
+    assert rrg_grade_override("AVOID", "LEADING") is None  # AVOID never upgraded
+    assert rrg_grade_override("DEPLOY", "LEADING") is None  # no override needed
+
+    # Too little data -> NO_DATA
+    short = np.array([100, 101, 102])
+    assert compute_rrg(short, short)["rrg_quadrant"] == "NO_DATA"
+
+
+def test_macro_direction_and_headwind():
+    """DSG-19: macro direction score and sector headwind flag."""
+    from src.engines.srm import macro_direction_score, compute_macro_headwind
+
+    # Strong uptrend: roc5 > 0, roc20 > 0 -> score +2
+    up = np.linspace(100, 120, 25)
+    score, roc5, roc20 = macro_direction_score(up)
+    assert score == 2
+    assert roc5 > 0
+    assert roc20 > 0
+
+    # Strong downtrend: roc5 < 0, roc20 < 0 -> score -2
+    down = np.linspace(120, 100, 25)
+    score_d, roc5_d, roc20_d = macro_direction_score(down)
+    assert score_d == -2
+    assert roc5_d < 0
+
+    # XLK with TLT falling (score -2), UUP rising (+2), HYG falling (-2), IWM falling (-2)
+    # Sensitivity: TLT+1, UUP-1, HYG+1, IWM+1
+    # Aligned: TLT(-2)*1=-2, UUP(+2)*(-1)=-2, HYG(-2)*1=-2, IWM(-2)*1=-2
+    # Weighted: 0.30*(-2) + 0.25*(-2) + 0.25*(-2) + 0.20*(-2) = -2.0
+    hw_score, hw_flag = compute_macro_headwind("XLK", -2, +2, -2, -2)
+    assert hw_score < -0.5
+    assert hw_flag == "HEADWIND"
+
+    # XLK with tailwind: TLT rising (+2), UUP falling (-2), HYG rising (+2), IWM rising (+2)
+    tw_score, tw_flag = compute_macro_headwind("XLK", +2, -2, +2, +2)
+    assert tw_score > 0.5
+    assert tw_flag == "TAILWIND"
+
+
+def test_sector_entry_gate():
+    """Combined gate: grade + RRG + macro -> PASS/WATCH/CAUTION/BLOCKED."""
+    from src.engines.srm import sector_entry_gate
+
+    assert sector_entry_gate("AVOID", "LEADING", "TAILWIND")[0] == "BLOCKED"
+    assert sector_entry_gate("HOLD", "LAGGING", "HEADWIND")[0] == "BLOCKED"
+    assert sector_entry_gate("DEPLOY", "LEADING", "TAILWIND")[0] == "PASS"
+    assert sector_entry_gate("HOLD", "IMPROVING", "NEUTRAL")[0] == "PASS"
+    assert sector_entry_gate("HOLD", "WEAKENING", "CAUTION")[0] == "CAUTION"
+    assert sector_entry_gate("DEPLOY", "WEAKENING", "HEADWIND")[0] == "CAUTION"
+    assert sector_entry_gate("TURNING", "IMPROVING", "NEUTRAL")[0] == "WATCH"
+
+
 def test_non_monotonic_dates_raise_or_handle():
     """Engines accept a single-ticker frame; if dates are out of order they should not produce garbage."""
     # We don't enforce monotonicity in the engine signatures, but the score_runner always sorts.

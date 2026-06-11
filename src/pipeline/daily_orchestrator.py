@@ -42,7 +42,10 @@ from src.data.paths import (
 )
 from src.data.universe import load_universe
 from src.engines import pipeline_rank, srm
-from src.engines.srm import GICS_ETFS, TICKER_TO_SECTOR, grade_all_sectors, get_sector_health, GRADE_TO_SH
+from src.engines.srm import (
+    GICS_ETFS, TICKER_TO_SECTOR, grade_all_sectors, get_sector_health, GRADE_TO_SH,
+    MACRO_INSTRUMENTS, enrich_sectors_intermarket, save_intermarket_cache,
+)
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
 from src.analyzer.ptrs import compute_ptrs, classify_vix_regime
 from src.analyzer.regime import compute_regime
@@ -160,10 +163,15 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
 
     # Step 4: SRM sector grading
     print("[daily] Step 4: SRM sector grading...")
-    sector_grades = _compute_srm(panel)
+    sector_grades = _compute_srm(panel, run_date=run_date)
     print(f"  Grades: {_summarize_grades(sector_grades)}")
+    _mw = sector_grades.get("_macro_weather", {})
+    if _mw:
+        print(f"  Macro: {_mw.get('regime_description', 'n/a')}")
     try:
         for etf, info in sector_grades.items():
+            if etf.startswith("_"):
+                continue
             upsert_srm(etf, run_date, info.get("grade", "UNKNOWN"), info.get("sh", 0))
     except Exception:
         pass
@@ -422,13 +430,34 @@ def _full_scoring(
     return scores
 
 
-def _compute_srm(panel: pd.DataFrame, trend_days: int = 10) -> dict:
-    """Grade all sectors using SRM.
+def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
+                  run_date: date | None = None) -> dict:
+    """Grade all sectors using SRM + DSG-18 RRG + DSG-19 macro overlay.
 
     trend_days=10 adds sh_trend + grade_trend (10-bar history) so PTRS
     context and the export JSON show momentum direction, not just today's grade.
     """
-    return grade_all_sectors(panel, trend_days=trend_days)
+    sector_grades = grade_all_sectors(panel, trend_days=trend_days)
+
+    # DSG-18 + DSG-19: fetch macro instruments and enrich with RRG + macro
+    macro_data: dict[str, np.ndarray] = {}
+    try:
+        client = FMPClient()
+        from datetime import timedelta
+        to_d = run_date or date.today()
+        from_d = to_d - timedelta(days=90)
+        for inst in MACRO_INSTRUMENTS:
+            bars = client.get_daily_bars(inst, from_date=from_d, to_date=to_d)
+            if not bars.empty:
+                macro_data[inst] = bars["close"].astype(float).to_numpy()
+        print(f"  Macro instruments: {', '.join(f'{k}({len(v)})' for k, v in macro_data.items())}")
+    except Exception as exc:
+        print(f"  [WARN] Macro instrument fetch: {exc}")
+
+    enrich_sectors_intermarket(sector_grades, panel, macro_data or None)
+    save_intermarket_cache(sector_grades, run_date or date.today())
+
+    return sector_grades
 
 
 def _compute_regime(spy: pd.DataFrame) -> dict:
@@ -941,9 +970,11 @@ def _build_output(
         if etfs:
             srm_summary[grade] = etfs
 
-    # Rich per-sector SRM detail: regime + trend data
+    # Rich per-sector SRM detail: regime + trend + DSG-18/19 intermarket data
     srm_detail = {}
     for etf, gdata in sector_grades.items():
+        if etf.startswith("_"):
+            continue
         srm_detail[etf] = {
             "grade": gdata.get("grade", "WATCH"),
             "trend_state": gdata.get("trend_state", ""),
@@ -951,6 +982,15 @@ def _build_output(
             "roc20": round(gdata.get("roc20", 0.0), 2),
             "roc5": round(gdata.get("roc5", 0.0), 2),
             "above_sma20": gdata.get("above_sma20", False),
+            "rrg_rs_ratio": gdata.get("rrg_rs_ratio"),
+            "rrg_rs_momentum": gdata.get("rrg_rs_momentum"),
+            "rrg_quadrant": gdata.get("rrg_quadrant"),
+            "rrg_direction": gdata.get("rrg_direction"),
+            "rrg_grade_override": gdata.get("rrg_grade_override"),
+            "macro_headwind_score": gdata.get("macro_headwind_score"),
+            "macro_headwind_flag": gdata.get("macro_headwind_flag"),
+            "entry_gate": gdata.get("entry_gate"),
+            "entry_gate_reason": gdata.get("entry_gate_reason"),
         }
 
     # Recipe signal matches with levels
