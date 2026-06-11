@@ -31,11 +31,19 @@ Minimum hold period (default 3 bars):
     before the trade has had a chance to develop.
 
 Tiers (trail WIDENS as position proves itself, using atr_eff = ATR × trail_mult):
-    T1  (0-0.5R):   session_low - 1.0 * atr_eff  (daily)
-    T1b (0.5-1R):   session_low - 1.0 * atr_eff  (daily), floor = entry (BE)
-    T2  (1-2R):     session_low - 1.5 * atr_eff  (daily), floor = entry
-    T3  (2-4R):     weekly_low  - 2.0 * atr_eff  (weekly), floor = entry + 1.5R
+    T1  (0-0.5R):   daily_low - 1.0 * atr_eff
+    T1b (0.5-1R):   daily_low - 1.0 * atr_eff, floor = entry (BE)
+    T2  (1-2R):     daily_low - 1.5 * atr_eff, floor = entry
+    T3  (2-4R):     weekly_low - 2.0 * atr_eff, floor = entry + 1.5R
     T4  (4R+):      max(weekly_low - 2.5*atr_eff, T1_target - 1*atr_eff), floor = entry + 3R
+
+Stop-source per tier (Pine spec):
+    T1/T2 use `low` — the current daily bar low.
+    T3/T4 use `weekly_low` — sourced in Pine via `request.security("W", low)`,
+    with a `ta.lowest(low, 5)` daily fallback when the weekly request returns na.
+    The Python `simulate_dsl_trade()` is fed daily bars only, so it runs the
+    daily fallback path (current-bar low) for every tier — the weekly source is
+    a TradingView-runtime detail, not a separate AQE data dependency.
 
 v2.0 change: flow-based take-profit. While in Tier 1, if the trade is
 profitable (R > 0.2) and flow_100 drops below 65, exit at close. Flow
