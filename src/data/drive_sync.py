@@ -31,6 +31,7 @@ from src.data.sector_mapper import (
 from src.engines.srm import (
     GICS_ETFS, get_sector_health, grade_all_sectors,
     enrich_sectors_intermarket, load_intermarket_cache,
+    TICKER_TO_THEMATIC, grade_thematic_baskets,
 )
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
@@ -268,7 +269,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
     """
     fields = {
         "gics_sector": None, "gics_sector_name": None, "gics_gate": "CHECK",
-        "sector_corr": None, "sector_corr_class": None,
+        "sector_corr": None, "sector_corr_class": None, "sector_corr_flag": None,
+        "thematic_basket": None, "thematic_grade": None,
+        "thematic_parent_gics": None, "thematic_parent_grade": None,
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
@@ -294,6 +297,17 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         corr = (lk.get("corr") or {}).get(tk)
         if corr:
             fields["sector_corr"], fields["sector_corr_class"] = corr[0], corr[1]
+            fields["sector_corr_flag"] = corr[1]  # alias for Alfred §9C
+
+        # Thematic basket (data only — gate unchanged). Parent GICS may differ
+        # from the ticker's own gics_sector (e.g. ANET XLK -> AI_Infra parent XLRE).
+        basket = TICKER_TO_THEMATIC.get(tk)
+        if basket:
+            tg = (lk.get("thematic") or {}).get(basket) or {}
+            fields["thematic_basket"] = basket
+            fields["thematic_grade"] = tg.get("grade")
+            fields["thematic_parent_gics"] = tg.get("parent_gics")
+            fields["thematic_parent_grade"] = tg.get("parent_grade")
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
@@ -490,6 +504,22 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- AQE v2.1 enrichment (rvol, rs_spy, sma_distance, sector_corr) ----
     _v21_lk = _compute_v21_lookups(sm)
     export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
+
+    # ---- Thematic basket grades (SRM v3.0) — pure panel math, 0 FMP calls ----
+    # Graded from constituents' equal-weight index, capped at parent GICS grade.
+    # Exported as DATA (per-record + a top-level block); the gate is unchanged.
+    try:
+        import pandas as _pd
+        from src.data.paths import PANEL_DAILY as _pdaily
+        if _pdaily.exists():
+            _panel_tb = _pd.read_parquet(_pdaily, columns=["date", "ticker", "close"])
+            _panel_tb["date"] = _pd.to_datetime(_panel_tb["date"]).dt.normalize()
+            _v21_lk["thematic"] = grade_thematic_baskets(_panel_tb, sector_grades)
+        else:
+            _v21_lk["thematic"] = {}
+    except Exception:  # noqa: BLE001
+        _v21_lk["thematic"] = {}
+    export["thematic_baskets"] = _v21_lk["thematic"]
     from datetime import date as _date
     export["sector_map_version"] = _date.today().isoformat()
     try:
@@ -874,18 +904,19 @@ def _build_sector_map_rich() -> dict:
     gaps: list[str] = []
     for t in sorted(set(univ) | set(sm.keys())):
         etf = sm.get(t)
+        basket = TICKER_TO_THEMATIC.get(t)
         if etf:
             tickers[t] = {
                 "gics_etf": etf,
                 "gics_sector_name": ETF_TO_NAME.get(etf),
-                "thematic_basket": None,
+                "thematic_basket": basket,
                 "source": "AUTO",
                 "confirmed_date": _ver,
             }
         else:
             tickers[t] = {
                 "gics_etf": None, "gics_sector_name": None,
-                "thematic_basket": None, "source": "UNKNOWN",
+                "thematic_basket": basket, "source": "UNKNOWN",
                 "confirmed_date": None,
             }
             gaps.append(t)

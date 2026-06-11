@@ -51,6 +51,38 @@ GRADE_TO_SH = {
     "AVOID": -8,
 }
 
+# Best -> worst ordering for grade comparisons (lower = better).
+GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
+
+# ── Thematic baskets (SRM v3.0 canonical) ───────────────────────────────
+# Each ticker carries its GICS classification AND a thematic basket whose
+# catalyst is its business reality (AI infra, space, defense, ...). The basket
+# is graded from its constituents' equal-weight price index using the same SRM
+# method, CAPPED at the parent-GICS grade (a basket can't grade better than its
+# parent sector). NB: a basket's parent GICS may differ from a constituent's own
+# GICS sector (e.g. ANET is XLK but AI_Infrastructure's parent is XLRE).
+THEMATIC_BASKETS: dict[str, dict] = {
+    "Infra_Power":       {"parent_gics_etf": "XLI",
+                          "constituents": ["VRT", "ETN", "PWR", "HUBB", "EMR", "GNRC", "JBL"]},
+    "Space_eVTOL":       {"parent_gics_etf": "XLI",
+                          "constituents": ["RKLB", "ASTS", "JOBY", "LUNR", "RDW"]},
+    "AI_Infrastructure": {"parent_gics_etf": "XLRE",
+                          "constituents": ["EQIX", "DLR", "AMT", "SMCI", "APLD", "ANET"]},
+    "Semiconductors":    {"parent_gics_etf": "XLK",
+                          "constituents": ["NVDA", "AMD", "AVGO", "CRDO", "AMAT", "KLAC", "LRCX", "MRVL"]},
+    "Cybersecurity":     {"parent_gics_etf": "XLK",
+                          "constituents": ["FTNT", "CRWD", "PANW", "ZS", "OKTA", "S"]},
+    "Defense_Tech":      {"parent_gics_etf": "XLI",
+                          "constituents": ["LMT", "RTX", "GD", "NOC", "LHX", "PLTR", "AXON", "TDG"]},
+}
+
+# Reverse lookup: ticker -> basket name. First basket wins if a ticker appears
+# in two (none do today).
+TICKER_TO_THEMATIC: dict[str, str] = {}
+for _bname, _binfo in THEMATIC_BASKETS.items():
+    for _tk in _binfo["constituents"]:
+        TICKER_TO_THEMATIC.setdefault(_tk, _bname)
+
 # Action-state labels: each encodes the market condition AND the implied posture
 # for a momentum book, so Alfred/committee read a directive, not a raw signal.
 # Derived from the two signals SRM already computes — price vs 20D SMA (trend
@@ -136,6 +168,72 @@ def grade_all_sectors(panel_daily: pd.DataFrame, trend_days: int = 0) -> dict[st
             info = {**info, "sh_trend": sh_trend, "grade_trend": grade_trend}
         results[etf] = info
     return results
+
+
+def _cap_grade(thematic: str, parent: str | None) -> str:
+    """Clamp a thematic grade so it can't be BETTER than its parent GICS grade."""
+    if not parent or parent not in GRADE_ORDER or thematic not in GRADE_ORDER:
+        return thematic
+    # Higher order = worse. If thematic is better (lower order) than parent,
+    # clamp it down to the parent grade.
+    return thematic if GRADE_ORDER[thematic] >= GRADE_ORDER[parent] else parent
+
+
+def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
+                           min_constituents: int = 2) -> dict[str, dict]:
+    """Grade each thematic basket from its constituents' equal-weight price index.
+
+    Reuses grade_sector_etf on a normalized equal-weight index of the
+    constituents present in the panel, then CAPS the result at the parent-GICS
+    grade. Degrades gracefully: a basket with fewer than min_constituents bars
+    present (e.g. constituents not yet in the universe) grades NO_DATA.
+
+    Returns {basket: {grade, raw_grade, parent_gics, parent_grade, roc20, roc5,
+    above_sma20, coverage, constituents_used}}. Pure panel math — 0 FMP calls.
+    """
+    out: dict[str, dict] = {}
+    try:
+        piv = panel_daily.pivot_table(index="date", columns="ticker", values="close").sort_index()
+    except Exception:  # noqa: BLE001
+        piv = None
+
+    for name, info in THEMATIC_BASKETS.items():
+        parent = info["parent_gics_etf"]
+        cons = info["constituents"]
+        parent_grade = (sector_grades.get(parent) or {}).get("grade")
+        present = [t for t in cons if piv is not None and t in piv.columns]
+
+        sub = piv[present].tail(80) if present else None
+        if sub is None or sub.shape[1] < min_constituents or len(sub) < 25:
+            out[name] = {
+                "grade": "NO_DATA", "raw_grade": "NO_DATA",
+                "parent_gics": parent, "parent_grade": parent_grade,
+                "roc20": None, "roc5": None, "above_sma20": None,
+                "coverage": f"{len(present)}/{len(cons)}",
+                "constituents_used": present,
+            }
+            continue
+
+        # Equal-weight index: rebase each constituent to its first valid value,
+        # then average across columns (skipna so staggered listings don't break it).
+        base = sub.bfill().iloc[0]
+        norm = sub.divide(base.where(base != 0))
+        idx = norm.mean(axis=1, skipna=True).dropna()
+        basket_df = pd.DataFrame({"date": idx.index, "close": idx.to_numpy()})
+
+        g = grade_sector_etf(basket_df)
+        capped = _cap_grade(g["grade"], parent_grade)
+        out[name] = {
+            "grade": capped,
+            "raw_grade": g["grade"],
+            "parent_gics": parent,
+            "parent_grade": parent_grade,
+            "roc20": g.get("roc20"), "roc5": g.get("roc5"),
+            "above_sma20": g.get("above_sma20"),
+            "coverage": f"{len(present)}/{len(cons)}",
+            "constituents_used": present,
+        }
+    return out
 
 
 def get_sector_health(ticker: str, sector_grades: dict[str, dict]) -> int:

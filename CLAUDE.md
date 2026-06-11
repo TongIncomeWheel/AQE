@@ -196,10 +196,24 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
 Per-record fields on all four tiers (uniform; `_v21_record_fields` + a normalization
 pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 (PASS/BLOCKED/WATCH/CHECK from SRM grade), `sector_corr` + `sector_corr_class`
-(60d Pearson vs parent ETF), `rvol` (vol/20d-avg), `rs_spy_20d` (20d ROC − SPY 20d ROC),
-`sma_distance_pct` (vs 50D SMA), `rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
+(+ `sector_corr_flag` alias for Alfred §9C — 60d Pearson vs parent ETF: <0.30
+IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-avg),
+`rs_spy_20d` (20d ROC − SPY 20d ROC), `sma_distance_pct` (vs 50D SMA),
+`rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
 `held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
 `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
+- **Thematic baskets** (SRM v3.0, `srm.THEMATIC_BASKETS`): six catalyst baskets
+  (Infra_Power, Space_eVTOL, AI_Infrastructure, Semiconductors, Cybersecurity,
+  Defense_Tech) each with a parent GICS ETF. `grade_thematic_baskets()` grades a
+  basket from its constituents' equal-weight price index via the SRM method,
+  **capped at the parent-GICS grade** (a basket can't grade better than its parent;
+  parent may differ from a constituent's own GICS, e.g. ANET XLK → AI_Infra parent
+  XLRE). Per-record `thematic_basket`/`thematic_grade`/`thematic_parent_gics`/
+  `thematic_parent_grade` + a top-level `thematic_baskets` block (grade, raw_grade,
+  coverage, constituents_used). **DATA only — the gate is unchanged; the committee
+  applies any MAX-capped logic.** Pure panel math (0 FMP calls); baskets with <2
+  constituents in the universe grade NO_DATA. `thematic_basket` is also stamped on
+  every record in the Drive sector RAG.
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
   (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
   `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).

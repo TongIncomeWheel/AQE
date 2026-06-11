@@ -518,6 +518,50 @@ def test_intermarket_brief():
     assert ib2["spy_iwm"]["spread"] == 0.0
 
 
+def test_thematic_baskets():
+    """Thematic basket grading: equal-weight index, capped at parent, graceful NO_DATA."""
+    from src.engines.srm import grade_thematic_baskets, _cap_grade, GRADE_ORDER, TICKER_TO_THEMATIC
+
+    dates = pd.date_range("2025-01-01", periods=90, freq="B")
+
+    def ramp(start, daily):
+        p = [start]
+        for _ in range(89):
+            p.append(p[-1] * (1 + daily))
+        return p
+
+    # Strong Semiconductors constituents (raw DEPLOY) but parent XLK only HOLD.
+    cons = {"NVDA": 0.004, "AMD": 0.003, "AVGO": 0.0035, "CRDO": 0.005,
+            "AMAT": 0.002, "LRCX": 0.003, "MRVL": 0.0025}
+    rows = []
+    for tk, dr in cons.items():
+        for d, c in zip(dates, ramp(100, dr)):
+            rows.append({"date": d, "ticker": tk, "close": c})
+    panel = pd.DataFrame(rows)
+    sector_grades = {"XLK": {"grade": "HOLD"}, "XLRE": {"grade": "WATCH"}}
+
+    bg = grade_thematic_baskets(panel, sector_grades)
+
+    # Cap: strong basket can't exceed parent HOLD.
+    assert bg["Semiconductors"]["raw_grade"] == "DEPLOY"
+    assert bg["Semiconductors"]["grade"] == "HOLD"
+    assert bg["Semiconductors"]["parent_grade"] == "HOLD"
+    assert GRADE_ORDER[bg["Semiconductors"]["grade"]] >= GRADE_ORDER["HOLD"]
+
+    # Baskets with no constituents in the panel degrade to NO_DATA (no crash).
+    assert bg["Defense_Tech"]["grade"] == "NO_DATA"
+    assert bg["Defense_Tech"]["coverage"] == "0/8"
+
+    # Cap helper edge cases.
+    assert _cap_grade("DEPLOY", "HOLD") == "HOLD"   # clamp down
+    assert _cap_grade("WATCH", "HOLD") == "WATCH"   # already worse, unchanged
+    assert _cap_grade("DEPLOY", None) == "DEPLOY"   # no parent -> unchanged
+
+    # Reverse lookup wired.
+    assert TICKER_TO_THEMATIC["NVDA"] == "Semiconductors"
+    assert TICKER_TO_THEMATIC["ANET"] == "AI_Infrastructure"
+
+
 def test_sector_entry_gate():
     """Combined gate: grade + RRG + macro -> PASS/WATCH/CAUTION/BLOCKED."""
     from src.engines.srm import sector_entry_gate
