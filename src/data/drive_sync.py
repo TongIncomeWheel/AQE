@@ -17,13 +17,17 @@ Each run overwrites the same filename so the Drive folder never clutters.
 from __future__ import annotations
 
 import json
-import os
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from src.analyzer.ptrs import compute_ptrs
-from src.data.sector_mapper import ETF_TO_NAME, load_sector_map
+from src.data.sector_mapper import (
+    ETF_TO_NAME,
+    SECTOR_MAP_DRIVE_FILENAME,
+    SECTOR_MAP_FOLDER_ID,
+    load_sector_map,
+)
 from src.engines.srm import (
     GICS_ETFS, get_sector_health, grade_all_sectors,
     enrich_sectors_intermarket, load_intermarket_cache,
@@ -38,14 +42,10 @@ from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 EXPORT_FILENAME = "aqe_daily_export.json"
 
 # Sector RAG map (AQE Data Schema Spec v1.0 §6) — published as a SINGLE file to
-# a dedicated Drive subfolder inside the AQE folder. AQE auto-sources GICS for
-# any blank and overwrites the one file each run (no duplicates).
-# Override with GDRIVE_SECTOR_FOLDER_ID. Version stamps the run date.
-SECTOR_MAP_FILENAME = "aqe_sector_map.json"
-SECTOR_MAP_FOLDER_ID = (
-    os.environ.get("GDRIVE_SECTOR_FOLDER_ID")
-    or "1CKhgB_wjtZipC8TdagIGN0dINiwhk6Ul"
-)
+# a dedicated Drive subfolder (the round-trip source of truth; folder + filename
+# defined in sector_mapper). AQE restores it on startup, auto-sources GICS for
+# any blank, and overwrites the one file each run. Version stamps the run date.
+SECTOR_MAP_FILENAME = SECTOR_MAP_DRIVE_FILENAME
 
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,

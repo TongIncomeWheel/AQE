@@ -10,6 +10,7 @@ Run:
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -23,6 +24,15 @@ from src.data.universe import load_universe
 from src.engines.srm import GICS_ETFS
 
 SECTOR_MAP_PATH = DATA_DIR / "sector_map.json"
+
+# Central sector RAG on Drive — the round-trip source of truth. AQE restores
+# the local flat map from this file on startup and republishes it (auto-filled)
+# each run. Override the folder with GDRIVE_SECTOR_FOLDER_ID.
+SECTOR_MAP_DRIVE_FILENAME = "aqe_sector_map.json"
+SECTOR_MAP_FOLDER_ID = (
+    os.environ.get("GDRIVE_SECTOR_FOLDER_ID")
+    or "1CKhgB_wjtZipC8TdagIGN0dINiwhk6Ul"
+)
 
 SECTOR_TO_ETF = {
     "Technology": "XLK",
@@ -102,6 +112,42 @@ def load_sector_map() -> dict[str, str]:
         with open(SECTOR_MAP_PATH) as f:
             return json.load(f)
     return {}
+
+
+def restore_sector_map_from_drive() -> int:
+    """Overwrite the local sector map from the central Drive RAG (source of truth).
+
+    Drive's `aqe_sector_map.json` is the single source of truth. Parses its rich
+    §6.2 format ({tickers: {tk: {gics_etf, ...}}}) into the flat {ticker: ETF}
+    map AQE reads, merging into the local file (Drive wins on conflicts). Runs on
+    pipeline startup so an ephemeral container reflects Drive WITHOUT re-querying
+    FMP for GICS already resolved on a prior run. Returns the number of mappings
+    restored from Drive (0 if Drive is unconfigured/empty). Never raises.
+    """
+    try:
+        from src.data import gdrive_uploader
+        if not gdrive_uploader.is_configured():
+            return 0
+        content = gdrive_uploader.download_text(
+            SECTOR_MAP_DRIVE_FILENAME, SECTOR_MAP_FOLDER_ID
+        )
+        if not content:
+            return 0
+        data = json.loads(content)
+        rich = data.get("tickers") or {}
+        flat = {
+            tk: info["gics_etf"]
+            for tk, info in rich.items()
+            if isinstance(info, dict) and info.get("gics_etf")
+        }
+        if not flat:
+            return 0
+        existing = load_sector_map()
+        existing.update(flat)  # Drive is authoritative on conflicts
+        _save_sector_map(existing)
+        return len(flat)
+    except Exception:  # noqa: BLE001
+        return 0
 
 
 def get_sector_map_gaps(tickers: list[str] | None = None) -> list[str]:

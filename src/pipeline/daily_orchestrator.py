@@ -73,6 +73,17 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive universe restore: {exc}")
 
+    # Step 0a2: Restore the sector RAG from Drive (round-trip source of truth)
+    # so an ephemeral container reflects the last published map and doesn't
+    # re-query FMP for GICS already resolved on a prior run.
+    try:
+        from src.data.sector_mapper import restore_sector_map_from_drive
+        _n_sm = restore_sector_map_from_drive()
+        if _n_sm:
+            print(f"[daily] Step 0a2: Restored {_n_sm} sector mappings from Drive")
+    except Exception as exc:
+        print(f"  [WARN] Drive sector-map restore: {exc}")
+
     # Step 0b: Pull the latest held-positions journal (PTJ) from Drive so the
     # export can flag held names and attach the engine's read on them.
     try:
