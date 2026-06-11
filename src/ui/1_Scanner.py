@@ -673,6 +673,9 @@ if srm_detail:
                     ("Dollar", "UUP", "uup_direction", "uup_roc5"),
                     ("Credit", "HYG", "hyg_direction", "hyg_roc5"),
                     ("Breadth", "IWM", "iwm_direction", "iwm_roc5"),
+                    ("Gold", "GLD", "gld_direction", "gld_roc5"),
+                    ("Copper", "CPER", "cper_direction", "cper_roc5"),
+                    ("Oil", "USO", "uso_direction", "uso_roc5"),
                 ]
                 _arrows = {"RISING": "**▲**", "FALLING": "**▼**", "FLAT": "▸"}
                 _md_rows = []
@@ -686,6 +689,17 @@ if srm_detail:
                     "| :--- | :---: | ---: |\n"
                     + "\n".join(_md_rows)
                 )
+                # Copper/Gold ratio — the headline growth+rates tell (Druckenmiller)
+                _cg_dir = _mw.get("copper_gold_direction", "FLAT")
+                if _cg_dir != "FLAT":
+                    _cg_roc = _mw.get("copper_gold_roc5", 0.0)
+                    _cg_ar = _arrows.get(_cg_dir, "▸")
+                    _cg_tag = ("reflation / risk-on" if _cg_dir == "RISING"
+                               else "deflation / risk-off")
+                    st.markdown(
+                        f"**Copper/Gold:** {_cg_ar} {_cg_dir} ({_cg_roc:+.1f}%) "
+                        f"— *{_cg_tag}*"
+                    )
                 _desc = _mw.get("regime_description", "")
                 if _desc:
                     st.caption(_desc)

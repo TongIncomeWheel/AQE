@@ -283,23 +283,32 @@ def rrg_grade_override(grade: str, quadrant: str) -> str | None:
 # DSG-19 — Risk Weather Macro Overlay
 # ═══════════════════════════════════════════════════════════════════════
 
-MACRO_INSTRUMENTS = ["TLT", "UUP", "HYG", "IWM"]
+MACRO_INSTRUMENTS = ["TLT", "UUP", "HYG", "IWM", "GLD", "CPER", "USO"]
 
+# Sensitivity sign per sector: when the instrument RISES, does it help (+1),
+# hurt (-1), or not matter (0) for the sector?  Columns are ordered to match
+# MACRO_INSTRUMENTS: [TLT, UUP, HYG, IWM, GLD, CPER, USO].
+#   GLD  — gold up = risk-off / debasement hedge (helps miners, hurts banks)
+#   CPER — copper up = "Dr. Copper" global-growth/reflation (helps cyclicals,
+#          hurts defensives via rotation + higher yields)
+#   USO  — oil up = energy strength but a consumer/transport cost squeeze
 SENSITIVITY = {
-    "XLK":  [+1, -1, +1, +1],
-    "XLC":  [+1, -1, +1, +1],
-    "XLY":  [+1,  0, +1, +1],
-    "XLF":  [ 0, +1, +1,  0],
-    "XLI":  [ 0,  0, +1, +1],
-    "XLB":  [+1, -1, +1, +1],
-    "XLE":  [ 0, -1,  0,  0],
-    "XLV":  [+1,  0,  0,  0],
-    "XLP":  [+1,  0,  0, -1],
-    "XLRE": [+1, -1,  0,  0],
-    "XLU":  [+1,  0,  0, -1],
+    "XLK":  [+1, -1, +1, +1,  0, +1,  0],
+    "XLC":  [+1, -1, +1, +1,  0, +1,  0],
+    "XLY":  [+1,  0, +1, +1,  0, +1, -1],
+    "XLF":  [ 0, +1, +1,  0, -1, +1,  0],
+    "XLI":  [ 0,  0, +1, +1,  0, +1, -1],
+    "XLB":  [+1, -1, +1, +1, +1, +1, +1],
+    "XLE":  [ 0, -1,  0,  0,  0, +1, +1],
+    "XLV":  [+1,  0,  0,  0,  0,  0,  0],
+    "XLP":  [+1,  0,  0, -1,  0, -1,  0],
+    "XLRE": [+1, -1,  0,  0,  0,  0,  0],
+    "XLU":  [+1,  0,  0, -1,  0, -1,  0],
 }
 
-MACRO_WEIGHTS = [0.30, 0.25, 0.25, 0.20]
+# Original four stay dominant (0.70); the commodity complex adds 0.30.
+# Total stays 1.0 so the TAILWIND/CAUTION/HEADWIND thresholds keep their scale.
+MACRO_WEIGHTS = [0.22, 0.15, 0.18, 0.15, 0.10, 0.12, 0.08]
 
 
 def macro_direction_score(closes: np.ndarray) -> tuple[int, float, float]:
@@ -327,15 +336,16 @@ def macro_direction_score(closes: np.ndarray) -> tuple[int, float, float]:
     return score, round(float(roc5), 2), round(float(roc20), 2)
 
 
-def compute_macro_headwind(etf: str, tlt_score: int, uup_score: int,
-                           hyg_score: int, iwm_score: int) -> tuple[float, str]:
+def compute_macro_headwind(etf: str, macro_scores: dict[str, int]) -> tuple[float, str]:
     """Weighted macro headwind score + flag for a sector ETF.
 
+    macro_scores: {instrument: direction_score} for the MACRO_INSTRUMENTS
+    (TLT/UUP/HYG/IWM/GLD/CPER/USO), each in [-2, +2].
     Score range depends on sector sensitivity (roughly -2 to +2).
     Flag: TAILWIND / NEUTRAL / CAUTION / HEADWIND.
     """
-    sens = SENSITIVITY.get(etf, [0, 0, 0, 0])
-    scores = [tlt_score, uup_score, hyg_score, iwm_score]
+    sens = SENSITIVITY.get(etf, [0] * len(MACRO_INSTRUMENTS))
+    scores = [macro_scores.get(inst, 0) for inst in MACRO_INSTRUMENTS]
     raw = sum(w * s * se for w, s, se in zip(MACRO_WEIGHTS, scores, sens))
     score = round(raw, 2)
 
@@ -368,6 +378,31 @@ def compute_macro_weather(macro_data: dict[str, np.ndarray]) -> dict:
             direction = "FLAT"
         weather[inst] = {"score": score, "roc5": roc5, "roc20": roc20, "direction": direction}
 
+    # Copper/Gold ratio — the Druckenmiller/Gundlach growth+rates tell.
+    # Rising = reflation / risk-on (front-runs higher 10y yields);
+    # falling = deflation / risk-off.
+    gld = macro_data.get("GLD")
+    cper = macro_data.get("CPER")
+    if (gld is not None and cper is not None
+            and len(gld) >= 21 and len(cper) >= 21):
+        n = min(len(gld), len(cper))
+        ratio = np.asarray(cper[-n:], dtype=float) / np.where(
+            np.asarray(gld[-n:], dtype=float) == 0, np.nan, np.asarray(gld[-n:], dtype=float)
+        )
+        ratio = ratio[~np.isnan(ratio)]
+        if len(ratio) >= 21:
+            cg_score, cg_roc5, cg_roc20 = macro_direction_score(ratio)
+            if cg_roc5 > 0.1:
+                cg_dir = "RISING"
+            elif cg_roc5 < -0.1:
+                cg_dir = "FALLING"
+            else:
+                cg_dir = "FLAT"
+            weather["COPPER_GOLD"] = {
+                "score": cg_score, "roc5": cg_roc5, "roc20": cg_roc20,
+                "direction": cg_dir,
+            }
+
     return weather
 
 
@@ -379,6 +414,10 @@ def _format_macro_weather(weather_raw: dict) -> dict:
     uup = weather_raw.get("UUP", {})
     hyg = weather_raw.get("HYG", {})
     iwm = weather_raw.get("IWM", {})
+    gld = weather_raw.get("GLD", {})
+    cper = weather_raw.get("CPER", {})
+    uso = weather_raw.get("USO", {})
+    cg = weather_raw.get("COPPER_GOLD", {})
 
     parts: list[str] = []
     if tlt.get("direction") == "FALLING":
@@ -397,6 +436,23 @@ def _format_macro_weather(weather_raw: dict) -> dict:
         parts.append("narrow tape")
     elif iwm.get("direction") == "RISING":
         parts.append("broad tape")
+    if gld.get("direction") == "RISING":
+        parts.append("gold bid")
+    elif gld.get("direction") == "FALLING":
+        parts.append("gold soft")
+    if cper.get("direction") == "RISING":
+        parts.append("copper firm (growth)")
+    elif cper.get("direction") == "FALLING":
+        parts.append("copper weak (slowing)")
+    if uso.get("direction") == "RISING":
+        parts.append("oil rising (inflation)")
+    elif uso.get("direction") == "FALLING":
+        parts.append("oil easing")
+    # The headline Druckenmiller tell goes last, as the regime verdict.
+    if cg.get("direction") == "RISING":
+        parts.append("copper/gold reflation tilt (risk-on)")
+    elif cg.get("direction") == "FALLING":
+        parts.append("copper/gold deflation tilt (risk-off)")
 
     desc = ", ".join(parts) + "." if parts else "No strong macro signal."
 
@@ -409,6 +465,15 @@ def _format_macro_weather(weather_raw: dict) -> dict:
         "hyg_roc5": hyg.get("roc5", 0.0),
         "iwm_direction": iwm.get("direction", "FLAT"),
         "iwm_roc5": iwm.get("roc5", 0.0),
+        "gld_direction": gld.get("direction", "FLAT"),
+        "gld_roc5": gld.get("roc5", 0.0),
+        "cper_direction": cper.get("direction", "FLAT"),
+        "cper_roc5": cper.get("roc5", 0.0),
+        "uso_direction": uso.get("direction", "FLAT"),
+        "uso_roc5": uso.get("roc5", 0.0),
+        "copper_gold_direction": cg.get("direction", "FLAT"),
+        "copper_gold_roc5": cg.get("roc5", 0.0),
+        "copper_gold_roc20": cg.get("roc20", 0.0),
         "regime_description": desc,
         "snapshot_date": str(_date.today()),
     }
@@ -447,7 +512,9 @@ def enrich_sectors_intermarket(
     """Add DSG-18 RRG + DSG-19 macro overlay to sector_grades (in-place).
 
     panel must contain SPY + sector ETF rows with [date, ticker, close].
-    macro_data: {instrument: closes_array} for TLT/UUP/HYG/IWM (optional).
+    macro_data: {instrument: closes_array} for TLT/UUP/HYG/IWM/GLD/CPER/USO
+    (optional). GLD/CPER/USO + the copper/gold ratio are the Druckenmiller
+    commodity-complex overlay.
     """
     spy_data = panel.loc[panel["ticker"] == "SPY"].sort_values("date")
     if spy_data.empty:
@@ -460,11 +527,6 @@ def enrich_sectors_intermarket(
         macro_weather_raw = compute_macro_weather(macro_data)
         for inst in MACRO_INSTRUMENTS:
             macro_scores[inst] = macro_weather_raw.get(inst, {}).get("score", 0)
-
-    tlt_sc = macro_scores.get("TLT", 0)
-    uup_sc = macro_scores.get("UUP", 0)
-    hyg_sc = macro_scores.get("HYG", 0)
-    iwm_sc = macro_scores.get("IWM", 0)
 
     for etf in GICS_ETFS:
         info = sector_grades.get(etf)
@@ -484,9 +546,7 @@ def enrich_sectors_intermarket(
         )
 
         if macro_data:
-            hw_score, hw_flag = compute_macro_headwind(
-                etf, tlt_sc, uup_sc, hyg_sc, iwm_sc
-            )
+            hw_score, hw_flag = compute_macro_headwind(etf, macro_scores)
             info["macro_headwind_score"] = hw_score
             info["macro_headwind_flag"] = hw_flag
         else:

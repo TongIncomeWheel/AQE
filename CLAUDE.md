@@ -111,11 +111,16 @@ the committee decision externally (data ping → human → AIC).
   **DSG-18 RRG layer**: RS-Ratio and RS-Momentum vs SPY (42-bar window) → quadrant
   (LEADING/IMPROVING/WEAKENING/LAGGING) + direction (ENTERING/DEEPENING/EXITING/STABLE).
   Grade override rules: DEPLOY+LAGGING → AVOID_FLAG, HOLD+LAGGING → AVOID_FLAG, etc.
-  **DSG-19 Macro overlay**: TLT/UUP/HYG/IWM direction scores × sector sensitivity
-  matrix → `macro_headwind_score`/`macro_headwind_flag` (TAILWIND/NEUTRAL/CAUTION/HEADWIND).
+  **DSG-19 Macro overlay**: TLT/UUP/HYG/IWM **+ GLD/CPER/USO** (Druckenmiller
+  commodity complex) direction scores × sector sensitivity matrix →
+  `macro_headwind_score`/`macro_headwind_flag` (TAILWIND/NEUTRAL/CAUTION/HEADWIND).
+  Also emits the **copper/gold ratio** (`copper_gold_direction/roc5/roc20`) — the
+  growth+rates tell that front-runs the 10y yield (rising = reflation/risk-on,
+  falling = deflation/risk-off). Weather fields (`gld/cper/uso_direction+roc5`,
+  copper/gold) ride in `macro_weather` on the export + the Scanner panel.
   **Combined entry gate**: `sector_entry_gate()` = grade + RRG + macro → PASS/WATCH/CAUTION/BLOCKED.
   HEADWIND+LAGGING = hard BLOCKED (no override). The gate replaces `gics_gate` on
-  per-record exports. FMP calls: +4 macro instruments per pipeline run.
+  per-record exports. FMP calls: +7 macro instruments per pipeline run.
   Propagated to `srm_detail`, the Scanner SRM table, and the Drive export `srm` block.
 
 ### Scoring composites (`src/engines/scoring.py`) — v1.8.0

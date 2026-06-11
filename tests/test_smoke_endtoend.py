@@ -440,18 +440,47 @@ def test_macro_direction_and_headwind():
     assert score_d == -2
     assert roc5_d < 0
 
-    # XLK with TLT falling (score -2), UUP rising (+2), HYG falling (-2), IWM falling (-2)
-    # Sensitivity: TLT+1, UUP-1, HYG+1, IWM+1
-    # Aligned: TLT(-2)*1=-2, UUP(+2)*(-1)=-2, HYG(-2)*1=-2, IWM(-2)*1=-2
-    # Weighted: 0.30*(-2) + 0.25*(-2) + 0.25*(-2) + 0.20*(-2) = -2.0
-    hw_score, hw_flag = compute_macro_headwind("XLK", -2, +2, -2, -2)
+    # XLK headwind: every instrument aligned against tech. Sensitivity
+    # [TLT+1, UUP-1, HYG+1, IWM+1, GLD0, CPER+1, USO0] — so TLT down, UUP up,
+    # HYG down, IWM down, CPER down all push the weighted score negative.
+    hw_score, hw_flag = compute_macro_headwind("XLK", {
+        "TLT": -2, "UUP": +2, "HYG": -2, "IWM": -2,
+        "GLD": 0, "CPER": -2, "USO": 0,
+    })
     assert hw_score < -0.5
     assert hw_flag == "HEADWIND"
 
-    # XLK with tailwind: TLT rising (+2), UUP falling (-2), HYG rising (+2), IWM rising (+2)
-    tw_score, tw_flag = compute_macro_headwind("XLK", +2, -2, +2, +2)
+    # XLK tailwind: instruments aligned for tech (rates down, dollar down,
+    # credit up, breadth up, copper-growth up).
+    tw_score, tw_flag = compute_macro_headwind("XLK", {
+        "TLT": +2, "UUP": -2, "HYG": +2, "IWM": +2,
+        "GLD": 0, "CPER": +2, "USO": 0,
+    })
     assert tw_score > 0.5
     assert tw_flag == "TAILWIND"
+
+    # Druckenmiller commodity complex: XLB (Materials) is positively geared to
+    # gold, copper, and oil all at once.
+    xlb_score, xlb_flag = compute_macro_headwind("XLB", {
+        "TLT": 0, "UUP": 0, "HYG": 0, "IWM": 0,
+        "GLD": +2, "CPER": +2, "USO": +2,
+    })
+    assert xlb_score > 0
+    assert xlb_flag in ("TAILWIND", "NEUTRAL")
+
+    # Copper/gold ratio surfaces in the weather summary.
+    from src.engines.srm import compute_macro_weather, _format_macro_weather
+    rising = np.linspace(100, 130, 30)
+    falling = np.linspace(130, 100, 30)
+    weather = compute_macro_weather({
+        "TLT": rising, "UUP": rising, "HYG": rising, "IWM": rising,
+        "GLD": falling, "CPER": rising, "USO": rising,
+    })
+    assert "COPPER_GOLD" in weather
+    assert weather["COPPER_GOLD"]["direction"] == "RISING"  # copper up / gold down
+    fmt = _format_macro_weather(weather)
+    assert fmt["copper_gold_direction"] == "RISING"
+    assert "reflation" in fmt["regime_description"]
 
 
 def test_sector_entry_gate():
