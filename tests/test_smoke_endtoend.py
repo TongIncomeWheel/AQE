@@ -484,37 +484,38 @@ def test_macro_direction_and_headwind():
 
 
 def test_intermarket_brief():
-    """§3A.6 COB intermarket brief: signal derivation + posture + schema."""
+    """§3A.6 COB intermarket DATA block: plain numbers only, no assessment."""
     from src.engines.srm import compute_intermarket
 
-    # Risk-off tape: dollar strengthening, bonds rallying, credit risk-off,
-    # large-caps leading -> 3+ risk-off -> RISK_OFF posture.
     md = {
-        "UUP": np.linspace(27.0, 28.5, 30),   # +5.5% -> STRENGTHENING
-        "TLT": np.linspace(88, 93, 30),       # rising + above sma20 -> RALLY
-        "HYG": np.linspace(78, 77.5, 30),     # soft vs treasuries -> RISK_OFF
-        "IWM": np.linspace(210, 200, 30),     # small caps lagging
+        "UUP": np.linspace(27.0, 28.5, 30),   # +5.5%
+        "TLT": np.linspace(88, 93, 30),       # rising, above sma20
+        "HYG": np.linspace(78, 77.5, 30),
+        "IWM": np.linspace(210, 200, 30),
     }
-    spy = np.linspace(420, 430, 30)           # spy outperforms iwm -> LARGE_CAP_LED
+    spy = np.linspace(420, 430, 30)
     ib = compute_intermarket(md, spy, "2026-06-11")
 
-    assert ib["uup"]["signal"] == "STRENGTHENING"
-    assert ib["tlt"]["signal"] == "RALLY"
-    assert ib["hyg"]["signal"] == "RISK_OFF"
-    assert ib["spy_iwm"]["signal"] == "LARGE_CAP_LED"
-    assert ib["macro_posture"] == "RISK_OFF"
+    # Schema: numbers only — NO signal / posture / brief fields (Druckenmiller
+    # assesses; AQE makes no call).
+    assert set(ib.keys()) == {"as_of", "uup", "tlt", "hyg", "spy_iwm"}
+    for tk in ("uup", "tlt"):
+        assert set(ib[tk].keys()) == {"close", "roc5", "roc20", "above_sma20"}
+    assert set(ib["hyg"].keys()) == {"close", "roc5", "roc20", "above_sma20", "hyg_tlt_spread"}
+    assert set(ib["spy_iwm"].keys()) == {"spy_roc20", "iwm_roc20", "spread"}
+    assert "signal" not in ib["uup"]
+    assert "macro_posture" not in ib
+    assert "druckenmiller_brief" not in ib
 
-    # Schema completeness
-    for k in ("as_of", "uup", "tlt", "hyg", "spy_iwm", "macro_posture", "druckenmiller_brief"):
-        assert k in ib
+    # Spreads are correct arithmetic.
     assert ib["hyg"]["hyg_tlt_spread"] == round(ib["hyg"]["roc5"] - ib["tlt"]["roc5"], 2)
     assert ib["spy_iwm"]["spread"] == round(ib["spy_iwm"]["spy_roc20"] - ib["spy_iwm"]["iwm_roc20"], 2)
-    assert isinstance(ib["druckenmiller_brief"], str) and ib["druckenmiller_brief"].endswith(".")
+    assert ib["uup"]["roc5"] > 0  # dollar rose
 
-    # Missing instrument degrades gracefully (no crash, NEUTRAL).
+    # Missing instruments degrade gracefully (None close, no crash).
     ib2 = compute_intermarket({}, None, "2026-06-11")
-    assert ib2["macro_posture"] == "MIXED"
-    assert ib2["uup"]["signal"] == "NEUTRAL"
+    assert ib2["uup"]["close"] is None
+    assert ib2["spy_iwm"]["spread"] == 0.0
 
 
 def test_sector_entry_gate():
