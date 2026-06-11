@@ -122,6 +122,15 @@ the committee decision externally (data ping → human → AIC).
   HEADWIND+LAGGING = hard BLOCKED (no override). The gate replaces `gics_gate` on
   per-record exports. FMP calls: +7 macro instruments per pipeline run.
   Propagated to `srm_detail`, the Scanner SRM table, and the Drive export `srm` block.
+  **§3A.6 Intermarket brief** (`compute_intermarket`): a top-level `intermarket`
+  export object (between `regime` and `srm`) — COB-driven Druckenmiller premarket
+  opener. Per-instrument close/roc5/roc20/above_sma20 + signal for UUP
+  (STRENGTHENING/WEAKENING), TLT (RALLY/SELLOFF), HYG-vs-TLT credit
+  (RISK_ON/RISK_OFF, `hyg_tlt_spread`), SPY-vs-IWM cap leadership
+  (LARGE_CAP_LED/SMALL_CAP_LED, `spread`), a `macro_posture` (RISK_ON/RISK_OFF/MIXED
+  = 3-of-4 vote) and a one-sentence `druckenmiller_brief`. **Reuses the COB closes
+  already fetched for the macro overlay — 0 new FMP calls.** Computed in the
+  orchestrator, stashed in the intermarket cache, read by the export.
 
 ### Scoring composites (`src/engines/scoring.py`) — v1.8.0
 **Parity with TradingView `Scoring v1.8.0`: composites are UNCAPPED.** The raw

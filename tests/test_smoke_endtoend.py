@@ -483,6 +483,40 @@ def test_macro_direction_and_headwind():
     assert "reflation" in fmt["regime_description"]
 
 
+def test_intermarket_brief():
+    """§3A.6 COB intermarket brief: signal derivation + posture + schema."""
+    from src.engines.srm import compute_intermarket
+
+    # Risk-off tape: dollar strengthening, bonds rallying, credit risk-off,
+    # large-caps leading -> 3+ risk-off -> RISK_OFF posture.
+    md = {
+        "UUP": np.linspace(27.0, 28.5, 30),   # +5.5% -> STRENGTHENING
+        "TLT": np.linspace(88, 93, 30),       # rising + above sma20 -> RALLY
+        "HYG": np.linspace(78, 77.5, 30),     # soft vs treasuries -> RISK_OFF
+        "IWM": np.linspace(210, 200, 30),     # small caps lagging
+    }
+    spy = np.linspace(420, 430, 30)           # spy outperforms iwm -> LARGE_CAP_LED
+    ib = compute_intermarket(md, spy, "2026-06-11")
+
+    assert ib["uup"]["signal"] == "STRENGTHENING"
+    assert ib["tlt"]["signal"] == "RALLY"
+    assert ib["hyg"]["signal"] == "RISK_OFF"
+    assert ib["spy_iwm"]["signal"] == "LARGE_CAP_LED"
+    assert ib["macro_posture"] == "RISK_OFF"
+
+    # Schema completeness
+    for k in ("as_of", "uup", "tlt", "hyg", "spy_iwm", "macro_posture", "druckenmiller_brief"):
+        assert k in ib
+    assert ib["hyg"]["hyg_tlt_spread"] == round(ib["hyg"]["roc5"] - ib["tlt"]["roc5"], 2)
+    assert ib["spy_iwm"]["spread"] == round(ib["spy_iwm"]["spy_roc20"] - ib["spy_iwm"]["iwm_roc20"], 2)
+    assert isinstance(ib["druckenmiller_brief"], str) and ib["druckenmiller_brief"].endswith(".")
+
+    # Missing instrument degrades gracefully (no crash, NEUTRAL).
+    ib2 = compute_intermarket({}, None, "2026-06-11")
+    assert ib2["macro_posture"] == "MIXED"
+    assert ib2["uup"]["signal"] == "NEUTRAL"
+
+
 def test_sector_entry_gate():
     """Combined gate: grade + RRG + macro -> PASS/WATCH/CAUTION/BLOCKED."""
     from src.engines.srm import sector_entry_gate

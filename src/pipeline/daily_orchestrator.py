@@ -459,6 +459,19 @@ def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
         print(f"  [WARN] Macro instrument fetch: {exc}")
 
     enrich_sectors_intermarket(sector_grades, panel, macro_data or None)
+
+    # §3A.6 intermarket brief — reuse the COB closes already fetched (0 new
+    # FMP calls) + SPY from the panel. Stashed for the export + cache.
+    try:
+        from src.engines.srm import compute_intermarket
+        spy_rows = panel.loc[panel["ticker"] == "SPY"].sort_values("date")
+        spy_closes = spy_rows["close"].astype(float).to_numpy() if not spy_rows.empty else None
+        sector_grades["_intermarket"] = compute_intermarket(
+            macro_data, spy_closes, str(run_date or date.today())
+        )
+    except Exception as exc:
+        print(f"  [WARN] Intermarket brief: {exc}")
+
     save_intermarket_cache(sector_grades, run_date or date.today())
 
     return sector_grades

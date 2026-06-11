@@ -79,15 +79,16 @@ def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
     return "; ".join(parts) if parts else ""
 
 
-def _build_srm_gics() -> tuple[list[dict], dict, dict]:
+def _build_srm_gics() -> tuple[list[dict], dict, dict, dict]:
     """Full 11-sector SRM grading with trend data + DSG-18/19 intermarket.
 
-    Returns (srm_gics_array, srm_signals_dict, macro_weather_dict).
+    Returns (srm_gics_array, srm_signals_dict, macro_weather_dict, intermarket_dict).
     srm_gics: one row per sector (sorted DEPLOY→AVOID) with grade, sh_value,
               roc20, roc5, divergence, above_sma20, sh_trend, grade_trend,
               + DSG-18 RRG fields + DSG-19 macro fields + combined gate.
     srm_signals: {deploy, hold, turning, watch, avoid, blocked} ETF lists.
     macro_weather: global macro weather summary.
+    intermarket: §3A.6 COB intermarket brief (UUP/TLT/HYG/SPY-IWM + posture).
     """
     import pandas as pd
     from src.data.paths import PANEL_DAILY as panel_path
@@ -95,12 +96,12 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict]:
     empty_signals = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
 
     if not panel_path.exists():
-        return [], empty_signals, {}
+        return [], empty_signals, {}, {}
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "close"])
     etfs_plus = set(GICS_ETFS) | {"SPY"}
     panel = panel[panel["ticker"].isin(etfs_plus)]
     if panel.empty:
-        return [], empty_signals, {}
+        return [], empty_signals, {}, {}
 
     graded = grade_all_sectors(panel, trend_days=10)
 
@@ -120,6 +121,7 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict]:
                         graded[etf][k] = cached_fields[k]
 
     macro_weather = (cache or {}).get("macro_weather", {})
+    intermarket = (cache or {}).get("intermarket", {})
 
     grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 
@@ -185,7 +187,7 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict]:
         if r.get("entry_gate") == "BLOCKED" and r["etf"] not in signals["blocked"]:
             signals["blocked"].append(r["etf"])
 
-    return rows, signals, macro_weather
+    return rows, signals, macro_weather, intermarket
 
 
 def _compute_v21_lookups(sm: dict) -> dict:
@@ -417,13 +419,16 @@ def build_export(shortlist: dict | None = None) -> dict:
     now_sgt = datetime.now(sgt)
 
     # Full 11-sector SRM grading + DSG-18/19 intermarket (spec §2)
-    srm_gics, srm_signals, macro_weather = _build_srm_gics()
+    srm_gics, srm_signals, macro_weather, intermarket = _build_srm_gics()
 
     export: dict = {
         "date": sl.get("date", ""),
         "exported_at": now_sgt.strftime("%Y-%m-%d %H:%M:%S SGT"),
         "market": "US equities — close-of-day scan",
         "regime": sl.get("regime", {}),
+        # §3A.6 COB intermarket brief — Druckenmiller's premarket opener.
+        # Top-level, between regime and srm (per Alfred 11 Jun spec).
+        "intermarket": intermarket,
         # Full SRM schema — combined into this one file (no separate SRM file).
         # `srm` is the list the AIC reader + protocols consume; `srm_gics` is
         # kept as an alias for existing callers.

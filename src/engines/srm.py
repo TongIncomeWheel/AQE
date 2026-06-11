@@ -479,6 +479,125 @@ def _format_macro_weather(weather_raw: dict) -> dict:
     }
 
 
+# ── §3A.6 Intermarket brief (COB-driven Druckenmiller opener) ───────────
+
+def _intermarket_instrument(closes) -> dict | None:
+    """close / roc5 / roc20 / above_sma20 from a COB close array (>=21 bars)."""
+    if closes is None:
+        return None
+    arr = np.asarray(closes, dtype=float)
+    if len(arr) < 21:
+        return None
+    close = float(arr[-1])
+    roc5 = (close / arr[-6] - 1) * 100 if arr[-6] != 0 else 0.0
+    roc20 = (close / arr[-21] - 1) * 100 if arr[-21] != 0 else 0.0
+    sma20 = float(np.mean(arr[-20:]))
+    return {
+        "close": round(close, 2),
+        "roc5": round(float(roc5), 2),
+        "roc20": round(float(roc20), 2),
+        "above_sma20": bool(close > sma20),
+    }
+
+
+def compute_intermarket(macro_data: dict[str, np.ndarray],
+                        spy_closes, as_of: str) -> dict:
+    """Build the §3A.6 intermarket brief from COB closes.
+
+    Inputs are the EOD close arrays already fetched for the macro overlay
+    (UUP/TLT/HYG/IWM) plus SPY from the panel. 30-bar lookback. No live pull.
+    Returns the top-level `intermarket` export object (signals + posture +
+    one-sentence Druckenmiller brief).
+    """
+    uup = _intermarket_instrument(macro_data.get("UUP"))
+    tlt = _intermarket_instrument(macro_data.get("TLT"))
+    hyg = _intermarket_instrument(macro_data.get("HYG"))
+    iwm = _intermarket_instrument(macro_data.get("IWM"))
+    spy = _intermarket_instrument(spy_closes)
+
+    # ── UUP (dollar) ──
+    uup_sig = "NEUTRAL"
+    if uup:
+        if uup["roc5"] > 0.5:
+            uup_sig = "STRENGTHENING"
+        elif uup["roc5"] < -0.5:
+            uup_sig = "WEAKENING"
+
+    # ── TLT (bonds) ──
+    tlt_sig = "NEUTRAL"
+    if tlt:
+        if tlt["above_sma20"] and tlt["roc5"] > 0:
+            tlt_sig = "RALLY"
+        elif not tlt["above_sma20"] and tlt["roc5"] < 0:
+            tlt_sig = "SELLOFF"
+
+    # ── HYG vs TLT (credit) ──
+    hyg_sig = "NEUTRAL"
+    hyg_tlt_spread = 0.0
+    if hyg and tlt:
+        hyg_tlt_spread = round(hyg["roc5"] - tlt["roc5"], 2)
+        if hyg["roc5"] - tlt["roc5"] > 0.5:
+            hyg_sig = "RISK_ON"
+        elif tlt["roc5"] - hyg["roc5"] > 0.5:
+            hyg_sig = "RISK_OFF"
+
+    # ── SPY vs IWM (cap leadership) ──
+    spy_iwm_sig = "NEUTRAL"
+    spy_iwm_spread = 0.0
+    spy_roc20 = spy["roc20"] if spy else 0.0
+    iwm_roc20 = iwm["roc20"] if iwm else 0.0
+    if spy and iwm:
+        spy_iwm_spread = round(spy_roc20 - iwm_roc20, 2)
+        if spy_iwm_spread > 0.5:
+            spy_iwm_sig = "LARGE_CAP_LED"
+        elif spy_iwm_spread < -0.5:
+            spy_iwm_sig = "SMALL_CAP_LED"
+
+    # ── Macro posture: tally risk-on (+1) vs risk-off (-1) across the four ──
+    risk_axis = {
+        "STRENGTHENING": -1, "WEAKENING": +1,   # dollar up = risk-off
+        "RALLY": -1, "SELLOFF": +1,             # bonds bid = risk-off
+        "RISK_ON": +1, "RISK_OFF": -1,          # credit
+        "LARGE_CAP_LED": -1, "SMALL_CAP_LED": +1,  # small-cap appetite = risk-on
+    }
+    votes = [risk_axis.get(s, 0) for s in (uup_sig, tlt_sig, hyg_sig, spy_iwm_sig)]
+    n_on = sum(1 for v in votes if v > 0)
+    n_off = sum(1 for v in votes if v < 0)
+    if n_on >= 3:
+        posture = "RISK_ON"
+    elif n_off >= 3:
+        posture = "RISK_OFF"
+    else:
+        posture = "MIXED"
+
+    # ── One-sentence Druckenmiller brief ──
+    _d = {"STRENGTHENING": "dollar strengthening", "WEAKENING": "dollar weakening",
+          "NEUTRAL": "dollar neutral"}[uup_sig]
+    _b = {"RALLY": "bonds rallying", "SELLOFF": "bonds selling off",
+          "NEUTRAL": "bonds neutral"}[tlt_sig]
+    _c = {"RISK_ON": "credit risk-on", "RISK_OFF": "credit risk-off",
+          "NEUTRAL": "credit neutral"}[hyg_sig]
+    _l = {"LARGE_CAP_LED": "large-caps leading", "SMALL_CAP_LED": "small-caps leading",
+          "NEUTRAL": "caps balanced"}[spy_iwm_sig]
+    bias = " with growth-headwind bias" if (tlt_sig == "SELLOFF" and posture == "MIXED") else ""
+    brief = f"{_d.capitalize()}, {_b}, {_c}, {_l} — net {posture}{bias}."
+
+    return {
+        "as_of": as_of,
+        "uup": {**(uup or {"close": None, "roc5": 0.0, "roc20": 0.0, "above_sma20": None}),
+                "signal": uup_sig},
+        "tlt": {**(tlt or {"close": None, "roc5": 0.0, "roc20": 0.0, "above_sma20": None}),
+                "signal": tlt_sig},
+        "hyg": {**(hyg or {"close": None, "roc5": 0.0, "roc20": 0.0, "above_sma20": None}),
+                "hyg_tlt_spread": hyg_tlt_spread, "signal": hyg_sig},
+        "spy_iwm": {"spy_roc20": round(float(spy_roc20), 2),
+                    "iwm_roc20": round(float(iwm_roc20), 2),
+                    "spread": spy_iwm_spread, "signal": spy_iwm_sig},
+        "macro_posture": posture,
+        "druckenmiller_brief": brief,
+    }
+
+
 # ── Combined entry gate (DSG-18 + DSG-19) ──────────────────────────
 
 def sector_entry_gate(grade: str, rrg_quadrant: str,
@@ -571,10 +690,14 @@ def save_intermarket_cache(sector_grades: dict[str, dict], run_date) -> None:
     from pathlib import Path
 
     cache_path = Path(__file__).resolve().parents[2] / "data" / "srm_intermarket_cache.json"
-    cache: dict = {"date": str(run_date), "macro_weather": {}, "sectors": {}}
+    cache: dict = {"date": str(run_date), "macro_weather": {},
+                   "intermarket": {}, "sectors": {}}
     mw = sector_grades.get("_macro_weather")
     if mw:
         cache["macro_weather"] = mw
+    im = sector_grades.get("_intermarket")
+    if im:
+        cache["intermarket"] = im
     for etf in GICS_ETFS:
         info = sector_grades.get(etf)
         if info is None:
