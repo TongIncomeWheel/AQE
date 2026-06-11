@@ -399,6 +399,26 @@ def _sector_label(etf: str) -> str:
     return ETF_NAMES.get(etf, etf)
 
 
+def _rrg_phrase(quadrant: str | None, direction: str | None) -> str:
+    """Explicit RRG state: combine quadrant + motion into one phrase that says
+    exactly what is entering/exiting which quadrant, e.g. 'Exiting LEADING'.
+
+    ENTERING = just crossed into this quadrant; DEEPENING = rotating further from
+    the SPY=100 center (rotation strengthening); EXITING = rotating back toward
+    center (rotation fading, about to leave); STABLE = holding position.
+    """
+    q = (quadrant or "").upper()
+    if not q or q in ("---", "NO_DATA", "—"):
+        return "—"
+    verb = {
+        "ENTERING": "Entering",
+        "DEEPENING": "Deepening in",
+        "EXITING": "Exiting",
+        "STABLE": "Holding in",
+    }.get((direction or "").upper(), "In")
+    return f"{verb} {q}"
+
+
 def _elder5_str(seq) -> str:
     """Last-5 Elder scores as a compact 'a,b,c,d,e' string (oldest -> newest)."""
     if not seq:
@@ -732,8 +752,7 @@ if srm_detail:
             "Sector": _sector_label(etf),
             "Grade": d.get("grade", "---"),
             "Action state": d.get("trend_state", "---"),
-            "RRG": d.get("rrg_quadrant", "---"),
-            "RRG Dir": d.get("rrg_direction", "---"),
+            "Rotation (RRG)": _rrg_phrase(d.get("rrg_quadrant"), d.get("rrg_direction")),
             "Macro": d.get("macro_headwind_flag", "---"),
             "Gate": d.get("entry_gate", "---"),
             "20d%": _fmt(roc20, "+.1f"),
@@ -742,6 +761,13 @@ if srm_detail:
         srm_rows.append(row)
     df_srm = pd.DataFrame(srm_rows)
     st.dataframe(df_srm, use_container_width=True, hide_index=True)
+    st.caption(
+        "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
+        "*Deepening in* = rotating further out (strengthening) · *Exiting* = "
+        "rotating back toward centre (fading, about to leave) · *Holding in* = stable. "
+        "Quadrants: LEADING (strong & rising) · IMPROVING (weak but rising) · "
+        "WEAKENING (strong but falling) · LAGGING (weak & falling)."
+    )
 else:
     # Fallback to legacy bucket summary
     srm = sl.get("srm_summary", {})
@@ -855,13 +881,17 @@ if _thematic:
             "Grade": _d.get("grade", "---"),
             "Raw": _d.get("raw_grade", "---"),
             "Parent": f'{_d.get("parent_gics", "—")} ({_d.get("parent_grade", "—")})',
-            "RRG": _d.get("rrg_quadrant", "---"),
-            "RRG Dir": _d.get("rrg_direction", "---"),
+            "Rotation (RRG)": _rrg_phrase(_d.get("rrg_quadrant"), _d.get("rrg_direction")),
             "20d%": _fmt(_d.get("roc20"), "+.1f"),
             "5d%": _fmt(_d.get("roc5"), "+.1f"),
             "Coverage": _d.get("coverage", "—"),
         })
     st.dataframe(pd.DataFrame(_trows), use_container_width=True, hide_index=True)
+    st.caption(
+        "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
+        "*Deepening in* = rotating further out (strengthening) · *Exiting* = "
+        "rotating back toward centre (fading, about to leave) · *Holding in* = stable."
+    )
 else:
     st.info(
         "No thematic basket grades yet — run the daily pipeline to populate "
