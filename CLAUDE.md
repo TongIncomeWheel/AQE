@@ -202,6 +202,25 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
 `rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
 `held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
 `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
+- **DSG-18 bracket-ready fields** (charter §6E.6, per-record on every tier — so Alfred
+  reads bracket levels verbatim, no derivation). **Group A** (pure algebra on DSL
+  fields): `atr_14d`, `coil_entry` (= `dsl_stop + atr_14d`, the 1×ATR resting limit),
+  `max_chase_tp2`/`max_chase_tp3` (= `(dsl_tp_Nr + 2·dsl_stop)/3`, max entry where R:R
+  to that TP ≥ 2.0), `rr_tp2_at_coil`/`rr_tp3_at_coil`. **Group B**: `vol_30d_ann` (30d
+  annualised realised vol from log returns), `beta_252d` (1-yr beta vs SPY, cov/var —
+  numpy, no scipy), plus **structural stop selection** — `structural_levels` (a list of
+  candidate stops {type, price, atr_ratio, rr_tp2, valid}; types = dsl_stop / swing_low /
+  fib_618 / fib_786 / ma20/50/100/200) and `optimal_stop` (the TIGHTEST valid level —
+  closest to entry passing `atr_ratio ≥ 1.0 AND rr_tp2 ≥ 2.0`) + `optimal_stop_exists`.
+  **Group C (`vol_shares_*`) is intentionally NOT exported** — it needs session-specific
+  dynCap (placeholders would dirty the schema); Alfred computes it from `atr_14d`.
+- **Fib ladder is flat** (DSG-18): the nested `fib` object was removed; every record now
+  carries `fib_swing_low`/`fib_swing_high` + `fib_236/382/500/618/786` (retracement
+  supports). `ma_20/50/100/200` stay flat absolute levels. The cloud Scanner rebuilds the
+  nested shape from the flat keys (`_nested_fib_from_export`) for its Fib display.
+  Legacy `dsl_be`/`dsl_buy` are fully gone (the alert engine re-derives the +0.5R buy from
+  `dsl_stop + 1.5·dsl_risk`). The export schema validator (`_REQUIRED_FIELDS`) enforces
+  the flat fib + bracket fields and BLOCKS the export if any are missing.
 - **Thematic baskets** (Thematic Basket Map v2.0, PM-approved 11 Jun 2026,
   `srm.THEMATIC_BASKETS`): **seven** catalyst baskets (Infra_Power, Space_eVTOL,
   AI_Infrastructure, Semiconductors, Cybersecurity, Defense_Tech, **Crypto_Digital**)

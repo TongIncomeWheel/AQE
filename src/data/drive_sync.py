@@ -198,7 +198,8 @@ def _compute_v21_lookups(sm: dict) -> dict:
     Returns {rvol, rs, sma, corr, spy_roc_20d} where rvol/rs/sma are
     {ticker: float} and corr is {ticker: (corr, class)}.
     """
-    out = {"rvol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {}, "spy_roc_20d": None}
+    out = {"rvol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
+           "vol30": {}, "beta252": {}, "spy_roc_20d": None}
     try:
         import numpy as np
         import pandas as pd
@@ -217,13 +218,31 @@ def _compute_v21_lookups(sm: dict) -> dict:
                 spy_roc = (float(spy["close"].iloc[-1]) / float(spy["close"].iloc[-21]) - 1) * 100
         out["spy_roc_20d"] = round(float(spy_roc), 2) if spy_roc is not None else None
 
-        # Daily returns pivot for sector correlation
+        # Daily returns pivot for sector correlation + 252d beta
         close_piv = p.pivot_table(index="date", columns="ticker", values="close")
         rets = close_piv.pct_change()
+        spy_rets = rets["SPY"] if "SPY" in rets.columns else None
 
         for tk, g in p.groupby("ticker", sort=False):
             cl = g["close"].to_numpy(dtype=float)
             vol = g["volume"].to_numpy(dtype=float)
+            # vol_30d_ann = std of daily log returns over last 30 sessions, annualised
+            if len(cl) >= 31:
+                logret = np.diff(np.log(cl[-31:]))
+                logret = logret[np.isfinite(logret)]
+                if len(logret) >= 2:
+                    out["vol30"][tk] = round(float(np.std(logret, ddof=1) * np.sqrt(252)), 4)
+            # beta_252d = cov(stock, SPY) / var(SPY) on daily returns over 252 sessions
+            if spy_rets is not None and tk in rets.columns and tk != "SPY":
+                pair = pd.concat([rets[tk], spy_rets], axis=1).dropna().tail(252)
+                if len(pair) >= 60:
+                    sp = pair.iloc[:, 1].to_numpy(dtype=float)
+                    st_ = pair.iloc[:, 0].to_numpy(dtype=float)
+                    var_sp = float(np.var(sp, ddof=1))
+                    if var_sp > 0:
+                        beta = float(np.cov(st_, sp, ddof=1)[0, 1] / var_sp)
+                        if np.isfinite(beta):
+                            out["beta252"][tk] = round(beta, 3)
             # rvol = today / 20-day prior average
             if len(vol) >= 21:
                 avg20 = float(np.nanmean(vol[-21:-1]))
@@ -262,6 +281,60 @@ def _compute_v21_lookups(sm: dict) -> dict:
     return out
 
 
+def _is_num(*vals) -> bool:
+    """True if every value is a finite number."""
+    return all(isinstance(v, (int, float)) and v == v and v not in (float("inf"), float("-inf"))
+               for v in vals)
+
+
+def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dict | None]:
+    """DSG-18 B3 — enumerate candidate structural stops and pick the optimal one.
+
+    For each candidate level below entry: risk = entry − level; atr_ratio =
+    risk / atr_14d; rr_tp2 = (dsl_tp_2r − entry) / risk; valid = atr_ratio ≥ 1.0
+    AND rr_tp2 ≥ 2.0. The optimal stop is the TIGHTEST valid level (closest to
+    entry → smallest risk that still clears both gates). Returns (levels, optimal).
+    """
+    entry, atr14, tp2 = d.get("entry"), d.get("atr14"), d.get("tp_2r")
+    if not _is_num(entry, atr14, tp2) or atr14 <= 0:
+        return [], None
+    fib = d.get("fib") or {}
+    rets = fib.get("retracements") or {}
+
+    levels: list[dict] = []
+
+    def _add(typ: str, price, date: str | None = None) -> None:
+        if not _is_num(price):
+            return
+        risk = entry - price
+        if risk <= 0:            # a long's stop must sit below entry
+            return
+        atr_ratio = round(risk / atr14, 2)
+        rr_tp2 = round((tp2 - entry) / risk, 2)
+        item = {"type": typ, "price": round(float(price), 2),
+                "atr_ratio": atr_ratio, "rr_tp2": rr_tp2,
+                "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0)}
+        if date:
+            item["date"] = date
+        levels.append(item)
+
+    _add("dsl_stop", d.get("stop"))
+    _add("swing_low", fib.get("swing_low"), fib.get("swing_low_date"))
+    _add("fib_618", rets.get("0.618"))
+    _add("fib_786", rets.get("0.786"))
+    for _w in (20, 50, 100, 200):
+        _add(f"ma{_w}", (ma or {}).get(_w))
+
+    valids = [x for x in levels if x["valid"]]
+    optimal = None
+    if valids:
+        best = max(valids, key=lambda x: x["price"])   # tightest = closest to entry
+        optimal = {"price": best["price"], "type": best["type"],
+                   "atr_ratio": best["atr_ratio"], "rr_tp2": best["rr_tp2"],
+                   "rationale": "Tightest level passing ATR >= 1.0 AND R:R TP2 >= 2.0"}
+    return levels, optimal
+
+
 def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                        sector_grades: dict) -> dict:
     """AQE v2.1 / Data-Schema-v1.0 per-record fields. Bulletproof: returns a
@@ -276,6 +349,17 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
+        # DSG-18 fib ladder (flat — retracement supports + swing anchors)
+        "fib_swing_low": None, "fib_swing_high": None,
+        "fib_236": None, "fib_382": None, "fib_500": None,
+        "fib_618": None, "fib_786": None,
+        # DSG-18 Group A — bracket-ready derived levels
+        "atr_14d": None, "coil_entry": None,
+        "max_chase_tp2": None, "max_chase_tp3": None,
+        "rr_tp2_at_coil": None, "rr_tp3_at_coil": None,
+        # DSG-18 Group B — vol / beta / structural stop selection
+        "vol_30d_ann": None, "beta_252d": None,
+        "structural_levels": [], "optimal_stop": None, "optimal_stop_exists": False,
         "held": False,
     }
     try:
@@ -341,6 +425,42 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                             ("rr_tp3", d.get("tp_3r"))):
                 if tp is not None:
                     fields[key] = round((tp - be) / risk, 2)
+
+        # ── DSG-18 fib ladder (flat) ───────────────────────────────────────
+        _fib = d.get("fib") or {}
+        _rets = _fib.get("retracements") or {}
+        fields["fib_swing_low"] = _fib.get("swing_low")
+        fields["fib_swing_high"] = _fib.get("swing_high")
+        fields["fib_236"] = _rets.get("0.236")
+        fields["fib_382"] = _rets.get("0.382")
+        fields["fib_500"] = _rets.get("0.5")
+        fields["fib_618"] = _rets.get("0.618")
+        fields["fib_786"] = _rets.get("0.786")
+
+        # ── DSG-18 Group A — bracket-ready derived levels ──────────────────
+        _stop, _atr14 = d.get("stop"), d.get("atr14")
+        _tp2, _tp3 = d.get("tp_2r"), d.get("tp_3r")
+        if _is_num(_stop, _atr14) and _atr14 > 0:
+            fields["atr_14d"] = round(float(_atr14), 2)
+            _coil = round(_stop + _atr14, 2)
+            fields["coil_entry"] = _coil
+            if _is_num(_tp2):
+                fields["max_chase_tp2"] = round((_tp2 + 2 * _stop) / 3, 2)
+            if _is_num(_tp3):
+                fields["max_chase_tp3"] = round((_tp3 + 2 * _stop) / 3, 2)
+            if (_coil - _stop) > 0:
+                if _is_num(_tp2):
+                    fields["rr_tp2_at_coil"] = round((_tp2 - _coil) / (_coil - _stop), 2)
+                if _is_num(_tp3):
+                    fields["rr_tp3_at_coil"] = round((_tp3 - _coil) / (_coil - _stop), 2)
+
+        # ── DSG-18 Group B — vol / beta / structural stop selection ────────
+        fields["vol_30d_ann"] = (lk.get("vol30") or {}).get(tk)
+        fields["beta_252d"] = (lk.get("beta252") or {}).get(tk)
+        _slevels, _optimal = _structural_stop_analysis(d, _ma)
+        fields["structural_levels"] = _slevels
+        fields["optimal_stop"] = _optimal
+        fields["optimal_stop_exists"] = _optimal is not None
     except Exception:  # noqa: BLE001
         pass
     return fields
@@ -418,16 +538,25 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
             "beta_60d": (betas.get(tk) or {}).get(60),
             "dsl_stop": d.get("stop"), "dsl_risk": d.get("risk"),
             "dsl_tp_1r": d.get("tp_1r"), "dsl_tp_2r": d.get("tp_2r"), "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_atr_ratio": d.get("dsl_atr_ratio"), "atr_14d": d.get("atr14"),
+            "dsl_atr_ratio": d.get("dsl_atr_ratio"), "atr_14d": v21["atr_14d"],
             "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
             "sector_corr": v21["sector_corr"], "sector_corr_class": v21["sector_corr_class"],
             "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
             "rvol": v21["rvol"], "rr_tp1": v21["rr_tp1"], "rr_tp2": v21["rr_tp2"], "rr_tp3": v21["rr_tp3"],
-            # absolute MA ladder + fib — so the live alert engine can evaluate
-            # MA/Fib support on held names uniformly with candidates.
+            # absolute MA ladder — so the live alert engine can evaluate MA
+            # support on held names uniformly with candidates.
             "ma_20": v21["ma_20"], "ma_50": v21["ma_50"],
             "ma_100": v21["ma_100"], "ma_200": v21["ma_200"],
-            "fib": d.get("fib"),
+            # DSG-18 flat fib ladder + bracket-ready fields (same as candidates).
+            "fib_swing_low": v21["fib_swing_low"], "fib_swing_high": v21["fib_swing_high"],
+            "fib_236": v21["fib_236"], "fib_382": v21["fib_382"], "fib_500": v21["fib_500"],
+            "fib_618": v21["fib_618"], "fib_786": v21["fib_786"],
+            "coil_entry": v21["coil_entry"],
+            "max_chase_tp2": v21["max_chase_tp2"], "max_chase_tp3": v21["max_chase_tp3"],
+            "rr_tp2_at_coil": v21["rr_tp2_at_coil"], "rr_tp3_at_coil": v21["rr_tp3_at_coil"],
+            "vol_30d_ann": v21["vol_30d_ann"], "beta_252d": v21["beta_252d"],
+            "structural_levels": v21["structural_levels"],
+            "optimal_stop": v21["optimal_stop"], "optimal_stop_exists": v21["optimal_stop_exists"],
         })
     return out
 
@@ -600,8 +729,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_3r": d.get("tp_3r"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "atr_14d": d.get("atr14"),            "rr_est": d.get("rr_est"),
-            "fib": d.get("fib"),
+            "rr_est": d.get("rr_est"),
             "elder_5d": elder5.get(tk),
             "rank_explain": _rank_explain(
                 c.get("pipe_rank", 0), floor, sc_val,
@@ -647,8 +775,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_3r": d.get("tp_3r"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "atr_14d": d.get("atr14"),            "rr_est": d.get("rr_est"),
-            "fib": d.get("fib"),
+            "rr_est": d.get("rr_est"),
             "elder_5d": elder5.get(tk),
             "rank_explain": _rank_explain(
                 pe.get("pipe_rank", 0), floor, pe_sc,
@@ -699,8 +826,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_3r": d.get("tp_3r"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "atr_14d": d.get("atr14"),            "rr_est": d.get("rr_est"),
-            "fib": d.get("fib"),
+            "rr_est": d.get("rr_est"),
             "elder_5d": elder5.get(rm["ticker"]),
             "rank_explain": _rank_explain(
                 rm.get("pipe_rank", 0), floor, sc_val,
@@ -794,8 +920,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "dsl_tp_3r": d.get("tp_3r"),
                     "dsl_rr_pct": d.get("rr_pct"),
                     "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "atr_14d": d.get("atr14"),                    "rr_est": d.get("rr_est"),
-                    "fib": d.get("fib"),
+            "rr_est": d.get("rr_est"),
                     "elder_5d": elder5.get(tk),
                     "rank_explain": _rank_explain(
                         wpr, wfl, wsc, tk in pe_tickers, tk,
@@ -842,7 +967,14 @@ def build_export(shortlist: dict | None = None) -> dict:
         "dsl_atr_ratio", "atr_14d",
         "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
         "beta_30d", "beta_60d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",
-        "fib", "floor", "rank_explain",
+        "floor", "rank_explain",
+        # DSG-18 flat fib ladder + bracket-ready fields
+        "fib_swing_low", "fib_swing_high",
+        "fib_236", "fib_382", "fib_500", "fib_618", "fib_786",
+        "coil_entry", "max_chase_tp2", "max_chase_tp3",
+        "rr_tp2_at_coil", "rr_tp3_at_coil",
+        "vol_30d_ann", "beta_252d",
+        "structural_levels", "optimal_stop", "optimal_stop_exists",
     ]
     for _tier_name in ("top_picks", "edge_list", "longlist"):
         for _rec in export[_tier_name]:

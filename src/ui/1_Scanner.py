@@ -443,7 +443,30 @@ def _fib_str(fib) -> str:
         return "---"
     sup = fib.get("retracements", {}).get("0.618")
     tgt = fib.get("extensions", {}).get("1.618")
+    if sup is None and tgt is None:
+        return "---"
+    if tgt is None:                        # flat export carries supports only
+        return _fmt(sup, ".2f")
     return f"{_fmt(sup, '.2f')} / {_fmt(tgt, '.2f')}"
+
+
+def _nested_fib_from_export(r: dict) -> dict | None:
+    """Rebuild the nested fib shape the UI helpers expect from the flat export
+    fib_* fields (the export schema was flattened in DSG-18)."""
+    rets = {}
+    for _key, _suffix in (("0.236", "236"), ("0.382", "382"), ("0.5", "500"),
+                          ("0.618", "618"), ("0.786", "786")):
+        _v = r.get(f"fib_{_suffix}")
+        if _v is not None:
+            rets[_key] = _v
+    if not rets and r.get("fib_swing_low") is None:
+        return None
+    return {
+        "swing_low": r.get("fib_swing_low"),
+        "swing_high": r.get("fib_swing_high"),
+        "retracements": rets,
+        "extensions": {},
+    }
 
 
 @st.cache_data(ttl=600)
@@ -931,7 +954,7 @@ if CLOUD_MODE:
                 "rr_pct": r.get("dsl_rr_pct"),
                 "dsl_atr_ratio": r.get("dsl_atr_ratio"),
                 "rr_est": r.get("rr_est"),
-                "fib":    r.get("fib"),
+                "fib":    _nested_fib_from_export(r),
             }
             elder5[tk] = r.get("elder_5d") or []
         return betas, dsl, elder5

@@ -568,6 +568,51 @@ def test_thematic_baskets():
     assert TICKER_TO_THEMATIC["ANET"] == "AI_Infrastructure"
 
 
+def test_dsg18_bracket_fields():
+    """DSG-18: Group A derived levels, flat fib ladder, and structural stop selection."""
+    from src.data.drive_sync import _v21_record_fields, _structural_stop_analysis
+
+    d = {
+        "entry": 215.0, "stop": 205.81, "risk": 9.19,
+        "tp_1r": 226.79, "tp_2r": 237.27, "tp_3r": 247.76,
+        "be": 215.0 + 0.5 * 9.19, "atr14": 5.24, "dsl_atr_ratio": 1.75,
+        "fib": {
+            "swing_low": 200.0, "swing_high": 230.0, "swing_low_date": "2026-06-10",
+            "retracements": {"0.236": 222.9, "0.382": 218.5, "0.5": 215.0,
+                             "0.618": 211.5, "0.786": 206.4},
+            "extensions": {"1.618": 248.5},
+        },
+    }
+    lk = {"ma": {"X": {20: 212.0, 50: 202.34}}, "vol30": {"X": 0.182},
+          "beta252": {"X": 0.04}, "rvol": {}, "rs": {}, "sma": {}, "corr": {},
+          "held": set(), "thematic": {}}
+    f = _v21_record_fields("X", d, lk, {"X": "XLV"}, {"XLV": {"grade": "HOLD"}})
+
+    # Group A — pure algebra from dsl fields.
+    assert f["atr_14d"] == 5.24
+    assert f["coil_entry"] == round(205.81 + 5.24, 2)               # stop + atr
+    assert f["max_chase_tp2"] == round((237.27 + 2 * 205.81) / 3, 2)
+    assert f["rr_tp2_at_coil"] == 5.0
+
+    # Flat fib ladder replaces the nested object.
+    assert "fib" not in f
+    assert f["fib_618"] == 211.5 and f["fib_786"] == 206.4
+    assert f["fib_swing_low"] == 200.0
+
+    # Group B — vol/beta passthrough + structural stop selection.
+    assert f["vol_30d_ann"] == 0.182 and f["beta_252d"] == 0.04
+    assert f["optimal_stop_exists"] is True
+    opt = f["optimal_stop"]
+    # Optimal = tightest valid (closest to entry, atr_ratio>=1.0 AND rr_tp2>=2.0).
+    assert opt["atr_ratio"] >= 1.0 and opt["rr_tp2"] >= 2.0
+    for lvl in f["structural_levels"]:
+        assert {"type", "price", "atr_ratio", "rr_tp2", "valid"} <= set(lvl)
+
+    # Degrade cleanly when inputs are missing.
+    empty_levels, empty_opt = _structural_stop_analysis({}, None)
+    assert empty_levels == [] and empty_opt is None
+
+
 def test_thematic_dual_listing():
     """v2.0 dual-listing: a ticker can map to multiple baskets; Crypto basket exists."""
     from src.engines.srm import (
