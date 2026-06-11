@@ -61,19 +61,32 @@ GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 # method, CAPPED at the parent-GICS grade (a basket can't grade better than its
 # parent sector). NB: a basket's parent GICS may differ from a constituent's own
 # GICS sector (e.g. ANET is XLK but AI_Infrastructure's parent is XLRE).
+# Constituent lists are sized for SECTOR representativeness (the basket grades
+# from an equal-weight price index of constituents present in the panel), NOT for
+# screening. Each is a liquid, pure-play set deep enough that no single name
+# swings the grade. A ticker belongs to at most one basket (reverse map is
+# first-wins). Every constituent must be in the universe to count toward coverage.
 THEMATIC_BASKETS: dict[str, dict] = {
     "Infra_Power":       {"parent_gics_etf": "XLI",
-                          "constituents": ["VRT", "ETN", "PWR", "HUBB", "EMR", "GNRC", "JBL"]},
+                          "constituents": ["VRT", "ETN", "PWR", "HUBB", "EMR", "GNRC", "JBL",
+                                           "GEV", "POWL", "NVT", "ATKR", "VST", "CEG"]},
     "Space_eVTOL":       {"parent_gics_etf": "XLI",
-                          "constituents": ["RKLB", "ASTS", "JOBY", "LUNR", "RDW"]},
+                          "constituents": ["RKLB", "ASTS", "JOBY", "LUNR", "RDW",
+                                           "ACHR", "PL", "VOYG", "KTOS", "AVAV"]},
     "AI_Infrastructure": {"parent_gics_etf": "XLRE",
-                          "constituents": ["EQIX", "DLR", "AMT", "SMCI", "APLD", "ANET"]},
+                          "constituents": ["EQIX", "DLR", "AMT", "SMCI", "APLD", "ANET",
+                                           "NBIS", "IREN", "CORZ", "CCI", "WULF", "SBAC"]},
     "Semiconductors":    {"parent_gics_etf": "XLK",
-                          "constituents": ["NVDA", "AMD", "AVGO", "CRDO", "AMAT", "KLAC", "LRCX", "MRVL"]},
+                          "constituents": ["NVDA", "AMD", "AVGO", "MRVL", "CRDO", "AMAT",
+                                           "KLAC", "LRCX", "MU", "QCOM", "TXN", "ADI",
+                                           "NXPI", "MCHP", "ARM"]},
     "Cybersecurity":     {"parent_gics_etf": "XLK",
-                          "constituents": ["FTNT", "CRWD", "PANW", "ZS", "OKTA", "S"]},
+                          "constituents": ["CRWD", "PANW", "ZS", "FTNT", "OKTA", "S",
+                                           "CYBR", "TENB", "VRNS", "NET", "RBRK", "QLYS",
+                                           "RPD"]},
     "Defense_Tech":      {"parent_gics_etf": "XLI",
-                          "constituents": ["LMT", "RTX", "GD", "NOC", "LHX", "PLTR", "AXON", "TDG"]},
+                          "constituents": ["LMT", "RTX", "GD", "NOC", "LHX", "PLTR", "AXON",
+                                           "TDG", "HII", "LDOS", "BAH", "CW", "HEI"]},
 }
 
 # Reverse lookup: ticker -> basket name. First basket wins if a ticker appears

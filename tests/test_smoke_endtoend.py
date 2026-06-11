@@ -550,7 +550,7 @@ def test_thematic_baskets():
 
     # Baskets with no constituents in the panel degrade to NO_DATA (no crash).
     assert bg["Defense_Tech"]["grade"] == "NO_DATA"
-    assert bg["Defense_Tech"]["coverage"] == "0/8"
+    assert bg["Defense_Tech"]["coverage"] == "0/13"
 
     # Cap helper edge cases.
     assert _cap_grade("DEPLOY", "HOLD") == "HOLD"   # clamp down
