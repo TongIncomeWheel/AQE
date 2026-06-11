@@ -606,7 +606,7 @@ if srm_detail:
                 _ylo = min(min(_moms), 98) - _pad
                 _yhi = max(max(_moms), 102) + _pad
 
-                _fig, _ax = plt.subplots(figsize=(5.5, 4.2))
+                _fig, _ax = plt.subplots(figsize=(5.4, 2.1))
 
                 _ax.fill_between([100, _xhi], 100, _yhi, alpha=0.06, color="#2ca02c")
                 _ax.fill_between([_xlo, 100], 100, _yhi, alpha=0.06, color="#1f77b4")
@@ -616,7 +616,7 @@ if srm_detail:
                 _ax.axhline(100, color="#888", lw=0.7, ls="--", alpha=0.5)
                 _ax.axvline(100, color="#888", lw=0.7, ls="--", alpha=0.5)
 
-                _lbl = dict(fontsize=9, alpha=0.35, weight="bold")
+                _lbl = dict(fontsize=6, alpha=0.35, weight="bold")
                 _ax.text(_xhi - _pad * 0.15, _yhi - _pad * 0.15, "LEADING",
                          ha="right", va="top", color="#2ca02c", **_lbl)
                 _ax.text(_xlo + _pad * 0.15, _yhi - _pad * 0.15, "IMPROVING",
@@ -632,23 +632,36 @@ if srm_detail:
 
                 for _etf, _r, _m, _gate, _ddir in _pts:
                     _c = _gc.get(_gate, "#555")
-                    _ax.scatter(_r, _m, color=_c, s=70, zorder=5,
-                                edgecolors="white", linewidth=0.8)
+                    _ax.scatter(_r, _m, color=_c, s=28, zorder=5,
+                                edgecolors="white", linewidth=0.6)
                     _ax.annotate(
                         _etf + _dir_arrow.get(_ddir, ""),
                         (_r, _m), textcoords="offset points",
-                        xytext=(6, 4), fontsize=7, fontweight="bold", color=_c,
+                        xytext=(4, 3), fontsize=5, fontweight="bold", color=_c,
                     )
 
-                _ax.set_xlabel("RS-Ratio vs SPY", fontsize=8)
-                _ax.set_ylabel("RS-Momentum", fontsize=8)
-                _ax.set_title("Relative Rotation Graph", fontsize=10, fontweight="bold", pad=6)
+                _ax.set_xlabel("RS-Ratio vs SPY", fontsize=6)
+                _ax.set_ylabel("RS-Momentum", fontsize=6)
+                _ax.set_title("Relative Rotation Graph", fontsize=7, fontweight="bold", pad=3)
                 _ax.set_xlim(_xlo, _xhi)
                 _ax.set_ylim(_ylo, _yhi)
-                _ax.tick_params(labelsize=7)
-                _fig.tight_layout(pad=1.0)
-                st.pyplot(_fig, use_container_width=True)
+                _ax.tick_params(labelsize=5)
+                _fig.tight_layout(pad=0.5)
+                st.pyplot(_fig, use_container_width=False)
                 plt.close(_fig)
+
+                # Legend: ticker → sector name + asterisk meaning
+                _leg = " · ".join(
+                    f"**{_etf}** {_sector_label(_etf)}"
+                    + ("\\*" if _dir_arrow.get(_ddir, "") else "")
+                    for _etf, _r, _m, _gate, _ddir in sorted(_pts)
+                )
+                st.caption(_leg)
+                st.caption(
+                    "\\* = sector just **entering** its quadrant (a fresh rotation). "
+                    "Axes are normalised to SPY = 100: right of centre = "
+                    "outperforming, above centre = momentum improving."
+                )
 
         # ── Macro Weather + Gate Summary (right) ──
         with _macro_col:
@@ -660,6 +673,9 @@ if srm_detail:
                     ("Dollar", "UUP", "uup_direction", "uup_roc5"),
                     ("Credit", "HYG", "hyg_direction", "hyg_roc5"),
                     ("Breadth", "IWM", "iwm_direction", "iwm_roc5"),
+                    ("Gold", "GLD", "gld_direction", "gld_roc5"),
+                    ("Copper", "CPER", "cper_direction", "cper_roc5"),
+                    ("Oil", "USO", "uso_direction", "uso_roc5"),
                 ]
                 _arrows = {"RISING": "**▲**", "FALLING": "**▼**", "FLAT": "▸"}
                 _md_rows = []
@@ -673,6 +689,17 @@ if srm_detail:
                     "| :--- | :---: | ---: |\n"
                     + "\n".join(_md_rows)
                 )
+                # Copper/Gold ratio — the headline growth+rates tell (Druckenmiller)
+                _cg_dir = _mw.get("copper_gold_direction", "FLAT")
+                if _cg_dir != "FLAT":
+                    _cg_roc = _mw.get("copper_gold_roc5", 0.0)
+                    _cg_ar = _arrows.get(_cg_dir, "▸")
+                    _cg_tag = ("reflation / risk-on" if _cg_dir == "RISING"
+                               else "deflation / risk-off")
+                    st.markdown(
+                        f"**Copper/Gold:** {_cg_ar} {_cg_dir} ({_cg_roc:+.1f}%) "
+                        f"— *{_cg_tag}*"
+                    )
                 _desc = _mw.get("regime_description", "")
                 if _desc:
                     st.caption(_desc)
@@ -1271,7 +1298,9 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
         f"beta {_fmt(r.get('beta_60d'), '.2f')}",
         f"Sector: {sector_name} ({etf}) {grade} · RRG {rrg_q} · Macro {macro_f} · Gate {entry_gate}",
         f"Regime: VIX {_fmt(vix, '.1f')} ({regime_lvl}) · "
-        f"PipeRank {_fmt(r.get('pipe_rank'), '.1f')}",
+        f"PipeRank {_fmt(r.get('pipe_rank'), '.1f')}"
+        + (f"  [FIP spike-excluded, {r.get('fip_window_effective', 252)}d window]"
+           if r.get("fip_spike_excluded") else ""),
         "Advise: entry decision + size per PTRS x regime. Charter v1.9.3.",
     ]
     return "\n".join(lines)

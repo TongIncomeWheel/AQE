@@ -440,18 +440,126 @@ def test_macro_direction_and_headwind():
     assert score_d == -2
     assert roc5_d < 0
 
-    # XLK with TLT falling (score -2), UUP rising (+2), HYG falling (-2), IWM falling (-2)
-    # Sensitivity: TLT+1, UUP-1, HYG+1, IWM+1
-    # Aligned: TLT(-2)*1=-2, UUP(+2)*(-1)=-2, HYG(-2)*1=-2, IWM(-2)*1=-2
-    # Weighted: 0.30*(-2) + 0.25*(-2) + 0.25*(-2) + 0.20*(-2) = -2.0
-    hw_score, hw_flag = compute_macro_headwind("XLK", -2, +2, -2, -2)
+    # XLK headwind: every instrument aligned against tech. Sensitivity
+    # [TLT+1, UUP-1, HYG+1, IWM+1, GLD0, CPER+1, USO0] — so TLT down, UUP up,
+    # HYG down, IWM down, CPER down all push the weighted score negative.
+    hw_score, hw_flag = compute_macro_headwind("XLK", {
+        "TLT": -2, "UUP": +2, "HYG": -2, "IWM": -2,
+        "GLD": 0, "CPER": -2, "USO": 0,
+    })
     assert hw_score < -0.5
     assert hw_flag == "HEADWIND"
 
-    # XLK with tailwind: TLT rising (+2), UUP falling (-2), HYG rising (+2), IWM rising (+2)
-    tw_score, tw_flag = compute_macro_headwind("XLK", +2, -2, +2, +2)
+    # XLK tailwind: instruments aligned for tech (rates down, dollar down,
+    # credit up, breadth up, copper-growth up).
+    tw_score, tw_flag = compute_macro_headwind("XLK", {
+        "TLT": +2, "UUP": -2, "HYG": +2, "IWM": +2,
+        "GLD": 0, "CPER": +2, "USO": 0,
+    })
     assert tw_score > 0.5
     assert tw_flag == "TAILWIND"
+
+    # Druckenmiller commodity complex: XLB (Materials) is positively geared to
+    # gold, copper, and oil all at once.
+    xlb_score, xlb_flag = compute_macro_headwind("XLB", {
+        "TLT": 0, "UUP": 0, "HYG": 0, "IWM": 0,
+        "GLD": +2, "CPER": +2, "USO": +2,
+    })
+    assert xlb_score > 0
+    assert xlb_flag in ("TAILWIND", "NEUTRAL")
+
+    # Copper/gold ratio surfaces in the weather summary.
+    from src.engines.srm import compute_macro_weather, _format_macro_weather
+    rising = np.linspace(100, 130, 30)
+    falling = np.linspace(130, 100, 30)
+    weather = compute_macro_weather({
+        "TLT": rising, "UUP": rising, "HYG": rising, "IWM": rising,
+        "GLD": falling, "CPER": rising, "USO": rising,
+    })
+    assert "COPPER_GOLD" in weather
+    assert weather["COPPER_GOLD"]["direction"] == "RISING"  # copper up / gold down
+    fmt = _format_macro_weather(weather)
+    assert fmt["copper_gold_direction"] == "RISING"
+    assert "reflation" in fmt["regime_description"]
+
+
+def test_intermarket_brief():
+    """§3A.6 COB intermarket DATA block: plain numbers only, no assessment."""
+    from src.engines.srm import compute_intermarket
+
+    md = {
+        "UUP": np.linspace(27.0, 28.5, 30),   # +5.5%
+        "TLT": np.linspace(88, 93, 30),       # rising, above sma20
+        "HYG": np.linspace(78, 77.5, 30),
+        "IWM": np.linspace(210, 200, 30),
+    }
+    spy = np.linspace(420, 430, 30)
+    ib = compute_intermarket(md, spy, "2026-06-11")
+
+    # Schema: numbers only — NO signal / posture / brief fields (Druckenmiller
+    # assesses; AQE makes no call).
+    assert set(ib.keys()) == {"as_of", "uup", "tlt", "hyg", "spy_iwm"}
+    for tk in ("uup", "tlt"):
+        assert set(ib[tk].keys()) == {"close", "roc5", "roc20", "above_sma20"}
+    assert set(ib["hyg"].keys()) == {"close", "roc5", "roc20", "above_sma20", "hyg_tlt_spread"}
+    assert set(ib["spy_iwm"].keys()) == {"spy_roc20", "iwm_roc20", "spread"}
+    assert "signal" not in ib["uup"]
+    assert "macro_posture" not in ib
+    assert "druckenmiller_brief" not in ib
+
+    # Spreads are correct arithmetic.
+    assert ib["hyg"]["hyg_tlt_spread"] == round(ib["hyg"]["roc5"] - ib["tlt"]["roc5"], 2)
+    assert ib["spy_iwm"]["spread"] == round(ib["spy_iwm"]["spy_roc20"] - ib["spy_iwm"]["iwm_roc20"], 2)
+    assert ib["uup"]["roc5"] > 0  # dollar rose
+
+    # Missing instruments degrade gracefully (None close, no crash).
+    ib2 = compute_intermarket({}, None, "2026-06-11")
+    assert ib2["uup"]["close"] is None
+    assert ib2["spy_iwm"]["spread"] == 0.0
+
+
+def test_thematic_baskets():
+    """Thematic basket grading: equal-weight index, capped at parent, graceful NO_DATA."""
+    from src.engines.srm import grade_thematic_baskets, _cap_grade, GRADE_ORDER, TICKER_TO_THEMATIC
+
+    dates = pd.date_range("2025-01-01", periods=90, freq="B")
+
+    def ramp(start, daily):
+        p = [start]
+        for _ in range(89):
+            p.append(p[-1] * (1 + daily))
+        return p
+
+    # Strong Semiconductors constituents (raw DEPLOY) but parent XLK only HOLD.
+    cons = {"NVDA": 0.004, "AMD": 0.003, "AVGO": 0.0035, "CRDO": 0.005,
+            "AMAT": 0.002, "LRCX": 0.003, "MRVL": 0.0025}
+    rows = []
+    for tk, dr in cons.items():
+        for d, c in zip(dates, ramp(100, dr)):
+            rows.append({"date": d, "ticker": tk, "close": c})
+    panel = pd.DataFrame(rows)
+    sector_grades = {"XLK": {"grade": "HOLD"}, "XLRE": {"grade": "WATCH"}}
+
+    bg = grade_thematic_baskets(panel, sector_grades)
+
+    # Cap: strong basket can't exceed parent HOLD.
+    assert bg["Semiconductors"]["raw_grade"] == "DEPLOY"
+    assert bg["Semiconductors"]["grade"] == "HOLD"
+    assert bg["Semiconductors"]["parent_grade"] == "HOLD"
+    assert GRADE_ORDER[bg["Semiconductors"]["grade"]] >= GRADE_ORDER["HOLD"]
+
+    # Baskets with no constituents in the panel degrade to NO_DATA (no crash).
+    assert bg["Defense_Tech"]["grade"] == "NO_DATA"
+    assert bg["Defense_Tech"]["coverage"] == "0/8"
+
+    # Cap helper edge cases.
+    assert _cap_grade("DEPLOY", "HOLD") == "HOLD"   # clamp down
+    assert _cap_grade("WATCH", "HOLD") == "WATCH"   # already worse, unchanged
+    assert _cap_grade("DEPLOY", None) == "DEPLOY"   # no parent -> unchanged
+
+    # Reverse lookup wired.
+    assert TICKER_TO_THEMATIC["NVDA"] == "Semiconductors"
+    assert TICKER_TO_THEMATIC["ANET"] == "AI_Infrastructure"
 
 
 def test_sector_entry_gate():

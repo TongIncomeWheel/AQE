@@ -143,12 +143,16 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
 
     # 3. Pipeline Rank (needs >= 252 bars).
     pipe_rank = fip = None
+    fip_spike_excluded = False
+    fip_window_effective = 252
     if len(d) >= PIPE_RANK_MIN_BARS:
         try:
             pr_df = pipeline_rank.compute(d)
             if not pr_df.empty:
                 pipe_rank = _last(pr_df["pipe_rank"])
                 fip = _last(pr_df["fip_quality"])
+                fip_spike_excluded = bool(pr_df["fip_spike_excluded"].iloc[-1])
+                fip_window_effective = int(pr_df["fip_window_effective"].iloc[-1])
         except Exception:
             pass
 
@@ -190,6 +194,8 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
                           if "impulse_state" in elder_df else ""),
         "pipe_rank": pipe_rank,
         "fip_quality": fip,
+        "fip_spike_excluded": fip_spike_excluded,
+        "fip_window_effective": fip_window_effective,
         "beta_30d": tk_betas.get(30),
         "beta_60d": tk_betas.get(60),
         "gate_pass": gate_pass,

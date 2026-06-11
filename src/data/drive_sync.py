@@ -17,16 +17,21 @@ Each run overwrites the same filename so the Drive folder never clutters.
 from __future__ import annotations
 
 import json
-import os
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from src.analyzer.ptrs import compute_ptrs
-from src.data.sector_mapper import ETF_TO_NAME, load_sector_map
+from src.data.sector_mapper import (
+    ETF_TO_NAME,
+    SECTOR_MAP_DRIVE_FILENAME,
+    SECTOR_MAP_FOLDER_ID,
+    load_sector_map,
+)
 from src.engines.srm import (
     GICS_ETFS, get_sector_health, grade_all_sectors,
     enrich_sectors_intermarket, load_intermarket_cache,
+    TICKER_TO_THEMATIC, grade_thematic_baskets,
 )
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
@@ -37,14 +42,11 @@ from src.data.paths import OUTPUT_DIR, PROJECT_ROOT  # single source of truth
 # via the REST API. No local Drive-mount path.
 EXPORT_FILENAME = "aqe_daily_export.json"
 
-# Sector RAG map (AQE Data Schema Spec v1.0 §6) — published to a dedicated
-# Drive subfolder inside the AQE folder. Override with GDRIVE_SECTOR_FOLDER_ID.
-SECTOR_MAP_FILENAME = "aqe_sector_map.json"
-SECTOR_MAP_FOLDER_ID = (
-    os.environ.get("GDRIVE_SECTOR_FOLDER_ID")
-    or "1CKhgB_wjtZipC8TdagIGN0dINiwhk6Ul"
-)
-SECTOR_MAP_VERSION = "2026-06-08"
+# Sector RAG map (AQE Data Schema Spec v1.0 §6) — published as a SINGLE file to
+# a dedicated Drive subfolder (the round-trip source of truth; folder + filename
+# defined in sector_mapper). AQE restores it on startup, auto-sources GICS for
+# any blank, and overwrites the one file each run. Version stamps the run date.
+SECTOR_MAP_FILENAME = SECTOR_MAP_DRIVE_FILENAME
 
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
@@ -79,15 +81,16 @@ def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
     return "; ".join(parts) if parts else ""
 
 
-def _build_srm_gics() -> tuple[list[dict], dict, dict]:
+def _build_srm_gics() -> tuple[list[dict], dict, dict, dict]:
     """Full 11-sector SRM grading with trend data + DSG-18/19 intermarket.
 
-    Returns (srm_gics_array, srm_signals_dict, macro_weather_dict).
+    Returns (srm_gics_array, srm_signals_dict, macro_weather_dict, intermarket_dict).
     srm_gics: one row per sector (sorted DEPLOY→AVOID) with grade, sh_value,
               roc20, roc5, divergence, above_sma20, sh_trend, grade_trend,
               + DSG-18 RRG fields + DSG-19 macro fields + combined gate.
     srm_signals: {deploy, hold, turning, watch, avoid, blocked} ETF lists.
     macro_weather: global macro weather summary.
+    intermarket: §3A.6 COB intermarket brief (UUP/TLT/HYG/SPY-IWM + posture).
     """
     import pandas as pd
     from src.data.paths import PANEL_DAILY as panel_path
@@ -95,12 +98,12 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict]:
     empty_signals = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
 
     if not panel_path.exists():
-        return [], empty_signals, {}
+        return [], empty_signals, {}, {}
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "close"])
     etfs_plus = set(GICS_ETFS) | {"SPY"}
     panel = panel[panel["ticker"].isin(etfs_plus)]
     if panel.empty:
-        return [], empty_signals, {}
+        return [], empty_signals, {}, {}
 
     graded = grade_all_sectors(panel, trend_days=10)
 
@@ -120,6 +123,7 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict]:
                         graded[etf][k] = cached_fields[k]
 
     macro_weather = (cache or {}).get("macro_weather", {})
+    intermarket = (cache or {}).get("intermarket", {})
 
     grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 
@@ -185,7 +189,7 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict]:
         if r.get("entry_gate") == "BLOCKED" and r["etf"] not in signals["blocked"]:
             signals["blocked"].append(r["etf"])
 
-    return rows, signals, macro_weather
+    return rows, signals, macro_weather, intermarket
 
 
 def _compute_v21_lookups(sm: dict) -> dict:
@@ -265,7 +269,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
     """
     fields = {
         "gics_sector": None, "gics_sector_name": None, "gics_gate": "CHECK",
-        "sector_corr": None, "sector_corr_class": None,
+        "sector_corr": None, "sector_corr_class": None, "sector_corr_flag": None,
+        "thematic_basket": None, "thematic_grade": None,
+        "thematic_parent_gics": None, "thematic_parent_grade": None,
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
@@ -291,6 +297,17 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         corr = (lk.get("corr") or {}).get(tk)
         if corr:
             fields["sector_corr"], fields["sector_corr_class"] = corr[0], corr[1]
+            fields["sector_corr_flag"] = corr[1]  # alias for Alfred §9C
+
+        # Thematic basket (data only — gate unchanged). Parent GICS may differ
+        # from the ticker's own gics_sector (e.g. ANET XLK -> AI_Infra parent XLRE).
+        basket = TICKER_TO_THEMATIC.get(tk)
+        if basket:
+            tg = (lk.get("thematic") or {}).get(basket) or {}
+            fields["thematic_basket"] = basket
+            fields["thematic_grade"] = tg.get("grade")
+            fields["thematic_parent_gics"] = tg.get("parent_gics")
+            fields["thematic_parent_grade"] = tg.get("parent_grade")
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
@@ -416,14 +433,27 @@ def build_export(shortlist: dict | None = None) -> dict:
     sgt = ZoneInfo("Asia/Singapore")
     now_sgt = datetime.now(sgt)
 
+    # Auto-source GICS for any universe ticker missing from the map (via FMP),
+    # up front, so BOTH the export's sector_map_gaps field and the published RAG
+    # reflect the filled map — AIC should never see blanks AQE could resolve.
+    try:
+        from src.data.sector_mapper import build_sector_map, get_sector_map_gaps
+        if get_sector_map_gaps():
+            build_sector_map()
+    except Exception:  # noqa: BLE001
+        pass
+
     # Full 11-sector SRM grading + DSG-18/19 intermarket (spec §2)
-    srm_gics, srm_signals, macro_weather = _build_srm_gics()
+    srm_gics, srm_signals, macro_weather, intermarket = _build_srm_gics()
 
     export: dict = {
         "date": sl.get("date", ""),
         "exported_at": now_sgt.strftime("%Y-%m-%d %H:%M:%S SGT"),
         "market": "US equities — close-of-day scan",
         "regime": sl.get("regime", {}),
+        # §3A.6 COB intermarket brief — Druckenmiller's premarket opener.
+        # Top-level, between regime and srm (per Alfred 11 Jun spec).
+        "intermarket": intermarket,
         # Full SRM schema — combined into this one file (no separate SRM file).
         # `srm` is the list the AIC reader + protocols consume; `srm_gics` is
         # kept as an alias for existing callers.
@@ -474,7 +504,24 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- AQE v2.1 enrichment (rvol, rs_spy, sma_distance, sector_corr) ----
     _v21_lk = _compute_v21_lookups(sm)
     export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
-    export["sector_map_version"] = SECTOR_MAP_VERSION
+
+    # ---- Thematic basket grades (SRM v3.0) — pure panel math, 0 FMP calls ----
+    # Graded from constituents' equal-weight index, capped at parent GICS grade.
+    # Exported as DATA (per-record + a top-level block); the gate is unchanged.
+    try:
+        import pandas as _pd
+        from src.data.paths import PANEL_DAILY as _pdaily
+        if _pdaily.exists():
+            _panel_tb = _pd.read_parquet(_pdaily, columns=["date", "ticker", "close"])
+            _panel_tb["date"] = _pd.to_datetime(_panel_tb["date"]).dt.normalize()
+            _v21_lk["thematic"] = grade_thematic_baskets(_panel_tb, sector_grades)
+        else:
+            _v21_lk["thematic"] = {}
+    except Exception:  # noqa: BLE001
+        _v21_lk["thematic"] = {}
+    export["thematic_baskets"] = _v21_lk["thematic"]
+    from datetime import date as _date
+    export["sector_map_version"] = _date.today().isoformat()
     try:
         from src.data.universe import load_universe
         _univ = load_universe(include_benchmark=False)
@@ -518,6 +565,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             "sc_momentum_raw": round(c.get("sc_momentum_raw", sc_val), 1),
             "ptrs": round(c.get("ptrs", 0), 1),
             "pipe_rank": round(c.get("pipe_rank", 0), 1),
+            "fip_spike_excluded": c.get("fip_spike_excluded", False),
+            "fip_window_effective": c.get("fip_window_effective", 252),
             "floor": floor,
             "beta_30d": (betas.get(tk) or {}).get(30),
             "beta_60d": (betas.get(tk) or {}).get(60),
@@ -563,6 +612,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             "sc_momentum_raw": round(pe_raw, 1),
             "ptrs": _ptrs(pe_sc, tk),
             "pipe_rank": round(pe.get("pipe_rank", 0), 1),
+            "fip_spike_excluded": pe.get("fip_spike_excluded", False),
+            "fip_window_effective": pe.get("fip_window_effective", 252),
             "floor": floor,
             "beta_30d": (betas.get(tk) or {}).get(30),
             "beta_60d": (betas.get(tk) or {}).get(60),
@@ -613,6 +664,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             "sc_momentum_raw": round(rm.get("sc_momentum_raw", sc_val), 1),
             "ptrs": _ptrs(sc_val, rm["ticker"]),
             "pipe_rank": round(rm.get("pipe_rank", 0), 1),
+            "fip_spike_excluded": rm.get("fip_spike_excluded", False),
+            "fip_window_effective": rm.get("fip_window_effective", 252),
             "floor": floor,
             "beta_30d": (betas.get(rm["ticker"]) or {}).get(30),
             "beta_60d": (betas.get(rm["ticker"]) or {}).get(60),
@@ -704,6 +757,8 @@ def build_export(shortlist: dict | None = None) -> dict:
                     ),
                     "ptrs": round(float(wr["_ptrs"]), 1),
                     "pipe_rank": round(wpr, 1),
+                    "fip_spike_excluded": bool(wr.get("fip_spike_excluded", False)),
+                    "fip_window_effective": int(wr.get("fip_window_effective", 252)),
                     "floor": wfl,
                     "beta_30d": (betas.get(tk) or {}).get(30),
             "beta_60d": (betas.get(tk) or {}).get(60),
@@ -821,7 +876,23 @@ def _build_sector_map_rich() -> dict:
 
     {version, ticker_count, tickers: {tk: {gics_etf, gics_sector_name,
     thematic_basket, source, confirmed_date}}, gaps}.
+
+    AQE auto-sources GICS for any universe ticker missing from the map (via
+    FMP profiles) BEFORE serializing, so the published RAG has no blanks — the
+    user does not curate by hand; AQE fills the gaps.
     """
+    from datetime import date as _date
+    _ver = _date.today().isoformat()
+
+    # Auto-fill blanks: resolve GICS for unmapped universe tickers via FMP
+    # (incremental — only the gaps are fetched). Best-effort.
+    try:
+        from src.data.sector_mapper import build_sector_map, get_sector_map_gaps
+        if get_sector_map_gaps():
+            build_sector_map()
+    except Exception:  # noqa: BLE001
+        pass
+
     sm = load_sector_map()
     try:
         from src.data.universe import load_universe
@@ -833,23 +904,24 @@ def _build_sector_map_rich() -> dict:
     gaps: list[str] = []
     for t in sorted(set(univ) | set(sm.keys())):
         etf = sm.get(t)
+        basket = TICKER_TO_THEMATIC.get(t)
         if etf:
             tickers[t] = {
                 "gics_etf": etf,
                 "gics_sector_name": ETF_TO_NAME.get(etf),
-                "thematic_basket": None,
+                "thematic_basket": basket,
                 "source": "AUTO",
-                "confirmed_date": SECTOR_MAP_VERSION,
+                "confirmed_date": _ver,
             }
         else:
             tickers[t] = {
                 "gics_etf": None, "gics_sector_name": None,
-                "thematic_basket": None, "source": "UNKNOWN",
+                "thematic_basket": basket, "source": "UNKNOWN",
                 "confirmed_date": None,
             }
             gaps.append(t)
     return {
-        "version": SECTOR_MAP_VERSION,
+        "version": _ver,
         "ticker_count": len(tickers),
         "tickers": tickers,
         "gaps": gaps,
@@ -902,6 +974,13 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
         drive_results.append({"file": SECTOR_MAP_FILENAME, "target": "SectorMap", **rs})
         if rs.get("ok"):
             written.append(f"gdrive:{SECTOR_MAP_FILENAME}")
+            # Keep the dedicated sector folder to a single file — trash any
+            # duplicate/stale copies so AIC always reads exactly one RAG.
+            try:
+                from src.data import gdrive_uploader
+                gdrive_uploader.keep_only_file(SECTOR_MAP_FOLDER_ID, rs.get("file_id"))
+            except Exception:                                                   # noqa: BLE001
+                pass
     except Exception as exc:                                                    # noqa: BLE001
         drive_results.append({"file": SECTOR_MAP_FILENAME, "ok": False, "reason": str(exc)})
 

@@ -51,6 +51,38 @@ GRADE_TO_SH = {
     "AVOID": -8,
 }
 
+# Best -> worst ordering for grade comparisons (lower = better).
+GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
+
+# ── Thematic baskets (SRM v3.0 canonical) ───────────────────────────────
+# Each ticker carries its GICS classification AND a thematic basket whose
+# catalyst is its business reality (AI infra, space, defense, ...). The basket
+# is graded from its constituents' equal-weight price index using the same SRM
+# method, CAPPED at the parent-GICS grade (a basket can't grade better than its
+# parent sector). NB: a basket's parent GICS may differ from a constituent's own
+# GICS sector (e.g. ANET is XLK but AI_Infrastructure's parent is XLRE).
+THEMATIC_BASKETS: dict[str, dict] = {
+    "Infra_Power":       {"parent_gics_etf": "XLI",
+                          "constituents": ["VRT", "ETN", "PWR", "HUBB", "EMR", "GNRC", "JBL"]},
+    "Space_eVTOL":       {"parent_gics_etf": "XLI",
+                          "constituents": ["RKLB", "ASTS", "JOBY", "LUNR", "RDW"]},
+    "AI_Infrastructure": {"parent_gics_etf": "XLRE",
+                          "constituents": ["EQIX", "DLR", "AMT", "SMCI", "APLD", "ANET"]},
+    "Semiconductors":    {"parent_gics_etf": "XLK",
+                          "constituents": ["NVDA", "AMD", "AVGO", "CRDO", "AMAT", "KLAC", "LRCX", "MRVL"]},
+    "Cybersecurity":     {"parent_gics_etf": "XLK",
+                          "constituents": ["FTNT", "CRWD", "PANW", "ZS", "OKTA", "S"]},
+    "Defense_Tech":      {"parent_gics_etf": "XLI",
+                          "constituents": ["LMT", "RTX", "GD", "NOC", "LHX", "PLTR", "AXON", "TDG"]},
+}
+
+# Reverse lookup: ticker -> basket name. First basket wins if a ticker appears
+# in two (none do today).
+TICKER_TO_THEMATIC: dict[str, str] = {}
+for _bname, _binfo in THEMATIC_BASKETS.items():
+    for _tk in _binfo["constituents"]:
+        TICKER_TO_THEMATIC.setdefault(_tk, _bname)
+
 # Action-state labels: each encodes the market condition AND the implied posture
 # for a momentum book, so Alfred/committee read a directive, not a raw signal.
 # Derived from the two signals SRM already computes — price vs 20D SMA (trend
@@ -136,6 +168,72 @@ def grade_all_sectors(panel_daily: pd.DataFrame, trend_days: int = 0) -> dict[st
             info = {**info, "sh_trend": sh_trend, "grade_trend": grade_trend}
         results[etf] = info
     return results
+
+
+def _cap_grade(thematic: str, parent: str | None) -> str:
+    """Clamp a thematic grade so it can't be BETTER than its parent GICS grade."""
+    if not parent or parent not in GRADE_ORDER or thematic not in GRADE_ORDER:
+        return thematic
+    # Higher order = worse. If thematic is better (lower order) than parent,
+    # clamp it down to the parent grade.
+    return thematic if GRADE_ORDER[thematic] >= GRADE_ORDER[parent] else parent
+
+
+def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
+                           min_constituents: int = 2) -> dict[str, dict]:
+    """Grade each thematic basket from its constituents' equal-weight price index.
+
+    Reuses grade_sector_etf on a normalized equal-weight index of the
+    constituents present in the panel, then CAPS the result at the parent-GICS
+    grade. Degrades gracefully: a basket with fewer than min_constituents bars
+    present (e.g. constituents not yet in the universe) grades NO_DATA.
+
+    Returns {basket: {grade, raw_grade, parent_gics, parent_grade, roc20, roc5,
+    above_sma20, coverage, constituents_used}}. Pure panel math — 0 FMP calls.
+    """
+    out: dict[str, dict] = {}
+    try:
+        piv = panel_daily.pivot_table(index="date", columns="ticker", values="close").sort_index()
+    except Exception:  # noqa: BLE001
+        piv = None
+
+    for name, info in THEMATIC_BASKETS.items():
+        parent = info["parent_gics_etf"]
+        cons = info["constituents"]
+        parent_grade = (sector_grades.get(parent) or {}).get("grade")
+        present = [t for t in cons if piv is not None and t in piv.columns]
+
+        sub = piv[present].tail(80) if present else None
+        if sub is None or sub.shape[1] < min_constituents or len(sub) < 25:
+            out[name] = {
+                "grade": "NO_DATA", "raw_grade": "NO_DATA",
+                "parent_gics": parent, "parent_grade": parent_grade,
+                "roc20": None, "roc5": None, "above_sma20": None,
+                "coverage": f"{len(present)}/{len(cons)}",
+                "constituents_used": present,
+            }
+            continue
+
+        # Equal-weight index: rebase each constituent to its first valid value,
+        # then average across columns (skipna so staggered listings don't break it).
+        base = sub.bfill().iloc[0]
+        norm = sub.divide(base.where(base != 0))
+        idx = norm.mean(axis=1, skipna=True).dropna()
+        basket_df = pd.DataFrame({"date": idx.index, "close": idx.to_numpy()})
+
+        g = grade_sector_etf(basket_df)
+        capped = _cap_grade(g["grade"], parent_grade)
+        out[name] = {
+            "grade": capped,
+            "raw_grade": g["grade"],
+            "parent_gics": parent,
+            "parent_grade": parent_grade,
+            "roc20": g.get("roc20"), "roc5": g.get("roc5"),
+            "above_sma20": g.get("above_sma20"),
+            "coverage": f"{len(present)}/{len(cons)}",
+            "constituents_used": present,
+        }
+    return out
 
 
 def get_sector_health(ticker: str, sector_grades: dict[str, dict]) -> int:
@@ -283,23 +381,32 @@ def rrg_grade_override(grade: str, quadrant: str) -> str | None:
 # DSG-19 — Risk Weather Macro Overlay
 # ═══════════════════════════════════════════════════════════════════════
 
-MACRO_INSTRUMENTS = ["TLT", "UUP", "HYG", "IWM"]
+MACRO_INSTRUMENTS = ["TLT", "UUP", "HYG", "IWM", "GLD", "CPER", "USO"]
 
+# Sensitivity sign per sector: when the instrument RISES, does it help (+1),
+# hurt (-1), or not matter (0) for the sector?  Columns are ordered to match
+# MACRO_INSTRUMENTS: [TLT, UUP, HYG, IWM, GLD, CPER, USO].
+#   GLD  — gold up = risk-off / debasement hedge (helps miners, hurts banks)
+#   CPER — copper up = "Dr. Copper" global-growth/reflation (helps cyclicals,
+#          hurts defensives via rotation + higher yields)
+#   USO  — oil up = energy strength but a consumer/transport cost squeeze
 SENSITIVITY = {
-    "XLK":  [+1, -1, +1, +1],
-    "XLC":  [+1, -1, +1, +1],
-    "XLY":  [+1,  0, +1, +1],
-    "XLF":  [ 0, +1, +1,  0],
-    "XLI":  [ 0,  0, +1, +1],
-    "XLB":  [+1, -1, +1, +1],
-    "XLE":  [ 0, -1,  0,  0],
-    "XLV":  [+1,  0,  0,  0],
-    "XLP":  [+1,  0,  0, -1],
-    "XLRE": [+1, -1,  0,  0],
-    "XLU":  [+1,  0,  0, -1],
+    "XLK":  [+1, -1, +1, +1,  0, +1,  0],
+    "XLC":  [+1, -1, +1, +1,  0, +1,  0],
+    "XLY":  [+1,  0, +1, +1,  0, +1, -1],
+    "XLF":  [ 0, +1, +1,  0, -1, +1,  0],
+    "XLI":  [ 0,  0, +1, +1,  0, +1, -1],
+    "XLB":  [+1, -1, +1, +1, +1, +1, +1],
+    "XLE":  [ 0, -1,  0,  0,  0, +1, +1],
+    "XLV":  [+1,  0,  0,  0,  0,  0,  0],
+    "XLP":  [+1,  0,  0, -1,  0, -1,  0],
+    "XLRE": [+1, -1,  0,  0,  0,  0,  0],
+    "XLU":  [+1,  0,  0, -1,  0, -1,  0],
 }
 
-MACRO_WEIGHTS = [0.30, 0.25, 0.25, 0.20]
+# Original four stay dominant (0.70); the commodity complex adds 0.30.
+# Total stays 1.0 so the TAILWIND/CAUTION/HEADWIND thresholds keep their scale.
+MACRO_WEIGHTS = [0.22, 0.15, 0.18, 0.15, 0.10, 0.12, 0.08]
 
 
 def macro_direction_score(closes: np.ndarray) -> tuple[int, float, float]:
@@ -327,15 +434,16 @@ def macro_direction_score(closes: np.ndarray) -> tuple[int, float, float]:
     return score, round(float(roc5), 2), round(float(roc20), 2)
 
 
-def compute_macro_headwind(etf: str, tlt_score: int, uup_score: int,
-                           hyg_score: int, iwm_score: int) -> tuple[float, str]:
+def compute_macro_headwind(etf: str, macro_scores: dict[str, int]) -> tuple[float, str]:
     """Weighted macro headwind score + flag for a sector ETF.
 
+    macro_scores: {instrument: direction_score} for the MACRO_INSTRUMENTS
+    (TLT/UUP/HYG/IWM/GLD/CPER/USO), each in [-2, +2].
     Score range depends on sector sensitivity (roughly -2 to +2).
     Flag: TAILWIND / NEUTRAL / CAUTION / HEADWIND.
     """
-    sens = SENSITIVITY.get(etf, [0, 0, 0, 0])
-    scores = [tlt_score, uup_score, hyg_score, iwm_score]
+    sens = SENSITIVITY.get(etf, [0] * len(MACRO_INSTRUMENTS))
+    scores = [macro_scores.get(inst, 0) for inst in MACRO_INSTRUMENTS]
     raw = sum(w * s * se for w, s, se in zip(MACRO_WEIGHTS, scores, sens))
     score = round(raw, 2)
 
@@ -368,6 +476,31 @@ def compute_macro_weather(macro_data: dict[str, np.ndarray]) -> dict:
             direction = "FLAT"
         weather[inst] = {"score": score, "roc5": roc5, "roc20": roc20, "direction": direction}
 
+    # Copper/Gold ratio — the Druckenmiller/Gundlach growth+rates tell.
+    # Rising = reflation / risk-on (front-runs higher 10y yields);
+    # falling = deflation / risk-off.
+    gld = macro_data.get("GLD")
+    cper = macro_data.get("CPER")
+    if (gld is not None and cper is not None
+            and len(gld) >= 21 and len(cper) >= 21):
+        n = min(len(gld), len(cper))
+        ratio = np.asarray(cper[-n:], dtype=float) / np.where(
+            np.asarray(gld[-n:], dtype=float) == 0, np.nan, np.asarray(gld[-n:], dtype=float)
+        )
+        ratio = ratio[~np.isnan(ratio)]
+        if len(ratio) >= 21:
+            cg_score, cg_roc5, cg_roc20 = macro_direction_score(ratio)
+            if cg_roc5 > 0.1:
+                cg_dir = "RISING"
+            elif cg_roc5 < -0.1:
+                cg_dir = "FALLING"
+            else:
+                cg_dir = "FLAT"
+            weather["COPPER_GOLD"] = {
+                "score": cg_score, "roc5": cg_roc5, "roc20": cg_roc20,
+                "direction": cg_dir,
+            }
+
     return weather
 
 
@@ -379,6 +512,10 @@ def _format_macro_weather(weather_raw: dict) -> dict:
     uup = weather_raw.get("UUP", {})
     hyg = weather_raw.get("HYG", {})
     iwm = weather_raw.get("IWM", {})
+    gld = weather_raw.get("GLD", {})
+    cper = weather_raw.get("CPER", {})
+    uso = weather_raw.get("USO", {})
+    cg = weather_raw.get("COPPER_GOLD", {})
 
     parts: list[str] = []
     if tlt.get("direction") == "FALLING":
@@ -397,6 +534,23 @@ def _format_macro_weather(weather_raw: dict) -> dict:
         parts.append("narrow tape")
     elif iwm.get("direction") == "RISING":
         parts.append("broad tape")
+    if gld.get("direction") == "RISING":
+        parts.append("gold bid")
+    elif gld.get("direction") == "FALLING":
+        parts.append("gold soft")
+    if cper.get("direction") == "RISING":
+        parts.append("copper firm (growth)")
+    elif cper.get("direction") == "FALLING":
+        parts.append("copper weak (slowing)")
+    if uso.get("direction") == "RISING":
+        parts.append("oil rising (inflation)")
+    elif uso.get("direction") == "FALLING":
+        parts.append("oil easing")
+    # The headline Druckenmiller tell goes last, as the regime verdict.
+    if cg.get("direction") == "RISING":
+        parts.append("copper/gold reflation tilt (risk-on)")
+    elif cg.get("direction") == "FALLING":
+        parts.append("copper/gold deflation tilt (risk-off)")
 
     desc = ", ".join(parts) + "." if parts else "No strong macro signal."
 
@@ -409,8 +563,74 @@ def _format_macro_weather(weather_raw: dict) -> dict:
         "hyg_roc5": hyg.get("roc5", 0.0),
         "iwm_direction": iwm.get("direction", "FLAT"),
         "iwm_roc5": iwm.get("roc5", 0.0),
+        "gld_direction": gld.get("direction", "FLAT"),
+        "gld_roc5": gld.get("roc5", 0.0),
+        "cper_direction": cper.get("direction", "FLAT"),
+        "cper_roc5": cper.get("roc5", 0.0),
+        "uso_direction": uso.get("direction", "FLAT"),
+        "uso_roc5": uso.get("roc5", 0.0),
+        "copper_gold_direction": cg.get("direction", "FLAT"),
+        "copper_gold_roc5": cg.get("roc5", 0.0),
+        "copper_gold_roc20": cg.get("roc20", 0.0),
         "regime_description": desc,
         "snapshot_date": str(_date.today()),
+    }
+
+
+# ── §3A.6 Intermarket brief (COB-driven Druckenmiller opener) ───────────
+
+def _intermarket_instrument(closes) -> dict | None:
+    """close / roc5 / roc20 / above_sma20 from a COB close array (>=21 bars)."""
+    if closes is None:
+        return None
+    arr = np.asarray(closes, dtype=float)
+    if len(arr) < 21:
+        return None
+    close = float(arr[-1])
+    roc5 = (close / arr[-6] - 1) * 100 if arr[-6] != 0 else 0.0
+    roc20 = (close / arr[-21] - 1) * 100 if arr[-21] != 0 else 0.0
+    sma20 = float(np.mean(arr[-20:]))
+    return {
+        "close": round(close, 2),
+        "roc5": round(float(roc5), 2),
+        "roc20": round(float(roc20), 2),
+        "above_sma20": bool(close > sma20),
+    }
+
+
+def compute_intermarket(macro_data: dict[str, np.ndarray],
+                        spy_closes, as_of: str) -> dict:
+    """Build the §3A.6 intermarket brief from COB closes.
+
+    Inputs are the EOD close arrays already fetched for the macro overlay
+    (UUP/TLT/HYG/IWM) plus SPY from the panel. 30-bar lookback. No live pull.
+    AQE emits raw numbers (close, ROC5, ROC20, above_sma20 + the two spreads);
+    it makes NO assessment — Druckenmiller reads these and provides the call.
+    """
+    _empty = {"close": None, "roc5": 0.0, "roc20": 0.0, "above_sma20": None}
+    uup = _intermarket_instrument(macro_data.get("UUP")) or dict(_empty)
+    tlt = _intermarket_instrument(macro_data.get("TLT")) or dict(_empty)
+    hyg = _intermarket_instrument(macro_data.get("HYG")) or dict(_empty)
+    iwm = _intermarket_instrument(macro_data.get("IWM"))
+    spy = _intermarket_instrument(spy_closes)
+
+    # Spreads are arithmetic conveniences, not judgments.
+    hyg_tlt_spread = (round(hyg["roc5"] - tlt["roc5"], 2)
+                      if hyg["close"] is not None and tlt["close"] is not None else 0.0)
+    spy_roc20 = spy["roc20"] if spy else 0.0
+    iwm_roc20 = iwm["roc20"] if iwm else 0.0
+    spy_iwm_spread = round(spy_roc20 - iwm_roc20, 2) if (spy and iwm) else 0.0
+
+    return {
+        "as_of": as_of,
+        "uup": uup,
+        "tlt": tlt,
+        "hyg": {**hyg, "hyg_tlt_spread": hyg_tlt_spread},
+        "spy_iwm": {
+            "spy_roc20": round(float(spy_roc20), 2),
+            "iwm_roc20": round(float(iwm_roc20), 2),
+            "spread": spy_iwm_spread,
+        },
     }
 
 
@@ -447,7 +667,9 @@ def enrich_sectors_intermarket(
     """Add DSG-18 RRG + DSG-19 macro overlay to sector_grades (in-place).
 
     panel must contain SPY + sector ETF rows with [date, ticker, close].
-    macro_data: {instrument: closes_array} for TLT/UUP/HYG/IWM (optional).
+    macro_data: {instrument: closes_array} for TLT/UUP/HYG/IWM/GLD/CPER/USO
+    (optional). GLD/CPER/USO + the copper/gold ratio are the Druckenmiller
+    commodity-complex overlay.
     """
     spy_data = panel.loc[panel["ticker"] == "SPY"].sort_values("date")
     if spy_data.empty:
@@ -460,11 +682,6 @@ def enrich_sectors_intermarket(
         macro_weather_raw = compute_macro_weather(macro_data)
         for inst in MACRO_INSTRUMENTS:
             macro_scores[inst] = macro_weather_raw.get(inst, {}).get("score", 0)
-
-    tlt_sc = macro_scores.get("TLT", 0)
-    uup_sc = macro_scores.get("UUP", 0)
-    hyg_sc = macro_scores.get("HYG", 0)
-    iwm_sc = macro_scores.get("IWM", 0)
 
     for etf in GICS_ETFS:
         info = sector_grades.get(etf)
@@ -484,9 +701,7 @@ def enrich_sectors_intermarket(
         )
 
         if macro_data:
-            hw_score, hw_flag = compute_macro_headwind(
-                etf, tlt_sc, uup_sc, hyg_sc, iwm_sc
-            )
+            hw_score, hw_flag = compute_macro_headwind(etf, macro_scores)
             info["macro_headwind_score"] = hw_score
             info["macro_headwind_flag"] = hw_flag
         else:
@@ -511,10 +726,14 @@ def save_intermarket_cache(sector_grades: dict[str, dict], run_date) -> None:
     from pathlib import Path
 
     cache_path = Path(__file__).resolve().parents[2] / "data" / "srm_intermarket_cache.json"
-    cache: dict = {"date": str(run_date), "macro_weather": {}, "sectors": {}}
+    cache: dict = {"date": str(run_date), "macro_weather": {},
+                   "intermarket": {}, "sectors": {}}
     mw = sector_grades.get("_macro_weather")
     if mw:
         cache["macro_weather"] = mw
+    im = sector_grades.get("_intermarket")
+    if im:
+        cache["intermarket"] = im
     for etf in GICS_ETFS:
         info = sector_grades.get(etf)
         if info is None:

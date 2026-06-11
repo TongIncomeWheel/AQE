@@ -73,6 +73,17 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive universe restore: {exc}")
 
+    # Step 0a2: Restore the sector RAG from Drive (round-trip source of truth)
+    # so an ephemeral container reflects the last published map and doesn't
+    # re-query FMP for GICS already resolved on a prior run.
+    try:
+        from src.data.sector_mapper import restore_sector_map_from_drive
+        _n_sm = restore_sector_map_from_drive()
+        if _n_sm:
+            print(f"[daily] Step 0a2: Restored {_n_sm} sector mappings from Drive")
+    except Exception as exc:
+        print(f"  [WARN] Drive sector-map restore: {exc}")
+
     # Step 0b: Pull the latest held-positions journal (PTJ) from Drive so the
     # export can flag held names and attach the engine's read on them.
     try:
@@ -138,10 +149,10 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     t0 = time.time()
     ranked = _pipeline_rank_screen(panel, run_date)
     print(f"  {len(ranked)} tickers ranked in {time.time() - t0:.1f}s")
-    print(f"  {sum(1 for _, r, _ in ranked if r >= PIPE_RANK_CUTOFF)} pass cutoff ({PIPE_RANK_CUTOFF})")
+    print(f"  {sum(1 for _, r, *_ in ranked if r >= PIPE_RANK_CUTOFF)} pass cutoff ({PIPE_RANK_CUTOFF})")
 
-    rank_lookup = {t: (r, fip) for t, r, fip in ranked}
-    top_tickers = [t for t, r, _ in ranked if r >= PIPE_RANK_CUTOFF][:STAGE2_MAX]
+    rank_lookup = {t: (r, fip, excl, win) for t, r, fip, excl, win in ranked}
+    top_tickers = [t for t, r, *_ in ranked if r >= PIPE_RANK_CUTOFF][:STAGE2_MAX]
 
     # Step 3: Full scoring for top candidates
     print(f"[daily] Step 3: Full scoring for top {len(top_tickers)} candidates...")
@@ -234,9 +245,11 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     shortlist_tickers = {c["ticker"] for c in shortlist}
     for rm in recipe_matches:
         rm["on_shortlist"] = rm["ticker"] in shortlist_tickers
-        pr, fip = rank_lookup.get(rm["ticker"], (0.0, 0.0))
+        pr, fip, excl, win = rank_lookup.get(rm["ticker"], (0.0, 0.0, False, 252))
         rm["pipe_rank"] = round(pr, 1)
         rm["fip_quality"] = round(fip, 1)
+        rm["fip_spike_excluded"] = excl
+        rm["fip_window_effective"] = win
     # Sort by Pipeline Rank (OOS IC=+0.030), then Floor (OOS IC=+0.005)
     def _floor(rm):
         e = rm.get("engines", {})
@@ -305,8 +318,8 @@ def _incremental_pull(run_date: date) -> None:
         print(f"  [WARN] Panel pull had errors: {exc}")
 
 
-def _pipeline_rank_screen(panel: pd.DataFrame, run_date: date) -> list[tuple[str, float, float]]:
-    """Run Pipeline Rank on all tickers, return sorted (ticker, rank, fip_quality) tuples."""
+def _pipeline_rank_screen(panel: pd.DataFrame, run_date: date) -> list[tuple[str, float, float, bool, int]]:
+    """Run Pipeline Rank on all tickers, return sorted (ticker, rank, fip_quality, fip_spike_excluded, fip_window_effective) tuples."""
     results = []
     tickers = [t for t in panel["ticker"].unique() if t not in GICS_ETFS and t != "SPY"]
 
@@ -320,8 +333,10 @@ def _pipeline_rank_screen(panel: pd.DataFrame, run_date: date) -> list[tuple[str
                 continue
             last_rank = pr["pipe_rank"].iloc[-1]
             last_fip = pr["fip_quality"].iloc[-1]
+            spike_excl = bool(pr["fip_spike_excluded"].iloc[-1])
+            fip_win = int(pr["fip_window_effective"].iloc[-1])
             if pd.notna(last_rank):
-                results.append((ticker, float(last_rank), float(last_fip) if pd.notna(last_fip) else 0.0))
+                results.append((ticker, float(last_rank), float(last_fip) if pd.notna(last_fip) else 0.0, spike_excl, fip_win))
         except Exception:
             continue
 
@@ -455,6 +470,19 @@ def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
         print(f"  [WARN] Macro instrument fetch: {exc}")
 
     enrich_sectors_intermarket(sector_grades, panel, macro_data or None)
+
+    # §3A.6 intermarket brief — reuse the COB closes already fetched (0 new
+    # FMP calls) + SPY from the panel. Stashed for the export + cache.
+    try:
+        from src.engines.srm import compute_intermarket
+        spy_rows = panel.loc[panel["ticker"] == "SPY"].sort_values("date")
+        spy_closes = spy_rows["close"].astype(float).to_numpy() if not spy_rows.empty else None
+        sector_grades["_intermarket"] = compute_intermarket(
+            macro_data, spy_closes, str(run_date or date.today())
+        )
+    except Exception as exc:
+        print(f"  [WARN] Intermarket brief: {exc}")
+
     save_intermarket_cache(sector_grades, run_date or date.today())
 
     return sector_grades
@@ -920,6 +948,8 @@ def _build_output(
             "disposition": c.get("disposition", "REJECT"),
             "mp_state": c.get("mp_state", ""),
             "pipe_rank": round(c.get("pipe_rank", 0), 1),
+            "fip_spike_excluded": c.get("fip_spike_excluded", False),
+            "fip_window_effective": c.get("fip_window_effective", 252),
             "engines": {
                 "flow": round(c.get("flow_100", 0), 1),
                 "energy": round(c.get("energy_100", 0), 1),
@@ -1007,6 +1037,8 @@ def _build_output(
             "sc_momentum_raw": round(rm.get("sc_momentum_raw", rm.get("sc_momentum", 0)), 1),
             "pipe_rank": rm.get("pipe_rank", 0),
             "fip_quality": rm.get("fip_quality", 0),
+            "fip_spike_excluded": rm.get("fip_spike_excluded", False),
+            "fip_window_effective": rm.get("fip_window_effective", 252),
             "engines": {
                 "flow": round(rm.get("flow_100", 0), 1),
                 "energy": round(rm.get("energy_100", 0), 1),
@@ -1040,13 +1072,15 @@ def _build_output(
             ent = round(close, 2)
             stp = round(ent - 2 * a14, 2) if a14 > 0 else 0
             rsz = round(ent - stp, 2) if stp > 0 else 0
-            pr, fip = _rl.get(pm["ticker"], (0.0, 0.0))
+            pr, fip, excl, win = _rl.get(pm["ticker"], (0.0, 0.0, False, 252))
             recipe_out.append({
                 "ticker": pm["ticker"],
                 "sc_momentum": round(pm.get("sc_momentum", 0), 1),
                 "sc_momentum_raw": round(pm.get("sc_momentum_raw", pm.get("sc_momentum", 0)), 1),
                 "pipe_rank": round(pr, 1),
                 "fip_quality": round(fip, 1),
+                "fip_spike_excluded": excl,
+                "fip_window_effective": win,
                 "engines": {
                     "flow": round(pm.get("flow_100", 0), 1),
                     "energy": round(pm.get("energy_100", 0), 1),

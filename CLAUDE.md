@@ -96,7 +96,11 @@ the committee decision externally (data ping → human → AIC).
 - `elder.py` — Elder Impulse engine
 - `bq.py` — Base Quality sub-engine
 - `k39.py` — K39 gate (weekly confirmation)
-- `pipeline_rank.py` — Pipeline Rank v1.0 (12mo return, ADX, RSI, vol, MA alignment)
+- `pipeline_rank.py` — Pipeline Rank v1.0 (12mo return, ADX, RSI, vol, MA alignment).
+  **DSG-20 FIP Spike Exclusion**: prior speculative spikes (>30% 21-day return, >126
+  bars ago, confirmed by ≥30% drawdown) are excluded from the FIP 252-bar window.
+  Exports `fip_spike_excluded` (bool) and `fip_window_effective` (int) on every record.
+  The 5-day recent spike penalty (>8% → -30) is unchanged.
 - `scoring.py` — SC_MOMENTUM + SC_POSITION composites with gate enforcement
 - `srm.py` — Sector Rotation Model (GICS ETF grading: DEPLOY/HOLD/TURNING/WATCH/AVOID).
   Also emits `trend_state` — a directive action-state label alongside the grade,
@@ -107,12 +111,25 @@ the committee decision externally (data ping → human → AIC).
   **DSG-18 RRG layer**: RS-Ratio and RS-Momentum vs SPY (42-bar window) → quadrant
   (LEADING/IMPROVING/WEAKENING/LAGGING) + direction (ENTERING/DEEPENING/EXITING/STABLE).
   Grade override rules: DEPLOY+LAGGING → AVOID_FLAG, HOLD+LAGGING → AVOID_FLAG, etc.
-  **DSG-19 Macro overlay**: TLT/UUP/HYG/IWM direction scores × sector sensitivity
-  matrix → `macro_headwind_score`/`macro_headwind_flag` (TAILWIND/NEUTRAL/CAUTION/HEADWIND).
+  **DSG-19 Macro overlay**: TLT/UUP/HYG/IWM **+ GLD/CPER/USO** (Druckenmiller
+  commodity complex) direction scores × sector sensitivity matrix →
+  `macro_headwind_score`/`macro_headwind_flag` (TAILWIND/NEUTRAL/CAUTION/HEADWIND).
+  Also emits the **copper/gold ratio** (`copper_gold_direction/roc5/roc20`) — the
+  growth+rates tell that front-runs the 10y yield (rising = reflation/risk-on,
+  falling = deflation/risk-off). Weather fields (`gld/cper/uso_direction+roc5`,
+  copper/gold) ride in `macro_weather` on the export + the Scanner panel.
   **Combined entry gate**: `sector_entry_gate()` = grade + RRG + macro → PASS/WATCH/CAUTION/BLOCKED.
   HEADWIND+LAGGING = hard BLOCKED (no override). The gate replaces `gics_gate` on
-  per-record exports. FMP calls: +4 macro instruments per pipeline run.
+  per-record exports. FMP calls: +7 macro instruments per pipeline run.
   Propagated to `srm_detail`, the Scanner SRM table, and the Drive export `srm` block.
+  **§3A.6 Intermarket data** (`compute_intermarket`): a top-level `intermarket`
+  export object (between `regime` and `srm`) — COB numbers for Druckenmiller's
+  premarket read. **Plain numbers only, NO assessment** (AQE makes no call;
+  Druckenmiller interprets): per-instrument close/roc5/roc20/above_sma20 for
+  UUP/TLT/HYG, the `hyg_tlt_spread` (hyg roc5 − tlt roc5), and `spy_iwm`
+  (spy_roc20, iwm_roc20, `spread`). No signal/posture/brief fields. **Reuses the
+  COB closes already fetched for the macro overlay — 0 new FMP calls.** Computed
+  in the orchestrator, stashed in the intermarket cache, read by the export.
 
 ### Scoring composites (`src/engines/scoring.py`) — v1.8.0
 **Parity with TradingView `Scoring v1.8.0`: composites are UNCAPPED.** The raw
@@ -179,10 +196,24 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
 Per-record fields on all four tiers (uniform; `_v21_record_fields` + a normalization
 pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 (PASS/BLOCKED/WATCH/CHECK from SRM grade), `sector_corr` + `sector_corr_class`
-(60d Pearson vs parent ETF), `rvol` (vol/20d-avg), `rs_spy_20d` (20d ROC − SPY 20d ROC),
-`sma_distance_pct` (vs 50D SMA), `rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
+(+ `sector_corr_flag` alias for Alfred §9C — 60d Pearson vs parent ETF: <0.30
+IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-avg),
+`rs_spy_20d` (20d ROC − SPY 20d ROC), `sma_distance_pct` (vs 50D SMA),
+`rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
 `held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
 `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
+- **Thematic baskets** (SRM v3.0, `srm.THEMATIC_BASKETS`): six catalyst baskets
+  (Infra_Power, Space_eVTOL, AI_Infrastructure, Semiconductors, Cybersecurity,
+  Defense_Tech) each with a parent GICS ETF. `grade_thematic_baskets()` grades a
+  basket from its constituents' equal-weight price index via the SRM method,
+  **capped at the parent-GICS grade** (a basket can't grade better than its parent;
+  parent may differ from a constituent's own GICS, e.g. ANET XLK → AI_Infra parent
+  XLRE). Per-record `thematic_basket`/`thematic_grade`/`thematic_parent_gics`/
+  `thematic_parent_grade` + a top-level `thematic_baskets` block (grade, raw_grade,
+  coverage, constituents_used). **DATA only — the gate is unchanged; the committee
+  applies any MAX-capped logic.** Pure panel math (0 FMP calls); baskets with <2
+  constituents in the universe grade NO_DATA. `thematic_basket` is also stamped on
+  every record in the Drive sector RAG.
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
   (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
   `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).
@@ -194,9 +225,17 @@ pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 - **PTRS** = engine score + SH (sector health); Alfred reads `ptrs` verbatim, computes no
   CM/SH/RA/RL. SRM `TURNING` SH = **−3** in AQE (PM "early signal" ruling; charter §4.3 says
   −5 — charter to be amended to −3 to match).
-- **Sector RAG map** (`aqe_sector_map.json`, rich §6.2 format) published to a dedicated Drive
-  subfolder `SECTOR_MAP_FOLDER_ID` (override `GDRIVE_SECTOR_FOLDER_ID`). Source of truth =
-  `data/sector_map.json` (flat {ticker: ETF}); gaps surfaced, filled manually.
+- **Sector RAG map** (`aqe_sector_map.json`, rich §6.2 format) is the **round-trip source of
+  truth** in a dedicated Drive subfolder `SECTOR_MAP_FOLDER_ID` (override
+  `GDRIVE_SECTOR_FOLDER_ID`; folder + filename live in `sector_mapper`). On pipeline startup
+  `restore_sector_map_from_drive()` parses the Drive RAG (rich → flat) into the local
+  `data/sector_map.json` AQE reads (Drive wins on conflicts) — so an ephemeral container
+  reflects Drive and **doesn't re-query FMP for GICS already resolved**. **AQE auto-fills any
+  remaining blanks** — before publishing, `build_export` resolves GICS via FMP profiles for
+  universe tickers still unmapped (incremental, only true gaps fetched), so AIC never reads a
+  blank AQE could source. After upload, `gdrive_uploader.keep_only_file()` trashes any other
+  file in that folder so it always holds exactly one RAG (no duplicates/stale copies).
+  `version`/`confirmed_date` stamp the run date.
 - UI: the Scanner page shows a **"AQE export — exactly what AIC receives"** panel rendering
   the verbatim export per tier (parity with the JSON).
 

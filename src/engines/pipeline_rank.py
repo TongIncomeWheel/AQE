@@ -24,6 +24,63 @@ import pandas as pd
 from . import utils as U
 
 
+def _fip_step_score(raw: float) -> float:
+    """Map FIP raw value to 0-100 quality score using step-function buckets."""
+    if raw > 0.10:
+        return 10.0
+    if raw > 0.0:
+        return 30.0
+    if raw >= -0.05:
+        return 60.0
+    if raw >= -0.10:
+        return 80.0
+    return 100.0
+
+
+def _detect_prior_spike(
+    close: pd.Series,
+    lookback: int = 252,
+    spike_return_threshold: float = 0.30,
+    spike_min_age_bars: int = 126,
+    spike_confirm_drawdown: float = 0.30,
+    spike_exclusion_window: int = 21,
+) -> tuple[bool, int | None, int | None, int | None]:
+    """Detect a prior speculative spike-and-collapse in the lookback window.
+
+    Returns (spike_found, spike_peak_bar, excl_start, excl_end) relative
+    to the lookback window slice.
+    """
+    px = close.iloc[-lookback:].values
+    n = len(px)
+
+    for i in range(20, n):
+        bars_from_end = n - i
+        if bars_from_end < spike_min_age_bars:
+            break
+
+        base = px[i - 20]
+        if base == 0:
+            continue
+        r21 = (px[i] - base) / base
+        if abs(r21) < spike_return_threshold:
+            continue
+
+        peak_price = max(px[i - 20 : i + 1])
+        if peak_price == 0:
+            continue
+        subsequent = px[i + 1 :]
+        if len(subsequent) == 0:
+            continue
+        trough = min(subsequent)
+        drawdown = (peak_price - trough) / peak_price
+        if drawdown >= spike_confirm_drawdown:
+            excl_start = max(0, i - spike_exclusion_window)
+            excl_end = min(n - 1, i + spike_exclusion_window)
+            return True, i, excl_start, excl_end
+
+    return False, None, None, None
+
+
 def compute(daily: pd.DataFrame) -> pd.DataFrame:
     """Compute Pipeline Rank for a single ticker's daily OHLCV frame."""
     d = daily.reset_index(drop=True).copy()
@@ -127,6 +184,40 @@ def compute(daily: pd.DataFrame) -> pd.DataFrame:
     spike_penalty = (max_5d_move > 0.08).astype(float) * 30.0
     fip_quality = (fip_quality - spike_penalty).clip(lower=0.0, upper=100.0)
 
+    # ---- DSG-20: Prior spike exclusion (last bar only) ----
+    fip_spike_excluded = pd.Series(False, index=close.index)
+    fip_window_effective = pd.Series(252, index=close.index, dtype=int)
+
+    if n >= lookback:
+        spike_found, spike_peak_bar, excl_start, excl_end = _detect_prior_spike(close)
+        if spike_found and spike_peak_bar is not None and excl_start is not None and excl_end is not None:
+            last_idx = close.index[-1]
+            fip_spike_excluded.iloc[-1] = True
+
+            window_returns = daily_ret.iloc[-lookback:]
+            included = [
+                window_returns.iloc[j]
+                for j in range(len(window_returns))
+                if not (excl_start <= j <= excl_end)
+            ]
+            eff_n = len(included)
+            fip_window_effective.iloc[-1] = eff_n
+
+            if eff_n > 0:
+                pp = sum(1 for r in included if r > 0) / eff_n
+                pn = sum(1 for r in included if r < 0) / eff_n
+                cum = sum(included)
+                msign = 1.0 if cum > 0 else -1.0
+                raw_excl = (pn - pp) * msign
+                fip_excl = _fip_step_score(raw_excl)
+
+                last_5 = daily_ret.iloc[-5:]
+                if last_5.abs().max() > 0.08:
+                    fip_excl = max(0.0, fip_excl - 30.0)
+
+                fip_quality.iloc[-1] = fip_excl
+                fip_raw.iloc[-1] = raw_excl
+
     # ---- Pipeline Rank composite ----
     pipe_rank = (momentum_composite * 0.70 + fip_quality * 0.30).clip(lower=0.0, upper=100.0)
 
@@ -149,6 +240,9 @@ def compute(daily: pd.DataFrame) -> pd.DataFrame:
         "pipe_tier": tier,
         "momentum_composite": momentum_composite,
         "fip_quality": fip_quality,
+        "fip_raw": fip_raw,
+        "fip_spike_excluded": fip_spike_excluded,
+        "fip_window_effective": fip_window_effective,
         "ret_12m_score": ret_score,
         "adx_score": adx_score,
         "rsi_score": rsi_score,
