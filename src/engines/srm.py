@@ -54,18 +54,16 @@ GRADE_TO_SH = {
 # Best -> worst ordering for grade comparisons (lower = better).
 GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 
-# ── Thematic baskets (SRM v3.0 canonical) ───────────────────────────────
-# Each ticker carries its GICS classification AND a thematic basket whose
-# catalyst is its business reality (AI infra, space, defense, ...). The basket
-# is graded from its constituents' equal-weight price index using the same SRM
-# method, CAPPED at the parent-GICS grade (a basket can't grade better than its
-# parent sector). NB: a basket's parent GICS may differ from a constituent's own
-# GICS sector (e.g. ANET is XLK but AI_Infrastructure's parent is XLRE).
-# Constituent lists are sized for SECTOR representativeness (the basket grades
-# from an equal-weight price index of constituents present in the panel), NOT for
-# screening. Each is a liquid, pure-play set deep enough that no single name
-# swings the grade. A ticker belongs to at most one basket (reverse map is
-# first-wins). Every constituent must be in the universe to count toward coverage.
+# ── Thematic baskets (Thematic Basket Map v2.0, PM-approved 11 Jun 2026) ──────
+# A basket is a CONTEXT LAYER ONLY: it annotates names AQE already scored and
+# grades a sector from its constituents' equal-weight price index (capped at the
+# parent-GICS grade). It does NOT add names to the scan universe — constituents
+# are pulled into the panel for grading (like the GICS ETFs) but are never
+# screened. A basket's parent GICS may differ from a constituent's own GICS
+# (e.g. ANET is XLK but AI_Infrastructure's parent is XLRE).
+#
+# Constituent lists below are the GRADING lists (the v2.0 tables, verbatim).
+# Counts: Infra 13, Space 10, AI 12, Semi 15, Cyber 13, Defense 13, Crypto 12.
 THEMATIC_BASKETS: dict[str, dict] = {
     "Infra_Power":       {"parent_gics_etf": "XLI",
                           "constituents": ["VRT", "ETN", "PWR", "HUBB", "EMR", "GNRC", "JBL",
@@ -77,24 +75,55 @@ THEMATIC_BASKETS: dict[str, dict] = {
                           "constituents": ["EQIX", "DLR", "AMT", "SMCI", "APLD", "ANET",
                                            "NBIS", "IREN", "CORZ", "CCI", "WULF", "SBAC"]},
     "Semiconductors":    {"parent_gics_etf": "XLK",
-                          "constituents": ["NVDA", "AMD", "AVGO", "MRVL", "CRDO", "AMAT",
-                                           "KLAC", "LRCX", "MU", "QCOM", "TXN", "ADI",
+                          "constituents": ["NVDA", "AMD", "AVGO", "CRDO", "AMAT", "KLAC",
+                                           "LRCX", "MRVL", "MU", "QCOM", "TXN", "ADI",
                                            "NXPI", "MCHP", "ARM"]},
     "Cybersecurity":     {"parent_gics_etf": "XLK",
-                          "constituents": ["CRWD", "PANW", "ZS", "FTNT", "OKTA", "S",
+                          "constituents": ["FTNT", "CRWD", "PANW", "ZS", "OKTA", "S",
                                            "CYBR", "TENB", "VRNS", "NET", "RBRK", "QLYS",
                                            "RPD"]},
     "Defense_Tech":      {"parent_gics_etf": "XLI",
                           "constituents": ["LMT", "RTX", "GD", "NOC", "LHX", "PLTR", "AXON",
                                            "TDG", "HII", "LDOS", "BAH", "CW", "HEI"]},
+    "Crypto_Digital":    {"parent_gics_etf": "XLF",
+                          "constituents": ["MSTR", "HOOD", "COIN", "MARA", "RIOT", "CLSK",
+                                           "BTDR", "HUT", "CIFR", "IREN", "CORZ", "WULF"]},
 }
 
-# Reverse lookup: ticker -> basket name. First basket wins if a ticker appears
-# in two (none do today).
-TICKER_TO_THEMATIC: dict[str, str] = {}
+# Annotation-only dual memberships (v2.0 Dual-Basket Summary). A ticker here is
+# TAGGED with the extra basket for committee context, but is NOT in that basket's
+# grading table (so it does not move that basket's grade). KTOS/AVAV grade in
+# Space_eVTOL but are surfaced as Defense_Tech too. IREN/CORZ/WULF need no entry:
+# they appear in BOTH the AI_Infrastructure and Crypto_Digital grading tables, so
+# the constituent-derived map already tags them with both.
+EXTRA_THEMATIC_TAGS: dict[str, list[str]] = {
+    "KTOS": ["Defense_Tech"],
+    "AVAV": ["Defense_Tech"],
+}
+
+# Reverse lookup. A ticker may belong to MULTIPLE baskets (v2.0 dual-listing).
+# TICKER_TO_THEMATICS holds the full ordered list (primary = first declared);
+# TICKER_TO_THEMATIC keeps the primary basket for single-value callers.
+TICKER_TO_THEMATICS: dict[str, list[str]] = {}
 for _bname, _binfo in THEMATIC_BASKETS.items():
     for _tk in _binfo["constituents"]:
-        TICKER_TO_THEMATIC.setdefault(_tk, _bname)
+        _lst = TICKER_TO_THEMATICS.setdefault(_tk, [])
+        if _bname not in _lst:
+            _lst.append(_bname)
+for _tk, _extra in EXTRA_THEMATIC_TAGS.items():
+    _lst = TICKER_TO_THEMATICS.setdefault(_tk, [])
+    for _b in _extra:
+        if _b not in _lst:
+            _lst.append(_b)
+TICKER_TO_THEMATIC: dict[str, str] = {_tk: _bs[0] for _tk, _bs in TICKER_TO_THEMATICS.items()}
+
+# Union of all GRADING constituents — pulled into the panel for grading but never
+# screened (panel_builder adds them; scoring/screening exclude any not already in
+# the scan universe). Annotation-only duals (KTOS/AVAV) are already constituents
+# of their grading basket, so this set is complete.
+BASKET_CONSTITUENTS: set[str] = {
+    _c for _b in THEMATIC_BASKETS.values() for _c in _b["constituents"]
+}
 
 # Action-state labels: each encodes the market condition AND the implied posture
 # for a momentum book, so Alfred/committee read a directive, not a raw signal.

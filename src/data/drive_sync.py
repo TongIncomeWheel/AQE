@@ -31,7 +31,7 @@ from src.data.sector_mapper import (
 from src.engines.srm import (
     GICS_ETFS, get_sector_health, grade_all_sectors,
     enrich_sectors_intermarket, load_intermarket_cache,
-    TICKER_TO_THEMATIC, grade_thematic_baskets,
+    TICKER_TO_THEMATIC, TICKER_TO_THEMATICS, grade_thematic_baskets,
 )
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
@@ -272,6 +272,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "sector_corr": None, "sector_corr_class": None, "sector_corr_flag": None,
         "thematic_basket": None, "thematic_grade": None,
         "thematic_parent_gics": None, "thematic_parent_grade": None,
+        "thematic_baskets": [],
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
@@ -299,15 +300,29 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["sector_corr"], fields["sector_corr_class"] = corr[0], corr[1]
             fields["sector_corr_flag"] = corr[1]  # alias for Alfred §9C
 
-        # Thematic basket (data only — gate unchanged). Parent GICS may differ
-        # from the ticker's own gics_sector (e.g. ANET XLK -> AI_Infra parent XLRE).
-        basket = TICKER_TO_THEMATIC.get(tk)
-        if basket:
-            tg = (lk.get("thematic") or {}).get(basket) or {}
-            fields["thematic_basket"] = basket
-            fields["thematic_grade"] = tg.get("grade")
-            fields["thematic_parent_gics"] = tg.get("parent_gics")
-            fields["thematic_parent_grade"] = tg.get("parent_grade")
+        # Thematic basket (data only — gate unchanged). A ticker may belong to
+        # MULTIPLE baskets (v2.0 dual-listing, e.g. IREN AI_Infra + Crypto): the
+        # singular fields carry the PRIMARY basket (backward compat), and
+        # thematic_baskets lists ALL of them so the committee sees both angles.
+        # Parent GICS may differ from the ticker's own gics_sector.
+        baskets = TICKER_TO_THEMATICS.get(tk) or []
+        if baskets:
+            thematic = lk.get("thematic") or {}
+            annotated = []
+            for b in baskets:
+                tg = thematic.get(b) or {}
+                annotated.append({
+                    "basket": b,
+                    "grade": tg.get("grade"),
+                    "parent_gics": tg.get("parent_gics"),
+                    "parent_grade": tg.get("parent_grade"),
+                })
+            fields["thematic_baskets"] = annotated
+            primary = annotated[0]
+            fields["thematic_basket"] = primary["basket"]
+            fields["thematic_grade"] = primary["grade"]
+            fields["thematic_parent_gics"] = primary["parent_gics"]
+            fields["thematic_parent_grade"] = primary["parent_grade"]
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)

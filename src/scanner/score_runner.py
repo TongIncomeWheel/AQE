@@ -88,7 +88,16 @@ def build_scores() -> None:
     if earnings_cal:
         print(f"  Earnings calendar loaded: {len(earnings_cal)} tickers")
 
-    tickers = sorted(daily_groups.keys())
+    # Score the scan universe only. Thematic-basket constituents that aren't in
+    # the scan universe live in the panel purely for SECTOR grading — they must
+    # never reach a screen (longlist / watchlist / edge), so keep them out of the
+    # score cache (Thematic Basket Map v2.0: baskets don't add scan names).
+    from src.engines.srm import BASKET_CONSTITUENTS
+    from src.data.universe import load_universe
+    _scan = set(load_universe(include_benchmark=True))
+    _basket_only = BASKET_CONSTITUENTS - _scan
+
+    tickers = sorted(t for t in daily_groups.keys() if t not in _basket_only)
     out_rows: list[pd.DataFrame] = []
     t0 = time.monotonic()
     for ticker in iter_with_progress(tickers, label="score"):

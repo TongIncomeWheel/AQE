@@ -74,6 +74,17 @@ def build_panel(history_years: int | None = None) -> None:
             tickers.append(_etf)
             _seen.add(_etf)
 
+    # Always pull thematic-basket constituents for SECTOR grading context. Like
+    # the GICS ETFs, they're graded (grade_thematic_baskets) but NOT screened —
+    # basket membership is a context layer and must not add names to the scan
+    # universe (Thematic Basket Map v2.0, PM directive). The scoring/screening
+    # stages exclude any basket constituent that isn't in the scan universe.
+    from src.engines.srm import BASKET_CONSTITUENTS as _BASKET_CONSTITUENTS
+    for _c in _BASKET_CONSTITUENTS:
+        if _c not in _seen:
+            tickers.append(_c)
+            _seen.add(_c)
+
     # Prioritize critical tickers so they get pulled before any quota cap:
     # 1) SPY (benchmark), 2) GICS sector ETFs (SRM), 3) everything else.
     priority = {BENCHMARK} | set(_GICS_ETFS)

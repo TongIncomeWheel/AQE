@@ -19,12 +19,6 @@ from pathlib import Path
 from src.data.paths import DATA_DIR, PROJECT_ROOT
 
 DEFAULT_UNIVERSE_FILE = DATA_DIR / "universe.txt"
-# Manual, version-controlled add-on list. Merged on top of universe.txt at load
-# time so the tickers survive `restore_universe_from_drive()` (which overwrites
-# universe.txt but not this file). Used when the canonical Drive universe.csv
-# can't be re-uploaded yet. De-duped against the main list; safe to leave in
-# place — delete once the Drive CSV carries these names.
-SUPPLEMENT_UNIVERSE_FILE = DATA_DIR / "universe_supplement.txt"
 BENCHMARK = "SPY"
 
 # Dedicated Drive folder holding the universe CSV (a subfolder of the AQE
@@ -52,23 +46,15 @@ def load_universe(path: Path | None = None, include_benchmark: bool = True) -> l
     file = path or DEFAULT_UNIVERSE_FILE
     tickers: list[str] = []
     seen: set[str] = set()
-
-    sources = [file]
-    # Only merge the supplement when reading the default universe (not an
-    # explicit ad-hoc path), and only if it exists.
-    if path is None and SUPPLEMENT_UNIVERSE_FILE.exists():
-        sources.append(SUPPLEMENT_UNIVERSE_FILE)
-
-    for src in sources:
-        for raw in src.read_text(encoding="utf-8").splitlines():
-            line = raw.split("#", 1)[0].strip()
-            if not line:
-                continue
-            sym = line.upper()
-            if sym in seen:
-                continue
-            seen.add(sym)
-            tickers.append(sym)
+    for raw in file.read_text(encoding="utf-8").splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+        sym = line.upper()
+        if sym in seen:
+            continue
+        seen.add(sym)
+        tickers.append(sym)
 
     if include_benchmark and BENCHMARK not in seen:
         tickers.insert(0, BENCHMARK)

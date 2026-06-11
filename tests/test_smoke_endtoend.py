@@ -557,9 +557,43 @@ def test_thematic_baskets():
     assert _cap_grade("WATCH", "HOLD") == "WATCH"   # already worse, unchanged
     assert _cap_grade("DEPLOY", None) == "DEPLOY"   # no parent -> unchanged
 
-    # Reverse lookup wired.
+    # Reverse lookup wired (singular = primary basket).
     assert TICKER_TO_THEMATIC["NVDA"] == "Semiconductors"
     assert TICKER_TO_THEMATIC["ANET"] == "AI_Infrastructure"
+
+
+def test_thematic_dual_listing():
+    """v2.0 dual-listing: a ticker can map to multiple baskets; Crypto basket exists."""
+    from src.engines.srm import (
+        THEMATIC_BASKETS, TICKER_TO_THEMATIC, TICKER_TO_THEMATICS,
+        BASKET_CONSTITUENTS,
+    )
+
+    # New Crypto_Digital basket present, parented to XLF.
+    assert "Crypto_Digital" in THEMATIC_BASKETS
+    assert THEMATIC_BASKETS["Crypto_Digital"]["parent_gics_etf"] == "XLF"
+
+    # IREN/CORZ/WULF are in BOTH AI_Infrastructure and Crypto_Digital grading
+    # tables -> tagged with both, primary = first declared (AI_Infrastructure).
+    for tk in ("IREN", "CORZ", "WULF"):
+        assert set(TICKER_TO_THEMATICS[tk]) == {"AI_Infrastructure", "Crypto_Digital"}
+        assert TICKER_TO_THEMATIC[tk] == "AI_Infrastructure"
+
+    # KTOS/AVAV grade in Space_eVTOL but are annotation-only duals of Defense_Tech
+    # (NOT in Defense's grading table, so Defense's count stays 13).
+    for tk in ("KTOS", "AVAV"):
+        assert TICKER_TO_THEMATICS[tk] == ["Space_eVTOL", "Defense_Tech"]
+        assert tk not in THEMATIC_BASKETS["Defense_Tech"]["constituents"]
+    assert len(THEMATIC_BASKETS["Defense_Tech"]["constituents"]) == 13
+
+    # Single-basket names still map to exactly one.
+    assert TICKER_TO_THEMATICS["NVDA"] == ["Semiconductors"]
+
+    # BASKET_CONSTITUENTS is the union of all grading tables (for the panel pull).
+    assert "MSTR" in BASKET_CONSTITUENTS and "KTOS" in BASKET_CONSTITUENTS
+    assert BASKET_CONSTITUENTS == {
+        c for b in THEMATIC_BASKETS.values() for c in b["constituents"]
+    }
 
 
 def test_sector_entry_gate():

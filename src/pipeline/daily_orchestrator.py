@@ -45,6 +45,7 @@ from src.engines import pipeline_rank, srm
 from src.engines.srm import (
     GICS_ETFS, TICKER_TO_SECTOR, grade_all_sectors, get_sector_health, GRADE_TO_SH,
     MACRO_INSTRUMENTS, enrich_sectors_intermarket, save_intermarket_cache,
+    BASKET_CONSTITUENTS,
 )
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
 from src.analyzer.ptrs import compute_ptrs, classify_vix_regime
@@ -321,7 +322,13 @@ def _incremental_pull(run_date: date) -> None:
 def _pipeline_rank_screen(panel: pd.DataFrame, run_date: date) -> list[tuple[str, float, float, bool, int]]:
     """Run Pipeline Rank on all tickers, return sorted (ticker, rank, fip_quality, fip_spike_excluded, fip_window_effective) tuples."""
     results = []
-    tickers = [t for t in panel["ticker"].unique() if t not in GICS_ETFS and t != "SPY"]
+    # Thematic-basket constituents not in the scan universe sit in the panel only
+    # for SECTOR grading — exclude them here too so they never enter screening
+    # (Thematic Basket Map v2.0: baskets don't add scan names).
+    _scan = set(load_universe(include_benchmark=True))
+    _basket_only = BASKET_CONSTITUENTS - _scan
+    tickers = [t for t in panel["ticker"].unique()
+               if t not in GICS_ETFS and t != "SPY" and t not in _basket_only]
 
     for ticker in tickers:
         grp = panel[panel["ticker"] == ticker].sort_values("date").reset_index(drop=True)

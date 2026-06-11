@@ -202,18 +202,32 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
 `rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
 `held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
 `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
-- **Thematic baskets** (SRM v3.0, `srm.THEMATIC_BASKETS`): six catalyst baskets
-  (Infra_Power, Space_eVTOL, AI_Infrastructure, Semiconductors, Cybersecurity,
-  Defense_Tech) each with a parent GICS ETF. `grade_thematic_baskets()` grades a
+- **Thematic baskets** (Thematic Basket Map v2.0, PM-approved 11 Jun 2026,
+  `srm.THEMATIC_BASKETS`): **seven** catalyst baskets (Infra_Power, Space_eVTOL,
+  AI_Infrastructure, Semiconductors, Cybersecurity, Defense_Tech, **Crypto_Digital**)
+  each with a parent GICS ETF. They are a **CONTEXT/SENTIMENT LAYER ONLY — run SRM
+  against a deterministically-defined constituent set to read thematic market
+  sentiment, exactly like sector rotation.** `grade_thematic_baskets()` grades a
   basket from its constituents' equal-weight price index via the SRM method,
-  **capped at the parent-GICS grade** (a basket can't grade better than its parent;
-  parent may differ from a constituent's own GICS, e.g. ANET XLK → AI_Infra parent
-  XLRE). Per-record `thematic_basket`/`thematic_grade`/`thematic_parent_gics`/
-  `thematic_parent_grade` + a top-level `thematic_baskets` block (grade, raw_grade,
-  coverage, constituents_used). **DATA only — the gate is unchanged; the committee
-  applies any MAX-capped logic.** Pure panel math (0 FMP calls); baskets with <2
-  constituents in the universe grade NO_DATA. `thematic_basket` is also stamped on
-  every record in the Drive sector RAG.
+  **capped at the parent-GICS grade** (parent may differ from a constituent's own
+  GICS, e.g. ANET XLK → AI_Infra parent XLRE; Crypto_Digital parent = XLF).
+  **Baskets do NOT add names to the scan universe** (governing rule): constituents
+  are pulled into the panel for grading — like the GICS ETFs — by `panel_builder`
+  (`srm.BASKET_CONSTITUENTS`), but `score_runner.build_scores` and the Pipeline
+  Rank screen **exclude any basket constituent not already in the scan universe**,
+  so they are graded but never screened (no longlist/watchlist leakage).
+  **Dual-listing** (`TICKER_TO_THEMATICS` = list, `TICKER_TO_THEMATIC` = primary):
+  IREN/CORZ/WULF are in both AI_Infrastructure and Crypto_Digital grading tables;
+  KTOS/AVAV grade in Space_eVTOL but are annotation-only Defense_Tech duals
+  (`EXTRA_THEMATIC_TAGS`, so Defense's count stays 13). Per-record singular
+  `thematic_basket`/`thematic_grade`/`thematic_parent_gics`/`thematic_parent_grade`
+  (PRIMARY basket, backward compat) **plus** a per-record `thematic_baskets` list
+  (every basket the ticker maps to, each with grade/parent_gics/parent_grade) so
+  the committee sees both angles, + a top-level `thematic_baskets` block (grade,
+  raw_grade, coverage, constituents_used). **DATA only — the gate is unchanged.**
+  Pure panel math (0 FMP calls for grading); baskets with <2 constituents present
+  grade NO_DATA. The primary `thematic_basket` is also stamped on every record in
+  the Drive sector RAG.
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
   (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
   `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).
