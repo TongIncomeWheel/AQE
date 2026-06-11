@@ -1150,6 +1150,7 @@ def _build_output(
         "active_recipe": active_recipe or {},
         "srm_summary": srm_summary,
         "srm_detail": srm_detail,
+        "macro_weather": {k: v for k, v in sector_grades.get("_macro_weather", {}).items()} if sector_grades.get("_macro_weather") else {},
         "meta": {
             "total_universe": len(load_universe()),
             "passed_pipeline_rank": len(shortlist),

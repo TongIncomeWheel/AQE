@@ -575,20 +575,127 @@ st.subheader("SRM Sector Health")
 
 srm_detail = sl.get("srm_detail", {})
 if srm_detail:
-    # Macro weather banner (DSG-19)
-    _mw_data = {etf: d for etf, d in srm_detail.items()
-                if d.get("macro_headwind_flag") and d["macro_headwind_flag"] != "NO_DATA"}
-    if _mw_data:
-        _hw_count = sum(1 for d in _mw_data.values() if d.get("macro_headwind_flag") == "HEADWIND")
-        _tw_count = sum(1 for d in _mw_data.values() if d.get("macro_headwind_flag") == "TAILWIND")
-        _gate_blocked = sum(1 for d in srm_detail.values() if d.get("entry_gate") == "BLOCKED")
-        _gate_pass = sum(1 for d in srm_detail.values() if d.get("entry_gate") == "PASS")
-        st.caption(
-            f"Macro overlay: {_hw_count} sector(s) HEADWIND · {_tw_count} TAILWIND · "
-            f"Entry gate: {_gate_pass} PASS · {_gate_blocked} BLOCKED"
-        )
+    # ── Visual panels: RRG scatter + Macro weather (above the table) ──
+    _has_rrg = any(
+        d.get("rrg_rs_ratio") is not None for d in srm_detail.values()
+    )
+    if _has_rrg:
+        _rrg_col, _macro_col = st.columns([3, 2])
 
-    # Build table sorted by grade rank
+        # ── RRG Scatter Plot (left) ──
+        with _rrg_col:
+            import matplotlib
+            matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
+
+            _pts = []
+            for _etf, _d in srm_detail.items():
+                _r = _d.get("rrg_rs_ratio")
+                _m = _d.get("rrg_rs_momentum")
+                if _r is not None and _m is not None:
+                    _pts.append((_etf, _r, _m, _d.get("entry_gate", "WATCH"),
+                                 _d.get("rrg_direction", "STABLE")))
+
+            if _pts:
+                _ratios = [p[1] for p in _pts]
+                _moms = [p[2] for p in _pts]
+                _pad = max(1.5, (max(_ratios) - min(_ratios)) * 0.2,
+                           (max(_moms) - min(_moms)) * 0.2)
+                _xlo = min(min(_ratios), 98) - _pad
+                _xhi = max(max(_ratios), 102) + _pad
+                _ylo = min(min(_moms), 98) - _pad
+                _yhi = max(max(_moms), 102) + _pad
+
+                _fig, _ax = plt.subplots(figsize=(5.5, 4.2))
+
+                _ax.fill_between([100, _xhi], 100, _yhi, alpha=0.06, color="#2ca02c")
+                _ax.fill_between([_xlo, 100], 100, _yhi, alpha=0.06, color="#1f77b4")
+                _ax.fill_between([100, _xhi], _ylo, 100, alpha=0.06, color="#ff7f0e")
+                _ax.fill_between([_xlo, 100], _ylo, 100, alpha=0.06, color="#d62728")
+
+                _ax.axhline(100, color="#888", lw=0.7, ls="--", alpha=0.5)
+                _ax.axvline(100, color="#888", lw=0.7, ls="--", alpha=0.5)
+
+                _lbl = dict(fontsize=9, alpha=0.35, weight="bold")
+                _ax.text(_xhi - _pad * 0.15, _yhi - _pad * 0.15, "LEADING",
+                         ha="right", va="top", color="#2ca02c", **_lbl)
+                _ax.text(_xlo + _pad * 0.15, _yhi - _pad * 0.15, "IMPROVING",
+                         ha="left", va="top", color="#1f77b4", **_lbl)
+                _ax.text(_xhi - _pad * 0.15, _ylo + _pad * 0.15, "WEAKENING",
+                         ha="right", va="bottom", color="#ff7f0e", **_lbl)
+                _ax.text(_xlo + _pad * 0.15, _ylo + _pad * 0.15, "LAGGING",
+                         ha="left", va="bottom", color="#d62728", **_lbl)
+
+                _gc = {"PASS": "#2ca02c", "WATCH": "#ff7f0e",
+                       "CAUTION": "#d62728", "BLOCKED": "#7f0000"}
+                _dir_arrow = {"ENTERING": " *", "DEEPENING": "", "EXITING": "", "STABLE": ""}
+
+                for _etf, _r, _m, _gate, _ddir in _pts:
+                    _c = _gc.get(_gate, "#555")
+                    _ax.scatter(_r, _m, color=_c, s=70, zorder=5,
+                                edgecolors="white", linewidth=0.8)
+                    _ax.annotate(
+                        _etf + _dir_arrow.get(_ddir, ""),
+                        (_r, _m), textcoords="offset points",
+                        xytext=(6, 4), fontsize=7, fontweight="bold", color=_c,
+                    )
+
+                _ax.set_xlabel("RS-Ratio vs SPY", fontsize=8)
+                _ax.set_ylabel("RS-Momentum", fontsize=8)
+                _ax.set_title("Relative Rotation Graph", fontsize=10, fontweight="bold", pad=6)
+                _ax.set_xlim(_xlo, _xhi)
+                _ax.set_ylim(_ylo, _yhi)
+                _ax.tick_params(labelsize=7)
+                _fig.tight_layout(pad=1.0)
+                st.pyplot(_fig, use_container_width=True)
+                plt.close(_fig)
+
+        # ── Macro Weather + Gate Summary (right) ──
+        with _macro_col:
+            _mw = sl.get("macro_weather", {})
+            if _mw:
+                st.markdown("##### Macro Weather")
+                _instr = [
+                    ("Rates", "TLT", "tlt_direction", "tlt_roc5"),
+                    ("Dollar", "UUP", "uup_direction", "uup_roc5"),
+                    ("Credit", "HYG", "hyg_direction", "hyg_roc5"),
+                    ("Breadth", "IWM", "iwm_direction", "iwm_roc5"),
+                ]
+                _arrows = {"RISING": "**▲**", "FALLING": "**▼**", "FLAT": "▸"}
+                _md_rows = []
+                for _lbl, _tk, _dk, _rk in _instr:
+                    _dir = _mw.get(_dk, "FLAT")
+                    _roc = _mw.get(_rk, 0.0)
+                    _ar = _arrows.get(_dir, "▸")
+                    _md_rows.append(f"| {_lbl} ({_tk}) | {_ar} {_dir} | {_roc:+.1f}% |")
+                st.markdown(
+                    "| Instrument | Direction | 5d ROC |\n"
+                    "| :--- | :---: | ---: |\n"
+                    + "\n".join(_md_rows)
+                )
+                _desc = _mw.get("regime_description", "")
+                if _desc:
+                    st.caption(_desc)
+            else:
+                st.info("Macro weather data not available — run the pipeline.")
+
+            # Gate summary
+            _gate_counts: dict[str, int] = {}
+            for _d in srm_detail.values():
+                _g = _d.get("entry_gate", "WATCH")
+                _gate_counts[_g] = _gate_counts.get(_g, 0) + 1
+            st.markdown("##### Entry Gate")
+            _gate_parts = []
+            for _gk in ("PASS", "WATCH", "CAUTION", "BLOCKED"):
+                _gn = _gate_counts.get(_gk, 0)
+                if _gn > 0:
+                    _gate_parts.append(f"{_gk}: **{_gn}**")
+            st.markdown(" · ".join(_gate_parts) if _gate_parts else "No gate data")
+
+            # Legend
+            st.caption("Dot color = entry gate: green PASS · orange WATCH · red CAUTION/BLOCKED")
+
+    # ── SRM Table ──
     grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
     srm_rows = []
     for etf, d in sorted(srm_detail.items(), key=lambda x: grade_order.get(x[1].get("grade", "WATCH"), 3)):
