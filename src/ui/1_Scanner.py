@@ -1235,6 +1235,48 @@ if st.button("Score tickers", type="primary", key="adhoc_score_btn"):
             from src.scanner.adhoc import score_tickers
             st.session_state["adhoc_results"] = score_tickers(_to_score)
 
+def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> str:
+    """Build a ready-to-paste AIC deliberation prompt from an ad-hoc score result."""
+    tk = r["ticker"]
+    lv = r.get("levels") or {}
+    sc = r.get("sc_momentum")
+    raw = r.get("sc_momentum_raw")
+    gate = "PASS" if r.get("gate_pass") else "CAPPED"
+
+    sm = load_sector_map()
+    etf = sm.get(tk, "")
+    sector_name = ETF_TO_NAME.get(etf, etf) if etf else "Unknown"
+    sd = srm_detail.get(etf, {})
+    grade = sd.get("grade", "—")
+    rrg_q = sd.get("rrg_quadrant", "—")
+    macro_f = sd.get("macro_headwind_flag", "—")
+    entry_gate = sd.get("entry_gate", "—")
+
+    ptrs = _quick_ptrs(sc, tk, sector_grades) if sc is not None else 0.0
+
+    regime_lvl = regime.get("level", "—")
+    vix = regime.get("vix", 0)
+
+    lines = [
+        f"AIC — {tk} (ad-hoc scan, {r.get('as_of', '?')}):",
+        f"SC {_fmt(sc, '.1f')}/raw {_fmt(raw, '.1f')} gate {gate} · "
+        f"PTRS {_fmt(ptrs, '.1f')} · MP {r.get('mp_state') or '—'}",
+        f"Flow {_fmt(r.get('flow'), '.0f')} · Energy {_fmt(r.get('energy'), '.0f')} · "
+        f"Structure {_fmt(r.get('structure'), '.0f')} · MP {_fmt(r.get('mp'), '.0f')} · "
+        f"Elder {_fmt(r.get('elder'), '.1f')} (5d: {_elder5_str(r.get('elder_5d'))}) · "
+        f"BQ {_fmt(r.get('bq'), '.0f')}",
+        f"DSL stop {_fmt(lv.get('stop'), '.2f')} · "
+        f"TP {_fmt(lv.get('tp_1r'), '.2f')}/{_fmt(lv.get('tp_2r'), '.2f')}/{_fmt(lv.get('tp_3r'), '.2f')} · "
+        f"R:R {_fmt(lv.get('rr_est'), '.1f')} · ATR ratio {_fmt(lv.get('dsl_atr_ratio'), '.2f')} · "
+        f"beta {_fmt(r.get('beta_60d'), '.2f')}",
+        f"Sector: {sector_name} ({etf}) {grade} · RRG {rrg_q} · Macro {macro_f} · Gate {entry_gate}",
+        f"Regime: VIX {_fmt(vix, '.1f')} ({regime_lvl}) · "
+        f"PipeRank {_fmt(r.get('pipe_rank'), '.1f')}",
+        "Advise: entry decision + size per PTRS x regime. Charter v1.9.3.",
+    ]
+    return "\n".join(lines)
+
+
 _adhoc_results = st.session_state.get("adhoc_results")
 if _adhoc_results:
     _ok = [r for r in _adhoc_results if not r.get("error")]
@@ -1273,6 +1315,15 @@ if _adhoc_results:
                 "Fib": _fib_str(lv.get("fib")),
             })
         st.dataframe(pd.DataFrame(_adhoc_rows), use_container_width=True, hide_index=True)
+
+        # AIC deliberation blurbs — one per scored ticker
+        st.markdown("##### AIC Deliberation Prompt")
+        st.caption("Copy and paste to AIC (Claude) for entry deliberation.")
+        _regime = sl.get("regime", {})
+        _srm_d = sl.get("srm_detail", {})
+        for r in _ok:
+            _blurb = _aic_blurb(r, _regime, _srm_d, _sector_grades)
+            st.code(_blurb, language=None)
 
     for r in _err:
         st.warning(f"**{r['ticker']}** — {r['error']}")
