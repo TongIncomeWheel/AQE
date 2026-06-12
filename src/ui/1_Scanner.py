@@ -1035,7 +1035,7 @@ _EXPORT_COL_ORDER = [
     "entry", "stop", "dsl_stop", "dsl_risk", "dsl_rr_pct",
     "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
     "coil_entry", "max_chase_tp2", "max_chase_tp3", "rr_tp2_at_coil", "rr_tp3_at_coil",
-    "optimal_stop", "optimal_stop_exists", "rr_est", "held", "rank_explain",
+    "optimal_stop", "optimal_stop_exists", "structural_targets", "rr_est", "held", "rank_explain",
 ]
 
 

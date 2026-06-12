@@ -608,9 +608,23 @@ def test_dsg18_bracket_fields():
     for lvl in f["structural_levels"]:
         assert {"type", "price", "atr_ratio", "rr_tp2", "valid"} <= set(lvl)
 
+    # Structural take-profit ladder: anchored to swing high + fib extensions,
+    # rr varies per name (unlike the removed constant rr_tp1/2/3).
+    tgts = f["structural_targets"]
+    assert tgts and all({"type", "price", "rr"} <= set(t) for t in tgts)
+    assert all(t["price"] > d["entry"] for t in tgts)          # targets above entry
+    assert [t["price"] for t in tgts] == sorted(t["price"] for t in tgts)  # nearest first
+    _types = {t["type"] for t in tgts}
+    assert "fib_1618" in _types                                # measured-move target present
+    # rr is the real R-distance to structure (e.g. swing high 230 @ ~1.63R, not a constant)
+    _ph = next(t for t in tgts if t["type"] == "prior_high")
+    assert _ph["rr"] == round((230.0 - 215.0) / 9.19, 2)
+
     # Degrade cleanly when inputs are missing.
     empty_levels, empty_opt = _structural_stop_analysis({}, None)
     assert empty_levels == [] and empty_opt is None
+    from src.data.drive_sync import _structural_target_analysis
+    assert _structural_target_analysis({}) == []
 
 
 def test_thematic_dual_listing():

@@ -335,6 +335,38 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
     return levels, optimal
 
 
+def _structural_target_analysis(d: dict) -> list[dict]:
+    """Take-profit ladder anchored to REAL structure rather than mechanical
+    R-multiples: the detected swing high (immediate overhead resistance) and its
+    fib measured-move extensions (1.272 / 1.618 / 2.0 / 2.618 of the swing range).
+
+    Each target above entry gets {type, price, rr} where rr = (price − entry) /
+    dsl_risk — its reward in R, which VARIES per name with the real swing (unlike
+    the fixed tp_1r/2r/3r). The mechanical tp_Nr stay as the risk/trail framework;
+    this is the structural objective AIC takes profit against. Nearest first.
+    """
+    entry, risk = d.get("entry"), d.get("risk")
+    if not _is_num(entry, risk) or risk <= 0:
+        return []
+    fib = d.get("fib") or {}
+    exts = fib.get("extensions") or {}
+    targets: list[dict] = []
+
+    def _add(typ: str, price) -> None:
+        if not _is_num(price) or price <= entry:   # a long's target sits above entry
+            return
+        targets.append({"type": typ, "price": round(float(price), 2),
+                        "rr": round((price - entry) / risk, 2)})
+
+    _add("prior_high", fib.get("swing_high"))
+    _add("fib_1272", exts.get("1.272"))
+    _add("fib_1618", exts.get("1.618"))
+    _add("fib_2000", exts.get("2.0"))
+    _add("fib_2618", exts.get("2.618"))
+    targets.sort(key=lambda x: x["price"])
+    return targets
+
+
 def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                        sector_grades: dict) -> dict:
     """AQE v2.1 / Data-Schema-v1.0 per-record fields. Bulletproof: returns a
@@ -359,6 +391,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # DSG-18 Group B — vol / beta / structural stop selection
         "vol_30d_ann": None, "beta_252d": None,
         "structural_levels": [], "optimal_stop": None, "optimal_stop_exists": False,
+        "structural_targets": [],
         "held": False,
     }
     try:
@@ -450,6 +483,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["structural_levels"] = _slevels
         fields["optimal_stop"] = _optimal
         fields["optimal_stop_exists"] = _optimal is not None
+        fields["structural_targets"] = _structural_target_analysis(d)
     except Exception:  # noqa: BLE001
         pass
     return fields
@@ -546,6 +580,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
             "vol_30d_ann": v21["vol_30d_ann"], "beta_252d": v21["beta_252d"],
             "structural_levels": v21["structural_levels"],
             "optimal_stop": v21["optimal_stop"], "optimal_stop_exists": v21["optimal_stop_exists"],
+            "structural_targets": v21["structural_targets"],
         })
     return out
 
@@ -964,6 +999,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         "rr_tp2_at_coil", "rr_tp3_at_coil",
         "vol_30d_ann", "beta_252d",
         "structural_levels", "optimal_stop", "optimal_stop_exists",
+        "structural_targets",
     ]
     for _tier_name in ("top_picks", "edge_list", "longlist"):
         for _rec in export[_tier_name]:
