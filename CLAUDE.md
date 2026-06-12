@@ -212,13 +212,21 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   fib_618 / fib_786 / ma20/50/100/200) and `optimal_stop` (the TIGHTEST valid level —
   closest to entry passing `atr_ratio ≥ 1.0 AND rr_tp2 ≥ 2.0`) + `optimal_stop_exists`.
   **Structure-anchored TP ladder** `structural_targets` (the mirror of
-  `structural_levels` on the upside): each `{type, price, rr}` for the detected
-  swing high (`prior_high`) + its fib measured-move extensions (`fib_1272/1618/2000/2618`)
-  that sit above entry, `rr = (price − entry)/dsl_risk` (the real R-distance, which
+  `structural_levels` on the upside): each `{type, price, rr}` for `resistance`
+  (prior CONFIRMED pivot highs above price — multi-swing overhead, via
+  `levels.overhead_resistance`, clustered within 0.5·ATR), the current swing high
+  (`prior_high`), and fib measured-move extensions (`fib_1272/1618/2000/2618`) that
+  sit above entry. `rr = (price − entry)/dsl_risk` (the real R-distance, which
   VARIES per name — unlike the removed constant `rr_tp1/2/3`). The mechanical
   `dsl_tp_1r/2r/3r` stay as the **risk/trail framework** (DSL tiers + win-rate
   backtest depend on them); `structural_targets` is the objective AIC takes profit
-  against. Nearest-first; empty when no swing can be anchored.
+  against. Nearest-first; resistance label wins de-dup ties; empty when no structure.
+- **Self-describing `field_glossary`** (top-level, `_FIELD_GLOSSARY` in `drive_sync.py`):
+  a one-line description per level field so the AIC never confuses a STOP with a
+  TARGET with an ENTRY. States the LONG convention (stops below / targets above
+  entry), units (absolute USD unless `_rr/_ratio/_pct/_ann`), and the key
+  distinction that `dsl_tp_Nr` is the mechanical risk/trail framework while
+  `structural_targets` is the real-structure profit objective.
   **Group C (`vol_shares_*`) is intentionally NOT exported** — it needs session-specific
   dynCap (placeholders would dirty the schema); Alfred computes it from `atr_14d`.
 - **Fib ladder is flat** (DSG-18): the nested `fib` object was removed; every record now

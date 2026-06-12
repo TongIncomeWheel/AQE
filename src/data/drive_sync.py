@@ -48,6 +48,59 @@ EXPORT_FILENAME = "aqe_daily_export.json"
 # any blank, and overwrites the one file each run. Version stamps the run date.
 SECTOR_MAP_FILENAME = SECTOR_MAP_DRIVE_FILENAME
 
+# Self-describing schema legend shipped at the top of every export so the AIC
+# reads each level correctly and never confuses a STOP with a TARGET with an
+# ENTRY. Direction convention (LONG setups): STOPS sit BELOW entry, TARGETS sit
+# ABOVE entry. Prices are absolute USD unless the field ends in _rr / _ratio /
+# _pct / _ann. AQE exports DATA + computed LEVELS only — no sizing, no decisions.
+_FIELD_GLOSSARY = {
+    "_convention": (
+        "LONG setups: STOPS are BELOW entry, TARGETS are ABOVE entry. Values are "
+        "absolute USD prices unless the name ends in _rr/_ratio/_pct/_ann (ratios) "
+        "or is a list/object. 'rr' = reward-to-risk in R, where 1R = dsl_risk."
+    ),
+    "entry": "Reference entry = prior close-of-day. The live fill is the IBKR price at "
+             "bracket time, NOT this value.",
+    "dsl_stop": "Primary protective STOP (below entry): β-adjusted structural stop = "
+                "recent 5-session low − 0.5·ATR, clamped to [0.75, 2.0–2.5]×ATR.",
+    "dsl_risk": "1R in USD = entry − dsl_stop. The risk unit every R-multiple uses.",
+    "dsl_atr_ratio": "Stop width in ATRs = dsl_risk / atr_14d (ratio).",
+    "dsl_tp_1r/2r/3r": "MECHANICAL targets = entry + 1/2/3 × dsl_risk. These drive the "
+                       "DSL trail tiers + the win-rate backtest — they are NOT a move "
+                       "forecast. For profit-taking on real structure use structural_targets.",
+    "atr_14d": "14-day Average True Range in USD (the volatility unit).",
+    "coil_entry": "An ENTRY level (not a stop/target) = dsl_stop + atr_14d (1×ATR above "
+                  "the stop) — the optimal resting-limit entry.",
+    "max_chase_tp2": "Max ENTRY price where R:R to dsl_tp_2r stays ≥ 2.0. Above it, a TP2 "
+                     "plan is no longer 2R — stand down or switch target.",
+    "max_chase_tp3": "Max ENTRY price where R:R to dsl_tp_3r stays ≥ 2.0.",
+    "rr_tp2_at_coil": "R:R to dsl_tp_2r if entered at coil_entry (ratio).",
+    "rr_tp3_at_coil": "R:R to dsl_tp_3r if entered at coil_entry (ratio).",
+    "optimal_stop": "RECOMMENDED stop {price,type,atr_ratio,rr_tp2}: the tightest structural "
+                    "level below entry passing atr_ratio≥1.0 AND rr_tp2≥2.0. Prefer over "
+                    "dsl_stop when optimal_stop_exists is true.",
+    "structural_levels": "Candidate STOPS below entry from structure (dsl_stop/swing_low/"
+                         "fib_618/fib_786/ma20-200). Each {type,price,atr_ratio,rr_tp2,valid}; "
+                         "valid = atr_ratio≥1.0 AND rr_tp2≥2.0.",
+    "structural_targets": "TAKE-PROFIT ladder ABOVE entry, anchored to REAL structure: "
+                          "type 'resistance' = prior confirmed pivot-high overhead; "
+                          "'prior_high' = current swing peak; 'fib_1272/1618/2000/2618' = "
+                          "measured-move extensions. Each {type,price,rr}, rr=(price−entry)/"
+                          "dsl_risk. USE THESE as profit objectives — per-name, unlike the "
+                          "mechanical dsl_tp_Nr. Nearest-first; empty if no structure anchors.",
+    "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
+    "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
+                               "pullback/STOP levels (absolute USD).",
+    "ma_20/50/100/200": "Simple moving averages (absolute USD) — dynamic support/resistance.",
+    "rr_est": "Legacy R:R to the fib 1.618 extension = (fib_1618 − entry)/dsl_risk. "
+              "Superseded by structural_targets.",
+    "vol_30d_ann": "30-day annualised realised volatility (decimal: 0.18 = 18%). For "
+                   "sizing/VaR, not a target.",
+    "beta_252d": "1-year beta vs SPY (cov/var).",
+    "ptrs": "Engine score + sector health. Disposition/sizing is the committee's call — "
+            "AQE exports no sizing.",
+}
+
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
                   pe_qualified: bool, ticker: str,
@@ -337,33 +390,51 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
 
 def _structural_target_analysis(d: dict) -> list[dict]:
     """Take-profit ladder anchored to REAL structure rather than mechanical
-    R-multiples: the detected swing high (immediate overhead resistance) and its
-    fib measured-move extensions (1.272 / 1.618 / 2.0 / 2.618 of the swing range).
+    R-multiples. Two structure sources, merged nearest-first:
+      • `resistance`  — prior CONFIRMED pivot highs above price (multi-swing
+                        overhead resistance the move must clear), and the current
+                        swing high (`prior_high`);
+      • fib measured-move extensions of the current swing (`fib_1272/1618/2000/2618`).
 
     Each target above entry gets {type, price, rr} where rr = (price − entry) /
-    dsl_risk — its reward in R, which VARIES per name with the real swing (unlike
+    dsl_risk — reward in R, which VARIES per name with the real structure (unlike
     the fixed tp_1r/2r/3r). The mechanical tp_Nr stay as the risk/trail framework;
-    this is the structural objective AIC takes profit against. Nearest first.
+    this is the structural objective AIC takes profit against. Near-equal levels
+    (within 0.5·ATR) collapse, keeping the resistance label over a fib label.
     """
-    entry, risk = d.get("entry"), d.get("risk")
+    entry, risk, atr14 = d.get("entry"), d.get("risk"), d.get("atr14")
     if not _is_num(entry, risk) or risk <= 0:
         return []
     fib = d.get("fib") or {}
     exts = fib.get("extensions") or {}
-    targets: list[dict] = []
 
-    def _add(typ: str, price) -> None:
+    raw: list[dict] = []
+
+    def _add(typ: str, price, date: str | None = None) -> None:
         if not _is_num(price) or price <= entry:   # a long's target sits above entry
             return
-        targets.append({"type": typ, "price": round(float(price), 2),
-                        "rr": round((price - entry) / risk, 2)})
+        item = {"type": typ, "price": round(float(price), 2),
+                "rr": round((price - entry) / risk, 2)}
+        if date:
+            item["date"] = date
+        raw.append(item)
 
+    # Structure (resistance) first so it wins on de-dup ties, then measured moves.
+    for r in (d.get("resistance") or []):
+        _add("resistance", r.get("price"), r.get("date"))
     _add("prior_high", fib.get("swing_high"))
     _add("fib_1272", exts.get("1.272"))
     _add("fib_1618", exts.get("1.618"))
     _add("fib_2000", exts.get("2.0"))
     _add("fib_2618", exts.get("2.618"))
-    targets.sort(key=lambda x: x["price"])
+
+    raw.sort(key=lambda x: x["price"])
+    gap = atr14 * 0.5 if _is_num(atr14) and atr14 > 0 else 0.0
+    targets: list[dict] = []
+    for t in raw:
+        if targets and gap > 0 and (t["price"] - targets[-1]["price"]) < gap:
+            continue                               # collapse near-equal levels
+        targets.append(t)
     return targets
 
 
@@ -690,6 +761,8 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["thematic_baskets"] = _v21_lk["thematic"]
     from datetime import date as _date
     export["sector_map_version"] = _date.today().isoformat()
+    # Self-describing legend so the AIC reads every level correctly.
+    export["field_glossary"] = _FIELD_GLOSSARY
     try:
         from src.data.universe import load_universe
         _univ = load_universe(include_benchmark=False)

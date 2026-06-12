@@ -94,6 +94,53 @@ def find_swing(
     }
 
 
+RESISTANCE_GAP_ATR = 0.5                   # cluster pivots closer than 0.5·ATR
+RESISTANCE_MAX_LEVELS = 4
+
+
+def overhead_resistance(
+    high: np.ndarray,
+    close: float,
+    dates: np.ndarray,
+    atr14: float,
+    k: int = PIVOT_K,
+    window: int = SWING_WINDOW,
+    max_levels: int = RESISTANCE_MAX_LEVELS,
+) -> list[dict]:
+    """Prior CONFIRMED fractal pivot highs sitting ABOVE the current close — the
+    true overhead resistance a long must clear, from multi-swing history (not just
+    the current swing). A pivot high is a bar whose high is the max of the k bars
+    on each side (an 11-bar fractal at k=5), so it needs k bars to its right to
+    confirm — the live peak is excluded until it stops extending. Near-equal highs
+    (within RESISTANCE_GAP_ATR·ATR) collapse to one level. Nearest-overhead first.
+
+    Returns [{price, date}], up to max_levels.
+    """
+    n = len(high)
+    if n < 2 * k + 1 or not (np.isfinite(close) and close > 0):
+        return []
+    start = max(0, n - window)
+    h = high[start:]
+    d = dates[start:]
+    pivots: list[tuple[float, int]] = []
+    for i in range(k, len(h) - k):
+        if h[i] >= h[i - k:i + k + 1].max() and h[i] > close:
+            pivots.append((float(h[i]), i))
+    pivots.sort(key=lambda x: x[0])                # nearest overhead first
+    gap = atr14 * RESISTANCE_GAP_ATR if (atr14 and np.isfinite(atr14)) else 0.0
+    out: list[dict] = []
+    last_price: float | None = None
+    for price, idx in pivots:
+        if last_price is not None and gap > 0 and (price - last_price) < gap:
+            continue                               # cluster near-equal highs
+        out.append({"price": round(price, 2),
+                    "date": str(pd.Timestamp(d[idx]).date())})
+        last_price = price
+        if len(out) >= max_levels:
+            break
+    return out
+
+
 def fib_levels(swing_low: float, swing_high: float) -> dict:
     """Fibonacci retracements (support) and extensions (targets) for a swing."""
     rng = swing_high - swing_low
@@ -166,6 +213,8 @@ def levels_for_ticker(
         "dsl_atr_ratio": atr_ratio,   # effective stop width in ATRs (β-capped 2.0–2.5)
         "rr_est": None,
         "fib": None,
+        # prior confirmed pivot highs above price — true overhead resistance
+        "resistance": overhead_resistance(highs, close, dates, atr14),
     }
 
     swing = find_swing(highs, lows)

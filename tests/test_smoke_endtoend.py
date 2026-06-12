@@ -576,11 +576,12 @@ def test_dsg18_bracket_fields():
         "entry": 215.0, "stop": 205.81, "risk": 9.19,
         "tp_1r": 226.79, "tp_2r": 237.27, "tp_3r": 247.76,
         "be": 215.0 + 0.5 * 9.19, "atr14": 5.24, "dsl_atr_ratio": 1.75,
+        "resistance": [{"price": 224.0, "date": "2026-05-01"}],
         "fib": {
             "swing_low": 200.0, "swing_high": 230.0, "swing_low_date": "2026-06-10",
             "retracements": {"0.236": 222.9, "0.382": 218.5, "0.5": 215.0,
                              "0.618": 211.5, "0.786": 206.4},
-            "extensions": {"1.618": 248.5},
+            "extensions": {"1.272": 238.16, "1.618": 248.54, "2.0": 260.0, "2.618": 278.54},
         },
     }
     lk = {"ma": {"X": {20: 212.0, 50: 202.34}}, "vol30": {"X": 0.182},
@@ -616,9 +617,16 @@ def test_dsg18_bracket_fields():
     assert [t["price"] for t in tgts] == sorted(t["price"] for t in tgts)  # nearest first
     _types = {t["type"] for t in tgts}
     assert "fib_1618" in _types                                # measured-move target present
+    assert "resistance" in _types                              # prior pivot-high overhead
     # rr is the real R-distance to structure (e.g. swing high 230 @ ~1.63R, not a constant)
     _ph = next(t for t in tgts if t["type"] == "prior_high")
     assert _ph["rr"] == round((230.0 - 215.0) / 9.19, 2)
+
+    # Self-describing glossary present so AIC reads stops vs targets correctly.
+    from src.data.drive_sync import _FIELD_GLOSSARY
+    for _k in ("dsl_stop", "dsl_tp_1r/2r/3r", "structural_targets", "optimal_stop",
+               "coil_entry", "_convention"):
+        assert _k in _FIELD_GLOSSARY
 
     # Degrade cleanly when inputs are missing.
     empty_levels, empty_opt = _structural_stop_analysis({}, None)
