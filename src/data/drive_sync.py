@@ -101,6 +101,56 @@ _FIELD_GLOSSARY = {
             "AQE exports no sizing.",
 }
 
+# HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
+# Every tradeable level carries an explicit role/unit/side so a stop can never be
+# read as a target, a ratio as a price, or a level on the wrong side of entry.
+# Controlled vocabularies (any reader can validate against these enums):
+_FIELD_SCHEMA_ENUMS = {
+    "role": ["entry", "reference", "stop", "target", "fib_support",
+             "moving_average", "risk_metric", "volatility", "ratio"],
+    "unit": ["usd", "r_multiple", "ratio", "pct", "atr", "decimal"],
+    "side": ["below_entry", "above_entry", "at_entry", "n/a"],
+}
+
+
+def _fs(role: str, unit: str, side: str) -> dict:
+    return {"role": role, "unit": unit, "side": side}
+
+
+_FIELD_SCHEMA = {
+    "entry":          _fs("reference", "usd", "at_entry"),
+    "dsl_stop":       _fs("stop", "usd", "below_entry"),
+    "dsl_risk":       _fs("risk_metric", "usd", "n/a"),
+    "dsl_atr_ratio":  _fs("ratio", "atr", "n/a"),
+    "dsl_rr_pct":     _fs("ratio", "pct", "n/a"),
+    "dsl_tp_1r":      _fs("target", "usd", "above_entry"),
+    "dsl_tp_2r":      _fs("target", "usd", "above_entry"),
+    "dsl_tp_3r":      _fs("target", "usd", "above_entry"),
+    "atr_14d":        _fs("volatility", "usd", "n/a"),
+    "coil_entry":     _fs("entry", "usd", "below_entry"),
+    "max_chase_tp2":  _fs("entry", "usd", "above_entry"),
+    "max_chase_tp3":  _fs("entry", "usd", "above_entry"),
+    "rr_tp2_at_coil": _fs("ratio", "r_multiple", "n/a"),
+    "rr_tp3_at_coil": _fs("ratio", "r_multiple", "n/a"),
+    "optimal_stop":   _fs("stop", "usd", "below_entry"),
+    "structural_levels":  _fs("stop", "usd", "below_entry"),
+    "structural_targets": _fs("target", "usd", "above_entry"),
+    "fib_swing_low":  _fs("reference", "usd", "n/a"),
+    "fib_swing_high": _fs("reference", "usd", "n/a"),
+    "fib_236":        _fs("fib_support", "usd", "n/a"),
+    "fib_382":        _fs("fib_support", "usd", "n/a"),
+    "fib_500":        _fs("fib_support", "usd", "n/a"),
+    "fib_618":        _fs("fib_support", "usd", "n/a"),
+    "fib_786":        _fs("fib_support", "usd", "n/a"),
+    "ma_20":          _fs("moving_average", "usd", "n/a"),
+    "ma_50":          _fs("moving_average", "usd", "n/a"),
+    "ma_100":         _fs("moving_average", "usd", "n/a"),
+    "ma_200":         _fs("moving_average", "usd", "n/a"),
+    "rr_est":         _fs("ratio", "r_multiple", "n/a"),
+    "vol_30d_ann":    _fs("volatility", "decimal", "n/a"),
+    "beta_252d":      _fs("risk_metric", "ratio", "n/a"),
+}
+
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
                   pe_qualified: bool, ticker: str,
@@ -366,7 +416,8 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
         rr_tp2 = round((tp2 - entry) / risk, 2)
         item = {"type": typ, "price": round(float(price), 2),
                 "atr_ratio": atr_ratio, "rr_tp2": rr_tp2,
-                "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0)}
+                "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0),
+                "role": "stop", "side": "below_entry"}   # hard guard
         if date:
             item["date"] = date
         levels.append(item)
@@ -384,6 +435,7 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
         best = max(valids, key=lambda x: x["price"])   # tightest = closest to entry
         optimal = {"price": best["price"], "type": best["type"],
                    "atr_ratio": best["atr_ratio"], "rr_tp2": best["rr_tp2"],
+                   "role": "stop", "side": "below_entry",   # hard guard
                    "rationale": "Tightest level passing ATR >= 1.0 AND R:R TP2 >= 2.0"}
     return levels, optimal
 
@@ -414,7 +466,8 @@ def _structural_target_analysis(d: dict) -> list[dict]:
         if not _is_num(price) or price <= entry:   # a long's target sits above entry
             return
         item = {"type": typ, "price": round(float(price), 2),
-                "rr": round((price - entry) / risk, 2)}
+                "rr": round((price - entry) / risk, 2),
+                "role": "target", "side": "above_entry"}   # hard guard
         if date:
             item["date"] = date
         raw.append(item)
@@ -761,7 +814,11 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["thematic_baskets"] = _v21_lk["thematic"]
     from datetime import date as _date
     export["sector_map_version"] = _date.today().isoformat()
-    # Self-describing legend so the AIC reads every level correctly.
+    # HARD GUARD (machine-readable, keyed off structure) + prose glossary so the
+    # AIC can never read a stop as a target or a ratio as a price. Every nested
+    # level item (structural_levels/targets, optimal_stop) also carries role/side.
+    export["field_schema"] = _FIELD_SCHEMA
+    export["field_schema_enums"] = _FIELD_SCHEMA_ENUMS
     export["field_glossary"] = _FIELD_GLOSSARY
     try:
         from src.data.universe import load_universe

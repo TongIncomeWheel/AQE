@@ -623,10 +623,29 @@ def test_dsg18_bracket_fields():
     assert _ph["rr"] == round((230.0 - 215.0) / 9.19, 2)
 
     # Self-describing glossary present so AIC reads stops vs targets correctly.
-    from src.data.drive_sync import _FIELD_GLOSSARY
+    from src.data.drive_sync import _FIELD_GLOSSARY, _FIELD_SCHEMA, _FIELD_SCHEMA_ENUMS
     for _k in ("dsl_stop", "dsl_tp_1r/2r/3r", "structural_targets", "optimal_stop",
                "coil_entry", "_convention"):
         assert _k in _FIELD_GLOSSARY
+
+    # HARD GUARD: machine schema uses only the controlled enums, and tags the key
+    # levels with the right role/side so a stop can't be read as a target.
+    for _v in _FIELD_SCHEMA.values():
+        assert _v["role"] in _FIELD_SCHEMA_ENUMS["role"]
+        assert _v["unit"] in _FIELD_SCHEMA_ENUMS["unit"]
+        assert _v["side"] in _FIELD_SCHEMA_ENUMS["side"]
+    assert _FIELD_SCHEMA["dsl_stop"]["role"] == "stop"
+    assert _FIELD_SCHEMA["dsl_stop"]["side"] == "below_entry"
+    assert _FIELD_SCHEMA["dsl_tp_2r"]["role"] == "target"
+    assert _FIELD_SCHEMA["structural_targets"]["side"] == "above_entry"
+
+    # Every nested level item self-tags role/side (hard guard at item level).
+    for _lvl in f["structural_levels"]:
+        assert _lvl["role"] == "stop" and _lvl["side"] == "below_entry"
+    for _t in f["structural_targets"]:
+        assert _t["role"] == "target" and _t["side"] == "above_entry"
+    if f["optimal_stop"]:
+        assert f["optimal_stop"]["role"] == "stop"
 
     # Degrade cleanly when inputs are missing.
     empty_levels, empty_opt = _structural_stop_analysis({}, None)

@@ -221,12 +221,18 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   `dsl_tp_1r/2r/3r` stay as the **risk/trail framework** (DSL tiers + win-rate
   backtest depend on them); `structural_targets` is the objective AIC takes profit
   against. Nearest-first; resistance label wins de-dup ties; empty when no structure.
-- **Self-describing `field_glossary`** (top-level, `_FIELD_GLOSSARY` in `drive_sync.py`):
-  a one-line description per level field so the AIC never confuses a STOP with a
-  TARGET with an ENTRY. States the LONG convention (stops below / targets above
-  entry), units (absolute USD unless `_rr/_ratio/_pct/_ann`), and the key
-  distinction that `dsl_tp_Nr` is the mechanical risk/trail framework while
-  `structural_targets` is the real-structure profit objective.
+- **Hard guard + glossary** so the AIC can never misread a level. Top-level
+  **`field_schema`** (`_FIELD_SCHEMA`) is machine-readable — `{field: {role, unit,
+  side}}` keyed off STRUCTURE, with controlled enums in **`field_schema_enums`**
+  (role ∈ stop/target/entry/reference/fib_support/moving_average/risk_metric/
+  volatility/ratio; unit ∈ usd/r_multiple/ratio/pct/atr/decimal; side ∈
+  below_entry/above_entry/at_entry/n/a). Every nested level item
+  (`structural_levels`/`structural_targets`/`optimal_stop`) ALSO self-tags
+  `role`+`side`, so a stop can't be read as a target or a ratio as a price.
+  Top-level **`field_glossary`** (`_FIELD_GLOSSARY`) is the prose companion — a
+  one-line description per field + the LONG convention and the `dsl_tp_Nr`
+  (mechanical risk/trail) vs `structural_targets` (real-structure objective)
+  distinction.
   **Group C (`vol_shares_*`) is intentionally NOT exported** — it needs session-specific
   dynCap (placeholders would dirty the schema); Alfred computes it from `atr_14d`.
 - **Fib ladder is flat** (DSG-18): the nested `fib` object was removed; every record now
