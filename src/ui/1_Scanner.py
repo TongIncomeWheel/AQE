@@ -1034,7 +1034,8 @@ _EXPORT_COL_ORDER = [
     "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
     "entry", "stop", "dsl_stop", "dsl_risk", "dsl_rr_pct",
     "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
-    "rr_est", "rr_tp1", "rr_tp2", "rr_tp3", "held", "fib", "rank_explain",
+    "coil_entry", "max_chase_tp2", "max_chase_tp3", "rr_tp2_at_coil", "rr_tp3_at_coil",
+    "optimal_stop", "optimal_stop_exists", "rr_est", "held", "rank_explain",
 ]
 
 
@@ -1075,7 +1076,7 @@ if _held:
         "mp_state", "elder", "beta_30d", "beta_60d", "rvol", "rs_spy_20d",
         "sma_distance_pct", "sector_corr", "dsl_stop", "dsl_tp_1r",
         "dsl_tp_2r", "dsl_tp_3r", "dsl_atr_ratio", "atr_14d",
-        "rr_tp1", "rr_tp2", "rr_tp3", "notes",
+        "coil_entry", "optimal_stop", "notes",
     ]
     _hdf = pd.DataFrame(_held)
     _hcols = [c for c in _HELD_COLS if c in _hdf.columns]
@@ -1157,7 +1158,8 @@ recipe_str = _recipe_label(active_recipe)
 st.caption(f"Aggregate recipe: {recipe_str}")
 st.caption(
     "Full export schema (exactly what AIC receives). DSL bracket: "
-    "`dsl_stop` = SL, `dsl_tp_1r/2r/3r` = targets, `rr_tp1/2/3` = R:R to each, "
+    "`dsl_stop` = SL, `dsl_tp_1r/2r/3r` = price targets (entry + 1/2/3·R), "
+    "`coil_entry`/`optimal_stop` + `rr_tp2_at_coil` = per-name R:R, "
     "`dsl_atr_ratio` = stop width in ATRs."
 )
 

@@ -199,7 +199,6 @@ pass in `drive_sync.py`): `gics_sector`, `gics_sector_name`, `gics_gate`
 (+ `sector_corr_flag` alias for Alfred §9C — 60d Pearson vs parent ETF: <0.30
 IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-avg),
 `rs_spy_20d` (20d ROC − SPY 20d ROC), `sma_distance_pct` (vs 50D SMA),
-`rr_tp1/2/3` (R:R to each DSL target from the internal +0.5R bracket point),
 `held` (false — positions decommissioned). Top-level: `spy_roc_20d`,
 `sector_map_version`, `sector_map_gaps`. All defensive — failures degrade to null.
 - **DSG-18 bracket-ready fields** (charter §6E.6, per-record on every tier — so Alfred
@@ -255,6 +254,11 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
   (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
   `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).
+  Also **`rr_tp1/2/3`** (and the charts `_rr` twin): degenerate constants — because
+  targets are fixed R-multiples of the stop (`tp_Nr = entry + N·R`) and the bracket
+  point is `entry + 0.5·R`, the R:R from that point is **always 0.33 / 1.00 / 1.67**
+  for every name, which confused the AIC. Per-name R:R lives in the DSG-18 fields
+  (`rr_tp2_at_coil`, `optimal_stop.rr_tp2`, `structural_levels[].rr_tp2`).
 - **DSL stop = β-adjusted v2.1** (`compute_initial_stop`): recent 5-session low − 0.5·ATR,
   clamped to [0.75, upper]×ATR, upper = 2.5/2.25/2.0 for β≥2.0/≥1.5/else. Wider room for
   high-β names (charter-updated to stop early stop-outs). Bracket geometry holds

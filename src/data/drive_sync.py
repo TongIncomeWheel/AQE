@@ -348,7 +348,6 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "thematic_baskets": [],
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
-        "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
         # DSG-18 fib ladder (flat — retracement supports + swing anchors)
         "fib_swing_low": None, "fib_swing_high": None,
         "fib_236": None, "fib_382": None, "fib_500": None,
@@ -415,16 +414,6 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             if _ma.get(w) is not None:
                 fields[f"ma_{w}"] = _ma[w]
         fields["held"] = tk in (lk.get("held") or set())
-
-        # R:R to each DSL target, measured from the internal +0.5R bracket point.
-        be, stop = d.get("be"), d.get("stop")
-        if be is not None and stop is not None and (be - stop) > 0:
-            risk = be - stop
-            for key, tp in (("rr_tp1", d.get("tp_1r")),
-                            ("rr_tp2", d.get("tp_2r")),
-                            ("rr_tp3", d.get("tp_3r"))):
-                if tp is not None:
-                    fields[key] = round((tp - be) / risk, 2)
 
         # ── DSG-18 fib ladder (flat) ───────────────────────────────────────
         _fib = d.get("fib") or {}
@@ -542,7 +531,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
             "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
             "sector_corr": v21["sector_corr"], "sector_corr_class": v21["sector_corr_class"],
             "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
-            "rvol": v21["rvol"], "rr_tp1": v21["rr_tp1"], "rr_tp2": v21["rr_tp2"], "rr_tp3": v21["rr_tp3"],
+            "rvol": v21["rvol"],
             # absolute MA ladder — so the live alert engine can evaluate MA
             # support on held names uniformly with candidates.
             "ma_20": v21["ma_20"], "ma_50": v21["ma_50"],

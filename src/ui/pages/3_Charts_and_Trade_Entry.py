@@ -126,13 +126,7 @@ def _rec_from_adhoc(a: dict) -> dict:
     panel + DSL zones render identically for off-list tickers. PTRS/RVol/RS/sector
     need the full pipeline, so they stay null (shown as — and noted)."""
     lv = a.get("levels") or {}
-    be, stop = lv.get("be"), lv.get("stop")
-    bracket = (be - stop) if (be is not None and stop is not None) else None
-
-    def _rr(tp):
-        if tp is not None and bracket and bracket > 0:
-            return round((tp - be) / bracket, 2)
-        return None
+    stop = lv.get("stop")
 
     return {
         "_tier": "ad-hoc (freshly scored)", "_adhoc": True, "_as_of": a.get("as_of"),
@@ -149,8 +143,6 @@ def _rec_from_adhoc(a: dict) -> dict:
         "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
         "dsl_tp_3r": lv.get("tp_3r"),
         "dsl_atr_ratio": lv.get("dsl_atr_ratio"), "atr_14d": lv.get("atr14"),
-        "rr_tp1": _rr(lv.get("tp_1r")), "rr_tp2": _rr(lv.get("tp_2r")),
-        "rr_tp3": _rr(lv.get("tp_3r")),
         "fib": lv.get("fib"),
     }
 
