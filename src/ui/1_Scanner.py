@@ -931,6 +931,19 @@ if CLOUD_MODE:
     # JSON so the read-only deploy never touches the 137MB parquet files.
     _export = load_export() or {}
 
+    def _rr_from_record(r: dict):
+        """Per-name R:R for the display tables. `rr_est` was removed from the
+        export (duplicate of structural_targets); derive it from the structural
+        fields instead — optimal_stop's R:R to TP2, else the nearest structural
+        target's R:R."""
+        opt = r.get("optimal_stop")
+        if isinstance(opt, dict) and opt.get("rr_tp2") is not None:
+            return opt.get("rr_tp2")
+        tgts = r.get("structural_targets") or []
+        if tgts and isinstance(tgts[0], dict):
+            return tgts[0].get("rr")
+        return None
+
     def _build_cloud_lookups(export: dict) -> tuple[dict, dict, dict]:
         betas: dict[str, dict] = {}
         dsl: dict[str, dict] = {}
@@ -953,7 +966,7 @@ if CLOUD_MODE:
                 "shares": r.get("dsl_shares"),
                 "rr_pct": r.get("dsl_rr_pct"),
                 "dsl_atr_ratio": r.get("dsl_atr_ratio"),
-                "rr_est": r.get("rr_est"),
+                "rr_est": _rr_from_record(r),
                 "fib":    _nested_fib_from_export(r),
             }
             elder5[tk] = r.get("elder_5d") or []
@@ -1035,7 +1048,7 @@ _EXPORT_COL_ORDER = [
     "entry", "stop", "dsl_stop", "dsl_risk", "dsl_rr_pct",
     "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
     "coil_entry", "max_chase_tp2", "max_chase_tp3", "rr_tp2_at_coil", "rr_tp3_at_coil",
-    "optimal_stop", "optimal_stop_exists", "structural_targets", "rr_est", "held", "rank_explain",
+    "optimal_stop", "optimal_stop_exists", "structural_targets", "held", "rank_explain",
 ]
 
 

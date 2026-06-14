@@ -7,7 +7,7 @@ REST API only — there are NO local Drive-mount writes.
   aqe_daily_export.json  (scan + SRM combined, overwritten each run)
 
 The committee reads this one file. SRM grading is embedded as the export's
-`srm` / `srm_gics` / `srm_signals` sections, so there is no separate SRM file.
+`srm` / `srm_signals` sections, so there is no separate SRM file.
 A copy is also written to the local OUTPUT_DIR — that is the app's own working
 file (read by the UI in cloud mode), not a user-facing Drive folder.
 
@@ -65,35 +65,43 @@ _FIELD_GLOSSARY = {
                 "recent 5-session low − 0.5·ATR, clamped to [0.75, 2.0–2.5]×ATR.",
     "dsl_risk": "1R in USD = entry − dsl_stop. The risk unit every R-multiple uses.",
     "dsl_atr_ratio": "Stop width in ATRs = dsl_risk / atr_14d (ratio).",
+    "dsl_rr_pct": "Risk per share as a percent of entry = dsl_risk / entry × 100 (pct).",
     "dsl_tp_1r/2r/3r": "MECHANICAL targets = entry + 1/2/3 × dsl_risk. These drive the "
                        "DSL trail tiers + the win-rate backtest — they are NOT a move "
                        "forecast. For profit-taking on real structure use structural_targets.",
     "atr_14d": "14-day Average True Range in USD (the volatility unit).",
     "coil_entry": "An ENTRY level (not a stop/target) = dsl_stop + atr_14d (1×ATR above "
-                  "the stop) — the optimal resting-limit entry.",
+                  "the stop) — the optimal resting-limit entry. A PULLBACK limit that sits "
+                  "≤ entry except when the stop is < 1×ATR (dsl_atr_ratio<1); its side vs "
+                  "entry therefore varies, so field_schema tags it side:n/a.",
     "max_chase_tp2": "Max ENTRY price where R:R to dsl_tp_2r stays ≥ 2.0. Above it, a TP2 "
                      "plan is no longer 2R — stand down or switch target.",
     "max_chase_tp3": "Max ENTRY price where R:R to dsl_tp_3r stays ≥ 2.0.",
-    "rr_tp2_at_coil": "R:R to dsl_tp_2r if entered at coil_entry (ratio).",
-    "rr_tp3_at_coil": "R:R to dsl_tp_3r if entered at coil_entry (ratio).",
-    "optimal_stop": "RECOMMENDED stop {price,type,atr_ratio,rr_tp2}: the tightest structural "
-                    "level below entry passing atr_ratio≥1.0 AND rr_tp2≥2.0. Prefer over "
-                    "dsl_stop when optimal_stop_exists is true.",
+    "rr_tp2_at_coil": "R:R to dsl_tp_2r if entered at coil_entry (ratio). Reference only — "
+                      "computed off the reference entry; recomputed at the live fill per §4.4.",
+    "rr_tp3_at_coil": "R:R to dsl_tp_3r if entered at coil_entry (ratio). Reference only — "
+                      "computed off the reference entry; recomputed at the live fill per §4.4.",
+    "optimal_stop": "Pre-regime CROSS-CHECK, NOT the operative stop {price,type,atr_ratio,"
+                    "rr_tp2}: the tightest structural level below entry passing atr_ratio≥1.0 "
+                    "AND rr_tp2≥2.0 — only 2 of charter §4.2's 3 gates (AQE cannot apply the "
+                    "live regime stop-% ceiling). Alfred selects the OPERATIVE stop per §4.2 "
+                    "from IBKR bars; this is a sanity cross-check, not a recommendation.",
     "structural_levels": "Candidate STOPS below entry from structure (dsl_stop/swing_low/"
-                         "fib_618/fib_786/ma20-200). Each {type,price,atr_ratio,rr_tp2,valid}; "
-                         "valid = atr_ratio≥1.0 AND rr_tp2≥2.0.",
+                         "swing_low_1/2/3/ma_cluster/fib_618/fib_786/ma20-200). Each "
+                         "{type,price,atr_ratio,rr_tp2,valid}; valid = atr_ratio≥1.0 AND "
+                         "rr_tp2≥2.0 — note `valid` OMITS the live regime stop-% ceiling, so "
+                         "these are §4.2 candidates for cross-check, not a final selection.",
     "structural_targets": "TAKE-PROFIT ladder ABOVE entry, anchored to REAL structure: "
                           "type 'resistance' = prior confirmed pivot-high overhead; "
                           "'prior_high' = current swing peak; 'fib_1272/1618/2000/2618' = "
                           "measured-move extensions. Each {type,price,rr}, rr=(price−entry)/"
-                          "dsl_risk. USE THESE as profit objectives — per-name, unlike the "
-                          "mechanical dsl_tp_Nr. Nearest-first; empty if no structure anchors.",
+                          "dsl_risk (reference — recomputed at the live fill per §4.4). USE "
+                          "THESE as profit objectives — per-name, unlike the mechanical "
+                          "dsl_tp_Nr. Nearest-first; empty if no structure anchors.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
     "ma_20/50/100/200": "Simple moving averages (absolute USD) — dynamic support/resistance.",
-    "rr_est": "Legacy R:R to the fib 1.618 extension = (fib_1618 − entry)/dsl_risk. "
-              "Superseded by structural_targets.",
     "vol_30d_ann": "30-day annualised realised volatility (decimal: 0.18 = 18%). For "
                    "sizing/VaR, not a target.",
     "beta_252d": "1-year beta vs SPY (cov/var).",
@@ -127,7 +135,7 @@ _FIELD_SCHEMA = {
     "dsl_tp_2r":      _fs("target", "usd", "above_entry"),
     "dsl_tp_3r":      _fs("target", "usd", "above_entry"),
     "atr_14d":        _fs("volatility", "usd", "n/a"),
-    "coil_entry":     _fs("entry", "usd", "below_entry"),
+    "coil_entry":     _fs("entry", "usd", "n/a"),
     "max_chase_tp2":  _fs("entry", "usd", "above_entry"),
     "max_chase_tp3":  _fs("entry", "usd", "above_entry"),
     "rr_tp2_at_coil": _fs("ratio", "r_multiple", "n/a"),
@@ -146,7 +154,6 @@ _FIELD_SCHEMA = {
     "ma_50":          _fs("moving_average", "usd", "n/a"),
     "ma_100":         _fs("moving_average", "usd", "n/a"),
     "ma_200":         _fs("moving_average", "usd", "n/a"),
-    "rr_est":         _fs("ratio", "r_multiple", "n/a"),
     "vol_30d_ann":    _fs("volatility", "decimal", "n/a"),
     "beta_252d":      _fs("risk_metric", "ratio", "n/a"),
 }
@@ -405,6 +412,7 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
     rets = fib.get("retracements") or {}
 
     levels: list[dict] = []
+    _seen: set[float] = set()                # de-dup by price; first label wins
 
     def _add(typ: str, price, date: str | None = None) -> None:
         if not _is_num(price):
@@ -412,9 +420,13 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
         risk = entry - price
         if risk <= 0:            # a long's stop must sit below entry
             return
+        p2 = round(float(price), 2)
+        if p2 in _seen:          # same shelf already added under an earlier label
+            return
+        _seen.add(p2)
         atr_ratio = round(risk / atr14, 2)
         rr_tp2 = round((tp2 - entry) / risk, 2)
-        item = {"type": typ, "price": round(float(price), 2),
+        item = {"type": typ, "price": p2,
                 "atr_ratio": atr_ratio, "rr_tp2": rr_tp2,
                 "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0),
                 "role": "stop", "side": "below_entry"}   # hard guard
@@ -424,8 +436,16 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
 
     _add("dsl_stop", d.get("stop"))
     _add("swing_low", fib.get("swing_low"), fib.get("swing_low_date"))
+    # §4.2 Step C — last 3 confirmed pivot lows below entry (from levels.swing_lows)
+    for _i, _sl in enumerate(d.get("swing_lows") or [], 1):
+        if isinstance(_sl, dict):
+            _add(f"swing_low_{_i}", _sl.get("price"), _sl.get("date"))
     _add("fib_618", rets.get("0.618"))
     _add("fib_786", rets.get("0.786"))
+    # Compressed MA20/MA50 cluster (within 1×ATR) — a confluence support shelf.
+    _ma20, _ma50 = (ma or {}).get(20), (ma or {}).get(50)
+    if _is_num(_ma20, _ma50) and abs(_ma20 - _ma50) <= atr14:
+        _add("ma_cluster", min(_ma20, _ma50))
     for _w in (20, 50, 100, 200):
         _add(f"ma{_w}", (ma or {}).get(_w))
 
@@ -747,14 +767,11 @@ def build_export(shortlist: dict | None = None) -> dict:
         # Top-level, between regime and srm (per Alfred 11 Jun spec).
         "intermarket": intermarket,
         # Full SRM schema — combined into this one file (no separate SRM file).
-        # `srm` is the list the AIC reader + protocols consume; `srm_gics` is
-        # kept as an alias for existing callers.
+        # `srm` is the canonical sector-grade list the AIC reader + protocols
+        # consume; `srm_signals` carries the deploy/hold/.../avoid ETF buckets.
+        # (The srm_gics/srm_deploy/srm_avoid aliases were dropped — duplicates.)
         "srm": srm_gics,
-        "srm_gics": srm_gics,
         "srm_signals": srm_signals,
-        # Backward compat — derived from computed grades, not shortlist.json
-        "srm_deploy": srm_signals.get("deploy", []),
-        "srm_avoid": srm_signals.get("avoid", []),
         "macro_weather": macro_weather,
         "top_picks": [],
         "edge_list": [],
@@ -883,7 +900,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_3r": d.get("tp_3r"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "rr_est": d.get("rr_est"),
             "elder_5d": elder5.get(tk),
             "rank_explain": _rank_explain(
                 c.get("pipe_rank", 0), floor, sc_val,
@@ -929,7 +945,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_3r": d.get("tp_3r"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "rr_est": d.get("rr_est"),
             "elder_5d": elder5.get(tk),
             "rank_explain": _rank_explain(
                 pe.get("pipe_rank", 0), floor, pe_sc,
@@ -980,7 +995,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "dsl_tp_3r": d.get("tp_3r"),
             "dsl_rr_pct": d.get("rr_pct"),
             "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "rr_est": d.get("rr_est"),
             "elder_5d": elder5.get(rm["ticker"]),
             "rank_explain": _rank_explain(
                 rm.get("pipe_rank", 0), floor, sc_val,
@@ -1074,7 +1088,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                     "dsl_tp_3r": d.get("tp_3r"),
                     "dsl_rr_pct": d.get("rr_pct"),
                     "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "rr_est": d.get("rr_est"),
                     "elder_5d": elder5.get(tk),
                     "rank_explain": _rank_explain(
                         wpr, wfl, wsc, tk in pe_tickers, tk,
@@ -1120,7 +1133,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         "dsl_stop", "dsl_risk", "dsl_rr_pct",
         "dsl_atr_ratio", "atr_14d",
         "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
-        "beta_30d", "beta_60d", "rr_est", "elder_5d", "mp_state", "pe", "pipe_rank",
+        "beta_30d", "beta_60d", "elder_5d", "mp_state", "pe", "pipe_rank",
         "floor", "rank_explain",
         # DSG-18 flat fib ladder + bracket-ready fields
         "fib_swing_low", "fib_swing_high",

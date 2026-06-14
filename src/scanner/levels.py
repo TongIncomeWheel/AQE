@@ -94,6 +94,40 @@ def find_swing(
     }
 
 
+def recent_pivot_lows(
+    low: np.ndarray,
+    dates: np.ndarray,
+    close: float,
+    k: int = PIVOT_K,
+    window: int = SWING_WINDOW,
+    n: int = 3,
+) -> list[dict]:
+    """The last `n` CONFIRMED fractal pivot lows sitting BELOW the current close —
+    structural STOP candidates (charter §4.2 Step C "last 3 confirmed swing lows").
+
+    A pivot low is a bar whose low is the minimum of the k bars on each side (an
+    11-bar fractal at k=5), so it needs k bars to its right to confirm. Only lows
+    below the close qualify (a long's stop sits below entry). Most-recent first.
+
+    Returns [{price, date}], up to n.
+    """
+    nbars = len(low)
+    if nbars < 2 * k + 1 or not (np.isfinite(close) and close > 0):
+        return []
+    start = max(0, nbars - window)
+    l = low[start:]
+    d = dates[start:]
+    out: list[dict] = []
+    for i in range(len(l) - k - 1, k - 1, -1):          # newest → oldest, confirmed only
+        price = float(l[i])
+        if price < close and l[i] <= l[i - k:i + k + 1].min():
+            out.append({"price": round(price, 2),
+                        "date": str(pd.Timestamp(d[i]).date())})
+            if len(out) >= n:
+                break
+    return out
+
+
 RESISTANCE_GAP_ATR = 0.5                   # cluster pivots closer than 0.5·ATR
 RESISTANCE_MAX_LEVELS = 4
 
@@ -181,7 +215,7 @@ def levels_for_ticker(
     so no sub-ATR stops can occur.
 
     Returns the levels dict {entry, stop, risk, tp_1r, tp_2r, tp_3r, be,
-    shares, rr_pct, rr_est, fib, dsl_atr_ratio, atr14, daily_range_proxy},
+    shares, rr_pct, rr_est, fib, dsl_atr_ratio, atr14, resistance, swing_lows},
     or None when inputs are invalid. `rr_est` and `fib` are None if no
     swing can be anchored.
     """
@@ -215,6 +249,8 @@ def levels_for_ticker(
         "fib": None,
         # prior confirmed pivot highs above price — true overhead resistance
         "resistance": overhead_resistance(highs, close, dates, atr14),
+        # last 3 confirmed pivot lows below price — structural stop candidates (§4.2 C)
+        "swing_lows": recent_pivot_lows(lows, dates, close),
     }
 
     swing = find_swing(highs, lows)

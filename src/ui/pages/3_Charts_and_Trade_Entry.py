@@ -44,6 +44,21 @@ if not PANEL_DAILY.exists():
     st.stop()
 
 
+def _rr_struct(rec: dict | None):
+    """Per-name R:R from the export's structural fields. `rr_est` was removed
+    (duplicate of structural_targets), so derive it: optimal_stop's R:R to TP2,
+    else the nearest structural target's R:R."""
+    if not rec:
+        return None
+    opt = rec.get("optimal_stop")
+    if isinstance(opt, dict) and opt.get("rr_tp2") is not None:
+        return opt.get("rr_tp2")
+    tgts = rec.get("structural_targets") or []
+    if tgts and isinstance(tgts[0], dict):
+        return tgts[0].get("rr")
+    return None
+
+
 @st.cache_data(ttl=900, show_spinner=False)
 def _load_panel(_hash: str) -> pd.DataFrame:
     df = pd.read_parquet(
@@ -572,16 +587,16 @@ with left:
         _risk_pct = (_be - _stop) / _be * 100
         # TP prices are dynamic (scale with the β-adjusted 1R). The TP ladder is
         # fixed R-multiples, so R:R-to-each-TP is a constant by construction —
-        # we show % move (which IS per-ticker) and the dynamic rr_est (reward to
-        # the Fib-1.618 extension ÷ risk) as the real per-name R:R.
+        # we show % move (which IS per-ticker) and a structural per-name R:R
+        # (optimal_stop's R:R to TP2, else nearest structural target).
         _segs = [f"🟥 Stop **{_stop:.2f}** (−{_risk_pct:.1f}%)", f"🟨 Buy **{_be:.2f}**"]
         for _tp, _lab in _tps:
             if _tp:
                 _p = (_tp - _be) / _be * 100
                 _segs.append(f"🟩 {_lab} **{_tp:.2f}** (+{_p:.1f}%)")
-        _est = rec.get("rr_est")
+        _est = _rr_struct(rec)
         if _est is not None:
-            _segs.append(f"🎯 R:R **{_est}** (to Fib 1.618)")
+            _segs.append(f"🎯 R:R **{_est}** (structural)")
         st.caption("  ·  ".join(_segs))
 
     # --- AQE numbers ---
@@ -637,12 +652,12 @@ with left:
         d2.metric("TP2", _f(r.get("dsl_tp_2r")))
         d3.metric("TP3", _f(r.get("dsl_tp_3r")))
         d3.metric("ATR ratio", _f(r.get("dsl_atr_ratio")))
-        d4.metric("R:R (Fib 1.618)", _f(r.get("rr_est"), ".2f"),
-                  help="The per-ticker R:R = reward to the Fib-1.618 extension ÷ 1R "
-                       "risk. This is the DYNAMIC one. The TP1/2/3 ladder is fixed "
-                       "R-multiples (+1R/+2R/+3R), so its R:R is a constant 1/2/3 for "
-                       "every name by design — the TP *prices* vary because 1R is "
-                       "β-adjusted, but the ratio doesn't.")
+        d4.metric("R:R (structural)", _f(_rr_struct(r), ".2f"),
+                  help="The per-ticker R:R from real structure — optimal_stop's R:R "
+                       "to TP2 if it exists, else the nearest structural target. The "
+                       "TP1/2/3 ladder is fixed R-multiples (+1R/+2R/+3R), so its R:R "
+                       "is a constant 1/2/3 for every name by design — the TP *prices* "
+                       "vary because 1R is β-adjusted, but the ratio doesn't.")
         d4.metric("ATR(14d)", _f(r.get("atr_14d")))
 
     # ── AIC commentary prompt ─────────────────────────────────────────────
@@ -681,7 +696,7 @@ with left:
             f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | "
             f"TP1 {_f(r.get('dsl_tp_1r'))} | TP2 {_f(r.get('dsl_tp_2r'))} | "
             f"TP3 {_f(r.get('dsl_tp_3r'))} | "
-            f"R:R est {_f(r.get('rr_est'), '.2f')} | ATR ratio {_f(r.get('dsl_atr_ratio'))}",
+            f"R:R (structural) {_f(_rr_struct(r), '.2f')} | ATR ratio {_f(r.get('dsl_atr_ratio'))}",
         ]
 
         # Volume context if we have it

@@ -85,6 +85,18 @@ def _sc(rec: dict):
         return -1.0
 
 
+def _rr_struct(rec: dict):
+    """Per-name R:R from structural fields (rr_est was removed from the export):
+    optimal_stop's R:R to TP2, else the nearest structural target's R:R."""
+    opt = rec.get("optimal_stop")
+    if isinstance(opt, dict) and opt.get("rr_tp2") is not None:
+        return opt.get("rr_tp2")
+    tgts = rec.get("structural_targets") or []
+    if tgts and isinstance(tgts[0], dict):
+        return tgts[0].get("rr")
+    return None
+
+
 def _aic_line(tk: str, rec: dict, t: dict) -> str:
     g = rec.get
     base = (f"AIC — {tk} ({'HELD' if t['is_held'] else t.get('source')}): "
@@ -95,7 +107,7 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
             f"St {_fmt(g('structure'), 0)} MP {_fmt(g('mp'), 0)} Eld {_fmt(g('elder'), 1)} · "
             f"DSL stop {_fmt(g('dsl_stop'))} "
             f"TP {_fmt(g('dsl_tp_1r'))}/{_fmt(g('dsl_tp_2r'))}/{_fmt(g('dsl_tp_3r'))} "
-            f"(rr_est {_fmt(g('rr_est'), 2)}) · β {_fmt(g('beta_30d'), 2)} · "
+            f"(R:R {_fmt(_rr_struct(rec), 2)}) · β {_fmt(g('beta_30d'), 2)} · "
             f"sector {g('gics_sector') or '—'} {g('gics_gate') or '—'}.")
     if t["is_held"]:
         base += (f" Trade: entry {_fmt(g('entry'))} qty {g('qty')} "
@@ -257,7 +269,9 @@ def send_test() -> dict:
                             "ptrs": 64, "mp_state": "STRONG", "flow": 82, "energy": 70,
                             "structure": 62, "mp": 60, "elder": 8, "beta_30d": 1.4,
                             "dsl_stop": 95, "dsl_risk": 4.33, "dsl_tp_1r": 103,
-                            "dsl_tp_2r": 106, "dsl_tp_3r": 109, "rr_est": 2.1,
+                            "dsl_tp_2r": 106, "dsl_tp_3r": 109,
+                            "optimal_stop": {"price": 96.5, "type": "swing_low_1",
+                                             "atr_ratio": 1.1, "rr_tp2": 2.1},
                             "gics_sector": "XLK", "gics_gate": "PASS"}],
               "held_positions": [{"ticker": "ODFL", "sc_momentum": 62, "ptrs": 58,
                                   "mp_state": "BUILDING", "entry": 239.45, "qty": 65,

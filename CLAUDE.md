@@ -183,7 +183,9 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
 - `beta_60d`, `rank_explain` per ticker
 - `exported_at` (SGT timestamp), `market`, `regime`
 - **SRM is combined in-file** (no separate SRM file): `srm` (canonical sector-grade
-  list for downstream readers), plus `srm_gics`/`srm_signals`/`srm_deploy`/`srm_avoid` aliases
+  list for downstream readers) + `srm_signals` (deploy/hold/…/avoid ETF buckets). The
+  duplicate `srm_gics`/`srm_deploy`/`srm_avoid` aliases were dropped (charter v2.0 §0.7
+  de-dup — `srm` IS `srm_gics`; the bucket lists live in `srm_signals`).
 - Erase-then-write to `output/` (local working copy) and the pinned Google Drive
   folder via the REST API (folder ID in `gdrive_uploader.DEFAULT_FOLDER_ID`,
   override with `GDRIVE_FOLDER_ID`). Scope is full `drive`. No local `G:` mount.
@@ -209,8 +211,14 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   annualised realised vol from log returns), `beta_252d` (1-yr beta vs SPY, cov/var —
   numpy, no scipy), plus **structural stop selection** — `structural_levels` (a list of
   candidate stops {type, price, atr_ratio, rr_tp2, valid}; types = dsl_stop / swing_low /
-  fib_618 / fib_786 / ma20/50/100/200) and `optimal_stop` (the TIGHTEST valid level —
-  closest to entry passing `atr_ratio ≥ 1.0 AND rr_tp2 ≥ 2.0`) + `optimal_stop_exists`.
+  **swing_low_1/2/3** (charter §4.2-C last-3 confirmed pivot lows, from
+  `levels.recent_pivot_lows`) / **ma_cluster** (MA20+MA50 confluence within 1×ATR) /
+  fib_618 / fib_786 / ma20/50/100/200; de-duped by price) and `optimal_stop` (the TIGHTEST
+  valid level — closest to entry passing `atr_ratio ≥ 1.0 AND rr_tp2 ≥ 2.0`) +
+  `optimal_stop_exists`. **`optimal_stop`/`structural_levels.valid` are a PRE-REGIME
+  CROSS-CHECK, NOT the operative stop** (charter v2.0 §4.2: AQE applies only 2 of the 3
+  gates — it can't know the live regime stop-% ceiling; Alfred selects the operative stop
+  from IBKR bars). The glossary says so explicitly (no "RECOMMENDED/Prefer" wording).
   **Structure-anchored TP ladder** `structural_targets` (the mirror of
   `structural_levels` on the upside): each `{type, price, rr}` for `resistance`
   (prior CONFIRMED pivot highs above price — multi-swing overhead, via
@@ -232,7 +240,9 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   Top-level **`field_glossary`** (`_FIELD_GLOSSARY`) is the prose companion — a
   one-line description per field + the LONG convention and the `dsl_tp_Nr`
   (mechanical risk/trail) vs `structural_targets` (real-structure objective)
-  distinction.
+  distinction. `coil_entry` is `side:n/a` (a pullback limit ≤ entry except when the
+  stop is < 1×ATR). The two halves are kept in lockstep: a test asserts every
+  `_FIELD_SCHEMA` key is covered by `_FIELD_GLOSSARY` (expanding grouped `/` keys).
   **Group C (`vol_shares_*`) is intentionally NOT exported** — it needs session-specific
   dynCap (placeholders would dirty the schema); Alfred computes it from `atr_14d`.
 - **Fib ladder is flat** (DSG-18): the nested `fib` object was removed; every record now
@@ -281,6 +291,11 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   point is `entry + 0.5·R`, the R:R from that point is **always 0.33 / 1.00 / 1.67**
   for every name, which confused the AIC. Per-name R:R lives in the DSG-18 fields
   (`rr_tp2_at_coil`, `optimal_stop.rr_tp2`, `structural_levels[].rr_tp2`).
+  Also **`rr_est`** (charter v2.0 §0.7 de-dup): it was `(fib_1618 − entry)/dsl_risk`,
+  i.e. exactly `structural_targets`[fib_1618].rr — a duplicate. `levels.py` still
+  computes it internally for the local UI; the export + its glossary/schema entries are
+  gone, and the cloud Scanner/Charts derive R:R from `optimal_stop.rr_tp2` (fallback:
+  nearest `structural_targets[].rr`).
 - **DSL stop = β-adjusted v2.1** (`compute_initial_stop`): recent 5-session low − 0.5·ATR,
   clamped to [0.75, upper]×ATR, upper = 2.5/2.25/2.0 for β≥2.0/≥1.5/else. Wider room for
   high-β names (charter-updated to stop early stop-outs). Bracket geometry holds

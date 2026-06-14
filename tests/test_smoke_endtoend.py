@@ -654,6 +654,66 @@ def test_dsg18_bracket_fields():
     assert _structural_target_analysis({}) == []
 
 
+def test_charter_v2_reconciliation():
+    """Charter v2.0 audit fixes: rr_est removed, optimal_stop demoted to a
+    cross-check, coil_entry side n/a, last-3 swing-low + MA-cluster stop
+    candidates, and the glossary/schema contract halves stay in lockstep."""
+    from src.data.drive_sync import (
+        _v21_record_fields, _FIELD_GLOSSARY, _FIELD_SCHEMA,
+    )
+
+    d = {
+        "entry": 215.0, "stop": 205.81, "risk": 9.19,
+        "tp_1r": 224.19, "tp_2r": 237.27, "tp_3r": 247.76,
+        "atr14": 5.24, "dsl_atr_ratio": 1.75,
+        "fib": {"swing_low": 200.0, "swing_high": 230.0,
+                "retracements": {"0.618": 211.5, "0.786": 206.4},
+                "extensions": {"1.618": 248.54}},
+        # §4.2-C — last 3 confirmed pivot lows below entry (from levels.swing_lows)
+        "swing_lows": [{"price": 208.0, "date": "2026-06-09"},
+                       {"price": 203.0, "date": "2026-05-20"},
+                       {"price": 198.0, "date": "2026-05-02"}],
+    }
+    # MA20/MA50 within 1×ATR (5.24) → a ma_cluster confluence shelf below entry.
+    lk = {"ma": {"X": {20: 212.0, 50: 209.5}},
+          "vol30": {}, "beta252": {}, "rvol": {}, "rs": {}, "sma": {},
+          "corr": {}, "held": set(), "thematic": {}}
+    f = _v21_record_fields("X", d, lk, {"X": "XLV"}, {"XLV": {"grade": "HOLD"}})
+
+    _types = {lvl["type"] for lvl in f["structural_levels"]}
+    assert "swing_low_1" in _types                       # last-3 pivot lows present
+    assert "ma_cluster" in _types                         # MA20/50 confluence shelf
+    _prices = [lvl["price"] for lvl in f["structural_levels"]]
+    assert len(_prices) == len(set(_prices))              # de-duped by price
+
+    # rr_est is fully gone from the export contract (all three layers).
+    assert "rr_est" not in f
+    assert "rr_est" not in _FIELD_GLOSSARY
+    assert "rr_est" not in _FIELD_SCHEMA
+
+    # coil_entry side n/a (varies vs entry); optimal_stop demoted to cross-check.
+    assert _FIELD_SCHEMA["coil_entry"]["side"] == "n/a"
+    _opt_doc = _FIELD_GLOSSARY["optimal_stop"]
+    assert "CROSS-CHECK" in _opt_doc
+    assert "RECOMMENDED" not in _opt_doc and "Prefer" not in _opt_doc
+
+    # Contract integrity: every machine-schema key is described in the glossary
+    # (expanding the glossary's grouped "prefix_a/b/c" keys first).
+    def _expand(key: str) -> set[str]:
+        if "/" not in key:
+            return {key}
+        head = key.split("/")[0]
+        prefix = head[:head.rfind("_") + 1]
+        return {prefix + seg for seg in key[len(prefix):].split("/")}
+
+    gloss: set[str] = set()
+    for k in _FIELD_GLOSSARY:
+        if not k.startswith("_"):
+            gloss |= _expand(k)
+    for k in _FIELD_SCHEMA:
+        assert k in gloss, f"{k} in field_schema but missing from field_glossary"
+
+
 def test_thematic_dual_listing():
     """v2.0 dual-listing: a ticker can map to multiple baskets; Crypto basket exists."""
     from src.engines.srm import (
