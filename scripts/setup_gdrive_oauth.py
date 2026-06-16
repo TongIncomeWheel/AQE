@@ -11,8 +11,12 @@ What you need before running this:
        https://console.cloud.google.com/projectcreate
   2. Enable the Google Drive API in that project:
        APIs & Services -> Library -> "Google Drive API" -> Enable
-  3. Configure the OAuth consent screen ("External", testing mode is fine
-     for personal use; add your own Google email as a Test User).
+  3. Configure the OAuth consent screen ("External"). IMPORTANT: set the
+     Publishing status to **"In production"** (Publish app), NOT "Testing".
+     In Testing mode Google EXPIRES the refresh token after 7 days, which
+     causes the recurring "invalid_grant: Token has been expired or revoked"
+     error. Production tokens are long-lived; as the sole user you do not need
+     Google's verification.
   4. Create an OAuth 2.0 Client ID:
        Credentials -> Create Credentials -> OAuth Client ID
        Application type: **Desktop app**
@@ -50,8 +54,31 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CLIENT_SECRET_PATH = PROJECT_ROOT / "client_secret.json"
 TOKEN_CACHE_PATH = PROJECT_ROOT / "gdrive_token_cache.json"
+ENV_PATH = PROJECT_ROOT / ".env"
 
 SCOPES = ["https://www.googleapis.com/auth/drive"]
+
+
+def _update_env_file(values: dict[str, str]) -> None:
+    """Write the OAuth keys into the local (gitignored) .env, in place.
+
+    Replaces any existing GOOGLE_OAUTH_* lines and appends missing ones,
+    leaving every other line (FMP_API_KEY, etc.) untouched. This is what
+    fixes a "Token has been expired or revoked" error on the LOCAL run —
+    the .env is the credential source for double-click .bat / local export.
+    """
+    lines = ENV_PATH.read_text(encoding="utf-8").splitlines() if ENV_PATH.exists() else []
+    remaining = dict(values)
+    out: list[str] = []
+    for line in lines:
+        key = line.split("=", 1)[0].strip() if "=" in line else ""
+        if key in remaining:
+            out.append(f"{key}={remaining.pop(key)}")
+        else:
+            out.append(line)
+    for key, val in remaining.items():            # keys not already present
+        out.append(f"{key}={val}")
+    ENV_PATH.write_text("\n".join(out) + "\n", encoding="utf-8")
 
 
 def main() -> int:
@@ -129,10 +156,24 @@ def main() -> int:
     except Exception as exc:                                                    # noqa: BLE001
         print(f"WARNING: token captured but smoke test failed: {exc}")
 
-    # Print what to paste into HF
+    # Fix the LOCAL run immediately: write the three keys into .env in place.
+    try:
+        _update_env_file({
+            "GOOGLE_OAUTH_CLIENT_ID": client_id,
+            "GOOGLE_OAUTH_CLIENT_SECRET": client_secret,
+            "GOOGLE_OAUTH_REFRESH_TOKEN": creds.refresh_token,
+        })
+        print(f"Local .env updated at: {ENV_PATH}  (gitignored) -- local export fixed.")
+    except Exception as exc:                                                     # noqa: BLE001
+        print(f"WARNING: could not auto-update .env ({exc}); paste the values below manually.")
+
+    # Print what to paste into HF + GitHub (those have their own copies)
     print()
     print("=" * 70)
-    print("Paste these into Hugging Face Space Settings -> Variables and secrets:")
+    print("Local .env is done. Now paste these into the CLOUD secret stores so")
+    print("the HF Space + GitHub Actions backstop keep writing to Drive:")
+    print("  - Hugging Face: Space Settings -> Variables and secrets")
+    print("  - GitHub: repo Settings -> Secrets and variables -> Actions")
     print("=" * 70)
     print()
     print("--- SECRETS (mark 'New secret' in HF UI) ---")
