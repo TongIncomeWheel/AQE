@@ -189,6 +189,13 @@ ONE combined JSON for committee consumption — `aqe_daily_export.json` in a sin
 - Erase-then-write to `output/` (local working copy) and the pinned Google Drive
   folder via the REST API (folder ID in `gdrive_uploader.DEFAULT_FOLDER_ID`,
   override with `GDRIVE_FOLDER_ID`). Scope is full `drive`. No local `G:` mount.
+  `export_to_drive()` ALWAYS writes the local copy first, then attempts the upload
+  (status `partial` = "local only" when Drive OAuth is broken).
+- **Download fallback:** the Scanner sidebar **📤 Export** section has a *Build
+  export → Drive* button + an *⬇️ Download export JSON* button (`_export_file_info`)
+  available in ALL modes. The download serves the local `aqe_daily_export.json`
+  through the browser — the way to grab the export when Drive sync fails (e.g.
+  expired OAuth token); it's the same file that would be pushed to Drive.
 - **Trade journal is local-only:** `aegis_trade_journal_{date}` is written to `output/`
   and NOT published to Drive. The old `SRM Daily/` and `AEGIS Trade Journal/` Drive
   folders are no longer written.

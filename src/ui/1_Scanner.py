@@ -41,6 +41,31 @@ def _writable(p) -> str:
         return "yes"
     except Exception as exc:
         return f"no ({type(exc).__name__})"
+
+
+def _export_file_info():
+    """(bytes, caption) for the local export JSON, or None if absent.
+
+    `export_to_drive()` writes this local working copy on every run *before*
+    attempting the Drive upload, so it exists even when Drive auth is broken
+    ("Local only"). This powers the download-to-browser fallback.
+    """
+    p = OUTPUT_DIR / "aqe_daily_export.json"
+    if not p.exists():
+        return None
+    try:
+        raw = p.read_bytes()
+    except Exception:  # noqa: BLE001
+        return None
+    when = "unknown"
+    try:
+        import json as _json
+        meta = _json.loads(raw)
+        when = meta.get("exported_at") or meta.get("date") or "unknown"
+    except Exception:  # noqa: BLE001
+        pass
+    return raw, f"exported {when} · {len(raw) / 1024:.0f} KB"
+
 from src.data.panel_builder import PANEL_DAILY
 from src.scanner.score_runner import SCORES_DAILY
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
@@ -315,18 +340,43 @@ with st.sidebar:
                 _universe_status.clear()
                 st.rerun()
 
-    if not CLOUD_MODE:
-        if st.button("Export to Drive", use_container_width=True):
-            from src.data.drive_sync import export_to_drive
+    # ---- Export + local-download fallback (all modes) ----------------
+    st.markdown("**📤 Export**")
+    if st.button("Build export → Drive", use_container_width=True,
+                 help="Rebuild aqe_daily_export.json, save the local working "
+                      "copy, and upload to the pinned Google Drive folder when "
+                      "Drive OAuth is healthy."):
+        from src.data.drive_sync import export_to_drive
+        with st.spinner("Building export…"):
+            st.session_state["_export_result"] = export_to_drive()
 
-            result = export_to_drive()
-            if result["status"] == "ok":
-                ts = result.get("exported_at", result["date"])
-                st.success(f"Exported to Drive — {ts}")
-            elif result["status"] == "partial":
-                st.warning(f"Local only: {result['reason']}")
-            else:
-                st.error(result.get("reason", "No data"))
+    _xr = st.session_state.get("_export_result")
+    if _xr:
+        _xs = _xr.get("status")
+        if _xs == "ok":
+            st.success(f"Saved to Drive ✓ — {_xr.get('exported_at') or _xr.get('date')}")
+        elif _xs == "partial":
+            st.warning("Drive upload failed — local copy saved. Use **Download "
+                       "export JSON** below as the fallback.")
+            st.caption(f"Reason: {_xr.get('reason')}")
+        else:
+            st.info(_xr.get("reason", "Nothing to export yet."))
+
+    # Always-available browser download — the fallback when Drive sync is down.
+    _xi = _export_file_info()
+    st.download_button(
+        "⬇️ Download export JSON",
+        data=(_xi[0] if _xi else b""),
+        file_name="aqe_daily_export.json",
+        mime="application/json",
+        use_container_width=True,
+        disabled=_xi is None,
+        help="Save aqe_daily_export.json to your computer (your browser asks "
+             "where to put it). Works even when Google Drive sync is broken — "
+             "it's the exact file that would be pushed to Drive.",
+    )
+    st.caption(_xi[1] if _xi else
+               "No export file yet — build it above or run the daily pipeline.")
 
 # ---------------------------------------------------------------------------
 # Onboarding check
