@@ -673,6 +673,46 @@ def _elder_history(_hash: str) -> dict[str, list]:
     return load_elder_history()
 
 
+@st.cache_data(ttl=600, show_spinner=False)
+def _rrg_tail_backfill(_hash: str) -> tuple[dict, dict]:
+    """({etf: tail}, {basket: tail}) computed live from the price panel.
+
+    Back-fill for the RRG charts when shortlist.json predates the tail feature
+    (no `rrg_history`): the tail is a deterministic function of the panel, so we
+    recompute it on demand instead of forcing a full pipeline rerun. Empty when
+    the panel isn't present (e.g. a cold Streamlit container).
+    """
+    sector_tails: dict[str, list] = {}
+    basket_tails: dict[str, list] = {}
+    try:
+        if not PANEL_DAILY.exists():
+            return sector_tails, basket_tails
+        import numpy as np
+        from src.engines import srm
+
+        panel = pd.read_parquet(PANEL_DAILY, columns=["date", "ticker", "close"])
+        panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
+        spy = (panel[panel["ticker"] == "SPY"].sort_values("date")["close"]
+               .astype(float).to_numpy())
+        if spy.size:
+            for _etf in srm.GICS_ETFS:
+                _d = panel[panel["ticker"] == _etf].sort_values("date")
+                if not _d.empty:
+                    sector_tails[_etf] = srm.compute_rrg_tail(
+                        _d["close"].astype(float).to_numpy(), spy)
+        # Baskets: reuse the canonical grader (it already emits rrg_history);
+        # parent-grade capping is irrelevant to the tail, so pass {}.
+        try:
+            _baskets = srm.grade_thematic_baskets(panel, {})
+            basket_tails = {k: (v.get("rrg_history") or [])
+                            for k, v in _baskets.items()}
+        except Exception:  # noqa: BLE001
+            pass
+    except Exception:  # noqa: BLE001
+        pass
+    return sector_tails, basket_tails
+
+
 def _recipe_label(recipe: dict) -> str:
     """Build a compact label from recipe thresholds."""
     parts = []
@@ -713,6 +753,9 @@ st.divider()
 st.subheader("SRM Sector Health")
 
 srm_detail = sl.get("srm_detail", {})
+# Back-fill RRG tails from the panel when shortlist.json predates the feature.
+_sector_tail_bf, _basket_tail_bf = _rrg_tail_backfill(
+    file_hash(PANEL_DAILY) if PANEL_DAILY.exists() else "none")
 if srm_detail:
     # ── Visual panels: RRG scatter + Macro weather (above the table) ──
     _has_rrg = any(
@@ -732,9 +775,9 @@ if srm_detail:
                 _r = _d.get("rrg_rs_ratio")
                 _m = _d.get("rrg_rs_momentum")
                 if _r is not None and _m is not None:
+                    _hist = _d.get("rrg_history") or _sector_tail_bf.get(_etf) or []
                     _all_pts.append((_etf, _r, _m, _d.get("entry_gate", "WATCH"),
-                                     _d.get("rrg_direction", "STABLE"),
-                                     _d.get("rrg_history") or []))
+                                     _d.get("rrg_direction", "STABLE"), _hist))
 
             _etf_opts = [p[0] for p in _all_pts]
             _sel_etfs = st.multiselect(
@@ -954,9 +997,9 @@ if _thematic:
             _r = _d.get("rrg_rs_ratio")
             _m = _d.get("rrg_rs_momentum")
             if _r is not None and _m is not None:
+                _hist = _d.get("rrg_history") or _basket_tail_bf.get(_b) or []
                 _all_tpts.append((_b, _r, _m, _d.get("grade", "NO_DATA"),
-                                  _d.get("rrg_direction", "STABLE"),
-                                  _d.get("rrg_history") or []))
+                                  _d.get("rrg_direction", "STABLE"), _hist))
 
         _b_opts = [p[0] for p in _all_tpts]
         _sel_b = st.multiselect(

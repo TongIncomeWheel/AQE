@@ -119,6 +119,9 @@ the committee decision externally (data ping → human → AIC).
   GICS-sector and thematic-basket RRGs carry it, and both Scanner RRG charts have a
   **multiselect** to trim which sectors/baskets plot when the chart gets crowded.
   `rrg_history` rides in `shortlist.json` (the chart's source), not the Drive export.
+  When `shortlist.json` predates the feature, the Scanner **back-fills the tails live
+  from the panel** (`_rrg_tail_backfill`, cached) so they show immediately without a
+  pipeline rerun.
   **DSG-19 Macro overlay**: TLT/UUP/HYG/IWM **+ GLD/CPER/USO** (Druckenmiller
   commodity complex) direction scores × sector sensitivity matrix →
   `macro_headwind_score`/`macro_headwind_flag` (TAILWIND/NEUTRAL/CAUTION/HEADWIND).
