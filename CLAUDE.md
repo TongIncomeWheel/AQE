@@ -112,6 +112,13 @@ the committee decision externally (data ping → human → AIC).
   **DSG-18 RRG layer**: RS-Ratio and RS-Momentum vs SPY (42-bar window) → quadrant
   (LEADING/IMPROVING/WEAKENING/LAGGING) + direction (ENTERING/DEEPENING/EXITING/STABLE).
   Grade override rules: DEPLOY+LAGGING → AVOID_FLAG, HOLD+LAGGING → AVOID_FLAG, etc.
+  Also emits **`rrg_history`** — `compute_rrg_tail()` recomputes the RRG point as-of
+  each of the last `RRG_TAIL_DAYS` (5) days from the panel (deterministic, no
+  accumulation/persistence — correct on day one; last point == current RRG), so the
+  Scanner can draw a dotted **direction-of-travel tail** behind each dot. Both the
+  GICS-sector and thematic-basket RRGs carry it, and both Scanner RRG charts have a
+  **multiselect** to trim which sectors/baskets plot when the chart gets crowded.
+  `rrg_history` rides in `shortlist.json` (the chart's source), not the Drive export.
   **DSG-19 Macro overlay**: TLT/UUP/HYG/IWM **+ GLD/CPER/USO** (Druckenmiller
   commodity complex) direction scores × sector sensitivity matrix →
   `macro_headwind_score`/`macro_headwind_flag` (TAILWIND/NEUTRAL/CAUTION/HEADWIND).

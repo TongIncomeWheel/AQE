@@ -727,17 +727,30 @@ if srm_detail:
             matplotlib.use("Agg")
             import matplotlib.pyplot as plt
 
-            _pts = []
+            _all_pts = []
             for _etf, _d in srm_detail.items():
                 _r = _d.get("rrg_rs_ratio")
                 _m = _d.get("rrg_rs_momentum")
                 if _r is not None and _m is not None:
-                    _pts.append((_etf, _r, _m, _d.get("entry_gate", "WATCH"),
-                                 _d.get("rrg_direction", "STABLE")))
+                    _all_pts.append((_etf, _r, _m, _d.get("entry_gate", "WATCH"),
+                                     _d.get("rrg_direction", "STABLE"),
+                                     _d.get("rrg_history") or []))
+
+            _etf_opts = [p[0] for p in _all_pts]
+            _sel_etfs = st.multiselect(
+                "Sectors to plot", _etf_opts, default=_etf_opts,
+                key="rrg_sector_filter",
+                help="Trim the RRG to just the sectors you want when it gets "
+                     "crowded. The dotted tail traces each sector's last 5 days "
+                     "(direction of travel); the dot is today.",
+            )
+            _pts = [p for p in _all_pts if p[0] in _sel_etfs] or _all_pts
 
             if _pts:
-                _ratios = [p[1] for p in _pts]
-                _moms = [p[2] for p in _pts]
+                _ratios = ([p[1] for p in _pts]
+                           + [h["rs_ratio"] for p in _pts for h in p[5]])
+                _moms = ([p[2] for p in _pts]
+                         + [h["rs_momentum"] for p in _pts for h in p[5]])
                 _pad = max(1.5, (max(_ratios) - min(_ratios)) * 0.2,
                            (max(_moms) - min(_moms)) * 0.2)
                 _xlo = min(min(_ratios), 98) - _pad
@@ -769,8 +782,15 @@ if srm_detail:
                        "CAUTION": "#d62728", "BLOCKED": "#7f0000"}
                 _dir_arrow = {"ENTERING": " *", "DEEPENING": "", "EXITING": "", "STABLE": ""}
 
-                for _etf, _r, _m, _gate, _ddir in _pts:
+                for _etf, _r, _m, _gate, _ddir, _hist in _pts:
                     _c = _gc.get(_gate, "#555")
+                    if len(_hist) >= 2:                       # 5-day tail
+                        _hx = [h["rs_ratio"] for h in _hist]
+                        _hy = [h["rs_momentum"] for h in _hist]
+                        _ax.plot(_hx, _hy, ls=":", lw=0.9, color=_c,
+                                 alpha=0.55, zorder=4)
+                        _ax.scatter(_hx[0], _hy[0], s=5, color=_c,
+                                    alpha=0.4, zorder=4)     # tail origin
                     _ax.scatter(_r, _m, color=_c, s=28, zorder=5,
                                 edgecolors="white", linewidth=0.6)
                     _ax.annotate(
@@ -793,13 +813,14 @@ if srm_detail:
                 _leg = " · ".join(
                     f"**{_etf}** {_sector_label(_etf)}"
                     + ("\\*" if _dir_arrow.get(_ddir, "") else "")
-                    for _etf, _r, _m, _gate, _ddir in sorted(_pts)
+                    for _etf, _r, _m, _gate, _ddir, _hist in sorted(_pts)
                 )
                 st.caption(_leg)
                 st.caption(
-                    "\\* = sector just **entering** its quadrant (a fresh rotation). "
-                    "Axes are normalised to SPY = 100: right of centre = "
-                    "outperforming, above centre = momentum improving."
+                    "Dotted **tail = last 5 days' path** (small dot = 5 days ago, "
+                    "big dot = today). \\* = sector just **entering** its quadrant "
+                    "(a fresh rotation). Axes are normalised to SPY = 100: right of "
+                    "centre = outperforming, above centre = momentum improving."
                 )
 
         # ── Macro Weather + Gate Summary (right) ──
@@ -928,17 +949,30 @@ if _thematic:
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
 
-        _tpts = []
+        _all_tpts = []
         for _b, _d in _thematic.items():
             _r = _d.get("rrg_rs_ratio")
             _m = _d.get("rrg_rs_momentum")
             if _r is not None and _m is not None:
-                _tpts.append((_b, _r, _m, _d.get("grade", "NO_DATA"),
-                              _d.get("rrg_direction", "STABLE")))
+                _all_tpts.append((_b, _r, _m, _d.get("grade", "NO_DATA"),
+                                  _d.get("rrg_direction", "STABLE"),
+                                  _d.get("rrg_history") or []))
+
+        _b_opts = [p[0] for p in _all_tpts]
+        _sel_b = st.multiselect(
+            "Baskets to plot", _b_opts, default=_b_opts,
+            key="rrg_thematic_filter",
+            format_func=lambda b: _basket_short.get(b, b),
+            help="Trim the thematic RRG when crowded. The dotted tail traces each "
+                 "basket's last 5 days (direction of travel); the dot is today.",
+        )
+        _tpts = [p for p in _all_tpts if p[0] in _sel_b] or _all_tpts
 
         if _tpts:
-            _ratios = [p[1] for p in _tpts]
-            _moms = [p[2] for p in _tpts]
+            _ratios = ([p[1] for p in _tpts]
+                       + [h["rs_ratio"] for p in _tpts for h in p[5]])
+            _moms = ([p[2] for p in _tpts]
+                     + [h["rs_momentum"] for p in _tpts for h in p[5]])
             _pad = max(1.5, (max(_ratios) - min(_ratios)) * 0.2,
                        (max(_moms) - min(_moms)) * 0.2)
             _xlo, _xhi = min(min(_ratios), 98) - _pad, max(max(_ratios), 102) + _pad
@@ -963,8 +997,15 @@ if _thematic:
                      ha="left", va="bottom", color="#d62728", **_lbl)
 
             _dir_arrow = {"ENTERING": " *", "DEEPENING": "", "EXITING": "", "STABLE": ""}
-            for _b, _r, _m, _grade, _ddir in _tpts:
+            for _b, _r, _m, _grade, _ddir, _hist in _tpts:
                 _c = _grade_color.get(_grade, "#555")
+                if len(_hist) >= 2:                          # 5-day tail
+                    _hx = [h["rs_ratio"] for h in _hist]
+                    _hy = [h["rs_momentum"] for h in _hist]
+                    _ax.plot(_hx, _hy, ls=":", lw=0.9, color=_c,
+                             alpha=0.55, zorder=4)
+                    _ax.scatter(_hx[0], _hy[0], s=5, color=_c,
+                                alpha=0.4, zorder=4)         # tail origin
                 _ax.scatter(_r, _m, color=_c, s=28, zorder=5,
                             edgecolors="white", linewidth=0.6)
                 _ax.annotate(
@@ -985,8 +1026,9 @@ if _thematic:
             plt.close(_fig)
             st.caption(
                 "Dot color = basket grade: green DEPLOY/HOLD · amber TURNING/WATCH · "
-                "red AVOID · grey NO_DATA. \\* = basket just **entering** its quadrant. "
-                "Axes normalised to SPY = 100."
+                "red AVOID · grey NO_DATA. Dotted **tail = last 5 days' path** "
+                "(small dot = 5 days ago, big dot = today). \\* = basket just "
+                "**entering** its quadrant. Axes normalised to SPY = 100."
             )
 
     # ── Thematic Table ──

@@ -232,7 +232,7 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
 
     Returns {basket: {grade, raw_grade, parent_gics, parent_grade, roc20, roc5,
     above_sma20, coverage, constituents_used, rrg_rs_ratio, rrg_rs_momentum,
-    rrg_quadrant, rrg_direction}}. Pure panel math — 0 FMP calls. RRG is the
+    rrg_quadrant, rrg_direction, rrg_history}}. Pure panel math — 0 FMP calls. RRG is the
     basket's equal-weight index vs SPY (same method as the GICS sector RRG).
     """
     out: dict[str, dict] = {}
@@ -256,6 +256,7 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
                 "coverage": f"{len(present)}/{len(cons)}",
                 "constituents_used": present,
                 **_rrg_no_data(),
+                "rrg_history": [],
             }
             continue
 
@@ -271,13 +272,17 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
 
         # RRG: the basket index vs SPY, aligned on the index's own dates.
         rrg = _rrg_no_data()
+        rrg_history: list[dict] = []
         try:
             if piv is not None and "SPY" in piv.columns:
                 spy_aligned = piv["SPY"].reindex(idx.index).to_numpy(dtype=float)
                 if not np.isnan(spy_aligned).any():
-                    rrg = compute_rrg(idx.to_numpy(dtype=float), spy_aligned)
+                    _idx_arr = idx.to_numpy(dtype=float)
+                    rrg = compute_rrg(_idx_arr, spy_aligned)
+                    rrg_history = compute_rrg_tail(_idx_arr, spy_aligned)
         except Exception:  # noqa: BLE001
             rrg = _rrg_no_data()
+            rrg_history = []
 
         out[name] = {
             "grade": capped,
@@ -289,6 +294,7 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
             "coverage": f"{len(present)}/{len(cons)}",
             "constituents_used": present,
             **rrg,
+            "rrg_history": rrg_history,
         }
     return out
 
@@ -325,6 +331,7 @@ def _dynamic_sector_lookup(ticker: str) -> str | None:
 RRG_WINDOW = 42          # ~42 trading days for the RS normalisation window
 RRG_MOM_PERIOD = 10      # RS-Momentum = 10-bar ROC of the RS line
 RRG_DIR_LOOKBACK = 5     # direction compares to 5 bars ago
+RRG_TAIL_DAYS = 5        # length of the direction-of-travel tail on the RRG chart
 
 
 def compute_rrg(sector_closes: np.ndarray, spy_closes: np.ndarray) -> dict:
@@ -378,6 +385,34 @@ def compute_rrg(sector_closes: np.ndarray, spy_closes: np.ndarray) -> dict:
         "rrg_quadrant": quadrant,
         "rrg_direction": direction,
     }
+
+
+def compute_rrg_tail(sector_closes: np.ndarray, spy_closes: np.ndarray,
+                     n: int = RRG_TAIL_DAYS) -> list[dict]:
+    """The last `n` daily RRG points (oldest→newest) for an ETF/index vs SPY.
+
+    Each point is the standard RRG (RS-Ratio, RS-Momentum) computed with the
+    normal RRG_WINDOW ending at that day, so the chart can draw a 5-day
+    direction-of-travel tail. Deterministic — recomputed from the price panel
+    every run, so NO day-to-day accumulation/persistence is needed (the tail is
+    correct on day one). The last point equals the current compute_rrg().
+
+    Returns [{rs_ratio, rs_momentum}], possibly shorter than n near history's
+    start; empty when there isn't a full window.
+    """
+    sc = np.asarray(sector_closes, dtype=float)
+    sp = np.asarray(spy_closes, dtype=float)
+    total = min(len(sc), len(sp))
+    pts: list[dict] = []
+    for k in range(n - 1, -1, -1):           # k = n-1 … 0  → oldest first
+        end = total - k
+        if end < RRG_WINDOW:
+            continue
+        r = compute_rrg(sc[:end], sp[:end])
+        if r.get("rrg_rs_ratio") is not None:
+            pts.append({"rs_ratio": r["rrg_rs_ratio"],
+                        "rs_momentum": r["rrg_rs_momentum"]})
+    return pts
 
 
 def _rrg_no_data() -> dict:
@@ -749,8 +784,10 @@ def enrich_sectors_intermarket(
         if not etf_data.empty:
             etf_closes = etf_data["close"].astype(float).to_numpy()
             rrg = compute_rrg(etf_closes, spy_closes)
+            info["rrg_history"] = compute_rrg_tail(etf_closes, spy_closes)
         else:
             rrg = _rrg_no_data()
+            info["rrg_history"] = []
 
         info.update(rrg)
         info["rrg_grade_override"] = rrg_grade_override(

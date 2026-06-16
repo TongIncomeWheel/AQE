@@ -714,6 +714,28 @@ def test_charter_v2_reconciliation():
         assert k in gloss, f"{k} in field_schema but missing from field_glossary"
 
 
+def test_rrg_tail():
+    """RRG 5-day tail: deterministic from the panel, continuous with the point."""
+    import numpy as np
+    from src.engines.srm import compute_rrg, compute_rrg_tail, RRG_TAIL_DAYS
+
+    rng = np.random.default_rng(7)
+    spy = 100 * np.cumprod(1 + rng.normal(0, 0.01, 120))
+    etf = 100 * np.cumprod(1 + rng.normal(0.0006, 0.012, 120))
+
+    tail = compute_rrg_tail(etf, spy)
+    assert len(tail) == RRG_TAIL_DAYS
+    assert all({"rs_ratio", "rs_momentum"} <= set(p) for p in tail)
+
+    # The newest tail point IS the current RRG (the dot sits at the tail's end).
+    cur = compute_rrg(etf, spy)
+    assert tail[-1]["rs_ratio"] == cur["rrg_rs_ratio"]
+    assert tail[-1]["rs_momentum"] == cur["rrg_rs_momentum"]
+
+    # Degrades cleanly when there isn't a full normalisation window.
+    assert compute_rrg_tail(etf[:30], spy[:30]) == []
+
+
 def test_thematic_dual_listing():
     """v2.0 dual-listing: a ticker can map to multiple baskets; Crypto basket exists."""
     from src.engines.srm import (

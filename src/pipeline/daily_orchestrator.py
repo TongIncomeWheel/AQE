@@ -1024,6 +1024,7 @@ def _build_output(
             "rrg_quadrant": gdata.get("rrg_quadrant"),
             "rrg_direction": gdata.get("rrg_direction"),
             "rrg_grade_override": gdata.get("rrg_grade_override"),
+            "rrg_history": gdata.get("rrg_history", []),
             "macro_headwind_score": gdata.get("macro_headwind_score"),
             "macro_headwind_flag": gdata.get("macro_headwind_flag"),
             "entry_gate": gdata.get("entry_gate"),
