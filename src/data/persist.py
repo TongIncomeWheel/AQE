@@ -45,13 +45,15 @@ def _members() -> list[tuple]:
     return items
 
 
-def save_snapshot() -> dict:
-    """Zip the present runtime artifacts and upload to the AQE Drive folder."""
-    try:
-        from src.data import gdrive_uploader
-        if not gdrive_uploader.is_configured():
-            return {"ok": False, "reason": "Drive not configured"}
+def build_snapshot_bytes() -> dict:
+    """Zip the present runtime artifacts in memory — NO Drive involved.
 
+    Returns {ok, blob, files, bytes, saved_at} or {ok: False, reason}. This is
+    the Drive-independent core: used both by save_snapshot() (which uploads the
+    blob) and by the UI's local-PC download fallback (which serves the blob
+    through the browser when Drive auth is broken).
+    """
+    try:
         buf = io.BytesIO()
         saved = []
         with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
@@ -62,6 +64,57 @@ def save_snapshot() -> dict:
         if not saved:
             return {"ok": False, "reason": "no runtime files to save (run the pipeline first)"}
         blob = buf.getvalue()
+        return {
+            "ok": True,
+            "blob": blob,
+            "saved_at": datetime.now(_SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
+            "files": saved,
+            "bytes": len(blob),
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
+def restore_snapshot_bytes(raw: bytes) -> dict:
+    """Extract a snapshot zip (given as bytes) into DATA_DIR/OUTPUT_DIR.
+
+    Drive-independent — used by load_snapshot() (after a Drive download) AND by
+    the UI's local-PC upload fallback (a zip the user uploads from disk).
+    """
+    try:
+        if not raw:
+            return {"ok": False, "reason": "empty file"}
+        extracted = []
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            for arc in z.namelist():
+                if arc.startswith("data/"):
+                    target = DATA_DIR / arc[len("data/"):]
+                elif arc.startswith("output/"):
+                    target = OUTPUT_DIR / arc[len("output/"):]
+                else:
+                    continue
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(z.read(arc))
+                extracted.append(arc)
+        if not extracted:
+            return {"ok": False, "reason": "no data/ or output/ members in the zip"}
+        return {"ok": True, "files": extracted, "count": len(extracted)}
+    except zipfile.BadZipFile:
+        return {"ok": False, "reason": "not a valid snapshot .zip"}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
+def save_snapshot() -> dict:
+    """Zip the present runtime artifacts and upload to the AQE Drive folder."""
+    built = build_snapshot_bytes()
+    if not built.get("ok"):
+        return built
+    blob = built["blob"]
+    try:
+        from src.data import gdrive_uploader
+        if not gdrive_uploader.is_configured():
+            return {"ok": False, "reason": "Drive not configured"}
 
         up = gdrive_uploader.upload_or_replace(
             SNAPSHOT_FILENAME, blob, mime="application/zip")
@@ -69,9 +122,9 @@ def save_snapshot() -> dict:
             return {"ok": False, "reason": f"upload failed: {up.get('reason')}"}
 
         meta = {
-            "saved_at": datetime.now(_SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
-            "files": saved,
-            "bytes": len(blob),
+            "saved_at": built["saved_at"],
+            "files": built["files"],
+            "bytes": built["bytes"],
         }
         # Best-effort export timestamp for context.
         try:
@@ -100,22 +153,11 @@ def load_snapshot() -> dict:
         if not raw:
             return {"ok": False, "reason": "no snapshot on Drive yet (Save one first)"}
 
-        extracted = []
-        with zipfile.ZipFile(io.BytesIO(raw)) as z:
-            for arc in z.namelist():
-                if arc.startswith("data/"):
-                    target = DATA_DIR / arc[len("data/"):]
-                elif arc.startswith("output/"):
-                    target = OUTPUT_DIR / arc[len("output/"):]
-                else:
-                    continue
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(z.read(arc))
-                extracted.append(arc)
-
-        meta = snapshot_status() or {}
-        return {"ok": True, "files": extracted,
-                "saved_at": meta.get("saved_at"), "count": len(extracted)}
+        res = restore_snapshot_bytes(raw)
+        if res.get("ok"):
+            meta = snapshot_status() or {}
+            res["saved_at"] = meta.get("saved_at")
+        return res
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 

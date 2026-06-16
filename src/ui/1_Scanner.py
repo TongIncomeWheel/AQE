@@ -267,7 +267,10 @@ with st.sidebar:
             st.rerun()
 
     with st.expander("💾 Daily Persist", expanded=False):
-        from src.data.persist import save_snapshot, load_snapshot, snapshot_status
+        from src.data.persist import (
+            save_snapshot, load_snapshot, snapshot_status,
+            build_snapshot_bytes, restore_snapshot_bytes,
+        )
 
         _snap = snapshot_status()
         if _snap:
@@ -300,6 +303,49 @@ with st.sidebar:
                 st.error(f"Load failed: {_r.get('reason')}")
         st.caption("Persists the runtime parquets + export so a merge/restart "
                    "skips the full AQE re-run.")
+
+        # ---- Local-PC fallback (works when Drive auth is down) ----
+        st.divider()
+        st.caption("**Local PC fallback** — save/restore the snapshot via your "
+                   "browser, no Google Drive needed.")
+        if st.button("📦 Build snapshot for download", use_container_width=True,
+                     help="Zip the runtime parquets + export in memory so you "
+                          "can download it to your PC. Drive-independent."):
+            with st.spinner("Building snapshot…"):
+                _b = build_snapshot_bytes()
+            if _b.get("ok"):
+                st.session_state["_snap_blob"] = _b["blob"]
+                st.session_state["_snap_caption"] = (
+                    f"{len(_b['files'])} files · {_b['bytes'] / 1e6:.1f} MB · "
+                    f"built {_b['saved_at']}")
+            else:
+                st.session_state.pop("_snap_blob", None)
+                st.error(_b.get("reason"))
+        if st.session_state.get("_snap_blob"):
+            st.download_button(
+                "⬇️ Download snapshot .zip",
+                data=st.session_state["_snap_blob"],
+                file_name="aqe_state_snapshot.zip",
+                mime="application/zip",
+                use_container_width=True,
+            )
+            st.caption(f"Ready · {st.session_state.get('_snap_caption', '')}")
+
+        _snap_up = st.file_uploader(
+            "Restore from a snapshot .zip on your PC", type=["zip"],
+            key="snap_upload",
+            help="Upload a previously downloaded aqe_state_snapshot.zip to "
+                 "restore the panel/scores/export without re-running the pipeline.")
+        if _snap_up is not None and st.button(
+                "📥 Restore from this file", use_container_width=True):
+            with st.spinner("Restoring snapshot…"):
+                _r = restore_snapshot_bytes(_snap_up.getvalue())
+            if _r.get("ok"):
+                st.cache_data.clear()
+                st.success(f"Restored {_r['count']} files. Reloading…")
+                st.rerun()
+            else:
+                st.error(f"Restore failed: {_r.get('reason')}")
 
     with st.expander("Universe", expanded=False):
         @st.cache_data(ttl=300, show_spinner=False)
