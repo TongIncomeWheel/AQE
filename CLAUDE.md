@@ -174,6 +174,29 @@ Dynamic Stop Loss with R-tiered trailing + flow-based take-profit.
 - Trail ratchets upward only. Highest tier locks.
 - Both Scanner UI tables and Drive export show DSL-based stops (not the naive 2xATR).
 
+### Intraday Momentum & Bracket — IMB (`src/intraday/`)
+A SEPARATE, recommend-only execution-prep layer that fixes AQE's two EOD weaknesses at
+decision time (stops anchored to real intraday support; entries timed to intraday
+momentum). It does NOT change the AQE export and places no orders. Deterministic + pure
+(unit-tested with synthetic bars), so it's feed-agnostic — bars come from the financial
+MCP `chart` tool today (intraday 1/5/15/30-min) and an IBKR feed can swap in later.
+- `momentum.py` — `intraday_momentum(bars5, rec)` → `{ims (0–100), state, components}`.
+  State ∈ ACCELERATING / PULLBACK_HOLDING / COILING / EXTENDED / FADING / BROKEN / UNKNOWN
+  from session VWAP (position+slope), opening range, RVOL **pace** (cum vol vs avg cum vol
+  by time-of-day), close-slope acceleration, higher-lows, and extension (R's past entry).
+- `bracket.py` — **operative stop** = the TIGHTEST candidate (intraday swing low / VWAP
+  buffer / OR low / prior-day low / AQE `structural_levels`) passing all **3 charter §4.2
+  gates**: ATR floor ≥1.0, R:R-TP2 ≥2.0, and the **regime stop-% ceiling** (the gate AQE
+  can't apply — `config.REGIME_STOP_PCT`, assumed GREEN/YELLOW/ORANGE/RED = 8/6/5/4%).
+  **entry zone** is state-driven and never chases past the export's `max_chase_tp2`;
+  FADING/BROKEN → stand down.
+- `plan.py` — `intraday_plan(rec, bars5, regime)` glues it into one plan + verdict + an
+  IBKR-ready bracket spec (recommend-only). `run_plan.py` is the CLI the skill calls.
+- **Driver = the Claude Code skill `.claude/skills/intraday-plan`**: read shortlist tickers
+  from the export, fetch 5-min bars per name via MCP `chart`, run
+  `python -m src.intraday.run_plan --bars-dir <dir>` → ranked table + IBKR specs + AIC
+  prompt. Phase 2: IBKR order *placement* + optional in-app panel. Tests: `tests/test_intraday.py`.
+
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
 Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export.
 
