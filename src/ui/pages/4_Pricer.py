@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.ui.shared import require_login, load_export  # noqa: E402
+from src.ui.shared import require_login, load_export, table_with_copy  # noqa: E402
 
 require_login()
 
