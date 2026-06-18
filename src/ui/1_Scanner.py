@@ -1594,17 +1594,17 @@ st.divider()
 # ---------------------------------------------------------------------------
 st.subheader("Elder list")
 st.caption(
-    "**Visibility only.** Every universe name whose **Elder Impulse = 8** on the "
+    "**Visibility only.** Every universe name whose **Elder Impulse ≥ 8** on the "
     "last close, regardless of other gates — catches fresh, event-induced "
     "strong-impulse setups the longlist/watchlist screens would filter out early. "
     "Same columns as the other lists; changes NO criteria or strategy."
 )
 _elder_recs = _ex.get("elder_list") or []
 if _elder_recs:
-    st.markdown(f"**{len(_elder_recs)}** name(s) at Elder = 8 today")
+    st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
     st.dataframe(_export_table(_elder_recs), use_container_width=True, hide_index=True)
 elif _ex:
-    st.info("No names at Elder = 8 on the last close today.")
+    st.info("No names at Elder ≥ 8 on the last close today.")
 else:
     st.info("Elder list needs the export JSON — run the daily pipeline + export.")
 

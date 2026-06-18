@@ -1009,7 +1009,7 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # --- Watchlist + Elder list: both derived from the latest scores_daily ---
     # Watchlist = full universe above the raw SC_MOM bar (the broad radar).
-    # Elder list = names with Elder Impulse == 8 on the latest close — pure
+    # Elder list = names with Elder Impulse >= 8 on the latest close — pure
     # VISIBILITY for fresh strong-impulse setups that other gates filtered out.
     # It changes NO screen/criteria/strategy; same record schema as the rest.
     import pandas as pd
@@ -1082,10 +1082,10 @@ def build_export(shortlist: dict | None = None) -> dict:
         for i, (_, wr) in enumerate(_wl.iterrows(), 1):
             export["watchlist"].append(_wl_record(wr, i, "watchlist"))
 
-        # Elder list — Elder Impulse == 8 on the latest close (visibility only).
+        # Elder list — Elder Impulse >= 8 on the latest close (visibility only).
         if "elder_score" in sc_df.columns:
             _el = sc_df[
-                pd.to_numeric(sc_df["elder_score"], errors="coerce").round() == 8
+                pd.to_numeric(sc_df["elder_score"], errors="coerce").round() >= 8
             ].sort_values(["_ptrs", "pipe_rank", "_floor"],
                           ascending=False).reset_index(drop=True)
             for i, (_, wr) in enumerate(_el.iterrows(), 1):

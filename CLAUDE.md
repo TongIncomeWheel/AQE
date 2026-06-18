@@ -24,7 +24,7 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - **Longlist vs Watchlist:** Longlist = qualified setups (pass the full recipe — every
   engine floor + Elder ≥ 7 — plus PE picks). Watchlist = broad radar (any universe name
   above the raw SC_MOM bar, no engine-floor gates). **Elder list** = visibility-only tier:
-  names with Elder Impulse == 8 on the latest close, regardless of other gates (surfaces
+  names with Elder Impulse >= 8 on the latest close, regardless of other gates (surfaces
   fresh strong-impulse/event setups filtered out early). It changes NO criteria/strategy.
 
 ## Architecture
@@ -222,7 +222,7 @@ Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Precision Edge, longlis
 ONE combined JSON for committee consumption — `aqe_daily_export.json` in a single
 `AQE/` folder, overwritten every run (no date-stamped clutter). Contains:
 - `top_picks` (PTRS-ranked shortlist), `edge_list` (Precision Edge), `longlist`, `watchlist`,
-  `elder_list` (Elder Impulse == 8 on the latest close — visibility-only, same record schema;
+  `elder_list` (Elder Impulse >= 8 on the latest close — visibility-only, same record schema;
   built from `scores_daily` like the watchlist, ranked PTRS→PipeRank→Floor). `summary.elder_count`.
 - Every ticker tagged with: `source` (longlist/watchlist), `pe` (bool), `on_longlist` (bool)
 - DSL fields: `dsl_stop`, `dsl_risk`, `dsl_tp_2r`, `dsl_shares`, `dsl_rr_pct`
