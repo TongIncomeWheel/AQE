@@ -19,7 +19,8 @@ from pathlib import Path
 from .plan import intraday_plan, rank_plans
 from . import config as C
 
-_TIER_RANK = {"held": 0, "top_picks": 1, "edge_list": 2, "longlist": 3, "watchlist": 4}
+_TIER_RANK = {"held": 0, "top_picks": 1, "edge_list": 2, "longlist": 3,
+              "watchlist": 4, "elder_list": 5}
 
 
 def build_rec_lookup(export: dict, scope: list[str]) -> dict[str, dict]:
@@ -30,7 +31,7 @@ def build_rec_lookup(export: dict, scope: list[str]) -> dict[str, dict]:
             tk = h.get("ticker")
             if tk:
                 recs[tk] = {**h, "source": "held"}
-    for tier in ("top_picks", "edge_list", "longlist", "watchlist"):
+    for tier in ("top_picks", "edge_list", "longlist", "watchlist", "elder_list"):
         if tier not in scope:
             continue
         for r in (export.get(tier) or []):

@@ -777,6 +777,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         "edge_list": [],
         "longlist": [],
         "watchlist": [],
+        "elder_list": [],
     }
 
     # ---- Shared helpers (loaded once, used by all four lists) ----
@@ -1006,104 +1007,96 @@ def build_export(shortlist: dict | None = None) -> dict:
             **_v21_record_fields(rm["ticker"], d, _v21_lk, sm, sector_grades),
         })
 
-    # --- Watchlist: full universe above raw SC_MOM >= 70 ---
+    # --- Watchlist + Elder list: both derived from the latest scores_daily ---
+    # Watchlist = full universe above the raw SC_MOM bar (the broad radar).
+    # Elder list = names with Elder Impulse == 8 on the latest close — pure
+    # VISIBILITY for fresh strong-impulse setups that other gates filtered out.
+    # It changes NO screen/criteria/strategy; same record schema as the rest.
     import pandas as pd
     from src.data.paths import SCORES_DAILY as scores_path
 
     if scores_path.exists():
-        wl_df = pd.read_parquet(scores_path)
-        wl_df["date"] = pd.to_datetime(wl_df["date"]).dt.normalize()
-        wl_latest = wl_df["date"].max()
-        wl_df = wl_df[wl_df["date"] == wl_latest].copy()
+        sc_df = pd.read_parquet(scores_path)
+        sc_df["date"] = pd.to_datetime(sc_df["date"]).dt.normalize()
+        sc_df = sc_df[sc_df["date"] == sc_df["date"].max()].copy()
 
         raw_col = (
-            "sc_momentum_raw"
-            if "sc_momentum_raw" in wl_df.columns
+            "sc_momentum_raw" if "sc_momentum_raw" in sc_df.columns
             else "sc_momentum"
         )
-        wl_mask = wl_df[raw_col] >= 70
-        _exclude = set(GICS_ETFS) | {"SPY"}
-        wl_mask &= ~wl_df["ticker"].isin(_exclude)
-        wl_df = wl_df[wl_mask].copy()
+        for c in ("pipe_rank", "flow_100", "energy_100", "structure_100", "mp_100"):
+            if c in sc_df.columns:
+                sc_df[c] = pd.to_numeric(sc_df[c], errors="coerce").fillna(0)
+        sc_df["_floor"] = sc_df[
+            ["flow_100", "energy_100", "structure_100", "mp_100"]].min(axis=1)
+        _sh = sc_df["ticker"].map(
+            lambda t: sector_grades.get(sm.get(t, ""), {}).get("sh", 0))
+        sc_df["_ptrs"] = (sc_df["sc_momentum"].fillna(0) + _sh.fillna(0)).round(1)
+        sc_df = sc_df[~sc_df["ticker"].isin(set(GICS_ETFS) | {"SPY"})].copy()
 
-        if not wl_df.empty:
-            for c in (
-                "pipe_rank", "flow_100", "energy_100",
-                "structure_100", "mp_100",
-            ):
-                if c in wl_df.columns:
-                    wl_df[c] = pd.to_numeric(
-                        wl_df[c], errors="coerce"
-                    ).fillna(0)
-            wl_df["_floor"] = wl_df[
-                ["flow_100", "energy_100", "structure_100", "mp_100"]
-            ].min(axis=1)
+        def _wl_record(wr, rank, source):
+            tk = wr["ticker"]
+            d = dsl_all.get(tk, {})
+            wfl = round(float(wr["_floor"]), 1)
+            wsc = float(wr.get("sc_momentum", 0)) or 0
+            wpr = float(wr.get("pipe_rank", 0))
+            return {
+                "rank": rank,
+                "ticker": tk,
+                "sc_momentum": round(wsc, 1),
+                "sc_momentum_raw": round(float(wr.get(raw_col, wsc)), 1),
+                "ptrs": round(float(wr["_ptrs"]), 1),
+                "pipe_rank": round(wpr, 1),
+                "fip_spike_excluded": bool(wr.get("fip_spike_excluded", False)),
+                "fip_window_effective": int(wr.get("fip_window_effective", 252)),
+                "floor": wfl,
+                "beta_30d": (betas.get(tk) or {}).get(30),
+                "beta_60d": (betas.get(tk) or {}).get(60),
+                "flow": round(float(wr.get("flow_100", 0)), 1),
+                "energy": round(float(wr.get("energy_100", 0)), 1),
+                "structure": round(float(wr.get("structure_100", 0)), 1),
+                "mp": round(float(wr.get("mp_100", 0)), 1),
+                "elder": round(float(wr.get("elder_score", 0)), 1),
+                "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
+                "entry": d.get("entry"),
+                "stop": d.get("stop"),
+                "dsl_stop": d.get("stop"),
+                "dsl_risk": d.get("risk"),
+                "dsl_tp_1r": d.get("tp_1r"),
+                "dsl_tp_2r": d.get("tp_2r"),
+                "dsl_tp_3r": d.get("tp_3r"),
+                "dsl_rr_pct": d.get("rr_pct"),
+                "dsl_atr_ratio": d.get("dsl_atr_ratio"),
+                "elder_5d": elder5.get(tk),
+                "rank_explain": _rank_explain(
+                    wpr, wfl, wsc, tk in pe_tickers, tk, sm, sector_grades),
+                "source": source,
+                "pe": tk in pe_tickers,
+                "on_longlist": tk in longlist_tickers,
+                **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
+            }
 
-            # Vectorized PTRS
-            wl_sh = wl_df["ticker"].map(
-                lambda t: sector_grades.get(sm.get(t, ""), {}).get("sh", 0)
-            )
-            wl_df["_ptrs"] = (
-                wl_df["sc_momentum"].fillna(0) + wl_sh.fillna(0)
-            ).round(1)
+        # Watchlist — raw SC_MOM ≥ 70, ranked PTRS → PipeRank → Floor.
+        _wl = sc_df[sc_df[raw_col] >= 70].sort_values(
+            ["_ptrs", "pipe_rank", "_floor"], ascending=False).reset_index(drop=True)
+        for i, (_, wr) in enumerate(_wl.iterrows(), 1):
+            export["watchlist"].append(_wl_record(wr, i, "watchlist"))
 
-            wl_df = wl_df.sort_values(
-                ["_ptrs", "pipe_rank", "_floor"], ascending=[False, False, False]
-            ).reset_index(drop=True)
-
-            for wi, (_, wr) in enumerate(wl_df.iterrows(), 1):
-                tk = wr["ticker"]
-                d = dsl_all.get(tk, {})
-                wfl = round(float(wr["_floor"]), 1)
-                wsc = float(wr.get("sc_momentum", 0)) or 0
-                wpr = float(wr.get("pipe_rank", 0))
-                export["watchlist"].append({
-                    "rank": wi,
-                    "ticker": tk,
-                    "sc_momentum": round(wsc, 1),
-                    "sc_momentum_raw": round(
-                        float(wr.get(raw_col, wsc)), 1
-                    ),
-                    "ptrs": round(float(wr["_ptrs"]), 1),
-                    "pipe_rank": round(wpr, 1),
-                    "fip_spike_excluded": bool(wr.get("fip_spike_excluded", False)),
-                    "fip_window_effective": int(wr.get("fip_window_effective", 252)),
-                    "floor": wfl,
-                    "beta_30d": (betas.get(tk) or {}).get(30),
-            "beta_60d": (betas.get(tk) or {}).get(60),
-                    "flow": round(float(wr.get("flow_100", 0)), 1),
-                    "energy": round(float(wr.get("energy_100", 0)), 1),
-                    "structure": round(
-                        float(wr.get("structure_100", 0)), 1
-                    ),
-                    "mp": round(float(wr.get("mp_100", 0)), 1),
-                    "elder": round(float(wr.get("elder_score", 0)), 1),
-                    "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
-                    "entry": d.get("entry"),
-                    "stop": d.get("stop"),
-                    "dsl_stop": d.get("stop"),
-                    "dsl_risk": d.get("risk"),
-                    "dsl_tp_1r": d.get("tp_1r"),
-                    "dsl_tp_2r": d.get("tp_2r"),
-                    "dsl_tp_3r": d.get("tp_3r"),
-                    "dsl_rr_pct": d.get("rr_pct"),
-                    "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-                    "elder_5d": elder5.get(tk),
-                    "rank_explain": _rank_explain(
-                        wpr, wfl, wsc, tk in pe_tickers, tk,
-                        sm, sector_grades,
-                    ),
-                    "source": "watchlist",
-                    "pe": tk in pe_tickers,
-                    "on_longlist": tk in longlist_tickers,
-                    **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
-                })
+        # Elder list — Elder Impulse == 8 on the latest close (visibility only).
+        if "elder_score" in sc_df.columns:
+            _el = sc_df[
+                pd.to_numeric(sc_df["elder_score"], errors="coerce").round() == 8
+            ].sort_values(["_ptrs", "pipe_rank", "_floor"],
+                          ascending=False).reset_index(drop=True)
+            for i, (_, wr) in enumerate(_el.iterrows(), 1):
+                export["elder_list"].append(_wl_record(wr, i, "elder_list"))
 
     export["summary"] = {
         "top_picks_count": len(export["top_picks"]),
         "edge_count": len(export["edge_list"]),
         "longlist_count": len(export["longlist"]),
         "watchlist_count": len(export["watchlist"]),
+        "elder_count": len(export["elder_list"]),
     }
 
     # ---- Uniform schema across all four tiers (Data Schema Spec v1.0 §2.2) ----
@@ -1111,7 +1104,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     # Fill cross-tier fields, then rebuild every record with the SAME ordered
     # key set (canonical order = the richest tier's record), null-filling gaps.
     _tiers = [export["top_picks"], export["edge_list"],
-              export["longlist"], export["watchlist"]]
+              export["longlist"], export["watchlist"], export["elder_list"]]
     for _tier in _tiers:
         for _rec in _tier:
             if "on_longlist" not in _rec:

@@ -91,7 +91,7 @@ st.caption(f"Regime **{lvl or '—'}** · stop ceiling **{IC.regime_stop_ceiling
            f"· risk **${IC.RISK_BUDGET:,.0f}** (3%)")
 
 recs_all = build_rec_lookup(
-    export, ["held", "top_picks", "edge_list", "longlist", "watchlist"])
+    export, ["held", "top_picks", "edge_list", "longlist", "watchlist", "elder_list"])
 if not recs_all:
     st.info("Export has no tickers to price.")
     st.stop()
