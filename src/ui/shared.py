@@ -58,6 +58,28 @@ def load_export() -> dict | None:
         return json.load(f)
 
 
+def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
+                    caption: str | None = None) -> None:
+    """Render a dataframe + a one-click copy block (paste straight into Claude).
+
+    Streamlit's `st.code` has a built-in copy-to-clipboard icon, so we stash the
+    table as TSV inside a small expander — one click copies the whole table, no
+    CSV download needed. Used for every data table in the app.
+    """
+    import streamlit as st
+    st.dataframe(df, use_container_width=True, hide_index=True)
+    try:
+        if df is None or len(df) == 0:
+            return
+        tsv = df.to_csv(sep="\t", index=False)
+    except Exception:  # noqa: BLE001
+        return
+    with st.expander(label, expanded=False):
+        if caption:
+            st.caption(caption)
+        st.code(tsv, language=None)   # the ⧉ icon copies the full table
+
+
 # ---------------------------------------------------------------------------
 # App login gate
 # ---------------------------------------------------------------------------

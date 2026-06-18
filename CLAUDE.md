@@ -217,9 +217,15 @@ MCP `chart` tool today (intraday 1/5/15/30-min) and an IBKR feed can swap in lat
 Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export.
 
 ### Scanner UI (`src/ui/1_Scanner.py`)
-Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Precision Edge, longlist, watchlist).
-- Longlist: sorted by Pipeline Rank DESC + Floor DESC. Columns include DSL stop, TP(+2R), R%, QTY, Beta, Why.
-- Watchlist: full universe above raw SC_MOM slider. Same DSL columns.
+Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Thematic, Precision Edge, Signals, Elder list).
+- **Signals (combined Longlist + Watchlist)**: ONE table = the export's longlist ∪ watchlist
+  (longlist record wins on dedup), filtered live with sliders (Min SC_MOM / Min PTRS / Min
+  Elder + MP-state multiselect + "Longlist only" toggle). `on_longlist` flags the qualified
+  names. Sorted PTRS desc; full export schema. (Replaced the separate Longlist + Watchlist sections.)
+- **Elder list**: export `elder_list` tier (Elder ≥ 8, visibility-only).
+- **Copy buttons everywhere**: `shared.table_with_copy(df, key=…)` renders the dataframe + a
+  "📋 Copy for AIC" expander whose `st.code` TSV has a one-click clipboard icon (paste
+  straight into Claude chat, no CSV download). Used by every data table.
 - `_compute_dsl_levels()` — cached helper computing structural stops for all tickers
 - `_load_betas()` — cached 60d beta vs SPY
 - `_rank_explain()` — 1-liner ranking explanation

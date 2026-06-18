@@ -87,7 +87,11 @@ cc1, cc2 = st.columns([1, 1])
 with cc1:
     risk = st.number_input("Risk $/trade", value=float(IC.RISK_BUDGET), step=100.0)
 with cc2:
-    interval = st.selectbox("Momentum bars", ["5min", "15min", "1min"], index=0)
+    interval = st.selectbox(
+        "Calc bars (momentum read)",
+        ["5min", "15min", "30min", "1hour", "4hour", "1min"], index=0,
+        help="Timeframe for the momentum/VWAP read. The bracket also uses daily "
+             "structure + 5-day hourly swing candidates regardless of this pick.")
 
 typed_list = [t.strip().upper() for t in typed.replace(",", " ").split() if t.strip()]
 tickers = list(dict.fromkeys(typed_list + list(picked)))   # de-dup, keep order
@@ -109,6 +113,44 @@ if st.button("Calculate brackets", type="primary", disabled=not tickers):
     st.session_state["pricer_results"] = [r for r in results if not r.get("error")]
     st.session_state["pricer_missing"] = missing
 
+def _aic_block(p: dict) -> str:
+    """Per-ticker, fact-only calculated summary to paste into the AIC.
+
+    Captures everything computed — no judgement, no recommendation."""
+    op = p["operative_stop"]
+    rng = p.get("range_5d") or {}
+    mom = p.get("momentum") or {}
+    cand = "; ".join(
+        f"{c['basis']}@{c['price']} (ATR×{c['atr_ratio']}, R:R{c['rr_tp2']}, "
+        f"{c['stop_pct']}%)" for c in (p.get("candidates") or [])) or "none below entry"
+    stp = "; ".join(f"{t['type']}@{t['price']} ({t['rr']}R)"
+                    for t in (p.get("structural_tps") or [])) or "none"
+    notes = "; ".join(p.get("notes") or []) or "none"
+    return (
+        f"AQE Pricer — {p['ticker']} ({lvl} regime) — CALCULATED FACTS (no view):\n"
+        f"universe={'yes' if p['in_universe'] else 'typed'} | price={p['price']} | "
+        f"ATR14d={p['atr_14d']} | 5d_range={rng.get('low')}-{rng.get('high')}\n"
+        f"entry={p['entry']} | coil_entry={p['coil_entry']} | "
+        f"operative_stop={op['price']} (basis={op['basis']}, risk={p['risk']}, "
+        f"ATR×={op.get('atr_ratio')}, R:R_TP2={op.get('rr_tp2')}, "
+        f"stop%={op.get('stop_pct')}, within_ceiling={op.get('within_ceiling')})\n"
+        f"TP1={p['tp']['tp1']} (+1R) | TP2={p['tp']['tp2']} (+2R) | "
+        f"TP3={p['tp']['tp3']} (+3R) | shares={p['shares']}\n"
+        f"structural_TPs: {stp}\n"
+        f"candidate_stops: {cand}\n"
+        f"momentum(reference): IMS={p.get('ims')} state={p.get('state')} | "
+        f"VWAP={mom.get('vwap')} pos={mom.get('vwap_pos_atr')}ATR "
+        f"slope_up={mom.get('vwap_slope_up')} | OR_break={mom.get('or_break')} "
+        f"(OR {mom.get('or_low')}-{mom.get('or_high')}) | "
+        f"RVOL_pace={mom.get('rvol_pace')} | accel={mom.get('accel_atr_per_bar')} | "
+        f"higher_lows={mom.get('higher_lows')} | ext={mom.get('ext_r')}R | "
+        f"as_of={mom.get('as_of')}\n"
+        f"notes: {notes}\n"
+        f"IBKR(recommend-only): BUY {p['shares']} LMT {p['entry']} | "
+        f"stop {op['price']} | TP {p['tp']['tp2']}"
+    )
+
+
 results = st.session_state.get("pricer_results")
 if results:
     rows = []
@@ -124,10 +166,10 @@ if results:
             "TP1": p["tp"]["tp1"], "TP2": p["tp"]["tp2"], "TP3": p["tp"]["tp3"],
             "Shares": p["shares"], "IMS": p.get("ims"), "State": p.get("state"),
         })
-    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-    st.caption("Stop = tightest valid level from the menu (3-gate metrics shown per "
-               "name below). TP1/2/3 are mechanical +1/2/3R off the operative stop; "
-               "structural targets listed per name. **No decision is implied.**")
+    table_with_copy(pd.DataFrame(rows), key="pricer_main")
+    st.caption("Stop = tightest level from the FIB/MA/DSL/swing menu (full metrics "
+               "per name below). TP1/2/3 = mechanical +1/2/3R off the stop; "
+               "structural targets per name. **No decision implied — facts only.**")
 
     for p in results:
         op = p["operative_stop"]
@@ -137,42 +179,20 @@ if results:
                 st.warning(" · ".join(p["notes"]))
             st.markdown("**Candidate levels (FIB / MA / DSL / swing — below entry)**")
             if p["candidates"]:
-                st.dataframe(pd.DataFrame([
+                table_with_copy(pd.DataFrame([
                     {"Basis": c["basis"], "Price": c["price"], "Risk": c["risk"],
                      "ATR×": c["atr_ratio"], "R:R-TP2": c["rr_tp2"],
                      "Stop %": c["stop_pct"], "ATR≥1": c["gate_atr"],
                      "R:R≥2": c["gate_rr"], "≤ceiling": c["within_ceiling"]}
-                    for c in p["candidates"]]),
-                    use_container_width=True, hide_index=True)
+                    for c in p["candidates"]]), key=f"cand_{p['ticker']}")
             else:
                 st.caption("No structural support below entry — used the ATR fallback stop.")
             if p["structural_tps"]:
                 st.markdown("**Structural take-profit targets (reference)**")
-                st.dataframe(pd.DataFrame(p["structural_tps"]),
-                             use_container_width=True, hide_index=True)
-            s = p["ibkr_spec"]
-            st.code(f"{s['symbol']}: BUY {s['quantity']} @ {s['order_type']} "
-                    f"{s['entry']} | stop {s['stop']} | TP {s['take_profit']}",
-                    language=None)
-            mom = p.get("momentum") or {}
-            if mom:
-                st.caption(
-                    f"Momentum (reference): VWAP {mom.get('vwap')} · pos "
-                    f"{mom.get('vwap_pos_atr')} ATR · OR break {mom.get('or_break')} "
-                    f"· RVOL pace {mom.get('rvol_pace')} · ext {mom.get('ext_r')}R "
-                    f"· as of {mom.get('as_of')}")
-
-    # Paste-to-AIC block (numbers only — no call)
-    lines = []
-    for p in results:
-        op = p["operative_stop"]
-        lines.append(
-            f"{p['ticker']}: price {p['price']}, entry {p['entry']}, stop {op['price']} "
-            f"({op['basis']}, {op.get('stop_pct')}%), coil {p['coil_entry']}, "
-            f"TP {p['tp']['tp1']}/{p['tp']['tp2']}/{p['tp']['tp3']}, {p['shares']} sh, "
-            f"IMS {p.get('ims')} {p.get('state')}")
-    st.markdown("##### Paste-to-AIC (calculated levels — you decide)")
-    st.text_area("Copy:", f"AQE Pricer ({lvl} regime):\n" + "\n".join(lines), height=160)
+                table_with_copy(pd.DataFrame(p["structural_tps"]),
+                                key=f"stp_{p['ticker']}")
+            st.markdown("**📋 Copy this ticker for the AIC (facts only)**")
+            st.code(_aic_block(p), language=None)
 
     missing = st.session_state.get("pricer_missing") or []
     if missing:

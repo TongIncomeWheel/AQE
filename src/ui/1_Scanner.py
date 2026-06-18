@@ -28,6 +28,7 @@ from src.ui.shared import (
     load_shortlist,
     require_login,
     run_module_streaming,
+    table_with_copy,
 )
 
 
@@ -943,7 +944,7 @@ if srm_detail:
         }
         srm_rows.append(row)
     df_srm = pd.DataFrame(srm_rows)
-    st.dataframe(df_srm, use_container_width=True, hide_index=True)
+    table_with_copy(df_srm, key="srm_table")
     st.caption(
         "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
         "*Deepening in* = rotating further out (strengthening) · *Exiting* = "
@@ -1090,7 +1091,7 @@ if _thematic:
             "5d%": _fmt(_d.get("roc5"), "+.1f"),
             "Coverage": _d.get("coverage", "—"),
         })
-    st.dataframe(pd.DataFrame(_trows), use_container_width=True, hide_index=True)
+    table_with_copy(pd.DataFrame(_trows), key="thematic_table")
     st.caption(
         "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
         "*Deepening in* = rotating further out (strengthening) · *Exiting* = "
@@ -1275,7 +1276,7 @@ if _held:
     _hdf = pd.DataFrame(_held)
     _hcols = [c for c in _HELD_COLS if c in _hdf.columns]
     _hcols += [c for c in _hdf.columns if c not in _hcols and not c.startswith("_")]
-    st.dataframe(_hdf[_hcols], use_container_width=True, hide_index=True)
+    table_with_copy(_hdf[_hcols], key="held_table")
     st.divider()
 
 
@@ -1338,253 +1339,72 @@ else:
             "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
             "Fib": _fib_str(dsl.get("fib")),
         })
-    st.dataframe(_export_table(_ex.get("edge_list")), use_container_width=True, hide_index=True)
+    table_with_copy(_export_table(_ex.get("edge_list")), key="edge_table")
 
 st.divider()
 
 # ---------------------------------------------------------------------------
-# 4. Longlist (Aggregate + PE)
+# 4. Signals — combined Longlist + Watchlist with on-screen filters
 # ---------------------------------------------------------------------------
-st.subheader("Longlist")
-
+st.subheader("Signals (Longlist + Watchlist)")
 active_recipe = sl.get("active_recipe", {})
-recipe_str = _recipe_label(active_recipe)
 st.caption(
-    "**Longlist = qualified setups.** Names passing the full aggregate recipe "
-    "(every engine floor + Elder ≥ 7) plus Precision-Edge picks — the actionable "
-    "shortlist. Stricter than the watchlist."
-)
-st.caption(f"Aggregate recipe: {recipe_str}")
-st.caption(
-    "Full export schema (exactly what AIC receives). DSL bracket: "
-    "`dsl_stop` = SL, `dsl_tp_1r/2r/3r` = price targets (entry + 1/2/3·R), "
-    "`coil_entry`/`optimal_stop` + `rr_tp2_at_coil` = per-name R:R, "
-    "`dsl_atr_ratio` = stop width in ATRs."
+    "One combined list — filter it with the sliders below. **Longlist** names "
+    "(`on_longlist = True`) passed the full recipe (every engine floor + Elder ≥ 7); "
+    "the rest are the broader **watchlist** radar (above the raw SC_MOM bar, no "
+    f"engine-floor gates). Aggregate recipe: {_recipe_label(active_recipe)}. "
+    "Full export schema = exactly what the AIC receives."
 )
 
-# recipe_matches now includes both aggregate qualifiers AND PE picks
-recipe_matches = sl.get("recipe_matches", [])
-candidates = sl.get("candidates", [])
+# Union of the export's longlist + watchlist (longlist record wins — it's richer).
+_sig: dict = {}
+for _key in ("longlist", "watchlist"):
+    for _r in (_ex.get(_key) or []):
+        _tk = _r.get("ticker")
+        if _tk and _tk not in _sig:
+            _sig[_tk] = _r
+_sig_recs = list(_sig.values())
 
-n_pe = sum(1 for rm in recipe_matches if rm.get("pe_qualified"))
-n_agg = len(recipe_matches) - n_pe
-st.markdown(f"**{len(recipe_matches)}** qualify today ({n_agg} aggregate, {n_pe} Precision Edge)")
+if _sig_recs:
+    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1.4, 1])
+    _min_sc = f1.slider("Min SC_MOM", 0, 100, 70, key="sig_sc")
+    _min_ptrs = f2.slider("Min PTRS", 0, 100, 0, key="sig_ptrs")
+    _min_elder = f3.slider("Min Elder", 0, 10, 0, key="sig_elder")
+    _mp_opts = sorted({(r.get("mp_state") or "").strip()
+                       for r in _sig_recs if (r.get("mp_state") or "").strip()})
+    _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
+    _ll_only = f5.checkbox("Longlist only", key="sig_ll")
 
-if recipe_matches:
-    rows = []
-    for i, rm in enumerate(recipe_matches, 1):
-        lvl = rm.get("levels", {})
-        eng = rm.get("engines", {})
-        ticker = rm.get("ticker", "")
+    def _keep(r: dict) -> bool:
+        if (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < _min_sc:
+            return False
+        if (r.get("ptrs") or 0) < _min_ptrs:
+            return False
+        if (r.get("elder") or 0) < _min_elder:
+            return False
+        if _mp_sel:
+            ms = (r.get("mp_state") or "").strip()
+            if ms and ms not in _mp_sel:
+                return False
+        if _ll_only and not r.get("on_longlist"):
+            return False
+        return True
 
-        floor = min(eng.get("flow", 0), eng.get("energy", 0),
-                    eng.get("structure", 0), eng.get("mp", 0))
-        sc_val = rm.get("sc_momentum", 0) or 0
-        ptrs_val = _quick_ptrs(sc_val, ticker, _sector_grades)
+    _filtered = sorted([r for r in _sig_recs if _keep(r)],
+                       key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    _n_ll = sum(1 for r in _filtered if r.get("on_longlist"))
+    st.markdown(f"**{len(_filtered)}** names match "
+                f"({_n_ll} on longlist · {len(_filtered) - _n_ll} watchlist-only)")
+    table_with_copy(_export_table(_filtered), key="sig_table")
 
-        dsl = _dsl.get(ticker, {})
-        rows.append({
-            "#": i,
-            "Ticker": ticker,
-            "Sector": _ticker_sector(ticker),
-            "Score": _fmt(rm.get("sc_momentum"), ".1f"),
-            "Raw": _fmt(rm.get("sc_momentum_raw"), ".1f"),
-            "PTRS": _fmt(ptrs_val, ".1f"),
-            "PipeRk": _fmt(rm.get("pipe_rank"), ".1f"),
-            "Floor": _fmt(floor, ".1f"),
-            "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
-            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
-            "Flow": _fmt(eng.get("flow"), ".0f"),
-            "Energy": _fmt(eng.get("energy"), ".0f"),
-            "Struct": _fmt(eng.get("structure"), ".0f"),
-            "MP": _fmt(eng.get("mp"), ".0f"),
-            "Elder": _fmt(eng.get("elder"), ".1f"),
-            "Elder5d": _elder5_str(_elder5.get(ticker)),
-            "Entry": _fmt(dsl.get("entry", lvl.get("entry")), ".2f"),
-            "DSL": _fmt(dsl.get("stop", lvl.get("stop")), ".2f"),
-            "TP 1/2/3": _tp_str(dsl, lvl),
-            "Distance to SL (%)": _fmt(dsl.get("rr_pct"), ".1f"),
-            "R/R": _fmt(dsl.get("rr_est"), ".1f"),
-            "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
-            "Fib": _fib_str(dsl.get("fib")),
-        })
-
-    st.dataframe(_export_table(_ex.get("longlist")), use_container_width=True, hide_index=True)
-
-    # Earnings warnings
-    earn_warned = []
-    for c in candidates:
-        if c.get("diagnostics", {}).get("earn_warning"):
-            earn_warned.append(c["ticker"])
-    for rm in recipe_matches:
-        t = rm["ticker"]
-        # Also check candidates for this ticker
-        for c in candidates:
-            if c["ticker"] == t and c.get("diagnostics", {}).get("earn_warning") and t not in earn_warned:
-                earn_warned.append(t)
-    if earn_warned:
-        st.warning(f"Earnings within 5 days: {', '.join(earn_warned)}")
+    # Earnings-within-5-days warning (from the pipeline diagnostics)
+    _earn = sorted({c["ticker"] for c in sl.get("candidates", [])
+                    if c.get("diagnostics", {}).get("earn_warning")
+                    and c.get("ticker") in _sig})
+    if _earn:
+        st.warning(f"Earnings within 5 days: {', '.join(_earn)}")
 else:
-    st.info("No tickers qualify for the aggregate longlist today. Review recipe thresholds on Page 2.")
-
-st.divider()
-
-# ---------------------------------------------------------------------------
-# 5. Signal Scanner — full universe scan with sector overlay
-# ---------------------------------------------------------------------------
-st.subheader("Watchlist")
-st.caption(
-    "**Watchlist = broad radar.** Every universe name above the raw SC_MOM bar "
-    "(slider), with NO engine-floor gates — wider and looser than the longlist. "
-    "Sorted by Pipeline Rank + Floor. DSL / TP 1-2-3 / R/R / Fib / Elder5d "
-    "columns as per the longlist."
-)
-
-@st.cache_data(ttl=300, show_spinner=False)
-def _load_latest_scores(_hash: str) -> pd.DataFrame:
-    """Load latest-date slice from scores_daily.parquet."""
-    df = pd.read_parquet(SCORES_DAILY)
-    df["date"] = pd.to_datetime(df["date"]).dt.normalize()
-    latest = df["date"].max()
-    out = df[df["date"] == latest].copy()
-    return out
-
-def _watchlist_from_export(export: dict) -> pd.DataFrame:
-    """Construct a `latest_scores`-shaped DataFrame from the export JSON.
-
-    Used in cloud read-only mode where we don't have scores_daily.parquet.
-    The export's watchlist + longlist together cover every ticker the local
-    scanner would have surfaced.
-    """
-    seen: set[str] = set()
-    rows: list[dict] = []
-    for key in ("watchlist", "longlist"):
-        for r in (export.get(key) or []):
-            tk = r.get("ticker")
-            if not tk or tk in seen:
-                continue
-            seen.add(tk)
-            rows.append({
-                "ticker": tk,
-                "sc_momentum": r.get("sc_momentum"),
-                "sc_momentum_raw": r.get("sc_momentum_raw") or r.get("sc_momentum"),
-                "flow_100": r.get("flow"),
-                "energy_100": r.get("energy"),
-                "structure_100": r.get("structure"),
-                "mp_100": r.get("mp"),
-                "elder_score": r.get("elder"),
-                "pipe_rank": r.get("pipe_rank"),
-            })
-    return pd.DataFrame(rows)
-
-
-if CLOUD_MODE:
-    _wl_export = _export                    # already loaded above
-    latest_scores = _watchlist_from_export(_wl_export) if _wl_export else pd.DataFrame()
-    _have_scan = not latest_scores.empty
-elif SCORES_DAILY.exists():
-    scores_hash = file_hash(SCORES_DAILY)
-    latest_scores = _load_latest_scores(scores_hash)
-    _have_scan = True
-else:
-    _have_scan = False
-
-if _have_scan:
-
-    # Controls: slider + number box side-by-side
-    sc_col1, sc_col2 = st.columns([3, 1])
-    with sc_col1:
-        scan_threshold = st.select_slider(
-            "Raw SC_MOM threshold",
-            options=list(range(50, 96)),
-            value=70,
-            key="scan_threshold",
-        )
-    with sc_col2:
-        st.markdown(f"### {scan_threshold}")
-        st.caption("Selected")
-
-    # Filter by raw SC_MOM (use raw if available, else gated)
-    raw_col = "sc_momentum_raw" if "sc_momentum_raw" in latest_scores.columns else "sc_momentum"
-    scan_mask = latest_scores[raw_col] >= scan_threshold
-    # Exclude sector ETFs and SPY
-    exclude = set(GICS_ETFS) | {"SPY"}
-    scan_mask &= ~latest_scores["ticker"].isin(exclude)
-
-    # Compute floor for sorting, then sort by pipe_rank + floor (same as longlist)
-    scan_df = latest_scores[scan_mask].copy()
-    for c in ("pipe_rank", "flow_100", "energy_100", "structure_100", "mp_100"):
-        if c in scan_df.columns:
-            scan_df[c] = pd.to_numeric(scan_df[c], errors="coerce").fillna(0)
-    scan_df["_floor"] = scan_df[["flow_100", "energy_100", "structure_100", "mp_100"]].min(axis=1)
-    scan_df = scan_df.sort_values(
-        ["pipe_rank", "_floor"], ascending=[False, False]
-    ).reset_index(drop=True)
-
-    # Sector lookup
-    sector_lookup = _load_sector_lookup()
-
-    st.markdown(f"**{len(scan_df)}** tickers with raw SC >= {scan_threshold}")
-
-    # --- Sector summary counter ---
-    if not scan_df.empty:
-        scan_df["_sector"] = scan_df["ticker"].map(lambda t: sector_lookup.get(t, "Unknown"))
-        sector_counts = scan_df["_sector"].value_counts()
-
-        st.markdown("**Sector signal concentration:**")
-        sc_parts = []
-        for sect, cnt in sector_counts.items():
-            sc_parts.append(f"**{sect}**: {cnt}")
-        # Display as a wrapped line of bold-count pairs
-        st.markdown(" · ".join(sc_parts))
-
-        # Vectorized PTRS for the whole watchlist (fast)
-        scan_df["_ptrs"] = _vectorized_ptrs(scan_df, _sector_grades)
-
-        # Build results table
-        scan_rows = []
-        for i, (_, row) in enumerate(scan_df.iterrows(), 1):
-            ticker = row["ticker"]
-            dsl = _dsl.get(ticker, {})
-            scan_rows.append({
-                "#": i,
-                "Ticker": ticker,
-                "Sector": sector_lookup.get(ticker, "—"),
-                "Score": _fmt(float(row["sc_momentum"]), ".1f"),
-                "Raw": _fmt(float(row.get("sc_momentum_raw", row["sc_momentum"])), ".1f"),
-                "PTRS": _fmt(float(row["_ptrs"]), ".1f"),
-                "PipeRk": _fmt(float(row.get("pipe_rank", 0)), ".1f"),
-                "Floor": _fmt(float(row["_floor"]), ".1f"),
-                "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
-            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
-                "Flow": _fmt(float(row.get("flow_100", 0)), ".0f"),
-                "Energy": _fmt(float(row.get("energy_100", 0)), ".0f"),
-                "Struct": _fmt(float(row.get("structure_100", 0)), ".0f"),
-                "MP": _fmt(float(row.get("mp_100", 0)), ".0f"),
-                "Elder": _fmt(float(row.get("elder_score", 0)), ".1f"),
-                "Elder5d": _elder5_str(_elder5.get(ticker)),
-                "Entry": _fmt(dsl.get("entry"), ".2f"),
-                "DSL": _fmt(dsl.get("stop"), ".2f"),
-                "TP 1/2/3": _tp_str(dsl),
-                "Distance to SL (%)": _fmt(dsl.get("rr_pct"), ".1f"),
-                "R/R": _fmt(dsl.get("rr_est"), ".1f"),
-                "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
-                "Fib": _fib_str(dsl.get("fib")),
-            })
-
-        _wl_recs = [r for r in (_ex.get("watchlist") or [])
-                    if (r.get("sc_momentum_raw") or 0) >= scan_threshold]
-        st.dataframe(_export_table(_wl_recs), use_container_width=True, hide_index=True)
-    else:
-        st.info(f"No tickers above raw SC >= {scan_threshold} today.")
-else:
-    if CLOUD_MODE:
-        st.info(
-            "Watchlist data not in the export JSON yet. "
-            "Run the daily pipeline locally + push the export to refresh."
-        )
-    else:
-        st.warning("scores_daily.parquet not found. Rebuild scores first.")
+    st.info("No signals in the export yet — run the daily pipeline + export.")
 
 
 st.divider()
@@ -1602,7 +1422,7 @@ st.caption(
 _elder_recs = _ex.get("elder_list") or []
 if _elder_recs:
     st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
-    st.dataframe(_export_table(_elder_recs), use_container_width=True, hide_index=True)
+    table_with_copy(_export_table(_elder_recs), key="elder_table")
 elif _ex:
     st.info("No names at Elder ≥ 8 on the last close today.")
 else:
@@ -1733,7 +1553,7 @@ if _adhoc_results:
                 "ATR Width": _fmt(lv.get("dsl_atr_ratio"), ".2f"),
                 "Fib": _fib_str(lv.get("fib")),
             })
-        st.dataframe(pd.DataFrame(_adhoc_rows), use_container_width=True, hide_index=True)
+        table_with_copy(pd.DataFrame(_adhoc_rows), key="adhoc_table")
 
         # AIC deliberation blurbs — one per scored ticker
         st.markdown("##### AIC Deliberation Prompt")
