@@ -1,14 +1,16 @@
-"""AQE Pricer — mechanical intraday entry & stop calculator (recommend-only).
+"""AQE Pricer — a pure bracket CALCULATOR (no recommendation, no decision).
 
-Turns the EOD export + live intraday 5-min bars into an operative stop (3-gate
-validated), a momentum-conditioned entry zone, a TP ladder, size, and an IBKR
-bracket spec. Pure deterministic math (no AI / no AIC) — the optional
-paste-to-AIC block is only for the user to reaffirm a decision.
+Type in ANY ticker (universe or not). For each, it pulls daily + 5-day hourly +
+5-min bars and computes a full bracket — entry, the best operative stop from the
+FIB / MA / DSL / coil / swing menu, a TP ladder, R:R and size — plus the live
+intraday momentum as reference. It NEVER blanks and makes NO call; paste the
+numbers to the AIC to decide.
 """
 
 from __future__ import annotations
 
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 import streamlit as st
@@ -26,14 +28,13 @@ require_login()
 
 import pandas as pd  # noqa: E402
 
-from src.intraday.plan import intraday_plan, rank_plans  # noqa: E402
+from src.intraday.pricer import price_ticker  # noqa: E402
 from src.intraday.run_plan import build_rec_lookup  # noqa: E402
 from src.intraday import config as IC  # noqa: E402
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def _fetch_bars(ticker: str, interval: str) -> list[dict]:
-    """Intraday bars for one ticker (cached 5 min). [] on failure."""
+def _intraday(ticker: str, interval: str) -> list[dict]:
     try:
         from src.data.fmp_client import FMPClient
         return FMPClient().get_intraday_bars(ticker, interval=interval)
@@ -41,137 +42,140 @@ def _fetch_bars(ticker: str, interval: str) -> list[dict]:
         return []
 
 
-def _zone_txt(z: dict) -> str:
-    if not z or z.get("kind") == "stand_down":
-        return "—"
-    return f"{z.get('low')}–{z.get('high')} ({z.get('kind')})"
+@st.cache_data(ttl=3600, show_spinner=False)
+def _daily(ticker: str):
+    try:
+        from src.data.fmp_client import FMPClient
+        frm = (date.today() - timedelta(days=400)).isoformat()
+        df = FMPClient().get_daily_bars(ticker, from_date=frm)
+        return df if df is not None and not df.empty else None
+    except Exception:  # noqa: BLE001
+        return None
 
 
-def _aic_text(plans: list[dict], lvl) -> str:
-    enters = [p for p in plans if p["action"] in ("ENTER", "CAUTION")]
-    if not enters:
-        return "No actionable intraday setups — all names stand down."
-    parts = []
-    for p in enters:
-        op = p.get("operative_stop") or {}
-        parts.append(
-            f"{p['ticker']} {p['state']} (IMS {p.get('ims')}): entry "
-            f"{_zone_txt(p['entry_zone'])}, stop {op.get('price')} "
-            f"({op.get('stop_pct')}%), TP {_tp2(p)}, {p.get('shares')} sh, "
-            f"R:R {p.get('rr')}")
-    return (f"AQE intraday read ({lvl} regime). " + " | ".join(parts)
-            + ". Recommend entry decision + size per PTRS × regime; "
-              "AQE/Pricer makes no call (mechanical levels only).")
-
-
-def _tp2(p: dict):
-    ladder = p.get("tp_ladder") or []
-    if len(ladder) >= 2:
-        return ladder[1]["price"]
-    return ladder[0]["price"] if ladder else None
-
-
-st.title("AQE Pricer — intraday entry & stop")
+st.title("AQE Pricer — bracket calculator")
 st.caption(
-    "Mechanical & recommend-only. Operative stop = tightest level passing all 3 "
-    "charter gates (ATR ≥ 1, R:R-TP2 ≥ 2, regime stop-% ceiling); entry zone is "
-    "momentum-conditioned and never chases past max-chase. **No AI** — paste the "
-    "summary to your AIC only to reaffirm."
+    "Pure calculator (no recommendation). For any ticker it computes the best "
+    "entry/stop/TP from the **FIB · MA · DSL · coil · swing** menu across daily + "
+    "5-day hourly + 5-min bars, with the live momentum as reference. Never blanks; "
+    "you/the AIC make the call."
 )
 
 export = load_export() or {}
-if not export:
-    st.warning("No AQE export found. Run the daily pipeline + export first "
-               "(Scanner → 📤 Export), then reload this page.")
-    st.stop()
-
 regime = export.get("regime") or {}
 lvl = regime.get("level") if isinstance(regime, dict) else regime
 st.caption(f"Regime **{lvl or '—'}** · stop ceiling **{IC.regime_stop_ceiling(regime)}%** "
            f"· risk **${IC.RISK_BUDGET:,.0f}** (3%)")
 
 recs_all = build_rec_lookup(
-    export, ["held", "top_picks", "edge_list", "longlist", "watchlist", "elder_list"])
-if not recs_all:
-    st.info("Export has no tickers to price.")
-    st.stop()
-
-all_tickers = sorted(recs_all)
-default_sel = [t for t in all_tickers
+    export, ["held", "top_picks", "edge_list", "longlist", "watchlist", "elder_list"]
+) if export else {}
+universe = sorted(recs_all)
+default_sel = [t for t in universe
                if recs_all[t].get("source") in ("held", "top_picks", "edge_list")]
 
-c1, c2, c3 = st.columns([3, 1, 1])
+c1, c2 = st.columns([2, 2])
 with c1:
-    sel = st.multiselect("Tickers to price", all_tickers,
-                         default=default_sel or all_tickers[:8],
-                         help="Defaults to held + top picks + precision-edge.")
+    typed = st.text_input("Type any tickers (comma/space separated)",
+                          placeholder="e.g. NVDA, ASML, ANY-SYMBOL",
+                          help="Priced even if not in the AQE universe — levels are "
+                               "computed live from daily bars.")
 with c2:
-    risk = st.number_input("Risk $/trade", value=float(IC.RISK_BUDGET), step=100.0)
-with c3:
-    interval = st.selectbox("Bars", ["5min", "15min", "1min"], index=0)
+    picked = st.multiselect("…or pick from the export", universe, default=default_sel)
 
-if st.button("Compute intraday plans", type="primary", disabled=not sel):
-    plans, missing = [], []
-    prog = st.progress(0.0, text="Fetching intraday bars…")
-    for i, tk in enumerate(sel, 1):
-        bars = _fetch_bars(tk, interval)
-        if not bars:
+cc1, cc2 = st.columns([1, 1])
+with cc1:
+    risk = st.number_input("Risk $/trade", value=float(IC.RISK_BUDGET), step=100.0)
+with cc2:
+    interval = st.selectbox("Momentum bars", ["5min", "15min", "1min"], index=0)
+
+typed_list = [t.strip().upper() for t in typed.replace(",", " ").split() if t.strip()]
+tickers = list(dict.fromkeys(typed_list + list(picked)))   # de-dup, keep order
+
+if st.button("Calculate brackets", type="primary", disabled=not tickers):
+    results, missing = [], []
+    prog = st.progress(0.0, text="Pricing…")
+    for i, tk in enumerate(tickers, 1):
+        b5 = _intraday(tk, interval)
+        b1 = _intraday(tk, "1hour")
+        ddf = _daily(tk)
+        if not b5 and ddf is None:
             missing.append(tk)
         else:
-            plans.append(intraday_plan(recs_all[tk], bars, regime=regime,
-                                       risk_budget=risk))
-        prog.progress(i / len(sel), text=f"Priced {tk} ({i}/{len(sel)})")
+            results.append(price_ticker(tk, recs_all.get(tk), b5, b1, ddf,
+                                        regime=regime, risk_budget=risk))
+        prog.progress(i / len(tickers), text=f"Priced {tk} ({i}/{len(tickers)})")
     prog.empty()
-    st.session_state["pricer_plans"] = rank_plans(plans)
+    st.session_state["pricer_results"] = [r for r in results if not r.get("error")]
     st.session_state["pricer_missing"] = missing
 
-plans = st.session_state.get("pricer_plans")
-if plans:
+results = st.session_state.get("pricer_results")
+if results:
     rows = []
-    for p in plans:
-        op = p.get("operative_stop") or {}
+    for p in results:
+        op = p["operative_stop"]
+        rng = p.get("range_5d") or {}
         rows.append({
-            "Ticker": p["ticker"], "IMS": p.get("ims"), "State": p["state"],
-            "Action": p["action"], "Entry zone": _zone_txt(p["entry_zone"]),
-            "Stop": op.get("price"), "Stop %": op.get("stop_pct"),
-            "TP2": _tp2(p), "R:R": p.get("rr"), "Shares": p.get("shares"),
+            "Ticker": p["ticker"], "Univ": "✓" if p["in_universe"] else "typed",
+            "Price": p["price"],
+            "5d Range": f"{rng.get('low')}–{rng.get('high')}" if rng else "—",
+            "Entry": p["entry"], "Stop": op["price"], "Basis": op["basis"],
+            "Stop %": op.get("stop_pct"), "Risk": p["risk"], "Coil": p["coil_entry"],
+            "TP1": p["tp"]["tp1"], "TP2": p["tp"]["tp2"], "TP3": p["tp"]["tp3"],
+            "Shares": p["shares"], "IMS": p.get("ims"), "State": p.get("state"),
         })
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+    st.caption("Stop = tightest valid level from the menu (3-gate metrics shown per "
+               "name below). TP1/2/3 are mechanical +1/2/3R off the operative stop; "
+               "structural targets listed per name. **No decision is implied.**")
 
-    # Stale-export guard: flag names whose EOD entry is far from the live bar.
-    stale = []
-    for p in plans:
-        rec = recs_all.get(p["ticker"], {})
-        e, px = rec.get("entry"), (p.get("momentum") or {}).get("price")
-        if e and px and abs(px - e) / e > 0.15:
-            stale.append(f"{p['ticker']} (entry {e} vs live {px})")
-    if stale:
-        st.warning("⚠️ Export looks stale for: " + ", ".join(stale)
-                   + " — structural anchors may be off; rerun the pipeline.")
-
-    st.markdown("##### IBKR bracket specs (recommend-only)")
-    for p in plans:
-        spec = p.get("ibkr_spec")
-        with st.expander(f"{p['ticker']} — {p['state']} · {p['action']}"):
-            st.write(p["verdict"])
-            if spec:
-                st.code(
-                    f"{spec['symbol']}: BUY {spec['quantity']} @ "
-                    f"{spec['order_type']} {spec['entry']} | "
-                    f"stop {spec['stop']} | TP {spec['take_profit']}",
+    for p in results:
+        op = p["operative_stop"]
+        with st.expander(f"{p['ticker']} — stop {op['price']} ({op['basis']}) · "
+                         f"{p['shares']} sh · state {p.get('state')}"):
+            if p.get("notes"):
+                st.warning(" · ".join(p["notes"]))
+            st.markdown("**Candidate levels (FIB / MA / DSL / swing — below entry)**")
+            if p["candidates"]:
+                st.dataframe(pd.DataFrame([
+                    {"Basis": c["basis"], "Price": c["price"], "Risk": c["risk"],
+                     "ATR×": c["atr_ratio"], "R:R-TP2": c["rr_tp2"],
+                     "Stop %": c["stop_pct"], "ATR≥1": c["gate_atr"],
+                     "R:R≥2": c["gate_rr"], "≤ceiling": c["within_ceiling"]}
+                    for c in p["candidates"]]),
+                    use_container_width=True, hide_index=True)
+            else:
+                st.caption("No structural support below entry — used the ATR fallback stop.")
+            if p["structural_tps"]:
+                st.markdown("**Structural take-profit targets (reference)**")
+                st.dataframe(pd.DataFrame(p["structural_tps"]),
+                             use_container_width=True, hide_index=True)
+            s = p["ibkr_spec"]
+            st.code(f"{s['symbol']}: BUY {s['quantity']} @ {s['order_type']} "
+                    f"{s['entry']} | stop {s['stop']} | TP {s['take_profit']}",
                     language=None)
             mom = p.get("momentum") or {}
-            st.caption(
-                f"VWAP {mom.get('vwap')} · pos {mom.get('vwap_pos_atr')} ATR · "
-                f"OR break {mom.get('or_break')} · RVOL pace {mom.get('rvol_pace')} "
-                f"· ext {mom.get('ext_r')}R · as of {mom.get('as_of')}")
+            if mom:
+                st.caption(
+                    f"Momentum (reference): VWAP {mom.get('vwap')} · pos "
+                    f"{mom.get('vwap_pos_atr')} ATR · OR break {mom.get('or_break')} "
+                    f"· RVOL pace {mom.get('rvol_pace')} · ext {mom.get('ext_r')}R "
+                    f"· as of {mom.get('as_of')}")
 
-    st.markdown("##### Paste-to-AIC summary")
-    st.text_area("Copy this into the AIC to reaffirm (optional):",
-                 _aic_text(plans, lvl), height=140)
+    # Paste-to-AIC block (numbers only — no call)
+    lines = []
+    for p in results:
+        op = p["operative_stop"]
+        lines.append(
+            f"{p['ticker']}: price {p['price']}, entry {p['entry']}, stop {op['price']} "
+            f"({op['basis']}, {op.get('stop_pct')}%), coil {p['coil_entry']}, "
+            f"TP {p['tp']['tp1']}/{p['tp']['tp2']}/{p['tp']['tp3']}, {p['shares']} sh, "
+            f"IMS {p.get('ims')} {p.get('state')}")
+    st.markdown("##### Paste-to-AIC (calculated levels — you decide)")
+    st.text_area("Copy:", f"AQE Pricer ({lvl} regime):\n" + "\n".join(lines), height=160)
 
     missing = st.session_state.get("pricer_missing") or []
     if missing:
-        st.caption(f"No intraday bars returned for: {', '.join(missing)}")
+        st.caption(f"No price data for: {', '.join(missing)}")
 else:
-    st.info("Pick tickers and click **Compute intraday plans**.")
+    st.info("Type tickers and/or pick from the export, then **Calculate brackets**.")

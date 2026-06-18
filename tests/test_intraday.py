@@ -187,3 +187,68 @@ def test_rank_plans_orders_enter_first():
     ranked = rank_plans(plans)
     assert [p["action"] for p in ranked] == ["ENTER", "ENTER", "CAUTION", "STAND_DOWN"]
     assert ranked[0]["ims"] == 70  # higher IMS enter first
+
+
+# ── Pricer (pure calculator — always a bracket, any ticker) ─────────────────
+def _daily_df(start_close=100.0, n=260, drift=0.05, seed=3):
+    import numpy as np
+    import pandas as pd
+    rng = np.random.default_rng(seed)
+    closes = start_close + np.cumsum(rng.normal(drift, 1.0, n))
+    closes = np.maximum(closes, 5.0)
+    dates = pd.bdate_range("2025-06-01", periods=n)
+    return pd.DataFrame({
+        "date": dates, "open": closes, "high": closes + 1.0,
+        "low": closes - 1.0, "close": closes, "volume": 1_000_000,
+    })
+
+
+def test_pricer_typed_ticker_never_blank():
+    """A symbol NOT in the universe (rec=None) still gets a full bracket."""
+    from src.intraday.pricer import price_ticker
+    df = _daily_df()
+    b5 = mk_bars(DAY, [float(df["close"].iloc[-1]) + i * 0.1 for i in range(10)])
+    p = price_ticker("ZZZZ", None, b5, [], df, regime={"level": "GREEN"})
+    assert p["in_universe"] is False                 # computed live
+    assert p["operative_stop"]["price"] is not None  # never blank
+    assert p["operative_stop"]["price"] < p["entry"]
+    assert p["shares"] >= 1
+    assert p["tp"]["tp1"] < p["tp"]["tp2"] < p["tp"]["tp3"]
+    assert p["operative_stop"]["atr_ratio"] >= 0.5   # not absurdly tight
+    assert p["ibkr_spec"]["stop"] == p["operative_stop"]["price"]
+
+
+def test_pricer_broken_momentum_still_brackets():
+    """Even with broken/falling intraday momentum the Pricer returns a bracket
+    (it's a calculator, not a gatekeeper — no STAND_DOWN)."""
+    from src.intraday.pricer import price_ticker
+    df = _daily_df()
+    last = float(df["close"].iloc[-1])
+    b5 = mk_bars(DAY, [last - i * 0.5 for i in range(10)])   # falling → BROKEN
+    p = price_ticker("ZZZZ", None, b5, [], df, regime={"level": "GREEN"})
+    assert "action" not in p                          # no decision field
+    assert p["operative_stop"]["price"] is not None and p["shares"] >= 1
+    assert p["state"] in {"BROKEN", "FADING", "COILING", "ACCELERATING",
+                          "PULLBACK_HOLDING", "EXTENDED", "UNKNOWN", "NO_INTRADAY"}
+
+
+def test_pricer_prefers_tightest_valid_from_menu():
+    """Operative stop = tightest candidate from FIB/MA/DSL/swing passing the gates."""
+    from src.intraday.pricer import price_ticker
+    df = _daily_df()
+    entry = float(df["close"].iloc[-1])
+    rec = {
+        "ticker": "AAA", "entry": entry, "dsl_stop": round(entry - 9, 2),
+        "dsl_risk": 9.0, "atr_14d": 3.0, "dsl_tp_2r": round(entry + 12, 2),
+        "structural_levels": [
+            {"type": "swing_low_1", "price": round(entry - 4, 2)},   # tightest valid
+            {"type": "ma_cluster", "price": round(entry - 8, 2)},
+        ],
+        "structural_targets": [{"type": "r1", "price": round(entry + 6, 2)},
+                               {"type": "r2", "price": round(entry + 12, 2)}],
+    }
+    b5 = mk_bars(DAY, [entry + i * 0.05 for i in range(10)])
+    p = price_ticker("AAA", rec, b5, [], df, regime={"level": "GREEN"})
+    assert p["in_universe"] is True
+    assert p["operative_stop"]["basis"] == "aqe_swing_low_1"
+    assert p["operative_stop"]["price"] == round(entry - 4, 2)

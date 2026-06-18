@@ -197,12 +197,18 @@ MCP `chart` tool today (intraday 1/5/15/30-min) and an IBKR feed can swap in lat
   FADING/BROKEN → stand down.
 - `plan.py` — `intraday_plan(rec, bars5, regime)` glues it into one plan + verdict + an
   IBKR-ready bracket spec (recommend-only). `run_plan.py` is the CLI the skill calls.
-- **In-app driver = the Pricer page** (`src/ui/pages/4_Pricer.py`): load the export, pick
-  scope (held + top_picks + edge_list by default), fetch live intraday bars via
-  `fmp_client.get_intraday_bars()` (`/stable/historical-chart/{interval}`, cached 5 min),
-  run `intraday_plan` per name → ranked table + per-name IBKR bracket spec + a paste-to-AIC
-  summary. **Fully mechanical — no AI/AIC call**; the AIC only reaffirms if the user pastes
-  the summary. Flags a stale export (EOD entry far from the live bar).
+- **In-app driver = the Pricer page** (`src/ui/pages/4_Pricer.py`, engine
+  `src/intraday/pricer.py`): a **pure bracket CALCULATOR, not a gatekeeper**. Accepts
+  ANY typed-in ticker (not just the universe) + export picks; per name it pulls daily +
+  5-day hourly + 5-min bars (`fmp_client.get_intraday_bars`/`get_daily_bars`) and ALWAYS
+  returns a full bracket (never blanks, no STAND_DOWN): entry, the **best operative stop
+  from the FIB/MA/DSL/coil/swing menu** (tightest passing the 3 gates; 1×ATR floor
+  fallback), TP ladder (mechanical +1/2/3R + structural targets), R:R, size, with the live
+  momentum as REFERENCE only. For a non-universe symbol the structural levels are computed
+  live from daily bars via `pricer.ensure_levels` (reusing `levels_for_ticker` +
+  `_structural_stop_analysis`/`_structural_target_analysis`). **Makes no decision** —
+  outputs numbers + a paste-to-AIC block. (`plan.py`/`intraday_plan` stays the separate
+  recommend-only path for the CLI/skill.)
 - Also runnable headless: `python -m src.intraday.run_plan --bars-dir <dir>` (CLI) and the
   documented chat skill `docs/skills/aqe-intraday-plan/SKILL.md` (self-contained algorithm
   for a Claude.ai Agent Skill). Phase 2: IBKR order *placement*. Tests: `tests/test_intraday.py`.
