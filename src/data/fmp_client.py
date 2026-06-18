@@ -134,6 +134,32 @@ class FMPClient:
         df["volume"] = df["volume"].fillna(0).astype("int64")
         return df[["date", "open", "high", "low", "close", "volume"]]
 
+    def get_intraday_bars(
+        self,
+        ticker: str,
+        interval: str = "5min",
+        from_date: str | date | None = None,
+        to_date: str | date | None = None,
+    ) -> list[dict]:
+        """Intraday OHLCV bars for one ticker (default 5-min).
+
+        interval ∈ {1min, 5min, 15min, 30min, 1hour, 4hour}. Returns a list of
+        {date, open, high, low, close, volume} dicts (FMP order; the intraday
+        module sorts internally). Returns [] on any failure so callers degrade
+        gracefully. Used by the Pricer (intraday momentum + bracket).
+        """
+        params = {"symbol": ticker, "apikey": self.config.api_key}
+        if from_date is not None:
+            params["from"] = _as_iso(from_date)
+        if to_date is not None:
+            params["to"] = _as_iso(to_date)
+        url = f"{FMP_BASE_STABLE}/historical-chart/{interval}"
+        try:
+            payload = self._get_json(url, params=params)
+        except FMPError:
+            return []
+        return payload if isinstance(payload, list) else []
+
     def get_quotes(self, tickers: list[str]) -> dict[str, dict]:
         """Fetch live (15-min-delayed on Starter) quotes for a set of tickers.
 

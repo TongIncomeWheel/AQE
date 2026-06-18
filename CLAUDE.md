@@ -192,10 +192,15 @@ MCP `chart` tool today (intraday 1/5/15/30-min) and an IBKR feed can swap in lat
   FADING/BROKEN → stand down.
 - `plan.py` — `intraday_plan(rec, bars5, regime)` glues it into one plan + verdict + an
   IBKR-ready bracket spec (recommend-only). `run_plan.py` is the CLI the skill calls.
-- **Driver = the Claude Code skill `.claude/skills/intraday-plan`**: read shortlist tickers
-  from the export, fetch 5-min bars per name via MCP `chart`, run
-  `python -m src.intraday.run_plan --bars-dir <dir>` → ranked table + IBKR specs + AIC
-  prompt. Phase 2: IBKR order *placement* + optional in-app panel. Tests: `tests/test_intraday.py`.
+- **In-app driver = the Pricer page** (`src/ui/pages/4_Pricer.py`): load the export, pick
+  scope (held + top_picks + edge_list by default), fetch live intraday bars via
+  `fmp_client.get_intraday_bars()` (`/stable/historical-chart/{interval}`, cached 5 min),
+  run `intraday_plan` per name → ranked table + per-name IBKR bracket spec + a paste-to-AIC
+  summary. **Fully mechanical — no AI/AIC call**; the AIC only reaffirms if the user pastes
+  the summary. Flags a stale export (EOD entry far from the live bar).
+- Also runnable headless: `python -m src.intraday.run_plan --bars-dir <dir>` (CLI) and the
+  documented chat skill `docs/skills/aqe-intraday-plan/SKILL.md` (self-contained algorithm
+  for a Claude.ai Agent Skill). Phase 2: IBKR order *placement*. Tests: `tests/test_intraday.py`.
 
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
 Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export.

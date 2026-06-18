@@ -48,9 +48,9 @@ def intraday_plan(rec: dict, bars5, regime=None,
 
 def _ibkr_spec(ticker: str, brk: dict) -> dict | None:
     """A recommend-only IBKR bracket spec (NOT placed) for phase-2 execution."""
-    if brk["action"] in ("STAND_DOWN",) or not brk.get("operative_stop"):
+    op = brk.get("operative_stop")
+    if brk["action"] == "STAND_DOWN" or not op or op.get("price") is None:
         return None
-    op = brk["operative_stop"]
     zone = brk["entry_zone"]
     tp2 = None
     if len(brk["tp_ladder"]) >= 2:
