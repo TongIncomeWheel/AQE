@@ -46,7 +46,7 @@ def monitored(export: dict) -> list[dict]:
     """Flatten the export into a dedup'd monitor list of {ticker, source, record}.
 
     Held names win (their record carries the live trade context); otherwise the
-    richest candidate tier wins (PE > top > longlist > watchlist).
+    single `longlist` (PM v1.1 — one list only) supplies the candidates.
     """
     held_recs = export.get("held_positions") or []
     held_tickers = {r.get("ticker") for r in held_recs if r.get("ticker")}
@@ -58,15 +58,13 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    for src, tier in (("PE", "edge_list"), ("top", "top_picks"),
-                      ("longlist", "longlist"), ("watchlist", "watchlist")):
-        for r in export.get(tier) or []:
-            tk = r.get("ticker")
-            if not tk or tk in seen:
-                continue
-            seen.add(tk)
-            out.append({"ticker": tk, "source": src,
-                        "is_held": False, "record": r})
+    for r in export.get("longlist") or []:
+        tk = r.get("ticker")
+        if not tk or tk in seen:
+            continue
+        seen.add(tk)
+        out.append({"ticker": tk, "source": "longlist",
+                    "is_held": False, "record": r})
     return out
 
 

@@ -31,7 +31,7 @@ def build_rec_lookup(export: dict, scope: list[str]) -> dict[str, dict]:
             tk = h.get("ticker")
             if tk:
                 recs[tk] = {**h, "source": "held"}
-    for tier in ("top_picks", "edge_list", "longlist", "watchlist", "elder_list"):
+    for tier in ("longlist",):   # PM v1.1 — one list only
         if tier not in scope:
             continue
         for r in (export.get(tier) or []):

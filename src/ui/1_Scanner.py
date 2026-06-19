@@ -1131,7 +1131,7 @@ if CLOUD_MODE:
         dsl: dict[str, dict] = {}
         elder5: dict[str, list] = {}
         rows = []
-        for key in ("top_picks", "edge_list", "longlist", "watchlist"):
+        for key in ("longlist",):   # PM v1.1 — one list only
             rows.extend(export.get(key) or [])
         for r in rows:
             tk = r.get("ticker")
@@ -1231,7 +1231,35 @@ _EXPORT_COL_ORDER = [
     "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
     "coil_entry", "max_chase_tp2", "max_chase_tp3", "rr_tp2_at_coil", "rr_tp3_at_coil",
     "optimal_stop", "optimal_stop_exists", "structural_targets", "held", "rank_explain",
+    "elder_pattern", "ecx_vwap_pos", "ecx_vwap_slope", "ecx_vol_trend",
+    "ecx_vol_above20d", "ecx_up_dn_ratio", "ecx_vcp_label", "ecx_vcp_tight",
+    "ecx_exhaustion",
 ]
+
+
+def _flatten_elder_context(edf):
+    """Expand the nested elder_context dict into readable ecx_* columns."""
+    if "elder_context" not in edf.columns:
+        return edf
+
+    def g(ctx, *path):
+        cur = ctx
+        for k in path:
+            if not isinstance(cur, dict):
+                return None
+            cur = cur.get(k)
+        return cur
+
+    ctxs = edf["elder_context"]
+    edf["ecx_vwap_pos"] = ctxs.apply(lambda c: g(c, "vwap_5d", "position"))
+    edf["ecx_vwap_slope"] = ctxs.apply(lambda c: g(c, "vwap_5d", "slope_5d"))
+    edf["ecx_vol_trend"] = ctxs.apply(lambda c: g(c, "volume", "vol_trend_5d"))
+    edf["ecx_vol_above20d"] = ctxs.apply(lambda c: g(c, "volume", "vol_above_20d_avg"))
+    edf["ecx_up_dn_ratio"] = ctxs.apply(lambda c: g(c, "volume", "up_bar_vol_ratio"))
+    edf["ecx_vcp_label"] = ctxs.apply(lambda c: g(c, "vcp", "vcp_label"))
+    edf["ecx_vcp_tight"] = ctxs.apply(lambda c: g(c, "vcp", "vcp_tightness_pct"))
+    edf["ecx_exhaustion"] = ctxs.apply(lambda c: g(c, "exhaustion_check", "exhaustion_flag"))
+    return edf.drop(columns=["elder_context"])
 
 
 def _export_table(records):
@@ -1239,6 +1267,7 @@ def _export_table(records):
     if not records:
         return pd.DataFrame()
     edf = pd.DataFrame(records)
+    edf = _flatten_elder_context(edf)
     if "elder_5d" in edf.columns:
         edf["elder_5d"] = edf["elder_5d"].apply(
             lambda v: ",".join(str(int(x)) for x in v) if isinstance(v, list)
@@ -1281,99 +1310,30 @@ if _held:
 
 
 # ---------------------------------------------------------------------------
-# 3. Precision Edge
+# 3. Longlist — THE one list (PM v1.1). Filter with the sliders below.
 # ---------------------------------------------------------------------------
-st.subheader("Precision Edge")
-
-pe_signals = sl.get("precision_edge", [])
-pe_recipe = sl.get("precision_recipe", {})
-bt = pe_recipe.get("_backtest", {})
-
-if bt:
-    st.caption(
-        f"Backtest: WR {bt.get('win_rate', 0):.1f}% | "
-        f"{bt.get('per_week', 0):.1f} trades/wk | "
-        f"Exp {bt.get('expectancy_r', 0):.2f}R | "
-        f"{bt.get('trades', 0)} trades | "
-        f"{bt.get('period', '')}"
-    )
-
-if not pe_signals:
-    st.info("No Precision Edge signals today.")
-else:
-    pe_rows = []
-    for i, sig in enumerate(pe_signals, 1):
-        ticker = sig.get("ticker", "")
-        eng = sig.get("engines", {})
-        lvl = sig.get("levels", {})
-        sc_val = sig.get("sc_momentum") or round(
-            eng.get("flow", 0) * 0.30 + eng.get("energy", 0) * 0.30
-            + eng.get("structure", 0) * 0.20 + eng.get("mp", 0) * 0.20, 1
-        )
-        floor = min(eng.get("flow", 0), eng.get("energy", 0),
-                    eng.get("structure", 0), eng.get("mp", 0))
-        ptrs_val = _quick_ptrs(sc_val, ticker, _sector_grades)
-        dsl = _dsl.get(ticker, {})
-        pe_rows.append({
-            "#": i,
-            "Ticker": ticker,
-            "Sector": _ticker_sector(ticker),
-            "Score": _fmt(sc_val, ".1f"),
-            "Raw": _fmt(sig.get("sc_momentum_raw", sc_val), ".1f"),
-            "PTRS": _fmt(ptrs_val, ".1f"),
-            "PipeRk": _fmt(sig.get("pipe_rank"), ".1f"),
-            "Floor": _fmt(floor, ".1f"),
-            "Beta30": _fmt((_betas.get(ticker) or {}).get(30), ".2f"),
-            "Beta60": _fmt((_betas.get(ticker) or {}).get(60), ".2f"),
-            "Flow": _fmt(eng.get("flow"), ".0f"),
-            "Energy": _fmt(eng.get("energy"), ".0f"),
-            "Struct": _fmt(eng.get("structure"), ".0f"),
-            "MP": _fmt(eng.get("mp"), ".0f"),
-            "Elder": _fmt(eng.get("elder"), ".1f"),
-            "Elder5d": _elder5_str(_elder5.get(ticker)),
-            "Entry": _fmt(dsl.get("entry", lvl.get("entry")), ".2f"),
-            "DSL": _fmt(dsl.get("stop", lvl.get("stop")), ".2f"),
-            "TP 1/2/3": _tp_str(dsl, lvl),
-            "Distance to SL (%)": _fmt(dsl.get("rr_pct"), ".1f"),
-            "R/R": _fmt(dsl.get("rr_est"), ".1f"),
-            "ATR Width": _fmt(dsl.get("dsl_atr_ratio"), ".2f"),
-            "Fib": _fib_str(dsl.get("fib")),
-        })
-    table_with_copy(_export_table(_ex.get("edge_list")), key="edge_table")
-
-st.divider()
-
-# ---------------------------------------------------------------------------
-# 4. Signals — combined Longlist + Watchlist with on-screen filters
-# ---------------------------------------------------------------------------
-st.subheader("Signals (Longlist + Watchlist)")
+st.subheader("Longlist")
 active_recipe = sl.get("active_recipe", {})
 st.caption(
-    "One combined list — filter it with the sliders below. **Longlist** names "
-    "(`on_longlist = True`) passed the full recipe (every engine floor + Elder ≥ 7); "
-    "the rest are the broader **watchlist** radar (above the raw SC_MOM bar, no "
-    f"engine-floor gates). Aggregate recipe: {_recipe_label(active_recipe)}. "
-    "Full export schema = exactly what the AIC receives."
+    "The single AQE list (no more watchlist / PE / Elder sub-lists). Flags per row: "
+    "`on_longlist` = passed the full recipe (engine floors + Elder ≥ 7); `pe` = "
+    "Precision-Edge. `elder_pattern` + `elder_context` (VWAP/volume/VCP/exhaustion, "
+    "Instruction v1.1) ride on every row. Filter with the sliders — e.g. Min Elder = 8 "
+    f"reproduces the old Elder list. Aggregate recipe: {_recipe_label(active_recipe)}."
 )
 
-# Union of the export's longlist + watchlist (longlist record wins — it's richer).
-_sig: dict = {}
-for _key in ("longlist", "watchlist"):
-    for _r in (_ex.get(_key) or []):
-        _tk = _r.get("ticker")
-        if _tk and _tk not in _sig:
-            _sig[_tk] = _r
-_sig_recs = list(_sig.values())
-
-if _sig_recs:
-    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1.4, 1])
+_ll_recs = _ex.get("longlist") or []
+if _ll_recs:
+    f1, f2, f3, f4, f5, f6 = st.columns([1, 1, 1, 1.4, 1, 1])
     _min_sc = f1.slider("Min SC_MOM", 0, 100, 70, key="sig_sc")
     _min_ptrs = f2.slider("Min PTRS", 0, 100, 0, key="sig_ptrs")
     _min_elder = f3.slider("Min Elder", 0, 10, 0, key="sig_elder")
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
-                       for r in _sig_recs if (r.get("mp_state") or "").strip()})
+                       for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
-    _ll_only = f5.checkbox("Longlist only", key="sig_ll")
+    _ll_only = f5.checkbox("Qualified only", key="sig_ll",
+                           help="on_longlist = passed the full recipe")
+    _pe_only = f6.checkbox("PE only", key="sig_pe")
 
     def _keep(r: dict) -> bool:
         if (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < _min_sc:
@@ -1388,45 +1348,25 @@ if _sig_recs:
                 return False
         if _ll_only and not r.get("on_longlist"):
             return False
+        if _pe_only and not r.get("pe"):
+            return False
         return True
 
-    _filtered = sorted([r for r in _sig_recs if _keep(r)],
+    _filtered = sorted([r for r in _ll_recs if _keep(r)],
                        key=lambda r: (r.get("ptrs") or 0), reverse=True)
     _n_ll = sum(1 for r in _filtered if r.get("on_longlist"))
+    _n_pe = sum(1 for r in _filtered if r.get("pe"))
     st.markdown(f"**{len(_filtered)}** names match "
-                f"({_n_ll} on longlist · {len(_filtered) - _n_ll} watchlist-only)")
-    table_with_copy(_export_table(_filtered), key="sig_table")
+                f"({_n_ll} qualified · {_n_pe} PE)")
+    table_with_copy(_export_table(_filtered), key="ll_table")
 
-    # Earnings-within-5-days warning (from the pipeline diagnostics)
     _earn = sorted({c["ticker"] for c in sl.get("candidates", [])
                     if c.get("diagnostics", {}).get("earn_warning")
-                    and c.get("ticker") in _sig})
+                    and c.get("ticker") in {r.get("ticker") for r in _ll_recs}})
     if _earn:
         st.warning(f"Earnings within 5 days: {', '.join(_earn)}")
 else:
-    st.info("No signals in the export yet — run the daily pipeline + export.")
-
-
-st.divider()
-
-# ---------------------------------------------------------------------------
-# 5b. Elder list — Elder Impulse == 8 on the latest close (visibility only)
-# ---------------------------------------------------------------------------
-st.subheader("Elder list")
-st.caption(
-    "**Visibility only.** Every universe name whose **Elder Impulse ≥ 8** on the "
-    "last close, regardless of other gates — catches fresh, event-induced "
-    "strong-impulse setups the longlist/watchlist screens would filter out early. "
-    "Same columns as the other lists; changes NO criteria or strategy."
-)
-_elder_recs = _ex.get("elder_list") or []
-if _elder_recs:
-    st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
-    table_with_copy(_export_table(_elder_recs), key="elder_table")
-elif _ex:
-    st.info("No names at Elder ≥ 8 on the last close today.")
-else:
-    st.info("Elder list needs the export JSON — run the daily pipeline + export.")
+    st.info("No longlist in the export yet — run the daily pipeline + export.")
 
 st.divider()
 

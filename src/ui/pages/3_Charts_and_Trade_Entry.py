@@ -74,17 +74,16 @@ export = load_export() or {}
 held_positions = export.get("held_positions") or []
 held_lookup = {h.get("ticker"): h for h in held_positions if h.get("ticker")}
 
+_ll = export.get("longlist") or []
 cat_sets = {
-    "Top picks": {r.get("ticker") for r in (export.get("top_picks") or [])},
-    "PE": {r.get("ticker") for r in (export.get("edge_list") or [])},
-    "Longlist": {r.get("ticker") for r in (export.get("longlist") or [])},
-    "Watchlist": {r.get("ticker") for r in (export.get("watchlist") or [])},
+    "Longlist": {r.get("ticker") for r in _ll},
+    "Qualified": {r.get("ticker") for r in _ll if r.get("on_longlist")},
+    "PE": {r.get("ticker") for r in _ll if r.get("pe")},
     "Held": set(held_lookup.keys()),
 }
 rec_lookup: dict[str, dict] = {}
-for _tier in ("top_picks", "edge_list", "longlist", "watchlist"):
-    for _rec in (export.get(_tier) or []):
-        rec_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": _tier})
+for _rec in _ll:
+    rec_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": "longlist"})
 for _h in held_positions:
     rec_lookup.setdefault(_h.get("ticker"), {**_h, "_tier": "held"})
 
@@ -125,7 +124,7 @@ def _short(level: str) -> str:
 
 
 # Selection state — the single source of truth for which ticker is charted.
-_default = export["top_picks"][0].get("ticker") if export.get("top_picks") else None
+_default = _ll[0].get("ticker") if _ll else None
 if _default not in panel_tickers:
     _default = next(iter(sorted(rec_lookup)), None)
 st.session_state.setdefault("sel_ticker", _default)
@@ -611,7 +610,7 @@ with left:
         st.caption(f"📅 Engine read **as of {_asof}** (end-of-day, last pipeline run) — "
                    "these are NOT intraday; only the price / Live line moves during the day.")
     if rec is None:
-        st.caption("Not in today's lists (top_picks / edge / longlist / watchlist).")
+        st.caption("Not in today's longlist.")
     else:
         st.caption(f"Source tier: **{rec.get('_tier')}** · sector "
                    f"{rec.get('gics_sector') or '—'} "

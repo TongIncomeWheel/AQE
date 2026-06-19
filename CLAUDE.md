@@ -20,12 +20,18 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - **SIGNAL_MAX_AGE = 2 trading days.** Stale picks have no edge.
 - **User is in Singapore (SGT, UTC+8).** Data is US markets close-of-day scans. All timestamps use `ZoneInfo("Asia/Singapore")`.
 - **Do NOT cap lists at 25.** When asked for a list, show the full list.
-- **Watchlist is simple:** show tickers with SC_MOM score above the slider threshold.
-- **Longlist vs Watchlist:** Longlist = qualified setups (pass the full recipe — every
-  engine floor + Elder ≥ 7 — plus PE picks). Watchlist = broad radar (any universe name
-  above the raw SC_MOM bar, no engine-floor gates). **Elder list** = visibility-only tier:
-  names with Elder Impulse >= 8 on the latest close, regardless of other gates (surfaces
-  fresh strong-impulse/event setups filtered out early). It changes NO criteria/strategy.
+- **ONE list (PM v1.1, 19 Jun 2026):** the export + UI carry a single `longlist` — no
+  more watchlist / PE / top_picks / elder_list as separate lists. Per-row FLAGS preserve
+  the info: `on_longlist` (passed the full recipe — engine floors + Elder ≥ 7), `pe`
+  (Precision-Edge). `held_positions` stays (positions, not a screen). Filter in the UI
+  with sliders (Min SC_MOM / PTRS / Elder + MP-state + Qualified/PE toggles); Min Elder = 8
+  reproduces the old "Elder list". Broad set = scored universe with raw SC_MOM ≥ 50.
+- **`elder_context` (Instruction v1.1)** rides on every longlist row (`src/engines/elder_context.py`):
+  `elder_pattern` (ACCUMULATION_BASE/ACCELERATION/CORRECTION_REENTRY/SUSTAINED/INTERRUPTED
+  from `elder_5d`), `vwap_5d`, `volume` (trend/up-dn ratio/20d), `vcp` (tightness + label),
+  `exhaustion_check`. The **export** computes the daily-derived block (free from
+  `panel_daily`; VWAP/hourly fields null); the **Pricer** computes the FULL block (hourly
+  VWAP/volume) live per ticker. Pure + tested (`tests/test_elder_context.py`).
 
 ## Architecture
 
@@ -233,10 +239,11 @@ Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Thematic, Precision Edg
 ### Drive export (`src/data/drive_sync.py`)
 ONE combined JSON for committee consumption — `aqe_daily_export.json` in a single
 `AQE/` folder, overwritten every run (no date-stamped clutter). Contains:
-- `top_picks` (PTRS-ranked shortlist), `edge_list` (Precision Edge), `longlist`, `watchlist`,
-  `elder_list` (Elder Impulse >= 8 on the latest close — visibility-only, same record schema;
-  built from `scores_daily` like the watchlist, ranked PTRS→PipeRank→Floor). `summary.elder_count`.
-- Every ticker tagged with: `source` (longlist/watchlist), `pe` (bool), `on_longlist` (bool)
+- A SINGLE `longlist` (PM v1.1) = scored universe (raw SC_MOM ≥ 50) ∪ recipe/PE/top/elder≥8
+  names, ranked PTRS desc, each row carrying `elder_pattern` + `elder_context`. Plus
+  `held_positions`. `summary` = {longlist_count, held_count}. (top_picks/edge_list/watchlist/
+  elder_list keys removed — fold into `longlist` via the `on_longlist`/`pe` flags.)
+- Every ticker tagged with: `source` (longlist), `pe` (bool), `on_longlist` (bool)
 - DSL fields: `dsl_stop`, `dsl_risk`, `dsl_tp_2r`, `dsl_shares`, `dsl_rr_pct`
 - `beta_60d`, `rank_explain` per ticker
 - `exported_at` (SGT timestamp), `market`, `regime`

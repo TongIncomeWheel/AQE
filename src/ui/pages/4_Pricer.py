@@ -67,12 +67,11 @@ lvl = regime.get("level") if isinstance(regime, dict) else regime
 st.caption(f"Regime **{lvl or '—'}** · stop ceiling **{IC.regime_stop_ceiling(regime)}%** "
            f"· risk **${IC.RISK_BUDGET:,.0f}** (3%)")
 
-recs_all = build_rec_lookup(
-    export, ["held", "top_picks", "edge_list", "longlist", "watchlist", "elder_list"]
-) if export else {}
+recs_all = build_rec_lookup(export, ["held", "longlist"]) if export else {}
 universe = sorted(recs_all)
 default_sel = [t for t in universe
-               if recs_all[t].get("source") in ("held", "top_picks", "edge_list")]
+               if recs_all[t].get("source") == "held"
+               or recs_all[t].get("on_longlist") or recs_all[t].get("pe")]
 
 c1, c2 = st.columns([2, 2])
 with c1:
@@ -126,6 +125,21 @@ def _aic_block(p: dict) -> str:
     stp = "; ".join(f"{t['type']}@{t['price']} ({t['rr']}R)"
                     for t in (p.get("structural_tps") or [])) or "none"
     notes = "; ".join(p.get("notes") or []) or "none"
+    ec = p.get("elder_context") or {}
+    ec_line = ""
+    if ec:
+        vw = ec.get("vwap_5d", {})
+        vo = ec.get("volume", {})
+        vc = ec.get("vcp", {})
+        ex = ec.get("exhaustion_check", {})
+        ec_line = (
+            f"\nelder_pattern={ec.get('elder_pattern')} | "
+            f"VWAP5d={vw.get('value')} {vw.get('position')} slope {vw.get('slope_5d')} | "
+            f"vol_trend={vo.get('vol_trend_5d')} up/dn={vo.get('up_bar_vol_ratio')} "
+            f"above20d={vo.get('vol_above_20d_avg')} | "
+            f"VCP {vc.get('vcp_label')} tight {vc.get('vcp_tightness_pct')}% "
+            f"(base {vc.get('base_range_pct')}% / cur {vc.get('current_range_pct_5d')}%) | "
+            f"exhaustion={ex.get('exhaustion_flag')}")
     return (
         f"AQE Pricer — {p['ticker']} ({lvl} regime) — CALCULATED FACTS (no view):\n"
         f"universe={'yes' if p['in_universe'] else 'typed'} | price={p['price']} | "
@@ -145,7 +159,8 @@ def _aic_block(p: dict) -> str:
         f"RVOL_pace={mom.get('rvol_pace')} | accel={mom.get('accel_atr_per_bar')} | "
         f"higher_lows={mom.get('higher_lows')} | ext={mom.get('ext_r')}R | "
         f"as_of={mom.get('as_of')}\n"
-        f"notes: {notes}\n"
+        f"notes: {notes}"
+        f"{ec_line}\n"
         f"IBKR(recommend-only): BUY {p['shares']} LMT {p['entry']} | "
         f"stop {op['price']} | TP {p['tp']['tp2']}"
     )
@@ -157,6 +172,7 @@ if results:
     for p in results:
         op = p["operative_stop"]
         rng = p.get("range_5d") or {}
+        ec = p.get("elder_context") or {}
         rows.append({
             "Ticker": p["ticker"], "Univ": "✓" if p["in_universe"] else "typed",
             "Price": p["price"],
@@ -165,6 +181,11 @@ if results:
             "Stop %": op.get("stop_pct"), "Risk": p["risk"], "Coil": p["coil_entry"],
             "TP1": p["tp"]["tp1"], "TP2": p["tp"]["tp2"], "TP3": p["tp"]["tp3"],
             "Shares": p["shares"], "IMS": p.get("ims"), "State": p.get("state"),
+            "Pattern": p.get("elder_pattern"),
+            "VWAP": (ec.get("vwap_5d") or {}).get("position"),
+            "VolTrend": (ec.get("volume") or {}).get("vol_trend_5d"),
+            "VCP": (ec.get("vcp") or {}).get("vcp_label"),
+            "Exh": (ec.get("exhaustion_check") or {}).get("exhaustion_flag"),
         })
     table_with_copy(pd.DataFrame(rows), key="pricer_main")
     st.caption("Stop = tightest level from the FIB/MA/DSL/swing menu (full metrics "

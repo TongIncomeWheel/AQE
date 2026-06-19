@@ -1077,7 +1077,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             }
 
         # Watchlist — raw SC_MOM ≥ 70, ranked PTRS → PipeRank → Floor.
-        _wl = sc_df[sc_df[raw_col] >= 70].sort_values(
+        # Broad candidate set — raw SC_MOM ≥ 50 (UI sliders trim upward).
+        _wl = sc_df[sc_df[raw_col] >= 50].sort_values(
             ["_ptrs", "pipe_rank", "_floor"], ascending=False).reset_index(drop=True)
         for i, (_, wr) in enumerate(_wl.iterrows(), 1):
             export["watchlist"].append(_wl_record(wr, i, "watchlist"))
@@ -1091,33 +1092,79 @@ def build_export(shortlist: dict | None = None) -> dict:
             for i, (_, wr) in enumerate(_el.iterrows(), 1):
                 export["elder_list"].append(_wl_record(wr, i, "elder_list"))
 
-    export["summary"] = {
-        "top_picks_count": len(export["top_picks"]),
-        "edge_count": len(export["edge_list"]),
-        "longlist_count": len(export["longlist"]),
-        "watchlist_count": len(export["watchlist"]),
-        "elder_count": len(export["elder_list"]),
-    }
+    # ---- ONE LIST (PM v1.1): collapse every tier into a single `longlist` ----
+    # No more top_picks / edge_list / watchlist / elder_list as separate lists —
+    # they're merged here; on_longlist (recipe-qualified) and pe (precision-edge)
+    # survive as per-record FLAGS so nothing is lost. held_positions stays (it's
+    # positions, not a screen). Filter/rank in the UI via sliders.
+    _merged: dict = {}
+    for _tname in ("top_picks", "edge_list", "longlist", "watchlist", "elder_list"):
+        for _r in export.get(_tname, []):
+            _tk = _r.get("ticker")
+            if not _tk:
+                continue
+            if "on_longlist" not in _r:
+                _r["on_longlist"] = _tk in longlist_tickers
+            if _tk in _merged:                       # OR-merge the qualifying flags
+                if _r.get("on_longlist"):
+                    _merged[_tk]["on_longlist"] = True
+                if _r.get("pe"):
+                    _merged[_tk]["pe"] = True
+            else:
+                _merged[_tk] = _r
+    _longlist = sorted(_merged.values(),
+                       key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    for _i, _r in enumerate(_longlist, 1):
+        _r["rank"] = _i
+        _r["source"] = "longlist"
 
-    # ---- Uniform schema across all four tiers (Data Schema Spec v1.0 §2.2) ----
-    # "All four tiers carry an identical field set. Missing values are null."
-    # Fill cross-tier fields, then rebuild every record with the SAME ordered
-    # key set (canonical order = the richest tier's record), null-filling gaps.
-    _tiers = [export["top_picks"], export["edge_list"],
-              export["longlist"], export["watchlist"], export["elder_list"]]
-    for _tier in _tiers:
-        for _rec in _tier:
-            if "on_longlist" not in _rec:
-                _rec["on_longlist"] = _rec.get("ticker") in longlist_tickers
-    _all_keys: set[str] = set()
-    for _tier in _tiers:
-        for _rec in _tier:
+    # ---- Elder Context block (Instruction v1.1) on every name ----------------
+    # Daily-derived (free from panel_daily): elder_pattern + VCP + 20d-vol +
+    # daily exhaustion. VWAP / hourly-volume fields are filled LIVE in the Pricer
+    # (it already fetches hourly) so the nightly export stays fast.
+    try:
+        import pandas as _pd
+        from src.data.paths import PANEL_DAILY as _PAN
+        from src.engines.elder_context import compute_elder_context, elder_pattern
+        _pan = _pd.read_parquet(
+            _PAN, columns=["date", "ticker", "open", "high", "low", "close", "volume"])
+        _pan["date"] = _pd.to_datetime(_pan["date"]).dt.normalize()
+        _pan = _pan.sort_values("date")
+        _grp = {t: g for t, g in _pan.groupby("ticker", sort=False)}
+        for _r in _longlist:
+            _tk = _r.get("ticker")
+            _e5 = _r.get("elder_5d") or []
+            _r["elder_pattern"] = elder_pattern(_e5)
+            _g = _grp.get(_tk)
+            _daily = ([] if _g is None else [
+                {"date": str(d.date()), "open": o, "high": h, "low": low,
+                 "close": c, "volume": v}
+                for d, o, h, low, c, v in zip(
+                    _g["date"].tail(20), _g["open"].tail(20), _g["high"].tail(20),
+                    _g["low"].tail(20), _g["close"].tail(20), _g["volume"].tail(20))])
+            _st = _r.get("structural_targets") or []
+            _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
+            _r["elder_context"] = compute_elder_context(
+                _e5, [], _daily, resistance_price=_res)
+    except Exception:  # noqa: BLE001 — elder_context is additive, never blocks export
+        for _r in _longlist:
+            _r.setdefault("elder_pattern", None)
+            _r.setdefault("elder_context", None)
+
+    export["longlist"] = _longlist
+    for _k in ("top_picks", "edge_list", "watchlist", "elder_list"):
+        export.pop(_k, None)
+    export["summary"] = {"longlist_count": len(_longlist),
+                         "held_count": len(export.get("held_positions") or [])}
+
+    # ---- Uniform schema across the single list (null-fill to one key set) ----
+    if _longlist:
+        _all_keys: set[str] = set()
+        for _rec in _longlist:
             _all_keys.update(_rec.keys())
-    _canonical = (list(export["top_picks"][0].keys())
-                  if export["top_picks"] else sorted(_all_keys))
-    _order = _canonical + [k for k in sorted(_all_keys) if k not in _canonical]
-    for _tier in _tiers:
-        _tier[:] = [{k: _rec.get(k) for k in _order} for _rec in _tier]
+        _order = list(_longlist[0].keys())
+        _order += [k for k in sorted(_all_keys) if k not in _order]
+        export["longlist"] = [{k: _rec.get(k) for k in _order} for _rec in _longlist]
 
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
@@ -1137,14 +1184,13 @@ def build_export(shortlist: dict | None = None) -> dict:
         "structural_levels", "optimal_stop", "optimal_stop_exists",
         "structural_targets",
     ]
-    for _tier_name in ("top_picks", "edge_list", "longlist"):
-        for _rec in export[_tier_name]:
-            _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
-            if _missing:
-                raise ValueError(
-                    f"SCHEMA VIOLATION: {_tier_name} record "
-                    f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
-                )
+    for _rec in export["longlist"]:
+        _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
+        if _missing:
+            raise ValueError(
+                f"SCHEMA VIOLATION: longlist record "
+                f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
+            )
 
     return export
 

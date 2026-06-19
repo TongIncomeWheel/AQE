@@ -228,6 +228,22 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
     mom = intraday_momentum(bars5, rec) if b5 else {"ims": None, "state": "NO_INTRADAY",
                                                     "components": {}}
 
+    # Full Elder Context (Instruction v1.1) — hourly VWAP/volume + daily VCP.
+    elder_ctx = None
+    try:
+        from src.engines.elder_context import compute_elder_context
+        _daily_list = ([] if daily_df is None else [
+            {"date": str(d), "open": o, "high": h, "low": low, "close": c, "volume": v}
+            for d, o, h, low, c, v in zip(
+                daily_df["date"].astype(str), daily_df["open"], daily_df["high"],
+                daily_df["low"], daily_df["close"], daily_df["volume"])])
+        _res = (rec.get("structural_targets") or [{}])
+        _res = _res[0].get("price") if _res and isinstance(_res[0], dict) else None
+        elder_ctx = compute_elder_context(
+            rec.get("elder_5d"), bars1h, _daily_list, resistance_price=_res)
+    except Exception:  # noqa: BLE001
+        elder_ctx = None
+
     notes = []
     if not op.get("within_ceiling"):
         notes.append(f"stop {op['stop_pct']}% exceeds the {ceiling}% regime ceiling")
@@ -254,6 +270,8 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
         "momentum": mom.get("components", {}),
         "ims": mom.get("ims"),
         "state": mom.get("state"),
+        "elder_context": elder_ctx,
+        "elder_pattern": (elder_ctx or {}).get("elder_pattern") if elder_ctx else None,
         "notes": notes,
         "ibkr_spec": {
             "symbol": ticker, "action": "BUY", "order_type": "LMT",
