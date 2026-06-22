@@ -1263,7 +1263,12 @@ def _flatten_elder_context(edf):
 
 
 def _export_table(records):
-    """DataFrame of export records with the full uniform schema, ordered."""
+    """Clean, readable DataFrame of export records (scalar columns only).
+
+    Nested objects (structural_levels/targets, optimal_stop, fib) and all-empty
+    columns are dropped so the grid stays tidy — full nested data lives in the
+    export JSON / the Pricer. elder_context is flattened to ecx_* columns.
+    """
     if not records:
         return pd.DataFrame()
     edf = pd.DataFrame(records)
@@ -1273,13 +1278,15 @@ def _export_table(records):
             lambda v: ",".join(str(int(x)) for x in v) if isinstance(v, list)
             else ("" if v is None else v)
         )
-    if "fib" in edf.columns:
-        edf["fib"] = edf["fib"].apply(
-            lambda v: "✓" if isinstance(v, dict) else ("" if v is None else v)
-        )
+    # Drop any remaining nested (list/dict) columns — they clutter the grid.
+    _nested = [c for c in edf.columns
+               if edf[c].apply(lambda v: isinstance(v, (list, dict))).any()]
+    edf = edf.drop(columns=_nested, errors="ignore")
+    # Order by the curated list, then any extras; drop all-empty columns.
     cols = [c for c in _EXPORT_COL_ORDER if c in edf.columns]
     cols += [c for c in edf.columns if c not in cols]
-    return edf[cols]
+    edf = edf[cols].dropna(axis=1, how="all")
+    return edf
 
 
 # ---------------------------------------------------------------------------
