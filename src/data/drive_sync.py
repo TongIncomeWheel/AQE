@@ -1119,10 +1119,12 @@ def build_export(shortlist: dict | None = None) -> dict:
     _elderlist = export.get("elder_list", [])
 
     # ---- Elder Context block (Instruction v1.1) on EVERY row of BOTH lists ----
-    # `elder_5d` (5-day running Elder) + elder_pattern are always present; the
-    # daily-derived context (VCP / 20d-vol / exhaustion) is free from panel_daily.
-    # VWAP / hourly-volume fields are filled LIVE in the Pricer (it fetches hourly).
+    # `elder_5d` + elder_pattern are free. VWAP (5-day hourly base vs COB) and the
+    # volume trend / up-down ratio (buyer-seller / accum-distribution) need HOURLY
+    # bars — fetched from FMP here so the EXPORT carries them (not just the Pricer).
+    # Bounded + best-effort + cached per ticker; disable with AQE_ELDER_CTX_HOURLY=0.
     try:
+        import os as _os
         import pandas as _pd
         from src.data.paths import PANEL_DAILY as _PAN
         from src.engines.elder_context import compute_elder_context, elder_pattern
@@ -1132,11 +1134,28 @@ def build_export(shortlist: dict | None = None) -> dict:
         _pan = _pan.sort_values("date")
         _grp = {t: g for t, g in _pan.groupby("ticker", sort=False)}
 
+        # Hourly bars per ticker (5-day window) for VWAP + volume context.
+        _hourly: dict = {}
+        if _os.environ.get("AQE_ELDER_CTX_HOURLY", "1") != "0":
+            try:
+                from src.data.fmp_client import FMPClient
+                _fc = FMPClient()
+                _need = list({r.get("ticker")
+                              for r in (_longlist + _elderlist) if r.get("ticker")})
+                for _tk in _need[:400]:                 # safety cap
+                    try:
+                        _hourly[_tk] = _fc.get_intraday_bars(_tk, interval="1hour") or []
+                    except Exception:  # noqa: BLE001
+                        _hourly[_tk] = []
+            except Exception:  # noqa: BLE001
+                _hourly = {}
+
         def _attach_elder(_rows):
             for _r in _rows:
+                _tk = _r.get("ticker")
                 _e5 = _r.get("elder_5d") or []
                 _r["elder_pattern"] = elder_pattern(_e5)
-                _g = _grp.get(_r.get("ticker"))
+                _g = _grp.get(_tk)
                 _daily = ([] if _g is None else [
                     {"date": str(d.date()), "open": o, "high": h, "low": low,
                      "close": c, "volume": v}
@@ -1146,7 +1165,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                 _st = _r.get("structural_targets") or []
                 _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
                 _r["elder_context"] = compute_elder_context(
-                    _e5, [], _daily, resistance_price=_res)
+                    _e5, _hourly.get(_tk) or [], _daily, resistance_price=_res)
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)

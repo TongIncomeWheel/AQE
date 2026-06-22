@@ -30,9 +30,10 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - **`elder_context` (Instruction v1.1)** rides on every longlist row (`src/engines/elder_context.py`):
   `elder_pattern` (ACCUMULATION_BASE/ACCELERATION/CORRECTION_REENTRY/SUSTAINED/INTERRUPTED
   from `elder_5d`), `vwap_5d`, `volume` (trend/up-dn ratio/20d), `vcp` (tightness + label),
-  `exhaustion_check`. The **export** computes the daily-derived block (free from
-  `panel_daily`; VWAP/hourly fields null); the **Pricer** computes the FULL block (hourly
-  VWAP/volume) live per ticker. Pure + tested (`tests/test_elder_context.py`).
+  `exhaustion_check`. **Both the export and the Pricer fetch 5-day HOURLY bars from FMP**
+  (`get_intraday_bars(...,"1hour")`, bounded + best-effort, disable with
+  `AQE_ELDER_CTX_HOURLY=0`) so `vwap_5d` + volume trend / up-down ratio populate (not
+  just daily VCP). Pure + tested (`tests/test_elder_context.py`).
 
 ## Architecture
 
