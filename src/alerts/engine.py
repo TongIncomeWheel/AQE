@@ -58,13 +58,14 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    for r in export.get("longlist") or []:
-        tk = r.get("ticker")
-        if not tk or tk in seen:
-            continue
-        seen.add(tk)
-        out.append({"ticker": tk, "source": "longlist",
-                    "is_held": False, "record": r})
+    for _src in ("longlist", "elder_list"):
+        for r in export.get(_src) or []:
+            tk = r.get("ticker")
+            if not tk or tk in seen:
+                continue
+            seen.add(tk)
+            out.append({"ticker": tk, "source": _src,
+                        "is_held": False, "record": r})
     return out
 
 

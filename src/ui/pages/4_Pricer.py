@@ -67,7 +67,7 @@ lvl = regime.get("level") if isinstance(regime, dict) else regime
 st.caption(f"Regime **{lvl or '—'}** · stop ceiling **{IC.regime_stop_ceiling(regime)}%** "
            f"· risk **${IC.RISK_BUDGET:,.0f}** (3%)")
 
-recs_all = build_rec_lookup(export, ["held", "longlist"]) if export else {}
+recs_all = build_rec_lookup(export, ["held", "longlist", "elder_list"]) if export else {}
 universe = sorted(recs_all)
 default_sel = [t for t in universe
                if recs_all[t].get("source") == "held"

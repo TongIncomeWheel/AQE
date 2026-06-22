@@ -1092,13 +1092,12 @@ def build_export(shortlist: dict | None = None) -> dict:
             for i, (_, wr) in enumerate(_el.iterrows(), 1):
                 export["elder_list"].append(_wl_record(wr, i, "elder_list"))
 
-    # ---- ONE LIST (PM v1.1): collapse every tier into a single `longlist` ----
-    # No more top_picks / edge_list / watchlist / elder_list as separate lists —
-    # they're merged here; on_longlist (recipe-qualified) and pe (precision-edge)
-    # survive as per-record FLAGS so nothing is lost. held_positions stays (it's
-    # positions, not a screen). Filter/rank in the UI via sliders.
+    # ---- TWO lists (PM): the single screening `longlist` + the standalone
+    # `elder_list`. Longlist replaces watchlist/PE/top_picks (their info survives
+    # as on_longlist / pe FLAGS). Elder list is its OWN list — sole criterion
+    # Elder ≥ 8, nothing else (the strong-breakout catcher). held_positions stays.
     _merged: dict = {}
-    for _tname in ("top_picks", "edge_list", "longlist", "watchlist", "elder_list"):
+    for _tname in ("top_picks", "edge_list", "longlist", "watchlist"):
         for _r in export.get(_tname, []):
             _tk = _r.get("ticker")
             if not _tk:
@@ -1117,11 +1116,12 @@ def build_export(shortlist: dict | None = None) -> dict:
     for _i, _r in enumerate(_longlist, 1):
         _r["rank"] = _i
         _r["source"] = "longlist"
+    _elderlist = export.get("elder_list", [])
 
-    # ---- Elder Context block (Instruction v1.1) on every name ----------------
-    # Daily-derived (free from panel_daily): elder_pattern + VCP + 20d-vol +
-    # daily exhaustion. VWAP / hourly-volume fields are filled LIVE in the Pricer
-    # (it already fetches hourly) so the nightly export stays fast.
+    # ---- Elder Context block (Instruction v1.1) on EVERY row of BOTH lists ----
+    # `elder_5d` (5-day running Elder) + elder_pattern are always present; the
+    # daily-derived context (VCP / 20d-vol / exhaustion) is free from panel_daily.
+    # VWAP / hourly-volume fields are filled LIVE in the Pricer (it fetches hourly).
     try:
         import pandas as _pd
         from src.data.paths import PANEL_DAILY as _PAN
@@ -1131,40 +1131,49 @@ def build_export(shortlist: dict | None = None) -> dict:
         _pan["date"] = _pd.to_datetime(_pan["date"]).dt.normalize()
         _pan = _pan.sort_values("date")
         _grp = {t: g for t, g in _pan.groupby("ticker", sort=False)}
-        for _r in _longlist:
-            _tk = _r.get("ticker")
-            _e5 = _r.get("elder_5d") or []
-            _r["elder_pattern"] = elder_pattern(_e5)
-            _g = _grp.get(_tk)
-            _daily = ([] if _g is None else [
-                {"date": str(d.date()), "open": o, "high": h, "low": low,
-                 "close": c, "volume": v}
-                for d, o, h, low, c, v in zip(
-                    _g["date"].tail(20), _g["open"].tail(20), _g["high"].tail(20),
-                    _g["low"].tail(20), _g["close"].tail(20), _g["volume"].tail(20))])
-            _st = _r.get("structural_targets") or []
-            _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
-            _r["elder_context"] = compute_elder_context(
-                _e5, [], _daily, resistance_price=_res)
+
+        def _attach_elder(_rows):
+            for _r in _rows:
+                _e5 = _r.get("elder_5d") or []
+                _r["elder_pattern"] = elder_pattern(_e5)
+                _g = _grp.get(_r.get("ticker"))
+                _daily = ([] if _g is None else [
+                    {"date": str(d.date()), "open": o, "high": h, "low": low,
+                     "close": c, "volume": v}
+                    for d, o, h, low, c, v in zip(
+                        _g["date"].tail(20), _g["open"].tail(20), _g["high"].tail(20),
+                        _g["low"].tail(20), _g["close"].tail(20), _g["volume"].tail(20))])
+                _st = _r.get("structural_targets") or []
+                _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
+                _r["elder_context"] = compute_elder_context(
+                    _e5, [], _daily, resistance_price=_res)
+
+        _attach_elder(_longlist)
+        _attach_elder(_elderlist)
     except Exception:  # noqa: BLE001 — elder_context is additive, never blocks export
-        for _r in _longlist:
+        for _r in _longlist + _elderlist:
             _r.setdefault("elder_pattern", None)
             _r.setdefault("elder_context", None)
 
     export["longlist"] = _longlist
-    for _k in ("top_picks", "edge_list", "watchlist", "elder_list"):
+    export["elder_list"] = _elderlist          # standalone list — kept
+    for _k in ("top_picks", "edge_list", "watchlist"):
         export.pop(_k, None)
     export["summary"] = {"longlist_count": len(_longlist),
+                         "elder_count": len(_elderlist),
                          "held_count": len(export.get("held_positions") or [])}
 
-    # ---- Uniform schema across the single list (null-fill to one key set) ----
-    if _longlist:
+    # ---- Uniform schema per list (null-fill each to one key set) ----
+    for _lname in ("longlist", "elder_list"):
+        _rows = export.get(_lname) or []
+        if not _rows:
+            continue
         _all_keys: set[str] = set()
-        for _rec in _longlist:
+        for _rec in _rows:
             _all_keys.update(_rec.keys())
-        _order = list(_longlist[0].keys())
+        _order = list(_rows[0].keys())
         _order += [k for k in sorted(_all_keys) if k not in _order]
-        export["longlist"] = [{k: _rec.get(k) for k in _order} for _rec in _longlist]
+        export[_lname] = [{k: _rec.get(k) for k in _order} for _rec in _rows]
 
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [

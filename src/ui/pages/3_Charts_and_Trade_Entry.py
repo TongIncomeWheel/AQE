@@ -75,8 +75,10 @@ held_positions = export.get("held_positions") or []
 held_lookup = {h.get("ticker"): h for h in held_positions if h.get("ticker")}
 
 _ll = export.get("longlist") or []
+_el = export.get("elder_list") or []
 cat_sets = {
     "Longlist": {r.get("ticker") for r in _ll},
+    "Elder": {r.get("ticker") for r in _el},
     "Qualified": {r.get("ticker") for r in _ll if r.get("on_longlist")},
     "PE": {r.get("ticker") for r in _ll if r.get("pe")},
     "Held": set(held_lookup.keys()),
@@ -84,6 +86,8 @@ cat_sets = {
 rec_lookup: dict[str, dict] = {}
 for _rec in _ll:
     rec_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": "longlist"})
+for _rec in _el:
+    rec_lookup.setdefault(_rec.get("ticker"), {**_rec, "_tier": "elder_list"})
 for _h in held_positions:
     rec_lookup.setdefault(_h.get("ticker"), {**_h, "_tier": "held"})
 

@@ -1131,7 +1131,7 @@ if CLOUD_MODE:
         dsl: dict[str, dict] = {}
         elder5: dict[str, list] = {}
         rows = []
-        for key in ("longlist",):   # PM v1.1 — one list only
+        for key in ("longlist", "elder_list"):   # the two AQE lists
             rows.extend(export.get(key) or [])
         for r in rows:
             tk = r.get("ticker")
@@ -1374,6 +1374,27 @@ if _ll_recs:
         st.warning(f"Earnings within 5 days: {', '.join(_earn)}")
 else:
     st.info("No longlist in the export yet — run the daily pipeline + export.")
+
+st.divider()
+
+# ---------------------------------------------------------------------------
+# 3b. Elder list — STANDALONE. Sole criterion: Elder ≥ 8 (strong-breakout catcher)
+# ---------------------------------------------------------------------------
+st.subheader("Elder list")
+st.caption(
+    "**Standalone list — the only criterion is Elder Impulse ≥ 8** on the last "
+    "close (nothing else). This is where strong breakouts show up before they pass "
+    "the longlist screens. `elder_5d` (the 5-day running Elder) + `elder_context` "
+    "ride on every row, same as the longlist."
+)
+_elder_recs = _ex.get("elder_list") or []
+if _elder_recs:
+    st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
+    table_with_copy(_export_table(_elder_recs), key="elder_table")
+elif _ex:
+    st.info("No names at Elder ≥ 8 on the last close today.")
+else:
+    st.info("Elder list needs the export JSON — run the daily pipeline + export.")
 
 st.divider()
 

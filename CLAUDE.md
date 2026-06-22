@@ -20,12 +20,13 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - **SIGNAL_MAX_AGE = 2 trading days.** Stale picks have no edge.
 - **User is in Singapore (SGT, UTC+8).** Data is US markets close-of-day scans. All timestamps use `ZoneInfo("Asia/Singapore")`.
 - **Do NOT cap lists at 25.** When asked for a list, show the full list.
-- **ONE list (PM v1.1, 19 Jun 2026):** the export + UI carry a single `longlist` — no
-  more watchlist / PE / top_picks / elder_list as separate lists. Per-row FLAGS preserve
-  the info: `on_longlist` (passed the full recipe — engine floors + Elder ≥ 7), `pe`
-  (Precision-Edge). `held_positions` stays (positions, not a screen). Filter in the UI
-  with sliders (Min SC_MOM / PTRS / Elder + MP-state + Qualified/PE toggles); Min Elder = 8
-  reproduces the old "Elder list". Broad set = scored universe with raw SC_MOM ≥ 50.
+- **TWO lists (PM):** (1) a single screening **`longlist`** — replaces watchlist/PE/top_picks
+  (their info survives as per-row FLAGS `on_longlist` (passed the full recipe) + `pe`
+  (Precision-Edge); broad set = scored universe raw SC_MOM ≥ 50 ∪ recipe/PE/top; UI sliders
+  Min SC_MOM/PTRS/Elder + MP-state + Qualified/PE toggles). (2) a STANDALONE **`elder_list`**
+  whose SOLE criterion is **Elder ≥ 8** (strong-breakout catcher — no other gate).
+  `held_positions` stays (positions, not a screen). `summary` = {longlist_count,
+  elder_count, held_count}.
 - **`elder_context` (Instruction v1.1)** rides on every longlist row (`src/engines/elder_context.py`):
   `elder_pattern` (ACCUMULATION_BASE/ACCELERATION/CORRECTION_REENTRY/SUSTAINED/INTERRUPTED
   from `elder_5d`), `vwap_5d`, `volume` (trend/up-dn ratio/20d), `vcp` (tightness + label),
@@ -239,11 +240,12 @@ Streamlit multi-page app. Page 1 = Scanner (regime, SRM, Thematic, Precision Edg
 ### Drive export (`src/data/drive_sync.py`)
 ONE combined JSON for committee consumption — `aqe_daily_export.json` in a single
 `AQE/` folder, overwritten every run (no date-stamped clutter). Contains:
-- A SINGLE `longlist` (PM v1.1) = scored universe (raw SC_MOM ≥ 50) ∪ recipe/PE/top/elder≥8
-  names, ranked PTRS desc, each row carrying `elder_pattern` + `elder_context`. Plus
-  `held_positions`. `summary` = {longlist_count, held_count}. (top_picks/edge_list/watchlist/
-  elder_list keys removed — fold into `longlist` via the `on_longlist`/`pe` flags.)
-- Every ticker tagged with: `source` (longlist), `pe` (bool), `on_longlist` (bool)
+- `longlist` (scored universe raw SC_MOM ≥ 50 ∪ recipe/PE/top, ranked PTRS desc) +
+  standalone `elder_list` (Elder ≥ 8 only). Both carry `elder_5d` + `elder_pattern` +
+  `elder_context` on every row. Plus `held_positions`. `summary` = {longlist_count,
+  elder_count, held_count}. (top_picks/edge_list/watchlist keys removed — folded into
+  `longlist` via the `on_longlist`/`pe` flags.)
+- Every ticker tagged with: `source` (longlist/elder_list), `pe` (bool), `on_longlist` (bool)
 - DSL fields: `dsl_stop`, `dsl_risk`, `dsl_tp_2r`, `dsl_shares`, `dsl_rr_pct`
 - `beta_60d`, `rank_explain` per ticker
 - `exported_at` (SGT timestamp), `market`, `regime`
