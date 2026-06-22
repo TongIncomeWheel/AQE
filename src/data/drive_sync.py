@@ -1116,7 +1116,21 @@ def build_export(shortlist: dict | None = None) -> dict:
     for _i, _r in enumerate(_longlist, 1):
         _r["rank"] = _i
         _r["source"] = "longlist"
-    _elderlist = export.get("elder_list", [])
+
+    # Elder list = EVERY name with Elder >= 8 (sole criterion). Built from the
+    # scores_daily pass AND derived from the merged longlist — so it can never be
+    # empty while Elder-10 names are visible in the longlist (the prior bug: it
+    # only read scores_daily, which can be absent at export time).
+    _elderlist = list(export.get("elder_list", []))
+    _el_seen = {r.get("ticker") for r in _elderlist if r.get("ticker")}
+    for _r in _longlist:
+        if (_r.get("elder") or 0) >= 8 and _r.get("ticker") not in _el_seen:
+            _el_seen.add(_r.get("ticker"))
+            _elderlist.append(dict(_r))          # copy; re-tagged below
+    _elderlist = sorted(_elderlist, key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    for _i, _r in enumerate(_elderlist, 1):
+        _r["rank"] = _i
+        _r["source"] = "elder_list"
 
     # ---- Elder Context block (Instruction v1.1) on EVERY row of BOTH lists ----
     # `elder_5d` + elder_pattern are free. VWAP (5-day hourly base vs COB) and the
