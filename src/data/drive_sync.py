@@ -81,23 +81,27 @@ _FIELD_GLOSSARY = {
                       "computed off the reference entry; recomputed at the live fill per §4.4.",
     "rr_tp3_at_coil": "R:R to dsl_tp_3r if entered at coil_entry (ratio). Reference only — "
                       "computed off the reference entry; recomputed at the live fill per §4.4.",
-    "optimal_stop": "Pre-regime CROSS-CHECK, NOT the operative stop {price,type,atr_ratio,"
-                    "rr_tp2}: the tightest structural level below entry passing atr_ratio≥1.0 "
-                    "AND rr_tp2≥2.0 — only 2 of charter §4.2's 3 gates (AQE cannot apply the "
-                    "live regime stop-% ceiling). Alfred selects the OPERATIVE stop per §4.2 "
-                    "from IBKR bars; this is a sanity cross-check, not a recommendation.",
+    "optimal_stop": "The STRUCTURAL stop = strongest+closest valid level (the best of "
+                    "dsl_stop / fib / MA / swing below entry) passing atr_ratio≥1.0 AND "
+                    "rr_tp2≥2.0. {price,type,atr_ratio,rr_tp2,risk_usd,risk_pct}. "
+                    "**risk_usd = entry − price is the RISK to size against — NOT dsl_risk.** "
+                    "This applies only 2 of charter §4.2's 3 gates (no live regime stop-% "
+                    "ceiling), so Alfred may tighten for regime, but RISK and TP-R are read "
+                    "off this, not off dsl_risk × N.",
     "structural_levels": "Candidate STOPS below entry from structure (dsl_stop/swing_low/"
                          "swing_low_1/2/3/ma_cluster/fib_618/fib_786/ma20-200). Each "
                          "{type,price,atr_ratio,rr_tp2,valid}; valid = atr_ratio≥1.0 AND "
                          "rr_tp2≥2.0 — note `valid` OMITS the live regime stop-% ceiling, so "
                          "these are §4.2 candidates for cross-check, not a final selection.",
-    "structural_targets": "TAKE-PROFIT ladder ABOVE entry, anchored to REAL structure: "
+    "structural_targets": "THE take-profit levels. ABOVE entry, anchored to REAL structure: "
                           "type 'resistance' = prior confirmed pivot-high overhead; "
                           "'prior_high' = current swing peak; 'fib_1272/1618/2000/2618' = "
-                          "measured-move extensions. Each {type,price,rr}, rr=(price−entry)/"
-                          "dsl_risk (reference — recomputed at the live fill per §4.4). USE "
-                          "THESE as profit objectives — per-name, unlike the mechanical "
-                          "dsl_tp_Nr. Nearest-first; empty if no structure anchors.",
+                          "measured-move extensions. Each {type,price,rr,r_optimal}: "
+                          "**r_optimal = (price−entry)/optimal_stop.risk_usd = R vs the "
+                          "STRUCTURAL risk** (use this); rr is the legacy R vs dsl_risk. "
+                          "TAKE PROFIT against these PRICES nearest-first — NEVER off "
+                          "dsl_tp_Nr (those are mechanical entry + N×dsl_risk, not a target). "
+                          "Empty only when no structure anchors exist above price.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -453,10 +457,14 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
     optimal = None
     if valids:
         best = max(valids, key=lambda x: x["price"])   # tightest = closest to entry
+        _orisk = round(entry - best["price"], 2)
         optimal = {"price": best["price"], "type": best["type"],
                    "atr_ratio": best["atr_ratio"], "rr_tp2": best["rr_tp2"],
+                   "risk_usd": _orisk,                  # STRUCTURAL risk to size against
+                   "risk_pct": round(_orisk / entry * 100, 2) if entry else None,
                    "role": "stop", "side": "below_entry",   # hard guard
-                   "rationale": "Tightest level passing ATR >= 1.0 AND R:R TP2 >= 2.0"}
+                   "rationale": "Strongest+closest valid level (ATR>=1.0 AND R:R-TP2>=2.0). "
+                                "risk_usd = entry - price is the structural risk."}
     return levels, optimal
 
 
@@ -627,7 +635,16 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["structural_levels"] = _slevels
         fields["optimal_stop"] = _optimal
         fields["optimal_stop_exists"] = _optimal is not None
-        fields["structural_targets"] = _structural_target_analysis(d)
+        _stargets = _structural_target_analysis(d)
+        # r_optimal = R of each structural TP vs the STRUCTURAL risk (entry −
+        # optimal_stop), so the AIC sizes TP off structure, not the DSL risk.
+        if _optimal and _is_num(_optimal.get("risk_usd")) and _optimal["risk_usd"] > 0:
+            _orisk = _optimal["risk_usd"]
+            _entry = d.get("entry")
+            for _t in _stargets:
+                if _is_num(_t.get("price")) and _is_num(_entry):
+                    _t["r_optimal"] = round((_t["price"] - _entry) / _orisk, 2)
+        fields["structural_targets"] = _stargets
     except Exception:  # noqa: BLE001
         pass
     return fields

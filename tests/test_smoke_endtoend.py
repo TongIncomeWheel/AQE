@@ -691,10 +691,11 @@ def test_charter_v2_reconciliation():
     assert "rr_est" not in _FIELD_GLOSSARY
     assert "rr_est" not in _FIELD_SCHEMA
 
-    # coil_entry side n/a (varies vs entry); optimal_stop demoted to cross-check.
+    # coil_entry side n/a (varies vs entry); optimal_stop carries the structural
+    # risk (risk_usd) the AIC sizes against — never "RECOMMENDED/Prefer" wording.
     assert _FIELD_SCHEMA["coil_entry"]["side"] == "n/a"
     _opt_doc = _FIELD_GLOSSARY["optimal_stop"]
-    assert "CROSS-CHECK" in _opt_doc
+    assert "risk_usd" in _opt_doc
     assert "RECOMMENDED" not in _opt_doc and "Prefer" not in _opt_doc
 
     # Contract integrity: every machine-schema key is described in the glossary
