@@ -1289,6 +1289,20 @@ def _export_table(records):
     return edf
 
 
+def _list_summary(records):
+    """Compact count-by-Sector + count-by-Sector-Corr-class line for a list."""
+    if not records:
+        return
+    from collections import Counter
+    _sec = Counter((r.get("gics_sector_name") or r.get("gics_sector") or "—")
+                   for r in records)
+    _corr = Counter((r.get("sector_corr_class") or "—") for r in records)
+    st.caption("📊 **By sector:** "
+               + " · ".join(f"{k} **{v}**" for k, v in _sec.most_common()))
+    st.caption("🔗 **By sector-corr:** "
+               + " · ".join(f"{k} **{v}**" for k, v in _corr.most_common()))
+
+
 # ---------------------------------------------------------------------------
 # Held positions (from the daily PTJ) — the trade + AQE's current engine read
 # ---------------------------------------------------------------------------
@@ -1365,6 +1379,7 @@ if _ll_recs:
     _n_pe = sum(1 for r in _filtered if r.get("pe"))
     st.markdown(f"**{len(_filtered)}** names match "
                 f"({_n_ll} qualified · {_n_pe} PE)")
+    _list_summary(_filtered)
     table_with_copy(_export_table(_filtered), key="ll_table")
 
     _earn = sorted({c["ticker"] for c in sl.get("candidates", [])
@@ -1390,6 +1405,7 @@ st.caption(
 _elder_recs = _ex.get("elder_list") or []
 if _elder_recs:
     st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
+    _list_summary(_elder_recs)
     table_with_copy(_export_table(_elder_recs), key="elder_table")
 elif _ex:
     st.info("No names at Elder ≥ 8 on the last close today.")
