@@ -1381,6 +1381,9 @@ if _ll_recs:
     _ll_only = f5.checkbox("Qualified only", key="sig_ll",
                            help="on_longlist = passed the full recipe")
     _pe_only = f6.checkbox("PE only", key="sig_pe")
+    _sec_opts = sorted({(r.get("gics_sector_name") or r.get("gics_sector") or "—")
+                        for r in _ll_recs})
+    _sec_sel = st.multiselect("Sector", _sec_opts, default=_sec_opts, key="sig_sector")
 
     def _keep(r: dict) -> bool:
         if (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < _min_sc:
@@ -1392,6 +1395,10 @@ if _ll_recs:
         if _mp_sel:
             ms = (r.get("mp_state") or "").strip()
             if ms and ms not in _mp_sel:
+                return False
+        if _sec_sel:
+            sec = (r.get("gics_sector_name") or r.get("gics_sector") or "—")
+            if sec not in _sec_sel:
                 return False
         if _ll_only and not r.get("on_longlist"):
             return False
