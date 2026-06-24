@@ -1303,6 +1303,31 @@ def _list_summary(records):
                + " · ".join(f"{k} **{v}**" for k, v in _corr.most_common()))
 
 
+def _render_held_book(hb: dict):
+    """Portfolio Hedge Layer (§4C) — beta-adj book exposure + gap-scenario losses.
+    Display-only facts (same blob the AIC reads from the export)."""
+    if not hb:
+        return
+    st.markdown("**Portfolio Hedge Layer (§4C) — book exposure**")
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Beta-adj exposure", f"${hb.get('beta_adj_exposure_usd', 0):,.0f}")
+    m2.metric("$ / 1% gap", f"${hb.get('loss_per_1pct_gap_usd', 0):,.0f}")
+    m3.metric("Portfolio β30d", f"{hb.get('nav_weighted_beta_30d', 0):.2f}")
+    m4.metric("Total exposure", f"${hb.get('total_exposure_usd', 0):,.0f}")
+    _sw = {k: v for k, v in (hb.get("sector_weights") or {}).items() if v}
+    if _sw:
+        st.caption("Sector weights: " + " · ".join(
+            f"{k} **{v:.1f}%**" for k, v in sorted(_sw.items(), key=lambda x: -x[1])))
+    _gs = hb.get("gap_scenarios") or {}
+    if _gs:
+        _grows = [{"Gap": lbl, "Est. book loss": f"${(_gs.get(key) or {}).get('est_book_loss_usd', 0):,.0f}"}
+                  for lbl, key in (("3%", "gap_3pct"), ("5%", "gap_5pct"),
+                                   ("7%", "gap_7pct"), ("10%", "gap_10pct"))]
+        st.dataframe(pd.DataFrame(_grows), use_container_width=False, hide_index=True)
+    st.caption(f"as of {hb.get('as_of', '—')} · {hb.get('position_count', 0)} positions "
+               "· hedge payout (Alpaca) assembled by Alfred")
+
+
 # ---------------------------------------------------------------------------
 # Held positions (from the daily PTJ) — the trade + AQE's current engine read
 # ---------------------------------------------------------------------------
@@ -1327,6 +1352,7 @@ if _held:
     _hcols = [c for c in _HELD_COLS if c in _hdf.columns]
     _hcols += [c for c in _hdf.columns if c not in _hcols and not c.startswith("_")]
     table_with_copy(_hdf[_hcols], key="held_table")
+    _render_held_book(_ex.get("held_book"))
     st.divider()
 
 

@@ -44,6 +44,14 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 - `drive_sync.py` — exports `aqe_daily_export.json` to `output/` (local working copy) + the pinned Google Drive folder via REST (no local `G:` mount)
 - `ptj.py` — reads the daily held-positions journal (PTJ) from a dedicated Drive folder (`GDRIVE_PTJ_FOLDER_ID`, default `15PR74…`), picking the **latest-modified** non-folder file (dedupes runtime duplicates; ignores the `Legacy/` archive subfolder). Extracts `open_positions` → caches `output/held_positions.json`. The export then sets `held=true` on those tickers and adds a top-level `held_positions` array = the trade (entry/qty/SL/TP/unrealised) + AQE's current engine read (scores, MP state, DSL bracket, sector, RS). Surfaced on the Scanner "Held positions" panel + the Charts "Bought @" overlay.
 - `persist.py` — Daily Persist: zips the runtime state (`panel_daily`/`panel_weekly`/`spy_daily`/`scores_daily`/`sector_map`/`active_recipe`/`aqe.db` + `shortlist`/`aqe_daily_export`/`held_positions`) into `aqe_state_snapshot.zip` so an HF restart restores the last run in seconds instead of a full FMP re-pull. `save_snapshot()`/`load_snapshot()` use Drive; `build_snapshot_bytes()`/`restore_snapshot_bytes()` are the Drive-independent core powering the Scanner's **Local PC fallback** (download the snapshot .zip to your PC / upload it back) for when Drive OAuth is broken.
+- `held_book.py` (`src/analyzer/`) — **Portfolio Hedge Layer (Charter §4C)**: pure
+  arithmetic on the PTJ-sourced `held_positions` → a top-level `held_book` blob on the
+  export (beta-adj book exposure, `loss_per_1pct_gap_usd`, NAV-weighted β30d, GICS
+  `sector_weights`, `gap_scenarios` 3/5/7/10% est. book loss, per-position array). AQE is
+  EOD so price = **COB close from FMP** (`cob_price` on each held record), not live IBKR.
+  Uses β30d only (β60d stays for back-compat). Displayed on the Scanner Held-positions
+  panel (`_render_held_book`) and read verbatim by Alfred (facts, no opinion). Tested
+  (`tests/test_held_book.py`). Hedge payout (Alpaca) is assembled by Alfred, not AQE.
 - `sector_mapper.py` — maps tickers to GICS sector ETFs
 - `universe.py` — fixed, manually-curated ticker universe (the "fishing net"). Auto-refresh from the FMP screener is DISABLED (it ballooned to ~1800). Source of truth = a single CSV in a **dedicated Drive subfolder** (`UNIVERSE_FOLDER_ID`, override `GDRIVE_UNIVERSE_FOLDER_ID`); `restore_universe_from_drive()` overwrites the local `universe.txt` from it on every pipeline startup. Update via the app's Universe panel (overwrites the canonical `universe.csv`) or by replacing the file in that folder. `get_drive_universe_status()` powers the in-app date/count display.
 

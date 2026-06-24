@@ -701,6 +701,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
             "mp": round(sg("mp_100"), 0) if sg("mp_100") is not None else None,
             "mp_state": (str(s.get("mp_state")) if s is not None and pd.notna(s.get("mp_state")) else None),
             "elder": round(sg("elder_score"), 1) if sg("elder_score") is not None else None,
+            "cob_price": sg("close"),   # COB close (FMP) — held_book exposure basis
             "beta_30d": (betas.get(tk) or {}).get(30),
             "beta_60d": (betas.get(tk) or {}).get(60),
             "dsl_stop": d.get("stop"), "dsl_risk": d.get("risk"),
@@ -854,6 +855,14 @@ def build_export(shortlist: dict | None = None) -> dict:
     _v21_lk["held"] = {h.get("ticker") for h in _held if h.get("ticker")}
     export["held_positions"] = _build_held_positions(
         _held, dsl_all, betas, _v21_lk, sm, sector_grades, _ptrs)
+
+    # Portfolio Hedge Layer (Charter §4C) — beta-adj book exposure + gap losses.
+    try:
+        from src.analyzer.held_book import build_held_book
+        export["held_book"] = build_held_book(
+            export["held_positions"], now_sgt.strftime("%Y-%m-%d %H:%M:%S SGT"))
+    except Exception:  # noqa: BLE001 — additive; never blocks the export
+        pass
 
     # mp_state lookup from scores_daily.parquet — authoritative source.
     # shortlist.json nests mp_state inside "diagnostics" for candidates and
