@@ -1309,23 +1309,29 @@ def _render_held_book(hb: dict):
     if not hb:
         return
     st.markdown("**Portfolio Hedge Layer (§4C) — book exposure**")
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Beta-adj exposure", f"${hb.get('beta_adj_exposure_usd', 0):,.0f}")
-    m2.metric("$ / 1% gap", f"${hb.get('loss_per_1pct_gap_usd', 0):,.0f}")
+    m1, m2, m3, m4, m5 = st.columns(5)
+    m1.metric("Beta-adj exp (β30d)", f"${hb.get('beta_adj_exposure_usd', 0):,.0f}")
+    m2.metric("$ / 1% gap (β30d)", f"${hb.get('loss_per_1pct_gap_usd', 0):,.0f}")
     m3.metric("Portfolio β30d", f"{hb.get('nav_weighted_beta_30d', 0):.2f}")
-    m4.metric("Total exposure", f"${hb.get('total_exposure_usd', 0):,.0f}")
+    m4.metric("Portfolio β60d", f"{hb.get('nav_weighted_beta_60d', 0):.2f}",
+              help="Charter v2.1 §6.4 portfolio gate window (hard 2.0 / soft 1.8).")
+    m5.metric("Total exposure", f"${hb.get('total_exposure_usd', 0):,.0f}")
     _sw = {k: v for k, v in (hb.get("sector_weights") or {}).items() if v}
     if _sw:
         st.caption("Sector weights: " + " · ".join(
             f"{k} **{v:.1f}%**" for k, v in sorted(_sw.items(), key=lambda x: -x[1])))
-    _gs = hb.get("gap_scenarios") or {}
-    if _gs:
-        _grows = [{"Gap": lbl, "Est. book loss": f"${(_gs.get(key) or {}).get('est_book_loss_usd', 0):,.0f}"}
+    _gs30 = hb.get("gap_scenarios") or {}
+    _gs60 = hb.get("gap_scenarios_60d") or {}
+    if _gs30 or _gs60:
+        _grows = [{"Gap": lbl,
+                   "Est. book loss (β30d)": f"${(_gs30.get(key) or {}).get('est_book_loss_usd', 0):,.0f}",
+                   "Est. book loss (β60d)": f"${(_gs60.get(key) or {}).get('est_book_loss_usd', 0):,.0f}"}
                   for lbl, key in (("3%", "gap_3pct"), ("5%", "gap_5pct"),
                                    ("7%", "gap_7pct"), ("10%", "gap_10pct"))]
         st.dataframe(pd.DataFrame(_grows), use_container_width=False, hide_index=True)
     st.caption(f"as of {hb.get('as_of', '—')} · {hb.get('position_count', 0)} positions "
-               "· hedge payout (Alpaca) assembled by Alfred")
+               "· both β windows shown (AQE makes no gate call — Charter v2.1 §6.4 gate = "
+               "β60d) · hedge payout (Alpaca) assembled by Alfred")
 
 
 # ---------------------------------------------------------------------------

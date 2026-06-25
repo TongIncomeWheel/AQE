@@ -5,8 +5,9 @@ from __future__ import annotations
 from src.analyzer.held_book import build_held_book
 
 
-def _pos(tk, qty, cob, beta, sec, entry=None):
+def _pos(tk, qty, cob, beta, sec, entry=None, beta60=None):
     return {"ticker": tk, "qty": qty, "cob_price": cob, "beta_30d": beta,
+            "beta_60d": beta if beta60 is None else beta60,
             "gics_sector": sec, "entry": entry if entry is not None else cob}
 
 
@@ -24,6 +25,21 @@ def test_held_book_core_math():
     # Gap scenarios = beta-adj × pct
     assert hb["gap_scenarios"]["gap_5pct"]["est_book_loss_usd"] == 500.0
     assert hb["gap_scenarios"]["gap_10pct"]["est_book_loss_usd"] == 1000.0
+
+
+def test_held_book_carries_both_betas():
+    # β60d differs from β30d → parallel *_60d set computed independently.
+    held = [_pos("AAA", 100, 50.0, 1.2, "XLK", beta60=1.5),   # exp 5000
+            _pos("BBB", 100, 50.0, 0.8, "XLF", beta60=1.0)]   # exp 5000
+    hb = build_held_book(held)
+    assert hb["beta_adj_exposure_usd"] == 10000.0            # β30d: 6000+4000
+    assert hb["beta_adj_exposure_usd_60d"] == 12500.0        # β60d: 7500+5000
+    assert hb["nav_weighted_beta_30d"] == 1.0
+    assert hb["nav_weighted_beta_60d"] == 1.25
+    assert hb["gap_scenarios_60d"]["gap_5pct"]["est_book_loss_usd"] == 625.0
+    assert "no gate call" in hb["beta_basis"].lower()
+    p0 = next(p for p in hb["positions"] if p["ticker"] == "AAA")
+    assert p0["beta_60d"] == 1.5 and p0["beta_adj_exposure_usd_60d"] == 7500.0
     # Sector weights sum to ~100 across the populated sectors
     sw = hb["sector_weights"]
     assert sw["XLK"] == 50.0 and sw["XLF"] == 50.0

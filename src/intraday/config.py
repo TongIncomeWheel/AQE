@@ -34,10 +34,10 @@ IMS_WEIGHTS = {
 # ── Operative-stop gates (charter §4.2 — all three must pass) ───────────────
 MIN_ATR_RATIO = 1.0       # stop width ≥ 1× daily ATR (not too tight)
 MIN_RR_TP2 = 2.0          # reward:risk to TP2 ≥ 2.0
-# 3rd gate AQE can't apply: live regime stop-% ceiling. ASSUMED values —
-# tune to the charter. Risk (entry−stop)/entry must be ≤ the regime's ceiling.
-REGIME_STOP_PCT = {"GREEN": 8.0, "YELLOW": 6.0, "ORANGE": 5.0, "RED": 4.0}
-DEFAULT_STOP_PCT_CEILING = 6.0
+# Regime stop-% ceiling — AIC Charter v2.1 §4.2 Step D (24 Jun 2026). Risk
+# (entry−stop)/entry must be ≤ the regime's ceiling.
+REGIME_STOP_PCT = {"GREEN": 12.0, "YELLOW": 8.0, "ORANGE": 6.0, "RED": 4.0}
+DEFAULT_STOP_PCT_CEILING = 8.0
 VWAP_STOP_ATR = 0.5       # buffer below VWAP for the vwap-based stop candidate
 PIVOT_K = 3               # fractal half-width for intraday swing-low detection
 

@@ -106,7 +106,9 @@ _FIELD_GLOSSARY = {
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
     "ma_20/50/100/200": "Simple moving averages (absolute USD) — dynamic support/resistance.",
-    "vol_30d_ann": "30-day annualised realised volatility (decimal: 0.18 = 18%). For "
+    "vol_30d_ann": "30-day annualised realised volatility (decimal: 0.18 = 18%). This IS "
+                   "the Charter §4.5 operative sizing vol (the charter calls it 'vol_30d'; "
+                   "AQE's field is annualised — same number). For"
                    "sizing/VaR, not a target.",
     "beta_252d": "1-year beta vs SPY (cov/var).",
     "ptrs": "Engine score + sector health. Disposition/sizing is the committee's call — "

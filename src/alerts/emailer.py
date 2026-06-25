@@ -107,7 +107,8 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
             f"St {_fmt(g('structure'), 0)} MP {_fmt(g('mp'), 0)} Eld {_fmt(g('elder'), 1)} · "
             f"DSL stop {_fmt(g('dsl_stop'))} "
             f"TP {_fmt(g('dsl_tp_1r'))}/{_fmt(g('dsl_tp_2r'))}/{_fmt(g('dsl_tp_3r'))} "
-            f"(R:R {_fmt(_rr_struct(rec), 2)}) · β {_fmt(g('beta_30d'), 2)} · "
+            f"(R:R {_fmt(_rr_struct(rec), 2)}) · β30d {_fmt(g('beta_30d'), 2)}/"
+            f"β60d {_fmt(g('beta_60d'), 2)} · "
             f"sector {g('gics_sector') or '—'} {g('gics_gate') or '—'}.")
     if t["is_held"]:
         base += (f" Trade: entry {_fmt(g('entry'))} qty {g('qty')} "
@@ -181,7 +182,7 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
             f"padding:1px 7px;border-radius:9px'>{badge}</span> "
             f"<b style='font-size:15px'>{t['ticker']}</b> "
             f"<span style='color:#555;font-size:12px'>SC {sc} · PTRS {_fmt(rec.get('ptrs'),1)} "
-            f"· {rec.get('mp_state') or '—'} · β {_fmt(rec.get('beta_30d'),2)}</span></div>"
+            f"· {rec.get('mp_state') or '—'} · β30d {_fmt(rec.get('beta_30d'),2)}</span></div>"
             f"<div style='font-size:13px;margin-top:2px'><b>{t['label']}</b> · "
             f"live {t['live_px']} · {t['note']}</div>"
             f"<div style='font-size:11px;color:#666;margin-top:3px;font-family:monospace;"

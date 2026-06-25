@@ -49,7 +49,9 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
   export (beta-adj book exposure, `loss_per_1pct_gap_usd`, NAV-weighted β30d, GICS
   `sector_weights`, `gap_scenarios` 3/5/7/10% est. book loss, per-position array). AQE is
   EOD so price = **COB close from FMP** (`cob_price` on each held record), not live IBKR.
-  Uses β30d only (β60d stays for back-compat). Displayed on the Scanner Held-positions
+  **Carries BOTH β windows (PM ruling 24 Jun) — no gate call**: unsuffixed fields = β30d
+  basis (PHL spec names); `*_60d` parallels = β60d basis (Charter v2.1 §6.4 gate window).
+  Displayed on the Scanner Held-positions
   panel (`_render_held_book`) and read verbatim by Alfred (facts, no opinion). Tested
   (`tests/test_held_book.py`). Hedge payout (Alpaca) is assembled by Alfred, not AQE.
 - `sector_mapper.py` — maps tickers to GICS sector ETFs
@@ -207,8 +209,8 @@ MCP `chart` tool today (intraday 1/5/15/30-min) and an IBKR feed can swap in lat
   by time-of-day), close-slope acceleration, higher-lows, and extension (R's past entry).
 - `bracket.py` — **operative stop** = the TIGHTEST candidate (intraday swing low / VWAP
   buffer / OR low / prior-day low / AQE `structural_levels`) passing all **3 charter §4.2
-  gates**: ATR floor ≥1.0, R:R-TP2 ≥2.0, and the **regime stop-% ceiling** (the gate AQE
-  can't apply — `config.REGIME_STOP_PCT`, assumed GREEN/YELLOW/ORANGE/RED = 8/6/5/4%).
+  gates**: ATR floor ≥1.0, R:R-TP2 ≥2.0, and the **regime stop-% ceiling**
+  (`config.REGIME_STOP_PCT` = Charter v2.1 §4.2 GREEN/YELLOW/ORANGE/RED = 12/8/6/4%).
   **entry zone** is state-driven and never chases past the export's `max_chase_tp2`;
   FADING/BROKEN → stand down.
 - `plan.py` — `intraday_plan(rec, bars5, regime)` glues it into one plan + verdict + an
