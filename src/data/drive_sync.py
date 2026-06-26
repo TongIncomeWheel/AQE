@@ -1139,15 +1139,16 @@ def build_export(shortlist: dict | None = None) -> dict:
                     _merged[_tk]["pe"] = True
             else:
                 _merged[_tk] = _r
-    # Longlist tier = QUALIFIED (passed the full recipe) OR Precision-Edge ONLY.
-    # The broad raw-SC≥50 candidate set is deliberately EXCLUDED here (PM ruling,
-    # 26 Jun 2026): ≥50 is not a near-miss, it's noise — and since the alert engine
-    # monitors `longlist`, that noise fired random Buy/Breakout/stop emails every
-    # 15 min during market hours. Only qualified + PE names ride the longlist (and
-    # therefore the alerts). The standalone Elder≥8 list is unaffected (built below).
+    # Longlist tier = the longlist SCREEN, full stop (PM ruling, 26 Jun 2026):
+    # SC_MOM > 64 AND PTRS >= 60 AND Elder >= 7. ONE definition — `longlist_screen`
+    # is the single source of truth the Scanner sliders also default to, so what you
+    # SEE == what FIRES (the alert engine monitors `longlist`). The broad raw-SC>=50
+    # pool is gone — it was noise blasting random alerts every evening. on_longlist
+    # (full recipe) / pe stay as per-row BADGES, not membership gates. The standalone
+    # Elder>=8 list is built independently below and is unaffected.
+    from src.longlist_screen import passes as _ll_passes
     _longlist = sorted(
-        (_r for _r in _merged.values()
-         if _r.get("on_longlist") or _r.get("pe")),
+        (_r for _r in _merged.values() if _ll_passes(_r)),
         key=lambda r: (r.get("ptrs") or 0), reverse=True)
     for _i, _r in enumerate(_longlist, 1):
         _r["rank"] = _i

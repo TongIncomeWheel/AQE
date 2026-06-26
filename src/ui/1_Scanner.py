@@ -1368,19 +1368,23 @@ if _held:
 st.subheader("Longlist")
 active_recipe = sl.get("active_recipe", {})
 st.caption(
-    "The single AQE list (no more watchlist / PE / Elder sub-lists). Flags per row: "
-    "`on_longlist` = passed the full recipe (engine floors + Elder ≥ 7); `pe` = "
-    "Precision-Edge. `elder_pattern` + `elder_context` (VWAP/volume/VCP/exhaustion, "
-    "Instruction v1.1) ride on every row. Filter with the sliders — e.g. Min Elder = 8 "
-    f"reproduces the old Elder list. Aggregate recipe: {_recipe_label(active_recipe)}."
+    "**The longlist IS: SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7** — one definition, "
+    "no second gate. The sliders below DEFAULT to exactly that, and the export/alerts "
+    "fire off the same set (what you see == what fires). Drag the sliders to tighten "
+    "further. Per-row badges (not membership gates): `on_longlist` = also passed the "
+    "full engine recipe; `pe` = Precision-Edge. `elder_pattern` + `elder_context` "
+    f"ride on every row. Aggregate recipe: {_recipe_label(active_recipe)}."
 )
 
 _ll_recs = _ex.get("longlist") or []
 if _ll_recs:
     f1, f2, f3, f4, f5, f6 = st.columns([1, 1, 1, 1.4, 1, 1])
-    _min_sc = f1.slider("Min SC_MOM", 0, 100, 65, key="sig_sc")
-    _min_ptrs = f2.slider("Min PTRS", 0, 100, 60, key="sig_ptrs")
-    _min_elder = f3.slider("Min Elder", 0, 10, 7, key="sig_elder")
+    # Slider defaults ARE the longlist definition — same source as the export
+    # membership (src/longlist_screen.py). What you see == what fires.
+    from src.longlist_screen import MIN_SC, MIN_PTRS, MIN_ELDER
+    _min_sc = f1.slider("Min SC_MOM", 0, 100, MIN_SC, key="sig_sc")
+    _min_ptrs = f2.slider("Min PTRS", 0, 100, MIN_PTRS, key="sig_ptrs")
+    _min_elder = f3.slider("Min Elder", 0, 10, MIN_ELDER, key="sig_elder")
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
                        for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
