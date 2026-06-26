@@ -1378,9 +1378,9 @@ st.caption(
 _ll_recs = _ex.get("longlist") or []
 if _ll_recs:
     f1, f2, f3, f4, f5, f6 = st.columns([1, 1, 1, 1.4, 1, 1])
-    _min_sc = f1.slider("Min SC_MOM", 0, 100, 70, key="sig_sc")
-    _min_ptrs = f2.slider("Min PTRS", 0, 100, 0, key="sig_ptrs")
-    _min_elder = f3.slider("Min Elder", 0, 10, 0, key="sig_elder")
+    _min_sc = f1.slider("Min SC_MOM", 0, 100, 65, key="sig_sc")
+    _min_ptrs = f2.slider("Min PTRS", 0, 100, 60, key="sig_ptrs")
+    _min_elder = f3.slider("Min Elder", 0, 10, 7, key="sig_elder")
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
                        for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
