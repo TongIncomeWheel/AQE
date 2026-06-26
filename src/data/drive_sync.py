@@ -1139,8 +1139,16 @@ def build_export(shortlist: dict | None = None) -> dict:
                     _merged[_tk]["pe"] = True
             else:
                 _merged[_tk] = _r
-    _longlist = sorted(_merged.values(),
-                       key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    # Longlist tier = QUALIFIED (passed the full recipe) OR Precision-Edge ONLY.
+    # The broad raw-SC≥50 candidate set is deliberately EXCLUDED here (PM ruling,
+    # 26 Jun 2026): ≥50 is not a near-miss, it's noise — and since the alert engine
+    # monitors `longlist`, that noise fired random Buy/Breakout/stop emails every
+    # 15 min during market hours. Only qualified + PE names ride the longlist (and
+    # therefore the alerts). The standalone Elder≥8 list is unaffected (built below).
+    _longlist = sorted(
+        (_r for _r in _merged.values()
+         if _r.get("on_longlist") or _r.get("pe")),
+        key=lambda r: (r.get("ptrs") or 0), reverse=True)
     for _i, _r in enumerate(_longlist, 1):
         _r["rank"] = _i
         _r["source"] = "longlist"
