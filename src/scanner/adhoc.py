@@ -14,12 +14,14 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
+import numpy as np
 import pandas as pd
 
 from src.data.earnings import load_earnings
 from src.data.fmp_client import FMPClient, FMPError, resample_to_weekly
 from src.data.panel_builder import SPY_DAILY
 from src.engines import bq, elder, energy, flow, k39, mp, pipeline_rank, scoring, structure
+from src.engines.elder_context import compute_elder_context, elder_pattern
 from src.engines.scoring import SC_M_GATES
 from src.engines.utils import atr
 from src.scanner.betas import betas_for_ticker
@@ -76,6 +78,55 @@ def score_tickers(tickers: list[str]) -> list[dict]:
     from_dt = today - timedelta(days=int(HISTORY_YEARS * 365.25))
 
     return [_score_one(t, client, spy, earnings_cal, from_dt, today) for t in tickers]
+
+
+def _sma(close: pd.Series, n: int) -> float | None:
+    return round(float(close.tail(n).mean()), 2) if len(close) >= n else None
+
+
+def _panel_metrics(d: pd.DataFrame, spy: pd.DataFrame) -> dict:
+    """Bar-derived fields the longlist rows carry but the engines don't emit:
+    RVOL, RS vs SPY (20d), SMA-50 distance, MA ladder, 30d annualised vol,
+    252d beta. Each degrades to None on thin data — never raises.
+    """
+    out: dict = {"rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+                 "ma": {}, "vol_30d_ann": None, "beta_252d": None}
+    try:
+        close = d["close"].astype(float)
+        out["ma"] = {w: _sma(close, w) for w in (20, 50, 100, 200)
+                     if _sma(close, w) is not None}
+        sma50 = _sma(close, 50)
+        if sma50:
+            out["sma_distance_pct"] = round(
+                (float(close.iloc[-1]) - sma50) / sma50 * 100, 1)
+        if "volume" in d.columns and len(d) >= 20:
+            vol = d["volume"].astype(float)
+            avg20 = float(vol.tail(20).mean())
+            if avg20 > 0:
+                out["rvol"] = round(float(vol.iloc[-1]) / avg20, 2)
+        lr = np.log(close / close.shift(1)).dropna()
+        if len(lr) >= 30:
+            out["vol_30d_ann"] = round(float(lr.tail(30).std()) * float(np.sqrt(252)) * 100, 1)
+
+        m = pd.merge(
+            d[["date", "close"]].rename(columns={"close": "c_tk"}),
+            spy[["date", "close"]].rename(columns={"close": "c_spy"}),
+            on="date", how="inner").sort_values("date")
+        if len(m) >= 21:
+            tk20 = float(m["c_tk"].iloc[-1] / m["c_tk"].iloc[-21] - 1) * 100
+            sp20 = float(m["c_spy"].iloc[-1] / m["c_spy"].iloc[-21] - 1) * 100
+            out["rs_spy_20d"] = round(tk20 - sp20, 1)
+        if len(m) >= 60:
+            rt = np.log(m["c_tk"] / m["c_tk"].shift(1)).dropna().to_numpy()
+            rs = np.log(m["c_spy"] / m["c_spy"].shift(1)).dropna().to_numpy()
+            n = min(len(rt), len(rs), 252)
+            rt, rs = rt[-n:], rs[-n:]
+            var = float(np.var(rs))
+            if var > 0:
+                out["beta_252d"] = round(float(np.cov(rt, rs)[0, 1] / var), 2)
+    except Exception:  # noqa: BLE001 — metrics are best-effort enrichment
+        pass
+    return out
 
 
 def _last(series) -> float | None:
@@ -179,9 +230,25 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
                 if pd.notna(v)]
     tk_betas = betas_for_ticker(d, spy)
 
+    # Parity enrichment so the ad-hoc table carries the SAME columns as the
+    # longlist/elder tables: bar-derived panel metrics + the full elder_context
+    # block (elder_pattern + VWAP/volume/VCP/exhaustion). Hourly bars aren't
+    # fetched here (no extra FMP call), so the hourly VWAP fields stay None while
+    # the daily VCP / 20d-volume / pattern fields populate.
+    pm = _panel_metrics(d, spy)
+    as_of = str(pd.Timestamp(d["date"].iloc[-1]).date())
+    _resist = (levels or {}).get("resistance") or []
+    _resist_price = _resist[0].get("price") if _resist else None
+    try:
+        elder_ctx = compute_elder_context(
+            elder_5d, [], d.to_dict("records"),
+            resistance_price=_resist_price, computed_date=as_of)
+    except Exception:  # noqa: BLE001
+        elder_ctx = None
+
     return {
         "ticker": ticker,
-        "as_of": str(pd.Timestamp(d["date"].iloc[-1]).date()),
+        "as_of": as_of,
         "n_bars": len(d),
         "close": close,
         "sc_momentum": _last(sc_m),
@@ -201,4 +268,13 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         "gate_pass": gate_pass,
         "elder_5d": elder_5d,
         "levels": levels,
+        # Parity fields (longlist schema)
+        "rvol": pm["rvol"],
+        "rs_spy_20d": pm["rs_spy_20d"],
+        "sma_distance_pct": pm["sma_distance_pct"],
+        "ma": pm["ma"],
+        "vol_30d_ann": pm["vol_30d_ann"],
+        "beta_252d": pm["beta_252d"],
+        "elder_pattern": elder_pattern(elder_5d),
+        "elder_context": elder_ctx,
     }

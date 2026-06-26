@@ -1543,6 +1543,60 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
     return "\n".join(lines)
 
 
+def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> dict:
+    """Shape an ad-hoc score result into the EXPORT record schema, so it renders
+    through the same `_export_table()` as the Longlist/Elder tables → identical
+    columns (PTRS, GICS gate, sector_corr, RVOL/RS/SMA, the elder_pattern +
+    ecx_* context block, and the DSG-18 structural levels/targets).
+    """
+    from src.data.drive_sync import _v21_record_fields
+    from src.longlist_screen import passes as _ll_passes
+
+    tk = r["ticker"]
+    lv = r.get("levels") or {}            # already the shape _v21_record_fields reads
+    sc = r.get("sc_momentum")
+    raw = r.get("sc_momentum_raw")
+    ptrs = _quick_ptrs(sc, tk, sector_grades) if sc is not None else None
+
+    # Per-ticker lookup feeding _v21_record_fields (same keys the pipeline builds).
+    lk = {
+        "rvol": {tk: r.get("rvol")},
+        "rs": {tk: r.get("rs_spy_20d")},
+        "sma": {tk: r.get("sma_distance_pct")},
+        "ma": {tk: r.get("ma") or {}},
+        "vol30": {tk: r.get("vol_30d_ann")},
+        "beta252": {tk: r.get("beta_252d")},
+        "corr": {},        # 60d sector-corr needs parent-ETF bars — not fetched ad-hoc
+        "thematic": {},     # basket grades need the pipeline; basket names still tag
+        "held": set(),
+    }
+    v21 = _v21_record_fields(tk, lv, lk, sm, sector_grades)
+
+    rec = {
+        "rank": idx, "ticker": tk, "source": "adhoc", "pe": False,
+        "on_longlist": _ll_passes({"sc_momentum_raw": raw, "sc_momentum": sc,
+                                   "ptrs": ptrs, "elder": r.get("elder")}),
+        "sc_momentum": sc, "sc_momentum_raw": raw, "ptrs": ptrs,
+        "pipe_rank": r.get("pipe_rank"),
+        "flow": r.get("flow"), "energy": r.get("energy"),
+        "structure": r.get("structure"), "mp": r.get("mp"),
+        "mp_state": r.get("mp_state"),
+        "elder": r.get("elder"), "elder_5d": r.get("elder_5d"),
+        "beta_30d": r.get("beta_30d"), "beta_60d": r.get("beta_60d"),
+        "entry": lv.get("entry"), "stop": lv.get("stop"),
+        "dsl_stop": lv.get("stop"), "dsl_risk": lv.get("risk"),
+        "dsl_rr_pct": lv.get("rr_pct"), "dsl_atr_ratio": lv.get("dsl_atr_ratio"),
+        "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
+        "dsl_tp_3r": lv.get("tp_3r"),
+        "rank_explain": _rank_explain(r.get("pipe_rank"), None, sc or 0,
+                                      False, tk, sm, sector_grades),
+        "elder_pattern": r.get("elder_pattern"),
+        "elder_context": r.get("elder_context"),
+        **v21,
+    }
+    return rec
+
+
 _adhoc_results = st.session_state.get("adhoc_results")
 if _adhoc_results:
     _ok = [r for r in _adhoc_results if not r.get("error")]
@@ -1550,37 +1604,16 @@ if _adhoc_results:
 
     if _ok:
         st.caption(
-            "DSL / TP 1-2-3 / R/R / Fib / Elder5d as per the longlist. "
-            "As-of = the latest bar scored — may be fresher than the tables above."
+            "Full longlist schema — the SAME columns as the Longlist / Elder tables "
+            "(PTRS, GICS gate, sector_corr, RVOL, RS vs SPY, SMA-distance, "
+            "elder_pattern + ecx_* context, structural levels/targets, DSL/TP/Fib). "
+            "As-of = the latest bar scored — may be fresher than the tables above. "
+            "`source` = adhoc; sector_corr is blank (needs the parent-ETF panel)."
         )
-        _adhoc_rows = []
-        for r in _ok:
-            lv = r.get("levels") or {}
-            _adhoc_rows.append({
-                "Ticker": r["ticker"],
-                "As-of": r.get("as_of", "---"),
-                "Score": _fmt(r.get("sc_momentum"), ".1f"),
-                "Raw": _fmt(r.get("sc_momentum_raw"), ".1f"),
-                "Gate": "PASS" if r.get("gate_pass") else "CAPPED",
-                "Flow": _fmt(r.get("flow"), ".0f"),
-                "Energy": _fmt(r.get("energy"), ".0f"),
-                "Struct": _fmt(r.get("structure"), ".0f"),
-                "MP": _fmt(r.get("mp"), ".0f"),
-                "Elder": _fmt(r.get("elder"), ".1f"),
-                "Elder5d": _elder5_str(r.get("elder_5d")),
-                "BQ": _fmt(r.get("bq"), ".0f"),
-                "PipeRk": _fmt(r.get("pipe_rank"), ".1f"),
-                "Beta30": _fmt(r.get("beta_30d"), ".2f"),
-                "Beta60": _fmt(r.get("beta_60d"), ".2f"),
-                "Entry": _fmt(lv.get("entry"), ".2f"),
-                "DSL": _fmt(lv.get("stop"), ".2f"),
-                "TP 1/2/3": _tp_str(lv),
-                "Distance to SL (%)": _fmt(lv.get("rr_pct"), ".1f"),
-                "R/R": _fmt(lv.get("rr_est"), ".1f"),
-                "ATR Width": _fmt(lv.get("dsl_atr_ratio"), ".2f"),
-                "Fib": _fib_str(lv.get("fib")),
-            })
-        table_with_copy(pd.DataFrame(_adhoc_rows), key="adhoc_table")
+        _sm_adhoc = load_sector_map()
+        _adhoc_recs = [_adhoc_export_record(r, i, _sm_adhoc, _sector_grades)
+                       for i, r in enumerate(_ok, 1)]
+        table_with_copy(_export_table(_adhoc_recs), key="adhoc_table")
 
         # AIC deliberation blurbs — one per scored ticker
         st.markdown("##### AIC Deliberation Prompt")
