@@ -1,7 +1,9 @@
-"""In-app daily scheduler — runs the pipeline once each market morning.
+"""In-app daily scheduler — universe refresh + pipeline, each market morning.
 
-Schedule: 08:30 SGT, Tuesday–Saturday. Sunday and Monday (SGT) are skipped
-because US markets were closed Sat/Sun, so there's no fresh close-of-day data.
+Schedule (SGT, Tuesday–Saturday):
+  06:00 — Universe refresh (FMP screener → mcap/$2B + SMA20/50 + volume)
+  08:30 — Daily pipeline (pull → score → SRM → PTRS → Drive export)
+Sunday and Monday (SGT) are skipped (US markets closed Sat/Sun).
 
 How it works:
 - A daemon thread (started once per process) checks the SGT clock every minute.
@@ -42,6 +44,11 @@ WINDOW_END_HOUR = 12
 # Python weekday(): Mon=0 .. Sun=6. Skip Sunday(6) and Monday(0).
 SKIP_WEEKDAYS = {6, 0}
 
+# Universe auto-refresh runs at 06:00 SGT — 2.5 hours before the pipeline.
+UNIVERSE_HOUR = 6
+UNIVERSE_MIN = 0
+UNIVERSE_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00
+
 MARKER_FILENAME = "aqe_last_run.json"
 
 _started = False
@@ -65,6 +72,19 @@ def _should_run(now: datetime, last_run_date_iso: str | None) -> bool:
     if now.hour < RUN_HOUR or (now.hour == RUN_HOUR and now.minute < RUN_MIN):
         return False
     return last_run_date_iso != now.date().isoformat()
+
+
+def _should_refresh_universe(now: datetime,
+                             last_refresh_date_iso: str | None) -> bool:
+    """True if it's a run day, past 06:00 (within window), not refreshed today."""
+    if not _is_run_day(now.date()):
+        return False
+    if now.hour >= UNIVERSE_WINDOW_END_HOUR:
+        return False
+    if (now.hour < UNIVERSE_HOUR
+            or (now.hour == UNIVERSE_HOUR and now.minute < UNIVERSE_MIN)):
+        return False
+    return last_refresh_date_iso != now.date().isoformat()
 
 
 def next_run_hint() -> str:
@@ -170,13 +190,37 @@ def _run_pipeline_and_record(now: datetime) -> dict:
     return marker
 
 
+def _refresh_universe_and_record(now: datetime) -> None:
+    """Run the automated universe screener. Best-effort — failures are logged
+    but never block the pipeline run at 08:30."""
+    try:
+        from src.data.universe import build_universe
+        print(f"[daily-job] Universe refresh starting at "
+              f"{now.strftime('%Y-%m-%d %H:%M SGT')}")
+        result = build_universe()
+        status = result.get("status", "unknown")
+        total = result.get("total", 0)
+        added = result.get("added", 0)
+        removed = result.get("removed", 0)
+        print(f"[daily-job] Universe refresh {status}: "
+              f"{total} tickers (+{added}/-{removed})")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[daily-job] Universe refresh failed: {exc}")
+
+
 def _loop() -> None:
     # Seed last-run date from the persisted marker so a restart doesn't re-run.
     last = last_run_status()
     last_date = last.get("date_sgt") if last else None
+    last_universe_date: str | None = None
     while True:
         try:
             now = datetime.now(SGT)
+            # 06:00 SGT — universe refresh (before the pipeline)
+            if _should_refresh_universe(now, last_universe_date):
+                _refresh_universe_and_record(now)
+                last_universe_date = now.date().isoformat()
+            # 08:30 SGT — daily pipeline
             if _should_run(now, last_date):
                 _run_pipeline_and_record(now)
                 last_date = now.date().isoformat()

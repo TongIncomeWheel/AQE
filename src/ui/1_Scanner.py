@@ -386,6 +386,29 @@ with st.sidebar:
                     st.warning(msg + f" — Drive save failed: {result.get('drive_reason')}")
                 _universe_status.clear()
                 st.rerun()
+        st.divider()
+        st.caption(
+            "**Auto-refresh**: screens the full US equity market — mcap > $2B, "
+            "price > 20-day SMA, price > 50-day SMA, 10-day avg volume > 1.5M. "
+            "Runs automatically at 06:00 SGT (Tue–Sat). Use the button below "
+            "to trigger manually."
+        )
+        if st.button("Refresh universe now", type="primary",
+                      use_container_width=True, key="universe_refresh_btn"):
+            from src.data.universe import build_universe
+            with st.spinner("Screening US equities (mcap / SMA / volume)..."):
+                result = build_universe()
+            if result.get("status") == "ok":
+                st.success(
+                    f"Universe refreshed: **{result['total']}** tickers "
+                    f"(+{result['added']} new / -{result['removed']} dropped / "
+                    f"={result['kept']} kept)"
+                    + (" — saved to Drive" if result.get("drive_ok") else "")
+                )
+                _universe_status.clear()
+                st.rerun()
+            else:
+                st.error(f"Universe refresh failed: {result.get('reason', result)}")
 
     # ---- Export + local-download fallback (all modes) ----------------
     st.markdown("**📤 Export**")
