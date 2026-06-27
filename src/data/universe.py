@@ -1,13 +1,17 @@
-"""Universe management — load + persist the curated ticker list (the "fishing net").
+"""Universe management — load, screen, and persist the scan ticker list.
 
-The universe is a FIXED, manually-curated list. It lives as a single CSV in a
-dedicated Google Drive folder (`UNIVERSE_FOLDER_ID`), which is the source of
-truth. On startup `restore_universe_from_drive()` overwrites the local
-`universe.txt` from that folder. Update it by uploading a new CSV via the app
-(overwrites the canonical file) or by replacing the file directly in Drive.
+The universe is auto-refreshed daily at 06:00 SGT by `build_universe()` — an
+FMP-driven screen (market cap > $2B, price > 20-day SMA, price > 50-day SMA,
+10-day average volume > 1.5M). The result is written to the local
+`universe.txt` AND uploaded as the canonical CSV to a dedicated Google Drive
+folder (`UNIVERSE_FOLDER_ID`), so it persists across container restarts.
 
-`refresh_universe()` (FMP screener) is retained for MANUAL use only — it is no
-longer called by the daily pipeline (it ballooned the list to ~1800 tickers).
+On pipeline startup `restore_universe_from_drive()` overwrites the local
+`universe.txt` from that folder (Drive is source of truth between refreshes).
+
+The old `refresh_universe()` (screener-only, no SMA/volume filters) is kept for
+manual / legacy use. It previously ballooned the list to ~1800 — the new
+`build_universe()` is tighter by design.
 """
 
 from __future__ import annotations
@@ -36,6 +40,13 @@ UNIVERSE_MIN_VOLUME = 500_000
 UNIVERSE_EXCHANGES = ["NASDAQ", "NYSE"]
 
 EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U")
+
+# --- Automated universe screening (PM ruling, 27 Jun 2026) ---
+# The daily pipeline scans only this filtered set. Refreshed at 06:00 SGT
+# (before the 08:30 pipeline run) by the in-app scheduler.
+SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
+SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
+SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading days)
 
 
 def load_universe(path: Path | None = None, include_benchmark: bool = True) -> list[str]:
@@ -109,6 +120,145 @@ def refresh_universe(dry_run: bool = False) -> dict:
         "total": len(merged),
         "unchanged": False,
     }
+
+
+def build_universe(dry_run: bool = False) -> dict:
+    """Screen US equities to produce the AQE scan universe.
+
+    Criteria:
+      1. Market cap > $2B  (FMP screener)
+      2. Price > 20-day SMA
+      3. Price > 50-day SMA
+      4. 10-day average volume > 1.5M shares/day
+
+    Two-pass for API efficiency:
+      Pass 1 — FMP screener + batch quotes (~10 API calls for ~500 names).
+               Eliminates names below SMA50 using the quote's priceAvg50.
+      Pass 2 — Fetch 55 bars per survivor (~250-350 calls) to compute SMA20
+               and 10-day average volume.
+
+    Writes universe.txt locally AND uploads the CSV to Drive so it persists
+    across container restarts.  Returns a summary dict.
+    """
+    from datetime import timedelta
+
+    from src.data.fmp_client import FMPClient, FMPError
+
+    client = FMPClient()
+    today = date.today()
+    from_dt = today - timedelta(days=SCREEN_LOOKBACK_DAYS)
+
+    # ── Pass 1: FMP screener → broad candidates ──────────────────────────
+    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, US exchanges...")
+    try:
+        raw = client.get_screener(
+            min_mcap=SCREEN_MCAP,
+            min_price=5.0,
+            min_volume=500_000,            # generous pre-filter
+            exchanges=UNIVERSE_EXCHANGES,
+            limit=5000,
+        )
+    except FMPError as exc:
+        return {"status": "error", "reason": f"screener failed: {exc}"}
+
+    candidates = [
+        r["symbol"].upper().strip()
+        for r in raw
+        if r.get("symbol")
+        and not any(r["symbol"].endswith(s) for s in EXCLUDED_SUFFIXES)
+        and "." not in r["symbol"]
+        and " " not in r["symbol"]
+    ]
+    print(f"[universe] Screener: {len(candidates)} candidates")
+    if not candidates:
+        return {"status": "error", "reason": "screener returned 0 candidates"}
+
+    # ── Batch quotes: pre-filter on SMA50 (cheap — ~10 API calls) ────────
+    try:
+        quotes = client.get_quotes_batch(candidates, chunk=50)
+    except FMPError as exc:
+        return {"status": "error", "reason": f"batch quotes failed: {exc}"}
+
+    sma50_pass = []
+    for tk in candidates:
+        q = quotes.get(tk)
+        if not q:
+            continue
+        price, ma50 = q.get("price"), q.get("ma_50")
+        if price and ma50 and price > ma50:
+            sma50_pass.append(tk)
+    print(f"[universe] After SMA50 pre-filter: {len(sma50_pass)} candidates")
+
+    # ── Pass 2: fetch bars → SMA20 + 10-day avg volume ───────────────────
+    passed: list[str] = []
+    errors: list[str] = []
+    for i, tk in enumerate(sma50_pass):
+        if (i + 1) % 100 == 0:
+            print(f"[universe] Checking bars {i + 1}/{len(sma50_pass)}...")
+        try:
+            bars = client.get_daily_bars(tk, from_date=from_dt, to_date=today)
+            if bars is None or bars.empty or len(bars) < 50:
+                continue
+            close = bars["close"].astype(float)
+            volume = bars["volume"].astype(float)
+
+            price = float(close.iloc[-1])
+            sma20 = float(close.tail(20).mean())
+            sma50 = float(close.tail(50).mean())
+            avg_vol = float(volume.tail(10).mean())
+
+            if (price > sma20
+                    and price > sma50
+                    and avg_vol >= SCREEN_AVG_VOL_10D):
+                passed.append(tk)
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"{tk}: {exc}")
+
+    print(f"[universe] {len(passed)} tickers passed all filters"
+          + (f" ({len(errors)} errors)" if errors else ""))
+
+    # ── Compare with existing ─────────────────────────────────────────────
+    try:
+        existing = set(load_universe(include_benchmark=False))
+    except Exception:  # noqa: BLE001
+        existing = set()
+    new_set = set(passed)
+    added = sorted(new_set - existing)
+    removed = sorted(existing - new_set)
+    kept = sorted(existing & new_set)
+
+    if dry_run:
+        return {"status": "dry_run", "total": len(passed),
+                "added": len(added), "removed": len(removed), "kept": len(kept),
+                "tickers": sorted(passed), "errors": errors[:20]}
+
+    # ── Write + upload ────────────────────────────────────────────────────
+    final = sorted(passed)
+    _write_universe(final)
+
+    csv_text = "Symbol\n" + "\n".join(final) + "\n"
+    drive_ok, drive_reason = False, "not attempted"
+    try:
+        result = upload_universe(csv_text.encode("utf-8"))
+        drive_ok = result.get("drive_ok", False)
+        drive_reason = result.get("drive_reason", "unknown")
+    except Exception as exc:  # noqa: BLE001
+        drive_reason = f"{type(exc).__name__}: {exc}"
+
+    summary = {
+        "status": "ok",
+        "total": len(final),
+        "added": len(added),
+        "removed": len(removed),
+        "kept": len(kept),
+        "drive_ok": drive_ok,
+        "drive_reason": drive_reason,
+        "errors": errors[:20],
+    }
+    print(f"[universe] Done: {len(final)} tickers "
+          f"(+{len(added)} / -{len(removed)} / ={len(kept)})"
+          f" | Drive: {'ok' if drive_ok else drive_reason}")
+    return summary
 
 
 def _read_text(csv_path_or_bytes) -> str:

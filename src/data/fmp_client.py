@@ -198,6 +198,48 @@ class FMPClient:
             }
         return out
 
+    def get_quotes_batch(self, tickers: list[str],
+                         chunk: int = 50) -> dict[str, dict]:
+        """Batch quote fetch — comma-separated symbols, `chunk` per call.
+
+        Same return shape as get_quotes() but drastically fewer API calls
+        (~1 per 50 tickers vs 1 per ticker).
+        """
+        out: dict[str, dict] = {}
+        url = f"{FMP_BASE_STABLE}/quote"
+        for i in range(0, len(tickers), chunk):
+            batch = tickers[i:i + chunk]
+            try:
+                payload = self._get_json(
+                    url, params={"symbol": ",".join(batch),
+                                 "apikey": self.config.api_key})
+            except FMPQuotaError:
+                raise
+            except FMPError:
+                continue
+            if not isinstance(payload, list):
+                continue
+            for row in payload:
+                if not isinstance(row, dict):
+                    continue
+                tk = (row.get("symbol") or "").upper()
+                price = row.get("price")
+                if not tk or price is None:
+                    continue
+                out[tk] = {
+                    "price": _f(price),
+                    "open": _f(row.get("open")),
+                    "volume": _f(row.get("volume")),
+                    "avg_volume": _f(row.get("avgVolume")),
+                    "ma_50": _f(row.get("priceAvg50")),
+                    "ma_200": _f(row.get("priceAvg200")),
+                    "day_low": _f(row.get("dayLow")),
+                    "day_high": _f(row.get("dayHigh")),
+                    "prev_close": _f(row.get("previousClose")),
+                    "ts": row.get("timestamp"),
+                }
+        return out
+
     def get_screener(
         self,
         min_mcap: int = 1_000_000_000,
