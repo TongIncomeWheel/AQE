@@ -1254,6 +1254,11 @@ _EXPORT_COL_ORDER = [
     "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
     "coil_entry", "max_chase_tp2", "max_chase_tp3", "rr_tp2_at_coil", "rr_tp3_at_coil",
     "optimal_stop", "optimal_stop_exists", "structural_targets", "held", "rank_explain",
+    # Enrichment Spec v2.0
+    "rs_down_day_20d", "rs_leadership", "setup_state",
+    "breakout_conviction", "breakout_grade", "breakout_pattern", "breakout_bar_date",
+    "atr_caution", "beta_data_error", "malformed_bracket",
+    "beta_60d_capped", "dsl_atr_ratio_floored",
     "elder_pattern", "ecx_vwap_pos", "ecx_vwap_slope", "ecx_vol_trend",
     "ecx_vol_above20d", "ecx_up_dn_ratio", "ecx_vcp_label", "ecx_vcp_tight",
     "ecx_exhaustion",

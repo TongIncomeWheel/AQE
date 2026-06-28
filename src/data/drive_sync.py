@@ -113,6 +113,34 @@ _FIELD_GLOSSARY = {
     "beta_252d": "1-year beta vs SPY (cov/var).",
     "ptrs": "Engine score + sector health. Disposition/sizing is the committee's call — "
             "AQE exports no sizing.",
+    # Enrichment Spec v2.0 — new per-record signals + cleanup flags
+    "rs_down_day_20d": "All-weather leadership: stock's avg outperformance vs SPY on SPY "
+                       "DOWN days (last 20 sessions). Positive = beats SPY when market "
+                       "drops = genuine leader (pct).",
+    "rs_leadership": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, "
+                     "LAGGARD (<−0.25).",
+    "setup_state": "Daily lifecycle classification: EXTENDED (>8% above MA10, do not chase) "
+                   "/ BREAKOUT-READY (VCP + VWAP above + exhaustion clear) / "
+                   "CONTINUATION-READY (MA stack bullish + near MA10) / BASING (coil "
+                   "forming, not yet at trigger).",
+    "breakout_conviction": "Quality score (0–100) of the most recent expansion bar "
+                           "(range > 1.3× base avg). Higher = higher-quality breakout.",
+    "breakout_grade": "Letter grade from breakout_conviction: A (≥80) / B (≥65) / "
+                      "C (≥50) / D (<50).",
+    "breakout_pattern": "Named pattern of the most recent expansion bar: "
+                        "TELEGRAPHED_CONTINUATION / ABSORPTION_REVERSAL / "
+                        "SURPRISE_THRUST / STANDARD_BREAKOUT.",
+    "breakout_bar_date": "Date of the most recent expansion bar (YYYY-MM-DD).",
+    "atr_caution": "True if dsl_atr_ratio was floored to 1.5 in YELLOW/ORANGE/RED regime "
+                   "(the structural stop was too tight for the regime).",
+    "beta_data_error": "True if beta_60d exceeded ±5.0 (data error; capped value in "
+                       "beta_60d_capped).",
+    "malformed_bracket": "True if the DSL stop sits within 0.5% of entry (bracket is "
+                         "unusable — stop virtually at entry).",
+    "beta_60d_capped": "beta_60d capped at ±5.0 (use this; raw beta_60d may be a data "
+                       "error).",
+    "dsl_atr_ratio_floored": "dsl_atr_ratio floored at 1.5 in YELLOW+ regime (use this "
+                             "for sizing; raw dsl_atr_ratio may be sub-ATR).",
 }
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
@@ -121,8 +149,10 @@ _FIELD_GLOSSARY = {
 # Controlled vocabularies (any reader can validate against these enums):
 _FIELD_SCHEMA_ENUMS = {
     "role": ["entry", "reference", "stop", "target", "fib_support",
-             "moving_average", "risk_metric", "volatility", "ratio"],
-    "unit": ["usd", "r_multiple", "ratio", "pct", "atr", "decimal"],
+             "moving_average", "risk_metric", "volatility", "ratio",
+             "signal", "flag"],
+    "unit": ["usd", "r_multiple", "ratio", "pct", "atr", "decimal",
+             "score", "label", "boolean", "date"],
     "side": ["below_entry", "above_entry", "at_entry", "n/a"],
 }
 
@@ -162,6 +192,19 @@ _FIELD_SCHEMA = {
     "ma_200":         _fs("moving_average", "usd", "n/a"),
     "vol_30d_ann":    _fs("volatility", "decimal", "n/a"),
     "beta_252d":      _fs("risk_metric", "ratio", "n/a"),
+    # Enrichment Spec v2.0
+    "rs_down_day_20d":      _fs("signal", "pct", "n/a"),
+    "rs_leadership":        _fs("signal", "label", "n/a"),
+    "setup_state":          _fs("signal", "label", "n/a"),
+    "breakout_conviction":  _fs("signal", "score", "n/a"),
+    "breakout_grade":       _fs("signal", "label", "n/a"),
+    "breakout_pattern":     _fs("signal", "label", "n/a"),
+    "breakout_bar_date":    _fs("reference", "date", "n/a"),
+    "atr_caution":          _fs("flag", "boolean", "n/a"),
+    "beta_data_error":      _fs("flag", "boolean", "n/a"),
+    "malformed_bracket":    _fs("flag", "boolean", "n/a"),
+    "beta_60d_capped":      _fs("risk_metric", "ratio", "n/a"),
+    "dsl_atr_ratio_floored": _fs("ratio", "atr", "n/a"),
 }
 
 
@@ -397,6 +440,55 @@ def _compute_v21_lookups(sm: dict) -> dict:
     return out
 
 
+def _compute_enrichment_lookups(dsl_all: dict, betas: dict,
+                                regime_level: str) -> dict:
+    """Pre-compute Enrichment Spec v2.0 fields per ticker.
+
+    Returns {ticker: {rs_down_day_20d, rs_leadership, breakout_conviction,
+    breakout_grade, breakout_pattern, breakout_bar_date, atr_caution,
+    beta_data_error, malformed_bracket, beta_60d_capped,
+    dsl_atr_ratio_floored}}.
+    """
+    out: dict = {}
+    try:
+        import numpy as np
+        import pandas as pd
+        from src.data.paths import PANEL_DAILY, SPY_DAILY
+        from src.engines.enrichment import enrich_record
+
+        if not PANEL_DAILY.exists():
+            return out
+        pan = pd.read_parquet(
+            PANEL_DAILY,
+            columns=["date", "ticker", "open", "high", "low", "close", "volume"])
+        pan["date"] = pd.to_datetime(pan["date"]).dt.normalize()
+        pan = pan.sort_values("date")
+        grp = {t: g for t, g in pan.groupby("ticker", sort=False)}
+
+        spy_daily = None
+        if SPY_DAILY.exists():
+            spy_daily = pd.read_parquet(
+                SPY_DAILY, columns=["date", "close"]).sort_values("date")
+
+        for tk, g in grp.items():
+            d = dsl_all.get(tk, {})
+            beta_60d = (betas.get(tk) or {}).get(60)
+            out[tk] = enrich_record(
+                stock_daily=g,
+                spy_daily=spy_daily,
+                elder_ctx=None,
+                entry=d.get("entry"),
+                stop=d.get("stop"),
+                dsl_risk=d.get("risk"),
+                beta_60d=beta_60d,
+                dsl_atr_ratio=d.get("dsl_atr_ratio"),
+                regime_level=regime_level,
+            )
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
 def _is_num(*vals) -> bool:
     """True if every value is a finite number."""
     return all(isinstance(v, (int, float)) and v == v and v not in (float("inf"), float("-inf"))
@@ -547,6 +639,14 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "structural_levels": [], "optimal_stop": None, "optimal_stop_exists": False,
         "structural_targets": [],
         "held": False,
+        # Enrichment Spec v2.0 — new per-record signals + cleanup flags
+        "rs_down_day_20d": None, "rs_leadership": None,
+        "setup_state": "BASING",
+        "breakout_conviction": None, "breakout_grade": None,
+        "breakout_pattern": None, "breakout_bar_date": None,
+        "atr_caution": False, "beta_data_error": False,
+        "malformed_bracket": False,
+        "beta_60d_capped": None, "dsl_atr_ratio_floored": None,
     }
     try:
         etf = sm.get(tk)
@@ -647,6 +747,17 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                 if _is_num(_t.get("price")) and _is_num(_entry):
                     _t["r_optimal"] = round((_t["price"] - _entry) / _orisk, 2)
         fields["structural_targets"] = _stargets
+
+        # ── Enrichment Spec v2.0 — pre-computed per-ticker signals ────────
+        _enr = (lk.get("enrichment") or {}).get(tk, {})
+        for _ek in ("rs_down_day_20d", "rs_leadership",
+                     "breakout_conviction", "breakout_grade",
+                     "breakout_pattern", "breakout_bar_date",
+                     "atr_caution", "beta_data_error", "malformed_bracket",
+                     "beta_60d_capped", "dsl_atr_ratio_floored",
+                     "setup_state"):
+            if _ek in _enr and _enr[_ek] is not None:
+                fields[_ek] = _enr[_ek]
     except Exception:  # noqa: BLE001
         pass
     return fields
@@ -834,6 +945,10 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- AQE v2.1 enrichment (rvol, rs_spy, sma_distance, sector_corr) ----
     _v21_lk = _compute_v21_lookups(sm)
     export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
+
+    # ---- Enrichment Spec v2.0 (rs_down_day, breakout_conviction, cleanup) ----
+    _v21_lk["enrichment"] = _compute_enrichment_lookups(
+        dsl_all, betas, regime_level)
 
     # ---- Thematic basket grades (SRM v3.0) — pure panel math, 0 FMP calls ----
     # Graded from constituents' equal-weight index, capped at parent GICS grade.
@@ -1220,6 +1335,23 @@ def build_export(shortlist: dict | None = None) -> dict:
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)
+
+        # Enrichment v2.0: recompute setup_state now that elder_context is attached.
+        from src.engines.enrichment import compute_setup_state as _css
+        for _r in _longlist + _elderlist:
+            _cl = _r.get("entry")           # COB close = reference entry
+            _m10 = _r.get("ma_20")          # ma_10 not exported; use ma_20 as nearest
+            _m20 = _r.get("ma_20")
+            _m50 = _r.get("ma_50")
+            _ec = _r.get("elder_context")
+            if _cl and _m10:
+                # Compute proper MA10 from the panel if available
+                _pg = _grp.get(_r.get("ticker"))
+                if _pg is not None and len(_pg) >= 10:
+                    import numpy as _np
+                    _cls = _pg["close"].astype(float).to_numpy()
+                    _m10 = float(_np.mean(_cls[-10:]))
+                _r["setup_state"] = _css(_cl, _m10, _m20, _m50, _ec)
     except Exception:  # noqa: BLE001 — elder_context is additive, never blocks export
         for _r in _longlist + _elderlist:
             _r.setdefault("elder_pattern", None)
@@ -1262,6 +1394,12 @@ def build_export(shortlist: dict | None = None) -> dict:
         "vol_30d_ann", "beta_252d",
         "structural_levels", "optimal_stop", "optimal_stop_exists",
         "structural_targets",
+        # Enrichment Spec v2.0
+        "rs_down_day_20d", "rs_leadership", "setup_state",
+        "breakout_conviction", "breakout_grade", "breakout_pattern",
+        "breakout_bar_date",
+        "atr_caution", "beta_data_error", "malformed_bracket",
+        "beta_60d_capped", "dsl_atr_ratio_floored",
     ]
     for _rec in export["longlist"]:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
