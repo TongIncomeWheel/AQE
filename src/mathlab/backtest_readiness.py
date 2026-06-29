@@ -1,20 +1,24 @@
-"""AQE Readiness Score — Backtest Harness.
+"""AQE Momentum Intelligence — Backtest Harness.
 
-Tests the readiness score across the AQE universe at multiple trigger
-thresholds. Measures TP1 win rate, ride quality, capital velocity, and
-time profile vs a random-entry baseline. Validates reference cases.
+Tests momentum states across the AQE universe. For each state, measures:
+- TP1 win rate vs random-entry baseline
+- Ride quality (drawdown before TP1)
+- Capital velocity (days to TP1)
+- Time profile (T+1 through T+10)
+- Conviction score discrimination within states
+
+The key question: do the states predict which ticker-days are better entries
+and which are healthy holds vs broken trends?
 
 Usage:
     python -m src.mathlab.backtest_readiness
     python -m src.mathlab.backtest_readiness --dry-run
     python -m src.mathlab.backtest_readiness --refresh
-    python -m src.mathlab.backtest_readiness --reference-only
 """
 
 from __future__ import annotations
 
 import json
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from statistics import median
@@ -23,10 +27,10 @@ import numpy as np
 import pandas as pd
 
 from src.mathlab.readiness import (
-    DEFAULT_WEIGHTS,
-    classify_stage,
+    STATES,
+    STATE_RANK,
     classify_trajectory,
-    readiness_for_bars,
+    momentum_for_bars,
 )
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -39,15 +43,14 @@ PULL_END = "2026-06-30"
 FORWARD_SESSIONS = 10
 COOLDOWN = 5
 
-THRESHOLDS = [50, 60, 70, 75, 80, 85, 90]
 RETURN_HORIZONS = (1, 2, 3, 5, 7, 10)
 
 CACHE_DIR = Path("data/mathlab_cache")
 OUTPUT_DIR = Path("output")
 
-REFERENCE_TICKERS = ["VSCO", "BROS", "CAT"]
-REFERENCE_START = "2026-06-10"
-REFERENCE_END = "2026-06-30"
+# Conviction score buckets for within-state analysis
+CONVICTION_BUCKETS = [(0, 30, "LOW"), (30, 60, "MID"), (60, 100, "HIGH")]
+
 
 # ────────────────────────────────────────────────────────────────────────────
 # Data (reuses v3.1 cache)
@@ -66,7 +69,7 @@ def pull_daily_bars(ticker: str, force: bool = False) -> pd.DataFrame:
             bt_s, bt_e = pd.Timestamp(BT_START), pd.Timestamp(BT_END)
             n_bt = int(((df["date"] >= bt_s) & (df["date"] <= bt_e)).sum())
             if n_bt < 200:
-                print(f"STALE({n_bt})→re-pull ", end="", flush=True)
+                print(f"STALE({n_bt})->re-pull ", end="", flush=True)
                 return pull_daily_bars(ticker, force=True)
         return df
     from src.data.fmp_client import FMPClient, FMPError
@@ -79,7 +82,7 @@ def pull_daily_bars(ticker: str, force: bool = False) -> pd.DataFrame:
         df.to_parquet(p, index=False)
         return df
     except FMPError as e:
-        print(f"  [!] {ticker}: FMP error — {e}")
+        print(f"  [!] {ticker}: FMP error - {e}")
         return pd.DataFrame()
 
 
@@ -99,7 +102,7 @@ def load_universe() -> list[str]:
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# Bracket + forward scan (same as v3.1)
+# Bracket + forward scan
 # ────────────────────────────────────────────────────────────────────────────
 
 def bracket_from_bars(bars: pd.DataFrame, date_t: pd.Timestamp):
@@ -174,7 +177,7 @@ def scan_forward(bars: pd.DataFrame, date_t: pd.Timestamp,
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# Stats (same structure as v3.1)
+# Stats
 # ────────────────────────────────────────────────────────────────────────────
 
 def _bucket_stats(events: list[dict], bl_tp1: float = 0.0) -> dict:
@@ -226,128 +229,116 @@ def _time_profile(events: list[dict]) -> dict:
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# Reference case validation
+# Condition-level analysis
 # ────────────────────────────────────────────────────────────────────────────
 
-def _validate_reference_cases(all_bars: dict[str, pd.DataFrame]) -> dict:
-    ref = {}
-    for tk in REFERENCE_TICKERS:
-        bars = all_bars.get(tk)
-        if bars is None or bars.empty:
-            ref[tk] = {"status": "NO_DATA"}
-            continue
+def _condition_importance(all_events: list[dict], baseline_tp1: float) -> dict:
+    """Which individual conditions predict TP1?"""
+    bool_conditions = [
+        "vol_contracting", "vol_expanding_up", "range_tight",
+        "close_strong", "close_weak", "mas_stacked",
+        "ma10_gt_20", "ma20_gt_50", "price_above_ma10",
+        "price_above_ma20", "price_above_ma50",
+        "higher_lows", "close_trend_up", "close_trend_down",
+        "failed_breakout",
+    ]
 
-        scores = readiness_for_bars(bars)
-        if not scores:
-            ref[tk] = {"status": "NO_SCORES"}
-            continue
-
-        ref_start = pd.Timestamp(REFERENCE_START)
-        ref_end = pd.Timestamp(REFERENCE_END)
-        window = [s for s in scores if ref_start <= s["date"] <= ref_end]
-
-        if not window:
-            ref[tk] = {"status": "NO_DATA_IN_WINDOW", "score_count": len(scores),
-                       "date_range": f"{scores[0]['date']} to {scores[-1]['date']}"}
-            continue
-
-        daily = []
-        for s in window:
-            daily.append({
-                "date": str(s["date"].date()) if hasattr(s["date"], "date") else str(s["date"]),
-                "score": s["score"],
-                "stage": s["stage"],
-                "components": s["components"],
-                "failed_breakout": s.get("failed_breakout", False),
-            })
-
-        scores_list = [d["score"] for d in daily]
-        trajectory = classify_trajectory(scores_list[-5:]) if len(scores_list) >= 5 else "INSUFFICIENT"
-
-        checks = {}
-        if tk == "VSCO":
-            if len(daily) >= 2:
-                last_two = [d["score"] for d in daily[-2:]]
-                checks["breakout_day_higher_than_prior"] = last_two[-1] >= last_two[-2]
-            checks["last_day_stage"] = daily[-1]["stage"]
-            checks["trajectory"] = trajectory
-            checks["not_monitoring_day_before_last"] = (
-                daily[-2]["stage"] not in ("MONITORING", "BASE_FORMING")
-                if len(daily) >= 2 else None
-            )
-        elif tk == "BROS":
-            jun22_entries = [d for d in daily if "2026-06-22" in d["date"]]
-            jun26_entries = [d for d in daily if "2026-06-26" in d["date"]]
-            if jun22_entries and jun26_entries:
-                checks["jun22_failed_bo_detected"] = jun22_entries[0].get("failed_breakout", False)
-                checks["jun26_higher_than_jun22"] = jun26_entries[0]["score"] > jun22_entries[0]["score"]
-                checks["jun22_not_ready"] = jun22_entries[0]["stage"] not in ("READY", "TRIGGERED")
-        elif tk == "CAT":
-            if daily:
-                checks["not_ready_or_approaching"] = daily[-1]["stage"] not in ("READY", "TRIGGERED", "APPROACHING")
-                checks["last_score"] = daily[-1]["score"]
-
-        ref[tk] = {
-            "status": "OK",
-            "daily": daily,
-            "trajectory": trajectory,
-            "checks": checks,
-        }
-
-    return ref
-
-
-# ────────────────────────────────────────────────────────────────────────────
-# Component importance analysis
-# ────────────────────────────────────────────────────────────────────────────
-
-def _component_importance(all_events: list[dict], baseline_tp1: float) -> dict:
-    """Which components correlate with TP1 outcomes?"""
-    components = list(DEFAULT_WEIGHTS.keys())
     importance = {}
+    for cond in bool_conditions:
+        true_events = [e for e in all_events if e.get("conditions", {}).get(cond)]
+        false_events = [e for e in all_events if not e.get("conditions", {}).get(cond)]
 
-    for comp in components:
-        vals = []
-        tp1_hits = []
-        for ev in all_events:
-            c_val = ev.get("components", {}).get(comp, 0)
-            vals.append(c_val)
-            tp1_hits.append(1 if ev["fwd"].first_event == "TP1" else 0)
+        n_true = len(true_events)
+        n_false = len(false_events)
 
-        if len(vals) < 50:
-            importance[comp] = {"n": len(vals), "correlation": None, "edge_when_high": None}
+        if n_true < 30 or n_false < 30:
+            importance[cond] = {"n_true": n_true, "n_false": n_false,
+                                "tp1_when_true": None, "tp1_when_false": None,
+                                "edge": None}
             continue
 
-        vals_arr = np.array(vals)
-        tp1_arr = np.array(tp1_hits)
+        tp1_true = sum(1 for e in true_events if e["fwd"].first_event == "TP1") / n_true
+        tp1_false = sum(1 for e in false_events if e["fwd"].first_event == "TP1") / n_false
+        sl_true = sum(1 for e in true_events if e["fwd"].first_event == "SL") / n_true
+        sl_false = sum(1 for e in false_events if e["fwd"].first_event == "SL") / n_false
 
-        if np.std(vals_arr) < 1e-10:
-            importance[comp] = {"n": len(vals), "correlation": 0, "edge_when_high": None}
-            continue
+        dd_true = np.mean([e["fwd"].max_dd_pct for e in true_events])
+        dd_false = np.mean([e["fwd"].max_dd_pct for e in false_events])
 
-        corr = float(np.corrcoef(vals_arr, tp1_arr)[0, 1])
-        if np.isnan(corr):
-            corr = 0.0
-
-        p75 = float(np.percentile(vals_arr, 75))
-        high_mask = vals_arr >= p75
-        if np.sum(high_mask) > 0:
-            high_tp1 = float(np.mean(tp1_arr[high_mask]))
-            low_tp1 = float(np.mean(tp1_arr[~high_mask]))
-            edge = high_tp1 - low_tp1
-        else:
-            edge = 0.0
-
-        importance[comp] = {
-            "n": len(vals),
-            "correlation": round(corr, 4),
-            "tp1_rate_when_high": round(high_tp1, 4) if np.sum(high_mask) > 0 else None,
-            "tp1_rate_when_low": round(low_tp1, 4) if np.sum(~high_mask) > 0 else None,
-            "edge_when_high": round(edge, 4),
-            "p75_threshold": round(p75, 1),
+        importance[cond] = {
+            "n_true": n_true,
+            "n_false": n_false,
+            "tp1_when_true": round(tp1_true, 4),
+            "tp1_when_false": round(tp1_false, 4),
+            "sl_when_true": round(sl_true, 4),
+            "sl_when_false": round(sl_false, 4),
+            "dd_when_true": round(float(dd_true), 3),
+            "dd_when_false": round(float(dd_false), 3),
+            "edge": round(tp1_true - tp1_false, 4),
         }
 
     return importance
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# Combination analysis
+# ────────────────────────────────────────────────────────────────────────────
+
+def _combination_scan(all_events: list[dict], baseline_tp1: float) -> list[dict]:
+    """Test specific condition combinations that might produce edge."""
+    combos = [
+        ("vol_contract+stacked", ["vol_contracting", "mas_stacked"]),
+        ("vol_contract+stacked+strong_close", ["vol_contracting", "mas_stacked", "close_strong"]),
+        ("vol_contract+stacked+higher_lows", ["vol_contracting", "mas_stacked", "higher_lows"]),
+        ("vol_contract+close_trend_up", ["vol_contracting", "close_trend_up"]),
+        ("vol_expand_up+stacked", ["vol_expanding_up", "mas_stacked"]),
+        ("vol_expand_up+stacked+strong_close", ["vol_expanding_up", "mas_stacked", "close_strong"]),
+        ("stacked+above_ma10+higher_lows", ["mas_stacked", "price_above_ma10", "higher_lows"]),
+        ("stacked+tight_range+vol_contract", ["mas_stacked", "range_tight", "vol_contracting"]),
+        ("stacked+close_trend_up+above_ma10", ["mas_stacked", "close_trend_up", "price_above_ma10"]),
+        ("above_ma50+NOT_above_ma10+higher_lows", None),  # pullback within trend
+    ]
+
+    results = []
+    for name, conds in combos:
+        if conds is None:
+            # Special: pullback within trend
+            matched = [e for e in all_events
+                       if e.get("conditions", {}).get("price_above_ma50")
+                       and not e.get("conditions", {}).get("price_above_ma10")
+                       and e.get("conditions", {}).get("higher_lows")]
+        else:
+            matched = [e for e in all_events
+                       if all(e.get("conditions", {}).get(c) for c in conds)]
+
+        not_matched = [e for e in all_events if e not in matched]
+
+        n = len(matched)
+        if n < 30:
+            results.append({"combo": name, "n": n, "edge": None})
+            continue
+
+        stats = _bucket_stats(matched, baseline_tp1)
+        stats_anti = _bucket_stats(not_matched, baseline_tp1)
+        tp = _time_profile(matched)
+
+        results.append({
+            "combo": name,
+            "n": n,
+            "tp1_win_rate": stats["tp1_win_rate"],
+            "sl_hit_rate": stats["sl_hit_rate"],
+            "avg_dd_pct": stats["avg_dd_pct"],
+            "avg_days_to_tp1": stats["avg_days_to_tp1"],
+            "tp1_then_tp2": stats["tp1_then_tp2_rate"],
+            "edge_vs_baseline": stats["edge_vs_baseline"],
+            "edge_vs_anti": round(stats["tp1_win_rate"] - stats_anti["tp1_win_rate"], 4),
+            "avg_return_T5": stats["avg_return_T5_pct"],
+            "avg_return_T10": stats["avg_return_T10_pct"],
+            "time_profile": tp,
+        })
+
+    results.sort(key=lambda x: -(x.get("edge_vs_baseline") or -1))
+    return results
 
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -355,20 +346,14 @@ def _component_importance(all_events: list[dict], baseline_tp1: float) -> dict:
 # ────────────────────────────────────────────────────────────────────────────
 
 def run_backtest(tickers: list[str] | None = None,
-                 dry_run: bool = False,
-                 reference_only: bool = False) -> dict:
+                 dry_run: bool = False) -> dict:
     if tickers is None:
         tickers = load_universe()
-    # Always include reference tickers
-    for rt in REFERENCE_TICKERS:
-        if rt not in tickers:
-            tickers.append(rt)
-    print(f"[readiness] Universe: {len(tickers)} tickers")
-    print(f"[readiness] BT window: {BT_START} → {BT_END}")
-    print(f"[readiness] Thresholds: {THRESHOLDS}")
+    print(f"[momentum] Universe: {len(tickers)} tickers")
+    print(f"[momentum] BT window: {BT_START} -> {BT_END}")
 
     # Phase 1: Pull bars
-    print("\n── Phase 1: Pulling daily bars ──")
+    print("\n-- Phase 1: Pulling daily bars --")
     all_bars: dict[str, pd.DataFrame] = {}
     failed = []
     for i, tk in enumerate(tickers, 1):
@@ -380,69 +365,41 @@ def run_backtest(tickers: list[str] | None = None,
         else:
             all_bars[tk] = df
             print(f"{len(df)} bars")
-        if dry_run and i >= 6:
+        if dry_run and i >= 8:
             break
 
-    # Phase 2: Compute daily readiness for every ticker
-    print(f"\n── Phase 2: Computing readiness scores ({len(all_bars)} tickers) ──")
-    all_readiness: dict[str, list[dict]] = {}
+    # Phase 2: Compute momentum states for every ticker
+    print(f"\n-- Phase 2: Computing momentum states ({len(all_bars)} tickers) --")
+    all_momentum: dict[str, list[dict]] = {}
     for i, (tk, bars) in enumerate(all_bars.items(), 1):
-        scores = readiness_for_bars(bars)
-        all_readiness[tk] = scores
+        states = momentum_for_bars(bars)
+        all_momentum[tk] = states
         if i <= 3 or i % 30 == 0:
-            n_bt = sum(1 for s in scores
+            n_bt = sum(1 for s in states
                        if pd.Timestamp(BT_START) <= s["date"] <= pd.Timestamp(BT_END))
-            print(f"  [{i}/{len(all_bars)}] {tk}: {len(scores)} total, {n_bt} in BT window")
+            print(f"  [{i}/{len(all_bars)}] {tk}: {len(states)} total, {n_bt} in BT window")
 
-    # Phase 2b: Reference case validation (always runs)
-    print("\n── Phase 2b: Reference case validation ──")
-    ref_results = _validate_reference_cases(all_bars)
-    for tk, ref in ref_results.items():
-        status = ref.get("status", "?")
-        if status == "OK":
-            checks = ref.get("checks", {})
-            check_str = ", ".join(f"{k}={v}" for k, v in checks.items())
-            scores = [d["score"] for d in ref.get("daily", [])]
-            print(f"  {tk}: {scores}")
-            print(f"    checks: {check_str}")
-        else:
-            print(f"  {tk}: {status}")
-
-    if reference_only:
-        result = {
-            "run_date": str(pd.Timestamp.now().date()),
-            "mode": "reference_only",
-            "reference_cases": ref_results,
-            "weights": DEFAULT_WEIGHTS,
-        }
-        _save_result(result)
-        return result
-
-    # Phase 3: Build trigger events per threshold + baseline
-    print(f"\n── Phase 3: Trigger events + baseline ──")
+    # Phase 3: Build events
+    print(f"\n-- Phase 3: Building events --")
     bt_start = pd.Timestamp(BT_START)
     bt_end = pd.Timestamp(BT_END)
 
-    # Baseline: every (ticker, date) pair
-    baseline_events: list[dict] = []
-    # All scored events (for component importance)
-    all_scored_events: list[dict] = []
-    # Per-threshold triggers
-    threshold_triggers: dict[int, list[dict]] = {t: [] for t in THRESHOLDS}
+    all_events: list[dict] = []
+    state_events: dict[str, list[dict]] = {s: [] for s in STATES}
 
+    # Per-state cooldown tracking per ticker
     total_dates = 0
     total_brackets = 0
 
-    for tk, scores in all_readiness.items():
+    for tk, states in all_momentum.items():
         bars = all_bars[tk]
-        bt_scores = [s for s in scores if bt_start <= s["date"] <= bt_end]
-        if not bt_scores:
+        bt_states = [s for s in states if bt_start <= s["date"] <= bt_end]
+        if not bt_states:
             continue
 
-        # Per-threshold: track last trigger date for cooldown
-        last_trigger: dict[int, pd.Timestamp | None] = {t: None for t in THRESHOLDS}
+        last_trigger_per_state: dict[str, pd.Timestamp | None] = {s: None for s in STATES}
 
-        for s in bt_scores:
+        for s in bt_states:
             dt = s["date"]
             total_dates += 1
 
@@ -457,125 +414,115 @@ def run_backtest(tickers: list[str] | None = None,
             ev = {
                 "ticker": tk,
                 "date": str(dt.date()) if hasattr(dt, "date") else str(dt),
-                "score": s["score"],
-                "stage": s["stage"],
-                "components": s["components"],
+                "state": s["state"],
+                "conviction": s["conviction"],
+                "conditions": s["conditions"],
                 "fwd": fwd,
             }
 
-            baseline_events.append(ev)
-            all_scored_events.append(ev)
+            all_events.append(ev)
 
-            # Check threshold crossings
-            score = s["score"]
-            for t in THRESHOLDS:
-                if score >= t:
-                    lt = last_trigger[t]
-                    if lt is None or (dt - lt).days >= COOLDOWN:
-                        threshold_triggers[t].append(ev)
-                        last_trigger[t] = dt
+            # State-specific with cooldown
+            ms = s["state"]
+            lt = last_trigger_per_state[ms]
+            if lt is None or (dt - lt).days >= COOLDOWN:
+                state_events[ms].append(ev)
+                last_trigger_per_state[ms] = dt
 
-    print(f"  Total dates scanned: {total_dates:,}")
+    print(f"  Total dates: {total_dates:,}")
     print(f"  Valid brackets: {total_brackets:,}")
-    print(f"  Baseline events: {len(baseline_events):,}")
-    for t in THRESHOLDS:
-        print(f"  Threshold {t}: {len(threshold_triggers[t]):,} triggers")
+    print(f"  Total events: {len(all_events):,}")
+    for s in STATES:
+        print(f"  {s:20s}: {len(state_events[s]):,} (with cooldown)")
 
-    # Phase 4: Compute stats
-    print(f"\n── Phase 4: Stats ──")
-    bl_stats = _bucket_stats(baseline_events)
+    # Phase 4: Stats per state
+    print(f"\n-- Phase 4: State stats --")
+    bl_stats = _bucket_stats(all_events)
     bl_tp1 = bl_stats["tp1_win_rate"]
 
-    threshold_results = {}
-    best_threshold = None
-    best_edge = -999
-
-    for t in THRESHOLDS:
-        evs = threshold_triggers[t]
+    state_results = {}
+    for s in STATES:
+        evs = state_events[s]
         stats = _bucket_stats(evs, bl_tp1)
         tp = _time_profile(evs)
 
-        # Trajectory cross-test within this threshold
+        # Conviction sub-buckets within this state
+        conv_buckets = {}
+        for lo_b, hi_b, label in CONVICTION_BUCKETS:
+            bucket_evs = [e for e in evs if lo_b <= e["conviction"] < hi_b]
+            conv_buckets[label] = _bucket_stats(bucket_evs, bl_tp1)
+
+        # Trajectory within this state
         traj_buckets: dict[str, list[dict]] = {
-            "BUILDING": [], "STABLE": [], "CHOPPY": [], "DEGRADING": [],
+            "IMPROVING": [], "STABLE": [], "DETERIORATING": [], "MIXED": [],
         }
         for ev in evs:
-            tk_scores = all_readiness.get(ev["ticker"], [])
+            tk_states = all_momentum.get(ev["ticker"], [])
             ev_date = pd.Timestamp(ev["date"])
             idx = None
-            for si, s in enumerate(tk_scores):
-                if s["date"] == ev_date:
+            for si, ms in enumerate(tk_states):
+                if ms["date"] == ev_date:
                     idx = si
                     break
             if idx is not None and idx >= 4:
-                s5 = [tk_scores[idx - 4 + j]["score"] for j in range(5)]
+                s5 = [tk_states[idx - 4 + j]["state"] for j in range(5)]
                 traj = classify_trajectory(s5)
             else:
-                traj = "CHOPPY"
+                traj = "MIXED"
             if traj in traj_buckets:
                 traj_buckets[traj].append(ev)
-
         traj_stats = {k: _bucket_stats(v, bl_tp1) for k, v in traj_buckets.items()}
 
-        threshold_results[str(t)] = {
+        state_results[s] = {
             "stats": stats,
             "time_profile": tp,
+            "conviction_buckets": conv_buckets,
             "trajectory": traj_stats,
         }
 
-        edge = stats["edge_vs_baseline"]
-        if stats["n"] >= 50 and edge > best_edge:
-            best_edge = edge
-            best_threshold = t
+        edge = stats["edge_vs_baseline"] * 100
+        print(f"  {s:20s}  n={stats['n']:>5,}  TP1={stats['tp1_win_rate']*100:>5.1f}%  "
+              f"Edge={edge:>+5.1f}pp  SL={stats['sl_hit_rate']*100:>5.1f}%  "
+              f"DD={stats['avg_dd_pct']:>+6.2f}%")
 
-    # Phase 5: Component importance
-    print(f"\n── Phase 5: Component importance ──")
-    importance = _component_importance(all_scored_events, bl_tp1)
-    for comp, imp in importance.items():
-        corr = imp.get("correlation", 0) or 0
-        edge = imp.get("edge_when_high", 0) or 0
-        print(f"  {comp:15s}  corr={corr:+.3f}  edge_high={edge:+.3f}")
+    # Phase 5: Condition importance
+    print(f"\n-- Phase 5: Condition importance --")
+    cond_imp = _condition_importance(all_events, bl_tp1)
+    sorted_cond = sorted(cond_imp.items(),
+                         key=lambda x: abs(x[1].get("edge") or 0), reverse=True)
+    for cond, data in sorted_cond:
+        edge = data.get("edge")
+        if edge is not None:
+            print(f"  {cond:30s}  edge={edge*100:>+5.1f}pp  "
+                  f"TP1(T)={data['tp1_when_true']*100:>5.1f}%  "
+                  f"TP1(F)={data['tp1_when_false']*100:>5.1f}%  "
+                  f"n={data['n_true']:,}/{data['n_false']:,}")
+        else:
+            print(f"  {cond:30s}  n_true={data['n_true']} (insufficient)")
 
-    # Phase 6: Build result
-    print(f"\n── Phase 6: Results ──")
+    # Phase 6: Combination scan
+    print(f"\n-- Phase 6: Condition combinations --")
+    combos = _combination_scan(all_events, bl_tp1)
+    for c in combos:
+        edge = c.get("edge_vs_baseline")
+        if edge is not None:
+            print(f"  {c['combo']:40s}  n={c['n']:>5,}  "
+                  f"TP1={c['tp1_win_rate']*100:>5.1f}%  "
+                  f"Edge={edge*100:>+5.1f}pp  "
+                  f"SL={c['sl_hit_rate']*100:>5.1f}%")
+        else:
+            print(f"  {c['combo']:40s}  n={c['n']} (insufficient)")
 
-    # Pass/fail
-    pf: dict = {}
-    if best_threshold is not None:
-        bt = threshold_results[str(best_threshold)]
-        bt_stats = bt["stats"]
-        pf["readiness_signal"] = {
-            "criterion": f"Threshold {best_threshold}: TP1 win >= baseline+5pp, n>=50, "
-                         f"days_to_tp1 4-8, drawdown shallower than baseline",
-            "verdict": "PASS" if (
-                bt_stats["edge_vs_baseline"] >= 0.05
-                and bt_stats["n"] >= 50
-                and 4 <= bt_stats["avg_days_to_tp1"] <= 8
-                and bt_stats["avg_dd_pct"] > bl_stats["avg_dd_pct"]
-            ) else "FAIL",
-            "best_threshold": best_threshold,
-            "edge": bt_stats["edge_vs_baseline"],
-            "n": bt_stats["n"],
-        }
+    # Phase 7: State distribution (how often is each state seen?)
+    print(f"\n-- Phase 7: State distribution --")
+    state_dist = {}
+    for s in STATES:
+        count = sum(1 for e in all_events if e["state"] == s)
+        pct = count / len(all_events) * 100 if all_events else 0
+        state_dist[s] = {"count": count, "pct": round(pct, 1)}
+        print(f"  {s:20s}  {count:>6,}  ({pct:>5.1f}%)")
 
-        # Trajectory adds edge?
-        bld = bt["trajectory"].get("BUILDING", {})
-        chp = bt["trajectory"].get("CHOPPY", {})
-        pf["trajectory_filter"] = {
-            "criterion": "BUILDING adds >= 3pp edge over CHOPPY within best threshold",
-            "verdict": "PASS" if (
-                bld.get("n", 0) >= 30
-                and bld.get("tp1_win_rate", 0) - chp.get("tp1_win_rate", 0) >= 0.03
-            ) else "FAIL",
-        }
-    else:
-        pf["readiness_signal"] = {
-            "criterion": "No threshold with n>=50",
-            "verdict": "FAIL",
-            "best_threshold": None,
-        }
-        pf["trajectory_filter"] = {"criterion": "N/A", "verdict": "FAIL"}
-
+    # Build result
     result = {
         "run_date": str(pd.Timestamp.now().date()),
         "universe_size": len(tickers),
@@ -583,17 +530,17 @@ def run_backtest(tickers: list[str] | None = None,
         "bracket_method": "ATR14 x 2.0 DSL, TP1 = 1.5R, TP2 = 2.0R",
         "max_forward_days": FORWARD_SESSIONS,
         "cooldown_sessions": COOLDOWN,
-        "weights": DEFAULT_WEIGHTS,
         "total_dates_scanned": total_dates,
         "total_brackets": total_brackets,
+        "total_events": len(all_events),
         "data_unavailable": failed,
         "baseline": bl_stats,
-        "baseline_time_profile": _time_profile(baseline_events),
-        "thresholds": threshold_results,
-        "best_threshold": best_threshold,
-        "component_importance": importance,
-        "reference_cases": ref_results,
-        "pass_fail": pf,
+        "baseline_time_profile": _time_profile(all_events),
+        "state_distribution": state_dist,
+        "states": state_results,
+        "condition_importance": cond_imp,
+        "condition_combinations": combos,
+        "pass_fail": _build_verdicts(state_results, bl_stats, combos),
     }
 
     _save_result(result)
@@ -601,12 +548,95 @@ def run_backtest(tickers: list[str] | None = None,
     return result
 
 
+def _build_verdicts(state_results: dict, bl_stats: dict, combos: list[dict]) -> dict:
+    """Build pass/fail verdicts."""
+    bl_tp1 = bl_stats["tp1_win_rate"]
+    pf = {}
+
+    # 1. Do states discriminate? Best state edge >= 3pp, worst <= -3pp
+    best_state = max(state_results.items(),
+                     key=lambda x: x[1]["stats"]["edge_vs_baseline"])
+    worst_state = min(state_results.items(),
+                      key=lambda x: x[1]["stats"]["edge_vs_baseline"])
+    spread = best_state[1]["stats"]["edge_vs_baseline"] - worst_state[1]["stats"]["edge_vs_baseline"]
+    pf["state_discrimination"] = {
+        "criterion": "Best-to-worst state spread >= 6pp, both n>=100",
+        "verdict": "PASS" if (
+            spread >= 0.06
+            and best_state[1]["stats"]["n"] >= 100
+            and worst_state[1]["stats"]["n"] >= 100
+        ) else "FAIL",
+        "best_state": best_state[0],
+        "best_edge": best_state[1]["stats"]["edge_vs_baseline"],
+        "worst_state": worst_state[0],
+        "worst_edge": worst_state[1]["stats"]["edge_vs_baseline"],
+        "spread": round(spread, 4),
+    }
+
+    # 2. HIGH_CONVICTION is the go signal — does it have real edge?
+    hc = state_results.get("HIGH_CONVICTION", {}).get("stats", {})
+    pf["high_conviction_signal"] = {
+        "criterion": "HIGH_CONVICTION: edge >= 5pp, n >= 50, SL <= baseline SL",
+        "verdict": "PASS" if (
+            hc.get("edge_vs_baseline", 0) >= 0.05
+            and hc.get("n", 0) >= 50
+            and hc.get("sl_hit_rate", 1) <= bl_stats.get("sl_hit_rate", 0) + 0.02
+        ) else "FAIL",
+        "edge": hc.get("edge_vs_baseline", 0),
+        "n": hc.get("n", 0),
+        "sl_rate": hc.get("sl_hit_rate", 0),
+    }
+
+    # 3. BREAKING_DOWN should be a avoid signal — negative edge
+    bd = state_results.get("BREAKING_DOWN", {}).get("stats", {})
+    pf["breakdown_avoidance"] = {
+        "criterion": "BREAKING_DOWN: edge <= -3pp, n >= 100",
+        "verdict": "PASS" if (
+            bd.get("edge_vs_baseline", 0) <= -0.03
+            and bd.get("n", 0) >= 100
+        ) else "FAIL",
+        "edge": bd.get("edge_vs_baseline", 0),
+        "n": bd.get("n", 0),
+    }
+
+    # 4. PULLBACK_HEALTHY should outperform BREAKING_DOWN
+    ph = state_results.get("PULLBACK_HEALTHY", {}).get("stats", {})
+    pf["pullback_discrimination"] = {
+        "criterion": "PULLBACK_HEALTHY TP1 > BREAKING_DOWN TP1 by >= 3pp, both n>=50",
+        "verdict": "PASS" if (
+            ph.get("tp1_win_rate", 0) - bd.get("tp1_win_rate", 0) >= 0.03
+            and ph.get("n", 0) >= 50
+            and bd.get("n", 0) >= 50
+        ) else "FAIL",
+    }
+
+    # 5. Any condition combination with meaningful edge?
+    best_combo = None
+    for c in combos:
+        e = c.get("edge_vs_baseline")
+        if e is not None and c["n"] >= 100:
+            if best_combo is None or e > best_combo.get("edge_vs_baseline", 0):
+                best_combo = c
+    pf["combo_edge"] = {
+        "criterion": "At least one combination with edge >= 3pp, n >= 100",
+        "verdict": "PASS" if (
+            best_combo is not None
+            and best_combo.get("edge_vs_baseline", 0) >= 0.03
+        ) else "FAIL",
+        "best_combo": best_combo.get("combo") if best_combo else None,
+        "best_edge": best_combo.get("edge_vs_baseline") if best_combo else None,
+        "best_n": best_combo.get("n") if best_combo else None,
+    }
+
+    return pf
+
+
 def _save_result(result: dict) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = OUTPUT_DIR / "mathlab_readiness.json"
     with open(out_path, "w") as f:
         json.dump(result, f, indent=2, default=str)
-    print(f"\n  Results → {out_path}")
+    print(f"\n  Results -> {out_path}")
 
 
 def _print_summary(result: dict) -> None:
@@ -614,89 +644,53 @@ def _print_summary(result: dict) -> None:
     bl_tp1 = bl.get("tp1_win_rate", 0) * 100
 
     print("\n" + "=" * 78)
-    print("  AQE READINESS SCORE — BACKTEST RESULTS")
+    print("  AQE MOMENTUM INTELLIGENCE - BACKTEST RESULTS")
     print("=" * 78)
     print(f"  Universe: {result['universe_size']} tickers | "
           f"Dates: {result['total_dates_scanned']:,} | "
-          f"Brackets: {result['total_brackets']:,}")
+          f"Events: {result['total_events']:,}")
     print(f"  Baseline TP1: {bl_tp1:.1f}% | SL: {bl.get('sl_hit_rate',0)*100:.1f}% | "
           f"DD: {bl.get('avg_dd_pct',0):+.2f}%")
 
-    print(f"\n── THRESHOLD RESULTS ──")
-    print(f"  {'Thresh':>6s}  {'N':>6s}  {'TP1%':>6s}  {'Edge':>6s}  {'SL%':>6s}  "
-          f"{'DD%':>7s}  {'d→TP1':>5s}  {'TP1→2':>5s}")
-    for t in THRESHOLDS:
-        ts = result["thresholds"].get(str(t), {}).get("stats", {})
-        edge = ts.get("edge_vs_baseline", 0) * 100
-        marker = " ◀" if t == result.get("best_threshold") else ""
-        print(f"  {t:>6d}  {ts.get('n',0):>6d}  "
-              f"{ts.get('tp1_win_rate',0)*100:>5.1f}%  "
+    # State results
+    print(f"\n-- STATE RESULTS --")
+    print(f"  {'State':20s}  {'N':>6s}  {'TP1%':>6s}  {'Edge':>6s}  {'SL%':>6s}  "
+          f"{'DD%':>7s}  {'d->TP1':>6s}  {'T+5':>6s}  {'T+10':>6s}")
+    for s in STATES:
+        sr = result["states"].get(s, {}).get("stats", {})
+        edge = sr.get("edge_vs_baseline", 0) * 100
+        print(f"  {s:20s}  {sr.get('n',0):>6,}  "
+              f"{sr.get('tp1_win_rate',0)*100:>5.1f}%  "
               f"{edge:>+5.1f}  "
-              f"{ts.get('sl_hit_rate',0)*100:>5.1f}%  "
-              f"{ts.get('avg_dd_pct',0):>+6.2f}%  "
-              f"{ts.get('avg_days_to_tp1',0):>5.1f}  "
-              f"{ts.get('tp1_then_tp2_rate',0)*100:>5.1f}%{marker}")
+              f"{sr.get('sl_hit_rate',0)*100:>5.1f}%  "
+              f"{sr.get('avg_dd_pct',0):>+6.2f}%  "
+              f"{sr.get('avg_days_to_tp1',0):>5.1f}  "
+              f"{sr.get('avg_return_T5_pct',0):>+5.2f}  "
+              f"{sr.get('avg_return_T10_pct',0):>+5.2f}")
 
-    bt = result.get("best_threshold")
-    if bt:
-        traj = result["thresholds"][str(bt)].get("trajectory", {})
-        print(f"\n── TRAJECTORY CROSS-TEST (threshold={bt}) ──")
-        for tr in ("BUILDING", "STABLE", "CHOPPY", "DEGRADING"):
-            ts = traj.get(tr, {})
-            print(f"  {tr:15s}  n={ts.get('n',0):>5d}  "
-                  f"TP1={ts.get('tp1_win_rate',0)*100:>5.1f}%  "
-                  f"Edge={ts.get('edge_vs_baseline',0)*100:>+5.1f}pp")
+    # Condition importance (top 10)
+    print(f"\n-- TOP CONDITIONS BY EDGE --")
+    cond = result.get("condition_importance", {})
+    sorted_c = sorted(cond.items(), key=lambda x: abs(x[1].get("edge") or 0), reverse=True)
+    for c, data in sorted_c[:10]:
+        edge = data.get("edge")
+        if edge is not None:
+            print(f"  {c:30s}  edge={edge*100:>+5.1f}pp  "
+                  f"n={data['n_true']:,}/{data['n_false']:,}")
 
-    # Time profile for best threshold
-    if bt:
-        tp = result["thresholds"][str(bt)].get("time_profile", {})
-        bl_tp = result.get("baseline_time_profile", {})
-        print(f"\n── TIME PROFILE (threshold={bt} vs baseline) ──")
-        header = f"  {'':15s}"
-        for h in RETURN_HORIZONS:
-            header += f"  T+{h:>2d}"
-        print(header)
-        row_sig = f"  {'Signal':15s}"
-        row_bl = f"  {'Baseline':15s}"
-        for h in RETURN_HORIZONS:
-            k = f"T+{h}"
-            row_sig += f"  {tp.get(k,{}).get('avg_return_pct',0):>+5.2f}"
-            row_bl += f"  {bl_tp.get(k,{}).get('avg_return_pct',0):>+5.2f}"
-        print(row_sig)
-        print(row_bl)
-
-    # Component importance
-    print(f"\n── COMPONENT IMPORTANCE ──")
-    imp = result.get("component_importance", {})
-    sorted_imp = sorted(imp.items(), key=lambda x: abs(x[1].get("correlation", 0) or 0), reverse=True)
-    for comp, data in sorted_imp:
-        corr = data.get("correlation", 0) or 0
-        edge = data.get("edge_when_high", 0) or 0
-        print(f"  {comp:15s}  corr={corr:+.4f}  edge_high={edge:+.4f}")
-
-    # Reference cases
-    print(f"\n── REFERENCE CASES ──")
-    for tk in REFERENCE_TICKERS:
-        ref = result.get("reference_cases", {}).get(tk, {})
-        if ref.get("status") == "OK":
-            daily = ref.get("daily", [])
-            scores = [d["score"] for d in daily]
-            stages = [d["stage"] for d in daily[-3:]] if len(daily) >= 3 else []
-            checks = ref.get("checks", {})
-            pass_checks = sum(1 for v in checks.values() if v is True)
-            total_checks = sum(1 for v in checks.values() if v is not None)
-            print(f"  {tk}: {scores}")
-            print(f"    Last 3 stages: {stages}")
-            print(f"    Checks: {pass_checks}/{total_checks} pass — {checks}")
-        else:
-            print(f"  {tk}: {ref.get('status', '?')}")
+    # Combinations
+    print(f"\n-- CONDITION COMBINATIONS --")
+    for c in result.get("condition_combinations", []):
+        edge = c.get("edge_vs_baseline")
+        if edge is not None:
+            print(f"  {c['combo']:40s}  n={c['n']:>5,}  edge={edge*100:>+5.1f}pp")
 
     # Pass/fail
-    print(f"\n── PASS / FAIL ──")
+    print(f"\n-- PASS / FAIL --")
     pf = result.get("pass_fail", {})
     for key, entry in pf.items():
         v = entry.get("verdict", "?")
-        marker = "✓" if v == "PASS" else "✗"
+        marker = "V" if v == "PASS" else "X"
         print(f"  {marker} {key}: {v}")
         print(f"    ({entry.get('criterion', '')})")
 
@@ -709,21 +703,19 @@ def _print_summary(result: dict) -> None:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="AQE Readiness Score Backtest")
+    parser = argparse.ArgumentParser(description="AQE Momentum Intelligence Backtest")
     parser.add_argument("--dry-run", action="store_true",
-                        help="First 6 tickers only (incl. reference)")
+                        help="First 8 tickers only")
     parser.add_argument("--refresh", action="store_true",
                         help="Force re-pull all bars from FMP")
-    parser.add_argument("--reference-only", action="store_true",
-                        help="Only compute reference cases (VSCO/BROS/CAT)")
     args = parser.parse_args()
 
     if args.refresh:
         import shutil
         if CACHE_DIR.exists():
             n = len(list(CACHE_DIR.glob("*.parquet")))
-            print(f"[readiness] --refresh: clearing {n} cached files")
+            print(f"[momentum] --refresh: clearing {n} cached files")
             shutil.rmtree(CACHE_DIR)
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-    run_backtest(dry_run=args.dry_run, reference_only=args.reference_only)
+    run_backtest(dry_run=args.dry_run)
