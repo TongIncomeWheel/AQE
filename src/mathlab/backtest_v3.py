@@ -66,7 +66,16 @@ def _cache_path(ticker: str) -> Path:
 def pull_daily_bars(ticker: str, force: bool = False) -> pd.DataFrame:
     p = _cache_path(ticker)
     if p.exists() and not force:
-        return pd.read_parquet(p)
+        df = pd.read_parquet(p)
+        if not df.empty:
+            df["date"] = pd.to_datetime(df["date"]).dt.normalize()
+            bt_start_ts = pd.Timestamp(BT_START)
+            bt_end_ts = pd.Timestamp(BT_END)
+            n_bt = int(((df["date"] >= bt_start_ts) & (df["date"] <= bt_end_ts)).sum())
+            if n_bt < 200 and not force:
+                print(f"STALE({n_bt} bt-dates)→re-pull ", end="", flush=True)
+                return pull_daily_bars(ticker, force=True)
+        return df
     from src.data.fmp_client import FMPClient, FMPError
     try:
         fc = FMPClient()
@@ -633,17 +642,46 @@ def run_backtest(tickers: list[str] | None = None,
 
     sector_map = load_sector_map()
 
+    # Phase 1c: data coverage summary
+    bt_start_ts = pd.Timestamp(BT_START)
+    bt_end_ts = pd.Timestamp(BT_END)
+    bar_counts = []
+    for tk, bars in all_bars.items():
+        n_bt = int(((bars["date"] >= bt_start_ts) & (bars["date"] <= bt_end_ts)).sum())
+        bar_counts.append((tk, len(bars), n_bt))
+    bar_counts.sort(key=lambda x: x[2])
+    total_bt_dates = sum(c[2] for c in bar_counts)
+    print(f"\n── Data coverage ──")
+    print(f"  Total bars in BT window: {total_bt_dates:,} across {len(bar_counts)} tickers")
+    print(f"  Expected: ~{len(bar_counts) * 350:,} (182 × ~350 trading days)")
+    if bar_counts:
+        p10 = bar_counts[len(bar_counts) // 10]
+        p50 = bar_counts[len(bar_counts) // 2]
+        print(f"  BT-window dates per ticker: min={bar_counts[0][2]} "
+              f"p10={p10[2]} median={p50[2]} max={bar_counts[-1][2]}")
+        short = [c for c in bar_counts if c[2] < 200]
+        if short:
+            print(f"  ⚠ {len(short)} tickers with < 200 BT dates (short coverage):")
+            for tk, total, bt in short[:10]:
+                print(f"    {tk}: {bt} bt-dates ({total} total bars)")
+            if len(short) > 10:
+                print(f"    ... and {len(short) - 10} more")
+
     # Phase 2: reconstruct signals + record triggers
     print(f"\n── Phase 2: Signal reconstruction ({len(all_bars)} tickers) ──")
     triggers: list[TriggerEvent] = []
     baseline_events: list[TriggerEvent] = []
     ticker_count = 0
+    total_dates_seen = 0
+    total_bracket_ok = 0
+    total_bracket_fail = 0
 
     for tk, bars in all_bars.items():
         ticker_count += 1
         dates = _trading_dates(bars)
         if not dates:
             continue
+        total_dates_seen += len(dates)
         if ticker_count % 20 == 0 or ticker_count <= 3:
             print(f"  [{ticker_count}/{len(all_bars)}] {tk}: {len(dates)} dates")
 
@@ -653,7 +691,9 @@ def run_backtest(tickers: list[str] | None = None,
         for dt in dates:
             bracket = bracket_from_bars(bars, dt)
             if bracket is None:
+                total_bracket_fail += 1
                 continue
+            total_bracket_ok += 1
 
             entry, sl, tp1, tp2, risk, atr14 = bracket
             fwd = scan_forward(bars, dt, entry, sl, tp1, tp2)
@@ -693,6 +733,11 @@ def run_backtest(tickers: list[str] | None = None,
         if dry_run and ticker_count >= 4:
             break
 
+    print(f"\n── Phase 2 summary ──")
+    print(f"  Total trading dates scanned: {total_dates_seen:,}")
+    print(f"  Bracket OK: {total_bracket_ok:,} | Bracket rejected: {total_bracket_fail:,}")
+    if total_dates_seen > 0:
+        print(f"  Bracket pass rate: {total_bracket_ok / total_dates_seen * 100:.1f}%")
     print(f"\n── Phase 3: Aggregation ({len(triggers)} signal events, "
           f"{len(baseline_events)} baseline events) ──")
 
@@ -1003,7 +1048,17 @@ if __name__ == "__main__":
                         help="First 4 tickers only")
     parser.add_argument("--tickers", nargs="+",
                         help="Specific tickers to test")
+    parser.add_argument("--refresh", action="store_true",
+                        help="Force re-pull all bars from FMP (ignore cache)")
     args = parser.parse_args()
+
+    if args.refresh:
+        import shutil
+        if CACHE_DIR.exists():
+            n_cached = len(list(CACHE_DIR.glob("*.parquet")))
+            print(f"[mathlab-v3] --refresh: clearing {n_cached} cached bar files")
+            shutil.rmtree(CACHE_DIR)
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
     tickers = args.tickers
     if tickers:

@@ -889,212 +889,10 @@ if _panels_ready:
 
 
 # ===================================================================
-# Section 6: MathLab AQE Jun Enrichment
+# Section 6: Signal Edge Backtest v3.1
 # ===================================================================
 
-st.header("Section 6: MathLab AQE Jun Enrichment")
-st.caption(
-    "Signal validation backtest: tests whether setup_state, rs_down_day_20d, "
-    "and breakout_conviction predict forward outcomes (TP1 hit rates). "
-    "Reconstructs all signals from FMP daily bars over Jan 2025 -- May 2026."
-)
-
-_enr_result_path = OUTPUT_DIR / "mathlab_backtest_v2.json"
-_enr_run = st.session_state.pop("_enr_run", None)
-
-if _enr_run:
-    _log_ph = st.empty()
-    _status_ph = st.empty()
-    _args_list = [sys.executable, "-u", "-m", "src.mathlab.backtest_v2"]
-    if _enr_run == "dry":
-        _args_list.append("--dry-run")
-    with st.spinner("Running Jun Enrichment backtest (pulls FMP bars + scans history)..."):
-        try:
-            _proc = __import__("subprocess").Popen(
-                _args_list, cwd=str(PROJECT_ROOT),
-                stdout=__import__("subprocess").PIPE,
-                stderr=__import__("subprocess").STDOUT, text=True, bufsize=1,
-            )
-            _buf: list[str] = []
-            assert _proc.stdout is not None
-            for _line in _proc.stdout:
-                _buf.append(_line.rstrip())
-                _log_ph.code("\n".join(_buf[-25:]))
-            _rc = _proc.wait()
-            if _rc == 0:
-                _status_ph.success("Enrichment backtest complete.")
-            else:
-                _status_ph.error(f"Backtest exited with code {_rc}")
-        except Exception as _ex:
-            _status_ph.error(f"Failed to run: {_ex}")
-    st.rerun()
-
-# Buttons
-_ec1, _ec2 = st.columns(2)
-with _ec1:
-    if st.button("Run full backtest", key="enr_bt_full", type="primary",
-                  use_container_width=True,
-                  help="Pulls ~156 tickers from FMP, reconstructs signals over "
-                       "17 months, measures outcomes. First run ~5-10 min (caches bars)."):
-        st.session_state["_enr_run"] = "full"
-        st.rerun()
-with _ec2:
-    if st.button("Dry run (4 tickers)", key="enr_bt_dry",
-                  use_container_width=True,
-                  help="Quick check on first 4 tickers only — validates logic."):
-        st.session_state["_enr_run"] = "dry"
-        st.rerun()
-
-# Display results if available
-if _enr_result_path.exists():
-    import json as _json_enr
-    _enr = _json_enr.loads(_enr_result_path.read_text(encoding="utf-8"))
-    if _enr:
-        _run_date = _enr.get("run_date", "?")
-        _total = _enr.get("total_trigger_events", 0)
-        _usize = _enr.get("universe_size", 0)
-        st.markdown(f"**Last run:** {_run_date} | **Universe:** {_usize} tickers | "
-                    f"**Trigger events:** {_total:,}")
-
-        # ── Pass / Fail verdicts ──
-        _pf = _enr.get("pass_fail", {})
-        _verdicts = []
-        for _hyp, _label in [
-            ("setup_state_hypothesis", "Setup State"),
-            ("rs_leadership_hypothesis", "RS Leadership"),
-            ("breakout_conviction_hypothesis", "Breakout Conviction"),
-        ]:
-            _v = _pf.get(_hyp, "?")
-            _verdicts.append((_label, _v))
-
-        _vc = st.columns(len(_verdicts))
-        for _col, (_lbl, _v) in zip(_vc, _verdicts):
-            with _col:
-                st.metric(_lbl, _v)
-
-        _pass_count = sum(1 for _, v in _verdicts if v == "PASS")
-        if _pass_count == 3:
-            st.success("All three enrichment signals validated. Proceed to production.")
-        elif _pass_count >= 1:
-            st.warning(f"{_pass_count}/3 signals pass. Review failing signals for recalibration.")
-        else:
-            st.error("No signals pass. Review signal definitions before deploying.")
-
-        # ── Setup State table ──
-        st.subheader("Setup State")
-        _ss = _enr.get("setup_state", {})
-        _ss_rows = []
-        for _state in ("BREAKOUT-READY", "CONTINUATION-READY", "BASING", "EXTENDED"):
-            _s = _ss.get(_state, {})
-            _ss_rows.append({
-                "State": _state,
-                "N": _s.get("n", 0),
-                "TP1 Hit %": f"{_s.get('hit_tp1', 0)*100:.1f}%",
-                "Stopped %": f"{_s.get('stopped', 0)*100:.1f}%",
-                "Open %": f"{_s.get('open', 0)*100:.1f}%",
-                "Avg MFE %": f"{_s.get('avg_mfe_pct', 0):+.1f}%",
-                "Avg MAE %": f"{_s.get('avg_mae_pct', 0):+.1f}%",
-                "Days to TP1": f"{_s.get('avg_days_to_tp1', 0):.1f}",
-            })
-        st.dataframe(pd.DataFrame(_ss_rows), use_container_width=True, hide_index=True)
-
-        # ── RS Leadership table ──
-        st.subheader("RS Leadership (Down-Day)")
-        _rs = _enr.get("rs_leadership", {})
-        _rs_rows = []
-        for _lead in ("LEADER", "IN-LINE", "LAGGARD"):
-            _s = _rs.get(_lead, {})
-            _rs_rows.append({
-                "Leadership": _lead,
-                "N": _s.get("n", 0),
-                "TP1 Hit %": f"{_s.get('hit_tp1', 0)*100:.1f}%",
-                "Stopped %": f"{_s.get('stopped', 0)*100:.1f}%",
-                "Avg MFE %": f"{_s.get('avg_mfe_pct', 0):+.1f}%",
-                "Avg MAE %": f"{_s.get('avg_mae_pct', 0):+.1f}%",
-            })
-        st.dataframe(pd.DataFrame(_rs_rows), use_container_width=True, hide_index=True)
-
-        # ── Breakout Conviction Grade table ──
-        st.subheader("Breakout Conviction Grade")
-        _bg = _enr.get("breakout_conviction_grade", {})
-        _bg_rows = []
-        for _grade in ("A", "B", "C", "D"):
-            _s = _bg.get(_grade, {})
-            _bg_rows.append({
-                "Grade": _grade,
-                "N": _s.get("n", 0),
-                "TP1 Hit %": f"{_s.get('hit_tp1', 0)*100:.1f}%",
-                "Stopped %": f"{_s.get('stopped', 0)*100:.1f}%",
-                "Avg MFE %": f"{_s.get('avg_mfe_pct', 0):+.1f}%",
-                "Days to TP1": f"{_s.get('avg_days_to_tp1', 0):.1f}",
-            })
-        st.dataframe(pd.DataFrame(_bg_rows), use_container_width=True, hide_index=True)
-
-        # ── Breakout Pattern table ──
-        st.subheader("Breakout Pattern")
-        _bp = _enr.get("breakout_pattern", {})
-        _bp_rows = []
-        for _pat in ("TELEGRAPHED_CONTINUATION", "ABSORPTION_REVERSAL",
-                      "SURPRISE_THRUST", "STANDARD_BREAKOUT"):
-            _s = _bp.get(_pat, {})
-            _bp_rows.append({
-                "Pattern": _pat,
-                "N": _s.get("n", 0),
-                "TP1 Hit %": f"{_s.get('hit_tp1', 0)*100:.1f}%",
-                "Avg MFE %": f"{_s.get('avg_mfe_pct', 0):+.1f}%",
-            })
-        st.dataframe(pd.DataFrame(_bp_rows), use_container_width=True, hide_index=True)
-
-        # ── Reference Cases ──
-        st.subheader("Reference Cases")
-        _rc = _enr.get("reference_cases", {})
-        for _key, _case in _rc.items():
-            _actual = _case.get("actual", None)
-            if _actual:
-                st.markdown(f"**{_key}:** {_actual}")
-            else:
-                _parts = []
-                for _f in ("setup_state", "rs_leadership", "breakout_grade",
-                           "breakout_pattern", "outcome"):
-                    _av = _case.get(_f)
-                    _ev = _case.get(f"expected_{_f}")
-                    if _av is not None:
-                        _match = ""
-                        if _ev:
-                            _match = " :white_check_mark:" if str(_av) in str(_ev) else " :x:"
-                        _parts.append(f"{_f}=**{_av}**{_match}")
-                st.markdown(f"**{_key}:** {' | '.join(_parts)}")
-                _note = _case.get("note")
-                if _note:
-                    st.caption(f"  {_note}")
-
-        # ── Warnings ──
-        _warns = _enr.get("sample_warnings", [])
-        if _warns:
-            st.subheader("Warnings")
-            for _w in _warns:
-                st.warning(_w)
-
-        # ── Download ──
-        st.download_button(
-            "Download full results JSON",
-            data=_enr_result_path.read_text(),
-            file_name="mathlab_backtest_v2.json",
-            mime="application/json",
-            key="enr_dl_json",
-        )
-else:
-    st.info(
-        "No enrichment backtest results yet. Click **Run full backtest** above. "
-        "First run pulls daily bars from FMP (~5-10 min, cached after)."
-    )
-
-
-# ===================================================================
-# Section 7: MathLab Backtest v3.1 (Signal Edge)
-# ===================================================================
-
-st.header("Section 7: Signal Edge Backtest v3.1")
+st.header("Section 6: Signal Edge Backtest v3.1")
 st.caption(
     "Does the signal increase the probability of hitting TP1 within 10 sessions, "
     "with less pain on the way there? ATR-based brackets, 5 signal dimensions, "
@@ -1110,6 +908,8 @@ if _v3_run:
     _v3_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_v3"]
     if _v3_run == "dry":
         _v3_args.append("--dry-run")
+    if _v3_run == "refresh":
+        _v3_args.append("--refresh")
     with st.spinner("Running v3.1 backtest (ATR brackets × 5 dimensions × baseline)..."):
         try:
             _v3_proc = __import__("subprocess").Popen(
@@ -1132,15 +932,22 @@ if _v3_run:
     st.rerun()
 
 # Buttons
-_v3c1, _v3c2 = st.columns(2)
+_v3c1, _v3c2, _v3c3 = st.columns(3)
 with _v3c1:
     if st.button("Run full v3.1 backtest", key="v3_bt_full", type="primary",
                   use_container_width=True,
                   help="~182 tickers + 11 sector ETFs + SPY. ATR brackets, 5 signal "
-                       "dimensions, baseline, combined. ~5-10 min (caches bars)."):
+                       "dimensions, baseline, combined. ~5-10 min (uses cached bars)."):
         st.session_state["_v3_run"] = "full"
         st.rerun()
 with _v3c2:
+    if st.button("Fresh pull + run", key="v3_bt_refresh",
+                  use_container_width=True,
+                  help="Clear bar cache and re-pull all bars from FMP. Use if previous "
+                       "run had low coverage (< 50K events). ~10-15 min."):
+        st.session_state["_v3_run"] = "refresh"
+        st.rerun()
+with _v3c3:
     if st.button("Dry run (4 tickers)", key="v3_bt_dry",
                   use_container_width=True,
                   help="Quick 4-ticker logic check."):
