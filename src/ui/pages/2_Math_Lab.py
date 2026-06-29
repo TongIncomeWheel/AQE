@@ -60,13 +60,13 @@ st.title("Math Lab")
 
 # Math Lab needs the full panel + score parquets for sections 1-5.
 # In cloud mode they only exist AFTER the user has run the daily pipeline.
-# Section 6 (enrichment backtest) pulls directly from FMP and doesn't need them.
+# Section 6 (AQE Readiness Score) pulls directly from FMP and doesn't need them.
 _panels_ready = PANEL_DAILY.exists() and SCORES_DAILY.exists()
 if is_cloud_mode() and not _panels_ready:
     st.info(
         "Sections 1-5 need the panel + score parquets. Open the **Scanner** page "
         "and click **Bootstrap + run daily pipeline** first (3-5 min). "
-        "Section 6 (Enrichment backtest) is available now."
+        "Section 6 (AQE Readiness Score) is available now."
     )
 
 st.caption(
@@ -889,244 +889,15 @@ if _panels_ready:
 
 
 # ===================================================================
-# Section 6: Signal Edge Backtest v3.1
+# Section 6: AQE Readiness Score
 # ===================================================================
 
-st.header("Section 6: Signal Edge Backtest v3.1")
+st.header("Section 6: AQE Readiness Score")
 st.caption(
-    "Does the signal increase the probability of hitting TP1 within 10 sessions, "
-    "with less pain on the way there? ATR-based brackets, 5 signal dimensions, "
-    "baseline comparison, combined cross-dimension analysis."
-)
-
-_v3_result_path = OUTPUT_DIR / "mathlab_backtest_v3.json"
-_v3_run = st.session_state.pop("_v3_run", None)
-
-if _v3_run:
-    _v3_log = st.empty()
-    _v3_status = st.empty()
-    _v3_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_v3"]
-    if _v3_run == "dry":
-        _v3_args.append("--dry-run")
-    if _v3_run == "refresh":
-        _v3_args.append("--refresh")
-    with st.spinner("Running v3.1 backtest (ATR brackets × 5 dimensions × baseline)..."):
-        try:
-            _v3_proc = __import__("subprocess").Popen(
-                _v3_args, cwd=str(PROJECT_ROOT),
-                stdout=__import__("subprocess").PIPE,
-                stderr=__import__("subprocess").STDOUT, text=True, bufsize=1,
-            )
-            _v3_buf: list[str] = []
-            assert _v3_proc.stdout is not None
-            for _v3_line in _v3_proc.stdout:
-                _v3_buf.append(_v3_line.rstrip())
-                _v3_log.code("\n".join(_v3_buf[-30:]))
-            _v3_rc = _v3_proc.wait()
-            if _v3_rc == 0:
-                _v3_status.success("v3.1 backtest complete.")
-            else:
-                _v3_status.error(f"Backtest exited with code {_v3_rc}")
-        except Exception as _v3_ex:
-            _v3_status.error(f"Failed to run: {_v3_ex}")
-    st.rerun()
-
-# Buttons
-_v3c1, _v3c2, _v3c3 = st.columns(3)
-with _v3c1:
-    if st.button("Run full v3.1 backtest", key="v3_bt_full", type="primary",
-                  use_container_width=True,
-                  help="~182 tickers + 11 sector ETFs + SPY. ATR brackets, 5 signal "
-                       "dimensions, baseline, combined. ~5-10 min (uses cached bars)."):
-        st.session_state["_v3_run"] = "full"
-        st.rerun()
-with _v3c2:
-    if st.button("Fresh pull + run", key="v3_bt_refresh",
-                  use_container_width=True,
-                  help="Clear bar cache and re-pull all bars from FMP. Use if previous "
-                       "run had low coverage (< 50K events). ~10-15 min."):
-        st.session_state["_v3_run"] = "refresh"
-        st.rerun()
-with _v3c3:
-    if st.button("Dry run (4 tickers)", key="v3_bt_dry",
-                  use_container_width=True,
-                  help="Quick 4-ticker logic check."):
-        st.session_state["_v3_run"] = "dry"
-        st.rerun()
-
-# Display results
-if _v3_result_path.exists():
-    import json as _json_v3
-    _v3 = _json_v3.loads(_v3_result_path.read_text(encoding="utf-8"))
-    if _v3:
-        _v3_run_date = _v3.get("run_date", "?")
-        _v3_total = _v3.get("total_signal_events", 0)
-        _v3_bl_total = _v3.get("total_baseline_events", 0)
-        _v3_usize = _v3.get("universe_size", 0)
-        st.markdown(
-            f"**Last run:** {_v3_run_date} | **Universe:** {_v3_usize} tickers | "
-            f"**Signal events:** {_v3_total:,} | **Baseline events:** {_v3_bl_total:,}"
-        )
-
-        # ── Baseline reference ──
-        _v3_bl = _v3.get("baseline", {})
-        _v3_bl_cols = st.columns(5)
-        with _v3_bl_cols[0]:
-            st.metric("Baseline TP1 Win", f"{_v3_bl.get('tp1_win_rate',0)*100:.1f}%")
-        with _v3_bl_cols[1]:
-            st.metric("Baseline SL Hit", f"{_v3_bl.get('sl_hit_rate',0)*100:.1f}%")
-        with _v3_bl_cols[2]:
-            st.metric("Baseline DD", f"{_v3_bl.get('avg_drawdown_before_tp1_pct',0):+.2f}%")
-        with _v3_bl_cols[3]:
-            st.metric("Baseline T+5", f"{_v3_bl.get('avg_return_T5_pct',0):+.2f}%")
-        with _v3_bl_cols[4]:
-            st.metric("Baseline T+10", f"{_v3_bl.get('avg_return_T10_pct',0):+.2f}%")
-
-        # ── Pass / Fail verdicts ──
-        st.subheader("Pass / Fail Verdicts")
-        _v3_pf = _v3.get("pass_fail", {})
-        _v3_verdict_keys = [
-            ("setup_state", "Setup State"),
-            ("rs_leadership_v2", "RS Leadership v2"),
-            ("breakout_conviction_v2", "Breakout Conviction"),
-            ("sector_context", "Sector Context"),
-            ("conviction_trend", "Conviction Trend"),
-            ("combined_best", "Combined Best"),
-        ]
-        _v3_vcols = st.columns(len(_v3_verdict_keys))
-        _v3_pass_count = 0
-        for _v3_col, (_v3_key, _v3_label) in zip(_v3_vcols, _v3_verdict_keys):
-            with _v3_col:
-                _v3_entry = _v3_pf.get(_v3_key, {})
-                _v3_v = _v3_entry.get("verdict", "?")
-                st.metric(_v3_label, _v3_v)
-                if _v3_v == "PASS":
-                    _v3_pass_count += 1
-
-        if _v3_pass_count >= 5:
-            st.success(f"{_v3_pass_count}/6 signals validated. Strong deployment candidate.")
-        elif _v3_pass_count >= 3:
-            st.warning(f"{_v3_pass_count}/6 signals pass. Review failing dimensions.")
-        else:
-            st.error(f"{_v3_pass_count}/6 signals pass. Signals need recalibration.")
-
-        # ── Dimension tables ──
-        def _v3_dim_table(title, data, bucket_order):
-            st.subheader(title)
-            rows = []
-            for bk in bucket_order:
-                s = data.get(bk, {})
-                rows.append({
-                    "Bucket": bk,
-                    "N": s.get("n", 0),
-                    "TP1 Win %": f"{s.get('tp1_win_rate',0)*100:.1f}%",
-                    "SL Hit %": f"{s.get('sl_hit_rate',0)*100:.1f}%",
-                    "Avg DD %": f"{s.get('avg_drawdown_before_tp1_pct',0):+.2f}%",
-                    "Avg Days→TP1": f"{s.get('avg_days_to_tp1',0):.1f}",
-                    "Med Days→TP1": f"{s.get('median_days_to_tp1',0):.1f}",
-                    "TP1→TP2 %": f"{s.get('tp1_then_tp2_rate',0)*100:.1f}%",
-                    "Edge pp": f"{s.get('edge_vs_baseline_tp1_win',0)*100:+.1f}",
-                })
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-
-        _v3_dim_table("Setup State",
-                      _v3.get("setup_state", {}),
-                      ["BREAKOUT-READY", "CONTINUATION-READY", "BASING", "EXTENDED"])
-
-        _v3_dim_table("RS Leadership v2 (Green-on-Red)",
-                      _v3.get("rs_leadership_v2", {}),
-                      ["LEADER", "IN-LINE", "LAGGARD"])
-
-        _v3_dim_table("Breakout Conviction v2",
-                      _v3.get("breakout_conviction_v2", {}),
-                      ["A", "B", "C"])
-
-        _v3_dim_table("Sector Context",
-                      _v3.get("sector_context", {}),
-                      ["IDIOSYNCRATIC", "MIXED", "SECTOR_DEPENDENT"])
-
-        _v3_dim_table("Conviction Trend",
-                      _v3.get("conviction_trend", {}),
-                      ["BUILDING", "STABLE", "CHOPPY", "DEGRADING"])
-
-        # ── Combined signal (top buckets) ──
-        _v3_cs = _v3.get("combined_signal", {})
-        _v3_cs_buckets = _v3_cs.get("buckets", {})
-        if _v3_cs_buckets:
-            st.subheader("Combined Signal (Top Buckets by TP1 Win)")
-            _v3_cs_sorted = sorted(_v3_cs_buckets.items(),
-                                    key=lambda x: -x[1].get("tp1_win_rate", 0))
-            _v3_cs_rows = []
-            for bk, bs in _v3_cs_sorted[:15]:
-                _v3_cs_rows.append({
-                    "Bucket": bk,
-                    "N": bs.get("n", 0),
-                    "TP1 Win %": f"{bs.get('tp1_win_rate',0)*100:.1f}%",
-                    "Edge pp": f"{bs.get('edge_vs_baseline_tp1_win',0)*100:+.1f}",
-                    "SL Hit %": f"{bs.get('sl_hit_rate',0)*100:.1f}%",
-                    "Avg DD %": f"{bs.get('avg_drawdown_before_tp1_pct',0):+.2f}%",
-                    "Days→TP1": f"{bs.get('avg_days_to_tp1',0):.1f}",
-                    "TP1→TP2 %": f"{bs.get('tp1_then_tp2_rate',0)*100:.1f}%",
-                })
-            st.dataframe(pd.DataFrame(_v3_cs_rows), use_container_width=True, hide_index=True)
-
-            _v3_best = _v3_pf.get("combined_best", {})
-            if _v3_best.get("best_bucket"):
-                st.markdown(
-                    f"**Best bucket:** `{_v3_best['best_bucket']}` — "
-                    f"TP1 win = {_v3_best.get('best_tp1_win_rate',0)*100:.1f}% "
-                    f"(baseline = {_v3_best.get('baseline_tp1_win_rate',0)*100:.1f}%)"
-                )
-
-        # ── Time profile ──
-        _v3_tp = _v3.get("time_profile", {})
-        _v3_tp_signals = ["BREAKOUT-READY", "CONTINUATION-READY", "BASING", "EXTENDED", "BASELINE"]
-        _v3_tp_data = {sig: _v3_tp.get(sig, {}) for sig in _v3_tp_signals if sig in _v3_tp}
-        if _v3_tp_data:
-            st.subheader("Time Profile (Forward Return Curve)")
-            _v3_tp_rows = []
-            for sig in _v3_tp_signals:
-                sp = _v3_tp.get(sig, {})
-                row = {"Signal": sig}
-                for h in (1, 2, 3, 5, 7, 10):
-                    k = f"T+{h}"
-                    val = sp.get(k, {}).get("avg_return_pct", 0)
-                    prof = sp.get(k, {}).get("pct_profitable", 0) * 100
-                    row[k] = f"{val:+.2f}% ({prof:.0f}%)"
-                _v3_tp_rows.append(row)
-            st.dataframe(pd.DataFrame(_v3_tp_rows), use_container_width=True, hide_index=True)
-
-        # ── Warnings ──
-        _v3_warns = _v3.get("sample_warnings", [])
-        if _v3_warns:
-            st.subheader("Warnings")
-            for _v3_w in _v3_warns:
-                st.warning(_v3_w)
-
-        # ── Download ──
-        st.download_button(
-            "Download v3.1 results JSON",
-            data=_v3_result_path.read_text(),
-            file_name="mathlab_backtest_v3.json",
-            mime="application/json",
-            key="v3_dl_json",
-        )
-else:
-    st.info(
-        "No v3.1 backtest results yet. Click **Run full v3.1 backtest** above. "
-        "First run pulls daily + sector ETF bars from FMP (~5-10 min, cached after)."
-    )
-
-
-# ===================================================================
-# Section 7: AQE Readiness Score Backtest
-# ===================================================================
-
-st.header("Section 7: AQE Readiness Score Backtest")
-st.caption(
-    "Progressive daily score (0-100) per ticker. Tests whether the readiness "
-    "score picks WHEN to enter — compares trigger thresholds (50-90) vs random-"
-    "entry baseline. Validates VSCO/BROS/CAT reference cases. Component importance "
+    "Progressive daily score (0-100) per ticker — tells the PM WHEN to enter. "
+    "Builds over days as conditions accumulate (coil evidence, VWAP positioning, "
+    "structure proximity). Tests trigger thresholds (50-90) vs random-entry "
+    "baseline. Validates VSCO/BROS/CAT reference cases. Component importance "
     "analysis identifies which parts of the score drive edge."
 )
 
@@ -1404,7 +1175,7 @@ if _rd_result_path.exists():
 else:
     st.info(
         "No readiness backtest results yet. Click **Run readiness backtest** above. "
-        "Uses the same FMP-cached daily bars as v3.1."
+        "First run pulls daily bars from FMP (~5-10 min, cached after)."
     )
 
 
