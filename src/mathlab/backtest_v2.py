@@ -33,6 +33,7 @@ import pandas as pd
 WARMUP_START = "2024-10-01"
 BT_START = "2025-01-01"
 BT_END = "2026-05-30"
+PULL_END = "2026-06-30"       # pull bars past BT_END for outcome measurement
 FORWARD_SESSIONS = 10
 
 STOP_PCT = 0.05           # 5% proxy stop
@@ -61,7 +62,7 @@ def pull_daily_bars(ticker: str, force: bool = False) -> pd.DataFrame:
     from src.data.fmp_client import FMPClient, FMPError
     try:
         fc = FMPClient()
-        df = fc.get_daily_bars(ticker, from_date=WARMUP_START, to_date=BT_END)
+        df = fc.get_daily_bars(ticker, from_date=WARMUP_START, to_date=PULL_END)
         if df.empty:
             return df
         p.parent.mkdir(parents=True, exist_ok=True)
