@@ -488,98 +488,327 @@ def _type_group_summary(feature_results: dict) -> dict:
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# Phase 6: Combination finder — the actual recipe engine
+# Phase 6: Recipe discovery — Lasso + Random Forest + Forward Stepwise
+#           + Walk-Forward validation
 # ────────────────────────────────────────────────────────────────────────────
 
-TOP_N_FOR_COMBOS = 15
-MIN_COMBO_N = 200
-
-def _normalize_feature(vals: np.ndarray) -> np.ndarray:
-    """Percentile-rank normalize a feature to 0-100 (handles NaN)."""
-    out = np.full_like(vals, np.nan)
-    mask = ~np.isnan(vals)
-    if mask.sum() < 10:
-        return out
-    from scipy.stats import rankdata
-    ranked = rankdata(vals[mask], method="average")
-    out[mask] = (ranked - 1) / (len(ranked) - 1) * 100
-    return out
+WALK_FORWARD_SPLIT = "2025-10-01"
+MIN_FEATURE_N = 200
 
 
-def _combo_score(rows: list[dict], features: list[str],
-                 weights: list[float]) -> np.ndarray:
-    """Build a weighted composite from normalized features."""
-    n = len(rows)
-    arrays = {}
-    for fn in features:
-        raw = np.array([r.get(fn, np.nan) for r in rows], dtype=float)
-        arrays[fn] = _normalize_feature(raw)
-    composite = np.zeros(n)
-    total_w = sum(weights)
-    for fn, w in zip(features, weights):
-        normed = arrays[fn]
-        valid = ~np.isnan(normed)
-        composite[valid] += normed[valid] * (w / total_w)
-        composite[~valid] = np.nan
-    return composite
+def _build_feature_matrix(rows: list[dict], feature_names: list[str]
+                          ) -> tuple[pd.DataFrame, list[str]]:
+    """Build a clean feature matrix from event rows. Returns (df, valid_cols)."""
+    df = pd.DataFrame(rows)
+    valid_cols = []
+    for fn in feature_names:
+        if fn in df.columns:
+            n_valid = int(df[fn].notna().sum())
+            if n_valid >= MIN_FEATURE_N:
+                valid_cols.append(fn)
+    return df, valid_cols
 
 
-def _eval_composite(composite: np.ndarray, tp1: np.ndarray, tp2: np.ndarray,
-                    sl: np.ndarray, t5: np.ndarray, t10: np.ndarray,
-                    dd: np.ndarray, baseline_tp1: float) -> dict | None:
-    """Evaluate a composite score — top-quintile TP1/TP2/SL rates + edge."""
-    mask = ~np.isnan(composite)
-    n_valid = int(mask.sum())
-    if n_valid < MIN_COMBO_N:
-        return None
+def _impute_and_scale(X: np.ndarray) -> np.ndarray:
+    """Median-impute NaN, then standardize each column to zero-mean unit-variance."""
+    X = X.copy()
+    for j in range(X.shape[1]):
+        col = X[:, j]
+        nan_mask = np.isnan(col)
+        if nan_mask.any():
+            med = float(np.nanmedian(col))
+            col[nan_mask] = med
+        mu = col.mean()
+        sigma = col.std()
+        if sigma > 1e-10:
+            X[:, j] = (col - mu) / sigma
+        else:
+            X[:, j] = 0.0
+    return X
 
-    c = composite[mask]
-    tp1_m = tp1[mask]
-    tp2_m = tp2[mask]
-    sl_m = sl[mask]
-    t5_m = t5[mask]
-    t10_m = t10[mask]
-    dd_m = dd[mask]
 
-    threshold = np.percentile(c, 80)
-    top_mask = c >= threshold
-    bot_mask = c <= np.percentile(c, 20)
-    n_top = int(top_mask.sum())
-    n_bot = int(bot_mask.sum())
-    if n_top < 50 or n_bot < 50:
-        return None
+def _run_lasso(X: np.ndarray, y: np.ndarray, feature_names: list[str],
+               target_name: str, alphas: list[float] | None = None) -> dict:
+    """L1-penalized logistic regression. Returns selected features + coefficients."""
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.preprocessing import StandardScaler
 
-    top_tp1 = float(tp1_m[top_mask].mean())
-    top_tp2 = float(tp2_m[top_mask].mean())
-    top_sl = float(sl_m[top_mask].mean())
-    top_t5 = float(np.nanmean(t5_m[top_mask]))
-    top_t10 = float(np.nanmean(t10_m[top_mask]))
-    top_dd = float(np.nanmean(dd_m[top_mask]))
+    X_clean = _impute_and_scale(X.copy())
 
-    bot_tp1 = float(tp1_m[bot_mask].mean())
-    bot_tp2 = float(tp2_m[bot_mask].mean())
-    bot_sl = float(sl_m[bot_mask].mean())
+    if alphas is None:
+        alphas = [0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
 
-    rho_tp1, p_tp1 = _spearman(composite, tp1)
+    best_score = -1.0
+    best_model = None
+    best_C = 1.0
+    for a in alphas:
+        C = 1.0 / a
+        try:
+            lr = LogisticRegression(
+                penalty="l1", C=C, solver="saga", max_iter=5000,
+                class_weight="balanced", random_state=42,
+            )
+            lr.fit(X_clean, y)
+            score = lr.score(X_clean, y)
+            n_nonzero = int(np.sum(np.abs(lr.coef_[0]) > 1e-6))
+            if n_nonzero >= 2 and score > best_score:
+                best_score = score
+                best_model = lr
+                best_C = C
+        except Exception:
+            continue
+
+    if best_model is None:
+        return {"selected": [], "coefficients": {}, "accuracy": 0, "C": 0}
+
+    coefs = best_model.coef_[0]
+    selected = []
+    for i, fn in enumerate(feature_names):
+        if abs(coefs[i]) > 1e-6:
+            selected.append({
+                "feature": fn,
+                "coefficient": round(float(coefs[i]), 6),
+                "abs_coef": round(abs(float(coefs[i])), 6),
+            })
+    selected.sort(key=lambda x: x["abs_coef"], reverse=True)
+
+    coef_dict = {s["feature"]: s["coefficient"] for s in selected}
+
+    # Compute recipe weights (absolute coefficients, normalized to sum=1)
+    total_abs = sum(s["abs_coef"] for s in selected)
+    recipe_weights = {}
+    if total_abs > 0:
+        for s in selected:
+            recipe_weights[s["feature"]] = round(s["abs_coef"] / total_abs, 4)
 
     return {
-        "n_valid": n_valid,
-        "n_top": n_top,
-        "n_bot": n_bot,
-        "top_tp1": round(top_tp1, 4),
-        "top_tp2": round(top_tp2, 4),
-        "top_sl": round(top_sl, 4),
-        "top_t5": round(top_t5, 3),
-        "top_t10": round(top_t10, 3),
-        "top_dd": round(top_dd, 3),
-        "bot_tp1": round(bot_tp1, 4),
-        "bot_tp2": round(bot_tp2, 4),
-        "bot_sl": round(bot_sl, 4),
-        "tp1_edge_pp": round((top_tp1 - baseline_tp1) * 100, 2),
-        "tp1_spread_pp": round((top_tp1 - bot_tp1) * 100, 2),
-        "tp2_spread_pp": round((top_tp2 - bot_tp2) * 100, 2),
-        "sl_spread_pp": round((top_sl - bot_sl) * 100, 2),
-        "rho_tp1": round(float(rho_tp1), 4),
+        "target": target_name,
+        "selected": selected,
+        "coefficients": coef_dict,
+        "recipe_weights": recipe_weights,
+        "n_selected": len(selected),
+        "accuracy": round(float(best_score), 4),
+        "C": round(float(best_C), 4),
+    }
+
+
+def _run_random_forest(X: np.ndarray, y: np.ndarray,
+                       feature_names: list[str],
+                       target_name: str) -> dict:
+    """Random Forest feature importance. Returns ranked features."""
+    from sklearn.ensemble import RandomForestClassifier
+
+    X_clean = _impute_and_scale(X.copy())
+
+    rf = RandomForestClassifier(
+        n_estimators=300, max_depth=8, min_samples_leaf=50,
+        class_weight="balanced", random_state=42, n_jobs=-1,
+    )
+    rf.fit(X_clean, y)
+
+    importances = rf.feature_importances_
+    ranked = []
+    for i, fn in enumerate(feature_names):
+        ranked.append({
+            "feature": fn,
+            "importance": round(float(importances[i]), 6),
+        })
+    ranked.sort(key=lambda x: x["importance"], reverse=True)
+
+    accuracy = round(float(rf.score(X_clean, y)), 4)
+
+    return {
+        "target": target_name,
+        "ranked": ranked,
+        "top_10": [r["feature"] for r in ranked[:10]],
+        "accuracy": accuracy,
+    }
+
+
+def _run_forward_stepwise(X: np.ndarray, y: np.ndarray,
+                          feature_names: list[str],
+                          target_name: str,
+                          max_features: int = 8) -> dict:
+    """Greedy forward stepwise: add the feature that most improves TP1 prediction.
+
+    NOTE: Bias-prone — the greedy path may miss globally better combos.
+    Included as a directional signal, not a definitive answer.
+    """
+    from sklearn.linear_model import LogisticRegression
+
+    X_clean = _impute_and_scale(X.copy())
+    n_feat = X_clean.shape[1]
+
+    selected_idx = []
+    selected_names = []
+    steps = []
+    best_score = 0.0
+
+    for step in range(min(max_features, n_feat)):
+        best_candidate = -1
+        best_candidate_score = best_score
+
+        for j in range(n_feat):
+            if j in selected_idx:
+                continue
+            trial_idx = selected_idx + [j]
+            X_trial = X_clean[:, trial_idx]
+            try:
+                lr = LogisticRegression(
+                    penalty="l2", C=1.0, solver="lbfgs", max_iter=2000,
+                    class_weight="balanced", random_state=42,
+                )
+                lr.fit(X_trial, y)
+                score = lr.score(X_trial, y)
+                if score > best_candidate_score:
+                    best_candidate_score = score
+                    best_candidate = j
+            except Exception:
+                continue
+
+        if best_candidate < 0 or best_candidate_score <= best_score + 0.001:
+            break
+
+        selected_idx.append(best_candidate)
+        selected_names.append(feature_names[best_candidate])
+        best_score = best_candidate_score
+        steps.append({
+            "step": step + 1,
+            "added": feature_names[best_candidate],
+            "accuracy": round(best_candidate_score, 4),
+            "features_so_far": list(selected_names),
+        })
+
+    return {
+        "target": target_name,
+        "selected": selected_names,
+        "n_selected": len(selected_names),
+        "final_accuracy": round(best_score, 4),
+        "steps": steps,
+        "note": "Greedy — may miss globally better combos. Directional only.",
+    }
+
+
+def _walk_forward_validate(
+    df: pd.DataFrame,
+    feature_cols: list[str],
+    target_col: str,
+    recipe_weights: dict[str, float],
+    split_date: str,
+    baseline_rate: float,
+) -> dict:
+    """Walk-forward validation: train on data before split, test after.
+
+    Builds a weighted composite from recipe_weights, splits into quintiles
+    on the TRAIN set, then applies the same thresholds to TEST and measures
+    whether the edge holds out-of-sample.
+    """
+    df = df.copy()
+    df["_date"] = pd.to_datetime(df["date"])
+    split = pd.Timestamp(split_date)
+
+    train = df[df["_date"] < split]
+    test = df[df["_date"] >= split]
+
+    if len(train) < 200 or len(test) < 100:
+        return {"error": "insufficient_data", "n_train": len(train), "n_test": len(test)}
+
+    # Build composite score using recipe weights
+    feats_in_recipe = [f for f in recipe_weights if f in feature_cols]
+    if not feats_in_recipe:
+        return {"error": "no_features_in_recipe"}
+
+    def _build_composite(subset: pd.DataFrame) -> np.ndarray:
+        composite = np.zeros(len(subset))
+        total_w = sum(recipe_weights[f] for f in feats_in_recipe)
+        for fn in feats_in_recipe:
+            vals = subset[fn].values.astype(float)
+            nan_mask = np.isnan(vals)
+            if nan_mask.any():
+                vals[nan_mask] = float(np.nanmedian(vals))
+            mu = np.nanmean(vals)
+            sigma = np.nanstd(vals)
+            if sigma > 1e-10:
+                normed = (vals - mu) / sigma
+            else:
+                normed = np.zeros_like(vals)
+            composite += normed * (recipe_weights[fn] / total_w)
+        return composite
+
+    # Train: build composite, find quintile thresholds
+    train_composite = _build_composite(train)
+    thresholds = [np.percentile(train_composite, p) for p in [20, 40, 60, 80]]
+
+    def _quintile_label(val):
+        if val < thresholds[0]:
+            return 1
+        elif val < thresholds[1]:
+            return 2
+        elif val < thresholds[2]:
+            return 3
+        elif val < thresholds[3]:
+            return 4
+        return 5
+
+    # Test: apply TRAIN thresholds to test data
+    test_composite = _build_composite(test)
+    test_quintiles = np.array([_quintile_label(v) for v in test_composite])
+    test_target = test[target_col].values.astype(float)
+
+    # Also get train quintile rates for comparison
+    train_quintiles = np.array([_quintile_label(v) for v in train_composite])
+    train_target = train[target_col].values.astype(float)
+
+    result_quintiles = {}
+    for q in range(1, 6):
+        train_mask = train_quintiles == q
+        test_mask = test_quintiles == q
+        n_train_q = int(train_mask.sum())
+        n_test_q = int(test_mask.sum())
+
+        train_rate = float(train_target[train_mask].mean()) if n_train_q > 10 else None
+        test_rate = float(test_target[test_mask].mean()) if n_test_q > 10 else None
+
+        result_quintiles[f"Q{q}"] = {
+            "n_train": n_train_q,
+            "n_test": n_test_q,
+            "train_rate": round(train_rate, 4) if train_rate is not None else None,
+            "test_rate": round(test_rate, 4) if test_rate is not None else None,
+        }
+
+    # Overall metrics
+    train_top = train_quintiles == 5
+    test_top = test_quintiles == 5
+    train_bot = train_quintiles == 1
+    test_bot = test_quintiles == 1
+
+    in_sample_top = float(train_target[train_top].mean()) if train_top.sum() > 10 else 0
+    out_sample_top = float(test_target[test_top].mean()) if test_top.sum() > 10 else 0
+    in_sample_bot = float(train_target[train_bot].mean()) if train_bot.sum() > 10 else 0
+    out_sample_bot = float(test_target[test_bot].mean()) if test_bot.sum() > 10 else 0
+
+    return {
+        "split_date": split_date,
+        "n_train": len(train),
+        "n_test": len(test),
+        "target": target_col,
+        "recipe_features": feats_in_recipe,
+        "recipe_weights": {f: round(recipe_weights[f], 4) for f in feats_in_recipe},
+        "in_sample": {
+            "top_quintile_rate": round(in_sample_top, 4),
+            "bot_quintile_rate": round(in_sample_bot, 4),
+            "spread_pp": round((in_sample_top - in_sample_bot) * 100, 2),
+            "edge_vs_baseline_pp": round((in_sample_top - baseline_rate) * 100, 2),
+        },
+        "out_of_sample": {
+            "top_quintile_rate": round(out_sample_top, 4),
+            "bot_quintile_rate": round(out_sample_bot, 4),
+            "spread_pp": round((out_sample_top - out_sample_bot) * 100, 2),
+            "edge_vs_baseline_pp": round((out_sample_top - baseline_rate) * 100, 2),
+        },
+        "edge_survived": out_sample_top > baseline_rate,
+        "spread_survived": (out_sample_top - out_sample_bot) > 0,
+        "quintiles": result_quintiles,
     }
 
 
@@ -597,182 +826,213 @@ def _find_best_combinations(
     baseline_tp2: float,
     baseline_sl: float,
 ) -> dict:
-    """Find the best 2/3/4-feature combinations for TP1, TP2, and toxic SL.
+    """Phase 6: Multi-method recipe discovery.
 
-    Strategy:
-    1. Take top N features by absolute TP1 spread (the univariate winners)
-    2. Test all 2-way and 3-way equal-weight combos from those N
-    3. For the best 3-way combos, try weight optimization (grid search)
-    4. Separately find the toxic SL combinations (features whose combo
-       predicts stop-loss hits)
+    6A — Lasso logistic regression (L1): fits all features at once, zeros out
+         the useless ones. Coefficients = the recipe weights.
+    6B — Random Forest: tree-based feature importance. Captures non-linear
+         interactions that Lasso misses.
+    6C — Forward stepwise: greedy feature addition. Bias-prone but directional.
+    6D — Walk-forward validation: train before Oct 2025, test after. Any recipe
+         that works in-sample but fails out-of-sample is overfitting.
     """
-    from itertools import combinations
+    print(f"\n-- Phase 6: Multi-method recipe discovery --")
 
-    print(f"\n-- Phase 6: Finding best feature combinations --")
+    df, valid_cols = _build_feature_matrix(rows, feature_names)
+    X = df[valid_cols].values.astype(float)
+    tp1_y = df["tp1_hit"].values.astype(int)
+    tp2_y = df["tp2_hit"].values.astype(int)
+    sl_y = df["sl_hit"].values.astype(int)
 
-    # Select candidate features — top N by TP1 spread that have enough data
-    candidates_tp1 = sorted(
-        [fn for fn in feature_results
-         if feature_results[fn]["n_valid"] >= MIN_COMBO_N],
-        key=lambda fn: abs(feature_results[fn]["q5_q1_tp1_spread"]),
-        reverse=True,
-    )[:TOP_N_FOR_COMBOS]
+    print(f"  Feature matrix: {X.shape[0]} events × {X.shape[1]} features")
 
-    # Also grab top N by SL correlation for toxicity search
-    candidates_sl = sorted(
-        [fn for fn in feature_results
-         if feature_results[fn]["n_valid"] >= MIN_COMBO_N],
-        key=lambda fn: abs(feature_results[fn].get("q5_q1_sl_spread", 0)),
-        reverse=True,
-    )[:TOP_N_FOR_COMBOS]
+    # ═══════════════════════════════════════════════════════════════════
+    # 6A: Lasso logistic regression
+    # ═══════════════════════════════════════════════════════════════════
+    print(f"\n  ── 6A: Lasso Logistic Regression ──")
 
-    print(f"  TP1 candidates: {candidates_tp1}")
-    print(f"  SL candidates:  {candidates_sl}")
+    lasso_tp1 = _run_lasso(X, tp1_y, valid_cols, "TP1")
+    print(f"    TP1: {lasso_tp1['n_selected']} features selected "
+          f"(accuracy={lasso_tp1['accuracy']:.3f})")
+    for s in lasso_tp1["selected"][:10]:
+        sign = "+" if s["coefficient"] > 0 else "-"
+        w = lasso_tp1["recipe_weights"].get(s["feature"], 0)
+        print(f"      {sign} {s['feature']:25s}  coef={s['coefficient']:+.4f}  "
+              f"weight={w:.1%}")
 
-    # ── 2-way combos for TP1 ──
-    print(f"\n  Testing 2-way TP1 combinations...")
-    combo2_results = []
-    for f1, f2 in combinations(candidates_tp1, 2):
-        composite = _combo_score(rows, [f1, f2], [1.0, 1.0])
-        ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
-                             t5_arr, t10_arr, dd_arr, baseline_tp1)
-        if ev is not None:
-            combo2_results.append({
-                "features": [f1, f2],
-                "weights": [0.5, 0.5],
-                **ev,
-            })
+    lasso_tp2 = _run_lasso(X, tp2_y, valid_cols, "TP2")
+    print(f"    TP2: {lasso_tp2['n_selected']} features selected "
+          f"(accuracy={lasso_tp2['accuracy']:.3f})")
+    for s in lasso_tp2["selected"][:10]:
+        sign = "+" if s["coefficient"] > 0 else "-"
+        print(f"      {sign} {s['feature']:25s}  coef={s['coefficient']:+.4f}")
 
-    combo2_results.sort(key=lambda x: x["tp1_spread_pp"], reverse=True)
-    print(f"    Tested {len(combo2_results)} pairs")
-    if combo2_results:
-        best = combo2_results[0]
-        print(f"    Best 2-way: {best['features']} → "
-              f"top TP1={best['top_tp1']*100:.1f}% "
-              f"(+{best['tp1_edge_pp']:.1f}pp vs baseline), "
-              f"spread={best['tp1_spread_pp']:+.1f}pp")
+    lasso_sl = _run_lasso(X, sl_y, valid_cols, "SL (toxic)")
+    print(f"    SL:  {lasso_sl['n_selected']} features selected "
+          f"(accuracy={lasso_sl['accuracy']:.3f})")
+    for s in lasso_sl["selected"][:10]:
+        sign = "+" if s["coefficient"] > 0 else "-"
+        print(f"      {sign} {s['feature']:25s}  coef={s['coefficient']:+.4f}")
 
-    # ── 3-way combos for TP1 ──
-    print(f"\n  Testing 3-way TP1 combinations...")
-    combo3_results = []
-    for f1, f2, f3 in combinations(candidates_tp1, 3):
-        composite = _combo_score(rows, [f1, f2, f3], [1.0, 1.0, 1.0])
-        ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
-                             t5_arr, t10_arr, dd_arr, baseline_tp1)
-        if ev is not None:
-            combo3_results.append({
-                "features": [f1, f2, f3],
-                "weights": [0.333, 0.333, 0.333],
-                **ev,
-            })
+    # ═══════════════════════════════════════════════════════════════════
+    # 6B: Random Forest feature importance
+    # ═══════════════════════════════════════════════════════════════════
+    print(f"\n  ── 6B: Random Forest Feature Importance ──")
 
-    combo3_results.sort(key=lambda x: x["tp1_spread_pp"], reverse=True)
-    print(f"    Tested {len(combo3_results)} triples")
-    if combo3_results:
-        best = combo3_results[0]
-        print(f"    Best 3-way: {best['features']} → "
-              f"top TP1={best['top_tp1']*100:.1f}% "
-              f"(+{best['tp1_edge_pp']:.1f}pp vs baseline), "
-              f"spread={best['tp1_spread_pp']:+.1f}pp")
+    rf_tp1 = _run_random_forest(X, tp1_y, valid_cols, "TP1")
+    print(f"    TP1 accuracy={rf_tp1['accuracy']:.3f}")
+    print(f"    Top 10: {rf_tp1['top_10']}")
+    for r in rf_tp1["ranked"][:10]:
+        print(f"      {r['feature']:25s}  importance={r['importance']:.4f}")
 
-    # ── Weight optimization on the top 5 3-way combos ──
-    print(f"\n  Optimizing weights on top 5 3-way combos...")
-    optimized_results = []
-    weight_grid = [
-        (0.5, 0.3, 0.2), (0.5, 0.25, 0.25), (0.4, 0.4, 0.2),
-        (0.4, 0.3, 0.3), (0.6, 0.2, 0.2), (0.6, 0.3, 0.1),
-        (0.7, 0.2, 0.1), (0.7, 0.15, 0.15),
-        (0.333, 0.333, 0.333),
-    ]
-    for combo in combo3_results[:5]:
-        feats = combo["features"]
-        best_ev = combo
-        best_w = [0.333, 0.333, 0.333]
-        for w in weight_grid:
-            # Try all permutations of weights across the 3 features
-            from itertools import permutations
-            for wp in set(permutations(w)):
-                composite = _combo_score(rows, feats, list(wp))
-                ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
-                                     t5_arr, t10_arr, dd_arr, baseline_tp1)
-                if ev is not None and ev["tp1_spread_pp"] > best_ev["tp1_spread_pp"]:
-                    best_ev = ev
-                    best_w = list(wp)
+    rf_tp2 = _run_random_forest(X, tp2_y, valid_cols, "TP2")
+    print(f"    TP2 top 10: {rf_tp2['top_10']}")
 
-        optimized_results.append({
-            "features": feats,
-            "weights": [round(w, 3) for w in best_w],
-            **best_ev,
-        })
-        print(f"    {feats} → weights={[round(w,2) for w in best_w]} "
-              f"TP1 top={best_ev['top_tp1']*100:.1f}% "
-              f"spread={best_ev['tp1_spread_pp']:+.1f}pp")
+    rf_sl = _run_random_forest(X, sl_y, valid_cols, "SL")
+    print(f"    SL top 10: {rf_sl['top_10']}")
 
-    optimized_results.sort(key=lambda x: x["tp1_spread_pp"], reverse=True)
+    # ═══════════════════════════════════════════════════════════════════
+    # 6C: Forward stepwise (directional, bias-prone)
+    # ═══════════════════════════════════════════════════════════════════
+    print(f"\n  ── 6C: Forward Stepwise (directional, bias caveat) ──")
 
-    # ── Toxic SL combinations ──
-    print(f"\n  Testing toxic SL combinations (what predicts stop-loss)...")
-    sl_combo_results = []
-    for f1, f2 in combinations(candidates_sl, 2):
-        composite = _combo_score(rows, [f1, f2], [1.0, 1.0])
-        ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
-                             t5_arr, t10_arr, dd_arr, baseline_tp1)
-        if ev is not None:
-            sl_combo_results.append({
-                "features": [f1, f2],
-                "weights": [0.5, 0.5],
-                **ev,
-            })
+    stepwise_tp1 = _run_forward_stepwise(X, tp1_y, valid_cols, "TP1")
+    print(f"    TP1: {stepwise_tp1['n_selected']} features, "
+          f"accuracy={stepwise_tp1['final_accuracy']:.3f}")
+    for step in stepwise_tp1["steps"]:
+        print(f"      Step {step['step']}: +{step['added']} → {step['accuracy']:.3f}")
 
-    # Sort by SL spread — highest SL rate in one quintile vs lowest
-    sl_combo_results.sort(key=lambda x: abs(x["sl_spread_pp"]), reverse=True)
-    print(f"    Tested {len(sl_combo_results)} SL pairs")
-    if sl_combo_results:
-        worst = sl_combo_results[0]
-        high_sl = max(worst["top_sl"], worst["bot_sl"])
-        print(f"    Most toxic: {worst['features']} → "
-              f"worst quintile SL={high_sl*100:.1f}%, "
-              f"spread={worst['sl_spread_pp']:+.1f}pp")
+    stepwise_sl = _run_forward_stepwise(X, sl_y, valid_cols, "SL")
+    print(f"    SL:  {stepwise_sl['n_selected']} features, "
+          f"accuracy={stepwise_sl['final_accuracy']:.3f}")
 
-    # ── Print summary ──
-    print(f"\n  ═══ COMBINATION RESULTS SUMMARY ═══")
+    # ═══════════════════════════════════════════════════════════════════
+    # 6D: Walk-forward validation
+    # ═══════════════════════════════════════════════════════════════════
+    print(f"\n  ── 6D: Walk-Forward Validation (split={WALK_FORWARD_SPLIT}) ──")
 
-    print(f"\n  BEST TP1 RECIPES (optimized weights):")
-    print(f"  {'Rank':>4s}  {'Features':55s}  {'Weights':22s}  "
-          f"{'Top TP1':>7s}  {'Edge':>6s}  {'Spread':>7s}  "
-          f"{'Top TP2':>7s}  {'Top SL':>6s}  {'Top T+10':>8s}")
-    print("  " + "-" * 140)
-    for i, c in enumerate(optimized_results[:5], 1):
-        feats_str = " + ".join(c["features"])
-        w_str = "/".join(f"{w:.0%}" for w in c["weights"])
-        print(f"  {i:>4d}  {feats_str:55s}  {w_str:22s}  "
-              f"{c['top_tp1']*100:>6.1f}%  {c['tp1_edge_pp']:>+5.1f}  "
-              f"{c['tp1_spread_pp']:>+6.1f}  "
-              f"{c['top_tp2']*100:>6.1f}%  {c['top_sl']*100:>5.1f}%  "
-              f"{c['top_t10']:>+7.2f}%")
+    # Validate the Lasso TP1 recipe
+    wf_lasso_tp1 = _walk_forward_validate(
+        df, valid_cols, "tp1_hit",
+        lasso_tp1["recipe_weights"], WALK_FORWARD_SPLIT, baseline_tp1,
+    )
+    if "error" not in wf_lasso_tp1:
+        ins = wf_lasso_tp1["in_sample"]
+        oos = wf_lasso_tp1["out_of_sample"]
+        survived = "YES" if wf_lasso_tp1["edge_survived"] else "NO"
+        print(f"    Lasso TP1 recipe:")
+        print(f"      In-sample:  top Q={ins['top_quintile_rate']*100:.1f}%  "
+              f"edge={ins['edge_vs_baseline_pp']:+.1f}pp  "
+              f"spread={ins['spread_pp']:+.1f}pp")
+        print(f"      Out-sample: top Q={oos['top_quintile_rate']*100:.1f}%  "
+              f"edge={oos['edge_vs_baseline_pp']:+.1f}pp  "
+              f"spread={oos['spread_pp']:+.1f}pp  "
+              f"SURVIVED={survived}")
+    else:
+        print(f"    Lasso TP1: {wf_lasso_tp1['error']}")
 
-    print(f"\n  TOXIC SL COMBINATIONS (avoid these patterns):")
-    print(f"  {'Rank':>4s}  {'Features':55s}  "
-          f"{'Top SL':>6s}  {'Bot SL':>6s}  {'SL Spread':>9s}  "
-          f"{'Top TP1':>7s}  {'Bot TP1':>7s}")
-    print("  " + "-" * 110)
-    for i, c in enumerate(sl_combo_results[:10], 1):
-        feats_str = " + ".join(c["features"])
-        print(f"  {i:>4d}  {feats_str:55s}  "
-              f"{c['top_sl']*100:>5.1f}%  {c['bot_sl']*100:>5.1f}%  "
-              f"{c['sl_spread_pp']:>+8.1f}  "
-              f"{c['top_tp1']*100:>6.1f}%  {c['bot_tp1']*100:>6.1f}%")
+    # Validate the Lasso TP2 recipe
+    wf_lasso_tp2 = _walk_forward_validate(
+        df, valid_cols, "tp2_hit",
+        lasso_tp2["recipe_weights"], WALK_FORWARD_SPLIT, baseline_tp2,
+    )
+    if "error" not in wf_lasso_tp2:
+        ins = wf_lasso_tp2["in_sample"]
+        oos = wf_lasso_tp2["out_of_sample"]
+        survived = "YES" if wf_lasso_tp2["edge_survived"] else "NO"
+        print(f"    Lasso TP2 recipe:")
+        print(f"      In-sample:  top Q={ins['top_quintile_rate']*100:.1f}%  "
+              f"edge={ins['edge_vs_baseline_pp']:+.1f}pp  "
+              f"spread={ins['spread_pp']:+.1f}pp")
+        print(f"      Out-sample: top Q={oos['top_quintile_rate']*100:.1f}%  "
+              f"edge={oos['edge_vs_baseline_pp']:+.1f}pp  "
+              f"spread={oos['spread_pp']:+.1f}pp  "
+              f"SURVIVED={survived}")
+
+    # Validate the Lasso SL recipe
+    wf_lasso_sl = _walk_forward_validate(
+        df, valid_cols, "sl_hit",
+        lasso_sl["recipe_weights"], WALK_FORWARD_SPLIT, baseline_sl,
+    )
+    if "error" not in wf_lasso_sl:
+        ins = wf_lasso_sl["in_sample"]
+        oos = wf_lasso_sl["out_of_sample"]
+        survived = "YES" if wf_lasso_sl["edge_survived"] else "NO"
+        print(f"    Lasso SL recipe:")
+        print(f"      In-sample:  top Q={ins['top_quintile_rate']*100:.1f}%  "
+              f"spread={ins['spread_pp']:+.1f}pp")
+        print(f"      Out-sample: top Q={oos['top_quintile_rate']*100:.1f}%  "
+              f"spread={oos['spread_pp']:+.1f}pp  "
+              f"SURVIVED={survived}")
+
+    # Validate the RF top features as an equal-weight recipe
+    rf_top_feats = rf_tp1["top_10"][:5]
+    rf_recipe = {f: 0.2 for f in rf_top_feats}
+    wf_rf_tp1 = _walk_forward_validate(
+        df, valid_cols, "tp1_hit",
+        rf_recipe, WALK_FORWARD_SPLIT, baseline_tp1,
+    )
+    if "error" not in wf_rf_tp1:
+        ins = wf_rf_tp1["in_sample"]
+        oos = wf_rf_tp1["out_of_sample"]
+        survived = "YES" if wf_rf_tp1["edge_survived"] else "NO"
+        print(f"    RF top-5 equal-weight:")
+        print(f"      In-sample:  top Q={ins['top_quintile_rate']*100:.1f}%  "
+              f"edge={ins['edge_vs_baseline_pp']:+.1f}pp  "
+              f"spread={ins['spread_pp']:+.1f}pp")
+        print(f"      Out-sample: top Q={oos['top_quintile_rate']*100:.1f}%  "
+              f"edge={oos['edge_vs_baseline_pp']:+.1f}pp  "
+              f"spread={oos['spread_pp']:+.1f}pp  "
+              f"SURVIVED={survived}")
+
+    # ═══════════════════════════════════════════════════════════════════
+    # Cross-method agreement — features that appear across methods
+    # ═══════════════════════════════════════════════════════════════════
+    print(f"\n  ── Cross-Method Agreement ──")
+
+    lasso_set = set(lasso_tp1["coefficients"].keys())
+    rf_set = set(rf_tp1["top_10"])
+    step_set = set(stepwise_tp1["selected"])
+
+    agreement_all = lasso_set & rf_set & step_set
+    agreement_2of3 = (lasso_set & rf_set) | (lasso_set & step_set) | (rf_set & step_set)
+
+    print(f"    All 3 methods agree on: {sorted(agreement_all) if agreement_all else 'none'}")
+    print(f"    At least 2 of 3 agree on: {sorted(agreement_2of3)}")
+
+    # SL agreement
+    lasso_sl_set = set(lasso_sl["coefficients"].keys())
+    rf_sl_set = set(rf_sl["top_10"])
+    step_sl_set = set(stepwise_sl["selected"])
+    sl_agreement = (lasso_sl_set & rf_sl_set) | (lasso_sl_set & step_sl_set) | (rf_sl_set & step_sl_set)
+    print(f"    SL toxic (2+ agree): {sorted(sl_agreement)}")
 
     return {
-        "best_2way_tp1": combo2_results[:10],
-        "best_3way_tp1": combo3_results[:10],
-        "optimized_3way": optimized_results[:10],
-        "toxic_sl_2way": sl_combo_results[:10],
-        "n_2way_tested": len(combo2_results),
-        "n_3way_tested": len(combo3_results),
-        "n_sl_tested": len(sl_combo_results),
-        "candidates_tp1": candidates_tp1,
-        "candidates_sl": candidates_sl,
+        "lasso": {
+            "tp1": lasso_tp1,
+            "tp2": lasso_tp2,
+            "sl": lasso_sl,
+        },
+        "random_forest": {
+            "tp1": rf_tp1,
+            "tp2": rf_tp2,
+            "sl": rf_sl,
+        },
+        "forward_stepwise": {
+            "tp1": stepwise_tp1,
+            "sl": stepwise_sl,
+        },
+        "walk_forward": {
+            "lasso_tp1": wf_lasso_tp1,
+            "lasso_tp2": wf_lasso_tp2,
+            "lasso_sl": wf_lasso_sl,
+            "rf_tp1": wf_rf_tp1,
+        },
+        "cross_method_agreement": {
+            "tp1_all_3": sorted(agreement_all),
+            "tp1_2_of_3": sorted(agreement_2of3),
+            "sl_2_of_3": sorted(sl_agreement),
+        },
     }
 
 

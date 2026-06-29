@@ -1384,74 +1384,139 @@ if _sc_result_path.exists():
             st.dataframe(pd.DataFrame(_sc_sl_rows), hide_index=True,
                           use_container_width=True)
 
-        # ── Combination results ──
+        # ── Recipe discovery results (Phase 6) ──
         _sc_combos = _sc.get("combinations", {})
         if _sc_combos:
-            st.subheader("Best TP1 Recipes (optimized weight combos)")
-            st.caption(
-                "Top feature combinations with optimized weights. "
-                "'Edge' = top-quintile TP1 rate minus baseline. "
-                "'Spread' = top-quintile minus bottom-quintile."
-            )
-            _sc_opt = _sc_combos.get("optimized_3way", [])
-            if _sc_opt:
-                _sc_opt_rows = []
-                for i, c in enumerate(_sc_opt[:10], 1):
-                    feats_str = " + ".join(c["features"])
-                    w_str = " / ".join(f"{w:.0%}" for w in c["weights"])
-                    _sc_opt_rows.append({
-                        "Rank": i,
-                        "Features": feats_str,
-                        "Weights": w_str,
-                        "Top TP1": f"{c['top_tp1']*100:.1f}%",
-                        "Edge": f"{c['tp1_edge_pp']:+.1f}pp",
-                        "Spread": f"{c['tp1_spread_pp']:+.1f}pp",
-                        "Top TP2": f"{c['top_tp2']*100:.1f}%",
-                        "Top SL": f"{c['top_sl']*100:.1f}%",
-                        "Top T+10": f"{c['top_t10']:+.2f}%",
-                    })
-                st.dataframe(pd.DataFrame(_sc_opt_rows), hide_index=True,
-                              use_container_width=True)
+            # ── 6A: Lasso recipe ──
+            _sc_lasso = _sc_combos.get("lasso", {})
+            if _sc_lasso:
+                st.subheader("6A: Lasso Recipe (L1 logistic regression)")
+                st.caption(
+                    "L1 penalty zeros out useless features — survivors ARE the recipe. "
+                    "Positive coef = higher value → more TP1 hits. Negative = inverse."
+                )
+                for target_key, label in [("tp1", "TP1 Hit"), ("tp2", "TP2 Hit"),
+                                          ("sl", "SL Hit (toxic)")]:
+                    _sc_lr = _sc_lasso.get(target_key, {})
+                    if not _sc_lr or not _sc_lr.get("selected"):
+                        continue
+                    st.markdown(
+                        f"**{label}** — {_sc_lr['n_selected']} features selected, "
+                        f"accuracy={_sc_lr['accuracy']:.3f}"
+                    )
+                    _sc_lr_rows = []
+                    for s in _sc_lr["selected"][:15]:
+                        w = _sc_lr.get("recipe_weights", {}).get(s["feature"], 0)
+                        _sc_lr_rows.append({
+                            "Feature": s["feature"],
+                            "Coefficient": f"{s['coefficient']:+.4f}",
+                            "Weight": f"{w:.1%}",
+                            "Direction": "Bullish" if s["coefficient"] > 0 else "Bearish",
+                        })
+                    st.dataframe(pd.DataFrame(_sc_lr_rows), hide_index=True,
+                                  use_container_width=True)
 
-            st.subheader("Best 2-Way Combinations")
-            _sc_c2 = _sc_combos.get("best_2way_tp1", [])
-            if _sc_c2:
-                _sc_c2_rows = []
-                for i, c in enumerate(_sc_c2[:10], 1):
-                    feats_str = " + ".join(c["features"])
-                    _sc_c2_rows.append({
-                        "Rank": i,
-                        "Features": feats_str,
-                        "Top TP1": f"{c['top_tp1']*100:.1f}%",
-                        "Edge": f"{c['tp1_edge_pp']:+.1f}pp",
-                        "Spread": f"{c['tp1_spread_pp']:+.1f}pp",
-                        "Top TP2": f"{c['top_tp2']*100:.1f}%",
-                        "Top SL": f"{c['top_sl']*100:.1f}%",
-                    })
-                st.dataframe(pd.DataFrame(_sc_c2_rows), hide_index=True,
-                              use_container_width=True)
+            # ── 6B: Random Forest ──
+            _sc_rf = _sc_combos.get("random_forest", {})
+            if _sc_rf:
+                st.subheader("6B: Random Forest Feature Importance")
+                st.caption(
+                    "Tree-based importance — captures non-linear interactions. "
+                    "Higher importance = model relies on this feature more."
+                )
+                for target_key, label in [("tp1", "TP1"), ("tp2", "TP2"), ("sl", "SL")]:
+                    _sc_rfd = _sc_rf.get(target_key, {})
+                    if not _sc_rfd:
+                        continue
+                    st.markdown(
+                        f"**{label}** — accuracy={_sc_rfd['accuracy']:.3f}"
+                    )
+                    _sc_rf_rows = []
+                    for r in _sc_rfd.get("ranked", [])[:15]:
+                        _sc_rf_rows.append({
+                            "Feature": r["feature"],
+                            "Importance": f"{r['importance']:.4f}",
+                        })
+                    st.dataframe(pd.DataFrame(_sc_rf_rows), hide_index=True,
+                                  use_container_width=True)
 
-            st.subheader("Toxic SL Combinations (avoid these)")
-            st.caption(
-                "Feature pairs that predict stop-loss hits. "
-                "When BOTH features are in their extreme quintile, SL rate spikes."
-            )
-            _sc_toxic = _sc_combos.get("toxic_sl_2way", [])
-            if _sc_toxic:
-                _sc_toxic_rows = []
-                for i, c in enumerate(_sc_toxic[:10], 1):
-                    feats_str = " + ".join(c["features"])
-                    high_sl = max(c["top_sl"], c["bot_sl"])
-                    _sc_toxic_rows.append({
-                        "Rank": i,
-                        "Features": feats_str,
-                        "Worst SL": f"{high_sl*100:.1f}%",
-                        "SL Spread": f"{c['sl_spread_pp']:+.1f}pp",
-                        "Top TP1": f"{c['top_tp1']*100:.1f}%",
-                        "Bot TP1": f"{c['bot_tp1']*100:.1f}%",
+            # ── 6C: Forward Stepwise ──
+            _sc_step = _sc_combos.get("forward_stepwise", {})
+            if _sc_step:
+                st.subheader("6C: Forward Stepwise (directional only)")
+                st.caption(
+                    "Greedy: adds the feature that most improves prediction at each step. "
+                    "Bias-prone — may miss globally better combos."
+                )
+                for target_key, label in [("tp1", "TP1"), ("sl", "SL")]:
+                    _sc_sd = _sc_step.get(target_key, {})
+                    if not _sc_sd:
+                        continue
+                    st.markdown(
+                        f"**{label}** — {_sc_sd['n_selected']} features, "
+                        f"final accuracy={_sc_sd['final_accuracy']:.3f}"
+                    )
+                    _sc_step_rows = []
+                    for step in _sc_sd.get("steps", []):
+                        _sc_step_rows.append({
+                            "Step": step["step"],
+                            "Added": step["added"],
+                            "Accuracy": f"{step['accuracy']:.3f}",
+                            "Features": " + ".join(step["features_so_far"]),
+                        })
+                    st.dataframe(pd.DataFrame(_sc_step_rows), hide_index=True,
+                                  use_container_width=True)
+
+            # ── 6D: Walk-Forward Validation ──
+            _sc_wf = _sc_combos.get("walk_forward", {})
+            if _sc_wf:
+                st.subheader("6D: Walk-Forward Validation")
+                st.caption(
+                    "Train before Oct 2025, test after. Does the edge survive out-of-sample?"
+                )
+                _sc_wf_rows = []
+                for wf_key, label in [("lasso_tp1", "Lasso TP1"),
+                                       ("lasso_tp2", "Lasso TP2"),
+                                       ("lasso_sl", "Lasso SL"),
+                                       ("rf_tp1", "RF Top-5 TP1")]:
+                    _sc_wfd = _sc_wf.get(wf_key, {})
+                    if not _sc_wfd or "error" in _sc_wfd:
+                        continue
+                    ins = _sc_wfd["in_sample"]
+                    oos = _sc_wfd["out_of_sample"]
+                    _sc_wf_rows.append({
+                        "Recipe": label,
+                        "Train n": f"{_sc_wfd['n_train']:,}",
+                        "Test n": f"{_sc_wfd['n_test']:,}",
+                        "IS Top Q": f"{ins['top_quintile_rate']*100:.1f}%",
+                        "IS Edge": f"{ins['edge_vs_baseline_pp']:+.1f}pp",
+                        "IS Spread": f"{ins['spread_pp']:+.1f}pp",
+                        "OOS Top Q": f"{oos['top_quintile_rate']*100:.1f}%",
+                        "OOS Edge": f"{oos['edge_vs_baseline_pp']:+.1f}pp",
+                        "OOS Spread": f"{oos['spread_pp']:+.1f}pp",
+                        "Survived?": "YES" if _sc_wfd["edge_survived"] else "NO",
                     })
-                st.dataframe(pd.DataFrame(_sc_toxic_rows), hide_index=True,
-                              use_container_width=True)
+                if _sc_wf_rows:
+                    st.dataframe(pd.DataFrame(_sc_wf_rows), hide_index=True,
+                                  use_container_width=True)
+
+            # ── Cross-method agreement ──
+            _sc_agree = _sc_combos.get("cross_method_agreement", {})
+            if _sc_agree:
+                st.subheader("Cross-Method Agreement")
+                st.caption(
+                    "Features that multiple methods independently identify as important. "
+                    "Higher agreement = more confidence the signal is real."
+                )
+                _a3 = _sc_agree.get("tp1_all_3", [])
+                _a2 = _sc_agree.get("tp1_2_of_3", [])
+                _asl = _sc_agree.get("sl_2_of_3", [])
+                if _a3:
+                    st.markdown(f"**All 3 methods agree (TP1):** {', '.join(_a3)}")
+                if _a2:
+                    st.markdown(f"**2 of 3 methods agree (TP1):** {', '.join(_a2)}")
+                if _asl:
+                    st.markdown(f"**SL toxic (2+ agree):** {', '.join(_asl)}")
 
         # ── Download ──
         st.download_button(
