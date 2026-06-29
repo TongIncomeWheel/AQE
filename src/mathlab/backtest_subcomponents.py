@@ -34,6 +34,8 @@ FORWARD_SESSIONS = 10
 COOLDOWN = 5
 
 CACHE_DIR = Path("data/mathlab_cache")
+ENGINES_CACHE_DIR = CACHE_DIR / "engines"
+EVENTS_CACHE_PATH = CACHE_DIR / "events_table.parquet"
 OUTPUT_DIR = Path("output")
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -172,6 +174,87 @@ def _daily_to_weekly(daily: pd.DataFrame) -> pd.DataFrame:
         "close": "last", "volume": "sum"
     }).dropna(subset=["close"])
     return weekly.reset_index()
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# Persistence — cache events table + per-ticker engine output
+# ────────────────────────────────────────────────────────────────────────────
+
+def _engine_cache_path(ticker: str) -> Path:
+    return ENGINES_CACHE_DIR / f"{ticker}_wide.parquet"
+
+
+def _load_cached_engines(ticker: str) -> pd.DataFrame | None:
+    p = _engine_cache_path(ticker)
+    if p.exists():
+        try:
+            df = pd.read_parquet(p)
+            if not df.empty and len(df.columns) > 10:
+                return df
+        except Exception:
+            pass
+    return None
+
+
+def _save_engine_cache(ticker: str, wide: pd.DataFrame) -> None:
+    ENGINES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    wide.to_parquet(_engine_cache_path(ticker), index=False)
+
+
+def _save_events_table(rows: list[dict], tickers: list[str]) -> None:
+    """Persist the events table so Phases 1-3 can be skipped on re-runs."""
+    df = pd.DataFrame(rows)
+    df.attrs["universe"] = ",".join(sorted(tickers))
+    df.attrs["bt_start"] = BT_START
+    df.attrs["bt_end"] = BT_END
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(EVENTS_CACHE_PATH, index=False)
+    # Also save universe metadata alongside (parquet attrs not always preserved)
+    meta = {
+        "tickers": sorted(tickers),
+        "bt_start": BT_START,
+        "bt_end": BT_END,
+        "n_events": len(rows),
+        "n_tickers": len(tickers),
+    }
+    meta_path = CACHE_DIR / "events_meta.json"
+    with open(meta_path, "w") as f:
+        json.dump(meta, f, indent=2)
+    print(f"  Events table cached -> {EVENTS_CACHE_PATH} ({len(rows):,} events)")
+
+
+def _load_events_table(tickers: list[str] | None = None) -> tuple[list[dict], list[str]] | None:
+    """Load cached events table. Returns (rows, tickers) or None if stale/missing."""
+    if not EVENTS_CACHE_PATH.exists():
+        return None
+    meta_path = CACHE_DIR / "events_meta.json"
+    if not meta_path.exists():
+        return None
+    try:
+        with open(meta_path) as f:
+            meta = json.load(f)
+        cached_bt = (meta.get("bt_start"), meta.get("bt_end"))
+        if cached_bt != (BT_START, BT_END):
+            print(f"  [cache] BT window changed ({cached_bt} -> {(BT_START, BT_END)}), rebuilding")
+            return None
+        cached_tickers = meta.get("tickers", [])
+        if tickers is not None:
+            requested = set(tickers)
+            cached = set(cached_tickers)
+            missing = requested - cached
+            if missing:
+                print(f"  [cache] {len(missing)} new tickers not in cache, rebuilding")
+                return None
+        df = pd.read_parquet(EVENTS_CACHE_PATH)
+        if df.empty:
+            return None
+        rows = df.to_dict("records")
+        print(f"  [cache] Loaded {len(rows):,} events from cache "
+              f"({meta['n_tickers']} tickers, {meta['bt_start']}→{meta['bt_end']})")
+        return rows, cached_tickers
+    except Exception as e:
+        print(f"  [cache] Failed to load: {e}")
+        return None
 
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -1041,7 +1124,8 @@ def _find_best_combinations(
 # ────────────────────────────────────────────────────────────────────────────
 
 def run_backtest(tickers: list[str] | None = None,
-                 dry_run: bool = False) -> dict:
+                 dry_run: bool = False,
+                 rebuild: bool = False) -> dict:
     if tickers is None:
         tickers = load_universe()
     if dry_run:
@@ -1050,101 +1134,124 @@ def run_backtest(tickers: list[str] | None = None,
     print(f"[subcomp] Universe: {len(tickers)} tickers")
     print(f"[subcomp] BT window: {BT_START} -> {BT_END}")
 
-    # ── Phase 1: Pull bars ──
-    print("\n-- Phase 1: Pulling daily bars --")
-    all_bars: dict[str, pd.DataFrame] = {}
+    feature_names = _all_feature_names()
     failed: list[str] = []
 
-    # SPY first
-    print("  SPY...", end=" ", flush=True)
-    spy_bars = pull_daily_bars("SPY")
-    if spy_bars.empty:
-        print("EMPTY — Structure/MP will degrade")
-        spy_bars = pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume"])
-    else:
-        print(f"{len(spy_bars)} bars")
+    # ── Try loading cached events table (skip Phases 1-3) ──
+    rows = None
+    if not rebuild:
+        cached = _load_events_table(tickers)
+        if cached is not None:
+            rows, cached_tickers = cached
+            failed = [t for t in tickers if t not in set(cached_tickers)]
+            print(f"  Skipping Phases 1-3 (data loaded from cache)")
 
-    for i, tk in enumerate(tickers, 1):
-        print(f"  [{i}/{len(tickers)}] {tk}...", end=" ", flush=True)
-        df = pull_daily_bars(tk)
-        if df.empty:
-            print("EMPTY")
-            failed.append(tk)
+    if rows is None:
+        # ── Phase 1: Pull bars ──
+        print("\n-- Phase 1: Pulling daily bars --")
+        all_bars: dict[str, pd.DataFrame] = {}
+
+        print("  SPY...", end=" ", flush=True)
+        spy_bars = pull_daily_bars("SPY")
+        if spy_bars.empty:
+            print("EMPTY — Structure/MP will degrade")
+            spy_bars = pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume"])
         else:
-            all_bars[tk] = df
-            print(f"{len(df)} bars")
+            print(f"{len(spy_bars)} bars")
 
-    # ── Phase 2: Compute all engine subcomponents ──
-    print(f"\n-- Phase 2: Computing engines ({len(all_bars)} tickers) --")
-    all_wide: dict[str, pd.DataFrame] = {}
+        for i, tk in enumerate(tickers, 1):
+            print(f"  [{i}/{len(tickers)}] {tk}...", end=" ", flush=True)
+            df = pull_daily_bars(tk)
+            if df.empty:
+                print("EMPTY")
+                failed.append(tk)
+            else:
+                all_bars[tk] = df
+                print(f"{len(df)} bars")
 
-    for i, (tk, bars) in enumerate(all_bars.items(), 1):
-        if i <= 3 or i % 30 == 0 or i == len(all_bars):
-            print(f"  [{i}/{len(all_bars)}] {tk}...", end=" ", flush=True)
+        # ── Phase 2: Compute all engine subcomponents ──
+        print(f"\n-- Phase 2: Computing engines ({len(all_bars)} tickers) --")
+        all_wide: dict[str, pd.DataFrame] = {}
 
-        wide = compute_all_subcomponents(tk, bars, spy_bars)
-        if wide is not None:
-            all_wide[tk] = wide
-            if i <= 3 or i % 30 == 0 or i == len(all_bars):
-                valid = wide.drop(columns=["date"]).notna().sum(axis=0)
-                n_valid = int((valid > 0).sum())
-                print(f"{n_valid} features valid")
-        else:
-            if i <= 3 or i % 30 == 0 or i == len(all_bars):
-                print("SKIP (too few bars)")
+        for i, (tk, bars) in enumerate(all_bars.items(), 1):
+            log_this = i <= 3 or i % 30 == 0 or i == len(all_bars)
+            if log_this:
+                print(f"  [{i}/{len(all_bars)}] {tk}...", end=" ", flush=True)
 
-    print(f"  Engines computed: {len(all_wide)}/{len(all_bars)} tickers")
+            # Check engine cache first
+            if not rebuild:
+                cached_wide = _load_cached_engines(tk)
+                if cached_wide is not None:
+                    all_wide[tk] = cached_wide
+                    if log_this:
+                        print("cached")
+                    continue
 
-    # ── Phase 3: Build events ──
-    print(f"\n-- Phase 3: Building events --")
-    bt_start = pd.Timestamp(BT_START)
-    bt_end = pd.Timestamp(BT_END)
+            wide = compute_all_subcomponents(tk, bars, spy_bars)
+            if wide is not None:
+                all_wide[tk] = wide
+                _save_engine_cache(tk, wide)
+                if log_this:
+                    valid = wide.drop(columns=["date"]).notna().sum(axis=0)
+                    n_valid = int((valid > 0).sum())
+                    print(f"{n_valid} features")
+            else:
+                if log_this:
+                    print("SKIP (too few bars)")
 
-    feature_names = _all_feature_names()
-    rows: list[dict] = []
-    total_dates = 0
+        print(f"  Engines computed: {len(all_wide)}/{len(all_bars)} tickers")
 
-    for tk, wide in all_wide.items():
-        bars = all_bars[tk]
-        wide["date"] = pd.to_datetime(wide["date"]).dt.normalize()
-        bt_mask = (wide["date"] >= bt_start) & (wide["date"] <= bt_end)
-        bt_rows = wide[bt_mask]
+        # ── Phase 3: Build events ──
+        print(f"\n-- Phase 3: Building events --")
+        bt_start = pd.Timestamp(BT_START)
+        bt_end = pd.Timestamp(BT_END)
 
-        last_trigger = None
-        for _, row in bt_rows.iterrows():
-            dt = row["date"]
-            total_dates += 1
+        rows = []
+        total_dates = 0
 
-            # Cooldown
-            if last_trigger is not None and (dt - last_trigger).days < COOLDOWN:
-                continue
+        for tk, wide in all_wide.items():
+            bars = all_bars[tk]
+            wide["date"] = pd.to_datetime(wide["date"]).dt.normalize()
+            bt_mask = (wide["date"] >= bt_start) & (wide["date"] <= bt_end)
+            bt_rows = wide[bt_mask]
 
-            bracket = bracket_from_bars(bars, dt)
-            if bracket is None:
-                continue
-            entry, sl, tp1, tp2, risk, atr14 = bracket
-            fwd = scan_forward(bars, dt, entry, sl, tp1, tp2)
+            last_trigger = None
+            for _, row in bt_rows.iterrows():
+                dt = row["date"]
+                total_dates += 1
 
-            ev = {
-                "ticker": tk,
-                "date": str(dt.date()),
-                "tp1_hit": 1 if fwd.first_event == "TP1" else 0,
-                "tp2_hit": 1 if fwd.tp2_hit and fwd.first_event != "SL" else 0,
-                "sl_hit": 1 if fwd.first_event == "SL" else 0,
-                "sl_first": 1 if fwd.sl_hit else 0,
-                "outcome": fwd.first_event,
-                "t5_return": fwd.returns.get("T+5", np.nan),
-                "t10_return": fwd.returns.get("T+10", np.nan),
-                "max_dd": fwd.max_dd_pct,
-            }
-            for fn in feature_names:
-                ev[fn] = float(row[fn]) if fn in row.index and not pd.isna(row.get(fn)) else np.nan
+                if last_trigger is not None and (dt - last_trigger).days < COOLDOWN:
+                    continue
 
-            rows.append(ev)
-            last_trigger = dt
+                bracket = bracket_from_bars(bars, dt)
+                if bracket is None:
+                    continue
+                entry, sl, tp1, tp2, risk, atr14 = bracket
+                fwd = scan_forward(bars, dt, entry, sl, tp1, tp2)
 
-    print(f"  Total dates scanned: {total_dates:,}")
-    print(f"  Events (with cooldown): {len(rows):,}")
+                ev = {
+                    "ticker": tk,
+                    "date": str(dt.date()),
+                    "tp1_hit": 1 if fwd.first_event == "TP1" else 0,
+                    "tp2_hit": 1 if fwd.tp2_hit and fwd.first_event != "SL" else 0,
+                    "sl_hit": 1 if fwd.first_event == "SL" else 0,
+                    "sl_first": 1 if fwd.sl_hit else 0,
+                    "outcome": fwd.first_event,
+                    "t5_return": fwd.returns.get("T+5", np.nan),
+                    "t10_return": fwd.returns.get("T+10", np.nan),
+                    "max_dd": fwd.max_dd_pct,
+                }
+                for fn in feature_names:
+                    ev[fn] = float(row[fn]) if fn in row.index and not pd.isna(row.get(fn)) else np.nan
+
+                rows.append(ev)
+                last_trigger = dt
+
+        print(f"  Total dates scanned: {total_dates:,}")
+        print(f"  Events (with cooldown): {len(rows):,}")
+
+        # Persist the events table for future runs
+        _save_events_table(rows, list(all_wide.keys()))
 
     if len(rows) < 100:
         print("  [!] Too few events for analysis")
@@ -1380,15 +1487,28 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true",
                         help="Run on 8 tickers only")
     parser.add_argument("--refresh", action="store_true",
-                        help="Re-pull all daily bars from FMP")
+                        help="Re-pull all daily bars from FMP (clears bar cache)")
+    parser.add_argument("--rebuild", action="store_true",
+                        help="Rebuild events table + engines from scratch (ignores all caches)")
+    parser.add_argument("--analysis-only", action="store_true",
+                        help="Skip Phases 1-3, load cached events, re-run analysis only (Phases 4-6)")
     args = parser.parse_args()
 
+    rebuild = args.rebuild
     if args.refresh:
         import shutil
         if CACHE_DIR.exists():
             n = len(list(CACHE_DIR.glob("*.parquet")))
-            print(f"[subcomp] --refresh: clearing {n} cached files")
+            print(f"[subcomp] --refresh: clearing ALL cached files ({n})")
             shutil.rmtree(CACHE_DIR)
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        rebuild = True
 
-    run_backtest(dry_run=args.dry_run)
+    if args.analysis_only:
+        cached = _load_events_table()
+        if cached is None:
+            print("[subcomp] No cached events table found. Run without --analysis-only first.")
+        else:
+            print("[subcomp] --analysis-only: skipping Phases 1-3")
+
+    run_backtest(dry_run=args.dry_run, rebuild=rebuild)

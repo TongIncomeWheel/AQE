@@ -1215,8 +1215,10 @@ if _sc_run:
     _sc_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_subcomponents"]
     if _sc_run == "dry":
         _sc_args.append("--dry-run")
-    if _sc_run == "refresh":
-        _sc_args.append("--refresh")
+    elif _sc_run == "rebuild":
+        _sc_args.append("--rebuild")
+    elif _sc_run == "analysis":
+        _sc_args.append("--analysis-only")
     with st.spinner("Running subcomponent correlation backtest..."):
         try:
             _sc_proc = __import__("subprocess").Popen(
@@ -1238,21 +1240,29 @@ if _sc_run:
             _sc_status.error(f"Failed to run: {_sc_ex}")
     st.rerun()
 
-_scc1, _scc2, _scc3 = st.columns(3)
+_scc1, _scc2, _scc3, _scc4 = st.columns(4)
 with _scc1:
-    if st.button("Run subcomponent backtest", key="sc_bt_full", type="primary",
+    if st.button("Run full backtest", key="sc_bt_full", type="primary",
                   use_container_width=True,
-                  help="Full universe correlation + quintile analysis on all 70 features. "
-                       "Uses cached bars."):
+                  help="Full universe. Uses cached bars + engine output. "
+                       "First run pulls from FMP; subsequent runs skip Phases 1-3."):
         st.session_state["_sc_run"] = "full"
         st.rerun()
 with _scc2:
-    if st.button("Fresh pull + run", key="sc_bt_refresh",
+    if st.button("Re-run analysis only", key="sc_bt_analysis",
                   use_container_width=True,
-                  help="Clear bar cache and re-pull from FMP, then full backtest."):
-        st.session_state["_sc_run"] = "refresh"
+                  help="Skip data pull + engine computation (Phases 1-3), "
+                       "load cached events table, re-run Phases 4-6 only. "
+                       "Use this to iterate on the recipe without re-pulling data."):
+        st.session_state["_sc_run"] = "analysis"
         st.rerun()
 with _scc3:
+    if st.button("Rebuild from scratch", key="sc_bt_rebuild",
+                  use_container_width=True,
+                  help="Ignore all caches, re-compute engines + events from scratch."):
+        st.session_state["_sc_run"] = "rebuild"
+        st.rerun()
+with _scc4:
     if st.button("Dry run (8 tickers)", key="sc_bt_dry",
                   use_container_width=True,
                   help="Quick logic check on 8 tickers."):
