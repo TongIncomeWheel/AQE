@@ -1365,6 +1365,94 @@ if _sc_result_path.exists():
             st.dataframe(pd.DataFrame(_sc_t10_rows), hide_index=True,
                           use_container_width=True)
 
+        # ── SL Toxicity ranking ──
+        st.subheader("SL Toxicity Ranking (features predicting stop-loss)")
+        _sc_ranked_sl = _sc.get("ranked_by_sl_toxicity", [])
+        if _sc_ranked_sl:
+            _sc_sl_rows = []
+            for i, f in enumerate(_sc_ranked_sl[:15], 1):
+                _sc_sl_rows.append({
+                    "Rank": i,
+                    "Feature": f["name"],
+                    "Type": f["type"],
+                    "Q5-Q1 SL": f"{f.get('q5_q1_sl_spread',0)*100:+.2f}pp",
+                    "rho_SL": f"{f.get('rho_sl',0):+.4f}",
+                    "Q5 SL%": f"{f.get('q5_sl_rate',0)*100:.1f}%",
+                    "Q1 SL%": f"{f.get('q1_sl_rate',0)*100:.1f}%",
+                    "n": f"{f['n']:,}",
+                })
+            st.dataframe(pd.DataFrame(_sc_sl_rows), hide_index=True,
+                          use_container_width=True)
+
+        # ── Combination results ──
+        _sc_combos = _sc.get("combinations", {})
+        if _sc_combos:
+            st.subheader("Best TP1 Recipes (optimized weight combos)")
+            st.caption(
+                "Top feature combinations with optimized weights. "
+                "'Edge' = top-quintile TP1 rate minus baseline. "
+                "'Spread' = top-quintile minus bottom-quintile."
+            )
+            _sc_opt = _sc_combos.get("optimized_3way", [])
+            if _sc_opt:
+                _sc_opt_rows = []
+                for i, c in enumerate(_sc_opt[:10], 1):
+                    feats_str = " + ".join(c["features"])
+                    w_str = " / ".join(f"{w:.0%}" for w in c["weights"])
+                    _sc_opt_rows.append({
+                        "Rank": i,
+                        "Features": feats_str,
+                        "Weights": w_str,
+                        "Top TP1": f"{c['top_tp1']*100:.1f}%",
+                        "Edge": f"{c['tp1_edge_pp']:+.1f}pp",
+                        "Spread": f"{c['tp1_spread_pp']:+.1f}pp",
+                        "Top TP2": f"{c['top_tp2']*100:.1f}%",
+                        "Top SL": f"{c['top_sl']*100:.1f}%",
+                        "Top T+10": f"{c['top_t10']:+.2f}%",
+                    })
+                st.dataframe(pd.DataFrame(_sc_opt_rows), hide_index=True,
+                              use_container_width=True)
+
+            st.subheader("Best 2-Way Combinations")
+            _sc_c2 = _sc_combos.get("best_2way_tp1", [])
+            if _sc_c2:
+                _sc_c2_rows = []
+                for i, c in enumerate(_sc_c2[:10], 1):
+                    feats_str = " + ".join(c["features"])
+                    _sc_c2_rows.append({
+                        "Rank": i,
+                        "Features": feats_str,
+                        "Top TP1": f"{c['top_tp1']*100:.1f}%",
+                        "Edge": f"{c['tp1_edge_pp']:+.1f}pp",
+                        "Spread": f"{c['tp1_spread_pp']:+.1f}pp",
+                        "Top TP2": f"{c['top_tp2']*100:.1f}%",
+                        "Top SL": f"{c['top_sl']*100:.1f}%",
+                    })
+                st.dataframe(pd.DataFrame(_sc_c2_rows), hide_index=True,
+                              use_container_width=True)
+
+            st.subheader("Toxic SL Combinations (avoid these)")
+            st.caption(
+                "Feature pairs that predict stop-loss hits. "
+                "When BOTH features are in their extreme quintile, SL rate spikes."
+            )
+            _sc_toxic = _sc_combos.get("toxic_sl_2way", [])
+            if _sc_toxic:
+                _sc_toxic_rows = []
+                for i, c in enumerate(_sc_toxic[:10], 1):
+                    feats_str = " + ".join(c["features"])
+                    high_sl = max(c["top_sl"], c["bot_sl"])
+                    _sc_toxic_rows.append({
+                        "Rank": i,
+                        "Features": feats_str,
+                        "Worst SL": f"{high_sl*100:.1f}%",
+                        "SL Spread": f"{c['sl_spread_pp']:+.1f}pp",
+                        "Top TP1": f"{c['top_tp1']*100:.1f}%",
+                        "Bot TP1": f"{c['bot_tp1']*100:.1f}%",
+                    })
+                st.dataframe(pd.DataFrame(_sc_toxic_rows), hide_index=True,
+                              use_container_width=True)
+
         # ── Download ──
         st.download_button(
             "Download subcomponent results JSON",

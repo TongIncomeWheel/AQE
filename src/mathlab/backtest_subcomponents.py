@@ -330,7 +330,10 @@ def bracket_from_bars(bars: pd.DataFrame, date_t: pd.Timestamp):
 class ForwardResult:
     tp1_hit: bool = False
     tp1_day: int | None = None
+    tp2_hit: bool = False
+    tp2_day: int | None = None
     sl_hit: bool = False
+    sl_day: int | None = None
     first_event: str = "NONE"
     max_dd_pct: float = 0.0
     returns: dict = field(default_factory=dict)
@@ -354,6 +357,7 @@ def scan_forward(bars: pd.DataFrame, date_t: pd.Timestamp,
             worst_low = min(worst_low, bar_lo)
         if not r.sl_hit and bar_lo <= sl:
             r.sl_hit = True
+            r.sl_day = n
             if r.first_event == "NONE":
                 r.first_event = "SL"
         if not r.tp1_hit and bar_hi >= tp1:
@@ -361,6 +365,9 @@ def scan_forward(bars: pd.DataFrame, date_t: pd.Timestamp,
             r.tp1_day = n
             if r.first_event == "NONE":
                 r.first_event = "TP1"
+        if not r.tp2_hit and bar_hi >= tp2:
+            r.tp2_hit = True
+            r.tp2_day = n
     r.max_dd_pct = round((worst_low - entry) / entry * 100, 3)
     return r
 
@@ -381,7 +388,9 @@ def _spearman(x: np.ndarray, y: np.ndarray) -> tuple[float, float]:
 
 def _quintile_analysis(values: np.ndarray, tp1_hits: np.ndarray,
                        t5_returns: np.ndarray, t10_returns: np.ndarray,
-                       dd: np.ndarray) -> dict:
+                       dd: np.ndarray,
+                       tp2_hits: np.ndarray | None = None,
+                       sl_hits: np.ndarray | None = None) -> dict:
     """Split values into 5 equal-count groups, measure outcomes per group."""
     mask = ~np.isnan(values)
     if mask.sum() < 100:
@@ -392,6 +401,8 @@ def _quintile_analysis(values: np.ndarray, tp1_hits: np.ndarray,
     t5 = t5_returns[mask]
     t10 = t10_returns[mask]
     d = dd[mask]
+    tp2 = tp2_hits[mask] if tp2_hits is not None else None
+    sl = sl_hits[mask] if sl_hits is not None else None
 
     ranks = pd.Series(v).rank(method="first")
     n = len(ranks)
@@ -409,7 +420,7 @@ def _quintile_analysis(values: np.ndarray, tp1_hits: np.ndarray,
         qn = int(qm.sum())
         if qn == 0:
             continue
-        result[f"Q{q}"] = {
+        qd = {
             "n": qn,
             "val_lo": round(float(np.nanmin(v[qm])), 3),
             "val_hi": round(float(np.nanmax(v[qm])), 3),
@@ -419,10 +430,21 @@ def _quintile_analysis(values: np.ndarray, tp1_hits: np.ndarray,
             "avg_t10": round(float(np.nanmean(t10[qm])), 3),
             "avg_dd": round(float(np.nanmean(d[qm])), 3),
         }
+        if tp2 is not None:
+            qd["tp2_rate"] = round(float(tp2[qm].mean()), 4)
+        if sl is not None:
+            qd["sl_rate"] = round(float(sl[qm].mean()), 4)
+        result[f"Q{q}"] = qd
 
     if "Q5" in result and "Q1" in result:
         result["q5_q1_tp1_spread"] = round(
             result["Q5"]["tp1_rate"] - result["Q1"]["tp1_rate"], 4)
+        if tp2 is not None:
+            result["q5_q1_tp2_spread"] = round(
+                result["Q5"].get("tp2_rate", 0) - result["Q1"].get("tp2_rate", 0), 4)
+        if sl is not None:
+            result["q5_q1_sl_spread"] = round(
+                result["Q5"].get("sl_rate", 0) - result["Q1"].get("sl_rate", 0), 4)
         rates = [result[f"Q{i}"]["tp1_rate"] for i in range(1, 6) if f"Q{i}" in result]
         result["monotonic_up"] = all(rates[i] <= rates[i + 1] for i in range(len(rates) - 1))
         result["monotonic_down"] = all(rates[i] >= rates[i + 1] for i in range(len(rates) - 1))
@@ -463,6 +485,295 @@ def _type_group_summary(feature_results: dict) -> dict:
             "avg_abs_corr_t10": round(float(np.mean(corrs_t10)), 4) if corrs_t10 else 0,
         }
     return summary
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# Phase 6: Combination finder — the actual recipe engine
+# ────────────────────────────────────────────────────────────────────────────
+
+TOP_N_FOR_COMBOS = 15
+MIN_COMBO_N = 200
+
+def _normalize_feature(vals: np.ndarray) -> np.ndarray:
+    """Percentile-rank normalize a feature to 0-100 (handles NaN)."""
+    out = np.full_like(vals, np.nan)
+    mask = ~np.isnan(vals)
+    if mask.sum() < 10:
+        return out
+    from scipy.stats import rankdata
+    ranked = rankdata(vals[mask], method="average")
+    out[mask] = (ranked - 1) / (len(ranked) - 1) * 100
+    return out
+
+
+def _combo_score(rows: list[dict], features: list[str],
+                 weights: list[float]) -> np.ndarray:
+    """Build a weighted composite from normalized features."""
+    n = len(rows)
+    arrays = {}
+    for fn in features:
+        raw = np.array([r.get(fn, np.nan) for r in rows], dtype=float)
+        arrays[fn] = _normalize_feature(raw)
+    composite = np.zeros(n)
+    total_w = sum(weights)
+    for fn, w in zip(features, weights):
+        normed = arrays[fn]
+        valid = ~np.isnan(normed)
+        composite[valid] += normed[valid] * (w / total_w)
+        composite[~valid] = np.nan
+    return composite
+
+
+def _eval_composite(composite: np.ndarray, tp1: np.ndarray, tp2: np.ndarray,
+                    sl: np.ndarray, t5: np.ndarray, t10: np.ndarray,
+                    dd: np.ndarray, baseline_tp1: float) -> dict | None:
+    """Evaluate a composite score — top-quintile TP1/TP2/SL rates + edge."""
+    mask = ~np.isnan(composite)
+    n_valid = int(mask.sum())
+    if n_valid < MIN_COMBO_N:
+        return None
+
+    c = composite[mask]
+    tp1_m = tp1[mask]
+    tp2_m = tp2[mask]
+    sl_m = sl[mask]
+    t5_m = t5[mask]
+    t10_m = t10[mask]
+    dd_m = dd[mask]
+
+    threshold = np.percentile(c, 80)
+    top_mask = c >= threshold
+    bot_mask = c <= np.percentile(c, 20)
+    n_top = int(top_mask.sum())
+    n_bot = int(bot_mask.sum())
+    if n_top < 50 or n_bot < 50:
+        return None
+
+    top_tp1 = float(tp1_m[top_mask].mean())
+    top_tp2 = float(tp2_m[top_mask].mean())
+    top_sl = float(sl_m[top_mask].mean())
+    top_t5 = float(np.nanmean(t5_m[top_mask]))
+    top_t10 = float(np.nanmean(t10_m[top_mask]))
+    top_dd = float(np.nanmean(dd_m[top_mask]))
+
+    bot_tp1 = float(tp1_m[bot_mask].mean())
+    bot_tp2 = float(tp2_m[bot_mask].mean())
+    bot_sl = float(sl_m[bot_mask].mean())
+
+    rho_tp1, p_tp1 = _spearman(composite, tp1)
+
+    return {
+        "n_valid": n_valid,
+        "n_top": n_top,
+        "n_bot": n_bot,
+        "top_tp1": round(top_tp1, 4),
+        "top_tp2": round(top_tp2, 4),
+        "top_sl": round(top_sl, 4),
+        "top_t5": round(top_t5, 3),
+        "top_t10": round(top_t10, 3),
+        "top_dd": round(top_dd, 3),
+        "bot_tp1": round(bot_tp1, 4),
+        "bot_tp2": round(bot_tp2, 4),
+        "bot_sl": round(bot_sl, 4),
+        "tp1_edge_pp": round((top_tp1 - baseline_tp1) * 100, 2),
+        "tp1_spread_pp": round((top_tp1 - bot_tp1) * 100, 2),
+        "tp2_spread_pp": round((top_tp2 - bot_tp2) * 100, 2),
+        "sl_spread_pp": round((top_sl - bot_sl) * 100, 2),
+        "rho_tp1": round(float(rho_tp1), 4),
+    }
+
+
+def _find_best_combinations(
+    rows: list[dict],
+    feature_names: list[str],
+    feature_results: dict[str, dict],
+    tp1_arr: np.ndarray,
+    tp2_arr: np.ndarray,
+    sl_arr: np.ndarray,
+    t5_arr: np.ndarray,
+    t10_arr: np.ndarray,
+    dd_arr: np.ndarray,
+    baseline_tp1: float,
+    baseline_tp2: float,
+    baseline_sl: float,
+) -> dict:
+    """Find the best 2/3/4-feature combinations for TP1, TP2, and toxic SL.
+
+    Strategy:
+    1. Take top N features by absolute TP1 spread (the univariate winners)
+    2. Test all 2-way and 3-way equal-weight combos from those N
+    3. For the best 3-way combos, try weight optimization (grid search)
+    4. Separately find the toxic SL combinations (features whose combo
+       predicts stop-loss hits)
+    """
+    from itertools import combinations
+
+    print(f"\n-- Phase 6: Finding best feature combinations --")
+
+    # Select candidate features — top N by TP1 spread that have enough data
+    candidates_tp1 = sorted(
+        [fn for fn in feature_results
+         if feature_results[fn]["n_valid"] >= MIN_COMBO_N],
+        key=lambda fn: abs(feature_results[fn]["q5_q1_tp1_spread"]),
+        reverse=True,
+    )[:TOP_N_FOR_COMBOS]
+
+    # Also grab top N by SL correlation for toxicity search
+    candidates_sl = sorted(
+        [fn for fn in feature_results
+         if feature_results[fn]["n_valid"] >= MIN_COMBO_N],
+        key=lambda fn: abs(feature_results[fn].get("q5_q1_sl_spread", 0)),
+        reverse=True,
+    )[:TOP_N_FOR_COMBOS]
+
+    print(f"  TP1 candidates: {candidates_tp1}")
+    print(f"  SL candidates:  {candidates_sl}")
+
+    # ── 2-way combos for TP1 ──
+    print(f"\n  Testing 2-way TP1 combinations...")
+    combo2_results = []
+    for f1, f2 in combinations(candidates_tp1, 2):
+        composite = _combo_score(rows, [f1, f2], [1.0, 1.0])
+        ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
+                             t5_arr, t10_arr, dd_arr, baseline_tp1)
+        if ev is not None:
+            combo2_results.append({
+                "features": [f1, f2],
+                "weights": [0.5, 0.5],
+                **ev,
+            })
+
+    combo2_results.sort(key=lambda x: x["tp1_spread_pp"], reverse=True)
+    print(f"    Tested {len(combo2_results)} pairs")
+    if combo2_results:
+        best = combo2_results[0]
+        print(f"    Best 2-way: {best['features']} → "
+              f"top TP1={best['top_tp1']*100:.1f}% "
+              f"(+{best['tp1_edge_pp']:.1f}pp vs baseline), "
+              f"spread={best['tp1_spread_pp']:+.1f}pp")
+
+    # ── 3-way combos for TP1 ──
+    print(f"\n  Testing 3-way TP1 combinations...")
+    combo3_results = []
+    for f1, f2, f3 in combinations(candidates_tp1, 3):
+        composite = _combo_score(rows, [f1, f2, f3], [1.0, 1.0, 1.0])
+        ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
+                             t5_arr, t10_arr, dd_arr, baseline_tp1)
+        if ev is not None:
+            combo3_results.append({
+                "features": [f1, f2, f3],
+                "weights": [0.333, 0.333, 0.333],
+                **ev,
+            })
+
+    combo3_results.sort(key=lambda x: x["tp1_spread_pp"], reverse=True)
+    print(f"    Tested {len(combo3_results)} triples")
+    if combo3_results:
+        best = combo3_results[0]
+        print(f"    Best 3-way: {best['features']} → "
+              f"top TP1={best['top_tp1']*100:.1f}% "
+              f"(+{best['tp1_edge_pp']:.1f}pp vs baseline), "
+              f"spread={best['tp1_spread_pp']:+.1f}pp")
+
+    # ── Weight optimization on the top 5 3-way combos ──
+    print(f"\n  Optimizing weights on top 5 3-way combos...")
+    optimized_results = []
+    weight_grid = [
+        (0.5, 0.3, 0.2), (0.5, 0.25, 0.25), (0.4, 0.4, 0.2),
+        (0.4, 0.3, 0.3), (0.6, 0.2, 0.2), (0.6, 0.3, 0.1),
+        (0.7, 0.2, 0.1), (0.7, 0.15, 0.15),
+        (0.333, 0.333, 0.333),
+    ]
+    for combo in combo3_results[:5]:
+        feats = combo["features"]
+        best_ev = combo
+        best_w = [0.333, 0.333, 0.333]
+        for w in weight_grid:
+            # Try all permutations of weights across the 3 features
+            from itertools import permutations
+            for wp in set(permutations(w)):
+                composite = _combo_score(rows, feats, list(wp))
+                ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
+                                     t5_arr, t10_arr, dd_arr, baseline_tp1)
+                if ev is not None and ev["tp1_spread_pp"] > best_ev["tp1_spread_pp"]:
+                    best_ev = ev
+                    best_w = list(wp)
+
+        optimized_results.append({
+            "features": feats,
+            "weights": [round(w, 3) for w in best_w],
+            **best_ev,
+        })
+        print(f"    {feats} → weights={[round(w,2) for w in best_w]} "
+              f"TP1 top={best_ev['top_tp1']*100:.1f}% "
+              f"spread={best_ev['tp1_spread_pp']:+.1f}pp")
+
+    optimized_results.sort(key=lambda x: x["tp1_spread_pp"], reverse=True)
+
+    # ── Toxic SL combinations ──
+    print(f"\n  Testing toxic SL combinations (what predicts stop-loss)...")
+    sl_combo_results = []
+    for f1, f2 in combinations(candidates_sl, 2):
+        composite = _combo_score(rows, [f1, f2], [1.0, 1.0])
+        ev = _eval_composite(composite, tp1_arr, tp2_arr, sl_arr,
+                             t5_arr, t10_arr, dd_arr, baseline_tp1)
+        if ev is not None:
+            sl_combo_results.append({
+                "features": [f1, f2],
+                "weights": [0.5, 0.5],
+                **ev,
+            })
+
+    # Sort by SL spread — highest SL rate in one quintile vs lowest
+    sl_combo_results.sort(key=lambda x: abs(x["sl_spread_pp"]), reverse=True)
+    print(f"    Tested {len(sl_combo_results)} SL pairs")
+    if sl_combo_results:
+        worst = sl_combo_results[0]
+        high_sl = max(worst["top_sl"], worst["bot_sl"])
+        print(f"    Most toxic: {worst['features']} → "
+              f"worst quintile SL={high_sl*100:.1f}%, "
+              f"spread={worst['sl_spread_pp']:+.1f}pp")
+
+    # ── Print summary ──
+    print(f"\n  ═══ COMBINATION RESULTS SUMMARY ═══")
+
+    print(f"\n  BEST TP1 RECIPES (optimized weights):")
+    print(f"  {'Rank':>4s}  {'Features':55s}  {'Weights':22s}  "
+          f"{'Top TP1':>7s}  {'Edge':>6s}  {'Spread':>7s}  "
+          f"{'Top TP2':>7s}  {'Top SL':>6s}  {'Top T+10':>8s}")
+    print("  " + "-" * 140)
+    for i, c in enumerate(optimized_results[:5], 1):
+        feats_str = " + ".join(c["features"])
+        w_str = "/".join(f"{w:.0%}" for w in c["weights"])
+        print(f"  {i:>4d}  {feats_str:55s}  {w_str:22s}  "
+              f"{c['top_tp1']*100:>6.1f}%  {c['tp1_edge_pp']:>+5.1f}  "
+              f"{c['tp1_spread_pp']:>+6.1f}  "
+              f"{c['top_tp2']*100:>6.1f}%  {c['top_sl']*100:>5.1f}%  "
+              f"{c['top_t10']:>+7.2f}%")
+
+    print(f"\n  TOXIC SL COMBINATIONS (avoid these patterns):")
+    print(f"  {'Rank':>4s}  {'Features':55s}  "
+          f"{'Top SL':>6s}  {'Bot SL':>6s}  {'SL Spread':>9s}  "
+          f"{'Top TP1':>7s}  {'Bot TP1':>7s}")
+    print("  " + "-" * 110)
+    for i, c in enumerate(sl_combo_results[:10], 1):
+        feats_str = " + ".join(c["features"])
+        print(f"  {i:>4d}  {feats_str:55s}  "
+              f"{c['top_sl']*100:>5.1f}%  {c['bot_sl']*100:>5.1f}%  "
+              f"{c['sl_spread_pp']:>+8.1f}  "
+              f"{c['top_tp1']*100:>6.1f}%  {c['bot_tp1']*100:>6.1f}%")
+
+    return {
+        "best_2way_tp1": combo2_results[:10],
+        "best_3way_tp1": combo3_results[:10],
+        "optimized_3way": optimized_results[:10],
+        "toxic_sl_2way": sl_combo_results[:10],
+        "n_2way_tested": len(combo2_results),
+        "n_3way_tested": len(combo3_results),
+        "n_sl_tested": len(sl_combo_results),
+        "candidates_tp1": candidates_tp1,
+        "candidates_sl": candidates_sl,
+    }
 
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -558,7 +869,10 @@ def run_backtest(tickers: list[str] | None = None,
                 "ticker": tk,
                 "date": str(dt.date()),
                 "tp1_hit": 1 if fwd.first_event == "TP1" else 0,
+                "tp2_hit": 1 if fwd.tp2_hit and fwd.first_event != "SL" else 0,
                 "sl_hit": 1 if fwd.first_event == "SL" else 0,
+                "sl_first": 1 if fwd.sl_hit else 0,
+                "outcome": fwd.first_event,
                 "t5_return": fwd.returns.get("T+5", np.nan),
                 "t10_return": fwd.returns.get("T+10", np.nan),
                 "max_dd": fwd.max_dd_pct,
@@ -576,20 +890,26 @@ def run_backtest(tickers: list[str] | None = None,
         print("  [!] Too few events for analysis")
         return {"error": "insufficient_data", "n_events": len(rows)}
 
-    # ── Phase 4: Correlation + quintile analysis ──
-    print(f"\n-- Phase 4: Correlation + quintile analysis --")
+    # ── Phase 4: Univariate correlation + quintile analysis ──
+    print(f"\n-- Phase 4: Univariate correlation + quintile analysis --")
 
     tp1_arr = np.array([r["tp1_hit"] for r in rows], dtype=float)
+    tp2_arr = np.array([r["tp2_hit"] for r in rows], dtype=float)
+    sl_arr = np.array([r["sl_hit"] for r in rows], dtype=float)
+    sl_first_arr = np.array([r["sl_first"] for r in rows], dtype=float)
     t5_arr = np.array([r.get("t5_return", np.nan) for r in rows], dtype=float)
     t10_arr = np.array([r.get("t10_return", np.nan) for r in rows], dtype=float)
     dd_arr = np.array([r["max_dd"] for r in rows], dtype=float)
 
     baseline_tp1 = float(tp1_arr.mean())
+    baseline_tp2 = float(tp2_arr.mean())
+    baseline_sl = float(sl_arr.mean())
     baseline_t5 = float(np.nanmean(t5_arr))
     baseline_t10 = float(np.nanmean(t10_arr))
     baseline_dd = float(np.nanmean(dd_arr))
 
-    print(f"  Baseline: TP1={baseline_tp1*100:.1f}%  T+5={baseline_t5:.3f}%  "
+    print(f"  Baseline: TP1={baseline_tp1*100:.1f}%  TP2={baseline_tp2*100:.1f}%  "
+          f"SL={baseline_sl*100:.1f}%  T+5={baseline_t5:.3f}%  "
           f"T+10={baseline_t10:.3f}%  DD={baseline_dd:.2f}%")
 
     feature_results: dict[str, dict] = {}
@@ -603,11 +923,14 @@ def run_backtest(tickers: list[str] | None = None,
         meta = _feature_meta(fn)
 
         rho_tp1, p_tp1 = _spearman(vals, tp1_arr)
+        rho_tp2, p_tp2 = _spearman(vals, tp2_arr)
+        rho_sl, p_sl = _spearman(vals, sl_arr)
         rho_t5, p_t5 = _spearman(vals, t5_arr)
         rho_t10, p_t10 = _spearman(vals, t10_arr)
         rho_dd, p_dd = _spearman(vals, dd_arr)
 
-        quint = _quintile_analysis(vals, tp1_arr, t5_arr, t10_arr, dd_arr)
+        quint = _quintile_analysis(vals, tp1_arr, t5_arr, t10_arr, dd_arr,
+                                   tp2_hits=tp2_arr, sl_hits=sl_arr)
 
         feature_results[fn] = {
             "name": fn,
@@ -617,12 +940,16 @@ def run_backtest(tickers: list[str] | None = None,
             "n_valid": n_valid,
             "correlation": {
                 "tp1_hit": {"rho": rho_tp1, "p": p_tp1},
+                "tp2_hit": {"rho": rho_tp2, "p": p_tp2},
+                "sl_hit": {"rho": rho_sl, "p": p_sl},
                 "t5_return": {"rho": rho_t5, "p": p_t5},
                 "t10_return": {"rho": rho_t10, "p": p_t10},
                 "max_drawdown": {"rho": rho_dd, "p": p_dd},
             },
             "quintiles": quint,
             "q5_q1_tp1_spread": quint.get("q5_q1_tp1_spread", 0.0),
+            "q5_q1_tp2_spread": quint.get("q5_q1_tp2_spread", 0.0),
+            "q5_q1_sl_spread": quint.get("q5_q1_sl_spread", 0.0),
             "monotonic_up": quint.get("monotonic_up", False),
             "monotonic_down": quint.get("monotonic_down", False),
         }
@@ -642,20 +969,43 @@ def run_backtest(tickers: list[str] | None = None,
         reverse=True,
     )
 
+    ranked_by_sl = sorted(
+        feature_results.values(),
+        key=lambda f: abs(f.get("q5_q1_sl_spread", 0)),
+        reverse=True,
+    )
+
     type_summary = _type_group_summary(feature_results)
 
-    # Print top 20 by spread
-    print(f"\n  {'Rank':>4s}  {'Feature':25s}  {'Type':18s}  {'Engine':10s}  "
-          f"{'Q5-Q1':>7s}  {'rho_TP1':>8s}  {'rho_T10':>8s}  {'Mono':>4s}  {'n':>6s}")
-    print("  " + "-" * 110)
+    # Print top 25 by TP1 spread
+    print(f"\n  TOP 25 by TP1 quintile spread:")
+    print(f"  {'Rank':>4s}  {'Feature':25s}  {'Type':18s}  {'Engine':10s}  "
+          f"{'Q5-Q1 TP1':>9s}  {'Q5-Q1 TP2':>9s}  {'Q5-Q1 SL':>8s}  "
+          f"{'rho_TP1':>8s}  {'Mono':>4s}  {'n':>6s}")
+    print("  " + "-" * 130)
     for i, f in enumerate(ranked_by_spread[:25], 1):
         mono = "UP" if f["monotonic_up"] else ("DN" if f["monotonic_down"] else "  ")
         rho_tp1 = f["correlation"]["tp1_hit"]["rho"]
-        rho_t10 = f["correlation"]["t10_return"]["rho"]
-        spread = f["q5_q1_tp1_spread"]
+        tp1_sp = f["q5_q1_tp1_spread"]
+        tp2_sp = f.get("q5_q1_tp2_spread", 0)
+        sl_sp = f.get("q5_q1_sl_spread", 0)
         print(f"  {i:>4d}  {f['name']:25s}  {f['type']:18s}  {f['engine']:10s}  "
-              f"{spread*100:>+6.2f}%  {rho_tp1:>+7.4f}  {rho_t10:>+7.4f}  {mono:>4s}  "
-              f"{f['n_valid']:>6,}")
+              f"{tp1_sp*100:>+8.2f}%  {tp2_sp*100:>+8.2f}%  {sl_sp*100:>+7.2f}%  "
+              f"{rho_tp1:>+7.4f}  {mono:>4s}  {f['n_valid']:>6,}")
+
+    # Print SL toxicity ranking
+    print(f"\n  TOP 15 SL TOXICITY (features most correlated with stop-loss hits):")
+    print(f"  {'Rank':>4s}  {'Feature':25s}  {'Type':18s}  {'Q5-Q1 SL':>8s}  "
+          f"{'rho_SL':>8s}  {'Q5 SL%':>7s}  {'Q1 SL%':>7s}")
+    print("  " + "-" * 100)
+    for i, f in enumerate(ranked_by_sl[:15], 1):
+        rho_sl = f["correlation"]["sl_hit"]["rho"]
+        sl_sp = f.get("q5_q1_sl_spread", 0)
+        q5_sl = f.get("quintiles", {}).get("Q5", {}).get("sl_rate", 0)
+        q1_sl = f.get("quintiles", {}).get("Q1", {}).get("sl_rate", 0)
+        print(f"  {i:>4d}  {f['name']:25s}  {f['type']:18s}  "
+              f"{sl_sp*100:>+7.2f}%  {rho_sl:>+7.4f}  "
+              f"{q5_sl*100:>6.1f}%  {q1_sl*100:>6.1f}%")
 
     # Print type group summary
     print(f"\n  TYPE GROUP SUMMARY:")
@@ -672,20 +1022,30 @@ def run_backtest(tickers: list[str] | None = None,
               f"{data['avg_abs_corr_tp1']:>9.4f}")
 
     # Print quintile detail for top 5
-    print(f"\n  QUINTILE DETAIL (top 5 by spread):")
+    print(f"\n  QUINTILE DETAIL (top 5 by TP1 spread):")
     for f in ranked_by_spread[:5]:
         print(f"\n  {f['name']} ({f['type']}, {f['engine']}): "
-              f"Q5-Q1 = {f['q5_q1_tp1_spread']*100:+.2f}pp")
+              f"Q5-Q1 TP1={f['q5_q1_tp1_spread']*100:+.2f}pp  "
+              f"TP2={f.get('q5_q1_tp2_spread',0)*100:+.2f}pp  "
+              f"SL={f.get('q5_q1_sl_spread',0)*100:+.2f}pp")
         quint = f.get("quintiles", {})
         for q in ["Q1", "Q2", "Q3", "Q4", "Q5"]:
             qd = quint.get(q, {})
             if qd:
+                tp2_s = f"  TP2={qd.get('tp2_rate',0)*100:>5.1f}%" if "tp2_rate" in qd else ""
+                sl_s = f"  SL={qd.get('sl_rate',0)*100:>5.1f}%" if "sl_rate" in qd else ""
                 print(f"    {q}: n={qd['n']:>5,}  "
                       f"val=[{qd['val_lo']:.1f}-{qd['val_hi']:.1f}]  "
-                      f"TP1={qd['tp1_rate']*100:>5.1f}%  "
+                      f"TP1={qd['tp1_rate']*100:>5.1f}%{tp2_s}{sl_s}  "
                       f"T+5={qd['avg_t5']:>+6.2f}%  "
                       f"T+10={qd['avg_t10']:>+6.2f}%  "
                       f"DD={qd['avg_dd']:>+6.2f}%")
+
+    # ── Phase 6: Combination finder ──
+    combo_results = _find_best_combinations(rows, feature_names, feature_results,
+                                            tp1_arr, tp2_arr, sl_arr, t5_arr,
+                                            t10_arr, dd_arr, baseline_tp1,
+                                            baseline_tp2, baseline_sl)
 
     # ── Build result ──
     result = {
@@ -696,6 +1056,8 @@ def run_backtest(tickers: list[str] | None = None,
         "data_unavailable": failed,
         "baseline": {
             "tp1_rate": round(baseline_tp1, 4),
+            "tp2_rate": round(baseline_tp2, 4),
+            "sl_rate": round(baseline_sl, 4),
             "avg_t5": round(baseline_t5, 3),
             "avg_t10": round(baseline_t10, 3),
             "avg_dd": round(baseline_dd, 3),
@@ -704,21 +1066,35 @@ def run_backtest(tickers: list[str] | None = None,
         "features": {k: v for k, v in feature_results.items()},
         "ranked_by_tp1_spread": [
             {"name": f["name"], "type": f["type"], "engine": f["engine"],
-             "q5_q1_spread": f["q5_q1_tp1_spread"],
+             "q5_q1_tp1_spread": f["q5_q1_tp1_spread"],
+             "q5_q1_tp2_spread": f.get("q5_q1_tp2_spread", 0),
+             "q5_q1_sl_spread": f.get("q5_q1_sl_spread", 0),
              "rho_tp1": f["correlation"]["tp1_hit"]["rho"],
+             "rho_tp2": f["correlation"]["tp2_hit"]["rho"],
+             "rho_sl": f["correlation"]["sl_hit"]["rho"],
              "rho_t10": f["correlation"]["t10_return"]["rho"],
              "monotonic": f["monotonic_up"] or f["monotonic_down"],
              "n": f["n_valid"]}
             for f in ranked_by_spread
         ],
+        "ranked_by_sl_toxicity": [
+            {"name": f["name"], "type": f["type"],
+             "q5_q1_sl_spread": f.get("q5_q1_sl_spread", 0),
+             "rho_sl": f["correlation"]["sl_hit"]["rho"],
+             "q5_sl_rate": f.get("quintiles", {}).get("Q5", {}).get("sl_rate", 0),
+             "q1_sl_rate": f.get("quintiles", {}).get("Q1", {}).get("sl_rate", 0),
+             "n": f["n_valid"]}
+            for f in ranked_by_sl
+        ],
         "ranked_by_t10_corr": [
             {"name": f["name"], "type": f["type"],
              "rho_t10": f["correlation"]["t10_return"]["rho"],
-             "q5_q1_spread": f["q5_q1_tp1_spread"],
+             "q5_q1_tp1_spread": f["q5_q1_tp1_spread"],
              "n": f["n_valid"]}
             for f in ranked_by_t10_corr
         ],
         "type_summary": type_summary,
+        "combinations": combo_results,
     }
 
     _save_result(result)
