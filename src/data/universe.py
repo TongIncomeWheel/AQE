@@ -127,15 +127,18 @@ def build_universe(dry_run: bool = False) -> dict:
 
     Criteria:
       1. Market cap > $2B  (FMP screener)
-      2. Price > 20-day SMA  (computed from bars)
-      3. Price > 50-day SMA  (computed from bars)
-      4. 10-day average volume > 1.5M shares/day  (computed from bars)
+      2. Price > 20-day SMA
+      3. Price > 50-day SMA
+      4. 10-day average volume > 1.5M shares/day
 
-    Flow: FMP screener → fetch 55 bars per candidate → filter on SMA20/SMA50/
-    volume → write universe.txt + upload CSV to Drive.  ~300-500 API calls,
-    takes 2-4 minutes at ~250 calls/min (FMP Starter).
+    Two-pass for API efficiency:
+      Pass 1 — FMP screener + batch quotes (~10 API calls for ~500 names).
+               Eliminates names below SMA50 using the quote's priceAvg50.
+      Pass 2 — Fetch 55 bars per survivor (~250-350 calls) to compute SMA20
+               and 10-day average volume.
 
-    Returns a summary dict with status, counts, and any errors.
+    Writes universe.txt locally AND uploads the CSV to Drive so it persists
+    across container restarts.  Returns a summary dict.
     """
     from datetime import timedelta
 
@@ -145,21 +148,18 @@ def build_universe(dry_run: bool = False) -> dict:
     today = date.today()
     from_dt = today - timedelta(days=SCREEN_LOOKBACK_DAYS)
 
-    # ── FMP screener → broad candidates ──────────────────────────────────
-    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, "
-          f"US exchanges ({', '.join(UNIVERSE_EXCHANGES)})...")
+    # ── Pass 1: FMP screener → broad candidates ──────────────────────────
+    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, US exchanges...")
     try:
         raw = client.get_screener(
             min_mcap=SCREEN_MCAP,
             min_price=5.0,
-            min_volume=100_000,            # generous pre-filter; 10d avg checked from bars
+            min_volume=500_000,            # generous pre-filter
             exchanges=UNIVERSE_EXCHANGES,
             limit=5000,
         )
     except FMPError as exc:
         return {"status": "error", "reason": f"screener failed: {exc}"}
-
-    print(f"[universe] Screener raw response: {len(raw)} items")
 
     candidates = [
         r["symbol"].upper().strip()
@@ -169,27 +169,35 @@ def build_universe(dry_run: bool = False) -> dict:
         and "." not in r["symbol"]
         and " " not in r["symbol"]
     ]
-    print(f"[universe] After symbol cleanup: {len(candidates)} candidates")
+    print(f"[universe] Screener: {len(candidates)} candidates")
     if not candidates:
-        sample = [r.get("symbol", r) for r in raw[:5]] if raw else "empty"
-        return {"status": "error",
-                "reason": f"screener returned {len(raw)} items but 0 valid symbols. "
-                          f"Sample: {sample}"}
+        return {"status": "error", "reason": "screener returned 0 candidates"}
 
-    # ── Fetch bars → compute SMA20, SMA50, 10-day avg volume ─────────────
+    # ── Batch quotes: pre-filter on SMA50 (cheap — ~10 API calls) ────────
+    try:
+        quotes = client.get_quotes_batch(candidates, chunk=50)
+    except FMPError as exc:
+        return {"status": "error", "reason": f"batch quotes failed: {exc}"}
+
+    sma50_pass = []
+    for tk in candidates:
+        q = quotes.get(tk)
+        if not q:
+            continue
+        price, ma50 = q.get("price"), q.get("ma_50")
+        if price and ma50 and price > ma50:
+            sma50_pass.append(tk)
+    print(f"[universe] After SMA50 pre-filter: {len(sma50_pass)} candidates")
+
+    # ── Pass 2: fetch bars → SMA20 + 10-day avg volume ───────────────────
     passed: list[str] = []
-    skipped_bars = 0
-    skipped_sma = 0
-    skipped_vol = 0
     errors: list[str] = []
-    for i, tk in enumerate(candidates):
+    for i, tk in enumerate(sma50_pass):
         if (i + 1) % 100 == 0:
-            print(f"[universe] Checking {i + 1}/{len(candidates)} "
-                  f"({len(passed)} passed so far)...")
+            print(f"[universe] Checking bars {i + 1}/{len(sma50_pass)}...")
         try:
             bars = client.get_daily_bars(tk, from_date=from_dt, to_date=today)
             if bars is None or bars.empty or len(bars) < 50:
-                skipped_bars += 1
                 continue
             close = bars["close"].astype(float)
             volume = bars["volume"].astype(float)
@@ -199,27 +207,15 @@ def build_universe(dry_run: bool = False) -> dict:
             sma50 = float(close.tail(50).mean())
             avg_vol = float(volume.tail(10).mean())
 
-            if not (price > sma20 and price > sma50):
-                skipped_sma += 1
-                continue
-            if avg_vol < SCREEN_AVG_VOL_10D:
-                skipped_vol += 1
-                continue
-            passed.append(tk)
+            if (price > sma20
+                    and price > sma50
+                    and avg_vol >= SCREEN_AVG_VOL_10D):
+                passed.append(tk)
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{tk}: {exc}")
 
-    print(f"[universe] {len(passed)} passed | "
-          f"{skipped_bars} too few bars | "
-          f"{skipped_sma} below SMA20/50 | "
-          f"{skipped_vol} low volume | "
-          f"{len(errors)} errors")
-
-    if not passed:
-        return {"status": "error",
-                "reason": f"0 tickers passed from {len(candidates)} candidates "
-                          f"(bars={skipped_bars}, sma={skipped_sma}, vol={skipped_vol}, "
-                          f"err={len(errors)})"}
+    print(f"[universe] {len(passed)} tickers passed all filters"
+          + (f" ({len(errors)} errors)" if errors else ""))
 
     # ── Compare with existing ─────────────────────────────────────────────
     try:
