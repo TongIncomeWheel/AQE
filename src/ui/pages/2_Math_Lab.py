@@ -1119,6 +1119,296 @@ else:
 
 
 # ===================================================================
+# Section 7: AQE Readiness Score Backtest
+# ===================================================================
+
+st.header("Section 7: AQE Readiness Score Backtest")
+st.caption(
+    "Progressive daily score (0-100) per ticker. Tests whether the readiness "
+    "score picks WHEN to enter — compares trigger thresholds (50-90) vs random-"
+    "entry baseline. Validates VSCO/BROS/CAT reference cases. Component importance "
+    "analysis identifies which parts of the score drive edge."
+)
+
+_rd_result_path = OUTPUT_DIR / "mathlab_readiness.json"
+_rd_run = st.session_state.pop("_rd_run", None)
+
+if _rd_run:
+    _rd_log = st.empty()
+    _rd_status = st.empty()
+    _rd_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_readiness"]
+    if _rd_run == "dry":
+        _rd_args.append("--dry-run")
+    if _rd_run == "refresh":
+        _rd_args.append("--refresh")
+    if _rd_run == "reference":
+        _rd_args.append("--reference-only")
+    with st.spinner("Running readiness backtest..."):
+        try:
+            _rd_proc = __import__("subprocess").Popen(
+                _rd_args, cwd=str(PROJECT_ROOT),
+                stdout=__import__("subprocess").PIPE,
+                stderr=__import__("subprocess").STDOUT, text=True, bufsize=1,
+            )
+            _rd_buf: list[str] = []
+            assert _rd_proc.stdout is not None
+            for _rd_line in _rd_proc.stdout:
+                _rd_buf.append(_rd_line.rstrip())
+                _rd_log.code("\n".join(_rd_buf[-30:]))
+            _rd_rc = _rd_proc.wait()
+            if _rd_rc == 0:
+                _rd_status.success("Readiness backtest complete.")
+            else:
+                _rd_status.error(f"Backtest exited with code {_rd_rc}")
+        except Exception as _rd_ex:
+            _rd_status.error(f"Failed to run: {_rd_ex}")
+    st.rerun()
+
+# Buttons
+_rdc1, _rdc2, _rdc3, _rdc4 = st.columns(4)
+with _rdc1:
+    if st.button("Run readiness backtest", key="rd_bt_full", type="primary",
+                  use_container_width=True,
+                  help="Full universe, 7 thresholds (50-90), baseline, trajectory, "
+                       "component importance, reference cases. Uses cached bars."):
+        st.session_state["_rd_run"] = "full"
+        st.rerun()
+with _rdc2:
+    if st.button("Fresh pull + run", key="rd_bt_refresh",
+                  use_container_width=True,
+                  help="Clear bar cache and re-pull from FMP, then full backtest."):
+        st.session_state["_rd_run"] = "refresh"
+        st.rerun()
+with _rdc3:
+    if st.button("Reference cases only", key="rd_bt_ref",
+                  use_container_width=True,
+                  help="VSCO/BROS/CAT only — validates the score against known cases."):
+        st.session_state["_rd_run"] = "reference"
+        st.rerun()
+with _rdc4:
+    if st.button("Dry run (6 tickers)", key="rd_bt_dry",
+                  use_container_width=True,
+                  help="Quick logic check."):
+        st.session_state["_rd_run"] = "dry"
+        st.rerun()
+
+# Display results
+if _rd_result_path.exists():
+    import json as _json_rd
+    _rd = _json_rd.loads(_rd_result_path.read_text(encoding="utf-8"))
+    if _rd:
+        _rd_mode = _rd.get("mode", "full")
+        _rd_run_date = _rd.get("run_date", "?")
+        _rd_usize = _rd.get("universe_size", 0)
+        _rd_total_dates = _rd.get("total_dates_scanned", 0)
+        _rd_total_bk = _rd.get("total_brackets", 0)
+        _rd_best_t = _rd.get("best_threshold")
+
+        st.markdown(
+            f"**Last run:** {_rd_run_date} | **Mode:** {_rd_mode} | "
+            f"**Universe:** {_rd_usize} tickers | **Dates scanned:** "
+            f"{_rd_total_dates:,} | **Brackets:** {_rd_total_bk:,}"
+        )
+
+        # ── Baseline metrics ──
+        _rd_bl = _rd.get("baseline", {})
+        if _rd_bl:
+            _rd_blc = st.columns(5)
+            with _rd_blc[0]:
+                st.metric("Baseline TP1 Win", f"{_rd_bl.get('tp1_win_rate',0)*100:.1f}%")
+            with _rd_blc[1]:
+                st.metric("Baseline SL Hit", f"{_rd_bl.get('sl_hit_rate',0)*100:.1f}%")
+            with _rd_blc[2]:
+                st.metric("Baseline DD", f"{_rd_bl.get('avg_dd_pct',0):+.2f}%")
+            with _rd_blc[3]:
+                st.metric("Baseline T+5", f"{_rd_bl.get('avg_return_T5_pct',0):+.2f}%")
+            with _rd_blc[4]:
+                st.metric("Baseline T+10", f"{_rd_bl.get('avg_return_T10_pct',0):+.2f}%")
+
+        # ── Pass / Fail verdicts ──
+        _rd_pf = _rd.get("pass_fail", {})
+        if _rd_pf:
+            st.subheader("Pass / Fail Verdicts")
+            _rd_pf_keys = [
+                ("readiness_signal", "Readiness Signal"),
+                ("trajectory_filter", "Trajectory Filter"),
+            ]
+            _rd_vcols = st.columns(len(_rd_pf_keys))
+            for _rd_col, (_rd_key, _rd_label) in zip(_rd_vcols, _rd_pf_keys):
+                with _rd_col:
+                    _rd_entry = _rd_pf.get(_rd_key, {})
+                    _rd_v = _rd_entry.get("verdict", "?")
+                    st.metric(_rd_label, _rd_v)
+                    _rd_crit = _rd_entry.get("criterion", "")
+                    if _rd_crit:
+                        st.caption(_rd_crit)
+
+            if _rd_best_t is not None:
+                st.info(f"Best threshold: **{_rd_best_t}** (edge: "
+                        f"{_rd_pf.get('readiness_signal',{}).get('edge',0)*100:+.1f}pp, "
+                        f"n={_rd_pf.get('readiness_signal',{}).get('n',0):,})")
+
+        # ── Threshold comparison table ──
+        _rd_thresholds = _rd.get("thresholds", {})
+        if _rd_thresholds:
+            st.subheader("Threshold Comparison")
+            _rd_t_rows = []
+            for t in (50, 60, 70, 75, 80, 85, 90):
+                ts = _rd_thresholds.get(str(t), {}).get("stats", {})
+                if not ts:
+                    continue
+                marker = " **" if t == _rd_best_t else ""
+                _rd_t_rows.append({
+                    "Threshold": f"{t}{marker}",
+                    "N": ts.get("n", 0),
+                    "TP1 Win %": f"{ts.get('tp1_win_rate',0)*100:.1f}%",
+                    "Edge pp": f"{ts.get('edge_vs_baseline',0)*100:+.1f}",
+                    "SL Hit %": f"{ts.get('sl_hit_rate',0)*100:.1f}%",
+                    "Avg DD %": f"{ts.get('avg_dd_pct',0):+.2f}%",
+                    "Avg Days→TP1": f"{ts.get('avg_days_to_tp1',0):.1f}",
+                    "Med Days→TP1": f"{ts.get('median_days_to_tp1',0):.1f}",
+                    "TP1→TP2 %": f"{ts.get('tp1_then_tp2_rate',0)*100:.1f}%",
+                })
+            if _rd_t_rows:
+                st.dataframe(pd.DataFrame(_rd_t_rows), use_container_width=True, hide_index=True)
+
+        # ── Trajectory cross-test (best threshold) ──
+        if _rd_best_t is not None:
+            _rd_traj = _rd_thresholds.get(str(_rd_best_t), {}).get("trajectory", {})
+            if _rd_traj:
+                st.subheader(f"Trajectory Cross-Test (Threshold {_rd_best_t})")
+                _rd_tj_rows = []
+                for tj in ("BUILDING", "STABLE", "CHOPPY", "DEGRADING"):
+                    ts = _rd_traj.get(tj, {})
+                    _rd_tj_rows.append({
+                        "Trajectory": tj,
+                        "N": ts.get("n", 0),
+                        "TP1 Win %": f"{ts.get('tp1_win_rate',0)*100:.1f}%",
+                        "Edge pp": f"{ts.get('edge_vs_baseline',0)*100:+.1f}",
+                        "SL Hit %": f"{ts.get('sl_hit_rate',0)*100:.1f}%",
+                        "Avg DD %": f"{ts.get('avg_dd_pct',0):+.2f}%",
+                        "Avg Days→TP1": f"{ts.get('avg_days_to_tp1',0):.1f}",
+                    })
+                st.dataframe(pd.DataFrame(_rd_tj_rows), use_container_width=True, hide_index=True)
+
+        # ── Time profile (best threshold vs baseline) ──
+        if _rd_best_t is not None:
+            _rd_tp = _rd_thresholds.get(str(_rd_best_t), {}).get("time_profile", {})
+            _rd_bl_tp = _rd.get("baseline_time_profile", {})
+            if _rd_tp:
+                st.subheader(f"Time Profile (Threshold {_rd_best_t} vs Baseline)")
+                _rd_tp_rows = []
+                for label, src in [("Signal", _rd_tp), ("Baseline", _rd_bl_tp)]:
+                    row = {"": label}
+                    for h in (1, 2, 3, 5, 7, 10):
+                        k = f"T+{h}"
+                        val = src.get(k, {}).get("avg_return_pct", 0)
+                        prof = src.get(k, {}).get("pct_profitable", 0) * 100
+                        row[k] = f"{val:+.2f}% ({prof:.0f}%)"
+                    _rd_tp_rows.append(row)
+                st.dataframe(pd.DataFrame(_rd_tp_rows), use_container_width=True, hide_index=True)
+
+        # ── Component importance ──
+        _rd_imp = _rd.get("component_importance", {})
+        if _rd_imp:
+            st.subheader("Component Importance")
+            _rd_imp_sorted = sorted(_rd_imp.items(),
+                                     key=lambda x: abs(x[1].get("correlation", 0) or 0),
+                                     reverse=True)
+            _rd_imp_rows = []
+            for comp, data in _rd_imp_sorted:
+                corr = data.get("correlation", 0) or 0
+                edge = data.get("edge_when_high", 0) or 0
+                p75 = data.get("p75_threshold")
+                _rd_imp_rows.append({
+                    "Component": comp,
+                    "N": data.get("n", 0),
+                    "Correlation": f"{corr:+.4f}",
+                    "TP1% when High": f"{data.get('tp1_rate_when_high',0)*100:.1f}%" if data.get("tp1_rate_when_high") is not None else "—",
+                    "TP1% when Low": f"{data.get('tp1_rate_when_low',0)*100:.1f}%" if data.get("tp1_rate_when_low") is not None else "—",
+                    "Edge (High-Low)": f"{edge*100:+.1f}pp",
+                    "P75 Threshold": f"{p75:.1f}" if p75 is not None else "—",
+                })
+            st.dataframe(pd.DataFrame(_rd_imp_rows), use_container_width=True, hide_index=True)
+
+        # ── Reference cases ──
+        _rd_refs = _rd.get("reference_cases", {})
+        if _rd_refs:
+            st.subheader("Reference Cases (VSCO / BROS / CAT)")
+            for _rd_tk in ("VSCO", "BROS", "CAT"):
+                _rd_ref = _rd_refs.get(_rd_tk, {})
+                _rd_ref_status = _rd_ref.get("status", "?")
+                with st.expander(f"{_rd_tk} — {_rd_ref_status}", expanded=(_rd_ref_status == "OK")):
+                    if _rd_ref_status == "OK":
+                        _rd_daily = _rd_ref.get("daily", [])
+                        _rd_checks = _rd_ref.get("checks", {})
+                        _rd_traj_label = _rd_ref.get("trajectory", "?")
+
+                        # Score trajectory chart
+                        if _rd_daily:
+                            _rd_dates = [d["date"] for d in _rd_daily]
+                            _rd_scores = [d["score"] for d in _rd_daily]
+                            _rd_fig, _rd_ax = plt.subplots(figsize=(8, 2.5))
+                            _rd_ax.plot(_rd_dates, _rd_scores, marker="o", markersize=3,
+                                        linewidth=1.5, color="steelblue")
+                            _rd_ax.axhline(75, color="green", linestyle=":", linewidth=0.7, label="READY (75)")
+                            _rd_ax.axhline(60, color="orange", linestyle=":", linewidth=0.7, label="APPROACHING (60)")
+                            _rd_ax.set_ylim(0, 100)
+                            _rd_ax.set_ylabel("Readiness")
+                            _rd_ax.set_title(f"{_rd_tk} — {_rd_traj_label}")
+                            _rd_ax.legend(fontsize=7, loc="upper left")
+                            _rd_ax.tick_params(axis="x", rotation=45, labelsize=7)
+                            _rd_ax.grid(alpha=0.2)
+                            st.pyplot(_rd_fig, clear_figure=True)
+
+                        # Daily detail table
+                        if _rd_daily:
+                            _rd_d_rows = []
+                            for d in _rd_daily:
+                                row = {
+                                    "Date": d["date"],
+                                    "Score": d["score"],
+                                    "Stage": d["stage"],
+                                    "Failed BO": "Y" if d.get("failed_breakout") else "",
+                                }
+                                comps = d.get("components", {})
+                                for ck in ("vol_coil", "range_coil", "vwap", "proximity",
+                                           "close_quality", "ma_stack", "trigger", "base_len"):
+                                    row[ck] = comps.get(ck, 0)
+                                _rd_d_rows.append(row)
+                            st.dataframe(pd.DataFrame(_rd_d_rows), use_container_width=True, hide_index=True)
+
+                        # Validation checks
+                        if _rd_checks:
+                            st.markdown("**Checks:**")
+                            for ck, cv in _rd_checks.items():
+                                icon = "✓" if cv is True else ("✗" if cv is False else "—")
+                                st.markdown(f"- {icon} `{ck}` = `{cv}`")
+                    else:
+                        st.warning(f"Status: {_rd_ref_status}")
+
+        # ── Weights used ──
+        _rd_weights = _rd.get("weights", {})
+        if _rd_weights:
+            with st.expander("Score weights used"):
+                st.json(_rd_weights)
+
+        # ── Download ──
+        st.download_button(
+            "Download readiness results JSON",
+            data=_rd_result_path.read_text(),
+            file_name="mathlab_readiness.json",
+            mime="application/json",
+            key="rd_dl_json",
+        )
+else:
+    st.info(
+        "No readiness backtest results yet. Click **Run readiness backtest** above. "
+        "Uses the same FMP-cached daily bars as v3.1."
+    )
+
+
+# ===================================================================
 # Divider: Historical Exploration (needs parquets)
 # ===================================================================
 
