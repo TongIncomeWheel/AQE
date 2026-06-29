@@ -60,13 +60,13 @@ st.title("Math Lab")
 
 # Math Lab needs the full panel + score parquets for sections 1-5.
 # In cloud mode they only exist AFTER the user has run the daily pipeline.
-# Section 6 (AQE Readiness Score) pulls directly from FMP and doesn't need them.
+# Section 6 (AQE Momentum Intelligence) pulls directly from FMP and doesn't need them.
 _panels_ready = PANEL_DAILY.exists() and SCORES_DAILY.exists()
 if is_cloud_mode() and not _panels_ready:
     st.info(
         "Sections 1-5 need the panel + score parquets. Open the **Scanner** page "
         "and click **Bootstrap + run daily pipeline** first (3-5 min). "
-        "Section 6 (AQE Readiness Score) is available now."
+        "Section 6 (AQE Momentum Intelligence) is available now."
     )
 
 st.caption(
@@ -889,15 +889,17 @@ if _panels_ready:
 
 
 # ===================================================================
-# Section 6: AQE Momentum Intelligence
+# Section 6: AQE Momentum Intelligence (Dual-State)
 # ===================================================================
 
 st.header("Section 6: AQE Momentum Intelligence")
 st.caption(
-    "Per-ticker momentum state classification for new + held positions. "
-    "States: HIGH_CONVICTION / BUILDING / PULLBACK_HEALTHY / COILING / "
-    "STALLING / BREAKING_DOWN. Tests which states predict forward outcomes "
-    "across the full universe. Condition-level and combination analysis."
+    "Two outputs per ticker-day: "
+    "**Momentum State** (bar conditions: ACCELERATING / BUILDING / PULLBACK_HEALTHY "
+    "/ COILING / STALLING / BREAKING_DOWN) + "
+    "**Readiness State** (bar conditions + Elder/ADX/RSI: READY_NOW / SETTING_UP "
+    "/ WAIT / STAND_DOWN). "
+    "Tests whether C-inputs (Elder/ADX/RSI) add predictive power on top of bar conditions."
 )
 
 _rd_result_path = OUTPUT_DIR / "mathlab_readiness.json"
@@ -911,7 +913,7 @@ if _rd_run:
         _rd_args.append("--dry-run")
     if _rd_run == "refresh":
         _rd_args.append("--refresh")
-    with st.spinner("Running momentum intelligence backtest..."):
+    with st.spinner("Running dual-state momentum backtest..."):
         try:
             _rd_proc = __import__("subprocess").Popen(
                 _rd_args, cwd=str(PROJECT_ROOT),
@@ -925,7 +927,7 @@ if _rd_run:
                 _rd_log.code("\n".join(_rd_buf[-30:]))
             _rd_rc = _rd_proc.wait()
             if _rd_rc == 0:
-                _rd_status.success("Momentum intelligence backtest complete.")
+                _rd_status.success("Dual-state momentum backtest complete.")
             else:
                 _rd_status.error(f"Backtest exited with code {_rd_rc}")
         except Exception as _rd_ex:
@@ -937,8 +939,8 @@ _rdc1, _rdc2, _rdc3 = st.columns(3)
 with _rdc1:
     if st.button("Run momentum backtest", key="rd_bt_full", type="primary",
                   use_container_width=True,
-                  help="Full universe, 6 momentum states, condition importance, "
-                       "combination analysis, conviction sub-buckets. Uses cached bars."):
+                  help="Full universe, dual-state classification, A+C condition tests. "
+                       "Uses cached bars."):
         st.session_state["_rd_run"] = "full"
         st.rerun()
 with _rdc2:
@@ -985,44 +987,61 @@ if _rd_result_path.exists():
             with _rd_blc[4]:
                 st.metric("Baseline T+10", f"{_rd_bl.get('avg_return_T10_pct',0):+.2f}%")
 
-        # ── Pass / Fail verdicts ──
+        # ── Pass / Fail verdicts (7 tests) ──
         _rd_pf = _rd.get("pass_fail", {})
         if _rd_pf:
             st.subheader("Pass / Fail Verdicts")
             _rd_pf_keys = [
-                ("state_discrimination", "State Discrimination"),
-                ("high_conviction_signal", "High Conviction Signal"),
-                ("breakdown_avoidance", "Breakdown Avoidance"),
-                ("pullback_discrimination", "Pullback vs Breakdown"),
-                ("combo_edge", "Condition Combo Edge"),
+                ("momentum_discrimination", "Momentum Discrim."),
+                ("readiness_discrimination", "Readiness Discrim."),
+                ("ready_now_signal", "READY_NOW Signal"),
+                ("stand_down_avoidance", "STAND_DOWN Avoid"),
+                ("timing_value", "Timing Value"),
+                ("c_adds_value", "C Adds Value"),
+                ("combo_edge", "Combo Edge"),
             ]
-            _rd_vcols = st.columns(len(_rd_pf_keys))
             _rd_pass_count = 0
-            for _rd_col, (_rd_key, _rd_label) in zip(_rd_vcols, _rd_pf_keys):
-                with _rd_col:
+            # First row: 4 verdicts
+            _rd_vcols1 = st.columns(4)
+            for idx, (_rd_key, _rd_label) in enumerate(_rd_pf_keys[:4]):
+                with _rd_vcols1[idx]:
                     _rd_entry = _rd_pf.get(_rd_key, {})
                     _rd_v = _rd_entry.get("verdict", "?")
                     st.metric(_rd_label, _rd_v)
                     if _rd_v == "PASS":
                         _rd_pass_count += 1
-            if _rd_pass_count >= 4:
-                st.success(f"{_rd_pass_count}/5 verdicts pass. States discriminate — deploy candidate.")
-            elif _rd_pass_count >= 2:
-                st.warning(f"{_rd_pass_count}/5 verdicts pass. Partial signal — review details.")
-            else:
-                st.error(f"{_rd_pass_count}/5 verdicts pass. States don't discriminate reliably.")
+            # Second row: 3 verdicts
+            _rd_vcols2 = st.columns(3)
+            for idx, (_rd_key, _rd_label) in enumerate(_rd_pf_keys[4:]):
+                with _rd_vcols2[idx]:
+                    _rd_entry = _rd_pf.get(_rd_key, {})
+                    _rd_v = _rd_entry.get("verdict", "?")
+                    st.metric(_rd_label, _rd_v)
+                    if _rd_v == "PASS":
+                        _rd_pass_count += 1
 
-        # ── State results table ──
-        _rd_states = _rd.get("states", {})
-        if _rd_states:
-            st.subheader("State Results (vs Baseline)")
-            _rd_state_order = ["HIGH_CONVICTION", "BUILDING", "PULLBACK_HEALTHY",
-                               "COILING", "STALLING", "BREAKING_DOWN"]
-            _rd_s_rows = []
-            for s in _rd_state_order:
-                ss = _rd_states.get(s, {}).get("stats", {})
-                dist = _rd.get("state_distribution", {}).get(s, {})
-                _rd_s_rows.append({
+            _rd_total_tests = len(_rd_pf_keys)
+            if _rd_pass_count >= 5:
+                st.success(f"{_rd_pass_count}/{_rd_total_tests} verdicts pass. "
+                           "Strong dual-state signal — deploy candidate.")
+            elif _rd_pass_count >= 3:
+                st.warning(f"{_rd_pass_count}/{_rd_total_tests} verdicts pass. "
+                           "Partial signal — review details.")
+            else:
+                st.error(f"{_rd_pass_count}/{_rd_total_tests} verdicts pass. "
+                         "States don't discriminate reliably.")
+
+        # ── Momentum state results (A-inputs) ──
+        _rd_mom = _rd.get("momentum_states", {})
+        if _rd_mom:
+            st.subheader("Momentum States (A-inputs: bar conditions)")
+            _rd_mom_order = ["ACCELERATING", "BUILDING", "PULLBACK_HEALTHY",
+                             "COILING", "STALLING", "BREAKING_DOWN"]
+            _rd_m_rows = []
+            for s in _rd_mom_order:
+                ss = _rd_mom.get(s, {}).get("stats", {})
+                dist = _rd.get("momentum_distribution", {}).get(s, {})
+                _rd_m_rows.append({
                     "State": s,
                     "N": ss.get("n", 0),
                     "% of Days": f"{dist.get('pct', 0):.1f}%",
@@ -1031,16 +1050,65 @@ if _rd_result_path.exists():
                     "SL Hit %": f"{ss.get('sl_hit_rate',0)*100:.1f}%",
                     "Avg DD %": f"{ss.get('avg_dd_pct',0):+.2f}%",
                     "Days->TP1": f"{ss.get('avg_days_to_tp1',0):.1f}",
-                    "TP1->TP2 %": f"{ss.get('tp1_then_tp2_rate',0)*100:.1f}%",
                     "T+5 %": f"{ss.get('avg_return_T5_pct',0):+.2f}%",
-                    "T+10 %": f"{ss.get('avg_return_T10_pct',0):+.2f}%",
                 })
-            st.dataframe(pd.DataFrame(_rd_s_rows), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(_rd_m_rows), use_container_width=True, hide_index=True)
 
-        # ── Condition importance ──
+        # ── Readiness state results (A+C) ──
+        _rd_rdy = _rd.get("readiness_states", {})
+        if _rd_rdy:
+            st.subheader("Readiness States (A+C: bar conditions + Elder/ADX/RSI)")
+            _rd_r_order = ["READY_NOW", "SETTING_UP", "WAIT", "STAND_DOWN"]
+            _rd_r_rows = []
+            for s in _rd_r_order:
+                ss = _rd_rdy.get(s, {}).get("stats", {})
+                dist = _rd.get("readiness_distribution", {}).get(s, {})
+                _rd_r_rows.append({
+                    "State": s,
+                    "N": ss.get("n", 0),
+                    "% of Days": f"{dist.get('pct', 0):.1f}%",
+                    "TP1 Win %": f"{ss.get('tp1_win_rate',0)*100:.1f}%",
+                    "Edge pp": f"{ss.get('edge_vs_baseline',0)*100:+.1f}",
+                    "SL Hit %": f"{ss.get('sl_hit_rate',0)*100:.1f}%",
+                    "Avg DD %": f"{ss.get('avg_dd_pct',0):+.2f}%",
+                    "Days->TP1": f"{ss.get('avg_days_to_tp1',0):.1f}",
+                    "T+5 %": f"{ss.get('avg_return_T5_pct',0):+.2f}%",
+                })
+            st.dataframe(pd.DataFrame(_rd_r_rows), use_container_width=True, hide_index=True)
+
+        # ── C-input additive value ──
+        _rd_c_add = _rd.get("c_additive_value", {})
+        if _rd_c_add:
+            st.subheader("C-Input Additive Value")
+            st.caption(
+                "For each momentum state, does splitting by readiness (adding Elder/ADX/RSI) "
+                "improve prediction? If READY_NOW within BUILDING beats WAIT within BUILDING, "
+                "C-inputs add value."
+            )
+            _rd_ca_rows = []
+            for ms in ["ACCELERATING", "BUILDING", "PULLBACK_HEALTHY",
+                        "COILING", "STALLING", "BREAKING_DOWN"]:
+                data = _rd_c_add.get(ms, {})
+                split = data.get("split", {})
+                if not split or data.get("n", 0) < 30:
+                    continue
+                row = {"Momentum": ms, "N": data.get("n", 0),
+                       "Base TP1%": f"{data.get('tp1_rate',0)*100:.1f}%"}
+                for rs in ["READY_NOW", "SETTING_UP", "WAIT", "STAND_DOWN"]:
+                    if rs in split:
+                        rs_s = split[rs]
+                        row[rs] = f"{rs_s['tp1_win_rate']*100:.1f}% ({rs_s['n']})"
+                    else:
+                        row[rs] = "—"
+                _rd_ca_rows.append(row)
+            if _rd_ca_rows:
+                st.dataframe(pd.DataFrame(_rd_ca_rows), use_container_width=True,
+                             hide_index=True)
+
+        # ── Condition importance (A and C tagged) ──
         _rd_cond = _rd.get("condition_importance", {})
         if _rd_cond:
-            st.subheader("Condition Importance (Individual)")
+            st.subheader("Condition Importance (A = bar, C = Elder/ADX/RSI)")
             _rd_cond_sorted = sorted(_rd_cond.items(),
                                       key=lambda x: abs(x[1].get("edge") or 0),
                                       reverse=True)
@@ -1049,8 +1117,10 @@ if _rd_result_path.exists():
                 edge = data.get("edge")
                 if edge is None:
                     continue
+                group = data.get("group", "?")
+                tag = "[A]" if group == "a_conditions" else "[C]"
                 _rd_c_rows.append({
-                    "Condition": cond,
+                    "Condition": f"{tag} {cond}",
                     "N (True)": f"{data.get('n_true',0):,}",
                     "N (False)": f"{data.get('n_false',0):,}",
                     "TP1% True": f"{data.get('tp1_when_true',0)*100:.1f}%",
@@ -1058,13 +1128,12 @@ if _rd_result_path.exists():
                     "Edge pp": f"{edge*100:+.1f}",
                     "SL% True": f"{data.get('sl_when_true',0)*100:.1f}%",
                     "SL% False": f"{data.get('sl_when_false',0)*100:.1f}%",
-                    "DD True": f"{data.get('dd_when_true',0):+.2f}%",
-                    "DD False": f"{data.get('dd_when_false',0):+.2f}%",
                 })
             if _rd_c_rows:
-                st.dataframe(pd.DataFrame(_rd_c_rows), use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(_rd_c_rows), use_container_width=True,
+                             hide_index=True)
 
-        # ── Condition combinations ──
+        # ── Condition combinations (A, C, A+C tagged) ──
         _rd_combos = _rd.get("condition_combinations", [])
         if _rd_combos:
             st.subheader("Condition Combinations")
@@ -1087,15 +1156,14 @@ if _rd_result_path.exists():
                     "Avg DD %": f"{c.get('avg_dd_pct',0):+.2f}%",
                     "Days->TP1": f"{c.get('avg_days_to_tp1',0):.1f}",
                     "T+5 %": f"{c.get('avg_return_T5',0):+.2f}%",
-                    "T+10 %": f"{c.get('avg_return_T10',0):+.2f}%",
                 })
             st.dataframe(pd.DataFrame(_rd_cb_rows), use_container_width=True, hide_index=True)
 
-        # ── Conviction sub-buckets for best state ──
-        _rd_pf_hc = _rd_pf.get("state_discrimination", {})
-        _rd_best_state = _rd_pf_hc.get("best_state")
-        if _rd_best_state and _rd_best_state in _rd_states:
-            _rd_conv = _rd_states[_rd_best_state].get("conviction_buckets", {})
+        # ── Conviction sub-buckets for best momentum state ──
+        _rd_pf_md = _rd_pf.get("momentum_discrimination", {})
+        _rd_best_state = _rd_pf_md.get("best")
+        if _rd_best_state and _rd_best_state in _rd_mom:
+            _rd_conv = _rd_mom[_rd_best_state].get("conviction_buckets", {})
             if _rd_conv:
                 st.subheader(f"Conviction Buckets ({_rd_best_state})")
                 _rd_cv_rows = []
@@ -1108,7 +1176,8 @@ if _rd_result_path.exists():
                         "Edge pp": f"{cs.get('edge_vs_baseline',0)*100:+.1f}",
                         "SL Hit %": f"{cs.get('sl_hit_rate',0)*100:.1f}%",
                     })
-                st.dataframe(pd.DataFrame(_rd_cv_rows), use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(_rd_cv_rows), use_container_width=True,
+                             hide_index=True)
 
         # ── Download ──
         st.download_button(
