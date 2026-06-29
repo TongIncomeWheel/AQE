@@ -1195,6 +1195,192 @@ else:
 
 
 # ===================================================================
+# Section 7: Subcomponent Correlation Backtest
+# ===================================================================
+
+st.header("Section 7: Subcomponent Correlation")
+st.caption(
+    "Decomposes ALL 7 AQE engines into 50 raw subcomponents + ROC variants (70 total), "
+    "then measures Spearman correlation + quintile analysis against forward outcomes "
+    "(TP1 hit, T+5/T+10 returns, max drawdown). Finds which individual features actually "
+    "drive upward momentum — independent of the current composite weightings."
+)
+
+_sc_result_path = OUTPUT_DIR / "mathlab_subcomponents.json"
+_sc_run = st.session_state.pop("_sc_run", None)
+
+if _sc_run:
+    _sc_log = st.empty()
+    _sc_status = st.empty()
+    _sc_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_subcomponents"]
+    if _sc_run == "dry":
+        _sc_args.append("--dry-run")
+    if _sc_run == "refresh":
+        _sc_args.append("--refresh")
+    with st.spinner("Running subcomponent correlation backtest..."):
+        try:
+            _sc_proc = __import__("subprocess").Popen(
+                _sc_args, cwd=str(PROJECT_ROOT),
+                stdout=__import__("subprocess").PIPE,
+                stderr=__import__("subprocess").STDOUT, text=True, bufsize=1,
+            )
+            _sc_buf: list[str] = []
+            assert _sc_proc.stdout is not None
+            for _sc_line in _sc_proc.stdout:
+                _sc_buf.append(_sc_line.rstrip())
+                _sc_log.code("\n".join(_sc_buf[-30:]))
+            _sc_rc = _sc_proc.wait()
+            if _sc_rc == 0:
+                _sc_status.success("Subcomponent correlation backtest complete.")
+            else:
+                _sc_status.error(f"Backtest exited with code {_sc_rc}")
+        except Exception as _sc_ex:
+            _sc_status.error(f"Failed to run: {_sc_ex}")
+    st.rerun()
+
+_scc1, _scc2, _scc3 = st.columns(3)
+with _scc1:
+    if st.button("Run subcomponent backtest", key="sc_bt_full", type="primary",
+                  use_container_width=True,
+                  help="Full universe correlation + quintile analysis on all 70 features. "
+                       "Uses cached bars."):
+        st.session_state["_sc_run"] = "full"
+        st.rerun()
+with _scc2:
+    if st.button("Fresh pull + run", key="sc_bt_refresh",
+                  use_container_width=True,
+                  help="Clear bar cache and re-pull from FMP, then full backtest."):
+        st.session_state["_sc_run"] = "refresh"
+        st.rerun()
+with _scc3:
+    if st.button("Dry run (8 tickers)", key="sc_bt_dry",
+                  use_container_width=True,
+                  help="Quick logic check on 8 tickers."):
+        st.session_state["_sc_run"] = "dry"
+        st.rerun()
+
+if _sc_result_path.exists():
+    import json as _json_sc
+    _sc = _json_sc.loads(_sc_result_path.read_text(encoding="utf-8"))
+    if _sc and "error" not in _sc:
+        _sc_run_date = _sc.get("run_date", "?")
+        _sc_usize = _sc.get("universe_size", 0)
+        _sc_total_events = _sc.get("total_events", 0)
+        _sc_bl = _sc.get("baseline", {})
+
+        st.markdown(
+            f"**Last run:** {_sc_run_date} | "
+            f"**Universe:** {_sc_usize} tickers | "
+            f"**Events:** {_sc_total_events:,} | "
+            f"**Baseline TP1:** {_sc_bl.get('tp1_rate', 0)*100:.1f}%"
+        )
+
+        # ── Top features ranked by Q5-Q1 spread ──
+        st.subheader("Top Features by TP1 Quintile Spread (Q5-Q1)")
+        _sc_ranked = _sc.get("ranked_by_tp1_spread", [])
+        if _sc_ranked:
+            _sc_top_rows = []
+            for i, f in enumerate(_sc_ranked[:30], 1):
+                _sc_top_rows.append({
+                    "Rank": i,
+                    "Feature": f["name"],
+                    "Type": f["type"],
+                    "Engine": f["engine"],
+                    "Q5-Q1 Spread": f"{f['q5_q1_spread']*100:+.2f}pp",
+                    "rho_TP1": f"{f['rho_tp1']:+.4f}",
+                    "rho_T10": f"{f['rho_t10']:+.4f}",
+                    "Monotonic": "Yes" if f.get("monotonic") else "",
+                    "n": f"{f['n']:,}",
+                })
+            st.dataframe(pd.DataFrame(_sc_top_rows), hide_index=True,
+                          use_container_width=True)
+
+        # ── Type group summary ──
+        st.subheader("Feature Type Summary")
+        st.caption("Which CATEGORY of features predicts best?")
+        _sc_types = _sc.get("type_summary", {})
+        if _sc_types:
+            _sc_type_rows = []
+            for tag in sorted(_sc_types, key=lambda t: abs(_sc_types[t].get("avg_abs_spread", 0)),
+                              reverse=True):
+                td = _sc_types[tag]
+                _sc_type_rows.append({
+                    "Type": tag,
+                    "# Features": td["n_features"],
+                    "Avg |Spread|": f"{td['avg_abs_spread']*100:.2f}pp",
+                    "Max Spread": f"{td['max_spread']*100:+.2f}pp",
+                    "Best Feature": td["best_feature"],
+                    "Avg |rho| TP1": f"{td['avg_abs_corr_tp1']:.4f}",
+                    "Avg |rho| T10": f"{td['avg_abs_corr_t10']:.4f}",
+                })
+            st.dataframe(pd.DataFrame(_sc_type_rows), hide_index=True,
+                          use_container_width=True)
+
+        # ── Quintile detail for top 5 ──
+        st.subheader("Quintile Detail (Top 5)")
+        _sc_features = _sc.get("features", {})
+        for _sc_f_entry in _sc_ranked[:5]:
+            _sc_f_name = _sc_f_entry["name"]
+            _sc_f_data = _sc_features.get(_sc_f_name, {})
+            if not _sc_f_data:
+                continue
+            _sc_quint = _sc_f_data.get("quintiles", {})
+            st.markdown(
+                f"**{_sc_f_name}** ({_sc_f_data.get('type','')}, "
+                f"{_sc_f_data.get('engine','')}) — "
+                f"Q5-Q1 = {_sc_f_data.get('q5_q1_tp1_spread',0)*100:+.2f}pp"
+            )
+            _sc_q_rows = []
+            for q in ["Q1", "Q2", "Q3", "Q4", "Q5"]:
+                qd = _sc_quint.get(q, {})
+                if qd:
+                    _sc_q_rows.append({
+                        "Quintile": q,
+                        "n": f"{qd['n']:,}",
+                        "Value Range": f"{qd['val_lo']:.1f} – {qd['val_hi']:.1f}",
+                        "Median": f"{qd['val_median']:.1f}",
+                        "TP1 Rate": f"{qd['tp1_rate']*100:.1f}%",
+                        "Avg T+5": f"{qd['avg_t5']:+.2f}%",
+                        "Avg T+10": f"{qd['avg_t10']:+.2f}%",
+                        "Avg DD": f"{qd['avg_dd']:+.2f}%",
+                    })
+            if _sc_q_rows:
+                st.dataframe(pd.DataFrame(_sc_q_rows), hide_index=True,
+                              use_container_width=True)
+
+        # ── Top features by T+10 correlation ──
+        st.subheader("Top Features by T+10 Return Correlation")
+        _sc_ranked_t10 = _sc.get("ranked_by_t10_corr", [])
+        if _sc_ranked_t10:
+            _sc_t10_rows = []
+            for i, f in enumerate(_sc_ranked_t10[:15], 1):
+                _sc_t10_rows.append({
+                    "Rank": i,
+                    "Feature": f["name"],
+                    "Type": f["type"],
+                    "rho_T10": f"{f['rho_t10']:+.4f}",
+                    "Q5-Q1 Spread": f"{f['q5_q1_spread']*100:+.2f}pp",
+                    "n": f"{f['n']:,}",
+                })
+            st.dataframe(pd.DataFrame(_sc_t10_rows), hide_index=True,
+                          use_container_width=True)
+
+        # ── Download ──
+        st.download_button(
+            "Download subcomponent results JSON",
+            data=_sc_result_path.read_text(),
+            file_name="mathlab_subcomponents.json",
+            mime="application/json",
+            key="sc_dl_json",
+        )
+else:
+    st.info(
+        "No subcomponent correlation results yet. Click **Run subcomponent backtest** above. "
+        "First run pulls daily bars from FMP (~10-15 min for full universe, cached after)."
+    )
+
+
+# ===================================================================
 # Divider: Historical Exploration (needs parquets)
 # ===================================================================
 
