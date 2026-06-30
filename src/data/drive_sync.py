@@ -1420,6 +1420,15 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     export["longlist"] = _longlist
     export["elder_list"] = _elderlist          # standalone list — kept
+    # The broad watchlist (SC>=50) is NOT shown to the AIC, but the alert engine
+    # needs a wider monitored set than the tight longlist — otherwise the narrow
+    # trigger bands (buy-zone crossing, 2-8% breakout, near-stop) rarely fire on
+    # just ~20 names. _alert_pool carries the dedup'd watchlist minus longlist/elder
+    # tickers so the alert engine has ~100+ names to watch without spamming the AIC.
+    _alert_seen = {r.get("ticker") for r in _longlist + _elderlist if r.get("ticker")}
+    _alert_pool = [r for r in export.get("watchlist", [])
+                   if r.get("ticker") and r.get("ticker") not in _alert_seen]
+    export["_alert_pool"] = _alert_pool
     for _k in ("top_picks", "edge_list", "watchlist"):
         export.pop(_k, None)
     export["summary"] = {"longlist_count": len(_longlist),

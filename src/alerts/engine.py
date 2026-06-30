@@ -45,8 +45,10 @@ def load_export() -> dict | None:
 def monitored(export: dict) -> list[dict]:
     """Flatten the export into a dedup'd monitor list of {ticker, source, record}.
 
-    Held names win (their record carries the live trade context); otherwise the
-    single `longlist` (PM v1.1 — one list only) supplies the candidates.
+    Held names win; then longlist + elder_list (the tight qualified set); then
+    _alert_pool (the broader SC>=50 watchlist, dedup'd against the above). The
+    tight longlist is what the AIC sees; _alert_pool widens the net for alerts
+    only, so the narrow trigger bands have enough names to fire on.
     """
     held_recs = export.get("held_positions") or []
     held_tickers = {r.get("ticker") for r in held_recs if r.get("ticker")}
@@ -58,7 +60,7 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    for _src in ("longlist", "elder_list"):
+    for _src in ("longlist", "elder_list", "_alert_pool"):
         for r in export.get(_src) or []:
             tk = r.get("ticker")
             if not tk or tk in seen:
