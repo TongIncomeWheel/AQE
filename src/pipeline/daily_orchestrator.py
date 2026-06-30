@@ -304,6 +304,20 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Persist snapshot failed: {exc}")
 
+    # Step 8c: Signal ledger — archive today's longlist/elder_list + backfill
+    # forward returns for older signals. Append-only; never raises.
+    try:
+        from src.data.signal_ledger import record_signals, backfill_outcomes
+        export_json = OUTPUT_DIR / "aqe_daily_export.json"
+        if export_json.exists():
+            import json as _json
+            _export = _json.loads(export_json.read_text(encoding="utf-8"))
+            n_snap = record_signals(_export)
+            n_fill = backfill_outcomes()
+            print(f"  Signal ledger: {n_snap} signals archived, {n_fill} outcomes backfilled")
+    except Exception as exc:
+        print(f"  [WARN] Signal ledger: {exc}")
+
     print("=" * 60)
     print(f"[daily] Done. {len(shortlist)} candidates on today's shortlist.")
 
