@@ -1240,29 +1240,22 @@ if _sc_run:
             _sc_status.error(f"Failed to run: {_sc_ex}")
     st.rerun()
 
-_scc1, _scc2, _scc3, _scc4 = st.columns(4)
+_scc1, _scc2, _scc3 = st.columns(3)
 with _scc1:
-    if st.button("Run full backtest", key="sc_bt_full", type="primary",
+    if st.button("Run", key="sc_bt_full", type="primary",
                   use_container_width=True,
-                  help="Full universe. Uses cached bars + engine output. "
-                       "First run pulls from FMP; subsequent runs skip Phases 1-3."):
+                  help="Uses cached data — instant if already run once. "
+                       "First run pulls from FMP (~10 min, cached after)."):
         st.session_state["_sc_run"] = "full"
         st.rerun()
 with _scc2:
-    if st.button("Re-run analysis only", key="sc_bt_analysis",
+    if st.button("Rebuild (fresh FMP pull)", key="sc_bt_rebuild",
                   use_container_width=True,
-                  help="Skip data pull + engine computation (Phases 1-3), "
-                       "load cached events table, re-run Phases 4-6 only. "
-                       "Use this to iterate on the recipe without re-pulling data."):
-        st.session_state["_sc_run"] = "analysis"
-        st.rerun()
-with _scc3:
-    if st.button("Rebuild from scratch", key="sc_bt_rebuild",
-                  use_container_width=True,
-                  help="Ignore all caches, re-compute engines + events from scratch."):
+                  help="Re-pull all bars from FMP + re-compute engines. "
+                       "Use only if engine math changed or data is stale."):
         st.session_state["_sc_run"] = "rebuild"
         st.rerun()
-with _scc4:
+with _scc3:
     if st.button("Dry run (8 tickers)", key="sc_bt_dry",
                   use_container_width=True,
                   help="Quick logic check on 8 tickers."):
