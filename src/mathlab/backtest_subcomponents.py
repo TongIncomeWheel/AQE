@@ -389,6 +389,7 @@ def _feature_meta(name: str) -> dict:
 # ────────────────────────────────────────────────────────────────────────────
 
 def bracket_from_bars(bars: pd.DataFrame, date_t: pd.Timestamp):
+    """Real DSL v2.1 bracket: lowest(low,5) - 0.5×ATR, clamped [0.75, 2.0]×ATR."""
     b = bars[bars["date"] <= date_t].tail(20)
     if len(b) < 15:
         return None
@@ -405,8 +406,15 @@ def bracket_from_bars(bars: pd.DataFrame, date_t: pd.Timestamp):
     atr14 = float(np.mean(trs[-14:])) if len(trs) >= 14 else float(np.mean(trs))
     if atr14 <= 0:
         return None
-    risk = atr14 * 2.0
-    return entry, entry - risk, entry + risk * 1.5, entry + risk * 2.0, risk, atr14
+    struct_low = float(np.min(lo[-5:]))
+    buffered_stop = struct_low - 0.5 * atr14
+    raw_distance = entry - buffered_stop
+    upper_clamp = atr14 * 2.0
+    risk = max(min(raw_distance, upper_clamp), atr14 * 0.75)
+    sl = entry - risk
+    tp1 = entry + risk * 1.5
+    tp2 = entry + risk * 2.0
+    return entry, sl, tp1, tp2, risk, atr14
 
 
 @dataclass
@@ -612,18 +620,20 @@ def _impute_and_scale(X: np.ndarray) -> np.ndarray:
 
 def _run_lasso(X: np.ndarray, y: np.ndarray, feature_names: list[str],
                target_name: str, alphas: list[float] | None = None) -> dict:
-    """L1-penalized logistic regression. Returns selected features + coefficients."""
+    """L1-penalized logistic regression — dual output: full + sparse recipe.
+
+    Full: best training accuracy (may select many features).
+    Sparse: fewest features within 1pp of the best accuracy — the usable recipe.
+    """
     from sklearn.linear_model import LogisticRegression
-    from sklearn.preprocessing import StandardScaler
 
     X_clean = _impute_and_scale(X.copy())
 
     if alphas is None:
-        alphas = [0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
+        alphas = [0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5,
+                  1.0, 2.0, 5.0, 10.0, 20.0, 50.0]
 
-    best_score = -1.0
-    best_model = None
-    best_C = 1.0
+    all_fits = []
     for a in alphas:
         C = 1.0 / a
         try:
@@ -634,45 +644,63 @@ def _run_lasso(X: np.ndarray, y: np.ndarray, feature_names: list[str],
             lr.fit(X_clean, y)
             score = lr.score(X_clean, y)
             n_nonzero = int(np.sum(np.abs(lr.coef_[0]) > 1e-6))
-            if n_nonzero >= 2 and score > best_score:
-                best_score = score
-                best_model = lr
-                best_C = C
+            if n_nonzero >= 2:
+                all_fits.append({"model": lr, "C": C, "alpha": a,
+                                 "score": score, "n_features": n_nonzero})
         except Exception:
             continue
 
-    if best_model is None:
-        return {"selected": [], "coefficients": {}, "accuracy": 0, "C": 0}
+    if not all_fits:
+        return {"selected": [], "coefficients": {}, "accuracy": 0, "C": 0,
+                "sparse": None}
 
-    coefs = best_model.coef_[0]
-    selected = []
-    for i, fn in enumerate(feature_names):
-        if abs(coefs[i]) > 1e-6:
-            selected.append({
-                "feature": fn,
-                "coefficient": round(float(coefs[i]), 6),
-                "abs_coef": round(abs(float(coefs[i])), 6),
-            })
-    selected.sort(key=lambda x: x["abs_coef"], reverse=True)
+    best_fit = max(all_fits, key=lambda x: x["score"])
+    best_score = best_fit["score"]
 
-    coef_dict = {s["feature"]: s["coefficient"] for s in selected}
+    # Sparse: fewest features within 1pp of the best accuracy
+    candidates = [f for f in all_fits if f["score"] >= best_score - 0.01]
+    sparse_fit = min(candidates, key=lambda x: x["n_features"])
 
-    # Compute recipe weights (absolute coefficients, normalized to sum=1)
-    total_abs = sum(s["abs_coef"] for s in selected)
-    recipe_weights = {}
-    if total_abs > 0:
-        for s in selected:
-            recipe_weights[s["feature"]] = round(s["abs_coef"] / total_abs, 4)
+    def _extract(fit):
+        coefs = fit["model"].coef_[0]
+        selected = []
+        for i, fn in enumerate(feature_names):
+            if abs(coefs[i]) > 1e-6:
+                selected.append({
+                    "feature": fn,
+                    "coefficient": round(float(coefs[i]), 6),
+                    "abs_coef": round(abs(float(coefs[i])), 6),
+                })
+        selected.sort(key=lambda x: x["abs_coef"], reverse=True)
+        coef_dict = {s["feature"]: s["coefficient"] for s in selected}
+        total_abs = sum(s["abs_coef"] for s in selected)
+        recipe_weights = {}
+        if total_abs > 0:
+            for s in selected:
+                recipe_weights[s["feature"]] = round(s["abs_coef"] / total_abs, 4)
+        return {
+            "selected": selected,
+            "coefficients": coef_dict,
+            "recipe_weights": recipe_weights,
+            "n_selected": len(selected),
+            "accuracy": round(float(fit["score"]), 4),
+            "C": round(float(fit["C"]), 4),
+        }
 
-    return {
-        "target": target_name,
-        "selected": selected,
-        "coefficients": coef_dict,
-        "recipe_weights": recipe_weights,
-        "n_selected": len(selected),
-        "accuracy": round(float(best_score), 4),
-        "C": round(float(best_C), 4),
-    }
+    full = _extract(best_fit)
+    full["target"] = target_name
+
+    if sparse_fit is not best_fit:
+        sparse = _extract(sparse_fit)
+        sparse["target"] = f"{target_name} (sparse)"
+        full["sparse"] = sparse
+        print(f"    {target_name} sparse: {sparse['n_selected']} features "
+              f"(C={sparse['C']:.4f}, acc={sparse['accuracy']:.3f} "
+              f"vs full {full['accuracy']:.3f})")
+    else:
+        full["sparse"] = None
+
+    return full
 
 
 def _run_random_forest(X: np.ndarray, y: np.ndarray,
@@ -1048,6 +1076,27 @@ def _find_best_combinations(
               f"spread={oos['spread_pp']:+.1f}pp  "
               f"SURVIVED={survived}")
 
+    # Validate the SPARSE Lasso TP1 recipe (if different from full)
+    wf_sparse_tp1 = {}
+    if lasso_tp1.get("sparse") and lasso_tp1["sparse"]["recipe_weights"]:
+        wf_sparse_tp1 = _walk_forward_validate(
+            df, valid_cols, "tp1_hit",
+            lasso_tp1["sparse"]["recipe_weights"], WALK_FORWARD_SPLIT, baseline_tp1,
+        )
+        if "error" not in wf_sparse_tp1:
+            ins = wf_sparse_tp1["in_sample"]
+            oos = wf_sparse_tp1["out_of_sample"]
+            survived = "YES" if wf_sparse_tp1["edge_survived"] else "NO"
+            n_sp = lasso_tp1["sparse"]["n_selected"]
+            print(f"    Sparse Lasso TP1 ({n_sp} features):")
+            print(f"      In-sample:  top Q={ins['top_quintile_rate']*100:.1f}%  "
+                  f"edge={ins['edge_vs_baseline_pp']:+.1f}pp  "
+                  f"spread={ins['spread_pp']:+.1f}pp")
+            print(f"      Out-sample: top Q={oos['top_quintile_rate']*100:.1f}%  "
+                  f"edge={oos['edge_vs_baseline_pp']:+.1f}pp  "
+                  f"spread={oos['spread_pp']:+.1f}pp  "
+                  f"SURVIVED={survived}")
+
     # Validate the RF top features as an equal-weight recipe
     rf_top_feats = rf_tp1["top_10"][:5]
     rf_recipe = {f: 0.2 for f in rf_top_feats}
@@ -1109,6 +1158,7 @@ def _find_best_combinations(
             "lasso_tp1": wf_lasso_tp1,
             "lasso_tp2": wf_lasso_tp2,
             "lasso_sl": wf_lasso_sl,
+            "sparse_lasso_tp1": wf_sparse_tp1,
             "rf_tp1": wf_rf_tp1,
         },
         "cross_method_agreement": {
@@ -1240,6 +1290,7 @@ def run_backtest(tickers: list[str] | None = None,
                     "t5_return": fwd.returns.get("T+5", np.nan),
                     "t10_return": fwd.returns.get("T+10", np.nan),
                     "max_dd": fwd.max_dd_pct,
+                    "risk_atr_ratio": round(risk / atr14, 4) if atr14 > 0 else np.nan,
                 }
                 for fn in feature_names:
                     ev[fn] = float(row[fn]) if fn in row.index and not pd.isna(row.get(fn)) else np.nan
@@ -1278,6 +1329,44 @@ def run_backtest(tickers: list[str] | None = None,
     print(f"  Baseline: TP1={baseline_tp1*100:.1f}%  TP2={baseline_tp2*100:.1f}%  "
           f"SL={baseline_sl*100:.1f}%  T+5={baseline_t5:.3f}%  "
           f"T+10={baseline_t10:.3f}%  DD={baseline_dd:.2f}%")
+
+    # ── Filtered baseline: does screening by SC_MOM actually help? ──
+    sc_mom_arr = np.array([r.get("sc_mom", np.nan) for r in rows], dtype=float)
+    filtered_baselines = {}
+    for threshold in [0, 50, 60, 70, 75, 80]:
+        mask = sc_mom_arr >= threshold if threshold > 0 else np.ones(len(rows), dtype=bool)
+        n = int(mask.sum())
+        if n < 50:
+            continue
+        fb = {
+            "threshold": threshold,
+            "n": n,
+            "tp1_rate": round(float(tp1_arr[mask].mean()), 4),
+            "tp2_rate": round(float(tp2_arr[mask].mean()), 4),
+            "sl_rate": round(float(sl_arr[mask].mean()), 4),
+            "avg_t5": round(float(np.nanmean(t5_arr[mask])), 3),
+            "avg_t10": round(float(np.nanmean(t10_arr[mask])), 3),
+        }
+        filtered_baselines[threshold] = fb
+
+    if filtered_baselines:
+        print(f"\n  FILTERED BASELINES (by SC_MOM threshold):")
+        print(f"  {'SC_MOM≥':>8s}  {'n':>6s}  {'TP1':>6s}  {'TP2':>6s}  "
+              f"{'SL':>6s}  {'T+5':>7s}  {'T+10':>7s}")
+        print("  " + "-" * 56)
+        for thr, fb in sorted(filtered_baselines.items()):
+            label = "ALL" if thr == 0 else f"{thr}"
+            print(f"  {label:>8s}  {fb['n']:>6,}  {fb['tp1_rate']*100:>5.1f}%  "
+                  f"{fb['tp2_rate']*100:>5.1f}%  {fb['sl_rate']*100:>5.1f}%  "
+                  f"{fb['avg_t5']:>+6.2f}%  {fb['avg_t10']:>+6.2f}%")
+
+    # ── Risk stats: what's the typical 1R in ATR terms? ──
+    risk_arr = np.array([r.get("risk_atr_ratio", np.nan) for r in rows], dtype=float)
+    valid_risk = risk_arr[~np.isnan(risk_arr)]
+    if len(valid_risk) > 0:
+        print(f"\n  DSL bracket stats: median 1R = {np.median(valid_risk):.2f}×ATR  "
+              f"mean = {np.mean(valid_risk):.2f}×ATR  "
+              f"range [{np.min(valid_risk):.2f}, {np.max(valid_risk):.2f}]")
 
     feature_results: dict[str, dict] = {}
     for fn in feature_names:
@@ -1428,6 +1517,14 @@ def run_backtest(tickers: list[str] | None = None,
             "avg_t5": round(baseline_t5, 3),
             "avg_t10": round(baseline_t10, 3),
             "avg_dd": round(baseline_dd, 3),
+        },
+        "filtered_baselines": filtered_baselines if filtered_baselines else {},
+        "bracket_stats": {
+            "median_risk_atr": round(float(np.median(valid_risk)), 4) if len(valid_risk) > 0 else None,
+            "mean_risk_atr": round(float(np.mean(valid_risk)), 4) if len(valid_risk) > 0 else None,
+            "min_risk_atr": round(float(np.min(valid_risk)), 4) if len(valid_risk) > 0 else None,
+            "max_risk_atr": round(float(np.max(valid_risk)), 4) if len(valid_risk) > 0 else None,
+            "note": "1R in ATR multiples; TP1 = 1.5R above entry, TP2 = 2.0R above entry",
         },
         "n_features_tested": len(feature_results),
         "features": {k: v for k, v in feature_results.items()},

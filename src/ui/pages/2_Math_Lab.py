@@ -1278,6 +1278,36 @@ if _sc_result_path.exists():
             f"**Baseline TP1:** {_sc_bl.get('tp1_rate', 0)*100:.1f}%"
         )
 
+        # ── Bracket stats ──
+        _sc_bracket = _sc.get("bracket_stats", {})
+        if _sc_bracket and _sc_bracket.get("median_risk_atr") is not None:
+            st.caption(
+                f"DSL bracket: median 1R = {_sc_bracket['median_risk_atr']:.2f}x ATR "
+                f"(range {_sc_bracket['min_risk_atr']:.2f}-{_sc_bracket['max_risk_atr']:.2f}) | "
+                f"TP1 = 1.5R above entry, TP2 = 2.0R"
+            )
+
+        # ── Filtered baselines ──
+        _sc_fb = _sc.get("filtered_baselines", {})
+        if _sc_fb:
+            st.subheader("Filtered Baselines (by SC_MOM threshold)")
+            st.caption("Does screening by SC_MOM actually help?")
+            _fb_rows = []
+            for thr in sorted(_sc_fb, key=lambda x: int(x)):
+                fb = _sc_fb[thr]
+                label = "ALL" if int(thr) == 0 else f"SC_MOM >= {thr}"
+                _fb_rows.append({
+                    "Filter": label,
+                    "Events": f"{fb['n']:,}",
+                    "TP1": f"{fb['tp1_rate']*100:.1f}%",
+                    "TP2": f"{fb['tp2_rate']*100:.1f}%",
+                    "SL": f"{fb['sl_rate']*100:.1f}%",
+                    "T+5": f"{fb['avg_t5']:+.2f}%",
+                    "T+10": f"{fb['avg_t10']:+.2f}%",
+                })
+            st.dataframe(pd.DataFrame(_fb_rows), hide_index=True,
+                          use_container_width=True)
+
         # ── Top features ranked by Q5-Q1 spread ──
         st.subheader("Top Features by TP1 Quintile Spread (Q5-Q1)")
         _sc_ranked = _sc.get("ranked_by_tp1_spread", [])
@@ -1420,6 +1450,24 @@ if _sc_result_path.exists():
                         })
                     st.dataframe(pd.DataFrame(_sc_lr_rows), hide_index=True,
                                   use_container_width=True)
+                    # Show sparse recipe if available
+                    _sc_sparse = _sc_lr.get("sparse")
+                    if _sc_sparse and _sc_sparse.get("selected"):
+                        st.markdown(
+                            f"**{label} SPARSE** — {_sc_sparse['n_selected']} features "
+                            f"(acc={_sc_sparse['accuracy']:.3f}, within 1pp of full)"
+                        )
+                        _sp_rows = []
+                        for s in _sc_sparse["selected"]:
+                            w = _sc_sparse.get("recipe_weights", {}).get(s["feature"], 0)
+                            _sp_rows.append({
+                                "Feature": s["feature"],
+                                "Coefficient": f"{s['coefficient']:+.4f}",
+                                "Weight": f"{w:.1%}",
+                                "Direction": "Bullish" if s["coefficient"] > 0 else "Bearish",
+                            })
+                        st.dataframe(pd.DataFrame(_sp_rows), hide_index=True,
+                                      use_container_width=True)
 
             # ── 6B: Random Forest ──
             _sc_rf = _sc_combos.get("random_forest", {})
@@ -1481,6 +1529,7 @@ if _sc_result_path.exists():
                 )
                 _sc_wf_rows = []
                 for wf_key, label in [("lasso_tp1", "Lasso TP1"),
+                                       ("sparse_lasso_tp1", "Sparse Lasso TP1"),
                                        ("lasso_tp2", "Lasso TP2"),
                                        ("lasso_sl", "Lasso SL"),
                                        ("rf_tp1", "RF Top-5 TP1")]:
