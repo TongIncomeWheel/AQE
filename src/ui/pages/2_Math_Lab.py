@@ -1623,6 +1623,20 @@ _rdhl_tab_scan, _rdhl_tab_single = st.tabs(["Scan Universe", "Single Ticker"])
 
 # ── Tab 1: Scan Universe ──────────────────────────────────────────────
 with _rdhl_tab_scan:
+    st.caption(
+        "Crosses readiness/health with quality scores from scores_daily. "
+        "Compression without quality is noise — use the SC_MOM floor to "
+        "filter to names worth trading."
+    )
+    _scan_c1, _scan_c2 = st.columns([1, 1])
+    with _scan_c1:
+        _scan_sc_floor = st.slider(
+            "Min SC_MOM", 0, 100, 50, step=5, key="rdhl_sc_floor",
+            help="Quality floor. Backtest showed rd>=70 AND sc>=60 was the winning combo.")
+    with _scan_c2:
+        _scan_sort = st.selectbox(
+            "Sort by", ["RD Score", "SC_MOM", "HL Score", "PTRS"],
+            key="rdhl_sort_col")
     _rdhl_scan_btn = st.button("Scan Universe", key="rdhl_scan_btn", type="primary")
     if _rdhl_scan_btn:
         if not PANEL_DAILY.exists():
@@ -1651,6 +1665,24 @@ with _rdhl_tab_scan:
                         _scan_weekly_grp = {t: g.sort_values("date").reset_index(drop=True)
                                             for t, g in _scan_wk.groupby("ticker", sort=False)}
 
+                    # Pull quality scores from scores_daily
+                    _scan_quality: dict[str, dict] = {}
+                    if SCORES_DAILY.exists():
+                        _sq = pd.read_parquet(SCORES_DAILY)
+                        _sq["date"] = pd.to_datetime(_sq["date"]).dt.normalize()
+                        _sq_latest = _sq[_sq["date"] == _sq["date"].max()]
+                        for _, _sqr in _sq_latest.iterrows():
+                            _scan_quality[_sqr["ticker"]] = {
+                                "sc_mom": float(_sqr.get("sc_momentum", 0) or 0),
+                                "sc_pos": float(_sqr.get("sc_position", 0) or 0),
+                                "flow": float(_sqr.get("flow_100", 0) or 0),
+                                "energy": float(_sqr.get("energy_100", 0) or 0),
+                                "structure": float(_sqr.get("structure_100", 0) or 0),
+                                "mp": float(_sqr.get("mp_100", 0) or 0),
+                                "elder": float(_sqr.get("elder_score", 0) or 0),
+                                "ptrs": float(_sqr.get("sc_momentum", 0) or 0),
+                            }
+
                     _scan_rows = []
                     _scan_tickers = sorted(t for t in _scan_grp if t != "SPY")
                     _scan_progress = st.progress(0, text="Scanning...")
@@ -1662,6 +1694,7 @@ with _rdhl_tab_scan:
                         _sd = _scan_grp[_stk]
                         if len(_sd) < 60:
                             continue
+                        _sq_vals = _scan_quality.get(_stk, {})
                         try:
                             _srd = _rd_eng.compute(_sd, spy_daily=_scan_spy)
                             _sw = _scan_weekly_grp.get(_stk)
@@ -1673,6 +1706,9 @@ with _rdhl_tab_scan:
                             _scan_rows.append({
                                 "Ticker": _stk,
                                 "Close": round(float(_sd["close"].iloc[-1]), 2),
+                                "SC_MOM": round(_sq_vals.get("sc_mom", 0), 1),
+                                "PTRS": round(_sq_vals.get("ptrs", 0), 1),
+                                "Elder": round(_sq_vals.get("elder", 0), 0),
                                 "RD Score": float(_srd_last["rd_score"]),
                                 "RD State": _srd_last["rd_state"],
                                 "Compress": float(_srd_last["rd_compression"]),
@@ -1681,10 +1717,10 @@ with _rdhl_tab_scan:
                                 "RS Bonus": float(_srd_last["rd_rs_bonus"]),
                                 "HL Score": float(_shl_last["hl_score"]),
                                 "HL State": _shl_last["hl_state"],
-                                "Trend": float(_shl_last["hl_trend"]),
-                                "Flow": float(_shl_last["hl_flow"]),
-                                "RS": float(_shl_last["hl_rs"]),
-                                "Risk": float(_shl_last["hl_risk"]),
+                                "Flow": round(_sq_vals.get("flow", 0), 1),
+                                "Energy": round(_sq_vals.get("energy", 0), 1),
+                                "Structure": round(_sq_vals.get("structure", 0), 1),
+                                "MP": round(_sq_vals.get("mp", 0), 1),
                             })
                         except Exception:
                             continue
@@ -1692,25 +1728,36 @@ with _rdhl_tab_scan:
 
                     if _scan_rows:
                         _scan_df = pd.DataFrame(_scan_rows)
-                        _scan_nonzero = _scan_df[_scan_df["RD Score"] > 0].sort_values(
-                            "RD Score", ascending=False).reset_index(drop=True)
+                        _scan_filtered = _scan_df[
+                            (_scan_df["RD Score"] > 0) &
+                            (_scan_df["SC_MOM"] >= _scan_sc_floor)
+                        ].sort_values(
+                            _scan_sort, ascending=False
+                        ).reset_index(drop=True)
+
+                        _n_rd_pos = int((_scan_df["RD Score"] > 0).sum())
                         st.subheader(
-                            f"Readiness > 0: {len(_scan_nonzero)} of "
-                            f"{len(_scan_df)} tickers")
-                        if len(_scan_nonzero) > 0:
-                            st.dataframe(_scan_nonzero, hide_index=True,
+                            f"RD > 0 AND SC_MOM >= {_scan_sc_floor}: "
+                            f"{len(_scan_filtered)} names "
+                            f"({_n_rd_pos} with RD > 0 total)")
+
+                        if len(_scan_filtered) > 0:
+                            st.dataframe(_scan_filtered, hide_index=True,
                                          use_container_width=True)
                         else:
-                            st.warning("No tickers with rd_score > 0 in the panel.")
-                            st.caption("Showing top 20 by compression sub-score instead:")
-                            _scan_comp = _scan_df.sort_values(
-                                "Compress", ascending=False).head(20).reset_index(drop=True)
-                            st.dataframe(_scan_comp, hide_index=True,
-                                         use_container_width=True)
+                            st.warning(
+                                f"No tickers pass both RD > 0 and SC_MOM >= {_scan_sc_floor}. "
+                                f"Try lowering the SC_MOM floor.")
+                            if _n_rd_pos > 0:
+                                st.caption(f"Showing all {_n_rd_pos} with RD > 0 (no quality filter):")
+                                _scan_rd_only = _scan_df[_scan_df["RD Score"] > 0].sort_values(
+                                    "RD Score", ascending=False).reset_index(drop=True)
+                                st.dataframe(_scan_rd_only, hide_index=True,
+                                             use_container_width=True)
 
                         with st.expander("Full universe scan (all tickers)"):
                             st.dataframe(
-                                _scan_df.sort_values("RD Score", ascending=False).reset_index(drop=True),
+                                _scan_df.sort_values(_scan_sort, ascending=False).reset_index(drop=True),
                                 hide_index=True, use_container_width=True)
                     else:
                         st.error("No scores produced.")
