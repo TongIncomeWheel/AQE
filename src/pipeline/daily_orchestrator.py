@@ -358,7 +358,7 @@ def _full_scoring(
     earnings_cal: dict[str, str] | None = None,
 ) -> list[dict]:
     """Run full engine suite on selected tickers, return latest scores."""
-    from src.engines import bq, elder, energy, flow, k39, mp, scoring, structure
+    from src.engines import bq, elder, energy, flow, health, k39, mp, readiness, scoring, structure
     from src.engines.utils import atr
 
     spy = pd.read_parquet(SPY_DAILY) if SPY_DAILY.exists() else panel[panel["ticker"] == "SPY"]
@@ -424,6 +424,9 @@ def _full_scoring(
             )
             atr14 = atr(d["high"].astype(float), d["low"].astype(float), d["close"].astype(float), n=14)
 
+            rd_df = readiness.compute(d, spy_daily=spy)
+            hl_df = health.compute(d, spy_daily=spy, weekly=w if not w.empty else None)
+
             from src.data.earnings import days_to_earnings, earn_proximity_score
             earn_days = days_to_earnings(ticker, run_date, earnings_cal or {})
             earn_sc = earn_proximity_score(earn_days)
@@ -445,6 +448,10 @@ def _full_scoring(
                 "atr14": float(atr14.iloc[-1]) if not pd.isna(atr14.iloc[-1]) else 0.0,
                 "earn_days": earn_days,
                 "earn_score": earn_sc,
+                "rd_score": float(rd_df["rd_score"].iloc[-1]),
+                "rd_state": str(rd_df["rd_state"].iloc[-1]),
+                "hl_score": float(hl_df["hl_score"].iloc[-1]),
+                "hl_state": str(hl_df["hl_state"].iloc[-1]),
             })
         except Exception:
             continue

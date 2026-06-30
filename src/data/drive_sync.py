@@ -141,6 +141,22 @@ _FIELD_GLOSSARY = {
                        "error).",
     "dsl_atr_ratio_floored": "dsl_atr_ratio floored at 1.5 in YELLOW+ regime (use this "
                              "for sizing; raw dsl_atr_ratio may be sub-ATR).",
+    # Readiness Score — entry timing
+    "rd_score": "Readiness composite (0-100). Measures compression + trigger signals. "
+                "READY (80+) / WATCH (60-79) / NEUTRAL (40-59) / NOT_READY (<40).",
+    "rd_state": "Readiness state label: READY / WATCH / NEUTRAL / NOT_READY.",
+    "rd_compression": "Compression sub-score (0-60). Tight range + dry volume + EMA convergence.",
+    "rd_trigger": "Trigger sub-score (0-25). Range expansion + volume surge from compression.",
+    "rd_pos_mod": "Position modifier (-15 to 0). Penalty for already-extended names.",
+    "rd_rs_bonus": "RS acceleration bonus (0-15). Positive when outperforming SPY recently.",
+    # Health Score — position maintenance
+    "hl_score": "Health composite (0-100). Measures trend integrity for held positions. "
+                "HOLD_ADD (75+) / HOLD (50-74) / TIGHTEN (30-49) / EXIT (<30).",
+    "hl_state": "Health state label: HOLD_ADD / HOLD / TIGHTEN / EXIT.",
+    "hl_trend": "Trend structure sub-score (0-35). Higher lows + bars above EMA21.",
+    "hl_flow": "Flow confirmation sub-score (0-25). MFI health + volume up/down ratio.",
+    "hl_rs": "Relative strength sub-score (0-20). RS vs SPY maintenance.",
+    "hl_risk": "Risk flags penalty (-20 to 0). ATR spike + close weakness + EMA breakdown.",
 }
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
@@ -205,6 +221,19 @@ _FIELD_SCHEMA = {
     "malformed_bracket":    _fs("flag", "boolean", "n/a"),
     "beta_60d_capped":      _fs("risk_metric", "ratio", "n/a"),
     "dsl_atr_ratio_floored": _fs("ratio", "atr", "n/a"),
+    # Readiness / Health
+    "rd_score":             _fs("signal", "score", "n/a"),
+    "rd_state":             _fs("signal", "label", "n/a"),
+    "rd_compression":       _fs("signal", "score", "n/a"),
+    "rd_trigger":           _fs("signal", "score", "n/a"),
+    "rd_pos_mod":           _fs("signal", "score", "n/a"),
+    "rd_rs_bonus":          _fs("signal", "score", "n/a"),
+    "hl_score":             _fs("signal", "score", "n/a"),
+    "hl_state":             _fs("signal", "label", "n/a"),
+    "hl_trend":             _fs("signal", "score", "n/a"),
+    "hl_flow":              _fs("signal", "score", "n/a"),
+    "hl_rs":                _fs("signal", "score", "n/a"),
+    "hl_risk":              _fs("signal", "score", "n/a"),
 }
 
 
@@ -639,6 +668,11 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "structural_levels": [], "optimal_stop": None, "optimal_stop_exists": False,
         "structural_targets": [],
         "held": False,
+        # Readiness / Health scores
+        "rd_score": None, "rd_state": None,
+        "rd_compression": None, "rd_trigger": None, "rd_pos_mod": None, "rd_rs_bonus": None,
+        "hl_score": None, "hl_state": None,
+        "hl_trend": None, "hl_flow": None, "hl_rs": None, "hl_risk": None,
         # Enrichment Spec v2.0 — new per-record signals + cleanup flags
         "rs_down_day_20d": None, "rs_leadership": None,
         "setup_state": "BASING",
@@ -747,6 +781,15 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                 if _is_num(_t.get("price")) and _is_num(_entry):
                     _t["r_optimal"] = round((_t["price"] - _entry) / _orisk, 2)
         fields["structural_targets"] = _stargets
+
+        # ── Readiness / Health scores (from scores_daily or orchestrator) ──
+        _rdhl = (lk.get("rdhl") or {}).get(tk, {})
+        for _rk in ("rd_score", "rd_state", "rd_compression", "rd_trigger",
+                     "rd_pos_mod", "rd_rs_bonus",
+                     "hl_score", "hl_state", "hl_trend", "hl_flow",
+                     "hl_rs", "hl_risk"):
+            if _rk in _rdhl and _rdhl[_rk] is not None:
+                fields[_rk] = _rdhl[_rk]
 
         # ── Enrichment Spec v2.0 — pre-computed per-ticker signals ────────
         _enr = (lk.get("enrichment") or {}).get(tk, {})
@@ -998,17 +1041,35 @@ def build_export(shortlist: dict | None = None) -> dict:
     except Exception:  # noqa: BLE001 — additive; never blocks the export
         pass
 
-    # mp_state lookup from scores_daily.parquet — authoritative source.
-    # shortlist.json nests mp_state inside "diagnostics" for candidates and
-    # omits it entirely from precision_edge, so we derive from the parquet.
+    # mp_state + readiness/health lookup from scores_daily.parquet.
     import pandas as pd
     from src.data.paths import SCORES_DAILY as _scores_path
     _mp_states: dict[str, str] = {}
+    _rdhl_lookup: dict[str, dict] = {}
     if _scores_path.exists():
-        _sc = pd.read_parquet(_scores_path, columns=["date", "ticker", "mp_state"])
+        _rdhl_cols = ["date", "ticker", "mp_state"]
+        _rd_hl_fields = [
+            "rd_score", "rd_state", "rd_compression", "rd_trigger",
+            "rd_pos_mod", "rd_rs_bonus",
+            "hl_score", "hl_state", "hl_trend", "hl_flow", "hl_rs", "hl_risk",
+        ]
+        _sc = pd.read_parquet(_scores_path)
         _sc["date"] = pd.to_datetime(_sc["date"]).dt.normalize()
         _latest = _sc[_sc["date"] == _sc["date"].max()]
         _mp_states = dict(zip(_latest["ticker"], _latest["mp_state"].astype(str)))
+        for _, _row in _latest.iterrows():
+            _tk = _row["ticker"]
+            _rd_hl_vals = {}
+            for _f in _rd_hl_fields:
+                if _f in _row.index:
+                    _v = _row[_f]
+                    if isinstance(_v, str):
+                        _rd_hl_vals[_f] = _v
+                    elif _v is not None and _v == _v:
+                        _rd_hl_vals[_f] = round(float(_v), 1) if not isinstance(_v, str) else _v
+            if _rd_hl_vals:
+                _rdhl_lookup[_tk] = _rd_hl_vals
+    _v21_lk["rdhl"] = _rdhl_lookup
 
     # Top Picks = candidates (PTRS-ranked shortlist) — SAME schema as longlist
     for c in sl.get("candidates", []):

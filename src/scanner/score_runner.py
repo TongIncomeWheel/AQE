@@ -24,7 +24,7 @@ import pandas as pd
 from src.data.earnings import load_earnings
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
-from src.engines import bq, elder, energy, flow, k39, mp, pipeline_rank, scoring, structure
+from src.engines import bq, elder, energy, flow, health, k39, mp, pipeline_rank, readiness, scoring, structure
 from src.engines.utils import atr
 
 
@@ -56,6 +56,12 @@ SCORE_COLUMNS = [
     # ── Pipeline Rank sub-components ──
     "momentum_composite", "pipe_tier",
     "pr_ret_12m", "pr_adx_score", "pr_rsi_score", "pr_vol_score", "pr_ma_score",
+    # ── Readiness sub-components ──
+    "rd_score", "rd_state", "rd_compression", "rd_trigger", "rd_pos_mod", "rd_rs_bonus",
+    "rd_inside_bars", "rd_range_exp", "rd_vol_surge", "rd_close_str",
+    # ── Health sub-components ──
+    "hl_score", "hl_state", "hl_trend", "hl_flow", "hl_rs", "hl_risk",
+    "hl_higher_lows", "hl_trend_bars", "hl_vol_updn", "hl_atr_spike",
 ]
 
 
@@ -118,6 +124,8 @@ def build_scores() -> None:
             elder_df = elder.compute(d)
             bq_df = bq.compute(d)
             k39_gate_s, k39_val = k39.compute_k39_gate(w, d["date"])
+            rd_df = readiness.compute(d, spy_daily=spy_daily)
+            hl_df = health.compute(d, spy_daily=spy_daily, weekly=w if not w.empty else None)
         except Exception as exc:
             print(f"  !! {ticker}: {exc}", file=sys.stderr)
             continue
@@ -267,6 +275,28 @@ def build_scores() -> None:
             "pr_rsi_score": pr_df["rsi_score"] if len(d) >= 252 else np.nan,
             "pr_vol_score": pr_df["vol_score"] if len(d) >= 252 else np.nan,
             "pr_ma_score": pr_df["ma_score"] if len(d) >= 252 else np.nan,
+            # Readiness sub-components
+            "rd_score": rd_df["rd_score"],
+            "rd_state": rd_df["rd_state"],
+            "rd_compression": rd_df["rd_compression"],
+            "rd_trigger": rd_df["rd_trigger"],
+            "rd_pos_mod": rd_df["rd_pos_mod"],
+            "rd_rs_bonus": rd_df["rd_rs_bonus"],
+            "rd_inside_bars": rd_df["rd_inside_bars"],
+            "rd_range_exp": rd_df["rd_range_exp"],
+            "rd_vol_surge": rd_df["rd_vol_surge"],
+            "rd_close_str": rd_df["rd_close_str"],
+            # Health sub-components
+            "hl_score": hl_df["hl_score"],
+            "hl_state": hl_df["hl_state"],
+            "hl_trend": hl_df["hl_trend"],
+            "hl_flow": hl_df["hl_flow"],
+            "hl_rs": hl_df["hl_rs"],
+            "hl_risk": hl_df["hl_risk"],
+            "hl_higher_lows": hl_df["hl_higher_lows"],
+            "hl_trend_bars": hl_df["hl_trend_bars"],
+            "hl_vol_updn": hl_df["hl_vol_updn"],
+            "hl_atr_spike": hl_df["hl_atr_spike"],
         })
         out_rows.append(row[SCORE_COLUMNS])
 
