@@ -1655,12 +1655,15 @@ if _rdhl_run and _rdhl_ticker:
                     _rdhl_weekly = _rdhl_wk_grp.get(_rdhl_ticker)
 
             if _rdhl_daily is None:
-                from src.data.fmp_client import get_daily_bars
-                _rdhl_daily = get_daily_bars(_rdhl_ticker, limit=400)
+                from datetime import timedelta
+                from src.data.fmp_client import FMPClient
+                _fmp = FMPClient()
+                _fmp_from = (datetime.now() - timedelta(days=600)).strftime("%Y-%m-%d")
+                _rdhl_daily = _fmp.get_daily_bars(_rdhl_ticker, from_date=_fmp_from)
                 if _rdhl_daily is not None and not _rdhl_daily.empty:
                     _rdhl_daily["date"] = pd.to_datetime(_rdhl_daily["date"]).dt.normalize()
                     _rdhl_daily = _rdhl_daily.sort_values("date").reset_index(drop=True)
-                _rdhl_spy_raw = get_daily_bars("SPY", limit=400)
+                _rdhl_spy_raw = _fmp.get_daily_bars("SPY", from_date=_fmp_from)
                 if _rdhl_spy_raw is not None and not _rdhl_spy_raw.empty:
                     _rdhl_spy_raw["date"] = pd.to_datetime(_rdhl_spy_raw["date"]).dt.normalize()
                     _rdhl_spy = _rdhl_spy_raw.sort_values("date").reset_index(drop=True)
