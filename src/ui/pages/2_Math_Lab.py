@@ -1614,135 +1614,233 @@ else:
 st.divider()
 st.header("Section 8: Readiness & Health Score")
 st.caption(
-    "Enter a ticker and click **Run** to compute entry-timing (Readiness) "
-    "and position-health (Health) scores from daily OHLCV bars."
+    "**Scan Universe** runs readiness + health across all panel tickers and "
+    "shows names with rd_score > 0, sorted high→low. "
+    "Or enter a single ticker for a detailed breakdown."
 )
 
-_rdhl_col1, _rdhl_col2, _rdhl_col3 = st.columns([2, 1, 1])
-with _rdhl_col1:
-    _rdhl_ticker = st.text_input(
-        "Ticker", value="", placeholder="e.g. AAPL",
-        key="rdhl_ticker_input",
-    ).strip().upper()
-with _rdhl_col2:
-    _rdhl_run = st.button("Run", key="rdhl_run_btn", type="primary")
-with _rdhl_col3:
-    _rdhl_use_panel = st.checkbox("Use cached panel", value=True, key="rdhl_use_panel",
-                                  help="Use panel_daily.parquet if available (faster). Uncheck to pull fresh from FMP.")
+_rdhl_tab_scan, _rdhl_tab_single = st.tabs(["Scan Universe", "Single Ticker"])
 
-if _rdhl_run and _rdhl_ticker:
-    with st.spinner(f"Computing readiness & health for {_rdhl_ticker}..."):
-        try:
-            _rdhl_daily = None
-            _rdhl_spy = None
-            _rdhl_weekly = None
+# ── Tab 1: Scan Universe ──────────────────────────────────────────────
+with _rdhl_tab_scan:
+    _rdhl_scan_btn = st.button("Scan Universe", key="rdhl_scan_btn", type="primary")
+    if _rdhl_scan_btn:
+        if not PANEL_DAILY.exists():
+            st.error("panel_daily.parquet not found. Run the daily pipeline first.")
+        else:
+            with st.spinner("Scanning universe for readiness & health scores..."):
+                try:
+                    from src.engines import readiness as _rd_eng, health as _hl_eng
 
-            if _rdhl_use_panel and PANEL_DAILY.exists():
-                _rdhl_panel = pd.read_parquet(PANEL_DAILY)
-                _rdhl_panel["date"] = pd.to_datetime(_rdhl_panel["date"]).dt.normalize()
-                _rdhl_grp = {t: g.sort_values("date").reset_index(drop=True)
-                             for t, g in _rdhl_panel.groupby("ticker", sort=False)}
-                _rdhl_daily = _rdhl_grp.get(_rdhl_ticker)
-                _rdhl_spy = _rdhl_grp.get("SPY")
-                if SPY_DAILY.exists():
-                    _rdhl_spy = pd.read_parquet(SPY_DAILY)
-                    _rdhl_spy["date"] = pd.to_datetime(_rdhl_spy["date"]).dt.normalize()
-                if PANEL_WEEKLY.exists():
-                    _rdhl_wk_panel = pd.read_parquet(PANEL_WEEKLY)
-                    _rdhl_wk_panel["date"] = pd.to_datetime(_rdhl_wk_panel["date"]).dt.normalize()
-                    _rdhl_wk_grp = {t: g.sort_values("date").reset_index(drop=True)
-                                    for t, g in _rdhl_wk_panel.groupby("ticker", sort=False)}
-                    _rdhl_weekly = _rdhl_wk_grp.get(_rdhl_ticker)
+                    _scan_panel = pd.read_parquet(PANEL_DAILY)
+                    _scan_panel["date"] = pd.to_datetime(_scan_panel["date"]).dt.normalize()
+                    _scan_grp = {t: g.sort_values("date").reset_index(drop=True)
+                                 for t, g in _scan_panel.groupby("ticker", sort=False)}
 
-            if _rdhl_daily is None:
-                from datetime import timedelta
-                from src.data.fmp_client import FMPClient
-                _fmp = FMPClient()
-                _fmp_from = (datetime.now() - timedelta(days=600)).strftime("%Y-%m-%d")
-                _rdhl_daily = _fmp.get_daily_bars(_rdhl_ticker, from_date=_fmp_from)
-                if _rdhl_daily is not None and not _rdhl_daily.empty:
-                    _rdhl_daily["date"] = pd.to_datetime(_rdhl_daily["date"]).dt.normalize()
-                    _rdhl_daily = _rdhl_daily.sort_values("date").reset_index(drop=True)
-                _rdhl_spy_raw = _fmp.get_daily_bars("SPY", from_date=_fmp_from)
-                if _rdhl_spy_raw is not None and not _rdhl_spy_raw.empty:
-                    _rdhl_spy_raw["date"] = pd.to_datetime(_rdhl_spy_raw["date"]).dt.normalize()
-                    _rdhl_spy = _rdhl_spy_raw.sort_values("date").reset_index(drop=True)
+                    _scan_spy = None
+                    if SPY_DAILY.exists():
+                        _scan_spy = pd.read_parquet(SPY_DAILY)
+                        _scan_spy["date"] = pd.to_datetime(_scan_spy["date"]).dt.normalize()
+                    elif "SPY" in _scan_grp:
+                        _scan_spy = _scan_grp["SPY"]
 
-            if _rdhl_daily is None or len(_rdhl_daily) < 60:
-                st.error(f"Not enough data for {_rdhl_ticker} (need ≥60 bars).")
-            else:
-                from src.engines import readiness as _rd_eng, health as _hl_eng
+                    _scan_weekly_grp = {}
+                    if PANEL_WEEKLY.exists():
+                        _scan_wk = pd.read_parquet(PANEL_WEEKLY)
+                        _scan_wk["date"] = pd.to_datetime(_scan_wk["date"]).dt.normalize()
+                        _scan_weekly_grp = {t: g.sort_values("date").reset_index(drop=True)
+                                            for t, g in _scan_wk.groupby("ticker", sort=False)}
 
-                _rd_result = _rd_eng.compute(_rdhl_daily, spy_daily=_rdhl_spy)
-                _hl_result = _hl_eng.compute(
-                    _rdhl_daily, spy_daily=_rdhl_spy,
-                    weekly=_rdhl_weekly if _rdhl_weekly is not None and not _rdhl_weekly.empty else None,
-                )
+                    _scan_rows = []
+                    _scan_tickers = sorted(t for t in _scan_grp if t != "SPY")
+                    _scan_progress = st.progress(0, text="Scanning...")
+                    for _si, _stk in enumerate(_scan_tickers):
+                        if _si % 20 == 0:
+                            _scan_progress.progress(
+                                _si / len(_scan_tickers),
+                                text=f"Scanning {_stk} ({_si}/{len(_scan_tickers)})")
+                        _sd = _scan_grp[_stk]
+                        if len(_sd) < 60:
+                            continue
+                        try:
+                            _srd = _rd_eng.compute(_sd, spy_daily=_scan_spy)
+                            _sw = _scan_weekly_grp.get(_stk)
+                            _shl = _hl_eng.compute(
+                                _sd, spy_daily=_scan_spy,
+                                weekly=_sw if _sw is not None and not _sw.empty else None)
+                            _srd_last = _srd.iloc[-1]
+                            _shl_last = _shl.iloc[-1]
+                            _scan_rows.append({
+                                "Ticker": _stk,
+                                "Close": round(float(_sd["close"].iloc[-1]), 2),
+                                "RD Score": float(_srd_last["rd_score"]),
+                                "RD State": _srd_last["rd_state"],
+                                "Compress": float(_srd_last["rd_compression"]),
+                                "Trigger": float(_srd_last["rd_trigger"]),
+                                "Pos Mod": float(_srd_last["rd_pos_mod"]),
+                                "RS Bonus": float(_srd_last["rd_rs_bonus"]),
+                                "HL Score": float(_shl_last["hl_score"]),
+                                "HL State": _shl_last["hl_state"],
+                                "Trend": float(_shl_last["hl_trend"]),
+                                "Flow": float(_shl_last["hl_flow"]),
+                                "RS": float(_shl_last["hl_rs"]),
+                                "Risk": float(_shl_last["hl_risk"]),
+                            })
+                        except Exception:
+                            continue
+                    _scan_progress.empty()
 
-                _rd_last = _rd_result.iloc[-1]
-                _hl_last = _hl_result.iloc[-1]
+                    if _scan_rows:
+                        _scan_df = pd.DataFrame(_scan_rows)
+                        _scan_nonzero = _scan_df[_scan_df["RD Score"] > 0].sort_values(
+                            "RD Score", ascending=False).reset_index(drop=True)
+                        st.subheader(
+                            f"Readiness > 0: {len(_scan_nonzero)} of "
+                            f"{len(_scan_df)} tickers")
+                        if len(_scan_nonzero) > 0:
+                            st.dataframe(_scan_nonzero, hide_index=True,
+                                         use_container_width=True)
+                        else:
+                            st.warning("No tickers with rd_score > 0 in the panel.")
+                            st.caption("Showing top 20 by compression sub-score instead:")
+                            _scan_comp = _scan_df.sort_values(
+                                "Compress", ascending=False).head(20).reset_index(drop=True)
+                            st.dataframe(_scan_comp, hide_index=True,
+                                         use_container_width=True)
 
-                st.subheader(f"{_rdhl_ticker} — Latest Scores")
+                        with st.expander("Full universe scan (all tickers)"):
+                            st.dataframe(
+                                _scan_df.sort_values("RD Score", ascending=False).reset_index(drop=True),
+                                hide_index=True, use_container_width=True)
+                    else:
+                        st.error("No scores produced.")
+                except Exception as _scan_exc:
+                    st.error(f"Error scanning universe: {_scan_exc}")
 
-                _sc1, _sc2 = st.columns(2)
-                with _sc1:
-                    _rd_color = (
-                        "🟢" if _rd_last["rd_state"] == "READY"
-                        else "🟡" if _rd_last["rd_state"] == "WATCH"
-                        else "🟠" if _rd_last["rd_state"] == "NEUTRAL"
-                        else "🔴"
+# ── Tab 2: Single Ticker ──────────────────────────────────────────────
+with _rdhl_tab_single:
+    _rdhl_col1, _rdhl_col2 = st.columns([3, 1])
+    with _rdhl_col1:
+        _rdhl_ticker = st.text_input(
+            "Ticker", value="", placeholder="e.g. AAPL",
+            key="rdhl_ticker_input",
+        ).strip().upper()
+    with _rdhl_col2:
+        _rdhl_run = st.button("Run", key="rdhl_run_btn", type="primary")
+
+    if _rdhl_run and _rdhl_ticker:
+        with st.spinner(f"Computing readiness & health for {_rdhl_ticker}..."):
+            try:
+                _rdhl_daily = None
+                _rdhl_spy = None
+                _rdhl_weekly = None
+
+                if PANEL_DAILY.exists():
+                    _rdhl_panel = pd.read_parquet(PANEL_DAILY)
+                    _rdhl_panel["date"] = pd.to_datetime(_rdhl_panel["date"]).dt.normalize()
+                    _rdhl_grp = {t: g.sort_values("date").reset_index(drop=True)
+                                 for t, g in _rdhl_panel.groupby("ticker", sort=False)}
+                    _rdhl_daily = _rdhl_grp.get(_rdhl_ticker)
+                    _rdhl_spy = _rdhl_grp.get("SPY")
+                    if SPY_DAILY.exists():
+                        _rdhl_spy = pd.read_parquet(SPY_DAILY)
+                        _rdhl_spy["date"] = pd.to_datetime(_rdhl_spy["date"]).dt.normalize()
+                    if PANEL_WEEKLY.exists():
+                        _rdhl_wk_panel = pd.read_parquet(PANEL_WEEKLY)
+                        _rdhl_wk_panel["date"] = pd.to_datetime(_rdhl_wk_panel["date"]).dt.normalize()
+                        _rdhl_wk_grp = {t: g.sort_values("date").reset_index(drop=True)
+                                        for t, g in _rdhl_wk_panel.groupby("ticker", sort=False)}
+                        _rdhl_weekly = _rdhl_wk_grp.get(_rdhl_ticker)
+
+                if _rdhl_daily is None:
+                    from datetime import timedelta
+                    from src.data.fmp_client import FMPClient
+                    _fmp = FMPClient()
+                    _fmp_from = (datetime.now() - timedelta(days=600)).strftime("%Y-%m-%d")
+                    _rdhl_daily = _fmp.get_daily_bars(_rdhl_ticker, from_date=_fmp_from)
+                    if _rdhl_daily is not None and not _rdhl_daily.empty:
+                        _rdhl_daily["date"] = pd.to_datetime(_rdhl_daily["date"]).dt.normalize()
+                        _rdhl_daily = _rdhl_daily.sort_values("date").reset_index(drop=True)
+                    _rdhl_spy_raw = _fmp.get_daily_bars("SPY", from_date=_fmp_from)
+                    if _rdhl_spy_raw is not None and not _rdhl_spy_raw.empty:
+                        _rdhl_spy_raw["date"] = pd.to_datetime(_rdhl_spy_raw["date"]).dt.normalize()
+                        _rdhl_spy = _rdhl_spy_raw.sort_values("date").reset_index(drop=True)
+
+                if _rdhl_daily is None or len(_rdhl_daily) < 60:
+                    st.error(f"Not enough data for {_rdhl_ticker} (need >= 60 bars).")
+                else:
+                    from src.engines import readiness as _rd_eng, health as _hl_eng
+
+                    _rd_result = _rd_eng.compute(_rdhl_daily, spy_daily=_rdhl_spy)
+                    _hl_result = _hl_eng.compute(
+                        _rdhl_daily, spy_daily=_rdhl_spy,
+                        weekly=_rdhl_weekly if _rdhl_weekly is not None and not _rdhl_weekly.empty else None,
                     )
-                    st.metric("Readiness Score", f"{_rd_last['rd_score']:.1f}")
-                    st.write(f"**State:** {_rd_color} {_rd_last['rd_state']}")
-                    st.write(
-                        f"Compression: **{_rd_last['rd_compression']:.1f}**/60 | "
-                        f"Trigger: **{_rd_last['rd_trigger']:.1f}**/25 | "
-                        f"Pos Mod: **{_rd_last['rd_pos_mod']:.1f}** | "
-                        f"RS Bonus: **{_rd_last['rd_rs_bonus']:.1f}**/15"
-                    )
-                    st.caption(
-                        f"Inside bars: {_rd_last['rd_inside_bars']:.0f} | "
-                        f"Range exp: {_rd_last['rd_range_exp']:.2f} | "
-                        f"Vol surge: {_rd_last['rd_vol_surge']:.2f} | "
-                        f"Close str: {_rd_last['rd_close_str']:.2f}"
-                    )
 
-                with _sc2:
-                    _hl_color = (
-                        "🟢" if _hl_last["hl_state"] == "HOLD_ADD"
-                        else "🟡" if _hl_last["hl_state"] == "HOLD"
-                        else "🟠" if _hl_last["hl_state"] == "TIGHTEN"
-                        else "🔴"
-                    )
-                    st.metric("Health Score", f"{_hl_last['hl_score']:.1f}")
-                    st.write(f"**State:** {_hl_color} {_hl_last['hl_state']}")
-                    st.write(
-                        f"Trend: **{_hl_last['hl_trend']:.1f}**/35 | "
-                        f"Flow: **{_hl_last['hl_flow']:.1f}**/25 | "
-                        f"RS: **{_hl_last['hl_rs']:.1f}**/20 | "
-                        f"Risk: **{_hl_last['hl_risk']:.1f}**"
-                    )
-                    st.caption(
-                        f"Higher lows: {_hl_last['hl_higher_lows']:.0f} | "
-                        f"Trend bars: {_hl_last['hl_trend_bars']:.0f} | "
-                        f"Vol up/dn: {_hl_last['hl_vol_updn']:.3f} | "
-                        f"ATR spike: {_hl_last['hl_atr_spike']:.3f}"
-                    )
+                    _rd_last = _rd_result.iloc[-1]
+                    _hl_last = _hl_result.iloc[-1]
 
-                with st.expander("Score history (last 20 bars)"):
-                    _hist = pd.DataFrame({
-                        "date": _rd_result["date"].iloc[-20:],
-                        "rd_score": _rd_result["rd_score"].iloc[-20:].values,
-                        "rd_state": _rd_result["rd_state"].iloc[-20:].values,
-                        "hl_score": _hl_result["hl_score"].iloc[-20:].values,
-                        "hl_state": _hl_result["hl_state"].iloc[-20:].values,
-                    })
-                    st.dataframe(_hist, hide_index=True, use_container_width=True)
+                    st.subheader(f"{_rdhl_ticker} — Latest Scores")
 
-        except Exception as _rdhl_exc:
-            st.error(f"Error computing scores: {_rdhl_exc}")
-elif _rdhl_run and not _rdhl_ticker:
-    st.warning("Enter a ticker symbol above.")
+                    _sc1, _sc2 = st.columns(2)
+                    with _sc1:
+                        _rd_color = (
+                            "🟢" if _rd_last["rd_state"] == "READY"
+                            else "🟡" if _rd_last["rd_state"] == "WATCH"
+                            else "🟠" if _rd_last["rd_state"] == "NEUTRAL"
+                            else "🔴"
+                        )
+                        st.metric("Readiness Score", f"{_rd_last['rd_score']:.1f}")
+                        st.write(f"**State:** {_rd_color} {_rd_last['rd_state']}")
+                        st.write(
+                            f"Compression: **{_rd_last['rd_compression']:.1f}**/60 | "
+                            f"Trigger: **{_rd_last['rd_trigger']:.1f}**/25 | "
+                            f"Pos Mod: **{_rd_last['rd_pos_mod']:.1f}** | "
+                            f"RS Bonus: **{_rd_last['rd_rs_bonus']:.1f}**/15"
+                        )
+                        st.caption(
+                            f"Inside bars: {_rd_last['rd_inside_bars']:.0f} | "
+                            f"Range exp: {_rd_last['rd_range_exp']:.2f} | "
+                            f"Vol surge: {_rd_last['rd_vol_surge']:.2f} | "
+                            f"Close str: {_rd_last['rd_close_str']:.2f}"
+                        )
+
+                    with _sc2:
+                        _hl_color = (
+                            "🟢" if _hl_last["hl_state"] == "HOLD_ADD"
+                            else "🟡" if _hl_last["hl_state"] == "HOLD"
+                            else "🟠" if _hl_last["hl_state"] == "TIGHTEN"
+                            else "🔴"
+                        )
+                        st.metric("Health Score", f"{_hl_last['hl_score']:.1f}")
+                        st.write(f"**State:** {_hl_color} {_hl_last['hl_state']}")
+                        st.write(
+                            f"Trend: **{_hl_last['hl_trend']:.1f}**/35 | "
+                            f"Flow: **{_hl_last['hl_flow']:.1f}**/25 | "
+                            f"RS: **{_hl_last['hl_rs']:.1f}**/20 | "
+                            f"Risk: **{_hl_last['hl_risk']:.1f}**"
+                        )
+                        st.caption(
+                            f"Higher lows: {_hl_last['hl_higher_lows']:.0f} | "
+                            f"Trend bars: {_hl_last['hl_trend_bars']:.0f} | "
+                            f"Vol up/dn: {_hl_last['hl_vol_updn']:.3f} | "
+                            f"ATR spike: {_hl_last['hl_atr_spike']:.3f}"
+                        )
+
+                    with st.expander("Score history (last 20 bars)"):
+                        _hist = pd.DataFrame({
+                            "date": _rd_result["date"].iloc[-20:],
+                            "rd_score": _rd_result["rd_score"].iloc[-20:].values,
+                            "rd_state": _rd_result["rd_state"].iloc[-20:].values,
+                            "hl_score": _hl_result["hl_score"].iloc[-20:].values,
+                            "hl_state": _hl_result["hl_state"].iloc[-20:].values,
+                        })
+                        st.dataframe(_hist, hide_index=True, use_container_width=True)
+
+            except Exception as _rdhl_exc:
+                st.error(f"Error computing scores: {_rdhl_exc}")
+    elif _rdhl_run and not _rdhl_ticker:
+        st.warning("Enter a ticker symbol above.")
 
 
 # ===================================================================
