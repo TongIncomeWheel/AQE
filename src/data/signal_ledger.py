@@ -379,6 +379,147 @@ def get_hit_rates(
     }
 
 
+def backfill_historical(
+    scores_path: Path | None = None,
+    panel_path: Path | None = None,
+    min_sc_raw: float = 65.0,
+    min_elder: float = 7.0,
+    elder_list_min: float = 8.0,
+) -> dict:
+    """Replay the longlist/elder_list filter on every historical date in
+    scores_daily.parquet and record them as signal snapshots, then backfill
+    forward returns from panel_daily.parquet.
+
+    This gives ~360 days of signal history with outcomes instantly — no FMP
+    calls needed since the data is already in the parquets.
+
+    PTRS is approximated as SC_MOM (SH ranges -8 to +3 and we don't have
+    historical SRM grades per date). DSL levels are approximated from
+    close and ATR14 using the naive formula.
+    """
+    from src.data.paths import SCORES_DAILY, PANEL_DAILY
+
+    scores_path = scores_path or SCORES_DAILY
+    panel_path = panel_path or PANEL_DAILY
+
+    if not scores_path.exists():
+        return {"ok": False, "reason": "scores_daily.parquet not found"}
+
+    init_ledger()
+
+    scores = pd.read_parquet(scores_path)
+    scores["date"] = pd.to_datetime(scores["date"]).dt.normalize()
+
+    all_dates = sorted(scores["date"].unique())
+    print(f"  Backfill: {len(all_dates)} dates, "
+          f"{scores['ticker'].nunique()} tickers in scores_daily")
+
+    total_snaps = 0
+
+    for scan_dt in all_dates:
+        scan_date = scan_dt.strftime("%Y-%m-%d")
+        day_scores = scores[scores["date"] == scan_dt]
+
+        rows: list[tuple] = []
+        outcome_rows: list[tuple] = []
+        seen_tk: set[str] = set()
+
+        for _, r in day_scores.iterrows():
+            tk = r["ticker"]
+            sc_raw = float(r.get("sc_momentum_raw") or r.get("sc_momentum") or 0)
+            elder = float(r.get("elder_score") or 0)
+            close = float(r.get("close") or 0)
+            atr14 = float(r.get("atr14") or 0)
+
+            is_longlist = sc_raw >= min_sc_raw and elder >= min_elder
+            is_elder = elder >= elder_list_min
+
+            if not is_longlist and not is_elder:
+                continue
+
+            sources = []
+            if is_longlist:
+                sources.append("longlist")
+            if is_elder:
+                sources.append("elder_list")
+
+            # Approximate DSL levels from close + ATR
+            entry = close
+            dsl_risk = max(atr14 * 1.5, 0.01) if atr14 > 0 else None
+            dsl_stop = (close - dsl_risk) if dsl_risk else None
+            dsl_tp_1r = (entry + dsl_risk) if dsl_risk else None
+            dsl_tp_2r = (entry + 2 * dsl_risk) if dsl_risk else None
+
+            # Approximate PTRS as SC_MOM (no historical SRM)
+            ptrs_approx = sc_raw
+
+            rd_score = float(r["rd_score"]) if "rd_score" in r.index and pd.notna(r.get("rd_score")) else None
+            rd_state = str(r["rd_state"]) if "rd_state" in r.index and pd.notna(r.get("rd_state")) else ""
+            hl_score = float(r["hl_score"]) if "hl_score" in r.index and pd.notna(r.get("hl_score")) else None
+            hl_state = str(r["hl_state"]) if "hl_state" in r.index and pd.notna(r.get("hl_state")) else ""
+
+            for src in sources:
+                rows.append((
+                    scan_date, tk, src,
+                    1 if is_longlist else 0,
+                    0,  # pe — can't reconstruct historically
+                    _n(close),
+                    _n(sc_raw),
+                    _n(sc_raw),
+                    _n(ptrs_approx),
+                    _n(elder),
+                    _n(r.get("flow_100")),
+                    _n(r.get("energy_100")),
+                    _n(r.get("structure_100")),
+                    _n(r.get("mp_100")),
+                    _n(r.get("bq_100")),
+                    str(r.get("mp_state") or ""),
+                    _n(rd_score),
+                    rd_state,
+                    _n(hl_score),
+                    hl_state,
+                    "",  # gics_sector — not in scores_daily
+                    "",  # gics_gate
+                    _n(entry),
+                    _n(dsl_stop),
+                    _n(dsl_risk),
+                    _n(dsl_tp_1r),
+                    _n(dsl_tp_2r),
+                ))
+
+            if tk not in seen_tk:
+                seen_tk.add(tk)
+                outcome_rows.append((scan_date, tk, _n(close)))
+
+        if rows:
+            with _conn() as conn:
+                conn.executemany(
+                    "INSERT OR IGNORE INTO signal_snapshots "
+                    "(scan_date, ticker, list_source, on_longlist, pe, close, "
+                    "sc_mom, sc_mom_raw, ptrs, elder, flow, energy, structure, mp, bq, "
+                    "mp_state, rd_score, rd_state, hl_score, hl_state, "
+                    "gics_sector, gics_gate, entry, dsl_stop, dsl_risk, dsl_tp_1r, dsl_tp_2r) "
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    rows,
+                )
+            with _conn() as conn:
+                conn.executemany(
+                    "INSERT OR IGNORE INTO signal_outcomes (scan_date, ticker, close_t0) "
+                    "VALUES (?,?,?)",
+                    outcome_rows,
+                )
+            total_snaps += len(rows)
+
+    print(f"  Backfill: {total_snaps} historical signals recorded across {len(all_dates)} dates")
+
+    # Now backfill all forward returns
+    n_filled = backfill_outcomes(panel_path)
+    print(f"  Backfill: {n_filled} outcomes filled with forward returns")
+
+    stats = ledger_stats()
+    return {"ok": True, "signals": total_snaps, "outcomes_filled": n_filled, "stats": stats}
+
+
 def ledger_stats() -> dict:
     """Quick diagnostic: row counts, date range, fill status."""
     init_ledger()

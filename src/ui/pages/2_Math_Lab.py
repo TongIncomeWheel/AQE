@@ -2468,3 +2468,133 @@ if _panels_ready:
         mime="text/csv",
         key="ml_export_csv",
     )
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Section 9: Signal Ledger — Historical Performance
+# ═══════════════════════════════════════════════════════════════════════════
+
+st.header("Section 9: Signal Ledger")
+st.markdown(
+    "Append-only archive of every name AQE longlisted/elder-listed, with "
+    "forward returns (T+5/10/20) and TP/SL hit rates. "
+    "**Backfill** replays the longlist filter on historical scores_daily and "
+    "fills outcomes from panel_daily — no FMP calls needed."
+)
+
+try:
+    from src.data.signal_ledger import (
+        backfill_historical, backfill_outcomes, get_hit_rates,
+        get_signal_history, ledger_stats,
+    )
+
+    stats = ledger_stats()
+
+    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+    col_s1.metric("Signals", f"{stats['snapshots']:,}")
+    col_s2.metric("Outcomes filled", f"{stats['filled']:,}")
+    col_s3.metric("Pending", f"{stats['pending']:,}")
+    col_s4.metric("Date range",
+                  f"{stats['date_range'][0]} → {stats['date_range'][1]}"
+                  if stats['date_range'] else "none")
+
+    tab_bf, tab_rates, tab_browse = st.tabs(["Backfill", "Hit Rates", "Browse Signals"])
+
+    with tab_bf:
+        st.markdown(
+            "Replay longlist (SC_MOM_RAW ≥ 65, Elder ≥ 7) and elder_list (Elder ≥ 8) "
+            "on every historical date in scores_daily.parquet, then fill forward returns."
+        )
+        if st.button("Run Historical Backfill", key="ledger_backfill"):
+            with st.spinner("Backfilling... (this may take a minute)"):
+                result = backfill_historical()
+            if result.get("ok"):
+                st.success(
+                    f"Done: {result['signals']:,} signals, "
+                    f"{result['outcomes_filled']:,} outcomes filled"
+                )
+                st.json(result["stats"])
+            else:
+                st.error(result.get("reason", "unknown error"))
+
+        if stats["pending"] > 0:
+            st.markdown(f"**{stats['pending']}** outcomes still pending (need more forward bars).")
+            if st.button("Backfill Outcomes Only", key="ledger_outcomes"):
+                with st.spinner("Filling forward returns..."):
+                    n = backfill_outcomes()
+                st.success(f"Filled {n} outcomes")
+
+    with tab_rates:
+        st.markdown("Aggregate hit rates across all filled outcomes. Filter by score thresholds.")
+
+        rc1, rc2, rc3 = st.columns(3)
+        hr_min_sc = rc1.number_input("Min SC_MOM", 0, 100, 65, key="hr_sc")
+        hr_source = rc2.selectbox("List source", ["all", "longlist", "elder_list"], key="hr_src")
+        hr_from = rc3.text_input("From date (YYYY-MM-DD)", "", key="hr_from")
+
+        rates = get_hit_rates(
+            min_sc=hr_min_sc if hr_min_sc > 0 else None,
+            list_source=hr_source if hr_source != "all" else None,
+            from_date=hr_from if hr_from else None,
+        )
+
+        if rates["n"] == 0:
+            st.info(rates.get("message", "No data"))
+        else:
+            st.markdown(f"**{rates['n']:,}** signals with filled T+20 outcomes")
+            mc1, mc2, mc3 = st.columns(3)
+            mc1.metric("Avg T+5 return", f"{rates['avg_ret_t5']:+.2f}%")
+            mc2.metric("Avg T+10 return", f"{rates['avg_ret_t10']:+.2f}%")
+            mc3.metric("Avg T+20 return", f"{rates['avg_ret_t20']:+.2f}%")
+
+            mc4, mc5, mc6 = st.columns(3)
+            if rates.get("tp1_hit_rate") is not None:
+                mc4.metric("TP1 hit rate", f"{rates['tp1_hit_rate']:.1f}%")
+            if rates.get("tp2_hit_rate") is not None:
+                mc5.metric("TP2 hit rate", f"{rates['tp2_hit_rate']:.1f}%")
+            if rates.get("sl_hit_rate") is not None:
+                mc6.metric("SL hit rate", f"{rates['sl_hit_rate']:.1f}%")
+
+            mc7, mc8, _ = st.columns(3)
+            mc7.metric("% positive T+10", f"{rates['pct_positive_t10']:.1f}%")
+            mc8.metric("% positive T+20", f"{rates['pct_positive_t20']:.1f}%")
+
+    with tab_browse:
+        st.markdown("Browse individual signal history.")
+        bc1, bc2 = st.columns(2)
+        browse_ticker = bc1.text_input("Ticker (blank = all)", "", key="browse_tk").upper().strip()
+        browse_source = bc2.selectbox("Source", ["all", "longlist", "elder_list"], key="browse_src")
+
+        history = get_signal_history(
+            ticker=browse_ticker if browse_ticker else None,
+            list_source=browse_source if browse_source != "all" else None,
+        )
+
+        if history.empty:
+            st.info("No signals recorded yet. Run the backfill first.")
+        else:
+            show_cols = [
+                "scan_date", "ticker", "list_source", "sc_mom", "ptrs", "elder",
+                "flow", "energy", "structure", "mp", "rd_score", "hl_score",
+                "close", "ret_t5", "ret_t10", "ret_t20",
+                "tp1_hit", "tp2_hit", "sl_hit",
+            ]
+            show_cols = [c for c in show_cols if c in history.columns]
+            st.dataframe(
+                history[show_cols].head(500),
+                use_container_width=True,
+                height=400,
+            )
+            st.caption(f"Showing {min(500, len(history))} of {len(history)} rows")
+
+            csv_ledger = io.StringIO()
+            history.to_csv(csv_ledger, index=False)
+            st.download_button(
+                "Download full ledger CSV",
+                csv_ledger.getvalue(),
+                f"signal_ledger_{datetime.now().strftime('%Y%m%d')}.csv",
+                "text/csv",
+                key="ledger_csv_dl",
+            )
+
+except Exception as exc:
+    st.error(f"Signal ledger error: {exc}")
