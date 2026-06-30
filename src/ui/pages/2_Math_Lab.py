@@ -1308,6 +1308,26 @@ if _sc_result_path.exists():
             st.dataframe(pd.DataFrame(_fb_rows), hide_index=True,
                           use_container_width=True)
 
+        # ── Readiness / Health baselines ──
+        _sc_rb = _sc.get("readiness_baselines", {})
+        if _sc_rb:
+            st.subheader("Readiness / Health Baselines")
+            st.caption("Do the new timing (readiness) and momentum (health) scores predict TP1?")
+            _rb_rows = []
+            for lbl in _sc_rb:
+                rb = _sc_rb[lbl]
+                _rb_rows.append({
+                    "Filter": lbl,
+                    "Events": f"{rb['n']:,}",
+                    "TP1": f"{rb['tp1_rate']*100:.1f}%",
+                    "TP2": f"{rb['tp2_rate']*100:.1f}%",
+                    "SL": f"{rb['sl_rate']*100:.1f}%",
+                    "T+5": f"{rb['avg_t5']:+.2f}%",
+                    "T+10": f"{rb['avg_t10']:+.2f}%",
+                })
+            st.dataframe(pd.DataFrame(_rb_rows), hide_index=True,
+                          use_container_width=True)
+
         # ── Top features ranked by Q5-Q1 spread ──
         st.subheader("Top Features by TP1 Quintile Spread (Q5-Q1)")
         _sc_ranked = _sc.get("ranked_by_tp1_spread", [])

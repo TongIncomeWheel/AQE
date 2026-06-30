@@ -500,9 +500,8 @@ with left:
                                  marker_line=dict(color=_fcol, width=1)),
                           row=2, col=1)
 
-    # --- DSL stop / TP zones (buy line removed — it was a confusing +0.5R
-    # derived level; TP zones now anchor off the stop) ---
     _stop = rec.get("dsl_stop") if rec else None
+    _be = rec.get("entry") if rec else None
     _tps = ([(rec.get("dsl_tp_1r"), "TP1"), (rec.get("dsl_tp_2r"), "TP2"),
              (rec.get("dsl_tp_3r"), "TP3")] if rec else [])
     if _stop:

@@ -106,12 +106,35 @@ SUBCOMPONENT_SPEC = [
     ("pr_ma", "pipeline_rank", "ma_score", "TREND", "MA structure alignment (0-20)"),
     ("pr_fip", "pipeline_rank", "fip_quality", "QUALITY", "FIP path quality (0-100)"),
     ("pr_100", "pipeline_rank", "pipe_rank", "COMPOSITE", "Pipeline Rank composite (0-100)"),
+
+    # ── Readiness engine ──
+    ("rd_compression", "readiness", "rd_compression", "COMPRESSION", "Compression state (0-60)"),
+    ("rd_trigger", "readiness", "rd_trigger", "TRIGGER", "Release/trigger signal (0-25)"),
+    ("rd_pos_mod", "readiness", "rd_pos_mod", "POSITION", "Position penalty (-15 to 0)"),
+    ("rd_rs_bonus", "readiness", "rd_rs_bonus", "RELATIVE_STRENGTH", "RS acceleration bonus (0-15)"),
+    ("rd_score", "readiness", "rd_score", "COMPOSITE", "Readiness composite (0-100)"),
+    ("rd_inside_bars", "readiness", "rd_inside_bars", "COMPRESSION", "Inside bar count 5-bar"),
+    ("rd_range_exp", "readiness", "rd_range_exp", "TRIGGER", "Range expansion ratio"),
+    ("rd_vol_surge", "readiness", "rd_vol_surge", "TRIGGER", "Volume surge ratio"),
+    ("rd_close_str", "readiness", "rd_close_str", "TRIGGER", "Close strength on expansion bars"),
+
+    # ── Health engine ──
+    ("hl_trend", "health", "hl_trend", "TREND", "Trend structure (0-35)"),
+    ("hl_flow", "health", "hl_flow", "FLOW", "Flow confirmation (0-25)"),
+    ("hl_rs", "health", "hl_rs", "RELATIVE_STRENGTH", "RS maintenance (0-20)"),
+    ("hl_risk", "health", "hl_risk", "VOLATILITY", "Risk-flag penalty (-20 to 0)"),
+    ("hl_score", "health", "hl_score", "COMPOSITE", "Health composite (0-100)"),
+    ("hl_higher_lows", "health", "hl_higher_lows", "TREND", "Higher-low count 10-bar"),
+    ("hl_trend_bars", "health", "hl_trend_bars", "TREND", "Consecutive bars above EMA21"),
+    ("hl_vol_updn", "health", "hl_vol_updn", "VOLUME", "Volume up/down ratio 10-bar"),
+    ("hl_atr_spike", "health", "hl_atr_spike", "VOLATILITY", "ATR5/ATR14 spike ratio"),
 ]
 
 SC_M_WEIGHTS = {"fl_100": 0.30, "en_100": 0.30, "st_100": 0.20, "mp_100": 0.20}
 SC_P_WEIGHTS = {"fl_100": 0.10, "en_100": 0.30, "st_100": 0.20, "mp_100": 0.05, "bq_100": 0.35}
 
-COMPOSITE_KEYS = ["fl_100", "en_100", "st_100", "mp_100", "el_score", "bq_100", "pr_100"]
+COMPOSITE_KEYS = ["fl_100", "en_100", "st_100", "mp_100", "el_score", "bq_100", "pr_100",
+                   "rd_score", "hl_score"]
 ROC_WINDOWS = [3, 5]
 
 TYPE_TAGS = sorted(set(s[3] for s in SUBCOMPONENT_SPEC))
@@ -272,6 +295,7 @@ def compute_all_subcomponents(
     Returns None if computation fails.
     """
     from src.engines import flow, energy, structure, mp, elder, bq, pipeline_rank
+    from src.engines import readiness, health
 
     d = daily.sort_values("date").reset_index(drop=True)
     if len(d) < 100:
@@ -315,6 +339,16 @@ def compute_all_subcomponents(
         engine_dfs["pipeline_rank"] = pipeline_rank.compute(d)
     except Exception as e:
         print(f"  [!] {ticker} pipeline_rank: {e}")
+
+    try:
+        engine_dfs["readiness"] = readiness.compute(d, spy_daily)
+    except Exception as e:
+        print(f"  [!] {ticker} readiness: {e}")
+
+    try:
+        engine_dfs["health"] = health.compute(d, spy_daily, weekly)
+    except Exception as e:
+        print(f"  [!] {ticker} health: {e}")
 
     if not engine_dfs:
         return None
@@ -1360,6 +1394,43 @@ def run_backtest(tickers: list[str] | None = None,
                   f"{fb['tp2_rate']*100:>5.1f}%  {fb['sl_rate']*100:>5.1f}%  "
                   f"{fb['avg_t5']:>+6.2f}%  {fb['avg_t10']:>+6.2f}%")
 
+    # ── Readiness-conditioned baselines ──
+    rd_arr = np.array([r.get("rd_score", np.nan) for r in rows], dtype=float)
+    hl_arr_vals = np.array([r.get("hl_score", np.nan) for r in rows], dtype=float)
+    readiness_baselines = {}
+    for label, mask in [
+        ("ALL", np.ones(len(rows), dtype=bool)),
+        ("rd≥40", rd_arr >= 40),
+        ("rd≥60", rd_arr >= 60),
+        ("rd≥70", rd_arr >= 70),
+        ("rd≥80", rd_arr >= 80),
+        ("rd≥70 & sc≥60", (rd_arr >= 70) & (sc_mom_arr >= 60)),
+        ("hl≥50", hl_arr_vals >= 50),
+        ("hl≥75", hl_arr_vals >= 75),
+    ]:
+        valid = mask & ~np.isnan(rd_arr if "rd" in label else hl_arr_vals if "hl" in label else tp1_arr)
+        n_ev = int(valid.sum())
+        if n_ev < 30:
+            continue
+        readiness_baselines[label] = {
+            "n": n_ev,
+            "tp1_rate": round(float(tp1_arr[valid].mean()), 4),
+            "tp2_rate": round(float(tp2_arr[valid].mean()), 4),
+            "sl_rate": round(float(sl_arr[valid].mean()), 4),
+            "avg_t5": round(float(np.nanmean(t5_arr[valid])), 3),
+            "avg_t10": round(float(np.nanmean(t10_arr[valid])), 3),
+        }
+
+    if readiness_baselines:
+        print(f"\n  READINESS/HEALTH BASELINES:")
+        print(f"  {'Filter':>16s}  {'n':>6s}  {'TP1':>6s}  {'TP2':>6s}  "
+              f"{'SL':>6s}  {'T+5':>7s}  {'T+10':>7s}")
+        print("  " + "-" * 64)
+        for lbl, rb in readiness_baselines.items():
+            print(f"  {lbl:>16s}  {rb['n']:>6,}  {rb['tp1_rate']*100:>5.1f}%  "
+                  f"{rb['tp2_rate']*100:>5.1f}%  {rb['sl_rate']*100:>5.1f}%  "
+                  f"{rb['avg_t5']:>+6.2f}%  {rb['avg_t10']:>+6.2f}%")
+
     # ── Risk stats: what's the typical 1R in ATR terms? ──
     risk_arr = np.array([r.get("risk_atr_ratio", np.nan) for r in rows], dtype=float)
     valid_risk = risk_arr[~np.isnan(risk_arr)]
@@ -1519,6 +1590,7 @@ def run_backtest(tickers: list[str] | None = None,
             "avg_dd": round(baseline_dd, 3),
         },
         "filtered_baselines": filtered_baselines if filtered_baselines else {},
+        "readiness_baselines": readiness_baselines if readiness_baselines else {},
         "bracket_stats": {
             "median_risk_atr": round(float(np.median(valid_risk)), 4) if len(valid_risk) > 0 else None,
             "mean_risk_atr": round(float(np.mean(valid_risk)), 4) if len(valid_risk) > 0 else None,
