@@ -1487,10 +1487,21 @@ def build_export(shortlist: dict | None = None) -> dict:
         _order += [k for k in sorted(_all_keys) if k not in _order]
         export[_lname] = [{k: _rec.get(k) for k in _order} for _rec in _rows]
 
+    # ---- Backward-compat shim — minimal aliases so stale skills still find
+    # key fields. Remove when skills are updated to the current schema. ------
+    for _lname_bc in ("longlist", "elder_list", "_alert_pool"):
+        for _rec in export.get(_lname_bc) or []:
+            _rec.setdefault("stop", _rec.get("dsl_stop"))
+    for _hp in export.get("held_positions") or []:
+        _hp.setdefault("stop", _hp.get("dsl_stop"))
+    _sigs = export.get("srm_signals") or {}
+    export.setdefault("srm_deploy", _sigs.get("deploy", []))
+    export.setdefault("srm_avoid", _sigs.get("avoid", []))
+
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
-        "mp", "elder", "entry",
+        "mp", "elder", "entry", "stop",
         "dsl_stop", "dsl_risk", "dsl_rr_pct",
         "dsl_atr_ratio", "atr_14d",
         "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
