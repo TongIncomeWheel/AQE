@@ -295,23 +295,27 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   to that TP ≥ 2.0), `rr_tp2_at_coil`/`rr_tp3_at_coil`. **Group B**: `vol_30d_ann` (30d
   annualised realised vol from log returns), `beta_252d` (1-yr beta vs SPY, cov/var —
   numpy, no scipy), plus **structural stop selection** — `structural_levels` (a list of
-  candidate stops {type, price, atr_ratio, rr_tp2, valid}; types = dsl_stop / swing_low /
+  VALID candidate stops {type, price, atr_ratio, rr_tp2, risk_pct, valid,
+  regime_valid}; types = dsl_stop / swing_low /
   **swing_low_1/2/3** (charter §4.2-C last-3 confirmed pivot lows, from
   `levels.recent_pivot_lows`) / **ma_cluster** (MA20+MA50 confluence within 1×ATR) /
-  fib_618 / fib_786 / ma20/50/100/200; de-duped by price) and `optimal_stop` (the TIGHTEST
-  valid level — closest to entry passing `atr_ratio ≥ 1.0 AND rr_tp2 ≥ 2.0`) +
-  `optimal_stop_exists`. **`optimal_stop`/`structural_levels.valid` are a PRE-REGIME
-  CROSS-CHECK, NOT the operative stop** (charter v2.0 §4.2: AQE applies only 2 of the 3
-  gates — it can't know the live regime stop-% ceiling; Alfred selects the operative stop
-  from IBKR bars). The glossary says so explicitly (no "RECOMMENDED/Prefer" wording).
+  fib_618 / fib_786 / ma20/50/100/200; de-duped by price; **filtered to valid-only**
+  — invalid candidates are stripped from the export). `structural_levels_total` =
+  how many candidates were evaluated (valid + invalid). `optimal_stop` = the
+  TIGHTEST valid level passing ALL 3 charter §4.2 gates (`atr_ratio ≥ 1.0 AND
+  rr_tp2 ≥ 2.0 AND risk_pct ≤ regime ceiling`) + `optimal_stop_exists`.
+  **`optimal_stop` IS the operative stop** — fully regime-validated. Top-level
+  `regime_stop_pct_ceiling` (GREEN 12% / YELLOW 8% / ORANGE 6% / RED 4%) is
+  exported so all readers share the same ceiling.
   **Structure-anchored TP ladder** `structural_targets` (the mirror of
-  `structural_levels` on the upside): each `{type, price, rr}` for `resistance`
+  `structural_levels` on the upside): each `{type, price, rr, r_optimal,
+  r_optimal_source}` for `resistance`
   (prior CONFIRMED pivot highs above price — multi-swing overhead, via
   `levels.overhead_resistance`, clustered within 0.5·ATR), the current swing high
   (`prior_high`), and fib measured-move extensions (`fib_1272/1618/2000/2618`) that
-  sit above entry. `rr = (price − entry)/dsl_risk` (the real R-distance, which
-  VARIES per name — unlike the removed constant `rr_tp1/2/3`). The mechanical
-  `dsl_tp_1r/2r/3r` stay as the **risk/trail framework** (DSL tiers + win-rate
+  sit above entry. `r_optimal` = R vs structural risk (optimal_stop.risk_usd when
+  available, else dsl_risk — `r_optimal_source` = `"structural"` or `"dsl_risk"`).
+  The mechanical `dsl_tp_1r/2r/3r` stay as the **risk/trail framework** (DSL tiers + win-rate
   backtest depend on them); `structural_targets` is the objective AIC takes profit
   against. Nearest-first; resistance label wins de-dup ties; empty when no structure.
 - **Hard guard + glossary** so the AIC can never misread a level. Top-level
@@ -371,6 +375,8 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
 - **REMOVED** (PM ruling, "AQE makes no decisions/sizing; no nulls"): `disposition`
   (sizing decision — Alfred decides from `ptrs`), `dsl_shares` (sizing calc),
   `atr_1h` / `breakout_stop` / `daily_range_proxy` (always-null in an EOD system).
+  Also bare **`stop`** (was identical to `dsl_stop` — redundant, caused confusion
+  with Charter Rule 3a's `optimal_stop` discipline; `dsl_stop` is the documented field).
   Also **`rr_tp1/2/3`** (and the charts `_rr` twin): degenerate constants — because
   targets are fixed R-multiples of the stop (`tp_Nr = entry + N·R`) and the bracket
   point is `entry + 0.5·R`, the R:R from that point is **always 0.33 / 1.00 / 1.67**

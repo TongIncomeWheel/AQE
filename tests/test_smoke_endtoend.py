@@ -604,10 +604,15 @@ def test_dsg18_bracket_fields():
     assert f["vol_30d_ann"] == 0.182 and f["beta_252d"] == 0.04
     assert f["optimal_stop_exists"] is True
     opt = f["optimal_stop"]
-    # Optimal = tightest valid (closest to entry, atr_ratio>=1.0 AND rr_tp2>=2.0).
+    # Optimal = tightest valid (closest to entry, all 3 gates).
     assert opt["atr_ratio"] >= 1.0 and opt["rr_tp2"] >= 2.0
+    assert opt["regime_valid"] is True
+    # structural_levels contains only valid candidates; total tracks how many evaluated.
+    assert f["structural_levels_total"] > 0
     for lvl in f["structural_levels"]:
-        assert {"type", "price", "atr_ratio", "rr_tp2", "valid"} <= set(lvl)
+        assert {"type", "price", "atr_ratio", "rr_tp2", "risk_pct", "valid",
+                "regime_valid"} <= set(lvl)
+        assert lvl["valid"] is True
 
     # Structural take-profit ladder: anchored to swing high + fib extensions,
     # rr varies per name (unlike the removed constant rr_tp1/2/3).
@@ -621,11 +626,14 @@ def test_dsg18_bracket_fields():
     # rr is the real R-distance to structure (e.g. swing high 230 @ ~1.63R, not a constant)
     _ph = next(t for t in tgts if t["type"] == "prior_high")
     assert _ph["rr"] == round((230.0 - 215.0) / 9.19, 2)
+    # r_optimal uses structural risk (from optimal_stop) with source tag
+    assert all("r_optimal" in t and "r_optimal_source" in t for t in tgts)
+    assert _ph["r_optimal_source"] in ("structural", "dsl_risk")
 
     # Self-describing glossary present so AIC reads stops vs targets correctly.
     from src.data.drive_sync import _FIELD_GLOSSARY, _FIELD_SCHEMA, _FIELD_SCHEMA_ENUMS
     for _k in ("dsl_stop", "dsl_tp_1r/2r/3r", "structural_targets", "optimal_stop",
-               "coil_entry", "_convention"):
+               "coil_entry", "_convention", "structural_levels_total"):
         assert _k in _FIELD_GLOSSARY
 
     # HARD GUARD: machine schema uses only the controlled enums, and tags the key
@@ -648,8 +656,8 @@ def test_dsg18_bracket_fields():
         assert f["optimal_stop"]["role"] == "stop"
 
     # Degrade cleanly when inputs are missing.
-    empty_levels, empty_opt = _structural_stop_analysis({}, None)
-    assert empty_levels == [] and empty_opt is None
+    empty_levels, empty_opt, empty_total = _structural_stop_analysis({}, None)
+    assert empty_levels == [] and empty_opt is None and empty_total == 0
     from src.data.drive_sync import _structural_target_analysis
     assert _structural_target_analysis({}) == []
 

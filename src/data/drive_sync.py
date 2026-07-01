@@ -81,24 +81,29 @@ _FIELD_GLOSSARY = {
                       "computed off the reference entry; recomputed at the live fill per §4.4.",
     "rr_tp3_at_coil": "R:R to dsl_tp_3r if entered at coil_entry (ratio). Reference only — "
                       "computed off the reference entry; recomputed at the live fill per §4.4.",
-    "optimal_stop": "The STRUCTURAL stop = strongest+closest valid level (the best of "
-                    "dsl_stop / fib / MA / swing below entry) passing atr_ratio≥1.0 AND "
-                    "rr_tp2≥2.0. {price,type,atr_ratio,rr_tp2,risk_usd,risk_pct}. "
+    "optimal_stop": "The OPERATIVE stop = strongest+closest valid level (best of "
+                    "dsl_stop / fib / MA / swing below entry) passing ALL 3 charter §4.2 "
+                    "gates: atr_ratio≥1.0, rr_tp2≥2.0, AND risk_pct≤regime ceiling "
+                    "(GREEN 12% / YELLOW 8% / ORANGE 6% / RED 4%). "
+                    "{price,type,atr_ratio,rr_tp2,risk_pct,risk_usd,regime_valid}. "
                     "**risk_usd = entry − price is the RISK to size against — NOT dsl_risk.** "
-                    "This applies only 2 of charter §4.2's 3 gates (no live regime stop-% "
-                    "ceiling), so Alfred may tighten for regime, but RISK and TP-R are read "
-                    "off this, not off dsl_risk × N.",
-    "structural_levels": "Candidate STOPS below entry from structure (dsl_stop/swing_low/"
-                         "swing_low_1/2/3/ma_cluster/fib_618/fib_786/ma20-200). Each "
-                         "{type,price,atr_ratio,rr_tp2,valid}; valid = atr_ratio≥1.0 AND "
-                         "rr_tp2≥2.0 — note `valid` OMITS the live regime stop-% ceiling, so "
-                         "these are §4.2 candidates for cross-check, not a final selection.",
+                    "This is the fully validated stop — no further regime check needed.",
+    "structural_levels": "VALID candidate STOPS below entry from structure (dsl_stop/swing_low/"
+                         "swing_low_1/2/3/ma_cluster/fib_618/fib_786/ma20-200). ONLY levels "
+                         "passing all 3 gates (atr_ratio≥1.0, rr_tp2≥2.0, risk_pct≤regime "
+                         "ceiling) are included. Each {type,price,atr_ratio,rr_tp2,risk_pct,"
+                         "valid,regime_valid}. structural_levels_total = how many candidates "
+                         "were evaluated (valid + invalid).",
+    "structural_levels_total": "Total candidate stops evaluated before filtering to valid-only "
+                               "(integer). Compare to len(structural_levels) to see how many "
+                               "were eliminated by the 3-gate filter.",
     "structural_targets": "THE take-profit levels. ABOVE entry, anchored to REAL structure: "
                           "type 'resistance' = prior confirmed pivot-high overhead; "
                           "'prior_high' = current swing peak; 'fib_1272/1618/2000/2618' = "
-                          "measured-move extensions. Each {type,price,rr,r_optimal}: "
-                          "**r_optimal = (price−entry)/optimal_stop.risk_usd = R vs the "
-                          "STRUCTURAL risk** (use this); rr is the legacy R vs dsl_risk. "
+                          "measured-move extensions. Each {type,price,rr,r_optimal,"
+                          "r_optimal_source}: **r_optimal** = R vs the structural risk "
+                          "(optimal_stop.risk_usd when available, else dsl_risk — "
+                          "r_optimal_source tells which: 'structural' or 'dsl_risk'). "
                           "TAKE PROFIT against these PRICES nearest-first — NEVER off "
                           "dsl_tp_Nr (those are mechanical entry + N×dsl_risk, not a target). "
                           "Empty only when no structure anchors exist above price.",
@@ -194,6 +199,7 @@ _FIELD_SCHEMA = {
     "rr_tp3_at_coil": _fs("ratio", "r_multiple", "n/a"),
     "optimal_stop":   _fs("stop", "usd", "below_entry"),
     "structural_levels":  _fs("stop", "usd", "below_entry"),
+    "structural_levels_total": _fs("ratio", "decimal", "n/a"),
     "structural_targets": _fs("target", "usd", "above_entry"),
     "fib_swing_low":  _fs("reference", "usd", "n/a"),
     "fib_swing_high": _fs("reference", "usd", "n/a"),
@@ -524,21 +530,37 @@ def _is_num(*vals) -> bool:
                for v in vals)
 
 
-def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dict | None]:
+_REGIME_STOP_CEILINGS: dict[str, float] = {
+    "GREEN": 12.0, "YELLOW": 8.0, "ORANGE": 6.0, "RED": 4.0,
+}
+
+
+def regime_stop_ceiling(regime_level: str | None) -> float:
+    """Charter §4.2 regime-calibrated stop-% ceiling."""
+    return _REGIME_STOP_CEILINGS.get((regime_level or "GREEN").upper(), 12.0)
+
+
+def _structural_stop_analysis(
+    d: dict, ma: dict | None, regime_level: str | None = None,
+) -> tuple[list[dict], dict | None, int]:
     """DSG-18 B3 — enumerate candidate structural stops and pick the optimal one.
 
-    For each candidate level below entry: risk = entry − level; atr_ratio =
-    risk / atr_14d; rr_tp2 = (dsl_tp_2r − entry) / risk; valid = atr_ratio ≥ 1.0
-    AND rr_tp2 ≥ 2.0. The optimal stop is the TIGHTEST valid level (closest to
-    entry → smallest risk that still clears both gates). Returns (levels, optimal).
+    Full 3-gate validation per Charter §4.2:
+      1. atr_ratio >= 1.0 (ATR floor)
+      2. rr_tp2 >= 2.0 (R:R gate)
+      3. risk_pct <= regime stop-% ceiling (GREEN 12%, YELLOW 8%, ORANGE 6%, RED 4%)
+
+    Returns (valid_levels_only, optimal, total_candidates_evaluated).
+    The export carries only valid candidates — invalid ones are noise for the AIC.
     """
     entry, atr14, tp2 = d.get("entry"), d.get("atr14"), d.get("tp_2r")
     if not _is_num(entry, atr14, tp2) or atr14 <= 0:
-        return [], None
+        return [], None, 0
     fib = d.get("fib") or {}
     rets = fib.get("retracements") or {}
+    ceiling = regime_stop_ceiling(regime_level)
 
-    levels: list[dict] = []
+    all_levels: list[dict] = []
     _seen: set[float] = set()                # de-dup by price; first label wins
 
     def _add(typ: str, price, date: str | None = None) -> None:
@@ -553,13 +575,16 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
         _seen.add(p2)
         atr_ratio = round(risk / atr14, 2)
         rr_tp2 = round((tp2 - entry) / risk, 2)
+        risk_pct = round(risk / entry * 100, 2) if entry else 99.0
+        regime_ok = bool(risk_pct <= ceiling)
         item = {"type": typ, "price": p2,
-                "atr_ratio": atr_ratio, "rr_tp2": rr_tp2,
-                "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0),
+                "atr_ratio": atr_ratio, "rr_tp2": rr_tp2, "risk_pct": risk_pct,
+                "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0 and regime_ok),
+                "regime_valid": regime_ok,
                 "role": "stop", "side": "below_entry"}   # hard guard
         if date:
             item["date"] = date
-        levels.append(item)
+        all_levels.append(item)
 
     _add("dsl_stop", d.get("stop"))
     _add("swing_low", fib.get("swing_low"), fib.get("swing_low_date"))
@@ -576,19 +601,22 @@ def _structural_stop_analysis(d: dict, ma: dict | None) -> tuple[list[dict], dic
     for _w in (20, 50, 100, 200):
         _add(f"ma{_w}", (ma or {}).get(_w))
 
-    valids = [x for x in levels if x["valid"]]
+    total_evaluated = len(all_levels)
+    valids = [x for x in all_levels if x["valid"]]
     optimal = None
     if valids:
         best = max(valids, key=lambda x: x["price"])   # tightest = closest to entry
         _orisk = round(entry - best["price"], 2)
         optimal = {"price": best["price"], "type": best["type"],
                    "atr_ratio": best["atr_ratio"], "rr_tp2": best["rr_tp2"],
+                   "risk_pct": best["risk_pct"],
                    "risk_usd": _orisk,                  # STRUCTURAL risk to size against
-                   "risk_pct": round(_orisk / entry * 100, 2) if entry else None,
+                   "regime_valid": True,
                    "role": "stop", "side": "below_entry",   # hard guard
-                   "rationale": "Strongest+closest valid level (ATR>=1.0 AND R:R-TP2>=2.0). "
+                   "rationale": "Strongest+closest valid level passing all 3 gates "
+                                "(ATR>=1.0, R:R-TP2>=2.0, risk_pct<=regime ceiling). "
                                 "risk_usd = entry - price is the structural risk."}
-    return levels, optimal
+    return valids, optimal, total_evaluated
 
 
 def _structural_target_analysis(d: dict) -> list[dict]:
@@ -643,7 +671,8 @@ def _structural_target_analysis(d: dict) -> list[dict]:
 
 
 def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
-                       sector_grades: dict) -> dict:
+                       sector_grades: dict,
+                       regime_level: str | None = None) -> dict:
     """AQE v2.1 / Data-Schema-v1.0 per-record fields. Bulletproof: returns a
     full key set with null values on any error, so the schema is always present.
     """
@@ -665,7 +694,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "rr_tp2_at_coil": None, "rr_tp3_at_coil": None,
         # DSG-18 Group B — vol / beta / structural stop selection
         "vol_30d_ann": None, "beta_252d": None,
-        "structural_levels": [], "optimal_stop": None, "optimal_stop_exists": False,
+        "structural_levels": [], "structural_levels_total": 0,
+        "optimal_stop": None, "optimal_stop_exists": False,
         "structural_targets": [],
         "held": False,
         # Readiness / Health scores
@@ -767,19 +797,29 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # ── DSG-18 Group B — vol / beta / structural stop selection ────────
         fields["vol_30d_ann"] = (lk.get("vol30") or {}).get(tk)
         fields["beta_252d"] = (lk.get("beta252") or {}).get(tk)
-        _slevels, _optimal = _structural_stop_analysis(d, _ma)
+        _slevels, _optimal, _sl_total = _structural_stop_analysis(
+            d, _ma, regime_level=regime_level)
         fields["structural_levels"] = _slevels
+        fields["structural_levels_total"] = _sl_total
         fields["optimal_stop"] = _optimal
         fields["optimal_stop_exists"] = _optimal is not None
         _stargets = _structural_target_analysis(d)
-        # r_optimal = R of each structural TP vs the STRUCTURAL risk (entry −
-        # optimal_stop), so the AIC sizes TP off structure, not the DSL risk.
+        # r_optimal = R of each structural TP vs risk. Prefer structural risk
+        # (optimal_stop.risk_usd); fall back to dsl_risk with a source tag.
+        _entry = d.get("entry")
+        _orisk = None
+        _r_opt_source = None
         if _optimal and _is_num(_optimal.get("risk_usd")) and _optimal["risk_usd"] > 0:
             _orisk = _optimal["risk_usd"]
-            _entry = d.get("entry")
+            _r_opt_source = "structural"
+        elif _is_num(d.get("risk")) and d["risk"] > 0:
+            _orisk = d["risk"]
+            _r_opt_source = "dsl_risk"
+        if _orisk and _is_num(_entry):
             for _t in _stargets:
-                if _is_num(_t.get("price")) and _is_num(_entry):
+                if _is_num(_t.get("price")):
                     _t["r_optimal"] = round((_t["price"] - _entry) / _orisk, 2)
+                    _t["r_optimal_source"] = _r_opt_source
         fields["structural_targets"] = _stargets
 
         # ── Readiness / Health scores (from scores_daily or orchestrator) ──
@@ -817,7 +857,8 @@ def _num(v):
         return None
 
 
-def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
+def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
+                          regime_level=None):
     """Merge each PTJ held position with AQE's current engine read on it.
 
     Gives AIC, in one place: the trade (entry/qty/SL/TP/unrealised from the PTJ)
@@ -846,7 +887,8 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn):
         s = sc_lookup.get(tk)
         sg = (lambda k: _num(s.get(k)) if s is not None else None)
         sc = sg("sc_momentum")
-        v21 = _v21_record_fields(tk, d, lk, sm, sector_grades)
+        v21 = _v21_record_fields(tk, d, lk, sm, sector_grades,
+                                 regime_level=regime_level)
         out.append({
             "ticker": tk,
             # --- the trade (from PTJ) ---
@@ -978,6 +1020,7 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # Extract regime level for DSL v1.5 dynamic stop width
     regime_level = (sl.get("regime", {}).get("level") or "GREEN").upper()
+    export["regime_stop_pct_ceiling"] = regime_stop_ceiling(regime_level)
 
     sm = load_sector_map()
     betas = load_betas()
@@ -1031,7 +1074,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         _held = []
     _v21_lk["held"] = {h.get("ticker") for h in _held if h.get("ticker")}
     export["held_positions"] = _build_held_positions(
-        _held, dsl_all, betas, _v21_lk, sm, sector_grades, _ptrs)
+        _held, dsl_all, betas, _v21_lk, sm, sector_grades, _ptrs,
+        regime_level=regime_level)
 
     # Portfolio Hedge Layer (Charter §4C) — beta-adj book exposure + gap losses.
     try:
@@ -1097,7 +1141,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "elder": e["elder"],
             "mp_state": _mp_states.get(tk, c.get("mp_state", "")),
             "entry": c["levels"].get("entry"),
-            "stop": c["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
             "dsl_risk": d.get("risk"),
             "dsl_tp_1r": d.get("tp_1r"),
@@ -1112,7 +1155,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "top_picks",
             "pe": tk in pe_tickers,
-            **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
+            **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
 
     # Edge List = Precision Edge — SAME schema as longlist
@@ -1142,7 +1185,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "elder": eng["elder"],
             "mp_state": _mp_states.get(tk, pe.get("mp_state", "")),
             "entry": pe["levels"].get("entry"),
-            "stop": pe["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
             "dsl_risk": d.get("risk"),
             "dsl_tp_1r": d.get("tp_1r"),
@@ -1157,7 +1199,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "edge_list",
             "pe": True,
-            **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
+            **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
     longlist_tickers: set[str] = set()
     sorted_rm = sorted(sl.get("recipe_matches", []),
@@ -1192,7 +1234,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "elder": e["elder"],
             "mp_state": _mp_states.get(rm["ticker"], rm.get("mp_state", "")),
             "entry": rm["levels"].get("entry"),
-            "stop": rm["levels"].get("stop"),
             "dsl_stop": d.get("stop"),
             "dsl_risk": d.get("risk"),
             "dsl_tp_1r": d.get("tp_1r"),
@@ -1208,7 +1249,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "longlist",
             "pe": bool(rm.get("pe_qualified")),
-            **_v21_record_fields(rm["ticker"], d, _v21_lk, sm, sector_grades),
+            **_v21_record_fields(rm["ticker"], d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
 
     # --- Watchlist + Elder list: both derived from the latest scores_daily ---
@@ -1263,7 +1304,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "elder": round(float(wr.get("elder_score", 0)), 1),
                 "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                 "entry": d.get("entry"),
-                "stop": d.get("stop"),
                 "dsl_stop": d.get("stop"),
                 "dsl_risk": d.get("risk"),
                 "dsl_tp_1r": d.get("tp_1r"),
@@ -1277,7 +1317,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "source": source,
                 "pe": tk in pe_tickers,
                 "on_longlist": tk in longlist_tickers,
-                **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades),
+                **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
             }
 
         # Watchlist — raw SC_MOM ≥ 70, ranked PTRS → PipeRank → Floor.
@@ -1450,7 +1490,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
-        "mp", "elder", "entry", "stop",
+        "mp", "elder", "entry",
         "dsl_stop", "dsl_risk", "dsl_rr_pct",
         "dsl_atr_ratio", "atr_14d",
         "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
@@ -1462,7 +1502,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "coil_entry", "max_chase_tp2", "max_chase_tp3",
         "rr_tp2_at_coil", "rr_tp3_at_coil",
         "vol_30d_ann", "beta_252d",
-        "structural_levels", "optimal_stop", "optimal_stop_exists",
+        "structural_levels", "structural_levels_total",
+        "optimal_stop", "optimal_stop_exists",
         "structural_targets",
         # Enrichment Spec v2.0
         "rs_down_day_20d", "rs_leadership", "setup_state",
