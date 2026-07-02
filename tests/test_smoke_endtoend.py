@@ -564,7 +564,7 @@ def test_thematic_baskets():
     assert _cap_grade("DEPLOY", None) == "DEPLOY"   # no parent -> unchanged
 
     # Reverse lookup wired (singular = primary basket).
-    assert TICKER_TO_THEMATIC["NVDA"] == "Semiconductors"
+    assert TICKER_TO_THEMATIC["NVDA"] == "Mag7"
     assert TICKER_TO_THEMATIC["ANET"] == "AI_Infrastructure"
 
 
@@ -762,15 +762,15 @@ def test_thematic_dual_listing():
         assert set(TICKER_TO_THEMATICS[tk]) == {"AI_Infrastructure", "Crypto_Digital"}
         assert TICKER_TO_THEMATIC[tk] == "AI_Infrastructure"
 
-    # KTOS/AVAV grade in Space_eVTOL but are annotation-only duals of Defense_Tech
-    # (NOT in Defense's grading table, so Defense's count stays 13).
+    # KTOS/AVAV grade in Space_eVTOL + Autonomous_Robotics, annotation-only
+    # duals of Defense_Tech (NOT in Defense's grading table, count stays 13).
     for tk in ("KTOS", "AVAV"):
-        assert TICKER_TO_THEMATICS[tk] == ["Space_eVTOL", "Defense_Tech"]
+        assert set(TICKER_TO_THEMATICS[tk]) == {"Space_eVTOL", "Autonomous_Robotics", "Defense_Tech"}
         assert tk not in THEMATIC_BASKETS["Defense_Tech"]["constituents"]
     assert len(THEMATIC_BASKETS["Defense_Tech"]["constituents"]) == 13
 
-    # Single-basket names still map to exactly one.
-    assert TICKER_TO_THEMATICS["NVDA"] == ["Semiconductors"]
+    # Multi-basket names map to all baskets they appear in.
+    assert set(TICKER_TO_THEMATICS["NVDA"]) == {"Mag7", "Semiconductors"}
 
     # BASKET_CONSTITUENTS is the union of all grading tables (for the panel pull).
     assert "MSTR" in BASKET_CONSTITUENTS and "KTOS" in BASKET_CONSTITUENTS

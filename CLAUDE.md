@@ -341,24 +341,25 @@ IDIOSYNCRATIC / 0.30–0.70 MIXED / ≥0.70 SECTOR_DEPENDENT), `rvol` (vol/20d-a
   Legacy `dsl_be`/`dsl_buy` are fully gone (the alert engine re-derives the +0.5R buy from
   `dsl_stop + 1.5·dsl_risk`). The export schema validator (`_REQUIRED_FIELDS`) enforces
   the flat fib + bracket fields and BLOCKS the export if any are missing.
-- **Thematic baskets** (Thematic Basket Map v2.0, PM-approved 11 Jun 2026,
-  `srm.THEMATIC_BASKETS`): **seven** catalyst baskets (Infra_Power, Space_eVTOL,
-  AI_Infrastructure, Semiconductors, Cybersecurity, Defense_Tech, **Crypto_Digital**)
-  each with a parent GICS ETF. They are a **CONTEXT/SENTIMENT LAYER ONLY — run SRM
+- **Thematic baskets** (Thematic Basket Map v3.0, PM-approved 02 Jul 2026,
+  `srm.THEMATIC_BASKETS`): **35** thematic baskets across 9 sector groups
+  (Mega-cap, AI & Technology, Space/Defense/Industrials, Energy, Materials &
+  Commodities, Financials, Consumer, Healthcare, Real Estate, Communication),
+  each with a parent GICS ETF. Duplicates across baskets are intentional — each
+  basket grades independently. They are a **CONTEXT/SENTIMENT LAYER ONLY — run SRM
   against a deterministically-defined constituent set to read thematic market
   sentiment, exactly like sector rotation.** `grade_thematic_baskets()` grades a
   basket from its constituents' equal-weight price index via the SRM method,
   **capped at the parent-GICS grade** (parent may differ from a constituent's own
   GICS, e.g. ANET XLK → AI_Infra parent XLRE; Crypto_Digital parent = XLF).
   **Baskets do NOT add names to the scan universe** (governing rule): constituents
-  are pulled into the panel for grading — like the GICS ETFs — by `panel_builder`
-  (`srm.BASKET_CONSTITUENTS`), but `score_runner.build_scores` and the Pipeline
-  Rank screen **exclude any basket constituent not already in the scan universe**,
-  so they are graded but never screened (no longlist/watchlist leakage).
+  (~330 unique tickers) are pulled into the panel for grading — like the GICS
+  ETFs — by `panel_builder` (`srm.BASKET_CONSTITUENTS`), but `score_runner` and
+  the Pipeline Rank screen **exclude any basket constituent not already in the
+  scan universe**, so they are graded but never screened (no longlist leakage).
   **Dual-listing** (`TICKER_TO_THEMATICS` = list, `TICKER_TO_THEMATIC` = primary):
-  IREN/CORZ/WULF are in both AI_Infrastructure and Crypto_Digital grading tables;
-  KTOS/AVAV grade in Space_eVTOL but are annotation-only Defense_Tech duals
-  (`EXTRA_THEMATIC_TAGS`, so Defense's count stays 13). Per-record singular
+  tickers appearing in multiple baskets (e.g. NVDA in Mag7 + Semiconductors,
+  DKNG in Gaming_Streaming + Travel_Leisure) are tagged with all. Per-record singular
   `thematic_basket`/`thematic_grade`/`thematic_parent_gics`/`thematic_parent_grade`
   (PRIMARY basket, backward compat) **plus** a per-record `thematic_baskets` list
   (every basket the ticker maps to, each with grade/parent_gics/parent_grade) so
