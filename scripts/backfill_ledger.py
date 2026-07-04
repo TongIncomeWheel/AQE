@@ -63,6 +63,7 @@ def main():
     if not PANEL_DAILY.exists():
         print(f"\n  ERROR: {PANEL_DAILY} not found.")
         print("  Either run the daily pipeline first, or re-run with --pull.")
+        if sys.stdin.isatty():
         input("\n  Press Enter to exit...")
         sys.exit(1)
 
@@ -103,6 +104,7 @@ def main():
 
     if not result.get("ok"):
         print(f"\n  ERROR: {result.get('reason')}")
+        if sys.stdin.isatty():
         input("\n  Press Enter to exit...")
         sys.exit(1)
 
@@ -171,7 +173,8 @@ def main():
     print("  Daily pipeline Step 8c will keep appending from here")
     print("=" * 65)
 
-    input("\n  Press Enter to exit...")
+    if sys.stdin.isatty():
+        input("\n  Press Enter to exit...")
 
 
 if __name__ == "__main__":
