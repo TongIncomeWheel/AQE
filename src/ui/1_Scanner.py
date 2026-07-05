@@ -804,14 +804,37 @@ if srm_detail:
                                      _d.get("rrg_direction", "STABLE"), _hist))
 
             _etf_opts = [p[0] for p in _all_pts]
-            _sel_etfs = st.multiselect(
-                "Sectors to plot", _etf_opts, default=_etf_opts,
-                key="rrg_sector_filter",
-                help="Trim the RRG to just the sectors you want when it gets "
-                     "crowded. The dotted tail traces each sector's last 5 days "
-                     "(direction of travel); the dot is today.",
-            )
+            _fc1, _fc2 = st.columns([3, 2])
+            with _fc1:
+                _sel_etfs = st.multiselect(
+                    "Sectors to plot", _etf_opts, default=_etf_opts,
+                    key="rrg_sector_filter",
+                    help="Trim the RRG to just the sectors you want when it gets "
+                         "crowded. The dotted tail traces each sector's last 5 days "
+                         "(direction of travel); the dot is today.",
+                )
+            with _fc2:
+                _rrg_dir_filter = st.selectbox(
+                    "RRG filter", ["All", "Positive", "Negative",
+                                   "LEADING", "IMPROVING", "WEAKENING", "LAGGING"],
+                    key="rrg_sector_dir_filter",
+                    help="Positive = LEADING + IMPROVING quadrants. "
+                         "Negative = WEAKENING + LAGGING. Or pick a single quadrant.",
+                )
+
             _pts = [p for p in _all_pts if p[0] in _sel_etfs] or _all_pts
+
+            _POS_QUADS = {"LEADING", "IMPROVING"}
+            _NEG_QUADS = {"WEAKENING", "LAGGING"}
+            if _rrg_dir_filter == "Positive":
+                _q_map = {e: d.get("rrg_quadrant", "") for e, d in srm_detail.items()}
+                _pts = [p for p in _pts if _q_map.get(p[0]) in _POS_QUADS] or _pts
+            elif _rrg_dir_filter == "Negative":
+                _q_map = {e: d.get("rrg_quadrant", "") for e, d in srm_detail.items()}
+                _pts = [p for p in _pts if _q_map.get(p[0]) in _NEG_QUADS] or _pts
+            elif _rrg_dir_filter in ("LEADING", "IMPROVING", "WEAKENING", "LAGGING"):
+                _q_map = {e: d.get("rrg_quadrant", "") for e, d in srm_detail.items()}
+                _pts = [p for p in _pts if _q_map.get(p[0]) == _rrg_dir_filter] or _pts
 
             if _pts:
                 _ratios = ([p[1] for p in _pts]
@@ -1026,14 +1049,37 @@ if _thematic:
                                   _d.get("rrg_direction", "STABLE"), _hist))
 
         _b_opts = [p[0] for p in _all_tpts]
-        _sel_b = st.multiselect(
-            "Baskets to plot", _b_opts, default=_b_opts,
-            key="rrg_thematic_filter",
-            format_func=lambda b: _basket_short.get(b, b),
-            help="Trim the thematic RRG when crowded. The dotted tail traces each "
-                 "basket's last 5 days (direction of travel); the dot is today.",
-        )
+        _tc1, _tc2 = st.columns([3, 2])
+        with _tc1:
+            _sel_b = st.multiselect(
+                "Baskets to plot", _b_opts, default=_b_opts,
+                key="rrg_thematic_filter",
+                format_func=lambda b: _basket_short.get(b, b),
+                help="Trim the thematic RRG when crowded. The dotted tail traces each "
+                     "basket's last 5 days (direction of travel); the dot is today.",
+            )
+        with _tc2:
+            _rrg_theme_dir = st.selectbox(
+                "RRG filter", ["All", "Positive", "Negative",
+                               "LEADING", "IMPROVING", "WEAKENING", "LAGGING"],
+                key="rrg_thematic_dir_filter",
+                help="Positive = LEADING + IMPROVING quadrants. "
+                     "Negative = WEAKENING + LAGGING. Or pick a single quadrant.",
+            )
+
         _tpts = [p for p in _all_tpts if p[0] in _sel_b] or _all_tpts
+
+        _POS_Q = {"LEADING", "IMPROVING"}
+        _NEG_Q = {"WEAKENING", "LAGGING"}
+        if _rrg_theme_dir == "Positive":
+            _tq = {b: d.get("rrg_quadrant", "") for b, d in _thematic.items()}
+            _tpts = [p for p in _tpts if _tq.get(p[0]) in _POS_Q] or _tpts
+        elif _rrg_theme_dir == "Negative":
+            _tq = {b: d.get("rrg_quadrant", "") for b, d in _thematic.items()}
+            _tpts = [p for p in _tpts if _tq.get(p[0]) in _NEG_Q] or _tpts
+        elif _rrg_theme_dir in ("LEADING", "IMPROVING", "WEAKENING", "LAGGING"):
+            _tq = {b: d.get("rrg_quadrant", "") for b, d in _thematic.items()}
+            _tpts = [p for p in _tpts if _tq.get(p[0]) == _rrg_theme_dir] or _tpts
 
         if _tpts:
             _ratios = ([p[1] for p in _tpts]
