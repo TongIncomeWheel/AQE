@@ -1,0 +1,1631 @@
+<title>AQE Engine Calibration Suite — Full Parameter Reference</title>
+<style>
+  @font-face {
+    font-family: 'JB Mono';
+    src: local('JetBrains Mono'), local('Menlo'), local('Consolas');
+  }
+  :root {
+    --bg: #fafaf8;
+    --bg-card: #ffffff;
+    --bg-code: #f3f1ed;
+    --bg-header: #1a1a2e;
+    --text: #1c1c1e;
+    --text-muted: #6b6b70;
+    --text-header: #fafaf8;
+    --border: #d8d5cf;
+    --border-light: #e8e5df;
+    --accent: #2d5a88;
+    --accent-light: #e8f0f8;
+    --green: #2a7d4f;
+    --green-bg: #e8f5ee;
+    --orange: #c46a10;
+    --orange-bg: #fef3e2;
+    --red: #b83232;
+    --red-bg: #fce8e8;
+    --purple: #6b3fa0;
+    --purple-bg: #f0e8f8;
+    --teal: #1a7a6d;
+    --teal-bg: #e5f5f2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111118;
+      --bg-card: #1a1a24;
+      --bg-code: #22222e;
+      --bg-header: #0d0d18;
+      --text: #e0dfd8;
+      --text-muted: #8a8a92;
+      --text-header: #e0dfd8;
+      --border: #2e2e3a;
+      --border-light: #252530;
+      --accent: #5a9fd4;
+      --accent-light: #1a2a3d;
+      --green: #4aaf72;
+      --green-bg: #142a1e;
+      --orange: #e08830;
+      --orange-bg: #2a1e0a;
+      --red: #e05555;
+      --red-bg: #2a1414;
+      --purple: #9a6dd4;
+      --purple-bg: #1e142a;
+      --teal: #3aaa9a;
+      --teal-bg: #0a2a25;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-hover: 0 2px 8px rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111118;
+    --bg-card: #1a1a24;
+    --bg-code: #22222e;
+    --bg-header: #0d0d18;
+    --text: #e0dfd8;
+    --text-muted: #8a8a92;
+    --text-header: #e0dfd8;
+    --border: #2e2e3a;
+    --border-light: #252530;
+    --accent: #5a9fd4;
+    --accent-light: #1a2a3d;
+    --green: #4aaf72;
+    --green-bg: #142a1e;
+    --orange: #e08830;
+    --orange-bg: #2a1e0a;
+    --red: #e05555;
+    --red-bg: #2a1414;
+    --purple: #9a6dd4;
+    --purple-bg: #1e142a;
+    --teal: #3aaa9a;
+    --teal-bg: #0a2a25;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #fafaf8;
+    --bg-card: #ffffff;
+    --bg-code: #f3f1ed;
+    --bg-header: #1a1a2e;
+    --text: #1c1c1e;
+    --text-muted: #6b6b70;
+    --text-header: #fafaf8;
+    --border: #d8d5cf;
+    --border-light: #e8e5df;
+    --accent: #2d5a88;
+    --accent-light: #e8f0f8;
+    --green: #2a7d4f;
+    --green-bg: #e8f5ee;
+    --orange: #c46a10;
+    --orange-bg: #fef3e2;
+    --red: #b83232;
+    --red-bg: #fce8e8;
+    --purple: #6b3fa0;
+    --purple-bg: #f0e8f8;
+    --teal: #1a7a6d;
+    --teal-bg: #e5f5f2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .hero {
+    background: var(--bg-header);
+    color: var(--text-header);
+    padding: 40px 24px 32px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .hero .sub {
+    font-size: 14px;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+  .hero .version {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+    box-shadow: var(--shadow);
+  }
+  .nav::-webkit-scrollbar { height: 0; }
+  .nav a {
+    display: inline-block;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav a:hover, .nav a:focus {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  .engine-section {
+    margin-bottom: 32px;
+  }
+  .engine-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: var(--shadow);
+  }
+  .engine-header:hover { box-shadow: var(--shadow-hover); }
+  .engine-header .tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .tag-core { background: var(--accent-light); color: var(--accent); }
+  .tag-composite { background: var(--purple-bg); color: var(--purple); }
+  .tag-risk { background: var(--red-bg); color: var(--red); }
+  .tag-timing { background: var(--teal-bg); color: var(--teal); }
+  .tag-support { background: var(--orange-bg); color: var(--orange); }
+  .tag-regime { background: var(--green-bg); color: var(--green); }
+
+  .engine-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .engine-header .arrow {
+    font-size: 14px;
+    transition: transform 0.2s;
+    color: var(--text-muted);
+  }
+  .engine-body {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: var(--bg-card);
+    padding: 0;
+    overflow: hidden;
+  }
+  .engine-body.collapsed { display: none; }
+
+  .param-group {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .param-group:last-child { border-bottom: none; }
+  .param-group h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .formula {
+    background: var(--bg-code);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'JB Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin-bottom: 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 6px 10px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+    background: var(--bg-code);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child {
+    font-family: 'JB Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .tier-table td:nth-child(2),
+  .tier-table td:nth-child(3) {
+    font-family: 'JB Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    padding-left: 10px;
+    border-left: 2px solid var(--border);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    vertical-align: middle;
+  }
+  .badge-max { background: var(--green-bg); color: var(--green); }
+  .badge-penalty { background: var(--red-bg); color: var(--red); }
+  .badge-gate { background: var(--orange-bg); color: var(--orange); }
+  .badge-weight { background: var(--accent-light); color: var(--accent); }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 700px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  .inline-params {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .inline-param {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: var(--bg-code);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .inline-param .k {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+  .inline-param .v {
+    font-family: 'JB Mono', monospace;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .section-divider {
+    text-align: center;
+    padding: 20px 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .overview-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+  }
+  .overview-card .label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .overview-card .val {
+    font-family: 'JB Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .toc-link { scroll-margin-top: 50px; }
+</style>
+
+<div class="hero">
+  <h1>AQE Engine Calibration Suite</h1>
+  <p class="sub">Every weight, threshold, lookback, tier, and formula across all 15 engines</p>
+  <span class="version">Base Reference — 5 Jul 2026</span>
+</div>
+
+<nav class="nav">
+  <a href="#flow">Flow</a>
+  <a href="#energy">Energy</a>
+  <a href="#structure">Structure</a>
+  <a href="#mp">MP</a>
+  <a href="#elder">Elder</a>
+  <a href="#bq">BQ</a>
+  <a href="#scoring">Scoring</a>
+  <a href="#pipeline">Pipeline Rank</a>
+  <a href="#readiness">Readiness</a>
+  <a href="#health">Health</a>
+  <a href="#dsl">DSL</a>
+  <a href="#srm">SRM</a>
+  <a href="#ptrs">PTRS</a>
+  <a href="#regime">Regime</a>
+  <a href="#k39">K39</a>
+  <a href="#levels">Levels</a>
+  <a href="#elder-ctx">Elder Context</a>
+</nav>
+
+<div class="container">
+
+  <!-- ============ OVERVIEW ============ -->
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="label">SC_MOM Formula</div>
+      <div class="val">F·30 + E·30 + S·20 + M·20</div>
+    </div>
+    <div class="overview-card">
+      <div class="label">SC_POS Formula</div>
+      <div class="val">F·10 + E·30 + S·20 + M·5 + BQ·35</div>
+    </div>
+    <div class="overview-card">
+      <div class="label">Pipeline Rank</div>
+      <div class="val">Mom·70 + FIP·30</div>
+    </div>
+    <div class="overview-card">
+      <div class="label">PTRS</div>
+      <div class="val">engine_score + SH</div>
+    </div>
+    <div class="overview-card">
+      <div class="label">Capital / Risk</div>
+      <div class="val">$70K / 3% ($2,100)</div>
+    </div>
+  </div>
+
+  <!-- ============ FLOW v1.3 ============ -->
+  <div class="engine-section toc-link" id="flow">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-core">Core</span>
+      <h2>Flow v1.3</h2>
+      <span class="badge badge-weight">SC_MOM: 30% · SC_POS: 10%</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">flow_100 = clip(flow_score + accum_score + volume_score + skew_score + ext, 0, 38) / 38 × 100</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/flow.py</span></div>
+          <div class="inline-param"><span class="k">Max Raw</span><span class="v">38</span></div>
+          <div class="inline-param"><span class="k">Range</span><span class="v">0–100</span></div>
+        </div>
+      </div>
+      <div class="param-group">
+        <h3>Global Parameters</h3>
+        <table>
+          <tr><th>Parameter</th><th>Value</th><th>Used In</th></tr>
+          <tr><td>flow_length</td><td>10</td><td>MFI period, CMF period</td></tr>
+          <tr><td>ha_lookback</td><td>10</td><td>Heikin-Ashi quality count</td></tr>
+          <tr><td>vol_period</td><td>20</td><td>Volume SMA baseline</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 1: flow_score <span class="badge badge-max">max 17</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">MFI + CMF + Heikin-Ashi quality, each tiered</p>
+        <table class="tier-table">
+          <tr><th>Component</th><th>Condition</th><th>Points</th></tr>
+          <tr><td>mfi_score</td><td>MFI(10) ≥ 55</td><td>5</td></tr>
+          <tr><td></td><td>MFI(10) ≥ 48</td><td>4</td></tr>
+          <tr><td></td><td>MFI(10) ≥ 42</td><td>3</td></tr>
+          <tr><td></td><td>MFI(10) ≥ 38</td><td>2</td></tr>
+          <tr><td></td><td>else</td><td>0</td></tr>
+          <tr><td>cmf_score</td><td>CMF(10) ≥ 0.05</td><td>5</td></tr>
+          <tr><td></td><td>CMF(10) ≥ 0.02</td><td>4</td></tr>
+          <tr><td></td><td>CMF(10) ≥ 0.0</td><td>3</td></tr>
+          <tr><td></td><td>CMF(10) ≥ −0.05</td><td>2</td></tr>
+          <tr><td></td><td>else</td><td>0</td></tr>
+          <tr><td>ha_score</td><td>HA green bars (10) ≥ 5</td><td>7</td></tr>
+          <tr><td></td><td>HA green bars (10) ≥ 3</td><td>5</td></tr>
+          <tr><td></td><td>HA green bars (10) ≥ 2</td><td>3</td></tr>
+          <tr><td></td><td>else</td><td>0</td></tr>
+        </table>
+        <div class="formula" style="margin-top:8px">flow_score = mfi_score + cmf_score + ha_score  (max 5+5+7 = 17)</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 2: accum_score <span class="badge badge-max">max 7.5</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">A/D line linear regression slope</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>ad_slope > 0.5</td><td>7.5</td></tr>
+          <tr><td>ad_slope > 0.2</td><td>5.0</td></tr>
+          <tr><td>ad_slope > 0.0</td><td>3.0</td></tr>
+          <tr><td>else</td><td>0.0</td></tr>
+        </table>
+        <div class="note">A/D line = cumsum of ((close−low)−(high−close))/(high−low) × volume. Slope via linreg over 20 bars.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 3: volume_score <span class="badge badge-max">max 7.5</span></h3>
+        <table class="tier-table">
+          <tr><th>Component</th><th>Condition</th><th>Points</th></tr>
+          <tr><td>vol_trend</td><td>SMA(vol,5)/SMA(vol,20) ≥ 1.2</td><td>4.5</td></tr>
+          <tr><td></td><td>ratio ≥ 1.05</td><td>3.0</td></tr>
+          <tr><td></td><td>ratio ≥ 0.9</td><td>1.5</td></tr>
+          <tr><td></td><td>else</td><td>0</td></tr>
+          <tr><td>vol_spike</td><td>today_vol / SMA(vol,20) ≥ 2.0</td><td>3.0</td></tr>
+          <tr><td></td><td>ratio ≥ 1.5</td><td>2.0</td></tr>
+          <tr><td></td><td>else</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 4: skew_score <span class="badge badge-max">max 3.5</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Up-volume / down-volume ratio (UDR) over 10 bars</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>UDR ≥ 1.5</td><td>3.5</td></tr>
+          <tr><td>UDR ≥ 1.2</td><td>2.5</td></tr>
+          <tr><td>UDR ≥ 0.8</td><td>1.0</td></tr>
+          <tr><td>UDR < 0.8</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 5: ext (position/extension) <span class="badge badge-penalty">−8 to +5</span></h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>pos50 ≥ 90 (over-extended)</td><td>−8</td></tr>
+          <tr><td>pos50 ≥ 80</td><td>−4</td></tr>
+          <tr><td>pos50 ≥ 50 (healthy)</td><td>+3</td></tr>
+          <tr><td>pos50 ≥ 30</td><td>+5</td></tr>
+          <tr><td>pos50 < 30</td><td>0</td></tr>
+        </table>
+        <div class="note">pos50 = (close − lowest(low,50)) / (highest(high,50) − lowest(low,50)) × 100</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ENERGY v1.3.1 ============ -->
+  <div class="engine-section toc-link" id="energy">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-core">Core</span>
+      <h2>Energy v1.3.1</h2>
+      <span class="badge badge-weight">SC_MOM: 30% · SC_POS: 30%</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">en_raw = vp_position + price_action + squeeze + exhaustion + atr_score
+energy_100 = clip(en_raw / 59.5 × 100, 0, 100)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/energy.py</span></div>
+          <div class="inline-param"><span class="k">Max Raw</span><span class="v">59.5</span></div>
+          <div class="inline-param"><span class="k">vol_period</span><span class="v">20</span></div>
+          <div class="inline-param"><span class="k">atr_length</span><span class="v">20</span></div>
+          <div class="inline-param"><span class="k">exh_trend_min</span><span class="v">15</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 1: vp_position <span class="badge badge-max">max 17.5</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Position within 50-bar range, with over-extension penalty</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>pos50 ≥ 90</td><td>15.0 (penalty from 17.5)</td></tr>
+          <tr><td>pos50 ≥ 70</td><td>17.5</td></tr>
+          <tr><td>pos50 ≥ 50</td><td>12.5</td></tr>
+          <tr><td>pos50 ≥ 30</td><td>7.5</td></tr>
+          <tr><td>pos50 < 30</td><td>2.5</td></tr>
+        </table>
+        <div class="note">en_pos50 = same formula as flow ext pos50. Top-of-range (≥90) is penalized: strong but extended.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 2: price_action <span class="badge badge-max">max ~12.5</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Higher-low count + tightness + pullback bonus. Depth modifier applied.</p>
+        <table class="tier-table">
+          <tr><th>Component</th><th>Logic</th><th>Max</th></tr>
+          <tr><td>higher_lows</td><td>Count of bars where low > prior low (last 5 bars), tiered</td><td>5.0</td></tr>
+          <tr><td>tightness</td><td>ATR(5)/ATR(20) compression ratio, lower is tighter</td><td>5.0</td></tr>
+          <tr><td>pullback</td><td>Bonus if pulled back to 30–60 range from >70</td><td>2.5</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>Depth Modifier</th><th>Condition</th><th>Multiplier</th></tr>
+          <tr><td>Deep</td><td>pos50 < 30</td><td>×0.5</td></tr>
+          <tr><td>Low</td><td>pos50 < 45</td><td>×0.7</td></tr>
+          <tr><td>Normal</td><td>pos50 ≥ 45</td><td>×1.0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 3: squeeze <span class="badge badge-max">max 12.5</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Bollinger Bands inside Keltner Channels + BB width percentile</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>BB inside KC AND BB_width < 20th percentile(126)</td><td>12.5</td></tr>
+          <tr><td>BB inside KC AND BB_width < 40th percentile</td><td>10.0</td></tr>
+          <tr><td>BB inside KC (any width)</td><td>7.5</td></tr>
+          <tr><td>BB_width < 30th percentile (no squeeze)</td><td>4.0</td></tr>
+          <tr><td>else</td><td>0</td></tr>
+        </table>
+        <div class="note">BB = SMA(20) ± 2σ. KC = EMA(20) ± 1.5×ATR(20). Percentile lookback = 126 bars.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 4: exhaustion <span class="badge badge-penalty">base 10, penalties</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Starts at 10.0, deducted for climactic signals. Min = 0.</p>
+        <table class="tier-table">
+          <tr><th>Penalty</th><th>Condition</th><th>Deduction</th></tr>
+          <tr><td>Climactic volume</td><td>vol > 2.5 × SMA(vol,20) AND pos50 > 80</td><td>−5</td></tr>
+          <tr><td>Bearish divergence</td><td>price new 20d high BUT RSI < prior RSI high</td><td>−3</td></tr>
+          <tr><td>Wide spread</td><td>(high−low)/close > 2× SMA(range,20) AND close < midpoint</td><td>−2</td></tr>
+        </table>
+        <div class="note">exh_trend_min = 15 bars of uptrend required before divergence check activates.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 5: atr_score <span class="badge badge-max">max 7.0</span></h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>ATR percentile(100) in 20–80%</td><td>7.0 (expansion sweet spot)</td></tr>
+          <tr><td>ATR percentile 10–20% or 80–90%</td><td>4.0</td></tr>
+          <tr><td>ATR percentile < 10% or > 90%</td><td>1.0</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STRUCTURE v1.5.0 ============ -->
+  <div class="engine-section toc-link" id="structure">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-core">Core</span>
+      <h2>Structure v1.5.0</h2>
+      <span class="badge badge-weight">SC_MOM: 20% · SC_POS: 20%</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">ms_raw = rs_spy + rs_accel + base + ms_pos + resist + wk + earn
+structure_100 = clip(ms_raw / 95 × 100, 0, 100)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/structure.py</span></div>
+          <div class="inline-param"><span class="k">Max Raw</span><span class="v">95</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 1: rs_spy <span class="badge badge-max">max 15</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">60-day relative strength vs SPY</p>
+        <div class="formula">rs_raw = (stock_roc_60d − spy_roc_60d)</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>rs_raw ≥ 15%</td><td>15</td></tr>
+          <tr><td>rs_raw ≥ 8%</td><td>12</td></tr>
+          <tr><td>rs_raw ≥ 3%</td><td>8</td></tr>
+          <tr><td>rs_raw ≥ 0%</td><td>4</td></tr>
+          <tr><td>rs_raw < 0%</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 2: rs_accel <span class="badge badge-max">max 15</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">RS acceleration = 20d RS minus 60d RS (gaining vs losing ground)</p>
+        <div class="formula">rs_accel_raw = (stock_roc_20d − spy_roc_20d) − (stock_roc_60d − spy_roc_60d)</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>rs_accel_raw ≥ 8%</td><td>15</td></tr>
+          <tr><td>rs_accel_raw ≥ 4%</td><td>12</td></tr>
+          <tr><td>rs_accel_raw ≥ 1%</td><td>8</td></tr>
+          <tr><td>rs_accel_raw ≥ 0%</td><td>4</td></tr>
+          <tr><td>rs_accel_raw < 0%</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 3: base <span class="badge badge-max">max 15</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">3-mode detection: VCP, staircase, smooth base. With breakout latch & quality multiplier.</p>
+        <table class="tier-table">
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>min_base_days</td><td>3</td></tr>
+          <tr><td>decay_window</td><td>10 bars</td></tr>
+          <tr><td>pivot_lookback</td><td>60 bars</td></tr>
+          <tr><td>breakout_vol</td><td>vol > SMA(vol, 20)</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>Quality Multiplier</th><th>Condition</th><th>Factor</th></tr>
+          <tr><td>High</td><td>Base ≥ 10 days + tight range</td><td>×1.0</td></tr>
+          <tr><td>Medium</td><td>Base ≥ 5 days</td><td>×0.8</td></tr>
+          <tr><td>Low</td><td>Base 3–4 days</td><td>×0.6</td></tr>
+        </table>
+        <div class="note">Breakout latch: once triggered, holds for decay_window bars. Base score = base_raw × quality_mult.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 4: ms_pos <span class="badge badge-max">max 15</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">50-day range position (same as pos50)</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>pos50 ≥ 80</td><td>15</td></tr>
+          <tr><td>pos50 ≥ 60</td><td>12</td></tr>
+          <tr><td>pos50 ≥ 40</td><td>8</td></tr>
+          <tr><td>pos50 ≥ 20</td><td>4</td></tr>
+          <tr><td>pos50 < 20</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 5: resist <span class="badge badge-max">max 10</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Distance to 50-day high (closer = more points)</p>
+        <div class="formula">resist_pct = (highest(high, 50) − close) / close × 100</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>resist_pct ≤ 2%</td><td>10</td></tr>
+          <tr><td>resist_pct ≤ 5%</td><td>7</td></tr>
+          <tr><td>resist_pct ≤ 10%</td><td>4</td></tr>
+          <tr><td>resist_pct > 10%</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 6: wk (weekly trend) <span class="badge badge-max">max 15</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Weekly close vs SMA(10) on weekly bars</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>Above SMA(10,wk) for ≥ 4 consecutive weeks</td><td>15</td></tr>
+          <tr><td>Above SMA(10,wk) for ≥ 2 weeks</td><td>10</td></tr>
+          <tr><td>Above SMA(10,wk)</td><td>5</td></tr>
+          <tr><td>Below SMA(10,wk)</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 7: earn (earnings proximity) <span class="badge badge-max">max 10</span></h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>Earnings within 10 trading days (risk)</td><td>2</td></tr>
+          <tr><td>Earnings within 20 days</td><td>5</td></tr>
+          <tr><td>No nearby earnings / default</td><td>10</td></tr>
+        </table>
+        <div class="note">Default override = 10.0 when earnings data unavailable (avoids penalizing data gaps).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MP v1.2 ============ -->
+  <div class="engine-section toc-link" id="mp">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-core">Core</span>
+      <h2>Momentum Persistence v1.2</h2>
+      <span class="badge badge-weight">SC_MOM: 20% · SC_POS: 5%</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">mp_score = clip(abs_mom + adx + rel_mom + trend, 0, 100)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/mp.py</span></div>
+          <div class="inline-param"><span class="k">roc_period</span><span class="v">20</span></div>
+          <div class="inline-param"><span class="k">adx_period</span><span class="v">14</span></div>
+          <div class="inline-param"><span class="k">trend_ma</span><span class="v">50</span></div>
+        </table>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 1: abs_mom <span class="badge badge-max">max 30</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">20-day ROC z-score</p>
+        <div class="formula">roc_20 = (close / close.shift(20) − 1) × 100
+z = (roc_20 − mean(roc_20, 60)) / std(roc_20, 60)
+abs_mom = clip(z × 10, 0, 30)</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 2: adx <span class="badge badge-max">max 25</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Wilder DMI/ADX with directional filter</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>ADX ≥ 40 AND DI+ > DI−</td><td>25</td></tr>
+          <tr><td>ADX ≥ 30 AND DI+ > DI−</td><td>20</td></tr>
+          <tr><td>ADX ≥ 20 AND DI+ > DI−</td><td>12</td></tr>
+          <tr><td>ADX ≥ 15 AND DI+ > DI−</td><td>6</td></tr>
+          <tr><td>DI+ ≤ DI−</td><td>0</td></tr>
+        </table>
+        <div class="note">Uses Wilder RMA (exponential, factor 1/period). ADX = RMA of abs(DI+ − DI−)/(DI+ + DI−) × 100.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 3: rel_mom <span class="badge badge-max">max 25</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Excess return vs SPY over 20 days</p>
+        <div class="formula">excess = stock_roc_20d − spy_roc_20d</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>excess ≥ 10%</td><td>25</td></tr>
+          <tr><td>excess ≥ 5%</td><td>18</td></tr>
+          <tr><td>excess ≥ 2%</td><td>12</td></tr>
+          <tr><td>excess ≥ 0%</td><td>5</td></tr>
+          <tr><td>excess < 0%</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 4: trend <span class="badge badge-max">max 20</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">Moving average structure (alignment)</p>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>close > SMA(20) > SMA(50) (fully aligned)</td><td>20</td></tr>
+          <tr><td>close > SMA(50) (above trend)</td><td>12</td></tr>
+          <tr><td>close > SMA(50) (some alignment)</td><td>6</td></tr>
+          <tr><td>below SMA(50)</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>State Logic</h3>
+        <div class="formula">rising = mp_score > mp_score.shift(3)
+STRONG  = rising AND mp_score ≥ 75
+BUILDING = rising AND mp_score < 75
+FADING  = NOT rising</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ELDER ============ -->
+  <div class="engine-section toc-link" id="elder">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-core">Core</span>
+      <h2>Elder Impulse</h2>
+      <span class="badge badge-gate">Gate: ≥ 7 for entry</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">elder_score = clip(state_score + slope_score + hist_score, 0, 10)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/elder.py</span></div>
+          <div class="inline-param"><span class="k">ema_length</span><span class="v">13</span></div>
+          <div class="inline-param"><span class="k">macd_fast</span><span class="v">12</span></div>
+          <div class="inline-param"><span class="k">macd_slow</span><span class="v">26</span></div>
+          <div class="inline-param"><span class="k">macd_signal</span><span class="v">9</span></div>
+          <div class="inline-param"><span class="k">Range</span><span class="v">0–10</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 1: state_score <span class="badge badge-max">max 4</span></h3>
+        <table class="tier-table">
+          <tr><th>Color</th><th>Condition</th><th>Points</th></tr>
+          <tr><td>GREEN</td><td>EMA(13) rising AND MACD-H rising</td><td>4</td></tr>
+          <tr><td>BLUE</td><td>Neither GREEN nor RED</td><td>2</td></tr>
+          <tr><td>RED</td><td>EMA(13) falling AND MACD-H falling</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 2: slope_score <span class="badge badge-max">max 3</span></h3>
+        <div class="formula">slope_pct = (EMA(13) − EMA(13).shift(1)) / EMA(13).shift(1) × 100</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>slope_pct ≥ 1.0%</td><td>3</td></tr>
+          <tr><td>slope_pct ≥ 0.3%</td><td>2</td></tr>
+          <tr><td>slope_pct > 0%</td><td>1</td></tr>
+          <tr><td>slope_pct ≤ 0%</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 3: hist_score <span class="badge badge-max">max 3</span></h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>MACD-H > 0 AND rising (H > H[1])</td><td>3</td></tr>
+          <tr><td>MACD-H > 0 (positive but not rising)</td><td>2</td></tr>
+          <tr><td>MACD-H ≤ 0 AND rising</td><td>1</td></tr>
+          <tr><td>MACD-H ≤ 0 AND falling</td><td>0</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BQ ============ -->
+  <div class="engine-section toc-link" id="bq">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-core">Core</span>
+      <h2>Base Quality (BQ)</h2>
+      <span class="badge badge-weight">SC_POS: 35%</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">bq_100 = clip(bq_range + bq_vol + bq_base + bq_ema, 0, 100)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/bq.py</span></div>
+          <div class="inline-param"><span class="k">Range</span><span class="v">0–100</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 1: bq_range (ATR Tightness) <span class="badge badge-max">max 30</span></h3>
+        <div class="formula">ratio = ATR(5) / ATR(20)</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>ratio ≤ 0.5</td><td>30</td></tr>
+          <tr><td>ratio ≤ 0.6</td><td>25</td></tr>
+          <tr><td>ratio ≤ 0.7</td><td>20</td></tr>
+          <tr><td>ratio ≤ 0.8</td><td>15</td></tr>
+          <tr><td>ratio ≤ 0.9</td><td>10</td></tr>
+          <tr><td>ratio ≤ 1.0</td><td>5</td></tr>
+          <tr><td>ratio > 1.0</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 2: bq_vol (Volume Dry-Up) <span class="badge badge-max">max 25</span></h3>
+        <div class="formula">ratio = SMA(vol, 5) / SMA(vol, 20)</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>ratio ≤ 0.5</td><td>25</td></tr>
+          <tr><td>ratio ≤ 0.65</td><td>20</td></tr>
+          <tr><td>ratio ≤ 0.8</td><td>15</td></tr>
+          <tr><td>ratio ≤ 0.95</td><td>10</td></tr>
+          <tr><td>ratio ≤ 1.1</td><td>5</td></tr>
+          <tr><td>ratio > 1.1</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 3: bq_base (Duration) <span class="badge badge-max">max 20</span></h3>
+        <p style="margin-bottom:8px;color:var(--text-muted);font-size:12px;">3-mode base with 60-bar pivot + 8% band. Inverted-U scoring (10–25 days optimal).</p>
+        <table class="tier-table">
+          <tr><th>Duration</th><th>Points</th></tr>
+          <tr><td>10–25 days</td><td>20 (optimal)</td></tr>
+          <tr><td>6–9 days or 26–40 days</td><td>15</td></tr>
+          <tr><td>3–5 days or 41–60 days</td><td>10</td></tr>
+          <tr><td>< 3 days or > 60 days</td><td>0–5</td></tr>
+        </table>
+        <div class="inline-params" style="margin-top:6px">
+          <div class="inline-param"><span class="k">pivot_lookback</span><span class="v">60 bars</span></div>
+          <div class="inline-param"><span class="k">band_pct</span><span class="v">8%</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Sub 4: bq_ema (EMA Convergence) <span class="badge badge-max">max 25</span></h3>
+        <div class="formula">spread = max(EMA8, EMA13, EMA21) − min(EMA8, EMA13, EMA21)
+ratio = spread / ATR(20)</div>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>ratio ≤ 0.5</td><td>25</td></tr>
+          <tr><td>ratio ≤ 0.8</td><td>20</td></tr>
+          <tr><td>ratio ≤ 1.2</td><td>15</td></tr>
+          <tr><td>ratio ≤ 1.8</td><td>10</td></tr>
+          <tr><td>ratio ≤ 2.5</td><td>5</td></tr>
+          <tr><td>ratio > 2.5</td><td>0</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCORING COMPOSITES ============ -->
+  <div class="section-divider">Composites & Screening</div>
+
+  <div class="engine-section toc-link" id="scoring">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-composite">Composite</span>
+      <h2>Scoring Composites v1.8.0</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>SC_MOMENTUM</h3>
+        <div class="formula">sc_momentum = Flow × 0.30 + Energy × 0.30 + Structure × 0.20 + MP × 0.20</div>
+        <table>
+          <tr><th>Engine</th><th>Weight</th><th>Gate Threshold</th></tr>
+          <tr><td>Flow</td><td>30%</td><td>≥ 60</td></tr>
+          <tr><td>Energy</td><td>30%</td><td>≥ 60</td></tr>
+          <tr><td>Structure</td><td>20%</td><td>≥ 55</td></tr>
+          <tr><td>MP</td><td>20%</td><td>≥ 55</td></tr>
+          <tr><td>Elder</td><td>(gate only)</td><td>≥ 6.5</td></tr>
+        </table>
+        <div class="note">v1.8.0: score is UNCAPPED. sc_m_gates is a boolean flag, not a score modifier.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>SC_POSITION</h3>
+        <div class="formula">sc_position = Flow × 0.10 + Energy × 0.30 + Structure × 0.20 + MP × 0.05 + BQ × 0.35</div>
+        <table>
+          <tr><th>Engine</th><th>Weight</th><th>Gate Threshold</th></tr>
+          <tr><td>Flow</td><td>10%</td><td>≥ 40</td></tr>
+          <tr><td>Energy</td><td>30%</td><td>≥ 60</td></tr>
+          <tr><td>Structure</td><td>20%</td><td>≥ 65</td></tr>
+          <tr><td>MP</td><td>5%</td><td>≥ 40</td></tr>
+          <tr><td>BQ</td><td>35%</td><td>≥ 60</td></tr>
+          <tr><td>K39</td><td>(gate only)</td><td>K39 gate pass</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Qualification</h3>
+        <div class="formula">is_qualified = (sc_momentum ≥ 75.0) AND (elder ≥ 6.5)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PIPELINE RANK ============ -->
+  <div class="engine-section toc-link" id="pipeline">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-composite">Composite</span>
+      <h2>Pipeline Rank v1.0</h2>
+      <span class="badge badge-gate">Screen: ≥ 60</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">pipe_rank = momentum_composite × 0.70 + fip_quality × 0.30</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/pipeline_rank.py</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Momentum Composite (5 sub-scores, each 0–20)</h3>
+        <table class="tier-table">
+          <tr><th>Sub-Score</th><th>Source</th><th>Max</th></tr>
+          <tr><td>ret_12m</td><td>252-day cumulative return, percentile-ranked</td><td>20</td></tr>
+          <tr><td>adx_score</td><td>ADX(14), tiered</td><td>20</td></tr>
+          <tr><td>rsi_score</td><td>RSI(14), sweet spot 50–70 = max</td><td>20</td></tr>
+          <tr><td>vol_score</td><td>Inverse volatility (lower vol = higher score)</td><td>20</td></tr>
+          <tr><td>ma_structure</td><td>MA alignment (20>50>100>200)</td><td>20</td></tr>
+        </table>
+        <div class="formula" style="margin-top:6px">momentum_composite = (ret_12m + adx + rsi + vol + ma_structure) / 5 × 100 / 20</div>
+      </div>
+
+      <div class="param-group">
+        <h3>FIP Quality</h3>
+        <div class="formula">fip = (pct_negative − pct_positive) × sign(cum_return_252d) × 100</div>
+        <table>
+          <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+          <tr><td>fip_window</td><td>252 bars</td><td>1-year lookback for distribution</td></tr>
+          <tr><td>spike_penalty</td><td>−30</td><td>If max 5d abs return > 8%</td></tr>
+          <tr><td>prior_spike_ret</td><td>30%</td><td>21d return threshold for DSG-20 exclusion</td></tr>
+          <tr><td>prior_spike_age</td><td>126 bars</td><td>Minimum age for spike exclusion</td></tr>
+          <tr><td>drawdown_confirm</td><td>30%</td><td>Post-spike drawdown confirmation</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Tiers</h3>
+        <table class="tier-table">
+          <tr><th>Tier</th><th>Range</th><th>Action</th></tr>
+          <tr><td>A-TIER</td><td>≥ 75</td><td>Top quality</td></tr>
+          <tr><td>B-STRONG</td><td>60–74</td><td>Passes screen</td></tr>
+          <tr><td>C-WATCH</td><td>45–59</td><td>Watch only</td></tr>
+          <tr><td>D-SKIP</td><td>< 45</td><td>Skip</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ READINESS ============ -->
+  <div class="section-divider">Timing & Maintenance</div>
+
+  <div class="engine-section toc-link" id="readiness">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-timing">Timing</span>
+      <h2>Readiness Score</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">rd_score = clip(compression + trigger + pos_mod + rs_bonus, 0, 100)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/readiness.py</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>A. Compression (0–60 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Sub</th><th>Source</th><th>Max</th><th>Tiers</th></tr>
+          <tr><td>ATR tightness</td><td>ATR(5)/ATR(20) ratio</td><td>18</td><td>≤0.5→18, ≤0.6→15, ≤0.7→12, ≤0.8→9, ≤0.9→6, ≤1.0→3, >1.0→0</td></tr>
+          <tr><td>Squeeze</td><td>BB inside KC + width pct</td><td>8</td><td>squeeze+tight→8, squeeze→6, narrow→3, else→0</td></tr>
+          <tr><td>Vol dry-up</td><td>SMA(vol,5)/SMA(vol,20)</td><td>15</td><td>≤0.5→15, ≤0.65→12, ≤0.8→9, ≤0.95→6, ≤1.1→3, >1.1→0</td></tr>
+          <tr><td>EMA convergence</td><td>EMA 8/13/21 spread / ATR</td><td>10</td><td>≤0.5→10, ≤0.8→8, ≤1.2→6, ≤1.8→4, ≤2.5→2, >2.5→0</td></tr>
+          <tr><td>Inside bars</td><td>Count of inside bars in last 5</td><td>9</td><td>5→9, 4→8, 3→6, 2→4, 1→2, 0→0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>B. Trigger (0–25 pts) — gated on compression</h3>
+        <table class="tier-table">
+          <tr><th>Sub</th><th>Gate</th><th>Max</th><th>Logic</th></tr>
+          <tr><td>Range expansion</td><td>compression ≥ 20</td><td>12</td><td>today_range/SMA(range,5): ≥2.0→12, ≥1.5→8, ≥1.3→5, else→0</td></tr>
+          <tr><td>Volume surge</td><td>bq_vol_dry ≥ 6</td><td>10</td><td>today_vol/SMA(vol,5): ≥2.5→10, ≥1.8→7, ≥1.5→4, else→0</td></tr>
+          <tr><td>Close strength</td><td>range_exp > 1.3</td><td>3</td><td>(close−low)/(high−low) ≥ 0.7 → 3, else → 0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>C. Position Modifier (−15 to 0 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>pos50 > 90 (over-extended)</td><td>−12</td></tr>
+          <tr><td>pos50 > 80</td><td>−8</td></tr>
+          <tr><td>Elder proxy ≥ 8</td><td>−3 (already impulse firing)</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>D. RS Acceleration Bonus (0–15 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Points</th></tr>
+          <tr><td>rs_accel_raw > 5%</td><td>15</td></tr>
+          <tr><td>rs_accel_raw > 2%</td><td>10</td></tr>
+          <tr><td>rs_accel_raw > 0%</td><td>5</td></tr>
+          <tr><td>else</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>States</h3>
+        <table class="tier-table">
+          <tr><th>State</th><th>Threshold</th></tr>
+          <tr><td>NOT_READY</td><td>< 40</td></tr>
+          <tr><td>NEUTRAL</td><td>40–59</td></tr>
+          <tr><td>WATCH</td><td>60–79</td></tr>
+          <tr><td>READY</td><td>≥ 80</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HEALTH ============ -->
+  <div class="engine-section toc-link" id="health">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-timing">Timing</span>
+      <h2>Health Score</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Composite Formula</h3>
+        <div class="formula">hl_score = clip(trend + flow + rs + risk, 0, 100)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">Source</span><span class="v">src/engines/health.py</span></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>A. Trend Structure (0–35 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Sub</th><th>Max</th><th>Logic</th></tr>
+          <tr><td>Higher-lows (10-bar)</td><td>15</td><td>Count bars where low > prior low: ≥7→15, ≥5→12, ≥3→8, ≥2→4, else→0</td></tr>
+          <tr><td>Bars above EMA(21)</td><td>15</td><td>Consecutive: ≥20→15, ≥10→10, ≥5→6, ≥2→3, else→0</td></tr>
+          <tr><td>Weekly trend</td><td>5</td><td>st_wk score ≥ 10 → 5, else → 0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>B. Flow Confirmation (0–25 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Sub</th><th>Max</th><th>Logic</th></tr>
+          <tr><td>MFI health</td><td>15</td><td>MFI(14): ≥70→15, ≥60→10, ≥50→5, <50→0</td></tr>
+          <tr><td>Vol up/down ratio (10-bar)</td><td>10</td><td>sum(vol on up days)/sum(vol on down): ≥1.5→10, ≥1.2→7, ≥1.0→4, <1.0→0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>C. Relative Strength (0–20 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Sub</th><th>Max</th><th>Logic</th></tr>
+          <tr><td>RS vs SPY</td><td>10</td><td>st_rs_spy score ≥ 10 → 10, ≥ 5 → 5, else → 0</td></tr>
+          <tr><td>RS acceleration</td><td>10</td><td>rs_accel_raw ≥ 2 → 10, ≥ 0 → 5, < 0 → 0</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>D. Risk Flags (−20 to 0 pts)</h3>
+        <table class="tier-table">
+          <tr><th>Flag</th><th>Condition</th><th>Penalty</th></tr>
+          <tr><td>ATR spike</td><td>ATR(5)/ATR(14) > 2.0</td><td>−10</td></tr>
+          <tr><td></td><td>ATR(5)/ATR(14) > 1.5</td><td>−5</td></tr>
+          <tr><td>Weak close count</td><td>≥ 3 of last 5 bars close in lower 30%</td><td>−5</td></tr>
+          <tr><td>Below declining EMA(21)</td><td>close < EMA(21) AND EMA(21) falling</td><td>−5</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>States</h3>
+        <table class="tier-table">
+          <tr><th>State</th><th>Threshold</th><th>Action</th></tr>
+          <tr><td>EXIT</td><td>< 30</td><td>Broken trend — exit or trail tight</td></tr>
+          <tr><td>TIGHTEN</td><td>30–49</td><td>Deteriorating — tighten stop</td></tr>
+          <tr><td>HOLD</td><td>50–74</td><td>Mixed — hold, don't add</td></tr>
+          <tr><td>HOLD_ADD</td><td>≥ 75</td><td>Intact — hold or add</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DSL ============ -->
+  <div class="section-divider">Risk Management</div>
+
+  <div class="engine-section toc-link" id="dsl">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-risk">Risk</span>
+      <h2>DSL v2.1 + Trail v1.5</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Initial Stop (v2.1, β-adjusted)</h3>
+        <div class="formula">raw_stop = lowest(low, 5) − 0.5 × ATR(14)
+clamped to [0.75 × ATR, upper × ATR]
+
+upper = 2.5  if β ≥ 2.0
+upper = 2.25 if β ≥ 1.5
+upper = 2.0  otherwise
+
+entry = close
+dsl_risk = entry − clamped_stop</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Trail Multiplier</h3>
+        <table class="tier-table">
+          <tr><th>Condition</th><th>Multiplier</th></tr>
+          <tr><td>MP state = FADING</td><td>0.85</td></tr>
+          <tr><td>β ≥ 2.0</td><td>1.25</td></tr>
+          <tr><td>β ≥ 1.5</td><td>1.10</td></tr>
+          <tr><td>default</td><td>1.00</td></tr>
+        </table>
+        <div class="formula" style="margin-top:6px">atr_eff = ATR(14) × trail_mult</div>
+      </div>
+
+      <div class="param-group">
+        <h3>R-Tier Trail Ladder</h3>
+        <table class="tier-table">
+          <tr><th>Tier</th><th>R-Range</th><th>Trail Stop</th><th>Floor</th></tr>
+          <tr><td>T1</td><td>0 – 0.5R</td><td>low − 1.0 × atr_eff</td><td>initial stop</td></tr>
+          <tr><td>T1b</td><td>0.5R – 1R</td><td>low − 1.0 × atr_eff</td><td>breakeven (entry)</td></tr>
+          <tr><td>T2</td><td>1R – 2R</td><td>low − 1.5 × atr_eff</td><td>breakeven</td></tr>
+          <tr><td>T3</td><td>2R – 4R</td><td>low − 2.0 × atr_eff</td><td>entry + 1.5R</td></tr>
+          <tr><td>T4</td><td>4R+</td><td>max(low−2.5×atr_eff, tp2R−1.0×atr_eff)</td><td>entry + 3R</td></tr>
+        </table>
+        <div class="note">Trail ratchets upward only. Highest tier locks. Breakeven trigger = entry + 0.5R.</div>
+      </div>
+
+      <div class="param-group">
+        <h3>Flow TP (T1 only)</h3>
+        <table>
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>tp_flow_floor</td><td>65</td></tr>
+          <tr><td>tp_min_r</td><td>0.2</td></tr>
+          <tr><td>tp_grace_bars</td><td>2</td></tr>
+        </table>
+        <div class="formula" style="margin-top:6px">Exit T1 if: flow_100 < 65 AND unrealised_r > 0.2 AND bars_held > 2</div>
+      </div>
+
+      <div class="param-group">
+        <h3>DSL v1.5 Dynamic (regime-based)</h3>
+        <table class="tier-table">
+          <tr><th>Regime</th><th>Base ATR Multiple</th></tr>
+          <tr><td>GREEN</td><td>1.5</td></tr>
+          <tr><td>YELLOW</td><td>2.0</td></tr>
+          <tr><td>ORANGE</td><td>2.5</td></tr>
+          <tr><td>RED</td><td>3.0</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>Elder Adjustment</th><th>Score</th><th>ATR Adj</th></tr>
+          <tr><td>Strong</td><td>≥ 9</td><td>−0.25</td></tr>
+          <tr><td>Neutral</td><td>7–8</td><td>0</td></tr>
+          <tr><td>Weak</td><td>< 7</td><td>+0.50</td></tr>
+        </table>
+        <div class="formula" style="margin-top:6px">final_ratio = clip(base + elder_adj, 1.0, 3.5)
+min_hold_bars = 3
+max_bars = 63</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SRM ============ -->
+  <div class="engine-section toc-link" id="srm">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-regime">Regime</span>
+      <h2>SRM + RRG + Macro</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Sector Grade Logic</h3>
+        <table class="tier-table">
+          <tr><th>Grade</th><th>Condition</th><th>SH</th></tr>
+          <tr><td>DEPLOY</td><td>above SMA(20) AND roc20 > 5%</td><td>+3</td></tr>
+          <tr><td>HOLD</td><td>above SMA(20) AND roc20 > 0%</td><td>0</td></tr>
+          <tr><td>TURNING</td><td>NOT above SMA(20) AND divergence > 0</td><td>−3</td></tr>
+          <tr><td>WATCH</td><td>above SMA(20) AND roc20 ≤ 0%</td><td>−5</td></tr>
+          <tr><td>AVOID</td><td>else</td><td>−8</td></tr>
+        </table>
+        <div class="note">divergence = roc5 trend vs roc20 trend (short-term improvement vs longer decline).</div>
+      </div>
+
+      <div class="param-group">
+        <h3>RRG (Relative Rotation Graph)</h3>
+        <table>
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>window</td><td>42 bars</td></tr>
+          <tr><td>mom_period</td><td>10 bars</td></tr>
+          <tr><td>center_line</td><td>100 (RS-Ratio and RS-Momentum)</td></tr>
+          <tr><td>dir_lookback</td><td>5 bars</td></tr>
+          <tr><td>tail_days</td><td>5</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>Quadrant</th><th>RS-Ratio</th><th>RS-Momentum</th></tr>
+          <tr><td>LEADING</td><td>> 100</td><td>> 100</td></tr>
+          <tr><td>WEAKENING</td><td>> 100</td><td>< 100</td></tr>
+          <tr><td>LAGGING</td><td>< 100</td><td>< 100</td></tr>
+          <tr><td>IMPROVING</td><td>< 100</td><td>> 100</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>Direction</th><th>Logic</th></tr>
+          <tr><td>ENTERING</td><td>Was in a different quadrant 5 bars ago</td></tr>
+          <tr><td>DEEPENING</td><td>Moving further into quadrant</td></tr>
+          <tr><td>EXITING</td><td>Moving toward next quadrant</td></tr>
+          <tr><td>STABLE</td><td>Minimal movement</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Macro Headwind</h3>
+        <table class="tier-table">
+          <tr><th>Instrument</th><th>Weight</th><th>Direction Logic</th></tr>
+          <tr><td>TLT</td><td>0.22</td><td>ROC-based direction score</td></tr>
+          <tr><td>HYG</td><td>0.18</td><td>ROC-based direction score</td></tr>
+          <tr><td>UUP</td><td>0.15</td><td>INVERTED (dollar up = headwind)</td></tr>
+          <tr><td>IWM</td><td>0.15</td><td>ROC-based direction score</td></tr>
+          <tr><td>GLD</td><td>0.10</td><td>ROC-based direction score</td></tr>
+          <tr><td>CPER</td><td>0.12</td><td>ROC-based direction score</td></tr>
+          <tr><td>USO</td><td>0.08</td><td>ROC-based direction score</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>Headwind Flag</th><th>Composite Score</th></tr>
+          <tr><td>TAILWIND</td><td>≥ 0.5</td></tr>
+          <tr><td>NEUTRAL</td><td>≥ −0.2</td></tr>
+          <tr><td>CAUTION</td><td>≥ −0.5</td></tr>
+          <tr><td>HEADWIND</td><td>< −0.5</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Entry Gate (Combined)</h3>
+        <table class="tier-table">
+          <tr><th>Gate</th><th>Condition</th></tr>
+          <tr><td>PASS</td><td>DEPLOY/HOLD + LEADING/IMPROVING + no headwind</td></tr>
+          <tr><td>WATCH</td><td>HOLD/TURNING + mixed RRG</td></tr>
+          <tr><td>CAUTION</td><td>WATCH grade or CAUTION macro</td></tr>
+          <tr><td>BLOCKED</td><td>AVOID grade OR (HEADWIND + LAGGING)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PTRS ============ -->
+  <div class="engine-section toc-link" id="ptrs">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-composite">Composite</span>
+      <h2>PTRS (Position/Trade Rating Score)</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Formula</h3>
+        <div class="formula">ptrs = engine_score + SH</div>
+        <table>
+          <tr><th>Component</th><th>Source</th><th>Range</th></tr>
+          <tr><td>engine_score</td><td>SC_MOM (from scoring composite)</td><td>0–100</td></tr>
+          <tr><td>SH</td><td>Sector Health from SRM grade</td><td>−8 to +3</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Disposition Tiers</h3>
+        <table class="tier-table">
+          <tr><th>Disposition</th><th>PTRS Range</th><th>Risk Budget</th><th>Shares</th></tr>
+          <tr><td>FULL</td><td>≥ 60</td><td>$2,100 (3%)</td><td>$2,100 / dsl_risk</td></tr>
+          <tr><td>HALF</td><td>50–59</td><td>$1,050 (1.5%)</td><td>$1,050 / dsl_risk</td></tr>
+          <tr><td>QUARTER</td><td>45–49</td><td>$525 (0.75%)</td><td>$525 / dsl_risk</td></tr>
+          <tr><td>REJECT</td><td>< 45</td><td>$0</td><td>No trade</td></tr>
+        </table>
+        <div class="note">PTRS disposition × Regime max_new_size = final position size. Capital = $70K fixed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REGIME ============ -->
+  <div class="engine-section toc-link" id="regime">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-regime">Regime</span>
+      <h2>Regime Detection</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>VIX Regimes</h3>
+        <table class="tier-table">
+          <tr><th>Regime</th><th>VIX Range</th><th>Stop % Ceiling</th></tr>
+          <tr><td>GREEN</td><td>≤ 18</td><td>12%</td></tr>
+          <tr><td>YELLOW</td><td>18–25</td><td>8%</td></tr>
+          <tr><td>ORANGE</td><td>25–30</td><td>6%</td></tr>
+          <tr><td>RED</td><td>> 30</td><td>4%</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Hurst Exponent</h3>
+        <table>
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>lookback</td><td>60 bars</td></tr>
+          <tr><td>min_window</td><td>10 bars</td></tr>
+        </table>
+        <table class="tier-table" style="margin-top:8px">
+          <tr><th>State</th><th>Hurst Value</th></tr>
+          <tr><td>TRENDING</td><td>> 0.55</td></tr>
+          <tr><td>RANDOM</td><td>0.45–0.55</td></tr>
+          <tr><td>MEAN_REVERT</td><td>< 0.45</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ K39 ============ -->
+  <div class="section-divider">Support Engines</div>
+
+  <div class="engine-section toc-link" id="k39">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-support">Support</span>
+      <h2>K39 Gate</h2>
+      <span class="badge badge-gate">SC_POS gate</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Gate Logic</h3>
+        <div class="formula">k39 = Stochastic %K(period=39) on WEEKLY bars
+k39_gate = (k39 > 50) AND (OBV > SMA(OBV, 30))</div>
+        <table>
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>stoch_period</td><td>39 weeks</td></tr>
+          <tr><td>obv_sma</td><td>30 weeks</td></tr>
+          <tr><td>k39_threshold</td><td>50</td></tr>
+        </table>
+        <div class="note">Both conditions must be true for SC_POS gate pass. Weekly timeframe.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ LEVELS ============ -->
+  <div class="engine-section toc-link" id="levels">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-support">Support</span>
+      <h2>Structural Levels</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Core Parameters</h3>
+        <table>
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>CAPITAL</td><td>$70,000</td></tr>
+          <tr><td>RISK_PCT</td><td>3% ($2,100)</td></tr>
+          <tr><td>PIVOT_K</td><td>5 (bars on each side to confirm pivot)</td></tr>
+          <tr><td>SWING_WINDOW</td><td>120 bars</td></tr>
+          <tr><td>RESISTANCE_GAP_ATR</td><td>0.5 (cluster within 0.5×ATR)</td></tr>
+          <tr><td>RESISTANCE_MAX_LEVELS</td><td>4</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Fibonacci Levels</h3>
+        <div class="grid-2">
+          <div>
+            <strong style="font-size:12px;color:var(--text-muted);">Retracements (supports)</strong>
+            <table class="tier-table">
+              <tr><td>fib_236</td><td>23.6%</td></tr>
+              <tr><td>fib_382</td><td>38.2%</td></tr>
+              <tr><td>fib_500</td><td>50.0%</td></tr>
+              <tr><td>fib_618</td><td>61.8%</td></tr>
+              <tr><td>fib_786</td><td>78.6%</td></tr>
+            </table>
+          </div>
+          <div>
+            <strong style="font-size:12px;color:var(--text-muted);">Extensions (targets)</strong>
+            <table class="tier-table">
+              <tr><td>fib_1272</td><td>127.2%</td></tr>
+              <tr><td>fib_1618</td><td>161.8%</td></tr>
+              <tr><td>fib_2000</td><td>200.0%</td></tr>
+              <tr><td>fib_2618</td><td>261.8%</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <h3>Stop Validation Gates (Charter §4.2)</h3>
+        <table class="tier-table">
+          <tr><th>Gate</th><th>Requirement</th></tr>
+          <tr><td>ATR floor</td><td>atr_ratio ≥ 1.0</td></tr>
+          <tr><td>R:R (TP2)</td><td>rr_tp2 ≥ 2.0</td></tr>
+          <tr><td>Regime stop %</td><td>risk_pct ≤ regime ceiling (12/8/6/4%)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ELDER CONTEXT ============ -->
+  <div class="engine-section toc-link" id="elder-ctx">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-support">Support</span>
+      <h2>Elder Context v1.1</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>5-Day Pattern Classification</h3>
+        <table class="tier-table">
+          <tr><th>Pattern</th><th>Logic (from elder_5d = [T-4..T0])</th></tr>
+          <tr><td>SUSTAINED</td><td>≥ 4 bars at ≥ 9, min(elder_5d) ≥ 8</td></tr>
+          <tr><td>CORRECTION_REENTRY</td><td>Dip to ≤ 7 after ≥ 9, then recovery</td></tr>
+          <tr><td>ACCELERATION</td><td>Early bars ≤ 6, T0+T−1 ≥ 9</td></tr>
+          <tr><td>ACCUMULATION_BASE</td><td>All ≤ 8, non-decreasing sequence</td></tr>
+          <tr><td>INTERRUPTED</td><td>Any bar at T−3..T0 ≤ 5</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>VCP Assessment</h3>
+        <table>
+          <tr><th>Field</th><th>Threshold</th><th>Label</th></tr>
+          <tr><td>tightness</td><td>< 50%</td><td>TIGHT (else LOOSE)</td></tr>
+          <tr><td>vol_trend</td><td>±10% change</td><td>CONTRACTING / FLAT / EXPANDING</td></tr>
+          <tr><td>vwap_position</td><td>close vs VWAP(5d)</td><td>ABOVE / BELOW</td></tr>
+          <tr><td>up_bar_ratio</td><td>> 1.0</td><td>More up-volume bars than down</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Volume Trend</h3>
+        <table class="tier-table">
+          <tr><th>Change</th><th>Label</th></tr>
+          <tr><td>> +10%</td><td>EXPANDING</td></tr>
+          <tr><td>−10% to +10%</td><td>FLAT</td></tr>
+          <tr><td>< −10%</td><td>CONTRACTING</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Exhaustion Check</h3>
+        <div class="formula">climactic = vol > 2.5 × SMA(vol, 20) AND pos50 > 80
+divergence = new high + RSI lower than prior RSI high
+spread = range > 2× avg range AND close < midpoint</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ACTIVE RECIPE ============ -->
+  <div class="section-divider">Active Recipe & Sizing</div>
+
+  <div class="engine-section">
+    <div class="engine-header" onclick="toggle(this)">
+      <span class="tag tag-composite">Config</span>
+      <h2>Active Recipe Thresholds</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="engine-body">
+      <div class="param-group">
+        <h3>Longlist Recipe</h3>
+        <table>
+          <tr><th>Engine</th><th>Minimum</th></tr>
+          <tr><td>SC_MOMENTUM</td><td>≥ 75</td></tr>
+          <tr><td>Flow</td><td>≥ 80</td></tr>
+          <tr><td>Energy</td><td>≥ 64</td></tr>
+          <tr><td>Structure</td><td>≥ 60</td></tr>
+          <tr><td>MP</td><td>≥ 60</td></tr>
+          <tr><td>Elder</td><td>≥ 7</td></tr>
+          <tr><td>Phase</td><td>ANY</td></tr>
+        </table>
+      </div>
+
+      <div class="param-group">
+        <h3>Sizing Chain</h3>
+        <div class="formula">position_size = PTRS_disposition × regime_max_new_size
+
+FULL    = $2,100 (3% of $70K)
+HALF    = $1,050 (1.5%)
+QUARTER =   $525 (0.75%)
+
+shares = risk_budget / dsl_risk (1R)</div>
+        <div class="inline-params">
+          <div class="inline-param"><span class="k">MAX_POSITIONS</span><span class="v">6</span></div>
+          <div class="inline-param"><span class="k">SIGNAL_MAX_AGE</span><span class="v">2 trading days</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.arrow');
+  body.classList.toggle('collapsed');
+  arrow.textContent = body.classList.contains('collapsed') ? '▶' : '▼';
+}
+</script>
