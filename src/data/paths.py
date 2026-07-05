@@ -48,6 +48,9 @@ PANEL_WEEKLY = DATA_DIR / "panel_weekly.parquet"
 SPY_DAILY = DATA_DIR / "spy_daily.parquet"
 SCORES_DAILY = DATA_DIR / "scores_daily.parquet"
 
+MA_PANEL = DATA_DIR / "ma_panel.parquet"
+MA_SCAN = DATA_DIR / "ma_scan.parquet"
+
 SHORTLIST_PATH = OUTPUT_DIR / "shortlist.json"
 EXPORT_JSON = OUTPUT_DIR / "aqe_daily_export.json"
 DASHBOARD_PATH = OUTPUT_DIR / "dashboard.txt"

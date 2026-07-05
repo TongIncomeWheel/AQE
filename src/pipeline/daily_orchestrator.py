@@ -318,6 +318,20 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Signal ledger: {exc}")
 
+    # Step 8d: MA Proximity Scanner — broad-market MA proximity scan
+    # Separate from AQE scoring; uses its own panel for all US stocks >$1B.
+    # Never raises — quota issues or failures don't block the main pipeline.
+    try:
+        print("[daily] Step 8d: MA Proximity Scanner...")
+        from src.scanner.ma_scanner import run_ma_scan
+        ma_result = run_ma_scan(client=FMPClient())
+        if ma_result.get("ok"):
+            print(f"  MA scan: {ma_result['stats']['near_any_ma']} stocks near at least one MA")
+        else:
+            print(f"  MA scan: skipped ({ma_result.get('reason')})")
+    except Exception as exc:
+        print(f"  [WARN] MA scan: {exc}")
+
     print("=" * 60)
     print(f"[daily] Done. {len(shortlist)} candidates on today's shortlist.")
 
