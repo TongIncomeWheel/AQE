@@ -318,6 +318,19 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Signal ledger: {exc}")
 
+    # Step 8c-2: Signal Radar paper-track — log today's runner/premove tags across
+    # the full scored universe + reconcile matured ones vs the pre-registered bands.
+    # Additive DETECTION tracker; never gates/sizes; never raises past this guard.
+    try:
+        from src.data.signal_ledger import record_signal_tags, reconcile_signal_tags
+        _exp = locals().get("_export") or {}
+        _sig_date = _exp.get("date")
+        n_tags = record_signal_tags(scan_date=_sig_date)
+        n_recon = reconcile_signal_tags()
+        print(f"  Signal Radar track: {n_tags} tags logged, {n_recon} matured/scored")
+    except Exception as exc:
+        print(f"  [WARN] Signal Radar track: {exc}")
+
     # Step 8d: MA Proximity Scanner — broad-market MA proximity scan
     # Separate from AQE scoring; uses its own panel for all US stocks >$1B.
     # Never raises — quota issues or failures don't block the main pipeline.

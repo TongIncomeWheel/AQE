@@ -1532,6 +1532,98 @@ else:
 st.divider()
 
 # ---------------------------------------------------------------------------
+# 3c. Signal Radar (M14-M18) — DETECTION tags, NOT entry signals
+# ---------------------------------------------------------------------------
+st.subheader("Signal Radar")
+st.caption(
+    "**Detection tags — NOT entry signals, NOT sizing.** The PM decides "
+    "entry/bracket/size live, exactly like `on_longlist`/`pe`. Two radars: "
+    "**`runner_setup`** = already moving with another leg (short base + 5-day thrust "
+    "+ clear overhead), with conviction 0–4 + subtype; **`premove_setup`** = quiet "
+    "now but coiled (young base + squeeze + well below the high), which historically "
+    "led the move by a median ~12 trading days. Every % below is a **detection rate** "
+    "(how often tagged names touched a level, price-path only) — never a win rate. "
+    "**No tag informs sizing until its paper-track shows PASS.**"
+)
+
+# Today's tagged names — pulled from the export (longlist ∪ elder records carry the tags)
+_sig_seen: set[str] = set()
+_runner_rows, _premove_rows = [], []
+for _rec in (_ex.get("longlist") or []) + (_ex.get("elder_list") or []):
+    _tk = _rec.get("ticker")
+    if not _tk or _tk in _sig_seen:
+        continue
+    _sig_seen.add(_tk)
+    if _rec.get("runner_setup"):
+        _runner_rows.append({
+            "ticker": _tk, "conviction": _rec.get("runner_conviction"),
+            "subtype": _rec.get("mover_subtype"), "sc_mom": _rec.get("sc_momentum"),
+            "ptrs": _rec.get("ptrs"), "elder": _rec.get("elder"),
+            "gics_sector": _rec.get("gics_sector_name") or _rec.get("gics_sector"),
+        })
+    if _rec.get("premove_setup"):
+        _premove_rows.append({
+            "ticker": _tk, "conviction": _rec.get("premove_conviction"),
+            "sc_mom": _rec.get("sc_momentum"), "ptrs": _rec.get("ptrs"),
+            "elder": _rec.get("elder"),
+            "gics_sector": _rec.get("gics_sector_name") or _rec.get("gics_sector"),
+        })
+
+_sc1, _sc2 = st.columns(2)
+with _sc1:
+    st.markdown(f"**Runner setups (continuation) — {len(_runner_rows)}**")
+    if _runner_rows:
+        _rdf = pd.DataFrame(sorted(_runner_rows,
+                                   key=lambda x: -(x.get("conviction") or 0)))
+        table_with_copy(_rdf, key="radar_runner")
+    else:
+        st.caption("None on the lists today." if _ex else "Needs the export JSON.")
+with _sc2:
+    st.markdown(f"**Pre-move setups (coiled) — {len(_premove_rows)}**")
+    if _premove_rows:
+        _pdf = pd.DataFrame(sorted(_premove_rows,
+                                   key=lambda x: -(x.get("conviction") or 0)))
+        table_with_copy(_pdf, key="radar_premove")
+    else:
+        st.caption("None on the lists today." if _ex else "Needs the export JSON.")
+
+st.caption(
+    "Note: this shows tagged names that are also on the Longlist/Elder list. The "
+    "paper-track below scores every tag across the full scored universe."
+)
+
+# Paper-track scoreboard — the forward proof vs the pre-registered bands
+try:
+    from src.data.signal_ledger import signal_track_scoreboard
+    _sb = signal_track_scoreboard()
+    _board = []
+    for _tag, _e in _sb.get("tags", {}).items():
+        _board.append({
+            "tag": _tag, "logged": _e.get("logged"), "matured": _e.get("matured"),
+            "detection_+20%/20d": (f"{_e['det20']}%" if _e.get("det20") is not None else "—"),
+            "detection_+10%/10d": (f"{_e['det10']}%" if _e.get("det10") is not None else "—"),
+            "pond_base_+20%": (f"{_sb['pond_base_det20']}%"
+                               if _sb.get("pond_base_det20") is not None else "—"),
+            "verdict": _e.get("verdict"),
+        })
+    if _board:
+        st.markdown(
+            f"**Paper-track scoreboard** · pre-registered {_sb.get('registered_on')} · "
+            f"{_sb.get('days_elapsed', 0)} days elapsed"
+        )
+        table_with_copy(pd.DataFrame(_board), key="radar_track")
+        st.caption(
+            "Verdict is mechanical vs the pre-registered bands (runner PASS = "
+            "≥35% forward +20%/20d detection AND ≥1.5× the concurrent pond base, "
+            "after ≥60 matured tags & ≥92 days; premove bands from the M18 study). "
+            "Detection rate ≠ win rate. **No sizing off any tag until PASS.**"
+        )
+except Exception as _exc:  # noqa: BLE001
+    st.caption(f"Paper-track scoreboard warming up (needs matured tags): {_exc}")
+
+st.divider()
+
+# ---------------------------------------------------------------------------
 # 6. Ad-hoc Ticker Scorer — score names beyond the uploaded universe
 # ---------------------------------------------------------------------------
 st.subheader("Ad-hoc Ticker Scorer")

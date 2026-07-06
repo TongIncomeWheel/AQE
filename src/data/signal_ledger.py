@@ -22,6 +22,7 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import numpy as np
 import pandas as pd
 
 from src.data.paths import DATA_DIR, PANEL_DAILY
@@ -85,7 +86,46 @@ CREATE TABLE IF NOT EXISTS signal_outcomes (
 CREATE INDEX IF NOT EXISTS idx_snap_date ON signal_snapshots(scan_date);
 CREATE INDEX IF NOT EXISTS idx_snap_ticker ON signal_snapshots(ticker);
 CREATE INDEX IF NOT EXISTS idx_outcome_date ON signal_outcomes(scan_date);
+
+-- ── Signal Radar paper-track (M14-M18) ─────────────────────────────────────
+-- Short-term memory: which names the radar tagged each day, and (once matured)
+-- what price actually did afterward vs the PRE-REGISTERED pass/fail bands.
+-- Append-only; reconcile is idempotent. Detection rate != win rate. NO TAG
+-- INFORMS SIZING UNTIL ITS TRACK SHOWS PASS.
+CREATE TABLE IF NOT EXISTS signal_tags (
+    tag_date     TEXT    NOT NULL,
+    ticker       TEXT    NOT NULL,
+    tag          TEXT    NOT NULL,   -- 'runner_setup' or 'premove_setup'
+    conviction   INTEGER,
+    subtype      TEXT,
+    PRIMARY KEY (tag_date, ticker, tag)
+);
+
+CREATE TABLE IF NOT EXISTS signal_track_results (
+    tag_date       TEXT    NOT NULL,
+    ticker         TEXT    NOT NULL,
+    tag            TEXT    NOT NULL,
+    matured_10d    INTEGER DEFAULT 0,
+    matured_20d    INTEGER DEFAULT 0,
+    fwdmax_pct_10d REAL,
+    fwdmax_pct_20d REAL,
+    PRIMARY KEY (tag_date, ticker, tag)
+);
+
+CREATE INDEX IF NOT EXISTS idx_tags_date ON signal_tags(tag_date);
+CREATE INDEX IF NOT EXISTS idx_tags_tag ON signal_tags(tag);
+CREATE INDEX IF NOT EXISTS idx_trackres_tag ON signal_track_results(tag);
 """
+
+# ── PRE-REGISTERED paper-track bands (frozen 2026-07-06 — do NOT move after the
+# fact; this is the pre-registration discipline the whole program held to). ──
+TRACK_REGISTERED_ON = "2026-07-06"
+RUNNER_MIN_EPISODES = 60
+RUNNER_MIN_CAL_DAYS = 92
+RUNNER_PASS_FLOOR = 35.0        # % forward +20%/20d detection
+RUNNER_PASS_MULT = 1.5          # x concurrent QUAL-pond base
+RUNNER_FAIL_BELOW = 25.0
+# premove bands live in signal_engine_params.json (premove_track_bands), read live.
 
 
 @contextmanager
@@ -548,3 +588,186 @@ def ledger_stats() -> dict:
         "unique_tickers": unique_tickers,
         "unique_dates": unique_dates,
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Signal Radar paper-track — the forward proof, and the gate to ALL sizing.
+# Every run: (1) LOG today's runner_setup / premove_setup names; (2) RECONCILE
+# every logged name old enough against what price actually did (next open,
+# price-path only) vs the PRE-REGISTERED bands. Detection rate != win rate.
+# ═══════════════════════════════════════════════════════════════════════════
+def record_signal_tags(scan_date: str | None = None) -> int:
+    """Log today's runner_setup / premove_setup names to the append-only tracker.
+
+    Computes tags across the FULL scored universe (not just the longlist) so the
+    tracker measures each tag's true edge, exactly as pre-registered. Dedupes on
+    (tag_date, ticker, tag). Returns the number of tags logged. Never raises past
+    the caller's guard — a missing engine/params degrades to 0 tags.
+    """
+    init_ledger()
+    from src.engines.signal_radar import signal_lookup
+
+    lk = signal_lookup(asof=scan_date)
+    # derive the scan date from scores if not given
+    if not scan_date:
+        from src.data.paths import SCORES_DAILY
+        _sd = pd.read_parquet(SCORES_DAILY, columns=["date"])
+        scan_date = str(pd.to_datetime(_sd["date"]).max().date())
+    scan_date = scan_date[:10]
+
+    rows: list[tuple] = []
+    for tk, v in lk.items():
+        if v.get("runner_setup"):
+            rows.append((scan_date, tk, "runner_setup",
+                         int(v.get("runner_conviction") or 0), v.get("mover_subtype")))
+        if v.get("premove_setup"):
+            rows.append((scan_date, tk, "premove_setup",
+                         int(v.get("premove_conviction") or 0), None))
+
+    if not rows:
+        return 0
+    with _conn() as conn:
+        conn.executemany(
+            "INSERT OR REPLACE INTO signal_tags "
+            "(tag_date, ticker, tag, conviction, subtype) VALUES (?,?,?,?,?)",
+            rows,
+        )
+    return len(rows)
+
+
+def reconcile_signal_tags(panel_path: Path | None = None) -> int:
+    """Score every logged tag old enough (>=10/20 bars forward) against price.
+
+    Entry = next bar's open; outcome = max favourable % within the horizon
+    (price path only, no stop, no R). Idempotent UPDATE-on-mature. Returns the
+    number of track rows written/updated.
+    """
+    init_ledger()
+    panel_path = panel_path or PANEL_DAILY
+    if not panel_path.exists():
+        return 0
+
+    with _conn() as conn:
+        tags = conn.execute(
+            "SELECT tag_date, ticker, tag FROM signal_tags"
+        ).fetchall()
+    if not tags:
+        return 0
+
+    panel = pd.read_parquet(panel_path, columns=["date", "ticker", "open", "high"])
+    panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
+    groups = {t: g.sort_values("date").reset_index(drop=True)
+              for t, g in panel.groupby("ticker")}
+
+    written = 0
+    with _conn() as conn:
+        for tag_date_str, ticker, tag in tags:
+            g = groups.get(ticker)
+            if g is None:
+                continue
+            tag_dt = pd.Timestamp(tag_date_str)
+            loc = g.index[g["date"] == tag_dt]
+            if not len(loc):
+                continue
+            i = int(loc[0])
+            if i + 1 >= len(g) or not (g["open"].iloc[i + 1] > 0):
+                continue
+            e = float(g["open"].iloc[i + 1])
+
+            rec = {"matured_10d": 0, "matured_20d": 0,
+                   "fwdmax_pct_10d": None, "fwdmax_pct_20d": None}
+            for hz, lbl in [(10, "10d"), (20, "20d")]:
+                if i + 1 + hz <= len(g):
+                    hi = float(g["high"].iloc[i + 1:i + 1 + hz].max())
+                    rec[f"fwdmax_pct_{lbl}"] = round((hi / e - 1) * 100, 4)
+                    rec[f"matured_{lbl}"] = 1
+            if not rec["matured_10d"]:
+                continue
+            conn.execute(
+                "INSERT OR REPLACE INTO signal_track_results "
+                "(tag_date, ticker, tag, matured_10d, matured_20d, "
+                "fwdmax_pct_10d, fwdmax_pct_20d) VALUES (?,?,?,?,?,?,?)",
+                (tag_date_str, ticker, tag, rec["matured_10d"], rec["matured_20d"],
+                 rec["fwdmax_pct_10d"], rec["fwdmax_pct_20d"]),
+            )
+            written += 1
+    return written
+
+
+def _concurrent_pond_base(lo: str, hi: str, panel_path: Path | None = None) -> float | None:
+    """QUAL-pond +20%/20d base detection over [lo, hi] — the 1.5x reference band."""
+    from src.data.paths import SCORES_DAILY
+    panel_path = panel_path or PANEL_DAILY
+    if not SCORES_DAILY.exists() or not panel_path.exists():
+        return None
+    sc = pd.read_parquet(SCORES_DAILY, columns=["date", "ticker", "sc_momentum", "elder_score"])
+    sc["date"] = pd.to_datetime(sc["date"]).dt.normalize()
+    qual = sc[(sc["date"] >= pd.Timestamp(lo)) & (sc["date"] <= pd.Timestamp(hi))
+              & (sc["sc_momentum"] >= 75) & (sc["elder_score"] >= 6.5)]
+    if qual.empty:
+        return None
+    panel = pd.read_parquet(panel_path, columns=["date", "ticker", "open", "high"])
+    panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
+    groups = {t: g.sort_values("date").reset_index(drop=True)
+              for t, g in panel.groupby("ticker")}
+    outc = []
+    for _, q in qual.iterrows():
+        g = groups.get(q["ticker"])
+        if g is None:
+            continue
+        loc = g.index[g["date"] == q["date"]]
+        if len(loc):
+            i = int(loc[0])
+            if i + 21 <= len(g) and g["open"].iloc[i + 1] > 0:
+                e = float(g["open"].iloc[i + 1])
+                outc.append((g["high"].iloc[i + 1:i + 21].max() / e - 1) * 100 >= 20)
+    return round(float(np.mean(outc)) * 100, 1) if outc else None
+
+
+def signal_track_scoreboard() -> dict:
+    """Per-tag paper-track scoreboard vs the pre-registered bands — reused verbatim
+    by the Scanner UI (do not recompute differently there). Every % is a DETECTION
+    rate (price path only), not a win rate."""
+    init_ledger()
+    from src.engines.signal_radar import load_params
+    params = load_params() or {}
+
+    with _conn() as conn:
+        logged = dict(conn.execute(
+            "SELECT tag, COUNT(*) FROM signal_tags GROUP BY tag").fetchall())
+        dates = conn.execute("SELECT MIN(tag_date), MAX(tag_date) FROM signal_tags").fetchone()
+        res = pd.read_sql_query("SELECT * FROM signal_track_results", conn)
+
+    lo, hi = (dates[0], dates[1]) if dates and dates[0] else (None, None)
+    days_elapsed = ((pd.Timestamp.now().normalize() - pd.Timestamp(lo)).days
+                    if lo else 0)
+    pond_base = _concurrent_pond_base(lo, hi) if lo else None
+
+    out = {"registered_on": TRACK_REGISTERED_ON, "days_elapsed": days_elapsed,
+           "pond_base_det20": pond_base, "tags": {}}
+    for tag in ("runner_setup", "premove_setup"):
+        sub = res[(res["tag"] == tag) & (res["matured_20d"] == 1)] if not res.empty else res
+        n = len(sub)
+        entry = {"logged": int(logged.get(tag, 0)), "matured": n,
+                 "det20": None, "det10": None, "verdict": "RUNNING (nothing matured yet)"}
+        if n:
+            entry["det20"] = round(float((sub["fwdmax_pct_20d"] >= 20).mean()) * 100, 1)
+            entry["det10"] = round(float((sub["fwdmax_pct_10d"] >= 10).mean()) * 100, 1)
+            if tag == "runner_setup":
+                floor, mult, fail_below = RUNNER_PASS_FLOOR, RUNNER_PASS_MULT, RUNNER_FAIL_BELOW
+                window_met = n >= RUNNER_MIN_EPISODES and days_elapsed >= RUNNER_MIN_CAL_DAYS
+            else:
+                b = params.get("premove_track_bands") or {}
+                floor = b.get("pass_floor"); mult = b.get("pass_mult"); fail_below = b.get("fail_below")
+                window_met = n >= RUNNER_MIN_EPISODES and days_elapsed >= RUNNER_MIN_CAL_DAYS
+            det = entry["det20"]
+            if not window_met:
+                entry["verdict"] = "RUNNING (window not met)"
+            elif floor is not None and det >= floor and (pond_base is None or det >= mult * pond_base):
+                entry["verdict"] = "PASS — edge holding; sizing discussion may open"
+            elif fail_below is not None and det < fail_below:
+                entry["verdict"] = "FAIL — below pre-registered floor; do not size"
+            else:
+                entry["verdict"] = "INCONCLUSIVE — between bands; keep tracking"
+        out["tags"][tag] = entry
+    return out

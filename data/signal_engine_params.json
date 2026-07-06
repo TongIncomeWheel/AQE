@@ -1,0 +1,128 @@
+{
+  "fitted_on": "v1.8.0 QUAL pond (research_panel + dynamics)",
+  "n_pond": 7040,
+  "runner_rule": {
+    "base_days_max": 15.0,
+    "ret_5d_min": 14.5,
+    "resist_score_max": 8.5
+  },
+  "conviction_cuts": {
+    "base_days_lo": 12.0,
+    "ret_5d_hi": 10.642611242970478,
+    "resist_score_lo": 10.0,
+    "dist_20dhigh_lo": -1.3312284043860534
+  },
+  "subtype_z": {
+    "ret_3d": {
+      "mean": 8.15396943530778,
+      "std": 10.507855077796277
+    },
+    "ret_5d": {
+      "mean": 10.81411201876059,
+      "std": 12.262365777501932
+    },
+    "atr_slope_3d": {
+      "mean": 10.321183955457983,
+      "std": 20.650714249578897
+    },
+    "atr_slope_5d": {
+      "mean": 13.231376622516336,
+      "std": 28.82022299021701
+    },
+    "mp_100": {
+      "mean": 75.4715909090909,
+      "std": 13.177966593866364
+    },
+    "adx_val": {
+      "mean": 25.440386165208636,
+      "std": 8.622493569583392
+    },
+    "k39_value": {
+      "mean": 64.08688381196296,
+      "std": 26.13007173763207
+    },
+    "pipe_rank": {
+      "mean": 69.66997099471081,
+      "std": 12.92887668636267
+    },
+    "bq_vol_dry": {
+      "mean": 2.7095170454545454,
+      "std": 4.351558929500272
+    },
+    "bq_100": {
+      "mean": 28.577272727272728,
+      "std": 10.326506331137017
+    },
+    "bq_range_tight": {
+      "mean": 1.506534090909091,
+      "std": 2.940323713803391
+    },
+    "squeeze_score": {
+      "mean": 3.631818181818182,
+      "std": 4.371179824681926
+    },
+    "ext_score": {
+      "mean": 2.8832386363636364,
+      "std": 2.1411354855894484
+    },
+    "rd_compression": {
+      "mean": 12.08984375,
+      "std": 5.894921180797925
+    },
+    "energy_100": {
+      "mean": 68.19948433919022,
+      "std": 7.330409313386864
+    }
+  },
+  "premove_rule": {
+    "legs": [
+      {
+        "feature": "base_days",
+        "op": "<=",
+        "value": 7.5
+      },
+      {
+        "feature": "squeeze_score",
+        "op": ">",
+        "value": 4.5
+      },
+      {
+        "feature": "dist_20dhigh",
+        "op": "<=",
+        "value": -16.2178
+      }
+    ],
+    "rule": "base_days <= 7.50 AND squeeze_score > 4.50 AND dist_20dhigh <= -16.22",
+    "source": "M18 run_20260706v_m18",
+    "test_detection_pct": 49.4,
+    "test_base_pct": 10.0
+  },
+  "premove_conviction_cuts": {
+    "base_days": {
+      "direction": "low",
+      "value": 22.0
+    },
+    "dist_20dhigh": {
+      "direction": "low",
+      "value": -7.217573221757335
+    },
+    "bq_base_dur": {
+      "direction": "low",
+      "value": 0.0
+    },
+    "bq_base_days": {
+      "direction": "low",
+      "value": 0.0
+    }
+  },
+  "premove_track_bands": {
+    "pass_floor": 14.9,
+    "pass_mult": 1.5,
+    "fail_below": 10.0,
+    "note": "pre-registered from M18 test-era quiet base"
+  },
+  "premove_reference": {
+    "lead_time_median_days_to_20pct": 12.0,
+    "quiet_base_test_pct": 10.0
+  }
+}

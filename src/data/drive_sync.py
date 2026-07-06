@@ -162,6 +162,26 @@ _FIELD_GLOSSARY = {
     "hl_flow": "Flow confirmation sub-score (0-25). MFI health + volume up/down ratio.",
     "hl_rs": "Relative strength sub-score (0-20). RS vs SPY maintenance.",
     "hl_risk": "Risk flags penalty (-20 to 0). ATR spike + close weakness + EMA breakdown.",
+    # Signal Radar (M14-M18) — DETECTION tags, NOT gates and NOT sizing.
+    "runner_setup": "DETECTION tag (bool): name is already moving with another leg — "
+                    "short young base + strong 5-day thrust + clear overhead (M15 rule). "
+                    "NOT a gate, NOT sizing; the PM decides entry/bracket/size live. Any % "
+                    "reported for this tag elsewhere is a DETECTION RATE (how often tagged "
+                    "names historically touched a level, price-path only) — never a win rate.",
+    "runner_conviction": "DETECTION conviction (0-4): how many of the four M15 legs "
+                         "(short base / strong 5d momentum / clear overhead / room below the "
+                         "20d high) are in their favourable tercile. Higher = stronger "
+                         "historical detection, not a probability of profit.",
+    "mover_subtype": "DETECTION sub-type label (explosive / trend / tight_base / squeeze) — "
+                     "the family whose z-score profile the name matches best (M16c). Context "
+                     "only; not a gate.",
+    "premove_setup": "DETECTION tag (bool): name is QUIET now but coiled to launch — very "
+                     "young base + squeeze on + well below the recent high (M18 rule, applies "
+                     "only to quiet-pond names). Historical launches came a median ~12 trading "
+                     "days after the tag — a pre-move radar, not a same-day trigger. NOT a "
+                     "gate, NOT sizing; % elsewhere = detection rate, not win rate.",
+    "premove_conviction": "DETECTION conviction (0-N): count of M18 launcher-fingerprint legs "
+                          "present. Context only; not a probability of profit.",
 }
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
@@ -240,6 +260,12 @@ _FIELD_SCHEMA = {
     "hl_flow":              _fs("signal", "score", "n/a"),
     "hl_rs":                _fs("signal", "score", "n/a"),
     "hl_risk":              _fs("signal", "score", "n/a"),
+    # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
+    "runner_setup":         _fs("signal", "boolean", "n/a"),
+    "runner_conviction":    _fs("signal", "score", "n/a"),
+    "mover_subtype":        _fs("signal", "label", "n/a"),
+    "premove_setup":        _fs("signal", "boolean", "n/a"),
+    "premove_conviction":   _fs("signal", "score", "n/a"),
 }
 
 
@@ -711,6 +737,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "atr_caution": False, "beta_data_error": False,
         "malformed_bracket": False,
         "beta_60d_capped": None, "dsl_atr_ratio_floored": None,
+        # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
+        "runner_setup": False, "runner_conviction": 0, "mover_subtype": None,
+        "premove_setup": False, "premove_conviction": 0,
     }
     try:
         etf = sm.get(tk)
@@ -841,6 +870,15 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                      "setup_state"):
             if _ek in _enr and _enr[_ek] is not None:
                 fields[_ek] = _enr[_ek]
+
+        # ── Signal Radar (M14-M18) — additive DETECTION tags ──────────────
+        # runner_setup / premove_setup + conviction + subtype. Never gate/size;
+        # PM reads them like on_longlist/pe. % elsewhere = detection rate, not win rate.
+        _sig = (lk.get("signals") or {}).get(tk, {})
+        for _sk in ("runner_setup", "runner_conviction", "mover_subtype",
+                     "premove_setup", "premove_conviction"):
+            if _sk in _sig and _sig[_sk] is not None:
+                fields[_sk] = _sig[_sk]
     except Exception:  # noqa: BLE001
         pass
     return fields
@@ -1035,6 +1073,19 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- Enrichment Spec v2.0 (rs_down_day, breakout_conviction, cleanup) ----
     _v21_lk["enrichment"] = _compute_enrichment_lookups(
         dsl_all, betas, regime_level)
+
+    # ---- Signal Radar (M14-M18) — per-ticker DETECTION tags ----
+    # runner_setup / premove_setup + conviction + subtype from the scored universe.
+    # ADDITIVE: read-only on scores_daily + panel; a failure degrades to no tags
+    # (defaults False/0/None already stamped by _v21_record_fields) — never blocks
+    # the export or changes any existing field.
+    try:
+        from src.engines.signal_radar import signal_lookup
+        _v21_lk["signals"] = signal_lookup()
+        print(f"  Signal Radar: tagged {len(_v21_lk['signals'])} names")
+    except Exception as _exc:  # noqa: BLE001
+        _v21_lk["signals"] = {}
+        print(f"  [WARN] Signal Radar lookup skipped: {_exc}")
 
     # ---- Thematic basket grades (SRM v3.0) — pure panel math, 0 FMP calls ----
     # Graded from constituents' equal-weight index, capped at parent GICS grade.
