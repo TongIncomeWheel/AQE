@@ -1546,50 +1546,35 @@ st.caption(
     "**No tag informs sizing until its paper-track shows PASS.**"
 )
 
-# Today's tagged names — pulled from the export (longlist ∪ elder records carry the tags)
-_sig_seen: set[str] = set()
-_runner_rows, _premove_rows = [], []
-for _rec in (_ex.get("longlist") or []) + (_ex.get("elder_list") or []):
-    _tk = _rec.get("ticker")
-    if not _tk or _tk in _sig_seen:
-        continue
-    _sig_seen.add(_tk)
-    if _rec.get("runner_setup"):
-        _runner_rows.append({
-            "ticker": _tk, "conviction": _rec.get("runner_conviction"),
-            "subtype": _rec.get("mover_subtype"), "sc_mom": _rec.get("sc_momentum"),
-            "ptrs": _rec.get("ptrs"), "elder": _rec.get("elder"),
-            "gics_sector": _rec.get("gics_sector_name") or _rec.get("gics_sector"),
-        })
-    if _rec.get("premove_setup"):
-        _premove_rows.append({
-            "ticker": _tk, "conviction": _rec.get("premove_conviction"),
-            "sc_mom": _rec.get("sc_momentum"), "ptrs": _rec.get("ptrs"),
-            "elder": _rec.get("elder"),
-            "gics_sector": _rec.get("gics_sector_name") or _rec.get("gics_sector"),
-        })
+# Today's tagged names — the STANDALONE radar block covers the full scored universe
+# (so quiet pre-move names, which never reach the longlist, still show). Each row is
+# flagged on_longlist / on_elder so the overlap reads at a glance.
+_radar_block = _ex.get("signal_radar") or {}
+_runner_rows = _radar_block.get("runner_setup") or []
+_premove_rows = _radar_block.get("premove_setup") or []
 
 _sc1, _sc2 = st.columns(2)
 with _sc1:
     st.markdown(f"**Runner setups (continuation) — {len(_runner_rows)}**")
     if _runner_rows:
-        _rdf = pd.DataFrame(sorted(_runner_rows,
-                                   key=lambda x: -(x.get("conviction") or 0)))
-        table_with_copy(_rdf, key="radar_runner")
+        table_with_copy(pd.DataFrame(_runner_rows), key="radar_runner")
+    elif _radar_block:
+        st.caption("No runner setups on the last scan.")
     else:
-        st.caption("None on the lists today." if _ex else "Needs the export JSON.")
+        st.caption("Needs an export with the signal_radar block (rerun the pipeline).")
 with _sc2:
     st.markdown(f"**Pre-move setups (coiled) — {len(_premove_rows)}**")
     if _premove_rows:
-        _pdf = pd.DataFrame(sorted(_premove_rows,
-                                   key=lambda x: -(x.get("conviction") or 0)))
-        table_with_copy(_pdf, key="radar_premove")
+        table_with_copy(pd.DataFrame(_premove_rows), key="radar_premove")
+    elif _radar_block:
+        st.caption("No pre-move setups on the last scan.")
     else:
-        st.caption("None on the lists today." if _ex else "Needs the export JSON.")
+        st.caption("Needs an export with the signal_radar block (rerun the pipeline).")
 
 st.caption(
-    "Note: this shows tagged names that are also on the Longlist/Elder list. The "
-    "paper-track below scores every tag across the full scored universe."
+    "`on_longlist` / `on_elder` flag whether a radar name is also on those lists. "
+    "Runners often overlap the longlist; pre-move names are usually fresh quiet "
+    "names that appear ONLY here — that's the point (they move a median ~12 days out)."
 )
 
 # Paper-track scoreboard — the forward proof vs the pre-registered bands

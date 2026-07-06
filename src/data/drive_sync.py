@@ -1074,18 +1074,24 @@ def build_export(shortlist: dict | None = None) -> dict:
     _v21_lk["enrichment"] = _compute_enrichment_lookups(
         dsl_all, betas, regime_level)
 
-    # ---- Signal Radar (M14-M18) — per-ticker DETECTION tags ----
-    # runner_setup / premove_setup + conviction + subtype from the scored universe.
-    # ADDITIVE: read-only on scores_daily + panel; a failure degrades to no tags
-    # (defaults False/0/None already stamped by _v21_record_fields) — never blocks
+    # ---- Signal Radar (M14-M18) — per-ticker DETECTION tags + standalone block ----
+    # runner_setup / premove_setup + conviction + subtype from the FULL scored
+    # universe. Computed ONCE: the lookup stamps the 5 fields onto each list record,
+    # and the ranked lists become the standalone `signal_radar` block below (so the
+    # QUIET pre-move names — which never reach the longlist — are still surfaced).
+    # ADDITIVE + read-only; a failure degrades to no tags / empty block, never blocks
     # the export or changes any existing field.
+    _radar = None
     try:
-        from src.engines.signal_radar import signal_lookup
-        _v21_lk["signals"] = signal_lookup()
-        print(f"  Signal Radar: tagged {len(_v21_lk['signals'])} names")
+        from src.engines.signal_radar import compute_radar
+        _radar = compute_radar()
+        _v21_lk["signals"] = _radar["lookup"]
+        print(f"  Signal Radar: {len(_radar['runner_setup'])} runner / "
+              f"{len(_radar['premove_setup'])} pre-move tags "
+              f"({len(_radar['lookup'])} scored)")
     except Exception as _exc:  # noqa: BLE001
         _v21_lk["signals"] = {}
-        print(f"  [WARN] Signal Radar lookup skipped: {_exc}")
+        print(f"  [WARN] Signal Radar skipped: {_exc}")
 
     # ---- Thematic basket grades (SRM v3.0) — pure panel math, 0 FMP calls ----
     # Graded from constituents' equal-weight index, capped at parent GICS grade.
@@ -1525,6 +1531,30 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["summary"] = {"longlist_count": len(_longlist),
                          "elder_count": len(_elderlist),
                          "held_count": len(export.get("held_positions") or [])}
+
+    # ---- Standalone Signal Radar block (M14-M18) — the one place AIC scans the
+    # radar daily. Two ranked lists over the FULL scored universe, each name flagged
+    # with whether it is ALSO on the longlist / elder list (overlap at a glance).
+    # DETECTION tags only — never a gate, never sizing. Additive; empty on failure.
+    try:
+        if _radar is not None:
+            _ll_tk = {r.get("ticker") for r in _longlist if r.get("ticker")}
+            _el_tk = {r.get("ticker") for r in _elderlist if r.get("ticker")}
+            for _grp in ("runner_setup", "premove_setup"):
+                for _e in _radar.get(_grp, []):
+                    _e["on_longlist"] = _e["ticker"] in _ll_tk
+                    _e["on_elder"] = _e["ticker"] in _el_tk
+            export["signal_radar"] = {
+                "scan_date": _radar.get("scan_date"),
+                "n_scored": _radar.get("n_scored"),
+                "runner_setup": _radar.get("runner_setup", []),
+                "premove_setup": _radar.get("premove_setup", []),
+                "note": _radar.get("note"),
+            }
+            export["summary"]["runner_count"] = len(_radar.get("runner_setup", []))
+            export["summary"]["premove_count"] = len(_radar.get("premove_setup", []))
+    except Exception:  # noqa: BLE001 — radar block is additive, never blocks export
+        pass
 
     # ---- Uniform schema per list (null-fill each to one key set) ----
     for _lname in ("longlist", "elder_list"):

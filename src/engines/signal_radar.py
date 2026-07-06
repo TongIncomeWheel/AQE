@@ -280,13 +280,25 @@ def _clean(v):
     return v
 
 
-def signal_lookup(scores_path=None, panel_path=None, asof=None) -> dict[str, dict]:
-    """Build a per-ticker signal-tag dict for the latest scored date.
+_RADAR_NOTE = ("DETECTION tags only -- NOT entry signals, NOT sizing. The PM/AIC "
+               "decides entry/bracket/size live. Every % is a detection rate "
+               "(price-path only), never a win rate. No tag informs sizing until "
+               "its paper-track shows PASS.")
 
-    Returns {ticker: {runner_setup, runner_conviction, mover_subtype,
-                      premove_setup, premove_conviction}} -- exactly the 5 fields the
-    export stamps onto each record. Read-only; raises only if params/data missing
-    (caller wraps in try/except so a failure degrades to no tags).
+
+def compute_radar(scores_path=None, panel_path=None, asof=None) -> dict:
+    """Compute the radar ONCE for the latest scored date and return everything.
+
+    Returns:
+      {
+        "lookup": {ticker: {5 tag fields}},          # for per-record export stamping
+        "runner_setup":  [ {ticker, conviction, subtype, sc_momentum, elder, ret_5d} ],
+        "premove_setup": [ {ticker, conviction, sc_momentum, elder, dist_20dhigh} ],
+        "scan_date": "YYYY-MM-DD", "n_scored": int, "note": str,
+      }
+    Both lists cover the FULL scored universe (not just the longlist) and are ranked
+    by conviction desc. Read-only; raises only if params/data missing (callers wrap
+    in try/except so a failure degrades to no tags).
     """
     scores_path = scores_path or SCORES_DAILY
     panel_path = panel_path or PANEL_DAILY
@@ -301,30 +313,49 @@ def signal_lookup(scores_path=None, panel_path=None, asof=None) -> dict[str, dic
     when = pd.to_datetime(asof) if asof else scores["date"].max()
     tags = compute_signals(scores[["date", "ticker"] + have], panel, dates=[when])
 
-    out: dict[str, dict] = {}
+    lookup: dict[str, dict] = {}
+    runners, premovers = [], []
     for _, row in tags.iterrows():
-        out[row["ticker"]] = {
+        tk = row["ticker"]
+        lookup[tk] = {
             "runner_setup": _clean(row.get("runner_setup")),
             "runner_conviction": _clean(row.get("runner_conviction")),
             "mover_subtype": _clean(row.get("mover_subtype")),
             "premove_setup": _clean(row.get("premove_setup")),
             "premove_conviction": _clean(row.get("premove_conviction")),
         }
-    return out
+        if row.get("runner_setup"):
+            runners.append({
+                "ticker": tk,
+                "conviction": _clean(row.get("runner_conviction")),
+                "subtype": _clean(row.get("mover_subtype")),
+                "sc_momentum": _clean(row.get("sc_momentum")),
+                "elder": _clean(row.get("elder_score")),
+                "ret_5d": round(_clean(row.get("ret_5d")), 1) if _clean(row.get("ret_5d")) is not None else None,
+            })
+        if row.get("premove_setup"):
+            premovers.append({
+                "ticker": tk,
+                "conviction": _clean(row.get("premove_conviction")),
+                "sc_momentum": _clean(row.get("sc_momentum")),
+                "elder": _clean(row.get("elder_score")),
+                "dist_20dhigh": round(_clean(row.get("dist_20dhigh")), 1) if _clean(row.get("dist_20dhigh")) is not None else None,
+            })
+
+    runners.sort(key=lambda x: -(x.get("conviction") or 0))
+    premovers.sort(key=lambda x: -(x.get("conviction") or 0))
+    return {"lookup": lookup, "runner_setup": runners, "premove_setup": premovers,
+            "scan_date": str(pd.Timestamp(when).date()), "n_scored": len(lookup),
+            "note": _RADAR_NOTE}
+
+
+def signal_lookup(scores_path=None, panel_path=None, asof=None) -> dict[str, dict]:
+    """Per-ticker signal-tag dict for the latest scored date (the 5 fields the
+    export stamps onto each record). Thin wrapper over compute_radar()."""
+    return compute_radar(scores_path, panel_path, asof)["lookup"]
 
 
 def scan_latest(asof=None) -> dict:
-    """On-demand manual scan (the run_signal_scan.bat fallback). Returns today's
-    runner + pre-mover names. No side effects beyond reading the parquets."""
-    lk = signal_lookup(asof=asof)
-    runners = sorted(
-        [{"ticker": t, **v} for t, v in lk.items() if v.get("runner_setup")],
-        key=lambda x: -(x.get("runner_conviction") or 0),
-    )
-    premovers = sorted(
-        [{"ticker": t, "premove_conviction": v.get("premove_conviction")}
-         for t, v in lk.items() if v.get("premove_setup")],
-        key=lambda x: -(x.get("premove_conviction") or 0),
-    )
-    return {"n_scored": len(lk), "runner_setup": runners, "premove_setup": premovers,
-            "note": "DETECTION tags only -- not gates, not sizing. PM decides entry/bracket/size live."}
+    """On-demand manual scan (the run_signal_scan.bat fallback) — the standalone
+    radar block for the latest date. No side effects beyond reading the parquets."""
+    return compute_radar(asof=asof)
