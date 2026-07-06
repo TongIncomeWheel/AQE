@@ -172,6 +172,11 @@ _FIELD_GLOSSARY = {
                          "(short base / strong 5d momentum / clear overhead / room below the "
                          "20d high) are in their favourable tercile. Higher = stronger "
                          "historical detection, not a probability of profit.",
+    "runner_conviction_label": "Human-readable conviction = word + number, e.g. 'HIGH (3/4)'. "
+                         "The word is anchored to the historical +20%/20d detection ladder "
+                         "(MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4 ~= 5/13/27/43% "
+                         "detection). Read this, not the bare number. Still a detection tag, "
+                         "not a win rate, not sizing.",
     "mover_subtype": "DETECTION sub-type label (explosive / trend / tight_base / squeeze) — "
                      "the family whose z-score profile the name matches best (M16c). Context "
                      "only; not a gate.",
@@ -180,8 +185,11 @@ _FIELD_GLOSSARY = {
                      "only to quiet-pond names). Historical launches came a median ~12 trading "
                      "days after the tag — a pre-move radar, not a same-day trigger. NOT a "
                      "gate, NOT sizing; % elsewhere = detection rate, not win rate.",
-    "premove_conviction": "DETECTION conviction (0-N): count of M18 launcher-fingerprint legs "
+    "premove_conviction": "DETECTION conviction (0-4): count of M18 launcher-fingerprint legs "
                           "present. Context only; not a probability of profit.",
+    "premove_conviction_label": "Human-readable pre-move conviction = word + number, e.g. "
+                          "'HIGH (3/4)' (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4). Read "
+                          "this, not the bare number. Detection tag, not a win rate, not sizing.",
 }
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
@@ -261,11 +269,13 @@ _FIELD_SCHEMA = {
     "hl_rs":                _fs("signal", "score", "n/a"),
     "hl_risk":              _fs("signal", "score", "n/a"),
     # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
-    "runner_setup":         _fs("signal", "boolean", "n/a"),
-    "runner_conviction":    _fs("signal", "score", "n/a"),
-    "mover_subtype":        _fs("signal", "label", "n/a"),
-    "premove_setup":        _fs("signal", "boolean", "n/a"),
-    "premove_conviction":   _fs("signal", "score", "n/a"),
+    "runner_setup":            _fs("signal", "boolean", "n/a"),
+    "runner_conviction":       _fs("signal", "score", "n/a"),
+    "runner_conviction_label": _fs("signal", "label", "n/a"),
+    "mover_subtype":           _fs("signal", "label", "n/a"),
+    "premove_setup":           _fs("signal", "boolean", "n/a"),
+    "premove_conviction":      _fs("signal", "score", "n/a"),
+    "premove_conviction_label": _fs("signal", "label", "n/a"),
 }
 
 
@@ -738,8 +748,10 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "malformed_bracket": False,
         "beta_60d_capped": None, "dsl_atr_ratio_floored": None,
         # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
-        "runner_setup": False, "runner_conviction": 0, "mover_subtype": None,
+        "runner_setup": False, "runner_conviction": 0,
+        "runner_conviction_label": None, "mover_subtype": None,
         "premove_setup": False, "premove_conviction": 0,
+        "premove_conviction_label": None,
     }
     try:
         etf = sm.get(tk)
@@ -875,8 +887,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # runner_setup / premove_setup + conviction + subtype. Never gate/size;
         # PM reads them like on_longlist/pe. % elsewhere = detection rate, not win rate.
         _sig = (lk.get("signals") or {}).get(tk, {})
-        for _sk in ("runner_setup", "runner_conviction", "mover_subtype",
-                     "premove_setup", "premove_conviction"):
+        for _sk in ("runner_setup", "runner_conviction", "runner_conviction_label",
+                     "mover_subtype", "premove_setup", "premove_conviction",
+                     "premove_conviction_label"):
             if _sk in _sig and _sig[_sk] is not None:
                 fields[_sk] = _sig[_sk]
     except Exception:  # noqa: BLE001

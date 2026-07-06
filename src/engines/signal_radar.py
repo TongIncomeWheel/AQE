@@ -285,6 +285,20 @@ _RADAR_NOTE = ("DETECTION tags only -- NOT entry signals, NOT sizing. The PM/AIC
                "(price-path only), never a win rate. No tag informs sizing until "
                "its paper-track shows PASS.")
 
+# Conviction word anchored to the historical +20%/20d detection ladder (0-4 legs) --
+# the WORD gives the number meaning to a reader; delivered together as "HIGH (3/4)".
+_CONVICTION_WORDS = {0: "MINIMAL", 1: "LOW", 2: "MODERATE", 3: "HIGH", 4: "MAX"}
+
+
+def conviction_label(n) -> str | None:
+    """Pair the data-anchored word with the number: e.g. 3 -> 'HIGH (3/4)'.
+    Returns None when conviction is missing (never a bare number to a reader)."""
+    try:
+        i = int(n)
+    except (TypeError, ValueError):
+        return None
+    return f"{_CONVICTION_WORDS.get(i, str(i))} ({i}/4)"
+
 
 def compute_radar(scores_path=None, panel_path=None, asof=None) -> dict:
     """Compute the radar ONCE for the latest scored date and return everything.
@@ -317,17 +331,22 @@ def compute_radar(scores_path=None, panel_path=None, asof=None) -> dict:
     runners, premovers = [], []
     for _, row in tags.iterrows():
         tk = row["ticker"]
+        _rc = _clean(row.get("runner_conviction"))
+        _pc = _clean(row.get("premove_conviction"))
         lookup[tk] = {
             "runner_setup": _clean(row.get("runner_setup")),
-            "runner_conviction": _clean(row.get("runner_conviction")),
+            "runner_conviction": _rc,
+            "runner_conviction_label": conviction_label(_rc) if row.get("runner_setup") else None,
             "mover_subtype": _clean(row.get("mover_subtype")),
             "premove_setup": _clean(row.get("premove_setup")),
-            "premove_conviction": _clean(row.get("premove_conviction")),
+            "premove_conviction": _pc,
+            "premove_conviction_label": conviction_label(_pc) if row.get("premove_setup") else None,
         }
         if row.get("runner_setup"):
             runners.append({
                 "ticker": tk,
-                "conviction": _clean(row.get("runner_conviction")),
+                "conviction": _rc,
+                "conviction_label": conviction_label(_rc),
                 "subtype": _clean(row.get("mover_subtype")),
                 "sc_momentum": _clean(row.get("sc_momentum")),
                 "elder": _clean(row.get("elder_score")),
@@ -336,7 +355,8 @@ def compute_radar(scores_path=None, panel_path=None, asof=None) -> dict:
         if row.get("premove_setup"):
             premovers.append({
                 "ticker": tk,
-                "conviction": _clean(row.get("premove_conviction")),
+                "conviction": _pc,
+                "conviction_label": conviction_label(_pc),
                 "sc_momentum": _clean(row.get("sc_momentum")),
                 "elder": _clean(row.get("elder_score")),
                 "dist_20dhigh": round(_clean(row.get("dist_20dhigh")), 1) if _clean(row.get("dist_20dhigh")) is not None else None,

@@ -61,26 +61,24 @@ tercile (each leg is a data-derived cut, frozen from the pond):
 | 3 | `resist_score` in bottom tercile | clear overhead |
 | 4 | `dist_20dhigh` in bottom tercile | room below the 20-day high |
 
-**How to read the number — the detection ladder is monotonic and clean** (historical
-+20%/20d detection by conviction level, price-path only):
+**Delivered as WORD + NUMBER together** — `conviction_label`, e.g. **`HIGH (3/4)`**.
+The bare number means nothing on its own to a reader; the word gives it meaning, and
+the word is **anchored to the historical detection ladder** (not a judgement call):
 
 ```
- conviction   historical +20%/20d detection
-     1                ~4.5%
-     2               ~12.6%
-     3               ~27.2%
-     4               ~43.4%       (pond base ≈ 16%)
+ conviction_label      legs   historical +20%/20d detection
+ MINIMAL (0/4)          0            below base
+ LOW (1/4)              1               ~4.5%
+ MODERATE (2/4)         2              ~12.6%
+ HIGH (3/4)             3              ~27.2%
+ MAX (4/4)              4              ~43.4%       (pond base ≈ 16%)
 ```
 
-Reading: **higher conviction = materially higher historical detection.** A conviction-4
-runner touched +20% within a month ~43% of the time historically; a conviction-1 name,
-~5%. Treat conviction as a *strength-of-signal dial*, not a probability of a winning
-trade.
-
-**Delivered as the raw 0–4 integer — deliberately.** It is NOT mapped to a labelled
-band (LOW/MED/HIGH/MAX). The number *is* the read: each step up is a measured jump in
-historical detection (the ladder above), so a band would only blur a data-derived
-scale and re-introduce judgement where the data already speaks. Read the integer.
+Reading: **higher conviction = materially higher historical detection.** A `MAX (4/4)`
+runner touched +20% within a month ~43% of the time historically; a `LOW (1/4)` name,
+~5%. The label is a *strength-of-signal dial*, not a probability of a winning trade.
+The raw integer (`runner_conviction`) is still delivered alongside for sorting/machine
+use — but the label is the human read.
 
 ### `premove_conviction` — integer scale 0–4
 
@@ -120,13 +118,14 @@ entire scored universe, both lists ranked by conviction:
   "scan_date": "2026-07-06",
   "n_scored": 512,
   "runner_setup": [
-    { "ticker": "APP", "conviction": 4, "subtype": "squeeze",
-      "sc_momentum": 88, "elder": 9, "ret_5d": 21.3,
+    { "ticker": "APP", "conviction": 4, "conviction_label": "MAX (4/4)",
+      "subtype": "squeeze", "sc_momentum": 88, "elder": 9, "ret_5d": 21.3,
       "on_longlist": true, "on_elder": true }
   ],
   "premove_setup": [
-    { "ticker": "SNDK", "conviction": 3, "sc_momentum": 41, "elder": 5,
-      "dist_20dhigh": -18.4, "on_longlist": false, "on_elder": false }
+    { "ticker": "SNDK", "conviction": 3, "conviction_label": "HIGH (3/4)",
+      "sc_momentum": 41, "elder": 5, "dist_20dhigh": -18.4,
+      "on_longlist": false, "on_elder": false }
   ],
   "note": "DETECTION tags only — not entry signals, not sizing…"
 }
@@ -239,10 +238,11 @@ FMP pull (FMP_API_KEY, existing)
 
 ## 8. What AIC feedback would help most
 
-Settled by the PM (not open for band-mapping / channel debate): conviction is delivered
-as the **raw 0–4 integer** (no labelled bands — the number is the data-derived read),
-and the radar lands **only** in the daily export/scan protocol AIC already runs (no
-email or side channel). Feedback wanted on the read itself:
+Settled by the PM (not open for debate): conviction is delivered as **word + number
+together** (`conviction_label`, e.g. `HIGH (3/4)`) — the word is anchored to the
+detection ladder so it carries meaning, the number is kept alongside for machine use.
+The radar lands **only** in the daily export/scan protocol AIC already runs (no email
+or side channel). Feedback wanted on the read itself:
 
 1. Is the `signal_radar` block the right shape / right fields to scan daily?
 2. Any additional context field per name that would sharpen the pre-market read
