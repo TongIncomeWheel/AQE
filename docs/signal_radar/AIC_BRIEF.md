@@ -171,6 +171,19 @@ the natural hand-off from "watch" to "actionable."
    discretion.
 5. **Do not size off any tag yet.** The forward paper-track (below) is the gate.
 
+### Early-move safety net — how a pre-move name reaches the live alert
+
+A pre-move name is on "early watch" — but sometimes a coil breaks **earlier** than its
+~12-day median. Because pre-movers are quiet (below every list), the live alert engine
+would normally never watch them. So the radar names are folded into a dedicated
+**`_radar_pool`** the alert engine monitors: each carries its DSL levels, and when one
+**breaks out fresh** (or trades through its buy-zone) intraday, it fires a live alert
+tagged **`radar-premove` / `radar-runner`** with an **"⚡ running EARLY"** note and its
+conviction label — even though it isn't on the longlist yet. (Radar names fire only on
+the two *upside* events — buy-zone / breakout — not the approaching-stop event, since
+there's no position to protect.) This closes the gap between "on early watch" and
+"it moved before we expected."
+
 ### What it is NOT
 
 - **Not a gate** — it never filters the longlist or blocks a name.

@@ -1322,6 +1322,12 @@ def build_export(shortlist: dict | None = None) -> dict:
             **_v21_record_fields(rm["ticker"], d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
 
+    # Signal Radar alert pool — full records for the radar names (esp. QUIET
+    # pre-movers, which sit below every list) so the alert engine can WATCH them
+    # and fire when one runs EARLY, before it graduates onto the longlist. Built
+    # inside the scores block below where sc_df + _wl_record are in scope.
+    _radar_pool_recs: list = []
+
     # --- Watchlist + Elder list: both derived from the latest scores_daily ---
     # Watchlist = full universe above the raw SC_MOM bar (the broad radar).
     # Elder list = names with Elder Impulse >= 8 on the latest close — pure
@@ -1405,6 +1411,21 @@ def build_export(shortlist: dict | None = None) -> dict:
                           ascending=False).reset_index(drop=True)
             for i, (_, wr) in enumerate(_el.iterrows(), 1):
                 export["elder_list"].append(_wl_record(wr, i, "elder_list"))
+
+        # Signal Radar pool — full records (DSL levels + scores + radar tags) for
+        # every runner/pre-move name, so the alert engine can watch for an EARLY
+        # move. Pre-movers matter most: they are quiet and below every list.
+        if _radar is not None:
+            _sc_by_tk = {r["ticker"]: r for _, r in sc_df.iterrows()}
+            _rr = 0
+            for _grp, _src in (("premove_setup", "radar-premove"),
+                               ("runner_setup", "radar-runner")):
+                for _e in _radar.get(_grp, []):
+                    _wr = _sc_by_tk.get(_e.get("ticker"))
+                    if _wr is None:
+                        continue
+                    _rr += 1
+                    _radar_pool_recs.append(_wl_record(_wr, _rr, _src))
 
     # ---- TWO lists (PM): the single screening `longlist` + the standalone
     # `elder_list`. Longlist replaces watchlist/PE/top_picks (their info survives
@@ -1539,6 +1560,21 @@ def build_export(shortlist: dict | None = None) -> dict:
     _alert_pool = [r for r in export.get("watchlist", [])
                    if r.get("ticker") and r.get("ticker") not in _alert_seen]
     export["_alert_pool"] = _alert_pool
+
+    # Signal Radar pool — the QUIET pre-movers (and any runner) nothing else
+    # watches, so an EARLY breakout still fires an alert. Dedup against every set
+    # already monitored (longlist/elder/watchlist); require DSL levels to evaluate.
+    _radar_covered = _alert_seen | {r.get("ticker") for r in _alert_pool}
+    _radar_pool: list = []
+    _radar_seen: set = set()
+    for _r in _radar_pool_recs:
+        _tk = _r.get("ticker")
+        if (not _tk or _tk in _radar_covered or _tk in _radar_seen
+                or not _r.get("dsl_stop")):
+            continue
+        _radar_seen.add(_tk)
+        _radar_pool.append(_r)
+    export["_radar_pool"] = _radar_pool
     for _k in ("top_picks", "edge_list", "watchlist"):
         export.pop(_k, None)
     export["summary"] = {"longlist_count": len(_longlist),

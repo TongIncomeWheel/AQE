@@ -60,13 +60,16 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    for _src in ("longlist", "elder_list", "_alert_pool"):
+    for _src in ("longlist", "elder_list", "_alert_pool", "_radar_pool"):
         for r in export.get(_src) or []:
             tk = r.get("ticker")
             if not tk or tk in seen:
                 continue
             seen.add(tk)
-            out.append({"ticker": tk, "source": _src,
+            # Radar-pool records carry their own descriptive source (radar-premove
+            # / radar-runner) so the digest can flag an EARLY move on a watched coil.
+            _label = r.get("source") if _src == "_radar_pool" else _src
+            out.append({"ticker": tk, "source": _label,
                         "is_held": False, "record": r})
     return out
 
@@ -140,7 +143,12 @@ def evaluate(ticker: str, source: str, is_held: bool,
                 f"(fresh, ≤{C.BREAKOUT_MAX_PCT:.0f}%)")
 
     # --- Approaching stop (within X% above it; held uses its own SL) ---
-    if stop is not None and stop > 0 and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100):
+    # Skipped for radar-pool names: a pre-move/early watch is about catching the
+    # UPSIDE launch, not managing a stop on a position we don't hold. Radar names
+    # fire only on the two upside events above (buy-zone / breakout).
+    _is_radar = isinstance(source, str) and source.startswith("radar")
+    if (not _is_radar and stop is not None and stop > 0
+            and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100)):
         cushion = (live / stop - 1) * 100
         add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
             stop, f"{cushion:.1f}% above stop {stop:.2f}")

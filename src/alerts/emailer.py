@@ -69,7 +69,8 @@ def _fmt(v, dp=2):
 
 def _rec_lookup(export: dict) -> dict:
     out: dict = {}
-    for tier in ("held_positions", "edge_list", "top_picks", "longlist", "watchlist"):
+    for tier in ("held_positions", "edge_list", "top_picks", "longlist",
+                 "watchlist", "_alert_pool", "_radar_pool"):
         for r in export.get(tier) or []:
             out.setdefault(r.get("ticker"), r)
     return out
@@ -110,6 +111,16 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
             f"(R:R {_fmt(_rr_struct(rec), 2)}) · β30d {_fmt(g('beta_30d'), 2)}/"
             f"β60d {_fmt(g('beta_60d'), 2)} · "
             f"sector {g('gics_sector') or '—'} {g('gics_gate') or '—'}.")
+    # Radar early-move context: flag that this is a WATCHED coil running ahead of
+    # its expected ~12-day lead — the detection tag + its conviction label.
+    _rad = str(t.get("source") or "")
+    if _rad.startswith("radar"):
+        if g("premove_setup") and g("premove_conviction_label"):
+            base += (f" ⚡ PRE-MOVE radar running EARLY — premove {g('premove_conviction_label')} "
+                     f"(detection tag, not a win rate; watched coil, ~12d median lead).")
+        elif g("runner_setup") and g("runner_conviction_label"):
+            base += (f" ⚡ RUNNER radar — runner {g('runner_conviction_label')} "
+                     f"(detection tag, not a win rate).")
     if t["is_held"]:
         base += (f" Trade: entry {_fmt(g('entry'))} qty {g('qty')} "
                  f"SL {_fmt(g('held_sl'))} unreal ${_fmt(g('unreal_usd'), 0)}. "
