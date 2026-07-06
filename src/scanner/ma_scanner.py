@@ -63,12 +63,15 @@ def get_ma_universe(client: FMPClient | None = None) -> pd.DataFrame:
     )
 
     EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U", "-R", "-RT")
+    EXCLUDED_CONTAINS = ("-P", "-PA", "-PB", "-PC", "-PD")
     tickers = []
     for r in raw:
         sym = r.get("symbol", "")
         if not sym or any(sym.endswith(s) for s in EXCLUDED_SUFFIXES):
             continue
         if "." in sym and not sym.startswith("."):
+            continue
+        if "-" in sym and any(sym.endswith(s) or f"{s}" in sym for s in EXCLUDED_CONTAINS):
             continue
         tickers.append({
             "ticker": sym,

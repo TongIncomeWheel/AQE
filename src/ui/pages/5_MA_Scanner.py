@@ -24,6 +24,8 @@ require_login()
 st.title("MA Proximity Scanner")
 st.caption("US stocks >$1B within ±10% of key moving averages")
 
+PROXIMITY_PCT = 10.0
+
 
 # ── Load data ───────────────────────────────────────────────────────────
 @st.cache_data(ttl=300)
@@ -81,7 +83,15 @@ with col_f3:
 with col_f4:
     min_days = st.number_input("Min days near", min_value=0, max_value=200, value=0)
 
-aqe_only = st.checkbox("AQE universe only", value=False)
+col_f5, col_f6 = st.columns(2)
+with col_f5:
+    _sectors = sorted(df["sector"].dropna().unique()) if "sector" in df.columns else []
+    sector_filter = st.multiselect("Sector", _sectors, default=[], key="ma_sector_filter",
+                                   help="Leave empty for all sectors")
+with col_f6:
+    primary_only = st.checkbox("Primary listings only", value=True,
+                               help="Exclude preferred shares, units, class-B duplicates")
+    aqe_only = st.checkbox("AQE universe only", value=False)
 
 # ── Apply filters ───────────────────────────────────────────────────────
 filtered = df.copy()
@@ -103,6 +113,13 @@ if ma_filter:
             p_mask = p_mask & (filtered[side_col] == side_filter)
         mask = mask | p_mask
     filtered = filtered[mask]
+
+if primary_only and "ticker" in filtered.columns:
+    _has_dash = filtered["ticker"].str.contains("-", na=False)
+    filtered = filtered[~_has_dash]
+
+if sector_filter and "sector" in filtered.columns:
+    filtered = filtered[filtered["sector"].isin(sector_filter)]
 
 if aqe_only and "in_aqe" in filtered.columns:
     filtered = filtered[filtered["in_aqe"]]
@@ -203,5 +220,3 @@ with st.expander("Manual refresh"):
                 st.rerun()
             else:
                 st.error(f"Failed: {result.get('reason')}")
-
-PROXIMITY_PCT = 10.0
