@@ -77,6 +77,11 @@ runner touched +20% within a month ~43% of the time historically; a conviction-1
 ~5%. Treat conviction as a *strength-of-signal dial*, not a probability of a winning
 trade.
 
+**Delivered as the raw 0–4 integer — deliberately.** It is NOT mapped to a labelled
+band (LOW/MED/HIGH/MAX). The number *is* the read: each step up is a measured jump in
+historical detection (the ladder above), so a band would only blur a data-derived
+scale and re-introduce judgement where the data already speaks. Read the integer.
+
 ### `premove_conviction` — integer scale 0–4
 
 Counts how many of the four M18 launcher-fingerprint legs are present (`base_days`,
@@ -234,13 +239,16 @@ FMP pull (FMP_API_KEY, existing)
 
 ## 8. What AIC feedback would help most
 
-1. Is the `signal_radar` block the right shape/among the right fields to scan daily?
-2. Should conviction be surfaced as the raw 0–4, or mapped to a labelled band
-   (e.g. LOW / MEDIUM / HIGH / MAX) for faster reading?
-3. Should the runner/pre-move counts ride in the pre-market **alert email header** so
-   they hit the inbox without opening the Scanner?
-4. Any additional context field per name that would sharpen the pre-market read
+Settled by the PM (not open for band-mapping / channel debate): conviction is delivered
+as the **raw 0–4 integer** (no labelled bands — the number is the data-derived read),
+and the radar lands **only** in the daily export/scan protocol AIC already runs (no
+email or side channel). Feedback wanted on the read itself:
+
+1. Is the `signal_radar` block the right shape / right fields to scan daily?
+2. Any additional context field per name that would sharpen the pre-market read
    without adding noise?
+3. For runners that overlap the longlist, is the `on_longlist` / `on_elder` flag enough
+   to bridge "detected" → "actionable with a bracket", or is more linkage useful?
 
 *Reference trail (full derivation): `docs/signal_radar/` — M16/M17/M18 synthesis,
 BUILD_REPORT, integration brief. The BQ calibration evidence in that folder is a
