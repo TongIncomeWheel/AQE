@@ -81,9 +81,11 @@ AQE. Everything references the same output — same data, same tables, no re-der
 
 **Absorbs inputs #3/#4/#5** — these are no longer separate tasks, they are the engine's definition:
 
-- **Stop rule (input #4):** SL = **closest structural support** below entry, β/ATR-aware; candidates
-  = last support / MA / Fib. *(supersedes the current `optimal_stop` "tightest valid" — see open #2:
-  the engine's default becomes "closest", pending final PM confirm.)*
+- **Stop rule (input #4) — 🔒 RESOLVED = TIGHTEST VALID:** SL = among the structural candidates
+  (last support / MA / Fib) that PASS the 3 gates, take the one **closest to entry** (highest price
+  = smallest risk). This *is* the current `optimal_stop` logic — no change. "Tightest valid" is how
+  you get a well-defined "closest support": the gates are the tie-breaker that stops a too-near
+  level from being picked. β(30d)/ATR-aware via the gates.
 - **Target rule (input #5):** TP = **closest structural resistance** above entry, β/ATR-aware;
   candidates = pivot high / MA / Fib; **Fibs preferred**; soft secondary = **TPx + ATR**.
 - **Alert levels (input #3):** the alert's buy/TP/stop all read the engine's bracket — mechanical
@@ -179,8 +181,8 @@ proper fallback logic is the separate **bracketing-engine refinement**.
 
 ## Remaining open questions for the PM
 1. ~~Retire mechanical TP?~~ **RESOLVED — remove mechanical DSL *and* TP altogether, whole-AQE.**
-2. **Engine stop rule = "closest valid support"** (item 4) — default set to *closest* (supersedes
-   the code's current "tightest valid"). → PM final confirm; only affects the one rule inside §2.0.
+2. ~~Engine stop rule?~~ **RESOLVED — TIGHTEST VALID** (= closest structural support that passes the
+   gates; the current `optimal_stop` logic, unchanged).
 3. ~~Alert universe?~~ **RESOLVED — held + longlist + elder + Signal Radar; drop the broad
    `_alert_pool`.**
 4. Chart pull (1.2) — **per-ticker on-demand** default + cache the monitored set?
