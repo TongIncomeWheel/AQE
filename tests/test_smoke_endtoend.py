@@ -568,146 +568,62 @@ def test_thematic_baskets():
     assert TICKER_TO_THEMATIC["ANET"] == "AI_Infrastructure"
 
 
-def test_dsg18_bracket_fields():
-    """DSG-18: Group A derived levels, flat fib ladder, and structural stop selection."""
-    from src.data.drive_sync import _v21_record_fields, _structural_stop_analysis
+def test_bracket_field_on_record():
+    """The record carries the canonical `bracket` (bracket_engine) and NONE of the
+    retired mechanical DSL/TP fields."""
+    from src.data.drive_sync import _v21_record_fields
 
     d = {
-        "entry": 215.0, "stop": 205.81, "risk": 9.19,
-        "tp_1r": 226.79, "tp_2r": 237.27, "tp_3r": 247.76,
-        "be": 215.0 + 0.5 * 9.19, "atr14": 5.24, "dsl_atr_ratio": 1.75,
-        "resistance": [{"price": 224.0, "date": "2026-05-01"}],
-        "fib": {
-            "swing_low": 200.0, "swing_high": 230.0, "swing_low_date": "2026-06-10",
-            "retracements": {"0.236": 222.9, "0.382": 218.5, "0.5": 215.0,
-                             "0.618": 211.5, "0.786": 206.4},
-            "extensions": {"1.272": 238.16, "1.618": 248.54, "2.0": 260.0, "2.618": 278.54},
-        },
+        "entry": 100.0, "atr14": 2.0,
+        "resistance": [{"price": 108.0, "date": "2026-05-01"}, {"price": 112.0}],
+        "swing_lows": [{"price": 97.0}, {"price": 94.0}],
+        "fib": {"swing_low": 92.0, "swing_high": 112.0,
+                "retracements": {"0.618": 96.0, "0.786": 93.0},
+                "extensions": {"1.618": 120.0}},
     }
-    lk = {"ma": {"X": {20: 212.0, 50: 202.34}}, "vol30": {"X": 0.182},
-          "beta252": {"X": 0.04}, "rvol": {}, "rs": {}, "sma": {}, "corr": {},
-          "held": set(), "thematic": {}}
-    f = _v21_record_fields("X", d, lk, {"X": "XLV"}, {"XLV": {"grade": "HOLD"}})
-
-    # Group A — pure algebra from dsl fields.
-    assert f["atr_14d"] == 5.24
-    assert f["coil_entry"] == round(205.81 + 5.24, 2)               # stop + atr
-    assert f["max_chase_tp2"] == round((237.27 + 2 * 205.81) / 3, 2)
-    assert f["rr_tp2_at_coil"] == 5.0
-
-    # Flat fib ladder replaces the nested object.
-    assert "fib" not in f
-    assert f["fib_618"] == 211.5 and f["fib_786"] == 206.4
-    assert f["fib_swing_low"] == 200.0
-
-    # Group B — vol/beta passthrough + structural stop selection.
-    assert f["vol_30d_ann"] == 0.182 and f["beta_252d"] == 0.04
-    assert f["optimal_stop_exists"] is True
-    opt = f["optimal_stop"]
-    # Optimal = tightest valid (closest to entry, all 3 gates).
-    assert opt["atr_ratio"] >= 1.0 and opt["rr_tp2"] >= 2.0
-    assert opt["regime_valid"] is True
-    # structural_levels contains only valid candidates; total tracks how many evaluated.
-    assert f["structural_levels_total"] > 0
-    for lvl in f["structural_levels"]:
-        assert {"type", "price", "atr_ratio", "rr_tp2", "risk_pct", "valid",
-                "regime_valid"} <= set(lvl)
-        assert lvl["valid"] is True
-
-    # Structural take-profit ladder: anchored to swing high + fib extensions,
-    # rr varies per name (unlike the removed constant rr_tp1/2/3).
-    tgts = f["structural_targets"]
-    assert tgts and all({"type", "price", "rr"} <= set(t) for t in tgts)
-    assert all(t["price"] > d["entry"] for t in tgts)          # targets above entry
-    assert [t["price"] for t in tgts] == sorted(t["price"] for t in tgts)  # nearest first
-    _types = {t["type"] for t in tgts}
-    assert "fib_1618" in _types                                # measured-move target present
-    assert "resistance" in _types                              # prior pivot-high overhead
-    # rr is the real R-distance to structure (e.g. swing high 230 @ ~1.63R, not a constant)
-    _ph = next(t for t in tgts if t["type"] == "prior_high")
-    assert _ph["rr"] == round((230.0 - 215.0) / 9.19, 2)
-    # r_optimal uses structural risk (from optimal_stop) with source tag
-    assert all("r_optimal" in t and "r_optimal_source" in t for t in tgts)
-    assert _ph["r_optimal_source"] in ("structural", "dsl_risk")
-
-    # Self-describing glossary present so AIC reads stops vs targets correctly.
-    from src.data.drive_sync import _FIELD_GLOSSARY, _FIELD_SCHEMA, _FIELD_SCHEMA_ENUMS
-    for _k in ("dsl_stop", "dsl_tp_1r/2r/3r", "structural_targets", "optimal_stop",
-               "coil_entry", "_convention", "structural_levels_total"):
-        assert _k in _FIELD_GLOSSARY
-
-    # HARD GUARD: machine schema uses only the controlled enums, and tags the key
-    # levels with the right role/side so a stop can't be read as a target.
-    for _v in _FIELD_SCHEMA.values():
-        assert _v["role"] in _FIELD_SCHEMA_ENUMS["role"]
-        assert _v["unit"] in _FIELD_SCHEMA_ENUMS["unit"]
-        assert _v["side"] in _FIELD_SCHEMA_ENUMS["side"]
-    assert _FIELD_SCHEMA["dsl_stop"]["role"] == "stop"
-    assert _FIELD_SCHEMA["dsl_stop"]["side"] == "below_entry"
-    assert _FIELD_SCHEMA["dsl_tp_2r"]["role"] == "target"
-    assert _FIELD_SCHEMA["structural_targets"]["side"] == "above_entry"
-
-    # Every nested level item self-tags role/side (hard guard at item level).
-    for _lvl in f["structural_levels"]:
-        assert _lvl["role"] == "stop" and _lvl["side"] == "below_entry"
-    for _t in f["structural_targets"]:
-        assert _t["role"] == "target" and _t["side"] == "above_entry"
-    if f["optimal_stop"]:
-        assert f["optimal_stop"]["role"] == "stop"
-
-    # Degrade cleanly when inputs are missing.
-    empty_levels, empty_opt, empty_total = _structural_stop_analysis({}, None)
-    assert empty_levels == [] and empty_opt is None and empty_total == 0
-    from src.data.drive_sync import _structural_target_analysis
-    assert _structural_target_analysis({}) == []
-
-
-def test_charter_v2_reconciliation():
-    """Charter v2.0 audit fixes: rr_est removed, optimal_stop demoted to a
-    cross-check, coil_entry side n/a, last-3 swing-low + MA-cluster stop
-    candidates, and the glossary/schema contract halves stay in lockstep."""
-    from src.data.drive_sync import (
-        _v21_record_fields, _FIELD_GLOSSARY, _FIELD_SCHEMA,
-    )
-
-    d = {
-        "entry": 215.0, "stop": 205.81, "risk": 9.19,
-        "tp_1r": 224.19, "tp_2r": 237.27, "tp_3r": 247.76,
-        "atr14": 5.24, "dsl_atr_ratio": 1.75,
-        "fib": {"swing_low": 200.0, "swing_high": 230.0,
-                "retracements": {"0.618": 211.5, "0.786": 206.4},
-                "extensions": {"1.618": 248.54}},
-        # §4.2-C — last 3 confirmed pivot lows below entry (from levels.swing_lows)
-        "swing_lows": [{"price": 208.0, "date": "2026-06-09"},
-                       {"price": 203.0, "date": "2026-05-20"},
-                       {"price": 198.0, "date": "2026-05-02"}],
-    }
-    # MA20/MA50 within 1×ATR (5.24) → a ma_cluster confluence shelf below entry.
-    lk = {"ma": {"X": {20: 212.0, 50: 209.5}},
+    lk = {"ma": {"X": {20: 98.0, 50: 95.0, 100: 90.0, 200: 85.0}},
           "vol30": {}, "beta252": {}, "rvol": {}, "rs": {}, "sma": {},
           "corr": {}, "held": set(), "thematic": {}}
     f = _v21_record_fields("X", d, lk, {"X": "XLV"}, {"XLV": {"grade": "HOLD"}})
 
-    _types = {lvl["type"] for lvl in f["structural_levels"]}
-    assert "swing_low_1" in _types                       # last-3 pivot lows present
-    assert "ma_cluster" in _types                         # MA20/50 confluence shelf
-    _prices = [lvl["price"] for lvl in f["structural_levels"]]
-    assert len(_prices) == len(set(_prices))              # de-duped by price
+    b = f["bracket"]
+    assert b is not None and b["valid"] is True
+    assert b["stop"] == 98.0 and b["stop_type"] == "ma20"          # tightest valid
+    assert b["risk"] == 2.0 and b["stop_atr_dist"] == 1.0          # ATR-relative
+    assert b["rr"] == 6.0                                           # vs structural TP2
+    assert [t["price"] for t in b["targets"]][:2] == [108.0, 112.0]  # nearest-first
+    assert b["price_source"] == "eod_close"
 
-    # rr_est is fully gone from the export contract (all three layers).
-    assert "rr_est" not in f
-    assert "rr_est" not in _FIELD_GLOSSARY
-    assert "rr_est" not in _FIELD_SCHEMA
+    # The retired mechanical vocabulary must be gone from the record entirely.
+    for _dead in ("dsl_stop", "dsl_risk", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
+                  "dsl_rr_pct", "optimal_stop", "structural_targets",
+                  "structural_levels", "coil_entry", "max_chase_tp2",
+                  "rr_tp2_at_coil"):
+        assert _dead not in f, f"retired field {_dead} still on the record"
 
-    # coil_entry side n/a (varies vs entry); optimal_stop carries the structural
-    # risk (risk_usd) the AIC sizes against — never "RECOMMENDED/Prefer" wording.
-    assert _FIELD_SCHEMA["coil_entry"]["side"] == "n/a"
-    _opt_doc = _FIELD_GLOSSARY["optimal_stop"]
-    assert "risk_usd" in _opt_doc
-    assert "RECOMMENDED" not in _opt_doc and "Prefer" not in _opt_doc
 
-    # Contract integrity: every machine-schema key is described in the glossary
-    # (expanding the glossary's grouped "prefix_a/b/c" keys first).
+def test_charter_v2_reconciliation():
+    """Schema/glossary contract: bracket is the operative field, mechanical DSL/TP
+    is gone from both halves, enums are valid, and every schema key is documented."""
+    from src.data.drive_sync import (
+        _FIELD_GLOSSARY, _FIELD_SCHEMA, _FIELD_SCHEMA_ENUMS,
+    )
+
+    # bracket present in both halves; mechanical fields removed from both.
+    assert "bracket" in _FIELD_SCHEMA and "bracket" in _FIELD_GLOSSARY
+    for _dead in ("dsl_stop", "dsl_risk", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
+                  "optimal_stop", "structural_targets", "structural_levels",
+                  "coil_entry", "max_chase_tp2", "rr_tp2_at_coil", "rr_est"):
+        assert _dead not in _FIELD_SCHEMA, f"{_dead} still in schema"
+        assert _dead not in _FIELD_GLOSSARY, f"{_dead} still in glossary"
+
+    # Enums valid for every schema value.
+    for _v in _FIELD_SCHEMA.values():
+        assert _v["role"] in _FIELD_SCHEMA_ENUMS["role"]
+        assert _v["unit"] in _FIELD_SCHEMA_ENUMS["unit"]
+        assert _v["side"] in _FIELD_SCHEMA_ENUMS["side"]
+
+    # Contract integrity: every machine-schema key is described in the glossary.
     def _expand(key: str) -> set[str]:
         if "/" not in key:
             return {key}

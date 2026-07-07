@@ -33,6 +33,7 @@ from src.engines.srm import (
     enrich_sectors_intermarket, load_intermarket_cache,
     TICKER_TO_THEMATIC, TICKER_TO_THEMATICS, grade_thematic_baskets,
 )
+from src.engines.bracket_engine import compute_bracket, regime_stop_ceiling
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
 
@@ -57,56 +58,22 @@ _FIELD_GLOSSARY = {
     "_convention": (
         "LONG setups: STOPS are BELOW entry, TARGETS are ABOVE entry. Values are "
         "absolute USD prices unless the name ends in _rr/_ratio/_pct/_ann (ratios) "
-        "or is a list/object. 'rr' = reward-to-risk in R, where 1R = dsl_risk."
+        "or is a list/object. 'rr'/'r' = reward-to-risk in R, where 1R = bracket.risk "
+        "(= price − bracket.stop, the structural risk unit)."
     ),
     "entry": "Reference entry = prior close-of-day. The live fill is the IBKR price at "
              "bracket time, NOT this value.",
-    "dsl_stop": "Primary protective STOP (below entry): β-adjusted structural stop = "
-                "recent 5-session low − 0.5·ATR, clamped to [0.75, 2.0–2.5]×ATR.",
-    "dsl_risk": "1R in USD = entry − dsl_stop. The risk unit every R-multiple uses.",
-    "dsl_atr_ratio": "Stop width in ATRs = dsl_risk / atr_14d (ratio).",
-    "dsl_rr_pct": "Risk per share as a percent of entry = dsl_risk / entry × 100 (pct).",
-    "dsl_tp_1r/2r/3r": "MECHANICAL targets = entry + 1/2/3 × dsl_risk. These drive the "
-                       "DSL trail tiers + the win-rate backtest — they are NOT a move "
-                       "forecast. For profit-taking on real structure use structural_targets.",
     "atr_14d": "14-day Average True Range in USD (the volatility unit).",
-    "coil_entry": "An ENTRY level (not a stop/target) = dsl_stop + atr_14d (1×ATR above "
-                  "the stop) — the optimal resting-limit entry. A PULLBACK limit that sits "
-                  "≤ entry except when the stop is < 1×ATR (dsl_atr_ratio<1); its side vs "
-                  "entry therefore varies, so field_schema tags it side:n/a.",
-    "max_chase_tp2": "Max ENTRY price where R:R to dsl_tp_2r stays ≥ 2.0. Above it, a TP2 "
-                     "plan is no longer 2R — stand down or switch target.",
-    "max_chase_tp3": "Max ENTRY price where R:R to dsl_tp_3r stays ≥ 2.0.",
-    "rr_tp2_at_coil": "R:R to dsl_tp_2r if entered at coil_entry (ratio). Reference only — "
-                      "computed off the reference entry; recomputed at the live fill per §4.4.",
-    "rr_tp3_at_coil": "R:R to dsl_tp_3r if entered at coil_entry (ratio). Reference only — "
-                      "computed off the reference entry; recomputed at the live fill per §4.4.",
-    "optimal_stop": "The OPERATIVE stop = strongest+closest valid level (best of "
-                    "dsl_stop / fib / MA / swing below entry) passing ALL 3 charter §4.2 "
-                    "gates: atr_ratio≥1.0, rr_tp2≥2.0, AND risk_pct≤regime ceiling "
-                    "(GREEN 12% / YELLOW 8% / ORANGE 6% / RED 4%). "
-                    "{price,type,atr_ratio,rr_tp2,risk_pct,risk_usd,regime_valid}. "
-                    "**risk_usd = entry − price is the RISK to size against — NOT dsl_risk.** "
-                    "This is the fully validated stop — no further regime check needed.",
-    "structural_levels": "VALID candidate STOPS below entry from structure (dsl_stop/swing_low/"
-                         "swing_low_1/2/3/ma_cluster/fib_618/fib_786/ma20-200). ONLY levels "
-                         "passing all 3 gates (atr_ratio≥1.0, rr_tp2≥2.0, risk_pct≤regime "
-                         "ceiling) are included. Each {type,price,atr_ratio,rr_tp2,risk_pct,"
-                         "valid,regime_valid}. structural_levels_total = how many candidates "
-                         "were evaluated (valid + invalid).",
-    "structural_levels_total": "Total candidate stops evaluated before filtering to valid-only "
-                               "(integer). Compare to len(structural_levels) to see how many "
-                               "were eliminated by the 3-gate filter.",
-    "structural_targets": "THE take-profit levels. ABOVE entry, anchored to REAL structure: "
-                          "type 'resistance' = prior confirmed pivot-high overhead; "
-                          "'prior_high' = current swing peak; 'fib_1272/1618/2000/2618' = "
-                          "measured-move extensions. Each {type,price,rr,r_optimal,"
-                          "r_optimal_source}: **r_optimal** = R vs the structural risk "
-                          "(optimal_stop.risk_usd when available, else dsl_risk — "
-                          "r_optimal_source tells which: 'structural' or 'dsl_risk'). "
-                          "TAKE PROFIT against these PRICES nearest-first — NEVER off "
-                          "dsl_tp_Nr (those are mechanical entry + N×dsl_risk, not a target). "
-                          "Empty only when no structure anchors exist above price.",
+    "bracket": "THE bracket — the single source of truth for stop + targets (mechanical "
+               "DSL/TP is retired). A nested object: {price, price_source (eod_close on the "
+               "daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib "
+               "that the stop sits on), stop_atr_dist (risk in ATRs — read this, not raw "
+               "USD), risk (=price−stop, the R unit to size against), risk_pct, "
+               "targets[{type,price,r,atr_dist}] (structural resistance/MA/fib ABOVE price, "
+               "nearest-first — TAKE PROFIT against these), rr (R:R to the structural TP2), "
+               "valid, invalid_reason}. When valid=false the name has NO tradeable bracket "
+               "('no valid bracket') — show that, never a mechanical fallback. STOP is below "
+               "price, TARGETS above; R and ATR distances are relative, not absolute noise.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -212,23 +179,11 @@ def _fs(role: str, unit: str, side: str) -> dict:
 
 _FIELD_SCHEMA = {
     "entry":          _fs("reference", "usd", "at_entry"),
-    "dsl_stop":       _fs("stop", "usd", "below_entry"),
-    "dsl_risk":       _fs("risk_metric", "usd", "n/a"),
-    "dsl_atr_ratio":  _fs("ratio", "atr", "n/a"),
-    "dsl_rr_pct":     _fs("ratio", "pct", "n/a"),
-    "dsl_tp_1r":      _fs("target", "usd", "above_entry"),
-    "dsl_tp_2r":      _fs("target", "usd", "above_entry"),
-    "dsl_tp_3r":      _fs("target", "usd", "above_entry"),
     "atr_14d":        _fs("volatility", "usd", "n/a"),
-    "coil_entry":     _fs("entry", "usd", "n/a"),
-    "max_chase_tp2":  _fs("entry", "usd", "above_entry"),
-    "max_chase_tp3":  _fs("entry", "usd", "above_entry"),
-    "rr_tp2_at_coil": _fs("ratio", "r_multiple", "n/a"),
-    "rr_tp3_at_coil": _fs("ratio", "r_multiple", "n/a"),
-    "optimal_stop":   _fs("stop", "usd", "below_entry"),
-    "structural_levels":  _fs("stop", "usd", "below_entry"),
-    "structural_levels_total": _fs("ratio", "decimal", "n/a"),
-    "structural_targets": _fs("target", "usd", "above_entry"),
+    # THE BRACKET — the single object carrying stop + targets + R:R. Mechanical
+    # DSL/TP fields are RETIRED. `bracket` is a nested object (see field_glossary);
+    # its own stop/target items self-tag role/side.
+    "bracket":        _fs("stop", "usd", "below_entry"),
     "fib_swing_low":  _fs("reference", "usd", "n/a"),
     "fib_swing_high": _fs("reference", "usd", "n/a"),
     "fib_236":        _fs("fib_support", "usd", "n/a"),
@@ -566,145 +521,6 @@ def _is_num(*vals) -> bool:
                for v in vals)
 
 
-_REGIME_STOP_CEILINGS: dict[str, float] = {
-    "GREEN": 12.0, "YELLOW": 8.0, "ORANGE": 6.0, "RED": 4.0,
-}
-
-
-def regime_stop_ceiling(regime_level: str | None) -> float:
-    """Charter §4.2 regime-calibrated stop-% ceiling."""
-    return _REGIME_STOP_CEILINGS.get((regime_level or "GREEN").upper(), 12.0)
-
-
-def _structural_stop_analysis(
-    d: dict, ma: dict | None, regime_level: str | None = None,
-) -> tuple[list[dict], dict | None, int]:
-    """DSG-18 B3 — enumerate candidate structural stops and pick the optimal one.
-
-    Full 3-gate validation per Charter §4.2:
-      1. atr_ratio >= 1.0 (ATR floor)
-      2. rr_tp2 >= 2.0 (R:R gate)
-      3. risk_pct <= regime stop-% ceiling (GREEN 12%, YELLOW 8%, ORANGE 6%, RED 4%)
-
-    Returns (valid_levels_only, optimal, total_candidates_evaluated).
-    The export carries only valid candidates — invalid ones are noise for the AIC.
-    """
-    entry, atr14, tp2 = d.get("entry"), d.get("atr14"), d.get("tp_2r")
-    if not _is_num(entry, atr14, tp2) or atr14 <= 0:
-        return [], None, 0
-    fib = d.get("fib") or {}
-    rets = fib.get("retracements") or {}
-    ceiling = regime_stop_ceiling(regime_level)
-
-    all_levels: list[dict] = []
-    _seen: set[float] = set()                # de-dup by price; first label wins
-
-    def _add(typ: str, price, date: str | None = None) -> None:
-        if not _is_num(price):
-            return
-        risk = entry - price
-        if risk <= 0:            # a long's stop must sit below entry
-            return
-        p2 = round(float(price), 2)
-        if p2 in _seen:          # same shelf already added under an earlier label
-            return
-        _seen.add(p2)
-        atr_ratio = round(risk / atr14, 2)
-        rr_tp2 = round((tp2 - entry) / risk, 2)
-        risk_pct = round(risk / entry * 100, 2) if entry else 99.0
-        regime_ok = bool(risk_pct <= ceiling)
-        item = {"type": typ, "price": p2,
-                "atr_ratio": atr_ratio, "rr_tp2": rr_tp2, "risk_pct": risk_pct,
-                "valid": bool(atr_ratio >= 1.0 and rr_tp2 >= 2.0 and regime_ok),
-                "regime_valid": regime_ok,
-                "role": "stop", "side": "below_entry"}   # hard guard
-        if date:
-            item["date"] = date
-        all_levels.append(item)
-
-    _add("dsl_stop", d.get("stop"))
-    _add("swing_low", fib.get("swing_low"), fib.get("swing_low_date"))
-    # §4.2 Step C — last 3 confirmed pivot lows below entry (from levels.swing_lows)
-    for _i, _sl in enumerate(d.get("swing_lows") or [], 1):
-        if isinstance(_sl, dict):
-            _add(f"swing_low_{_i}", _sl.get("price"), _sl.get("date"))
-    _add("fib_618", rets.get("0.618"))
-    _add("fib_786", rets.get("0.786"))
-    # Compressed MA20/MA50 cluster (within 1×ATR) — a confluence support shelf.
-    _ma20, _ma50 = (ma or {}).get(20), (ma or {}).get(50)
-    if _is_num(_ma20, _ma50) and abs(_ma20 - _ma50) <= atr14:
-        _add("ma_cluster", min(_ma20, _ma50))
-    for _w in (20, 50, 100, 200):
-        _add(f"ma{_w}", (ma or {}).get(_w))
-
-    total_evaluated = len(all_levels)
-    valids = [x for x in all_levels if x["valid"]]
-    optimal = None
-    if valids:
-        best = max(valids, key=lambda x: x["price"])   # tightest = closest to entry
-        _orisk = round(entry - best["price"], 2)
-        optimal = {"price": best["price"], "type": best["type"],
-                   "atr_ratio": best["atr_ratio"], "rr_tp2": best["rr_tp2"],
-                   "risk_pct": best["risk_pct"],
-                   "risk_usd": _orisk,                  # STRUCTURAL risk to size against
-                   "regime_valid": True,
-                   "role": "stop", "side": "below_entry",   # hard guard
-                   "rationale": "Strongest+closest valid level passing all 3 gates "
-                                "(ATR>=1.0, R:R-TP2>=2.0, risk_pct<=regime ceiling). "
-                                "risk_usd = entry - price is the structural risk."}
-    return valids, optimal, total_evaluated
-
-
-def _structural_target_analysis(d: dict) -> list[dict]:
-    """Take-profit ladder anchored to REAL structure rather than mechanical
-    R-multiples. Two structure sources, merged nearest-first:
-      • `resistance`  — prior CONFIRMED pivot highs above price (multi-swing
-                        overhead resistance the move must clear), and the current
-                        swing high (`prior_high`);
-      • fib measured-move extensions of the current swing (`fib_1272/1618/2000/2618`).
-
-    Each target above entry gets {type, price, rr} where rr = (price − entry) /
-    dsl_risk — reward in R, which VARIES per name with the real structure (unlike
-    the fixed tp_1r/2r/3r). The mechanical tp_Nr stay as the risk/trail framework;
-    this is the structural objective AIC takes profit against. Near-equal levels
-    (within 0.5·ATR) collapse, keeping the resistance label over a fib label.
-    """
-    entry, risk, atr14 = d.get("entry"), d.get("risk"), d.get("atr14")
-    if not _is_num(entry, risk) or risk <= 0:
-        return []
-    fib = d.get("fib") or {}
-    exts = fib.get("extensions") or {}
-
-    raw: list[dict] = []
-
-    def _add(typ: str, price, date: str | None = None) -> None:
-        if not _is_num(price) or price <= entry:   # a long's target sits above entry
-            return
-        item = {"type": typ, "price": round(float(price), 2),
-                "rr": round((price - entry) / risk, 2),
-                "role": "target", "side": "above_entry"}   # hard guard
-        if date:
-            item["date"] = date
-        raw.append(item)
-
-    # Structure (resistance) first so it wins on de-dup ties, then measured moves.
-    for r in (d.get("resistance") or []):
-        _add("resistance", r.get("price"), r.get("date"))
-    _add("prior_high", fib.get("swing_high"))
-    _add("fib_1272", exts.get("1.272"))
-    _add("fib_1618", exts.get("1.618"))
-    _add("fib_2000", exts.get("2.0"))
-    _add("fib_2618", exts.get("2.618"))
-
-    raw.sort(key=lambda x: x["price"])
-    gap = atr14 * 0.5 if _is_num(atr14) and atr14 > 0 else 0.0
-    targets: list[dict] = []
-    for t in raw:
-        if targets and gap > 0 and (t["price"] - targets[-1]["price"]) < gap:
-            continue                               # collapse near-equal levels
-        targets.append(t)
-    return targets
-
 
 def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                        sector_grades: dict,
@@ -724,15 +540,11 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "fib_swing_low": None, "fib_swing_high": None,
         "fib_236": None, "fib_382": None, "fib_500": None,
         "fib_618": None, "fib_786": None,
-        # DSG-18 Group A — bracket-ready derived levels
-        "atr_14d": None, "coil_entry": None,
-        "max_chase_tp2": None, "max_chase_tp3": None,
-        "rr_tp2_at_coil": None, "rr_tp3_at_coil": None,
-        # DSG-18 Group B — vol / beta / structural stop selection
+        "atr_14d": None,
         "vol_30d_ann": None, "beta_252d": None,
-        "structural_levels": [], "structural_levels_total": 0,
-        "optimal_stop": None, "optimal_stop_exists": False,
-        "structural_targets": [],
+        # THE BRACKET — single source of truth (bracket_engine). Structural stop +
+        # targets, R:R vs structural TP2, ATR-relative. Mechanical DSL/TP retired.
+        "bracket": None,
         "held": False,
         # Readiness / Health scores
         "rd_score": None, "rd_state": None,
@@ -818,50 +630,24 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["fib_618"] = _rets.get("0.618")
         fields["fib_786"] = _rets.get("0.786")
 
-        # ── DSG-18 Group A — bracket-ready derived levels ──────────────────
-        _stop, _atr14 = d.get("stop"), d.get("atr14")
-        _tp2, _tp3 = d.get("tp_2r"), d.get("tp_3r")
-        if _is_num(_stop, _atr14) and _atr14 > 0:
+        # ── ATR + vol / beta ───────────────────────────────────────────────
+        _atr14 = d.get("atr14")
+        if _is_num(_atr14) and _atr14 > 0:
             fields["atr_14d"] = round(float(_atr14), 2)
-            _coil = round(_stop + _atr14, 2)
-            fields["coil_entry"] = _coil
-            if _is_num(_tp2):
-                fields["max_chase_tp2"] = round((_tp2 + 2 * _stop) / 3, 2)
-            if _is_num(_tp3):
-                fields["max_chase_tp3"] = round((_tp3 + 2 * _stop) / 3, 2)
-            if (_coil - _stop) > 0:
-                if _is_num(_tp2):
-                    fields["rr_tp2_at_coil"] = round((_tp2 - _coil) / (_coil - _stop), 2)
-                if _is_num(_tp3):
-                    fields["rr_tp3_at_coil"] = round((_tp3 - _coil) / (_coil - _stop), 2)
-
-        # ── DSG-18 Group B — vol / beta / structural stop selection ────────
         fields["vol_30d_ann"] = (lk.get("vol30") or {}).get(tk)
         fields["beta_252d"] = (lk.get("beta252") or {}).get(tk)
-        _slevels, _optimal, _sl_total = _structural_stop_analysis(
-            d, _ma, regime_level=regime_level)
-        fields["structural_levels"] = _slevels
-        fields["structural_levels_total"] = _sl_total
-        fields["optimal_stop"] = _optimal
-        fields["optimal_stop_exists"] = _optimal is not None
-        _stargets = _structural_target_analysis(d)
-        # r_optimal = R of each structural TP vs risk. Prefer structural risk
-        # (optimal_stop.risk_usd); fall back to dsl_risk with a source tag.
-        _entry = d.get("entry")
-        _orisk = None
-        _r_opt_source = None
-        if _optimal and _is_num(_optimal.get("risk_usd")) and _optimal["risk_usd"] > 0:
-            _orisk = _optimal["risk_usd"]
-            _r_opt_source = "structural"
-        elif _is_num(d.get("risk")) and d["risk"] > 0:
-            _orisk = d["risk"]
-            _r_opt_source = "dsl_risk"
-        if _orisk and _is_num(_entry):
-            for _t in _stargets:
-                if _is_num(_t.get("price")):
-                    _t["r_optimal"] = round((_t["price"] - _entry) / _orisk, 2)
-                    _t["r_optimal_source"] = _r_opt_source
-        fields["structural_targets"] = _stargets
+
+        # ── THE BRACKET — single source of truth (bracket_engine) ──────────
+        # Structural stop (tightest valid support) + structural targets
+        # (resistance/MA/fib, nearest-first), R:R measured vs the structural TP2,
+        # ATR-relative distances. Daily run → price = EOD close. Mechanical DSL/TP
+        # is RETIRED — this is the only bracket AQE exposes. Un-bracketable names
+        # carry valid=false + invalid_reason ("no valid bracket").
+        _bracket = compute_bracket(d, _ma, regime_level,
+                                   price=d.get("entry"), price_source="eod_close")
+        fields["bracket"] = {_k: _bracket[_k] for _k in (
+            "price", "price_source", "stop", "stop_type", "stop_atr_dist",
+            "risk", "risk_pct", "targets", "rr", "valid", "invalid_reason")}
 
         # ── Readiness / Health scores (from scores_daily or orchestrator) ──
         _rdhl = (lk.get("rdhl") or {}).get(tk, {})
@@ -970,9 +756,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             "cob_price": sg("close"),   # COB close (FMP) — held_book exposure basis
             "beta_30d": (betas.get(tk) or {}).get(30),
             "beta_60d": (betas.get(tk) or {}).get(60),
-            "dsl_stop": d.get("stop"), "dsl_risk": d.get("risk"),
-            "dsl_tp_1r": d.get("tp_1r"), "dsl_tp_2r": d.get("tp_2r"), "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_atr_ratio": d.get("dsl_atr_ratio"), "atr_14d": v21["atr_14d"],
+            "atr_14d": v21["atr_14d"],
             "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
             "sector_corr": v21["sector_corr"], "sector_corr_class": v21["sector_corr_class"],
             "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
@@ -981,17 +765,13 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             # support on held names uniformly with candidates.
             "ma_20": v21["ma_20"], "ma_50": v21["ma_50"],
             "ma_100": v21["ma_100"], "ma_200": v21["ma_200"],
-            # DSG-18 flat fib ladder + bracket-ready fields (same as candidates).
+            # DSG-18 flat fib ladder.
             "fib_swing_low": v21["fib_swing_low"], "fib_swing_high": v21["fib_swing_high"],
             "fib_236": v21["fib_236"], "fib_382": v21["fib_382"], "fib_500": v21["fib_500"],
             "fib_618": v21["fib_618"], "fib_786": v21["fib_786"],
-            "coil_entry": v21["coil_entry"],
-            "max_chase_tp2": v21["max_chase_tp2"], "max_chase_tp3": v21["max_chase_tp3"],
-            "rr_tp2_at_coil": v21["rr_tp2_at_coil"], "rr_tp3_at_coil": v21["rr_tp3_at_coil"],
             "vol_30d_ann": v21["vol_30d_ann"], "beta_252d": v21["beta_252d"],
-            "structural_levels": v21["structural_levels"],
-            "optimal_stop": v21["optimal_stop"], "optimal_stop_exists": v21["optimal_stop_exists"],
-            "structural_targets": v21["structural_targets"],
+            # THE BRACKET — structural stop/targets (single source of truth).
+            "bracket": v21["bracket"],
         })
     return out
 
@@ -1211,13 +991,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "elder": e["elder"],
             "mp_state": _mp_states.get(tk, c.get("mp_state", "")),
             "entry": c["levels"].get("entry"),
-            "dsl_stop": d.get("stop"),
-            "dsl_risk": d.get("risk"),
-            "dsl_tp_1r": d.get("tp_1r"),
-            "dsl_tp_2r": d.get("tp_2r"),
-            "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_rr_pct": d.get("rr_pct"),
-            "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "elder_5d": elder5.get(tk),
             "rank_explain": _rank_explain(
                 c.get("pipe_rank", 0), floor, sc_val,
@@ -1255,13 +1028,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "elder": eng["elder"],
             "mp_state": _mp_states.get(tk, pe.get("mp_state", "")),
             "entry": pe["levels"].get("entry"),
-            "dsl_stop": d.get("stop"),
-            "dsl_risk": d.get("risk"),
-            "dsl_tp_1r": d.get("tp_1r"),
-            "dsl_tp_2r": d.get("tp_2r"),
-            "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_rr_pct": d.get("rr_pct"),
-            "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "elder_5d": elder5.get(tk),
             "rank_explain": _rank_explain(
                 pe.get("pipe_rank", 0), floor, pe_sc,
@@ -1304,13 +1070,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "elder": e["elder"],
             "mp_state": _mp_states.get(rm["ticker"], rm.get("mp_state", "")),
             "entry": rm["levels"].get("entry"),
-            "dsl_stop": d.get("stop"),
-            "dsl_risk": d.get("risk"),
-            "dsl_tp_1r": d.get("tp_1r"),
-            "dsl_tp_2r": d.get("tp_2r"),
-            "dsl_tp_3r": d.get("tp_3r"),
-            "dsl_rr_pct": d.get("rr_pct"),
-            "dsl_atr_ratio": d.get("dsl_atr_ratio"),
             "elder_5d": elder5.get(rm["ticker"]),
             "rank_explain": _rank_explain(
                 rm.get("pipe_rank", 0), floor, sc_val,
@@ -1380,13 +1139,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "elder": round(float(wr.get("elder_score", 0)), 1),
                 "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                 "entry": d.get("entry"),
-                "dsl_stop": d.get("stop"),
-                "dsl_risk": d.get("risk"),
-                "dsl_tp_1r": d.get("tp_1r"),
-                "dsl_tp_2r": d.get("tp_2r"),
-                "dsl_tp_3r": d.get("tp_3r"),
-                "dsl_rr_pct": d.get("rr_pct"),
-                "dsl_atr_ratio": d.get("dsl_atr_ratio"),
                 "elder_5d": elder5.get(tk),
                 "rank_explain": _rank_explain(
                     wpr, wfl, wsc, tk in pe_tickers, tk, sm, sector_grades),
@@ -1520,7 +1272,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     for d, o, h, low, c, v in zip(
                         _g["date"].tail(20), _g["open"].tail(20), _g["high"].tail(20),
                         _g["low"].tail(20), _g["close"].tail(20), _g["volume"].tail(20))])
-                _st = _r.get("structural_targets") or []
+                _st = ((_r.get("bracket") or {}).get("targets")) or []
                 _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
                 _r["elder_context"] = compute_elder_context(
                     _e5, _hourly.get(_tk) or [], _daily, resistance_price=_res)
@@ -1566,7 +1318,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     for _r in _radar_pool_recs:
         _tk = _r.get("ticker")
         if (not _tk or _tk in _radar_covered or _tk in _radar_seen
-                or not _r.get("dsl_stop")):
+                or not (_r.get("bracket") or {}).get("stop")):
             continue
         _radar_seen.add(_tk)
         _radar_pool.append(_r)
@@ -1616,21 +1368,15 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
-        "mp", "elder", "entry",
-        "dsl_stop", "dsl_risk", "dsl_rr_pct",
-        "dsl_atr_ratio", "atr_14d",
-        "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
+        "mp", "elder", "entry", "atr_14d",
         "beta_30d", "beta_60d", "elder_5d", "mp_state", "pe", "pipe_rank",
         "floor", "rank_explain",
-        # DSG-18 flat fib ladder + bracket-ready fields
+        # DSG-18 flat fib ladder
         "fib_swing_low", "fib_swing_high",
         "fib_236", "fib_382", "fib_500", "fib_618", "fib_786",
-        "coil_entry", "max_chase_tp2", "max_chase_tp3",
-        "rr_tp2_at_coil", "rr_tp3_at_coil",
         "vol_30d_ann", "beta_252d",
-        "structural_levels", "structural_levels_total",
-        "optimal_stop", "optimal_stop_exists",
-        "structural_targets",
+        # THE BRACKET — single source of truth (structural stop + targets)
+        "bracket",
         # Enrichment Spec v2.0
         "rs_down_day_20d", "rs_leadership", "setup_state",
         "breakout_conviction", "breakout_grade", "breakout_pattern",
