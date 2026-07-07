@@ -119,10 +119,43 @@ export, alerts, chart — and retire the mechanical `dsl_tp_*` from what AIC rea
 **2.1 + 3.1/3.3 (wire it in + clean feed)** → **3.2/3.4 (labels + sector/thematic direction)** →
 **1.2 + 2.4 (chart perf + merge, in parallel)**.
 
-## Open questions for the PM
-1. **Retire mechanical `dsl_tp_*` entirely** from what AIC reads, or keep them as a labelled
-   fallback alongside the structural bracket?
-2. Alert universe (1.1) — keep the current 5-tier set, or trim/expand?
-3. Chart pull (1.2) — go with **per-ticker on-demand** as the default, cache the monitored set?
-4. Should `optimal_stop` change from "tightest valid" to **"closest valid support"** — those can
-   differ (item 4 says *closest*).
+## 🔒 PM DECISION — retire mechanical DSL + TP across the WHOLE AQE
+
+**Ruling (2026-07-07):** the mechanical stop/target ladder is "nonsense and noise." Retire it
+**everywhere it is AIC-facing or drives a live decision.** The **structural bracket becomes THE
+bracket**: operative stop = `optimal_stop` (closest structural support), targets =
+`structural_targets` (structural resistance / MA / fib). R (risk unit) = `entry − optimal_stop`.
+
+**Fields to retire from the export / alerts / chart:** `dsl_stop`, `dsl_risk`, `dsl_tp_1r/2r/3r`,
+`dsl_rr_pct`, `dsl_atr_ratio` (as the operative levels), plus the derived mechanical helpers
+`coil_entry`, `max_chase_tp2/tp3`, `rr_tp2_at_coil`/`rr_tp3_at_coil`. Rename the survivors to plain
+structural terms (stop / risk / targets) — no "DSL" vocabulary in the AIC feed.
+
+### ⚠️ Dependencies that must RE-BASE onto the structural bracket (don't just delete)
+These currently read `dsl_stop`/`dsl_risk`/`dsl_tp_*` — each needs re-pointing at `optimal_stop` /
+`structural_targets` *before* the mechanical fields are removed, or they break silently:
+- **Alert triggers** — `BUY_ZONE` = `dsl_stop + 1.5·dsl_risk`; the email R:R line. → derive from
+  `optimal_stop` + `structural_targets`.
+- **Signal ledger / paper-track outcomes** — TP/SL-hit detection uses `dsl_stop`/`dsl_tp_1r/2r`. →
+  score against structural stop/targets.
+- **`structural_targets[].r_optimal`** — already falls back to `dsl_risk` when
+  `optimal_stop.risk_usd` is absent. → make structural risk the sole basis.
+- **Backtest DSL simulator** (`src/scanner/dsl.py` R-tier trailing + flow-TP) — this is a *testing*
+  tool, not AIC-facing. **Open sub-question:** retire it too, or keep it as the backtest ruler while
+  the live feed goes fully structural?
+
+### ⚠️ Fallback when `optimal_stop` doesn't exist
+`optimal_stop_exists` is **False** whenever no structural candidate passes the 3 gates (the
+"un-bracketable" names). With mechanical DSL retired, those names have **no stop at all**. Policy
+needed → this is exactly the **bracketing-engine refinement** (item 2.2 / the separate workstream).
+Until that lands, decide: **suppress the name from the feed**, or **show it flagged "no valid
+bracket."** (No silent mechanical fallback — that's what we're removing.)
+
+## Remaining open questions for the PM
+1. ~~Retire mechanical TP?~~ **RESOLVED — retire mechanical DSL *and* TP, whole-AQE.**
+2. **`optimal_stop` = "closest valid support"** (item 4) vs the current "tightest valid"? They can
+   differ. → PM to confirm "closest."
+3. Alert universe (1.1) — keep the current 5-tier set, or trim/expand?
+4. Chart pull (1.2) — **per-ticker on-demand** default + cache the monitored set?
+5. Backtest DSL simulator — retire, or keep as the backtest-only ruler? (see above)
+6. Un-bracketable names — **suppress** or **flag** until the bracketing engine lands? (see above)
