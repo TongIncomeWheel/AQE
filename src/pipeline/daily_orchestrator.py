@@ -324,8 +324,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     try:
         from src.data.signal_ledger import record_signal_tags, reconcile_signal_tags
         _exp = locals().get("_export") or {}
-        _sig_date = _exp.get("date")
-        n_tags = record_signal_tags(scan_date=_sig_date)
+        n_tags = record_signal_tags(_exp)          # reads the export block — no recompute
         n_recon = reconcile_signal_tags()
         print(f"  Signal Radar track: {n_tags} tags logged, {n_recon} matured/scored")
     except Exception as exc:

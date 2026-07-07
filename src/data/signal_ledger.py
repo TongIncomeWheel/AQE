@@ -596,33 +596,29 @@ def ledger_stats() -> dict:
 # every logged name old enough against what price actually did (next open,
 # price-path only) vs the PRE-REGISTERED bands. Detection rate != win rate.
 # ═══════════════════════════════════════════════════════════════════════════
-def record_signal_tags(scan_date: str | None = None) -> int:
+def record_signal_tags(export: dict | None = None) -> int:
     """Log today's runner_setup / premove_setup names to the append-only tracker.
 
-    Computes tags across the FULL scored universe (not just the longlist) so the
-    tracker measures each tag's true edge, exactly as pre-registered. Dedupes on
-    (tag_date, ticker, tag). Returns the number of tags logged. Never raises past
-    the caller's guard — a missing engine/params degrades to 0 tags.
+    Reads the already-computed `signal_radar` block off the export (both lists cover
+    the FULL scored universe) — NO recomputation, so this adds ~no time to the
+    nightly run. Dedupes on (tag_date, ticker, tag). Returns the number of tags
+    logged. Never raises past the caller's guard; a missing block degrades to 0 tags.
     """
     init_ledger()
-    from src.engines.signal_radar import signal_lookup
-
-    lk = signal_lookup(asof=scan_date)
-    # derive the scan date from scores if not given
+    block = (export or {}).get("signal_radar") or {}
+    scan_date = (block.get("scan_date") or (export or {}).get("date") or "")[:10]
     if not scan_date:
-        from src.data.paths import SCORES_DAILY
-        _sd = pd.read_parquet(SCORES_DAILY, columns=["date"])
-        scan_date = str(pd.to_datetime(_sd["date"]).max().date())
-    scan_date = scan_date[:10]
+        return 0
 
     rows: list[tuple] = []
-    for tk, v in lk.items():
-        if v.get("runner_setup"):
-            rows.append((scan_date, tk, "runner_setup",
-                         int(v.get("runner_conviction") or 0), v.get("mover_subtype")))
-        if v.get("premove_setup"):
-            rows.append((scan_date, tk, "premove_setup",
-                         int(v.get("premove_conviction") or 0), None))
+    for e in block.get("runner_setup", []):
+        if e.get("ticker"):
+            rows.append((scan_date, e["ticker"], "runner_setup",
+                         int(e.get("conviction") or 0), e.get("subtype")))
+    for e in block.get("premove_setup", []):
+        if e.get("ticker"):
+            rows.append((scan_date, e["ticker"], "premove_setup",
+                         int(e.get("conviction") or 0), None))
 
     if not rows:
         return 0
@@ -656,6 +652,14 @@ def reconcile_signal_tags(panel_path: Path | None = None) -> int:
 
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "open", "high"])
     panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
+    # PERF: tags mature within 20 trading days, so only recent history can reconcile
+    # a still-open tag. Keep a generous tail (covers any tag < ~6 months old) to cut
+    # the groupby cost — older tags are already matured/scored.
+    _oldest = min((pd.Timestamp(t[0]) for t in tags), default=None)
+    _cut = panel["date"].max() - pd.Timedelta(days=200)
+    if _oldest is not None:
+        _cut = min(_cut, _oldest - pd.Timedelta(days=5))
+    panel = panel[panel["date"] >= _cut]
     groups = {t: g.sort_values("date").reset_index(drop=True)
               for t, g in panel.groupby("ticker")}
 

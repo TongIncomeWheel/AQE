@@ -72,6 +72,12 @@ DYNAMIC_COLS = ["ret_3d", "ret_5d", "atr_slope_3d", "atr_slope_5d", "atr5_over_a
 # decile of the name's own 20-day range.
 QUIET_TRAIL_LO, QUIET_TRAIL_HI, QUIET_POS20_MAX = -8.0, 8.0, 0.90
 
+# PERF: how much recent panel history to keep before computing trajectory features.
+# The longest rolling window is 20 bars (+ ATR14); ~90 calendar days ≈ 63 trading
+# bars — comfortably enough for the scan date to be exact, ~6x cheaper than the
+# full multi-year panel.
+_PANEL_TAIL_DAYS = 90
+
 # The 5 tags this engine appends to the export (additive; never gate/size).
 SIGNAL_FIELDS = ["runner_setup", "runner_conviction", "mover_subtype",
                  "premove_setup", "premove_conviction"]
@@ -324,7 +330,15 @@ def compute_radar(scores_path=None, panel_path=None, asof=None) -> dict:
         raise RuntimeError(f"scores_daily missing signal columns: {missing}")
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "open", "high",
                                                  "low", "close", "volume"])
+    panel["date"] = pd.to_datetime(panel["date"])
     when = pd.to_datetime(asof) if asof else scores["date"].max()
+    # PERF: the trajectory features need at most a ~20-bar rolling lookback for the
+    # scan date to be valid — so slice the panel to a recent tail (≈90 calendar days
+    # ≈ 63 trading bars) BEFORE computing features. This cuts the groupby-rolling
+    # cost ~6x vs running it over the full multi-year panel, which was the dominant
+    # cost in the nightly run. Latest-date values are identical to the full compute.
+    _cutoff = when - pd.Timedelta(days=_PANEL_TAIL_DAYS)
+    panel = panel[panel["date"] >= _cutoff].copy()
     tags = compute_signals(scores[["date", "ticker"] + have], panel, dates=[when])
 
     lookup: dict[str, dict] = {}
