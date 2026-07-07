@@ -96,16 +96,16 @@ def evaluate(ticker: str, source: str, is_held: bool,
     day_hi = _n(quote.get("day_high"))
     day_lo = _n(quote.get("day_low"))
     entry = _n(rec.get("entry"))
-    stop = _n(rec.get("held_sl")) if is_held else _n(rec.get("dsl_stop"))
-    # Buy-zone trigger = the +0.5R level, re-derived internally (no longer an
-    # export field — it confused the AIC as an "entry/BE" price). Geometry:
-    # buy = dsl_stop + 1.5·dsl_risk.
-    _dsl_stop = _n(rec.get("dsl_stop"))
-    _dsl_risk = _n(rec.get("dsl_risk"))
-    be = _dsl_stop + 1.5 * _dsl_risk if (_dsl_stop is not None and _dsl_risk is not None) else None
-    tp1 = _n(rec.get("held_tp1")) if is_held else _n(rec.get("dsl_tp_1r"))
-    tp2 = _n(rec.get("held_tp2")) if is_held else _n(rec.get("dsl_tp_2r"))
-    tp3 = _n(rec.get("dsl_tp_3r"))
+    # The structural bracket is the single source of levels (mechanical DSL retired).
+    _bracket = rec.get("bracket") or {}
+    _b_stop = _n(_bracket.get("stop"))
+    _b_risk = _n(_bracket.get("risk"))
+    _b_price = _n(_bracket.get("price")) or entry
+    # Stop: held names use their live position SL; others use the structural stop.
+    stop = _n(rec.get("held_sl")) if is_held else _b_stop
+    # Buy-zone trigger = +0.5R above the bracket price (structural risk unit).
+    be = (_b_price + 0.5 * _b_risk
+          if (_b_price is not None and _b_risk is not None) else None)
 
     trig: list[dict] = []
 

@@ -86,15 +86,25 @@ def _sc(rec: dict):
 
 
 def _rr_struct(rec: dict):
-    """Per-name R:R from structural fields (rr_est was removed from the export):
-    optimal_stop's R:R to TP2, else the nearest structural target's R:R."""
-    opt = rec.get("optimal_stop")
-    if isinstance(opt, dict) and opt.get("rr_tp2") is not None:
-        return opt.get("rr_tp2")
-    tgts = rec.get("structural_targets") or []
+    """Per-name R:R from the structural bracket (bracket.rr, else nearest target's r)."""
+    b = rec.get("bracket") or {}
+    if b.get("rr") is not None:
+        return b.get("rr")
+    tgts = b.get("targets") or []
     if tgts and isinstance(tgts[0], dict):
-        return tgts[0].get("rr")
+        return tgts[0].get("r")
     return None
+
+
+def _bracket_str(rec: dict) -> str:
+    """Compact structural bracket for the AIC line: stop (type) + TP ladder + R:R,
+    or 'no valid bracket'."""
+    b = rec.get("bracket") or {}
+    if not b or not b.get("valid"):
+        return "no valid bracket"
+    _tps = "/".join(_fmt(t.get("price")) for t in (b.get("targets") or [])[:3]) or "—"
+    return (f"stop {_fmt(b.get('stop'))} ({b.get('stop_type') or '—'}) "
+            f"TP {_tps} (R:R {_fmt(b.get('rr'), 2)})")
 
 
 def _aic_line(tk: str, rec: dict, t: dict) -> str:
@@ -105,9 +115,7 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
             f"PTRS {_fmt(g('ptrs'), 1)} · MP {g('mp_state') or '—'} · "
             f"Flow {_fmt(g('flow'), 0)} En {_fmt(g('energy'), 0)} "
             f"St {_fmt(g('structure'), 0)} MP {_fmt(g('mp'), 0)} Eld {_fmt(g('elder'), 1)} · "
-            f"DSL stop {_fmt(g('dsl_stop'))} "
-            f"TP {_fmt(g('dsl_tp_1r'))}/{_fmt(g('dsl_tp_2r'))}/{_fmt(g('dsl_tp_3r'))} "
-            f"(R:R {_fmt(_rr_struct(rec), 2)}) · β30d {_fmt(g('beta_30d'), 2)}/"
+            f"{_bracket_str(rec)} · β30d {_fmt(g('beta_30d'), 2)}/"
             f"β60d {_fmt(g('beta_60d'), 2)} · "
             f"sector {g('gics_sector') or '—'} {g('gics_gate') or '—'}.")
     # Radar early-move context: flag that this is a WATCHED coil running ahead of
@@ -279,13 +287,18 @@ def send_test() -> dict:
               "longlist": [{"ticker": "TEST1", "sc_momentum": 78, "sc_momentum_raw": 78,
                             "ptrs": 64, "mp_state": "STRONG", "flow": 82, "energy": 70,
                             "structure": 62, "mp": 60, "elder": 8, "beta_30d": 1.4,
-                            "dsl_stop": 95, "dsl_risk": 4.33, "dsl_tp_1r": 103,
-                            "dsl_tp_2r": 106, "dsl_tp_3r": 109,
-                            "optimal_stop": {"price": 96.5, "type": "swing_low_1",
-                                             "atr_ratio": 1.1, "rr_tp2": 2.1},
+                            "bracket": {"price": 100.0, "price_source": "eod_close",
+                                        "stop": 96.5, "stop_type": "swing_low_1",
+                                        "stop_atr_dist": 1.1, "risk": 3.5, "risk_pct": 3.5,
+                                        "targets": [{"type": "resistance", "price": 108.0,
+                                                     "r": 3.3, "atr_dist": 2.3}],
+                                        "rr": 3.3, "valid": True, "invalid_reason": None},
                             "gics_sector": "XLK", "gics_gate": "PASS"}],
               "held_positions": [{"ticker": "ODFL", "sc_momentum": 62, "ptrs": 58,
                                   "mp_state": "BUILDING", "entry": 239.45, "qty": 65,
                                   "held_sl": 230, "unreal_usd": 317, "beta_30d": 1.17,
-                                  "dsl_stop": 228, "dsl_risk": 8.0}]}
+                                  "bracket": {"price": 239.45, "stop": 228.0,
+                                              "stop_type": "swing_low_1", "risk": 11.45,
+                                              "targets": [], "rr": None, "valid": True,
+                                              "invalid_reason": None}}]}
     return send_digest(sample, export)

@@ -155,6 +155,17 @@ def _n(v):
         return None
 
 
+def _bk(rec: dict) -> dict:
+    """The structural bracket off an export record (empty dict if absent)."""
+    return rec.get("bracket") or {}
+
+
+def _bk_tp(rec: dict, i: int):
+    """i-th structural target price (None if out of range)."""
+    tgts = _bk(rec).get("targets") or []
+    return tgts[i].get("price") if i < len(tgts) and isinstance(tgts[i], dict) else None
+
+
 def record_signals(export: dict) -> int:
     """Append today's longlist + elder_list to the ledger. Returns row count."""
     init_ledger()
@@ -197,11 +208,14 @@ def record_signals(export: dict) -> int:
                 str(rec.get("hl_state") or ""),
                 str(rec.get("gics_sector") or ""),
                 str(rec.get("gics_gate") or ""),
+                # Structural bracket (mechanical DSL retired). The dsl_* column
+                # NAMES are legacy internal storage; the VALUES are now the
+                # structural stop + nearest two targets.
                 _n(rec.get("entry")),
-                _n(rec.get("dsl_stop")),
-                _n(rec.get("dsl_risk")),
-                _n(rec.get("dsl_tp_1r")),
-                _n(rec.get("dsl_tp_2r")),
+                _n(_bk(rec).get("stop")),
+                _n(_bk(rec).get("risk")),
+                _n(_bk_tp(rec, 0)),
+                _n(_bk_tp(rec, 1)),
             ))
 
     if not rows:
