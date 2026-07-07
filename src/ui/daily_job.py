@@ -157,33 +157,64 @@ def _run_pipeline_and_record(now: datetime) -> dict:
 
     started = now.strftime("%Y-%m-%d %H:%M:%S SGT")
     marker = {"date_sgt": now.date().isoformat(), "started_at": started}
-    try:
-        proc = subprocess.run(
-            [sys.executable, "-u", "-m", "src.pipeline.daily_orchestrator"],
-            cwd=str(PROJECT_ROOT), capture_output=True, text=True, timeout=2400,
-        )
-        rc = proc.returncode
-        picks = None
-        exported_at = None
+
+    # Timeout budget for the whole pipeline subprocess. The FMP pull + scoring +
+    # SRM + export + snapshot + signal ledger + MA scan (≈2000 tickers) can run
+    # long; 2400s was too tight and killed the process mid-tail (after the export
+    # was already written). 3300s (55 min) gives headroom while still bounding a
+    # genuine runaway.
+    _PIPELINE_TIMEOUT = 3300
+
+    def _feed_status():
+        """Was today's export actually written? Returns (exported_at, is_today)."""
         try:
             if EXPORT_JSON.exists():
                 exp = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
-                picks = (exp.get("summary") or {}).get("top_picks_count")
-                exported_at = exp.get("exported_at")
+                return exp.get("exported_at"), (exp.get("date") == now.date().isoformat())
         except Exception:  # noqa: BLE001
             pass
+        return None, False
+
+    try:
+        proc = subprocess.run(
+            [sys.executable, "-u", "-m", "src.pipeline.daily_orchestrator"],
+            cwd=str(PROJECT_ROOT), capture_output=True, text=True,
+            timeout=_PIPELINE_TIMEOUT,
+        )
+        rc = proc.returncode
+        exported_at, _ = _feed_status()
         marker.update({
             "status": "success" if rc == 0 else "failed",
             "rc": rc,
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
-            "top_picks": picks,
             "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if rc != 0 else "",
         })
-    except Exception as exc:  # noqa: BLE001
+    except subprocess.TimeoutExpired as exc:
+        # The orchestrator writes + uploads the export at Step 8, BEFORE the heavy
+        # tail steps (snapshot / ledger / MA scan). If those ran past the budget,
+        # the feed is still current — mark "partial" (feed OK) not "failed", and
+        # capture the last log lines so the slow tail step is diagnosable.
+        partial = exc.stdout or ""
+        if isinstance(partial, bytes):
+            partial = partial.decode("utf-8", "replace")
+        exported_at, feed_today = _feed_status()
         marker.update({
-            "status": "failed",
+            "status": "partial" if feed_today else "failed",
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
+            "exported_at": exported_at,
+            "reason": (f"TimeoutExpired after {_PIPELINE_TIMEOUT}s"
+                       + (" — feed EXPORTED OK; a tail step (snapshot/ledger/MA "
+                          "scan) ran long. Trading feed is current."
+                          if feed_today else " — timed out before the export.")),
+            "last_steps": "\n".join(partial.splitlines()[-20:]),
+        })
+    except Exception as exc:  # noqa: BLE001
+        exported_at, feed_today = _feed_status()
+        marker.update({
+            "status": "partial" if feed_today else "failed",
+            "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
+            "exported_at": exported_at,
             "reason": f"{type(exc).__name__}: {exc}",
         })
     _write_marker(marker)

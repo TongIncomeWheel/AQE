@@ -64,6 +64,13 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     print(f"[daily] AQE Daily Pipeline - {run_date}")
     print("=" * 60)
 
+    # Wall-clock stopwatch so the log shows how long each phase takes (the
+    # scheduler's timeout diagnostics read these — pinpoints a slow tail step).
+    _t0 = time.monotonic()
+
+    def _el() -> str:
+        return f"[+{time.monotonic() - _t0:5.0f}s]"
+
     # Step 0a: Restore universe from Drive if container has no local copy
     # (HF containers have ephemeral filesystems — this recovers the universe
     # from the last Drive backup so we don't need a full FMP screener pull)
@@ -279,6 +286,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     print(f"  Dashboard: {DASHBOARD_PATH}")
 
     # Step 8: Export to Google Drive
+    print(f"{_el()} [daily] Step 8: Drive export...")
     try:
         from src.data.drive_sync import export_to_drive
         drive_result = export_to_drive()
@@ -293,6 +301,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
 
     # Step 8b: Daily-persist snapshot — zip the runtime parquets/outputs to Drive
     # so a restart can restore the last run without a full re-pull.
+    print(f"{_el()} [daily] Step 8b: persist snapshot...")
     try:
         from src.data.persist import save_snapshot
         snap = save_snapshot()
@@ -307,6 +316,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # Step 8c: Signal ledger — archive today's longlist/elder_list + backfill
     # forward returns for older signals. Append-only; never raises.
     try:
+        print(f"{_el()} [daily] Step 8c: signal ledger...")
         from src.data.signal_ledger import record_signals, backfill_outcomes
         export_json = OUTPUT_DIR / "aqe_daily_export.json"
         if export_json.exists():
@@ -322,6 +332,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # the full scored universe + reconcile matured ones vs the pre-registered bands.
     # Additive DETECTION tracker; never gates/sizes; never raises past this guard.
     try:
+        print(f"{_el()} [daily] Step 8c-2: signal radar track...")
         from src.data.signal_ledger import record_signal_tags, reconcile_signal_tags
         _exp = locals().get("_export") or {}
         n_tags = record_signal_tags(_exp)          # reads the export block — no recompute
@@ -334,7 +345,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # Separate from AQE scoring; uses its own panel for all US stocks >$1B.
     # Never raises — quota issues or failures don't block the main pipeline.
     try:
-        print("[daily] Step 8d: MA Proximity Scanner...")
+        print(f"{_el()} [daily] Step 8d: MA Proximity Scanner...")
         from src.scanner.ma_scanner import run_ma_scan
         ma_result = run_ma_scan(client=FMPClient())
         if ma_result.get("ok"):
@@ -345,7 +356,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         print(f"  [WARN] MA scan: {exc}")
 
     print("=" * 60)
-    print(f"[daily] Done. {len(shortlist)} candidates on today's shortlist.")
+    print(f"{_el()} [daily] Done. {len(shortlist)} candidates on today's shortlist.")
 
     return output
 
