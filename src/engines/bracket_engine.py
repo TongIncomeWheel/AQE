@@ -166,12 +166,20 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
         "risk": None, "risk_pct": None,
         "targets": [], "rr": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
+        # Where a stop WOULD sit if there is no structural level = 1×ATR below
+        # price. This is the reference for un-bracketable names (valid=false) —
+        # NOT the operative stop when a structural bracket exists.
+        "atr_fallback_stop": None,
         "valid": False, "invalid_reason": None,
         "candidates": [], "regime_ceiling_pct": ceiling,
     }
     if not _num(price, atr14) or atr14 <= 0 or price <= 0:
         out["invalid_reason"] = "no valid bracket — missing price/ATR"
         return out
+
+    # ATR-fallback stop = 1×ATR below price. Present on every bracket; it's the
+    # reference stop to use ONLY when valid=false (no structural level exists).
+    out["atr_fallback_stop"] = round(price - atr14, 2)
 
     # 1) Structural targets above price (fixed from bars).
     targets = _candidate_targets(levels, price, atr14)

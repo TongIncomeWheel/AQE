@@ -115,8 +115,7 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
             f"PTRS {_fmt(g('ptrs'), 1)} · MP {g('mp_state') or '—'} · "
             f"Flow {_fmt(g('flow'), 0)} En {_fmt(g('energy'), 0)} "
             f"St {_fmt(g('structure'), 0)} MP {_fmt(g('mp'), 0)} Eld {_fmt(g('elder'), 1)} · "
-            f"{_bracket_str(rec)} · β30d {_fmt(g('beta_30d'), 2)}/"
-            f"β60d {_fmt(g('beta_60d'), 2)} · "
+            f"{_bracket_str(rec)} · β30d {_fmt(g('beta_30d'), 2)} · "
             f"sector {g('gics_sector') or '—'} {g('gics_gate') or '—'}.")
     # Radar early-move context: flag that this is a WATCHED coil running ahead of
     # its expected ~12-day lead — the detection tag + its conviction label.

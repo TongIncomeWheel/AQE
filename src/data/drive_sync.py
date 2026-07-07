@@ -69,8 +69,11 @@ _FIELD_GLOSSARY = {
                "daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib "
                "that the stop sits on), stop_atr_dist (risk in ATRs — read this, not raw "
                "USD), risk (=price−stop, the R unit to size against), risk_pct, "
-               "targets[{type,price,r,atr_dist}] (structural resistance/MA/fib ABOVE price, "
-               "nearest-first — TAKE PROFIT against these), rr (R:R to the structural TP2), "
+               "targets[{type,tp (TP1/2/3),price,r,atr_dist}] (structural resistance/MA/fib "
+               "ABOVE price, nearest-first — TAKE PROFIT against these), rr (R:R to the "
+               "structural TP2), rr_tp1/rr_tp2/rr_tp3 (R:R to each of the first three targets), "
+               "atr_fallback_stop (= 1×ATR below price — the reference stop to use ONLY when "
+               "valid=false, i.e. no structural level exists), "
                "valid, invalid_reason}. When valid=false the name has NO tradeable bracket "
                "('no valid bracket') — show that, never a mechanical fallback. STOP is below "
                "price, TARGETS above; R and ATR distances are relative, not absolute noise.",
@@ -103,16 +106,10 @@ _FIELD_GLOSSARY = {
                         "TELEGRAPHED_CONTINUATION / ABSORPTION_REVERSAL / "
                         "SURPRISE_THRUST / STANDARD_BREAKOUT.",
     "breakout_bar_date": "Date of the most recent expansion bar (YYYY-MM-DD).",
-    "atr_caution": "True if dsl_atr_ratio was floored to 1.5 in YELLOW/ORANGE/RED regime "
-                   "(the structural stop was too tight for the regime).",
-    "beta_data_error": "True if beta_60d exceeded ±5.0 (data error; capped value in "
-                       "beta_60d_capped).",
-    "malformed_bracket": "True if the DSL stop sits within 0.5% of entry (bracket is "
-                         "unusable — stop virtually at entry).",
-    "beta_60d_capped": "beta_60d capped at ±5.0 (use this; raw beta_60d may be a data "
-                       "error).",
-    "dsl_atr_ratio_floored": "dsl_atr_ratio floored at 1.5 in YELLOW+ regime (use this "
-                             "for sizing; raw dsl_atr_ratio may be sub-ATR).",
+    "atr_caution": "True if the structural stop was too tight for the regime "
+                   "(risk% near the regime ceiling).",
+    "malformed_bracket": "True if the structural stop sits within 0.5% of price "
+                         "(bracket unusable — stop virtually at entry).",
     # Readiness Score — entry timing
     "rd_score": "Readiness composite (0-100). Measures compression + trigger signals. "
                 "READY (80+) / WATCH (60-79) / NEUTRAL (40-59) / NOT_READY (<40).",
@@ -217,10 +214,7 @@ _FIELD_SCHEMA = {
     "breakout_pattern":     _fs("signal", "label", "n/a"),
     "breakout_bar_date":    _fs("reference", "date", "n/a"),
     "atr_caution":          _fs("flag", "boolean", "n/a"),
-    "beta_data_error":      _fs("flag", "boolean", "n/a"),
     "malformed_bracket":    _fs("flag", "boolean", "n/a"),
-    "beta_60d_capped":      _fs("risk_metric", "ratio", "n/a"),
-    "dsl_atr_ratio_floored": _fs("ratio", "atr", "n/a"),
     # Readiness / Health
     "rd_score":             _fs("signal", "score", "n/a"),
     "rd_state":             _fs("signal", "label", "n/a"),
@@ -547,7 +541,6 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
     """
     fields = {
         "gics_sector": None, "gics_sector_name": None, "gics_gate": "CHECK",
-        "sector_corr": None, "sector_corr_class": None, "sector_corr_flag": None,
         "thematic_basket": None, "thematic_grade": None,
         "thematic_parent_gics": None, "thematic_parent_grade": None,
         "thematic_baskets": [],
@@ -577,9 +570,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "setup_state": "BASING",
         "breakout_conviction": None, "breakout_grade": None,
         "breakout_pattern": None, "breakout_bar_date": None,
-        "atr_caution": False, "beta_data_error": False,
-        "malformed_bracket": False,
-        "beta_60d_capped": None, "dsl_atr_ratio_floored": None,
+        "atr_caution": False, "malformed_bracket": False,
         # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
         "runner_setup": False, "runner_conviction": 0,
         "runner_conviction_label": None, "mover_subtype": None,
@@ -612,10 +603,6 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["sector_rrg_quadrant"] = _srm_rrg.get("rrg_quadrant")
             fields["sector_rrg_direction"] = _srm_rrg.get("rrg_direction")
 
-        corr = (lk.get("corr") or {}).get(tk)
-        if corr:
-            fields["sector_corr"], fields["sector_corr_class"] = corr[0], corr[1]
-            fields["sector_corr_flag"] = corr[1]  # alias for Alfred §9C
 
         # Thematic basket (data only — gate unchanged). A ticker may belong to
         # MULTIPLE baskets (v2.0 dual-listing, e.g. IREN AI_Infra + Crypto): the
@@ -682,7 +669,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["bracket"] = {_k: _bracket[_k] for _k in (
             "price", "price_source", "stop", "stop_type", "stop_atr_dist",
             "risk", "risk_pct", "targets", "rr",
-            "rr_tp1", "rr_tp2", "rr_tp3", "valid", "invalid_reason")}
+            "rr_tp1", "rr_tp2", "rr_tp3", "atr_fallback_stop",
+            "valid", "invalid_reason")}
 
         # ── Readiness / Health scores (from scores_daily or orchestrator) ──
         _rdhl = (lk.get("rdhl") or {}).get(tk, {})
@@ -698,9 +686,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         for _ek in ("rs_down_day_20d", "rs_leadership",
                      "breakout_conviction", "breakout_grade",
                      "breakout_pattern", "breakout_bar_date",
-                     "atr_caution", "beta_data_error", "malformed_bracket",
-                     "beta_60d_capped", "dsl_atr_ratio_floored",
-                     "setup_state"):
+                     "atr_caution", "malformed_bracket", "setup_state"):
             if _ek in _enr and _enr[_ek] is not None:
                 fields[_ek] = _enr[_ek]
 
@@ -790,10 +776,8 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             "elder": round(sg("elder_score"), 1) if sg("elder_score") is not None else None,
             "cob_price": sg("close"),   # COB close (FMP) — held_book exposure basis
             "beta_30d": (betas.get(tk) or {}).get(30),
-            "beta_60d": (betas.get(tk) or {}).get(60),
             "atr_14d": v21["atr_14d"],
             "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
-            "sector_corr": v21["sector_corr"], "sector_corr_class": v21["sector_corr_class"],
             "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
             "rvol": v21["rvol"],
             # absolute MA ladder — so the live alert engine can evaluate MA
@@ -1022,7 +1006,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "fip_window_effective": c.get("fip_window_effective", 252),
             "floor": floor,
             "beta_30d": (betas.get(tk) or {}).get(30),
-            "beta_60d": (betas.get(tk) or {}).get(60),
             "flow": round(e["flow"], 1),
             "energy": round(e["energy"], 1),
             "structure": round(e["structure"], 1),
@@ -1059,7 +1042,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "fip_window_effective": pe.get("fip_window_effective", 252),
             "floor": floor,
             "beta_30d": (betas.get(tk) or {}).get(30),
-            "beta_60d": (betas.get(tk) or {}).get(60),
             "flow": round(eng["flow"], 1),
             "energy": round(eng["energy"], 1),
             "structure": round(eng["structure"], 1),
@@ -1101,7 +1083,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "fip_window_effective": rm.get("fip_window_effective", 252),
             "floor": floor,
             "beta_30d": (betas.get(rm["ticker"]) or {}).get(30),
-            "beta_60d": (betas.get(rm["ticker"]) or {}).get(60),
             "flow": round(e["flow"], 1),
             "energy": round(e["energy"], 1),
             "structure": round(e["structure"], 1),
@@ -1170,7 +1151,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "fip_window_effective": int(wr.get("fip_window_effective", 252)),
                 "floor": wfl,
                 "beta_30d": (betas.get(tk) or {}).get(30),
-                "beta_60d": (betas.get(tk) or {}).get(60),
                 "flow": round(float(wr.get("flow_100", 0)), 1),
                 "energy": round(float(wr.get("energy_100", 0)), 1),
                 "structure": round(float(wr.get("structure_100", 0)), 1),
@@ -1364,9 +1344,46 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["_radar_pool"] = _radar_pool
     for _k in ("top_picks", "edge_list", "watchlist"):
         export.pop(_k, None)
-    export["summary"] = {"longlist_count": len(_longlist),
-                         "elder_count": len(_elderlist),
-                         "held_count": len(export.get("held_positions") or [])}
+
+    # ---- THE DAILY LIST — collapse watchlist ∪ elder ∪ signal-ledger into ONE
+    # list (PM ruling). Each name appears ONCE, flagged so the AIC reads
+    # membership + correspondence in a single row (no cross-checking 3 lists).
+    # Elder is folded in because event-driven SUPER-RUNNERS hit Elder≥8 WITHOUT the
+    # normal scoring/structure sequence — they must appear here, flagged on_elder.
+    # `_radar_pool` supplies full records for ledger names not on the watchlist/elder.
+    _dl: dict = {}
+    for _r in _longlist:
+        _tk = _r.get("ticker")
+        if _tk:
+            _dl[_tk] = {**_r, "on_watchlist": True, "on_elder": False}
+    for _r in _elderlist:
+        _tk = _r.get("ticker")
+        if not _tk:
+            continue
+        if _tk in _dl:
+            _dl[_tk]["on_elder"] = True
+        else:
+            _dl[_tk] = {**_r, "on_watchlist": False, "on_elder": True}
+    for _r in _radar_pool:                      # ledger names not on watchlist/elder
+        _tk = _r.get("ticker")
+        if _tk and _tk not in _dl:
+            _dl[_tk] = {**_r, "on_watchlist": False, "on_elder": False}
+    for _r in _dl.values():
+        _r["in_ledger"] = bool(_r.get("runner_setup") or _r.get("premove_setup"))
+    _daily_list = sorted(_dl.values(), key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    for _i, _r in enumerate(_daily_list, 1):
+        _r["rank"] = _i
+    export["daily_list"] = _daily_list
+
+    export["summary"] = {
+        "daily_count": len(_daily_list),
+        "watchlist_count": sum(1 for r in _daily_list if r.get("on_watchlist")),
+        "elder_count": sum(1 for r in _daily_list if r.get("on_elder")),
+        "ledger_count": sum(1 for r in _daily_list if r.get("in_ledger")),
+        "held_count": len(export.get("held_positions") or []),
+        # legacy counts (longlist/elder_list kept one cycle for consumers)
+        "longlist_count": len(_longlist),
+    }
 
     # ---- Standalone Signal Radar block (M14-M18) — the one place AIC scans the
     # radar daily. Two ranked lists over the FULL scored universe, each name flagged
@@ -1393,7 +1410,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         pass
 
     # ---- Uniform schema per list (null-fill each to one key set) ----
-    for _lname in ("longlist", "elder_list"):
+    for _lname in ("daily_list", "longlist", "elder_list"):
         _rows = export.get(_lname) or []
         if not _rows:
             continue
@@ -1408,7 +1425,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
         "mp", "elder", "entry", "atr_14d",
-        "beta_30d", "beta_60d", "elder_5d", "mp_state", "pe", "pipe_rank",
+        "beta_30d", "elder_5d", "mp_state", "pe", "pipe_rank",
         "floor", "rank_explain",
         # DSG-18 flat fib ladder
         "fib_swing_low", "fib_swing_high",
@@ -1420,8 +1437,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         "rs_down_day_20d", "rs_leadership", "setup_state",
         "breakout_conviction", "breakout_grade", "breakout_pattern",
         "breakout_bar_date",
-        "atr_caution", "beta_data_error", "malformed_bracket",
-        "beta_60d_capped", "dsl_atr_ratio_floored",
+        "atr_caution", "malformed_bracket",
     ]
     for _rec in export["longlist"]:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
