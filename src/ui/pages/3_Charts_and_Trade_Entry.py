@@ -45,18 +45,31 @@ if not PANEL_DAILY.exists():
 
 
 def _rr_struct(rec: dict | None):
-    """Per-name R:R from the export's structural fields. `rr_est` was removed
-    (duplicate of structural_targets), so derive it: optimal_stop's R:R to TP2,
-    else the nearest structural target's R:R."""
+    """Per-name R:R from the structural bracket (bracket.rr, else nearest target's r)."""
     if not rec:
         return None
-    opt = rec.get("optimal_stop")
-    if isinstance(opt, dict) and opt.get("rr_tp2") is not None:
-        return opt.get("rr_tp2")
-    tgts = rec.get("structural_targets") or []
+    b = rec.get("bracket") or {}
+    if b.get("rr") is not None:
+        return b.get("rr")
+    tgts = b.get("targets") or []
     if tgts and isinstance(tgts[0], dict):
-        return tgts[0].get("rr")
+        return tgts[0].get("r")
     return None
+
+
+def _bstop(rec: dict | None):
+    return (rec.get("bracket") or {}).get("stop") if rec else None
+
+
+def _batr(rec: dict | None):
+    return (rec.get("bracket") or {}).get("stop_atr_dist") if rec else None
+
+
+def _btp(rec: dict | None, i: int):
+    """i-th structural target price from the bracket (None if absent)."""
+    tgts = (rec.get("bracket") or {}).get("targets") if rec else None
+    tgts = tgts or []
+    return tgts[i].get("price") if i < len(tgts) and isinstance(tgts[i], dict) else None
 
 
 @st.cache_data(ttl=900, show_spinner=False)
@@ -144,7 +157,13 @@ def _rec_from_adhoc(a: dict) -> dict:
     panel + DSL zones render identically for off-list tickers. PTRS/RVol/RS/sector
     need the full pipeline, so they stay null (shown as — and noted)."""
     lv = a.get("levels") or {}
-    stop = lv.get("stop")
+    try:
+        from src.engines.bracket_engine import compute_bracket
+        _ma = {w: lv.get(f"ma_{w}") for w in (20, 50, 100, 200)}
+        _bracket = compute_bracket(lv, _ma, a.get("regime"),
+                                   price=lv.get("entry"), price_source="eod_close")
+    except Exception:  # noqa: BLE001
+        _bracket = None
 
     return {
         "_tier": "ad-hoc (freshly scored)", "_adhoc": True, "_as_of": a.get("as_of"),
@@ -157,10 +176,8 @@ def _rec_from_adhoc(a: dict) -> dict:
         "pipe_rank": a.get("pipe_rank"),
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "gics_sector": None, "gics_sector_name": None, "gics_gate": None,
-        "dsl_stop": stop, "dsl_risk": lv.get("risk"),
-        "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
-        "dsl_tp_3r": lv.get("tp_3r"),
-        "dsl_atr_ratio": lv.get("dsl_atr_ratio"), "atr_14d": lv.get("atr14"),
+        "entry": lv.get("entry"), "atr_14d": lv.get("atr14"),
+        "bracket": _bracket,        # structural bracket (mechanical DSL/TP retired)
         "fib": lv.get("fib"),
     }
 
@@ -500,10 +517,10 @@ with left:
                                  marker_line=dict(color=_fcol, width=1)),
                           row=2, col=1)
 
-    _stop = rec.get("dsl_stop") if rec else None
+    _stop = _bstop(rec) if rec else None
     _be = rec.get("entry") if rec else None
-    _tps = ([(rec.get("dsl_tp_1r"), "TP1"), (rec.get("dsl_tp_2r"), "TP2"),
-             (rec.get("dsl_tp_3r"), "TP3")] if rec else [])
+    _tps = ([(_btp(rec, 0), "TP1"), (_btp(rec, 1), "TP2"),
+             (_btp(rec, 2), "TP3")] if rec else [])
     if _stop:
         fig.add_hline(y=_stop, line=dict(color="#EF5350", width=1.2, dash="dash"),
                       annotation_text=f"Stop {_stop:.2f}",
@@ -649,11 +666,11 @@ with left:
     if rec is not None:
         st.markdown("**DSL bracket**")
         d1, d2, d3, d4 = st.columns(4)
-        d1.metric("Stop", _f(r.get("dsl_stop")))
-        d2.metric("TP1", _f(r.get("dsl_tp_1r")))
-        d2.metric("TP2", _f(r.get("dsl_tp_2r")))
-        d3.metric("TP3", _f(r.get("dsl_tp_3r")))
-        d3.metric("ATR ratio", _f(r.get("dsl_atr_ratio")))
+        d1.metric("Stop", _f(_bstop(r)))
+        d2.metric("TP1", _f(_btp(r, 0)))
+        d2.metric("TP2", _f(_btp(r, 1)))
+        d3.metric("TP3", _f(_btp(r, 2)))
+        d3.metric("ATR ratio", _f(_batr(r)))
         d4.metric("R:R (structural)", _f(_rr_struct(r), ".2f"),
                   help="The per-ticker R:R from real structure — optimal_stop's R:R "
                        "to TP2 if it exists, else the nearest structural target. The "
@@ -695,10 +712,10 @@ with left:
             f"Sector {r.get('gics_sector') or '—'} ({r.get('gics_sector_name') or '—'}) | "
             f"Gate {r.get('gics_gate') or '—'}",
             f"",
-            f"DSL BRACKET  Stop {_f(r.get('dsl_stop'))} | "
-            f"TP1 {_f(r.get('dsl_tp_1r'))} | TP2 {_f(r.get('dsl_tp_2r'))} | "
-            f"TP3 {_f(r.get('dsl_tp_3r'))} | "
-            f"R:R (structural) {_f(_rr_struct(r), '.2f')} | ATR ratio {_f(r.get('dsl_atr_ratio'))}",
+            f"DSL BRACKET  Stop {_f(_bstop(r))} | "
+            f"TP1 {_f(_btp(r, 0))} | TP2 {_f(_btp(r, 1))} | "
+            f"TP3 {_f(_btp(r, 2))} | "
+            f"R:R (structural) {_f(_rr_struct(r), '.2f')} | ATR ratio {_f(_batr(r))}",
         ]
 
         # Volume context if we have it

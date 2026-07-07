@@ -1183,17 +1183,19 @@ if CLOUD_MODE:
     _export = load_export() or {}
 
     def _rr_from_record(r: dict):
-        """Per-name R:R for the display tables. `rr_est` was removed from the
-        export (duplicate of structural_targets); derive it from the structural
-        fields instead — optimal_stop's R:R to TP2, else the nearest structural
-        target's R:R."""
-        opt = r.get("optimal_stop")
-        if isinstance(opt, dict) and opt.get("rr_tp2") is not None:
-            return opt.get("rr_tp2")
-        tgts = r.get("structural_targets") or []
+        """Per-name R:R from the structural bracket (bracket.rr, else nearest
+        target's r)."""
+        b = r.get("bracket") or {}
+        if b.get("rr") is not None:
+            return b.get("rr")
+        tgts = b.get("targets") or []
         if tgts and isinstance(tgts[0], dict):
-            return tgts[0].get("rr")
+            return tgts[0].get("r")
         return None
+
+    def _tp_price(r: dict, i: int):
+        tgts = (r.get("bracket") or {}).get("targets") or []
+        return tgts[i].get("price") if i < len(tgts) and isinstance(tgts[i], dict) else None
 
     def _build_cloud_lookups(export: dict) -> tuple[dict, dict, dict]:
         betas: dict[str, dict] = {}
@@ -1207,17 +1209,19 @@ if CLOUD_MODE:
             if not tk or tk in dsl:
                 continue
             betas[tk] = {30: r.get("beta_30d"), 60: r.get("beta_60d")}
+            _b = r.get("bracket") or {}
             dsl[tk] = {
                 "entry": r.get("entry"),
-                "stop": r.get("dsl_stop"),
-                "risk": r.get("dsl_risk"),
-                "tp_1r": r.get("dsl_tp_1r"),
-                "tp_2r": r.get("dsl_tp_2r"),
-                "tp_3r": r.get("dsl_tp_3r"),
-                "shares": r.get("dsl_shares"),
-                "rr_pct": r.get("dsl_rr_pct"),
-                "dsl_atr_ratio": r.get("dsl_atr_ratio"),
+                "stop": _b.get("stop"),
+                "risk": _b.get("risk"),
+                "stop_type": _b.get("stop_type"),
+                "tp_1r": _tp_price(r, 0),
+                "tp_2r": _tp_price(r, 1),
+                "tp_3r": _tp_price(r, 2),
+                "rr_pct": _b.get("risk_pct"),
+                "stop_atr_dist": _b.get("stop_atr_dist"),
                 "rr_est": _rr_from_record(r),
+                "bracket": _b,
                 "fib":    _nested_fib_from_export(r),
             }
             elder5[tk] = r.get("elder_5d") or []
@@ -1296,10 +1300,9 @@ _EXPORT_COL_ORDER = [
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
-    "entry", "stop", "dsl_stop", "dsl_risk", "dsl_rr_pct",
-    "dsl_atr_ratio", "atr_14d", "dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r",
-    "coil_entry", "max_chase_tp2", "max_chase_tp3", "rr_tp2_at_coil", "rr_tp3_at_coil",
-    "optimal_stop", "optimal_stop_exists", "structural_targets", "held", "rank_explain",
+    "entry", "atr_14d",
+    # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)
+    "bracket", "held", "rank_explain",
     # Enrichment Spec v2.0
     "rs_down_day_20d", "rs_leadership", "setup_state",
     "breakout_conviction", "breakout_grade", "breakout_pattern", "breakout_bar_date",
@@ -1424,9 +1427,7 @@ if _held:
         "held_tp2", "trade_date", "ptj_sector", "gics_gate",
         "sc_momentum", "ptrs", "pipe_rank", "flow", "energy", "structure", "mp",
         "mp_state", "elder", "beta_30d", "beta_60d", "rvol", "rs_spy_20d",
-        "sma_distance_pct", "sector_corr", "dsl_stop", "dsl_tp_1r",
-        "dsl_tp_2r", "dsl_tp_3r", "dsl_atr_ratio", "atr_14d",
-        "coil_entry", "optimal_stop", "notes",
+        "sma_distance_pct", "sector_corr", "atr_14d", "bracket", "notes",
     ]
     _hdf = pd.DataFrame(_held)
     _hcols = [c for c in _HELD_COLS if c in _hdf.columns]
@@ -1680,9 +1681,9 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
         f"Structure {_fmt(r.get('structure'), '.0f')} · MP {_fmt(r.get('mp'), '.0f')} · "
         f"Elder {_fmt(r.get('elder'), '.1f')} (5d: {_elder5_str(r.get('elder_5d'))}) · "
         f"BQ {_fmt(r.get('bq'), '.0f')}",
-        f"DSL stop {_fmt(lv.get('stop'), '.2f')} · "
+        f"Stop {_fmt(lv.get('stop'), '.2f')} ({lv.get('stop_type') or '—'}) · "
         f"TP {_fmt(lv.get('tp_1r'), '.2f')}/{_fmt(lv.get('tp_2r'), '.2f')}/{_fmt(lv.get('tp_3r'), '.2f')} · "
-        f"R:R {_fmt(lv.get('rr_est'), '.1f')} · ATR ratio {_fmt(lv.get('dsl_atr_ratio'), '.2f')} · "
+        f"R:R {_fmt(lv.get('rr_est'), '.1f')} · stop {_fmt(lv.get('stop_atr_dist'), '.2f')}×ATR · "
         f"beta {_fmt(r.get('beta_60d'), '.2f')}",
         f"Sector: {sector_name} ({etf}) {grade} · RRG {rrg_q} · Macro {macro_f} · Gate {entry_gate}",
         f"Regime: VIX {_fmt(vix, '.1f')} ({regime_lvl}) · "
@@ -1734,11 +1735,8 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
         "mp_state": r.get("mp_state"),
         "elder": r.get("elder"), "elder_5d": r.get("elder_5d"),
         "beta_30d": r.get("beta_30d"), "beta_60d": r.get("beta_60d"),
-        "entry": lv.get("entry"), "stop": lv.get("stop"),
-        "dsl_stop": lv.get("stop"), "dsl_risk": lv.get("risk"),
-        "dsl_rr_pct": lv.get("rr_pct"), "dsl_atr_ratio": lv.get("dsl_atr_ratio"),
-        "dsl_tp_1r": lv.get("tp_1r"), "dsl_tp_2r": lv.get("tp_2r"),
-        "dsl_tp_3r": lv.get("tp_3r"),
+        "entry": lv.get("entry"),
+        # bracket comes from **v21 (_v21_record_fields); mechanical dsl_* retired.
         "rank_explain": _rank_explain(r.get("pipe_rank"), None, sc or 0,
                                       False, tk, sm, sector_grades),
         "elder_pattern": r.get("elder_pattern"),
