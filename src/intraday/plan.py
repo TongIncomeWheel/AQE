@@ -13,12 +13,11 @@ from .momentum import intraday_momentum
 from .bracket import build_bracket
 
 
-def intraday_plan(rec: dict, bars5, regime=None,
-                  risk_budget: float = C.RISK_BUDGET) -> dict:
-    """Full intraday plan for one ticker.
+def intraday_plan(rec: dict, bars5, regime=None) -> dict:
+    """Full intraday plan for one ticker (levels + verdict only — AIC sizes).
 
-    rec        : the AQE export record (carries entry, dsl_*, atr_14d,
-                 structural_levels, structural_targets, max_chase_tp2, …)
+    rec        : the AQE export record (carries entry, atr_14d, the structural
+                 `bracket`, …)
     bars5      : list of 5-min OHLCV bars (FMP `chart intraday-5-min` shape)
     regime     : the export's `regime` dict or level string (for the stop ceiling)
     """
@@ -26,7 +25,7 @@ def intraday_plan(rec: dict, bars5, regime=None,
     ticker = rec.get("ticker", "?")
     mom = intraday_momentum(bars5, rec)
     bars = normalize_bars(bars5)
-    brk = build_bracket(rec, bars, mom, regime=regime, risk_budget=risk_budget)
+    brk = build_bracket(rec, bars, mom, regime=regime)
 
     return {
         "ticker": ticker,
@@ -39,7 +38,6 @@ def intraday_plan(rec: dict, bars5, regime=None,
         "operative_stop": brk["operative_stop"],
         "tp_ladder": brk["tp_ladder"],
         "rr": brk["rr"],
-        "shares": brk["shares"],
         "planned_entry": brk.get("planned_entry"),
         "verdict": brk["verdict"],
         "ibkr_spec": _ibkr_spec(ticker, brk),
@@ -63,8 +61,7 @@ def _ibkr_spec(ticker: str, brk: dict) -> dict | None:
         "symbol": ticker, "action": "BUY", "order_type": order_type,
         "entry": zone.get("high"), "entry_low": zone.get("low"),
         "stop": op.get("price"), "take_profit": tp2,
-        "quantity": brk["shares"],
-        "note": "Recommend-only — review before transmitting to IBKR.",
+        "note": "Recommend-only levels — AIC sizes; review before transmitting.",
     }
 
 

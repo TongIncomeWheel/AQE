@@ -169,10 +169,9 @@ def test_plan_enter_shape_and_ibkr_spec():
                        "targets": [{"type": "r1", "price": 102.0},
                                    {"type": "r2", "price": 106.0}]}}
     closes = [100 + i * 0.1 for i in range(10)]   # gentle rise, stays under max_chase
-    p = intraday_plan(rec, mk_bars(DAY, closes), regime="GREEN", risk_budget=2100)
+    p = intraday_plan(rec, mk_bars(DAY, closes), regime="GREEN")
     assert p["action"] == "ENTER"
     assert p["operative_stop"]["price"] is not None
-    assert p["shares"] >= 1
     spec = p["ibkr_spec"]
     assert spec and spec["action"] == "BUY" and spec["symbol"] == "AAA"
     assert spec["stop"] == p["operative_stop"]["price"]
@@ -213,7 +212,6 @@ def test_pricer_typed_ticker_never_blank():
     assert p["in_universe"] is False                 # computed live
     assert p["operative_stop"]["price"] is not None  # never blank
     assert p["operative_stop"]["price"] < p["entry"]
-    assert p["shares"] >= 1
     assert p["tp"]["tp1"] < p["tp"]["tp2"] < p["tp"]["tp3"]
     assert p["operative_stop"]["atr_ratio"] >= 0.5   # not absurdly tight
     assert p["ibkr_spec"]["stop"] == p["operative_stop"]["price"]
@@ -228,7 +226,7 @@ def test_pricer_broken_momentum_still_brackets():
     b5 = mk_bars(DAY, [last - i * 0.5 for i in range(10)])   # falling → BROKEN
     p = price_ticker("ZZZZ", None, b5, [], df, regime={"level": "GREEN"})
     assert "action" not in p                          # no decision field
-    assert p["operative_stop"]["price"] is not None and p["shares"] >= 1
+    assert p["operative_stop"]["price"] is not None
     assert p["state"] in {"BROKEN", "FADING", "COILING", "ACCELERATING",
                           "PULLBACK_HOLDING", "EXTENDED", "UNKNOWN", "NO_INTRADAY"}
 

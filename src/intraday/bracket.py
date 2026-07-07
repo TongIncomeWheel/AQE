@@ -189,13 +189,14 @@ def entry_zone(rec: dict, momentum: dict) -> dict:
 
 
 def build_bracket(rec: dict, bars: list[dict], momentum: dict,
-                  regime=None, risk_budget: float = C.RISK_BUDGET) -> dict:
-    """Assemble entry zone + operative stop + TP ladder + size + verdict."""
+                  regime=None) -> dict:
+    """Assemble entry zone + operative stop + TP ladder + verdict. No sizing —
+    AIC sizes (PM ruling); AQE outputs levels only."""
     zone = entry_zone(rec, momentum)
     if zone["kind"] == "stand_down":
         return {"action": "STAND_DOWN", "entry_zone": zone,
                 "operative_stop": None, "tp_ladder": [], "rr": None,
-                "shares": 0, "verdict": zone["note"]}
+                "verdict": zone["note"]}
 
     # Reference entry = the worse (higher) edge of the zone → conservative R:R.
     planned_entry = zone["high"] or zone["low"]
@@ -208,7 +209,6 @@ def build_bracket(rec: dict, bars: list[dict], momentum: dict,
     tp_ladder = sorted(tp_ladder, key=lambda x: x["price"])[:3]
 
     risk = op.get("risk") if op else None
-    shares = int(math.floor(risk_budget / risk)) if risk else 0
     tp2 = tp_ladder[1]["price"] if len(tp_ladder) >= 2 else (
         tp_ladder[0]["price"] if tp_ladder else None)
     rr = round((tp2 - planned_entry) / risk, 2) if (tp2 and risk) else None
@@ -223,9 +223,9 @@ def build_bracket(rec: dict, bars: list[dict], momentum: dict,
         action = "CAUTION"
     else:
         verdict = (f"{state} (IMS {ims}): {zone['note']} Stop {op['price']} "
-                   f"({op['type']}, {op.get('stop_pct')}%), {shares} sh, R:R≈{rr}.")
+                   f"({op['type']}, {op.get('stop_pct')}%), R:R≈{rr}.")
         action = "ENTER"
 
     return {"action": action, "entry_zone": zone, "operative_stop": op,
-            "tp_ladder": tp_ladder, "rr": rr, "shares": shares,
+            "tp_ladder": tp_ladder, "rr": rr,
             "planned_entry": round(planned_entry, 2), "verdict": verdict}

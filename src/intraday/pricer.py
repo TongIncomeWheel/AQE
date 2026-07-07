@@ -216,7 +216,7 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
                    "rr": round((t["price"] - entry) / risk, 2)}
                   for t in ((rec.get("bracket") or {}).get("targets") or [])
                   if isinstance(t, dict) and _num(t.get("price")) and t["price"] > entry][:4]
-    shares = int(math.floor(risk_budget / risk)) if risk else 0
+    # No sizing — AIC sizes (PM ruling). AQE outputs levels only.
 
     mom = intraday_momentum(bars5, rec) if b5 else {"ims": None, "state": "NO_INTRADAY",
                                                     "components": {}}
@@ -255,7 +255,6 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
         "coil_entry": coil,
         "operative_stop": op,
         "risk": risk,
-        "shares": shares,
         "tp": {"tp1": tp1, "tp2": tp2, "tp3": tp3},
         "rr_tp2": 2.0,
         "structural_tps": struct_tps,
@@ -269,7 +268,6 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
         "ibkr_spec": {
             "symbol": ticker, "action": "BUY", "order_type": "LMT",
             "entry": entry, "stop": op["price"], "take_profit": tp2,
-            "quantity": shares,
-            "note": "Calculated levels — recommend-only; you/the AIC decide.",
+            "note": "Calculated levels — recommend-only; AIC sizes + decides.",
         },
     }

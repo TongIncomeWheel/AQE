@@ -64,8 +64,7 @@ st.caption(
 export = load_export() or {}
 regime = export.get("regime") or {}
 lvl = regime.get("level") if isinstance(regime, dict) else regime
-st.caption(f"Regime **{lvl or '—'}** · stop ceiling **{IC.regime_stop_ceiling(regime)}%** "
-           f"· risk **${IC.RISK_BUDGET:,.0f}** (3%)")
+st.caption(f"Regime **{lvl or '—'}** · stop ceiling **{IC.regime_stop_ceiling(regime)}%**")
 
 recs_all = build_rec_lookup(export, ["held", "longlist", "elder_list"]) if export else {}
 universe = sorted(recs_all)
@@ -84,7 +83,7 @@ with c2:
 
 cc1, cc2 = st.columns([1, 1])
 with cc1:
-    risk = st.number_input("Risk $/trade", value=float(IC.RISK_BUDGET), step=100.0)
+    st.caption("No sizing — AIC sizes; AQE shows levels only.")
 with cc2:
     interval = st.selectbox(
         "Calc bars (momentum read)",
@@ -106,7 +105,7 @@ if st.button("Calculate brackets", type="primary", disabled=not tickers):
             missing.append(tk)
         else:
             results.append(price_ticker(tk, recs_all.get(tk), b5, b1, ddf,
-                                        regime=regime, risk_budget=risk))
+                                        regime=regime))
         prog.progress(i / len(tickers), text=f"Priced {tk} ({i}/{len(tickers)})")
     prog.empty()
     st.session_state["pricer_results"] = [r for r in results if not r.get("error")]
@@ -149,7 +148,7 @@ def _aic_block(p: dict) -> str:
         f"ATR×={op.get('atr_ratio')}, R:R_TP2={op.get('rr_tp2')}, "
         f"stop%={op.get('stop_pct')}, within_ceiling={op.get('within_ceiling')})\n"
         f"TP1={p['tp']['tp1']} (+1R) | TP2={p['tp']['tp2']} (+2R) | "
-        f"TP3={p['tp']['tp3']} (+3R) | shares={p['shares']}\n"
+        f"TP3={p['tp']['tp3']} (+3R)\n"
         f"structural_TPs: {stp}\n"
         f"candidate_stops: {cand}\n"
         f"momentum(reference): IMS={p.get('ims')} state={p.get('state')} | "
@@ -161,7 +160,7 @@ def _aic_block(p: dict) -> str:
         f"as_of={mom.get('as_of')}\n"
         f"notes: {notes}"
         f"{ec_line}\n"
-        f"IBKR(recommend-only): BUY {p['shares']} LMT {p['entry']} | "
+        f"IBKR(recommend-only): BUY LMT {p['entry']} | "
         f"stop {op['price']} | TP {p['tp']['tp2']}"
     )
 
@@ -180,7 +179,7 @@ if results:
             "Entry": p["entry"], "Stop": op["price"], "Basis": op["basis"],
             "Stop %": op.get("stop_pct"), "Risk": p["risk"], "Coil": p["coil_entry"],
             "TP1": p["tp"]["tp1"], "TP2": p["tp"]["tp2"], "TP3": p["tp"]["tp3"],
-            "Shares": p["shares"], "IMS": p.get("ims"), "State": p.get("state"),
+            "IMS": p.get("ims"), "State": p.get("state"),
             "Pattern": p.get("elder_pattern"),
             "VWAP": (ec.get("vwap_5d") or {}).get("position"),
             "VolTrend": (ec.get("volume") or {}).get("vol_trend_5d"),
@@ -195,7 +194,7 @@ if results:
     for p in results:
         op = p["operative_stop"]
         with st.expander(f"{p['ticker']} — stop {op['price']} ({op['basis']}) · "
-                         f"{p['shares']} sh · state {p.get('state')}"):
+                         f"state {p.get('state')}"):
             if p.get("notes"):
                 st.warning(" · ".join(p["notes"]))
             st.markdown("**Candidate levels (FIB / MA / DSL / swing — below entry)**")
