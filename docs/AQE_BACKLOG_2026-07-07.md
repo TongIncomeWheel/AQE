@@ -131,31 +131,37 @@ bracket**: operative stop = `optimal_stop` (closest structural support), targets
 `coil_entry`, `max_chase_tp2/tp3`, `rr_tp2_at_coil`/`rr_tp3_at_coil`. Rename the survivors to plain
 structural terms (stop / risk / targets) — no "DSL" vocabulary in the AIC feed.
 
-### ⚠️ Dependencies that must RE-BASE onto the structural bracket (don't just delete)
-These currently read `dsl_stop`/`dsl_risk`/`dsl_tp_*` — each needs re-pointing at `optimal_stop` /
-`structural_targets` *before* the mechanical fields are removed, or they break silently:
-- **Alert triggers** — `BUY_ZONE` = `dsl_stop + 1.5·dsl_risk`; the email R:R line. → derive from
-  `optimal_stop` + `structural_targets`.
-- **Signal ledger / paper-track outcomes** — TP/SL-hit detection uses `dsl_stop`/`dsl_tp_1r/2r`. →
-  score against structural stop/targets.
-- **`structural_targets[].r_optimal`** — already falls back to `dsl_risk` when
-  `optimal_stop.risk_usd` is absent. → make structural risk the sole basis.
-- **Backtest DSL simulator** (`src/scanner/dsl.py` R-tier trailing + flow-TP) — this is a *testing*
-  tool, not AIC-facing. **Open sub-question:** retire it too, or keep it as the backtest ruler while
-  the live feed goes fully structural?
+**Approach (PM ruling):** **remove altogether — clean removal, fix-forward.** No careful re-base,
+no compatibility shims. "Slapping data over data is stupid." We rip out the mechanical fields and
+the DSL construct, then fix whatever breaks *as it surfaces* — no layering to preserve dead vocab.
 
-### ⚠️ Fallback when `optimal_stop` doesn't exist
-`optimal_stop_exists` is **False** whenever no structural candidate passes the 3 gates (the
-"un-bracketable" names). With mechanical DSL retired, those names have **no stop at all**. Policy
-needed → this is exactly the **bracketing-engine refinement** (item 2.2 / the separate workstream).
-Until that lands, decide: **suppress the name from the feed**, or **show it flagged "no valid
-bracket."** (No silent mechanical fallback — that's what we're removing.)
+### Known breakage points (fix-forward, not pre-emptive re-base)
+These read the mechanical fields and WILL break on removal — we fix each at the structural bracket
+when it surfaces (listed so we know where to look, not to gate the removal):
+- **Alert triggers** — `BUY_ZONE` = `dsl_stop + 1.5·dsl_risk`; the email R:R line → `optimal_stop`
+  + `structural_targets`.
+- **Signal ledger / paper-track** — TP/SL-hit uses `dsl_stop`/`dsl_tp_1r/2r` → structural
+  stop/targets.
+- **`structural_targets[].r_optimal`** — currently falls back to `dsl_risk` → structural risk only.
+- **Schema validator `_REQUIRED_FIELDS`** — lists the `dsl_*` fields → drop them from the required
+  set (else the export self-blocks).
+- **`_FIELD_SCHEMA` / `_FIELD_GLOSSARY`** — drop the mechanical entries (lockstep test).
+- **Scanner / Pricer / Charts UI** — any column reading `dsl_*` → structural.
+
+### 🔒 Backtest DSL simulator — RETIRE (PM ruling)
+`src/scanner/dsl.py` R-tier trailing + flow-TP simulator is retired too. The backtest ruler goes
+structural along with everything else.
+
+### 🔒 Un-bracketable names — SHOW "no valid bracket" (PM ruling)
+When no structural candidate passes the 3 gates (`optimal_stop_exists = false`), the name stays in
+the feed but is **flagged "no valid bracket"** — no stop/target shown, no mechanical fallback. The
+proper fallback logic is the separate **bracketing-engine refinement**.
 
 ## Remaining open questions for the PM
-1. ~~Retire mechanical TP?~~ **RESOLVED — retire mechanical DSL *and* TP, whole-AQE.**
+1. ~~Retire mechanical TP?~~ **RESOLVED — remove mechanical DSL *and* TP altogether, whole-AQE.**
 2. **`optimal_stop` = "closest valid support"** (item 4) vs the current "tightest valid"? They can
    differ. → PM to confirm "closest."
 3. Alert universe (1.1) — keep the current 5-tier set, or trim/expand?
 4. Chart pull (1.2) — **per-ticker on-demand** default + cache the monitored set?
-5. Backtest DSL simulator — retire, or keep as the backtest-only ruler? (see above)
-6. Un-bracketable names — **suppress** or **flag** until the bracketing engine lands? (see above)
+5. ~~Backtest simulator?~~ **RESOLVED — retire it.**
+6. ~~Un-bracketable names?~~ **RESOLVED — show "no valid bracket."**
