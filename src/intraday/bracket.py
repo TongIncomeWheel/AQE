@@ -36,15 +36,16 @@ def _intraday_swing_low(bars: list[dict], price: float, k: int = C.PIVOT_K):
 
 
 def _tp2_target(rec: dict, entry: float) -> float | None:
-    """The TP2 price used for the R:R gate — structural TP2 if present, else dsl_tp_2r."""
-    tgts = rec.get("structural_targets") or []
+    """The TP2 price used for the R:R gate — the 2nd structural target from the
+    bracket (mechanical dsl_tp_2r retired)."""
+    tgts = (rec.get("bracket") or {}).get("targets") or []
     above = [t.get("price") for t in tgts
              if isinstance(t, dict) and _num(t.get("price")) and t["price"] > entry]
     if len(above) >= 2:
         return float(sorted(above)[1])     # 2nd structural target ≈ TP2
     if above:
         return float(above[0])
-    return _num(rec.get("dsl_tp_2r"))
+    return None
 
 
 def candidate_stops(bars: list[dict], rec: dict, momentum: dict) -> list[dict]:
@@ -80,7 +81,7 @@ def candidate_stops(bars: list[dict], rec: dict, momentum: dict) -> list[dict]:
     if len(days) >= 2:
         add("prior_day_low", min(x["l"] for x in by_day[days[-2]]))
     # AQE daily structural levels (already validated structure)
-    for lvl in (rec.get("structural_levels") or []):
+    for lvl in []:  # daily structural_levels retired — intraday derives from bars
         if isinstance(lvl, dict):
             add(f"aqe_{lvl.get('type', 'struct')}", lvl.get("price"))
     return out
@@ -123,12 +124,13 @@ def operative_stop(bars: list[dict], rec: dict, momentum: dict,
         best = max(valids, key=lambda s: s["price"])   # tightest passing all gates
         best["gated_out"] = False
         return best
-    # No candidate cleared all three gates → fall back to AQE dsl_stop, flagged.
-    dsl = _num(rec.get("dsl_stop"))
+    # No candidate cleared all three gates → fall back to the AQE structural
+    # bracket stop, flagged.
+    dsl = _num((rec.get("bracket") or {}).get("stop"))
     if dsl is not None and dsl < planned_entry:
         risk = planned_entry - dsl
         return {
-            "type": "dsl_stop_fallback", "price": round(dsl, 2),
+            "type": "bracket_stop_fallback", "price": round(dsl, 2),
             "risk": round(risk, 2),
             "atr_ratio": round(risk / atr14, 2) if atr14 else None,
             "rr_tp2": round((tp2 - planned_entry) / risk, 2) if tp2 else None,
@@ -147,7 +149,7 @@ def entry_zone(rec: dict, momentum: dict) -> dict:
     price = comp.get("price")
     vwap = comp.get("vwap")
     or_high = comp.get("or_high")
-    max_chase = _num(rec.get("max_chase_tp2"))
+    max_chase = None  # max_chase_tp2 retired
     cap = max_chase if max_chase is not None else (price * 1.02 if price else None)
 
     if state in ("FADING", "BROKEN", "UNKNOWN"):
@@ -200,14 +202,9 @@ def build_bracket(rec: dict, bars: list[dict], momentum: dict,
     op = operative_stop(bars, rec, momentum, planned_entry, regime)
 
     tp_ladder = []
-    for t in (rec.get("structural_targets") or []):
+    for t in ((rec.get("bracket") or {}).get("targets") or []):
         if isinstance(t, dict) and _num(t.get("price")) and t["price"] > planned_entry:
             tp_ladder.append({"type": t.get("type"), "price": t["price"]})
-    if not tp_ladder:
-        for key in ("dsl_tp_1r", "dsl_tp_2r", "dsl_tp_3r"):
-            p = _num(rec.get(key))
-            if p and p > planned_entry:
-                tp_ladder.append({"type": key, "price": p})
     tp_ladder = sorted(tp_ladder, key=lambda x: x["price"])[:3]
 
     risk = op.get("risk") if op else None

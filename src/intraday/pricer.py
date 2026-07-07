@@ -65,15 +65,13 @@ def ensure_levels(ticker: str, rec: dict | None, daily_df) -> dict:
     """
     rec = dict(rec or {})
     rec.setdefault("ticker", ticker)
-    if _num(rec.get("dsl_stop")) and _num(rec.get("atr_14d")):
+    if (rec.get("bracket") or {}).get("stop") is not None and _num(rec.get("atr_14d")):
         return rec
     if daily_df is None or len(daily_df) < 20:
         return rec
     try:
         from src.scanner.levels import levels_for_ticker
-        from src.data.drive_sync import (
-            _structural_stop_analysis, _structural_target_analysis,
-        )
+        from src.engines.bracket_engine import compute_bracket
         close = float(daily_df["close"].iloc[-1])
         atr14 = _atr_from_df(daily_df, 14)
         d = levels_for_ticker(
@@ -86,21 +84,16 @@ def ensure_levels(ticker: str, rec: dict | None, daily_df) -> dict:
             return rec
         ma = {w: round(float(daily_df["close"].tail(w).mean()), 2)
               for w in (20, 50, 100, 200) if len(daily_df) >= w}
-        slevels, opt = _structural_stop_analysis(d, ma)
-        stargets = _structural_target_analysis(d)
         rets = (d.get("fib") or {}).get("retracements") or {}
+        _bracket = compute_bracket(d, ma, rec.get("regime"),
+                                   price=d["entry"], price_source="eod_close")
         rec.update({
-            "entry": d["entry"], "dsl_stop": d["stop"], "dsl_risk": d["risk"],
-            "atr_14d": round(atr14, 2),
-            "dsl_tp_1r": d["tp_1r"], "dsl_tp_2r": d["tp_2r"], "dsl_tp_3r": d["tp_3r"],
-            "dsl_rr_pct": d.get("rr_pct"), "dsl_atr_ratio": d.get("dsl_atr_ratio"),
-            "coil_entry": round(d["stop"] + atr14, 2),
-            "max_chase_tp2": round((d["tp_2r"] + 2 * d["stop"]) / 3, 2),
+            "entry": d["entry"], "atr_14d": round(atr14, 2),
             "ma_20": ma.get(20), "ma_50": ma.get(50),
             "ma_100": ma.get(100), "ma_200": ma.get(200),
             "fib_618": rets.get("0.618"), "fib_786": rets.get("0.786"),
-            "structural_levels": slevels, "structural_targets": stargets,
-            "optimal_stop": opt, "_computed": True,
+            # THE BRACKET — single source of truth (mechanical DSL/TP retired).
+            "bracket": _bracket, "_computed": True,
         })
     except Exception:  # noqa: BLE001 — calculator must still return a partial rec
         pass
@@ -127,12 +120,12 @@ def _candidate_stops(rec: dict, entry: float, bars5: list[dict],
         seen.add(r)
         out.append({"basis": basis, "price": r})
 
-    add("dsl_stop", rec.get("dsl_stop"))
+    add("bracket_stop", (rec.get("bracket") or {}).get("stop"))
     add("fib_618", rec.get("fib_618"))
     add("fib_786", rec.get("fib_786"))
     for w in (20, 50, 100, 200):
         add(f"ma_{w}", rec.get(f"ma_{w}"))
-    for lvl in (rec.get("structural_levels") or []):
+    for lvl in []:  # daily structural_levels retired — intraday derives from bars
         if isinstance(lvl, dict):
             add(f"aqe_{lvl.get('type', 'struct')}", lvl.get("price"))
     for sl in _pivot_lows(bars1h, entry):
@@ -143,7 +136,7 @@ def _candidate_stops(rec: dict, entry: float, bars5: list[dict],
 
 
 def _tp2_ref(rec: dict, entry: float, fallback_risk: float) -> float:
-    above = sorted(t["price"] for t in (rec.get("structural_targets") or [])
+    above = sorted(t["price"] for t in ((rec.get("bracket") or {}).get("targets") or [])
                    if isinstance(t, dict) and _num(t.get("price")) and t["price"] > entry)
     if len(above) >= 2:
         return above[1]
@@ -221,7 +214,7 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
     tp3 = round(entry + 3 * risk, 2)
     struct_tps = [{"type": t.get("type"), "price": t["price"],
                    "rr": round((t["price"] - entry) / risk, 2)}
-                  for t in (rec.get("structural_targets") or [])
+                  for t in ((rec.get("bracket") or {}).get("targets") or [])
                   if isinstance(t, dict) and _num(t.get("price")) and t["price"] > entry][:4]
     shares = int(math.floor(risk_budget / risk)) if risk else 0
 
@@ -237,7 +230,7 @@ def price_ticker(ticker: str, rec: dict | None, bars5, bars1h, daily_df,
             for d, o, h, low, c, v in zip(
                 daily_df["date"].astype(str), daily_df["open"], daily_df["high"],
                 daily_df["low"], daily_df["close"], daily_df["volume"])])
-        _res = (rec.get("structural_targets") or [{}])
+        _res = ((rec.get("bracket") or {}).get("targets") or [{}])
         _res = _res[0].get("price") if _res and isinstance(_res[0], dict) else None
         elder_ctx = compute_elder_context(
             rec.get("elder_5d"), bars1h, _daily_list, resistance_price=_res)

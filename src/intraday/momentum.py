@@ -153,11 +153,11 @@ def intraday_momentum(bars5, rec: dict | None = None) -> dict:
 
     # ── Extension vs the AQE reference entry (R's already run) ──
     entry_ref = rec.get("entry")
-    dsl_risk = rec.get("dsl_risk")
+    _risk = (rec.get("bracket") or {}).get("risk")   # structural R unit
     ext_r = None
-    if isinstance(entry_ref, (int, float)) and isinstance(dsl_risk, (int, float)) \
-            and dsl_risk:
-        ext_r = (price - entry_ref) / dsl_risk
+    if isinstance(entry_ref, (int, float)) and isinstance(_risk, (int, float)) \
+            and _risk:
+        ext_r = (price - entry_ref) / _risk
 
     near_vwap = abs(vwap_pos) <= C.VWAP_NEAR_ATR
 

@@ -72,7 +72,7 @@ def test_state_broken():
 
 def test_state_extended():
     closes = [100 + i * 1.8 for i in range(12)]            # steep ramp
-    rec = {"entry": 100.0, "dsl_risk": 2.0}
+    rec = {"entry": 100.0, "bracket": {"risk": 2.0}}
     m = intraday_momentum(mk_bars(DAY, closes), rec)
     assert m["state"] == "EXTENDED"
     assert m["components"]["ext_r"] >= C.EXTENDED_R
@@ -105,43 +105,44 @@ def _mom(price, vwap=None, or_low=None, iatr=1.0):
                            "intraday_atr": iatr}}
 
 
-def test_operative_stop_tightest_valid():
-    rec = {"atr_14d": 1.0, "dsl_tp_2r": 105.0, "dsl_stop": 98.0,
-           "structural_levels": [
-               {"type": "a", "price": 99.2},   # risk .8 → atr_ratio .8 < 1 → FAIL
-               {"type": "b", "price": 98.8},   # risk 1.2, rr 4.17, .8% → VALID
-               {"type": "c", "price": 97.0},   # risk 3, rr 1.67 < 2 → FAIL
-           ]}
+def test_operative_stop_bracket_fallback():
+    # Daily structural_levels menu retired — with no intraday bar candidates, the
+    # operative stop falls back to the AQE structural bracket stop (flagged).
+    rec = {"atr_14d": 1.0,
+           "bracket": {"stop": 98.8,
+                       "targets": [{"type": "r1", "price": 103.0},
+                                   {"type": "r2", "price": 105.0}]}}
     op = operative_stop([], rec, _mom(100.0), planned_entry=100.0, regime="GREEN")
-    assert op["valid"] and op["price"] == 98.8 and op["type"] == "aqe_b"
+    assert op["type"] == "bracket_stop_fallback" and op["price"] == 98.8
 
 
 def test_operative_stop_regime_ceiling_blocks():
     # Only candidate passing ATR+R:R breaches the RED 4% ceiling → gated_out.
-    rec = {"atr_14d": 1.0, "dsl_tp_2r": 110.0, "dsl_stop": 94.5,
-           "structural_levels": [{"type": "x", "price": 95.0}]}  # risk 5 → 5% > 4%
+    rec = {"atr_14d": 1.0,
+           "bracket": {"stop": 95.0,
+                       "targets": [{"type": "x", "price": 110.0}]}}  # risk 5 → 5% > 4%
     op = operative_stop([], rec, _mom(100.0), planned_entry=100.0, regime="RED")
     assert op["gated_out"] is True and op["valid"] is False
     assert op["ceiling_pct"] == 4.0
 
 
 # ── entry zone: never chase past max_chase_tp2 ──────────────────────────────
-def test_entry_zone_extended_stands_down_past_max_chase():
-    rec = {"max_chase_tp2": 105.0}
-    mom = {"state": "EXTENDED", "components": {"price": 112, "vwap": 108, "or_high": 110}}
-    z = entry_zone(rec, mom)
-    assert z["kind"] == "stand_down"      # even a VWAP pullback (108) > cap (105)
+def test_entry_zone_extended_stands_down_when_support_above_cap():
+    # max_chase_tp2 retired → the chase cap is price*1.02. VWAP 108 > cap 102.
+    mom = {"state": "EXTENDED", "components": {"price": 100, "vwap": 108, "or_high": 110}}
+    z = entry_zone({}, mom)
+    assert z["kind"] == "stand_down"
 
 
 def test_entry_zone_accelerating_caps_high():
-    rec = {"max_chase_tp2": 103.0}
+    rec = {}
     mom = {"state": "ACCELERATING", "components": {"price": 101, "vwap": 100}}
     z = entry_zone(rec, mom)
     assert z["kind"] == "now" and z["high"] <= 103.0
 
 
 def test_entry_zone_pullback_zone():
-    rec = {"max_chase_tp2": 105.0}
+    rec = {}
     mom = {"state": "PULLBACK_HOLDING", "components": {"price": 101, "vwap": 100}}
     z = entry_zone(rec, mom)
     assert z["kind"] == "limit" and z["low"] <= 100.0 <= z["high"] + 1e-9
@@ -154,19 +155,19 @@ def test_entry_zone_broken_stands_down():
 
 # ── full plan ───────────────────────────────────────────────────────────────
 def test_plan_stand_down_when_broken():
-    rec = {"ticker": "ZZZ", "entry": 105, "dsl_risk": 2, "atr_14d": 1,
-           "dsl_tp_2r": 110, "dsl_stop": 102}
+    rec = {"ticker": "ZZZ", "entry": 105, "atr_14d": 1,
+           "bracket": {"stop": 102, "risk": 3,
+                       "targets": [{"type": "r1", "price": 110}]}}
     closes = [105 - i * 0.6 for i in range(10)]
     p = intraday_plan(rec, mk_bars(DAY, closes), regime="GREEN")
     assert p["action"] == "STAND_DOWN" and p["ibkr_spec"] is None
 
 
 def test_plan_enter_shape_and_ibkr_spec():
-    rec = {"ticker": "AAA", "atr_14d": 1.0, "dsl_tp_2r": 106.0, "dsl_stop": 97.5,
-           "max_chase_tp2": 104.0,
-           "structural_levels": [{"type": "swing_low_1", "price": 99.5}],
-           "structural_targets": [{"type": "r1", "price": 102.0},
-                                  {"type": "r2", "price": 106.0}]}
+    rec = {"ticker": "AAA", "atr_14d": 1.0,
+           "bracket": {"stop": 97.5, "risk": 2.5,
+                       "targets": [{"type": "r1", "price": 102.0},
+                                   {"type": "r2", "price": 106.0}]}}
     closes = [100 + i * 0.1 for i in range(10)]   # gentle rise, stays under max_chase
     p = intraday_plan(rec, mk_bars(DAY, closes), regime="GREEN", risk_budget=2100)
     assert p["action"] == "ENTER"
@@ -238,17 +239,15 @@ def test_pricer_prefers_tightest_valid_from_menu():
     df = _daily_df()
     entry = float(df["close"].iloc[-1])
     rec = {
-        "ticker": "AAA", "entry": entry, "dsl_stop": round(entry - 9, 2),
-        "dsl_risk": 9.0, "atr_14d": 3.0, "dsl_tp_2r": round(entry + 12, 2),
-        "structural_levels": [
-            {"type": "swing_low_1", "price": round(entry - 4, 2)},   # tightest valid
-            {"type": "ma_cluster", "price": round(entry - 8, 2)},
-        ],
-        "structural_targets": [{"type": "r1", "price": round(entry + 6, 2)},
-                               {"type": "r2", "price": round(entry + 12, 2)}],
+        "ticker": "AAA", "entry": entry, "atr_14d": 3.0,
+        "fib_618": round(entry - 4, 2),        # tightest valid support in the menu
+        "ma_50": round(entry - 8, 2),
+        "bracket": {"stop": round(entry - 9, 2),
+                    "targets": [{"type": "r1", "price": round(entry + 6, 2)},
+                                {"type": "r2", "price": round(entry + 12, 2)}]},
     }
     b5 = mk_bars(DAY, [entry + i * 0.05 for i in range(10)])
     p = price_ticker("AAA", rec, b5, [], df, regime={"level": "GREEN"})
     assert p["in_universe"] is True
-    assert p["operative_stop"]["basis"] == "aqe_swing_low_1"
+    assert p["operative_stop"]["basis"] == "fib_618"
     assert p["operative_stop"]["price"] == round(entry - 4, 2)
