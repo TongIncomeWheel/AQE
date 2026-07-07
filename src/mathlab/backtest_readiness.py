@@ -92,7 +92,7 @@ def load_universe() -> list[str]:
     with open(export_path) as f:
         ex = json.load(f)
     tickers = set()
-    for lst in ("longlist", "elder_list"):
+    for lst in ("daily_list", "longlist", "elder_list"):   # daily_list = current; others legacy
         for r in ex.get(lst, []):
             tk = r.get("ticker")
             if tk and tk != "SPY":

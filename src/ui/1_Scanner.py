@@ -1201,9 +1201,12 @@ if CLOUD_MODE:
         betas: dict[str, dict] = {}
         dsl: dict[str, dict] = {}
         elder5: dict[str, list] = {}
-        rows = []
-        for key in ("longlist", "elder_list"):   # the two AQE lists
-            rows.extend(export.get(key) or [])
+        # daily_list is the single collapsed AQE list; fall back to the legacy
+        # longlist/elder_list keys for older exports.
+        rows = list(export.get("daily_list") or [])
+        if not rows:
+            for key in ("longlist", "elder_list"):
+                rows.extend(export.get(key) or [])
         for r in rows:
             tk = r.get("ticker")
             if not tk or tk in dsl:
@@ -1451,7 +1454,12 @@ st.caption(
     f"ride on every row. Aggregate recipe: {_recipe_label(active_recipe)}."
 )
 
-_ll_recs = _ex.get("longlist") or []
+# The Signals table = the single collapsed `daily_list` (watchlist ∪ elder ∪
+# ledger, each row flagged on_watchlist/on_elder/in_ledger). Legacy exports that
+# still carry `longlist` fall back to it.
+_ll_recs = _ex.get("daily_list")
+if _ll_recs is None:
+    _ll_recs = _ex.get("longlist") or []
 if _ll_recs:
     f1, f2, f3, f4, f5, f6 = st.columns([1, 1, 1, 1.4, 1, 1])
     # Slider defaults ARE the longlist definition — same source as the export
@@ -1465,7 +1473,8 @@ if _ll_recs:
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
     _ll_only = f5.checkbox("Qualified only", key="sig_ll",
                            help="on_longlist = passed the full recipe")
-    _pe_only = f6.checkbox("PE only", key="sig_pe")
+    _ledger_only = f6.checkbox("In ledger", key="sig_ledger",
+                               help="runner_setup OR premove_setup fired (Signal Radar)")
     _sec_opts = sorted({(r.get("gics_sector_name") or r.get("gics_sector") or "—")
                         for r in _ll_recs})
     _sec_sel = st.multiselect("Sector", _sec_opts, default=_sec_opts, key="sig_sector")
@@ -1487,16 +1496,17 @@ if _ll_recs:
                 return False
         if _ll_only and not r.get("on_longlist"):
             return False
-        if _pe_only and not r.get("pe"):
+        if _ledger_only and not r.get("in_ledger"):
             return False
         return True
 
     _filtered = sorted([r for r in _ll_recs if _keep(r)],
                        key=lambda r: (r.get("ptrs") or 0), reverse=True)
     _n_ll = sum(1 for r in _filtered if r.get("on_longlist"))
-    _n_pe = sum(1 for r in _filtered if r.get("pe"))
+    _n_el = sum(1 for r in _filtered if r.get("on_elder"))
+    _n_lg = sum(1 for r in _filtered if r.get("in_ledger"))
     st.markdown(f"**{len(_filtered)}** names match "
-                f"({_n_ll} qualified · {_n_pe} PE)")
+                f"({_n_ll} qualified · {_n_el} Elder≥8 · {_n_lg} in ledger)")
     _list_summary(_filtered)
     table_with_copy(_export_table(_filtered), key="ll_table")
 
@@ -1520,7 +1530,11 @@ st.caption(
     "the longlist screens. `elder_5d` (the 5-day running Elder) + `elder_context` "
     "ride on every row, same as the longlist."
 )
-_elder_recs = _ex.get("elder_list") or []
+# Elder tier = daily_list rows flagged on_elder (legacy exports: elder_list key).
+if _ex.get("daily_list") is not None:
+    _elder_recs = [r for r in _ex["daily_list"] if r.get("on_elder")]
+else:
+    _elder_recs = _ex.get("elder_list") or []
 if _elder_recs:
     st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
     _list_summary(_elder_recs)

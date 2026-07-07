@@ -69,7 +69,7 @@ def _fmt(v, dp=2):
 
 def _rec_lookup(export: dict) -> dict:
     out: dict = {}
-    for tier in ("held_positions", "longlist", "elder_list", "_radar_pool"):
+    for tier in ("held_positions", "daily_list", "_radar_pool"):
         for r in export.get(tier) or []:
             out.setdefault(r.get("ticker"), r)
     return out
@@ -283,7 +283,7 @@ def send_test() -> dict:
          "level_price": 230.0, "live_px": 235.0, "note": "2.2% above stop 230.00"},
     ]
     export = {"date": "TEST", "regime": {"level": "TEST"},
-              "longlist": [{"ticker": "TEST1", "sc_momentum": 78, "sc_momentum_raw": 78,
+              "daily_list": [{"ticker": "TEST1", "sc_momentum": 78, "sc_momentum_raw": 78,
                             "ptrs": 64, "mp_state": "STRONG", "flow": 82, "energy": 70,
                             "structure": 62, "mp": 60, "elder": 8, "beta_30d": 1.4,
                             "bracket": {"price": 100.0, "price_source": "eod_close",

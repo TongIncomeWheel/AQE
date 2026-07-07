@@ -110,18 +110,6 @@ _FIELD_GLOSSARY = {
                        "drops = genuine leader (pct).",
     "rs_leadership": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, "
                      "LAGGARD (<−0.25).",
-    "setup_state": "Daily lifecycle classification: EXTENDED (>8% above MA10, do not chase) "
-                   "/ BREAKOUT-READY (VCP + VWAP above + exhaustion clear) / "
-                   "CONTINUATION-READY (MA stack bullish + near MA10) / BASING (coil "
-                   "forming, not yet at trigger).",
-    "breakout_conviction": "Quality score (0–100) of the most recent expansion bar "
-                           "(range > 1.3× base avg). Higher = higher-quality breakout.",
-    "breakout_grade": "Letter grade from breakout_conviction: A (≥80) / B (≥65) / "
-                      "C (≥50) / D (<50).",
-    "breakout_pattern": "Named pattern of the most recent expansion bar: "
-                        "TELEGRAPHED_CONTINUATION / ABSORPTION_REVERSAL / "
-                        "SURPRISE_THRUST / STANDARD_BREAKOUT.",
-    "breakout_bar_date": "Date of the most recent expansion bar (YYYY-MM-DD).",
     "atr_caution": "True if the structural stop was too tight for the regime "
                    "(risk% near the regime ceiling).",
     "malformed_bracket": "True if the structural stop sits within 0.5% of price "
@@ -210,17 +198,12 @@ _FIELD_SCHEMA = {
     "ma_200":         _fs("moving_average", "usd", "n/a"),
     "vol_30d_ann":    _fs("volatility", "decimal", "n/a"),
     "beta_252d":      _fs("risk_metric", "ratio", "n/a"),
-    # Enrichment Spec v2.0
+    # Enrichment Spec v2.0 (setup_state + breakout_* hidden — Signal Radar overlap)
     "rs_down_day_20d":      _fs("signal", "pct", "n/a"),
     "rs_leadership":        _fs("signal", "label", "n/a"),
-    "setup_state":          _fs("signal", "label", "n/a"),
-    "breakout_conviction":  _fs("signal", "score", "n/a"),
-    "breakout_grade":       _fs("signal", "label", "n/a"),
-    "breakout_pattern":     _fs("signal", "label", "n/a"),
-    "breakout_bar_date":    _fs("reference", "date", "n/a"),
     "atr_caution":          _fs("flag", "boolean", "n/a"),
     "malformed_bracket":    _fs("flag", "boolean", "n/a"),
-    # Readiness / Health
+    # Health (HOLD decision, held_positions only)
     "hl_score":             _fs("signal", "score", "n/a"),
     "hl_state":             _fs("signal", "label", "n/a"),
     # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
@@ -555,13 +538,12 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # targets, R:R vs structural TP2, ATR-relative. Mechanical DSL/TP retired.
         "bracket": None,
         "held": False,
-        # Readiness / Health scores
+        # Health score (hold decision, held_positions only)
         "hl_score": None, "hl_state": None,
-        # Enrichment Spec v2.0 — new per-record signals + cleanup flags
+        # Enrichment Spec v2.0 — RS leadership + bracket-quality flags. setup_state
+        # and breakout_* are HIDDEN from the feed (they overlapped Signal Radar's
+        # DETECT layer); the engine still computes them, they are just not exported.
         "rs_down_day_20d": None, "rs_leadership": None,
-        "setup_state": "BASING",
-        "breakout_conviction": None, "breakout_grade": None,
-        "breakout_pattern": None, "breakout_bar_date": None,
         "atr_caution": False, "malformed_bracket": False,
         # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
         "runner_setup": False, "runner_conviction": 0,
@@ -677,11 +659,12 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                 fields[_rk] = _rdhl[_rk]
 
         # ── Enrichment Spec v2.0 — pre-computed per-ticker signals ────────
+        # setup_state + breakout_* are NOT copied — they overlapped Signal Radar
+        # (the DETECT layer) and are hidden from the feed. Only the RS-leadership
+        # read + bracket-quality flags ride on the record.
         _enr = (lk.get("enrichment") or {}).get(tk, {})
         for _ek in ("rs_down_day_20d", "rs_leadership",
-                     "breakout_conviction", "breakout_grade",
-                     "breakout_pattern", "breakout_bar_date",
-                     "atr_caution", "malformed_bracket", "setup_state"):
+                     "atr_caution", "malformed_bracket"):
             if _ek in _enr and _enr[_ek] is not None:
                 fields[_ek] = _enr[_ek]
 
@@ -1294,30 +1277,18 @@ def build_export(shortlist: dict | None = None) -> dict:
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)
-
-        # Enrichment v2.0: recompute setup_state now that elder_context is attached.
-        from src.engines.enrichment import compute_setup_state as _css
-        for _r in _longlist + _elderlist:
-            _cl = _r.get("entry")           # COB close = reference entry
-            _m10 = _r.get("ma_20")          # ma_10 not exported; use ma_20 as nearest
-            _m20 = _r.get("ma_20")
-            _m50 = _r.get("ma_50")
-            _ec = _r.get("elder_context")
-            if _cl and _m10:
-                # Compute proper MA10 from the panel if available
-                _pg = _grp.get(_r.get("ticker"))
-                if _pg is not None and len(_pg) >= 10:
-                    import numpy as _np
-                    _cls = _pg["close"].astype(float).to_numpy()
-                    _m10 = float(_np.mean(_cls[-10:]))
-                _r["setup_state"] = _css(_cl, _m10, _m20, _m50, _ec)
     except Exception:  # noqa: BLE001 — elder_context is additive, never blocks export
         for _r in _longlist + _elderlist:
             _r.setdefault("elder_pattern", None)
             _r.setdefault("elder_context", None)
 
-    export["longlist"] = _longlist
-    export["elder_list"] = _elderlist          # standalone list — kept
+    # HARD CUT (PM ruling) — longlist/elder_list are NO LONGER exported keys. The
+    # single `daily_list` (built below = watchlist ∪ elder ∪ ledger, each row flagged
+    # on_watchlist/on_elder/in_ledger) is the ONE list the AIC + UI read. The internal
+    # _longlist/_elderlist still drive daily_list, the alert universe, and the
+    # Signal-Radar overlap flags — they are just not surfaced as separate export keys.
+    export.pop("longlist", None)
+    export.pop("elder_list", None)
     # Alert universe (PM ruling 2026-07-07) = the daily AQE list + signal ledger.
     # The broad SC>=50 `_alert_pool` was DROPPED (it was noise); the Signal-Radar
     # pre-move names backfill the tighter set. Alerts fire only on names AQE
@@ -1377,8 +1348,6 @@ def build_export(shortlist: dict | None = None) -> dict:
         "elder_count": sum(1 for r in _daily_list if r.get("on_elder")),
         "ledger_count": sum(1 for r in _daily_list if r.get("in_ledger")),
         "held_count": len(export.get("held_positions") or []),
-        # legacy counts (longlist/elder_list kept one cycle for consumers)
-        "longlist_count": len(_longlist),
     }
 
     # ---- Standalone Signal Radar block (M14-M18) — the one place AIC scans the
@@ -1413,21 +1382,25 @@ def build_export(shortlist: dict | None = None) -> dict:
     #  • Readiness (all rd_*): hidden from the whole feed.
     #  • Health: composite+state (hl_score/hl_state) on held_positions ONLY (it's a
     #    hold decision); the 4 hl_ sub-scores dropped everywhere.
+    #  • Enrichment overlap (setup_state + breakout_*): hidden — Signal Radar IS the
+    #    DETECT layer, so these competing detect signals are stripped (engine kept).
     _DEPRECATED = ("pe", "rank_explain")
     _READINESS = ("rd_score", "rd_state", "rd_compression", "rd_trigger",
                   "rd_pos_mod", "rd_rs_bonus")
     _HL_SUB = ("hl_trend", "hl_flow", "hl_rs", "hl_risk")
     _HEALTH_CORE = ("hl_score", "hl_state")
-    for _lname in ("daily_list", "longlist", "elder_list", "_radar_pool"):
+    _ENRICH_OVERLAP = ("setup_state", "breakout_conviction", "breakout_grade",
+                       "breakout_pattern", "breakout_bar_date")
+    for _lname in ("daily_list", "_radar_pool"):
         for _r in export.get(_lname) or []:
-            for _dk in _DEPRECATED + _READINESS + _HL_SUB + _HEALTH_CORE:
+            for _dk in _DEPRECATED + _READINESS + _HL_SUB + _HEALTH_CORE + _ENRICH_OVERLAP:
                 _r.pop(_dk, None)
     for _r in export.get("held_positions") or []:
-        for _dk in _DEPRECATED + _READINESS + _HL_SUB:   # keep hl_score/hl_state
+        for _dk in _DEPRECATED + _READINESS + _HL_SUB + _ENRICH_OVERLAP:  # keep hl_score/hl_state
             _r.pop(_dk, None)
 
     # ---- Uniform schema per list (null-fill each to one key set) ----
-    for _lname in ("daily_list", "longlist", "elder_list"):
+    for _lname in ("daily_list",):
         _rows = export.get(_lname) or []
         if not _rows:
             continue
@@ -1449,17 +1422,15 @@ def build_export(shortlist: dict | None = None) -> dict:
         "vol_30d_ann", "beta_252d",
         # THE BRACKET — single source of truth (structural stop + targets)
         "bracket",
-        # Enrichment Spec v2.0
-        "rs_down_day_20d", "rs_leadership", "setup_state",
-        "breakout_conviction", "breakout_grade", "breakout_pattern",
-        "breakout_bar_date",
+        # Enrichment Spec v2.0 (setup_state + breakout_* hidden — Signal Radar overlap)
+        "rs_down_day_20d", "rs_leadership",
         "atr_caution", "malformed_bracket",
     ]
-    for _rec in export["longlist"]:
+    for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
         if _missing:
             raise ValueError(
-                f"SCHEMA VIOLATION: longlist record "
+                f"SCHEMA VIOLATION: daily_list record "
                 f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
             )
 

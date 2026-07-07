@@ -61,16 +61,16 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    for _src in ("longlist", "elder_list", "_radar_pool"):
+    # `daily_list` is the single collapsed AQE list (watchlist ∪ elder ∪ ledger);
+    # `_radar_pool` backfills quiet pre-movers not on it. Each record carries its
+    # own descriptive source (longlist / elder_list / radar-premove / radar-runner).
+    for _src in ("daily_list", "_radar_pool"):
         for r in export.get(_src) or []:
             tk = r.get("ticker")
             if not tk or tk in seen:
                 continue
             seen.add(tk)
-            # Radar-pool records carry their own descriptive source (radar-premove
-            # / radar-runner) so the digest can flag an EARLY move on a watched coil.
-            _label = r.get("source") if _src == "_radar_pool" else _src
-            out.append({"ticker": tk, "source": _label,
+            out.append({"ticker": tk, "source": r.get("source") or _src,
                         "is_held": False, "record": r})
     return out
 

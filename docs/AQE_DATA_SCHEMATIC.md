@@ -70,13 +70,14 @@ answers a different question, so there's no "picking at random":
 | `hl_score`, `hl_state` | ✅ **held_positions ONLY** | Health = the HOLD decision; only meaningful once you're in a trade. Stripped off the daily list. |
 | `hl_trend`, `hl_flow`, `hl_rs`, `hl_risk` | ✂️ | the 4 sub-scores dropped everywhere (AIC reads the composite + state). |
 
-## 9. Enrichment flags (12)
+## 9. Enrichment flags
 | Field | Keep? | Note |
 |---|---|---|
-| `setup_state`, `rs_leadership`, `rs_down_day_20d` | ⚠️ | context signals — used? |
-| `breakout_conviction`, `breakout_grade`, `breakout_pattern`, `breakout_bar_date` | ⚠️ | breakout enrichment — 4 fields, overlaps Signal Radar? |
-| `atr_caution`, `malformed_bracket` | ⚠️ | quality flags |
-| `dsl_atr_ratio_floored` | ✂️🔴 | **DEAD — references the retired `dsl_atr_ratio`. Remove.** |
+| `rs_leadership`, `rs_down_day_20d` | ✅ | all-weather RS leadership (SPY down days) — distinct read, not a DETECT overlap |
+| `atr_caution`, `malformed_bracket` | ✅ | bracket-quality guard flags |
+| `setup_state` | ✂️ **CUT from feed** | overlapped Signal Radar's DETECT layer (BREAKOUT-READY/CONTINUATION-READY vs premove/runner). **Engine kept**; hidden from feed. |
+| `breakout_conviction`, `breakout_grade`, `breakout_pattern`, `breakout_bar_date` | ✂️ **CUT from feed** | competing DETECT signal — Signal Radar IS the detect layer. **Engine kept**; hidden from feed. |
+| `dsl_atr_ratio_floored`, `beta_60d_capped`, `beta_data_error`, `sector_corr*` | ✅ done | already absent from the export (only internal). |
 
 ## 10. Misc (4)
 | Field | Keep? | Note |
@@ -97,11 +98,16 @@ and the rd/hl + fib/MA calls take it under ~60.
 
 ---
 
-## The daily-list collapse (your request: one list, ledger↔watchlist correspondence)
+## The daily-list collapse — ✅ SHIPPED (hard cut)
 
-**Today:** three separate structures — `longlist` (the watchlist/screen), `elder_list`,
-and the standalone `signal_radar` block. **Proposed collapse → one `daily_list`**, every
-row flagged so AIC reads membership + correspondence in one place:
+`longlist` + `elder_list` are **no longer exported keys**. The single **`daily_list`**
+is now the ONE list the AIC + every consumer read (alerts, signal ledger, Scanner,
+Charts, Pricer, intraday, backtests all repointed). Each row is flagged
+`on_watchlist` / `on_elder` / `in_ledger` so membership + correspondence read in one
+place. `summary` = {daily_count, watchlist_count, elder_count, ledger_count, held_count}.
+The internal `_longlist`/`_elderlist` still drive the build; they're just not surfaced.
+
+Original proposal (for reference), every row flagged so AIC reads membership in one place:
 
 ```jsonc
 "daily_list": [

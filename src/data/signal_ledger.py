@@ -167,7 +167,11 @@ def _bk_tp(rec: dict, i: int):
 
 
 def record_signals(export: dict) -> int:
-    """Append today's longlist + elder_list to the ledger. Returns row count."""
+    """Append today's daily_list (as longlist/elder_list rows) to the ledger.
+
+    Returns row count. Membership is re-derived from each daily_list row's
+    on_watchlist / on_elder flags (a name on both writes two rows).
+    """
     init_ledger()
 
     scan_date = (export.get("date") or "")[:10]
@@ -177,11 +181,20 @@ def record_signals(export: dict) -> int:
     rows: list[tuple] = []
     seen: set[tuple[str, str]] = set()
 
-    for source_key in ("longlist", "elder_list"):
-        for rec in export.get(source_key) or []:
-            tk = rec.get("ticker")
-            if not tk:
-                continue
+    # `daily_list` is the single collapsed AQE list (watchlist ∪ elder ∪ ledger).
+    # Re-derive the legacy list_source ('longlist'/'elder_list') from its flags so
+    # the ledger's (ticker, list_source) semantics are preserved — a name on both
+    # writes two rows. Radar-only names (neither flag) are not recorded (as before).
+    for rec in export.get("daily_list") or []:
+        tk = rec.get("ticker")
+        if not tk:
+            continue
+        _sources = []
+        if rec.get("on_watchlist"):
+            _sources.append("longlist")
+        if rec.get("on_elder"):
+            _sources.append("elder_list")
+        for source_key in _sources:
             key = (tk, source_key)
             if key in seen:
                 continue

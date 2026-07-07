@@ -5,7 +5,7 @@ the financial MCP `chart` tool, writes each array to <bars-dir>/<TICKER>.json,
 then calls this runner. Keeping the formatting here (not hand-coded by the model)
 makes the output deterministic.
 
-    python -m src.intraday.run_plan --bars-dir /tmp/bars [--scope held,top_picks,edge_list]
+    python -m src.intraday.run_plan --bars-dir /tmp/bars [--scope held,daily_list]
                                     [--tickers AAPL,MSFT] [--risk 2100]
                                     [--export output/aqe_daily_export.json]
 """
@@ -19,28 +19,29 @@ from pathlib import Path
 from .plan import intraday_plan, rank_plans
 from . import config as C
 
-_TIER_RANK = {"held": 0, "top_picks": 1, "edge_list": 2, "longlist": 3,
-              "watchlist": 4, "elder_list": 5}
+_TIER_RANK = {"held": 0, "daily_list": 3}
 
 
 def build_rec_lookup(export: dict, scope: list[str]) -> dict[str, dict]:
-    """One record per ticker from the requested tiers; richest tier wins."""
+    """One record per ticker from the requested tiers; richest tier wins.
+
+    `daily_list` is the single collapsed AQE list (watchlist ∪ elder ∪ ledger);
+    held wins on dedup. (Legacy longlist/elder_list keys are no longer exported.)
+    """
     recs: dict[str, dict] = {}
     if "held" in scope:
         for h in (export.get("held_positions") or []):
             tk = h.get("ticker")
             if tk:
                 recs[tk] = {**h, "source": "held"}
-    for tier in ("longlist", "elder_list"):   # the two AQE lists
-        if tier not in scope:
-            continue
-        for r in (export.get(tier) or []):
+    if "daily_list" in scope:
+        for r in (export.get("daily_list") or []):
             tk = r.get("ticker")
             if not tk:
                 continue
             cur = recs.get(tk)
-            if cur is None or _TIER_RANK[tier] < _TIER_RANK.get(cur.get("source"), 9):
-                recs[tk] = {**r, "source": tier}
+            if cur is None or _TIER_RANK["daily_list"] < _TIER_RANK.get(cur.get("source"), 9):
+                recs[tk] = {**r, "source": "daily_list"}
     return recs
 
 
@@ -124,7 +125,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="AQE intraday momentum + bracket plan")
     ap.add_argument("--export", default="output/aqe_daily_export.json")
     ap.add_argument("--bars-dir", required=True)
-    ap.add_argument("--scope", default="held,top_picks,edge_list")
+    ap.add_argument("--scope", default="held,daily_list")
     ap.add_argument("--tickers", default=None)
     ap.add_argument("--risk", type=float, default=C.RISK_BUDGET)
     a = ap.parse_args(argv)

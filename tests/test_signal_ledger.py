@@ -20,11 +20,21 @@ def _tmp_db(tmp_path):
 
 
 def _make_export(scan_date="2026-06-25", longlist=None, elder_list=None):
-    return {
-        "date": scan_date,
-        "longlist": longlist or [],
-        "elder_list": elder_list or [],
-    }
+    # The ledger now reads the single collapsed `daily_list`; longlist names map to
+    # on_watchlist, elder_list names to on_elder (union, deduped by ticker). The
+    # helper still takes longlist=/elder_list= for readable call sites.
+    dl: dict = {}
+    for r in (longlist or []):
+        tk = r.get("ticker")
+        if tk:
+            dl.setdefault(tk, {**r, "on_watchlist": False, "on_elder": False})
+            dl[tk]["on_watchlist"] = True
+    for r in (elder_list or []):
+        tk = r.get("ticker")
+        if tk:
+            dl.setdefault(tk, {**r, "on_watchlist": False, "on_elder": False})
+            dl[tk]["on_elder"] = True
+    return {"date": scan_date, "daily_list": list(dl.values())}
 
 
 def _rec(ticker, sc=70, ptrs=65, elder=8, close=100.0, **kw):
