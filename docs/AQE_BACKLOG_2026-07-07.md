@@ -51,6 +51,11 @@ one bracket definition.**
     charted (fast, seconds).
   - Likely answer: **(b) for the chart the PM is looking at** + **(a) cache** for the monitored set.
 - Shares the "per-ticker vs universe pull" question with 1.1.
+- **Feed cadence — stay 15-min delayed (recommendation, PM-aligned).** Real-time live is *not*
+  recommended for AQE's feed/alerts: the signals are EOD/swing, so 15-min granularity is plenty to
+  see a level cross; live is noisier and would trip more false level-crosses (the PM's own concern).
+  Live's real benefit is *execution precision* — and that belongs at the **broker (IBKR) at order
+  time**, not in AQE's scanning feed. Net: 15-min FMP is the right call; no data upgrade needed.
 
 ---
 
@@ -63,8 +68,15 @@ AQE. Everything references the same output — same data, same tables, no re-der
 
 - **New module** (e.g. `src/engines/bracket_engine.py`) computes the canonical bracket for a ticker
   from daily bars + β(30d) + ATR + regime, and emits ONE bracket object/table:
-  `{ entry, stop, stop_type, stop_atr_dist, risk, targets[ {price, type, r, ...} ], valid,
-    invalid_reason }`.
+  `{ price, price_source, stop, stop_type, stop_atr_dist, risk, targets[ {price, type, r, ...} ],
+    rr, valid, invalid_reason }`.
+- **🔒 Price source = FMP, always (PM ruling).** Structural levels (stop/targets) are FIXED from the
+  bars; **R:R and distances are computed against the passed-in price**:
+  - **Daily run** → `price = FMP close-of-day` → the EOD snapshot as the name enters the watchlist.
+  - **Live pull** (chart / bracket / entry) → `price = FMP 15-min-delayed quote`.
+  - Fixes today's inconsistency (alert fires on live price but shows EOD R:R). Same engine, price
+    passed in, R:R recomputed. `price_source` stamped so AIC knows which it's reading.
+  - **Stay 15-min delayed** (not real-time live) — see the feed-cadence note in §1.2.
 - **Every consumer calls it — none compute their own bracket:**
   - the **Drive export** stamps the bracket per record (replaces the scattered `optimal_stop` /
     `structural_targets` / `dsl_*` assembly),
