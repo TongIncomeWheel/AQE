@@ -57,22 +57,20 @@ one bracket definition.**
   - **(b) Persist** — add `ma_panel.parquet` + `ma_universe.json` to `persist.py`'s snapshot members
     (Drive), so they survive restarts → pulls stay **truly incremental** (only bars since last run),
     not a full re-pull.
-  - **(c) Own cadence** — run it on its **own schedule / own timeout**, separate from the 08:30 feed
-    run (+ the existing on-demand UI button). MA proximity moves slowly → it doesn't need every
-    daily run. **Open: daily-but-separate slot, or weekly?**
+  - **(c) Own cadence — 🔒 WEEKLY (PM ruling).** Runs on its own weekly schedule + own timeout,
+    separate from the 08:30 feed run (+ the existing on-demand UI button). MA proximity moves slowly,
+    so weekly is plenty and cheapest on FMP calls.
 - **Effect on the timeout:** with the MA scan out of the daily run (plus the radar tail-slice + the
   3300s bump already shipped), the daily feed pipeline should finish well inside budget. The new
   `[+NNNs]` step timers will confirm the culprit on the next HF run.
 
-**1.2 — Pricer / Chart pull is too slow** *(from input #2)*
-- Problem: pulling 15-min data on every chart request takes ~10 min → unusable.
-- Options on the table (PM open to ideas):
-  - **(a) Persistence layer** — the alert poller already fetches quotes every 15 min; cache them
-    (Drive/local) so the chart reads the cache instead of re-pulling.
-  - **(b) Per-ticker on-demand pull** — don't pull the universe; pull just the one ticker being
-    charted (fast, seconds).
-  - Likely answer: **(b) for the chart the PM is looking at** + **(a) cache** for the monitored set.
-- Shares the "per-ticker vs universe pull" question with 1.1.
+**1.2 — 🔒 Pricer / Chart pull is too slow — fix = per-ticker on-demand (+ cache)**
+- Problem: a chart request takes ~10 min → unusable.
+- **Approach (not a hard decision — the obvious fix):** pull **only the one ticker being charted**,
+  on demand (daily + intraday for that symbol) → seconds, not minutes. Plus **reuse the monitored-
+  set bars the alert poller already fetches** (cache) so those load instantly with no extra pull.
+- Build-time detail (sort when we implement): the Pricer already pulls per-ticker; the ~10-min hit
+  is likely pulling for the whole filtered list / 3 timeframes at once — trim to on-demand + cache.
 - **Feed cadence — stay 15-min delayed (recommendation, PM-aligned).** Real-time live is *not*
   recommended for AQE's feed/alerts: the signals are EOD/swing, so 15-min granularity is plenty to
   see a level cross; live is noisier and would trip more false level-crosses (the PM's own concern).
@@ -219,6 +217,10 @@ proper fallback logic is the separate **bracketing-engine refinement**.
    gates; the current `optimal_stop` logic, unchanged).
 3. ~~Alert universe?~~ **RESOLVED — held + longlist + elder + Signal Radar; drop the broad
    `_alert_pool`.**
-4. Chart pull (1.2) — **per-ticker on-demand** default + cache the monitored set?
+4. ~~Chart pull?~~ **RESOLVED — per-ticker on-demand + cache the monitored set.**
+7. ~~MA scan cadence?~~ **RESOLVED — weekly, standalone.**
+
+**→ All decisions locked. The backlog is fully specced and ready to build when the PM switches out
+of planning mode.**
 5. ~~Backtest simulator?~~ **RESOLVED — retire it.**
 6. ~~Un-bracketable names?~~ **RESOLVED — show "no valid bracket."**
