@@ -42,6 +42,28 @@ one bracket definition.**
   Radar names fire only on the two upside events.
   - → the trigger levels get re-based onto the structural bracket (item 2.1 / the DSL-retirement).
 
+**1.3 — 🔒 MA Scanner: decouple from the daily pull + persist (PM ruling)**
+- **Problem:** the MA scan (broad market, ~2000 tickers >$1B near their MAs) runs as **Step 8d
+  inside the daily orchestrator** and takes **~40 min → it is what times out the daily feed**. Root
+  cause is two-fold:
+  1. **Coupled** — a slow broad-market scan is bolted onto the trading-feed pipeline it has nothing
+     to do with (it's not part of the AIC feed).
+  2. **Not persisted** — `ma_panel.parquet` / `ma_universe.json` are **not in the persist snapshot**,
+     so every HF container recycle wipes them and the "incremental" pull becomes a **full
+     2000-ticker re-pull** (250 days each).
+- **Fix:**
+  - **(a) Decouple** — remove the MA scan from `daily_orchestrator` (Step 8d). It becomes its own
+    standalone exercise; the daily feed pull never waits on it again.
+  - **(b) Persist** — add `ma_panel.parquet` + `ma_universe.json` to `persist.py`'s snapshot members
+    (Drive), so they survive restarts → pulls stay **truly incremental** (only bars since last run),
+    not a full re-pull.
+  - **(c) Own cadence** — run it on its **own schedule / own timeout**, separate from the 08:30 feed
+    run (+ the existing on-demand UI button). MA proximity moves slowly → it doesn't need every
+    daily run. **Open: daily-but-separate slot, or weekly?**
+- **Effect on the timeout:** with the MA scan out of the daily run (plus the radar tail-slice + the
+  3300s bump already shipped), the daily feed pipeline should finish well inside budget. The new
+  `[+NNNs]` step timers will confirm the culprit on the next HF run.
+
 **1.2 — Pricer / Chart pull is too slow** *(from input #2)*
 - Problem: pulling 15-min data on every chart request takes ~10 min → unusable.
 - Options on the table (PM open to ideas):
