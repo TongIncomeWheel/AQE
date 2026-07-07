@@ -146,7 +146,7 @@ def _short(level: str) -> str:
 
 
 # Selection state — the single source of truth for which ticker is charted.
-_default = _ll[0].get("ticker") if _ll else None
+_default = _daily[0].get("ticker") if _daily else None
 if _default not in panel_tickers:
     _default = next(iter(sorted(rec_lookup)), None)
 st.session_state.setdefault("sel_ticker", _default)

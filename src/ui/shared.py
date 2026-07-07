@@ -59,25 +59,48 @@ def load_export() -> dict | None:
 
 
 def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
-                    caption: str | None = None) -> None:
-    """Render a dataframe + a one-click copy block (paste straight into Claude).
+                    caption: str | None = None, filterable: bool = True) -> None:
+    """Render a dataframe + an in-table filter + a one-click copy block.
+
+    `st.dataframe` is sortable but NOT filterable, so we add a free-text filter
+    box above every table: a row is kept if ANY cell contains the query
+    (case-insensitive substring). The copy block then copies the FILTERED view —
+    what you see is what you paste into Claude. Set filterable=False to suppress
+    the box (e.g. for tiny 1–2 row tables).
 
     Streamlit's `st.code` has a built-in copy-to-clipboard icon, so we stash the
-    table as TSV inside a small expander — one click copies the whole table, no
-    CSV download needed. Used for every data table in the app.
+    (filtered) table as TSV inside a small expander. Used for every data table.
     """
     import streamlit as st
-    st.dataframe(df, use_container_width=True, hide_index=True)
+
+    view = df
+    if filterable and df is not None and len(df) > 0:
+        q = st.text_input(
+            "Filter rows", key=f"{key}_filter",
+            placeholder="🔎 filter — type to match across all columns…",
+            label_visibility="collapsed",
+        )
+        if q and q.strip():
+            q_low = q.strip().lower()
+            try:
+                mask = df.astype(str).apply(
+                    lambda col: col.str.lower().str.contains(q_low, na=False, regex=False))
+                view = df[mask.any(axis=1)]
+                st.caption(f"{len(view)} / {len(df)} rows match “{q.strip()}”")
+            except Exception:  # noqa: BLE001 — filtering never blocks the table
+                view = df
+
+    st.dataframe(view, use_container_width=True, hide_index=True)
     try:
-        if df is None or len(df) == 0:
+        if view is None or len(view) == 0:
             return
-        tsv = df.to_csv(sep="\t", index=False)
+        tsv = view.to_csv(sep="\t", index=False)
     except Exception:  # noqa: BLE001
         return
     with st.expander(label, expanded=False):
         if caption:
             st.caption(caption)
-        st.code(tsv, language=None)   # the ⧉ icon copies the full table
+        st.code(tsv, language=None)   # the ⧉ icon copies the filtered table
 
 
 # ---------------------------------------------------------------------------
