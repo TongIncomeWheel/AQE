@@ -57,13 +57,18 @@ stop/target set** — keep all.
 `runner_setup · runner_conviction · runner_conviction_label · mover_subtype ·
 premove_setup · premove_conviction · premove_conviction_label` — the detection tags.
 
-## 8. Readiness / Health (12)
+## 8. Readiness / Health — decision framework applied
+**DETECT → ENTER → HOLD** (now in `field_glossary._decision_framework`). Each stage
+answers a different question, so there's no "picking at random":
+- **DETECT** (is a move brewing?) = Signal Radar (`runner_setup` / `premove_setup`)
+- **ENTER** (buy, and where?) = the `bracket` + the live alert engine (buy/breakout/near-stop)
+- **HOLD** (should an open position stay on?) = Health (`hl_score`/`hl_state`)
+
 | Field | Keep? | Note |
 |---|---|---|
-| `rd_score`, `rd_state` | ✅ | readiness composite + state |
-| `rd_compression`, `rd_trigger`, `rd_pos_mod`, `rd_rs_bonus` | ✂️ | the 4 sub-scores — noise if AIC only reads the composite |
-| `hl_score`, `hl_state` | ✅ | health composite + state |
-| `hl_trend`, `hl_flow`, `hl_rs`, `hl_risk` | ✂️ | the 4 sub-scores — same |
+| `rd_score`, `rd_state`, `rd_compression`, `rd_trigger`, `rd_pos_mod`, `rd_rs_bonus` | ✂️ **CUT from feed** | Readiness overlapped `premove_setup` + the alert levels (DETECT + ENTER already cover entry timing). **Engine kept + still persisted to `scores_daily`** — just hidden from the AIC feed. |
+| `hl_score`, `hl_state` | ✅ **held_positions ONLY** | Health = the HOLD decision; only meaningful once you're in a trade. Stripped off the daily list. |
+| `hl_trend`, `hl_flow`, `hl_rs`, `hl_risk` | ✂️ | the 4 sub-scores dropped everywhere (AIC reads the composite + state). |
 
 ## 9. Enrichment flags (12)
 | Field | Keep? | Note |

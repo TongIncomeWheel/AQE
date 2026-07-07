@@ -61,6 +61,22 @@ _FIELD_GLOSSARY = {
         "or is a list/object. 'rr'/'r' = reward-to-risk in R, where 1R = bracket.risk "
         "(= price − bracket.stop, the structural risk unit)."
     ),
+    "_decision_framework": (
+        "AQE reads the trade lifecycle in three distinct stages — do NOT conflate "
+        "them; each answers a different question, so there is no 'picking at random': "
+        "(1) DETECT — is a move brewing? = Signal Radar (runner_setup = a name already "
+        "moving with another leg; premove_setup = a pre-move, ~12-day lead). These are "
+        "DETECTION tags, not entries. "
+        "(2) ENTER — is it time to buy, and where? = the bracket (stop/targets/R:R) + "
+        "the live alert engine (buy-zone / breakout / near-stop levels). The PM/AIC "
+        "pulls the trigger here. "
+        "(3) HOLD — should an OPEN position stay on? = Health (hl_score/hl_state, on "
+        "held_positions ONLY): HOLD_ADD / HOLD / TIGHTEN / EXIT on trend integrity. "
+        "Readiness (the old rd_* entry-timing composite) is intentionally NOT in this "
+        "feed — it overlapped premove_setup + the alert levels, so DETECT and ENTER "
+        "already cover entry timing. AQE makes NO decision at any stage; it supplies "
+        "the data and levels, the AIC decides."
+    ),
     "entry": "Reference entry = prior close-of-day. The live fill is the IBKR price at "
              "bracket time, NOT this value.",
     "atr_14d": "14-day Average True Range in USD (the volatility unit).",
@@ -110,22 +126,11 @@ _FIELD_GLOSSARY = {
                    "(risk% near the regime ceiling).",
     "malformed_bracket": "True if the structural stop sits within 0.5% of price "
                          "(bracket unusable — stop virtually at entry).",
-    # Readiness Score — entry timing
-    "rd_score": "Readiness composite (0-100). Measures compression + trigger signals. "
-                "READY (80+) / WATCH (60-79) / NEUTRAL (40-59) / NOT_READY (<40).",
-    "rd_state": "Readiness state label: READY / WATCH / NEUTRAL / NOT_READY.",
-    "rd_compression": "Compression sub-score (0-60). Tight range + dry volume + EMA convergence.",
-    "rd_trigger": "Trigger sub-score (0-25). Range expansion + volume surge from compression.",
-    "rd_pos_mod": "Position modifier (-15 to 0). Penalty for already-extended names.",
-    "rd_rs_bonus": "RS acceleration bonus (0-15). Positive when outperforming SPY recently.",
-    # Health Score — position maintenance
-    "hl_score": "Health composite (0-100). Measures trend integrity for held positions. "
-                "HOLD_ADD (75+) / HOLD (50-74) / TIGHTEN (30-49) / EXIT (<30).",
-    "hl_state": "Health state label: HOLD_ADD / HOLD / TIGHTEN / EXIT.",
-    "hl_trend": "Trend structure sub-score (0-35). Higher lows + bars above EMA21.",
-    "hl_flow": "Flow confirmation sub-score (0-25). MFI health + volume up/down ratio.",
-    "hl_rs": "Relative strength sub-score (0-20). RS vs SPY maintenance.",
-    "hl_risk": "Risk flags penalty (-20 to 0). ATR spike + close weakness + EMA breakdown.",
+    # Health Score — HOLD decision, held_positions ONLY (see decision framework).
+    "hl_score": "Health composite (0-100). Trend integrity of a HELD position — the "
+                "HOLD decision. HOLD_ADD (75+) / HOLD (50-74) / TIGHTEN (30-49) / EXIT (<30). "
+                "Shown ONLY on held_positions.",
+    "hl_state": "Health state label (held only): HOLD_ADD / HOLD / TIGHTEN / EXIT.",
     # Signal Radar (M14-M18) — DETECTION tags, NOT gates and NOT sizing.
     "runner_setup": "DETECTION tag (bool): name is already moving with another leg — "
                     "short young base + strong 5-day thrust + clear overhead (M15 rule). "
@@ -216,18 +221,8 @@ _FIELD_SCHEMA = {
     "atr_caution":          _fs("flag", "boolean", "n/a"),
     "malformed_bracket":    _fs("flag", "boolean", "n/a"),
     # Readiness / Health
-    "rd_score":             _fs("signal", "score", "n/a"),
-    "rd_state":             _fs("signal", "label", "n/a"),
-    "rd_compression":       _fs("signal", "score", "n/a"),
-    "rd_trigger":           _fs("signal", "score", "n/a"),
-    "rd_pos_mod":           _fs("signal", "score", "n/a"),
-    "rd_rs_bonus":          _fs("signal", "score", "n/a"),
     "hl_score":             _fs("signal", "score", "n/a"),
     "hl_state":             _fs("signal", "label", "n/a"),
-    "hl_trend":             _fs("signal", "score", "n/a"),
-    "hl_flow":              _fs("signal", "score", "n/a"),
-    "hl_rs":                _fs("signal", "score", "n/a"),
-    "hl_risk":              _fs("signal", "score", "n/a"),
     # Signal Radar (M14-M18) — additive DETECTION tags (never gate/size)
     "runner_setup":            _fs("signal", "boolean", "n/a"),
     "runner_conviction":       _fs("signal", "score", "n/a"),
@@ -561,10 +556,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "bracket": None,
         "held": False,
         # Readiness / Health scores
-        "rd_score": None, "rd_state": None,
-        "rd_compression": None, "rd_trigger": None, "rd_pos_mod": None, "rd_rs_bonus": None,
         "hl_score": None, "hl_state": None,
-        "hl_trend": None, "hl_flow": None, "hl_rs": None, "hl_risk": None,
         # Enrichment Spec v2.0 — new per-record signals + cleanup flags
         "rs_down_day_20d": None, "rs_leadership": None,
         "setup_state": "BASING",
@@ -672,12 +664,15 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             "rr_tp1", "rr_tp2", "rr_tp3", "atr_fallback_stop",
             "valid", "invalid_reason")}
 
-        # ── Readiness / Health scores (from scores_daily or orchestrator) ──
+        # ── Health score (hold-decision, held_positions only) ─────────────
+        # Readiness (rd_*) is HIDDEN from the AIC feed — the engine still runs
+        # and persists to scores_daily, but the DETECT→ENTER→HOLD framework
+        # gives AIC Signal Radar (detect) → alerts (enter) → Health (hold),
+        # so rd_* is not stamped. Health (hl_score/hl_state) rides on every
+        # record here; the feed scrub keeps it on held_positions and strips it
+        # off the daily list (a hold read only matters once you're in a trade).
         _rdhl = (lk.get("rdhl") or {}).get(tk, {})
-        for _rk in ("rd_score", "rd_state", "rd_compression", "rd_trigger",
-                     "rd_pos_mod", "rd_rs_bonus",
-                     "hl_score", "hl_state", "hl_trend", "hl_flow",
-                     "hl_rs", "hl_risk"):
+        for _rk in ("hl_score", "hl_state"):
             if _rk in _rdhl and _rdhl[_rk] is not None:
                 fields[_rk] = _rdhl[_rk]
 
@@ -967,11 +962,10 @@ def build_export(shortlist: dict | None = None) -> dict:
     _rdhl_lookup: dict[str, dict] = {}
     if _scores_path.exists():
         _rdhl_cols = ["date", "ticker", "mp_state"]
-        _rd_hl_fields = [
-            "rd_score", "rd_state", "rd_compression", "rd_trigger",
-            "rd_pos_mod", "rd_rs_bonus",
-            "hl_score", "hl_state", "hl_trend", "hl_flow", "hl_rs", "hl_risk",
-        ]
+        # Only Health is stamped onto records (held_positions only). Readiness
+        # (rd_*) stays computed + persisted in scores_daily but is not read into
+        # the export — it is hidden from the AIC feed.
+        _rd_hl_fields = ["hl_score", "hl_state"]
         _sc = pd.read_parquet(_scores_path)
         _sc["date"] = pd.to_datetime(_sc["date"]).dt.normalize()
         _latest = _sc[_sc["date"] == _sc["date"].max()]
@@ -1411,22 +1405,25 @@ def build_export(shortlist: dict | None = None) -> dict:
     except Exception:  # noqa: BLE001 — radar block is additive, never blocks export
         pass
 
-    # ---- Feed scrub (PM ruling) — three cuts, applied before the uniform pass:
-    #  1. drop `pe` (Precision-Edge, deprecated) + `rank_explain` (useless);
-    #  2. drop the 8 readiness/health SUB-scores (keep composite + state);
-    #  3. scope by purpose — READINESS (entry timing) rides watchlist rows only,
-    #     HEALTH (hold decision) rides held_positions only.
+    # ---- Feed scrub (PM ruling) — clean the AIC feed before the uniform pass.
+    # Decision framework: DETECT (Signal Radar) → ENTER (alert engine) → HOLD
+    # (Health). Readiness overlapped premove_setup + the alerts, so it is NOT
+    # shown to the AIC (the engine + scores_daily still compute it — just hidden).
+    #  • `pe` (deprecated) + `rank_explain` (useless): gone everywhere.
+    #  • Readiness (all rd_*): hidden from the whole feed.
+    #  • Health: composite+state (hl_score/hl_state) on held_positions ONLY (it's a
+    #    hold decision); the 4 hl_ sub-scores dropped everywhere.
     _DEPRECATED = ("pe", "rank_explain")
-    _SUBSCORES = ("rd_compression", "rd_trigger", "rd_pos_mod", "rd_rs_bonus",
-                  "hl_trend", "hl_flow", "hl_rs", "hl_risk")
-    _HEALTH = ("hl_score", "hl_state")            # hold decision → held only
-    _READINESS = ("rd_score", "rd_state")         # entry timing → watchlist only
+    _READINESS = ("rd_score", "rd_state", "rd_compression", "rd_trigger",
+                  "rd_pos_mod", "rd_rs_bonus")
+    _HL_SUB = ("hl_trend", "hl_flow", "hl_rs", "hl_risk")
+    _HEALTH_CORE = ("hl_score", "hl_state")
     for _lname in ("daily_list", "longlist", "elder_list", "_radar_pool"):
         for _r in export.get(_lname) or []:
-            for _dk in _DEPRECATED + _SUBSCORES + _HEALTH:
+            for _dk in _DEPRECATED + _READINESS + _HL_SUB + _HEALTH_CORE:
                 _r.pop(_dk, None)
     for _r in export.get("held_positions") or []:
-        for _dk in _DEPRECATED + _SUBSCORES + _READINESS:
+        for _dk in _DEPRECATED + _READINESS + _HL_SUB:   # keep hl_score/hl_state
             _r.pop(_dk, None)
 
     # ---- Uniform schema per list (null-fill each to one key set) ----
