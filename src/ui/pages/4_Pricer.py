@@ -53,6 +53,104 @@ def _daily(ticker: str):
         return None
 
 
+# ---------------------------------------------------------------------------
+# AQE engine scores on the priced ticker (A/B) — surface, don't recompute.
+# Priority: (1) the AQE export record (last run, surfaced) → (2) scores_daily
+# (scored last run but not on the daily_list) → (3) compute live via the ad-hoc
+# engine suite for a symbol NOT in AQE. The FIRST hit wins, so an AQE name is
+# never re-scored — only a genuinely non-AQE ticker triggers a live calc.
+# ---------------------------------------------------------------------------
+_SCORE_KEYS = (
+    "sc_momentum", "sc_momentum_raw", "ptrs", "flow", "energy", "structure",
+    "mp", "elder", "bq", "pipe_rank", "mp_state", "gics_sector", "gics_gate",
+    "thematic_basket", "thematic_grade", "rs_spy_20d", "rvol", "beta_30d",
+    "sma_distance_pct", "vol_30d_ann",
+)
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def _scores_daily_latest() -> dict:
+    """{ticker: row-dict} for the latest date in scores_daily.parquet (AQE's last
+    run's full scored set). Empty in cloud mode when the parquet is absent."""
+    try:
+        from src.data.paths import SCORES_DAILY
+        if not SCORES_DAILY.exists():
+            return {}
+        df = pd.read_parquet(SCORES_DAILY)
+        df["date"] = pd.to_datetime(df["date"]).dt.normalize()
+        latest = df[df["date"] == df["date"].max()]
+        return {r["ticker"]: r.to_dict() for _, r in latest.iterrows()}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _num_or_none(v, ndp=1):
+    try:
+        if v is None or (isinstance(v, float) and v != v):
+            return None
+        return round(float(v), ndp)
+    except (TypeError, ValueError):
+        return v if isinstance(v, str) else None
+
+
+def _scores_from_rec(rec: dict) -> dict:
+    """A — pull the score fields straight off the AQE export record (no recompute)."""
+    return {k: rec.get(k) for k in _SCORE_KEYS}
+
+
+def _scores_from_scores_daily(row: dict) -> dict:
+    """A (ext) — map a scores_daily row to the canonical score keys. GICS/thematic/
+    RS aren't in scores_daily (added at export time), so they stay None here."""
+    sc = _num_or_none(row.get("sc_momentum"))
+    return {
+        "sc_momentum": sc, "sc_momentum_raw": _num_or_none(row.get("sc_momentum_raw")),
+        "ptrs": sc,  # PTRS = engine score (Sector-Health adj dropped, PM ruling)
+        "flow": _num_or_none(row.get("flow_100")), "energy": _num_or_none(row.get("energy_100")),
+        "structure": _num_or_none(row.get("structure_100")), "mp": _num_or_none(row.get("mp_100")),
+        "elder": _num_or_none(row.get("elder_score")), "bq": _num_or_none(row.get("bq_100")),
+        "pipe_rank": _num_or_none(row.get("pipe_rank")),
+        "mp_state": (str(row["mp_state"]) if row.get("mp_state") is not None
+                     and str(row.get("mp_state")) != "nan" else None),
+        "gics_sector": None, "gics_gate": None, "thematic_basket": None,
+        "thematic_grade": None, "rs_spy_20d": None, "rvol": None, "beta_30d": None,
+        "sma_distance_pct": None, "vol_30d_ann": None,
+    }
+
+
+def _scores_from_live(s: dict) -> dict:
+    """B — map a live score_tickers() result to the canonical score keys."""
+    sc = s.get("sc_momentum")
+    return {
+        "sc_momentum": sc, "sc_momentum_raw": s.get("sc_momentum_raw"), "ptrs": sc,
+        "flow": s.get("flow"), "energy": s.get("energy"), "structure": s.get("structure"),
+        "mp": s.get("mp"), "elder": s.get("elder"), "bq": s.get("bq"),
+        "pipe_rank": s.get("pipe_rank"), "mp_state": s.get("mp_state") or None,
+        "gics_sector": None, "gics_gate": None, "thematic_basket": None, "thematic_grade": None,
+        "rs_spy_20d": s.get("rs_spy_20d"), "rvol": s.get("rvol"),
+        "beta_30d": s.get("beta_30d"), "sma_distance_pct": s.get("sma_distance_pct"),
+        "vol_30d_ann": s.get("vol_30d_ann"),
+    }
+
+
+def _resolve_scores(tk: str, rec: dict | None, allow_live: bool = True) -> tuple[dict | None, str]:
+    """Return (scores, source_label). Checks AQE's last run FIRST; only computes
+    live for a symbol genuinely not in AQE."""
+    if rec and rec.get("sc_momentum") is not None:
+        return _scores_from_rec(rec), "AQE last run (export)"
+    row = _scores_daily_latest().get(tk)
+    if row is not None:
+        return _scores_from_scores_daily(row), "AQE last run (scores_daily)"
+    if allow_live:
+        try:
+            from src.scanner.adhoc import score_tickers
+            r = score_tickers([tk])
+            if r and not r[0].get("error"):
+                return _scores_from_live(r[0]), "computed live (not in AQE)"
+        except Exception:  # noqa: BLE001
+            pass
+    return None, "unavailable"
+
+
 st.title("AQE Pricer — bracket calculator")
 st.caption(
     "Pure calculator (no recommendation). For any ticker it computes the best "
@@ -104,8 +202,14 @@ if st.button("Calculate brackets", type="primary", disabled=not tickers):
         if not b5 and ddf is None:
             missing.append(tk)
         else:
-            results.append(price_ticker(tk, recs_all.get(tk), b5, b1, ddf,
-                                        regime=regime))
+            _rec = recs_all.get(tk)
+            _p = price_ticker(tk, _rec, b5, b1, ddf, regime=regime)
+            # A/B — attach AQE engine scores (surfaced from the last run, or
+            # computed live only if the ticker isn't in AQE at all).
+            _sc, _src = _resolve_scores(tk, _rec)
+            _p["scores"] = _sc or {}
+            _p["score_source"] = _src
+            results.append(_p)
         prog.progress(i / len(tickers), text=f"Priced {tk} ({i}/{len(tickers)})")
     prog.empty()
     st.session_state["pricer_results"] = [r for r in results if not r.get("error")]
@@ -139,10 +243,23 @@ def _aic_block(p: dict) -> str:
             f"VCP {vc.get('vcp_label')} tight {vc.get('vcp_tightness_pct')}% "
             f"(base {vc.get('base_range_pct')}% / cur {vc.get('current_range_pct_5d')}%) | "
             f"exhaustion={ex.get('exhaustion_flag')}")
+    sc = p.get("scores") or {}
+    src = p.get("score_source") or "n/a"
+    scores_line = (
+        f"AQE scores [{src}]: SC_MOM={sc.get('sc_momentum')} raw={sc.get('sc_momentum_raw')} "
+        f"PTRS={sc.get('ptrs')} | Flow={sc.get('flow')} Energy={sc.get('energy')} "
+        f"Structure={sc.get('structure')} MP={sc.get('mp')} Elder={sc.get('elder')} "
+        f"BQ={sc.get('bq')} | PipeRank={sc.get('pipe_rank')} mp_state={sc.get('mp_state')} | "
+        f"GICS={sc.get('gics_sector')}/{sc.get('gics_gate')} "
+        f"thematic={sc.get('thematic_basket')}({sc.get('thematic_grade')}) | "
+        f"RS_SPY20d={sc.get('rs_spy_20d')} RVOL={sc.get('rvol')} beta30d={sc.get('beta_30d')} "
+        f"SMA50d%={sc.get('sma_distance_pct')} vol30d_ann={sc.get('vol_30d_ann')}\n"
+    )
     return (
         f"AQE Pricer — {p['ticker']} ({lvl} regime) — CALCULATED FACTS (no view):\n"
         f"universe={'yes' if p['in_universe'] else 'typed'} | price={p['price']} | "
         f"ATR14d={p['atr_14d']} | 5d_range={rng.get('low')}-{rng.get('high')}\n"
+        f"{scores_line}"
         f"entry={p['entry']} | coil_entry={p['coil_entry']} | "
         f"operative_stop={op['price']} (basis={op['basis']}, risk={p['risk']}, "
         f"ATR×={op.get('atr_ratio')}, R:R_TP2={op.get('rr_tp2')}, "
@@ -167,14 +284,25 @@ def _aic_block(p: dict) -> str:
 
 results = st.session_state.get("pricer_results")
 if results:
+    _SRC_TAG = {"AQE last run (export)": "AQE", "AQE last run (scores_daily)": "AQE·sd",
+                "computed live (not in AQE)": "live", "unavailable": "—"}
     rows = []
     for p in results:
         op = p["operative_stop"]
         rng = p.get("range_5d") or {}
         ec = p.get("elder_context") or {}
+        sc = p.get("scores") or {}
         rows.append({
             "Ticker": p["ticker"], "Univ": "✓" if p["in_universe"] else "typed",
+            "Src": _SRC_TAG.get(p.get("score_source"), p.get("score_source")),
             "Price": p["price"],
+            # AQE engine read (surfaced from the last run, or computed for non-AQE)
+            "SC_MOM": sc.get("sc_momentum"), "PTRS": sc.get("ptrs"),
+            "Flow": sc.get("flow"), "Energy": sc.get("energy"),
+            "Struct": sc.get("structure"), "MP": sc.get("mp"),
+            "Elder": sc.get("elder"), "Pipe": sc.get("pipe_rank"),
+            "GICS": sc.get("gics_sector"), "Gate": sc.get("gics_gate"),
+            "RS20d": sc.get("rs_spy_20d"),
             "5d Range": f"{rng.get('low')}–{rng.get('high')}" if rng else "—",
             "Entry": p["entry"], "Stop": op["price"], "Basis": op["basis"],
             "Stop %": op.get("stop_pct"), "Risk": p["risk"], "Coil": p["coil_entry"],
@@ -187,14 +315,32 @@ if results:
             "Exh": (ec.get("exhaustion_check") or {}).get("exhaustion_flag"),
         })
     table_with_copy(pd.DataFrame(rows), key="pricer_main")
-    st.caption("Stop = tightest level from the FIB/MA/DSL/swing menu (full metrics "
-               "per name below). TP1/2/3 = mechanical +1/2/3R off the stop; "
-               "structural targets per name. **No decision implied — facts only.**")
+    st.caption("**Src** = where the AQE scores came from: **AQE** (last-run export) · "
+               "**AQE·sd** (last-run scores_daily) · **live** (not in AQE — scored on "
+               "the fly) · **—** (unavailable). Stop = tightest level from the "
+               "FIB/MA/DSL/swing menu. TP1/2/3 = mechanical +1/2/3R off the stop; "
+               "structural targets per name below. **No decision implied — facts only.**")
+
+    # (C) One-click copy of EVERY priced ticker's full fact block for the AIC.
+    st.markdown("**📋 Copy ALL priced tickers (full facts) for the AIC**")
+    st.code("\n\n".join(_aic_block(p) for p in results), language=None)
 
     for p in results:
         op = p["operative_stop"]
         with st.expander(f"{p['ticker']} — stop {op['price']} ({op['basis']}) · "
                          f"state {p.get('state')}"):
+            _sc = p.get("scores") or {}
+            if _sc.get("sc_momentum") is not None:
+                st.caption(
+                    f"**AQE read** [{p.get('score_source')}]: SC_MOM **{_sc.get('sc_momentum')}** · "
+                    f"PTRS **{_sc.get('ptrs')}** · Flow {_sc.get('flow')} · Energy {_sc.get('energy')} · "
+                    f"Struct {_sc.get('structure')} · MP {_sc.get('mp')} · Elder {_sc.get('elder')} · "
+                    f"Pipe {_sc.get('pipe_rank')}"
+                    + (f" · {_sc.get('gics_sector')}/{_sc.get('gics_gate')}"
+                       if _sc.get('gics_sector') else ""))
+            else:
+                st.caption(f"**AQE read**: unavailable ({p.get('score_source')}) — "
+                           "bracket/levels only.")
             if p.get("notes"):
                 st.warning(" · ".join(p["notes"]))
             st.markdown("**Candidate levels (FIB / MA / DSL / swing — below entry)**")
