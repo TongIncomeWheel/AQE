@@ -1409,6 +1409,18 @@ def build_export(shortlist: dict | None = None) -> dict:
     except Exception:  # noqa: BLE001 — radar block is additive, never blocks export
         pass
 
+    # ---- Deprecated-field scrub (PM ruling): drop `pe` (Precision-Edge,
+    # deprecated) and `rank_explain` (useless) from every record before the
+    # uniform pass so they never reach the AIC feed.
+    _DEPRECATED = ("pe", "rank_explain")
+    for _lname in ("daily_list", "longlist", "elder_list", "_radar_pool"):
+        for _r in export.get(_lname) or []:
+            for _dk in _DEPRECATED:
+                _r.pop(_dk, None)
+    for _r in export.get("held_positions") or []:
+        for _dk in _DEPRECATED:
+            _r.pop(_dk, None)
+
     # ---- Uniform schema per list (null-fill each to one key set) ----
     for _lname in ("daily_list", "longlist", "elder_list"):
         _rows = export.get(_lname) or []
@@ -1425,8 +1437,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
         "mp", "elder", "entry", "atr_14d",
-        "beta_30d", "elder_5d", "mp_state", "pe", "pipe_rank",
-        "floor", "rank_explain",
+        "beta_30d", "elder_5d", "mp_state", "pipe_rank", "floor",
         # DSG-18 flat fib ladder
         "fib_swing_low", "fib_swing_high",
         "fib_236", "fib_382", "fib_500", "fib_618", "fib_786",
