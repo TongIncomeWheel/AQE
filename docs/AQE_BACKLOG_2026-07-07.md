@@ -31,15 +31,20 @@ data pass.** This is the thread that ties the whole backlog together.
 ## 1 · Data pull
 
 **1.1 — Audit the AQE alert pull** *(from input #1)*
-- **Universe (answer, for the record):** the alert monitor = `held_positions` → `longlist` →
-  `elder_list` → `_alert_pool` (broad watchlist, raw SC_MOM ≥ 50, minus the above) → `_radar_pool`
-  (the new Signal-Radar names). Quotes are 15-min-delayed FMP `/stable/quote`, fetched once per
-  cycle for that whole set.
-- **What triggers an alert (answer):** only 3 bounded events — **Hit buy price** (today's candle
-  traded *through* `dsl_stop + 1.5·dsl_risk`), **fresh Breakout** (2–8% over entry), **Approaching
-  stop**. Radar names fire only on the two upside events.
-- **To decide:** is that universe right? Too wide / too narrow? Should the trigger set change once
-  brackets go structural (item 3)?
+- **Current universe:** `held_positions` → `longlist` → `elder_list` → `_alert_pool` (broad, raw
+  SC_MOM ≥ 50, ~100+ names) → `_radar_pool` (Signal-Radar). Quotes = 15-min-delayed FMP
+  `/stable/quote`, one fetch per cycle for the whole set.
+- **🔒 PM ruling — narrow the universe to the daily AQE list + signal ledger:**
+  **`held_positions` + `longlist` + `elder_list` + `_radar_pool` (Signal Radar). DROP `_alert_pool`**
+  (the broad SC≥50 pool — that's the noise). Alerts should fire only on names AQE actually surfaces
+  that day.
+  - *Note:* `_alert_pool` was originally added because the tight list rarely tripped the narrow
+    bands — so expect **fewer alerts**. The Signal-Radar names (esp. pre-move coils) now backfill
+    that, which is the point: relevant > frequent.
+- **What triggers an alert (current):** 3 bounded events — **Hit buy price** (candle traded
+  *through* `dsl_stop + 1.5·dsl_risk`), **fresh Breakout** (2–8% over entry), **Approaching stop**.
+  Radar names fire only on the two upside events.
+  - → the trigger levels get re-based onto the structural bracket (item 2.1 / the DSL-retirement).
 
 **1.2 — Pricer / Chart pull is too slow** *(from input #2)*
 - Problem: pulling 15-min data on every chart request takes ~10 min → unusable.
@@ -161,7 +166,8 @@ proper fallback logic is the separate **bracketing-engine refinement**.
 1. ~~Retire mechanical TP?~~ **RESOLVED — remove mechanical DSL *and* TP altogether, whole-AQE.**
 2. **`optimal_stop` = "closest valid support"** (item 4) vs the current "tightest valid"? They can
    differ. → PM to confirm "closest."
-3. Alert universe (1.1) — keep the current 5-tier set, or trim/expand?
+3. ~~Alert universe?~~ **RESOLVED — held + longlist + elder + Signal Radar; drop the broad
+   `_alert_pool`.**
 4. Chart pull (1.2) — **per-ticker on-demand** default + cache the monitored set?
 5. ~~Backtest simulator?~~ **RESOLVED — retire it.**
 6. ~~Un-bracketable names?~~ **RESOLVED — show "no valid bracket."**
