@@ -851,8 +851,10 @@ def build_export(shortlist: dict | None = None) -> dict:
     sector_grades = {r["etf"]: {"grade": r["grade"], "sh": r["sh_value"]} for r in srm_gics} if srm_gics else sl.get("srm_detail", {})
 
     def _ptrs(sc_mom, ticker):
-        sh = get_sector_health(ticker, sector_grades)
-        r = compute_ptrs(sc_mom, sh)
+        # PM ruling: PTRS drops the Sector-Health adjustment (that is a committee
+        # deliberation; SRM grade + sector/thematic RRG give the qualitative read).
+        # PTRS = the engine score, no sector discount.
+        r = compute_ptrs(sc_mom, 0.0)
         v = r.get("ptrs")
         return round(v, 1) if v is not None and v == v else 0.0
 
@@ -1129,9 +1131,9 @@ def build_export(shortlist: dict | None = None) -> dict:
                 sc_df[c] = pd.to_numeric(sc_df[c], errors="coerce").fillna(0)
         sc_df["_floor"] = sc_df[
             ["flow_100", "energy_100", "structure_100", "mp_100"]].min(axis=1)
-        _sh = sc_df["ticker"].map(
-            lambda t: sector_grades.get(sm.get(t, ""), {}).get("sh", 0))
-        sc_df["_ptrs"] = (sc_df["sc_momentum"].fillna(0) + _sh.fillna(0)).round(1)
+        # PTRS = engine score, no Sector-Health adjustment (PM ruling; SRM/RRG
+        # carry the sector read separately).
+        sc_df["_ptrs"] = sc_df["sc_momentum"].fillna(0).round(1)
         sc_df = sc_df[~sc_df["ticker"].isin(set(GICS_ETFS) | {"SPY"})].copy()
 
         def _wl_record(wr, rank, source):
@@ -1409,16 +1411,22 @@ def build_export(shortlist: dict | None = None) -> dict:
     except Exception:  # noqa: BLE001 — radar block is additive, never blocks export
         pass
 
-    # ---- Deprecated-field scrub (PM ruling): drop `pe` (Precision-Edge,
-    # deprecated) and `rank_explain` (useless) from every record before the
-    # uniform pass so they never reach the AIC feed.
+    # ---- Feed scrub (PM ruling) — three cuts, applied before the uniform pass:
+    #  1. drop `pe` (Precision-Edge, deprecated) + `rank_explain` (useless);
+    #  2. drop the 8 readiness/health SUB-scores (keep composite + state);
+    #  3. scope by purpose — READINESS (entry timing) rides watchlist rows only,
+    #     HEALTH (hold decision) rides held_positions only.
     _DEPRECATED = ("pe", "rank_explain")
+    _SUBSCORES = ("rd_compression", "rd_trigger", "rd_pos_mod", "rd_rs_bonus",
+                  "hl_trend", "hl_flow", "hl_rs", "hl_risk")
+    _HEALTH = ("hl_score", "hl_state")            # hold decision → held only
+    _READINESS = ("rd_score", "rd_state")         # entry timing → watchlist only
     for _lname in ("daily_list", "longlist", "elder_list", "_radar_pool"):
         for _r in export.get(_lname) or []:
-            for _dk in _DEPRECATED:
+            for _dk in _DEPRECATED + _SUBSCORES + _HEALTH:
                 _r.pop(_dk, None)
     for _r in export.get("held_positions") or []:
-        for _dk in _DEPRECATED:
+        for _dk in _DEPRECATED + _SUBSCORES + _READINESS:
             _r.pop(_dk, None)
 
     # ---- Uniform schema per list (null-fill each to one key set) ----
