@@ -5,26 +5,22 @@ structured from the PM's 7 inputs into the 3 categories.
 
 ---
 
-## ⭐ The insight that reshapes items 1, 3, 4, 5, 6
+## ⭐ The spine — one Bracketing Engine everything references
 
-**AQE already computes structural brackets — the alerts and Pricer just don't use them.**
+**The root cause of items 3/4/5/6 is that brackets are computed in several places with different
+logic: `levels.py` (structural `optimal_stop`/`structural_targets`), `dsl.py` (mechanical DSL),
+the alert engine (re-derives a buy-zone from `dsl_stop`+1.5·`dsl_risk`), the Pricer (its own),
+the intraday `bracket.py` (its own). That divergence IS the "unclean data / messed-up columns."**
 
-The daily export already carries, per ticker (DSG-18 / Charter v2.3 work):
-- **`optimal_stop`** = the *tightest structural support* that passes the 3 gates (ATR floor ≥1.0,
-  R:R-TP2 ≥2.0, risk% ≤ regime ceiling). Candidates are **swing lows, MA cluster (MA20/50),
-  fib_618/786, MA20/50/100/200** — i.e. exactly "last support / MA / Fib" (item 4).
-- **`structural_targets`** = *structural resistance* nearest-first: prior pivot highs, the prior
-  swing high, and **fib extensions (1.272/1.618/2.0/2.618)** (item 5). It's already β-adjusted
-  (the DSL stop uses 30-day β) and ATR-gated.
+**The clean design (PM ruling): a single Bracketing Engine — one source of truth for every
+stop/target, referenced by the export, alerts, Pricer, charts, and signal ledger, with one shared
+schema (same data, same tables). See §2.0.** The good news: the structural logic already exists in
+`levels.py` (closest support / resistance via swing lows, MA, Fib) — the work is to consolidate it
+into the engine, delete the mechanical DSL, and make everyone read the engine's output.
 
-**But** the **alert engine** and the **email** still show the *mechanical* ladder
-(`dsl_tp_1r/2r/3r` = entry + 1/2/3 × R) — that's item 3's complaint. And the labelling is messy
-enough (item 6) that AIC can't tell the structural levels from the mechanical ones.
-
-➡️ **So items 3/4/5 are mostly "surface + wire the structural brackets we already have," not
-"build them." The build that remains is calibration (is `optimal_stop` really the *closest* valid
-support? is the ATR-relative labelling right?) + pointing the alerts/Pricer at them + a clean
-data pass.** This is the thread that ties the whole backlog together.
+➡️ **This is the thread that ties the whole backlog together: build the engine (2.0) → the export,
+alerts, chart, and ledger all reference it → the feed is automatically clean because there's only
+one bracket definition.**
 
 ---
 
@@ -60,26 +56,45 @@ data pass.** This is the thread that ties the whole backlog together.
 
 ## 2 · Bracket & Charting Methodology
 
-**2.1 — Alert TP must be structural, not mechanical** *(input #3)*
-- Today the alert/email shows `2×ATR / 2×SL` mechanical TP. Replace with the **structural target**
-  (nearest `structural_targets` resistance / fib) — which the export already carries.
+### 🔒 2.0 — THE BRACKETING ENGINE (architectural spine, PM ruling)
 
-**2.2 — SL = closest structural support** *(input #4)*
-- Rule: SL = nearest structural support, β(30d)- and ATR-aware; candidates = **last support / MA /
-  Fib**. → this *is* `optimal_stop`'s definition. Task = verify it picks the **closest** valid
-  support (not just the tightest-passing) and that its risk is sane relative to ATR.
+**The clean design: one bracketing engine is the single source of truth for every stop/target in
+AQE. Everything references the same output — same data, same tables, no re-derivation anywhere.**
 
-**2.3 — TP = closest structural resistance** *(input #5)*
-- Rule: TP = nearest structural resistance, β/ATR-aware; candidates = **support/MA/Fib**; soft
-  secondary = **TPx + ATR**, but **Fibs preferred**. → this *is* `structural_targets`. Task = confirm
-  nearest-first ordering + fib preference; expose the "TP + ATR" soft variant if wanted.
+- **New module** (e.g. `src/engines/bracket_engine.py`) computes the canonical bracket for a ticker
+  from daily bars + β(30d) + ATR + regime, and emits ONE bracket object/table:
+  `{ entry, stop, stop_type, stop_atr_dist, risk, targets[ {price, type, r, ...} ], valid,
+    invalid_reason }`.
+- **Every consumer calls it — none compute their own bracket:**
+  - the **Drive export** stamps the bracket per record (replaces the scattered `optimal_stop` /
+    `structural_targets` / `dsl_*` assembly),
+  - the **alert engine** triggers off the bracket (buy-zone / breakout / near-stop derived from it),
+  - the **Pricer** + **Charts/Trade-Entry** display it,
+  - the **signal ledger / paper-track** scores outcomes against it.
+- **One schema, referenced everywhere** — the bracket's field set + glossary are defined once by the
+  engine; the export schema, the UI tables, and the alert email all read that same definition. No
+  per-consumer column remixing (that's the "unclean data" in item 6).
+- This makes the DSL retirement trivial: there is simply **nothing else computing a bracket** — the
+  mechanical `dsl_*` construct is deleted, not replaced piecemeal.
+- The engine **owns the SL/TP rule** (below) — so "closest vs tightest" is decided *once, in one
+  place*, not re-litigated per consumer.
+
+**Absorbs inputs #3/#4/#5** — these are no longer separate tasks, they are the engine's definition:
+
+- **Stop rule (input #4):** SL = **closest structural support** below entry, β/ATR-aware; candidates
+  = last support / MA / Fib. *(supersedes the current `optimal_stop` "tightest valid" — see open #2:
+  the engine's default becomes "closest", pending final PM confirm.)*
+- **Target rule (input #5):** TP = **closest structural resistance** above entry, β/ATR-aware;
+  candidates = pivot high / MA / Fib; **Fibs preferred**; soft secondary = **TPx + ATR**.
+- **Alert levels (input #3):** the alert's buy/TP/stop all read the engine's bracket — mechanical
+  `2×ATR / 2×SL` is gone.
+- **Un-bracketable:** when no candidate passes the gates → `valid=false`, `invalid_reason` set; the
+  feed shows **"no valid bracket"** (no fallback).
 
 **2.4 — Merge Pricer into Chart & Trade Entry; drop sizing** *(input #7)*
 - Combine the Pricer page into the (already-merged) Charts + Trade Entry page. **Remove position
-  sizing** — AIC sizes, AQE just shows levels. Reduces surface + the slow pull (ties to 1.2).
-
-*(Cross-ref: 2.1/2.2/2.3 all resolve to "use `optimal_stop` + `structural_targets` everywhere —
-export, alerts, chart — and retire the mechanical `dsl_tp_*` from what AIC reads.")*
+  sizing** — AIC sizes, AQE just shows levels. Both then render the **same bracket-engine output**
+  (ties to 1.2 + 2.0).
 
 ---
 
@@ -108,21 +123,21 @@ export, alerts, chart — and retire the mechanical `dsl_tp_*` from what AIC rea
 ## Dependencies & suggested sequence
 
 ```
-1.1 Audit alerts (universe + triggers + what a "bracket" is)   ← foundation, defines truth
+2.0 BRACKETING ENGINE  ← the spine: one engine, one schema, one output
+     (owns SL=closest support, TP=closest resistance, valid/invalid)
         │
-        ├─► 2.2 SL = optimal_stop (verify "closest" + ATR sanity)
-        ├─► 2.3 TP = structural_targets (verify nearest-first + fib)
-        │        │
-        │        └─► 2.1 Wire structural bracket into alerts (retire mechanical TP)
-        │
-        └─► 3.1/3.3 Clean + ATR-label the levels  ──► 3.2 readiness/conviction clarity
-                                                   └─► 3.4 GICS + thematic direction per ticker
-1.2 Pricer/chart pull perf ──► 2.4 merge Pricer+Chart, drop sizing
+        ├─► export stamps the engine's bracket   ──► retire mechanical dsl_* (fix-forward)
+        ├─► alerts trigger off the engine's bracket (1.1 universe already narrowed)
+        ├─► Pricer + Charts render the engine's bracket ──► 2.4 merge + drop sizing
+        ├─► signal ledger scores outcomes vs the engine's bracket
+        └─► feed is clean by construction (3.1/3.3) ──► 3.2 readiness/conviction labels
+                                                     └─► 3.4 GICS + thematic direction per ticker
+1.2 Pricer/chart pull perf (per-ticker + cache) — parallel, feeds 2.4
 ```
 
-**Proposed order:** **1.1 (audit)** → **2.2/2.3 (lock the structural SL/TP definition)** →
-**2.1 + 3.1/3.3 (wire it in + clean feed)** → **3.2/3.4 (labels + sector/thematic direction)** →
-**1.2 + 2.4 (chart perf + merge, in parallel)**.
+**Proposed order:** **2.0 build the engine** (owns the SL/TP rule) → **repoint export + alerts +
+ledger at it, delete mechanical DSL** → **feed clean-up falls out (3.1/3.3)** → **3.2/3.4 (labels +
+sector/thematic direction)** → **1.2 + 2.4 (chart perf + merge, parallel)**.
 
 ## 🔒 PM DECISION — retire mechanical DSL + TP across the WHOLE AQE
 
@@ -164,8 +179,8 @@ proper fallback logic is the separate **bracketing-engine refinement**.
 
 ## Remaining open questions for the PM
 1. ~~Retire mechanical TP?~~ **RESOLVED — remove mechanical DSL *and* TP altogether, whole-AQE.**
-2. **`optimal_stop` = "closest valid support"** (item 4) vs the current "tightest valid"? They can
-   differ. → PM to confirm "closest."
+2. **Engine stop rule = "closest valid support"** (item 4) — default set to *closest* (supersedes
+   the code's current "tightest valid"). → PM final confirm; only affects the one rule inside §2.0.
 3. ~~Alert universe?~~ **RESOLVED — held + longlist + elder + Signal Radar; drop the broad
    `_alert_pool`.**
 4. Chart pull (1.2) — **per-ticker on-demand** default + cache the monitored set?
