@@ -45,10 +45,11 @@ def load_export() -> dict | None:
 def monitored(export: dict) -> list[dict]:
     """Flatten the export into a dedup'd monitor list of {ticker, source, record}.
 
-    Held names win; then longlist + elder_list (the tight qualified set); then
-    _alert_pool (the broader SC>=50 watchlist, dedup'd against the above). The
-    tight longlist is what the AIC sees; _alert_pool widens the net for alerts
-    only, so the narrow trigger bands have enough names to fire on.
+    Universe = the daily AQE list + signal ledger (PM ruling 2026-07-07): held →
+    longlist → elder_list → _radar_pool (Signal Radar). The broad SC>=50
+    `_alert_pool` was DROPPED — it was noise; alerts should fire only on names AQE
+    actually surfaces that day. The Signal-Radar pre-move names backfill the tighter
+    set (relevant > frequent).
     """
     held_recs = export.get("held_positions") or []
     held_tickers = {r.get("ticker") for r in held_recs if r.get("ticker")}
@@ -60,7 +61,7 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    for _src in ("longlist", "elder_list", "_alert_pool", "_radar_pool"):
+    for _src in ("longlist", "elder_list", "_radar_pool"):
         for r in export.get(_src) or []:
             tk = r.get("ticker")
             if not tk or tk in seen:

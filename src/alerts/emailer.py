@@ -69,8 +69,7 @@ def _fmt(v, dp=2):
 
 def _rec_lookup(export: dict) -> dict:
     out: dict = {}
-    for tier in ("held_positions", "edge_list", "top_picks", "longlist",
-                 "watchlist", "_alert_pool", "_radar_pool"):
+    for tier in ("held_positions", "longlist", "elder_list", "_radar_pool"):
         for r in export.get(tier) or []:
             out.setdefault(r.get("ticker"), r)
     return out

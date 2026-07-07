@@ -341,19 +341,12 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Signal Radar track: {exc}")
 
-    # Step 8d: MA Proximity Scanner — broad-market MA proximity scan
-    # Separate from AQE scoring; uses its own panel for all US stocks >$1B.
-    # Never raises — quota issues or failures don't block the main pipeline.
-    try:
-        print(f"{_el()} [daily] Step 8d: MA Proximity Scanner...")
-        from src.scanner.ma_scanner import run_ma_scan
-        ma_result = run_ma_scan(client=FMPClient())
-        if ma_result.get("ok"):
-            print(f"  MA scan: {ma_result['stats']['near_any_ma']} stocks near at least one MA")
-        else:
-            print(f"  MA scan: skipped ({ma_result.get('reason')})")
-    except Exception as exc:
-        print(f"  [WARN] MA scan: {exc}")
+    # NOTE: the MA Proximity Scanner (broad-market ~2000-ticker scan) is DECOUPLED
+    # from the daily pipeline — it ran here as Step 8d and its full pull (~40 min on
+    # a cold, un-persisted panel) was timing out the daily feed. It now runs as its
+    # own WEEKLY standalone job (src/ui/daily_job.py, Saturdays) against a persisted
+    # ma_panel, so the trading feed never waits on it. On-demand via the MA Scanner
+    # UI button is unchanged.
 
     print("=" * 60)
     print(f"{_el()} [daily] Done. {len(shortlist)} candidates on today's shortlist.")

@@ -49,6 +49,13 @@ UNIVERSE_HOUR = 6
 UNIVERSE_MIN = 0
 UNIVERSE_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00
 
+# MA Proximity Scanner — WEEKLY standalone (decoupled from the daily feed pull).
+# Runs Saturday (a run day, so the container is likely awake) at 10:00 SGT, AFTER
+# the 08:30 pipeline, against a persisted ma_panel so it stays incremental.
+MA_SCAN_WEEKDAY = 5                 # Saturday (Mon=0 … Sun=6)
+MA_SCAN_HOUR = 10
+MA_SCAN_WINDOW_END_HOUR = 20        # generous catch-up window
+
 MARKER_FILENAME = "aqe_last_run.json"
 
 _started = False
@@ -85,6 +92,15 @@ def _should_refresh_universe(now: datetime,
             or (now.hour == UNIVERSE_HOUR and now.minute < UNIVERSE_MIN)):
         return False
     return last_refresh_date_iso != now.date().isoformat()
+
+
+def _should_run_ma_scan(now: datetime, last_ma_date_iso: str | None) -> bool:
+    """True if it's the weekly MA-scan slot (Saturday, past 10:00, not run today)."""
+    if now.weekday() != MA_SCAN_WEEKDAY:
+        return False
+    if now.hour < MA_SCAN_HOUR or now.hour >= MA_SCAN_WINDOW_END_HOUR:
+        return False
+    return last_ma_date_iso != now.date().isoformat()
 
 
 def next_run_hint() -> str:
@@ -239,11 +255,45 @@ def _refresh_universe_and_record(now: datetime) -> None:
         print(f"[daily-job] Universe refresh failed: {exc}")
 
 
+def _run_ma_scan_and_record(now: datetime) -> None:
+    """Weekly standalone MA Proximity Scan. Restore the persisted ma_panel first
+    (so the pull is incremental, not a cold ~2000-ticker re-pull), scan, then
+    persist. Best-effort — never blocks anything; the daily feed is independent.
+    Own timeout so a slow FMP pull can't hang the scheduler thread.
+    """
+    try:
+        print(f"[daily-job] Weekly MA scan starting "
+              f"{now.strftime('%Y-%m-%d %H:%M SGT')}")
+        # Restore last run's ma_panel from the snapshot so the scan is incremental.
+        try:
+            from src.data.persist import load_snapshot
+            load_snapshot()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[daily-job] MA scan: snapshot restore skipped ({exc})")
+        from src.scanner.ma_scanner import run_ma_scan
+        from src.data.fmp_client import FMPClient
+        result = run_ma_scan(client=FMPClient())
+        if result.get("ok"):
+            print(f"[daily-job] Weekly MA scan: "
+                  f"{result['stats']['near_any_ma']} stocks near ≥1 MA")
+        else:
+            print(f"[daily-job] Weekly MA scan skipped ({result.get('reason')})")
+        # Persist the freshened ma_panel so next week's scan stays incremental.
+        try:
+            from src.data.persist import save_snapshot
+            save_snapshot()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[daily-job] MA scan: snapshot save skipped ({exc})")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[daily-job] Weekly MA scan failed: {exc}")
+
+
 def _loop() -> None:
     # Seed last-run date from the persisted marker so a restart doesn't re-run.
     last = last_run_status()
     last_date = last.get("date_sgt") if last else None
     last_universe_date: str | None = None
+    last_ma_date: str | None = None
     while True:
         try:
             now = datetime.now(SGT)
@@ -251,10 +301,14 @@ def _loop() -> None:
             if _should_refresh_universe(now, last_universe_date):
                 _refresh_universe_and_record(now)
                 last_universe_date = now.date().isoformat()
-            # 08:30 SGT — daily pipeline
+            # 08:30 SGT — daily pipeline (trading feed)
             if _should_run(now, last_date):
                 _run_pipeline_and_record(now)
                 last_date = now.date().isoformat()
+            # Saturday 10:00 SGT — weekly standalone MA scan (decoupled from feed)
+            if _should_run_ma_scan(now, last_ma_date):
+                _run_ma_scan_and_record(now)
+                last_ma_date = now.date().isoformat()
         except Exception:  # noqa: BLE001
             pass
         time.sleep(60)

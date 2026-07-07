@@ -36,6 +36,9 @@ def _members() -> list[tuple]:
     data_files = [
         "panel_daily.parquet", "panel_weekly.parquet", "spy_daily.parquet",
         "scores_daily.parquet", "sector_map.json", "active_recipe.json", "aqe.db",
+        # MA Proximity Scanner state — persisted so the WEEKLY standalone scan stays
+        # incremental across HF recycles (else it re-pulls ~2000 tickers each time).
+        "ma_panel.parquet", "ma_scan.parquet", "ma_universe.json",
     ]
     out_files = [
         "shortlist.json", "aqe_daily_export.json", "held_positions.json",

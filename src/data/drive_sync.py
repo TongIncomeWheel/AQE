@@ -1551,20 +1551,16 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     export["longlist"] = _longlist
     export["elder_list"] = _elderlist          # standalone list — kept
-    # The broad watchlist (SC>=50) is NOT shown to the AIC, but the alert engine
-    # needs a wider monitored set than the tight longlist — otherwise the narrow
-    # trigger bands (buy-zone crossing, 2-8% breakout, near-stop) rarely fire on
-    # just ~20 names. _alert_pool carries the dedup'd watchlist minus longlist/elder
-    # tickers so the alert engine has ~100+ names to watch without spamming the AIC.
+    # Alert universe (PM ruling 2026-07-07) = the daily AQE list + signal ledger.
+    # The broad SC>=50 `_alert_pool` was DROPPED (it was noise); the Signal-Radar
+    # pre-move names backfill the tighter set. Alerts fire only on names AQE
+    # actually surfaces that day.
     _alert_seen = {r.get("ticker") for r in _longlist + _elderlist if r.get("ticker")}
-    _alert_pool = [r for r in export.get("watchlist", [])
-                   if r.get("ticker") and r.get("ticker") not in _alert_seen]
-    export["_alert_pool"] = _alert_pool
 
     # Signal Radar pool — the QUIET pre-movers (and any runner) nothing else
-    # watches, so an EARLY breakout still fires an alert. Dedup against every set
-    # already monitored (longlist/elder/watchlist); require DSL levels to evaluate.
-    _radar_covered = _alert_seen | {r.get("ticker") for r in _alert_pool}
+    # watches, so an EARLY breakout still fires an alert. Dedup against the daily
+    # list (longlist/elder); require DSL levels to evaluate.
+    _radar_covered = _alert_seen
     _radar_pool: list = []
     _radar_seen: set = set()
     for _r in _radar_pool_recs:
