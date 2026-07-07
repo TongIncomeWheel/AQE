@@ -752,6 +752,11 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             "mp": round(sg("mp_100"), 0) if sg("mp_100") is not None else None,
             "mp_state": (str(s.get("mp_state")) if s is not None and pd.notna(s.get("mp_state")) else None),
             "elder": round(sg("elder_score"), 1) if sg("elder_score") is not None else None,
+            # Health = the HOLD decision (trend integrity), the whole point of the
+            # held book. Sourced from scores_daily; held names are force-scored in
+            # the orchestrator so this is populated even off the top-50 screen.
+            "hl_score": round(sg("hl_score"), 1) if sg("hl_score") is not None else None,
+            "hl_state": (str(s.get("hl_state")) if s is not None and pd.notna(s.get("hl_state")) else None),
             "cob_price": sg("close"),   # COB close (FMP) — held_book exposure basis
             "beta_30d": (betas.get(tk) or {}).get(30),
             "atr_14d": v21["atr_14d"],

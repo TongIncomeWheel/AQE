@@ -94,6 +94,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
 
     # Step 0b: Pull the latest held-positions journal (PTJ) from Drive so the
     # export can flag held names and attach the engine's read on them.
+    _held = []
     try:
         from src.data.ptj import refresh_held_positions
         _held = refresh_held_positions()
@@ -161,6 +162,13 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
 
     rank_lookup = {t: (r, fip, excl, win) for t, r, fip, excl, win in ranked}
     top_tickers = [t for t, r, *_ in ranked if r >= PIPE_RANK_CUTOFF][:STAGE2_MAX]
+    # ALWAYS score held names (from PTJ) even if they've dropped out of the top-50
+    # momentum screen — Health (the HOLD decision) can only be computed for a name
+    # that's scored, and the held book needs it on every position.
+    _panel_tickers = set(panel["ticker"].unique())
+    for _htk in [p.get("ticker") for p in (_held or []) if p.get("ticker")]:
+        if _htk not in top_tickers and _htk in _panel_tickers:
+            top_tickers.append(_htk)
 
     # Step 3: Full scoring for top candidates
     print(f"[daily] Step 3: Full scoring for top {len(top_tickers)} candidates...")
