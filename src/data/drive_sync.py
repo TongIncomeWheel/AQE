@@ -157,6 +157,17 @@ _FIELD_GLOSSARY = {
     "premove_conviction_label": "Human-readable pre-move conviction = word + number, e.g. "
                           "'HIGH (3/4)' (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4). Read "
                           "this, not the bare number. Detection tag, not a win rate, not sizing.",
+    "sector_trend_state": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum "
+                          "Building — Add' / 'Momentum Fading — Hold' / 'Recovering' / 'Declining'). "
+                          "Context; the gate is gics_gate, unchanged.",
+    "sector_rrg_quadrant": "The ticker's sector RRG quadrant vs SPY: LEADING / IMPROVING / "
+                          "WEAKENING / LAGGING.",
+    "sector_rrg_direction": "The ticker's sector RRG direction of travel: ENTERING / DEEPENING / "
+                          "EXITING / STABLE.",
+    "thematic_rrg_quadrant": "The ticker's PRIMARY thematic basket's RRG quadrant vs SPY "
+                          "(LEADING / IMPROVING / WEAKENING / LAGGING).",
+    "thematic_rrg_direction": "The ticker's PRIMARY thematic basket's RRG direction "
+                          "(ENTERING / DEEPENING / EXITING / STABLE).",
 }
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
@@ -231,6 +242,12 @@ _FIELD_SCHEMA = {
     "premove_setup":           _fs("signal", "boolean", "n/a"),
     "premove_conviction":      _fs("signal", "score", "n/a"),
     "premove_conviction_label": _fs("signal", "label", "n/a"),
+    # Sector (SRM) + thematic rotation DIRECTION per ticker
+    "sector_trend_state":     _fs("signal", "label", "n/a"),
+    "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
+    "sector_rrg_direction":   _fs("signal", "label", "n/a"),
+    "thematic_rrg_quadrant":  _fs("signal", "label", "n/a"),
+    "thematic_rrg_direction": _fs("signal", "label", "n/a"),
 }
 
 
@@ -534,6 +551,10 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "thematic_basket": None, "thematic_grade": None,
         "thematic_parent_gics": None, "thematic_parent_grade": None,
         "thematic_baskets": [],
+        # Sector (SRM) + thematic RRG DIRECTION per ticker — the day's rotation read
+        "sector_trend_state": None,
+        "sector_rrg_quadrant": None, "sector_rrg_direction": None,
+        "thematic_rrg_quadrant": None, "thematic_rrg_direction": None,
         "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         # DSG-18 fib ladder (flat — retracement supports + swing anchors)
@@ -582,6 +603,15 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         else:
             fields["gics_gate"] = "CHECK"
 
+        # Sector rotation DIRECTION for the day (data only — gate unchanged):
+        # SRM trend_state + the sector's RRG quadrant/direction (from srm_detail).
+        if etf:
+            _srm_rrg = (lk.get("srm_rrg") or {}).get(etf) or {}
+            fields["sector_trend_state"] = (_srm_rrg.get("trend_state")
+                                            or sector_grades.get(etf, {}).get("trend_state"))
+            fields["sector_rrg_quadrant"] = _srm_rrg.get("rrg_quadrant")
+            fields["sector_rrg_direction"] = _srm_rrg.get("rrg_direction")
+
         corr = (lk.get("corr") or {}).get(tk)
         if corr:
             fields["sector_corr"], fields["sector_corr_class"] = corr[0], corr[1]
@@ -603,6 +633,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                     "grade": tg.get("grade"),
                     "parent_gics": tg.get("parent_gics"),
                     "parent_grade": tg.get("parent_grade"),
+                    "rrg_quadrant": tg.get("rrg_quadrant"),
+                    "rrg_direction": tg.get("rrg_direction"),
                 })
             fields["thematic_baskets"] = annotated
             primary = annotated[0]
@@ -610,6 +642,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_grade"] = primary["grade"]
             fields["thematic_parent_gics"] = primary["parent_gics"]
             fields["thematic_parent_grade"] = primary["parent_grade"]
+            fields["thematic_rrg_quadrant"] = primary["rrg_quadrant"]
+            fields["thematic_rrg_direction"] = primary["rrg_direction"]
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
@@ -647,7 +681,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                                    price=d.get("entry"), price_source="eod_close")
         fields["bracket"] = {_k: _bracket[_k] for _k in (
             "price", "price_source", "stop", "stop_type", "stop_atr_dist",
-            "risk", "risk_pct", "targets", "rr", "valid", "invalid_reason")}
+            "risk", "risk_pct", "targets", "rr",
+            "rr_tp1", "rr_tp2", "rr_tp3", "valid", "invalid_reason")}
 
         # ── Readiness / Health scores (from scores_daily or orchestrator) ──
         _rdhl = (lk.get("rdhl") or {}).get(tk, {})
@@ -866,6 +901,10 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- Enrichment Spec v2.0 (rs_down_day, breakout_conviction, cleanup) ----
     _v21_lk["enrichment"] = _compute_enrichment_lookups(
         dsl_all, betas, regime_level)
+
+    # ---- Sector rotation per ticker: SRM trend_state + sector RRG (from srm_detail,
+    # which carries trend_state/rrg_quadrant/rrg_direction; sector_grades may not).
+    _v21_lk["srm_rrg"] = sl.get("srm_detail") or {}
 
     # ---- Signal Radar (M14-M18) — per-ticker DETECTION tags + standalone block ----
     # runner_setup / premove_setup + conviction + subtype from the FULL scored

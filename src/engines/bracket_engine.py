@@ -165,6 +165,7 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
         "stop": None, "stop_type": None, "stop_atr_dist": None,
         "risk": None, "risk_pct": None,
         "targets": [], "rr": None,
+        "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
         "valid": False, "invalid_reason": None,
         "candidates": [], "regime_ceiling_pct": ceiling,
     }
@@ -203,14 +204,24 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
     out["risk_pct"] = best["risk_pct"]
 
     # 4) Re-price every target's R against the structural risk + tag ATR distance.
+    #    The first three carry a TP1/TP2/TP3 label so the AIC reads R:R per target
+    #    directly (r = (target − price) / risk = the reward:risk to that level).
+    _tp_labels = {0: "TP1", 1: "TP2", 2: "TP3"}
     out["targets"] = [
         {"type": t["type"], "price": t["price"],
+         "tp": _tp_labels.get(i),
          "r": round((t["price"] - price) / risk, 2) if risk > 0 else None,
          "atr_dist": round((t["price"] - price) / atr14, 2),
          **({"date": t["date"]} if t.get("date") else {})}
-        for t in targets
+        for i, t in enumerate(targets)
     ]
-    # 5) Headline R:R = to the structural TP2.
-    out["rr"] = round((tp2_ref - price) / risk, 2) if risk > 0 else None
+    # 5) R:R to each of the first three structural targets (offloads the calc for
+    #    the AIC). rr == rr_tp2 (the headline). None when that target doesn't exist.
+    def _rr_to(i):
+        return out["targets"][i]["r"] if i < len(out["targets"]) else None
+    out["rr_tp1"] = _rr_to(0)
+    out["rr_tp2"] = _rr_to(1)
+    out["rr_tp3"] = _rr_to(2)
+    out["rr"] = out["rr_tp2"] if out["rr_tp2"] is not None else out["rr_tp1"]
     out["valid"] = True
     return out
