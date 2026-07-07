@@ -409,6 +409,30 @@ def simulate_dsl_trade(
     }
 
 
+def _structural_initial_stop(bars, entry_idx: int, entry_price: float,
+                             atr14: float, beta, regime: str = "GREEN"):
+    """The structural bracket stop at a signal's entry — the SAME logic the live
+    feed uses (bracket_engine on levels_for_ticker). Returns (stop, risk), or
+    (None, None) when no valid structural bracket exists (un-tradeable)."""
+    try:
+        from src.scanner.levels import levels_for_ticker
+        from src.engines.bracket_engine import compute_bracket
+        hi = bars["high"].iloc[:entry_idx + 1].astype(float).to_numpy()
+        lo = bars["low"].iloc[:entry_idx + 1].astype(float).to_numpy()
+        dt = bars["date"].iloc[:entry_idx + 1].to_numpy()
+        d = levels_for_ticker(entry_price, atr14, hi, lo, dt, beta=beta)
+        if not d:
+            return None, None
+        ma = {w: float(bars["close"].iloc[max(0, entry_idx + 1 - w):entry_idx + 1].mean())
+              for w in (20, 50, 100, 200) if entry_idx + 1 >= w}
+        b = compute_bracket(d, ma, regime, price=entry_price, price_source="eod_close")
+        if not b.get("valid"):
+            return None, None
+        return b["stop"], b["risk"]
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
 def compute_dsl_outcomes(
     signals: pd.DataFrame,
     panel_daily: pd.DataFrame,
@@ -492,7 +516,16 @@ def compute_dsl_outcomes(
 
         mp_state = str(row["mp_state"]) if "mp_state" in row.index and pd.notna(row.get("mp_state")) else None
 
-        initial_stop, risk = compute_initial_stop(entry_price, atr14, recent_lows, beta=beta)
+        # SAME LOGIC as the live feed (PM ruling): the initial stop is the
+        # bracket_engine's structural stop, not a separate mechanical one. An
+        # un-bracketable signal (no valid structural stop) is not tradeable —
+        # mirror the live "no valid bracket" and skip it.
+        _regime = str(row["regime"]) if "regime" in row.index and pd.notna(row.get("regime")) else "GREEN"
+        initial_stop, risk = _structural_initial_stop(
+            bars, entry_idx, entry_price, atr14, beta, _regime)
+        if initial_stop is None or risk is None or risk <= 0:
+            results.append(_empty_dsl_row())
+            continue
 
         # Forward bars (entry+1 onward)
         fwd_start = entry_idx + 1
