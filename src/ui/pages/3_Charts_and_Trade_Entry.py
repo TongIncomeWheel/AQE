@@ -221,10 +221,16 @@ with right:
             else:
                 st.error(f"Failed: {_res.get('reason')}")
 
-    # Quotes power BOTH views — fetch once on first load, cache, manual refresh.
-    _need = "tem_quotes" not in st.session_state
-    _refresh = st.button("🔄 Refresh live levels", use_container_width=True)
-    if _need or _refresh:
+    # Quotes power the LIVE triggers in both views. The page opens on the LAST
+    # SNAPSHOT — the EOD export levels + the 36h alert history (the SAME source the
+    # alert emails run off) — and does NOT fetch the whole universe on load (that
+    # made the page unusable). Live 15-min quotes are pulled ONLY on demand, when
+    # you click Refresh.
+    _refresh = st.button(
+        "🔄 Refresh live levels", use_container_width=True,
+        help="Pull live 15-min quotes for the monitored set now. Otherwise the "
+             "page runs off the last EOD snapshot + 36h alert history.")
+    if _refresh:
         with st.spinner("Fetching 15-min quotes…"):
             try:
                 from src.data.fmp_client import FMPClient
@@ -234,6 +240,9 @@ with right:
                 st.session_state["tem_quotes"] = {}
                 st.error(f"Quote fetch failed: {exc}")
     quotes = st.session_state.get("tem_quotes") or {}
+    if not quotes:
+        st.caption("📸 Last snapshot (EOD levels + 36h alert history) · hit "
+                   "**Refresh live levels** for live 15-min triggers.")
 
     from datetime import datetime as _dt  # noqa: E402
     from zoneinfo import ZoneInfo as _ZI  # noqa: E402
@@ -399,7 +408,10 @@ with left:
         st.session_state["sel_ticker"] = sel_dd
 
     lookback = s3.slider("Bars", 60, 500, 250, step=10, label_visibility="collapsed")
-    show_live = s4.toggle("Live", value=True, help="Stamp the 15-min price on the chart")
+    show_live = s4.toggle(
+        "Live", value=False,
+        help="Fetch THIS ticker's live 15-min price now and stamp it on the chart. "
+             "Off by default — the chart loads on the EOD close (last snapshot).")
 
     sel = st.session_state["sel_ticker"]
     rec = rec_lookup.get(sel)
