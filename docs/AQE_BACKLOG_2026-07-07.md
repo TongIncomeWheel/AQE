@@ -1,0 +1,128 @@
+# AQE Backlog — 2026-07-07
+
+**Mode:** planning. Nothing here is being executed yet — this is the agreed worklist,
+structured from the PM's 7 inputs into the 3 categories.
+
+---
+
+## ⭐ The insight that reshapes items 1, 3, 4, 5, 6
+
+**AQE already computes structural brackets — the alerts and Pricer just don't use them.**
+
+The daily export already carries, per ticker (DSG-18 / Charter v2.3 work):
+- **`optimal_stop`** = the *tightest structural support* that passes the 3 gates (ATR floor ≥1.0,
+  R:R-TP2 ≥2.0, risk% ≤ regime ceiling). Candidates are **swing lows, MA cluster (MA20/50),
+  fib_618/786, MA20/50/100/200** — i.e. exactly "last support / MA / Fib" (item 4).
+- **`structural_targets`** = *structural resistance* nearest-first: prior pivot highs, the prior
+  swing high, and **fib extensions (1.272/1.618/2.0/2.618)** (item 5). It's already β-adjusted
+  (the DSL stop uses 30-day β) and ATR-gated.
+
+**But** the **alert engine** and the **email** still show the *mechanical* ladder
+(`dsl_tp_1r/2r/3r` = entry + 1/2/3 × R) — that's item 3's complaint. And the labelling is messy
+enough (item 6) that AIC can't tell the structural levels from the mechanical ones.
+
+➡️ **So items 3/4/5 are mostly "surface + wire the structural brackets we already have," not
+"build them." The build that remains is calibration (is `optimal_stop` really the *closest* valid
+support? is the ATR-relative labelling right?) + pointing the alerts/Pricer at them + a clean
+data pass.** This is the thread that ties the whole backlog together.
+
+---
+
+## 1 · Data pull
+
+**1.1 — Audit the AQE alert pull** *(from input #1)*
+- **Universe (answer, for the record):** the alert monitor = `held_positions` → `longlist` →
+  `elder_list` → `_alert_pool` (broad watchlist, raw SC_MOM ≥ 50, minus the above) → `_radar_pool`
+  (the new Signal-Radar names). Quotes are 15-min-delayed FMP `/stable/quote`, fetched once per
+  cycle for that whole set.
+- **What triggers an alert (answer):** only 3 bounded events — **Hit buy price** (today's candle
+  traded *through* `dsl_stop + 1.5·dsl_risk`), **fresh Breakout** (2–8% over entry), **Approaching
+  stop**. Radar names fire only on the two upside events.
+- **To decide:** is that universe right? Too wide / too narrow? Should the trigger set change once
+  brackets go structural (item 3)?
+
+**1.2 — Pricer / Chart pull is too slow** *(from input #2)*
+- Problem: pulling 15-min data on every chart request takes ~10 min → unusable.
+- Options on the table (PM open to ideas):
+  - **(a) Persistence layer** — the alert poller already fetches quotes every 15 min; cache them
+    (Drive/local) so the chart reads the cache instead of re-pulling.
+  - **(b) Per-ticker on-demand pull** — don't pull the universe; pull just the one ticker being
+    charted (fast, seconds).
+  - Likely answer: **(b) for the chart the PM is looking at** + **(a) cache** for the monitored set.
+- Shares the "per-ticker vs universe pull" question with 1.1.
+
+---
+
+## 2 · Bracket & Charting Methodology
+
+**2.1 — Alert TP must be structural, not mechanical** *(input #3)*
+- Today the alert/email shows `2×ATR / 2×SL` mechanical TP. Replace with the **structural target**
+  (nearest `structural_targets` resistance / fib) — which the export already carries.
+
+**2.2 — SL = closest structural support** *(input #4)*
+- Rule: SL = nearest structural support, β(30d)- and ATR-aware; candidates = **last support / MA /
+  Fib**. → this *is* `optimal_stop`'s definition. Task = verify it picks the **closest** valid
+  support (not just the tightest-passing) and that its risk is sane relative to ATR.
+
+**2.3 — TP = closest structural resistance** *(input #5)*
+- Rule: TP = nearest structural resistance, β/ATR-aware; candidates = **support/MA/Fib**; soft
+  secondary = **TPx + ATR**, but **Fibs preferred**. → this *is* `structural_targets`. Task = confirm
+  nearest-first ordering + fib preference; expose the "TP + ATR" soft variant if wanted.
+
+**2.4 — Merge Pricer into Chart & Trade Entry; drop sizing** *(input #7)*
+- Combine the Pricer page into the (already-merged) Charts + Trade Entry page. **Remove position
+  sizing** — AIC sizes, AQE just shows levels. Reduces surface + the slow pull (ties to 1.2).
+
+*(Cross-ref: 2.1/2.2/2.3 all resolve to "use `optimal_stop` + `structural_targets` everywhere —
+export, alerts, chart — and retire the mechanical `dsl_tp_*` from what AIC reads.")*
+
+---
+
+## 3 · Clean / simplified data feed to AIC
+
+**3.1 — DSL levels are odd / badly labelled / not ATR-relative** *(input #6)*
+- Raw `dsl_stop`/`dsl_tp_*` are absolute USD with confusing names. Make every level **ATR-relative
+  and clearly labelled** (or drop the mechanical ones in favour of the structural bracket).
+
+**3.2 — Readiness + conviction not understood by AIC** *(input #6)*
+- The signal-ledger readiness (`rd_*`) and radar conviction reach AIC as bare scores. We added
+  `conviction_label` ("HIGH (3/4)"); do the same clarity pass for readiness/health, or cut what
+  AIC doesn't use.
+
+**3.3 — Too much unclean data / messed-up columns** *(input #6)*
+- A field-pruning pass: keep only what AIC reads; remove/rename the rest. (Continues the earlier
+  removal of rr_tp1/2/3, rr_est, disposition, bare `stop`.)
+
+**3.4 — Add per-ticker GICS + Thematic *direction* for the day** *(input #6)*
+- Each watchlist ticker should carry its **GICS direction** and **Thematic direction** for the day —
+  we already compute these (SRM `trend_state` / RRG direction, thematic-basket RRG). Task = surface
+  them cleanly per record, not just in the top-level SRM block.
+
+---
+
+## Dependencies & suggested sequence
+
+```
+1.1 Audit alerts (universe + triggers + what a "bracket" is)   ← foundation, defines truth
+        │
+        ├─► 2.2 SL = optimal_stop (verify "closest" + ATR sanity)
+        ├─► 2.3 TP = structural_targets (verify nearest-first + fib)
+        │        │
+        │        └─► 2.1 Wire structural bracket into alerts (retire mechanical TP)
+        │
+        └─► 3.1/3.3 Clean + ATR-label the levels  ──► 3.2 readiness/conviction clarity
+                                                   └─► 3.4 GICS + thematic direction per ticker
+1.2 Pricer/chart pull perf ──► 2.4 merge Pricer+Chart, drop sizing
+```
+
+**Proposed order:** **1.1 (audit)** → **2.2/2.3 (lock the structural SL/TP definition)** →
+**2.1 + 3.1/3.3 (wire it in + clean feed)** → **3.2/3.4 (labels + sector/thematic direction)** →
+**1.2 + 2.4 (chart perf + merge, in parallel)**.
+
+## Open questions for the PM
+1. **Retire mechanical `dsl_tp_*` entirely** from what AIC reads, or keep them as a labelled
+   fallback alongside the structural bracket?
+2. Alert universe (1.1) — keep the current 5-tier set, or trim/expand?
+3. Chart pull (1.2) — go with **per-ticker on-demand** as the default, cache the monitored set?
+4. Should `optimal_stop` change from "tightest valid" to **"closest valid support"** — those can
+   differ (item 4 says *closest*).
