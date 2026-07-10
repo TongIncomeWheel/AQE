@@ -1507,6 +1507,9 @@ if _ll_recs:
     _n_lg = sum(1 for r in _filtered if r.get("in_ledger"))
     st.markdown(f"**{len(_filtered)}** names match "
                 f"({_n_ll} qualified · {_n_el} Elder≥8 · {_n_lg} in ledger)")
+    _held_here = [r.get("ticker") for r in _filtered if r.get("held")]
+    if _held_here:
+        st.caption(f"🔵 **{len(_held_here)} held**: {', '.join(_held_here)}")
     _list_summary(_filtered)
     table_with_copy(_export_table(_filtered), key="ll_table")
 
@@ -1537,6 +1540,9 @@ else:
     _elder_recs = _ex.get("elder_list") or []
 if _elder_recs:
     st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
+    _held_elder = [r.get("ticker") for r in _elder_recs if r.get("held")]
+    if _held_elder:
+        st.caption(f"🔵 **{len(_held_elder)} of these are held**: {', '.join(_held_elder)}")
     _list_summary(_elder_recs)
     table_with_copy(_export_table(_elder_recs), key="elder_table")
 elif _ex:

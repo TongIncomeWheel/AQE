@@ -757,6 +757,13 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             # the orchestrator so this is populated even off the top-50 screen.
             "hl_score": round(sg("hl_score"), 1) if sg("hl_score") is not None else None,
             "hl_state": (str(s.get("hl_state")) if s is not None and pd.notna(s.get("hl_state")) else None),
+            # Signal-ledger DETECTION tags (from Signal Radar) so a held name shows
+            # whether it's ALSO firing runner/pre-move — same as the daily_list rows.
+            "runner_setup": bool(v21.get("runner_setup")),
+            "runner_conviction_label": v21.get("runner_conviction_label"),
+            "premove_setup": bool(v21.get("premove_setup")),
+            "premove_conviction_label": v21.get("premove_conviction_label"),
+            "in_ledger": bool(v21.get("runner_setup") or v21.get("premove_setup")),
             "cob_price": sg("close"),   # COB close (FMP) — held_book exposure basis
             "beta_30d": (betas.get(tk) or {}).get(30),
             "atr_14d": v21["atr_14d"],
