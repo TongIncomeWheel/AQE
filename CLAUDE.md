@@ -231,6 +231,30 @@ MCP `chart` tool today (intraday 1/5/15/30-min) and an IBKR feed can swap in lat
   documented chat skill `docs/skills/aqe-intraday-plan/SKILL.md` (self-contained algorithm
   for a Claude.ai Agent Skill). Phase 2: IBKR order *placement*. Tests: `tests/test_intraday.py`.
 
+### Options scanner + calculator — IBKR-fed (`src/options/`)
+A SEPARATE, recommend-only options layer for the **income wheel** (does NOT touch the
+AQE equity export, places no orders). Data comes from the **IBKR hosted MCP** (spot +
+strike + expiry + **IV** + bid/ask + OI) — **no paid API, no local TWS/Gateway**. Greeks
+are a deterministic **Black-Scholes** transform of IBKR's IV (IBKR uses a binomial for
+American exercise; the gap is negligible for the OTM puts the wheel sells). Pure stdlib
+(`math`, `statistics.NormalDist` — no numpy/scipy), fully unit-tested (`tests/test_options.py`).
+- `greeks.py` — BS `bs_price` (the market-maker fair value), `bs_greeks` (Δ/Γ/Θ-per-day/
+  ν-per-1%/ρ), `implied_vol` (bisection back-out from a mid), `prob_below` (risk-neutral POP).
+- `csp.py` — `analyze_csp` (cash-secured put: credit, collateral, static + annualised yield,
+  breakeven, downside cushion, assignment prob, POP, daily theta credit, edge-vs-model,
+  contracts-per-slot) + `analyze_put_spread` (defined-risk put credit spread: net credit,
+  max-loss/collateral, R:R, breakeven, POP, contracts per $2,100 risk).
+- `scanner.py` — `calculator` (single-contract detail; backs out IV from the mid when the
+  feed omits it), `scan_csps` (theta scanner: filter puts by delta band 0.15–0.35, DTE,
+  POP, OI, quote width → ranked by annualised return-on-collateral), `build_put_spreads`
+  (auto-pairs legs `--width` apart, ranked by R:R), `best` (the best RRR combo).
+- `config.py` — all knobs (risk-free/div defaults, wheel filters, $70K/3%/6-slot sizing).
+- **Driver = the `aqe-option-scanner` chat skill** (`docs/skills/aqe-option-scanner/SKILL.md`,
+  self-contained BS spec): Claude pulls the chain via the IBKR MCP, writes a contracts JSON,
+  and runs `python -m src.options.run_scan --contracts <f> --mode scan|spreads|calc`
+  (deterministic formatter). Runs "just like Tiger MCP" — the MCP is the feed, Claude + the
+  skill are the intelligence. Closed market → empty bid/ask → prices off BS fair value.
+
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
 Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export.
 
