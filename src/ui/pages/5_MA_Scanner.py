@@ -62,6 +62,20 @@ c3.metric("Near SMA50", int(df["near_sma50"].sum()))
 c4.metric("Near SMA100", int(df["near_sma100"].sum()))
 c5.metric("Near SMA200", int(df["near_sma200"].sum()))
 
+# Re-upload the already-computed scan to Drive — no FMP re-pull.
+_ub, _um = st.columns([1, 3])
+if _ub.button("⬆️ Upload to Drive", use_container_width=True,
+              help="Re-publish the CURRENT scan (data/ma_scan.parquet) to the Drive "
+                   "folder as aqe_ma_scan.json — no re-pull, near-instant."):
+    from src.scanner.ma_scanner import republish_ma_scan
+    with st.spinner("Uploading aqe_ma_scan.json to Drive…"):
+        _r = republish_ma_scan()
+    if _r.get("ok"):
+        _um.success(f"Uploaded **aqe_ma_scan.json** → Drive "
+                    f"({'replaced' if _r.get('replaced') else 'created'}).")
+    else:
+        _um.warning(f"Upload: {_r.get('reason')}")
+
 st.divider()
 
 # ── Filters ─────────────────────────────────────────────────────────────

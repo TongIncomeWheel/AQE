@@ -365,6 +365,27 @@ def run_ma_scan(client: FMPClient | None = None, publish: bool = True) -> dict:
     return {"ok": True, "scan": scan, "stats": stats, "publish": pub}
 
 
+def republish_ma_scan() -> dict:
+    """Re-upload the LATEST persisted MA scan to Drive WITHOUT re-pulling any bars.
+
+    Reads data/ma_scan.parquet (the already-computed scan), rebuilds the JSON and
+    uploads it under aqe_ma_scan.json. Use when the scan already ran and you just
+    need it (re)published — no FMP calls, near-instant.
+    """
+    scan = load_latest_scan()
+    if scan is None or scan.empty:
+        return {"ok": False,
+                "reason": "No persisted MA scan (data/ma_scan.parquet) — run the scan first"}
+    stats = {
+        "near_any_ma": len(scan),
+        "source": "republish (persisted scan — no FMP re-pull)",
+    }
+    for p in MA_PERIODS:
+        col = f"near_sma{p}"
+        stats[col] = int(scan[col].sum()) if col in scan.columns else 0
+    return publish_ma_scan(scan, stats)
+
+
 def load_latest_scan() -> pd.DataFrame:
     """Load cached MA scan results. Returns empty DataFrame if none."""
     if MA_SCAN.exists():

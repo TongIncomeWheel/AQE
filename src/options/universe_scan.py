@@ -110,6 +110,32 @@ def export_scan_to_drive(blob: dict, path: str = None) -> dict:
     return {"local": local, "drive": res}
 
 
+def republish_scan_to_drive(path: str = None) -> dict:
+    """Re-upload the EXISTING local options_scan.json to Drive WITHOUT re-scanning.
+
+    Reads the local blob (already computed) and overwrites options_scan.json in the
+    CSP folder — no Alpaca calls. Use when the scan ran and you just need it
+    (re)published. Never raises; degrades to a reason string.
+    """
+    import os
+    p = path or C.UNIVERSE_SCAN_FILE
+    if not os.path.exists(p):
+        return {"ok": False, "reason": f"No local {p} — run a scan first"}
+    try:
+        content = Path(p).read_text(encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "reason": f"read failed: {e}"}
+    folder = os.environ.get("GDRIVE_CSP_FOLDER_ID", C.GDRIVE_CSP_FOLDER_ID)
+    try:
+        from src.data import gdrive_uploader
+        if not gdrive_uploader.is_configured():
+            return {"ok": False, "reason": "Drive not configured"}
+        return gdrive_uploader.upload_or_replace(
+            C.CSP_SCAN_FILENAME, content, folder_id=folder)
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(e).__name__}: {e}"}
+
+
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="AQE universe CSP theta scanner (Alpaca)")

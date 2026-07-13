@@ -65,6 +65,19 @@ with st.expander("↻ Run a scan", expanded=True):
     run_sub = b2.button("Run subset (local only)",
                         disabled=not have_keys or not subset.strip(),
                         use_container_width=True)
+    # Re-upload the EXISTING local scan to Drive — no re-scan, no Alpaca keys needed.
+    if st.button("⬆️ Re-upload existing scan → Drive", use_container_width=True,
+                 disabled=not SCAN_FILE.exists(),
+                 help="Push the current output/options_scan.json to the Drive folder "
+                      "without re-scanning. Use when you already have the JSON."):
+        from src.options.universe_scan import republish_scan_to_drive
+        with st.spinner("Uploading options_scan.json to Drive…"):
+            _rr = republish_scan_to_drive(str(SCAN_FILE))
+        if _rr.get("ok"):
+            st.success(f"Uploaded **{OC.CSP_SCAN_FILENAME}** → Drive "
+                       f"({'replaced' if _rr.get('replaced') else 'created'}).")
+        else:
+            st.warning(f"Upload: {_rr.get('reason')}")
     if run_full or run_sub:
         from src.options.universe_scan import (scan_universe, write_scan,
                                                export_scan_to_drive)
