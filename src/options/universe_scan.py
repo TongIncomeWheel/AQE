@@ -50,6 +50,7 @@ def scan_universe(tickers=None, today: date = None, dte_min=None, dte_max=None,
         f"DTE {dte_min}-{dte_max}")
 
     candidates, no_spot, errored = [], [], []
+    error_detail, no_candidate = {}, []      # WHY names failed + the silent bucket
     for tk in tickers:
         spot = spots.get(tk)
         if not spot:
@@ -59,24 +60,41 @@ def scan_universe(tickers=None, today: date = None, dte_min=None, dte_max=None,
             chain = get_chain(tk, spot, today, dte_min, dte_max)
         except Exception as e:                          # one bad name never kills the run
             errored.append(tk)
+            error_detail[tk] = f"{type(e).__name__}: {e}"[:200]
             log(f"[universe-scan] {tk}: {type(e).__name__} {e}")
             continue
         res = scan_csps(chain, r=r, q=q, fill=fill,
                         dte_min=dte_min, dte_max=dte_max, min_oi=0, **filters)
-        candidates.extend(res["passed"])
+        if res["passed"]:
+            candidates.extend(res["passed"])
+        else:
+            # Priced OK but nothing cleared the filters — track it so this bucket
+            # isn't silent (was invisible before; the AIC flagged the gap).
+            no_candidate.append(tk)
 
     ranked = rank(candidates, rank_key)
+    priced = len([t for t in tickers if spots.get(t)])
     blob = {
         "generated_for": today.isoformat(),
         "dte_window": [dte_min, dte_max],
-        "universe_size": len(tickers), "priced": len(spots),
+        "universe_size": len(tickers), "priced": priced,
         "candidates_count": len(ranked),
+        "counts": {                                     # at-a-glance run health
+            "universe": len(tickers), "priced": priced,
+            "with_candidates": len({c["ticker"] for c in ranked}),
+            "no_candidate": len(no_candidate),
+            "errored": len(errored), "no_spot": len(no_spot),
+        },
         "names_no_spot": no_spot, "names_errored": errored,
+        "names_no_candidate": no_candidate,
+        "error_detail": error_detail,                   # ticker → why it failed
         "rank_key": rank_key,
         "candidates": ranked,
     }
-    log(f"[universe-scan] {len(ranked)} CSP candidates across "
-        f"{len({c['ticker'] for c in ranked})} names")
+    log(f"[universe-scan] {len(ranked)} candidates / "
+        f"{blob['counts']['with_candidates']} names · "
+        f"{len(no_candidate)} priced-no-pass · {len(errored)} errored · "
+        f"{len(no_spot)} no-spot")
     return blob
 
 

@@ -93,7 +93,50 @@ def test_fetch_put_chain_injected():
     rows = alpaca.fetch_put_chain("MRVL", 228.5, today=TODAY, dte_min=20,
                                   dte_max=50, http_get=fake_get)
     assert len(rows) == 1
-    assert calls[0][1]["type"] == "put" and calls[0][1]["feed"] == C.ALPACA_FEED
+    p = calls[0][1]
+    assert p["type"] == "put" and p["feed"] == C.ALPACA_FEED
+    # The request is bounded server-side (the fix for the mass errors): the
+    # expiration window is capped and only OTM strikes below spot are requested.
+    assert p["expiration_date_lte"] == (TODAY + __import__("datetime").timedelta(days=50)).isoformat()
+    assert p["strike_price_lte"] == 228.5
+    assert p["strike_price_gte"] == round(228.5 * (1 - C.ALPACA_MAX_OTM_FRAC), 2)
+
+
+def test_http_get_retries_on_429(monkeypatch):
+    import sys
+    import types
+
+    class Resp:
+        def __init__(self, status, js=None, headers=None):
+            self.status_code = status
+            self._js = js or {}
+            self.headers = headers or {}
+
+        def json(self):
+            return self._js
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise RuntimeError(f"HTTP {self.status_code}")
+
+    calls = {"n": 0}
+
+    def fake_get(url, params=None, headers=None, timeout=None):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return Resp(429, headers={"Retry-After": "0"})   # rate-limited once
+        return Resp(200, js={"ok": True})
+
+    fake = types.ModuleType("requests")
+    fake.RequestException = Exception
+    fake.get = fake_get
+    monkeypatch.setitem(sys.modules, "requests", fake)
+    monkeypatch.setenv(C.ALPACA_KEY_ID_ENV, "k")
+    monkeypatch.setenv(C.ALPACA_SECRET_ENV, "s")
+    monkeypatch.setattr(alpaca.time, "sleep", lambda *_: None)   # no real waiting
+
+    out = alpaca._http_get("/x", {})
+    assert out == {"ok": True} and calls["n"] == 2               # retried past the 429
 
 
 # ── Universe orchestration with stub provider ───────────────────────────────
@@ -138,7 +181,30 @@ def test_scan_universe_survives_bad_name():
                                     "delta_min": 0.0, "delta_max": 1.0},
                            log=lambda *_: None)
     assert "BOOM" in blob["names_errored"]
+    assert "BOOM" in blob["error_detail"]                  # WHY it failed is captured
+    assert "chain 500" in blob["error_detail"]["BOOM"]
     assert blob["candidates_count"] >= 1                   # OK still scanned
+
+
+def test_scan_universe_tracks_priced_no_pass():
+    """A name that prices fine but clears no filter lands in names_no_candidate,
+    not silently dropped (the bucket the AIC flagged as invisible)."""
+    def fake_spots(syms):
+        return {"RICH": 100.0, "THIN": 100.0}
+
+    def fake_chain(tk, spot, today, dte_min, dte_max):
+        iv = 0.60 if tk == "RICH" else 0.02   # THIN → negligible premium → no pass
+        return [{"ticker": tk, "spot": spot, "strike": 90, "dte": 35,
+                 "iv": iv, "bid": None, "ask": None, "right": "PUT"}]
+
+    blob = U.scan_universe(tickers=["RICH", "THIN"], today=TODAY,
+                           fetch_spots=fake_spots, fetch_put_chain=fake_chain,
+                           filters={"min_annual_yield": 0.10, "delta_min": 0.0,
+                                    "delta_max": 1.0, "min_pop": 0.0},
+                           log=lambda *_: None)
+    assert "THIN" in blob["names_no_candidate"]
+    assert blob["counts"]["no_candidate"] == 1
+    assert "RICH" in {c["ticker"] for c in blob["candidates"]}
 
 
 def test_export_scan_to_drive_replaces_by_name_without_trimming(monkeypatch, tmp_path):

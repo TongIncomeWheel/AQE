@@ -45,6 +45,12 @@ ALPACA_KEY_ID_ENV = "ALPACA_API_KEY_ID"
 ALPACA_SECRET_ENV = "ALPACA_API_SECRET_KEY"
 ALPACA_SPOT_CHUNK = 100         # symbols per batched stock-snapshot call
 ALPACA_TIMEOUT = 20             # per-request seconds
+ALPACA_MAX_RPM = 180            # client-side pacing — stay under the free 200/min cap
+ALPACA_MAX_RETRIES = 4          # retry 429 / 5xx with backoff (honours Retry-After)
+# Only fetch OTM puts within this fraction below spot — bounds the chain server-side
+# so liquid names don't page through the whole strike ladder (the delta-band filter
+# downstream is the real gate; this just keeps the payload small).
+ALPACA_MAX_OTM_FRAC = 0.5
 
 # Liquidity is IMPLICIT (PM ruling): the AQE universe is already-liquid names, and
 # we only sell ROUND strikes — multiples of $5 are naturally the deep-OI ones — so

@@ -16,9 +16,17 @@ Env keys (set as HF/deploy secrets, like FMP): `ALPACA_API_KEY_ID`,
 from __future__ import annotations
 
 import os
-from datetime import date
+import time
+import threading
+from datetime import date, timedelta
 
 from .. import config as C
+
+# Client-side rate limiter — calls are sequential, so a single min-interval gate
+# keeps us under Alpaca's free 200/min data cap (the root cause of the mass errors).
+_MIN_INTERVAL = 60.0 / max(C.ALPACA_MAX_RPM, 1)
+_last_call = [0.0]
+_rl_lock = threading.Lock()
 
 
 # ── OCC symbol + response parsing (pure) ────────────────────────────────────
@@ -105,13 +113,41 @@ def _auth_headers() -> dict:
     return {"APCA-API-KEY-ID": kid, "APCA-API-SECRET-KEY": sec}
 
 
+def _pace() -> None:
+    """Block until at least _MIN_INTERVAL has elapsed since the last request."""
+    with _rl_lock:
+        wait = _MIN_INTERVAL - (time.monotonic() - _last_call[0])
+        if wait > 0:
+            time.sleep(wait)
+        _last_call[0] = time.monotonic()
+
+
 def _http_get(path: str, params: dict) -> dict:
+    """Paced + retried GET. Honours 429 Retry-After and backs off on 5xx, so a
+    transient rate-limit/blip no longer turns a whole name into a hard error."""
     import requests
     url = f"{C.ALPACA_DATA_URL}{path}"
-    r = requests.get(url, params=params, headers=_auth_headers(),
-                     timeout=C.ALPACA_TIMEOUT)
-    r.raise_for_status()
-    return r.json()
+    last_exc = None
+    for attempt in range(C.ALPACA_MAX_RETRIES + 1):
+        _pace()
+        try:
+            r = requests.get(url, params=params, headers=_auth_headers(),
+                             timeout=C.ALPACA_TIMEOUT)
+        except requests.RequestException as exc:            # network blip → retry
+            last_exc = exc
+            time.sleep(min(2 ** attempt, 30))
+            continue
+        if r.status_code == 429 or r.status_code >= 500:
+            if attempt < C.ALPACA_MAX_RETRIES:
+                retry_after = r.headers.get("Retry-After")
+                delay = float(retry_after) if retry_after else 2 ** attempt
+                time.sleep(min(delay, 30))
+                continue
+        r.raise_for_status()
+        return r.json()
+    if last_exc:
+        raise last_exc
+    raise RuntimeError("Alpaca request failed after retries")
 
 
 def fetch_put_chain(underlying: str, spot: float, today: date = None,
@@ -125,11 +161,18 @@ def fetch_put_chain(underlying: str, spot: float, today: date = None,
     dte_min = C.UNIVERSE_DTE_MIN if dte_min is None else dte_min
     dte_max = C.UNIVERSE_DTE_MAX if dte_max is None else dte_max
     getter = http_get or _http_get
-    exp_lo = today.isoformat()
+    # Bound the request server-side to the DTE window AND to OTM strikes below spot.
+    # Without expiration_date_lte, Alpaca returns the ENTIRE forward chain (out
+    # years of LEAPS) per name — huge payloads that force pagination and blow the
+    # rate cap. This is the fix for the mass "names_errored" on liquid names.
     params = {
         "feed": feed or C.ALPACA_FEED, "type": "put", "limit": 1000,
-        "expiration_date_gte": exp_lo,
+        "expiration_date_gte": today.isoformat(),
+        "expiration_date_lte": (today + timedelta(days=dte_max)).isoformat(),
     }
+    if spot:
+        params["strike_price_lte"] = round(float(spot), 2)   # OTM puts only
+        params["strike_price_gte"] = round(float(spot) * (1 - C.ALPACA_MAX_OTM_FRAC), 2)
     rows, token = [], None
     for _ in range(10):                                 # page cap (safety)
         if token:
