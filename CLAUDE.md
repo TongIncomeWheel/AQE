@@ -254,6 +254,18 @@ American exercise; the gap is negligible for the OTM puts the wheel sells). Pure
   and runs `python -m src.options.run_scan --contracts <f> --mode scan|spreads|calc`
   (deterministic formatter). Runs "just like Tiger MCP" — the MCP is the feed, Claude + the
   skill are the intelligence. Closed market → empty bid/ask → prices off BS fair value.
+- **Universe theta scanner** (`universe_scan.py` + `providers/alpaca.py` + Scanner page
+  `6_Option_Scanner.py`) — the hosted, whole-universe sweep. The chat MCPs (IBKR/Tiger) only
+  exist in a Claude session, so the in-app scanner uses **Alpaca's option-chain snapshot over
+  REST** (free "indicative" feed: IV + greeks + quotes in ONE call per underlying — no
+  per-contract fan-out, no throttle; keys `ALPACA_API_KEY_ID`/`ALPACA_API_SECRET_KEY` as
+  deploy secrets like FMP). `scan_universe()` loops the AQE universe → batched spots →
+  per-name put chain → `scan_csps` → ranked `output/options_scan.json`. **No open-interest
+  call**: liquidity is implicit (liquid universe + round strikes, multiples of `$5`). The
+  Streamlit page filters the sweep live (annualised yield / Δ band / DTE / POP / cushion) and
+  can run an on-demand subset. ~600 names ≈ 3 min at Alpaca's 200/min free cap. The pure
+  parsers (`parse_occ_symbol`/`parse_chain`) + orchestration are tested with fixtures/stubs
+  (`tests/test_options_universe.py`), no network/keys.
 
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
 Steps: incremental pull -> Pipeline Rank screen -> full scoring (top 50) -> SRM grading -> regime detection -> PTRS + disposition -> recipe match screen -> Precision Edge screen -> output JSON + Drive export.

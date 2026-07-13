@@ -35,3 +35,23 @@ SPREAD_DEFAULT_WIDTH = 5.0    # default strike width when auto-pairing legs
 # The theta scanner's primary sort key. "annual_yield" = return-on-collateral
 # annualised; "theta_efficiency" = daily theta credit per $ of collateral.
 SCAN_RANK_KEY = "annual_yield"
+
+# ── Universe theta scanner (the standalone, hosted, whole-universe sweep) ────
+# Data comes from Alpaca's option-chain snapshot (free "indicative" feed: IV +
+# greeks + quotes, one call per underlying — no per-contract fan-out, no throttle).
+ALPACA_DATA_URL = "https://data.alpaca.markets"
+ALPACA_FEED = "indicative"      # free, ~15-min delayed; "opra" needs the paid sub
+ALPACA_KEY_ID_ENV = "ALPACA_API_KEY_ID"
+ALPACA_SECRET_ENV = "ALPACA_API_SECRET_KEY"
+ALPACA_SPOT_CHUNK = 100         # symbols per batched stock-snapshot call
+ALPACA_TIMEOUT = 20             # per-request seconds
+
+# Liquidity is IMPLICIT (PM ruling): the AQE universe is already-liquid names, and
+# we only sell ROUND strikes — multiples of $5 are naturally the deep-OI ones — so
+# we never spend a call fetching open interest.
+ROUND_STRIKE_STEP = 5.0         # keep only strikes that are a multiple of this
+
+# Universe-sweep DTE window (the wheel's monthly sweet spot).
+UNIVERSE_DTE_MIN = 20
+UNIVERSE_DTE_MAX = 50
+UNIVERSE_SCAN_FILE = "output/options_scan.json"   # where the sweep is written
