@@ -139,3 +139,20 @@ def test_scan_universe_survives_bad_name():
                            log=lambda *_: None)
     assert "BOOM" in blob["names_errored"]
     assert blob["candidates_count"] >= 1                   # OK still scanned
+
+
+def test_export_scan_to_drive_writes_local_and_keeps_one(monkeypatch, tmp_path):
+    from src.data import gdrive_uploader
+    kept = {}
+    monkeypatch.setattr(gdrive_uploader, "upload_or_replace",
+                        lambda fn, content, folder_id=None: {
+                            "ok": True, "file_id": "F1", "replaced": True,
+                            "filename": fn, "folder_id": folder_id})
+    monkeypatch.setattr(gdrive_uploader, "keep_only_file",
+                        lambda folder, fid: kept.update(folder=folder, fid=fid))
+    out = U.export_scan_to_drive({"candidates": [], "candidates_count": 0},
+                                 str(tmp_path / "options_scan.json"))
+    assert out["drive"]["ok"] and out["drive"]["file_id"] == "F1"
+    assert (tmp_path / "options_scan.json").exists()       # local copy always written
+    assert kept["fid"] == "F1"                             # trims to a single Drive file
+    assert kept["folder"] == C.GDRIVE_CSP_FOLDER_ID

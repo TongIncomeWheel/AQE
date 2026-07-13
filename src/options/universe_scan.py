@@ -88,6 +88,27 @@ def write_scan(blob: dict, path: str = None) -> str:
     return str(p)
 
 
+def export_scan_to_drive(blob: dict, path: str = None) -> dict:
+    """Write the local copy, then overwrite the single CSP file in the dedicated
+    Drive folder (like AQE's export). Always writes local first, then best-effort
+    uploads — a broken Drive OAuth degrades to a local-only copy, never raises.
+    Returns {"local": <path>, "drive": {...}}.
+    """
+    import os
+    local = write_scan(blob, path)
+    folder = os.environ.get("GDRIVE_CSP_FOLDER_ID", C.GDRIVE_CSP_FOLDER_ID)
+    try:
+        from src.data import gdrive_uploader
+        content = json.dumps(blob, indent=2, default=str)
+        res = gdrive_uploader.upload_or_replace(
+            C.CSP_SCAN_FILENAME, content, folder_id=folder)
+        if res.get("ok") and res.get("file_id"):
+            gdrive_uploader.keep_only_file(folder, res["file_id"])   # keep exactly one
+    except Exception as e:                                            # pragma: no cover
+        res = {"ok": False, "reason": f"{type(e).__name__}: {e}"}
+    return {"local": local, "drive": res}
+
+
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="AQE universe CSP theta scanner (Alpaca)")

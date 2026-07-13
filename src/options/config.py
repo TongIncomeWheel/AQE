@@ -54,4 +54,9 @@ ROUND_STRIKE_STEP = 5.0         # keep only strikes that are a multiple of this
 # Universe-sweep DTE window (the wheel's monthly sweet spot).
 UNIVERSE_DTE_MIN = 20
 UNIVERSE_DTE_MAX = 50
-UNIVERSE_SCAN_FILE = "output/options_scan.json"   # where the sweep is written
+UNIVERSE_SCAN_FILE = "output/options_scan.json"   # local working copy of the sweep
+
+# Dedicated Drive folder for the CSP scan (overwritten every run → always ONE
+# file, like AQE's export folder). Override with env GDRIVE_CSP_FOLDER_ID.
+GDRIVE_CSP_FOLDER_ID = "1HAh3Vw0sWASm5GccifPUP5_cZh31Z7oC"
+CSP_SCAN_FILENAME = "options_scan.json"

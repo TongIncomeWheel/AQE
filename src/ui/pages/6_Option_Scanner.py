@@ -46,26 +46,46 @@ def _load_scan() -> dict | None:
     return None
 
 
-# ── On-demand sweep (subset — the full universe sweep is the nightly job) ────
-with st.expander("↻ Run a scan now (on-demand)", expanded=False):
+# ── Run a scan (full universe → Drive, or a local subset) ───────────────────
+with st.expander("↻ Run a scan", expanded=True):
     have_keys = bool(os.environ.get(OC.ALPACA_KEY_ID_ENV) and
                      os.environ.get(OC.ALPACA_SECRET_ENV))
     if not have_keys:
         st.info(f"Set **{OC.ALPACA_KEY_ID_ENV}** + **{OC.ALPACA_SECRET_ENV}** as "
-                "deploy secrets to enable live scans. The nightly job writes "
-                "`options_scan.json` unattended once they're set.")
-    subset = st.text_input("Tickers (comma list; blank = full universe — slower)", "")
-    c1, c2, c3 = st.columns(3)
+                "deploy secrets to enable live scans.")
+    subset = st.text_input("Subset tickers (comma list; used by the local button)", "")
+    c1, c2 = st.columns(2)
     dmin = c1.number_input("DTE min", 1, 365, OC.UNIVERSE_DTE_MIN)
     dmax = c2.number_input("DTE max", 1, 365, OC.UNIVERSE_DTE_MAX)
-    if c3.button("Run scan", disabled=not have_keys, use_container_width=True):
-        from src.options.universe_scan import scan_universe, write_scan
-        tk = [t.strip().upper() for t in subset.split(",") if t.strip()] or None
-        with st.spinner("Scanning… (full universe ≈ a few minutes)"):
+    b1, b2 = st.columns(2)
+    run_full = b1.button("🚀 Run full scan → Drive", disabled=not have_keys,
+                         use_container_width=True,
+                         help="Sweep the whole AQE universe and overwrite the single "
+                              "CSP file in the Drive folder.")
+    run_sub = b2.button("Run subset (local only)",
+                        disabled=not have_keys or not subset.strip(),
+                        use_container_width=True)
+    if run_full or run_sub:
+        from src.options.universe_scan import (scan_universe, write_scan,
+                                               export_scan_to_drive)
+        tk = ([t.strip().upper() for t in subset.split(",") if t.strip()]
+              if run_sub else None)
+        with st.spinner("Scanning… full universe ≈ a few minutes"):
             blob = scan_universe(tickers=tk, dte_min=int(dmin), dte_max=int(dmax),
                                  log=lambda *_: None)
-            write_scan(blob, str(SCAN_FILE))
-        st.success(f"Scanned — {blob['candidates_count']} candidates. Reloading…")
+            if run_full:
+                res = export_scan_to_drive(blob, str(SCAN_FILE))
+                dr = res["drive"]
+                if dr.get("ok"):
+                    st.success(f"Scanned {blob['candidates_count']} candidates → Drive "
+                               f"({'replaced' if dr.get('replaced') else 'created'} "
+                               f"`{OC.CSP_SCAN_FILENAME}`).")
+                else:
+                    st.warning(f"Scanned {blob['candidates_count']} — saved locally; "
+                               f"Drive upload failed: {dr.get('reason')}")
+            else:
+                write_scan(blob, str(SCAN_FILE))
+                st.success(f"Scanned {blob['candidates_count']} candidates (local).")
         st.rerun()
 
 scan = _load_scan()
