@@ -1,9 +1,13 @@
 """In-app daily scheduler — universe refresh + pipeline, each market morning.
 
 Schedule (SGT, Tuesday–Saturday):
+  05:30 — Universe CSP theta scan (Alpaca → options_scan.json to the CSP Drive folder)
   06:00 — Universe refresh (FMP screener → mcap/$2B + SMA20/50 + volume)
   08:30 — Daily pipeline (pull → score → SRM → PTRS → Drive export)
 Sunday and Monday (SGT) are skipped (US markets closed Sat/Sun).
+
+The 05:30 CSP scan runs ~1h after the US close and 3h before the pipeline, so the
+options sweep never contends with the AQE feed run.
 
 How it works:
 - A daemon thread (started once per process) checks the SGT clock every minute.
@@ -43,6 +47,13 @@ RUN_MIN = 30
 WINDOW_END_HOUR = 12
 # Python weekday(): Mon=0 .. Sun=6. Skip Sunday(6) and Monday(0).
 SKIP_WEEKDAYS = {6, 0}
+
+# Universe CSP theta scan runs at 05:30 SGT — ~1h after the US close, BEFORE the
+# 06:00 universe refresh + 08:30 pipeline, so the options sweep never contends with
+# the AQE feed. Publishes options_scan.json to the dedicated CSP Drive folder.
+CSP_SCAN_HOUR = 5
+CSP_SCAN_MIN = 30
+CSP_SCAN_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00 (before AQE)
 
 # Universe auto-refresh runs at 06:00 SGT — 2.5 hours before the pipeline.
 UNIVERSE_HOUR = 6
@@ -89,6 +100,18 @@ def _should_refresh_universe(now: datetime,
             or (now.hour == UNIVERSE_HOUR and now.minute < UNIVERSE_MIN)):
         return False
     return last_refresh_date_iso != now.date().isoformat()
+
+
+def _should_run_csp_scan(now: datetime, last_csp_date_iso: str | None) -> bool:
+    """True if it's a run day, past 05:30 (within window), not scanned today."""
+    if not _is_run_day(now.date()):
+        return False
+    if now.hour >= CSP_SCAN_WINDOW_END_HOUR:
+        return False
+    if (now.hour < CSP_SCAN_HOUR
+            or (now.hour == CSP_SCAN_HOUR and now.minute < CSP_SCAN_MIN)):
+        return False
+    return last_csp_date_iso != now.date().isoformat()
 
 
 def next_run_hint() -> str:
@@ -243,6 +266,51 @@ def _refresh_universe_and_record(now: datetime) -> None:
         print(f"[daily-job] Universe refresh failed: {exc}")
 
 
+def _csp_scan_seed_date() -> str | None:
+    """Seed the last-CSP-scan date from the existing options_scan.json so a
+    container restart doesn't re-run today's scan."""
+    try:
+        from src.data.paths import OUTPUT_DIR
+        from src.options import config as OC
+        p = OUTPUT_DIR / Path(OC.UNIVERSE_SCAN_FILE).name
+        if p.exists():
+            return json.loads(p.read_text(encoding="utf-8")).get("generated_for")
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
+def _run_csp_scan_and_record(now: datetime) -> None:
+    """Nightly universe CSP theta scan → the CSP Drive folder. Independent of the
+    AQE feed; best-effort. Skips cleanly if Alpaca keys aren't set. Passes the SGT
+    date so the run stamp + DTE are correct on a UTC container.
+    """
+    try:
+        from src.options import config as OC
+        if not (os.environ.get(OC.ALPACA_KEY_ID_ENV)
+                and os.environ.get(OC.ALPACA_SECRET_ENV)):
+            print("[daily-job] CSP scan skipped — Alpaca keys not set "
+                  f"({OC.ALPACA_KEY_ID_ENV}/{OC.ALPACA_SECRET_ENV})")
+            return
+        # Use the freshest universe (Drive is source of truth between refreshes).
+        try:
+            from src.data.universe import restore_universe_from_drive
+            restore_universe_from_drive()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[daily-job] CSP scan: universe restore skipped ({exc})")
+        from src.options.universe_scan import scan_universe, export_scan_to_drive
+        print(f"[daily-job] CSP universe scan starting "
+              f"{now.strftime('%Y-%m-%d %H:%M SGT')}")
+        blob = scan_universe(today=now.date(), log=lambda *_: None)
+        res = export_scan_to_drive(blob)
+        dr = res.get("drive", {})
+        print(f"[daily-job] CSP scan: {blob['candidates_count']} candidates across "
+              f"{len({c['ticker'] for c in blob['candidates']})} names, Drive "
+              + ("ok" if dr.get("ok") else f"FAILED ({dr.get('reason')})"))
+    except Exception as exc:  # noqa: BLE001
+        print(f"[daily-job] CSP scan failed: {exc}")
+
+
 def _run_ma_scan_and_record(now: datetime) -> None:
     """Daily MA Proximity Scan — runs right AFTER the trading feed is published
     (so it never delays/fails the feed). Restore the persisted ma_panel first (so
@@ -283,9 +351,14 @@ def _loop() -> None:
     last_date = last.get("date_sgt") if last else None
     last_universe_date: str | None = None
     last_ma_date: str | None = None
+    last_csp_date: str | None = _csp_scan_seed_date()
     while True:
         try:
             now = datetime.now(SGT)
+            # 05:30 SGT — universe CSP theta scan (before the refresh + pipeline)
+            if _should_run_csp_scan(now, last_csp_date):
+                _run_csp_scan_and_record(now)
+                last_csp_date = now.date().isoformat()
             # 06:00 SGT — universe refresh (before the pipeline)
             if _should_refresh_universe(now, last_universe_date):
                 _refresh_universe_and_record(now)

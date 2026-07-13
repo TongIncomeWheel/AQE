@@ -59,7 +59,7 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 
 ### Cloud uptime + daily auto-run (HF Space)
 - `src/ui/keepalive.py` — in-app daemon pings the Space's own public URL (`KEEPALIVE_MINUTES`, default 90) so HF doesn't sleep. Paired with an external UptimeRobot monitor (every 30 min). Both no-op locally; both work behind the `AQE_APP_PASSWORD` gate (started in `require_login()` before `st.stop()`; HF counts any HTTP hit).
-- `src/ui/daily_job.py` — in-app scheduler thread runs the full pipeline at **08:30 SGT, Tue–Sat** (skips Sun/Mon — US markets shut Sat/Sun), exporting to the AQE Drive folder. Writes a `aqe_last_run.json` marker (local + Drive) that drives the Scanner's status bar (last run time / success / push). Needs the container awake (UptimeRobot). HF-only unless `AQE_ENABLE_SCHEDULER=1`.
+- `src/ui/daily_job.py` — in-app scheduler thread runs the full pipeline at **08:30 SGT, Tue–Sat** (skips Sun/Mon — US markets shut Sat/Sun), exporting to the AQE Drive folder. Writes a `aqe_last_run.json` marker (local + Drive) that drives the Scanner's status bar (last run time / success / push). Needs the container awake (UptimeRobot). HF-only unless `AQE_ENABLE_SCHEDULER=1`. **Also runs the universe CSP theta scan at 05:30 SGT** (`_run_csp_scan_and_record` → `options_scan.json` to the CSP Drive folder) — ~1h after the US close, 3h before the pipeline so the two never contend; skips cleanly if the Alpaca keys aren't set, passes the SGT date so the run stamp + DTE are right on a UTC container, and de-dups a same-day re-run via the existing scan file.
 - `earnings.py` — pulls/stores earnings calendar from FMP
 - `db.py` — SQLite state store (7 tables)
 
