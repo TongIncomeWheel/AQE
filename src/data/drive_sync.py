@@ -34,6 +34,7 @@ from src.engines.srm import (
     TICKER_TO_THEMATIC, TICKER_TO_THEMATICS, grade_thematic_baskets,
 )
 from src.engines.bracket_engine import compute_bracket, regime_stop_ceiling
+from src.engines import scoring
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
 
@@ -147,6 +148,20 @@ _FIELD_GLOSSARY = {
     "premove_conviction_label": "Human-readable pre-move conviction = word + number, e.g. "
                           "'HIGH (3/4)' (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4). Read "
                           "this, not the bare number. Detection tag, not a win rate, not sizing.",
+    "sc_m_gates": "SC_MOMENTUM qualification gate (bool): True iff EVERY engine floor passes — "
+                  "Flow≥60, Energy≥60, Structure≥55, MP≥55, Elder≥6.5 (Pine SC_M_GATES). It does "
+                  "NOT cap the score (composite is uncapped); it flags whether the momentum "
+                  "read is fully gated. See sc_m_gate_detail for which specific check fails.",
+    "sc_m_gate_detail": "Per-engine SC_MOMENTUM gate pass/fail (dict): {flow, energy, structure, "
+                        "mp, elder} each True/False vs the SC_M_GATES threshold — so you read WHICH "
+                        "check a name is failing without recomputing. false = that engine is below "
+                        "its floor.",
+    "sc_p_gates": "SC_POSITION qualification gate (bool): True iff every engine floor passes — "
+                  "Flow≥40, Energy≥60, Structure≥65, MP≥40, BQ≥60 (Pine SC_P_GATES) AND the K39 "
+                  "weekly gate. Does NOT cap the score. See sc_p_gate_detail for the breakdown.",
+    "sc_p_gate_detail": "Per-engine SC_POSITION gate pass/fail (dict): {flow, energy, structure, "
+                        "mp, bq, k39} each True/False vs the SC_P_GATES threshold (k39 = the weekly "
+                        "confirmation gate; null if unavailable).",
     "sector_trend_state": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum "
                           "Building — Add' / 'Momentum Fading — Hold' / 'Recovering' / 'Declining'). "
                           "Context; the gate is gics_gate, unchanged.",
@@ -214,6 +229,11 @@ _FIELD_SCHEMA = {
     "premove_setup":           _fs("signal", "boolean", "n/a"),
     "premove_conviction":      _fs("signal", "score", "n/a"),
     "premove_conviction_label": _fs("signal", "label", "n/a"),
+    # SC gate qualification (overall bool + per-engine pass/fail breakdown)
+    "sc_m_gates":              _fs("signal", "boolean", "n/a"),
+    "sc_m_gate_detail":        _fs("signal", "label", "n/a"),
+    "sc_p_gates":              _fs("signal", "boolean", "n/a"),
+    "sc_p_gate_detail":        _fs("signal", "label", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -693,6 +713,23 @@ def _num(v):
         return None
 
 
+def _held_sc_gates(s) -> dict:
+    """SC_MOMENTUM/SC_POSITION gate breakdown for a held record from its
+    scores_daily row (`s`), or nulls when the name wasn't scored. Same thresholds
+    as the daily_list rows (SC_M_GATES / SC_P_GATES)."""
+    if s is None:
+        return {"sc_m_gates": None, "sc_m_gate_detail": None,
+                "sc_p_gates": None, "sc_p_gate_detail": None}
+    _gm = scoring.gate_breakdown_momentum(
+        s.get("flow_100"), s.get("energy_100"), s.get("structure_100"),
+        s.get("mp_100"), s.get("elder_score"))
+    _gp = scoring.gate_breakdown_position(
+        s.get("flow_100"), s.get("energy_100"), s.get("structure_100"),
+        s.get("mp_100"), s.get("bq_100"), s.get("k39_gate"))
+    return {"sc_m_gates": _gm["pass"], "sc_m_gate_detail": _gm["detail"],
+            "sc_p_gates": _gp["pass"], "sc_p_gate_detail": _gp["detail"]}
+
+
 def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
                           regime_level=None):
     """Merge each PTJ held position with AQE's current engine read on it.
@@ -752,6 +789,9 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             "mp": round(sg("mp_100"), 0) if sg("mp_100") is not None else None,
             "mp_state": (str(s.get("mp_state")) if s is not None and pd.notna(s.get("mp_state")) else None),
             "elder": round(sg("elder_score"), 1) if sg("elder_score") is not None else None,
+            # SC gate breakdown (same thresholds as daily_list rows) so the AIC
+            # reads which check a held name fails without recomputing.
+            **_held_sc_gates(s),
             # Health = the HOLD decision (trend integrity), the whole point of the
             # held book. Sourced from scores_daily; held names are force-scored in
             # the orchestrator so this is populated even off the top-50 screen.
@@ -1131,6 +1171,16 @@ def build_export(shortlist: dict | None = None) -> dict:
             wfl = round(float(wr["_floor"]), 1)
             wsc = float(wr.get("sc_momentum", 0)) or 0
             wpr = float(wr.get("pipe_rank", 0))
+            # SC gate breakdown — computed from the RAW engine scores (not the
+            # rounded display values) against the exact SC_M_GATES/SC_P_GATES
+            # thresholds, so the feed shows WHICH check a name fails.
+            _gm = scoring.gate_breakdown_momentum(
+                wr.get("flow_100"), wr.get("energy_100"),
+                wr.get("structure_100"), wr.get("mp_100"), wr.get("elder_score"))
+            _gp = scoring.gate_breakdown_position(
+                wr.get("flow_100"), wr.get("energy_100"),
+                wr.get("structure_100"), wr.get("mp_100"), wr.get("bq_100"),
+                wr.get("k39_gate"))
             return {
                 "rank": rank,
                 "ticker": tk,
@@ -1147,6 +1197,9 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "structure": round(float(wr.get("structure_100", 0)), 1),
                 "mp": round(float(wr.get("mp_100", 0)), 1),
                 "elder": round(float(wr.get("elder_score", 0)), 1),
+                # SC gate qualification (overall bool + per-engine breakdown)
+                "sc_m_gates": _gm["pass"], "sc_m_gate_detail": _gm["detail"],
+                "sc_p_gates": _gp["pass"], "sc_p_gate_detail": _gp["detail"],
                 "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                 "entry": d.get("entry"),
                 "elder_5d": elder5.get(tk),
@@ -1290,8 +1343,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             _r.setdefault("elder_context", None)
 
     # HARD CUT (PM ruling) — longlist/elder_list are NO LONGER exported keys. The
-    # single `daily_list` (built below = watchlist ∪ elder ∪ ledger, each row flagged
-    # on_watchlist/on_elder/in_ledger) is the ONE list the AIC + UI read. The internal
+    # single `daily_list` (built below = longlist ∪ elder ∪ ledger, each row flagged
+    # on_longlist/on_elder/in_ledger) is the ONE list the AIC + UI read. The internal
     # _longlist/_elderlist still drive daily_list, the alert universe, and the
     # Signal-Radar overlap flags — they are just not surfaced as separate export keys.
     export.pop("longlist", None)
@@ -1319,17 +1372,19 @@ def build_export(shortlist: dict | None = None) -> dict:
     for _k in ("top_picks", "edge_list", "watchlist"):
         export.pop(_k, None)
 
-    # ---- THE DAILY LIST — collapse watchlist ∪ elder ∪ signal-ledger into ONE
+    # ---- THE DAILY LIST — collapse longlist ∪ elder ∪ signal-ledger into ONE
     # list (PM ruling). Each name appears ONCE, flagged so the AIC reads
     # membership + correspondence in a single row (no cross-checking 3 lists).
-    # Elder is folded in because event-driven SUPER-RUNNERS hit Elder≥8 WITHOUT the
-    # normal scoring/structure sequence — they must appear here, flagged on_elder.
-    # `_radar_pool` supplies full records for ledger names not on the watchlist/elder.
+    # `on_longlist` = passed the longlist screen (SC_MOM≥65 & PTRS≥60 & Elder≥7,
+    # via longlist_screen.passes on `_longlist`) — the REAL membership (the stale
+    # recipe-set badge is gone). Elder is folded in because event-driven
+    # SUPER-RUNNERS hit Elder≥8 WITHOUT the normal scoring/structure sequence.
+    # `_radar_pool` supplies full records for ledger names not on the longlist/elder.
     _dl: dict = {}
     for _r in _longlist:
         _tk = _r.get("ticker")
         if _tk:
-            _dl[_tk] = {**_r, "on_watchlist": True, "on_elder": False}
+            _dl[_tk] = {**_r, "on_longlist": True, "on_elder": False}
     for _r in _elderlist:
         _tk = _r.get("ticker")
         if not _tk:
@@ -1337,11 +1392,11 @@ def build_export(shortlist: dict | None = None) -> dict:
         if _tk in _dl:
             _dl[_tk]["on_elder"] = True
         else:
-            _dl[_tk] = {**_r, "on_watchlist": False, "on_elder": True}
-    for _r in _radar_pool:                      # ledger names not on watchlist/elder
+            _dl[_tk] = {**_r, "on_longlist": False, "on_elder": True}
+    for _r in _radar_pool:                      # ledger names not on longlist/elder
         _tk = _r.get("ticker")
         if _tk and _tk not in _dl:
-            _dl[_tk] = {**_r, "on_watchlist": False, "on_elder": False}
+            _dl[_tk] = {**_r, "on_longlist": False, "on_elder": False}
     for _r in _dl.values():
         _r["in_ledger"] = bool(_r.get("runner_setup") or _r.get("premove_setup"))
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("ptrs") or 0), reverse=True)
@@ -1351,7 +1406,7 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     export["summary"] = {
         "daily_count": len(_daily_list),
-        "watchlist_count": sum(1 for r in _daily_list if r.get("on_watchlist")),
+        "longlist_count": sum(1 for r in _daily_list if r.get("on_longlist")),
         "elder_count": sum(1 for r in _daily_list if r.get("on_elder")),
         "ledger_count": sum(1 for r in _daily_list if r.get("in_ledger")),
         "held_count": len(export.get("held_positions") or []),
@@ -1367,7 +1422,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             _el_tk = {r.get("ticker") for r in _elderlist if r.get("ticker")}
             for _grp in ("runner_setup", "premove_setup"):
                 for _e in _radar.get(_grp, []):
-                    _e["on_watchlist"] = _e["ticker"] in _ll_tk
+                    _e["on_longlist"] = _e["ticker"] in _ll_tk
                     _e["on_elder"] = _e["ticker"] in _el_tk
             export["signal_radar"] = {
                 "scan_date": _radar.get("scan_date"),
@@ -1391,7 +1446,9 @@ def build_export(shortlist: dict | None = None) -> dict:
     #    hold decision); the 4 hl_ sub-scores dropped everywhere.
     #  • Enrichment overlap (setup_state + breakout_*): hidden — Signal Radar IS the
     #    DETECT layer, so these competing detect signals are stripped (engine kept).
-    _DEPRECATED = ("pe", "rank_explain", "on_longlist")
+    # (`on_longlist` is NO LONGER scrubbed — it's now the real, documented longlist
+    #  membership flag on daily_list, not the retired stale recipe badge.)
+    _DEPRECATED = ("pe", "rank_explain")
     _READINESS = ("rd_score", "rd_state", "rd_compression", "rd_trigger",
                   "rd_pos_mod", "rd_rs_bonus")
     _HL_SUB = ("hl_trend", "hl_flow", "hl_rs", "hl_risk")
@@ -1432,6 +1489,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         # Enrichment Spec v2.0 (setup_state + breakout_* hidden — Signal Radar overlap)
         "rs_down_day_20d", "rs_leadership",
         "atr_caution", "malformed_bracket",
+        # SC gate qualification (overall bool + per-engine breakdown alongside)
+        "sc_m_gates", "sc_p_gates",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]

@@ -194,6 +194,53 @@ def gates_position(
     return gates_pass
 
 
+def _passes(value, threshold: float) -> bool:
+    """Scalar floor check — True iff value is a finite number ≥ threshold."""
+    try:
+        v = float(value)
+        return v == v and v >= threshold      # NaN-safe
+    except (TypeError, ValueError):
+        return False
+
+
+def gate_breakdown_momentum(flow, energy, structure, mp, elder=None) -> dict:
+    """Per-engine SC_MOMENTUM gate pass/fail from SCALAR scores + the overall flag.
+
+    Uses the exact SC_M_GATES thresholds (same as the Series `gates_momentum`),
+    so a reader sees WHICH check a name fails without recomputing. Returns
+    {"pass": bool, "detail": {flow, energy, structure, mp, elder}} — `elder` is
+    None when not supplied. `pass` == every supplied check True.
+    """
+    detail = {
+        "flow": _passes(flow, SC_M_GATES["flow"]),
+        "energy": _passes(energy, SC_M_GATES["energy"]),
+        "structure": _passes(structure, SC_M_GATES["structure"]),
+        "mp": _passes(mp, SC_M_GATES["mp"]),
+        "elder": _passes(elder, SC_M_GATES["elder"]) if elder is not None else None,
+    }
+    checks = [v for v in detail.values() if v is not None]
+    return {"pass": bool(checks) and all(checks), "detail": detail}
+
+
+def gate_breakdown_position(flow, energy, structure, mp, bq, k39=None) -> dict:
+    """Per-engine SC_POSITION gate pass/fail from SCALAR scores + the overall flag.
+
+    Uses the exact SC_P_GATES thresholds + the K39 weekly gate (same as the
+    Series `gates_position`). Returns {"pass": bool, "detail": {flow, energy,
+    structure, mp, bq, k39}} — `k39` is None when not supplied.
+    """
+    detail = {
+        "flow": _passes(flow, SC_P_GATES["flow"]),
+        "energy": _passes(energy, SC_P_GATES["energy"]),
+        "structure": _passes(structure, SC_P_GATES["structure"]),
+        "mp": _passes(mp, SC_P_GATES["mp"]),
+        "bq": _passes(bq, SC_P_GATES["bq"]),
+        "k39": (bool(k39) if k39 is not None else None),
+    }
+    checks = [v for v in detail.values() if v is not None]
+    return {"pass": bool(checks) and all(checks), "detail": detail}
+
+
 def is_qualified(
     sc_momentum: pd.Series,
     elder_score: pd.Series,

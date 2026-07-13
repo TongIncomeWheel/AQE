@@ -1454,7 +1454,7 @@ st.caption(
 )
 
 # The Signals table = the single collapsed `daily_list` (watchlist ∪ elder ∪
-# ledger, each row flagged on_watchlist/on_elder/in_ledger). Legacy exports that
+# ledger, each row flagged on_longlist/on_elder/in_ledger). Legacy exports that
 # still carry `longlist` fall back to it.
 _ll_recs = _ex.get("daily_list")
 if _ll_recs is None:
@@ -1563,7 +1563,7 @@ st.caption(
 
 # Today's tagged names — the STANDALONE radar block covers the full scored universe
 # (so quiet pre-move names, which never reach the watchlist, still show). Each row is
-# flagged on_watchlist / on_elder so the overlap reads at a glance.
+# flagged on_longlist / on_elder so the overlap reads at a glance.
 _radar_block = _ex.get("signal_radar") or {}
 _runner_rows = _radar_block.get("runner_setup") or []
 _premove_rows = _radar_block.get("premove_setup") or []
@@ -1587,8 +1587,8 @@ with _sc2:
         st.caption("Needs an export with the signal_radar block (rerun the pipeline).")
 
 st.caption(
-    "`on_watchlist` / `on_elder` flag whether a radar name is also on those lists. "
-    "Runners often overlap the watchlist; pre-move names are usually fresh quiet "
+    "`on_longlist` / `on_elder` flag whether a radar name is also on those lists. "
+    "Runners often overlap the longlist; pre-move names are usually fresh quiet "
     "names that appear ONLY here — that's the point (they move a median ~12 days out)."
 )
 

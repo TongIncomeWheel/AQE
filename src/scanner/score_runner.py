@@ -33,7 +33,7 @@ SCORE_COLUMNS = [
     "close", "atr14",
     # ── Aggregate scores ──
     "flow_100", "energy_100", "structure_100", "mp_100", "elder_score",
-    "bq_100", "k39_value",
+    "bq_100", "k39_value", "k39_gate",
     "mp_state", "impulse_state",
     "sc_momentum", "sc_momentum_raw", "sc_position", "sc_position_raw",
     "sc_m_gates", "sc_p_gates",
@@ -209,6 +209,7 @@ def build_scores() -> None:
             "elder_score": elder_df["elder_score"],
             "bq_100": bq_df["bq_100"],
             "k39_value": k39_val,
+            "k39_gate": k39_gate_s,          # weekly gate bool → SC_POSITION gate detail
             "mp_state": mp_df["mp_state"],
             "impulse_state": elder_df["impulse_state"],
             "sc_momentum": sc_m,
