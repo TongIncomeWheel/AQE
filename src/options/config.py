@@ -18,8 +18,8 @@ MAX_POSITIONS = 6         # cash-secured collateral is split across at most 6 sl
 
 # ── CSP theta-scanner filters (the income-wheel entry screen) ───────────────
 # Short-put delta band — the wheel's sweet spot (moderate assignment odds).
-CSP_DELTA_MIN = 0.15      # |delta| floor (too far OTM → thin premium)
-CSP_DELTA_MAX = 0.35      # |delta| ceiling (too close → high assignment risk)
+CSP_DELTA_MIN = 0.18      # |delta| floor — below this, premium too thin (ignore)
+CSP_DELTA_MAX = 0.40      # |delta| ceiling — above this, too close to the money (ignore)
 CSP_DTE_MIN = 7           # min days to expiry (avoid gamma/pin week unless wanted)
 CSP_DTE_MAX = 60          # max days to expiry (theta/day decays past ~45 DTE)
 CSP_MIN_POP = 0.65        # min prob the put expires worthless (not assigned)
@@ -57,9 +57,9 @@ ALPACA_MAX_OTM_FRAC = 0.5
 # we never spend a call fetching open interest.
 ROUND_STRIKE_STEP = 5.0         # keep only strikes that are a multiple of this
 
-# Universe-sweep DTE window (the wheel's monthly sweet spot).
+# Universe-sweep DTE window — nothing beyond 45 days (theta/day thins out past ~45).
 UNIVERSE_DTE_MIN = 20
-UNIVERSE_DTE_MAX = 50
+UNIVERSE_DTE_MAX = 45
 UNIVERSE_SCAN_FILE = "output/options_scan.json"   # local working copy of the sweep
 
 # Dedicated Drive folder for the CSP scan (overwritten every run → always ONE

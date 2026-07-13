@@ -245,7 +245,7 @@ American exercise; the gap is negligible for the OTM puts the wheel sells). Pure
   contracts-per-slot) + `analyze_put_spread` (defined-risk put credit spread: net credit,
   max-loss/collateral, R:R, breakeven, POP, contracts per $2,100 risk).
 - `scanner.py` — `calculator` (single-contract detail; backs out IV from the mid when the
-  feed omits it), `scan_csps` (theta scanner: filter puts by delta band 0.15–0.35, DTE,
+  feed omits it), `scan_csps` (theta scanner: filter puts by delta band 0.18–0.40, DTE ≤45,
   POP, OI, quote width → ranked by annualised return-on-collateral), `build_put_spreads`
   (auto-pairs legs `--width` apart, ranked by R:R), `best` (the best RRR combo).
 - `config.py` — all knobs (risk-free/div defaults, wheel filters, $70K/3%/6-slot sizing).
