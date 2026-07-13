@@ -42,14 +42,15 @@ def _pct(x, nd=1, dash="—"):
 def _print_scan(rows, top, rejected_n):
     print(f"\nCSP theta scan — {len(rows)} pass the wheel filters "
           f"({rejected_n} rejected). Ranked by {C.SCAN_RANK_KEY}, top {top}:\n")
-    hdr = (f"{'TICKER':7} {'STRIKE':>7} {'DTE':>4} {'DELTA':>6} {'CREDIT':>7} "
+    hdr = (f"{'TICKER':7} {'STRIKE':>7} {'DTE':>4} {'DELTA':>6} {'DIST':>6} {'CREDIT':>7} "
            f"{'ANN.YLD':>8} {'POP':>6} {'CUSH':>6} {'θ/day':>7} {'EDGE':>7} {'CONTR':>5}")
     print(hdr)
     print("-" * len(hdr))
     for m in rows[:top]:
         print(f"{str(m.get('ticker')):7} {_f(m.get('strike')):>7} {str(m.get('dte')):>4} "
-              f"{_f(m.get('abs_delta'), 3):>6} {_f(m.get('credit_per_contract')):>7} "
-              f"{_pct(m.get('annual_yield')):>8} {_pct(m.get('pop_not_assigned')):>6} "
+              f"{_f(m.get('abs_delta'), 3):>6} {_pct(m.get('distance_to_strike_pct')):>6} "
+              f"{_f(m.get('credit_per_contract')):>7} "
+              f"{_pct(m.get('annual_yield')):>8} {_pct(m.get('pop')):>6} "
               f"{_pct(m.get('downside_cushion')):>6} {_f(m.get('theta_credit_day')):>7} "
               f"{_f(m.get('edge_vs_model')):>7} {str(m.get('max_contracts')):>5}")
     b = SC.best(rows)

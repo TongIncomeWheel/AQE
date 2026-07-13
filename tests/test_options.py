@@ -85,6 +85,8 @@ def test_csp_core_identities():
     assert m["static_yield"] == pytest.approx(credit / 95, abs=1e-4)
     # annualised = static × 365/DTE.
     assert m["annual_yield"] == pytest.approx(m["static_yield"] * 365 / 30, abs=1e-4)
+    # distance-to-strike = how far OTM = (spot − strike)/spot.
+    assert m["distance_to_strike_pct"] == pytest.approx((100.0 - 95.0) / 100.0, abs=1e-4)
     # collateral is cash-secured = strike × 100.
     assert m["collateral"] == pytest.approx(9500.0)
     # assignment prob = P(finish below strike); not-assigned = 1 − that.

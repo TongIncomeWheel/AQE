@@ -78,6 +78,7 @@ def analyze_csp(contract: dict, r=None, q=None, fill="mid",
     annual_yield = (static_yield * C.YEAR_DAYS / dte) if (static_yield and dte) else None
     breakeven = K - credit
     cushion = (S - breakeven) / S if S else None
+    dist_to_strike = (S - K) / S if S else None      # how far OTM the strike sits
 
     # Probabilities (risk-neutral). Assignment = finish below the short strike.
     assign_prob = prob_below(S, K, T, iv, r, q) if iv else None
@@ -103,6 +104,7 @@ def analyze_csp(contract: dict, r=None, q=None, fill="mid",
         "collateral": _round(collateral, 2),
         "static_yield": _round(static_yield, 4), "annual_yield": _round(annual_yield, 4),
         "breakeven": _round(breakeven), "downside_cushion": _round(cushion, 4),
+        "distance_to_strike_pct": _round(dist_to_strike, 4),
         "assignment_prob": _round(assign_prob, 4), "pop": _round(pop, 4),
         "pop_not_assigned": _round(pop_not_assigned, 4),
         "theta_credit_day": _round(theta_day, 2), "theta_efficiency": _round(theta_eff, 6),

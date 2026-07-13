@@ -86,13 +86,22 @@ if not rows:
 
 df = pd.DataFrame(rows)
 
-# ── Live filters ────────────────────────────────────────────────────────────
+# ── Live filters (triage a long list) ───────────────────────────────────────
 st.sidebar.header("Filters")
-ay_min = st.sidebar.slider("Min annualised yield %", 0, 200, 20) / 100.0
 d_lo, d_hi = st.sidebar.slider("Delta band |Δ|", 0.0, 1.0,
-                               (OC.CSP_DELTA_MIN, OC.CSP_DELTA_MAX), 0.01)
-pop_min = st.sidebar.slider("Min POP (not assigned) %", 0, 100, 60) / 100.0
-cush_min = st.sidebar.slider("Min downside cushion %", 0, 50, 0) / 100.0
+                               (OC.CSP_DELTA_MIN, OC.CSP_DELTA_MAX), 0.01,
+                               help="Short-put delta. Lower = further OTM / safer.")
+pop_min = st.sidebar.slider("Min POP % (prob. of profit)", 0, 100, 70,
+                            help="P(finish above breakeven) — keep the premium.") / 100.0
+dist_min = st.sidebar.slider("Min distance to strike %", 0, 40, 0,
+                             help="How far OTM the strike sits below spot.") / 100.0
+ay_min = st.sidebar.slider("Min annualised yield %", 0, 200, 20) / 100.0
+cush_min = st.sidebar.slider("Min downside cushion %", 0, 50, 0,
+                             help="Spot vs breakeven (strike − credit).") / 100.0
+_slot = int(OC.CAPITAL / OC.MAX_POSITIONS)
+cap_max = st.sidebar.number_input(
+    "Max collateral $ / contract (0 = no cap)", 0, 500_000, 0, step=500,
+    help=f"Cash-secured = strike × 100. One of {OC.MAX_POSITIONS} slots ≈ ${_slot:,}.")
 dte_lo, dte_hi = st.sidebar.slider("DTE", 0, 365,
                                    tuple(scan.get("dte_window", [20, 50])))
 names = sorted(df["ticker"].unique())
@@ -101,22 +110,31 @@ pick = st.sidebar.multiselect("Tickers (blank = all)", names, [])
 f = df.copy()
 f = f[(f["annual_yield"].fillna(0) >= ay_min) &
       (f["abs_delta"].fillna(0).between(d_lo, d_hi)) &
-      (f["pop_not_assigned"].fillna(0) >= pop_min) &
+      (f.get("pop", pd.Series(0, index=f.index)).fillna(0) >= pop_min) &
+      (f.get("distance_to_strike_pct", pd.Series(0, index=f.index)).fillna(0) >= dist_min) &
       (f["downside_cushion"].fillna(-9) >= cush_min) &
       (f["dte"].between(dte_lo, dte_hi))]
+if cap_max:
+    f = f[f["collateral"].fillna(0) <= cap_max]
 if pick:
     f = f[f["ticker"].isin(pick)]
 f = f.sort_values("annual_yield", ascending=False)
 
 st.subheader(f"{len(f)} matches")
-cols = ["ticker", "strike", "dte", "abs_delta", "credit_per_contract", "annual_yield",
-        "pop_not_assigned", "downside_cushion", "breakeven", "theta_credit_day",
-        "collateral", "iv"]
-show = f[[c for c in cols if c in f.columns]].rename(columns={
-    "abs_delta": "delta", "credit_per_contract": "credit", "annual_yield": "ann_yield",
-    "pop_not_assigned": "pop_safe", "downside_cushion": "cushion",
-    "theta_credit_day": "theta/day"})
-table_with_copy(show, key="universe_csp")
+# Build a display frame with percentages as numeric %-scaled columns (sortable).
+disp = pd.DataFrame({"ticker": f["ticker"], "strike": f["strike"], "dte": f["dte"]})
+if "abs_delta" in f.columns:
+    disp["delta"] = f["abs_delta"].round(3)
+for label, src in [("dist_to_strike_%", "distance_to_strike_pct"), ("POP_%", "pop"),
+                   ("not_assigned_%", "pop_not_assigned"), ("ann_yield_%", "annual_yield"),
+                   ("cushion_%", "downside_cushion"), ("iv_%", "iv")]:
+    if src in f.columns:
+        disp[label] = (f[src] * 100).round(1)
+for label, src in [("credit$", "credit_per_contract"), ("breakeven", "breakeven"),
+                   ("theta/day", "theta_credit_day"), ("collateral", "collateral")]:
+    if src in f.columns:
+        disp[label] = f[src]
+table_with_copy(disp, key="universe_csp")
 
 if len(f):
     b = f.iloc[0]
