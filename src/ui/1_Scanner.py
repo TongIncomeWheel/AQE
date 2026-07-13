@@ -1298,7 +1298,7 @@ with st.expander("🗂️ GICS sector gaps (RAG maintenance)", expanded=False):
 _ex = load_export() or {}
 
 _EXPORT_COL_ORDER = [
-    "rank", "ticker", "source", "pe", "on_longlist",
+    "rank", "ticker", "source", "pe",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1449,8 +1449,7 @@ st.caption(
     "**The longlist IS: SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7** — one definition, "
     "no second gate. The sliders below DEFAULT to exactly that, and the export/alerts "
     "fire off the same set (what you see == what fires). Drag the sliders to tighten "
-    "further. Per-row badges (not membership gates): `on_longlist` = also passed the "
-    "full engine recipe; `pe` = Precision-Edge. `elder_pattern` + `elder_context` "
+    "further. `elder_pattern` + `elder_context` "
     f"ride on every row. Aggregate recipe: {_recipe_label(active_recipe)}."
 )
 
@@ -1461,7 +1460,7 @@ _ll_recs = _ex.get("daily_list")
 if _ll_recs is None:
     _ll_recs = _ex.get("longlist") or []
 if _ll_recs:
-    f1, f2, f3, f4, f5, f6 = st.columns([1, 1, 1, 1.4, 1, 1])
+    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1.4, 1])
     # Slider defaults ARE the longlist definition — same source as the export
     # membership (src/longlist_screen.py). What you see == what fires.
     from src.longlist_screen import MIN_SC, MIN_PTRS, MIN_ELDER
@@ -1471,9 +1470,7 @@ if _ll_recs:
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
                        for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
-    _ll_only = f5.checkbox("Qualified only", key="sig_ll",
-                           help="on_longlist = passed the full recipe")
-    _ledger_only = f6.checkbox("In ledger", key="sig_ledger",
+    _ledger_only = f5.checkbox("In ledger", key="sig_ledger",
                                help="runner_setup OR premove_setup fired (Signal Radar)")
     _sec_opts = sorted({(r.get("gics_sector_name") or r.get("gics_sector") or "—")
                         for r in _ll_recs})
@@ -1494,19 +1491,16 @@ if _ll_recs:
             sec = (r.get("gics_sector_name") or r.get("gics_sector") or "—")
             if sec not in _sec_sel:
                 return False
-        if _ll_only and not r.get("on_longlist"):
-            return False
         if _ledger_only and not r.get("in_ledger"):
             return False
         return True
 
     _filtered = sorted([r for r in _ll_recs if _keep(r)],
                        key=lambda r: (r.get("ptrs") or 0), reverse=True)
-    _n_ll = sum(1 for r in _filtered if r.get("on_longlist"))
     _n_el = sum(1 for r in _filtered if r.get("on_elder"))
     _n_lg = sum(1 for r in _filtered if r.get("in_ledger"))
     st.markdown(f"**{len(_filtered)}** names match "
-                f"({_n_ll} qualified · {_n_el} Elder≥8 · {_n_lg} in ledger)")
+                f"({_n_el} Elder≥8 · {_n_lg} in ledger)")
     _held_here = [r.get("ticker") for r in _filtered if r.get("held")]
     if _held_here:
         st.caption(f"🔵 **{len(_held_here)} held**: {', '.join(_held_here)}")
@@ -1558,7 +1552,7 @@ st.divider()
 st.subheader("Signal Radar")
 st.caption(
     "**Detection tags — NOT entry signals, NOT sizing.** The PM decides "
-    "entry/bracket/size live, exactly like `on_longlist`/`pe`. Two radars: "
+    "entry/bracket/size live. Two radars: "
     "**`runner_setup`** = already moving with another leg (short base + 5-day thrust "
     "+ clear overhead), with conviction 0–4 + subtype; **`premove_setup`** = quiet "
     "now but coiled (young base + squeeze + well below the high), which historically "
@@ -1568,8 +1562,8 @@ st.caption(
 )
 
 # Today's tagged names — the STANDALONE radar block covers the full scored universe
-# (so quiet pre-move names, which never reach the longlist, still show). Each row is
-# flagged on_longlist / on_elder so the overlap reads at a glance.
+# (so quiet pre-move names, which never reach the watchlist, still show). Each row is
+# flagged on_watchlist / on_elder so the overlap reads at a glance.
 _radar_block = _ex.get("signal_radar") or {}
 _runner_rows = _radar_block.get("runner_setup") or []
 _premove_rows = _radar_block.get("premove_setup") or []
@@ -1593,8 +1587,8 @@ with _sc2:
         st.caption("Needs an export with the signal_radar block (rerun the pipeline).")
 
 st.caption(
-    "`on_longlist` / `on_elder` flag whether a radar name is also on those lists. "
-    "Runners often overlap the longlist; pre-move names are usually fresh quiet "
+    "`on_watchlist` / `on_elder` flag whether a radar name is also on those lists. "
+    "Runners often overlap the watchlist; pre-move names are usually fresh quiet "
     "names that appear ONLY here — that's the point (they move a median ~12 days out)."
 )
 
@@ -1746,8 +1740,6 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
 
     rec = {
         "rank": idx, "ticker": tk, "source": "adhoc", "pe": False,
-        "on_longlist": _ll_passes({"sc_momentum_raw": raw, "sc_momentum": sc,
-                                   "ptrs": ptrs, "elder": r.get("elder")}),
         "sc_momentum": sc, "sc_momentum_raw": raw, "ptrs": ptrs,
         "pipe_rank": r.get("pipe_rank"),
         "flow": r.get("flow"), "energy": r.get("energy"),

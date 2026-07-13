@@ -168,7 +168,7 @@ recs_all = build_rec_lookup(export, ["held", "daily_list"]) if export else {}
 universe = sorted(recs_all)
 default_sel = [t for t in universe
                if recs_all[t].get("source") == "held"
-               or recs_all[t].get("on_longlist") or recs_all[t].get("pe")]
+               or recs_all[t].get("in_ledger") or recs_all[t].get("on_elder")]
 
 c1, c2 = st.columns([2, 2])
 with c1:

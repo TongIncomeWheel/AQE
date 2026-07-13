@@ -99,7 +99,6 @@ if _daily is None:
 cat_sets = {
     "Watchlist": {r.get("ticker") for r in _daily if r.get("on_watchlist", True)},
     "Elder": {r.get("ticker") for r in _daily if r.get("on_elder")},
-    "Qualified": {r.get("ticker") for r in _daily if r.get("on_longlist")},
     "In ledger": {r.get("ticker") for r in _daily if r.get("in_ledger")},
     "Held": set(held_lookup.keys()),
 }
@@ -358,8 +357,8 @@ with left:
     # Filters that scope the dropdown to manageable subsets (mobile list mgmt).
     with st.expander("Filters", expanded=False):
         fa, fs, fb = st.columns([1, 1.2, 1.6])
-        category = fa.selectbox("List", ["All", "Watchlist", "Qualified",
-                                         "Elder", "In ledger", "Held"])
+        category = fa.selectbox("List", ["All", "Watchlist", "Elder",
+                                         "In ledger", "Held"])
         sector = fs.selectbox("Sector", ["All", *_sectors])
         mp_filter = fb.multiselect("MP state", ["STRONG", "BUILDING", "FADING"], default=[])
         g1, g2, g3 = st.columns(3)

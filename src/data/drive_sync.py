@@ -1154,7 +1154,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                     wpr, wfl, wsc, tk in pe_tickers, tk, sm, sector_grades),
                 "source": source,
                 "pe": tk in pe_tickers,
-                "on_longlist": tk in longlist_tickers,
                 **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
             }
 
@@ -1190,20 +1189,16 @@ def build_export(shortlist: dict | None = None) -> dict:
                     _radar_pool_recs.append(_wl_record(_wr, _rr, _src))
 
     # ---- TWO lists (PM): the single screening `longlist` + the standalone
-    # `elder_list`. Longlist replaces watchlist/PE/top_picks (their info survives
-    # as on_longlist / pe FLAGS). Elder list is its OWN list — sole criterion
-    # Elder ≥ 8, nothing else (the strong-breakout catcher). held_positions stays.
+    # `elder_list`. Longlist replaces watchlist/PE/top_picks. Elder list is its OWN
+    # list — sole criterion Elder ≥ 8, nothing else (the strong-breakout catcher).
+    # `on_longlist` is RETIRED (undocumented badge, AIC noise). held_positions stays.
     _merged: dict = {}
     for _tname in ("top_picks", "edge_list", "longlist", "watchlist"):
         for _r in export.get(_tname, []):
             _tk = _r.get("ticker")
             if not _tk:
                 continue
-            if "on_longlist" not in _r:
-                _r["on_longlist"] = _tk in longlist_tickers
-            if _tk in _merged:                       # OR-merge the qualifying flags
-                if _r.get("on_longlist"):
-                    _merged[_tk]["on_longlist"] = True
+            if _tk in _merged:                       # OR-merge the pe flag
                 if _r.get("pe"):
                     _merged[_tk]["pe"] = True
             else:
@@ -1364,7 +1359,7 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # ---- Standalone Signal Radar block (M14-M18) — the one place AIC scans the
     # radar daily. Two ranked lists over the FULL scored universe, each name flagged
-    # with whether it is ALSO on the longlist / elder list (overlap at a glance).
+    # with whether it is ALSO on the watchlist / elder list (overlap at a glance).
     # DETECTION tags only — never a gate, never sizing. Additive; empty on failure.
     try:
         if _radar is not None:
@@ -1372,7 +1367,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             _el_tk = {r.get("ticker") for r in _elderlist if r.get("ticker")}
             for _grp in ("runner_setup", "premove_setup"):
                 for _e in _radar.get(_grp, []):
-                    _e["on_longlist"] = _e["ticker"] in _ll_tk
+                    _e["on_watchlist"] = _e["ticker"] in _ll_tk
                     _e["on_elder"] = _e["ticker"] in _el_tk
             export["signal_radar"] = {
                 "scan_date": _radar.get("scan_date"),
@@ -1396,7 +1391,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     #    hold decision); the 4 hl_ sub-scores dropped everywhere.
     #  • Enrichment overlap (setup_state + breakout_*): hidden — Signal Radar IS the
     #    DETECT layer, so these competing detect signals are stripped (engine kept).
-    _DEPRECATED = ("pe", "rank_explain")
+    _DEPRECATED = ("pe", "rank_explain", "on_longlist")
     _READINESS = ("rd_score", "rd_state", "rd_compression", "rd_trigger",
                   "rd_pos_mod", "rd_rs_bonus")
     _HL_SUB = ("hl_trend", "hl_flow", "hl_rs", "hl_risk")
