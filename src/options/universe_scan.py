@@ -100,10 +100,11 @@ def export_scan_to_drive(blob: dict, path: str = None) -> dict:
     try:
         from src.data import gdrive_uploader
         content = json.dumps(blob, indent=2, default=str)
+        # REPLACE options_scan.json by name. Do NOT keep_only_file — this folder is
+        # SHARED with the MA scan (aqe_ma_scan.json); trimming to one file would
+        # trash the sibling. Each scan overwrites only its own filename.
         res = gdrive_uploader.upload_or_replace(
             C.CSP_SCAN_FILENAME, content, folder_id=folder)
-        if res.get("ok") and res.get("file_id"):
-            gdrive_uploader.keep_only_file(folder, res["file_id"])   # keep exactly one
     except Exception as e:                                            # pragma: no cover
         res = {"ok": False, "reason": f"{type(e).__name__}: {e}"}
     return {"local": local, "drive": res}

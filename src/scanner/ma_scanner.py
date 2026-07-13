@@ -282,20 +282,17 @@ def publish_ma_scan(scan: pd.DataFrame, stats: dict) -> dict:
     except Exception:  # noqa: BLE001
         pass
 
-    # Drive — overwrite in place, then trim the folder to this single file.
+    # Drive — REPLACE the same filename in place (upload_or_replace finds
+    # aqe_ma_scan.json by name and overwrites it). Do NOT keep_only_file here: this
+    # folder is SHARED with the options scan (options_scan.json), so trimming to a
+    # single file would trash the sibling. Each scan owns its own filename.
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
             return {"ok": False, "reason": "Drive not configured (local copy only)"}
-        r = gdrive_uploader.upload_or_replace(
+        return gdrive_uploader.upload_or_replace(
             MA_SCAN_DRIVE_FILENAME, content, mime="application/json",
             folder_id=MA_SCAN_FOLDER_ID)
-        if r.get("ok") and r.get("file_id"):
-            try:
-                gdrive_uploader.keep_only_file(MA_SCAN_FOLDER_ID, r["file_id"])
-            except Exception:  # noqa: BLE001
-                pass
-        return r
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 

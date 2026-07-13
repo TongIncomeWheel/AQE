@@ -141,11 +141,16 @@ def test_scan_universe_survives_bad_name():
     assert blob["candidates_count"] >= 1                   # OK still scanned
 
 
-def test_export_scan_to_drive_writes_local_and_keeps_one(monkeypatch, tmp_path):
+def test_export_scan_to_drive_replaces_by_name_without_trimming(monkeypatch, tmp_path):
+    """The CSP folder is SHARED with the MA scan (aqe_ma_scan.json). The publish
+    must REPLACE options_scan.json by name and NEVER keep_only_file — trimming the
+    folder to one file would trash the sibling MA-scan output."""
     from src.data import gdrive_uploader
+    uploaded = {}
     kept = {}
     monkeypatch.setattr(gdrive_uploader, "upload_or_replace",
-                        lambda fn, content, folder_id=None: {
+                        lambda fn, content, folder_id=None: uploaded.update(
+                            fn=fn, folder_id=folder_id) or {
                             "ok": True, "file_id": "F1", "replaced": True,
                             "filename": fn, "folder_id": folder_id})
     monkeypatch.setattr(gdrive_uploader, "keep_only_file",
@@ -154,5 +159,6 @@ def test_export_scan_to_drive_writes_local_and_keeps_one(monkeypatch, tmp_path):
                                  str(tmp_path / "options_scan.json"))
     assert out["drive"]["ok"] and out["drive"]["file_id"] == "F1"
     assert (tmp_path / "options_scan.json").exists()       # local copy always written
-    assert kept["fid"] == "F1"                             # trims to a single Drive file
-    assert kept["folder"] == C.GDRIVE_CSP_FOLDER_ID
+    assert uploaded["fn"] == C.CSP_SCAN_FILENAME           # overwrites its own file
+    assert uploaded["folder_id"] == C.GDRIVE_CSP_FOLDER_ID
+    assert kept == {}                                      # keep_only_file NOT called
