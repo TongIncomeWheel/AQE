@@ -7,22 +7,27 @@ days each stock has been within ±10% of each MA.
 Use case: finding quality companies that have pulled back to key MAs
 for swing entries or calendar trades.
 
-Runs as part of the daily pipeline (Step 8d) and stores results in
-data/ma_scan.parquet. The first run pulls ~250 days of bars for the
-full MA universe (~2000 tickers, ~8 min at 250 calls/min). Subsequent
-runs are incremental (only new bars since last pull).
+Runs DAILY alongside the daily pipeline (in the in-app scheduler, right after
+the trading feed is published — decoupled from the pipeline's critical path so a
+slow FMP pull can't fail the feed). Stores results in data/ma_scan.parquet and
+publishes one overwritten JSON (`aqe_ma_scan.json`) to a dedicated Drive folder
+(`MA_SCAN_FOLDER_ID`). The first run pulls ~250 days of bars for the full MA
+universe (~2000 tickers, ~8 min at 250 calls/min); subsequent daily runs are
+incremental (only new bars since last pull, most tickers skipped) so they're fast.
 """
 
 from __future__ import annotations
 
+import os
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
 
 from src.data.fmp_client import FMPClient, FMPError, FMPQuotaError, iter_with_progress
-from src.data.paths import DATA_DIR
+from src.data.paths import DATA_DIR, OUTPUT_DIR
 
 MA_PANEL = DATA_DIR / "ma_panel.parquet"
 MA_SCAN = DATA_DIR / "ma_scan.parquet"
@@ -32,6 +37,13 @@ PROXIMITY_PCT = 10.0
 MA_PERIODS = [20, 50, 100, 200]
 LOOKBACK_CALENDAR_DAYS = 400  # enough for 200 trading days + buffer
 MIN_MCAP = 1_000_000_000
+
+# Dedicated Drive folder for the daily MA-scan output (one overwritten JSON).
+MA_SCAN_FOLDER_ID = (
+    os.environ.get("GDRIVE_MA_SCAN_FOLDER_ID")
+    or "1HAh3Vw0sWASm5GccifPUP5_cZh31Z7oC"
+)
+MA_SCAN_DRIVE_FILENAME = "aqe_ma_scan.json"
 
 
 def get_ma_universe(client: FMPClient | None = None) -> pd.DataFrame:
@@ -243,7 +255,52 @@ def compute_ma_proximity(panel: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def run_ma_scan(client: FMPClient | None = None) -> dict:
+def publish_ma_scan(scan: pd.DataFrame, stats: dict) -> dict:
+    """Publish the MA scan to the dedicated Drive folder as ONE overwritten JSON
+    (`aqe_ma_scan.json`), plus a local working copy in output/. Best-effort —
+    never raises. Records are the near-an-MA rows (sorted by ma_near_count desc).
+    """
+    import json
+    sgt = ZoneInfo("Asia/Singapore")
+    records = [] if scan is None or scan.empty else json.loads(
+        scan.assign(date=scan["date"].astype(str)).to_json(orient="records"))
+    payload = {
+        "generated_at": datetime.now(sgt).strftime("%Y-%m-%d %H:%M:%S SGT"),
+        "proximity_pct": PROXIMITY_PCT,
+        "ma_periods": MA_PERIODS,
+        "min_mcap": MIN_MCAP,
+        "stats": stats,
+        "count": len(records),
+        "scan": records,
+    }
+    content = json.dumps(payload, indent=2)
+
+    # Local working copy (erase-then-write, single file).
+    try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        (OUTPUT_DIR / MA_SCAN_DRIVE_FILENAME).write_text(content, encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+
+    # Drive — overwrite in place, then trim the folder to this single file.
+    try:
+        from src.data import gdrive_uploader
+        if not gdrive_uploader.is_configured():
+            return {"ok": False, "reason": "Drive not configured (local copy only)"}
+        r = gdrive_uploader.upload_or_replace(
+            MA_SCAN_DRIVE_FILENAME, content, mime="application/json",
+            folder_id=MA_SCAN_FOLDER_ID)
+        if r.get("ok") and r.get("file_id"):
+            try:
+                gdrive_uploader.keep_only_file(MA_SCAN_FOLDER_ID, r["file_id"])
+            except Exception:  # noqa: BLE001
+                pass
+        return r
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
+def run_ma_scan(client: FMPClient | None = None, publish: bool = True) -> dict:
     """Full MA scan: screen universe → pull bars → compute proximity.
 
     Returns dict with scan results and stats.
@@ -301,7 +358,14 @@ def run_ma_scan(client: FMPClient | None = None) -> dict:
     for p in MA_PERIODS:
         print(f"  Near SMA{p}: {stats[f'near_sma{p}']}")
 
-    return {"ok": True, "scan": scan, "stats": stats}
+    # Publish the scan to the dedicated Drive folder (one overwritten JSON).
+    pub = {"ok": False, "reason": "publish skipped"}
+    if publish:
+        pub = publish_ma_scan(scan, stats)
+        print(f"[MA Scanner] Drive publish: "
+              f"{'ok' if pub.get('ok') else pub.get('reason')}")
+
+    return {"ok": True, "scan": scan, "stats": stats, "publish": pub}
 
 
 def load_latest_scan() -> pd.DataFrame:
