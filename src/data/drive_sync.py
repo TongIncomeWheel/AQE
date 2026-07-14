@@ -93,7 +93,21 @@ _FIELD_GLOSSARY = {
                "valid=false, i.e. no structural level exists), "
                "valid, invalid_reason}. When valid=false the name has NO tradeable bracket "
                "('no valid bracket') — show that, never a mechanical fallback. STOP is below "
-               "price, TARGETS above; R and ATR distances are relative, not absolute noise.",
+               "price, TARGETS above; R and ATR distances are relative, not absolute noise. "
+               "VOLUME VALIDATION: dated levels carry vol_ratio (pivot-bar volume / trailing "
+               "20-bar avg) + vol_validated (ratio ≥ 1.2) — a level DEFENDED on high volume "
+               "is a stronger level; the stop's own read is stop_date + stop_vol_ratio + "
+               "stop_vol_validated (present when the stop is swing-based). Data only — the "
+               "3 gates are unchanged.",
+    "structure_shift": "BOS/CHoCH read vs the CONFIRMED swing anchors (data only, never a "
+                       "gate): BULLISH_BOS = COB close broke ABOVE the last confirmed swing "
+                       "high (break of structure — trend continuation/ignition); "
+                       "BEARISH_CHOCH = close broke BELOW the up-swing's anchor low "
+                       "(character change — the up-structure failed); RANGE = inside the "
+                       "swing. Null when no swing is detected.",
+    "structure_shift_ref": "The swing level the shift is measured against (USD): the broken "
+                           "swing high for BULLISH_BOS, the broken anchor low for "
+                           "BEARISH_CHOCH; null for RANGE.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -253,6 +267,9 @@ _FIELD_SCHEMA = {
     "sc_p_gate_detail":        _fs("signal", "label", "n/a"),
     # Engine subcomponents (nested by engine — context only, never a gate)
     "subcomponents":           _fs("signal", "score", "n/a"),
+    # Structure shift (BOS/CHoCH) — data only, never a gate
+    "structure_shift":         _fs("signal", "label", "n/a"),
+    "structure_shift_ref":     _fs("reference", "usd", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -577,6 +594,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # targets, R:R vs structural TP2, ATR-relative. Mechanical DSL/TP retired.
         "bracket": None,
         "held": False,
+        # Structure shift (BOS/CHoCH) — data only, never a gate
+        "structure_shift": None, "structure_shift_ref": None,
         # Health score (hold decision, held_positions only)
         "hl_score": None, "hl_state": None,
         # Enrichment Spec v2.0 — RS leadership + bracket-quality flags. setup_state
@@ -681,9 +700,27 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                                    price=d.get("entry"), price_source="eod_close")
         fields["bracket"] = {_k: _bracket[_k] for _k in (
             "price", "price_source", "stop", "stop_type", "stop_atr_dist",
-            "risk", "risk_pct", "targets", "rr",
+            "stop_date", "risk", "risk_pct", "targets", "rr",
             "rr_tp1", "rr_tp2", "rr_tp3", "atr_fallback_stop",
             "valid", "invalid_reason")}
+
+        # ── Structure shift (BOS/CHoCH) — TV-analysis Phase 5 ─────────────
+        # COB close vs the CONFIRMED swing anchors: above the last confirmed
+        # swing high = BULLISH_BOS (break of structure); below the up-swing's
+        # anchor low = BEARISH_CHOCH (character change); else RANGE. Null when
+        # no swing is detected. Data only — never a gate.
+        _entry_px = d.get("entry")
+        _ssh, _ssl = _fib.get("swing_high"), _fib.get("swing_low")
+        if _is_num(_entry_px) and _is_num(_ssh) and _is_num(_ssl):
+            if _entry_px > _ssh:
+                fields["structure_shift"] = "BULLISH_BOS"
+                fields["structure_shift_ref"] = _ssh
+            elif _entry_px < _ssl:
+                fields["structure_shift"] = "BEARISH_CHOCH"
+                fields["structure_shift_ref"] = _ssl
+            else:
+                fields["structure_shift"] = "RANGE"
+                fields["structure_shift_ref"] = None
 
         # ── Health score (hold-decision, held_positions only) ─────────────
         # Readiness (rd_*) is HIDDEN from the AIC feed — the engine still runs
@@ -1412,6 +1449,48 @@ def build_export(shortlist: dict | None = None) -> dict:
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)
+
+        # ── Volume-validated pivots (TV-analysis Phase 4) ─────────────────
+        # A level DEFENDED on high volume is a stronger level. For every dated
+        # bracket level (swing-based stop, resistance/prior-high targets), stamp
+        # vol_ratio = pivot-bar volume / trailing 20-bar avg at that date, and
+        # vol_validated = ratio ≥ 1.2 (the BigBeluga high-volume-pivot rule).
+        # Data only; the 3 gates are unchanged. Best-effort per record.
+        def _stamp_vol_validation(_rows):
+            for _r in _rows:
+                try:
+                    _g = _grp.get(_r.get("ticker"))
+                    _b = _r.get("bracket") or {}
+                    if _g is None or "volume" not in _g.columns or not _b:
+                        continue
+                    _vs = _g["volume"].astype(float)
+                    _avg = _vs.rolling(20).mean()
+                    _dix = {str(dd.date()): j for j, dd in enumerate(_g["date"])}
+
+                    def _ratio_at(_dt):
+                        _j = _dix.get(_dt)
+                        if _j is None:
+                            return None
+                        _a = _avg.iloc[_j]
+                        if _a and _a == _a and _a > 0:
+                            return round(float(_vs.iloc[_j]) / float(_a), 2)
+                        return None
+
+                    for _item in (_b.get("targets") or []):
+                        _rt = _ratio_at(_item.get("date"))
+                        if _rt is not None:
+                            _item["vol_ratio"] = _rt
+                            _item["vol_validated"] = bool(_rt >= 1.2)
+                    _srt = _ratio_at(_b.get("stop_date"))
+                    if _srt is not None:
+                        _b["stop_vol_ratio"] = _srt
+                        _b["stop_vol_validated"] = bool(_srt >= 1.2)
+                except Exception:  # noqa: BLE001
+                    continue
+
+        _stamp_vol_validation(_longlist)
+        _stamp_vol_validation(_elderlist)
+        _stamp_vol_validation(_radar_pool_recs)
     except Exception:  # noqa: BLE001 — elder_context is additive, never blocks export
         for _r in _longlist + _elderlist:
             _r.setdefault("elder_pattern", None)
@@ -1568,6 +1647,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "sc_m_gates", "sc_p_gates",
         # Engine subcomponents block (nested; None-filled when a column is absent)
         "subcomponents",
+        # Structure shift (BOS/CHoCH — null when no swing detected)
+        "structure_shift",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]

@@ -162,7 +162,7 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
     out: dict = {
         "price": round(float(price), 2) if _num(price) else None,
         "price_source": price_source,
-        "stop": None, "stop_type": None, "stop_atr_dist": None,
+        "stop": None, "stop_type": None, "stop_atr_dist": None, "stop_date": None,
         "risk": None, "risk_pct": None,
         "targets": [], "rr": None,
         "rr_tp1": None, "rr_tp2": None, "rr_tp3": None,
@@ -208,6 +208,7 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
     out["stop"] = best["price"]
     out["stop_type"] = best["type"]
     out["stop_atr_dist"] = best["atr_dist"]
+    out["stop_date"] = best.get("date")     # pivot date when the stop is swing-based
     out["risk"] = risk
     out["risk_pct"] = best["risk_pct"]
 
