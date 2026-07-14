@@ -25,21 +25,52 @@ from src.data.paths import EXPORT_JSON
 # ---------------------------------------------------------------------------
 
 def load_export() -> dict | None:
-    """The daily export — local copy first, then Drive (for the GH backstop)."""
+    """The daily export — the MORE RECENT of the local working copy and Drive.
+
+    A "local copy" is not reliably fresh: `output/aqe_daily_export.json` is
+    committed to git as a backup record, so a fresh checkout (every GitHub
+    Actions run) or a freshly-redeployed HF Space (before that container's own
+    pipeline run) can see a LOCAL file that is actually the stale git-committed
+    snapshot — while Drive already has the real, current export from whichever
+    environment (Space or the GH pipeline backstop) actually ran the pipeline.
+    Trusting local-first silently starved the freshness guard and blocked every
+    alert for days without ever raising. Fast path: if local already carries
+    today's date, skip the Drive round-trip (the common case). Otherwise compare
+    `exported_at`/`date` and return whichever export is newer.
+    """
+    local = None
     try:
         if EXPORT_JSON.exists():
-            return json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
+            local = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         pass
+
+    try:
+        today = datetime.now(ZoneInfo("America/New_York")).date().isoformat()
+        if local and str(local.get("date") or "")[:10] == today:
+            return local
+    except Exception:  # noqa: BLE001
+        pass
+
+    drive = None
     try:
         from src.data import gdrive_uploader
         if gdrive_uploader.is_configured():
             txt = gdrive_uploader.download_text("aqe_daily_export.json")
             if txt:
-                return json.loads(txt)
+                drive = json.loads(txt)
     except Exception:  # noqa: BLE001
         pass
-    return None
+
+    if drive is None:
+        return local
+    if local is None:
+        return drive
+
+    def _key(exp: dict) -> str:
+        return str(exp.get("exported_at") or exp.get("date") or "")
+
+    return drive if _key(drive) > _key(local) else local
 
 
 def monitored(export: dict) -> list[dict]:
