@@ -108,6 +108,25 @@ _FIELD_GLOSSARY = {
     "structure_shift_ref": "The swing level the shift is measured against (USD): the broken "
                            "swing high for BULLISH_BOS, the broken anchor low for "
                            "BEARISH_CHOCH; null for RANGE.",
+    "mp_accel": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum "
+                "z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is "
+                "building; negative = rolling over. Flags inflection BEFORE the level/"
+                "mp_state confirms — read alongside mp_state (which is a knife-edge when "
+                "the score plateaus). Additive diagnostic, not part of the Pine spec.",
+    "mp_accel_state": "Label for mp_accel with a ±0.10 dead-zone: ACCELERATING / "
+                      "DECELERATING / FLAT.",
+    "div_state": "Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: "
+                 "confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a "
+                 "lower pivot low while ≥1 oscillator made a higher low (downmove losing "
+                 "internal energy); BEARISH mirror on highs; MIXED = both; NONE. Oscillators "
+                 "tested: RSI, MFI, CMF, MACD, OBV — all AQE-computed. Context only, "
+                 "never a gate.",
+    "div_bull_count": "How many of the 5 oscillators confirm the bullish divergence (0-5). "
+                      "More confirming oscillators = stronger read.",
+    "div_bear_count": "How many of the 5 oscillators confirm the bearish divergence (0-5).",
+    "div_oscs": "Which oscillators fired, comma-joined — bullish names bare, bearish names "
+                "prefixed '-' (e.g. 'rsi,mfi,-obv'). Null when none.",
+    "div_date": "Date of the confirming (newer) pivot anchoring the divergence.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -270,6 +289,14 @@ _FIELD_SCHEMA = {
     # Structure shift (BOS/CHoCH) — data only, never a gate
     "structure_shift":         _fs("signal", "label", "n/a"),
     "structure_shift_ref":     _fs("reference", "usd", "n/a"),
+    # Momentum acceleration + divergence (TV-analysis Phases 2+3 — context only)
+    "mp_accel":                _fs("signal", "decimal", "n/a"),
+    "mp_accel_state":          _fs("signal", "label", "n/a"),
+    "div_state":               _fs("signal", "label", "n/a"),
+    "div_bull_count":          _fs("signal", "score", "n/a"),
+    "div_bear_count":          _fs("signal", "score", "n/a"),
+    "div_oscs":                _fs("signal", "label", "n/a"),
+    "div_date":                _fs("reference", "date", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -806,6 +833,39 @@ def _sub_val(v):
         return None
 
 
+def _sub_str(v):
+    """Clean string or None (NaN-safe)."""
+    if v is None:
+        return None
+    s = str(v)
+    return s if s and s not in ("nan", "None") else None
+
+
+def _sub_int(v):
+    """Clean int or None (NaN-safe)."""
+    f = _sub_val(v)
+    return int(f) if isinstance(f, float) or isinstance(f, int) else None
+
+
+def _new_engine_fields(row) -> dict:
+    """Momentum-acceleration + divergence fields from a scores_daily row
+    (TV-analysis Phases 2+3). Missing columns degrade to None."""
+    if row is None:
+        return {"mp_accel": None, "mp_accel_state": None, "div_state": None,
+                "div_bull_count": None, "div_bear_count": None,
+                "div_oscs": None, "div_date": None}
+    get = row.get if hasattr(row, "get") else (lambda k: None)
+    return {
+        "mp_accel": _sub_val(get("mp_accel")),
+        "mp_accel_state": _sub_str(get("mp_accel_state")),
+        "div_state": _sub_str(get("div_state")),
+        "div_bull_count": _sub_int(get("div_bull_count")),
+        "div_bear_count": _sub_int(get("div_bear_count")),
+        "div_oscs": _sub_str(get("div_oscs")),
+        "div_date": _sub_str(get("div_date")),
+    }
+
+
 def _subcomponents(row) -> dict | None:
     """Nested per-engine sub-score block from a scores_daily row (Series/dict).
     Always returns the full key set (None-filled) so the schema is stable."""
@@ -900,6 +960,8 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             **_held_sc_gates(s),
             # Engine subcomponents — same nightly sub-score block as daily_list.
             "subcomponents": _subcomponents(s),
+            # Momentum acceleration + divergence (same fields as daily_list rows)
+            **_new_engine_fields(s),
             # Health = the HOLD decision (trend integrity), the whole point of the
             # held book. Sourced from scores_daily; held names are force-scored in
             # the orchestrator so this is populated even off the top-50 screen.
@@ -1312,6 +1374,8 @@ def build_export(shortlist: dict | None = None) -> dict:
                 # read (nested by engine; see field_glossary). Educates the AIC on
                 # WHY an engine scored what it did. Zero extra compute.
                 "subcomponents": _subcomponents(wr),
+                # Momentum acceleration + divergence (TV-analysis Phases 2+3)
+                **_new_engine_fields(wr),
                 "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                 "entry": d.get("entry"),
                 "elder_5d": elder5.get(tk),
@@ -1649,6 +1713,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "subcomponents",
         # Structure shift (BOS/CHoCH — null when no swing detected)
         "structure_shift",
+        # Momentum acceleration + divergence (null until the next scores run)
+        "mp_accel", "div_state",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]

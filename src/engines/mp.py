@@ -5,6 +5,8 @@ Outputs:
     mp_state        ∈ {"BUILDING", "STRONG", "FADING"}
     abs_mom_score, adx_score, rel_mom_score, trend_score
     roc_zscore, excess_return, adx_val, di_bullish (diagnostics)
+    mp_accel, mp_accel_state (ADDITIVE — momentum acceleration, not part of the
+        Pine spec; see the "Momentum acceleration" block below)
 
 Composite (Pine line 69-70):
     mp_raw = abs_mom + adx + rel_mom + trend
@@ -17,6 +19,10 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+
+# Dead-zone thresholds for the additive acceleration state label.
+ACCEL_UP = 0.10
+ACCEL_DN = -0.10
 
 
 def compute(
@@ -100,6 +106,16 @@ def compute(
     mp_state = mp_state.where(~(mp_rising & (mp_score < 75.0)), "BUILDING")
     mp_state = mp_state.where(~(mp_rising & (mp_score >= 75.0)), "STRONG")
 
+    # ---- Momentum acceleration (ADDITIVE — not part of the Pine spec) ----
+    # 2nd-derivative read: is the momentum z-score itself rising or rolling over?
+    # velocity = 5-bar change of roc_zscore, smoothed 3 bars. Flags inflection
+    # BEFORE the level/state confirms (complements mp_state's 3-bar delta).
+    mp_accel = U.sma(roc_zscore.diff(5), 3)
+
+    mp_accel_state = pd.Series("FLAT", index=close.index, dtype="object")
+    mp_accel_state = mp_accel_state.where(~(mp_accel > ACCEL_UP), "ACCELERATING")
+    mp_accel_state = mp_accel_state.where(~(mp_accel < ACCEL_DN), "DECELERATING")
+
     return pd.DataFrame({
         "date": d["date"],
         "mp_score": mp_score,
@@ -112,6 +128,8 @@ def compute(
         "excess_return": excess_return,
         "adx_val": adx_val,
         "di_bullish": di_bullish,
+        "mp_accel": mp_accel,
+        "mp_accel_state": mp_accel_state,
     })
 
 

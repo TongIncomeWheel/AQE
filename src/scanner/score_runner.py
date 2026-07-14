@@ -24,7 +24,7 @@ import pandas as pd
 from src.data.earnings import load_earnings
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
-from src.engines import bq, elder, energy, flow, health, k39, mp, pipeline_rank, readiness, scoring, structure
+from src.engines import bq, divergence, elder, energy, flow, health, k39, mp, pipeline_rank, readiness, scoring, structure
 from src.engines.utils import atr
 
 
@@ -62,6 +62,10 @@ SCORE_COLUMNS = [
     # ── Health sub-components ──
     "hl_score", "hl_state", "hl_trend", "hl_flow", "hl_rs", "hl_risk",
     "hl_higher_lows", "hl_trend_bars", "hl_vol_updn", "hl_atr_spike",
+    # ── Momentum acceleration (additive, MP engine) ──
+    "mp_accel", "mp_accel_state",
+    # ── Divergence (price vs RSI/MFI/CMF/MACD/OBV — last bar only) ──
+    "div_state", "div_bull_count", "div_bear_count", "div_oscs", "div_date",
 ]
 
 
@@ -126,6 +130,9 @@ def build_scores() -> None:
             k39_gate_s, k39_val = k39.compute_k39_gate(w, d["date"])
             rd_df = readiness.compute(d, spy_daily=spy_daily)
             hl_df = health.compute(d, spy_daily=spy_daily, weekly=w if not w.empty else None)
+            # Divergence is a LAST-BAR read (non-repainting, freshness-gated);
+            # persisted on the latest row only, NaN/None for history.
+            div = divergence.compute_divergence(d)
         except Exception as exc:
             print(f"  !! {ticker}: {exc}", file=sys.stderr)
             continue
@@ -298,7 +305,23 @@ def build_scores() -> None:
             "hl_trend_bars": hl_df["hl_trend_bars"],
             "hl_vol_updn": hl_df["hl_vol_updn"],
             "hl_atr_spike": hl_df["hl_atr_spike"],
+            # Momentum acceleration (full series from the MP engine)
+            "mp_accel": mp_df["mp_accel"],
+            "mp_accel_state": mp_df["mp_accel_state"],
         })
+        # Divergence — LAST BAR ONLY (the engine reads the trailing window at the
+        # latest close; history rows carry NaN/None = "not computed", honest).
+        _last_ix = row.index[-1]
+        row["div_state"] = None
+        row["div_oscs"] = None
+        row["div_date"] = None
+        row["div_bull_count"] = np.nan
+        row["div_bear_count"] = np.nan
+        row.loc[_last_ix, "div_state"] = div["div_state"]
+        row.loc[_last_ix, "div_oscs"] = div["div_oscs"]
+        row.loc[_last_ix, "div_date"] = div["div_date"]
+        row.loc[_last_ix, "div_bull_count"] = float(div["div_bull_count"])
+        row.loc[_last_ix, "div_bear_count"] = float(div["div_bear_count"])
         out_rows.append(row[SCORE_COLUMNS])
 
     if not out_rows:
