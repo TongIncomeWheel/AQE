@@ -162,6 +162,23 @@ _FIELD_GLOSSARY = {
     "sc_p_gate_detail": "Per-engine SC_POSITION gate pass/fail (dict): {flow, energy, structure, "
                         "mp, bq, k39} each True/False vs the SC_P_GATES threshold (k39 = the weekly "
                         "confirmation gate; null if unavailable).",
+    "subcomponents": "The engine SUB-SCORES behind each headline read — nested by engine, so the "
+                     "AIC sees WHY an engine scored what it did (context, never a gate). "
+                     "flow: {flow_score (MFI+CMF+HA core), accum_score, volume_score, skew_score, "
+                     "ext_score (extension penalty), mfi, cmf, ha_quality_count}. "
+                     "energy: {vp_position_score (volume-profile position), price_action_score, "
+                     "squeeze_score (BB/KC squeeze — the TTM-squeeze read), exhaustion_score, "
+                     "atr_score, en_pos50, en_trend_bars}. "
+                     "structure: {rs_spy_score, rs_accel_score, base_score, ms_pos_score (market "
+                     "structure), resist_score (overhead), wk_score (weekly trend = HTF bias), "
+                     "earn_score, rs_vs_spy (raw), rs_accel (raw), base_days, bd_mode}. "
+                     "mp: {abs_mom_score, mp_adx_score, rel_mom_score, trend_score, roc_zscore "
+                     "(momentum z), excess_return (vs SPY %), adx_val, di_bullish}. "
+                     "bq: {bq_range_tight, bq_vol_dry, bq_base_dur, bq_ema_conv, bq_base_days}. "
+                     "pipe: {pr_ret_12m, pr_adx_score, pr_rsi_score, pr_vol_score, pr_ma_score "
+                     "(MA-stack alignment), momentum_composite, pipe_tier}. "
+                     "Readiness sub-scores are intentionally NOT here (hidden per the "
+                     "decision-framework ruling) and Health sub-scores stay held-only/dropped.",
     "sector_trend_state": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum "
                           "Building — Add' / 'Momentum Fading — Hold' / 'Recovering' / 'Declining'). "
                           "Context; the gate is gics_gate, unchanged.",
@@ -234,6 +251,8 @@ _FIELD_SCHEMA = {
     "sc_m_gate_detail":        _fs("signal", "label", "n/a"),
     "sc_p_gates":              _fs("signal", "boolean", "n/a"),
     "sc_p_gate_detail":        _fs("signal", "label", "n/a"),
+    # Engine subcomponents (nested by engine — context only, never a gate)
+    "subcomponents":           _fs("signal", "score", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -713,6 +732,56 @@ def _num(v):
         return None
 
 
+# ---------------------------------------------------------------------------
+# Engine SUBCOMPONENT surface (PM ruling: educate the AIC — the engines already
+# compute ~60 sub-scores nightly into scores_daily; ship them, don't hide them).
+# Readiness (rd_*) stays hidden (decision-framework ruling) and the Health
+# sub-scores stay dropped (PM ruling) — this block covers the 6 scoring engines.
+# ---------------------------------------------------------------------------
+_SUBCOMPONENT_SPEC = {
+    # engine → scores_daily columns (missing columns degrade to None)
+    "flow": ["flow_score", "accum_score", "volume_score", "skew_score",
+              "ext_score", "mfi", "cmf", "ha_quality_count"],
+    "energy": ["vp_position_score", "price_action_score", "squeeze_score",
+                "exhaustion_score", "atr_score", "en_pos50", "en_trend_bars"],
+    "structure": ["rs_spy_score", "rs_accel_score", "base_score", "ms_pos_score",
+                   "resist_score", "wk_score", "earn_score",
+                   "rs_vs_spy", "rs_accel", "base_days", "bd_mode"],
+    "mp": ["abs_mom_score", "mp_adx_score", "rel_mom_score", "trend_score",
+            "roc_zscore", "excess_return", "adx_val", "di_bullish"],
+    "bq": ["bq_range_tight", "bq_vol_dry", "bq_base_dur", "bq_ema_conv",
+            "bq_base_days"],
+    "pipe": ["pr_ret_12m", "pr_adx_score", "pr_rsi_score", "pr_vol_score",
+              "pr_ma_score", "momentum_composite", "pipe_tier"],
+}
+
+
+def _sub_val(v):
+    """Round numerics, pass strings/bools, NaN/missing → None."""
+    if isinstance(v, bool):
+        return v
+    if isinstance(v, str):
+        return v if v and v != "nan" else None
+    try:
+        f = float(v)
+        return round(f, 2) if f == f else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _subcomponents(row) -> dict | None:
+    """Nested per-engine sub-score block from a scores_daily row (Series/dict).
+    Always returns the full key set (None-filled) so the schema is stable."""
+    if row is None:
+        return None
+    try:
+        get = row.get if hasattr(row, "get") else (lambda k: None)
+        return {eng: {c: _sub_val(get(c)) for c in cols}
+                for eng, cols in _SUBCOMPONENT_SPEC.items()}
+    except Exception:  # noqa: BLE001 — additive, never blocks the export
+        return None
+
+
 def _held_sc_gates(s) -> dict:
     """SC_MOMENTUM/SC_POSITION gate breakdown for a held record from its
     scores_daily row (`s`), or nulls when the name wasn't scored. Same thresholds
@@ -792,6 +861,8 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             # SC gate breakdown (same thresholds as daily_list rows) so the AIC
             # reads which check a held name fails without recomputing.
             **_held_sc_gates(s),
+            # Engine subcomponents — same nightly sub-score block as daily_list.
+            "subcomponents": _subcomponents(s),
             # Health = the HOLD decision (trend integrity), the whole point of the
             # held book. Sourced from scores_daily; held names are force-scored in
             # the orchestrator so this is populated even off the top-50 screen.
@@ -1200,6 +1271,10 @@ def build_export(shortlist: dict | None = None) -> dict:
                 # SC gate qualification (overall bool + per-engine breakdown)
                 "sc_m_gates": _gm["pass"], "sc_m_gate_detail": _gm["detail"],
                 "sc_p_gates": _gp["pass"], "sc_p_gate_detail": _gp["detail"],
+                # Engine SUBCOMPONENTS — the nightly sub-scores behind each engine
+                # read (nested by engine; see field_glossary). Educates the AIC on
+                # WHY an engine scored what it did. Zero extra compute.
+                "subcomponents": _subcomponents(wr),
                 "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                 "entry": d.get("entry"),
                 "elder_5d": elder5.get(tk),
@@ -1491,6 +1566,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "atr_caution", "malformed_bracket",
         # SC gate qualification (overall bool + per-engine breakdown alongside)
         "sc_m_gates", "sc_p_gates",
+        # Engine subcomponents block (nested; None-filled when a column is absent)
+        "subcomponents",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]
