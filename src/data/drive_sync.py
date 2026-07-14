@@ -127,6 +127,48 @@ _FIELD_GLOSSARY = {
     "div_oscs": "Which oscillators fired, comma-joined — bullish names bare, bearish names "
                 "prefixed '-' (e.g. 'rsi,mfi,-obv'). Null when none.",
     "div_date": "Date of the confirming (newer) pivot anchoring the divergence.",
+    "pin_bar_state": "Candlestick REJECTION pattern on the LAST closed bar (pure geometry, "
+                     "no lookahead): BULLISH_PIN = long lower wick (≥66% of range) + small "
+                     "body (≤40%) + small upper wick (≤40%) — the market pushed down and got "
+                     "rejected; BEARISH_PIN mirrors it (long upper wick). NONE = no pattern. "
+                     "Filtered so the bar's range must be ≥2× the prior bar's range (rejects "
+                     "'pin bars' that are just noise inside an already-tiny range).",
+    "pin_bar_date": "Date of the pin bar (null when pin_bar_state=NONE).",
+    "pin_bar_level": "The pin bar's rejection extreme (USD): the LOW for a bullish pin "
+                     "(a candidate support), the HIGH for a bearish pin (candidate "
+                     "resistance). Null when pin_bar_state=NONE.",
+    "inside_bar": "True if the LAST bar's range is fully inside the PRIOR bar's range "
+                  "(high < prev_high AND low > prev_low) — a one-bar consolidation pause.",
+    "pib_pattern": "True if the SECOND-TO-LAST bar was a pin bar AND the last bar is an "
+                   "inside bar relative to it — the 'rejection, then pause' combo pattern. "
+                   "Independent of pin_bar_state (which only reads the LAST bar itself).",
+    "choch_state": "Change-of-Character (swing-break trend flip), the LATEST detected event: "
+                   "BULLISH = close broke above the last confirmed swing high while the prior "
+                   "trend was flat/down; BEARISH mirrors it (broke below swing low). NONE = "
+                   "no CHoCH detected. Non-repainting (confirmed pivots only).",
+    "choch_date": "Date of the latest CHoCH event (null when choch_state=NONE).",
+    "knn_prob": "K-NEAREST-NEIGHBORS directional probability (0-1) for the current CHoCH: "
+                "the win-rate of the K most similar HISTORICAL CHoCH events on this SAME "
+                "ticker (matched on 3 features — volume-delta, ATR-normalised displacement, "
+                "velocity — via Euclidean distance), where 'win' = the move's max favorable "
+                "excursion exceeded its max adverse excursion within a fixed lookahead. This "
+                "IS genuine instance-based learning (a real kNN), not a black box — but it's "
+                "simple (3 hand-picked features, no training beyond the ticker's own history) "
+                "and should be read as one more context signal, not a probability of profit. "
+                "Null when there's no CHoCH or too few historical analogs to query.",
+    "knn_significant": "True iff knn_prob clears the confidence threshold in either direction "
+                       "(≥60% or ≤40% by default) — i.e. the historical analogs actually agree, "
+                       "not a coin-flip.",
+    "knn_neighbors_used": "How many historical analog events the knn_prob is averaged over "
+                          "(0 if none found).",
+    "knn_tp1": "Nearest kNN-implied target (USD): current price ± half the neighbors' mean "
+              "favorable excursion, signed by the CHoCH direction. A statistical projection "
+              "from historical analogs, NOT a structural level — read alongside bracket.targets, "
+              "never in place of them.",
+    "knn_tp2": "Mid kNN-implied target: current price ± the neighbors' MEDIAN favorable "
+              "excursion, signed by direction.",
+    "knn_tp3": "Far kNN-implied target: current price ± the neighbors' 75th-percentile "
+              "favorable excursion, signed by direction.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -297,6 +339,23 @@ _FIELD_SCHEMA = {
     "div_bear_count":          _fs("signal", "score", "n/a"),
     "div_oscs":                _fs("signal", "label", "n/a"),
     "div_date":                _fs("reference", "date", "n/a"),
+    # Pin bar / inside bar (candlestick geometry — data only)
+    "pin_bar_state":           _fs("signal", "label", "n/a"),
+    "pin_bar_date":            _fs("reference", "date", "n/a"),
+    "pin_bar_level":           _fs("reference", "usd", "n/a"),
+    "inside_bar":              _fs("flag", "boolean", "n/a"),
+    "pib_pattern":             _fs("flag", "boolean", "n/a"),
+    # Smart Money kNN — CHoCH + instance-based learning (context only, never a gate)
+    "choch_state":             _fs("signal", "label", "n/a"),
+    "choch_date":              _fs("reference", "date", "n/a"),
+    "knn_prob":                _fs("signal", "ratio", "n/a"),
+    "knn_significant":         _fs("flag", "boolean", "n/a"),
+    "knn_neighbors_used":      _fs("signal", "score", "n/a"),
+    # side is n/a (not a fixed above/below-entry field): direction depends on
+    # choch_state — above entry for BULLISH, below entry for BEARISH.
+    "knn_tp1":                 _fs("target", "usd", "n/a"),
+    "knn_tp2":                 _fs("target", "usd", "n/a"),
+    "knn_tp3":                 _fs("target", "usd", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -847,13 +906,32 @@ def _sub_int(v):
     return int(f) if isinstance(f, float) or isinstance(f, int) else None
 
 
+def _sub_bool(v):
+    """Clean bool or None — only a genuine Python/NumPy bool passes through."""
+    import numpy as _np
+    if isinstance(v, (bool, _np.bool_)):
+        return bool(v)
+    return None
+
+
+_NEW_ENGINE_NULL = {
+    "mp_accel": None, "mp_accel_state": None, "div_state": None,
+    "div_bull_count": None, "div_bear_count": None,
+    "div_oscs": None, "div_date": None,
+    "pin_bar_state": None, "pin_bar_date": None, "pin_bar_level": None,
+    "inside_bar": None, "pib_pattern": None,
+    "choch_state": None, "choch_date": None, "knn_prob": None,
+    "knn_significant": None, "knn_neighbors_used": None,
+    "knn_tp1": None, "knn_tp2": None, "knn_tp3": None,
+}
+
+
 def _new_engine_fields(row) -> dict:
-    """Momentum-acceleration + divergence fields from a scores_daily row
-    (TV-analysis Phases 2+3). Missing columns degrade to None."""
+    """Momentum-acceleration + divergence + pin-bar + smart-money-kNN fields
+    from a scores_daily row (TV-analysis Phases 2/3/6/7). Missing columns
+    degrade to None."""
     if row is None:
-        return {"mp_accel": None, "mp_accel_state": None, "div_state": None,
-                "div_bull_count": None, "div_bear_count": None,
-                "div_oscs": None, "div_date": None}
+        return dict(_NEW_ENGINE_NULL)
     get = row.get if hasattr(row, "get") else (lambda k: None)
     return {
         "mp_accel": _sub_val(get("mp_accel")),
@@ -863,6 +941,19 @@ def _new_engine_fields(row) -> dict:
         "div_bear_count": _sub_int(get("div_bear_count")),
         "div_oscs": _sub_str(get("div_oscs")),
         "div_date": _sub_str(get("div_date")),
+        "pin_bar_state": _sub_str(get("pin_bar_state")),
+        "pin_bar_date": _sub_str(get("pin_bar_date")),
+        "pin_bar_level": _sub_val(get("pin_bar_level")),
+        "inside_bar": _sub_bool(get("inside_bar")),
+        "pib_pattern": _sub_bool(get("pib_pattern")),
+        "choch_state": _sub_str(get("choch_state")),
+        "choch_date": _sub_str(get("choch_date")),
+        "knn_prob": _sub_val(get("knn_prob")),
+        "knn_significant": _sub_bool(get("knn_significant")),
+        "knn_neighbors_used": _sub_int(get("knn_neighbors_used")),
+        "knn_tp1": _sub_val(get("knn_tp1")),
+        "knn_tp2": _sub_val(get("knn_tp2")),
+        "knn_tp3": _sub_val(get("knn_tp3")),
     }
 
 
@@ -1713,8 +1804,9 @@ def build_export(shortlist: dict | None = None) -> dict:
         "subcomponents",
         # Structure shift (BOS/CHoCH — null when no swing detected)
         "structure_shift",
-        # Momentum acceleration + divergence (null until the next scores run)
-        "mp_accel", "div_state",
+        # Momentum acceleration + divergence + pin-bar + smart-money kNN
+        # (null until the next scores run)
+        "mp_accel", "div_state", "pin_bar_state", "choch_state",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]

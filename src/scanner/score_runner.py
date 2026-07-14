@@ -24,7 +24,7 @@ import pandas as pd
 from src.data.earnings import load_earnings
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
-from src.engines import bq, divergence, elder, energy, flow, health, k39, mp, pipeline_rank, readiness, scoring, structure
+from src.engines import bq, divergence, elder, energy, flow, health, k39, mp, pin_bar, pipeline_rank, readiness, scoring, smart_money_knn, structure
 from src.engines.utils import atr
 
 
@@ -66,6 +66,11 @@ SCORE_COLUMNS = [
     "mp_accel", "mp_accel_state",
     # ── Divergence (price vs RSI/MFI/CMF/MACD/OBV — last bar only) ──
     "div_state", "div_bull_count", "div_bear_count", "div_oscs", "div_date",
+    # ── Pin Bar / Inside Bar pattern (last bar only) ──
+    "pin_bar_state", "pin_bar_date", "pin_bar_level", "inside_bar", "pib_pattern",
+    # ── Smart Money kNN — CHoCH + instance-based learning (last bar only) ──
+    "choch_state", "choch_date", "knn_prob", "knn_significant",
+    "knn_neighbors_used", "knn_tp1", "knn_tp2", "knn_tp3",
 ]
 
 
@@ -133,6 +138,11 @@ def build_scores() -> None:
             # Divergence is a LAST-BAR read (non-repainting, freshness-gated);
             # persisted on the latest row only, NaN/None for history.
             div = divergence.compute_divergence(d)
+            # Pin bar / inside bar is also a LAST-BAR read (pure geometry).
+            pb = pin_bar.compute_pin_bar(d)
+            # Smart Money CHoCH + kNN — also a LAST-BAR read (the latest CHoCH,
+            # scored against the ticker's own historical CHoCH events).
+            sm = smart_money_knn.compute_smart_money(d)
         except Exception as exc:
             print(f"  !! {ticker}: {exc}", file=sys.stderr)
             continue
@@ -322,6 +332,40 @@ def build_scores() -> None:
         row.loc[_last_ix, "div_date"] = div["div_date"]
         row.loc[_last_ix, "div_bull_count"] = float(div["div_bull_count"])
         row.loc[_last_ix, "div_bear_count"] = float(div["div_bear_count"])
+        # Pin bar / inside bar — LAST BAR ONLY (pure geometry on the most recent
+        # closed candle; history rows carry NaN/None = "not computed").
+        row["pin_bar_state"] = None
+        row["pin_bar_date"] = None
+        row["pin_bar_level"] = np.nan
+        row["inside_bar"] = None
+        row["pib_pattern"] = None
+        row.loc[_last_ix, "pin_bar_state"] = pb["pin_bar_state"]
+        row.loc[_last_ix, "pin_bar_date"] = pb["pin_bar_date"]
+        row.loc[_last_ix, "pin_bar_level"] = (
+            float(pb["pin_bar_level"]) if pb["pin_bar_level"] is not None else np.nan)
+        row.loc[_last_ix, "inside_bar"] = pb["inside_bar"]
+        row.loc[_last_ix, "pib_pattern"] = pb["pib_pattern"]
+        # Smart Money kNN — LAST BAR ONLY (the latest CHoCH + its neighbor score).
+        row["choch_state"] = None
+        row["choch_date"] = None
+        row["knn_prob"] = np.nan
+        row["knn_significant"] = None
+        row["knn_neighbors_used"] = np.nan
+        row["knn_tp1"] = np.nan
+        row["knn_tp2"] = np.nan
+        row["knn_tp3"] = np.nan
+        row.loc[_last_ix, "choch_state"] = sm["choch_state"]
+        row.loc[_last_ix, "choch_date"] = sm["choch_date"]
+        row.loc[_last_ix, "knn_prob"] = (
+            float(sm["knn_prob"]) if sm["knn_prob"] is not None else np.nan)
+        row.loc[_last_ix, "knn_significant"] = sm["knn_significant"]
+        row.loc[_last_ix, "knn_neighbors_used"] = float(sm["knn_neighbors_used"])
+        row.loc[_last_ix, "knn_tp1"] = (
+            float(sm["tp1"]) if sm["tp1"] is not None else np.nan)
+        row.loc[_last_ix, "knn_tp2"] = (
+            float(sm["tp2"]) if sm["tp2"] is not None else np.nan)
+        row.loc[_last_ix, "knn_tp3"] = (
+            float(sm["tp3"]) if sm["tp3"] is not None else np.nan)
         out_rows.append(row[SCORE_COLUMNS])
 
     if not out_rows:
