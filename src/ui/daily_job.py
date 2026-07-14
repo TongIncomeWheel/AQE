@@ -146,14 +146,8 @@ def _write_marker(marker: dict) -> None:
         pass
 
 
-def last_run_status() -> dict | None:
-    """Read the last-run marker — local first, then Drive. None if never run."""
-    try:
-        p = _marker_path()
-        if p.exists():
-            return json.loads(p.read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
-        pass
+def _read_drive_marker() -> dict | None:
+    """Read the last-run marker from Drive. None on any miss."""
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
@@ -172,6 +166,49 @@ def last_run_status() -> dict | None:
         return json.loads(content)
     except Exception:  # noqa: BLE001
         return None
+
+
+def _marker_key(m: dict | None):
+    """Sort key for recency — (run date, finished/started timestamp)."""
+    if not m:
+        return ("", "")
+    return (m.get("date_sgt") or "", m.get("finished_at") or m.get("started_at") or "")
+
+
+def last_run_status() -> dict | None:
+    """Read the last-run marker — the MORE RECENT of the local file and the Drive
+    copy. The daily run can happen via the in-app scheduler (writes the local
+    marker) OR the GitHub backstop on a separate runner (writes only the Drive
+    marker). Reading local-only made the status bar under-report on backstop days,
+    so we compare both and show the newest. Best-effort; Drive read failure → local.
+    """
+    local_m = None
+    try:
+        p = _marker_path()
+        if p.exists():
+            local_m = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        pass
+    # Fast path: if the LOCAL marker already reflects today's run, trust it and
+    # skip the Drive round-trip (avoids a REST call on every page render).
+    today = datetime.now(SGT).date().isoformat()
+    if local_m and local_m.get("date_sgt") == today:
+        return local_m
+    # Otherwise the local marker may be stale (e.g. the GitHub backstop ran today
+    # on a separate runner and only updated Drive) — compare and show the newest.
+    drive_m = _read_drive_marker()
+    candidates = [m for m in (local_m, drive_m) if m]
+    if not candidates:
+        return None
+    newest = max(candidates, key=_marker_key)
+    # Refresh the local copy when Drive is newer, so subsequent reads are cheap
+    # and the container reflects the backstop run after a restart.
+    if newest is drive_m and drive_m is not local_m:
+        try:
+            _marker_path().write_text(json.dumps(newest, indent=2), encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
+    return newest
 
 
 # ---------------------------------------------------------------------------
