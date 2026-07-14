@@ -178,8 +178,10 @@ _FIELD_GLOSSARY = {
                    "AQE's field is annualised — same number). For"
                    "sizing/VaR, not a target.",
     "beta_252d": "1-year beta vs SPY (cov/var).",
-    "ptrs": "Engine score + sector health. Disposition/sizing is the committee's call — "
-            "AQE exports no sizing.",
+    "ptrs": "= SC_MOMENTUM verbatim (PM ruling: the Sector-Health adjustment is DROPPED — "
+            "sector context is read separately and qualitatively via `srm`/RRG, not "
+            "double-counted into a per-ticker score). Disposition/sizing is the "
+            "committee's call — AQE exports no sizing.",
     # Enrichment Spec v2.0 — new per-record signals + cleanup flags
     "rs_down_day_20d": "All-weather leadership: stock's avg outperformance vs SPY on SPY "
                        "DOWN days (last 20 sessions). Positive = beats SPY when market "
