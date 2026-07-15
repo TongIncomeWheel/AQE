@@ -1718,8 +1718,7 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
     columns (PTRS, GICS gate, sector_corr, RVOL/RS/SMA, the elder_pattern +
     ecx_* context block, and the DSG-18 structural levels/targets).
     """
-    from src.data.drive_sync import _v21_record_fields
-    from src.longlist_screen import passes as _ll_passes
+    from src.data.drive_sync import _v21_record_fields, _subcomponents, _new_engine_fields
 
     tk = r["ticker"]
     lv = r.get("levels") or {}            # already the shape _v21_record_fields reads
@@ -1739,7 +1738,14 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
         "thematic": {},     # basket grades need the pipeline; basket names still tag
         "held": set(),
     }
+    # _v21_record_fields already gives gics/thematic/fib/MA + a bracket + the
+    # structure_shift read (same function every tier calls). Its OWN bracket
+    # recompute has no volume-validation though (that's a post-hoc pass in
+    # build_export) — adhoc.py already computed + volume-stamped its own
+    # bracket via the SAME bracket_engine functions, so it overrides below.
     v21 = _v21_record_fields(tk, lv, lk, sm, sector_grades)
+    if r.get("bracket"):
+        v21["bracket"] = r["bracket"]
 
     rec = {
         "rank": idx, "ticker": tk, "source": "adhoc", "pe": False,
@@ -1751,12 +1757,22 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
         "elder": r.get("elder"), "elder_5d": r.get("elder_5d"),
         "beta_30d": r.get("beta_30d"), "beta_60d": r.get("beta_60d"),
         "entry": lv.get("entry"),
-        # bracket comes from **v21 (_v21_record_fields); mechanical dsl_* retired.
+        # bracket comes from **v21 (_v21_record_fields, volume-stamp override above).
         "rank_explain": _rank_explain(r.get("pipe_rank"), None, sc or 0,
                                       False, tk, sm, sector_grades),
         "elder_pattern": r.get("elder_pattern"),
         "elder_context": r.get("elder_context"),
         **v21,
+        # Same suite as daily_list/held_positions (PM ruling): engine
+        # subcomponents, gate breakdown, momentum acceleration, divergence,
+        # pin bar / inside bar, smart-money CHoCH+kNN, Health. adhoc.py's `r`
+        # already carries every raw column these two functions read — same
+        # code, zero duplicated extraction logic.
+        "subcomponents": _subcomponents(r),
+        **_new_engine_fields(r),
+        "sc_m_gates": r.get("sc_m_gates"), "sc_m_gate_detail": r.get("sc_m_gate_detail"),
+        "sc_p_gates": r.get("sc_p_gates"), "sc_p_gate_detail": r.get("sc_p_gate_detail"),
+        "hl_score": r.get("hl_score"), "hl_state": r.get("hl_state"),
     }
     return rec
 

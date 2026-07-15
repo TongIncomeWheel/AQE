@@ -20,7 +20,9 @@ import pandas as pd
 from src.data.earnings import load_earnings
 from src.data.fmp_client import FMPClient, FMPError, resample_to_weekly
 from src.data.panel_builder import SPY_DAILY
-from src.engines import bq, elder, energy, flow, k39, mp, pipeline_rank, scoring, structure
+from src.engines import (bq, divergence, elder, energy, flow, health, k39, mp,
+                         pin_bar, pipeline_rank, scoring, smart_money_knn, structure)
+from src.engines.bracket_engine import compute_bracket, stamp_bracket_volume
 from src.engines.elder_context import compute_elder_context, elder_pattern
 from src.engines.scoring import SC_M_GATES
 from src.engines.utils import atr
@@ -196,6 +198,7 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
     pipe_rank = fip = None
     fip_spike_excluded = False
     fip_window_effective = 252
+    pr_df = None
     if len(d) >= PIPE_RANK_MIN_BARS:
         try:
             pr_df = pipeline_rank.compute(d)
@@ -205,9 +208,12 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
                 fip_spike_excluded = bool(pr_df["fip_spike_excluded"].iloc[-1])
                 fip_window_effective = int(pr_df["fip_window_effective"].iloc[-1])
         except Exception:
-            pass
+            pr_df = None
 
-    # 4. SC_MOMENTUM gate (Elder>=6.5, Flow>=60, Energy>=60, Struct>=55, MP>=55).
+    # 4. SC_MOMENTUM gate (Elder>=6.5, Flow>=60, Energy>=60, Struct>=55, MP>=55)
+    # — legacy scalar flag, kept for backward compat. The FULL per-engine
+    # breakdown (matching the daily feed's sc_m_gates/sc_p_gates exactly, same
+    # scoring.gate_breakdown_* functions) is added at Step 6 below.
     engine_vals = (eld, fl, en, stc, mpv)
     gate_pass = (
         all(v is not None for v in engine_vals)
@@ -215,6 +221,9 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         and en >= SC_M_GATES["energy"] and stc >= SC_M_GATES["structure"]
         and mpv >= SC_M_GATES["mp"]
     )
+    k39_bool = bool(_last(k39_gate_s)) if len(k39_gate_s) else False
+    gm = scoring.gate_breakdown_momentum(fl, en, stc, mpv, eld)
+    gp = scoring.gate_breakdown_position(fl, en, stc, mpv, bqv, k39_bool)
 
     # 5. Trade levels + Elder 5-day history.
     levels = None
@@ -230,12 +239,45 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
                 if pd.notna(v)]
     tk_betas = betas_for_ticker(d, spy)
 
-    # Parity enrichment so the ad-hoc table carries the SAME columns as the
-    # longlist/elder tables: bar-derived panel metrics + the full elder_context
-    # block (elder_pattern + VWAP/volume/VCP/exhaustion). Hourly bars aren't
-    # fetched here (no extra FMP call), so the hourly VWAP fields stay None while
-    # the daily VCP / 20d-volume / pattern fields populate.
+    # 5b. THE BRACKET — same engine, same volume-validation as the daily feed
+    # (bracket_engine.compute_bracket + stamp_bracket_volume; PM ruling: one
+    # suite everywhere). `levels` already carries the fib/resistance/swing_lows
+    # shape compute_bracket expects; `pm["ma"]` (below) supplies the MA ladder.
+    # regime_level defaults to None (GREEN ceiling) — ad-hoc scoring has no
+    # regime context threaded in, matching how the Scanner's _v21_record_fields
+    # call already behaves for ad-hoc records.
     pm = _panel_metrics(d, spy)
+    bracket = None
+    if levels:
+        bracket = compute_bracket(levels, pm["ma"], None,
+                                  price=levels.get("entry"), price_source="eod_close")
+        stamp_bracket_volume(bracket, d["date"], d["volume"])
+
+    # 5c. Health (hold-decision read) — same engine as held_positions, so an
+    # ad-hoc preview of a name you're considering (or already hold) shows the
+    # SAME trend-integrity read it would carry once in the held book.
+    hl_score = hl_state = None
+    try:
+        hl_df = health.compute(d, spy_daily=spy, weekly=w if not w.empty else None)
+        hl_score = _last(hl_df["hl_score"])
+        hl_state = (str(hl_df["hl_state"].iloc[-1])
+                   if "hl_state" in hl_df and len(hl_df) else None)
+    except Exception:
+        pass
+
+    # 5d. The 3 TV-analysis engines (Phases 2/6/7) — divergence, pin bar /
+    # inside bar, smart-money CHoCH+kNN. Same functions, same defaults as the
+    # nightly score_runner.py path.
+    div = divergence.compute_divergence(d)
+    pb = pin_bar.compute_pin_bar(d)
+    sm = smart_money_knn.compute_smart_money(d)
+
+    # Parity enrichment so the ad-hoc table carries the SAME columns as the
+    # longlist/elder tables: bar-derived panel metrics (computed at 5b above,
+    # reused here) + the full elder_context block (elder_pattern + VWAP/volume/
+    # VCP/exhaustion). Hourly bars aren't fetched here (no extra FMP call), so
+    # the hourly VWAP fields stay None while the daily VCP / 20d-volume /
+    # pattern fields populate.
     as_of = str(pd.Timestamp(d["date"].iloc[-1]).date())
     _resist = (levels or {}).get("resistance") or []
     _resist_price = _resist[0].get("price") if _resist else None
@@ -277,4 +319,65 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         "beta_252d": pm["beta_252d"],
         "elder_pattern": elder_pattern(elder_5d),
         "elder_context": elder_ctx,
+        # THE BRACKET — same engine + volume-validation as the daily feed.
+        "bracket": bracket,
+        # SC gate qualification — overall bool + per-engine breakdown, same
+        # scoring.gate_breakdown_* functions the daily feed uses.
+        "sc_m_gates": gm["pass"], "sc_m_gate_detail": gm["detail"],
+        "sc_p_gates": gp["pass"], "sc_p_gate_detail": gp["detail"],
+        "k39_gate": k39_bool,
+        # Health (hold-decision read) — same engine as held_positions.
+        "hl_score": hl_score, "hl_state": hl_state,
+        # Divergence / pin-bar / smart-money kNN (TV-analysis Phases 2/6/7) —
+        # merged verbatim, their dict keys already match the daily feed's names
+        # (div_state/div_bull_count/.../pin_bar_state/.../choch_state/knn_prob/...).
+        **div,
+        **pb,
+        "choch_state": sm["choch_state"], "choch_date": sm["choch_date"],
+        "knn_prob": sm["knn_prob"], "knn_significant": sm["knn_significant"],
+        "knn_neighbors_used": sm["knn_neighbors_used"],
+        "knn_tp1": sm["tp1"], "knn_tp2": sm["tp2"], "knn_tp3": sm["tp3"],
+        # Momentum acceleration (MP engine, additive columns).
+        "mp_accel": _last(mp_df["mp_accel"]) if "mp_accel" in mp_df else None,
+        "mp_accel_state": (str(mp_df["mp_accel_state"].iloc[-1])
+                           if "mp_accel_state" in mp_df and len(mp_df) else None),
+        # Engine SUBCOMPONENTS — raw scores_daily-named columns, so
+        # drive_sync._subcomponents(r) can be called directly on this dict
+        # (same key names, same function, zero duplicated extraction logic).
+        "flow_score": _last(flow_df["flow_score"]), "accum_score": _last(flow_df["accum_score"]),
+        "volume_score": _last(flow_df["volume_score"]), "skew_score": _last(flow_df["skew_score"]),
+        "ext_score": _last(flow_df["ext_score"]), "mfi": _last(flow_df["mfi"]),
+        "cmf": _last(flow_df["cmf"]), "ha_quality_count": _last(flow_df["ha_quality_count"]),
+        "vp_position_score": _last(energy_df["vp_position_score"]),
+        "price_action_score": _last(energy_df["price_action_score"]),
+        "squeeze_score": _last(energy_df["squeeze_score"]),
+        "exhaustion_score": _last(energy_df["exhaustion_score"]),
+        "atr_score": _last(energy_df["atr_score"]), "en_pos50": _last(energy_df["en_pos50"]),
+        "en_trend_bars": _last(energy_df["en_trend_bars"]),
+        "rs_spy_score": _last(structure_df["rs_spy_score"]),
+        "rs_accel_score": _last(structure_df["rs_accel_score"]),
+        "base_score": _last(structure_df["base_score"]),
+        "ms_pos_score": _last(structure_df["ms_pos_score"]),
+        "resist_score": _last(structure_df["resist_score"]), "wk_score": _last(structure_df["wk_score"]),
+        "earn_score": _last(structure_df["earn_score"]), "rs_vs_spy": _last(structure_df["rs_vs_spy"]),
+        "rs_accel": _last(structure_df["rs_accel"]), "base_days": _last(structure_df["base_days"]),
+        "bd_mode": (str(structure_df["bd_mode"].iloc[-1])
+                   if "bd_mode" in structure_df and len(structure_df) else None),
+        "abs_mom_score": _last(mp_df["abs_mom_score"]), "mp_adx_score": _last(mp_df["adx_score"]),
+        "rel_mom_score": _last(mp_df["rel_mom_score"]), "trend_score": _last(mp_df["trend_score"]),
+        "roc_zscore": _last(mp_df["roc_zscore"]), "excess_return": _last(mp_df["excess_return"]),
+        "adx_val": _last(mp_df["adx_val"]),
+        "di_bullish": (bool(mp_df["di_bullish"].iloc[-1])
+                       if "di_bullish" in mp_df and len(mp_df) else None),
+        "bq_range_tight": _last(bq_df["bq_range_tight"]), "bq_vol_dry": _last(bq_df["bq_vol_dry"]),
+        "bq_base_dur": _last(bq_df["bq_base_dur"]), "bq_ema_conv": _last(bq_df["bq_ema_conv"]),
+        "bq_base_days": _last(bq_df["bq_base_days"]),
+        "pr_ret_12m": _last(pr_df["ret_12m_score"]) if pr_df is not None else None,
+        "pr_adx_score": _last(pr_df["adx_score"]) if pr_df is not None else None,
+        "pr_rsi_score": _last(pr_df["rsi_score"]) if pr_df is not None else None,
+        "pr_vol_score": _last(pr_df["vol_score"]) if pr_df is not None else None,
+        "pr_ma_score": _last(pr_df["ma_score"]) if pr_df is not None else None,
+        "momentum_composite": _last(pr_df["momentum_composite"]) if pr_df is not None else None,
+        "pipe_tier": (str(pr_df["pipe_tier"].iloc[-1])
+                     if pr_df is not None and len(pr_df) else None),
     }

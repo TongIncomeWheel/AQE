@@ -234,3 +234,54 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
     out["rr"] = out["rr_tp2"] if out["rr_tp2"] is not None else out["rr_tp1"]
     out["valid"] = True
     return out
+
+
+def stamp_bracket_volume(bracket: dict | None, dates, volumes) -> None:
+    """Volume-validate a bracket's dated levels IN PLACE (TV-analysis Phase 4,
+    the BigBeluga high-volume-pivot rule): a level DEFENDED on high volume is a
+    stronger level. Adds `vol_ratio` (that level's pivot-bar volume / trailing
+    20-bar average as of that date) and `vol_validated` (ratio >= 1.2) to every
+    dated item in `bracket["targets"]`, and `stop_vol_ratio`/
+    `stop_vol_validated` when `bracket["stop_date"]` is set.
+
+    `dates`/`volumes` are the ticker's own daily bars (ascending, aligned) —
+    the SAME data every caller already has, so this stays a pure function with
+    no panel/lookup dependency. Single source of truth: both the daily-list
+    build (drive_sync.py, looping many tickers via a panel groupby) and the
+    ad-hoc scorer (adhoc.py, one ticker's own fetched bars) call this same
+    function — never duplicate the ratio math.
+
+    Data only — the 3 charter gates are unchanged. No-op on missing/malformed
+    input; never raises.
+    """
+    if not bracket or dates is None or volumes is None:
+        return
+    try:
+        import pandas as pd
+        vs = pd.Series(volumes).astype(float).reset_index(drop=True)
+        ds = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+        if len(vs) == 0 or len(ds) == 0:
+            return
+        avg = vs.rolling(20).mean()
+        dix = {str(d.date()): j for j, d in enumerate(ds)}
+
+        def _ratio_at(dt):
+            j = dix.get(dt)
+            if j is None:
+                return None
+            a = avg.iloc[j]
+            if a and a == a and a > 0:
+                return round(float(vs.iloc[j]) / float(a), 2)
+            return None
+
+        for item in (bracket.get("targets") or []):
+            rt = _ratio_at(item.get("date"))
+            if rt is not None:
+                item["vol_ratio"] = rt
+                item["vol_validated"] = bool(rt >= 1.2)
+        srt = _ratio_at(bracket.get("stop_date"))
+        if srt is not None:
+            bracket["stop_vol_ratio"] = srt
+            bracket["stop_vol_validated"] = bool(srt >= 1.2)
+    except Exception:  # noqa: BLE001 — data enrichment, never blocks the caller
+        pass

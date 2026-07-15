@@ -33,7 +33,7 @@ from src.engines.srm import (
     enrich_sectors_intermarket, load_intermarket_cache,
     TICKER_TO_THEMATIC, TICKER_TO_THEMATICS, grade_thematic_baskets,
 )
-from src.engines.bracket_engine import compute_bracket, regime_stop_ceiling
+from src.engines.bracket_engine import compute_bracket, regime_stop_ceiling, stamp_bracket_volume
 from src.engines import scoring
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
@@ -1088,6 +1088,10 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             "vol_30d_ann": v21["vol_30d_ann"], "beta_252d": v21["beta_252d"],
             # THE BRACKET — structural stop/targets (single source of truth).
             "bracket": v21["bracket"],
+            # Structure shift (BOS/CHoCH) — v21 already computes this; was being
+            # dropped since this dict cherry-picks keys instead of merging **v21.
+            "structure_shift": v21.get("structure_shift"),
+            "structure_shift_ref": v21.get("structure_shift_ref"),
         })
     return out
 
@@ -1612,11 +1616,11 @@ def build_export(shortlist: dict | None = None) -> dict:
         _attach_elder(_elderlist)
 
         # ── Volume-validated pivots (TV-analysis Phase 4) ─────────────────
-        # A level DEFENDED on high volume is a stronger level. For every dated
-        # bracket level (swing-based stop, resistance/prior-high targets), stamp
-        # vol_ratio = pivot-bar volume / trailing 20-bar avg at that date, and
-        # vol_validated = ratio ≥ 1.2 (the BigBeluga high-volume-pivot rule).
-        # Data only; the 3 gates are unchanged. Best-effort per record.
+        # A level DEFENDED on high volume is a stronger level. Delegates to
+        # bracket_engine.stamp_bracket_volume (the SINGLE source of truth for
+        # this math — adhoc.py's ad-hoc scorer calls the identical function on
+        # its own fetched bars, so the daily feed and ad-hoc scoring can never
+        # drift onto two different vol_ratio formulas). Best-effort per record.
         def _stamp_vol_validation(_rows):
             for _r in _rows:
                 try:
@@ -1624,34 +1628,16 @@ def build_export(shortlist: dict | None = None) -> dict:
                     _b = _r.get("bracket") or {}
                     if _g is None or "volume" not in _g.columns or not _b:
                         continue
-                    _vs = _g["volume"].astype(float)
-                    _avg = _vs.rolling(20).mean()
-                    _dix = {str(dd.date()): j for j, dd in enumerate(_g["date"])}
-
-                    def _ratio_at(_dt):
-                        _j = _dix.get(_dt)
-                        if _j is None:
-                            return None
-                        _a = _avg.iloc[_j]
-                        if _a and _a == _a and _a > 0:
-                            return round(float(_vs.iloc[_j]) / float(_a), 2)
-                        return None
-
-                    for _item in (_b.get("targets") or []):
-                        _rt = _ratio_at(_item.get("date"))
-                        if _rt is not None:
-                            _item["vol_ratio"] = _rt
-                            _item["vol_validated"] = bool(_rt >= 1.2)
-                    _srt = _ratio_at(_b.get("stop_date"))
-                    if _srt is not None:
-                        _b["stop_vol_ratio"] = _srt
-                        _b["stop_vol_validated"] = bool(_srt >= 1.2)
+                    stamp_bracket_volume(_b, _g["date"], _g["volume"])
                 except Exception:  # noqa: BLE001
                     continue
 
         _stamp_vol_validation(_longlist)
         _stamp_vol_validation(_elderlist)
         _stamp_vol_validation(_radar_pool_recs)
+        # Held positions get the SAME volume-validated bracket read as every
+        # other tier — the whole point of "one suite everywhere" (PM ruling).
+        _stamp_vol_validation(export.get("held_positions") or [])
     except Exception:  # noqa: BLE001 — elder_context is additive, never blocks export
         for _r in _longlist + _elderlist:
             _r.setdefault("elder_pattern", None)
