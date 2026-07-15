@@ -156,9 +156,13 @@ _FIELD_GLOSSARY = {
                 "simple (3 hand-picked features, no training beyond the ticker's own history) "
                 "and should be read as one more context signal, not a probability of profit. "
                 "Null when there's no CHoCH or too few historical analogs to query.",
-    "knn_significant": "True iff knn_prob clears the confidence threshold in either direction "
-                       "(≥60% or ≤40% by default) — i.e. the historical analogs actually agree, "
-                       "not a coin-flip.",
+    "knn_significant": "True iff knn_prob clears a fixed threshold in either direction (≥60% or "
+                       "≤40% by default). CAVEAT (AIC Charter Amendment v2.8, 2026-07-15 ruling): "
+                       "this is a plain threshold check on a SMALL neighbor count (k=5 by "
+                       "default), NOT a statistical significance test — at k=5, 3-of-5 agreeing "
+                       "clears the 60% bar trivially, including by chance. Carries no p-value or "
+                       "confidence-interval semantics. Read as 'the threshold was crossed', not "
+                       "'the analogs meaningfully agree'.",
     "knn_neighbors_used": "How many historical analog events the knn_prob is averaged over "
                           "(0 if none found).",
     "knn_tp1": "Nearest kNN-implied target (USD): current price ± half the neighbors' mean "

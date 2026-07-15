@@ -43,6 +43,13 @@ Algorithm
    fewer if the pool is smaller), `knn_prob` = the neighbors' mean
    outcome. TP1/2/3 project the neighbors' `favorable_run` distribution
    (mean*0.5 / median / p75) from TODAY's close, signed by direction.
+   `knn_significant` = `knn_prob` clears `min_score` in either direction.
+   AIC Charter Amendment v2.8 (2026-07-15) ruling: at the default k=5 this
+   is a PLAIN THRESHOLD CHECK, not a statistical significance test — 3-of-5
+   neighbors agreeing clears 60% trivially, including by chance, on a small
+   n. Do not describe it as "significant"/"confident" in the export glossary
+   or anywhere else without this caveat attached (see `field_glossary`'s
+   `knn_significant` entry in `drive_sync.py` for the exact wording).
 
 Judgment calls (the spec had a couple of intentionally loose spots):
   * "prev_i far/absent" (vol_delta windowing): the interval `[prev_i, i]`
