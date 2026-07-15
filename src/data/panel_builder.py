@@ -85,6 +85,24 @@ def build_panel(history_years: int | None = None) -> None:
             tickers.append(_c)
             _seen.add(_c)
 
+    # Always pull currently-held positions (PTJ) too — even if a name has since
+    # dropped out of (or never was in) the curated universe, AQE can still
+    # source its bars by ticker and compute the full engine read (Health, DSL
+    # bracket, subcomponents, conviction labels, …) for the held book. Without
+    # this, a held name outside the universe silently has no panel row, so
+    # every downstream engine field on it reads null (2026-07-15 incident).
+    # Option/spread legs (type OPT/OPT_SPREAD) aren't real equity tickers FMP
+    # can price as a daily bar series, so only STK rows are pulled here.
+    try:
+        from src.data.ptj import load_held_positions as _load_held
+        for _p in _load_held():
+            _htk = _p.get("ticker")
+            if _htk and _htk not in _seen and _p.get("type", "STK") == "STK":
+                tickers.append(_htk)
+                _seen.add(_htk)
+    except Exception:
+        pass
+
     # Prioritize critical tickers so they get pulled before any quota cap:
     # 1) SPY (benchmark), 2) GICS sector ETFs (SRM), 3) everything else.
     priority = {BENCHMARK} | set(_GICS_ETFS)

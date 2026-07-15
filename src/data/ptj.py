@@ -58,11 +58,23 @@ def fetch_latest_ptj() -> dict | None:
 def refresh_held_positions() -> list[dict]:
     """Fetch the latest PTJ, extract held positions, cache locally. Returns them.
 
-    Falls back to the local cache when Drive is unavailable.
+    Falls back to the local cache when Drive is unavailable — but NEVER lets a
+    failed live fetch silently masquerade as a genuine flat book: the cache
+    always carries a `status` ("live" | "cache_fallback") so downstream
+    readers (the export, the Scanner UI) can tell "PTJ fetch failed this run"
+    apart from "the book is actually empty". Real-money system — a silent
+    empty is worse than a stale-but-labeled one.
     """
     ptj = fetch_latest_ptj()
     if not ptj:
-        return load_held_positions()
+        prior = load_ptj_cache()
+        prior["status"] = "cache_fallback"
+        try:
+            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+            PTJ_CACHE.write_text(json.dumps(prior, indent=2), encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
+        return prior.get("positions") or []
     held = ptj.get("open_positions") or []
     cache = {
         "source_file": ptj.get("_ptj_file"),
@@ -70,6 +82,7 @@ def refresh_held_positions() -> list[dict]:
         "snapshot": ptj.get("snapshot"),
         "positions": held,
         "options": ptj.get("options") or [],
+        "status": "live",
     }
     try:
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -80,7 +93,7 @@ def refresh_held_positions() -> list[dict]:
 
 
 def load_ptj_cache() -> dict:
-    """The cached PTJ snapshot ({source_file, modified, positions, options})."""
+    """The cached PTJ snapshot ({source_file, modified, positions, options, status})."""
     try:
         if PTJ_CACHE.exists():
             return json.loads(PTJ_CACHE.read_text(encoding="utf-8"))
@@ -92,3 +105,12 @@ def load_ptj_cache() -> dict:
 def load_held_positions() -> list[dict]:
     """Held (open) positions from the local cache — no Drive call."""
     return load_ptj_cache().get("positions") or []
+
+
+def ptj_status() -> str:
+    """'live' (this run fetched fresh from Drive), 'cache_fallback' (Drive fetch
+    failed/unreachable and we fell back to whatever was last cached — possibly
+    stale or, on a freshly-restarted container, empty), or 'unknown' (no cache
+    file has ever been written)."""
+    cache = load_ptj_cache()
+    return cache.get("status") or ("unknown" if not cache else "cache_fallback")

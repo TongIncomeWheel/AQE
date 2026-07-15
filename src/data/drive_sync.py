@@ -1244,10 +1244,12 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # ---- Held positions (from the daily PTJ) + AQE engine read ----
     try:
-        from src.data.ptj import load_held_positions
+        from src.data.ptj import load_held_positions, ptj_status
         _held = load_held_positions()
+        export["held_positions_status"] = ptj_status()
     except Exception:  # noqa: BLE001
         _held = []
+        export["held_positions_status"] = "unknown"
     _v21_lk["held"] = {h.get("ticker") for h in _held if h.get("ticker")}
     export["held_positions"] = _build_held_positions(
         _held, dsl_all, betas, _v21_lk, sm, sector_grades, _ptrs,
@@ -1711,6 +1713,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         "elder_count": sum(1 for r in _daily_list if r.get("on_elder")),
         "ledger_count": sum(1 for r in _daily_list if r.get("in_ledger")),
         "held_count": len(export.get("held_positions") or []),
+        "held_positions_status": export.get("held_positions_status", "unknown"),
     }
 
     # ---- Standalone Signal Radar block (M14-M18) — the one place AIC scans the

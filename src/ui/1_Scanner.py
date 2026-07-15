@@ -1441,6 +1441,15 @@ if _held:
     table_with_copy(_hdf[_hcols], key="held_table")
     _render_held_book(_ex.get("held_book"))
     st.divider()
+elif _ex.get("held_positions_status") not in (None, "live"):
+    st.warning(
+        f"⚠️ Held positions came back **empty** and the PTJ status is "
+        f"`{_ex.get('held_positions_status')}` — this run could NOT confirm a live "
+        "read from the trade journal on Drive. An empty table here does NOT mean "
+        "your book is flat. Re-run the pipeline (or check Drive access) before "
+        "trusting a zero-held read."
+    )
+    st.divider()
 
 
 # ---------------------------------------------------------------------------
