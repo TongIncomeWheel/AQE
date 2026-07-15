@@ -43,7 +43,7 @@ from src.data.paths import (
 from src.data.universe import load_universe
 from src.engines import pipeline_rank, srm
 from src.engines.srm import (
-    GICS_ETFS, TICKER_TO_SECTOR, grade_all_sectors, get_sector_health, GRADE_TO_SH,
+    GICS_ETFS, TICKER_TO_SECTOR, grade_all_sectors,
     MACRO_INSTRUMENTS, enrich_sectors_intermarket, save_intermarket_cache,
     BASKET_CONSTITUENTS,
 )
@@ -586,17 +586,25 @@ def _compute_ptrs_all(
 ) -> list[dict]:
     """Compute PTRS for all scored candidates.
 
-    PTRS = SC_MOMENTUM + SH (sector health only).
+    PTRS = SC_MOMENTUM verbatim. The legacy Sector-Health (+SH) term is DROPPED
+    (PM ruling, AIC Charter Amendment v2.8, 2026-07) — sector context is now a
+    committee-level qualitative read via `srm`/RRG, not a per-ticker score
+    penalty. This must match drive_sync.py's `_ptrs()`/`compute_ptrs(sc_mom,
+    0.0)` bit-for-bit: this function feeds `shortlist.json`'s `candidates[]`,
+    which the export copies verbatim into `top_picks` — a stale `+SH` value
+    here would leak into the live daily_list PTRS (and the longlist PTRS≥60
+    gate) for any ticker whose export record is sourced from top_picks. Fixed
+    2026-07-15 (was still computing real SH after the rest of the pipeline
+    moved to 0.0 — see docs/MATHLAB_PTRS_CHANGELOG.md).
     Regime/VIX handles macro sizing separately — no double penalty.
     """
     candidates = []
     for s in scores:
         ticker = s["ticker"]
-        sh = get_sector_health(ticker, sector_grades)
 
         ptrs_result = compute_ptrs(
             engine_score=s["sc_momentum"],
-            sh=sh,
+            sh=0.0,
         )
 
         candidate = {**s, **ptrs_result}

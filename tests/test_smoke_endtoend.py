@@ -332,6 +332,43 @@ def test_ptrs_disposition_bands():
     assert classify_vix_regime(35.0) == "RED"
 
 
+def test_compute_ptrs_batch_matches_live_feed():
+    """Regression guard (AIC Charter Amendment v2.8, 2026-07-15): batch/backtest
+    PTRS must be bit-for-bit identical to the live feed's PTRS = SC_MOMENTUM
+    verbatim. sector_grades carries NONZERO SH values on purpose — if the legacy
+    +SH fork ever reopens in compute_ptrs_batch, this test catches it."""
+    signals = pd.DataFrame({
+        "ticker": ["AAPL", "MSFT", "NVDA"],
+        "sc_momentum": [72.3, 55.0, 88.9],
+    })
+    # A sector_grades dict that WOULD move PTRS under the old +SH formula.
+    sector_grades = {"XLK": {"sh": 3}, "XLF": {"sh": -8}}
+    out = compute_ptrs_batch(signals, sector_grades)
+    assert list(out["ptrs"]) == [72.3, 55.0, 88.9]
+    assert list(out["ptrs"]) == list(out["sc_momentum"])
+
+
+def test_orchestrator_ptrs_matches_live_feed():
+    """The 2026-07-15 incident: _compute_ptrs_all still computed real SH after
+    the rest of the pipeline moved to sh=0.0 — its output leaked into
+    export['top_picks'] and could survive into the final daily_list PTRS (and
+    the longlist PTRS>=60 gate) for any ticker sourced from top_picks. Pin the
+    fix: PTRS must equal SC_MOMENTUM verbatim regardless of sector_grades."""
+    from src.pipeline.daily_orchestrator import _compute_ptrs_all
+
+    scores = [
+        {"ticker": "AAPL", "sc_momentum": 72.3},
+        {"ticker": "XOM", "sc_momentum": 40.0},
+    ]
+    # sector_grades with real SH values — must NOT move the result.
+    sector_grades = {"XLK": {"sh": 3, "grade": "DEPLOY"},
+                     "XLE": {"sh": -8, "grade": "AVOID"}}
+    candidates = _compute_ptrs_all(scores, sector_grades, vix=18.0, regime={})
+    for c in candidates:
+        assert c["ptrs"] == c["sc_momentum"]
+        assert c["sh"] == 0.0
+
+
 def test_srm_grade_basic():
     """SRM should grade a synthetic uptrending ETF as DEPLOY or HOLD."""
     n = 50

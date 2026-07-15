@@ -70,7 +70,7 @@ def _export_file_info():
 from src.data.panel_builder import PANEL_DAILY
 from src.scanner.score_runner import SCORES_DAILY
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
-from src.engines.srm import GICS_ETFS, get_sector_health, GRADE_TO_SH
+from src.engines.srm import GICS_ETFS
 from src.analyzer.ptrs import compute_ptrs
 
 # ---------------------------------------------------------------------------
@@ -602,9 +602,15 @@ def _ticker_sector(ticker: str) -> str:
 
 
 def _quick_ptrs(sc_mom: float, ticker: str, sector_grades: dict) -> float:
-    """Compute PTRS for any ticker: SC_MOM + SH (sector health only)."""
-    sh = get_sector_health(ticker, sector_grades)
-    result = compute_ptrs(sc_mom, sh)
+    """PTRS for any ticker (ad-hoc scorer) = SC_MOM verbatim.
+
+    The legacy Sector-Health (+SH) term is DROPPED (PM ruling, AIC Charter
+    Amendment v2.8, 2026-07) — must match the daily_list/held_positions PTRS
+    (drive_sync.py's `_ptrs()`) bit-for-bit, or the ad-hoc scorer silently
+    shows the PM a different PTRS than the live feed for the same ticker.
+    `ticker`/`sector_grades` kept for call-site compatibility (unused).
+    """
+    result = compute_ptrs(sc_mom, 0.0)
     ptrs = result.get("ptrs")
     return round(ptrs, 1) if ptrs is not None and ptrs == ptrs else 0.0
 
@@ -617,16 +623,13 @@ def _load_sector_sh_map() -> dict[str, int]:
 
 
 def _vectorized_ptrs(df: pd.DataFrame, sector_grades: dict) -> pd.Series:
-    """Compute PTRS for a full DataFrame: SC_MOM + SH (vectorized)."""
-    from src.data.sector_mapper import load_sector_map
-    sm = load_sector_map()  # {ticker: 'XLE', ...}
+    """PTRS for a full DataFrame = SC_MOM verbatim (vectorized).
 
-    # Map ticker -> sector ETF -> SH value (vectorized)
-    sh_series = df["ticker"].map(
-        lambda t: sector_grades.get(sm.get(t, ""), {}).get("sh", 0)
-    )
-    ptrs = df["sc_momentum"].fillna(0) + sh_series.fillna(0)
-    return ptrs.round(1)
+    The legacy Sector-Health (+SH) term is DROPPED (PM ruling, AIC Charter
+    Amendment v2.8, 2026-07) — see `_quick_ptrs`. `sector_grades` kept for
+    call-site compatibility (unused).
+    """
+    return df["sc_momentum"].fillna(0).round(1)
 
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
