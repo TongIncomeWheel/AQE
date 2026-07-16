@@ -1027,6 +1027,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
                                  regime_level=regime_level)
         out.append({
             "ticker": tk,
+            "position_type": p.get("type") or "STK",
             # --- the trade (from PTJ) ---
             "qty": p.get("qty"),
             "entry": _num(p.get("entry")),
@@ -1842,10 +1843,18 @@ def _compute_data_quality(daily_list: list[dict], held_positions: list[dict]) ->
 
     Value-level companion to the key-level `_REQUIRED_FIELDS` guard above.
     Never raises/blocks — returns a flag list for the caller to surface.
+
+    held_positions rows that are option/spread legs (position_type != STK, e.g.
+    a covered call or a hedge combo from the PTJ) are skipped here: they were
+    never going to have an equity score/bracket in the first place — that's a
+    category mismatch, not a data gap, and flagging it as one is noise that
+    erodes trust in the guard.
     """
     flagged: list[dict] = []
     for tier, rows in (("daily_list", daily_list), ("held_positions", held_positions)):
         for rec in rows:
+            if tier == "held_positions" and rec.get("position_type", "STK") != "STK":
+                continue
             nulls = [f for f in _HARD_REQUIRED_NONNULL if rec.get(f) is None]
             if nulls:
                 flagged.append({"ticker": rec.get("ticker"), "tier": tier, "null_fields": nulls})

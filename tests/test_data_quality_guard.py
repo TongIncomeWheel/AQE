@@ -65,3 +65,22 @@ def test_hard_required_list_matches_what_the_pm_confirmed():
         "sc_momentum", "flow", "energy", "structure", "mp", "elder",
         "entry", "atr_14d", "bracket",
     }
+
+
+def test_option_and_spread_legs_never_flagged_as_a_data_gap():
+    """A covered-call/hedge leg from the PTJ (e.g. IBM_260C, IWM_HEDGE) can
+    never carry an equity score/bracket — that's a category mismatch, not a
+    data gap. Only STK-type held_positions rows go through the guard."""
+    for kind in ("OPT", "OPT_SPREAD"):
+        leg = {"ticker": "IBM_260C", "position_type": kind}  # everything else genuinely null
+        dq = _compute_data_quality([], [leg])
+        assert dq["flagged_count"] == 0, kind
+
+
+def test_stk_rows_without_position_type_default_to_checked():
+    # Back-compat: a held row with no position_type at all is treated as STK
+    # (the default before this field existed), so it still gets checked.
+    bad = _good_record("LEGACY")
+    bad["bracket"] = None
+    dq = _compute_data_quality([], [bad])
+    assert dq["flagged_count"] == 1
