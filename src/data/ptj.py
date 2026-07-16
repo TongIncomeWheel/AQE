@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 
 from src.data.paths import OUTPUT_DIR
 
@@ -23,9 +24,24 @@ PTJ_FOLDER_ID = (
 )
 PTJ_CACHE = OUTPUT_DIR / "held_positions.json"
 
+# A real daily journal is named aegis_trade_journal_YYYY-MM-DD_v<version>[...].
+# Other artifacts land in the SAME top-level folder (not the excluded Legacy/
+# subfolder) — e.g. aegis_trade_journal_ARCHIVE_master.json, a rolled-up
+# metrics summary whose open_positions entries are deliberately stripped of
+# entry/livePx/sl/tp. "Pick the most-recently-modified file in the folder"
+# picked that archive file on 2026-07-16 (its modifiedTime was newer than the
+# actual journal that day) and shipped a held book with every entry/live_px
+# null. Require the dated-version filename shape so only real journals match.
+_PTJ_NAME_RE = re.compile(r"^aegis_trade_journal_\d{4}-\d{2}-\d{2}_v")
+
 
 def fetch_latest_ptj() -> dict | None:
-    """Download + parse the most-recently-modified file in the PTJ folder."""
+    """Download + parse the most-recently-modified REAL journal in the PTJ folder.
+
+    "Real journal" = filename matches aegis_trade_journal_YYYY-MM-DD_v* — this
+    excludes non-journal artifacts (e.g. an archive/metrics rollup) that may
+    land in the same folder with a newer modifiedTime than the actual journal.
+    """
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
@@ -37,13 +53,14 @@ def fetch_latest_ptj() -> dict | None:
         q = f"'{PTJ_FOLDER_ID}' in parents and trashed = false"
         res = service.files().list(
             q=q, orderBy="modifiedTime desc",
-            fields="files(id,name,modifiedTime,mimeType)", pageSize=10,
+            fields="files(id,name,modifiedTime,mimeType)", pageSize=25,
         ).execute()
         files = [f for f in (res.get("files") or [])
-                 if f.get("mimeType") != "application/vnd.google-apps.folder"]
+                 if f.get("mimeType") != "application/vnd.google-apps.folder"
+                 and _PTJ_NAME_RE.match(f.get("name") or "")]
         if not files:
             return None
-        latest = files[0]  # newest by modifiedTime
+        latest = files[0]  # newest by modifiedTime, among real journals only
         content = service.files().get_media(fileId=latest["id"]).execute()
         if isinstance(content, bytes):
             content = content.decode("utf-8")

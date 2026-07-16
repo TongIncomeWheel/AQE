@@ -65,3 +65,92 @@ def test_refresh_fetch_failure_with_no_prior_cache_returns_empty_but_flagged(mon
 def test_load_ptj_cache_survives_missing_file(tmp_path):
     assert ptj.load_ptj_cache() == {}
     assert ptj.load_held_positions() == []
+
+
+class _FakeFilesList:
+    def __init__(self, response):
+        self._response = response
+
+    def execute(self):
+        return self._response
+
+
+class _FakeGetMedia:
+    def __init__(self, content):
+        self._content = content
+
+    def execute(self):
+        return self._content
+
+
+class _FakeFiles:
+    """Stub for service.files() — routes list()/get_media() to fixtures."""
+
+    def __init__(self, list_response, content_by_id):
+        self._list_response = list_response
+        self._content_by_id = content_by_id
+
+    def list(self, **kwargs):
+        return _FakeFilesList(self._list_response)
+
+    def get_media(self, fileId):
+        return _FakeGetMedia(self._content_by_id[fileId])
+
+
+class _FakeService:
+    def __init__(self, list_response, content_by_id):
+        self._files = _FakeFiles(list_response, content_by_id)
+
+    def files(self):
+        return self._files
+
+
+def test_fetch_latest_ptj_skips_archive_file_with_newer_modtime(monkeypatch):
+    """Regression for the 2026-07-16 incident: an ARCHIVE_master.json summary
+    (open_positions stripped of entry/livePx) landed in the SAME top-level PTJ
+    folder with a NEWER modifiedTime than the actual daily journal, so
+    "most-recently-modified file wins" picked the archive and every held
+    position shipped with entry=null. The filename shape filter must reject it."""
+    list_response = {"files": [
+        {"id": "archive1", "name": "aegis_trade_journal_ARCHIVE_master.json",
+         "modifiedTime": "2026-07-15T23:32:27.272Z", "mimeType": "application/json"},
+        {"id": "real1", "name": "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY",
+         "modifiedTime": "2026-07-15T15:34:01.825Z", "mimeType": "application/json"},
+    ]}
+    content_by_id = {
+        "archive1": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111}]}),
+        "real1": json.dumps({"open_positions": [
+            {"ticker": "IBM", "qty": 111, "entry": 263.14, "livePx": 216.97},
+        ]}),
+    }
+
+    from src.data import gdrive_uploader
+    monkeypatch.setattr(gdrive_uploader, "is_configured", lambda: True)
+    monkeypatch.setattr(gdrive_uploader.DriveConfig, "from_env", classmethod(lambda cls: object()))
+    monkeypatch.setattr(
+        gdrive_uploader, "_build_service",
+        lambda cfg: _FakeService(list_response, content_by_id),
+    )
+
+    result = ptj.fetch_latest_ptj()
+    assert result is not None
+    assert result["_ptj_file"] == "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY"
+    assert result["open_positions"][0]["entry"] == 263.14
+    assert result["open_positions"][0]["livePx"] == 216.97
+
+
+def test_ptj_name_regex_matches_real_journals_and_rejects_artifacts():
+    real_names = [
+        "aegis_trade_journal_2026-07-14_v2.9.1_CORRECTED.json",
+        "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY",
+        "aegis_trade_journal_2026-06-08_v2.8_eod_sync",
+    ]
+    non_journal_names = [
+        "aegis_trade_journal_ARCHIVE_master.json",
+        "aegis_trade_journal_ARCHIVE_master",
+        "some_other_file.json",
+    ]
+    for name in real_names:
+        assert ptj._PTJ_NAME_RE.match(name), name
+    for name in non_journal_names:
+        assert not ptj._PTJ_NAME_RE.match(name), name
