@@ -1,0 +1,624 @@
+# AQE Field Glossary — Methodology & Math
+
+**Purpose:** every field AQE calculates per ticker, with the exact formula/threshold
+behind it and a plain-English read. This is the reference for verifying a number by
+hand, not just knowing what it's called. Source-cited (`file.py:line`) throughout so
+any figure can be spot-checked against the live code.
+
+**Scope:** this covers calculation methodology. For what ships on which export tier
+(longlist/elder_list/held) and field-count housekeeping, see `AQE_DATA_SCHEMATIC.md`.
+For the machine-readable role/unit/side schema the AIC keys off structurally, see
+`field_schema`/`field_schema_enums`/`field_glossary` inside the export itself
+(`src/data/drive_sync.py`) — this document is the prose companion with the math added.
+
+**Convention** (unchanged from the export's own `_convention` note): LONG setups —
+stops sit BELOW entry, targets sit ABOVE entry. Values are absolute USD unless the
+name ends `_rr`/`_ratio`/`_pct`/`_ann` (ratios), or is a nested list/object. `1R` =
+`bracket.risk` = `price − bracket.stop`.
+
+**Decision framework** — AQE reads the trade lifecycle in three stages that must not
+be conflated:
+1. **DETECT** — is a move brewing? (Signal Radar: `runner_setup`/`premove_setup`).
+   Detection tags, not entries.
+2. **ENTER** — is it time to buy, and where? (the bracket + live alert levels).
+3. **HOLD** — should an open position stay on? (`hl_score`/`hl_state`, held-only).
+
+AQE makes no decision at any stage — it supplies data and levels; the PM/AIC decides.
+
+---
+
+## 0. Shared math primitives (`src/engines/utils.py`)
+
+Reused across multiple engines — Pine `ta.*` ports. Formulas below, not repeated per
+engine section.
+
+| Helper | Formula |
+|---|---|
+| `sma(x,n)` | rolling mean, `min_periods=n` (NaN until `n` bars) |
+| `ema(x,n)` | `x.ewm(span=n, adjust=False).mean()` |
+| `wilder_rma(x,n)` | Wilder smoothing: seed bar `n-1` with plain SMA of first `n` bars, then `out[i] = (1/n)·cur + (1−1/n)·prev`. Used for ATR, RSI, ADX/DMI. |
+| `stdev_pop(x,n)` | population stdev, `ddof=0` |
+| `true_range(H,L,C)` | `max(\|H−L\|, \|H−Cprev\|, \|L−Cprev\|)`; first bar = `H−L` |
+| `atr(H,L,C,n=14)` | `wilder_rma(true_range, n)` |
+| `rsi(x,n=14)` | Wilder RSI: `100 − 100/(1+avg_gain/avg_loss)` via `wilder_rma`; 100 when avg_loss=0 & avg_gain>0 |
+| `macd(C,12,26,9)` | `macd_line = EMA12−EMA26`; `signal = EMA9(macd_line)`; `hist = macd_line − signal` |
+| `linreg_endpoint(x,n)` | Pine `ta.linreg(x,n,0)` — rolling OLS, fitted value at the window's LAST point |
+| `highest(x,n)` / `lowest(x,n)` | rolling max/min |
+| `heikin_ashi(O,H,L,C)` | `HA_close=(O+H+L+C)/4`; `HA_open[t]=(HA_open[t-1]+HA_close[t-1])/2` (recursive) |
+| `stochastic_k(C,H,L,n)` | raw unsmoothed `%K = (C−lowest_low_n)/(highest_high_n−lowest_low_n)·100`, 50 default on zero range |
+| `obv(C,V)` | cumulative sum of `sign(C.diff())·V` |
+| `asof_weekly_value(...)` | look-ahead-safe join: most recent **strictly prior** weekly value (mirrors Pine `request.security(sym,"W",x[1])`) |
+
+All engines share the same warmup pattern: **NaN until enough bars exist**, never a
+placeholder default. A NaN engine value is later converted to JSON `null` by the
+export's `_num()` helper (`src/data/drive_sync.py:853-861`) — see §14 for why this
+matters for data-quality monitoring.
+
+---
+
+## 1. Core scoring engines
+
+Each engine returns a `[0,100]` composite (except Elder, `[0,10]`) plus the raw
+sub-scores behind it (surfaced on every `daily_list`/`held_positions` row under
+`subcomponents`). None of these engines enforce their own floors — every gate/floor
+lives exclusively in `scoring.py` (§2).
+
+### 1.1 Flow v1.3 — `src/engines/flow.py`
+
+Measures accumulation/distribution and volume quality. Composite range `[0,100]`,
+raw sub-score ceiling 38.
+
+| Field | Formula | Reads |
+|---|---|---|
+| `mfi` | Custom 10-bar dollar-flow ratio: partitions `volume·hlc3` into up/down buckets by sign of `hlc3.diff()`; `100 − 100/(1+sum_up/sum_down)`, default 50 | dollar-weighted buying pressure, 10-bar |
+| `cmf` | Chaikin Money Flow, 10-bar: `Σ(((C−L)−(H−C))/(H−L)·V) / ΣV` (H=L bars excluded) | where volume closed within the day's range |
+| `flow_score` (max 17) | `fl_fb + ha_b`, clipped 17. `fl_fb`: step on `(mfi,cmf)` — `mfi>38\|cmf>-0.05→2.5`; `mfi>42&cmf>0→5.0`; `mfi>48&cmf>0.02→8.0`; `mfi>55&cmf>0.05→11.0`. `ha_b`: Heikin-Ashi "quality" count over 10 bars — bars with `\|HA_close−HA_open_ref\|<0.5·ATR20`; `≥2→2, ≥3→4, ≥5→6` | candle cleanliness vs volatility |
+| `accum_score` (max 7.5) | A/D raw = `((2C−L−H)/(H−L))·V`, 60-bar rolling sum `ad`; `ad_s=linreg(ad,10)`, `ad_l=linreg(ad,20)`. `ad_s>0→1.5; >0.85·ad_l→3.0; >ad_l→5.5; >1.1·ad_l→7.5` | is the A/D-line slope accelerating |
+| `volume_score` (max 7.5) | `vt_b`(trend, `SMA(V,5)/SMA(V,20)`: `>0.9→2,>1.05→4,>1.2→5.5`) `+ spk_b`(spike, `V/SMA(V,20)`: `>1.5→1,>2.0→2`), clipped 7.5 | recent volume trend + spikes |
+| `skew_score` (max 3.5) | 10-bar up-volume/down-volume ratio `udr`: `≥0.8→1.5, >1.2→2.5, >1.5→3.5` | up-vol vs down-vol dominance |
+| `ext_score` (−8..+5) | Ternary, highest-priority match: new-20d-high+`vol_ratio>1.5`+`close_range>0.6`→**+5**; near-top-of-range (`pos>85`)+vol/close confirm→**+3**; extended+huge-vol+weak-close→**−8** (climax risk); moderately extended+weak-close→**−5**; near-range-low (`pos<25`)→**+3** (mean-reversion room); else **0** | extension/climax risk |
+| `flow_100` | `raw = clip(flow_score+accum_score+volume_score+skew_score+ext_score, 0, 38)`; `flow_100 = raw/38·100` | headline Flow read |
+
+Warmup: NaN until `ad_l` (needs ~80 bars).
+
+### 1.2 Energy v1.3.1 — `src/engines/energy.py`
+
+Measures volume-profile position, price-action quality, squeeze/coil state,
+exhaustion, and ATR expansion health. Raw ceiling 59.5.
+
+| Field | Formula | Reads |
+|---|---|---|
+| `en_pos50` | `(C−L50)/(H50−L50)·100`, default 50 | position within 50-bar range |
+| `vp_position_score` (max 17.5) | step on `en_pos50`: `<30→3,≥30→5,≥45→8,≥60→12,≥75→17,≥90→15` (90+ tier scores LOWER — deliberate "too extended" penalty) + LVN proxy bonus `+1.5` if `en_pos50>75` and 5d range `<2·ATR20` | value-area position, penalizes over-extension |
+| `price_action_score` | `structure`(higher-low count, max 5) `+ tightness`(compression ratio 5d/20d range, max 4.5) `+ pullback`(% off 20d high, max 3) then **discounted** `×0.7` if `en_pos50<45`, `×0.5` if `<30` | trend quality, discounted when price sits low in range |
+| `squeeze_score` (max 12.5) | Bollinger bandwidth percentile (`bwp`, own 50-bar range) + Keltner-inside-Bollinger squeeze flag `sq`; tiers `bwp<50→4.0, bwp<30→8.5, sq→5.0, sq&bwp<50→7.5, sq&bwp<35→10.0, sq&bwp<20→12.5` | volatility contraction / coiling (TTM-squeeze read) |
+| `exhaustion_score` (base 10, floor 0) | **Inactive** (pinned 10.0) until `en_trend_bars≥15` consecutive bars above EMA20. Once mature: `10 + climactic_penalty + divergence_penalty + wide_spread_penalty` — climactic (`vol_ratio>2.5&gain%<3→−2.5`, `>3.0&<2%→−4.0`), MFI/MACD bearish divergence at new 10-bar high (`−2 to −3`), wide-spread-no-follow-through (`−1.5 to −3`) | blow-off / climax risk after a sustained run |
+| `atr_score` (max 7.0) | `atr_expansion_pct = (SMA(ATR,5)−SMA(ATR,20))/SMA(ATR,20)·100`; sweet spot `[20,80]→7.0`, `>150→2.0` (too hot), `>80→4.0`, `≥15→5.5`, `≥10→4.0`, `≥0→1.0`, `≥−10→0.5`, else `0` | rewards moderate expansion, penalizes stagnation AND blow-off |
+| `energy_100` | `clip((vp+pa+squeeze+exhaustion+atr)/59.5·100, 0, 100)` | headline Energy read |
+
+Note: `en_pos50` (Energy) and `ms_p50` (Structure, §1.3) use the identical formula but
+are computed independently, not shared code. Warmup: NaN until ~70 bars.
+
+### 1.3 Structure v1.5.0 — `src/engines/structure.py`
+
+Measures RS vs SPY, base quality, market structure position, weekly trend, and
+earnings proximity. Raw ceiling 95.
+
+| Field | Formula | Reads |
+|---|---|---|
+| `rs_vs_spy` | stock 60d return − SPY 60d return | `rs_spy_score` (max 15): `>-3→3,>0→6,>2→10,>5→12,>10→15` |
+| `rs_accel` | (20d relative return) − (60d relative return) | `rs_accel_score` (max 15): `>-5→3,>-2→6,>0→9,>2→12,>5→15` — is RS itself accelerating |
+| `base_score` (max 15) | 3-mode base detection (VCP `10d range≤15%` / staircase-uptrend-shallow-pullback / smooth-EMA20-rising) with a **stateful latch**: consecutive `in_base` bars counted; on breakout (`close>consolidation_high` & `vol>SMA20`) the base-day count **latches** and decays over 10 bars post-breakout (`bd_mode` reports which mode fired: 1/2/3, 4=multiple). Tiers on `base_days`: `<3→0,<5→3,5-7→6,7-10→10,10-25→15,25-30→12,30-35→8,>35→5`; then × higher-lows quality multiplier (`<2 lows→×0.6, ≥2→×0.8, ≥4→×1.0`) | base quality + duration, with post-breakout credit decay |
+| `ms_p50` | 50-bar range position (same formula as `en_pos50`) | `ms_pos_score` (max 15): `≥45→4,≥60→7,≥75→10,≥85→13,≥95→15` |
+| `resist_score` (max 10) | `dist_to_resist=(H50−C)/C·100`: `≤15→3,≤8→5,≤3→10,≤0→7` (AT/above the 50d high scores LOWER (7) than just-under-it (10) — a chasing penalty) | room to the recent high |
+| weekly trend (max 15) | 10-week SMA of weekly close, joined via `asof_weekly_value` (no look-ahead): `close>0.93·sma10→2,>0.97·sma10→5,>sma10→10,>sma10&rising→15` | HTF bias |
+| `earn_score` (max 10) | from FMP earnings calendar: `≤5d→0,≤10d→4,≤20d→7,>20d/unknown→10` | earnings-proximity risk |
+| `structure_100` | `clip((rs_spy+rs_accel+base+ms_pos+resist+wk+earn)/95·100, 0, 100)` | headline Structure read |
+
+Note: Structure's base-duration system and BQ's (§1.6) use the SAME latch/decay
+mechanism but **different band/scoring constants** — not the same computation despite
+similar shape (Structure: 15%-range VCP mode; BQ: 8%-band, 60-bar-pivot variant).
+
+### 1.4 Momentum Persistence (MP) v1.2 — `src/engines/mp.py`
+
+| Field | Formula | Reads |
+|---|---|---|
+| `roc_zscore` | z-score of 20d ROC vs its own 50-bar SMA/stdev | `abs_mom_score` (max 30): `≥2.0→30,≥1.5→26,≥1.0→22,≥0.5→16,≥0.0→10,≥-0.5→5` |
+| ADX/DMI (Wilder, n=14) | standard `+DM/−DM`, `DI±=100·DM_n/TR_n`, `DX=100·\|DI+−DI-\|/(DI++DI-)`, `ADX=wilder_rma(DX,14)` | `adx_score`/`adx_val` (max 25): requires `DI+>DI-`; `≥20→12,≥25→18,≥30→22,≥40→25` |
+| `excess_return` | stock 20d ROC − SPY 20d ROC | `rel_mom_score` (max 25): `≥15→25,≥10→22,≥5→18,≥2→13,≥0→8,≥-3→3` |
+| `trend_score` (max 20) | priority ladder on price vs EMA20/SMA50 + their slopes: above-EMA20-only→5; above-SMA50-not-rising→8; above-SMA50-rising-not-EMA20→12; above-both-SMA50-rising→16; **above-both-both-rising→20** | full trend alignment |
+| `mp_score` | `clip(abs_mom+adx+rel_mom+trend, 0, 100)` | headline MP read |
+| `mp_state` | `mp_rising = mp_score > mp_score.shift(3)`; `FADING`(default)→`BUILDING`(rising, <75)→`STRONG`(rising, ≥75) | momentum lifecycle label |
+| `mp_accel` | `SMA(roc_zscore.diff(5), 3)` — **2nd derivative**: smoothed 5-bar change in the momentum z-score. Additive, non-Pine. | is momentum itself accelerating, ahead of `mp_state` confirming |
+| `mp_accel_state` | dead-zone ±0.10: `>0.10→ACCELERATING, <-0.10→DECELERATING, else FLAT` | |
+
+Two independent Wilder-DMI/ADX implementations exist (`mp.py::_dmi` and
+`pipeline_rank.py::_dmi`) — should numerically agree but are separately coded.
+
+### 1.5 Elder Impulse — `src/engines/elder.py`
+
+Range `[0,10]`.
+
+| Component | Formula |
+|---|---|
+| Impulse color | `green = EMA13 rising & MACD-hist rising`; `red = EMA13 falling & hist falling`; `blue = neither` |
+| `state_score` ∈{0,2,4} | green→4, blue→2, red→0 |
+| `ema_slope` | `(EMA13−EMA13[3 bars ago])/EMA13·100` → `slope_score` ∈{0,1,2,3}: `>0→1,>0.3→2,>1.0→3` |
+| `hist_accel` | `hist − hist_prev` → `hist_score` ∈{0,1,2,3}: `hist>0&!accel→2; hist≤0&accel→1; hist>0&accel→3; else 0` |
+| `elder_score` | `clip(state_score+slope_score+hist_score, 0, 10)` |
+| `impulse_state` | NEUTRAL default → GREEN if impulse_green, RED if impulse_red |
+
+Gates elsewhere consume this: Elder≥7 required for longlist entries, Elder≥8 for
+`elder_list`, Elder≥6.5 inside `SC_M_GATES` — none of that logic lives in this file.
+
+### 1.6 Base Quality (BQ) — `src/engines/bq.py`
+
+Feeds **only SC_POSITION**. Already normalized `[0,100]` (its four sub-maxima sum to
+exactly 100 — no extra scaling needed).
+
+| Field | Formula (max) |
+|---|---|
+| `bq_range_tight` (30) | `ATR5/ATR20` ratio: `<1.0→4,<0.9→8,<0.8→14,<0.7→20,<0.6→25,<0.5→30` — tighter recent range scores higher |
+| `bq_vol_dry` (25) | `SMA(V,5)/SMA(V,20)`: `<1.1→5,<0.95→10,<0.8→15,<0.65→20,<0.5→25` — drier volume scores higher |
+| `bq_base_dur` (20) | own 3-mode base system (60-bar pivot, 8% band — distinct constants from Structure's), same DSG-02 latch/decay: `3-4→4,5-6→8,7-9→14,10-25→20,25-35→14,>35→8` |
+| `bq_ema_conv` (25) | EMA8/13/21 spread normalized by ATR20: `<2.5→5,<1.8→10,<1.2→15,<0.8→20,<0.5→25` — tighter convergence scores higher |
+| `bq_100` | straight sum, clipped `[0,100]` |
+
+### 1.7 K39 gate — `src/engines/k39.py`
+
+Weekly confirmation gate, feeds only SC_POSITION. Not a `[0,100]` score — returns a
+boolean gate series.
+
+- `k39` = raw weekly stochastic `%K` over **39 weekly bars** (unsmoothed).
+- `k39_gate = (k39 > 50) AND (weekly OBV > 30-week SMA of weekly OBV)`.
+- Mapped to daily via `asof_weekly_value` (no look-ahead).
+- Needs ≥39 weekly bars, else returns an all-False gate + all-NaN K39 value — cannot
+  compute a meaningful 39-week stochastic without 39 weeks of history.
+
+---
+
+## 2. Composite scores — `src/engines/scoring.py` v1.8.0
+
+**Composites are UNCAPPED.** Gate/floor failures are exported as separate booleans
+(`sc_m_gates`/`sc_p_gates` + `*_gate_detail` breakdowns), never as a score ceiling
+(v1.6.0's `GATE_CAP=49.0` hard cap was removed 8 Jun 2026, AIC-approved).
+
+### SC_MOMENTUM
+```
+sc_momentum = Flow×0.30 + Energy×0.30 + Structure×0.20 + MP×0.20    (clipped 0-100)
+```
+Gate (`sc_m_gates`, all must pass): `Elder≥6.5, Flow≥60, Energy≥60, Structure≥55, MP≥55`.
+`sc_m_gate_detail` = per-engine pass/fail dict so you read WHICH check fails without
+recomputing.
+
+### SC_POSITION
+```
+sc_position = Flow×0.10 + Energy×0.30 + Structure×0.20 + MP×0.05 + BQ×0.35   (clipped 0-100)
+```
+Gate (`sc_p_gates`, all must pass): `Flow≥40, Energy≥60, Structure≥65, MP≥40, BQ≥60`
+**plus** the K39 weekly gate. `sc_p_gate_detail` includes `k39`.
+
+### `is_qualified()` — separate "Qualified" gate
+```
+qualified = sc_momentum >= 75.0  AND  elder_score >= 6.5
+```
+
+---
+
+## 3. Pipeline Rank v1.0 — `src/engines/pipeline_rank.py`
+
+Stage-1 universe screener, daily-OHLCV only (no weekly/SPY dependency).
+```
+pipe_rank = Momentum_Composite×0.70 + FIP_Quality×0.30    (clipped 0-100)
+```
+`B-STRONG` tier (`pipe_rank≥60`) is the cutoff that advances a name to full scoring.
+
+**Momentum Composite (5 sub-components, max 100):**
+
+| Sub-score (max 20) | Formula |
+|---|---|
+| `ret_12m_score` | 12-month return **skipping the most recent month** (`C/C[231]−1`): `>-10→4,>0→8,>10→12,>25→16,>50→20` |
+| `adx_score` | Wilder ADX(14) (separately coded from MP's): `>15→5` (bullish not required); `>20&DI+>DI-→10`; `>25&bullish→15`; `>30&bullish→20` |
+| `rsi_score` | RSI(14): `>30→5,>40→10,>50→15,[50,70]→20`, then **overbought override** `>80→10` |
+| `vol_score` | `SMA(V,5)/SMA(V,20)`: `>0.7→5,>0.9→10,>1.0→15,>1.2→20` |
+| `ma_score` | additive: `C>EMA20→+4, C>EMA50→+4, C>EMA150→+3, C>EMA200→+3, full-stack-alignment→+3, SMA50-rising→+3` (clipped 20) |
+
+**FIP Path Quality ("Fraction of Informed Pricing", 0-100):**
+```
+fip_raw = (pct_negative_days − pct_positive_days over 252d) × sign(252d cum return)
+```
+Negative FIP (steady grinding days in the move's direction) = high quality path.
+`fip_quality` step: `>0.10→10` (jumpy, worst), `(0,0.10]→30`, `[-0.05,0]→60`,
+`[-0.10,-0.05)→80`, `<-0.10→100` (smoothest, best).
+**5-day spike penalty**: any single-day \|return\| >8% in the trailing 5 days →
+`fip_quality −= 30`, clipped [0,100]. Always applied, independent of the exclusion below.
+
+**DSG-20 prior-spike exclusion** (`fip_spike_excluded`, `fip_window_effective`):
+scans the trailing 252-bar window for a prior speculative spike ≥126 bars old
+(21-bar return ≥30%, confirmed by a subsequent ≥30% drawdown from the spike peak).
+If found, FIP is recomputed **excluding** a ±21-bar window around the spike, and
+`fip_window_effective` records the reduced bar count. Prevents an old resolved
+meme-stock-style spike from permanently poisoning path quality, while the *recent*
+5-day spike penalty still applies unconditionally.
+
+Warmup: needs the full 252 bars. Tiers: `D-SKIP`(default)→`C-WATCH`(≥45)→`B-STRONG`(≥60)→`A-TIER`(≥75).
+
+---
+
+## 4. THE BRACKET — `src/engines/bracket_engine.py` + `src/scanner/levels.py`
+
+**The single source of truth for stop + targets.** Mechanical DSL/TP fields are
+retired from the export; every consumer (export, alerts, Pricer, charts, signal
+ledger) reads this one nested `bracket` object.
+
+### Regime stop-% ceiling
+```
+REGIME_STOP_CEILINGS = {GREEN: 12%, YELLOW: 8%, ORANGE: 6%, RED: 4%}
+```
+
+### The 3 charter gates (a stop candidate must pass ALL to be `valid`)
+1. **ATR floor**: `stop_atr_dist ≥ 1.0` (risk ≥ 1×ATR)
+2. **R:R floor**: `rr_tp2 ≥ 2.0` (reward:risk to the structural TP2 reference ≥ 2)
+3. **Regime ceiling**: `risk_pct ≤` the regime's stop-% ceiling above
+
+### Stop candidates (evaluated, deduped by price, tightest valid wins)
+`swing_low` (fib swing low) · `swing_low_1/2/3` (last 3 CONFIRMED fractal pivot lows,
+`k=5`/11-bar fractal, `window=120` bars) · `fib_618`/`fib_786` (retracement supports) ·
+`ma_cluster` (`min(MA20,MA50)` only when `|MA20−MA50|≤ATR14`, i.e. genuinely
+confluent) · flat `ma20/50/100/200`. **Operative stop = the highest-priced (tightest)
+candidate that passes all 3 gates.** `atr_fallback_stop = price − ATR14` is
+reference-only, used ONLY when `valid=false` (no structural stop qualifies) — never
+the operative stop.
+
+### Target ladder (nearest-first, above price)
+Prior CONFIRMED pivot highs (`resistance`, clustered within 0.5×ATR of each other),
+current swing high (`prior_high`), and Fibonacci extensions `1.272/1.618/2.0/2.618`
+measured from the swing low/high. A target within `0.5×ATR14` of a nearer one
+collapses into it (resistance labels win ties over Fib). First three tagged
+`TP1/TP2/TP3`; each carries `r` (reward in R) and `atr_dist`.
+
+### Volume validation (`stamp_bracket_volume`)
+For every dated level (stop + targets): `vol_ratio = volume[date] / SMA(volume,20)[date]`;
+`vol_validated = vol_ratio ≥ 1.2` — a level DEFENDED on above-average volume is a
+stronger level. Data only, never a gate.
+
+### Structural level sourcing — `src/scanner/levels.py`
+- `find_swing()`: current up-swing high = simple `argmax(high)` over the trailing 120
+  bars (no confirmation lag — doesn't anchor stale during an extending name); swing
+  low = the last CONFIRMED pivot low before that high.
+- `recent_pivot_lows(...,n=3)`: last 3 CONFIRMED fractal pivot lows below close.
+- `overhead_resistance(...)`: prior CONFIRMED pivot highs above close, collapsed
+  within `0.5×ATR`, nearest-first, capped at 4.
+- Fib retracements: `swing_high − range·r` for `r∈{0.236,0.382,0.5,0.618,0.786}`.
+  Extensions: `swing_low + range·e` for `e∈{1.272,1.618,2.0,2.618}`.
+
+### DSL v2.1 β-adjusted initial stop (legacy mechanical layer, `src/scanner/dsl.py`)
+Still computed internally (feeds `dsl_atr_ratio`/`atr_ratio` diagnostics and the
+local UI): `stop = lowest(low,5) − 0.5·ATR14`, clamped to `[0.75, upper]×ATR14` where
+`upper = 2.5` (β≥2.0), `2.25` (β≥1.5), else `2.0` — wider stop room for high-beta
+names. Bracket geometry: BE trigger at `entry+0.5R`, `tp_N = entry + N·R`.
+
+---
+
+## 5. DETECT layer — signals, not gates, not sizing
+
+### 5.1 Signal Radar — `src/engines/signal_radar.py`
+
+Detection-RATE tags across the full scored universe. Frozen params in
+`data/signal_engine_params.json`, never re-fit in production.
+
+- **`runner_setup`** (M15 rule — continuation): `base_days ≤ 15 AND ret_5d > 14.5%
+  AND resist_score ≤ 8.5` (short young base + strong 5d thrust + clear overhead).
+- **`runner_conviction`** (0-4): count of 4 legs in their favorable tercile
+  (`base_days`, `ret_5d`, `resist_score`, `dist_20dhigh`) vs frozen cut points.
+  Label ladder: MINIMAL(0)/LOW(1)/MODERATE(2)/HIGH(3)/MAX(4) ≈ historical
+  5%/13%/27%/43% +20%/20d detection rate.
+- **`mover_subtype`** (M16c): argmax of 4 family z-scores vs frozen means/stds —
+  `explosive` (ret_3d/5d, ATR slope), `trend` (MP/ADX/K39/PipeRank), `tight_base`
+  (BQ sub-scores), `squeeze` (squeeze_score/ext_score/compression).
+- **`premove_setup`** (M18 rule — pre-move, quiet names only): `is_quiet` (trailing
+  20d return ∈[−8%,+8%] AND `pos20<0.90`) AND every frozen leg of the launcher
+  fingerprint. Historical launches came a median ~12 trading days after the tag.
+- **`premove_conviction`** (0-4): count of frozen legs satisfied, forced 0 when not
+  quiet.
+
+Every % surfaced anywhere for these tags is a **detection rate** (how often tagged
+names historically touched a level, price-path only) — **never a win rate**.
+
+### 5.2 Divergence — `src/engines/divergence.py`
+
+Regular (non-hidden) price-vs-oscillator divergence at the last CONFIRMED pivot,
+non-repainting. Oscillators: RSI(14), MFI(14), CMF(20), MACD-line, OBV.
+
+- Confirmed pivot: index `i` is the **strict unique** min/max of `[i−5, i+5]`
+  (5-bar fractal, both sides).
+- **Bullish**: last two confirmed pivot LOWS `p1`(older)→`p2`(newer), span
+  `5–60 bars`, fresh (≤15 bars old), price makes a LOWER low at `p2` while the
+  oscillator makes a HIGHER low.
+- **Bearish**: mirror on pivot highs (price higher high, oscillator lower high).
+- `div_state`: BULLISH / BEARISH / MIXED (both) / NONE.
+- `div_bull_count`/`div_bear_count`: how many of the 5 oscillators confirm (0-5) —
+  more confirming oscillators = stronger read.
+
+### 5.3 Pin Bar / Inside Bar — `src/engines/pin_bar.py`
+
+Pure candlestick geometry on the LAST closed bar, no lookahead.
+
+- **BULLISH_PIN**: lower wick ≥66% of bar range AND body ≤40% AND upper wick ≤40%.
+- **BEARISH_PIN**: mirror (long upper wick).
+- Small-candle filter: rejected if the bar's own range is `<2×` the PRIOR bar's
+  range (filters "pin bars" that are just noise inside an already-tiny range).
+- `inside_bar`: last bar's H/L fully inside the prior bar's H/L.
+- `pib_pattern`: bar[−2] was a pin bar AND bar[−1] is an inside bar relative to it
+  (the "rejection, then pause" combo).
+- `pin_bar_level`: the rejection extreme — bar LOW for a bullish pin (candidate
+  support), bar HIGH for a bearish pin (candidate resistance).
+
+### 5.4 Smart Money kNN — `src/engines/smart_money_knn.py`
+
+CHoCH (Change of Character) detection, then a genuine k-NN classifier scoring the
+current CHoCH against every past same-direction CHoCH on the SAME ticker.
+
+- **CHoCH**: bullish flip when `close` breaks above the last known confirmed swing
+  high while trend was flat/down; bearish mirrors on the swing low. Swings via a
+  5-bar (both-side) pivot, confirmed 5 bars after printing.
+- **3 features per event** (vs the prior event): `vol_delta` (mean signed volume ÷
+  mean volume over the segment, signed by which side of the bar range volume
+  traded), `displacement` (`|Δclose|/ATR14`), `velocity` (`displacement / bars`).
+- **Self-labeling**: 20-bar lookahead after each event; `outcome=1` if max-favorable
+  excursion exceeds max-adverse excursion, else 0.
+- **kNN query**: pool = past SAME-direction, resolved events within the trailing
+  500 bars; `dist = Euclidean(3 features)`; `k=5` nearest; `knn_prob =
+  mean(outcomes of the k nearest)`.
+- `knn_significant = knn_prob≥0.60 OR ≤0.40`. **Caveat (AIC Charter Amendment v2.8,
+  2026-07-15 ruling): this is a plain threshold check at k=5, NOT a statistical
+  significance test** — 3-of-5 agreeing clears the 60% bar trivially, including by
+  chance. No p-value/confidence-interval semantics.
+- `knn_tp1/2/3`: current price ± half-mean / median / 75th-percentile of the
+  neighbors' favorable excursion, signed by direction — a statistical projection
+  from historical analogs, NOT a structural level (read alongside `bracket.targets`,
+  never in place of them).
+
+### 5.5 `structure_shift` — BOS/CHoCH read vs confirmed swing anchors
+
+`BULLISH_BOS` = close broke above the last confirmed swing high (trend
+continuation). `BEARISH_CHOCH` = close broke below the up-swing's anchor low
+(character change — the up-structure failed). `RANGE` = inside the swing. Data
+only, never a gate. `structure_shift_ref` = the swing level it's measured against.
+
+---
+
+## 6. Health Score — `src/engines/health.py` (held positions ONLY — the HOLD decision)
+
+"Should I stay in this position?" — trend integrity, distinct from entry timing.
+
+| Block | Max | Components |
+|---|---|---|
+| **A. Trend Structure** | 35 | A1 higher-low count over 10 bars (0-15) + A2 consecutive bars above EMA21 (0-15) + A3 weekly trend confirmation (0/5) |
+| **B. Flow Confirmation** | 25 | B1 MFI(14) health tiers (0-15) + B2 10-bar up/down volume ratio (0-10) |
+| **C. Relative Strength** | 20 | C1 20d RS-vs-SPY maintenance (0-10) + C2 RS acceleration, `rs_20−rs_60` (0-10). 0 if <60 SPY bars. |
+| **D. Risk Flags** | −20 to 0 | D1 ATR spike (`ATR5/ATR14>1.5→−5,>2.0→−10`) + D2 weak-close count (5 bars, `−3`/`−5`) + D3 EMA21 breakdown (`−5`) |
+
+```
+hl_score = clip(A + B + C + D, 0, 100)
+```
+`hl_state`: `≥75→HOLD_ADD, ≥50→HOLD, ≥30→TIGHTEN, else EXIT`.
+
+---
+
+## 7. Elder Context — `src/engines/elder_context.py` (Instruction v1.1)
+
+Rides on every longlist row — VWAP/volume/VCP/exhaustion confirmation for the raw
+Elder score. Pure function on caller-supplied hourly (5-day, up to 40 bars) + daily
+(20 bars) bars; every sub-block degrades independently to `null` on thin data.
+
+- **`elder_pattern`** — classifies the last 5 daily Elder readings, priority order:
+  `SUSTAINED` (≥4 of 5 readings ≥9, min≥8) → `CORRECTION_REENTRY` (dipped ≤7 after a
+  prior ≥9, now back ≥9) → `ACCELERATION` (started weak ≤6, now strong ≥9 and
+  rising) → `ACCUMULATION_BASE` (capped ≤8, non-decreasing) → `INTERRUPTED` (any
+  interior reading ≤5) → `None`.
+- **`vwap_5d`**: running VWAP over the trailing hourly bars (`Σ(typical·V)/ΣV`,
+  typical=(H+L+C)/3); `position` = ABOVE/BELOW; `slope_5d` = linear-regression slope
+  label (RISING/FALLING/FLAT, ±0.1%/session threshold).
+- **`volume`**: `up_bar_vol_ratio` (mean up-hourly-bar volume ÷ mean down-hourly-bar
+  volume); `vol_trend_5d` (EXPANDING/CONTRACTING/FLAT, comparing early vs late
+  session-average hourly volume, ±10% threshold); `vol_above_20d_avg`.
+- **`vcp`**: `tightness_pct = (5d range/5d mid) ÷ (20d range/20d mid) × 100`.
+  `VCP_SETUP` requires tight (<50%) AND contracting volume AND above VWAP AND
+  up-volume-dominant AND a favorable Elder pattern; `VCP_PARTIAL` = tight but not
+  all confirmations; `VCP_ABSENT` = not tight or below VWAP.
+- **`exhaustion_check`**: 3 flags — volume-contracting near the 20d high, VWAP slope
+  flat/falling, price within 2% of a given resistance level. `RISK` (all 3),
+  `CAUTION` (2), else `CLEAR`.
+
+---
+
+## 8. Enrichment fields — `src/engines/enrichment.py`
+
+- **`rs_down_day_20d`**: average stock outperformance vs SPY, computed ONLY on SPY's
+  down days over the trailing 20 sessions. Positive = genuine leadership (beats SPY
+  when the market drops). `rs_leadership`: `>0.25→LEADER, <-0.25→LAGGARD, else IN-LINE`.
+- **`atr_caution`** (AQE-BL-002): in YELLOW/ORANGE/RED regime, flags if
+  `dsl_atr_ratio<1.5` (stop was too tight for the regime).
+- **`malformed_bracket`**: flags if the structural stop sits within 0.5% of price
+  (bracket effectively unusable).
+- Also computes (internal/local-UI use): `setup_state` (EXTENDED/BREAKOUT-READY/
+  CONTINUATION-READY/BASING lifecycle label), `breakout_conviction` (0-100 grade of
+  the most recent range-expansion bar, pattern-classified as ABSORPTION_REVERSAL /
+  TELEGRAPHED_CONTINUATION / SURPRISE_THRUST / STANDARD_BREAKOUT), and beta-capping
+  (`|beta_60d|>5.0` flagged as a data error).
+
+---
+
+## 9. Sector Rotation Model (SRM) v3.0 — `src/engines/srm.py`
+
+### 9.1 Core grading — `grade_all_sectors`
+Per GICS sector ETF (11: XLK/XLV/XLF/XLE/XLI/XLY/XLP/XLRE/XLU/XLC/XLB):
+```
+roc20 = (close − close[21 bars ago]) / close[21 bars ago] × 100
+roc5  = (close − close[6 bars ago])  / close[6 bars ago]  × 100
+divergence = roc5 − roc20      # is short-term momentum accelerating vs the trend?
+above_sma20 = close > SMA(close, 20)
+```
+Grade decision tree (first match wins): `above_sma20 & roc20>5 → DEPLOY` ·
+`above_sma20 & roc20>0 → HOLD` · `!above_sma20 & divergence>0 → TURNING` ·
+`above_sma20 & roc20≤0 → WATCH` · else `AVOID`.
+Sector Health `sh`: DEPLOY=+3, HOLD=0, TURNING=−3 *(AQE's own PM ruling; charter text
+says −5, unreconciled)*, WATCH=−5, AVOID=−8.
+`trend_state`: (above_sma20, divergence>0) → "Momentum Building — Add" /
+"Momentum Fading — Hold, Don't Add" / "Recovering From Weakness — Watch for Entry" /
+"Declining — Avoid".
+
+### 9.2 RRG layer (DSG-18)
+42-bar window. `rs_line = sector_close/SPY_close`, rebased to 100 at window start
+(`rs_norm`). `rrg_rs_ratio` = current rebased level. `rrg_rs_momentum` = 10-bar ROC
+of the rebased RS line, re-centered around 100. Quadrant: ratio≥100&mom≥100→
+**LEADING**, ratio<100&mom≥100→**IMPROVING**, ratio≥100&mom<100→**WEAKENING**,
+else→**LAGGING**. Direction (vs 5 bars ago): quadrant changed→**ENTERING**; else
+compare Euclidean distance from (100,100) now vs 5 bars ago — growing >2%→
+**DEEPENING**, shrinking >2%→**EXITING**, else→**STABLE**. `rrg_history` recomputes
+the RRG point as-of each of the last 5 days (no persistence — deterministic from the
+panel every run) for the chart's direction-of-travel tail.
+
+### 9.3 Macro overlay (DSG-19)
+7 instruments: TLT, UUP, HYG, IWM, GLD, CPER, USO, weighted `[.22,.15,.18,.15,.10,.12,.08]`.
+Per-instrument direction score ∈{−2..+2} from `sign(roc5) + sign(roc20)`.
+```
+macro_headwind_score = Σ(weight_i × direction_score_i × sector_sensitivity_sign_i)
+```
+where sensitivity is a per-GICS-ETF sign vector (+1 helps/−1 hurts/0 neutral) e.g.
+XLK: `[TLT+1, UUP−1, HYG+1, IWM+1, GLD 0, CPER+1, USO 0]` (rate cuts / weak dollar /
+tight credit spreads good / broad tape good / copper reflation good). Flag:
+`≥0.5→TAILWIND, ≥-0.2→NEUTRAL, ≥-0.5→CAUTION, else→HEADWIND`.
+**Copper/Gold ratio** (`CPER/GLD`, same direction-score method): the growth+rates
+tell that front-runs the 10y yield — rising=reflation/risk-on, falling=risk-off.
+
+### 9.4 Combined entry gate — `sector_entry_gate(grade, rrg_quadrant, macro_flag)`
+`grade==AVOID → BLOCKED`. `HEADWIND + LAGGING → BLOCKED` (hard, no override).
+`HEADWIND alone → CAUTION`. `LAGGING/WEAKENING + macro CAUTION → CAUTION`.
+`(DEPLOY|HOLD) + (LEADING|IMPROVING) + (TAILWIND|NEUTRAL) → PASS`. Else `WATCH`.
+Replaces `gics_gate` per-record.
+
+### 9.5 Intermarket brief (§3A.6) — `compute_intermarket`
+Plain COB numbers, **no assessment** (Druckenmiller/committee interprets): per
+instrument (UUP/TLT/HYG) `close/roc5/roc20/above_sma20`, `hyg_tlt_spread =
+hyg.roc5 − tlt.roc5`, `spy_iwm.spread = spy.roc20 − iwm.roc20`. Reuses the macro
+overlay's already-fetched closes — 0 additional FMP calls.
+
+### 9.6 Thematic baskets — `grade_thematic_baskets` (Thematic Basket Map v3.0)
+35 baskets across 9 sector groups, each with a parent GICS ETF. Equal-weight index
+per basket: `norm = close/first_valid_close` per constituent, `index =
+mean(norm, skipna)` (staggered listings don't break it). Graded with the SAME
+`grade_sector_etf` tree on this synthetic index, then **capped** — the thematic
+grade can never be BETTER than its parent GICS grade (`GRADE_ORDER`: DEPLOY<HOLD<
+TURNING<WATCH<AVOID). RRG computed identically for the basket index vs SPY. Pure
+panel math, 0 FMP calls. Baskets do NOT add names to the scan universe — governing
+rule; constituents are pulled into the panel for grading only.
+
+---
+
+## 10. PTRS — `src/analyzer/ptrs.py`
+
+```
+ptrs = engine_score + sh
+```
+**Current production behavior**: every live call site passes `sh=0.0`, so
+**`ptrs == sc_momentum` (or `sc_position`) verbatim** — the Sector-Health adjustment
+was formally retired (AIC Charter Amendment v2.8, 2026-07). Sector context is read
+separately/qualitatively via `srm`/RRG rather than double-counted into the per-ticker
+score. *(Note: `CLAUDE.md`'s "PTRS = SC_MOMENTUM + SH" line predates this ruling and
+should be updated to match — flagging for the PM.)*
+
+**Disposition** (sizing tier, quality-only — VIX handled separately by regime):
+`≥60→FULL(100%)`, `[50,60)→HALF(50%)`, `[45,50)→QUARTER(25%)`, `<45→REJECT(0%)`.
+
+**Regime sizing** (VIX-based, applied on top, no double penalty):
+`GREEN→FULL, YELLOW→QUARTER, ORANGE→QUARTER, RED→NONE`. **Final size =
+min(PTRS disposition, regime max_new_size).**
+
+---
+
+## 11. Portfolio Hedge Layer — `src/analyzer/held_book.py` (Charter §4C, held only)
+
+Pure arithmetic on PTJ-sourced `held_positions` — no engine calls. Price precedence:
+`cob_price` (FMP EOD close, preferred) → `live_px` → `entry`.
+
+Per position: `exposure_usd = qty × price`; `beta_adj_exposure_usd = exposure ×
+beta_30d` (default β=1.0 if missing — market-neutral assumption); a parallel β60d
+basis is carried alongside (Charter v2.1 §6.4 gate window) — **no gate call on which
+window is "correct"**, both are exported.
+
+Book-level: `loss_per_1pct_gap_usd = beta_adj_exposure_usd × 0.01`;
+`nav_weighted_beta_30d = beta_adj_exposure_usd / total_exposure`;
+`gap_scenarios[3/5/7/10%] = beta_adj_exposure_usd × pct` — estimated $ book loss per
+gap-down scenario, beta-scaled. `sector_weights`: exposure share per GICS ETF (all
+11 sectors present, 0.0 where unheld).
+
+---
+
+## 12. Regime detection — `src/analyzer/regime.py`
+
+- **VIX regime** (`classify_vix_regime`): `≤18→GREEN, (18,25]→YELLOW, (25,30]→ORANGE, >30→RED`.
+- **Hurst exponent** (`hurst_exponent`, rescaled-range/R-S method on SPY log-returns):
+  dyadic window sizes (`2^k`), per window compute mean-centered cumulative-sum range
+  `R` ÷ segment stdev `S`, average `R/S` across segments, then the OLS slope of
+  `log(mean R/S)` vs `log(window)` **is** the Hurst exponent H (clipped [0,1]).
+  Default 0.50 (random-walk) if <20 return observations.
+- `classify_hurst`: `H>0.55→TRENDING` (momentum favored), `H<0.45→MEAN_REVERT`
+  (momentum caution), else `RANDOM` (no clear edge).
+
+---
+
+## 13. Betas — `src/scanner/betas.py`
+
+```
+beta = Cov(stock daily returns, SPY daily returns) / Var(SPY daily returns)
+```
+Computed over trailing 30d and 60d windows independently (`BETA_WINDOWS=(30,60)`);
+needs ≥2 common dates and non-zero SPY variance in the window, else that window is
+skipped (not zero-filled). Rounded to 2dp. 30d feeds the DSL β-clamp (§4); 60d is
+the smoother committee view and the Charter v2.1 §6.4 gate basis.
+
+---
+
+## 14. Production screening thresholds — `data/active_recipe.json`
+
+Applied by `daily_orchestrator.py`, not baked into any engine:
+
+- **Longlist** (`_recipe_match_screen`): `SC_MOM≥75, Flow≥80, Energy≥64, Structure≥60,
+  MP≥60, Elder≥7`, `phase_filter=ANY` (no MP-state restriction). Each threshold only
+  applies if set >0. Sorted by `sc_momentum` descending.
+- **Watchlist / near-miss screen** (`_watchlist_screen`): deliberately relaxed —
+  `SC_MOM_raw≥68, Flow≥55, Energy≥50, Structure≥45, MP≥45`, **no Elder gate**. Uses
+  the ungated `sc_momentum_raw` specifically to surface gate-suppressed names.
+  Excludes anything already on the longlist. Each match carries a `gaps` list —
+  plain-English strings showing which longlist gate(s) it fails and by how much.
+- **Precision Edge screen** (`_precision_edge_screen`): `SC_MOM≥50` cross-up floor
+  plus **sub-component** filters (not aggregate scores): `roc_zscore≥1.94` (Energy,
+  momentum 2σ above normal), `k39_value≥50.0` (composite gate confirmed),
+  `pr_rsi_score≥20.0` (Pipeline Rank, RSI outperforms peer universe),
+  `rel_mom_score≥18.0` (MP, trend strength confirmed). All must pass (AND). Backtest
+  record embedded in the recipe file: 37.2% win rate, 2031 trades, 7.1/week,
+  expectancy 0.64R, Sep 2020–May 2026.
+
+---
+
+## 15. Known documentation-drift notes
+
+- **PTRS**: `CLAUDE.md`'s top-level summary says `PTRS = SC_MOM + SH`; the live code
+  (§10 above) has `sh` hard-coded to 0 at every call site per AIC Charter Amendment
+  v2.8 — PTRS is SC_MOMENTUM verbatim in production today. `CLAUDE.md` needs updating
+  to match the code, not the reverse (a stray `+SH` fork had briefly survived
+  live in `daily_orchestrator.py` until it was found and killed 2026-07-15).
+- **`grade_sector_etf` empty-data edge case**: returns `grade="WATCH"` but the
+  paired `trend_state` evaluates to `"Declining — Avoid"` — the fallback's grade and
+  directive label are internally inconsistent (cosmetic, low-impact).
+- `capacity.py` and `baselines.py` (`src/analyzer/`) are offline backtest/calibration
+  tooling only — not part of the live `aqe_daily_export.json` path.
+
+---
+
+*Generated 2026-07-15. Every formula above is cited to its source file at the time of
+writing — re-verify against the live code if a value looks off, since engines do get
+recalibrated (see `MATHLAB_PTRS_CHANGELOG.md` for the PTRS revision history as an
+example of how that's tracked).*
