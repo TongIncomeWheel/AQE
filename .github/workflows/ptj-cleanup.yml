@@ -5,12 +5,15 @@ name: AQE PTJ folder cleanup
 # per write. This tidies it daily: keeps the newest file, moves the rest into
 # a Legacy/ subfolder — so nothing downstream can grab a stale file by mistake.
 #
-# Runs shortly before the daily pipeline (08:30 SGT Tue–Sat) picks up the PTJ,
-# on the same Tue–Sat cadence (Cowork writes on days the PM has positions to
-# log, which tracks US market days). 08:15 SGT = 00:15 UTC.
+# Runs at 06:30 SGT — an hour after the planned PTJ auto-write (05:30 SGT)
+# and well ahead of the daily pipeline (08:45 SGT), so the folder is tidy
+# by the time the pipeline reads it regardless of which path wrote the PTJ.
+# SGT = UTC+8, so 06:30 SGT falls on 22:30 UTC the *previous* calendar day —
+# hence the Mon–Fri UTC window below to land on Tue–Sat SGT (matching the
+# pipeline's run days).
 on:
   schedule:
-    - cron: "15 0 * * 2-6"   # 00:15 UTC = 08:15 SGT, Tue–Sat
+    - cron: "30 22 * * 1-5"   # 22:30 UTC Mon–Fri = 06:30 SGT Tue–Sat
   workflow_dispatch: {}
 
 concurrency:
