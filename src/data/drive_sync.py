@@ -35,6 +35,7 @@ from src.engines.srm import (
 )
 from src.engines.bracket_engine import compute_bracket, regime_stop_ceiling, stamp_bracket_volume
 from src.engines import scoring
+from src.engines.lens_consensus import compute_lens_consensus, build_lens_ranking, LENS_GLOSSARY
 from src.scanner.betas import load_betas
 from src.scanner.levels import load_elder_history, load_trade_levels
 
@@ -276,6 +277,7 @@ _FIELD_GLOSSARY = {
     "thematic_rrg_direction": "The ticker's PRIMARY thematic basket's RRG direction "
                           "(ENTERING / DEEPENING / EXITING / STABLE).",
 }
+_FIELD_GLOSSARY.update(LENS_GLOSSARY)
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
 # Every tradeable level carries an explicit role/unit/side so a stop can never be
@@ -1723,7 +1725,9 @@ def build_export(shortlist: dict | None = None) -> dict:
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("ptrs") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
+    compute_lens_consensus(_daily_list)                      # Part 2 gains 3 keys
     export["daily_list"] = _daily_list
+    export["lens_ranking"] = build_lens_ranking(_daily_list)  # Part 1
 
     export["summary"] = {
         "daily_count": len(_daily_list),
