@@ -1,0 +1,40 @@
+name: AQE PTJ folder cleanup
+
+# Cowork writes the daily trade journal to the PTJ Drive folder but can't
+# overwrite/delete its own previous files, so the folder accumulates one file
+# per write. This tidies it daily: keeps the newest file, moves the rest into
+# a Legacy/ subfolder — so nothing downstream can grab a stale file by mistake.
+#
+# Runs at 06:30 SGT — an hour after the planned PTJ auto-write (05:30 SGT)
+# and well ahead of the daily pipeline (08:45 SGT), so the folder is tidy
+# by the time the pipeline reads it regardless of which path wrote the PTJ.
+# SGT = UTC+8, so 06:30 SGT falls on 22:30 UTC the *previous* calendar day —
+# hence the Mon–Fri UTC window below to land on Tue–Sat SGT (matching the
+# pipeline's run days).
+on:
+  schedule:
+    - cron: "30 22 * * 1-5"   # 22:30 UTC Mon–Fri = 06:30 SGT Tue–Sat
+  workflow_dispatch: {}
+
+concurrency:
+  group: aqe-ptj-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Archive extra PTJ files
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+        run: python -m scripts.cleanup_ptj_folder
