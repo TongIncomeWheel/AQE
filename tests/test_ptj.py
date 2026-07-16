@@ -141,6 +141,10 @@ def test_fetch_latest_ptj_skips_archive_file_with_newer_modtime(monkeypatch):
 
 def test_ptj_name_regex_matches_real_journals_and_rejects_artifacts():
     real_names = [
+        # New convention (PM ruling 2026-07-16): dated CoB snapshots, accumulate.
+        "aegis_trade_journal_2026-07-16_PTJ.json",
+        "aegis_trade_journal_2026-07-17_PTJ.json",
+        # Pre-2026-07-16 versioned shape — still accepted for continuity.
         "aegis_trade_journal_2026-07-14_v2.9.1_CORRECTED.json",
         "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY",
         "aegis_trade_journal_2026-06-08_v2.8_eod_sync",
@@ -154,3 +158,62 @@ def test_ptj_name_regex_matches_real_journals_and_rejects_artifacts():
         assert ptj._PTJ_NAME_RE.match(name), name
     for name in non_journal_names:
         assert not ptj._PTJ_NAME_RE.match(name), name
+
+
+def test_fetch_latest_ptj_uses_new_ptj_naming_convention(monkeypatch):
+    """The PM's new standing convention: aegis_trade_journal_YYYY-MM-DD_PTJ.json,
+    dated CoB snapshots that accumulate (never overwritten), vs the ARCHIVE
+    master which overwrites daily and must always be ignored."""
+    list_response = {"files": [
+        {"id": "archive1", "name": "aegis_trade_journal_ARCHIVE_master.json",
+         "modifiedTime": "2026-07-17T23:59:59.000Z", "mimeType": "application/json"},
+        {"id": "ptj_16", "name": "aegis_trade_journal_2026-07-16_PTJ.json",
+         "modifiedTime": "2026-07-16T09:00:00.000Z", "mimeType": "application/json"},
+        {"id": "ptj_17", "name": "aegis_trade_journal_2026-07-17_PTJ.json",
+         "modifiedTime": "2026-07-17T09:00:00.000Z", "mimeType": "application/json"},
+    ]}
+    content_by_id = {
+        "archive1": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111}]}),
+        "ptj_16": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 200.0}]}),
+        "ptj_17": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 205.0}]}),
+    }
+    from src.data import gdrive_uploader
+    monkeypatch.setattr(gdrive_uploader, "is_configured", lambda: True)
+    monkeypatch.setattr(gdrive_uploader.DriveConfig, "from_env", classmethod(lambda cls: object()))
+    monkeypatch.setattr(
+        gdrive_uploader, "_build_service",
+        lambda cfg: _FakeService(list_response, content_by_id),
+    )
+
+    result = ptj.fetch_latest_ptj()
+    assert result["_ptj_file"] == "aegis_trade_journal_2026-07-17_PTJ.json"
+    assert result["open_positions"][0]["entry"] == 205.0
+
+
+def test_fetch_latest_ptj_sorts_by_filename_date_not_raw_modtime(monkeypatch):
+    """Extra safety guard (2026-07-16 ruling): the date IN THE FILENAME is the
+    primary sort key, not Drive's modifiedTime alone — so a metadata quirk
+    (e.g. an older-dated file re-saved/touched later, bumping its
+    modifiedTime) can't make a stale journal look newest."""
+    list_response = {"files": [
+        # Older calendar date, but a LATER modifiedTime than the real latest.
+        {"id": "stale", "name": "aegis_trade_journal_2026-07-15_PTJ.json",
+         "modifiedTime": "2026-07-17T23:00:00.000Z", "mimeType": "application/json"},
+        {"id": "actual_latest", "name": "aegis_trade_journal_2026-07-16_PTJ.json",
+         "modifiedTime": "2026-07-16T09:00:00.000Z", "mimeType": "application/json"},
+    ]}
+    content_by_id = {
+        "stale": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 199.0}]}),
+        "actual_latest": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 201.0}]}),
+    }
+    from src.data import gdrive_uploader
+    monkeypatch.setattr(gdrive_uploader, "is_configured", lambda: True)
+    monkeypatch.setattr(gdrive_uploader.DriveConfig, "from_env", classmethod(lambda cls: object()))
+    monkeypatch.setattr(
+        gdrive_uploader, "_build_service",
+        lambda cfg: _FakeService(list_response, content_by_id),
+    )
+
+    result = ptj.fetch_latest_ptj()
+    assert result["_ptj_file"] == "aegis_trade_journal_2026-07-16_PTJ.json"
+    assert result["open_positions"][0]["entry"] == 201.0
