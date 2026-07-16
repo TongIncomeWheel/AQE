@@ -306,6 +306,13 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
             print(f"  Drive export: local only ({drive_result['reason']})")
         else:
             print(f"  Drive export: skipped ({drive_result.get('reason', 'unknown')})")
+        _dq = drive_result.get("data_quality") or {}
+        if _dq.get("flagged_count"):
+            _held_flags = [f for f in _dq["flagged"] if f["tier"] == "held_positions"]
+            _tag = f" — {len(_held_flags)} on HELD positions" if _held_flags else ""
+            print(f"  [WARN] data_quality: {_dq['flagged_count']} record(s) have a "
+                  f"null core field despite being scored{_tag}: "
+                  f"{[f['ticker'] for f in _dq['flagged']]}")
     except Exception as exc:
         print(f"  [WARN] Drive export failed: {exc}")
 

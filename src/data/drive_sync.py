@@ -1811,7 +1811,45 @@ def build_export(shortlist: dict | None = None) -> dict:
                 f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
             )
 
+    # ---- Data-quality guard — VALUE-level, not just key-level (2026-07-15 ruling).
+    # _REQUIRED_FIELDS above only checks a key exists; a NaN engine result (e.g.
+    # insufficient bar-history warmup) silently becomes JSON null via _num() and
+    # sails straight through that check. NEVER blocks the export — a single
+    # thin-history ticker must not take down the whole nightly committee feed —
+    # but it is surfaced loudly (top-level `data_quality` block + a pipeline log
+    # line + a Scanner UI warning) so a blank is never mistaken for "nothing to
+    # see here".
+    export["data_quality"] = _compute_data_quality(
+        export.get("daily_list") or [], export.get("held_positions") or [])
+
     return export
+
+
+# Fields that, for a ticker which made it into daily_list/held_positions at all
+# (i.e. went through full scoring), must never be null — a null here means a
+# real data gap (thin history, an FMP gap, a degenerate calc), not a
+# legitimate "not detected" state (unlike div_state=NONE,
+# structure_shift=null-no-swing, etc., which ARE valid states and are
+# intentionally excluded from this list).
+_HARD_REQUIRED_NONNULL = [
+    "sc_momentum", "flow", "energy", "structure", "mp", "elder",
+    "entry", "atr_14d", "bracket",
+]
+
+
+def _compute_data_quality(daily_list: list[dict], held_positions: list[dict]) -> dict:
+    """Flag records with a null core field despite having been fully scored.
+
+    Value-level companion to the key-level `_REQUIRED_FIELDS` guard above.
+    Never raises/blocks — returns a flag list for the caller to surface.
+    """
+    flagged: list[dict] = []
+    for tier, rows in (("daily_list", daily_list), ("held_positions", held_positions)):
+        for rec in rows:
+            nulls = [f for f in _HARD_REQUIRED_NONNULL if rec.get(f) is None]
+            if nulls:
+                flagged.append({"ticker": rec.get("ticker"), "tier": tier, "null_fields": nulls})
+    return {"flagged_count": len(flagged), "flagged": flagged}
 
 
 def _upload_file(filename: str, content: str) -> dict:
@@ -1970,6 +2008,7 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
         "exported_at": export.get("exported_at", ""),
         "written": written,
         "drive_api_results": drive_results,
+        "data_quality": export.get("data_quality", {"flagged_count": 0, "flagged": []}),
         **({"reason": reason} if reason else {}),
     }
 

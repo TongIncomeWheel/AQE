@@ -1300,6 +1300,30 @@ with st.expander("🗂️ GICS sector gaps (RAG maintenance)", expanded=False):
 # ---------------------------------------------------------------------------
 _ex = load_export() or {}
 
+_dq = _ex.get("data_quality") or {}
+if _dq.get("flagged_count"):
+    _dq_held = [f for f in _dq["flagged"] if f.get("tier") == "held_positions"]
+    _dq_daily = [f for f in _dq["flagged"] if f.get("tier") == "daily_list"]
+    with st.expander(
+        f"⚠️ Data quality: {_dq['flagged_count']} record(s) have a null core field "
+        f"despite being scored" + (f" — {len(_dq_held)} on HELD positions" if _dq_held else ""),
+        expanded=bool(_dq_held),
+    ):
+        st.caption(
+            "These tickers made it into the feed via full scoring, so a null here "
+            "is a real data gap (thin price history, an FMP gap, a degenerate "
+            "calc) — not a 'nothing detected' state. Don't read a blank cell "
+            "below as confirmed zero/absent."
+        )
+        if _dq_held:
+            st.markdown("**Held positions:**")
+            for _f in _dq_held:
+                st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
+        if _dq_daily:
+            st.markdown("**Daily list:**")
+            for _f in _dq_daily:
+                st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
+
 _EXPORT_COL_ORDER = [
     "rank", "ticker", "source", "pe",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
