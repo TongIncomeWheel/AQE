@@ -99,15 +99,19 @@ _FIELD_GLOSSARY = {
                "is a stronger level; the stop's own read is stop_date + stop_vol_ratio + "
                "stop_vol_validated (present when the stop is swing-based). Data only — the "
                "3 gates are unchanged.",
-    "structure_shift": "BOS/CHoCH read vs the CONFIRMED swing anchors (data only, never a "
-                       "gate): BULLISH_BOS = COB close broke ABOVE the last confirmed swing "
-                       "high (break of structure — trend continuation/ignition); "
+    "structure_shift": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a "
+                       "gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED "
+                       "pivot high (break of structure — trend continuation/ignition); "
                        "BEARISH_CHOCH = close broke BELOW the up-swing's anchor low "
                        "(character change — the up-structure failed); RANGE = inside the "
-                       "swing. Null when no swing is detected.",
-    "structure_shift_ref": "The swing level the shift is measured against (USD): the broken "
-                           "swing high for BULLISH_BOS, the broken anchor low for "
-                           "BEARISH_CHOCH; null for RANGE.",
+                       "swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling "
+                       "FIX_CONFIRMED_PIVOT: the bullish test previously compared against the "
+                       "current swing's window-max high, which always includes today's own "
+                       "bar — making BULLISH_BOS mathematically unreachable. Now compares "
+                       "against the nearest confirmed pivot high instead.)",
+    "structure_shift_ref": "The level the shift is measured against (USD): the broken "
+                           "confirmed pivot high for BULLISH_BOS, the broken swing anchor "
+                           "low for BEARISH_CHOCH; null for RANGE.",
     "mp_accel": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum "
                 "z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is "
                 "building; negative = rolling over. Flags inflection BEFORE the level/"
@@ -797,16 +801,29 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             "valid", "invalid_reason")}
 
         # ── Structure shift (BOS/CHoCH) — TV-analysis Phase 5 ─────────────
-        # COB close vs the CONFIRMED swing anchors: above the last confirmed
-        # swing high = BULLISH_BOS (break of structure); below the up-swing's
-        # anchor low = BEARISH_CHOCH (character change); else RANGE. Null when
-        # no swing is detected. Data only — never a gate.
+        # COB close vs the CONFIRMED anchors: above the nearest CONFIRMED pivot
+        # high = BULLISH_BOS (break of structure); below the up-swing's anchor
+        # low = BEARISH_CHOCH (character change); else RANGE. Null when no
+        # swing is detected. Data only — never a gate.
+        #
+        # FIX_CONFIRMED_PIVOT (AIC ruling 9-0, 2026-07-16): the bullish test
+        # used to compare against `_fib.swing_high`, which is find_swing()'s
+        # window MAX HIGH — a window that always includes today's own bar. So
+        # close (<= today's own high <= that window max) could mathematically
+        # never exceed it; BULLISH_BOS was permanently unreachable (verified:
+        # 0 hits in 227,717 historical rows, 0 in every live export to date).
+        # Now compares against the NEAREST CONFIRMED pivot high above price
+        # (`d["resistance"][0]`, from overhead_resistance() — already excludes
+        # the live/unconfirmed peak, needs k bars to its right to confirm).
+        # find_swing()/BEARISH_CHOCH/RANGE are untouched, exactly as scoped.
         _entry_px = d.get("entry")
-        _ssh, _ssl = _fib.get("swing_high"), _fib.get("swing_low")
-        if _is_num(_entry_px) and _is_num(_ssh) and _is_num(_ssl):
-            if _entry_px > _ssh:
+        _ssl = _fib.get("swing_low")
+        _resistance = d.get("resistance") or []
+        _confirmed_high = _resistance[0]["price"] if _resistance else None
+        if _is_num(_entry_px) and _is_num(_ssl):
+            if _is_num(_confirmed_high) and _entry_px > _confirmed_high:
                 fields["structure_shift"] = "BULLISH_BOS"
-                fields["structure_shift_ref"] = _ssh
+                fields["structure_shift_ref"] = _confirmed_high
             elif _entry_px < _ssl:
                 fields["structure_shift"] = "BEARISH_CHOCH"
                 fields["structure_shift_ref"] = _ssl
