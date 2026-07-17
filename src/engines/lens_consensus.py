@@ -81,17 +81,17 @@ def compute_lens_consensus(records: list[dict]) -> list[dict]:
         # 3 INSTI MONEY — accumulation position today
         lens["insti_money"] = t_inst[i]
 
-        # 4 STRUCTURE — AQE's own labels only.
-        #   Wyckoff's standing demand: structure_shift is read JOINTLY with div_state.
-        #   A bullish break with a bearish divergence against it is NOT a clean strong.
-        #   NOTE: this is the ONE place a voice's opinion is encoded. See §6.
-        ss, div = rec.get("structure_shift"), rec.get("div_state")
+        # 4 STRUCTURE — AQE's own structure_shift label, ALONE. §6 PM ruling
+        # (2026-07-17, Option B): "You do not decide. You present." — no
+        # joint read with div_state. structure_shift is a pure label
+        # pass-through, same treatment as every other lens field.
+        ss = rec.get("structure_shift")
         if ss == "BULLISH_BOS":
-            lens["structure"] = OK if div == "BEARISH" else STRONG
+            lens["structure"] = STRONG
         elif ss == "BEARISH_CHOCH":
             lens["structure"] = WARN
-        elif ss:
-            lens["structure"] = WARN if div == "BEARISH" else OK
+        elif ss == "RANGE":
+            lens["structure"] = OK
         else:
             lens["structure"] = NONE
 

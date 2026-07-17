@@ -104,22 +104,25 @@ def test_premove_setup_forces_strong_coil():
         assert r["lens"]["coil"] == STRONG
 
 
-def test_structure_bullish_bos_with_bearish_divergence_is_ok_not_strong():
-    rec = _rec("X", structure_shift="BULLISH_BOS", div_state="BEARISH")
-    compute_lens_consensus([rec])
-    assert rec["lens"]["structure"] == OK
-
-
-def test_structure_bullish_bos_clean_is_strong():
-    rec = _rec("X", structure_shift="BULLISH_BOS", div_state="BULLISH")
-    compute_lens_consensus([rec])
-    assert rec["lens"]["structure"] == STRONG
+def test_structure_bullish_bos_is_strong_regardless_of_divergence():
+    # PM ruling 2026-07-17 (Option B): "You do not decide. You present." —
+    # structure_shift is read ALONE, div_state never enters the structure lens.
+    for div in ("BEARISH", "BULLISH", None):
+        rec = _rec("X", structure_shift="BULLISH_BOS", div_state=div)
+        compute_lens_consensus([rec])
+        assert rec["lens"]["structure"] == STRONG, div
 
 
 def test_structure_bearish_choch_is_always_warn():
     rec = _rec("X", structure_shift="BEARISH_CHOCH", div_state="BULLISH")
     compute_lens_consensus([rec])
     assert rec["lens"]["structure"] == WARN
+
+
+def test_structure_range_is_ok():
+    rec = _rec("X", structure_shift="RANGE", div_state="BEARISH")
+    compute_lens_consensus([rec])
+    assert rec["lens"]["structure"] == OK
 
 
 def test_structure_no_shift_is_dashes():
