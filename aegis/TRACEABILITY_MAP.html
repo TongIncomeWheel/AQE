@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis — System Traceability Map · Board Review 18 Jul 2026</title>
+<style>
+  .viz-root{
+    color-scheme:light;
+    --surface-1:#fcfcfb; --page:#f9f9f7; --ink-1:#0b0b0b; --ink-2:#52514e; --ink-3:#898781;
+    --grid:#e1e0d9; --ring:rgba(11,11,11,.10);
+    --l1:#2a78d6; --l2:#008300; --l3:#e87ba4; --l4:#eda100; --l5:#1baf7a; --l6:#eb6834;
+    --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+    --edge:#c3c2b7; --edge-hi:#2a78d6;
+  }
+  :root[data-theme="dark"] .viz-root, :root:not([data-theme="light"]) .viz-root{
+    color-scheme:dark;
+    --surface-1:#1a1a19; --page:#0d0d0d; --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-3:#898781;
+    --grid:#2c2c2a; --ring:rgba(255,255,255,.10);
+    --l1:#3987e5; --l2:#008300; --l3:#d55181; --l4:#c98500; --l5:#199e70; --l6:#d95926;
+    --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+    --edge:#383835; --edge-hi:#3987e5;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+  .viz-root{background:var(--page);color:var(--ink-1);min-height:100vh;padding:18px 20px 40px}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;margin-bottom:6px}
+  h1{font-size:20px;font-weight:700}
+  .sub{color:var(--ink-2);font-size:13px}
+  .toggle{margin-left:auto;border:1px solid var(--ring);background:var(--surface-1);color:var(--ink-2);
+    border-radius:8px;padding:5px 12px;cursor:pointer;font-size:12px}
+  /* KPI band */
+  .kpis{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+  .tile{background:var(--surface-1);border:1px solid var(--ring);border-radius:10px;padding:10px 16px;min-width:118px}
+  .tile b{display:block;font-size:24px;font-weight:700}
+  .tile span{color:var(--ink-2);font-size:12px}
+  /* controls */
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 14px}
+  .chip{border:1px solid var(--ring);background:var(--surface-1);color:var(--ink-2);border-radius:16px;
+    padding:5px 12px;cursor:pointer;font-size:12px;display:flex;gap:6px;align-items:center}
+  .chip.on{border-color:var(--ink-2);color:var(--ink-1);font-weight:600}
+  .dot{width:9px;height:9px;border-radius:50%}
+  input[type=search]{background:var(--surface-1);border:1px solid var(--ring);color:var(--ink-1);
+    border-radius:8px;padding:6px 12px;font-size:13px;width:210px}
+  .hint{color:var(--ink-3);font-size:12px;margin-left:auto}
+  /* map */
+  .stage{position:relative;background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;
+    overflow-x:auto;overflow-y:hidden}
+  .cols{display:flex;gap:26px;padding:20px 24px 26px;min-width:1240px;position:relative;z-index:2}
+  svg.wires{position:absolute;inset:0;z-index:1;pointer-events:none}
+  .col{flex:1 1 0;min-width:180px}
+  .col h2{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+    padding:4px 8px;border-left:3px solid var(--lc);margin-bottom:10px}
+  .node{position:relative;background:var(--page);border:1px solid var(--ring);border-left:3px solid var(--lc);
+    border-radius:8px;padding:7px 9px 7px 10px;margin-bottom:8px;cursor:pointer;transition:opacity .15s,box-shadow .15s}
+  .node .nm{font-size:12.5px;font-weight:600;line-height:1.25}
+  .node .st{font-size:10.5px;color:var(--ink-2);display:flex;align-items:center;gap:5px;margin-top:2px}
+  .node .st .dot{width:8px;height:8px}
+  .node.sel{box-shadow:0 0 0 2px var(--edge-hi)}
+  .node.dim{opacity:.22}
+  .node.hidden{display:none}
+  /* detail panel */
+  .panel{position:fixed;top:0;right:-420px;width:400px;max-width:92vw;height:100vh;background:var(--surface-1);
+    border-left:1px solid var(--ring);padding:22px;overflow-y:auto;transition:right .22s;z-index:50}
+  .panel.open{right:0;box-shadow:-12px 0 40px rgba(0,0,0,.35)}
+  .panel h3{font-size:17px;margin-bottom:2px}
+  .panel .layer-tag{font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+  .badge{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:600;border-radius:14px;
+    padding:3px 10px;margin:10px 0;border:1px solid var(--ring)}
+  .panel dl{margin-top:8px}
+  .panel dt{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin-top:12px}
+  .panel dd{font-size:13px;color:var(--ink-1);margin-top:3px}
+  .panel dd.mono{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--ink-2)}
+  .linklist span{display:inline-block;background:var(--page);border:1px solid var(--ring);border-radius:6px;
+    padding:2px 8px;margin:2px 3px 0 0;font-size:12px;color:var(--ink-2);cursor:pointer}
+  .close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--ink-2);font-size:20px;cursor:pointer}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;color:var(--ink-2);font-size:12px}
+  .legend div{display:flex;gap:6px;align-items:center}
+  footer{margin-top:14px;color:var(--ink-3);font-size:11.5px}
+  @media (max-width:700px){ .panel{width:100vw} .kpis .tile{min-width:100px;padding:8px 12px} .tile b{font-size:19px} }
+</style>
+</head>
+<body>
+<div class="viz-root" id="root">
+  <header>
+    <h1>Aegis — System Traceability Map</h1>
+    <div class="sub">Every module, who feeds whom, and its verification state · audit of 18 Jul 2026 · kernel v5.3</div>
+    <button class="toggle" id="themeBtn">Light mode</button>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search a module…">
+    <button class="chip on" data-f="all">All</button>
+    <button class="chip" data-f="v"><span class="dot" style="background:var(--good)"></span>Verified ✓</button>
+    <button class="chip" data-f="b"><span class="dot" style="background:var(--warn)"></span>Built ◐</button>
+    <button class="chip" data-f="o"><span class="dot" style="background:var(--crit)"></span>Open ○</button>
+    <span class="hint">Click any module → its full upstream & downstream chain lights up + details open</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg class="wires" id="wires"></svg>
+    <div class="cols" id="cols"></div>
+  </div>
+
+  <div class="legend">
+    <div><span class="dot" style="background:var(--good)"></span>✓ Verified — tested by execution in this build cycle</div>
+    <div><span class="dot" style="background:var(--warn)"></span>◐ Built — complete; proven at the practice week</div>
+    <div><span class="dot" style="background:var(--crit)"></span>○ Open — tracked in the backlog, not yet built/run</div>
+  </div>
+<aside class="panel" id="panel">
+  <button class="close" id="closeBtn">✕</button>
+  <div class="layer-tag" id="pLayer"></div>
+  <h3 id="pName"></h3>
+  <div class="badge" id="pBadge"></div>
+  <dl>
+    <dt>What it is</dt><dd id="pDesc"></dd>
+    <dt>Where it lives</dt><dd class="mono" id="pLoc"></dd>
+    <dt>Verification / evidence</dt><dd id="pVer"></dd>
+    <dt>Shaped by rulings</dt><dd id="pDec"></dd>
+    <dt>Consumes (upstream)</dt><dd class="linklist" id="pUp"></dd>
+    <dt>Feeds (downstream)</dt><dd class="linklist" id="pDown"></dd>
+  </dl>
+</aside>
+  <footer>Reviews on record: internal QA + 5-specialist panel (93 findings, all closed or backlogged) + regression retest (10/11 fixes verified by execution) + Kimi &amp; Claude platform experts. Real-order capability remains OFF until the practice week passes its checklist.</footer>
+</div>
+
+
+
+<script>
+const LAYERS=[
+ {id:"gov",  name:"Governance & Config", c:"--l1"},
+ {id:"proc", name:"Processes",           c:"--l2"},
+ {id:"agent",name:"Agents",              c:"--l3"},
+ {id:"tool", name:"Tools & Calculators", c:"--l4"},
+ {id:"data", name:"Data & Contracts",    c:"--l5"},
+ {id:"harn", name:"Harness & Market",    c:"--l6"},
+];
+// status: v=Verified ✓, b=Built ◐, o=Open ○
+const N=[
+// GOVERNANCE
+{id:"pm",l:"gov",s:"v",n:"PM (Ash)",d:"The only decision-maker. Approves the daily plan by 9pm, lends autonomy via the /arm switch, executes or pre-stages every order.",loc:"You",v:"Role boundary enforced in law + code (order tools denied to all agents but one).",dec:"All D-rulings"},
+{id:"law",l:"gov",s:"v",n:"Constitution (2 pages)",d:"The ten standing laws: one order-capable agent, one fact one place, read-never-invent, code computes / models judge, independence before consensus, learning without debt.",loc:"aegis/charter/constitution.md",v:"Read-through review; every law traced to an enforcing mechanism.",dec:"D-7 D-8 D-9"},
+{id:"rules",l:"gov",s:"v",n:"Rulebook (law)",d:"Doctrines that need committee + PM to change: event filter, anti-anchoring, bracket doctrine, data-source authority, journal rules.",loc:"aegis/charter/rulebook.yaml",v:"Parses clean; zero dangling citations across both packages (final sweep).",dec:"D-4 D-5 D-11"},
+{id:"params",l:"gov",s:"v",n:"Parameters (yours to tune)",d:"Every number, once: risk sizes, bands, ceilings, caps, screen criteria, retention. Changed by one plain-English line; every tweak logged + committed.",loc:"aegis/charter/parameters.yaml + tools/set_param.py",v:"Change tool executed: refuses wrong types, wrong keys; logs and commits.",dec:"D-3 D-6 D-7a"},
+{id:"decs",l:"gov",s:"v",n:"Decisions log (D-1…D-11)",d:"Every ruling with its date and what it retired — the anti-spaghetti memory.",loc:"aegis/charter/decisions_log.md",v:"11 rulings recorded; ships inside both packages.",dec:"—"},
+{id:"cmds",l:"gov",s:"v",n:"Command set",d:"One word, one action: /pm /plan /approve /arm /disarm /pause /flatten /why /killed and more.",loc:"aegis/charter/commands.md",v:"Registry complete after UX review added the safety commands.",dec:"D-7a"},
+// PROCESSES
+{id:"weekly",l:"proc",s:"b",n:"Weekly process (Sun)",d:"Reads your CS Weekly PDF, sets the week's posture, produces performance + system reports, universe churn, rule-review sweep.",loc:"aegis/skills/weekly",v:"Sequence reviewed; runs live from the practice week.",dec:"—"},
+{id:"pre",l:"proc",s:"b",n:"Premarket process (by 4pm)",d:"The 11-step morning pass: freshness → universe → feed checks → held book + hedge → voice swarm → tally → news filter → weather → deliberation → plan → your approval.",loc:"aegis/skills/premarket",v:"Walked step-by-step by two review panels; first live run at practice week.",dec:"D-2 D-11"},
+{id:"mkt",l:"proc",s:"b",n:"Market-hours watch (while you sleep)",d:"Code watches prices; an agent wakes only when an approved trigger fires, re-checks, routes any order need to the gatekeeper, logs one line.",loc:"aegis/skills/market_hours + engine alert module",v:"Uses the engine's existing alert machinery; loader glue is the open item.",dec:"D-1 D-7"},
+{id:"post",l:"proc",s:"b",n:"Post-market accounting (4–10am)",d:"Journal from broker truth, capital roll, stop audit, metrics, completeness audit, daily archive to GitHub, cleanup.",loc:"aegis/skills/post_market",v:"Journal write is validate-or-halt; ordering fixed after review (no ledger update on a failed journal).",dec:"D-9"},
+{id:"rev",l:"proc",s:"b",n:"Design & Review (daily)",d:"Did we see the winners? Every miss classified; findings become backlog items that MUST retire something.",loc:"aegis/skills/design_review",v:"Miss taxonomy defined; feeds the development pipeline.",dec:"D-8"},
+{id:"dev",l:"proc",s:"v",n:"Development pipeline",d:"The managed-change bridge: capture → your one-tap approval → build on a branch → shadow test → ship → re-measure 15 sessions later. No edits outside it.",loc:"aegis/skills/development + backlog file",v:"17 backlog items flowing through it now, all schema-checked; 1 shipped (hedge wiring).",dec:"D-8"},
+// AGENTS
+{id:"swarm",l:"agent",s:"b",n:"Voice swarm (10 nominators)",d:"Nine investor frameworks + the mechanical Detect seat. Each spawns as a fresh isolated worker with ONE compiled file: identity + canon + data menu + shared process + own memory + output form.",loc:"packages: agents/voice-*  (compiled from kernel cards)",v:"All 10 files verified complete & consistent in both packages; correct format per both platform experts; first live spawn at practice week.",dec:"D-5"},
+{id:"delib",l:"agent",s:"b",n:"Deliberation committee",d:"After the tally: nominating voices argue, a bear case is mandatory, near-unanimity triggers a challenge, dissent is recorded.",loc:"premarket steps 8–9",v:"Discipline rules carried from your charter, unchanged.",dec:"D-2 D-4"},
+{id:"gate",l:"agent",s:"b",n:"Staging Gatekeeper",d:"THE only order-capable agent. Seven checks from files (consensus, news-clean, bracket, size, portfolio gates, your approval, order mechanics) → preview, or logged refusal. Owns post-fill checks.",loc:"aegis/skills/staging-gatekeeper",v:"Durable order counter executed (allow/allow/refuse); full mechanical checker is the gating open item before any armed session.",dec:"D-1 D-7"},
+{id:"assur",l:"agent",s:"b",n:"Assurance trio",d:"Auditor (did everything run, was anything invented) · performance scorer (misses classified) · learning agent (proposals with mandatory retirement).",loc:"aegis/skills/auditor · performance_scorer · learning_agent",v:"Checklists reviewed; run live from practice week.",dec:"D-8"},
+// TOOLS
+{id:"screen",l:"tool",s:"b",n:"Universe screen",d:"Builds the day's tradable list: US primary shares, above a key average, big enough, trading actively.",loc:"aegis/tools/universe_screen.py",v:"Was dead-on-arrival (wrong settings file) — caught by QA, fixed, loads clean; first live run needs your data key.",dec:"D-3"},
+{id:"trip",l:"tool",s:"v",n:"Feed tripwires",d:"Blocks the morning if the data feed looks wrong — including the silent-dead-signal failure your research team once caught by hand. Known issues carry dated waivers.",loc:"aegis/tools/tripwires.py + waivers.json",v:"Passed the real 18-Jul feed; proven to BLOCK when the waiver is removed.",dec:"—"},
+{id:"ledger",l:"tool",s:"v",n:"Nomination ledger",d:"The outcome memory: every voice's picks tracked against price for 15 trading days; per-voice hit rates.",loc:"aegis/tools/nomination_ledger.py",v:"Counting bug fixed (calendar vs trading days) — all columns now fill; proven on a fabricated 3-week series.",dec:"—"},
+{id:"size",l:"tool",s:"v",n:"Sizing calculator",d:"Two-step position sizing (risk-based, then volatility-capped) + post-fill risk check with the $50 tolerance.",loc:"aegis/tools/calculators/sizing.py",v:"Executed with real numbers; rejects bad inputs (zero volatility, unit mistakes).",dec:"—"},
+{id:"ap",l:"tool",s:"v",n:"Autopilot switch",d:"/arm lends autonomy until 5:30am, then it dies on its own. Order cap stored on disk. Any read problem = OFF.",loc:"aegis/tools/autopilot.py",v:"Full cycle executed: arm → status → capped counting → refuse → disarm; corrupt state fails safe.",dec:"D-7 D-7a"},
+{id:"hedge",l:"tool",s:"b",n:"Hedge calculator",d:"Prices three protective structures against portfolio gap risk, scored by cover-per-dollar.",loc:"aegis/tools/calculators/hedge_engine.py (+ options data script)",v:"Single pricing library (three old copies retired); runs in premarket held-book step.",dec:"BL-007 shipped"},
+{id:"jan",l:"tool",s:"v",n:"Janitor + legacy migration",d:"Keeps data growth flat (30-day roll-ups + monthly archives) and cleans your ~40 old journal files once, with a manifest.",loc:"aegis/tools/janitor.py · migrate_legacy.py",v:"Both dry-run tested; migration awaits one run on your PC.",dec:"D-9"},
+{id:"measure",l:"tool",s:"b",n:"Measure-before-vote",d:"Any proposed rule gets measured on 20 months of history BEFORE the committee votes — with sample-size and repeat-testing warnings.",loc:"aegis/tools/measure_proposal.py",v:"Guardrails added after statistics review.",dec:"—"},
+{id:"glue",l:"tool",s:"o",n:"Glue scripts (3)",d:"Alert loader (plan → watch engine) · daily price feed for the ledger · 10:00 morning-summary assembler.",loc:"backlog BL-003/004/005",v:"Open — small, built at deploy.",dec:"—"},
+{id:"gatecheck",l:"tool",s:"o",n:"Mechanical gate-checker",d:"Turns the gatekeeper's 7 checks from instructions into executable code. GATES the first armed session.",loc:"backlog BL-009",v:"Open — deliberately before any real order.",dec:"D-7"},
+// DATA
+{id:"aqe",l:"data",s:"v",n:"AQE engine + daily feed",d:"Your quant engine, untouched: scores, brackets, signals for ~180 names nightly. The single analytical source of truth.",loc:"repo root (src/, run_daily) → daily export",v:"Live 18-Jul feed validated against its contract, zero errors.",dec:"—"},
+{id:"contracts",l:"data",s:"v",n:"Data contracts (7)",d:"Formal shape-checks for the feed, nominations, plan, journal, ledger, backlog — files that don't validate don't count as done.",loc:"aegis/contracts/*.json",v:"All parse; feed contract regenerated from a full real day after QA found it too strict.",dec:"—"},
+{id:"shelves",l:"data",s:"b",n:"Four data shelves",d:"Start-of-day / intraday / end-of-day / persistent — dated, immutable, archived by the janitor, mirrored to GitHub daily.",loc:"data/ (skeleton ships in both packages)",v:"Layout shipped; fills from first live day.",dec:"D-9"},
+{id:"plan",l:"data",s:"b",n:"Daily plan + approval token",d:"The 4pm deliverable: held-book actions, tiered ideas with exact triggers, watch table, your approval + pre-authorised flags — the file the gatekeeper trusts.",loc:"contracts/plan.schema.json → data/sod/",v:"Contract verified; phone-render rules written after UX review.",dec:"D-1 D-2"},
+{id:"journal",l:"data",s:"b",n:"Journal (book of record)",d:"Built nightly from broker truth; feeds tomorrow's engine run — the loop that closes the day.",loc:"contracts/journal.schema.json → data/eod/",v:"Contract verified; validate-or-halt rule in place; legacy naming chaos ends at migration.",dec:"D-9"},
+{id:"backlog",l:"data",s:"v",n:"Backlog (development memory)",d:"17 items, each with evidence, owner, and what it retires. The audit's open list and the change pipeline's queue are the same file.",loc:"data/persistent/backlog.jsonl",v:"All 17 validate against their contract.",dec:"D-8"},
+// HARNESS
+{id:"cl",l:"harn",s:"v",n:"Claude package",d:"Complete install: 21 skills, 10 compiled voice agents, contracts, tools, charter, config, data skeleton — plus its own broker-connection file (account connectors don't reach the PC runtime).",loc:"generated: dist/claude-plugin/",v:"Format confirmed against official docs by the Claude platform expert; connection-file flaw found & fixed. Tier guidance: Max $200.",dec:"D-9"},
+{id:"km",l:"harn",s:"v",n:"Kimi package",d:"Same system in Kimi's real conventions: hyphenated names, YAML launch file registering the 10 voice workers, its load-first file, inlined auth.",loc:"generated: dist/kimi/",v:"Rebuilt to official Kimi format per platform expert; launch file parses. Tier guidance: $39 plan.",dec:"D-9"},
+{id:"tiger",l:"harn",s:"v",n:"Tiger broker",d:"Default execution broker. Preview-then-confirm double-lock on every order; your cloud service, reused untouched.",loc:"your Google Cloud service",v:"Answered live from this session (account summary).",dec:"—"},
+{id:"fmp",l:"harn",s:"v",n:"Market data (FMP)",d:"Prices, screening, history — connector on Claude, plain key on the PC.",loc:"connector + .env key",v:"Answered live from this session (index quote).",dec:"—"},
+{id:"ibkr",l:"harn",s:"b",n:"IBKR (read-only service)",d:"Positions, balances, orders, fills. Contains NO order-placement ability by construction.",loc:"aegis/tools/mcp/ibkr_mcp/",v:"Built; untested against a live gateway — practice-week item.",dec:"—"},
+{id:"gh",l:"harn",s:"o",n:"GitHub push + private repo",d:"Three commits staged and bundled; your one token (action box PM-1) lands them and flips the repo private.",loc:"github.com/TongIncomeWheel/AQE → /aegis",v:"Open — your action.",dec:"D-9"},
+{id:"sched",l:"harn",s:"o",n:"PC scheduler (the clock)",d:"Windows Task Scheduler entries for premarket, post-market, review, weekly, janitor — generated on your confirm (action box PM-2).",loc:"your 24/7 PC",v:"Open — your confirm. PC down = system stops = safe.",dec:"D-9"},
+];
+const E=[
+ ["pm","law"],["law","rules"],["law","params"],["decs","rules"],["decs","params"],["cmds","pm"],
+ ["rules","pre"],["rules","mkt"],["rules","post"],["params","pre"],["params","gate"],["params","ap"],
+ ["pre","swarm"],["screen","swarm"],["aqe","trip"],["trip","pre"],["contracts","trip"],
+ ["swarm","delib"],["delib","plan"],["pre","plan"],["plan","pm"],["pm","gate"],["plan","gate"],
+ ["size","gate"],["ap","gate"],["gatecheck","gate"],["gate","tiger"],
+ ["plan","glue"],["glue","mkt"],["mkt","gate"],["aqe","mkt"],
+ ["gate","journal"],["tiger","journal"],["ibkr","journal"],["post","journal"],["journal","aqe"],
+ ["journal","ledger"],["swarm","ledger"],["fmp","ledger"],["ledger","assur"],["assur","rev"],
+ ["rev","dev"],["dev","backlog"],["backlog","dev"],["dev","params"],["measure","delib"],
+ ["hedge","pre"],["fmp","screen"],["jan","shelves"],["journal","shelves"],["plan","shelves"],
+ ["shelves","gh"],["cl","sched"],["km","sched"],["params","cl"],["params","km"],["law","cl"],["law","km"],
+ ["weekly","pre"]
+];
+const SICON={v:"✓",b:"◐",o:"○"}, SNAME={v:"Verified",b:"Built",o:"Open"}, SVAR={v:"--good",b:"--warn",o:"--crit"};
+const byId=Object.fromEntries(N.map(n=>[n.id,n]));
+// KPIs
+const counts={v:0,b:0,o:0}; N.forEach(n=>counts[n.s]++);
+document.getElementById("kpis").innerHTML=[
+ ["Modules",N.length,"traced end-to-end"],
+ ["Verified ✓",counts.v,"tested by execution"],
+ ["Built ◐",counts.b,"proven at practice week"],
+ ["Open ○",counts.o,"all in the backlog"],
+ ["Rulings",11,"each retired something"],
+ ["Reviews",8,"QA · panel ×5 · platforms ×2"],
+].map(([k,v,s])=>`<div class="tile"><b>${v}</b><span>${k}<br>${s}</span></div>`).join("");
+// build columns
+const colsEl=document.getElementById("cols");
+LAYERS.forEach(L=>{
+  const c=document.createElement("div");c.className="col";c.style.setProperty("--lc",`var(${L.c})`);
+  c.innerHTML=`<h2>${L.name}</h2>`;
+  N.filter(n=>n.l===L.id).forEach(n=>{
+    const el=document.createElement("div");el.className="node";el.id="n-"+n.id;el.style.setProperty("--lc",`var(${L.c})`);
+    el.innerHTML=`<div class="nm">${n.n}</div><div class="st"><span class="dot" style="background:var(${SVAR[n.s]})"></span>${SICON[n.s]} ${SNAME[n.s]}</div>`;
+    el.onclick=()=>select(n.id);
+    c.appendChild(el);
+  });
+  colsEl.appendChild(c);
+});
+// wires
+const svg=document.getElementById("wires"), stage=document.getElementById("stage");
+function drawWires(hi){
+  const sr=stage.getBoundingClientRect(); svg.innerHTML=""; svg.setAttribute("width",colsEl.scrollWidth); svg.setAttribute("height",colsEl.scrollHeight);
+  E.forEach(([a,b])=>{
+    const ea=document.getElementById("n-"+a), eb=document.getElementById("n-"+b);
+    if(!ea||!eb||ea.classList.contains("hidden")||eb.classList.contains("hidden"))return;
+    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
+    const x1=ra.right-sr.left+stage.scrollLeft, y1=ra.top+ra.height/2-sr.top;
+    const x2=rb.left-sr.left+stage.scrollLeft, y2=rb.top+rb.height/2-sr.top;
+    const p=document.createElementNS("http://www.w3.org/2000/svg","path");
+    const mx=(x1+x2)/2, back=x2<x1;
+    p.setAttribute("d",back?`M${x1-ra.width} ${y1} C ${x1-ra.width-40} ${y1}, ${x2+rb.width+40} ${y2}, ${x2+rb.width} ${y2}`
+                          :`M${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`);
+    const isHi=hi&&(hi.has(a+">"+b));
+    p.setAttribute("stroke",isHi?getComputedStyle(document.getElementById("root")).getPropertyValue("--edge-hi"):getComputedStyle(document.getElementById("root")).getPropertyValue("--edge"));
+    p.setAttribute("stroke-width",isHi?2.2:1.1); p.setAttribute("fill","none"); p.setAttribute("opacity",hi?(isHi?"0.95":"0.12"):"0.5");
+    svg.appendChild(p);
+  });
+}
+// trace: full upstream+downstream chain
+function chain(id){
+  const up=new Set(), down=new Set(), hiE=new Set();
+  let q=[id]; while(q.length){const x=q.pop(); E.forEach(([a,b])=>{ if(b===x&&!up.has(a)){up.add(a);hiE.add(a+">"+b);q.push(a);} });}
+  q=[id]; while(q.length){const x=q.pop(); E.forEach(([a,b])=>{ if(a===x&&!down.has(b)){down.add(b);hiE.add(a+">"+b);q.push(b);} });}
+  return {up,down,hiE};
+}
+let selected=null;
+function select(id){
+  selected=id; const n=byId[id], {up,down,hiE}=chain(id);
+  N.forEach(m=>{const el=document.getElementById("n-"+m.id);
+    el.classList.toggle("sel",m.id===id);
+    el.classList.toggle("dim",!(m.id===id||up.has(m.id)||down.has(m.id)));});
+  drawWires(hiE);
+  const P=document.getElementById("panel"); P.classList.add("open");
+  document.getElementById("pLayer").textContent=LAYERS.find(L=>L.id===n.l).name;
+  document.getElementById("pName").textContent=n.n;
+  const bd=document.getElementById("pBadge");
+  bd.innerHTML=`<span class="dot" style="background:var(${SVAR[n.s]})"></span>${SICON[n.s]} ${SNAME[n.s]}`;
+  document.getElementById("pDesc").textContent=n.d;
+  document.getElementById("pLoc").textContent=n.loc;
+  document.getElementById("pVer").textContent=n.v;
+  document.getElementById("pDec").textContent=n.dec||"—";
+  const mk=(set,el)=>{el.innerHTML="";[...set].forEach(x=>{const s=document.createElement("span");s.textContent=byId[x].n;s.onclick=()=>select(x);el.appendChild(s);});if(!set.size)el.textContent="—";};
+  mk(new Set(E.filter(([a,b])=>b===id).map(([a])=>a)),document.getElementById("pUp"));
+  mk(new Set(E.filter(([a,b])=>a===id).map(([,b])=>b)),document.getElementById("pDown"));
+}
+function clearSel(){selected=null;N.forEach(m=>{const el=document.getElementById("n-"+m.id);el.classList.remove("sel","dim");});
+  document.getElementById("panel").classList.remove("open");drawWires(null);}
+document.getElementById("closeBtn").onclick=clearSel;
+// filters + search
+let filt="all";
+document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));ch.classList.add("on");filt=ch.dataset.f;apply();});
+document.getElementById("q").oninput=apply;
+function apply(){
+  const q=document.getElementById("q").value.toLowerCase();
+  N.forEach(m=>{const el=document.getElementById("n-"+m.id);
+    const okF=filt==="all"||m.s===filt;
+    const okQ=!q||m.n.toLowerCase().includes(q)||m.d.toLowerCase().includes(q);
+    el.classList.toggle("hidden",!(okF&&okQ));});
+  drawWires(selected?chain(selected).hiE:null);
+}
+// theme
+const btn=document.getElementById("themeBtn");
+btn.onclick=()=>{const r=document.documentElement;const dark=r.getAttribute("data-theme")!=="light";
+  r.setAttribute("data-theme",dark?"light":"dark");btn.textContent=dark?"Dark mode":"Light mode";
+  setTimeout(()=>drawWires(selected?chain(selected).hiE:null),30);};
+window.addEventListener("resize",()=>drawWires(selected?chain(selected).hiE:null));
+requestAnimationFrame(()=>drawWires(null));
+</script>
+</body>
+</html>
