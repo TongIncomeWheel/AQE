@@ -103,3 +103,58 @@ audit:
   - FIELD_MISREAD
   - FABRICATION
   - CONDUCT_FAILURE
+exceptions:
+  ladder: DETECT (checks are built into every step) -> RETRY ONCE (transient service
+    pulls only, never validation failures) -> DEGRADE along a NAMED safe path only
+    -> STAND DOWN fail-closed when no safe path exists -> DISARM FIRST if autopilot
+    is armed and anything is in doubt -> RECORD an exception file always -> NOTIFY
+    by severity
+  classes:
+  - DATA_MISSING_OR_STALE
+  - DATA_INVALID
+  - SERVICE_UNREACHABLE
+  - AGENT_FAILURE
+  - STATE_CORRUPT
+  - MISSED_CLOCK
+  - HUMAN_ABSENT
+  gate_refusals_are_not_exceptions: a gatekeeper refusal is a designed outcome with
+    its own record, never an error
+  page_now:
+  - tripwire BLOCK
+  - journal fails validation or is PROVISIONAL
+  - any fabrication finding
+  - any anomaly during an armed session
+  - alert engine not alive at watch-window start
+  - broker unreachable while armed
+  morning_summary:
+  - voice shortfall (ran with 8-9 of 10)
+  - hedge check skipped on tool failure
+  - GitHub push queued after retry
+  - single-name data gaps
+  - CS Weekly missing
+  named_degradations:
+    voice_fails: re-spawn once; still invalid -> proceed with the remaining voices
+      (minimum 8), tally notes the empty seats, auditor flags the session INCOMPLETE
+    hedge_tools_fail: plan ships WITHOUT the hedge block, flagged in the plan headline
+    ibkr_down_at_reconcile: Tiger-only reconcile, journal marked PARTIAL_SOURCES,
+      page
+    broker_pulls_down_at_reconcile: journal built from gatekeeper records only, marked
+      PROVISIONAL -> downstream mutations HALT (ledger, held-list emit), page; engine
+      reuses last GOOD journal
+    github_push_fails: retry once, then queue the commit locally and note in the morning
+      summary
+    spot_fails_at_revalidation: that trigger stands down, logged MISSED_BY_FAILURE
+      (distinct from MISSED-BY-DESIGN); never confirm on stale spot
+  no_safe_degradation:
+  - 'feed missing/stale or tripwire BLOCK -> the whole premarket stands down: no plan,
+    no alerts loaded, nothing armed; held book protected by broker-side stops'
+  - universe screen cannot run -> premarket stands down (voices have nothing lawful
+    to read)
+  - journal invalid -> everything downstream of it halts
+  - autopilot state unreadable -> OFF (already in the tool)
+  missed_clock: 'a run that never fired or overran is itself an exception: next run
+    detects the gap via freshness checks; a stood-down trading day = no new trades,
+    broker stops still protect the book; post-market NEVER skips — it records the
+    quiet day'
+  recovery: next scheduled run self-heals where a fresh input fixes it; anything else
+    becomes a backlog item automatically

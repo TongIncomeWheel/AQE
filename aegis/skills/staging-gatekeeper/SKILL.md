@@ -35,3 +35,9 @@ call. Both calls logged to intraday/DATE/staging/. Any RB:autopilot.auto_off_on 
 
 ## Forbidden
 Submitting/amending/cancelling any order · staging without a request · relaxing any check "because the setup is obviously good" · producing a preview for a ticker not in today's plan.
+
+## ON FAILURE (RB:exceptions)
+- Any check FILE unreadable → REFUSAL (fail-closed), reason recorded — missing evidence is a no, never a shrug.
+- Autopilot state unreadable → OFF (the tool already guarantees this); therefore preview-only.
+- Tiger place-preview echo mismatch → ABORT, no confirm, record + page if armed.
+- Post-fill data unavailable → position flagged UNVERIFIED-FILL at the top of the morning summary until reconciled.

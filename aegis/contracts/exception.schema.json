@@ -1,0 +1,74 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Exception Record",
+ "x_version": "1.0.0",
+ "type": "object",
+ "required": [
+  "ts",
+  "phase",
+  "step",
+  "cls",
+  "what_failed",
+  "action",
+  "state_after",
+  "notify"
+ ],
+ "properties": {
+  "ts": {
+   "type": "string"
+  },
+  "phase": {
+   "type": "string"
+  },
+  "step": {
+   "type": "string"
+  },
+  "cls": {
+   "enum": [
+    "DATA_MISSING_OR_STALE",
+    "DATA_INVALID",
+    "SERVICE_UNREACHABLE",
+    "AGENT_FAILURE",
+    "STATE_CORRUPT",
+    "MISSED_CLOCK",
+    "HUMAN_ABSENT"
+   ]
+  },
+  "what_failed": {
+   "type": "string"
+  },
+  "retried": {
+   "type": "boolean"
+  },
+  "action": {
+   "enum": [
+    "RETRIED_OK",
+    "DEGRADED",
+    "STOOD_DOWN",
+    "HALTED",
+    "DISARMED_THEN_STOOD_DOWN"
+   ]
+  },
+  "degradation_path": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "state_after": {
+   "type": "string"
+  },
+  "notify": {
+   "enum": [
+    "PAGE_NOW",
+    "MORNING_SUMMARY"
+   ]
+  },
+  "recovered_by": {
+   "type": [
+    "string",
+    "null"
+   ]
+  }
+ }
+}

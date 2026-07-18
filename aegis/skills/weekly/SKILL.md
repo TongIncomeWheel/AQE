@@ -10,3 +10,7 @@ Owner: Weekly Orchestrator.
 3. **Performance reports.** WTD/MTD/YTD book performance + system performance (nomination hit rates per voice from the Ledger, audit trends, breach counts) → one Drive report + phone summary.
 4. **Universe hygiene.** Screen-churn report: names entering/leaving the daily screen this week, small-cap exclusions of note (D-3 monitoring — evidence if the PM ever revisits the $2bn floor).
 5. **Rule review.** Any rulebook keys past review_by surfaced for keep/amend/retire (law 10).
+
+## ON FAILURE (RB:exceptions)
+- CS Weekly missing → notify + retry later; never blocks the week (standing rule).
+- Ledger report fails → publish the book report anyway, system-performance section marked DEFERRED.
