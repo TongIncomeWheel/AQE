@@ -1,725 +1,942 @@
 {
- "_source": "AQE field_glossary + field_schema (live feed 2026-07-18)",
- "_note": "Kernel copy of AQE field meanings. Injected into each voice's menu at spawn (BL-034). One place; regenerated when AQE's contract changes.",
- "fields": {
-  "atr_14d": {
-   "definition": "14-day Average True Range in USD (the volatility unit).",
-   "schema": {
-    "role": "volatility",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "enrichment",
-   "how_computed": "14-day Average True Range in USD \u2014 the volatility unit used for stops/sizing."
-  },
-  "atr_caution": {
-   "definition": "True if the structural stop was too tight for the regime (risk% near the regime ceiling).",
-   "schema": {
-    "role": "flag",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "beta_252d": {
-   "definition": "1-year beta vs SPY (cov/var).",
-   "schema": {
-    "role": "risk_metric",
-    "unit": "ratio",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "bracket": {
-   "definition": "THE bracket \u2014 the single source of truth for stop + targets (mechanical DSL/TP is retired). A nested object: {price, price_source (eod_close on the daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib that the stop sits on), stop_atr_dist (risk in ATRs \u2014 read this, not raw USD), risk (=price\u2212stop, the R unit to size against), risk_pct, targets[{type,tp (TP1/2/3),price,r,atr_dist}] (structural resistance/MA/fib ABOVE price, nearest-first \u2014 TAKE PROFIT against these), rr (R:R to the structural TP2), rr_tp1/rr_tp2/rr_tp3 (R:R to each of the first three targets), atr_fallback_stop (= 1\u00d7ATR below price \u2014 the reference stop to use ONLY when valid=false, i.e. no structural level exists), valid, invalid_reason}. When valid=false the name has NO tradeable bracket ('no valid bracket') \u2014 show that, never a mechanical fallback. STOP is below price, TARGETS above; R and ATR distances are relative, not absolute noise. VOLUME VALIDATION: dated levels carry vol_ratio (pivot-bar volume / trailing 20-bar avg) + vol_validated (ratio \u2265 1.2) \u2014 a level DEFENDED on high volume is a stronger level; the stop's own read is stop_date + stop_vol_ratio + stop_vol_validated (present when the stop is swing-based). Data only \u2014 the 3 gates are unchanged.",
-   "schema": {
-    "role": "stop",
-    "unit": "usd",
-    "side": "below_entry"
-   },
-   "enums": null,
-   "engine": "bracket_engine.py",
-   "how_computed": "THE single source of truth for stop + targets \u2014 a STRUCTURAL bracket from per-ticker levels (pivots), volume-validated (a level defended on high volume ranks stronger). Never recomputed downstream; a bad input degrades to valid=false, never raises."
-  },
-  "choch_date": {
-   "definition": "Date of the latest CHoCH event (null when choch_state=NONE).",
-   "schema": {
-    "role": "reference",
-    "unit": "date",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "choch_state": {
-   "definition": "Change-of-Character (swing-break trend flip), the LATEST detected event: BULLISH = close broke above the last confirmed swing high while the prior trend was flat/down; BEARISH mirrors it (broke below swing low). NONE = no CHoCH detected. Non-repainting (confirmed pivots only).",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "div_bear_count": {
-   "definition": "How many of the 5 oscillators confirm the bearish divergence (0-5).",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "div_bull_count": {
-   "definition": "How many of the 5 oscillators confirm the bullish divergence (0-5). More confirming oscillators = stronger read.",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "div_date": {
-   "definition": "Date of the confirming (newer) pivot anchoring the divergence.",
-   "schema": {
-    "role": "reference",
-    "unit": "date",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "div_oscs": {
-   "definition": "Which oscillators fired, comma-joined \u2014 bullish names bare, bearish names prefixed '-' (e.g. 'rsi,mfi,-obv'). Null when none.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "div_state": {
-   "definition": "Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a lower pivot low while \u22651 oscillator made a higher low (downmove losing internal energy); BEARISH mirror on highs; MIXED = both; NONE. Oscillators tested: RSI, MFI, CMF, MACD, OBV \u2014 all AQE-computed. Context only, never a gate.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "divergence.py",
-   "how_computed": "Regular (reversal-warning) divergence between price and five oscillators (RSI14/MFI14/CMF20/MACD/OBV) at CONFIRMED pivots only."
-  },
-  "entry": {
-   "definition": "Reference entry = prior close-of-day. The live fill is the IBKR price at bracket time, NOT this value.",
-   "schema": {
-    "role": "reference",
-    "unit": "usd",
-    "side": "at_entry"
-   },
-   "enums": null
-  },
-  "fib_236": {
-   "definition": "",
-   "schema": {
-    "role": "fib_support",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_236/382/500/618/786": {
-   "definition": "Fib RETRACEMENT supports below the swing high \u2014 potential pullback/STOP levels (absolute USD).",
-   "schema": {},
-   "enums": null
-  },
-  "fib_382": {
-   "definition": "",
-   "schema": {
-    "role": "fib_support",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_500": {
-   "definition": "",
-   "schema": {
-    "role": "fib_support",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_618": {
-   "definition": "",
-   "schema": {
-    "role": "fib_support",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_786": {
-   "definition": "",
-   "schema": {
-    "role": "fib_support",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_swing_high": {
-   "definition": "",
-   "schema": {
-    "role": "reference",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_swing_low": {
-   "definition": "",
-   "schema": {
-    "role": "reference",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "fib_swing_low/high": {
-   "definition": "Anchors of the current detected up-swing (absolute USD).",
-   "schema": {},
-   "enums": null
-  },
-  "hl_score": {
-   "definition": "Health composite (0-100). Trend integrity of a HELD position \u2014 the HOLD decision. HOLD_ADD (75+) / HOLD (50-74) / TIGHTEN (30-49) / EXIT (<30). Shown ONLY on held_positions.",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "hl_state": {
-   "definition": "Health state label (held only): HOLD_ADD / HOLD / TIGHTEN / EXIT.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "inside_bar": {
-   "definition": "True if the LAST bar's range is fully inside the PRIOR bar's range (high < prev_high AND low > prev_low) \u2014 a one-bar consolidation pause.",
-   "schema": {
-    "role": "flag",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "knn_neighbors_used": {
-   "definition": "How many historical analog events the knn_prob is averaged over (0 if none found).",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "knn_prob": {
-   "definition": "K-NEAREST-NEIGHBORS directional probability (0-1) for the current CHoCH: the win-rate of the K most similar HISTORICAL CHoCH events on this SAME ticker (matched on 3 features \u2014 volume-delta, ATR-normalised displacement, velocity \u2014 via Euclidean distance), where 'win' = the move's max favorable excursion exceeded its max adverse excursion within a fixed lookahead. This IS genuine instance-based learning (a real kNN), not a black box \u2014 but it's simple (3 hand-picked features, no training beyond the ticker's own history) and should be read as one more context signal, not a probability of profit. Null when there's no CHoCH or too few historical analogs to query.",
-   "schema": {
-    "role": "signal",
-    "unit": "ratio",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "smart_money_knn.py",
-   "how_computed": "CHoCH (change-of-character) trend-flip detected on confirmed swing pivots, then scored by a k-nearest-neighbors classifier over the ticker's OWN past CHoCH events \u2014 a calibrated probability, not a label."
-  },
-  "knn_significant": {
-   "definition": "True iff knn_prob clears a fixed threshold in either direction (\u226560% or \u226440% by default). CAVEAT (AIC Charter Amendment v2.8, 2026-07-15 ruling): this is a plain threshold check on a SMALL neighbor count (k=5 by default), NOT a statistical significance test \u2014 at k=5, 3-of-5 agreeing clears the 60% bar trivially, including by chance. Carries no p-value or confidence-interval semantics. Read as 'the threshold was crossed', not 'the analogs meaningfully agree'.",
-   "schema": {
-    "role": "flag",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "smart_money_knn.py",
-   "how_computed": "Flag: whether the kNN neighbour set is large/consistent enough for the probability to be trusted."
-  },
-  "knn_tp1": {
-   "definition": "Nearest kNN-implied target (USD): current price \u00b1 half the neighbors' mean favorable excursion, signed by the CHoCH direction. A statistical projection from historical analogs, NOT a structural level \u2014 read alongside bracket.targets, never in place of them.",
-   "schema": {
-    "role": "target",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "knn_tp2": {
-   "definition": "Mid kNN-implied target: current price \u00b1 the neighbors' MEDIAN favorable excursion, signed by direction.",
-   "schema": {
-    "role": "target",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "knn_tp3": {
-   "definition": "Far kNN-implied target: current price \u00b1 the neighbors' 75th-percentile favorable excursion, signed by direction.",
-   "schema": {
-    "role": "target",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "lens": {
-   "definition": "Per-lens read: strong/ok/warn/-- for leadership, coil, insti_money, structure, resistance, sector. `extension` is ALWAYS null \u2014 the voices disagree on what extension means, so AQE prints the numbers (subcomponents.flow.ext_score, energy.en_pos50/exhaustion_score/atr_score) and makes no call. Every verdict comes from a label AQE already computes, or from top/bottom-third position in TODAY's list. No fitted thresholds anywhere. '--' = no data; absence is never agreement.",
-   "schema": {},
-   "enums": null,
-   "engine": "lens_consensus.py",
-   "how_computed": "The AIC-read addition: a COUNT of how many lenses agree on a name. AQE presents, AIC decides \u2014 sort only, never cut."
-  },
-  "lens_positive": {
-   "definition": "Count of lenses reading `strong` (0-6). UNWEIGHTED \u2014 no weighting was ever earned. Sort on it to tier the read; it is a READING AID, not a prediction, and whether 5-of-6 beats 2-of-6 is untested. Never a gate: nothing is eliminated, every name keeps its full block.",
-   "schema": {},
-   "enums": null,
-   "engine": "lens_consensus.py",
-   "how_computed": "Number of lenses reading positive on the name (the consensus tally the Detect seat leans on)."
-  },
-  "lens_ranking": {
-   "definition": "PART 1 of the AIC read \u2014 every scored name ordered by how many lenses agree (`positive` desc, then `warnings` asc, then ptrs). A READING ORDER, not a verdict, and not a filter: nothing is eliminated and the count carries no proven edge. The FULL per-name data is Part 2 = `daily_list`, unchanged.",
-   "schema": {},
-   "enums": null
-  },
-  "lens_warnings": {
-   "definition": "Count of lenses reading `warn` (0-6).",
-   "schema": {},
-   "enums": null,
-   "engine": "lens_consensus.py",
-   "how_computed": "The lenses flagging a caution on the name \u2014 a veto/attention signal, never a buy trigger."
-  },
-  "ma_100": {
-   "definition": "",
-   "schema": {
-    "role": "moving_average",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "ma_20": {
-   "definition": "",
-   "schema": {
-    "role": "moving_average",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "ma_20/50/100/200": {
-   "definition": "Simple moving averages (absolute USD) \u2014 dynamic support/resistance.",
-   "schema": {},
-   "enums": null
-  },
-  "ma_200": {
-   "definition": "",
-   "schema": {
-    "role": "moving_average",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "ma_50": {
-   "definition": "",
-   "schema": {
-    "role": "moving_average",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "malformed_bracket": {
-   "definition": "True if the structural stop sits within 0.5% of price (bracket unusable \u2014 stop virtually at entry).",
-   "schema": {
-    "role": "flag",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "mover_subtype": {
-   "definition": "DETECTION sub-type label (explosive / trend / tight_base / squeeze) \u2014 the family whose z-score profile the name matches best (M16c). Context only; not a gate.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "mp_accel": {
-   "definition": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is building; negative = rolling over. Flags inflection BEFORE the level/mp_state confirms \u2014 read alongside mp_state (which is a knife-edge when the score plateaus). Additive diagnostic, not part of the Pine spec.",
-   "schema": {
-    "role": "signal",
-    "unit": "decimal",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "mp.py (additive)",
-   "how_computed": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum z-score (roc_zscore). Not part of the original Pine spec."
-  },
-  "mp_accel_state": {
-   "definition": "Label for mp_accel with a \u00b10.10 dead-zone: ACCELERATING / DECELERATING / FLAT.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "mp.py",
-   "how_computed": "Label over mp_accel {ACCELERATING/DECELERATING/\u2026} \u2014 is the thrust still building or dying."
-  },
-  "pib_pattern": {
-   "definition": "True if the SECOND-TO-LAST bar was a pin bar AND the last bar is an inside bar relative to it \u2014 the 'rejection, then pause' combo pattern. Independent of pin_bar_state (which only reads the LAST bar itself).",
-   "schema": {
-    "role": "flag",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "pin_bar_date": {
-   "definition": "Date of the pin bar (null when pin_bar_state=NONE).",
-   "schema": {
-    "role": "reference",
-    "unit": "date",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "pin_bar_level": {
-   "definition": "The pin bar's rejection extreme (USD): the LOW for a bullish pin (a candidate support), the HIGH for a bearish pin (candidate resistance). Null when pin_bar_state=NONE.",
-   "schema": {
-    "role": "reference",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "pin_bar_state": {
-   "definition": "Candlestick REJECTION pattern on the LAST closed bar (pure geometry, no lookahead): BULLISH_PIN = long lower wick (\u226566% of range) + small body (\u226440%) + small upper wick (\u226440%) \u2014 the market pushed down and got rejected; BEARISH_PIN mirrors it (long upper wick). NONE = no pattern. Filtered so the bar's range must be \u22652\u00d7 the prior bar's range (rejects 'pin bars' that are just noise inside an already-tiny range).",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "pin_bar.py",
-   "how_computed": "Candlestick geometry on the last (closed) bar: pin bar (long rejection wick, small body) / inside bar / combo. No lookahead."
-  },
-  "premove_conviction": {
-   "definition": "DETECTION conviction (0-4): count of M18 launcher-fingerprint legs present. Context only; not a probability of profit.",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "signal_radar.py",
-   "how_computed": "Conviction paired with the premove tag."
-  },
-  "premove_conviction_label": {
-   "definition": "Human-readable pre-move conviction = word + number, e.g. 'HIGH (3/4)' (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4). Read this, not the bare number. Detection tag, not a win rate, not sizing.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "premove_setup": {
-   "definition": "DETECTION tag (bool): name is QUIET now but coiled to launch \u2014 very young base + squeeze on + well below the recent high (M18 rule, applies only to quiet-pond names). Historical launches came a median ~12 trading days after the tag \u2014 a pre-move radar, not a same-day trigger. NOT a gate, NOT sizing; % elsewhere = detection rate, not win rate.",
-   "schema": {
-    "role": "signal",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "signal_radar.py",
-   "how_computed": "%-based radar tag for PRE-MOVE \u2014 a name about to run (3-5 day trajectory features)."
-  },
-  "ptrs": {
-   "definition": "= SC_MOMENTUM verbatim (PM ruling: the Sector-Health adjustment is DROPPED \u2014 sector context is read separately and qualitatively via `srm`/RRG, not double-counted into a per-ticker score). Disposition/sizing is the committee's call \u2014 AQE exports no sizing.",
-   "schema": {},
-   "enums": null
-  },
-  "rs_down_day_20d": {
-   "definition": "All-weather leadership: stock's avg outperformance vs SPY on SPY DOWN days (last 20 sessions). Positive = beats SPY when market drops = genuine leader (pct).",
-   "schema": {
-    "role": "signal",
-    "unit": "pct",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "rs_leadership": {
-   "definition": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, LAGGARD (<\u22120.25).",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "runner_conviction": {
-   "definition": "DETECTION conviction (0-4): how many of the four M15 legs (short base / strong 5d momentum / clear overhead / room below the 20d high) are in their favourable tercile. Higher = stronger historical detection, not a probability of profit.",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "signal_radar.py",
-   "how_computed": "Conviction (e.g. n/4) paired with the runner tag; conviction_label pairs the word with the number, never a bare number."
-  },
-  "runner_conviction_label": {
-   "definition": "Human-readable conviction = word + number, e.g. 'HIGH (3/4)'. The word is anchored to the historical +20%/20d detection ladder (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4 ~= 5/13/27/43% detection). Read this, not the bare number. Still a detection tag, not a win rate, not sizing.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "runner_setup": {
-   "definition": "DETECTION tag (bool): name is already moving with another leg \u2014 short young base + strong 5-day thrust + clear overhead (M15 rule). NOT a gate, NOT sizing; the PM decides entry/bracket/size live. Any % reported for this tag elsewhere is a DETECTION RATE (how often tagged names historically touched a level, price-path only) \u2014 never a win rate.",
-   "schema": {
-    "role": "signal",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "signal_radar.py",
-   "how_computed": "%-based radar tag for CONTINUATION \u2014 a name likely to KEEP running. Price-path/%-trajectory features, not risk/bracket."
-  },
-  "sc_m_gate_detail": {
-   "definition": "Per-engine SC_MOMENTUM gate pass/fail (dict): {flow, energy, structure, mp, elder} each True/False vs the SC_M_GATES threshold \u2014 so you read WHICH check a name is failing without recomputing. false = that engine is below its floor.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sc_m_gates": {
-   "definition": "SC_MOMENTUM qualification gate (bool): True iff EVERY engine floor passes \u2014 Flow\u226560, Energy\u226560, Structure\u226555, MP\u226555, Elder\u22656.5 (Pine SC_M_GATES). It does NOT cap the score (composite is uncapped); it flags whether the momentum read is fully gated. See sc_m_gate_detail for which specific check fails.",
-   "schema": {
-    "role": "signal",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sc_p_gate_detail": {
-   "definition": "Per-engine SC_POSITION gate pass/fail (dict): {flow, energy, structure, mp, bq, k39} each True/False vs the SC_P_GATES threshold (k39 = the weekly confirmation gate; null if unavailable).",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sc_p_gates": {
-   "definition": "SC_POSITION qualification gate (bool): True iff every engine floor passes \u2014 Flow\u226540, Energy\u226560, Structure\u226565, MP\u226540, BQ\u226560 (Pine SC_P_GATES) AND the K39 weekly gate. Does NOT cap the score. See sc_p_gate_detail for the breakdown.",
-   "schema": {
-    "role": "signal",
-    "unit": "boolean",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sector_rrg_direction": {
-   "definition": "The ticker's sector RRG direction of travel: ENTERING / DEEPENING / EXITING / STABLE.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sector_rrg_quadrant": {
-   "definition": "The ticker's sector RRG quadrant vs SPY: LEADING / IMPROVING / WEAKENING / LAGGING.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sector_trend_state": {
-   "definition": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum Building \u2014 Add' / 'Momentum Fading \u2014 Hold' / 'Recovering' / 'Declining'). Context; the gate is gics_gate, unchanged.",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "srm.py (SRM v3.0)",
-   "how_computed": "Sector ETF graded on breadth + momentum \u2192 DEPLOY/HOLD/TURNING/WATCH/AVOID, mapped to Sector-Health values (+3/0/-3/\u2026). Weather, never a gate."
-  },
-  "structure_shift": {
-   "definition": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED pivot high (break of structure \u2014 trend continuation/ignition); BEARISH_CHOCH = close broke BELOW the up-swing's anchor low (character change \u2014 the up-structure failed); RANGE = inside the swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling FIX_CONFIRMED_PIVOT: the bullish test previously compared against the current swing's window-max high, which always includes today's own bar \u2014 making BULLISH_BOS mathematically unreachable. Now compares against the nearest confirmed pivot high instead.)",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null,
-   "engine": "structure/smart_money",
-   "how_computed": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close beyond the last confirmed pivot high; measured against structure_shift_ref."
-  },
-  "structure_shift_ref": {
-   "definition": "The level the shift is measured against (USD): the broken confirmed pivot high for BULLISH_BOS, the broken swing anchor low for BEARISH_CHOCH; null for RANGE.",
-   "schema": {
-    "role": "reference",
-    "unit": "usd",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "subcomponents": {
-   "definition": "The engine SUB-SCORES behind each headline read \u2014 nested by engine, so the AIC sees WHY an engine scored what it did (context, never a gate). flow: {flow_score (MFI+CMF+HA core), accum_score, volume_score, skew_score, ext_score (extension penalty), mfi, cmf, ha_quality_count}. energy: {vp_position_score (volume-profile position), price_action_score, squeeze_score (BB/KC squeeze \u2014 the TTM-squeeze read), exhaustion_score, atr_score, en_pos50, en_trend_bars}. structure: {rs_spy_score, rs_accel_score, base_score, ms_pos_score (market structure), resist_score (overhead), wk_score (weekly trend = HTF bias), earn_score, rs_vs_spy (raw), rs_accel (raw), base_days, bd_mode}. mp: {abs_mom_score, mp_adx_score, rel_mom_score, trend_score, roc_zscore (momentum z), excess_return (vs SPY %), adx_val, di_bullish}. bq: {bq_range_tight, bq_vol_dry, bq_base_dur, bq_ema_conv, bq_base_days}. pipe: {pr_ret_12m, pr_adx_score, pr_rsi_score, pr_vol_score, pr_ma_score (MA-stack alignment), momentum_composite, pipe_tier}. Readiness sub-scores are intentionally NOT here (hidden per the decision-framework ruling) and Health sub-scores stay held-only/dropped.",
-   "schema": {
-    "role": "signal",
-    "unit": "score",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "thematic_rrg_direction": {
-   "definition": "The ticker's PRIMARY thematic basket's RRG direction (ENTERING / DEEPENING / EXITING / STABLE).",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "thematic_rrg_quadrant": {
-   "definition": "The ticker's PRIMARY thematic basket's RRG quadrant vs SPY (LEADING / IMPROVING / WEAKENING / LAGGING).",
-   "schema": {
-    "role": "signal",
-    "unit": "label",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "vol_30d_ann": {
-   "definition": "30-day annualised realised volatility (decimal: 0.18 = 18%). This IS the Charter \u00a74.5 operative sizing vol (the charter calls it 'vol_30d'; AQE's field is annualised \u2014 same number). Forsizing/VaR, not a target.",
-   "schema": {
-    "role": "volatility",
-    "unit": "decimal",
-    "side": "n/a"
-   },
-   "enums": null
-  },
-  "sc_momentum": {
-   "definition": "",
-   "engine": "scoring.py (SC_MOMENTUM v1.8.0)",
-   "how_computed": "Weighted composite [0,100], UNCAPPED \u2014 raw weighted average of the engine sub-scores (flow/energy/structure/mp/elder); sub-component floors are NOT applied to the composite; the Elder gate is enforced at qualification, not in the number.",
-   "schema": {},
-   "enums": null
-  },
-  "sc_momentum_raw": {
-   "definition": "",
-   "engine": "scoring.py",
-   "how_computed": "The ungated SC_MOMENTUM weighted average (same as sc_momentum in v1.8.0).",
-   "schema": {},
-   "enums": null
-  },
-  "flow": {
-   "definition": "",
-   "engine": "flow.py (Flow v1.3)",
-   "how_computed": "[0,100] = flow_score (MFI + CMF + Heikin-Ashi quality, max 17) + accum_score (A/D rolling-sum linreg short vs long, max 7.5) + volume_score (volume trend + spike, max 7.5) + skew_score (up/down day skew).",
-   "schema": {},
-   "enums": null
-  },
-  "energy": {
-   "definition": "",
-   "engine": "energy.py (Energy v1.3.1)",
-   "how_computed": "[0,100] from a range-position PROXY (real volume-profile POC/VAH/VAL is diagnostic only) + price-action + squeeze + exhaustion + ATR sub-scores.",
-   "schema": {},
-   "enums": null
-  },
-  "structure": {
-   "definition": "",
-   "engine": "structure.py (Structure v1.5.0)",
-   "how_computed": "[0,100] = clip((rs_spy + rs_accel + base + ms_pos + resist + wk + earn)/95*100). Relative strength vs SPY + acceleration + base quality + market-structure position + resistance + weekly + earnings.",
-   "schema": {},
-   "enums": null
-  },
-  "mp": {
-   "definition": "",
-   "engine": "mp.py (Momentum Persistence v1.2)",
-   "how_computed": "[0,100] from abs_mom + ADX + rel_mom + trend sub-scores; diagnostics roc_zscore, excess_return, adx_val, di_bullish.",
-   "schema": {},
-   "enums": null
-  },
-  "mp_state": {
-   "definition": "",
-   "engine": "mp.py",
-   "how_computed": "Label {BUILDING, STRONG, FADING} derived from the momentum-persistence reading \u2014 the campaign phase, not a magnitude.",
-   "schema": {},
-   "enums": null
-  },
-  "elder": {
-   "definition": "",
-   "engine": "elder.py (Elder Impulse)",
-   "how_computed": "[0,10] = state_score {0,2,4} (impulse colour green/blue/red) + slope_score {0-3} (3-bar EMA slope %) + hist_score {0-3} (MACD histogram trend).",
-   "schema": {},
-   "enums": null
-  },
-  "elder_5d": {
-   "definition": "",
-   "engine": "elder.py",
-   "how_computed": "The Elder impulse score read over a 5-day context (recent impulse persistence).",
-   "schema": {},
-   "enums": null
-  },
-  "gics_gate": {
-   "definition": "",
-   "engine": "srm.py",
-   "how_computed": "Combined sector entry gate (grade + RRG quadrant + macro headwind) \u2192 PASS/WATCH/CAUTION/BLOCKED. Context for sizing tone.",
-   "schema": {},
-   "enums": null
-  },
-  "beta_30d": {
-   "definition": "",
-   "engine": "enrichment",
-   "how_computed": "30-day beta vs SPY \u2014 the gate window (D-6); beta_252d is monitoring colour only.",
-   "schema": {},
-   "enums": null
-  },
-  "rvol": {
-   "definition": "",
-   "engine": "enrichment",
-   "how_computed": "Relative volume vs recent average \u2014 effort confirmation; >1 = above-normal participation.",
-   "schema": {},
-   "enums": null
-  },
-  "sma_distance_pct": {
-   "definition": "",
-   "engine": "enrichment",
-   "how_computed": "% distance of price from its SMA \u2014 extension; large positive = extended/late, near zero = at support.",
-   "schema": {},
-   "enums": null
-  }
- },
+ "_source": "AQE live export + src/engines/*.py (D-24 spec). One place; AQE conforms to this.",
  "_conventions": {
   "_convention": "LONG setups: STOPS are BELOW entry, TARGETS are ABOVE entry. Values are absolute USD prices unless the name ends in _rr/_ratio/_pct/_ann (ratios) or is a list/object. 'rr'/'r' = reward-to-risk in R, where 1R = bracket.risk (= price \u2212 bracket.stop, the structural risk unit).",
   "_decision_framework": "AQE reads the trade lifecycle in three distinct stages \u2014 do NOT conflate them; each answers a different question, so there is no 'picking at random': (1) DETECT \u2014 is a move brewing? = Signal Radar (runner_setup = a name already moving with another leg; premove_setup = a pre-move, ~12-day lead). These are DETECTION tags, not entries. (2) ENTER \u2014 is it time to buy, and where? = the bracket (stop/targets/R:R) + the live alert engine (buy-zone / breakout / near-stop levels). The PM/AIC pulls the trigger here. (3) HOLD \u2014 should an OPEN position stay on? = Health (hl_score/hl_state, on held_positions ONLY): HOLD_ADD / HOLD / TIGHTEN / EXIT on trend integrity. Readiness (the old rd_* entry-timing composite) is intentionally NOT in this feed \u2014 it overlapped premove_setup + the alert levels, so DETECT and ENTER already cover entry timing. AQE makes NO decision at any stage; it supplies the data and levels, the AIC decides."
  },
- "_methods_source": "Transposed from AQE src/engines/*.py module + function docstrings (D-29 bottoms-up, PM-directed extraction from the actual code)."
+ "fields": {
+  "atr_14d": {
+   "definition": "14-day Average True Range in USD (the volatility unit).",
+   "method": "14-day Average True Range (USD) \u2014 volatility unit.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "atr_caution": {
+   "definition": "True if the structural stop was too tight for the regime (risk% near the regime ceiling).",
+   "method": "",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "beta_252d": {
+   "definition": "1-year beta vs SPY (cov/var).",
+   "method": "252-day beta (monitoring colour only).",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "beta_30d": {
+   "definition": "",
+   "method": "30-day beta vs SPY (the gate window, D-6).",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "bracket": {
+   "definition": "THE bracket \u2014 the single source of truth for stop + targets (mechanical DSL/TP is retired). A nested object: {price, price_source (eod_close on the daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib that the stop sits on), stop_atr_dist (risk in ATRs \u2014 read this, not raw USD), risk (=price\u2212stop, the R unit to size against), risk_pct, targets[{type,tp (TP1/2/3),price,r,atr_dist}] (structural resistance/MA/fib ABOVE price, nearest-first \u2014 TAKE PROFIT against these), rr (R:R to the structural TP2), rr_tp1/rr_tp2/rr_tp3 (R:R to each of the first three targets), atr_fallback_stop (= 1\u00d7ATR below price \u2014 the reference stop to use ONLY when valid=false, i.e. no structural level exists), valid, invalid_reason}. When valid=false the name has NO tradeable bracket ('no valid bracket') \u2014 show that, never a mechanical fallback. STOP is below price, TARGETS above; R and ATR distances are relative, not absolute noise. VOLUME VALIDATION: dated levels carry vol_ratio (pivot-bar volume / trailing 20-bar avg) + vol_validated (ratio \u2265 1.2) \u2014 a level DEFENDED on high volume is a stronger level; the stop's own read is stop_date + stop_vol_ratio + stop_vol_validated (present when the stop is swing-based). Data only \u2014 the 3 gates are unchanged.",
+   "method": "bracket_engine.py: structural single-source bracket (stop/targets), volume-validated, valid=false degrades.",
+   "type": "dict",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "choch_date": {
+   "definition": "Date of the latest CHoCH event (null when choch_state=NONE).",
+   "method": "date of last CHoCH.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "choch_state": {
+   "definition": "Change-of-Character (swing-break trend flip), the LATEST detected event: BULLISH = close broke above the last confirmed swing high while the prior trend was flat/down; BEARISH mirrors it (broke below swing low). NONE = no CHoCH detected. Non-repainting (confirmed pivots only).",
+   "method": "smart_money_knn.py: change-of-character state.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "div_bear_count": {
+   "definition": "How many of the 5 oscillators confirm the bearish divergence (0-5).",
+   "method": "",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "div_bull_count": {
+   "definition": "How many of the 5 oscillators confirm the bullish divergence (0-5). More confirming oscillators = stronger read.",
+   "method": "",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "div_date": {
+   "definition": "Date of the confirming (newer) pivot anchoring the divergence.",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "div_oscs": {
+   "definition": "Which oscillators fired, comma-joined \u2014 bullish names bare, bearish names prefixed '-' (e.g. 'rsi,mfi,-obv'). Null when none.",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "div_state": {
+   "definition": "Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a lower pivot low while \u22651 oscillator made a higher low (downmove losing internal energy); BEARISH mirror on highs; MIXED = both; NONE. Oscillators tested: RSI, MFI, CMF, MACD, OBV \u2014 all AQE-computed. Context only, never a gate.",
+   "method": "divergence.py: regular divergence price vs 5 oscillators at confirmed pivots.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "elder": {
+   "definition": "",
+   "method": "elder.py: [0,10] state{0,2,4}+slope{0-3}+histogram{0-3}.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "elder_5d": {
+   "definition": "",
+   "method": "elder.py: 5-day elder impulse context (list).",
+   "type": "list",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "elder_context": {
+   "definition": "",
+   "method": "elder.py: hourly VWAP/VCP/exhaustion context object.",
+   "type": "dict",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "elder_pattern": {
+   "definition": "",
+   "method": "elder.py: labelled elder impulse pattern.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "energy": {
+   "definition": "",
+   "method": "energy.py: [0,100] range-position proxy + price-action + squeeze + exhaustion + ATR.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "entry": {
+   "definition": "Reference entry = prior close-of-day. The live fill is the IBKR price at bracket time, NOT this value.",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "fib_236": {
+   "definition": "",
+   "method": "23.6% Fibonacci retracement of swing_low\u2192swing_high.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fib_382": {
+   "definition": "",
+   "method": "38.2% fib retracement.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fib_500": {
+   "definition": "",
+   "method": "50% fib retracement.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fib_618": {
+   "definition": "",
+   "method": "61.8% fib retracement.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fib_786": {
+   "definition": "",
+   "method": "78.6% fib retracement.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fib_swing_high": {
+   "definition": "",
+   "method": "upper anchor of the fib swing.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fib_swing_low": {
+   "definition": "",
+   "method": "lower anchor of the fib swing.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "fip_spike_excluded": {
+   "definition": "",
+   "method": "",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": true
+  },
+  "fip_window_effective": {
+   "definition": "",
+   "method": "",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": true
+  },
+  "floor": {
+   "definition": "",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": true
+  },
+  "flow": {
+   "definition": "",
+   "method": "flow.py: [0,100] = MFI+CMF+Heikin-Ashi quality + A/D linreg + volume trend/spike + up/down skew.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "gics_gate": {
+   "definition": "",
+   "method": "srm.py: sector entry gate PASS/WATCH/CAUTION/BLOCKED (grade+RRG+macro).",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "gics_sector": {
+   "definition": "",
+   "method": "GICS sector ETF code.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "gics_sector_name": {
+   "definition": "",
+   "method": "GICS sector name.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "held": {
+   "definition": "",
+   "method": "flag: currently held.",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "in_ledger": {
+   "definition": "",
+   "method": "flag: currently tracked in the nomination ledger.",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "inside_bar": {
+   "definition": "True if the LAST bar's range is fully inside the PRIOR bar's range (high < prev_high AND low > prev_low) \u2014 a one-bar consolidation pause.",
+   "method": "",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "knn_neighbors_used": {
+   "definition": "How many historical analog events the knn_prob is averaged over (0 if none found).",
+   "method": "",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "knn_prob": {
+   "definition": "K-NEAREST-NEIGHBORS directional probability (0-1) for the current CHoCH: the win-rate of the K most similar HISTORICAL CHoCH events on this SAME ticker (matched on 3 features \u2014 volume-delta, ATR-normalised displacement, velocity \u2014 via Euclidean distance), where 'win' = the move's max favorable excursion exceeded its max adverse excursion within a fixed lookahead. This IS genuine instance-based learning (a real kNN), not a black box \u2014 but it's simple (3 hand-picked features, no training beyond the ticker's own history) and should be read as one more context signal, not a probability of profit. Null when there's no CHoCH or too few historical analogs to query.",
+   "method": "smart_money_knn.py: kNN over ticker's own CHoCH history \u2192 directional probability.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "knn_significant": {
+   "definition": "True iff knn_prob clears a fixed threshold in either direction (\u226560% or \u226440% by default). CAVEAT (AIC Charter Amendment v2.8, 2026-07-15 ruling): this is a plain threshold check on a SMALL neighbor count (k=5 by default), NOT a statistical significance test \u2014 at k=5, 3-of-5 agreeing clears the 60% bar trivially, including by chance. Carries no p-value or confidence-interval semantics. Read as 'the threshold was crossed', not 'the analogs meaningfully agree'.",
+   "method": "smart_money_knn.py: threshold flag (NOT a significance test).",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "knn_tp1": {
+   "definition": "Nearest kNN-implied target (USD): current price \u00b1 half the neighbors' mean favorable excursion, signed by the CHoCH direction. A statistical projection from historical analogs, NOT a structural level \u2014 read alongside bracket.targets, never in place of them.",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "knn_tp2": {
+   "definition": "Mid kNN-implied target: current price \u00b1 the neighbors' MEDIAN favorable excursion, signed by direction.",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "knn_tp3": {
+   "definition": "Far kNN-implied target: current price \u00b1 the neighbors' 75th-percentile favorable excursion, signed by direction.",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "lens": {
+   "definition": "Per-lens read: strong/ok/warn/-- for leadership, coil, insti_money, structure, resistance, sector. `extension` is ALWAYS null \u2014 the voices disagree on what extension means, so AQE prints the numbers (subcomponents.flow.ext_score, energy.en_pos50/exhaustion_score/atr_score) and makes no call. Every verdict comes from a label AQE already computes, or from top/bottom-third position in TODAY's list. No fitted thresholds anywhere. '--' = no data; absence is never agreement.",
+   "method": "lens_consensus.py + per-lens checks: {leadership,coil,insti_money,structure,resistance,extension,sector}.",
+   "type": "dict",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "lens_positive": {
+   "definition": "Count of lenses reading `strong` (0-6). UNWEIGHTED \u2014 no weighting was ever earned. Sort on it to tier the read; it is a READING AID, not a prediction, and whether 5-of-6 beats 2-of-6 is untested. Never a gate: nothing is eliminated, every name keeps its full block.",
+   "method": "lens_consensus.py: count of lenses reading positive.",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "lens_warnings": {
+   "definition": "Count of lenses reading `warn` (0-6).",
+   "method": "lens_consensus.py: lenses flagging caution.",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "ma_100": {
+   "definition": "",
+   "method": "N-day SMA of close.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "ma_20": {
+   "definition": "",
+   "method": "N-day simple moving average of close.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "ma_200": {
+   "definition": "",
+   "method": "N-day SMA of close.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "ma_50": {
+   "definition": "",
+   "method": "N-day SMA of close.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "malformed_bracket": {
+   "definition": "True if the structural stop sits within 0.5% of price (bracket unusable \u2014 stop virtually at entry).",
+   "method": "",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "mover_subtype": {
+   "definition": "DETECTION sub-type label (explosive / trend / tight_base / squeeze) \u2014 the family whose z-score profile the name matches best (M16c). Context only; not a gate.",
+   "method": "mover classification subtype.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "mp": {
+   "definition": "",
+   "method": "mp.py: [0,100] abs_mom+ADX+rel_mom+trend.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "mp_accel": {
+   "definition": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is building; negative = rolling over. Flags inflection BEFORE the level/mp_state confirms \u2014 read alongside mp_state (which is a knife-edge when the score plateaus). Additive diagnostic, not part of the Pine spec.",
+   "method": "mp.py: 2nd derivative \u2014 5-bar change of MP roc z-score.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "mp_accel_state": {
+   "definition": "Label for mp_accel with a \u00b10.10 dead-zone: ACCELERATING / DECELERATING / FLAT.",
+   "method": "mp.py: label over mp_accel {ACCELERATING/DECELERATING/...}.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "mp_state": {
+   "definition": "",
+   "method": "mp.py: label {BUILDING,STRONG,FADING}.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "on_elder": {
+   "definition": "",
+   "method": "flag: on the Elder list.",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "on_longlist": {
+   "definition": "",
+   "method": "flag: on the longlist.",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "pib_pattern": {
+   "definition": "True if the SECOND-TO-LAST bar was a pin bar AND the last bar is an inside bar relative to it \u2014 the 'rejection, then pause' combo pattern. Independent of pin_bar_state (which only reads the LAST bar itself).",
+   "method": "",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "pin_bar_date": {
+   "definition": "Date of the pin bar (null when pin_bar_state=NONE).",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "pin_bar_level": {
+   "definition": "The pin bar's rejection extreme (USD): the LOW for a bullish pin (a candidate support), the HIGH for a bearish pin (candidate resistance). Null when pin_bar_state=NONE.",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "pin_bar_state": {
+   "definition": "Candlestick REJECTION pattern on the LAST closed bar (pure geometry, no lookahead): BULLISH_PIN = long lower wick (\u226566% of range) + small body (\u226440%) + small upper wick (\u226440%) \u2014 the market pushed down and got rejected; BEARISH_PIN mirrors it (long upper wick). NONE = no pattern. Filtered so the bar's range must be \u22652\u00d7 the prior bar's range (rejects 'pin bars' that are just noise inside an already-tiny range).",
+   "method": "pin_bar.py: pin/inside-bar candlestick geometry on last bar.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "pipe_rank": {
+   "definition": "",
+   "method": "pipeline_rank.py: momentum pipeline rank.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "premove_conviction": {
+   "definition": "DETECTION conviction (0-4): count of M18 launcher-fingerprint legs present. Context only; not a probability of profit.",
+   "method": "",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "premove_conviction_label": {
+   "definition": "Human-readable pre-move conviction = word + number, e.g. 'HIGH (3/4)' (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4). Read this, not the bare number. Detection tag, not a win rate, not sizing.",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "premove_setup": {
+   "definition": "DETECTION tag (bool): name is QUIET now but coiled to launch \u2014 very young base + squeeze on + well below the recent high (M18 rule, applies only to quiet-pond names). Historical launches came a median ~12 trading days after the tag \u2014 a pre-move radar, not a same-day trigger. NOT a gate, NOT sizing; % elsewhere = detection rate, not win rate.",
+   "method": "signal_radar.py: %-radar pre-move tag (about to run).",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "ptrs": {
+   "definition": "= SC_MOMENTUM verbatim (PM ruling: the Sector-Health adjustment is DROPPED \u2014 sector context is read separately and qualitatively via `srm`/RRG, not double-counted into a per-ticker score). Disposition/sizing is the committee's call \u2014 AQE exports no sizing.",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "rank": {
+   "definition": "",
+   "method": "overall daily rank.",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "rs_down_day_20d": {
+   "definition": "All-weather leadership: stock's avg outperformance vs SPY on SPY DOWN days (last 20 sessions). Positive = beats SPY when market drops = genuine leader (pct).",
+   "method": "",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "rs_leadership": {
+   "definition": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, LAGGARD (<\u22120.25).",
+   "method": "relative-strength leadership label.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "rs_spy_20d": {
+   "definition": "",
+   "method": "20-day relative strength vs SPY.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "runner_conviction": {
+   "definition": "DETECTION conviction (0-4): how many of the four M15 legs (short base / strong 5d momentum / clear overhead / room below the 20d high) are in their favourable tercile. Higher = stronger historical detection, not a probability of profit.",
+   "method": "",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "runner_conviction_label": {
+   "definition": "Human-readable conviction = word + number, e.g. 'HIGH (3/4)'. The word is anchored to the historical +20%/20d detection ladder (MINIMAL 0 / LOW 1 / MODERATE 2 / HIGH 3 / MAX 4 ~= 5/13/27/43% detection). Read this, not the bare number. Still a detection tag, not a win rate, not sizing.",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "runner_setup": {
+   "definition": "DETECTION tag (bool): name is already moving with another leg \u2014 short young base + strong 5-day thrust + clear overhead (M15 rule). NOT a gate, NOT sizing; the PM decides entry/bracket/size live. Any % reported for this tag elsewhere is a DETECTION RATE (how often tagged names historically touched a level, price-path only) \u2014 never a win rate.",
+   "method": "signal_radar.py: %-radar continuation tag (will keep running).",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "rvol": {
+   "definition": "",
+   "method": "relative volume vs recent average (>1 = above-normal participation).",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sc_m_gate_detail": {
+   "definition": "Per-engine SC_MOMENTUM gate pass/fail (dict): {flow, energy, structure, mp, elder} each True/False vs the SC_M_GATES threshold \u2014 so you read WHICH check a name is failing without recomputing. false = that engine is below its floor.",
+   "method": "scoring.py: per-engine SC_MOMENTUM gate pass/fail.",
+   "type": "dict",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sc_m_gates": {
+   "definition": "SC_MOMENTUM qualification gate (bool): True iff EVERY engine floor passes \u2014 Flow\u226560, Energy\u226560, Structure\u226555, MP\u226555, Elder\u22656.5 (Pine SC_M_GATES). It does NOT cap the score (composite is uncapped); it flags whether the momentum read is fully gated. See sc_m_gate_detail for which specific check fails.",
+   "method": "scoring.py: overall SC_MOMENTUM gate flag.",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sc_momentum": {
+   "definition": "",
+   "method": "scoring.py: uncapped weighted composite [0,100] of flow/energy/structure/mp/elder; floors not applied to composite; Elder gate at qualification.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sc_momentum_raw": {
+   "definition": "",
+   "method": "scoring.py: the ungated SC_MOMENTUM weighted average.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sc_p_gate_detail": {
+   "definition": "Per-engine SC_POSITION gate pass/fail (dict): {flow, energy, structure, mp, bq, k39} each True/False vs the SC_P_GATES threshold (k39 = the weekly confirmation gate; null if unavailable).",
+   "method": "scoring.py: per-engine SC_POSITION gate pass/fail.",
+   "type": "dict",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sc_p_gates": {
+   "definition": "SC_POSITION qualification gate (bool): True iff every engine floor passes \u2014 Flow\u226540, Energy\u226560, Structure\u226565, MP\u226540, BQ\u226560 (Pine SC_P_GATES) AND the K39 weekly gate. Does NOT cap the score. See sc_p_gate_detail for the breakdown.",
+   "method": "scoring.py: overall SC_POSITION gate flag.",
+   "type": "bool",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sector_rrg_direction": {
+   "definition": "The ticker's sector RRG direction of travel: ENTERING / DEEPENING / EXITING / STABLE.",
+   "method": "srm.py: RRG direction.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sector_rrg_quadrant": {
+   "definition": "The ticker's sector RRG quadrant vs SPY: LEADING / IMPROVING / WEAKENING / LAGGING.",
+   "method": "srm.py: RRG quadrant of the sector.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sector_trend_state": {
+   "definition": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum Building \u2014 Add' / 'Momentum Fading \u2014 Hold' / 'Recovering' / 'Declining'). Context; the gate is gics_gate, unchanged.",
+   "method": "srm.py: sector ETF grade DEPLOY/HOLD/TURNING/WATCH/AVOID \u2192 SH.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "sma_distance_pct": {
+   "definition": "",
+   "method": "% distance of price from SMA (extension).",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "source": {
+   "definition": "",
+   "method": "data source tag.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "structure": {
+   "definition": "",
+   "method": "structure.py: clip((rs_spy+rs_accel+base+ms_pos+resist+wk+earn)/95*100).",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "structure_shift": {
+   "definition": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED pivot high (break of structure \u2014 trend continuation/ignition); BEARISH_CHOCH = close broke BELOW the up-swing's anchor low (character change \u2014 the up-structure failed); RANGE = inside the swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling FIX_CONFIRMED_PIVOT: the bullish test previously compared against the current swing's window-max high, which always includes today's own bar \u2014 making BULLISH_BOS mathematically unreachable. Now compares against the nearest confirmed pivot high instead.)",
+   "method": "structure/smart_money: BOS/CHoCH vs confirmed anchors (data only).",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "structure_shift_ref": {
+   "definition": "The level the shift is measured against (USD): the broken confirmed pivot high for BULLISH_BOS, the broken swing anchor low for BEARISH_CHOCH; null for RANGE.",
+   "method": "",
+   "type": "NoneType",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "subcomponents": {
+   "definition": "The engine SUB-SCORES behind each headline read \u2014 nested by engine, so the AIC sees WHY an engine scored what it did (context, never a gate). flow: {flow_score (MFI+CMF+HA core), accum_score, volume_score, skew_score, ext_score (extension penalty), mfi, cmf, ha_quality_count}. energy: {vp_position_score (volume-profile position), price_action_score, squeeze_score (BB/KC squeeze \u2014 the TTM-squeeze read), exhaustion_score, atr_score, en_pos50, en_trend_bars}. structure: {rs_spy_score, rs_accel_score, base_score, ms_pos_score (market structure), resist_score (overhead), wk_score (weekly trend = HTF bias), earn_score, rs_vs_spy (raw), rs_accel (raw), base_days, bd_mode}. mp: {abs_mom_score, mp_adx_score, rel_mom_score, trend_score, roc_zscore (momentum z), excess_return (vs SPY %), adx_val, di_bullish}. bq: {bq_range_tight, bq_vol_dry, bq_base_dur, bq_ema_conv, bq_base_days}. pipe: {pr_ret_12m, pr_adx_score, pr_rsi_score, pr_vol_score, pr_ma_score (MA-stack alignment), momentum_composite, pipe_tier}. Readiness sub-scores are intentionally NOT here (hidden per the decision-framework ruling) and Health sub-scores stay held-only/dropped.",
+   "method": "",
+   "type": "dict",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "thematic_basket": {
+   "definition": "",
+   "method": "srm.py: thematic basket membership.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "thematic_baskets": {
+   "definition": "",
+   "method": "all thematic baskets the name belongs to.",
+   "type": "list",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "thematic_grade": {
+   "definition": "",
+   "method": "srm.py: thematic basket grade.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "thematic_parent_gics": {
+   "definition": "",
+   "method": "parent GICS of the thematic basket.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "thematic_parent_grade": {
+   "definition": "",
+   "method": "parent GICS grade.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "thematic_rrg_direction": {
+   "definition": "The ticker's PRIMARY thematic basket's RRG direction (ENTERING / DEEPENING / EXITING / STABLE).",
+   "method": "thematic RRG direction.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "thematic_rrg_quadrant": {
+   "definition": "The ticker's PRIMARY thematic basket's RRG quadrant vs SPY (LEADING / IMPROVING / WEAKENING / LAGGING).",
+   "method": "thematic RRG quadrant.",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "ticker": {
+   "definition": "",
+   "method": "",
+   "type": "str",
+   "enum": null,
+   "glossary_gap": true,
+   "method_gap": true,
+   "undocumented": false
+  },
+  "vol_30d_ann": {
+   "definition": "30-day annualised realised volatility (decimal: 0.18 = 18%). This IS the Charter \u00a74.5 operative sizing vol (the charter calls it 'vol_30d'; AQE's field is annualised \u2014 same number). Forsizing/VaR, not a target.",
+   "method": "30-day annualised volatility (decimal fraction).",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  }
+ },
+ "subcomponents": {
+  "flow": [
+   "flow_score",
+   "accum_score",
+   "volume_score",
+   "skew_score",
+   "ext_score",
+   "mfi",
+   "cmf",
+   "ha_quality_count"
+  ],
+  "energy": [
+   "vp_position_score",
+   "price_action_score",
+   "squeeze_score",
+   "exhaustion_score",
+   "atr_score",
+   "en_pos50",
+   "en_trend_bars"
+  ],
+  "structure": [
+   "rs_spy_score",
+   "rs_accel_score",
+   "base_score",
+   "ms_pos_score",
+   "resist_score",
+   "wk_score",
+   "earn_score",
+   "rs_vs_spy",
+   "rs_accel",
+   "base_days",
+   "bd_mode"
+  ],
+  "mp": [
+   "abs_mom_score",
+   "mp_adx_score",
+   "rel_mom_score",
+   "trend_score",
+   "roc_zscore",
+   "excess_return",
+   "adx_val",
+   "di_bullish"
+  ],
+  "bq": [
+   "bq_range_tight",
+   "bq_vol_dry",
+   "bq_base_dur",
+   "bq_ema_conv",
+   "bq_base_days"
+  ],
+  "pipe": [
+   "pr_ret_12m",
+   "pr_adx_score",
+   "pr_rsi_score",
+   "pr_vol_score",
+   "pr_ma_score",
+   "momentum_composite",
+   "pipe_tier"
+  ]
+ }
 }
