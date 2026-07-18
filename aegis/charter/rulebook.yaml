@@ -165,11 +165,13 @@ topology:
   pc_role: AQE feed server + intraday alert watcher; pushes every export/alert to
     GitHub on write so EITHER deployment can pull a fresh feed (BL-022). The PC serves
     both equally and belongs to neither.
-  kimi_credentials: 'Kimi''s deployment carries the same requirements as Claude''s,
-    including its order path — so broker credential scope is a per-deployment PM
-    choice, not a Kimi-is-lesser rule (D-19 supersedes D-15''s "Kimi read-only /
-    gatekeeper Claude-only"). The one_armed_at_a_time invariant is what keeps two
-    order-capable deployments safe, not crippling one of them.'
+  kimi_credentials: 'Kimi stays READ-ONLY until the PM explicitly confirms migration
+    into production (D-30). Until then the Kimi package ships NO order path — no
+    staging-gatekeeper, no broker write credential, no /arm — it is an analysis /
+    shadow deployment only. On explicit PM production-migration confirmation, the
+    order path is added and the one_armed_at_a_time invariant governs. This makes the
+    one_armed_at_a_time rule moot for now (only Claude can arm), which is the safe
+    default while Kimi is still being proven.'
 data_sources:
   scores_and_analytics: AQE export (GitHub repo engine) — verbatim
   equity_spot_live: Tiger MCP (cloud-hosted, reuse) -> IBKR fallback

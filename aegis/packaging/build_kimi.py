@@ -23,6 +23,8 @@ def main():
     for name in sorted(os.listdir(os.path.join(SRC, "skills"))):
         if name.startswith("voice-"):
             continue
+        if name == "staging-gatekeeper":
+            continue   # D-30: Kimi is read-only until explicit production migration — NO order path ships
         kname = name.replace("_", "-")
         sdst = os.path.join(DIST, "skills", kname); os.makedirs(sdst, exist_ok=True)
         for f in os.listdir(os.path.join(SRC, "skills", name)):
