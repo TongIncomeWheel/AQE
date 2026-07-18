@@ -1,0 +1,89 @@
+meta:
+  version: 1.0.0
+  note: PM-TUNABLE parameters. Change via tools/set_param.py (plain-English through
+    the agent) — every change auto-logged to decisions_log.md. Law lives in rulebook.yaml
+    and needs committee.
+capital:
+  one_r_pct_of_dyncap: 1.5
+  sizes:
+    standard_r: 1.0
+    high_conviction_r: 2.0
+    runner_hedge_addon_r: 0.5
+    catalyst_unconfirmed_r: 0.5
+  vol_cap_pct_of_dyncap:
+    GREEN: 2.0
+    YELLOW: 1.5
+risk:
+  gates:
+    portfolio_beta:
+      soft: 1.8
+      hard: 2.0
+    var_95_1m_pct_of_dyncap:
+      soft: 16
+      hard: 20
+    leverage_x_dyncap:
+      soft: 2.5
+      hard: 3.0
+    combined_stop_risk_pct_of_dyncap_max: 5
+  per_trade:
+    rr_min_to_tp2: 2.0
+    stop_atr_distance_min: 1.0
+regime:
+  vix_bands:
+    GREEN: <18
+    YELLOW: 18-25
+    ORANGE: 25-30
+    RED: '>30'
+  stop_pct_ceiling:
+    GREEN: 12
+    YELLOW: 8
+    ORANGE: 6
+  atr_stop_multiple_base:
+    GREEN: 1.5
+    YELLOW: 2.0
+    ORANGE: 2.5
+  elder_adjustment:
+    8-10: -0.25
+    5-7: 0.0
+    1-4: 0.5
+  atr_multiple_clamp:
+  - 1.0
+  - 3.5
+universe:
+  screen:
+    market: US primary listings, common stock only
+    price_vs_ema: close at/above ANY of EMA20, EMA50, EMA100
+    market_cap_min_usd: 2000000000
+    volume_rule: current volume >= 30-day average volume
+committee:
+  nominations_per_voice: 10
+  deliberation_threshold: nomination_count >= 2 OR lens top tier
+  conviction_high: 5 of 9 voices
+schedule:
+  weekly_run: Sunday
+  premarket_plan_ready: '16:00'
+  pm_approval_deadline: '21:00'
+  autonomous_window: 01:30-10:00
+  us_market_hours_sgt: 21:30-04:00 (summer)
+  morning_summary: '10:00'
+  market_watch_mode: code watches (AQE alert engine); committee wakes on trigger only
+    — no timed AI polling loops
+retention:
+  raw_days: 30
+  ledger_window_days: 15
+  learning_lookback_days: 5
+  archive: monthly zip to Drive after raw_days; rollup summary kept forever
+autopilot:
+  default: OFF — preview only, always
+  max_r_per_order: 1.0
+  max_orders_per_session: 3
+  scope: ONLY tickers on today's PM-APPROVED plan with preauthorised=true
+  auto_off_on:
+  - tripwire block
+  - any portfolio gate breach
+  - broker error
+  - window end
+  - expiry
+  expiry: fixed 05:30 SGT next occurrence — definitive, no timezone math (D-7a)
+  window: arm at/after plan approval; expires 05:30 SGT — covers the full US session
+    summer or winter

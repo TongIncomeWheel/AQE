@@ -1,0 +1,9 @@
+{
+  "_comment": "Fill in at deploy. These are the ONLY places service addresses live.",
+  "tiger_mcp":  { "url": "REPLACE: https://<your-cloud-run-tiger-mcp>", "auth": "REPLACE: header or none", "reused": true },
+  "alpaca_mcp": { "url": "REPLACE: https://<your-cloud-run-alpaca-mcp>", "auth": "REPLACE", "reused": true },
+  "ibkr_gateway": { "url": "https://localhost:5000/v1/api", "account_env": "IBKR_ACCOUNT" },
+  "fmp": { "base": "https://financialmodelingprep.com/stable", "key_env": "FMP_API_KEY" },
+  "aqe_repo": { "url": "REPLACE: https://github.com/<you>/<aqe-repo>", "export_path": "output/aqe_daily_export.json" },
+  "drive_sync": { "method": "rclone", "remote": "REPLACE: gdrive:Aegis", "direction": "bidirectional data/ only" }
+}

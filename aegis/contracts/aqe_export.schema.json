@@ -1,0 +1,8068 @@
+{
+ "$schema": "http://json-schema.org/schema#",
+ "type": "object",
+ "properties": {
+  "date": {
+   "type": "string"
+  },
+  "exported_at": {
+   "type": "string"
+  },
+  "market": {
+   "type": "string"
+  },
+  "regime": {
+   "type": "object",
+   "properties": {
+    "vix": {
+     "type": "number"
+    },
+    "level": {
+     "type": "string"
+    },
+    "hurst": {
+     "type": "number"
+    },
+    "trend": {
+     "type": "string"
+    },
+    "implication": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "hurst",
+    "implication",
+    "level",
+    "trend",
+    "vix"
+   ]
+  },
+  "intermarket": {
+   "type": "object",
+   "properties": {
+    "as_of": {
+     "type": "string"
+    },
+    "uup": {
+     "type": "object",
+     "properties": {
+      "close": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "above_sma20",
+      "close",
+      "roc20",
+      "roc5"
+     ]
+    },
+    "tlt": {
+     "type": "object",
+     "properties": {
+      "close": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "above_sma20",
+      "close",
+      "roc20",
+      "roc5"
+     ]
+    },
+    "hyg": {
+     "type": "object",
+     "properties": {
+      "close": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "hyg_tlt_spread": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "above_sma20",
+      "close",
+      "hyg_tlt_spread",
+      "roc20",
+      "roc5"
+     ]
+    },
+    "spy_iwm": {
+     "type": "object",
+     "properties": {
+      "spy_roc20": {
+       "type": "number"
+      },
+      "iwm_roc20": {
+       "type": "number"
+      },
+      "spread": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "iwm_roc20",
+      "spread",
+      "spy_roc20"
+     ]
+    }
+   },
+   "required": [
+    "as_of",
+    "hyg",
+    "spy_iwm",
+    "tlt",
+    "uup"
+   ]
+  },
+  "srm": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "etf": {
+      "type": "string"
+     },
+     "sector": {
+      "type": "string"
+     },
+     "grade": {
+      "type": "string"
+     },
+     "trend_state": {
+      "type": "string"
+     },
+     "sh_value": {
+      "type": "integer"
+     },
+     "roc20": {
+      "type": "number"
+     },
+     "roc5": {
+      "type": "number"
+     },
+     "divergence": {
+      "type": "number"
+     },
+     "above_sma20": {
+      "type": "boolean"
+     },
+     "sh_trend": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     },
+     "grade_trend": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "rrg_rs_ratio": {
+      "type": "number"
+     },
+     "rrg_rs_momentum": {
+      "type": "number"
+     },
+     "rrg_quadrant": {
+      "type": "string"
+     },
+     "rrg_direction": {
+      "type": "string"
+     },
+     "rrg_grade_override": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "macro_headwind_score": {
+      "type": "number"
+     },
+     "macro_headwind_flag": {
+      "type": "string"
+     },
+     "entry_gate": {
+      "type": "string"
+     },
+     "entry_gate_reason": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "above_sma20",
+     "divergence",
+     "entry_gate",
+     "entry_gate_reason",
+     "etf",
+     "grade",
+     "grade_trend",
+     "macro_headwind_flag",
+     "macro_headwind_score",
+     "roc20",
+     "roc5",
+     "rrg_direction",
+     "rrg_grade_override",
+     "rrg_quadrant",
+     "rrg_rs_momentum",
+     "rrg_rs_ratio",
+     "sector",
+     "sh_trend",
+     "sh_value",
+     "trend_state"
+    ]
+   }
+  },
+  "srm_signals": {
+   "type": "object",
+   "properties": {
+    "deploy": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "hold": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "turning": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "watch": {
+     "type": "array"
+    },
+    "avoid": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "blocked": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   },
+   "required": [
+    "avoid",
+    "blocked",
+    "deploy",
+    "hold",
+    "turning",
+    "watch"
+   ]
+  },
+  "macro_weather": {
+   "type": "object",
+   "properties": {
+    "tlt_direction": {
+     "type": "string"
+    },
+    "tlt_roc5": {
+     "type": "number"
+    },
+    "uup_direction": {
+     "type": "string"
+    },
+    "uup_roc5": {
+     "type": "number"
+    },
+    "hyg_direction": {
+     "type": "string"
+    },
+    "hyg_roc5": {
+     "type": "number"
+    },
+    "iwm_direction": {
+     "type": "string"
+    },
+    "iwm_roc5": {
+     "type": "number"
+    },
+    "gld_direction": {
+     "type": "string"
+    },
+    "gld_roc5": {
+     "type": "number"
+    },
+    "cper_direction": {
+     "type": "string"
+    },
+    "cper_roc5": {
+     "type": "number"
+    },
+    "uso_direction": {
+     "type": "string"
+    },
+    "uso_roc5": {
+     "type": "number"
+    },
+    "copper_gold_direction": {
+     "type": "string"
+    },
+    "copper_gold_roc5": {
+     "type": "number"
+    },
+    "copper_gold_roc20": {
+     "type": "number"
+    },
+    "regime_description": {
+     "type": "string"
+    },
+    "snapshot_date": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "copper_gold_direction",
+    "copper_gold_roc20",
+    "copper_gold_roc5",
+    "cper_direction",
+    "cper_roc5",
+    "gld_direction",
+    "gld_roc5",
+    "hyg_direction",
+    "hyg_roc5",
+    "iwm_direction",
+    "iwm_roc5",
+    "regime_description",
+    "snapshot_date",
+    "tlt_direction",
+    "tlt_roc5",
+    "uso_direction",
+    "uso_roc5",
+    "uup_direction",
+    "uup_roc5"
+   ]
+  },
+  "regime_stop_pct_ceiling": {
+   "type": "number"
+  },
+  "spy_roc_20d": {
+   "type": "number"
+  },
+  "thematic_baskets": {
+   "type": "object",
+   "properties": {
+    "Mag7": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "AI_Infrastructure": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "AI_Software": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Semiconductors": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Chip_Equipment": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Enterprise_Software": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Cloud_Computing": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Cybersecurity": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Quantum_Computing": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Space_eVTOL": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Defense_Tech": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Infra_Power": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Infra_Construction": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Autonomous_Robotics": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Transport_Logistics": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Nuclear_Energy": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Solar_Renewables": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Oil_Services": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Midstream_MLP": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Critical_Minerals": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Gold_Miners": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Agri_Commodities": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Big_Banks": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Fintech": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Crypto_Digital": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Insurance": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Payments": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Gaming_Streaming": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "E_Commerce": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Travel_Leisure": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Homebuilders": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Biotech": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "MedTech": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "REITs": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    },
+    "Social_Media": {
+     "type": "object",
+     "properties": {
+      "grade": {
+       "type": "string"
+      },
+      "raw_grade": {
+       "type": "string"
+      },
+      "parent_gics": {
+       "type": "string"
+      },
+      "parent_grade": {
+       "type": "string"
+      },
+      "roc20": {
+       "type": "number"
+      },
+      "roc5": {
+       "type": "number"
+      },
+      "above_sma20": {
+       "type": "boolean"
+      },
+      "coverage": {
+       "type": "string"
+      },
+      "constituents_used": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rrg_rs_ratio": {
+       "type": "number"
+      },
+      "rrg_rs_momentum": {
+       "type": "number"
+      },
+      "rrg_quadrant": {
+       "type": "string"
+      },
+      "rrg_direction": {
+       "type": "string"
+      },
+      "rrg_history": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "rs_ratio": {
+          "type": "number"
+         },
+         "rs_momentum": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "rs_momentum",
+         "rs_ratio"
+        ]
+       }
+      }
+     },
+     "required": [
+      "above_sma20",
+      "constituents_used",
+      "coverage",
+      "grade",
+      "parent_gics",
+      "parent_grade",
+      "raw_grade",
+      "roc20",
+      "roc5",
+      "rrg_direction",
+      "rrg_history",
+      "rrg_quadrant",
+      "rrg_rs_momentum",
+      "rrg_rs_ratio"
+     ]
+    }
+   },
+   "required": [
+    "AI_Infrastructure",
+    "AI_Software",
+    "Agri_Commodities",
+    "Autonomous_Robotics",
+    "Big_Banks",
+    "Biotech",
+    "Chip_Equipment",
+    "Cloud_Computing",
+    "Critical_Minerals",
+    "Crypto_Digital",
+    "Cybersecurity",
+    "Defense_Tech",
+    "E_Commerce",
+    "Enterprise_Software",
+    "Fintech",
+    "Gaming_Streaming",
+    "Gold_Miners",
+    "Homebuilders",
+    "Infra_Construction",
+    "Infra_Power",
+    "Insurance",
+    "Mag7",
+    "MedTech",
+    "Midstream_MLP",
+    "Nuclear_Energy",
+    "Oil_Services",
+    "Payments",
+    "Quantum_Computing",
+    "REITs",
+    "Semiconductors",
+    "Social_Media",
+    "Solar_Renewables",
+    "Space_eVTOL",
+    "Transport_Logistics",
+    "Travel_Leisure"
+   ]
+  },
+  "sector_map_version": {
+   "type": "string"
+  },
+  "field_schema": {
+   "type": "object",
+   "properties": {
+    "entry": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "atr_14d": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "bracket": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_swing_low": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_swing_high": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_236": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_382": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_500": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_618": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "fib_786": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "ma_20": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "ma_50": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "ma_100": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "ma_200": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "vol_30d_ann": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "beta_252d": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "rs_down_day_20d": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "rs_leadership": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "atr_caution": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "malformed_bracket": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "hl_score": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "hl_state": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "runner_setup": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "runner_conviction": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "runner_conviction_label": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "mover_subtype": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "premove_setup": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "premove_conviction": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "premove_conviction_label": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sc_m_gates": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sc_m_gate_detail": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sc_p_gates": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sc_p_gate_detail": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "subcomponents": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "structure_shift": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "structure_shift_ref": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "mp_accel": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "mp_accel_state": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "div_state": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "div_bull_count": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "div_bear_count": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "div_oscs": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "div_date": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "pin_bar_state": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "pin_bar_date": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "pin_bar_level": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "inside_bar": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "pib_pattern": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "choch_state": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "choch_date": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "knn_prob": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "knn_significant": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "knn_neighbors_used": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "knn_tp1": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "knn_tp2": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "knn_tp3": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sector_trend_state": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sector_rrg_quadrant": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "sector_rrg_direction": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "thematic_rrg_quadrant": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    },
+    "thematic_rrg_direction": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "side": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "role",
+      "side",
+      "unit"
+     ]
+    }
+   },
+   "required": [
+    "atr_14d",
+    "atr_caution",
+    "beta_252d",
+    "bracket",
+    "choch_date",
+    "choch_state",
+    "div_bear_count",
+    "div_bull_count",
+    "div_date",
+    "div_oscs",
+    "div_state",
+    "entry",
+    "fib_236",
+    "fib_382",
+    "fib_500",
+    "fib_618",
+    "fib_786",
+    "fib_swing_high",
+    "fib_swing_low",
+    "hl_score",
+    "hl_state",
+    "inside_bar",
+    "knn_neighbors_used",
+    "knn_prob",
+    "knn_significant",
+    "knn_tp1",
+    "knn_tp2",
+    "knn_tp3",
+    "ma_100",
+    "ma_20",
+    "ma_200",
+    "ma_50",
+    "malformed_bracket",
+    "mover_subtype",
+    "mp_accel",
+    "mp_accel_state",
+    "pib_pattern",
+    "pin_bar_date",
+    "pin_bar_level",
+    "pin_bar_state",
+    "premove_conviction",
+    "premove_conviction_label",
+    "premove_setup",
+    "rs_down_day_20d",
+    "rs_leadership",
+    "runner_conviction",
+    "runner_conviction_label",
+    "runner_setup",
+    "sc_m_gate_detail",
+    "sc_m_gates",
+    "sc_p_gate_detail",
+    "sc_p_gates",
+    "sector_rrg_direction",
+    "sector_rrg_quadrant",
+    "sector_trend_state",
+    "structure_shift",
+    "structure_shift_ref",
+    "subcomponents",
+    "thematic_rrg_direction",
+    "thematic_rrg_quadrant",
+    "vol_30d_ann"
+   ]
+  },
+  "field_schema_enums": {
+   "type": "object",
+   "properties": {
+    "role": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "unit": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "side": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   },
+   "required": [
+    "role",
+    "side",
+    "unit"
+   ]
+  },
+  "field_glossary": {
+   "type": "object",
+   "properties": {
+    "_convention": {
+     "type": "string"
+    },
+    "_decision_framework": {
+     "type": "string"
+    },
+    "entry": {
+     "type": "string"
+    },
+    "atr_14d": {
+     "type": "string"
+    },
+    "bracket": {
+     "type": "string"
+    },
+    "structure_shift": {
+     "type": "string"
+    },
+    "structure_shift_ref": {
+     "type": "string"
+    },
+    "mp_accel": {
+     "type": "string"
+    },
+    "mp_accel_state": {
+     "type": "string"
+    },
+    "div_state": {
+     "type": "string"
+    },
+    "div_bull_count": {
+     "type": "string"
+    },
+    "div_bear_count": {
+     "type": "string"
+    },
+    "div_oscs": {
+     "type": "string"
+    },
+    "div_date": {
+     "type": "string"
+    },
+    "pin_bar_state": {
+     "type": "string"
+    },
+    "pin_bar_date": {
+     "type": "string"
+    },
+    "pin_bar_level": {
+     "type": "string"
+    },
+    "inside_bar": {
+     "type": "string"
+    },
+    "pib_pattern": {
+     "type": "string"
+    },
+    "choch_state": {
+     "type": "string"
+    },
+    "choch_date": {
+     "type": "string"
+    },
+    "knn_prob": {
+     "type": "string"
+    },
+    "knn_significant": {
+     "type": "string"
+    },
+    "knn_neighbors_used": {
+     "type": "string"
+    },
+    "knn_tp1": {
+     "type": "string"
+    },
+    "knn_tp2": {
+     "type": "string"
+    },
+    "knn_tp3": {
+     "type": "string"
+    },
+    "fib_swing_low/high": {
+     "type": "string"
+    },
+    "fib_236/382/500/618/786": {
+     "type": "string"
+    },
+    "ma_20/50/100/200": {
+     "type": "string"
+    },
+    "vol_30d_ann": {
+     "type": "string"
+    },
+    "beta_252d": {
+     "type": "string"
+    },
+    "ptrs": {
+     "type": "string"
+    },
+    "rs_down_day_20d": {
+     "type": "string"
+    },
+    "rs_leadership": {
+     "type": "string"
+    },
+    "atr_caution": {
+     "type": "string"
+    },
+    "malformed_bracket": {
+     "type": "string"
+    },
+    "hl_score": {
+     "type": "string"
+    },
+    "hl_state": {
+     "type": "string"
+    },
+    "runner_setup": {
+     "type": "string"
+    },
+    "runner_conviction": {
+     "type": "string"
+    },
+    "runner_conviction_label": {
+     "type": "string"
+    },
+    "mover_subtype": {
+     "type": "string"
+    },
+    "premove_setup": {
+     "type": "string"
+    },
+    "premove_conviction": {
+     "type": "string"
+    },
+    "premove_conviction_label": {
+     "type": "string"
+    },
+    "sc_m_gates": {
+     "type": "string"
+    },
+    "sc_m_gate_detail": {
+     "type": "string"
+    },
+    "sc_p_gates": {
+     "type": "string"
+    },
+    "sc_p_gate_detail": {
+     "type": "string"
+    },
+    "subcomponents": {
+     "type": "string"
+    },
+    "sector_trend_state": {
+     "type": "string"
+    },
+    "sector_rrg_quadrant": {
+     "type": "string"
+    },
+    "sector_rrg_direction": {
+     "type": "string"
+    },
+    "thematic_rrg_quadrant": {
+     "type": "string"
+    },
+    "thematic_rrg_direction": {
+     "type": "string"
+    },
+    "lens_ranking": {
+     "type": "string"
+    },
+    "lens": {
+     "type": "string"
+    },
+    "lens_positive": {
+     "type": "string"
+    },
+    "lens_warnings": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "_convention",
+    "_decision_framework",
+    "atr_14d",
+    "atr_caution",
+    "beta_252d",
+    "bracket",
+    "choch_date",
+    "choch_state",
+    "div_bear_count",
+    "div_bull_count",
+    "div_date",
+    "div_oscs",
+    "div_state",
+    "entry",
+    "fib_236/382/500/618/786",
+    "fib_swing_low/high",
+    "hl_score",
+    "hl_state",
+    "inside_bar",
+    "knn_neighbors_used",
+    "knn_prob",
+    "knn_significant",
+    "knn_tp1",
+    "knn_tp2",
+    "knn_tp3",
+    "lens",
+    "lens_positive",
+    "lens_ranking",
+    "lens_warnings",
+    "ma_20/50/100/200",
+    "malformed_bracket",
+    "mover_subtype",
+    "mp_accel",
+    "mp_accel_state",
+    "pib_pattern",
+    "pin_bar_date",
+    "pin_bar_level",
+    "pin_bar_state",
+    "premove_conviction",
+    "premove_conviction_label",
+    "premove_setup",
+    "ptrs",
+    "rs_down_day_20d",
+    "rs_leadership",
+    "runner_conviction",
+    "runner_conviction_label",
+    "runner_setup",
+    "sc_m_gate_detail",
+    "sc_m_gates",
+    "sc_p_gate_detail",
+    "sc_p_gates",
+    "sector_rrg_direction",
+    "sector_rrg_quadrant",
+    "sector_trend_state",
+    "structure_shift",
+    "structure_shift_ref",
+    "subcomponents",
+    "thematic_rrg_direction",
+    "thematic_rrg_quadrant",
+    "vol_30d_ann"
+   ]
+  },
+  "sector_map_gaps": {
+   "type": "array"
+  },
+  "held_positions_status": {
+   "type": "string"
+  },
+  "held_positions": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "ticker": {
+      "type": "string"
+     },
+     "position_type": {
+      "type": "string"
+     },
+     "qty": {
+      "type": "integer"
+     },
+     "entry": {
+      "type": "number"
+     },
+     "live_px": {
+      "type": "number"
+     },
+     "held_sl": {
+      "type": "null"
+     },
+     "held_tp1": {
+      "type": "null"
+     },
+     "held_tp2": {
+      "type": "null"
+     },
+     "trade_date": {
+      "type": "null"
+     },
+     "unreal_usd": {
+      "type": "number"
+     },
+     "exposure": {
+      "type": "number"
+     },
+     "ptj_sector": {
+      "type": "string"
+     },
+     "ptj_srm_grade": {
+      "type": "null"
+     },
+     "notes": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "held": {
+      "type": "boolean"
+     },
+     "sc_momentum": {
+      "type": "number"
+     },
+     "sc_momentum_raw": {
+      "type": "number"
+     },
+     "ptrs": {
+      "type": "number"
+     },
+     "pipe_rank": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "flow": {
+      "type": "number"
+     },
+     "energy": {
+      "type": "number"
+     },
+     "structure": {
+      "type": "number"
+     },
+     "mp": {
+      "type": "number"
+     },
+     "mp_state": {
+      "type": "string"
+     },
+     "elder": {
+      "type": "number"
+     },
+     "sc_m_gates": {
+      "type": "boolean"
+     },
+     "sc_m_gate_detail": {
+      "type": "object",
+      "properties": {
+       "flow": {
+        "type": "boolean"
+       },
+       "energy": {
+        "type": "boolean"
+       },
+       "structure": {
+        "type": "boolean"
+       },
+       "mp": {
+        "type": "boolean"
+       },
+       "elder": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "elder",
+       "energy",
+       "flow",
+       "mp",
+       "structure"
+      ]
+     },
+     "sc_p_gates": {
+      "type": "boolean"
+     },
+     "sc_p_gate_detail": {
+      "type": "object",
+      "properties": {
+       "flow": {
+        "type": "boolean"
+       },
+       "energy": {
+        "type": "boolean"
+       },
+       "structure": {
+        "type": "boolean"
+       },
+       "mp": {
+        "type": "boolean"
+       },
+       "bq": {
+        "type": "boolean"
+       },
+       "k39": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "bq",
+       "energy",
+       "flow",
+       "k39",
+       "mp",
+       "structure"
+      ]
+     },
+     "subcomponents": {
+      "type": "object",
+      "properties": {
+       "flow": {
+        "type": "object",
+        "properties": {
+         "flow_score": {
+          "type": "number"
+         },
+         "accum_score": {
+          "type": "number"
+         },
+         "volume_score": {
+          "type": "number"
+         },
+         "skew_score": {
+          "type": "number"
+         },
+         "ext_score": {
+          "type": "number"
+         },
+         "mfi": {
+          "type": "number"
+         },
+         "cmf": {
+          "type": "number"
+         },
+         "ha_quality_count": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "accum_score",
+         "cmf",
+         "ext_score",
+         "flow_score",
+         "ha_quality_count",
+         "mfi",
+         "skew_score",
+         "volume_score"
+        ]
+       },
+       "energy": {
+        "type": "object",
+        "properties": {
+         "vp_position_score": {
+          "type": "number"
+         },
+         "price_action_score": {
+          "type": "number"
+         },
+         "squeeze_score": {
+          "type": "number"
+         },
+         "exhaustion_score": {
+          "type": "number"
+         },
+         "atr_score": {
+          "type": "number"
+         },
+         "en_pos50": {
+          "type": "number"
+         },
+         "en_trend_bars": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "atr_score",
+         "en_pos50",
+         "en_trend_bars",
+         "exhaustion_score",
+         "price_action_score",
+         "squeeze_score",
+         "vp_position_score"
+        ]
+       },
+       "structure": {
+        "type": "object",
+        "properties": {
+         "rs_spy_score": {
+          "type": "number"
+         },
+         "rs_accel_score": {
+          "type": "number"
+         },
+         "base_score": {
+          "type": "number"
+         },
+         "ms_pos_score": {
+          "type": "number"
+         },
+         "resist_score": {
+          "type": "number"
+         },
+         "wk_score": {
+          "type": "number"
+         },
+         "earn_score": {
+          "type": "number"
+         },
+         "rs_vs_spy": {
+          "type": "number"
+         },
+         "rs_accel": {
+          "type": "number"
+         },
+         "base_days": {
+          "type": "number"
+         },
+         "bd_mode": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "base_days",
+         "base_score",
+         "bd_mode",
+         "earn_score",
+         "ms_pos_score",
+         "resist_score",
+         "rs_accel",
+         "rs_accel_score",
+         "rs_spy_score",
+         "rs_vs_spy",
+         "wk_score"
+        ]
+       },
+       "mp": {
+        "type": "object",
+        "properties": {
+         "abs_mom_score": {
+          "type": "number"
+         },
+         "mp_adx_score": {
+          "type": "number"
+         },
+         "rel_mom_score": {
+          "type": "number"
+         },
+         "trend_score": {
+          "type": "number"
+         },
+         "roc_zscore": {
+          "type": "number"
+         },
+         "excess_return": {
+          "type": "number"
+         },
+         "adx_val": {
+          "type": "number"
+         },
+         "di_bullish": {
+          "type": "boolean"
+         }
+        },
+        "required": [
+         "abs_mom_score",
+         "adx_val",
+         "di_bullish",
+         "excess_return",
+         "mp_adx_score",
+         "rel_mom_score",
+         "roc_zscore",
+         "trend_score"
+        ]
+       },
+       "bq": {
+        "type": "object",
+        "properties": {
+         "bq_range_tight": {
+          "type": "number"
+         },
+         "bq_vol_dry": {
+          "type": "number"
+         },
+         "bq_base_dur": {
+          "type": "number"
+         },
+         "bq_ema_conv": {
+          "type": "number"
+         },
+         "bq_base_days": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "bq_base_days",
+         "bq_base_dur",
+         "bq_ema_conv",
+         "bq_range_tight",
+         "bq_vol_dry"
+        ]
+       },
+       "pipe": {
+        "type": "object",
+        "properties": {
+         "pr_ret_12m": {
+          "type": [
+           "null",
+           "number"
+          ]
+         },
+         "pr_adx_score": {
+          "type": [
+           "null",
+           "number"
+          ]
+         },
+         "pr_rsi_score": {
+          "type": [
+           "null",
+           "number"
+          ]
+         },
+         "pr_vol_score": {
+          "type": [
+           "null",
+           "number"
+          ]
+         },
+         "pr_ma_score": {
+          "type": [
+           "null",
+           "number"
+          ]
+         },
+         "momentum_composite": {
+          "type": [
+           "null",
+           "number"
+          ]
+         },
+         "pipe_tier": {
+          "type": [
+           "null",
+           "string"
+          ]
+         }
+        },
+        "required": [
+         "momentum_composite",
+         "pipe_tier",
+         "pr_adx_score",
+         "pr_ma_score",
+         "pr_ret_12m",
+         "pr_rsi_score",
+         "pr_vol_score"
+        ]
+       }
+      },
+      "required": [
+       "bq",
+       "energy",
+       "flow",
+       "mp",
+       "pipe",
+       "structure"
+      ]
+     },
+     "mp_accel": {
+      "type": "number"
+     },
+     "mp_accel_state": {
+      "type": "string"
+     },
+     "div_state": {
+      "type": "string"
+     },
+     "div_bull_count": {
+      "type": "integer"
+     },
+     "div_bear_count": {
+      "type": "integer"
+     },
+     "div_oscs": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "div_date": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "pin_bar_state": {
+      "type": "string"
+     },
+     "pin_bar_date": {
+      "type": "null"
+     },
+     "pin_bar_level": {
+      "type": "null"
+     },
+     "inside_bar": {
+      "type": "boolean"
+     },
+     "pib_pattern": {
+      "type": "boolean"
+     },
+     "choch_state": {
+      "type": "string"
+     },
+     "choch_date": {
+      "type": "string"
+     },
+     "knn_prob": {
+      "type": "number"
+     },
+     "knn_significant": {
+      "type": "boolean"
+     },
+     "knn_neighbors_used": {
+      "type": "integer"
+     },
+     "knn_tp1": {
+      "type": "number"
+     },
+     "knn_tp2": {
+      "type": "number"
+     },
+     "knn_tp3": {
+      "type": "number"
+     },
+     "hl_score": {
+      "type": "number"
+     },
+     "hl_state": {
+      "type": "string"
+     },
+     "runner_setup": {
+      "type": "boolean"
+     },
+     "runner_conviction_label": {
+      "type": "null"
+     },
+     "premove_setup": {
+      "type": "boolean"
+     },
+     "premove_conviction_label": {
+      "type": "null"
+     },
+     "in_ledger": {
+      "type": "boolean"
+     },
+     "cob_price": {
+      "type": "number"
+     },
+     "beta_30d": {
+      "type": "number"
+     },
+     "atr_14d": {
+      "type": "number"
+     },
+     "gics_sector": {
+      "type": "string"
+     },
+     "gics_gate": {
+      "type": "string"
+     },
+     "rs_spy_20d": {
+      "type": "number"
+     },
+     "sma_distance_pct": {
+      "type": "number"
+     },
+     "rvol": {
+      "type": "number"
+     },
+     "ma_20": {
+      "type": "number"
+     },
+     "ma_50": {
+      "type": "number"
+     },
+     "ma_100": {
+      "type": "number"
+     },
+     "ma_200": {
+      "type": "number"
+     },
+     "fib_swing_low": {
+      "type": "number"
+     },
+     "fib_swing_high": {
+      "type": "number"
+     },
+     "fib_236": {
+      "type": "number"
+     },
+     "fib_382": {
+      "type": "number"
+     },
+     "fib_500": {
+      "type": "number"
+     },
+     "fib_618": {
+      "type": "number"
+     },
+     "fib_786": {
+      "type": "number"
+     },
+     "vol_30d_ann": {
+      "type": "number"
+     },
+     "beta_252d": {
+      "type": "number"
+     },
+     "bracket": {
+      "type": "object",
+      "properties": {
+       "price": {
+        "type": "number"
+       },
+       "price_source": {
+        "type": "string"
+       },
+       "stop": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "stop_type": {
+        "type": [
+         "null",
+         "string"
+        ]
+       },
+       "stop_atr_dist": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "stop_date": {
+        "type": [
+         "null",
+         "string"
+        ]
+       },
+       "risk": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "risk_pct": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "targets": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string"
+          },
+          "price": {
+           "type": "number"
+          },
+          "date": {
+           "type": "string"
+          },
+          "atr_dist": {
+           "type": "number"
+          },
+          "vol_ratio": {
+           "type": "number"
+          },
+          "vol_validated": {
+           "type": "boolean"
+          },
+          "tp": {
+           "type": [
+            "null",
+            "string"
+           ]
+          },
+          "r": {
+           "type": "number"
+          }
+         },
+         "required": [
+          "atr_dist",
+          "price",
+          "type"
+         ]
+        }
+       },
+       "rr": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "rr_tp1": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "rr_tp2": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "rr_tp3": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "atr_fallback_stop": {
+        "type": "number"
+       },
+       "valid": {
+        "type": "boolean"
+       },
+       "invalid_reason": {
+        "type": [
+         "null",
+         "string"
+        ]
+       },
+       "stop_vol_ratio": {
+        "type": "number"
+       },
+       "stop_vol_validated": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "atr_fallback_stop",
+       "invalid_reason",
+       "price",
+       "price_source",
+       "risk",
+       "risk_pct",
+       "rr",
+       "rr_tp1",
+       "rr_tp2",
+       "rr_tp3",
+       "stop",
+       "stop_atr_dist",
+       "stop_date",
+       "stop_type",
+       "targets",
+       "valid"
+      ]
+     },
+     "structure_shift": {
+      "type": "string"
+     },
+     "structure_shift_ref": {
+      "type": [
+       "null",
+       "number"
+      ]
+     }
+    },
+    "required": [
+     "atr_14d",
+     "beta_252d",
+     "beta_30d",
+     "bracket",
+     "choch_date",
+     "choch_state",
+     "cob_price",
+     "div_bear_count",
+     "div_bull_count",
+     "div_date",
+     "div_oscs",
+     "div_state",
+     "elder",
+     "energy",
+     "entry",
+     "exposure",
+     "fib_236",
+     "fib_382",
+     "fib_500",
+     "fib_618",
+     "fib_786",
+     "fib_swing_high",
+     "fib_swing_low",
+     "flow",
+     "gics_gate",
+     "gics_sector",
+     "held",
+     "held_sl",
+     "held_tp1",
+     "held_tp2",
+     "hl_score",
+     "hl_state",
+     "in_ledger",
+     "inside_bar",
+     "knn_neighbors_used",
+     "knn_prob",
+     "knn_significant",
+     "knn_tp1",
+     "knn_tp2",
+     "knn_tp3",
+     "live_px",
+     "ma_100",
+     "ma_20",
+     "ma_200",
+     "ma_50",
+     "mp",
+     "mp_accel",
+     "mp_accel_state",
+     "mp_state",
+     "notes",
+     "pib_pattern",
+     "pin_bar_date",
+     "pin_bar_level",
+     "pin_bar_state",
+     "pipe_rank",
+     "position_type",
+     "premove_conviction_label",
+     "premove_setup",
+     "ptj_sector",
+     "ptj_srm_grade",
+     "ptrs",
+     "qty",
+     "rs_spy_20d",
+     "runner_conviction_label",
+     "runner_setup",
+     "rvol",
+     "sc_m_gate_detail",
+     "sc_m_gates",
+     "sc_momentum",
+     "sc_momentum_raw",
+     "sc_p_gate_detail",
+     "sc_p_gates",
+     "sma_distance_pct",
+     "structure",
+     "structure_shift",
+     "structure_shift_ref",
+     "subcomponents",
+     "ticker",
+     "trade_date",
+     "unreal_usd",
+     "vol_30d_ann"
+    ]
+   }
+  },
+  "held_book": {
+   "type": "object",
+   "properties": {
+    "as_of": {
+     "type": "string"
+    },
+    "position_count": {
+     "type": "integer"
+    },
+    "total_exposure_usd": {
+     "type": "number"
+    },
+    "beta_adj_exposure_usd": {
+     "type": "number"
+    },
+    "loss_per_1pct_gap_usd": {
+     "type": "number"
+    },
+    "nav_weighted_beta_30d": {
+     "type": "number"
+    },
+    "gap_scenarios": {
+     "type": "object",
+     "properties": {
+      "gap_3pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      },
+      "gap_5pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      },
+      "gap_7pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      },
+      "gap_10pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      }
+     },
+     "required": [
+      "gap_10pct",
+      "gap_3pct",
+      "gap_5pct",
+      "gap_7pct"
+     ]
+    },
+    "beta_adj_exposure_usd_60d": {
+     "type": "number"
+    },
+    "loss_per_1pct_gap_usd_60d": {
+     "type": "number"
+    },
+    "nav_weighted_beta_60d": {
+     "type": "number"
+    },
+    "gap_scenarios_60d": {
+     "type": "object",
+     "properties": {
+      "gap_3pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      },
+      "gap_5pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      },
+      "gap_7pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      },
+      "gap_10pct": {
+       "type": "object",
+       "properties": {
+        "est_book_loss_usd": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "est_book_loss_usd"
+       ]
+      }
+     },
+     "required": [
+      "gap_10pct",
+      "gap_3pct",
+      "gap_5pct",
+      "gap_7pct"
+     ]
+    },
+    "beta_basis": {
+     "type": "string"
+    },
+    "sector_weights": {
+     "type": "object",
+     "properties": {
+      "XLK": {
+       "type": "number"
+      },
+      "XLV": {
+       "type": "number"
+      },
+      "XLF": {
+       "type": "number"
+      },
+      "XLE": {
+       "type": "number"
+      },
+      "XLI": {
+       "type": "number"
+      },
+      "XLY": {
+       "type": "number"
+      },
+      "XLP": {
+       "type": "number"
+      },
+      "XLRE": {
+       "type": "number"
+      },
+      "XLU": {
+       "type": "number"
+      },
+      "XLC": {
+       "type": "number"
+      },
+      "XLB": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "XLB",
+      "XLC",
+      "XLE",
+      "XLF",
+      "XLI",
+      "XLK",
+      "XLP",
+      "XLRE",
+      "XLU",
+      "XLV",
+      "XLY"
+     ]
+    },
+    "positions": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "ticker": {
+        "type": "string"
+       },
+       "qty": {
+        "type": "integer"
+       },
+       "entry_price": {
+        "type": "number"
+       },
+       "live_price": {
+        "type": "number"
+       },
+       "exposure_usd": {
+        "type": "number"
+       },
+       "beta_30d": {
+        "type": "number"
+       },
+       "beta_60d": {
+        "type": "number"
+       },
+       "beta_adj_exposure_usd": {
+        "type": "number"
+       },
+       "beta_adj_exposure_usd_60d": {
+        "type": "number"
+       },
+       "gics_sector": {
+        "type": "string"
+       },
+       "sector_weight_pct": {
+        "type": "number"
+       }
+      },
+      "required": [
+       "beta_30d",
+       "beta_60d",
+       "beta_adj_exposure_usd",
+       "beta_adj_exposure_usd_60d",
+       "entry_price",
+       "exposure_usd",
+       "gics_sector",
+       "live_price",
+       "qty",
+       "sector_weight_pct",
+       "ticker"
+      ]
+     }
+    }
+   },
+   "required": [
+    "as_of",
+    "beta_adj_exposure_usd",
+    "beta_adj_exposure_usd_60d",
+    "beta_basis",
+    "gap_scenarios",
+    "gap_scenarios_60d",
+    "loss_per_1pct_gap_usd",
+    "loss_per_1pct_gap_usd_60d",
+    "nav_weighted_beta_30d",
+    "nav_weighted_beta_60d",
+    "position_count",
+    "positions",
+    "sector_weights",
+    "total_exposure_usd"
+   ]
+  },
+  "_radar_pool": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "rank": {
+      "type": "integer"
+     },
+     "ticker": {
+      "type": "string"
+     },
+     "sc_momentum": {
+      "type": "number"
+     },
+     "sc_momentum_raw": {
+      "type": "number"
+     },
+     "ptrs": {
+      "type": "number"
+     },
+     "pipe_rank": {
+      "type": "number"
+     },
+     "fip_spike_excluded": {
+      "type": "boolean"
+     },
+     "fip_window_effective": {
+      "type": "integer"
+     },
+     "floor": {
+      "type": "number"
+     },
+     "beta_30d": {
+      "type": "number"
+     },
+     "flow": {
+      "type": "number"
+     },
+     "energy": {
+      "type": "number"
+     },
+     "structure": {
+      "type": "number"
+     },
+     "mp": {
+      "type": "number"
+     },
+     "elder": {
+      "type": "number"
+     },
+     "sc_m_gates": {
+      "type": "boolean"
+     },
+     "sc_m_gate_detail": {
+      "type": "object",
+      "properties": {
+       "flow": {
+        "type": "boolean"
+       },
+       "energy": {
+        "type": "boolean"
+       },
+       "structure": {
+        "type": "boolean"
+       },
+       "mp": {
+        "type": "boolean"
+       },
+       "elder": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "elder",
+       "energy",
+       "flow",
+       "mp",
+       "structure"
+      ]
+     },
+     "sc_p_gates": {
+      "type": "boolean"
+     },
+     "sc_p_gate_detail": {
+      "type": "object",
+      "properties": {
+       "flow": {
+        "type": "boolean"
+       },
+       "energy": {
+        "type": "boolean"
+       },
+       "structure": {
+        "type": "boolean"
+       },
+       "mp": {
+        "type": "boolean"
+       },
+       "bq": {
+        "type": "boolean"
+       },
+       "k39": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "bq",
+       "energy",
+       "flow",
+       "k39",
+       "mp",
+       "structure"
+      ]
+     },
+     "subcomponents": {
+      "type": "object",
+      "properties": {
+       "flow": {
+        "type": "object",
+        "properties": {
+         "flow_score": {
+          "type": "number"
+         },
+         "accum_score": {
+          "type": "number"
+         },
+         "volume_score": {
+          "type": "number"
+         },
+         "skew_score": {
+          "type": "number"
+         },
+         "ext_score": {
+          "type": "number"
+         },
+         "mfi": {
+          "type": "number"
+         },
+         "cmf": {
+          "type": "number"
+         },
+         "ha_quality_count": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "accum_score",
+         "cmf",
+         "ext_score",
+         "flow_score",
+         "ha_quality_count",
+         "mfi",
+         "skew_score",
+         "volume_score"
+        ]
+       },
+       "energy": {
+        "type": "object",
+        "properties": {
+         "vp_position_score": {
+          "type": "number"
+         },
+         "price_action_score": {
+          "type": "number"
+         },
+         "squeeze_score": {
+          "type": "number"
+         },
+         "exhaustion_score": {
+          "type": "number"
+         },
+         "atr_score": {
+          "type": "number"
+         },
+         "en_pos50": {
+          "type": "number"
+         },
+         "en_trend_bars": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "atr_score",
+         "en_pos50",
+         "en_trend_bars",
+         "exhaustion_score",
+         "price_action_score",
+         "squeeze_score",
+         "vp_position_score"
+        ]
+       },
+       "structure": {
+        "type": "object",
+        "properties": {
+         "rs_spy_score": {
+          "type": "number"
+         },
+         "rs_accel_score": {
+          "type": "number"
+         },
+         "base_score": {
+          "type": "number"
+         },
+         "ms_pos_score": {
+          "type": "number"
+         },
+         "resist_score": {
+          "type": "number"
+         },
+         "wk_score": {
+          "type": "number"
+         },
+         "earn_score": {
+          "type": "number"
+         },
+         "rs_vs_spy": {
+          "type": "number"
+         },
+         "rs_accel": {
+          "type": "number"
+         },
+         "base_days": {
+          "type": "number"
+         },
+         "bd_mode": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "base_days",
+         "base_score",
+         "bd_mode",
+         "earn_score",
+         "ms_pos_score",
+         "resist_score",
+         "rs_accel",
+         "rs_accel_score",
+         "rs_spy_score",
+         "rs_vs_spy",
+         "wk_score"
+        ]
+       },
+       "mp": {
+        "type": "object",
+        "properties": {
+         "abs_mom_score": {
+          "type": "number"
+         },
+         "mp_adx_score": {
+          "type": "number"
+         },
+         "rel_mom_score": {
+          "type": "number"
+         },
+         "trend_score": {
+          "type": "number"
+         },
+         "roc_zscore": {
+          "type": "number"
+         },
+         "excess_return": {
+          "type": "number"
+         },
+         "adx_val": {
+          "type": "number"
+         },
+         "di_bullish": {
+          "type": "boolean"
+         }
+        },
+        "required": [
+         "abs_mom_score",
+         "adx_val",
+         "di_bullish",
+         "excess_return",
+         "mp_adx_score",
+         "rel_mom_score",
+         "roc_zscore",
+         "trend_score"
+        ]
+       },
+       "bq": {
+        "type": "object",
+        "properties": {
+         "bq_range_tight": {
+          "type": "number"
+         },
+         "bq_vol_dry": {
+          "type": "number"
+         },
+         "bq_base_dur": {
+          "type": "number"
+         },
+         "bq_ema_conv": {
+          "type": "number"
+         },
+         "bq_base_days": {
+          "type": "number"
+         }
+        },
+        "required": [
+         "bq_base_days",
+         "bq_base_dur",
+         "bq_ema_conv",
+         "bq_range_tight",
+         "bq_vol_dry"
+        ]
+       },
+       "pipe": {
+        "type": "object",
+        "properties": {
+         "pr_ret_12m": {
+          "type": "number"
+         },
+         "pr_adx_score": {
+          "type": "number"
+         },
+         "pr_rsi_score": {
+          "type": "number"
+         },
+         "pr_vol_score": {
+          "type": "number"
+         },
+         "pr_ma_score": {
+          "type": "number"
+         },
+         "momentum_composite": {
+          "type": "number"
+         },
+         "pipe_tier": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "momentum_composite",
+         "pipe_tier",
+         "pr_adx_score",
+         "pr_ma_score",
+         "pr_ret_12m",
+         "pr_rsi_score",
+         "pr_vol_score"
+        ]
+       }
+      },
+      "required": [
+       "bq",
+       "energy",
+       "flow",
+       "mp",
+       "pipe",
+       "structure"
+      ]
+     },
+     "mp_accel": {
+      "type": "number"
+     },
+     "mp_accel_state": {
+      "type": "string"
+     },
+     "div_state": {
+      "type": "string"
+     },
+     "div_bull_count": {
+      "type": "integer"
+     },
+     "div_bear_count": {
+      "type": "integer"
+     },
+     "div_oscs": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "div_date": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "pin_bar_state": {
+      "type": "string"
+     },
+     "pin_bar_date": {
+      "type": "null"
+     },
+     "pin_bar_level": {
+      "type": "null"
+     },
+     "inside_bar": {
+      "type": "boolean"
+     },
+     "pib_pattern": {
+      "type": "boolean"
+     },
+     "choch_state": {
+      "type": "string"
+     },
+     "choch_date": {
+      "type": "string"
+     },
+     "knn_prob": {
+      "type": "number"
+     },
+     "knn_significant": {
+      "type": "boolean"
+     },
+     "knn_neighbors_used": {
+      "type": "integer"
+     },
+     "knn_tp1": {
+      "type": "number"
+     },
+     "knn_tp2": {
+      "type": "number"
+     },
+     "knn_tp3": {
+      "type": "number"
+     },
+     "mp_state": {
+      "type": "string"
+     },
+     "entry": {
+      "type": "number"
+     },
+     "elder_5d": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     },
+     "source": {
+      "type": "string"
+     },
+     "gics_sector": {
+      "type": "string"
+     },
+     "gics_sector_name": {
+      "type": "string"
+     },
+     "gics_gate": {
+      "type": "string"
+     },
+     "thematic_basket": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_grade": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_parent_gics": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_parent_grade": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_baskets": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "basket": {
+         "type": "string"
+        },
+        "grade": {
+         "type": "string"
+        },
+        "parent_gics": {
+         "type": "string"
+        },
+        "parent_grade": {
+         "type": "string"
+        },
+        "rrg_quadrant": {
+         "type": "string"
+        },
+        "rrg_direction": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "basket",
+        "grade",
+        "parent_gics",
+        "parent_grade",
+        "rrg_direction",
+        "rrg_quadrant"
+       ]
+      }
+     },
+     "sector_trend_state": {
+      "type": "string"
+     },
+     "sector_rrg_quadrant": {
+      "type": "string"
+     },
+     "sector_rrg_direction": {
+      "type": "string"
+     },
+     "thematic_rrg_quadrant": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_rrg_direction": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "rvol": {
+      "type": "number"
+     },
+     "rs_spy_20d": {
+      "type": "number"
+     },
+     "sma_distance_pct": {
+      "type": "number"
+     },
+     "ma_20": {
+      "type": "number"
+     },
+     "ma_50": {
+      "type": "number"
+     },
+     "ma_100": {
+      "type": "number"
+     },
+     "ma_200": {
+      "type": "number"
+     },
+     "fib_swing_low": {
+      "type": "number"
+     },
+     "fib_swing_high": {
+      "type": "number"
+     },
+     "fib_236": {
+      "type": "number"
+     },
+     "fib_382": {
+      "type": "number"
+     },
+     "fib_500": {
+      "type": "number"
+     },
+     "fib_618": {
+      "type": "number"
+     },
+     "fib_786": {
+      "type": "number"
+     },
+     "atr_14d": {
+      "type": "number"
+     },
+     "vol_30d_ann": {
+      "type": "number"
+     },
+     "beta_252d": {
+      "type": "number"
+     },
+     "bracket": {
+      "type": "object",
+      "properties": {
+       "price": {
+        "type": "number"
+       },
+       "price_source": {
+        "type": "string"
+       },
+       "stop": {
+        "type": "number"
+       },
+       "stop_type": {
+        "type": "string"
+       },
+       "stop_atr_dist": {
+        "type": "number"
+       },
+       "stop_date": {
+        "type": [
+         "null",
+         "string"
+        ]
+       },
+       "risk": {
+        "type": "number"
+       },
+       "risk_pct": {
+        "type": "number"
+       },
+       "targets": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string"
+          },
+          "price": {
+           "type": "number"
+          },
+          "tp": {
+           "type": [
+            "null",
+            "string"
+           ]
+          },
+          "r": {
+           "type": "number"
+          },
+          "atr_dist": {
+           "type": "number"
+          },
+          "date": {
+           "type": "string"
+          },
+          "vol_ratio": {
+           "type": "number"
+          },
+          "vol_validated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "atr_dist",
+          "price",
+          "r",
+          "tp",
+          "type"
+         ]
+        }
+       },
+       "rr": {
+        "type": "number"
+       },
+       "rr_tp1": {
+        "type": "number"
+       },
+       "rr_tp2": {
+        "type": "number"
+       },
+       "rr_tp3": {
+        "type": "number"
+       },
+       "atr_fallback_stop": {
+        "type": "number"
+       },
+       "valid": {
+        "type": "boolean"
+       },
+       "invalid_reason": {
+        "type": "null"
+       },
+       "stop_vol_ratio": {
+        "type": "number"
+       },
+       "stop_vol_validated": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "atr_fallback_stop",
+       "invalid_reason",
+       "price",
+       "price_source",
+       "risk",
+       "risk_pct",
+       "rr",
+       "rr_tp1",
+       "rr_tp2",
+       "rr_tp3",
+       "stop",
+       "stop_atr_dist",
+       "stop_date",
+       "stop_type",
+       "targets",
+       "valid"
+      ]
+     },
+     "held": {
+      "type": "boolean"
+     },
+     "structure_shift": {
+      "type": "string"
+     },
+     "structure_shift_ref": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "rs_down_day_20d": {
+      "type": "number"
+     },
+     "rs_leadership": {
+      "type": "string"
+     },
+     "atr_caution": {
+      "type": "boolean"
+     },
+     "malformed_bracket": {
+      "type": "boolean"
+     },
+     "runner_setup": {
+      "type": "boolean"
+     },
+     "runner_conviction": {
+      "type": "integer"
+     },
+     "runner_conviction_label": {
+      "type": "null"
+     },
+     "mover_subtype": {
+      "type": "string"
+     },
+     "premove_setup": {
+      "type": "boolean"
+     },
+     "premove_conviction": {
+      "type": "integer"
+     },
+     "premove_conviction_label": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "atr_14d",
+     "atr_caution",
+     "beta_252d",
+     "beta_30d",
+     "bracket",
+     "choch_date",
+     "choch_state",
+     "div_bear_count",
+     "div_bull_count",
+     "div_date",
+     "div_oscs",
+     "div_state",
+     "elder",
+     "elder_5d",
+     "energy",
+     "entry",
+     "fib_236",
+     "fib_382",
+     "fib_500",
+     "fib_618",
+     "fib_786",
+     "fib_swing_high",
+     "fib_swing_low",
+     "fip_spike_excluded",
+     "fip_window_effective",
+     "floor",
+     "flow",
+     "gics_gate",
+     "gics_sector",
+     "gics_sector_name",
+     "held",
+     "inside_bar",
+     "knn_neighbors_used",
+     "knn_prob",
+     "knn_significant",
+     "knn_tp1",
+     "knn_tp2",
+     "knn_tp3",
+     "ma_100",
+     "ma_20",
+     "ma_200",
+     "ma_50",
+     "malformed_bracket",
+     "mover_subtype",
+     "mp",
+     "mp_accel",
+     "mp_accel_state",
+     "mp_state",
+     "pib_pattern",
+     "pin_bar_date",
+     "pin_bar_level",
+     "pin_bar_state",
+     "pipe_rank",
+     "premove_conviction",
+     "premove_conviction_label",
+     "premove_setup",
+     "ptrs",
+     "rank",
+     "rs_down_day_20d",
+     "rs_leadership",
+     "rs_spy_20d",
+     "runner_conviction",
+     "runner_conviction_label",
+     "runner_setup",
+     "rvol",
+     "sc_m_gate_detail",
+     "sc_m_gates",
+     "sc_momentum",
+     "sc_momentum_raw",
+     "sc_p_gate_detail",
+     "sc_p_gates",
+     "sector_rrg_direction",
+     "sector_rrg_quadrant",
+     "sector_trend_state",
+     "sma_distance_pct",
+     "source",
+     "structure",
+     "structure_shift",
+     "structure_shift_ref",
+     "subcomponents",
+     "thematic_basket",
+     "thematic_baskets",
+     "thematic_grade",
+     "thematic_parent_gics",
+     "thematic_parent_grade",
+     "thematic_rrg_direction",
+     "thematic_rrg_quadrant",
+     "ticker",
+     "vol_30d_ann"
+    ]
+   }
+  },
+  "daily_list": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "rank": {
+      "type": "integer"
+     },
+     "ticker": {
+      "type": "string"
+     },
+     "sc_momentum": {
+      "type": "number"
+     },
+     "sc_momentum_raw": {
+      "type": "number"
+     },
+     "ptrs": {
+      "type": "number"
+     },
+     "pipe_rank": {
+      "type": "number"
+     },
+     "fip_spike_excluded": {
+      "type": "boolean"
+     },
+     "fip_window_effective": {
+      "type": "integer"
+     },
+     "floor": {
+      "type": "number"
+     },
+     "beta_30d": {
+      "type": "number"
+     },
+     "flow": {
+      "type": "number"
+     },
+     "energy": {
+      "type": "number"
+     },
+     "structure": {
+      "type": "number"
+     },
+     "mp": {
+      "type": "number"
+     },
+     "elder": {
+      "type": "number"
+     },
+     "mp_state": {
+      "type": "string"
+     },
+     "entry": {
+      "type": "number"
+     },
+     "elder_5d": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     },
+     "source": {
+      "type": "string"
+     },
+     "gics_sector": {
+      "type": "string"
+     },
+     "gics_sector_name": {
+      "type": "string"
+     },
+     "gics_gate": {
+      "type": "string"
+     },
+     "thematic_basket": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_grade": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_parent_gics": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_parent_grade": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_baskets": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "basket": {
+         "type": "string"
+        },
+        "grade": {
+         "type": "string"
+        },
+        "parent_gics": {
+         "type": "string"
+        },
+        "parent_grade": {
+         "type": "string"
+        },
+        "rrg_quadrant": {
+         "type": "string"
+        },
+        "rrg_direction": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "basket",
+        "grade",
+        "parent_gics",
+        "parent_grade",
+        "rrg_direction",
+        "rrg_quadrant"
+       ]
+      }
+     },
+     "sector_trend_state": {
+      "type": "string"
+     },
+     "sector_rrg_quadrant": {
+      "type": "string"
+     },
+     "sector_rrg_direction": {
+      "type": "string"
+     },
+     "thematic_rrg_quadrant": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "thematic_rrg_direction": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "rvol": {
+      "type": "number"
+     },
+     "rs_spy_20d": {
+      "type": "number"
+     },
+     "sma_distance_pct": {
+      "type": "number"
+     },
+     "ma_20": {
+      "type": "number"
+     },
+     "ma_50": {
+      "type": "number"
+     },
+     "ma_100": {
+      "type": "number"
+     },
+     "ma_200": {
+      "type": "number"
+     },
+     "fib_swing_low": {
+      "type": "number"
+     },
+     "fib_swing_high": {
+      "type": "number"
+     },
+     "fib_236": {
+      "type": "number"
+     },
+     "fib_382": {
+      "type": "number"
+     },
+     "fib_500": {
+      "type": "number"
+     },
+     "fib_618": {
+      "type": "number"
+     },
+     "fib_786": {
+      "type": "number"
+     },
+     "atr_14d": {
+      "type": "number"
+     },
+     "vol_30d_ann": {
+      "type": "number"
+     },
+     "beta_252d": {
+      "type": "number"
+     },
+     "bracket": {
+      "type": "object",
+      "properties": {
+       "price": {
+        "type": "number"
+       },
+       "price_source": {
+        "type": "string"
+       },
+       "stop": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "stop_type": {
+        "type": [
+         "null",
+         "string"
+        ]
+       },
+       "stop_atr_dist": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "stop_date": {
+        "type": "null"
+       },
+       "risk": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "risk_pct": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "targets": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string"
+          },
+          "price": {
+           "type": "number"
+          },
+          "atr_dist": {
+           "type": "number"
+          },
+          "date": {
+           "type": "string"
+          },
+          "vol_ratio": {
+           "type": "number"
+          },
+          "vol_validated": {
+           "type": "boolean"
+          },
+          "tp": {
+           "type": [
+            "null",
+            "string"
+           ]
+          },
+          "r": {
+           "type": "number"
+          }
+         },
+         "required": [
+          "atr_dist",
+          "price",
+          "type"
+         ]
+        }
+       },
+       "rr": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "rr_tp1": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "rr_tp2": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "rr_tp3": {
+        "type": [
+         "null",
+         "number"
+        ]
+       },
+       "atr_fallback_stop": {
+        "type": "number"
+       },
+       "valid": {
+        "type": "boolean"
+       },
+       "invalid_reason": {
+        "type": [
+         "null",
+         "string"
+        ]
+       }
+      },
+      "required": [
+       "atr_fallback_stop",
+       "invalid_reason",
+       "price",
+       "price_source",
+       "risk",
+       "risk_pct",
+       "rr",
+       "rr_tp1",
+       "rr_tp2",
+       "rr_tp3",
+       "stop",
+       "stop_atr_dist",
+       "stop_date",
+       "stop_type",
+       "targets",
+       "valid"
+      ]
+     },
+     "held": {
+      "type": "boolean"
+     },
+     "structure_shift": {
+      "type": "string"
+     },
+     "structure_shift_ref": {
+      "type": "null"
+     },
+     "rs_down_day_20d": {
+      "type": "number"
+     },
+     "rs_leadership": {
+      "type": "string"
+     },
+     "atr_caution": {
+      "type": "boolean"
+     },
+     "malformed_bracket": {
+      "type": "boolean"
+     },
+     "runner_setup": {
+      "type": "boolean"
+     },
+     "runner_conviction": {
+      "type": "integer"
+     },
+     "runner_conviction_label": {
+      "type": "null"
+     },
+     "mover_subtype": {
+      "type": "string"
+     },
+     "premove_setup": {
+      "type": "boolean"
+     },
+     "premove_conviction": {
+      "type": "integer"
+     },
+     "premove_conviction_label": {
+      "type": "null"
+     },
+     "elder_pattern": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "elder_context": {
+      "type": "object",
+      "properties": {
+       "computed_date": {
+        "type": "string"
+       },
+       "hourly_bars_used": {
+        "type": "integer"
+       },
+       "vwap_5d": {
+        "type": "object",
+        "properties": {
+         "value": {
+          "type": "number"
+         },
+         "position": {
+          "type": "string"
+         },
+         "slope_5d": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "position",
+         "slope_5d",
+         "value"
+        ]
+       },
+       "volume": {
+        "type": "object",
+        "properties": {
+         "vol_trend_5d": {
+          "type": "string"
+         },
+         "vol_above_20d_avg": {
+          "type": "boolean"
+         },
+         "up_bar_vol_ratio": {
+          "type": "number"
+         },
+         "avg_vol_20d": {
+          "type": "integer"
+         },
+         "avg_vol_5d_up_bars": {
+          "type": "integer"
+         },
+         "avg_vol_5d_down_bars": {
+          "type": "integer"
+         }
+        },
+        "required": [
+         "avg_vol_20d",
+         "avg_vol_5d_down_bars",
+         "avg_vol_5d_up_bars",
+         "up_bar_vol_ratio",
+         "vol_above_20d_avg",
+         "vol_trend_5d"
+        ]
+       },
+       "vcp": {
+        "type": "object",
+        "properties": {
+         "base_range_pct": {
+          "type": "number"
+         },
+         "current_range_pct_5d": {
+          "type": "number"
+         },
+         "vcp_tightness_pct": {
+          "type": "number"
+         },
+         "vcp_label": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "base_range_pct",
+         "current_range_pct_5d",
+         "vcp_label",
+         "vcp_tightness_pct"
+        ]
+       },
+       "elder_pattern": {
+        "type": [
+         "null",
+         "string"
+        ]
+       },
+       "exhaustion_check": {
+        "type": "object",
+        "properties": {
+         "vol_contracting_on_up_bars": {
+          "type": "boolean"
+         },
+         "vwap_flat_or_falling": {
+          "type": "boolean"
+         },
+         "at_structural_resistance": {
+          "type": "boolean"
+         },
+         "exhaustion_flag": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "at_structural_resistance",
+         "exhaustion_flag",
+         "vol_contracting_on_up_bars",
+         "vwap_flat_or_falling"
+        ]
+       }
+      },
+      "required": [
+       "computed_date",
+       "elder_pattern",
+       "exhaustion_check",
+       "hourly_bars_used",
+       "vcp",
+       "volume",
+       "vwap_5d"
+      ]
+     },
+     "on_longlist": {
+      "type": "boolean"
+     },
+     "on_elder": {
+      "type": "boolean"
+     },
+     "in_ledger": {
+      "type": "boolean"
+     },
+     "lens": {
+      "type": "object",
+      "properties": {
+       "leadership": {
+        "type": "string"
+       },
+       "coil": {
+        "type": "string"
+       },
+       "insti_money": {
+        "type": "string"
+       },
+       "structure": {
+        "type": "string"
+       },
+       "resistance": {
+        "type": "string"
+       },
+       "extension": {
+        "type": "null"
+       },
+       "sector": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "coil",
+       "extension",
+       "insti_money",
+       "leadership",
+       "resistance",
+       "sector",
+       "structure"
+      ]
+     },
+     "lens_positive": {
+      "type": "integer"
+     },
+     "lens_warnings": {
+      "type": "integer"
+     },
+     "choch_date": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "choch_state": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "div_bear_count": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "div_bull_count": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "div_date": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "div_oscs": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "div_state": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "inside_bar": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "knn_neighbors_used": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "knn_prob": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "knn_significant": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "knn_tp1": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "knn_tp2": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "knn_tp3": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "mp_accel": {
+      "type": [
+       "null",
+       "number"
+      ]
+     },
+     "mp_accel_state": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "pib_pattern": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "pin_bar_date": {
+      "type": "null"
+     },
+     "pin_bar_level": {
+      "type": "null"
+     },
+     "pin_bar_state": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "sc_m_gate_detail": {
+      "anyOf": [
+       {
+        "type": "null"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "flow": {
+          "type": "boolean"
+         },
+         "energy": {
+          "type": "boolean"
+         },
+         "structure": {
+          "type": "boolean"
+         },
+         "mp": {
+          "type": "boolean"
+         },
+         "elder": {
+          "type": "boolean"
+         }
+        },
+        "required": [
+         "elder",
+         "energy",
+         "flow",
+         "mp",
+         "structure"
+        ]
+       }
+      ]
+     },
+     "sc_m_gates": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "sc_p_gate_detail": {
+      "anyOf": [
+       {
+        "type": "null"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "flow": {
+          "type": "boolean"
+         },
+         "energy": {
+          "type": "boolean"
+         },
+         "structure": {
+          "type": "boolean"
+         },
+         "mp": {
+          "type": "boolean"
+         },
+         "bq": {
+          "type": "boolean"
+         },
+         "k39": {
+          "type": "boolean"
+         }
+        },
+        "required": [
+         "bq",
+         "energy",
+         "flow",
+         "k39",
+         "mp",
+         "structure"
+        ]
+       }
+      ]
+     },
+     "sc_p_gates": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "subcomponents": {
+      "anyOf": [
+       {
+        "type": "null"
+       },
+       {
+        "type": "object",
+        "properties": {
+         "flow": {
+          "type": "object",
+          "properties": {
+           "flow_score": {
+            "type": "number"
+           },
+           "accum_score": {
+            "type": "number"
+           },
+           "volume_score": {
+            "type": "number"
+           },
+           "skew_score": {
+            "type": "number"
+           },
+           "ext_score": {
+            "type": "number"
+           },
+           "mfi": {
+            "type": "number"
+           },
+           "cmf": {
+            "type": "number"
+           },
+           "ha_quality_count": {
+            "type": "number"
+           }
+          },
+          "required": [
+           "accum_score",
+           "cmf",
+           "ext_score",
+           "flow_score",
+           "ha_quality_count",
+           "mfi",
+           "skew_score",
+           "volume_score"
+          ]
+         },
+         "energy": {
+          "type": "object",
+          "properties": {
+           "vp_position_score": {
+            "type": "number"
+           },
+           "price_action_score": {
+            "type": "number"
+           },
+           "squeeze_score": {
+            "type": "number"
+           },
+           "exhaustion_score": {
+            "type": "number"
+           },
+           "atr_score": {
+            "type": "number"
+           },
+           "en_pos50": {
+            "type": "number"
+           },
+           "en_trend_bars": {
+            "type": "number"
+           }
+          },
+          "required": [
+           "atr_score",
+           "en_pos50",
+           "en_trend_bars",
+           "exhaustion_score",
+           "price_action_score",
+           "squeeze_score",
+           "vp_position_score"
+          ]
+         },
+         "structure": {
+          "type": "object",
+          "properties": {
+           "rs_spy_score": {
+            "type": "number"
+           },
+           "rs_accel_score": {
+            "type": "number"
+           },
+           "base_score": {
+            "type": "number"
+           },
+           "ms_pos_score": {
+            "type": "number"
+           },
+           "resist_score": {
+            "type": "number"
+           },
+           "wk_score": {
+            "type": "number"
+           },
+           "earn_score": {
+            "type": "number"
+           },
+           "rs_vs_spy": {
+            "type": "number"
+           },
+           "rs_accel": {
+            "type": "number"
+           },
+           "base_days": {
+            "type": "number"
+           },
+           "bd_mode": {
+            "type": "number"
+           }
+          },
+          "required": [
+           "base_days",
+           "base_score",
+           "bd_mode",
+           "earn_score",
+           "ms_pos_score",
+           "resist_score",
+           "rs_accel",
+           "rs_accel_score",
+           "rs_spy_score",
+           "rs_vs_spy",
+           "wk_score"
+          ]
+         },
+         "mp": {
+          "type": "object",
+          "properties": {
+           "abs_mom_score": {
+            "type": "number"
+           },
+           "mp_adx_score": {
+            "type": "number"
+           },
+           "rel_mom_score": {
+            "type": "number"
+           },
+           "trend_score": {
+            "type": "number"
+           },
+           "roc_zscore": {
+            "type": "number"
+           },
+           "excess_return": {
+            "type": "number"
+           },
+           "adx_val": {
+            "type": "number"
+           },
+           "di_bullish": {
+            "type": "boolean"
+           }
+          },
+          "required": [
+           "abs_mom_score",
+           "adx_val",
+           "di_bullish",
+           "excess_return",
+           "mp_adx_score",
+           "rel_mom_score",
+           "roc_zscore",
+           "trend_score"
+          ]
+         },
+         "bq": {
+          "type": "object",
+          "properties": {
+           "bq_range_tight": {
+            "type": "number"
+           },
+           "bq_vol_dry": {
+            "type": "number"
+           },
+           "bq_base_dur": {
+            "type": "number"
+           },
+           "bq_ema_conv": {
+            "type": "number"
+           },
+           "bq_base_days": {
+            "type": "number"
+           }
+          },
+          "required": [
+           "bq_base_days",
+           "bq_base_dur",
+           "bq_ema_conv",
+           "bq_range_tight",
+           "bq_vol_dry"
+          ]
+         },
+         "pipe": {
+          "type": "object",
+          "properties": {
+           "pr_ret_12m": {
+            "type": "number"
+           },
+           "pr_adx_score": {
+            "type": "number"
+           },
+           "pr_rsi_score": {
+            "type": "number"
+           },
+           "pr_vol_score": {
+            "type": "number"
+           },
+           "pr_ma_score": {
+            "type": "number"
+           },
+           "momentum_composite": {
+            "type": "number"
+           },
+           "pipe_tier": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "momentum_composite",
+           "pipe_tier",
+           "pr_adx_score",
+           "pr_ma_score",
+           "pr_ret_12m",
+           "pr_rsi_score",
+           "pr_vol_score"
+          ]
+         }
+        },
+        "required": [
+         "bq",
+         "energy",
+         "flow",
+         "mp",
+         "pipe",
+         "structure"
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "atr_14d",
+     "atr_caution",
+     "beta_252d",
+     "beta_30d",
+     "bracket",
+     "choch_date",
+     "choch_state",
+     "div_bear_count",
+     "div_bull_count",
+     "div_date",
+     "div_oscs",
+     "div_state",
+     "elder",
+     "elder_5d",
+     "elder_context",
+     "elder_pattern",
+     "energy",
+     "entry",
+     "fib_236",
+     "fib_382",
+     "fib_500",
+     "fib_618",
+     "fib_786",
+     "fib_swing_high",
+     "fib_swing_low",
+     "fip_spike_excluded",
+     "fip_window_effective",
+     "floor",
+     "flow",
+     "gics_gate",
+     "gics_sector",
+     "gics_sector_name",
+     "held",
+     "in_ledger",
+     "inside_bar",
+     "knn_neighbors_used",
+     "knn_prob",
+     "knn_significant",
+     "knn_tp1",
+     "knn_tp2",
+     "knn_tp3",
+     "lens",
+     "lens_positive",
+     "lens_warnings",
+     "ma_100",
+     "ma_20",
+     "ma_200",
+     "ma_50",
+     "malformed_bracket",
+     "mover_subtype",
+     "mp",
+     "mp_accel",
+     "mp_accel_state",
+     "mp_state",
+     "on_elder",
+     "on_longlist",
+     "pib_pattern",
+     "pin_bar_date",
+     "pin_bar_level",
+     "pin_bar_state",
+     "pipe_rank",
+     "premove_conviction",
+     "premove_conviction_label",
+     "premove_setup",
+     "ptrs",
+     "rank",
+     "rs_down_day_20d",
+     "rs_leadership",
+     "rs_spy_20d",
+     "runner_conviction",
+     "runner_conviction_label",
+     "runner_setup",
+     "rvol",
+     "sc_m_gate_detail",
+     "sc_m_gates",
+     "sc_momentum",
+     "sc_momentum_raw",
+     "sc_p_gate_detail",
+     "sc_p_gates",
+     "sector_rrg_direction",
+     "sector_rrg_quadrant",
+     "sector_trend_state",
+     "sma_distance_pct",
+     "source",
+     "structure",
+     "structure_shift",
+     "structure_shift_ref",
+     "subcomponents",
+     "thematic_basket",
+     "thematic_baskets",
+     "thematic_grade",
+     "thematic_parent_gics",
+     "thematic_parent_grade",
+     "thematic_rrg_direction",
+     "thematic_rrg_quadrant",
+     "ticker",
+     "vol_30d_ann"
+    ]
+   }
+  },
+  "lens_ranking": {
+   "type": "object",
+   "properties": {
+    "method": {
+     "type": "string"
+    },
+    "lens_set": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "extension_note": {
+     "type": "string"
+    },
+    "reading_aid_not_a_prediction": {
+     "type": "string"
+    },
+    "full_data_in": {
+     "type": "string"
+    },
+    "count": {
+     "type": "integer"
+    },
+    "ranked": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "rank": {
+        "type": "integer"
+       },
+       "ticker": {
+        "type": "string"
+       },
+       "positive": {
+        "type": "integer"
+       },
+       "warnings": {
+        "type": "integer"
+       },
+       "lens": {
+        "type": "object",
+        "properties": {
+         "leadership": {
+          "type": "string"
+         },
+         "coil": {
+          "type": "string"
+         },
+         "insti_money": {
+          "type": "string"
+         },
+         "structure": {
+          "type": "string"
+         },
+         "resistance": {
+          "type": "string"
+         },
+         "extension": {
+          "type": "null"
+         },
+         "sector": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "coil",
+         "extension",
+         "insti_money",
+         "leadership",
+         "resistance",
+         "sector",
+         "structure"
+        ]
+       }
+      },
+      "required": [
+       "lens",
+       "positive",
+       "rank",
+       "ticker",
+       "warnings"
+      ]
+     }
+    }
+   },
+   "required": [
+    "count",
+    "extension_note",
+    "full_data_in",
+    "lens_set",
+    "method",
+    "ranked",
+    "reading_aid_not_a_prediction"
+   ]
+  },
+  "summary": {
+   "type": "object",
+   "properties": {
+    "daily_count": {
+     "type": "integer"
+    },
+    "longlist_count": {
+     "type": "integer"
+    },
+    "elder_count": {
+     "type": "integer"
+    },
+    "ledger_count": {
+     "type": "integer"
+    },
+    "held_count": {
+     "type": "integer"
+    },
+    "held_positions_status": {
+     "type": "string"
+    },
+    "runner_count": {
+     "type": "integer"
+    },
+    "premove_count": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "daily_count",
+    "elder_count",
+    "held_count",
+    "held_positions_status",
+    "ledger_count",
+    "longlist_count",
+    "premove_count",
+    "runner_count"
+   ]
+  },
+  "signal_radar": {
+   "type": "object",
+   "properties": {
+    "scan_date": {
+     "type": "string"
+    },
+    "n_scored": {
+     "type": "integer"
+    },
+    "runner_setup": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "ticker": {
+        "type": "string"
+       },
+       "conviction": {
+        "type": "integer"
+       },
+       "conviction_label": {
+        "type": "string"
+       },
+       "subtype": {
+        "type": "string"
+       },
+       "sc_momentum": {
+        "type": "number"
+       },
+       "elder": {
+        "type": "number"
+       },
+       "ret_5d": {
+        "type": "number"
+       },
+       "on_longlist": {
+        "type": "boolean"
+       },
+       "on_elder": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "conviction",
+       "conviction_label",
+       "elder",
+       "on_elder",
+       "on_longlist",
+       "ret_5d",
+       "sc_momentum",
+       "subtype",
+       "ticker"
+      ]
+     }
+    },
+    "premove_setup": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "ticker": {
+        "type": "string"
+       },
+       "conviction": {
+        "type": "integer"
+       },
+       "conviction_label": {
+        "type": "string"
+       },
+       "sc_momentum": {
+        "type": "number"
+       },
+       "elder": {
+        "type": "number"
+       },
+       "dist_20dhigh": {
+        "type": "number"
+       },
+       "on_longlist": {
+        "type": "boolean"
+       },
+       "on_elder": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "conviction",
+       "conviction_label",
+       "dist_20dhigh",
+       "elder",
+       "on_elder",
+       "on_longlist",
+       "sc_momentum",
+       "ticker"
+      ]
+     }
+    },
+    "note": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "n_scored",
+    "note",
+    "premove_setup",
+    "runner_setup",
+    "scan_date"
+   ]
+  },
+  "data_quality": {
+   "type": "object",
+   "properties": {
+    "flagged_count": {
+     "type": "integer"
+    },
+    "flagged": {
+     "type": "array"
+    }
+   },
+   "required": [
+    "flagged",
+    "flagged_count"
+   ]
+  }
+ },
+ "required": [
+  "_radar_pool",
+  "daily_list",
+  "data_quality",
+  "date",
+  "exported_at",
+  "field_glossary",
+  "field_schema",
+  "field_schema_enums",
+  "held_book",
+  "held_positions",
+  "held_positions_status",
+  "intermarket",
+  "lens_ranking",
+  "macro_weather",
+  "market",
+  "regime",
+  "regime_stop_pct_ceiling",
+  "sector_map_gaps",
+  "sector_map_version",
+  "signal_radar",
+  "spy_roc_20d",
+  "srm",
+  "srm_signals",
+  "summary",
+  "thematic_baskets"
+ ],
+ "title": "AQE Daily Export",
+ "x_version": "1.0.0",
+ "x_generated_from": "live export 2026-07-18, arrays sampled to 8 items"
+}

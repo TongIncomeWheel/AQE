@@ -1,0 +1,13 @@
+{ "$schema": "https://json-schema.org/draft/2020-12/schema", "title": "Backlog Item", "x_version": "1.0.0",
+  "type": "object", "required": ["id", "date", "finding", "evidence", "proposed_change", "retires", "owner", "status"],
+  "properties": {
+    "id": {"type": "string"}, "date": {"type": "string", "format": "date"},
+    "finding": {"type": "string"}, "evidence": {"type": "string"},
+    "proposed_change": {"type": "string"},
+    "expected_effect": {"type": "string"},
+    "retires": {"type": "string", "minLength": 3},
+    "owner": {"enum": ["code", "rulebook", "parameters", "voice-card", "skill", "contract"]},
+    "measured_on_panel": {"type": "boolean"},
+    "status": {"enum": ["PROPOSED", "PM_APPROVED", "IN_DEV", "IN_SHADOW", "SHIPPED", "REJECTED", "RETIRED"]},
+    "branch": {"type": ["string", "null"]}, "shipped_version": {"type": ["string", "null"]},
+    "shadow_result": {"type": ["string", "null"]}}}

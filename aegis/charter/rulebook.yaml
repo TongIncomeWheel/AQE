@@ -1,0 +1,102 @@
+meta:
+  version: 1.1.0-draft
+  ratified: false
+  review_by: '2026-10-18'
+  note: 'LAW: doctrines and structures — committee + PM ratification to change. Numbers
+    live in parameters.yaml.'
+capital:
+  dyncap_method: prior dynCap + realised P&L from CLOSED trades only; never recomputed
+    from market value
+  sizing_steps: 'two-step mandatory: R-size then vol-cap; take the smaller (tools/calculators/sizing.py)'
+risk:
+  beta_gate_window: beta_30d (D-6 FINAL; beta_60d = monitoring colour only, never
+    a gate input)
+  breach_rule: combined stop risk breach leads every output until resolved
+universe:
+  frequency: daily_premarket
+  ledger_continuity: names that leave the screen remain tracked in the Nomination
+    Ledger until their 15-day window closes
+  pm_rationale: 'PM rationale on record: if a name drops out, the signal was not strong
+    or persistent'
+committee:
+  voices_active:
+  - lynch
+  - oneil
+  - wyckoff
+  - raschke
+  - steenbarger
+  - thorp
+  - seow
+  - minervini
+  - druckenmiller
+  voices_reserve:
+  - demark
+  - pardo
+  - elder
+  - dalio
+  - murphy
+  detect_lens_seat: true
+  non_deliberated_output: ranked watch table in the daily plan; all nominations recorded
+    in ledger regardless
+  macro_brief_first: druckenmiller
+  bear_case_mandatory: true
+  unanimity_challenge: preliminary >= 6/7 agreement triggers rotating adversarial
+    challenge (thorp/pardo/steenbarger)
+  event_filter:
+    mna: announced or rumoured bid / strategic review -> EVENT-DRIVEN, cannot advance
+    activist: hostile campaign / board action -> EVENT-DRIVEN, cannot advance
+    single_catalyst: '>15% move in <10 days on one announcement -> EVENT-DRIVEN, cannot
+      advance'
+  anti_anchoring: voices nominate from the same universe file in isolation; no pipeline
+    tags, no detect reveals, no ordering hints pre-nomination
+  event_filter_timing: post-nomination, pre-deliberation, on nominated names only
+    (D-11); flagged names visible but cannot advance
+brackets:
+  source: AQE export bracket object, verbatim; never recomputed by an agent
+  validity_gates: atr>=RB:risk.per_trade.stop_atr_distance_min AND rr>=RB:risk.per_trade.rr_min_to_tp2
+    AND risk% <= RB:regime.stop_pct_ceiling
+  entry_orders: LIMIT
+  exit_orders: MARKET
+  stop_staging: only after fill confirmed, at actual fill price; post-fill actual-risk
+    check, flag if delta > $50
+orders:
+  sole_path: staging-gatekeeper is the ONLY agent that may produce previews, confirm
+    orders, or run post-fill; orchestrators may only request
+  default_mode: PREVIEW — every passing request ends as a preview for the PM to act
+    on
+  autopilot: PM-owned switch, default OFF. When the PM arms it (tools/autopilot.py,
+    logged, with expiry), the gatekeeper — and no other agent — may execute the Tiger
+    two-step (place preview -> confirm) for APPROVED preauthorised plan names, inside
+    RB:autopilot window and caps. Any auto_off condition disarms immediately. Tiger
+    is default execution broker.
+  arming: only the PM can arm; arming is a dated, logged, auto-expiring state — never
+    a standing default
+regime:
+  red_rule: no new entries
+  hurst_note: MEAN_REVERT label is surfaced to committee as caveat; throttles deployment
+    posture, never the list
+srm:
+  role: context_only
+  layers: 11 GICS sector ETFs + thematic baskets, RRG quadrants; full trend_state
+    label always shown with grade
+data_sources:
+  scores_and_analytics: AQE export (GitHub repo engine) — verbatim
+  equity_spot_live: Tiger MCP (cloud-hosted, reuse) -> IBKR fallback
+  options_chain_greeks: Alpaca MCP (cloud-hosted, reuse; 15-min delayed) — never for
+    spot
+  bars_and_screen: FMP
+  positions_fills: IBKR + Tiger connectors/MCP; broker pull is execution truth
+  currency: USD_only
+  staleness: export older than T-1 must be flagged and PM-acknowledged before use
+journal:
+  naming: aegis_journal_YYYY-MM-DD.json; one canonical current file; dated files immutable;
+    no CORRECTED/SUPERSEDED/Copy-of suffixes ever again
+  retention: current + dated archive; Drive sync is replication, not the access path
+audit:
+  completeness: every voice ran; every deliberated name addressed; every data pull
+    tagged source+time
+  breach_classes:
+  - PROTOCOL_FAILURE
+  - FIELD_MISREAD
+  - FABRICATION
+  - CONDUCT_FAILURE

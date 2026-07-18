@@ -1,0 +1,14 @@
+{ "$schema": "https://json-schema.org/draft/2020-12/schema", "title": "Voice Nomination File", "x_version": "1.0.0",
+  "type": "object", "required": ["voice", "date", "nominations", "held_review"],
+  "properties": {
+    "voice": {"type": "string"}, "date": {"type": "string", "format": "date"},
+    "universe_file": {"type": "string"},
+    "nominations": {"type": "array", "maxItems": 10, "items": {"type": "object",
+      "required": ["ticker", "reason", "conviction"],
+      "properties": {"ticker": {"type": "string"}, "reason": {"type": "string", "maxLength": 300},
+        "fields_cited": {"type": "array", "items": {"type": "string"}},
+        "conviction": {"type": "integer", "minimum": 1, "maximum": 5}}}},
+    "held_review": {"type": "array", "items": {"type": "object",
+      "required": ["ticker", "verdict"],
+      "properties": {"ticker": {"type": "string"}, "verdict": {"enum": ["KEEP", "TIGHTEN", "EXIT-CASE"]}, "line": {"type": "string"}}}},
+    "shortfall_reason": {"type": "string"}}}

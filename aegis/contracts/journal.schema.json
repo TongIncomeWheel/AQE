@@ -1,0 +1,16 @@
+{ "$schema": "https://json-schema.org/draft/2020-12/schema", "title": "Aegis Journal (PTJ successor)", "x_version": "1.0.0",
+  "type": "object", "required": ["date", "dyncap", "open_positions", "closed_trades", "metrics"],
+  "properties": {"date": {"type": "string", "format": "date"},
+    "dyncap": {"type": "object", "required": ["value", "one_r"], "properties": {
+      "value": {"type": "number"}, "one_r": {"type": "number"}, "method": {"type": "string"}}},
+    "open_positions": {"type": "array", "items": {"type": "object",
+      "required": ["ticker", "qty", "entry", "stop_reference"],
+      "properties": {"ticker": {"type": "string"}, "qty": {"type": "number"}, "entry": {"type": "number"},
+        "entry_date": {"type": "string"}, "stop_reference": {"type": ["number", "null"]},
+        "stop_live_broker": {"type": ["number", "null"]}, "stop_match": {"enum": ["MATCH", "MISMATCH", "MISSING", null]},
+        "tp1": {"type": ["number", "null"]}, "tp2": {"type": ["number", "null"]}, "tp3": {"type": ["number", "null"]},
+        "trigger": {"type": ["string", "null"]}, "broker": {"type": "string"}, "unrealised_usd": {"type": ["number", "null"]}}}},
+    "closed_trades": {"type": "array", "items": {"type": "object"}},
+    "hedge": {"type": ["object", "null"]},
+    "metrics": {"type": "object"},
+    "broker_sync": {"type": "object"}}}
