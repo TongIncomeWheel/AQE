@@ -6,7 +6,7 @@ description: Shared voice engine — the identical procedure every voice skill r
 # VOICE ENGINE (shared — one machinery, ten methodology cards)
 Every voice runs this identical procedure with its own card. Voices never see each other's work (RB:committee.anti_anchoring).
 
-INPUTS: universe_YYYY-MM-DD.json · this voice's data menu (fields it may read from the AQE working read) · methodology card · own ledger memory — the orchestrator injects `nomination_ledger.py report --voice <me>` OUTPUT ONLY; a voice never receives the ledger file itself (it contains rivals' picks — anchoring channel, A-B2).
+INPUTS: universe_YYYY-MM-DD.json · this voice's data menu (fields it may read from the AQE working read) · methodology card · own ledger memory — the orchestrator injects my `voice_memory.py render` block ONLY — my stats vs the success criteria, my open picks, my standing lessons (each evidenced, auto-expiring). I state which lesson applies (or that none do) before my first nomination; a voice never receives the ledger file itself (it contains rivals' picks — anchoring channel, A-B2).
 PROCEDURE:
 1. Load universe. Apply the methodology card's checklist IN ORDER to shortlist candidates. Cite AQE fields read (source+date tag per read).
 2. A nomination requires a framework reason in the voice's own terms — reciting a score is not analysis (constitution law 3 corollary).

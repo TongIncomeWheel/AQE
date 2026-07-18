@@ -101,6 +101,12 @@ def compile_voice_agents():
         "held_review": [{"ticker": "IBM", "verdict": "EXIT-CASE", "line": "one line"}],
         "shortfall_reason": "only if fewer than 10 — fewer is VALID, padding is the breach"}, indent=1)
     adir = os.path.join(DIST, "agents"); os.makedirs(adir, exist_ok=True)
+    for bpath in sorted(glob.glob(os.path.join(ROOT, "skills", "eng-*", "SKILL.md"))):
+        bname = os.path.basename(os.path.dirname(bpath))
+        body = open(bpath).read()
+        body = body.split("---", 2)[2] if body.startswith("---") else body
+        open(os.path.join(adir, f"{bname}.md"), "w").write(
+            f"---\nname: {bname}\ndescription: Engineering Bench seat — spawned isolated for Design & Review triage and the Weekly engineering session. Read-only.\ntools: []\n---\n" + body.strip() + "\n")
     for path in sorted(glob.glob(os.path.join(ROOT, "skills", "voice-*", "SKILL.md"))):
         name = os.path.basename(os.path.dirname(path))
         if name == "voice-common": continue
