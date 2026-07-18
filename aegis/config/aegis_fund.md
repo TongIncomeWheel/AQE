@@ -12,7 +12,7 @@ This is the **one place** the Aegis sub-fund's capital lives (D-21). Edit the bl
 ## The fields
 
 - **strategy_tag** — always `AEGIS`. This is the label stamped on every Aegis order (D-17) so its capital and positions are never confused with the other two strategies (Income Wheel, Protege9) sharing the same brokers. Do not change it.
-- **allocated_capital_usd** — **the one number you must set.** Your capital allocation to the Aegis strategy. Until it has a value, sizing deliberately refuses (no anchor = no position sizing). Example: `allocated_capital_usd: 60000`.
+- **allocated_capital_usd** — **the one number you must set.** Your capital allocation to the Aegis strategy. Until it has a value, sizing deliberately refuses (no anchor = no position sizing). Example: `allocated_capital_usd: null`.
 - **dyncap_usd** — dynamic capital: your allocation plus realised profit/loss from closed Aegis trades only. Leave it `null` and the system seeds it to your allocation on day one, then maintains it from the Aegis PTJ. You normally never touch this.
 - **brokers** — the brokers Aegis trades through. Leave as is unless that changes.
 

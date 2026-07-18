@@ -1,0 +1,17 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Autopilot State",
+ "x_version": "1.0.0",
+ "x_note": "The durable on-disk arming state (BL-011). Read fail-safe: any read error -> treated as OFF. Only the PM arms; expiry is fixed 05:30 SGT (D-7a).",
+ "type": "object",
+ "required": ["armed"],
+ "properties": {
+  "armed": {"type": "boolean"},
+  "reason": {"type": "string"},
+  "at": {"type": ["string", "null"], "description": "when armed/disarmed"},
+  "expiry": {"type": ["string", "null"], "description": "fixed next 05:30 SGT while armed (D-7a)"},
+  "orders_used": {"type": "integer", "minimum": 0, "default": 0},
+  "max_orders": {"type": "integer", "description": "RB:autopilot.max_orders_per_session"},
+  "deployment": {"enum": ["claude", "kimi", null], "description": "which deployment holds the arm — only ONE may be armed for live at a time (D-19); Kimi cannot arm until production migration (D-30)"}
+ }
+}

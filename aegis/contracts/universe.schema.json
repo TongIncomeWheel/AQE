@@ -1,0 +1,23 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Daily Universe File",
+ "x_version": "1.0.0",
+ "x_note": "The one universe file every voice reads (BL-011). Produced by universe_screen.py from the AQE working read; menu-slimmed per voice at spawn. Validated before any voice reads it.",
+ "type": "object",
+ "required": ["date", "rows"],
+ "properties": {
+  "date": {"type": "string", "format": "date"},
+  "screen": {"type": "object", "description": "the screen params applied (RB:universe.screen) — provenance"},
+  "rows": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["ticker"],
+    "properties": {
+     "ticker": {"type": "string"}
+    },
+    "x_note": "each row carries the AQE working-read fields; a voice sees only its data-menu subset"
+   }
+  }
+ }
+}

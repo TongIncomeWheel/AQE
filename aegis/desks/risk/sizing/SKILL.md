@@ -11,7 +11,7 @@ The methodology the system always had (two-step R-then-vol-cap) now with an owne
 ## The dynamic capital anchor (read first, every time)
 Dynamic capital is the Aegis sub-fund's, never the co-mingled account's (D-21):
 - Read `config/aegis_fund.md` via `tools/fund_config.py`.
-- `dynCap = allocated_capital + realised P&L on CLOSED Aegis trades only` (RB:capital.dyncap_method) — the Operations desk maintains it from the Aegis PTJ; I read it, never recompute from market value.
+- `dynCap = allocated_capital + realised P&L on CLOSED Aegis trades only` (RB:capital.dyncap_method) — maintained in `data/persistent/dyncap_ledger.json` by `tools/dyncap_ledger.py` (Operations updates it from the Aegis PTJ; I read it via `get_dyncap()`), never recomputed from market value.
 - **If `allocated_capital_usd` is unset → REFUSE to size.** No anchor = no position (BL-030). Never fall back to raw broker NAV.
 
 ## The two steps (both mandatory, take the smaller)

@@ -1,0 +1,43 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Staging Gatekeeper Record (preview or refusal)",
+ "x_version": "1.0.0",
+ "x_note": "The staging-gatekeeper's output for every order request (BL-011). PASS = a preview; FAIL = a refusal. Every record is AEGIS-tagged (D-17) and carries the mechanical check result (BL-009).",
+ "type": "object",
+ "required": ["ticker", "outcome", "checks", "requested_by", "strategy_tag", "broker", "ts"],
+ "properties": {
+  "ticker": {"type": "string"},
+  "outcome": {"enum": ["PREVIEW", "REFUSED", "CONFIRMED"]},
+  "strategy_tag": {"const": "AEGIS"},
+  "broker": {"enum": ["tiger", "ibkr"]},
+  "requested_by": {"type": "string", "description": "the desk/persona that requested — never the gatekeeper itself"},
+  "ts": {"type": "string"},
+  "checks": {
+   "type": "array",
+   "description": "the 7-check framework result, mechanically verified (BL-009 gate_check.py); the agent only relays this",
+   "items": {
+    "type": "object",
+    "required": ["name", "pass"],
+    "properties": {
+     "name": {"enum": ["consensus", "event_clean", "bracket_valid", "size", "portfolio_gates", "pm_approval", "mechanics"]},
+     "pass": {"type": "boolean"},
+     "evidence": {"type": "string"}
+    }
+   }
+  },
+  "first_failed_check": {"type": ["string", "null"], "description": "non-null on REFUSED — the first check that failed"},
+  "preview": {
+   "type": ["object", "null"],
+   "description": "present on PREVIEW/CONFIRMED",
+   "properties": {
+    "side": {"enum": ["BUY", "SELL"]},
+    "qty": {"type": "integer"},
+    "limit_price": {"type": "number"},
+    "stop_plan": {"type": ["number", "null"]},
+    "tp_levels": {"type": "array", "items": {"type": "number"}},
+    "r_used": {"type": "number"}
+   }
+  },
+  "autopilot_armed": {"type": "boolean", "description": "whether this ran under an armed switch"}
+ }
+}
