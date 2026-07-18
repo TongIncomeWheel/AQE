@@ -1,0 +1,50 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Committee Deliberation Record",
+ "x_version": "1.0.0",
+ "type": "object",
+ "required": ["date", "deliberation_set", "verdicts"],
+ "properties": {
+  "date": {"type": "string"},
+  "deliberation_set": {
+   "type": "array",
+   "items": {"type": "string"},
+   "description": "Every ticker that reached >=2 nominations (D-2) or lens top tier, event-filter-cleared, entering deliberation"
+  },
+  "verdicts": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "verdict", "conviction", "nominators", "bear_case", "dissent"],
+    "properties": {
+     "ticker": {"type": "string"},
+     "verdict": {"enum": ["ADVANCE", "HOLD-FOR-CONDITIONS", "PASS"]},
+     "conviction": {"type": "integer", "minimum": 1, "maximum": 5},
+     "nominators": {"type": "array", "items": {"type": "string"}},
+     "bear_case": {
+      "type": "string",
+      "minLength": 1,
+      "description": "MANDATORY (RB:committee.bear_case_mandatory; performance.committee.bear_case_present_pct_min=100) — the strongest reason NOT to take this name, stated plainly, even on an ADVANCE"
+     },
+     "dissent": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": ["voice", "note"],
+       "properties": {"voice": {"type": "string"}, "note": {"type": "string"}}
+      },
+      "description": "Recorded, never suppressed — empty array is a valid outcome (true unanimity), not an assumed default"
+     },
+     "unanimity_challenge_triggered": {
+      "type": "boolean",
+      "description": "RB:committee.unanimity_challenge — preliminary >=6/7 agreement triggers rotating adversarial challenge (thorp/pardo/steenbarger)"
+     },
+     "conditions": {
+      "type": ["string", "null"],
+      "description": "Required (non-null) when verdict is HOLD-FOR-CONDITIONS; null otherwise"
+     }
+    }
+   }
+  }
+ }
+}

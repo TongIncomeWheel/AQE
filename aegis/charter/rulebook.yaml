@@ -82,6 +82,25 @@ srm:
   role: context_only
   layers: 11 GICS sector ETFs + thematic baskets, RRG quadrants; full trend_state
     label always shown with grade
+model_tiers:
+  doctrine: 'three planes, three cost tiers (D-16). Judgment plane (the 10 voices,
+    the 5 Engineering Bench seats, committee-desk deliberation, the Intraday Review
+    Pod) ALWAYS runs RB:model_tiers via parameters — pinned explicitly inside every
+    compiled agent file itself, never left to inherit whatever tier the orchestrator
+    session happens to be running that day. Control plane (the orchestrator executing
+    each process skill — premarket/market_hours/post_market/design_review/weekly —
+    plus the staging-gatekeeper mechanical relay once BL-009 ships) runs the economy
+    tier — sequencing, tool calls, and contract validation, not deep reasoning. Data
+    plane (tools/*.py) runs no model at all — plain deterministic code, zero LLM
+    cost, unchanged by this doctrine.'
+  never_silent_downgrade: 'a judgment-plane agent tier is pinned in its own file
+    at build time (inline_rb), so a PM switching the cockpit or orchestrator session
+    to a cheaper model for cost reasons can never accidentally downgrade a voice,
+    a bench seat, or a deliberation without a deliberate parameters.yaml change'
+  verify_not_assume: 'model pinning is a documented capability on both platforms
+    but community reports exist of it being silently ignored on Claude Code in some
+    versions; confirm actual behaviour via the usage/cost dashboard in the practice
+    week (BL-026), not by assumption'
 topology:
   engines: Claude cloud workspace (primary, sole order path) + KimiClaw cloud workspace
     (full parallel shadow) each run the scheduled phases on their own schedulers (D-15);

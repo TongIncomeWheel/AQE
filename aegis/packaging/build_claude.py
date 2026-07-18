@@ -100,13 +100,22 @@ def compile_voice_agents():
         "nominations": [{"ticker": "PYPL", "reason": "one line, MY framework language", "fields_cited": ["elder_5d","bracket.stop"], "conviction": 4, "price_at_nomination": None}],
         "held_review": [{"ticker": "IBM", "verdict": "EXIT-CASE", "line": "one line"}],
         "shortfall_reason": "only if fewer than 10 — fewer is VALID, padding is the breach"}, indent=1)
+    judgment_model = rb_lookup("model_tiers.judgment")  # D-16: pinned at build time, never inherited
     adir = os.path.join(DIST, "agents"); os.makedirs(adir, exist_ok=True)
     for bpath in sorted(glob.glob(os.path.join(ROOT, "skills", "eng-*", "SKILL.md"))):
         bname = os.path.basename(os.path.dirname(bpath))
         body = open(bpath).read()
         body = body.split("---", 2)[2] if body.startswith("---") else body
         open(os.path.join(adir, f"{bname}.md"), "w").write(
-            f"---\nname: {bname}\ndescription: Engineering Bench seat — spawned isolated for Design & Review triage and the Weekly engineering session. Read-only.\ntools: []\n---\n" + body.strip() + "\n")
+            f"---\nname: {bname}\ndescription: Engineering Bench seat — spawned isolated for Design & Review triage and the Weekly engineering session. Read-only.\nmodel: {judgment_model}\ntools: []\n---\n" + body.strip() + "\n")
+    # D-16: committee-desk — the deliberation step, pulled out of "the orchestrator's own session"
+    # into its own pinned judgment-tier agent, same reasoning as the voice swarm's isolation.
+    cd_path = os.path.join(ROOT, "skills", "committee-desk", "SKILL.md")
+    if os.path.isfile(cd_path):
+        body = open(cd_path).read()
+        body = body.split("---", 2)[2] if body.startswith("---") else body
+        open(os.path.join(adir, "committee-desk.md"), "w").write(inline_rb(
+            f"---\nname: committee-desk\ndescription: Isolated deliberation agent — turns the tallied, event-filter-cleared nomination set into verdicts (ADVANCE/HOLD-FOR-CONDITIONS/PASS) with a mandatory bear case on every entry. Spawned once per premarket run by the orchestrator. Model pinned to RB:model_tiers.judgment (D-16).\nmodel: {judgment_model}\ntools: []\n---\n" + body.strip() + "\n"))
     for path in sorted(glob.glob(os.path.join(ROOT, "skills", "voice-*", "SKILL.md"))):
         name = os.path.basename(os.path.dirname(path))
         if name == "voice-common": continue
@@ -117,6 +126,7 @@ def compile_voice_agents():
         agent = f"""---
 name: {name}
 description: Isolated nominator agent — {vkey}. Spawned fresh each premarket by the orchestrator; sees ONLY this file + the universe file + its own ledger report. No tools, no session context, no other voices.
+model: {judgment_model}
 tools: []
 ---
 # AGENT: {name.upper()} — complete standalone instruction set (GENERATED; edit the kernel card, not this)

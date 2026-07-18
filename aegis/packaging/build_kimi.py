@@ -4,7 +4,7 @@ Emits: dist/kimi/ with Agent Skills (same compiled skills as Claude — the form
 markdown+frontmatter), agents/ (voice subagent definitions for swarm mode), and mcp.json pointing at
 the reused Tiger/Alpaca cloud MCPs + the local IBKR server + FMP.
 """
-import json, os, shutil, sys
+import json, os, shutil, sys, yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "dist", "kimi")
@@ -35,6 +35,10 @@ def main():
         "# AEGIS — load-first\nRead CONTEXT.md in this directory before anything else; it is the system context document. "
         "Then obey charter/constitution.md; procedures are the installed skills; commands per charter/commands.md.\n")
     # K1: Kimi subagents are YAML agent-files, not markdown frontmatter. Emit system-prompt files + one agent-file.
+    # D-16: judgment-tier pin attempted via "model:" key — UNVERIFIED against current kimi-cli schema (BL-026).
+    rb = yaml.safe_load(open(os.path.join(ROOT, "charter", "rulebook.yaml")))
+    pp_ = yaml.safe_load(open(os.path.join(ROOT, "charter", "parameters.yaml")))
+    kimi_judgment_model = pp_.get("model_tiers", {}).get("kimi_judgment", "kimi-for-coding-highspeed")
     os.makedirs(os.path.join(DIST, "agents"), exist_ok=True)
     subagents = {}
     for f in sorted(os.listdir(os.path.join(SRC, "agents"))):
@@ -43,14 +47,15 @@ def main():
         vname = f.replace(".md", "").replace("_", "-")
         pp = os.path.join(DIST, "agents", vname + ".txt")
         open(pp, "w").write(body.strip() + "\n")
-        subagents[vname] = {"extend": "default", "system_prompt_path": "./agents/" + vname + ".txt", "tools": []}
+        # BL-026: "model" key here is a best-effort D-16 pin, not a confirmed kimi-cli field — verify at deploy.
+        subagents[vname] = {"extend": "default", "system_prompt_path": "./agents/" + vname + ".txt",
+                             "model": kimi_judgment_model, "tools": []}
     agentfile = {"version": 1,
                  "agent": {"name": "aegis", "extend": "default", "system_prompt_path": "./AGENTS.md"},
                  "subagents": subagents}
-    import yaml as _y
     open(os.path.join(DIST, "aegis-agent.yaml"), "w").write(
         "# GENERATED — Kimi agent-file. Launch: kimi --agent-file aegis-agent.yaml (verify schema vs current kimi-cli docs at deploy)\n"
-        + _y.dump(agentfile, sort_keys=False))
+        + yaml.dump(agentfile, sort_keys=False))
     ep = json.load(open(os.path.join(ROOT, "config", "endpoints.json")))
     # K2: env-substitution in headers is undocumented on Kimi — inline the real token from .env at BUILD time.
     tok = os.environ.get("TIGER_MCP_AUTH", "REPLACE-at-build: set TIGER_MCP_AUTH in env and re-run build_kimi.py; chmod 600 mcp.json")
@@ -68,7 +73,10 @@ def main():
         "3b. Launch every run with: kimi --agent-file aegis-agent.yaml (registers the 10 voice subagents; K1).\n"
         "4. Swarm mode: premarket step 5 targets the voice-* subagents from aegis-agent.yaml — fresh context, no tools.\n"
         "5. Install kimi-cli via the OFFICIAL install script/package (see moonshotai.github.io/kimi-cli — the old npm name in earlier docs was wrong).\n"
-        "6. Plan guidance (platform review 18 Jul): Allegretto tier fits the daily cycle; Moderato weekly ceiling is too small.\n")
+        "6. Plan guidance (platform review 18 Jul): Allegretto tier fits the daily cycle; Moderato weekly ceiling is too small.\n"
+        "7. Model tiering (D-16, BL-026 UNVERIFIED): aegis-agent.yaml pins each voice subagent's \"model\" key to "
+        f"{kimi_judgment_model} — confirm this field name against current kimi-cli docs before trusting it; if unsupported, "
+        "every subagent silently runs whatever the top-level session model is, which defeats the cost-tiering intent.\n")
     print(f"built {DIST}")
 
 if __name__ == "__main__":
