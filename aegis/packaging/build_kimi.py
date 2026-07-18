@@ -32,7 +32,7 @@ def main():
         "1. Install kimi-cli; log in with your Kimi subscription.\n"
         "2. Copy skills/ into your Kimi agent skills directory; agents/voices into subagent definitions.\n"
         "3. Merge mcp.json into Kimi's MCP config; fill endpoints in kernel config/endpoints.json first and rebuild.\n"
-        "4. Swarm mode: the premarket skill step 6 spawns each voices/*.md as an isolated subagent.\n")
+        "4. Swarm mode: premarket step 5 spawns each agents/voice-*.md as an isolated subagent (fresh context, no tools).\n")
     print(f"built {DIST}")
 
 if __name__ == "__main__":

@@ -71,7 +71,7 @@ def passes(symbol):
     if above_any and vol_ok:
         return {"ticker": symbol, "close": close,
                 "above_ema": [n for n, e in emas.items() if e and close >= e],
-                "vol_vs_30d": round(vols[-1] / max(sum(vols[-30:]) / 30, 1), 2)}
+                "vol_vs_30d": round(vols[-1] / max(sum(prior30) / max(len(prior30),1), 1), 2)}  # QA-N2: display matches the gating rule
     return None
 
 

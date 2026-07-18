@@ -54,9 +54,14 @@ def main():
     for d in ("contracts", "tools"):
         shutil.copytree(os.path.join(ROOT, d), os.path.join(DIST, d), ignore=shutil.ignore_patterns("__pycache__"))
     os.makedirs(os.path.join(DIST, "charter"), exist_ok=True)
-    for f in ("rulebook.yaml", "parameters.yaml", "commands.md", "constitution.md"):
+    for f in ("rulebook.yaml", "parameters.yaml", "commands.md", "constitution.md", "decisions_log.md"):
         shutil.copy(os.path.join(ROOT, "charter", f), os.path.join(DIST, "charter", f))
     shutil.copy(os.path.join(ROOT, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
+    shutil.copytree(os.path.join(ROOT, "config"), os.path.join(DIST, "config"))
+    for shelf in ("data/sod", "data/intraday", "data/eod", "data/persistent/cs_weekly", "data/archive"):
+        os.makedirs(os.path.join(DIST, shelf), exist_ok=True)
+        open(os.path.join(DIST, shelf, ".keep"), "w").write("")
+    shutil.copy(os.path.join(ROOT, "data", "README.md"), os.path.join(DIST, "data", "README.md"))
     open(os.path.join(DIST, "README.md"), "w").write("# aegis-v4 plugin (GENERATED)\nSkills in skills/; contracts, tools, charter and CONTEXT.md ship IN-PACKAGE so the install is self-sufficient. Commands: skills/premarket/commands.md.\n")
     compile_voice_agents()
     print(f"built {DIST}")
