@@ -82,6 +82,17 @@ srm:
   role: context_only
   layers: 11 GICS sector ETFs + thematic baskets, RRG quadrants; full trend_state
     label always shown with grade
+topology:
+  engines: Claude cloud workspace (primary, sole order path) + KimiClaw cloud workspace
+    (full parallel shadow) each run the scheduled phases on their own schedulers (D-15);
+    Kimi engine live only after smoke test passes (BL-021)
+  pc_role: AQE feed server + intraday alert watcher ONLY; every export/alert pushed
+    to GitHub immediately on write — the clouds' fresh-feed source (BL-022)
+  cockpit: ONE command surface — the Claude app chat. All approvals, arming, steering
+    there and nowhere else; the Kimi surface is read/diff only
+  kimi_credentials: read-only broker data permitted (scoping BL-023); NO order-capable
+    credential ever enters the Kimi cloud; staging-gatekeeper ships only in the Claude
+    package
 data_sources:
   scores_and_analytics: AQE export (GitHub repo engine) — verbatim
   equity_spot_live: Tiger MCP (cloud-hosted, reuse) -> IBKR fallback

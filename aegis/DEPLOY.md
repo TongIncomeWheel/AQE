@@ -1,65 +1,70 @@
 # DEPLOY — how this kernel becomes a running system on Claude and on Kimi
 Plain steps, actual paths. The kernel never runs directly; you install what the packagers generate.
+**Topology per D-15 (18 Jul): two cloud engines + one cockpit + a narrowed PC.** The Claude cloud workspace and KimiClaw each run the full scheduled phases; the PC only runs AQE and the intraday alert watcher and pushes everything to GitHub the moment it's written; every approval, arm and steer happens in ONE place — the Claude app chat.
+
 ---
 
 # ⚠️ PM ACTION BOX — the only things that need YOUR hands. Do them whenever ready; nobody will ask again.
 
-> **PM-1 · GitHub token (unlocks: kernel push finalisation, daily archive commits from sessions)**
+> **PM-1 · GitHub token (unlocks: kernel push, and now the ENTIRE PC-to-cloud data flow — this is the load-bearing one)**
 > github.com → your avatar → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token → Resource owner: you · Repository access: **Only select repositories → TongIncomeWheel/AQE** · Permissions: **Contents → Read and write** (nothing else) · Expiration: 90 days → Generate → copy.
 > Then either: (a) paste it into any working session and say **/push** — the prepared commit goes up in seconds; or (b) skip the token entirely and run on your PC:
-> `git pull` → unzip the latest kernel so `aegis/` sits at the repo root → `git add aegis && git commit -m "aegis kernel v4.9" && git push`
+> `git pull` → unzip the latest kernel so `aegis/` sits at the repo root → `git add aegis && git commit -m "aegis kernel" && git push`
 > *(Optional while you're there: Settings → General → Danger Zone → Change visibility → **Private**.)*
+> Under D-15 the repo is no longer just resilience — it is how the fresh AQE export and intraday alerts reach both cloud engines (BL-022). The token lives on the PC AND in both cloud workspaces.
 
-> **PM-2 · Windows scheduler (unlocks: the standing clock — premarket build, post-market, weekly, janitor)**
-> Confirm the PC is Windows and stays on 24/7, then in any working session say **/schedule** — the Task Scheduler XML entries are generated for import (Task Scheduler → Import Task…), one per clock entry from RB:schedule. Nothing else needed.
+> **PM-2 · PC scheduler — NARROWED by D-15 (unlocks: the feed only)**
+> The PC no longer runs the phases. It needs exactly TWO Task Scheduler entries: (1) run AQE + push the export to GitHub immediately after; (2) start the alert watcher before the US open with its 21:25 SGT heartbeat. Confirm the PC is Windows and stays on 24/7, then say **/schedule pc** in any working session — the two entries are generated for import.
 
-> **PM-3 · Tiger URL + auth (unlocks: scheduled Claude Code runs on the PC, AND Kimi if used — this one is needed for both, per the platform review)**
+> **PM-3 · Claude scheduled tasks (unlocks: the standing clock — premarket build, post-market, design & review, weekly, janitor)**
+> Say **/schedule cloud** in the Claude workspace — I create the scheduled tasks on the app's own scheduler (they fire fresh cloud sessions on the SGT clock and push a notification to your phone when a run finishes with something you need to see). Nothing to install. One thing we verify in the practice week: that scheduled headless runs reach the Tiger connector; if they don't, the packaged `.mcp.json` with the Tiger URL (PM-4) is the fallback and it's one line.
+
+> **PM-4 · Tiger URL + auth (unlocks: Kimi's read-only broker data, and the fallback for scheduled Claude runs)**
 > claude.ai → Settings → Connectors → Tiger MCPv7 → copy the server URL → paste one line into `aegis/config/endpoints.json` (`tiger_mcp.url`).
+> ⚠️ For Kimi this is gated by **BL-023**: the current token can place orders, so it does NOT go into the Kimi cloud as-is. First ask whether the Tiger MCP can mint a second READ-ONLY token/endpoint; if it can't, that becomes a DECIDE — policy-level allowlist (Kimi package ships zero write tools) or no broker data on the Kimi side.
 
-> **PM-4 · PC env file (unlocks: universe screen live run, ledger price feed)**
-> Copy `aegis/config/env.example` → `.env` in the repo folder on the PC; fill `FMP_API_KEY=` (from your FMP account). Alpaca keys are already embedded (your ruling); IBKR only if you chose the gateway.
+> **PM-5 · Env keys (unlocks: universe screen, ledger price feed)**
+> Copy `aegis/config/env.example` → `.env` and fill `FMP_API_KEY=` (from your FMP account) — on the PC and in each cloud workspace. Alpaca read-only keys are already embedded (your ruling); IBKR only if you chose the gateway.
+
+> **PM-6 · Kimi side (unlocks: the parallel engine)**
+> Subscribe Allegretto → open kimi.com → enable Kimi Claw (the chat workspace tab). Then say **/kimi smoke** in any working session and I run BL-021: can it execute our Python tools, reach the Tiger URL, fire a scheduled task on our clock, and load one skill. The Kimi engine goes live ONLY after that passes; until then Kimi CLI on the PC remains the tested fallback. No Telegram bridge — the browser/app chat tab is the surface, per your ruling.
 
 Everything else in this file is my work or automatic.
 
+---
+
+## A. The Claude side (primary — engine AND cockpit in one workspace)
+
+**A1. Platform boundary, corrected 18 Jul and now working FOR us:** your account connectors (Tiger MCPv7, FMP, Drive) work in claude.ai app / project / Cowork sessions — which is exactly where the engines now live under D-15. The old problem (connectors not reaching the PC's CLI) mostly evaporates because the PC no longer runs phases. The one residue: scheduled headless firings may not carry interactively-authenticated connectors — verified in the practice week, with the packaged `.mcp.json` (PM-4) as the one-line fallback.
+
+**A2. The cloud workspace (this one) — the engine:**
+1. Kernel lives in the workspace + GitHub (`aegis/` at the repo root). `python3 aegis/packaging/build_claude.py` generates the plugin; its 21 skills and command registry are what the sessions run.
+2. Data shelves (`data/sod`, `intraday`, `eod`, `persistent`, `archive`) live in the workspace and sync through the repo: every phase run starts with a pull (fresh AQE export from the PC per BL-022) and ends with a commit.
+3. The standing clock runs on the app's scheduled tasks (PM-3): premarket build 13:00 SGT · market-hours watch session from 21:25 SGT (self-paced alert polling against the repo per BL-022) · post-market 04:05 · design & review after it · Sunday weekly · nightly janitor.
+4. Smoke test: `/fa` (book from state) · `tools/tripwires.py` on the latest export · one SUPERVISED `/pm` end-to-end — watching run time (voices in parallel, not serial) and token burn to size the plan week.
+5. Plan guidance (platform review): the daily 10-voice cycle points at **Claude Max $200 (20x)**; the $100 tier may hit the weekly ceiling — confirm on the usage dashboard after the practice week.
+
+**A3. The cockpit — the same workspace, from your phone:**
+1. This chat IS the cockpit: `/plan`, `/approve`, `/arm`, `/ap`, `/fa`, `/watch`, `/steer` from your phone, any time. Project knowledge carries `CONTEXT.md` + the four charter files; instructions: "Load CONTEXT.md first; obey the charter; procedures are the installed skills; commands per commands.md."
+2. **Sole command surface (D-15).** Approvals, arming and steering happen here and nowhere else. The 4pm plan, the 10am summary (with the Kimi diff), and pages arrive here as app pushes.
 
 ---
 
-## A. Deploy into Claude (primary today)
+## B. The Kimi side (parallel engine — KimiClaw first, CLI as fallback)
 
-**A1. What works with zero setup — CORRECTED after platform review (18 Jul):** the Tiger and FMP connectors on your claude.ai account work in **claude.ai app / project / Cowork sessions only** (verified live). They do **NOT** carry over to Claude Code running on your PC — that's a platform boundary, not a bug. The scheduled PC runs use the plugin's own connection file (`.mcp.json`, generated by the build): fill the Tiger URL + auth once via PM-3 and rebuild. Market-data and Alpaca on the PC are plain scripts with keys from `.env` — no connector needed.
-
-**A2. Claude Code / Cowork on your PC (the runtime that can run schedules and touch files):**
-1. On the PC: `git clone` the (private) AQE repo → you have `aegis/` inside it.
-2. `python3 aegis/packaging/build_claude.py` → generates `aegis/dist/claude-plugin/aegis-v4/`.
-3. Copy that folder to `~/.claude/plugins/aegis-v4/` (or point Claude Code at it as a local plugin). Restart Claude Code — the 21 skills appear, commands (`/pm`, `/arm`, `/plan`…) live in the registry file shipped with them.
-4. Create `data/` next to the repo per `data/README.md`; copy `config/env.example` → `.env`, fill FMP key (Tiger/FMP not needed — connectors; Alpaca keys embedded).
-5. Schedule the standing clock (Windows Task Scheduler): 13:00 SGT premarket build · 04:05 post-market · then design&review · Sunday weekly · nightly janitor. Each entry = `claude -p "/pm"` style headless invocations (exact commands in the generated plugin README).
-6. Smoke test: `/fa` (book from state) · run `tools/tripwires.py` on the latest AQE export · `/pm` once SUPERVISED end-to-end — watch two things the platform review flagged: total run time (sessions have a 5-hour window; the 10 voices must run in parallel, not one after another) and token usage (to size your plan week).
-7. Plan guidance (platform review): the daily cycle points at **Claude Max $200 (20x)** for comfortable weekly headroom; the $100 tier may hit the weekly ceiling with a 10-voice daily swarm — confirm with the usage dashboard after the practice week.
-
-**A3. New claude.ai Project (phone/chat surface — the one you talk to):**
-1. Create the project. Upload FOUR files to project knowledge: `CONTEXT.md`, `charter/constitution.md`, `charter/rulebook.yaml`, `charter/parameters.yaml` (+ `charter/commands.md`).
-2. Project instructions = one line: "Load CONTEXT.md first; obey the charter; procedures are the installed skills; commands per commands.md."
-3. Connectors (Tiger MCPv7, FMP, Drive if kept) are account-level — already attached.
-4. This project is your UX: `/plan`, `/approve`, `/arm`, `/ap`, `/fa` from your phone. The heavy scheduled runs happen in A2 on the PC; both read/write the same data/ shelves synced through the repo.
-
----
-
-## B. Deploy into Kimi Code CLI (the alternative harness)
-
-1. On the PC: install Kimi CLI (`npm i -g @moonshot/kimi-cli` or per current vendor doc), log in with your Kimi subscription.
-2. `python3 aegis/packaging/build_kimi.py` → generates `aegis/dist/kimi/`.
-3. Copy `dist/kimi/skills/*` into Kimi's Agent Skills directory (`~/.kimi/skills/` per its config); copy `dist/kimi/agents/voices/*` into its subagent definitions — the premarket skill's step 6 spawns them as the swarm.
-4. Fill `config/endpoints.json`: paste the Tiger connector URL (claude.ai → Settings → Connectors → Tiger MCPv7 → copy URL) — the ONE manual line; FMP key from `.env`; IBKR stdio entry already written. Re-run build_kimi so `mcp.json` regenerates; merge it into Kimi's MCP config.
-5. Same `.env`, same `data/` shelves, same repo — the two harnesses are interchangeable by construction; artifacts diff cleanly because they follow the same contracts.
-6. Shadow protocol: run Kimi in parallel for a week; each day diff `data/sod/DATE/committee_*.json` and the plan against the Claude run; cut over (or keep as warm standby) when the diff is boring.
+1. **KimiClaw (primary path, gated by BL-021):** enable per PM-6 → run the smoke test → `python3 aegis/packaging/build_kimi.py` (a Claw-format adapter variant is cut if the smoke test shows ClawHub skill format differs from Kimi CLI's) → install skills into the Claw workspace → set its scheduled tasks to the same SGT clock → GitHub token so it pulls the same repo/feed and commits its outputs under `data/.../kimi/`.
+2. **Scope (D-15):** full parallel — same universe file, same voices, same phases — plus read-only broker data ONCE BL-023 resolves the credential scoping. **No order path exists on this side:** no staging-gatekeeper skill, no write tools in the package, `/arm` unknown to it by construction.
+3. **Surface:** the kimi.com Claw chat tab (browser or app). Read it like a second analyst's desk; you never approve anything there. No Telegram bridge.
+4. **Shadow protocol:** runs the same week as the Claude practice week; each day the 10am summary diffs Kimi's committee output and plan against Claude's. The diff being boring is the acceptance signal; where they disagree, that's free adversarial review of the committee itself.
+5. **Fallback:** if the smoke test fails, Kimi CLI on the PC (the already-built `dist/kimi/` package) runs the same shadow — it just loses the chat surface until KimiClaw matures.
 
 ---
 
 ## C. What "deployed" means — the acceptance checklist
-- [ ] `/pm` produces a schema-valid plan by 16:00 with all 10 nomination files present
-- [ ] Tripwires pass on today's export; a forced failure blocks and pages
-- [ ] `/arm` → `/ap` shows armed till next 05:30 SGT → `/disarm` works
-- [ ] Gatekeeper refuses a name missing consensus (test with a dummy request) and logs it
-- [ ] Post-market writes journal + metrics + audit; GitHub daily archive commit appears
-- [ ] Morning summary arrives at 10:00 with ledger update and any backlog asks
+- [ ] `/pm` produces a schema-valid plan by 16:00 with all 10 nomination files present — fired by the cloud scheduler, not by hand
+- [ ] Fresh AQE export reaches both clouds via the repo before the premarket build (BL-022 latency measured)
+- [ ] Tripwires pass on today's export; a forced failure blocks and a page reaches your phone as an app push
+- [ ] `/arm` → `/ap` shows armed till next 05:30 SGT → `/disarm` works — in the Claude cockpit only; the Kimi side has no such command
+- [ ] Gatekeeper refuses a name missing consensus (dummy request) and logs it
+- [ ] Post-market writes journal + metrics + audit; both engines' archive commits appear on GitHub
+- [ ] Morning summary arrives at 10:00 with ledger update, backlog asks, AND the Claude-vs-Kimi plan diff
