@@ -7,8 +7,8 @@
 | **/arm** | Arm autopilot → auto-expires next 05:30 SGT. Gatekeeper may auto-place approved preauthorised names within caps | no — arming is the consent |
 | **/disarm** | Kill autopilot instantly | no |
 | **/ap** | Autopilot status (armed? expires? orders used?) | no |
-| **/fa** | Quick book view from state, plain text — token-cheap | no |
-| **/status** | Rendered status card (D-22): open Aegis positions + P&L, armed state + expiry, alerts armed/fired, plan headline — the union of /fa + /ap + /watch in one glance | no |
+| **/fa** | Quick book view, plain text, read from today's workspace files (not chat memory — G3) — token-cheap | no |
+| **/status** | Rendered status card (D-22, skills/status): open Aegis positions + P&L, armed state + expiry, alerts armed/fired, plan headline — the union of /fa + /ap + /watch in one glance, read from the persistent workspace so it works in any fresh chat | no |
 | **/watch** | Market-hours status: alerts armed, fires so far | no |
 | **/bracket T** | Bracket card for ticker T (AQE verbatim + live distance) | no |
 | **/close** | Run post-market now (journal, metrics, audit) | no |
