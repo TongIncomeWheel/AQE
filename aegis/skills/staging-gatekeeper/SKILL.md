@@ -18,8 +18,10 @@ One owner for everything order-shaped. Orchestrators cannot stage; they submit a
 7. **Mechanics.** Entry is LIMIT, exit path MARKET, stop planned post-fill (RB:brackets).
 
 ## Outputs
-- PASS → staging preview: `{ticker, side, qty, limit_price, stop_plan, tp_levels, r_used, checks: 7×PASS, requested_by}` → to the PM (Phase 1: PM stages personally). Written to data/intraday/DATE/staging/.
-- FAIL → refusal record with the first failed check and evidence → same folder. A refusal is a normal outcome, not an error.
+- PASS → staging preview: `{ticker, side, qty, limit_price, stop_plan, tp_levels, r_used, checks: 7×PASS, requested_by, strategy_tag: "AEGIS", broker: "tiger"|"ibkr"}` → to the PM (Phase 1: PM stages personally). Written to data/intraday/DATE/staging/.
+- FAIL → refusal record with the first failed check and evidence, same `strategy_tag`/`broker` stamp → same folder. A refusal is a normal outcome, not an error.
+- **Every order, no exception, carries RB:identity.strategy_tag = AEGIS and its broker (D-17).** This is Aegis's own audit trail and is always achievable regardless of what the broker itself shows. Broker-native tagging is currently BLOCKED (RB:identity.order_tagging.broker_native — the Tiger/IBKR MCP tools expose no tag/remark field) — until that's fixed, **every preview handed to the PM must say, in plain words, "tag this AEGIS when you place it in [Tiger/IBKR]"** — Phase 1's manual staging is the only place a broker-native tag can happen today.
+- On fill: cross-reference the broker's own returned order id against this skill's `strategy_tag` stamp in the post-fill record — this is what lets held-book review, dynCap, and every RB:risk.gates computation later filter to the AEGIS-only book instead of the co-mingled account (RB:identity.capital_segregation).
 
 ## Post-fill protocol (this skill owns it)
 On fill confirmation: compute actual risk = qty × (fill − stop) via sizing.post_fill_check; flag if delta > $50 (RB:brackets.stop_staging) · output the portfolio metrics line · check combined stop risk (RB:risk.breach_rule) · issue the stop-staging instruction at ACTUAL fill price for the PM to stage.

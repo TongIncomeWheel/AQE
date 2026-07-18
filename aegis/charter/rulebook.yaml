@@ -4,9 +4,39 @@ meta:
   review_by: '2026-10-18'
   note: 'LAW: doctrines and structures — committee + PM ratification to change. Numbers
     live in parameters.yaml.'
+identity:
+  doctrine: 'Aegis is ONE of THREE strategies sharing co-mingled capital across TWO
+    brokers (D-17). The other two (Income Wheel, Protege9) are out of scope for this
+    kernel entirely — Aegis must never read, size against, or risk-gate their positions,
+    and must never assume a broker account''s totals belong to it alone.'
+  strategy_tag: AEGIS
+  other_strategies_for_context_only: [income_wheel, protege9]
+  brokers: [tiger, ibkr]
+  order_tagging:
+    internal: 'ACHIEVABLE NOW, our own audit trail: every staging-gatekeeper record
+      (preview, confirm, refusal) is stamped strategy_tag=AEGIS and broker={tiger|ibkr},
+      cross-referenced to the broker''s own returned order id once filled. This is
+      law regardless of what the broker itself displays.'
+    broker_native: 'BLOCKED as of 18 Jul — the current Tiger/IBKR MCP tool wrappers
+      (place_stock_order, create_order_instruction) expose no client-order-tag, remark,
+      or reference field; the underlying broker APIs likely support one but the MCP
+      surface Aegis is required to reuse (PM ruling: do not rebuild Tiger/Alpaca MCPs)
+      does not pass it through. Interim (Phase 1 only, PM stages personally per RB:orders.phase_1):
+      the staging preview MUST instruct the PM to add an AEGIS tag/memo manually in
+      the broker''s own app at submission. Real fix is BL-028 (MCP passthrough param
+      — needs the PM, as owner of that hosting relationship, to request it) or Phase
+      2 auto-staging simply cannot claim broker-native tagging until it ships.'
+  capital_segregation: 'Aegis''s dynCap (RB:capital.dyncap_method) is computed from
+    AEGIS-tagged positions/fills ONLY, never from co-mingled broker account totals.
+    RB:risk.gates (beta/VaR/leverage/combined-stop) apply to the Aegis sub-fund book
+    exclusively. Positions predating this rule carry no tag and cannot be attributed
+    automatically — BL-027 is the one-time PM reconciliation that seeds the split;
+    until it''s done, any risk-gate reading taken from raw broker totals is provisional
+    and must say so.'
 capital:
   dyncap_method: prior dynCap + realised P&L from CLOSED trades only; never recomputed
-    from market value
+    from market value; computed on the AEGIS-tagged book only (RB:identity.capital_segregation),
+    never on co-mingled broker totals
   sizing_steps: 'two-step mandatory: R-size then vol-cap; take the smaller (tools/calculators/sizing.py)'
 risk:
   beta_gate_window: beta_30d (D-6 FINAL; beta_60d = monitoring colour only, never
@@ -83,16 +113,20 @@ srm:
   layers: 11 GICS sector ETFs + thematic baskets, RRG quadrants; full trend_state
     label always shown with grade
 model_tiers:
-  doctrine: 'three planes, three cost tiers (D-16). Judgment plane (the 10 voices,
-    the 5 Engineering Bench seats, committee-desk deliberation, the Intraday Review
-    Pod) ALWAYS runs RB:model_tiers via parameters — pinned explicitly inside every
-    compiled agent file itself, never left to inherit whatever tier the orchestrator
-    session happens to be running that day. Control plane (the orchestrator executing
-    each process skill — premarket/market_hours/post_market/design_review/weekly —
-    plus the staging-gatekeeper mechanical relay once BL-009 ships) runs the economy
-    tier — sequencing, tool calls, and contract validation, not deep reasoning. Data
-    plane (tools/*.py) runs no model at all — plain deterministic code, zero LLM
-    cost, unchanged by this doctrine.'
+  doctrine: 'three planes, three cost tiers (D-16), scope-not-capability (D-18 correction).
+    Judgment plane (the 10 voices, the 5 Engineering Bench seats, committee-desk
+    deliberation, the Intraday Review Pod) ALWAYS runs RB:model_tiers.judgment —
+    pinned explicitly inside every compiled agent file itself, never left to inherit
+    whatever tier the orchestrator session happens to be running that day; its job
+    is open-ended multi-framework analysis with no fixed ruleset. Control plane (the
+    orchestrator executing each process skill, the exception ladder, staging-gatekeeper''s
+    checklist relay) runs RB:model_tiers.control — a genuinely capable model, not
+    the cheapest available, because it exercises real autonomous judgment inside
+    a BOUNDED ruleset (which degradation path applies, whether an anomaly warrants
+    disarm-first, how to phrase a page or summary for the PM) — this is different
+    scope from judgment plane, not less intelligence. Data plane (tools/*.py) runs
+    no model at all — plain deterministic code, zero LLM cost, unchanged by this
+    doctrine.'
   never_silent_downgrade: 'a judgment-plane agent tier is pinned in its own file
     at build time (inline_rb), so a PM switching the cockpit or orchestrator session
     to a cheaper model for cost reasons can never accidentally downgrade a voice,
