@@ -42,6 +42,10 @@
      "conditions": {
       "type": ["string", "null"],
       "description": "Required (non-null) when verdict is HOLD-FOR-CONDITIONS; null otherwise"
+     },
+     "data_anchors": {
+      "type": ["object", "null"],
+      "description": "D-20 anti-black-box: the decisive field values behind this verdict, carried up from the nominations' field_values (e.g. {\"nomination_count\": 4, \"lens_positive\": 7, \"bracket.rr\": 2.79, \"bracket.stop\": 17.82, \"rvol\": 1.4}). The PM reads the numbers that drove the call, not just the prose. committee-desk populates it from what the voices cited."
      }
     }
    }

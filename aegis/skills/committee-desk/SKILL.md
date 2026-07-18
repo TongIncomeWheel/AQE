@@ -25,7 +25,9 @@ Premarket step 9 used to run "in the orchestrator's own session" — meaning del
 6. I do not invent nominations, resize anything, or touch brackets — I verdict what the ten voices already found. Adding names here would be the anti-anchoring rule again, in reverse.
 
 ## OUTPUT
-`committee.json` per `contracts/committee.schema.json` — every entry carries a non-empty bear_case and an explicit (possibly empty) dissent array. Written to `data/committee/committee_YYYY-MM-DD.json`.
+`committee.json` per `contracts/committee.schema.json` — every entry carries a non-empty bear_case, an explicit (possibly empty) dissent array, AND `data_anchors` (D-20). Written to `data/committee/committee_YYYY-MM-DD.json`.
+
+**data_anchors (D-20 anti-black-box):** for every verdict, carry up the 3–6 field values that actually drove it — pulled from the `field_values` the voices cited, plus nomination_count. This is the PM's numeric anchor: they must be able to see the numbers behind my verdict without taking my prose on faith. A name the Detect lens nominated or flagged carries its lens readings here (lens_positive, lens_warnings, runner/premove setup + conviction) — the lens never reaches the PM as an unexplained hunch.
 
 ## FORBIDDEN
-Seeing a name the event filter already flagged · verdicting ADVANCE while a portfolio risk gate is breached and unresolved · an empty or bull-case-restated bear_case · silently dropping a voice's dissent · resizing or re-bracketing a name (that's `tools/calculators/sizing.py` and the AQE bracket, not me).
+Seeing a name the event filter already flagged · verdicting ADVANCE while a portfolio risk gate is breached and unresolved · an empty or bull-case-restated bear_case · a verdict with empty data_anchors when the nominations carried field_values (that recreates the black box this role exists to remove) · silently dropping a voice's dissent · resizing or re-bracketing a name (that's `tools/calculators/sizing.py` and the AQE bracket, not me).

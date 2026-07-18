@@ -1,6 +1,6 @@
 # DEPLOY — how this kernel becomes a running system on Claude and on Kimi
 Plain steps, actual paths. The kernel never runs directly; you install what the packagers generate.
-**Topology per D-15 (18 Jul): two cloud engines + one cockpit + a narrowed PC.** The Claude cloud workspace and KimiClaw each run the full scheduled phases; the PC only runs AQE and the intraday alert watcher and pushes everything to GitHub the moment it's written; every approval, arm and steer happens in ONE place — the Claude app chat.
+**Topology per D-19 (18 Jul, corrects D-15): TWO independent deployments of one shared kernel.** Claude and Kimi are each a complete, self-sufficient Aegis with its OWN cockpit, scheduler, phases and order path — identical requirements, run independently, vendor-agnostic. They share the kernel in git (one source of truth) but never talk at runtime: no cross-vendor diff, no primary/shadow. The PC serves both equally (AQE feed + alert watcher, pushed to GitHub on write) and belongs to neither. One hard safety rule spanning both: only ONE deployment may be autopilot-armed for live orders at a time, since both hit the same broker accounts.
 
 ---
 
@@ -46,17 +46,19 @@ Everything else in this file is my work or automatic.
 
 **A3. The cockpit — the same workspace, from your phone:**
 1. This chat IS the cockpit: `/plan`, `/approve`, `/arm`, `/ap`, `/fa`, `/watch`, `/steer` from your phone, any time. Project knowledge carries `CONTEXT.md` + the four charter files; instructions: "Load CONTEXT.md first; obey the charter; procedures are the installed skills; commands per commands.md."
-2. **Sole command surface (D-15).** Approvals, arming and steering happen here and nowhere else. The 4pm plan, the 10am summary (with the Kimi diff), and pages arrive here as app pushes.
+2. **This is the Claude deployment's cockpit (D-19).** Approvals, arming and steering for the Claude deployment happen here. The 4pm plan, the 10am summary, and pages arrive here as app pushes. The Kimi deployment has its OWN cockpit (section B) with the same commands — they are independent; you drive whichever you're running. The one rule across both: never arm both for live orders at once.
 
 ---
 
-## B. The Kimi side (parallel engine — KimiClaw first, CLI as fallback)
+## B. The Kimi deployment (independent, its own wrapper — D-19)
 
-1. **KimiClaw (primary path, gated by BL-021):** enable per PM-6 → run the smoke test → `python3 aegis/packaging/build_kimi.py` (a Claw-format adapter variant is cut if the smoke test shows ClawHub skill format differs from Kimi CLI's) → install skills into the Claw workspace → set its scheduled tasks to the same SGT clock → GitHub token so it pulls the same repo/feed and commits its outputs under `data/.../kimi/`.
-2. **Scope (D-15):** full parallel — same universe file, same voices, same phases — plus read-only broker data ONCE BL-023 resolves the credential scoping. **No order path exists on this side:** no staging-gatekeeper skill, no write tools in the package, `/arm` unknown to it by construction.
-3. **Surface:** the kimi.com Claw chat tab (browser or app). Read it like a second analyst's desk; you never approve anything there. No Telegram bridge.
-4. **Shadow protocol:** runs the same week as the Claude practice week; each day the 10am summary diffs Kimi's committee output and plan against Claude's. The diff being boring is the acceptance signal; where they disagree, that's free adversarial review of the committee itself.
-5. **Fallback:** if the smoke test fails, Kimi CLI on the PC (the already-built `dist/kimi/` package) runs the same shadow — it just loses the chat surface until KimiClaw matures.
+A full standalone Aegis, identical requirements to the Claude one — not a shadow, not order-blind.
+
+1. **KimiClaw (primary path, gated by BL-021):** enable per PM-6 → run the smoke test → `python3 aegis/packaging/build_kimi.py` (a Claw-format adapter variant is cut if the smoke test shows ClawHub skill format differs from Kimi CLI's) → install skills into the Claw workspace → set its OWN scheduled tasks to the SGT clock → GitHub token so it pulls the same shared kernel/feed and commits its own outputs under `data/.../kimi/`.
+2. **Scope (D-19):** full deployment — same universe, same voices, same phases, same order path and `/arm` as Claude. Broker credential scope is a per-deployment PM choice, not a Kimi-is-lesser rule. Safety comes from the one-armed-at-a-time invariant, not from crippling this side.
+3. **Cockpit:** the kimi.com Claw chat tab (browser or app) is the Kimi deployment's own command surface — same commands as the Claude cockpit. You drive whichever deployment you're running that day. No Telegram bridge (your ruling: chat surface, not a bot bridge).
+4. **Running both:** run them independently and compare for yourself — that's what vendor-agnostic means here. There is deliberately NO automated cross-vendor diff (that coupling was removed in D-19). Both may run in preview/analysis at once; only one may be armed for live orders.
+5. **Fallback:** if the smoke test fails, Kimi CLI on the PC (the already-built `dist/kimi/` package) runs the same deployment from the terminal until KimiClaw matures.
 
 ---
 
@@ -64,7 +66,8 @@ Everything else in this file is my work or automatic.
 - [ ] `/pm` produces a schema-valid plan by 16:00 with all 10 nomination files present — fired by the cloud scheduler, not by hand
 - [ ] Fresh AQE export reaches both clouds via the repo before the premarket build (BL-022 latency measured)
 - [ ] Tripwires pass on today's export; a forced failure blocks and a page reaches your phone as an app push
-- [ ] `/arm` → `/ap` shows armed till next 05:30 SGT → `/disarm` works — in the Claude cockpit only; the Kimi side has no such command
+- [ ] `/arm` → `/ap` shows armed till next 05:30 SGT → `/disarm` works — in whichever deployment's cockpit you're driving; never both armed for live at once
 - [ ] Gatekeeper refuses a name missing consensus (dummy request) and logs it
-- [ ] Post-market writes journal + metrics + audit; both engines' archive commits appear on GitHub
-- [ ] Morning summary arrives at 10:00 with ledger update, backlog asks, AND the Claude-vs-Kimi plan diff
+- [ ] Every plan idea and held action shows its data anchor / lens readings (D-20) — no black-box conclusions
+- [ ] Held-book review reflects the Aegis PTJ, not raw co-mingled broker totals (D-21)
+- [ ] Post-market writes journal + metrics + audit; the running deployment's archive commit appears on GitHub

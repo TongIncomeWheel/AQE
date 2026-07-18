@@ -27,12 +27,18 @@ identity:
       — needs the PM, as owner of that hosting relationship, to request it) or Phase
       2 auto-staging simply cannot claim broker-native tagging until it ships.'
   capital_segregation: 'Aegis''s dynCap (RB:capital.dyncap_method) is computed from
-    AEGIS-tagged positions/fills ONLY, never from co-mingled broker account totals.
-    RB:risk.gates (beta/VaR/leverage/combined-stop) apply to the Aegis sub-fund book
-    exclusively. Positions predating this rule carry no tag and cannot be attributed
-    automatically — BL-027 is the one-time PM reconciliation that seeds the split;
-    until it''s done, any risk-gate reading taken from raw broker totals is provisional
-    and must say so.'
+    the AEGIS book ONLY, never from co-mingled broker account totals. RB:risk.gates
+    (beta/VaR/leverage/combined-stop) apply to the Aegis sub-fund book exclusively.
+    SOURCE OF TRUTH for the Aegis book = the Aegis PTJ file (D-21) — it is already
+    AEGIS-filtered, so attribution of current open positions is ALREADY DONE (this
+    closes the old BL-027 concern). The only PM input still required is the capital
+    allocation number (parameters.yaml sub_fund.allocated_capital_usd), which anchors
+    dynCap. Any risk-gate reading taken from raw broker totals instead of the PTJ
+    is provisional and must say so.'
+  sub_fund_config: 'Per-strategy parameters live in config (parameters.yaml sub_fund
+    block for Aegis; sibling files if the other strategies are ever onboarded). Aegis
+    reads ONLY its own — it never sizes against, gates on, or reports the other
+    strategies'' capital or positions.'
 capital:
   dyncap_method: prior dynCap + realised P&L from CLOSED trades only; never recomputed
     from market value; computed on the AEGIS-tagged book only (RB:identity.capital_segregation),
@@ -136,16 +142,33 @@ model_tiers:
     versions; confirm actual behaviour via the usage/cost dashboard in the practice
     week (BL-026), not by assumption'
 topology:
-  engines: Claude cloud workspace (primary, sole order path) + KimiClaw cloud workspace
-    (full parallel shadow) each run the scheduled phases on their own schedulers (D-15);
-    Kimi engine live only after smoke test passes (BL-021)
-  pc_role: AQE feed server + intraday alert watcher ONLY; every export/alert pushed
-    to GitHub immediately on write — the clouds' fresh-feed source (BL-022)
-  cockpit: ONE command surface — the Claude app chat. All approvals, arming, steering
-    there and nowhere else; the Kimi surface is read/diff only
-  kimi_credentials: read-only broker data permitted (scoping BL-023); NO order-capable
-    credential ever enters the Kimi cloud; staging-gatekeeper ships only in the Claude
-    package
+  engines: 'TWO FULLY INDEPENDENT deployments of the same kernel (D-19, corrects
+    D-15). Claude and Kimi each get their OWN complete wrapper — own cockpit, own
+    scheduler, own phases, own order path, identical requirements and expectations.
+    Neither reads the other; there is NO cross-vendor diff, no shadow-feeds-primary,
+    no merged summary. "Parallel run" = the PM runs both independently and stays
+    vendor-agnostic, NOT two halves of one system. Each is built from the same kernel
+    by its own packager (build_claude / build_kimi) and is a self-sufficient Aegis
+    on its own.'
+  vendor_separation: 'the kernel is shared (one source of truth in git); the DEPLOYMENTS
+    are separate. A change lands in the kernel once and both packagers regenerate —
+    but a running Claude deployment and a running Kimi deployment never talk to each
+    other at runtime. This is the anti-spaghetti line: shared kernel, isolated
+    runtimes.'
+  one_armed_at_a_time: 'THE ONE HARD SAFETY INVARIANT across the two deployments —
+    because both point at the same broker accounts, only ONE engine may have autopilot
+    armed for live orders at any moment. Running both in preview/analysis simultaneously
+    is fine and expected; two armed engines on one account = double orders. This is
+    a PM discipline enforced by the arming state being per-deployment and the PM
+    never arming both.'
+  pc_role: AQE feed server + intraday alert watcher; pushes every export/alert to
+    GitHub on write so EITHER deployment can pull a fresh feed (BL-022). The PC serves
+    both equally and belongs to neither.
+  kimi_credentials: 'Kimi''s deployment carries the same requirements as Claude''s,
+    including its order path — so broker credential scope is a per-deployment PM
+    choice, not a Kimi-is-lesser rule (D-19 supersedes D-15''s "Kimi read-only /
+    gatekeeper Claude-only"). The one_armed_at_a_time invariant is what keeps two
+    order-capable deployments safe, not crippling one of them.'
 data_sources:
   scores_and_analytics: AQE export (GitHub repo engine) — verbatim
   equity_spot_live: Tiger MCP (cloud-hosted, reuse) -> IBKR fallback
