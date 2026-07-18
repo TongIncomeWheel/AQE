@@ -1,6 +1,8 @@
 # AEGIS — SYSTEM CONTEXT DOCUMENT
 **The load-first file. Any harness, agent or human reads THIS before anything else.**
-v4.4 · 18 Jul 2026 · Plain English. Companion files: `charter/constitution.md` (law) · `charter/rulebook.yaml` (doctrine) · `charter/parameters.yaml` (numbers) · `charter/decisions_log.md` (rulings D-1…D-9).
+v4.5 · 18 Jul 2026 · Plain English. Companion files: `charter/constitution.md` (law) · `charter/rulebook.yaml` (doctrine) · `charter/parameters.yaml` (numbers) · `charter/decisions_log.md` (rulings D-1…D-22, newest first).
+
+**How you interact (D-22):** you don't run a special app. Each deployment bootstraps on its vendor's native chat — the Claude app for the Claude deployment, the Kimi app for the Kimi one — opening it loads this file and the charter, and it's live. You type commands (`charter/commands.md`); plans show compact data anchors with `/why TICKER` to expand the full data; `/status` renders a one-glance card (positions, armed state, alerts). The two deployments are independent — only one is ever armed for live orders at a time.
 
 ---
 

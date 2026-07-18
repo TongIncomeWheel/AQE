@@ -7,7 +7,8 @@
 | **/arm** | Arm autopilot → auto-expires next 05:30 SGT. Gatekeeper may auto-place approved preauthorised names within caps | no — arming is the consent |
 | **/disarm** | Kill autopilot instantly | no |
 | **/ap** | Autopilot status (armed? expires? orders used?) | no |
-| **/fa** | Quick book view from state — token-cheap | no |
+| **/fa** | Quick book view from state, plain text — token-cheap | no |
+| **/status** | Rendered status card (D-22): open Aegis positions + P&L, armed state + expiry, alerts armed/fired, plan headline — the union of /fa + /ap + /watch in one glance | no |
 | **/watch** | Market-hours status: alerts armed, fires so far | no |
 | **/bracket T** | Bracket card for ticker T (AQE verbatim + live distance) | no |
 | **/close** | Run post-market now (journal, metrics, audit) | no |
@@ -16,7 +17,7 @@
 | **/param X Y** | Set parameter X to Y (validated, logged, committed) | shows old→new, then yes |
 | **/backlog** | Show open backlog items awaiting your tap | per item |
 | **/killed** | Show today's gatekeeper refusals and why | no |
-| **/why T [date]** | Why did ticker T not advance — covers committee PASS, event filter, gatekeeper refusal, any stage | no |
+| **/why T [date]** | Two modes (D-20 tiered): for a name ON the plan → expand its FULL data anchor (every field the voices cited + values, the committee bear case + dissent); for a name NOT on the plan → why it didn't advance (committee PASS, event filter, gatekeeper refusal, any stage) | no |
 | **/reject** | Reject today's plan outright (plan stands down) | it IS the confirm |
 | **/pause** | Suspend the whole system: no scheduled runs, no alert wakes, autopilot disarmed. `/resume` restarts | no |
 | **/flatten** | EMERGENCY: gatekeeper emits exit previews for ALL held names for you to execute | previews only — you execute |
