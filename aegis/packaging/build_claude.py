@@ -63,6 +63,15 @@ def main():
         open(os.path.join(DIST, shelf, ".keep"), "w").write("")
     shutil.copy(os.path.join(ROOT, "data", "README.md"), os.path.join(DIST, "data", "README.md"))
     open(os.path.join(DIST, "README.md"), "w").write("# aegis-v4 plugin (GENERATED)\nSkills in skills/; contracts, tools, charter and CONTEXT.md ship IN-PACKAGE so the install is self-sufficient. Commands: skills/premarket/commands.md.\n")
+    # Claude-expert fix #9/#10: claude.ai account connectors do NOT reach Claude Code CLI.
+    # The plugin must carry its own MCP config; values flow from config/endpoints.json (PM fills once, rebuilds).
+    ep = json.load(open(os.path.join(ROOT, "config", "endpoints.json")))
+    json.dump({"mcpServers": {
+        "tiger": {"type": "http", "url": ep["tiger_mcp"]["url"],
+                   "headers": {"Authorization": "REPLACE-with-your-Tiger-auth (or leave for claude.ai-session-only use)"}}
+    }, "_note": "FMP + Alpaca are plain REST via tools/ with keys in .env — no MCP needed in CLI. "
+                "This file only matters for scheduled Claude Code runs on the PC; claude.ai app sessions use account connectors."},
+        open(os.path.join(DIST, ".mcp.json"), "w"), indent=1)
     compile_voice_agents()
     print(f"built {DIST}")
 

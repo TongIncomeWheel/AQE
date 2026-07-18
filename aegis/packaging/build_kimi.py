@@ -16,15 +16,48 @@ def main():
     build_claude.main()
     shutil.rmtree(DIST, ignore_errors=True)
     SRC = os.path.join(ROOT, "dist", "claude-plugin", "aegis-v4")
-    for d in ("skills", "contracts", "tools", "charter"):
+    for d in ("contracts", "tools", "charter"):
         shutil.copytree(os.path.join(SRC, d), os.path.join(DIST, d))
+    # K3: Kimi skill names must be [a-z0-9-]; K7: voice skills stay OUT of Kimi skills (agents ARE the swarm)
+    os.makedirs(os.path.join(DIST, "skills"), exist_ok=True)
+    for name in sorted(os.listdir(os.path.join(SRC, "skills"))):
+        if name.startswith("voice-"):
+            continue
+        kname = name.replace("_", "-")
+        sdst = os.path.join(DIST, "skills", kname); os.makedirs(sdst, exist_ok=True)
+        for f in os.listdir(os.path.join(SRC, "skills", name)):
+            body = open(os.path.join(SRC, "skills", name, f)).read()
+            body = body.replace(f"name: {name}", f"name: {kname}")
+            open(os.path.join(sdst, f), "w").write(body)
     shutil.copy(os.path.join(SRC, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
-    shutil.copytree(os.path.join(SRC, "agents"), os.path.join(DIST, "agents"))   # compiled standalone voice agents
+    # K4: Kimi auto-loads AGENTS.md, not CONTEXT.md
+    open(os.path.join(DIST, "AGENTS.md"), "w").write(
+        "# AEGIS — load-first\nRead CONTEXT.md in this directory before anything else; it is the system context document. "
+        "Then obey charter/constitution.md; procedures are the installed skills; commands per charter/commands.md.\n")
+    # K1: Kimi subagents are YAML agent-files, not markdown frontmatter. Emit system-prompt files + one agent-file.
+    os.makedirs(os.path.join(DIST, "agents"), exist_ok=True)
+    subagents = {}
+    for f in sorted(os.listdir(os.path.join(SRC, "agents"))):
+        body = open(os.path.join(SRC, "agents", f)).read()
+        body = body.split("---", 2)[2] if body.startswith("---") else body   # strip Claude frontmatter
+        vname = f.replace(".md", "").replace("_", "-")
+        pp = os.path.join(DIST, "agents", vname + ".txt")
+        open(pp, "w").write(body.strip() + "\n")
+        subagents[vname] = {"extend": "default", "system_prompt_path": "./agents/" + vname + ".txt", "tools": []}
+    agentfile = {"version": 1,
+                 "agent": {"name": "aegis", "extend": "default", "system_prompt_path": "./AGENTS.md"},
+                 "subagents": subagents}
+    import yaml as _y
+    open(os.path.join(DIST, "aegis-agent.yaml"), "w").write(
+        "# GENERATED — Kimi agent-file. Launch: kimi --agent-file aegis-agent.yaml (verify schema vs current kimi-cli docs at deploy)\n"
+        + _y.dump(agentfile, sort_keys=False))
     ep = json.load(open(os.path.join(ROOT, "config", "endpoints.json")))
+    # K2: env-substitution in headers is undocumented on Kimi — inline the real token from .env at BUILD time.
+    tok = os.environ.get("TIGER_MCP_AUTH", "REPLACE-at-build: set TIGER_MCP_AUTH in env and re-run build_kimi.py; chmod 600 mcp.json")
     mcp = {"mcpServers": {
-        "tiger":  {"transport": "http", "url": ep["tiger_mcp"]["url"], "headers": {"Authorization": "${TIGER_MCP_AUTH}"}},
+        "tiger":  {"transport": "http", "url": ep["tiger_mcp"]["url"], "headers": {"Authorization": tok}},
         "ibkr":   {"transport": "stdio", "command": "python3",
-                    "args": ["./tools/mcp/ibkr_mcp/server.py"]},
+                    "args": [os.path.join(os.path.abspath(DIST), "tools", "mcp", "ibkr_mcp", "server.py")]},   # K5: absolute path
     }, "_note": "FMP + Alpaca are plain REST via tools (keys in .env) — no MCP needed (F10). Relative ibkr path: run kimi from the dist folder."}
     json.dump(mcp, open(os.path.join(DIST, "mcp.json"), "w"), indent=1)
     open(os.path.join(DIST, "README.md"), "w").write(
@@ -32,7 +65,10 @@ def main():
         "1. Install kimi-cli; log in with your Kimi subscription.\n"
         "2. Copy skills/ into your Kimi agent skills directory; agents/voices into subagent definitions.\n"
         "3. Merge mcp.json into Kimi's MCP config; fill endpoints in kernel config/endpoints.json first and rebuild.\n"
-        "4. Swarm mode: premarket step 5 spawns each agents/voice-*.md as an isolated subagent (fresh context, no tools).\n")
+        "3b. Launch every run with: kimi --agent-file aegis-agent.yaml (registers the 10 voice subagents; K1).\n"
+        "4. Swarm mode: premarket step 5 targets the voice-* subagents from aegis-agent.yaml — fresh context, no tools.\n"
+        "5. Install kimi-cli via the OFFICIAL install script/package (see moonshotai.github.io/kimi-cli — the old npm name in earlier docs was wrong).\n"
+        "6. Plan guidance (platform review 18 Jul): Allegretto tier fits the daily cycle; Moderato weekly ceiling is too small.\n")
     print(f"built {DIST}")
 
 if __name__ == "__main__":
