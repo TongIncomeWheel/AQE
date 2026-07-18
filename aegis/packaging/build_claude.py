@@ -58,7 +58,72 @@ def main():
         shutil.copy(os.path.join(ROOT, "charter", f), os.path.join(DIST, "charter", f))
     shutil.copy(os.path.join(ROOT, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
     open(os.path.join(DIST, "README.md"), "w").write("# aegis-v4 plugin (GENERATED)\nSkills in skills/; contracts, tools, charter and CONTEXT.md ship IN-PACKAGE so the install is self-sufficient. Commands: skills/premarket/commands.md.\n")
+    compile_voice_agents()
     print(f"built {DIST}")
+
+# Data taxonomy per voice: the EXACT AQE fields each voice may read (its data menu, made explicit).
+VOICE_MENUS = {
+ "lynch":        ["ticker","gics_sector_name","sc_momentum","flow","structure","rvol","rs_spy_20d","bracket.stop","bracket.risk_pct","bracket.rr","close","above_ema","vol_vs_30d"],
+ "oneil":        ["ticker","sc_momentum","structure","elder","elder_5d","rvol","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.rr","sma_distance_pct"],
+ "wyckoff":      ["ticker","flow","energy","mp_state","mp_accel_state","choch_state","rvol","bracket.stop","bracket.rr"],
+ "raschke":      ["ticker","elder","elder_5d","energy","atr_14d","mp_accel_state","structure_shift","bracket.stop","bracket.risk_pct"],
+ "steenbarger":  ["ticker","gics_sector_name","sc_momentum","lens_warnings","rvol"],
+ "thorp":        ["ticker","sc_momentum","bracket.rr","bracket.rr_tp1","bracket.rr_tp2","knn_prob","knn_significant","sc_m_gate_detail","sc_p_gate_detail","beta_30d"],
+ "seow":         ["ticker","ma_20","ma_50","ma_100","ma_200","sma_distance_pct","mp_state","sector_trend_state","close","above_ema","bracket.stop"],
+ "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
+ "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade"],
+ "detect_lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
+}
+
+def compile_voice_agents():
+    """B1 fix: emit ONE self-contained agent definition per voice — the file a harness actually
+    spawns as an isolated subagent. Compiled from: voice card + shared engine + data menu +
+    output contract example. All ten from one template => structural consistency."""
+    import glob
+    common = open(os.path.join(ROOT, "skills", "voice-common", "SKILL.md")).read()
+    common_body = common.split("---", 2)[2] if common.startswith("---") else common
+    example = json.dumps({"voice": "<me>", "date": "<YYYY-MM-DD>", "universe_file": "<path>",
+        "nominations": [{"ticker": "PYPL", "reason": "one line, MY framework language", "fields_cited": ["elder_5d","bracket.stop"], "conviction": 4, "price_at_nomination": None}],
+        "held_review": [{"ticker": "IBM", "verdict": "EXIT-CASE", "line": "one line"}],
+        "shortfall_reason": "only if fewer than 10 — fewer is VALID, padding is the breach"}, indent=1)
+    adir = os.path.join(DIST, "agents"); os.makedirs(adir, exist_ok=True)
+    for path in sorted(glob.glob(os.path.join(ROOT, "skills", "voice-*", "SKILL.md"))):
+        name = os.path.basename(os.path.dirname(path))
+        if name == "voice-common": continue
+        vkey = name.replace("voice-", "")
+        card = open(path).read()
+        card_body = card.split("---", 2)[2] if card.startswith("---") else card
+        menu = VOICE_MENUS.get(vkey, [])
+        agent = f"""---
+name: {name}
+description: Isolated nominator agent — {vkey}. Spawned fresh each premarket by the orchestrator; sees ONLY this file + the universe file + its own ledger report. No tools, no session context, no other voices.
+tools: []
+---
+# AGENT: {name.upper()} — complete standalone instruction set (GENERATED; edit the kernel card, not this)
+
+## 1 · WHO I AM (identity + canon)
+{card_body.strip()}
+
+## 2 · MY DATA TAXONOMY (the ONLY fields I read — my data menu, enforced)
+{", ".join("`"+m+"`" for m in menu)}
+Reading any field not on this menu — especially composites for detect_lens, or lens fields for framework voices — is a breach the auditor checks.
+
+## 3 · MY PROCESS (identical machinery for all ten — the shared engine)
+{common_body.strip()}
+
+## 4 · MY MEMORY (injected, never fetched)
+The orchestrator pastes the OUTPUT of `nomination_ledger.py report --voice {vkey}` below my prompt — my own last-15-day hit rates and open nominations only. I never see the ledger file (it contains other voices' picks).
+
+## 5 · MY OUTPUT (contract + example — return EXACTLY this shape)
+contracts/nomination.schema.json. Example:
+```json
+{example}
+```
+
+## 6 · FORBIDDEN
+Other voices' outputs or existence in-context · the tally · macro/SRM before nominating · computing scores · fetching prices (orchestrator stamps price_at_nomination at tally) · padding to 10 · EVENT-DRIVEN checks (not my job — filter runs after tally).
+"""
+        open(os.path.join(adir, f"{name}.md"), "w").write(inline_rb(agent))
 
 if __name__ == "__main__":
     main()

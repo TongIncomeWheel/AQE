@@ -189,6 +189,26 @@ Dated folders immutable at day close → after `retention.raw_days` (30, tunable
 
 # PART 6B — THE DAY IN FOUR LENSES (what is actually happening, when)
 
+## The swarm, drawn (how voice independence is real, not claimed)
+
+```
+                       ORCHESTRATOR (premarket, step 5)
+                       reads: universe file · agents/voice-*.md · per-voice ledger reports
+      ┌───────┬───────┬───────┬───────┬───┴───┬───────┬───────┬───────┬───────┬────────┐
+      ▼       ▼       ▼       ▼       ▼       ▼       ▼       ▼       ▼       ▼
+   [lynch] [oneil] [wyckoff][raschke][steen][thorp] [seow] [minervini][druck][detect]
+   each = ONE fresh subagent · ONE compiled agent file (identity+canon+data menu+process
+   +own memory+output contract+forbidden) · NO tools · NO session · NO sight of the others
+      │       │       │       │       │       │       │       │       │       │
+      └── nomination.json ×10 (schema-validated on receipt) ──────────────────┘
+                       ▼
+        TALLY (count votes; stamp prices) → EVENT FILTER (nominated names only, D-11)
+        → deliberation set (2+ votes / lens top tier) → single-context deliberation
+```
+Consistency guarantee: all ten agent files are COMPILED from one template (shared engine) + one
+card each by `packaging/build_claude.py` — the machinery cannot drift between voices, only the
+methodology cards differ, and those are the files you read and correct.
+
 ## Premarket lens (13:00–21:00 SGT — the thinking window)
 The AQE engine has already run (08:30). From 13:00 the Premarket orchestrator: verifies journal freshness → builds the day's universe from the screen → validates the export through tripwires → sends the identical universe to ten isolated voices → collects ten nomination files → tallies (2+ votes or lens top tier = deliberation set) → runs the blocking event filter on the nominated names only (D-11) → macro/SRM weather → deliberation with mandatory bear case → assembles the Executive Action Plan (held actions + new ideas with triggers, brackets, sizes + ranked watch table). Plan on your phone by 16:00. You `/approve` (or edit) by 21:00; approved triggers load into the AQE alert universe; you optionally `/arm`. **State at end of lens:** sod/ shelf complete; alerts armed; autopilot armed or not.
 

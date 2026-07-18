@@ -19,10 +19,7 @@ def main():
     for d in ("skills", "contracts", "tools", "charter"):
         shutil.copytree(os.path.join(SRC, d), os.path.join(DIST, d))
     shutil.copy(os.path.join(SRC, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
-    vdst = os.path.join(DIST, "agents", "voices"); os.makedirs(vdst, exist_ok=True)
-    for name in sorted(os.listdir(os.path.join(SRC, "skills"))):   # A-B1/F10: voices from the INLINED dist, not raw kernel
-        if name.startswith("voice-"):
-            shutil.copy(os.path.join(SRC, "skills", name, "SKILL.md"), os.path.join(vdst, name + ".md"))
+    shutil.copytree(os.path.join(SRC, "agents"), os.path.join(DIST, "agents"))   # compiled standalone voice agents
     ep = json.load(open(os.path.join(ROOT, "config", "endpoints.json")))
     mcp = {"mcpServers": {
         "tiger":  {"transport": "http", "url": ep["tiger_mcp"]["url"], "headers": {"Authorization": "${TIGER_MCP_AUTH}"}},
