@@ -89,10 +89,40 @@ VOICE_MENUS = {
  "detect_lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
 }
 
+def _field_meanings_block(menu):
+    """BL-034 / D-29: for a voice's menu, render each field's meaning + how AQE computes it
+    from contracts/field_dictionary.json, so the voice reads understanding, not a bare label."""
+    try:
+        fd = json.load(open(os.path.join(ROOT, "contracts", "field_dictionary.json")))["fields"]
+    except Exception:
+        return ""
+    lines = []
+    seen_keys = set()
+    for m in menu:
+        key = m.split(".")[0]
+        if "." in m and key in seen_keys:
+            lines.append(f"- `{m}` — sub-field of `{key}` (see above)")
+            continue
+        e = fd.get(m) or fd.get(key) or {}
+        defn = (e.get("definition") or "").strip()
+        how = (e.get("how_computed") or "").strip()
+        if defn or how:
+            seen_keys.add(key)
+            bits = []
+            if defn: bits.append(defn)
+            if how: bits.append("HOW: " + how)
+            lines.append(f"- `{m}` — " + " · ".join(bits))
+    if not lines:
+        return ""
+    return ("\n\n## 2b · WHAT MY FIELDS MEAN (from AQE's own glossary + engine methods — I apply, never blind-read; D-29)\n"
+            + "\n".join(lines)
+            + "\nIf a field's meaning above is empty or unclear, I say so and do not invent analysis over it.")
+
+
 def compile_voice_agents():
     """B1 fix: emit ONE self-contained agent definition per voice — the file a harness actually
     spawns as an isolated subagent. Compiled from: voice card + shared engine + data menu +
-    output contract example. All ten from one template => structural consistency."""
+    field meanings (BL-034) + output contract example. All ten from one template => structural consistency."""
     import glob
     common = open(os.path.join(ROOT, "skills", "voice-common", "SKILL.md")).read()
     common_body = common.split("---", 2)[2] if common.startswith("---") else common
@@ -136,7 +166,7 @@ tools: []
 
 ## 2 · MY DATA TAXONOMY (the ONLY fields I read — my data menu, enforced)
 {", ".join("`"+m+"`" for m in menu)}
-Reading any field not on this menu — especially composites for detect_lens, or lens fields for framework voices — is a breach the auditor checks.
+Reading any field not on this menu — especially composites for detect_lens, or lens fields for framework voices — is a breach the auditor checks.{_field_meanings_block(menu)}
 
 ## 3 · MY PROCESS (identical machinery for all ten — the shared engine)
 {common_body.strip()}
