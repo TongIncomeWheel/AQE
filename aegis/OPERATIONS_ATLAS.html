@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aegis Operations Atlas</title><style>
+*{box-sizing:border-box;margin:0}
+body{font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d0d0d;color:#fff;padding:20px 22px 60px}
+.wrap{max-width:1200px;margin:0 auto}
+h1{font-size:21px} h2{font-size:16px;margin:34px 0 4px;padding-left:10px;border-left:4px solid var(--acc,#3987e5)}
+h3{font-size:13.5px;margin:14px 0 6px;color:#fff}
+.sub{color:#c3c2b7;font-size:13px;margin-top:3px}
+.meta{color:#898781;font-size:12px;margin:2px 0 10px;padding-left:14px}
+table{border-collapse:collapse;width:100%;margin:10px 0 6px;background:#1a1a19;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+th{background:#242422;color:#c3c2b7;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:7px 9px}
+td{padding:7px 9px;border-top:1px solid rgba(255,255,255,.07);font-size:12.5px;vertical-align:top;color:#e8e7e0}
+td.step{color:#898781;font-weight:700;white-space:nowrap}
+td.who{color:#d55181;white-space:nowrap} td.tool{color:#c98500}
+td.io{color:#199e70;font-size:12px} td.gate{color:#e66767;font-size:12px}
+.tag{display:inline-block;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:1px 9px;font-size:11px;color:#c3c2b7;margin-right:6px}
+.tag.auto{border-color:#199e70;color:#199e70}.tag.you{border-color:#fab219;color:#fab219}.tag.mixed{border-color:#d95926;color:#d95926}
+.tag.v{border-color:#0ca30c;color:#0ca30c}.tag.b{border-color:#fab219;color:#fab219}.tag.o{border-color:#d03b3b;color:#d03b3b}
+details{background:#1a1a19;border:1px solid rgba(255,255,255,.1);border-radius:8px;margin:7px 0;padding:0}
+summary{cursor:pointer;padding:9px 12px;font-weight:600;font-size:13px;list-style-position:inside}
+summary .st{font-weight:400;color:#898781;font-size:12px}
+details > div{padding:2px 14px 12px;border-top:1px solid rgba(255,255,255,.07)}
+dt{color:#898781;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-top:9px}
+dd{margin:2px 0 0;color:#e8e7e0;font-size:12.5px}
+ol.logic{margin:4px 0 0 18px;font-size:12.5px;color:#e8e7e0} ol.logic li{margin:2px 0}
+.scope{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+.scope div{flex:1 1 300px;background:#1a1a19;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;font-size:12.5px}
+.scope b{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#898781;display:block;margin-bottom:3px}
+.in b{color:#0ca30c}.out b{color:#d03b3b}
+.loopbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#1a1a19;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:12.5px}
+.loopbar .n{background:#3987e5;color:#fff;border-radius:50%;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.loopbar .arrow{color:#898781}
+.matrix td,.matrix th{text-align:center;padding:5px 6px}
+.matrix td:first-child{text-align:left;white-space:nowrap}
+.dot{color:#3987e5;font-weight:700}.dotpm{color:#fab219;font-weight:700}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.toc a{color:#c3c2b7;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:4px 12px;font-size:12px;text-decoration:none}
+footer{margin-top:30px;color:#898781;font-size:11.5px}
+@media print{body{background:#fff;color:#000}}
+</style></head><body><div class="wrap">
+<h1>Aegis — Operations Atlas</h1><div class="sub">Phase runbooks · the exact shape of every tool and skill · loops · coverage matrix. Static document — nothing needs clicking; expanders are optional detail. 18 Jul 2026 · kernel v5.3.</div>
+<div class="toc"><a href="#ph-weekly">Weekly</a><a href="#ph-pre">Premarket</a><a href="#ph-app">Approval</a><a href="#ph-mkt">Market hours</a><a href="#ph-exec">Trade execution</a><a href="#ph-post">Post-market</a><a href="#tools">Tool shapes</a><a href="#skills">Skill &amp; agent shapes</a><a href="#loops">Loops</a><a href="#matrix">Coverage matrix</a></div>
+<h2 id="ph-pre" style="--acc:#008300">Phase: Premarket</h2>
+<div class="meta"><span class="tag">1:00–4:00pm SGT</span><span class="tag auto">🌙 autonomous build</span><span class="tag">Loop 1 step 4–7</span></div>
+<div class="sub" style="padding-left:14px">Builds the day: fresh universe, checked data, ten independent nominations, one deliberated plan on your phone by 4pm.</div>
+<div class="scope"><div class="in"><b>In scope</b>Universe build · feed validation · held book + hedge check · voice swarm · tally · news filter on nominees · deliberation · plan assembly</div><div class="out"><b>Out of scope</b>No orders, no previews, no broker writes — the gatekeeper is not invoked; sizing is computed for the plan only</div></div>
+<table><tr><th>Step</th><th>What happens</th><th>Skill / agent</th><th>Tools invoked</th><th>Reads → writes</th><th>Gate / check</th><th>Mode</th></tr>
+<tr><td class="step">1</td><td>Freshness check: is yesterday's journal written and is the feed dated today?</td><td class="who">premarket</td><td class="tool">—</td><td class="io">journal date, feed date → halt note if stale</td><td class="gate">stale → notify + halt (never proceed silently)</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">2</td><td>Build the tradable universe: US primary shares above any of the 20/50/100-day averages, ≥$2bn, volume ≥ its prior-30-day average</td><td class="who">premarket</td><td class="tool">universe screen</td><td class="io">FMP screener + 400-day bars → sod/universe.json</td><td class="gate">name-level errors skipped and counted</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">3</td><td>Validate + tripwire the quant feed before ANY agent reads it</td><td class="who">premarket</td><td class="tool">feed contract · tripwires</td><td class="io">daily feed + waivers → clean verdict or BLOCK</td><td class="gate">BLOCK stops the whole morning + pages you</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">4</td><td>Held-book review + hedge check: gap exposure crossed with sector posture vs current hedge; candidates only if cover is short</td><td class="who">premarket</td><td class="tool">hedge calculator · options pricer · Alpaca script · Tiger spot</td><td class="io">feed held book + journal hedge record → hedge block for the plan</td><td class="gate">skip logged if under 4 positions</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">5</td><td>Spawn the ten voices as isolated workers — each gets ONE compiled file, the universe, and its own memory printout; ten separate contexts, no cross-sight</td><td class="who">voice swarm (10) + shared engine</td><td class="tool">ledger (per-voice report injected)</td><td class="io">universe → 10 nomination files</td><td class="gate">each file contract-checked on receipt; fewer-than-10-with-reason is valid</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">6</td><td>Tally: count votes across the ten files (mechanical seat counts equally); stamp prices; pick the deliberation set (2+ votes or top signal tier); record ALL picks in the ledger</td><td class="who">premarket</td><td class="tool">ledger (record)</td><td class="io">10 nominations → tally + ledger rows</td><td class="gate">lens count never substitutes for votes</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">7</td><td>News filter on NOMINATED names only (~30–80): takeover, activist fight, one-off spike</td><td class="who">premarket</td><td class="tool">news lookups</td><td class="io">nominee list → flags</td><td class="gate">BLOCKING: flagged names stay visible, cannot advance</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">8</td><td>Weather: macro brief (currencies/bonds/credit) + sector posture — sizing tone only</td><td class="who">Druckenmiller voice</td><td class="tool">—</td><td class="io">feed macro blocks → posture note</td><td class="gate">never removes a name (weather-not-gates)</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">9</td><td>Deliberation on the survivors: each nominating voice argues; bear case mandatory; near-unanimity triggers a challenge; dissent recorded</td><td class="who">deliberation committee</td><td class="tool">measure-before-vote (if a rule-claim arises)</td><td class="io">tally + weather → committee file</td><td class="gate">no vote on an unmeasured field claim</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">10</td><td>Assemble the plan: held actions, advanced ideas with exact triggers, brackets copied verbatim from the feed, sizes computed, watch table; phone render in plain words</td><td class="who">premarket</td><td class="tool">sizing calculator</td><td class="io">committee + feed brackets → sod/plan.json + phone render</td><td class="gate">plan must validate against its contract</td><td><span class="tag auto">auto</span></td></tr>
+</table>
+<h2 id="ph-app" style="--acc:#eda100">Phase: Approval</h2>
+<div class="meta"><span class="tag">4:00–9:00pm SGT</span><span class="tag you">👤 you are needed</span><span class="tag">Loop 1 step 8 · Loop 3 start</span></div>
+<div class="sub" style="padding-left:14px">The one interactive window. Nothing in the system proceeds past this point without your token.</div>
+<div class="scope"><div class="in"><b>In scope</b>Plan review and edit · your approval token · arming the autopilot · loading alerts · pre-staging conditional orders in the broker</div><div class="out"><b>Out of scope</b>No analysis re-runs, no re-deliberation — the committee is closed for the day; edits are yours alone</div></div>
+<table><tr><th>Step</th><th>What happens</th><th>Skill / agent</th><th>Tools invoked</th><th>Reads → writes</th><th>Gate / check</th><th>Mode</th></tr>
+<tr><td class="step">1</td><td>Plan lands on your phone (headline → held actions → ideas → watch table)</td><td class="who">premarket render</td><td class="tool">—</td><td class="io">sod/plan.json → phone</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">2</td><td>You review: /plan · /approve · /approve except TICKER · /reject · /why TICKER</td><td class="who">you + command set</td><td class="tool">—</td><td class="io">your decision → approval token in plan.json</td><td class="gate">no token = nothing downstream</td><td><span class="tag you">PM</span></td></tr>
+<tr><td class="step">3</td><td>Optionally lend autonomy: /arm (dies at 5:30am; 1R/order, 3/night caps)</td><td class="who">you</td><td class="tool">autopilot switch</td><td class="io">→ armed state on disk (logged)</td><td class="gate">only you can arm; /disarm any time</td><td><span class="tag you">PM</span></td></tr>
+<tr><td class="step">4</td><td>Approved triggers loaded into the engine's overnight watch list</td><td class="who">market-hours prep</td><td class="tool">alert loader (OPEN)</td><td class="io">plan triggers → engine watch config</td><td class="gate">load confirmed back, else flagged</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">5</td><td>You pre-stage conditional orders in the broker app (the default execution path)</td><td class="who">you</td><td class="tool">Tiger app</td><td class="io">plan brackets → staged broker orders</td><td class="gate">your hands, not the system's</td><td><span class="tag you">PM</span></td></tr>
+<tr><td class="step">6</td><td>8:30pm reminder; 9:00pm without approval → plan STANDS DOWN: no alerts, no arming, nothing staged</td><td class="who">premarket close-out</td><td class="tool">—</td><td class="io">→ stand-down note</td><td class="gate">silence never trades</td><td><span class="tag auto">auto</span></td></tr>
+</table>
+<h2 id="ph-mkt" style="--acc:#e87ba4">Phase: Market hours</h2>
+<div class="meta"><span class="tag">9:30pm–4:00am SGT</span><span class="tag auto">🌙 autonomous watch</span><span class="tag">Loop 1 step 9</span></div>
+<div class="sub" style="padding-left:14px">You sleep. Code polls; agents wake only on your approved triggers; every wake writes one line.</div>
+<div class="scope"><div class="in"><b>In scope</b>Price watching (code) · trigger wake-ups · re-validation · order requests to the gatekeeper · fill observation</div><div class="out"><b>Out of scope</b>No new ideas, no re-deliberation, no plan changes — the plan is frozen at 9pm; no stop moves</div></div>
+<table><tr><th>Step</th><th>What happens</th><th>Skill / agent</th><th>Tools invoked</th><th>Reads → writes</th><th>Gate / check</th><th>Mode</th></tr>
+<tr><td class="step">1</td><td>Engine's alert code polls prices against the loaded watch list (no AI in the loop)</td><td class="who">AQE alert engine</td><td class="tool">—</td><td class="io">live prices vs triggers</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">2</td><td>Trigger fires → market-hours skill wakes with that ONE plan entry</td><td class="who">market-hours</td><td class="tool">—</td><td class="io">alert + plan entry → wake record</td><td class="gate">one line per wake, nothing else</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">3</td><td>Re-validation: trigger really met at live spot? any overnight news flag? gap sane?</td><td class="who">market-hours</td><td class="tool">Tiger spot</td><td class="io">live quote vs plan entry → go/no-go</td><td class="gate">failed re-check = stand down + log</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">4</td><td>Order-shaped need → REQUEST to the gatekeeper (this skill cannot stage anything itself)</td><td class="who">market-hours → gatekeeper</td><td class="tool">—</td><td class="io">request file → gatekeeper</td><td class="gate">sole-path law</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">5</td><td>If you pre-staged in the broker: system only observes and logs the fire</td><td class="who">market-hours</td><td class="tool">—</td><td class="io">→ fire log</td><td class="gate">MISSED-BY-DESIGN recorded if unstaged</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">6</td><td>If ARMED: gatekeeper runs its 7 checks, then the counter, then Tiger's place-preview → verify echo → confirm</td><td class="who">gatekeeper</td><td class="tool">autopilot (count) · sizing · Tiger</td><td class="io">checks vs files → confirmed order</td><td class="gate">cap refusal = hard stop; kill-condition disarms FIRST</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">7</td><td>Fill observed → post-fill: actual risk vs budget ($50 tolerance) · metrics line · stop verification at fill basis</td><td class="who">gatekeeper</td><td class="tool">sizing (post-fill check)</td><td class="io">broker fill → post-fill record</td><td class="gate">over-tolerance flagged for trim</td><td><span class="tag auto">auto</span></td></tr>
+</table>
+<h2 id="ph-exec" style="--acc:#eb6834">Trade execution (the order path — cuts across phases)</h2>
+<div class="meta"><span class="tag">any time</span><span class="tag mixed">⚡ preview default · autonomous only while armed</span><span class="tag">Loop 1 steps 8–10</span></div>
+<div class="sub" style="padding-left:14px">Real money. One agent, seven checks, everything written down. Default: every order ends in YOUR hands. Armed: the gatekeeper alone may confirm, within caps, until 5:30am.</div>
+<div class="scope"><div class="in"><b>In scope</b>The seven checks · preview emission · armed confirms · post-fill protocol · refusal records</div><div class="out"><b>Out of scope</b>Order ideas (committee's job) · stop philosophy (feed's brackets) · anything for names not on the approved plan</div></div>
+<table><tr><th>Step</th><th>What happens</th><th>Skill / agent</th><th>Tools invoked</th><th>Reads → writes</th><th>Gate / check</th><th>Mode</th></tr>
+<tr><td class="step">1</td><td>CHECK 1 — Consensus: today's committee file shows ADVANCE for this name, with dissent recorded</td><td class="who">gatekeeper</td><td class="tool">—</td><td class="io">committee file</td><td class="gate">fail = refusal record, named check</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">2</td><td>CHECK 2 — News-clean: not flagged by the event filter</td><td class="who">gatekeeper</td><td class="tool">—</td><td class="io">tally flags</td><td class="gate">EVENT-DRIVEN never advances</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">3</td><td>CHECK 3 — Bracket valid: stop/target set copied verbatim from the feed passes its three gates</td><td class="who">gatekeeper</td><td class="tool">—</td><td class="io">feed bracket</td><td class="gate">refused e.g. when risk% > your regime ceiling</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">4</td><td>CHECK 4 — Size correct: two-step sizing, right multiple for the conviction tier</td><td class="who">gatekeeper</td><td class="tool">sizing calculator</td><td class="io">capital + entry/stop/vol → shares</td><td class="gate">both steps mandatory</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">5</td><td>CHECK 5 — Portfolio still safe AFTER the add: beta, VaR, leverage, combined stop-risk</td><td class="who">gatekeeper</td><td class="tool">sizing + book metrics</td><td class="io">post-add book → pass/fail</td><td class="gate">any breach = refusal</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">6</td><td>CHECK 6 — Your approval: name on today's plan, token present, pre-authorised flag for overnight</td><td class="who">gatekeeper</td><td class="tool">—</td><td class="io">plan.json approval</td><td class="gate">no token, no order — ever</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">7</td><td>CHECK 7 — Mechanics: limit entry, market exit path, stop planned post-fill</td><td class="who">gatekeeper</td><td class="tool">—</td><td class="io">order spec</td><td class="gate">—</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">8</td><td>All pass → PREVIEW written for you (default), or — armed only — counter increment then Tiger place-preview → echo-verify → confirm</td><td class="who">gatekeeper</td><td class="tool">autopilot (count) · Tiger</td><td class="io">→ preview / confirmed order + record</td><td class="gate">counter refuses past cap; echo mismatch = abort</td><td><span class="tag mixed">armed-only</span></td></tr>
+<tr><td class="step">9</td><td>Post-fill: actual risk vs budget ($50) · portfolio metrics line · stop instruction at ACTUAL fill price</td><td class="who">gatekeeper</td><td class="tool">sizing (post-fill)</td><td class="io">fill → post-fill record → journal merge</td><td class="gate">delta > $50 → trim instruction</td><td><span class="tag auto">auto</span></td></tr>
+</table>
+<h2 id="ph-post" style="--acc:#1baf7a">Phase: Post-market</h2>
+<div class="meta"><span class="tag">4:00–10:00am SGT</span><span class="tag auto">🌙 autonomous accounting + learning</span><span class="tag">Loop 1 close · Loop 2 full</span></div>
+<div class="sub" style="padding-left:14px">The day is counted, audited, scored, learned from, archived — and summarised into ONE 10am push.</div>
+<div class="scope"><div class="in"><b>In scope</b>Broker reconcile · journal · metrics · audits · scoring · learning proposals · archive · cleanup</div><div class="out"><b>Out of scope</b>No trading decisions, no parameter changes without your tap, no deletion of anything — archive only</div></div>
+<table><tr><th>Step</th><th>What happens</th><th>Skill / agent</th><th>Tools invoked</th><th>Reads → writes</th><th>Gate / check</th><th>Mode</th></tr>
+<tr><td class="step">1</td><td>Pull fills, positions, balances from the brokers — broker truth, never memory</td><td class="who">post-market</td><td class="tool">Tiger · IBKR service</td><td class="io">broker APIs → raw pulls</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">2</td><td>Merge vs the gatekeeper's own intraday records; any mismatch surfaced, never smoothed</td><td class="who">post-market</td><td class="tool">—</td><td class="io">pulls + staging records → reconciled set</td><td class="gate">mismatch = flagged line</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">3</td><td>Capital roll (closed trades only) + stop audit: reference stop vs broker's actual, MATCH / MISMATCH / MISSING per position</td><td class="who">post-market</td><td class="tool">—</td><td class="io">reconciled set → capital + audit rows</td><td class="gate">MISSING = priority flag</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">4</td><td>Write the journal and validate it against its contract</td><td class="who">post-market</td><td class="tool">journal contract</td><td class="io">→ eod/journal.json</td><td class="gate">FAILS → HALT: nothing below runs, you get paged</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">5</td><td>Portfolio metrics + completeness audit (every voice ran? every name addressed? anything invented?)</td><td class="who">auditor</td><td class="tool">—</td><td class="io">day's artifacts → audit file</td><td class="gate">invention pages you immediately</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">6</td><td>Ledger update: actioned flags + price tracking columns for every open nomination</td><td class="who">post-market</td><td class="tool">ledger (track) · price feed (OPEN)</td><td class="io">prices → ledger columns d1…d15</td><td class="gate">missing data counted, not hidden</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">7</td><td>Score the day: actual movers vs nominated / deliberated / advanced / actioned — every miss classified</td><td class="who">performance scorer</td><td class="tool">ledger (report)</td><td class="io">feed + ledger → miss classes</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">8</td><td>Learning: findings → backlog proposals, each with evidence and a MANDATORY retirement</td><td class="who">learning agent</td><td class="tool">backlog contract</td><td class="io">review → backlog items</td><td class="gate">no retirement = invalid item</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">9</td><td>Housekeeping: janitor roll-ups + monthly archives · daily GitHub archive commit</td><td class="who">post-market</td><td class="tool">janitor · git</td><td class="io">aged folders → rollups + zips → repo</td><td class="gate">nothing deleted, ever</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">10</td><td>10:00 — ONE summary push: fires, fills, deltas, journal state, audit result, learning asks for your tap</td><td class="who">assembler (OPEN)</td><td class="tool">—</td><td class="io">eod artifacts → one push</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+</table>
+<h2 id="ph-weekly" style="--acc:#2a78d6">Phase: Weekly</h2>
+<div class="meta"><span class="tag">Sunday</span><span class="tag auto">🌙 autonomous — you read the report</span><span class="tag">feeds Loop 2</span></div>
+<div class="sub" style="padding-left:14px">The stepping-back pass that keeps the machine honest week over week.</div>
+<div class="scope"><div class="in"><b>In scope</b>CS Weekly ingest · posture · performance + system reports · universe churn · stale-rule sweep</div><div class="out"><b>Out of scope</b>No trades, no plan, no parameter changes without your tap</div></div>
+<table><tr><th>Step</th><th>What happens</th><th>Skill / agent</th><th>Tools invoked</th><th>Reads → writes</th><th>Gate / check</th><th>Mode</th></tr>
+<tr><td class="step">1</td><td>Read the newest CS Weekly PDF from its drop folder into the week's posture memory</td><td class="who">weekly</td><td class="tool">—</td><td class="io">PDF → posture file</td><td class="gate">missing = notify + retry, never blocks the week</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">2</td><td>Held book + regime review against the posture</td><td class="who">weekly</td><td class="tool">—</td><td class="io">journal + feed → posture notes</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">3</td><td>Week/month/year performance AND system performance: per-voice hit rates from the ledger, audit trends, refusal patterns</td><td class="who">weekly</td><td class="tool">ledger (report)</td><td class="io">journal + ledger → weekly report</td><td class="gate">Detect-seat judged only on ≥12-month numbers</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">4</td><td>Universe churn: who entered/left the screen this week (evidence file if you revisit the $2bn floor)</td><td class="who">weekly</td><td class="tool">—</td><td class="io">universe files → churn table</td><td class="gate">—</td><td><span class="tag auto">auto</span></td></tr>
+<tr><td class="step">5</td><td>Stale-rule sweep: any rule past its review date surfaced for keep / amend / retire</td><td class="who">weekly</td><td class="tool">—</td><td class="io">parameters review dates → asks</td><td class="gate">rules die when stale (law 10)</td><td><span class="tag auto">auto</span></td></tr>
+</table>
+<h2 id="tools" style="--acc:#c98500">The exact shape of every tool</h2><div class="sub" style="padding-left:14px">Each: what goes in → what it does inside, numbered → what comes out → what happens on failure. Expanders open for detail; summaries alone give the full inventory.</div>
+<details><summary>Universe screen <span class="st">— ◐ Built · used in: Premarket step 2</span></summary><div>
+<dt>Input</dt><dd>Market screener (US primary, ≥$2bn, actively trading) + 400 days of prices per surviving name</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Server-side cut: country, size, share type</li><li>Per name: compute the 20/50/100-day exponential averages; pass if the last completed close sits at or above ANY of them</li><li>Volume test: last completed day's volume ≥ its own prior-30-day average (the compared day excluded, so a spike can't inflate its own baseline)</li><li>Write the passing list with the criteria embedded in the file</li></ol></dd>
+<dt>Output</dt><dd>sod/universe.json — the ONLY list any voice ever sees</dd><dt>On failure</dt><dd>A name whose data errors is skipped and counted, never guessed; no data key = cannot run at all (loud, not silent)</dd></div></details>
+<details><summary>Feed tripwires <span class="st">— ✓ Verified · used in: Premarket step 3</span></summary><div>
+<dt>Input</dt><dd>The daily quant feed + yesterday's journal + the waiver file</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Required sections all present, list non-empty</li><li>Dead-signal check: any documented signal state observed ZERO times across ~180 names = alarm — unless a dated waiver names it a known engine defect (waiver expires with the fix)</li><li>Sanity band: share of names with valid stop/target sets must sit in a plausible range — 100% or ~0% both alarm</li><li>Dictionary drift: the feed's own glossary vs the fields actually present</li><li>Held positions in the feed must match the journal's held list</li><li>Staleness flag propagated if the feed isn't marked live</li></ol></dd>
+<dt>Output</dt><dd>Clean exit, or BLOCK with each failed check named</dd><dt>On failure</dt><dd>BLOCK stops the entire morning and pages you — the failure mode is loud by design</dd></div></details>
+<details><summary>Nomination ledger <span class="st">— ✓ Verified · used in: Premarket 5–6 · Post-market 6–7 · Weekly 3</span></summary><div>
+<dt>Input</dt><dd>Ten nomination files daily; a daily price table</dd><dt>Internal logic</dt><dd><ol class="logic"><li>record: append each voice's picks; malformed files skipped AND counted; duplicates ignored</li><li>track: for every open pick, fill day-1/3/5/10/15 columns in TRADING days, plus best gain and worst drawdown; close the row after 15 bars; rows with missing prices are counted, not hidden</li><li>report: per voice — number of picks, hit rate at day 5, average move, exclusions disclosed</li></ol></dd>
+<dt>Output</dt><dd>The outcome memory: per-voice hit rates that feed the scorer and the weekly report</dd><dt>On failure</dt><dd>A malformed input never aborts the run; missing prices are disclosed in every report (no silent survivorship)</dd></div></details>
+<details><summary>Sizing calculator <span class="st">— ✓ Verified · used in: Premarket 10 · Execution 4, 9</span></summary><div>
+<dt>Input</dt><dd>Capital, risk multiple, entry, stop, 30-day volatility</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Step 1 — risk shares: budget ÷ (entry − stop), floored</li><li>Step 2 — volatility cap: cap dollars ÷ the position's expected daily dollar movement, floored</li><li>Final size = the SMALLER of the two — both steps mandatory</li><li>Post-fill: actual risk = shares × (fill − stop); flag if it misses budget by more than $50</li></ol></dd>
+<dt>Output</dt><dd>Shares, dollar risk, which step capped it; post-fill verdict</dd><dt>On failure</dt><dd>REFUSES rather than computes: entry at/below stop, volatility outside a sane band (catches percent-vs-decimal mistakes), non-positive capital</dd></div></details>
+<details><summary>Autopilot switch <span class="st">— ✓ Verified · used in: Approval 3 · Market hours 6 · Execution 8</span></summary><div>
+<dt>Input</dt><dd>Your /arm · /disarm · status · count commands</dd><dt>Internal logic</dt><dd><ol class="logic"><li>arm: writes a dated, reasoned state expiring at the NEXT 5:30am — fixed, no timezone math</li><li>status: ANY read problem (corrupt file, missing field) = OFF — fail-safe by construction</li><li>count: before each armed confirm, increments a counter ON DISK and refuses past the cap — survives restarts</li><li>disarm: instant, one line, always wins</li></ol></dd>
+<dt>Output</dt><dd>The armed/disarmed truth the gatekeeper must read before every confirm</dd><dt>On failure</dt><dd>Fails OFF, never ON; kill conditions disarm FIRST, notify after</dd></div></details>
+<details><summary>Parameter changer <span class="st">— ✓ Verified · used in: Any time you speak; Loop 3 step 2</span></summary><div>
+<dt>Input</dt><dd>One plain-English instruction from you (e.g. 'set the size floor to 1.5bn')</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Key must already exist (new rules go the committee path, not the tweak path)</li><li>Type must match — a yes/no can't replace a number (this exact bug would have made the janitor archive everything)</li><li>Write the value · append a dated entry to the decisions log · commit</li></ol></dd>
+<dt>Output</dt><dd>Changed parameter + a permanent audit line</dd><dt>On failure</dt><dd>Refuses loudly with the reason; never partial-writes</dd></div></details>
+<details><summary>Janitor <span class="st">— ✓ Verified · used in: Post-market 9</span></summary><div>
+<dt>Input</dt><dd>The data shelves + the retention setting (30 days, yours to tune)</dd><dt>Internal logic</dt><dd><ol class="logic"><li>For each dated day-folder older than retention: write a compact summary kept forever</li><li>Zip the raw folder into that month's archive</li><li>Remove the raw folder — the archive and summary remain</li></ol></dd>
+<dt>Output</dt><dd>Flat disk growth forever; monthly zips + permanent roll-ups</dd><dt>On failure</dt><dd>Dry-run mode proves the plan first; invalid folder names are skipped, never guessed at</dd></div></details>
+<details><summary>Legacy migration (one-time) <span class="st">— ◐ Built · used in: Once, at deploy</span></summary><div>
+<dt>Input</dt><dd>Your old Drive journal folder (~40 files, five naming styles)</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Find every readable journal; the NEWEST valid one becomes the seed</li><li>Move everything else into one dated archive folder</li><li>Write a manifest: old name → size → new location. Delete nothing</li></ol></dd>
+<dt>Output</dt><dd>One clean seed + one archive + one manifest</dd><dt>On failure</dt><dd>Dry-run first; a file that won't parse is archived as-is and listed</dd></div></details>
+<details><summary>Measure-before-vote <span class="st">— ◐ Built · used in: Premarket 9 · any design review</span></summary><div>
+<dt>Input</dt><dd>A proposed rule ('names with X do better'), the 20-month history panel</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Split the pool: names matching the claim vs the rest</li><li>Compare forward outcomes at your thresholds</li><li>Control by volatility tercile — the confound that fooled a past committee round</li><li>Warn UNDERPOWERED below 200 samples (exploratory only, no vote) and warn about repeat-testing inflation</li></ol></dd>
+<dt>Output</dt><dd>The numbers the committee must see BEFORE voting on any field claim</dd><dt>On failure</dt><dd>Small samples are labelled, not hidden</dd></div></details>
+<details><summary>Hedge calculator <span class="st">— ◐ Built · used in: Premarket 4</span></summary><div>
+<dt>Input</dt><dd>The feed's held-book gap exposures, sector posture, current hedge record, an options chain</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Coverage check: what a 3/5/7/10% gap costs vs what the current hedge pays</li><li>If cover is short for the posture: build three candidate protective structures</li><li>Price each (single shared pricer) and score by cover-per-dollar</li></ol></dd>
+<dt>Output</dt><dd>A recommended structure into the plan's hedge block — you execute it like any order</dd><dt>On failure</dt><dd>Skips (and logs) under 4 positions; never executes anything</dd></div></details>
+<details><summary>Options pricer (single copy) <span class="st">— ✓ Verified · used in: Inside the hedge calculator</span></summary><div>
+<dt>Input</dt><dd>Spot, strike, expiry, volatility</dd><dt>Internal logic</dt><dd><ol class="logic"><li>One standard options pricing function — THE copy; the three scattered duplicates were retired</li></ol></dd>
+<dt>Output</dt><dd>Theoretical option prices for the hedge calculator</dd><dt>On failure</dt><dd>Pure function; bad inputs raise, never guess</dd></div></details>
+<details><summary>Alpaca data script <span class="st">— ◐ Built · used in: Premarket 4</span></summary><div>
+<dt>Input</dt><dd>Ticker + expiry window</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Plain web calls to the options data service (15-minute delayed), keys embedded by your ruling</li></ol></dd>
+<dt>Output</dt><dd>Chains and volatility for hedge pricing</dd><dt>On failure</dt><dd>A failed call surfaces as missing data, never invented</dd></div></details>
+<details><summary>Package builders <span class="st">— ✓ Verified · used in: Loop 3 step 4; every change ships through them</span></summary><div>
+<dt>Input</dt><dd>The whole kernel (charter, skills, voices, tools, contracts)</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Stamp every parameter value into every skill at build time (no runtime rule-lookups, no restating from memory)</li><li>Compile the ten voice agent files from one template + one card each</li><li>Emit a COMPLETE Claude install and a COMPLETE Kimi install — contracts, tools, charter, config, connection files included</li><li>Never hand-edited: rebuild replaces everything</li></ol></dd>
+<dt>Output</dt><dd>dist/claude-plugin and dist/kimi — what actually gets installed</dd><dt>On failure</dt><dd>A build error stops the build; there is no partial package</dd></div></details>
+<details><summary>OPEN — Mechanical gate-checker <span class="st">— ○ Open · used in: Execution (before arming, ever)</span></summary><div>
+<dt>Input</dt><dd>An order request + the day's files</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Will run the gatekeeper's seven checks as CODE and emit a signed pass/fail record the agent can only relay</li></ol></dd>
+<dt>Output</dt><dd>The precondition for the first armed session — deliberately gates it</dd><dt>On failure</dt><dd>—</dd></div></details>
+<details><summary>OPEN — Alert loader <span class="st">— ○ Open · used in: Approval 4</span></summary><div>
+<dt>Input</dt><dd>Your approved plan</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Will write each trigger into the engine's overnight watch config and read back a confirmation</li></ol></dd>
+<dt>Output</dt><dd>Loaded watch list + confirmation</dd><dt>On failure</dt><dd>Unconfirmed load = flagged in the 10am summary</dd></div></details>
+<details><summary>OPEN — Ledger price feed <span class="st">— ○ Open · used in: Post-market 6</span></summary><div>
+<dt>Input</dt><dd>The open ledger rows</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Will pull one price table daily so tracking columns fill themselves</li></ol></dd>
+<dt>Output</dt><dd>prices.json for the ledger's track step</dd><dt>On failure</dt><dd>Missing day = disclosed gap</dd></div></details>
+<details><summary>OPEN — Morning-summary assembler <span class="st">— ○ Open · used in: Post-market 10</span></summary><div>
+<dt>Input</dt><dd>The night's artifacts</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Will stitch journal, audit, review and backlog asks into ONE push at 10:00</li></ol></dd>
+<dt>Output</dt><dd>The single morning message</dd><dt>On failure</dt><dd>—</dd></div></details>
+<h2 id="skills" style="--acc:#d55181">The exact shape of every skill &amp; agent</h2>
+<details><summary>Premarket orchestrator <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>1pm schedule or /pm</dd><dt>What it does</dt><dd>Runs the 10-step build above, top to bottom, one pass</dd><dt>Invokes</dt><dd>Universe screen, tripwires, hedge calculator, the ten voice agents, ledger, sizing, deliberation</dd><dt>Produces</dt><dd>The 4pm plan + phone render</dd><dt>May never</dt><dd>Hold opinions · contain thresholds · produce order previews (stripped of the ability)</dd></div></details>
+<details><summary>Market-hours orchestrator <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>An alert fire only — never a timer</dd><dt>What it does</dt><dd>Wake → re-validate → route to gatekeeper → log one line</dd><dt>Invokes</dt><dd>Tiger spot, gatekeeper (by request)</dd><dt>Produces</dt><dd>Wake log, fire records</dd><dt>May never</dt><dd>Stage anything itself · re-deliberate the plan · move stops</dd></div></details>
+<details><summary>Post-market orchestrator <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>4:05am schedule or /close</dd><dt>What it does</dt><dd>Reconcile → journal (validate or HALT) → audits → scoring → learning → archive</dd><dt>Invokes</dt><dd>Tiger, IBKR service, journal contract, ledger, janitor, git</dd><dt>Produces</dt><dd>The journal, metrics, audit, review, backlog updates</dd><dt>May never</dt><dd>Mutate anything after a failed journal · delete anything</dd></div></details>
+<details><summary>Weekly orchestrator <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>Sunday schedule or /weekly</dd><dt>What it does</dt><dd>Posture → reports → churn → rule sweep</dd><dt>Invokes</dt><dd>Ledger report, parameter review dates</dd><dt>Produces</dt><dd>The weekly report + posture memory</dd><dt>May never</dt><dd>Trade, change parameters, touch the plan</dd></div></details>
+<details><summary>Development pipeline <span class="st">— ✓ Verified</span></summary><div>
+<dt>Triggered by</dt><dd>A captured finding or your idea</dd><dt>What it does</dt><dd>Capture (retirement mandatory) → your tap → branch build → shadow day → ship → re-measure at 15 sessions</dd><dt>Invokes</dt><dd>Coding agent, both builders, backlog contract</dd><dt>Produces</dt><dd>Shipped changes with permanent evidence trail</dd><dt>May never</dt><dd>Merge without your approval · accept an item that retires nothing</dd></div></details>
+<details><summary>Staging Gatekeeper <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>A REQUEST from an orchestrator — nothing else</dd><dt>What it does</dt><dd>The seven checks from FILES (never memory) → preview, or armed-confirm via counter + double-lock → post-fill protocol</dd><dt>Invokes</dt><dd>Sizing, autopilot status+count, Tiger</dd><dt>Produces</dt><dd>Previews, refusal records, confirms (armed), post-fill records</dd><dt>May never</dt><dd>Act unrequested · skip a check · touch a name off the approved plan · exist twice</dd></div></details>
+<details><summary>Voice agents ×10 (one shape, ten cards) <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>Spawned by premarket step 5, each in a fresh isolated context</dd><dt>What it does</dt><dd>Six sections each: WHO I AM (framework + canon principles) · MY DATA (the exact fields allowed — the statistician gets odds fields, the tape-reader gets volume fields, the mechanical seat gets ONLY signal fields) · MY PROCESS (identical engine) · MY MEMORY (own results printout, injected) · MY OUTPUT (the contract + example) · FORBIDDEN</dd><dt>Invokes</dt><dd>Nothing — no tools, by design</dd><dt>Produces</dt><dd>One nomination file each</dd><dt>May never</dt><dd>See another voice · see the tally · fetch prices · compute scores · pad to ten</dd></div></details>
+<details><summary>Deliberation committee <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>Premarket step 9, on the survivors only</dd><dt>What it does</dt><dd>Cases argued in framework language; mandatory bear case; near-unanimity challenge; dissent recorded verbatim</dd><dt>Invokes</dt><dd>Measure-before-vote when a field claim arises</dd><dt>Produces</dt><dd>The committee file the gatekeeper later checks</dd><dt>May never</dt><dd>Smooth dissent away · vote on unmeasured claims</dd></div></details>
+<details><summary>Auditor <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>Post-market step 5</dd><dt>What it does</dt><dd>Did every voice run? every name get addressed? every read carry its source? anything invented?</dd><dt>Invokes</dt><dd>—</dd><dt>Produces</dt><dd>The audit file; invention pages you instantly</dd><dt>May never</dt><dd>Fix things itself — it reports</dd></div></details>
+<details><summary>Performance scorer <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>Post-market step 7</dd><dt>What it does</dt><dd>Actual movers vs nominated / deliberated / advanced / actioned; each miss placed in one class so the fix targets the right stage</dd><dt>Invokes</dt><dd>Ledger report</dd><dt>Produces</dt><dd>Scoring file for review + the Detect seat's long-horizon evidence</dd><dt>May never</dt><dd>Judge the Detect seat on short windows</dd></div></details>
+<details><summary>Learning agent <span class="st">— ◐ Built</span></summary><div>
+<dt>Triggered by</dt><dd>Post-market step 8</dd><dt>What it does</dt><dd>Findings → proposals with evidence, expected effect, and what each RETIRES</dd><dt>Invokes</dt><dd>Backlog contract</dd><dt>Produces</dt><dd>Backlog items for your morning tap</dd><dt>May never</dt><dd>Change anything directly</dd></div></details>
+<h2 id="loops" style="--acc:#3987e5">The three engineered loops</h2>
+<h3>Loop 1 · Daily trading (closed circuit)</h3><div class="sub">Each day literally feeds the next: the journal's held list is tomorrow's engine input.</div><div class="loopbar">
+<span class="n">1</span> journal
+<span class="arrow">→</span>
+<span class="n">2</span> quant engine
+<span class="arrow">→</span>
+<span class="n">3</span> tripwired feed
+<span class="arrow">→</span>
+<span class="n">4</span> premarket build
+<span class="arrow">→</span>
+<span class="n">5</span> tally + news filter
+<span class="arrow">→</span>
+<span class="n">6</span> deliberation
+<span class="arrow">→</span>
+<span class="n">7</span> plan
+<span class="arrow">→</span>
+<span class="n">8</span> YOUR approval
+<span class="arrow">→</span>
+<span class="n">9</span> gatekeeper
+<span class="arrow">→</span>
+<span class="n">10</span> broker
+<span class="arrow">→ back to 1</span>
+</div>
+<h3>Loop 2 · Learning (anti-decay)</h3><div class="sub">Outcomes, not opinions, drive change — and every change must retire something.</div><div class="loopbar">
+<span class="n">1</span> journal
+<span class="arrow">→</span>
+<span class="n">2</span> outcome ledger
+<span class="arrow">→</span>
+<span class="n">3</span> scorer (miss classes)
+<span class="arrow">→</span>
+<span class="n">4</span> design &amp; review
+<span class="arrow">→</span>
+<span class="n">5</span> learning agent
+<span class="arrow">→</span>
+<span class="n">6</span> backlog (retirement mandatory)
+<span class="arrow">→</span>
+<span class="n">7</span> development pipeline
+<span class="arrow">→</span>
+<span class="n">8</span> parameters
+<span class="arrow">→</span>
+<span class="n">9</span> tomorrow's premarket
+<span class="arrow">→ back to 1</span>
+</div>
+<h3>Loop 3 · Config (anti-spaghetti)</h3><div class="sub">A tweak cannot happen without leaving a record, and reaches every skill only through a rebuild.</div><div class="loopbar">
+<span class="n">1</span> YOU say one line
+<span class="arrow">→</span>
+<span class="n">2</span> parameter changer (validate · log · commit)
+<span class="arrow">→</span>
+<span class="n">3</span> parameters file
+<span class="arrow">→</span>
+<span class="n">4</span> package builders
+<span class="arrow">→</span>
+<span class="n">5</span> installed package
+<span class="arrow">→</span>
+<span class="n">6</span> tomorrow's processes
+<span class="arrow">→</span>
+<span class="n">7</span> result in your plan
+<span class="arrow">→ back to 1</span>
+</div>
+<h2 id="matrix" style="--acc:#199e70">Coverage matrix — what is on duty in which phase</h2><div class="sub" style="padding-left:14px">● invoked automatically · ◆ your hands. Rows are every skill and tool; columns are the six phases.</div>
+<table class="matrix"><tr><th>Module</th><th>Weekly</th><th>Premarket</th><th>Approval</th><th>Mkt hours</th><th>Execution</th><th>Post-mkt</th></tr>
+<tr><td>Premarket orchestrator</td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Market-hours orchestrator</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Post-market orchestrator</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Weekly orchestrator</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Development pipeline</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Voice agents ×10 + engine</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Deliberation committee</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Staging Gatekeeper</td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
+<tr><td>Auditor / Scorer / Learner</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Universe screen</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Feed tripwires</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Nomination ledger</td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Sizing calculator</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td></tr>
+<tr><td>Autopilot switch</td><td class="dot"></td><td class="dot"></td><td class="dotpm">◆</td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td></tr>
+<tr><td>Parameter changer</td><td class="dotpm">◆</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dotpm">◆</td></tr>
+<tr><td>Janitor</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Measure-before-vote</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Hedge calc + pricer + Alpaca</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Package builders</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dotpm">◆ after your tap</td></tr>
+<tr><td>Alert loader (OPEN)</td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td>Price feed (OPEN)</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Summary assembler (OPEN)</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Gate-checker (OPEN)</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td></tr>
+<tr><td>Tiger broker</td><td class="dot"></td><td class="dot">● spot</td><td class="dotpm">◆ stage</td><td class="dot">●</td><td class="dotpm">● / ◆</td><td class="dot">● reconcile</td></tr>
+<tr><td>IBKR service</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Market data (FMP)</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td>Journal + contracts</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
+</table>
+<footer>Static document — works in any viewer, prints clean. Companion: TRACEABILITY_MAP.html (the clickable dependency graph, best in a desktop browser). Both ship inside the kernel and regenerate with it. Real-order capability stays OFF until the practice week passes its checklist.</footer>
+</div></body></html>
