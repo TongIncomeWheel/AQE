@@ -15,18 +15,20 @@ def main():
     import build_claude
     build_claude.main()
     shutil.rmtree(DIST, ignore_errors=True)
-    shutil.copytree(os.path.join(ROOT, "dist", "claude-plugin", "aegis-v4", "skills"), os.path.join(DIST, "skills"))
+    SRC = os.path.join(ROOT, "dist", "claude-plugin", "aegis-v4")
+    for d in ("skills", "contracts", "tools", "charter"):
+        shutil.copytree(os.path.join(SRC, d), os.path.join(DIST, d))
+    shutil.copy(os.path.join(SRC, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
     vdst = os.path.join(DIST, "agents", "voices"); os.makedirs(vdst, exist_ok=True)
-    for name in sorted(os.listdir(os.path.join(ROOT, "skills"))):
+    for name in sorted(os.listdir(os.path.join(SRC, "skills"))):   # A-B1/F10: voices from the INLINED dist, not raw kernel
         if name.startswith("voice-"):
-            shutil.copy(os.path.join(ROOT, "skills", name, "SKILL.md"), os.path.join(vdst, name + ".md"))
+            shutil.copy(os.path.join(SRC, "skills", name, "SKILL.md"), os.path.join(vdst, name + ".md"))
     ep = json.load(open(os.path.join(ROOT, "config", "endpoints.json")))
     mcp = {"mcpServers": {
-        "tiger":  {"transport": "http", "url": ep["tiger_mcp"]["url"]},
-        "alpaca": {"transport": "http", "url": ep["alpaca_mcp"]["url"]},
+        "tiger":  {"transport": "http", "url": ep["tiger_mcp"]["url"], "headers": {"Authorization": "${TIGER_MCP_AUTH}"}},
         "ibkr":   {"transport": "stdio", "command": "python3",
-                    "args": [os.path.join(ROOT, "tools", "mcp", "ibkr_mcp", "server.py")]},
-    }}
+                    "args": ["./tools/mcp/ibkr_mcp/server.py"]},
+    }, "_note": "FMP + Alpaca are plain REST via tools (keys in .env) — no MCP needed (F10). Relative ibkr path: run kimi from the dist folder."}
     json.dump(mcp, open(os.path.join(DIST, "mcp.json"), "w"), indent=1)
     open(os.path.join(DIST, "README.md"), "w").write(
         "# Aegis on Kimi Code CLI (generated)\n"

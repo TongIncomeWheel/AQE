@@ -21,14 +21,19 @@ def main():
     doc = yaml.safe_load(open(PARAMS))
     node, parts = doc, a.key.split(".")
     for p in parts[:-1]:
-        if p not in node: sys.exit(f"REFUSED: '{a.key}' not in parameters.yaml — new keys are a law change, take it to the committee path")
+        if not isinstance(node, dict) or p not in node:
+            sys.exit(f"REFUSED: '{a.key}' not in parameters.yaml — new keys are a law change, take it to the committee path")
         node = node[p]
+    if not isinstance(node, dict):
+        sys.exit(f"REFUSED: '{a.key}' path passes through a scalar")
     leaf = parts[-1]
     if leaf not in node: sys.exit(f"REFUSED: '{a.key}' not in parameters.yaml")
     old = node[leaf]
     try: new = yaml.safe_load(a.value)
     except Exception: new = a.value
-    if type(old) not in (type(new), type(None)) and not (isinstance(old,(int,float)) and isinstance(new,(int,float))):
+    def _num(x): return isinstance(x, (int, float)) and not isinstance(x, bool)   # QA-F3: bool is NOT a number
+    ok = (type(old) is type(new)) or (_num(old) and _num(new)) or old is None
+    if not ok:
         sys.exit(f"REFUSED: type mismatch ({type(old).__name__} -> {type(new).__name__})")
     node[leaf] = new
     yaml.dump(doc, open(PARAMS, "w"), sort_keys=False, allow_unicode=True)

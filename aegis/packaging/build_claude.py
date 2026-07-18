@@ -50,6 +50,14 @@ def main():
         os.makedirs(sk, exist_ok=True)
         open(os.path.join(sk, "SKILL.md"), "w").write(inline_rb(open(skill_md).read()))
     shutil.copy(os.path.join(ROOT, "charter", "commands.md"), os.path.join(DIST, "skills", "premarket", "commands.md"))
+    # Arch-F2/A-B3: a package must be self-sufficient — ship contracts, charter yamls, CONTEXT, tools
+    for d in ("contracts", "tools"):
+        shutil.copytree(os.path.join(ROOT, d), os.path.join(DIST, d), ignore=shutil.ignore_patterns("__pycache__"))
+    os.makedirs(os.path.join(DIST, "charter"), exist_ok=True)
+    for f in ("rulebook.yaml", "parameters.yaml", "commands.md", "constitution.md"):
+        shutil.copy(os.path.join(ROOT, "charter", f), os.path.join(DIST, "charter", f))
+    shutil.copy(os.path.join(ROOT, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
+    open(os.path.join(DIST, "README.md"), "w").write("# aegis-v4 plugin (GENERATED)\nSkills in skills/; contracts, tools, charter and CONTEXT.md ship IN-PACKAGE so the install is self-sufficient. Commands: skills/premarket/commands.md.\n")
     print(f"built {DIST}")
 
 if __name__ == "__main__":

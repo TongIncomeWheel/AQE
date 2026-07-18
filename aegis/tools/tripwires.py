@@ -4,10 +4,19 @@ The BULLISH_BOS lesson, permanent: a field state that never fires (or always fir
 Exit code 0 = clean, 1 = BLOCK (orchestrator must stop and notify PM).
 Usage: python3 tripwires.py path/to/aqe_daily_export.json [--history data/tripwire_history.json]
 """
-import json, sys, argparse, collections
+import json, os, sys, argparse, collections
 
 ENUM_FIELDS = ["structure_shift", "mp_state", "mp_accel_state", "choch_state", "div_state",
                "pin_bar_state", "elder_pattern", "rs_leadership", "mover_subtype"]
+# DS-F2: documented states per enum. A documented state observed ZERO times across a healthy list
+# is the BULLISH_BOS failure class — alarm unless waived in waivers.json (known engine defects, dated).
+EXPECTED_ENUMS = {
+    # ONLY states documented by the feed/glossary belong here. Guessed lists cause false alarms.
+    # Authoritative per-field enum export from the engine = backlog BL-014; until then, structure_shift
+    # is the one contract-documented 3-state enum (glossary + 16-Jul dissent).
+    "structure_shift": ["RANGE", "BEARISH_CHOCH", "BULLISH_BOS"],
+}
+WAIVERS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "waivers.json")
 BRACKET_VALID_BAND = (0.03, 0.60)   # share of daily_list with bracket.valid — outside band = alarm
 
 def main():
@@ -26,6 +35,14 @@ def main():
         counts = collections.Counter(str(r.get(f)) for r in dl if f in r)
         if counts and len(counts) == 1 and len(dl) > 50:
             problems.append(f"enum '{f}' shows a single state across {len(dl)} rows: {dict(counts)} — dead or stuck field?")
+    # 1b. DS-F2: dead-state detection among live enums (the BULLISH_BOS class)
+    waivers = json.load(open(WAIVERS)) if os.path.exists(WAIVERS) else {}
+    if len(dl) > 50:
+        for f, expected in EXPECTED_ENUMS.items():
+            observed = {str(r.get(f)) for r in dl if r.get(f) is not None}
+            dead = [st for st in expected if st not in observed and st not in waivers.get(f, {})]
+            if dead:
+                problems.append(f"enum '{f}': documented state(s) {dead} observed ZERO times in {len(dl)} rows — dead code or wiring defect (waive in waivers.json only with a dated engine-defect record)")
     # 2. bracket validity rate band
     if dl:
         rate = sum(1 for r in dl if (r.get("bracket") or {}).get("valid")) / len(dl)

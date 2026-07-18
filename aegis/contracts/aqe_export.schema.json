@@ -4797,7 +4797,10 @@
       "type": "null"
      },
      "trade_date": {
-      "type": "null"
+      "type": [
+       "null",
+       "string"
+      ]
      },
      "unreal_usd": {
       "type": "number"
@@ -5301,25 +5304,46 @@
       "type": "number"
      },
      "fib_swing_low": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_swing_high": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_236": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_382": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_500": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_618": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_786": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "vol_30d_ann": {
       "type": "number"
@@ -5475,7 +5499,10 @@
       ]
      },
      "structure_shift": {
-      "type": "string"
+      "type": [
+       "null",
+       "string"
+      ]
      },
      "structure_shift_ref": {
       "type": [
@@ -6835,31 +6862,58 @@
       "type": "number"
      },
      "ma_100": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "ma_200": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_swing_low": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_swing_high": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_236": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_382": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_500": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_618": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "fib_786": {
-      "type": "number"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "atr_14d": {
       "type": "number"
@@ -6898,7 +6952,10 @@
         ]
        },
        "stop_date": {
-        "type": "null"
+        "type": [
+         "null",
+         "string"
+        ]
        },
        "risk": {
         "type": [
@@ -6987,6 +7044,12 @@
          "null",
          "string"
         ]
+       },
+       "stop_vol_ratio": {
+        "type": "number"
+       },
+       "stop_vol_validated": {
+        "type": "boolean"
        }
       },
       "required": [
@@ -7012,10 +7075,16 @@
       "type": "boolean"
      },
      "structure_shift": {
-      "type": "string"
+      "type": [
+       "null",
+       "string"
+      ]
      },
      "structure_shift_ref": {
-      "type": "null"
+      "type": [
+       "null",
+       "number"
+      ]
      },
      "rs_down_day_20d": {
       "type": "number"
@@ -7036,7 +7105,10 @@
       "type": "integer"
      },
      "runner_conviction_label": {
-      "type": "null"
+      "type": [
+       "null",
+       "string"
+      ]
      },
      "mover_subtype": {
       "type": "string"
@@ -7048,7 +7120,10 @@
       "type": "integer"
      },
      "premove_conviction_label": {
-      "type": "null"
+      "type": [
+       "null",
+       "string"
+      ]
      },
      "elder_pattern": {
       "type": [
@@ -7057,125 +7132,132 @@
       ]
      },
      "elder_context": {
-      "type": "object",
-      "properties": {
-       "computed_date": {
-        "type": "string"
+      "anyOf": [
+       {
+        "type": "null"
        },
-       "hourly_bars_used": {
-        "type": "integer"
-       },
-       "vwap_5d": {
+       {
         "type": "object",
         "properties": {
-         "value": {
-          "type": "number"
-         },
-         "position": {
+         "computed_date": {
           "type": "string"
          },
-         "slope_5d": {
-          "type": "string"
-         }
-        },
-        "required": [
-         "position",
-         "slope_5d",
-         "value"
-        ]
-       },
-       "volume": {
-        "type": "object",
-        "properties": {
-         "vol_trend_5d": {
-          "type": "string"
-         },
-         "vol_above_20d_avg": {
-          "type": "boolean"
-         },
-         "up_bar_vol_ratio": {
-          "type": "number"
-         },
-         "avg_vol_20d": {
+         "hourly_bars_used": {
           "type": "integer"
          },
-         "avg_vol_5d_up_bars": {
-          "type": "integer"
+         "vwap_5d": {
+          "type": "object",
+          "properties": {
+           "value": {
+            "type": "number"
+           },
+           "position": {
+            "type": "string"
+           },
+           "slope_5d": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "position",
+           "slope_5d",
+           "value"
+          ]
          },
-         "avg_vol_5d_down_bars": {
-          "type": "integer"
+         "volume": {
+          "type": "object",
+          "properties": {
+           "vol_trend_5d": {
+            "type": "string"
+           },
+           "vol_above_20d_avg": {
+            "type": "boolean"
+           },
+           "up_bar_vol_ratio": {
+            "type": "number"
+           },
+           "avg_vol_20d": {
+            "type": "integer"
+           },
+           "avg_vol_5d_up_bars": {
+            "type": "integer"
+           },
+           "avg_vol_5d_down_bars": {
+            "type": "integer"
+           }
+          },
+          "required": [
+           "avg_vol_20d",
+           "avg_vol_5d_down_bars",
+           "avg_vol_5d_up_bars",
+           "up_bar_vol_ratio",
+           "vol_above_20d_avg",
+           "vol_trend_5d"
+          ]
+         },
+         "vcp": {
+          "type": "object",
+          "properties": {
+           "base_range_pct": {
+            "type": "number"
+           },
+           "current_range_pct_5d": {
+            "type": "number"
+           },
+           "vcp_tightness_pct": {
+            "type": "number"
+           },
+           "vcp_label": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "base_range_pct",
+           "current_range_pct_5d",
+           "vcp_label",
+           "vcp_tightness_pct"
+          ]
+         },
+         "elder_pattern": {
+          "type": [
+           "null",
+           "string"
+          ]
+         },
+         "exhaustion_check": {
+          "type": "object",
+          "properties": {
+           "vol_contracting_on_up_bars": {
+            "type": "boolean"
+           },
+           "vwap_flat_or_falling": {
+            "type": "boolean"
+           },
+           "at_structural_resistance": {
+            "type": "boolean"
+           },
+           "exhaustion_flag": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "at_structural_resistance",
+           "exhaustion_flag",
+           "vol_contracting_on_up_bars",
+           "vwap_flat_or_falling"
+          ]
          }
         },
         "required": [
-         "avg_vol_20d",
-         "avg_vol_5d_down_bars",
-         "avg_vol_5d_up_bars",
-         "up_bar_vol_ratio",
-         "vol_above_20d_avg",
-         "vol_trend_5d"
-        ]
-       },
-       "vcp": {
-        "type": "object",
-        "properties": {
-         "base_range_pct": {
-          "type": "number"
-         },
-         "current_range_pct_5d": {
-          "type": "number"
-         },
-         "vcp_tightness_pct": {
-          "type": "number"
-         },
-         "vcp_label": {
-          "type": "string"
-         }
-        },
-        "required": [
-         "base_range_pct",
-         "current_range_pct_5d",
-         "vcp_label",
-         "vcp_tightness_pct"
-        ]
-       },
-       "elder_pattern": {
-        "type": [
-         "null",
-         "string"
-        ]
-       },
-       "exhaustion_check": {
-        "type": "object",
-        "properties": {
-         "vol_contracting_on_up_bars": {
-          "type": "boolean"
-         },
-         "vwap_flat_or_falling": {
-          "type": "boolean"
-         },
-         "at_structural_resistance": {
-          "type": "boolean"
-         },
-         "exhaustion_flag": {
-          "type": "string"
-         }
-        },
-        "required": [
-         "at_structural_resistance",
-         "exhaustion_flag",
-         "vol_contracting_on_up_bars",
-         "vwap_flat_or_falling"
+         "computed_date",
+         "elder_pattern",
+         "exhaustion_check",
+         "hourly_bars_used",
+         "vcp",
+         "volume",
+         "vwap_5d"
         ]
        }
-      },
-      "required": [
-       "computed_date",
-       "elder_pattern",
-       "exhaustion_check",
-       "hourly_bars_used",
-       "vcp",
-       "volume",
-       "vwap_5d"
       ]
      },
      "on_longlist": {
@@ -7629,25 +7711,46 @@
           "type": "object",
           "properties": {
            "pr_ret_12m": {
-            "type": "number"
+            "type": [
+             "null",
+             "number"
+            ]
            },
            "pr_adx_score": {
-            "type": "number"
+            "type": [
+             "null",
+             "number"
+            ]
            },
            "pr_rsi_score": {
-            "type": "number"
+            "type": [
+             "null",
+             "number"
+            ]
            },
            "pr_vol_score": {
-            "type": "number"
+            "type": [
+             "null",
+             "number"
+            ]
            },
            "pr_ma_score": {
-            "type": "number"
+            "type": [
+             "null",
+             "number"
+            ]
            },
            "momentum_composite": {
-            "type": "number"
+            "type": [
+             "null",
+             "number"
+            ]
            },
            "pipe_tier": {
-            "type": "string"
+            "type": [
+             "null",
+             "string"
+            ]
            }
           },
           "required": [
@@ -8063,6 +8166,6 @@
   "thematic_baskets"
  ],
  "title": "AQE Daily Export",
- "x_version": "1.0.0",
- "x_generated_from": "live export 2026-07-18, arrays sampled to 8 items"
+ "x_version": "1.1.0",
+ "x_generated_from": "live export 2026-07-18, FULL arrays (nullable-aware regen after QA-F2)"
 }

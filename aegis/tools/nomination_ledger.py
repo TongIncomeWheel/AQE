@@ -14,7 +14,8 @@ Storage: data/ledger/ledger.jsonl (append-only; one JSON object per line, schema
 import argparse, json, os, sys, glob
 from datetime import date, datetime
 
-LEDGER = os.environ.get("AEGIS_LEDGER", "data/ledger/ledger.jsonl")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LEDGER = os.environ.get("AEGIS_LEDGER", os.path.join(ROOT, "data", "persistent", "ledger.jsonl"))  # QA-F12: ROOT-anchored, persistent shelf
 WINDOW_DAYS = 15
 CHECKPOINTS = [1, 3, 5, 10, 15]
 
@@ -36,10 +37,14 @@ def record(args):
     rows = _load()
     seen = {(r["date"], r["voice"], r["ticker"]) for r in rows}
     added = 0
+    skipped = 0
     for path in glob.glob(os.path.join(args.nominations_dir, "*.json")):
-        nom = json.load(open(path))
-        if "nominations" not in nom:
-            continue
+        try:
+            nom = json.load(open(path))
+            if "nominations" not in nom or "date" not in nom or "voice" not in nom:
+                skipped += 1; continue
+        except Exception:
+            skipped += 1; continue
         for n in nom["nominations"]:
             key = (nom["date"], nom["voice"], n["ticker"])
             if key in seen:
@@ -57,7 +62,7 @@ def record(args):
             seen.add(key)
             added += 1
     _save(rows)
-    print(f"recorded {added} nominations; ledger now {len(rows)} rows")
+    print(f"recorded {added} nominations ({skipped} malformed files skipped); ledger now {len(rows)} rows")
 
 
 def track(args):
@@ -70,24 +75,23 @@ def track(args):
         t = r["tracking"]
         if t.get("closed"):
             continue
-        nom_date = datetime.strptime(r["date"], "%Y-%m-%d").date()
-        age = (today - nom_date).days
         series = prices.get(r["ticker"], {})
         base = r.get("price_at_nomination")
-        if base is None and series:
-            base = series.get(r["date"])
-            r["price_at_nomination"] = base
-        if not base or not series:
-            continue
         path = sorted((d, p) for d, p in series.items() if d >= r["date"])
-        if path:
-            closes = [p for _, p in path]
-            t["max_gain_pct"] = round((max(closes) / base - 1) * 100, 2)
-            t["max_drawdown_pct"] = round((min(closes) / base - 1) * 100, 2)
-            for cp in CHECKPOINTS:
-                if age >= cp and len(path) > cp:
-                    t[f"d{cp}"] = round((path[cp][1] / base - 1) * 100, 2)
-        if age >= WINDOW_DAYS:
+        if base is None and path:
+            base = path[0][1]   # DS-F4: anchor at first bar >= nomination date, explicitly d0
+            r["price_at_nomination"] = base
+        if not base or not path:
+            t["no_data"] = True   # DS-F4: excluded rows are COUNTED, not silently dropped
+            updated += 1
+            continue
+        closes = [p for _, p in path]
+        t["max_gain_pct"] = round((max(closes) / base - 1) * 100, 2)
+        t["max_drawdown_pct"] = round((min(closes) / base - 1) * 100, 2)
+        for cp in CHECKPOINTS:
+            if len(path) > cp:                       # DS-F1: TRADING-day indexed, no calendar gate
+                t[f"d{cp}"] = round((path[cp][1] / base - 1) * 100, 2)
+        if len(path) > WINDOW_DAYS:                  # DS-F1: close after 15 TRADING bars — d15 now reachable
             t["closed"] = True
         updated += 1
     _save(rows)
@@ -109,6 +113,8 @@ def report(args):
         v["sum_maxg"] += t.get("max_gain_pct") or 0
         if t["d5"] > 0:
             v["wins5"] += 1
+    excl = sum(1 for r in rows if r["tracking"].get("no_data"))
+    print(f"(excluded for missing price data: {excl} rows — survivorship note DS-F4)")
     print(f"{'voice':<15}{'n':>5}{'hit%@d5':>9}{'avg d5%':>9}{'avg maxG%':>10}")
     for v, s in sorted(byv.items(), key=lambda kv: -(kv[1]['sum5'] / max(kv[1]['n'], 1))):
         n = s["n"]

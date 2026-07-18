@@ -18,8 +18,9 @@ from datetime import date
 import yaml
 
 FMP = "https://financialmodelingprep.com/stable"
-RB = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "charter", "rulebook.yaml")))
-SCREEN = RB["universe"]["screen"]
+_C = os.path.join(os.path.dirname(__file__), "..", "charter")
+_P = yaml.safe_load(open(os.path.join(_C, "parameters.yaml")))
+SCREEN = _P["universe"]["screen"]   # QA-F1 fix: screen params live in parameters.yaml
 KEY = os.environ.get("FMP_API_KEY", "")
 
 
@@ -38,7 +39,7 @@ def base_pool():
         isEtf="false", isFund="false", isActivelyTrading="true",
         country="US", exchange="NYSE,NASDAQ,AMEX", limit=5000,
     )
-    return [r["symbol"] for r in rows if r.get("symbol") and "." not in r["symbol"]]
+    return [r["symbol"] for r in rows if r.get("symbol")]  # DS-F8: keep BRK.B-class symbols; ADR/secondary filtering via exchange param
 
 
 def ema(closes, n):
@@ -54,7 +55,7 @@ def ema(closes, n):
 def passes(symbol):
     """EMA + volume cuts need bars: 1 call per name (batch where plan allows)."""
     try:
-        bars = _get("historical-price-eod/light", symbol=symbol, limit=120)
+        bars = _get("historical-price-eod/light", symbol=symbol, limit=400)  # DS-F6: EMA100 needs ~4x n bars to converge
     except Exception:
         return None
     if not isinstance(bars, list) or len(bars) < 40:
@@ -62,10 +63,11 @@ def passes(symbol):
     bars = sorted(bars, key=lambda b: b["date"])
     closes = [b["price"] if "price" in b else b.get("close") for b in bars]
     vols = [b.get("volume", 0) for b in bars]
-    close = closes[-1]
+    close = closes[-1]          # last COMPLETED bar (run premarket; FMP eod bars only)
     emas = {n: ema(closes, n) for n in (20, 50, 100)}
     above_any = any(e is not None and close >= e for e in emas.values())
-    vol_ok = vols[-1] >= (sum(vols[-30:]) / min(30, len(vols)))
+    prior30 = vols[-31:-1] if len(vols) > 31 else vols[:-1]   # DS-F7: compare vs prior 30, EXCLUDING the compared bar
+    vol_ok = vols[-1] >= (sum(prior30) / max(len(prior30), 1))
     if above_any and vol_ok:
         return {"ticker": symbol, "close": close,
                 "above_ema": [n for n, e in emas.items() if e and close >= e],

@@ -16,4 +16,10 @@
 | **/param X Y** | Set parameter X to Y (validated, logged, committed) | shows old→new, then yes |
 | **/backlog** | Show open backlog items awaiting your tap | per item |
 | **/killed** | Show today's gatekeeper refusals and why | no |
+| **/why T [date]** | Why did ticker T not advance — covers committee PASS, event filter, gatekeeper refusal, any stage | no |
+| **/reject** | Reject today's plan outright (plan stands down) | it IS the confirm |
+| **/pause** | Suspend the whole system: no scheduled runs, no alert wakes, autopilot disarmed. `/resume` restarts | no |
+| **/flatten** | EMERGENCY: gatekeeper emits exit previews for ALL held names for you to execute | previews only — you execute |
+| **/eod** | Alias of /close (post-market run) | no |
+| **/later** | Defer a backlog item to tomorrow's summary | no |
 Anything not on this list can still be said in plain English — commands are the fast path, not the only path.

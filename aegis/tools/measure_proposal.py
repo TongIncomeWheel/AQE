@@ -19,6 +19,10 @@ def main():
     df = pd.read_parquet(a.panel)
     if a.pool: df = df.query(a.pool)
     cond, comp = df.query(a.condition), df.query(f"not ({a.condition})")
+    MIN_N = 200
+    if len(cond) < MIN_N:
+        print(f"⚠ UNDERPOWERED: condition n={len(cond)} < {MIN_N} — report as EXPLORATORY ONLY, no vote (DS-F3)")
+    print("⚠ Multiplicity: overlapping forward windows inflate effective n ~20x; repeated daily proposals need the proposal registry + FDR pass before any is ratified (DS-F3)")
     print(f"pool={len(df)}  condition n={len(cond)}  complement n={len(comp)}")
     for th in a.thresholds:
         print(f">= +{th}%: condition {(cond[a.outcome] >= th).mean():.1%}  vs complement {(comp[a.outcome] >= th).mean():.1%}")
