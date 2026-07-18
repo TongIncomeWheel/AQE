@@ -161,6 +161,11 @@ footer{margin-top:30px;color:#898781;font-size:11.5px}
 <details><summary>Alpaca data script <span class="st">— ◐ Built · used in: Premarket 4</span></summary><div>
 <dt>Input</dt><dd>Ticker + expiry window</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Plain web calls to the options data service (15-minute delayed), keys embedded by your ruling</li></ol></dd>
 <dt>Output</dt><dd>Chains and volatility for hedge pricing</dd><dt>On failure</dt><dd>A failed call surfaces as missing data, never invented</dd></div></details>
+<details><summary>Voice memory (compounding, bounded) <span class="st">— ✓ Verified · used in: Post-market 2b · Premarket 5</span></summary><div>
+<dt>Input</dt><dd>The outcome ledger + the nightly scorecard</dd>
+<dt>Internal logic</dt><dd><ol class="logic"><li>update (nightly): per voice — rolling stats vs the success criteria, open picks, last-10 outcomes, and STANDING LESSONS (max 5, each with evidence; expire after 30 sessions unless re-confirmed — memory compounds, never balloons)</li><li>add-lesson: the bench or PM pins an evidenced lesson to a voice</li><li>render (morning): the exact block injected into that voice's spawn — the voice must state which lesson applies before nominating</li></ol></dd>
+<dt>Output</dt><dd>data/persistent/voice_memory/&lt;voice&gt;.json + the injected morning block</dd>
+<dt>On failure</dt><dd>No history = says so; a voice never gets another voice's memory</dd></div></details>
 <details><summary>Package builders <span class="st">— ✓ Verified · used in: Loop 3 step 4; every change ships through them</span></summary><div>
 <dt>Input</dt><dd>The whole kernel (charter, skills, voices, tools, contracts)</dd><dt>Internal logic</dt><dd><ol class="logic"><li>Stamp every parameter value into every skill at build time (no runtime rule-lookups, no restating from memory)</li><li>Compile the ten voice agent files from one template + one card each</li><li>Emit a COMPLETE Claude install and a COMPLETE Kimi install — contracts, tools, charter, config, connection files included</li><li>Never hand-edited: rebuild replaces everything</li></ol></dd>
 <dt>Output</dt><dd>dist/claude-plugin and dist/kimi — what actually gets installed</dd><dt>On failure</dt><dd>A build error stops the build; there is no partial package</dd></div></details>
@@ -198,6 +203,11 @@ footer{margin-top:30px;color:#898781;font-size:11.5px}
 <dt>Triggered by</dt><dd>Spawned by premarket step 5, each in a fresh isolated context</dd><dt>What it does</dt><dd>Six sections each: WHO I AM (framework + canon principles) · MY DATA (the exact fields allowed — the statistician gets odds fields, the tape-reader gets volume fields, the mechanical seat gets ONLY signal fields) · MY PROCESS (identical engine) · MY MEMORY (own results printout, injected) · MY OUTPUT (the contract + example) · FORBIDDEN</dd><dt>Invokes</dt><dd>Nothing — no tools, by design</dd><dt>Produces</dt><dd>One nomination file each</dd><dt>May never</dt><dd>See another voice · see the tally · fetch prices · compute scores · pad to ten</dd></div></details>
 <details><summary>Deliberation committee <span class="st">— ◐ Built</span></summary><div>
 <dt>Triggered by</dt><dd>Premarket step 9, on the survivors only</dd><dt>What it does</dt><dd>Cases argued in framework language; mandatory bear case; near-unanimity challenge; dissent recorded verbatim</dd><dt>Invokes</dt><dd>Measure-before-vote when a field claim arises</dd><dt>Produces</dt><dd>The committee file the gatekeeper later checks</dd><dt>May never</dt><dd>Smooth dissent away · vote on unmeasured claims</dd></div></details>
+<details><summary>Engineering Bench ×5 (technical · indicator · data · process · governance-chair) <span class="st">— ◐ Built (D-14)</span></summary><div>
+<dt>Triggered by</dt><dd>Design &amp; Review triage nightly (bounded) and the Weekly engineering session (full)</dd>
+<dt>What it does</dt><dd>The glue between findings and fixes: every finding routes to its owning seat — signal claims to indicator design (measured on the panel first), shapes to data design, architecture to technical design, runbooks/exceptions to process engineering — and the governance chair routes the result (tweak vs change vs law), enforces the retirement, and assembles the PM STEER file</dd>
+<dt>Produces</dt><dd>SPEC / MEASURED / DATA-IMPACT / PROCESS blocks on backlog items · the daily steer file (FYI / DECIDE / PRE-FIX / POST-FIX; unanswered DECIDEs re-surface every day)</dd>
+<dt>May never</dt><dd>Write code (coding agent does) · approve its own specs · let a finding die in a file · bundle law changes into "small fixes"</dd></div></details>
 <details><summary>Auditor <span class="st">— ◐ Built</span></summary><div>
 <dt>Triggered by</dt><dd>Post-market step 5</dd><dt>What it does</dt><dd>Did every voice run? every name get addressed? every read carry its source? anything invented?</dd><dt>Invokes</dt><dd>—</dd><dt>Produces</dt><dd>The audit file; invention pages you instantly</dd><dt>May never</dt><dd>Fix things itself — it reports</dd></div></details>
 <details><summary>Performance scorer <span class="st">— ◐ Built</span></summary><div>
@@ -308,6 +318,8 @@ footer{margin-top:30px;color:#898781;font-size:11.5px}
 <tr><td>Voice agents ×10 + engine</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
 <tr><td>Deliberation committee</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
 <tr><td>Staging Gatekeeper</td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
+<tr><td>Engineering Bench ×5</td><td class="dot">●</td><td></td><td></td><td></td><td></td><td class="dot">●</td></tr>
+<tr><td>Voice memory tool</td><td></td><td class="dot">●</td><td></td><td></td><td></td><td class="dot">●</td></tr>
 <tr><td>Auditor / Scorer / Learner</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
 <tr><td>Universe screen</td><td class="dot"></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
 <tr><td>Live sector pulse (intraday SRM)</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td></tr>

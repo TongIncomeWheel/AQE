@@ -1,0 +1,128 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "PM Steer File",
+ "x_version": "1.0.0",
+ "type": "object",
+ "required": [
+  "date",
+  "fyi",
+  "decide",
+  "pre_fix",
+  "post_fix"
+ ],
+ "properties": {
+  "date": {
+   "type": "string"
+  },
+  "fyi": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "item"
+    ],
+    "properties": {
+     "item": {
+      "type": "string"
+     },
+     "evidence": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "decide": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "question",
+     "options",
+     "recommendation"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "question": {
+      "type": "string"
+     },
+     "options": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "recommendation": {
+      "type": "string"
+     },
+     "days_pending": {
+      "type": "integer"
+     },
+     "backlog_ref": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "pre_fix": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "what_changes",
+     "when",
+     "retires"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "what_changes": {
+      "type": "string"
+     },
+     "when": {
+      "type": "string"
+     },
+     "retires": {
+      "type": "string"
+     },
+     "shadow_planned": {
+      "type": "boolean"
+     }
+    }
+   }
+  },
+  "post_fix": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "what_changed",
+     "shadow_result",
+     "re_measure_date"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "what_changed": {
+      "type": "string"
+     },
+     "shadow_result": {
+      "type": "string"
+     },
+     "re_measure_date": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ }
+}

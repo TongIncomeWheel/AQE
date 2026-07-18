@@ -87,3 +87,32 @@ autopilot:
   expiry: fixed 05:30 SGT next occurrence — definitive, no timezone math (D-7a)
   window: arm at/after plan approval; expires 05:30 SGT — covers the full US session
     summer or winter
+performance:
+  note: 'Success criteria evaluated EVERY post-market by the scorer (D-14). Verdicts:
+    PASS / WATCH / FAIL. All bands PM-tunable.'
+  voice:
+    eval_window_sessions: 15
+    hit_d5_min_pct: 45
+    excess_d5_vs_universe_min_pct: 0.0
+    watch_band_pct: 5
+    fail_consecutive_windows: 2
+    detect_seat_eval_horizon_months: 12
+  committee:
+    advanced_vs_watchtable_excess_d5_min_pct: 0.5
+    bear_case_present_pct_min: 100
+  plan:
+    trigger_fire_rate_band_pct:
+    - 10
+    - 60
+    missed_by_design_avg_move_tracked: true
+  execution:
+    slippage_vs_plan_max_bps: 50
+    unjustified_refusals_max_per_week: 0
+  system:
+    runs_on_time_pct_min: 95
+    page_exceptions_max_per_week: 3
+    journal_validation_fail_max: 0
+  memory:
+    standing_lessons_max_per_voice: 5
+    lesson_expiry_sessions: 30
+    open_nominations_shown_max: 10

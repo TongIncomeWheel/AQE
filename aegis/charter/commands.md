@@ -25,4 +25,6 @@
 | **/ptj** | Print the trade journal in TODAY'S format — same fields, same scope (open + closed + metrics + broker sync). Heavy path, exact command only, exactly as before | no |
 | **/hedge** | Run the hedge check on demand (coverage matrix; candidates if cover is short) — same as the old /hedge | no |
 | **/later** | Defer a backlog item to tomorrow's summary | no |
+| **/steer** | Show the pending steer file: FYI · DECIDE (your one-tap items, with days-pending) · PRE-FIX notices · POST-FIX results | per DECIDE item |
+| **/findings** | Raw findings from the last review before bench triage | no |
 Anything not on this list can still be said in plain English — commands are the fast path, not the only path.
