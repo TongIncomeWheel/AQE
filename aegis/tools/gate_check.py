@@ -24,8 +24,9 @@ context.json = {
 import json, sys, datetime
 
 def _sgt_now():
-    # SGT stamp without Date.now-in-scripts constraints; uses wallclock at tool run (real tool, not a workflow script)
-    return datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    # True SGT (UTC+8) — matches autopilot.py's SGT logs so staging & autopilot records correlate (MED-3 fix)
+    sgt = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
+    return sgt.replace(microsecond=0).isoformat() + "+08:00"
 
 def verify(ctx):
     checks = []
@@ -38,7 +39,13 @@ def verify(ctx):
     chk("event_clean", ctx.get("event_driven") is False, f"event_driven={ctx.get('event_driven')}")
     chk("bracket_valid", (ctx.get("bracket") or {}).get("valid") is True, f"bracket.valid={(ctx.get('bracket') or {}).get('valid')}")
     sz = ctx.get("size") or {}
-    chk("size", isinstance(sz.get("shares"), int) and sz.get("shares", 0) > 0, f"shares={sz.get('shares')} r_used={sz.get('r_used')}")
+    r_used = sz.get("r_used"); max_r = ctx.get("max_r_per_order")
+    size_ok = isinstance(sz.get("shares"), int) and sz.get("shares", 0) > 0
+    # HIGH-1: when armed, the per-order R cap (RB:autopilot.max_r_per_order) is enforced HERE in code,
+    # not left to agent prose — a 2R high-conviction size cannot auto-confirm under a 1R armed cap.
+    if ctx.get("autopilot_armed") and max_r is not None and r_used is not None and r_used > max_r:
+        size_ok = False
+    chk("size", size_ok, f"shares={sz.get('shares')} r_used={r_used} max_r={max_r} armed={ctx.get('autopilot_armed')}")
     pg = ctx.get("portfolio_gates") or {}
     gates_ok = all(pg.get(k) is True for k in ("beta_ok", "var_ok", "leverage_ok", "combined_stop_ok"))
     chk("portfolio_gates", gates_ok, f"{pg}")

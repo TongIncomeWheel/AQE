@@ -38,16 +38,34 @@ def update(closed_trades_path):
     if isinstance(closed, dict):
         closed = closed.get("closed_trades", [])
     led = compute(closed)
+    # MED-1: validate the capital anchor against its contract before writing (fail-closed)
+    try:
+        import jsonschema
+        schema_path = os.path.join(ROOT, "contracts", "dyncap_ledger.schema.json")
+        if os.path.exists(schema_path):
+            jsonschema.validate(led, json.load(open(schema_path)))
+    except Exception as e:
+        raise ValueError(f"dyncap ledger failed its contract, refusing to write: {e}")
     os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
     json.dump(led, open(LEDGER, "w"), indent=1)
     return led
 
 
 def get_dyncap():
-    """Read the current ledger's dynCap (None if unset). Callers refuse on None."""
+    """Read dynCap, CROSS-CHECKED against the live allocation anchor on every call (CRIT-1 fix).
+    - allocation unset in config/aegis_fund.md -> None (refuse; BL-030 kill-switch honoured).
+    - cached ledger's allocation != current config allocation -> stale cache -> None (refuse),
+      so a PM zeroing/changing the allocation can never be bypassed by a stale ledger; someone
+      must re-run `dyncap_ledger.py update` to serve a fresh figure. Never size on phantom capital."""
+    live_alloc = fund_config.allocated_capital()
+    if live_alloc is None:
+        return None
     if not os.path.exists(LEDGER):
         return compute([])["dyncap_usd"]
-    return json.load(open(LEDGER)).get("dyncap_usd")
+    led = json.load(open(LEDGER))
+    if led.get("allocated_capital_usd") != live_alloc:
+        return None
+    return led.get("dyncap_usd")
 
 
 if __name__ == "__main__":

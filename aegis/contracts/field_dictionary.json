@@ -33,11 +33,11 @@
    "undocumented": false
   },
   "beta_30d": {
-   "definition": "",
+   "definition": "30-day beta vs SPY \u2014 the portfolio-gate window (D-6).",
    "method": "30-day beta vs SPY (the gate window, D-6).",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -63,7 +63,11 @@
    "definition": "Change-of-Character (swing-break trend flip), the LATEST detected event: BULLISH = close broke above the last confirmed swing high while the prior trend was flat/down; BEARISH mirrors it (broke below swing low). NONE = no CHoCH detected. Non-repainting (confirmed pivots only).",
    "method": "smart_money_knn.py: change-of-character state.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "BULLISH",
+    "BEARISH",
+    "NONE"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
@@ -108,53 +112,64 @@
    "definition": "Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a lower pivot low while \u22651 oscillator made a higher low (downmove losing internal energy); BEARISH mirror on highs; MIXED = both; NONE. Oscillators tested: RSI, MFI, CMF, MACD, OBV \u2014 all AQE-computed. Context only, never a gate.",
    "method": "divergence.py: regular divergence price vs 5 oscillators at confirmed pivots.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "BULLISH",
+    "BEARISH",
+    "MIXED",
+    "NONE"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "elder": {
-   "definition": "",
+   "definition": "Elder Impulse score [0,10] (elder.py): state{0,2,4}+slope{0-3}+MACD-histogram{0-3}.",
    "method": "elder.py: [0,10] state{0,2,4}+slope{0-3}+histogram{0-3}.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "elder_5d": {
-   "definition": "",
+   "definition": "Elder impulse read over a 5-day context (list of recent impulse states).",
    "method": "elder.py: 5-day elder impulse context (list).",
    "type": "list",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "elder_context": {
-   "definition": "",
+   "definition": "Hourly VWAP/VCP/exhaustion context object behind the elder read (elder_context.py).",
    "method": "elder.py: hourly VWAP/VCP/exhaustion context object.",
    "type": "dict",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "elder_pattern": {
-   "definition": "",
+   "definition": "Labelled Elder impulse pattern (see enum).",
    "method": "elder.py: labelled elder impulse pattern.",
    "type": "str",
-   "enum": null,
-   "glossary_gap": true,
+   "enum": [
+    "ACCELERATION",
+    "ACCUMULATION_BASE",
+    "CORRECTION_REENTRY",
+    "INTERRUPTED",
+    "SUSTAINED"
+   ],
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "energy": {
-   "definition": "",
+   "definition": "Energy engine [0,100] (energy.py): range-position proxy + price-action + squeeze + exhaustion + ATR.",
    "method": "energy.py: [0,100] range-position proxy + price-action + squeeze + exhaustion + ATR.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -168,146 +183,151 @@
    "undocumented": false
   },
   "fib_236": {
-   "definition": "",
+   "definition": "23.6% Fibonacci retracement of swing_low->swing_high (USD).",
    "method": "23.6% Fibonacci retracement of swing_low\u2192swing_high.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fib_382": {
-   "definition": "",
+   "definition": "38.2% Fibonacci retracement (USD).",
    "method": "38.2% fib retracement.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fib_500": {
-   "definition": "",
+   "definition": "50% retracement (USD).",
    "method": "50% fib retracement.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fib_618": {
-   "definition": "",
+   "definition": "61.8% Fibonacci retracement (USD).",
    "method": "61.8% fib retracement.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fib_786": {
-   "definition": "",
+   "definition": "78.6% Fibonacci retracement (USD).",
    "method": "78.6% fib retracement.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fib_swing_high": {
-   "definition": "",
+   "definition": "Upper anchor (swing high) of the Fibonacci retracement.",
    "method": "upper anchor of the fib swing.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fib_swing_low": {
-   "definition": "",
+   "definition": "Lower anchor (swing low) of the Fibonacci retracement.",
    "method": "lower anchor of the fib swing.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "fip_spike_excluded": {
-   "definition": "",
+   "definition": "UNDOCUMENTED \u2014 AQE owner to define (FIP spike-exclusion flag; confirm semantics).",
    "method": "",
    "type": "bool",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": true
   },
   "fip_window_effective": {
-   "definition": "",
+   "definition": "UNDOCUMENTED \u2014 AQE owner to define (effective FIP window; confirm semantics).",
    "method": "",
    "type": "int",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": true
   },
   "floor": {
-   "definition": "",
+   "definition": "UNDOCUMENTED \u2014 AQE owner to define (meaning not recoverable from code comments).",
    "method": "",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": true
   },
   "flow": {
-   "definition": "",
+   "definition": "Flow engine [0,100] (flow.py): MFI+CMF+Heikin-Ashi quality + A/D linreg + volume trend/spike + up/down skew.",
    "method": "flow.py: [0,100] = MFI+CMF+Heikin-Ashi quality + A/D linreg + volume trend/spike + up/down skew.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "gics_gate": {
-   "definition": "",
+   "definition": "Sector entry gate PASS/WATCH/CAUTION/BLOCKED (srm.sector_entry_gate: grade+RRG+macro).",
    "method": "srm.py: sector entry gate PASS/WATCH/CAUTION/BLOCKED (grade+RRG+macro).",
    "type": "str",
-   "enum": null,
-   "glossary_gap": true,
+   "enum": [
+    "PASS",
+    "WATCH",
+    "CAUTION",
+    "BLOCKED"
+   ],
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "gics_sector": {
-   "definition": "",
+   "definition": "GICS sector ETF code the name maps to.",
    "method": "GICS sector ETF code.",
    "type": "str",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "gics_sector_name": {
-   "definition": "",
+   "definition": "GICS sector name.",
    "method": "GICS sector name.",
    "type": "str",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "held": {
-   "definition": "",
+   "definition": "Flag: name is currently held.",
    "method": "flag: currently held.",
    "type": "bool",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "in_ledger": {
-   "definition": "",
+   "definition": "Flag: name is currently tracked in the nomination ledger.",
    "method": "flag: currently tracked in the nomination ledger.",
    "type": "bool",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -402,38 +422,38 @@
    "undocumented": false
   },
   "ma_100": {
-   "definition": "",
+   "definition": "100-day simple moving average of close.",
    "method": "N-day SMA of close.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "ma_20": {
-   "definition": "",
+   "definition": "20-day simple moving average of close.",
    "method": "N-day simple moving average of close.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "ma_200": {
-   "definition": "",
+   "definition": "200-day simple moving average of close.",
    "method": "N-day SMA of close.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "ma_50": {
-   "definition": "",
+   "definition": "50-day simple moving average of close.",
    "method": "N-day SMA of close.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -456,11 +476,11 @@
    "undocumented": false
   },
   "mp": {
-   "definition": "",
+   "definition": "Momentum Persistence [0,100] (mp.py): abs_mom+ADX+rel_mom+trend.",
    "method": "mp.py: [0,100] abs_mom+ADX+rel_mom+trend.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -477,35 +497,43 @@
    "definition": "Label for mp_accel with a \u00b10.10 dead-zone: ACCELERATING / DECELERATING / FLAT.",
    "method": "mp.py: label over mp_accel {ACCELERATING/DECELERATING/...}.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "ACCELERATING",
+    "FLAT",
+    "DECELERATING"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "mp_state": {
-   "definition": "",
+   "definition": "Momentum-persistence phase label (mp.py).",
    "method": "mp.py: label {BUILDING,STRONG,FADING}.",
    "type": "str",
-   "enum": null,
-   "glossary_gap": true,
+   "enum": [
+    "BUILDING",
+    "STRONG",
+    "FADING"
+   ],
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "on_elder": {
-   "definition": "",
+   "definition": "Flag: name is on the Elder list.",
    "method": "flag: on the Elder list.",
    "type": "bool",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "on_longlist": {
-   "definition": "",
+   "definition": "Flag: name is on the longlist.",
    "method": "flag: on the longlist.",
    "type": "bool",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -540,17 +568,21 @@
    "definition": "Candlestick REJECTION pattern on the LAST closed bar (pure geometry, no lookahead): BULLISH_PIN = long lower wick (\u226566% of range) + small body (\u226440%) + small upper wick (\u226440%) \u2014 the market pushed down and got rejected; BEARISH_PIN mirrors it (long upper wick). NONE = no pattern. Filtered so the bar's range must be \u22652\u00d7 the prior bar's range (rejects 'pin bars' that are just noise inside an already-tiny range).",
    "method": "pin_bar.py: pin/inside-bar candlestick geometry on last bar.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "NONE",
+    "BULLISH_PIN",
+    "BEARISH_PIN"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "pipe_rank": {
-   "definition": "",
+   "definition": "Momentum-pipeline rank (pipeline_rank.py).",
    "method": "pipeline_rank.py: momentum pipeline rank.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -591,11 +623,11 @@
    "undocumented": false
   },
   "rank": {
-   "definition": "",
+   "definition": "Overall daily rank of the name in the scored universe.",
    "method": "overall daily rank.",
    "type": "int",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -612,17 +644,21 @@
    "definition": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, LAGGARD (<\u22120.25).",
    "method": "relative-strength leadership label.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "LEADER",
+    "IN-LINE",
+    "LAGGARD"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "rs_spy_20d": {
-   "definition": "",
+   "definition": "20-day relative strength vs SPY (%).",
    "method": "20-day relative strength vs SPY.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -654,11 +690,11 @@
    "undocumented": false
   },
   "rvol": {
-   "definition": "",
+   "definition": "Relative volume vs recent average; >1 = above-normal participation.",
    "method": "relative volume vs recent average (>1 = above-normal participation).",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -681,20 +717,20 @@
    "undocumented": false
   },
   "sc_momentum": {
-   "definition": "",
+   "definition": "SC_MOMENTUM composite [0,100], uncapped weighted average of flow/energy/structure/mp/elder (scoring.py v1.8.0); floors not applied to the composite, Elder gate enforced at qualification.",
    "method": "scoring.py: uncapped weighted composite [0,100] of flow/energy/structure/mp/elder; floors not applied to composite; Elder gate at qualification.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "sc_momentum_raw": {
-   "definition": "",
+   "definition": "The ungated SC_MOMENTUM weighted average (== sc_momentum in v1.8.0).",
    "method": "scoring.py: the ungated SC_MOMENTUM weighted average.",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -720,7 +756,11 @@
    "definition": "The ticker's sector RRG direction of travel: ENTERING / DEEPENING / EXITING / STABLE.",
    "method": "srm.py: RRG direction.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "ENTERING",
+    "DEEPENING",
+    "EXITING"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
@@ -729,7 +769,12 @@
    "definition": "The ticker's sector RRG quadrant vs SPY: LEADING / IMPROVING / WEAKENING / LAGGING.",
    "method": "srm.py: RRG quadrant of the sector.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "LEADING",
+    "WEAKENING",
+    "LAGGING",
+    "IMPROVING"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
@@ -738,35 +783,40 @@
    "definition": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum Building \u2014 Add' / 'Momentum Fading \u2014 Hold' / 'Recovering' / 'Declining'). Context; the gate is gics_gate, unchanged.",
    "method": "srm.py: sector ETF grade DEPLOY/HOLD/TURNING/WATCH/AVOID \u2192 SH.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "Declining \u2014 Avoid",
+    "Momentum Fading \u2014 Hold, Don't Add",
+    "Recovering From Weakness \u2014 Watch for Entry",
+    "Leading \u2014 Deploy"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "sma_distance_pct": {
-   "definition": "",
+   "definition": "Percent distance of price from its SMA \u2014 extension (large + = extended, ~0 = at support).",
    "method": "% distance of price from SMA (extension).",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "source": {
-   "definition": "",
+   "definition": "Data-source tag for the record.",
    "method": "data source tag.",
    "type": "str",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "structure": {
-   "definition": "",
+   "definition": "Structure engine [0,100] (structure.py): clip((rs_spy+rs_accel+base+ms_pos+resist+wk+earn)/95*100).",
    "method": "structure.py: clip((rs_spy+rs_accel+base+ms_pos+resist+wk+earn)/95*100).",
    "type": "float",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -774,7 +824,11 @@
    "definition": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED pivot high (break of structure \u2014 trend continuation/ignition); BEARISH_CHOCH = close broke BELOW the up-swing's anchor low (character change \u2014 the up-structure failed); RANGE = inside the swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling FIX_CONFIRMED_PIVOT: the bullish test previously compared against the current swing's window-max high, which always includes today's own bar \u2014 making BULLISH_BOS mathematically unreachable. Now compares against the nearest confirmed pivot high instead.)",
    "method": "structure/smart_money: BOS/CHoCH vs confirmed anchors (data only).",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "RANGE",
+    "BULLISH_BOS",
+    "BEARISH_CHOCH"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
@@ -798,47 +852,59 @@
    "undocumented": false
   },
   "thematic_basket": {
-   "definition": "",
+   "definition": "Thematic basket the name belongs to (srm thematic layer).",
    "method": "srm.py: thematic basket membership.",
    "type": "str",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "thematic_baskets": {
-   "definition": "",
+   "definition": "All thematic baskets the name belongs to.",
    "method": "all thematic baskets the name belongs to.",
    "type": "list",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "thematic_grade": {
-   "definition": "",
+   "definition": "Grade of the name's thematic basket (see enum).",
    "method": "srm.py: thematic basket grade.",
    "type": "str",
-   "enum": null,
-   "glossary_gap": true,
+   "enum": [
+    "DEPLOY",
+    "HOLD",
+    "TURNING",
+    "WATCH",
+    "AVOID"
+   ],
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "thematic_parent_gics": {
-   "definition": "",
+   "definition": "Parent GICS sector of the thematic basket.",
    "method": "parent GICS of the thematic basket.",
    "type": "str",
    "enum": null,
-   "glossary_gap": true,
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "thematic_parent_grade": {
-   "definition": "",
+   "definition": "Grade of the parent GICS sector.",
    "method": "parent GICS grade.",
    "type": "str",
-   "enum": null,
-   "glossary_gap": true,
+   "enum": [
+    "DEPLOY",
+    "HOLD",
+    "TURNING",
+    "WATCH",
+    "AVOID"
+   ],
+   "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
@@ -846,7 +912,11 @@
    "definition": "The ticker's PRIMARY thematic basket's RRG direction (ENTERING / DEEPENING / EXITING / STABLE).",
    "method": "thematic RRG direction.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "ENTERING",
+    "DEEPENING",
+    "EXITING"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
@@ -855,7 +925,12 @@
    "definition": "The ticker's PRIMARY thematic basket's RRG quadrant vs SPY (LEADING / IMPROVING / WEAKENING / LAGGING).",
    "method": "thematic RRG quadrant.",
    "type": "str",
-   "enum": null,
+   "enum": [
+    "LEADING",
+    "WEAKENING",
+    "LAGGING",
+    "IMPROVING"
+   ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
@@ -938,5 +1013,6 @@
    "momentum_composite",
    "pipe_tier"
   ]
- }
+ },
+ "_synced_with": "AQE src/engines/agentic_dictionary.py (D-24 source of truth)"
 }

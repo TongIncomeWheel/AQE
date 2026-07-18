@@ -58,14 +58,15 @@ def main():
     open(os.path.join(DIST, "aegis-agent.yaml"), "w").write(
         "# GENERATED — Kimi agent-file. Launch: kimi --agent-file aegis-agent.yaml (verify schema vs current kimi-cli docs at deploy)\n"
         + yaml.dump(agentfile, sort_keys=False))
-    ep = json.load(open(os.path.join(ROOT, "config", "endpoints.json")))
-    # K2: env-substitution in headers is undocumented on Kimi — inline the real token from .env at BUILD time.
-    tok = os.environ.get("TIGER_MCP_AUTH", "REPLACE-at-build: set TIGER_MCP_AUTH in env and re-run build_kimi.py; chmod 600 mcp.json")
+    # HIGH-2 / D-30: Kimi is read-only until production migration. The Tiger cloud MCP exposes
+    # order-placement tools (place_stock_order/cancel_order/...), so it is DELIBERATELY NOT wired
+    # into the Kimi package — no order-capable endpoint enters the Kimi cloud, enforced by construction
+    # (not by hoping the PM supplies a read-only token). Kimi reads market data via FMP (read-only REST)
+    # and the local read-only IBKR MCP below (no order tools by construction).
     mcp = {"mcpServers": {
-        "tiger":  {"transport": "http", "url": ep["tiger_mcp"]["url"], "headers": {"Authorization": tok}},
         "ibkr":   {"transport": "stdio", "command": "python3",
-                    "args": [os.path.join(os.path.abspath(DIST), "tools", "mcp", "ibkr_mcp", "server.py")]},   # K5: absolute path
-    }, "_note": "FMP + Alpaca are plain REST via tools (keys in .env) — no MCP needed (F10). Relative ibkr path: run kimi from the dist folder."}
+                    "args": [os.path.join(os.path.abspath(DIST), "tools", "mcp", "ibkr_mcp", "server.py")]},   # K5: absolute path; read-only
+    }, "_note": "Tiger write-capable MCP intentionally EXCLUDED from Kimi (D-30 read-only, HIGH-2). FMP + Alpaca are read-only REST via tools (keys in .env). Re-add a Tiger endpoint ONLY with a read-only-scoped token on explicit production migration (BL-023)."}
     json.dump(mcp, open(os.path.join(DIST, "mcp.json"), "w"), indent=1)
     open(os.path.join(DIST, "README.md"), "w").write(
         "# Aegis on Kimi Code CLI (generated)\n"

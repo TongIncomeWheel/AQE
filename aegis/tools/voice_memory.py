@@ -61,7 +61,9 @@ def add_lesson(args):
     Ls=[L for L in mem["standing_lessons"] if L["text"]!=args.text]
     Ls.append({"text":args.text,"evidence":args.evidence,"first_seen":str(date.today()),
                "last_confirmed_session":mem.get("session_count",0)})
-    mem["standing_lessons"]=Ls[-json.load(open(os.path.join(ROOT,'charter','parameters.yaml')))["performance"]["memory"]["standing_lessons_max_per_voice"] if False else -5:]
+    import yaml as _yaml
+    _cap=_yaml.safe_load(open(os.path.join(ROOT,'charter','parameters.yaml')))["performance"]["memory"]["standing_lessons_max_per_voice"]
+    mem["standing_lessons"]=Ls[-_cap:]  # LOW-1 fix: honour the parameter, was hardcoded -5 behind `if False`
     json.dump(mem,open(mp,"w"),indent=1); print(f"lesson added for {args.voice} ({len(mem['standing_lessons'])} standing)")
 
 def render(args):

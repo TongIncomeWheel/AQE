@@ -1,0 +1,15 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Dynamic Capital Ledger",
+ "x_version": "1.0.0",
+ "x_note": "The Aegis sub-fund capital anchor (MED-1). The single most load-bearing money handoff — validated on write. dynCap = allocation + realised P&L on closed AEGIS trades (D-21).",
+ "type": "object",
+ "required": ["allocated_capital_usd", "realised_pnl_usd", "dyncap_usd", "closed_count"],
+ "properties": {
+  "allocated_capital_usd": {"type": ["number", "null"], "description": "from config/aegis_fund.md; null = unset -> sizing refuses"},
+  "realised_pnl_usd": {"type": "number"},
+  "dyncap_usd": {"type": ["number", "null"], "description": "allocation + realised P&L; null when allocation unset"},
+  "closed_count": {"type": "integer", "minimum": 0},
+  "note": {"type": "string"}
+ }
+}
