@@ -4,15 +4,9 @@ meta:
     the agent) — every change auto-logged to decisions_log.md. Law lives in rulebook.yaml
     and needs committee.
 sub_fund:
-  note: 'D-21: Aegis is ONE sub-fund of a co-mingled book (see RB:identity). This block
-    holds ONLY Aegis''s own capital. The other two strategies (Income Wheel, Protege9)
-    are deliberately NOT modelled here — when/if they are ever brought under this
-    kernel they become sibling files config/sub_funds/*.yaml, not new keys bolted
-    on here. Do not build them speculatively.'
-  strategy_tag: AEGIS
-  allocated_capital_usd: null            # PM SETS THIS: your capital allocation to Aegis. Until set, dynCap has no anchor and sizing must refuse.
-  dyncap_usd: null                       # current dynamic capital = allocated_capital + realised P&L from CLOSED AEGIS-tagged trades only (RB:capital.dyncap_method). Seeded = allocated_capital on day one; maintained by post_market from the Aegis PTJ.
-  dyncap_source: Aegis PTJ file (already AEGIS-filtered) — the one source of truth for Aegis positions and fills; never raw co-mingled broker totals
+  note: 'D-21/D-23: Aegis sub-fund capital moved to a plain editable file — config/aegis_fund.md
+    (PM ruling: a simple MD I can adjust). That file is the ONE place; read it via
+    tools/fund_config.py. Not duplicated here.'
 capital:
   one_r_pct_of_dyncap: 1.5
   sizes:

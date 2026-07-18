@@ -35,10 +35,11 @@ identity:
     allocation number (parameters.yaml sub_fund.allocated_capital_usd), which anchors
     dynCap. Any risk-gate reading taken from raw broker totals instead of the PTJ
     is provisional and must say so.'
-  sub_fund_config: 'Per-strategy parameters live in config (parameters.yaml sub_fund
-    block for Aegis; sibling files if the other strategies are ever onboarded). Aegis
-    reads ONLY its own — it never sizes against, gates on, or reports the other
-    strategies'' capital or positions.'
+  sub_fund_config: 'The Aegis sub-fund config is a plain editable Markdown file —
+    config/aegis_fund.md (D-23) — read via tools/fund_config.py; the PM edits it
+    by hand or through the cockpit. Sibling MD files if the other strategies are ever
+    onboarded. Aegis reads ONLY its own — it never sizes against, gates on, or reports
+    the other strategies'' capital or positions.'
 capital:
   dyncap_method: prior dynCap + realised P&L from CLOSED trades only; never recomputed
     from market value; computed on the AEGIS-tagged book only (RB:identity.capital_segregation),
