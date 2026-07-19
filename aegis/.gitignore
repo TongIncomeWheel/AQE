@@ -1,0 +1,12 @@
+# Aegis kernel — never commit secrets or ephemeral build output
+# Secrets (Phase 3 of INSTALL.md): live only here, never in a tracked file
+config/.env
+.env
+*.key
+*.pem
+*.credentials
+# Generated packages (build_claude.py / build_kimi.py — regenerated, never hand-edited)
+dist/
+# Python scratch
+__pycache__/
+*.pyc

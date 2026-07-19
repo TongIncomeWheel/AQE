@@ -1,0 +1,94 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Aegis Install Manifest",
+ "x_version": "1.0.0",
+ "x_note": "Machine-readable twin of aegis/INSTALL.md — a fresh AI executor can iterate `phases` in order, run each step by `actor`, and verify `check` before advancing. Prose rationale lives in INSTALL.md; this is the executable spine. actor: AI = executor runs it; PM = human gate, STOP and ask.",
+ "conventions": {
+  "actors": {"AI": "executor runs the cmd/tool", "PM": "human-only gate: STOP, state need, wait"},
+  "idempotent": true,
+  "on_check_fail": "STOP; report the failing check verbatim; never loosen a check to proceed",
+  "state_file": "aegis/data/persistent/install_state.json",
+  "load_first": ["aegis/CONTEXT.md", "aegis/charter/constitution.md", "aegis/charter/rulebook.yaml", "aegis/charter/parameters.yaml", "aegis/charter/decisions_log.md"]
+ },
+ "state_schema": {
+  "type": "object",
+  "required": ["phase", "status"],
+  "properties": {
+   "phase": {"type": "integer"},
+   "status": {"enum": ["pending", "in_progress", "passed", "blocked_pm", "failed"]},
+   "checks": {"type": "array", "items": {"type": "object", "required": ["name", "pass"], "properties": {"name": {"type": "string"}, "pass": {"type": "boolean"}, "evidence": {"type": "string"}}}},
+   "pm_gate": {"type": ["string", "null"], "description": "what human input is awaited"},
+   "notes": {"type": "string"},
+   "ts_from_env": {"type": "string", "description": "timestamp taken from the environment, not invented"}
+  }
+ },
+ "phases": [
+  {"phase": 0, "title": "Preconditions", "actor": "AI",
+   "steps": [
+    {"cmd": "git --version; python3 --version; node --version"},
+    {"cmd": "pip install pyyaml jsonschema pyarrow pandas --break-system-packages", "note": "pyarrow/pandas only if reseeding the historical store"},
+    {"tool": "ToolSearch", "for": ["FMP", "Tiger", "Google Drive"], "note": "record which connectors resolve"}
+   ],
+   "check": "git + python3 present AND >=2 of {FMP,Drive} connectors resolvable"},
+
+  {"phase": 1, "title": "Get the kernel", "actor": "AI",
+   "steps": [
+    {"cmd": "git clone https://github.com/TongIncomeWheel/AQE.git  # or: git -C AQE pull"},
+    {"cmd": "test -f aegis/charter/rulebook.yaml && git rev-parse --short HEAD"}
+   ],
+   "check": "aegis/charter/rulebook.yaml exists AND decisions_log.md contains 'D-43'"},
+
+  {"phase": 2, "title": "Build packages", "actor": "AI",
+   "steps": [
+    {"cmd": "python3 aegis/packaging/build_claude.py"},
+    {"cmd": "python3 aegis/packaging/build_kimi.py  # Kimi deployment only"}
+   ],
+   "check": "dist/claude-plugin/aegis-v4/agents/ has 12 files (10 voice-* + committee-desk + staging-gatekeeper); Kimi build (if run) excludes staging-gatekeeper"},
+
+  {"phase": 3, "title": "Config & secrets", "actor": "PM+AI",
+   "steps": [
+    {"actor": "AI", "cmd": "python3 aegis/tools/fund_config.py", "note": "confirm it parses"},
+    {"actor": "PM", "gate": "FMP_API_KEY + GitHub token into gitignored aegis/config/.env (copy env.example)"},
+    {"actor": "PM", "gate": "tiger_mcp.url into aegis/config/endpoints.json (for headless runs)"},
+    {"actor": "PM", "gate": "allocated_capital_usd in aegis/config/aegis_fund.md if null (BL-030)"}
+   ],
+   "check": "fund_config.allocated_capital() is a number; git check-ignore aegis/config/.env returns path; no secret in tracked files"},
+
+  {"phase": 4, "title": "Data bridge & shelf", "actor": "AI",
+   "steps": [
+    {"cmd": "python3 aegis/tools/historical_store.py  # record n_tickers, date_range"},
+    {"cmd": "python3 -c \"import json,glob; [json.load(open(f)) for f in glob.glob('aegis/contracts/*.json')]\""},
+    {"tool": "connectors", "do": "pull today's AQE export (validate vs aqe_export.schema.json; run tools/tripwires.py) and latest Aegis PTJ from RB:data_sources.ptj.drive_folder_id"},
+    {"cmd": "python3 aegis/tools/dyncap_ledger.py update <ptj.json>"}
+   ],
+   "check": "historical n_tickers>500; tripwires PASS; dyncap get_dyncap() non-null AND marked_asof==today"},
+
+  {"phase": 5, "title": "Install as running workspace", "actor": "AI+PM",
+   "steps": [
+    {"actor": "AI", "do": "install generated skills + commands.md into the workspace; load CONTEXT.md + charter as project knowledge with the standing instruction"},
+    {"actor": "AI", "do": "Kimi: register voice subagents from aegis-agent.yaml"}
+   ],
+   "check": "a skill loads AND /fa renders from state without error"},
+
+  {"phase": 6, "title": "Standing clock (scheduled tasks)", "actor": "PM",
+   "steps": [
+    {"tool": "create_trigger", "tasks": ["premarket (plan 16:00 SGT)", "market-hours watch (~21:25 SGT)", "post-market (~04:05 SGT)", "design & review", "weekly (Sunday)", "nightly janitor"], "note": "app scheduler, NOT in-process cron; each fires a fresh session that pulls->runs->commits"}
+   ],
+   "check": "list_triggers shows the tasks with intended cron/next-run"},
+
+  {"phase": 7, "title": "Smoke test / UAT", "actor": "AI",
+   "steps": [
+    {"do": "one SUPERVISED premarket run -> schema-valid plan, 10 nomination files, committee.json, sizing+gates vs live dynCap"},
+    {"cmd": "python3 aegis/tools/daily_flow_audit.py <DATE> --render"},
+    {"do": "forced-failure: tripwire block stands down + pages; gatekeeper refuses a no-consensus dummy and logs it"}
+   ],
+   "check": "DEPLOY.md section C acceptance checklist passes item-by-item; results written to install_state.json"},
+
+  {"phase": 8, "title": "Go-live gating", "actor": "PM",
+   "steps": [
+    {"gate": "shadow/practice week hand-staged"},
+    {"gate": "then /arm within RB:autopilot caps (<=1R, <=3/session, 05:30 SGT expiry, preauthorised only); one deployment armed at a time"}
+   ],
+   "check": "NONE — installer STOPS here; arming is the PM's decision, never automated"}
+ ]
+}
