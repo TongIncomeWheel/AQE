@@ -90,8 +90,15 @@ committee:
     (D-11); flagged names visible but cannot advance
 brackets:
   source: AQE export bracket object, verbatim; never recomputed by an agent
-  validity_gates: atr>=RB:risk.per_trade.stop_atr_distance_min AND rr>=RB:risk.per_trade.rr_min_to_tp2
-    AND risk% <= RB:regime.stop_pct_ceiling
+  quality_flags: 'D-38 — atr>=RB:risk.per_trade.stop_atr_distance_min, rr>=RB:risk.per_trade.rr_min_to_tp2,
+    risk% <= RB:regime.stop_pct_ceiling are SOFT QUALITY FLAGS surfaced at deliberation,
+    NOT hard gates. A high-beta breakout with a wide stop (low RR) is a valid momentum
+    setup — the committee/PM weigh the flag and may advance it. Bracket quality never
+    mechanically cuts a name.'
+  hard_floor: 'the ONLY hard requirement — a stop must be DEFINABLE (structural stop, else
+    the AQE atr_fallback_stop) so dollar-risk is bounded, and the position is R-sized on the
+    ACTUAL (possibly wide) stop so risk stays within the R budget + portfolio gates. Risk is
+    controlled by SIZE, not by refusing the trade.'
   entry_orders: LIMIT
   exit_orders: MARKET
   stop_staging: only after fill confirmed, at actual fill price; post-fill actual-risk
@@ -184,13 +191,14 @@ gate_doctrine:
   - universe screen (data scope; near-misses surfaced for revival D-37, not a silent cut)
   - regime RED -> no new entries (book safety)
   - event filter -> EVENT-DRIVEN cannot advance (kept HARD by PM ruling; stays VISIBLE in the tally)
-  - bracket validity gates at sizing/stage (ATR / RR / risk-ceiling)
+  - a DEFINABLE stop (structural or ATR-fallback) so risk is bounded + R-sizing on the actual stop (D-38 — NOT the RR/ATR quality thresholds; those are soft flags)
   - portfolio gates HARD breach (beta/VaR/leverage/combined-stop) -> blocks new entry
   - staging-gatekeeper 7 checks at order time
   soft_flags_travel:
   - SRM/macro (weather, D-4) · regime YELLOW/ORANGE · Hurst mean-revert
   - portfolio gates SOFT (beta 1.8 / VaR 16 / leverage 2.5 / sector 25) -> flag only
   - detect lens warnings · staleness-acknowledge · the near-miss list · single-voice conviction
+  - bracket QUALITY (RR / ATR-distance / risk%) — D-38: surfaced at deliberation, never a cut; a wide-stop high-beta breakout is sized down, not filtered out
   one_judgment_point: 'the committee deliberation is where every flag converges into ONE
     verdict. Nothing re-litigates or reverses a name after it except the PM, or a logged
     intraday re-review (the pod, D-13). Context is an INPUT to the one decision, never a

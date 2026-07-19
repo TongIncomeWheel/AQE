@@ -11,7 +11,7 @@ One owner for everything order-shaped. Orchestrators cannot stage; they submit a
 ## The checklist — ALL must pass, in order
 1. **Consensus.** Today's committee file contains ADVANCE for this ticker, with conviction and recorded dissent. (HOLD-FOR-CONDITIONS passes only if its named condition is evidenced true.)
 2. **Event clean.** Not flagged EVENT-DRIVEN (RB:committee.event_filter).
-3. **Bracket.** AQE bracket object valid (RB:brackets.validity_gates), read verbatim — or a PM override recorded in today's plan.
+3. **Stop defined & risk bounded (D-38 — NOT bracket quality).** A stop must be DEFINABLE — the AQE structural stop, else the `atr_fallback_stop` — so dollar-risk is bounded and the position is R-sized on the ACTUAL stop. Bracket QUALITY (RR≥2, ATR-distance, risk%≤ceiling) is a SOFT flag the committee/PM already weighed at deliberation; it is NOT re-checked here and NEVER refuses a name. The gatekeeper refuses only if NO stop is definable (risk truly unbounded) — a wide stop on a high-beta breakout passes, sized smaller.
 4. **Size.** Computed by tools/calculators/sizing.py, both steps, R-multiple per RB:capital.sizes for this conviction tier.
 5. **Portfolio gates AFTER add.** Beta (RB:risk.gates.portfolio_beta, window per RB:risk.beta_gate_window) · VaR · leverage · combined stop risk — all pass at post-add values.
 6. **PM approval.** The ticker appears in today's plan with approval status APPROVED; for overnight names the preauthorised flag is true (RB:orders.phase_1).

@@ -37,7 +37,10 @@ def verify(ctx):
     cond_ok = (verdict == "ADVANCE") or (verdict == "HOLD-FOR-CONDITIONS" and c.get("conditions_met") is True)
     chk("consensus", cond_ok, f"committee verdict={verdict} conditions_met={c.get('conditions_met')}")
     chk("event_clean", ctx.get("event_driven") is False, f"event_driven={ctx.get('event_driven')}")
-    chk("bracket_valid", (ctx.get("bracket") or {}).get("valid") is True, f"bracket.valid={(ctx.get('bracket') or {}).get('valid')}")
+    # D-38: the hard floor is a DEFINABLE stop (risk bounded), NOT bracket quality (RR/ATR).
+    b = ctx.get("bracket") or {}
+    stop_defined = b.get("stop") is not None or b.get("atr_fallback_stop") is not None
+    chk("stop_defined", stop_defined, f"stop={b.get('stop')} atr_fallback={b.get('atr_fallback_stop')} (RR/ATR quality is a soft flag, not gated)")
     sz = ctx.get("size") or {}
     r_used = sz.get("r_used"); max_r = ctx.get("max_r_per_order")
     size_ok = isinstance(sz.get("shares"), int) and sz.get("shares", 0) > 0
