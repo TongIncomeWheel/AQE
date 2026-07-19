@@ -40,6 +40,10 @@ risk:
     var_95_1m_pct_of_dyncap:              # BL-030: PM set 1-month VaR 20% as the HARD cap; soft warning 18
       soft: 18
       hard: 20
+      method: parametric                  # D-42 (PM ruling): single-factor variance-covariance VaR,
+      #                                     95% one-month, z=1.645, computed by tools/calculators/var_parametric.py
+      #                                     from per-name exposure (PTJ) + beta/vol (AQE export) + SPY vol (historical store).
+      #                                     NOT historical/simulated. Checked on the POST-ADD book -> var_ok for gate_check.
     leverage_x_dyncap:
       soft: 2.5
       hard: 3.0
@@ -94,6 +98,14 @@ quality_flags:                 # D-39: thresholds for the restored voice quality
   overextended_sma_pct: 25.0   # sma_distance_pct at/above -> extended, late to chase
   rs_down_day_min: 2.0         # rs_down_day_20d at/above -> resilient on down days
   knn_prob_min: 0.6            # knn_prob at/above (AND knn_significant) -> favorable historical edge
+data_sources:
+  ptj:                                    # D-21/D-41: the Aegis book source of truth (held book + dynCap mark)
+    drive_folder_id: '15PR74ws_kTXTqCcEfRGga_jjHrMvbCEM'   # unchanged from before (PM 2026-07-19); also in config/aegis_fund.md
+    read: latest dated file matching aegis_trade_journal_YYYY-MM-DD_PTJ.json (the /ptj skill's output name — do NOT rename)
+    archive_master: aegis_trade_journal_ARCHIVE_master.json
+    written_by: the /ptj (print-trade-journal) skill — same write location & naming as before; the kernel only READS it
+    used_for: premarket step 4 held-book read + mark-to-market dynCap refresh (dyncap_ledger.py update)
+  staleness: plan/export/journal older than the current session date is stale — fix or stand down (premarket step 1)
 schedule:
   weekly_run: Sunday
   premarket_plan_ready: '16:00'

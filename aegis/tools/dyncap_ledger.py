@@ -47,16 +47,50 @@ def compute(closed_trades, open_positions=None, marked_asof=None):
             "note": "dynCap = allocation + realised + UNREALISED = current Aegis equity, mark-to-market (D-41)"}
 
 
+def from_ptj(ptj):
+    """Build the ledger record from a live Aegis PTJ (D-21 source of truth, already AEGIS-filtered).
+    The PTJ maintains cumulative realised via capital.dynCapital (= allocation + all realised P&L);
+    mark-to-market dynCap (D-41) = that realised basis + current unrealised on open positions.
+    unrealised keys tolerated: unrealUsd / unrealised_pnl_usd / unrealizedUsd."""
+    alloc = fund_config.allocated_capital()
+    cap = ptj.get("capital") or {}
+    realised_basis = cap.get("dynCapital")   # allocation + cumulative realised (PTJ-authoritative)
+    opens = ptj.get("open_positions") or ptj.get("positions") or []
+    def _u(p):
+        for k in ("unrealUsd", "unrealised_pnl_usd", "unrealizedUsd", "unrealPnl"):
+            if p.get(k) is not None:
+                return float(p[k])
+        return 0.0
+    unrealised = round(sum(_u(p) for p in opens), 2)
+    if alloc is None or realised_basis is None:
+        return {"allocated_capital_usd": alloc, "realised_pnl_usd": 0.0,
+                "unrealised_pnl_usd": unrealised, "dyncap_usd": None,
+                "closed_count": 0, "open_count": len(opens),
+                "marked_asof": ptj.get("snapshot"),
+                "note": "allocation or PTJ realised basis missing — sizing must REFUSE"}
+    realised = round(realised_basis - alloc, 2)   # cumulative realised implied by the PTJ basis
+    return {"allocated_capital_usd": alloc, "realised_pnl_usd": realised,
+            "unrealised_pnl_usd": unrealised,
+            "dyncap_usd": round(realised_basis + unrealised, 2),
+            "closed_count": len(ptj.get("closed_trades_today") or ptj.get("closed_trades") or []),
+            "open_count": len(opens), "marked_asof": ptj.get("snapshot"),
+            "note": "dynCap = PTJ realised basis + UNREALISED (open, marked) = current Aegis equity, mark-to-market (D-41)"}
+
+
 def update(ptj_path):
-    """Read the Aegis PTJ (closed_trades + open positions marked to price) and recompute."""
+    """Read the Aegis PTJ and recompute dynCap. Detects the live PTJ shape (capital.dynCapital +
+    open_positions) and uses from_ptj; otherwise the generic closed/open path."""
     doc = json.load(open(ptj_path)) if ptj_path else {}
-    if isinstance(doc, list):
-        closed, opened = doc, []          # bare list = closed trades (back-compat)
+    if isinstance(doc, dict) and doc.get("capital", {}).get("dynCapital") is not None:
+        led = from_ptj(doc)
     else:
-        closed = doc.get("closed_trades", [])
-        opened = doc.get("open_positions") or doc.get("positions") or []
-    marked = doc.get("marked_asof") or doc.get("as_of") if isinstance(doc, dict) else None
-    led = compute(closed, opened, marked_asof=marked)
+        if isinstance(doc, list):
+            closed, opened = doc, []          # bare list = closed trades (back-compat)
+        else:
+            closed = doc.get("closed_trades", [])
+            opened = doc.get("open_positions") or doc.get("positions") or []
+        marked = doc.get("marked_asof") or doc.get("as_of") if isinstance(doc, dict) else None
+        led = compute(closed, opened, marked_asof=marked)
     # MED-1: validate the capital anchor against its contract before writing (fail-closed)
     try:
         import jsonschema

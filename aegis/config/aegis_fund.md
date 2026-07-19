@@ -1,8 +1,9 @@
 ---
 strategy_tag: AEGIS
 allocated_capital_usd: 75000
-dyncap_usd: 64000
+dyncap_usd: 66699
 brokers: [tiger, ibkr]
+ptj_drive_folder_id: 15PR74ws_kTXTqCcEfRGga_jjHrMvbCEM
 ---
 
 # Aegis Sub-Fund Config
