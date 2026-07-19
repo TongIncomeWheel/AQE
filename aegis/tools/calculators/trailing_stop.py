@@ -25,6 +25,7 @@ def r_multiple(entry: float, price: float, initial_risk_per_share: float) -> flo
 def trail_stop(*, entry: float, price: float, current_stop: float,
                initial_risk_per_share: float, aqe_operative_stop: float | None,
                tp1_hit: bool = False, tp2_hit: bool = False, tp1: float | None = None,
+               cleared_levels: list | None = None, structural_buffer_pct: float = 0.3,
                breakeven_trigger_r: float = 1.0, breakeven_buffer_pct: float = 0.0) -> dict:
     """Return the new stop and whether it moved. NEVER returns a stop below current_stop
     (ratchet). NEVER returns a stop at/above price (that's an exit, not a stop) — if the
@@ -52,6 +53,16 @@ def trail_stop(*, entry: float, price: float, current_stop: float,
             exit_signal = True; reasons.append("structure_reached_price:EXIT")
         elif aqe_operative_stop > current_stop:
             candidates.append(aqe_operative_stop); reasons.append("structure_trail")
+
+    # 2b) structural-level tighten (D-35): when price CLEARS a structural level (20MA / fib),
+    #     that level flips to support — tuck the stop just below it, even BEFORE any TP is hit.
+    if cleared_levels:
+        below = [lv for lv in cleared_levels if isinstance(lv, (int, float)) and lv < price]
+        if below:
+            lvl = max(below)
+            cand = round(lvl * (1 - structural_buffer_pct / 100.0), 4)  # "just below" the reclaimed level
+            if cand > current_stop and cand < price:
+                candidates.append(cand); reasons.append(f"just_below_cleared_{round(lvl,2)}")
 
     # 3) milestone locks
     if tp1_hit and entry > current_stop:
@@ -101,7 +112,11 @@ if __name__ == "__main__":
     # exit signal when structure reaches price
     d = trail_stop(entry=e, price=106, current_stop=104, initial_risk_per_share=irps, aqe_operative_stop=106)
     assert d["exit_signal"] and d["new_stop"] == 104, d
+    # structural tighten pre-TP: price 108 cleared the 20MA at 106 -> stop tucks just below 106
+    f = trail_stop(entry=e, price=108, current_stop=101, initial_risk_per_share=irps,
+                   aqe_operative_stop=100, cleared_levels=[95, 106, 112], structural_buffer_pct=0.3)
+    assert 105.6 < f["new_stop"] < 106 and "just_below_cleared_106" in f["reason"], f  # 106*(1-0.003)=105.68; 112 not cleared (above price)
     # scale-out once per target
     s = scale_out(shares_held=300, tp1_hit=True, tp2_hit=False, tp1_done=False, tp2_done=False)
     assert s["scale_shares"] == 99 and s["tp_level"] == "TP1", s
-    print("trailing_stop self-test PASSED (ratchet, breakeven, structure, exit-signal, scale-out)")
+    print("trailing_stop self-test PASSED (ratchet, breakeven, structure, cleared-level tighten, exit-signal, scale-out)")

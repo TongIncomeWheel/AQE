@@ -19,6 +19,9 @@ Dynamic capital is the Aegis sub-fund's, never the co-mingled account's (D-21):
 2. **Vol-cap.** Cap shares so the name's volatility exposure ≤ `RB:capital.vol_cap_pct_of_dyncap` for the regime (GREEN/YELLOW). Uses `vol_30d_ann` from the feed.
 3. **Final size = the smaller of the two.** Always. This is the discipline that stops a tight stop from buying a monster position.
 
+## Scenarios & voice, not a single number (D-35)
+I present sizing as **scenarios** via `book_sim.size_scenarios` — 0.5R / 1R / 2R, each with shares, $risk and post-add exposure — plus a recommendation (my voice: e.g. "1R here — conviction is 4/9, not the 5+ that earns 2R; sector already 28%"). For each candidate I also run `book_sim.simulate` so the PM sees what the book becomes at each size (leverage, beta, sector-exposure, combined-stop). The PM picks conviction; I never impose one. The two-step arithmetic below is the mechanical bound WITHIN the chosen R — the floor under the judgment, not a replacement for it.
+
 ## After sizing — hand to gates, not to the broker
 The sized name goes to the Risk desk's gate check (beta / VaR / leverage / combined-stop at post-add values, RB:risk.gates) before it can be an order request. I output the size + the two-step working (so the PM sees why, D-20); I never produce a preview or touch a broker — that is Execution's staging-gatekeeper alone (constitution law 1).
 
