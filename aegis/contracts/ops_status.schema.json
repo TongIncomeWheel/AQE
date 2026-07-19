@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aegis ops-status (/ops)",
+  "x_note": "Output of tools/ops_status.py assemble() (D-45) — the SYSTEM-liveness view (distinct from /status, the book cockpit). Read-only; reuses daily_flow_audit.py. Fail-visible: anything unreadable is listed in `partial`, never faked.",
+  "type": "object",
+  "required": ["date", "status", "loops", "flow", "state_health", "channels", "partial"],
+  "additionalProperties": true,
+  "properties": {
+    "date": {"type": "string"},
+    "status": {"type": "string", "enum": ["ALIVE", "PARTIAL", "DEGRADED"]},
+    "loops": {"type": "array", "items": {"type": "object", "required": ["loop", "when"],
+      "properties": {"loop": {"type": "string"}, "when": {"type": "string"}}}},
+    "flow": {"type": "object", "description": "reused from daily_flow_audit.audit(): layers touched/idle, headline, incident count"},
+    "state_health": {"type": "object", "description": "historical store, dyncap, kernel commit freshness"},
+    "channels": {"type": "object", "required": ["whatsapp", "watchdog"],
+      "properties": {"whatsapp": {"type": "boolean"}, "watchdog": {"type": "boolean"}}},
+    "partial": {"type": "array", "items": {"type": "string"}, "description": "pieces that could not be read (the PARTIAL signal)"}
+  }
+}

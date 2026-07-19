@@ -47,6 +47,7 @@ instruction set. You already have the four things you need:
 ## PHASE 3 — Config & secrets `[PM]` gates for values, `[AI]` for wiring
 - **Fund config** (`aegis/config/aegis_fund.md`): already carries `allocated_capital_usd`, `dyncap_usd`, `brokers`, `ptj_drive_folder_id`. `[AI]` confirm it parses via `python3 aegis/tools/fund_config.py`. If `allocated_capital_usd` is null → `[PM]` gate (BL-030): ask the PM for the allocation; do not size on a null anchor.
 - **Secrets** live in a gitignored file — `aegis/config/.env` (copy from `aegis/config/env.example`). Required: `FMP_API_KEY` `[PM]`. The GitHub token for push/pull-of-feed `[PM]` lives here too (or in the host's credential store) — NEVER in a tracked file. Alpaca read-only keys are already embedded per PM ruling.
+- **Notification secrets (D-45, optional but recommended)** `[PM]`: for the self-heal phone alerts, set the WhatsApp channel (`WHATSAPP_TOKEN`/`WHATSAPP_PHONE_ID`/`WHATSAPP_TO`, or the `TWILIO_*` alternative) and `WATCHDOG_URL` (an external healthchecks.io/cloud-cron ping URL). All in `aegis/config/.env`. If unset, `notify.py` degrades gracefully to print-only and `/ops` reports the channels as OFF — no crash, just no phone pings.
 - **Endpoints** (`aegis/config/endpoints.json`): `tiger_mcp.url` `[PM]` (from the account's Tiger connector) — needed for scheduled/headless runs; interactive sessions may inherit it.
 - **CHECK:** `fund_config.allocated_capital()` returns a number; `.env` exists and is gitignored (`git check-ignore aegis/config/.env` returns the path); no secret appears in `git status` staged/tracked files.
 
@@ -64,6 +65,7 @@ instruction set. You already have the four things you need:
 
 ## PHASE 6 — The standing clock `[PM]` (create scheduled tasks)
 - Create the scheduled tasks on the app's own scheduler (NOT the in-process cron): premarket build (plan ready 16:00 SGT), market-hours watch session (from ~21:25 SGT), post-market (~04:05), design & review (after post-market), Sunday weekly, nightly janitor. Use the `create_trigger` scheduled-task tool; each fires a fresh session that pulls the repo, runs its phase, and commits.
+- **Heartbeat + dead-man's-switch (D-45)** `[PM]`: also create a light heartbeat task that fires `tools/notify.py pre_run` at T-minus `RB:notifications.pre_run_minutes` before each `RB:notifications.key_runs` entry (premarket, ptj, post-market) and checks in with the watchdog (`notify.py --checkin ok`). Register the matching external watchdog (healthchecks.io or a cloud cron) to expect those check-ins so a missed one pages you — this is the only way box-death becomes an alarm rather than silence. **CHECK addendum:** `list_triggers` shows the heartbeat task, and a manual `notify.py --checkin ok` turns the external watchdog green.
 - This is a `[PM]` gate because it commits the account to a recurring cadence and (for headless firings) may need the packaged `.mcp.json`/Tiger URL fallback — confirm with the PM before creating.
 - **CHECK:** `list_triggers` shows the created tasks with the intended cron/next-run.
 

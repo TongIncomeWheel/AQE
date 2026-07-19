@@ -50,7 +50,8 @@
     {"actor": "AI", "cmd": "python3 aegis/tools/fund_config.py", "note": "confirm it parses"},
     {"actor": "PM", "gate": "FMP_API_KEY + GitHub token into gitignored aegis/config/.env (copy env.example)"},
     {"actor": "PM", "gate": "tiger_mcp.url into aegis/config/endpoints.json (for headless runs)"},
-    {"actor": "PM", "gate": "allocated_capital_usd in aegis/config/aegis_fund.md if null (BL-030)"}
+    {"actor": "PM", "gate": "allocated_capital_usd in aegis/config/aegis_fund.md if null (BL-030)"},
+    {"actor": "PM", "gate": "OPTIONAL (D-45): WhatsApp + WATCHDOG_URL notification secrets into aegis/config/.env; if unset, notify.py is print-only and /ops shows channels OFF (no crash)"}
    ],
    "check": "fund_config.allocated_capital() is a number; git check-ignore aegis/config/.env returns path; no secret in tracked files"},
 
@@ -73,9 +74,10 @@
 
   {"phase": 6, "title": "Standing clock (scheduled tasks)", "actor": "PM",
    "steps": [
-    {"tool": "create_trigger", "tasks": ["premarket (plan 16:00 SGT)", "market-hours watch (~21:25 SGT)", "post-market (~04:05 SGT)", "design & review", "weekly (Sunday)", "nightly janitor"], "note": "app scheduler, NOT in-process cron; each fires a fresh session that pulls->runs->commits"}
+    {"tool": "create_trigger", "tasks": ["premarket (plan 16:00 SGT)", "market-hours watch (~21:25 SGT)", "post-market (~04:05 SGT)", "design & review", "weekly (Sunday)", "nightly janitor"], "note": "app scheduler, NOT in-process cron; each fires a fresh session that pulls->runs->commits"},
+    {"tool": "create_trigger", "tasks": ["heartbeat: notify.py pre_run at T-minus notifications.pre_run_minutes before each notifications.key_runs entry + notify.py --checkin ok"], "note": "D-45; register the matching EXTERNAL watchdog (healthchecks.io/cloud cron) so a missed check-in pages the PM -- box-death becomes an alarm, not silence"}
    ],
-   "check": "list_triggers shows the tasks with intended cron/next-run"},
+   "check": "list_triggers shows the loop tasks AND the heartbeat with intended cron/next-run; a manual notify.py --checkin ok turns the external watchdog green"},
 
   {"phase": 7, "title": "Smoke test / UAT", "actor": "AI",
    "steps": [

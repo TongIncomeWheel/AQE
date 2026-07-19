@@ -173,3 +173,32 @@ model_tiers:
   cockpit: sonnet
   kimi_judgment: kimi-for-coding-highspeed
   kimi_control: kimi-for-coding
+notifications:   # D-45: PM-tunable — which operational events ping the phone. Emitter tools/notify.py (order-blind). Secrets in config/.env; channel/watchdog URLs in config/endpoints.json.
+  channel: whatsapp            # one-way alerts only; two-way chat stays in the web cockpit (PM ruling, D-45)
+  pre_run_minutes: 15          # heartbeat ping this many minutes before each key run (proves alive)
+  on:                          # events that ping (PM: all pings on, 2026-07-19)
+    pre_run: true
+    run_ok: true
+    run_fail: true             # ALWAYS on and visually unmistakable — the failure page is the point
+    healed: true
+    alert: true
+  key_runs:                    # the runs that get a T-minus pre-run heartbeat
+  - premarket
+  - ptj
+  - post_market
+  quiet_hours: none            # no suppression — PM wants all pings (2026-07-19)
+  watchdog: external           # dead-man's-switch lives OFF-box (healthchecks.io / cloud cron); ABSENCE of a check-in is the alarm
+self_heal:       # D-45: PM-tunable — the OPERATIONAL self-heal net (tools/self_heal.py, Engineering & Change). Extends D-40 data self-heal; never places an order (constitution law 1).
+  max_retries: 3               # bounded retries for transient failures (feed/ptj/store)
+  auto_heal:                   # failure classes the system may fix WITHOUT the PM (data plane only)
+  - feed_pull                  # transient — re-fetch + revalidate + tripwires
+  - ptj_pull                   # transient — re-pull both brokers, refresh dynCap
+  - store_stale                # transient — reseed via D-40 historical_store
+  escalate_only:               # NEVER auto-healed — page the PM with the manual fix (/recover)
+  - schema
+  - config
+  - logic
+  stand_down:                  # a hard gate is stood down, never healed; PM clears/overrides (recorded)
+  - tripwire
+  - gate
+  log: data/eod/<date>/self_heal_<date>.jsonl

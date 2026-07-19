@@ -15,6 +15,7 @@ An earlier design split this into "Change & Technical" + "Assurance & Governance
 - **Data utilities** — janitor, migrate, ledger jobs, feed sync, historical loader, the shelf layout.
 - **The design bench** — five lenses run inline as a skill (D-27): technical, indicator, data, business-process, governance. A seat is spawned only for a deep/contested design (a named isolation reason).
 - **Assurance** — auditor (run completeness/conduct), performance scorer + criteria, learning + `tools/measure_proposal.py`.
+- **Operational self-heal & liveness (D-45)** — the operational self-heal net (`tools/self_heal.py`: classify a failure → attempt a bounded, safe, idempotent fix → else escalate to the PM with the manual command), the one-way phone notification emitter (`tools/notify.py`, order-blind, unmistakable failure page + external dead-man's-switch), and the on-demand system-liveness view (`tools/ops_status.py`, surfaced as `/ops`; the PM's manual levers are the `recover` skill: `/heal` `/recover` `/repull` `/reseed`). Extends the D-40 historical-store self-heal and reuses `daily_flow_audit.py`; never places, sizes, or arms an order (constitution law 1).
 - **The managed-change pipeline (D-8)** — capture → PM approval → branch → verify/shadow → ship → remember. Backlog is `data/persistent/backlog.jsonl`; the decisions log is the amendment record.
 
 ## My routine

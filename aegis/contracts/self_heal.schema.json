@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aegis self-heal event",
+  "x_note": "Output of tools/self_heal.py heal() (D-45). One event per recovery attempt, appended to data/eod/<date>/self_heal_<date>.jsonl. Order-blind by construction: no order/size/arm field exists here.",
+  "type": "object",
+  "required": ["loop", "failure", "klass", "ts", "healed", "escalate", "stand_down"],
+  "additionalProperties": true,
+  "properties": {
+    "loop": {"type": "string", "description": "the loop/step that failed (premarket, post-market, ptj, ...)"},
+    "failure": {"type": "string", "enum": ["feed_pull", "ptj_pull", "store_stale", "schema", "config", "logic", "tripwire", "gate", "unknown"]},
+    "klass": {"type": "string", "enum": ["transient", "structural", "gate"], "description": "recovery policy class"},
+    "ts": {"type": "string", "description": "UTC timestamp from the environment, never invented"},
+    "healed": {"type": "boolean", "description": "true only if a bounded safe fix succeeded"},
+    "escalate": {"type": "boolean", "description": "true if the PM must act"},
+    "stand_down": {"type": "boolean", "description": "true if a hard gate/tripwire stood the process down (never auto-healed)"},
+    "actions": {"type": "array", "items": {"type": "object"}, "description": "the recovery actions attempted, each with its own result"},
+    "manual_fix": {"type": ["string", "null"], "description": "the /recover-family command the PM can run"},
+    "message": {"type": "string"}
+  }
+}

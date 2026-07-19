@@ -26,5 +26,10 @@
     "method": "rclone",
     "remote": "REPLACE: gdrive:Aegis",
     "direction": "bidirectional data/ only"
+  },
+  "notifications": {
+    "whatsapp_api": "https://graph.facebook.com/v20.0",
+    "provider": "meta OR twilio -- keys live in config/.env (D-45), never here",
+    "watchdog": "external dead-man's-switch (healthchecks.io / cloud cron); ping URL in WATCHDOG_URL env -- absence of a check-in is the alarm"
   }
 }

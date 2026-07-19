@@ -28,4 +28,9 @@
 | **/later** | Defer a backlog item to tomorrow's summary | no |
 | **/steer** | Show the pending steer file: FYI · DECIDE (your one-tap items, with days-pending) · PRE-FIX notices · POST-FIX results | per DECIDE item |
 | **/findings** | Raw findings from the last review before bench triage | no |
+| **/ops** | System liveness card (skills/ops-status): are the loops firing, is state fresh, are alert channels up — the SYSTEM sibling of /status. `/ops --render` writes the full dashboard. Read-only, places nothing | no |
+| **/recover [loop]** | Re-run a failed loop fresh (premarket · market-hours · post-market · eod-audit). Read/compute/plan only — a re-run that reaches execution still previews at the gate (D-45) | no |
+| **/heal [loop] --failure T** | Run the auto self-heal protocol for a classified failure (transient→retry/reseed; structural→escalate; gate→stand down). Never places an order | no |
+| **/repull [ptj]** | Re-fetch today's AQE export (revalidate + tripwires); `/repull ptj` re-pulls both brokers and refreshes dynCap | no |
+| **/reseed [names]** | Force a historical-store seed (D-40) for missing/stale names | no |
 Anything not on this list can still be said in plain English — commands are the fast path, not the only path.
