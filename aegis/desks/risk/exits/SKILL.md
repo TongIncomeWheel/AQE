@@ -11,10 +11,13 @@ The book doesn't only buy — it exits for stop, target, and rotation, and it tr
 ## Inputs (per held position, from the Aegis PTJ + AQE)
 entry · current stop · live/close price · initial risk-per-share (entry − initial stop = 1R) · AQE's fresh daily operative stop · TP1/2/3 and which are hit · shares held · which targets already scaled.
 
-## What I decide (per position)
-1. **Trailing stop** — `trailing_stop.trail_stop(...)` (RB:trailing): breakeven after +1R, then ratchet up to AQE's fresh operative stop, milestone-lock after TP1 (≥entry) and TP2 (≥TP1). **It NEVER lowers the stop** (the ratchet invariant) and never sits at/above price — if structure has reached price it returns an EXIT signal instead. Output: `stop_new` if raised → a TIGHTEN_STOP action for Execution.
-2. **Take-profit scale-out** — `trailing_stop.scale_out(...)` (RB:trailing.scale_out): take the configured fraction at TP1 and TP2 (once each), run the remainder on the trail. Output: SCALE_OUT action with tp_level + scale_shares.
-3. **Rotation** — a held name exits when EITHER Research flags thesis decay (EXIT-CASE) OR a new idea is materially stronger and capital is needed; I do the head-to-head capital math (freed dynCap vs the new idea's R-need). Output: EXIT action with the reason.
+## The division of labour (D-34): committee judges, PM decides, I floor & compute
+Exits are JUDGMENT-led, not a formula. The committee deliberates each held name (price vs ATR range, structural levels, runner-vs-weakening — RUN/TAKE-PARTIAL/TIGHTEN/EXIT) and the PM decides partial-vs-run. My mechanical job is the protective FLOOR and the capital/exposure math underneath that judgment.
+
+## What I own (per position)
+1. **Trailing stop — the mechanical FLOOR (always runs, regardless of judgment).** `trailing_stop.trail_stop(...)` (RB:trailing): breakeven after +1R, then ratchet to AQE's fresh operative stop, milestone-lock after TP1(≥entry)/TP2(≥TP1). **NEVER lowers** (ratchet invariant); if structure reaches price it returns an EXIT signal. Output: `stop_new` if raised → TIGHTEN_STOP. This protects capital even when the committee says RUN.
+2. **Take-profit — a SUGGESTED default, not an automatic sale (D-34).** `trailing_stop.scale_out(...)` produces the default fractions (RB:trailing.scale_out) as a STARTING POINT. The actual partial-vs-run is the committee's held_verdict (RUN vs TAKE-PARTIAL) + the PM's call — I present the suggestion with the committee read and the numbers; the PM sets the amount. I never auto-scale a RUN verdict.
+3. **Rotation — three triggers, I do the math (D-34).** A held name is a rotation candidate when: (a) thesis decay (committee EXIT verdict), OR (b) capital-competition — a new idea is materially stronger and capital is needed (I compute freed dynCap vs the new idea's R-need), OR (c) **sector over-exposure** — held-book concentration breaches RB:risk.gates.sector_exposure (I compute per-sector exposure vs dynCap; committee flags it too). Output: EXIT with exit_reason ROTATION_THESIS / ROTATION_CAPITAL / SECTOR_OVEREXPOSURE.
 
 ## Cadence (RB:trailing.cadence)
 - **Post-market (daily):** recompute the trail for every held name for next session; stage any raise.

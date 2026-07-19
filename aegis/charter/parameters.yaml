@@ -42,6 +42,9 @@ risk:
       soft: 2.5
       hard: 3.0
     combined_stop_risk_pct_of_dyncap_max: 5
+    sector_exposure_pct_of_dyncap:      # D-34: single-sector concentration on the held book
+      soft: 25                          # flag for rotation review
+      hard: 35                          # over-exposed — rotation candidate
   per_trade:
     rr_min_to_tp2: 2.0
     stop_atr_distance_min: 1.0

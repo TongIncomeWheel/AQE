@@ -6,6 +6,22 @@
  "required": ["date", "deliberation_set", "verdicts"],
  "properties": {
   "date": {"type": "string"},
+  "held_verdicts": {
+   "type": "array",
+   "description": "D-34: full deliberation of each HELD position (not just a fold of voice lines)",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "held_verdict", "bear_case"],
+    "properties": {
+     "ticker": {"type": "string"},
+     "held_verdict": {"enum": ["RUN", "TAKE-PARTIAL", "TIGHTEN", "EXIT"]},
+     "bear_case": {"type": "string", "minLength": 1},
+     "data_anchors": {"type": ["object", "null"], "description": "price vs ATR range, distance to structural levels, sc_momentum/mp_state, unrealised/R-multiple"},
+     "dissent": {"type": "array", "items": {"type": "object"}}
+    }
+   }
+  },
+  "sector_exposure_note": {"type": ["string", "null"], "description": "D-34: committee flag on held-book sector concentration for the Risk over-exposure check"},
   "deliberation_set": {
    "type": "array",
    "items": {"type": "string"},
