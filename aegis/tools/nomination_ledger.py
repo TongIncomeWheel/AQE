@@ -3,13 +3,13 @@
 
 The system's outcome memory (constitution law 7). Three commands:
 
-  record  --date D --nominations-dir data/committee/DATE/   append the day's nominations
+  record  --date D --nominations-dir data/sod/DATE/nominations/   append the day's nominations
   track   --prices data/prices.json                          update d1..d15 / max gain / max drawdown
   report  [--days 15] [--voice lynch]                        hit rates & expectancy per voice
 
 Ledger continuity (RB:universe.ledger_continuity): names that leave the daily screen
 stay tracked until their 15-day window closes.
-Storage: data/ledger/ledger.jsonl (append-only; one JSON object per line, schema contracts/ledger.schema.json).
+Storage: data/persistent/ledger.jsonl (append-only, cross-day persistent shelf; one JSON object per line, schema contracts/ledger.schema.json).
 """
 import argparse, json, os, sys, glob
 from datetime import date, datetime

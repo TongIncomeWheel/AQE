@@ -26,5 +26,12 @@
         "lens_readings": {"type": ["object", "null"], "description": "D-20: when the Detect lens nominated or flagged this name, its ACTUAL readings (lens_positive, lens_warnings, runner_setup/conviction, premove_setup/conviction) shown explicitly — the lens never surfaces a name as a black box"}}}},
     "watch_table": {"type": "array", "items": {"type": "object"},
       "x_note": "D-20: each watch-table row must carry the data anchor that surfaced it (nomination_count, which voices, and the 2-3 field values behind it) — a watched name the PM can't see the data for is a black box"},
+    "hedge": {"type": ["object", "null"],
+      "x_note": "BL-007: the premarket hedge assessment output. Phase 1 = coverage matrix (beta-adjusted exposure vs SRM/macro posture); Phase 2 (only if coverage short) = the recommended put-spread structure from hedge_engine.py. Null/absent when position_count < 4 (skip rule) or coverage is adequate.",
+      "properties": {
+        "posture": {"type": ["string", "null"], "description": "macro/SRM posture the coverage was assessed against"},
+        "coverage_adequate": {"type": ["boolean", "null"]},
+        "skipped_reason": {"type": ["string", "null"], "description": "e.g. position_count<4, or coverage adequate"},
+        "recommended_structure": {"type": ["object", "null"], "description": "the chosen put-spread (legs, cost, coverage-to-cost) when Phase 2 ran"}}},
     "approval": {"type": "object", "properties": {"status": {"enum": ["DRAFT", "APPROVED", "EDITED", "REJECTED"]},
       "approved_at": {"type": ["string", "null"]}, "edits": {"type": "array", "items": {"type": "string"}}}}}}

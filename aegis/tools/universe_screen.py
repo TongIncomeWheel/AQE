@@ -8,9 +8,10 @@ Criteria (RB:universe.screen — change them in rulebook.yaml, not here):
   - current volume >= 30-day average volume
 
 Data source: FMP (API key in env FMP_API_KEY).
-Output: data/universe/universe_YYYY-MM-DD.json — the ONLY universe file any voice sees.
+Output: data/sod/YYYY-MM-DD/universe.json — the ONLY universe file any voice sees
+(the standard SOD shelf layout every skill/tool writes to — BL-012).
 
-Usage: python3 universe_screen.py [--out data/universe/] [--dry-run]
+Usage: python3 universe_screen.py [--out data/sod] [--dry-run]
 """
 import argparse, json, os, sys, time, urllib.request
 from datetime import date
@@ -95,7 +96,7 @@ def evaluate(symbol):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="data/universe")
+    ap.add_argument("--out", default="data/sod", help="SOD shelf root; file lands at <out>/<DATE>/universe.json")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--max-names", type=int, default=0, help="cap for testing")
     a = ap.parse_args()
@@ -120,8 +121,9 @@ def main():
     if a.dry_run:
         print(json.dumps({**doc, "names": out[:10], "near_misses": near[:10]}, indent=1))
         return
-    os.makedirs(a.out, exist_ok=True)
-    path = os.path.join(a.out, f"universe_{date.today()}.json")
+    outdir = os.path.join(a.out, str(date.today()))   # SOD shelf: data/sod/DATE/ (BL-012)
+    os.makedirs(outdir, exist_ok=True)
+    path = os.path.join(outdir, "universe.json")
     json.dump(doc, open(path, "w"), indent=1)
     print(f"wrote {path}: {len(out)} names, {len(near)} near-misses ({dropped} dropped)")
 

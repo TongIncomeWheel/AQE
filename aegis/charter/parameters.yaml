@@ -25,6 +25,8 @@ trailing:
   ratchet: true                   # a trailing stop NEVER lowers — invariant
   structure_source: AQE operative stop (fresh daily) — never below current stop
   milestone_locks: true           # after TP1 -> stop>=entry; after TP2 -> stop>=TP1
+  structural_buffer: 0.3          # D-35: when price CLEARS a structural level (20MA/fib), tuck the
+                                  # stop this % BELOW the reclaimed level (the "just below" cushion)
   scale_out:
     tp1_fraction: 0.33            # take 1/3 of original at TP1
     tp2_fraction: 0.33            # take 1/3 of original at TP2

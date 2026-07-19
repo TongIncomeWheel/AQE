@@ -28,7 +28,7 @@ Premarket step 9 used to run "in the orchestrator's own session" — meaning del
 7. I do not invent nominations, resize anything, or touch brackets — I verdict what the ten voices already found, informed by the risk lens. Adding names here would be the anti-anchoring rule again, in reverse.
 
 ## OUTPUT
-`committee.json` per `contracts/committee.schema.json` — new-idea `verdicts` AND `held_verdicts` (D-34: RUN / TAKE-PARTIAL / TIGHTEN / EXIT per held name, each with bear_case + data_anchors), plus a `sector_exposure_note`. Every entry carries a non-empty bear_case, an explicit dissent array, AND `data_anchors` (D-20). Written to `data/committee/committee_YYYY-MM-DD.json`.
+`committee.json` per `contracts/committee.schema.json` — new-idea `verdicts` AND `held_verdicts` (D-34: RUN / TAKE-PARTIAL / TIGHTEN / EXIT per held name, each with bear_case + data_anchors), plus a `sector_exposure_note`. Every entry carries a non-empty bear_case, an explicit dissent array, AND `data_anchors` (D-20). Written to `data/sod/DATE/committee.json` (the standard SOD shelf — BL-012; the old flat `data/committee/` dir is retired).
 
 **data_anchors (D-20 anti-black-box):** for every verdict, carry up the 3–6 field values that actually drove it — pulled from the `field_values` the voices cited, plus nomination_count, plus any fired quality flags (D-39) that shaped the verdict (e.g. `bearish_divergence` on a PASS, `squeeze`+`tight_base` on an ADVANCE). This is the PM's numeric anchor: they must be able to see the numbers behind my verdict without taking my prose on faith. A name the Detect lens nominated or flagged carries its lens readings here (lens_positive, lens_warnings, runner/premove setup + conviction) — the lens never reaches the PM as an unexplained hunch.
 
