@@ -41,9 +41,13 @@ identity:
     onboarded. Aegis reads ONLY its own — it never sizes against, gates on, or reports
     the other strategies'' capital or positions.'
 capital:
-  dyncap_method: prior dynCap + realised P&L from CLOSED trades only; never recomputed
-    from market value; computed on the AEGIS-tagged book only (RB:identity.capital_segregation),
-    never on co-mingled broker totals
+  dyncap_method: 'D-41 (PM ruling 2026-07-19, revises D-21) — MARK-TO-MARKET. dynCap =
+    allocated_capital + realised P&L (closed AEGIS trades) + UNREALISED P&L (open AEGIS
+    positions, marked to current price) = current Aegis sub-fund EQUITY. Sizing tracks what
+    is actually held; procyclical by design (de-sizes in drawdown) — the PM''s explicit choice.
+    Computed on the AEGIS-tagged book ONLY (RB:identity.capital_segregation), never co-mingled
+    broker totals; the Aegis PTJ is the mark source. Because it moves with unrealised P&L it is
+    REFRESHED each premarket from the fresh PTJ (never a stale mark).'
   sizing_steps: 'two-step mandatory: R-size then vol-cap; take the smaller (tools/calculators/sizing.py)'
 risk:
   beta_gate_window: beta_30d (D-6 FINAL; beta_60d = monitoring colour only, never

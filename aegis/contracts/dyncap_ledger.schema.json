@@ -2,14 +2,17 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Dynamic Capital Ledger",
  "x_version": "1.0.0",
- "x_note": "The Aegis sub-fund capital anchor (MED-1). The single most load-bearing money handoff — validated on write. dynCap = allocation + realised P&L on closed AEGIS trades (D-21).",
+ "x_note": "The Aegis sub-fund capital anchor (MED-1). The single most load-bearing money handoff — validated on write. dynCap = allocation + realised + UNREALISED = current Aegis equity, mark-to-market (D-41, revises D-21).",
  "type": "object",
  "required": ["allocated_capital_usd", "realised_pnl_usd", "dyncap_usd", "closed_count"],
  "properties": {
   "allocated_capital_usd": {"type": ["number", "null"], "description": "from config/aegis_fund.md; null = unset -> sizing refuses"},
-  "realised_pnl_usd": {"type": "number"},
-  "dyncap_usd": {"type": ["number", "null"], "description": "allocation + realised P&L; null when allocation unset"},
+  "realised_pnl_usd": {"type": "number", "description": "realised P&L on closed AEGIS trades"},
+  "unrealised_pnl_usd": {"type": "number", "description": "D-41: marked unrealised P&L on open AEGIS positions (from the PTJ)"},
+  "dyncap_usd": {"type": ["number", "null"], "description": "allocation + realised + unrealised (current Aegis equity); null when allocation unset"},
   "closed_count": {"type": "integer", "minimum": 0},
+  "open_count": {"type": "integer", "minimum": 0, "description": "D-41: open AEGIS positions marked into dynCap"},
+  "marked_asof": {"type": ["string", "null"], "description": "D-41: PTJ mark timestamp; dynCap is mark-to-market so this must be fresh (refreshed each premarket)"},
   "note": {"type": "string"}
  }
 }

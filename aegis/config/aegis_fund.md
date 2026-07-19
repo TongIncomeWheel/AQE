@@ -1,7 +1,7 @@
 ---
 strategy_tag: AEGIS
-allocated_capital_usd: null
-dyncap_usd: null
+allocated_capital_usd: 75000
+dyncap_usd: 64000
 brokers: [tiger, ibkr]
 ---
 
@@ -13,7 +13,7 @@ This is the **one place** the Aegis sub-fund's capital lives (D-21). Edit the bl
 
 - **strategy_tag** — always `AEGIS`. This is the label stamped on every Aegis order (D-17) so its capital and positions are never confused with the other two strategies (Income Wheel, Protege9) sharing the same brokers. Do not change it.
 - **allocated_capital_usd** — **the one number you must set.** Your capital allocation to the Aegis strategy. Until it has a value, sizing deliberately refuses (no anchor = no position sizing). Example: `allocated_capital_usd: null`.
-- **dyncap_usd** — dynamic capital: your allocation plus realised profit/loss from closed Aegis trades only. Leave it `null` and the system seeds it to your allocation on day one, then maintains it from the Aegis PTJ. You normally never touch this.
+- **dyncap_usd** — dynamic capital (D-41, mark-to-market): your allocation plus realised P&L on closed Aegis trades PLUS unrealised P&L on open Aegis positions = your **current Aegis equity**. It moves with the market and is refreshed each premarket from the Aegis PTJ, so sizing always tracks what you actually hold (and shrinks in drawdown). Leave it `null` to let the ledger maintain it; the value below is the current mark as you last stated it.
 - **brokers** — the brokers Aegis trades through. Leave as is unless that changes.
 
 ## Why an MD file and not a hidden setting

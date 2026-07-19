@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
-"""Aegis dynamic-capital ledger (BL-029 / D-21).
+"""Aegis dynamic-capital ledger (BL-029 / D-21, method revised by D-41).
 
-dynCap = allocated_capital + realised P&L on CLOSED AEGIS-tagged trades only
-(RB:capital.dyncap_method) — computed on the Aegis sub-fund book, NEVER co-mingled
-broker totals. Allocation comes from config/aegis_fund.md (via fund_config.py);
-closed-trade realised P&L comes from the Aegis PTJ (already AEGIS-filtered).
+dynCap = allocated_capital + realised P&L (closed AEGIS trades) + UNREALISED P&L
+(open AEGIS positions, marked) = current Aegis sub-fund EQUITY (RB:capital.dyncap_method,
+D-41 PM ruling 2026-07-19: mark-to-market, so sizing tracks what you actually hold).
+Computed on the Aegis sub-fund book ONLY, NEVER co-mingled broker totals. Allocation comes
+from config/aegis_fund.md (via fund_config.py); realised + unrealised P&L come from the Aegis
+PTJ (already AEGIS-filtered, positions marked to current price).
+
+Mark-to-market note (D-41): dynCap now moves with unrealised P&L, so it must be REFRESHED
+each premarket from the fresh PTJ (Operations runs `update <ptj.json>` after the book read).
+It is procyclical by design — it de-sizes in drawdown — the PM's explicit choice.
 
 Fail-closed: if allocation is unset, dynCap is None and sizing must refuse (BL-030).
 
 Usage:
-  python3 tools/dyncap_ledger.py update <closed_trades.json>   # recompute + write ledger
-  python3 tools/dyncap_ledger.py show                          # print current ledger
+  python3 tools/dyncap_ledger.py update <ptj.json>   # recompute (closed+open) + write ledger
+  python3 tools/dyncap_ledger.py show                 # print current ledger
 """
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -20,24 +26,37 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEDGER = os.path.join(ROOT, "data", "persistent", "dyncap_ledger.json")
 
 
-def compute(closed_trades):
-    """closed_trades: list of {ticker, strategy_tag, realised_pnl_usd}. Only AEGIS rows count."""
+def compute(closed_trades, open_positions=None, marked_asof=None):
+    """Mark-to-market dynCap (D-41). Only AEGIS rows count.
+    closed_trades: list of {ticker, strategy_tag, realised_pnl_usd}
+    open_positions: list of {ticker, strategy_tag, unrealised_pnl_usd} (marked by the PTJ)."""
     alloc = fund_config.allocated_capital()
     if alloc is None:
-        return {"allocated_capital_usd": None, "realised_pnl_usd": 0.0, "dyncap_usd": None,
-                "closed_count": 0, "note": "allocation unset (BL-030) — sizing must REFUSE"}
-    aegis = [t for t in closed_trades if t.get("strategy_tag") == "AEGIS"]
-    realised = round(sum(float(t.get("realised_pnl_usd", 0) or 0) for t in aegis), 2)
+        return {"allocated_capital_usd": None, "realised_pnl_usd": 0.0, "unrealised_pnl_usd": 0.0,
+                "dyncap_usd": None, "closed_count": 0, "open_count": 0, "marked_asof": marked_asof,
+                "note": "allocation unset (BL-030) — sizing must REFUSE"}
+    aegis_closed = [t for t in closed_trades if t.get("strategy_tag") == "AEGIS"]
+    aegis_open = [p for p in (open_positions or []) if p.get("strategy_tag") == "AEGIS"]
+    realised = round(sum(float(t.get("realised_pnl_usd", 0) or 0) for t in aegis_closed), 2)
+    unrealised = round(sum(float(p.get("unrealised_pnl_usd", 0) or 0) for p in aegis_open), 2)
     return {"allocated_capital_usd": alloc, "realised_pnl_usd": realised,
-            "dyncap_usd": round(alloc + realised, 2), "closed_count": len(aegis),
-            "note": "dynCap = allocation + realised P&L on closed AEGIS trades (D-21)"}
+            "unrealised_pnl_usd": unrealised,
+            "dyncap_usd": round(alloc + realised + unrealised, 2),
+            "closed_count": len(aegis_closed), "open_count": len(aegis_open),
+            "marked_asof": marked_asof,
+            "note": "dynCap = allocation + realised + UNREALISED = current Aegis equity, mark-to-market (D-41)"}
 
 
-def update(closed_trades_path):
-    closed = json.load(open(closed_trades_path)) if closed_trades_path else []
-    if isinstance(closed, dict):
-        closed = closed.get("closed_trades", [])
-    led = compute(closed)
+def update(ptj_path):
+    """Read the Aegis PTJ (closed_trades + open positions marked to price) and recompute."""
+    doc = json.load(open(ptj_path)) if ptj_path else {}
+    if isinstance(doc, list):
+        closed, opened = doc, []          # bare list = closed trades (back-compat)
+    else:
+        closed = doc.get("closed_trades", [])
+        opened = doc.get("open_positions") or doc.get("positions") or []
+    marked = doc.get("marked_asof") or doc.get("as_of") if isinstance(doc, dict) else None
+    led = compute(closed, opened, marked_asof=marked)
     # MED-1: validate the capital anchor against its contract before writing (fail-closed)
     try:
         import jsonschema

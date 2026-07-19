@@ -34,16 +34,16 @@ trailing:
   cadence: daily post-market recompute for next session + intraday tighten on a target hit
 risk:
   gates:
-    portfolio_beta:
-      soft: 1.8
-      hard: 2.0
-    var_95_1m_pct_of_dyncap:
-      soft: 16
+    portfolio_beta:                       # BL-030 (PM 2026-07-19): weighted-beta soft 2.0 / hard 2.5
+      soft: 2.0
+      hard: 2.5
+    var_95_1m_pct_of_dyncap:              # BL-030: PM set 1-month VaR 20% as the HARD cap; soft warning 18
+      soft: 18
       hard: 20
     leverage_x_dyncap:
       soft: 2.5
       hard: 3.0
-    combined_stop_risk_pct_of_dyncap_max: 5
+    combined_stop_risk_pct_of_dyncap_max: 12   # BL-030: PM "total known risk 12%" (sum of open distance-to-stop)
     sector_exposure_pct_of_dyncap:      # D-34: single-sector concentration on the held book
       soft: 25                          # flag for rotation review
       hard: 35                          # over-exposed — rotation candidate
