@@ -65,10 +65,11 @@
 
   {"phase": 5, "title": "Install as running workspace", "actor": "AI+PM",
    "steps": [
-    {"actor": "AI", "do": "install generated skills + commands.md into the workspace; load CONTEXT.md + charter as project knowledge with the standing instruction"},
-    {"actor": "AI", "do": "Kimi: register voice subagents from aegis-agent.yaml"}
+    {"actor": "AI", "do": "package aegis/dist/claude-plugin/aegis-v4/ into a .plugin file and deliver to PM"},
+    {"actor": "PM", "gate": "HARD PLATFORM GATE: open the delivered .plugin file in the Cowork DESKTOP app and install it (replaces/supersedes any older plugin build live on the account). A remote/cloud container CANNOT install a plugin -- no /mnt/.local-plugins or /mnt/.plugins mount exists there; do not attempt a workaround."},
+    {"actor": "AI", "do": "Kimi only: register voice subagents from aegis-agent.yaml (no desktop-only constraint on this path)"}
    ],
-   "check": "a skill loads AND /fa renders from state without error"},
+   "check": "a skill loads AND /fa renders from state without error, confirmed against the NEWLY installed plugin (check skill/version, not just that a plugin responds)"},
 
   {"phase": 6, "title": "Standing clock (scheduled tasks)", "actor": "PM",
    "steps": [
