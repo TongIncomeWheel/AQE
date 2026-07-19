@@ -17,6 +17,19 @@ capital:
   vol_cap_pct_of_dyncap:
     GREEN: 2.0
     YELLOW: 1.5
+trailing:
+  note: 'D-33 exit lifecycle — PM-tunable. Hybrid trail (breakeven then structure ratchet),
+    milestone locks, scale-out. Engine: tools/calculators/trailing_stop.py; owner: Risk desk.'
+  breakeven_trigger_r: 1.0        # move stop to breakeven after +1R
+  breakeven_buffer_pct: 0.0       # optional cushion above entry at breakeven
+  ratchet: true                   # a trailing stop NEVER lowers — invariant
+  structure_source: AQE operative stop (fresh daily) — never below current stop
+  milestone_locks: true           # after TP1 -> stop>=entry; after TP2 -> stop>=TP1
+  scale_out:
+    tp1_fraction: 0.33            # take 1/3 of original at TP1
+    tp2_fraction: 0.33            # take 1/3 of original at TP2
+    remainder: runs on the trail  # the last third rides the trailing stop
+  cadence: daily post-market recompute for next session + intraday tighten on a target hit
 risk:
   gates:
     portfolio_beta:
