@@ -131,13 +131,25 @@ def compile_voice_agents():
         "held_review": [{"ticker": "IBM", "verdict": "EXIT-CASE", "line": "one line"}],
         "shortfall_reason": "only if fewer than 10 — fewer is VALID, padding is the breach"}, indent=1)
     judgment_model = rb_lookup("model_tiers.judgment")  # D-16: pinned at build time, never inherited
+    control_model = rb_lookup("model_tiers.control")
     adir = os.path.join(DIST, "agents"); os.makedirs(adir, exist_ok=True)
-    for bpath in sorted(glob.glob(os.path.join(ROOT, "skills", "eng-*", "SKILL.md"))):
-        bname = os.path.basename(os.path.dirname(bpath))
-        body = open(bpath).read()
-        body = body.split("---", 2)[2] if body.startswith("---") else body
-        open(os.path.join(adir, f"{bname}.md"), "w").write(
-            f"---\nname: {bname}\ndescription: Engineering Bench seat — spawned isolated for Design & Review triage and the Weekly engineering session. Read-only.\nmodel: {judgment_model}\ntools: []\n---\n" + body.strip() + "\n")
+    # MED-1/D-27: the 5 bench lenses run INLINE by default; only compile them as standing agents
+    # when explicitly asked (a deep/contested design). Default OFF — no standing bench spawns.
+    if os.environ.get("AEGIS_COMPILE_BENCH_AGENTS"):
+        for bpath in sorted(glob.glob(os.path.join(ROOT, "skills", "eng-*", "SKILL.md"))):
+            bname = os.path.basename(os.path.dirname(bpath))
+            body = open(bpath).read()
+            body = body.split("---", 2)[2] if body.startswith("---") else body
+            open(os.path.join(adir, f"{bname}.md"), "w").write(
+                f"---\nname: {bname}\ndescription: Engineering Bench seat — spawned isolated ONLY for a deep/contested design review. Read-only.\nmodel: {judgment_model}\ntools: []\n---\n" + body.strip() + "\n")
+    # HIGH-3/D-27(III): the staging-gatekeeper is a SPAWNED agent — security isolation, the only
+    # order-capable component, sealed from the control-plane orchestrator context. Compile it to agents/.
+    gk = os.path.join(ROOT, "skills", "staging-gatekeeper", "SKILL.md")
+    if os.path.isfile(gk):
+        body = open(gk).read(); body = body.split("---", 2)[2] if body.startswith("---") else body
+        open(os.path.join(adir, "staging-gatekeeper.md"), "w").write(inline_rb(
+            "---\nname: staging-gatekeeper\ndescription: The ONLY order-capable agent (constitution law 1). Spawned ISOLATED (D-27 reason III) so an armed, order-capable component is sealed from untrusted text in the orchestrator context. Relays gate_check.py's signed record; executes the Tiger two-step only under an armed switch within caps.\n"
+            f"model: {control_model}\ntools: [\"Bash\"]\n---\n" + body.strip() + "\n"))
     # D-16: committee-desk — the deliberation step, pulled out of "the orchestrator's own session"
     # into its own pinned judgment-tier agent, same reasoning as the voice swarm's isolation.
     cd_path = os.path.join(ROOT, "skills", "committee-desk", "SKILL.md")

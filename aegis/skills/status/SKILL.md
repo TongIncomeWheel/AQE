@@ -1,6 +1,6 @@
 ---
 name: status
-description: Renders the /status card (D-22, G5) — the one-glance consolidated view of the Aegis book. Triggers on "/status". Reads TODAY'S FILES from the persistent Cowork workspace (never conversation state, G3), so it is correct in any fresh chat. Owned by the Chief cockpit; read-only, places nothing.
+description: Renders the /status card (D-22, G5) — the one-glance consolidated view of the Aegis book. Triggers on "/status". Reads TODAY'S FILES from the persistent Cowork workspace (never conversation state, G3), so it is correct in any fresh chat. Owned by the Operations desk (book of record) as a read-only cockpit command the Chief surfaces; places nothing (MED-3).
 ---
 
 # SKILL: /status — the consolidated cockpit card (D-22 / G5)

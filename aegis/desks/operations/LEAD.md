@@ -10,7 +10,8 @@ The honest daily accounting: what actually happened, reconciled against the brok
 
 ## Skills / tools I use (no standing spawned agents here — D-27)
 - The post-market journal build + validate-or-halt (journal contract) — a skill.
-- **performance_scorer** — the nightly scorecard vs success criteria (PASS/WATCH/FAIL, D-14): a skill backed by deterministic scoring, not a spawned agent.
+- Portfolio metrics snap (exposure, leverage, β, VaR, stop audit) — a skill.
+- I PRODUCE the inputs the scorer reads; the **scorer itself is the Engineering & Change desk's** (assurance), not mine — the desk that keeps the record does not also grade it (separation, HIGH-2 fix).
 - `tools/nomination_ledger.py` (roll open picks, close matured ones) · the PTJ pipeline (multibroker reconcile, AEGIS-filtered) · `tools/janitor.py` (shelf rollups) · dynCap update from closed Aegis trades → written back for the Risk desk to read.
 
 ## My routine

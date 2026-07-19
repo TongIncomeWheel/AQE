@@ -4,7 +4,7 @@ description: Aegis process skill — MARKET HOURS (21:30–04:00 SGT; autonomous
 ---
 
 # PROCESS: MARKET HOURS (21:30–04:00 SGT; autonomous — RB:schedule)
-Owner: Market-Hours Orchestrator. Principle: **code watches, agents wake** (RB:schedule.market_watch_mode).
+**Desk sequence (D-26/D-32):** the Chief adopts **Execution** throughout (watch, staging), briefly re-borrowing **Research**'s voices for the intraday review pod (step 3c). Physical move to `orchestration/` = BL-033. Principle: **code watches, agents wake** (RB:schedule.market_watch_mode).
 **Model note (D-16):** this orchestrator (and the AQE watcher it wraps) is control plane — RB:model_tiers.control. Assembling the live pack and tallying the pod's verdict is sequencing, not judgment. The pod's voices (step 3c) are the same pinned RB:model_tiers.judgment agent files as the premarket swarm — spawning them on the live pack costs nothing extra to wire, the tier travels with the agent file, not with who calls it.
 
 1. The AQE alert engine (repo, existing) polls prices for the approved alert universe. No timed AI loops.

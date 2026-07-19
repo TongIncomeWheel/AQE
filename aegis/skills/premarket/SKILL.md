@@ -4,7 +4,7 @@ description: Aegis process skill — PREMARKET (weekdays; plan ready 16:00 SGT, 
 ---
 
 # PROCESS: PREMARKET (weekdays; plan ready 16:00 SGT, PM approval by 21:00 — RB:schedule)
-Owner: Premarket Orchestrator. Voices work in isolation at step 5. No numbers here — all thresholds are RB: keys.
+**Desk sequence (D-26/D-32):** the Chief adopts **Research** (steps 1–9: universe, swarm, tally, event filter, weather, deliberation) → **Risk** (step 10 sizing + gates) → **PM approval** (step 11) → **Execution** (step 11 staging requests). Physical move to `orchestration/` = BL-033. Voices work in isolation at step 5. No numbers here — all thresholds are RB: keys.
 **Model note (D-16):** you, the orchestrator running this skill, are control plane — RB:model_tiers.control. Your job is sequencing, tool calls, and contract validation, never analysis. Every step that needs real judgment (the swarm at step 5, deliberation at step 9) is delegated to a pinned judgment-tier agent — RB:model_tiers.judgment, baked into that agent's own compiled file. Don't reason hard here; spawn, validate, move on.
 
 1. **Freshness check.** Journal current? AQE export dated today (RB:data_sources.staleness)? If stale → fix/notify first, do not proceed silently.

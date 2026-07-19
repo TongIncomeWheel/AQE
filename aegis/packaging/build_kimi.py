@@ -44,6 +44,8 @@ def main():
     os.makedirs(os.path.join(DIST, "agents"), exist_ok=True)
     subagents = {}
     for f in sorted(os.listdir(os.path.join(SRC, "agents"))):
+        if f.startswith("staging-gatekeeper"):
+            continue   # D-30/HIGH-2: Kimi is read-only — the order-capable agent never ships to the Kimi package
         body = open(os.path.join(SRC, "agents", f)).read()
         body = body.split("---", 2)[2] if body.startswith("---") else body   # strip Claude frontmatter
         vname = f.replace(".md", "").replace("_", "-")
