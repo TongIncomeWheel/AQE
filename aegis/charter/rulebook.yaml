@@ -172,6 +172,29 @@ topology:
     order path is added and the one_armed_at_a_time invariant governs. This makes the
     one_armed_at_a_time rule moot for now (only Claude can arm), which is the safe
     default while Kimi is still being proven.'
+gate_doctrine:
+  principle: 'D-37 — gates are FEW, LATE and NAMED; everything else is a SOFT FLAG that
+    travels WITH the name into the ONE holistic deliberation and removes nothing beforehand.
+    Fixes "cut too early" (nothing is removed before the committee sees the whole picture,
+    except safety/data-integrity and the daily screen — whose near-misses are now surfaced
+    for revival) and "flip-flop" (a single judgment point; no verdict reversal after
+    deliberation except an explicit PM decision or a logged intraday re-review — the pod).'
+  hard_gates_only:
+  - feed missing/stale or tripwire BLOCK -> stand down (data integrity)
+  - universe screen (data scope; near-misses surfaced for revival D-37, not a silent cut)
+  - regime RED -> no new entries (book safety)
+  - event filter -> EVENT-DRIVEN cannot advance (kept HARD by PM ruling; stays VISIBLE in the tally)
+  - bracket validity gates at sizing/stage (ATR / RR / risk-ceiling)
+  - portfolio gates HARD breach (beta/VaR/leverage/combined-stop) -> blocks new entry
+  - staging-gatekeeper 7 checks at order time
+  soft_flags_travel:
+  - SRM/macro (weather, D-4) · regime YELLOW/ORANGE · Hurst mean-revert
+  - portfolio gates SOFT (beta 1.8 / VaR 16 / leverage 2.5 / sector 25) -> flag only
+  - detect lens warnings · staleness-acknowledge · the near-miss list · single-voice conviction
+  one_judgment_point: 'the committee deliberation is where every flag converges into ONE
+    verdict. Nothing re-litigates or reverses a name after it except the PM, or a logged
+    intraday re-review (the pod, D-13). Context is an INPUT to the one decision, never a
+    gate applied after it — that is what stops the flip-flop.'
 data_sources:
   scores_and_analytics: AQE export (GitHub repo engine) — verbatim
   equity_spot_live: Tiger MCP (cloud-hosted, reuse) -> IBKR fallback

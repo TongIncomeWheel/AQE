@@ -75,9 +75,14 @@ universe:
     price_vs_ema: close at/above ANY of EMA20, EMA50, EMA100
     market_cap_min_usd: 2000000000
     volume_rule: current volume >= 30-day average volume
+  near_miss:                 # D-37: names just outside the screen are SURFACED (not nominated) for PM/committee revival
+    ema_band_pct: 2.0        # close within 2% below the nearest EMA
+    vol_band_pct: 10.0       # volume within 10% below the 30-day average
 committee:
   nominations_per_voice: 10
-  deliberation_threshold: nomination_count >= 2 OR lens top tier
+  deliberation_threshold: nomination_count >= 2 OR lens top tier OR (single nominator AND
+    conviction >= solo_high_conviction_min)   # D-37: a strong lone signal isn't cut early
+  solo_high_conviction_min: 4                  # a single voice at >=4/5 earns full deliberation
   conviction_high: 5 of 9 voices
 schedule:
   weekly_run: Sunday

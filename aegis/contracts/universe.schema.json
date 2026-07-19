@@ -4,19 +4,27 @@
  "x_version": "1.0.0",
  "x_note": "The one universe file every voice reads (BL-011). Produced by universe_screen.py from the AQE working read; menu-slimmed per voice at spawn. Validated before any voice reads it.",
  "type": "object",
- "required": ["date", "rows"],
+ "required": ["date", "names"],
  "properties": {
   "date": {"type": "string", "format": "date"},
-  "screen": {"type": "object", "description": "the screen params applied (RB:universe.screen) — provenance"},
-  "rows": {
+  "criteria": {"type": "object", "description": "the screen params applied (RB:universe.screen) — provenance"},
+  "count": {"type": "integer"},
+  "names": {
    "type": "array",
+   "description": "the screened universe — the ONLY names voices nominate from",
    "items": {
     "type": "object",
     "required": ["ticker"],
-    "properties": {
-     "ticker": {"type": "string"}
-    },
-    "x_note": "each row carries the AQE working-read fields; a voice sees only its data-menu subset"
+    "properties": {"ticker": {"type": "string"}}
+   }
+  },
+  "near_misses": {
+   "type": "array",
+   "description": "D-37: names just outside the screen (RB:universe.near_miss) — SURFACED for PM/committee revival, NOT nominated",
+   "items": {
+    "type": "object",
+    "required": ["ticker"],
+    "properties": {"ticker": {"type": "string"}, "near_miss_reason": {"type": "string"}}
    }
   }
  }
