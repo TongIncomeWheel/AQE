@@ -952,6 +952,33 @@
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
+  },
+  "bq": {
+   "definition": "Base-quality engine \u2014 measures how tight and mature a consolidation is (bq.py).",
+   "method": "bq.py: composites base duration, range tightness, volatility dry-up and EMA convergence into a base-quality read.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "bq.bq_base_dur": {
+   "definition": "Base duration in days \u2014 how long the current consolidation/base has held (longer, tighter bases are higher quality; feeds the tight_base quality flag).",
+   "method": "bq.py: count of bars in the identified base window.",
+   "type": "int",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
+  },
+  "bq.bq_range_tight": {
+   "definition": "Range-tightness score of the base \u2014 higher = tighter price range within the base (volatility contraction; paired with base duration for the tight_base flag).",
+   "method": "bq.py: inverse of normalized high-low range across the base window, scaled.",
+   "type": "float",
+   "enum": null,
+   "glossary_gap": false,
+   "method_gap": false,
+   "undocumented": false
   }
  },
  "subcomponents": {

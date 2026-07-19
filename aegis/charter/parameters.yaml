@@ -84,6 +84,14 @@ committee:
     conviction >= solo_high_conviction_min)   # D-37: a strong lone signal isn't cut early
   solo_high_conviction_min: 4                  # a single voice at >=4/5 earns full deliberation
   conviction_high: 5 of 9 voices
+quality_flags:                 # D-39: thresholds for the restored voice quality-evaluation flags
+  # SOFT signals surfaced at deliberation (D-37/D-38) — never a gate. tools/quality_flags.py reads these.
+  squeeze_min: 5.0             # energy.squeeze_score at/above -> volatility squeeze (breakout pending)
+  base_dur_min: 10             # bq.bq_base_dur (days) minimum for a "tight base"
+  range_tight_min: 12          # bq.bq_range_tight minimum (paired with base_dur) for a tight base
+  overextended_sma_pct: 25.0   # sma_distance_pct at/above -> extended, late to chase
+  rs_down_day_min: 2.0         # rs_down_day_20d at/above -> resilient on down days
+  knn_prob_min: 0.6            # knn_prob at/above (AND knn_significant) -> favorable historical edge
 schedule:
   weekly_run: Sunday
   premarket_plan_ready: '16:00'

@@ -7,6 +7,8 @@ rulebook values inlined at build time so skills neither restate rules from memor
 import json, os, shutil, yaml, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+import quality_flags as _qf  # D-39: restored voice quality-flag vocabulary (single source of truth)
 DIST = os.path.join(ROOT, "dist", "claude-plugin", "aegis-v4")
 RB = yaml.safe_load(open(os.path.join(ROOT, "charter", "rulebook.yaml")))
 _P = yaml.safe_load(open(os.path.join(ROOT, "charter", "parameters.yaml")))
@@ -119,6 +121,27 @@ def _field_meanings_block(menu):
             + "\nIf a field's meaning above is empty or unclear, I say so and do not invent analysis over it.")
 
 
+def _quality_flags_block(vkey):
+    """D-39: inject THIS voice's restored quality-evaluation vocabulary — the momentum-literature
+    flags its framework asked for, dropped by drift, now put back. SOFT signals (D-37/D-38): they
+    sharpen the nomination case and travel to deliberation; they are NEVER a gate. Reverse-mapped
+    from quality_flags.FLAG_VOICES so each voice sees only its own flags."""
+    cat = _qf.catalog_for_voice(vkey)
+    if not cat:
+        return ""
+    lines = []
+    for flag, pol, defn, fields in cat:
+        tag = "STRENGTH" if pol == "strength" else ("CAUTION" if pol == "caution" else "CONTEXT")
+        lines.append(f"- **{flag}** [{tag}] — {defn}  ·  anchor: {', '.join('`'+f+'`' for f in fields)}")
+    return ("\n\n## 2c · MY QUALITY FLAGS (restored — the evaluation signals my framework asks for; D-39)\n"
+            "These are SOFT: they strengthen or caution a case and I cite them in `fields_cited`, but they "
+            "never force or block a nomination (D-37/D-38). The orchestrator stamps which of these actually "
+            "FIRE for each name (deterministic, from `tools/quality_flags.py`) — I read the fired flag, I do "
+            "not recompute it. A flag that does not fire is simply silent; absence is not a negative.\n"
+            + "\n".join(lines)
+            + "\nWhen a fired flag bears on my read of a name, I name it in my reason line in my own framework's language.")
+
+
 def compile_voice_agents():
     """B1 fix: emit ONE self-contained agent definition per voice — the file a harness actually
     spawns as an isolated subagent. Compiled from: voice card + shared engine + data menu +
@@ -164,7 +187,12 @@ def compile_voice_agents():
         vkey = name.replace("voice-", "")
         card = open(path).read()
         card_body = card.split("---", 2)[2] if card.startswith("---") else card
-        menu = VOICE_MENUS.get(vkey, [])
+        menu = list(VOICE_MENUS.get(vkey, []))
+        # D-39: put the voice's quality-flag anchor fields back on its menu so citing a fired
+        # flag's source is not an off-menu breach. Additive, dedup-preserving order.
+        for _f in _qf.source_fields_for_voice(vkey):
+            if _f not in menu:
+                menu.append(_f)
         agent = f"""---
 name: {name}
 description: Isolated nominator agent — {vkey}. Spawned fresh each premarket by the orchestrator; sees ONLY this file + the universe file + its own ledger report. No tools, no session context, no other voices.
@@ -178,7 +206,7 @@ tools: []
 
 ## 2 · MY DATA TAXONOMY (the ONLY fields I read — my data menu, enforced)
 {", ".join("`"+m+"`" for m in menu)}
-Reading any field not on this menu — especially composites for detect_lens, or lens fields for framework voices — is a breach the auditor checks.{_field_meanings_block(menu)}
+Reading any field not on this menu — especially composites for detect_lens, or lens fields for framework voices — is a breach the auditor checks.{_field_meanings_block(menu)}{_quality_flags_block(vkey)}
 
 ## 3 · MY PROCESS (identical machinery for all ten — the shared engine)
 {common_body.strip()}
