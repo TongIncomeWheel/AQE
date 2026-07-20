@@ -43,6 +43,7 @@ instruction set. You already have the four things you need:
 ## PHASE 2 — Build the packages `[AI]`
 - `python3 aegis/packaging/build_claude.py` (always). For the Kimi deployment also `python3 aegis/packaging/build_kimi.py`.
 - **CHECK:** `aegis/dist/claude-plugin/aegis-v4/` exists and contains `agents/` with exactly the 12 standing agents (10 `voice-*.md` + `committee-desk.md` + `staging-gatekeeper.md`) and `skills/`. Kimi build (if run) must NOT contain `staging-gatekeeper` (D-30 read-only). If the counts differ → STOP.
+- **CHECK (D-45):** the self-heal layer shipped — `tools/{notify.py,self_heal.py,ops_status.py}` and `skills/{ops-status,recover}/SKILL.md` are present in the built package, and `contracts/{self_heal,ops_status}.schema.json` too. Note: these are tools/skills, NOT compiled agents — the agent count stays **12** (do not expect 14). If any are missing → STOP.
 
 ## PHASE 3 — Config & secrets `[PM]` gates for values, `[AI]` for wiring
 - **Fund config** (`aegis/config/aegis_fund.md`): already carries `allocated_capital_usd`, `dyncap_usd`, `brokers`, `ptj_drive_folder_id`. `[AI]` confirm it parses via `python3 aegis/tools/fund_config.py`. If `allocated_capital_usd` is null → `[PM]` gate (BL-030): ask the PM for the allocation; do not size on a null anchor.
@@ -60,7 +61,7 @@ instruction set. You already have the four things you need:
 ## PHASE 5 — Install as a running workspace `[AI]` package + `[PM]` install (HARD PLATFORM GATE)
 - **Claude (Cowork):** `[AI]` zip `aegis/dist/claude-plugin/aegis-v4/` into a `.plugin` file and deliver it to the PM. **STOP HERE — this is not optional.** Plugin installation in Cowork can ONLY be performed from the **desktop app**; a remote/cloud execution container (this runbook's own executor) has no `/mnt/.local-plugins` or `/mnt/.plugins` mount and CANNOT install, enable, or replace a plugin itself, no matter how the CHECK is retried. `[PM]` gate: open the delivered `.plugin` file in the Cowork desktop app and install it — this replaces/supersedes any older `aegis-cic`/prior-version plugin still live on the account. Do not attempt a workaround (writing to a container mount, editing account state directly, etc.) — none exists; wait for the PM.
 - **Kimi:** `aegis/packaging/build_kimi.py` output → install skills into the Claw workspace; register the voice subagents from `aegis-agent.yaml`. (Kimi's install path does not carry this desktop-only constraint — confirm before assuming it applies.)
-- **CHECK:** a trivial skill loads and `/fa` (book from state) renders without error, using the NEWLY installed plugin (verify skill/version, not just that *a* plugin responds — a stale prior plugin can mask this check).
+- **CHECK:** a trivial skill loads and both `/fa` (book from state) and `/ops` (system liveness, D-45) render without error, using the NEWLY installed plugin (verify skill/version, not just that *a* plugin responds — a stale prior plugin can mask this check). A first `/ops` will honestly report the notification channels OFF until Phase 6 — that PARTIAL is expected, not a failure.
 - If blocked: write `install_state.json` with `status: "blocked_pm"`, `phase: 5`, and `pm_gate` stating exactly this ask, then STOP and report to the PM. Do not mark Phase 5 passed on the strength of packaging alone.
 
 ## PHASE 6 — The standing clock `[PM]` (create scheduled tasks)
@@ -72,7 +73,8 @@ instruction set. You already have the four things you need:
 ## PHASE 7 — Smoke test / UAT `[AI]` supervised
 - One SUPERVISED end-to-end premarket: run the `premarket` skill against today's data → confirm a schema-valid plan (`contracts/plan.schema.json`) with all 10 nomination files present, `committee.json` written, sizing + gates computed against the live dynCap, and the daily flow audit renders (`tools/daily_flow_audit.py DATE --render`).
 - Forced-failure checks: a tripwire block STANDS DOWN the phase and pages; the gatekeeper REFUSES a dummy request missing consensus and logs it.
-- **CHECK:** the DEPLOY.md §C acceptance checklist passes item by item. Record results into `install_state.json`. Any FAIL → STOP, report.
+- **Self-heal layer UAT (D-45):** `/ops` renders the liveness card; `notify.py run_fail --dry-run` renders and its failure page is visibly distinct from a green ping; with the channel set, one live `notify.py pre_run` arrives on the phone; `self_heal.py <loop> --failure ptj_pull --dry-run` reports **healed** (transient) while `--failure tripwire` reports **stand_down / not healed** (gate — never auto-healed); `notify.py --checkin ok` turns the external watchdog green; and a paused watchdog check pages the PM (proves box-death is caught). Confirm NONE of `/heal /recover /repull /reseed` can place an order — a recovered loop reaching execution still stops at a gatekeeper preview.
+- **CHECK:** the DEPLOY.md §C acceptance checklist passes item by item AND the self-heal UAT above passes each item. Record results into `install_state.json`. Any FAIL → STOP, report.
 
 ## PHASE 8 — Go-live gating `[PM]` — NOT automated
 - Shadow/practice week: the system runs on the clock but the PM hand-stages every order; build trust in the plans.

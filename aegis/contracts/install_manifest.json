@@ -43,7 +43,7 @@
     {"cmd": "python3 aegis/packaging/build_claude.py"},
     {"cmd": "python3 aegis/packaging/build_kimi.py  # Kimi deployment only"}
    ],
-   "check": "dist/claude-plugin/aegis-v4/agents/ has 12 files (10 voice-* + committee-desk + staging-gatekeeper); Kimi build (if run) excludes staging-gatekeeper"},
+   "check": "dist/claude-plugin/aegis-v4/agents/ has 12 files (10 voice-* + committee-desk + staging-gatekeeper); Kimi build (if run) excludes staging-gatekeeper; D-45 self-heal layer present in the package: tools/{notify,self_heal,ops_status}.py, skills/{ops-status,recover}/SKILL.md, contracts/{self_heal,ops_status}.schema.json -- these are tools/skills NOT agents, so agent count stays 12"},
 
   {"phase": 3, "title": "Config & secrets", "actor": "PM+AI",
    "steps": [
@@ -70,7 +70,7 @@
     {"actor": "PM", "gate": "HARD PLATFORM GATE: open the delivered .plugin file in the Cowork DESKTOP app and install it (replaces/supersedes any older plugin build live on the account). A remote/cloud container CANNOT install a plugin -- no /mnt/.local-plugins or /mnt/.plugins mount exists there; do not attempt a workaround."},
     {"actor": "AI", "do": "Kimi only: register voice subagents from aegis-agent.yaml (no desktop-only constraint on this path)"}
    ],
-   "check": "a skill loads AND /fa renders from state without error, confirmed against the NEWLY installed plugin (check skill/version, not just that a plugin responds)"},
+   "check": "a skill loads AND both /fa AND /ops (D-45 liveness) render from state without error, confirmed against the NEWLY installed plugin (check skill/version, not just that a plugin responds); a first /ops reporting channels OFF is expected until Phase 6, not a failure"},
 
   {"phase": 6, "title": "Standing clock (scheduled tasks)", "actor": "PM",
    "steps": [
@@ -83,9 +83,10 @@
    "steps": [
     {"do": "one SUPERVISED premarket run -> schema-valid plan, 10 nomination files, committee.json, sizing+gates vs live dynCap"},
     {"cmd": "python3 aegis/tools/daily_flow_audit.py <DATE> --render"},
-    {"do": "forced-failure: tripwire block stands down + pages; gatekeeper refuses a no-consensus dummy and logs it"}
+    {"do": "forced-failure: tripwire block stands down + pages; gatekeeper refuses a no-consensus dummy and logs it"},
+    {"do": "D-45 self-heal UAT: /ops renders; notify.py run_fail --dry-run failure page is visibly distinct; one live pre_run arrives on phone (if channel set); self_heal.py --failure ptj_pull => healed, --failure tripwire => stand_down/not healed; notify.py --checkin ok greens the watchdog; a paused watchdog pages the PM; confirm /heal /recover /repull /reseed cannot place an order (execution still previews at the gate)"}
    ],
-   "check": "DEPLOY.md section C acceptance checklist passes item-by-item; results written to install_state.json"},
+   "check": "DEPLOY.md section C acceptance checklist passes item-by-item AND the D-45 self-heal UAT passes each item; results written to install_state.json"},
 
   {"phase": 8, "title": "Go-live gating", "actor": "PM",
    "steps": [
