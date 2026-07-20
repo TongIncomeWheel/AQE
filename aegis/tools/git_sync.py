@@ -39,7 +39,26 @@ COMMIT_EMAIL = os.environ.get("GIT_AUTHOR_EMAIL", "aegis@local")
 
 
 def _token():
-    return os.environ.get("GITHUB_PAT") or os.environ.get("GH_TOKEN")
+    # 1) environment (a real env var / secret store), else
+    # 2) the ONE file: aegis/config/.env  (line: GITHUB_PAT=...). gitignored.
+    t = os.environ.get("GITHUB_PAT") or os.environ.get("GH_TOKEN")
+    if t:
+        return t
+    envfile = os.path.join(ROOT, "config", ".env")
+    if os.path.exists(envfile):
+        try:
+            for line in open(envfile):
+                line = line.strip()
+                if line.startswith("#") or "=" not in line:
+                    continue
+                k, _, v = line.partition("=")
+                if k.strip() in ("GITHUB_PAT", "GH_TOKEN"):
+                    v = v.split("#", 1)[0].strip().strip('"').strip("'")
+                    if v:
+                        return v
+        except Exception:
+            pass
+    return None
 
 
 def _scrub(text, token):
