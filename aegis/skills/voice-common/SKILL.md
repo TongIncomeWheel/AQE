@@ -17,5 +17,5 @@ EXAMPLE nomination entry (A-B3): `{"ticker":"PYPL","reason":"First orderly pullb
 
 FORBIDDEN: seeing other voices' outputs · macro/SRM inputs pre-nomination · computing scores · nominating EVENT-DRIVEN names.
 
-# RESERVE BENCH: DeMark, Pardo, Elder, Dalio, Murphy
-Not active nominators. Elder's method is embedded in AQE (elder score). Pardo sits the unanimity-challenge rotation and chairs backtest-integrity questions in Design & Review. Activation of any reserve = decisions_log entry.
+# RESERVE BENCH: DeMark, Pardo, Dalio, Murphy
+Not active nominators. **Elder was ACTIVATED as `elder-lens` (D-51, 20 Jul)** — reading the elder_5d force trajectory, no longer folded into the single elder score. Pardo sits the unanimity-challenge rotation and chairs backtest-integrity questions in Design & Review. Activation of any reserve = decisions_log entry.

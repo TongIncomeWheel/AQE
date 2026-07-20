@@ -50,7 +50,7 @@ def _exceptions(day):
 
 
 VOICES = ["lynch", "oneil", "wyckoff", "raschke", "steenbarger", "thorp", "seow",
-          "minervini", "druckenmiller", "detect-lens"]
+          "minervini", "druckenmiller", "detect-lens", "elder-lens"]
 
 
 def audit(day):

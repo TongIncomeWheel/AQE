@@ -115,6 +115,9 @@ schedule:
   morning_summary: '10:00'
   market_watch_mode: code watches (AQE alert engine); committee wakes on trigger only
     — no timed AI polling loops
+  market_watch_poll_minutes: 30            # D-54 (was 15 — noisy, PM). Full-universe poll cadence.
+  market_watch_scope: full_universe        # D-54: poll ALL names, not just approved — SOD signals don't justify ignoring the rest
+  market_watch_triggers: [breakout, stop_hit_or_approaching, approaching_buy]
 retention:
   raw_days: 30
   ledger_window_days: 15

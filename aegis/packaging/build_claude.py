@@ -89,6 +89,7 @@ VOICE_MENUS = {
  "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
  "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade"],
  "detect-lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
+ "elder-lens":   ["ticker","elder","elder_5d","elder_pattern","mp_state","mp"],
 }
 
 def _field_meanings_block(menu):

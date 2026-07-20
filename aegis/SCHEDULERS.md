@@ -27,7 +27,9 @@ Start with the three **core** tasks for the pilot; add 4–6 once the core is tr
 > Aegis scheduled premarket. Read `aegis/CONTEXT.md` + the four `aegis/charter/*` files, run `aegis/tools/preflight.py`, then run the premarket process. Produce the Executive Action Plan and notify me for approval by 16:00 SGT. Place NO orders — previews only; autopilot acts only if I have armed it, within its caps.
 
 **2 · Market-hours watch**
-> Aegis scheduled market-hours watch. Read `aegis/CONTEXT.md` + charter, run the market_hours process — track distance-to-stop and trails on the held book, page me only on a trigger. Place nothing unless autopilot is armed within its caps.
+> Aegis scheduled market-hours watch. Read `aegis/CONTEXT.md` + charter, run the market_hours process. The AQE alert engine polls the FULL universe every 30 min (D-54) for breakouts / stop-approaches / approaching-buy; on an on-plan trigger run the Intraday Review Pod, on an off-plan mover run the quick 3-lens deliberation and page me only if it earns attention. Track distance-to-stop and trails on the held book. Place nothing unless autopilot is armed within its caps.
+
+> **Scheduler vs poll (tightening — no slop):** this scheduled task is the *session liveness + bootstrap* fire (one wake at 21:25 SGT to confirm the alert engine is alive and the book is loaded — the 21:25 liveness check in `market_hours`). It is NOT the intraday clock. The **30-min full-universe polling is the AQE alert engine's job** (repo, runs on the always-on box per D-9), which *wakes* a session on a trigger. So: scheduler = liveness heartbeat + wake-on-trigger host; AQE engine = the 30-min poll. Do not add timed AI polling loops (RB:market_watch_mode) — that duplicates the engine and burns tokens.
 
 **3 · Post-market**
 > Aegis scheduled post-market. Read `aegis/CONTEXT.md` + charter, run `aegis/tools/preflight.py`, run the post_market process (journal, metrics, audit, flow audit), then run `aegis/tools/git_sync.py` to commit + push state. Notify me with the summary. Place nothing.
