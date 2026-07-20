@@ -35,7 +35,7 @@ VOICE_SPECS = {
     "steenbarger":  [("sc_momentum", 1), ("rvol", 1)],
     "minervini":    [("structure", 1), ("rs_spy_20d", 1), ("sma_distance_pct", -1)],
     "druckenmiller":[("beta_30d", -1), ("sc_momentum", 1)],
-    "thorp":        [("sc_momentum", 1), ("structure", 1)],   # bracket.rr mostly null pre-exercise -> proxy; flagged
+    "thorp":        [("sc_momentum", 1), ("bracket.rr", 1)],   # thorp's OWN menu only; bracket.rr null pre-exercise -> proxy, flagged
 }
 # axis thresholds for tiering
 BREADTH_STRONG = 3      # in >=3 voices' top-3
@@ -60,8 +60,19 @@ def _pctiles(pairs):
     return out
 
 
+def _get(r, f):
+    """Resolve a possibly-dotted field path (e.g. 'bracket.rr') against the record."""
+    cur = r
+    for part in f.split("."):
+        if isinstance(cur, dict):
+            cur = cur.get(part)
+        else:
+            return None
+    return cur
+
+
 def _field(records, f):
-    return {t: _num(r.get(f)) for t, r in records.items()}
+    return {t: _num(_get(r, f)) for t, r in records.items()}
 
 
 def _ma_align(r):
