@@ -89,7 +89,7 @@ committee:
   deliberation_threshold: nomination_count >= 2 OR lens top tier OR (single nominator AND
     conviction >= solo_high_conviction_min)   # D-37: a strong lone signal isn't cut early
   solo_high_conviction_min: 4                  # a single voice at >=4/5 earns full deliberation
-  conviction_high: 5 of 9 voices
+  conviction_high: 7            # D-55: >=7 voices nominating a name = high conviction (roster now 11; supersedes stale "5 of 9")
 quality_flags:                 # D-39: thresholds for the restored voice quality-evaluation flags
   # SOFT signals surfaced at deliberation (D-37/D-38) — never a gate. tools/quality_flags.py reads these.
   squeeze_min: 5.0             # energy.squeeze_score at/above -> volatility squeeze (breakout pending)

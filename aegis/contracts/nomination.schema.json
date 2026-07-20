@@ -94,6 +94,18 @@
   },
   "shortfall_reason": {
    "type": "string"
+  },
+  "data_gaps": {
+   "type": "array",
+   "description": "D-55 SELF-HEAL: menu fields the voice needed but found ABSENT/null in the universe record. The voice DECLARES the gap (never silently works around it, never invents — law 3); the Chief orchestrator then SOURCES each field (FMP for market/technical fields; an AQE re-export/trigger for engine-computed fields) per contracts/field_dictionary.json and re-runs the affected voice on the repaired record. A data-starved nomination is not accepted.",
+   "items": {
+    "type": "object",
+    "required": ["field"],
+    "properties": {
+     "field": {"type": "string", "description": "the menu field that was missing/null"},
+     "impact": {"type": "string", "description": "how its absence limited this voice's read"}
+    }
+   }
   }
  }
 }
