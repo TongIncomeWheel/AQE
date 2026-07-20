@@ -115,8 +115,10 @@ schedule:
   morning_summary: '10:00'
   market_watch_mode: code watches (AQE alert engine); committee wakes on trigger only
     — no timed AI polling loops
-  market_watch_poll_minutes: 30            # D-54 (was 15 — noisy, PM). Full-universe poll cadence.
-  market_watch_scope: full_universe        # D-54: poll ALL names, not just approved — SOD signals don't justify ignoring the rest
+  alert_feed_minutes: 15                    # D-62: AQE writes alerts every 15 min to the inbox (not email)
+  alert_scope: today_strong_momentum_universe   # D-62 (supersedes D-54 full_universe): scope, not cadence, kills the noise
+  alert_inbox_path: data/alerts/DATE/inbox.jsonl   # D-62: AQE writes here; session sweeps via tools/alert_inbox.py
+  market_watch_sweep_minutes: 15            # session sweep cadence over the inbox; pod runs only on pre-filtered survivors (cheap)
   market_watch_triggers: [breakout, stop_hit_or_approaching, approaching_buy]
 flag_condition:                  # D-57: RATIFIED replacement for the rudimentary sc_momentum>70. Builds the SOD quality WATCH SET; the live price then TRIGGERS (D-54). Everything except event_clear is a SCORE, never a gate (D-4/D-52 doctrine).
   hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
