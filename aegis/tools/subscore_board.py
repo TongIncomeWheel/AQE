@@ -35,7 +35,7 @@ VOICE_SPECS = {
     "steenbarger":  [("sc_momentum", 1), ("rvol", 1)],
     "minervini":    [("structure", 1), ("rs_spy_20d", 1), ("sma_distance_pct", -1)],
     "druckenmiller":[("beta_30d", -1), ("sc_momentum", 1)],
-    "thorp":        [("sc_momentum", 1), ("bracket.rr", 1)],   # thorp's OWN menu only; bracket.rr null pre-exercise -> proxy, flagged
+    "thorp":        [("knn_prob", 1), ("sc_momentum", 1)],   # thorp's OWN menu; knn_prob (empirical edge) is 100% populated — use it, not the sparse bracket.rr
 }
 # axis thresholds for tiering
 BREADTH_STRONG = 3      # in >=3 voices' top-3

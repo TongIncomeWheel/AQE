@@ -81,13 +81,13 @@ def main():
 
 # Data taxonomy per voice: the EXACT AQE fields each voice may read (its data menu, made explicit).
 VOICE_MENUS = {
- "lynch":        ["ticker","gics_sector_name","sc_momentum","flow","structure","rvol","rs_spy_20d","bracket.stop","bracket.risk_pct","bracket.rr","close","above_ema","vol_vs_30d"],
+ "lynch":        ["ticker","gics_sector_name","sc_momentum","flow","structure","rvol","rs_spy_20d","bracket.stop","bracket.risk_pct","bracket.rr","entry","sma_distance_pct"],
  "oneil":        ["ticker","sc_momentum","structure","elder","elder_5d","rvol","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.rr","sma_distance_pct"],
  "wyckoff":      ["ticker","flow","energy","mp_state","mp_accel_state","choch_state","rvol","bracket.stop","bracket.rr"],
  "raschke":      ["ticker","elder","elder_5d","energy","atr_14d","mp_accel_state","structure_shift","bracket.stop","bracket.risk_pct"],
  "steenbarger":  ["ticker","gics_sector_name","sc_momentum","lens_warnings","rvol"],
  "thorp":        ["ticker","sc_momentum","bracket.rr","bracket.rr_tp1","bracket.rr_tp2","knn_prob","knn_significant","sc_m_gate_detail","sc_p_gate_detail","beta_30d"],
- "seow":         ["ticker","ma_20","ma_50","ma_100","ma_200","sma_distance_pct","mp_state","sector_trend_state","close","above_ema","bracket.stop"],
+ "seow":         ["ticker","ma_20","ma_50","ma_100","ma_200","sma_distance_pct","mp_state","sector_trend_state","entry","bracket.stop"],
  "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
  "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade"],
  "detect-lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
