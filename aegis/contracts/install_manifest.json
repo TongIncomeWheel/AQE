@@ -51,7 +51,7 @@
     {"actor": "PM", "gate": "FMP_API_KEY + GitHub token into gitignored aegis/config/.env (copy env.example)"},
     {"actor": "PM", "gate": "tiger_mcp.url into aegis/config/endpoints.json (for headless runs)"},
     {"actor": "PM", "gate": "allocated_capital_usd in aegis/config/aegis_fund.md if null (BL-030)"},
-    {"actor": "PM", "gate": "OPTIONAL (D-45): WhatsApp + WATCHDOG_URL notification secrets into aegis/config/.env; if unset, notify.py is print-only and /ops shows channels OFF (no crash)"}
+    {"actor": "AI", "note": "D-46: PILOT notifications are Cowork-NATIVE (notifications.channel=cowork) -- nothing to configure. WhatsApp/WATCHDOG_URL secrets are POST-MIGRATION (local box/Kimi) only; leave blank for the pilot, do NOT wire them"}
    ],
    "check": "fund_config.allocated_capital() is a number; git check-ignore aegis/config/.env returns path; no secret in tracked files"},
 
@@ -70,21 +70,21 @@
     {"actor": "PM", "gate": "HARD PLATFORM GATE: open the delivered .plugin file in the Cowork DESKTOP app and install it (replaces/supersedes any older plugin build live on the account). A remote/cloud container CANNOT install a plugin -- no /mnt/.local-plugins or /mnt/.plugins mount exists there; do not attempt a workaround."},
     {"actor": "AI", "do": "Kimi only: register voice subagents from aegis-agent.yaml (no desktop-only constraint on this path)"}
    ],
-   "check": "a skill loads AND both /fa AND /ops (D-45 liveness) render from state without error, confirmed against the NEWLY installed plugin (check skill/version, not just that a plugin responds); a first /ops reporting channels OFF is expected until Phase 6, not a failure"},
+   "check": "a skill loads AND both /fa AND /ops (D-45 liveness) render from state without error, confirmed against the NEWLY installed plugin (check skill/version, not just that a plugin responds); /ops shows the channel as cowork-native (D-46 pilot default) -- only a first-run/git-head PARTIAL is expected, not a channel problem"},
 
   {"phase": 6, "title": "Standing clock (scheduled tasks)", "actor": "PM",
    "steps": [
     {"tool": "create_trigger", "tasks": ["premarket (plan 16:00 SGT)", "market-hours watch (~21:25 SGT)", "post-market (~04:05 SGT)", "design & review", "weekly (Sunday)", "nightly janitor"], "note": "app scheduler, NOT in-process cron; each fires a fresh session that pulls->runs->commits"},
-    {"tool": "create_trigger", "tasks": ["heartbeat: notify.py pre_run at T-minus notifications.pre_run_minutes before each notifications.key_runs entry + notify.py --checkin ok"], "note": "D-45; register the matching EXTERNAL watchdog (healthchecks.io/cloud cron) so a missed check-in pages the PM -- box-death becomes an alarm, not silence"}
+    {"tool": "create_trigger", "note": "D-46 PILOT: enable each loop task's notifications:{push:true} so run_ok/run_fail rides the Cowork NATIVE push. OPTIONAL pre-run heartbeat task: notify.py pre_run before each key run. The external watchdog + Windows schtasks/batch in NOTIFICATIONS_SETUP.md are POST-MIGRATION (local box) ONLY -- not wired on Cowork"}
    ],
-   "check": "list_triggers shows the loop tasks AND the heartbeat with intended cron/next-run; a manual notify.py --checkin ok turns the external watchdog green"},
+   "check": "list_triggers shows the loop tasks (and any optional heartbeat) with push notifications enabled; NO external watchdog is required on the Cowork pilot"},
 
   {"phase": 7, "title": "Smoke test / UAT", "actor": "AI",
    "steps": [
     {"do": "one SUPERVISED premarket run -> schema-valid plan, 10 nomination files, committee.json, sizing+gates vs live dynCap"},
     {"cmd": "python3 aegis/tools/daily_flow_audit.py <DATE> --render"},
     {"do": "forced-failure: tripwire block stands down + pages; gatekeeper refuses a no-consensus dummy and logs it"},
-    {"do": "D-45 self-heal UAT: /ops renders; notify.py run_fail --dry-run failure page is visibly distinct; one live pre_run arrives on phone (if channel set); self_heal.py --failure ptj_pull => healed, --failure tripwire => stand_down/not healed; notify.py --checkin ok greens the watchdog; a paused watchdog pages the PM; confirm /heal /recover /repull /reseed cannot place an order (execution still previews at the gate)"}
+    {"do": "D-45/D-46 self-heal UAT (Cowork-native): /ops renders and shows channel=cowork-native; notify.py run_fail --dry-run failure page is visibly distinct; a run_ok/pre_run emits the message that rides the scheduled-task push (confirm a test task's push reaches the phone); self_heal.py --failure ptj_pull => healed, --failure tripwire => stand_down/not healed; confirm /heal /recover /repull /reseed cannot place an order (execution still previews at the gate). SKIP the external-watchdog check -- POST-MIGRATION only"}
    ],
    "check": "DEPLOY.md section C acceptance checklist passes item-by-item AND the D-45 self-heal UAT passes each item; results written to install_state.json"},
 

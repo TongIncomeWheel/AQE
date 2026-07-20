@@ -1,8 +1,29 @@
-# AEGIS — Notification & Self-Heal Setup (D-45)
+# AEGIS — Notification & Self-Heal Setup
 
-**Goal:** switch on the phone pings + dead-man's-switch in ~20 minutes, copy-paste, no coding.
-This is a one-time setup. Until you do it, the system runs fine — it just prints alerts instead
-of sending them, and `/ops` shows the channels as OFF. Nothing breaks.
+> ## ⛔ THIS GUIDE IS THE POST-MIGRATION (LOCAL BOX / KIMI) PATH — NOT FOR THE COWORK PILOT (D-46)
+>
+> **The pilot runs on Claude Cowork, where notifications are NATIVE — there is nothing to set up.**
+> Each scheduled task carries its run message to your phone via Cowork's own **push notification**
+> (`notifications.channel: cowork`). `notify.py` emits the message as the session's output and the
+> task's push delivers it. `/ops` will show the channel as **cowork-native**. Do NOT wire WhatsApp,
+> Twilio, healthchecks.io, Windows batch files, or `schtasks` for the pilot — none of them are used.
+>
+> Come back to everything below **only after** you decide to migrate off Cowork onto the local box
+> (or Kimi), at which point you set `AEGIS_NOTIFY_CHANNEL=whatsapp` and follow these steps.
+
+---
+
+## PILOT (Claude Cowork) — the whole setup, in three lines
+1. When you create the Phase-6 scheduled tasks (`create_trigger`), turn on each task's **push** notification.
+2. That's it — run confirmations and the unmistakable failure page arrive on your phone automatically.
+3. Ask for `/ops` any time for the live liveness card. (Optional: a small pre-run heartbeat task for the "starting soon, alive" ping.)
+
+---
+
+# ↓↓↓ POST-MIGRATION SETUP (local box / Kimi only — ignore for the pilot) ↓↓↓
+
+**Goal:** switch on the WhatsApp pings + external dead-man's-switch in ~20 minutes, copy-paste, no coding.
+Only relevant once you've migrated off Cowork. Until then the system runs fine on Cowork's native push.
 
 You are switching on four things:
 1. a **WhatsApp** channel (one-way alerts to your phone),

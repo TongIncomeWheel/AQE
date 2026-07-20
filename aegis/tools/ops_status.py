@@ -83,9 +83,12 @@ def _state_health():
 
 
 def _channels():
+    ch = os.environ.get("AEGIS_NOTIFY_CHANNEL", "cowork").lower()
     return {
-        "whatsapp": bool(os.environ.get("WHATSAPP_TOKEN") or os.environ.get("TWILIO_SID")),
-        "watchdog": bool(os.environ.get("WATCHDOG_URL")),
+        "active": ch,                       # 'cowork' (pilot native push) or 'whatsapp' (post-migration)
+        "cowork_push": ch == "cowork",      # native — always available inside a Cowork session
+        "whatsapp": bool(os.environ.get("WHATSAPP_TOKEN") or os.environ.get("TWILIO_SID")),  # post-migration
+        "watchdog": bool(os.environ.get("WATCHDOG_URL")),                                     # post-migration
     }
 
 
@@ -105,10 +108,10 @@ def assemble(day=None):
     health, m2 = _state_health()
     missing += m2
     chans = _channels()
-    if not chans["whatsapp"]:
-        missing.append("notification channel unconfigured")
-    if not chans["watchdog"]:
-        missing.append("watchdog unconfigured")
+    # Cowork pilot: native push is always on — nothing to configure, no PARTIAL.
+    # Only the post-migration whatsapp channel can be "selected but unconfigured".
+    if chans["active"] == "whatsapp" and not chans["whatsapp"]:
+        missing.append("whatsapp channel selected but unconfigured")
 
     incidents = (flow or {}).get("exception_count", 0)
     layers_touched = (flow or {}).get("layers_touched", [])
@@ -150,7 +153,10 @@ def render_card(s):
     if f.get("headline"):
         L.append(f"  {f['headline']}")
     ch = s["channels"]
-    L.append(f"  alerts: whatsapp {'on' if ch['whatsapp'] else 'OFF'} · watchdog {'on' if ch['watchdog'] else 'OFF'}")
+    if ch["active"] == "cowork":
+        L.append("  alerts: cowork-native push (pilot)  ·  whatsapp/watchdog: post-migration")
+    else:
+        L.append(f"  alerts: whatsapp {'on' if ch['whatsapp'] else 'OFF'} · watchdog {'on' if ch['watchdog'] else 'OFF'}")
     if s["partial"]:
         L.append(f"  ⚠ PARTIAL — unavailable: {', '.join(s['partial'])}")
     return "\n".join(L)

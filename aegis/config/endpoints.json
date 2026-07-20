@@ -28,8 +28,10 @@
     "direction": "bidirectional data/ only"
   },
   "notifications": {
+    "active_channel": "cowork -- PILOT native push via scheduled-task notifications (D-46); no endpoint needed",
+    "_migration_only": "the entries below activate ONLY post-pilot on the local box / Kimi, when AEGIS_NOTIFY_CHANNEL=whatsapp -- NOT wired for the Cowork pilot",
     "whatsapp_api": "https://graph.facebook.com/v20.0",
-    "provider": "meta OR twilio -- keys live in config/.env (D-45), never here",
-    "watchdog": "external dead-man's-switch (healthchecks.io / cloud cron); ping URL in WATCHDOG_URL env -- absence of a check-in is the alarm"
+    "provider": "meta OR twilio -- keys live in config/.env, never here",
+    "watchdog": "external dead-man's-switch (healthchecks.io / cloud cron); ping URL in WATCHDOG_URL env -- only meaningful when we run the infra (local box)"
   }
 }

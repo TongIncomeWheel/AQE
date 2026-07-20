@@ -13,10 +13,18 @@ Doctrine (constitution v4.1):
     returns a failed status — it never pretends a ping was delivered.
   - Law 4 (code computes): message construction is deterministic here; no model.
 
-Two channels, both optional and read from the environment (never from a tracked
-file — see config/env.example):
-  - WhatsApp one-way alerts   → WHATSAPP_* env (Meta Cloud API or Twilio-style)
-  - External dead-man's-switch → WATCHDOG_URL env (e.g. healthchecks.io)
+CHANNEL (D-46): the default channel is **cowork** — the PILOT runs on Claude
+Cowork, where the emitted message IS the session's output and the scheduled
+task's own push notification delivers it to the PM's phone. No third-party
+service, nothing to configure. This is the intended pilot path, not a fallback.
+The WhatsApp channel and the external watchdog are the POST-MIGRATION (local
+box / Kimi) path and are OFF until `AEGIS_NOTIFY_CHANNEL=whatsapp` is set — do
+NOT wire them for the Cowork pilot.
+
+Channels (env, never a tracked file — see config/env.example):
+  - cowork (default) → message printed as session output → Cowork native push
+  - whatsapp (post-migration) → WHATSAPP_* / TWILIO_* env
+  - watchdog (post-migration) → WATCHDOG_URL env (e.g. healthchecks.io)
 
 The FAILURE template is deliberately unlike every other message so a page that
 matters is never mistaken for a routine green ping (PM ruling, D-45).
@@ -101,6 +109,11 @@ def _whatsapp_config():
     return None
 
 
+def _channel():
+    """Default 'cowork' (pilot). 'whatsapp' is the post-migration local path."""
+    return os.environ.get("AEGIS_NOTIFY_CHANNEL", "cowork").lower()
+
+
 def send(kind, fields, dry_run=False):
     """
     Build and send a notification. Returns a status dict; never raises on a
@@ -109,14 +122,27 @@ def send(kind, fields, dry_run=False):
     if kind not in KINDS:
         return {"ok": False, "error": f"unknown kind {kind!r}"}
     title, body = build(kind, fields)
-    cfg = _whatsapp_config()
+    channel = _channel()
 
-    if dry_run or cfg is None:
-        reason = "dry-run" if dry_run else "channel unconfigured (WHATSAPP_* not set) — printed only"
-        print(f"[notify:{kind}] {reason}\n{body}\n")
+    if dry_run:
+        print(f"[notify:{kind}] dry-run ({channel})\n{body}\n")
         return {"ok": True, "sent": False, "kind": kind, "title": title,
-                "body": body, "reason": reason}
+                "body": body, "channel": channel, "reason": "dry-run"}
 
+    if channel == "cowork":
+        # PILOT path: the printed message is the Cowork session's output; the
+        # scheduled task's push notification carries it to the PM's phone. This
+        # is delivery, not a fallback — no external service is involved.
+        print(f"[notify:{kind}] (cowork-native push)\n{body}\n")
+        return {"ok": True, "sent": True, "via": "cowork-push", "kind": kind,
+                "title": title, "body": body, "channel": "cowork"}
+
+    # channel == "whatsapp" — POST-MIGRATION local path only.
+    cfg = _whatsapp_config()
+    if cfg is None:
+        print(f"[notify:{kind}] whatsapp channel selected but WHATSAPP_*/TWILIO_* unset — printed only\n{body}\n")
+        return {"ok": True, "sent": False, "kind": kind, "body": body,
+                "channel": "whatsapp", "reason": "whatsapp unconfigured"}
     try:
         import requests  # deferred; only needed when actually sending
         if cfg["provider"] == "meta":
@@ -142,9 +168,10 @@ def send(kind, fields, dry_run=False):
 
 def checkin(status="ok"):
     """
-    Ping the external watchdog so the ABSENCE of a check-in becomes the alarm
-    (covers the case where the whole box is dead and cannot page). No-op with a
-    printed note if WATCHDOG_URL is unset.
+    POST-MIGRATION (local box) only: ping the external watchdog so the ABSENCE
+    of a check-in becomes the alarm if the box dies. Not used in the Cowork
+    pilot (Anthropic runs the infra; liveness comes from the scheduled tasks'
+    native completion pushes). No-op with a printed note if WATCHDOG_URL is unset.
     """
     base = os.environ.get("WATCHDOG_URL")
     if not base:
