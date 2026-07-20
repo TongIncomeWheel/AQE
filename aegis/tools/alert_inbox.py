@@ -98,8 +98,19 @@ def sweep(date, export, inbox, cursor_path):
         }
         # HELD-BOOK alerts (stop/approaching on a position) ALWAYS surface — risk stream, not opportunity
         risk_stream = atype in ("stop_hit", "stop_approaching")
-        # coarse opportunity gate
-        quality_ok = (scm is not None and scm >= SC_MOM_FLOOR) or lp >= LENS_FLOOR or enriched["is_runner"]
+        # QUALITY GATE (D-62/D-57) — the anti-noise filter. A breakout is "worth podding" only if it
+        # is a FRESH quality pivot, not an extended chase. Deterministic; protects the voices from noise.
+        e5 = r.get("elder_5d") or [0]
+        sd = r.get("sma_distance_pct")
+        checks = {
+            "strong_univ": (scm or 0) >= STRONG_UNIVERSE_FLOOR,
+            "detect_ok": lp >= 3,                                   # >=3/6 detect sub-lenses
+            "edge_ok": (r.get("knn_prob") or 0) >= 0.5,             # empirical edge, not a coin flip
+            "not_extended": (sd is not None and sd < 12),           # NOT a ~20%-over-SMA late chase
+            "force_sustained": (sum(e5[-3:]) / 3) >= 8,             # elder force still up
+        }
+        enriched["gate"] = {"passed": sum(checks.values()), "checks": checks}
+        quality_ok = sum(checks.values()) >= 4                      # 4 of 5 -> worth a pod
         if risk_stream:
             enriched["route"] = "HELD-RISK -> page immediately"; pod_worthy.append(enriched)
         elif stale:
@@ -109,7 +120,7 @@ def sweep(date, export, inbox, cursor_path):
         elif not event_clear:
             enriched["skip_reason"] = "event-driven (earnings) — cannot advance"; skipped.append(enriched)
         elif not quality_ok:
-            enriched["skip_reason"] = f"below pod bar (sc_mom {scm}, lens {lp}/6, not runner)"; skipped.append(enriched)
+            enriched["skip_reason"] = f"quality gate {enriched['gate']['passed']}/5 (<4) — extended/unconfirmed breakout"; skipped.append(enriched)
         else:
             enriched["route"] = "POD (Detect+Elder+fitting voice) -> page if CONFIRM & gate-actionable"; pod_worthy.append(enriched)
 
