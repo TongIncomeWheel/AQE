@@ -118,6 +118,19 @@ schedule:
   market_watch_poll_minutes: 30            # D-54 (was 15 — noisy, PM). Full-universe poll cadence.
   market_watch_scope: full_universe        # D-54: poll ALL names, not just approved — SOD signals don't justify ignoring the rest
   market_watch_triggers: [breakout, stop_hit_or_approaching, approaching_buy]
+flag_condition:                  # D-57: RATIFIED replacement for the rudimentary sc_momentum>70. Builds the SOD quality WATCH SET; the live price then TRIGGERS (D-54). Everything except event_clear is a SCORE, never a gate (D-4/D-52 doctrine).
+  hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
+  score_factors:                 # weighted, not all-or-nothing
+    - structure_integrity        # structure, structure_shift (reward BOS/tight base; penalise CHoCH)
+    - participation              # DISCRIMINATING combo: rvol>=1.5 AND flow>0 AND rs_spy_20d>0 (rs_leadership==LEADER is table-stakes, weak alone)
+    - detect_lens                # lens_positive >= 4 of 6
+    - elder_force                # elder_5d rising; elder_pattern in {ACCELERATION, CORRECTION_REENTRY}; penalise INTERRUPTED
+    - bracket_exercisable        # a workable stop exists via the bracket exercise (D-52) — soft
+    - extension_penalty          # large sma_distance_pct penalised in mean-revert tape
+    - sector_rotation_alignment  # sector_rrg in {LEADING, IMPROVING} rewarded; the de-rate engine penalised
+  composite_rank: tiebreak_only  # sc_momentum/rank DEMOTED from driver to floor/tiebreak — a high score is a caution in a de-rate
+  profile: robust_first          # D-57 (Pardo guard): ship ONE robust profile now (structure+participation+event_clear+extension). The regime-adaptive/sector-rotation reweighting is BEHIND walk-forward validation before it goes live — no shipping an in-sample fit.
+  tiers: {WATCH_A: high_threshold, WATCH_B: lower_threshold_visible_not_discarded}  # filtered names stay VISIBLE (WATCH_B), never silently dropped — use all the data (PM)
 retention:
   raw_days: 30
   ledger_window_days: 15
@@ -128,6 +141,8 @@ autopilot:
   max_r_per_order: 1.0
   max_orders_per_session: 3
   scope: ONLY tickers on today's PM-APPROVED plan with preauthorised=true
+  auto_deliberate_execute: OFF   # D-58: when the PM ARMS this, an intraday mover is auto-deliberated (judgment tier) and, if it clears the consensus bar, auto-executed within caps via the gatekeeper. Default OFF — routine watch is haiku, preview-only.
+  auto_execute_consensus_min: 6  # D-58 (PM): auto-execute only if the quick deliberation reaches >=6 voices in consensus. Below 6 -> page the PM, never auto-fire.
   auto_off_on:
   - tripwire block
   - any portfolio gate breach
@@ -174,6 +189,7 @@ model_tiers:
   judgment: opus
   control: sonnet
   cockpit: sonnet
+  watch: haiku                   # D-58: the CHEAP tier. The 30-min market-hours poll (held-book checks + off-plan scan) runs here by default. Escalate to judgment ONLY on PM request or an armed auto-deliberate. Anti-overfit/anti-cost: never spend opus on a routine poll.
   kimi_judgment: kimi-for-coding-highspeed
   kimi_control: kimi-for-coding
 notifications:   # D-45/D-46: PM-tunable — which operational events ping the phone. Emitter tools/notify.py (order-blind).
