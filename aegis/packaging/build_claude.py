@@ -59,7 +59,9 @@ def main():
     for f in ("rulebook.yaml", "parameters.yaml", "commands.md", "constitution.md", "decisions_log.md"):
         shutil.copy(os.path.join(ROOT, "charter", f), os.path.join(DIST, "charter", f))
     shutil.copy(os.path.join(ROOT, "CONTEXT.md"), os.path.join(DIST, "CONTEXT.md"))
-    shutil.copytree(os.path.join(ROOT, "config"), os.path.join(DIST, "config"))
+    # NEVER ship the secret (D-49): .env is excluded from the distributable — only env.example ships.
+    shutil.copytree(os.path.join(ROOT, "config"), os.path.join(DIST, "config"),
+                    ignore=shutil.ignore_patterns(".env", ".env.*", "*.secret", "__pycache__"))
     for shelf in ("data/sod", "data/intraday", "data/eod", "data/persistent/cs_weekly", "data/archive"):
         os.makedirs(os.path.join(DIST, shelf), exist_ok=True)
         open(os.path.join(DIST, shelf, ".keep"), "w").write("")
