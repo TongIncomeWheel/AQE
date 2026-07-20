@@ -156,7 +156,7 @@ def render(board, lens_positive, records, consensus=None):
     # per voice
     lines.append("\n**Each voice alone (top pick by its own sub-scores):**")
     for v in list(VOICE_SPECS) + ["seow", "detect-lens", "elder-lens"]:
-        flag = " *(rr-null proxy)*" if v == "thorp" else ""
+        flag = " *(edge=knn_prob)*" if v == "thorp" else ""
         lines.append(f"- {v}: {' > '.join(L[v])}{flag}")
     # tiers
     lines.append("\n**Data-only tiering (agreement across breadth / detect / elder force):**")
