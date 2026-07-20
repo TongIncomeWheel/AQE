@@ -1,0 +1,25 @@
+{
+  "schema": "market_watch",
+  "date": "2026-07-20",
+  "pass_time_utc": "2026-07-20T10:05:00Z",
+  "run_type": "DRY_RUN_MONITOR_PASS",
+  "autopilot": "OFF",
+  "data_sources": {"prices": "FMP live", "book": "Tiger MCP (live, reconnected)", "ibkr": "DOWN — not required; all executable-stop names at Tiger; 8 IBKR names frozen/compliance-hold"},
+  "actionable_stops": [
+    {"ticker": "DDOG", "live": 258.69, "stop": 247.17, "dist_pct": 4.5, "usd_to_stop": 276.48, "trail_floor": 247.17, "ratchet": "held (below entry, floor cannot raise)", "status": "HOLDING"},
+    {"ticker": "AMPL", "live": 9.60, "stop": 8.90, "dist_pct": 7.3, "trail_floor": 8.90, "ratchet": "held", "status": "HOLDING"},
+    {"ticker": "V", "live": 358.68, "stop": 343.29, "dist_pct": 4.3, "trail_floor": 343.29, "ratchet": "held", "status": "HOLDING — flipped red today, watch"},
+    {"ticker": "SPGI", "live": 450.84, "stop": 420.73, "dist_pct": 6.7, "trail_floor": 420.73, "ratchet": "held (marginal vs entry)", "status": "HOLDING"}
+  ],
+  "awareness_only_frozen": [
+    {"ticker": "SLDE", "live": 20.50, "advisory_stop": 20.45, "dist_pct": 0.2, "flag": "AT ADVISORY STOP — would trigger if executable; COMPLIANCE_HOLD, no action possible", "status": "FLAG"},
+    {"ticker": "IBM", "live": 212.67, "note": "broken -19.2%, no stop ref, frozen", "status": "AWARE"}
+  ],
+  "trigger_evaluation": {
+    "live_stop_hits": 0,
+    "nearest_live": "DDOG +4.5%",
+    "page_decision": "SILENT on actionable stops (no live-stop hit). SLDE-at-advisory logged as awareness (frozen, non-actionable).",
+    "orders_placed": 0
+  },
+  "diversifier_confirm": "Energy diversifiers green while book red today: PSX +2.8%, MPC +2.2% vs XLK -1.1%, XLF -0.9% — negative-beta thesis confirmed live."
+}
