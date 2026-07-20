@@ -88,7 +88,7 @@ VOICE_MENUS = {
  "seow":         ["ticker","ma_20","ma_50","ma_100","ma_200","sma_distance_pct","mp_state","sector_trend_state","close","above_ema","bracket.stop"],
  "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
  "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade"],
- "detect_lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
+ "detect-lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
 }
 
 def _field_meanings_block(menu):
@@ -206,7 +206,7 @@ tools: []
 
 ## 2 · MY DATA TAXONOMY (the ONLY fields I read — my data menu, enforced)
 {", ".join("`"+m+"`" for m in menu)}
-Reading any field not on this menu — especially composites for detect_lens, or lens fields for framework voices — is a breach the auditor checks.{_field_meanings_block(menu)}{_quality_flags_block(vkey)}
+Reading any field not on this menu — especially composites for detect-lens, or lens fields for framework voices — is a breach the auditor checks.{_field_meanings_block(menu)}{_quality_flags_block(vkey)}
 
 ## 3 · MY PROCESS (identical machinery for all ten — the shared engine)
 {common_body.strip()}

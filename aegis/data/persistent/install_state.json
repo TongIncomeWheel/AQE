@@ -1,26 +1,17 @@
 {
-  "phase": 5,
-  "status": "blocked_pm",
+  "phase": 6,
+  "status": "in_progress",
   "checks": [
-    {"name": "phase0_git_python_node_present", "pass": true, "evidence": "git 2.43.0, python3 3.11.15, node v22.22.2"},
-    {"name": "phase0_connectors_resolvable", "pass": true, "evidence": "FMP, Tiger MCPv7, Google Drive, Interactive Brokers (IBKR) all connected:true, enabledInChat:true"},
-    {"name": "phase1_aegis_at_repo_root", "pass": true, "evidence": "aegis/ present at /home/claude/AQE/aegis"},
-    {"name": "phase1_rulebook_and_D43", "pass": true, "evidence": "rulebook.yaml exists; decisions_log.md contains D-43"},
-    {"name": "phase2_agent_count", "pass": true, "evidence": "12 agents (10 voices + committee-desk + staging-gatekeeper); skills/ populated"},
-    {"name": "phase3_fund_config_parses", "pass": true, "evidence": "allocated_capital_usd=75000, dyncap_usd=66699"},
-    {"name": "phase3_secrets_wiring", "pass": true, "evidence": "GH_TOKEN proxy-injected; FMP/Tiger/IBKR/Drive account-level MCP connectors confirmed connected+enabled"},
-    {"name": "phase4_historical_store", "pass": true, "evidence": "n_tickers=869, date_range 2020-07 to 2026-07"},
-    {"name": "phase4_contracts_valid", "pass": true, "evidence": "all contracts JSON valid; field_dictionary 100 fields"},
-    {"name": "phase4_aqe_export_pulled", "pass": true, "evidence": "aqe_daily_export.json pulled via Drive, dated 2026-07-18 (freshest -- pipeline skips Sun/Mon)"},
-    {"name": "phase4_tripwires", "pass": true, "evidence": "tripwires clean: 177 rows, exit 0"},
-    {"name": "phase4_ptj_pulled", "pass": true, "evidence": "latest PTJ v2.9.6 pulled, 12 open positions"},
-    {"name": "phase4_dyncap_refreshed", "pass": true, "evidence": "dyncap_usd=66698.64, matches aegis_fund.md's 66699 to the dollar -- cross-validated"},
-    {"name": "phase5_stale_plugin_identified", "pass": true, "evidence": "Account's live plugin is aegis-cic v3.1.0 (id plugin_01GGAYPD3BoKb1fXV6fxyK74), 5 skills, aligned to retired Charter v3.0. New build is aegis-v4 1.1.0-draft, 20 skills, 12 agents, Charter v4.1 through D-43."},
-    {"name": "phase5_new_plugin_packaged", "pass": true, "evidence": "aegis-v4 zipped to a .plugin file (137 files, no unfilled ~~ placeholders), delivered to PM via SendUserFile (file_uuid 052943a7-f594-49ff-bd50-b0c893beffc0)."},
-    {"name": "phase5_plugin_installed", "pass": false, "evidence": "Cannot install a plugin from this remote cloud container -- the cowork-plugin-customizer skill confirmed no mnt/.local-plugins or mnt/.plugins mount exists here (that mechanism is desktop-app-only). PM must open the delivered .plugin file on desktop and click install."},
-    {"name": "phase5_trivial_skill_and_fa_render", "pass": null, "evidence": "Cannot verify until the new plugin is installed and enabled -- old plugin's /fa still points at stale v3.0 logic."}
+    {"name": "phase0_4_verified", "pass": true, "evidence": "connectors resolvable; fund_config 75000/66699; historical store 869 tickers; contracts valid; tripwires clean 177 rows; PTJ v2.9.6 12 open; dyncap 66698.64 cross-checks 66699"},
+    {"name": "phase2_agent_count", "pass": true, "evidence": "clean rebuild: 12 agents (10 voice-* + committee-desk + staging-gatekeeper); 30 skills"},
+    {"name": "phase2_selfheal_layer_D45", "pass": true, "evidence": "tools/{notify,self_heal,ops_status}.py + skills/{ops-status,recover} + contracts/{self_heal,ops_status}.schema.json present"},
+    {"name": "phase2_notify_cowork_native_D46", "pass": true, "evidence": "notifications.channel=cowork; whatsapp/watchdog deferred behind AEGIS_NOTIFY_CHANNEL=whatsapp"},
+    {"name": "phase2_detect_lens_rename", "pass": true, "evidence": "voice-detect_lens -> voice-detect-lens across skill dir + build_claude.py (VOICE_MENUS key + breach text) + daily_flow_audit.py VOICES; rebuild shows 12 agents incl voice-detect-lens.md, ZERO underscore agent names. rulebook detect_lens_seat is a config key (not an agent name) -- intentionally unchanged. Fixes desktop plugin-validation failure."},
+    {"name": "phase5_plugin_installed", "pass": true, "evidence": "PM installed aegis-v4 on desktop; validation passes with the detect-lens rename. Old aegis-cic v3.1.0 superseded."},
+    {"name": "flow_drive_crud", "pass": true, "evidence": "LIVE 2026-07-20T03:00:11Z: Drive READ ok (PTJ folder 15PR74..., latest aegis_trade_journal_2026-07-17_PTJ.json v2.9.6 visible); Drive WRITE ok (create_file succeeded, id 1k1cxfz...). Connector has read+write scope. No connector delete tool -- flow appends/creates dated files, never deletes, so not required. NOTE: create_file converts text to a Google Doc unless disableConversionToGoogleType=true; the /ptj skill already writes application/json correctly (existing .json files confirm)."},
+    {"name": "flow_github_crud", "pass": true, "evidence": "READ (git fetch/clone public) ok, no cred. WRITE (git push) proven this session WITH a PAT. CONFIG: deployed autonomous/scheduled sessions need a push credential available (interactive PM-driven sessions can paste a per-session PAT). No GitHub MCP connector exists -- push is via git CLI + token."}
   ],
-  "pm_gate": "Open the delivered aegis-v4.plugin file in the Cowork desktop app and install it, replacing/supplementing the old aegis-cic v3.1.0 plugin. Once installed, resume this install at Phase 5's CHECK (trivial skill loads, /fa renders) and continue to Phase 6 (which is its own PM gate for creating the standing scheduled tasks).",
-  "notes": "Phases 0-4 fully verified and clean, including a real cross-check: independently-recomputed dynCap (66698.64) matches the account's recorded fund state (66699) to the dollar. Phase 5 blocked on a genuine platform constraint (plugin install requires the desktop app), not a PM preference -- the new plugin is packaged and delivered, awaiting PM install action. Phases 6-8 remain untouched and are their own explicit PM gates per INSTALL.md.",
-  "ts_from_env": "2026-07-19T07:09:42Z"
+  "pm_gate": "GitHub push credential for autonomous runs is the one open CONFIG item (Drive needs nothing -- read+write both live-verified). For the supervised pilot where the PM drives, a pasted per-session PAT is sufficient. Then Phase 6 (create scheduled tasks with push notifications on) and a Phase 7 supervised smoke test.",
+  "notes": "Detect-lens plugin-validation fix applied to origin/main so the source of truth matches the installed plugin (prevents the next build regenerating the broken underscore agent). Drive + GitHub CRUD live-verified 2026-07-20T03:00:11Z. A throwaway Drive write-test file (aegis_crud_write_test_DELETE_ME, root) was created to prove write scope -- PM to delete.",
+  "ts_from_env": "2026-07-20T03:00:11Z"
 }

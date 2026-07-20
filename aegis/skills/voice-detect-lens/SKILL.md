@@ -1,6 +1,6 @@
 ---
-name: voice-detect_lens
-description: Voice skill — methodology card for detect_lens. Runs the voice-common engine in ISOLATION; outputs nomination.json per contracts/nomination.schema.json.
+name: voice-detect-lens
+description: Voice skill — methodology card for detect-lens. Runs the voice-common engine in ISOLATION; outputs nomination.json per contracts/nomination.schema.json.
 ---
 
 # VOICE: DETECT LENS — the 10th nominator (Decision D-5; non-human seat)
