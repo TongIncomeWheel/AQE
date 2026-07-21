@@ -1,0 +1,98 @@
+AEGIS BOOTSTRAP DIAGNOSTIC — FRESH SCHEDULED SESSION
+Generated: 2026-07-21 (scheduled routine, unattended)
+Model: claude-fable-5
+Client context: mobile app / cloud sandbox (ephemeral container)
+
+=====================================================================
+STEP 1 — SHELL / FILESYSTEM / ENV
+=====================================================================
+pwd                    : /home/claude
+whoami                 : root
+HOME                   : /root
+
+/home/claude/aegis                                  : WORKSPACE_ABSENT
+/home/claude/aegis/config/.env                      : ENV_DOTENV_ABSENT
+/root/.claude/plugins/synced/aegis-v4               : PLUGIN_PRESENT
+
+GH_TOKEN  (first 10)   : "proxy-inje"   (present but proxy-injected sentinel, NOT a usable PAT)
+GITHUB_PAT (first 10)  : ""             (ABSENT / empty)
+
+ls /home/claude        : (empty — no files/dirs)
+
+KEY FINDINGS (Step 1):
+- A fired session starts in /home/claude as root, HOME=/root.
+- The persistent aegis WORKSPACE is NOT present in the fired container
+  (/home/claude/aegis absent) and neither is config/.env. A fresh session
+  has NO pre-seeded workspace or dotenv — state must be pulled from git.
+- The aegis-v4 PLUGIN itself IS synced/present under
+  /root/.claude/plugins/synced/aegis-v4 (skills + agents load fine).
+- Neither GH_TOKEN nor GITHUB_PAT is available as a usable credential in the
+  fired env. GH_TOKEN resolves to the literal "proxy-inje..." sentinel
+  (a proxy-injected placeholder, not a real token); GITHUB_PAT is empty.
+  => A fired session cannot authenticate to GitHub from environment secrets.
+     Git access in this run worked ONLY because a PAT was passed inline in
+     the task prompt.
+
+=====================================================================
+STEP 2 — SKILLS & MCP CONNECTOR VISIBILITY
+=====================================================================
+(a) aegis-v4:* SKILLS available to this fired session:
+  auditor, committee-desk, design_review, development,
+  eng-data, eng-governance, eng-indicator, eng-process, eng-technical,
+  learning_agent, market_hours, ops-status, performance_scorer,
+  post_market, premarket, recover, staging-gatekeeper, status,
+  voice-common, voice-detect-lens, voice-druckenmiller, voice-elder-lens,
+  voice-lynch, voice-minervini, voice-oneil, voice-raschke, voice-seow,
+  voice-steenbarger, voice-thorp, voice-wyckoff, weekly
+  => Full aegis-v4 skill surface is present.
+
+  aegis-v4:* AGENTS (subagent types) available:
+  committee-desk, staging-gatekeeper, voice-detect-lens, voice-druckenmiller,
+  voice-elder-lens, voice-lynch, voice-minervini, voice-oneil, voice-raschke,
+  voice-seow, voice-steenbarger, voice-thorp, voice-wyckoff
+  => Full nominator + judgment + gatekeeper agent surface is present.
+
+(b) MCP CONNECTOR / TOOL AVAILABILITY RIGHT NOW:
+  FMP           : AVAILABLE. Full mcp__FMP__* surface (quote, chart, company,
+                  statements, analyst, calendar, news, secFilings, etc.).
+  Tiger         : AVAILABLE. Server "Tiger_MCPv7" connected after a short
+                  handshake delay (was "still connecting" at session start,
+                  came online on first ToolSearch). Full mcp__Tiger_MCPv7__*
+                  surface: get_account_summary, get_stock_positions,
+                  get_option_positions, get_wheel_state, get_position_roc,
+                  get_filled_orders, place_stock_order, place_option_order,
+                  execute_roll, cancel_order, etc. (write tools preview by
+                  default; submit only with confirm=True).
+  Google Drive  : AVAILABLE. Full mcp__Google_Drive__* surface (search_files,
+                  read_file_content, create_file, download_file_content, etc.).
+
+  Also present (not requested, noted for completeness):
+    Interactive_Brokers_IBKR (get_price_snapshot, positions, orders, options),
+    Google_Calendar (search_events), Booking_com.
+
+  NOTE on Tiger timing: Tiger_MCPv7 is NOT instantly ready at session start —
+  it reports "still connecting" and only surfaces tools after a keyword
+  ToolSearch forces a wait. A fired run that assumes Tiger is up on the very
+  first tool call may see it missing; a ToolSearch retry resolves it.
+
+=====================================================================
+STEP 3 — GIT PERSISTENCE PATH
+=====================================================================
+Clone of TongIncomeWheel/AQE.git via inline x-access-token PAT: OK.
+This report written to aegis/data/diag/bootstrap_report.txt and pushed to main.
+=> Git round-trip works when a PAT is supplied inline in the prompt. It does
+   NOT work from env secrets (see Step 1). This is the load-bearing caveat for
+   any scheduled routine that must persist state: the credential has to travel
+   with the task, because the fired container carries no usable git secret.
+
+=====================================================================
+BOTTOM LINE FOR A FIRED SESSION
+=====================================================================
+CAN SEE:  aegis-v4 plugin (all skills + agents); FMP, Tiger (after a brief
+          connect delay), Google Drive, IBKR MCP connectors.
+CANNOT SEE: the persistent /home/claude/aegis workspace, config/.env, or any
+          usable GitHub credential in the environment. /home/claude is empty.
+IMPLICATION: A fresh premarket/market/post-market run must (1) reconstruct its
+          workspace from git at start, (2) carry its own git PAT inline (env
+          secrets are absent/sentinel), and (3) tolerate a Tiger MCP connect
+          delay with a ToolSearch retry rather than declaring it unavailable.
