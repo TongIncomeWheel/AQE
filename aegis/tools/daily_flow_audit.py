@@ -142,13 +142,22 @@ def audit(day):
     # ---- Operations: journal
     jrnl = glob.glob(os.path.join(eod, "*journal*.json")) or glob.glob(os.path.join(D, "journal", f"*{day}*.json"))
     msum = bool(_load(os.path.join(eod, "morning_summary.json")))
+    # PTJ Drive-write verification (D-69) — an INDEPENDENT check of Drive itself, not just the
+    # kernel's own belief that its write succeeded (this is the exact class of gap that let the
+    # 07-18->07-20 stale PTJ go undetected: every prior check here reads local files only).
+    ptj_check = _load(os.path.join(eod, "ptj_drive_check.json"))
+    ptj_status = ptj_check.get("status") if isinstance(ptj_check, dict) else "NOT_CHECKED"
     layers["operations_desk"] = {
         "touched": bool(jrnl) or msum,
         "journal_written": bool(jrnl),
         "morning_summary": msum,
+        "ptj_drive_status": ptj_status,
+        "ptj_drive_verified": ptj_status == "FRESH",
     }
 
     exc = _exceptions(day)
+    if ptj_status not in ("FRESH", "NOT_CHECKED"):
+        exc.append(f"ptj_drive_{ptj_status.lower()}")  # e.g. ptj_drive_stale / ptj_drive_missing
 
     # ---- inferred spawn/agent count (D-27 standing spawns)
     spawns = layers["research_desk"]["voices_ran_count"] \

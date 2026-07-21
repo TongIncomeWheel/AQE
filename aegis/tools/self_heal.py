@@ -55,7 +55,10 @@ CLASS = {
 
 # The manual command the PM can fire for each failure if auto-heal can't (D-45).
 MANUAL_FIX = {
-    "feed_pull":   "/repull   — re-fetch today's AQE export, revalidate, re-run tripwires",
+    "feed_pull":   "AQE export still missing/stale after 3 bounded retries (D-70). Confirm AQE's "
+                   "pipeline has actually completed (check/kick it on your box), then tell Claude "
+                   "'rerun premarket' in any live session — that re-fires the premarket trigger on "
+                   "demand. The kernel never touches AQE itself; this is the PM's manual lever.",
     "ptj_pull":    "/repull ptj — re-pull both brokers and refresh dynCap",
     "store_stale": "/reseed   — force a historical-store seed (D-40) for the affected names",
     "schema":      "/recover  — a contract changed shape; review the failing schema, then re-run",

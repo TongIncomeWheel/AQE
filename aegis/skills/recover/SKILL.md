@@ -26,8 +26,14 @@ gatekeeper and PM dispose.
   Transient (feed/ptj/store) → bounded retry / reseed and report "healed".
   Structural (schema/config) → escalate with the fix. Gate/tripwire → **stand
   down, never auto-heal** — the PM clears or overrides (recorded).
-- **`/repull`** → re-fetch today's AQE export, revalidate against the schema,
-  re-run `tools/tripwires.py`. **`/repull ptj`** → re-pull both brokers and
+- **`/repull`** → re-fetch today's AQE export from the Drive "AQE" folder (D-66), revalidate
+  against the schema, re-run `tools/tripwires.py`. **This is the manual lever behind D-70's
+  page:** premarket already retries the AQE pull 3x with backoff before ever paging (~25 min,
+  self-healing an AQE pipeline that's just running a bit late); a page only fires after that's
+  exhausted, meaning AQE genuinely hasn't produced today's export yet. The fix is NOT to
+  auto-retry harder — it's to confirm AQE has actually finished (check/kick it on the PM's box)
+  and then say "rerun premarket" (or `/repull`), which re-fires the trigger on demand. The
+  kernel never controls or re-triggers AQE itself. **`/repull ptj`** → re-pull both brokers and
   refresh dynCap (`tools/dyncap_ledger.py update <ptj>`).
 - **`/reseed [tickers|universe]`** → force a historical-store seed via the D-40
   path (`tools/historical_store.py check` + `seed`) for missing/stale names.
