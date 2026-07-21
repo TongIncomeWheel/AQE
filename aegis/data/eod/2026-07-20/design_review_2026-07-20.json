@@ -1,0 +1,35 @@
+{
+ "date": "2026-07-20",
+ "run_ts_utc": "2026-07-21T01:50:00Z",
+ "kind": "design_review (D&R, after post-market 2026-07-20 session)",
+ "desk": "Engineering & Change (Chief adopts; 5 bench lenses inline per D-27)",
+ "step1_assurance": {
+  "post_market": "RAN via D-64 fresh-session self-bootstrap — clone + PAT injection OK, BOTH brokers pulled live 00:50Z (IBKR recovered vs 07-20 intraday outage), journal aegis_journal_2026-07-20.json written and valid, commit d67996e pushed. D-64 fix VERIFIED LIVE on its first scheduled firing.",
+  "market_watch": "Wake fired 00:57Z (08:55 SGT) — OUTSIDE the 21:30-04:00 SGT window; stood down correctly (STAND_DOWN_OUT_OF_WINDOW), no false action. Cadence/schedule of the rebuilt v2 trigger needs re-pinning (BL-045). No alert inbox existed to sweep (BL-044).",
+  "premarket_07-20": "Ran as gate-breach DRY_RUN: 0/11 voices spawned, 0 nominations, no committee session. Flow audit layers not touched: committee_desk, execution_gatekeeper. Universe file was a 12-field thin projection — non-compliant with D-53 mandatory taxonomy (root blocker: no AQE export reached the workspace).",
+  "voice_completeness": "0 of 11 voices ran vs 11 expected — process deviation: constitution §4 invocation rule says voices are invoked 'always all ten' (now eleven); a portfolio hard breach blocks NEW ENTRY (RB:gate_doctrine), not analysis. Third consecutive session with an empty Nomination Ledger.",
+  "exceptions": "0 exception files 07-20; self-heal log clean for the session."
+ },
+ "step2_performance": {
+  "method": "Degraded scorer pass — no AQE export for 07-20, no nominations to score (scorecard.json: INSUFFICIENT_DATA x11). Substitute: FMP close-of-session check on the full surfaced set (35 universe candidates + 12 held + 4 conditional ideas) vs SPY.",
+  "session": "US Mon 2026-07-20: SPY -0.16%, XLK +0.07%, XLF -0.39%.",
+  "runners_check": "No missed runner in the surfaced universe: max candidate mover SCHW +0.97%; the day's real runners were the book's own names — NU +2.94%, SLDE +2.63%, AMPL +2.40%, DDOG +1.74%. Miss classification: NONE material (no NOT-IN-UNIVERSE runner detected in the tracked set; nomination-based classes unscoreable with an empty ledger).",
+  "held_book": "Unrealised improved -5,088 -> -4,451 (+$637 on the day); dynCap 67,406.03 (1R = 1,011.09); gross leverage 2.006x; VaR 14.72% of dynCap (OK, soft 18); 0 Aegis fills; approved optional XLK/XLF trims NOT exercised.",
+  "verdict_quality": "Committee-desk held verdicts aged well: RUN names PTRN/EXEL flat-to-down but intact; TIGHTEN names behaved; SLDE closed 21.04 ABOVE its breakeven ratchet 20.90 (advisory) — the 07-20 'AT advisory stop' flag resolved upward. Conditional diversifiers confirmed a second straight session: PSX +0.94% and MPC +0.87% (both new 52wk highs) while XLK/XLF flat-down — the negative-beta cure keeps validating while it sits parked behind unexercised trims."
+ },
+ "step3_learning": {
+  "window": "5 sessions (RB:retention.learning_lookback_days)",
+  "dominant_pattern": "The learning loop itself is starved: 3 of the last 3 trading sessions produced zero nominations (dry-run/gate-breach skips), so voice hit-rates, detect-seat evaluation (D-5) and the D-60 board-vs-consensus split all have no data. The single highest-leverage fix is operational, not analytical: run the swarm every premarket regardless of gate state, capping verdicts (no new-entry ADVANCE under breach) rather than skipping analysis.",
+  "secondary": "Every degradation this session traces to ONE dependency: the AQE export + D-62 alert inbox not landing in the workspace/repo (trailing DEGRADED breakeven-only, thin universe breaching D-53, no subscore board, no flag-condition watch set, empty alert sweep). BL-022 (PC pushes every export/alert to GitHub) is the named fix and is PM-side infra."
+ },
+ "step4_bench_triage": {
+  "process": "DRY_RUN swarm-skip -> eng-process: premarket must ALWAYS spawn all 11 voices; gate breach constrains VERDICTS not ANALYSIS. -> BL-043 (PROPOSED). Market-watch out-of-window wake -> trigger cron re-pin -> BL-045 (PROPOSED).",
+  "data": "sod universe.json thin 12-field projection = D-53 breach; auditor must fail such runs; unfixable in-kernel until the export lands -> folded into BL-044 dependency.",
+  "technical": "AQE export + alert-inbox delivery to the scheduled workspace = the blocking dependency for D-53/D-57/D-60/D-62/trailing-structure. AQE-side (PM PC/HF job) -> BL-044 (PROPOSED, owner aqe, extends BL-022).",
+  "indicator": "No field-conditional proposal advanced today -> measure_proposal.py NOT required (step 5 clean). BL-040 (exhaustion_score semantics) and BL-042 (store maintainer) remain OPEN, owner aqe.",
+  "governance": "D-64 verified live -> POST-FIX entry; its standing security note (PAT now at rest in trigger prompts) -> DECIDE: rotate to fine-grained repo-scoped contents-only PAT. Book hygiene items (DDOG stop MISMATCH tighter 248.30 vs ref 247.17; IBM NO reference stop while carrying -$5.5k; IWM Aug-07 put spread live at IBKR vs plan 'No IWM live') -> DECIDE items, PM-only."
+ },
+ "step5_proposal_measurement": "No field-conditional idea entered the pipeline this session; nothing advanced unmeasured.",
+ "step6_backlog": "Captured BL-043, BL-044, BL-045 as PROPOSED (capture stage only — nothing ships without PM approval per development pipeline + constitution law 1/PM directive).",
+ "step7_steer": "data/persistent/steer.json written (contracts/steer.schema.json) — 4 DECIDE items, 5 FYI, 2 PRE-FIX, 1 POST-FIX."
+}

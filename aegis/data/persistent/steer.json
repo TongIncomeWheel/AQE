@@ -1,0 +1,87 @@
+{
+ "date": "2026-07-21",
+ "fyi": [
+  {
+   "item": "D-64 self-bootstrap VERIFIED LIVE on first scheduled firing: post-market ran unattended from a fresh container (clone + PAT + both brokers pulled), journal valid, commit d67996e pushed. The silent-death class is closed.",
+   "evidence": "eod/2026-07-20 journal + scorecard; intraday/2026-07-21 wake_log (bootstrap OK)"
+  },
+  {
+   "item": "Book: dynCap 67,406.03 (+$637 unrealised on the day), 1R = 1,011, gross leverage 2.006x, VaR 14.7% of dynCap (OK). Zero Aegis fills Mon; SPY -0.16%.",
+   "evidence": "aegis_journal_2026-07-20.json, metrics_2026-07-20.json"
+  },
+  {
+   "item": "No missed runner Mon: max universe-candidate mover SCHW +0.97%; the day's runners were our OWN names (NU +2.9%, SLDE +2.6%, AMPL +2.4%, DDOG +1.7%). SLDE closed 21.04, ABOVE its advisory breakeven ratchet 20.90 — Sunday's at-stop flag resolved upward.",
+   "evidence": "FMP close check on all 35 candidates + 12 held + 4 conditionals, D&R step 2"
+  },
+  {
+   "item": "Diversifier thesis confirmed a SECOND straight session while parked: PSX +0.94% and MPC +0.87% (both new 52wk highs) vs XLK flat / XLF -0.4%. Opportunity cost of the unexercised trims is accruing.",
+   "evidence": "market_watch_2026-07-20.json diversifier_confirm + FMP 07-20 closes"
+  },
+  {
+   "item": "Market-watch wake fired at 08:55 SGT (outside 21:30-04:00 window) and correctly stood down — no false action, but the rebuilt v2 trigger cadence needs re-pinning (BL-045).",
+   "evidence": "intraday/2026-07-21/wake_log.jsonl"
+  }
+ ],
+ "decide": [
+  {
+   "id": "SD-2026-07-21-1",
+   "question": "Sector-gate breach still leads (XLK 113% / XLF 80% of dynCap vs 35% hard gate; RB:risk.breach_rule). The 4 sellable trims (AMPL, DDOG, V, SPGI) were approved Sunday but not exercised. Exercise tonight, or adjust the condition?",
+   "options": [
+    "A) Exercise the approved partial trims tonight (frees the HOLD-FOR-CONDITIONS diversifiers PSX/MPC/BNL)",
+    "B) Waive/adjust: permit non-breach-sector adds while gross <= 2.0x (rulebook path, needs your ratification)",
+    "C) Hold as-is (breach continues to block all new entries)"
+   ],
+   "recommendation": "A — the breach blocks every add while the confirmed diversifiers run away (PSX/MPC at 52wk highs); trims are the designed cure and were already approved in principle.",
+   "days_pending": 1,
+   "backlog_ref": null
+  },
+  {
+   "id": "SD-2026-07-21-2",
+   "question": "Approve BL-043: premarket ALWAYS spawns all 11 voices; a portfolio gate breach caps VERDICTS (no gross-adding ADVANCE) but never skips the swarm. 3 straight sessions produced 0 nominations, so the Ledger is empty and no voice can be scored (law 7 starved).",
+   "options": ["Approve (ship via branch + shadow next session)", "Reject", "Discuss"],
+   "recommendation": "Approve — it restores the learning loop; analysis was never what the gate blocks (RB:gate_doctrine).",
+   "days_pending": 0,
+   "backlog_ref": "BL-043"
+  },
+  {
+   "id": "SD-2026-07-21-3",
+   "question": "BL-044 (PM-side infra): the AQE export + D-62 alert inbox never reach the scheduled workspace — this ONE dependency caused every degradation Mon (thin universe breaching D-53, trailing breakeven-only, no watch-set, empty alert sweep). Enable the PC/HF job to push aqe_daily_export.json + data/alerts/DATE/inbox.jsonl to the repo on write (BL-022 pattern)?",
+   "options": ["Yes — I will wire the PC/HF push", "Alternative: Drive-only and kernel pulls from Drive", "Defer"],
+   "recommendation": "Yes — repo push serves both deployments (RB:topology.pc_role) and unblocks D-53/D-57/D-60/D-62 in one move.",
+   "days_pending": 0,
+   "backlog_ref": "BL-044"
+  },
+  {
+   "id": "SD-2026-07-21-4",
+   "question": "Book hygiene, three ticks: (1) confirm the DDOG tighter live stop 248.30 (vs ref 247.17) is your manual tighten so the reference updates; (2) IBM carries NO reference stop at all on a -$5.5k position — set an advisory reference tonight so dollar-risk is at least bounded on paper; (3) the IWM Aug-07 put spread IS live at IBKR though plan 07-20 said 'No IWM live' — confirm it is yours (non-Aegis?) so the hedge book reconciles. Also standing: rotate the trigger-prompt PAT to a fine-grained, repo-scoped, contents-only token (D-64 security note).",
+   "options": ["Confirm all four", "Answer individually in chat (/steer)"],
+   "recommendation": "Confirm all four — none changes a position; all four close audit mismatches.",
+   "days_pending": 1,
+   "backlog_ref": null
+  }
+ ],
+ "pre_fix": [
+  {
+   "id": "BL-043",
+   "what_changes": "premarket skill: swarm ALWAYS runs (all 11 voices, isolated); gate-breach constrains verdict space (HOLD-FOR-CONDITIONS / watch-table only), nominations + ledger recording proceed daily.",
+   "when": "On your SD-2026-07-21-2 approval — branch + one shadow session, then ship",
+   "retires": "The DRY_RUN shortcut that skips the swarm on a gate breach (and with it the empty-ledger starvation of voice scoring)",
+   "shadow_planned": true
+  },
+  {
+   "id": "BL-045",
+   "what_changes": "Market-watch scheduled trigger rebuilt (v3) with cron pinned inside 21:30-04:00 SGT sweep cadence (RB:schedule.market_watch_sweep_minutes); trigger prompts are immutable so this is a rebuild, not an edit.",
+   "when": "On your nod — same-day rebuild",
+   "retires": "The v2 trigger's out-of-window wake (08:55 SGT firing)",
+   "shadow_planned": false
+  }
+ ],
+ "post_fix": [
+  {
+   "id": "D-64",
+   "what_changed": "Scheduled sessions self-bootstrap workspace + credential (STEP 0 clone + inline PAT + verify + page-on-fail); both core triggers rebuilt v2.",
+   "shadow_result": "VERIFIED LIVE 2026-07-21: post-market fired unattended, bootstrapped, pulled both brokers, wrote a valid journal, pushed commit d67996e; watch wake also bootstrapped clean. One residue: watch cadence out-of-window (-> BL-045).",
+   "re_measure_date": "2026-08-11"
+  }
+ ]
+}
