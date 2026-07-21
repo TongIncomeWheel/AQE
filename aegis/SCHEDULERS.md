@@ -23,20 +23,24 @@ if it takes SGT directly, use the SGT column). Each task fires a FRESH session t
 context, runs its phase, and (post-market) pushes state. Turn **push notifications ON** for each
 so completions + failures reach your phone.
 
-**LIVE SCHEDULE (as set 21 Jul 2026 — PM cadence; supersedes the pilot times below).**
-All fresh-session cron jobs carry the D-64 STEP 0 bootstrap. Intraday is an in-session /loop, NOT cron.
+**LIVE SCHEDULE (as of D-74, 21 Jul 2026 — PM cadence; supersedes the pilot times below).**
+All fresh-session cron jobs carry the D-64 STEP 0 bootstrap. Intraday is an in-session /loop, hosted by a dedicated liveness trigger (see below), not raw cron polling.
 
-| # | Task | SGT | Cron (UTC) | Engine | Status |
+| # | Task | SGT | Cron (UTC) | Trigger ID | Status |
 |---|---|---|---|---|---|
-| 6 | Janitor (hygiene) | 03:50 wkdays | `50 19 * * 1-5` | cron + bootstrap | **LIVE** — just before post-market |
-| 3 | Post-market | 04:05 (Tue–Sat) | `5 20 * * 1-5` | cron + bootstrap | **LIVE** |
-| 4 | Design & Review | 08:00 (Tue–Sat) | `0 0 * * 2-6` | cron + bootstrap | **LIVE** — results at start of PM's day |
-| 1 | Premarket build (swarm) | 10:00 wkdays | `0 2 * * 1-5` | cron + bootstrap | **LIVE** — 11 voices + committee |
-| 2 | Intraday AQE sweep | mkt hours, 30 min | — (in-session) | **/loop** (ScheduleWakeup) | **LIVE** — no bootstrap needed |
-| 5 | Weekly param review | Sun | `0 22 * * 6` | cron + bootstrap | not set up (optional) |
+| 7 | Market-hours liveness (arms the intraday loop) | 21:25 wkdays | `25 13 * * 1-5` | `trig_01MjvFDC4Yd94cdk6U5rAu7S` | **LIVE (D-74)** — fires once at open, self-rearms via ScheduleWakeup every 30 min until 04:00 SGT close, then stops |
+| 3 | Post-market | 05:05 (Tue–Sat) | `5 21 * * 1-5` | `trig_01FWqohNLAnML72pnYCgvdc6` | **LIVE (D-74)** — fixed at 05:05, NOT 04:05, so it never needs adjusting across a US DST changeover (see note below) |
+| 4 | Design & Review | 08:00 (Tue–Sat) | `0 0 * * 2-6` | `trig_013Qq5WzkyrzSY29BNthWYbq` | **LIVE** — results at start of PM's day |
+| 1 | Premarket build (swarm) | 10:00 wkdays | `0 2 * * 1-5` | `trig_01CNrP3NWF5EqNyyuRyViy2U` | **LIVE** — 11 voices + committee |
+| 5 | Weekly param review + janitor | Sun 06:00 SGT | `0 22 * * 6` | `trig_01XTADWmyCZSbT4C4qtSz9eu` | **LIVE** — janitor hygiene folded into the weekly process, NOT a separate daily job |
 
-Daily SGT order: janitor 03:50 → post-market 04:05 → design&review 08:00 → premarket 10:00 → (US open 21:30, /loop sweeps 30-min) → your 21:00 approval of the premarket plan.
-The old pilot times (premarket 15:50, watch 21:25, D&R 05:00, janitor 04:40) are RETIRED. 2B (hourly market-watch cron) removed — the /loop replaces it.
+Daily SGT order: post-market 05:05 → design&review 08:00 → premarket 10:00 → your 21:00 approval of the premarket plan → market-hours liveness 21:25 arms the loop → US open 21:30, /loop self-rearms every 30 min through 04:00 SGT close → post-market picks up the next morning.
+
+**DST note (D-74, PM: "so we don't have to change it because of any daylight saving time change"):** post-market's 05:05 SGT slot is deliberately the LATER of the two possible US-close-derived times. Under EDT (US summer, UTC-4) the actual close lands at 04:00 SGT — post-market fires ~65 min after close, comfortably safe. Under EST (US winter, UTC-5, roughly Nov–Mar) the same close shifts to 05:00 SGT — a naive 04:05 SGT slot would fire BEFORE the market finished closing that half of the year, exactly the kind of stale-data bug this system exists to prevent. 05:05 SGT is safe in both states year-round; the cost is running ~1hr later than strictly necessary during EDT months, traded deliberately for a cron that never needs touching twice a year.
+
+**D-74 fix — the intraday loop had no host.** market-watch's old hourly cron was retired in favor of an in-session `/loop`, but no trigger was ever created to ARM that loop each evening — the 30-min sweep referenced everywhere in this doc (D-63, D-70) was never actually live. Trigger #7 above closes that gap: it fires once at 21:25 SGT, confirms liveness, sweeps the alert inbox, then calls `ScheduleWakeup` to re-fire itself every 30 min until 04:00 SGT, at which point it sends a final summary and stops rearming.
+
+The old pilot times (premarket 15:50, watch 21:25 as a one-shot heartbeat with no rearm, D&R 05:00, a separate daily janitor at 04:40/03:50) are RETIRED. 2B (hourly market-watch cron) removed — the /loop replaces it. The old post-market v2 (04:05 SGT) and three superseded "PTJ → Archive → Dashboard" chain triggers (created 07-09/07-11/07-16, dead since D-67/D-68 made PTJ+archive kernel-native) were deleted 21 Jul.
 
 ## The prompt for each (paste as the task's instruction)
 
