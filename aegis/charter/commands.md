@@ -29,6 +29,8 @@
 | **/steer** | Show the pending steer file: FYI · DECIDE (your one-tap items, with days-pending) · PRE-FIX notices · POST-FIX results | per DECIDE item |
 | **/findings** | Raw findings from the last review before bench triage | no |
 | **/ops** | System liveness card (skills/ops-status): are the loops firing, is state fresh, are alert channels up — the SYSTEM sibling of /status. `/ops --render` writes the full dashboard. Read-only, places nothing | no |
+| **/cockpit arm** | Make THIS session the live cockpit (skills/cockpit, D-76): render current state now + schedule `send_later` deliveries so each loop's result appears HERE, in the chat you're reading, instead of in an invisible fresh session. Self-perpetuates day to day; re-run once in any brand-new chat to re-establish. Display only, places nothing | no |
+| **/cockpit status** | Is delivery currently covered? Reads data/cockpit/armed.json — which deliveries are pending today, and the standing across-session limitation stated plainly | no |
 | **/recover [loop]** | Re-run a failed loop fresh (premarket · market-hours · post-market · eod-audit). Read/compute/plan only — a re-run that reaches execution still previews at the gate (D-45) | no |
 | **/heal [loop] --failure T** | Run the auto self-heal protocol for a classified failure (transient→retry/reseed; structural→escalate; gate→stand down). Never places an order | no |
 | **/repull [ptj]** | Re-fetch today's AQE export (revalidate + tripwires); `/repull ptj` re-pulls both brokers and refreshes dynCap | no |
