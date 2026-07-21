@@ -86,6 +86,45 @@ Rated **MUST** (non-negotiable), **SHOULD** (strongly wanted), **NICE** (bonus).
 | O3 | **Resilience** — if the box/process dies, no committed work is lost (git); ideally the process auto-restarts and resumes. | SHOULD |
 | O4 | **Self-hostable or on trusted infra** — this is a live trading book; data residency and control matter. | SHOULD |
 
+### 2.6 Self-healing & autonomous recovery — KEY POINT (preserve the agent layer, add the runtime layer)
+
+Self-healing is a **primary requirement, not a footnote.** Aegis already implements a mature
+**agent/kernel-level** self-heal doctrine that any target runtime MUST preserve unchanged; and it needs
+**runtime-level** recovery that the current harness cannot fully provide. Both must be captured in the
+solution.
+
+**Agent/kernel-level self-heal — EXISTS in the kernel, must run intact on the new runtime:**
+
+| # | Capability | Where (decision) |
+|---|---|---|
+| SH1 | Classify every failure — transient / structural / gate / capacity — and act per policy: bounded retry, reseed, escalate-with-exact-manual-fix, or stand-down | `tools/self_heal.py` (D-45) |
+| SH2 | **Bounded retry before stand-down** on feed/data pulls (AQE export re-checked +5/+10/+10 min) — heals a late feed silently, pages only on genuine failure | premarket step 3 (D-70) |
+| SH3 | **Data-store reconcile / reseed** — a missing or stale name history is re-pulled from FMP, never faked | `historical_store.py` (D-40) |
+| SH4 | **Declared-data-gap heal** — a voice DECLARES a missing field; the Chief SOURCES it (FMP or AQE re-export) and RE-RUNS that voice; a name proceeds with a gap only if genuinely unavailable, never guessed | premarket step 5 (D-55) |
+| SH5 | **Independent verification (assurance)** — verify the world, not the kernel's belief about it: confirm the PTJ actually landed in Drive, not just that the write step ran | `drive_ptj_check.py` (D-69) |
+| SH6 | **Session self-bootstrap** — a fresh scheduled session reconstructs its own workspace + credential + git before running; page + STOP on a half-built workspace | `bootstrap.py` (D-64) |
+| SH7 | **Capacity-limit detection** — recognise a model/usage-cap hit distinctly from a data failure; escalate with wait-for-reset, do NOT retry into the same ceiling | `self_heal` usage_limit (D-72) |
+| SH8 | **Dead-man's-switch check-in** — the ABSENCE of a heartbeat becomes the alarm if the box dies mid-run | `notify.py --checkin` (D-45) |
+
+**Doctrine the runtime must not break:** self-heal is **ORDER-BLIND** (may re-run READ/COMPUTE/PLAN,
+never place/size/arm); **bounded + logged** (`data/eod/DATE/self_heal_DATE.jsonl`); **declare on
+exhaustion, never fabricate**; a **hard gate/tripwire is stood down, never healed** (PM override only).
+
+**Runtime-level self-heal — the sourced runtime MUST ADD (this is what Cowork could not do):**
+
+| # | Requirement | Priority |
+|---|---|---|
+| SH-R1 | **Auto-restart a died process/loop and RESUME from the last checkpoint** (git state) without duplicating side effects | MUST |
+| SH-R2 | **Re-fire a scheduled loop that failed or never ran** on demand (the `/recover` lever — a missed premarket must be recoverable), with the operator notified | MUST |
+| SH-R3 | **Deliver an unrecoverable failure to the operator with the exact manual fix** — the ladder already produces this text; the runtime must actually get it to the phone | MUST |
+| SH-R4 | **Watchdog / liveness monitoring of the agent process itself** — extend the dead-man's-switch (SH8) from the run to the runtime | SHOULD |
+| SH-R5 | **Idempotent retries** — a re-run must not double-journal, double-order, or double-commit (git + schema validation already guard this; the runtime must respect it) | MUST |
+
+**Net:** the *intelligence* of self-healing lives in the kernel and must be preserved; the runtime must
+supply the *process resilience* that keeps the self-healing agents alive, resumable, and their
+escalations delivered. A candidate runtime that cannot restart/resume a loop (SH-R1) or re-fire a
+missed one with notification (SH-R2/R3) leaves the self-heal doctrine half-blind.
+
 ---
 
 ## 3. THE ARCHITECTURE WE EXPECT TO BUILD (hybrid reference)
@@ -167,6 +206,10 @@ Copy these into any vendor/OSS evaluation:
 9. **Cost:** metered/API or self-host — no weekly usage cap that a heavy daily swarm would hit? (O1)
 10. **Model-agnostic:** can we point the judgment tier at Claude today and Kimi/local tomorrow without
     rewriting business logic? (R5)
+11. **Self-healing / recovery:** if a scheduled loop dies mid-run, does the runtime **auto-restart and
+    resume from checkpoint** without duplicating side effects, and can the operator **re-fire a missed
+    loop on demand** with notification? (SH-R1/R2/R5) Does it preserve our order-blind, bounded,
+    never-fabricate self-heal doctrine (§2.6)?
 
 Any solution that answers **yes to 1, 2, 3, 4, 5** is a genuine fit. That specific combination —
 persistent bound two-way conversation + approval + push — is precisely what Claude Cowork could not

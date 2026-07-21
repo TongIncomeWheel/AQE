@@ -40,6 +40,13 @@ never co-mingled broker totals (D-17).
   armed, dated, auto-expiring autopilot switch; default is PREVIEW-only, PM stages personally (D-1, D-7).
 - **Anti-spaghetti.** When a need arises, COMPLETE or CORRECT an existing structure, or build one
   genuinely new agent/skill — never overlayer prose/flags/shims. Every change names what it retires (D-8).
+- **Self-healing is first-class.** The agents must classify failures, retry within bounds, reseed data,
+  source declared gaps, verify the world independently, and escalate with the exact manual fix — never
+  fabricate around a failure, and never self-heal a hard gate. This agent-level self-heal doctrine (the
+  D-45 exception ladder + D-40/D-55/D-64/D-69/D-70/D-72) is a KEY capability that any runtime must
+  preserve, and the runtime itself must add process-level recovery (restart/resume, re-fire a missed
+  loop, deliver the escalation). Captured in full as a rated requirement in
+  `02_RUNTIME_INFRA_REQUIREMENTS.md §2.6`.
 - **The PM must be able to SEE and STEER.** An agentic system that does work the PM cannot observe,
   interrogate, or approve in one coherent place is only half-built. (This is the open gap — see §7
   and `02_RUNTIME_INFRA_REQUIREMENTS.md`.)

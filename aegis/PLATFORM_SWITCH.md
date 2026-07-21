@@ -98,3 +98,6 @@ a genuine fit.
 - The alert universe is a mechanical formula (the casting mat), not a hand-picked list.
 - One order path; preview by default; the arming switch expires.
 - git is the source of truth; nothing critical in chat memory.
+- Self-heal is order-blind, bounded, logged, and never fabricates; a hard gate is stood down, never
+  healed. Preserve the agent-level self-heal ladder intact and add runtime-level restart/resume/re-fire
+  (see `handoff/02_RUNTIME_INFRA_REQUIREMENTS.md §2.6`).
