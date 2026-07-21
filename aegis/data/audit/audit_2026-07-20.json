@@ -1,0 +1,18 @@
+{
+ "date": "2026-07-20",
+ "kind": "usage_completeness_audit (RB:audit)",
+ "voices_ran": 0,
+ "voices_expected_note": "Premarket 07-20 was a gate-breach DRY_RUN \u2014 nomination swarm intentionally not spawned; tally/committee empty by design, NOT a protocol failure. Auditor still flags the session INCOMPLETE vs the standard 10-seat day.",
+ "session_completeness": "INCOMPLETE_BY_DESIGN",
+ "data_pulls_tagged": [
+  "Tiger MCPv7 positions/orders/fills 2026-07-21T00:50:00Z",
+  "IBKR positions 2026-07-21T00:50:00Z",
+  "Drive PTJ v2.9.6 (1lNErSyBnVUoudMqK4B_XgXNfTJIC1vAv)"
+ ],
+ "fabrication_check": "PASS \u2014 every journal number traces to a live broker pull or the PM-confirmed PTJ v2.9.6; no recomputed brackets; no asserted stops without a broker pull (Tiger open-orders pulled; IBKR stop absence is the compliance hold, verified empty on the orders surface)",
+ "staleness": "Journal basis PTJ 2026-07-17 (T-1 business day, Fri) \u2014 within staleness rule for a Monday session",
+ "breaches": [],
+ "exceptions": [
+  "market_hours watch layer: no intraday/2026-07-20 shelf \u2014 only the 10:05Z monitor pass in sod/. Scheduled market-hours loop appears NOT to have run overnight; flag to Design & Review."
+ ]
+}

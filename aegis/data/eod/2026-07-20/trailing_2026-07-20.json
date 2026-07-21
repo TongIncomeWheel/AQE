@@ -1,0 +1,136 @@
+{
+ "date": "2026-07-20",
+ "mode": "DEGRADED \u2014 no AQE export today: structure inputs unavailable; breakeven/ratchet-only pass. irps proxied as entry - current advisory stop. Ratchet invariant holds: no stop lowered.",
+ "positions": [
+  {
+   "ticker": "AMPL",
+   "broker": "TIGER",
+   "current_stop": 8.9,
+   "new_stop": 8.9,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": -0.07
+  },
+  {
+   "ticker": "DDOG",
+   "broker": "TIGER",
+   "current_stop": 247.17,
+   "new_stop": 247.17,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": -0.131
+  },
+  {
+   "ticker": "V",
+   "broker": "TIGER",
+   "current_stop": 343.29,
+   "new_stop": 343.29,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": -0.042
+  },
+  {
+   "ticker": "SPGI",
+   "broker": "TIGER",
+   "current_stop": 420.73,
+   "new_stop": 420.73,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": -0.068
+  },
+  {
+   "ticker": "IBM",
+   "result": "SKIPPED",
+   "why": "no reference stop"
+  },
+  {
+   "ticker": "PTRN",
+   "result": "SKIPPED",
+   "why": "stop already >= entry (no irps derivable without AQE structure)"
+  },
+  {
+   "ticker": "EXEL",
+   "broker": "IBKR",
+   "current_stop": 51.15,
+   "new_stop": 51.15,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": 0.321
+  },
+  {
+   "ticker": "VRSK",
+   "broker": "IBKR",
+   "current_stop": 183.4,
+   "new_stop": 191.8045,
+   "raised": true,
+   "reason": "breakeven@1.0R",
+   "exit_signal": false,
+   "r_multiple": 1.188
+  },
+  {
+   "ticker": "CHYM",
+   "broker": "IBKR",
+   "current_stop": 19.86,
+   "new_stop": 19.86,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": 0.601
+  },
+  {
+   "ticker": "NTAP",
+   "broker": "IBKR",
+   "current_stop": 159.3,
+   "new_stop": 159.3,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": -0.868
+  },
+  {
+   "ticker": "NU",
+   "broker": "IBKR",
+   "current_stop": 13.02,
+   "new_stop": 13.02,
+   "raised": false,
+   "reason": "no_change",
+   "exit_signal": false,
+   "r_multiple": 0.192
+  },
+  {
+   "ticker": "SLDE",
+   "broker": "IBKR",
+   "current_stop": 20.45,
+   "new_stop": 20.9026,
+   "raised": true,
+   "reason": "breakeven@1.0R",
+   "exit_signal": false,
+   "r_multiple": 1.209
+  }
+ ],
+ "tighten_stop_requests": [
+  {
+   "type": "TIGHTEN_STOP",
+   "ticker": "VRSK",
+   "broker": "IBKR",
+   "from": 183.4,
+   "to": 191.8045,
+   "reason": "breakeven@1.0R",
+   "executability": "ADVISORY-ONLY (IBKR 30-day compliance hold)"
+  },
+  {
+   "type": "TIGHTEN_STOP",
+   "ticker": "SLDE",
+   "broker": "IBKR",
+   "from": 20.45,
+   "to": 20.9026,
+   "reason": "breakeven@1.0R",
+   "executability": "ADVISORY-ONLY (IBKR 30-day compliance hold)"
+  }
+ ]
+}
