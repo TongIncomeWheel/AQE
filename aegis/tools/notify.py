@@ -130,10 +130,18 @@ def send(kind, fields, dry_run=False):
                 "body": body, "channel": channel, "reason": "dry-run"}
 
     if channel == "cowork":
-        # PILOT path: the printed message is the Cowork session's output; the
-        # scheduled task's push notification carries it to the PM's phone. This
-        # is delivery, not a fallback — no external service is involved.
-        print(f"[notify:{kind}] (cowork-native push)\n{body}\n")
+        # PILOT path — CORRECTED (D-75): the Cowork scheduled-task push notification is
+        # generated from the SESSION'S FINAL ASSISTANT CHAT MESSAGE, not from this function's
+        # stdout. Printing here is a LOG of what should be sent — it is NOT delivery by itself.
+        # D-75 root cause: premarket ran clean end-to-end on 21 Jul (full 11-voice swarm,
+        # committee deliberation, plan pushed to git ~03:11 UTC) but the PM's phone showed
+        # nothing by 16:24 SGT — because the orchestrator called this function and moved on,
+        # never actually SPEAKING this body as its own closing chat message. The calling skill
+        # step MUST treat this print as a draft and then say the same content, in plain
+        # language, as the session's actual final reply to the user — that reply is what the
+        # platform's push notification is built from.
+        print(f"[notify:{kind}] (cowork-native push — orchestrator MUST also send this as its "
+              f"final chat message, not just print it — D-75)\n{body}\n")
         return {"ok": True, "sent": True, "via": "cowork-push", "kind": kind,
                 "title": title, "body": body, "channel": "cowork"}
 
