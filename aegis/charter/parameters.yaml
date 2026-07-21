@@ -154,7 +154,8 @@ alert_universe:                   # D-77: the WIRED implementation of the flag_c
   calibration_note: "21 Jul 2026: validated BILL(6 lanes) & ETSY(5) -> Tier1; DINO(2 lanes, 25% ext) -> Tier3 watch. 56 names (40/10/6) vs old sc70=57 flat / sc80=2 / committee-pick=37."
   pod_contract: "every fired alert carries lane_count + lanes_fired into the market-hours pod (D-63) — the same numbers the voices read to call runner-or-not"
 conviction_funnel:               # D-78: the DAILY PREMARKET three-axis funnel — data (lanes) x lens (detect) x consensus (votes). tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
-  axes: [consensus, data, lens]  # CONSENSUS=voices(count+avg conviction); DATA=8-lane casting mat (D-77); LENS=6-lens detect
+  axes: [data, lens, consensus]  # D-79 ORDER: DATA=8-lane casting mat (D-77) FIRST; LENS=6-lens detect; CONSENSUS=voices = ADVISORY overlay, never the entry ticket (PM: "data but lens first before we anchor on voices advisory")
+  primary_axes: [data, lens]     # a name enters the shortlist iff DATA strong OR LENS strong (mechanical); voices only CONFIRM or read advisory-silent
   target_min: 10                 # PM: "always start from approx 10-15 names to filter down into a high conviction plan"
   target_max: 15
   cons_strong_votes: 3           # consensus grade S/M/W cutoffs (votes)
@@ -163,11 +164,10 @@ conviction_funnel:               # D-78: the DAILY PREMARKET three-axis funnel �
   data_med_lanes: 3
   lens_strong: 4                 # LENS grade cutoffs (detect positive /6)
   lens_med: 2
-  shortlist_rule: ">=2 axes STRONG -> convergence shortlist (ranked n_strong, votes, lanes, detect); trimmed to target_max"
+  shortlist_rule: "D-79: DATA strong OR LENS strong -> shortlist (mechanical entry); ranked by lanes+detect FIRST, votes as advisory tiebreak; trimmed to target_max. Each name tagged TRIPLE (all 3 agree) / CONFIRMED (data-led + swarm backed, votes>=cons_med) / DATA_LED (data-led, voices advisory-silent — promoted anyway)."
   contradictions:                # surfaced separately to DEEPEN deliberation (PM: 'highlight contradictory or positive overlaps')
-    consensus_only: "voted >= cons_strong_votes but data & lens both NOT strong -> fresh or stale? committee must rule (e.g. DINO)"
-    data_lens_only: "<=1 vote but data OR lens strong -> did the swarm miss a confirmed runner? (capped, ranked by lanes+detect)"
-  data_lens_only_cap: 6
+    consensus_only: "voted >= cons_strong_votes but data & lens both NOT strong -> voices ADVISORY only; fresh or stale? committee must rule run/drop (e.g. DINO/CSX/UNP 21 Jul)"
+  data_lens_only_cap: 6          # retained param; the former missed-runner set is now PROMOTED into the shortlist as DATA_LED (D-79)
   wiring: "premarket step 6b — runs after tally (step 6), its shortlist + contradictions frame the deliberation packet (step 9); the committee deliberates the shortlist and must explicitly RESOLVE each contradiction (run or drop)"
 retention:
   raw_days: 30

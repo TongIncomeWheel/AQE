@@ -97,29 +97,40 @@ def build(tally, daily_list, lens_positive, params=None, event_blocked=None):
             "profile": f"{gc}/{gd}/{gl}",
         })
 
-    # CONVERGENCE SHORTLIST = strong on >= 2 axes, ranked; trimmed toward target_max.
-    convergent = sorted([s for s in scored if s["n_strong"] >= 2],
-                        key=lambda s: (-s["n_strong"], -s["votes"], -s["lane_count"], -s["detect"]))
-    shortlist = convergent[:p["target_max"]]
+    # CONVERGENCE SHORTLIST — DATA + LENS FIRST, consensus ADVISORY (D-79, PM: "data but
+    # lens first before we anchor on voices advisory"). The PRIMARY membership test is the
+    # MECHANICAL one: a name is a candidate iff DATA is strong OR LENS is strong. The voices
+    # (consensus) are then an OVERLAY on top — they CONFIRM (voted too) or are ADVISORY-SILENT
+    # (data/lens say go, the swarm did not nominate) — never the entry ticket.
+    primary = [s for s in scored if s["axes"]["data"] == "S" or s["axes"]["lens"] == "S"]
+    # rank by mechanical strength first (lanes+detect), consensus only as a tiebreak/advisory.
+    primary.sort(key=lambda s: (-(s["lane_count"] + s["detect"]), -s["lane_count"], -s["votes"]))
+    shortlist = primary[:p["target_max"]]
     for s in shortlist:
-        s["class"] = ("TRIPLE" if s["n_strong"] == 3 else "OVERLAP")
-        s["overlap"] = "+".join([ax for ax, g in s["axes"].items() if g == "S"])
+        confirmed = s["votes"] >= p["cons_med_votes"]
+        s["consensus_read"] = "CONFIRMED" if confirmed else "advisory-silent"
+        if s["n_strong"] == 3:
+            s["class"] = "TRIPLE"                       # data + lens + voices all agree
+        elif confirmed:
+            s["class"] = "CONFIRMED"                    # data/lens-led AND the swarm backed it
+        else:
+            s["class"] = "DATA_LED"                     # data/lens-led, voices advisory-silent (promoted anyway)
+        s["mech"] = "+".join([ax for ax in ("data", "lens") if s["axes"][ax] == "S"])
 
-    # CONTRADICTIONS — the deliberation-deepening set.
+    # CONTRADICTION — voted well but the MECHANICALS do not confirm. These are NOT in the
+    # data/lens-first shortlist (voices are advisory, not the anchor); they are surfaced for the
+    # committee to explicitly rule on: fresh, or stale/extended? (e.g. DINO 4 votes / 2 lanes).
     consensus_only = sorted(
         [s for s in scored if s["votes"] >= p["contradiction_consensus_min_votes"]
          and s["axes"]["data"] != "S" and s["axes"]["lens"] != "S"],
         key=lambda s: (-s["votes"], s["lane_count"]))
     for s in consensus_only:
-        s["tension"] = ("voted by %d but only %d/8 lanes, %d/6 lens — fresh, or stale/extended? committee must rule"
+        s["tension"] = ("voted by %d but only %d/8 lanes, %d/6 lens — voices advisory only; "
+                        "fresh, or stale/extended? committee must rule (run or drop)"
                         % (s["votes"], s["lane_count"], s["detect"]))
-    data_lens_only = sorted(
-        [s for s in scored if s["votes"] <= 1 and (s["axes"]["data"] == "S" or s["axes"]["lens"] == "S")
-         and s not in shortlist],
-        key=lambda s: (-(s["lane_count"] + s["detect"]), -s["sc_momentum"]))[:p["data_lens_only_cap"]]
-    for s in data_lens_only:
-        s["tension"] = ("%d/8 lanes, %d/6 lens but only %d vote — did the swarm miss a confirmed runner?"
-                        % (s["lane_count"], s["detect"], s["votes"]))
+    # The former 'data_lens_only missed-runner' set is now PROMOTED into the shortlist as
+    # DATA_LED entries (data leads, voices advisory). Keep an empty list for schema stability.
+    data_lens_only = []
 
     return {
         "recipe": "conviction_funnel_v1",
@@ -138,18 +149,21 @@ def build(tally, daily_list, lens_positive, params=None, event_blocked=None):
 
 def _summary(shortlist, cons_only, data_only):
     triples = [s["ticker"] for s in shortlist if s.get("class") == "TRIPLE"]
-    overlaps = [s["ticker"] for s in shortlist if s.get("class") == "OVERLAP"]
+    confirmed = [s["ticker"] for s in shortlist if s.get("class") == "CONFIRMED"]
+    data_led = [s["ticker"] for s in shortlist if s.get("class") == "DATA_LED"]
     lines = []
-    lines.append("POSITIVE OVERLAP (high conviction, fast-track): "
-                 + ("triple-convergent " + ", ".join(triples) + "; " if triples else "")
-                 + "two-axis " + ", ".join(overlaps) if overlaps or triples else "none")
+    lines.append("SHORTLIST is DATA+LENS-first, voices advisory (D-79).")
+    if triples:
+        lines.append("TRIPLE (data+lens+voices agree — highest): " + ", ".join(triples))
+    if confirmed:
+        lines.append("CONFIRMED (data/lens-led, swarm backed): " + ", ".join(confirmed))
+    if data_led:
+        lines.append("DATA-LED, voices advisory-silent (mechanically strong, swarm under-nominated — deliberate): "
+                     + ", ".join(data_led))
     if cons_only:
-        lines.append("CONTRADICTION — voted but unconfirmed (data/lens say wait): "
+        lines.append("CONTRADICTION — voted but mechanicals do NOT confirm (voices advisory only; run or drop?): "
                      + ", ".join("%s(%dv,%d lanes)" % (s["ticker"], s["votes"], s["lane_count"]) for s in cons_only))
-    if data_only:
-        lines.append("CONTRADICTION — mechanically strong but under-nominated (possible missed runners): "
-                     + ", ".join("%s(%d lanes,%d lens)" % (s["ticker"], s["lane_count"], s["detect"]) for s in data_only))
-    lines.append("Deliberate the %d shortlist names; explicitly RESOLVE each contradiction (run or drop)." % len(shortlist))
+    lines.append("Deliberate the %d shortlist names; explicitly RESOLVE each contradiction." % len(shortlist))
     return " | ".join(lines)
 
 
@@ -176,11 +190,15 @@ def _selftest():
              "DJT": {"count": 1, "convictions": {"a": 3}}}
     f = build(tally, dl, lens)
     sl = {s["ticker"]: s for s in f["convergence_shortlist"]}
-    assert "SHO" in sl and sl["SHO"]["class"] == "TRIPLE", "SHO must be triple-convergent"
+    # D-79: data+lens FIRST, voices advisory.
+    assert "SHO" in sl and sl["SHO"]["class"] == "TRIPLE", "SHO (all 3 strong) must be TRIPLE in shortlist"
+    # DJT is data-strong but only 1 vote -> now PROMOTED into the shortlist as DATA_LED (voices advisory-silent).
+    assert "DJT" in sl and sl["DJT"]["class"] == "DATA_LED", "DJT must be DATA_LED in the shortlist (data leads, voices advisory)"
+    assert sl["DJT"]["consensus_read"] == "advisory-silent", "DJT consensus must read advisory-silent"
+    # DINO is voted (4) but mechanically weak (data W, lens W) -> NOT in shortlist; a consensus-only contradiction.
+    assert "DINO" not in sl, "DINO (voted but data/lens weak) must NOT enter the data-first shortlist"
     assert any(s["ticker"] == "DINO" for s in f["contradictions"]["consensus_only"]), "DINO must be a consensus-only contradiction"
-    assert any(s["ticker"] == "DJT" for s in f["contradictions"]["data_lens_only"]), "DJT must be a data-strong missed-runner contradiction"
-    assert "DINO" not in sl, "DINO (S/W/W) must NOT auto-enter the convergence shortlist"
-    print("conviction_funnel.py selftest: PASS  (SHO triple; DINO consensus-only tension; DJT missed-runner tension)")
+    print("conviction_funnel.py selftest: PASS  (D-79 data+lens-first: SHO triple; DJT data-led/advisory-silent in shortlist; DINO voted-but-unconfirmed contradiction)")
 
 
 def main(argv=None):

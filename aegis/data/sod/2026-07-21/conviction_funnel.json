@@ -22,125 +22,11 @@
  },
  "counts": {
   "nominated_scored": 62,
-  "shortlist": 14,
+  "shortlist": 15,
   "consensus_only_contradictions": 3,
-  "data_lens_only_contradictions": 6
+  "data_lens_only_contradictions": 0
  },
  "convergence_shortlist": [
-  {
-   "ticker": "SHO",
-   "votes": 3,
-   "avg_conviction": 4.0,
-   "lane_count": 6,
-   "detect": 5,
-   "sc_momentum": 68.1,
-   "ext_pct": 5.43,
-   "sector": "Real Estate",
-   "axes": {
-    "consensus": "S",
-    "data": "S",
-    "lens": "S"
-   },
-   "n_strong": 3,
-   "profile": "S/S/S",
-   "class": "TRIPLE",
-   "overlap": "consensus+data+lens"
-  },
-  {
-   "ticker": "FBP",
-   "votes": 4,
-   "avg_conviction": 3.2,
-   "lane_count": 7,
-   "detect": 3,
-   "sc_momentum": 75.8,
-   "ext_pct": 9.02,
-   "sector": "Financials",
-   "axes": {
-    "consensus": "S",
-    "data": "S",
-    "lens": "M"
-   },
-   "n_strong": 2,
-   "profile": "S/S/M",
-   "class": "OVERLAP",
-   "overlap": "consensus+data"
-  },
-  {
-   "ticker": "CTVA",
-   "votes": 4,
-   "avg_conviction": 3.2,
-   "lane_count": 5,
-   "detect": 2,
-   "sc_momentum": 72.3,
-   "ext_pct": 7.24,
-   "sector": "Materials",
-   "axes": {
-    "consensus": "S",
-    "data": "S",
-    "lens": "M"
-   },
-   "n_strong": 2,
-   "profile": "S/S/M",
-   "class": "OVERLAP",
-   "overlap": "consensus+data"
-  },
-  {
-   "ticker": "EFX",
-   "votes": 3,
-   "avg_conviction": 3.7,
-   "lane_count": 6,
-   "detect": 2,
-   "sc_momentum": 68.6,
-   "ext_pct": 8.68,
-   "sector": "Industrials",
-   "axes": {
-    "consensus": "S",
-    "data": "S",
-    "lens": "M"
-   },
-   "n_strong": 2,
-   "profile": "S/S/M",
-   "class": "OVERLAP",
-   "overlap": "consensus+data"
-  },
-  {
-   "ticker": "NOMD",
-   "votes": 3,
-   "avg_conviction": 4.3,
-   "lane_count": 6,
-   "detect": 1,
-   "sc_momentum": 76.4,
-   "ext_pct": 12.99,
-   "sector": "Consumer Staples",
-   "axes": {
-    "consensus": "S",
-    "data": "S",
-    "lens": "W"
-   },
-   "n_strong": 2,
-   "profile": "S/S/W",
-   "class": "OVERLAP",
-   "overlap": "consensus+data"
-  },
-  {
-   "ticker": "NHI",
-   "votes": 3,
-   "avg_conviction": 4.0,
-   "lane_count": 5,
-   "detect": 3,
-   "sc_momentum": 61.1,
-   "ext_pct": 6.35,
-   "sector": "Real Estate",
-   "axes": {
-    "consensus": "S",
-    "data": "S",
-    "lens": "M"
-   },
-   "n_strong": 2,
-   "profile": "S/S/M",
-   "class": "OVERLAP",
-   "overlap": "consensus+data"
-  },
   {
    "ticker": "NWBI",
    "votes": 2,
@@ -157,8 +43,9 @@
    },
    "n_strong": 2,
    "profile": "M/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "CONFIRMED",
+   "class": "CONFIRMED",
+   "mech": "data+lens"
   },
   {
    "ticker": "DRH",
@@ -176,8 +63,9 @@
    },
    "n_strong": 2,
    "profile": "M/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "CONFIRMED",
+   "class": "CONFIRMED",
+   "mech": "data+lens"
   },
   {
    "ticker": "HR",
@@ -195,8 +83,69 @@
    },
    "n_strong": 2,
    "profile": "W/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data+lens"
+  },
+  {
+   "ticker": "SHO",
+   "votes": 3,
+   "avg_conviction": 4.0,
+   "lane_count": 6,
+   "detect": 5,
+   "sc_momentum": 68.1,
+   "ext_pct": 5.43,
+   "sector": "Real Estate",
+   "axes": {
+    "consensus": "S",
+    "data": "S",
+    "lens": "S"
+   },
+   "n_strong": 3,
+   "profile": "S/S/S",
+   "consensus_read": "CONFIRMED",
+   "class": "TRIPLE",
+   "mech": "data+lens"
+  },
+  {
+   "ticker": "FBP",
+   "votes": 4,
+   "avg_conviction": 3.2,
+   "lane_count": 7,
+   "detect": 3,
+   "sc_momentum": 75.8,
+   "ext_pct": 9.02,
+   "sector": "Financials",
+   "axes": {
+    "consensus": "S",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 2,
+   "profile": "S/S/M",
+   "consensus_read": "CONFIRMED",
+   "class": "CONFIRMED",
+   "mech": "data"
+  },
+  {
+   "ticker": "PSX",
+   "votes": 1,
+   "avg_conviction": 4.0,
+   "lane_count": 7,
+   "detect": 3,
+   "sc_momentum": 74.7,
+   "ext_pct": 16.27,
+   "sector": "Energy",
+   "axes": {
+    "consensus": "W",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 1,
+   "profile": "W/S/M",
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data"
   },
   {
    "ticker": "BNL",
@@ -214,8 +163,9 @@
    },
    "n_strong": 2,
    "profile": "W/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data+lens"
   },
   {
    "ticker": "SPG",
@@ -233,8 +183,9 @@
    },
    "n_strong": 2,
    "profile": "W/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data+lens"
   },
   {
    "ticker": "MTG",
@@ -252,8 +203,109 @@
    },
    "n_strong": 2,
    "profile": "W/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data+lens"
+  },
+  {
+   "ticker": "EA",
+   "votes": 2,
+   "avg_conviction": 3.5,
+   "lane_count": 7,
+   "detect": 2,
+   "sc_momentum": 78.1,
+   "ext_pct": 2.88,
+   "sector": "Communication Services",
+   "axes": {
+    "consensus": "M",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 1,
+   "profile": "M/S/M",
+   "consensus_read": "CONFIRMED",
+   "class": "CONFIRMED",
+   "mech": "data"
+  },
+  {
+   "ticker": "EPRT",
+   "votes": 2,
+   "avg_conviction": 3.5,
+   "lane_count": 7,
+   "detect": 2,
+   "sc_momentum": 73.7,
+   "ext_pct": 8.21,
+   "sector": "Real Estate",
+   "axes": {
+    "consensus": "M",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 1,
+   "profile": "M/S/M",
+   "consensus_read": "CONFIRMED",
+   "class": "CONFIRMED",
+   "mech": "data"
+  },
+  {
+   "ticker": "RXO",
+   "votes": 2,
+   "avg_conviction": 3.0,
+   "lane_count": 7,
+   "detect": 2,
+   "sc_momentum": 71.8,
+   "ext_pct": 12.67,
+   "sector": "Industrials",
+   "axes": {
+    "consensus": "M",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 1,
+   "profile": "M/S/M",
+   "consensus_read": "CONFIRMED",
+   "class": "CONFIRMED",
+   "mech": "data"
+  },
+  {
+   "ticker": "RSI",
+   "votes": 1,
+   "avg_conviction": 3.0,
+   "lane_count": 7,
+   "detect": 2,
+   "sc_momentum": 74.3,
+   "ext_pct": 18.14,
+   "sector": "Consumer Discretionary",
+   "axes": {
+    "consensus": "W",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 1,
+   "profile": "W/S/M",
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data"
+  },
+  {
+   "ticker": "WT",
+   "votes": 1,
+   "avg_conviction": 3.0,
+   "lane_count": 6,
+   "detect": 3,
+   "sc_momentum": 72.0,
+   "ext_pct": 8.56,
+   "sector": "Financials",
+   "axes": {
+    "consensus": "W",
+    "data": "S",
+    "lens": "M"
+   },
+   "n_strong": 1,
+   "profile": "W/S/M",
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data"
   },
   {
    "ticker": "ALL",
@@ -271,27 +323,9 @@
    },
    "n_strong": 2,
    "profile": "W/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
-  },
-  {
-   "ticker": "CURB",
-   "votes": 1,
-   "avg_conviction": 3.0,
-   "lane_count": 5,
-   "detect": 4,
-   "sc_momentum": 62.7,
-   "ext_pct": 5.61,
-   "sector": "Real Estate",
-   "axes": {
-    "consensus": "W",
-    "data": "S",
-    "lens": "S"
-   },
-   "n_strong": 2,
-   "profile": "W/S/S",
-   "class": "OVERLAP",
-   "overlap": "data+lens"
+   "consensus_read": "advisory-silent",
+   "class": "DATA_LED",
+   "mech": "data+lens"
   }
  ],
  "contradictions": {
@@ -312,7 +346,7 @@
     },
     "n_strong": 1,
     "profile": "S/W/W",
-    "tension": "voted by 4 but only 2/8 lanes, 1/6 lens \u2014 fresh, or stale/extended? committee must rule"
+    "tension": "voted by 4 but only 2/8 lanes, 1/6 lens \u2014 voices advisory only; fresh, or stale/extended? committee must rule (run or drop)"
    },
    {
     "ticker": "CSX",
@@ -330,7 +364,7 @@
     },
     "n_strong": 1,
     "profile": "S/M/W",
-    "tension": "voted by 4 but only 3/8 lanes, 0/6 lens \u2014 fresh, or stale/extended? committee must rule"
+    "tension": "voted by 4 but only 3/8 lanes, 0/6 lens \u2014 voices advisory only; fresh, or stale/extended? committee must rule (run or drop)"
    },
    {
     "ticker": "UNP",
@@ -348,119 +382,10 @@
     },
     "n_strong": 1,
     "profile": "S/M/W",
-    "tension": "voted by 4 but only 3/8 lanes, 0/6 lens \u2014 fresh, or stale/extended? committee must rule"
+    "tension": "voted by 4 but only 3/8 lanes, 0/6 lens \u2014 voices advisory only; fresh, or stale/extended? committee must rule (run or drop)"
    }
   ],
-  "data_lens_only": [
-   {
-    "ticker": "PSX",
-    "votes": 1,
-    "avg_conviction": 4.0,
-    "lane_count": 7,
-    "detect": 3,
-    "sc_momentum": 74.7,
-    "ext_pct": 16.27,
-    "sector": "Energy",
-    "axes": {
-     "consensus": "W",
-     "data": "S",
-     "lens": "M"
-    },
-    "n_strong": 1,
-    "profile": "W/S/M",
-    "tension": "7/8 lanes, 3/6 lens but only 1 vote \u2014 did the swarm miss a confirmed runner?"
-   },
-   {
-    "ticker": "RSI",
-    "votes": 1,
-    "avg_conviction": 3.0,
-    "lane_count": 7,
-    "detect": 2,
-    "sc_momentum": 74.3,
-    "ext_pct": 18.14,
-    "sector": "Consumer Discretionary",
-    "axes": {
-     "consensus": "W",
-     "data": "S",
-     "lens": "M"
-    },
-    "n_strong": 1,
-    "profile": "W/S/M",
-    "tension": "7/8 lanes, 2/6 lens but only 1 vote \u2014 did the swarm miss a confirmed runner?"
-   },
-   {
-    "ticker": "WT",
-    "votes": 1,
-    "avg_conviction": 3.0,
-    "lane_count": 6,
-    "detect": 3,
-    "sc_momentum": 72.0,
-    "ext_pct": 8.56,
-    "sector": "Financials",
-    "axes": {
-     "consensus": "W",
-     "data": "S",
-     "lens": "M"
-    },
-    "n_strong": 1,
-    "profile": "W/S/M",
-    "tension": "6/8 lanes, 3/6 lens but only 1 vote \u2014 did the swarm miss a confirmed runner?"
-   },
-   {
-    "ticker": "PEB",
-    "votes": 1,
-    "avg_conviction": 4.0,
-    "lane_count": 4,
-    "detect": 5,
-    "sc_momentum": 63.7,
-    "ext_pct": 13.23,
-    "sector": "Real Estate",
-    "axes": {
-     "consensus": "W",
-     "data": "M",
-     "lens": "S"
-    },
-    "n_strong": 1,
-    "profile": "W/M/S",
-    "tension": "4/8 lanes, 5/6 lens but only 1 vote \u2014 did the swarm miss a confirmed runner?"
-   },
-   {
-    "ticker": "VLO",
-    "votes": 1,
-    "avg_conviction": 4.0,
-    "lane_count": 6,
-    "detect": 2,
-    "sc_momentum": 75.4,
-    "ext_pct": 20.61,
-    "sector": "Energy",
-    "axes": {
-     "consensus": "W",
-     "data": "S",
-     "lens": "M"
-    },
-    "n_strong": 1,
-    "profile": "W/S/M",
-    "tension": "6/8 lanes, 2/6 lens but only 1 vote \u2014 did the swarm miss a confirmed runner?"
-   },
-   {
-    "ticker": "DJT",
-    "votes": 1,
-    "avg_conviction": 3.0,
-    "lane_count": 7,
-    "detect": 1,
-    "sc_momentum": 75.2,
-    "ext_pct": 15.07,
-    "sector": "Communication Services",
-    "axes": {
-     "consensus": "W",
-     "data": "S",
-     "lens": "W"
-    },
-    "n_strong": 1,
-    "profile": "W/S/W",
-    "tension": "7/8 lanes, 1/6 lens but only 1 vote \u2014 did the swarm miss a confirmed runner?"
-   }
-  ]
+  "data_lens_only": []
  },
- "summary": "POSITIVE OVERLAP (high conviction, fast-track): triple-convergent SHO; two-axis FBP, CTVA, EFX, NOMD, NHI, NWBI, DRH, HR, BNL, SPG, MTG, ALL, CURB | CONTRADICTION \u2014 voted but unconfirmed (data/lens say wait): DINO(4v,2 lanes), CSX(4v,3 lanes), UNP(4v,3 lanes) | CONTRADICTION \u2014 mechanically strong but under-nominated (possible missed runners): PSX(7 lanes,3 lens), RSI(7 lanes,2 lens), WT(6 lanes,3 lens), PEB(4 lanes,5 lens), VLO(6 lanes,2 lens), DJT(7 lanes,1 lens) | Deliberate the 14 shortlist names; explicitly RESOLVE each contradiction (run or drop)."
+ "summary": "SHORTLIST is DATA+LENS-first, voices advisory (D-79). | TRIPLE (data+lens+voices agree \u2014 highest): SHO | CONFIRMED (data/lens-led, swarm backed): NWBI, DRH, FBP, EA, EPRT, RXO | DATA-LED, voices advisory-silent (mechanically strong, swarm under-nominated \u2014 deliberate): HR, PSX, BNL, SPG, MTG, RSI, WT, ALL | CONTRADICTION \u2014 voted but mechanicals do NOT confirm (voices advisory only; run or drop?): DINO(4v,2 lanes), CSX(4v,3 lanes), UNP(4v,3 lanes) | Deliberate the 15 shortlist names; explicitly RESOLVE each contradiction."
 }
