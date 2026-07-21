@@ -1,0 +1,18 @@
+{
+  "cockpit_armed": true,
+  "armed_date_sgt": "2026-07-21",
+  "armed_at_utc": "2026-07-21T09:35:00Z",
+  "note": "Live cockpit for the session that ran /cockpit arm on 21 Jul. Deliveries below fire send_later back into that session, timed just after each cron pushes to git. Each fired delivery re-arms tomorrow's same delivery, so one arm self-perpetuates until the session is truly closed.",
+  "daily_deliveries_sgt": {
+    "post_market": "05:25",
+    "design_review": "08:20",
+    "premarket": "10:40",
+    "market_hours_wrap": "04:10"
+  },
+  "next_delivery_armed": {
+    "loop": "post_market",
+    "fire_at_utc": "2026-07-21T21:25:00Z",
+    "fire_at_sgt": "2026-07-22 05:25"
+  },
+  "limitation": "A send_later dies if this session is truly closed/replaced by a new chat. In a new chat, run /cockpit arm once to re-establish. Compute + git are durable (cron, D-64) so no work is lost in the gap."
+}
