@@ -153,7 +153,8 @@ alert_universe:                   # D-77: the WIRED implementation of the flag_c
   event_overlay: strike          # event-driven names (M&A etc., D-11) are STRUCK from the universe regardless of lanes
   calibration_note: "21 Jul 2026: validated BILL(6 lanes) & ETSY(5) -> Tier1; DINO(2 lanes, 25% ext) -> Tier3 watch. 56 names (40/10/6) vs old sc70=57 flat / sc80=2 / committee-pick=37."
   pod_contract: "every fired alert carries lane_count + lanes_fired into the market-hours pod (D-63) — the same numbers the voices read to call runner-or-not"
-conviction_funnel:               # D-78: the DAILY PREMARKET three-axis funnel — data (lanes) x lens (detect) x consensus (votes). tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
+conviction_funnel:               # D-78/79/80: the DAILY PREMARKET three-axis funnel. tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
+  doctrine_locked: "DATA leads · LENS seconds · VOICES corroborate or challenge → consensus for HIGH CONVICTION (D-80). Data/lens (mechanical) set the shortlist; voices corroborate, stay silent, or challenge; high conviction = mechanical confirmation AND voice corroboration, synthesised by the committee. Voices never buy a seat alone."
   axes: [data, lens, consensus]  # D-79 ORDER: DATA=8-lane casting mat (D-77) FIRST; LENS=6-lens detect; CONSENSUS=voices = ADVISORY overlay, never the entry ticket (PM: "data but lens first before we anchor on voices advisory")
   primary_axes: [data, lens]     # a name enters the shortlist iff DATA strong OR LENS strong (mechanical); voices only CONFIRM or read advisory-silent
   target_min: 10                 # PM: "always start from approx 10-15 names to filter down into a high conviction plan"

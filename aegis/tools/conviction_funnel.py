@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 """
-conviction_funnel.py — the premarket three-axis conviction funnel (D-78).
+conviction_funnel.py — the premarket three-axis conviction funnel (D-78/D-79/D-80).
+
+================================ SELECTION DOCTRINE (LOCKED, D-80) ================================
+  DATA leads  ·  LENS seconds  ·  VOICES corroborate or challenge  →  consensus for HIGH CONVICTION.
+
+  - DATA (the 8-lane casting mat, D-77) is the primary, mechanical signal of momentum arriving.
+  - LENS (the 6-lens detect) is the second confirmer.
+  - Data OR lens strong = a name enters the ~10-15 shortlist (the mechanically-confirmed set).
+  - VOICES then CORROBORATE (nominate/add conviction), are SILENT (advisory), or CHALLENGE
+    (dissent / bear case, or vote a name the mechanicals do NOT confirm).
+  - HIGH CONVICTION = mechanical confirmation AND voice corroboration (the committee synthesis).
+    A mechanically-strong name the voices challenge, or a voted name the mechanicals don't confirm,
+    is a DELIBERATION item the committee must resolve (run or drop) — never an auto-advance.
+  Voices corroborate or challenge; they never buy a seat on their own. Data leads.
+==================================================================================================
 
 Records the "lane methodology" into the DAILY PREMARKET run. The PM's mandate:
   "data driven, lens and consensus driven. Concise summary highlighting contradictory
