@@ -5,6 +5,19 @@ until they exist, nothing fires on its own (runs are manual via KICKOFF.md Kicko
 **Watch the FIRST firing of each** (shadow) to confirm a scheduled fresh session bootstraps:
 plugin loaded, `config/.env` readable, connectors up. That first-fire is the last real unknown.
 
+> **RESOLVED — D-64 (21 Jul 2026): a fresh scheduled session does NOT inherit the workspace.**
+> A live fired-session diagnostic proved a scheduled task starts a BRAND-NEW ephemeral container
+> that has the aegis-v4 plugin + all MCP connectors (FMP/Tiger/IBKR/Drive) but **NOT**
+> `/home/claude/aegis`, **NOT** `config/.env`, and **NO** usable git token (env `GH_TOKEN` is a
+> `proxy-injected` sentinel). So every prompt below MUST begin with a **STEP 0 bootstrap** that
+> reconstructs the workspace before the phase, or the session dies silently (no commit, no page).
+> The bootstrap: `export AEGIS_PAT=<pat>` → clone `TongIncomeWheel/AQE` to `/home/claude/AQE` →
+> write `aegis/config/.env` → `cd` in → verify `aegis/CONTEXT.md` → page + STOP on failure.
+> `tools/bootstrap.py` encodes this contract (carries NO token — D-49; the PAT travels inline in
+> the trigger prompt, the only channel a fresh container can read). Tiger MCP may need a ToolSearch
+> retry before it is up. Trigger prompts are immutable (`prompt_update_disabled`) — to change one,
+> recreate the trigger (v2).
+
 **Times:** SGT is UTC+8. Cron below is written in **UTC** (confirm your scheduler's timezone;
 if it takes SGT directly, use the SGT column). Each task fires a FRESH session that reads the
 context, runs its phase, and (post-market) pushes state. Turn **push notifications ON** for each
