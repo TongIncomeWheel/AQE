@@ -1,0 +1,9 @@
+# Phase 0-1 runtime dependencies
+litellm>=1.40          # model gateway — one interface, routes to Claude / Kimi / local
+jsonschema>=4.0        # validates every artifact against contracts/*.json
+pyyaml>=6.0
+
+# --- later phases (not needed for Phase 0-1; listed so the engineer knows the path) ---
+# discord.py>=2.3      # Phase 4 — the cockpit
+# ib_async>=1.0        # Phase 5 — IBKR (maintained fork of ib_insync)
+# apscheduler>=3.10    # Phase 2 — the loop scheduler

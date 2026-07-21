@@ -1,0 +1,19 @@
+# Aegis runtime — one-command Phase 0-1.
+#
+#   1) copy .env.example -> .env   (edit only when you go from mock to real)
+#   2) docker compose up           -> runs a full premarket, offline & free, and prints the result
+#
+# When ready for real: set AEGIS_MOCK=0 and ANTHROPIC_API_KEY in .env, then:
+#   docker compose run --rm runtime premarket --date 2026-07-21
+#
+services:
+  runtime:
+    build:
+      context: ..                     # repo root — the whole kernel goes into the image
+      dockerfile: runtime/Dockerfile
+    env_file: .env
+    volumes:
+      - ./out:/app/runtime/out        # the run artifacts land here on your machine
+    # default command (mock premarket on the bundled sample date). Override on the CLI:
+    #   docker compose run --rm runtime chief "run premarket for 2026-07-21"
+    command: ["premarket", "--date", "2026-07-21"]
