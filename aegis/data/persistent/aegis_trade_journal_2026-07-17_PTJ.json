@@ -1,0 +1,89 @@
+{
+  "version": "2.9.6",
+  "supersedes": "2.9.5",
+  "correction_note": "PM confirmed 2026-07-17 04:3x UTC: V and SPGI are Aegis book positions (entered 2026-07-16), moved from unmatched_fills into open_positions. ECHO confirmed NOT Aegis, dropped entirely. Skill's default-capture policy updated (see print-trade-journal SKILL.md v2.4/STEP 2): future ambiguous same-session BUY fills auto-capture into open_positions with confirmation_status flag rather than sitting outside the book pending PM review.",
+  "snapshot": "2026-07-17 04:30 UTC (live re-pull, both brokers, PM-confirmed positions folded in)",
+  "regime": "GREEN",
+  "record": "1W/1L YTD",
+  "capital": {
+    "dynCapital": 71857.07,
+    "oneR": 1077.86,
+    "priorDynCapital": 72574.37,
+    "sessionRealizedPnl": -717.30,
+    "basis_note": "Unchanged -- no new Aegis-classified closed trades since CMG. V/SPGI are open adds, not realized events, so dynCap is unaffected by their confirmation."
+  },
+  "open_positions": [
+    {"ticker": "IBM", "type": "STK", "qty": 111, "entry": 263.14849009, "livePx": 214.00, "exposure": 23754.00, "unrealUsd": -5455.48, "sector": "XLK", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D", "notes": "SL advisory only, not executable."},
+    {"ticker": "PTRN", "type": "STK", "qty": 327, "entry": 25.15262202, "livePx": 28.92, "exposure": 9456.84, "unrealUsd": 1231.93, "sector": "XLK", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "EXEL", "type": "STK", "qty": 95, "entry": 54.73870842, "livePx": 55.68, "exposure": 5289.60, "unrealUsd": 89.42, "sector": "XLV", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "VRSK", "type": "STK", "qty": 67, "entry": 191.80450299, "livePx": 201.49, "exposure": 13499.83, "unrealUsd": 648.93, "sector": "XLK", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "CHYM", "type": "STK", "qty": 479, "entry": 21.15262213, "livePx": 21.93, "exposure": 10504.47, "unrealUsd": 372.36, "sector": "XLF", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "NTAP", "type": "STK", "qty": 112, "entry": 172.15262232, "livePx": 157.50, "exposure": 17640.00, "unrealUsd": -1641.09, "sector": "XLK", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "NU", "type": "STK", "qty": 871, "entry": 13.85055109, "livePx": 13.70, "exposure": 11932.70, "unrealUsd": -131.13, "sector": "XLF", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "SLDE", "type": "STK", "qty": 629, "entry": 20.9026221, "livePx": 20.60, "exposure": 12957.40, "unrealUsd": -190.35, "sector": "XLF", "broker": "IBKR", "sl_status": "COMPLIANCE_HOLD_30D"},
+    {"ticker": "DDOG", "type": "STK", "qty": 24, "entry": 266.5438, "livePx": 261.20, "exposure": 6268.80, "unrealUsd": -128.25, "sector": "XLK", "broker": "TIGER", "live_stop_broker": 247.17},
+    {"ticker": "AMPL", "type": "STK", "qty": 571, "entry": 9.7494, "livePx": 9.50, "exposure": 5424.50, "unrealUsd": -142.40, "sector": "TBD", "broker": "TIGER", "live_stop_broker": 8.90},
+    {"ticker": "V", "type": "STK", "qty": 20, "entry": 361.3381, "livePx": 364.2545, "exposure": 7285.09, "unrealUsd": 56.10, "sector": "XLF", "broker": "TIGER", "live_stop_broker": 343.29, "tradeDate": "2026-07-16", "confirmation_status": "CONFIRMED", "notes": "PM-confirmed Aegis 2026-07-17."},
+    {"ticker": "SPGI", "type": "STK", "qty": 23, "entry": 450.2636, "livePx": 456.08, "exposure": 10489.84, "unrealUsd": 131.53, "sector": "XLF", "broker": "TIGER", "live_stop_broker": 420.73, "tradeDate": "2026-07-16", "confirmation_status": "CONFIRMED", "notes": "PM-confirmed Aegis 2026-07-17."}
+  ],
+  "closed_trades_today": [
+    {
+      "id": "CMG-20260714-20260717",
+      "ticker": "CMG",
+      "type": "STK",
+      "qty": 250,
+      "entry": 36.93,
+      "exitPx": 34.0901,
+      "entryDate": "2026-07-14",
+      "exitDate": "2026-07-17",
+      "holdDays": 3,
+      "sl": 34.10,
+      "rRealised": -1.003,
+      "pnlUsd": -717.30,
+      "pnlPct": -7.69,
+      "winLoss": "L",
+      "sector": "XLY",
+      "exitReason": "SL triggered",
+      "broker": "TIGER"
+    }
+  ],
+  "excluded_non_aegis_fills": [
+    {"symbol": "ECHO", "qty": 1, "avg_price": 6.2, "action": "BUY", "right": "CALL", "strike": "105", "expiry": "2026-10-16", "broker": "TIGER", "note": "PM-confirmed NOT Aegis 2026-07-17. Excluded from book."}
+  ],
+  "broker_sync": {
+    "last_sync_utc": "2026-07-17T04:30:00Z",
+    "sync_phase": "POST_MARKET",
+    "connectors": ["IBKR_NATIVE_CLAUDE_v1", "TIGER_MCPv7"],
+    "aegis_positions_matched": 12,
+    "aegis_positions_unmatched": 0,
+    "fills_reconciled": 3,
+    "fills_unmatched": 0,
+    "sl_audit": [
+      {"ticker": "IBM", "reference_sl_ptj": null, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "PTRN", "reference_sl_ptj": 26.29, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "EXEL", "reference_sl_ptj": 51.15, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "VRSK", "reference_sl_ptj": 183.4, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "CHYM", "reference_sl_ptj": 19.86, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "NTAP", "reference_sl_ptj": 159.3, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "NU", "reference_sl_ptj": 13.02, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "SLDE", "reference_sl_ptj": 20.45, "live_stop_broker": null, "broker": "IBKR", "status": "HOLD_30D"},
+      {"ticker": "DDOG", "reference_sl_ptj": null, "live_stop_broker": 247.17, "broker": "TIGER", "status": "MATCH_LIVE"},
+      {"ticker": "AMPL", "reference_sl_ptj": null, "live_stop_broker": 8.90, "broker": "TIGER", "status": "MATCH_LIVE"},
+      {"ticker": "V", "reference_sl_ptj": null, "live_stop_broker": 343.29, "broker": "TIGER", "status": "MATCH_LIVE"},
+      {"ticker": "SPGI", "reference_sl_ptj": null, "live_stop_broker": 420.73, "broker": "TIGER", "status": "MATCH_LIVE"}
+    ],
+    "unmatched_fills": [],
+    "reconciliation_notes": "V and SPGI confirmed Aegis by PM 2026-07-17 and folded into open_positions (12 total). ECHO confirmed non-Aegis, excluded. IBKR get_account_trades/get_account_orders empty again this pull -- persistent connector gap."
+  },
+  "hedge": {
+    "instrument": "IWM_XLK_XLF_combo",
+    "contracts": 11,
+    "expiry_primary": "2026-08-07",
+    "note": "IWM 3ct + XLK/XLF combo 8ct. QQQ/TLT puts on book NOT reconciled into hedges field."
+  },
+  "aqe_held_field": {
+    "held_tickers": ["IBM", "PTRN", "EXEL", "VRSK", "CHYM", "NTAP", "NU", "SLDE", "DDOG", "AMPL", "V", "SPGI"],
+    "count": 12,
+    "note": "AQE engine will flag these as held:true in tomorrow's export."
+  }
+}

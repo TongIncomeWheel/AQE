@@ -1,0 +1,1768 @@
+{
+ "date": "2026-07-21",
+ "posture": "YELLOW / MEAN-REVERT. dynCap $67,406 \u00b7 1R $1,011. NO hard portfolio gate open; VaR 19.0% SOFT breach (hard 20); sector concentration XLK 113% / XLF 79% of dynCap = over-exposed, rotation candidates (D-34). Exits first: IBM + NTAP out, PTRN partial \u2014 frees ~$45k XLK; adds are diversifiers (XLI/XLB/XLE/XLRE/XLP/XLC), low/negative beta, sized 1R on actual stops. XLK/XLF re-deploys are conditional on freed capital. Bellwether letters not supplied today. Leverage headroom after exits \u2248 $78,206 notional at soft 2.5x \u2014 PM selects a subset of the 12 ADVANCE previews; gatekeeper enforces post-add gates (check 5) at staging.",
+ "held_actions": [
+  {
+   "ticker": "IBM",
+   "action": "EXIT",
+   "committee_read": "EXIT",
+   "reason": "down -19% (-$5,566) with NO executable stop (IBKR 30-day compliance hold), sc collapsed to 28.7, elder 3, momentum FADING \u2014 the thesis is broken and the only risk control available is a manual exit. H",
+   "data_anchors": {
+    "pnl": "-19% / -$5,566",
+    "stop": "none (compliance hold)",
+    "sc_momentum": 28.7,
+    "elder": 3,
+    "state": "FADING",
+    "sector": "XLK 113% \u2014 EXIT relieves the breach & VaR",
+    "votes": "10 EXIT-CASE, 1 KEEP(detect-null)"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": "STRUCTURE_EXIT"
+  },
+  {
+   "ticker": "NTAP",
+   "action": "EXIT",
+   "committee_read": "EXIT",
+   "reason": "elder 0 (momentum fully dead), FADING, down -6.4% and price is only 1.2% above the 159.30 stop \u2014 it is going to stop out anyway; beta 1.49 makes it a top VaR contributor and it sits in the 113% XLK br",
+   "data_anchors": {
+    "pnl": "-6.4%",
+    "stop": "159.30 (1.2% below cob \u2014 approaching)",
+    "elder": 0,
+    "state": "FADING",
+    "beta": 1.49,
+    "sector": "XLK 113% \u2014 EXIT relieves breach & VaR",
+    "votes": "7 EXIT-CASE, 3 TIGHTEN, 1 KEEP"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": "STOP"
+  },
+  {
+   "ticker": "PTRN",
+   "action": "TRIM",
+   "committee_read": "TAKE-PARTIAL",
+   "reason": "+11.4% but 28.8% extended and FADING with knn 0.00 (zero forward edge) \u2014 the gain is real but the momentum that made it is gone, and it sits in the hard-breached XLK sleeve. Banking a partial locks th",
+   "data_anchors": {
+    "pnl": "+11.4%",
+    "stop": "26.29 (above entry \u2014 locked gain)",
+    "sc_momentum": 58.8,
+    "elder": 5,
+    "state": "FADING",
+    "ext": "28.8%",
+    "knn": 0.0,
+    "sector": "XLK 113% \u2014 partial relieves breach",
+    "votes": "8 TIGHTEN, 3 KEEP"
+   },
+   "stop_new": null,
+   "tp_level": "TP1",
+   "scale_shares": 107,
+   "exit_reason": "TAKE_PROFIT"
+  },
+  {
+   "ticker": "EXEL",
+   "action": "HOLD",
+   "committee_read": "RUN",
+   "reason": "only +1.4% and elder is a weak 3 \u2014 the momentum case is thin and 2 voices already argue EXIT; if the BUILDING state stalls this round-trips to the 51.15 stop. But it is the book's sole XLV diversifier",
+   "data_anchors": {
+    "pnl": "+1.4%",
+    "stop": "51.15",
+    "elder": 3,
+    "state": "BUILDING",
+    "sector": "XLV 7.8% (diversifier)",
+    "votes": "6 KEEP, 3 TIGHTEN, 2 EXIT-CASE"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "VRSK",
+   "action": "HOLD",
+   "committee_read": "RUN",
+   "reason": "raschke flags a BEARISH_CHOCH \u2014 the structure may be topping \u2014 and it sits in the 113% XLK breach, so a reversal here would be doubly unwelcome. But elder 10 STRONG, +5.2%, stop at breakeven (risk-fre",
+   "data_anchors": {
+    "pnl": "+5.2%",
+    "stop": "191.80 (breakeven \u2014 risk-free)",
+    "sc_momentum": 66.6,
+    "elder": 10,
+    "state": "STRONG",
+    "sector": "XLK 113%",
+    "votes": "10 KEEP, 1 EXIT-CASE"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "CHYM",
+   "action": "TIGHTEN_STOP",
+   "committee_read": "TIGHTEN",
+   "reason": "BEARISH_CHOCH fired and beta 1.70 is the single highest-beta name in the whole book \u2014 a direct hit to the soft-breached VaR \u2014 inside the 79% XLF breach; +3.7% is a slim cushion. The stop was already r",
+   "data_anchors": {
+    "pnl": "+3.7%",
+    "stop": "20.47 (raised today, structure trail)",
+    "elder": 7,
+    "state": "STRONG w/ BEARISH_CHOCH",
+    "beta": 1.7,
+    "sector": "XLF 79% \u2014 top VaR/beta reduction candidate",
+    "votes": "6 KEEP, 5 TIGHTEN"
+   },
+   "stop_new": 20.47,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "NU",
+   "action": "TIGHTEN_STOP",
+   "committee_read": "TIGHTEN",
+   "reason": "FADING with BEARISH_CHOCH fired despite elder 9, and rvol 1.94 on a near-flat (+1.0%) position suggests distribution, not accumulation; sits in the 79% XLF breach. Raise the stop toward 13.02 \u2014 if the",
+   "data_anchors": {
+    "pnl": "+1.0%",
+    "stop": "13.02",
+    "elder": 9,
+    "state": "FADING w/ BEARISH_CHOCH",
+    "rvol": 1.94,
+    "sector": "XLF 79% \u2014 trim candidate",
+    "votes": "6 TIGHTEN, 3 KEEP, 2 EXIT-CASE"
+   },
+   "stop_new": 13.02,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "SLDE",
+   "action": "HOLD",
+   "committee_read": "RUN",
+   "reason": "wyckoff reads flow 30 as dead \u2014 no demand behind the price \u2014 and it sits in the 79% XLF breach at only +0.7%, so the risk-free claim is thin. But elder 8 STRONG, sc 65, stop at breakeven, and 7 of 11 ",
+   "data_anchors": {
+    "pnl": "+0.7%",
+    "stop": "20.90 (breakeven)",
+    "sc_momentum": 65,
+    "elder": 8,
+    "state": "STRONG",
+    "sector": "XLF 79%",
+    "votes": "7 KEEP, 3 TIGHTEN, 1 EXIT-CASE"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "DDOG",
+   "action": "TIGHTEN_STOP",
+   "committee_read": "TIGHTEN",
+   "reason": "elder 4 FADING and down -1.3% inside the 113% XLK breach \u2014 the momentum has rolled and 3 voices read EXIT; the wide 247.17 stop (~6% below) is loose risk in a stretched sleeve. Raise the stop to cut t",
+   "data_anchors": {
+    "pnl": "-1.3%",
+    "stop": "247.17 (wide, ~6%)",
+    "elder": 4,
+    "state": "FADING",
+    "knn": 1.0,
+    "squeeze": 8.5,
+    "sector": "XLK 113% \u2014 tighten relieves breach",
+    "votes": "4 KEEP, 4 TIGHTEN, 3 EXIT-CASE"
+   },
+   "stop_new": 247.17,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "AMPL",
+   "action": "TIGHTEN_STOP",
+   "committee_read": "TIGHTEN",
+   "reason": "30.8% extended yet only +0.8% in P&L \u2014 it has round-tripped a big move and is now FADING inside the 113% XLK breach. A 30.8% extension with fading momentum is prime reversion risk in a mean-revert tap",
+   "data_anchors": {
+    "pnl": "+0.8%",
+    "stop": "8.90",
+    "sc_momentum": 74.2,
+    "state": "FADING",
+    "ext": "30.8%",
+    "sector": "XLK 113% \u2014 tighten/trim relieves breach",
+    "votes": "6 TIGHTEN, 4 KEEP"
+   },
+   "stop_new": 8.9,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "V",
+   "action": "HOLD",
+   "committee_read": "RUN",
+   "reason": "sits in the 79% XLF breach and is essentially flat (-0.2%), so it contributes to the concentration without yet earning its keep; if MA is also added the payments/financials bet doubles. But elder 7 ST",
+   "data_anchors": {
+    "pnl": "-0.2%",
+    "stop": "343.29",
+    "elder": 7,
+    "state": "STRONG",
+    "sector": "XLF 79%",
+    "votes": "9 KEEP, 2 TIGHTEN"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  },
+  {
+   "ticker": "SPGI",
+   "action": "HOLD",
+   "committee_read": "RUN",
+   "reason": "in the 79% XLF breach and marginally negative (-0.4%); a sharp financials reversal would hit it and V together. But elder 7 STRONG ACCELERATING with 9 of 11 KEEP and a defined 420.73 stop.",
+   "data_anchors": {
+    "pnl": "-0.4%",
+    "stop": "420.73",
+    "elder": 7,
+    "state": "STRONG ACCELERATING",
+    "sector": "XLF 79%",
+    "votes": "9 KEEP, 2 TIGHTEN"
+   },
+   "stop_new": null,
+   "tp_level": null,
+   "scale_shares": null,
+   "exit_reason": null
+  }
+ ],
+ "new_ideas": [
+  {
+   "ticker": "CTVA",
+   "tier": 1,
+   "nomination_count": 4,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "4",
+   "dissent": "minervini: tightest stop but momentum FADING \u2014 smallest-size only",
+   "trigger": "break/hold over 86.78 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 86.78,
+    "stop": 84.19,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 87.69
+     },
+     {
+      "type": "fib_1272",
+      "price": 91.97
+     }
+    ],
+    "rr": 2.0,
+    "risk_pct": 2.98
+   },
+   "size_shares": 390,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 4,
+    "sector": "XLB Recovering (sole Materials diversifier)",
+    "beta": 0.09,
+    "ext": "7.2%",
+    "bracket_valid": true,
+    "rr": 2.0,
+    "risk_pct": "2.98%",
+    "flags": "rs_leader; CAUTION FADING",
+    "sizing": {
+     "shares_r": 390,
+     "shares_volcap": 898,
+     "capped_by": "r",
+     "risk_usd": 1010.1,
+     "notional_usd": 33844.0
+    },
+    "risk_usd": 1010.1,
+    "bear_case": "minervini himself flags FADING momentum state and rr is a bare 2.00 at a 2.98% stop \u2014 this is a slow ag/materials grind, not a thrust; if the copper/gold reflation tilt stalls the theme unwinds and there is little R cush"
+   }
+  },
+  {
+   "ticker": "UNP",
+   "tier": 1,
+   "nomination_count": 4,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "4",
+   "dissent": "steen: drop CSX to avoid rail crowding \u2014 UNP is the keeper",
+   "trigger": "break/hold over 296.25 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 296.25,
+    "stop": 290.5,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 303.15
+     },
+     {
+      "type": "fib_1272",
+      "price": 316.19
+     }
+    ],
+    "rr": null,
+    "risk_pct": 1.94
+   },
+   "size_shares": 175,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 4,
+    "sc_momentum": 80.0,
+    "sector": "XLI",
+    "beta": -0.08,
+    "ext": "8.8%",
+    "flags": "rs_leader, flow+structure>80",
+    "sizing": {
+     "shares_r": 175,
+     "shares_volcap": 215,
+     "capped_by": "r",
+     "risk_usd": 1006.25,
+     "notional_usd": 51844.0
+    },
+    "risk_usd": 1006.25,
+    "bear_case": "XLI is only TURNING/Recovering and the tape is narrow (IWM roc -1.11); a $296 rail stalwart at 8.8% extension in a MEAN_REVERT regime can chop sideways for weeks. steen explicitly wants CSX dropped for crowding \u2014 two rai"
+   }
+  },
+  {
+   "ticker": "EFX",
+   "tier": 1,
+   "nomination_count": 3,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "4",
+   "dissent": null,
+   "trigger": "break/hold over 180.08 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 180.08,
+    "stop": 173.27,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 200.09
+     },
+     {
+      "type": "resistance",
+      "price": 203.88
+     }
+    ],
+    "rr": null,
+    "risk_pct": 3.78
+   },
+   "size_shares": 148,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 3,
+    "sc_momentum": 68.6,
+    "sector": "XLI",
+    "beta": -0.12,
+    "rvol": 1.78,
+    "ext": "8.7%",
+    "flags": "impulse_accel, rs_leader, rs_resilient",
+    "sizing": {
+     "shares_r": 148,
+     "shares_volcap": 190,
+     "capped_by": "r",
+     "risk_usd": 1007.88,
+     "notional_usd": 26652.0
+    },
+    "risk_usd": 1007.88,
+    "bear_case": "sc 68.6 is the lowest of the ADVANCE cohort and bracket is invalid (fallback 173.27 = a ~3.8% stop, no confirmed structure); the 1.78 rvol acceleration could be a one-day spike that fades in a mean-revert tape."
+   }
+  },
+  {
+   "ticker": "CTAS",
+   "tier": 1,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 201.8 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 201.8,
+    "stop": 196.11,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 202.5
+     },
+     {
+      "type": "resistance",
+      "price": 209.08
+     }
+    ],
+    "rr": null,
+    "risk_pct": 2.82
+   },
+   "size_shares": 177,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 2,
+    "sc_momentum": 76.3,
+    "sector": "XLI",
+    "beta": -0.27,
+    "ext": "14.7%",
+    "rvol": 0.96,
+    "flags": "impulse_accel, rs_leader, bullish_div",
+    "sizing": {
+     "shares_r": 177,
+     "shares_volcap": 208,
+     "capped_by": "r",
+     "risk_usd": 1007.13,
+     "notional_usd": 35719.0
+    },
+    "risk_usd": 1007.13,
+    "bear_case": "14.7% extended into a $200 name on sub-1.0 rvol (0.96) \u2014 the markup is unconfirmed by volume, and a bearish reversion here has a long way to fall with only an ATR-fallback stop to lean on."
+   }
+  },
+  {
+   "ticker": "RXO",
+   "tier": 1,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 28.87 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 28.87,
+    "stop": 27.11,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 29.86
+     },
+     {
+      "type": "fib_1272",
+      "price": 33.43
+     }
+    ],
+    "rr": 2.59,
+    "risk_pct": 6.1
+   },
+   "size_shares": 574,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLI",
+    "beta": 0.42,
+    "bracket_valid": true,
+    "rr": 2.59,
+    "risk_pct": "6.10% (size down)",
+    "flags": "squeeze, impulse_accel, rs_leader",
+    "sizing": {
+     "shares_r": 574,
+     "shares_volcap": 1124,
+     "capped_by": "r",
+     "risk_usd": 1010.24,
+     "notional_usd": 16571.0
+    },
+    "risk_usd": 1010.24,
+    "bear_case": "the only definable stop is a wide 6.10% (well over the 1R/1.5% frame) \u2014 must be sized down hard; positive beta 0.42 adds to VaR, and a freight-adjacent name is exposed if the narrow tape rolls."
+   }
+  },
+  {
+   "ticker": "LNG",
+   "tier": 1,
+   "nomination_count": 1,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 264.95 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 264.95,
+    "stop": 253.4,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 275.45
+     },
+     {
+      "type": "resistance",
+      "price": 299.49
+     }
+    ],
+    "rr": 2.99,
+    "risk_pct": 4.36
+   },
+   "size_shares": 87,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 1,
+    "sector": "XLE DEPLOY",
+    "beta": -0.61,
+    "bracket_valid": true,
+    "rr": 2.99,
+    "risk_pct": "4.36%",
+    "ext": "9.2%",
+    "flags": "rs_leader, rs_resilient",
+    "sizing": {
+     "shares_r": 87,
+     "shares_volcap": 226,
+     "capped_by": "r",
+     "risk_usd": 1004.85,
+     "notional_usd": 23051.0
+    },
+    "risk_usd": 1004.85,
+    "bear_case": "single nomination \u2014 no framework corroboration; rvol 0.59 is thin participation for a stage-2 claim, and a $265 energy name can gap on any oil reversal despite the defined 4.36% risk."
+   }
+  },
+  {
+   "ticker": "NHI",
+   "tier": 1,
+   "nomination_count": 3,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "4",
+   "dissent": "(adversarial): 0.37 rvol contradicts the breakout thesis \u2014 thrust unconfirmed",
+   "trigger": "break/hold over 79.26 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 79.26,
+    "stop": 76.42,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 86.81
+     },
+     {
+      "type": "resistance",
+      "price": 91.38
+     }
+    ],
+    "rr": 4.27,
+    "risk_pct": 3.58
+   },
+   "size_shares": 356,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 3,
+    "sector": "XLRE",
+    "beta": -1.0,
+    "bracket_valid": true,
+    "rr": 4.27,
+    "risk_pct": "3.58%",
+    "knn": 1.0,
+    "rvol": 0.37,
+    "flags": "squeeze, impulse_accel, rs_leader; CAUTION bearish_div",
+    "sizing": {
+     "shares_r": 356,
+     "shares_volcap": 772,
+     "capped_by": "r",
+     "risk_usd": 1011.04,
+     "notional_usd": 28217.0
+    },
+    "risk_usd": 1011.04,
+    "bear_case": "rvol 0.37 is nearly dead \u2014 a fresh 10-high on no volume is a hollow breakout, and the bearish_div flag warns the thrust is losing internal energy; the very negative beta (-1.00) means it can bleed if the tape rallies whi"
+   }
+  },
+  {
+   "ticker": "CTRE",
+   "tier": 1,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 42.45 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 42.45,
+    "stop": 41.43,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 43.08
+     },
+     {
+      "type": "fib_1272",
+      "price": 45.02
+     }
+    ],
+    "rr": null,
+    "risk_pct": 2.4
+   },
+   "size_shares": 991,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 2,
+    "sc_momentum": 65.2,
+    "sector": "XLRE",
+    "beta": -0.74,
+    "ext": "6.1%",
+    "rvol": 0.57,
+    "flags": "impulse_accel, rs_leader, rs_resilient; CAUTION bearish_div",
+    "sizing": {
+     "shares_r": 991,
+     "shares_volcap": 1372,
+     "capped_by": "r",
+     "risk_usd": 1010.82,
+     "notional_usd": 42068.0
+    },
+    "risk_usd": 1010.82,
+    "bear_case": "rvol 0.57 thin and a bearish_div flag fired; sc 65.2 is soft and XLRE is Fading-Hold \u2014 the contraction may resolve down, not up, with only an ATR-fallback stop."
+   }
+  },
+  {
+   "ticker": "EPRT",
+   "tier": 1,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 33.35 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 33.35,
+    "stop": 32.71,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 33.6
+     },
+     {
+      "type": "resistance",
+      "price": 34.73
+     }
+    ],
+    "rr": null,
+    "risk_pct": 1.92
+   },
+   "size_shares": 1579,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLRE",
+    "beta": -0.82,
+    "ext": "8.2%",
+    "rvol": 1.0,
+    "flags": "impulse_accel, rs_leader; CAUTION bearish_div",
+    "sizing": {
+     "shares_r": 1579,
+     "shares_volcap": 1812,
+     "capped_by": "r",
+     "risk_usd": 1010.56,
+     "notional_usd": 52660.0
+    },
+    "risk_usd": 1010.56,
+    "bear_case": "bearish_div fired against the acceleration claim and rvol is exactly 1.00 (no real demand surge); invalid bracket means a fallback 32.71 stop with no structural confirmation."
+   }
+  },
+  {
+   "ticker": "NOMD",
+   "tier": 1,
+   "nomination_count": 3,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "4",
+   "dissent": "(adversarial): structure_choch contradicts the textbook stage-2 read",
+   "trigger": "break/hold over 11.85 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 11.85,
+    "stop": 11.24,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 13.08
+     },
+     {
+      "type": "fib_1272",
+      "price": 13.37
+     }
+    ],
+    "rr": 2.49,
+    "risk_pct": 5.15
+   },
+   "size_shares": 1657,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 3,
+    "sc_momentum": 76.4,
+    "sector": "XLP",
+    "beta": -0.38,
+    "bracket_valid": true,
+    "rr": 2.49,
+    "risk_pct": "5.15%",
+    "flags": "impulse_accel, rs_leader; CAUTION structure_choch",
+    "sizing": {
+     "shares_r": 1657,
+     "shares_volcap": 4629,
+     "capped_by": "r",
+     "risk_usd": 1010.77,
+     "notional_usd": 19635.0
+    },
+    "risk_usd": 1010.77,
+    "bear_case": "structure_choch fired \u2014 the recent structure has already broken character once; risk is a wide 5.15% at the valid stop so it must be sized down, and a $12 frozen-food name has limited follow-through if the theme stays du"
+   }
+  },
+  {
+   "ticker": "EIX",
+   "tier": 1,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "3",
+   "dissent": "SRM(context): XLU AVOID \u2014 sector is the headwind",
+   "trigger": "break/hold over 77.25 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 77.25,
+    "stop": 75.31,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 79.88
+     },
+     {
+      "type": "fib_1272",
+      "price": 82.42
+     }
+    ],
+    "rr": 2.66,
+    "risk_pct": 2.51
+   },
+   "size_shares": 521,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLU DECLINING-AVOID",
+    "beta": -0.31,
+    "bracket_valid": true,
+    "rr": 2.66,
+    "risk_pct": "2.51%",
+    "flags": "impulse_accel, rs_leader; CAUTION atr_caution",
+    "sizing": {
+     "shares_r": 521,
+     "shares_volcap": 984,
+     "capped_by": "r",
+     "risk_usd": 1010.74,
+     "notional_usd": 40247.0
+    },
+    "risk_usd": 1010.74,
+    "bear_case": "XLU is graded DECLINING-AVOID \u2014 buying the tightest pullback in the weakest sector; atr_caution flag fired, and utility names underperform in the risk-on copper/gold reflation tilt described in the macro brief."
+   }
+  },
+  {
+   "ticker": "EA",
+   "tier": 1,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "ADVANCE",
+   "conviction": "4",
+   "dissent": null,
+   "trigger": "break/hold over 209.29 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 209.29,
+    "stop": 208.36,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 209.34
+     },
+     {
+      "type": "fib_1272",
+      "price": 210.57
+     }
+    ],
+    "rr": null,
+    "risk_pct": 0.44
+   },
+   "size_shares": 1087,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": null,
+   "data_anchors": {
+    "nomination_count": 2,
+    "sc_momentum": 78.1,
+    "sector": "XLC (diversifier, not in book)",
+    "beta": -0.03,
+    "knn": 1.0,
+    "ext": "2.9%",
+    "flags": "impulse_accel, rs_leader",
+    "sizing": {
+     "shares_r": 1087,
+     "shares_volcap": 1804,
+     "capped_by": "r",
+     "risk_usd": 1010.91,
+     "notional_usd": 227498.0,
+     "leverage_note": "two-step size exceeds leverage headroom (~$78,206 at soft 2.5x after exits) \u2014 gatekeeper check 5 will cap; indicative max 373 sh"
+    },
+    "risk_usd": 1010.91,
+    "bear_case": "ext only 2.9% and rvol 0.71 mean there is almost no thrust yet \u2014 the cleanest KNN edge (1.00) can also mean it just sits at support and does nothing; XLC is Fading-Hold, so the diversification benefit is real but the mom"
+   }
+  },
+  {
+   "ticker": "AVPT",
+   "tier": 2,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 13.24 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 13.24,
+    "stop": 12.72,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 13.48
+     },
+     {
+      "type": "fib_1272",
+      "price": 14.51
+     }
+    ],
+    "rr": null,
+    "risk_pct": 3.93
+   },
+   "size_shares": 1944,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Only on XLK capital freed by the IBM/NTAP exits (relieves the 113% breach); otherwise it does not clear the concentration gate.",
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLK 113% (hard breach)",
+    "beta": 0.09,
+    "ext": "19.5%",
+    "rvol": 0.66,
+    "knn": 0.8,
+    "flags": "impulse_accel, rs_leader",
+    "sizing": {
+     "shares_r": 1944,
+     "shares_volcap": 3664,
+     "capped_by": "r",
+     "risk_usd": 1010.88,
+     "notional_usd": 25739.0
+    },
+    "risk_usd": 1010.88,
+    "bear_case": "XLK is hard-breached at 113% of dynCap \u2014 an add here deepens the single worst concentration in the book; 19.5% extended in a MEAN_REVERT tape on rvol 0.66 is a reversion setup, not an entry."
+   }
+  },
+  {
+   "ticker": "BOX",
+   "tier": 2,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 30.85 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 30.85,
+    "stop": 29.77,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 31.83
+     },
+     {
+      "type": "fib_1272",
+      "price": 33.94
+     }
+    ],
+    "rr": null,
+    "risk_pct": 3.5
+   },
+   "size_shares": 936,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Take only on XLK capital freed by IBM/NTAP exits \u2014 its negative beta makes it the preferred XLK re-deploy over AVPT.",
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLK 113% (hard breach)",
+    "beta": -0.3,
+    "ext": "15.8%",
+    "knn": 0.8,
+    "flags": "impulse_accel, rs_leader, rs_resilient",
+    "sizing": {
+     "shares_r": 936,
+     "shares_volcap": 1585,
+     "capped_by": "r",
+     "risk_usd": 1010.88,
+     "notional_usd": 28876.0
+    },
+    "risk_usd": 1010.88,
+    "bear_case": "still an XLK add into a 113% breach even though beta -0.30 is VaR-friendly; 15.8% extended with an invalid bracket (fallback 29.77) means an unconfirmed stop under an extended name."
+   }
+  },
+  {
+   "ticker": "FBP",
+   "tier": 2,
+   "nomination_count": 4,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 27.43 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 27.43,
+    "stop": 26.93,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 27.89
+     },
+     {
+      "type": "fib_1272",
+      "price": 28.48
+     }
+    ],
+    "rr": null,
+    "risk_pct": 1.82
+   },
+   "size_shares": 2022,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Only against XLF capital freed by a CHYM/NU tighten-then-trim; cannot ADVANCE into the 79% breach unfunded.",
+   "data_anchors": {
+    "nomination_count": 4,
+    "sector": "XLF 79% (hard breach)",
+    "beta": 0.11,
+    "ext": "9.0%",
+    "flags": "squeeze, impulse_accel, rs_leader",
+    "sizing": {
+     "shares_r": 2022,
+     "shares_volcap": 3042,
+     "capped_by": "r",
+     "risk_usd": 1011.0,
+     "notional_usd": 55463.0
+    },
+    "risk_usd": 1011.0,
+    "bear_case": "strongest XLF case on the board (4 votes, squeeze coiling) but XLF is hard-breached at 79% \u2014 adding here worsens the second-worst concentration; a $27 PR bank on invalid bracket has no confirmed structural stop."
+   }
+  },
+  {
+   "ticker": "MA",
+   "tier": 2,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": "steen(implied): V already held \u2014 MA compounds payments crowding",
+   "trigger": "break/hold over 547.44 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 547.44,
+    "stop": 534.94,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 561.92
+     },
+     {
+      "type": "fib_1272",
+      "price": 573.79
+     }
+    ],
+    "rr": 2.11,
+    "risk_pct": 2.28
+   },
+   "size_shares": 80,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Take only on XLF capital freed by CHYM/NU trims, and not alongside a full V position (payments crowding).",
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLF 79% (hard breach)",
+    "beta": -0.13,
+    "bracket_valid": true,
+    "rr": 2.11,
+    "risk_pct": "2.28%",
+    "flags": "rs_leader",
+    "sizing": {
+     "shares_r": 80,
+     "shares_volcap": 124,
+     "capped_by": "r",
+     "risk_usd": 1000.0,
+     "notional_usd": 43795.0
+    },
+    "risk_usd": 1000.0,
+    "bear_case": "a wide-moat stalwart with the tightest valid risk (2.28%), but it is another XLF name into a 79% breach and the book already holds V at $360 \u2014 MA + V is a doubled payments/financials bet; near-zero beta helps VaR but not"
+   }
+  },
+  {
+   "ticker": "TRV",
+   "tier": 2,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": null,
+   "trigger": "break/hold over 368.5 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 368.5,
+    "stop": 359.18,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 371.94
+     },
+     {
+      "type": "fib_1272",
+      "price": 395.01
+     }
+    ],
+    "rr": null,
+    "risk_pct": 2.53
+   },
+   "size_shares": 108,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Only on XLF capital freed by CHYM/NU trims; its strong negative beta makes it the preferred XLF re-deploy for the VaR constraint.",
+   "data_anchors": {
+    "nomination_count": 2,
+    "sc_momentum": 79.4,
+    "sector": "XLF 79% (hard breach)",
+    "beta": -0.88,
+    "ext": "17.2%",
+    "flags": "impulse_accel, rs_leader, rs_resilient",
+    "sizing": {
+     "shares_r": 108,
+     "shares_volcap": 132,
+     "capped_by": "r",
+     "risk_usd": 1006.56,
+     "notional_usd": 39798.0
+    },
+    "risk_usd": 1006.56,
+    "bear_case": "beta -0.88 is genuinely VaR-friendly, but it is still an XLF add into a 79% breach; 17.2% extended on a $368 insurer with an invalid bracket is a stretched entry, and bullish CHoCH can fail fast in a mean-revert tape."
+   }
+  },
+  {
+   "ticker": "CSX",
+   "tier": 2,
+   "nomination_count": 4,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": "steen: drop CSX for crowding \u2014 hold UNP instead",
+   "trigger": "break/hold over 50.11 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 50.11,
+    "stop": 49.17,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 51.29
+     },
+     {
+      "type": "fib_1272",
+      "price": 52.96
+     }
+    ],
+    "rr": null,
+    "risk_pct": 1.88
+   },
+   "size_shares": 1075,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Advance only if UNP is NOT taken; two rails simultaneously is disallowed crowding.",
+   "data_anchors": {
+    "nomination_count": 4,
+    "sector": "XLI",
+    "beta": 0.21,
+    "ext": "6.5%",
+    "flags": "rs_leader; rail-crowding vs UNP",
+    "sizing": {
+     "shares_r": 1075,
+     "shares_volcap": 1564,
+     "capped_by": "r",
+     "risk_usd": 1010.5,
+     "notional_usd": 53868.0
+    },
+    "risk_usd": 1010.5,
+    "bear_case": "4 votes and an orderly pullback, but steen explicitly says drop CSX for UNP to avoid rail crowding \u2014 UNP is the stronger rail (sc 80 vs 75.4, druck c5). Taking both is one over-sized railroad macro bet in a narrow tape."
+   }
+  },
+  {
+   "ticker": "FA",
+   "tier": 2,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": "oneil: 29% ext flagged himself",
+   "trigger": "break/hold over 22.3 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 22.3,
+    "stop": 21.42,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 22.78
+     },
+     {
+      "type": "fib_1272",
+      "price": 24.77
+     }
+    ],
+    "rr": null,
+    "risk_pct": 3.95
+   },
+   "size_shares": 1148,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Wait for a pullback/base to reset the 29% extension AND clear well before the Aug-6 earnings; do not chase here.",
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLI",
+    "beta": -0.01,
+    "ext": "29.4%",
+    "rvol": 2.22,
+    "flags": "impulse_accel, rs_leader; CAUTION bearish_div, overextended; earnings Aug-6",
+    "sizing": {
+     "shares_r": 1148,
+     "shares_volcap": 1526,
+     "capped_by": "r",
+     "risk_usd": 1010.24,
+     "notional_usd": 25600.0
+    },
+    "risk_usd": 1010.24,
+    "bear_case": "29.4% extended with the overextended AND bearish_div flags both firing, into an Aug-6 earnings print, in a MEAN_REVERT regime \u2014 this is a textbook reversion-risk chase; wyckoff's c5 effort/result read is fighting a stret"
+   }
+  },
+  {
+   "ticker": "DINO",
+   "tier": 2,
+   "nomination_count": 4,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "3",
+   "dissent": "oneil: 25% ext caution on his own nomination",
+   "trigger": "break/hold over 90.41 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 90.41,
+    "stop": 87.72,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 91.45
+     },
+     {
+      "type": "fib_1272",
+      "price": 98.97
+     }
+    ],
+    "rr": null,
+    "risk_pct": 2.98
+   },
+   "size_shares": 375,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Wait for a pullback/consolidation to relieve the 25% extension; strong theme (XLE DEPLOY) but entry is stretched.",
+   "data_anchors": {
+    "nomination_count": 4,
+    "sc_momentum": 79.7,
+    "sector": "XLE DEPLOY",
+    "beta": -0.3,
+    "ext": "25%",
+    "rs20d": 40.8,
+    "flags": "impulse_accel, rs_leader, rs_resilient",
+    "sizing": {
+     "shares_r": 375,
+     "shares_volcap": 434,
+     "capped_by": "r",
+     "risk_usd": 1008.75,
+     "notional_usd": 33904.0
+    },
+    "risk_usd": 1008.75,
+    "bear_case": "25% extended in a MEAN_REVERT regime where >20% extension is a real reversion risk \u2014 oneil flags it himself; elder's SUSTAINED read is strongest but an invalid bracket means chasing a parabolic energy move with an unconf"
+   }
+  },
+  {
+   "ticker": "CAG",
+   "tier": 2,
+   "nomination_count": 1,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "2",
+   "dissent": null,
+   "trigger": "break/hold over 14.64 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 14.64,
+    "stop": 13.93,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 16.07
+     },
+     {
+      "type": "resistance",
+      "price": 19.48
+     }
+    ],
+    "rr": 6.82,
+    "risk_pct": 4.85
+   },
+   "size_shares": 1424,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Wait for the bearish_div / structure_choch to resolve (a clean higher-low reclaim above the base); then the negative-beta, high-RR profile is worth revisiting.",
+   "data_anchors": {
+    "nomination_count": 1,
+    "sc_momentum": 59.6,
+    "sector": "XLP",
+    "beta": -0.83,
+    "bracket_valid": true,
+    "rr": 6.82,
+    "risk_pct": "4.85%",
+    "flags": "impulse_accel, rs_leader; CAUTION structure_choch, bearish_div",
+    "sizing": {
+     "shares_r": 1424,
+     "shares_volcap": 2803,
+     "capped_by": "r",
+     "risk_usd": 1011.04,
+     "notional_usd": 20847.0
+    },
+    "risk_usd": 1011.04,
+    "bear_case": "single nomination, sc only 59.6 (weakest in the set), and BOTH structure_choch and bearish_div fired \u2014 the outsized 6.82 rr is attractive but is priced off a base whose structure has already broken character; buying agai"
+   }
+  },
+  {
+   "ticker": "SHO",
+   "tier": 2,
+   "nomination_count": 3,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "2",
+   "dissent": "(adversarial/thorp-seat): negative rs20d + 0.34 rvol invalidate the momentum-high claim",
+   "trigger": "break/hold over 11.79 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 11.79,
+    "stop": 11.48,
+    "note": "verbatim",
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 12.07
+     },
+     {
+      "type": "fib_1272",
+      "price": 12.73
+     }
+    ],
+    "rr": 3.03,
+    "risk_pct": 2.63
+   },
+   "size_shares": 3261,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Require volume expansion (rvol >1.0) and rs20d turning positive to confirm real participation before entry.",
+   "data_anchors": {
+    "nomination_count": 3,
+    "sc_momentum": 68.1,
+    "sector": "XLRE",
+    "beta": 0.1,
+    "bracket_valid": true,
+    "rr": 3.03,
+    "rs20d": -0.4,
+    "rvol": 0.34,
+    "flags": "squeeze, impulse_accel, rs_leader (contradicted by negative rs20d)",
+    "sizing": {
+     "shares_r": 3261,
+     "shares_volcap": 6400,
+     "capped_by": "r",
+     "risk_usd": 1010.91,
+     "notional_usd": 38447.0
+    },
+    "risk_usd": 1010.91,
+    "bear_case": "lens top-tier 5/6 but the hard data contradicts it: rs20d is NEGATIVE (-0.4) so it is NOT a relative leader, and rvol 0.34 is dead \u2014 a 'fresh momentum high' on no volume and no relative strength is a hollow signal in a m"
+   }
+  },
+  {
+   "ticker": "DRH",
+   "tier": 2,
+   "nomination_count": 2,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "2",
+   "dissent": null,
+   "trigger": "break/hold over 12.75 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 12.75,
+    "stop": 12.47,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 12.77
+     },
+     {
+      "type": "fib_1272",
+      "price": 13.1
+     }
+    ],
+    "rr": null,
+    "risk_pct": 2.2
+   },
+   "size_shares": 3611,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Take only if REIT sleeve has room after NHI/CTRE/EPRT sizing and the squeeze fires with volume; otherwise it is redundant XLRE risk.",
+   "data_anchors": {
+    "nomination_count": 2,
+    "sector": "XLRE",
+    "beta": 0.14,
+    "ext": "10.3%",
+    "rs20d": 4.2,
+    "flags": "squeeze, impulse_accel, rs_leader",
+    "sizing": {
+     "shares_r": 3611,
+     "shares_volcap": 5949,
+     "capped_by": "r",
+     "risk_usd": 1011.08,
+     "notional_usd": 46040.0
+    },
+    "risk_usd": 1011.08,
+    "bear_case": "a $12 lodging REIT with rs20d only 4.2 (thin relative strength) and an invalid bracket; the squeeze is real but XLRE is already being tapped via NHI/CTRE/EPRT \u2014 adding DRH builds a new REIT concentration for a weak-RS na"
+   }
+  },
+  {
+   "ticker": "REG",
+   "tier": 2,
+   "nomination_count": 1,
+   "lens_tier": null,
+   "committee_position": "HOLD-FOR-CONDITIONS",
+   "conviction": "2",
+   "dissent": null,
+   "trigger": "break/hold over 82.14 (COB ref; LIMIT entry, re-validate vs live spot)",
+   "bracket": {
+    "entry_ref": 82.14,
+    "stop": 80.76,
+    "note": "exercised (fallback stop, D-52)",
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 83.66
+     },
+     {
+      "type": "fib_1272",
+      "price": 84.97
+     }
+    ],
+    "rr": null,
+    "risk_pct": 1.68
+   },
+   "size_shares": 732,
+   "size_r": 1.0,
+   "preauthorised": false,
+   "conditions": "Take only if XLRE sleeve has residual room after NHI/CTRE/EPRT and the coil breaks with volume.",
+   "data_anchors": {
+    "nomination_count": 1,
+    "sc_momentum": 65.5,
+    "sector": "XLRE",
+    "beta": -0.51,
+    "ext": "4.2%",
+    "rs20d": 7.5,
+    "flags": "impulse_accel, rs_leader",
+    "sizing": {
+     "shares_r": 732,
+     "shares_volcap": 971,
+     "capped_by": "r",
+     "risk_usd": 1010.16,
+     "notional_usd": 60126.0
+    },
+    "risk_usd": 1010.16,
+    "bear_case": "single nomination; sc 65.5 and rs20d only 7.5 make this a quiet, coiled pullback with little momentum \u2014 in a mean-revert tape a low-thrust REIT can stay coiled indefinitely, and the REIT sleeve is already being filled by"
+   }
+  }
+ ],
+ "watch_table": [
+  {
+   "ticker": "PYPL",
+   "nomination_count": 4,
+   "voices": [
+    "wyckoff",
+    "elder-lens",
+    "oneil",
+    "steenbarger"
+   ],
+   "anchors": {
+    "flag": "EVENT-DRIVEN \u2014 Stripe/Advent $60.50 bid; cannot advance (D-11)",
+    "px": 56.82
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "nomination_count": 1,
+   "voices": [
+    "druckenmiller"
+   ],
+   "anchors": {
+    "sc": 70.0,
+    "rvol": 0.79,
+    "ext_pct": 7.63,
+    "px": 326.59
+   }
+  },
+  {
+   "ticker": "AIG",
+   "nomination_count": 1,
+   "voices": [
+    "minervini"
+   ],
+   "anchors": {
+    "sc": 56.0,
+    "rvol": 0.48,
+    "ext_pct": 4.34,
+    "px": 79.8
+   }
+  },
+  {
+   "ticker": "ALL",
+   "nomination_count": 1,
+   "voices": [
+    "detect-lens"
+   ],
+   "anchors": {
+    "sc": 67.8,
+    "rvol": 0.63,
+    "ext_pct": 11.7,
+    "px": 253.73
+   }
+  },
+  {
+   "ticker": "BNL",
+   "nomination_count": 1,
+   "voices": [
+    "detect-lens"
+   ],
+   "anchors": {
+    "sc": 68.5,
+    "rvol": 0.54,
+    "ext_pct": 9.06,
+    "px": 22.72
+   }
+  },
+  {
+   "ticker": "BNY",
+   "nomination_count": 1,
+   "voices": [
+    "thorp"
+   ],
+   "anchors": {
+    "sc": 74.6,
+    "rvol": 0.77,
+    "ext_pct": 9.16,
+    "px": 156.93
+   }
+  },
+  {
+   "ticker": "BRX",
+   "nomination_count": 1,
+   "voices": [
+    "seow"
+   ],
+   "anchors": {
+    "sc": 56.7,
+    "rvol": 0.69,
+    "ext_pct": 4.45,
+    "px": 32.43
+   }
+  },
+  {
+   "ticker": "CB",
+   "nomination_count": 1,
+   "voices": [
+    "lynch"
+   ],
+   "anchors": {
+    "sc": 69.1,
+    "rvol": 0.73,
+    "ext_pct": 6.21,
+    "px": 352.53
+   }
+  },
+  {
+   "ticker": "CHRW",
+   "nomination_count": 1,
+   "voices": [
+    "druckenmiller"
+   ],
+   "anchors": {
+    "sc": 73.2,
+    "rvol": 0.96,
+    "ext_pct": 12.04,
+    "px": 205.8
+   }
+  },
+  {
+   "ticker": "CURB",
+   "nomination_count": 1,
+   "voices": [
+    "detect-lens"
+   ],
+   "anchors": {
+    "sc": 62.7,
+    "rvol": 1.03,
+    "ext_pct": 5.61,
+    "px": 31.28
+   }
+  },
+  {
+   "ticker": "CXM",
+   "nomination_count": 1,
+   "voices": [
+    "thorp"
+   ],
+   "anchors": {
+    "sc": 73.1,
+    "rvol": 0.85,
+    "ext_pct": 11.25,
+    "px": 5.95
+   }
+  },
+  {
+   "ticker": "DJT",
+   "nomination_count": 1,
+   "voices": [
+    "wyckoff"
+   ],
+   "anchors": {
+    "sc": 75.2,
+    "rvol": 0.81,
+    "ext_pct": 15.07,
+    "px": 9.74
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "nomination_count": 1,
+   "voices": [
+    "druckenmiller"
+   ],
+   "anchors": {
+    "sc": 73.6,
+    "rvol": 0.67,
+    "ext_pct": 18.83,
+    "px": 84.03
+   }
+  },
+  {
+   "ticker": "FRSH",
+   "nomination_count": 1,
+   "voices": [
+    "steenbarger"
+   ],
+   "anchors": {
+    "sc": 72.5,
+    "rvol": 0.84,
+    "ext_pct": 15.15,
+    "px": 11.05
+   }
+  },
+  {
+   "ticker": "HR",
+   "nomination_count": 1,
+   "voices": [
+    "raschke"
+   ],
+   "anchors": {
+    "sc": 69.2,
+    "rvol": 1.25,
+    "ext_pct": 4.51,
+    "px": 21.25
+   }
+  },
+  {
+   "ticker": "KRG",
+   "nomination_count": 1,
+   "voices": [
+    "seow"
+   ],
+   "anchors": {
+    "sc": 70.6,
+    "rvol": 0.93,
+    "ext_pct": 6.36,
+    "px": 29.69
+   }
+  },
+  {
+   "ticker": "MAC",
+   "nomination_count": 1,
+   "voices": [
+    "detect-lens"
+   ],
+   "anchors": {
+    "sc": 59.9,
+    "rvol": 0.79,
+    "ext_pct": 7.48,
+    "px": 25.59
+   }
+  },
+  {
+   "ticker": "MPC",
+   "nomination_count": 1,
+   "voices": [
+    "wyckoff"
+   ],
+   "anchors": {
+    "sc": 74.2,
+    "rvol": 0.67,
+    "ext_pct": 19.85,
+    "px": 315.31
+   }
+  },
+  {
+   "ticker": "MTG",
+   "nomination_count": 1,
+   "voices": [
+    "detect-lens"
+   ],
+   "anchors": {
+    "sc": 68.2,
+    "rvol": 0.72,
+    "ext_pct": 9.72,
+    "px": 29.32
+   }
+  },
+  {
+   "ticker": "NNN",
+   "nomination_count": 1,
+   "voices": [
+    "seow"
+   ],
+   "anchors": {
+    "sc": 65.4,
+    "rvol": 0.92,
+    "ext_pct": 6.85,
+    "px": 48.92
+   }
+  },
+  {
+   "ticker": "RSI",
+   "nomination_count": 1,
+   "voices": [
+    "thorp"
+   ],
+   "anchors": {
+    "sc": 74.3,
+    "rvol": 1.16,
+    "ext_pct": 18.14,
+    "px": 34.52
+   }
+  },
+  {
+   "ticker": "SGHC",
+   "nomination_count": 1,
+   "voices": [
+    "oneil"
+   ],
+   "anchors": {
+    "sc": 68.7,
+    "rvol": 1.94,
+    "ext_pct": 13.78,
+    "px": 15.58
+   }
+  },
+  {
+   "ticker": "SPG",
+   "nomination_count": 1,
+   "voices": [
+    "detect-lens"
+   ],
+   "anchors": {
+    "sc": 61.9,
+    "rvol": 0.59,
+    "ext_pct": 7.01,
+    "px": 228.19
+   }
+  },
+  {
+   "ticker": "STAG",
+   "nomination_count": 1,
+   "voices": [
+    "raschke"
+   ],
+   "anchors": {
+    "sc": 65.2,
+    "rvol": 0.91,
+    "ext_pct": 8.54,
+    "px": 41.82
+   }
+  },
+  {
+   "ticker": "VRNS",
+   "nomination_count": 1,
+   "voices": [
+    "druckenmiller"
+   ],
+   "anchors": {
+    "sc": 66.0,
+    "rvol": 0.47,
+    "ext_pct": 31.4,
+    "px": 47.45
+   }
+  },
+  {
+   "ticker": "WT",
+   "nomination_count": 1,
+   "voices": [
+    "thorp"
+   ],
+   "anchors": {
+    "sc": 72.0,
+    "rvol": 0.86,
+    "ext_pct": 8.56,
+    "px": 20.24
+   }
+  }
+ ],
+ "approval": {
+  "status": "DRAFT",
+  "token": null,
+  "deadline_sgt": "21:00",
+  "rule": "no approval by 21:00 \u2192 plan STANDS DOWN (silence never trades)"
+ },
+ "hedge": {
+  "status": "COVERAGE-ADEQUATE-REVIEW",
+  "note": "Existing hedge (IWM 3ct + XLK/XLF combo 8ct, exp 2026-08-07) covers the beta-adj exposure ($35.4k, loss/1% gap $354); 17 days to expiry \u2014 roll decision due next week. No new hedge order today; position_count 12 >= 4 so assessment ran."
+ },
+ "exceptions": [
+  "subscore_board returned empty (universe-format mismatch, D-60 attachment missing today \u2014 logged for Design & Review)",
+  "voice swarm required one full re-spawn: first spawn returned fabricated reads (voices lack file access in scheduled container); re-run with inlined data, all 11 valid \u2014 flag for auditor",
+  "BETA + PTRN historical store deferred_too_new (<12mo, D-40)",
+  "bellwether letters (CS Weekly/Crown) not supplied \u2014 context absent, declared"
+ ]
+}
