@@ -25,7 +25,10 @@ gatekeeper and PM dispose.
   for a classified failure: `python3 tools/self_heal.py <loop> --failure <type>`.
   Transient (feed/ptj/store) → bounded retry / reseed and report "healed".
   Structural (schema/config) → escalate with the fix. Gate/tripwire → **stand
-  down, never auto-heal** — the PM clears or overrides (recorded).
+  down, never auto-heal** — the PM clears or overrides (recorded). **Capacity
+  (`usage_limit`, D-72) → never auto-retried** (a Claude Max-plan session/weekly
+  usage ceiling — retrying now just re-hits the same wall); escalates immediately
+  with "wait for the window to reset, then rerun `<loop>`."
 - **`/repull`** → re-fetch today's AQE export from the Drive "AQE" folder (D-66), revalidate
   against the schema, re-run `tools/tripwires.py`. **This is the manual lever behind D-70's
   page:** premarket already retries the AQE pull 3x with backoff before ever paging (~25 min,

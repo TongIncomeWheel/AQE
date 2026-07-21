@@ -25,7 +25,21 @@ Hard doctrine (constitution v4.1):
 
 CLI:
   self_heal.py <loop> --failure <type> [--tickers A,B] [--max-retries N] [--dry-run]
-  types: feed_pull | ptj_pull | store_stale | schema | config | tripwire | gate | unknown
+  types: feed_pull | ptj_pull | store_stale | schema | config | tripwire | gate | usage_limit | unknown
+
+usage_limit (D-72 — Claude Max-plan session/weekly cap, capacity class): the PM runs the
+scheduled pipeline on a Claude Max 5x plan (150 SGD/mo), which pools a rolling 5-hour session
+window + a weekly cap across ALL usage on the account — Anthropic publishes no separate
+allowance for Claude Code / Agent SDK / scheduled-task usage, and no documented behavior for
+what a scheduled (non-interactive) session does if it hits the cap mid-run. Premarket's 11
+opus-tier spawns (10 voices + committee-desk) are the concentrated cost driver. `detect_usage_limit()`
+is a deterministic text classifier (law 4) — given a spawn failure's error text, it flags whether
+the failure carries a usage/rate/session-limit signature, DISTINCT from a voice simply returning
+invalid/empty content (which stays on the existing "respawn once, proceed with the rest" path).
+KNOWN LIMITATION, stated plainly: this can only catch a failure where the ORCHESTRATOR session
+itself survives to observe and classify a subagent spawn's error text. If the orchestrator's own
+session hits the cap, nothing here runs to catch it — that residual risk is not closed by this
+tool and is a reason the PM is evaluating metered API billing for the scheduled pipeline separately.
 """
 
 import os
@@ -41,6 +55,8 @@ DATA = os.environ.get("AEGIS_DATA_DIR", os.path.join(ROOT, "data"))
 #   transient : safe to retry / re-fetch automatically (data plane only)
 #   structural: cannot auto-fix (schema/config/logic) → escalate with a manual fix
 #   gate      : a hard gate / tripwire → STAND DOWN + page, never auto-heal
+#   capacity  : an account-level usage ceiling (D-72) → retrying now just re-hits the same
+#               ceiling, so no auto-retry; escalate immediately with the wait-for-reset guidance
 CLASS = {
     "feed_pull":   "transient",
     "ptj_pull":    "transient",
@@ -50,6 +66,7 @@ CLASS = {
     "logic":       "structural",
     "tripwire":    "gate",
     "gate":        "gate",
+    "usage_limit": "capacity",
     "unknown":     "structural",
 }
 
@@ -66,12 +83,44 @@ MANUAL_FIX = {
     "logic":       "/recover  — re-run the loop; if it recurs, this is a code fix (Design & Review)",
     "tripwire":    "stand-down held — PM must clear the tripwire block before any re-run",
     "gate":        "stand-down held — hard-gate breach; PM override is the only path (recorded)",
+    "usage_limit": "This is NOT a data/config problem — the Claude account hit its session/weekly "
+                   "usage cap mid-run (D-72). Check the account's usage indicator for the reset time, "
+                   "then once the window resets tell Claude 'rerun <loop>' to re-fire that phase's "
+                   "trigger. No auto-retry is attempted (it would just re-hit the same ceiling). If "
+                   "this recurs often, the scheduled pipeline may need metered API billing instead of "
+                   "the Max plan — flagged separately, PM decision pending.",
     "unknown":     "/recover  — re-run the loop under supervision",
 }
+
+# Text signatures Anthropic/the client surface when a spawn hits a session/rate/usage ceiling —
+# deliberately broad (law 4, deterministic match, no model judgement) so a wording change on
+# either side still gets caught. Checked case-insensitively against a spawn failure's error text.
+USAGE_LIMIT_SIGNATURES = (
+    "usage limit", "rate limit", "rate_limit", "ratelimit",
+    "5-hour limit", "session limit", "weekly limit", "weekly cap",
+    "quota exceeded", "resets at", "reset at", "overloaded_error",
+    "429", "limit reached", "usage cap",
+)
 
 
 def classify(failure):
     return CLASS.get(failure, "structural")
+
+
+def detect_usage_limit(error_text):
+    """
+    Deterministic classifier (D-72, law 4): does a subagent spawn failure's error text carry a
+    usage/session/rate-limit signature, as opposed to a generic invalid/empty voice response?
+    Returns {"matched": bool, "signature": str|None}. Never raises — a malformed/None input is
+    simply "no match", not a crash (a diagnostic check must not become a new failure mode).
+    """
+    if not error_text:
+        return {"matched": False, "signature": None}
+    text = str(error_text).lower()
+    for sig in USAGE_LIMIT_SIGNATURES:
+        if sig in text:
+            return {"matched": True, "signature": sig}
+    return {"matched": False, "signature": None}
 
 
 def _now():
@@ -135,6 +184,12 @@ def heal(loop, failure, tickers=None, max_retries=3, dry_run=False, notify=True)
         # Never auto-heal a hard gate / tripwire — stand down + page (Gate rule).
         result.update(stand_down=True, escalate=True,
                       message=f"{failure} is a hard gate — stood down, not auto-healed. PM must clear/override.")
+    elif klass == "capacity":
+        # D-72: an account-level usage ceiling. No auto-retry — it would just re-hit the same
+        # ceiling within the same window. Escalate immediately, distinctly from a data/logic failure.
+        result.update(escalate=True,
+                      message="usage_limit: spawn failure carries a session/usage-cap signature, "
+                              "not a data or logic failure — escalating with the wait-for-reset guidance.")
     elif klass == "transient":
         if failure in ("feed_pull",):
             r = _retry(lambda: True, max_retries, dry_run)  # orchestrator supplies the real pull callable
@@ -177,7 +232,39 @@ def heal(loop, failure, tickers=None, max_retries=3, dry_run=False, notify=True)
     return result
 
 
+def _selftest():
+    # detect_usage_limit: real-shaped signatures match, ordinary failures don't, no crash on None/empty.
+    hit = detect_usage_limit("Error: rate_limit_error — you have reached your usage limit, resets at 14:00 UTC")
+    assert hit["matched"] is True and hit["signature"] in ("rate_limit", "usage limit", "resets at"), hit
+    hit2 = detect_usage_limit("weekly limit reached for this workspace")
+    assert hit2["matched"] is True, hit2
+    miss = detect_usage_limit("KeyError: 'nomination_id' — malformed nomination.json")
+    assert miss["matched"] is False, miss
+    empty = detect_usage_limit("")
+    assert empty["matched"] is False, empty
+    none_ = detect_usage_limit(None)
+    assert none_["matched"] is False, none_
+
+    # heal(): capacity class never auto-retries, always escalates, carries the D-72 manual_fix.
+    r = heal("premarket", "usage_limit", dry_run=True, notify=False)
+    assert r["klass"] == "capacity", r
+    assert r["healed"] is False and r["escalate"] is True and r["stand_down"] is False, r
+    assert r["actions"] == [], r  # no retry action attempted — retrying would just re-hit the ceiling
+    assert "usage" in r["manual_fix"].lower() or "cap" in r["manual_fix"].lower(), r
+
+    # Existing classes untouched by this change.
+    assert classify("feed_pull") == "transient"
+    assert classify("gate") == "gate"
+    assert classify("usage_limit") == "capacity"
+    print("self_heal.py selftest: PASS")
+
+
 def _main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+    if argv and argv[0] == "selftest":
+        _selftest()
+        return
     p = argparse.ArgumentParser(description="Aegis operational self-heal (order-blind, D-45)")
     p.add_argument("loop")
     p.add_argument("--failure", required=True, choices=sorted(CLASS.keys()))
