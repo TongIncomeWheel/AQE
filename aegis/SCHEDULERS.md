@@ -23,16 +23,20 @@ if it takes SGT directly, use the SGT column). Each task fires a FRESH session t
 context, runs its phase, and (post-market) pushes state. Turn **push notifications ON** for each
 so completions + failures reach your phone.
 
-| # | Task | SGT | Cron (UTC) | Core? |
-|---|---|---|---|---|
-| 1 | Premarket build | 15:50 wkdays | `50 7 * * 1-5` | **yes** |
-| 2 | Market-hours watch | 21:25 wkdays | `25 13 * * 1-5` | **yes** |
-| 3 | Post-market | 04:05 (Tue–Sat) | `5 20 * * 1-5` | **yes** |
-| 4 | Design & Review | 05:00 wkdays | `0 21 * * 1-5` | optional |
-| 5 | Weekly | Sun 06:00 | `0 22 * * 6` | optional |
-| 6 | Nightly janitor | 04:40 daily | `40 20 * * *` | optional |
+**LIVE SCHEDULE (as set 21 Jul 2026 — PM cadence; supersedes the pilot times below).**
+All fresh-session cron jobs carry the D-64 STEP 0 bootstrap. Intraday is an in-session /loop, NOT cron.
 
-Start with the three **core** tasks for the pilot; add 4–6 once the core is trusted.
+| # | Task | SGT | Cron (UTC) | Engine | Status |
+|---|---|---|---|---|---|
+| 6 | Janitor (hygiene) | 03:50 wkdays | `50 19 * * 1-5` | cron + bootstrap | **LIVE** — just before post-market |
+| 3 | Post-market | 04:05 (Tue–Sat) | `5 20 * * 1-5` | cron + bootstrap | **LIVE** |
+| 4 | Design & Review | 08:00 (Tue–Sat) | `0 0 * * 2-6` | cron + bootstrap | **LIVE** — results at start of PM's day |
+| 1 | Premarket build (swarm) | 10:00 wkdays | `0 2 * * 1-5` | cron + bootstrap | **LIVE** — 11 voices + committee |
+| 2 | Intraday AQE sweep | mkt hours, 30 min | — (in-session) | **/loop** (ScheduleWakeup) | **LIVE** — no bootstrap needed |
+| 5 | Weekly param review | Sun | `0 22 * * 6` | cron + bootstrap | not set up (optional) |
+
+Daily SGT order: janitor 03:50 → post-market 04:05 → design&review 08:00 → premarket 10:00 → (US open 21:30, /loop sweeps 30-min) → your 21:00 approval of the premarket plan.
+The old pilot times (premarket 15:50, watch 21:25, D&R 05:00, janitor 04:40) are RETIRED. 2B (hourly market-watch cron) removed — the /loop replaces it.
 
 ## The prompt for each (paste as the task's instruction)
 
