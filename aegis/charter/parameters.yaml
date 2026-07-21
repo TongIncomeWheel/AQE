@@ -133,6 +133,26 @@ flag_condition:                  # D-57: RATIFIED replacement for the rudimentar
   composite_rank: tiebreak_only  # sc_momentum/rank DEMOTED from driver to floor/tiebreak — a high score is a caution in a de-rate
   profile: robust_first          # D-57 (Pardo guard): ship ONE robust profile now (structure+participation+event_clear+extension). The regime-adaptive/sector-rotation reweighting is BEHIND walk-forward validation before it goes live — no shipping an in-sample fit.
   tiers: {WATCH_A: high_threshold, WATCH_B: lower_threshold_visible_not_discarded}  # filtered names stay VISIBLE (WATCH_B), never silently dropped — use all the data (PM)
+alert_universe:                   # D-77: the WIRED implementation of the flag_condition doctrine (above) for the intraday AQE alert feed — the "casting mat". tools/alert_universe.py, deterministic (law 4). Replaces the raw sc_momentum>70 feed AND the too-narrow committee hand-pick.
+  sc_floor: 70                   # core momentum membership floor (a name must have real momentum first)
+  min_lanes: 2                   # minimum detection lanes to enter the universe at all
+  t1_lanes: 5                    # Tier 1 = high-confirmation (priority alerts)
+  t2_lanes: 3                    # Tier 2 = confirmed (second priority); below t2 = Tier 3 watch-only
+  lane_structure: 72             # 'struct' lane threshold
+  lane_flow: 68                  # 'flow' lane threshold
+  lane_detect: 4                 # 'detect' lane threshold (6-lens positive count) — an OR-booster, NEVER a gate
+  lanes:                         # the 8 momentum-incoming detection lanes counted per name (D-77 enrichment over D-57 score_factors)
+    - sc_m_gates                 # all 5 momentum sub-gates pass (flow/energy/structure/mp/elder)
+    - choch_bullish              # choch_state == BULLISH (Wyckoff structural turn) — the key add BILL had that detect-lens missed
+    - knn_significant            # Thorp quant edge fired
+    - detect_lens                # 6-lens positive >= lane_detect (one lane, not the gate)
+    - rs_leadership              # LEADER
+    - structure                  # >= lane_structure
+    - flow                       # >= lane_flow
+    - mp_accel                   # not DECELERATING (momentum arriving, not rolling over)
+  event_overlay: strike          # event-driven names (M&A etc., D-11) are STRUCK from the universe regardless of lanes
+  calibration_note: "21 Jul 2026: validated BILL(6 lanes) & ETSY(5) -> Tier1; DINO(2 lanes, 25% ext) -> Tier3 watch. 56 names (40/10/6) vs old sc70=57 flat / sc80=2 / committee-pick=37."
+  pod_contract: "every fired alert carries lane_count + lanes_fired into the market-hours pod (D-63) — the same numbers the voices read to call runner-or-not"
 retention:
   raw_days: 30
   ledger_window_days: 15
