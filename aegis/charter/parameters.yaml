@@ -153,6 +153,22 @@ alert_universe:                   # D-77: the WIRED implementation of the flag_c
   event_overlay: strike          # event-driven names (M&A etc., D-11) are STRUCK from the universe regardless of lanes
   calibration_note: "21 Jul 2026: validated BILL(6 lanes) & ETSY(5) -> Tier1; DINO(2 lanes, 25% ext) -> Tier3 watch. 56 names (40/10/6) vs old sc70=57 flat / sc80=2 / committee-pick=37."
   pod_contract: "every fired alert carries lane_count + lanes_fired into the market-hours pod (D-63) — the same numbers the voices read to call runner-or-not"
+conviction_funnel:               # D-78: the DAILY PREMARKET three-axis funnel — data (lanes) x lens (detect) x consensus (votes). tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
+  axes: [consensus, data, lens]  # CONSENSUS=voices(count+avg conviction); DATA=8-lane casting mat (D-77); LENS=6-lens detect
+  target_min: 10                 # PM: "always start from approx 10-15 names to filter down into a high conviction plan"
+  target_max: 15
+  cons_strong_votes: 3           # consensus grade S/M/W cutoffs (votes)
+  cons_med_votes: 2
+  data_strong_lanes: 5           # DATA grade cutoffs (lane_count, D-77)
+  data_med_lanes: 3
+  lens_strong: 4                 # LENS grade cutoffs (detect positive /6)
+  lens_med: 2
+  shortlist_rule: ">=2 axes STRONG -> convergence shortlist (ranked n_strong, votes, lanes, detect); trimmed to target_max"
+  contradictions:                # surfaced separately to DEEPEN deliberation (PM: 'highlight contradictory or positive overlaps')
+    consensus_only: "voted >= cons_strong_votes but data & lens both NOT strong -> fresh or stale? committee must rule (e.g. DINO)"
+    data_lens_only: "<=1 vote but data OR lens strong -> did the swarm miss a confirmed runner? (capped, ranked by lanes+detect)"
+  data_lens_only_cap: 6
+  wiring: "premarket step 6b — runs after tally (step 6), its shortlist + contradictions frame the deliberation packet (step 9); the committee deliberates the shortlist and must explicitly RESOLVE each contradiction (run or drop)"
 retention:
   raw_days: 30
   ledger_window_days: 15
