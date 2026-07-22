@@ -1,0 +1,84 @@
+{
+  "voice": "thorp",
+  "date": "2026-07-22",
+  "universe_file": "/home/claude/AQE/aegis/data/sod/2026-07-22/universe.json",
+  "nominations": [
+    {
+      "ticker": "AXON",
+      "reason": "Best expectancy in the universe: rr_tp2 4.34, rr_tp1 2.5 already >2R at bracket prices; every momentum AND position gate passes; atr_caution false so the R:R is not a volatility artifact. knn 0.6/significant is favorable but I treat it as context only (k=5 = 3-of-5, no confidence semantics).",
+      "fields_cited": ["bracket.rr_tp2", "bracket.rr_tp1", "sc_m_gate_detail", "sc_p_gate_detail", "atr_caution", "knn_prob"],
+      "conviction": 5,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "ISRG",
+      "reason": "rr_tp2 2.82 with the lowest beta_30d of the R:R leaders (0.85) — real edge that is NOT hidden index leverage, so it survives the correlation check. All gates clean, atr_caution false. knn 0.6/sig is a soft tailwind, not the reason.",
+      "fields_cited": ["bracket.rr_tp2", "beta_30d", "sc_m_gate_detail", "sc_p_gate_detail", "atr_caution"],
+      "conviction": 4,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "MELI",
+      "reason": "rr_tp2 3.63 (second-highest in universe), all momentum and position gates pass. knn is null — no historical analogs — which is honest: I would rather size on a clean 3.6R structure than on an overclaimed 3-of-5 signal.",
+      "fields_cited": ["bracket.rr_tp2", "sc_m_gate_detail", "sc_p_gate_detail", "knn_prob"],
+      "conviction": 4,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "CRM",
+      "reason": "rr_tp2 2.98, rr_tp1 1.62; all gates pass, atr_caution false. Solid expectancy at bracket prices with beta 1.19. knn 0.6/sig noted as context only (small-sample caveat).",
+      "fields_cited": ["bracket.rr_tp2", "bracket.rr_tp1", "sc_m_gate_detail", "beta_30d", "atr_caution"],
+      "conviction": 4,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "WING",
+      "reason": "rr_tp2 3.11, rr_tp1 1.75 — first target clears 1.75R, all gates clean, atr_caution false, beta 1.32. Genuine payoff asymmetry; knn 0.4 not-significant so no directional lean claimed.",
+      "fields_cited": ["bracket.rr_tp2", "bracket.rr_tp1", "sc_m_gate_detail", "atr_caution", "knn_prob"],
+      "conviction": 3,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "NOW",
+      "reason": "rr_tp2 3.06 on a clean gate slate (all momentum + position pass), atr_caution false. knn null — no analogs, so I lean on the structural R:R, not a story.",
+      "fields_cited": ["bracket.rr_tp2", "sc_m_gate_detail", "sc_p_gate_detail", "atr_caution"],
+      "conviction": 3,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "NVDA",
+      "reason": "rr_tp2 2.74 with all gates passing and atr_caution false; beta 1.4 is elevated so I would size DOWN for the correlation/leverage it carries. knn 0.6/sig is supportive context only.",
+      "fields_cited": ["bracket.rr_tp2", "sc_m_gate_detail", "sc_p_gate_detail", "beta_30d", "atr_caution"],
+      "conviction": 3,
+      "price_at_nomination": null
+    },
+    {
+      "ticker": "CRWD",
+      "reason": "rr_tp2 2.65, all gates clean, atr_caution false, beta 1.22. Middle-of-pack expectancy but fully intact structure and no volatility confound; honest 2.6R, not overclaimed.",
+      "fields_cited": ["bracket.rr_tp2", "sc_m_gate_detail", "sc_p_gate_detail", "atr_caution", "beta_30d"],
+      "conviction": 3,
+      "price_at_nomination": null
+    }
+  ],
+  "held_review": [
+    {"ticker": "AMPL", "verdict": "EXIT-CASE", "line": "Absent from today's scored universe — no bracket to defend and no way to verify an edge; flagging for manual price/stop check (see data_gaps)."},
+    {"ticker": "DDOG", "verdict": "KEEP", "line": "rr_tp2 2.15 still intact, all momentum gates pass, atr_caution false — expectancy holds."},
+    {"ticker": "V", "verdict": "TIGHTEN", "line": "rr_tp1 only 1.0 (first target = 1R) — payoff compressing; low beta 0.95 argues to hold but raise the stop toward breakeven."},
+    {"ticker": "SPGI", "verdict": "TIGHTEN", "line": "rr_tp2 1.9 / rr_tp1 1.05 — thinning edge; gates clean and beta 0.88, so tighten rather than exit."},
+    {"ticker": "IBM", "verdict": "EXIT-CASE", "line": "rr_tp1 0.95 — nearest resistance sits inside 1R; no positive expectancy left to size against."},
+    {"ticker": "PTRN", "verdict": "EXIT-CASE", "line": "bracket valid=false (elder momentum gate fail) — no tradeable stop/target; nothing to defend."},
+    {"ticker": "EXEL", "verdict": "KEEP", "line": "rr_tp2 1.95 valid, gates clean, beta 0.9; modest but real R:R, price 42.6 so not a sub-$5 concern."},
+    {"ticker": "VRSK", "verdict": "TIGHTEN", "line": "rr_tp2 1.8 / rr_tp1 1.0 — thin; lowest beta in the book (0.7) so keep on a tighter stop, don't add."},
+    {"ticker": "CHYM", "verdict": "EXIT-CASE", "line": "bracket valid=false (structure gate fail) AND atr_caution true — no valid stop and elevated volatility; exit."},
+    {"ticker": "NTAP", "verdict": "KEEP", "line": "rr_tp2 2.0 valid, all momentum gates pass, atr_caution false, beta 1.1 — expectancy intact."},
+    {"ticker": "NU", "verdict": "TIGHTEN", "line": "risk_pct 5.8% is a wide bracket on the lowest-priced held name (13.85) — my standing lesson (low-price names need tighter brackets) fires; tighten the stop or cut size."},
+    {"ticker": "SLDE", "verdict": "EXIT-CASE", "line": "bracket valid=false — no valid stop/target to hold against; exit."}
+  ],
+  "shortfall_reason": "8 nominations, not 10: I only carried names with rr_tp2 >= ~2.6 AND clean momentum gates AND atr_caution=false. Lower-R:R or volatility-flagged names (APP, TSLA — atr_caution true, beta >2.0) were dropped rather than padded; sub-$5 names were excluded per my standing lesson.",
+  "data_gaps": [
+    {
+      "field": "bracket / full record (AMPL)",
+      "impact": "AMPL is a held name but is absent from today's scored universe — I cannot read its bracket, gates, or beta, so I cannot verify whether its edge still holds; held verdict defaulted to EXIT-CASE pending an AQE re-trigger or FMP pull on AMPL."
+    }
+  ]
+}
