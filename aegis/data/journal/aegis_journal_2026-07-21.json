@@ -1,0 +1,62 @@
+{
+  "date": "2026-07-21",
+  "dyncap": {
+    "value": 65761.65,
+    "one_r": 986.42,
+    "method": "D-41 mark-to-market: allocated 75000.00 + realised(closed AEGIS, unchanged since 2026-07-17 CMG stop) -3142.93 + unrealised(open, broker close marks 2026-07-21T21:22:08Z) -6095.42 = 65761.65. AEGIS book only (RB:identity.capital_segregation). Hedge MTM excluded from dynCap (stock book only, D-41 series)."
+  },
+  "open_positions": [
+    {"ticker": "AMPL", "qty": 571, "entry": 9.7494, "entry_date": "", "stop_reference": 8.9, "stop_live_broker": 8.9, "stop_match": "MATCH", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "TIGER", "sector": "TBD", "unrealised_usd": -32.77},
+    {"ticker": "DDOG", "qty": 24, "entry": 266.5438, "entry_date": "", "stop_reference": 247.17, "stop_live_broker": 248.3, "stop_match": "MISMATCH", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "TIGER", "sector": "XLK", "unrealised_usd": -320.01},
+    {"ticker": "V", "qty": 20, "entry": 361.4496, "entry_date": "2026-07-16", "stop_reference": 343.29, "stop_live_broker": 343.29, "stop_match": "MATCH", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "TIGER", "sector": "XLF", "unrealised_usd": -105.19},
+    {"ticker": "SPGI", "qty": 23, "entry": 450.3614, "entry_date": "2026-07-16", "stop_reference": 420.73, "stop_live_broker": 420.73, "stop_match": "MATCH", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "TIGER", "sector": "XLF", "unrealised_usd": -439.33},
+    {"ticker": "IBM", "qty": 111, "entry": 263.14849, "entry_date": "", "stop_reference": null, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLK", "unrealised_usd": -5811.79, "notes": "COMPLIANCE_HOLD_30D, SL advisory only, worst position in book"},
+    {"ticker": "PTRN", "qty": 327, "entry": 25.15262, "entry_date": "", "stop_reference": 26.29, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLK", "unrealised_usd": 437.32},
+    {"ticker": "EXEL", "qty": 95, "entry": 54.73871, "entry_date": "", "stop_reference": 51.15, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLV", "unrealised_usd": 131.22},
+    {"ticker": "VRSK", "qty": 67, "entry": 191.8045, "entry_date": "", "stop_reference": 183.4, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLK", "unrealised_usd": 230.85},
+    {"ticker": "CHYM", "qty": 479, "entry": 21.15262, "entry_date": "", "stop_reference": 19.86, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLF", "unrealised_usd": 563.96},
+    {"ticker": "NTAP", "qty": 112, "entry": 172.15262, "entry_date": "", "stop_reference": 159.3, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLK", "unrealised_usd": -977.9},
+    {"ticker": "NU", "qty": 871, "entry": 13.85055, "entry_date": "", "stop_reference": 13.02, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLF", "unrealised_usd": 443.73},
+    {"ticker": "SLDE", "qty": 629, "entry": 20.90262, "entry_date": "", "stop_reference": 20.45, "stop_live_broker": null, "stop_match": "MISSING", "tp1": null, "tp2": null, "tp3": null, "trigger": null, "broker": "IBKR", "sector": "XLF", "unrealised_usd": -215.51}
+  ],
+  "closed_trades": [],
+  "hedge": {
+    "XLK_put_spread_aug21": {"legs": "+2x 175P / -2x 165P (Tiger)", "unreal_usd": -88.7},
+    "XLF_put_spread_aug21": {"legs": "+6x 54P / -6x 51P (Tiger)", "unreal_usd": -28.08},
+    "aegis_net_unreal_usd": -116.78,
+    "note": "Aegis hedges = Tiger XLK put-spread + XLF put-spread ONLY (D-71). Net unreal -116.78. IWM/QQQ/TLT put structures on IBKR and all single-name options are Protege9, EXCLUDED. NOTE (recover 2026-07-22): the scheduled post-market run wrongly re-included IWM_put_spread_aug07 (-445.59) as an Aegis hedge in violation of D-71; removed in this reconciliation. Hedge MTM excluded from dynCap (D-41 series)."
+  },
+  "metrics": {
+    "gross_exposure_usd": 133566.09,
+    "gross_leverage_x": 2.031,
+    "unrealised_usd": -6095.42,
+    "realised_today_usd": 0.0,
+    "sector_pct_dyncap": {"TBD": 8.42, "XLK": 105.72, "XLF": 80.87, "XLV": 8.11},
+    "nav_beta_proxy": null,
+    "var_95_1m_usd": null,
+    "var_pct_of_dyncap": null,
+    "risk_calc_note": "beta/VaR NOT recomputed this run (tools/calculators/var_parametric.py not invoked) -- carry forward yesterday's nav_beta_proxy 1.404 / var_pct_of_dyncap 14.72% as last-known, do not treat as current.",
+    "session_note": "No AEGIS fills 2026-07-21 (both brokers pulled live; all 12 positions unchanged qty/cost vs 2026-07-20 PTJ). Tiger realized_pnl_today $247.38 is an IBM options combo -- Income Wheel/Protege9 book, excluded from Aegis P&L."
+  },
+  "broker_sync": {
+    "last_sync_utc": "2026-07-21T21:22:08Z",
+    "sync_phase": "POST_MARKET",
+    "connectors": ["TIGER_MCPv7", "IBKR_NATIVE_CLAUDE_v1"],
+    "sources": "FULL -- both brokers pulled live this run",
+    "aegis_positions_matched": 12,
+    "aegis_positions_unmatched": 0,
+    "fills_reconciled": 0,
+    "fills_unmatched": 0,
+    "non_aegis_fills_excluded": 1,
+    "sl_audit_summary": {"MATCH": 3, "MISMATCH": 1, "MISSING": 8},
+    "sl_audit_notes": "Tiger: 4/4 resting GTC stops confirmed via get_open_orders (AMPL/V/SPGI match reference; DDOG live 248.30 vs reference 247.17, +1.13 mismatch -- unresolved carryover, not new). IBKR: get_account_orders and get_account_trades both returned empty again this pull -- persistent connector gap flagged 2026-07-17 and 2026-07-20, still unresolved. IBM under 30-day compliance hold, no executable stop, largest unrealised loss in the book."
+  },
+  "provenance": {
+    "written_by": "Claude (Cowork scheduled post-market 2026-07-21), reconciled by manual /recover post-market 2026-07-22",
+    "close_marks_at_utc": "2026-07-21T21:22:08Z",
+    "recovered_at_utc": "2026-07-22T01:45:00Z",
+    "github_archive_pushed": true,
+    "recover_notes": "Scheduled post-market DID run and persist this record to Drive at close (21:22Z), but (1) its GitHub push was blocked by the platform safety classifier (PAT-in-prompt), (2) no PM notification surfaced (D-75 silent-notification class), and (3) it re-included IWM as an Aegis hedge against D-71. This /recover closes the git-archive gap, corrects the D-71 hedge scope, and delivers the headline. Close marks retained (more representative than a late after-hours re-pull); dynCap unchanged (hedge excluded from dynCap).",
+    "dyncap_tooling_note": "Computed by direct reconciliation, not tools/dyncap_ledger.py, due to a schema-shape mismatch between that script's from_ptj() and the current PTJ dyncap.value convention. Flagged for Engineering & Change (BL open), not silently resolved."
+  }
+}

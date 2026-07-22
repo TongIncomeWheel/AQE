@@ -1,0 +1,67 @@
+{
+ "date": "2026-07-21",
+ "run_ts_utc": "2026-07-22T00:25:00Z",
+ "kind": "design_review (D&R for the 2026-07-21 US session; post-market for this session DID NOT LAND \u2014 reviewed from premarket/intraday shelves + live FMP/ledger, per constitution failure rule)",
+ "desk": "Engineering & Change (Chief adopts; 5 bench lenses inline per D-27)",
+ "step1_assurance": {
+  "post_market": "FAILED TO LAND \u2014 the post-market v3 trigger fired 2026-07-21T21:05Z (05:05 SGT 07-22, next_run advanced to 07-22T21:05Z) but NO journal, NO audit, NO commit exists for 2026-07-21 (repo HEAD 35ef07a 21:27Z is an engineering commit). eod/2026-07-21 was absent. Exception class AGENT_FAILURE/MISSED_CLOCK, page-now class (journal chain broken). Downstream not run: dynCap roll, SL audit, ledger 'actioned' marks, held-list emit for AQE, IBM hedge-roll journal fold (manual_actions 07-21 pending). Today's premarket (10:00 SGT) will read a STALE journal (07-20) \u2014 staleness rule requires flag + PM acknowledge or stand-down.",
+  "premarket_07-21": "RAN FULL \u2014 11/11 voices, 104 nominations, tally, event filter (PYPL correctly EVENT-DRIVEN), conviction funnel (D-78/79/80), committee 12 ADVANCE / 12 HOLD-FOR-CONDITIONS / 14+ PASS, plan assembled 24 new ideas + 12 held actions + 26 watch. Declared exceptions: subscore_board empty (D-60 attachment missing), first voice spawn returned fabricated reads (no file access in scheduled container) \u2014 full re-spawn with INLINED data, all 11 valid (flagged for auditor); BETA/PTRN historical deferred (<12mo); bellwether letters absent (declared).",
+  "plan_approval": "Plan stayed DRAFT \u2014 no approval token by 21:00 SGT deadline; system stood down by design ('silence never trades'). SECOND consecutive session with an unactioned plan.",
+  "market_watch": "In-session hosted sweep loop WORKED (21:28 SGT liveness wake + 00:57 SGT sweep, self-rearm +30min). Alert-engine inbox NEVER wrote all session (BL-018/BL-044 root: AQE export + inbox never reach the workspace) \u2014 capture path blind; compensating manual SL sweep run each wake. PM PAGED 01:05 SGT: SLDE below 20.90 advisory stop at session lows, PTRN pierced 26.29 (low 25.89), ALL IBKR names carry no broker stop (compliance hold). Entry fires CSX/DINO/TRV/FBP correctly recorded MISSED_BY_DESIGN. The stale v2 out-of-window trigger ALSO fired 08:55 SGT and stood down (BL-045 open).",
+  "voice_completeness": "11 of 11 ran; ledger recording had NOT been done by post-market (missing) \u2014 recorded in THIS D&R session: 104 rows now in persistent/ledger.jsonl, d1 tracked (law 7 restored)."
+ },
+ "step2_performance": {
+  "method": "FMP live quote pull 00:10Z (07-21 close/high/low vs 07-20 close) on all 63 nominated + 12 held + watch names; ledger record+track run this session (tools/nomination_ledger.py).",
+  "spy_day": "+0.83%",
+  "did_the_system_see_the_winners": "YES on selection, NO on action. Runners >=2% among tracked set: NU +2.86 (HELD), NTAP +2.85 (HELD), NHI +2.32 (ADVANCE, trigger FIRED), PEB +2.28 (PASS), CTRE +2.24 (ADVANCE, trigger FIRED), WT +2.22 (nominated by thorp, not deliberated). Every >=2% runner was either held or surfaced by the swarm \u2014 zero NOT-IN-UNIVERSE misses.",
+  "verdict_cohorts_d1": {
+   "ADVANCE": "+0.02% avg (n=12; best NHI +2.32, worst EFX -3.93)",
+   "HOLD-FOR-CONDITIONS": "-0.49% (n=12)",
+   "PASS": "-0.54% (n=14)",
+   "read": "monotone ADVANCE > HOLD > PASS on d1 \u2014 early but the committee ordering added value; d5 verdicts start closing 2026-07-28"
+  },
+  "voice_d1_preliminary": {
+   "raschke": "+1.18% avg, 88% hit (n=8)",
+   "minervini": "+0.50%, 67% (n=9)",
+   "detect-lens": "+0.48%, 70% (n=10)",
+   "seow": "+0.37%, 70% (n=10)",
+   "elder-lens": "-0.16% (n=10)",
+   "lynch": "-0.30% (n=10)",
+   "steenbarger": "-0.37% (n=7)",
+   "thorp": "-0.51% (n=10)",
+   "wyckoff": "-0.71% (n=10)",
+   "druckenmiller": "-1.10%, 30% (n=10)",
+   "oneil": "-1.98%, 20% hit (n=10 \u2014 caught EFX -3.9, IOT -6.4, FA -5.3, GPN -2.8)",
+   "note": "d1 colour only; PASS/WATCH/FAIL verdicts remain INSUFFICIENT_DATA until d5 windows close (RB:performance.voice)"
+  },
+  "trigger_fires": "18 of 24 plan triggers traded through (75%) \u2014 ABOVE the RB:performance.plan.trigger_fire_rate_band [10,60]. 9 of 12 ADVANCE names fired (CTVA UNP RXO NHI CTRE EPRT NOMD EIX EA). ALL 18 fires un-actioned: plan was never approved. Triggers are bare 'break of COB high' \u2014 near-certain to tick through on a flat-up tape; definition too loose (BL-047).",
+  "misses_classified": {
+   "ADVANCED-NOT-ACTIONED": "NHI +2.32, CTRE +2.24 (+7 other fired ADVANCEs with smaller closes). Root cause: no PM approval by 21:00 \u2014 the approval channel, not the engine (BL-049).",
+   "DELIBERATED-NOT-ADVANCED": "PEB +2.28 (PASSed: single detect-lens nomination, rs20d 1.9). Defensible on the evidence at decision time.",
+   "NOMINATED-NOT-DELIBERATED": "WT +2.22 (single thorp nomination below deliberation threshold). Working as designed (D-37).",
+   "MISSED-BY-DESIGN": "CSX -0.44, DINO +1.42, TRV +0.31, FBP +0.77 (HOLD-FOR-CONDITIONS names that fired overnight with nothing pre-staged, autopilot OFF; records in intraday/2026-07-21/staging/). Outcome cost modest.",
+   "NOT-IN-UNIVERSE": "none found among tracked movers"
+  },
+  "held_book_day": "Mixed: NU +2.86, NTAP +2.85, CHYM +1.82, EXEL +1.06 vs PTRN -6.28 (CLOSED 26.25, BELOW its 26.29 reference stop, NO broker stop \u2014 IBKR compliance hold), SLDE -2.28 (closed 20.56, below the 20.90 advisory ratchet), SPGI -3.81, DDOG -3.20 (broker stop 248.30 held? close 254.79 \u2014 stop NOT hit), VRSK -3.24, AMPL -2.44, V -1.32, IBM -1.17. The two names the 01:05 SGT page flagged both closed at/below reference stops with no broker-side protection.",
+  "efx_event": "EFX (ADVANCE, conv 4) gapped to 155.5 open vs 180.08 prior close (-13.6%), low 155.00, recovered to 173.00 (-3.93%). Catalyst NOT verified in-session (calendar pull unavailable this run \u2014 declared, not fabricated); pattern is consistent with a scheduled-event gap. Entry trigger 180.08 never fired \u2014 trigger discipline kept us out. Committee had PASSed RHI explicitly for earnings 07-23 but no equivalent screen caught EFX \u2014 earnings-proximity checking is ad hoc per voice/committee, not deterministic (BL-048)."
+ },
+ "step3_learning": {
+  "window": "5 sessions (RB:retention.learning_lookback_days)",
+  "themes": [
+   "The engine now reliably SEES (11/11 voices, 104 noms, all >=2% runners surfaced or held) but the system cannot ACT: 2 consecutive unapproved plans + autopilot OFF + no broker stops on IBKR names = selection alpha with zero capture. The binding constraint has moved from analysis to the PM approval/execution channel.",
+   "Feed dependency remains the #1 operational root cause (BL-044): no AQE export/alert inbox in the workspace -> alert engine blind all session, manual compensating sweeps, D-53/D-57/D-60/D-62 all degraded.",
+   "Scheduled-run reliability: D-64 bootstrap verified live, but a fired run that produces NO output is still invisible until the next D&R (post-market 07-21). Need run receipts + failure paging (BL-046).",
+   "Diversifier thesis (PSX/MPC) confirmed a THIRD session (PSX +1.66 new 52wk high, MPC +1.41 new 52wk high) while the XLK/XLF concentration breach still blocks adds and the approved trims remain unexercised (SD-2026-07-21-1 pending, day 2)."
+  ]
+ },
+ "step4_bench_triage": {
+  "process": "P0: post-market non-delivery (BL-046 spec below). P1: PM approval flow \u2014 plan out 16:00, silence to 21:00, stand-down; propose 20:00 SGT approval-nudge push + 21:05 explicit STAND-DOWN notice (BL-049). Trigger-band breach routed to indicator.",
+  "indicator": "Trigger definition too loose (75% fire rate vs band 10-60): propose clearance-qualified trigger (e.g. +0.25xATR above ref or first 15-min close above) \u2014 MUST be measured on the panel via tools/measure_proposal.py before advancing (step 5). Earnings-proximity flag (BL-048): deterministic earnings_date within N sessions on every deliberation packet; field-conditional -> measure first.",
+  "data": "Ledger lineage restored this session (104 rows recorded+tracked). Journal chain has a 07-21 hole until recovered. IBM hedge roll (07-21 manual action) must fold into the next journal. Ledger d1 tracking required an ad-hoc 78-name FMP pull \u2014 propose a small deterministic prices-file writer for track (folds into BL-042/BL-044 feed work, data seat owns shape).",
+  "technical": "Run-receipt architecture (BL-046): every scheduled firing writes data/diag/run_receipt_<run>_<date>.json at start+end; next session pages run_fail on absent/half receipts. Extends tools/self_heal.py + daily_flow_audit.py, no new subsystem. Voice-spawn fix from 07-21 (inline data into agent prompt when file access absent) should become the DEFAULT spawn mode in scheduled containers \u2014 small premarket skill change, rides with BL-043.",
+  "governance": "Routing: BL-046 code (no law change). BL-047 parameter+skill after measurement. BL-048 code+process after measurement. BL-049 process skill + notification param. Retirements named on each. Unanswered DECIDE items re-surface with days_pending incremented (SD-1 now day 2 \u2014 it gates the whole add-side of the book)."
+ },
+ "step5_proposal_measurement": "BL-047 and BL-048 are field-conditional -> queued for tools/measure_proposal.py on the enriched panel BEFORE backlog advance to build (BULLISH_BOS rule). NOT runnable this session: the panel lives with AQE (no export in workspace \u2014 BL-044 again). Both items enter the backlog as PROPOSED/measurement-pending, explicitly NOT build-approved.",
+ "step6_backlog": "Appended BL-046..BL-049 (PROPOSED). BL-043 partially validated live: premarket 07-21 DID run the full swarm under a sector-gate breach and routed ADVANCEs to non-breached sectors only \u2014 formal ship still pending PM approval SD-2026-07-21-2. BL-044 remains the highest-leverage open infra item. BL-045 evidence updated (hosted 30-min sweep loop works; stale v2 cron still fires 08:55 SGT).",
+ "step7_steer": "Steer file rebuilt for 2026-07-22: 4 carried DECIDE items (days_pending incremented) + 2 new (post-market recovery; BL-046 approval), FYI updated, PRE-FIX/POST-FIX updated. Lands in the 10:00 morning summary; /steer any time."
+}
