@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
-"""Daily Universe Screen — Decision D-3. The screen IS the universe.
+"""Daily Universe Screen — Decision D-3.
+
+================================ DEPRECATED (handoff/08, Lane 1) ================================
+  NO LONGER the production universe source. FMP feeds the AQE engine UPSTREAM; the kernel does
+  NOT re-screen FMP. The production universe is built by tools/universe_build.py from
+  output/aqe_daily_export.json (the AQE export IS the scored universe, D-66). This second FMP
+  screen is dead in the scheduled container anyway (no FMP_API_KEY). It is KEPT ON DISK because
+  it is a valid STANDALONE FMP screen (ad-hoc research / a sanity cross-check), but it is retired
+  from the premarket path and must not write the production data/sod/DATE/universe.json.
+==================================================================================================
+
+The screen IS the universe.
 
 Criteria (RB:universe.screen — change them in rulebook.yaml, not here):
   - US primary listings, common stock only (no ETFs/ADR-secondaries/OTC)

@@ -58,49 +58,24 @@ Usage:
 import json
 import argparse
 import sys
+import os
 
-# --- default thresholds (mirror charter/parameters.yaml alert_universe.*) ---
-DEFAULTS = {
-    "sc_floor": 70,      # core momentum floor (membership gate)
-    "min_lanes": 2,      # minimum detection lanes to be in the universe at all
-    "t1_lanes": 5,       # Tier 1 threshold (high confirmation)
-    "t2_lanes": 3,       # Tier 2 threshold (confirmed)
-    "lane_structure": 72,
-    "lane_flow": 68,
-    "lane_detect": 4,
-}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lanes  # noqa: E402  — the SINGLE source of the 8-lane logic + thresholds (Lane-2 dedup)
+
+# --- default thresholds now live in tools/lanes.py (lanes.DEFAULTS['alert_universe']) ---
+# Kept as a module alias for backwards-compat callers that referenced alert_universe.DEFAULTS.
+DEFAULTS = lanes.DEFAULTS["alert_universe"]
 
 
 def _num(v, dv=0):
     return v if isinstance(v, (int, float)) else dv
 
 
-def lanes_for(rec, detect_positive, p):
-    """Return the list of detection-lane names that fired for one AQE record.
-    detect_positive = the name's 6-lens 'positive' count from lens_ranking."""
-    L = []
-    if rec.get("sc_m_gates") is True:
-        L.append("5gates")
-    if rec.get("choch_state") == "BULLISH":
-        L.append("CHoCH+")
-    if rec.get("knn_significant") is True:
-        L.append("KNN")
-    if _num(detect_positive) >= p["lane_detect"]:
-        L.append("detect%d" % int(detect_positive))
-    if rec.get("rs_leadership") == "LEADER":
-        L.append("LEADER")
-    if _num(rec.get("structure")) >= p["lane_structure"]:
-        L.append("struct")
-    if _num(rec.get("flow")) >= p["lane_flow"]:
-        L.append("flow")
-    if rec.get("mp_accel_state") in ("ACCELERATING", "BUILDING", "FLAT"):
-        L.append("accel")
-    return L
-
-
 def build(daily_list, lens_positive_by_ticker, params=None, event_blocked=None):
     """Pure function (law 4). daily_list: list of AQE records. lens_positive_by_ticker:
-    {ticker: int}. Returns the tiered universe dict. Never calls a model or the network."""
+    {ticker: int}. Returns the tiered universe dict. Never calls a model or the network.
+    Lane logic is single-sourced from tools/lanes.py (byte-identical to the retired local copy)."""
     p = dict(DEFAULTS)
     if params:
         p.update({k: v for k, v in params.items() if v is not None})
@@ -112,7 +87,7 @@ def build(daily_list, lens_positive_by_ticker, params=None, event_blocked=None):
         sc = _num(r.get("sc_momentum"))
         if sc < p["sc_floor"]:
             continue
-        fired = lanes_for(r, lens_positive_by_ticker.get(t, 0), p)
+        fired = lanes.lanes_for(r, lens_positive_by_ticker.get(t, 0), p)
         if len(fired) < p["min_lanes"]:
             continue
         row = {
@@ -162,14 +137,20 @@ def build(daily_list, lens_positive_by_ticker, params=None, event_blocked=None):
 
 def from_export(export_path, params=None, event_blocked=None):
     """Convenience: load an AQE export file and build. lens positive comes from the
-    export's own lens_ranking block (no separate MCP call needed)."""
+    export's own lens_ranking block (no separate MCP call needed).
+
+    Thresholds are loaded from charter/parameters.yaml (alert_universe.*) via
+    lanes.load_params, then any CLI overrides in `params` win on top (CLI still wins)."""
     d = json.load(open(export_path))
     dl = d.get("daily_list", [])
     lens = {}
     for x in (d.get("lens_ranking", {}) or {}).get("ranked", []):
         if isinstance(x, dict):
             lens[x.get("ticker")] = x.get("positive", 0)
-    return build(dl, lens, params=params, event_blocked=event_blocked)
+    resolved = lanes.load_params("alert_universe")           # parameters.yaml -> honoured
+    if params:
+        resolved.update({k: v for k, v in params.items() if v is not None})  # CLI wins
+    return build(dl, lens, params=resolved, event_blocked=event_blocked)
 
 
 def _selftest():

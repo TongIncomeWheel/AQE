@@ -26,7 +26,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # coarse pod-worthiness pre-filter (the POD does the real judgment; this is just triage)
 SC_MOM_FLOOR = 70.0     # high-composite names go to the pod
 LENS_FLOOR = 2          # or 2+ detect sub-lenses strong
-STRONG_UNIVERSE_FLOOR = 65.0   # "today's strong-momentum universe" cut when AQE doesn't assert on_strong_universe
+STRONG_UNIVERSE_FLOOR = 70.0   # aligned to the single alert-universe floor (D-81); fallback cut when AQE doesn't assert on_strong_universe. TODO(D-81 follow-up): scope directly to data/alerts/DATE/alert_universe.json membership instead of re-deriving.
 
 
 def _load_export(export):

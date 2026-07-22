@@ -45,33 +45,18 @@ Usage:
 """
 import json
 import argparse
+import os
+import sys
 
-DEFAULTS = {
-    "target_min": 10, "target_max": 15,
-    "cons_strong_votes": 3, "cons_med_votes": 2,       # consensus grade cutoffs
-    "data_strong_lanes": 5, "data_med_lanes": 3,       # DATA (lane) grade cutoffs
-    "lens_strong": 4, "lens_med": 2,                   # LENS (detect) grade cutoffs
-    "lane_structure": 72, "lane_flow": 68, "lane_detect": 4,
-    "contradiction_consensus_min_votes": 3,            # a "consensus-only" tension needs real votes
-    "data_lens_only_cap": 6,                           # cap the missed-runner list
-}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lanes  # noqa: E402  — the SINGLE source of the 8-lane logic + thresholds (Lane-2 dedup)
+
+# --- default thresholds now live in tools/lanes.py (lanes.DEFAULTS['conviction_funnel']) ---
+DEFAULTS = lanes.DEFAULTS["conviction_funnel"]
 
 
 def _num(v, dv=0):
     return v if isinstance(v, (int, float)) else dv
-
-
-def _lane_count(rec, detect_positive, p):
-    return sum([
-        rec.get("sc_m_gates") is True,
-        rec.get("choch_state") == "BULLISH",
-        rec.get("knn_significant") is True,
-        _num(detect_positive) >= p["lane_detect"],
-        rec.get("rs_leadership") == "LEADER",
-        _num(rec.get("structure")) >= p["lane_structure"],
-        _num(rec.get("flow")) >= p["lane_flow"],
-        rec.get("mp_accel_state") in ("ACCELERATING", "BUILDING", "FLAT"),
-    ])
 
 
 def _grade(val, strong, med):
@@ -97,15 +82,15 @@ def build(tally, daily_list, lens_positive, params=None, event_blocked=None):
         votes = _num(info.get("count"))
         convs = list((info.get("convictions") or {}).values())
         avg_conv = round(sum(convs) / len(convs), 1) if convs else 0.0
-        lanes = _lane_count(r, lens_positive.get(t, 0), p)
+        lane_ct = lanes.lane_count(r, lens_positive.get(t, 0), p)
         detect = _num(lens_positive.get(t, 0))
         gc = _grade(votes, p["cons_strong_votes"], p["cons_med_votes"])
-        gd = _grade(lanes, p["data_strong_lanes"], p["data_med_lanes"])
+        gd = _grade(lane_ct, p["data_strong_lanes"], p["data_med_lanes"])
         gl = _grade(detect, p["lens_strong"], p["lens_med"])
         n_strong = sum(x == "S" for x in (gc, gd, gl))
         scored.append({
             "ticker": t, "votes": votes, "avg_conviction": avg_conv,
-            "lane_count": lanes, "detect": detect, "sc_momentum": _num(r.get("sc_momentum")),
+            "lane_count": lane_ct, "detect": detect, "sc_momentum": _num(r.get("sc_momentum")),
             "ext_pct": _num(r.get("sma_distance_pct")), "sector": r.get("gics_sector_name"),
             "axes": {"consensus": gc, "data": gd, "lens": gl}, "n_strong": n_strong,
             "profile": f"{gc}/{gd}/{gl}",
@@ -182,11 +167,16 @@ def _summary(shortlist, cons_only, data_only):
 
 
 def from_files(tally_path, export_path, params=None, event_blocked=None):
+    """Thresholds are loaded from charter/parameters.yaml (conviction_funnel.*) via
+    lanes.load_params; any caller `params` override wins on top."""
     tally = json.load(open(tally_path)).get("tally", {})
     d = json.load(open(export_path))
     lens = {x.get("ticker"): x.get("positive", 0)
             for x in (d.get("lens_ranking", {}) or {}).get("ranked", []) if isinstance(x, dict)}
-    return build(tally, d.get("daily_list", []), lens, params=params, event_blocked=event_blocked)
+    resolved = lanes.load_params("conviction_funnel")        # parameters.yaml -> honoured
+    if params:
+        resolved.update({k: v for k, v in params.items() if v is not None})
+    return build(tally, d.get("daily_list", []), lens, params=resolved, event_blocked=event_blocked)
 
 
 def _selftest():
