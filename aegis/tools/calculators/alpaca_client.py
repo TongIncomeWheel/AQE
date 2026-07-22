@@ -1,6 +1,5 @@
 # KERNEL COPY — PM ruling 18 Jul: hardcoded keys acceptable (pure read-only data API). Env vars override if ever set.
 """Alpaca options market-data client — read-only data feed.
-import os
 
 Operations: SPY spot · single-option Greeks · batch Greeks · chain snapshot.
 No portfolio access. Positions are supplied by the Principal; this client only marks them.
@@ -8,6 +7,7 @@ No portfolio access. Positions are supplied by the Principal; this client only m
 Keys hard-coded for the paper account but only the data API (data.alpaca.markets)
 is hit, so the same keys work identically against a live account.
 """
+import os
 import re
 import sys
 import json
