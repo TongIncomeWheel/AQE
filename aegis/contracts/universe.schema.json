@@ -1,30 +1,60 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Daily Universe File",
- "x_version": "1.0.0",
- "x_note": "The one universe file every voice reads (BL-011). Produced by universe_screen.py from the AQE working read; menu-slimmed per voice at spawn. Validated before any voice reads it.",
+ "x_version": "2.0.0",
+ "x_note": "The ONE universe file every voice reads (BL-011). Produced by tools/universe_build.py from output/aqe_daily_export.json — the AQE export IS the scored universe (D-66, handoff/08 Lane 1). ONE fixed shape: {date, source, count, names[], near_misses[]}. Tightened 2026-07-22 to REJECT the drifted hand-assembled shapes (e.g. {date, regime, vix, candidates, held} with no names[]).",
+ "x_consumed_fields": [
+  "ticker", "rank", "sc_momentum", "sc_momentum_raw", "flow", "energy", "structure",
+  "mp", "mp_state", "mp_accel_state", "elder", "elder_5d", "elder_pattern", "entry",
+  "beta_30d", "rvol", "rs_spy_20d", "rs_leadership", "rs_down_day_20d", "sma_distance_pct",
+  "ma_20", "ma_50", "ma_100", "ma_200", "atr_14d", "gics_sector", "gics_sector_name",
+  "sector_trend_state", "structure_shift", "choch_state", "div_bear_count", "div_state",
+  "knn_prob", "knn_significant", "atr_caution", "runner_setup", "mover_subtype",
+  "pin_bar_state", "sc_m_gates", "sc_m_gate_detail", "sc_p_gate_detail", "lens",
+  "lens_positive", "source", "held", "bracket", "subcomponents"
+ ],
  "type": "object",
- "required": ["date", "names"],
+ "required": ["date", "source", "count", "names"],
  "properties": {
   "date": {"type": "string", "format": "date"},
-  "criteria": {"type": "object", "description": "the screen params applied (RB:universe.screen) — provenance"},
+  "source": {
+   "description": "provenance — the AQE export this universe was shaped from (kind='aqe_daily_export' + its date)",
+   "oneOf": [
+    {"type": "string"},
+    {
+     "type": "object",
+     "required": ["kind"],
+     "properties": {
+      "kind": {"type": "string"},
+      "export_date": {"type": "string"},
+      "export_path": {"type": ["string", "null"]}
+     }
+    }
+   ]
+  },
   "count": {"type": "integer"},
   "names": {
    "type": "array",
-   "description": "the screened universe — the ONLY names voices nominate from",
+   "description": "the scored universe — the ONLY names voices nominate from — each TRIMMED to the consumed field set (x_consumed_fields)",
    "items": {
     "type": "object",
-    "required": ["ticker"],
-    "properties": {"ticker": {"type": "string"}}
+    "required": ["ticker", "sc_momentum"],
+    "properties": {
+     "ticker": {"type": "string"},
+     "sc_momentum": {"type": "number"}
+    }
    }
   },
   "near_misses": {
    "type": "array",
-   "description": "D-37: names just outside the screen (RB:universe.near_miss) — SURFACED for PM/committee revival, NOT nominated",
+   "description": "AQE's own just-below-floor band [sc_floor-5, sc_floor) — SURFACED for PM/committee revival, NOT nominated. Same trimmed shape + near_miss_reason.",
    "items": {
     "type": "object",
     "required": ["ticker"],
-    "properties": {"ticker": {"type": "string"}, "near_miss_reason": {"type": "string"}}
+    "properties": {
+     "ticker": {"type": "string"},
+     "near_miss_reason": {"type": "string"}
+    }
    }
   }
  }

@@ -8138,15 +8138,12 @@
    ]
   }
  },
+ "x_optional_self_describing": "handoff/08 Lane 4: field_schema, field_schema_enums, field_glossary, thematic_baskets (top-level) and data_quality are self-describing/bloat blocks with ZERO code readers (~42 KB/day). They are ALLOWED (additionalProperties defaults true) but NO LONGER required — the AQE engine should stop emitting them (see docs/AQE_SLIM_EMIT_SPEC.md). daily_list + lens_ranking remain the required payload.",
  "required": [
   "_radar_pool",
   "daily_list",
-  "data_quality",
   "date",
   "exported_at",
-  "field_glossary",
-  "field_schema",
-  "field_schema_enums",
   "held_book",
   "held_positions",
   "held_positions_status",
@@ -8162,10 +8159,9 @@
   "spy_roc_20d",
   "srm",
   "srm_signals",
-  "summary",
-  "thematic_baskets"
+  "summary"
  ],
  "title": "AQE Daily Export",
- "x_version": "1.1.0",
- "x_generated_from": "live export 2026-07-18, FULL arrays (nullable-aware regen after QA-F2)"
+ "x_version": "1.2.0",
+ "x_generated_from": "live export 2026-07-18, FULL arrays (nullable-aware regen after QA-F2); required tightened 2026-07-22 (handoff/08 Lane 4 — self-describing blocks now optional)"
 }
