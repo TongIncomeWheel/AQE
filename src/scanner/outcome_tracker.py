@@ -33,7 +33,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.backtest.labels import batch_triple_barrier
+from src.research.backtest.labels import batch_triple_barrier
 
 
 WINDOWS = (5, 10, 21)

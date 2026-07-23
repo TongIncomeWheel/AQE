@@ -25,12 +25,12 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from src.calibration.walkforward import (
+from src.research.calibration.walkforward import (
     walk_forward_analysis,
     format_walkforward,
     walk_forward_summary,
 )
-from src.calibration.independent_validation import (
+from src.research.calibration.independent_validation import (
     run_independent_validation,
     format_validation_report,
     results_to_dict,
@@ -91,7 +91,7 @@ def main():
     scores = pd.read_parquet(scores_path)
 
     print("[pe-val] Detecting entry signals with DSL outcomes...")
-    from src.calibration.run_optimizer import _detect_signals_with_outcomes
+    from src.research.calibration.run_optimizer import _detect_signals_with_outcomes
     outcomes = _detect_signals_with_outcomes(scores, panel)
     print(f"[pe-val] {len(outcomes)} signals with outcomes")
 

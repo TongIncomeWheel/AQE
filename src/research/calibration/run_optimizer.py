@@ -22,12 +22,12 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from src.calibration.recipe_optimizer import (
+from src.research.calibration.recipe_optimizer import (
     TargetProfile,
     run_grid_search,
     format_results,
 )
-from src.calibration.independent_validation import (
+from src.research.calibration.independent_validation import (
     run_independent_validation,
     format_validation_report,
     results_to_dict,
@@ -141,7 +141,7 @@ def main():
 
     # Run fixed-recipe walk-forward on best recipe
     if results:
-        from src.calibration.walkforward import (
+        from src.research.calibration.walkforward import (
             walk_forward_analysis,
             format_walkforward,
             walk_forward_summary,

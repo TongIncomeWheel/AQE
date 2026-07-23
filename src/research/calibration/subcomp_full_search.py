@@ -12,7 +12,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from src.calibration.subcomp_optimizer import detect_signals, compute_outcomes
+from src.research.calibration.subcomp_optimizer import detect_signals, compute_outcomes
 
 
 # Columns to SKIP (identifiers, price, outcome vars, not useful as filters)

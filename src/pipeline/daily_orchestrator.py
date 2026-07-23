@@ -220,7 +220,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     outcome_path = DATA_DIR / "optimizer_results.json"
     if outcome_path.exists():
         try:
-            from src.backtest.confidence import batch_confidence
+            from src.research.backtest.confidence import batch_confidence
             # Load outcomes from the scores (which contain DSL R data)
             scores_path = DATA_DIR / "scores_daily.parquet"
             if scores_path.exists():
@@ -294,6 +294,18 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     _write_outputs(output)
     print(f"  Shortlist: {SHORTLIST_PATH}")
     print(f"  Dashboard: {DASHBOARD_PATH}")
+
+    # Step 7b: Aegis three-list export — the 47-field contract Aegis consumes
+    print(f"{_el()} [daily] Step 7b: Aegis three-list export...")
+    try:
+        aegis_path = _build_aegis_export(
+            run_date, regime, candidates, rank_lookup, sector_grades,
+            shortlist=shortlist, recipe_matches=recipe_matches,
+            precision_matches=precision_matches,
+        )
+        print(f"  Aegis export: {aegis_path}")
+    except Exception as exc:
+        print(f"  [WARN] Aegis export failed: {exc}")
 
     # Step 8: Export to Google Drive
     print(f"{_el()} [daily] Step 8: Drive export...")
@@ -1289,6 +1301,193 @@ def _build_output(
             "recipe_match_count": len(recipe_out),
         },
     }
+
+
+# ── Aegis three-list export ──────────────────────────────────────────────
+
+# Core fields every list member carries (47-field contract for Aegis).
+# The daily_list carries all of these; inner lists carry a compact subset.
+AEGIS_CORE_FIELDS = [
+    "ticker", "close", "atr14",
+    "sc_momentum", "sc_momentum_raw", "sc_position", "ptrs", "disposition",
+    "flow_100", "energy_100", "structure_100", "mp_100", "elder_score", "bq_100",
+    "mp_state", "pipe_rank", "fip_quality", "fip_spike_excluded", "fip_window_effective",
+    "entry", "stop", "r_size", "be_trigger", "target_1r", "target_2r", "target_3r",
+    "shares", "risk_dollars",
+    "signal_date", "signal_age", "signal_sc", "sc_direction",
+    "earn_days", "earn_warning",
+    "sector", "sector_grade", "sh", "ra", "rl", "cm",
+    "precision", "bc_score", "bc_tier", "bc_modifier",
+    "squeeze_score",
+    "vix_regime", "hurst", "hurst_regime", "max_new_size",
+]
+
+INNER_COMPACT_FIELDS = [
+    "ticker", "close", "atr14",
+    "sc_momentum", "sc_position", "ptrs", "disposition",
+    "pipe_rank", "fip_quality",
+    "flow_100", "energy_100", "structure_100", "mp_100", "elder_score",
+    "entry", "stop", "r_size", "target_1r", "target_2r", "target_3r", "shares",
+    "signal_date", "signal_age",
+    "sector", "sector_grade",
+    "precision", "bc_tier",
+]
+
+
+def _build_aegis_export(
+    run_date: date,
+    regime: dict,
+    candidates: list[dict],
+    rank_lookup: dict,
+    sector_grades: dict,
+    shortlist: list[dict] | None = None,
+    recipe_matches: list[dict] | None = None,
+    precision_matches: list[dict] | None = None,
+) -> str:
+    """Build the Aegis three-list export and write to output/aegis_daily_export.json.
+
+    Returns the file path written.
+    """
+    vix_regime = classify_vix_regime(regime.get("vix", 18.0))
+    if vix_regime == "RED":
+        max_new_size = "NONE"
+    elif vix_regime in ("ORANGE", "YELLOW"):
+        max_new_size = "QUARTER"
+    else:
+        max_new_size = "FULL"
+
+    # Build set lookups for tagging
+    sl_tickers = {c["ticker"] for c in (shortlist or [])}
+    rm_tickers = {rm["ticker"] for rm in (recipe_matches or [])}
+    pe_tickers = {pm["ticker"] for pm in (precision_matches or [])}
+
+    # Enrich all candidates with pipe_rank from rank_lookup
+    for c in candidates:
+        pr, fip, excl, win = rank_lookup.get(c["ticker"], (0.0, 0.0, False, 252))
+        c["pipe_rank"] = round(pr, 1)
+        c["fip_quality"] = round(fip, 1)
+        c["fip_spike_excluded"] = excl
+        c["fip_window_effective"] = win
+
+    # Sort all candidates by pipe_rank desc, then engine floor desc
+    def _floor(c):
+        return min(
+            c.get("flow_100", 0), c.get("energy_100", 0),
+            c.get("structure_100", 0), c.get("mp_100", 0),
+        )
+    candidates.sort(key=lambda c: (c.get("pipe_rank", 0), _floor(c)), reverse=True)
+
+    # Build daily_list (full field set for every scored ticker)
+    daily_list = []
+    for c in candidates:
+        close = c.get("close", 0)
+        atr14 = c.get("atr14", 0)
+        entry = round(close, 2)
+        stop = round(entry - 2 * atr14, 2) if atr14 > 0 else 0
+        r_size = round(entry - stop, 2) if stop > 0 else 0
+
+        record = {
+            # Identity
+            "ticker": c["ticker"],
+            "close": round(close, 2),
+            "atr14": round(atr14, 3),
+            # Scores
+            "sc_momentum": round(c.get("sc_momentum", 0), 1),
+            "sc_momentum_raw": round(c.get("sc_momentum_raw", c.get("sc_momentum", 0)), 1),
+            "sc_position": round(c.get("sc_position", 0), 1),
+            "ptrs": c.get("ptrs", 0),
+            "disposition": c.get("disposition", "REJECT"),
+            # Engines
+            "flow_100": round(c.get("flow_100", 0), 1),
+            "energy_100": round(c.get("energy_100", 0), 1),
+            "structure_100": round(c.get("structure_100", 0), 1),
+            "mp_100": round(c.get("mp_100", 0), 1),
+            "elder_score": round(c.get("elder_score", 0), 1),
+            "bq_100": round(c.get("bq_100", 0), 1),
+            "mp_state": c.get("mp_state", ""),
+            # Pipeline rank
+            "pipe_rank": c["pipe_rank"],
+            "fip_quality": c["fip_quality"],
+            "fip_spike_excluded": c["fip_spike_excluded"],
+            "fip_window_effective": c["fip_window_effective"],
+            # Levels
+            "entry": entry,
+            "stop": stop,
+            "r_size": r_size,
+            "be_trigger": round(entry + 0.5 * r_size, 2) if r_size > 0 else 0,
+            "target_1r": round(entry + r_size, 2) if r_size > 0 else 0,
+            "target_2r": round(entry + 2 * r_size, 2) if r_size > 0 else 0,
+            "target_3r": round(entry + 3 * r_size, 2) if r_size > 0 else 0,
+            "shares": int(2100 / r_size) if r_size > 0 else 0,
+            "risk_dollars": 2100.0,
+            # Signal
+            "signal_date": c.get("signal_date", ""),
+            "signal_age": c.get("signal_age", 0),
+            "signal_sc": c.get("signal_sc", 0),
+            "sc_direction": c.get("sc_direction", ""),
+            # Diagnostics
+            "earn_days": c.get("earn_days"),
+            "earn_warning": c.get("earn_days") is not None and c.get("earn_days", 999) <= 5,
+            # Context
+            "sector": c.get("sector", "UNKNOWN"),
+            "sector_grade": c.get("sector_grade", "UNKNOWN"),
+            "sh": c.get("sh", 0),
+            "ra": c.get("ra", 0),
+            "rl": c.get("rl", 0),
+            "cm": c.get("cm", 0),
+            # Qualifiers
+            "precision": c.get("precision", False) or c["ticker"] in pe_tickers,
+            "on_shortlist": c["ticker"] in sl_tickers,
+            "on_recipe": c["ticker"] in rm_tickers,
+            "bc_score": c.get("bc_score"),
+            "bc_tier": c.get("bc_tier", "INSUFFICIENT"),
+            "bc_modifier": c.get("bc_modifier", 0.0),
+            "squeeze_score": round(c.get("squeeze_score", 0), 1),
+            # Regime context
+            "vix_regime": vix_regime,
+            "hurst": round(regime.get("hurst", 0.5), 3),
+            "hurst_regime": regime.get("hurst_regime", "RANDOM"),
+            "max_new_size": max_new_size,
+        }
+        daily_list.append(record)
+
+    # Inner lists: top-N by pipe_rank + floor, compact field set
+    def _compact(rec: dict) -> dict:
+        return {k: rec.get(k) for k in INNER_COMPACT_FIELDS}
+
+    inner_top10 = [_compact(r) for r in daily_list[:10]]
+    inner_top25 = [_compact(r) for r in daily_list[:25]]
+
+    sgt = ZoneInfo("Asia/Singapore")
+    export = {
+        "date": str(run_date),
+        "refreshed_at": datetime.now(sgt).strftime("%Y-%m-%d %H:%M:%S SGT"),
+        "regime": {
+            "vix": regime.get("vix", 18.0),
+            "level": vix_regime,
+            "hurst": regime.get("hurst", 0.5),
+            "trend": regime.get("hurst_regime", "RANDOM"),
+        },
+        "max_new_size": max_new_size,
+        "daily_list": daily_list,
+        "inner_top10": inner_top10,
+        "inner_top25": inner_top25,
+        "srm_summary": {
+            grade: [etf for etf, v in sector_grades.items() if v.get("grade") == grade and not etf.startswith("_")]
+            for grade in ["DEPLOY", "HOLD", "TURNING", "WATCH", "AVOID"]
+        },
+        "meta": {
+            "total_scored": len(daily_list),
+            "on_shortlist": sum(1 for r in daily_list if r.get("on_shortlist")),
+            "on_recipe": sum(1 for r in daily_list if r.get("on_recipe")),
+            "precision_edge": sum(1 for r in daily_list if r.get("precision")),
+        },
+    }
+
+    out_path = OUTPUT_DIR / "aegis_daily_export.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(export, f, indent=2)
+    return str(out_path)
 
 
 def _write_outputs(output: dict) -> None:

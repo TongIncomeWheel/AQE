@@ -17,8 +17,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.backtest.costs import entry_fill, exit_fill, round_trip_cost, SLIPPAGE_PCT
-from src.backtest.sizing import (
+from src.research.backtest.costs import entry_fill, exit_fill, round_trip_cost, SLIPPAGE_PCT
+from src.research.backtest.sizing import (
     compute_position_size,
     MAX_POSITIONS,
     MAX_SECTOR_EXPOSURE,
@@ -310,7 +310,7 @@ def simulate_portfolio(
     )
 
     # Correlated loss stress test — the gap Monte Carlo can't see
-    from src.backtest.correlation_stress import run_correlation_stress, stress_to_dict
+    from src.research.backtest.correlation_stress import run_correlation_stress, stress_to_dict
     stress = run_correlation_stress(
         closed_trades, initial_capital, risk_pct, max_positions,
     )
@@ -416,7 +416,7 @@ def _compute_summary(trades: list[dict], initial_capital: float, final_equity: f
 
 
 def _empty_result(capital: float) -> dict:
-    from src.backtest.correlation_stress import stress_to_dict, _empty_stress
+    from src.research.backtest.correlation_stress import stress_to_dict, _empty_stress
     return {
         "trades": [],
         "equity_curve": [],

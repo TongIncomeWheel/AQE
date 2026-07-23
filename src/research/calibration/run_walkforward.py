@@ -24,8 +24,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from src.calibration.recipe_optimizer import RecipeResult
-from src.calibration.walkforward import (
+from src.research.calibration.recipe_optimizer import RecipeResult
+from src.research.calibration.walkforward import (
     walk_forward_analysis,
     format_walkforward,
     walk_forward_summary,
@@ -75,7 +75,7 @@ def main():
     scores = pd.read_parquet(scores_path)
 
     print("[wf] Detecting entry signals with DSL outcomes...")
-    from src.calibration.run_optimizer import _detect_signals_with_outcomes
+    from src.research.calibration.run_optimizer import _detect_signals_with_outcomes
     outcomes = _detect_signals_with_outcomes(scores, panel)
     print(f"[wf] {len(outcomes)} signals with outcomes")
 

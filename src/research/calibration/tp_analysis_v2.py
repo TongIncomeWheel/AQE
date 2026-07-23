@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.scanner.dsl import compute_initial_stop
 from src.engines.utils import atr as compute_atr
-from src.calibration.tp_analysis import TPRule, run_tp_backtest
+from src.research.calibration.tp_analysis import TPRule, run_tp_backtest
 
 
 def three_bucket(label, df):

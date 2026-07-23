@@ -24,7 +24,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from src.calibration.recipe_optimizer import run_grid_search, RecipeResult
+from src.research.calibration.recipe_optimizer import run_grid_search, RecipeResult
 
 
 MIN_OOS_TRADES = 20  # Minimum test trades for a valid window

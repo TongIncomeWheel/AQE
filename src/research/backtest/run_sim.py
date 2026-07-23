@@ -20,7 +20,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from src.backtest.portfolio_sim import simulate_portfolio, example_100k_scenario, monte_carlo_equity
+from src.research.backtest.portfolio_sim import simulate_portfolio, example_100k_scenario, monte_carlo_equity
 
 
 def main():
@@ -126,7 +126,7 @@ def main():
     # Correlated loss stress test
     stress = result.get("stress_test", {})
     if stress:
-        from src.backtest.correlation_stress import format_stress_report, StressResult
+        from src.research.backtest.correlation_stress import format_stress_report, StressResult
         # Reconstruct dataclass for formatting
         sr = StressResult(**stress)
         print(format_stress_report(sr, capital=70_000.0))

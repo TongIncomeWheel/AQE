@@ -23,7 +23,7 @@ from statistics import median
 import numpy as np
 import pandas as pd
 
-from src.mathlab.readiness import (
+from src.research.mathlab.readiness import (
     MOMENTUM_STATES,
     READINESS_STATES,
     MOMENTUM_RANK,

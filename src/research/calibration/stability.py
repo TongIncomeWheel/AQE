@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from src.calibration.walkforward import WFWindow
+from src.research.calibration.walkforward import WFWindow
 
 
 @dataclass

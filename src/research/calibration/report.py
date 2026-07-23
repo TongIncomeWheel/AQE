@@ -20,9 +20,9 @@ from pathlib import Path
 
 import numpy as np
 
-from src.calibration.recipe_optimizer import RecipeResult
-from src.calibration.stability import ParamStability, analyze_stability, format_stability
-from src.calibration.walkforward import WFWindow, format_walkforward
+from src.research.calibration.recipe_optimizer import RecipeResult
+from src.research.calibration.stability import ParamStability, analyze_stability, format_stability
+from src.research.calibration.walkforward import WFWindow, format_walkforward
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -120,7 +120,7 @@ def generate_calibration_report(
     lines.append("  SECTION 4: OVERFITTING DETECTION")
     lines.append("-" * 80)
     try:
-        from src.calibration.validation import probability_of_backtest_overfitting
+        from src.research.calibration.validation import probability_of_backtest_overfitting
         if optimizer_results and len(optimizer_results) >= 5:
             lines.append("  PBO (Probability of Backtest Overfitting) via CSCV:")
             lines.append("  PBO measures how often the 'best' in-sample model fails out-of-sample.")
