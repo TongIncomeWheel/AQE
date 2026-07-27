@@ -1,0 +1,22 @@
+{
+  "loop": "premarket",
+  "session_date": "2026-07-27",
+  "event": "STAND_DOWN",
+  "class": "feed_pull",
+  "step": "3 — AQE export pull / freshness check",
+  "reason": "AQE daily export stale: Drive 'AQE' folder aqe_daily_export.json internal date=2026-07-25 (Fri US close scan, last modified 2026-07-25T04:54Z). No today (2026-07-27) or T-1 (2026-07-26) export published; engine normally exports ~08:44 SGT.",
+  "retries": [
+    {"check": "initial", "sgt": "10:54", "result": "stale 2026-07-25"},
+    {"check": "+~2min",  "sgt": "10:57", "result": "stale 2026-07-25"},
+    {"check": "+~11min", "sgt": "11:08", "result": "stale 2026-07-25"},
+    {"check": "+~20min", "sgt": "11:18", "result": "stale 2026-07-25"}
+  ],
+  "swarm_run": false,
+  "plan_built": false,
+  "orders_staged": false,
+  "armed": false,
+  "held_book": "untouched — protected by broker-side stops (12 positions)",
+  "page": "notify.py run_fail sent + Cowork push delivered (D-75 closing message posted)",
+  "manual_fix": "Confirm AQE pipeline completed, then say 'rerun premarket' to re-fire the build.",
+  "last_good": "2026-07-25"
+}
