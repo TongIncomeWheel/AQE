@@ -1,6 +1,26 @@
 {
- "date": "2026-07-22",
+ "date": "2026-07-27",
  "fyi": [
+  {
+   "item": "WEEKLY REVIEW P0 (compounds the 07-22 P0, now 6 days old): the entire automated daily loop has produced NO new sod/eod/intraday data since 2026-07-21/22. Premarket, market-hours-watch, design&review and weekly triggers are all still firing on their cron (last_fired_at 07-24 to 07-26 per list_triggers), but nothing they do is landing in the repo -- they are running and failing silently, or running and producing nothing durable. Only the post-market trigger's own bookkeeping is fully stuck (last_fired_at 2026-07-21T21:07:33Z, never advanced since). Net effect: 4 trading days (07-22 through 07-25) plus today have no premarket plan, no committee, no journal, no dynCap roll, no SL audit.",
+   "evidence": "aegis/data/{sod,eod,intraday,alerts} -- no dated folders after 07-21/22; shallow git HEAD before this session was 9e8d99e (2026-07-23T13:35 SGT, a code-reorg commit, not a data commit); list_triggers shows post-market last_fired_at stuck at 2026-07-21T21:07:33Z while sibling triggers advanced through 07-26"
+  },
+  {
+   "item": "WHILE THIS REVIEW WAS RUNNING, a live market-hours session (commit 866250d, pushed 2026-07-27T02:58 UTC, minutes before this weekly session started) independently confirmed via a direct IBKR broker pull: get_account_orders returned ZERO working stop orders on ANY held position -- SLDE, PTRN, NTAP, NU, AEHR, CHYM, CTOS, DUOL, EXEL, ICHR, IWM, MRVL, TGB, TLT, VRSK, XMTR, plus HK equities 700/992. PTRN has continued deteriorating unstoped to $22.17 (avg cost $25.15, -11.8%). That session already paged the PM out-of-band; this weekly notification restates it because six days of unwatched exposure on a real book outranks every other item in this review.",
+   "evidence": "aegis/data/intraday/2026-07-27/exceptions/exception_market_hours_20260727.json (severity PAGE_NOW)"
+  },
+  {
+   "item": "Voice ledger performance (per-voice, d1 only -- the only tracked session remains 07-21, 104 nominations across 11 voices; first d5 close is 2026-07-28 and cannot advance further until fresh premarket runs resume): raschke best d1 (+1.18% avg, 87.5% hit, n=8); oneil worst d1 (-1.98% avg, 20% hit, n=10). Sample is thin and unchanged from last week's read -- no new voice data has been produced since.",
+   "evidence": "aegis/data/persistent/ledger.jsonl (104 rows, all dated 2026-07-21)"
+  },
+  {
+   "item": "Universe churn is stale for the same reason: only 07-20/21/22 sod/universe.json exist. 07-21 to 07-22 showed 42 names entering the screen and 50 leaving (schema also drifted day to day -- 07-20 used candidates/held keys, 07-21/22 switched to names/near_misses/source -- worth a data-seat note, not a P0). No churn data exists for 07-23 onward because the screen has not run.",
+   "evidence": "aegis/data/sod/2026-07-20/universe.json, .../2026-07-21/universe.json, .../2026-07-22/universe.json"
+  },
+  {
+   "item": "Rulebook keys: only one review_by date found in charter/rulebook.yaml (meta.review_by: 2026-10-18) -- not due. No parameter keys are past review.",
+   "evidence": "aegis/charter/rulebook.yaml line 4"
+  },
   {
    "item": "P0 \u2014 Post-market for the 07-21 session FIRED but DIED silently: no journal, no audit, no commit. Journal chain now 07-20 -> hole -> today. Recovery lever: /recover post_market (compute-only) before the 10:00 SGT premarket; otherwise premarket must stale-flag the 07-20 journal for your acknowledgment (RB staleness).",
    "evidence": "eod/2026-07-21/exception_post_market_missing.json; trigger log next_run advanced"
@@ -28,6 +48,29 @@
  ],
  "decide": [
   {
+   "id": "SD-2026-07-27-1",
+   "question": "P0, real money: the IBKR book has carried zero broker-side stops for at least 6 days (confirmed live moments ago) while the automated watch that would normally page on this has itself been dark since 07-21/22. Stage protective stops now?",
+   "options": [
+    "A) Stage stops manually in the broker today on all 18 open names (recommended -- do not wait for automation to recover)",
+    "B) Confirm you already hold informal/mental stops and accept the gap a while longer"
+   ],
+   "recommendation": "A -- six days unwatched on a real book is the finding of the week; do this before anything else here.",
+   "days_pending": 0,
+   "backlog_ref": null
+  },
+  {
+   "id": "SD-2026-07-27-2",
+   "question": "Diagnose why premarket/market-hours/design&review have kept firing on schedule (per list_triggers) but stopped landing any data in git since 07-21/22, and why the post-market trigger itself stopped advancing entirely. Candidates worth checking: the 07-23 repo reorg commit (author 'AQE Pipeline', not a PM or Claude session) may have changed paths the scheduled prompts still reference; or the inline GITHUB_PAT embedded in each trigger's stored prompt may have been rotated/revoked around 07-22 (SD-2026-07-21-4 already flagged rotating this token). Run /recover against each stalled loop once the cause is confirmed.",
+   "options": [
+    "A) Approve a diagnostic pass (read-only) against one weekday's actual premarket session output/errors before touching anything",
+    "B) Just re-fire everything and see what happens",
+    "C) Defer to next week"
+   ],
+   "recommendation": "A -- fixing a symptom (re-firing) without knowing why five straight sessions produced nothing risks masking the real defect again.",
+   "days_pending": 0,
+   "backlog_ref": "BL-046"
+  },
+  {
    "id": "SD-2026-07-22-1",
    "question": "Post-market 07-21 died silently (P0). Recover it now? /recover post_market re-runs the journal build (broker pulls + dynCap roll + SL audit + IBM hedge-roll fold) \u2014 compute only, no orders. Doing nothing leaves a permanent hole and a stale-journal premarket today.",
    "options": [
@@ -35,7 +78,7 @@
     "B) No \u2014 accept the hole; premarket runs on the 07-20 journal with your staleness acknowledgment"
    ],
    "recommendation": "A \u2014 the book of record should not carry a hole; recovery is bounded and order-blind.",
-   "days_pending": 0,
+   "days_pending": 5,
    "backlog_ref": "BL-046"
   },
   {
@@ -47,7 +90,7 @@
     "Discuss"
    ],
    "recommendation": "Approve \u2014 this is the missing half of D-64; today proved the gap at P0 severity.",
-   "days_pending": 0,
+   "days_pending": 5,
    "backlog_ref": "BL-046"
   },
   {
@@ -59,7 +102,7 @@
     "C) Hold as-is (breach continues to block all new entries)"
    ],
    "recommendation": "A \u2014 third session of diversifier confirmation, and the breach sectors are now the ones bleeding.",
-   "days_pending": 2,
+   "days_pending": 7,
    "backlog_ref": null
   },
   {
@@ -71,7 +114,7 @@
     "Discuss"
    ],
    "recommendation": "Approve \u2014 validated live on 07-21; formalising retires the DRY_RUN shortcut.",
-   "days_pending": 1,
+   "days_pending": 6,
    "backlog_ref": "BL-043"
   },
   {
@@ -83,7 +126,7 @@
     "Defer"
    ],
    "recommendation": "Yes \u2014 highest-leverage open infra item; unblocks D-53/D-57/D-60/D-62 and the trailing structure ratchet in one move.",
-   "days_pending": 1,
+   "days_pending": 6,
    "backlog_ref": "BL-044"
   },
   {
@@ -94,7 +137,7 @@
     "Answer individually in chat (/steer)"
    ],
    "recommendation": "Confirm all four \u2014 none changes a position; all close audit mismatches.",
-   "days_pending": 2,
+   "days_pending": 7,
    "backlog_ref": null
   },
   {
@@ -106,7 +149,7 @@
     "Discuss"
    ],
    "recommendation": "Approve \u2014 stand-down stays law; only its silence is retired.",
-   "days_pending": 0,
+   "days_pending": 5,
    "backlog_ref": "BL-049"
   }
  ],
