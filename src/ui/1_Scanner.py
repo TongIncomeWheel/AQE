@@ -1324,6 +1324,39 @@ if _dq.get("flagged_count"):
             for _f in _dq_daily:
                 st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
 
+# ---------------------------------------------------------------------------
+# Detect Lens Ranking — every scored name ordered by how many lenses agree.
+# Unweighted reading aid (PM build order, 2026-07-16): sort only, nothing is
+# cut/capped/eliminated. The full per-name data stays in the Signals table
+# below; this is just "where do I start reading."
+# ---------------------------------------------------------------------------
+_lens_ranking = _ex.get("lens_ranking") or {}
+if _lens_ranking.get("ranked"):
+    st.subheader(f"Detect Lens Ranking ({_lens_ranking.get('count', 0)})")
+    st.caption(
+        "Ranked by count of lenses reading **strong**: "
+        + ", ".join(_lens_ranking.get("lens_set", [])) + ". "
+        "UNWEIGHTED — sort only, nothing is filtered or eliminated. `--` = no "
+        "data (absence is never agreement), not a low score. A reading aid, "
+        "not a prediction — whether more lenses agreeing is actually better "
+        "is untested."
+    )
+    _lens_rows = []
+    for _r in _lens_ranking["ranked"]:
+        _lens = _r.get("lens") or {}
+        _row = {"rank": _r.get("rank"), "ticker": _r.get("ticker"),
+                "positive": _r.get("positive"), "warnings": _r.get("warnings")}
+        for _lane in _lens_ranking.get("lens_set", []):
+            _row[_lane] = _lens.get(_lane, "--")
+        _lens_rows.append(_row)
+    table_with_copy(pd.DataFrame(_lens_rows), key="lens_ranking_table")
+    st.divider()
+elif _ex:
+    st.info(
+        "No lens_ranking in this export yet — it was added 2026-07-17; run the "
+        "daily pipeline once to generate it."
+    )
+
 _EXPORT_COL_ORDER = [
     "rank", "ticker", "source", "pe",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
