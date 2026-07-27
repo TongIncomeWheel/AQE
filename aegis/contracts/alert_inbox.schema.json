@@ -1,16 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AQE Alert Inbox record (D-62)",
-  "x_note": "AQE writes one JSON object per line (JSONL) to aegis/data/alerts/DATE/inbox.jsonl every 15 min INSTEAD OF EMAIL. The Aegis market-watch session reads this, never the inbox the PM's mail client. Alerts are scoped to TODAY's strong-momentum universe only.",
+  "title": "AQE Alert Inbox record (D-62, extended D-82)",
+  "x_note": "AQE writes one JSON object per line (JSONL) to aegis/data/alerts/DATE/inbox.jsonl INSTEAD OF EMAIL. The Aegis market-watch session reads this, never the PM's mail client. D-82: cadence is now every 30 min (file, not email); alerts are scoped to TODAY's data/alerts/DATE/alert_list.json membership and tagged with the list category (A/B/C) that put the ticker on the longlist.",
   "type": "object",
   "required": ["ts", "ticker", "alert_type", "price", "universe_date"],
   "properties": {
-    "ts": {"type": "string", "description": "ISO8601 UTC time the alert fired (the 15-min AQE cycle)"},
+    "ts": {"type": "string", "description": "ISO8601 UTC time the alert fired (the 30-min AQE cycle; 15-min pre-D-82)"},
     "ticker": {"type": "string"},
-    "alert_type": {"enum": ["breakout", "stop_hit", "stop_approaching", "approaching_buy"]},
+    "category": {
+      "description": "D-82: which alert-list category (A=casting mat / B=5d-elder / C=voice nominations) put this ticker on today's longlist. String for a single category or an array when the ticker sits in more than one list. Optional (back-compat).",
+      "oneOf": [
+        {"enum": ["A", "B", "C"]},
+        {"type": "array", "items": {"enum": ["A", "B", "C"]}}
+      ]
+    },
+    "alert_type": {"enum": ["breakout", "stop_hit", "stop_approaching", "approaching_buy", "entry_cross", "breakout_2pct_cob", "sl_approach", "sl_hit", "target_approach"]},
     "price": {"type": "number", "description": "live price at alert"},
-    "universe_date": {"type": "string", "format": "date", "description": "the AQE strong-momentum universe date this alert is scoped to — must be TODAY (staleness is rejected)"},
+    "level": {"type": "number", "description": "D-82: the price level the alert_type references (e.g. the +2%-over-prior-COB breakout level, the SL, or the target)"},
+    "universe_date": {"type": "string", "format": "date", "description": "the AQE alert-list date this alert is scoped to — must be TODAY (staleness is rejected)"},
     "trigger_detail": {"type": "string", "description": "e.g. 'broke 20d-high 46.70', 'within 0.3ATR of buy'"},
-    "on_strong_universe": {"type": "boolean", "description": "AQE asserts this ticker is on today's strong-momentum screen"}
+    "on_strong_universe": {"type": "boolean", "description": "AQE asserts this ticker is on today's alert-list membership (back-compat field)"}
   }
 }

@@ -153,6 +153,12 @@ alert_universe:                   # D-77: the WIRED implementation of the flag_c
   event_overlay: strike          # event-driven names (M&A etc., D-11) are STRUCK from the universe regardless of lanes
   calibration_note: "21 Jul 2026: validated BILL(6 lanes) & ETSY(5) -> Tier1; DINO(2 lanes, 25% ext) -> Tier3 watch. 56 names (40/10/6) vs old sc70=57 flat / sc80=2 / committee-pick=37."
   pod_contract: "every fired alert carries lane_count + lanes_fired into the market-hours pod (D-63) — the same numbers the voices read to call runner-or-not"
+alert_list:                       # D-82: the DAILY AQE ALERT LONGLIST = A u B u C (tools/alert_list.py, deterministic, law 4). REUSES the casting mat (List A) + voice nominations (List C); List B (5d-elder) is the one thin new piece. The amalgam is what the AQE engine monitors intraday and the market-hours agent sweeps.
+  list_a_top: 50                 # List A: top 50 by tier, Data+Detect lens (the alert_universe casting mat)
+  list_b_elder_top: 15           # List B: strongest 5-day Elder, top 15 (falls back to `elder` while elder_5d ships empty)
+  list_c_per_voice: 10           # List C: up to 10 ideas per committee voice (read-only reuse of nominations/<voice>.json)
+  breakout_pct: 2.0              # +2% over prior COB = breakout trigger (breakout_level = round(prior_cob*1.02, 2))
+  intraday_cadence_min: 30       # was 15 (email); now 30 (file written to the Drive "AQE" folder)
 conviction_funnel:               # D-78/79/80: the DAILY PREMARKET three-axis funnel. tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
   doctrine_locked: "DATA leads · LENS seconds · VOICES corroborate or challenge → consensus for HIGH CONVICTION (D-80). Data/lens (mechanical) set the shortlist; voices corroborate, stay silent, or challenge; high conviction = mechanical confirmation AND voice corroboration, synthesised by the committee. Voices never buy a seat alone."
   axes: [data, lens, consensus]  # D-79 ORDER: DATA=8-lane casting mat (D-77) FIRST; LENS=6-lens detect; CONSENSUS=voices = ADVISORY overlay, never the entry ticket (PM: "data but lens first before we anchor on voices advisory")

@@ -104,3 +104,44 @@ Per-record ~97 → ~45 top-level fields + a populated `subcomponents`; ~42 KB/da
 self-describing blocks gone; the empty-`subcomponents` consumption gap closed. The kernel already
 consumes exactly the 45-field set and validates the trimmed shape, so a slimmer export is a strict
 improvement with no kernel change required.
+
+---
+
+## Intraday alert emission (D-82)
+
+The daily alert LONGLIST is now `data/alerts/DATE/alert_list.json`, built kernel-side by
+`tools/alert_list.py` as the amalgam **A ∪ B ∪ C**:
+
+- **List A** = top 50 by tier, Data+Detect lens — the existing casting mat (`tools/alert_universe.py`).
+- **List B** = strongest 5-day Elder, top 15.
+- **List C** = up to 10 ideas per committee voice — the existing `nominations/<voice>.json` (read-only).
+
+Two changes are required of the external AQE engine so the intraday feed matches this design:
+
+### (a) POPULATE `elder_5d` — the List B gap
+
+List B ranks by `elder_5d` (the 5-day Elder-force series/strength). While `elder_5d` ships
+**empty/null**, `alert_list.py` FALLS BACK to the single-day `elder` composite and stamps
+`elder_field_used: "elder(fallback)"` in the output. Emit `elder_5d` per `daily_list` record
+(either a scalar 5-day strength or the 5-element daily series — the kernel reduces a series to its
+mean) so List B ranks on the intended field and `elder_field_used` reads `"elder_5d"`.
+
+### (b) Switch the alert feed from 15-min EMAIL to a 30-min FILE
+
+Stop emailing alerts. Every **30 minutes** (was 15) write a JSONL alert file to the Drive **"AQE"**
+folder (the kernel sweeps it via `tools/alert_inbox.py`), each line conforming to the **extended**
+`contracts/alert_inbox.schema.json`:
+
+- **Scope** every alert to that day's `data/alerts/DATE/alert_list.json` membership only — never the
+  full universe.
+- **Tag** each alert with its `category` (`A` / `B` / `C`, or an array when the ticker is on more
+  than one list) — the same category carried in the alert-list entry.
+- Use the bracket-level `alert_type` values now in the schema: `entry_cross`, `breakout_2pct_cob`
+  (+2% over prior COB — see `breakout_level` in the alert-list entry), `sl_approach`, `sl_hit`,
+  `target_approach` (legacy `breakout`/`stop_hit`/`stop_approaching`/`approaching_buy` remain valid).
+- Carry the referenced price in `level` (the breakout level / SL / target) alongside live `price`.
+- **NO PTRS** and no subscores in the alert — the alert is thin: `ts, ticker, category, alert_type,
+  price, level, universe_date, trigger_detail`.
+
+Cadence and list sizes are PM-tunable in `charter/parameters.yaml → alert_list.*`
+(`intraday_cadence_min`, `breakout_pct`, `list_a_top`, `list_b_elder_top`, `list_c_per_voice`).
