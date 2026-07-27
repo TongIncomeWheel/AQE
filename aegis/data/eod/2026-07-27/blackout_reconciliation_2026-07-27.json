@@ -1,0 +1,113 @@
+{
+ "date": "2026-07-27",
+ "kind": "design_review_ad_hoc (out-of-schedule fire; RB:design_review)",
+ "session_completeness": "PARTIAL -- ad hoc fire, no premarket/post-market inputs for 07-23..07-26 exist to review; this session substituted a live broker reconciliation instead",
+ "headline": "5-session blackout (07-23 to 07-27) discovered and reconciled against live broker state; book of record is stale but the true book was rebuilt manually this session",
+ "true_book_now": {
+  "V": {
+   "broker": "TIGER",
+   "qty": 20,
+   "stop_live": 343.29,
+   "stop_match": "MATCH"
+  },
+  "PTRN": {
+   "broker": "IBKR",
+   "qty": 327,
+   "stop_live": null,
+   "stop_reference": 26.29,
+   "current_price": 22.17,
+   "breached": true
+  },
+  "EXEL": {
+   "broker": "IBKR",
+   "qty": 95,
+   "stop_live": null,
+   "stop_reference": 51.15,
+   "current_price": 55.45,
+   "breached": false
+  },
+  "VRSK": {
+   "broker": "IBKR",
+   "qty": 67,
+   "stop_live": null,
+   "stop_reference": 183.4,
+   "current_price": 201.34,
+   "breached": false
+  },
+  "CHYM": {
+   "broker": "IBKR",
+   "qty": 479,
+   "stop_live": null,
+   "stop_reference": 19.86,
+   "current_price": 20.69,
+   "breached": false
+  },
+  "NTAP": {
+   "broker": "IBKR",
+   "qty": 112,
+   "stop_live": null,
+   "stop_reference": 159.3,
+   "current_price": 170.25,
+   "breached": false
+  },
+  "NU": {
+   "broker": "IBKR",
+   "qty": 871,
+   "stop_live": null,
+   "stop_reference": 13.02,
+   "current_price": 14.13,
+   "breached": false
+  },
+  "SLDE": {
+   "broker": "IBKR",
+   "qty": 629,
+   "stop_live": null,
+   "stop_reference": 20.45,
+   "current_price": 20.26,
+   "breached": true
+  }
+ },
+ "closed_since_last_journal": [
+  {
+   "ticker": "AMPL",
+   "qty": 571,
+   "fill_price": 8.9,
+   "fill_time": "2026-07-22T22:38:39Z",
+   "broker": "TIGER",
+   "mechanism": "stop"
+  },
+  {
+   "ticker": "DDOG",
+   "qty": 24,
+   "fill_price": 247.67,
+   "fill_time": "2026-07-22T21:30:58Z",
+   "broker": "TIGER",
+   "mechanism": "stop"
+  },
+  {
+   "ticker": "SPGI",
+   "qty": 23,
+   "fill_price": 420.5,
+   "fill_time": "2026-07-23T22:08:55Z",
+   "broker": "TIGER",
+   "mechanism": "stop"
+  },
+  {
+   "ticker": "IBM",
+   "qty": 111,
+   "fill_price": 214.445,
+   "fill_time": "2026-07-24T19:55:21Z",
+   "broker": "IBKR",
+   "mechanism": "MARKET sell (likely manual PM close post compliance-hold expiry)",
+   "realized_pnl": -5407.09
+  }
+ ],
+ "exceptions": [
+  "MISSED_CLOCK x5 -- premarket/market_hours/post_market/design_review produced no artifacts 2026-07-23 through 2026-07-26",
+  "scheduled trigger 'Aegis post-market' next_run_at not advanced since 2026-07-22T21:05Z as of this session"
+ ],
+ "backlog_refs": [
+  "BL-050",
+  "BL-051"
+ ]
+}
