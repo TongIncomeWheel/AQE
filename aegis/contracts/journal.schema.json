@@ -9,8 +9,11 @@
         "entry_date": {"type": "string"}, "stop_reference": {"type": ["number", "null"]},
         "stop_live_broker": {"type": ["number", "null"]}, "stop_match": {"enum": ["MATCH", "MISMATCH", "MISSING", null]},
         "tp1": {"type": ["number", "null"]}, "tp2": {"type": ["number", "null"]}, "tp3": {"type": ["number", "null"]},
-        "trigger": {"type": ["string", "null"]}, "broker": {"type": "string"}, "unrealised_usd": {"type": ["number", "null"]}}}},
+        "trigger": {"type": ["string", "null"]}, "broker": {"type": "string"}, "unrealised_usd": {"type": ["number", "null"]},
+        "mark_price": {"type": ["number", "null"], "description": "D-85: current mark used for unrealised_usd. Absent/null means portfolio_metrics.py falls back to entry cost basis and flags the position as unmarked, never fabricates a price."},
+        "aqe_snapshot": {"type": ["object", "null"], "description": "D-85: AQE's market-data view of this held ticker (sector, beta, ann_vol_pct, sc_momentum, structure, elder, elder_5d, mp_accel_state, rs_leadership, flow, choch_state — see tools/held_book_refresh.py AQE_SNAPSHOT_FIELDS). Null until the loop has refreshed this position at least once; portfolio_metrics.py excludes null-snapshot positions rather than guessing."},
+        "aqe_snapshot_as_of": {"type": ["string", "null"], "description": "D-85: the date aqe_snapshot was actually refreshed (an AQE export date) — carried forward honestly by held_book_refresh.py carry-forward, so this is very often NOT today's date. Never silently reset."}}}},
     "closed_trades": {"type": "array", "items": {"type": "object"}},
     "hedge": {"type": ["object", "null"]},
-    "metrics": {"type": "object"},
+    "metrics": {"type": "object", "description": "D-85: populated by tools/portfolio_metrics.py — gross_exposure_usd, leverage, net_beta_dollar, nav_beta, sector_concentration_pct, stop_audit, var, computed_from_aqe_dated, mixed_vintage, excluded_no_aqe_data. Lives HERE (not a separate file) so the journal is one proper portfolio snapshot, not just a list of positions (PM ruling, D-85)."},
     "broker_sync": {"type": "object"}}}
