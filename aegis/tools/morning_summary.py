@@ -26,8 +26,20 @@ def assemble(data_dir, date):
             parts[key] = summarise(v)
     eod = os.path.join(data_dir, "eod", date)
     persistent = os.path.join(data_dir, "persistent")
-    grab("journal", os.path.join(eod, f"aegis_journal_{date}.json"),
+    journal_path = os.path.join(data_dir, "journal", f"aegis_journal_{date}.json")
+    grab("journal", journal_path,
          lambda j: {"valid": j.get("valid", True), "closed_trades": len(j.get("closed_trades", [])), "open": len(j.get("open_positions", []))})
+    # review_flags (print-trade-journal skill): named exceptions any held-book write found this
+    # run — a stop mismatch, a position with no AQE data, a name absent from today's export.
+    # Read from the SAME journal file, not a separate grab — an absent journal already marks the
+    # summary PARTIAL above; this only adds what's INSIDE a journal that does exist.
+    jdoc = _load(journal_path) or {}
+    rflags = jdoc.get("review_flags", []) or []
+    parts["review_flags"] = {
+        "high": [f for f in rflags if f.get("severity") == "high"],
+        "medium_count": len([f for f in rflags if f.get("severity") == "medium"]),
+        "low_count": len([f for f in rflags if f.get("severity") == "low"]),
+    }
     grab("scorecard", os.path.join(eod, "scorecard.json"),
          lambda s: {"verdict": s.get("verdict"), "failing": s.get("failing_windows")})
     grab("dyncap", os.path.join(persistent, "dyncap_ledger.json"),
@@ -71,6 +83,12 @@ def render(s):
     for f in pl.get("fired", []):
         L.append(f"    ▲ {f['ticker']} FIRED — {f.get('why') or ''}")
         if f.get("case"): L.append(f"       {f['case'][:110]}")
+    rf = s.get("review_flags") or {}
+    highs = rf.get("high", [])
+    L.append(f"  Held-book review flags: {len(highs)} need attention "
+             f"({rf.get('medium_count', 0)} medium, {rf.get('low_count', 0)} low, not shown here)")
+    for f in highs:
+        L.append(f"    ! {f['ticker']} {f['type']} — {f.get('detail', '')}")
     return "\n".join(L)
 
 if __name__ == "__main__":

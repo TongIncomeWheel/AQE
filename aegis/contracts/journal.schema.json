@@ -16,4 +16,10 @@
     "closed_trades": {"type": "array", "items": {"type": "object"}},
     "hedge": {"type": ["object", "null"]},
     "metrics": {"type": "object", "description": "D-85: populated by tools/portfolio_metrics.py — gross_exposure_usd, leverage, net_beta_dollar, nav_beta, sector_concentration_pct, stop_audit, var, computed_from_aqe_dated, mixed_vintage, excluded_no_aqe_data. Lives HERE (not a separate file) so the journal is one proper portfolio snapshot, not just a list of positions (PM ruling, D-85)."},
+    "review_flags": {"type": "array", "items": {"type": "object",
+      "required": ["ticker", "type", "detail", "severity"],
+      "properties": {"ticker": {"type": "string"}, "type": {"type": "string"},
+        "detail": {"type": "string"}, "severity": {"enum": ["low", "medium", "high"]},
+        "since": {"type": ["string", "null"]}}},
+      "description": "D-86: named, actionable exceptions any print-trade-journal operation finds — never blocks a write, always visible. Surfaced in the morning summary and the premarket held-book render, not buried in metrics."},
     "broker_sync": {"type": "object"}}}

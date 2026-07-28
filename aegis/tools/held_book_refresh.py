@@ -26,17 +26,29 @@ THE LOOP, concretely:
      targeted per-ticker MERGE into `aqe_snapshot` + `aqe_snapshot_as_of`, never touching the
      execution-truth fields post-market already committed (qty, entry, entry_date, stop_reference,
      stop_live_broker, stop_match, tp1-3, trigger, broker, unrealised_usd, mark_price).
-  3. Tomorrow's post-market carries THIS refreshed snapshot forward again (step 1), closing the
+  3. Also in premarket, right after the fresh floor is computed: `stop-update` writes it into
+     `stop_reference` and recomputes `stop_match` against the broker's live stop. A MISMATCH
+     here is expected (the broker order usually hasn't been staged yet) — it is flagged, never
+     blocking. `stop_live_broker` itself is execution truth and is never written here.
+  4. Tomorrow's post-market carries THIS refreshed snapshot forward again (step 1), closing the
      loop — so the metrics post-market computes are always built from the most recent AQE data
      available, dated honestly, never faked to look same-day.
 
-Deterministic (law 4) — no model, no network. Both operations mutate `open_positions` only;
-every other journal key (dyncap, closed_trades, hedge, metrics, broker_sync) passes through
-byte-identical.
+WRITE ALWAYS, FLAG NEVER BLOCKS: every operation here appends to the journal's `review_flags`
+(ticker, type, detail, severity) whenever it finds something a person should look at — a name
+that's never been refreshed, one absent from today's export, a stop mismatch. None of that ever
+stops the write. This is the part of the "still write, but flag for PM attention" answer that
+lives at the mechanical layer; the print-trade-journal skill is where the three orchestrators
+(post-market, premarket, market-hours) each call in at their own moment.
+
+Deterministic (law 4) — no model, no network. All three operations mutate `open_positions` (and
+append to `review_flags`) only; every other journal key (dyncap, closed_trades, hedge, metrics,
+broker_sync) passes through byte-identical.
 
 Usage:
   python3 tools/held_book_refresh.py carry-forward --journal today.json --prior yesterday.json [--out today.json]
   python3 tools/held_book_refresh.py refresh --journal today.json --export aqe_daily_export.json [--out today.json]
+  python3 tools/held_book_refresh.py stop-update --journal today.json --stops new_stops.json [--out today.json]
   python3 tools/held_book_refresh.py selftest
 """
 import json
@@ -58,10 +70,38 @@ def _index_by_ticker(rows):
     return {r.get("ticker"): r for r in (rows or []) if r.get("ticker")}
 
 
+def _flag(journal, ticker, kind, detail, severity="medium"):
+    """Append one named, actionable exception to the journal's review_flags — this is the
+    'still write, but flag for PM attention' rule: nothing in this file ever blocks a write on a
+    data-quality problem, it records what's wrong, on which ticker, and lets the write proceed.
+    Idempotent per (ticker, kind) WITHIN this file: if an operation is re-run in the same session
+    (a retry, or called twice by mistake), the existing flag's detail is refreshed in place rather
+    than duplicated — review_flags reflects current conditions, not a growing log."""
+    flags = journal.setdefault("review_flags", [])
+    for f in flags:
+        if f.get("ticker") == ticker and f.get("type") == kind:
+            f["detail"], f["severity"], f["since"] = detail, severity, journal.get("date")
+            return
+    flags.append({"ticker": ticker, "type": kind, "detail": detail, "severity": severity,
+                  "since": journal.get("date")})
+
+
+def _unflag(journal, ticker, kind):
+    """Remove a (ticker, kind) flag if the condition that raised it no longer holds — a
+    review_flags entry reflects CURRENT state, not a history of everything that was ever wrong."""
+    flags = journal.get("review_flags")
+    if not flags:
+        return
+    journal["review_flags"] = [f for f in flags
+                               if not (f.get("ticker") == ticker and f.get("type") == kind)]
+
+
 def carry_forward(journal, prior_journal):
     """Pull each held ticker's most recent aqe_snapshot forward from `prior_journal` into
     `journal`, IN PLACE. The original aqe_snapshot_as_of travels with it unchanged — carrying a
-    snapshot forward never pretends it is fresher than it is. Returns a report."""
+    snapshot forward never pretends it is fresher than it is. A ticker with NO prior data
+    anywhere is flagged `no_aqe_data` (high severity — this position is being risk-managed
+    blind) rather than silently left null. Returns a report."""
     prior_by_ticker = _index_by_ticker((prior_journal or {}).get("open_positions"))
     carried, no_prior_data, already_had = [], [], []
     for pos in journal.get("open_positions", []) or []:
@@ -78,14 +118,19 @@ def carry_forward(journal, prior_journal):
             pos.setdefault("aqe_snapshot", None)
             pos.setdefault("aqe_snapshot_as_of", None)
             no_prior_data.append(t)
+            _flag(journal, t, "no_aqe_data",
+                  "held position has never been refreshed with AQE data — excluded from "
+                  "leverage/beta/sector/VaR until the next premarket refresh finds it",
+                  severity="high")
     return {"carried": carried, "no_prior_data": no_prior_data, "already_had": already_had}
 
 
 def refresh_from_export(journal, export):
     """Merge fresh AQE fields into each held ticker's aqe_snapshot from today's `export`, IN
     PLACE. A ticker not present in today's export keeps its existing (now-stale) snapshot rather
-    than being blanked — a missing export row is never treated as 'no longer relevant'. Returns
-    a report."""
+    than being blanked — a missing export row is never treated as 'no longer relevant', but it
+    is flagged `not_in_todays_export` (low severity — informational) so it is visible, not
+    silent. Returns a report."""
     export_date = export.get("date")
     export_by_ticker = _index_by_ticker(export.get("daily_list"))
     refreshed, not_found_in_export = [], []
@@ -94,6 +139,10 @@ def refresh_from_export(journal, export):
         rec = export_by_ticker.get(t)
         if rec is None:
             not_found_in_export.append(t)
+            _flag(journal, t, "not_in_todays_export",
+                  "held ticker absent from today's AQE export — keeping its existing "
+                  "(now-stale) aqe_snapshot rather than blanking it",
+                  severity="low")
             continue
         snap = {k: rec.get(k) for k in AQE_SNAPSHOT_FIELDS if k in rec}
         pos["aqe_snapshot"] = snap
@@ -101,6 +150,41 @@ def refresh_from_export(journal, export):
         refreshed.append(t)
     return {"refreshed": refreshed, "not_found_in_export": not_found_in_export,
             "export_date": export_date}
+
+
+def stop_update(journal, new_stops):
+    """Write trailing_stop.py's freshly computed floor into `stop_reference` for each ticker in
+    `new_stops` ({ticker: new_stop_value}), IN PLACE, then recompute `stop_match` against
+    whatever `stop_live_broker` currently says. A MISMATCH right after this is EXPECTED — it
+    means the broker order hasn't been staged yet, not that anything is broken — so it is
+    flagged, never blocking. Only `stop_reference` and `stop_match` are touched; `stop_live_broker`
+    is execution truth and is never written here, only compared against. Returns a report."""
+    updated, mismatched, missing_broker_stop = [], [], []
+    for pos in journal.get("open_positions", []) or []:
+        t = pos.get("ticker")
+        if t not in new_stops:
+            continue
+        pos["stop_reference"] = new_stops[t]
+        live = pos.get("stop_live_broker")
+        if live is None:
+            pos["stop_match"] = "MISSING"
+            missing_broker_stop.append(t)
+            _flag(journal, t, "stop_missing",
+                  "no live broker stop on record for this held position",
+                  severity="medium")
+        elif round(float(live), 4) == round(float(new_stops[t]), 4):
+            pos["stop_match"] = "MATCH"
+            _unflag(journal, t, "stop_mismatch")
+        else:
+            pos["stop_match"] = "MISMATCH"
+            mismatched.append(t)
+            _flag(journal, t, "stop_mismatch",
+                  "kernel's new stop %.4g vs broker's live stop %.4g — order likely not "
+                  "staged yet, not necessarily an error" % (new_stops[t], live),
+                  severity="high")
+        updated.append(t)
+    return {"updated": updated, "mismatched": mismatched,
+            "missing_broker_stop": missing_broker_stop}
 
 
 # --------------------------------------------------------------------------- CLI
@@ -127,6 +211,16 @@ def cmd_refresh(args):
     with open(out, "w") as fh:
         json.dump(journal, fh, indent=1)
     print(json.dumps({"op": "refresh", "out": out, **report}, indent=1))
+
+
+def cmd_stop_update(args):
+    journal = _load(args.journal)
+    new_stops = _load(args.stops)   # {ticker: new_stop_value}
+    report = stop_update(journal, new_stops)
+    out = args.out or args.journal
+    with open(out, "w") as fh:
+        json.dump(journal, fh, indent=1)
+    print(json.dumps({"op": "stop-update", "out": out, **report}, indent=1))
 
 
 def selftest(_args=None):
@@ -168,10 +262,51 @@ def selftest(_args=None):
     assert today["open_positions"][0]["stop_reference"] == 47.0
     assert today["dyncap"]["value"] == 65000, "refresh must not touch anything outside open_positions"
 
+    # review_flags: BBB never got a prior snapshot (no_aqe_data, high) and was absent from the
+    # export the first time it was checked... actually BBB WAS found on the second export check
+    # above? no -- BBB was never in `export`, so it should carry a not_in_todays_export flag too.
+    kinds = {f["type"] for f in today.get("review_flags", [])}
+    assert "no_aqe_data" in kinds, today.get("review_flags")
+    assert "not_in_todays_export" in kinds, today.get("review_flags")
+
+    # stop-update: write the new floor, recompute stop_match against the broker's live value.
+    today["open_positions"][0]["stop_live_broker"] = 50.0   # broker hasn't caught up yet
+    today["open_positions"][1]["stop_live_broker"] = 19.0
+    r3 = stop_update(today, {"AAA": 52.0, "BBB": 19.0})
+    assert today["open_positions"][0]["stop_reference"] == 52.0
+    assert today["open_positions"][0]["stop_match"] == "MISMATCH", today["open_positions"][0]
+    assert today["open_positions"][1]["stop_match"] == "MATCH", today["open_positions"][1]
+    assert r3["mismatched"] == ["AAA"], r3
+    assert today["open_positions"][0]["stop_live_broker"] == 50.0, \
+        "stop-update must NEVER write stop_live_broker — that is execution truth"
+    kinds2 = {f["type"] for f in today.get("review_flags", [])}
+    assert "stop_mismatch" in kinds2, today.get("review_flags")
+
+    # a position with no live broker stop at all -> MISSING, flagged, never fabricated
+    today["open_positions"].append({"ticker": "DDD", "qty": 10, "entry": 5.0, "stop_reference": 4.0})
+    r4 = stop_update(today, {"DDD": 4.5})
+    assert today["open_positions"][-1]["stop_match"] == "MISSING"
+    assert r4["missing_broker_stop"] == ["DDD"], r4
+
+    # idempotent flags: re-running stop-update on AAA (still mismatched) must REFRESH the
+    # existing flag in place, not append a second one for the same (ticker, kind).
+    before = len(today["review_flags"])
+    stop_update(today, {"AAA": 53.0})
+    after = len(today["review_flags"])
+    assert after == before, "re-running the same check must not duplicate an existing flag: %d -> %d" % (before, after)
+    assert [f for f in today["review_flags"] if f["ticker"] == "AAA" and f["type"] == "stop_mismatch"][0]["detail"].find("53") != -1
+
+    # once resolved (broker catches up), the flag must be REMOVED, not left stale
+    today["open_positions"][0]["stop_live_broker"] = 53.0
+    stop_update(today, {"AAA": 53.0})
+    assert today["open_positions"][0]["stop_match"] == "MATCH"
+    assert not [f for f in today["review_flags"] if f["ticker"] == "AAA" and f["type"] == "stop_mismatch"],         "a resolved mismatch must be cleared from review_flags, not left stale"
+
     print("held_book_refresh selftest OK — carry-forward preserves the original as_of date "
-          "(never fakes freshness), refresh stamps today's date and only touches matched "
-          "tickers' aqe_snapshot, a name missing from the export keeps its existing snapshot "
-          "instead of being blanked, execution-truth fields are untouched by both operations.")
+          "(never fakes freshness) and flags no_aqe_data; refresh stamps today's date, flags a "
+          "name absent from today's export instead of blanking it; stop-update writes the new "
+          "floor, recomputes stop_match, never touches stop_live_broker, and flags MISMATCH/"
+          "MISSING without blocking the write; execution-truth fields are untouched throughout.")
 
 
 def main(argv=None):
@@ -185,6 +320,10 @@ def main(argv=None):
     r.add_argument("--journal", required=True)
     r.add_argument("--export", required=True)
     r.add_argument("--out")
+    su = sub.add_parser("stop-update")
+    su.add_argument("--journal", required=True)
+    su.add_argument("--stops", required=True, help="JSON file: {ticker: new_stop_value}")
+    su.add_argument("--out")
     sub.add_parser("selftest")
     a = ap.parse_args(argv)
     if a.cmd == "selftest":
@@ -193,6 +332,8 @@ def main(argv=None):
         cmd_carry_forward(a)
     elif a.cmd == "refresh":
         cmd_refresh(a)
+    elif a.cmd == "stop-update":
+        cmd_stop_update(a)
 
 
 if __name__ == "__main__":
