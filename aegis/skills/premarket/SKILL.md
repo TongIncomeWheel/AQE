@@ -1,6 +1,6 @@
 ---
 name: premarket
-description: Aegis process skill — PREMARKET, EXPENSIVE HALF (D-91). The judgement half only: swarm, tally, funnel, deliberation, plan, PM approval. The data work (export pull, universe build, held-book refresh, stops, dynCap, push) belongs to the `premarket_data` skill and is a hard prerequisite — this half will not start without its stamp. Procedure lives HERE, not in the charter. Numbers cited as RB: keys from charter/rulebook.yaml + charter/parameters.yaml.
+description: Aegis process skill — PREMARKET, EXPENSIVE HALF (D-91). The judgement half only — swarm, tally, funnel, deliberation, plan, PM approval. The data work (export pull, universe build, held-book refresh, stops, dynCap, push) belongs to the `premarket_data` skill and is a hard prerequisite — this half will not start without its stamp. Procedure lives HERE, not in the charter. Numbers cited as RB keys from charter/rulebook.yaml + charter/parameters.yaml.
 ---
 
 # PROCESS: PREMARKET — THE JUDGEMENT HALF (weekdays; plan ready 16:00 SGT, PM approval by 21:00 — RB:schedule)

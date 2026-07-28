@@ -37,6 +37,76 @@ def inline_rb(text):
             return m.group(0)
     return re.sub(r"RB:([a-z0-9_.]+)", sub, text)
 
+MODEL_PIN = re.compile(r"^model:\s*([A-Za-z0-9._-]+)\s*(?:#(.*))?$", re.M)
+
+
+def assert_frontmatter(name, text):
+    """D-92 — two build-time gates on every skill's YAML frontmatter.
+
+    GATE 1: THE FRONTMATTER MUST PARSE. Five skills shipped for weeks with frontmatter that was not
+    valid YAML — an unquoted `description:` containing a bare `RB: keys` or `half only: swarm` reads
+    as a nested mapping and the block fails to load. Nothing warned, because nothing checked. A
+    skill whose frontmatter will not parse is a skill the runtime cannot reliably see, which is the
+    worst kind of defect: the file is present, the text is correct, and it does not run.
+
+    GATE 2: A PINNED MODEL TIER MUST STILL MATCH THE CHARTER. A process skill MAY pin its own model
+    tier in frontmatter, but the pinned literal must cite the charter tier it came from and must
+    still equal it.
+
+    Why this assertion exists rather than a bare `model:` line. The charter's governing design rule
+    is that no number or tier is ever restated outside charter/*.yaml — a restatement is a second
+    source of truth that drifts silently the first time the PM retunes the real one. But a skill
+    cannot dereference RB: at load time: frontmatter is read by the runtime before anything of ours
+    runs, so `model: RB:model_tiers.control` would be a literal, invalid model name. The only place
+    the two can be reconciled is here, at build time. So the source carries the literal WITH its
+    key in a comment, and this function fails the build the moment they disagree. The tier stays
+    PM-tunable in one file, and the pin can never quietly outlive it.
+
+    An UNCITED pin is also a hard failure — that is precisely the restated value the rule forbids.
+    A skill with no `model:` line at all is untouched: it inherits, which is the existing default.
+    """
+    head = text.split("---", 2)[1] if text.startswith("---") else ""
+    if not head.strip():
+        raise SystemExit("BUILD FAILED — skills/%s/SKILL.md has no YAML frontmatter block." % name)
+    try:
+        fm = yaml.safe_load(head)
+    except yaml.YAMLError as exc:
+        raise SystemExit(
+            "BUILD FAILED — skills/%s/SKILL.md frontmatter is not valid YAML, so the runtime "
+            "cannot load this skill: %s\nThe usual cause is an unquoted `description:` containing "
+            "a colon followed by a space (`RB: keys`, `half only: swarm`), which YAML reads as a "
+            "nested mapping. Quote the value or remove the colon." % (name, exc))
+    if not isinstance(fm, dict) or "name" not in fm or "description" not in fm:
+        raise SystemExit("BUILD FAILED — skills/%s/SKILL.md frontmatter must carry both `name` and "
+                         "`description`; got %r." % (name, fm))
+    if fm["name"] != name:
+        raise SystemExit("BUILD FAILED — skills/%s/SKILL.md declares name `%s`. The directory is "
+                         "what the runtime keys on; they must agree." % (name, fm["name"]))
+
+    m = MODEL_PIN.search(head)
+    if not m:
+        return None
+    literal, comment = m.group(1), (m.group(2) or "")
+    cite = re.search(r"RB:(model_tiers\.[a-z_]+)", comment)
+    if not cite:
+        raise SystemExit(
+            "BUILD FAILED — skills/%s/SKILL.md pins `model: %s` with no RB:model_tiers.* citation "
+            "in the comment on that line. An uncited tier is a restated value with no source, and "
+            "it will outlive the charter the first time the PM retunes it. Write e.g. "
+            "`model: %s  # RB:model_tiers.control`." % (name, literal, literal))
+    try:
+        expected = rb_lookup(cite.group(1))
+    except Exception:
+        raise SystemExit("BUILD FAILED — skills/%s/SKILL.md cites RB:%s, which does not exist in "
+                         "charter/parameters.yaml." % (name, cite.group(1)))
+    if str(expected) != literal:
+        raise SystemExit(
+            "BUILD FAILED — skills/%s/SKILL.md pins `model: %s` but RB:%s is now `%s`. The charter "
+            "moved and the skill did not. Update the skill's frontmatter literal to `%s`."
+            % (name, literal, cite.group(1), expected, expected))
+    return literal
+
+
 def main():
     shutil.rmtree(DIST, ignore_errors=True)
     os.makedirs(os.path.join(DIST, ".claude-plugin"), exist_ok=True)
@@ -48,9 +118,11 @@ def main():
         skill_md = os.path.join(src, name, "SKILL.md")
         if not os.path.isfile(skill_md):
             continue
+        body = open(skill_md).read()
+        assert_frontmatter(name, body)  # D-92: parses + declares its own name + pinned tier matches
         sk = os.path.join(DIST, "skills", name)
         os.makedirs(sk, exist_ok=True)
-        open(os.path.join(sk, "SKILL.md"), "w").write(inline_rb(open(skill_md).read()))
+        open(os.path.join(sk, "SKILL.md"), "w").write(inline_rb(body))
     shutil.copy(os.path.join(ROOT, "charter", "commands.md"), os.path.join(DIST, "skills", "premarket", "commands.md"))
     # Arch-F2/A-B3: a package must be self-sufficient — ship contracts, charter yamls, CONTEXT, tools
     for d in ("contracts", "tools"):

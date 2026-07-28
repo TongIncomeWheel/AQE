@@ -1,6 +1,6 @@
 ---
 name: design_review
-description: Aegis process skill — DESIGN & REVIEW (after post-market; autonomous; asks land in the 10:00 summary). Procedure lives HERE, not in the charter. Numbers cited as RB: keys from charter/rulebook.yaml.
+description: Aegis process skill — DESIGN & REVIEW (after post-market; autonomous; asks land in the 10:00 summary). Procedure lives HERE, not in the charter. Numbers cited as RB keys from charter/rulebook.yaml.
 ---
 
 # PROCESS: DESIGN & REVIEW (after post-market; autonomous; asks land in the 10:00 summary)

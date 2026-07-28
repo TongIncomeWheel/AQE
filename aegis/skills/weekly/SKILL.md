@@ -1,6 +1,6 @@
 ---
 name: weekly
-description: Aegis process skill — WEEKLY (Sunday; autonomous with one interactive touch). Procedure lives HERE, not in the charter. Numbers cited as RB: keys from charter/rulebook.yaml.
+description: Aegis process skill — WEEKLY (Sunday; autonomous with one interactive touch). Procedure lives HERE, not in the charter. Numbers cited as RB keys from charter/rulebook.yaml.
 ---
 
 # PROCESS: WEEKLY (Sunday; autonomous with one interactive touch)

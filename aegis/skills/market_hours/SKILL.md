@@ -1,6 +1,6 @@
 ---
 name: market_hours
-description: Aegis process skill — MARKET HOURS (21:30–04:00 SGT; autonomous — RB:schedule). Procedure lives HERE, not in the charter. Numbers cited as RB: keys from charter/rulebook.yaml.
+description: Aegis process skill — MARKET HOURS (21:30–04:00 SGT; autonomous — RB:schedule). Procedure lives HERE, not in the charter. Numbers cited as RB keys from charter/rulebook.yaml.
 ---
 
 # PROCESS: MARKET HOURS (21:30–04:00 SGT; autonomous — RB:schedule)

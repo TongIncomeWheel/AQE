@@ -1,6 +1,6 @@
 ---
 name: post_market
-description: Aegis process skill — POST MARKET (04:00–10:00 SGT; autonomous). Procedure lives HERE, not in the charter. Numbers cited as RB: keys from charter/rulebook.yaml.
+description: Aegis process skill — POST MARKET (04:00–10:00 SGT; autonomous). Procedure lives HERE, not in the charter. Numbers cited as RB keys from charter/rulebook.yaml.
 ---
 
 # PROCESS: POST MARKET (04:00–10:00 SGT; autonomous)
