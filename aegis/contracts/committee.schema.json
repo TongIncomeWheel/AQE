@@ -62,6 +62,29 @@
      "data_anchors": {
       "type": ["object", "null"],
       "description": "D-20 anti-black-box: the decisive field values behind this verdict, carried up from the nominations' field_values (e.g. {\"nomination_count\": 4, \"lens_positive\": 7, \"bracket.rr\": 2.79, \"bracket.stop\": 17.82, \"rvol\": 1.4}). The PM reads the numbers that drove the call, not just the prose. committee-desk populates it from what the voices cited."
+     },
+     "ledger_proposal": {
+      "type": ["object", "null"],
+      "description": "D-83: the committee's OWN call on whether this name is worth keeping in the Pipeline Ledger after today. Only names the committee proposes are filed — post-market does NOT sweep everything that failed to advance. Omit or set null to propose nothing (the default for a genuinely dead name). Made once, here, at deliberation time — no extra spawn, no second judgement pass later.",
+      "required": ["propose", "classification", "reason"],
+      "properties": {
+       "propose": {"type": "boolean", "description": "true = file it. false/absent = drop it (logged in committee.json, not carried forward)."},
+       "classification": {
+        "enum": ["daily_reconsider", "trigger_silent"],
+        "description": "daily_reconsider = re-fed into tomorrow's tally so it is re-scored fresh every morning. trigger_silent = parked and silent; only resurfaces when `trigger` fires on the market-hours sweep."
+       },
+       "trigger": {
+        "type": ["object", "null"],
+        "required": ["field", "op", "value"],
+        "properties": {
+         "field": {"type": "string", "description": "an AQE export field (e.g. sc_momentum, structure, price) — must be a field the daily export actually carries"},
+         "op": {"enum": [">=", "<=", ">", "<", "=="]},
+         "value": {"type": "number"}
+        },
+        "description": "REQUIRED when classification is trigger_silent; null otherwise. A trigger_silent row with no trigger is a contradiction and pipeline_ledger.py rejects it."
+       },
+       "reason": {"type": "string", "minLength": 1, "maxLength": 400, "description": "why this setup is worth carrying — the committee's own words, stored as case_snapshot so re-surfacing never needs a re-nomination"}
+      }
      }
     }
    }

@@ -42,6 +42,19 @@ def assemble(data_dir, date):
         missing.append("backlog"); parts["backlog_open"] = None; parts["pm_actions"] = []
     grab("steer", os.path.join(persistent, "steer.json"),
          lambda s: {"decide": s.get("decide", []), "fyi": len(s.get("fyi", []))})
+    # Pipeline Ledger (D-83) — ideas the committee parked, and anything whose trigger
+    # fired overnight. NOT via grab(): an absent store is an empty ledger (a normal
+    # state before the first proposal), not a missing overnight artifact.
+    pl = _load(os.path.join(persistent, "pipeline_ledger.json"), {"rows": []}) or {"rows": []}
+    plrows = pl.get("rows", [])
+    parts["pipeline_ledger"] = {
+        "active": len([r for r in plrows if r.get("status") == "active"]),
+        "daily_reconsider": len([r for r in plrows if r.get("status") == "active" and r.get("classification") == "daily_reconsider"]),
+        "trigger_silent": len([r for r in plrows if r.get("status") == "active" and r.get("classification") == "trigger_silent"]),
+        # fired rows are the only part that asks anything of the PM — surfaced by name
+        "fired": [{"ticker": r["ticker"], "why": r.get("fired_note"), "case": r.get("case_snapshot")}
+                  for r in plrows if r.get("status") == "fired"],
+    }
     status = "PARTIAL" if missing else "COMPLETE"
     return {"date": date, "status": status, "missing": missing, **parts}
 
@@ -53,6 +66,11 @@ def render(s):
     dc = s.get("dyncap");   L.append(f"  dynCap: {dc['dyncap_usd'] if dc else 'awaiting allocation'}")
     L.append(f"  Backlog open: {s.get('backlog_open')} · PM actions: {', '.join(s.get('pm_actions') or []) or 'none'}")
     st = s.get("steer");    L.append(f"  DECIDE items: {len((st or {}).get('decide', []))} (re-surface until answered)")
+    pl = s.get("pipeline_ledger") or {}
+    L.append(f"  Pipeline Ledger: {pl.get('active', 0)} active ({pl.get('daily_reconsider', 0)} re-considered daily, {pl.get('trigger_silent', 0)} parked on a trigger)")
+    for f in pl.get("fired", []):
+        L.append(f"    ▲ {f['ticker']} FIRED — {f.get('why') or ''}")
+        if f.get("case"): L.append(f"       {f['case'][:110]}")
     return "\n".join(L)
 
 if __name__ == "__main__":

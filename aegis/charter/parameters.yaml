@@ -115,11 +115,16 @@ schedule:
   morning_summary: '10:00'
   market_watch_mode: code watches (AQE alert engine); committee wakes on trigger only
     — no timed AI polling loops
-  alert_feed_minutes: 15                    # D-62: AQE writes alerts every 15 min to the inbox (not email)
+  alert_feed_minutes: 30                    # D-82 (was 15, D-62): AQE writes alerts every 30 min to the inbox (not email). Kept in step with alert_list.intraday_cadence_min — change both together.
   alert_scope: today_strong_momentum_universe   # D-62 (supersedes D-54 full_universe): scope, not cadence, kills the noise
   alert_inbox_path: data/alerts/DATE/inbox.jsonl   # D-62: AQE writes here; session sweeps via tools/alert_inbox.py
-  market_watch_sweep_minutes: 15            # session sweep cadence over the inbox; pod runs only on pre-filtered survivors (cheap)
+  market_watch_sweep_minutes: 30            # D-82 (was 15): session sweep cadence over the inbox; pod runs only on pre-filtered survivors (cheap)
   market_watch_triggers: [breakout, stop_hit_or_approaching, approaching_buy]
+  phase_zero:                             # D-83: the cheap dependency gate that fires the expensive premarket build. Its OWN scheduled task, deliberately tiny (two file reads, no models, no swarm).
+    first_check_sgt: '13:00'              # first firing — comfortably after post-market's 04:00-10:00 window and AQE's daily export
+    repeat_minutes: 30                    # fires repeatedly; tools/phase_gate.py claim is the exactly-once latch, so a repeat can never double-fire the build
+    page_after_sgt: '14:30'               # still NOT_READY past this time = the retry budget is spent -> page the PM (the plan is due 16:00; this leaves room to fix it)
+    fires: premarket_build                # what a READY verdict triggers
 flag_condition:                  # D-57: RATIFIED replacement for the rudimentary sc_momentum>70. Builds the SOD quality WATCH SET; the live price then TRIGGERS (D-54). Everything except event_clear is a SCORE, never a gate (D-4/D-52 doctrine).
   hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
   score_factors:                 # weighted, not all-or-nothing
@@ -159,6 +164,13 @@ alert_list:                       # D-82: the DAILY AQE ALERT LONGLIST = A u B u
   list_c_per_voice: 10           # List C: up to 10 ideas per committee voice (read-only reuse of nominations/<voice>.json)
   breakout_pct: 2.0              # +2% over prior COB = breakout trigger (breakout_level = round(prior_cob*1.02, 2))
   intraday_cadence_min: 30       # was 15 (email); now 30 (file written to the Drive "AQE" folder)
+pipeline_ledger:                  # D-83: the lifecycle store for ideas that have NOT fired yet (tools/pipeline_ledger.py, deterministic, law 4). Distinct from the Nomination Ledger (ledger.jsonl), which scores OUTCOMES of names already nominated. Only names the COMMITTEE proposed (committee.schema.json ledger_proposal) land here — post-market files, it never judges.
+  ttl_days: 30                   # bounded TTL — an idea dies stale unless a later committee re-proposes it (which extends the TTL). Same die-stale discipline as voice memory.
+  max_rows: 60                   # hard ceiling on ACTIVE rows; oldest are expired out and named in the run outcome (never a silent truncation). A ledger the PM cannot read in one glance has stopped being a ledger.
+  classifications:               # set per-name by the committee, not by post-market
+    daily_reconsider: "re-fed into the next premarket's tally and re-scored fresh every morning — for a setup that is live and could change tomorrow"
+    trigger_silent: "parked and silent until its {field, op, value} condition fires on the market-hours sweep — for a setup that is real but needs one specific thing first"
+  doctrine: "The committee decides what is worth keeping, once, at deliberation time (no extra spawn). Post-market's job is purely mechanical filing. A trigger_silent row with no trigger is REJECTED (it would be parked forever); a proposal on an ADVANCE name is REJECTED (it belongs in the plan). A missing export field NEVER counts as a satisfied trigger."
 conviction_funnel:               # D-78/79/80: the DAILY PREMARKET three-axis funnel. tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
   doctrine_locked: "DATA leads · LENS seconds · VOICES corroborate or challenge → consensus for HIGH CONVICTION (D-80). Data/lens (mechanical) set the shortlist; voices corroborate, stay silent, or challenge; high conviction = mechanical confirmation AND voice corroboration, synthesised by the committee. Voices never buy a seat alone."
   axes: [data, lens, consensus]  # D-79 ORDER: DATA=8-lane casting mat (D-77) FIRST; LENS=6-lens detect; CONSENSUS=voices = ADVISORY overlay, never the entry ticket (PM: "data but lens first before we anchor on voices advisory")
