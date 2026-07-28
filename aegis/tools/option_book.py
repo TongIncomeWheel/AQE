@@ -374,8 +374,16 @@ def derive_hedge(journal):
     contracts, dte, iv — alongside the identity it never had (underlying, expiry, per-leg
     contract keys, structure id). `iv` is OMITTED rather than set to None when the legs carry no
     implied vol, because hedge_engine reads it with a 0.20 default: a present-but-null key would
-    crash the coverage math, while an absent one degrades to the documented default. The gap is
-    flagged either way rather than passed off as a real number.
+    crash the coverage math, while an absent one degrades to the documented default.
+
+    GREEKS ARE NOT THIS TOOL'S JOB (D-90, PM ruling). The journal is a book of record — what is
+    held, at what strikes, to what expiry, in what size. Greeks and IV are ANALYTICS, they are
+    only available from Alpaca (15-min delayed; neither broker serves them at contract level),
+    and they are consumed in exactly one place: premarket's hedge-coverage assessment. So they
+    are pulled at the point of use, not at journal-write, and their ABSENCE here is normal and
+    is NOT flagged — flagging it would fire a review flag on every journal ever written, which
+    is flag fatigue, not risk management. `has_iv` in the return value tells the caller whether
+    the record carries measured vol; premarket enriches and flags if its own pull fails.
 
     No confirmed structure -> hedge is set to None, honestly. That is a book with no hedge, and
     it is different from the old permanent null, which was a book whose hedge was never looked
@@ -453,14 +461,11 @@ def derive_hedge(journal):
     chosen = candidates[0]
     journal["hedge"] = chosen
 
-    if "iv" not in chosen:
-        _flag(journal, chosen["underlying"], "hedge_iv_missing",
-              "hedge %s carries no implied vol on either leg — coverage will be computed on "
-              "hedge_engine's 0.20 default, which is an assumption, not a measurement. Pull "
-              "Greeks (Alpaca, 15-min delayed) before trusting the coverage number"
-              % chosen["structure_id"], severity="medium")
-    else:
-        _unflag(journal, chosen["underlying"], "hedge_iv_missing")
+    # No hedge_iv_missing flag here, deliberately (D-90). Missing IV at journal-write is the
+    # NORMAL state, not an exception: Greeks come from Alpaca at the point of use in premarket,
+    # not from the broker pull that builds this file. A flag that fires every single day teaches
+    # the PM to ignore flags. Any stale flag written by the earlier behaviour is cleared.
+    _unflag(journal, chosen["underlying"], "hedge_iv_missing")
 
     if len(candidates) > 1:
         _flag(journal, chosen["underlying"], "multiple_hedge_structures",
@@ -644,7 +649,9 @@ def selftest(_args=None):
     assert "iv" not in j3["hedge"], \
         "with no measured IV the key must be ABSENT (hedge_engine's 0.20 default applies), " \
         "never present-and-null, which would crash the coverage math"
-    assert [f for f in j3["review_flags"] if f["type"] == "hedge_iv_missing"]
+    assert not [f for f in j3.get("review_flags", []) if f["type"] == "hedge_iv_missing"], \
+        "D-90: missing IV at journal-write is NORMAL (Greeks are pulled at point of use in " \
+        "premarket, not here) and must not raise a flag that would fire every single day"
 
     # --- an unidentifiable leg is kept and flagged, never dropped -----------------------
     j4 = {"date": "2026-07-28", "option_positions": [{"occ_symbol": "GARBAGE", "qty": 1}]}

@@ -125,6 +125,20 @@ default (the gap is flagged either way); and where two confirmed structures are 
 **nearest expiry** becomes the record and the others are flagged HIGH — never silently ignored.
 No confirmed structure → `hedge: null`, honestly.
 
+**Greeks and IV are NOT part of this journal (D-90, PM ruling).** The journal is a book of record:
+what is held, at what strikes, to what expiry, in what size, at what entry and mark — all of which
+the broker pull itself returns. Greeks are analytics. **Alpaca is the only source that serves them
+at contract level (15-min delayed; neither Tiger nor IBKR provides them), and exactly one consumer
+reads them — premarket's hedge-coverage assessment — so they are pulled there, at the point of use,
+on the two legs that need them.** Post-market makes no network call for data post-market never
+reads. Consequently a leg with no Greeks is the NORMAL state in this file and raises no flag:
+`derive-hedge` deliberately does not flag missing IV, because a flag that fires on every journal
+ever written is flag fatigue, not risk management. The schema keeps the Greek fields optional and
+nullable so premarket can stamp them (with `greeks_as_of`, so the 15-minute delay stays visible)
+without a second write path. If the Alpaca pull fails at premarket, the coverage math runs on
+`hedge_engine`'s documented 0.20 default and the plan must SAY it is an assumed vol — a coverage
+number on assumed vol is a weaker claim than one on measured vol, and the PM sizes differently.
+
 **Scope is hedge-only** (PM ruling). Income and wheel structures belong to other books and are not
 Aegis's to classify, size, or manage.
 
