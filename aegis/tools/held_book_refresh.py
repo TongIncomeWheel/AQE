@@ -36,16 +36,28 @@ THE LOOP, concretely:
 
 WRITE ALWAYS, FLAG NEVER BLOCKS: every operation here appends to the journal's `review_flags`
 (ticker, type, detail, severity) whenever it finds something a person should look at — a name
-that's never been refreshed, one absent from today's export, a stop mismatch. None of that ever
-stops the write. This is the part of the "still write, but flag for PM attention" answer that
-lives at the mechanical layer; the print-trade-journal skill is where the three orchestrators
-(post-market, premarket, market-hours) each call in at their own moment.
+that's never been refreshed, one absent from today's export, a stop mismatch, a fill that isn't
+yet a confirmed Aegis position. None of that ever stops the write. This is the part of the "still
+write, but flag for PM attention" answer that lives at the mechanical layer; the
+print-trade-journal skill is where the three orchestrators (post-market, premarket, market-hours)
+each call in at their own moment.
 
-Deterministic (law 4) — no model, no network. All three operations mutate `open_positions` (and
-append to `review_flags`) only; every other journal key (dyncap, closed_trades, hedge, metrics,
-broker_sync) passes through byte-identical.
+AEGIS-MEMBERSHIP SORTING (classify_aegis_status): not every broker fill is an Aegis trade — the
+PM runs other books on the same brokers. This runs once, right after Operation 1 builds
+open_positions, before Carry-forward. It sorts each fill against two lists — staged Aegis orders
+(silently confirmed) and a persistent non-Aegis exclusion list (silently dropped, never
+re-flagged) — and pulls anything matching neither in as `pending_review`: managed like any other
+position, but excluded from portfolio_metrics.py's numbers until the PM confirms or rejects it at
+the next premarket approval (mark_confirmed / mark_rejected).
+
+Deterministic (law 4) — no model, no network. All operations here mutate `open_positions` (and
+append to/remove from `review_flags`) only; every other journal key (dyncap, closed_trades,
+hedge, metrics, broker_sync) passes through byte-identical.
 
 Usage:
+  python3 tools/held_book_refresh.py classify --journal today.json --exclusions data/persistent/non_aegis_exclusions.json [--staged staged.json] [--out today.json]
+  python3 tools/held_book_refresh.py confirm --journal today.json --ticker TICK [--out today.json]
+  python3 tools/held_book_refresh.py reject --journal today.json --ticker TICK --exclusions data/persistent/non_aegis_exclusions.json [--reason "..."] [--out today.json]
   python3 tools/held_book_refresh.py carry-forward --journal today.json --prior yesterday.json [--out today.json]
   python3 tools/held_book_refresh.py refresh --journal today.json --export aqe_daily_export.json [--out today.json]
   python3 tools/held_book_refresh.py stop-update --journal today.json --stops new_stops.json [--out today.json]
@@ -53,6 +65,7 @@ Usage:
 """
 import json
 import argparse
+import os
 import sys
 
 # The AQE fields captured per position. Deliberately a fixed, named set (not a blind copy of the
@@ -94,6 +107,95 @@ def _unflag(journal, ticker, kind):
         return
     journal["review_flags"] = [f for f in flags
                                if not (f.get("ticker") == ticker and f.get("type") == kind)]
+
+
+# --------------------------------------------------------------------- Aegis-membership sorting
+# Not everything the broker fills back is an Aegis trade (PM runs other books on the same
+# brokers). This is the classification step at the front of Operation 1 (Execution) that decides
+# what belongs in this journal at all, and it is deliberately conservative: pull the unknown ones
+# in and manage them, never leave a real fill unmanaged, but never let an unconfirmed one count
+# in the numbers either (see tools/portfolio_metrics.py excluded_pending_review).
+
+def load_exclusions(path):
+    """The persistent non-Aegis exclusion list — one small JSON file, the same class of store as
+    the pipeline/nomination ledgers, NOT an archive: {ticker: {since, reason}}. A missing file is
+    an empty list, never an error — nothing has been rejected yet."""
+    try:
+        with open(path) as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        return {}
+
+
+def add_exclusion(path, ticker, reason, since):
+    """Record a PM rejection once. Idempotent by design — re-adding the same ticker refreshes its
+    reason/date rather than duplicating; this is a set of decisions, not a log of events."""
+    exclusions = load_exclusions(path)
+    exclusions[ticker] = {"since": since, "reason": reason}
+    with open(path, "w") as fh:
+        json.dump(exclusions, fh, indent=1)
+    return exclusions
+
+
+def classify_aegis_status(journal, staged_tickers, exclusions):
+    """Run once, right after broker fills build open_positions (Operation 1), before anything
+    else reads the file. Memory first, so the PM is never shown something already settled:
+      1. Ticker matches a staged/approved Aegis order (or was already `confirmed` on a prior
+         run) -> aegis_status = confirmed. Silent — nothing to decide.
+      2. Ticker is on the exclusion list (a PM already rejected it before) -> dropped from
+         open_positions entirely, silent. Non-Aegis positions are never carried in this book
+         (Charter scope) — the exclusion list itself is the record; nothing else gets written.
+      3. Neither -> aegis_status = pending_review. Pulled INTO open_positions — it's real
+         capital, it gets stops and carry-forward like everything else — and flagged ONCE, so it
+         reaches the PM at the next premarket approval instead of being buried or repeated daily.
+    staged_tickers: iterable of tickers this run's fills-reconciliation expected (from the
+    gatekeeper's staged orders). exclusions: dict from load_exclusions(). Returns a report."""
+    staged = set(staged_tickers or [])
+    confirmed, excluded_non_aegis, pending, remaining = [], [], [], []
+    for pos in journal.get("open_positions", []) or []:
+        t = pos.get("ticker")
+        if t in staged or pos.get("aegis_status") == "confirmed":
+            pos["aegis_status"] = "confirmed"
+            confirmed.append(t)
+            remaining.append(pos)
+        elif t in exclusions:
+            excluded_non_aegis.append(t)
+            _unflag(journal, t, "pending_review")   # clears a flag from an earlier, pre-exclusion run
+        else:
+            pos["aegis_status"] = "pending_review"
+            pending.append(t)
+            remaining.append(pos)
+            _flag(journal, t, "pending_review",
+                  "fill not matched to a staged Aegis order — pulled in and risk-managed "
+                  "conservatively, but excluded from portfolio metrics until the PM confirms or "
+                  "rejects it at the next premarket approval",
+                  severity="medium")
+    journal["open_positions"] = remaining
+    return {"confirmed": confirmed, "excluded_non_aegis": excluded_non_aegis, "pending_review": pending}
+
+
+def mark_confirmed(journal, ticker):
+    """PM approved a pending_review position at premarket -> confirmed, flag cleared. Caller
+    must re-run portfolio_metrics.py compute afterward for the numbers to reflect it — that
+    isn't done here, this only mutates open_positions."""
+    for pos in journal.get("open_positions", []) or []:
+        if pos.get("ticker") == ticker:
+            pos["aegis_status"] = "confirmed"
+            _unflag(journal, ticker, "pending_review")
+            return True
+    return False
+
+
+def mark_rejected(journal, ticker, exclusions_path, reason="PM-rejected, non-Aegis", today=None):
+    """PM rejected a pending_review position at premarket. Removes it from open_positions (it was
+    never an Aegis holding) and records it once on the persistent exclusion list, so it never
+    resurfaces as pending_review again — the exclusion list IS the record, there is no separate
+    archive. Caller must re-run portfolio_metrics.py compute afterward, same as mark_confirmed."""
+    journal["open_positions"] = [p for p in journal.get("open_positions", []) or []
+                                 if p.get("ticker") != ticker]
+    _unflag(journal, ticker, "pending_review")
+    add_exclusion(exclusions_path, ticker, reason, today or journal.get("date"))
+    return True
 
 
 def carry_forward(journal, prior_journal):
@@ -191,6 +293,38 @@ def stop_update(journal, new_stops):
 def _load(path):
     with open(path) as fh:
         return json.load(fh)
+
+
+def cmd_classify(args):
+    journal = _load(args.journal)
+    exclusions = load_exclusions(args.exclusions)
+    staged = _load(args.staged) if args.staged else []
+    report = classify_aegis_status(journal, staged, exclusions)
+    out = args.out or args.journal
+    with open(out, "w") as fh:
+        json.dump(journal, fh, indent=1)
+    print(json.dumps({"op": "classify", "out": out, **report}, indent=1))
+
+
+def cmd_confirm(args):
+    journal = _load(args.journal)
+    ok = mark_confirmed(journal, args.ticker)
+    out = args.out or args.journal
+    with open(out, "w") as fh:
+        json.dump(journal, fh, indent=1)
+    print(json.dumps({"op": "confirm", "out": out, "ticker": args.ticker, "found": ok,
+                      "note": "re-run portfolio_metrics.py compute to reflect this"}, indent=1))
+
+
+def cmd_reject(args):
+    journal = _load(args.journal)
+    mark_rejected(journal, args.ticker, args.exclusions, args.reason or "PM-rejected, non-Aegis")
+    out = args.out or args.journal
+    with open(out, "w") as fh:
+        json.dump(journal, fh, indent=1)
+    print(json.dumps({"op": "reject", "out": out, "ticker": args.ticker,
+                      "exclusions": args.exclusions,
+                      "note": "re-run portfolio_metrics.py compute to reflect this"}, indent=1))
 
 
 def cmd_carry_forward(args):
@@ -309,9 +443,81 @@ def selftest(_args=None):
           "MISSING without blocking the write; execution-truth fields are untouched throughout.")
 
 
+def selftest_aegis_status(_args=None):
+    import tempfile
+    excl_path = os.path.join(tempfile.mkdtemp(), "non_aegis_exclusions.json")
+
+    journal = {"date": "2026-07-28", "open_positions": [
+        {"ticker": "AAA", "qty": 10, "entry": 50.0},                 # staged -> confirmed
+        {"ticker": "MARA", "qty": 5, "entry": 20.0},                 # unmatched, unexcluded -> pending
+        {"ticker": "WHEEL1", "qty": 1, "entry": 5.0},                # already on the exclusion list -> dropped
+    ]}
+    exclusions = {"WHEEL1": {"since": "2026-07-01", "reason": "PM-rejected, options wheel"}}
+    with open(excl_path, "w") as fh:
+        json.dump(exclusions, fh)
+
+    r1 = classify_aegis_status(journal, staged_tickers=["AAA"], exclusions=load_exclusions(excl_path))
+    assert r1["confirmed"] == ["AAA"], r1
+    assert r1["pending_review"] == ["MARA"], r1
+    assert r1["excluded_non_aegis"] == ["WHEEL1"], r1
+    tickers_left = {p["ticker"] for p in journal["open_positions"]}
+    assert tickers_left == {"AAA", "MARA"}, \
+        "WHEEL1 must be dropped from open_positions entirely, not just flagged"
+    assert journal["open_positions"][0]["aegis_status"] == "confirmed"
+    assert journal["open_positions"][1]["aegis_status"] == "pending_review"
+    kinds = {f["type"] for f in journal.get("review_flags", [])}
+    assert "pending_review" in kinds, journal.get("review_flags")
+
+    # PM confirms MARA at next premarket -> flag clears, status flips
+    ok = mark_confirmed(journal, "MARA")
+    assert ok is True
+    mara = [p for p in journal["open_positions"] if p["ticker"] == "MARA"][0]
+    assert mara["aegis_status"] == "confirmed"
+    assert not [f for f in journal.get("review_flags", []) if f["ticker"] == "MARA"], \
+        "confirming must clear the pending_review flag"
+
+    # a second name comes in pending, PM rejects it instead
+    journal["open_positions"].append({"ticker": "DDD", "qty": 2, "entry": 3.0,
+                                      "aegis_status": "pending_review"})
+    _flag(journal, "DDD", "pending_review", "fill not matched to a staged order")
+    mark_rejected(journal, "DDD", excl_path, reason="PM-rejected, unit test")
+    assert "DDD" not in {p["ticker"] for p in journal["open_positions"]}, \
+        "reject must remove the position row entirely"
+    assert not [f for f in journal.get("review_flags", []) if f["ticker"] == "DDD"]
+    persisted = load_exclusions(excl_path)
+    assert "DDD" in persisted and persisted["DDD"]["reason"] == "PM-rejected, unit test"
+
+    # DDD must never resurface as pending_review again — the exclusion list catches it upstream
+    journal["open_positions"].append({"ticker": "DDD", "qty": 1, "entry": 3.5})  # a later fill
+    r2 = classify_aegis_status(journal, staged_tickers=[], exclusions=load_exclusions(excl_path))
+    assert "DDD" in r2["excluded_non_aegis"], r2
+    assert "DDD" not in r2["pending_review"], \
+        "a previously-rejected ticker must be excluded silently, never re-flagged as pending"
+
+    print("held_book_refresh selftest_aegis_status OK — staged fills confirm silently, "
+          "previously-rejected fills are dropped silently and never re-flagged, genuinely new "
+          "fills are pulled in as pending_review and flagged once; confirm/reject correctly "
+          "mutate open_positions and review_flags, and reject persists to the exclusion list.")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Held-book AQE snapshot refresh (D-85, deterministic)")
     sub = ap.add_subparsers(dest="cmd", required=True)
+    cl = sub.add_parser("classify")
+    cl.add_argument("--journal", required=True)
+    cl.add_argument("--exclusions", required=True)
+    cl.add_argument("--staged", help="JSON file: list of staged Aegis tickers")
+    cl.add_argument("--out")
+    co = sub.add_parser("confirm")
+    co.add_argument("--journal", required=True)
+    co.add_argument("--ticker", required=True)
+    co.add_argument("--out")
+    rj = sub.add_parser("reject")
+    rj.add_argument("--journal", required=True)
+    rj.add_argument("--ticker", required=True)
+    rj.add_argument("--exclusions", required=True)
+    rj.add_argument("--reason")
+    rj.add_argument("--out")
     c = sub.add_parser("carry-forward")
     c.add_argument("--journal", required=True)
     c.add_argument("--prior")
@@ -328,6 +534,13 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.cmd == "selftest":
         selftest()
+        selftest_aegis_status()
+    elif a.cmd == "classify":
+        cmd_classify(a)
+    elif a.cmd == "confirm":
+        cmd_confirm(a)
+    elif a.cmd == "reject":
+        cmd_reject(a)
     elif a.cmd == "carry-forward":
         cmd_carry_forward(a)
     elif a.cmd == "refresh":

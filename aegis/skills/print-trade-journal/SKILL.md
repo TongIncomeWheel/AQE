@@ -21,20 +21,54 @@ gets silently dropped, and nothing halts the write over it.** The only thing tha
 write is the journal itself failing to build or failing schema validation — a data-quality flag on
 one ticker is never that.
 
-## THE FIVE OPERATIONS
+## THE OPERATIONS
 
 | # | Operation | Who runs it, and when | Tool | Touches | Never touches |
 |---|---|---|---|---|---|
 | 1 | **Execution** | Post-market, first thing — reconciles broker fills into `open_positions`/`closed_trades`, rolls dynCap. The only operation allowed to add or remove a position row. | (post-market's own journal-build step) | qty, entry, entry_date, stop_live_broker, tp1-3, trigger, broker, unrealised_usd, mark_price, closed_trades, dyncap | aqe_snapshot, aqe_snapshot_as_of, metrics |
-| 2 | **Carry-forward** | Post-market, immediately after Execution, same session — post-market always runs before premarket pulls AQE, so this is the only way today's file starts with ANY market-data context. | `held_book_refresh.py carry-forward` | aqe_snapshot, aqe_snapshot_as_of (only where currently null) | everything else |
-| 3 | **Metrics** | Post-market, right after Carry-forward — computes the real portfolio numbers off whatever's attached. | `portfolio_metrics.py compute` | metrics only | open_positions, review_flags stay as Carry-forward left them |
+| 1a | **Aegis-membership sort** | Post-market, immediately after Execution, same file, before anything else reads it — not every broker fill is an Aegis trade. | `held_book_refresh.py classify` | aegis_status (confirmed/pending_review), drops non-Aegis rows entirely, review_flags | execution-truth fields on rows it keeps |
+| 2 | **Carry-forward** | Post-market, immediately after the membership sort, same session — post-market always runs before premarket pulls AQE, so this is the only way today's file starts with ANY market-data context. | `held_book_refresh.py carry-forward` | aqe_snapshot, aqe_snapshot_as_of (only where currently null) | everything else |
+| 3 | **Metrics** | Post-market, right after Carry-forward — computes the real portfolio numbers off whatever's attached, for CONFIRMED positions only. Recomputes unconditionally every run (no LLM cost, no reason to skip). | `portfolio_metrics.py compute` | metrics only | open_positions, review_flags stay as Carry-forward left them |
 | 4 | **AQE refresh** | Premarket, right after the day's AQE pull — the update this whole design exists for. | `held_book_refresh.py refresh` | aqe_snapshot, aqe_snapshot_as_of (unconditionally, for matched tickers) | execution-truth fields |
 | 5 | **Stop update** | Premarket, right after the trailing-stop floor is computed — writes the new number in and checks it against the broker. | `held_book_refresh.py stop-update` | stop_reference, stop_match | stop_live_broker (read-only comparison, never written) |
+| 5a | **Membership decision** | Premarket, at PM approval — the PM confirms or rejects each `pending_review` row from Operation 1a. | `held_book_refresh.py confirm` / `reject` | aegis_status, review_flags, and (on reject) the persistent exclusion list | everything else |
+| 5b | **Metrics recompute** | Premarket, immediately after 5a, only if 5a changed anything — the numbers must reflect the PM's decision same-day, not tomorrow. | `portfolio_metrics.py compute` | metrics only | — |
 
-A sixth touch happens outside this table: **market-hours**, when a live fill or a take-profit
+A further touch happens outside this table: **market-hours**, when a live fill or a take-profit
 lands mid-session. That is Execution-class work (same fields, same tool family) sourced from a
 live broker pull instead of post-market's end-of-day reconciliation — market-hours cites
-Operation 1's field list for what it's allowed to touch, same discipline, different trigger.
+Operation 1's field list for what it's allowed to touch, same discipline, different trigger. A
+market-hours fill that doesn't match a staged order should go through the same membership sort
+before it's trusted for anything.
+
+**5a/5b are captured here as the target, not yet wired into premarket's own SKILL.md** —
+premarket's step sequence hasn't been walked and amended for this yet; that happens when premarket
+gets the same review post-market just got.
+
+## AEGIS-MEMBERSHIP SORTING (Operation 1a) — not every fill is ours
+
+The PM runs other books on the same brokers (a standing example: a MARA/AMAT options wheel that
+is explicitly out of Aegis's scope per the Charter). Operation 1 cannot tell an Aegis trade from
+one of those just by looking at a fill, so Operation 1a decides, conservatively, right after
+Operation 1 and before anything else touches the file:
+
+1. **Matches a staged Aegis order** (or was already `confirmed` on a prior run) → `aegis_status:
+   confirmed`. Silent — nothing for the PM to decide.
+2. **Matches the persistent exclusion list** (`data/persistent/non_aegis_exclusions.json` — a
+   PM already rejected this ticker before) → dropped from `open_positions` entirely, silent.
+   Non-Aegis positions are never carried in this book. The exclusion list itself IS the record —
+   ticker, date, reason — there is no separate archive of rejected fills; that would be
+   over-engineering something whose only job is keeping today's portfolio numbers honest.
+3. **Neither** → `aegis_status: pending_review`. Pulled INTO `open_positions` anyway — it's real
+   capital, so it gets stops and carry-forward like anything else — and flagged once
+   (`review_flags`, type `pending_review`) so it reaches the PM at the next premarket approval,
+   never buried, never re-flagged daily once seen.
+
+The PM's decision at premarket is final and one-way: **confirm** flips the row to `confirmed` and
+clears the flag; **reject** removes the row and writes the ticker once to the exclusion list, so
+it is silently excluded — never re-surfaced as pending — every day after, even if the broker keeps
+reporting it. Either decision must be followed immediately by a Metrics recompute (Operation 5b)
+so the same day's numbers reflect it, not tomorrow's.
 
 ## STORAGE — where every write actually lands (plain confirmation, kept next to the write rules on purpose)
 
@@ -52,8 +86,8 @@ that's real on one session's disk is invisible everywhere else:
 
 | Session | Operations it runs | Pushes to GitHub? |
 |---|---|---|
-| Post-market | 1, 2, 3 (Execution, Carry-forward, Metrics) | Yes — always, end of its journal step |
-| Premarket | 4, 5 (AQE refresh, Stop update) | Yes — right after Operation 5, same run |
+| Post-market | 1, 1a, 2, 3 (Execution, Membership sort, Carry-forward, Metrics) | Yes — always, end of its journal step |
+| Premarket | 4, 5, (5a/5b once wired) (AQE refresh, Stop update, Membership decision, Metrics recompute) | Yes — right after its last write, same run |
 | Market-hours | Execution-class, on an observed fill only | Yes — right after that fill's update, skipped on a quiet cycle |
 
 **This was a real gap, found and closed while confirming this, not a pre-existing guarantee:**
@@ -66,13 +100,20 @@ silently treated as done.
 
 ## PROCEDURE (what each caller actually does)
 
-1. **If you are post-market:** run Operation 1 (your own fills logic), then Operation 2
-   (`carry-forward --journal <today> --prior <most recent prior journal with a snapshot>`), then
-   Operation 3 (`compute --journal <today>`). All three, same file, same session, in that order —
-   Metrics needs whatever Carry-forward just attached. Then push (`git_sync.py`) as you already do.
+1. **If you are post-market:** run Operation 1 (your own fills logic), then Operation 1a
+   (`classify --journal <today> --exclusions data/persistent/non_aegis_exclusions.json --staged
+   <today's staged-orders list>`), then Operation 2 (`carry-forward --journal <today> --prior
+   <most recent prior journal with a snapshot>`), then Operation 3 (`compute --journal <today>`).
+   All four, same file, same session, in that order — Membership sort must run before anything
+   else reads the file, and Metrics needs whatever Carry-forward just attached. Then push
+   (`git_sync.py`) as you already do.
 2. **If you are premarket:** after your AQE pull lands, run Operation 4
    (`refresh --journal <today> --export <today's export>`), then run your trailing-stop
    calculation, then run Operation 5 (`stop-update --journal <today> --stops <ticker: new_stop map>`).
+   Once the PM approves the plan, for each `pending_review` row route the PM's decision through
+   Operation 5a (`confirm --journal <today> --ticker <T>` or `reject --journal <today> --ticker <T>
+   --exclusions data/persistent/non_aegis_exclusions.json`), then Operation 5b
+   (`compute --journal <today>`) if 5a touched anything, so the numbers reflect it same-day.
    **Then push** — `tools/git_sync.py -m "premarket held-book refresh <DATE>"` — this session's
    checkout is the only place these writes exist until that push lands.
 3. **If you are market-hours:** on an observed fill, update the affected position's
@@ -84,16 +125,18 @@ silently treated as done.
    the file is necessary but not sufficient, it has to surface somewhere a person looks.
 
 ## WHAT THIS SKILL MUST NOT DO
-Compute anything itself (all five operations are `tools/held_book_refresh.py` /
-`tools/portfolio_metrics.py`, deterministic, no model) · invent a sixth write path outside the
-table above · suppress or soften a `review_flags` entry to make a run look cleaner · let a
-data-quality flag block a write · touch `stop_live_broker` anywhere except Operation 1's fill
-reconciliation · **write to the journal and end the session without pushing** — a write that
-never reaches GitHub is indistinguishable from a write that never happened, to every other
-session that reads this file.
+Compute anything itself (every operation is `tools/held_book_refresh.py` /
+`tools/portfolio_metrics.py`, deterministic, no model) · invent a write path outside the table
+above · suppress or soften a `review_flags` entry to make a run look cleaner · let a data-quality
+flag block a write · touch `stop_live_broker` anywhere except Operation 1's fill reconciliation ·
+skip Operation 3/5b's recompute to save cost — it is free, always run it · build a second archive
+of rejected non-Aegis fills alongside the exclusion list — the exclusion list already is the
+record, a second one is over-engineering · **write to the journal and end the session without
+pushing** — a write that never reaches GitHub is indistinguishable from a write that never
+happened, to every other session that reads this file.
 
 ## ON FAILURE
-- Any of the five operations errors (bad JSON, journal missing) → that IS a write failure, not a
+- Any operation errors (bad JSON, journal missing) → that IS a write failure, not a
   data-quality flag — halt the calling session's ordering rule the same as a journal validation
   failure, page.
 - `review_flags` entries are idempotent per (ticker, condition) within a day's file — a re-run of

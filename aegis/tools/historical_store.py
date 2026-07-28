@@ -35,6 +35,11 @@ Usage:
   historical_store.py check --list A,B,C      -> {missing, stale, ok, deferred} (read-only)
   historical_store.py check --universe <f>    -> same, tickers read from a universe.json
   historical_store.py seed <TICKER> --bars <daily.json> [--source ...]  -> write/refresh one name
+
+beta(ticker, market="SPY") is the module's beta accessor (no CLI verb — called directly by
+tools/portfolio_metrics.py) — same monthly-return series this file already maintains, so a
+position's beta and its volatility are always the same source (D-85: previously beta came from
+the AQE snapshot while market vol came from here; that split is retired).
 """
 import json, os, sys, math
 from datetime import date
@@ -60,6 +65,31 @@ def stats(ticker):
     """Anchoring stats (n_months, mean, std, ann_vol) or None if the ticker isn't in the store."""
     o = get(ticker)
     return o["stats"] if o else None
+
+
+def beta(ticker, market="SPY"):
+    """Beta of `ticker` vs `market`, computed from monthly returns already in this store — same
+    FMP source, same resample logic as everything else here (D-40), so a portfolio's beta and its
+    volatility never come from two different places. Aligns by calendar month (only months both
+    names actually have); returns None if either name is missing from the store or the overlap is
+    too thin to mean anything (< MIN_MONTHS) — never a guessed or default value."""
+    t_obj, m_obj = get(ticker), get(market)
+    if not t_obj or not m_obj:
+        return None
+    t_by_month = {r["month"]: r["ret_pct"] for r in t_obj.get("monthly", []) if r.get("ret_pct") is not None}
+    m_by_month = {r["month"]: r["ret_pct"] for r in m_obj.get("monthly", []) if r.get("ret_pct") is not None}
+    months = sorted(set(t_by_month) & set(m_by_month))
+    if len(months) < MIN_MONTHS:
+        return None
+    t_ret = [t_by_month[mo] for mo in months]
+    m_ret = [m_by_month[mo] for mo in months]
+    n = len(months)
+    t_mean, m_mean = sum(t_ret) / n, sum(m_ret) / n
+    cov = sum((t_ret[i] - t_mean) * (m_ret[i] - m_mean) for i in range(n)) / (n - 1)
+    var = sum((r - m_mean) ** 2 for r in m_ret) / (n - 1)
+    if not var:
+        return None
+    return round(cov / var, 4)
 
 
 def coverage():
