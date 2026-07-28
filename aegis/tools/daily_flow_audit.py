@@ -142,22 +142,27 @@ def audit(day):
     # ---- Operations: journal
     jrnl = glob.glob(os.path.join(eod, "*journal*.json")) or glob.glob(os.path.join(D, "journal", f"*{day}*.json"))
     msum = bool(_load(os.path.join(eod, "morning_summary.json")))
-    # PTJ Drive-write verification (D-69) — an INDEPENDENT check of Drive itself, not just the
-    # kernel's own belief that its write succeeded (this is the exact class of gap that let the
-    # 07-18->07-20 stale PTJ go undetected: every prior check here reads local files only).
-    ptj_check = _load(os.path.join(eod, "ptj_drive_check.json"))
-    ptj_status = ptj_check.get("status") if isinstance(ptj_check, dict) else "NOT_CHECKED"
+    # GitHub-landed verification (D-84, supersedes D-69's Drive check). The book of record is
+    # now GitHub only (Drive dependency retired — same JSON, one place, real CRUD for the
+    # janitor). "Landed" ground truth is `git_sync.py`'s own push result, captured by the
+    # orchestrator to data/eod/DATE/git_sync_result.json. A `git push` that returns success IS
+    # confirmation the remote has the commit — git's protocol has no fire-and-forget failure
+    # mode the way Drive's create_file did, so this is a STRONGER guarantee than D-69 ever had,
+    # not a weaker stand-in for it.
+    git_check = _load(os.path.join(eod, "git_sync_result.json"))
+    git_pushed = bool(isinstance(git_check, dict) and git_check.get("pushed"))
+    git_status = "PUSHED" if git_pushed else ("NOT_CHECKED" if git_check is None else "NOT_PUSHED")
     layers["operations_desk"] = {
         "touched": bool(jrnl) or msum,
         "journal_written": bool(jrnl),
         "morning_summary": msum,
-        "ptj_drive_status": ptj_status,
-        "ptj_drive_verified": ptj_status == "FRESH",
+        "github_push_status": git_status,
+        "github_push_verified": git_pushed,
     }
 
     exc = _exceptions(day)
-    if ptj_status not in ("FRESH", "NOT_CHECKED"):
-        exc.append(f"ptj_drive_{ptj_status.lower()}")  # e.g. ptj_drive_stale / ptj_drive_missing
+    if git_status == "NOT_PUSHED":
+        exc.append("github_push_failed")
 
     # ---- inferred spawn/agent count (D-27 standing spawns)
     spawns = layers["research_desk"]["voices_ran_count"] \

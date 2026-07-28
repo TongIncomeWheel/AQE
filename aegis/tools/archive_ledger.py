@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
-"""Aegis trade-journal archive ledger (BL-046 / D-68 — print-trade-journal successor, part 2).
+"""Aegis trade-journal archive ledger (BL-046 / D-68, retimed by D-84 — print-trade-journal
+successor, part 2).
 
-D-67 moved PTJ EMISSION into the kernel (post_market writes aegis_trade_journal_[DATE]_PTJ.json
-directly). This tool is the second half the retired standalone skill did: append newly CLOSED
-Aegis trades into the running master ledger (`aegis_trade_journal_ARCHIVE_master.json`) and
-recompute the rollups — deterministic (law 4), no model judgement, matches the schema already
-live in Drive (built 2026-07-17, `archive_meta` + `closed_trades_ledger` + `metrics` blocks).
+D-67 moved PTJ emission into the kernel. D-84 then retired the separate Google Drive PTJ file
+entirely — the git-committed `data/journal/aegis_journal_YYYY-MM-DD.json` (pushed to GitHub via
+`git_sync.py`) is now the ONE book of record; a second Drive copy of the same JSON was pure
+duplication with no upside once GitHub was already the version-controlled backup. This tool is
+the archive half: append newly CLOSED Aegis trades into the running master ledger
+(`data/persistent/aegis_trade_journal_ARCHIVE_master.json`, a local git-tracked file) and
+recompute the rollups — deterministic (law 4), no model judgement.
 
 MERGE RULE (Golden Rule, preserved from the retired skill): if a trade's (ticker, exitDate)
 already exists in the ledger, the NEWER value replaces it (idempotent re-runs never duplicate).
 
-WHAT THIS DOES NOT DO: write to Drive. The orchestrating post_market session reads the current
-archive via the Drive connector, calls this tool with that JSON + today's newly closed trades,
-and writes the returned JSON back via mcp__Google_Drive__create_file. (No delete/overwrite tool
-is exposed by the connector — see KNOWN LIMITATION below.)
-
-KNOWN LIMITATION (D-68, surfaced not hidden): the Drive connector available to the kernel has
-create/read/search but NO delete or true overwrite. Every archive write creates a NEW file with
-the same title; "the archive" is always "the ARCHIVE_master.json with the latest modifiedTime"
-in that folder. This is a real gap (it's exactly how the folder accumulated duplicate PTJ/archive
-files before) — flagged to the PM as a housekeeping item, not silently worked around.
+WHAT THIS DOES: reads the archive as a plain local file, merges, and the orchestrating
+post_market session writes the returned JSON straight back to the SAME local path — a normal
+overwrite. `tools/git_sync.py` then commits it under `data/persistent` (already in its
+DEFAULT_PATHS) same as every other shelf. No search-by-modifiedTime, no duplicate-file
+accumulation — git overwrites in place and keeps the real history in `git log`, which is
+strictly better than the old KNOWN LIMITATION this docstring used to warn about (the Drive
+connector had no delete/true-overwrite, so "the archive" was always a modifiedTime guess among
+duplicates). That limitation no longer applies — retired with the Drive dependency.
 
 Usage:
   python3 tools/archive_ledger.py merge --archive archive.json --closed closed_trades.json [--out out.json]

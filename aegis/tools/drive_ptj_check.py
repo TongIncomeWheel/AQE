@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
-"""Drive PTJ freshness check (D-69) — independent verification that the day's PTJ actually
+"""RETIRED (D-84) — Drive is no longer the PTJ store; nothing calls this tool anymore.
+
+The Google Drive PTJ write this checked for was retired: the git-committed
+`data/journal/aegis_journal_YYYY-MM-DD.json`, pushed via `tools/git_sync.py`, is now the ONE
+book of record (a second Drive copy of the same JSON had no upside once GitHub already held it
+as a version-controlled backup). Its replacement in `tools/daily_flow_audit.py`'s Operations
+layer is `git_sync_result.json` — `git push` returning success IS the "landed" confirmation,
+no separate listing/verdict tool needed. Left on disk (not deleted) so its git history and
+docstring below stay legible; do not wire this back into a skill without re-checking whether
+Drive is back in the picture.
+
+--- ORIGINAL DOCSTRING (D-69, superseded) ---
+Drive PTJ freshness check (D-69) — independent verification that the day's PTJ actually
 landed in Drive, not just that the kernel BELIEVED it wrote it.
 
 WHY THIS EXISTS: the PM asked why Design & Review's own assurance layer (auditor,
