@@ -1324,41 +1324,8 @@ if _dq.get("flagged_count"):
             for _f in _dq_daily:
                 st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
 
-# ---------------------------------------------------------------------------
-# Detect Lens Ranking — every scored name ordered by how many lenses agree.
-# Unweighted reading aid (PM build order, 2026-07-16): sort only, nothing is
-# cut/capped/eliminated. The full per-name data stays in the Signals table
-# below; this is just "where do I start reading."
-# ---------------------------------------------------------------------------
-_lens_ranking = _ex.get("lens_ranking") or {}
-if _lens_ranking.get("ranked"):
-    st.subheader(f"Detect Lens Ranking ({_lens_ranking.get('count', 0)})")
-    st.caption(
-        "Ranked by count of lenses reading **strong**: "
-        + ", ".join(_lens_ranking.get("lens_set", [])) + ". "
-        "UNWEIGHTED — sort only, nothing is filtered or eliminated. `--` = no "
-        "data (absence is never agreement), not a low score. A reading aid, "
-        "not a prediction — whether more lenses agreeing is actually better "
-        "is untested."
-    )
-    _lens_rows = []
-    for _r in _lens_ranking["ranked"]:
-        _lens = _r.get("lens") or {}
-        _row = {"rank": _r.get("rank"), "ticker": _r.get("ticker"),
-                "positive": _r.get("positive"), "warnings": _r.get("warnings")}
-        for _lane in _lens_ranking.get("lens_set", []):
-            _row[_lane] = _lens.get(_lane, "--")
-        _lens_rows.append(_row)
-    table_with_copy(pd.DataFrame(_lens_rows), key="lens_ranking_table")
-    st.divider()
-elif _ex:
-    st.info(
-        "No lens_ranking in this export yet — it was added 2026-07-17; run the "
-        "daily pipeline once to generate it."
-    )
-
 _EXPORT_COL_ORDER = [
-    "rank", "ticker", "source", "pe",
+    "rank", "ticker", "source", "pe", "on_elder",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1407,7 +1374,7 @@ def _export_table(records):
 
     Nested objects (structural_levels/targets, optimal_stop, fib) and all-empty
     columns are dropped so the grid stays tidy — full nested data lives in the
-    export JSON / the Pricer. elder_context is flattened to ecx_* columns.
+    export JSON. elder_context is flattened to ecx_* columns.
     """
     if not records:
         return pd.DataFrame()
@@ -1511,6 +1478,8 @@ elif _ex.get("held_positions_status") not in (None, "live"):
 
 # ---------------------------------------------------------------------------
 # 3. Longlist — THE one list (PM v1.1). Filter with the sliders below.
+# Elder (≥8) is a COLUMN on this same list (`on_elder`), not a separate list —
+# combined per PM ruling 2026-07-28.
 # ---------------------------------------------------------------------------
 st.subheader("Longlist")
 active_recipe = sl.get("active_recipe", {})
@@ -1518,7 +1487,8 @@ st.caption(
     "**The longlist IS: SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7** — one definition, "
     "no second gate. The sliders below DEFAULT to exactly that, and the export/alerts "
     "fire off the same set (what you see == what fires). Drag the sliders to tighten "
-    "further. `elder_pattern` + `elder_context` "
+    "further. **`on_elder`** ticks TRUE for names also at Elder ≥ 8 (the old "
+    "standalone Elder list, now just a column here). `elder_pattern` + `elder_context` "
     f"ride on every row. Aggregate recipe: {_recipe_label(active_recipe)}."
 )
 
@@ -1587,108 +1557,38 @@ else:
 st.divider()
 
 # ---------------------------------------------------------------------------
-# 3b. Elder list — STANDALONE. Sole criterion: Elder ≥ 8 (strong-breakout catcher)
+# 3b. Detect Lens Segment — every scored name ordered by how many lenses agree.
+# Replaces the old Signal Radar section (PM ruling 2026-07-28: Signal Radar's
+# runner/premove detection tags are expired). Unweighted reading aid (PM build
+# order, 2026-07-16): sort only, nothing is cut/capped/eliminated. The full
+# per-name data stays in the Signals table above; this is "where do I start
+# reading."
 # ---------------------------------------------------------------------------
-st.subheader("Elder list")
-st.caption(
-    "**Standalone list — the only criterion is Elder Impulse ≥ 8** on the last "
-    "close (nothing else). This is where strong breakouts show up before they pass "
-    "the longlist screens. `elder_5d` (the 5-day running Elder) + `elder_context` "
-    "ride on every row, same as the longlist."
-)
-# Elder tier = daily_list rows flagged on_elder (legacy exports: elder_list key).
-if _ex.get("daily_list") is not None:
-    _elder_recs = [r for r in _ex["daily_list"] if r.get("on_elder")]
-else:
-    _elder_recs = _ex.get("elder_list") or []
-if _elder_recs:
-    st.markdown(f"**{len(_elder_recs)}** name(s) at Elder ≥ 8 today")
-    _held_elder = [r.get("ticker") for r in _elder_recs if r.get("held")]
-    if _held_elder:
-        st.caption(f"🔵 **{len(_held_elder)} of these are held**: {', '.join(_held_elder)}")
-    _list_summary(_elder_recs)
-    table_with_copy(_export_table(_elder_recs), key="elder_table")
+_lens_ranking = _ex.get("lens_ranking") or {}
+if _lens_ranking.get("ranked"):
+    st.subheader(f"Detect Lens Segment ({_lens_ranking.get('count', 0)})")
+    st.caption(
+        "Ranked by count of lenses reading **strong**: "
+        + ", ".join(_lens_ranking.get("lens_set", [])) + ". "
+        "UNWEIGHTED — sort only, nothing is filtered or eliminated. `--` = no "
+        "data (absence is never agreement), not a low score. A reading aid, "
+        "not a prediction — whether more lenses agreeing is actually better "
+        "is untested."
+    )
+    _lens_rows = []
+    for _r in _lens_ranking["ranked"]:
+        _lens = _r.get("lens") or {}
+        _row = {"rank": _r.get("rank"), "ticker": _r.get("ticker"),
+                "positive": _r.get("positive"), "warnings": _r.get("warnings")}
+        for _lane in _lens_ranking.get("lens_set", []):
+            _row[_lane] = _lens.get(_lane, "--")
+        _lens_rows.append(_row)
+    table_with_copy(pd.DataFrame(_lens_rows), key="lens_ranking_table")
 elif _ex:
-    st.info("No names at Elder ≥ 8 on the last close today.")
-else:
-    st.info("Elder list needs the export JSON — run the daily pipeline + export.")
-
-st.divider()
-
-# ---------------------------------------------------------------------------
-# 3c. Signal Radar (M14-M18) — DETECTION tags, NOT entry signals
-# ---------------------------------------------------------------------------
-st.subheader("Signal Radar")
-st.caption(
-    "**Detection tags — NOT entry signals, NOT sizing.** The PM decides "
-    "entry/bracket/size live. Two radars: "
-    "**`runner_setup`** = already moving with another leg (short base + 5-day thrust "
-    "+ clear overhead), with conviction 0–4 + subtype; **`premove_setup`** = quiet "
-    "now but coiled (young base + squeeze + well below the high), which historically "
-    "led the move by a median ~12 trading days. Every % below is a **detection rate** "
-    "(how often tagged names touched a level, price-path only) — never a win rate. "
-    "**No tag informs sizing until its paper-track shows PASS.**"
-)
-
-# Today's tagged names — the STANDALONE radar block covers the full scored universe
-# (so quiet pre-move names, which never reach the watchlist, still show). Each row is
-# flagged on_longlist / on_elder so the overlap reads at a glance.
-_radar_block = _ex.get("signal_radar") or {}
-_runner_rows = _radar_block.get("runner_setup") or []
-_premove_rows = _radar_block.get("premove_setup") or []
-
-_sc1, _sc2 = st.columns(2)
-with _sc1:
-    st.markdown(f"**Runner setups (continuation) — {len(_runner_rows)}**")
-    if _runner_rows:
-        table_with_copy(pd.DataFrame(_runner_rows), key="radar_runner")
-    elif _radar_block:
-        st.caption("No runner setups on the last scan.")
-    else:
-        st.caption("Needs an export with the signal_radar block (rerun the pipeline).")
-with _sc2:
-    st.markdown(f"**Pre-move setups (coiled) — {len(_premove_rows)}**")
-    if _premove_rows:
-        table_with_copy(pd.DataFrame(_premove_rows), key="radar_premove")
-    elif _radar_block:
-        st.caption("No pre-move setups on the last scan.")
-    else:
-        st.caption("Needs an export with the signal_radar block (rerun the pipeline).")
-
-st.caption(
-    "`on_longlist` / `on_elder` flag whether a radar name is also on those lists. "
-    "Runners often overlap the longlist; pre-move names are usually fresh quiet "
-    "names that appear ONLY here — that's the point (they move a median ~12 days out)."
-)
-
-# Paper-track scoreboard — the forward proof vs the pre-registered bands
-try:
-    from src.data.signal_ledger import signal_track_scoreboard
-    _sb = signal_track_scoreboard()
-    _board = []
-    for _tag, _e in _sb.get("tags", {}).items():
-        _board.append({
-            "tag": _tag, "logged": _e.get("logged"), "matured": _e.get("matured"),
-            "detection_+20%/20d": (f"{_e['det20']}%" if _e.get("det20") is not None else "—"),
-            "detection_+10%/10d": (f"{_e['det10']}%" if _e.get("det10") is not None else "—"),
-            "pond_base_+20%": (f"{_sb['pond_base_det20']}%"
-                               if _sb.get("pond_base_det20") is not None else "—"),
-            "verdict": _e.get("verdict"),
-        })
-    if _board:
-        st.markdown(
-            f"**Paper-track scoreboard** · pre-registered {_sb.get('registered_on')} · "
-            f"{_sb.get('days_elapsed', 0)} days elapsed"
-        )
-        table_with_copy(pd.DataFrame(_board), key="radar_track")
-        st.caption(
-            "Verdict is mechanical vs the pre-registered bands (runner PASS = "
-            "≥35% forward +20%/20d detection AND ≥1.5× the concurrent pond base, "
-            "after ≥60 matured tags & ≥92 days; premove bands from the M18 study). "
-            "Detection rate ≠ win rate. **No sizing off any tag until PASS.**"
-        )
-except Exception as _exc:  # noqa: BLE001
-    st.caption(f"Paper-track scoreboard warming up (needs matured tags): {_exc}")
+    st.info(
+        "No lens_ranking in this export yet — run the daily pipeline once to "
+        "generate it."
+    )
 
 st.divider()
 

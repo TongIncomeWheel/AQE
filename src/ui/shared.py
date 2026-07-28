@@ -1,8 +1,8 @@
 """Shared utilities for the multi-page Streamlit app.
 
 Contains: path constants, data loaders, formatting helpers, onboarding,
-subprocess runner. Imported by Page 1 (Scanner), Page 2 (Math Lab),
-and Page 3 (Positions).
+subprocess runner. Imported by the Scanner, Charts and Trade Entry,
+MA Scanner, and Option Scanner pages.
 
 IMPORTANT: No st.* calls at module-level. All Streamlit calls must be
 inside functions that pages call explicitly, so st.set_page_config()
