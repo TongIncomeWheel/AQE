@@ -36,18 +36,48 @@ lands mid-session. That is Execution-class work (same fields, same tool family) 
 live broker pull instead of post-market's end-of-day reconciliation — market-hours cites
 Operation 1's field list for what it's allowed to touch, same discipline, different trigger.
 
+## STORAGE — where every write actually lands (plain confirmation, kept next to the write rules on purpose)
+
+**The journal lives in this repo and goes to GitHub. There is no other copy anywhere — Google
+Drive was retired as a store for it.** `data/journal/aegis_journal_YYYY-MM-DD.json` is a plain
+file in the kernel's own git repository; `tools/git_sync.py` commits and pushes it to
+`github.com/TongIncomeWheel/AQE.git`. That push IS the "saved" moment — a write that only reaches
+local disk has not actually gone anywhere durable yet.
+
+**This matters because each scheduled run is its OWN session with its OWN fresh checkout of the
+repo.** Post-market, premarket, and market-hours don't share a running process or a shared disk —
+each one clones the repo fresh when it starts and only ever sees what the LAST push put there.
+So the write rules and the push have to travel together, at every single touch point, or a write
+that's real on one session's disk is invisible everywhere else:
+
+| Session | Operations it runs | Pushes to GitHub? |
+|---|---|---|
+| Post-market | 1, 2, 3 (Execution, Carry-forward, Metrics) | Yes — always, end of its journal step |
+| Premarket | 4, 5 (AQE refresh, Stop update) | Yes — right after Operation 5, same run |
+| Market-hours | Execution-class, on an observed fill only | Yes — right after that fill's update, skipped on a quiet cycle |
+
+**This was a real gap, found and closed while confirming this, not a pre-existing guarantee:**
+until this was checked, only post-market ever pushed. Premarket's AQE refresh and stop update, and
+market-hours' fill updates, were landing on that session's local disk and nowhere else — gone the
+moment the session ended, never seen by tomorrow's post-market carry-forward or by any other
+session that day. All three now push. If `GITHUB_PAT` is missing, every push fails the same way
+(committed locally, not pushed) and that must be stated plainly in that session's run outcome, not
+silently treated as done.
+
 ## PROCEDURE (what each caller actually does)
 
 1. **If you are post-market:** run Operation 1 (your own fills logic), then Operation 2
    (`carry-forward --journal <today> --prior <most recent prior journal with a snapshot>`), then
    Operation 3 (`compute --journal <today>`). All three, same file, same session, in that order —
-   Metrics needs whatever Carry-forward just attached.
+   Metrics needs whatever Carry-forward just attached. Then push (`git_sync.py`) as you already do.
 2. **If you are premarket:** after your AQE pull lands, run Operation 4
    (`refresh --journal <today> --export <today's export>`), then run your trailing-stop
    calculation, then run Operation 5 (`stop-update --journal <today> --stops <ticker: new_stop map>`).
+   **Then push** — `tools/git_sync.py -m "premarket held-book refresh <DATE>"` — this session's
+   checkout is the only place these writes exist until that push lands.
 3. **If you are market-hours:** on an observed fill, update the affected position's
-   execution-truth fields the same way Operation 1 does (same field list, same file) — this is
-   still a journal write, not a separate store.
+   execution-truth fields the same way Operation 1 does (same field list, same file), **then
+   push** the same way — skip the push on a cycle where nothing fired, most cycles won't need one.
 4. **Whoever runs last in a given session** should glance at `review_flags` added THIS run and
    make sure anything `severity: high` is going to actually reach the PM (post-market: the
    morning summary; premarket: the held-book section of the plan render) — the flag existing in
@@ -58,7 +88,9 @@ Compute anything itself (all five operations are `tools/held_book_refresh.py` /
 `tools/portfolio_metrics.py`, deterministic, no model) · invent a sixth write path outside the
 table above · suppress or soften a `review_flags` entry to make a run look cleaner · let a
 data-quality flag block a write · touch `stop_live_broker` anywhere except Operation 1's fill
-reconciliation.
+reconciliation · **write to the journal and end the session without pushing** — a write that
+never reaches GitHub is indistinguishable from a write that never happened, to every other
+session that reads this file.
 
 ## ON FAILURE
 - Any of the five operations errors (bad JSON, journal missing) → that IS a write failure, not a
