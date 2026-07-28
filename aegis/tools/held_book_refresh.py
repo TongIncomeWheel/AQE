@@ -71,12 +71,41 @@ import sys
 # The AQE fields captured per position. Deliberately a fixed, named set (not a blind copy of the
 # whole export record) so the journal stays the "trimmed, consumed field set" discipline the rest
 # of the kernel already follows (D-81) — not another 97-field byte-copy.
+#
+# These are the names AS AQE SPELLS THEM (D-91). The list previously asked for "sector", "beta"
+# and "ann_vol_pct", which do not exist anywhere in the AQE record — the real keys are
+# gics_sector, beta_30d and vol_30d_ann. Because the copy is guarded by `if k in rec`, those three
+# were dropped in silence on every refresh that ever ran, so every aqe_snapshot in every journal
+# was written without a sector. That matters in exactly one place and it is not a small one:
+# portfolio_metrics.py takes sector from the snapshot (D-88 left it as the ONLY AQE-sourced field
+# in that calc, beta and vol having moved to FMP via historical_store) — so sector_concentration
+# was being computed against a field that was never populated.
 AQE_SNAPSHOT_FIELDS = [
-    "sector", "beta", "ann_vol_pct", "sc_momentum", "structure", "elder", "elder_5d",
+    "gics_sector", "beta_30d", "vol_30d_ann", "sc_momentum", "structure", "elder", "elder_5d",
     "mp_accel_state", "rs_leadership", "flow", "choch_state",
     "bracket",   # the structural stop/targets trailing_stop.py needs (D-33/D-85) — without this
                  # field the loop refreshes risk metrics but not the number that actually moves stops
 ]
+
+# Legacy snapshot key -> the AQE key that actually carries it. Snapshots written before D-91 used
+# the left-hand names (and mostly wrote nothing under them). Readers that still ask for the old
+# name resolve through here rather than every call site being rewritten.
+SNAPSHOT_ALIASES = {"sector": "gics_sector", "beta": "beta_30d", "ann_vol_pct": "vol_30d_ann"}
+
+
+def snapshot_get(snap, field, default=None):
+    """Read `field` from an aqe_snapshot under either the current or the pre-D-91 name."""
+    if not snap:
+        return default
+    if field in snap and snap[field] is not None:
+        return snap[field]
+    alias = SNAPSHOT_ALIASES.get(field)
+    if alias and snap.get(alias) is not None:
+        return snap[alias]
+    for old, new in SNAPSHOT_ALIASES.items():
+        if new == field and snap.get(old) is not None:
+            return snap[old]
+    return default
 
 
 def _index_by_ticker(rows):
@@ -227,31 +256,86 @@ def carry_forward(journal, prior_journal):
     return {"carried": carried, "no_prior_data": no_prior_data, "already_had": already_had}
 
 
+def export_record_index(export):
+    """Every AQE record in today's export, indexed by ticker, WITH its source recorded (D-91).
+
+    AQE publishes a scored record for a held name in one of two blocks, and which block depends
+    on whether that name also made the daily longlist:
+      * `daily_list`      — the scored longlist (122 rows in the 25 Jul export). A held name
+                            appears here only if it independently qualified: 2 of 12 did.
+      * `held_positions`  — one row per held name (12 of 12), carrying the same sub-score set
+                            (sc_momentum, ptrs, flow, energy, structure, elder, mp, beta_30d,
+                            atr_14d, gics_sector, bracket, subcomponents, ...).
+
+    The refresh used to index `daily_list` alone. So ten of twelve held positions were declared
+    'absent from today's AQE export', kept a stale snapshot, and were flagged low-severity —
+    every single day — while their fresh record sat in the other block of the same file. The
+    downstream cost was not cosmetic: portfolio_metrics.py EXCLUDES a position whose snapshot is
+    null rather than guessing, and trailing_stop.py takes its structural stop from
+    aqe_snapshot.bracket, so ten of twelve held names were being risk-managed off a stop that
+    never moved.
+
+    Both blocks are read. Where a name is in both, `daily_list` wins field-by-field (it is the
+    fuller record — it alone carries elder_5d and rs_leadership) and `held_positions` fills
+    whatever daily_list lacks. Returns {ticker: (record, source)} where source is one of
+    'daily_list', 'held_positions', 'both'.
+    """
+    dl = _index_by_ticker(export.get("daily_list"))
+    hp = _index_by_ticker(export.get("held_positions"))
+    out = {}
+    for t in set(dl) | set(hp):
+        if t in dl and t in hp:
+            merged = dict(hp[t])
+            merged.update({k: v for k, v in dl[t].items() if v is not None})
+            out[t] = (merged, "both")
+        elif t in dl:
+            out[t] = (dl[t], "daily_list")
+        else:
+            out[t] = (hp[t], "held_positions")
+    return out
+
+
 def refresh_from_export(journal, export):
     """Merge fresh AQE fields into each held ticker's aqe_snapshot from today's `export`, IN
     PLACE. A ticker not present in today's export keeps its existing (now-stale) snapshot rather
     than being blanked — a missing export row is never treated as 'no longer relevant', but it
     is flagged `not_in_todays_export` (low severity — informational) so it is visible, not
-    silent. Returns a report."""
+    silent. Returns a report.
+
+    Reads BOTH scored blocks of the export via export_record_index (D-91) — see that function for
+    why indexing daily_list alone silently stranded most of the held book."""
     export_date = export.get("date")
-    export_by_ticker = _index_by_ticker(export.get("daily_list"))
-    refreshed, not_found_in_export = [], []
+    index = export_record_index(export)
+    refreshed, not_found_in_export, sources, thin = [], [], {}, {}
     for pos in journal.get("open_positions", []) or []:
         t = pos.get("ticker")
-        rec = export_by_ticker.get(t)
-        if rec is None:
+        hit = index.get(t)
+        if hit is None:
             not_found_in_export.append(t)
             _flag(journal, t, "not_in_todays_export",
-                  "held ticker absent from today's AQE export — keeping its existing "
-                  "(now-stale) aqe_snapshot rather than blanking it",
+                  "held ticker absent from today's AQE export — neither the scored longlist nor "
+                  "the held-positions block carries a row for it, so its existing (now-stale) "
+                  "aqe_snapshot is kept rather than blanked",
                   severity="low")
             continue
+        rec, source = hit
         snap = {k: rec.get(k) for k in AQE_SNAPSHOT_FIELDS if k in rec}
+        # A field the export genuinely does not carry for this name is recorded as absent, not
+        # invented. held_positions rows carry no elder_5d / rs_leadership, so a name refreshed
+        # from that block alone is a legitimately thinner snapshot — say so rather than let a
+        # reader assume the field was looked up and came back empty.
+        missing = [k for k in AQE_SNAPSHOT_FIELDS if k not in rec]
         pos["aqe_snapshot"] = snap
         pos["aqe_snapshot_as_of"] = export_date
+        pos["aqe_snapshot_source"] = source
         refreshed.append(t)
+        sources[t] = source
+        if missing:
+            thin[t] = missing
+        # The refresh is the moment the stale-snapshot flag stops being true.
+        _unflag(journal, t, "not_in_todays_export")
     return {"refreshed": refreshed, "not_found_in_export": not_found_in_export,
-            "export_date": export_date}
+            "sources": sources, "fields_absent": thin, "export_date": export_date}
 
 
 def stop_update(journal, new_stops):
@@ -378,18 +462,29 @@ def selftest(_args=None):
     # execution-truth fields untouched
     assert today["open_positions"][0]["entry"] == 50.0 and today["open_positions"][0]["qty"] == 100
 
+    # Field names here are the ones AQE ACTUALLY uses (D-91). The fixture used to say
+    # sector/beta/ann_vol_pct, which exist nowhere in a real export — so the test passed against
+    # a shape production never produced, and the silent-drop bug lived underneath it.
     export = {"date": "2026-07-28", "daily_list": [
-        {"ticker": "AAA", "sector": "Tech", "beta": 1.35, "ann_vol_pct": 40.0, "sc_momentum": 82.0,
+        {"ticker": "AAA", "gics_sector": "Tech", "beta_30d": 1.35, "vol_30d_ann": 40.0,
+         "sc_momentum": 82.0, "elder_5d": 3, "rs_leadership": "LEADER",
          "extra_field_not_in_allowlist": "should not leak"},
     ]}
     r2 = refresh_from_export(today, export)
     assert r2["refreshed"] == ["AAA"], r2
     assert r2["not_found_in_export"] == ["BBB"], r2
     snap = today["open_positions"][0]["aqe_snapshot"]
-    assert snap["beta"] == 1.35 and snap["sc_momentum"] == 82.0, snap
+    assert snap["beta_30d"] == 1.35 and snap["sc_momentum"] == 82.0, snap
+    assert snap["gics_sector"] == "Tech", \
+        "the sector must actually land in the snapshot — portfolio_metrics reads it for concentration"
+    assert snapshot_get(snap, "sector") == "Tech" and snapshot_get(snap, "beta") == 1.35, \
+        "snapshot_get must resolve a pre-D-91 field name against a current snapshot"
+    assert snapshot_get({"sector": "Energy"}, "gics_sector") == "Energy", \
+        "and the reverse — a current reader against a legacy snapshot"
     assert "extra_field_not_in_allowlist" not in snap, "only the named AQE_SNAPSHOT_FIELDS travel in"
     assert today["open_positions"][0]["aqe_snapshot_as_of"] == "2026-07-28", \
         "refresh MUST stamp today's export date, not carry the old one forward"
+    assert today["open_positions"][0]["aqe_snapshot_source"] == "daily_list", today["open_positions"][0]
     # BBB's snapshot is untouched (still null — not found in export, never blanked-to-something-else)
     assert today["open_positions"][1]["aqe_snapshot"] is None
     # execution-truth fields still untouched after refresh too
@@ -402,6 +497,38 @@ def selftest(_args=None):
     kinds = {f["type"] for f in today.get("review_flags", [])}
     assert "no_aqe_data" in kinds, today.get("review_flags")
     assert "not_in_todays_export" in kinds, today.get("review_flags")
+
+    # --- the held book lives in TWO blocks and both must be read (D-91) --------------------
+    # BBB is not on the scored longlist — most held names are not — but AQE still publishes its
+    # full record under held_positions. Indexing daily_list alone stranded it.
+    export2 = {"date": "2026-07-29",
+               "daily_list": [{"ticker": "AAA", "gics_sector": "Tech", "beta_30d": 1.40,
+                               "sc_momentum": 84.0, "elder_5d": 4, "rs_leadership": "LEADER"}],
+               "held_positions": [
+                   {"ticker": "AAA", "gics_sector": "Tech", "beta_30d": 1.39, "sc_momentum": 83.0,
+                    "vol_30d_ann": 41.0, "bracket": {"valid": True}},
+                   {"ticker": "BBB", "gics_sector": "Energy", "beta_30d": 0.9, "sc_momentum": 61.0,
+                    "vol_30d_ann": 28.0, "structure": 70.0, "bracket": {"valid": False}}]}
+    r2b = refresh_from_export(today, export2)
+    assert sorted(r2b["refreshed"]) == ["AAA", "BBB"], \
+        ("a held name carried only in held_positions must refresh, not be declared absent", r2b)
+    assert r2b["not_found_in_export"] == [], r2b
+    assert r2b["sources"] == {"AAA": "both", "BBB": "held_positions"}, r2b
+    bsnap = today["open_positions"][1]["aqe_snapshot"]
+    assert bsnap["gics_sector"] == "Energy" and bsnap["sc_momentum"] == 61.0, bsnap
+    assert bsnap["bracket"] == {"valid": False}, \
+        "the bracket must travel — it is the number trailing_stop.py moves the stop with"
+    # held_positions rows carry no elder_5d/rs_leadership: recorded as absent, never invented
+    assert "elder_5d" in r2b["fields_absent"]["BBB"], r2b["fields_absent"]
+    assert "elder_5d" not in bsnap, "a field the export does not carry must be absent, not null-filled"
+    # where both blocks have the name, daily_list wins field-by-field and held_positions fills gaps
+    asnap = today["open_positions"][0]["aqe_snapshot"]
+    assert asnap["sc_momentum"] == 84.0 and asnap["beta_30d"] == 1.40, ("daily_list must win", asnap)
+    assert asnap["vol_30d_ann"] == 41.0, ("held_positions must fill what daily_list lacks", asnap)
+    # and a name that refreshed successfully must lose its stale-snapshot flag
+    assert not [f for f in today.get("review_flags", [])
+                if f["type"] == "not_in_todays_export" and f["ticker"] == "BBB"], \
+        "a successful refresh must clear the flag that said the name was missing"
 
     # stop-update: write the new floor, recompute stop_match against the broker's live value.
     today["open_positions"][0]["stop_live_broker"] = 50.0   # broker hasn't caught up yet

@@ -41,7 +41,20 @@ COMMIT_EMAIL = os.environ.get("GIT_AUTHOR_EMAIL", "noreply@anthropic.com")
 # Where a self-healed clone lands when no in-place checkout exists.
 CHECKOUT_DIR = os.environ.get("AEGIS_CHECKOUT_DIR",
                               os.path.join(os.path.expanduser("~"), ".aegis_sync_checkout"))
-DEFAULT_PATHS = ["aegis/data", "aegis/charter/decisions_log.md", "aegis/data/persistent"]
+DEFAULT_PATHS = [
+    "aegis/data",
+    "aegis/charter/decisions_log.md",
+    "aegis/data/persistent",
+    # D-91: the AQE export itself. It was NOT in this list, and that was a real hole once
+    # premarket split in two. Each process is its own session with its own fresh checkout, so
+    # the data half downloading the export to local disk is invisible to the judgement half
+    # unless the file is PUSHED — the push is the only "saved" moment there is. Without this
+    # path the judgement half would clone, find no export, and stand the morning down while
+    # the file it needed sat on a container that no longer exists.
+    # Named exactly, not as the whole output/ directory: this one file is tracked, the rest of
+    # output/ (shortlist, calibration reports, dashboard) is gitignored on purpose.
+    "aegis/output/aqe_daily_export.json",
+]
 
 
 def _looks_like_pat(t):

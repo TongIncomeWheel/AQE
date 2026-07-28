@@ -1,0 +1,158 @@
+{
+ "date": "2026-07-27",
+ "status": "PARTIAL",
+ "missing": [
+  "journal",
+  "scorecard"
+ ],
+ "journal": null,
+ "review_flags": {
+  "high": [],
+  "medium_count": 0,
+  "low_count": 0
+ },
+ "scorecard": null,
+ "dyncap": {
+  "dyncap_usd": 65761.65,
+  "realised_pnl_usd": -3142.93
+ },
+ "backlog_open": 35,
+ "pm_actions": [
+  "BL-001",
+  "BL-002",
+  "BL-019",
+  "BL-021",
+  "BL-028",
+  "BL-030",
+  "BL-032",
+  "BL-035"
+ ],
+ "steer": {
+  "decide": [
+   {
+    "id": "SD-2026-07-27-1",
+    "question": "P0, real money: the IBKR book has carried zero broker-side stops for at least 6 days (confirmed live moments ago) while the automated watch that would normally page on this has itself been dark since 07-21/22. Stage protective stops now?",
+    "options": [
+     "A) Stage stops manually in the broker today on all 18 open names (recommended -- do not wait for automation to recover)",
+     "B) Confirm you already hold informal/mental stops and accept the gap a while longer"
+    ],
+    "recommendation": "A -- six days unwatched on a real book is the finding of the week; do this before anything else here.",
+    "days_pending": 0,
+    "backlog_ref": null
+   },
+   {
+    "id": "SD-2026-07-27-3",
+    "question": "PTRN and SLDE are trading below their reference stops (26.29/22.17 and 20.45/20.26) and were flagged 07-22 as IBKR compliance-hold names that cannot be sold at will -- same class as IBM, which WAS sold 07-24 once (presumably) its hold lifted. Is the hold still active on PTRN and SLDE specifically?",
+    "options": [
+     "A) Yes, still held on both -- acknowledge, no action possible, keep watching",
+     "B) Hold has lifted on one or both -- stage a manual sell in the IBKR app at your discretion",
+     "C) Unsure -- have next session check the IBKR compliance/holding-period fields directly before recommending anything"
+    ],
+    "recommendation": "C if uncertain, otherwise B for any name whose hold has lifted -- both have been unmanaged for 6 sessions and PTRN's loss has widened since the 07-21 flag.",
+    "days_pending": 0,
+    "backlog_ref": null
+   },
+   {
+    "id": "SD-2026-07-27-2",
+    "question": "Diagnose why premarket/market-hours/design&review have kept firing on schedule (per list_triggers) but stopped landing any data in git since 07-21/22, and why the post-market trigger itself stopped advancing entirely. Candidates worth checking: the 07-23 repo reorg commit (author 'AQE Pipeline', not a PM or Claude session) may have changed paths the scheduled prompts still reference; or the inline GITHUB_PAT embedded in each trigger's stored prompt may have been rotated/revoked around 07-22 (SD-2026-07-21-4 already flagged rotating this token). Run /recover against each stalled loop once the cause is confirmed.",
+    "options": [
+     "A) Approve a diagnostic pass (read-only) against one weekday's actual premarket session output/errors before touching anything",
+     "B) Just re-fire everything and see what happens",
+     "C) Defer to next week"
+    ],
+    "recommendation": "A -- fixing a symptom (re-firing) without knowing why five straight sessions produced nothing risks masking the real defect again.",
+    "days_pending": 0,
+    "backlog_ref": "BL-046"
+   },
+   {
+    "id": "SD-2026-07-22-1",
+    "question": "Post-market 07-21 died silently (P0). Recover it now? /recover post_market re-runs the journal build (broker pulls + dynCap roll + SL audit + IBM hedge-roll fold) \u2014 compute only, no orders. Doing nothing leaves a permanent hole and a stale-journal premarket today.",
+    "options": [
+     "A) Yes \u2014 reply '/recover post_market' (recommended, before 10:00 SGT)",
+     "B) No \u2014 accept the hole; premarket runs on the 07-20 journal with your staleness acknowledgment"
+    ],
+    "recommendation": "A \u2014 the book of record should not carry a hole; recovery is bounded and order-blind.",
+    "days_pending": 5,
+    "backlog_ref": "BL-046"
+   },
+   {
+    "id": "SD-2026-07-22-2",
+    "question": "Approve BL-046 (run receipts + failure paging for every scheduled run \u2014 a fired-but-dead run pages within one wake)?",
+    "options": [
+     "Approve (build on branch, shadow next session)",
+     "Reject",
+     "Discuss"
+    ],
+    "recommendation": "Approve \u2014 this is the missing half of D-64; today proved the gap at P0 severity.",
+    "days_pending": 5,
+    "backlog_ref": "BL-046"
+   },
+   {
+    "id": "SD-2026-07-21-1",
+    "question": "CARRIED (day 2): Sector-gate breach still leads (XLK 113% / XLF 79-80% vs 35% hard). The 4 approved trims (AMPL, DDOG, V, SPGI) remain unexercised. Note SPGI -3.8% and DDOG -3.2% on 07-21 \u2014 the un-trimmed exposure is now costing directly. Exercise tonight, waive, or hold?",
+    "options": [
+     "A) Exercise the approved partial trims tonight (frees the HOLD-FOR-CONDITIONS diversifiers)",
+     "B) Waive/adjust: permit non-breach-sector adds while gross <= 2.0x (rulebook path, needs ratification)",
+     "C) Hold as-is (breach continues to block all new entries)"
+    ],
+    "recommendation": "A \u2014 third session of diversifier confirmation, and the breach sectors are now the ones bleeding.",
+    "days_pending": 7,
+    "backlog_ref": null
+   },
+   {
+    "id": "SD-2026-07-21-2",
+    "question": "CARRIED (day 1): Approve BL-043 \u2014 premarket ALWAYS runs all 11 voices; a gate breach caps VERDICTS, never the swarm. (07-21 already ran this way de facto and it worked: full ledger day + breach-respecting verdicts.)",
+    "options": [
+     "Approve (formalise in the skill via branch + shadow)",
+     "Reject",
+     "Discuss"
+    ],
+    "recommendation": "Approve \u2014 validated live on 07-21; formalising retires the DRY_RUN shortcut.",
+    "days_pending": 6,
+    "backlog_ref": "BL-043"
+   },
+   {
+    "id": "SD-2026-07-21-3",
+    "question": "CARRIED (day 1): BL-044 \u2014 enable the PC/HF job to push aqe_daily_export.json + alert inbox to the repo on write. This dependency again blinded the alert engine ALL of 07-21 (zero inbox writes, manual sweeps compensating).",
+    "options": [
+     "Yes \u2014 I will wire the PC/HF push",
+     "Alternative: Drive-only and kernel pulls from Drive",
+     "Defer"
+    ],
+    "recommendation": "Yes \u2014 highest-leverage open infra item; unblocks D-53/D-57/D-60/D-62 and the trailing structure ratchet in one move.",
+    "days_pending": 6,
+    "backlog_ref": "BL-044"
+   },
+   {
+    "id": "SD-2026-07-21-4",
+    "question": "CARRIED (day 2): book hygiene four-pack \u2014 (1) confirm DDOG tighter live stop 248.30 as your manual tighten; (2) set an advisory reference stop on IBM (still none, -$5.5k position); (3) confirm the IWM Aug-07 put spread at IBKR is non-Aegis; (4) rotate the trigger-prompt PAT to a fine-grained repo-scoped token. PTRN/SLDE below-reference closes tonight make (2)-style hygiene more urgent, not less.",
+    "options": [
+     "Confirm all four",
+     "Answer individually in chat (/steer)"
+    ],
+    "recommendation": "Confirm all four \u2014 none changes a position; all close audit mismatches.",
+    "days_pending": 7,
+    "backlog_ref": null
+   },
+   {
+    "id": "SD-2026-07-22-3",
+    "question": "Approve BL-049 (20:00 SGT approval-nudge + 21:05 explicit stand-down notice)? Two silent approval lapses in two sessions; last night it cost 18 fired triggers including NHI +2.3/CTRE +2.2.",
+    "options": [
+     "Approve",
+     "Reject \u2014 I prefer the silent default",
+     "Discuss"
+    ],
+    "recommendation": "Approve \u2014 stand-down stays law; only its silence is retired.",
+    "days_pending": 5,
+    "backlog_ref": "BL-049"
+   }
+  ],
+  "fyi": 12
+ },
+ "pipeline_ledger": {
+  "active": 0,
+  "daily_reconsider": 0,
+  "trigger_silent": 0,
+  "fired": []
+ }
+}

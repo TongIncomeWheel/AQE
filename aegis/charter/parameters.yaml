@@ -123,12 +123,20 @@ schedule:
   alert_inbox_path: data/alerts/DATE/inbox.jsonl   # D-62: AQE writes here; session sweeps via tools/alert_inbox.py
   market_watch_sweep_minutes: 30            # D-82 (was 15): session sweep cadence over the inbox; pod runs only on pre-filtered survivors (cheap)
   market_watch_triggers: [breakout, stop_hit_or_approaching, approaching_buy]
-  phase_zero:                             # D-83: the cheap dependency gate that fires the expensive premarket build. Its OWN scheduled task, deliberately tiny (two file reads, no models, no swarm).
+  phase_zero:                             # D-83/D-91: the cheap dependency gate in FRONT of premarket. Deliberately tiny (one command, one exit code, no models, no swarm).
+                                          # D-91 — IT NOW GATES TWO PROCESSES, NOT ONE. Premarket split into a cheap data half (premarket_data) and an
+                                          # expensive judgement half (premarket_build). They have DIFFERENT prerequisites, so Phase 0's job changed from
+                                          # "is it ready?" to "which of the two is next?" — see skills/phase_zero/SKILL.md step 2.
+                                          # HONESTY NOTE (standing PM rule, not a technicality): NO SCHEDULED TASK EXISTS FOR ANY OF THIS. The keys below
+                                          # describe the cadence Phase 0 WOULD run at. Nothing here is wired to a live schedule; every run is started by hand.
+                                          # Do not read first_check_sgt/repeat_minutes as evidence that something is running unattended. It is not.
     first_check_sgt: '09:30'              # set by what the gate READS, not by habit: post-market runs 05:05 SGT and AQE's daily job finishes ~08:44 SGT, so on a normal morning both are on disk by 09:30
-    repeat_minutes: 30                    # fires repeatedly; tools/phase_gate.py claim is the exactly-once latch, so a repeat can never double-fire the build
+    repeat_minutes: 30                    # would fire repeatedly; tools/phase_gate.py claim is the exactly-once latch PER PHASE, so a repeat can never double-fire either half
     page_after_sgt: '12:00'               # still NOT_READY past this time = the retry budget is spent -> page the PM. 4h before the 16:00 plan deadline: room to kick AQE or re-run post-market by hand and still ship
-    fires: premarket_build                # what a READY verdict triggers. Firing on READY (not on a fixed 10:00 cron) means an early morning gets an early build; a late one retries instead of running on stale truth
-    fires_trigger_id: trig_01CNrP3NWF5EqNyyuRyViy2U   # the existing "Aegis premarket build (10:00 SGT weekdays)" scheduled task — Phase 0 fires THIS, it does not create a second build path
+    sequence: [premarket_data, premarket_build]   # D-91: the order Phase 0 walks. The data half is checked first; the build half only becomes checkable once the data half has stamped ok for today.
+    fires: premarket_build                # the TERMINAL target — what the whole gate exists to protect. Retained under its old name for readers/tools that keyed on it before the split.
+    fires_trigger_id: trig_01CNrP3NWF5EqNyyuRyViy2U   # D-91: the id RECORDED for the judgement half. The task behind it is NOT enabled. This is a recorded target, not a live wire.
+    fires_data_trigger_id: null           # D-91: the data half has no recorded id because no such task has ever been created. null is the honest value — a placeholder id here would read as "wired" to the next person. While it is null Phase 0 cannot fire the data half, and says so plainly instead of pretending.
 flag_condition:                  # D-57: RATIFIED replacement for the rudimentary sc_momentum>70. Builds the SOD quality WATCH SET; the live price then TRIGGERS (D-54). Everything except event_clear is a SCORE, never a gate (D-4/D-52 doctrine).
   hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
   score_factors:                 # weighted, not all-or-nothing

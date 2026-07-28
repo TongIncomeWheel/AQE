@@ -64,6 +64,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "cal
 import var_parametric  # noqa: E402 — reuse, do not reimplement the VaR model
 import historical_store  # noqa: E402 — reuse, single source for beta/vol (FMP-backed)
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from held_book_refresh import snapshot_get  # noqa: E402 — one reader for both snapshot vintages
+
 
 def build_positions(open_positions, beta_fn=None, stats_fn=None):
     """Split held positions into (usable, excluded_no_aqe_data, excluded_pending_review).
@@ -96,7 +99,12 @@ def build_positions(open_positions, beta_fn=None, stats_fn=None):
             "exposure_usd": qty * float(price or 0),
             "beta": beta_fn(ticker),
             "ann_vol_pct": st.get("ann_vol_pct"),
-            "sector": snap.get("sector") or "UNKNOWN",
+            # D-91: read through snapshot_get. The snapshot key is `gics_sector` (the name AQE
+            # actually uses); `sector` was the name this line asked for and no writer ever
+            # produced it, so every sector_concentration figure this module has ever emitted was
+            # 100% "UNKNOWN" — one bucket, concentration trivially maxed, gate meaningless.
+            # snapshot_get resolves either spelling so journals written before the fix still read.
+            "sector": snapshot_get(snap, "gics_sector") or "UNKNOWN",
             "as_of": p.get("aqe_snapshot_as_of"),
             "unmarked": unmarked,
         })

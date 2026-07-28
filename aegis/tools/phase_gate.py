@@ -18,6 +18,17 @@ TWO COMMANDS, TWO OWNERS
   post-market calls `stamp`  — "I finished, here is the session I journaled."
   Phase 0    calls `check`   — "is it safe to fire the expensive build yet?"
 
+WHICH PROCESS ARE YOU GATING? (`--for`, D-91)
+  Premarket is TWO processes with DIFFERENT prerequisites, so one gate answer for
+  both was wrong in a way that mattered:
+    --for premarket_data   the cheap data half. Needs post-market only. It is the
+                           process that FETCHES the export, so gating it on the
+                           export was a deadlock — nothing could ever fetch it.
+    --for premarket_build  the expensive judgement half. Needs post-market, today's
+                           export on disk, AND an ok premarket_data stamp for today.
+  The data half stamps itself with `stamp --phase premarket_data` exactly as
+  post-market does, and a `fail` stamp there BLOCKS the swarm rather than looping it.
+
 EXIT CODES (this is the whole interface — the Phase 0 scheduled task branches on it)
   0  READY      -> fire the premarket build
   1  NOT_READY  -> a thing that fixes itself with time (post-market hasn't run yet,
@@ -32,7 +43,8 @@ Deterministic (law 4). Reads only; writes only its own stamp file. Places nothin
 Usage:
   python3 tools/phase_gate.py stamp --phase post_market --status ok \\
         --journal-date 2026-07-27 [--note "..."]
-  python3 tools/phase_gate.py check [--date 2026-07-28] [--json]
+  python3 tools/phase_gate.py check --for premarket_data  [--date 2026-07-28] [--json]
+  python3 tools/phase_gate.py check --for premarket_build [--date 2026-07-28] [--json]
   python3 tools/phase_gate.py show
   python3 tools/phase_gate.py selftest
 """
@@ -136,9 +148,30 @@ def _export_ok(date, path):
     return True, edate, "%d names" % n
 
 
+# Which gates apply to which downstream phase (D-91). Premarket is two processes now — a cheap
+# data half and an expensive judgement half — and they do NOT have the same prerequisites.
+GATES_FOR = {
+    # The CHEAP half is the process that fetches the export. Requiring the export to already be
+    # on disk before firing it was a deadlock: the only session that downloads it is the one this
+    # gate refused to start. Nothing had ever fired it, so nothing had ever been noticed.
+    # Prerequisite is post-market alone.
+    "premarket_data": {"post_market": True, "export": False, "requires_stamp": None},
+    # The EXPENSIVE half runs only after the cheap half stamped ok. By then the export is on disk
+    # AND pushed, so checking it here is a real check rather than a circular one — and it is worth
+    # checking twice, because the expensive half runs in its OWN fresh checkout and a missing
+    # push would otherwise be discovered twelve agent spawns too late.
+    "premarket_build": {"post_market": True, "export": True, "requires_stamp": "premarket_data"},
+}
+
+
 def check(args):
     date = _today(args.date)
     export_path = args.export or EXPORT_PATH
+    target = getattr(args, "for_phase", None) or "premarket_data"
+    if target not in GATES_FOR:
+        raise SystemExit("unknown --for phase %r; expected one of %s"
+                         % (target, ", ".join(sorted(GATES_FOR))))
+    gates = GATES_FOR[target]
     doc = _load()
     pm = doc["phases"].get("post_market")
 
@@ -146,10 +179,13 @@ def check(args):
     verdict = READY
 
     # --- gate 1: post-market ran, and ran clean -------------------------------
-    if pm is None:
+    journal = (False, "not checked")
+    if not gates["post_market"]:
+        journal = (False, "not required for %s" % target)
+    elif pm is None:
         verdict = NOT_READY
         reasons.append("no post_market stamp on record — post-market has not run yet")
-        journal = (False, "not checked")
+        journal = (False, "no stamp")
     else:
         if pm.get("status") != "ok":
             verdict = BLOCKED
@@ -167,23 +203,52 @@ def check(args):
             # waiting fixes that.
             verdict = BLOCKED
             reasons.append(jnote)
-    if pm is None:
-        journal = (False, "no stamp")
+
+    # --- gate 2b: the upstream half of premarket has stamped ------------------
+    # Only the expensive half has an upstream half. Same grammar as post-market:
+    # absent-or-yesterday is transient (the cheap half is still to run today), an
+    # explicit failure is not (the cheap half tried and could not produce the data,
+    # so spinning up the swarm would be spending the expensive session on nothing).
+    need = gates["requires_stamp"]
+    upstream = doc["phases"].get(need) if need else None
+    if need:
+        if upstream is None:
+            verdict = max(verdict, NOT_READY)
+            reasons.append("no %s stamp on record — the cheap data half has not run yet" % need)
+        elif upstream.get("status") != "ok":
+            verdict = BLOCKED
+            reasons.append("%s stamped %s on %s: %s"
+                           % (need, upstream.get("status"), upstream.get("run_date"),
+                              upstream.get("note") or "no note"))
+        elif upstream.get("run_date") != date:
+            verdict = max(verdict, NOT_READY)
+            reasons.append("last %s run was %s, expected %s"
+                           % (need, upstream.get("run_date"), date))
 
     # --- gate 3: today's AQE export is published ------------------------------
-    eok, edate, enote = _export_ok(date, export_path)
-    if not eok:
-        # AQE is an external box on its own schedule; a late export is the normal
-        # transient case, never a hard block.
-        verdict = max(verdict, NOT_READY)
-        reasons.append(enote)
+    # Applied ONLY where it is a real check. For the cheap half it was a deadlock:
+    # that process is the one that FETCHES the export, so gating its start on the
+    # export already being on disk meant it could never start on a normal morning.
+    if gates["export"]:
+        eok, edate, enote = _export_ok(date, export_path)
+        if not eok:
+            # AQE is an external box on its own schedule; a late export is the normal
+            # transient case, never a hard block.
+            verdict = max(verdict, NOT_READY)
+            reasons.append(enote)
+    else:
+        eok, edate = None, None
+        enote = "not gated for %s — this is the process that fetches it" % target
 
     label = {READY: "READY", NOT_READY: "NOT_READY", BLOCKED: "BLOCKED"}[verdict]
     out = {
         "date": date,
+        "for": target,
         "verdict": label,
         "exit_code": verdict,
         "post_market": pm,
+        "upstream_phase": need,
+        "upstream": upstream,
         "journal_ok": journal[0],
         "journal": journal[1],
         "export_ok": eok,
@@ -191,15 +256,15 @@ def check(args):
         "export": enote,
         "reasons": reasons,
         "action": {
-            "READY": "fire the premarket build",
+            "READY": "fire %s" % target,
             "NOT_READY": "retry later within the self-heal budget; page only when it is spent",
-            "BLOCKED": "page the PM now — do not fire the build",
+            "BLOCKED": "page the PM now — do not fire %s" % target,
         }[label],
     }
     if args.json:
         print(json.dumps(out, indent=1))
     else:
-        print("PHASE GATE %s — %s" % (date, label))
+        print("PHASE GATE %s (for %s) — %s" % (date, target, label))
         for r in reasons:
             print("  - %s" % r)
         if not reasons:
@@ -258,12 +323,18 @@ def selftest(args):
     class A:
         pass
 
-    def run_check(date):
-        a = A(); a.date = date; a.json = True; a.export = export_path
+    def run_check(date, for_phase="premarket_build"):
+        a = A(); a.date = date; a.json = True; a.export = export_path; a.for_phase = for_phase
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             code = check(a)
         return code, json.loads(buf.getvalue())
+
+    def stamp_data(date, status="ok"):
+        s = A(); s.phase = "premarket_data"; s.status = status; s.date = date
+        s.journal_date = None; s.note = None; s.run_at = None
+        with contextlib.redirect_stdout(io.StringIO()):
+            stamp(s)
 
     # 1. nothing at all -> NOT_READY (post-market simply hasn't run)
     code, r = run_check("2026-07-28")
@@ -277,6 +348,8 @@ def selftest(args):
         stamp(s)
     code, r = run_check("2026-07-28")
     assert code == BLOCKED, "a failed post-market must BLOCK, not retry: %s" % r
+    code, r = run_check("2026-07-28", "premarket_data")
+    assert code == BLOCKED, "a failed post-market must block the cheap half too: %s" % r
 
     # 3. post-market ok but the journal it claims is missing -> BLOCKED
     s.status = "ok"; s.note = None
@@ -291,21 +364,57 @@ def selftest(args):
     code, r = run_check("2026-07-28")
     assert code == NOT_READY and r["journal_ok"], "missing export is transient: %s" % r
 
+    # 4b. THE DEADLOCK, broken (D-91). Same disk state, same moment — but the process being
+    # gated is the one that DOWNLOADS the export, so its own gate must not demand it first.
+    # Before this, every real morning sat at NOT_READY forever: nothing ever fetched the export
+    # because the only session that fetches it was refused a start for not having fetched it.
+    assert not os.path.exists(export_path), "precondition: no export on disk yet"
+    code, r = run_check("2026-07-28", "premarket_data")
+    assert code == READY, ("the cheap half must start with NO export on disk — it is the "
+                           "process that fetches it: %s" % r)
+    assert r["export_ok"] is None and "fetches it" in r["export"], r
+
+    # 4c. ...and the expensive half must NOT start there, on the same state.
+    code, r = run_check("2026-07-28")
+    assert code == NOT_READY, "the expensive half must still wait for the data: %s" % r
+
     # 5. export dated yesterday -> still NOT_READY (staleness is not freshness)
     with open(export_path, "w") as fh:
         json.dump({"date": "2026-07-27", "daily_list": [{"ticker": "AAA"}]}, fh)
     code, r = run_check("2026-07-28")
     assert code == NOT_READY and not r["export_ok"], "a stale export must not pass: %s" % r
 
-    # 6. everything current -> READY
+    # 6. export current — but the cheap half has not stamped, so the expensive half still waits.
+    # This is the second, independent gate: the two halves run in SEPARATE fresh checkouts, so an
+    # export sitting on this disk is not proof the data half finished and pushed.
     with open(export_path, "w") as fh:
         json.dump({"date": "2026-07-28", "daily_list": [{"ticker": "AAA"}]}, fh)
     code, r = run_check("2026-07-28")
+    assert code == NOT_READY, "no premarket_data stamp must hold the swarm back: %s" % r
+    assert any("cheap data half has not run" in x for x in r["reasons"]), r["reasons"]
+
+    # 6b. cheap half stamped ok, today -> READY
+    stamp_data("2026-07-28")
+    code, r = run_check("2026-07-28")
     assert code == READY and r["verdict"] == "READY", r
+
+    # 6c. cheap half stamped FAIL -> BLOCKED. It tried and could not produce the data; the
+    # expensive session would be spent on nothing.
+    stamp_data("2026-07-28", status="fail")
+    code, r = run_check("2026-07-28")
+    assert code == BLOCKED, "a failed data half must page, not retry the swarm: %s" % r
+    stamp_data("2026-07-28")
 
     # 7. yesterday's stamp against today -> NOT_READY (today's run is still pending)
     code, r = run_check("2026-07-29")
     assert code == NOT_READY, "a stamp from a previous day must not green-light today: %s" % r
+
+    # 7b. an unknown --for is a hard stop, never a silent default to the permissive gate
+    try:
+        run_check("2026-07-28", "premarket_everything")
+        raise AssertionError("an unknown phase must not be accepted")
+    except SystemExit:
+        pass
 
     # 8. the claim latch: first firing of the day wins, every later one loses
     def run_claim(date, release=False):
@@ -327,7 +436,9 @@ def selftest(args):
 
     print("phase_gate selftest OK — no stamp/stale stamp = NOT_READY (retry), "
           "failed post-market or missing journal = BLOCKED (page), late or stale export = NOT_READY, "
-          "all current = READY.")
+          "all current = READY; and the two premarket halves gate DIFFERENTLY — the cheap data "
+          "half starts with no export on disk (deadlock broken), the expensive half waits for "
+          "both the export and the data half's ok stamp.")
     return 0
 
 
@@ -344,9 +455,14 @@ def main():
     p1.add_argument("--run-at", dest="run_at")
     p1.set_defaults(fn=stamp)
 
-    p2 = sub.add_parser("check", help="Phase 0's gate: is it safe to fire the premarket build?")
+    p2 = sub.add_parser("check", help="Phase 0's gate: is it safe to fire the next process?")
     p2.add_argument("--date")
     p2.add_argument("--export")
+    p2.add_argument("--for", dest="for_phase", default="premarket_data",
+                    choices=sorted(GATES_FOR),
+                    help="which downstream process you are about to fire — the gates differ "
+                         "(premarket_data fetches the export, so it is NOT gated on it; "
+                         "premarket_build is gated on both the export and a premarket_data stamp)")
     p2.add_argument("--json", action="store_true")
     p2.set_defaults(fn=check)
 
