@@ -10,3 +10,7 @@ dist/
 # Python scratch
 __pycache__/
 *.pyc
+# Rehearsal output (run_post_market.sh --rehearsal). A dry run's artefacts are scratch by
+# definition — they must never reach the book of record, and a rehearsal must never mutate
+# the live shelf. The script redirects them here; this line keeps them out of the repo.
+data/eod/*/rehearsal/
