@@ -171,12 +171,28 @@ def persist(args):
     origin_date = cm.get("date") or date
 
     doc = load()
-    filed, extended, rejected, skipped = [], [], [], []
+    filed, extended, rejected, skipped, closed = [], [], [], [], []
 
     for v in cm.get("verdicts", []) or []:
         ticker = str(v.get("ticker", "")).upper()
         if not ticker:
             continue
+
+        # LIFECYCLE CLOSE, checked before anything else: a name the committee
+        # ADVANCED today has graduated out of the pipeline into the plan. If it was
+        # carrying an active row, close it now — otherwise the same idea sits in two
+        # places at once (live in the plan, still "watched" in the ledger) until its
+        # TTL quietly expires, which is exactly how a tracking store rots.
+        if v.get("verdict") == "ADVANCE":
+            ex = _row(doc, ticker)
+            if ex and ex.get("status") == "active":
+                ex["status"] = "closed"
+                ex["closed_on"] = date
+                ex["closed_reason"] = "advanced into the plan"
+                ex["last_seen"] = date
+                _log(ex, date, "closed", "committee ADVANCED it — now a plan line, not a pipeline idea")
+                closed.append(ticker)
+
         prop = v.get("ledger_proposal")
         if prop is None:
             continue                                   # the default: not proposed, dropped
@@ -257,6 +273,7 @@ def persist(args):
     out = {
         "date": date, "committee": args.committee, "session": args.session,
         "filed": filed, "extended": extended, "rejected": rejected,
+        "closed_advanced": closed,
         "not_proposed": skipped, "overflow_expired": overflow,
         "active_rows": len([r for r in doc["rows"] if r.get("status") == "active"]),
     }
@@ -474,7 +491,33 @@ def selftest(args):
     sres3 = json.loads(buf.getvalue())
     assert "AAA" in sres3["expired"], "TTL must expire a stale row: %s" % sres3
 
-    print("pipeline_ledger selftest OK — proposals filed only when the committee asked, "
+    # graduation: a parked name the committee later ADVANCES must be CLOSED, not left
+    # sitting active while it also trades in the plan.
+    grad_file = {"date": "2026-09-30", "verdicts": [
+        {"ticker": "FFF", "verdict": "HOLD-FOR-CONDITIONS", "conviction": 4, "nominators": ["wyckoff"],
+         "bear_case": "x", "dissent": [],
+         "ledger_proposal": {"propose": True, "classification": "daily_reconsider",
+                             "reason": "wants one more day"}}]}
+    gpath = os.path.join(tmp, "grad.json")
+    with open(gpath, "w") as fh:
+        json.dump(grad_file, fh)
+    g = A(); g.committee = gpath; g.date = "2026-09-30"; g.session = "premarket_committee"
+    with contextlib.redirect_stdout(io.StringIO()):
+        persist(g)
+    assert _row(load(), "FFF")["status"] == "active"
+    grad_file["verdicts"][0] = {"ticker": "FFF", "verdict": "ADVANCE", "conviction": 5,
+                                "nominators": ["wyckoff"], "bear_case": "x", "dissent": []}
+    with open(gpath, "w") as fh:
+        json.dump(grad_file, fh)
+    g2 = A(); g2.committee = gpath; g2.date = "2026-10-01"; g2.session = "premarket_committee"
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        persist(g2)
+    gres = json.loads(buf.getvalue())
+    assert gres["closed_advanced"] == ["FFF"], "an ADVANCED name must close its pipeline row: %s" % gres
+    assert _row(load(), "FFF")["status"] == "closed", "row must be closed, not left active"
+
+    print("pipeline_ledger selftest OK — an ADVANCED name closes its row (no double-tracking), "
           "trigger_silent without a trigger rejected, ADVANCE rejected, re-persist idempotent, "
           "missing fields never fire, TTL expires.")
     return 0

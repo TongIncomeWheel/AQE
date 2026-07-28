@@ -13,8 +13,14 @@ WHAT THIS IS (the locked D-82 design):
     List C = up to 10 ideas per committee voice  = the EXISTING voice nominations
              (data/sod/DATE/nominations/<voice>.json). READ-ONLY reuse — these
              already feed committee and MUST remain completely intact.
+    List P = the Pipeline Ledger's active `trigger_silent` rows (D-83) = names a
+             previous committee PARKED on a stated condition. READ-ONLY reuse of
+             data/persistent/pipeline_ledger.json. A parked name is not in today's
+             plan and usually not strong enough for A/B, so without List P its
+             condition could only be noticed by post-market's end-of-day sweep — a
+             full session late. Each P entry carries its trigger and case snapshot.
 
-  The amalgam A u B u C is the daily alert longlist.
+  The amalgam A u B u C u P is the daily alert longlist.
 
 ANTI-SPAGHETTI (handoff/08 doctrine): this REUSES existing outputs. It does NOT
 re-screen FMP, does NOT re-implement the 8-lane casting mat, does NOT re-run the
@@ -48,6 +54,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import alert_universe  # noqa: E402  — List A source (the EXISTING casting mat). REUSE, do not reimplement.
 
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _PARAMS_PATH = os.path.join(os.path.dirname(__file__), "..", "charter", "parameters.yaml")
 
 # Fallback defaults (mirror charter/parameters.yaml -> alert_list.*). parameters.yaml wins.
@@ -175,6 +182,39 @@ def list_c(nominations_dir, per_voice=10):
     return amalgam, per_voice_raw
 
 
+def list_p(ledger_path=None):
+    """List P = the Pipeline Ledger's PARKED names (D-83) — active `trigger_silent`
+    rows the committee asked to keep alive until a stated condition fires.
+
+    Why they belong on the alert list at all: a parked name is by definition NOT in
+    today's plan and usually not strong enough to make List A/B, so without this it
+    would be invisible intraday and its condition could only ever be noticed by
+    post-market's end-of-day sweep — a full session late. Membership here is what
+    lets the market-hours sweep see it move in real time.
+
+    READ-ONLY: never writes the ledger. An absent store is an empty list, not an
+    error (a normal state before the first proposal). Rows carry their own trigger
+    so the market-hours sweep can evaluate the condition, not just the bracket."""
+    path = ledger_path or os.environ.get(
+        "AEGIS_PIPELINE_LEDGER", os.path.join(ROOT, "data", "persistent", "pipeline_ledger.json"))
+    try:
+        doc = json.load(open(path))
+    except Exception:
+        return []
+    rows = []
+    for r in doc.get("rows", []) or []:
+        if r.get("status") != "active" or r.get("classification") != "trigger_silent":
+            continue
+        t = str(r.get("ticker", "")).upper()
+        if not t:
+            continue
+        rows.append({"ticker": t, "trigger": r.get("trigger"),
+                     "case_snapshot": r.get("case_snapshot"),
+                     "origin_date": r.get("origin_date")})
+    rows.sort(key=lambda r: r["ticker"])
+    return rows
+
+
 # --------------------------------------------------------------------------- amalgamate
 def _bracket_for(rec, breakout_pct):
     """Pull the alert bracket from the export record's `bracket`.
@@ -193,15 +233,16 @@ def _bracket_for(rec, breakout_pct):
     return bracket_out, breakout_level
 
 
-def amalgamate(a_rows, b_rows, c_rows, export_index, breakout_pct=2.0):
-    """Union A u B u C by ticker. Each entry:
-      {ticker, categories:[subset of A/B/C], why:{...for whichever fired},
+def amalgamate(a_rows, b_rows, c_rows, export_index, breakout_pct=2.0, p_rows=None):
+    """Union A u B u C u P by ticker. Each entry:
+      {ticker, categories:[subset of A/B/C/P], why:{...for whichever fired},
        bracket:{entry, stop, targets, prior_cob}, breakout_level, sc_momentum}
     NO PTRS / subscores in the alert-list entry."""
     a_by = {r["ticker"]: r for r in a_rows}
     b_by = {r["ticker"]: r for r in b_rows}
     c_by = {r["ticker"]: r for r in c_rows}
-    tickers = set(a_by) | set(b_by) | set(c_by)
+    p_by = {r["ticker"]: r for r in (p_rows or [])}
+    tickers = set(a_by) | set(b_by) | set(c_by) | set(p_by)
 
     entries = []
     for t in tickers:
@@ -216,6 +257,11 @@ def amalgamate(a_rows, b_rows, c_rows, export_index, breakout_pct=2.0):
         if t in c_by:
             cats.append("C")
             why["C"] = "%s conv%s" % (",".join(c_by[t]["voices"]), c_by[t]["max_conviction"])
+        if t in p_by:
+            cats.append("P")
+            tg = p_by[t].get("trigger") or {}
+            why["P"] = "parked %s — fires on %s %s %s" % (
+                p_by[t].get("origin_date"), tg.get("field"), tg.get("op"), tg.get("value"))
 
         rec = export_index.get(t, {})
         bracket_out, breakout_level = _bracket_for(rec, breakout_pct)
@@ -223,14 +269,22 @@ def amalgamate(a_rows, b_rows, c_rows, export_index, breakout_pct=2.0):
         if scm is None and t in a_by:
             scm = a_by[t].get("sc_momentum")
 
-        entries.append({
+        entry = {
             "ticker": t,
             "categories": cats,
             "why": why,
             "bracket": bracket_out,
             "breakout_level": breakout_level,
             "sc_momentum": scm,
-        })
+        }
+        # A parked name carries its condition and its case so the market-hours sweep
+        # can check the actual trigger, not just the bracket, and so the pod that
+        # wakes on it sees the case the committee made when it parked the name.
+        if t in p_by:
+            entry["pipeline"] = {"trigger": p_by[t].get("trigger"),
+                                 "case_snapshot": p_by[t].get("case_snapshot"),
+                                 "origin_date": p_by[t].get("origin_date")}
+        entries.append(entry)
 
     # deterministic: multi-list first, then momentum, then ticker
     entries.sort(key=lambda e: (-len(e["categories"]), -_num(e["sc_momentum"], -1), e["ticker"]))
@@ -239,7 +293,7 @@ def amalgamate(a_rows, b_rows, c_rows, export_index, breakout_pct=2.0):
 
 # --------------------------------------------------------------------------- build
 def build(export_path, nominations_dir, out=None, review_out=None, params=None,
-          event_blocked=None):
+          event_blocked=None, ledger_path=None):
     """Load the export + nominations, fork the three lists, amalgamate, and write BOTH
     artifacts. Returns the alert_list dict. DATE is reused from the export."""
     p = dict(load_params())
@@ -254,9 +308,10 @@ def build(export_path, nominations_dir, out=None, review_out=None, params=None,
     a_rows = list_a(export_path, top=int(p["list_a_top"]), event_blocked=event_blocked)
     b_rows, elder_field_used = list_b(daily_list, top=int(p["list_b_elder_top"]))
     c_rows, per_voice_raw = list_c(nominations_dir, per_voice=int(p["list_c_per_voice"]))
+    p_rows = list_p(ledger_path)
 
     entries = amalgamate(a_rows, b_rows, c_rows, export_index,
-                         breakout_pct=float(p["breakout_pct"]))
+                         breakout_pct=float(p["breakout_pct"]), p_rows=p_rows)
 
     # Event filter is GLOBAL (D-11): an event-driven name is struck from the ENTIRE alert
     # list, not just List A. List A (casting mat) already excludes event_blocked, but a
@@ -276,10 +331,11 @@ def build(export_path, nominations_dir, out=None, review_out=None, params=None,
             "nominations_dir": nominations_dir,
             "recipe": {"A": "casting_mat top %d (tools/alert_universe.py)" % int(p["list_a_top"]),
                        "B": "strongest 5d elder top %d" % int(p["list_b_elder_top"]),
-                       "C": "voice nominations, up to %d/voice (read-only)" % int(p["list_c_per_voice"])},
+                       "C": "voice nominations, up to %d/voice (read-only)" % int(p["list_c_per_voice"]),
+                       "P": "pipeline ledger active trigger_silent rows (read-only, D-83)"},
             "cadence_min": int(p["intraday_cadence_min"]),
         },
-        "counts": {"A": len(a_rows), "B": len(b_rows), "C": len(c_rows),
+        "counts": {"A": len(a_rows), "B": len(b_rows), "C": len(c_rows), "P": len(p_rows),
                    "total_unique": len(entries), "struck_event": len(struck)},
         "entries": entries,
         "struck_event": struck,
@@ -392,7 +448,37 @@ def _selftest():
     b_ranks = {e["ticker"]: e for e in doc["entries"]}
     assert b_ranks["CCC"]["why"]["B"].startswith("elder 10.0 (rank 1)"), b_ranks["CCC"]["why"]
 
+
+    # --- List P (D-83): an active trigger_silent row joins the alert list, carrying its
+    # condition and case; a fired/expired/closed row or a daily_reconsider row does NOT.
+    import tempfile as _tf
+    _t = _tf.mkdtemp()
+    _lp = os.path.join(_t, "pipeline_ledger.json")
+    json.dump({"rows": [
+        {"ticker": "PPP", "status": "active", "classification": "trigger_silent",
+         "trigger": {"field": "sc_momentum", "op": ">=", "value": 75},
+         "case_snapshot": "spring held; wants momentum", "origin_date": "2026-07-20"},
+        {"ticker": "QQQ", "status": "active", "classification": "daily_reconsider",
+         "trigger": None, "case_snapshot": "base intact", "origin_date": "2026-07-20"},
+        {"ticker": "RRR", "status": "expired", "classification": "trigger_silent",
+         "trigger": {"field": "sc_momentum", "op": ">=", "value": 90},
+         "case_snapshot": "stale", "origin_date": "2026-06-01"},
+    ]}, open(_lp, "w"))
+    prows = list_p(_lp)
+    assert [r["ticker"] for r in prows] == ["PPP"], (
+        "only ACTIVE trigger_silent rows join List P: %s" % prows)
+    assert list_p(os.path.join(_t, "nope.json")) == [], "an absent ledger is an empty List P, not an error"
+    pdoc = build(export_path, noms_dir, out=os.path.join(_t, "alert_list.json"), ledger_path=_lp)
+    pents = {e["ticker"]: e for e in pdoc["entries"]}
+    assert pdoc["counts"]["P"] == 1, pdoc["counts"]
+    assert "P" in pents["PPP"]["categories"] and pents["PPP"]["pipeline"]["trigger"]["value"] == 75
+    assert pents["PPP"]["pipeline"]["case_snapshot"] == "spring held; wants momentum"
+    assert "QQQ" not in pents and "RRR" not in pents
+    # a name already on A/B/C that is ALSO parked gains P, it does not duplicate
+    assert len([e for e in pdoc["entries"] if e["ticker"] == "PPP"]) == 1
+
     print("alert_list.py selftest: PASS  (A/B/C populate; AAA multi-category A+B+C; "
+          "List P takes active trigger_silent rows only and carries the trigger+case; "
           "elder fallback on null elder_5d; bracket+breakout_level present; review store per-voice)")
 
 
@@ -406,6 +492,8 @@ def main(argv=None):
                                  "review lands beside it when set")
     b.add_argument("--review-out", help="override the premarket_review.json path")
     b.add_argument("--event-blocked", default="")
+    b.add_argument("--ledger", help="pipeline_ledger.json path for List P "
+                                   "(default data/persistent/pipeline_ledger.json)")
     sub.add_parser("selftest")
     a = ap.parse_args(argv)
     if a.cmd == "selftest":
@@ -413,7 +501,7 @@ def main(argv=None):
         return
     blocked = [t.strip().upper() for t in a.event_blocked.split(",") if t.strip()]
     doc = build(a.export, a.nominations_dir, out=a.out, review_out=a.review_out,
-                event_blocked=blocked or None)
+                event_blocked=blocked or None, ledger_path=a.ledger)
     summary = {"date": doc["date"], "counts": doc["counts"],
                "elder_field_used": doc["elder_field_used"], "written": doc["_written"]}
     print(json.dumps(summary, indent=1))
