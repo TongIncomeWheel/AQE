@@ -121,10 +121,11 @@ schedule:
   market_watch_sweep_minutes: 30            # D-82 (was 15): session sweep cadence over the inbox; pod runs only on pre-filtered survivors (cheap)
   market_watch_triggers: [breakout, stop_hit_or_approaching, approaching_buy]
   phase_zero:                             # D-83: the cheap dependency gate that fires the expensive premarket build. Its OWN scheduled task, deliberately tiny (two file reads, no models, no swarm).
-    first_check_sgt: '13:00'              # first firing — comfortably after post-market's 04:00-10:00 window and AQE's daily export
+    first_check_sgt: '09:30'              # set by what the gate READS, not by habit: post-market runs 05:05 SGT and AQE's daily job finishes ~08:44 SGT, so on a normal morning both are on disk by 09:30
     repeat_minutes: 30                    # fires repeatedly; tools/phase_gate.py claim is the exactly-once latch, so a repeat can never double-fire the build
-    page_after_sgt: '14:30'               # still NOT_READY past this time = the retry budget is spent -> page the PM (the plan is due 16:00; this leaves room to fix it)
-    fires: premarket_build                # what a READY verdict triggers
+    page_after_sgt: '12:00'               # still NOT_READY past this time = the retry budget is spent -> page the PM. 4h before the 16:00 plan deadline: room to kick AQE or re-run post-market by hand and still ship
+    fires: premarket_build                # what a READY verdict triggers. Firing on READY (not on a fixed 10:00 cron) means an early morning gets an early build; a late one retries instead of running on stale truth
+    fires_trigger_id: trig_01CNrP3NWF5EqNyyuRyViy2U   # the existing "Aegis premarket build (10:00 SGT weekdays)" scheduled task — Phase 0 fires THIS, it does not create a second build path
 flag_condition:                  # D-57: RATIFIED replacement for the rudimentary sc_momentum>70. Builds the SOD quality WATCH SET; the live price then TRIGGERS (D-54). Everything except event_clear is a SCORE, never a gate (D-4/D-52 doctrine).
   hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
   score_factors:                 # weighted, not all-or-nothing
