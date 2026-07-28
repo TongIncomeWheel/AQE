@@ -11,19 +11,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 class TestCosts:
     def test_entry_fill_slips_up(self):
-        from src.backtest.costs import entry_fill
+        from src.research.backtest.costs import entry_fill
         fill, comm = entry_fill(100.0, 100)
         assert fill == pytest.approx(100.10, abs=0.01)
         assert comm == pytest.approx(0.50, abs=0.01)
 
     def test_exit_fill_slips_down(self):
-        from src.backtest.costs import exit_fill
+        from src.research.backtest.costs import exit_fill
         fill, comm = exit_fill(100.0, 100)
         assert fill == pytest.approx(99.90, abs=0.01)
         assert comm == pytest.approx(0.50, abs=0.01)
 
     def test_round_trip_cost(self):
-        from src.backtest.costs import round_trip_cost
+        from src.research.backtest.costs import round_trip_cost
         cost = round_trip_cost(100.0, 105.0, 100)
         assert cost > 0
         # Slippage both sides + commission both sides
@@ -33,7 +33,7 @@ class TestCosts:
 
 class TestSizing:
     def test_full_position(self):
-        from src.backtest.sizing import compute_position_size
+        from src.research.backtest.sizing import compute_position_size
         result = compute_position_size(
             equity=100_000, entry_price=50.0,
             risk_per_share=2.0, disposition="FULL"
@@ -43,7 +43,7 @@ class TestSizing:
         assert result["dollar_risk"] == pytest.approx(3000.0)
 
     def test_half_position(self):
-        from src.backtest.sizing import compute_position_size
+        from src.research.backtest.sizing import compute_position_size
         result = compute_position_size(
             equity=100_000, entry_price=50.0,
             risk_per_share=2.0, disposition="HALF"
@@ -52,7 +52,7 @@ class TestSizing:
         assert result["shares"] == 750
 
     def test_quarter_position(self):
-        from src.backtest.sizing import compute_position_size
+        from src.research.backtest.sizing import compute_position_size
         result = compute_position_size(
             equity=100_000, entry_price=50.0,
             risk_per_share=2.0, disposition="QUARTER"
@@ -61,7 +61,7 @@ class TestSizing:
         assert result["shares"] == 375
 
     def test_reject_gives_zero(self):
-        from src.backtest.sizing import compute_position_size
+        from src.research.backtest.sizing import compute_position_size
         result = compute_position_size(
             equity=100_000, entry_price=50.0,
             risk_per_share=2.0, disposition="REJECT"
@@ -69,7 +69,7 @@ class TestSizing:
         assert result["shares"] == 0
 
     def test_zero_risk_per_share(self):
-        from src.backtest.sizing import compute_position_size
+        from src.research.backtest.sizing import compute_position_size
         result = compute_position_size(
             equity=100_000, entry_price=50.0,
             risk_per_share=0.0, disposition="FULL"
@@ -79,7 +79,7 @@ class TestSizing:
 
 class TestTripleBarrier:
     def test_upper_barrier_hit(self):
-        from src.backtest.portfolio_sim import triple_barrier_label
+        from src.research.backtest.portfolio_sim import triple_barrier_label
         # Price gaps up immediately
         highs = np.array([110.0, 115.0])
         lows = np.array([99.0, 100.0])
@@ -91,7 +91,7 @@ class TestTripleBarrier:
         assert result["bars"] == 1
 
     def test_lower_barrier_hit(self):
-        from src.backtest.portfolio_sim import triple_barrier_label
+        from src.research.backtest.portfolio_sim import triple_barrier_label
         # Price drops
         highs = np.array([101.0, 100.0])
         lows = np.array([96.0, 95.0])
@@ -103,7 +103,7 @@ class TestTripleBarrier:
         assert result["bars"] == 1
 
     def test_vertical_barrier(self):
-        from src.backtest.portfolio_sim import triple_barrier_label
+        from src.research.backtest.portfolio_sim import triple_barrier_label
         # Price stays flat
         highs = np.array([101.0] * 25)
         lows = np.array([99.0] * 25)
@@ -117,7 +117,7 @@ class TestTripleBarrier:
 
 class TestMonteCarlo:
     def test_basic_distribution(self):
-        from src.backtest.portfolio_sim import monte_carlo_equity
+        from src.research.backtest.portfolio_sim import monte_carlo_equity
         np.random.seed(42)
         pnls = [100.0] * 10 + [-50.0] * 5  # 10 wins, 5 losses
         result = monte_carlo_equity(pnls, 100_000, n_simulations=500)
@@ -126,6 +126,6 @@ class TestMonteCarlo:
         assert result["p5_return_pct"] <= result["median_return_pct"]
 
     def test_empty_trades(self):
-        from src.backtest.portfolio_sim import monte_carlo_equity
+        from src.research.backtest.portfolio_sim import monte_carlo_equity
         result = monte_carlo_equity([], 100_000)
         assert result["median_return_pct"] == 0.0

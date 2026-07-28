@@ -806,7 +806,7 @@ def test_capacity_check():
 
 def test_walkforward_windows():
     """Walk-forward analysis returns valid windows on synthetic outcomes."""
-    from src.calibration.walkforward import walk_forward_analysis, format_walkforward, WFWindow
+    from src.research.calibration.walkforward import walk_forward_analysis, format_walkforward, WFWindow
     rng = np.random.default_rng(42)
     n = 2000
     dates = pd.bdate_range("2020-01-02", periods=n)
@@ -832,7 +832,7 @@ def test_walkforward_windows():
 
 def test_walkforward_empty():
     """Walk-forward on empty data returns empty list."""
-    from src.calibration.walkforward import walk_forward_analysis
+    from src.research.calibration.walkforward import walk_forward_analysis
     result = walk_forward_analysis(pd.DataFrame(), r_column="dsl_r_realized")
     assert result == []
 
@@ -852,7 +852,7 @@ def test_pipeline_rank_basic():
 
 def test_bc_layer():
     """Backtest Confidence layer scores and classifies correctly."""
-    from src.backtest.confidence import (
+    from src.research.backtest.confidence import (
         compute_bc_score, bc_modifier, classify_composite_band,
         build_profile_signature, match_outcomes, BCResult,
     )
@@ -978,7 +978,7 @@ def test_sqlite_roundtrip(tmp_path):
 
 def test_pbo_and_purged_kfold():
     """PBO detects overfitting in random data; purged K-fold runs cleanly."""
-    from src.calibration.validation import (
+    from src.research.calibration.validation import (
         probability_of_backtest_overfitting,
         purged_kfold_cv,
         deflated_sharpe_ratio,
@@ -1018,7 +1018,7 @@ def test_pbo_and_purged_kfold():
 
 def test_triple_barrier():
     """Triple barrier labeling: UPPER hit, LOWER hit, VERTICAL expiry."""
-    from src.backtest.labels import apply_triple_barrier, batch_triple_barrier
+    from src.research.backtest.labels import apply_triple_barrier, batch_triple_barrier
 
     # --- Single trade: hits profit target (UPPER) ---
     entry = 100.0
@@ -1090,7 +1090,7 @@ def test_triple_barrier():
 
 def test_correlation_stress():
     """Correlated loss stress test produces valid output on synthetic trades."""
-    from src.backtest.correlation_stress import (
+    from src.research.backtest.correlation_stress import (
         run_correlation_stress, format_stress_report, stress_to_dict, StressResult,
     )
     import json as _json

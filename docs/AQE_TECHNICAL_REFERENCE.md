@@ -1,31 +1,181 @@
-# AQE Field Glossary — Methodology & Math
+# AQE Technical Reference — What It Delivers & How Every Field Is Calculated
 
-**Purpose:** every field AQE calculates per ticker, with the exact formula/threshold
-behind it and a plain-English read. This is the reference for verifying a number by
-hand, not just knowing what it's called. Source-cited (`file.py:line`) throughout so
-any figure can be spot-checked against the live code.
+**The one canonical technical doc for AQE.** Part I describes the daily deliverable —
+the pipeline, the export's shape, who reads it, and the data-integrity guarantees.
+Part II is the per-field calculation methodology — every formula/threshold AQE
+computes, cited to source (`file.py:line`) so any number can be spot-checked against
+the live code. (Supersedes the former separate `AQE_FIELD_GLOSSARY.md` and
+`AQE_DAILY_DELIVERABLE.md` — merged 2026-07-27 into this single reference.)
 
-**Scope:** this covers calculation methodology. For what ships on which export tier
-(longlist/elder_list/held) and field-count housekeeping, see `AQE_DATA_SCHEMATIC.md`.
-For the machine-readable role/unit/side schema the AIC keys off structurally, see
-`field_schema`/`field_schema_enums`/`field_glossary` inside the export itself
-(`src/data/drive_sync.py`) — this document is the prose companion with the math added.
+For per-tier field-count housekeeping (which fields ship on longlist vs elder_list vs
+held), see `AQE_DATA_SCHEMATIC.md`. For what changed and when, see the weekly
+changelog docs. For the machine-readable role/unit/side schema the AIC keys off
+structurally at runtime, see `field_schema`/`field_schema_enums`/`field_glossary`
+inside the export itself (`src/data/drive_sync.py`) — Part II below is the prose
+companion to that, with the math added.
 
-**Convention** (unchanged from the export's own `_convention` note): LONG setups —
-stops sit BELOW entry, targets sit ABOVE entry. Values are absolute USD unless the
-name ends `_rr`/`_ratio`/`_pct`/`_ann` (ratios), or is a nested list/object. `1R` =
+**Convention** (matches the export's own `_convention` note): LONG setups — stops sit
+BELOW entry, targets sit ABOVE entry. Values are absolute USD unless the name ends
+`_rr`/`_ratio`/`_pct`/`_ann` (ratios), or is a nested list/object. `1R` =
 `bracket.risk` = `price − bracket.stop`.
 
-**Decision framework** — AQE reads the trade lifecycle in three stages that must not
-be conflated:
-1. **DETECT** — is a move brewing? (Signal Radar: `runner_setup`/`premove_setup`).
-   Detection tags, not entries.
-2. **ENTER** — is it time to buy, and where? (the bracket + live alert levels).
-3. **HOLD** — should an open position stay on? (`hl_score`/`hl_state`, held-only).
+---
 
-AQE makes no decision at any stage — it supplies data and levels; the PM/AIC decides.
+# Part I — The Daily Deliverable
+
+## 1. What AQE is
+
+A production daily scanner for ~600+ US equities. Every trading night it pulls fresh
+price data, runs five proprietary engines plus a Stage-1 screen and two composite
+scores, grades sector rotation, reads the macro tape, and produces one self-describing
+JSON — the single artifact the PM/AIC committee reads to run the book. AQE computes
+data and levels. **It does not decide, size, or gate a trade** — that judgment stays
+with the committee.
+
+## 2. The daily pipeline (`src/pipeline/daily_orchestrator.py`)
+
+Runs on two independent schedules that never overlap, sharing state via Drive so the
+second never contradicts the first:
+
+| Trigger | When (SGT) | What |
+|---|---|---|
+| In-app scheduler (HF Space) | 08:30, Tue–Sat | Primary run |
+| GitHub Actions backstop | 09:30, Tue–Sat | Runs only if the Space hasn't already run today (catches a sleeping/restarted container) |
+| Universe options theta scan | 05:30, Tue–Sat | Separate job, ~1h after US close — never contends with the 08:30 run |
+| MA proximity scan | Daily | Decoupled from the pipeline's critical path |
+
+**Steps, in order:**
+1. **PTJ pull** — the day's held-positions journal from Drive (dated `aegis_trade_journal_YYYY-MM-DD_PTJ.json`; the separate `ARCHIVE_master.json` running summary is explicitly excluded from selection).
+2. **Incremental price pull** — daily bars for the fixed, manually-curated universe (+ GICS sector ETFs, thematic-basket constituents, and every currently-held ticker, even ones outside the curated universe).
+3. **Earnings calendar refresh.**
+4. **Score-cache refresh** — keeps `scores_daily.parquet` current with the panel.
+5. **Pipeline Rank screen** — Stage-1 filter over the full universe (`pipe_rank ≥ 60` advances); held names are force-added regardless of rank so Health can always be computed for an open position.
+6. **Full scoring** — Flow/Energy/Structure/MP/Elder/BQ/K39 + SC_MOMENTUM/SC_POSITION composites for every advancing + held ticker.
+7. **SRM sector grading** — 11 GICS sectors + RRG + macro overlay + 35 thematic baskets.
+8. **Regime detection** — VIX bucket + Hurst exponent (SPY).
+9. **PTRS + disposition** per candidate.
+10. **Recipe screens** — longlist, near-miss watchlist, Precision Edge.
+11. **Output + Drive export** — the JSON described below, published and schema-validated before it ships.
+12. **Daily-persist snapshot** — zips the day's parquets/outputs to Drive so a container restart restores state in seconds instead of a full re-pull.
+
+## 3. The artifact: `aqe_daily_export.json`
+
+One file, overwritten each run (no date-stamped clutter), written to `output/`
+locally and to a single pinned Drive folder. This is the file the committee reads.
+
+### Top-level shape
+
+| Key | What it is |
+|---|---|
+| `date`, `exported_at`, `market` | Run identity — SGT timestamp, since the desk is Singapore-based reading a US close-of-day scan |
+| `regime` | VIX bucket + Hurst regime (TRENDING/MEAN_REVERT/RANDOM) + plain-English implication |
+| `intermarket` | Raw COB numbers only (UUP/TLT/HYG, SPY-IWM spread) — **no assessment**, the committee interprets |
+| `srm` | All 11 GICS sectors graded (DEPLOY→AVOID) + RRG quadrant/direction + macro headwind + combined entry gate |
+| `srm_signals` | The same grades bucketed into deploy/hold/turning/watch/avoid/blocked ETF lists |
+| `macro_weather` | TLT/UUP/HYG/IWM/GLD/CPER/USO direction reads + the copper/gold reflation tell |
+| `thematic_baskets` | 35 thematic baskets (Mag7, AI Infra, Semiconductors, …), each graded and capped at its parent GICS sector — context only, never adds scan names |
+| `daily_list` | **Part 2 of the AIC read** — every scored ticker, full field set (see §4) |
+| `lens_ranking` | **Part 1 of the AIC read** — every scored name ordered by lens agreement (see §5) |
+| `held_positions` | The PM's actual open book (from PTJ) merged with AQE's current engine read on each name |
+| `held_book` | Portfolio Hedge Layer — beta-adjusted book exposure, gap-loss scenarios, sector weights |
+| `held_positions_status` | `live` / `cache_fallback` / `unknown` — was this run's held-book read a genuine fresh pull? |
+| `signal_radar`, `_radar_pool` | Detection-rate tags (runner/premove) across the full scored universe |
+| `summary` | Headline counts — daily/longlist/elder/ledger/held, + `data_quality.flagged_count` |
+| `data_quality` | Records with a null core field despite being scored — visible, never silent |
+| `field_schema`, `field_schema_enums`, `field_glossary` | The export is **self-describing**: every field's role/unit/side + a prose one-liner, shipped in the same file |
+| `regime_stop_pct_ceiling`, `spy_roc_20d`, `sector_map_version`, `sector_map_gaps` | Supporting context/versioning |
+
+### `daily_list` — what's on every row
+
+Roughly 60 fields per ticker, grouped:
+- **Identity + rank**: ticker, rank, source, PE flag, sector.
+- **Composite scores**: `sc_momentum`, `ptrs`, `pipe_rank`, and the five engine reads (Flow/Energy/Structure/MP/Elder) plus BQ/K39 where relevant, with per-engine **gate breakdown** (which specific floor a name is failing, not just pass/fail).
+- **`subcomponents`** — the ~46 nightly sub-scores behind the six engine reads, so the committee sees *why* an engine scored what it did.
+- **THE BRACKET** — one nested object: the operative stop (tightest structural level passing all 3 charter gates), the target ladder, R:R, volume-validated levels. Single source of truth for stop/targets; mechanical DSL/TP fields are retired.
+- **DETECT layer** — `structure_shift` (BOS/CHoCH), `div_state` (price/oscillator divergence), `pin_bar_state`/`inside_bar`, `choch_state` + kNN instance-based confidence, `mp_accel` (momentum acceleration). Data only, never a gate.
+- **`lens`, `lens_positive`, `lens_warnings`** — the lens-consensus reading aid (§5).
+- **Signal Radar tags** — `runner_setup`/`premove_setup` + conviction, detection-rate labels, never sizing.
+- **Sector/thematic context** — GICS gate, sector trend state, RRG quadrant/direction, primary thematic basket.
+- **Risk context** — beta (30d/60d/252d), realised vol, RS-vs-SPY on down days, ATR/malformed-bracket caution flags.
+
+### `held_positions` — the same suite, plus the trade itself
+
+Every currently-open position (from the PM's PTJ, IBKR + Tiger) carries the trade
+(entry/qty/SL/TP/unrealised) **and** the identical engine read described above —
+including for tickers that have dropped out of (or never were in) the curated
+universe; AQE sources their bars specifically because they're held. Options/hedge
+legs (covered calls, put spreads) ride along with their raw trade data but are
+excluded from the equity-scoring fields and from the `data_quality` guard — an
+option can't have an SC_MOMENTUM score, and flagging that as a "gap" would be noise.
+
+Additionally carries `hl_score`/`hl_state` — **Health**, the HOLD decision (trend
+integrity of an open position), shown nowhere else.
+
+## 4. The three-stage decision framework
+
+AQE's fields answer three distinct questions, deliberately kept separate:
+
+1. **DETECT** — is a move brewing? (Signal Radar tags — detection, not entry.)
+2. **ENTER** — is it time to buy, and where? (the bracket + live alert engine.)
+3. **HOLD** — should an open position stay on? (Health, held-only.)
+
+AQE supplies data and levels at every stage. It makes no decision at any of them.
+
+## 5. Lens consensus
+
+`lens_ranking` (top-level) orders every scored name by how many of 6 lenses —
+leadership, coil, insti_money, structure, resistance, sector — read `strong`. Every
+`daily_list` row carries `lens`/`lens_positive`/`lens_warnings` to match.
+**Unweighted, zero fitted parameters** (four attempts to fit weights all failed
+pre-launch) — it's a reading aid for where to start looking, not a ranking model, and
+it never cuts, caps, filters, or eliminates a name. `extension` is deliberately
+excluded from the count — the voices disagree on what it means, so AQE prints the raw
+numbers and makes no call, the same treatment applied to the `structure` lens (reads
+`structure_shift` alone, no `div_state` cross-check — PM ruling 2026-07-17: *"you do
+not decide, you present"*).
+
+## 6. Data-integrity guarantees
+
+Three layers, each catching a different failure mode:
+
+1. **Schema key guard** (`_REQUIRED_FIELDS`) — blocks the entire export if a required
+   field is structurally missing from a record. Catches code bugs (schema drift).
+2. **Value-level `data_quality` guard** — flags (never blocks) any `daily_list` or
+   `held_positions` STK record where a core engine field (`sc_momentum`, `flow`,
+   `energy`, `structure`, `mp`, `elder`, `entry`, `atr_14d`, `bracket`) came back
+   null despite the ticker having gone through full scoring. Catches data gaps
+   (thin history, an FMP gap) that the key guard can't see. Never blocks — a single
+   thin-history ticker must not take down the whole nightly feed — but it's surfaced
+   loudly: the pipeline log, the export JSON, and a Scanner UI warning banner.
+3. **PTJ fetch-status tracking** (`held_positions_status`) — a failed live Drive
+   fetch of the day's trade journal preserves the last-known-good cache instead of
+   silently rendering an empty (indistinguishable-from-flat) held book, and stamps
+   whether this run's read was actually live.
+
+## 7. Who reads it
+
+- **The PM/AIC committee** — the Drive JSON directly, or via the Scanner UI's
+  "exactly what AIC receives" panel (verbatim render of the export).
+- **Scanner UI** (`src/ui/1_Scanner.py`) — Streamlit multi-page app: regime, SRM,
+  Thematic Rotation, Detect Lens Ranking, the combined Signals table (longlist ∪
+  watchlist, slider-filterable), Elder list, held positions + hedge layer.
+- **Live alert engine** — polls FMP every 15 min for the monitored set (every
+  export ticker + held positions), emails on three bounded level events (buy-price
+  hit, fresh breakout, approaching-stop). Freshness-gated against a stale export.
+- **Pricer page** — a pure bracket calculator for any typed-in ticker (universe or
+  not), same engine suite as the export.
+- **Intraday plan / options income-wheel chat skills** — separate, recommend-only
+  layers that read the export's structural levels but place no orders.
 
 ---
+
+# Part II — Calculation Methodology, Field by Field
+
+**Decision framework recap** — AQE reads the trade lifecycle in three stages that
+must not be conflated: **DETECT** (Signal Radar — detection tags, not entries),
+**ENTER** (the bracket + live alert levels), **HOLD** (`hl_score`/`hl_state`,
+held-only). AQE makes no decision at any stage — it supplies data and levels; the
+PM/AIC decides.
 
 ## 0. Shared math primitives (`src/engines/utils.py`)
 
@@ -51,10 +201,8 @@ engine section.
 
 All engines share the same warmup pattern: **NaN until enough bars exist**, never a
 placeholder default. A NaN engine value is later converted to JSON `null` by the
-export's `_num()` helper (`src/data/drive_sync.py:853-861`) — see §14 for why this
-matters for data-quality monitoring.
-
----
+export's `_num()` helper (`src/data/drive_sync.py`) — see §14 for why this matters
+for data-quality monitoring.
 
 ## 1. Core scoring engines
 
@@ -160,7 +308,7 @@ exactly 100 — no extra scaling needed).
 |---|---|
 | `bq_range_tight` (30) | `ATR5/ATR20` ratio: `<1.0→4,<0.9→8,<0.8→14,<0.7→20,<0.6→25,<0.5→30` — tighter recent range scores higher |
 | `bq_vol_dry` (25) | `SMA(V,5)/SMA(V,20)`: `<1.1→5,<0.95→10,<0.8→15,<0.65→20,<0.5→25` — drier volume scores higher |
-| `bq_base_dur` (20) | own 3-mode base system (60-bar pivot, 8% band — distinct constants from Structure's), same DSG-02 latch/decay: `3-4→4,5-6→8,7-9→14,10-25→20,25-35→14,>35→8` |
+| `bq_base_dur` (20) | own 3-mode base system (60-bar pivot, 8% band — distinct constants from Structure's), same latch/decay: `3-4→4,5-6→8,7-9→14,10-25→20,25-35→14,>35→8` |
 | `bq_ema_conv` (25) | EMA8/13/21 spread normalized by ATR20: `<2.5→5,<1.8→10,<1.2→15,<0.8→20,<0.5→25` — tighter convergence scores higher |
 | `bq_100` | straight sum, clipped `[0,100]` |
 
@@ -174,8 +322,6 @@ boolean gate series.
 - Mapped to daily via `asof_weekly_value` (no look-ahead).
 - Needs ≥39 weekly bars, else returns an all-False gate + all-NaN K39 value — cannot
   compute a meaningful 39-week stochastic without 39 weeks of history.
-
----
 
 ## 2. Composite scores — `src/engines/scoring.py` v1.8.0
 
@@ -202,8 +348,6 @@ Gate (`sc_p_gates`, all must pass): `Flow≥40, Energy≥60, Structure≥65, MP�
 ```
 qualified = sc_momentum >= 75.0  AND  elder_score >= 6.5
 ```
-
----
 
 ## 3. Pipeline Rank v1.0 — `src/engines/pipeline_rank.py`
 
@@ -233,7 +377,7 @@ Negative FIP (steady grinding days in the move's direction) = high quality path.
 **5-day spike penalty**: any single-day \|return\| >8% in the trailing 5 days →
 `fip_quality −= 30`, clipped [0,100]. Always applied, independent of the exclusion below.
 
-**DSG-20 prior-spike exclusion** (`fip_spike_excluded`, `fip_window_effective`):
+**Prior-spike exclusion** (`fip_spike_excluded`, `fip_window_effective`):
 scans the trailing 252-bar window for a prior speculative spike ≥126 bars old
 (21-bar return ≥30%, confirmed by a subsequent ≥30% drawdown from the spike peak).
 If found, FIP is recomputed **excluding** a ±21-bar window around the spike, and
@@ -242,8 +386,6 @@ meme-stock-style spike from permanently poisoning path quality, while the *recen
 5-day spike penalty still applies unconditionally.
 
 Warmup: needs the full 252 bars. Tiers: `D-SKIP`(default)→`C-WATCH`(≥45)→`B-STRONG`(≥60)→`A-TIER`(≥75).
-
----
 
 ## 4. THE BRACKET — `src/engines/bracket_engine.py` + `src/scanner/levels.py`
 
@@ -298,8 +440,6 @@ local UI): `stop = lowest(low,5) − 0.5·ATR14`, clamped to `[0.75, upper]×ATR
 `upper = 2.5` (β≥2.0), `2.25` (β≥1.5), else `2.0` — wider stop room for high-beta
 names. Bracket geometry: BE trigger at `entry+0.5R`, `tp_N = entry + N·R`.
 
----
-
 ## 5. DETECT layer — signals, not gates, not sizing
 
 ### 5.1 Signal Radar — `src/engines/signal_radar.py`
@@ -307,16 +447,16 @@ names. Bracket geometry: BE trigger at `entry+0.5R`, `tp_N = entry + N·R`.
 Detection-RATE tags across the full scored universe. Frozen params in
 `data/signal_engine_params.json`, never re-fit in production.
 
-- **`runner_setup`** (M15 rule — continuation): `base_days ≤ 15 AND ret_5d > 14.5%
+- **`runner_setup`** (continuation rule): `base_days ≤ 15 AND ret_5d > 14.5%
   AND resist_score ≤ 8.5` (short young base + strong 5d thrust + clear overhead).
 - **`runner_conviction`** (0-4): count of 4 legs in their favorable tercile
   (`base_days`, `ret_5d`, `resist_score`, `dist_20dhigh`) vs frozen cut points.
   Label ladder: MINIMAL(0)/LOW(1)/MODERATE(2)/HIGH(3)/MAX(4) ≈ historical
   5%/13%/27%/43% +20%/20d detection rate.
-- **`mover_subtype`** (M16c): argmax of 4 family z-scores vs frozen means/stds —
+- **`mover_subtype`** : argmax of 4 family z-scores vs frozen means/stds —
   `explosive` (ret_3d/5d, ATR slope), `trend` (MP/ADX/K39/PipeRank), `tight_base`
   (BQ sub-scores), `squeeze` (squeeze_score/ext_score/compression).
-- **`premove_setup`** (M18 rule — pre-move, quiet names only): `is_quiet` (trailing
+- **`premove_setup`** (pre-move rule, quiet names only): `is_quiet` (trailing
   20d return ∈[−8%,+8%] AND `pos20<0.90`) AND every frozen leg of the launcher
   fingerprint. Historical launches came a median ~12 trading days after the tag.
 - **`premove_conviction`** (0-4): count of frozen legs satisfied, forced 0 when not
@@ -379,14 +519,16 @@ current CHoCH against every past same-direction CHoCH on the SAME ticker.
   from historical analogs, NOT a structural level (read alongside `bracket.targets`,
   never in place of them).
 
-### 5.5 `structure_shift` — BOS/CHoCH read vs confirmed swing anchors
+### 5.5 `structure_shift` — BOS/CHoCH read vs confirmed anchors
 
-`BULLISH_BOS` = close broke above the last confirmed swing high (trend
+`BULLISH_BOS` = COB close broke above the nearest CONFIRMED pivot high (trend
 continuation). `BEARISH_CHOCH` = close broke below the up-swing's anchor low
 (character change — the up-structure failed). `RANGE` = inside the swing. Data
-only, never a gate. `structure_shift_ref` = the swing level it's measured against.
-
----
+only, never a gate. `structure_shift_ref` = the level it's measured against.
+(Fixed 2026-07-16, AIC ruling FIX_CONFIRMED_PIVOT: previously compared against
+`find_swing()`'s window-max high, which always includes the current bar — making
+`BULLISH_BOS` mathematically unreachable. Now uses the nearest confirmed pivot
+instead, same source `overhead_resistance()` the bracket already computes.)
 
 ## 6. Health Score — `src/engines/health.py` (held positions ONLY — the HOLD decision)
 
@@ -403,8 +545,6 @@ only, never a gate. `structure_shift_ref` = the swing level it's measured agains
 hl_score = clip(A + B + C + D, 0, 100)
 ```
 `hl_state`: `≥75→HOLD_ADD, ≥50→HOLD, ≥30→TIGHTEN, else EXIT`.
-
----
 
 ## 7. Elder Context — `src/engines/elder_context.py` (Instruction v1.1)
 
@@ -431,14 +571,12 @@ Elder score. Pure function on caller-supplied hourly (5-day, up to 40 bars) + da
   flat/falling, price within 2% of a given resistance level. `RISK` (all 3),
   `CAUTION` (2), else `CLEAR`.
 
----
-
 ## 8. Enrichment fields — `src/engines/enrichment.py`
 
 - **`rs_down_day_20d`**: average stock outperformance vs SPY, computed ONLY on SPY's
   down days over the trailing 20 sessions. Positive = genuine leadership (beats SPY
   when the market drops). `rs_leadership`: `>0.25→LEADER, <-0.25→LAGGARD, else IN-LINE`.
-- **`atr_caution`** (AQE-BL-002): in YELLOW/ORANGE/RED regime, flags if
+- **`atr_caution`**: in YELLOW/ORANGE/RED regime, flags if
   `dsl_atr_ratio<1.5` (stop was too tight for the regime).
 - **`malformed_bracket`**: flags if the structural stop sits within 0.5% of price
   (bracket effectively unusable).
@@ -447,8 +585,6 @@ Elder score. Pure function on caller-supplied hourly (5-day, up to 40 bars) + da
   the most recent range-expansion bar, pattern-classified as ABSORPTION_REVERSAL /
   TELEGRAPHED_CONTINUATION / SURPRISE_THRUST / STANDARD_BREAKOUT), and beta-capping
   (`|beta_60d|>5.0` flagged as a data error).
-
----
 
 ## 9. Sector Rotation Model (SRM) v3.0 — `src/engines/srm.py`
 
@@ -469,7 +605,7 @@ says −5, unreconciled)*, WATCH=−5, AVOID=−8.
 "Momentum Fading — Hold, Don't Add" / "Recovering From Weakness — Watch for Entry" /
 "Declining — Avoid".
 
-### 9.2 RRG layer (DSG-18)
+### 9.2 RRG layer
 42-bar window. `rs_line = sector_close/SPY_close`, rebased to 100 at window start
 (`rs_norm`). `rrg_rs_ratio` = current rebased level. `rrg_rs_momentum` = 10-bar ROC
 of the rebased RS line, re-centered around 100. Quadrant: ratio≥100&mom≥100→
@@ -480,7 +616,7 @@ compare Euclidean distance from (100,100) now vs 5 bars ago — growing >2%→
 the RRG point as-of each of the last 5 days (no persistence — deterministic from the
 panel every run) for the chart's direction-of-travel tail.
 
-### 9.3 Macro overlay (DSG-19)
+### 9.3 Macro overlay
 7 instruments: TLT, UUP, HYG, IWM, GLD, CPER, USO, weighted `[.22,.15,.18,.15,.10,.12,.08]`.
 Per-instrument direction score ∈{−2..+2} from `sign(roc5) + sign(roc20)`.
 ```
@@ -515,8 +651,6 @@ TURNING<WATCH<AVOID). RRG computed identically for the basket index vs SPY. Pure
 panel math, 0 FMP calls. Baskets do NOT add names to the scan universe — governing
 rule; constituents are pulled into the panel for grading only.
 
----
-
 ## 10. PTRS — `src/analyzer/ptrs.py`
 
 ```
@@ -526,8 +660,7 @@ ptrs = engine_score + sh
 **`ptrs == sc_momentum` (or `sc_position`) verbatim** — the Sector-Health adjustment
 was formally retired (AIC Charter Amendment v2.8, 2026-07). Sector context is read
 separately/qualitatively via `srm`/RRG rather than double-counted into the per-ticker
-score. *(Note: `CLAUDE.md`'s "PTRS = SC_MOMENTUM + SH" line predates this ruling and
-should be updated to match — flagging for the PM.)*
+score.
 
 **Disposition** (sizing tier, quality-only — VIX handled separately by regime):
 `≥60→FULL(100%)`, `[50,60)→HALF(50%)`, `[45,50)→QUARTER(25%)`, `<45→REJECT(0%)`.
@@ -535,8 +668,6 @@ should be updated to match — flagging for the PM.)*
 **Regime sizing** (VIX-based, applied on top, no double penalty):
 `GREEN→FULL, YELLOW→QUARTER, ORANGE→QUARTER, RED→NONE`. **Final size =
 min(PTRS disposition, regime max_new_size).**
-
----
 
 ## 11. Portfolio Hedge Layer — `src/analyzer/held_book.py` (Charter §4C, held only)
 
@@ -554,8 +685,6 @@ Book-level: `loss_per_1pct_gap_usd = beta_adj_exposure_usd × 0.01`;
 gap-down scenario, beta-scaled. `sector_weights`: exposure share per GICS ETF (all
 11 sectors present, 0.0 where unheld).
 
----
-
 ## 12. Regime detection — `src/analyzer/regime.py`
 
 - **VIX regime** (`classify_vix_regime`): `≤18→GREEN, (18,25]→YELLOW, (25,30]→ORANGE, >30→RED`.
@@ -567,8 +696,6 @@ gap-down scenario, beta-scaled. `sector_weights`: exposure share per GICS ETF (a
 - `classify_hurst`: `H>0.55→TRENDING` (momentum favored), `H<0.45→MEAN_REVERT`
   (momentum caution), else `RANDOM` (no clear edge).
 
----
-
 ## 13. Betas — `src/scanner/betas.py`
 
 ```
@@ -578,8 +705,6 @@ Computed over trailing 30d and 60d windows independently (`BETA_WINDOWS=(30,60)`
 needs ≥2 common dates and non-zero SPY variance in the window, else that window is
 skipped (not zero-filled). Rounded to 2dp. 30d feeds the DSL β-clamp (§4); 60d is
 the smoother committee view and the Charter v2.1 §6.4 gate basis.
-
----
 
 ## 14. Production screening thresholds — `data/active_recipe.json`
 
@@ -601,24 +726,22 @@ Applied by `daily_orchestrator.py`, not baked into any engine:
   record embedded in the recipe file: 37.2% win rate, 2031 trades, 7.1/week,
   expectancy 0.64R, Sep 2020–May 2026.
 
----
+## 15. Known documentation-drift / cosmetic notes
 
-## 15. Known documentation-drift notes
-
-- **PTRS**: `CLAUDE.md`'s top-level summary says `PTRS = SC_MOM + SH`; the live code
-  (§10 above) has `sh` hard-coded to 0 at every call site per AIC Charter Amendment
-  v2.8 — PTRS is SC_MOMENTUM verbatim in production today. `CLAUDE.md` needs updating
-  to match the code, not the reverse (a stray `+SH` fork had briefly survived
-  live in `daily_orchestrator.py` until it was found and killed 2026-07-15).
+- **PTRS**: `CLAUDE.md`'s top-level summary once said `PTRS = SC_MOM + SH`; the live
+  code (§10 above) has `sh` hard-coded to 0 at every call site per AIC Charter
+  Amendment v2.8 — PTRS is SC_MOMENTUM verbatim in production. A stray `+SH` fork had
+  briefly survived live in `daily_orchestrator.py` until found and killed 2026-07-15.
 - **`grade_sector_etf` empty-data edge case**: returns `grade="WATCH"` but the
   paired `trend_state` evaluates to `"Declining — Avoid"` — the fallback's grade and
   directive label are internally inconsistent (cosmetic, low-impact).
-- `capacity.py` and `baselines.py` (`src/analyzer/`) are offline backtest/calibration
+- `src/analyzer/capacity.py` and `baselines.py` are offline backtest/calibration
   tooling only — not part of the live `aqe_daily_export.json` path.
 
 ---
 
-*Generated 2026-07-15. Every formula above is cited to its source file at the time of
-writing — re-verify against the live code if a value looks off, since engines do get
-recalibrated (see `MATHLAB_PTRS_CHANGELOG.md` for the PTRS revision history as an
-example of how that's tracked).*
+*Every formula above is cited to its source file — re-verify against the live code
+if a value looks off, since engines do get recalibrated (see
+`MATHLAB_PTRS_CHANGELOG.md` for the PTRS revision history as an example of how
+that's tracked). Merged from AQE_FIELD_GLOSSARY.md + AQE_DAILY_DELIVERABLE.md,
+2026-07-27.*

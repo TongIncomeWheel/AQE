@@ -64,7 +64,7 @@ def main():
         print(f"\n  ERROR: {PANEL_DAILY} not found.")
         print("  Either run the daily pipeline first, or re-run with --pull.")
         if sys.stdin.isatty():
-        input("\n  Press Enter to exit...")
+            input("\n  Press Enter to exit...")
         sys.exit(1)
 
     import pandas as pd
@@ -105,7 +105,7 @@ def main():
     if not result.get("ok"):
         print(f"\n  ERROR: {result.get('reason')}")
         if sys.stdin.isatty():
-        input("\n  Press Enter to exit...")
+            input("\n  Press Enter to exit...")
         sys.exit(1)
 
     elapsed_ledger = time.time() - t_ledger

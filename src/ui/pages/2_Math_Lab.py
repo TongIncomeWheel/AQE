@@ -194,7 +194,7 @@ if _panels_ready:
             "avg_r": 1.0,
             "trades_per_week": float(_opt_tpw_pending or 10),
         }, indent=2))
-        _args = [sys.executable, "-u", "-m", "src.calibration.run_optimizer"]
+        _args = [sys.executable, "-u", "-m", "src.research.calibration.run_optimizer"]
         if _opt_run_mode == "quick":
             _args.append("--quick")
         _log_ph = st.empty()
@@ -879,7 +879,7 @@ if _panels_ready:
             log = st.empty()
             status = st.empty()
             with st.spinner("Running portfolio simulation..."):
-                run_module_streaming("src.backtest.run_sim", "Portfolio simulation", log, status)
+                run_module_streaming("src.research.backtest.run_sim", "Portfolio simulation", log, status)
             st.rerun()
     else:
         st.info(
@@ -908,7 +908,7 @@ _rd_run = st.session_state.pop("_rd_run", None)
 if _rd_run:
     _rd_log = st.empty()
     _rd_status = st.empty()
-    _rd_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_readiness"]
+    _rd_args = [sys.executable, "-u", "-m", "src.research.mathlab.backtest_readiness"]
     if _rd_run == "dry":
         _rd_args.append("--dry-run")
     if _rd_run == "refresh":
@@ -1212,7 +1212,7 @@ _sc_run = st.session_state.pop("_sc_run", None)
 if _sc_run:
     _sc_log = st.empty()
     _sc_status = st.empty()
-    _sc_args = [sys.executable, "-u", "-m", "src.mathlab.backtest_subcomponents"]
+    _sc_args = [sys.executable, "-u", "-m", "src.research.mathlab.backtest_subcomponents"]
     if _sc_run == "dry":
         _sc_args.append("--dry-run")
     elif _sc_run == "rebuild":
@@ -2037,7 +2037,7 @@ if _panels_ready:
             status = st.empty()
             with st.spinner("Running Precision Edge validation..."):
                 run_module_streaming(
-                    "src.calibration.run_pe_validation",
+                    "src.research.calibration.run_pe_validation",
                     "PE validation",
                     log,
                     status,

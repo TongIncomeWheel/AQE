@@ -27,8 +27,8 @@ Seven builds, in three categories:
 | 7 | Smart-Money kNN (CHoCH + instance-based learning) | **New engine** |
 
 **Trigger:** these were built after cross-referencing 22 open-source TradingView
-community strategies against AQE's engine suite (full mapping in
-`docs/AQE_TV_STRATEGY_ANALYSIS.md`). ~15 of the 22 turned out to already be
+community strategies against AQE's engine suite (mapping archived; summarized in
+`docs/AQE_CHANGELOG_2026-07-13_to_2026-07-17.md`, Tuesday). ~15 of the 22 turned out to already be
 inside AQE's nightly computation, just never exported — that's build #1. Two
 gaps had no AQE analog at all and needed real new engines — builds #6 and #7.
 The rest (#2, #3, #4, #5) are small, targeted enrichments.
@@ -165,7 +165,7 @@ pipe_rank = momentum_composite × 0.70 + fip_quality × 0.30
 `momentum_composite` (5 sub-parts, 0-100): 12-month return (skip 1mo), ADX trend
 strength, RSI momentum zone, volume confirmation, MA structure — sub-scores
 `pr_ret_12m`, `pr_adx_score`, `pr_rsi_score`, `pr_vol_score`, `pr_ma_score`.
-`fip_quality` = Fraction-of-Informed-Pricing (step-scored) with the DSG-20 prior-
+`fip_quality` = Fraction-of-Informed-Pricing (step-scored) with the prior-
 spike exclusion. Filter: `pipe_rank ≥ 60` advances to full scoring.
 
 ### Elder Impulse (0–10)
@@ -346,8 +346,9 @@ scrutiny.
 
 ---
 
-*Source: `docs/AQE_TV_STRATEGY_ANALYSIS.md` (the originating strategy-mapping
-analysis). Engines: `src/engines/{flow,energy,structure,mp,bq,pipeline_rank,
-elder,k39,divergence,pin_bar,smart_money_knn}.py`. Export assembly:
-`src/data/drive_sync.py` (`_subcomponents`, `_new_engine_fields`,
-`field_glossary`, `field_schema`).*
+*Source: the originating strategy-mapping analysis (archived; summarized in
+`docs/AQE_CHANGELOG_2026-07-13_to_2026-07-17.md`). Engines: `src/engines/{flow,
+energy,structure,mp,bq,pipeline_rank,elder,k39,divergence,pin_bar,
+smart_money_knn}.py`. Export assembly: `src/data/drive_sync.py`
+(`_subcomponents`, `_new_engine_fields`, `field_glossary`, `field_schema`); full
+per-field math now lives in `docs/AQE_TECHNICAL_REFERENCE.md`.*
