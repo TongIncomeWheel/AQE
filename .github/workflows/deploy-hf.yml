@@ -43,6 +43,8 @@ jobs:
           # no shared ancestry with the polluted history, so it can never
           # transmit that blob, and it's always a --force push to HF (HF's
           # git history is a rebuildable deploy mirror, not authoritative).
+          git config user.email "aqe-deploy@github-actions.local"
+          git config user.name "AQE Deploy Bot"
           git checkout --orphan hf-deploy-tmp
           git add -A -- ':!aegis'
           git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded — HF storage rejects its binary content)"
