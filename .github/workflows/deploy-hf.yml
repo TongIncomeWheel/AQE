@@ -46,6 +46,12 @@ jobs:
           git config user.email "aqe-deploy@github-actions.local"
           git config user.name "AQE Deploy Bot"
           git checkout --orphan hf-deploy-tmp
+          # `checkout --orphan` preserves the CURRENT index (everything from the
+          # prior HEAD, including aegis/, is already staged as "A" at this point).
+          # `git add -A -- ':!aegis'` alone only adds/updates paths matching the
+          # pathspec — it does NOT unstage already-staged paths outside it. Clear
+          # the inherited index first so the exclusion actually takes effect.
+          git rm -r --cached . > /dev/null
           git add -A -- ':!aegis'
           git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded — HF storage rejects its binary content)"
 
