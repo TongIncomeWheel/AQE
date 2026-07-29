@@ -31,10 +31,26 @@ jobs:
             exit 0
           fi
           USER="${HF_USERNAME:-AQE-Aegis}"
-          echo "Pushing $(git rev-parse --short HEAD) to HF Space..."
+          ORIG_SHA="$(git rev-parse --short HEAD)"
+
+          # aegis/ (a separate, unrelated agent-system tree — not imported by
+          # any AQE app code) has grown binary content HF's storage backend
+          # flatly rejects at push time (non-Xet/LFS blobs), which poisons
+          # every deploy once it lands in the branch's history. Build a
+          # single clean orphan commit of the CURRENT tree minus aegis/ and
+          # push that instead — GitHub's own `main` (source of truth) is
+          # untouched; only what reaches the HF mirror changes. Orphan means
+          # no shared ancestry with the polluted history, so it can never
+          # transmit that blob, and it's always a --force push to HF (HF's
+          # git history is a rebuildable deploy mirror, not authoritative).
+          git checkout --orphan hf-deploy-tmp
+          git add -A -- ':!aegis'
+          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded — HF storage rejects its binary content)"
+
+          echo "Pushing ${ORIG_SHA} (aegis/ excluded) to HF Space..."
           ok=0
           for i in 1 2 3 4 5; do
-            if git push "https://${USER}:${HF_TOKEN}@huggingface.co/spaces/AQE-Aegis/aqe" HEAD:main; then
+            if git push --force "https://${USER}:${HF_TOKEN}@huggingface.co/spaces/AQE-Aegis/aqe" hf-deploy-tmp:main; then
               ok=1; break
             fi
             echo "HF push attempt $i failed (likely 429 rate-limit) — backing off..."
