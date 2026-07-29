@@ -81,6 +81,26 @@ _FIELD_GLOSSARY = {
     ),
     "entry": "Reference entry = prior close-of-day. The live fill is the IBKR price at "
              "bracket time, NOT this value.",
+    "live_px": "(held_positions only) Current mark for a held ticker = the same FMP "
+               "close every other field on the record is scored against (see "
+               "cob_price) — not a broker/journal field. PM ruling 2026-07-29: the "
+               "Aegis journal's own live-price field was retired in its D-84 "
+               "restructure, so AQE now supplies this from its own data instead of "
+               "leaving it empty.",
+    "held_sl": "(held_positions only) The trade's OWN stop as tracked by the PM/broker "
+              "in the Aegis journal — `stop_live_broker` if the broker confirms one, "
+              "else the journal's `stop_reference`. This is the position's actual "
+              "working stop, NOT AQE's structural read (that's `bracket.stop`); the "
+              "two can legitimately disagree — `stop_match` upstream flags it.",
+    "held_tp1": "(held_positions only) PM ruling 2026-07-29: the Aegis journal's own "
+               "tp1 is unpopulated on held names, so this is AQE's own computed "
+               "bracket.targets TP1 price instead of an empty field. Null when the "
+               "bracket has no valid TP1 (see bracket.valid).",
+    "held_tp2": "(held_positions only) Same as held_tp1, but bracket.targets TP2.",
+    "unreal_usd": "(held_positions only) NOT YET WIRED — currently reads a journal "
+                  "field the Aegis journal's 2026-07-28 restructure retired, so this "
+                  "is always null. PM ruling 2026-07-29: leave as-is for now; the real "
+                  "fix is a proper qty×(live_px−entry) calculation, not a rename.",
     "atr_14d": "14-day Average True Range in USD (the volatility unit).",
     "bracket": "THE bracket — the single source of truth for stop + targets (mechanical "
                "DSL/TP is retired). A nested object: {price, price_source (eod_close on the "
@@ -1044,17 +1064,36 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
         sc = sg("sc_momentum")
         v21 = _v21_record_fields(tk, d, lk, sm, sector_grades,
                                  regime_level=regime_level)
+        # Aegis journal schema (post D-84, 2026-07-28) no longer matches the
+        # camelCase shape this reader was built against — map to its current
+        # field names rather than the retired ones (`livePx`/`sl`/`unrealUsd`).
+        _bracket = v21.get("bracket") or {}
+        _tp_by_type = {t.get("tp"): t.get("price")
+                       for t in (_bracket.get("targets") or []) if t.get("tp")}
+        _held_stop = p.get("stop_live_broker")
+        if _held_stop is None:
+            _held_stop = p.get("stop_reference")
         out.append({
             "ticker": tk,
             "position_type": p.get("type") or "STK",
             # --- the trade (from PTJ) ---
             "qty": p.get("qty"),
             "entry": _num(p.get("entry")),
-            "live_px": _num(p.get("livePx")),
-            "held_sl": _num(p.get("sl")),
-            "held_tp1": _num(p.get("tp1")),
-            "held_tp2": _num(p.get("tp2")),
-            "trade_date": p.get("tradeDate") or p.get("entryDate"),
+            # live_px: no live/mark field survives on the journal's own
+            # open_positions row post D-84 (`mark_price` is usually null) — use
+            # the same FMP close the rest of the record is scored against.
+            "live_px": sg("close"),
+            "held_sl": _num(_held_stop),
+            # held_tp1/2: the journal's own tp1/tp2 are unpopulated on the
+            # Aegis side — surface AQE's own computed bracket targets instead
+            # (PM ruling 2026-07-29) rather than show an empty field.
+            "held_tp1": _tp_by_type.get("TP1"),
+            "held_tp2": _tp_by_type.get("TP2"),
+            "trade_date": p.get("tradeDate") or p.get("entryDate") or p.get("entry_date"),
+            # unreal_usd: PM ruling 2026-07-29 — leave as-is (a real calculation,
+            # not a rename) until sized properly. Still reads the retired
+            # camelCase key on purpose, so it stays null rather than silently
+            # picking up the journal's own unrealised_usd (a different basis).
             "unreal_usd": _num(p.get("unrealUsd")),
             "exposure": _num(p.get("exposure")),
             "ptj_sector": p.get("sector"),
