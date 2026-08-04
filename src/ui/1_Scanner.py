@@ -1330,9 +1330,11 @@ _EXPORT_COL_ORDER = [
     "rank", "ticker", "source", "pe", "on_longlist", "on_elder", "on_qs",
     # QS read, flattened from the nested `qs` block so it sorts/filters/copies
     # like any other column (the full block stays on the row for the cards).
-    "qs_conviction", "qs_state", "qs_p", "qs_vs_mkt", "qs_hits", "qs_persist",
-    "qs_lens_total", "qs_signal", "qs_target_2atr", "qs_give_up_2atr",
-    "qs_usual_days", "qs_dip_pct", "qs_vetoes",
+    "qs_conviction", "qs_state", "qs_signal",
+    "qs_p", "qs_n", "qs_edge",          # p is never shown without n (STEP 8)
+    "qs_hits", "qs_persist", "qs_lens_total",
+    "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
+    "qs_vetoes", "qs_extrapolated", "qs_bucket",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1374,20 +1376,37 @@ def _flatten_qs(edf):
         return default if cur is None else cur
 
     qs = edf["qs"]
+    # Names follow the spec's own vocabulary wherever it has one: recipe_hits,
+    # qs_persist, lens_total, conviction, state, vetoes, p, edge.
     edf["qs_conviction"] = qs.apply(lambda q: g(q, "conviction"))
     edf["qs_state"] = qs.apply(lambda q: g(q, "state", "code", default=""))
     edf["qs_signal"] = qs.apply(lambda q: g(q, "signal", default=""))
     edf["qs_p"] = qs.apply(lambda q: g(q, "odds", "p"))
-    edf["qs_vs_mkt"] = qs.apply(lambda q: g(q, "odds", "edge"))
+    # SPEC RULE (STEP 8 / §4.4): a probability is NEVER shown without the
+    # analogue count behind it. p alone hides whether it came from 700 historical
+    # look-alikes or 17, which is the difference between a read and a rumour.
+    edf["qs_n"] = qs.apply(lambda q: g(q, "odds", "n_analogues"))
+    edf["qs_edge"] = qs.apply(lambda q: g(q, "odds", "edge"))
     edf["qs_hits"] = qs.apply(lambda q: g(q, "engine", "recipe_hits"))
     edf["qs_persist"] = qs.apply(lambda q: g(q, "engine", "qs_persist"))
     edf["qs_lens_total"] = qs.apply(lambda q: g(q, "engine", "lens_total"))
+    # `_2atr` is deliberate and NOT spec vocabulary: the spec calls these
+    # target / give_up, but in this table they sit beside the structural
+    # bracket's TP1/TP2, and an unqualified "target" column would invite
+    # reading qs_p as the odds of hitting a bracket target. It is not.
     edf["qs_target_2atr"] = qs.apply(lambda q: g(q, "objective", "target_2atr"))
     edf["qs_give_up_2atr"] = qs.apply(lambda q: g(q, "objective", "give_up_2atr"))
     edf["qs_usual_days"] = qs.apply(lambda q: g(q, "path", "usual_days"))
     edf["qs_dip_pct"] = qs.apply(lambda q: g(q, "path", "typical_dip_pct"))
     edf["qs_vetoes"] = qs.apply(
         lambda q: ", ".join(g(q, "vetoes", default=[]) or []))
+    # Honesty flags, not spec fields — both mark a row whose number means less
+    # than it looks. `extrapolated` = scored outside the measured population;
+    # `2-D fallback` = the persistence-aware cell was too thin, so the coarser
+    # 2-D table was used and there are no path stats.
+    edf["qs_extrapolated"] = qs.apply(
+        lambda q: bool(g(q, "odds", "extrapolated", default=False)))
+    edf["qs_bucket"] = qs.apply(lambda q: g(q, "odds", "bucket", default=""))
     return edf
 
 
