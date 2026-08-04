@@ -349,6 +349,45 @@ def _write_universe(tickers: list[str]) -> None:
     DEFAULT_UNIVERSE_FILE.write_text("\n".join(lines), encoding="utf-8")
 
 
+def universe_built_date(path: Path | None = None) -> date | None:
+    """The date stamped in universe.txt's header, or None if unreadable.
+
+    The universe is a DYNAMIC daily screen, so "when was this built" is a
+    first-class question: a pipeline run against a stale list scans names that
+    may no longer meet the size/liquidity rule and misses ones that now do,
+    with nothing in the output revealing it.
+    """
+    file = path or DEFAULT_UNIVERSE_FILE
+    try:
+        for raw in file.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line.startswith("#"):
+                break
+            if "updated" in line:
+                token = line.rsplit(" ", 1)[-1]
+                return date.fromisoformat(token)
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
+def universe_is_stale(as_of: date | None = None) -> bool:
+    """True when the universe was not built on `as_of` (default today)."""
+    built = universe_built_date()
+    return built is None or built != (as_of or date.today())
+
+
+def universe_status() -> dict:
+    """{built, count, stale} — for the pipeline log and the UI status bar."""
+    built = universe_built_date()
+    try:
+        count = len(load_universe(include_benchmark=False))
+    except Exception:  # noqa: BLE001
+        count = 0
+    return {"built": built.isoformat() if built else None,
+            "count": count, "stale": universe_is_stale()}
+
+
 def _csv_to_universe_text(content: str) -> str | None:
     """Extract tickers from a screener CSV (Symbol column) → universe.txt text.
 

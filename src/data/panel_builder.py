@@ -69,10 +69,12 @@ def build_panel(history_years: int | None = None) -> None:
     # panel. Without this, every SRM grade defaults to WATCH (empty frame).
     from src.engines.srm import GICS_ETFS as _GICS_ETFS
     _seen = set(tickers)
+    _extra_etfs: list[str] = []
     for _etf in _GICS_ETFS:
         if _etf not in _seen:
             tickers.append(_etf)
             _seen.add(_etf)
+            _extra_etfs.append(_etf)
 
     # Always pull thematic-basket constituents for SECTOR grading context. Like
     # the GICS ETFs, they're graded (grade_thematic_baskets) but NOT screened —
@@ -80,10 +82,12 @@ def build_panel(history_years: int | None = None) -> None:
     # universe (Thematic Basket Map v2.0, PM directive). The scoring/screening
     # stages exclude any basket constituent that isn't in the scan universe.
     from src.engines.srm import BASKET_CONSTITUENTS as _BASKET_CONSTITUENTS
+    _extra_basket: list[str] = []
     for _c in _BASKET_CONSTITUENTS:
         if _c not in _seen:
             tickers.append(_c)
             _seen.add(_c)
+            _extra_basket.append(_c)
 
     # Always pull currently-held positions (PTJ) too — even if a name has since
     # dropped out of (or never was in) the curated universe, AQE can still
@@ -108,8 +112,17 @@ def build_panel(history_years: int | None = None) -> None:
     priority = {BENCHMARK} | set(_GICS_ETFS)
     tickers = sorted(tickers, key=lambda t: (0 if t in priority else 1, t))
 
-    print(f"[panel] pulling {len(tickers)} tickers, {history_years}yr lookback, "
-          f"earliest={earliest}", flush=True)
+    # Break the count down. The pull is ALWAYS larger than the scan universe —
+    # it adds GICS ETFs, thematic-basket constituents and held names, none of
+    # which are screened. A single total reads as "the universe is this big",
+    # which it is not, and that gap is exactly what makes a run look wrong.
+    _n_uni = len(load_universe(include_benchmark=True))
+    _n_etf, _n_bc = len(_extra_etfs), len(_extra_basket)
+    _n_held = len(tickers) - _n_uni - _n_etf - _n_bc
+    print(f"[panel] pulling {len(tickers)} tickers "
+          f"= universe {_n_uni} + GICS ETFs {_n_etf} "
+          f"+ basket constituents {_n_bc} + held {max(_n_held, 0)}  "
+          f"({history_years}yr lookback, earliest={earliest})", flush=True)
 
     client = FMPClient()
 

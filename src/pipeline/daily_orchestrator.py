@@ -17,6 +17,7 @@ Run:
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from datetime import date, datetime, timedelta
@@ -104,13 +105,46 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] PTJ fetch: {exc}")
 
-    # Step 0: The universe is NEVER a fixed list — it is a dynamic FMP screen
-    # rebuilt daily at 06:00 SGT by `universe.build_universe()` (before this
-    # 08:30 run) and restored from Drive above. THE rule, shared by every list
-    # (Longlist / Elder / QS): mcap >= $2B, 10-day avg volume >= 1.5M, US
-    # primary listing. Size + liquidity + listing only — no trend filter, so a
-    # pulled-back name stays eligible; each list applies its own trend view
-    # through its own thresholds.
+    # Step 0: THE UNIVERSE — determined here, not assumed.
+    #
+    # The universe is NEVER a fixed list: it is a dynamic FMP screen (mcap >=
+    # $2B, 10-day avg volume >= 1.5M, US primary listing — size + liquidity +
+    # listing only, no trend filter). The in-app scheduler rebuilds it at 06:00
+    # SGT, but a MANUAL run can fire at any time, and previously the pipeline
+    # simply read whatever universe.txt happened to hold. That is how a run
+    # ends up scanning a list built weeks earlier: it screens names that may no
+    # longer meet the rule, misses ones that now do, and nothing in the output
+    # says so. The pipeline now determines its own universe first.
+    #
+    # Rebuilt only when it was not already built TODAY — build_universe makes
+    # several hundred FMP calls, so re-screening on every button press would be
+    # slow and wasteful. Set AQE_SKIP_UNIVERSE=1 to force reuse (fast reruns).
+    print(f"{_el()} [daily] Step 0: Universe...")
+    try:
+        from src.data.universe import (build_universe, universe_is_stale,
+                                       universe_status)
+        _us = universe_status()
+        if os.environ.get("AQE_SKIP_UNIVERSE") == "1":
+            print(f"  Reusing universe: {_us['count']} names "
+                  f"(built {_us['built']}) — AQE_SKIP_UNIVERSE=1")
+        elif universe_is_stale():
+            print(f"  Universe last built {_us['built']} ({_us['count']} names)"
+                  f" — rebuilding from the FMP screen...")
+            _ub = build_universe()
+            if _ub.get("status") == "ok":
+                print(f"  Universe: {_ub['total']} names "
+                      f"(+{_ub['added']} / -{_ub['removed']})")
+            else:
+                # A failed screen must NOT leave the run with no list. Keep the
+                # previous universe and say loudly that it is stale.
+                print(f"  [WARN] Universe rebuild failed: {_ub.get('reason')}")
+                print(f"  [WARN] PROCEEDING ON A STALE UNIVERSE: {_us['count']} "
+                      f"names built {_us['built']} — names may no longer meet "
+                      f"the $2B / 1.5M rule")
+        else:
+            print(f"  Universe: {_us['count']} names (already built today)")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] Universe step failed: {exc} — using existing list")
 
     # Step 1: Load cached data (incremental pull handled by panel_builder)
     if not skip_pull:
