@@ -388,15 +388,17 @@ with st.sidebar:
                 st.rerun()
         st.divider()
         st.caption(
-            "**Auto-refresh**: screens the full US equity market — mcap > $2B, "
-            "price > 20-day SMA, price > 50-day SMA, 10-day avg volume > 1.5M. "
-            "Runs automatically at 06:00 SGT (Tue–Sat). Use the button below "
-            "to trigger manually."
+            "**Auto-refresh**: screens the full US equity market — mcap ≥ $2B, "
+            "10-day avg volume ≥ 1.5M, US primary listing (NASDAQ/NYSE). "
+            "Size + liquidity + listing only — **no trend filter**, so a "
+            "pulled-back name stays eligible and each list applies its own "
+            "trend view. Runs automatically at 06:00 SGT (Tue–Sat). Use the "
+            "button below to trigger manually."
         )
         if st.button("Refresh universe now", type="primary",
                       use_container_width=True, key="universe_refresh_btn"):
             from src.data.universe import build_universe
-            with st.spinner("Screening US equities (mcap / SMA / volume)..."):
+            with st.spinner("Screening US equities (mcap / volume / listing)..."):
                 result = build_universe()
             if result.get("status") == "ok":
                 st.success(

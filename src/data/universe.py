@@ -1,17 +1,29 @@
 """Universe management — load, screen, and persist the scan ticker list.
 
-The universe is auto-refreshed daily at 06:00 SGT by `build_universe()` — an
-FMP-driven screen (market cap > $2B, price > 20-day SMA, price > 50-day SMA,
-10-day average volume > 1.5M). The result is written to the local
+The universe is NEVER a fixed list. It is a dynamic FMP-driven screen,
+auto-refreshed daily at 06:00 SGT by `build_universe()`, written to the local
 `universe.txt` AND uploaded as the canonical CSV to a dedicated Google Drive
-folder (`UNIVERSE_FOLDER_ID`), so it persists across container restarts.
+folder (`UNIVERSE_FOLDER_ID`) so it persists across container restarts.
+
+THE universe rule (PM ruling 2026-08-04) — one eligibility test, shared by
+every downstream list (Longlist, Elder, QS). Nothing else belongs here:
+
+    market cap >= $2B  ·  10-day average volume >= 1.5M shares
+    ·  US primary listing (NASDAQ/NYSE, warrants/units excluded)
+
+Membership is SIZE + LIQUIDITY + LISTING only. Trend filters (the former
+`price > SMA20` / `price > SMA50` conditions) were REMOVED from universe
+membership on 2026-08-04: they are a screening opinion, not an eligibility
+test, and they silently deleted the pulled-back names the QS engine is built
+to find before QS could ever score them. Each list now applies its own trend
+view through its own recipe/thresholds, which they already did anyway.
 
 On pipeline startup `restore_universe_from_drive()` overwrites the local
 `universe.txt` from that folder (Drive is source of truth between refreshes).
 
-The old `refresh_universe()` (screener-only, no SMA/volume filters) is kept for
-manual / legacy use. It previously ballooned the list to ~1800 — the new
-`build_universe()` is tighter by design.
+The old `refresh_universe()` (screener-only, no volume filter) is kept for
+manual / legacy use; it ballooned the list to ~1800 because it applied no
+liquidity floor at all. `build_universe()` keeps the 1.5M floor.
 """
 
 from __future__ import annotations
@@ -47,6 +59,12 @@ EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U")
 SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
 SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
 SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading days)
+# Cheap pre-filter applied to the batch-quote `avgVolume` before spending one
+# bars call per name. Deliberately well BELOW SCREEN_AVG_VOL_10D: FMP's
+# avgVolume uses a longer window than 10 days, so a name in a volume lull whose
+# 10-day mean genuinely clears 1.5M must not be dropped before we measure it.
+# The real 1.5M test is applied in Pass 2 against a true 10-day mean.
+SCREEN_AVG_VOL_PREFILTER = 750_000
 
 
 def load_universe(path: Path | None = None, include_benchmark: bool = True) -> list[str]:
@@ -125,17 +143,23 @@ def refresh_universe(dry_run: bool = False) -> dict:
 def build_universe(dry_run: bool = False) -> dict:
     """Screen US equities to produce the AQE scan universe.
 
-    Criteria:
-      1. Market cap > $2B  (FMP screener)
-      2. Price > 20-day SMA
-      3. Price > 50-day SMA
-      4. 10-day average volume > 1.5M shares/day
+    THE universe rule — size + liquidity + listing, nothing else:
+      1. Market cap >= $2B                    (FMP screener)
+      2. 10-day average volume >= 1.5M shares (measured from bars)
+      3. US primary listing, NASDAQ/NYSE, warrants/units excluded
+
+    NO trend filter. `price > SMA20` / `price > SMA50` were removed on
+    2026-08-04 (PM ruling): universe membership is an eligibility test, not a
+    screening opinion, and the SMA conditions deleted exactly the pulled-back
+    names QS is designed to surface. Longlist/Elder apply their own trend view
+    downstream via their own thresholds.
 
     Two-pass for API efficiency:
-      Pass 1 — FMP screener + batch quotes (~10 API calls for ~500 names).
-               Eliminates names below SMA50 using the quote's priceAvg50.
-      Pass 2 — Fetch 55 bars per survivor (~250-350 calls) to compute SMA20
-               and 10-day average volume.
+      Pass 1 — FMP screener + batch quotes (~1 call per 50 names). Pre-filters
+               on the quote's avgVolume at SCREEN_AVG_VOL_PREFILTER, a
+               deliberately generous floor, purely to bound Pass 2's cost.
+      Pass 2 — Fetch ~55 bars per survivor (1 call each) and apply the real
+               10-day average volume test.
 
     Writes universe.txt locally AND uploads the CSV to Drive so it persists
     across container restarts.  Returns a summary dict.
@@ -173,43 +197,43 @@ def build_universe(dry_run: bool = False) -> dict:
     if not candidates:
         return {"status": "error", "reason": "screener returned 0 candidates"}
 
-    # ── Batch quotes: pre-filter on SMA50 (cheap — ~10 API calls) ────────
+    # ── Batch quotes: cheap volume pre-filter (~1 call per 50 names) ─────
+    # NOT a trend filter. This exists only to bound Pass 2's per-name bars
+    # cost; the binding liquidity test is the true 10-day mean in Pass 2.
     try:
         quotes = client.get_quotes_batch(candidates, chunk=50)
     except FMPError as exc:
         return {"status": "error", "reason": f"batch quotes failed: {exc}"}
 
-    sma50_pass = []
+    vol_prefilter_pass = []
     for tk in candidates:
         q = quotes.get(tk)
         if not q:
+            # No quote came back — do NOT silently drop the name. Let Pass 2
+            # measure it from bars; a missing quote is an FMP gap, not a fail.
+            vol_prefilter_pass.append(tk)
             continue
-        price, ma50 = q.get("price"), q.get("ma_50")
-        if price and ma50 and price > ma50:
-            sma50_pass.append(tk)
-    print(f"[universe] After SMA50 pre-filter: {len(sma50_pass)} candidates")
+        av = q.get("avg_volume")
+        if av is None or av >= SCREEN_AVG_VOL_PREFILTER:
+            vol_prefilter_pass.append(tk)
+    print(f"[universe] After volume pre-filter "
+          f"(avgVolume >= {SCREEN_AVG_VOL_PREFILTER:,}): "
+          f"{len(vol_prefilter_pass)} candidates")
 
-    # ── Pass 2: fetch bars → SMA20 + 10-day avg volume ───────────────────
+    # ── Pass 2: fetch bars → true 10-day average volume ──────────────────
     passed: list[str] = []
     errors: list[str] = []
-    for i, tk in enumerate(sma50_pass):
+    for i, tk in enumerate(vol_prefilter_pass):
         if (i + 1) % 100 == 0:
-            print(f"[universe] Checking bars {i + 1}/{len(sma50_pass)}...")
+            print(f"[universe] Checking bars {i + 1}/{len(vol_prefilter_pass)}...")
         try:
             bars = client.get_daily_bars(tk, from_date=from_dt, to_date=today)
             if bars is None or bars.empty or len(bars) < 50:
                 continue
-            close = bars["close"].astype(float)
             volume = bars["volume"].astype(float)
-
-            price = float(close.iloc[-1])
-            sma20 = float(close.tail(20).mean())
-            sma50 = float(close.tail(50).mean())
             avg_vol = float(volume.tail(10).mean())
 
-            if (price > sma20
-                    and price > sma50
-                    and avg_vol >= SCREEN_AVG_VOL_10D):
+            if avg_vol >= SCREEN_AVG_VOL_10D:
                 passed.append(tk)
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{tk}: {exc}")
