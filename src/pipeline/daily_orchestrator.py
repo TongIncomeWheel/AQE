@@ -303,6 +303,10 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
             print(f"  regime {_m['regime_code']} — {_m['description']}")
             print(f"  eligible {_qs['eligible_count']} · scored "
                   f"{_qs['scored_count']} · emitted {_qs['emitted_count']}")
+            from src.engines.qs_daily import write_daily_json as _qs_write
+            _qs_path = _qs_write(_qs)
+            if _qs_path:
+                print(f"  QS artifact: {_qs_path}")
             if not _qs.get("persist_ready"):
                 print("  [WARN] QS memory is thin (<5 stored sessions) — "
                       "qs_persist reads low for every name until it fills")

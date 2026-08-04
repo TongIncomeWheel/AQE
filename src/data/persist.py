@@ -39,9 +39,25 @@ def _members() -> list[tuple]:
         # MA Proximity Scanner state — persisted so the WEEKLY standalone scan stays
         # incremental across HF recycles (else it re-pulls ~2000 tickers each time).
         "ma_panel.parquet", "ma_scan.parquet", "ma_universe.json",
+        # The universe itself. It is a DYNAMIC daily screen (~933 names), so a
+        # recycle between the 06:00 rebuild and the 08:30 run would otherwise
+        # leave the pipeline with no list at all. Drive restore covers this too;
+        # this is the belt to that braces.
+        "universe.txt",
     ]
+    # QS's memory (recipe_hits trail + regime series) rides inside aqe.db above,
+    # which is why that file is load-bearing rather than incidental: without it
+    # qs_persist reads 0 for every name after a recycle and the whole book
+    # re-prices downward with nothing in the output looking wrong.
+    #
+    # The frozen QS config (data/qs/*.json) is deliberately NOT here — it ships
+    # in the Docker image with the repo, so it is restored by a rebuild, not by
+    # a snapshot. Snapshotting it would let a stale copy silently outlive a
+    # re-freeze.
     out_files = [
         "shortlist.json", "aqe_daily_export.json", "held_positions.json",
+        # QS's standalone artifact — same numbers as the export's qs blocks.
+        "qs_daily.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]

@@ -129,3 +129,69 @@ def test_fail_dict_has_the_shape_callers_expect():
               "eligible_count", "scored_count", "emitted_count"):
         assert k in r
     assert r["ok"] is False
+
+
+# --------------------------------------------------- config path resolution
+
+def test_frozen_config_resolves_when_data_dir_is_redirected(tmp_path):
+    """A Space with persistent storage sets AQE_DATA_DIR=/data.
+
+    The frozen book ships in the IMAGE at <project>/data/qs, so resolving it
+    from DATA_DIR alone would make QS fail to load on every run of any deploy
+    that redirects the data dir — the exact configuration production uses when
+    persistent storage is on.
+    """
+    empty = tmp_path / "redirected"
+    (empty / "qs").mkdir(parents=True)
+    p = QD._config_path("recipe_book.json")
+    assert p.exists(), "shipped config must resolve without DATA_DIR"
+    assert p.name == "recipe_book.json"
+
+
+def test_data_dir_copy_wins_when_present(tmp_path, monkeypatch):
+    """An operator can drop a newer freeze into persistent storage."""
+    override_root = tmp_path / "data"
+    (override_root / "qs").mkdir(parents=True)
+    newer = override_root / "qs" / "recipe_book.json"
+    newer.write_text("{}")
+    monkeypatch.setattr(QD, "DATA_DIR", override_root)
+    assert QD._config_path("recipe_book.json") == newer
+
+
+# ---------------------------------------------------- standalone artifact
+
+def test_failed_run_does_not_overwrite_yesterdays_artifact(tmp_path, monkeypatch):
+    """A failed run must not replace a good file with an empty one."""
+    target = tmp_path / "qs_daily.json"
+    target.write_text('{"date": "yesterday"}')
+    monkeypatch.setattr(QD, "QS_DAILY_JSON", target)
+    assert QD.write_daily_json({"ok": False, "reason": "boom"}) is None
+    assert "yesterday" in target.read_text()
+
+
+def test_artifact_carries_the_date_and_only_emitted_names(tmp_path, monkeypatch):
+    monkeypatch.setattr(QD, "QS_DAILY_JSON", tmp_path / "qs_daily.json")
+    monkeypatch.setattr(QD, "OUTPUT_DIR", tmp_path)
+    res = {
+        "ok": True, "status": "live", "date": "2026-08-04",
+        "market": {"description": "x"}, "versions": {"recipe_book": "v3"},
+        "eligible_count": 10, "scored_count": 10, "emitted_count": 1,
+        "persist_ready": True,
+        "rows": {"AAA": {"ticker": "AAA", "emitted": True, "rank": 1},
+                 "BBB": {"ticker": "BBB", "emitted": False, "rank": None}},
+    }
+    import json
+    path = QD.write_daily_json(res)
+    doc = json.loads(open(path).read())
+    assert doc["date"] == "2026-08-04"
+    assert [i["ticker"] for i in doc["ideas"]] == ["AAA"]
+    assert doc["counts"]["scored"] == 10
+
+
+def test_qs_artifacts_are_in_the_persist_snapshot():
+    """QS memory + artifact must survive a container recycle."""
+    from src.data import persist
+    arcs = [arc for _, arc in persist._members()]
+    assert "data/aqe.db" in arcs          # qs_daily_hits + qs_regime_series
+    assert "output/qs_daily.json" in arcs
+    assert "data/universe.txt" in arcs    # the dynamic screen's output

@@ -23,14 +23,35 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from src.data.paths import DATA_DIR, PANEL_DAILY, SCORES_DAILY
+from src.data.paths import DATA_DIR, OUTPUT_DIR, PANEL_DAILY, PROJECT_ROOT, SCORES_DAILY
 from src.engines import qs_engine as E
 from src.engines import qs_fields as F
 from src.engines import qs_spec as S
 
-QS_CONFIG_DIR = DATA_DIR / "qs"
-RECIPE_BOOK_PATH = QS_CONFIG_DIR / "recipe_book.json"
-CALIBRATION_PATH = QS_CONFIG_DIR / "calibration.json"
+# The frozen book/calibration are CODE-adjacent, not runtime state: they ship
+# with the repo and are baked into the Docker image at <project>/data/qs.
+# Resolving them from DATA_DIR alone breaks on any deploy that redirects it —
+# a Hugging Face Space with persistent storage sets AQE_DATA_DIR=/data, where
+# no config was ever written, so QS would fail to load on every single run.
+#
+# Order: DATA_DIR first (so an operator CAN drop a newer freeze into
+# persistent storage without a rebuild), then the shipped copy.
+def _config_path(name: str):
+    override = DATA_DIR / "qs" / name
+    if override.exists():
+        return override
+    return PROJECT_ROOT / "data" / "qs" / name
+
+
+QS_CONFIG_DIR = PROJECT_ROOT / "data" / "qs"
+RECIPE_BOOK_PATH = _config_path("recipe_book.json")
+CALIBRATION_PATH = _config_path("calibration.json")
+
+# Standalone daily artifact. AQE's convention is a stable filename overwritten
+# each run (so the Drive folder never clutters), and the immutable per-day
+# record lives in aqe.db's qs_daily_hits trail, which is the real audit trail
+# and is snapshotted. The run date is carried INSIDE the file.
+QS_DAILY_JSON = OUTPUT_DIR / "qs_daily.json"
 
 # QS's own daily eligibility rule, ON TOP of universe membership: today's
 # volume must exceed the ticker's OWN 10-day average (handover §2.1). About
@@ -47,6 +68,42 @@ def load_config() -> tuple[dict, dict]:
     with open(CALIBRATION_PATH) as f:
         cal = json.load(f)
     return book, cal
+
+
+def write_daily_json(result: dict) -> str | None:
+    """Write the standalone QS artifact alongside the main export.
+
+    Same numbers as the export's qs blocks — one computation, two surfaces, so
+    they cannot drift. Returns the path, or None if the run failed (a failed
+    run must not overwrite yesterday's good file with an empty one).
+    """
+    if not result.get("ok"):
+        return None
+    try:
+        rows = sorted(
+            (r for r in result["rows"].values() if r.get("emitted")),
+            key=lambda r: (r.get("rank") or 10 ** 6))
+        doc = {
+            "date": result.get("date"),
+            "engine": "QS",
+            "status": result.get("status"),
+            "versions": result.get("versions", {}),
+            "outcome_def": "touch +2*ATR14 within 20 sessions",
+            "market": result.get("market", {}),
+            "counts": {
+                "eligible": result.get("eligible_count"),
+                "scored": result.get("scored_count"),
+                "emitted": result.get("emitted_count"),
+            },
+            "persist_ready": result.get("persist_ready"),
+            "ideas": rows,
+        }
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        with open(QS_DAILY_JSON, "w") as f:
+            json.dump(doc, f, indent=1, default=str)
+        return str(QS_DAILY_JSON)
+    except Exception:  # noqa: BLE001 — an artifact write never breaks the run
+        return None
 
 
 def eligible_tickers(panel: pd.DataFrame, as_of) -> list[str]:
