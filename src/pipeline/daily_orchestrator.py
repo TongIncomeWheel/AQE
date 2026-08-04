@@ -104,10 +104,13 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] PTJ fetch: {exc}")
 
-    # Step 0: Universe is a FIXED, manually-curated list (the "fishing net").
-    # Auto-refresh from the FMP screener is intentionally disabled — it ballooned
-    # the list to ~1800 tickers. To change the universe, overwrite universe.txt
-    # (or universe.csv) in the Drive folder, or use the app's Universe Upload.
+    # Step 0: The universe is NEVER a fixed list — it is a dynamic FMP screen
+    # rebuilt daily at 06:00 SGT by `universe.build_universe()` (before this
+    # 08:30 run) and restored from Drive above. THE rule, shared by every list
+    # (Longlist / Elder / QS): mcap >= $2B, 10-day avg volume >= 1.5M, US
+    # primary listing. Size + liquidity + listing only — no trend filter, so a
+    # pulled-back name stays eligible; each list applies its own trend view
+    # through its own thresholds.
 
     # Step 1: Load cached data (incremental pull handled by panel_builder)
     if not skip_pull:
@@ -285,6 +288,28 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         c["precision"] = c["ticker"] in precision_tickers
     n_prec = sum(1 for c in shortlist if c["precision"])
     print(f"  {len(precision_matches)} tickers pass Precision Edge | {n_prec} also on shortlist")
+
+    # Step 6e: QS (Quiet Strength) — the third lens. Scores the eligible
+    # universe off scores_daily + panel; the export merges its rows into the
+    # single daily_list under `on_qs`. Degrades loudly rather than raising:
+    # QS is an ADDITION to a working real-money pipeline, so a QS failure must
+    # not take down the export Longlist/Elder/held all ride on.
+    print(f"{_el()} [daily] Step 6e: QS engine...")
+    try:
+        from src.engines.qs_daily import run as _qs_run
+        _qs = _qs_run(as_of=run_date, sector_map=load_sector_map())
+        if _qs.get("ok"):
+            _m = _qs["market"]
+            print(f"  regime {_m['regime_code']} — {_m['description']}")
+            print(f"  eligible {_qs['eligible_count']} · scored "
+                  f"{_qs['scored_count']} · emitted {_qs['emitted_count']}")
+            if not _qs.get("persist_ready"):
+                print("  [WARN] QS memory is thin (<5 stored sessions) — "
+                      "qs_persist reads low for every name until it fills")
+        else:
+            print(f"  [WARN] QS did not run: {_qs.get('reason')}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] QS engine failed: {exc}")
 
     # Step 7: Output
     print("[daily] Step 7: Output...")

@@ -1327,7 +1327,12 @@ if _dq.get("flagged_count"):
                 st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
 
 _EXPORT_COL_ORDER = [
-    "rank", "ticker", "source", "pe", "on_elder",
+    "rank", "ticker", "source", "pe", "on_longlist", "on_elder", "on_qs",
+    # QS read, flattened from the nested `qs` block so it sorts/filters/copies
+    # like any other column (the full block stays on the row for the cards).
+    "qs_conviction", "qs_state", "qs_p", "qs_vs_mkt", "qs_hits", "qs_persist",
+    "qs_lens_total", "qs_signal", "qs_target_2atr", "qs_give_up_2atr",
+    "qs_usual_days", "qs_dip_pct", "qs_vetoes",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1344,6 +1349,46 @@ _EXPORT_COL_ORDER = [
     "ecx_vol_above20d", "ecx_up_dn_ratio", "ecx_vcp_label", "ecx_vcp_tight",
     "ecx_exhaustion",
 ]
+
+
+def _flatten_qs(edf):
+    """Expand the nested `qs` block into flat qs_* columns for the grid.
+
+    The grid drops nested objects, so without this the whole QS read would
+    vanish from the table (and from the TSV the AIC gets pasted). The full
+    nested block stays on the row and is what the cards render from.
+
+    qs_p / qs_target_2atr describe the +/-2xATR OBJECTIVE, not the structural
+    bracket — the column names carry `2atr` so the two level sets stay
+    distinguishable at a glance in a wide table.
+    """
+    if "qs" not in edf.columns:
+        return edf
+
+    def g(q, *path, default=None):
+        cur = q
+        for k in path:
+            if not isinstance(cur, dict):
+                return default
+            cur = cur.get(k)
+        return default if cur is None else cur
+
+    qs = edf["qs"]
+    edf["qs_conviction"] = qs.apply(lambda q: g(q, "conviction"))
+    edf["qs_state"] = qs.apply(lambda q: g(q, "state", "code", default=""))
+    edf["qs_signal"] = qs.apply(lambda q: g(q, "signal", default=""))
+    edf["qs_p"] = qs.apply(lambda q: g(q, "odds", "p"))
+    edf["qs_vs_mkt"] = qs.apply(lambda q: g(q, "odds", "edge"))
+    edf["qs_hits"] = qs.apply(lambda q: g(q, "engine", "recipe_hits"))
+    edf["qs_persist"] = qs.apply(lambda q: g(q, "engine", "qs_persist"))
+    edf["qs_lens_total"] = qs.apply(lambda q: g(q, "engine", "lens_total"))
+    edf["qs_target_2atr"] = qs.apply(lambda q: g(q, "objective", "target_2atr"))
+    edf["qs_give_up_2atr"] = qs.apply(lambda q: g(q, "objective", "give_up_2atr"))
+    edf["qs_usual_days"] = qs.apply(lambda q: g(q, "path", "usual_days"))
+    edf["qs_dip_pct"] = qs.apply(lambda q: g(q, "path", "typical_dip_pct"))
+    edf["qs_vetoes"] = qs.apply(
+        lambda q: ", ".join(g(q, "vetoes", default=[]) or []))
+    return edf
 
 
 def _flatten_elder_context(edf):
@@ -1382,6 +1427,7 @@ def _export_table(records):
         return pd.DataFrame()
     edf = pd.DataFrame(records)
     edf = _flatten_elder_context(edf)
+    edf = _flatten_qs(edf)
     if "elder_5d" in edf.columns:
         edf["elder_5d"] = edf["elder_5d"].apply(
             lambda v: ",".join(str(int(x)) for x in v) if isinstance(v, list)
@@ -1479,20 +1525,31 @@ elif _ex.get("held_positions_status") not in (None, "live"):
 
 
 # ---------------------------------------------------------------------------
-# 3. Longlist — THE one list (PM v1.1). Filter with the sliders below.
-# Elder (≥8) is a COLUMN on this same list (`on_elder`), not a separate list —
-# combined per PM ruling 2026-07-28.
+# 3. THE daily list — ONE list, membership as columns (PM ruling 2026-08-04).
+# Longlist / Elder (≥8) / QS are LENSES on this single list (`on_longlist`,
+# `on_elder`, `on_qs`), never parallel lists. Filters below select which lens,
+# which sector/thematic, and the level thresholds.
 # ---------------------------------------------------------------------------
-st.subheader("Longlist")
+st.subheader("Daily list")
 active_recipe = sl.get("active_recipe", {})
 st.caption(
-    "**The longlist IS: SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7** — one definition, "
-    "no second gate. The sliders below DEFAULT to exactly that, and the export/alerts "
-    "fire off the same set (what you see == what fires). Drag the sliders to tighten "
-    "further. **`on_elder`** ticks TRUE for names also at Elder ≥ 8 (the old "
-    "standalone Elder list, now just a column here). `elder_pattern` + `elder_context` "
-    f"ride on every row. Aggregate recipe: {_recipe_label(active_recipe)}."
+    "**ONE list — Longlist, Elder and QS are columns on it, not separate lists.** "
+    "`on_longlist` = SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7 (the sliders default to "
+    "exactly that, and the export/alerts fire off the same set — what you see == what "
+    "fires). `on_elder` = also Elder ≥ 8. `on_qs` = cleared the Quiet Strength engine's "
+    "emit rule. A name can carry any combination; **tick QS alone to see what the new "
+    "lens is adding.** `elder_pattern` + `elder_context` ride on every row. "
+    f"Aggregate recipe: {_recipe_label(active_recipe)}."
 )
+_qs_status = _ex.get("qs_status", "not_run")
+if _qs_status == "error":
+    st.warning(
+        "⚠️ **QS did not run for this export** — an empty QS column here means "
+        "nothing was CHECKED, not that nothing qualified. See the pipeline log."
+    )
+elif _qs_status == "not_run":
+    st.info("QS has not run yet for this export — run the daily pipeline once to "
+            "populate the QS column.")
 
 # The Signals table = the single collapsed `daily_list` (watchlist ∪ elder ∪
 # ledger, each row flagged on_longlist/on_elder/in_ledger). Legacy exports that
@@ -1511,11 +1568,24 @@ if _ll_recs:
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
                        for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
-    _ledger_only = f5.checkbox("In ledger", key="sig_ledger",
-                               help="runner_setup OR premove_setup fired (Signal Radar)")
+    _min_conv = f5.slider("Min QS conviction", 0, 5, 0, key="sig_qsconv",
+                          help="0 = no QS filter. QS conviction 0-5; 0 also means "
+                               "vetoed-and-shown, so 1+ hides struck names.")
+
+    # LENS membership — which list(s) to show. Empty = show everything.
+    g1, g2 = st.columns([2, 2])
+    _lens_sel = g1.multiselect(
+        "Lists", ["Longlist", "Elder ≥8", "QS", "QS only", "In ledger", "Held"],
+        default=[], key="sig_lists",
+        help="Empty = every name. 'QS only' = on the QS list and on NEITHER "
+             "Longlist nor Elder — what the new lens is adding on its own.")
     _sec_opts = sorted({(r.get("gics_sector_name") or r.get("gics_sector") or "—")
                         for r in _ll_recs})
-    _sec_sel = st.multiselect("Sector", _sec_opts, default=_sec_opts, key="sig_sector")
+    _sec_sel = g2.multiselect("Sector", _sec_opts, default=_sec_opts,
+                              key="sig_sector")
+    _th_opts = sorted({(r.get("thematic_basket") or "—") for r in _ll_recs})
+    _th_sel = st.multiselect("Thematic basket", _th_opts, default=_th_opts,
+                             key="sig_thematic") if len(_th_opts) > 1 else _th_opts
 
     def _keep(r: dict) -> bool:
         if (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < _min_sc:
@@ -1532,21 +1602,69 @@ if _ll_recs:
             sec = (r.get("gics_sector_name") or r.get("gics_sector") or "—")
             if sec not in _sec_sel:
                 return False
-        if _ledger_only and not r.get("in_ledger"):
+        if _th_sel and (r.get("thematic_basket") or "—") not in _th_sel:
             return False
+        if _min_conv and ((r.get("qs") or {}).get("conviction") or 0) < _min_conv:
+            return False
+        if _lens_sel:
+            _qs_only = (r.get("on_qs") and not r.get("on_longlist")
+                        and not r.get("on_elder"))
+            hit = (("Longlist" in _lens_sel and r.get("on_longlist"))
+                   or ("Elder ≥8" in _lens_sel and r.get("on_elder"))
+                   or ("QS" in _lens_sel and r.get("on_qs"))
+                   or ("QS only" in _lens_sel and _qs_only)
+                   or ("In ledger" in _lens_sel and r.get("in_ledger"))
+                   or ("Held" in _lens_sel and r.get("held")))
+            if not hit:
+                return False
         return True
 
     _filtered = sorted([r for r in _ll_recs if _keep(r)],
                        key=lambda r: (r.get("ptrs") or 0), reverse=True)
     _n_el = sum(1 for r in _filtered if r.get("on_elder"))
     _n_lg = sum(1 for r in _filtered if r.get("in_ledger"))
+    _n_qs = sum(1 for r in _filtered if r.get("on_qs"))
+    _n_qso = sum(1 for r in _filtered if r.get("on_qs")
+                 and not r.get("on_longlist") and not r.get("on_elder"))
     st.markdown(f"**{len(_filtered)}** names match "
-                f"({_n_el} Elder≥8 · {_n_lg} in ledger)")
+                f"({_n_el} Elder≥8 · {_n_qs} QS, {_n_qso} QS-only · "
+                f"{_n_lg} in ledger)")
     _held_here = [r.get("ticker") for r in _filtered if r.get("held")]
     if _held_here:
         st.caption(f"🔵 **{len(_held_here)} held**: {', '.join(_held_here)}")
     _list_summary(_filtered)
     table_with_copy(_export_table(_filtered), key="ll_table")
+
+    # ---- QS cards, rendered from the export ALONE (src/engines/qs_card.py).
+    # The renderer cannot open a file or call an engine, so anything shown here
+    # is provably in the daily JSON — which is what makes "rebuild the card for
+    # X" work for the AIC as well as the screen.
+    _qs_rows = [r for r in _filtered if r.get("qs")]
+    if _qs_rows:
+        with st.expander(f"QS cards ({len(_qs_rows)})", expanded=False):
+            st.caption(
+                "Read the market line first — it can cancel the day. "
+                "**OBJECTIVE** is the ±2×ATR14 yardstick the probability was "
+                "measured against; **LEVELS** is AQE's structural bracket — what "
+                "you'd actually trade. They are different numbers answering "
+                "different questions, so the probability never refers to a "
+                "bracket target."
+            )
+            try:
+                from src.engines.qs_card import render_market, render_card
+                st.code(render_market(_ex.get("qs_market") or {}), language=None)
+                _cards = sorted(
+                    _qs_rows,
+                    key=lambda r: ((r.get("qs") or {}).get("rank") or 10**6))
+                _pick = st.multiselect(
+                    "Show cards for", [r["ticker"] for r in _cards],
+                    default=[r["ticker"] for r in _cards[:5]], key="qs_cards_pick")
+                for _r in _cards:
+                    if _r["ticker"] in _pick:
+                        st.code(render_card(_r, _ex.get("qs_market") or {}),
+                                language=None)
+            except Exception as _exc:  # noqa: BLE001
+                st.caption(f"card renderer unavailable: {_exc}")
 
     _earn = sorted({c["ticker"] for c in sl.get("candidates", [])
                     if c.get("diagnostics", {}).get("earn_warning")

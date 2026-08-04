@@ -299,6 +299,78 @@ _FIELD_GLOSSARY = {
 }
 _FIELD_GLOSSARY.update(LENS_GLOSSARY)
 
+# ---- QS (Quiet Strength) — the third lens, folded into the SAME daily_list.
+_FIELD_GLOSSARY.update({
+    "on_qs": "TRUE if the name cleared QS's emit rule today (>=2 recipe hits AND "
+             "conviction >=2, or vetoed-and-shown). Membership flag on the ONE "
+             "daily_list — Longlist/Elder/QS are lenses on one list, not parallel "
+             "lists. A name can carry any combination.",
+    "qs": "The Quiet Strength read (nested). Present on EVERY row QS evaluated, "
+          "including names it did NOT emit — so a Longlist-only name still shows "
+          "its QS conviction/probability/lens. ABSENT means QS could not evaluate "
+          "the name at all (outside the eligible set or no scores), which is NOT "
+          "the same as a poor QS score. Keys: conviction (0-5) + conviction_word; "
+          "signal (STRONG/GOOD/WATCH/NONE/SKIP, driven by recipe_hits); state "
+          "{code EARLY/READY/READY+, plain, test_hit_rate, awake}; odds {p, "
+          "p_test, n_analogues, market_avg, edge, bucket, bucket_kind, refers_to, "
+          "extrapolated}; objective {now, target_2atr, target_pct, give_up_2atr, "
+          "atr_pct}; path {usual_days, typical_dip_pct}; engine {recipe_hits, "
+          "qs_persist, lens_total, lens{5 scores}, components{16 raw values}, "
+          "matched_recipes}; vetoes; unevaluable_vetoes; why; versions.",
+    "qs.odds.p": "Probability of reaching the QS OBJECTIVE (+2xATR14 within 20 "
+                 "sessions) read from a table of historical look-alikes matched on "
+                 "(recipe_hits band x lens_total band x persistence band). This is "
+                 "p_train, the conservative side; p_test sits beside it as context. "
+                 "NEVER read p without n_analogues behind it, and NEVER read it as "
+                 "the odds of reaching a bracket target — see qs.objective.",
+    "qs.objective": "The MECHANICAL yardstick the probability was measured "
+                    "against: target_2atr = close + 2xATR14, give_up_2atr = close - "
+                    "2xATR14. NOT a trade instruction and NOT the tradeable level "
+                    "set — `bracket` is that (structural, 3-gate validated). The two "
+                    "are different numbers answering different questions; conflating "
+                    "them makes qs.odds.p read as the odds of hitting structural TP2, "
+                    "which it is not.",
+    "qs.odds.extrapolated": "TRUE when the name sat OUTSIDE today's QS-eligible set "
+                            "(its volume did not beat its own 10-day average). It was "
+                            "still scored, against the eligible cohort's distribution "
+                            "without joining it — so the reference curve stays the "
+                            "measured population — but its probability is a "
+                            "read-across, not a measured analogue. Never emitted.",
+    "qs.engine.qs_persist": "How many of the PRIOR 5 stored sessions the name also "
+                            "qualified as QS (recipe_hits >= 3). An independent "
+                            "conviction dimension: inside identical hits x lens "
+                            "buckets it still adds +0.06..+0.16 to the hit rate. "
+                            "Counted over stored SESSIONS, not calendar days — a "
+                            "market holiday is not a day the name failed.",
+    "qs.engine.recipe_hits": "How many of the frozen book's 40 recipes the name "
+                             "satisfies. Counts ALL 40 entries, including 8 exact "
+                             "duplicate pairs that are double-counted BY DESIGN — the "
+                             "calibration's hit bands were fitted on this total, so "
+                             "de-duplicating to 32 would drop names a band and "
+                             "understate every probability.",
+    "qs.unevaluable_vetoes": "Vetoes that could NOT be evaluated because an input was "
+                             "missing/NaN. The name was not struck (matching the "
+                             "reference, which fails open), but this is recorded so a "
+                             "veto that could not be checked is never mistaken for one "
+                             "that was checked and cleared.",
+    "qs.state": "EARLY = quietly strong, not yet moving. READY = was quietly strong "
+                "all week, now starting to move. READY+ = READY and STILL qualifying "
+                "today (the rarer case — most recipes need quiet momentum, so hits "
+                "normally collapse the moment the move starts). Measured test rates "
+                "64.8 / 69.4 / 73.1% vs a 54.8% base. Descriptive: the label feeds "
+                "nothing, though recipe_hits — which separates READY from READY+ — "
+                "does feed the probability bucket.",
+    "qs_market": "The MARKET row, read FIRST because it can cancel the day: "
+                 "plain-English regime description, the base rate the average stock "
+                 "hits its target in this regime, the stance action line, and the "
+                 "regime code as a footnote. STAND_DOWN emits an empty QS list by "
+                 "design.",
+    "qs_status": "'live' (QS ran), 'error' (it failed — reason in the pipeline log), "
+                 "or 'not_run'. Distinguishes a QS OUTAGE from a genuinely quiet "
+                 "market. An empty QS list with status='live' means nothing "
+                 "qualified; with status='error' it means nothing was checked.",
+})
+
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
 # Every tradeable level carries an explicit role/unit/side so a stop can never be
 # read as a target, a ratio as a price, or a level on the wrong side of entry.
@@ -1761,6 +1833,51 @@ def build_export(shortlist: dict | None = None) -> dict:
             _dl[_tk] = {**_r, "on_longlist": False, "on_elder": False}
     for _r in _dl.values():
         _r["in_ledger"] = bool(_r.get("runner_setup") or _r.get("premove_setup"))
+
+    # ---- QS (Quiet Strength) — the third lens, folded into the SAME list.
+    # Same pattern as Elder above: one row per name, membership as a flag, so
+    # the committee never cross-references parallel lists. A QS-only name is
+    # unioned in and gets the identical AQE block via _v21_record_fields, so
+    # its bracket/ATR/DETECT/sector fields come from the same source as every
+    # other row and cannot disagree. Every row that QS scored carries its full
+    # `qs` block — including names QS did NOT emit — so a Longlist-only name
+    # still shows its QS conviction/probability/lens read (PM ruling
+    # 2026-08-04). Absent `qs` means QS could not evaluate the name at all,
+    # which is different from, and must not read as, a poor QS score.
+    _qs_status, _qs_market = "not_run", {}
+    try:
+        from src.engines.qs_daily import run as _qs_run
+        _qs = _qs_run(as_of=None, sector_map=sm)
+        _qs_status = _qs.get("status", "error")
+        _qs_market = _qs.get("market") or {}
+        _qs_rows = _qs.get("rows") or {}
+        for _tk, _qrow in _qs_rows.items():
+            if _tk in _dl:
+                _dl[_tk]["qs"] = _qrow
+                _dl[_tk]["on_qs"] = bool(_qrow.get("emitted"))
+            elif _qrow.get("emitted"):
+                # QS-only name — build the full AQE record for it so the row is
+                # as data-rich as any other, then attach the QS read.
+                _d = dsl_all.get(_tk, {})
+                _rec = {
+                    "ticker": _tk, "source": "qs",
+                    "pe": _tk in pe_tickers,
+                    **_v21_record_fields(_tk, _d, _v21_lk, sm, sector_grades,
+                                         regime_level=regime_level),
+                    "on_longlist": False, "on_elder": False, "in_ledger": False,
+                    "qs": _qrow, "on_qs": True,
+                }
+                _dl[_tk] = _rec
+        if not _qs.get("ok"):
+            print(f"  [WARN] QS layer unavailable: {_qs.get('reason')}")
+    except Exception as _exc:  # noqa: BLE001 — QS never breaks the export
+        _qs_status = "error"
+        print(f"  [WARN] QS layer failed: {_exc}")
+    for _r in _dl.values():
+        _r.setdefault("on_qs", False)
+    export["qs_market"] = _qs_market
+    export["qs_status"] = _qs_status
+
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("ptrs") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
@@ -1773,6 +1890,11 @@ def build_export(shortlist: dict | None = None) -> dict:
         "longlist_count": sum(1 for r in _daily_list if r.get("on_longlist")),
         "elder_count": sum(1 for r in _daily_list if r.get("on_elder")),
         "ledger_count": sum(1 for r in _daily_list if r.get("in_ledger")),
+        "qs_count": sum(1 for r in _daily_list if r.get("on_qs")),
+        "qs_scored_count": sum(1 for r in _daily_list if r.get("qs")),
+        "qs_only_count": sum(1 for r in _daily_list if r.get("on_qs")
+                             and not r.get("on_longlist") and not r.get("on_elder")),
+        "qs_status": export.get("qs_status", "not_run"),
         "held_count": len(export.get("held_positions") or []),
         "held_positions_status": export.get("held_positions_status", "unknown"),
     }
