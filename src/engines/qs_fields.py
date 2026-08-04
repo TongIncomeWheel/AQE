@@ -147,10 +147,24 @@ def compute_rs_consist(panel: pd.DataFrame, ew: pd.DataFrame,
                        tickers: list[str] | None = None) -> pd.DataFrame:
     """Fraction of the last 126 sessions the ticker beat the EW universe.
 
-    A "win" is strictly `stock_return > ew_return` on the same day. Days where
-    the stock has no bar are excluded from BOTH numerator and denominator —
-    the denominator is the count of days actually compared, not a flat 126, so
-    a name with a trading halt is not silently penalised for the gap.
+    MATCHES THE REFERENCE IMPLEMENTATION EXACTLY (`daily_scan.py:80-91`):
+
+        beat = (rets > idx_ret[:, None]).astype(float)
+        rs   = DataFrame(beat).rolling(126, min_periods=126).mean()
+
+    Two consequences of that formulation are deliberate, surprising, and load
+    bearing — the frozen calibration was measured against them, so they are
+    reproduced rather than "improved":
+
+    1. A day the ticker did NOT trade counts as a LOSS, not as an excluded
+       observation. `NaN > x` is False, which `.astype(float)` turns into 0.0.
+       The denominator is therefore always a flat 126, never a count of days
+       actually compared. A halted name is penalised for the gap.
+    2. The window is strict (`min_periods=126`): no value at all is emitted
+       until a full 126 sessions exist, rather than a partial-sample estimate.
+
+    Changing either would shift every name's LEADERSHIP lens score, move names
+    across `lens_total` band boundaries, and silently re-price the whole book.
     """
     closes = _close_matrix(panel)
     if tickers:
@@ -158,17 +172,13 @@ def compute_rs_consist(panel: pd.DataFrame, ew: pd.DataFrame,
         if keep:
             closes = closes[keep]
     rets = closes.pct_change()
-    ew_ret = ew["ew_ret"].reindex(rets.index)
+    # nan_to_num on the index return mirrors the reference: a day where the
+    # cross-sectional mean is undefined is treated as a 0% index day.
+    ew_ret = ew["ew_ret"].reindex(rets.index).fillna(0.0)
 
-    comparable = rets.notna() & ew_ret.notna().to_numpy()[:, None]
-    wins = (rets.gt(ew_ret, axis=0)) & comparable
-
-    win_ct = wins.rolling(RS_CONSIST_WINDOW, min_periods=1).sum()
-    cmp_ct = comparable.rolling(RS_CONSIST_WINDOW, min_periods=1).sum()
-    # Require a materially full window before quoting a fraction — a 3-day
-    # sample reading "100% of days" is noise wearing a statistic's clothes.
-    min_obs = RS_CONSIST_WINDOW // 2
-    frac = (win_ct / cmp_ct).where(cmp_ct >= min_obs)
+    beat = rets.gt(ew_ret, axis=0).astype(float)   # NaN -> False -> 0.0
+    frac = beat.rolling(RS_CONSIST_WINDOW,
+                        min_periods=RS_CONSIST_WINDOW).mean()
 
     out = frac.stack().dropna().reset_index()
     out.columns = ["date", "ticker", "rs_consist"]
