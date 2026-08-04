@@ -120,19 +120,58 @@ FLAG_UNEVALUABLE_VETOES = True
 # string comparison is safe as written.
 AWAKE_IMPULSE_VALUE = "GREEN"
 
-# READY is tested BEFORE early, so it wins when both would qualify.
-# "READY+" appears in the handover's prose (§1.3, quoted at 73.1%) but the
-# reference emits only READY / EARLY / "" — it is a research label describing
-# a subset of READY, not a third emitted state. We follow the reference.
+# READY is tested BEFORE EARLY, so it wins when both would qualify.
+#
+# READY+ — PM RULING 2026-08-04, a deliberate DEPARTURE from the reference.
+# The handover quotes READY+ at 73.1% (§1.3, "both qualifying today AND held
+# AND awake") but daily_scan.py emits only READY / EARLY / "". The PM wants it
+# surfaced, so it is emitted as a third state.
+#
+# This is SAFE to add: the state label is descriptive only. est_p is keyed on
+# (hits, lens_total, persist) and conviction on (est_p, cell_base_rate) —
+# neither reads qs_state, and SORT_KEYS does not include it. Emitting READY+
+# therefore changes not one probability, conviction, or rank position. It
+# splits the existing READY population into two labels, nothing more.
+#
+# READY+ is a strict subset of READY: same trigger, plus the profile STILL
+# qualifying today. That is the rarer and more informative case — most recipes
+# require quiet momentum, so hits normally collapse at the exact moment the
+# move begins. A name still printing >=3 hits while awake has not collapsed.
 STATE_DESC: dict[str, str] = {
     "EARLY": "quietly strong, hasn't started moving yet",
     "READY": "was quietly strong all week, now starting to move",
+    "READY+": "quietly strong all week, now moving — and still qualifying today",
     "": "",
 }
 PERSIST_WINDOW = 5          # daily_scan.py:151
 QS_DAY_MIN_HITS = 3         # daily_scan.py:160 — a "QS day" is hits >= 3
 READY_MIN_PERSIST = 3       # daily_scan.py:174
 EARLY_MIN_HITS = 3          # daily_scan.py:175
+READY_PLUS_MIN_HITS = 3     # handover §1.3 — "both qualifying today"
+
+
+def qs_state(recipe_hits: int, qs_persist: int, awake: bool) -> str:
+    """EARLY / READY / READY+ / "" — daily_scan.py:173-175 plus READY+.
+
+    Order matters: the READY family is tested first, so a name that would
+    satisfy both READY and EARLY is reported as READY (it is moving, which is
+    the more actionable fact). EARLY requires NOT awake by definition.
+    """
+    if qs_persist >= READY_MIN_PERSIST and awake:
+        return "READY+" if recipe_hits >= READY_PLUS_MIN_HITS else "READY"
+    if recipe_hits >= EARLY_MIN_HITS and not awake:
+        return "EARLY"
+    return ""
+
+
+# Measured test-window hit rates, for display next to the state so the
+# committee reads a state against its own historical base, not the global one.
+# Handover Appendix A; base rate for all of them is 0.548.
+STATE_TEST_RATE: dict[str, float] = {
+    "EARLY": 0.648,
+    "READY": 0.694,
+    "READY+": 0.731,
+}
 
 
 # ---------------------------------------------------------------------------
