@@ -153,14 +153,25 @@ def _f(v):
 
 
 def market_block(regime: dict) -> dict:
-    """The MARKET row — plain English first, numbers after, code as a footnote."""
+    """The MARKET row — plain English first, numbers after, code as a footnote.
+
+    `colour` grades the weather from the recipe book's OWN measured base rate,
+    not from invented thresholds: GREEN >= 0.60, AMBER >= 0.50, RED below,
+    GREY when the regime was never measured. It is a WARNING — `gates_list` is
+    False, so nothing here filters a single name. AQE presents; the PM decides.
+    """
     base = regime.get("base_rate_test")
+    colour = S.regime_colour(base)
     return {
         "description": regime["desc"],
         "avg_stock_hits_target": base,
         "action": S.STANCE_ACTION.get(regime["stance"], "Normal selectivity."),
         "regime_code": f"{regime['cell']} / {regime['stance']}",
         "stance": regime["stance"],
+        "colour": colour,
+        "vs_all_market_base": (None if base is None
+                               else round(base - S.DEFAULT_CELL_BASE_RATE, 3)),
+        "gates_list": S.REGIME_GATES_THE_LIST,
         "trend_200": regime.get("trend_200"),
         "vol_60": regime.get("vol_60"),
         "base_rate_measured": base is not None,

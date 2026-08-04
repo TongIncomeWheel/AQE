@@ -252,9 +252,46 @@ QS_RANK_TOP_N = 50
 # The printed sheet additionally requires hits >= 2 (daily_scan.py:390) on top
 # of the handover's stated noise rule (R8: conviction < 2 never emitted).
 # Vetoed names (conviction 0) ARE emitted so the committee sees what was
-# struck and why. STAND_DOWN emits an empty list by design.
+# struck and why.
 SHEET_MIN_HITS = 2
 STAND_DOWN_STANCE = "STAND_DOWN"
+
+# REGIME IS A WARNING, NOT A GATE — PM ruling 2026-08-04, a deliberate
+# DEPARTURE from the handover (§4.1 "in STAND_DOWN the actionable list is empty
+# by design", R8 "enforce ... STAND_DOWN empty list") and from daily_scan.py:391.
+#
+# The reference emptied the whole list in a STAND_DOWN regime. That makes AQE
+# DECIDE, which is the one thing it does not do: "AQE makes no decisions, no
+# sizing. It exports data + computed levels only." A market read that silently
+# deletes 240 scored names is a decision wearing a filter's clothes — and it is
+# indistinguishable, on screen, from an engine that failed.
+#
+# The regime still matters, and still shows up in two honest places: it sets
+# `cell_base_rate`, so a hot market cannot flatter a mediocre name through
+# `edge`; and it is published as a graded WARNING the PM reads first.
+REGIME_GATES_THE_LIST = False
+
+# Regime colour, derived from the recipe book's OWN measured base rate rather
+# than from invented thresholds. base_rate_test is the fraction of eligible
+# stocks that reached the objective in that regime during the test window, so
+# it is the backtested answer to "how good is this weather".
+# Anchored on the global test base rate (0.548): materially above it is green,
+# materially below is red.
+REGIME_GREEN_MIN = 0.60      # comfortably better than the 0.548 all-market base
+REGIME_AMBER_MIN = 0.50      # around the base
+REGIME_COLOURS = ("GREEN", "AMBER", "RED", "GREY")
+
+
+def regime_colour(base_rate_test: float | None) -> str:
+    """GREEN / AMBER / RED from the regime's measured base rate; GREY if never
+    measured (T1V1 and `unclassified` carry no base_rate_test)."""
+    if base_rate_test is None:
+        return "GREY"
+    if base_rate_test >= REGIME_GREEN_MIN:
+        return "GREEN"
+    if base_rate_test >= REGIME_AMBER_MIN:
+        return "AMBER"
+    return "RED"
 
 # `high_probability` — daily_scan.py:352-355. Not in the handover prose.
 HIGH_PROB_MIN_HITS = 3

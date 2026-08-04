@@ -241,9 +241,84 @@ def test_run_returns_one_row_per_name(day):
     assert len(_run(day)) == len(day)
 
 
-def test_stand_down_emits_nothing(day):
-    reg = dict(REGIME, stance="STAND_DOWN")
-    assert not any(r["emitted"] for r in _run(day, regime=reg))
+def _emittable_day():
+    """A frame engineered so several names genuinely clear the emit rule.
+
+    The random `day` fixture emits nothing, so a regime test built on it would
+    pass under ANY rule — which is exactly how the old STAND_DOWN test passed
+    while asserting behaviour that no longer exists.
+    """
+    n = 12
+    rng = np.random.default_rng(11)
+    d = {"ticker": [f"E{i:02d}" for i in range(n)],
+         "close": np.full(n, 100.0), "atr14": np.full(n, 2.0),
+         "impulse_state": np.array(["RED"] * n)}
+    # Satisfy the duplicated quiet-momentum family so hits land well above the
+    # sheet floor, and keep veto inputs clear so nothing is struck.
+    d.update({"vp_position_score": np.full(n, 20.0), "ms_pos_score": np.full(n, 9.0),
+              "en_pos50": np.full(n, 80.0), "roc_zscore": np.full(n, -1.5),
+              "rel_mom_score": np.full(n, -1.0), "abs_mom_score": np.full(n, -1.0)})
+    for f in (S.CARD_COMPONENTS + ["k39_value", "pr_ma_score", "pr_ret_12m",
+                                   "excess_return", "rs_accel", "pipe_rank",
+                                   "volume_score", "fip_quality", "pr_vol_score",
+                                   "earn_score", "exhaustion_score"]):
+        d.setdefault(f, rng.uniform(40, 90, n))
+    return pd.DataFrame(d)
+
+
+def test_regime_does_not_gate_the_list():
+    """PM ruling 2026-08-04: regime WARNS, it does not filter.
+
+    The reference emptied the whole sheet in STAND_DOWN. That is AQE deciding,
+    and on screen an empty list is indistinguishable from a broken engine —
+    which is exactly how it read when a real run landed in T3V1 with 240 names
+    scored and none listed.
+    """
+    d = _emittable_day()
+    normal = _run(d, regime=REGIME)
+    stood_down = _run(d, regime=dict(REGIME, stance="STAND_DOWN"))
+    assert any(r["emitted"] for r in normal), "fixture must emit under a normal regime"
+    assert [r["emitted"] for r in normal] == [r["emitted"] for r in stood_down], \
+        "STAND_DOWN must not remove names — it is a warning, not a filter"
+    assert S.REGIME_GATES_THE_LIST is False
+
+
+def test_regime_still_shapes_conviction_through_the_base_rate():
+    """Warning, not ignored: a harder regime must still cost edge.
+
+    Dropping the gate must not turn the regime into decoration — it sets
+    cell_base_rate, so a hot market cannot flatter a mediocre name.
+    """
+    d = _emittable_day()
+    easy = _run(d, regime=dict(REGIME, base_rate_test=0.35))
+    hard = _run(d, regime=dict(REGIME, base_rate_test=0.75))
+    assert ([r["conviction"] for r in easy] != [r["conviction"] for r in hard])
+    assert all(e["odds"]["edge"] > h["odds"]["edge"]
+               for e, h in zip(easy, hard)
+               if e["odds"]["edge"] is not None and h["odds"]["edge"] is not None)
+
+
+def test_regime_colour_comes_from_the_measured_base_rate():
+    """The colour is backtested, not an opinion — it grades base_rate_test."""
+    assert S.regime_colour(0.753) == "GREEN"    # T2V1
+    assert S.regime_colour(0.550) == "AMBER"    # T3V2
+    assert S.regime_colour(0.443) == "RED"      # T3V1
+    assert S.regime_colour(None) == "GREY"      # T1V1 / unclassified
+
+
+def test_colour_can_disagree_with_the_books_stance_word():
+    """And it should — the stance is judgement, the colour is measurement.
+
+    T1V3 is labelled DEFENSIVE ("bear weather") yet measured 61.3%, better
+    than the 54.8% all-market base. T3V3 is labelled PRESS yet measured 44.6%.
+    A colour that just mirrored the stance would add nothing.
+    """
+    book = json.load(open(DATA_DIR / "qs" / "recipe_book.json"))
+    regimes = book["regimes"]
+    assert S.regime_colour(regimes["T1V3"]["base_rate_test"]) == "GREEN"
+    assert regimes["T1V3"]["stance"] == "DEFENSIVE"
+    assert S.regime_colour(regimes["T3V3"]["base_rate_test"]) == "RED"
+    assert "PRESS" in regimes["T3V3"]["stance"]
 
 
 def test_vetoed_names_are_emitted_so_the_strike_is_visible(day):

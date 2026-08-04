@@ -409,14 +409,19 @@ def run_qs(day: pd.DataFrame, book: dict, calibration: dict,
 def _assign_ranks(rows: list[dict], stance: str) -> None:
     """qs.rank over the emittable pool, and on_qs membership.
 
-    Two separate rules, both from the reference:
+    Two separate rules:
       qs_rank  — hits >= 1, no vetoes, sorted by SORT_KEYS, cut at 50 (:381-386)
-      emitted  — hits >= 2 AND (conviction >= 2 OR vetoed), empty in
-                 STAND_DOWN (:390-391). Vetoed names ARE emitted so the
-                 committee sees what was struck; conviction 1 is suppressed
-                 because it has no edge over today's own market.
+      emitted  — hits >= 2 AND (conviction >= 2 OR vetoed). Vetoed names ARE
+                 emitted so the committee sees what was struck; conviction 1 is
+                 suppressed because it has no edge over today's own market.
+
+    REGIME NO LONGER GATES THE LIST (PM ruling 2026-08-04). The reference
+    emptied the entire sheet in a STAND_DOWN regime; that is AQE deciding, and
+    on screen it is indistinguishable from a broken engine. The regime is
+    published as a graded warning instead, and still shapes every row through
+    `cell_base_rate` -> `edge`. See qs_spec.REGIME_GATES_THE_LIST.
     """
-    stand_down = stance == S.STAND_DOWN_STANCE
+    stand_down = (stance == S.STAND_DOWN_STANCE) and S.REGIME_GATES_THE_LIST
     pool = [r for r in rows
             if r["engine"]["recipe_hits"] >= S.QS_RANK_MIN_HITS and not r["vetoes"]]
     pool.sort(key=lambda r: (r["engine"]["recipe_hits"], r["odds"]["p"] or 0,

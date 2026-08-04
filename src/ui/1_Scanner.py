@@ -1613,16 +1613,25 @@ elif _qs_status == "not_run":
 _qsm = _ex.get("qs_market") or {}
 if _qsm.get("description"):
     _avg = _qsm.get("avg_stock_hits_target")
-    _avg_txt = (f" In this market the average stock reaches its target "
-                f"**{_avg:.0%}** of the time." if _avg is not None else
-                " No measured base rate for this regime.")
-    _line = (f"**QS market read — {_qsm['description']}.**{_avg_txt} "
-             f"{_qsm.get('action', '')}  \n`{_qsm.get('regime_code', '')}`")
-    if _qsm.get("stance") == "STAND_DOWN":
-        st.error("🛑 " + _line + "  \n**The QS list is empty today by design** — "
-                 "names still carry a QS read, but none are listed.")
-    else:
-        st.info(_line)
+    _vs = _qsm.get("vs_all_market_base")
+    _avg_txt = (
+        f" The average stock reaches its target **{_avg:.0%}** of the time in "
+        f"this weather" + (f" ({_vs:+.0%} vs the {0.548:.0%} all-market base)."
+                           if _vs is not None else ".")
+        if _avg is not None else
+        " This regime has **no measured base rate** — conviction falls back to "
+        "the all-market 54.8%.")
+    _colour = _qsm.get("colour", "GREY")
+    _icon = {"GREEN": "🟢", "AMBER": "🟡", "RED": "🔴"}.get(_colour, "⚪")
+    _line = (f"{_icon} **QS market read — {_colour}: {_qsm['description']}.**"
+             f"{_avg_txt} {_qsm.get('action', '')}  \n"
+             f"`{_qsm.get('regime_code', '')}`")
+    # A WARNING, never a filter (PM ruling 2026-08-04). Regime shapes every
+    # row's `edge` through the base rate it sets — it does not remove names.
+    _note = ("  \n_Regime is a warning, not a filter — no name is removed from "
+             "the list because of it._")
+    (st.error if _colour == "RED" else
+     st.warning if _colour == "AMBER" else st.info)(_line + _note)
 
 # The Signals table = the single collapsed `daily_list` (watchlist ∪ elder ∪
 # ledger, each row flagged on_longlist/on_elder/in_ledger). Legacy exports that
