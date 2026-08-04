@@ -759,16 +759,60 @@ def test_non_monotonic_dates_raise_or_handle():
     assert (f_sorted["flow_100"].dropna() <= 100).all()
 
 
-def test_hurst_trending():
-    """Strong uptrend should produce H > 0.55 (TRENDING)."""
-    from src.analyzer.regime import hurst_exponent, classify_hurst
-    # Steady uptrend with small noise
-    np.random.seed(123)
-    prices = 100 * np.cumprod(1 + 0.002 + np.random.randn(200) * 0.005)
+def _ar1_prices(n, phi, seed, vol=0.01):
+    """Prices whose RETURNS are autocorrelated at lag 1.
+
+    phi > 0 = persistent (an up move begets an up move) -> H > 0.5
+    phi < 0 = mean-reverting (an up move begets a down move) -> H < 0.5
+    """
+    rng = np.random.default_rng(seed)
+    eps = rng.normal(0, vol, n)
+    r = np.zeros(n)
+    for i in range(1, n):
+        r[i] = phi * r[i - 1] + eps[i]
+    return 100 * np.exp(np.cumsum(r))
+
+
+def test_hurst_persistent_series_reads_above_half():
+    """Genuine persistence — autocorrelated returns — must push H up."""
+    from src.analyzer.regime import hurst_exponent
+    hs = [hurst_exponent(_ar1_prices(120, 0.35, s)) for s in range(30)]
+    assert all(0.0 <= h <= 1.0 for h in hs)
+    assert np.mean(hs) > 0.52
+
+
+def test_hurst_mean_reverting_series_reads_below_half():
+    from src.analyzer.regime import hurst_exponent
+    hs = [hurst_exponent(_ar1_prices(120, -0.35, s)) for s in range(30)]
+    assert np.mean(hs) < 0.48
+
+
+def test_drift_alone_does_not_read_as_trending():
+    """A steady uptrend is NOT persistence, and must not inflate H.
+
+    This is the misconception the previous estimator quietly encoded: it was
+    biased high enough (mean 0.593 on random data) that a drifting series
+    cleared the TRENDING threshold on bias alone. Hurst measures whether moves
+    FOLLOW THROUGH, not whether price went up. A momentum system whose regime
+    indicator says "momentum favoured" because the market drifted is reading
+    its own premise back to itself.
+    """
+    from src.analyzer.regime import hurst_exponent
+    rng = np.random.default_rng(123)
+    prices = 100 * np.cumprod(1 + 0.002 + rng.normal(0, 0.005, 200))
     h = hurst_exponent(prices)
-    assert 0.0 <= h <= 1.0
-    # Strong trend should push H above 0.5
-    assert h > 0.45
+    assert 0.30 <= h <= 0.62, f"drift alone should sit near 0.5, got {h}"
+
+
+def test_hurst_is_unbiased_on_random_data():
+    """The regression guard: a market with no structure must read ~0.5.
+
+    If this drifts upward again, AQE's regime field starts telling a momentum
+    system that momentum is working, on no evidence.
+    """
+    from src.analyzer.regime import hurst_exponent
+    hs = [hurst_exponent(_ar1_prices(60, 0.0, s)) for s in range(200)]
+    assert 0.45 <= np.mean(hs) <= 0.55, f"biased: mean {np.mean(hs):.3f}"
 
 
 def test_hurst_random_walk():
