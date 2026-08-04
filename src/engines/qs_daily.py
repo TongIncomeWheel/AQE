@@ -278,6 +278,10 @@ def _score_off_cohort(other: pd.DataFrame, cohort: pd.DataFrame, book: dict,
     for r in rows:
         r["emitted"] = False
         r["rank"] = None
+        r["not_listed_reason"] = (
+            "not QS-eligible today (volume did not beat its own 10-day "
+            "average) — scored against the eligible cohort as a read-across, "
+            "never listed")
     return rows
 
 

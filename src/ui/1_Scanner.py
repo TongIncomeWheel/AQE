@@ -1333,14 +1333,15 @@ _EXPORT_COL_ORDER = [
     # QS, ordered as the decision reads: is it a pick -> what are the odds ->
     # what drove them -> where do I trade it -> anything against it.
     "qs_conviction", "qs_state", "qs_signal",
-    "qs_p", "qs_n", "qs_edge",          # p is never shown without n (STEP 8)
-    "qs_hits", "qs_persist", "qs_lens_total",
+    "qs_p_pct", "qs_n", "qs_edge_pts",   # p is never shown without n (STEP 8)
+    "qs_hits_of40", "qs_persist_of5", "qs_lens_of10",
     "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
-    "qs_vetoes", "qs_extrapolated",
+    "qs_vetoes", "qs_extrapolated", "qs_not_listed",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
+    "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)
     "bracket", "held", "rank_explain",
@@ -1383,15 +1384,30 @@ def _flatten_qs(edf):
     edf["qs_conviction"] = qs.apply(lambda q: g(q, "conviction"))
     edf["qs_state"] = qs.apply(lambda q: g(q, "state", "code", default=""))
     edf["qs_signal"] = qs.apply(lambda q: g(q, "signal", default=""))
-    edf["qs_p"] = qs.apply(lambda q: g(q, "odds", "p"))
+    # Column NAMES carry the scale; VALUES stay numeric so the grid still sorts
+    # and the sliders still compare. Bare decimals (0.71 beside 0.264) and bare
+    # integers (17 beside 4) read as four similar numbers when they are two
+    # different stages of one calculation:
+    #   hits + persist + lens  ->  pick a calibration bucket  ->  p, n
+    #   p - today's market base rate                          ->  edge
+    # Formatting them as strings ("17/40") would fix the confusion and break
+    # sorting — "17/40" sorts before "4/40" lexically — so the scale goes in
+    # the header instead.
+    edf["qs_p_pct"] = qs.apply(
+        lambda q: (lambda p: None if p is None else round(p * 100, 1))(
+            g(q, "odds", "p")))
     # SPEC RULE (STEP 8 / §4.4): a probability is NEVER shown without the
     # analogue count behind it. p alone hides whether it came from 700 historical
     # look-alikes or 17, which is the difference between a read and a rumour.
     edf["qs_n"] = qs.apply(lambda q: g(q, "odds", "n_analogues"))
-    edf["qs_edge"] = qs.apply(lambda q: g(q, "odds", "edge"))
-    edf["qs_hits"] = qs.apply(lambda q: g(q, "engine", "recipe_hits"))
-    edf["qs_persist"] = qs.apply(lambda q: g(q, "engine", "qs_persist"))
-    edf["qs_lens_total"] = qs.apply(lambda q: g(q, "engine", "lens_total"))
+    # In percentage POINTS, not a decimal: edge is the gap between two
+    # percentages, so "+26" cannot be misread as a probability of 0.26.
+    edf["qs_edge_pts"] = qs.apply(
+        lambda q: (lambda e: None if e is None else round(e * 100, 1))(
+            g(q, "odds", "edge")))
+    edf["qs_hits_of40"] = qs.apply(lambda q: g(q, "engine", "recipe_hits"))
+    edf["qs_persist_of5"] = qs.apply(lambda q: g(q, "engine", "qs_persist"))
+    edf["qs_lens_of10"] = qs.apply(lambda q: g(q, "engine", "lens_total"))
     # `_2atr` is deliberate and NOT spec vocabulary: the spec calls these
     # target / give_up, but in this table they sit beside the structural
     # bracket's TP1/TP2, and an unqualified "target" column would invite
@@ -1407,6 +1423,11 @@ def _flatten_qs(edf):
     # measured on, so its p is a read-across rather than a measured analogue.
     edf["qs_extrapolated"] = qs.apply(
         lambda q: bool(g(q, "odds", "extrapolated", default=False)))
+    # WHY a scored name is not on the QS list. Four separate rules all produce
+    # on_qs=False, so without this a high-conviction name sitting off the list
+    # reads as a bug rather than a rule.
+    edf["qs_not_listed"] = qs.apply(
+        lambda q: g(q, "not_listed_reason", default="") or "")
     # Deliberately NOT columns: the calibration cell key ("8+|6-7|4-5"), the
     # bucket kind, the five individual lens scores, the 16 raw components,
     # matched_recipes, p_test. They are engine mechanics — they say HOW the
@@ -1462,6 +1483,15 @@ def _export_table(records):
     _nested = [c for c in edf.columns
                if edf[c].apply(lambda v: isinstance(v, (list, dict))).any()]
     edf = edf.drop(columns=_nested, errors="ignore")
+    # Fields the export stores as a DECIMAL fraction but which are percentages
+    # (vol_30d_ann 0.18 = 18%, knn_prob 0.62 = 62%). Scaled here, in the display
+    # frame only, so the % suffix the grid adds is truthful. The export JSON is
+    # untouched — readers there still get the documented decimal.
+    for _c, _new in (("vol_30d_ann", "vol_30d_ann_pct"),
+                     ("knn_prob", "knn_prob_pct")):
+        if _c in edf.columns:
+            edf[_new] = pd.to_numeric(edf[_c], errors="coerce") * 100
+            edf = edf.drop(columns=[_c])
     # Order by the curated list, then any extras; drop all-empty columns.
     cols = [c for c in _EXPORT_COL_ORDER if c in edf.columns]
     cols += [c for c in edf.columns if c not in cols]
@@ -1576,6 +1606,24 @@ elif _qs_status == "not_run":
     st.info("QS has not run yet for this export — run the daily pipeline once to "
             "populate the QS column.")
 
+# QS market line, ABOVE the table. Spec §4.3: "Market first — it can cancel the
+# day." A STAND_DOWN regime empties the QS list by design, so without this a
+# screen full of high-conviction names carrying on_qs=False looks broken rather
+# than obeying a rule.
+_qsm = _ex.get("qs_market") or {}
+if _qsm.get("description"):
+    _avg = _qsm.get("avg_stock_hits_target")
+    _avg_txt = (f" In this market the average stock reaches its target "
+                f"**{_avg:.0%}** of the time." if _avg is not None else
+                " No measured base rate for this regime.")
+    _line = (f"**QS market read — {_qsm['description']}.**{_avg_txt} "
+             f"{_qsm.get('action', '')}  \n`{_qsm.get('regime_code', '')}`")
+    if _qsm.get("stance") == "STAND_DOWN":
+        st.error("🛑 " + _line + "  \n**The QS list is empty today by design** — "
+                 "names still carry a QS read, but none are listed.")
+    else:
+        st.info(_line)
+
 # The Signals table = the single collapsed `daily_list` (watchlist ∪ elder ∪
 # ledger, each row flagged on_longlist/on_elder/in_ledger). Legacy exports that
 # still carry `longlist` fall back to it.
@@ -1615,19 +1663,31 @@ if _ll_recs:
              "flow, leadership). The 'how strong is the profile' read, before "
              "the calibration turns it into odds.")
 
-    # LENS membership — which list(s) to show. Empty = show everything.
+    # LENS membership — checkboxes, so every list is visible at once and
+    # ticking two is one click each rather than a dropdown round-trip.
+    # Nothing ticked = show everything. Ticks are OR'd: Longlist + Elder shows
+    # names on either, not only names on both.
     # 'In ledger' is GONE: it meant runner_setup OR premove_setup, i.e. pure
     # Signal Radar, which is retired. A filter for a dead lens is worse than no
     # filter — it implies the lens is still telling you something.
-    g1, g2 = st.columns([2, 2])
-    _lens_sel = g1.multiselect(
-        "Lists", ["Longlist", "Elder ≥8", "QS", "QS only", "Held"],
-        default=[], key="sig_lists",
-        help="Empty = every name. 'QS only' = on the QS list and on NEITHER "
-             "Longlist nor Elder — what the new lens is adding on its own.")
+    st.caption("**Lists** — tick any combination (nothing ticked = all names)")
+    _LENS_BOXES = [
+        ("Longlist", "sig_f_ll", None),
+        ("Elder ≥8", "sig_f_el", None),
+        ("QS", "sig_f_qs", None),
+        ("QS only", "sig_f_qso",
+         "On QS and on NEITHER Longlist nor Elder — what the third lens is "
+         "adding on its own."),
+        ("Held", "sig_f_held", None),
+    ]
+    _lens_cols = st.columns(len(_LENS_BOXES))
+    _lens_sel = [
+        label for (label, key, hlp), col in zip(_LENS_BOXES, _lens_cols)
+        if col.checkbox(label, key=key, help=hlp)
+    ]
     _sec_opts = sorted({(r.get("gics_sector_name") or r.get("gics_sector") or "—")
                         for r in _ll_recs})
-    _sec_sel = g2.multiselect("Sector", _sec_opts, default=_sec_opts,
+    _sec_sel = st.multiselect("Sector", _sec_opts, default=_sec_opts,
                               key="sig_sector")
     _th_opts = sorted({(r.get("thematic_basket") or "—") for r in _ll_recs})
     _th_sel = st.multiselect("Thematic basket", _th_opts, default=_th_opts,

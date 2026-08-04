@@ -58,8 +58,44 @@ def load_export() -> dict | None:
         return json.load(f)
 
 
+def percent_column_config(df) -> dict:
+    """Display config that renders percentage columns WITH a % sign.
+
+    Values stay numeric so the grid still sorts and filters correctly — a
+    formatted string would sort lexically ("100" before "9"). Streamlit's
+    NumberColumn applies the suffix at render time only.
+
+    Recognises the naming convention used across the export:
+      *_pct / *_pc   a percentage        -> "12.3%"
+      *_pts          percentage POINTS   -> "+26 pts"   (a gap between two
+                                            percentages, not a percentage)
+      *_ann          annualised decimal  -> scaled x100 and shown as a percent
+    """
+    try:
+        import streamlit as st
+    except Exception:  # noqa: BLE001
+        return {}
+    cfg = {}
+    for c in getattr(df, "columns", []):
+        name = str(c)
+        try:
+            if not pd.api.types.is_numeric_dtype(df[c]):
+                continue
+        except Exception:  # noqa: BLE001
+            continue
+        if name.endswith("_pts"):
+            cfg[c] = st.column_config.NumberColumn(name, format="%+.0f pts")
+        elif name.endswith(("_pct", "_pc")):
+            cfg[c] = st.column_config.NumberColumn(name, format="%.1f%%")
+        elif name.endswith("_ann"):
+            # Stored as a decimal (0.18 = 18%) — see the field glossary.
+            cfg[c] = st.column_config.NumberColumn(name, format="%.1f%%")
+    return cfg
+
+
 def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
-                    caption: str | None = None, filterable: bool = True) -> None:
+                    caption: str | None = None, filterable: bool = True,
+                    column_config: dict | None = None) -> None:
     """Render a dataframe + an in-table filter + a one-click copy block.
 
     `st.dataframe` is sortable but NOT filterable, so we add a free-text filter
@@ -90,7 +126,14 @@ def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
             except Exception:  # noqa: BLE001 — filtering never blocks the table
                 view = df
 
-    st.dataframe(view, use_container_width=True, hide_index=True)
+    # Percentage columns render with a % sign unless the caller overrides.
+    if column_config is None:
+        try:
+            column_config = percent_column_config(view)
+        except Exception:  # noqa: BLE001 — formatting never blocks the table
+            column_config = None
+    st.dataframe(view, use_container_width=True, hide_index=True,
+                 column_config=column_config or None)
     try:
         if view is None or len(view) == 0:
             return

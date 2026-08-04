@@ -430,3 +430,26 @@ def _assign_ranks(rows: list[dict], stance: str) -> None:
             not stand_down
             and r["engine"]["recipe_hits"] >= S.SHEET_MIN_HITS
             and (r["conviction"] >= 2 or r["conviction"] == 0))
+        # WHY a scored name is not on the list. Four different rules produce
+        # the same emitted=False, and without naming which one fired, a
+        # conviction-3 STRONG name sitting off the list looks like a bug
+        # rather than a rule. Checked in the order the rules actually apply.
+        if r["emitted"]:
+            r["not_listed_reason"] = None
+        elif not r.get("eligible", True):
+            r["not_listed_reason"] = (
+                "not QS-eligible today (volume did not beat its own 10-day "
+                "average) — scored as a read-across only, never listed")
+        elif stand_down:
+            r["not_listed_reason"] = (
+                "regime is STAND_DOWN — the QS list is empty today by design")
+        elif r["engine"]["recipe_hits"] < S.SHEET_MIN_HITS:
+            r["not_listed_reason"] = (
+                f"only {r['engine']['recipe_hits']} recipe hits "
+                f"(needs >= {S.SHEET_MIN_HITS})")
+        elif r["conviction"] == 1:
+            r["not_listed_reason"] = (
+                "conviction 1 — no edge over today's market, suppressed by "
+                "the noise rule")
+        else:
+            r["not_listed_reason"] = "did not clear the emit rule"
