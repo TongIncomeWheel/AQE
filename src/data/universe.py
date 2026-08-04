@@ -68,12 +68,35 @@ UNIVERSE_RULE_ID = "v2-mcap2B-vol1.5M-us-notrend"
 SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
 SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
 SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading days)
-# Cheap pre-filter applied to the batch-quote `avgVolume` before spending one
-# bars call per name. Deliberately well BELOW SCREEN_AVG_VOL_10D: FMP's
-# avgVolume uses a longer window than 10 days, so a name in a volume lull whose
-# 10-day mean genuinely clears 1.5M must not be dropped before we measure it.
-# The real 1.5M test is applied in Pass 2 against a true 10-day mean.
-SCREEN_AVG_VOL_PREFILTER = 750_000
+# ---- API-BUDGET BANDS ------------------------------------------------------
+# Pass 2 costs ONE FMP call per name, and the client throttles to 80 calls/min
+# on cloud IPs, so an unbounded Pass 2 is the difference between a 4-minute
+# screen and a 20-minute one. Dropping the old SMA50 pre-filter (which happened
+# to halve the candidate set) made this acute — that filter was paying for
+# itself in API budget while doing screening work it should not have been doing.
+#
+# So the batch quote's `avgVolume` (free — ~1 call per 50 names) decides two of
+# the three cases outright, and only the genuinely uncertain band spends a bars
+# call:
+#
+#   avgVolume >= HIGH   -> admit,  no bars call   (comfortably above the floor)
+#   avgVolume <  LOW    -> reject, no bars call   (comfortably below it)
+#   LOW <= av < HIGH    -> fetch bars, apply the true 10-day mean
+#
+# TRADE-OFF, stated rather than buried: FMP's avgVolume uses a longer window
+# than 10 days, so the two shortcut bands are approximations. A name whose
+# volume collapsed very recently could be admitted on a stale average, and one
+# that just woke up could be rejected. The bands are set wide (2x and 0.5x the
+# 1.5M floor) so only names far from the boundary skip verification, and every
+# name NEAR the threshold — where the decision actually matters — is still
+# measured exactly.
+SCREEN_AVG_VOL_HIGH = SCREEN_AVG_VOL_10D * 2      # 3.0M — admit unverified
+SCREEN_AVG_VOL_PREFILTER = SCREEN_AVG_VOL_10D // 2  # 750k — reject unverified
+
+# Hard ceiling on Pass 2 bars calls, so a bad screener day cannot turn into a
+# thousand-call run. Names beyond the cap keep their previous membership rather
+# than being silently dropped.
+SCREEN_MAX_BAR_CALLS = 400
 
 
 def load_universe(path: Path | None = None, include_benchmark: bool = True) -> list[str]:
@@ -214,27 +237,57 @@ def build_universe(dry_run: bool = False) -> dict:
     except FMPError as exc:
         return {"status": "error", "reason": f"batch quotes failed: {exc}"}
 
-    vol_prefilter_pass = []
+    # Three-way split on the free avgVolume, so only the uncertain band costs
+    # a bars call. See the SCREEN_AVG_VOL_* band rationale above.
+    passed: list[str] = []          # admitted without verification
+    to_verify: list[str] = []       # in the band — needs a real 10-day mean
+    rejected_cheap = 0
     for tk in candidates:
         q = quotes.get(tk)
-        if not q:
-            # No quote came back — do NOT silently drop the name. Let Pass 2
-            # measure it from bars; a missing quote is an FMP gap, not a fail.
-            vol_prefilter_pass.append(tk)
-            continue
-        av = q.get("avg_volume")
-        if av is None or av >= SCREEN_AVG_VOL_PREFILTER:
-            vol_prefilter_pass.append(tk)
-    print(f"[universe] After volume pre-filter "
-          f"(avgVolume >= {SCREEN_AVG_VOL_PREFILTER:,}): "
-          f"{len(vol_prefilter_pass)} candidates")
+        av = q.get("avg_volume") if q else None
+        if av is None:
+            # No quote / no avgVolume — do NOT guess in either direction.
+            # Measure it: a missing quote is an FMP gap, not a screening result.
+            to_verify.append(tk)
+        elif av >= SCREEN_AVG_VOL_HIGH:
+            passed.append(tk)
+        elif av < SCREEN_AVG_VOL_PREFILTER:
+            rejected_cheap += 1
+        else:
+            to_verify.append(tk)
+
+    print(f"[universe] avgVolume split: {len(passed)} admitted "
+          f"(>= {SCREEN_AVG_VOL_HIGH:,}), {rejected_cheap} rejected "
+          f"(< {SCREEN_AVG_VOL_PREFILTER:,}), {len(to_verify)} to verify")
+
+    capped = 0
+    if len(to_verify) > SCREEN_MAX_BAR_CALLS:
+        capped = len(to_verify) - SCREEN_MAX_BAR_CALLS
+        # Verify the most liquid first — those are likeliest to pass, so the
+        # budget buys the most membership.
+        to_verify.sort(key=lambda t: -((quotes.get(t) or {}).get("avg_volume") or 0))
+        deferred, to_verify = to_verify[SCREEN_MAX_BAR_CALLS:], to_verify[:SCREEN_MAX_BAR_CALLS]
+        # Deferred names keep whatever membership they already had, rather than
+        # being silently dropped by an API budget they never knew about.
+        try:
+            prior = set(load_universe(include_benchmark=False))
+        except Exception:  # noqa: BLE001
+            prior = set()
+        kept = [t for t in deferred if t in prior]
+        passed.extend(kept)
+        print(f"[universe] [WARN] {capped} names over the {SCREEN_MAX_BAR_CALLS}-call "
+              f"verification cap — {len(kept)} kept on prior membership, "
+              f"{capped - len(kept)} deferred to the next run")
+
+    est_min = len(to_verify) / max(client.config.rate_limit_per_min, 1)
+    print(f"[universe] Pass 2: {len(to_verify)} bars calls "
+          f"(~{est_min:.1f} min at {client.config.rate_limit_per_min}/min)")
 
     # ── Pass 2: fetch bars → true 10-day average volume ──────────────────
-    passed: list[str] = []
     errors: list[str] = []
-    for i, tk in enumerate(vol_prefilter_pass):
+    for i, tk in enumerate(to_verify):
         if (i + 1) % 100 == 0:
-            print(f"[universe] Checking bars {i + 1}/{len(vol_prefilter_pass)}...")
+            print(f"[universe] Checking bars {i + 1}/{len(to_verify)}...")
         try:
             bars = client.get_daily_bars(tk, from_date=from_dt, to_date=today)
             if bars is None or bars.empty or len(bars) < 50:
@@ -246,6 +299,7 @@ def build_universe(dry_run: bool = False) -> dict:
                 passed.append(tk)
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{tk}: {exc}")
+    passed = sorted(set(passed))
 
     print(f"[universe] {len(passed)} tickers passed all filters"
           + (f" ({len(errors)} errors)" if errors else ""))

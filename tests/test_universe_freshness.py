@@ -123,6 +123,51 @@ def test_rule_id_records_that_the_trend_filter_is_gone():
     assert "2B" in U.UNIVERSE_RULE_ID
 
 
+# -------------------------------------------------------------- API budget
+
+def test_verification_bands_bracket_the_liquidity_floor():
+    """Only names NEAR the threshold spend a call; the rest are decided free.
+
+    The bands must sit either side of the real floor, or the shortcut would be
+    deciding cases where the answer is genuinely in doubt.
+    """
+    assert U.SCREEN_AVG_VOL_PREFILTER < U.SCREEN_AVG_VOL_10D < U.SCREEN_AVG_VOL_HIGH
+    assert U.SCREEN_AVG_VOL_HIGH == U.SCREEN_AVG_VOL_10D * 2
+    assert U.SCREEN_AVG_VOL_PREFILTER == U.SCREEN_AVG_VOL_10D // 2
+
+
+def test_bars_calls_are_hard_capped():
+    """A bad screener day must not become a thousand-call run.
+
+    Pass 2 costs one call per name against an 80/min cloud limit, so the cap is
+    what bounds the screen's wall-clock time, not just its quota use.
+    """
+    assert U.SCREEN_MAX_BAR_CALLS <= 500
+    per_min_cloud = 80
+    assert U.SCREEN_MAX_BAR_CALLS / per_min_cloud <= 6.0, \
+        "Pass 2 must stay under ~6 minutes at the cloud rate limit"
+
+
+def test_screen_call_budget_is_bounded():
+    """Whole-screen worst case = screener + batch quotes + capped Pass 2."""
+    max_candidates = 5000                      # the screener `limit`
+    batch_quote_calls = max_candidates / 50    # chunk=50
+    worst = 1 + batch_quote_calls + U.SCREEN_MAX_BAR_CALLS
+    assert worst <= 600, f"screen could cost {worst} calls"
+
+
+def test_missing_avg_volume_is_verified_not_guessed():
+    """A missing quote is an FMP gap, not a screening result.
+
+    Guessing either way would silently admit an illiquid name or drop a good
+    one on an API hiccup.
+    """
+    import inspect
+    src = inspect.getsource(U.build_universe)
+    assert "av is None" in src
+    assert "to_verify.append(tk)" in src
+
+
 def test_the_screen_carries_no_trend_filter():
     """Guard on the rule itself — size + liquidity + listing only.
 
