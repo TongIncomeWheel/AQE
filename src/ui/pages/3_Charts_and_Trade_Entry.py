@@ -96,10 +96,12 @@ if _daily is None:
     for r in (export.get("elder_list") or []):
         if r.get("ticker") not in _seen:
             _daily.append({**r, "on_elder": True})
+# "In ledger" is retired — it meant runner_setup OR premove_setup, i.e. pure
+# Signal Radar, which is no longer read. QS replaces it as the third lens.
 cat_sets = {
     "Longlist": {r.get("ticker") for r in _daily if r.get("on_longlist", True)},
     "Elder": {r.get("ticker") for r in _daily if r.get("on_elder")},
-    "In ledger": {r.get("ticker") for r in _daily if r.get("in_ledger")},
+    "QS": {r.get("ticker") for r in _daily if r.get("on_qs")},
     "Held": set(held_lookup.keys()),
 }
 rec_lookup: dict[str, dict] = {}
@@ -358,7 +360,7 @@ with left:
     with st.expander("Filters", expanded=False):
         fa, fs, fb = st.columns([1, 1.2, 1.6])
         category = fa.selectbox("List", ["All", "Longlist", "Elder",
-                                         "In ledger", "Held"])
+                                         "QS", "Held"])
         sector = fs.selectbox("Sector", ["All", *_sectors])
         mp_filter = fb.multiselect("MP state", ["STRONG", "BUILDING", "FADING"], default=[])
         g1, g2, g3 = st.columns(3)

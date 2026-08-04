@@ -1558,7 +1558,7 @@ _ll_recs = _ex.get("daily_list")
 if _ll_recs is None:
     _ll_recs = _ex.get("longlist") or []
 if _ll_recs:
-    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1.4, 1])
+    f1, f2, f3, f4 = st.columns([1, 1, 1, 1.4])
     # Slider defaults ARE the longlist definition — same source as the export
     # membership (src/longlist_screen.py). What you see == what fires.
     from src.longlist_screen import MIN_SC, MIN_PTRS, MIN_ELDER
@@ -1568,14 +1568,35 @@ if _ll_recs:
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
                        for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
-    _min_conv = f5.slider("Min QS conviction", 0, 5, 0, key="sig_qsconv",
-                          help="0 = no QS filter. QS conviction 0-5; 0 also means "
-                               "vetoed-and-shown, so 1+ hides struck names.")
+
+    # ---- QS sliders. All default to 0 = no QS filtering, so the list behaves
+    # exactly as before until you reach for one. A row that QS never scored is
+    # EXCLUDED once any of these is raised above 0 — "no QS read" is not the
+    # same as "scored zero", and silently keeping unscored names would make a
+    # QS filter look like it had found something it hadn't.
+    q1, q2, q3 = st.columns([1, 1, 1])
+    _min_conv = q1.slider(
+        "Min QS conviction", 0, 5, 0, key="sig_qsconv",
+        help="QS conviction 0-5. 0 = no filter. Note conviction 0 also means "
+             "VETOED-and-shown, so 1+ hides struck names.")
+    _min_qs_p = q2.slider(
+        "Min QS probability %", 0, 100, 0, key="sig_qsp",
+        help="Odds of reaching the QS objective (+2xATR14 within 20 sessions). "
+             "The market's own average is on the QS card — a probability only "
+             "means something against that base.")
+    _min_qs_lens = q3.slider(
+        "Min QS lens total", 0.0, 10.0, 0.0, step=0.5, key="sig_qslens",
+        help="Mean of the five lens scores (structure, coil, quiet momentum, "
+             "flow, leadership). The 'how strong is the profile' read, before "
+             "the calibration turns it into odds.")
 
     # LENS membership — which list(s) to show. Empty = show everything.
+    # 'In ledger' is GONE: it meant runner_setup OR premove_setup, i.e. pure
+    # Signal Radar, which is retired. A filter for a dead lens is worse than no
+    # filter — it implies the lens is still telling you something.
     g1, g2 = st.columns([2, 2])
     _lens_sel = g1.multiselect(
-        "Lists", ["Longlist", "Elder ≥8", "QS", "QS only", "In ledger", "Held"],
+        "Lists", ["Longlist", "Elder ≥8", "QS", "QS only", "Held"],
         default=[], key="sig_lists",
         help="Empty = every name. 'QS only' = on the QS list and on NEITHER "
              "Longlist nor Elder — what the new lens is adding on its own.")
@@ -1604,8 +1625,24 @@ if _ll_recs:
                 return False
         if _th_sel and (r.get("thematic_basket") or "—") not in _th_sel:
             return False
-        if _min_conv and ((r.get("qs") or {}).get("conviction") or 0) < _min_conv:
-            return False
+
+        # QS thresholds. Any of these above 0 means the user is filtering ON
+        # QS, so a row QS never scored cannot qualify — absence of a read is
+        # not a low read, and keeping unscored names would pad the result with
+        # names the filter never actually examined.
+        if _min_conv or _min_qs_p or _min_qs_lens:
+            _q = r.get("qs")
+            if not _q:
+                return False
+            if (_q.get("conviction") or 0) < _min_conv:
+                return False
+            _p = (_q.get("odds") or {}).get("p")
+            if _min_qs_p and (_p is None or _p * 100 < _min_qs_p):
+                return False
+            _lt = (_q.get("engine") or {}).get("lens_total")
+            if _min_qs_lens and (_lt is None or _lt < _min_qs_lens):
+                return False
+
         if _lens_sel:
             _qs_only = (r.get("on_qs") and not r.get("on_longlist")
                         and not r.get("on_elder"))
@@ -1613,7 +1650,6 @@ if _ll_recs:
                    or ("Elder ≥8" in _lens_sel and r.get("on_elder"))
                    or ("QS" in _lens_sel and r.get("on_qs"))
                    or ("QS only" in _lens_sel and _qs_only)
-                   or ("In ledger" in _lens_sel and r.get("in_ledger"))
                    or ("Held" in _lens_sel and r.get("held")))
             if not hit:
                 return False
@@ -1622,13 +1658,13 @@ if _ll_recs:
     _filtered = sorted([r for r in _ll_recs if _keep(r)],
                        key=lambda r: (r.get("ptrs") or 0), reverse=True)
     _n_el = sum(1 for r in _filtered if r.get("on_elder"))
-    _n_lg = sum(1 for r in _filtered if r.get("in_ledger"))
     _n_qs = sum(1 for r in _filtered if r.get("on_qs"))
     _n_qso = sum(1 for r in _filtered if r.get("on_qs")
                  and not r.get("on_longlist") and not r.get("on_elder"))
+    _n_scored = sum(1 for r in _filtered if r.get("qs"))
     st.markdown(f"**{len(_filtered)}** names match "
-                f"({_n_el} Elder≥8 · {_n_qs} QS, {_n_qso} QS-only · "
-                f"{_n_lg} in ledger)")
+                f"({_n_el} Elder≥8 · {_n_qs} on QS, {_n_qso} QS-only · "
+                f"{_n_scored} carry a QS read)")
     _held_here = [r.get("ticker") for r in _filtered if r.get("held")]
     if _held_here:
         st.caption(f"🔵 **{len(_held_here)} held**: {', '.join(_held_here)}")
