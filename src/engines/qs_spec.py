@@ -43,6 +43,18 @@ LENSES: dict[str, list[tuple[str, int]]] = {
 LENS_SCORE_DP = 1
 LENS_TOTAL_DP = 1
 
+# Raw component values carried onto the card — daily_scan.py:446-450. The 15
+# scored lens components plus `base_days`, which the reference prints on the
+# STRUCTURE line but does NOT score. Shipped so a card can be rebuilt from the
+# export without a data lookup.
+CARD_COMPONENTS: list[str] = [
+    "en_pos50", "ms_pos_score", "structure_100", "base_days",
+    "bq_range_tight", "bq_ema_conv", "squeeze_score",
+    "roc_zscore", "abs_mom_score", "rel_mom_score",
+    "accum_score", "cmf", "mfi",
+    "rs_consist", "rs_vs_spy", "elder_score",
+]
+
 
 # ---------------------------------------------------------------------------
 # CALIBRATION BANDS — daily_scan.py:326-329, transcribed verbatim.
