@@ -257,11 +257,33 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
     # ad-hoc preview of a name you're considering (or already hold) shows the
     # SAME trend-integrity read it would carry once in the held book.
     hl_score = hl_state = None
+    hl_subs: dict = {}
     try:
         hl_df = health.compute(d, spy_daily=spy, weekly=w if not w.empty else None)
         hl_score = _last(hl_df["hl_score"])
         hl_state = (str(hl_df["hl_state"].iloc[-1])
                    if "hl_state" in hl_df and len(hl_df) else None)
+        # Health SUB-scores. Not shown on the ad-hoc table (they stay held-only
+        # in the export), but four QS recipes read them — without these the
+        # recipes silently cannot fire and the ad-hoc hit count comes back
+        # understated versus the same name scored in the nightly run.
+        for _c in ("hl_flow", "hl_higher_lows", "hl_trend_bars", "hl_vol_updn"):
+            if _c in hl_df:
+                hl_subs[_c] = _last(hl_df[_c])
+    except Exception:
+        pass
+
+    # 5c-2. Readiness sub-scores. The readiness COMPOSITE is retired from the
+    # export, but the engine still runs nightly and two QS recipes read rd_*.
+    # Run it here for the same reason as the health subs above: parity with a
+    # universe name, not because readiness itself is surfaced.
+    rd_subs: dict = {}
+    try:
+        from src.engines import readiness as _readiness
+        _rd = _readiness.compute(d, spy_daily=spy)
+        for _c in ("rd_compression", "rd_pos_mod"):
+            if _c in _rd:
+                rd_subs[_c] = _last(_rd[_c])
     except Exception:
         pass
 
@@ -328,6 +350,17 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         "k39_gate": k39_bool,
         # Health (hold-decision read) — same engine as held_positions.
         "hl_score": hl_score, "hl_state": hl_state,
+        # ---- QS engine inputs -------------------------------------------
+        # QS reads AQE's subcomponents under the names score_runner persists,
+        # so the ad-hoc record has to speak the same vocabulary or its recipes
+        # cannot fire. Aliases (not renames — the originals stay for the
+        # existing table), plus the k39 VALUE, which was computed and thrown
+        # away here while three QS recipes key on it.
+        "elder_score": eld,
+        "structure_100": stc,
+        "k39_value": _last(_k39_val) if len(_k39_val) else None,
+        **hl_subs,
+        **rd_subs,
         # Divergence / pin-bar / smart-money kNN (TV-analysis Phases 2/6/7) —
         # merged verbatim, their dict keys already match the daily feed's names
         # (div_state/div_bull_count/.../pin_bar_state/.../choch_state/knn_prob/...).

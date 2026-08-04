@@ -176,3 +176,82 @@ def test_backfill_reports_rather_than_raising_without_data(monkeypatch, tmp_path
     monkeypatch.setattr(qs_backfill, "PANEL_DAILY", tmp_path / "nope.parquet")
     r = qs_backfill.backfill()
     assert r["ok"] is False and "missing" in r["reason"]
+
+
+# ------------------------------------------------------------- ad-hoc lookup
+
+def _adhoc_record(ticker="ADHOC", **over):
+    rec = {"ticker": ticker, "close": 150.0, "atr14": 3.0,
+           "impulse_state": "RED"}
+    for f in S.CARD_COMPONENTS:
+        rec.setdefault(f, 15.0)
+    for f in ("vp_position_score", "k39_value", "pr_ma_score", "pr_ret_12m",
+              "excess_return", "rs_accel", "pipe_rank", "volume_score",
+              "fip_quality", "pr_vol_score", "earn_score", "exhaustion_score",
+              "hl_flow", "hl_score", "hl_trend_bars", "hl_higher_lows",
+              "hl_vol_updn", "rd_compression", "rd_pos_mod", "en_trend_bars",
+              "bq_base_days", "bq_base_dur", "atr_score", "resist_score",
+              "skew_score", "price_action_score"):
+        rec.setdefault(f, 15.0)
+    rec.update(over)
+    return rec
+
+
+def test_adhoc_ticker_gets_a_full_qs_read(synthetic):
+    r = QD.score_adhoc(_adhoc_record())
+    assert r["ok"] is True, r.get("reason")
+    qs = r["qs"]
+    assert "conviction" in qs and "odds" in qs and "engine" in qs
+    assert len(qs["engine"]["lens"]) == 5
+
+
+def test_adhoc_is_always_flagged_as_a_read_across(synthetic):
+    """An ad-hoc name sits outside the measured population by construction."""
+    qs = QD.score_adhoc(_adhoc_record())["qs"]
+    assert qs["eligible"] is False
+    assert qs["odds"]["extrapolated"] is True
+    assert qs["emitted"] is False and qs["rank"] is None
+
+
+def test_adhoc_scoring_does_not_disturb_the_cohort(synthetic):
+    """Adding the ad-hoc name must not move any universe name's lens score."""
+    before = {t: row["engine"]["lens_total"]
+              for t, row in QD.run(store=False)["rows"].items()}
+    QD.score_adhoc(_adhoc_record())
+    after = {t: row["engine"]["lens_total"]
+             for t, row in QD.run(store=False)["rows"].items()}
+    assert before == after
+
+
+def test_adhoc_reports_missing_recipe_inputs(synthetic):
+    """A missing field fails its condition silently — the gap must be visible."""
+    rec = _adhoc_record()
+    rec.pop("k39_value")
+    rec.pop("hl_flow")
+    r = QD.score_adhoc(rec)
+    assert r["ok"] is True
+    assert r["coverage"]["complete"] is False
+    assert set(r["coverage"]["recipe_inputs_missing"]) >= {"k39_value", "hl_flow"}
+
+
+def test_adhoc_reports_complete_coverage_when_nothing_is_missing(synthetic):
+    r = QD.score_adhoc(_adhoc_record())
+    assert r["coverage"]["complete"] is True
+    assert r["coverage"]["recipe_inputs_missing"] == []
+
+
+def test_adhoc_card_renders(synthetic):
+    r = QD.score_adhoc(_adhoc_record())
+    card = qs_card.render_card(
+        {"ticker": "ADHOC", "on_qs": False, "qs": r["qs"]}, r["market"])
+    assert "ADHOC" in card and "CONVICTION" in card
+
+
+def test_adhoc_without_a_ticker_fails_cleanly(synthetic):
+    r = QD.score_adhoc({})
+    assert r["ok"] is False and "ticker" in r["reason"]
+
+
+def test_adhoc_never_raises_on_a_junk_record(synthetic):
+    r = QD.score_adhoc({"ticker": "X", "close": "not a number"})
+    assert isinstance(r, dict) and "ok" in r

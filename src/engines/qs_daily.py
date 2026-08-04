@@ -224,6 +224,101 @@ def _score_off_cohort(other: pd.DataFrame, cohort: pd.DataFrame, book: dict,
     return rows
 
 
+def score_adhoc(record: dict, as_of=None) -> dict:
+    """QS read for ONE ad-hoc ticker, scored against today's eligible cohort.
+
+    `record` is an ad-hoc score result (src/scanner/adhoc.py) carrying the raw
+    subcomponent values under the names score_runner persists.
+
+    The ticker is placed onto the cohort's percentile curve WITHOUT joining it,
+    so no universe name's lens score moves and the reference distribution stays
+    the population the calibration was measured on. The result is therefore a
+    READ-ACROSS: an ad-hoc name is outside the measured population by
+    construction (it need not even be in the universe), so `eligible` is False
+    and `odds.extrapolated` is True. Read it as "what the table says for a
+    profile like this", never as a measured probability for this name.
+
+    Returns {ok, qs, market, coverage, ...}. `coverage` is not decoration:
+    `cond_mask` treats a MISSING field as a failed condition, so any recipe
+    field the ad-hoc path could not compute silently costs hits, which can drop
+    the name a whole band and understate its probability. The caller must
+    surface that rather than presenting a confident-looking number.
+    """
+    try:
+        tk = record.get("ticker")
+        if not tk:
+            return {"ok": False, "reason": "no ticker in record"}
+        if not PANEL_DAILY.exists() or not SCORES_DAILY.exists():
+            return {"ok": False, "reason": "panel/scores parquet missing — "
+                                           "run the daily pipeline first"}
+        book, cal = load_config()
+
+        panel = pd.read_parquet(PANEL_DAILY,
+                                columns=["date", "ticker", "close", "volume"])
+        panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
+        scores = pd.read_parquet(SCORES_DAILY)
+        scores["date"] = pd.to_datetime(scores["date"]).dt.normalize()
+        asof = (pd.Timestamp(as_of).normalize() if as_of
+                else min(panel["date"].max(), scores["date"].max()))
+
+        _, regime_df = F.compute_all(panel)
+        reg_row = regime_df.loc[asof] if asof in regime_df.index else None
+        regime = resolve_regime(book, reg_row)
+
+        elig = set(eligible_tickers(panel, asof))
+        cohort = scores[(scores["date"] == asof)
+                        & (scores["ticker"].isin(elig))].copy()
+        if cohort.empty:
+            return {"ok": False, "reason": f"no eligible cohort on {asof.date()}",
+                    "market": market_block(regime)}
+
+        # rs_consist for the cohort feeds the LEADERSHIP lens; without it that
+        # lens would score the ad-hoc name on 2 of 3 components.
+        ew = F.build_ew_index(panel)
+        rs = F.compute_rs_consist(panel, ew)
+        rs_today = rs[rs["date"] == asof][["ticker", "rs_consist"]]
+        cohort = cohort.merge(rs_today, on="ticker", how="left")
+
+        row = {c: record.get(c) for c in cohort.columns if c in record}
+        row["ticker"] = tk
+        row["date"] = asof
+        if record.get("rs_consist") is not None:
+            row["rs_consist"] = record["rs_consist"]
+        one = pd.DataFrame([row])
+
+        # Which recipe/veto inputs did the ad-hoc path actually produce?
+        needed = sorted({c["field"] for r in book["recipes"] for c in r["conditions"]}
+                        | {c["field"] for v in book["vetoes"] for c in v["conditions"]})
+        missing = [f for f in needed
+                   if f not in one.columns or pd.isna(one[f].iloc[0])]
+
+        stacked = E.score_lenses(pd.concat([cohort, one], ignore_index=True))
+        tail = stacked.iloc[[-1]].copy()
+
+        from src.data import qs_store
+        persist = qs_store.get_qs_persist(asof)
+        rows = E.run_qs(tail, book, cal, regime,
+                        persist_map={tk: persist.get(tk, 0)}, eligible=False)
+        if not rows:
+            return {"ok": False, "reason": "engine returned no row",
+                    "market": market_block(regime)}
+        qs = rows[0]
+        qs["emitted"] = False
+        qs["rank"] = None
+        return {
+            "ok": True, "qs": qs, "market": market_block(regime),
+            "regime": regime, "date": str(asof.date()),
+            "cohort_size": len(cohort),
+            "coverage": {
+                "recipe_inputs_required": len(needed),
+                "recipe_inputs_missing": missing,
+                "complete": not missing,
+            },
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
 def _fail(reason: str, market: dict | None = None,
           regime: dict | None = None) -> dict:
     """A LOUD empty. `status` distinguishes a QS outage from a quiet market."""

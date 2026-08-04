@@ -1879,7 +1879,69 @@ if _adhoc_results:
         _sm_adhoc = load_sector_map()
         _adhoc_recs = [_adhoc_export_record(r, i, _sm_adhoc, _sector_grades)
                        for i, r in enumerate(_ok, 1)]
+
+        # ---- QS read for each typed ticker, so an ad-hoc lookup is the SAME
+        # analysis as a daily_list row. If the name is already on today's list
+        # we reuse its export block (that one is a genuine in-cohort read);
+        # otherwise we score it against today's eligible cohort as a
+        # read-across, flagged extrapolated.
+        _qs_market_adhoc, _qs_notes = _ex.get("qs_market") or {}, []
+        _dl_by_tk = {r.get("ticker"): r for r in (_ex.get("daily_list") or [])}
+        for _rec, _raw in zip(_adhoc_recs, _ok):
+            _tk = _rec["ticker"]
+            _on_list = _dl_by_tk.get(_tk) or {}
+            if _on_list.get("qs"):
+                _rec["qs"] = _on_list["qs"]
+                _rec["on_qs"] = bool(_on_list.get("on_qs"))
+                continue
+            try:
+                from src.engines.qs_daily import score_adhoc
+                _res = score_adhoc(_raw)
+                if _res.get("ok"):
+                    _rec["qs"] = _res["qs"]
+                    _rec["on_qs"] = False
+                    if not _qs_market_adhoc:
+                        _qs_market_adhoc = _res.get("market") or {}
+                    _miss = (_res.get("coverage") or {}).get("recipe_inputs_missing")
+                    if _miss:
+                        _qs_notes.append((_tk, _miss))
+                else:
+                    _qs_notes.append((_tk, [f"not scored: {_res.get('reason')}"]))
+            except Exception as _exc:  # noqa: BLE001
+                _qs_notes.append((_tk, [f"error: {_exc}"]))
+
         table_with_copy(_export_table(_adhoc_recs), key="adhoc_table")
+
+        if any(r.get("qs") for r in _adhoc_recs):
+            st.caption(
+                "**QS on an ad-hoc name is a READ-ACROSS, not a measured "
+                "probability.** The ticker is placed onto today's eligible "
+                "cohort's curve without joining it, so no universe name moves — "
+                "but an ad-hoc name sits outside the population the odds were "
+                "measured on (it need not even be in the universe). Every "
+                "ad-hoc row is flagged `extrapolated`. A name already on "
+                "today's list reuses its real in-cohort read instead."
+            )
+        for _tk, _miss in _qs_notes:
+            st.warning(
+                f"**{_tk}** — QS inputs missing: `{', '.join(_miss)}`. A missing "
+                f"field fails its condition, so recipe hits are UNDERSTATED and "
+                f"the probability reads low. Treat this name's QS score as a "
+                f"floor, not a verdict."
+            )
+
+        _qs_cards_adhoc = [r for r in _adhoc_recs if r.get("qs")]
+        if _qs_cards_adhoc:
+            with st.expander(f"QS cards — ad-hoc ({len(_qs_cards_adhoc)})",
+                             expanded=False):
+                try:
+                    from src.engines.qs_card import render_market, render_card
+                    if _qs_market_adhoc:
+                        st.code(render_market(_qs_market_adhoc), language=None)
+                    for _r in _qs_cards_adhoc:
+                        st.code(render_card(_r, _qs_market_adhoc), language=None)
+                except Exception as _exc:  # noqa: BLE001
+                    st.caption(f"card renderer unavailable: {_exc}")
 
         # AIC deliberation blurbs — one per scored ticker
         st.markdown("##### AIC Deliberation Prompt")
