@@ -46,11 +46,26 @@ Full per-module math and the complete export field list: `docs/AQE_TECHNICAL_REF
 ### Live alerts (`src/alerts/` + `src/ui/pages/3_Charts_and_Trade_Entry.py`)
 Polls FMP every ~15 min for the monitored set (every export ticker + held positions). Emails on **3 bounded level events only** (hit-buy-price, fresh breakout, approaching-stop — TP/Fib/MA/RVol alerts were removed as noise). Freshness-gated against a stale export (`MAX_EXPORT_AGE_DAYS`). No AI inside — each alert carries a paste-to-AIC prompt; the PM runs the committee decision externally. Primary emailer = in-app HF thread via Resend HTTPS; GitHub Actions cron is the backstop, sharing Drive dedup state so the two never double-email.
 
+### QS — Quiet Strength (`src/engines/qs_*.py`)
+The third lens, alongside Longlist and Elder — **not a separate list.** Finds names that are structurally strong *while momentum is still asleep*, and gives each a calibrated probability of touching **+2×ATR14 within 20 sessions**, read from a frozen table of historical look-alikes.
+- **Frozen config, never fitted at runtime**: `data/qs/recipe_book.json` (40 recipes, 5 vetoes, 10 regimes) + `data/qs/calibration.json` (35 3-D + 16 2-D buckets). Re-freeze annually; recipe/veto/regime edits are PM sign-off only. Reference implementation archived at `docs/qs_daily_scan_reference.py`.
+- `qs_spec.py` — every frozen constant, transcribed from source with line cites. **The band asymmetry is not a typo**: hits/persist bands are right-inclusive, the lens band uses strict `<`, so `lens_total == 6.0` is `"6-7"`. `recipe_hits` counts **all 40** entries including 8 duplicate pairs — de-duplicating to 32 drops names a whole band and understates every probability.
+- `qs_fields.py` — the 5 inputs AQE lacked: `ret20`, `rs_consist` (vs the **equal-weight universe**, not SPY — a breadth question), `rank_in_sector`, `trend_200`, `vol_60`. Regime terciles are expanding + shifted one day (causal); a full-series fit would leak the future into every historical row.
+- `qs_engine.py` — lenses → recipes → vetoes → calibration → conviction 0-5 → levels → why.
+- `qs_store.py` — memory in `aqe.db` (already in the Daily Persist snapshot): `recipe_hits` trail + regime series. `qs_persist` counts prior **stored sessions**, not calendar days.
+- `qs_daily.py` — one call for the orchestrator. **Degrades loudly**: `qs_status` distinguishes an outage from a quiet market.
+- `qs_card.py` — renders committee cards **from the export alone** (a test forbids it importing pandas or opening a file), so every card claim is reconstructible from the daily JSON.
+- **`qs.objective` (±2×ATR14) is the yardstick the probability was measured against. `bracket` is the tradeable structural set. Never merge them** — conflating them makes `qs.odds.p` read as the odds of hitting structural TP2, which it is not.
+- Backfill: `scripts/qs_backfill.bat` (~15 sessions — a floor for persistence, not a research rebuild).
+
 ### Engines (`src/engines/`)
 Flow / Energy / Structure / MP / Elder / BQ / K39 / Pipeline Rank / SC_MOMENTUM+SC_POSITION composites — full formulas in the reference doc §Part II.1-3. `bracket_engine.py` is **the** stop/target source of truth (structural, 3-charter-gates validated; mechanical DSL/TP fields are retired from the export). `srm.py` — sector grading + RRG + macro overlay + 35 thematic baskets (context layer, never adds scan names). DETECT layer (`divergence.py`, `pin_bar.py`, `smart_money_knn.py`, `signal_radar.py`) and `lens_consensus.py` (the unweighted lens-agreement reading aid) are data-only — never gates, never sizing.
 
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
-PTJ pull -> incremental price pull -> earnings refresh -> score-cache refresh -> Pipeline Rank screen -> full scoring -> SRM grading -> regime detection -> PTRS + disposition -> recipe screens (longlist/watchlist/Precision Edge) -> output JSON + Drive export -> daily-persist snapshot.
+PTJ pull -> incremental price pull -> earnings refresh -> score-cache refresh -> Pipeline Rank screen -> full scoring -> SRM grading -> regime detection -> PTRS + disposition -> recipe screens (longlist/watchlist/Precision Edge) -> **QS engine** -> output JSON + Drive export -> daily-persist snapshot.
+
+### ONE list, membership as columns
+`daily_list` is the single list every surface reads. Longlist / Elder / QS / ledger / held are **flags on it** (`on_longlist`, `on_elder`, `on_qs`, `in_ledger`, `held`), never parallel lists — the committee reads membership in one row instead of cross-referencing three. Every row carries the identical AQE block (bracket, ATR, fibs, MAs, beta, vol, DETECT, sector) from the same `_v21_record_fields()` call, so levels cannot disagree between lists, **plus** its full `qs` block if QS scored it — including names QS did not emit, so a Longlist-only name still shows its QS read. An *absent* `qs` key means QS could not evaluate the name; that is not the same as a poor QS score.
 
 ### Scanner UI (`src/ui/1_Scanner.py`)
 Streamlit multi-page app: regime, SRM, Thematic Rotation, Detect Lens Ranking, the combined Signals table (`daily_list`, slider-filterable on SC_MOM/PTRS/Elder/MP-state), Elder list, held positions + hedge layer, a `data_quality` warning banner when any record has a null core field. `shared.table_with_copy()` — every data table gets a filter box + one-click TSV copy for pasting into AIC chat.
