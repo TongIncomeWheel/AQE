@@ -121,28 +121,31 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # slow and wasteful. Set AQE_SKIP_UNIVERSE=1 to force reuse (fast reruns).
     print(f"{_el()} [daily] Step 0: Universe...")
     try:
-        from src.data.universe import (build_universe, universe_is_stale,
+        from src.data.universe import (UNIVERSE_RULE_ID as _UNIVERSE_RULE_ID,
+                                       build_universe, universe_is_stale,
                                        universe_status)
         _us = universe_status()
         if os.environ.get("AQE_SKIP_UNIVERSE") == "1":
             print(f"  Reusing universe: {_us['count']} names "
                   f"(built {_us['built']}) — AQE_SKIP_UNIVERSE=1")
         elif universe_is_stale():
-            print(f"  Universe last built {_us['built']} ({_us['count']} names)"
-                  f" — rebuilding from the FMP screen...")
+            print(f"  Stale: {_us['stale_reason']} "
+                  f"(currently {_us['count']} names) — rebuilding...")
             _ub = build_universe()
             if _ub.get("status") == "ok":
                 print(f"  Universe: {_ub['total']} names "
-                      f"(+{_ub['added']} / -{_ub['removed']})")
+                      f"(+{_ub['added']} / -{_ub['removed']}) "
+                      f"| rule {_UNIVERSE_RULE_ID}")
             else:
                 # A failed screen must NOT leave the run with no list. Keep the
                 # previous universe and say loudly that it is stale.
                 print(f"  [WARN] Universe rebuild failed: {_ub.get('reason')}")
                 print(f"  [WARN] PROCEEDING ON A STALE UNIVERSE: {_us['count']} "
-                      f"names built {_us['built']} — names may no longer meet "
-                      f"the $2B / 1.5M rule")
+                      f"names, {_us['stale_reason']} — names may not meet the "
+                      f"current $2B / 1.5M rule")
         else:
-            print(f"  Universe: {_us['count']} names (already built today)")
+            print(f"  Universe: {_us['count']} names "
+                  f"(built today, rule {_us['rule']})")
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] Universe step failed: {exc} — using existing list")
 

@@ -56,6 +56,15 @@ EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U")
 # --- Automated universe screening (PM ruling, 27 Jun 2026) ---
 # The daily pipeline scans only this filtered set. Refreshed at 06:00 SGT
 # (before the 08:30 pipeline run) by the in-app scheduler.
+# Identifies the RULE a universe file was built under, stamped into its header.
+# A universe built by an older rule is treated as stale even if it was built
+# today, so a rule change takes effect on the next run instead of waiting for
+# the calendar to roll. Bump this whenever the screen changes.
+#
+# v2 (2026-08-04): dropped the price>SMA20 / price>SMA50 trend conditions —
+# membership is an eligibility test, not a screening opinion.
+UNIVERSE_RULE_ID = "v2-mcap2B-vol1.5M-us-notrend"
+
 SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
 SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
 SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading days)
@@ -342,8 +351,9 @@ def upload_universe(csv_path_or_bytes) -> dict:
 
 
 def _write_universe(tickers: list[str]) -> None:
-    """Write universe.txt locally (used by the manual refresh path only)."""
+    """Write universe.txt locally, stamped with the date AND the rule used."""
     lines = [f"# AQE Universe — updated {date.today()}",
+             f"# rule: {UNIVERSE_RULE_ID}",
              f"# {len(tickers)} tickers", "", *tickers, ""]
     DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
     DEFAULT_UNIVERSE_FILE.write_text("\n".join(lines), encoding="utf-8")
@@ -371,21 +381,60 @@ def universe_built_date(path: Path | None = None) -> date | None:
     return None
 
 
+def universe_built_rule(path: Path | None = None) -> str | None:
+    """The rule id stamped in universe.txt's header, or None if absent.
+
+    Absent means the file predates rule stamping, which is itself a mismatch —
+    it was built by an older screen.
+    """
+    file = path or DEFAULT_UNIVERSE_FILE
+    try:
+        for raw in file.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line.startswith("#"):
+                break
+            if line.lower().startswith("# rule:"):
+                return line.split(":", 1)[1].strip()
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
 def universe_is_stale(as_of: date | None = None) -> bool:
-    """True when the universe was not built on `as_of` (default today)."""
+    """True when the universe must be rebuilt before it can be trusted.
+
+    Stale on EITHER count:
+      - not built today, or
+      - built under a DIFFERENT screen rule.
+
+    The rule check matters on the day a rule changes: a file built this morning
+    by the previous screen is fresh by date but wrong by definition, and
+    without this the new rule would not take effect until the calendar rolled.
+    An unstamped file (predating rule stamping) counts as a mismatch.
+    """
+    if universe_built_rule() != UNIVERSE_RULE_ID:
+        return True
     built = universe_built_date()
     return built is None or built != (as_of or date.today())
 
 
 def universe_status() -> dict:
-    """{built, count, stale} — for the pipeline log and the UI status bar."""
+    """{built, rule, count, stale, stale_reason} — pipeline log + UI status."""
     built = universe_built_date()
+    rule = universe_built_rule()
     try:
         count = len(load_universe(include_benchmark=False))
     except Exception:  # noqa: BLE001
         count = 0
+    if rule != UNIVERSE_RULE_ID:
+        reason = f"built under rule {rule or 'unstamped'}, current is {UNIVERSE_RULE_ID}"
+    elif built != date.today():
+        reason = f"built {built}, not today"
+    else:
+        reason = None
     return {"built": built.isoformat() if built else None,
-            "count": count, "stale": universe_is_stale()}
+            "rule": rule, "count": count,
+            "stale": universe_is_stale(), "stale_reason": reason}
 
 
 def _csv_to_universe_text(content: str) -> str | None:

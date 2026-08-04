@@ -16,9 +16,12 @@ import pytest
 from src.data import universe as U
 
 
-def _write(tmp_path, built: str | None, tickers=("AAA", "BBB", "CCC")):
+def _write(tmp_path, built: str | None, tickers=("AAA", "BBB", "CCC"),
+           rule: str | None = "CURRENT"):
     p = tmp_path / "universe.txt"
     head = [f"# AQE Universe — updated {built}"] if built else ["# AQE Universe"]
+    if rule is not None:
+        head.append(f"# rule: {U.UNIVERSE_RULE_ID if rule == 'CURRENT' else rule}")
     head.append(f"# {len(tickers)} tickers")
     p.write_text("\n".join(head + [""] + list(tickers) + [""]), encoding="utf-8")
     return p
@@ -70,6 +73,54 @@ def test_status_reports_built_count_and_staleness(tmp_path, monkeypatch):
     assert st["built"] == "2026-05-28"
     assert st["count"] == 2
     assert st["stale"] is True
+
+
+# ------------------------------------------------------------ rule stamping
+
+def test_a_file_built_today_under_an_OLD_rule_is_stale(tmp_path, monkeypatch):
+    """The transition case, and the one that would have gone unnoticed.
+
+    On the day a screen rule changes, a universe built that morning by the
+    PREVIOUS rule is fresh by date but wrong by definition. Without the rule
+    check the new rule would not take effect until the calendar rolled, and
+    the run would quietly scan the old membership.
+    """
+    monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
+                        _write(tmp_path, date.today().isoformat(),
+                               rule="v1-with-sma-filters"))
+    assert U.universe_is_stale() is True
+    assert "v1-with-sma-filters" in U.universe_status()["stale_reason"]
+
+
+def test_an_unstamped_file_is_stale_even_if_built_today(tmp_path, monkeypatch):
+    """Predates rule stamping, so it was built by an older screen."""
+    monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
+                        _write(tmp_path, date.today().isoformat(), rule=None))
+    assert U.universe_is_stale() is True
+    assert "unstamped" in U.universe_status()["stale_reason"]
+
+
+def test_today_plus_current_rule_is_the_only_fresh_combination(tmp_path,
+                                                               monkeypatch):
+    monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
+                        _write(tmp_path, date.today().isoformat()))
+    st = U.universe_status()
+    assert st["stale"] is False and st["stale_reason"] is None
+    assert st["rule"] == U.UNIVERSE_RULE_ID
+
+
+def test_writer_stamps_both_date_and_rule(tmp_path, monkeypatch):
+    monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE", tmp_path / "universe.txt")
+    U._write_universe(["AAA", "BBB"])
+    assert U.universe_built_date() == date.today()
+    assert U.universe_built_rule() == U.UNIVERSE_RULE_ID
+    assert U.universe_is_stale() is False
+
+
+def test_rule_id_records_that_the_trend_filter_is_gone():
+    """The id is documentation the pipeline log prints — keep it meaningful."""
+    assert "notrend" in U.UNIVERSE_RULE_ID
+    assert "2B" in U.UNIVERSE_RULE_ID
 
 
 def test_the_screen_carries_no_trend_filter():
