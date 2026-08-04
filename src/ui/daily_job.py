@@ -358,10 +358,15 @@ def _run_ma_scan_and_record(now: datetime) -> None:
     try:
         print(f"[daily-job] Daily MA scan starting "
               f"{now.strftime('%Y-%m-%d %H:%M SGT')}")
-        # Restore last run's ma_panel from the snapshot so the scan is incremental.
+        # Restore last run's ma_panel so the scan is incremental — and ONLY
+        # ma_panel. A full restore here would also roll panel_daily,
+        # scores_daily and universe.txt back to whenever the zip was written,
+        # discarding bars the pipeline pulled since and forcing a re-pull. The
+        # MA scan runs after the feed is published, so "since" is exactly the
+        # window that matters.
         try:
             from src.data.persist import load_snapshot
-            load_snapshot()
+            load_snapshot(only=["ma_panel.parquet", "ma_universe.json"])
         except Exception as exc:  # noqa: BLE001
             print(f"[daily-job] MA scan: snapshot restore skipped ({exc})")
         from src.scanner.ma_scanner import run_ma_scan

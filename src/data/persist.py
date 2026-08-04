@@ -94,16 +94,24 @@ def build_snapshot_bytes() -> dict:
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
-def restore_snapshot_bytes(raw: bytes) -> dict:
+def restore_snapshot_bytes(raw: bytes, only: list[str] | None = None) -> dict:
     """Extract a snapshot zip (given as bytes) into DATA_DIR/OUTPUT_DIR.
 
     Drive-independent — used by load_snapshot() (after a Drive download) AND by
     the UI's local-PC upload fallback (a zip the user uploads from disk).
+
+    `only` restricts the restore to member basenames (e.g. ["ma_panel.parquet"]).
+    That matters because a snapshot restore OVERWRITES: a caller that wants one
+    file back would otherwise also roll panel_daily/scores_daily/universe.txt
+    back to whenever the zip was written, silently discarding bars pulled since
+    and forcing a re-pull nobody asked for. Restoring everything is right after
+    a container recycle (there is nothing to lose) and wrong mid-session.
     """
     try:
         if not raw:
             return {"ok": False, "reason": "empty file"}
-        extracted = []
+        wanted = set(only) if only else None
+        extracted, skipped = [], []
         with zipfile.ZipFile(io.BytesIO(raw)) as z:
             for arc in z.namelist():
                 if arc.startswith("data/"):
@@ -112,12 +120,18 @@ def restore_snapshot_bytes(raw: bytes) -> dict:
                     target = OUTPUT_DIR / arc[len("output/"):]
                 else:
                     continue
+                if wanted is not None and target.name not in wanted:
+                    skipped.append(arc)
+                    continue
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(z.read(arc))
                 extracted.append(arc)
         if not extracted:
-            return {"ok": False, "reason": "no data/ or output/ members in the zip"}
-        return {"ok": True, "files": extracted, "count": len(extracted)}
+            reason = ("no member matched " + ", ".join(sorted(wanted))
+                      if wanted else "no data/ or output/ members in the zip")
+            return {"ok": False, "reason": reason}
+        return {"ok": True, "files": extracted, "count": len(extracted),
+                "skipped": skipped}
     except zipfile.BadZipFile:
         return {"ok": False, "reason": "not a valid snapshot .zip"}
     except Exception as exc:  # noqa: BLE001
@@ -161,8 +175,13 @@ def save_snapshot() -> dict:
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
-def load_snapshot() -> dict:
-    """Download the snapshot zip from Drive and extract into DATA_DIR/OUTPUT_DIR."""
+def load_snapshot(only: list[str] | None = None) -> dict:
+    """Download the snapshot zip from Drive and extract into DATA_DIR/OUTPUT_DIR.
+
+    Pass `only` to restore specific members (see restore_snapshot_bytes) when
+    the caller wants one artifact back and must NOT roll everything else to
+    whenever the zip was written.
+    """
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
@@ -172,7 +191,7 @@ def load_snapshot() -> dict:
         if not raw:
             return {"ok": False, "reason": "no snapshot on Drive yet (Save one first)"}
 
-        res = restore_snapshot_bytes(raw)
+        res = restore_snapshot_bytes(raw, only=only)
         if res.get("ok"):
             meta = snapshot_status() or {}
             res["saved_at"] = meta.get("saved_at")
