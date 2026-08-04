@@ -1330,11 +1330,13 @@ _EXPORT_COL_ORDER = [
     "rank", "ticker", "source", "pe", "on_longlist", "on_elder", "on_qs",
     # QS read, flattened from the nested `qs` block so it sorts/filters/copies
     # like any other column (the full block stays on the row for the cards).
+    # QS, ordered as the decision reads: is it a pick -> what are the odds ->
+    # what drove them -> where do I trade it -> anything against it.
     "qs_conviction", "qs_state", "qs_signal",
     "qs_p", "qs_n", "qs_edge",          # p is never shown without n (STEP 8)
     "qs_hits", "qs_persist", "qs_lens_total",
     "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
-    "qs_vetoes", "qs_extrapolated", "qs_bucket",
+    "qs_vetoes", "qs_extrapolated",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1400,13 +1402,17 @@ def _flatten_qs(edf):
     edf["qs_dip_pct"] = qs.apply(lambda q: g(q, "path", "typical_dip_pct"))
     edf["qs_vetoes"] = qs.apply(
         lambda q: ", ".join(g(q, "vetoes", default=[]) or []))
-    # Honesty flags, not spec fields — both mark a row whose number means less
-    # than it looks. `extrapolated` = scored outside the measured population;
-    # `2-D fallback` = the persistence-aware cell was too thin, so the coarser
-    # 2-D table was used and there are no path stats.
+    # One honesty flag, kept because it changes how the number should be READ:
+    # an extrapolated row was scored from OUTSIDE the population the odds were
+    # measured on, so its p is a read-across rather than a measured analogue.
     edf["qs_extrapolated"] = qs.apply(
         lambda q: bool(g(q, "odds", "extrapolated", default=False)))
-    edf["qs_bucket"] = qs.apply(lambda q: g(q, "odds", "bucket", default=""))
+    # Deliberately NOT columns: the calibration cell key ("8+|6-7|4-5"), the
+    # bucket kind, the five individual lens scores, the 16 raw components,
+    # matched_recipes, p_test. They are engine mechanics — they say HOW the
+    # number was reached, not what it is, and a grid of them is unreadable.
+    # All of it is still in the daily file and on the QS card, so nothing is
+    # lost for audit or for answering "why is this name here".
     return edf
 
 
