@@ -184,7 +184,12 @@ def test_artifact_carries_the_date_and_only_emitted_names(tmp_path, monkeypatch)
     path = QD.write_daily_json(res)
     doc = json.loads(open(path).read())
     assert doc["date"] == "2026-08-04"
+    # `ideas` is what the screen lists...
     assert [i["ticker"] for i in doc["ideas"]] == ["AAA"]
+    # ...and `all_scored` is the FULL set, so "why wasn't X listed" is
+    # answerable from the file alone. Since regime no longer gates, absence
+    # from the list is now the PM's judgement to make, which needs the data.
+    assert [i["ticker"] for i in doc["all_scored"]] == ["AAA", "BBB"]
     assert doc["counts"]["scored"] == 10
 
 
@@ -195,3 +200,49 @@ def test_qs_artifacts_are_in_the_persist_snapshot():
     assert "data/aqe.db" in arcs          # qs_daily_hits + qs_regime_series
     assert "output/qs_daily.json" in arcs
     assert "data/universe.txt" in arcs    # the dynamic screen's output
+
+
+# ----------------------------------------------------- regime explainability
+
+def test_regime_grid_covers_every_book_cell_and_marks_today():
+    book, _ = QD.load_config()
+    grid = QD.regime_grid(book, today_cell="T3V1")
+    assert len(grid) == len(book["regimes"])
+    today = [g for g in grid if g["is_today"]]
+    assert len(today) == 1 and today[0]["cell"] == "T3V1"
+
+
+def test_regime_grid_ranks_by_measured_base_rate():
+    """Best-measured first, unmeasured last — so 'how good is today' is visible."""
+    book, _ = QD.load_config()
+    grid = QD.regime_grid(book)
+    measured = [g["avg_stock_hits_target"] for g in grid
+                if g["avg_stock_hits_target"] is not None]
+    assert measured == sorted(measured, reverse=True)
+    assert grid[0]["cell"] == "T2V1"          # 75.3%, the best weather
+    assert grid[-1]["avg_stock_hits_target"] is None
+
+
+def test_regime_grid_colour_can_contradict_the_book_stance():
+    """The point of publishing both: measurement beside judgement."""
+    book, _ = QD.load_config()
+    by_cell = {g["cell"]: g for g in QD.regime_grid(book)}
+    assert by_cell["T1V3"]["colour"] == "GREEN"
+    assert by_cell["T1V3"]["book_stance"] == "DEFENSIVE"
+    assert by_cell["T3V3"]["colour"] == "RED"
+    assert "PRESS" in by_cell["T3V3"]["book_stance"]
+
+
+def test_market_block_explains_how_the_cell_was_reached():
+    """A cell code the reader has to take on trust is not an explanation."""
+    row = pd.Series({"regime_cell": "T3V1", "trend_200": 0.1298, "vol_60": 0.1485,
+                     "t_tercile": 3.0, "v_tercile": 1.0,
+                     "t_lo": 0.02, "t_hi": 0.08, "v_lo": 0.16, "v_hi": 0.22})
+    book, _ = QD.load_config()
+    m = QD.market_block(QD.resolve_regime(book, row))
+    inp = m["inputs"]
+    assert inp["trend_200"] == 0.1298 and inp["trend_tercile"] == 3.0
+    assert inp["vol_60"] == 0.1485 and inp["vol_tercile"] == 1.0
+    assert inp["trend_boundaries"] == [0.02, 0.08]
+    assert "no lookahead" in inp["method"]
+    assert m["colour"] == "RED" and m["gates_list"] is False

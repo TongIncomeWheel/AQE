@@ -1633,6 +1633,56 @@ if _qsm.get("description"):
     (st.error if _colour == "RED" else
      st.warning if _colour == "AMBER" else st.info)(_line + _note)
 
+    with st.expander("How today's regime was calculated, and how it ranks",
+                     expanded=False):
+        _in = _qsm.get("inputs") or {}
+        if _in.get("trend_200") is not None:
+            _tb = _in.get("trend_boundaries") or [None, None]
+            _vb = _in.get("vol_boundaries") or [None, None]
+            _fmt = lambda v: "—" if v is None else f"{v:+.3f}"
+            st.markdown(
+                f"**Two inputs, each bucketed into thirds.**\n\n"
+                f"| Input | Today | Tercile cut-points | Lands in |\n"
+                f"|---|---|---|---|\n"
+                f"| **TREND** — {_in.get('trend_200_meaning','')} | "
+                f"`{_in['trend_200']:+.4f}` | "
+                f"`{_fmt(_tb[0])}` / `{_fmt(_tb[1])}` | "
+                f"**T{int(_in['trend_tercile']) if _in.get('trend_tercile') else '?'}** |\n"
+                f"| **VOL** — {_in.get('vol_60_meaning','')} | "
+                f"`{_in['vol_60']:.4f}` | "
+                f"`{_fmt(_vb[0])}` / `{_fmt(_vb[1])}` | "
+                f"**V{int(_in['vol_tercile']) if _in.get('vol_tercile') else '?'}** |\n"
+            )
+            st.caption(_in.get("method", ""))
+        _grid = _qsm.get("regime_grid") or []
+        if _grid:
+            st.markdown("**All 10 regimes, ranked by measured base rate** — "
+                        "the colour is backtested, not an opinion. Today is ★.")
+            st.dataframe(
+                pd.DataFrame([{
+                    "": "★" if g["is_today"] else "",
+                    "rank": g["rank"],
+                    "colour": g["colour"],
+                    "regime": g["cell"],
+                    "market description": g["description"],
+                    "avg stock hits target %": (
+                        None if g["avg_stock_hits_target"] is None
+                        else round(g["avg_stock_hits_target"] * 100, 1)),
+                    "vs all-market 54.8% (pts)": (
+                        None if g["vs_all_market_base"] is None
+                        else round(g["vs_all_market_base"] * 100, 1)),
+                    "book stance": g["book_stance"],
+                } for g in _grid]),
+                use_container_width=True, hide_index=True)
+            st.caption(
+                "The **book stance** is a judgement word from the frozen recipe "
+                "book; the **colour** is the measured hit rate. They disagree "
+                "more often than you'd expect — T1V3 reads DEFENSIVE "
+                "(\"bear weather\") but measured 61.3%, better than the "
+                "all-market base, while T3V3 reads PRESS but measured 44.6%. "
+                "Where they differ, the colour is the one with evidence behind it."
+            )
+
 # The Signals table = the single collapsed `daily_list` (watchlist ∪ elder ∪
 # ledger, each row flagged on_longlist/on_elder/in_ledger). Legacy exports that
 # still carry `longlist` fall back to it.

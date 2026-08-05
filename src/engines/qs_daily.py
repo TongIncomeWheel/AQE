@@ -80,9 +80,20 @@ def write_daily_json(result: dict) -> str | None:
     if not result.get("ok"):
         return None
     try:
-        rows = sorted(
-            (r for r in result["rows"].values() if r.get("emitted")),
-            key=lambda r: (r.get("rank") or 10 ** 6))
+        # THE FULL SET, not just the listed names (PM ruling 2026-08-04).
+        # Publishing only `emitted` rows made the file agree with the screen but
+        # lose the answer to "what about the ones you didn't list" — and since
+        # regime no longer gates, a name being absent from the list is now a
+        # judgement the PM makes, which requires seeing it. Ranked names first,
+        # then everything else by conviction; `emitted` and `not_listed_reason`
+        # say which is which.
+        allrows = list(result["rows"].values())
+        allrows.sort(key=lambda r: (
+            not r.get("emitted"),
+            r.get("rank") or 10 ** 6,
+            -(r.get("conviction") or 0),
+            -((r.get("odds") or {}).get("p") or 0),
+        ))
         doc = {
             "date": result.get("date"),
             "engine": "QS",
@@ -96,7 +107,10 @@ def write_daily_json(result: dict) -> str | None:
                 "emitted": result.get("emitted_count"),
             },
             "persist_ready": result.get("persist_ready"),
-            "ideas": rows,
+            # `ideas` = the names that cleared the emit rule (what the screen
+            # shows). `all_scored` = every name QS evaluated, same field set.
+            "ideas": [r for r in allrows if r.get("emitted")],
+            "all_scored": allrows,
         }
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         with open(QS_DAILY_JSON, "w") as f:
@@ -141,7 +155,44 @@ def resolve_regime(book: dict, regime_row: pd.Series | None) -> dict:
         "trend_200": (None if regime_row is None
                       else _f(regime_row.get("trend_200"))),
         "vol_60": None if regime_row is None else _f(regime_row.get("vol_60")),
+        # The tercile boundaries that produced today's cell, so the code is
+        # explainable rather than asserted.
+        "t_tercile": None if regime_row is None else _f(regime_row.get("t_tercile")),
+        "v_tercile": None if regime_row is None else _f(regime_row.get("v_tercile")),
+        "t_lo": None if regime_row is None else _f(regime_row.get("t_lo")),
+        "t_hi": None if regime_row is None else _f(regime_row.get("t_hi")),
+        "v_lo": None if regime_row is None else _f(regime_row.get("v_lo")),
+        "v_hi": None if regime_row is None else _f(regime_row.get("v_hi")),
     }
+
+
+def regime_grid(book: dict, today_cell: str | None = None) -> list[dict]:
+    """All 10 regime cells, graded and ranked — the full backtested table.
+
+    Published so the committee can see today's weather IN CONTEXT: how good
+    this regime is against every other one, measured, rather than being handed
+    a single code and a stance word. `is_today` marks the live cell.
+
+    Sorted best-measured first, unmeasured last.
+    """
+    rows = []
+    for cell, v in (book.get("regimes") or {}).items():
+        base = v.get("base_rate_test")
+        rows.append({
+            "cell": cell,
+            "is_today": bool(today_cell and cell == today_cell),
+            "colour": S.regime_colour(base),
+            "description": v.get("desc", ""),
+            "book_stance": v.get("stance", ""),
+            "avg_stock_hits_target": base,
+            "vs_all_market_base": (None if base is None
+                                   else round(base - S.DEFAULT_CELL_BASE_RATE, 3)),
+        })
+    rows.sort(key=lambda r: (r["avg_stock_hits_target"] is None,
+                             -(r["avg_stock_hits_target"] or 0)))
+    for i, r in enumerate(rows, 1):
+        r["rank"] = i
+    return rows
 
 
 def _f(v):
@@ -172,9 +223,26 @@ def market_block(regime: dict) -> dict:
         "vs_all_market_base": (None if base is None
                                else round(base - S.DEFAULT_CELL_BASE_RATE, 3)),
         "gates_list": S.REGIME_GATES_THE_LIST,
-        "trend_200": regime.get("trend_200"),
-        "vol_60": regime.get("vol_60"),
         "base_rate_measured": base is not None,
+        # HOW today's cell was reached — the two inputs, the tercile boundaries
+        # they were measured against, and which third each landed in.
+        "inputs": {
+            "trend_200": regime.get("trend_200"),
+            "trend_200_meaning": "equal-weight universe index vs its own 200-day "
+                                 "average (+0.13 = 13% above trend)",
+            "trend_tercile": regime.get("t_tercile"),
+            "trend_boundaries": [regime.get("t_lo"), regime.get("t_hi")],
+            "vol_60": regime.get("vol_60"),
+            "vol_60_meaning": "annualised stdev of that index's daily returns "
+                              "over 60 sessions (0.15 = 15%)",
+            "vol_tercile": regime.get("v_tercile"),
+            "vol_boundaries": [regime.get("v_lo"), regime.get("v_hi")],
+            "method": "T = which third of TREND, V = which third of VOLATILITY. "
+                      "Terciles are fitted on an EXPANDING history shifted one "
+                      "day, so the boundaries classifying today come only from "
+                      "prior days — no lookahead.",
+        },
+        "regime_grid": [],   # filled by run(); all 10 cells, ranked + graded
     }
 
 
@@ -255,9 +323,11 @@ def run(as_of: date | None = None, sector_map: dict[str, str] | None = None,
             } for r in rows]))
 
         emitted = [r for r in rows if r["emitted"]]
+        _mkt = market_block(regime)
+        _mkt["regime_grid"] = regime_grid(book, regime.get("cell"))
         return {
             "ok": True, "status": "live", "date": str(asof.date()),
-            "market": market_block(regime), "regime": regime,
+            "market": _mkt, "regime": regime,
             "rows": {r["ticker"]: r for r in rows},
             "eligible_count": len(eligible_day), "scored_count": len(rows),
             "emitted_count": len(emitted),

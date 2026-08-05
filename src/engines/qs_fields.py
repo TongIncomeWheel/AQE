@@ -97,12 +97,16 @@ def compute_regime_series(ew: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame({"trend_200": trend_200, "vol_60": vol_60})
 
 
-def _causal_tercile(s: pd.Series, min_history: int = MIN_REGIME_HISTORY) -> pd.Series:
+def _causal_tercile(s: pd.Series, min_history: int = MIN_REGIME_HISTORY
+                    ) -> tuple[pd.Series, pd.Series, pd.Series]:
     """Bucket each value into 1/2/3 against terciles fitted on PRIOR days only.
 
     `.expanding().quantile()` includes the current row, so the result is
     shifted one day — the boundaries classifying date t come from t-1 back.
-    Returns NaN until `min_history` prior observations exist.
+    Returns (tercile, lower_boundary, upper_boundary); the boundaries are
+    returned so the export can show WHY a day landed where it did rather than
+    asserting a cell code the reader has to take on trust.
+    NaN until `min_history` prior observations exist.
     """
     lo = s.expanding(min_periods=min_history).quantile(1 / 3).shift(1)
     hi = s.expanding(min_periods=min_history).quantile(2 / 3).shift(1)
@@ -111,18 +115,18 @@ def _causal_tercile(s: pd.Series, min_history: int = MIN_REGIME_HISTORY) -> pd.S
     out[ok & (s <= lo)] = 1.0
     out[ok & (s > lo) & (s <= hi)] = 2.0
     out[ok & (s > hi)] = 3.0
-    return out
+    return out, lo, hi
 
 
 def assign_regime_cells(regime: pd.DataFrame) -> pd.DataFrame:
-    """Add causal terciles and the T{1-3}V{1-3} cell code.
+    """Add causal terciles, their boundaries, and the T{1-3}V{1-3} cell code.
 
     Days without enough history to fit a tercile are labelled `unclassified`,
     matching the recipe book's own regime key for that state.
     """
     out = regime.copy()
-    out["t_tercile"] = _causal_tercile(out["trend_200"])
-    out["v_tercile"] = _causal_tercile(out["vol_60"])
+    out["t_tercile"], out["t_lo"], out["t_hi"] = _causal_tercile(out["trend_200"])
+    out["v_tercile"], out["v_lo"], out["v_hi"] = _causal_tercile(out["vol_60"])
     cell = []
     for t, v in zip(out["t_tercile"], out["v_tercile"]):
         if pd.isna(t) or pd.isna(v):
