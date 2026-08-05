@@ -73,14 +73,35 @@ def load_export() -> dict | None:
     return drive if _key(drive) > _key(local) else local
 
 
+def _lens_count(r: dict) -> int:
+    return sum(bool(r.get(k)) for k in ("on_longlist", "on_elder", "on_qs"))
+
+
+def in_alert_universe(r: dict) -> bool:
+    """Strength gate for an UNHELD name (PM ruling 2026-08-04).
+
+    On at least TWO of {Longlist, Elder, QS}, or on QS alone. Multi-lens
+    agreement, or the one lens whose whole purpose is finding what the others
+    miss — nothing in between.
+
+    The old universe had NO strength gate at all: any monitored name touching a
+    level fired, which is why it read as noise. It also still drew from
+    `_radar_pool` (retired Signal Radar), so alerts came from a lens no surface
+    reads any more.
+    """
+    n = _lens_count(r)
+    if n >= 2:
+        return True
+    return bool(r.get("on_qs")) and not r.get("on_longlist") and not r.get("on_elder")
+
+
 def monitored(export: dict) -> list[dict]:
     """Flatten the export into a dedup'd monitor list of {ticker, source, record}.
 
-    Universe = the daily AQE list + signal ledger (PM ruling 2026-07-07): held →
-    longlist → elder_list → _radar_pool (Signal Radar). The broad SC>=50
-    `_alert_pool` was DROPPED — it was noise; alerts should fire only on names AQE
-    actually surfaces that day. The Signal-Radar pre-move names backfill the tighter
-    set (relevant > frequent).
+    Universe = held (always, no strength gate — you own it, conviction is
+    irrelevant to risk) + unheld names passing `in_alert_universe`.
+
+    `_radar_pool` is NO LONGER a source: it is Signal Radar, retired.
     """
     held_recs = export.get("held_positions") or []
     held_tickers = {r.get("ticker") for r in held_recs if r.get("ticker")}
@@ -92,11 +113,10 @@ def monitored(export: dict) -> list[dict]:
                         "is_held": True, "record": r})
 
     seen = set(held_tickers)
-    # `daily_list` is the single collapsed AQE list (watchlist ∪ elder ∪ ledger);
-    # `_radar_pool` backfills quiet pre-movers not on it. Each record carries its
-    # own descriptive source (longlist / elder_list / radar-premove / radar-runner).
-    for _src in ("daily_list", "_radar_pool"):
+    for _src in ("daily_list",):
         for r in export.get(_src) or []:
+            if not in_alert_universe(r):
+                continue
             tk = r.get("ticker")
             if not tk or tk in seen:
                 continue
@@ -153,37 +173,76 @@ def evaluate(ticker: str, source: str, is_held: bool,
     #   RVol were removed — they fired on names long past the level (stale noise).
     # Every condition is a BOUNDED band, so a name far past a level never fires.
 
-    # --- Hit buy price: TODAY's candle must trade THROUGH the buy line, i.e. the
-    # buy price lies inside today's intraday range [day_low, day_high]. Not a
-    # "near the buy" proximity check — the price has to have actually touched it
-    # today. Naturally bounded: a name that gapped above and held (day_low > be)
-    # or never reached it (day_high < be) does not fire. Held names are already in.
-    if (not is_held and be is not None
-            and day_hi is not None and day_lo is not None
-            and day_lo <= be <= day_hi):
-        add("BUY_ZONE", "Hit buy price", be,
-            f"today's range [{day_lo:.2f}–{day_hi:.2f}] crossed buy {be:.2f} "
-            f"(live {live:.2f})")
+    # --- MOVE: plain +/-2% vs prior close. A NOTIFICATION, not a decision
+    # level and not an entry signal (PM ruling 2026-08-04) — "something is
+    # happening here", nothing more. Expect it on a third to a half of the
+    # universe on an active day; that is the intended cost of a movement tape.
+    prev_close = _n(quote.get("prev_close"))
+    if prev_close and prev_close > 0:
+        chg = (live / prev_close - 1) * 100
+        if abs(chg) >= C.MOVE_PCT:
+            add("MOVE", f"Moved {chg:+.1f}%", prev_close,
+                f"{chg:+.1f}% vs prior close {prev_close:.2f} — movement only, "
+                f"no entry claim")
 
-    # --- Fresh breakout (bounded: only just-broken-out names, never extended) ---
-    if not is_held and entry is not None and entry > 0:
-        lo = entry * (1 + C.BREAKOUT_PCT / 100)
-        hi = entry * (1 + C.BREAKOUT_MAX_PCT / 100)
-        if lo <= live <= hi:
-            add("BREAKOUT", "Breakout (fresh)", lo,
-                f"+{(live / entry - 1) * 100:.1f}% over entry {entry:.2f} "
-                f"(fresh, ≤{C.BREAKOUT_MAX_PCT:.0f}%)")
+    # --- BOS: closed above the last CONFIRMED pivot high. The structural
+    # breakout: price clearing the level that was capping it, rather than a
+    # fixed % over an arbitrary reference (the old rule) or a target already
+    # reached (TP1). Sourced from the daily read, so it changes once per day.
+    _lph = (rec.get("last_pivot_high") or {}).get("price")
+    if not is_held and rec.get("structure_shift") == "BULLISH_BOS":
+        add("BOS", "Break of structure", _lph,
+            f"closed above the last confirmed pivot high"
+            + (f" {_lph:.2f}" if _lph else "") + f" (live {live:.2f})")
 
-    # --- Approaching stop (within X% above it; held uses its own SL) ---
-    # Skipped for radar-pool names: a pre-move/early watch is about catching the
-    # UPSIDE launch, not managing a stop on a position we don't hold. Radar names
-    # fire only on the two upside events above (buy-zone / breakout).
-    _is_radar = isinstance(source, str) and source.startswith("radar")
-    if (not _is_radar and stop is not None and stop > 0
-            and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100)):
-        cushion = (live / stop - 1) * 100
-        add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
-            stop, f"{cushion:.1f}% above stop {stop:.2f}")
+    # --- AT A DECISION LEVEL: within X% of the stop, TP1 or the pivot high.
+    # Deliberately NOT every structural level — within 2% of ANY of the ~15
+    # levels a row carries caught 72% of the universe on the 2026-08-04
+    # export; restricted to these three it was 2 of 83.
+    _tp1 = next((t.get("price") for t in (_bracket.get("targets") or [])
+                 if t.get("tp") == "TP1"), None)
+    for _lname, _lvl in (("stop", _b_stop), ("TP1", _tp1),
+                         ("pivot high", _lph)):
+        _lvl = _n(_lvl)
+        if _lvl and _lvl > 0 and abs(live / _lvl - 1) * 100 <= C.NEAR_LEVEL_PCT:
+            add("AT_LEVEL", f"At {_lname}", _lvl,
+                f"{abs(live / _lvl - 1) * 100:.1f}% from {_lname} {_lvl:.2f}")
+            break                       # one level event per name per poll
+
+    # --- Approaching stop, measured in R so it means the same on every
+    # ticker. A flat 5% band spanned 0.4-3.3 ATRs and 0.4-2.5 R across the
+    # universe: the same alert, a different warning on every name.
+    #
+    # For a HELD name the risk unit is the one actually taken — what was paid
+    # minus where the stop sits — not the bracket's structural risk. Held rows
+    # frequently carry an INVALID bracket (no structural stop passed the
+    # gates), so bracket.risk is None on every held position in the 2026-08-04
+    # export; without this they would all silently fall back to the flat %.
+    _risk_unit = _b_risk
+    if is_held:
+        _h_entry = _n(rec.get("entry"))
+        _h_sl = _n(rec.get("held_sl"))
+        if _h_entry and _h_sl and _h_entry > _h_sl:
+            _risk_unit = _h_entry - _h_sl
+    if stop is not None and stop > 0 and live > stop:
+        if _risk_unit and _risk_unit > 0:
+            cushion_r = (live - stop) / _risk_unit
+            if cushion_r <= C.NEAR_STOP_R:
+                add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
+                    stop, f"{cushion_r:.2f}R above stop {stop:.2f} "
+                          f"({(live / stop - 1) * 100:.1f}%)")
+        elif live <= stop * (1 + C.NEAR_STOP_PCT / 100):
+            add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
+                stop, f"{(live / stop - 1) * 100:.1f}% above stop {stop:.2f} "
+                      f"(no risk unit — % fallback)")
+
+    # --- HELD-ONLY: a veto struck something you own. Risk-side, rare, and the
+    # kind of thing that should not wait for a price level to surface it.
+    if is_held:
+        _vetoes = ((rec.get("qs") or {}).get("vetoes")) or []
+        if _vetoes:
+            add("VETO_HELD", "Veto fired on a held name", None,
+                f"QS veto: {', '.join(_vetoes)}")
 
     return trig
 
