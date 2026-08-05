@@ -619,7 +619,7 @@ def test_bracket_field_on_record():
                 "extensions": {"1.618": 120.0}},
     }
     lk = {"ma": {"X": {20: 98.0, 50: 95.0, 100: 90.0, 200: 85.0}},
-          "vol30": {}, "beta252": {}, "rvol": {}, "rs": {}, "sma": {},
+          "vol30": {}, "beta252": {}, "day_vol": {}, "rs": {}, "sma": {},
           "corr": {}, "held": set(), "thematic": {}}
     f = _v21_record_fields("X", d, lk, {"X": "XLV"}, {"XLV": {"grade": "HOLD"}})
 

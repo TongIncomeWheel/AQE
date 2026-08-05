@@ -52,7 +52,7 @@ import sys
 # names means the stage that computes it did not run.
 MENU_FIELDS = [
     "sc_momentum", "flow", "energy", "structure", "mp", "mp_state", "mp_accel_state",
-    "elder", "elder_5d", "elder_pattern", "structure_shift", "sma_distance_pct", "rvol",
+    "elder", "elder_5d", "elder_pattern", "structure_shift", "sma_distance_pct", "day_vol",
     "rs_spy_20d", "rs_leadership", "ma_20", "ma_50", "ma_100", "ma_200", "atr_14d",
     "bracket", "lens", "lens_positive", "sector_trend_state", "beta_30d",
 ]

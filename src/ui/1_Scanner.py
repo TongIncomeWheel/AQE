@@ -1340,7 +1340,7 @@ _EXPORT_COL_ORDER = [
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
-    "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
+    "beta_30d", "beta_60d", "day_vol", "rs_spy_20d", "sma_distance_pct",
     "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)
@@ -1559,7 +1559,7 @@ if _held:
         "ticker", "qty", "entry", "live_px", "unreal_usd", "held_sl", "held_tp1",
         "held_tp2", "trade_date", "ptj_sector", "gics_gate",
         "sc_momentum", "ptrs", "pipe_rank", "flow", "energy", "structure", "mp",
-        "mp_state", "elder", "beta_30d", "beta_60d", "rvol", "rs_spy_20d",
+        "mp_state", "elder", "beta_30d", "beta_60d", "day_vol", "rs_spy_20d",
         "sma_distance_pct", "sector_corr", "atr_14d", "bracket", "notes",
     ]
     _hdf = pd.DataFrame(_held)
@@ -1989,7 +1989,7 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
 
     # Per-ticker lookup feeding _v21_record_fields (same keys the pipeline builds).
     lk = {
-        "rvol": {tk: r.get("rvol")},
+        "day_vol": {tk: r.get("day_vol")},
         "rs": {tk: r.get("rs_spy_20d")},
         "sma": {tk: r.get("sma_distance_pct")},
         "ma": {tk: r.get("ma") or {}},

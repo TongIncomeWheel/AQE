@@ -82,7 +82,7 @@ answers a different question, so there's no "picking at random":
 ## 10. Misc (4)
 | Field | Keep? | Note |
 |---|---|---|
-| `rvol`, `rs_spy_20d`, `sma_distance_pct` | ✅ | vol / RS / MA distance |
+| `day_vol` (was `rvol`), `rs_spy_20d`, `sma_distance_pct` | ✅ | vol / RS / MA distance |
 | `held` | ✅ | held flag |
 
 ---

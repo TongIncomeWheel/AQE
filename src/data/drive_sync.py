@@ -296,10 +296,13 @@ _FIELD_GLOSSARY = {
                           "(LEADING / IMPROVING / WEAKENING / LAGGING).",
     "thematic_rrg_direction": "The ticker's PRIMARY thematic basket's RRG direction "
                           "(ENTERING / DEEPENING / EXITING / STABLE).",
-    "rvol": "The DAY'S VOLUME MULTIPLE: today's volume divided by this name's own "
-            "prior 20-day average. 1.0 = a normal day for it, 1.8 = it traded 1.8x "
-            "its own normal. The only volume-participation field on the row — there "
-            "is deliberately no second one under another name.",
+    "day_vol": "(formerly `rvol` — same number, same formula, renamed 2026-08-05) "
+               "The DAY'S VOLUME MULTIPLE: today's volume divided by this name's "
+               "own prior 20-day average. 1.0 = a normal day for it, 1.8 = it "
+               "traded 1.8x its own normal. The only volume-participation field on "
+               "the row — there is deliberately no second one under another name. "
+               "Charter docs, archived exports and voice menus written before the "
+               "rename say `rvol`; they mean this field.",
 }
 _FIELD_GLOSSARY.update(LENS_GLOSSARY)
 
@@ -619,10 +622,10 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict, dict]:
 def _compute_v21_lookups(sm: dict) -> dict:
     """Per-ticker lookups for AQE v2.1 fields. Defensive — returns {} on any error.
 
-    Returns {rvol, rs, sma, corr, spy_roc_20d} where rvol/rs/sma are
+    Returns {day_vol, rs, sma, corr, spy_roc_20d} where day_vol/rs/sma are
     {ticker: float} and corr is {ticker: (corr, class)}.
     """
-    out = {"rvol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
+    out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
            "vol30": {}, "beta252": {}, "spy_roc_20d": None}
     try:
         import numpy as np
@@ -667,11 +670,11 @@ def _compute_v21_lookups(sm: dict) -> dict:
                         beta = float(np.cov(st_, sp, ddof=1)[0, 1] / var_sp)
                         if np.isfinite(beta):
                             out["beta252"][tk] = round(beta, 3)
-            # rvol = today / 20-day prior average
+            # day_vol (was rvol) = today / 20-day prior average
             if len(vol) >= 21:
                 avg20 = float(np.nanmean(vol[-21:-1]))
                 if avg20 > 0:
-                    out["rvol"][tk] = round(float(vol[-1]) / avg20, 2)
+                    out["day_vol"][tk] = round(float(vol[-1]) / avg20, 2)
             # sma_distance_pct vs 50D SMA
             if len(cl) >= 50:
                 sma50 = float(np.nanmean(cl[-50:]))
@@ -776,7 +779,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "sector_trend_state": None,
         "sector_rrg_quadrant": None, "sector_rrg_direction": None,
         "thematic_rrg_quadrant": None, "thematic_rrg_direction": None,
-        "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+        "day_vol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
         # DSG-18 fib ladder (flat — retracement supports + swing anchors)
         "fib_swing_low": None, "fib_swing_high": None,
@@ -857,7 +860,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_parent_grade"] = primary["parent_grade"]
             fields["thematic_rrg_quadrant"] = primary["rrg_quadrant"]
             fields["thematic_rrg_direction"] = primary["rrg_direction"]
-        fields["rvol"] = (lk.get("rvol") or {}).get(tk)
+        fields["day_vol"] = (lk.get("day_vol") or {}).get(tk)
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
         _ma = (lk.get("ma") or {}).get(tk) or {}
@@ -1218,7 +1221,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             "atr_14d": v21["atr_14d"],
             "gics_sector": v21["gics_sector"], "gics_gate": v21["gics_gate"],
             "rs_spy_20d": v21["rs_spy_20d"], "sma_distance_pct": v21["sma_distance_pct"],
-            "rvol": v21["rvol"],
+            "day_vol": v21["day_vol"],
             # absolute MA ladder — so the live alert engine can evaluate MA
             # support on held names uniformly with candidates.
             "ma_20": v21["ma_20"], "ma_50": v21["ma_50"],
@@ -1323,7 +1326,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     elder5 = load_elder_history()
     pe_tickers = {p["ticker"] for p in sl.get("precision_edge", [])}
 
-    # ---- AQE v2.1 enrichment (rvol, rs_spy, sma_distance, sector_corr) ----
+    # ---- AQE v2.1 enrichment (day_vol, rs_spy, sma_distance, sector_corr) ----
     _v21_lk = _compute_v21_lookups(sm)
     export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
 

@@ -141,7 +141,7 @@ flag_condition:                  # D-57: RATIFIED replacement for the rudimentar
   hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
   score_factors:                 # weighted, not all-or-nothing
     - structure_integrity        # structure, structure_shift (reward BOS/tight base; penalise CHoCH)
-    - participation              # DISCRIMINATING combo: rvol>=1.5 AND flow>0 AND rs_spy_20d>0 (rs_leadership==LEADER is table-stakes, weak alone)
+    - participation              # DISCRIMINATING combo: day_vol>=1.5 (was rvol) AND flow>0 AND rs_spy_20d>0 (rs_leadership==LEADER is table-stakes, weak alone)
     - detect_lens                # lens_positive >= 4 of 6
     - elder_force                # elder_5d rising; elder_pattern in {ACCELERATION, CORRECTION_REENTRY}; penalise INTERRUPTED
     - bracket_exercisable        # a workable stop exists via the bracket exercise (D-52) — soft

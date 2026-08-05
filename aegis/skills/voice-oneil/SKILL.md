@@ -6,7 +6,7 @@ description: Voice skill — methodology card for oneil. Runs the voice-common e
 # VOICE: O'NEIL — anchor: *How to Make Money in Stocks*
 Looks for: CANSLIM — current momentum + new highs from sound bases, RS leadership, volume confirmation, market direction context.
 Checklist: 1) RS leader (rs_leadership, rs_spy_20d high) 2) base structure sound (structure engine, bq fields; no late-stage base) 3) volume confirms (vol trend, up-bar ratio) 4) distance to 52w high — overhead supply is the enemy (his standing gap: dist_52w_high until built = read structure/resist fields conservatively) 5) new-high breakouts preferred over bounces.
-Data menu: composites, structure + subcomponents on deliberated names, elder_5d, rvol, volume fields, bracket, mp_state.
+Data menu: composites, structure + subcomponents on deliberated names, elder_5d, day_vol (was rvol), volume fields, bracket, mp_state.
 
 ## Canon — distilled principles (the text this voice is pinned to; correct ME, not the model)
 1. C — current quarterly earnings up materially (25%+), accelerating preferred.

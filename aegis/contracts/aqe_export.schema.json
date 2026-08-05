@@ -5288,7 +5288,7 @@
      "sma_distance_pct": {
       "type": "number"
      },
-     "rvol": {
+     "day_vol": {
       "type": "number"
      },
      "ma_20": {
@@ -5519,6 +5519,7 @@
      "choch_date",
      "choch_state",
      "cob_price",
+     "day_vol",
      "div_bear_count",
      "div_bull_count",
      "div_date",
@@ -5577,7 +5578,6 @@
      "rs_spy_20d",
      "runner_conviction_label",
      "runner_setup",
-     "rvol",
      "sc_m_gate_detail",
      "sc_m_gates",
      "sc_momentum",
@@ -6384,7 +6384,7 @@
        "string"
       ]
      },
-     "rvol": {
+     "day_vol": {
       "type": "number"
      },
      "rs_spy_20d": {
@@ -6608,6 +6608,7 @@
      "bracket",
      "choch_date",
      "choch_state",
+     "day_vol",
      "div_bear_count",
      "div_bull_count",
      "div_date",
@@ -6665,7 +6666,6 @@
      "runner_conviction",
      "runner_conviction_label",
      "runner_setup",
-     "rvol",
      "sc_m_gate_detail",
      "sc_m_gates",
      "sc_momentum",
@@ -6846,7 +6846,7 @@
        "string"
       ]
      },
-     "rvol": {
+     "day_vol": {
       "type": "number"
      },
      "rs_spy_20d": {
@@ -7784,6 +7784,7 @@
      "bracket",
      "choch_date",
      "choch_state",
+     "day_vol",
      "div_bear_count",
      "div_bull_count",
      "div_date",
@@ -7849,7 +7850,6 @@
      "runner_conviction",
      "runner_conviction_label",
      "runner_setup",
-     "rvol",
      "sc_m_gate_detail",
      "sc_m_gates",
      "sc_momentum",
@@ -8163,5 +8163,8 @@
  ],
  "title": "AQE Daily Export",
  "x_version": "1.2.0",
- "x_generated_from": "live export 2026-07-18, FULL arrays (nullable-aware regen after QA-F2); required tightened 2026-07-22 (handoff/08 Lane 4 — self-describing blocks now optional)"
+ "x_generated_from": "live export 2026-07-18, FULL arrays (nullable-aware regen after QA-F2); required tightened 2026-07-22 (handoff/08 Lane 4 — self-describing blocks now optional)",
+ "x_field_renames": {
+  "rvol -> day_vol": "2026-08-05. Same number, same formula (today's volume over the name's own prior 20-day average). Exports written before this date carry `rvol`; readers of archived exports should treat the two names as one field."
+ }
 }

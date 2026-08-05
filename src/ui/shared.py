@@ -50,12 +50,30 @@ def is_cloud_mode() -> bool:
     return not SCORES_DAILY.exists()
 
 
+# Fields renamed in the export, old name -> new name. Applied on READ so an
+# archived or in-flight export written before the rename still renders. One
+# direction only: the writer emits the new name, nothing writes the old one.
+_LEGACY_FIELD_ALIASES = {"rvol": "day_vol"}
+
+
+def _apply_legacy_aliases(export: dict) -> dict:
+    for key in ("daily_list", "held_positions", "lens_ranking",
+                "longlist", "elder_list"):
+        for row in export.get(key) or []:
+            if not isinstance(row, dict):
+                continue
+            for old, new in _LEGACY_FIELD_ALIASES.items():
+                if new not in row and old in row:
+                    row[new] = row[old]
+    return export
+
+
 def load_export() -> dict | None:
     """Load `output/aqe_daily_export.json` (the canonical cloud-mode source)."""
     if not EXPORT_JSON.exists():
         return None
     with open(EXPORT_JSON) as f:
-        return json.load(f)
+        return _apply_legacy_aliases(json.load(f))
 
 
 def percent_column_config(df) -> dict:

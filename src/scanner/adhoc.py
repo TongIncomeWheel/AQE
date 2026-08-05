@@ -88,10 +88,10 @@ def _sma(close: pd.Series, n: int) -> float | None:
 
 def _panel_metrics(d: pd.DataFrame, spy: pd.DataFrame) -> dict:
     """Bar-derived fields the longlist rows carry but the engines don't emit:
-    RVOL, RS vs SPY (20d), SMA-50 distance, MA ladder, 30d annualised vol,
+    day_vol (was RVOL), RS vs SPY (20d), SMA-50 distance, MA ladder, 30d vol,
     252d beta. Each degrades to None on thin data — never raises.
     """
-    out: dict = {"rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+    out: dict = {"day_vol": None, "rs_spy_20d": None, "sma_distance_pct": None,
                  "ma": {}, "vol_30d_ann": None, "beta_252d": None}
     try:
         close = d["close"].astype(float)
@@ -105,7 +105,7 @@ def _panel_metrics(d: pd.DataFrame, spy: pd.DataFrame) -> dict:
             vol = d["volume"].astype(float)
             avg20 = float(vol.tail(20).mean())
             if avg20 > 0:
-                out["rvol"] = round(float(vol.iloc[-1]) / avg20, 2)
+                out["day_vol"] = round(float(vol.iloc[-1]) / avg20, 2)
         lr = np.log(close / close.shift(1)).dropna()
         if len(lr) >= 30:
             out["vol_30d_ann"] = round(float(lr.tail(30).std()) * float(np.sqrt(252)) * 100, 1)
@@ -333,7 +333,7 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         "elder_5d": elder_5d,
         "levels": levels,
         # Parity fields (longlist schema)
-        "rvol": pm["rvol"],
+        "day_vol": pm["day_vol"],
         "rs_spy_20d": pm["rs_spy_20d"],
         "sma_distance_pct": pm["sma_distance_pct"],
         "ma": pm["ma"],

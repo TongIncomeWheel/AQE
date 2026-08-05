@@ -46,7 +46,7 @@ import os
 CONSUMED = [
     "ticker", "rank", "sc_momentum", "sc_momentum_raw", "flow", "energy", "structure",
     "mp", "mp_state", "mp_accel_state", "elder", "elder_5d", "elder_pattern", "entry",
-    "beta_30d", "rvol", "rs_spy_20d", "rs_leadership", "rs_down_day_20d", "sma_distance_pct",
+    "beta_30d", "day_vol", "rs_spy_20d", "rs_leadership", "rs_down_day_20d", "sma_distance_pct",
     "ma_20", "ma_50", "ma_100", "ma_200", "atr_14d", "gics_sector", "gics_sector_name",
     "sector_trend_state", "structure_shift", "choch_state", "div_bear_count", "div_state",
     "knn_prob", "knn_significant", "atr_caution", "runner_setup", "mover_subtype",
@@ -54,9 +54,19 @@ CONSUMED = [
     "lens_positive", "source", "held", "bracket", "subcomponents",
 ]
 
+# --- Fields AQE renamed, old name -> new name. Applied on READ so an ARCHIVED export
+# (or an in-flight one written by an engine build older than the rename) still fills the
+# voice menu instead of silently arriving null. Nothing writes the old name.
+RENAMED = {"rvol": "day_vol"}   # renamed 2026-08-05; same number, same formula
+
+
 def _trim(rec):
     """Return the record trimmed to the consumed field set (present keys only)."""
-    return {k: rec.get(k) for k in CONSUMED if k in rec}
+    out = {k: rec.get(k) for k in CONSUMED if k in rec}
+    for old, new in RENAMED.items():
+        if new not in out and old in rec:
+            out[new] = rec[old]
+    return out
 
 
 def build(export, export_path=None):

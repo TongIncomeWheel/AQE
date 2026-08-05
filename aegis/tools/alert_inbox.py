@@ -104,11 +104,11 @@ def sweep(date, export, inbox, cursor_path):
         # is STRENGTH here; risk is a BRACKET question; edge/odds are the PM's call. Those ride as SOFT NOTES.
         sd = r.get("sma_distance_pct")
         rs_lead = r.get("rs_leadership")
-        real_move = (atype == "breakout") or (r.get("rvol") or 0) >= 1.0 or enriched["is_runner"]
+        real_move = (atype == "breakout") or (r.get("day_vol") or 0) >= 1.0 or enriched["is_runner"]
         checks = {
             "strong_univ": (scm or 0) >= STRONG_UNIVERSE_FLOOR,     # on today's strong-momentum universe
             "leader": rs_lead == "LEADER",                          # leadership (rs) — it IS a leader
-            "moving": real_move,                                    # actually running (breakout / rvol / runner)
+            "moving": real_move,                                    # actually running (breakout / day_vol / runner)
         }
         quality_ok = checks["strong_univ"] and checks["leader"] and checks["moving"]
         enriched["gate"] = {"runner": quality_ok, "checks": checks,

@@ -28,11 +28,11 @@ import json, os, argparse
 # Each voice's DISCRIMINATING menu fields (field, direction). +1 higher-better, -1 lower-better.
 # Mirrors VOICE_MENUS; seow/detect-lens/elder-lens use special metrics below.
 VOICE_SPECS = {
-    "lynch":        [("sc_momentum", 1), ("structure", 1), ("flow", 1), ("rvol", 1), ("rs_spy_20d", 1)],
-    "oneil":        [("rs_spy_20d", 1), ("elder", 1), ("rvol", 1), ("structure", 1), ("sma_distance_pct", -1)],
-    "wyckoff":      [("flow", 1), ("energy", 1), ("rvol", 1)],
+    "lynch":        [("sc_momentum", 1), ("structure", 1), ("flow", 1), ("day_vol", 1), ("rs_spy_20d", 1)],
+    "oneil":        [("rs_spy_20d", 1), ("elder", 1), ("day_vol", 1), ("structure", 1), ("sma_distance_pct", -1)],
+    "wyckoff":      [("flow", 1), ("energy", 1), ("day_vol", 1)],
     "raschke":      [("elder", 1), ("energy", 1)],
-    "steenbarger":  [("sc_momentum", 1), ("rvol", 1)],
+    "steenbarger":  [("sc_momentum", 1), ("day_vol", 1)],
     "minervini":    [("structure", 1), ("rs_spy_20d", 1), ("sma_distance_pct", -1)],
     "druckenmiller":[("beta_30d", -1), ("sc_momentum", 1)],
     "thorp":        [("knn_prob", 1), ("sc_momentum", 1)],   # thorp's OWN menu; knn_prob (empirical edge) is 100% populated — use it, not the sparse bracket.rr

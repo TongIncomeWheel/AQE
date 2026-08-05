@@ -180,7 +180,7 @@ def _rec_from_adhoc(a: dict) -> dict:
         "elder": a.get("elder"), "mp_state": a.get("mp_state"),
         "beta_30d": a.get("beta_30d"), "beta_60d": a.get("beta_60d"),
         "pipe_rank": a.get("pipe_rank"),
-        "rvol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+        "day_vol": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "gics_sector": None, "gics_sector_name": None, "gics_gate": None,
         "entry": lv.get("entry"), "atr_14d": lv.get("atr14"),
         "bracket": _bracket,        # structural bracket (mechanical DSL/TP retired)
@@ -676,7 +676,7 @@ with left:
     m2.metric("Structure", _f(r.get("structure"), ".0f"))
     m3.metric("MP", _f(r.get("mp"), ".0f"))
     m3.metric("Elder", _f(r.get("elder"), ".1f"))
-    m3.metric("RVOL", _f(r.get("rvol")))
+    m3.metric("Day vol x", _f(r.get("day_vol")))
     m4.metric("Beta 30 / 60", f"{_f(r.get('beta_30d'))} / {_f(r.get('beta_60d'))}")
     m4.metric("RS vs SPY 20d", _f(r.get("rs_spy_20d")))
     m4.metric("Dist 50DMA %", _f(r.get("sma_distance_pct")))
@@ -724,7 +724,7 @@ with left:
             f"Structure {_f(r.get('structure'), '.0f')} | MP {_f(r.get('mp'), '.0f')} | "
             f"Elder {_f(r.get('elder'), '.1f')} | MP state {r.get('mp_state') or '—'}",
             f"",
-            f"CONTEXT  RVOL {_f(r.get('rvol'))} | RS vs SPY 20d {_f(r.get('rs_spy_20d'))} | "
+            f"CONTEXT  Day vol {_f(r.get('day_vol'))}x | RS vs SPY 20d {_f(r.get('rs_spy_20d'))} | "
             f"Dist 50DMA {_f(r.get('sma_distance_pct'))}% | "
             f"Beta 30d/60d {_f(r.get('beta_30d'))}/{_f(r.get('beta_60d'))} | "
             f"Sector {r.get('gics_sector') or '—'} ({r.get('gics_sector_name') or '—'}) | "

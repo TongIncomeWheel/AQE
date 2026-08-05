@@ -60,7 +60,7 @@ GLOSSARY_FILL = {
     "elder_context": "Hourly VWAP/VCP/exhaustion context object behind the elder read (elder_context.py).",
     "elder_pattern": "Labelled Elder impulse pattern (see enum).",
     "beta_30d": "30-day beta vs SPY — the portfolio-gate window (D-6).",
-    "rvol": "Relative volume vs recent average; >1 = above-normal participation.",
+    "day_vol": "(formerly `rvol`) The day's volume over the name's own prior 20-day average; >1 = above-normal participation.",
     "rs_spy_20d": "20-day relative strength vs SPY (%).",
     "sma_distance_pct": "Percent distance of price from its SMA — extension (large + = extended, ~0 = at support).",
     "ma_20": "20-day simple moving average of close.",
