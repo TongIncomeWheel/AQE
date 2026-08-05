@@ -579,11 +579,13 @@ def test_thematic_baskets():
 
     bg = grade_thematic_baskets(panel, sector_grades)
 
-    # Cap: strong basket can't exceed parent HOLD.
-    assert bg["Semiconductors"]["raw_grade"] == "DEPLOY"
-    assert bg["Semiconductors"]["grade"] == "HOLD"
+    # The parent cap is NO LONGER APPLIED (2026-08-05): a strong basket keeps
+    # its own grade, and what the cap WOULD have said rides alongside it.
+    assert bg["Semiconductors"]["index_grade"] == "DEPLOY"
+    assert bg["Semiconductors"]["grade"] == "DEPLOY"
+    assert bg["Semiconductors"]["parent_capped_grade"] == "HOLD"
     assert bg["Semiconductors"]["parent_grade"] == "HOLD"
-    assert GRADE_ORDER[bg["Semiconductors"]["grade"]] >= GRADE_ORDER["HOLD"]
+    assert bg["Semiconductors"]["breadth_pct"] == 100.0   # all 7 ramping
 
     # RRG schema keys are always present (for the Thematic Rotation UI panel).
     for _k in ("rrg_rs_ratio", "rrg_rs_momentum", "rrg_quadrant", "rrg_direction"):

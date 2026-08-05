@@ -1158,7 +1158,9 @@ if _thematic:
         _trows.append({
             "Basket": _b.replace("_", " "),
             "Grade": _d.get("grade", "---"),
-            "Raw": _d.get("raw_grade", "---"),
+            "Why": _d.get("grade_path", "—"),
+            "Breadth %": _d.get("breadth_pct"),
+            "Capped at parent": _d.get("parent_capped_grade", "---"),
             "Parent": f'{_d.get("parent_gics", "—")} ({_d.get("parent_grade", "—")})',
             "Rotation (RRG)": _rrg_phrase(_d.get("rrg_quadrant"), _d.get("rrg_direction")),
             "20d%": _fmt(_d.get("roc20"), "+.1f"),
@@ -1167,6 +1169,17 @@ if _thematic:
         })
     table_with_copy(pd.DataFrame(_trows), key="thematic_table")
     st.caption(
+        "**Why** — which rule produced the grade. *trend* = the 20-day road "
+        "(roc20 > 5%) · *acceleration* = the 5-day road (≥ +6% in a week, ≥ 5 pts "
+        "ahead of the 20-day pace) · *recovery* = above its 20D SMA and thrusting, "
+        "but the month is still net negative · *narrow* = the index said DEPLOY and "
+        "breadth said no.  \n"
+        "**Breadth %** — how many constituents are above their OWN 20D SMA. An "
+        "equal-weight index can be carried by one name; this is the check on that. "
+        "Under 60% a DEPLOY is demoted to HOLD.  \n"
+        "**Capped at parent** — what the grade WOULD be under the old parent-GICS "
+        "cap, kept for reference. The cap is no longer applied: with XLK on HOLD it "
+        "made a +13% theme and a flat one read identically.  \n"
         "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
         "*Deepening in* = rotating further out (strengthening) · *Exiting* = "
         "rotating back toward centre (fading, about to leave) · *Holding in* = stable."

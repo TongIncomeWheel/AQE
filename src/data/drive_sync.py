@@ -296,6 +296,15 @@ _FIELD_GLOSSARY = {
                           "(LEADING / IMPROVING / WEAKENING / LAGGING).",
     "thematic_rrg_direction": "The ticker's PRIMARY thematic basket's RRG direction "
                           "(ENTERING / DEEPENING / EXITING / STABLE).",
+    "thematic_grade": "The PRIMARY thematic basket's grade — the theme's OWN reading, "
+                      "UNCAPPED since 2026-08-05. It used to be clamped at the parent "
+                      "GICS grade, which with XLK on HOLD made a +13% theme and a flat "
+                      "one read identically; the parent's grade is on the row as "
+                      "thematic_parent_grade, so apply that caution yourself. Each entry "
+                      "in thematic_baskets also carries grade_path (WHICH rule graded it: "
+                      "trend / acceleration / recovery / narrow / stalled / declining), "
+                      "breadth_pct (how many constituents are above their own 20D SMA) "
+                      "and parent_capped_grade (the old, more conservative reading).",
     "day_vol": "(formerly `rvol` — same number, same formula, renamed 2026-08-05) "
                "The DAY'S VOLUME MULTIPLE: today's volume divided by this name's "
                "own prior 20-day average. 1.0 = a normal day for it, 1.8 = it "
@@ -847,6 +856,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                 annotated.append({
                     "basket": b,
                     "grade": tg.get("grade"),
+                    "grade_path": tg.get("grade_path"),
+                    "breadth_pct": tg.get("breadth_pct"),
+                    "parent_capped_grade": tg.get("parent_capped_grade"),
                     "parent_gics": tg.get("parent_gics"),
                     "parent_grade": tg.get("parent_grade"),
                     "rrg_quadrant": tg.get("rrg_quadrant"),

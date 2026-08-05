@@ -56,8 +56,10 @@ GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 
 # ── Thematic baskets (Thematic Basket Map v2.0, PM-approved 11 Jun 2026) ──────
 # A basket is a CONTEXT LAYER ONLY: it annotates names AQE already scored and
-# grades a sector from its constituents' equal-weight price index (capped at the
-# parent-GICS grade). It does NOT add names to the scan universe — constituents
+# grades a theme from its constituents' equal-weight price index, confirmed by
+# constituent breadth. (It USED to be capped at the parent-GICS grade; that cap
+# was removed 2026-08-05 — see grade_thematic_baskets.) It does NOT add names
+# to the scan universe — constituents
 # are pulled into the panel for grading (like the GICS ETFs) but are never
 # screened. A basket's parent GICS may differ from a constituent's own GICS
 # (e.g. ANET is XLK but AI_Infrastructure's parent is XLRE).
@@ -242,12 +244,50 @@ def _trend_state(above_sma20: bool, divergence: float) -> str:
     return TREND_STATE[(bool(above_sma20), divergence > 0.0)]
 
 
+# ── Acceleration path to DEPLOY (Epic 1, 2026-08-05) ────────────────────────
+# The old ladder had ONE road to DEPLOY: roc20 > 5%. That is a 20-day question,
+# so a theme that turned three weeks ago cannot pass it however hard it is
+# running today — the drawdown still sits inside the window and drags roc20
+# down. On the 2026-08-05 export that hid the fastest names on the board:
+#
+#   Cybersecurity      roc20 +1.8%   roc5 +11.7%   above SMA20, RRG LEADING  -> "HOLD"
+#   Chip_Equipment     roc20 +0.3%   roc5 +18.6%   above SMA20               -> "HOLD"
+#   Quantum_Computing  roc20 +0.8%   roc5 +21.5%   above SMA20               -> "HOLD"
+#
+# The PM's words: "cyber security still lags, shows hold". It was not lagging;
+# the grade was reading a stale window. So a SECOND road to DEPLOY, on the two
+# signals SRM already computes:
+#
+#   trend intact (above SMA20) + the last week actually moved (roc5) + it is
+#   running ahead of its own 20-day pace (divergence = roc5 - roc20)
+#
+# Guarded by roc20 >= 0 ON PURPOSE. Without it a basket down 9% on the month
+# that bounced 18% in a week (Solar_Renewables, same export) would read DEPLOY
+# — that is a violent bounce off a hole, not a theme to put money into. Those
+# land on the recovery path below instead, which upgrades them WATCH -> TURNING
+# ("recovering from weakness, watch for entry") rather than to a buy.
+# Thresholds, stated so they can be argued with: the last five sessions did at
+# least +6%, AND ran at least 5 points ahead of the 20-day — the move has to be
+# big in its own right and RECENT, which is the whole point of the second road.
+# Checked against the 2026-08-05 board: Cybersecurity clears with room
+# (+11.7 / +9.9 ahead), while Mag7 (+8.4 / +4.9) and Infra_Construction
+# (+6.5 / +3.9) do not — a good week inside a slow month is still HOLD.
+ACCEL_MIN_ROC5 = 6.0            # the last week did at least this much
+ACCEL_MIN_DIVERGENCE = 5.0      # ...and is running this far ahead of the 20d pace
+TREND_MIN_ROC20 = 5.0           # the original, unchanged, trend road to DEPLOY
+
 
 def grade_sector_etf(etf_daily: pd.DataFrame) -> dict:
-    """Grade a single sector ETF's daily bars. Returns latest grade + metrics."""
+    """Grade a single sector ETF's daily bars. Returns latest grade + metrics.
+
+    `grade_path` says WHICH rule produced the grade — "trend" (the 20-day
+    road), "acceleration" (the 5-day road), "recovery", or the plain state
+    names. A grade you cannot account for is a grade you cannot argue with.
+    """
     if etf_daily.empty or len(etf_daily) < 25:
         return {"grade": "WATCH", "roc20": 0.0, "roc5": 0.0, "above_sma20": False,
-                "sh": -5, "trend_state": _trend_state(False, 0.0)}
+                "sh": -5, "trend_state": _trend_state(False, 0.0),
+                "grade_path": "insufficient_bars"}
 
     close = etf_daily["close"].astype(float)
     sma20 = U.sma(close, 20)
@@ -259,21 +299,28 @@ def grade_sector_etf(etf_daily: pd.DataFrame) -> dict:
 
     divergence = roc5 - roc20  # positive = 5d momentum recovering vs 20d trend
 
-    # Canonical SRM grading — must match live /SRM output exactly.
-    # Evaluate top-to-bottom, first match wins.
-    if above_sma20 and roc20 > 5.0:
-        grade = "DEPLOY"
+    # Canonical SRM grading. Evaluate top-to-bottom, first match wins.
+    _accelerating = (roc5 >= ACCEL_MIN_ROC5 and divergence >= ACCEL_MIN_DIVERGENCE)
+    if above_sma20 and roc20 > TREND_MIN_ROC20:
+        grade, path = "DEPLOY", "trend"
+    elif above_sma20 and roc20 >= 0.0 and _accelerating:
+        grade, path = "DEPLOY", "acceleration"
     elif above_sma20 and roc20 > 0.0:
-        grade = "HOLD"
+        grade, path = "HOLD", "trend"
+    elif above_sma20 and roc20 <= 0.0 and divergence >= ACCEL_MIN_DIVERGENCE:
+        # Above its 20D SMA with real thrust, but the MONTH is still net
+        # negative. Further along than a below-SMA bounce, not yet a trend.
+        grade, path = "TURNING", "recovery"
     elif not above_sma20 and divergence > 0.0:
-        grade = "TURNING"
+        grade, path = "TURNING", "below_sma_recovering"
     elif above_sma20 and roc20 <= 0.0:
-        grade = "WATCH"
+        grade, path = "WATCH", "stalled"
     else:
-        grade = "AVOID"
+        grade, path = "AVOID", "declining"
 
     return {
         "grade": grade,
+        "grade_path": path,
         "roc20": round(roc20, 2),
         "roc5": round(roc5, 2),
         "divergence": round(divergence, 2),
@@ -313,7 +360,12 @@ def grade_all_sectors(panel_daily: pd.DataFrame, trend_days: int = 0) -> dict[st
 
 
 def _cap_grade(thematic: str, parent: str | None) -> str:
-    """Clamp a thematic grade so it can't be BETTER than its parent GICS grade."""
+    """What the thematic grade WOULD be if clamped at its parent GICS grade.
+
+    No longer applied to `grade` (see grade_thematic_baskets) — published as
+    `parent_capped_grade` so the old, more conservative reading is still on the
+    row for anyone who wants it.
+    """
     if not parent or parent not in GRADE_ORDER or thematic not in GRADE_ORDER:
         return thematic
     # Higher order = worse. If thematic is better (lower order) than parent,
@@ -321,19 +373,64 @@ def _cap_grade(thematic: str, parent: str | None) -> str:
     return thematic if GRADE_ORDER[thematic] >= GRADE_ORDER[parent] else parent
 
 
+# ── Constituent breadth (Epic 1, 2026-08-05) ────────────────────────────────
+# A basket grade comes from an EQUAL-WEIGHT index, which one name can carry:
+# 13 constituents, one up 60%, twelve flat, and the index says the theme is
+# working. Breadth asks the question the index cannot — how many of them are
+# actually participating — measured on the SAME panel slice the index is built
+# from, so it covers every constituent, not just the ones that made the scan.
+#
+# It can only DEMOTE, never promote. A basket that is broad but going nowhere
+# is not a buy, so breadth confirms strength rather than manufacturing it.
+BREADTH_MIN_DEPLOY = 0.60       # under this, a DEPLOY is one or two names carrying it
+
+
+def _breadth(sub: pd.DataFrame) -> tuple[float | None, int, int]:
+    """Fraction of the basket's constituents above their OWN 20D SMA.
+
+    Returns (fraction, n_above, n_measured). None when nothing is measurable —
+    which is not the same as zero breadth and must not read as one.
+    """
+    n_above = n_meas = 0
+    for col in sub.columns:
+        s = sub[col].dropna()
+        if len(s) < 21:
+            continue
+        sma20 = float(s.iloc[-20:].mean())
+        if sma20 <= 0:
+            continue
+        n_meas += 1
+        if float(s.iloc[-1]) > sma20:
+            n_above += 1
+    return ((n_above / n_meas) if n_meas else None), n_above, n_meas
+
+
 def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
                            min_constituents: int = 2) -> dict[str, dict]:
     """Grade each thematic basket from its constituents' equal-weight price index.
 
     Reuses grade_sector_etf on a normalized equal-weight index of the
-    constituents present in the panel, then CAPS the result at the parent-GICS
-    grade. Degrades gracefully: a basket with fewer than min_constituents bars
-    present (e.g. constituents not yet in the universe) grades NO_DATA.
+    constituents present in the panel, then applies CONSTITUENT BREADTH.
+    Degrades gracefully: a basket with fewer than min_constituents bars present
+    (e.g. constituents not yet in the universe) grades NO_DATA.
 
-    Returns {basket: {grade, raw_grade, parent_gics, parent_grade, roc20, roc5,
-    above_sma20, coverage, constituents_used, rrg_rs_ratio, rrg_rs_momentum,
-    rrg_quadrant, rrg_direction, rrg_history}}. Pure panel math — 0 FMP calls. RRG is the
-    basket's equal-weight index vs SPY (same method as the GICS sector RRG).
+    THE PARENT CAP IS NO LONGER APPLIED (Epic 1, 2026-08-05). It used to clamp
+    every basket at its parent GICS grade, and with XLK on HOLD that collapsed
+    the whole technology board into one word: on the 2026-08-05 export, 21 of
+    35 baskets read HOLD, and Enterprise_Software (+13.6% 20d, RRG LEADING) was
+    indistinguishable from Fintech (+0.01%, LAGGING). A cap that maps a strong
+    theme and a dead one onto the same grade destroys the information the
+    basket layer exists to add — the sector's own grade is already on the row
+    as `parent_grade`, so the reader can apply the caution themselves. The old
+    value survives as `parent_capped_grade`; nothing is hidden, it is just no
+    longer the headline.
+
+    Returns {basket: {grade, index_grade, parent_capped_grade, grade_path,
+    breadth_pct, breadth_note, parent_gics, parent_grade, roc20, roc5,
+    divergence, above_sma20, coverage, constituents_used, rrg_rs_ratio,
+    rrg_rs_momentum, rrg_quadrant, rrg_direction, rrg_history}}. Pure panel
+    math — 0 FMP calls. RRG is the basket's equal-weight index vs SPY (same
+    method as the GICS sector RRG).
     """
     out: dict[str, dict] = {}
     try:
@@ -350,9 +447,12 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
         sub = piv[present].tail(80) if present else None
         if sub is None or sub.shape[1] < min_constituents or len(sub) < 25:
             out[name] = {
-                "grade": "NO_DATA", "raw_grade": "NO_DATA",
+                "grade": "NO_DATA", "index_grade": "NO_DATA",
+                "parent_capped_grade": "NO_DATA", "grade_path": "no_data",
+                "breadth_pct": None, "breadth_note": None,
                 "parent_gics": parent, "parent_grade": parent_grade,
-                "roc20": None, "roc5": None, "above_sma20": None,
+                "roc20": None, "roc5": None, "divergence": None,
+                "above_sma20": None,
                 "coverage": f"{len(present)}/{len(cons)}",
                 "constituents_used": present,
                 **_rrg_no_data(),
@@ -368,7 +468,17 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
         basket_df = pd.DataFrame({"date": idx.index, "close": idx.to_numpy()})
 
         g = grade_sector_etf(basket_df)
-        capped = _cap_grade(g["grade"], parent_grade)
+        index_grade, path = g["grade"], g["grade_path"]
+
+        # Breadth on the SAME slice the index was built from.
+        breadth, n_above, n_meas = _breadth(sub)
+        grade = index_grade
+        note = (f"{n_above}/{n_meas} above own 20D SMA"
+                if breadth is not None else "breadth not measurable")
+        if (index_grade == "DEPLOY" and breadth is not None
+                and breadth < BREADTH_MIN_DEPLOY):
+            grade, path = "HOLD", "narrow"
+            note += " — too narrow for DEPLOY, one or two names carrying it"
 
         # RRG: the basket index vs SPY, aligned on the index's own dates.
         rrg = _rrg_no_data()
@@ -385,11 +495,16 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
             rrg_history = []
 
         out[name] = {
-            "grade": capped,
-            "raw_grade": g["grade"],
+            "grade": grade,
+            "index_grade": index_grade,
+            "parent_capped_grade": _cap_grade(grade, parent_grade),
+            "grade_path": path,
+            "breadth_pct": round(100.0 * breadth, 1) if breadth is not None else None,
+            "breadth_note": note,
             "parent_gics": parent,
             "parent_grade": parent_grade,
             "roc20": g.get("roc20"), "roc5": g.get("roc5"),
+            "divergence": g.get("divergence"),
             "above_sma20": g.get("above_sma20"),
             "coverage": f"{len(present)}/{len(cons)}",
             "constituents_used": present,
