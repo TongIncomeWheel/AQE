@@ -900,20 +900,27 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # low = BEARISH_CHOCH (character change); else RANGE. Null when no
         # swing is detected. Data only — never a gate.
         #
-        # FIX_CONFIRMED_PIVOT (AIC ruling 9-0, 2026-07-16): the bullish test
-        # used to compare against `_fib.swing_high`, which is find_swing()'s
-        # window MAX HIGH — a window that always includes today's own bar. So
-        # close (<= today's own high <= that window max) could mathematically
-        # never exceed it; BULLISH_BOS was permanently unreachable (verified:
-        # 0 hits in 227,717 historical rows, 0 in every live export to date).
-        # Now compares against the NEAREST CONFIRMED pivot high above price
-        # (`d["resistance"][0]`, from overhead_resistance() — already excludes
-        # the live/unconfirmed peak, needs k bars to its right to confirm).
-        # find_swing()/BEARISH_CHOCH/RANGE are untouched, exactly as scoped.
+        # TWO FAILED ATTEMPTS, same root shape — the reference level was chosen
+        # such that price could never be above it, so BULLISH_BOS was
+        # mathematically unreachable both times:
+        #
+        #   attempt 1 (pre-2026-07-16): compared against `_fib.swing_high`,
+        #     find_swing()'s window MAX high — a window that always includes
+        #     today's own bar, so close <= today's high <= window max. Never.
+        #   attempt 2 (2026-07-16 .. 2026-08-04): compared against
+        #     `d["resistance"][0]`, from overhead_resistance(), which filters
+        #     to pivots ABOVE the close (`h[i] > close`). Asking whether the
+        #     close exceeds the nearest level above the close. Also never —
+        #     confirmed by 0 BULLISH_BOS in 240 rows of the 2026-08-04 export.
+        #
+        # A break of structure is price closing above a level it was
+        # previously UNDER, so the reference must be selected by RECENCY, not
+        # by side: the MOST RECENT confirmed pivot high, wherever it sits.
+        # find_swing()/BEARISH_CHOCH/RANGE are untouched.
         _entry_px = d.get("entry")
         _ssl = _fib.get("swing_low")
-        _resistance = d.get("resistance") or []
-        _confirmed_high = _resistance[0]["price"] if _resistance else None
+        _lph = d.get("last_pivot_high") or {}
+        _confirmed_high = _lph.get("price")
         if _is_num(_entry_px) and _is_num(_ssl):
             if _is_num(_confirmed_high) and _entry_px > _confirmed_high:
                 fields["structure_shift"] = "BULLISH_BOS"

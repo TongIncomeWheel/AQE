@@ -175,6 +175,44 @@ def overhead_resistance(
     return out
 
 
+def last_confirmed_pivot_high(
+    high: np.ndarray,
+    dates: np.ndarray,
+    k: int = PIVOT_K,
+    window: int = SWING_WINDOW,
+) -> dict | None:
+    """The MOST RECENT confirmed fractal pivot high — regardless of where price
+    sits relative to it. This is the level a break of structure breaks.
+
+    Deliberately NOT `overhead_resistance()`. That function filters to pivots
+    ABOVE the close (`h[i] > close`), which is correct for "what must a long
+    clear" and useless for detecting a break: asking whether the close exceeds
+    the nearest level ABOVE the close is unsatisfiable by construction. A BOS
+    is price closing above a level it was previously UNDER, so the level must
+    be selected by RECENCY, not by side.
+
+    (This is the second attempt at that test. The first compared against
+    find_swing()'s window-max high, which always includes today's own bar and
+    so was equally unreachable. Both bugs shared one shape: the reference level
+    was defined such that price could never be above it.)
+
+    Returns {price, date, bars_ago} for the latest pivot, or None.
+    """
+    n = len(high)
+    if n < 2 * k + 1:
+        return None
+    start = max(0, n - window)
+    h = high[start:]
+    d = dates[start:]
+    # Scan backwards — the first hit IS the most recent confirmed pivot.
+    for i in range(len(h) - k - 1, k - 1, -1):
+        if h[i] >= h[i - k:i + k + 1].max():
+            return {"price": round(float(h[i]), 2),
+                    "date": str(pd.Timestamp(d[i]).date()),
+                    "bars_ago": int(len(h) - 1 - i)}
+    return None
+
+
 def fib_levels(swing_low: float, swing_high: float) -> dict:
     """Fibonacci retracements (support) and extensions (targets) for a swing."""
     rng = swing_high - swing_low
@@ -251,6 +289,10 @@ def levels_for_ticker(
         "resistance": overhead_resistance(highs, close, dates, atr14),
         # last 3 confirmed pivot lows below price — structural stop candidates (§4.2 C)
         "swing_lows": recent_pivot_lows(lows, dates, close),
+        # MOST RECENT confirmed pivot high, either side of price — the level a
+        # break of structure breaks. Distinct from `resistance`, which is
+        # filtered to above-price and therefore cannot express a break.
+        "last_pivot_high": last_confirmed_pivot_high(highs, dates),
     }
 
     swing = find_swing(highs, lows)
