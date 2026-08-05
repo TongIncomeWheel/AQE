@@ -1613,11 +1613,9 @@ elif _qs_status == "not_run":
 _qsm = _ex.get("qs_market") or {}
 if _qsm.get("description"):
     _avg = _qsm.get("avg_stock_hits_target")
-    _vs = _qsm.get("vs_all_market_base")
     _avg_txt = (
         f" The average stock reaches its target **{_avg:.0%}** of the time in "
-        f"this weather" + (f" ({_vs:+.0%} vs the {0.548:.0%} all-market base)."
-                           if _vs is not None else ".")
+        f"this weather."
         if _avg is not None else
         " This regime has **no measured base rate** — conviction falls back to "
         "the all-market 54.8%.")
@@ -1668,9 +1666,6 @@ if _qsm.get("description"):
                     "avg stock hits target %": (
                         None if g["avg_stock_hits_target"] is None
                         else round(g["avg_stock_hits_target"] * 100, 1)),
-                    "vs all-market 54.8% (pts)": (
-                        None if g["vs_all_market_base"] is None
-                        else round(g["vs_all_market_base"] * 100, 1)),
                     "book stance": g["book_stance"],
                 } for g in _grid]),
                 use_container_width=True, hide_index=True)
