@@ -160,12 +160,25 @@ def evaluate(ticker: str, source: str, is_held: bool,
 
     trig: list[dict] = []
 
+    # Move vs the last close, computed once and stamped on EVERY alert as the
+    # reference anchor (PM ruling 2026-08-04): whatever else fired, the first
+    # question is always "and how far has it moved today".
+    _prev_close = _n(quote.get("prev_close"))
+    _chg_pct = ((live / _prev_close - 1) * 100
+                if _prev_close and _prev_close > 0 else None)
+    _anchor = (f" [{_chg_pct:+.1f}% vs COB {_prev_close:.2f}]"
+               if _chg_pct is not None else "")
+
     def add(level, label, level_price, note=""):
         trig.append({
             "ticker": ticker, "source": source, "is_held": is_held,
             "level": level, "label": label,
             "level_price": round(level_price, 2) if level_price is not None else None,
-            "live_px": round(live, 2), "note": note,
+            "live_px": round(live, 2),
+            # The anchor rides on every alert, not only on MOVE.
+            "chg_pct": round(_chg_pct, 2) if _chg_pct is not None else None,
+            "prev_close": round(_prev_close, 2) if _prev_close else None,
+            "note": (note + _anchor) if note else _anchor.strip(),
         })
 
     # Only THREE actionable, non-stale level events are emailed (PM ruling):
@@ -177,64 +190,55 @@ def evaluate(ticker: str, source: str, is_held: bool,
     # level and not an entry signal (PM ruling 2026-08-04) — "something is
     # happening here", nothing more. Expect it on a third to a half of the
     # universe on an active day; that is the intended cost of a movement tape.
-    prev_close = _n(quote.get("prev_close"))
-    if prev_close and prev_close > 0:
-        chg = (live / prev_close - 1) * 100
-        if abs(chg) >= C.MOVE_PCT:
-            add("MOVE", f"Moved {chg:+.1f}%", prev_close,
-                f"{chg:+.1f}% vs prior close {prev_close:.2f} — movement only, "
-                f"no entry claim")
+    if _chg_pct is not None and abs(_chg_pct) >= C.MOVE_PCT:
+        add("MOVE", f"Moved {_chg_pct:+.1f}%", _prev_close,
+            "movement only, no entry claim")
 
     # --- BOS: closed above the last CONFIRMED pivot high. The structural
     # breakout: price clearing the level that was capping it, rather than a
     # fixed % over an arbitrary reference (the old rule) or a target already
     # reached (TP1). Sourced from the daily read, so it changes once per day.
-    _lph = (rec.get("last_pivot_high") or {}).get("price")
-    if not is_held and rec.get("structure_shift") == "BULLISH_BOS":
+    _lph = _n((rec.get("last_pivot_high") or {}).get("price"))
+    _bos = (not is_held) and rec.get("structure_shift") == "BULLISH_BOS"
+    if _bos:
+        # structure_shift is the COB read, so intraday price may since have
+        # slipped back under the level. Say which, rather than printing a
+        # "broke above 104" line while live shows 103.
+        _back_under = _lph is not None and live < _lph
         add("BOS", "Break of structure", _lph,
-            f"closed above the last confirmed pivot high"
-            + (f" {_lph:.2f}" if _lph else "") + f" (live {live:.2f})")
+            "closed above the last confirmed pivot high"
+            + (f" {_lph:.2f}" if _lph else "")
+            + (" — but back UNDER it intraday" if _back_under else ""))
 
-    # --- AT A DECISION LEVEL: within X% of the stop, TP1 or the pivot high.
-    # Deliberately NOT every structural level — within 2% of ANY of the ~15
-    # levels a row carries caught 72% of the universe on the 2026-08-04
-    # export; restricted to these three it was 2 of 83.
-    _tp1 = next((t.get("price") for t in (_bracket.get("targets") or [])
-                 if t.get("tp") == "TP1"), None)
-    for _lname, _lvl in (("stop", _b_stop), ("TP1", _tp1),
-                         ("pivot high", _lph)):
-        _lvl = _n(_lvl)
-        if _lvl and _lvl > 0 and abs(live / _lvl - 1) * 100 <= C.NEAR_LEVEL_PCT:
-            add("AT_LEVEL", f"At {_lname}", _lvl,
-                f"{abs(live / _lvl - 1) * 100:.1f}% from {_lname} {_lvl:.2f}")
-            break                       # one level event per name per poll
+    # --- NEAR BREAKOUT: climbing toward the last confirmed pivot high but not
+    # through it yet. The heads-up BEFORE the BOS, so a name can be watched
+    # into the level rather than reported after it cleared.
+    # Suppressed once BOS has fired — you cannot be "approaching" a level the
+    # daily read says you already broke; that pair reads as a contradiction.
+    if not is_held and not _bos and _lph and live < _lph:
+        _gap = (1 - live / _lph) * 100
+        if _gap <= C.NEAR_BREAKOUT_PCT:
+            add("NEAR_BREAKOUT", "Approaching breakout level", _lph,
+                f"{_gap:.1f}% below the pivot high {_lph:.2f} it must clear")
 
-    # --- Approaching stop, measured in R so it means the same on every
-    # ticker. A flat 5% band spanned 0.4-3.3 ATRs and 0.4-2.5 R across the
-    # universe: the same alert, a different warning on every name.
-    #
-    # For a HELD name the risk unit is the one actually taken — what was paid
-    # minus where the stop sits — not the bracket's structural risk. Held rows
-    # frequently carry an INVALID bracket (no structural stop passed the
-    # gates), so bracket.risk is None on every held position in the 2026-08-04
-    # export; without this they would all silently fall back to the flat %.
-    _risk_unit = _b_risk
-    if is_held:
-        _h_entry = _n(rec.get("entry"))
-        _h_sl = _n(rec.get("held_sl"))
-        if _h_entry and _h_sl and _h_entry > _h_sl:
-            _risk_unit = _h_entry - _h_sl
-    if stop is not None and stop > 0 and live > stop:
-        if _risk_unit and _risk_unit > 0:
-            cushion_r = (live - stop) / _risk_unit
-            if cushion_r <= C.NEAR_STOP_R:
-                add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
-                    stop, f"{cushion_r:.2f}R above stop {stop:.2f} "
-                          f"({(live / stop - 1) * 100:.1f}%)")
-        elif live <= stop * (1 + C.NEAR_STOP_PCT / 100):
-            add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'DSL'})",
-                stop, f"{(live / stop - 1) * 100:.1f}% above stop {stop:.2f} "
-                      f"(no risk unit — % fallback)")
+    # --- NEAR TARGET: approaching TP1 from below. Matters most on a HELD
+    # name, where the question is whether to take something off.
+    _tp1 = _n(next((t.get("price") for t in (_bracket.get("targets") or [])
+                    if t.get("tp") == "TP1"), None))
+    if _tp1 and live < _tp1:
+        _gap = (1 - live / _tp1) * 100
+        if _gap <= C.NEAR_TARGET_PCT:
+            add("NEAR_TARGET", "Approaching first target", _tp1,
+                f"{_gap:.1f}% below TP1 {_tp1:.2f}")
+
+    # --- NEAR STOP: within X% above the stop. Held names use their OWN live
+    # SL, candidates the structural bracket stop. A plain percentage on
+    # purpose (PM ruling): an R-relative band was more consistent across
+    # tickers but harder to picture, and a stop you cannot picture is a stop
+    # you will not act on.
+    if stop is not None and stop > 0 and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100):
+        add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'structural'})",
+            stop, f"{(live / stop - 1) * 100:.1f}% above stop {stop:.2f}")
 
     # --- HELD-ONLY: a veto struck something you own. Risk-side, rare, and the
     # kind of thing that should not wait for a price level to surface it.

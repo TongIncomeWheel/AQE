@@ -17,21 +17,19 @@ def _f(env: str, default: float) -> float:
 
 
 # --- level tolerances ------------------------------------------------------
-# NEAR_STOP is R-RELATIVE, not a flat percentage. Measured on the 2026-08-04
-# export, a flat 5% band spanned 0.4 to 3.3 ATRs and 0.4 to 2.5 R across the
-# universe — the same alert meant something different on every ticker. 0.25R
-# means the same thing everywhere.
-NEAR_STOP_R = _f("AQE_ALERT_NEAR_STOP_R", 0.25)       # within X of 1R above the stop
-NEAR_STOP_PCT = _f("AQE_ALERT_NEAR_STOP_PCT", 5.0)    # fallback when risk is unknown
+# Simple percentage bands (PM ruling 2026-08-04). An earlier R-relative version
+# was more consistent across tickers but harder to read, and a stop you cannot
+# picture is not a stop you will act on.
+NEAR_STOP_PCT = _f("AQE_ALERT_NEAR_STOP_PCT", 5.0)    # within X% ABOVE the stop / SL
 
 # Plain movement notification — NOT an entry signal, NOT a decision level.
 MOVE_PCT = _f("AQE_ALERT_MOVE_PCT", 2.0)              # +/- X% vs prior close
 
-# Proximity to a DECISION level (bracket stop, TP1, last confirmed pivot high).
-# Deliberately NOT every structural level: within 2% of any of the ~15 levels a
-# row carries catches 72% of the universe, which is wallpaper. Restricted to
-# these three it was 2 of 83 on the same data.
-NEAR_LEVEL_PCT = _f("AQE_ALERT_NEAR_LEVEL_PCT", 2.0)
+# Approaching the breakout level (last confirmed pivot high) from BELOW, and
+# approaching the first target from below. Named for what they are; the old
+# catch-all "AT_LEVEL" told you a level was near without saying which or why.
+NEAR_BREAKOUT_PCT = _f("AQE_ALERT_NEAR_BREAKOUT_PCT", 2.0)
+NEAR_TARGET_PCT = _f("AQE_ALERT_NEAR_TARGET_PCT", 2.0)
 
 # Retired: BREAKOUT used to fire at +2%..+8% over the PRIOR CLOSE, a band with
 # no relationship to the chart. On the 2026-08-04 export the +2% trigger sat

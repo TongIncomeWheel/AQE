@@ -72,6 +72,16 @@ def _fired(rec, quote, is_held=False):
             E.evaluate("T", "daily_list", is_held, rec, quote)}
 
 
+def test_every_alert_carries_the_move_vs_cob_anchor():
+    """PM ruling: whatever fired, the first question is how far it moved today."""
+    rec = _rec(last_pivot_high={"price": 104.0})
+    for t in E.evaluate("T", "daily_list", False, rec,
+                        {"price": 103.0, "prev_close": 100.0}):
+        assert "vs COB" in t["note"]
+        assert t["chg_pct"] == pytest.approx(3.0, abs=0.1)
+        assert t["prev_close"] == 100.0
+
+
 def test_move_fires_on_two_percent_either_way():
     assert "MOVE" in _fired(_rec(), {"price": 102.5, "prev_close": 100.0})
     assert "MOVE" in _fired(_rec(), {"price": 97.5, "prev_close": 100.0})
@@ -93,53 +103,55 @@ def test_bos_does_not_fire_for_held_names():
                                is_held=True)
 
 
-def test_at_level_uses_decision_levels_only():
-    """Not all ~15 structural levels — that caught 72% of the universe.
-
-    A fib sitting 1% away must NOT fire; the stop, TP1 and pivot high must.
-    """
-    rec = _rec(fib_618=99.5, ma_50=99.6, ma_200=100.4)
-    assert "AT_LEVEL" not in _fired(rec, {"price": 100.0, "prev_close": 100.0})
-    assert "AT_LEVEL" in _fired(rec, {"price": 92.5, "prev_close": 92.5})   # stop
-    assert "AT_LEVEL" in _fired(rec, {"price": 111.0, "prev_close": 111.0})  # TP1
+def test_near_breakout_fires_below_the_pivot_only():
+    """Named for what it is: climbing INTO the level, not sitting anywhere near it."""
+    rec = _rec(last_pivot_high={"price": 104.0})
+    assert "NEAR_BREAKOUT" in _fired(rec, {"price": 103.0, "prev_close": 100.0})
+    assert "NEAR_BREAKOUT" not in _fired(rec, {"price": 98.0, "prev_close": 100.0})
+    assert "NEAR_BREAKOUT" not in _fired(rec, {"price": 106.0, "prev_close": 100.0})
 
 
-def test_at_level_fires_once_per_poll():
-    rec = _rec(last_pivot_high={"price": 92.3})     # pivot AND stop both near
-    trig = E.evaluate("T", "daily_list", False, rec,
-                      {"price": 92.4, "prev_close": 92.4})
-    assert sum(1 for t in trig if t["level"] == "AT_LEVEL") == 1
+def test_near_breakout_is_suppressed_once_bos_has_fired():
+    """"Approaching" a level the daily read says you broke is a contradiction."""
+    rec = _rec(last_pivot_high={"price": 104.0}, structure_shift="BULLISH_BOS")
+    fired = _fired(rec, {"price": 103.0, "prev_close": 100.0})
+    assert "BOS" in fired and "NEAR_BREAKOUT" not in fired
 
 
-# ------------------------------------------------- near-stop is R-relative
-
-def test_near_stop_means_the_same_on_a_cheap_and_an_expensive_name():
-    """The old flat 5% spanned 0.4R to 2.5R across the universe."""
-    cheap = _rec(entry=20.0, bracket={"valid": True, "stop": 18.0, "risk": 2.0,
-                                      "targets": []})
-    dear = _rec(entry=500.0, bracket={"valid": True, "stop": 450.0,
-                                      "risk": 50.0, "targets": []})
-    # both exactly 0.25R above their stop
-    assert "NEAR_STOP" in _fired(cheap, {"price": 18.5, "prev_close": 18.5})
-    assert "NEAR_STOP" in _fired(dear, {"price": 462.5, "prev_close": 462.5})
-    # both exactly 0.5R above — neither should fire
-    assert "NEAR_STOP" not in _fired(cheap, {"price": 19.0, "prev_close": 19.0})
-    assert "NEAR_STOP" not in _fired(dear, {"price": 475.0, "prev_close": 475.0})
+def test_bos_says_so_when_price_slipped_back_under_intraday():
+    """structure_shift is COB; live price can be under the level again."""
+    rec = _rec(last_pivot_high={"price": 104.0}, structure_shift="BULLISH_BOS")
+    t = [x for x in E.evaluate("T", "daily_list", False, rec,
+                               {"price": 103.0, "prev_close": 100.0})
+         if x["level"] == "BOS"]
+    assert "back UNDER it intraday" in t[0]["note"]
 
 
-def test_held_risk_unit_comes_from_the_trade_actually_taken():
-    """Held rows carry an INVALID bracket (risk None) in the live export.
+def test_near_target_fires_below_tp1():
+    rec = _rec()
+    assert "NEAR_TARGET" in _fired(rec, {"price": 110.5, "prev_close": 100.0})
+    assert "NEAR_TARGET" not in _fired(rec, {"price": 105.0, "prev_close": 100.0})
 
-    Without falling back to entry - held_sl every held position would silently
-    revert to the flat-% rule, which is the behaviour this replaces.
-    """
+
+# ------------------------------------------------------------- near stop
+
+def test_near_stop_is_a_plain_percentage_band(monkeypatch):
+    """PM ruling: keep it simple. Within 5% above the stop, nothing cleverer."""
+    rec = _rec()                                   # stop 92.00
+    assert "NEAR_STOP" in _fired(rec, {"price": 94.0, "prev_close": 100.0})
+    assert "NEAR_STOP" not in _fired(rec, {"price": 98.0, "prev_close": 100.0})
+    assert "NEAR_STOP" not in _fired(rec, {"price": 91.0, "prev_close": 100.0})
+
+
+def test_held_names_use_their_own_live_sl_not_the_structural_stop():
+    """Held rows carry an INVALID bracket in the live export — the SL is theirs."""
     rec = {"ticker": "SPGI", "entry": 450.36, "held_sl": 420.73,
            "bracket": {"valid": False}}
     t = [x for x in E.evaluate("SPGI", "held", True, rec,
-                               {"price": 428.0, "prev_close": 428.0})
+                               {"price": 435.0, "prev_close": 450.36})
          if x["level"] == "NEAR_STOP"]
-    assert t and "R above stop" in t[0]["note"]
-    assert "fallback" not in t[0]["note"]
+    assert t and "420.73" in t[0]["note"]
+    assert "SL" in t[0]["label"]
 
 
 def test_veto_on_a_held_name_fires_without_any_price_level():
