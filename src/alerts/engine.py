@@ -334,6 +334,7 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
 
     state = S.load_alert_state()
     fresh: list[dict] = []
+    ledger_rows: list[dict] = []
     for m in mon:
         q = quotes.get(m["ticker"])
         if not q:
@@ -342,6 +343,15 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
             if not S.is_fired(state, t["ticker"], t["level"]):
                 fresh.append(t)
                 S.mark_fired(state, t["ticker"], t["level"])
+                # Build the ledger row HERE, while the record and the quote that
+                # produced the trigger are both in hand — reconstructing them
+                # afterwards from `fresh` alone is not possible.
+                try:
+                    from src.alerts.ledger import build_entry
+                    ledger_rows.append(build_entry(t, m["record"], q,
+                                                   t.get("intraday")))
+                except Exception:  # noqa: BLE001 — never break a real alert
+                    pass
 
     summary["new_triggers"] = len(fresh)
     summary["triggers"] = fresh
@@ -352,6 +362,20 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
             S.append_history(fresh)
         except Exception:  # noqa: BLE001
             pass
+
+    # ...and to the RUNNING LEDGER on Drive, which is the committee's copy.
+    # These are two different records and both are required: history is a 36h
+    # on-screen feed keyed to the UI, the ledger is the permanent, scorable file
+    # the AIC reads. An email cannot be handed to the committee (PM ruling
+    # 2026-08-05), so a fired alert that reaches the inbox and not this file has
+    # not actually been delivered.
+    summary["ledgered"] = 0
+    if ledger_rows:
+        try:
+            from src.alerts.ledger import append as _ledger_append
+            summary["ledgered"] = (_ledger_append(ledger_rows) or {}).get("appended", 0)
+        except Exception as exc:  # noqa: BLE001
+            summary["ledger_error"] = f"{type(exc).__name__}: {exc}"
 
     if fresh and send_email:
         try:

@@ -227,6 +227,77 @@ def test_the_signature_rides_along_on_an_alert_that_did_earn_its_place():
     assert t and all("intraday" in x for x in t)
 
 
+# ------------------------------------------------------- ledger is WIRED
+
+def test_a_fired_alert_reaches_the_running_ledger_not_only_the_inbox(monkeypatch):
+    """The ledger module shipped with tests and NOTHING CALLED IT.
+
+    build_entry/append/rotation were all covered, so the suite was green while
+    aqe_alert_ledger.json never appeared on Drive — the committee's copy of
+    every alert simply did not exist. Unit tests on a module cannot prove the
+    run path uses it; this asserts the wiring itself.
+    """
+    from src.alerts import ledger as L
+
+    export = {"date": "2026-08-05", "held_positions": [],
+              "daily_list": [{"ticker": "T", "on_longlist": True, "on_elder": True,
+                              "entry": 100.0, "atr_14d": 3.0,
+                              "bracket": {"valid": True, "stop": 92.0, "risk": 8.0,
+                                          "targets": [{"tp": "TP1", "price": 112.0}]}}]}
+    captured: list[list[dict]] = []
+    monkeypatch.setattr(E, "load_export", lambda: export)
+    monkeypatch.setattr(E, "in_market_window", lambda: True)
+    monkeypatch.setattr(E, "_export_age_days", lambda _e: 0)
+    monkeypatch.setattr(E.S, "load_alert_state", lambda: {"date": "x", "fired": []})
+    monkeypatch.setattr(E.S, "save_alert_state", lambda _s: None)
+    monkeypatch.setattr(E.S, "append_history", lambda _f: None)
+    monkeypatch.setattr(L, "append", lambda rows: captured.append(rows) or
+                        {"ok": True, "appended": len(rows)})
+
+    import src.data.fmp_client as FC
+    monkeypatch.setattr(FC.FMPClient, "__init__", lambda self: None)
+    monkeypatch.setattr(FC.FMPClient, "get_quotes",
+                        lambda self, tks: {"T": {"price": 105.0, "prev_close": 100.0}})
+
+    summary = E.run_alert_cycle(send_email=False)
+    assert summary["new_triggers"] >= 1
+    assert summary["ledgered"] == summary["new_triggers"]
+    assert captured, "nothing was written to the ledger"
+    row = captured[0][0]
+    assert row["ticker"] == "T" and row["event"]
+    assert row["date"] and row["time_et"] and row["iso_week"]   # committee cuts
+    assert row["chg_pct_vs_cob"] == pytest.approx(5.0, abs=0.1)
+
+
+def test_a_ledger_failure_never_kills_the_alert_run(monkeypatch):
+    from src.alerts import ledger as L
+
+    export = {"date": "2026-08-05", "held_positions": [],
+              "daily_list": [{"ticker": "T", "on_longlist": True, "on_qs": True,
+                              "entry": 100.0, "atr_14d": 3.0,
+                              "bracket": {"valid": True, "stop": 92.0, "risk": 8.0,
+                                          "targets": []}}]}
+    monkeypatch.setattr(E, "load_export", lambda: export)
+    monkeypatch.setattr(E, "in_market_window", lambda: True)
+    monkeypatch.setattr(E, "_export_age_days", lambda _e: 0)
+    monkeypatch.setattr(E.S, "load_alert_state", lambda: {"date": "x", "fired": []})
+    monkeypatch.setattr(E.S, "save_alert_state", lambda _s: None)
+    monkeypatch.setattr(E.S, "append_history", lambda _f: None)
+
+    def _boom(_rows):
+        raise RuntimeError("drive down")
+    monkeypatch.setattr(L, "append", _boom)
+
+    import src.data.fmp_client as FC
+    monkeypatch.setattr(FC.FMPClient, "__init__", lambda self: None)
+    monkeypatch.setattr(FC.FMPClient, "get_quotes",
+                        lambda self, tks: {"T": {"price": 105.0, "prev_close": 100.0}})
+
+    summary = E.run_alert_cycle(send_email=False)
+    assert summary["ok"] is True and summary["new_triggers"] >= 1
+    assert "drive down" in summary["ledger_error"]
+
+
 def test_the_dead_email_switch_is_gone_not_merely_defaulted_off():
     """It claimed COIL/THRUST were ledger-only while they shipped in every
     email. A config that describes behaviour the code does not have is worse
