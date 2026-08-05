@@ -1341,6 +1341,9 @@ _EXPORT_COL_ORDER = [
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "rvol", "rs_spy_20d", "sma_distance_pct",
+    # COB daily signature — how the name CLOSED its own day
+    "day_signature", "day_position", "day_range_atr", "day_vol_x",
+    "day_from_open_pct",
     "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)

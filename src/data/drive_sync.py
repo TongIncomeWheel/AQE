@@ -301,6 +301,23 @@ _FIELD_GLOSSARY.update(LENS_GLOSSARY)
 
 # ---- QS (Quiet Strength) — the third lens, folded into the SAME daily_list.
 _FIELD_GLOSSARY.update({
+    "day_signature": "How the name CLOSED its own day, from the completed daily bar: "
+                     "COIL (range <=0.6x its ATR while closing in the top 70% of "
+                     "it — compressed and held), THRUST (range >=1.4x ATR, closing "
+                     "in the top 15%, on >=1.3x volume — expansion with conviction), "
+                     "FAILED_PUSH (wide range but closed in the bottom 20% — sellers "
+                     "took the day), or null for an ordinary day. A per-ticker "
+                     "DETAIL, never a gate. Thresholds are starting assumptions, "
+                     "not yet fitted to our own data.",
+    "day_position": "Where the close sat in the day's range, 0-1. 0.95 = closed on "
+                    "its highs; 0.05 = closed on its lows. The close-location value.",
+    "day_range_atr": "The day's high-low range divided by ATR14. <1 = a quieter day "
+                     "than this name's normal, >1 = wider. No time normalisation is "
+                     "needed here (unlike the LIVE intraday read) because the "
+                     "session is complete.",
+    "day_vol_x": "The day's volume over its own 20-day average.",
+    "day_from_open_pct": "Close vs open, %. Separates the intraday drive from the "
+                         "overnight gap.",
     "on_qs": "TRUE if the name cleared QS's emit rule today (>=2 recipe hits AND "
              "conviction >=2, or vetoed-and-shown). Membership flag on the ONE "
              "daily_list — Longlist/Elder/QS are lenses on one list, not parallel "
@@ -619,7 +636,7 @@ def _compute_v21_lookups(sm: dict) -> dict:
     {ticker: float} and corr is {ticker: (corr, class)}.
     """
     out = {"rvol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
-           "vol30": {}, "beta252": {}, "spy_roc_20d": None}
+           "vol30": {}, "beta252": {}, "daysig": {}, "spy_roc_20d": None}
     try:
         import numpy as np
         import pandas as pd
@@ -627,7 +644,9 @@ def _compute_v21_lookups(sm: dict) -> dict:
 
         if not PANEL_DAILY.exists():
             return out
-        p = pd.read_parquet(PANEL_DAILY, columns=["date", "ticker", "close", "volume"])
+        p = pd.read_parquet(PANEL_DAILY,
+                            columns=["date", "ticker", "open", "high", "low",
+                                     "close", "volume"])
         p["date"] = pd.to_datetime(p["date"]).dt.normalize()
         p = p.sort_values(["ticker", "date"])
 
@@ -664,10 +683,27 @@ def _compute_v21_lookups(sm: dict) -> dict:
                         if np.isfinite(beta):
                             out["beta252"][tk] = round(beta, 3)
             # rvol = today / 20-day prior average
+            avg20 = None
             if len(vol) >= 21:
                 avg20 = float(np.nanmean(vol[-21:-1]))
                 if avg20 > 0:
                     out["rvol"][tk] = round(float(vol[-1]) / avg20, 2)
+            # COB daily signature — where the day CLOSED in its own range, how
+            # wide that range was vs the name's normal, how heavy the volume.
+            # The completed-bar twin of the live intraday read: same three
+            # measures, no time normalisation needed because the day is done.
+            try:
+                from src.alerts.intraday import daily_signature
+                from src.engines.utils import atr as _atr_fn
+                _atr = float(_atr_fn(g["high"].astype(float),
+                                     g["low"].astype(float),
+                                     g["close"].astype(float), n=14).iloc[-1])
+                out["daysig"][tk] = daily_signature(
+                    float(g["open"].iloc[-1]), float(g["high"].iloc[-1]),
+                    float(g["low"].iloc[-1]), float(cl[-1]),
+                    float(vol[-1]), avg20, _atr)
+            except Exception:  # noqa: BLE001 — a detail field never blocks the export
+                pass
             # sma_distance_pct vs 50D SMA
             if len(cl) >= 50:
                 sma50 = float(np.nanmean(cl[-50:]))
@@ -854,6 +890,11 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_rrg_quadrant"] = primary["rrg_quadrant"]
             fields["thematic_rrg_direction"] = primary["rrg_direction"]
         fields["rvol"] = (lk.get("rvol") or {}).get(tk)
+        # COB daily signature (day_position / day_range_atr / day_vol_x /
+        # day_from_open_pct / day_signature) — per-ticker detail, not a gate.
+        fields.update((lk.get("daysig") or {}).get(tk) or {
+            "day_position": None, "day_range_atr": None, "day_vol_x": None,
+            "day_from_open_pct": None, "day_signature": None})
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
         _ma = (lk.get("ma") or {}).get(tk) or {}
