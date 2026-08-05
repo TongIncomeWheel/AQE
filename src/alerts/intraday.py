@@ -140,54 +140,6 @@ def classify(m: dict) -> str | None:
     return None
 
 
-def daily_signature(open_: float | None, high: float | None, low: float | None,
-                    close: float | None, volume: float | None,
-                    avg_volume: float | None, atr14: float | None) -> dict:
-    """The SAME read, computed at COB from a COMPLETED daily bar.
-
-    A per-ticker detail rather than an alert: where the day closed in its own
-    range, how wide that range was against the name's normal, and how heavy
-    the volume was. Every field on the daily list is COB, and this belongs
-    with them.
-
-    NO time normalisation here, and that is the point — the session is over,
-    so `range / ATR` is directly meaningful. The sqrt(elapsed) machinery above
-    exists only because a LIVE quote measures a half-finished day.
-    """
-    def f(v):
-        try:
-            x = float(v)
-            return x if math.isfinite(x) else None
-        except (TypeError, ValueError):
-            return None
-
-    o, h, l, c = f(open_), f(high), f(low), f(close)
-    v, av, atr = f(volume), f(avg_volume), f(atr14)
-    out = {"day_position": None, "day_range_atr": None, "day_vol_x": None,
-           "day_from_open_pct": None, "day_signature": None}
-    if h is None or l is None or c is None or h <= l:
-        return out
-
-    out["day_position"] = round((c - l) / (h - l), 3)
-    if atr and atr > 0:
-        out["day_range_atr"] = round((h - l) / atr, 2)
-    if v is not None and av:
-        out["day_vol_x"] = round(v / av, 2)
-    if o:
-        out["day_from_open_pct"] = round(100.0 * (c / o - 1), 2)
-
-    pos, rng, vol = out["day_position"], out["day_range_atr"], out["day_vol_x"]
-    if rng is not None:
-        if rng <= COIL_MAX_RATIO and pos >= COIL_MIN_POSITION:
-            out["day_signature"] = "COIL"
-        elif (rng >= THRUST_MIN_RATIO and pos >= THRUST_MIN_POSITION
-                and (vol is None or vol >= THRUST_MIN_VOL_PACE)):
-            out["day_signature"] = "THRUST"
-        elif rng >= THRUST_MIN_RATIO and pos <= FAILED_PUSH_MAX_POSITION:
-            out["day_signature"] = "FAILED_PUSH"
-    return out
-
-
 def describe(m: dict) -> str:
     """One line for the email/ledger — the numbers behind the signature."""
     bits = []
