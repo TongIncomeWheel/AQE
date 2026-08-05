@@ -201,5 +201,34 @@ def test_missing_range_is_not_treated_as_tight():
     assert r["position_in_range"] is None and r["signature"] is None
 
 
-def test_intraday_signatures_are_ledger_only_by_default():
-    assert C.EMAIL_INTRADAY_SIGNATURES is False
+def test_a_signature_never_manufactures_an_alert_of_its_own():
+    """A textbook COIL on a name doing nothing structural emails NOTHING.
+
+    This is the property the retired EMAIL_INTRADAY_SIGNATURES flag was meant
+    to guarantee and never did — nothing read it, so it guaranteed a comment.
+    The guarantee lives in evaluate(): the signature is attached to triggers,
+    it is never a trigger, so an unfitted threshold cannot page the PM.
+    """
+    import math
+    el = I.session_elapsed_fraction(_at(13, 0))
+    rng = 3.6 * math.sqrt(el) * 0.45                  # tight for the hour
+    quote = {"price": 100 + rng * 0.40, "day_high": 100 + rng * 0.45,
+             "day_low": 100 - rng * 0.55, "open": 100.0, "prev_close": 100.0,
+             "volume": 0.9e6 * el, "avg_volume": 1e6}
+    assert I.measures(quote, 3.6, _at(13, 0))["signature"] == "COIL"
+    # ...and yet: no 2% move, no BOS, nowhere near stop or target.
+    assert E.evaluate("T", "daily_list", False, _rec(), quote) == []
+
+
+def test_the_signature_rides_along_on_an_alert_that_did_earn_its_place():
+    rec = _rec(structure_shift="BULLISH_BOS", last_pivot_high={"price": 99.0})
+    t = E.evaluate("T", "daily_list", False, rec,
+                   {"price": 103.0, "prev_close": 100.0})
+    assert t and all("intraday" in x for x in t)
+
+
+def test_the_dead_email_switch_is_gone_not_merely_defaulted_off():
+    """It claimed COIL/THRUST were ledger-only while they shipped in every
+    email. A config that describes behaviour the code does not have is worse
+    than no config."""
+    assert not hasattr(C, "EMAIL_INTRADAY_SIGNATURES")

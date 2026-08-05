@@ -40,11 +40,18 @@ NEAR_TARGET_PCT = _f("AQE_ALERT_NEAR_TARGET_PCT", 2.0)
 BREAKOUT_PCT = _f("AQE_ALERT_BREAKOUT_PCT", 2.0)      # legacy, unused
 BREAKOUT_MAX_PCT = _f("AQE_ALERT_BREAKOUT_MAX_PCT", 8.0)  # legacy, unused
 
-# COIL / THRUST are computed and LEDGERED but not emailed until their
-# thresholds are set from real fires rather than from the sqrt(t) and
-# linear-volume assumptions in alerts/intraday.py.
-EMAIL_INTRADAY_SIGNATURES = os.environ.get(
-    "AQE_ALERT_EMAIL_INTRADAY", "0") == "1"
+# COIL / THRUST / FAILED_PUSH: no switch, by design. The signature NEVER fires
+# an email on its own — it is appended as a tag to a line that already earned
+# its place (⟨Coiling⟩ after a BOS, say), and it is written to every ledger
+# entry. Its thresholds are still starting assumptions rather than values
+# fitted to real fires (see alerts/intraday.py), which is a reason to WATCH the
+# tag accumulate, not to hide it.
+#
+# There WAS an EMAIL_INTRADAY_SIGNATURES flag here claiming these were
+# ledger-only. Nothing read it, so the tag shipped in every email regardless —
+# a config that described behaviour the code did not have. Removed rather than
+# wired: wiring it would have stripped useful context out of the digest to
+# honour a comment.
 
 # Refuse to email off an export older than this many calendar days (stale levels).
 MAX_EXPORT_AGE_DAYS = int(_f("AQE_ALERT_MAX_EXPORT_AGE_DAYS", 4))
