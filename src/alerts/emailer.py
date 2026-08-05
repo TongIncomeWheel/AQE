@@ -29,11 +29,26 @@ DEFAULT_TO = "ash.tzl@gmail.com"
 DEFAULT_FROM = "AQE Alerts <onboarding@resend.dev>"
 
 # Sections in render order. HELD floats above all of these.
+# Ordered by WHAT IT ASKS OF YOU, not by event name — the digest is read top
+# down under time pressure, so the sections descend from "act" to "context".
+# Held risk floats above everything in its own block (see _compose).
 _SECTIONS = [
-    ("BUY_ZONE", "🟢 Hit buy price", "#0a8a3a"),
-    ("BREAKOUT", "🚀 Breakout (fresh)", "#0a66cc"),
-    ("NEAR_STOP", "🛑 Approaching stop", "#d33"),
+    ("BOS",           "🚀 BROKE OUT — cleared its structural level", "#0a66cc"),
+    ("NEAR_BREAKOUT", "👀 APPROACHING BREAKOUT — climbing into the level", "#7a5af0"),
+    ("NEAR_TARGET",   "🎯 APPROACHING FIRST TARGET", "#0a8a3a"),
+    ("NEAR_STOP",     "🛑 APPROACHING STOP", "#d33"),
+    ("MOVE",          "📈 MOVING — reference only, no entry claim", "#777"),
 ]
+# Held-only events, shown inside the HELD block rather than as sections.
+_HELD_EVENTS = ("VETO_HELD", "NEAR_STOP")
+# Intraday reads are CONTEXT on whatever fired — never their own alert. They
+# are unproven thresholds (see alerts/intraday.py), so they annotate a line
+# that earned its place some other way rather than generating email of their own.
+_SIGNATURE_LABEL = {
+    "COIL": "COIL — tight and holding its highs",
+    "THRUST": "THRUST — expanding on volume, pressing the high",
+    "FAILED_PUSH": "FAILED PUSH — wide day, sold into the low",
+}
 
 
 def _cfg() -> dict:
@@ -158,21 +173,54 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
 
     n = len(triggers)
     counts = {key: len(v) for key, v in by_type.items()}
+    # Subject leads with what needs a decision; MOVE is deliberately last and
+    # unlabelled-as-urgent because it is a reference, not a signal.
+    _bits = [f"{counts['BOS']} broke out"] if counts.get("BOS") else []
+    if counts.get("NEAR_BREAKOUT"):
+        _bits.append(f"{counts['NEAR_BREAKOUT']} approaching")
+    if counts.get("NEAR_TARGET"):
+        _bits.append(f"{counts['NEAR_TARGET']} at target")
+    if held:
+        _bits.insert(0, f"{len(held)} HELD")
+    if counts.get("MOVE"):
+        _bits.append(f"{counts['MOVE']} moving")
     subject = (f"[AQE] {len({t['ticker'] for t in triggers})} names · "
-               f"{counts['BUY_ZONE']} buy · {counts['BREAKOUT']} breakout · "
-               f"{counts['NEAR_STOP']} near-stop"
-               + (f" · {len(held)} HELD" if held else ""))
+               + " · ".join(_bits or ["no events"]))
 
     # ---- plain text ----
-    tl = [f"AQE Trade Entry — {now_sgt} · export {exp_date} · regime {regime_txt or '—'}",
-          f"{n} alert(s). Prices 15-min delayed. Sorted by SC_MOM within each group.", ""]
+    tl = [f"AQE alerts — {now_sgt} · export {exp_date} · regime {regime_txt or '—'}",
+          f"{n} alert(s) on {len({t['ticker'] for t in triggers})} names. "
+          f"Prices 15-min delayed. Every line shows the move vs last close.", ""]
 
-    def _line(t):
+    def _lists(rec):
+        on = [n for n, k in (("LL", "on_longlist"), ("ELD", "on_elder"),
+                             ("QS", "on_qs")) if rec.get(k)]
+        return "+".join(on) if on else "—"
+
+    def _sig(t):
+        """Intraday read as CONTEXT on this line — never its own alert."""
+        s = (t.get("intraday") or {}).get("signature")
+        return f"  ⟨{_SIGNATURE_LABEL.get(s, s)}⟩" if s else ""
+
+    def _line(t, compact=False):
+        """Full block for an actionable event; ONE line for a reference one.
+
+        MOVE is reference-only, so it gets a single row. Giving it the same
+        three-line treatment as a break of structure buries the events that
+        actually ask something of you — 19 movement lines each carrying a full
+        AIC prompt is a wall, not a digest.
+        """
         rec = rl.get(t["ticker"], {})
-        tag = "★HELD" if t["is_held"] else (t.get("source") or "")
-        return (f"  {t['ticker']:6} [{tag}] SC {_fmt(rec.get('sc_momentum_raw') or rec.get('sc_momentum'), 1)} "
-                f"PTRS {_fmt(rec.get('ptrs'), 1)} {rec.get('mp_state') or ''} · "
-                f"live {t['live_px']} · {t['note']}\n      {_aic_line(t['ticker'], rec, t)}")
+        tag = "★HELD" if t["is_held"] else _lists(rec)
+        chg = (f"{t['chg_pct']:+.1f}%" if t.get("chg_pct") is not None else "—")
+        head = (f"  {t['ticker']:6} [{tag:8}] {t['live_px']:>9}  {chg:>7} vs COB"
+                f" · SC {_fmt(rec.get('sc_momentum_raw') or rec.get('sc_momentum'), 0)}"
+                f" PTRS {_fmt(rec.get('ptrs'), 0)}")
+        if compact:
+            return head + _sig(t)
+        return (head
+                + f"\n         {t['label']}: {t.get('note') or ''}{_sig(t)}"
+                + f"\n         {_aic_line(t['ticker'], rec, t)}")
 
     if held:
         tl.append(f"★ HELD ({len(held)})")
@@ -181,7 +229,8 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
     for key, title, _ in _SECTIONS:
         if by_type[key]:
             tl.append(f"{title} ({len(by_type[key])})")
-            tl += [_line(t) for t in by_type[key]]
+            # MOVE is reference-only -> one compact row per name.
+            tl += [_line(t, compact=(key == "MOVE")) for t in by_type[key]]
             tl.append("")
     plain = "\n".join(tl)
 

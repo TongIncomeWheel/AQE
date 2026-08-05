@@ -60,15 +60,29 @@ def build_entry(trigger: dict, record: dict, quote: dict,
     """
     qs = record.get("qs") or {}
     bracket = record.get("bracket") or {}
+    now = datetime.now(_ET)
+    iso_year, iso_week, _ = now.isocalendar()
     return {
-        "ts": _now_iso(),
-        "date": datetime.now(_ET).strftime("%Y-%m-%d"),
+        # ---- TIME FIRST. The committee slices intraday and intra-week, so
+        # every cut it needs is a top-level field rather than something to be
+        # parsed back out of a timestamp string.
+        "ts": _now_iso(),                                   # full ISO + tz
+        "date": now.strftime("%Y-%m-%d"),
+        "time_et": now.strftime("%H:%M"),
+        "weekday": now.strftime("%a"),
+        "iso_week": f"{iso_year}-W{iso_week:02d}",
+        "session": ("pre" if now.hour < 9 or (now.hour == 9 and now.minute < 30)
+                    else "post" if now.hour >= 16 else
+                    "am" if now.hour < 12 else "pm"),
         "ticker": trigger.get("ticker"),
         "event": trigger.get("level"),
         "label": trigger.get("label"),
         "note": trigger.get("note"),
         "level_price": trigger.get("level_price"),
         "live_px": trigger.get("live_px"),
+        # The reference anchor, as its own fields — not buried in `note`.
+        "chg_pct_vs_cob": trigger.get("chg_pct"),
+        "prev_close": trigger.get("prev_close"),
         "is_held": bool(trigger.get("is_held")),
         # --- state AT FIRE TIME: without this the row cannot be scored ---
         "lists": {
@@ -158,9 +172,23 @@ def append(new_entries: list[dict]) -> dict:
                 _append_archive(fname, rows)
                 archives.append(fname)
 
+        # Newest first: a committee opening this file wants today at the top,
+        # not to scroll a month to reach it.
+        hot.sort(key=lambda e: e.get("ts") or "", reverse=True)
         payload = {
             "updated": datetime.now(_SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "retention_days": RETENTION_DAYS,
+            "sorted": "newest first",
+            "slice_on": ["date", "iso_week", "time_et", "session", "ticker",
+                         "event", "is_held"],
+            "events": {
+                "BOS": "closed above its last confirmed pivot high",
+                "NEAR_BREAKOUT": "climbing into that level from below",
+                "NEAR_TARGET": "approaching TP1 from below",
+                "NEAR_STOP": "within 5% above the stop / live SL",
+                "MOVE": "+/-2% vs last close — reference only, no entry claim",
+                "VETO_HELD": "a QS veto struck a name in the held book",
+            },
             "entries": hot,
         }
         blob = json.dumps(payload, indent=1, default=str)

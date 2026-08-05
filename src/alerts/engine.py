@@ -139,7 +139,14 @@ def _n(v):
 
 def evaluate(ticker: str, source: str, is_held: bool,
              rec: dict, quote: dict) -> list[dict]:
-    """Return the list of triggered levels for one ticker given its live quote."""
+    """Return the list of triggered levels for one ticker given its live quote.
+
+    The intraday read (COIL / THRUST / FAILED_PUSH) is attached to every
+    trigger as CONTEXT — it never produces an alert of its own. Its thresholds
+    rest on the sqrt(t) and linear-volume approximations in alerts/intraday.py,
+    which are stated assumptions rather than fitted curves, so it annotates a
+    line that earned its place on a proven rule instead of manufacturing one.
+    """
     live = _n(quote.get("price"))
     if live is None or live <= 0:
         return []
@@ -169,6 +176,12 @@ def evaluate(ticker: str, source: str, is_held: bool,
     _anchor = (f" [{_chg_pct:+.1f}% vs COB {_prev_close:.2f}]"
                if _chg_pct is not None else "")
 
+    try:
+        from src.alerts import intraday as _I
+        _intraday = _I.measures(quote, _n(rec.get("atr_14d")))
+    except Exception:  # noqa: BLE001 — context must never break an alert
+        _intraday = {}
+
     def add(level, label, level_price, note=""):
         trig.append({
             "ticker": ticker, "source": source, "is_held": is_held,
@@ -178,6 +191,7 @@ def evaluate(ticker: str, source: str, is_held: bool,
             # The anchor rides on every alert, not only on MOVE.
             "chg_pct": round(_chg_pct, 2) if _chg_pct is not None else None,
             "prev_close": round(_prev_close, 2) if _prev_close else None,
+            "intraday": _intraday,
             "note": (note + _anchor) if note else _anchor.strip(),
         })
 
