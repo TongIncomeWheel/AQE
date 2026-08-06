@@ -1814,8 +1814,16 @@ if _ll_recs:
 
     # LENS membership — checkboxes, so every list is visible at once and
     # ticking two is one click each rather than a dropdown round-trip.
-    # Nothing ticked = show everything. Ticks are OR'd: Longlist + Elder shows
-    # names on either, not only names on both.
+    # Nothing ticked = show everything.
+    #
+    # HOW TWO TICKS COMBINE IS AN EXPLICIT CHOICE, not a hidden convention.
+    # They used to be OR'd silently, so ticking Longlist + Elder showed names
+    # on EITHER — and EQH (on_longlist True, on_elder False, Elder 7.0) sat in
+    # a list the PM had just asked to be Elder-only. The data was right and the
+    # semantics were unstated, which is the worse of the two failures: nothing
+    # on screen said which reading was in force. Default is now ALL (the
+    # intersection), because that is what ticking two boxes reads as; ANY is one
+    # click away for "show me everything on any of my lists".
     # 'In ledger' is GONE: it meant runner_setup OR premove_setup, i.e. pure
     # Signal Radar, which is retired. A filter for a dead lens is worse than no
     # filter — it implies the lens is still telling you something.
@@ -1834,6 +1842,14 @@ if _ll_recs:
         label for (label, key, hlp), col in zip(_LENS_BOXES, _lens_cols)
         if col.checkbox(label, key=key, help=hlp)
     ]
+    _lens_mode = "ALL"
+    if len(_lens_sel) > 1:                      # only ask when it can matter
+        _lens_mode = st.radio(
+            "Combine ticked lists by", ["ALL of them", "ANY of them"],
+            index=0, horizontal=True, key="sig_lens_mode",
+            help="ALL = a name must be on every list ticked (the intersection). "
+                 "ANY = on at least one of them (the union).",
+        ).split()[0]
     _sec_opts = sorted({(r.get("gics_sector_name") or r.get("gics_sector") or "—")
                         for r in _ll_recs})
     _sec_sel = st.multiselect("Sector", _sec_opts, default=_sec_opts,
@@ -1878,14 +1894,17 @@ if _ll_recs:
                 return False
 
         if _lens_sel:
-            _qs_only = (r.get("on_qs") and not r.get("on_longlist")
-                        and not r.get("on_elder"))
-            hit = (("Longlist" in _lens_sel and r.get("on_longlist"))
-                   or ("Elder ≥8" in _lens_sel and r.get("on_elder"))
-                   or ("QS" in _lens_sel and r.get("on_qs"))
-                   or ("QS only" in _lens_sel and _qs_only)
-                   or ("Held" in _lens_sel and r.get("held")))
-            if not hit:
+            _qs_only = bool(r.get("on_qs") and not r.get("on_longlist")
+                            and not r.get("on_elder"))
+            _member = {
+                "Longlist": bool(r.get("on_longlist")),
+                "Elder ≥8": bool(r.get("on_elder")),
+                "QS": bool(r.get("on_qs")),
+                "QS only": _qs_only,
+                "Held": bool(r.get("held")),
+            }
+            _hits = [_member.get(lbl, False) for lbl in _lens_sel]
+            if not (all(_hits) if _lens_mode == "ALL" else any(_hits)):
                 return False
         return True
 
