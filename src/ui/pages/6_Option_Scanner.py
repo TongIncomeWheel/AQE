@@ -184,6 +184,43 @@ for _col, _key in (("atr_14d", "atr_14d"), ("sector", "sector"),
                    ("sector_state", "sector_state"), ("sector_gate", "sector_gate"),
                    ("theme", "theme"), ("theme_grade", "theme_grade")):
     df[_col] = df["ticker"].map(lambda t, k=_key: (_ctx.get(t) or {}).get(k))
+# FALL BACK TO THE PANEL for names the export does not carry. The AQE daily
+# list is the SCORED set (326 names on 2026-08-06); the options universe is
+# wider, so a perfectly ordinary name like SNDK is simply absent from it and
+# every joined column came back blank. The bars are on disk either way, so a
+# blank ATR was a lookup that gave up rather than a number that does not exist.
+#
+# Uses src.engines.utils.atr — the SAME function the pipeline uses. This is one
+# implementation applied to more names, NOT a second ATR living on this page.
+@st.cache_data(ttl=900, show_spinner=False)
+def _panel_atr(tickers: tuple) -> dict:
+    try:
+        import pandas as _pd
+        from src.data.paths import PANEL_DAILY
+        from src.engines.utils import atr as _atr
+        if not PANEL_DAILY.exists():
+            return {}
+        pan = _pd.read_parquet(PANEL_DAILY,
+                               columns=["date", "ticker", "high", "low", "close"])
+        pan = pan[pan["ticker"].isin(set(tickers))].sort_values(["ticker", "date"])
+        out = {}
+        for tk, g in pan.groupby("ticker", sort=False):
+            if len(g) < 20:
+                continue
+            v = _atr(g["high"].astype(float), g["low"].astype(float),
+                     g["close"].astype(float), n=14).iloc[-1]
+            if v == v and v > 0:                       # not NaN, not zero
+                out[tk] = round(float(v), 2)
+        return out
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+_need = tuple(sorted(df.loc[df["atr_14d"].isna(), "ticker"].unique()))
+_from_panel = _panel_atr(_need) if len(_need) else {}
+if _from_panel:
+    df["atr_14d"] = df["atr_14d"].fillna(df["ticker"].map(_from_panel))
+
 if not _ctx:
     st.warning(
         "**AQE context unavailable** — atr_14d, dist_ATRs, sector and theme are "
@@ -320,11 +357,21 @@ for _label, _src in (("sector", "sector"), ("sector_state", "sector_state"),
                      ("theme", "theme"), ("theme_grade", "theme_grade")):
     if _src in f.columns:
         disp[_label] = f[_src]
-_missing = int(disp["atr_14d"].isna().sum()) if "atr_14d" in disp.columns else 0
-if _missing:
-    st.caption(f"{_missing} of {len(disp)} rows have no AQE context — those "
-               "tickers are in the options universe but were not scored by "
-               "today's daily run (blank, never guessed).")
+# A BLANK MUST SAY WHY, WHERE IT CAN BE SEEN. This used to be an st.caption
+# under the table — grey, small, and below the thing it explains, so a blank
+# ATR read as an unexplained gap (PM: "why is SNDK atr_14d blank? no error was
+# provided"). It is an st.info above the table now, and it NAMES the tickers.
+if "atr_14d" in disp.columns:
+    _blank_atr = sorted(disp.loc[disp["atr_14d"].isna(), "ticker"].unique())
+    if _blank_atr:
+        _eg = ", ".join(_blank_atr[:8]) + (" …" if len(_blank_atr) > 8 else "")
+        st.info(
+            f"**No ATR for {len(_blank_atr)} of {disp['ticker'].nunique()} names** "
+            f"({_eg}). They are in the options universe but not in today's AQE "
+            "daily list, and have no usable bars in the local panel either — so "
+            "atr_14d, dist_ATRs, sector and theme are blank on those rows. Blank, "
+            "never guessed; the ATR-distance filter excludes them rather than "
+            "letting an unknown pass.")
 table_with_copy(disp, key="universe_csp")
 
 if len(f):
