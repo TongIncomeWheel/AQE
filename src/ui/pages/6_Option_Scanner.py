@@ -184,12 +184,54 @@ for _col, _key in (("atr_14d", "atr_14d"), ("sector", "sector"),
                    ("sector_state", "sector_state"), ("sector_gate", "sector_gate"),
                    ("theme", "theme"), ("theme_grade", "theme_grade")):
     df[_col] = df["ticker"].map(lambda t, k=_key: (_ctx.get(t) or {}).get(k))
-# FALL BACK TO THE PANEL for names the export does not carry. The AQE daily
-# list is the SCORED set (326 names on 2026-08-06); the options universe is
-# wider, so a perfectly ordinary name like SNDK is simply absent from it and
-# every joined column came back blank. The bars are on disk either way, so a
-# blank ATR was a lookup that gave up rather than a number that does not exist.
+# ── THE SCORE CACHE — the right source, and the one I reached for last ──────
+# scores_daily.parquet holds the FULL UNIVERSE scored every day (594 names on
+# 2026-08-06), not the 326 the export publishes. The export is what CLEARED a
+# gate; the parquet is what was MEASURED. For a CSP list the second is the
+# right question — "what does AQE think of this name" applies to every name in
+# the universe, whether or not it earned a place on a list.
 #
+# It carries atr14 AND the scores, so this single join replaces a panel
+# recomputation and answers more than ATR ever did (PM: "it should pull from
+# both Universe parquet score and AQE longlist ... instead of running their
+# own"). Read straight off the file the pipeline writes — nothing recomputed.
+@st.cache_data(ttl=900, show_spinner=False)
+def _score_cache() -> dict:
+    try:
+        import pandas as _pd
+        from src.data.paths import DATA_DIR
+        pth = DATA_DIR / "scores_daily.parquet"
+        if not pth.exists():
+            return {}
+        cols = ["date", "ticker", "atr14", "sc_momentum", "elder_score",
+                "flow_100", "energy_100", "structure_100", "mp_100", "mp_state",
+                "pipe_rank"]
+        sc = _pd.read_parquet(pth, columns=cols)
+        sc["date"] = _pd.to_datetime(sc["date"])
+        sc = sc[sc["date"] == sc["date"].max()]          # LATEST day only
+        return {r["ticker"]: r for r in sc.to_dict("records")}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+_sc = _score_cache()
+for _col, _key in (("atr_14d", "atr14"), ("sc_mom", "sc_momentum"),
+                   ("elder", "elder_score"), ("flow", "flow_100"),
+                   ("energy", "energy_100"), ("structure", "structure_100"),
+                   ("mp", "mp_100"), ("mp_state", "mp_state"),
+                   ("pipe_rank", "pipe_rank")):
+    _vals = df["ticker"].map(lambda t, k=_key: (_sc.get(t) or {}).get(k))
+    # The export wins where it has a value — it is the same number from the same
+    # engines, and a row should not flip source between renders.
+    df[_col] = df[_col].fillna(_vals) if _col in df.columns else _vals
+if not _sc:
+    st.info("**Score cache unavailable** — sc_mom / elder / mp_state are blank. "
+            "scores_daily.parquet is not on this container (a fresh deploy "
+            "before the first pipeline run). The ATR falls back to the panel "
+            "and then FMP; the SCORES have no fallback, because they are AQE "
+            "engine output rather than market data.")
+
+# FALL BACK TO THE PANEL for anything the export and the score cache both miss.
 # Uses src.engines.utils.atr — the SAME function the pipeline uses. This is one
 # implementation applied to more names, NOT a second ATR living on this page.
 @st.cache_data(ttl=900, show_spinner=False)
@@ -335,6 +377,12 @@ atr_min = sb.number_input(
          "when this is on — an unknown is not a pass.")
 ay_min = sb.number_input("Annualised yield % ≥", 0.0, 500.0, 20.0, 5.0) / 100.0
 cush_min = sb.number_input("Downside cushion % ≥", 0.0, 50.0, 0.0, 0.5) / 100.0
+sc_min = sb.number_input("AQE SC_MOM ≥", 0.0, 100.0, 0.0, 5.0,
+                         help="From the full-universe score cache, so it "
+                              "applies to names that are not on any AQE list. "
+                              "Rows with no score are EXCLUDED when this is on.")
+eld_min = sb.number_input("AQE Elder ≥", 0.0, 10.0, 0.0, 0.5,
+                          help="Same source. 0 = off.")
 mcap_min = sb.number_input("Market cap $B ≥", 0.0, 5000.0, 0.0, 5.0,
                            help="Blank/0 = no floor. Needs a universe build "
                                 "since 2026-08-06 to be populated.")
@@ -373,6 +421,12 @@ if atr_min > 0:
     # fillna(-1) so a row with no ATR fails the test rather than passing it.
     f = f[f.get("atr_strikes", pd.Series(dtype=float)).reindex(f.index).fillna(-1)
           >= atr_min]
+# fillna(-1) so an unscored row FAILS the test rather than passing it — the
+# same rule as the ATR filter: an unknown is not a pass.
+if sc_min > 0 and "sc_mom" in f.columns:
+    f = f[pd.to_numeric(f["sc_mom"], errors="coerce").fillna(-1) >= sc_min]
+if eld_min > 0 and "elder" in f.columns:
+    f = f[pd.to_numeric(f["elder"], errors="coerce").fillna(-1) >= eld_min]
 if mcap_min > 0 and "mcap_b" in f.columns:
     f = f[f["mcap_b"].fillna(-1) >= mcap_min]
 if mcap_max > 0 and "mcap_b" in f.columns:
@@ -413,6 +467,14 @@ for label, src in [("credit$", "credit_per_contract"), ("breakeven", "breakeven"
 # makes a CSP distance readable across a $20 name and a $600 one.
 if "mcap_b" in f.columns:
     disp["mcap_$b"] = pd.to_numeric(f["mcap_b"], errors="coerce").round(1)
+# AQE's own read on the name, for EVERY universe name rather than only the
+# published ones. Rounded here, not in the join, so the source stays raw.
+for _label, _src in (("sc_mom", "sc_mom"), ("elder", "elder"),
+                     ("mp_state", "mp_state"), ("pipe_rank", "pipe_rank")):
+    if _src in f.columns:
+        _v = f[_src]
+        disp[_label] = (pd.to_numeric(_v, errors="coerce").round(1)
+                        if _src != "mp_state" else _v)
 for _label, _src in (("sector", "sector"), ("sector_state", "sector_state"),
                      ("theme", "theme"), ("theme_grade", "theme_grade")):
     if _src in f.columns:
