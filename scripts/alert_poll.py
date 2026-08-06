@@ -15,8 +15,22 @@ same secrets as the app: OAuth triple (Drive), FMP_API_KEY, AQE_SMTP_*.
 from __future__ import annotations
 
 import sys
+import time
 
 from src.alerts.engine import run_alert_cycle
+
+# WHY THE STOPWATCH. Two cycles were CANCELLED on the job timeout (2026-08-06,
+# 16:58 and 18:24 UTC) and GitHub does not retain logs for cancelled jobs, so
+# there was no way to tell WHICH step hung — export fetch, FMP quotes, Drive
+# state, ledger, or the email. A cycle that can die without saying where is a
+# cycle that cannot be fixed, only guessed at. Every phase now prints its own
+# elapsed time as it completes, so the next timeout leaves a trail even when
+# the job is killed mid-flight.
+_T0 = time.time()
+
+
+def _tick(label: str) -> None:
+    print(f"[alert_poll] +{time.time() - _T0:6.1f}s  {label}", flush=True)
 
 
 def main() -> int:
@@ -28,7 +42,9 @@ def main() -> int:
         return 0 if res.get("ok") else 1
 
     force = "--force" in sys.argv or "-f" in sys.argv
+    _tick("cycle start")
     summary = run_alert_cycle(send_email=True, force=force)
+    _tick("cycle done")
     print("[alert_poll]", summary.get("reason") or "ok",
           "| checked:", summary.get("checked"),
           "| new:", summary.get("new_triggers"),

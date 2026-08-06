@@ -301,7 +301,15 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         summary["reason"] = "outside US market hours"
         return summary
 
+    _t = __import__("time").time
+    _t0 = _t()
+
+    def _phase(label: str) -> None:
+        """Timed breadcrumbs — see scripts/alert_poll for why they exist."""
+        print(f"[alerts] +{_t() - _t0:6.1f}s  {label}", flush=True)
+
     export = load_export()
+    _phase(f"export loaded ({len((export or {}).get('daily_list') or [])} rows)")
     if not export:
         summary["reason"] = "no export available"
         return summary
@@ -320,9 +328,11 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         return summary
 
     tickers = [m["ticker"] for m in mon]
+    _phase(f"monitored set built ({len(tickers)} tickers)")
     try:
         from src.data.fmp_client import FMPClient, FMPError
         quotes = FMPClient().get_quotes(tickers)
+        _phase(f"quotes fetched ({len(quotes)})")
     except FMPError as exc:
         summary["reason"] = f"quote fetch failed: {exc}"
         return summary
@@ -355,6 +365,7 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
 
     summary["new_triggers"] = len(fresh)
     summary["triggers"] = fresh
+    _phase(f"evaluated ({len(fresh)} fresh triggers)")
 
     # Log every fired trigger to the rolling history (powers the 36h on-screen feed).
     if fresh:
@@ -387,7 +398,9 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         except Exception as exc:  # noqa: BLE001
             summary["reason"] = f"email error: {exc}"
 
+    _phase("ledger written")
     # Persist dedup state only if we actually recorded new fires (or to roll date)
     S.save_alert_state(state)
+    _phase("state saved — cycle complete")
     summary["ok"] = True
     return summary

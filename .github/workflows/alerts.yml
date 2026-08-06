@@ -29,7 +29,10 @@ concurrency:
 jobs:
   poll:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Raised 10 -> 20 after two cycles were cancelled on the timeout
+    # (2026-08-06). BOUNDED on purpose: a bigger number is not a fix, it is
+    # headroom while the phase timings above show which step is slow.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
