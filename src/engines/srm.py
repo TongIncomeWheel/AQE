@@ -450,6 +450,8 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
                 "grade": "NO_DATA", "index_grade": "NO_DATA",
                 "parent_capped_grade": "NO_DATA", "grade_path": "no_data",
                 "breadth_pct": None, "breadth_note": None,
+                "pattern": None, "pattern_stage": None, "pattern_trigger": None,
+                "pattern_days": None, "pattern_fit": None,
                 "parent_gics": parent, "parent_grade": parent_grade,
                 "roc20": None, "roc5": None, "divergence": None,
                 "above_sma20": None,
@@ -469,6 +471,17 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
 
         g = grade_sector_etf(basket_df)
         index_grade, path = g["grade"], g["grade_path"]
+
+        # Chart-pattern lens at THEME level, on the same equal-weight index the
+        # grade is read from. A cup in a whole theme is a different (and rarer)
+        # claim than a cup in one name, and it costs nothing extra — the index
+        # is already built. Column only; it never touches the grade.
+        try:
+            from src.engines.patterns import detect_all
+            _px = idx.to_numpy(dtype=float)
+            pattern = detect_all(_px, _px, _px, idx.index.to_numpy(), None)
+        except Exception:  # noqa: BLE001
+            pattern = {}
 
         # Breadth on the SAME slice the index was built from.
         breadth, n_above, n_meas = _breadth(sub)
@@ -501,6 +514,11 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
             "grade_path": path,
             "breadth_pct": round(100.0 * breadth, 1) if breadth is not None else None,
             "breadth_note": note,
+            "pattern": pattern.get("pattern"),
+            "pattern_stage": pattern.get("pattern_stage"),
+            "pattern_trigger": pattern.get("pattern_trigger"),
+            "pattern_days": pattern.get("pattern_days"),
+            "pattern_fit": pattern.get("pattern_fit"),
             "parent_gics": parent,
             "parent_grade": parent_grade,
             "roc20": g.get("roc20"), "roc5": g.get("roc5"),

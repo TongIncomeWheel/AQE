@@ -144,6 +144,40 @@ _FIELD_GLOSSARY = {
     "structure_shift_ref": "The level the shift is measured against (USD): the broken "
                            "confirmed pivot high for BULLISH_BOS/ABOVE_STRUCTURE, the "
                            "broken swing anchor low for BEARISH_CHOCH; null for RANGE.",
+    "pattern": "CHART-PATTERN LENS — the classic formation this name is currently "
+               "sitting inside, or null. A COLUMN on the one daily_list, exactly like "
+               "on_longlist / on_elder / on_qs: it adds no names, gates nothing and "
+               "sizes nothing. Today: CUP_HANDLE only. Built from the CONFIRMED pivot "
+               "series (the same 11-bar fractals the bracket and structure_shift use), "
+               "not from a bar-by-bar template match — which is what stops it finding a "
+               "cup in any 60 bars of noise.",
+    "pattern_stage": "CUP = both rims formed, no handle yet (shape known, not tradeable); "
+                     "HANDLE = the handle low is in and price is drifting under the rim; "
+                     "TRIGGERED = price has closed above the rim.",
+    "pattern_trigger": "The rim — the level that CONFIRMS the pattern (USD). Same kind of "
+                       "object as last_pivot_high, so the live alert layer watches it "
+                       "identically.",
+    "pattern_invalidation": "Below this the shape is gone whatever the fit score says "
+                            "(USD): the handle low once there is a handle, else the cup low.",
+    "pattern_days": "Days from the left rim to today. A textbook cup runs 2-6 months, so "
+                    "this is how you tell a real base from a three-week dip.",
+    "pattern_fit": "0-1, how TEXTBOOK the shape is (depth, rim symmetry, handle size, "
+                   "handle volume — flat-weighted). NOT a probability and not an edge. "
+                   "Read pattern_hit_rate for that.",
+    "pattern_start": "Date of the left rim.",
+    "pattern_hit_rate": "Of historical look-alikes (same stage, same fit band), the share "
+                        "that WORKED: closed above the rim within 20 sessions and then "
+                        "reached rim + 2xATR14 BEFORE closing below the invalidation. "
+                        "Measured by replaying this same detector over the panel's own "
+                        "history — never fitted at runtime. null unless pattern_status is "
+                        "'ok'.",
+    "pattern_n": "Sample size behind pattern_hit_rate. A rate on 12 look-alikes is a "
+                 "rumour; read the two together.",
+    "pattern_status": "'ok' = a measured rate; 'uncalibrated' = the history sweep has NEVER "
+                      "been run (scripts/pattern_calibrate.bat), so there is no rate and a "
+                      "null must NOT be read as 'we measured and found nothing'; "
+                      "'no_analogues' = calibrated, but no historical look-alikes in this "
+                      "cell.",
     "last_pivot_high": "{price, date} — the MOST RECENT confirmed fractal pivot high, "
                        "wherever it sits relative to today's close. The ceiling the name "
                        "last had to clear. This is what structure_shift is measured "
@@ -470,6 +504,15 @@ _FIELD_SCHEMA = {
     "structure_shift":         _fs("signal", "label", "n/a"),
     "structure_shift_ref":     _fs("reference", "usd", "n/a"),
     "last_pivot_high":         _fs("reference", "usd", "n/a"),
+    "pattern":                 _fs("signal", "label", "n/a"),
+    "pattern_stage":           _fs("signal", "label", "n/a"),
+    "pattern_trigger":         _fs("reference", "usd", "n/a"),
+    "pattern_invalidation":    _fs("reference", "usd", "n/a"),
+    "pattern_days":            _fs("signal", "decimal", "n/a"),
+    "pattern_fit":             _fs("signal", "score", "n/a"),
+    "pattern_hit_rate":        _fs("signal", "ratio", "n/a"),
+    "pattern_n":               _fs("signal", "decimal", "n/a"),
+    "pattern_status":          _fs("signal", "label", "n/a"),
     # Momentum acceleration + divergence (TV-analysis Phases 2+3 — context only)
     "mp_accel":                _fs("signal", "decimal", "n/a"),
     "mp_accel_state":          _fs("signal", "label", "n/a"),
@@ -654,7 +697,7 @@ def _compute_v21_lookups(sm: dict) -> dict:
     {ticker: float} and corr is {ticker: (corr, class)}.
     """
     out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
-           "vol30": {}, "beta252": {}, "spy_roc_20d": None}
+           "vol30": {}, "beta252": {}, "pattern": {}, "spy_roc_20d": None}
     try:
         import numpy as np
         import pandas as pd
@@ -662,7 +705,9 @@ def _compute_v21_lookups(sm: dict) -> dict:
 
         if not PANEL_DAILY.exists():
             return out
-        p = pd.read_parquet(PANEL_DAILY, columns=["date", "ticker", "close", "volume"])
+        p = pd.read_parquet(PANEL_DAILY,
+                            columns=["date", "ticker", "high", "low",
+                                     "close", "volume"])
         p["date"] = pd.to_datetime(p["date"]).dt.normalize()
         p = p.sort_values(["ticker", "date"])
 
@@ -703,6 +748,22 @@ def _compute_v21_lookups(sm: dict) -> dict:
                 avg20 = float(np.nanmean(vol[-21:-1]))
                 if avg20 > 0:
                     out["day_vol"][tk] = round(float(vol[-1]) / avg20, 2)
+            # Chart-pattern lens — a COLUMN on the one daily_list, never a
+            # screen of its own and never a gate (PM ruling 2026-08-06). Pure
+            # panel math on bars already pulled: 0 FMP calls.
+            try:
+                from src.engines.patterns import detect_all
+                from src.engines.pattern_calibration import lookup as _pat_lookup
+                _pat = detect_all(g["high"].to_numpy(dtype=float),
+                                  g["low"].to_numpy(dtype=float), cl,
+                                  g["date"].to_numpy(), vol)
+                if _pat.get("pattern"):
+                    _pat.update({f"pattern_{k}": v for k, v in
+                                 _pat_lookup(_pat["pattern_stage"],
+                                             _pat["pattern_fit"]).items()})
+                out["pattern"][tk] = _pat
+            except Exception:  # noqa: BLE001 — a lens never blocks the export
+                pass
             # sma_distance_pct vs 50D SMA
             if len(cl) >= 50:
                 sma50 = float(np.nanmean(cl[-50:]))
@@ -822,6 +883,12 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # Structure shift (BOS/CHoCH) — data only, never a gate
         "structure_shift": None, "structure_shift_ref": None,
         "last_pivot_high": None,
+        # Chart-pattern lens (columns, not a section). Present even as null so a
+        # reader can tell "no pattern" from "the detector never ran".
+        "pattern": None, "pattern_stage": None, "pattern_trigger": None,
+        "pattern_invalidation": None, "pattern_days": None, "pattern_fit": None,
+        "pattern_start": None, "pattern_hit_rate": None, "pattern_n": None,
+        "pattern_status": None,
         # Health score (hold decision, held_positions only)
         "hl_score": None, "hl_state": None,
         # Enrichment Spec v2.0 — RS leadership + bracket-quality flags. setup_state
@@ -893,6 +960,14 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_rrg_quadrant"] = primary["rrg_quadrant"]
             fields["thematic_rrg_direction"] = primary["rrg_direction"]
         fields["day_vol"] = (lk.get("day_vol") or {}).get(tk)
+        _pat = (lk.get("pattern") or {}).get(tk) or {}
+        for _k in ("pattern", "pattern_stage", "pattern_trigger",
+                   "pattern_invalidation", "pattern_days", "pattern_fit",
+                   "pattern_start", "pattern_status"):
+            if _k in _pat:
+                fields[_k] = _pat[_k]
+        fields["pattern_hit_rate"] = _pat.get("pattern_hit_rate")
+        fields["pattern_n"] = _pat.get("pattern_n")
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
         _ma = (lk.get("ma") or {}).get(tk) or {}

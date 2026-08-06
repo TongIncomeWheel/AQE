@@ -1160,6 +1160,8 @@ if _thematic:
             "Grade": _d.get("grade", "---"),
             "Why": _d.get("grade_path", "—"),
             "Breadth %": _d.get("breadth_pct"),
+            "Pattern": _d.get("pattern") or "—",
+            "Pattern stage": _d.get("pattern_stage") or "—",
             "Capped at parent": _d.get("parent_capped_grade", "---"),
             "Parent": f'{_d.get("parent_gics", "—")} ({_d.get("parent_grade", "—")})',
             "Rotation (RRG)": _rrg_phrase(_d.get("rrg_quadrant"), _d.get("rrg_direction")),
@@ -1354,6 +1356,8 @@ _EXPORT_COL_ORDER = [
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "day_vol", "rs_spy_20d", "sma_distance_pct",
+    "pattern", "pattern_stage", "pattern_trigger", "pattern_fit",
+    "pattern_hit_rate", "pattern_n", "pattern_days",
     "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)
