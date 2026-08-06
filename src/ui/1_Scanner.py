@@ -1923,16 +1923,24 @@ if _ll_recs:
         st.caption(f"🔵 **{len(_held_here)} held**: {', '.join(_held_here)}")
     _list_summary(_filtered)
     _ll_df = _export_table(_filtered)
-    # Categorical cuts the sliders above cannot express. These six are the ones
-    # that carry a LABEL rather than a number, so a threshold is meaningless on
-    # them and a free-text search is the wrong shape: "show me the LEADERs whose
-    # sector is also LEADING" is two picks, not a query.
+    # Categorical cuts the sliders above cannot express. These six carry a
+    # LABEL rather than a number, so a threshold is meaningless on them and free
+    # text is the wrong shape: "show me the LEADERs whose sector is also
+    # LEADING" is two picks, not a query.
+    #
+    # A FACET NEEDS FEW VALUES OR IT IS NOT A FACET. choch_date was here and was
+    # useless — 72 distinct dates on the 2026-08-06 board, so the pick-list was
+    # a date picker with no ordering and every choice matched a handful of rows.
+    # The question it was reaching for is "did structure break, yes or no", and
+    # structure_shift answers exactly that in 5 values: BULLISH_BOS /
+    # ABOVE_STRUCTURE / RANGE / BEARISH_CHOCH / null. The date still rides on
+    # the row for anyone reading a specific name.
     _ll_df = facet_filters(
         _ll_df, key="ll_table",
         facets=[("RS leadership", "rs_leadership"),
                 ("Elder pattern", "elder_pattern"),
                 ("Exhaustion", "ecx_exhaustion"),
-                ("CHoCH date", "choch_date"),
+                ("Structure", "structure_shift"),
                 ("Sector RRG", "sector_rrg_quadrant"),
                 ("Mover subtype", "mover_subtype")])
     # Chart-pattern cuts, on their own row so twelve pick-lists do not sit in

@@ -240,21 +240,32 @@ def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
             column_config = percent_column_config(view)
         except Exception:  # noqa: BLE001 — formatting never blocks the table
             column_config = None
-    # FREEZE THE FIRST COLUMN. These grids are 90+ columns wide; scrolling right
-    # to read a score loses the ticker it belongs to, which makes the whole row
-    # unreadable (PM: "i cant see the ticker as i scroll across"). The first
-    # column is the identifier on every table here — ticker, sector or basket —
-    # so pinning it is a property of the layout, not a per-table decision.
+    # FREEZE THE IDENTIFIER COLUMN. These grids are 90+ columns wide; scrolling
+    # right to read a score loses the name it belongs to, which makes the whole
+    # row unreadable.
+    #
+    # Pinned BY IDENTITY, not by position. The first attempt froze column 1 and
+    # nothing else, which on the daily list is `rank` — so the ticker scrolled
+    # away exactly as before and the fix looked like it had done nothing (PM:
+    # "only rank column is frozen and i still cant read"). What the reader needs
+    # anchored is the NAME, wherever it sits.
     _cfg = dict(column_config or {})
-    if pin_first and view is not None and len(getattr(view, "columns", [])):
-        _first = view.columns[0]
-        if _cfg.get(_first) is None:
+    _cols = list(getattr(view, "columns", [])) if view is not None else []
+    if pin_first and _cols:
+        _ids = {"ticker", "Ticker", "Basket", "Sector", "symbol", "Symbol"}
+        # The first column plus the identifier. Streamlit renders pinned columns
+        # at the left in their original order, so pinning rank AND ticker keeps
+        # the pair together rather than reordering them.
+        _pin = [_cols[0]] + [c for c in _cols[:4] if c in _ids and c != _cols[0]]
+        for _c in _pin:
+            if _cfg.get(_c) is not None:
+                continue
             try:
-                _cfg[_first] = st.column_config.Column(str(_first), pinned=True)
+                _cfg[_c] = st.column_config.Column(str(_c), pinned=True)
             except TypeError:
                 # `pinned` arrived in Streamlit 1.42. An older runtime loses the
-                # frozen column rather than the whole page.
-                pass
+                # frozen columns rather than the whole page.
+                break
     st.dataframe(view, use_container_width=True, hide_index=True,
                  column_config=_cfg or None)
     try:
