@@ -1370,9 +1370,10 @@ _EXPORT_COL_ORDER = [
     "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "day_vol", "rs_spy_20d", "sma_distance_pct",
-    "pattern", "pattern_direction", "pattern_stage", "pattern_trigger",
+    "pattern", "pattern_stage", "pattern_trigger",
     "pattern_invalidation", "pattern_fit", "pattern_days", "pattern_alt",
-    "candle_d", "candle_d_dir", "candle_w", "candle_w_dir",
+    "pattern_w", "pattern_w_stage", "pattern_w_trigger",
+    "candle_d", "candle_w",
     "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)
@@ -1515,6 +1516,31 @@ def _export_table(records):
     _nested = [c for c in edf.columns
                if edf[c].apply(lambda v: isinstance(v, (list, dict))).any()]
     edf = edf.drop(columns=_nested, errors="ignore")
+    # DIRECTION + NAME AS ONE LABEL (PM ruling 2026-08-06). A pattern column
+    # reading "CUP_HANDLE" next to a separate "BULLISH" column makes the reader
+    # do the join every time; on a visual flag that is the whole cost. The
+    # machine fields stay separate in the export JSON — this is display only.
+    def _txt(v):
+        """None / NaN / blank -> None. pandas turns a missing value into NaN,
+        which is TRUTHY, so a plain `if v` renders empty rows as "Nan · nan"."""
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return None
+        v = str(v).strip()
+        return v or None
+
+    for _name, _dir, _label in (("pattern", "pattern_direction", "pattern"),
+                                ("pattern_w", "pattern_w_dir", "pattern_w"),
+                                ("candle_d", "candle_d_dir", "candle_d"),
+                                ("candle_w", "candle_w_dir", "candle_w")):
+        if _name in edf.columns:
+            _d = edf[_dir] if _dir in edf.columns else [None] * len(edf)
+            edf[_label] = [
+                (f"{dd.title()} · {nn}" if (nn := _txt(n)) and (dd := _txt(d))
+                 else _txt(n))
+                for n, d in zip(edf[_name], _d)
+            ]
+            if _dir in edf.columns and _dir != _label:
+                edf = edf.drop(columns=[_dir])
     # Fields the export stores as a DECIMAL fraction but which are percentages
     # (vol_30d_ann 0.18 = 18%, knn_prob 0.62 = 62%). Scaled here, in the display
     # frame only, so the % suffix the grid adds is truthful. The export JSON is

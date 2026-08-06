@@ -155,6 +155,18 @@ _FIELD_GLOSSARY = {
                "BULLISH: CUP_HANDLE, DOUBLE_BOTTOM, ASC_TRIANGLE, FALLING_WEDGE, "
                "INV_HEAD_SHOULDERS. BEARISH: DOUBLE_TOP, DESC_TRIANGLE, "
                "RISING_WEDGE, HEAD_SHOULDERS.",
+    "pattern_w": "CHART-PATTERN LENS, WEEKLY — the same nine shapes read off WEEKLY "
+                 "bars. A cup or a head-and-shoulders built from weekly candles is a far "
+                 "bigger claim than the same outline on dailies, so the two are separate "
+                 "columns and never merged. Deliberately LEANER than the daily set: name, "
+                 "direction, stage and the level only. The weekly answers 'is a big base "
+                 "forming?'; the daily carries the actionable detail (invalidation, fit, "
+                 "days, alternatives). Null when the weekly panel is missing or the name "
+                 "has under 30 weekly bars.",
+    "pattern_w_dir": "BULLISH or BEARISH for pattern_w. Same warning as "
+                     "pattern_direction: on a bearish shape the trigger breaks DOWNWARD.",
+    "pattern_w_stage": "Stage of the weekly formation — see pattern_stage.",
+    "pattern_w_trigger": "The level that would confirm the WEEKLY shape (USD).",
     "candle_d": "CANDLESTICK LENS, DAILY — the shape of the LAST completed daily bar, "
                 "or null for an ordinary bar. A visual flag like `pattern`: no "
                 "probability, no gate. Three-bar reads beat two-bar reads beat "
@@ -542,6 +554,10 @@ _FIELD_SCHEMA = {
     "pattern":                 _fs("signal", "label", "n/a"),
     "pattern_direction":       _fs("signal", "label", "n/a"),
     "pattern_alt":             _fs("signal", "label", "n/a"),
+    "pattern_w":               _fs("signal", "label", "n/a"),
+    "pattern_w_dir":           _fs("signal", "label", "n/a"),
+    "pattern_w_stage":         _fs("signal", "label", "n/a"),
+    "pattern_w_trigger":       _fs("reference", "usd", "n/a"),
     "candle_d":                _fs("signal", "label", "n/a"),
     "candle_d_dir":            _fs("signal", "label", "n/a"),
     "candle_w":                _fs("signal", "label", "n/a"),
@@ -810,10 +826,26 @@ def _compute_v21_lookups(sm: dict) -> dict:
             # panel math on bars already pulled: 0 FMP calls.
             try:
                 from src.engines.patterns import detect_all
-                out["pattern"][tk] = detect_all(
-                    g["high"].to_numpy(dtype=float),
-                    g["low"].to_numpy(dtype=float), cl,
-                    g["date"].to_numpy(), vol)
+                _pd = detect_all(g["high"].to_numpy(dtype=float),
+                                 g["low"].to_numpy(dtype=float), cl,
+                                 g["date"].to_numpy(), vol)
+                # WEEKLY chart pattern too — a cup built from weekly bars is a
+                # far bigger claim than the same shape on dailies, and the
+                # weekly panel is already loaded for the candles. Kept LEAN on
+                # purpose: name, direction, stage and the level. The weekly is
+                # context ("is a big base forming?"); the daily carries the
+                # actionable detail.
+                _wg = wk_by.get(tk)
+                if _wg is not None and len(_wg) >= 30:
+                    _pw = detect_all(_wg["high"].to_numpy(dtype=float),
+                                     _wg["low"].to_numpy(dtype=float),
+                                     _wg["close"].to_numpy(dtype=float),
+                                     _wg["date"].to_numpy(), None)
+                    _pd.update({"pattern_w": _pw.get("pattern"),
+                                "pattern_w_dir": _pw.get("pattern_direction"),
+                                "pattern_w_stage": _pw.get("pattern_stage"),
+                                "pattern_w_trigger": _pw.get("pattern_trigger")})
+                out["pattern"][tk] = _pd
             except Exception:  # noqa: BLE001 — a lens never blocks the export
                 pass
             # Candlestick lens — the last completed bar's shape, DAILY and
@@ -968,6 +1000,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "pattern_trigger": None, "pattern_invalidation": None,
         "pattern_days": None, "pattern_fit": None, "pattern_start": None,
         "pattern_alt": None,
+        "pattern_w": None, "pattern_w_dir": None,
+        "pattern_w_stage": None, "pattern_w_trigger": None,
         "candle_d": None, "candle_d_dir": None,
         "candle_w": None, "candle_w_dir": None, "candle_w_date": None,
         # Health score (hold decision, held_positions only)
@@ -1045,7 +1079,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         _pat = (lk.get("pattern") or {}).get(tk) or {}
         for _k in ("pattern", "pattern_direction", "pattern_stage",
                    "pattern_trigger", "pattern_invalidation", "pattern_days",
-                   "pattern_fit", "pattern_start", "pattern_alt"):
+                   "pattern_fit", "pattern_start", "pattern_alt",
+                   "pattern_w", "pattern_w_dir", "pattern_w_stage",
+                   "pattern_w_trigger"):
             if _k in _pat:
                 fields[_k] = _pat[_k]
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
