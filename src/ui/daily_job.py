@@ -416,6 +416,19 @@ def _loop() -> None:
                 if last_ma_date != now.date().isoformat():
                     _run_ma_scan_and_record(now)
                     last_ma_date = now.date().isoformat()
+                # ...and the CSP scan, if its own 05:30 window was missed.
+                #
+                # THE WINDOWS DID NOT OVERLAP, so it could never catch up. The
+                # CSP slot is 05:30-08:00 and the pipeline slot is 08:30-12:00:
+                # any morning the Space was not awake in that first window —
+                # which is every morning it restarted overnight — the pipeline
+                # ran and the options sweep silently did not, with no path back.
+                # The MA scan has ridden along here since it was decoupled; the
+                # options scan should have too. Its own marker still guards
+                # against a double run when 05:30 DID fire.
+                if last_csp_date != now.date().isoformat():
+                    _run_csp_scan_and_record(now)
+                    last_csp_date = now.date().isoformat()
         except Exception:  # noqa: BLE001
             pass
         time.sleep(60)

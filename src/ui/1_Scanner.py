@@ -256,6 +256,22 @@ with st.sidebar:
     if st.button(pipeline_btn_label, type="primary", use_container_width=True,
                  disabled=(CLOUD_MODE and not FMP_KEY_SET)):
         run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline", prog, stat)
+        # The MORNING run is pipeline + MA scan + CSP scan. A manual run that
+        # quietly did less than the scheduled one is the exact class of surprise
+        # this session has spent the day removing, so the button does the same
+        # three things. Each is best-effort and cannot fail the feed.
+        try:
+            from datetime import datetime as _dt
+            from zoneinfo import ZoneInfo as _Z
+            from src.ui.daily_job import (_run_csp_scan_and_record,
+                                          _run_ma_scan_and_record)
+            _now = _dt.now(_Z("Asia/Singapore"))
+            stat.write("MA proximity scan…")
+            _run_ma_scan_and_record(_now)
+            stat.write("Options CSP universe scan…")
+            _run_csp_scan_and_record(_now)
+        except Exception as _exc:  # noqa: BLE001
+            st.warning(f"Follow-on scans skipped: {type(_exc).__name__}: {_exc}")
         st.rerun()
 
     with st.expander("Data Refresh", expanded=False):
