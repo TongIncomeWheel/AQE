@@ -1357,7 +1357,7 @@ _EXPORT_COL_ORDER = [
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "day_vol", "rs_spy_20d", "sma_distance_pct",
     "pattern", "pattern_stage", "pattern_trigger", "pattern_fit",
-    "pattern_hit_rate", "pattern_n", "pattern_days",
+    "pattern_days",
     "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)

@@ -18,13 +18,13 @@ Everything here consumes `pivot_series()` — the same 11-bar fractal convention
     bars on either side — throws most of that away before any tolerance is
     applied.
 
-WHAT IS DELIBERATELY NOT HERE.
-No probability, no hit rate, no "quality" verdict. Detection is the easy half
-and a detector on its own is decoration: loose rules find cups on everything.
-The number that makes a detection worth reading is measured by sweeping this
-same code across the panel's history and recording what actually happened next
-(see scripts/pattern_calibrate.py). Until that table exists the export ships
-`pattern_hit_rate: null` and says so — never a fabricated figure.
+NO PROBABILITY, AND THAT IS THE DESIGN (PM ruling 2026-08-06: "this pattern is
+just a visual flag for me, not a signal"). A historical hit-rate table was
+built and then removed on that ruling — a flag does not need one, and shipping
+an unused calibration layer is how dead code accumulates. Nothing here says a
+shape works; `pattern_fit` measures only how closely it matches the textbook
+drawing. If a measured edge is ever wanted, the sweep is in git history at
+dd9bcdc rather than sitting unread in the tree.
 
 EVERY TOLERANCE BELOW IS A CHOICE, NOT A FACT. Ten traders draw ten different
 cups. The constants are transcribed from the conventional definitions (O'Neil's
@@ -78,17 +78,33 @@ def pivot_series(high: np.ndarray, low: np.ndarray, dates: np.ndarray,
     start = max(0, n - window)
     h, l, d = high[start:], low[start:], dates[start:]
     m = len(h)
-    out: list[dict] = []
+    raw: list[dict] = []
     for i in range(k, m - k):
         win_h, win_l = h[i - k:i + k + 1], l[i - k:i + k + 1]
         if h[i] >= win_h.max():
-            out.append({"kind": "H", "price": float(h[i]), "idx": i,
+            raw.append({"kind": "H", "price": float(h[i]), "idx": i,
                         "date": str(pd.Timestamp(d[i]).date()),
                         "bars_ago": int(m - 1 - i)})
         elif l[i] <= win_l.min():
-            out.append({"kind": "L", "price": float(l[i]), "idx": i,
+            raw.append({"kind": "L", "price": float(l[i]), "idx": i,
                         "date": str(pd.Timestamp(d[i]).date()),
                         "bars_ago": int(m - 1 - i)})
+    # ONE TURN = ONE PIVOT. A flat or rounded top satisfies the fractal test on
+    # several adjacent bars, so the raw scan emits the same turn two or three
+    # times. Left in, that breaks any rule reading CONSECUTIVE pivots: an
+    # ascending triangle would see a "low" that failed to step up above the
+    # identical low one bar earlier, and reject a perfectly good shape.
+    # Collapse same-kind neighbours within k bars, keeping the extreme.
+    out: list[dict] = []
+    for p in raw:
+        if (out and out[-1]["kind"] == p["kind"]
+                and p["idx"] - out[-1]["idx"] <= k):
+            better = (p["price"] > out[-1]["price"] if p["kind"] == "H"
+                      else p["price"] < out[-1]["price"])
+            if better:
+                out[-1] = p
+            continue
+        out.append(p)
     return out
 
 
@@ -231,9 +247,187 @@ def detect_cup_handle(high: np.ndarray, low: np.ndarray, close: np.ndarray,
     return out
 
 
-# Registry — every detector returns the SAME shape, so adding double-bottom or
-# ascending-triangle later changes this list and nothing downstream.
-DETECTORS = {"CUP_HANDLE": detect_cup_handle}
+# ── Double bottom ───────────────────────────────────────────────────────────
+# Two lows at roughly the same level with a real bounce between them. The
+# bounce is what separates a base from a flat drift: without a minimum rise,
+# ANY two similar lows in a quiet range qualify, and quiet ranges are common.
+#
+# The base test is doing most of the work. Without it the rule fired on 30 of
+# 40 random walks — any drifting series throws up two similar lows with a
+# bounce between them somewhere in six months. Requiring the pair to be THE
+# low of the window, not just A pair of lows inside it, takes that to single
+# figures. A double bottom that is not at the bottom is not a double bottom.
+DB_LOW_TOLERANCE_PCT = 3.0    # how close the second low must come to the first
+DB_MIN_DAYS = 15              # closer together than this is one low, not two
+DB_MAX_DAYS = 160
+DB_MIN_BOUNCE_PCT = 12.0      # the middle peak must be this far above the lows
+DB_BASE_TOLERANCE_PCT = 4.0   # ...and both lows must be this near the window low
+
+
+def detect_double_bottom(high: np.ndarray, low: np.ndarray, close: np.ndarray,
+                         dates: np.ndarray, volume: np.ndarray | None = None,
+                         k: int = PIVOT_K, window: int = PATTERN_WINDOW) -> dict:
+    """The most recent double bottom, or a blank record.
+
+    Trigger is the NECKLINE — the peak between the two lows — not the lows
+    themselves. That is the level whose break confirms the base, and it is what
+    the alert layer should watch, so it is what ships as pattern_trigger.
+
+    Stages: BASE (both lows in, price still under the neckline) / TRIGGERED.
+    """
+    out = _blank()
+    n = len(high)
+    if n < 2 * k + 1 or len(close) != n:
+        return out
+    start = max(0, n - window)
+    h, l, c, d = high[start:], low[start:], close[start:], dates[start:]
+    piv = pivot_series(high, low, dates, k=k, window=window)
+    lows = [p for p in piv if p["kind"] == "L"]
+    if len(lows) < 2:
+        return out
+    last_close = float(c[-1])
+    window_low = float(np.nanmin(l))
+    if window_low <= 0:
+        return out
+
+    for si in range(len(lows) - 1, 0, -1):          # newest second-low first
+        second = lows[si]
+        for fi in range(si - 1, -1, -1):
+            first = lows[fi]
+            span = second["idx"] - first["idx"]
+            if span < DB_MIN_DAYS:
+                continue
+            if span > DB_MAX_DAYS:
+                break
+            if first["price"] <= 0:
+                continue
+            gap = abs(second["price"] - first["price"]) / first["price"] * 100
+            if gap > DB_LOW_TOLERANCE_PCT:
+                continue
+            # Both feet must sit at the FLOOR of the window. Two similar lows
+            # halfway up a range are a pause, not a base.
+            if max((first["price"] - window_low) / window_low * 100,
+                   (second["price"] - window_low) / window_low * 100) > DB_BASE_TOLERANCE_PCT:
+                continue
+            neck_seg = h[first["idx"]:second["idx"] + 1]
+            if len(neck_seg) == 0:
+                continue
+            neck = float(np.nanmax(neck_seg))
+            base = min(first["price"], second["price"])
+            if base <= 0:
+                continue
+            bounce = (neck - base) / base * 100
+            if bounce < DB_MIN_BOUNCE_PCT:
+                continue
+            # Already lost the base since the second low? Then the pattern
+            # failed and is not the live read, whatever it looked like.
+            if float(np.nanmin(l[second["idx"]:])) < base * 0.98:
+                continue
+
+            stage = "TRIGGERED" if last_close > neck else "BASE"
+            sym = 1.0 - min(1.0, gap / DB_LOW_TOLERANCE_PCT)
+            depth = min(1.0, bounce / (DB_MIN_BOUNCE_PCT * 3))
+            out.update({
+                "pattern": "DOUBLE_BOTTOM", "pattern_stage": stage,
+                "pattern_trigger": round(neck, 2),
+                "pattern_invalidation": round(base, 2),
+                "pattern_days": int(len(c) - 1 - first["idx"]),
+                "pattern_fit": round((sym + depth) / 2, 3),
+                "pattern_start": str(pd.Timestamp(d[first["idx"]]).date()),
+            })
+            return out
+    return out
+
+
+# ── Ascending triangle ──────────────────────────────────────────────────────
+# A flat ceiling being tested repeatedly while the lows step up underneath —
+# supply at one price, demand paying more each time. The RISING lows are the
+# whole content: without them it is just a resistance level, which AQE already
+# ships as last_pivot_high.
+AT_TOP_TOLERANCE_PCT = 2.5    # how flat the ceiling must be across touches
+AT_MIN_LOW_RISE_PCT = 1.0     # each low must clear the previous by this much
+AT_MIN_DAYS = 20
+AT_MAX_DAYS = 160
+AT_MIN_TOUCHES = 2            # of the ceiling — one touch is not a ceiling
+
+
+def detect_ascending_triangle(high: np.ndarray, low: np.ndarray,
+                              close: np.ndarray, dates: np.ndarray,
+                              volume: np.ndarray | None = None,
+                              k: int = PIVOT_K,
+                              window: int = PATTERN_WINDOW) -> dict:
+    """The most recent ascending triangle, or a blank record.
+
+    Trigger is the ceiling. Invalidation is the LAST rising low — the step that
+    would have to fail for the structure to be gone, which is tighter and more
+    honest than the first low of the formation.
+    """
+    out = _blank()
+    n = len(high)
+    if n < 2 * k + 1 or len(close) != n:
+        return out
+    start = max(0, n - window)
+    c, d = close[start:], dates[start:]
+    piv = pivot_series(high, low, dates, k=k, window=window)
+    highs = [p for p in piv if p["kind"] == "H"]
+    lows = [p for p in piv if p["kind"] == "L"]
+    if len(highs) < AT_MIN_TOUCHES or len(lows) < 2:
+        return out
+    last_close = float(c[-1])
+
+    # Widen the ceiling backwards from the most recent high: take every earlier
+    # high that sits within tolerance of it, stopping at the first that does not.
+    ref = highs[-1]
+    touches = [ref]
+    for p in reversed(highs[:-1]):
+        if abs(p["price"] - ref["price"]) / ref["price"] * 100 <= AT_TOP_TOLERANCE_PCT:
+            touches.append(p)
+        else:
+            break
+    if len(touches) < AT_MIN_TOUCHES:
+        return out
+    touches.reverse()
+    span = touches[-1]["idx"] - touches[0]["idx"]
+    if not (AT_MIN_DAYS <= span <= AT_MAX_DAYS):
+        return out
+
+    inner = [p for p in lows if touches[0]["idx"] < p["idx"] < touches[-1]["idx"]]
+    if len(inner) < 2:
+        return out
+    for a, b in zip(inner, inner[1:]):
+        if a["price"] <= 0 or (b["price"] - a["price"]) / a["price"] * 100 < AT_MIN_LOW_RISE_PCT:
+            return out          # a low that did not step up breaks the shape
+
+    ceiling = float(np.mean([p["price"] for p in touches]))
+    last_low = inner[-1]["price"]
+    if last_low >= ceiling:
+        return out
+    stage = "TRIGGERED" if last_close > ceiling else "FORMING"
+
+    spread = max(p["price"] for p in touches) - min(p["price"] for p in touches)
+    flat = 1.0 - min(1.0, (spread / ceiling * 100) / AT_TOP_TOLERANCE_PCT)
+    climb = min(1.0, (last_low - inner[0]["price"]) / (ceiling - inner[0]["price"])
+                if ceiling > inner[0]["price"] else 0.0)
+    reps = min(1.0, (len(touches) - AT_MIN_TOUCHES + 1) / 3.0)
+    out.update({
+        "pattern": "ASC_TRIANGLE", "pattern_stage": stage,
+        "pattern_trigger": round(ceiling, 2),
+        "pattern_invalidation": round(last_low, 2),
+        "pattern_days": int(len(c) - 1 - touches[0]["idx"]),
+        "pattern_fit": round((flat + climb + reps) / 3, 3),
+        "pattern_start": str(pd.Timestamp(d[touches[0]["idx"]]).date()),
+    })
+    return out
+
+
+# Registry — every detector returns the SAME shape, so adding one changes this
+# dict and nothing downstream. The calibration keys on the pattern NAME as well
+# as the stage, so a TRIGGERED cup and a TRIGGERED triangle never share a rate.
+DETECTORS = {
+    "CUP_HANDLE": detect_cup_handle,
+    "DOUBLE_BOTTOM": detect_double_bottom,
+    "ASC_TRIANGLE": detect_ascending_triangle,
+}
 
 
 def detect_all(high, low, close, dates, volume=None, **kw) -> dict:

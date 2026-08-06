@@ -186,3 +186,149 @@ def test_the_window_is_six_months_not_three():
     """A textbook cup runs 2-6 months. A 3-month window would silently report
     only the short ones and call the rest 'no pattern'."""
     assert P.PATTERN_WINDOW >= 126
+
+
+# ═══════════════════════════════════════════════════ double bottom
+
+def _double_bottom(gap_pct=1.5, bounce_pct=15.0, sep=40, pre=20, post=12,
+                   break_out=False):
+    """Two lows at a similar level with a real peak between them."""
+    lo = 100.0
+    peak = lo * (1 + bounce_pct / 100)
+    second = lo * (1 + gap_pct / 100)
+    down = list(np.linspace(peak * 1.15, lo, pre))
+    up = list(np.linspace(lo, peak, sep // 2))
+    back = list(np.linspace(peak, second, sep - sep // 2))
+    end_at = peak * (1.04 if break_out else 0.93)
+    tail = list(np.linspace(second, end_at, post))
+    return down + up + back + tail
+
+
+def test_a_double_bottom_is_found_with_the_neckline_as_the_trigger():
+    """The trigger must be the NECKLINE, not the lows — that is the level whose
+    break confirms the base and the one the alert layer should watch."""
+    h, l, c, d, v = _bars(_double_bottom())
+    r = P.detect_double_bottom(h, l, c, d, v)
+    assert r["pattern"] == "DOUBLE_BOTTOM"
+    assert r["pattern_stage"] == "BASE"
+    assert r["pattern_trigger"] == pytest.approx(115.0, rel=0.05)
+    assert r["pattern_invalidation"] == pytest.approx(100.0, rel=0.05)
+    assert r["pattern_trigger"] > r["pattern_invalidation"]
+
+
+def test_a_double_bottom_that_clears_the_neckline_reads_triggered():
+    h, l, c, d, v = _bars(_double_bottom(break_out=True))
+    assert P.detect_double_bottom(h, l, c, d, v)["pattern_stage"] == "TRIGGERED"
+
+
+def test_two_lows_with_no_bounce_between_them_is_a_flat_range():
+    """Without a minimum rise, ANY two similar lows in a quiet range qualify —
+    and quiet ranges are everywhere."""
+    h, l, c, d, v = _bars(_double_bottom(bounce_pct=3.0))
+    assert P.detect_double_bottom(h, l, c, d, v)["pattern"] is None
+
+
+def test_a_second_low_well_below_the_first_is_a_downtrend_not_a_base():
+    h, l, c, d, v = _bars(_double_bottom(gap_pct=-14.0))
+    assert P.detect_double_bottom(h, l, c, d, v)["pattern"] is None
+
+
+def test_a_base_that_has_since_broken_down_is_not_the_live_read():
+    path = _double_bottom() + list(np.linspace(100, 82, 12))
+    h, l, c, d, v = _bars(path)
+    assert P.detect_double_bottom(h, l, c, d, v)["pattern"] is None
+
+
+# ══════════════════════════════════════════════ ascending triangle
+
+def _asc_triangle(top=100.0, touches=3, rise_pct=6.0, leg=18, break_out=False):
+    """Flat ceiling tested repeatedly while the lows step up underneath."""
+    path = list(np.linspace(top * 0.80, top, leg))
+    n_low = touches
+    lows = np.linspace(top * (1 - rise_pct / 100 * n_low), top * 0.985, n_low)
+    for lw in lows:
+        path += list(np.linspace(top, lw, leg))       # pull back to a higher low
+        path += list(np.linspace(lw, top, leg))       # and back to the ceiling
+    path += list(np.linspace(top, top * (1.05 if break_out else 0.99), 10))
+    return path
+
+
+def test_an_ascending_triangle_is_found():
+    h, l, c, d, v = _bars(_asc_triangle())
+    r = P.detect_ascending_triangle(h, l, c, d, v)
+    assert r["pattern"] == "ASC_TRIANGLE"
+    assert r["pattern_stage"] == "FORMING"
+    assert r["pattern_trigger"] == pytest.approx(100.0, rel=0.04)
+
+
+def test_the_triangle_invalidation_is_the_LAST_rising_low():
+    """Tighter and more honest than the first low of the formation: that step
+    is the one that has to fail for the structure to be gone."""
+    h, l, c, d, v = _bars(_asc_triangle())
+    r = P.detect_ascending_triangle(h, l, c, d, v)
+    assert r["pattern_invalidation"] > 85.0
+    assert r["pattern_invalidation"] < r["pattern_trigger"]
+
+
+def test_a_close_above_the_ceiling_reads_triggered():
+    h, l, c, d, v = _bars(_asc_triangle(break_out=True))
+    assert P.detect_ascending_triangle(h, l, c, d, v)["pattern_stage"] == "TRIGGERED"
+
+
+def test_flat_lows_under_a_flat_top_is_a_range_not_a_triangle():
+    """The RISING lows are the entire content. Without them this is just a
+    resistance level, which AQE already ships as last_pivot_high."""
+    h, l, c, d, v = _bars(_asc_triangle(rise_pct=0.0))
+    assert P.detect_ascending_triangle(h, l, c, d, v)["pattern"] is None
+
+
+def test_falling_lows_are_not_an_ascending_triangle():
+    h, l, c, d, v = _bars(_asc_triangle(rise_pct=-5.0))
+    assert P.detect_ascending_triangle(h, l, c, d, v)["pattern"] is None
+
+
+def test_one_touch_of_the_ceiling_is_not_a_ceiling():
+    h, l, c, d, v = _bars(list(np.linspace(70, 100, 60)) + list(np.linspace(100, 92, 20)))
+    assert P.detect_ascending_triangle(h, l, c, d, v)["pattern"] is None
+
+
+# ═══════════════════════════════════════════════ the three together
+
+def test_every_detector_returns_the_identical_key_set():
+    """The registry contract: adding a pattern changes DETECTORS and nothing
+    downstream. That only holds if the shapes match exactly."""
+    h, l, c, d, v = _bars(_cup())
+    shapes = [fn(h, l, c, d, v) for fn in P.DETECTORS.values()]
+    assert all(set(s) == set(shapes[0]) for s in shapes)
+
+
+def test_detect_all_picks_the_best_fit_when_several_match():
+    h, l, c, d, v = _bars(_double_bottom())
+    hits = {n: fn(h, l, c, d, v) for n, fn in P.DETECTORS.items()}
+    matched = {n: r for n, r in hits.items() if r["pattern"]}
+    best = P.detect_all(h, l, c, d, v)
+    assert best["pattern"] in matched
+    assert best["pattern_fit"] == max(r["pattern_fit"] for r in matched.values())
+
+
+def test_noise_does_not_manufacture_any_of_the_three():
+    """Repeated for the full registry: the looser the shape, the more this
+    matters. An ascending triangle is the easiest of the three to see in noise."""
+    rng = np.random.default_rng(11)
+    hits = {n: 0 for n in P.DETECTORS}
+    for _ in range(40):
+        path = 100 * np.exp(np.cumsum(rng.normal(0, 0.012, 180)))
+        h, l, c, d, v = _bars(path)
+        for n, fn in P.DETECTORS.items():
+            if fn(h, l, c, d, v)["pattern"]:
+                hits[n] += 1
+    assert all(v <= 10 for v in hits.values()), hits
+
+
+def test_the_lens_carries_no_probability_by_design():
+    """PM ruling: a visual flag, not a signal. A hit-rate field reappearing
+    here would be a quiet re-litigation of that call."""
+    h, l, c, d, v = _bars(_cup())
+    r = P.detect_all(h, l, c, d, v)
+    assert not any(k in r for k in ("pattern_hit_rate", "pattern_n",
+                                    "pattern_status", "pattern_p"))
