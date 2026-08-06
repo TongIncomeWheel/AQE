@@ -88,6 +88,12 @@ def compute_lens_consensus(records: list[dict]) -> list[dict]:
         ss = rec.get("structure_shift")
         if ss == "BULLISH_BOS":
             lens["structure"] = STRONG
+        elif ss == "ABOVE_STRUCTURE":
+            # Above the last pivot but well past it — the break is old news.
+            # Still constructive (price IS above structure), so it reads OK
+            # rather than STRONG: the lens should not keep paying a name for a
+            # break it made three weeks ago. Split out 2026-08-06.
+            lens["structure"] = OK
         elif ss == "BEARISH_CHOCH":
             lens["structure"] = WARN
         elif ss == "RANGE":

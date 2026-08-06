@@ -51,6 +51,12 @@ EXPORT_FILENAME = "aqe_daily_export.json"
 # any blank, and overwrites the one file each run. Version stamps the run date.
 SECTOR_MAP_FILENAME = SECTOR_MAP_DRIVE_FILENAME
 
+# How far above the broken pivot a name may sit and still count as a BREAK
+# rather than a name that broke out weeks ago and kept going. 2% chosen off the
+# 2026-08-06 board: as-is 90 of the 136 alert-universe names carried the flag;
+# at 2% it is 20. See the structure_shift block in _v21_record_fields.
+BOS_MAX_EXTENSION_PCT = 2.0
+
 # Self-describing schema legend shipped at the top of every export so the AIC
 # reads each level correctly and never confuses a STOP with a TARGET with an
 # ENTRY. Direction convention (LONG setups): STOPS sit BELOW entry, TARGETS sit
@@ -121,18 +127,30 @@ _FIELD_GLOSSARY = {
                "stop_vol_validated (present when the stop is swing-based). Data only — the "
                "3 gates are unchanged.",
     "structure_shift": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a "
-                       "gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED "
-                       "pivot high (break of structure — trend continuation/ignition); "
-                       "BEARISH_CHOCH = close broke BELOW the up-swing's anchor low "
+                       "gate): BULLISH_BOS = COB close is above the last CONFIRMED pivot "
+                       "high AND still within 2% of it — a break that JUST HAPPENED; "
+                       "ABOVE_STRUCTURE = above that pivot but further than 2% past it — "
+                       "it broke out earlier and kept running, which is a state, not an "
+                       "event; BEARISH_CHOCH = close broke BELOW the up-swing's anchor low "
                        "(character change — the up-structure failed); RANGE = inside the "
-                       "swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling "
-                       "FIX_CONFIRMED_PIVOT: the bullish test previously compared against the "
-                       "current swing's window-max high, which always includes today's own "
-                       "bar — making BULLISH_BOS mathematically unreachable. Now compares "
-                       "against the nearest confirmed pivot high instead.)",
+                       "swing. Null when no swing is detected. (Two fixes. 2026-07-16: the "
+                       "bullish test compared against the current swing's window-max high, "
+                       "which includes today's own bar, making BULLISH_BOS unreachable. "
+                       "2026-08-06: with that fixed the flag went the other way — 149 of 328 "
+                       "names on the 2026-08-06 export, median price 4.6% above the level, "
+                       "MSFT +20%, PAY +80%. It was answering 'is price above an old high', "
+                       "so the freshness band was added and the extended case got its own "
+                       "label instead of being hidden inside BULLISH_BOS.)",
     "structure_shift_ref": "The level the shift is measured against (USD): the broken "
-                           "confirmed pivot high for BULLISH_BOS, the broken swing anchor "
-                           "low for BEARISH_CHOCH; null for RANGE.",
+                           "confirmed pivot high for BULLISH_BOS/ABOVE_STRUCTURE, the "
+                           "broken swing anchor low for BEARISH_CHOCH; null for RANGE.",
+    "last_pivot_high": "{price, date} — the MOST RECENT confirmed fractal pivot high, "
+                       "wherever it sits relative to today's close. The ceiling the name "
+                       "last had to clear. This is what structure_shift is measured "
+                       "against, and what the live NEAR_BREAKOUT alert watches price climb "
+                       "into. Shipped from 2026-08-06: it was computed and discarded "
+                       "before, so NEAR_BREAKOUT read a key that was not on any row and "
+                       "could never fire.",
     "mp_accel": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum "
                 "z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is "
                 "building; negative = rolling over. Flags inflection BEFORE the level/"
@@ -451,6 +469,7 @@ _FIELD_SCHEMA = {
     # Structure shift (BOS/CHoCH) — data only, never a gate
     "structure_shift":         _fs("signal", "label", "n/a"),
     "structure_shift_ref":     _fs("reference", "usd", "n/a"),
+    "last_pivot_high":         _fs("reference", "usd", "n/a"),
     # Momentum acceleration + divergence (TV-analysis Phases 2+3 — context only)
     "mp_accel":                _fs("signal", "decimal", "n/a"),
     "mp_accel_state":          _fs("signal", "label", "n/a"),
@@ -802,6 +821,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "held": False,
         # Structure shift (BOS/CHoCH) — data only, never a gate
         "structure_shift": None, "structure_shift_ref": None,
+        "last_pivot_high": None,
         # Health score (hold decision, held_positions only)
         "hl_score": None, "hl_state": None,
         # Enrichment Spec v2.0 — RS leadership + bracket-quality flags. setup_state
@@ -940,9 +960,28 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         _ssl = _fib.get("swing_low")
         _lph = d.get("last_pivot_high") or {}
         _confirmed_high = _lph.get("price")
+        # The pivot itself now ships on the row (2026-08-06). It was computed
+        # here, used to set the flag, and thrown away — so the alert engine's
+        # NEAR_BREAKOUT rule, which reads last_pivot_high.price, could never
+        # fire on ANY name. 0 of 328 rows carried it on the 2026-08-06 export.
+        fields["last_pivot_high"] = ({"price": _confirmed_high,
+                                      "date": _lph.get("date")}
+                                     if _is_num(_confirmed_high) else None)
         if _is_num(_entry_px) and _is_num(_ssl):
             if _is_num(_confirmed_high) and _entry_px > _confirmed_high:
-                fields["structure_shift"] = "BULLISH_BOS"
+                # A BREAK is an EVENT, not a standing state. Above the pivot
+                # and STILL NEAR IT = it just happened. Above it and 20% gone =
+                # it happened weeks ago and the flag never switched off.
+                # 2026-08-06 export: 149 of 328 names flagged BULLISH_BOS,
+                # median price 4.6% above the level, MSFT +20%, PAY +80% — the
+                # field was answering "is price above an old high", which is
+                # not what its name promises and not something to alert on.
+                # Rounded so the boundary is decided by the number, not by
+                # float dust: 118 * 1.02 evaluates to 2.0000000000000018%.
+                _ext = round(100.0 * (_entry_px / _confirmed_high - 1.0), 4)
+                fields["structure_shift"] = (
+                    "BULLISH_BOS" if _ext <= BOS_MAX_EXTENSION_PCT
+                    else "ABOVE_STRUCTURE")
                 fields["structure_shift_ref"] = _confirmed_high
             elif _entry_px < _ssl:
                 fields["structure_shift"] = "BEARISH_CHOCH"

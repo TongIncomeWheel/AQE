@@ -30,7 +30,7 @@ FIELD_ENUMS = {
     "choch_state": ["BULLISH", "BEARISH", "NONE"],
     "div_state": ["BULLISH", "BEARISH", "MIXED", "NONE"],
     "pin_bar_state": ["NONE", "BULLISH_PIN", "BEARISH_PIN"],          # pin_bar.py
-    "structure_shift": ["RANGE", "BULLISH_BOS", "BEARISH_CHOCH"],      # lens_consensus.py — BULLISH_BOS IS valid (retires the tripwire waiver)
+    "structure_shift": ["RANGE", "BULLISH_BOS", "ABOVE_STRUCTURE", "BEARISH_CHOCH"],  # ABOVE_STRUCTURE added 2026-08-06 (broke out earlier and kept running)
     "elder_pattern": ["ACCELERATION", "ACCUMULATION_BASE", "CORRECTION_REENTRY", "INTERRUPTED", "SUSTAINED"],
     "gics_gate": ["PASS", "WATCH", "CAUTION", "BLOCKED"],              # srm.sector_entry_gate
     "rs_leadership": ["LEADER", "IN-LINE", "LAGGARD"],

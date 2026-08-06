@@ -96,8 +96,8 @@ def test_bos_fires_on_a_real_breakout_through_the_level_functions():
     code actually reaches a state where close exceeds the reference level.
     """
     highs, lows, dates = _breakout_bars()
-    d = levels_for_ticker(close=21.5, atr14=1.0, highs=highs, lows=lows,
-                          dates=dates)
+    d = levels_for_ticker(close=20.2, atr14=1.0, highs=highs, lows=lows,
+                          dates=dates)          # 1% through — a FRESH break
     assert d is not None
     assert d["last_pivot_high"]["price"] == 20.0
     fields = _v21_record_fields("TEST", d, {}, {}, {})
@@ -151,8 +151,89 @@ def test_null_when_no_swing_detected():
 
 def test_bos_beats_choch_when_both_could_read():
     """Above the pivot AND above the swing low — the bullish read wins."""
-    d = _levels(entry=125.0, swing_low=90.0, swing_high=120.0,
+    d = _levels(entry=119.0, swing_low=90.0, swing_high=120.0,
                 last_pivot_high={"price": 118.0, "date": "2026-07-01",
                                  "bars_ago": 9})
     fields = _v21_record_fields("TEST", d, {}, {}, {})
     assert fields["structure_shift"] == "BULLISH_BOS"
+
+
+# ------------------------------------ a BREAK is an event, not a standing state
+
+def test_a_name_that_broke_out_weeks_ago_is_not_still_breaking_out():
+    """Attempt 3's defect, found on the 2026-08-06 live export.
+
+    Once the unreachability bugs were fixed the flag went the other way: 149 of
+    328 names carried BULLISH_BOS, median price 4.6% ABOVE the level — MSFT
+    +20%, PAY +80%. Nothing about MSFT 20% above an old pivot is a break of
+    structure; the flag simply never switched off. 90 of the 136 alert-universe
+    names would have gone into one digest.
+    """
+    d = _levels(entry=142.0, swing_low=90.0, swing_high=120.0,     # +20% through
+                last_pivot_high={"price": 118.0, "date": "2026-07-01",
+                                 "bars_ago": 9})
+    fields = _v21_record_fields("TEST", d, {}, {}, {})
+    assert fields["structure_shift"] == "ABOVE_STRUCTURE"
+    assert fields["structure_shift_ref"] == 118.0      # the level is still named
+
+
+def test_the_freshness_band_is_where_the_label_changes():
+    # 0.0 is deliberately absent: sitting exactly ON the level is not through
+    # it, and the rule is strictly-above. That case reads RANGE, tested below.
+    for ext_pct, expected in ((0.1, "BULLISH_BOS"), (1.9, "BULLISH_BOS"),
+                              (2.0, "BULLISH_BOS"), (2.1, "ABOVE_STRUCTURE"),
+                              (10.0, "ABOVE_STRUCTURE")):
+        d = _levels(entry=118.0 * (1 + ext_pct / 100), swing_low=90.0,
+                    swing_high=120.0,
+                    last_pivot_high={"price": 118.0, "date": "2026-07-01",
+                                     "bars_ago": 9})
+        got = _v21_record_fields("TEST", d, {}, {}, {})["structure_shift"]
+        assert got == expected, (ext_pct, got)
+
+
+def test_above_structure_does_not_read_as_a_strong_structure_lens():
+    """The lens should not keep paying a name for a break it made in June."""
+    from src.engines.lens_consensus import compute_lens_consensus
+    rows = [{"ticker": "FRESH", "structure_shift": "BULLISH_BOS"},
+            {"ticker": "OLD", "structure_shift": "ABOVE_STRUCTURE"}]
+    out = {r["ticker"]: r for r in compute_lens_consensus(rows)}
+    assert out["FRESH"]["lens"]["structure"] != out["OLD"]["lens"]["structure"]
+
+
+# ------------------------------------------- the pivot itself ships on the row
+
+def test_the_pivot_level_is_exported_not_just_used_and_discarded():
+    """It was computed, used to set the flag, then dropped.
+
+    The live NEAR_BREAKOUT alert reads record["last_pivot_high"]["price"], so
+    with the key absent from every row that alert could not fire on ANY name —
+    0 of 328 rows carried it on the 2026-08-06 export, and no test noticed
+    because every alert test hand-fed the key it was testing.
+    """
+    highs, lows, dates = _breakout_bars()
+    d = levels_for_ticker(close=18.0, atr14=1.0, highs=highs, lows=lows,
+                          dates=dates)
+    fields = _v21_record_fields("TEST", d, {}, {}, {})
+    assert fields["last_pivot_high"]["price"] == 20.0
+    assert "date" in fields["last_pivot_high"]
+
+
+def test_the_key_is_present_even_when_there_is_no_pivot():
+    d = _levels(entry=100.0, swing_low=90.0, swing_high=120.0,
+                last_pivot_high=None)
+    fields = _v21_record_fields("TEST", d, {}, {}, {})
+    assert "last_pivot_high" in fields and fields["last_pivot_high"] is None
+
+
+def test_near_breakout_can_fire_on_a_record_the_pipeline_actually_builds():
+    """End-to-end: the export row feeds the alert rule, no hand-built dict."""
+    from src.alerts import engine as E
+    highs, lows, dates = _breakout_bars()
+    d = levels_for_ticker(close=19.7, atr14=1.0, highs=highs, lows=lows,
+                          dates=dates)                     # 1.5% under 20.0
+    rec = _v21_record_fields("TEST", d, {}, {}, {})
+    rec["entry"] = 19.7
+    fired = {t["level"] for t in
+             E.evaluate("TEST", "daily_list", False, rec,
+                        {"price": 19.7, "prev_close": 19.6})}
+    assert "NEAR_BREAKOUT" in fired
