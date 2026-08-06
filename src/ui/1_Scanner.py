@@ -1895,6 +1895,16 @@ if _ll_recs:
                 ("CHoCH date", "choch_date"),
                 ("Sector RRG", "sector_rrg_quadrant"),
                 ("Mover subtype", "mover_subtype")])
+    # Chart-pattern cuts, on their own row so twelve pick-lists do not sit in
+    # one squeezed strip. Pattern carries the combined "Bullish · CUP_HANDLE"
+    # label, so choosing a shape picks its direction with it. Alt is the
+    # comma-separated runner-up list and is matched by MEMBERSHIP — picking
+    # DOUBLE_TOP must find a row reading "DOUBLE_TOP, RISING_WEDGE".
+    _ll_df = facet_filters(
+        _ll_df, key="ll_table2",
+        facets=[("Pattern", "pattern"),
+                ("Pattern stage", "pattern_stage"),
+                ("Also reads as", "pattern_alt", "multi")])
     table_with_copy(_ll_df, key="ll_table")
 
     # ---- QS cards, rendered from the export ALONE (src/engines/qs_card.py).

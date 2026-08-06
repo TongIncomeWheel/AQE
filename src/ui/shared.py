@@ -149,11 +149,17 @@ def facet_filters(df, *, key: str, facets: list, hide: list | None = None):
     other question — "show me only the DEPLOY sectors that are also LEADING" —
     which on a 35-row grid is the difference between reading it and scanning it.
 
-    `facets` is a list of (label, column) pairs. A column may be HIDDEN (name
-    starting with "_"): the RRG phrase shown in the table is prose like
-    "Leading · Deepening in", which is useless to pick from, so the row carries
-    `_rrg_q` = LEADING and the filter offers that instead. `hide` names extra
-    helper columns to drop before display.
+    `facets` is a list of (label, column) pairs, or (label, column, "multi") for
+    a column holding a COMMA-SEPARATED LIST rather than one value. pattern_alt
+    is "DOUBLE_TOP, RISING_WEDGE" — exact matching there would offer every
+    COMBINATION as its own option and then fail to match a row that contains the
+    pick alongside something else. Multi columns are split for the options and
+    matched by membership.
+
+    A column may be HIDDEN (name starting with "_"): the RRG phrase shown in the
+    table is prose like "Leading · Deepening in", which is useless to pick from,
+    so the row carries `_rrg_q` = LEADING and the filter offers that instead.
+    `hide` names extra helper columns to drop before display.
 
     Nothing selected means no filter on that column — the default view is the
     whole table, not an empty one.
@@ -164,12 +170,16 @@ def facet_filters(df, *, key: str, facets: list, hide: list | None = None):
         return df
     view = df
     cols = st.columns(len(facets))
-    for (label, col), slot in zip(facets, cols):
+    for spec, slot in zip(facets, cols):
+        label, col = spec[0], spec[1]
+        multi = len(spec) > 2 and spec[2] == "multi"
         if col not in df.columns:
             continue
-        opts = sorted({str(v) for v in df[col].dropna().tolist() if str(v).strip()
-                       and str(v) != "—"},
-                      key=lambda v: (_FACET_ORDER.get(v.upper(), 99), v))
+        raw = [str(v) for v in df[col].dropna().tolist()
+               if str(v).strip() and str(v) != "—"]
+        vals = ({p.strip() for v in raw for p in v.split(",") if p.strip()}
+                if multi else set(raw))
+        opts = sorted(vals, key=lambda v: (_FACET_ORDER.get(v.upper(), 99), v))
         if not opts:
             continue
         with slot:
@@ -177,10 +187,15 @@ def facet_filters(df, *, key: str, facets: list, hide: list | None = None):
                                     key=f"{key}_facet_{col}",
                                     placeholder=f"All {label.lower()}")
         if picked:
-            view = view[view[col].astype(str).isin(picked)]
+            if multi:
+                want = set(picked)
+                view = view[view[col].fillna("").astype(str).apply(
+                    lambda v: bool(want & {p.strip() for p in v.split(",")}))]
+            else:
+                view = view[view[col].astype(str).isin(picked)]
     if len(view) != len(df):
         st.caption(f"{len(view)} / {len(df)} rows")
-    drop = [c for c in (list(hide or []) + [c for _, c in facets])
+    drop = [c for c in (list(hide or []) + [f[1] for f in facets])
             if c.startswith("_") and c in view.columns]
     return view.drop(columns=drop) if drop else view
 
