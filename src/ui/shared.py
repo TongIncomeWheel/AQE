@@ -68,12 +68,33 @@ def _apply_legacy_aliases(export: dict) -> dict:
     return export
 
 
-def load_export() -> dict | None:
-    """Load `output/aqe_daily_export.json` (the canonical cloud-mode source)."""
-    if not EXPORT_JSON.exists():
+def load_export(allow_drive: bool = False) -> dict | None:
+    """Load `output/aqe_daily_export.json` (the canonical cloud-mode source).
+
+    `allow_drive` adds a Drive fallback. OFF by default because the AQE Scanner
+    calls this on every render and a REST round-trip per render is a bad trade.
+    Pages that read the export as CONTEXT — the Option Scanner joining ATR and
+    sector onto a CSP list — pass True behind their own cache: the container's
+    output/ is wiped by every deploy and sleep, so local-only means those
+    columns silently vanish on a fresh container.
+    """
+    if EXPORT_JSON.exists():
+        try:
+            with open(EXPORT_JSON) as f:
+                return _apply_legacy_aliases(json.load(f))
+        except Exception:  # noqa: BLE001
+            pass
+    if not allow_drive:
         return None
-    with open(EXPORT_JSON) as f:
-        return _apply_legacy_aliases(json.load(f))
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            txt = gdrive_uploader.download_text(EXPORT_JSON.name)
+            if txt:
+                return _apply_legacy_aliases(json.loads(txt))
+    except Exception:  # noqa: BLE001
+        pass
+    return None
 
 
 def percent_column_config(df) -> dict:

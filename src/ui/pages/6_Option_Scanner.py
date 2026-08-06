@@ -156,7 +156,7 @@ df = pd.DataFrame(rows)
 def _aqe_context() -> dict:
     try:
         from src.ui.shared import load_export
-        ex = load_export() or {}
+        ex = load_export(allow_drive=True) or {}
     except Exception:  # noqa: BLE001
         return {}
     out = {}
@@ -175,11 +175,22 @@ def _aqe_context() -> dict:
 
 
 _ctx = _aqe_context()
-if _ctx:
-    for _col, _key in (("atr_14d", "atr_14d"), ("sector", "sector"),
-                       ("sector_state", "sector_state"), ("sector_gate", "sector_gate"),
-                       ("theme", "theme"), ("theme_grade", "theme_grade")):
-        df[_col] = df["ticker"].map(lambda t, k=_key: (_ctx.get(t) or {}).get(k))
+# THE COLUMNS ARE ALWAYS CREATED, even when the context is empty. Building them
+# only `if _ctx` meant that on a fresh container — output/ wiped by a deploy, or
+# the daily export mid-write — the ATR, sector and theme columns simply WERE NOT
+# THERE, and a column that vanishes without a word is the silent-empty failure
+# this codebase forbids. Blank cells plus a warning is the honest version.
+for _col, _key in (("atr_14d", "atr_14d"), ("sector", "sector"),
+                   ("sector_state", "sector_state"), ("sector_gate", "sector_gate"),
+                   ("theme", "theme"), ("theme_grade", "theme_grade")):
+    df[_col] = df["ticker"].map(lambda t, k=_key: (_ctx.get(t) or {}).get(k))
+if not _ctx:
+    st.warning(
+        "**AQE context unavailable** — atr_14d, dist_ATRs, sector and theme are "
+        "blank on every row. The columns are still here; the daily export they "
+        "join from could not be read locally or from Drive (a fresh container "
+        "before the first pipeline run, or a run in progress). Re-check after "
+        "the AQE Scanner's daily pipeline completes.")
 
 # ── Market cap, joined from the universe build ──────────────────────────────
 # Harvested from the SAME FMP screener response that decides membership, so it
@@ -190,17 +201,21 @@ try:
     _mcap = load_universe_mcap()
 except Exception:  # noqa: BLE001
     _mcap = {}
-if _mcap:
-    df["mcap_b"] = df["ticker"].map(lambda t: (_mcap.get(t) or 0) / 1e9 or None)
+df["mcap_b"] = df["ticker"].map(lambda t: ((_mcap.get(t) or 0) / 1e9) or None)
+if not _mcap:
+    st.info("**Market cap not yet available** — the column is present but empty. "
+            "It is harvested during the universe build (06:00 SGT) and first "
+            "populates on the next one.")
 
 # Distance to the strike measured in ATRs. THE point of this column: a 6% gap
 # on a quiet $600 name and a 6% gap on a $20 mover are not the same trade, and
 # a percentage cannot tell them apart. One ATR = roughly a normal day's range,
 # so ">= 1 ATR away" reads as "the strike is beyond a typical day's move".
-if "atr_14d" in df.columns and "spot" in df.columns:
+if "spot" in df.columns:
     _gap = pd.to_numeric(df["spot"], errors="coerce") - pd.to_numeric(df["strike"],
                                                                      errors="coerce")
-    df["atr_strikes"] = (_gap / pd.to_numeric(df["atr_14d"], errors="coerce")).round(2)
+    df["atr_strikes"] = (_gap / pd.to_numeric(df.get("atr_14d"),
+                                              errors="coerce")).round(2)
 
 # ── Filters (sidebar — TYPED, so an exact number can be given) ──────────────
 # Kept in the sidebar where the PM expects them; the sliders became number
