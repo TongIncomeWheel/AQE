@@ -1359,6 +1359,7 @@ _EXPORT_COL_ORDER = [
     "beta_30d", "beta_60d", "day_vol", "rs_spy_20d", "sma_distance_pct",
     "pattern", "pattern_direction", "pattern_stage", "pattern_trigger",
     "pattern_invalidation", "pattern_fit", "pattern_days", "pattern_alt",
+    "candle_d", "candle_d_dir", "candle_w", "candle_w_dir",
     "vol_30d_ann_pct", "knn_prob_pct",
     "entry", "atr_14d",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)

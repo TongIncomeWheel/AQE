@@ -155,6 +155,29 @@ _FIELD_GLOSSARY = {
                "BULLISH: CUP_HANDLE, DOUBLE_BOTTOM, ASC_TRIANGLE, FALLING_WEDGE, "
                "INV_HEAD_SHOULDERS. BEARISH: DOUBLE_TOP, DESC_TRIANGLE, "
                "RISING_WEDGE, HEAD_SHOULDERS.",
+    "candle_d": "CANDLESTICK LENS, DAILY — the shape of the LAST completed daily bar, "
+                "or null for an ordinary bar. A visual flag like `pattern`: no "
+                "probability, no gate. Three-bar reads beat two-bar reads beat "
+                "single-candle reads (widest context wins). Bullish: HAMMER, "
+                "BULLISH_ENGULFING, PIERCING, BULLISH_HARAMI, MORNING_STAR, "
+                "THREE_WHITE_SOLDIERS, MARUBOZU_BULL. Bearish: SHOOTING_STAR, "
+                "BEARISH_ENGULFING, DARK_CLOUD, BEARISH_HARAMI, EVENING_STAR, "
+                "THREE_BLACK_CROWS, MARUBOZU_BEAR. Neutral: DOJI. NOTE: HAMMER and "
+                "SHOOTING_STAR are the SAME geometry as pin_bar_state and are computed "
+                "by the same function — one implementation seen from two places, not a "
+                "second wick rule that could drift from it.",
+    "candle_d_dir": "BULLISH / BEARISH / NEUTRAL for candle_d. DOJI is NEUTRAL on "
+                    "purpose: open and close level says indecision, and calling that "
+                    "directional would invent a read the bar does not contain.",
+    "candle_w": "CANDLESTICK LENS, WEEKLY — the same read on the last completed WEEKLY "
+                "bar, from panel_weekly. Kept as its own column and NEVER merged with "
+                "candle_d: a weekly engulfing is five sessions of agreement, a daily one "
+                "is a single session, and collapsing them would destroy the difference "
+                "that makes the weekly worth reading. Null when the weekly panel is "
+                "absent — which is a data gap, not an ordinary bar.",
+    "candle_w_dir": "BULLISH / BEARISH / NEUTRAL for candle_w.",
+    "candle_w_date": "Date of the weekly bar candle_w read — so a stale weekly panel is "
+                     "visible rather than silently reported as this week.",
     "pattern_direction": "BULLISH or BEARISH. READ THIS BEFORE pattern_trigger: on a "
                          "bearish shape the trigger is broken DOWNWARD and the "
                          "invalidation sits ABOVE it, so 'trigger = buy above' is exactly "
@@ -519,6 +542,11 @@ _FIELD_SCHEMA = {
     "pattern":                 _fs("signal", "label", "n/a"),
     "pattern_direction":       _fs("signal", "label", "n/a"),
     "pattern_alt":             _fs("signal", "label", "n/a"),
+    "candle_d":                _fs("signal", "label", "n/a"),
+    "candle_d_dir":            _fs("signal", "label", "n/a"),
+    "candle_w":                _fs("signal", "label", "n/a"),
+    "candle_w_dir":            _fs("signal", "label", "n/a"),
+    "candle_w_date":           _fs("signal", "date", "n/a"),
     "pattern_stage":           _fs("signal", "label", "n/a"),
     "pattern_trigger":         _fs("reference", "usd", "n/a"),
     "pattern_invalidation":    _fs("reference", "usd", "n/a"),
@@ -708,7 +736,8 @@ def _compute_v21_lookups(sm: dict) -> dict:
     {ticker: float} and corr is {ticker: (corr, class)}.
     """
     out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
-           "vol30": {}, "beta252": {}, "pattern": {}, "spy_roc_20d": None}
+           "vol30": {}, "beta252": {}, "pattern": {}, "candle": {},
+           "spy_roc_20d": None}
     try:
         import numpy as np
         import pandas as pd
@@ -717,8 +746,25 @@ def _compute_v21_lookups(sm: dict) -> dict:
         if not PANEL_DAILY.exists():
             return out
         p = pd.read_parquet(PANEL_DAILY,
-                            columns=["date", "ticker", "high", "low",
+                            columns=["date", "ticker", "open", "high", "low",
                                      "close", "volume"])
+        # WEEKLY bars for the second candlestick timeframe. Optional by design:
+        # a missing weekly panel leaves candle_w null rather than failing the
+        # export, and the daily read is unaffected.
+        try:
+            from src.data.paths import PANEL_WEEKLY
+            wk = (pd.read_parquet(PANEL_WEEKLY,
+                                  columns=["date", "ticker", "open", "high",
+                                           "low", "close"])
+                  if PANEL_WEEKLY.exists() else None)
+            if wk is not None:
+                wk["date"] = pd.to_datetime(wk["date"]).dt.normalize()
+                wk = wk.sort_values(["ticker", "date"])
+                wk_by = dict(tuple(wk.groupby("ticker", sort=False)))
+            else:
+                wk_by = {}
+        except Exception:  # noqa: BLE001
+            wk_by = {}
         p["date"] = pd.to_datetime(p["date"]).dt.normalize()
         p = p.sort_values(["ticker", "date"])
 
@@ -768,6 +814,33 @@ def _compute_v21_lookups(sm: dict) -> dict:
                     g["high"].to_numpy(dtype=float),
                     g["low"].to_numpy(dtype=float), cl,
                     g["date"].to_numpy(), vol)
+            except Exception:  # noqa: BLE001 — a lens never blocks the export
+                pass
+            # Candlestick lens — the last completed bar's shape, DAILY and
+            # WEEKLY as separate reads. A weekly engulfing is five sessions of
+            # agreement and a daily one is a single session; merging them would
+            # destroy the difference that makes the weekly worth reading.
+            try:
+                from src.engines.candles import detect_candle
+                _cd = detect_candle(g["open"].to_numpy(dtype=float),
+                                    g["high"].to_numpy(dtype=float),
+                                    g["low"].to_numpy(dtype=float), cl,
+                                    g["date"].to_numpy())
+                _cw = {}
+                _wg = wk_by.get(tk)
+                if _wg is not None and len(_wg):
+                    _cw = detect_candle(_wg["open"].to_numpy(dtype=float),
+                                        _wg["high"].to_numpy(dtype=float),
+                                        _wg["low"].to_numpy(dtype=float),
+                                        _wg["close"].to_numpy(dtype=float),
+                                        _wg["date"].to_numpy())
+                out["candle"][tk] = {
+                    "candle_d": _cd.get("candle"),
+                    "candle_d_dir": _cd.get("candle_direction"),
+                    "candle_w": _cw.get("candle"),
+                    "candle_w_dir": _cw.get("candle_direction"),
+                    "candle_w_date": _cw.get("candle_date"),
+                }
             except Exception:  # noqa: BLE001 — a lens never blocks the export
                 pass
             # sma_distance_pct vs 50D SMA
@@ -895,6 +968,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "pattern_trigger": None, "pattern_invalidation": None,
         "pattern_days": None, "pattern_fit": None, "pattern_start": None,
         "pattern_alt": None,
+        "candle_d": None, "candle_d_dir": None,
+        "candle_w": None, "candle_w_dir": None, "candle_w_date": None,
         # Health score (hold decision, held_positions only)
         "hl_score": None, "hl_state": None,
         # Enrichment Spec v2.0 — RS leadership + bracket-quality flags. setup_state
@@ -966,6 +1041,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_rrg_quadrant"] = primary["rrg_quadrant"]
             fields["thematic_rrg_direction"] = primary["rrg_direction"]
         fields["day_vol"] = (lk.get("day_vol") or {}).get(tk)
+        fields.update((lk.get("candle") or {}).get(tk) or {})
         _pat = (lk.get("pattern") or {}).get(tk) or {}
         for _k in ("pattern", "pattern_direction", "pattern_stage",
                    "pattern_trigger", "pattern_invalidation", "pattern_days",
