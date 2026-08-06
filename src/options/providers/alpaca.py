@@ -185,12 +185,44 @@ def fetch_put_chain(underlying: str, spot: float, today: date = None,
     return rows
 
 
+# AQE carries FMP-style class tickers (BRK-B); Alpaca wants BRK.B. One symbol
+# in the wrong dialect 400s the WHOLE chunk, so the 2026-08-06 sweep died on
+# ~100 names because of one of them.
+def to_alpaca_symbol(t: str) -> str:
+    return (t or "").strip().upper().replace("-", ".")
+
+
 def fetch_spots(symbols: list[str], http_get=None) -> dict:
-    """Batched last prices for many symbols (chunked stock-snapshot calls)."""
+    """Batched last prices for many symbols (chunked stock-snapshot calls).
+
+    A 400 on a chunk is NOT fatal and never silently empty. Alpaca rejects the
+    entire request if one symbol in it is unknown to them, so a chunk that
+    fails is bisected down to the individual name and only that name is
+    dropped. The alternative — letting the exception out — is what killed the
+    whole universe sweep on one bad ticker.
+    """
     getter = http_get or _http_get
-    spots = {}
-    for i in range(0, len(symbols), C.ALPACA_SPOT_CHUNK):
-        chunk = symbols[i:i + C.ALPACA_SPOT_CHUNK]
-        resp = getter("/v2/stocks/snapshots", {"symbols": ",".join(chunk)})
-        spots.update(parse_spots(resp))
+    spots: dict = {}
+    dialect = {to_alpaca_symbol(t): t for t in symbols}
+
+    def _pull(chunk: list[str]) -> None:
+        if not chunk:
+            return
+        try:
+            resp = getter("/v2/stocks/snapshots", {"symbols": ",".join(chunk)})
+        except Exception as exc:  # noqa: BLE001
+            if len(chunk) == 1:
+                print(f"[alpaca] spot unavailable for {chunk[0]}: {exc}")
+                return
+            mid = len(chunk) // 2
+            _pull(chunk[:mid])
+            _pull(chunk[mid:])
+            return
+        # Map back to the ticker AQE knows the name by.
+        for k, v in parse_spots(resp).items():
+            spots[dialect.get(k, k)] = v
+
+    alp = list(dialect)
+    for i in range(0, len(alp), C.ALPACA_SPOT_CHUNK):
+        _pull(alp[i:i + C.ALPACA_SPOT_CHUNK])
     return spots

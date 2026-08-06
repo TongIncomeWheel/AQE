@@ -35,6 +35,36 @@ from pathlib import Path
 from src.data.paths import DATA_DIR, PROJECT_ROOT
 
 DEFAULT_UNIVERSE_FILE = DATA_DIR / "universe.txt"
+# Market cap per member, harvested from the SAME screener response that builds
+# the universe (see build_universe). A lookup table, never a filter: membership
+# is decided by the $2B screen, and this only lets a reader sort and slice by
+# size afterwards.
+UNIVERSE_MCAP_FILE = DATA_DIR / "universe_mcap.json"
+
+
+def _write_universe_mcap(mcap_by_ticker: dict) -> None:
+    """Best-effort — a missing size table must never fail a universe build."""
+    try:
+        import json as _json
+        UNIVERSE_MCAP_FILE.parent.mkdir(parents=True, exist_ok=True)
+        UNIVERSE_MCAP_FILE.write_text(
+            _json.dumps({"built": str(date.today()), "mcap": mcap_by_ticker},
+                        indent=1), encoding="utf-8")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[universe] mcap table not written ({exc})")
+
+
+def load_universe_mcap() -> dict:
+    """{ticker: market cap in USD}. Empty when the table has not been built —
+    which readers must show as 'unknown', never as a small company."""
+    try:
+        import json as _json
+        if UNIVERSE_MCAP_FILE.exists():
+            d = _json.loads(UNIVERSE_MCAP_FILE.read_text(encoding="utf-8"))
+            return d.get("mcap") or {}
+    except Exception:  # noqa: BLE001
+        pass
+    return {}
 BENCHMARK = "SPY"
 
 # Dedicated Drive folder holding the universe CSV (a subfolder of the AQE
@@ -217,6 +247,20 @@ def build_universe(dry_run: bool = False) -> dict:
     except FMPError as exc:
         return {"status": "error", "reason": f"screener failed: {exc}"}
 
+    # The screener already returns marketCap and we were throwing it away. Kept
+    # now because the Option Scanner needs to filter by size — without it the
+    # top of a yield-sorted CSP list is all high-beta growth (PM: "i need to
+    # scroll a long time"). Zero extra API cost: same response, one more field.
+    mcap_by_tk = {}
+    for r in raw:
+        _sym = (r.get("symbol") or "").upper().strip()
+        _mc = r.get("marketCap") or r.get("marketCapitalization")
+        if _sym and _mc:
+            try:
+                mcap_by_tk[_sym] = float(_mc)
+            except (TypeError, ValueError):
+                pass
+
     candidates = [
         r["symbol"].upper().strip()
         for r in raw
@@ -322,6 +366,7 @@ def build_universe(dry_run: bool = False) -> dict:
     # ── Write + upload ────────────────────────────────────────────────────
     final = sorted(passed)
     _write_universe(final)
+    _write_universe_mcap({t: mcap_by_tk[t] for t in final if t in mcap_by_tk})
 
     csv_text = "Symbol\n" + "\n".join(final) + "\n"
     drive_ok, drive_reason = False, "not attempted"
