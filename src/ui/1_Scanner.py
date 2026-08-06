@@ -1663,11 +1663,14 @@ st.subheader("Daily list")
 active_recipe = sl.get("active_recipe", {})
 st.caption(
     "**ONE list — Longlist, Elder and QS are columns on it, not separate lists.** "
-    "`on_longlist` = SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7 (the sliders default to "
-    "exactly that, and the export/alerts fire off the same set — what you see == what "
-    "fires). `on_elder` = also Elder ≥ 8. `on_qs` = cleared the Quiet Strength engine's "
-    "emit rule. A name can carry any combination; **tick QS alone to see what the new "
-    "lens is adding.** `elder_pattern` + `elder_context` ride on every row. "
+    "`on_longlist` = SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7. `on_elder` = also "
+    "Elder ≥ 8. `on_qs` = cleared the Quiet Strength engine's emit rule. A name can "
+    "carry any combination; **tick QS alone to see what the third lens is adding.** "
+    "The sliders now start at ZERO so this really is the whole list — tick **Longlist** "
+    "for the old default view. (They used to default to the Longlist thresholds, which "
+    "made the Longlist tick a no-op and the QS tick return an empty table, since QS "
+    "exists to find names whose momentum is still asleep.) "
+    "`elder_pattern` + `elder_context` ride on every row. "
     f"Aggregate recipe: {_recipe_label(active_recipe)}."
 )
 _qs_status = _ex.get("qs_status", "not_run")
@@ -1760,12 +1763,30 @@ if _ll_recs is None:
     _ll_recs = _ex.get("longlist") or []
 if _ll_recs:
     f1, f2, f3, f4 = st.columns([1, 1, 1, 1.4])
-    # Slider defaults ARE the longlist definition — same source as the export
-    # membership (src/longlist_screen.py). What you see == what fires.
+    # SLIDERS START AT ZERO, so the default view is the WHOLE daily_list.
+    #
+    # They used to default to the Longlist thresholds (SC 65 / PTRS 60 /
+    # Elder 7), which quietly made the Longlist the default view and left the
+    # list checkboxes below with nothing to do: on the 2026-08-06 board ticking
+    # "Longlist" changed 192 rows into 192 rows, and ticking "QS" produced an
+    # EMPTY table — QS exists to find names whose momentum is still asleep, so
+    # by definition they do not clear SC>=65. Two filters contradicted each
+    # other and the sliders won silently, which reads as a broken checkbox.
+    #
+    # The charter is "ONE list, membership as columns": the list is
+    # daily_list, and Longlist / Elder / QS are lenses ON it. So the lens
+    # checkboxes choose the list and the sliders raise the bar within it —
+    # each control does one thing and every one of them visibly bites.
+    # Tick Longlist for the old default view; the thresholds are unchanged and
+    # still printed in the caption below.
     from src.longlist_screen import MIN_SC, MIN_PTRS, MIN_ELDER
-    _min_sc = f1.slider("Min SC_MOM", 0, 100, MIN_SC, key="sig_sc")
-    _min_ptrs = f2.slider("Min PTRS", 0, 100, MIN_PTRS, key="sig_ptrs")
-    _min_elder = f3.slider("Min Elder", 0, 10, MIN_ELDER, key="sig_elder")
+    _min_sc = f1.slider("Min SC_MOM", 0, 100, 0, key="sig_sc",
+                        help=f"Longlist membership uses {MIN_SC}.")
+    _min_ptrs = f2.slider("Min PTRS", 0, 100, 0, key="sig_ptrs",
+                          help=f"Longlist membership uses {MIN_PTRS}.")
+    _min_elder = f3.slider("Min Elder", 0, 10, 0, key="sig_elder",
+                           help=f"Longlist membership uses {MIN_ELDER}; the "
+                                f"Elder list uses 8.")
     _mp_opts = sorted({(r.get("mp_state") or "").strip()
                        for r in _ll_recs if (r.get("mp_state") or "").strip()})
     _mp_sel = f4.multiselect("MP state", _mp_opts, default=_mp_opts, key="sig_mp")
