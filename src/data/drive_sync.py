@@ -57,6 +57,13 @@ SECTOR_MAP_FILENAME = SECTOR_MAP_DRIVE_FILENAME
 # at 2% it is 20. See the structure_shift block in _v21_record_fields.
 BOS_MAX_EXTENSION_PCT = 2.0
 
+# "Nick Crown" volatility stop: a QUARTER of one 14-day ATR below entry.
+# Published as a REFERENCE level beside the structural bracket, never instead
+# of it — bracket_engine remains the single source of truth for the stop AQE
+# sizes against. Kept as a named constant so the multiple is arguable rather
+# than buried in an expression.
+ATR_QUARTER_STOP_MULT = 0.25
+
 # Self-describing schema legend shipped at the top of every export so the AIC
 # reads each level correctly and never confuses a STOP with a TARGET with an
 # ENTRY. Direction convention (LONG setups): STOPS sit BELOW entry, TARGETS sit
@@ -108,6 +115,19 @@ _FIELD_GLOSSARY = {
                   "is always null. PM ruling 2026-07-29: leave as-is for now; the real "
                   "fix is a proper qty×(live_px−entry) calculation, not a rename.",
     "atr_14d": "14-day Average True Range in USD (the volatility unit).",
+    "atr_quarter_stop": "A VOLATILITY stop: entry minus 0.25 x ATR14 (the \"Nick Crown\" "
+                        "level). A REFERENCE beside the bracket, NOT a replacement — "
+                        "bracket.stop stays the structural stop AQE sizes against, and "
+                        "the two answer different questions. This one asks 'how far is a "
+                        "quarter of a normal day?'; the bracket asks 'where is the level "
+                        "that would say I am wrong?'. Read atr_quarter_risk_pct with it: "
+                        "a quarter-ATR is TIGHT, typically well under 1% on a large-cap, "
+                        "so at a fixed 3% risk budget it implies a very large position "
+                        "and it will be hit often. That is the trade-off the level makes, "
+                        "not a flaw in it — but AQE states it rather than letting the "
+                        "share count imply it.",
+    "atr_quarter_risk_pct": "The atr_quarter_stop distance as a % of entry — i.e. how "
+                            "much room that stop actually gives.",
     "bracket": "THE bracket — the single source of truth for stop + targets (mechanical "
                "DSL/TP is retired). A nested object: {price, price_source (eod_close on the "
                "daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib "
@@ -507,6 +527,8 @@ def _fs(role: str, unit: str, side: str) -> dict:
 _FIELD_SCHEMA = {
     "entry":          _fs("reference", "usd", "at_entry"),
     "atr_14d":        _fs("volatility", "usd", "n/a"),
+    "atr_quarter_stop":     _fs("stop", "usd", "below_entry"),
+    "atr_quarter_risk_pct": _fs("risk_metric", "pct", "n/a"),
     # THE BRACKET — the single object carrying stop + targets + R:R. Mechanical
     # DSL/TP fields are RETIRED. `bracket` is a nested object (see field_glossary);
     # its own stop/target items self-tag role/side.
@@ -985,7 +1007,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "fib_swing_low": None, "fib_swing_high": None,
         "fib_236": None, "fib_382": None, "fib_500": None,
         "fib_618": None, "fib_786": None,
-        "atr_14d": None,
+        "atr_14d": None, "atr_quarter_stop": None, "atr_quarter_risk_pct": None,
         "vol_30d_ann": None, "beta_252d": None,
         # THE BRACKET — single source of truth (bracket_engine). Structural stop +
         # targets, R:R vs structural TP2, ATR-relative. Mechanical DSL/TP retired.
@@ -1107,6 +1129,16 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         _atr14 = d.get("atr14")
         if _is_num(_atr14) and _atr14 > 0:
             fields["atr_14d"] = round(float(_atr14), 2)
+            # Volatility stop at a QUARTER of one ATR below entry (PM: the
+            # "Nick Crown" level). A REFERENCE, not a competing bracket — see
+            # the glossary. Computed here because entry and ATR are both in
+            # hand and it is one multiplication; deriving it downstream would
+            # invite two answers to the same question.
+            _entry_px = d.get("entry")
+            if _is_num(_entry_px) and _entry_px > 0:
+                _q = float(_atr14) * ATR_QUARTER_STOP_MULT
+                fields["atr_quarter_stop"] = round(float(_entry_px) - _q, 2)
+                fields["atr_quarter_risk_pct"] = round(100.0 * _q / float(_entry_px), 2)
         fields["vol_30d_ann"] = (lk.get("vol30") or {}).get(tk)
         fields["beta_252d"] = (lk.get("beta252") or {}).get(tk)
 

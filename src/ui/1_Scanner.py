@@ -1391,7 +1391,7 @@ _EXPORT_COL_ORDER = [
     "pattern_w", "pattern_w_stage", "pattern_w_trigger",
     "candle_d", "candle_w",
     "vol_30d_ann_pct", "knn_prob_pct",
-    "entry", "atr_14d",
+    "entry", "atr_14d", "atr_quarter_stop", "atr_quarter_risk_pct",
     # THE BRACKET — structural stop + targets (mechanical DSL/TP retired)
     "bracket", "held", "rank_explain",
     # Enrichment Spec v2.0
