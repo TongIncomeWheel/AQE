@@ -19,6 +19,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.ui.shared import (
+    facet_filters,
     DATA_DIR,
     ETF_NAMES,
     OUTPUT_DIR,
@@ -992,9 +993,17 @@ if srm_detail:
             "Gate": d.get("entry_gate", "---"),
             "20d%": _fmt(roc20, "+.1f"),
             "5d%": _fmt(roc5, "+.1f"),
+            # Hidden: the RRG PHRASE is prose and useless to pick from, so the
+            # filter offers the quadrant behind it.
+            "_rrg_q": d.get("rrg_quadrant") or "",
         }
         srm_rows.append(row)
     df_srm = pd.DataFrame(srm_rows)
+    df_srm = facet_filters(df_srm, key="srm_table",
+                           facets=[("Grade", "Grade"),
+                                   ("Action state", "Action state"),
+                                   ("RRG", "_rrg_q"),
+                                   ("Macro", "Macro")])
     table_with_copy(df_srm, key="srm_table")
     st.caption(
         "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
@@ -1169,8 +1178,12 @@ if _thematic:
             "20d%": _fmt(_d.get("roc20"), "+.1f"),
             "5d%": _fmt(_d.get("roc5"), "+.1f"),
             "Coverage": _d.get("coverage", "—"),
+            "_rrg_q": _d.get("rrg_quadrant") or "",
         })
-    table_with_copy(pd.DataFrame(_trows), key="thematic_table")
+    _tdf = facet_filters(pd.DataFrame(_trows), key="thematic_table",
+                         facets=[("Grade", "Grade"), ("Why", "Why"),
+                                 ("RRG", "_rrg_q")])
+    table_with_copy(_tdf, key="thematic_table")
     st.caption(
         "**Why** — which rule produced the grade. *trend* = the 20-day road "
         "(roc20 > 5%) · *acceleration* = the 5-day road (≥ +6% in a week, ≥ 5 pts "

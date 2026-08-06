@@ -111,6 +111,59 @@ def percent_column_config(df) -> dict:
     return cfg
 
 
+# Preferred display order for the grade-like columns, so a filter list reads
+# best-to-worst rather than alphabetically (AVOID, DEPLOY, HOLD...).
+_FACET_ORDER = {
+    "DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4, "NO_DATA": 5,
+    "LEADING": 0, "IMPROVING": 1, "WEAKENING": 2, "LAGGING": 3,
+    "TAILWIND": 0, "NEUTRAL": 1, "CAUTION": 2, "HEADWIND": 3,
+    "PASS": 0, "BLOCKED": 4,
+}
+
+
+def facet_filters(df, *, key: str, facets: list, hide: list | None = None):
+    """Column-wise pick-lists above a table, returning the filtered frame.
+
+    The free-text box on `table_with_copy` answers "find X". This answers the
+    other question — "show me only the DEPLOY sectors that are also LEADING" —
+    which on a 35-row grid is the difference between reading it and scanning it.
+
+    `facets` is a list of (label, column) pairs. A column may be HIDDEN (name
+    starting with "_"): the RRG phrase shown in the table is prose like
+    "Leading · Deepening in", which is useless to pick from, so the row carries
+    `_rrg_q` = LEADING and the filter offers that instead. `hide` names extra
+    helper columns to drop before display.
+
+    Nothing selected means no filter on that column — the default view is the
+    whole table, not an empty one.
+    """
+    import streamlit as st
+
+    if df is None or len(df) == 0:
+        return df
+    view = df
+    cols = st.columns(len(facets))
+    for (label, col), slot in zip(facets, cols):
+        if col not in df.columns:
+            continue
+        opts = sorted({str(v) for v in df[col].dropna().tolist() if str(v).strip()
+                       and str(v) != "—"},
+                      key=lambda v: (_FACET_ORDER.get(v.upper(), 99), v))
+        if not opts:
+            continue
+        with slot:
+            picked = st.multiselect(label, opts, default=[],
+                                    key=f"{key}_facet_{col}",
+                                    placeholder=f"All {label.lower()}")
+        if picked:
+            view = view[view[col].astype(str).isin(picked)]
+    if len(view) != len(df):
+        st.caption(f"{len(view)} / {len(df)} rows")
+    drop = [c for c in (list(hide or []) + [c for _, c in facets])
+            if c.startswith("_") and c in view.columns]
+    return view.drop(columns=drop) if drop else view
+
+
 def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
                     caption: str | None = None, filterable: bool = True,
                     column_config: dict | None = None) -> None:
