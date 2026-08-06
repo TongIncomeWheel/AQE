@@ -221,6 +221,66 @@ _from_panel = _panel_atr(_need) if len(_need) else {}
 if _from_panel:
     df["atr_14d"] = df["atr_14d"].fillna(df["ticker"].map(_from_panel))
 
+
+# LAST RESORT: PULL THE BARS (PM: "option scanner should query and pull if there
+# is something that is NOT in the AQE Scanner universe. this helps them stay
+# optimal"). A CSP candidate outside the AQE universe is still a trade, and
+# refusing to price its volatility because another module never scored it is the
+# module's problem, not the trade's.
+#
+# BOUNDED, because FMP Starter has a throttle and a page render must never be
+# able to burn it: capped per render, cached for the session-day, and off by one
+# click. Same client and same ATR function as the pipeline — one implementation,
+# wider reach.
+FMP_ATR_MAX_FETCH = 40
+
+
+@st.cache_data(ttl=43200, show_spinner=False)          # 12h — ATR barely moves
+def _fmp_atr(tickers: tuple) -> dict:
+    from datetime import timedelta
+    try:
+        from src.data.fmp_client import FMPClient
+        from src.engines.utils import atr as _atr
+        cl = FMPClient()
+    except Exception as exc:  # noqa: BLE001
+        return {"_error": f"{type(exc).__name__}: {exc}"}
+    out, today = {}, date.today()
+    for tk in tickers:
+        try:
+            bars = cl.get_daily_bars(tk, from_date=today - timedelta(days=120),
+                                     to_date=today)
+            if bars is None or len(bars) < 20:
+                continue
+            v = _atr(bars["high"].astype(float), bars["low"].astype(float),
+                     bars["close"].astype(float), n=14).iloc[-1]
+            if v == v and v > 0:
+                out[tk] = round(float(v), 2)
+        except Exception:  # noqa: BLE001 — one bad symbol never stops the rest
+            continue
+    return out
+
+
+_still = sorted(df.loc[df["atr_14d"].isna(), "ticker"].unique())
+if _still:
+    _do_fetch = st.checkbox(
+        f"Fetch ATR from FMP for {len(_still)} name(s) outside the AQE universe",
+        value=True, key="opt_fmp_atr",
+        help=f"One daily-bars call each, capped at {FMP_ATR_MAX_FETCH} per "
+             "render and cached 12h, so this cannot burn the FMP throttle.")
+    if _do_fetch:
+        _pulled = _fmp_atr(tuple(_still[:FMP_ATR_MAX_FETCH]))
+        _err = _pulled.pop("_error", None)
+        if _err:
+            st.warning(f"FMP unavailable ({_err}) — those rows stay blank.")
+        elif _pulled:
+            df["atr_14d"] = df["atr_14d"].fillna(df["ticker"].map(_pulled))
+            st.caption(f"Pulled ATR14 from FMP for {len(_pulled)} name(s) not in "
+                       "the AQE daily list or the local panel.")
+        if len(_still) > FMP_ATR_MAX_FETCH:
+            st.caption(f"{len(_still) - FMP_ATR_MAX_FETCH} more still blank — the "
+                       f"per-render cap is {FMP_ATR_MAX_FETCH}. Re-render to "
+                       "continue; results are cached.")
+
 if not _ctx:
     st.warning(
         "**AQE context unavailable** — atr_14d, dist_ATRs, sector and theme are "
@@ -368,10 +428,12 @@ if "atr_14d" in disp.columns:
         st.info(
             f"**No ATR for {len(_blank_atr)} of {disp['ticker'].nunique()} names** "
             f"({_eg}). They are in the options universe but not in today's AQE "
-            "daily list, and have no usable bars in the local panel either — so "
-            "atr_14d, dist_ATRs, sector and theme are blank on those rows. Blank, "
-            "never guessed; the ATR-distance filter excludes them rather than "
-            "letting an unknown pass.")
+            "daily list, are absent from the local panel, and could not be "
+            "pulled from FMP either — so atr_14d and dist_ATRs are blank on "
+            "those rows. Blank, never guessed; the ATR-distance filter excludes "
+            "them rather than letting an unknown pass. (sector and theme stay "
+            "blank regardless: those are AQE ENGINE reads, not market data, so "
+            "there is nothing to fetch for a name AQE never scored.)")
 table_with_copy(disp, key="universe_csp")
 
 if len(f):
