@@ -151,7 +151,22 @@ _FIELD_GLOSSARY = {
                "DOUBLE_BOTTOM / ASC_TRIANGLE. Built from the CONFIRMED pivot series "
                "(the same 11-bar fractals the bracket and structure_shift use), not "
                "from a bar-by-bar template match — which is what stops it finding a "
-               "shape in any 60 bars of noise.",
+               "shape in any 60 bars of noise.\n"
+               "BULLISH: CUP_HANDLE, DOUBLE_BOTTOM, ASC_TRIANGLE, FALLING_WEDGE, "
+               "INV_HEAD_SHOULDERS. BEARISH: DOUBLE_TOP, DESC_TRIANGLE, "
+               "RISING_WEDGE, HEAD_SHOULDERS.",
+    "pattern_direction": "BULLISH or BEARISH. READ THIS BEFORE pattern_trigger: on a "
+                         "bearish shape the trigger is broken DOWNWARD and the "
+                         "invalidation sits ABOVE it, so 'trigger = buy above' is exactly "
+                         "backwards. A lens that only reported bullish shapes would be "
+                         "flattering the chart rather than reading it.",
+    "pattern_alt": "Other shapes this same chart also matched, or null. A cup & handle "
+                   "and a double top are the SAME geometry — two highs at a level with a "
+                   "trough between — and differ only in how price resolves, so an "
+                   "ambiguous chart genuinely matches both. Naming the runner-up is more "
+                   "honest than picking one on a tie-break the reader cannot see. NOTE: "
+                   "pattern_fit is only comparable WITHIN a pattern (each shape scores "
+                   "different things), so the ranking between them is rough.",
     "pattern_stage": "How far along the shape is. CUP_HANDLE: CUP = both rims formed, no "
                      "handle yet; HANDLE = the handle low is in and price is drifting "
                      "under the rim. DOUBLE_BOTTOM: BASE = both lows in, price under the "
@@ -502,6 +517,8 @@ _FIELD_SCHEMA = {
     "structure_shift_ref":     _fs("reference", "usd", "n/a"),
     "last_pivot_high":         _fs("reference", "usd", "n/a"),
     "pattern":                 _fs("signal", "label", "n/a"),
+    "pattern_direction":       _fs("signal", "label", "n/a"),
+    "pattern_alt":             _fs("signal", "label", "n/a"),
     "pattern_stage":           _fs("signal", "label", "n/a"),
     "pattern_trigger":         _fs("reference", "usd", "n/a"),
     "pattern_invalidation":    _fs("reference", "usd", "n/a"),
@@ -874,9 +891,10 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "last_pivot_high": None,
         # Chart-pattern lens (columns, not a section). Present even as null so a
         # reader can tell "no pattern" from "the detector never ran".
-        "pattern": None, "pattern_stage": None, "pattern_trigger": None,
-        "pattern_invalidation": None, "pattern_days": None, "pattern_fit": None,
-        "pattern_start": None,
+        "pattern": None, "pattern_direction": None, "pattern_stage": None,
+        "pattern_trigger": None, "pattern_invalidation": None,
+        "pattern_days": None, "pattern_fit": None, "pattern_start": None,
+        "pattern_alt": None,
         # Health score (hold decision, held_positions only)
         "hl_score": None, "hl_state": None,
         # Enrichment Spec v2.0 — RS leadership + bracket-quality flags. setup_state
@@ -949,9 +967,9 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_rrg_direction"] = primary["rrg_direction"]
         fields["day_vol"] = (lk.get("day_vol") or {}).get(tk)
         _pat = (lk.get("pattern") or {}).get(tk) or {}
-        for _k in ("pattern", "pattern_stage", "pattern_trigger",
-                   "pattern_invalidation", "pattern_days", "pattern_fit",
-                   "pattern_start"):
+        for _k in ("pattern", "pattern_direction", "pattern_stage",
+                   "pattern_trigger", "pattern_invalidation", "pattern_days",
+                   "pattern_fit", "pattern_start", "pattern_alt"):
             if _k in _pat:
                 fields[_k] = _pat[_k]
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)

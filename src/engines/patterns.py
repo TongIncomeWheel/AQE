@@ -109,9 +109,10 @@ def pivot_series(high: np.ndarray, low: np.ndarray, dates: np.ndarray,
 
 
 def _blank() -> dict:
-    return {"pattern": None, "pattern_stage": None, "pattern_trigger": None,
-            "pattern_invalidation": None, "pattern_days": None,
-            "pattern_fit": None, "pattern_start": None}
+    return {"pattern": None, "pattern_direction": None, "pattern_stage": None,
+            "pattern_trigger": None, "pattern_invalidation": None,
+            "pattern_days": None, "pattern_fit": None, "pattern_start": None,
+            "pattern_alt": None}
 
 
 def _fit(depth_pct: float, rim_gap_pct: float, handle_retrace: float,
@@ -227,7 +228,7 @@ def detect_cup_handle(high: np.ndarray, low: np.ndarray, close: np.ndarray,
                 continue
 
             out.update({
-                "pattern": "CUP_HANDLE",
+                "pattern": "CUP_HANDLE", "pattern_direction": "BULLISH",
                 "pattern_stage": stage,
                 # The rim is the level that confirms it. Same kind of object as
                 # last_pivot_high, so the alert layer watches it identically.
@@ -264,16 +265,21 @@ DB_MIN_BOUNCE_PCT = 12.0      # the middle peak must be this far above the lows
 DB_BASE_TOLERANCE_PCT = 4.0   # ...and both lows must be this near the window low
 
 
-def detect_double_bottom(high: np.ndarray, low: np.ndarray, close: np.ndarray,
-                         dates: np.ndarray, volume: np.ndarray | None = None,
-                         k: int = PIVOT_K, window: int = PATTERN_WINDOW) -> dict:
-    """The most recent double bottom, or a blank record.
+def _double_extreme(high, low, close, dates, bullish: bool,
+                    k: int = PIVOT_K, window: int = PATTERN_WINDOW) -> dict:
+    """Double bottom (bullish) and double top (bearish) in ONE code path.
 
-    Trigger is the NECKLINE — the peak between the two lows — not the lows
-    themselves. That is the level whose break confirms the base, and it is what
-    the alert layer should watch, so it is what ships as pattern_trigger.
+    Parameterised rather than reflected. Reflecting prices looked elegant and
+    was wrong twice over: negated prices trip every `<= 0` guard, and a
+    percentage tolerance measured against a negative base changes sign. Two
+    hand-written copies would instead drift apart the first time a tolerance is
+    tuned. One path, one flag, comparisons swapped.
 
-    Stages: BASE (both lows in, price still under the neckline) / TRIGGERED.
+    Trigger is the NECKLINE — the peak between the two lows, or the trough
+    between the two tops. That is the level whose break confirms the shape.
+
+    Stages: BASE (both feet in, price still the wrong side of the neckline) /
+    TRIGGERED.
     """
     out = _blank()
     n = len(high)
@@ -282,18 +288,20 @@ def detect_double_bottom(high: np.ndarray, low: np.ndarray, close: np.ndarray,
     start = max(0, n - window)
     h, l, c, d = high[start:], low[start:], close[start:], dates[start:]
     piv = pivot_series(high, low, dates, k=k, window=window)
-    lows = [p for p in piv if p["kind"] == "L"]
-    if len(lows) < 2:
+    feet = [p for p in piv if p["kind"] == ("L" if bullish else "H")]
+    if len(feet) < 2:
         return out
     last_close = float(c[-1])
-    window_low = float(np.nanmin(l))
-    if window_low <= 0:
+    # The extreme of the window the pair must sit at: the floor for a bottom,
+    # the ceiling for a top.
+    edge = float(np.nanmin(l)) if bullish else float(np.nanmax(h))
+    if edge <= 0:
         return out
 
-    for si in range(len(lows) - 1, 0, -1):          # newest second-low first
-        second = lows[si]
+    for si in range(len(feet) - 1, 0, -1):          # newest second foot first
+        second = feet[si]
         for fi in range(si - 1, -1, -1):
-            first = lows[fi]
+            first = feet[fi]
             span = second["idx"] - first["idx"]
             if span < DB_MIN_DAYS:
                 continue
@@ -304,31 +312,39 @@ def detect_double_bottom(high: np.ndarray, low: np.ndarray, close: np.ndarray,
             gap = abs(second["price"] - first["price"]) / first["price"] * 100
             if gap > DB_LOW_TOLERANCE_PCT:
                 continue
-            # Both feet must sit at the FLOOR of the window. Two similar lows
-            # halfway up a range are a pause, not a base.
-            if max((first["price"] - window_low) / window_low * 100,
-                   (second["price"] - window_low) / window_low * 100) > DB_BASE_TOLERANCE_PCT:
+            # Both feet must sit at the EXTREME of the window. Two similar lows
+            # halfway up a range are a pause, not a base — and two similar highs
+            # halfway up are not a top.
+            if (max(abs(first["price"] - edge), abs(second["price"] - edge))
+                    / edge * 100) > DB_BASE_TOLERANCE_PCT:
                 continue
-            neck_seg = h[first["idx"]:second["idx"] + 1]
-            if len(neck_seg) == 0:
+            seg = (h if bullish else l)[first["idx"]:second["idx"] + 1]
+            if len(seg) == 0:
                 continue
-            neck = float(np.nanmax(neck_seg))
-            base = min(first["price"], second["price"])
+            neck = float(np.nanmax(seg) if bullish else np.nanmin(seg))
+            base = (min(first["price"], second["price"]) if bullish
+                    else max(first["price"], second["price"]))
             if base <= 0:
                 continue
-            bounce = (neck - base) / base * 100
+            bounce = abs(neck - base) / base * 100
             if bounce < DB_MIN_BOUNCE_PCT:
                 continue
-            # Already lost the base since the second low? Then the pattern
+            # Already through the base since the second foot? Then the shape
             # failed and is not the live read, whatever it looked like.
-            if float(np.nanmin(l[second["idx"]:])) < base * 0.98:
-                continue
+            after = (l if bullish else h)[second["idx"]:]
+            if len(after):
+                broke = (float(np.nanmin(after)) < base * 0.98 if bullish
+                         else float(np.nanmax(after)) > base * 1.02)
+                if broke:
+                    continue
 
-            stage = "TRIGGERED" if last_close > neck else "BASE"
+            triggered = last_close > neck if bullish else last_close < neck
             sym = 1.0 - min(1.0, gap / DB_LOW_TOLERANCE_PCT)
             depth = min(1.0, bounce / (DB_MIN_BOUNCE_PCT * 3))
             out.update({
-                "pattern": "DOUBLE_BOTTOM", "pattern_stage": stage,
+                "pattern": "DOUBLE_BOTTOM" if bullish else "DOUBLE_TOP",
+                "pattern_direction": "BULLISH" if bullish else "BEARISH",
+                "pattern_stage": "TRIGGERED" if triggered else "BASE",
                 "pattern_trigger": round(neck, 2),
                 "pattern_invalidation": round(base, 2),
                 "pattern_days": int(len(c) - 1 - first["idx"]),
@@ -339,28 +355,230 @@ def detect_double_bottom(high: np.ndarray, low: np.ndarray, close: np.ndarray,
     return out
 
 
-# ── Ascending triangle ──────────────────────────────────────────────────────
-# A flat ceiling being tested repeatedly while the lows step up underneath —
-# supply at one price, demand paying more each time. The RISING lows are the
-# whole content: without them it is just a resistance level, which AQE already
-# ships as last_pivot_high.
-AT_TOP_TOLERANCE_PCT = 2.5    # how flat the ceiling must be across touches
-AT_MIN_LOW_RISE_PCT = 1.0     # each low must clear the previous by this much
+def detect_double_bottom(high, low, close, dates, volume=None, **kw) -> dict:
+    """Two lows at a level with a real bounce between them — BULLISH."""
+    return _double_extreme(high, low, close, dates, bullish=True, **kw)
+
+
+def detect_double_top(high, low, close, dates, volume=None, **kw) -> dict:
+    """The bearish twin. Trigger breaks DOWNWARD and the invalidation sits
+    ABOVE it — read pattern_direction before assuming either."""
+    return _double_extreme(high, low, close, dates, bullish=False, **kw)
+
+
+# ── Triangles ───────────────────────────────────────────────────────────────
+# A flat side tested repeatedly while the other side marches toward it.
+# Ascending: flat ceiling, lows stepping UP (bullish). Descending: flat floor,
+# highs stepping DOWN (bearish). The marching side is the entire content —
+# without it a flat ceiling is just a resistance level, which AQE already ships
+# as last_pivot_high.
+AT_TOP_TOLERANCE_PCT = 3.0    # how flat the tested side must be across touches
+AT_MIN_LOW_RISE_PCT = 1.0     # average travel required per step of the staircase
+AT_MAX_LOW_SLIP_PCT = 1.5     # a single step may go the wrong way this much
 AT_MIN_DAYS = 20
 AT_MAX_DAYS = 160
-AT_MIN_TOUCHES = 2            # of the ceiling — one touch is not a ceiling
+AT_MIN_TOUCHES = 2            # of the flat side — one touch is not a level
 
 
-def detect_ascending_triangle(high: np.ndarray, low: np.ndarray,
-                              close: np.ndarray, dates: np.ndarray,
-                              volume: np.ndarray | None = None,
-                              k: int = PIVOT_K,
-                              window: int = PATTERN_WINDOW) -> dict:
-    """The most recent ascending triangle, or a blank record.
+def _flat_side_triangle(high, low, close, dates, bullish: bool,
+                        k: int = PIVOT_K, window: int = PATTERN_WINDOW) -> dict:
+    out = _blank()
+    n = len(high)
+    if n < 2 * k + 1 or len(close) != n:
+        return out
+    start = max(0, n - window)
+    c, d = close[start:], dates[start:]
+    piv = pivot_series(high, low, dates, k=k, window=window)
+    flats = [p for p in piv if p["kind"] == ("H" if bullish else "L")]
+    steps = [p for p in piv if p["kind"] == ("L" if bullish else "H")]
+    if len(flats) < AT_MIN_TOUCHES or len(steps) < 2:
+        return out
+    last_close = float(c[-1])
 
-    Trigger is the ceiling. Invalidation is the LAST rising low — the step that
-    would have to fail for the structure to be gone, which is tighter and more
-    honest than the first low of the formation.
+    # Every touch near the newest one — NOT necessarily contiguous. The first
+    # version walked backwards and stopped at the first pivot outside tolerance,
+    # so one spike anywhere in the run destroyed the formation and the pattern
+    # almost never fired. A level is a price that keeps being tested; an
+    # intervening overshoot does not un-test it.
+    ref = flats[-1]
+    if ref["price"] <= 0:
+        return out
+    touches = [p for p in flats
+               if abs(p["price"] - ref["price"]) / ref["price"] * 100
+               <= AT_TOP_TOLERANCE_PCT]
+    if len(touches) < AT_MIN_TOUCHES:
+        return out
+    span = touches[-1]["idx"] - touches[0]["idx"]
+    if not (AT_MIN_DAYS <= span <= AT_MAX_DAYS):
+        return out
+
+    inner = [p for p in steps if touches[0]["idx"] < p["idx"] < touches[-1]["idx"]]
+    if len(inner) < 2 or inner[0]["price"] <= 0:
+        return out
+    # The staircase is judged AS A STAIRCASE. The first version demanded every
+    # consecutive pair travel 1%+ in the right direction, so one flat tread in
+    # an otherwise textbook shape threw the whole thing away.
+    travel = (inner[-1]["price"] - inner[0]["price"]) / inner[0]["price"] * 100
+    if not bullish:
+        travel = -travel
+    if travel < AT_MIN_LOW_RISE_PCT * (len(inner) - 1):
+        return out
+    for a, b in zip(inner, inner[1:]):
+        if a["price"] <= 0:
+            continue
+        step = (b["price"] - a["price"]) / a["price"] * 100
+        if not bullish:
+            step = -step
+        if step < -AT_MAX_LOW_SLIP_PCT:
+            return out          # a tread that went materially backwards
+
+    level = float(np.mean([p["price"] for p in touches]))
+    last_step = inner[-1]["price"]
+    if (last_step >= level) if bullish else (last_step <= level):
+        return out
+    triggered = last_close > level if bullish else last_close < level
+
+    spread = max(p["price"] for p in touches) - min(p["price"] for p in touches)
+    flat = 1.0 - min(1.0, (spread / level * 100) / AT_TOP_TOLERANCE_PCT)
+    reach = abs(level - inner[0]["price"])
+    climb = min(1.0, abs(last_step - inner[0]["price"]) / reach) if reach > 0 else 0.0
+    reps = min(1.0, (len(touches) - AT_MIN_TOUCHES + 1) / 3.0)
+    out.update({
+        "pattern": "ASC_TRIANGLE" if bullish else "DESC_TRIANGLE",
+        "pattern_direction": "BULLISH" if bullish else "BEARISH",
+        "pattern_stage": "TRIGGERED" if triggered else "FORMING",
+        "pattern_trigger": round(level, 2),
+        "pattern_invalidation": round(last_step, 2),
+        "pattern_days": int(len(c) - 1 - touches[0]["idx"]),
+        "pattern_fit": round((flat + climb + reps) / 3, 3),
+        "pattern_start": str(pd.Timestamp(d[touches[0]["idx"]]).date()),
+    })
+    return out
+
+
+def detect_ascending_triangle(high, low, close, dates, volume=None, **kw) -> dict:
+    """Flat ceiling, lows stepping up into it — BULLISH."""
+    return _flat_side_triangle(high, low, close, dates, bullish=True, **kw)
+
+
+def detect_descending_triangle(high, low, close, dates, volume=None, **kw) -> dict:
+    """Flat floor, highs stepping down onto it — BEARISH. Trigger breaks
+    DOWNWARD; the invalidation sits ABOVE it."""
+    return _flat_side_triangle(high, low, close, dates, bullish=False, **kw)
+
+
+# ── Wedges ──────────────────────────────────────────────────────────────────
+# Both trendlines pointing the SAME way while converging. That convergence is
+# the content: a rising wedge is not "an uptrend" — it is an uptrend whose
+# highs are running out of steam faster than its lows are, which is why the
+# conventional read is bearish despite every high being higher.
+#
+# Written directly rather than mirrored: the two wedges are not reflections of
+# each other in the way a double top reflects a double bottom. A RISING wedge
+# is bearish and a FALLING wedge is bullish, so mirroring one would produce the
+# other's shape with the wrong direction attached.
+WEDGE_MIN_PIVOTS = 2          # per side — two points define each trendline
+WEDGE_MIN_DAYS = 20
+WEDGE_MAX_DAYS = 160
+WEDGE_MIN_CONVERGENCE = 0.30  # the far end must be <=70% as wide as the near end
+WEDGE_MIN_SLOPE_PCT = 3.0     # total travel of the slower line, over the wedge
+
+
+def _wedge(high, low, close, dates, volume=None, rising=True,
+           k: int = PIVOT_K, window: int = PATTERN_WINDOW) -> dict:
+    out = _blank()
+    n = len(high)
+    if n < 2 * k + 1 or len(close) != n:
+        return out
+    start = max(0, n - window)
+    c, d = close[start:], dates[start:]
+    piv = pivot_series(high, low, dates, k=k, window=window)
+    hs = [p for p in piv if p["kind"] == "H"]
+    ls = [p for p in piv if p["kind"] == "L"]
+    if len(hs) < WEDGE_MIN_PIVOTS or len(ls) < WEDGE_MIN_PIVOTS:
+        return out
+
+    h0, h1 = hs[0], hs[-1]
+    l0, l1 = ls[0], ls[-1]
+    span = max(h1["idx"], l1["idx"]) - min(h0["idx"], l0["idx"])
+    if not (WEDGE_MIN_DAYS <= span <= WEDGE_MAX_DAYS):
+        return out
+    if h0["price"] <= 0 or l0["price"] <= 0:
+        return out
+    dh = (h1["price"] - h0["price"]) / h0["price"] * 100
+    dl = (l1["price"] - l0["price"]) / l0["price"] * 100
+
+    if rising:
+        # Both lines up, lows climbing FASTER — the wedge closes from below.
+        if dh <= 0 or dl <= 0 or dl <= dh:
+            return out
+        slower = dh
+    else:
+        # Both lines down, highs falling FASTER — the wedge closes from above.
+        if dh >= 0 or dl >= 0 or dh >= dl:
+            return out
+        slower = -dl
+    if slower < WEDGE_MIN_SLOPE_PCT:
+        return out
+
+    start_w = h0["price"] - l0["price"]
+    end_w = h1["price"] - l1["price"]
+    if start_w <= 0 or end_w <= 0 or end_w / start_w > (1 - WEDGE_MIN_CONVERGENCE):
+        return out
+
+    last_close = float(c[-1])
+    if rising:
+        trigger, invalid = l1["price"], h1["price"]      # breaks DOWN
+        stage = "TRIGGERED" if last_close < trigger else "FORMING"
+        name, direction = "RISING_WEDGE", "BEARISH"
+    else:
+        trigger, invalid = h1["price"], l1["price"]      # breaks UP
+        stage = "TRIGGERED" if last_close > trigger else "FORMING"
+        name, direction = "FALLING_WEDGE", "BULLISH"
+
+    conv = min(1.0, (1 - end_w / start_w) / 0.7)
+    steep = min(1.0, abs(slower) / (WEDGE_MIN_SLOPE_PCT * 4))
+    pts = min(1.0, (len(hs) + len(ls) - 4) / 4.0)
+    first = min(h0["idx"], l0["idx"])
+    out.update({
+        "pattern": name, "pattern_direction": direction, "pattern_stage": stage,
+        "pattern_trigger": round(trigger, 2),
+        "pattern_invalidation": round(invalid, 2),
+        "pattern_days": int(len(c) - 1 - first),
+        "pattern_fit": round((conv + steep + pts) / 3, 3),
+        "pattern_start": str(pd.Timestamp(d[first]).date()),
+    })
+    return out
+
+
+def detect_rising_wedge(high, low, close, dates, volume=None, **kw) -> dict:
+    """Higher highs AND higher lows, converging — BEARISH despite the uptrend."""
+    return _wedge(high, low, close, dates, volume, rising=True, **kw)
+
+
+def detect_falling_wedge(high, low, close, dates, volume=None, **kw) -> dict:
+    """Lower highs AND lower lows, converging — BULLISH despite the downtrend."""
+    return _wedge(high, low, close, dates, volume, rising=False, **kw)
+
+
+# ── Head & shoulders ────────────────────────────────────────────────────────
+# Three peaks, the middle one clearly highest, shoulders at comparable heights.
+# The NECKLINE through the two intervening lows is the level that matters; the
+# head is only what makes the shape recognisable.
+HS_MIN_HEAD_PCT = 3.0         # head must clear both shoulders by this much
+HS_SHOULDER_TOLERANCE_PCT = 8.0   # how unequal the shoulders may be
+HS_MIN_DAYS = 25
+HS_MAX_DAYS = 160
+
+
+def _head_shoulders(high, low, close, dates, bullish: bool,
+                    k: int = PIVOT_K, window: int = PATTERN_WINDOW) -> dict:
+    """H&S (bearish) and inverse H&S (bullish) in ONE code path.
+
+    Three extremes of the same kind, the middle one clearly the furthest out,
+    the outer two at comparable levels. The NECKLINE through the two
+    intervening opposite pivots is the level that matters; the head is only
+    what makes the shape recognisable.
     """
     out = _blank()
     n = len(high)
@@ -369,76 +587,127 @@ def detect_ascending_triangle(high: np.ndarray, low: np.ndarray,
     start = max(0, n - window)
     c, d = close[start:], dates[start:]
     piv = pivot_series(high, low, dates, k=k, window=window)
-    highs = [p for p in piv if p["kind"] == "H"]
-    lows = [p for p in piv if p["kind"] == "L"]
-    if len(highs) < AT_MIN_TOUCHES or len(lows) < 2:
+    peaks = [p for p in piv if p["kind"] == ("L" if bullish else "H")]
+    necks = [p for p in piv if p["kind"] == ("H" if bullish else "L")]
+    if len(peaks) < 3 or len(necks) < 2:
         return out
     last_close = float(c[-1])
+    sign = -1.0 if bullish else 1.0          # "further out" flips direction
 
-    # Widen the ceiling backwards from the most recent high: take every earlier
-    # high that sits within tolerance of it, stopping at the first that does not.
-    ref = highs[-1]
-    touches = [ref]
-    for p in reversed(highs[:-1]):
-        if abs(p["price"] - ref["price"]) / ref["price"] * 100 <= AT_TOP_TOLERANCE_PCT:
-            touches.append(p)
-        else:
-            break
-    if len(touches) < AT_MIN_TOUCHES:
-        return out
-    touches.reverse()
-    span = touches[-1]["idx"] - touches[0]["idx"]
-    if not (AT_MIN_DAYS <= span <= AT_MAX_DAYS):
-        return out
+    for ri in range(len(peaks) - 1, 1, -1):            # newest right shoulder
+        right, head, left = peaks[ri], peaks[ri - 1], peaks[ri - 2]
+        if left["price"] <= 0 or right["price"] <= 0:
+            continue
+        span = right["idx"] - left["idx"]
+        if not (HS_MIN_DAYS <= span <= HS_MAX_DAYS):
+            continue
+        # The head has to be a head — beyond BOTH shoulders by a clear margin.
+        if (min(sign * (head["price"] - left["price"]) / left["price"],
+                sign * (head["price"] - right["price"]) / right["price"]) * 100
+                < HS_MIN_HEAD_PCT):
+            continue
+        # ...and the shoulders comparable, or it is just a lower high / higher low.
+        if (abs(right["price"] - left["price"]) / left["price"] * 100
+                > HS_SHOULDER_TOLERANCE_PCT):
+            continue
+        mids = [p["price"] for p in necks if left["idx"] < p["idx"] < right["idx"]]
+        if len(mids) < 2:
+            continue
+        neck = float(np.mean(mids))
+        if neck <= 0:
+            continue
+        # The neckline must sit BETWEEN the shoulders and the head, or the
+        # shape is not the one being described.
+        shoulder = min(left["price"], right["price"]) if not bullish \
+            else max(left["price"], right["price"])
+        if (neck <= shoulder) if bullish else (neck >= shoulder):
+            continue
 
-    inner = [p for p in lows if touches[0]["idx"] < p["idx"] < touches[-1]["idx"]]
-    if len(inner) < 2:
+        triggered = last_close > neck if bullish else last_close < neck
+        far = max(left["price"], right["price"]) if not bullish \
+            else min(left["price"], right["price"])
+        head_s = min(1.0, (sign * (head["price"] - far) / far * 100)
+                     / (HS_MIN_HEAD_PCT * 3))
+        sym = 1.0 - min(1.0, (abs(right["price"] - left["price"]) / left["price"] * 100)
+                        / HS_SHOULDER_TOLERANCE_PCT)
+        out.update({
+            "pattern": "INV_HEAD_SHOULDERS" if bullish else "HEAD_SHOULDERS",
+            "pattern_direction": "BULLISH" if bullish else "BEARISH",
+            "pattern_stage": "TRIGGERED" if triggered else "FORMING",
+            "pattern_trigger": round(neck, 2),
+            "pattern_invalidation": round(head["price"], 2),
+            "pattern_days": int(len(c) - 1 - left["idx"]),
+            "pattern_fit": round((max(0.0, head_s) + sym) / 2, 3),
+            "pattern_start": str(pd.Timestamp(d[left["idx"]]).date()),
+        })
         return out
-    for a, b in zip(inner, inner[1:]):
-        if a["price"] <= 0 or (b["price"] - a["price"]) / a["price"] * 100 < AT_MIN_LOW_RISE_PCT:
-            return out          # a low that did not step up breaks the shape
-
-    ceiling = float(np.mean([p["price"] for p in touches]))
-    last_low = inner[-1]["price"]
-    if last_low >= ceiling:
-        return out
-    stage = "TRIGGERED" if last_close > ceiling else "FORMING"
-
-    spread = max(p["price"] for p in touches) - min(p["price"] for p in touches)
-    flat = 1.0 - min(1.0, (spread / ceiling * 100) / AT_TOP_TOLERANCE_PCT)
-    climb = min(1.0, (last_low - inner[0]["price"]) / (ceiling - inner[0]["price"])
-                if ceiling > inner[0]["price"] else 0.0)
-    reps = min(1.0, (len(touches) - AT_MIN_TOUCHES + 1) / 3.0)
-    out.update({
-        "pattern": "ASC_TRIANGLE", "pattern_stage": stage,
-        "pattern_trigger": round(ceiling, 2),
-        "pattern_invalidation": round(last_low, 2),
-        "pattern_days": int(len(c) - 1 - touches[0]["idx"]),
-        "pattern_fit": round((flat + climb + reps) / 3, 3),
-        "pattern_start": str(pd.Timestamp(d[touches[0]["idx"]]).date()),
-    })
     return out
 
 
+def detect_head_shoulders(high, low, close, dates, volume=None, **kw) -> dict:
+    """Classic BEARISH reversal: left shoulder, higher head, right shoulder.
+    Trigger is the neckline and it breaks DOWNWARD."""
+    return _head_shoulders(high, low, close, dates, bullish=False, **kw)
+
+
+def detect_inverse_head_shoulders(high, low, close, dates, volume=None, **kw) -> dict:
+    """The BULLISH reflection: two troughs either side of a deeper one, with a
+    neckline through the intervening peaks. Trigger breaks upward."""
+    return _head_shoulders(high, low, close, dates, bullish=True, **kw)
+
+
 # Registry — every detector returns the SAME shape, so adding one changes this
-# dict and nothing downstream. The calibration keys on the pattern NAME as well
-# as the stage, so a TRIGGERED cup and a TRIGGERED triangle never share a rate.
+# dict and nothing downstream. BOTH directions are represented on purpose: a
+# lens that only ever reports bullish shapes is not reading the chart, it is
+# flattering it.
 DETECTORS = {
+    # bullish
     "CUP_HANDLE": detect_cup_handle,
     "DOUBLE_BOTTOM": detect_double_bottom,
     "ASC_TRIANGLE": detect_ascending_triangle,
+    "FALLING_WEDGE": detect_falling_wedge,
+    "INV_HEAD_SHOULDERS": detect_inverse_head_shoulders,
+    # bearish
+    "DOUBLE_TOP": detect_double_top,
+    "DESC_TRIANGLE": detect_descending_triangle,
+    "RISING_WEDGE": detect_rising_wedge,
+    "HEAD_SHOULDERS": detect_head_shoulders,
 }
 
 
 def detect_all(high, low, close, dates, volume=None, **kw) -> dict:
-    """Run every detector; return the highest-fit hit, or a blank record."""
-    best = _blank()
+    """Run every detector; return the best match, with the others named.
+
+    A chart can legitimately match more than one shape, and often the matches
+    DISAGREE about direction — a cup & handle and a double top are the same
+    geometry (two highs at a level with a trough between) and differ only in
+    which way price eventually resolves. Silently reporting whichever scored
+    higher would hand the reader a bullish or bearish flag decided by a
+    tie-break they cannot see.
+
+    So the runner-up names ride along in `pattern_alt`. For a VISUAL flag that
+    is the useful answer: "this looks like a cup, and it also looks like a
+    double top" is a true statement about an ambiguous chart, and the eye
+    settles it in a second.
+
+    CAVEAT worth knowing: pattern_fit is only comparable WITHIN a pattern.
+    Each shape scores different things (a cup scores depth and handle volume, a
+    triangle scores flatness and touches), so ranking across patterns by fit is
+    rough. Fixing that properly needs outcome data, which was deliberately not
+    built (see the module docstring).
+    """
+    hits = []
     for fn in DETECTORS.values():
         try:
             r = fn(high, low, close, dates, volume, **kw)
         except Exception:  # noqa: BLE001 — a lens must never break the export
             continue
-        if r.get("pattern") and (best["pattern_fit"] is None
-                                 or (r["pattern_fit"] or 0) > best["pattern_fit"]):
-            best = r
+        if r.get("pattern"):
+            hits.append(r)
+    if not hits:
+        return _blank()
+    hits.sort(key=lambda r: r.get("pattern_fit") or 0.0, reverse=True)
+    best = hits[0]
+    others = [r["pattern"] for r in hits[1:]]
+    best["pattern_alt"] = ", ".join(others) if others else None
     return best

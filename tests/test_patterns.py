@@ -163,13 +163,29 @@ def test_detect_all_returns_the_same_shape_as_one_detector():
     one = P.detect_cup_handle(h, l, c, d, v)
     every = P.detect_all(h, l, c, d, v)
     assert set(one) == set(every)
-    assert every["pattern"] == "CUP_HANDLE"
+
+
+def test_an_ambiguous_chart_names_the_runner_up_instead_of_hiding_it():
+    """A cup & handle and a double top are the SAME geometry — two highs at a
+    level with a trough between — differing only in how price resolves. Picking
+    one silently would hand the reader a bullish or bearish flag decided by a
+    tie-break they cannot see."""
+    h, l, c, d, v = _bars(_cup())
+    r = P.detect_all(h, l, c, d, v)
+    named = {r["pattern"]} | set((r["pattern_alt"] or "").split(", ")) - {""}
+    assert "CUP_HANDLE" in named and "DOUBLE_TOP" in named
+
+
+def test_an_unambiguous_chart_has_no_alternatives():
+    h, l, c, d, v = _bars(list(np.linspace(50, 150, 160)))
+    assert P.detect_all(h, l, c, d, v)["pattern_alt"] is None
 
 
 def test_a_detector_that_explodes_cannot_break_the_lens(monkeypatch):
     def _boom(*a, **kw):
         raise RuntimeError("bad maths")
-    monkeypatch.setitem(P.DETECTORS, "CUP_HANDLE", _boom)
+    for name in list(P.DETECTORS):
+        monkeypatch.setitem(P.DETECTORS, name, _boom)
     h, l, c, d, v = _bars(_cup())
     assert P.detect_all(h, l, c, d, v)["pattern"] is None
 
@@ -332,3 +348,152 @@ def test_the_lens_carries_no_probability_by_design():
     r = P.detect_all(h, l, c, d, v)
     assert not any(k in r for k in ("pattern_hit_rate", "pattern_n",
                                     "pattern_status", "pattern_p"))
+
+
+# ═════════════════════════════════════ bearish twins + wedges + H&S
+
+def _mirror_path(path):
+    """Reflect a price path so a bullish fixture becomes its bearish twin."""
+    a = np.asarray(path, dtype=float)
+    return list(a.max() + a.min() - a)
+
+
+def _zig(pairs, leg=14):
+    out = []
+    for a, b in pairs:
+        out += list(np.linspace(a, b, leg))
+    return out
+
+
+_HS = [(80, 100), (100, 88), (88, 115), (115, 87), (87, 101), (101, 92)]
+_RISING_WEDGE = [(80, 100), (100, 88), (88, 104), (104, 95), (95, 107),
+                 (107, 101), (101, 108)]
+_FALLING_WEDGE = [(120, 95), (95, 112), (112, 90), (90, 104), (104, 88),
+                  (88, 98), (98, 89)]
+
+
+@pytest.mark.parametrize("name,path", [
+    ("DOUBLE_TOP", _mirror_path(_double_bottom())),
+    ("DESC_TRIANGLE", _mirror_path(_asc_triangle())),
+    ("HEAD_SHOULDERS", _zig(_HS, 22)),
+    ("INV_HEAD_SHOULDERS", _mirror_path(_zig(_HS, 22))),
+    ("RISING_WEDGE", _zig(_RISING_WEDGE)),
+    ("FALLING_WEDGE", _zig(_FALLING_WEDGE)),
+    ("DOUBLE_BOTTOM", _double_bottom()),
+    ("ASC_TRIANGLE", _asc_triangle()),
+    ("CUP_HANDLE", _cup()),
+])
+def test_every_registered_pattern_detects_its_own_textbook_shape(name, path):
+    h, l, c, d, v = _bars(path)
+    assert P.DETECTORS[name](h, l, c, d, v)["pattern"] == name
+
+
+@pytest.mark.parametrize("name,expected", [
+    ("CUP_HANDLE", "BULLISH"), ("DOUBLE_BOTTOM", "BULLISH"),
+    ("ASC_TRIANGLE", "BULLISH"), ("FALLING_WEDGE", "BULLISH"),
+    ("INV_HEAD_SHOULDERS", "BULLISH"),
+    ("DOUBLE_TOP", "BEARISH"), ("DESC_TRIANGLE", "BEARISH"),
+    ("RISING_WEDGE", "BEARISH"), ("HEAD_SHOULDERS", "BEARISH"),
+])
+def test_the_lens_reads_both_directions(name, expected):
+    """A lens that only ever reports bullish shapes is not reading the chart,
+    it is flattering it."""
+    paths = {"CUP_HANDLE": _cup(), "DOUBLE_BOTTOM": _double_bottom(),
+             "ASC_TRIANGLE": _asc_triangle(),
+             "DOUBLE_TOP": _mirror_path(_double_bottom()),
+             "DESC_TRIANGLE": _mirror_path(_asc_triangle()),
+             "HEAD_SHOULDERS": _zig(_HS, 22),
+             "INV_HEAD_SHOULDERS": _mirror_path(_zig(_HS, 22)),
+             "RISING_WEDGE": _zig(_RISING_WEDGE),
+             "FALLING_WEDGE": _zig(_FALLING_WEDGE)}
+    h, l, c, d, v = _bars(paths[name])
+    r = P.DETECTORS[name](h, l, c, d, v)
+    assert r["pattern_direction"] == expected
+
+
+def test_a_bearish_trigger_sits_BELOW_its_invalidation():
+    """The whole reason pattern_direction exists. On a bearish shape the
+    trigger is broken DOWNWARD and the invalidation is ABOVE it — a reader who
+    assumes 'trigger = buy above' would have it exactly backwards."""
+    for name, path in (("DOUBLE_TOP", _mirror_path(_double_bottom())),
+                       ("HEAD_SHOULDERS", _zig(_HS, 22)),
+                       ("RISING_WEDGE", _zig(_RISING_WEDGE))):
+        h, l, c, d, v = _bars(path)
+        r = P.DETECTORS[name](h, l, c, d, v)
+        assert r["pattern_direction"] == "BEARISH", name
+        assert r["pattern_trigger"] < r["pattern_invalidation"], name
+
+
+def test_a_bullish_trigger_sits_ABOVE_its_invalidation():
+    for name, path in (("CUP_HANDLE", _cup()), ("DOUBLE_BOTTOM", _double_bottom()),
+                       ("ASC_TRIANGLE", _asc_triangle()),
+                       ("FALLING_WEDGE", _zig(_FALLING_WEDGE))):
+        h, l, c, d, v = _bars(path)
+        r = P.DETECTORS[name](h, l, c, d, v)
+        assert r["pattern_direction"] == "BULLISH", name
+        assert r["pattern_trigger"] > r["pattern_invalidation"], name
+
+
+def test_a_rising_wedge_is_bearish_even_though_every_high_is_higher():
+    """The convergence is the content. Mirroring a falling wedge would have
+    produced this shape with the WRONG direction attached — which is why the
+    wedges are written directly rather than reflected."""
+    h, l, c, d, v = _bars(_zig(_RISING_WEDGE))
+    r = P.detect_rising_wedge(h, l, c, d, v)
+    assert r["pattern_direction"] == "BEARISH"
+    piv = P.pivot_series(h, l, d)
+    hs = [p["price"] for p in piv if p["kind"] == "H"]
+    assert hs[-1] > hs[0], "fixture is not actually making higher highs"
+
+
+def test_a_plain_uptrend_that_never_converges_is_not_a_wedge():
+    h, l, c, d, v = _bars(_zig([(80, 100), (100, 90), (90, 112), (112, 102),
+                                (102, 124), (124, 114), (114, 136)]))
+    assert P.detect_rising_wedge(h, l, c, d, v)["pattern"] is None
+
+
+def test_a_double_top_halfway_up_a_range_is_not_a_top():
+    """Mirror of the base test that fixed double bottom: two similar highs
+    halfway down a range are a pause, not a top."""
+    path = _mirror_path(_double_bottom()) + list(np.linspace(100, 160, 30))
+    h, l, c, d, v = _bars(path)
+    assert P.detect_double_top(h, l, c, d, v)["pattern"] is None
+
+
+def test_head_and_shoulders_needs_an_actual_head():
+    """Three peaks at the same height is a range, not a reversal."""
+    h, l, c, d, v = _bars(_zig([(80, 100), (100, 90), (90, 100), (100, 90),
+                                (90, 100), (100, 93)], 22))
+    assert P.detect_head_shoulders(h, l, c, d, v)["pattern"] is None
+
+
+def test_head_and_shoulders_needs_comparable_shoulders():
+    h, l, c, d, v = _bars(_zig([(60, 78), (78, 70), (70, 115), (115, 87),
+                                (87, 108), (108, 95)], 22))
+    assert P.detect_head_shoulders(h, l, c, d, v)["pattern"] is None
+
+
+def test_the_registry_covers_both_directions():
+    dirs = set()
+    for name, path in (("CUP_HANDLE", _cup()), ("HEAD_SHOULDERS", _zig(_HS, 22))):
+        h, l, c, d, v = _bars(path)
+        dirs.add(P.DETECTORS[name](h, l, c, d, v)["pattern_direction"])
+    assert dirs == {"BULLISH", "BEARISH"}
+    assert len(P.DETECTORS) >= 9
+
+
+def test_direction_is_present_on_every_blank_record_too():
+    h, l, c, d, v = _bars(list(np.linspace(50, 150, 160)))
+    for fn in P.DETECTORS.values():
+        r = fn(h, l, c, d, v)
+        assert "pattern_direction" in r
+
+
+def test_the_ascending_triangle_tolerates_one_overshoot_and_one_flat_tread():
+    """Both were fatal in the first version: it stopped gathering ceiling
+    touches at the first pivot outside tolerance, and demanded every single
+    low step up. A real staircase has an odd tread."""
+    path = _zig([(80, 100), (100, 88), (88, 107), (107, 93),   # 107 overshoots
+                 (93, 100), (100, 93), (93, 100), (100, 97)], 16)
+    h, l, c, d, v = _bars(path)
+    assert P.detect_ascending_triangle(h, l, c, d, v)["pattern"] == "ASC_TRIANGLE"
