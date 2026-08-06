@@ -166,7 +166,8 @@ def facet_filters(df, *, key: str, facets: list, hide: list | None = None):
 
 def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
                     caption: str | None = None, filterable: bool = True,
-                    column_config: dict | None = None) -> None:
+                    column_config: dict | None = None,
+                    pin_first: bool = True) -> None:
     """Render a dataframe + an in-table filter + a one-click copy block.
 
     `st.dataframe` is sortable but NOT filterable, so we add a free-text filter
@@ -203,8 +204,23 @@ def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
             column_config = percent_column_config(view)
         except Exception:  # noqa: BLE001 — formatting never blocks the table
             column_config = None
+    # FREEZE THE FIRST COLUMN. These grids are 90+ columns wide; scrolling right
+    # to read a score loses the ticker it belongs to, which makes the whole row
+    # unreadable (PM: "i cant see the ticker as i scroll across"). The first
+    # column is the identifier on every table here — ticker, sector or basket —
+    # so pinning it is a property of the layout, not a per-table decision.
+    _cfg = dict(column_config or {})
+    if pin_first and view is not None and len(getattr(view, "columns", [])):
+        _first = view.columns[0]
+        if _cfg.get(_first) is None:
+            try:
+                _cfg[_first] = st.column_config.Column(str(_first), pinned=True)
+            except TypeError:
+                # `pinned` arrived in Streamlit 1.42. An older runtime loses the
+                # frozen column rather than the whole page.
+                pass
     st.dataframe(view, use_container_width=True, hide_index=True,
-                 column_config=column_config or None)
+                 column_config=_cfg or None)
     try:
         if view is None or len(view) == 0:
             return

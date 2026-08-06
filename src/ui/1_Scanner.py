@@ -1882,7 +1882,20 @@ if _ll_recs:
     if _held_here:
         st.caption(f"🔵 **{len(_held_here)} held**: {', '.join(_held_here)}")
     _list_summary(_filtered)
-    table_with_copy(_export_table(_filtered), key="ll_table")
+    _ll_df = _export_table(_filtered)
+    # Categorical cuts the sliders above cannot express. These six are the ones
+    # that carry a LABEL rather than a number, so a threshold is meaningless on
+    # them and a free-text search is the wrong shape: "show me the LEADERs whose
+    # sector is also LEADING" is two picks, not a query.
+    _ll_df = facet_filters(
+        _ll_df, key="ll_table",
+        facets=[("RS leadership", "rs_leadership"),
+                ("Elder pattern", "elder_pattern"),
+                ("Exhaustion", "ecx_exhaustion"),
+                ("CHoCH date", "choch_date"),
+                ("Sector RRG", "sector_rrg_quadrant"),
+                ("Mover subtype", "mover_subtype")])
+    table_with_copy(_ll_df, key="ll_table")
 
     # ---- QS cards, rendered from the export ALONE (src/engines/qs_card.py).
     # The renderer cannot open a file or call an engine, so anything shown here

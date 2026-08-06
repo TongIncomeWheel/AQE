@@ -217,7 +217,7 @@ pop_min = sb.number_input("POP % ≥", 0.0, 100.0, 70.0, 1.0,
                           help="P(finish above breakeven).") / 100.0
 dist_min = sb.number_input("Distance to strike % ≥", 0.0, 40.0, 0.0, 0.5) / 100.0
 atr_min = sb.number_input(
-    "Distance ≥ N × ATR14", 0.0, 10.0, 0.0, 0.25,
+    "Distance ≥ N × ATR14  (dist_ATRs)", 0.0, 10.0, 0.0, 0.25,
     help="Set 1.0 for 'the strike is at least one 14-day ATR below spot'. "
          "0 = off. Rows with no ATR (ticker not scored today) are EXCLUDED "
          "when this is on — an unknown is not a pass.")
@@ -270,6 +270,21 @@ f = f.sort_values("annual_yield", ascending=False)
 st.subheader(f"{len(f)} matches")
 # Build a display frame with percentages as numeric %-scaled columns (sortable).
 disp = pd.DataFrame({"ticker": f["ticker"], "strike": f["strike"], "dte": f["dte"]})
+# The distance block, READ ACROSS IN ONE LINE (PM ruling): spot, the gap in
+# DOLLARS, the name's ATR in dollars, then the gap expressed in ATRs. Same unit
+# side by side is the whole point — "$12 away, ATR is $4, so three ATRs" is a
+# glance; the same thing as a percentage next to a dollar ATR is arithmetic.
+if "spot" in f.columns:
+    disp["spot"] = pd.to_numeric(f["spot"], errors="coerce").round(2)
+    disp["dist_$"] = (pd.to_numeric(f["spot"], errors="coerce")
+                      - pd.to_numeric(f["strike"], errors="coerce")).round(2)
+if "atr_14d" in f.columns:
+    disp["atr_14d"] = pd.to_numeric(f["atr_14d"], errors="coerce").round(2)
+if "atr_strikes" in f.columns:
+    # Named for the QUESTION it answers, not for the maths behind it.
+    # "atr_strikes" made the reader work out what was being divided by what;
+    # dist_ATRs sits next to dist_$ and atr_14d and completes the sentence.
+    disp["dist_ATRs"] = f["atr_strikes"]
 if "abs_delta" in f.columns:
     disp["delta"] = f["abs_delta"].round(3)
 for label, src in [("dist_to_strike_%", "distance_to_strike_pct"), ("POP_%", "pop"),
@@ -284,10 +299,6 @@ for label, src in [("credit$", "credit_per_contract"), ("breakeven", "breakeven"
 # AQE context. atr_strikes answers the question the raw ATR cannot: is this
 # strike a normal week's move away, or three of them? That is the number that
 # makes a CSP distance readable across a $20 name and a $600 one.
-if "atr_14d" in f.columns:
-    disp["atr_14d"] = pd.to_numeric(f["atr_14d"], errors="coerce").round(2)
-if "atr_strikes" in f.columns:
-    disp["atr_strikes"] = f["atr_strikes"]
 if "mcap_b" in f.columns:
     disp["mcap_$b"] = pd.to_numeric(f["mcap_b"], errors="coerce").round(1)
 for _label, _src in (("sector", "sector"), ("sector_state", "sector_state"),
