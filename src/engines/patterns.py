@@ -675,6 +675,32 @@ DETECTORS = {
 }
 
 
+# A TRIGGERED shape more than this far past its own trigger is SPENT — the
+# break happened, price left, and the formation is history rather than a read.
+# Same rule and same 5% as structure_shift's BULLISH_BOS band, for the same
+# reason: without it a flag latches on at the break and never switches off.
+# Measured on the 2026-08-06 board, 157 of 282 detections were TRIGGERED and the
+# median one was already 9.9% past its level (p75 19.4%, worst 112%).
+PATTERN_MAX_EXTENSION_PCT = 5.0
+
+# ...and a floor on how textbook the shape has to be. Deliberately mild: fit is
+# only comparable WITHIN a pattern (see detect_all), so a high floor would cut
+# whole shapes rather than weak instances.
+PATTERN_MIN_FIT = 0.50
+
+
+def _is_spent(r: dict, last_close: float) -> bool:
+    """Has price already left this pattern behind?"""
+    if r.get("pattern_stage") != "TRIGGERED":
+        return False
+    t = r.get("pattern_trigger")
+    if not isinstance(t, (int, float)) or t <= 0 or not last_close:
+        return False
+    ext = ((last_close / t - 1) if r.get("pattern_direction") == "BULLISH"
+           else (1 - last_close / t)) * 100
+    return ext > PATTERN_MAX_EXTENSION_PCT
+
+
 def detect_all(high, low, close, dates, volume=None, **kw) -> dict:
     """Run every detector; return the best match, with the others named.
 
@@ -696,14 +722,26 @@ def detect_all(high, low, close, dates, volume=None, **kw) -> dict:
     rough. Fixing that properly needs outcome data, which was deliberately not
     built (see the module docstring).
     """
+    try:
+        last_close = float(np.asarray(close, dtype=float)[-1])
+    except Exception:  # noqa: BLE001
+        last_close = 0.0
     hits = []
     for fn in DETECTORS.values():
         try:
             r = fn(high, low, close, dates, volume, **kw)
         except Exception:  # noqa: BLE001 — a lens must never break the export
             continue
-        if r.get("pattern"):
-            hits.append(r)
+        if not r.get("pattern"):
+            continue
+        # Spent and sloppy shapes are dropped HERE rather than in each detector,
+        # so the detectors stay pure geometry and the "is this still worth
+        # looking at" judgement lives in one place.
+        if _is_spent(r, last_close):
+            continue
+        if (r.get("pattern_fit") or 0) < PATTERN_MIN_FIT:
+            continue
+        hits.append(r)
     if not hits:
         return _blank()
     hits.sort(key=lambda r: r.get("pattern_fit") or 0.0, reverse=True)

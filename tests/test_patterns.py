@@ -319,10 +319,20 @@ def test_every_detector_returns_the_identical_key_set():
 
 
 def test_detect_all_picks_the_best_fit_when_several_match():
+    """Ranked among the shapes that SURVIVE the spent/fit cuts — detect_all
+    applies those before choosing, so the comparison has to as well."""
     h, l, c, d, v = _bars(_double_bottom())
-    hits = {n: fn(h, l, c, d, v) for n, fn in P.DETECTORS.items()}
-    matched = {n: r for n, r in hits.items() if r["pattern"]}
+    last = float(c[-1])
+    matched = {}
+    for n, fn in P.DETECTORS.items():
+        r = fn(h, l, c, d, v)
+        if (r["pattern"] and not P._is_spent(r, last)
+                and (r["pattern_fit"] or 0) >= P.PATTERN_MIN_FIT):
+            matched[n] = r
     best = P.detect_all(h, l, c, d, v)
+    if not matched:
+        assert best["pattern"] is None
+        return
     assert best["pattern"] in matched
     assert best["pattern_fit"] == max(r["pattern_fit"] for r in matched.values())
 
@@ -497,3 +507,57 @@ def test_the_ascending_triangle_tolerates_one_overshoot_and_one_flat_tread():
                  (93, 100), (100, 93), (93, 100), (100, 97)], 16)
     h, l, c, d, v = _bars(path)
     assert P.detect_ascending_triangle(h, l, c, d, v)["pattern"] == "ASC_TRIANGLE"
+
+
+# ════════════════════════════════════ spent shapes are dropped, not reported
+
+def test_a_shape_price_has_long_since_left_is_not_reported():
+    """The same defect as structure_shift's, one layer up: a flag latches on at
+    the break and never switches off. On the 2026-08-06 board 157 of 282
+    detections were TRIGGERED and the median one was already 9.9% past its
+    level — 87% of the whole board carried a pattern, which is not a flag."""
+    # JUST through the rim (~100.4): still the read.
+    fresh = _cup() + [101.0, 101.4, 101.8]
+    h, l, c, d, v = _bars(fresh)
+    assert P.detect_cup_handle(h, l, c, d, v)["pattern_stage"] == "TRIGGERED"
+    # The cup fixture is ALSO a double top (same geometry — see the ambiguity
+    # test), so assert the shape survived rather than that it won the tie-break.
+    r = P.detect_all(h, l, c, d, v)
+    named = {r["pattern"]} | {x.strip() for x in (r["pattern_alt"] or "").split(",")}
+    assert "CUP_HANDLE" in named
+    # ...and long gone once price has run away from it.
+    h2, l2, c2, d2, v2 = _bars(_cup() + list(np.linspace(101, 125, 8)))
+    assert P.detect_cup_handle(h2, l2, c2, d2, v2)["pattern_stage"] == "TRIGGERED"
+    assert P.detect_all(h2, l2, c2, d2, v2)["pattern"] is None
+
+
+def test_the_spent_test_reads_the_right_way_round_for_a_bearish_shape():
+    """A bearish trigger is broken DOWNWARD, so "past it" means BELOW. Getting
+    the sign wrong would keep every spent bearish shape and drop every fresh
+    one — and both halves would still look plausible on screen."""
+    fresh = {"pattern": "DOUBLE_TOP", "pattern_direction": "BEARISH",
+             "pattern_stage": "TRIGGERED", "pattern_trigger": 100.0}
+    assert P._is_spent(fresh, 98.0) is False        # 2% through — still the read
+    assert P._is_spent(fresh, 80.0) is True         # 20% through — long gone
+
+
+def test_an_unbroken_shape_is_never_spent_however_old():
+    """FORMING/BASE shapes have not triggered, so the extension test does not
+    apply to them at all — they are exactly what a watchlist wants."""
+    r = {"pattern": "ASC_TRIANGLE", "pattern_direction": "BULLISH",
+         "pattern_stage": "FORMING", "pattern_trigger": 100.0}
+    assert P._is_spent(r, 60.0) is False
+
+
+def test_a_sloppy_shape_is_dropped_by_the_fit_floor():
+    h, l, c, d, v = _bars(_cup())
+    one = P.detect_cup_handle(h, l, c, d, v)
+    assert one["pattern"] == "CUP_HANDLE"
+    import unittest.mock as _m
+    with _m.patch.object(P, "PATTERN_MIN_FIT", (one["pattern_fit"] or 0) + 0.01):
+        assert P.detect_all(h, l, c, d, v)["pattern"] != "CUP_HANDLE"
+
+
+def test_the_thresholds_are_named_so_they_can_be_argued_with():
+    assert P.PATTERN_MAX_EXTENSION_PCT == 5.0
+    assert P.PATTERN_MIN_FIT == 0.50
