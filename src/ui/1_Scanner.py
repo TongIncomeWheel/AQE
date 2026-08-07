@@ -1036,6 +1036,25 @@ else:
             sector_parts.append(f"**{bucket}:** {names}")
     st.markdown(" | ".join(sector_parts))
 
+@st.cache_data(ttl=120, show_spinner=False)
+def _daily_by_ticker() -> dict:
+    """{ticker: daily_list row}, loaded independently of the page's own later
+    `_ex` / `_ll_recs`.
+
+    The thematic panel renders ~500 lines BEFORE those are defined, and reading
+    a variable that does not exist yet is a NameError that only appears once
+    someone uses the feature — the cold-start smoke test never reaches this
+    code. Loading here keeps the block self-contained rather than depending on
+    where it happens to sit in the script.
+    """
+    try:
+        return {r.get("ticker"): r
+                for r in ((load_export() or {}).get("daily_list") or [])
+                if r.get("ticker")}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 # ---------------------------------------------------------------------------
 # 2b. Thematic Rotation — the SAME SRM/RRG method on deterministic basket
 #     constituent sets (a context/sentiment layer, SEPARATE from GICS sectors).
@@ -1208,7 +1227,11 @@ if _thematic:
         if _drill and _drill != "—":
             _bd = _thematic.get(_drill) or {}
             _cons = _bd.get("constituents_used") or []
-            _by_tk = {r.get("ticker"): r for r in (_ll_recs or [])}
+            # Read the export DIRECTLY, not the page's `_ll_recs` — that is
+            # defined ~550 lines further down, so referencing it here raised a
+            # NameError the moment a basket was picked. Cached, so this is one
+            # parse per render regardless of how many baskets get opened.
+            _by_tk = _daily_by_ticker()
             _rows = []
             for _c in _cons:
                 _r = _by_tk.get(_c) or {}
