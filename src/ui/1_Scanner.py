@@ -803,6 +803,42 @@ srm_detail = sl.get("srm_detail", {})
 _sector_tail_bf, _basket_tail_bf = _rrg_tail_backfill(
     file_hash(PANEL_DAILY) if PANEL_DAILY.exists() else "none")
 if srm_detail:
+    # ── ONE FILTER SET DRIVES THE CHART AND THE TABLE ───────────────────────
+    # The RRG scatter used to carry its OWN "Sectors to plot" + "RRG filter"
+    # widgets, independent of the table's facets below. Two filter sets over one
+    # dataset means the picture and the table can disagree while both look
+    # right, and the reader has no way to tell which one they are reading (PM:
+    # "make sure it drives whats on the graph as well ... table vs
+    # illustration"). The frame and its facets are therefore built HERE, above
+    # the chart, and the surviving sectors gate both.
+    grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
+    srm_rows = []
+    for etf, d in sorted(srm_detail.items(),
+                         key=lambda x: grade_order.get(x[1].get("grade", "WATCH"), 3)):
+        srm_rows.append({
+            "Sector": _sector_label(etf),
+            "Grade": d.get("grade", "---"),
+            "Action state": d.get("trend_state", "---"),
+            "Rotation (RRG)": _rrg_phrase(d.get("rrg_quadrant"), d.get("rrg_direction")),
+            "Macro": d.get("macro_headwind_flag", "---"),
+            "Gate": d.get("entry_gate", "---"),
+            "20d%": _fmt(d.get("roc20", 0), "+.1f"),
+            "5d%": _fmt(d.get("roc5", 0), "+.1f"),
+            # Hidden: the RRG PHRASE is prose and useless to pick from, so the
+            # filter offers the quadrant behind it. `_etf` lets the chart map a
+            # surviving ROW back to its ticker without re-deriving the label.
+            "_rrg_q": d.get("rrg_quadrant") or "",
+            "_etf": etf,
+        })
+    df_srm = facet_filters(pd.DataFrame(srm_rows), key="srm_table",
+                           facets=[("Grade", "Grade"),
+                                   ("Action state", "Action state"),
+                                   ("RRG", "_rrg_q"),
+                                   ("Macro", "Macro")],
+                           hide=["_etf"])
+    _srm_visible = set(df_srm["_etf"]) if "_etf" in df_srm.columns else set(srm_detail)
+    df_srm = df_srm.drop(columns=["_etf"], errors="ignore")
+
     # ── Visual panels: RRG scatter + Macro weather (above the table) ──
     _has_rrg = any(
         d.get("rrg_rs_ratio") is not None for d in srm_detail.values()
@@ -825,38 +861,19 @@ if srm_detail:
                     _all_pts.append((_etf, _r, _m, _d.get("entry_gate", "WATCH"),
                                      _d.get("rrg_direction", "STABLE"), _hist))
 
-            _etf_opts = [p[0] for p in _all_pts]
-            _fc1, _fc2 = st.columns([3, 2])
-            with _fc1:
-                _sel_etfs = st.multiselect(
-                    "Sectors to plot", _etf_opts, default=_etf_opts,
-                    key="rrg_sector_filter",
-                    help="Trim the RRG to just the sectors you want when it gets "
-                         "crowded. The dotted tail traces each sector's last 5 days "
-                         "(direction of travel); the dot is today.",
-                )
-            with _fc2:
-                _rrg_dir_filter = st.selectbox(
-                    "RRG filter", ["All", "Positive", "Negative",
-                                   "LEADING", "IMPROVING", "WEAKENING", "LAGGING"],
-                    key="rrg_sector_dir_filter",
-                    help="Positive = LEADING + IMPROVING quadrants. "
-                         "Negative = WEAKENING + LAGGING. Or pick a single quadrant.",
-                )
-
-            _pts = [p for p in _all_pts if p[0] in _sel_etfs] or _all_pts
-
-            _POS_QUADS = {"LEADING", "IMPROVING"}
-            _NEG_QUADS = {"WEAKENING", "LAGGING"}
-            if _rrg_dir_filter == "Positive":
-                _q_map = {e: d.get("rrg_quadrant", "") for e, d in srm_detail.items()}
-                _pts = [p for p in _pts if _q_map.get(p[0]) in _POS_QUADS] or _pts
-            elif _rrg_dir_filter == "Negative":
-                _q_map = {e: d.get("rrg_quadrant", "") for e, d in srm_detail.items()}
-                _pts = [p for p in _pts if _q_map.get(p[0]) in _NEG_QUADS] or _pts
-            elif _rrg_dir_filter in ("LEADING", "IMPROVING", "WEAKENING", "LAGGING"):
-                _q_map = {e: d.get("rrg_quadrant", "") for e, d in srm_detail.items()}
-                _pts = [p for p in _pts if _q_map.get(p[0]) == _rrg_dir_filter] or _pts
+            # THE CHART PLOTS WHAT THE TABLE SHOWS. Its own "Sectors to plot"
+            # and "RRG filter" widgets are gone: the first duplicated the
+            # facets, the second duplicated the RRG facet outright, and the
+            # picture could contradict the table underneath it.
+            #
+            # NOT falling back to "all" on an empty selection, deliberately.
+            # The old code did (`... or _all_pts`), so filtering down to nothing
+            # silently redrew the FULL chart — the one moment the reader most
+            # needs to be told the cut is empty.
+            _pts = [p for p in _all_pts if p[0] in _srm_visible]
+            if len(_pts) != len(_all_pts):
+                st.caption(f"Plotting {len(_pts)} of {len(_all_pts)} sectors — "
+                           "the filters above the table drive this chart too.")
 
             if _pts:
                 _ratios = ([p[1] for p in _pts]
@@ -994,32 +1011,8 @@ if srm_detail:
             # Legend
             st.caption("Dot color = entry gate: green PASS · orange WATCH · red CAUTION/BLOCKED")
 
-    # ── SRM Table ──
-    grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
-    srm_rows = []
-    for etf, d in sorted(srm_detail.items(), key=lambda x: grade_order.get(x[1].get("grade", "WATCH"), 3)):
-        roc20 = d.get("roc20", 0)
-        roc5 = d.get("roc5", 0)
-        row = {
-            "Sector": _sector_label(etf),
-            "Grade": d.get("grade", "---"),
-            "Action state": d.get("trend_state", "---"),
-            "Rotation (RRG)": _rrg_phrase(d.get("rrg_quadrant"), d.get("rrg_direction")),
-            "Macro": d.get("macro_headwind_flag", "---"),
-            "Gate": d.get("entry_gate", "---"),
-            "20d%": _fmt(roc20, "+.1f"),
-            "5d%": _fmt(roc5, "+.1f"),
-            # Hidden: the RRG PHRASE is prose and useless to pick from, so the
-            # filter offers the quadrant behind it.
-            "_rrg_q": d.get("rrg_quadrant") or "",
-        }
-        srm_rows.append(row)
-    df_srm = pd.DataFrame(srm_rows)
-    df_srm = facet_filters(df_srm, key="srm_table",
-                           facets=[("Grade", "Grade"),
-                                   ("Action state", "Action state"),
-                                   ("RRG", "_rrg_q"),
-                                   ("Macro", "Macro")])
+    # ── SRM Table — the frame and its facets were built ABOVE the chart, so
+    # both read the same cut. Nothing to filter here; just render.
     table_with_copy(df_srm, key="srm_table")
     st.caption(
         "**Rotation (RRG)** vs SPY: *Entering* = just crossed into that quadrant · "
@@ -1063,6 +1056,37 @@ if _thematic:
         "WATCH": "#d4a017", "AVOID": "#d62728", "NO_DATA": "#999999",
     }
 
+    # ── ONE FILTER SET, chart and table — same fix as the SRM panel above.
+    # The thematic RRG carried its own "Baskets to plot" + "RRG filter", so the
+    # picture and the 35-row table could disagree while both looked right.
+    _grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3,
+                    "AVOID": 4, "NO_DATA": 5}
+    _trows = []
+    for _b, _d in sorted(_thematic.items(),
+                         key=lambda x: _grade_order.get(x[1].get("grade", "NO_DATA"), 5)):
+        _trows.append({
+            "Basket": _b.replace("_", " "),
+            "Grade": _d.get("grade", "---"),
+            "Why": _d.get("grade_path", "—"),
+            "Breadth %": _d.get("breadth_pct"),
+            "Pattern": _d.get("pattern") or "—",
+            "Pattern dir": _d.get("pattern_direction") or "—",
+            "Pattern stage": _d.get("pattern_stage") or "—",
+            "Capped at parent": _d.get("parent_capped_grade", "---"),
+            "Parent": f'{_d.get("parent_gics", "—")} ({_d.get("parent_grade", "—")})',
+            "Rotation (RRG)": _rrg_phrase(_d.get("rrg_quadrant"), _d.get("rrg_direction")),
+            "20d%": _fmt(_d.get("roc20"), "+.1f"),
+            "5d%": _fmt(_d.get("roc5"), "+.1f"),
+            "Coverage": _d.get("coverage", "—"),
+            "_rrg_q": _d.get("rrg_quadrant") or "",
+            "_key": _b,
+        })
+    _tdf = facet_filters(pd.DataFrame(_trows), key="thematic_table",
+                         facets=[("Grade", "Grade"), ("Why", "Why"),
+                                 ("RRG", "_rrg_q")], hide=["_key"])
+    _theme_visible = set(_tdf["_key"]) if "_key" in _tdf.columns else set(_thematic)
+    _tdf = _tdf.drop(columns=["_key"], errors="ignore")
+
     _t_has_rrg = any(d.get("rrg_rs_ratio") is not None for d in _thematic.values())
     if _t_has_rrg:
         import matplotlib
@@ -1078,38 +1102,15 @@ if _thematic:
                 _all_tpts.append((_b, _r, _m, _d.get("grade", "NO_DATA"),
                                   _d.get("rrg_direction", "STABLE"), _hist))
 
-        _b_opts = [p[0] for p in _all_tpts]
-        _tc1, _tc2 = st.columns([3, 2])
-        with _tc1:
-            _sel_b = st.multiselect(
-                "Baskets to plot", _b_opts, default=_b_opts,
-                key="rrg_thematic_filter",
-                format_func=lambda b: _basket_short.get(b, b),
-                help="Trim the thematic RRG when crowded. The dotted tail traces each "
-                     "basket's last 5 days (direction of travel); the dot is today.",
-            )
-        with _tc2:
-            _rrg_theme_dir = st.selectbox(
-                "RRG filter", ["All", "Positive", "Negative",
-                               "LEADING", "IMPROVING", "WEAKENING", "LAGGING"],
-                key="rrg_thematic_dir_filter",
-                help="Positive = LEADING + IMPROVING quadrants. "
-                     "Negative = WEAKENING + LAGGING. Or pick a single quadrant.",
-            )
-
-        _tpts = [p for p in _all_tpts if p[0] in _sel_b] or _all_tpts
-
-        _POS_Q = {"LEADING", "IMPROVING"}
-        _NEG_Q = {"WEAKENING", "LAGGING"}
-        if _rrg_theme_dir == "Positive":
-            _tq = {b: d.get("rrg_quadrant", "") for b, d in _thematic.items()}
-            _tpts = [p for p in _tpts if _tq.get(p[0]) in _POS_Q] or _tpts
-        elif _rrg_theme_dir == "Negative":
-            _tq = {b: d.get("rrg_quadrant", "") for b, d in _thematic.items()}
-            _tpts = [p for p in _tpts if _tq.get(p[0]) in _NEG_Q] or _tpts
-        elif _rrg_theme_dir in ("LEADING", "IMPROVING", "WEAKENING", "LAGGING"):
-            _tq = {b: d.get("rrg_quadrant", "") for b, d in _thematic.items()}
-            _tpts = [p for p in _tpts if _tq.get(p[0]) == _rrg_theme_dir] or _tpts
+        # Plots exactly what the table shows. Its own two filter widgets are
+        # gone — they duplicated the facets and could contradict them. And an
+        # empty cut is REPORTED, not silently redrawn as the full chart, which
+        # is what the old `or _all_tpts` fallback did at the one moment the
+        # reader most needs to know the filter emptied.
+        _tpts = [p for p in _all_tpts if p[0] in _theme_visible]
+        if len(_tpts) != len(_all_tpts):
+            st.caption(f"Plotting {len(_tpts)} of {len(_all_tpts)} baskets — "
+                       "the filters above the table drive this chart too.")
 
         if _tpts:
             _ratios = ([p[1] for p in _tpts]
@@ -1174,31 +1175,8 @@ if _thematic:
                 "**entering** its quadrant. Axes normalised to SPY = 100."
             )
 
-    # ── Thematic Table ──
-    _grade_order = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3,
-                    "AVOID": 4, "NO_DATA": 5}
-    _trows = []
-    for _b, _d in sorted(_thematic.items(),
-                         key=lambda x: _grade_order.get(x[1].get("grade", "NO_DATA"), 5)):
-        _trows.append({
-            "Basket": _b.replace("_", " "),
-            "Grade": _d.get("grade", "---"),
-            "Why": _d.get("grade_path", "—"),
-            "Breadth %": _d.get("breadth_pct"),
-            "Pattern": _d.get("pattern") or "—",
-            "Pattern dir": _d.get("pattern_direction") or "—",
-            "Pattern stage": _d.get("pattern_stage") or "—",
-            "Capped at parent": _d.get("parent_capped_grade", "---"),
-            "Parent": f'{_d.get("parent_gics", "—")} ({_d.get("parent_grade", "—")})',
-            "Rotation (RRG)": _rrg_phrase(_d.get("rrg_quadrant"), _d.get("rrg_direction")),
-            "20d%": _fmt(_d.get("roc20"), "+.1f"),
-            "5d%": _fmt(_d.get("roc5"), "+.1f"),
-            "Coverage": _d.get("coverage", "—"),
-            "_rrg_q": _d.get("rrg_quadrant") or "",
-        })
-    _tdf = facet_filters(pd.DataFrame(_trows), key="thematic_table",
-                         facets=[("Grade", "Grade"), ("Why", "Why"),
-                                 ("RRG", "_rrg_q")])
+    # ── Thematic Table — frame + facets built ABOVE the chart so both read
+    # the same cut. Nothing to filter here; just render.
     table_with_copy(_tdf, key="thematic_table")
     st.caption(
         "**Why** — which rule produced the grade. *trend* = the 20-day road "
