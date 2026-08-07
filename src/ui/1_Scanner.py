@@ -1178,6 +1178,61 @@ if _thematic:
     # ── Thematic Table — frame + facets built ABOVE the chart so both read
     # the same cut. Nothing to filter here; just render.
     table_with_copy(_tdf, key="thematic_table")
+
+    # ── DRILL DOWN: what is actually IN a basket ────────────────────────────
+    # A basket grade is an equal-weight index of names the reader cannot see
+    # from the row, so "Cybersecurity is DEPLOY" is unauditable until you know
+    # which thirteen names produced it — and whether the ones carrying it are
+    # names AQE would touch (PM: "double click on the thematic basket that then
+    # shows me the underlying stocks").
+    #
+    # A PICKER, NOT A DOUBLE-CLICK. st.dataframe's row selection would need
+    # table_with_copy rebuilt around it, and the copy-for-AIC block reads the
+    # rendered frame — a selection-aware table risks copying a different view
+    # than the one on screen. The picker is one click, works on every Streamlit
+    # version, and cannot desync from the table.
+    _pick_opts = [b for b in _thematic if b in _theme_visible]
+    if _pick_opts:
+        _drill = st.selectbox(
+            "Show the stocks inside a basket", ["—"] + sorted(_pick_opts),
+            key="thematic_drill",
+            format_func=lambda b: b if b == "—" else b.replace("_", " "),
+            help="The grading constituents of that basket, with AQE's own read "
+                 "on each. Constituents are pulled into the panel for GRADING "
+                 "only — being in a basket never adds a name to the scan.")
+        if _drill and _drill != "—":
+            _bd = _thematic.get(_drill) or {}
+            _cons = _bd.get("constituents_used") or []
+            _by_tk = {r.get("ticker"): r for r in (_ll_recs or [])}
+            _rows = []
+            for _c in _cons:
+                _r = _by_tk.get(_c) or {}
+                _rows.append({
+                    "ticker": _c,
+                    # An empty flag column would read as "not on the list" when
+                    # the truth is "AQE never scored it" — so say which.
+                    "on AQE list": ("—" if not _r else
+                                    ", ".join([n for n, k in
+                                               (("LL", "on_longlist"),
+                                                ("Elder", "on_elder"),
+                                                ("QS", "on_qs")) if _r.get(k)]) or "scored, no list"),
+                    "sc_mom": _r.get("sc_momentum"),
+                    "elder": _r.get("elder"),
+                    "day_vol": _r.get("day_vol"),
+                    "structure": _r.get("structure_shift"),
+                    "pattern": _r.get("pattern") or "—",
+                    "entry": _r.get("entry"),
+                    "atr_14d": _r.get("atr_14d"),
+                })
+            _n_scored = sum(1 for r in _rows if r["on AQE list"] != "—")
+            st.caption(
+                f"**{_drill.replace('_', ' ')}** — {_bd.get('grade')} "
+                f"({_bd.get('grade_path')}) · breadth {_bd.get('breadth_pct')}% · "
+                f"coverage {_bd.get('coverage')}. "
+                f"{_n_scored} of {len(_rows)} constituents were scored by today's "
+                "run; the rest sit in the panel for GRADING only and carry no AQE "
+                "read — blank there means not scored, not weak.")
+            table_with_copy(pd.DataFrame(_rows), key=f"thematic_drill_{_drill}")
     st.caption(
         "**Why** — which rule produced the grade. *trend* = the 20-day road "
         "(roc20 > 5%) · *acceleration* = the 5-day road (≥ +6% in a week, ≥ 5 pts "
