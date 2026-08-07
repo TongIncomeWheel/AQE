@@ -834,8 +834,12 @@ if srm_detail:
                            facets=[("Grade", "Grade"),
                                    ("Action state", "Action state"),
                                    ("RRG", "_rrg_q"),
-                                   ("Macro", "Macro")],
-                           hide=["_etf"])
+                                   ("Macro", "Macro")])
+    # NOT passed via hide=: facet_filters DROPS hidden columns before it
+    # returns, so `_etf` would be gone here and the fallback below would
+    # silently restore every sector — which is exactly what happened, and why
+    # the chart ignored the filters while the table obeyed them. Read the key
+    # first, drop it after.
     _srm_visible = set(df_srm["_etf"]) if "_etf" in df_srm.columns else set(srm_detail)
     df_srm = df_srm.drop(columns=["_etf"], errors="ignore")
 
@@ -1083,7 +1087,8 @@ if _thematic:
         })
     _tdf = facet_filters(pd.DataFrame(_trows), key="thematic_table",
                          facets=[("Grade", "Grade"), ("Why", "Why"),
-                                 ("RRG", "_rrg_q")], hide=["_key"])
+                                 ("RRG", "_rrg_q")])
+    # Same trap as the SRM panel: read the key BEFORE dropping it.
     _theme_visible = set(_tdf["_key"]) if "_key" in _tdf.columns else set(_thematic)
     _tdf = _tdf.drop(columns=["_key"], errors="ignore")
 
