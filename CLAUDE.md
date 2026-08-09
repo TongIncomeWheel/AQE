@@ -58,6 +58,16 @@ The third lens, alongside Longlist and Elder — **not a separate list.** Finds 
 - **`qs.objective` (±2×ATR14) is the yardstick the probability was measured against. `bracket` is the tradeable structural set. Never merge them** — conflating them makes `qs.odds.p` read as the odds of hitting structural TP2, which it is not.
 - Backfill: `scripts/qs_backfill.bat` (~15 sessions — a floor for persistence, not a research rebuild).
 
+### Nick Crown Macro Layer (`src/macro/crown/`)
+Implementation of Crown Institutional Process **kernel v1.4** — positioning, breadth and regime *before* price. **Built STANDALONE by PM directive (2026-08-09): it reads nothing from SRM / Macro Weather / Thematic RRG and feeds nothing to them.** Merge + de-dup is a later decision; keeping them apart is what makes the overlap measurable.
+- Hierarchy, in order: **Heartbeat (RSP/SPY) → if confidence < 0.40 STOP → CTA + COT + Gamma → VIX/dispersion → divergence → expression FAMILY + size multiplier.** The gate is the point: a market you can't read stops the process, it doesn't just size down.
+- Outputs a **family** (one of 5) + a **multiplier on the PM's own risk budget**. Never a ticker, never a position — AQE still makes no decisions and no sizing.
+- **COT comes straight from cftc.gov**, not FMP (which gates it at Premium). Annual archives backfill history; `data/crown_cot.parquet` rides in Daily Persist because that file *is* the percentile window.
+- **CTA is replicated, not bought** (Moskowitz-Ooi-Pedersen + Faber, vol-normalised). Our positioning estimate won't match Goldman's; the **flip levels** — "CTAs turn seller of ES below X" — are arithmetic and will be close. That's the column worth reading.
+- **`^VIXEQ` is not on our FMP plan**, so the VIXEQ−VIX spread degrades to a *realised* dispersion proxy. `basis` always says which, the realised one always carries a caveat, and the page banners it — a realised number standing in silently for an implied one is exactly how a weaker claim gets mistaken for a stronger one.
+- **A gamma map without open interest is UNAVAILABLE, never a flat map** — a zeroed profile reads as "dealers are neutral", a completely different claim. Dealer-side is a stated *assumption*, not data.
+- Page: 🫀 Crown Macro. Daily: step 6f (gamma off, wrapped like QS). Full doc: `docs/AQE_CROWN_MACRO_LAYER.md`.
+
 ### Engines (`src/engines/`)
 Flow / Energy / Structure / MP / Elder / BQ / K39 / Pipeline Rank / SC_MOMENTUM+SC_POSITION composites — full formulas in the reference doc §Part II.1-3. `bracket_engine.py` is **the** stop/target source of truth (structural, 3-charter-gates validated; mechanical DSL/TP fields are retired from the export). `srm.py` — sector grading + RRG + macro overlay + 35 thematic baskets (context layer, never adds scan names). DETECT layer (`divergence.py`, `pin_bar.py`, `smart_money_knn.py`, `signal_radar.py`) and `lens_consensus.py` (the unweighted lens-agreement reading aid) are data-only — never gates, never sizing.
 

@@ -352,6 +352,26 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] QS engine failed: {exc}")
 
+    # Step 6f: Nick Crown Macro Layer — kernel v1.4, STANDALONE.
+    # Reads nothing from SRM / Macro Weather / Thematic RRG and feeds nothing to
+    # them; merge and de-dup is a later PM decision (2026-08-09). Gamma is OFF
+    # here because it needs Alpaca option chains with open interest — the Crown
+    # page runs it on demand. Wrapped like QS: this is an ADDITION to a working
+    # real-money pipeline and must never take the export down with it.
+    print(f"{_el()} [daily] Step 6f: Crown macro layer...")
+    try:
+        from src.macro.crown.daily import run_crown as _crown_run
+        _cr = _crown_run(with_gamma=False)
+        _hb, _dec = _cr.get("heartbeat", {}), _cr.get("decision", {})
+        print(f"  status {_cr['crown_status']} · heartbeat {_hb.get('regime')} "
+              f"(conf {_hb.get('confidence')}) · "
+              f"family {(_dec.get('expression') or {}).get('family')} · "
+              f"size x{_dec.get('size_multiplier')}")
+        for _d in _cr.get("degraded", []):
+            print(f"  [WARN] crown: {_d}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] Crown macro layer failed: {exc}")
+
     # Step 7: Output
     print("[daily] Step 7: Output...")
     output = _build_output(run_date, regime, sector_grades, shortlist, recipe_matches,

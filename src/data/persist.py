@@ -44,6 +44,11 @@ def _members() -> list[tuple]:
         # leave the pipeline with no list at all. Drive restore covers this too;
         # this is the belt to that braces.
         "universe.txt",
+        # Crown's COT history. The CFTC publishes one snapshot a week, so this
+        # file IS the percentile window — without it a recycle leaves every
+        # market reading "no history" instead of "crowded long", which is a
+        # different answer wearing the same shape.
+        "crown_cot.parquet",
     ]
     # QS's memory (recipe_hits trail + regime series) rides inside aqe.db above,
     # which is why that file is load-bearing rather than incidental: without it
@@ -58,6 +63,8 @@ def _members() -> list[tuple]:
         "shortlist.json", "aqe_daily_export.json", "held_positions.json",
         # QS's standalone artifact — same numbers as the export's qs blocks.
         "qs_daily.json",
+        # The Crown macro read, so the page renders instantly after a recycle.
+        "crown_macro.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]
