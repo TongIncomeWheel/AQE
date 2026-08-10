@@ -136,6 +136,31 @@ if fresh:
             "shrinking denominator silently re-rates every reading."
         )
 
+# ── the read, in English, before any numbers ─────────────────────────────
+# Generated from the finished dict on every run, so it cannot drift from what
+# the rest of the page shows.
+pe = crown.get("plain_english") or {}
+if pe.get("headline"):
+    st.header("What kind of market is this?")
+    st.markdown(f"### {pe['headline']}")
+
+    w1, w2 = st.columns([3, 2])
+    with w1:
+        st.markdown("**Why**")
+        for b in pe.get("because", []):
+            st.markdown(f"- {b}")
+        if pe.get("so_what"):
+            st.success(f"**So what** — {pe['so_what']}")
+    with w2:
+        if pe.get("watch_for"):
+            st.markdown("**What would change it**")
+            for wf in pe["watch_for"]:
+                st.markdown(f"- {wf}")
+        for c in pe.get("caveats", []):
+            st.warning(c)
+    st.caption(pe.get("note", ""))
+    st.divider()
+
 # ── the decision, first, because it is what the hierarchy is FOR ─────────
 
 dec = crown.get("decision") or {}

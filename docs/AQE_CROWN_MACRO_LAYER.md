@@ -76,6 +76,7 @@ and "NONE" is not.
 | `divergence.py` | 2.5 | The three accepted types, each read across every series we hold. |
 | `kernel.py` | 2.1/3/5 | The hierarchy, sequenced as pure functions. |
 | `data.py` | — | All network. The engines stay pure. |
+| `explain.py` | — | The regime in **plain English**, generated from the finished read every run. |
 | `daily.py` | 4 | One call; `crown_status` degrades loudly. |
 | `../scenarios.py` | — | **The first merge point**: Macro Weather × Crown → ranked scenario reads. Deliberately outside `crown/`. |
 
@@ -314,6 +315,47 @@ Three disciplines it enforces:
 - **An unavailable input is skipped, never counted as evidence against.**
 
 Runs at step 6g of the daily, writes `output/macro_scenarios.json`.
+
+---
+
+## The plain-English read
+
+Every other module produces numbers. `explain.py` produces the sentence a person
+actually wants: **what kind of market is this, why, what does the process say to
+do, and what would change the answer.** It is a pure function over the finished
+Crown dict, regenerated on every run and shipped in the artifact as
+`plain_english`, so the committee reads the same words the page shows and
+neither can go stale.
+
+Two rules the writing follows, both enforced by tests:
+
+1. **No jargon without its meaning.** "Dispersion at the 98th percentile" is not
+   English. "Single stocks are far more volatile than the index — wider than 98%
+   of the last two years" is. A test asserts the raw vocabulary (`percentile`,
+   `dispersion`, `gex`, `vixeq`, `flip_risk`, `heartbeat`) never reaches the
+   output.
+2. **No claim without its number, and no number without its claim.** "Breadth is
+   weak" cannot be checked; "0.328" cannot be understood.
+
+The output is `headline` / `because` / `so_what` / `watch_for` / `caveats`.
+`watch_for` is the part with teeth — it names the actual CTA flip levels ("if the
+S&P trades below 7,240, trend funds start selling"), the condition that would
+turn an easing spread back into a building one, and the leading scenario's own
+falsifiers.
+
+A worked example, from live volatility and COT data:
+
+> **A market with no clear breadth lead, calm on the surface but with single
+> stocks moving very differently underneath.** Best fit: a stock-picker's market
+> — the index tells you very little about the average name.
+>
+> - Single stocks are far more volatile than the index — wider than 88% of the
+>   last two years. But the gap has been shrinking for a month (down 9.2 points),
+>   so this stress is draining away rather than building. Buying downside into
+>   that is buying the end of the move. The index itself is calm: VIX at 14.9,
+>   lower than 91% of the last two years.
+> - Big speculators are unusually long the dollar, gold, copper and 4 others;
+>   unusually short natural gas, the Nasdaq, silver and 2 others.
 
 ---
 

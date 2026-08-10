@@ -34,6 +34,7 @@ from . import cot as cot_mod
 from . import cta as cta_mod
 from . import data as feeds
 from . import divergence as div_mod
+from . import explain as explain_mod
 from . import gamma as gamma_mod
 from . import heartbeat as hb_mod
 from . import kernel as kernel_mod
@@ -243,6 +244,16 @@ def _envelope(status, heartbeat, cta_read, cot_read, gamma_read, extra,
             "SRM / Macro Weather / Thematic RRG and feeds nothing to them. "
             "Merge and de-dup is a later decision."),
     }
+    # The plain-English read, generated from the finished dict so it can never
+    # drift from the numbers it describes. Scenarios are read from their own
+    # artifact when present — the two run in separate pipeline steps.
+    try:
+        from src.macro.scenarios import load_scenarios as _load_scen
+        out["plain_english"] = explain_mod.explain(out, _load_scen() or {})
+    except Exception as exc:  # noqa: BLE001
+        out["plain_english"] = {"headline": "Plain-English summary unavailable.",
+                                "because": [str(exc)], "so_what": "", "watch_for": []}
+
     if write:
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

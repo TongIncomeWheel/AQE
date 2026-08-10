@@ -5,8 +5,8 @@ decision (PM directive 2026-08-09). Nothing here reads them; nothing here
 feeds them.
 """
 
-from . import (cboe, cot, cta, daily, data, divergence, gamma, heartbeat,
-               kernel, spec, vol)
+from . import (cboe, cot, cta, daily, data, divergence, explain, gamma,
+               heartbeat, kernel, spec, vol)
 
-__all__ = ["cboe", "cot", "cta", "daily", "data", "divergence", "gamma",
-           "heartbeat", "kernel", "spec", "vol"]
+__all__ = ["cboe", "cot", "cta", "daily", "data", "divergence", "explain",
+           "gamma", "heartbeat", "kernel", "spec", "vol"]
