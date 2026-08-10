@@ -122,15 +122,37 @@ def _pace() -> None:
         _last_call[0] = time.monotonic()
 
 
+# Which trading host this key authenticates against, learned on first success.
+_TRADING_HOST: list = [None]
+
+
 def _http_get(path: str, params: dict) -> dict:
     """Paced + retried GET against the market-DATA host."""
     return _http_get_base(C.ALPACA_DATA_URL, path, params)
 
 
 def _http_get_trading(path: str, params: dict) -> dict:
-    """Same, against the TRADING host. Option open interest lives here, not on
-    the data host — `/v2/options/contracts` carries `open_interest`."""
-    return _http_get_base(C.ALPACA_TRADING_URL, path, params)
+    """Same, against the TRADING host — where open interest lives.
+
+    Tries the live host, then paper. A key authenticates against one or the
+    other, never both, and the 401 it returns on the wrong one looks identical
+    to a bad key. Trying both removes a question the PM should not have to
+    answer, and the working host is remembered so the second call is direct.
+    """
+    hosts = ([_TRADING_HOST[0]] if _TRADING_HOST[0] else
+             [C.ALPACA_TRADING_URL, C.ALPACA_PAPER_TRADING_URL])
+    last = None
+    for host in hosts:
+        try:
+            out = _http_get_base(host, path, params)
+            _TRADING_HOST[0] = host
+            return out
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            if "401" not in str(exc) and "403" not in str(exc):
+                raise          # a real error, not the wrong host
+            _TRADING_HOST[0] = None
+    raise last
 
 
 def _http_get_base(base: str, path: str, params: dict) -> dict:

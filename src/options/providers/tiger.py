@@ -190,32 +190,39 @@ def fetch_chain(underlying: str, spot: float, *, today: date | None = None,
     today = today or date.today()
     try:
         client = _client()
-        expiries = (client.get_option_expirations(symbols=[underlying]) or {})
-        # The SDK returns either a dict or a frame depending on version.
-        if hasattr(expiries, "to_dict"):
-            dates = sorted({_expiry_date(v) or v
-                            for v in expiries.get("date", [])})
-        else:
-            dates = sorted(expiries.get(underlying, []))
+        # get_option_expirations returns a DataFrame with a `date` column of
+        # 'YYYY-MM-DD' strings. It must never be truth-tested — `df or {}`
+        # raises "The truth value of a DataFrame is ambiguous", which is exactly
+        # how this failed the first time it ran against a live account.
+        exp_df = client.get_option_expirations(symbols=[underlying])
         usable = []
-        for d in dates:
-            dd = d if isinstance(d, date) else _expiry_date(d) or (
-                date.fromisoformat(str(d)[:10]) if str(d)[:4].isdigit() else None)
-            if dd and 0 <= (dd - today).days <= dte_max:
-                usable.append(dd)
-        usable = usable[:max_expiries]
+        if exp_df is not None and len(exp_df) > 0 and "date" in exp_df.columns:
+            for raw in exp_df["date"].tolist():
+                dd = _expiry_date(raw)
+                if dd is None:
+                    try:
+                        dd = date.fromisoformat(str(raw)[:10])
+                    except ValueError:
+                        continue
+                if 0 <= (dd - today).days <= dte_max:
+                    usable.append(dd)
+        usable = sorted(set(usable))[:max_expiries]
         if not usable:
             return {"spot": spot, "contracts": [], "oi_available": False,
-                    "reason": f"no {underlying} expiries inside {dte_max} days"}
+                    "reason": (f"no {underlying} expiries inside {dte_max} days "
+                               f"(the expiry list returned "
+                               f"{0 if exp_df is None else len(exp_df)} rows)")}
 
         rows = []
         for d in usable:
-            chain = client.get_option_chain(underlying, d.isoformat())
-            rows += (chain.to_dict("records") if hasattr(chain, "to_dict")
-                     else list(chain or []))
+            chain = client.get_option_chain(underlying, d.isoformat(),
+                                            return_greek_value=True)
+            if chain is None or len(chain) == 0:
+                continue
+            rows += chain.to_dict("records")
     except Exception as exc:  # noqa: BLE001
         return {"spot": spot, "contracts": [], "oi_available": False,
-                "reason": f"Tiger chain fetch failed: {exc}"}
+                "reason": f"Tiger chain fetch failed: {type(exc).__name__}: {exc}"}
 
     contracts = parse_chain_rows(rows, underlying, spot, today, dte_max)
     return {

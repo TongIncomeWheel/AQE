@@ -136,3 +136,32 @@ def test_stray_whitespace_and_blank_lines_do_not_corrupt_it():
 def test_an_empty_key_is_empty_not_an_exception():
     assert T.normalise_private_key("") == ""
     assert T.normalise_private_key(None) == ""
+
+
+# ────────────────── the SDK returns DataFrames, which must never be truth-tested
+
+def test_the_expiry_frame_is_never_truth_tested():
+    """`get_option_expirations` returns a DataFrame. Writing `df or {}` raises
+    "The truth value of a DataFrame is ambiguous", which is precisely how this
+    failed the first time it met a live account."""
+    import inspect
+    code = [ln.split("#")[0] for ln in
+            inspect.getsource(T.fetch_chain).splitlines()]
+    assert not any(" or {}" in ln or " or []" in ln for ln in code), \
+        "a DataFrame is being truth-tested again"
+    assert "len(exp_df) > 0" in "\n".join(code), \
+        "length is the only safe emptiness test on a DataFrame"
+
+
+def test_the_expiry_column_is_read_by_name_not_by_position():
+    """Tiger documents the frame as symbol/option_symbol/date/timestamp/
+    period_tag. Reading by position would break on any column re-order."""
+    import inspect
+    src = inspect.getsource(T.fetch_chain)
+    assert '"date" in exp_df.columns' in src
+    assert 'exp_df["date"]' in src
+
+
+def test_greeks_are_requested_from_the_chain():
+    import inspect
+    assert "return_greek_value=True" in inspect.getsource(T.fetch_chain)

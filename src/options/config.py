@@ -43,7 +43,14 @@ ALPACA_DATA_URL = "https://data.alpaca.markets"
 # Open interest is NOT on the market-data host. It lives on the TRADING API's
 # option-contracts endpoint, which is why a gamma map built purely off
 # /v1beta1/options/snapshots can never find it.
+#
+# There are TWO trading hosts and a key authenticates against exactly one of
+# them. A paper key gets 401 on the live host and a live key gets 401 on paper,
+# while both work fine on the market-data host — which is how a key that runs
+# the CSP sweep every day can still be rejected here. We try both rather than
+# asking the PM to know which kind of key they generated.
 ALPACA_TRADING_URL = "https://api.alpaca.markets"
+ALPACA_PAPER_TRADING_URL = "https://paper-api.alpaca.markets"
 ALPACA_FEED = "indicative"      # free, ~15-min delayed; "opra" needs the paid sub
 ALPACA_KEY_ID_ENV = "ALPACA_API_KEY_ID"
 ALPACA_SECRET_ENV = "ALPACA_API_SECRET_KEY"

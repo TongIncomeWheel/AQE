@@ -925,3 +925,30 @@ def test_a_missing_spot_says_all_three_failed_not_just_fmp():
         if "no spot price" in reason:
             assert "panel" in reason and "daily bars" in reason, \
                 "the message must name every source that was tried"
+
+
+# ─────────────────────── Alpaca: two trading hosts, one right answer
+
+def test_the_trading_fetch_tries_both_alpaca_hosts():
+    """A key authenticates against the live host or the paper host, never both,
+    and the 401 from the wrong one is indistinguishable from a bad key. Both
+    work on the market-data host, which is why a key that runs the CSP sweep
+    daily can still be rejected for open interest."""
+    import inspect
+
+    from src.options import config as C
+    from src.options.providers import alpaca as A
+    src = inspect.getsource(A._http_get_trading)
+    assert "ALPACA_TRADING_URL" in src and "ALPACA_PAPER_TRADING_URL" in src
+    assert C.ALPACA_PAPER_TRADING_URL != C.ALPACA_TRADING_URL
+    assert "paper-api" in C.ALPACA_PAPER_TRADING_URL
+
+
+def test_a_non_auth_error_is_not_retried_against_the_other_host():
+    """Only 401/403 means "wrong host". Retrying a 500 or a timeout there would
+    double every real failure and hide its cause."""
+    import inspect
+
+    from src.options.providers import alpaca as A
+    src = inspect.getsource(A._http_get_trading)
+    assert '"401" not in str(exc)' in src and "raise" in src

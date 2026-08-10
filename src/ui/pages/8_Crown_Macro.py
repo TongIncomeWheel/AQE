@@ -584,15 +584,21 @@ with st.expander("🔧 Gamma trial run — test the feed step by step"):
         if spot:
             try:
                 oi = _F.fetch_open_interest("SPY", float(spot))
+                from src.options.providers.alpaca import _TRADING_HOST
+                host = (_TRADING_HOST[0] or "").replace("https://", "") or "?"
                 rows.append({"Step": "3 · Open interest (TRADING api)",
                              "Result": "OK" if oi else "EMPTY",
-                             "Detail": (f"{len(oi)} contracts"
-                                        if oi else "check the key has trading "
-                                                   "scope, not just market data")})
+                             "Detail": (f"{len(oi)} contracts via {host}"
+                                        if oi else "no contracts returned")})
             except Exception as exc:  # noqa: BLE001
                 oi = {}
+                msg = str(exc)[:150]
+                hint = ("" if "401" not in msg else
+                        " — both the live and paper hosts rejected the key, so "
+                        "it is a market-data-only key. Generate one with "
+                        "trading scope, or leave it to Tiger.")
                 rows.append({"Step": "3 · Open interest (TRADING api)",
-                             "Result": "FAILED", "Detail": str(exc)[:160]})
+                             "Result": "FAILED", "Detail": msg + hint})
             try:
                 ch = _F.fetch_gamma_chain("SPY", float(spot))
                 rows.append({"Step": "4 · Greeks + join (DATA api)",
