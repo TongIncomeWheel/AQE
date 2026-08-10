@@ -30,6 +30,8 @@ from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from src.data.paths import OUTPUT_DIR
+from . import calendar as cal_mod
+from . import changes as changes_mod
 from . import cot as cot_mod
 from . import cta as cta_mod
 from . import data as feeds
@@ -38,6 +40,7 @@ from . import explain as explain_mod
 from . import gamma as gamma_mod
 from . import heartbeat as hb_mod
 from . import kernel as kernel_mod
+from . import levels as levels_mod
 from . import spec as S
 from . import vol as vol_mod
 
@@ -49,6 +52,9 @@ def run_crown(*, client=None, refresh_cot: bool = True,
               with_gamma: bool = True, write: bool = True) -> dict:
     """Run the hierarchy end to end and return the full Crown read."""
     degraded: list[str] = []
+    # Read the previous run BEFORE this one overwrites it — "what changed" is
+    # the question a regime report should answer, and it needs both sides.
+    previous = load_crown()
 
     # ── 1. Heartbeat ──────────────────────────────────────────────────────
     rsp, spy, missing = feeds.heartbeat_bars(client)
@@ -229,14 +235,76 @@ def run_crown(*, client=None, refresh_cot: bool = True,
                 f"({lag}d before {today}) — the run is only as current as that")
 
     status = "OK" if not degraded else "DEGRADED"
-    return _envelope(status, heartbeat, cta_read, cot_read, gamma_read,
-                     {"vol": vol_read, "divergence": div_read,
-                      "freshness": freshness}, decision,
-                     degraded, write)
+    out = _envelope(status, heartbeat, cta_read, cot_read, gamma_read,
+                    {"vol": vol_read, "divergence": div_read,
+                     "freshness": freshness}, decision,
+                    degraded, write=False)
+
+    # ── 8. the three reading sections ────────────────────────────────────
+    # Levels first, because `changes` and the calendar both read better once a
+    # reader knows where the lines are.
+    out["key_levels"] = levels_mod.build(out)
+    out["what_changed"] = changes_mod.diff(out, previous)
+    try:
+        out["calendar"] = cal_mod.build(client, held=_held_tickers(),
+                                        watched=_watched_tickers())
+    except Exception as exc:  # noqa: BLE001
+        out["calendar"] = {"events": [], "count": 0,
+                           "unavailable": [f"calendar failed: {exc}"]}
+    for note in (out["calendar"].get("unavailable") or []):
+        degraded.append(note)
+    out["degraded"] = degraded
+
+    # The plain-English read is regenerated now that the new blocks exist, so
+    # the sentence and the sections cannot disagree.
+    try:
+        from src.macro.scenarios import load_scenarios as _load_scen
+        out["plain_english"] = explain_mod.explain(out, _load_scen() or {})
+    except Exception:  # noqa: BLE001
+        pass
+
+    if write:
+        _write(out)
+    return out
+
+
+def _held_tickers() -> set:
+    """Names the PM actually holds, for the earnings filter."""
+    try:
+        from src.data.ptj import load_held_positions
+        return {p.get("ticker", "").upper() for p in (load_held_positions() or [])
+                if p.get("ticker")}
+    except Exception:  # noqa: BLE001
+        return set()
+
+
+def _watched_tickers(limit: int = 60) -> set:
+    """Names on today's list — a reaction there changes something actionable."""
+    try:
+        import json
+
+        from src.data.paths import OUTPUT_DIR
+        p = OUTPUT_DIR / "aqe_daily_export.json"
+        if not p.exists():
+            return set()
+        d = json.loads(p.read_text(encoding="utf-8"))
+        rows = d.get("daily_list") or []
+        return {r.get("ticker", "").upper() for r in rows[:limit] if r.get("ticker")}
+    except Exception:  # noqa: BLE001
+        return set()
+
+
+def _write(out: dict) -> None:
+    try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        CROWN_JSON.write_text(json.dumps(out, indent=2, ensure_ascii=False),
+                              encoding="utf-8")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[crown] could not write {CROWN_JSON}: {exc}", flush=True)
 
 
 def _envelope(status, heartbeat, cta_read, cot_read, gamma_read, extra,
-              decision, degraded, write) -> dict:
+              decision, degraded, write=True) -> dict:
     out = {
         "layer": "Nick Crown Macro Layer",
         "kernel_version": "1.4",

@@ -49,6 +49,14 @@ HOW_TO_READ = {
                    "model, not anyone's actual book. Rows sourced from an ETF "
                    "proxy carry the fund's price, not the contract's, and "
                    "should not be quoted as a contract level.",
+    "what_changed": "Only the moves since the last run that would change what "
+                    "a PM does. An empty list means today continues yesterday.",
+    "what_is_coming": "Scheduled moments when the reading above can change. "
+                      "Each carries what it tests, not a forecast.",
+    "key_levels": "Every line in the sand, sorted nearest first. Most are NOT "
+                  "prices — a breadth ratio, a volatility gap and a "
+                  "correlation percentile all have levels that change the "
+                  "regime when they break.",
     "limits": "What was missing or degraded in this run. Read before trusting "
               "anything above.",
 }
@@ -261,6 +269,14 @@ def build_llm_export(crown: dict, scenarios: dict | None = None) -> dict:
             },
         },
 
+        # Crown's own letter leads with what shifted and what is scheduled.
+        # Both belong above the evidence, not buried under it.
+        "what_changed": (crown.get("what_changed") or {}).get("changes") or [],
+        "what_is_coming": [
+            {k: e.get(k) for k in ("date", "day", "time_et", "event", "kind",
+                                   "what_it_tests")}
+            for e in ((crown.get("calendar") or {}).get("events") or [])],
+        "key_levels": ((crown.get("key_levels") or {}).get("levels") or []),
         "flip_levels": _flip_rows(crown),
         "how_to_read": HOW_TO_READ,
         "limits": _limits(crown, scen),

@@ -158,6 +158,66 @@ if pe.get("headline"):
         for c in pe.get("caveats", []):
             st.warning(c)
     st.caption(pe.get("note", ""))
+
+    # ── what shifted, and what is scheduled ──
+    ch = crown.get("what_changed") or {}
+    cal = crown.get("calendar") or {}
+    if ch.get("changes") or cal.get("events"):
+        n1, n2 = st.columns(2)
+        with n1:
+            st.markdown("**What changed since the last run**")
+            if ch.get("changes"):
+                for c in ch["changes"]:
+                    st.markdown(f"- {c}")
+            elif ch.get("available"):
+                st.caption("Nothing that would change what you do. Today "
+                           "continues yesterday.")
+            else:
+                st.caption("No previous run to compare against.")
+        with n2:
+            st.markdown("**What is coming**")
+            if cal.get("events"):
+                for e in cal["events"][:6]:
+                    when = f"{e['day']} {e['date'][5:]}"
+                    tm = f" · {e['time_et']} ET" if e.get("time_et") else ""
+                    st.markdown(f"- **{e['event']}** — {when}{tm}  \n"
+                                f"  {e['what_it_tests']}")
+            else:
+                st.caption("Nothing scheduled in the window"
+                           + (f" ({'; '.join(cal.get('unavailable') or [])})"
+                              if cal.get("unavailable") else "."))
+    st.divider()
+
+# ── key levels — most of them are not prices ─────────────────────────────
+
+kl = crown.get("key_levels") or {}
+if kl.get("levels"):
+    st.header("Key levels")
+    st.caption(kl.get("note", ""))
+
+    def _fmt_level(v, unit):
+        if v is None:
+            return "—"
+        if unit == "ratio":
+            return f"{float(v):.4f}"
+        if unit == "percentile":
+            return f"{float(v):.0f}"
+        return f"{float(v):,.2f}"
+
+    rows = [{"Type": r["kind"], "What": r["what"],
+             "Now": _fmt_level(r["now"], r["unit"]),
+             "Level": _fmt_level(r["level"], r["unit"]),
+             "Unit": r["unit"],
+             "Away": (f"{r['distance_pct']:+.2f}%"
+                      if r.get("distance_pct") is not None else "—"),
+             "If it breaks": r["if_it_breaks"],
+             "Quotable": "" if r.get("quotable_as_contract", True) else "⚠️ ETF proxy"}
+            for r in kl["levels"]]
+    table_with_copy(pd.DataFrame(rows), key="crown_levels",
+                    label="📋 Copy key levels")
+    st.caption("Ratios are shown to four decimals because the breadth ratio "
+               "moves in the third. A row marked ETF proxy carries a tracking "
+               "fund's price, not the contract's.")
     st.divider()
 
 # ── the decision, first, because it is what the hierarchy is FOR ─────────

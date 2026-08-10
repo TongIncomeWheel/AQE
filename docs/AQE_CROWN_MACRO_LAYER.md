@@ -78,6 +78,9 @@ and "NONE" is not.
 | `data.py` | — | All network. The engines stay pure. |
 | `explain.py` | — | The regime in **plain English**, generated from the finished read every run. |
 | `daily.py` | 4 | One call; `crown_status` degrades loudly. |
+| `levels.py` | — | **Key levels** across price, breadth, volatility and correlation — most rows are not prices. |
+| `calendar.py` | — | What is coming and what each one tests. Macro prints + earnings that can move this book. |
+| `changes.py` | — | What moved since the last run, and only what changes a decision. |
 | `export.py` | — | The **reading copy** for Drive: plain English first, series dropped, limits attached. |
 | `../scenarios.py` | — | **The first merge point**: Macro Weather × Crown → ranked scenario reads. Deliberately outside `crown/`. |
 
