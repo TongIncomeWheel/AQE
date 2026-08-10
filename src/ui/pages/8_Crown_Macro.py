@@ -619,6 +619,26 @@ with st.expander("🔧 Gamma trial run — test the feed step by step"):
                    "re-run the layer. If step 3 is empty, Tiger takes over "
                    "automatically once step 5 reads READY.")
 
+    st.markdown(
+        """
+**To switch Tiger on** — HuggingFace Space → **Settings** → *Variables and
+secrets* → **New secret**, three times:
+
+| Secret | Value |
+|---|---|
+| `TIGER_ID` | your developer id (a number) |
+| `TIGER_ACCOUNT` | the trading account number |
+| `TIGER_PRIVATE_KEY` | the whole `.pem` file, headers and all |
+
+All three from <https://quant.itigerup.com/openapi/> → Configuration. Use
+**Secret**, not *Variable* — variables show up in the build log. The Space
+restarts itself; then re-run the diagnostic and step 5 should read READY.
+
+Paste the key however it comes — full PEM, one line with `\\n`, or the bare
+body all work. Full walkthrough: `docs/AQE_TIGER_SETUP.md`.
+        """
+    )
+
 if not gam:
     st.info("Not computed — the process stopped at the Heartbeat gate.")
 elif gam.get("status") != "OK":

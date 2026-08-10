@@ -141,15 +141,37 @@ def parse_chain_rows(rows, underlying: str, spot: float,
 
 # ── network ──────────────────────────────────────────────────────────────
 
+def normalise_private_key(raw: str) -> str:
+    """Accept the key in whatever form it was pasted, return what Tiger wants.
+
+    `tigeropen.read_private_key` strips the PEM header and footer and keeps only
+    the base64 body, so handing the SDK a full `-----BEGIN RSA PRIVATE KEY-----`
+    block fails with an opaque signature error rather than a useful one. Since
+    the PM pastes this into a web form once and cannot debug it from a terminal,
+    every plausible paste has to work:
+
+      * full PEM with real newlines (what the file looks like)
+      * full PEM with literal \\n (what a one-line form field turns it into)
+      * the bare base64 body (what read_private_key returns)
+      * PKCS#8 headers instead of PKCS#1
+    """
+    if not raw:
+        return ""
+    text = raw.strip().replace("\\n", "\n")
+    body = [ln.strip() for ln in text.splitlines()
+            if ln.strip() and not ln.strip().startswith("-----")]
+    return "\n".join(body).strip()
+
+
 def _client():
     from tigeropen.common.consts import Language
     from tigeropen.quote.quote_client import QuoteClient
     from tigeropen.tiger_open_config import TigerOpenClientConfig
 
     cfg = TigerOpenClientConfig()
-    cfg.tiger_id = os.environ[TIGER_ID_ENV]
-    cfg.account = os.environ[TIGER_ACCOUNT_ENV]
-    cfg.private_key = os.environ[TIGER_KEY_ENV].replace("\\n", "\n")
+    cfg.tiger_id = os.environ[TIGER_ID_ENV].strip()
+    cfg.account = os.environ[TIGER_ACCOUNT_ENV].strip()
+    cfg.private_key = normalise_private_key(os.environ[TIGER_KEY_ENV])
     cfg.language = Language.en_US
     return QuoteClient(cfg)
 

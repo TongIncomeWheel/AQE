@@ -100,3 +100,39 @@ def test_the_output_matches_the_shape_the_gamma_engine_consumes():
     assert prof["available"] is True
     assert prof["regime"] in ("POSITIVE", "NEGATIVE")
     assert prof["total_open_interest"] == 58308 + 82245 + 49990
+
+
+# ────────────────── the private key, in whatever form it was pasted
+
+BODY = "MIIEpAIBAAKCAQEAxyz\nabc123DEF456\nghiJKL789"
+PEM = f"-----BEGIN RSA PRIVATE KEY-----\n{BODY}\n-----END RSA PRIVATE KEY-----"
+
+
+def test_a_full_pem_is_reduced_to_the_body_tiger_expects():
+    """tigeropen.read_private_key strips the header and footer. Passing the SDK
+    a full PEM block fails with an opaque signature error, and the PM pastes
+    this into a web form once with no terminal to debug it from."""
+    assert T.normalise_private_key(PEM) == BODY
+
+
+def test_a_one_line_pem_with_escaped_newlines_works():
+    assert T.normalise_private_key(PEM.replace("\n", "\\n")) == BODY
+
+
+def test_the_bare_body_passes_through_unchanged():
+    assert T.normalise_private_key(BODY) == BODY
+
+
+def test_pkcs8_headers_are_stripped_too():
+    p8 = f"-----BEGIN PRIVATE KEY-----\n{BODY}\n-----END PRIVATE KEY-----"
+    assert T.normalise_private_key(p8) == BODY
+
+
+def test_stray_whitespace_and_blank_lines_do_not_corrupt_it():
+    messy = f"  \n{PEM}\n\n  "
+    assert T.normalise_private_key(messy) == BODY
+
+
+def test_an_empty_key_is_empty_not_an_exception():
+    assert T.normalise_private_key("") == ""
+    assert T.normalise_private_key(None) == ""
