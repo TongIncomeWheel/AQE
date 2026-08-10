@@ -15,6 +15,31 @@ need any of this.
 
 ---
 
+## Check it on your own PC first
+
+`scripts\tiger_check.bat` — **double-click it.** It reads the three values from
+your local `.env`, connects to Tiger, pulls a live SPY chain and builds the
+gamma map, then prints the result.
+
+Locally you can point `TIGER_PRIVATE_KEY` at the **file path** of the `.pem`
+rather than pasting the key — the script reads either. In `.env`:
+
+```
+TIGER_ID=12345678
+TIGER_ACCOUNT=U1234567
+TIGER_PRIVATE_KEY=C:\path\to\tiger_private_key.pem
+```
+
+**It never prints your private key** — only its length and whether it looks like
+base64, which is enough to spot a truncated paste without putting a credential
+in your scrollback.
+
+Why bother: it separates two failures that look identical from the outside. Pass
+here and the credential is good, so anything still broken on the Space is a
+secrets problem. Fail here and nothing about the Space will fix it.
+
+---
+
 ## The three values, and where each one comes from
 
 Everything is on Tiger's developer portal: <https://quant.itigerup.com/openapi/>
