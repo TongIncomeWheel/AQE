@@ -111,9 +111,23 @@ def implied_spread(vix: pd.DataFrame | None,
     change = (round(float(m["spread"].iloc[-1] - m["spread"].iloc[-(w + 1)]), 2)
               if len(m) > w else None)
     band, direction = _band(pctl), _direction(change)
+    # The series plus the percentile BANDS it is judged against. Level and
+    # direction disagreeing (98th percentile, falling 9pts) is the case a pair
+    # of numbers hides and a single line makes obvious.
+    tail_n = min(len(m), S.DISPERSION_WINDOW)
+    win = m["spread"].tail(S.DISPERSION_WINDOW)
+    series = {
+        "dates": [str(d.date()) for d in m["date"].tail(tail_n)],
+        "spread": [round(float(x), 3) for x in m["spread"].tail(tail_n)],
+        "vix": [round(float(x), 2) for x in m["vix"].tail(tail_n)],
+        "single_stock_vol": [round(float(x), 2) for x in m["vixeq"].tail(tail_n)],
+        "band_elevated": round(float(win.quantile(S.DISPERSION_ELEVATED_PCTL)), 3),
+        "band_calm": round(float(win.quantile(S.DISPERSION_CALM_PCTL)), 3),
+    }
     return {
         "basis": "implied",
         "as_of": m["date"].iloc[-1].date().isoformat(),
+        "series": series,
         "vix": round(float(m["vix"].iloc[-1]), 2),
         "single_stock_vol": round(float(m["vixeq"].iloc[-1]), 2),
         "spread": round(float(m["spread"].iloc[-1]), 2),

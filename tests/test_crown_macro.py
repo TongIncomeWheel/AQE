@@ -67,6 +67,18 @@ def test_too_little_history_states_neutral_and_fails_the_gate():
     assert S.HB_CONF_NO_HISTORY < S.HB_CONFIDENCE_GATE
 
 
+def test_the_heartbeat_ships_the_series_and_the_range_it_is_judged_against():
+    """"Range position: TOP" is not interpretable without the range. The chart
+    is the reading here, so the data behind it has to travel with the verdict."""
+    n = 400
+    spy = walk(n, seed=1)
+    r = HB.heartbeat_from_frames(bars(spy * (0.28 + np.linspace(0, 0.10, n))), bars(spy))
+    s = r["series"]
+    assert len(s["ratio"]) == len(s["dates"]) == len(s["ma_20"]) > 0
+    assert s["range_low"] <= r["ratio"] <= s["range_high"]
+    assert s["lookback_days"] <= S.HB_LOOKBACK_DAYS
+
+
 def test_a_tired_wave_outranks_a_live_one():
     """§5's ladder: regime + matching range extreme scores 0.75, plain trend 0.65.
     A tired wave is the more actionable statement."""
@@ -320,6 +332,18 @@ def test_dispersion_and_implied_correlation_must_move_opposite():
 def test_corroboration_degrades_to_None_rather_than_inventing_agreement():
     c = VOL.corroboration(None, None)
     assert c["dspx"] is None and c["agrees"] is None
+
+
+def test_the_dispersion_spread_ships_its_series_and_its_percentile_bands():
+    """Level and direction disagree routinely; a pair of numbers hides it and a
+    line against its own bands does not."""
+    n = 600
+    d = pd.bdate_range("2023-01-02", periods=n)
+    vix = pd.DataFrame({"date": d, "close": np.full(n, 15.0)})
+    vixeq = pd.DataFrame({"date": d, "close": 15.0 + np.linspace(5, 25, n)})
+    s = VOL.analyse(vix=vix, vixeq=vixeq)["dispersion"]["series"]
+    assert len(s["spread"]) == len(s["dates"]) == len(s["vix"]) > 0
+    assert s["band_calm"] < s["band_elevated"]
 
 
 def test_a_high_vix_is_flagged_as_already_priced_not_as_a_sell():

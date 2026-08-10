@@ -161,6 +161,33 @@ if dec.get("early_exit"):
         "not because the readings came back quiet."
     )
 
+# One row for the whole hierarchy, in its own order, so the state is readable
+# before any scrolling. Each chip is the headline of the section below it.
+_hb = crown.get("heartbeat") or {}
+_cta = crown.get("cta") or {}
+_gam = crown.get("gamma") or {}
+_vol = crown.get("volatility") or {}
+_disp = _vol.get("dispersion") or {}
+_div = crown.get("divergence") or {}
+_scen_pre = load_scenarios() or {}
+
+s1, s2, s3, s4, s5 = st.columns(5)
+s1.metric("1 · Heartbeat", str(_hb.get("regime", "—")).upper(),
+          delta=str(_hb.get("range_position", "")).upper(), delta_color="off")
+s2.metric("2 · Positioning", str(_cta.get("overall_bias", "—")).replace("_", " ").upper(),
+          delta=f"gamma {_gam.get('regime', '—')}", delta_color="off")
+s3.metric("3 · Volatility", str(_disp.get("state", "—")).replace("_", " "),
+          delta=f"VIX {_vol.get('vix', '—')}", delta_color="off")
+s4.metric("4 · Divergence", f"{_div.get('weight', 0)} lit",
+          delta=", ".join(_div.get("types_fired") or []) or "none",
+          delta_color="off")
+s5.metric("5 · Scenario",
+          str(_scen_pre.get("leading") or "—").replace("_", " ").title(),
+          delta=("contested" if _scen_pre.get("contested") else ""),
+          delta_color="off")
+
+st.divider()
+
 pb = expr.get("playbook") or {}
 if fam != "NONE":
     st.markdown(f"**Context** — {pb.get('context', '')}")
@@ -209,6 +236,20 @@ h4.metric("20d slope", f"{hb.get('slope_20d'):.6f}" if hb.get("slope_20d") is no
 h5.metric("Confidence", _num(hb.get("confidence")),
           help=f"Gate is {S.HB_CONFIDENCE_GATE}. Below it, the process stops.")
 st.info(f"**{hb.get('bias', '—')}**")
+
+# The ratio against the 252-day range it is judged in. "Range position: TOP"
+# is not interpretable without the range, and a 20d slope is a number nobody
+# can picture — so both are drawn rather than described.
+hbs = hb.get("series") or {}
+if hbs.get("dates"):
+    idx = pd.to_datetime(hbs["dates"])
+    chart = pd.DataFrame({
+        "RSP/SPY": hbs["ratio"],
+        f"{S.HB_SLOPE_WINDOW}d MA": hbs.get("ma_20"),
+        f"{hbs.get('lookback_days')}d high": [hbs["range_high"]] * len(idx),
+        f"{hbs.get('lookback_days')}d low": [hbs["range_low"]] * len(idx),
+    }, index=idx)
+    st.line_chart(chart, height=260)
 st.caption(hb.get("rationale", ""))
 
 # ── 2. Positioning ────────────────────────────────────────────────────────
@@ -254,6 +295,22 @@ for key, r in sorted(mkts.items()):
 
 if rows:
     st.subheader("CTA trend model — and the levels where it flips")
+
+    # Who is positioned which way, at a glance. Eighteen signed numbers in a
+    # table is a lookup; sorted as bars it is a picture of the whole complex.
+    sig = {r["Market"]: r["Signal"] for r in rows if r.get("Signal") is not None}
+    if sig:
+        bc1, bc2 = st.columns(2)
+        with bc1:
+            st.caption("Trend signal by market (−1 short … +1 long)")
+            st.bar_chart(pd.Series(sig).sort_values(), height=320)
+        with bc2:
+            dist = {r["Market"]: r["Flip 1d %"] for r in rows
+                    if r.get("Flip 1d %") is not None}
+            if dist:
+                st.caption("Distance to the flip level, % (how far before the "
+                           "model turns)")
+                st.bar_chart(pd.Series(dist).sort_values(), height=320)
     st.caption(
         "Replicated from the public method (Moskowitz-Ooi-Pedersen time-series "
         "momentum at 2/6/12 months + Faber's 10-month average), vol-normalised. "
@@ -279,6 +336,17 @@ with st.expander("CFTC Commitment of Traders — large-spec positioning"):
         cc1, cc2 = st.columns(2)
         cc1.markdown("**Crowded long:** " + (", ".join(cl) or "_none_"))
         cc2.markdown("**Crowded short:** " + (", ".join(cs) or "_none_"))
+
+        # Percentile is the number that carries the meaning — "+180k contracts"
+        # says nothing without knowing whether that is a three-year extreme or a
+        # Tuesday. Centred on 0.5 so both crowded ends read as departures.
+        pct = {k: (v.get("percentile") - 0.5)
+               for k, v in (cot.get("markets") or {}).items()
+               if v.get("percentile") is not None}
+        if pct:
+            st.caption("Large-spec positioning percentile, centred on the median "
+                       "(+0.5 = 3-year crowded long, −0.5 = crowded short)")
+            st.bar_chart(pd.Series(pct).sort_values(), height=300)
         crows = [{"Market": k, "Contract": v.get("name"),
                   "Net spec": v.get("net_spec"), "% of OI": v.get("net_spec_pct_oi"),
                   "Percentile": v.get("percentile"), "WoW Δ%OI": v.get("wow_change_pct_oi"),
@@ -310,8 +378,16 @@ else:
         g4.metric("Put wall", _num(pw.get("strike")))
         st.caption(f"**{sym}** — {prof.get('interpretation')}")
         if prof.get("profile"):
-            st.bar_chart(pd.DataFrame(prof["profile"]).set_index("strike")["gex"],
-                         height=200)
+            pf = pd.DataFrame(prof["profile"]).set_index("strike")
+            gc1, gc2 = st.columns(2)
+            with gc1:
+                st.caption("Dealer gamma by strike — the walls")
+                st.bar_chart(pf["gex"], height=230)
+            with gc2:
+                # The flip IS the zero-crossing of the cumulative. Charting only
+                # the bars leaves the single most important level invisible.
+                st.caption("Cumulative gamma — the flip is where this crosses zero")
+                st.line_chart(pf["cumulative"], height=230)
     st.caption("⚠️ " + (next(iter((gam.get("underlyings") or {}).values()), {})
                         .get("assumption", "")))
 
@@ -360,6 +436,43 @@ elif vol.get("source") == "cboe":
     st.caption("Source: **cboe.com** direct — Cboe computes these indices and "
                "publishes the full history free. FMP gates VIXEQ, VIX3M and "
                "VIX9D above our plan.")
+
+# The spread against the percentile bands it is judged by. Level and direction
+# routinely disagree, and that disagreement is invisible in a pair of numbers.
+ds = disp.get("series") or {}
+if ds.get("dates"):
+    dc1, dc2 = st.columns([3, 2])
+    with dc1:
+        st.caption("VIXEQ − VIX against its own 2-year bands")
+        st.line_chart(pd.DataFrame({
+            "spread": ds["spread"],
+            "elevated (80th)": [ds["band_elevated"]] * len(ds["dates"]),
+            "calm (20th)": [ds["band_calm"]] * len(ds["dates"]),
+        }, index=pd.to_datetime(ds["dates"])), height=260)
+    with dc2:
+        st.caption("The two legs: single-stock vol vs index vol")
+        st.line_chart(pd.DataFrame({
+            "VIXEQ": ds["single_stock_vol"], "VIX": ds["vix"],
+        }, index=pd.to_datetime(ds["dates"])), height=260)
+
+ts_ = vol.get("term_structure") or {}
+if ts_.get("vix") and ts_.get("vix3m"):
+    pts = {"9d": ts_.get("vix9d"), "30d": ts_.get("vix"), "3m": ts_.get("vix3m")}
+    pts = {k: v for k, v in pts.items() if v is not None}
+    if len(pts) >= 2:
+        tc1, tc2 = st.columns([1, 3])
+        with tc1:
+            # Three points, but the SHAPE is the message: upward sloping is
+            # normal, inverted is stress being paid for right now.
+            st.caption(f"Term structure — **{ts_.get('shape')}**")
+            st.line_chart(pd.Series(pts), height=200)
+        with tc2:
+            st.caption(
+                "Upward sloping (contango) is the normal state — near-dated "
+                "protection is cheaper than far-dated. An inverted curve means "
+                "the market is paying up for protection *now*, which is the "
+                "shape that accompanies stress rather than predicting it."
+            )
 
 corr = vol.get("corroboration") or {}
 if corr.get("dspx") is not None:
@@ -616,6 +729,20 @@ else:
               is not None else "—", help="Share of conditions met — NOT a probability.")
     s3.metric("Contested", "YES" if scen.get("contested") else "no")
     st.info(scen.get("reading", ""))
+
+    # Seven expanders is a filing cabinet. One sorted bar is the ranking, which
+    # is the only thing the number is for.
+    bars_ = {s["scenario"].replace("_", " ").title(): s["score"]
+             for s in scen.get("scenarios", []) if s.get("can_lead")}
+    thin_ = [s["scenario"].replace("_", " ").title()
+             for s in scen.get("scenarios", []) if not s.get("can_lead")]
+    if bars_:
+        st.caption("Share of each scenario's conditions currently met — **not a "
+                   "probability**. Only scenarios with enough inputs to be "
+                   "ranked are shown.")
+        st.bar_chart(pd.Series(bars_).sort_values(), height=280)
+    if thin_:
+        st.caption("Too thinly covered to rank: " + ", ".join(thin_))
 
     for s in scen.get("scenarios", []):
         lead = s["scenario"] == scen.get("leading")

@@ -143,4 +143,23 @@ def heartbeat_from_frames(rsp: "object", spy: "object") -> dict:
     out = heartbeat_regime(float(m["rsp"].iloc[-1]), float(m["spy"].iloc[-1]),
                            ratio_series)
     out["as_of"] = m["date"].iloc[-1].date().isoformat()
+
+    # The series, so the reading can be SEEN rather than inferred. "Range
+    # position: TOP" is not interpretable without the range it refers to, and
+    # a 20-day slope is a number nobody can picture. Both are shipped with the
+    # 252-day band they are measured against.
+    tail = min(len(m), S.HB_LOOKBACK_DAYS)
+    win = pd.Series(ratio_series[-S.HB_LOOKBACK_DAYS:])
+    ratio_s = pd.Series(ratio_series)
+    out["series"] = {
+        "dates": [str(d.date()) for d in m["date"].tail(tail)],
+        "ratio": [round(float(x), 6) for x in ratio_series[-tail:]],
+        "ma_20": [None if pd.isna(v) else round(float(v), 6)
+                  for v in ratio_s.rolling(S.HB_SLOPE_WINDOW,
+                                           min_periods=S.HB_SLOPE_WINDOW)
+                                   .mean().tail(tail)],
+        "range_high": round(float(win.max()), 6),
+        "range_low": round(float(win.min()), 6),
+        "lookback_days": int(tail),
+    }
     return out
