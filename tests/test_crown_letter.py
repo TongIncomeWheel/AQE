@@ -177,40 +177,83 @@ def test_the_first_ever_run_says_so_instead_of_inventing_a_comparison():
 
 # ─────────────────────────────────────────────── the calendar
 
+# Recorded verbatim from FMP's live feed on 2026-08-10. Note the shapes that
+# broke the first parser: CPI is never called "Consumer Price Index", one
+# release arrives as many rows, and the times are UTC.
 ECON = [
-    {"date": "2026-08-12 08:30:00", "country": "US",
-     "event": "Consumer Price Index (CPI) YoY", "previous": "2.9%", "estimate": "2.8%"},
-    {"date": "2026-08-13 08:30:00", "country": "US",
-     "event": "Producer Price Index (PPI) MoM", "previous": "0.2%"},
-    {"date": "2026-08-14 08:30:00", "country": "US", "event": "Retail Sales MoM"},
+    {"date": "2026-08-12 12:30:00", "country": "US", "event": "CPI YoY (Jul)",
+     "impact": "High", "previous": 2.6, "estimate": 2.5},
+    {"date": "2026-08-12 12:30:00", "country": "US", "event": "Core CPI MoM (Jul)",
+     "impact": "High", "previous": 0.2},
+    {"date": "2026-08-12 12:30:00", "country": "US", "event": "Inflation Rate YoY (Jul)",
+     "impact": "High"},
+    {"date": "2026-08-12 12:30:00", "country": "US", "event": "Core CPI (Jul)",
+     "impact": "Low"},
+    {"date": "2026-08-13 12:30:00", "country": "US", "event": "Producer Price Index MoM (Jul)",
+     "impact": "High", "previous": -0.3, "estimate": 0.2},
+    {"date": "2026-08-13 12:30:00", "country": "US", "event": "Producer Price Index YoY (Jul)",
+     "impact": "Medium"},
+    {"date": "2026-08-14 12:30:00", "country": "US", "event": "Retail Sales MoM (Jul)",
+     "impact": "High"},
+    {"date": "2026-08-14 12:30:00", "country": "US", "event": "Retail Sales Ex Autos MoM (Jul)",
+     "impact": "Medium"},
     {"date": "2026-08-12 09:00:00", "country": "DE", "event": "German CPI"},
-    {"date": "2026-09-30 08:30:00", "country": "US", "event": "Consumer Price Index"},
-    {"date": "2026-08-12 10:00:00", "country": "US", "event": "Cheese Stocks"},
+    {"date": "2026-09-30 12:30:00", "country": "US", "event": "CPI YoY (Aug)",
+     "impact": "High"},
+    {"date": "2026-08-12 14:30:00", "country": "US",
+     "event": "EIA Heating Oil Stocks Change", "impact": "Low"},
 ]
 
 
 def test_only_us_prints_inside_the_window_survive():
     out = CAL.parse_economic_rows(ECON, TODAY, days=10)
-    names = [e["event"] for e in out]
-    assert not any("German" in n for n in names)
+    assert not any("German" in e["event"] for e in out)
     assert not any(e["date"] > "2026-08-20" for e in out)
 
 
-def test_an_event_with_nothing_to_say_about_it_is_dropped():
-    """A date with no reason attached is something the reader's calendar app
-    already gives them."""
+def test_cpi_is_found_despite_never_being_called_consumer_price_index():
+    """FMP names it "CPI YoY", "Core CPI MoM", "Inflation Rate YoY". Matching
+    the formal name found nothing at all, and CPI is the print of the week."""
     out = CAL.parse_economic_rows(ECON, TODAY, days=10)
-    assert not any("Cheese" in e["event"] for e in out)
+    cpi = [e for e in out if "CPI" in e["event"]]
+    assert cpi, "CPI went missing again"
+    assert cpi[0]["event"] == "Consumer Price Index (CPI)"
+
+
+def test_one_release_produces_one_line():
+    """That Wednesday's CPI arrived as four rows here and twelve in the live
+    feed. A calendar printing all twelve is worse than no calendar."""
+    out = CAL.parse_economic_rows(ECON, TODAY, days=10)
+    on_wed = [e for e in out if e["date"] == "2026-08-12"]
+    assert len(on_wed) == 1
+    assert len([e for e in out if e["date"] == "2026-08-13"]) == 1
+
+
+def test_the_highest_impact_variant_wins_because_it_carries_the_consensus():
+    out = {e["date"]: e for e in CAL.parse_economic_rows(ECON, TODAY, days=10)}
+    assert out["2026-08-12"]["impact"] == "High"
+    assert out["2026-08-12"]["consensus"] == 2.5
+    assert out["2026-08-13"]["previous"] == -0.3
+
+
+def test_times_are_converted_from_utc_to_eastern():
+    """12:30 UTC is the 8:30 ET everyone quotes. Printing 12:30 would send a
+    reader to their desk four hours late."""
+    out = CAL.parse_economic_rows(ECON, TODAY, days=10)
+    assert all(e["time_et"] == "08:30" for e in out)
+    assert out[0]["day"] == "Wednesday"
+
+
+def test_an_event_with_nothing_to_say_about_it_is_dropped():
+    out = CAL.parse_economic_rows(ECON, TODAY, days=10)
+    assert not any("Heating Oil" in e["event"] for e in out)
     assert all(e["what_it_tests"] for e in out)
 
 
 def test_cpi_and_ppi_carry_the_reason_they_are_on_the_list():
     out = {e["event"]: e for e in CAL.parse_economic_rows(ECON, TODAY, days=10)}
-    cpi = next(v for k, v in out.items() if "Consumer Price" in k)
-    ppi = next(v for k, v in out.items() if "Producer Price" in k)
-    assert "easing case" in cpi["what_it_tests"]
-    assert "input costs" in ppi["what_it_tests"]
-    assert cpi["day"] == "Wednesday"
+    assert "easing case" in out["Consumer Price Index (CPI)"]["what_it_tests"]
+    assert "input costs" in out["Producer Price Index (PPI)"]["what_it_tests"]
 
 
 def test_earnings_are_filtered_to_names_that_can_move_this_book():

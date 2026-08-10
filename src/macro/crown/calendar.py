@@ -30,110 +30,140 @@ LOOKAHEAD_DAYS = 10
 MAX_MACRO = 8
 MAX_EARNINGS = 6
 
-# US prints worth a committee's attention, and what each one actually tests.
-# Keyed on a lowercase fragment of the event name so FMP's exact wording can
-# drift without silently dropping the event.
+# US prints worth a committee's attention: what each one tests, and the name to
+# print it under.
+#
+# Three things learned from the live feed on 2026-08-10, each of which silently
+# broke the first version:
+#   * FMP names CPI as "CPI YoY (Jul)", "Core CPI MoM", "Inflation Rate YoY" —
+#     never "Consumer Price Index". Matching the formal name found nothing.
+#   * One release arrives as MANY rows. That Wednesday's CPI came back as
+#     twelve. A calendar that lists twelve CPIs is worse than no calendar.
+#   * Times are UTC. 12:30 there is the 8:30 ET everyone actually quotes.
+#
+# So each entry maps a set of name fragments to ONE canonical release, and the
+# rows are collapsed to one per release per day.
+RELEASES = [
+    ("fomc",              ("FOMC decision", 0),
+     ("fomc", "fed interest rate", "fed press conf")),
+    ("payrolls",          ("Non-farm payrolls", 1),
+     ("non farm payroll", "nonfarm payroll", "payrolls")),
+    ("cpi",               ("Consumer Price Index (CPI)", 2),
+     ("cpi", "inflation rate", "consumer price")),
+    ("pce",               ("Core PCE", 3), ("pce",)),
+    ("ppi",               ("Producer Price Index (PPI)", 4),
+     ("ppi", "producer price")),
+    ("retail",            ("Retail sales", 5), ("retail sales",)),
+    ("unemployment",      ("Unemployment rate", 6), ("unemployment rate",)),
+    ("ism_mfg",           ("ISM Manufacturing", 7),
+     ("ism manufacturing", "manufacturing pmi")),
+    ("gdp",               ("GDP", 8), ("gdp growth", "gdp (")),
+    ("ism_svc",           ("ISM Services", 9),
+     ("ism services", "services pmi")),
+    ("claims",            ("Initial jobless claims", 10), ("initial jobless",)),
+    ("michigan",          ("Michigan sentiment", 11), ("michigan",)),
+    ("durables",          ("Durable goods orders", 12), ("durable goods",)),
+]
+
 WHY_IT_MATTERS = {
-    "consumer price index": (
-        "Whether the easing case survives contact with the inflation data. A "
-        "cooler print supports equities; the cleaner signal is the long end of "
-        "the curve falling alongside the front end."),
-    "producer price index": (
-        "Whether input costs are still feeding through supply chains. A firm "
-        "print after a soft CPI limits the rates relief and keeps pressure on "
-        "the long end."),
-    "core pce": (
-        "The Fed's preferred inflation measure. It matters more than CPI for "
-        "what the Fed actually does, and less for what the market does on the "
-        "day."),
-    "nonfarm payroll": (
-        "The single biggest input to rate expectations. Watch the revisions "
-        "and the participation rate, not just the headline — a falling "
-        "unemployment rate can come from people leaving the labour force."),
-    "unemployment rate": (
-        "Read it beside the participation rate. It can fall for a bad reason."),
-    "fomc": (
-        "The rate decision and the language around it. The statement usually "
-        "moves the front end; the press conference moves the long end."),
-    "fed interest rate": (
-        "The rate decision itself. What matters for this layer is whether it "
-        "changes the trend-following models' rates positioning."),
-    "retail sales": (
-        "Whether weaker employment has reached household spending yet. Weak "
-        "spending with cooler inflation supports easing; weak spending without "
-        "it is the harder combination."),
-    "gdp": ("The growth backdrop the whole cross-asset read sits on."),
-    "ism manufacturing": (
-        "The cyclical pulse. Read it against copper — if they disagree, one of "
-        "them is wrong about growth."),
-    "ism services": ("The larger half of the economy, and the stickier "
-                     "inflation half."),
-    "initial jobless": (
-        "The highest-frequency labour signal there is. One week is noise; a "
-        "trend change here leads the monthly payroll number."),
+    "cpi": ("Whether the easing case survives contact with the inflation data. "
+            "A cooler print supports equities, and the cleaner signal is the "
+            "long end of the curve falling alongside the front end."),
+    "ppi": ("Whether input costs are still feeding through supply chains. A "
+            "firm print after a soft CPI limits the rates relief and keeps "
+            "pressure on the long end."),
+    "pce": ("The Fed's preferred inflation measure. It matters more than CPI "
+            "for what the Fed does, and less for what the market does on the "
+            "day."),
+    "payrolls": ("The single biggest input to rate expectations. Watch the "
+                 "revisions and the participation rate, not just the headline "
+                 "— unemployment can fall because people left the labour "
+                 "force."),
+    "unemployment": ("Read it beside the participation rate. It can fall for a "
+                     "bad reason."),
+    "fomc": ("The rate decision and the language around it. The statement "
+             "usually moves the front end; the press conference moves the long "
+             "end."),
+    "retail": ("Whether weaker employment has reached household spending yet. "
+               "Weak spending with cooler inflation supports easing; weak "
+               "spending without it is the harder combination."),
+    "gdp": "The growth backdrop the whole cross-asset reading sits on.",
+    "ism_mfg": ("The cyclical pulse. Read it against copper — if the two "
+                "disagree, one of them is wrong about growth."),
+    "ism_svc": ("The larger half of the economy, and the stickier inflation "
+                "half."),
+    "claims": ("The highest-frequency labour signal there is. One week is "
+               "noise, but a trend change here leads the monthly payroll "
+               "number."),
     "michigan": ("Consumer expectations, including the inflation expectations "
                  "the Fed watches."),
-    "durable goods": ("Business investment, and a read on the capex cycle."),
+    "durables": "Business investment, and a read on the capex cycle.",
 }
 
-# Ranked by how much they move a macro regime, so the list can be trimmed
-# without dropping the one that mattered.
-PRIORITY = ["fomc", "nonfarm payroll", "consumer price index",
-            "core pce", "producer price index", "retail sales",
-            "fed interest rate", "unemployment rate", "ism manufacturing",
-            "gdp", "ism services", "initial jobless", "michigan",
-            "durable goods"]
+IMPACT_RANK = {"high": 0, "medium": 1, "low": 2}
 
 
-def _why(event_name: str) -> tuple[str | None, int]:
-    """(why it matters, priority). Unknown events sort last and say nothing."""
+def _classify(event_name: str):
+    """(release key, printed name, priority) for an FMP event, or None."""
     low = (event_name or "").lower()
-    for i, key in enumerate(PRIORITY):
-        if key in low:
-            return WHY_IT_MATTERS.get(key), i
-    for key, why in WHY_IT_MATTERS.items():
-        if key in low:
-            return why, len(PRIORITY)
-    return None, len(PRIORITY) + 1
+    for key, (label, prio), fragments in RELEASES:
+        if any(f in low for f in fragments):
+            return key, label, prio
+    return None
+
+
+def _to_eastern(raw: str):
+    """FMP timestamps are UTC. 12:30 there is the 8:30 ET everyone quotes."""
+    from datetime import datetime, timezone
+    from zoneinfo import ZoneInfo
+    try:
+        dt = datetime.strptime(str(raw)[:19], "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return None, None
+    et = dt.replace(tzinfo=timezone.utc).astimezone(ZoneInfo("America/New_York"))
+    return et.date(), et.strftime("%H:%M")
 
 
 # ── macro prints ─────────────────────────────────────────────────────────
 
 def parse_economic_rows(rows, today: date, days: int = LOOKAHEAD_DAYS) -> list[dict]:
-    """FMP economic-calendar rows -> the events worth putting in front of a PM.
+    """FMP economic-calendar rows -> one line per release, in Eastern time.
 
-    Pure. Keeps US high-impact prints inside the window that we have something
-    to say about, because an event with no `why` is a date and nothing more.
+    Pure. The collapse is the important part: a single CPI release arrives as a
+    dozen rows (CPI MoM, CPI YoY, Core CPI, Inflation Rate…), and a calendar
+    that prints all twelve is worse than no calendar at all.
     """
-    out = []
     horizon = today + timedelta(days=days)
+    best: dict = {}
     for r in (rows or []):
         if str(r.get("country", "")).upper() not in ("US", "USA", "UNITED STATES"):
             continue
-        raw = str(r.get("date") or "")[:10]
-        try:
-            d = date.fromisoformat(raw)
-        except ValueError:
+        hit = _classify(r.get("event") or "")
+        if hit is None:
             continue
-        if not (today <= d <= horizon):
+        key, label, prio = hit
+        d, hhmm = _to_eastern(r.get("date"))
+        if d is None or not (today <= d <= horizon):
             continue
-        name = r.get("event") or ""
-        why, prio = _why(name)
-        if why is None:
-            continue
-        out.append({
-            "date": d.isoformat(),
-            "day": d.strftime("%A"),
-            "time_et": (str(r.get("date"))[11:16] or None),
-            "event": name,
-            "kind": "macro",
-            "what_it_tests": why,
-            "previous": r.get("previous"),
-            "consensus": r.get("estimate"),
-            "_priority": prio,
-        })
-    out.sort(key=lambda e: (e["date"], e["_priority"]))
+
+        impact = IMPACT_RANK.get(str(r.get("impact", "")).lower(), 3)
+        slot = (d.isoformat(), key)
+        prior = best.get(slot)
+        # Keep the highest-impact row for this release, since that is the
+        # variant carrying the consensus everyone trades.
+        if prior is None or impact < prior["_impact"]:
+            best[slot] = {
+                "date": d.isoformat(), "day": d.strftime("%A"),
+                "time_et": hhmm, "event": label, "kind": "macro",
+                "what_it_tests": WHY_IT_MATTERS.get(key),
+                "previous": r.get("previous"), "consensus": r.get("estimate"),
+                "impact": r.get("impact"),
+                "_impact": impact, "_priority": prio,
+            }
+
+    out = sorted(best.values(), key=lambda e: (e["date"], e["_priority"]))
     for e in out:
+        e.pop("_impact", None)
         e.pop("_priority", None)
     return out[:MAX_MACRO]
 
@@ -146,7 +176,7 @@ def fetch_macro_events(client=None, today: date | None = None,
         from src.data.fmp_client import FMP_BASE_STABLE, FMPClient
         c = client or FMPClient()
         payload = c._get_json(
-            f"{FMP_BASE_STABLE}/economic-calendar",
+            f"{FMP_BASE_STABLE}/economics-calendar",
             params={"from": today.isoformat(),
                     "to": (today + timedelta(days=days)).isoformat(),
                     "apikey": c.config.api_key})
