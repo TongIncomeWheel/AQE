@@ -248,33 +248,158 @@ st.divider()
 
 hb = crown.get("heartbeat") or {}
 st.header("1 · Heartbeat — what kind of market is this?")
-st.caption("RSP / SPY. Rising = the average stock is winning. Falling = the "
-           "leaders carry everything. Range position says when the wave is tired.")
+st.caption("The single most important reading on this page. Everything below it "
+           "is gated on it.")
+
+with st.expander("What is RSP/SPY, and what is it telling me about breadth?",
+                 expanded=False):
+    st.markdown(
+        """
+**Two funds that hold the same 500 companies, weighted differently.**
+
+- **SPY** is *cap-weighted* — the biggest companies dominate it. A handful of
+  mega-caps drive most of its movement.
+- **RSP** is *equal-weighted* — every one of the 500 counts the same. Apple gets
+  the same weight as the smallest name in the index.
+
+**So the ratio between them is a pure breadth measure.** Divide one by the other
+and the market direction cancels out. What is left is a single question:
+
+> **Is the average stock keeping up with the giants, or not?**
+
+**Rising ratio = broadening.** The average stock is gaining on the mega-caps.
+Money is spreading out. Small caps, mid caps, equal-weight sectors and the
+"second tier" of every industry tend to work. This is a healthy tape — the
+rally has participation.
+
+**Falling ratio = narrowing.** A handful of large names are carrying the index
+while everything else lags. The index can be making new highs *while most of
+your book goes nowhere*. This is where index-level performance flatters what is
+actually happening underneath.
+
+**Why the range position matters as much as the direction.** A trend that has
+just started tells you to go with it. A trend at the top or bottom of its
+12-month range tells you it is late and to prepare for the turn — which is
+worth more. That is why the two extreme combinations score highest:
+
+| | |
+|---|---|
+| **broadening + top of range** | Broadening is *tired*. Prepare to rotate back toward leaders. |
+| **narrowing + bottom of range** | Narrowing is *exhausted*. Start hunting breadth trades. |
+
+**Why the whole process is gated on this.** If breadth gives no clear signal,
+we do not know what kind of market we are in — and every reading below is an
+answer to a question that only makes sense once you do. So the process stops
+rather than sizing down into a market it cannot describe.
+        """
+    )
 
 h1, h2, h3, h4, h5 = st.columns(5)
-h1.metric("Regime", str(hb.get("regime", "—")).upper())
+h1.metric("Regime", str(hb.get("regime", "—")).upper(),
+          delta=(f"{hb.get('days_in_regime')} days" if hb.get("days_in_regime")
+                 else None), delta_color="off",
+          help="How long the 20-day slope has held this sign.")
 h2.metric("Range position", str(hb.get("range_position", "—")).upper(),
-          help="Where RSP/SPY sits in its own 252-day range.")
-h3.metric("Ratio", _num(hb.get("ratio"), 4))
-h4.metric("20d slope", f"{hb.get('slope_20d'):.6f}" if hb.get("slope_20d") is not None else "—",
-          help=f"|slope| must exceed {S.HB_SLOPE_EPS} to count as a regime.")
+          delta=(_pct(( hb.get("series") or {}).get("percentile_252d"))
+                 + " of 12m range" if (hb.get("series") or {}).get("percentile_252d")
+                 is not None else None), delta_color="off")
+h3.metric("Ratio (RSP/SPY)", _num(hb.get("ratio"), 4))
+h4.metric("vs its 20d average",
+          f"{hb.get('dist_to_ma20_pct'):+.2f}%" if hb.get("dist_to_ma20_pct")
+          is not None else "—",
+          help="Above = breadth improving faster than its own trend.")
 h5.metric("Confidence", _num(hb.get("confidence")),
+          delta=("passes gate" if hb.get("passes_gate") else "BELOW GATE"),
+          delta_color=("normal" if hb.get("passes_gate") else "inverse"),
           help=f"Gate is {S.HB_CONFIDENCE_GATE}. Below it, the process stops.")
+
+c5, c20, c60, cslope = st.columns(4)
+c5.metric("Breadth 5d", f"{hb.get('change_5d_pct'):+.2f}%"
+          if hb.get("change_5d_pct") is not None else "—")
+c20.metric("Breadth 20d", f"{hb.get('change_20d_pct'):+.2f}%"
+           if hb.get("change_20d_pct") is not None else "—")
+c60.metric("Breadth 60d", f"{hb.get('change_60d_pct'):+.2f}%"
+           if hb.get("change_60d_pct") is not None else "—")
+cslope.metric("20d slope",
+              f"{hb.get('slope_20d'):.6f}" if hb.get("slope_20d") is not None else "—",
+              help=f"Must exceed ±{S.HB_SLOPE_EPS} to count as a regime at all.")
+st.caption("A positive breadth change means the **average** stock beat the "
+           "mega-caps over that window — regardless of whether the index rose "
+           "or fell.")
+
 st.info(f"**{hb.get('bias', '—')}**")
 
-# The ratio against the 252-day range it is judged in. "Range position: TOP"
-# is not interpretable without the range, and a 20d slope is a number nobody
-# can picture — so both are drawn rather than described.
+try:
+    from src.macro.crown import explain as _EX
+    _line = _EX._breadth_reason(hb)
+    if _line:
+        st.markdown(f"**What this is telling us** — {_line}")
+except Exception:  # noqa: BLE001
+    pass
+
+# The ratio drawn as a normal chart. A line chart of four series on a 0.30-0.35
+# scale — two of them flat range lines — is unreadable, which is what it was.
 hbs = hb.get("series") or {}
+
+
+def _candles(series: dict, months: int):
+    """Candlestick of the RSP/SPY ratio with its 20d average. Matplotlib, per
+    the house rule (plain tables + matplotlib, no fancy visuals)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
+
+    n = min(len(series["dates"]), int(months * 21))
+    d = pd.to_datetime(series["dates"][-n:])
+    o = series.get("open") or series["close"]
+    o, h, l, c = (pd.Series((series.get(k) or series["close"])[-n:], dtype="float64")
+                  for k in ("open", "high", "low", "close"))
+    ma = pd.Series(series.get("ma_20") or [], dtype="float64").tail(n).reset_index(drop=True)
+
+    fig, ax = plt.subplots(figsize=(12, 5.4))
+    x = mdates.date2num(d.to_pydatetime())
+    width = 0.6 if n <= 90 else 0.9
+    up = c >= o
+    for i in range(n):
+        col = "#1a9850" if bool(up.iloc[i]) else "#d73027"
+        ax.vlines(x[i], l.iloc[i], h.iloc[i], color=col, linewidth=0.8)
+        lo_, hi_ = sorted((o.iloc[i], c.iloc[i]))
+        ax.add_patch(plt.Rectangle((x[i] - width / 2, lo_), width,
+                                   max(hi_ - lo_, 1e-9), facecolor=col,
+                                   edgecolor=col, linewidth=0.5))
+    if len(ma) == n:
+        ax.plot(x, ma, color="#2b6cb0", linewidth=1.4,
+                label=f"{S.HB_SLOPE_WINDOW}d MA")
+    for lvl, lab in ((series.get("range_high"), "252d high"),
+                     (series.get("range_low"), "252d low")):
+        if lvl is not None:
+            ax.axhline(lvl, color="#888", linestyle="--", linewidth=0.8)
+            ax.annotate(lab, xy=(x[-1], lvl), xytext=(4, 0),
+                        textcoords="offset points", fontsize=7, color="#666",
+                        va="center")
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
+    ax.set_ylabel("RSP / SPY")
+    ax.grid(alpha=0.25, linewidth=0.5)
+    ax.legend(loc="upper left", fontsize=8, frameon=False)
+    fig.autofmt_xdate()
+    fig.tight_layout()
+    return fig
+
+
 if hbs.get("dates"):
-    idx = pd.to_datetime(hbs["dates"])
-    chart = pd.DataFrame({
-        "RSP/SPY": hbs["ratio"],
-        f"{S.HB_SLOPE_WINDOW}d MA": hbs.get("ma_20"),
-        f"{hbs.get('lookback_days')}d high": [hbs["range_high"]] * len(idx),
-        f"{hbs.get('lookback_days')}d low": [hbs["range_low"]] * len(idx),
-    }, index=idx)
-    st.line_chart(chart, height=260)
+    span = st.radio("Chart window", [3, 6, 12], index=1, horizontal=True,
+                    format_func=lambda m: f"{m} months", key="hb_span")
+    try:
+        st.pyplot(_candles(hbs, span), clear_figure=True)
+    except Exception as exc:  # noqa: BLE001
+        st.warning(f"Chart unavailable ({exc}) — the numbers above still stand.")
+    st.caption(
+        "Green = the average stock gained on the index that day; red = it lost. "
+        "Blue is the 20-day average; the dashed lines are the 252-day range the "
+        "**range position** above is measured against. "
+        + (hbs.get("ohlc_note") or "")
+    )
 st.caption(hb.get("rationale", ""))
 
 # ── 2. Positioning ────────────────────────────────────────────────────────
@@ -285,6 +410,48 @@ cta = crown.get("cta") or {}
 mkts = crown.get("cta_markets") or {}
 cot = crown.get("cot") or {}
 gam = crown.get("gamma") or {}
+
+with st.expander("What is CTA, and how do I read this?", expanded=False):
+    st.markdown(
+        """
+**CTA = Commodity Trading Advisor.** Despite the name they trade everything —
+equity index futures, bonds, currencies, metals, energy, grains. They are
+**systematic trend followers**: rules, not opinions. If a market has gone up
+over the last few months, they are long it. If it turns down, they sell — and
+they sell whether or not the news justifies it.
+
+**Why you care.** They run hundreds of billions and they all use roughly the
+same public method, so they buy and sell *at the same time, at similar levels*.
+That makes their behaviour predictable in a way discretionary money is not.
+When they are already fully long something, there is nobody left to buy it —
+and when price crosses their trigger, a wave of mechanical selling arrives
+regardless of fundamentals.
+
+**How to read the three numbers**
+
+- **Signal (−1 to +1)** — how strongly the model is long or short that market.
+  Beyond ±0.75 counts as an extreme.
+- **Flip risk** — the *share of markets sitting at an extreme*. Read this as
+  **fragility, not conviction.** A high number means the trade is crowded, and
+  crowded trends unwind fast. It **cuts** the size multiplier.
+- **Flip level** — *the number worth having.* The price at which that market's
+  signal crosses zero and trend funds turn from buyer to seller. It is
+  arithmetic, not anyone's opinion.
+
+**What we can and cannot claim.** The bank notes everyone quotes cannot be
+bought through any feed we have, so we rebuild the model from the published
+academic method (Moskowitz-Ooi-Pedersen momentum plus Faber's 10-month
+average). **Our estimate of how much they hold will not match Goldman's** — the
+AUM weighting is a guess and they survey real books. **The flip levels will be
+close**, because a flip level is a property of the model, not of anyone's
+position.
+        """
+    )
+    if cta.get("overall_bias"):
+        from src.macro.crown import explain as _E
+        line = _E._cta_reason(cta)
+        if line:
+            st.info(f"**Right now** — {line}")
 
 t1, t2, t3, t4 = st.columns(4)
 t1.metric("CTA bias", str(cta.get("overall_bias", "—")).replace("_", " ").upper())
@@ -425,6 +592,52 @@ disp = vol.get("dispersion") or {}
 st.header("3 · Volatility — the true risk regime")
 st.caption("VIX is **not** a fear gauge here. It is the price of 30-day SPX vol. "
            "The tool Crown trades is single-stock vol minus index vol.")
+
+with st.expander("Why single-stock vol vs index vol is the thing to watch",
+                 expanded=False):
+    st.markdown(
+        """
+**Two different measurements.** **VIX** is the option market's price of how
+much the *index* will move over the next 30 days. **VIXEQ** is the same
+question asked of the *individual stocks inside it*. They are not the same
+number and the gap between them is the information.
+
+**Why they differ at all.** The index is a basket. If every stock moves
+together, the basket moves as much as its members and the two are close. If the
+members move in *different directions*, they cancel each other inside the
+basket — so the index sits still while the stocks underneath it are wild. That
+is the whole mechanism:
+
+> index volatility = single-stock volatility × how correlated they are
+
+**So the gap is really a correlation reading.** A wide gap means correlation has
+collapsed — stocks are trading on their own news instead of moving as one
+market.
+
+**Why that matters to you, in three ways**
+
+1. **The index hides risk.** A calm VIX with a wide gap does *not* mean a calm
+   market. It means the average position in your book is moving far more than
+   the index suggests. Index-level risk numbers will understate what you
+   actually own.
+2. **It is an early warning.** Stress usually starts in single names and
+   arrives at the index later. A widening gap has run ahead of 5-7% index
+   drawdowns. The index is the last thing to admit something is wrong.
+3. **It changes what works.** A wide gap is a **stock-picker's market** —
+   selection pays and index exposure does not. A narrow gap means everything
+   moves together, so selection buys you very little and only direction matters.
+
+**The trap, and it is the important part.** A wide gap is only a warning while
+it is **widening**. An elevated gap that is *shrinking* is stress leaving the
+market — buying downside into it is buying the end of the move. That is why
+this page reports **level** and **direction** separately and only calls it
+hidden stress when both agree.
+
+**Two cross-checks below.** DSPX is Cboe's own purpose-built version of this
+measurement. Implied correlation is the same thing seen from the other side, so
+it must move *opposite* the gap — if it ever stops doing so, distrust the gap.
+        """
+    )
 
 if not vol:
     st.info("Not computed — the process stopped at the Heartbeat gate.")

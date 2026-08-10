@@ -79,6 +79,21 @@ def test_the_heartbeat_ships_the_series_and_the_range_it_is_judged_against():
     assert s["lookback_days"] <= S.HB_LOOKBACK_DAYS
 
 
+def test_the_heartbeat_candles_are_valid_candles():
+    """The high of a RATIO is the biggest numerator over the SMALLEST
+    denominator — not the ratio of the two highs, which produced candles whose
+    high sat below their own open."""
+    n = 300
+    spy = walk(n, seed=9)
+    r = HB.heartbeat_from_frames(bars(spy * (0.30 + np.linspace(0, 0.04, n))),
+                                 bars(spy))
+    s = r["series"]
+    o, h, l, c = (np.array(s[k], dtype=float) for k in ("open", "high", "low", "close"))
+    assert (h >= np.maximum(o, c) - 1e-12).all(), "a high sits below its own body"
+    assert (l <= np.minimum(o, c) + 1e-12).all(), "a low sits above its own body"
+    assert "bound" in s["ohlc_note"]
+
+
 def test_a_tired_wave_outranks_a_live_one():
     """§5's ladder: regime + matching range extreme scores 0.75, plain trend 0.65.
     A tired wave is the more actionable statement."""

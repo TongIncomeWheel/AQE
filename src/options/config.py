@@ -40,6 +40,10 @@ SCAN_RANK_KEY = "annual_yield"
 # Data comes from Alpaca's option-chain snapshot (free "indicative" feed: IV +
 # greeks + quotes, one call per underlying — no per-contract fan-out, no throttle).
 ALPACA_DATA_URL = "https://data.alpaca.markets"
+# Open interest is NOT on the market-data host. It lives on the TRADING API's
+# option-contracts endpoint, which is why a gamma map built purely off
+# /v1beta1/options/snapshots can never find it.
+ALPACA_TRADING_URL = "https://api.alpaca.markets"
 ALPACA_FEED = "indicative"      # free, ~15-min delayed; "opra" needs the paid sub
 ALPACA_KEY_ID_ENV = "ALPACA_API_KEY_ID"
 ALPACA_SECRET_ENV = "ALPACA_API_SECRET_KEY"

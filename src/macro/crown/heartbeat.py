@@ -131,13 +131,22 @@ def heartbeat_from_frames(rsp: "object", spy: "object") -> dict:
     if rsp is None or spy is None or len(rsp) == 0 or len(spy) == 0:
         return _insufficient(0.0, "RSP or SPY bars unavailable")
 
-    a = pd.DataFrame({"date": pd.to_datetime(rsp["date"]),
-                      "rsp": pd.to_numeric(rsp["close"], errors="coerce")})
-    b = pd.DataFrame({"date": pd.to_datetime(spy["date"]),
-                      "spy": pd.to_numeric(spy["close"], errors="coerce")})
-    m = a.merge(b, on="date", how="inner").dropna().sort_values("date")
+    def _cols(df, tag):
+        out = {"date": pd.to_datetime(df["date"]),
+               f"{tag}_c": pd.to_numeric(df["close"], errors="coerce")}
+        # OHLC when the frame carries it, so the ratio can be drawn as candles
+        # rather than as a line nobody can read on a 0.30-0.35 scale.
+        for src, dst in (("open", "o"), ("high", "h"), ("low", "l")):
+            if src in getattr(df, "columns", []):
+                out[f"{tag}_{dst}"] = pd.to_numeric(df[src], errors="coerce")
+        return pd.DataFrame(out)
+
+    a, b = _cols(rsp, "rsp"), _cols(spy, "spy")
+    m = a.merge(b, on="date", how="inner").dropna(
+        subset=["rsp_c", "spy_c"]).sort_values("date")
     if m.empty:
         return _insufficient(0.0, "RSP and SPY share no common dates")
+    m = m.rename(columns={"rsp_c": "rsp", "spy_c": "spy"})
 
     ratio_series = (m["rsp"] / m["spy"]).to_numpy()
     out = heartbeat_regime(float(m["rsp"].iloc[-1]), float(m["spy"].iloc[-1]),
@@ -151,9 +160,45 @@ def heartbeat_from_frames(rsp: "object", spy: "object") -> dict:
     tail = min(len(m), S.HB_LOOKBACK_DAYS)
     win = pd.Series(ratio_series[-S.HB_LOOKBACK_DAYS:])
     ratio_s = pd.Series(ratio_series)
+
+    def _ratio(num, den):
+        """One OHLC leg of the ratio, if both sides carry that column.
+
+        The high of a RATIO is not the ratio of the two highs — it is the
+        biggest numerator over the smallest denominator, so high = rsp_high /
+        spy_LOW and low = rsp_low / spy_HIGH. Using high/high produced candles
+        whose high sat below their own open.
+        """
+        if num not in m.columns or den not in m.columns:
+            return None
+        v = (m[num] / m[den]).tail(tail)
+        return [None if pd.isna(x) else float(x) for x in v]
+
+    r_open = _ratio("rsp_o", "spy_o")
+    r_high = _ratio("rsp_h", "spy_l")      # max numerator / min denominator
+    r_low = _ratio("rsp_l", "spy_h")       # min numerator / max denominator
+    r_close = [float(x) for x in ratio_series[-tail:]]
+
+    # These are BOUNDS — the two legs need not print their extremes at the same
+    # instant — so clamp them around the bars that are exact. Without this a
+    # bound can still cross the body it is supposed to contain.
+    if r_open and r_high and r_low:
+        for i in range(len(r_close)):
+            body_hi = max(r_open[i], r_close[i])
+            body_lo = min(r_open[i], r_close[i])
+            r_high[i] = max(r_high[i], body_hi)
+            r_low[i] = min(r_low[i], body_lo)
+
+    def _round(xs):
+        return None if xs is None else [round(x, 6) for x in xs]
+
     out["series"] = {
         "dates": [str(d.date()) for d in m["date"].tail(tail)],
         "ratio": [round(float(x), 6) for x in ratio_series[-tail:]],
+        "open": _round(r_open),
+        "high": _round(r_high),
+        "low": _round(r_low),
+        "close": _round(r_close),
         "ma_20": [None if pd.isna(v) else round(float(v), 6)
                   for v in ratio_s.rolling(S.HB_SLOPE_WINDOW,
                                            min_periods=S.HB_SLOPE_WINDOW)
@@ -161,5 +206,42 @@ def heartbeat_from_frames(rsp: "object", spy: "object") -> dict:
         "range_high": round(float(win.max()), 6),
         "range_low": round(float(win.min()), 6),
         "lookback_days": int(tail),
+        "percentile_252d": round(float((win <= ratio_series[-1]).sum() - 1)
+                                 / max(len(win) - 1, 1), 4),
+        "ohlc_note": ("High/low are bounds: biggest RSP over smallest SPY and "
+                      "the reverse. The two legs need not print their extremes "
+                      "together, so the wick is a bound, not an observed tick."),
     }
+
+    # The numbers a reader needs to judge the regime rather than take the label
+    # on trust: how far breadth has moved over three horizons, where it sits
+    # against its own average, and how long this regime has actually held.
+    for w in (5, 20, 60):
+        out[f"change_{w}d_pct"] = (
+            round((ratio_series[-1] / ratio_series[-1 - w] - 1.0) * 100.0, 3)
+            if len(ratio_series) > w and ratio_series[-1 - w] else None)
+
+    ma_last = out["series"]["ma_20"][-1] if out["series"]["ma_20"] else None
+    out["dist_to_ma20_pct"] = (
+        round((ratio_series[-1] / ma_last - 1.0) * 100.0, 3)
+        if ma_last else None)
+
+    # How many consecutive sessions the 20-day slope has kept its current sign.
+    # A regime three days old and one three months old are different statements
+    # wearing the same label.
+    streak, cur = 0, None
+    for i in range(len(ratio_series) - 1,
+                   max(S.HB_SLOPE_WINDOW, len(ratio_series) - 130) - 1, -1):
+        seg = ratio_series[i - S.HB_SLOPE_WINDOW + 1: i + 1]
+        if len(seg) < S.HB_SLOPE_WINDOW:
+            break
+        sl = float(np.polyfit(np.arange(len(seg)), seg, 1)[0])
+        lab = ("broadening" if sl > S.HB_SLOPE_EPS
+               else "narrowing" if sl < -S.HB_SLOPE_EPS else "neutral")
+        if cur is None:
+            cur = lab
+        if lab != cur:
+            break
+        streak += 1
+    out["days_in_regime"] = int(streak)
     return out

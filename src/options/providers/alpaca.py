@@ -123,10 +123,21 @@ def _pace() -> None:
 
 
 def _http_get(path: str, params: dict) -> dict:
+    """Paced + retried GET against the market-DATA host."""
+    return _http_get_base(C.ALPACA_DATA_URL, path, params)
+
+
+def _http_get_trading(path: str, params: dict) -> dict:
+    """Same, against the TRADING host. Option open interest lives here, not on
+    the data host — `/v2/options/contracts` carries `open_interest`."""
+    return _http_get_base(C.ALPACA_TRADING_URL, path, params)
+
+
+def _http_get_base(base: str, path: str, params: dict) -> dict:
     """Paced + retried GET. Honours 429 Retry-After and backs off on 5xx, so a
     transient rate-limit/blip no longer turns a whole name into a hard error."""
     import requests
-    url = f"{C.ALPACA_DATA_URL}{path}"
+    url = f"{base}{path}"
     last_exc = None
     for attempt in range(C.ALPACA_MAX_RETRIES + 1):
         _pace()

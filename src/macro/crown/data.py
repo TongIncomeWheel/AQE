@@ -270,6 +270,49 @@ def _oi(snap: dict) -> float | None:
     return None
 
 
+def fetch_open_interest(underlying: str, spot: float, *,
+                        today: date | None = None, http_get=None) -> dict:
+    """{OCC symbol: open interest} from Alpaca's TRADING API.
+
+    This is the call the first version of the gamma layer was missing. Open
+    interest is not on the market-data host at all — `/v1beta1/options/snapshots`
+    returns quotes, greeks and implied vol, and no amount of asking it will
+    produce OI. It lives on `/v2/options/contracts`, which is a different host,
+    so a gamma map built purely off snapshots can never be built.
+    """
+    from src.options.providers.alpaca import _http_get_trading
+
+    today = today or date.today()
+    getter = http_get or _http_get_trading
+    params = {
+        "underlying_symbols": underlying,
+        "expiration_date_gte": today.isoformat(),
+        "expiration_date_lte": (today + timedelta(days=S.GAMMA_DTE_MAX)).isoformat(),
+        "limit": 10000,
+    }
+    if spot and spot > 0:
+        params["strike_price_gte"] = round(float(spot) * (1 - S.GAMMA_STRIKE_BAND), 2)
+        params["strike_price_lte"] = round(float(spot) * (1 + S.GAMMA_STRIKE_BAND), 2)
+
+    out, token = {}, None
+    for _ in range(12):
+        if token:
+            params["page_token"] = token
+        resp = getter("/v2/options/contracts", params)
+        for c in (resp.get("option_contracts") or []):
+            oi = c.get("open_interest")
+            sym = c.get("symbol")
+            if sym and oi is not None:
+                try:
+                    out[sym] = float(oi)
+                except (TypeError, ValueError):
+                    pass
+        token = resp.get("next_page_token")
+        if not token:
+            break
+    return out
+
+
 def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None,
                       http_get=None) -> dict:
     """Both rights, near the money, with gamma and open interest.
@@ -291,16 +334,34 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
         return {"spot": spot, "contracts": [], "oi_available": False,
                 "reason": "no spot price"}
 
+    from src.options import config as C
+
     lo = round(float(spot) * (1 - S.GAMMA_STRIKE_BAND), 2)
     hi = round(float(spot) * (1 + S.GAMMA_STRIKE_BAND), 2)
     params = {
+        # The CSP adapter passes this and the first gamma build did not. Without
+        # it Alpaca defaults to a feed the account may not be entitled to.
+        "feed": C.ALPACA_FEED,
         "limit": 1000,
         "expiration_date_gte": today.isoformat(),
         "expiration_date_lte": (today + timedelta(days=S.GAMMA_DTE_MAX)).isoformat(),
         "strike_price_gte": lo, "strike_price_lte": hi,
     }
 
-    rows, token, saw_oi, saw_any = [], None, False, False
+    # Open interest first — it comes from a DIFFERENT host, and without it there
+    # is no map to build, so failing here is worth failing early.
+    try:
+        oi_map = fetch_open_interest(underlying, spot, today=today)
+    except Exception as exc:
+        return {"spot": spot, "contracts": [], "oi_available": False,
+                "reason": f"open-interest fetch failed (trading API): {exc}"}
+    if not oi_map:
+        return {"spot": spot, "contracts": [], "oi_available": False,
+                "reason": ("the trading API returned no open interest for "
+                           f"{underlying} — check the Alpaca key has trading "
+                           "scope, not just market data")}
+
+    greeks, token, saw_any, saw_greeks = {}, None, False, False
     try:
         for _ in range(12):
             if token:
@@ -308,41 +369,43 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
             resp = getter(f"/v1beta1/options/snapshots/{underlying}", params)
             for occ, snap in (resp.get("snapshots") or {}).items():
                 saw_any = True
-                try:
-                    _root, expiry, right, strike = parse_occ_symbol(occ)
-                except (ValueError, IndexError):
-                    continue
-                g = (snap.get("greeks") or {})
-                gamma = g.get("gamma")
-                oi = _oi(snap)
-                if oi is not None:
-                    saw_oi = True
-                if gamma is None or oi is None:
-                    continue
-                rows.append({
-                    "occ": occ, "strike": float(strike), "right": right,
-                    "dte": (expiry - today).days, "gamma": float(gamma),
-                    "open_interest": float(oi),
-                })
+                g = (snap.get("greeks") or {}).get("gamma")
+                if g is not None:
+                    saw_greeks = True
+                    greeks[occ] = float(g)
             token = resp.get("next_page_token")
             if not token:
                 break
     except Exception as exc:
-        return {"spot": spot, "contracts": [], "oi_available": False,
-                "reason": f"chain fetch failed: {exc}"}
+        return {"spot": spot, "contracts": [], "oi_available": True,
+                "reason": f"greeks fetch failed (data API): {exc}"}
+
+    rows = []
+    for occ, gamma in greeks.items():
+        oi = oi_map.get(occ)
+        if oi is None or oi <= 0:
+            continue
+        try:
+            _root, expiry, right, strike = parse_occ_symbol(occ)
+        except (ValueError, IndexError):
+            continue
+        rows.append({"occ": occ, "strike": float(strike), "right": right,
+                     "dte": (expiry - today).days, "gamma": gamma,
+                     "open_interest": float(oi)})
 
     if not saw_any:
-        reason = "chain returned no snapshots"
-    elif not saw_oi:
-        reason = ("the options feed did not return open interest — a gamma map "
-                  "cannot be built without it (IBKR get_option_data and Tiger "
-                  "get_option_briefs both carry OI as alternatives)")
+        reason = "the chain endpoint returned no snapshots"
+    elif not saw_greeks:
+        reason = (f"snapshots carried no greeks on the '{C.ALPACA_FEED}' feed — "
+                  "gamma cannot be computed without them")
     elif not rows:
-        reason = "snapshots carried neither gamma nor open interest"
+        reason = (f"{len(greeks)} contracts had greeks and {len(oi_map)} had open "
+                  "interest, but none matched on OCC symbol")
     else:
         reason = None
 
-    return {"spot": float(spot), "contracts": rows, "oi_available": saw_oi,
+    return {"spot": float(spot), "contracts": rows, "oi_available": True,
+            "n_with_oi": len(oi_map), "n_with_greeks": len(greeks),
             "reason": reason}
 
 
