@@ -115,8 +115,14 @@ def run_crown(*, client=None, refresh_cot: bool = True,
         gamma_read = gamma_mod.analyse(chains)
         if chain_bad:
             gamma_read.setdefault("unavailable", {}).update(chain_bad)
+            # analyse() computed its `reason` before it could see WHY the fetch
+            # failed, so it says the useless "no chains supplied". The real
+            # reason — no keys, no spot, no open interest — is in `unavailable`,
+            # and a message that does not name it sends the reader nowhere.
+            gamma_read["reason"] = "; ".join(
+                f"{k}: {v}" for k, v in sorted(gamma_read["unavailable"].items()))
         if gamma_read.get("status") != "OK":
-            degraded.append(f"gamma unavailable: {gamma_read.get('reason')}")
+            degraded.append(f"gamma unavailable — {gamma_read.get('reason')}")
 
     # ── 4. volatility regime ──────────────────────────────────────────────
     vixes = feeds.vix_bars(client)
