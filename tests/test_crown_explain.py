@@ -62,15 +62,16 @@ def test_an_easing_spread_is_described_as_draining_not_building():
     into the end of a move."""
     pe = E.explain(crown(disp_state="ELEVATED_EASING"), SCEN)
     text = _all_text(pe)
-    assert "draining away rather than building" in text
-    assert "buying the end of the move" in text
+    assert "the gap is closing" in text
+    assert "leaving the market rather than building" in text
+    assert "index puts would be late" in text
 
 
 def test_a_rising_spread_is_described_as_the_warning():
     pe = E.explain(crown(disp_state="ELEVATED_RISING", chg=+6.0), SCEN)
     text = _all_text(pe)
-    assert "still widening" in text
-    assert "5-7%" in text
+    assert "still growing" in text
+    assert "5 to 7 percent" in text
 
 
 def test_narrowing_and_broadening_read_as_opposite_sentences():
@@ -82,7 +83,7 @@ def test_narrowing_and_broadening_read_as_opposite_sentences():
 
 def test_a_tired_wave_is_called_out_as_late():
     pe = E.explain(crown(regime="broadening", range_pos="top"), SCEN)
-    assert "late rather than early" in _all_text(pe)
+    assert "closer to its end than its start" in _all_text(pe)
 
 
 def test_the_size_multiplier_is_explained_not_just_quoted():
@@ -189,14 +190,14 @@ def test_a_flip_sitting_on_spot_is_called_a_knife_edge():
     r = E.gamma_reading(_profile(0.38))
     assert r["knife_edge"] is True
     joined = " ".join(r["lines"])
-    assert "0.38%" in joined and "where the tape already is" in joined
-    assert "sign inverts" in joined
+    assert "0.38%" in joined and "tipping point" in joined
+    assert "Treat the calm as fragile" in joined
 
 
 def test_a_distant_flip_is_reported_as_a_level_not_an_alarm():
     r = E.gamma_reading(_profile(4.5))
     assert r["knife_edge"] is False
-    assert "regime holds until" in " ".join(r["lines"])
+    assert "This holds until" in " ".join(r["lines"])
 
 
 def test_positive_and_negative_gamma_give_opposite_instructions():
@@ -210,7 +211,7 @@ def test_positive_and_negative_gamma_give_opposite_instructions():
 
 def test_the_walls_are_given_as_the_frame_with_their_share():
     line = next(l for l in E.gamma_reading(_profile(2.0))["lines"]
-                if "walls frame it" in l)
+                if "heaviest positioning" in l)
     assert "750" in line and "785" in line and "%" in line
 
 
@@ -252,3 +253,47 @@ def test_every_divergence_check_has_plain_words():
     line = next(b for b in pe["because"] if "warning sign" in b)
     for raw in ("rsi_slope", "breadth_ma", "cross_asset"):
         assert raw not in line
+
+
+# ──────────────────────────── plain English, enforced not hoped for
+
+def test_no_spec_section_references_reach_the_reader():
+    """A reader does not have the kernel document open. "§2.4's practical rule
+    is directional" tells them nothing and sends them somewhere they cannot go."""
+    text = _all_text(E.explain(crown(), SCEN))
+    assert "§" not in text
+    for prof in (_profile(0.38), _profile(4.0)):
+        assert "§" not in " ".join(E.gamma_reading(prof)["lines"])
+
+
+def test_the_prose_does_not_explain_our_own_implementation():
+    """Why a field exists is a code comment. The reader wants to know what the
+    market is doing, not why we store level and direction in two places."""
+    text = _all_text(E.explain(crown(), SCEN)).lower()
+    for tell in ("shown separately", "we store", "the process trims",
+                 "is what makes", "self-damping", "denominator",
+                 "reported as", "this field"):
+        assert tell not in text, f"implementation talk leaked: {tell}"
+
+
+def test_sentences_are_sentences():
+    """No fragments. Every line starts with a capital and ends with a stop."""
+    pe = E.explain(crown(), SCEN)
+    for line in pe["because"] + pe["watch_for"]:
+        stripped = line.replace("**", "").strip()
+        assert stripped[0].isupper() or stripped[0].isdigit(), \
+            f"does not start as a sentence: {stripped[:50]}"
+        assert stripped.endswith((".", "?")), \
+            f"does not end as a sentence: {stripped[-50:]}"
+
+
+def test_it_does_not_say_the_same_thing_twice_in_one_line():
+    """The complaint that prompted this: four restatements of one idea."""
+    pe = E.explain(crown(disp_state="ELEVATED_EASING"), SCEN)
+    vol_line = next(b for b in pe["because"] if "volatile than the index" in b)
+    low = vol_line.lower()
+    # "draining", "unwinding", "leaving" and "the end of the move" were four
+    # ways of saying one thing. One survivor only.
+    synonyms = sum(w in low for w in ("draining", "unwinding", "leaving",
+                                      "end of the move"))
+    assert synonyms <= 1, f"still restating itself: {vol_line}"

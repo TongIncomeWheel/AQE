@@ -892,3 +892,36 @@ def test_the_layer_declares_itself_standalone():
         assert "srm." not in src.replace("SRM", "")
     # divergence may share AQE primitives (rsi, pivots) but not the SRM layer
     assert "from src.engines.srm" not in inspect.getsource(divergence)
+
+
+# ──────────────────────────── spot resolution: three sources, not one
+
+def test_the_spot_resolver_tries_every_source_before_giving_up():
+    """A whole gamma map once died because the live quote endpoint returned
+    nothing and the code gave up — on a price the panel already held. A map
+    built on yesterday's close is worth far more than no map: the strike band
+    is +/-15%, so a day-old spot moves the walls not at all."""
+    import inspect
+
+    from src.macro.crown import data as F
+    src = inspect.getsource(F.resolve_spot)
+    assert "get_quotes_batch" in src          # live quote
+    assert "_panel_series" in src             # the panel we already hold
+    assert "fetch_bars" in src                # daily bars as the last resort
+
+
+def test_the_spot_resolver_names_where_the_price_came_from():
+    from src.macro.crown import data as F
+    px, src = F.resolve_spot("SPY")
+    assert src in ("fmp_quote", "panel_close", "fmp_daily_close", "unavailable")
+    if px is None:
+        assert src == "unavailable"
+
+
+def test_a_missing_spot_says_all_three_failed_not_just_fmp():
+    from src.macro.crown import data as F
+    _chains, bad = F.fetch_gamma_chains()
+    for reason in bad.values():
+        if "no spot price" in reason:
+            assert "panel" in reason and "daily bars" in reason, \
+                "the message must name every source that was tried"

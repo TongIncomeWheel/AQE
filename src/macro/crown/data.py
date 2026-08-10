@@ -409,36 +409,61 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
             "reason": reason}
 
 
+def resolve_spot(symbol: str, client: FMPClient | None = None) -> tuple[float | None, str]:
+    """(spot, where it came from). Tries three sources before giving up.
+
+    The first version asked FMP's live quote endpoint and gave up when it
+    returned nothing — which is how a whole gamma map died on a spot price we
+    already had on disk. A gamma map built on yesterday's close is worth far
+    more than no map at all: the strike band is +/-15%, so a one-day-old spot
+    moves the walls not at all and the flip distance only slightly.
+    """
+    c = _client(client)
+    if c is not None:
+        try:
+            q = (c.get_quotes_batch([symbol]) or {}).get(symbol) or {}
+            px = q.get("price") or q.get("prev_close")
+            if px:
+                return float(px), "fmp_quote"
+        except Exception:
+            pass
+
+    df = _panel_series(symbol)
+    if df is not None and len(df):
+        return float(df["close"].iloc[-1]), "panel_close"
+
+    if c is not None:
+        bars = fetch_bars(symbol, years=1, client=c)
+        if len(bars):
+            return float(bars["close"].iloc[-1]), "fmp_daily_close"
+
+    return None, "unavailable"
+
+
 def fetch_gamma_chains(underlyings=S.GAMMA_UNDERLYINGS,
                        client: FMPClient | None = None) -> tuple[dict, dict]:
     """Chains for the index underlyings. Returns (chains, failures)."""
     c = _client(client)
-    if c is None:
-        return {}, {u: "FMP client unavailable (no spot price)" for u in underlyings}
     chains, bad = {}, {}
-    try:
-        quotes = c.get_quotes_batch(list(underlyings))
-    except Exception as exc:
-        return {}, {u: f"spot lookup failed: {exc}" for u in underlyings}
-
-    # get_quotes_batch returns {ticker: {price, prev_close, ...}}.
-    spots = {}
-    for sym, q in (quotes or {}).items():
-        px = (q or {}).get("price") or (q or {}).get("prev_close")
+    spots, spot_src = {}, {}
+    for u in underlyings:
+        px, src = resolve_spot(u, c)
         if px:
-            spots[sym] = float(px)
+            spots[u], spot_src[u] = px, src
 
     from src.options.providers import tiger as _tiger
 
     for u in underlyings:
         spot = spots.get(u)
         if not spot:
-            bad[u] = "no spot price from FMP"
+            bad[u] = ("no spot price from any source — FMP quote, the local "
+                      "panel and FMP daily bars all came back empty")
             continue
 
         got = fetch_gamma_chain(u, spot)
         if got.get("contracts"):
             got["source"] = "alpaca"
+            got["spot_source"] = spot_src.get(u)
             chains[u] = got
             continue
 
@@ -450,6 +475,7 @@ def fetch_gamma_chains(underlyings=S.GAMMA_UNDERLYINGS,
             t = _tiger.fetch_chain(u, spot)
             if t.get("contracts"):
                 t["source"] = "tiger"
+                t["spot_source"] = spot_src.get(u)
                 chains[u] = t
                 continue
             why.append(f"tiger: {t.get('reason')}")

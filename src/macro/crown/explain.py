@@ -97,13 +97,14 @@ def _breadth_reason(hb: dict) -> str | None:
     if regime == "narrowing":
         s = "A handful of big names are carrying the index — the average stock is falling behind."
         if pos == "bottom":
-            s += (" That has run long enough to look tired: breadth is near the "
-                  "bottom of its 12-month range, which is usually where it turns.")
+            s += (" This has been going on long enough to look tired. Breadth "
+                  "is near the bottom of its 12-month range, which is usually "
+                  "where it turns.")
     elif regime == "broadening":
         s = "The average stock is keeping up with the index — the rally is broad."
         if pos == "top":
-            s += (" But breadth is near the top of its 12-month range, so the "
-                  "broad phase is probably late rather than early.")
+            s += (" Breadth is near the top of its 12-month range, so this "
+                  "phase is probably closer to its end than its start.")
     else:
         s = "Breadth is going sideways — neither the big names nor the average stock is leading."
     return s
@@ -117,27 +118,28 @@ def _vol_reason(vol: dict) -> str | None:
         return None
 
     if state == "ELEVATED_RISING":
-        s = (f"Single stocks are far more volatile than the index — the gap is "
-             f"wider than {_pct(pctl)} of the last two years, and it is still "
-             f"widening (up {abs(chg):.1f} points in a month). "
-             "That build-up has run ahead of 5-7% index drops before.")
+        s = (f"Single stocks are much more volatile than the index, and the gap "
+             f"is still growing. It widened by {abs(chg or 0):.1f} points over "
+             f"the last month and is now wider than {_pct(pctl)} of readings in "
+             "the past two years. Gaps this wide and still growing have come "
+             "before index falls of 5 to 7 percent.")
     elif state == "ELEVATED_EASING":
-        s = (f"Single stocks are far more volatile than the index — wider than "
-             f"{_pct(pctl)} of the last two years. But the gap has been "
-             f"shrinking for a month (down {abs(chg or 0):.1f} points), so this "
-             "stress is draining away rather than building. Buying downside into "
-             "that is buying the end of the move.")
+        s = (f"Single stocks are much more volatile than the index, but the gap "
+             f"is closing. It narrowed by {abs(chg or 0):.1f} points over the "
+             f"last month, from a level wider than {_pct(pctl)} of the past two "
+             "years. The stress is leaving the market rather than building, so "
+             "index puts would be late here.")
     elif state.startswith("CALM"):
-        s = "Single-stock volatility is unusually close to the index — nothing hiding underneath."
+        s = ("Single stocks are moving no more than the index is. There is "
+             "nothing building underneath a calm surface.")
     else:
-        s = "Single-stock volatility is roughly in line with the index."
+        s = "Single stocks are moving about as much as the index."
 
     vix, vpctl = vol.get("vix"), vol.get("vix_percentile")
     if vix is not None:
-        calm = (f" The index itself is calm: VIX at {vix:.1f}"
-                + (f", lower than {_pct(1 - (vpctl or 0))} of the last two years."
-                   if vpctl is not None else "."))
-        s += calm
+        s += f" The index itself is quiet, with VIX at {vix:.1f}"
+        s += (f", lower than {_pct(1 - (vpctl or 0))} of the past two years."
+              if vpctl is not None else ".")
     return s
 
 
@@ -189,31 +191,29 @@ def gamma_reading(prof: dict) -> dict:
         where = "above" if dist > 0 else "below"
         if knife:
             lines.append(
-                f"**But the flip is only {abs(dist):.2f}% {where} spot, at "
-                f"{flip:,.2f}.** That is not a level in the distance — it is "
-                "where the tape already is. "
-                + ("Lose it and the sign inverts: the damping stops and dealer "
-                   "hedging starts amplifying instead."
+                f"The tipping point sits at {flip:,.2f}, only {abs(dist):.2f}% "
+                f"{where} today's price. "
+                + ("If the market trades through it, dealers stop damping moves "
+                   "and start amplifying them. Treat the calm as fragile."
                    if pos else
-                   "Reclaim it and the sign inverts: the amplification stops and "
-                   "dealers begin damping instead."))
+                   "If the market trades back through it, dealers stop "
+                   "amplifying moves and start damping them."))
         else:
             lines.append(
-                f"The regime holds until {flip:,.2f} ({abs(dist):.1f}% {where} "
-                "spot), where the sign changes.")
+                f"This holds until {flip:,.2f}, which is {abs(dist):.1f}% "
+                f"{where} today's price. Past that level the effect reverses.")
 
     if cw.get("strike") and pw.get("strike"):
         lines.append(
-            f"The walls frame it: {pw['strike']:,.0f} below "
-            f"({pw['share_of_side']:.0%} of put gamma) and {cw['strike']:,.0f} "
-            f"above ({cw['share_of_side']:.0%} of call gamma). Those are the "
-            "magnets while the regime holds, and the acceleration points if it "
-            "breaks.")
+            f"The heaviest positioning sits at {pw['strike']:,.0f} below and "
+            f"{cw['strike']:,.0f} above, holding {pw['share_of_side']:.0%} and "
+            f"{cw['share_of_side']:.0%} of each side. Price tends to get pulled "
+            "toward those levels, and to move quickly once it clears them.")
 
     lines.append(
-        f"Size of the effect: ${abs(gex) / 1e9:,.2f}bn of dealer gamma per 1% "
-        f"move, across {prof.get('total_open_interest', 0):,} contracts of open "
-        "interest.")
+        f"The effect is worth about ${abs(gex) / 1e9:,.2f} billion for every 1% "
+        f"the index moves, spread across "
+        f"{prof.get('total_open_interest', 0):,} open contracts.")
 
     return {"headline": headline, "lines": lines, "knife_edge": bool(knife),
             "reason": None}
@@ -232,8 +232,8 @@ def _cta_reason(cta: dict) -> str | None:
     else:
         s = f"Trend-following funds are mixed across the {n} markets we track"
     if extremes:
-        s += (f", and {extremes} of them sit at an extreme. Crowded trends unwind "
-              "fast, which is why the process trims size here.")
+        s += (f", and {extremes} of those positions are stretched. Crowded "
+              "trades unwind quickly, so the size guidance is cut.")
     else:
         s += ", and none is at an extreme — the positioning is not crowded."
     return s
@@ -279,8 +279,8 @@ def _divergence_reason(div: dict) -> str | None:
     extra = int(div.get("weight", n)) - n
     if extra > 0:
         s += f" A further {extra} showed up on individual markets."
-    return s + (" None of these is a sell on its own — they matter when they "
-                "line up with the breadth read.")
+    return s + (" No single one of these is a reason to sell. They matter when "
+                "several point the same way as the breadth reading.")
 
 
 # ── what would change the answer ─────────────────────────────────────────
@@ -302,17 +302,17 @@ def _watch_for(crown: dict, scen: dict) -> list[str]:
 
     disp = (crown.get("volatility") or {}).get("dispersion") or {}
     if disp.get("state") == "ELEVATED_EASING":
-        out.append("If the single-stock-versus-index gap starts widening again, "
-                   "that flips from 'stress draining' to 'stress building' — "
-                   "that is the version worth acting on.")
+        out.append("Watch for the volatility gap starting to widen again. That "
+                   "would turn a fading warning into a live one.")
     elif disp.get("state", "").startswith("NORMAL") or disp.get("band") == "NORMAL":
-        out.append("If single-stock volatility pulls away from the index while "
-                   "the index stays calm, that is the early warning.")
+        out.append("Watch for single stocks becoming more volatile while the "
+                   "index stays calm. That gap is the earliest warning we get.")
 
     hb = crown.get("heartbeat") or {}
     if hb.get("regime") == "narrowing":
-        out.append("If the average stock starts keeping up again, the leadership "
-                   "trade is over and the breadth trade begins.")
+        out.append("Watch for the average stock keeping pace with the index "
+                   "again. That ends the leadership trade and starts the "
+                   "breadth trade.")
 
     # The leading scenario's own falsifiers, in its own words.
     lead = (scen or {}).get("leading")
@@ -320,7 +320,7 @@ def _watch_for(crown: dict, scen: dict) -> list[str]:
         for s in (scen.get("scenarios") or []):
             if s["scenario"] == lead:
                 for m in (s.get("missing_conditions") or [])[:2]:
-                    out.append(f"This read strengthens if {m} reverses.")
+                    out.append(f"This reading would strengthen if {m} reversed.")
                 break
     return out[:5]
 
@@ -428,6 +428,6 @@ def explain(crown: dict, scenarios: dict | None = None) -> dict:
         "watch_for": _watch_for(crown, scen),
         "caveats": caveats,
         "as_of": crown.get("generated_at"),
-        "note": ("Written from the numbers on this page every run — if the data "
-                 "moves, this moves with it."),
+        "note": ("Written from the numbers on this page every time it runs. "
+                 "When the data changes, this changes with it."),
     }

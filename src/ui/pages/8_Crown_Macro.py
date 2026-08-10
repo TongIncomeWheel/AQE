@@ -129,11 +129,10 @@ if fresh:
         table_with_copy(pd.DataFrame(frows), key="crown_freshness",
                         label="📋 Copy freshness table")
         st.caption(
-            "An ETF `via` means the futures symbol was unavailable or stale on "
-            "our FMP plan and the tracking ETF stood in — trend direction holds, "
-            "absolute levels are not the contract's. Markets are proxied rather "
-            "than dropped because `flip_risk` is extremes ÷ markets, and a "
-            "shrinking denominator silently re-rates every reading."
+            "Where the Via column shows an ETF, our data plan does not carry that "
+            "futures contract and the tracking fund stood in for it. The trend "
+            "direction is still right. The price levels are the ETF's, not the "
+            "contract's, so do not quote a flip level from one of those rows."
         )
 
 # ── the read, in English, before any numbers ─────────────────────────────
@@ -178,12 +177,12 @@ c4.metric("Checklist", "PASSED" if dec.get("checklist_pass") else "FAILED")
 
 if dec.get("early_exit"):
     st.error(
-        "**Early exit.** Heartbeat confidence is below the "
-        f"{S.HB_CONFIDENCE_GATE:.2f} gate, so §5 stopped the process and nothing "
-        "downstream was computed. A market you cannot read is not one you take a "
-        "smaller position in.\n\n"
-        "Sections 2–4 below are therefore **empty because they were never run**, "
-        "not because the readings came back quiet."
+        "**The process stopped here.** Breadth is not giving a clear enough "
+        f"signal to read the market, so nothing below this point was calculated. "
+        "When we cannot tell what kind of market this is, the answer is no new "
+        "risk rather than a smaller position.\n\n"
+        "Sections 2 to 4 are empty because they never ran, not because the "
+        "readings came back quiet."
     )
 
 # One row for the whole hierarchy, in its own order, so the state is readable
@@ -238,7 +237,7 @@ with st.expander("Why this family — every condition, met and unmet"):
             for c in cands]), use_container_width=True, hide_index=True)
     st.caption(f"Size derivation: {dec.get('size_derivation', '—')}")
 
-with st.expander("Audit trail (§4 rhythm, step by step)"):
+with st.expander("Audit trail — each step of the process in order"):
     for m in dec.get("messages", []):
         st.text(m)
 
@@ -521,8 +520,10 @@ with st.expander("CFTC Commitment of Traders — large-spec positioning"):
         st.caption(
             f"As of **{cot.get('as_of')}** ({cot.get('weeks_stale')} weeks stale). "
             "Straight from cftc.gov — FMP gates COT behind Premium, the CFTC "
-            "publishes it free. Reports Tuesday's book on Friday, so it can time "
-            "nothing; it is a slow context dial for §2.5's positioning divergence."
+            "publishes it free. The report covers Tuesday's positions and comes "
+            "out on Friday, so it is always at least three days old. Use it to "
+            "answer one question: is the crowd already positioned the way price "
+            "is moving?"
         )
         cl, cs = cot.get("crowded_long") or [], cot.get("crowded_short") or []
         cc1, cc2 = st.columns(2)
@@ -570,21 +571,17 @@ with st.expander("🔧 Gamma trial run — test the feed step by step"):
                                 else f"set {_C.ALPACA_KEY_ID_ENV} + "
                                      f"{_C.ALPACA_SECRET_ENV} as Space secrets")})
 
-        spot = None
-        if kid and sec:
-            try:
-                from src.data.fmp_client import FMPClient
-                q = FMPClient().get_quotes_batch(["SPY"])
-                spot = (q.get("SPY") or {}).get("price")
-                rows.append({"Step": "2 · SPY spot (FMP)",
-                             "Result": "OK" if spot else "NO PRICE",
-                             "Detail": str(spot)})
-            except Exception as exc:  # noqa: BLE001
-                rows.append({"Step": "2 · SPY spot (FMP)", "Result": "FAILED",
-                             "Detail": str(exc)[:160]})
+        # Spot is resolved from three sources in order, because a gamma map
+        # built on yesterday's close beats no map at all.
+        from src.macro.crown import data as _F
+        spot, src = _F.resolve_spot("SPY")
+        rows.append({"Step": "2 · SPY spot",
+                     "Result": "OK" if spot else "NONE",
+                     "Detail": (f"{spot} (from {src})" if spot
+                                else "FMP quote, local panel and FMP daily bars "
+                                     "all empty")})
 
         if spot:
-            from src.macro.crown import data as _F
             try:
                 oi = _F.fetch_open_interest("SPY", float(spot))
                 rows.append({"Step": "3 · Open interest (TRADING api)",
@@ -793,12 +790,11 @@ v5.metric("State", str(disp.get("state", "—")).replace("_", " "))
 
 if disp.get("state") == "ELEVATED_EASING":
     st.info(
-        "**Elevated but easing.** The spread sits in the top band, yet it has "
-        f"*fallen* {abs(disp.get('spread_20d_change') or 0):.2f} points over 20 "
-        "sessions. §2.4's practical rule is directional — a **rising** spread is "
-        "hidden stress. An elevated spread that is unwinding is stress *leaving* "
-        "the market, and buying downside into it buys the end of the move. Level "
-        "and direction are shown separately because they routinely disagree."
+        "**The gap is wide, but it is shrinking.** It has narrowed by "
+        f"{abs(disp.get('spread_20d_change') or 0):.2f} points over the last 20 "
+        "sessions. A wide gap only warns you while it is still growing. One that "
+        "is shrinking means the stress is already leaving the market, so buying "
+        "index puts here would be buying the end of the move."
     )
 
 if disp.get("basis") == "realised":
@@ -899,8 +895,8 @@ if not div:
 else:
     dm1, dm2 = st.columns([1, 3])
     dm1.metric("Warnings lit", div.get("weight", 0),
-               help="Independent non-confirmations currently firing. §2.5: "
-                    "divergence is most powerful when several agree.")
+               help="How many separate warnings are lit right now. One on its "
+                    "own means little. Several at once is worth acting on.")
     cov = div.get("coverage") or {}
     dm2.caption(
         f"Coverage — RSI across **{cov.get('rsi_series', 0)}** series · "
@@ -948,15 +944,12 @@ else:
                 st.line_chart(pd.DataFrame({"index (rebased)": rebased,
                                             "RSI-14": chart["rsi"]}), height=220)
         st.caption(
-            "Shown at both horizons because that is the thing worth looking at — "
-            "but a **single** window is a readout, not a warning. Measured on "
-            "trending random walks with no divergence structure, the 20d window "
-            "alone fires on **14.1%** of days (a bounded oscillator drifting off "
-            "its plateau is what a healthy trend looks like); both windows "
-            "agreeing fires on **0.6%**. For the strict form — a higher swing "
-            "high on a lower RSI high — see *RSI (index)* below, which compares "
-            "confirmed pivots over 120 sessions, because a 20-day window cannot "
-            "hold two comparable highs."
+            "Treat one window on its own as information, not a signal. In a "
+            "healthy uptrend RSI drifts down on its own, so the 20-day reading "
+            "alone flags a problem on 14% of ordinary days. When both windows "
+            "agree that drops to under 1%, which is why only agreement counts as "
+            "a warning. The stricter version of this test, comparing two swing "
+            "highs over six months, is in the RSI (pivots) row below."
         )
 
     if hbma.get("windows"):
@@ -986,10 +979,9 @@ else:
                     {"RSP/SPY": hs["ratio"], f"{hbma.get('ma_window', 20)}d MA": hs["ma"]},
                     index=pd.to_datetime(hs["dates"])), height=220)
         st.caption(
-            "This one fires on the RATIO's own move, not on the change in its "
-            "distance to the average — that gap is self-damping, because the "
-            "average chases the ratio and stabilises even while breadth "
-            "deteriorates outright. The gap level is shown as context."
+            "The warning triggers on the breadth ratio falling while the index "
+            "rises. The distance to the average is shown alongside it to tell "
+            "you how far the deterioration has gone."
         )
 
     st.subheader("All checks")
