@@ -402,6 +402,109 @@ def test_positioning_divergence_fires_on_price_up_into_a_crowded_long():
     assert r["state"] == "POSITIONING_DIVERGENCE" and r["price_rising"] is True
 
 
+def _rising(n=200, lo=100.0, hi=140.0):
+    return bars(np.linspace(lo, hi, n))
+
+
+def _vix_frame(path):
+    return pd.DataFrame({"date": pd.bdate_range("2022-01-03", periods=len(path)),
+                         "close": np.asarray(path, float)})
+
+
+def test_vix_rising_into_a_new_index_high_is_a_non_confirmation():
+    """Normally a grind to new highs bleeds implied vol. When protection gets
+    MORE expensive into strength, somebody is paying up."""
+    vix_up = _vix_frame(np.r_[np.full(180, 14.0), np.linspace(14.0, 22.0, 20)])
+    r = DIV.vix_nonconfirmation(_rising(), vix_up)
+    assert r["state"] == "VIX_NONCONFIRMATION" and r["vix_rising"] is True
+
+
+def test_vix_easing_into_a_new_high_CONFIRMS_rather_than_warns():
+    vix_dn = _vix_frame(np.r_[np.full(180, 20.0), np.linspace(20.0, 13.0, 20)])
+    assert DIV.vix_nonconfirmation(_rising(), vix_dn)["state"] == "CONFIRMED"
+
+
+def test_a_missing_vix_is_skipped_not_treated_as_passing():
+    r = DIV.vix_nonconfirmation(_rising(), None)
+    assert r["state"] == "NONE" and "no VIX" in r["reason"]
+
+
+def test_narrowing_breadth_under_a_new_index_high_is_a_non_confirmation():
+    """The purest form of the idea, and the data was already there: the index
+    makes a high because a few names carry it."""
+    r = DIV.breadth_nonconfirmation(_rising(), {"regime": "narrowing", "slope_20d": -0.0004})
+    assert r["state"] == "BREADTH_NONCONFIRMATION"
+    assert DIV.breadth_nonconfirmation(
+        _rising(), {"regime": "broadening"})["state"] == "CONFIRMED"
+
+
+def test_a_widening_spread_under_a_new_high_is_a_non_confirmation():
+    r = DIV.dispersion_nonconfirmation(_rising(), {"spread": 20.0, "direction": "RISING",
+                                                   "band": "ELEVATED"})
+    assert r["state"] == "DISPERSION_NONCONFIRMATION"
+    assert DIV.dispersion_nonconfirmation(
+        _rising(), {"spread": 20.0, "direction": "FALLING"})["state"] == "CONFIRMED"
+
+
+def test_the_dollar_is_inverted_because_a_bid_dollar_is_a_drag():
+    """Treating DX like copper would read a dollar squeeze as a healthy tape."""
+    eq, dxy = _rising(), _rising()               # both at new highs
+    r = DIV.cross_asset_divergence(eq, {"DX": dxy}, inverted=("DX",))
+    assert [f["name"] for f in r["failing"]] == ["DX"]
+    # Same series, NOT inverted, would have read as confirmation.
+    assert DIV.cross_asset_divergence(eq, {"DX": dxy}, inverted=())["state"] == "CONFIRMED"
+
+
+def test_the_rsi_matrix_scans_every_series_it_is_given():
+    d = bars(_two_rallies(5, 100, 132, 114, 136))
+    m = DIV.rsi_matrix({"SPY": d, "QQQ": d, "FLAT": bars(np.full(200, 100.0))})
+    assert m["scanned"] == 3
+    assert set(m["bearish"]) == {"SPY", "QQQ"}
+
+
+def test_the_positioning_sweep_covers_every_contract_with_both_legs():
+    ok = {"percentile": 0.93, "extreme": "CROWDED_LONG",
+          "percentile_reliable": True, "weeks_of_history": 136}
+    pm = DIV.positioning_matrix(
+        {"ES": _rising(), "GC": _rising(), "ZN": _rising()},
+        {"ES": ok, "GC": ok})                     # ZN has bars but no COT row
+    assert pm["scanned"] == 2 and set(pm["diverging"]) == {"ES", "GC"}
+
+
+def test_the_composite_reports_what_it_actually_covered():
+    """Coverage is not decoration: a check that was SKIPPED must never look like
+    a check that PASSED."""
+    out = DIV.analyse(_rising(), confirmers={"HG": bars(np.linspace(130, 100, 200))},
+                      rsi_series={"SPY": _rising()},
+                      vix_bars=None, heartbeat={"regime": "narrowing"},
+                      dispersion={"spread": 20.0, "direction": "RISING"})
+    cov = out["coverage"]
+    assert cov["vix"] is False and cov["breadth"] is True
+    assert cov["rsi_series"] == 1 and cov["confirmers"] == 1
+    assert out["weight"] >= out["count"]
+
+
+def test_independent_warnings_accumulate_into_a_weight():
+    quiet = DIV.analyse(_rising(), confirmers={"HG": _rising()},
+                        heartbeat={"regime": "broadening"},
+                        dispersion={"spread": 5.0, "direction": "FALLING"})
+    loud = DIV.analyse(_rising(), confirmers={"HG": bars(np.linspace(130, 100, 200))},
+                       heartbeat={"regime": "narrowing"},
+                       dispersion={"spread": 20.0, "direction": "RISING"},
+                       vix_bars=_vix_frame(np.r_[np.full(180, 14.0),
+                                                 np.linspace(14.0, 22.0, 20)]))
+    assert loud["weight"] > quiet["weight"]
+    assert loud["any_bearish"] is True and quiet["any_bearish"] is False
+
+
+def test_the_old_three_type_keys_survive_the_widening():
+    """§2.5 accepts three types. The extra reads are more of type 2, not a
+    fourth type smuggled in — so the taxonomy keys must still be there."""
+    out = DIV.analyse(_rising(), confirmers={"HG": _rising()})
+    for k in ("rsi", "cross_asset", "positioning"):
+        assert k in out
+
+
 def test_divergence_never_claims_to_be_a_trigger():
     out = DIV.analyse(bars(np.linspace(100, 140, 200)),
                       confirmers={"HG": bars(np.linspace(130, 100, 200))})

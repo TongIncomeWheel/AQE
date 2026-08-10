@@ -73,10 +73,11 @@ and "NONE" is not.
 | `vol.py` | 2.4 | VIX, the dispersion spread, DSPX + implied-correlation corroboration. |
 | `cboe.py` | 2.4 | The volatility complex direct from cboe.com — VIX, VIXEQ, DSPX, COR1M, VIX3M, VIX9D. |
 | `gamma.py` | 2.3 | Dealer GEX, gamma flip, call/put walls. |
-| `divergence.py` | 2.5 | The three accepted divergence types. |
+| `divergence.py` | 2.5 | The three accepted types, each read across every series we hold. |
 | `kernel.py` | 2.1/3/5 | The hierarchy, sequenced as pure functions. |
 | `data.py` | — | All network. The engines stay pure. |
 | `daily.py` | 4 | One call; `crown_status` degrades loudly. |
+| `../scenarios.py` | — | **The first merge point**: Macro Weather × Crown → ranked scenario reads. Deliberately outside `crown/`. |
 
 No LangGraph dependency. §6 states the intelligence lives in the pure functions
 and orchestration "only sequences" them — so it is a plain sequence, and every
@@ -207,11 +208,89 @@ plain words.
 
 ---
 
+## Divergence reads everything, not one series
+
+§2.5 accepts exactly three types, so the taxonomy stays at three — but each type
+now uses the whole data set rather than SPY plus two proxies:
+
+| Type | Reads |
+|---|---|
+| 1 · Classic RSI | a **matrix**: SPY, QQQ, RSP and all 18 CTA markets |
+| 2 · Cross-asset / intermarket | copper, oil, breadth, **the dollar (inverted)**, **VIX**, **the dispersion spread** |
+| 3 · Positioning vs price | a sweep of **all 16 COT contracts**, not just ES |
+
+The four type-2 additions are all non-confirmations — an intermarket series
+refusing to agree with price — so none of them is a fourth type smuggled in:
+
+- **VIX** — a grind to new highs normally bleeds implied vol. When the index
+  makes a high and protection gets *more* expensive at the same time, someone is
+  paying up into strength.
+- **Breadth** — the index at a new high while the RSP/SPY heartbeat is
+  *narrowing*. The purest form of the idea, and it reuses the Heartbeat rather
+  than recomputing breadth, so the two can never disagree about the same ratio.
+- **Dispersion** — a new high while single-stock vol pulls away from index vol.
+- **The dollar is inverted.** A bid dollar is a drag on risk, so DX at a new high
+  is the *warning*. Treating it like copper would read a dollar squeeze as a
+  healthy tape.
+
+`coverage` reports exactly what was evaluated, because a check that was
+**skipped** must never look like a check that **passed**. `weight` counts how
+many independent warnings are lit — §2.5's point is that divergence earns its
+weight when several agree, and the count is how a reader tells one straw from a
+pile of them.
+
+---
+
+## Macro scenarios — the first merge point
+
+`src/macro/scenarios.py`, deliberately **outside** `crown/`.
+
+Macro Weather has been capturing TLT / UUP / HYG / IWM / GLD / CPER / USO daily
+for a long time and using it for one thing: a per-sector headwind score. The raw
+cross-asset state those seven instruments describe was never assembled into a
+reading. This does that, and folds in what only Crown can see — dispersion,
+implied correlation, CTA sector bias, the breadth regime.
+
+Seven scenarios, each a set of weighted conditions: `REFLATION`, `GROWTH_SCARE`,
+`INFLATION_SHOCK`, `DISINFLATION_GOLDILOCKS`, `LIQUIDITY_STRESS`,
+`DISPERSION_REGIME`, `DOLLAR_SQUEEZE`.
+
+**Why it lives outside `crown/`.** The directive is that Crown is built
+standalone and merged later so the overlap stays measurable. Importing SRM into a
+Crown module would quietly pre-empt that decision — and a test forbids it. So
+Crown stays pure and this module reads *both finished outputs*. That is what a
+merge point is: a named place where two independent readings meet, not a
+dependency buried inside one of them.
+
+**A score is the share of conditions met. It is NOT a probability.** Nothing was
+fitted, nothing was backtested, no base rate was measured. Saying "seven of nine
+things this story needs are true right now" is a genuinely weaker claim than
+"70% likely", and the value is in the evidence and **falsifier** lists — what is
+*not* true is what would have to change for the story to become the read.
+
+Three disciplines it enforces:
+
+- **A thin scenario cannot lead.** A score from two of seven conditions is not
+  comparable to one from seven of seven; ranking them together lets a scenario
+  lead on the strength of the data we happen to be *missing*. Below 60% coverage
+  a scenario is reported with its evidence but is ineligible.
+- **Two stories fitting one tape is reported as contested**, not as a call.
+- **An unavailable input is skipped, never counted as evidence against.**
+
+Runs at step 6g of the daily, writes `output/macro_scenarios.json`.
+
+---
+
 ## Not yet built
 
 - **Gamma in the daily run** — currently on-demand only, pending a confirmed
   open-interest feed (Alpaca snapshots, or IBKR `get_option_data` / Tiger
-  `get_option_briefs`).
+  `get_option_briefs`). It is also the largest hole in the scenario layer: no
+  scenario currently reads dealer positioning.
+- **Scenario base rates.** Today a score is a share of conditions. Measuring what
+  actually followed each scenario historically would turn it into something
+  closer to QS's calibrated probability — a different and stronger claim, and it
+  needs a labelled history first.
 - **The merge with SRM / Macro Weather / Thematic RRG** — deliberately deferred.
   Both layers now produce a sector/regime view; measuring where they agree and
   where they contradict is the next decision, and it needs both running side by

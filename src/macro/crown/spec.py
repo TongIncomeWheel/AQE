@@ -144,9 +144,23 @@ DIV_PIVOT_K = 5                # matches AQE's single pivot definition (patterns
 DIV_LOOKBACK = 120
 DIV_MIN_SEPARATION = 5         # two pivots closer than this are one turn
 # §2.5 "Cross-asset / Intermarket": equities making new highs while copper or
-# breadth fails to confirm.
-DIV_CONFIRMERS = ("HG", "RSP")     # copper (growth) + equal-weight (breadth)
+# breadth fails to confirm. We hold 18 futures, so the confirmer set is the whole
+# growth / rates / dollar / energy complex rather than one proxy.
+#   HG  copper — global growth      ZN  rates
+#   CL  oil    — demand             DX  dollar (inverted: a bid dollar is a drag)
+#   RSP equal-weight — breadth
+DIV_CONFIRMERS = ("HG", "CL", "RSP")
+DIV_INVERTED_CONFIRMERS = ("DX",)  # a RISING dollar is the non-confirmation
 DIV_NEW_HIGH_WINDOW = 60
+
+# VIX-vs-price. Normally a grind to new highs bleeds implied vol; when the index
+# makes a high and protection gets MORE expensive at the same time, someone is
+# paying up into strength.
+DIV_VIX_WINDOW = 20                # sessions
+DIV_VIX_EPS = 0.5                  # vol points; below this the move is noise
+
+# Series the RSI matrix runs over, beyond the index itself.
+DIV_RSI_SERIES = ("SPY", "QQQ", "RSP")
 # §2.5 "Positioning vs Price": price rising while COT large-spec is extreme.
 DIV_COT_EXTREME_PCTL = 0.85
 

@@ -36,6 +36,7 @@ import pandas as pd  # noqa: E402
 
 from src.macro.crown import spec as S  # noqa: E402
 from src.macro.crown.daily import load_crown, run_crown  # noqa: E402
+from src.macro.scenarios import load_scenarios, run_scenarios  # noqa: E402
 
 st.title("🫀 Nick Crown Macro Layer")
 st.caption(
@@ -358,17 +359,135 @@ div = crown.get("divergence") or {}
 st.header("4 · Divergence — where momentum is failing behind price")
 st.caption(div.get("note", ""))
 
-d1, d2, d3 = st.columns(3)
-d1.metric("RSI", (div.get("rsi") or {}).get("state", "—"))
-d2.metric("Cross-asset", (div.get("cross_asset") or {}).get("state", "—"))
-d3.metric("Positioning", (div.get("positioning") or {}).get("state", "—"))
+if not div:
+    st.info("Not computed — the process stopped at the Heartbeat gate.")
+else:
+    dm1, dm2 = st.columns([1, 3])
+    dm1.metric("Warnings lit", div.get("weight", 0),
+               help="Independent non-confirmations currently firing. §2.5: "
+                    "divergence is most powerful when several agree.")
+    cov = div.get("coverage") or {}
+    dm2.caption(
+        f"Coverage — RSI across **{cov.get('rsi_series', 0)}** series · "
+        f"**{cov.get('confirmers', 0)}** cross-asset confirmers · "
+        f"**{cov.get('cot_contracts', 0)}** COT contracts · "
+        f"VIX {'✅' if cov.get('vix') else '—'} · "
+        f"breadth {'✅' if cov.get('breadth') else '—'} · "
+        f"dispersion {'✅' if cov.get('dispersion') else '—'}. "
+        "A skipped check is never shown as a passed one."
+    )
 
-for label, block in (("RSI", div.get("rsi")), ("Cross-asset", div.get("cross_asset")),
-                     ("Positioning", div.get("positioning"))):
-    b = block or {}
-    detail = b.get("why") or b.get("reason")
-    if detail:
-        st.markdown(f"- **{label}** — {detail}")
+    checks = [
+        ("RSI (index)", div.get("rsi")),
+        ("Cross-asset", div.get("cross_asset")),
+        ("VIX", div.get("vix")),
+        ("Breadth", div.get("breadth")),
+        ("Dispersion", div.get("dispersion")),
+        ("Positioning", div.get("positioning")),
+    ]
+    cols = st.columns(len(checks))
+    for col, (label, block) in zip(cols, checks):
+        state = (block or {}).get("state", "—")
+        col.metric(label, "—" if state in (None, "NONE") else state.replace("_", " "))
+
+    for label, block in checks:
+        b = block or {}
+        detail = b.get("why") or b.get("reason")
+        if detail:
+            fired = b.get("state") not in (None, "NONE", "CONFIRMED")
+            st.markdown(f"- {'⚠️' if fired else '·'} **{label}** — {detail}")
+
+    mat = div.get("rsi_matrix") or {}
+    if mat.get("scanned"):
+        with st.expander(f"RSI divergence matrix — {mat['scanned']} series scanned"):
+            if mat.get("bearish"):
+                st.markdown("**Bearish:** " + ", ".join(f"`{s}`" for s in mat["bearish"]))
+            if mat.get("bullish"):
+                st.markdown("**Bullish:** " + ", ".join(f"`{s}`" for s in mat["bullish"]))
+            if not mat.get("bearish") and not mat.get("bullish"):
+                st.caption("No divergence on any scanned series.")
+            rows = [{"Series": k, "State": v.get("state"),
+                     "Prior": (v.get("prior") or {}).get("price"),
+                     "Prior RSI": (v.get("prior") or {}).get("rsi"),
+                     "Latest": (v.get("latest") or {}).get("price"),
+                     "Latest RSI": (v.get("latest") or {}).get("rsi"),
+                     "Why": v.get("why") or v.get("reason")}
+                    for k, v in sorted((mat.get("by_series") or {}).items())]
+            if rows:
+                table_with_copy(pd.DataFrame(rows), key="crown_rsi_matrix",
+                                label="📋 Copy RSI matrix")
+
+    pm = div.get("positioning_matrix") or {}
+    if pm.get("scanned"):
+        with st.expander(f"Positioning sweep — {pm['scanned']} COT contracts"):
+            st.markdown("**Diverging:** " +
+                        (", ".join(f"`{s}`" for s in pm.get("diverging") or []) or "_none_"))
+            rows = [{"Market": k, "State": v.get("state"),
+                     "Price rising": v.get("price_rising"),
+                     "COT %ile": v.get("cot_percentile"),
+                     "Extreme": v.get("cot_extreme"), "Why": v.get("why")}
+                    for k, v in sorted((pm.get("by_market") or {}).items())]
+            if rows:
+                table_with_copy(pd.DataFrame(rows), key="crown_pos_matrix",
+                                label="📋 Copy positioning sweep")
+
+st.divider()
+
+# ── 5. Macro scenarios — the first merge point ───────────────────────────
+
+st.header("5 · Macro scenarios")
+st.caption(
+    "Macro Weather's seven instruments (TLT · UUP · HYG · IWM · GLD · CPER · USO) "
+    "read together with Crown's dispersion, implied correlation, CTA bias and "
+    "breadth. **This is the first merge point** — Crown itself stays standalone."
+)
+
+if st.button("🔄 Re-run scenario read", key="crown_scenarios"):
+    with st.spinner("Pulling macro instruments…"):
+        try:
+            st.session_state["crown_scen"] = run_scenarios(crown=crown)
+        except Exception as exc:
+            st.error(f"Scenario read failed: {exc}")
+
+# The daily pipeline writes this at step 6g; the button only refreshes it.
+scen = st.session_state.get("crown_scen") or load_scenarios()
+if not scen:
+    st.info("No scenario read yet — the daily pipeline writes one at step 6g, "
+            "or press **Re-run scenario read**.")
+elif scen.get("status") != "OK":
+    st.warning(f"Scenarios unavailable: {scen.get('reason')}")
+else:
+    for d in scen.get("degraded", []):
+        st.warning(f"⚠️ {d}")
+    s1, s2, s3 = st.columns(3)
+    s1.metric("Leading", str(scen.get("leading") or "NONE").replace("_", " ").title())
+    s2.metric("Score", _pct(scen.get("leading_score")) if scen.get("leading_score")
+              is not None else "—", help="Share of conditions met — NOT a probability.")
+    s3.metric("Contested", "YES" if scen.get("contested") else "no")
+    st.info(scen.get("reading", ""))
+
+    for s in scen.get("scenarios", []):
+        lead = s["scenario"] == scen.get("leading")
+        head = (f"{'🏁 ' if lead else ''}{s['scenario'].replace('_', ' ').title()} — "
+                f"{s['score']:.0%} of conditions · {s['coverage']:.0%} coverage")
+        with st.expander(head, expanded=lead):
+            st.markdown(f"_{s['story']}_")
+            if s.get("caveat"):
+                st.warning(s["caveat"])
+            e1, e2 = st.columns(2)
+            with e1:
+                st.markdown("**Evidence for**")
+                for e in s["evidence"] or ["_none_"]:
+                    st.markdown(f"- {e}")
+            with e2:
+                st.markdown("**What is missing** (the falsifiers)")
+                for e in s["missing_conditions"] or ["_nothing — all met_"]:
+                    st.markdown(f"- {e}")
+            if s.get("unavailable"):
+                st.caption("Not evaluable: " + " · ".join(s["unavailable"]))
+            st.markdown(f"**Expression family** — {s['expression']}")
+
+    st.caption(scen.get("note", ""))
 
 st.divider()
 st.caption(

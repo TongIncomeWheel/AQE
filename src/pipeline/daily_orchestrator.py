@@ -372,6 +372,27 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] Crown macro layer failed: {exc}")
 
+    # Step 6g: Macro scenario reads — the FIRST MERGE POINT between Macro
+    # Weather's seven instruments and the Crown layer. Deliberately a separate
+    # module rather than a Crown import: the PM directive is that Crown stays
+    # standalone until the merge is an explicit decision, and this is that
+    # decision made in one named place.
+    print(f"{_el()} [daily] Step 6g: Macro scenarios...")
+    try:
+        from src.macro.scenarios import run_scenarios as _scen_run
+        _sc = _scen_run()
+        if _sc.get("status") == "OK":
+            print(f"  leading {_sc.get('leading')} "
+                  f"({(_sc.get('leading_score') or 0):.0%} of conditions"
+                  f"{', CONTESTED' if _sc.get('contested') else ''}) · "
+                  f"runner-up {_sc.get('runner_up')}")
+        else:
+            print(f"  [WARN] scenarios: {_sc.get('reason')}")
+        for _d in _sc.get("degraded", []):
+            print(f"  [WARN] scenarios: {_d}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] Macro scenarios failed: {exc}")
+
     # Step 7: Output
     print("[daily] Step 7: Output...")
     output = _build_output(run_date, regime, sector_grades, shortlist, recipe_matches,

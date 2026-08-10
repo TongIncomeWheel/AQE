@@ -69,6 +69,8 @@ def _members() -> list[tuple]:
         "qs_daily.json",
         # The Crown macro read, so the page renders instantly after a recycle.
         "crown_macro.json",
+        # The macro scenario read (Crown x Macro Weather merge point).
+        "macro_scenarios.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]

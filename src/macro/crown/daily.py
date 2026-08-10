@@ -121,20 +121,46 @@ def run_crown(*, client=None, refresh_cot: bool = True,
     elif vol_read.get("status") != "OK":
         degraded.append(f"volatility regime unavailable: {vol_read.get('reason')}")
 
-    # ── 5. divergence ─────────────────────────────────────────────────────
+    # ── 5. divergence — read across everything the layer holds ────────────
     confirmers = {}
-    for name in S.DIV_CONFIRMERS:
+    for name in tuple(S.DIV_CONFIRMERS) + tuple(S.DIV_INVERTED_CONFIRMERS):
         if name in fut:
             confirmers[name] = fut[name]
+        elif name == "RSP" and rsp is not None and len(rsp):
+            confirmers[name] = rsp
         else:
             bars = feeds.fetch_bars(name, client=client)
             if len(bars):
                 confirmers[name] = bars
+
+    # The RSI matrix: the index plus the breadth/growth series, plus every CTA
+    # market. A divergence on SPY alone is one observation; the same one showing
+    # on SPY, QQQ and copper is a different statement.
+    rsi_series = {"SPY": spy}
+    if rsp is not None and len(rsp):
+        rsi_series["RSP"] = rsp
+    qqq = feeds.fetch_bars("QQQ", client=client)
+    if len(qqq):
+        rsi_series["QQQ"] = qqq
+    rsi_series.update(fut)
+
     div_read = div_mod.analyse(
-        spy, confirmers=confirmers,
-        cot_reading=(cot_read.get("markets") or {}).get("ES"))
+        spy,
+        confirmers=confirmers,
+        cot_reading=(cot_read.get("markets") or {}).get("ES"),
+        rsi_series=rsi_series,
+        vix_bars=vixes.get("vix"),
+        heartbeat=heartbeat,
+        dispersion=(vol_read.get("dispersion") or {}),
+        market_bars=fut,
+        cot_markets=cot_read.get("markets") or {},
+    )
     if not confirmers:
         degraded.append("no cross-asset confirmers available")
+    cov = div_read.get("coverage") or {}
+    if not cov.get("vix"):
+        degraded.append("divergence ran without VIX — the VIX non-confirmation "
+                        "check was skipped, not passed")
 
     # ── 6. the decision ───────────────────────────────────────────────────
     decision = kernel_mod.run(heartbeat, cta_read.get("flow", {}), gamma_read,
