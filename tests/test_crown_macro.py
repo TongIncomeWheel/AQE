@@ -402,6 +402,114 @@ def test_positioning_divergence_fires_on_price_up_into_a_crowded_long():
     assert r["state"] == "POSITIONING_DIVERGENCE" and r["price_rising"] is True
 
 
+# ────────────────── the slope readout: "price up, RSI down" at 5d and 20d
+
+def test_the_readout_always_reports_both_horizons_with_the_numbers():
+    """The point of this one is to be LOOKED AT. Price %, RSI points and the
+    series must all be there, at 5d and 20d, whatever the verdict."""
+    r = DIV.rsi_trend_readout(bars(walk(300, seed=21, drift=0.0008)))
+    assert set(r["windows"]) == {"5", "20"}
+    for w in r["windows"].values():
+        assert "price_change_pct" in w and "rsi_change_pts" in w
+    assert len(r["series"]["close"]) == len(r["series"]["rsi"]) > 0
+    assert len(r["series"]["dates"]) == len(r["series"]["close"])
+
+
+def test_one_window_alone_is_MIXED_and_explicitly_not_acted_on():
+    """20d alone fires on 14.1% of days in a plain uptrend — a bounded
+    oscillator drifting off its plateau is what a healthy trend looks like."""
+    found = None
+    for s in range(80):
+        r = DIV.rsi_trend_readout(bars(walk(420, seed=s, drift=0.0006)))
+        if r["state"] == "MIXED":
+            found = r
+            break
+    assert found is not None, "no single-window case in 80 walks"
+    assert len(found["windows_diverging"]) == 1
+    assert found["both_windows"] is False
+    assert "never acted on" in found["why"]
+
+
+def test_the_warning_requires_BOTH_windows_to_agree():
+    assert S.DIV_TREND_READOUT_NEEDS_BOTH is True
+    r = DIV.rsi_trend_readout(bars(walk(300, seed=5, drift=0.0006)))
+    if r["state"] == "BEARISH_DIVERGENCE":
+        assert r["both_windows"] is True
+
+
+def test_the_warning_stays_rare_on_a_plain_uptrend():
+    """The measured discipline. If a refactor makes this fire on 10% of days it
+    has stopped being a warning and become a weather report."""
+    fires = total = 0
+    for s in range(8):
+        d = bars(walk(520, seed=s * 13 + 3, drift=0.0006))
+        for i in range(300, 520, 12):
+            total += 1
+            if DIV.rsi_trend_readout(d.iloc[:i + 1])["state"] == "BEARISH_DIVERGENCE":
+                fires += 1
+    assert total > 100
+    assert fires / total < 0.05, f"warning fired on {fires / total:.1%} of trending days"
+
+
+def test_the_readout_and_the_pivot_detector_are_different_questions():
+    """A 20-day window cannot hold two comparable swing highs, so the strict
+    form needs 120 sessions. Neither function replaces the other."""
+    assert S.DIV_LOOKBACK >= 120
+    assert max(S.DIV_TREND_WINDOWS) < S.DIV_LOOKBACK
+    d = bars(_two_rallies(5, 100, 132, 114, 136))
+    assert DIV.rsi_divergence(d)["state"] == "BEARISH_RSI_DIVERGENCE"
+    assert "state" in DIV.rsi_trend_readout(d)          # both answer, independently
+
+
+# ────────────────── breadth against its own moving average
+
+def test_breadth_rolling_over_under_a_rising_index_fires():
+    n = 280
+    rng = np.random.default_rng(4)
+    spy = 100 * np.exp(np.cumsum(rng.normal(0.0010, 0.005, n)))
+    ratio = np.concatenate([np.linspace(0.30, 0.345, 200),
+                            np.linspace(0.345, 0.330, 80)])
+    r = DIV.heartbeat_ma_divergence(bars(spy), bars(spy * ratio), bars(spy))
+    assert r["state"] == "BREADTH_MA_DIVERGENCE"
+    assert r["below_ma"] is True
+    assert r["distance_to_ma_pct"] < 0
+
+
+def test_breadth_improving_under_a_rising_index_does_not_fire():
+    n = 280
+    rng = np.random.default_rng(4)
+    spy = 100 * np.exp(np.cumsum(rng.normal(0.0010, 0.005, n)))
+    r = DIV.heartbeat_ma_divergence(bars(spy), bars(spy * np.linspace(0.30, 0.345, n)),
+                                    bars(spy))
+    assert r["state"] == "NONE"
+    assert r["below_ma"] is False
+
+
+def test_breadth_fires_on_the_ratio_not_on_its_gap_to_the_average():
+    """The gap is self-damping — the average chases the ratio, so it stabilises
+    even while breadth deteriorates outright. The ratio's own move is the test;
+    the gap is reported as context."""
+    n = 280
+    rng = np.random.default_rng(4)
+    spy = 100 * np.exp(np.cumsum(rng.normal(0.0010, 0.005, n)))
+    ratio = np.concatenate([np.linspace(0.30, 0.345, 200),
+                            np.linspace(0.345, 0.330, 80)])
+    r = DIV.heartbeat_ma_divergence(bars(spy), bars(spy * ratio), bars(spy))
+    w20 = r["windows"]["20"]
+    assert w20["breadth_ratio_change_pct"] < 0
+    assert "gap_to_ma_pct" in w20
+    assert r["ma"] is not None and r["ma_window"] == S.DIV_HEARTBEAT_MA
+
+
+def test_breadth_returns_the_series_so_it_can_be_charted():
+    n = 280
+    rng = np.random.default_rng(4)
+    spy = 100 * np.exp(np.cumsum(rng.normal(0.0010, 0.005, n)))
+    r = DIV.heartbeat_ma_divergence(bars(spy), bars(spy * 0.31), bars(spy))
+    s = r["series"]
+    assert len(s["ratio"]) == len(s["ma"]) == len(s["dates"]) > 0
+
+
 def _rising(n=200, lo=100.0, hi=140.0):
     return bars(np.linspace(lo, hi, n))
 

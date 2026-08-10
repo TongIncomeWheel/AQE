@@ -171,6 +171,7 @@ def run_crown(*, client=None, refresh_cot: bool = True,
         dispersion=(vol_read.get("dispersion") or {}),
         market_bars=fut,
         cot_markets=cot_read.get("markets") or {},
+        rsp_bars=rsp, spy_bars=spy,
     )
     if not confirmers:
         degraded.append("no cross-asset confirmers available")

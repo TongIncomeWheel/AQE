@@ -422,11 +422,94 @@ else:
         "A skipped check is never shown as a passed one."
     )
 
+    # ── the everyday read: price direction vs RSI direction, 5d and 20d ──
+    slope = div.get("rsi_slope") or {}
+    hbma = div.get("breadth_ma") or {}
+    if slope.get("windows"):
+        st.subheader("Price vs RSI — 5d and 20d")
+        srow = []
+        for w in sorted(slope["windows"], key=lambda x: int(x)):
+            v = slope["windows"][w]
+            srow.append({"Window": f"{w}d",
+                         "Price Δ%": v.get("price_change_pct"),
+                         "RSI Δ pts": v.get("rsi_change_pts"),
+                         "RSI then": v.get("rsi_then"), "RSI now": v.get("rsi_now"),
+                         "Read": v.get("state", "").replace("_", " ")})
+        sc1, sc2 = st.columns([2, 3])
+        with sc1:
+            st.dataframe(pd.DataFrame(srow), use_container_width=True, hide_index=True)
+            verdict = slope.get("state", "NONE")
+            if verdict == "BEARISH_DIVERGENCE":
+                st.error(f"⚠️ **Both windows agree** — {slope.get('why')}")
+            elif verdict == "BULLISH_DIVERGENCE":
+                st.success(f"**Both windows agree (bullish)** — {slope.get('why')}")
+            elif verdict == "MIXED":
+                st.info(f"**One horizon only** — {slope.get('why')}")
+            else:
+                st.caption("Price and RSI are not pulling apart at either horizon.")
+        with sc2:
+            ser = slope.get("series") or {}
+            if ser.get("dates"):
+                chart = pd.DataFrame({"date": pd.to_datetime(ser["dates"]),
+                                      "close": ser["close"], "rsi": ser["rsi"]}
+                                     ).set_index("date")
+                st.caption("Index (rebased to 100) vs RSI-14")
+                rebased = chart["close"] / chart["close"].iloc[0] * 100
+                st.line_chart(pd.DataFrame({"index (rebased)": rebased,
+                                            "RSI-14": chart["rsi"]}), height=220)
+        st.caption(
+            "Shown at both horizons because that is the thing worth looking at — "
+            "but a **single** window is a readout, not a warning. Measured on "
+            "trending random walks with no divergence structure, the 20d window "
+            "alone fires on **14.1%** of days (a bounded oscillator drifting off "
+            "its plateau is what a healthy trend looks like); both windows "
+            "agreeing fires on **0.6%**. For the strict form — a higher swing "
+            "high on a lower RSI high — see *RSI (index)* below, which compares "
+            "confirmed pivots over 120 sessions, because a 20-day window cannot "
+            "hold two comparable highs."
+        )
+
+    if hbma.get("windows"):
+        st.subheader(f"Breadth vs its own {hbma.get('ma_window', 20)}d average")
+        hc1, hc2 = st.columns([2, 3])
+        with hc1:
+            hrow = [{"Window": f"{w}d",
+                     "Index Δ%": v.get("price_change_pct"),
+                     "RSP/SPY Δ%": v.get("breadth_ratio_change_pct"),
+                     "Read": v.get("state", "").replace("_", " ")}
+                    for w, v in sorted(hbma["windows"].items(), key=lambda x: int(x[0]))]
+            st.dataframe(pd.DataFrame(hrow), use_container_width=True, hide_index=True)
+            st.metric(f"Distance to {hbma.get('ma_window', 20)}d MA",
+                      f"{hbma.get('distance_to_ma_pct'):+.2f}%"
+                      if hbma.get("distance_to_ma_pct") is not None else "—",
+                      delta="below" if hbma.get("below_ma") else "above",
+                      delta_color="inverse" if hbma.get("below_ma") else "normal")
+            if hbma.get("state") == "BREADTH_MA_DIVERGENCE":
+                st.error(f"⚠️ {hbma.get('why')}")
+            else:
+                st.caption(hbma.get("why") or "")
+        with hc2:
+            hs = hbma.get("series") or {}
+            if hs.get("dates"):
+                st.caption("RSP/SPY against its own moving average")
+                st.line_chart(pd.DataFrame(
+                    {"RSP/SPY": hs["ratio"], f"{hbma.get('ma_window', 20)}d MA": hs["ma"]},
+                    index=pd.to_datetime(hs["dates"])), height=220)
+        st.caption(
+            "This one fires on the RATIO's own move, not on the change in its "
+            "distance to the average — that gap is self-damping, because the "
+            "average chases the ratio and stabilises even while breadth "
+            "deteriorates outright. The gap level is shown as context."
+        )
+
+    st.subheader("All checks")
     checks = [
-        ("RSI (index)", div.get("rsi")),
+        ("RSI (pivots)", div.get("rsi")),
+        ("RSI (5d/20d)", div.get("rsi_slope")),
         ("Cross-asset", div.get("cross_asset")),
         ("VIX", div.get("vix")),
-        ("Breadth", div.get("breadth")),
+        ("Breadth regime", div.get("breadth")),
+        ("Breadth vs MA", div.get("breadth_ma")),
         ("Dispersion", div.get("dispersion")),
         ("Positioning", div.get("positioning")),
     ]
@@ -442,9 +525,32 @@ else:
             fired = b.get("state") not in (None, "NONE", "CONFIRMED")
             st.markdown(f"- {'⚠️' if fired else '·'} **{label}** — {detail}")
 
+    smat = div.get("slope_matrix") or {}
+    if smat.get("scanned"):
+        with st.expander(f"5d/20d read across {smat['scanned']} series"):
+            st.markdown("**Both windows bearish:** " +
+                        (", ".join(f"`{s}`" for s in smat.get("bearish") or []) or "_none_"))
+            st.markdown("**Both windows bullish:** " +
+                        (", ".join(f"`{s}`" for s in smat.get("bullish") or []) or "_none_"))
+            rows = []
+            for k, v in sorted((smat.get("by_series") or {}).items()):
+                w = v.get("windows") or {}
+                rows.append({
+                    "Series": k,
+                    "5d price Δ%": (w.get("5") or {}).get("price_change_pct"),
+                    "5d RSI Δ": (w.get("5") or {}).get("rsi_change_pts"),
+                    "20d price Δ%": (w.get("20") or {}).get("price_change_pct"),
+                    "20d RSI Δ": (w.get("20") or {}).get("rsi_change_pts"),
+                    "RSI now": v.get("rsi_now"),
+                    "Read": str(v.get("state", "")).replace("_", " "),
+                })
+            if rows:
+                table_with_copy(pd.DataFrame(rows), key="crown_slope_matrix",
+                                label="📋 Copy 5d/20d read")
+
     mat = div.get("rsi_matrix") or {}
     if mat.get("scanned"):
-        with st.expander(f"RSI divergence matrix — {mat['scanned']} series scanned"):
+        with st.expander(f"RSI divergence matrix (pivots) — {mat['scanned']} series scanned"):
             if mat.get("bearish"):
                 st.markdown("**Bearish:** " + ", ".join(f"`{s}`" for s in mat["bearish"]))
             if mat.get("bullish"):

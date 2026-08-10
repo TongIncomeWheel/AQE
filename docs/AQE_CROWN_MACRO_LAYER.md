@@ -219,6 +219,42 @@ now uses the whole data set rather than SPY plus two proxies:
 | 2 · Cross-asset / intermarket | copper, oil, breadth, **the dollar (inverted)**, **VIX**, **the dispersion spread** |
 | 3 · Positioning vs price | a sweep of **all 16 COT contracts**, not just ES |
 
+Type 1 ships in **two forms**, because they answer different questions:
+
+- **Pivot form** (`rsi_divergence`) — the textbook one. A higher confirmed swing
+  high on a lower RSI high, over a 120-session lookback. Strict, and rare.
+- **Slope readout** (`rsi_trend_readout`) — the everyday one. Price direction
+  against RSI direction at **5 and 20 sessions**, with both series returned so it
+  can be charted. This is "SPY grinding up while RSI heads down", computed
+  exactly that way.
+
+**Why the slope form is a readout first and a warning second — measured, not
+asserted.** RSI is bounded and mean-reverting: in a sustained uptrend it
+saturates and then drifts back toward its plateau, so "price up 20d, RSI down
+20d" is the *normal* state of a healthy trend. On trending random walks carrying
+no divergence structure at all:
+
+| formulation | fires on a plain uptrend |
+|---|---|
+| 5-day window alone | 2.5% of days |
+| **20-day window alone** | **14.1%** — unusable as a trigger |
+| **both windows agreeing** | **0.6%** — the warning threshold |
+
+So both horizons are always shown (that is the thing worth looking at), a single
+window reads `MIXED` and is explicitly never acted on, and only agreement
+between them counts. A 20-day window also cannot hold two comparable swing
+highs, which is why the strict form needs 120 sessions — the two are not
+substitutes.
+
+Breadth gets the same two-form treatment: the **regime label** (which only flips
+once the 20-day slope turns) and **`heartbeat_ma_divergence`**, which catches the
+deterioration earlier — the index making ground while RSP/SPY rolls toward its
+own 20-day average. That one fires on the **ratio's own move**, not on the change
+in its distance to the average: the gap is self-damping, because the average
+chases the ratio and stabilises even while breadth deteriorates outright. The gap
+level is reported as context. Note the ratio is a price ratio, not a bounded
+oscillator, so a slope comparison is valid there in a way it is not on RSI.
+
 The four type-2 additions are all non-confirmations — an intermarket series
 refusing to agree with price — so none of them is a fourth type smuggled in:
 

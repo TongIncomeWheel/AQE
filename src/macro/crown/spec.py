@@ -173,6 +173,40 @@ DIV_VIX_EPS = 0.5                  # vol points; below this the move is noise
 
 # Series the RSI matrix runs over, beyond the index itself.
 DIV_RSI_SERIES = ("SPY", "QQQ", "RSP")
+
+# ── SLOPE divergence (the everyday read) ─────────────────────────────────
+# The pivot detector answers "did this swing high beat the last one on weaker
+# momentum". That is the textbook form, and it is rare — it needs two confirmed
+# fractals in the window. The everyday question is simpler and fires far more
+# often: **over the last N sessions, is price going up while the indicator goes
+# down?** Both are kept. They answer different questions and neither replaces
+# the other.
+DIV_TREND_WINDOWS = (5, 20)        # short read and structural read, side by side
+DIV_TREND_PRICE_EPS_PCT = 0.5      # a move under this is noise, not a trend
+
+# RSI is BOUNDED and mean-reverting, so a raw slope on it does not mean what it
+# means on price. In a sustained uptrend RSI saturates and then drifts back
+# toward its plateau, so "price up over 20d, RSI down over 20d" is the NORMAL
+# state of a healthy trend rather than a warning. Measured on trending random
+# walks carrying no divergence structure at all, the slope read fired on:
+#
+#     5-day window only ....... 2.5% of days
+#     20-day window only ..... 14.1% of days     <- unusable as a trigger
+#     BOTH windows agreeing ... 0.6% of days     <- the warning threshold
+#
+# So the readout is ALWAYS shown at both horizons — that is the thing worth
+# looking at — but it only counts as a warning when the two agree. A single
+# window is reported and never acted on.
+DIV_TREND_RSI_EPS_PTS = 2.0
+DIV_TREND_READOUT_NEEDS_BOTH = True
+
+DIV_HEARTBEAT_MA = 20              # the heartbeat's own moving average
+# The breadth RATIO's own move. Measuring the change in its DISTANCE to the MA
+# instead is self-damping — the average chases the ratio, so the gap stabilises
+# even as breadth deteriorates outright. The level of that gap is still reported;
+# it just is not what the test fires on.
+DIV_TREND_RATIO_EPS_PCT = 0.25
+DIV_SERIES_TAIL = 60               # sessions returned so the read can be CHARTED
 # §2.5 "Positioning vs Price": price rising while COT large-spec is extreme.
 DIV_COT_EXTREME_PCTL = 0.85
 

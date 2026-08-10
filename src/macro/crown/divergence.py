@@ -208,6 +208,268 @@ def rsi_matrix(series: dict) -> dict:
             "scanned": len(out)}
 
 
+# ── 1b. SLOPE divergence — the everyday form ──────────────────────────────
+#
+# The pivot detector above answers "did this swing high beat the last one on
+# weaker momentum". That is textbook, and it is RARE: it needs two confirmed
+# fractals inside the window, so on a steady grind it returns NONE for weeks.
+#
+# The everyday question is simpler. Over the last 5 and 20 sessions, is price
+# going UP while the indicator goes DOWN? That is a bearish divergence whether
+# or not the tape happened to print a pivot, and it is the read a human actually
+# makes looking at the chart. Both forms ship, because they answer different
+# questions and neither one replaces the other.
+
+def _tail(v, n: int = S.DIV_SERIES_TAIL) -> list:
+    out = pd.Series(v).dropna().tail(n).tolist()
+    return [round(float(x), 4) for x in out]
+
+
+def _pct_change(v, window: int) -> float | None:
+    v = pd.Series(v).dropna()
+    if len(v) <= window or float(v.iloc[-1 - window]) == 0:
+        return None
+    return round((float(v.iloc[-1]) / float(v.iloc[-1 - window]) - 1.0) * 100.0, 3)
+
+
+def _pt_change(v, window: int) -> float | None:
+    v = pd.Series(v).dropna()
+    if len(v) <= window:
+        return None
+    return round(float(v.iloc[-1]) - float(v.iloc[-1 - window]), 3)
+
+
+def _slope_state(price_move: float | None, ind_move: float | None,
+                 price_eps: float, ind_eps: float,
+                 ind_start: float | None = None,
+                 bear_level: float | None = None,
+                 bull_level: float | None = None) -> str:
+    """Direction of price against direction of the indicator over one window.
+
+    `bear_level` / `bull_level` gate on where the indicator STARTED. For RSI this
+    is load-bearing: a fall from 45 to 40 while price rises is a weak market
+    getting weaker, not momentum failing behind price, and without the gate a
+    bounded oscillator drifting back off its plateau reads as a divergence on
+    every healthy trend.
+    """
+    if price_move is None or ind_move is None:
+        return "UNKNOWN"
+    up = price_move > price_eps
+    down = price_move < -price_eps
+    ind_up = ind_move > ind_eps
+    ind_down = ind_move < -ind_eps
+
+    if up and ind_down:
+        if bear_level is not None and (ind_start is None or ind_start < bear_level):
+            return "FLAT"
+        return "BEARISH_DIVERGENCE"
+    if down and ind_up:
+        if bull_level is not None and (ind_start is None or ind_start > bull_level):
+            return "FLAT"
+        return "BULLISH_DIVERGENCE"
+    if (up and ind_up) or (down and ind_down):
+        return "ALIGNED"
+    return "FLAT"
+
+
+def _value_at(v, window: int) -> float | None:
+    v = pd.Series(v).dropna()
+    if len(v) <= window:
+        return None
+    return round(float(v.iloc[-1 - window]), 3)
+
+
+def rsi_trend_readout(bars, *, windows=S.DIV_TREND_WINDOWS,
+                      period: int = S.DIV_RSI_PERIOD) -> dict:
+    """Price direction against RSI direction at 5 and 20 sessions.
+
+    This is the everyday read — "SPY grinding up while RSI heads down" — computed
+    exactly that way and returned WITH both series so it can be charted rather
+    than taken on trust.
+
+    It is a READOUT first and a warning second, and the difference is measured,
+    not asserted. On trending random walks with no divergence structure at all,
+    the 20-day window alone fires on 14.1% of days, because a bounded oscillator
+    drifting back off its plateau is what a healthy trend looks like. Both
+    windows agreeing fires on 0.6%. So both horizons are always shown, and only
+    agreement between them counts as a warning.
+
+    For a strict, textbook divergence — a higher swing high on a lower RSI high —
+    use `rsi_divergence`, which compares confirmed pivots over 120 sessions. A
+    20-day window cannot hold two comparable highs, so the two functions are
+    answering different questions and neither replaces the other.
+    """
+    df = _frame(bars)
+    if df is None or len(df) < period + max(windows) + 2:
+        return {"state": "NONE", "reason": "insufficient history", "windows": {}}
+
+    rsi = U.rsi(df["close"], period)
+    per: dict[str, dict] = {}
+    bear_w, bull_w = [], []
+    for w in windows:
+        pm = _pct_change(df["close"], w)
+        im = _pt_change(rsi, w)
+        if pm is None or im is None:
+            per[str(w)] = {"window": w, "state": "UNKNOWN"}
+            continue
+        up = pm > S.DIV_TREND_PRICE_EPS_PCT
+        down = pm < -S.DIV_TREND_PRICE_EPS_PCT
+        r_up = im > S.DIV_TREND_RSI_EPS_PTS
+        r_down = im < -S.DIV_TREND_RSI_EPS_PTS
+
+        if up and r_down:
+            st = "PRICE_UP_RSI_DOWN"
+            bear_w.append(w)
+        elif down and r_up:
+            st = "PRICE_DOWN_RSI_UP"
+            bull_w.append(w)
+        elif (up and r_up) or (down and r_down):
+            st = "ALIGNED"
+        else:
+            st = "FLAT"
+        per[str(w)] = {"window": w, "price_change_pct": pm, "rsi_change_pts": im,
+                       "rsi_now": (round(float(rsi.iloc[-1]), 2)
+                                   if np.isfinite(rsi.iloc[-1]) else None),
+                       "rsi_then": _value_at(rsi, w), "state": st}
+
+    need = len(windows) if S.DIV_TREND_READOUT_NEEDS_BOTH else 1
+    if len(bear_w) >= need:
+        state, hits, dirn = "BEARISH_DIVERGENCE", bear_w, "bearish"
+    elif len(bull_w) >= need:
+        state, hits, dirn = "BULLISH_DIVERGENCE", bull_w, "bullish"
+    elif bear_w or bull_w:
+        state, hits, dirn = "MIXED", (bear_w or bull_w), None
+    else:
+        state, hits, dirn = "NONE", [], None
+
+    if hits:
+        parts = [f"{w}d price {per[str(w)]['price_change_pct']:+.2f}% vs RSI "
+                 f"{per[str(w)]['rsi_change_pts']:+.1f}pts" for w in sorted(hits)]
+        why = "; ".join(parts)
+        if state == "MIXED":
+            why += (f" — only the {sorted(hits)[0]}d window; a single horizon is "
+                    "reported, never acted on")
+    else:
+        why = None
+
+    return {
+        "state": state,
+        "direction": dirn,
+        "windows": per,
+        "windows_diverging": sorted(bear_w + bull_w),
+        "both_windows": bool(len(bear_w) >= len(windows) or len(bull_w) >= len(windows)),
+        "rsi_now": (round(float(rsi.iloc[-1]), 2)
+                    if np.isfinite(rsi.iloc[-1]) else None),
+        "series": {
+            "dates": [str(d.date()) for d in df["date"].tail(S.DIV_SERIES_TAIL)],
+            "close": _tail(df["close"]),
+            "rsi": _tail(rsi),
+        },
+        "why": why,
+        "reason": None,
+    }
+
+
+def heartbeat_ma_divergence(equity_bars, rsp_bars, spy_bars, *,
+                            windows=S.DIV_TREND_WINDOWS,
+                            ma_window: int = S.DIV_HEARTBEAT_MA) -> dict:
+    """Index rising while the RSP/SPY heartbeat rolls over toward its own MA.
+
+    The regime label ("narrowing") only flips once the 20-day slope turns. This
+    catches the deterioration earlier and in the terms a chart shows it: how far
+    the breadth ratio sits above its own moving average, and whether that gap is
+    shrinking while the index makes ground.
+    """
+    a, b = _frame(rsp_bars), _frame(spy_bars)
+    if a is None or b is None:
+        return {"state": "NONE", "reason": "RSP or SPY bars unavailable", "windows": {}}
+
+    m = (pd.DataFrame({"date": a["date"], "rsp": a["close"]})
+         .merge(pd.DataFrame({"date": b["date"], "spy": b["close"]}),
+                on="date", how="inner").dropna().sort_values("date"))
+    if len(m) < ma_window + max(windows) + 2:
+        return {"state": "NONE", "reason": "insufficient common history", "windows": {}}
+
+    m["ratio"] = m["rsp"] / m["spy"]
+    m["ma"] = m["ratio"].rolling(ma_window, min_periods=ma_window).mean()
+    m["dist_pct"] = (m["ratio"] / m["ma"] - 1.0) * 100.0
+
+    eq = _frame(equity_bars)
+    price = eq["close"] if eq is not None and len(eq) else m["spy"]
+
+    per: dict[str, dict] = {}
+    hits: list[int] = []
+    for w in windows:
+        pm = _pct_change(price, w)
+        # The RATIO's own move, not the change in its distance to the MA. That
+        # distance is self-damping: the average chases the ratio, so the gap
+        # stabilises even while breadth deteriorates outright. The gap LEVEL is
+        # still reported below — it just is not what the test fires on.
+        rm = _pct_change(m["ratio"], w)
+        st = _slope_state(pm, rm, S.DIV_TREND_PRICE_EPS_PCT,
+                          S.DIV_TREND_RATIO_EPS_PCT)
+        per[str(w)] = {"window": w, "price_change_pct": pm,
+                       "breadth_ratio_change_pct": rm,
+                       "gap_to_ma_pct": _pt_change(m["dist_pct"], w),
+                       "state": st}
+        if st == "BEARISH_DIVERGENCE":
+            hits.append(w)
+
+    dist_now = float(m["dist_pct"].iloc[-1]) if pd.notna(m["dist_pct"].iloc[-1]) else None
+    below = bool(dist_now is not None and dist_now < 0)
+
+    if hits:
+        parts = [f"{w}d: index {per[str(w)]['price_change_pct']:+.2f}% while "
+                 f"RSP/SPY fell {per[str(w)]['breadth_ratio_change_pct']:+.2f}%"
+                 for w in hits]
+        where = (f"now {abs(dist_now):.2f}% {'below' if below else 'above'} its "
+                 f"{ma_window}d average" if dist_now is not None else "")
+        why = f"Index gaining while breadth rolls over — {'; '.join(parts)}; {where}"
+        state = "BREADTH_MA_DIVERGENCE"
+    else:
+        state = "NONE"
+        why = (f"Breadth ratio {'below' if below else 'above'} its {ma_window}d "
+               f"average ({dist_now:+.2f}%)" if dist_now is not None else None)
+
+    return {
+        "state": state,
+        "windows": per,
+        "windows_diverging": sorted(hits),
+        "both_windows": bool(len(hits) >= len(windows)),
+        "ratio": round(float(m["ratio"].iloc[-1]), 6),
+        "ma": (round(float(m["ma"].iloc[-1]), 6)
+               if pd.notna(m["ma"].iloc[-1]) else None),
+        "distance_to_ma_pct": round(dist_now, 3) if dist_now is not None else None,
+        "below_ma": below,
+        "ma_window": ma_window,
+        "series": {
+            "dates": [str(d.date()) for d in m["date"].tail(S.DIV_SERIES_TAIL)],
+            "ratio": _tail(m["ratio"], S.DIV_SERIES_TAIL),
+            "ma": _tail(m["ma"], S.DIV_SERIES_TAIL),
+            "dist_pct": _tail(m["dist_pct"], S.DIV_SERIES_TAIL),
+        },
+        "why": why,
+        "reason": None,
+    }
+
+
+def trend_matrix(series: dict, *, windows=S.DIV_TREND_WINDOWS) -> dict:
+    """Slope divergence across every series, so one name is not one observation."""
+    out, bearish, bullish = {}, [], []
+    for name, bars in (series or {}).items():
+        r = rsi_trend_readout(bars, windows=windows)
+        # The full series is dropped here — 60 points x 20 markets bloats the
+        # artifact for a table nobody charts. The index keeps its series.
+        r.pop("series", None)
+        out[name] = r
+        if r.get("state") == "BEARISH_DIVERGENCE":
+            bearish.append(name)
+        elif r.get("state") == "BULLISH_DIVERGENCE":
+            bullish.append(name)
+    return {"by_series": out, "bearish": sorted(bearish), "bullish": sorted(bullish),
+            "scanned": len(out), "windows": list(windows)}
+
+
 # ── 2b. the other intermarket non-confirmations ───────────────────────────
 
 def _is_rising(bars, window: int, eps: float = 0.0) -> tuple[bool | None, float | None]:
@@ -383,16 +645,25 @@ def analyse(equity_bars, *, confirmers: dict | None = None,
             heartbeat: dict | None = None,
             dispersion: dict | None = None,
             market_bars: dict | None = None,
-            cot_markets: dict | None = None) -> dict:
+            cot_markets: dict | None = None,
+            rsp_bars=None, spy_bars=None) -> dict:
     """All three types, read across everything the layer holds.
 
     `any_bearish` deliberately does NOT mean "sell". §2.5 is explicit that
     divergence is a filter, and the kernel only lets it act when the Heartbeat or
     the dispersion spread agrees.
     """
-    # Type 1 — classic RSI, on the index and across the matrix.
+    # Type 1 — classic RSI in BOTH forms. The pivot form is the textbook one and
+    # is rare; the slope form is the everyday one ("price up, RSI down") and
+    # fires without needing two confirmed fractals in the window.
     rsi_d = rsi_divergence(equity_bars)
+    rsi_slope = rsi_trend_readout(equity_bars)
     matrix = rsi_matrix(rsi_series or {})
+    slope_matrix = trend_matrix(rsi_series or {})
+
+    # Type 2 — breadth, in both forms too: the regime label, and the earlier
+    # read of the ratio rolling toward its own moving average.
+    hb_ma = heartbeat_ma_divergence(equity_bars, rsp_bars, spy_bars)
 
     # Type 2 — every intermarket non-confirmation we can source.
     cross = cross_asset_divergence(equity_bars, confirmers or {})
@@ -406,9 +677,11 @@ def analyse(equity_bars, *, confirmers: dict | None = None,
 
     checks = {
         "rsi": rsi_d,
+        "rsi_slope": rsi_slope,
         "cross_asset": cross,
         "vix": vix_nc,
         "breadth": breadth_nc,
+        "breadth_ma": hb_ma,
         "dispersion": disp_nc,
         "positioning": pos,
     }
@@ -417,25 +690,34 @@ def analyse(equity_bars, *, confirmers: dict | None = None,
 
     bearish = bool(
         rsi_d.get("state") == "BEARISH_RSI_DIVERGENCE"
-        or matrix["bearish"]
+        or rsi_slope.get("state") == "BEARISH_DIVERGENCE"
+        or matrix["bearish"] or slope_matrix["bearish"]
         or cross.get("state") == "CROSS_ASSET_DIVERGENCE"
         or vix_nc.get("state") == "VIX_NONCONFIRMATION"
         or breadth_nc.get("state") == "BREADTH_NONCONFIRMATION"
+        or hb_ma.get("state") == "BREADTH_MA_DIVERGENCE"
         or disp_nc.get("state") == "DISPERSION_NONCONFIRMATION"
         or (pos.get("state") == "POSITIONING_DIVERGENCE" and pos.get("price_rising"))
     )
-    bullish = bool(rsi_d.get("state") == "BULLISH_RSI_DIVERGENCE" or matrix["bullish"])
+    bullish = bool(rsi_d.get("state") == "BULLISH_RSI_DIVERGENCE"
+                   or rsi_slope.get("state") == "BULLISH_DIVERGENCE"
+                   or matrix["bullish"] or slope_matrix["bullish"])
 
     # How many INDEPENDENT warnings are lit. §2.5 says divergence is most
     # powerful when it aligns with something else; the count is how a reader
     # tells one straw from a pile of them.
-    weight = len(fired) + len(matrix["bearish"]) + len(pos_matrix["diverging"])
+    weight = (len(fired) + len(matrix["bearish"]) + len(slope_matrix["bearish"])
+              + len(pos_matrix["diverging"]))
 
     return {
         # the three accepted types
         "rsi": rsi_d,
         "cross_asset": cross,
         "positioning": pos,
+        # the slope forms — the everyday read
+        "rsi_slope": rsi_slope,
+        "breadth_ma": hb_ma,
+        "slope_matrix": slope_matrix,
         # the widened reads
         "rsi_matrix": matrix,
         "vix": vix_nc,
@@ -450,11 +732,14 @@ def analyse(equity_bars, *, confirmers: dict | None = None,
         "weight": weight,
         "coverage": {
             "rsi_series": matrix["scanned"],
+            "slope_series": slope_matrix["scanned"],
             "confirmers": len(confirmers or {}),
             "cot_contracts": pos_matrix["scanned"],
             "vix": vix_bars is not None,
             "breadth": bool(heartbeat),
+            "breadth_ma": hb_ma.get("state") != "NONE" or hb_ma.get("ma") is not None,
             "dispersion": bool(dispersion),
+            "windows": list(S.DIV_TREND_WINDOWS),
         },
         "note": ("A warning or confirmation filter, never a standalone entry "
                  "trigger (§2.5). Weight it only where the Heartbeat regime or "
