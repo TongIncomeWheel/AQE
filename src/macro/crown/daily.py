@@ -26,7 +26,7 @@ apart for now is what makes the overlap measurable rather than assumed.
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from src.data.paths import OUTPUT_DIR
@@ -51,8 +51,7 @@ def run_crown(*, client=None, refresh_cot: bool = True,
 
     # ── 1. Heartbeat ──────────────────────────────────────────────────────
     rsp, spy, missing = feeds.heartbeat_bars(client)
-    if missing:
-        degraded.append(f"heartbeat bars missing: {', '.join(missing)}")
+    degraded.extend(missing)
     heartbeat = hb_mod.heartbeat_from_frames(rsp, spy)
 
     if heartbeat.get("observations", 0) == 0:
@@ -74,9 +73,22 @@ def run_crown(*, client=None, refresh_cot: bool = True,
                          degraded, write)
 
     # ── 3. positioning: CTA, COT, gamma ───────────────────────────────────
-    fut, fut_missing = feeds.futures_bars(client)
+    fut, fut_missing, fut_sources = feeds.futures_bars(client)
     if fut_missing:
         degraded.append(f"CTA markets without bars: {', '.join(fut_missing)}")
+    proxied = sorted(k for k, v in fut_sources.items() if v["via"] == "etf_fallback")
+    if proxied:
+        pairs = ", ".join(f"{k}->{fut_sources[k]['symbol']}" for k in proxied)
+        degraded.append(
+            f"CTA markets on an ETF proxy rather than the future ({pairs}) "
+            "— trend direction holds, absolute levels are not the contract's")
+    stale_markets = sorted(k for k, v in fut_sources.items() if v["stale"])
+    if stale_markets:
+        detail = ", ".join(
+            "{} (last {}, {}d)".format(k, fut_sources[k]["as_of"],
+                                       fut_sources[k]["days_stale"])
+            for k in stale_markets)
+        degraded.append(f"CTA markets running on STALE bars: {detail}")
     cta_read = cta_mod.analyse(fut) if fut else {
         "flow": cta_mod.cta_flow_analysis({}), "markets": {}}
 
@@ -89,6 +101,11 @@ def run_crown(*, client=None, refresh_cot: bool = True,
     cot_read = cot_mod.analyse()
     if cot_read.get("status") != "OK":
         degraded.append(f"COT unavailable: {cot_read.get('reason')}")
+    elif (cot_read.get("weeks_stale") or 0) > S.COT_MAX_STALENESS_WEEKS:
+        degraded.append(
+            f"COT is {cot_read['weeks_stale']} weeks old (last {cot_read['as_of']}) "
+            "— the CFTC publishes weekly, so this is a fetch problem, not a quiet "
+            "market")
 
     gamma_read = {"status": "SKIPPED", "regime": "UNKNOWN", "underlyings": {},
                   "unavailable": {}, "reason": "gamma not requested"}
@@ -166,9 +183,39 @@ def run_crown(*, client=None, refresh_cot: bool = True,
     decision = kernel_mod.run(heartbeat, cta_read.get("flow", {}), gamma_read,
                               vol_read, div_read)
 
+    # ── 7. freshness — every source, its last bar, and the lag to today ──
+    # "As of when?" has to be answerable per source, not once for the whole
+    # read: the legs come from four different publishers on four different
+    # clocks, and the run is only ever as current as its OLDEST leg.
+    today = datetime.now(SGT).date()
+    freshness = {
+        "today": today.isoformat(),
+        "heartbeat": {S.HEARTBEAT_NUM: feeds.staleness(rsp),
+                      S.HEARTBEAT_DEN: feeds.staleness(spy)},
+        "cta_markets": fut_sources,
+        "volatility": {"as_of": (vol_read.get("dispersion") or {}).get("as_of"),
+                       "source": vol_read.get("source")},
+        "cot": {"as_of": cot_read.get("as_of"),
+                "weeks_stale": cot_read.get("weeks_stale")},
+    }
+    dates = [freshness["heartbeat"][k]["as_of"] for k in freshness["heartbeat"]]
+    dates += [v.get("as_of") for v in fut_sources.values()]
+    dates += [freshness["volatility"]["as_of"]]
+    dates = [d for d in dates if d]
+    freshness["oldest_leg"] = min(dates) if dates else None
+    freshness["newest_leg"] = max(dates) if dates else None
+    if freshness["oldest_leg"]:
+        lag = (today - date.fromisoformat(freshness["oldest_leg"])).days
+        freshness["oldest_leg_days"] = lag
+        if lag > S.MAX_BAR_STALENESS_DAYS:
+            degraded.append(
+                f"the oldest leg of this read is {freshness['oldest_leg']} "
+                f"({lag}d before {today}) — the run is only as current as that")
+
     status = "OK" if not degraded else "DEGRADED"
     return _envelope(status, heartbeat, cta_read, cot_read, gamma_read,
-                     {"vol": vol_read, "divergence": div_read}, decision,
+                     {"vol": vol_read, "divergence": div_read,
+                      "freshness": freshness}, decision,
                      degraded, write)
 
 
@@ -188,6 +235,7 @@ def _envelope(status, heartbeat, cta_read, cot_read, gamma_read, extra,
         "gamma": gamma_read or {},
         "volatility": (extra or {}).get("vol", {}),
         "divergence": (extra or {}).get("divergence", {}),
+        "freshness": (extra or {}).get("freshness", {}),
         "decision": decision,
         "standalone_note": (
             "Built standalone by PM directive (2026-08-09). Reads nothing from "

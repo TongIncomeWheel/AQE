@@ -43,27 +43,37 @@ CTA_SIGNAL_SCALE_SIGMA = 2.0
 # `cot` is the CFTC contract market code, so positioning joins to the same row.
 # Crude maps to the ICE Europe WTI contract: it carries ~875k open interest in the
 # futures-only report, and the NYMEX flagship is simply not published there.
+# `fallback` is an ETF that tracks the same exposure. It exists because several
+# treasury-futures symbols are plan-gated on our FMP tier (ZNUSD returns ACCESS
+# DENIED), and silently DROPPING four markets would be worse than proxying them:
+# `flip_risk` is extremes / n_markets, so losing the whole rates complex changes
+# the denominator and quietly re-rates every reading. A proxied market is always
+# labelled `via_fallback` so nobody mistakes IEF for the 10-year future.
+#
+# Symbols verified against FMP's own commodities-list on 2026-08-10. Three were
+# wrong on the first pass: corn, soybeans and wheat are quoted in CENTS and carry
+# a USX suffix, and there is no ZWUSD at all — FMP's wheat is KEUSX.
 MARKETS: dict[str, dict] = {
-    "ES":  {"fmp": "ESUSD", "label": "S&P 500",      "sector": "equity",   "cot": "13874A"},
-    "NQ":  {"fmp": "NQUSD", "label": "Nasdaq 100",   "sector": "equity",   "cot": "209742"},
-    "YM":  {"fmp": "YMUSD", "label": "Dow",          "sector": "equity",   "cot": "124603"},
+    "ES":  {"fmp": "ESUSD", "label": "S&P 500",      "sector": "equity", "cot": "13874A", "fallback": "SPY"},
+    "NQ":  {"fmp": "NQUSD", "label": "Nasdaq 100",   "sector": "equity", "cot": "209742", "fallback": "QQQ"},
+    "YM":  {"fmp": "YMUSD", "label": "Dow",          "sector": "equity", "cot": "124603", "fallback": "DIA"},
     # Only the MICRO Russell 2000 appears in the futures-only report; the full
     # -size contract is not published there, so this is the best available proxy.
-    "RTY": {"fmp": "RTYUSD", "label": "Russell 2000", "sector": "equity",  "cot": "239747"},
-    "ZN":  {"fmp": "ZNUSD", "label": "UST 10Y note", "sector": "rates",    "cot": "043602"},
-    "ZB":  {"fmp": "ZBUSD", "label": "UST bond",     "sector": "rates",    "cot": "020601"},
-    "ZF":  {"fmp": "ZFUSD", "label": "UST 5Y note",  "sector": "rates",    "cot": "044601"},
-    "ZT":  {"fmp": "ZTUSD", "label": "UST 2Y note",  "sector": "rates",    "cot": "042601"},
-    "CL":  {"fmp": "CLUSD", "label": "WTI crude",    "sector": "energy",   "cot": "067411"},
-    "BZ":  {"fmp": "BZUSD", "label": "Brent crude",  "sector": "energy",   "cot": None},
-    "NG":  {"fmp": "NGUSD", "label": "Natural gas",  "sector": "energy",   "cot": "023651"},
-    "GC":  {"fmp": "GCUSD", "label": "Gold",         "sector": "metals",   "cot": "088691"},
-    "SI":  {"fmp": "SIUSD", "label": "Silver",       "sector": "metals",   "cot": "084691"},
-    "HG":  {"fmp": "HGUSD", "label": "Copper",       "sector": "metals",   "cot": "085692"},
-    "DX":  {"fmp": "DXUSD", "label": "US dollar",    "sector": "fx",       "cot": "098662"},
-    "ZC":  {"fmp": "ZCUSD", "label": "Corn",         "sector": "ags",      "cot": "002602"},
-    "ZS":  {"fmp": "ZSUSD", "label": "Soybeans",     "sector": "ags",      "cot": "005602"},
-    "ZW":  {"fmp": "ZWUSD", "label": "Wheat",        "sector": "ags",      "cot": "001602"},
+    "RTY": {"fmp": "RTYUSD", "label": "Russell 2000", "sector": "equity", "cot": "239747", "fallback": "IWM"},
+    "ZN":  {"fmp": "ZNUSD", "label": "UST 10Y note", "sector": "rates",  "cot": "043602", "fallback": "IEF"},
+    "ZB":  {"fmp": "ZBUSD", "label": "UST bond",     "sector": "rates",  "cot": "020601", "fallback": "TLT"},
+    "ZF":  {"fmp": "ZFUSD", "label": "UST 5Y note",  "sector": "rates",  "cot": "044601", "fallback": "IEI"},
+    "ZT":  {"fmp": "ZTUSD", "label": "UST 2Y note",  "sector": "rates",  "cot": "042601", "fallback": "SHY"},
+    "CL":  {"fmp": "CLUSD", "label": "WTI crude",    "sector": "energy", "cot": "067411", "fallback": "USO"},
+    "BZ":  {"fmp": "BZUSD", "label": "Brent crude",  "sector": "energy", "cot": None,     "fallback": "BNO"},
+    "NG":  {"fmp": "NGUSD", "label": "Natural gas",  "sector": "energy", "cot": "023651", "fallback": "UNG"},
+    "GC":  {"fmp": "GCUSD", "label": "Gold",         "sector": "metals", "cot": "088691", "fallback": "GLD"},
+    "SI":  {"fmp": "SIUSD", "label": "Silver",       "sector": "metals", "cot": "084691", "fallback": "SLV"},
+    "HG":  {"fmp": "HGUSD", "label": "Copper",       "sector": "metals", "cot": "085692", "fallback": "CPER"},
+    "DX":  {"fmp": "DXUSD", "label": "US dollar",    "sector": "fx",     "cot": "098662", "fallback": "UUP"},
+    "ZC":  {"fmp": "ZCUSX", "label": "Corn",         "sector": "ags",    "cot": "002602", "fallback": "CORN"},
+    "ZS":  {"fmp": "ZSUSX", "label": "Soybeans",     "sector": "ags",    "cot": "005602", "fallback": "SOYB"},
+    "ZW":  {"fmp": "KEUSX", "label": "Wheat",        "sector": "ags",    "cot": "001602", "fallback": "WEAT"},
 }
 
 

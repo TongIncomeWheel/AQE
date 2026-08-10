@@ -644,6 +644,79 @@ def test_cot_analyse_with_no_history_is_UNAVAILABLE_not_empty_calm():
     assert r["crowded_long"] == [] and r["crowded_short"] == []
 
 
+# ──────────────────────────────────────────── freshness: stale-but-present
+
+def _dated(end, n=400, start_price=100.0):
+    """A bar frame whose LAST date is `end`."""
+    d = pd.bdate_range(end=pd.Timestamp(end), periods=n)
+    c = np.full(n, start_price)
+    return pd.DataFrame({"date": d, "open": c, "high": c * 1.01,
+                         "low": c * 0.99, "close": c, "volume": np.full(n, 1e6)})
+
+
+def test_staleness_reports_the_last_bar_and_the_lag_to_today():
+    from src.macro.crown import data as F
+    today = pd.Timestamp.today().normalize()
+    s = F.staleness(_dated(today))
+    assert s["as_of"] == today.date().isoformat() and s["days_stale"] == 0
+    old = F.staleness(_dated(today - pd.Timedelta(days=60)))
+    assert old["days_stale"] >= 59
+
+
+def test_a_series_that_stopped_updating_is_stale_even_though_it_is_long():
+    """THE defect this guards. A panel that stopped in June still has thousands
+    of rows, so a LENGTH check passes trivially and the stale file silently
+    displaces a live fetch — which is how the Heartbeat once read two months
+    behind every other source."""
+    from src.macro.crown import data as F
+    june = _dated(pd.Timestamp.today().normalize() - pd.Timedelta(days=60), n=2000)
+    assert len(june) > S.HB_LOOKBACK_DAYS      # sails past any length guard
+    assert F.is_stale(june) is True            # ...but fails the recency one
+
+
+def test_a_current_series_is_not_stale():
+    from src.macro.crown import data as F
+    assert F.is_stale(_dated(pd.Timestamp.today().normalize())) is False
+
+
+def test_an_empty_frame_is_stale_not_silently_fresh():
+    from src.macro.crown import data as F
+    assert F.is_stale(pd.DataFrame()) is True
+    assert F.staleness(None)["as_of"] is None
+
+
+def test_the_freshness_thresholds_are_named_constants():
+    for name in ("MAX_BAR_STALENESS_DAYS", "PANEL_MAX_STALENESS_DAYS",
+                 "COT_MAX_STALENESS_WEEKS"):
+        assert hasattr(S, name), name
+
+
+# ─────────────────────────────────── the CTA universe: symbols and proxies
+
+def test_every_cta_market_has_a_fallback_so_the_denominator_cannot_shrink():
+    """flip_risk is extremes / n_markets. Dropping the whole rates complex
+    because ZNUSD is plan-gated would silently re-rate every reading."""
+    for key, meta in CTA.MARKETS.items():
+        assert meta.get("fallback"), key
+        assert meta["fmp"], key
+
+
+def test_the_cent_quoted_ags_use_the_USX_symbols_fmp_actually_serves():
+    """Corn, soybeans and wheat are quoted in cents and carry a USX suffix;
+    FMP serves no ZWUSD at all. Verified against its own commodities-list."""
+    assert CTA.MARKETS["ZC"]["fmp"] == "ZCUSX"
+    assert CTA.MARKETS["ZS"]["fmp"] == "ZSUSX"
+    assert CTA.MARKETS["ZW"]["fmp"] == "KEUSX"
+
+
+def test_the_rates_complex_is_present_and_proxied_to_duration_matched_etfs():
+    rates = {k: v for k, v in CTA.MARKETS.items() if v["sector"] == "rates"}
+    assert set(rates) == {"ZN", "ZB", "ZF", "ZT"}
+    assert rates["ZN"]["fallback"] == "IEF"      # 7-10y
+    assert rates["ZB"]["fallback"] == "TLT"      # 20y+
+    assert rates["ZT"]["fallback"] == "SHY"      # 1-3y
+
+
 # ─────────────────────────────────────────────────── the layer's own rules
 
 def test_every_threshold_is_a_named_constant():

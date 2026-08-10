@@ -281,6 +281,46 @@ Runs at step 6g of the daily, writes `output/macro_scenarios.json`.
 
 ---
 
+## Freshness — "as of when?", per source
+
+The legs come from four publishers on four clocks (FMP, Cboe, the CFTC, the
+local panel), so a single "generated at" timestamp hides the one that quietly
+stopped updating. Every source now carries `as_of` and `days_stale`, and the
+run reports its **oldest leg** — because the read is only ever as current as
+that.
+
+This exists because of a real defect, found 2026-08-10. `heartbeat_bars`
+preferred the local panel over a live fetch — correct, it is free and already
+built — but guarded it with a **length** check (`len < 252`). A panel that
+stopped updating in June still has thousands of rows, so it sailed past the
+guard, displaced the live fetch, and the Heartbeat reported **June** while every
+other source reported August. Nothing was empty, so nothing complained.
+
+Stale-but-present is the sneakier half of *"a failed data fetch must be LOUD"*
+(CLAUDE.md). The guard is now recency, not row count, and a stale local file
+loses to the network rather than beating it on size.
+
+### The CTA universe, corrected
+
+Verified against FMP's own `commodities-list` on 2026-08-10. Three symbols were
+simply wrong on the first pass, and one whole complex is plan-gated:
+
+- Corn, soybeans and wheat are quoted in **cents** and carry a `USX` suffix.
+  There is no `ZWUSD` at all — FMP's wheat is `KEUSX`. So `ZCUSD/ZSUSD/ZWUSD`
+  became `ZCUSX/ZSUSX/KEUSX`.
+- **`ZNUSD` returns ACCESS DENIED on our Starter plan**, and the rest of the
+  treasury complex is at risk with it.
+
+Every market therefore carries a duration- or exposure-matched **ETF fallback**
+(ZN→IEF, ZB→TLT, ZF→IEI, ZT→SHY, CL→USO, DX→UUP …). A market that cannot source
+its future is **proxied and labelled**, never dropped — because `flip_risk` is
+extremes ÷ n_markets, and losing the whole rates complex silently shrinks the
+denominator and re-rates every reading. `freshness.cta_markets[k].via` says
+`futures` or `etf_fallback` for every one, so a proxy is never mistaken for the
+contract: the trend direction holds, the absolute levels are not the future's.
+
+---
+
 ## Not yet built
 
 - **Gamma in the daily run** — currently on-demand only, pending a confirmed

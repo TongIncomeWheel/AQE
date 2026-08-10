@@ -22,6 +22,18 @@ from __future__ import annotations
 HEARTBEAT_NUM = "RSP"          # equal-weight S&P 500
 HEARTBEAT_DEN = "SPY"          # cap-weighted S&P 500
 
+# ── freshness ────────────────────────────────────────────────────────────
+# Every series carries an `as_of`, and anything past these thresholds is called
+# out. This exists because of a real defect: the heartbeat preferred the local
+# panel over a live fetch and guarded it with a LENGTH check (`len < 252`). A
+# panel that stopped updating in June still has thousands of rows, so it sailed
+# past the guard and the Heartbeat reported June while every other source
+# reported August. Stale-but-present is the sneakier half of "a failed fetch
+# must be LOUD" (CLAUDE.md) — nothing is empty, so nothing complains.
+MAX_BAR_STALENESS_DAYS = 5     # calendar days: a long weekend plus a holiday
+PANEL_MAX_STALENESS_DAYS = 4   # the panel is rebuilt daily; 4 covers a weekend
+COT_MAX_STALENESS_WEEKS = 3    # CFTC publishes weekly, 3 days in arrears
+
 HB_LOOKBACK_DAYS = 252         # §5 heartbeat_regime lookback_days
 HB_SLOPE_WINDOW = 20           # §5 history[-20:]
 HB_MIN_HISTORY = 20            # §5 len(history) < 20 -> neutral

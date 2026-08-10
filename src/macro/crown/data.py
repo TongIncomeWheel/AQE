@@ -97,23 +97,65 @@ def fetch_many(symbols, years: int = BAR_YEARS,
 
 
 def heartbeat_bars(client: FMPClient | None = None) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
-    """RSP and SPY. SPY is preferred from the local panel when it is there —
-    it is the same series and it saves a call the pipeline already made."""
+    """RSP and SPY, preferring the local panel ONLY while it is current.
+
+    The panel is free and already built, so it is worth preferring — but a stale
+    panel must lose to a live fetch. `_panel_series` now enforces that, and
+    anything that comes back stale from BOTH sources is named rather than used.
+    """
     c = _client(client)
-    spy = _panel_series(S.HEARTBEAT_DEN)
-    if spy is None or len(spy) < S.HB_LOOKBACK_DAYS:
-        spy = fetch_bars(S.HEARTBEAT_DEN, client=c)
-    rsp = _panel_series(S.HEARTBEAT_NUM)
-    if rsp is None or len(rsp) < S.HB_LOOKBACK_DAYS:
-        rsp = fetch_bars(S.HEARTBEAT_NUM, client=c)
-    missing = [n for n, d in ((S.HEARTBEAT_NUM, rsp), (S.HEARTBEAT_DEN, spy))
-               if d is None or len(d) == 0]
-    return (rsp if rsp is not None else pd.DataFrame(),
-            spy if spy is not None else pd.DataFrame(), missing)
+    notes: list[str] = []
+    out: dict[str, pd.DataFrame] = {}
+    for name in (S.HEARTBEAT_NUM, S.HEARTBEAT_DEN):
+        df = _panel_series(name)
+        source = "panel"
+        if df is None or len(df) < S.HB_LOOKBACK_DAYS:
+            df = fetch_bars(name, client=c)
+            source = "fmp"
+        if df is None or len(df) == 0:
+            notes.append(f"{name}: no bars from panel or FMP")
+            out[name] = pd.DataFrame()
+            continue
+        if is_stale(df):
+            s = staleness(df)
+            notes.append(f"{name}: STALE — last bar {s['as_of']} "
+                         f"({s['days_stale']}d old, source={source})")
+        out[name] = df
+    return out[S.HEARTBEAT_NUM], out[S.HEARTBEAT_DEN], notes
 
 
-def _panel_series(ticker: str) -> pd.DataFrame | None:
-    """One ticker's bars out of the daily panel, if the panel has it."""
+def last_date(df) -> pd.Timestamp | None:
+    """The most recent bar date in a frame, or None."""
+    if df is None or len(df) == 0 or "date" not in getattr(df, "columns", []):
+        return None
+    d = pd.to_datetime(pd.DataFrame(df)["date"], errors="coerce").dropna()
+    return d.max() if len(d) else None
+
+
+def staleness(df) -> dict:
+    """{as_of, days_stale} for any bar frame. The thing every feed must carry."""
+    d = last_date(df)
+    if d is None:
+        return {"as_of": None, "days_stale": None}
+    return {"as_of": d.date().isoformat(),
+            "days_stale": int((pd.Timestamp.today().normalize() - d.normalize()).days)}
+
+
+def is_stale(df, max_days: int = S.MAX_BAR_STALENESS_DAYS) -> bool:
+    s = staleness(df)
+    return s["days_stale"] is None or s["days_stale"] > max_days
+
+
+def _panel_series(ticker: str,
+                  max_stale_days: int = S.PANEL_MAX_STALENESS_DAYS) -> pd.DataFrame | None:
+    """One ticker's bars out of the daily panel — only if the panel is CURRENT.
+
+    The recency test is the whole point. Preferring the panel is a good idea (it
+    is free and already built), but the original guard checked only LENGTH, so a
+    panel that stopped updating months ago passed trivially and silently
+    displaced a live fetch. A stale local file must lose to the network, not beat
+    it on row count.
+    """
     if not PANEL_DAILY.exists():
         return None
     try:
@@ -124,20 +166,45 @@ def _panel_series(ticker: str) -> pd.DataFrame | None:
     sub = p[p["ticker"] == ticker]
     if sub.empty:
         return None
-    return sub.drop(columns=["ticker"]).sort_values("date").reset_index(drop=True)
+    out = sub.drop(columns=["ticker"]).sort_values("date").reset_index(drop=True)
+    if is_stale(out, max_stale_days):
+        return None
+    return out
 
 
-def futures_bars(client: FMPClient | None = None) -> tuple[dict, list[str]]:
-    """Bars for the replicated CTA universe, keyed by our market key (ES, ZN…)."""
+def futures_bars(client: FMPClient | None = None) -> tuple[dict, list[str], dict]:
+    """Bars for the replicated CTA universe, keyed by our market key (ES, ZN…).
+
+    Returns (frames, missing, sources). A market whose futures symbol is
+    unavailable or stale falls back to its tracking ETF rather than dropping out,
+    because `flip_risk` is extremes / n_markets — losing the whole rates complex
+    silently changes the denominator and re-rates every reading. `sources` records
+    which leg each market actually came from, so a proxy is never mistaken for
+    the future itself.
+    """
     c = _client(client)
-    frames, bad = {}, []
+    frames, bad, sources = {}, [], {}
     for key, meta in MARKETS.items():
-        df = fetch_bars(meta["fmp"], client=c)
-        if len(df) >= S.CTA_MIN_HISTORY:
-            frames[key] = df
-        else:
-            bad.append(f"{key} ({meta['fmp']})")
-    return frames, bad
+        sym = meta["fmp"]
+        df = fetch_bars(sym, client=c)
+        used, stale = "futures", False
+
+        if len(df) < S.CTA_MIN_HISTORY or is_stale(df):
+            fb = meta.get("fallback")
+            alt = fetch_bars(fb, client=c) if fb else pd.DataFrame()
+            if len(alt) >= S.CTA_MIN_HISTORY and not is_stale(alt):
+                df, sym, used = alt, fb, "etf_fallback"
+            elif len(df) >= S.CTA_MIN_HISTORY:
+                used, stale = "futures", True      # keep it, but say it is stale
+            else:
+                bad.append(f"{key} ({meta['fmp']}"
+                           + (f" / {fb}" if fb else "") + ")")
+                continue
+
+        frames[key] = df
+        sources[key] = {"symbol": sym, "via": used, "stale": stale,
+                        **staleness(df)}
+    return frames, bad, sources
 
 
 def vix_bars(client: FMPClient | None = None, *, refresh: bool = True) -> dict:

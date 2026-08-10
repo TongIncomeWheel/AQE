@@ -91,6 +91,51 @@ if crown.get("degraded"):
         for d in crown["degraded"]:
             st.markdown(f"- {d}")
 
+# ── freshness: as-of per source, against today ───────────────────────────
+# The legs come from four publishers on four clocks. A single "generated at"
+# would hide a source that quietly stopped updating, which is exactly how a
+# stale panel once made the Heartbeat read two months behind everything else.
+fresh = crown.get("freshness") or {}
+if fresh:
+    lag = fresh.get("oldest_leg_days")
+    f1, f2, f3 = st.columns(3)
+    f1.metric("Today", fresh.get("today", "—"))
+    f2.metric("Oldest leg", fresh.get("oldest_leg") or "—",
+              delta=(f"{lag}d behind" if lag else "current"),
+              delta_color=("inverse" if (lag or 0) > S.MAX_BAR_STALENESS_DAYS else "off"))
+    f3.metric("Newest leg", fresh.get("newest_leg") or "—")
+    if (lag or 0) > S.MAX_BAR_STALENESS_DAYS:
+        st.error(f"**This read is only as current as {fresh.get('oldest_leg')}.** "
+                 "Every number below inherits that date, whatever the run "
+                 "timestamp says.")
+
+    with st.expander("Freshness by source — last bar vs today"):
+        frows = []
+        for name, s in (fresh.get("heartbeat") or {}).items():
+            frows.append({"Source": f"Heartbeat · {name}", "As of": s.get("as_of"),
+                          "Days behind": s.get("days_stale"), "Via": "panel/FMP"})
+        for k, s in (fresh.get("cta_markets") or {}).items():
+            frows.append({"Source": f"CTA · {k}", "As of": s.get("as_of"),
+                          "Days behind": s.get("days_stale"),
+                          "Via": f"{s.get('symbol')} ({s.get('via')})"
+                                 + (" ⚠️STALE" if s.get("stale") else "")})
+        v = fresh.get("volatility") or {}
+        frows.append({"Source": "Volatility complex", "As of": v.get("as_of"),
+                      "Days behind": None, "Via": v.get("source")})
+        c_ = fresh.get("cot") or {}
+        frows.append({"Source": "CFTC COT", "As of": c_.get("as_of"),
+                      "Days behind": (c_.get("weeks_stale") or 0) * 7,
+                      "Via": "cftc.gov (weekly)"})
+        table_with_copy(pd.DataFrame(frows), key="crown_freshness",
+                        label="📋 Copy freshness table")
+        st.caption(
+            "An ETF `via` means the futures symbol was unavailable or stale on "
+            "our FMP plan and the tracking ETF stood in — trend direction holds, "
+            "absolute levels are not the contract's. Markets are proxied rather "
+            "than dropped because `flip_risk` is extremes ÷ markets, and a "
+            "shrinking denominator silently re-rates every reading."
+        )
+
 # ── the decision, first, because it is what the hierarchy is FOR ─────────
 
 dec = crown.get("decision") or {}
