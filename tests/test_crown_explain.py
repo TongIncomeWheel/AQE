@@ -169,6 +169,58 @@ def test_a_stale_read_says_so_in_the_caveats():
                or "2026-06-11" in x for x in pe["caveats"])
 
 
+# ─────────────────────────────────────────────────── the gamma reading
+
+def _profile(flip_dist_pct, positive=True):
+    spot = 773.92
+    return {"available": True, "spot": spot,
+            "total_gex": (1.52e9 if positive else -1.52e9),
+            "regime": "POSITIVE" if positive else "NEGATIVE",
+            "gamma_flip": spot * (1 + flip_dist_pct / 100),
+            "flip_distance_pct": flip_dist_pct,
+            "call_wall": {"strike": 785.0, "share_of_side": 0.33},
+            "put_wall": {"strike": 750.0, "share_of_side": 0.24},
+            "total_open_interest": 753518}
+
+
+def test_a_flip_sitting_on_spot_is_called_a_knife_edge():
+    """+$1.5bn of positive gamma sounds comfortable. A flip 0.38% away is not,
+    and a row of metrics will never say so."""
+    r = E.gamma_reading(_profile(0.38))
+    assert r["knife_edge"] is True
+    joined = " ".join(r["lines"])
+    assert "0.38%" in joined and "where the tape already is" in joined
+    assert "sign inverts" in joined
+
+
+def test_a_distant_flip_is_reported_as_a_level_not_an_alarm():
+    r = E.gamma_reading(_profile(4.5))
+    assert r["knife_edge"] is False
+    assert "regime holds until" in " ".join(r["lines"])
+
+
+def test_positive_and_negative_gamma_give_opposite_instructions():
+    pos = E.gamma_reading(_profile(3.0, positive=True))
+    neg = E.gamma_reading(_profile(3.0, positive=False))
+    assert "sell rallies and buy dips" in pos["headline"]
+    assert "buy rallies and sell dips" in neg["headline"]
+    assert "do not chase breakouts" in " ".join(pos["lines"])
+    assert "give stops more room" in " ".join(neg["lines"])
+
+
+def test_the_walls_are_given_as_the_frame_with_their_share():
+    line = next(l for l in E.gamma_reading(_profile(2.0))["lines"]
+                if "walls frame it" in l)
+    assert "750" in line and "785" in line and "%" in line
+
+
+def test_an_unavailable_profile_says_nothing_rather_than_something_bland():
+    r = E.gamma_reading({"available": False, "reason": "no open interest"})
+    assert r["headline"] is None and r["lines"] == []
+    assert r["reason"] == "no open interest"
+    assert E.gamma_reading(None)["headline"] is None
+
+
 # ────────────────────────────────────────────────────── it is GENERATED
 
 def test_it_is_pure_and_regenerates_from_the_data():

@@ -548,6 +548,77 @@ with st.expander("CFTC Commitment of Traders — large-spec positioning"):
             table_with_copy(pd.DataFrame(crows), key="crown_cot", label="📋 Copy COT table")
 
 st.subheader("Gamma — the short-term structural force")
+
+with st.expander("🔧 Gamma trial run — test the feed step by step"):
+    st.caption(
+        "Gamma needs **two different Alpaca hosts**: greeks come from the "
+        "market-data API, open interest from the **trading** API. A key with "
+        "market-data scope only will pass the first and fail the second. This "
+        "runs each step separately and tells you which one broke."
+    )
+    if st.button("Run gamma diagnostic", key="gamma_diag"):
+        import os
+
+        from src.options import config as _C
+        rows = []
+
+        kid = os.environ.get(_C.ALPACA_KEY_ID_ENV)
+        sec = os.environ.get(_C.ALPACA_SECRET_ENV)
+        rows.append({"Step": "1 · Alpaca keys present",
+                     "Result": "OK" if (kid and sec) else "MISSING",
+                     "Detail": (f"{_C.ALPACA_KEY_ID_ENV} set" if kid
+                                else f"set {_C.ALPACA_KEY_ID_ENV} + "
+                                     f"{_C.ALPACA_SECRET_ENV} as Space secrets")})
+
+        spot = None
+        if kid and sec:
+            try:
+                from src.data.fmp_client import FMPClient
+                q = FMPClient().get_quotes_batch(["SPY"])
+                spot = (q.get("SPY") or {}).get("price")
+                rows.append({"Step": "2 · SPY spot (FMP)",
+                             "Result": "OK" if spot else "NO PRICE",
+                             "Detail": str(spot)})
+            except Exception as exc:  # noqa: BLE001
+                rows.append({"Step": "2 · SPY spot (FMP)", "Result": "FAILED",
+                             "Detail": str(exc)[:160]})
+
+        if spot:
+            from src.macro.crown import data as _F
+            try:
+                oi = _F.fetch_open_interest("SPY", float(spot))
+                rows.append({"Step": "3 · Open interest (TRADING api)",
+                             "Result": "OK" if oi else "EMPTY",
+                             "Detail": (f"{len(oi)} contracts"
+                                        if oi else "check the key has trading "
+                                                   "scope, not just market data")})
+            except Exception as exc:  # noqa: BLE001
+                oi = {}
+                rows.append({"Step": "3 · Open interest (TRADING api)",
+                             "Result": "FAILED", "Detail": str(exc)[:160]})
+            try:
+                ch = _F.fetch_gamma_chain("SPY", float(spot))
+                rows.append({"Step": "4 · Greeks + join (DATA api)",
+                             "Result": "OK" if ch.get("contracts") else "EMPTY",
+                             "Detail": (f"{len(ch.get('contracts') or [])} usable "
+                                        f"| oi={ch.get('n_with_oi')} "
+                                        f"greeks={ch.get('n_with_greeks')}"
+                                        if ch.get("contracts")
+                                        else str(ch.get("reason"))[:160])})
+            except Exception as exc:  # noqa: BLE001
+                rows.append({"Step": "4 · Greeks + join (DATA api)",
+                             "Result": "FAILED", "Detail": str(exc)[:160]})
+        from src.options.providers import tiger as _T
+        miss = _T.missing_requirements()
+        rows.append({"Step": "5 · Tiger fallback",
+                     "Result": "READY" if _T.is_configured() else "not configured",
+                     "Detail": ("proven to carry open interest"
+                                if _T.is_configured() else "; ".join(miss))})
+        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        st.caption("Steps 1-4 green → tick **Include gamma** at the top and "
+                   "re-run the layer. If step 3 is empty, Tiger takes over "
+                   "automatically once step 5 reads READY.")
+
 if not gam:
     st.info("Not computed — the process stopped at the Heartbeat gate.")
 elif gam.get("status") != "OK":
@@ -559,27 +630,75 @@ elif gam.get("status") != "OK":
         "read as 'dealers are neutral', which is a different claim entirely."
     )
 else:
+    from src.macro.crown import explain as _EG
+
+    def _gamma_fig(prof: dict, sym: str):
+        """Bars + cumulative on one figure. The flip is the zero-crossing of the
+        cumulative, so the two panels have to share an x-axis to be read."""
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        d = pd.DataFrame(prof["profile"])
+        spot = prof["spot"]
+        fig, (a1, a2) = plt.subplots(2, 1, figsize=(11, 6.6), sharex=True)
+        cols = ["#1a9850" if v > 0 else "#d73027" for v in d["gex"]]
+        w = max((d["strike"].max() - d["strike"].min()) / max(len(d) * 1.6, 1), 0.5)
+        a1.bar(d["strike"], d["gex"] / 1e6, width=w, color=cols)
+        a1.axvline(spot, color="#2b6cb0", ls="--", lw=1.2, label=f"spot {spot:,.2f}")
+        a1.set_ylabel("$m per 1% move")
+        a1.set_title(f"{sym} dealer gamma by strike")
+        a1.legend(fontsize=8, frameon=False)
+        a1.grid(alpha=0.25, linewidth=0.5)
+
+        a2.plot(d["strike"], d["cumulative"] / 1e6, color="#333", lw=1.6)
+        a2.axhline(0, color="#d73027", ls="--", lw=1)
+        a2.axvline(spot, color="#2b6cb0", ls="--", lw=1.2)
+        if prof.get("gamma_flip"):
+            a2.axvline(prof["gamma_flip"], color="#e08214", lw=1.8,
+                       label=f"flip {prof['gamma_flip']:,.2f}")
+            a2.legend(fontsize=8, frameon=False)
+        a2.set_ylabel("cumulative, $m")
+        a2.set_xlabel("strike")
+        a2.set_title("Cumulative — the flip is where this crosses zero", fontsize=9)
+        a2.grid(alpha=0.25, linewidth=0.5)
+        fig.tight_layout()
+        return fig
+
     for sym, prof in (gam.get("underlyings") or {}).items():
-        g1, g2, g3, g4 = st.columns(4)
-        g1.metric(f"{sym} gamma regime", prof.get("regime"))
-        g2.metric("Gamma flip", _num(prof.get("gamma_flip")),
-                  delta=(f"{prof.get('flip_distance_pct'):+.2f}%"
-                         if prof.get("flip_distance_pct") is not None else None))
+        st.markdown(f"#### {sym}")
+        g1, g2, g3, g4, g5 = st.columns(5)
+        g1.metric("Regime", prof.get("regime"))
+        g2.metric("Total gamma",
+                  f"${(prof.get('total_gex') or 0) / 1e9:+,.2f}bn",
+                  help="Dealer gamma per 1% move in the underlying.")
+        g3.metric("Gamma flip", _num(prof.get("gamma_flip")),
+                  delta=(f"{prof.get('flip_distance_pct'):+.2f}% from spot"
+                         if prof.get("flip_distance_pct") is not None else None),
+                  delta_color="off")
         cw, pw = prof.get("call_wall") or {}, prof.get("put_wall") or {}
-        g3.metric("Call wall", _num(cw.get("strike")))
-        g4.metric("Put wall", _num(pw.get("strike")))
-        st.caption(f"**{sym}** — {prof.get('interpretation')}")
+        g4.metric("Call wall", _num(cw.get("strike")),
+                  delta=(f"{cw.get('share_of_side'):.0%} of call gamma"
+                         if cw.get("share_of_side") else None), delta_color="off")
+        g5.metric("Put wall", _num(pw.get("strike")),
+                  delta=(f"{pw.get('share_of_side'):.0%} of put gamma"
+                         if pw.get("share_of_side") else None), delta_color="off")
+
+        read = _EG.gamma_reading(prof)
+        if read.get("headline"):
+            st.markdown(f"**{read['headline']}**")
+            for ln in read["lines"]:
+                st.markdown(f"- {ln}")
+            if read.get("knife_edge"):
+                st.warning("Spot is sitting on the flip. Treat the regime as "
+                           "unstable rather than as a floor.")
+
         if prof.get("profile"):
-            pf = pd.DataFrame(prof["profile"]).set_index("strike")
-            gc1, gc2 = st.columns(2)
-            with gc1:
-                st.caption("Dealer gamma by strike — the walls")
-                st.bar_chart(pf["gex"], height=230)
-            with gc2:
-                # The flip IS the zero-crossing of the cumulative. Charting only
-                # the bars leaves the single most important level invisible.
-                st.caption("Cumulative gamma — the flip is where this crosses zero")
-                st.line_chart(pf["cumulative"], height=230)
+            try:
+                st.pyplot(_gamma_fig(prof, sym), clear_figure=True)
+            except Exception as exc:  # noqa: BLE001
+                st.warning(f"Chart unavailable ({exc}) — the numbers above stand.")
+
     st.caption("⚠️ " + (next(iter((gam.get("underlyings") or {}).values()), {})
                         .get("assumption", "")))
 

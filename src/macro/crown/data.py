@@ -428,14 +428,32 @@ def fetch_gamma_chains(underlyings=S.GAMMA_UNDERLYINGS,
         if px:
             spots[sym] = float(px)
 
+    from src.options.providers import tiger as _tiger
+
     for u in underlyings:
         spot = spots.get(u)
         if not spot:
             bad[u] = "no spot price from FMP"
             continue
+
         got = fetch_gamma_chain(u, spot)
         if got.get("contracts"):
+            got["source"] = "alpaca"
             chains[u] = got
+            continue
+
+        # Tiger is the fallback, and it exists because it has actually been seen
+        # to return open interest. Trying it only after Alpaca keeps the primary
+        # path primary while making a plan-gated feed non-fatal.
+        why = [f"alpaca: {got.get('reason')}"]
+        if _tiger.is_configured():
+            t = _tiger.fetch_chain(u, spot)
+            if t.get("contracts"):
+                t["source"] = "tiger"
+                chains[u] = t
+                continue
+            why.append(f"tiger: {t.get('reason')}")
         else:
-            bad[u] = got.get("reason") or "no contracts"
+            why.append("tiger: " + "; ".join(_tiger.missing_requirements()))
+        bad[u] = " | ".join(why)
     return chains, bad

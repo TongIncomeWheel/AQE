@@ -141,6 +141,9 @@ GAMMA_WALL_MIN_SHARE = 0.03    # DERIVED — absolute floor: <3% of a side is no
 # strike carrying materially MORE than its even share, so the test is relative
 # to the ladder's own width and the fixed floor is only the backstop.
 GAMMA_WALL_DOMINANCE = 2.5     # x the even share (1 / number of strikes)
+# Inside this distance the flip is not a level in the distance — it is where the
+# tape already is, and "positive gamma" stops being a comfortable statement.
+GAMMA_FLIP_NEAR_PCT = 1.0
 
 
 # ═══════════════════════════════════════════════════════════════════════

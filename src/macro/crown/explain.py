@@ -23,6 +23,8 @@ recomputation — so what it says is exactly what the rest of the page shows.
 
 from __future__ import annotations
 
+from . import spec as S
+
 # ── plain words for the layer's internal vocabulary ──────────────────────
 
 FAMILY_PLAIN = {
@@ -149,6 +151,72 @@ def _gamma_reason(gam: dict) -> str | None:
         return ("Option dealers are positioned in a way that amplifies moves — "
                 "expect bigger swings in both directions than the news deserves.")
     return None
+
+
+def gamma_reading(prof: dict) -> dict:
+    """One gamma profile, in the words a person would use about it.
+
+    The numbers on their own do not say the thing that matters. "+$1.5bn, flip
+    at 776.88, spot 773.92" is three facts; *"pinned while it holds 777, and
+    unstable the moment it loses it"* is the read. The distance to the flip is
+    what turns a comfortable regime into a knife-edge, and it is the first thing
+    a person looks for and the last thing a metric row conveys.
+    """
+    if not prof or not prof.get("available"):
+        return {"headline": None, "lines": [],
+                "reason": (prof or {}).get("reason")}
+
+    spot = prof.get("spot")
+    gex = prof.get("total_gex") or 0.0
+    flip = prof.get("gamma_flip")
+    dist = prof.get("flip_distance_pct")
+    cw = prof.get("call_wall") or {}
+    pw = prof.get("put_wall") or {}
+    pos = prof.get("regime") == "POSITIVE"
+
+    lines = []
+    if pos:
+        headline = "Dealers are long gamma — they sell rallies and buy dips, so moves get damped and price pins."
+        lines.append("That is a mean-reversion tape: fade extremes, sell premium, "
+                     "do not chase breakouts.")
+    else:
+        headline = "Dealers are short gamma — they buy rallies and sell dips, so moves get amplified."
+        lines.append("Expect bigger swings in both directions than the news "
+                     "deserves, and give stops more room than usual.")
+
+    knife = dist is not None and abs(dist) < S.GAMMA_FLIP_NEAR_PCT
+    if flip is not None and dist is not None:
+        where = "above" if dist > 0 else "below"
+        if knife:
+            lines.append(
+                f"**But the flip is only {abs(dist):.2f}% {where} spot, at "
+                f"{flip:,.2f}.** That is not a level in the distance — it is "
+                "where the tape already is. "
+                + ("Lose it and the sign inverts: the damping stops and dealer "
+                   "hedging starts amplifying instead."
+                   if pos else
+                   "Reclaim it and the sign inverts: the amplification stops and "
+                   "dealers begin damping instead."))
+        else:
+            lines.append(
+                f"The regime holds until {flip:,.2f} ({abs(dist):.1f}% {where} "
+                "spot), where the sign changes.")
+
+    if cw.get("strike") and pw.get("strike"):
+        lines.append(
+            f"The walls frame it: {pw['strike']:,.0f} below "
+            f"({pw['share_of_side']:.0%} of put gamma) and {cw['strike']:,.0f} "
+            f"above ({cw['share_of_side']:.0%} of call gamma). Those are the "
+            "magnets while the regime holds, and the acceleration points if it "
+            "breaks.")
+
+    lines.append(
+        f"Size of the effect: ${abs(gex) / 1e9:,.2f}bn of dealer gamma per 1% "
+        f"move, across {prof.get('total_open_interest', 0):,} contracts of open "
+        "interest.")
+
+    return {"headline": headline, "lines": lines, "knife_edge": bool(knife),
+            "reason": None}
 
 
 def _cta_reason(cta: dict) -> str | None:
