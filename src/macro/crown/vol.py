@@ -65,6 +65,31 @@ def _band(pctl: float | None) -> str:
     return "NORMAL"
 
 
+def _direction(change: float | None) -> str:
+    """RISING / FALLING / FLAT over the rise window."""
+    if change is None:
+        return "UNKNOWN"
+    if change > S.DISPERSION_RISE_EPS:
+        return "RISING"
+    if change < -S.DISPERSION_RISE_EPS:
+        return "FALLING"
+    return "FLAT"
+
+
+def _state(band: str, direction: str) -> str:
+    """Level and direction as one label, because they routinely disagree.
+
+    On 2026-08-07 the spread was at the 98th percentile of its entire history
+    AND had fallen 9.2 points in twenty sessions. "ELEVATED" alone would have
+    read as a live warning; "ELEVATED_EASING" says what is actually happening.
+    """
+    if band == "ELEVATED":
+        return "ELEVATED_RISING" if direction == "RISING" else "ELEVATED_EASING"
+    if band == "UNKNOWN":
+        return "UNKNOWN"
+    return f"{band}_{direction}" if direction == "RISING" else band
+
+
 # ── the dispersion spread, both bases ─────────────────────────────────────
 
 def implied_spread(vix: pd.DataFrame | None,
@@ -81,16 +106,23 @@ def implied_spread(vix: pd.DataFrame | None,
         return None
     m["spread"] = m["vixeq"] - m["vix"]
     pctl = percentile_of_last(m["spread"])
+    pctl_full = percentile_of_last(m["spread"], len(m))
+    w = S.DISPERSION_RISE_WINDOW
+    change = (round(float(m["spread"].iloc[-1] - m["spread"].iloc[-(w + 1)]), 2)
+              if len(m) > w else None)
+    band, direction = _band(pctl), _direction(change)
     return {
         "basis": "implied",
         "as_of": m["date"].iloc[-1].date().isoformat(),
         "vix": round(float(m["vix"].iloc[-1]), 2),
         "single_stock_vol": round(float(m["vixeq"].iloc[-1]), 2),
         "spread": round(float(m["spread"].iloc[-1]), 2),
-        "spread_20d_change": (round(float(m["spread"].iloc[-1] - m["spread"].iloc[-21]), 2)
-                              if len(m) > 21 else None),
+        "spread_20d_change": change,
         "percentile": round(pctl, 4) if pctl is not None else None,
-        "band": _band(pctl),
+        "percentile_full_history": round(pctl_full, 4) if pctl_full is not None else None,
+        "band": band,
+        "direction": direction,
+        "state": _state(band, direction),
         "observations": int(len(m)),
         "caveat": None,
     }
@@ -138,6 +170,10 @@ def realised_spread(panel: pd.DataFrame | None, spy: pd.DataFrame | None,
     m["spread"] = m["single"] - m["spy"]
 
     pctl = percentile_of_last(m["spread"], history)
+    w = S.DISPERSION_RISE_WINDOW
+    change = (round(float(m["spread"].iloc[-1] - m["spread"].iloc[-(w + 1)]), 2)
+              if len(m) > w else None)
+    band, direction = _band(pctl), _direction(change)
     return {
         "basis": "realised",
         "as_of": m.index[-1].date().isoformat(),
@@ -145,16 +181,18 @@ def realised_spread(panel: pd.DataFrame | None, spy: pd.DataFrame | None,
         "single_stock_vol": round(float(m["single"].iloc[-1]), 2),
         "index_vol": round(float(m["spy"].iloc[-1]), 2),
         "spread": round(float(m["spread"].iloc[-1]), 2),
-        "spread_20d_change": (round(float(m["spread"].iloc[-1] - m["spread"].iloc[-21]), 2)
-                              if len(m) > 21 else None),
+        "spread_20d_change": change,
         "percentile": round(pctl, 4) if pctl is not None else None,
-        "band": _band(pctl),
+        "percentile_full_history": None,
+        "band": band,
+        "direction": direction,
+        "state": _state(band, direction),
         "constituents": int(m["n"].iloc[-1]),
         "observations": int(len(m)),
-        "caveat": ("REALISED, not implied — ^VIXEQ is not available on our FMP "
-                   "plan. This lags and carries no volatility risk premium. It "
-                   "is not the number §2.4 describes, only the same question "
-                   "asked of the data we hold."),
+        "caveat": ("REALISED, not implied — the last resort, used only when the "
+                   "Cboe VIXEQ series could not be fetched. It lags and carries "
+                   "no volatility risk premium, so it is not the number §2.4 "
+                   "describes, only the same question asked of bars we hold."),
     }
 
 
@@ -183,6 +221,49 @@ def term_structure(vix: pd.DataFrame | None, vix3m: pd.DataFrame | None,
     return out
 
 
+# ── corroboration: Cboe's own dispersion + implied correlation ───────────
+
+def corroboration(dspx: pd.DataFrame | None,
+                  cor1m: pd.DataFrame | None) -> dict:
+    """DSPX and implied correlation, as a cross-check on the hand-built spread.
+
+    Two independent readings of one question. DSPX is Cboe's purpose-built
+    dispersion index — same question, constructed by the people who define the
+    inputs. Implied correlation is the mechanical other side: index variance is
+    constituent variance times correlation, so a collapsing correlation IS a
+    widening spread, and it must move OPPOSITE. If it ever stops doing so, the
+    spread is wrong, not the market.
+    """
+    out = {"dspx": None, "dspx_percentile": None, "dspx_band": None,
+           "implied_correlation": None, "correlation_percentile": None,
+           "agrees": None, "note": None}
+
+    def _last_and_pctl(df):
+        if df is None or len(df) == 0:
+            return None, None
+        v = pd.to_numeric(pd.DataFrame(df)["close"], errors="coerce").dropna()
+        if v.empty:
+            return None, None
+        return float(v.iloc[-1]), percentile_of_last(v, S.DISPERSION_WINDOW)
+
+    d_last, d_pctl = _last_and_pctl(dspx)
+    c_last, c_pctl = _last_and_pctl(cor1m)
+    out["dspx"] = round(d_last, 2) if d_last is not None else None
+    out["dspx_percentile"] = round(d_pctl, 4) if d_pctl is not None else None
+    out["dspx_band"] = _band(d_pctl)
+    out["implied_correlation"] = round(c_last, 2) if c_last is not None else None
+    out["correlation_percentile"] = round(c_pctl, 4) if c_pctl is not None else None
+
+    if d_pctl is not None and c_pctl is not None:
+        # High dispersion should pair with LOW correlation.
+        out["agrees"] = bool((d_pctl >= 0.5) == (c_pctl <= 0.5))
+        out["note"] = ("Dispersion and correlation agree (they move opposite by "
+                       "construction)" if out["agrees"] else
+                       "Dispersion and implied correlation DISAGREE — treat the "
+                       "spread with suspicion")
+    return out
+
+
 # ── the §2.4 reading ──────────────────────────────────────────────────────
 
 def analyse(vix: pd.DataFrame | None = None,
@@ -190,7 +271,9 @@ def analyse(vix: pd.DataFrame | None = None,
             vix3m: pd.DataFrame | None = None,
             vix9d: pd.DataFrame | None = None,
             panel: pd.DataFrame | None = None,
-            spy: pd.DataFrame | None = None) -> dict:
+            spy: pd.DataFrame | None = None,
+            dspx: pd.DataFrame | None = None,
+            cor1m: pd.DataFrame | None = None) -> dict:
     """The volatility regime, and the three Crown rules that read off it."""
     disp = implied_spread(vix, vixeq)
     if disp is None:
@@ -212,13 +295,19 @@ def analyse(vix: pd.DataFrame | None = None,
         status = "DEGRADED_REALISED_PROXY"
 
     band = disp["band"] if disp else "UNKNOWN"
+    direction = (disp or {}).get("direction", "UNKNOWN")
 
     # §2.4's three practical rules, stated as flags rather than prose so the
     # kernel can act on them without re-parsing a sentence.
     rules = {
-        # "Rising VIXEQ-VIX spread -> hidden stress -> favour defined-risk
-        #  downside or reduce risk."
-        "hidden_stress": bool(band == "ELEVATED"),
+        # "RISING VIXEQ-VIX spread -> hidden stress -> favour defined-risk
+        #  downside or reduce risk." Level alone is not the rule: an elevated
+        #  spread that is unwinding is stress LEAVING the market, and buying
+        #  downside into it is buying the end of the move.
+        "hidden_stress": bool(band == "ELEVATED" and direction == "RISING"),
+        # The narrative claim ("an elevated spread has predicted 5-7% drawdowns")
+        # kept separate, so an elevated-but-easing tape is never invisible.
+        "dispersion_elevated": bool(band == "ELEVATED"),
         # "Very low VIX + positive gamma -> premium-selling / mean-reversion."
         # Gamma is not this module's business, so only the VIX half is decided
         # here and the kernel ANDs it with the gamma sign.
@@ -232,6 +321,7 @@ def analyse(vix: pd.DataFrame | None = None,
         "vix": round(vix_last, 2) if vix_last is not None else None,
         "vix_percentile": round(vix_pctl, 4) if vix_pctl is not None else None,
         "dispersion": disp,
+        "corroboration": corroboration(dspx, cor1m),
         "term_structure": term_structure(vix, vix3m, vix9d),
         "rules": rules,
         "reason": None if disp else "no VIX series and no panel to fall back on",

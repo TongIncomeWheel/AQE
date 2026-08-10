@@ -46,7 +46,7 @@ own risk budget and is capped at `SIZE_MULT_CAP = 1.15`.
 
 | Family | Fires when |
 |---|---|
-| `HIDDEN_STRESS_DOWNSIDE` | dispersion spread elevated |
+| `HIDDEN_STRESS_DOWNSIDE` | dispersion spread elevated **and rising** |
 | `DIVERGENCE_PAIR_SHORT` | bearish divergence + narrowing + crowded CTA |
 | `MEAN_REVERSION_PREMIUM` | positive gamma + very low VIX + broadening |
 | `BROADENING_CARRY` | broadening + mid-range + positive gamma + calm + clean trend |
@@ -70,7 +70,8 @@ and "NONE" is not.
 | `heartbeat.py` | 2.2 | RSP/SPY regime — faithful transcription of `heartbeat_regime`. |
 | `cta.py` | 2.3 | Replicated trend model + **flip levels**. |
 | `cot.py` | 2.3/2.5 | CFTC Commitment of Traders, direct from cftc.gov. |
-| `vol.py` | 2.4 | VIX + the dispersion spread, implied or realised. |
+| `vol.py` | 2.4 | VIX, the dispersion spread, DSPX + implied-correlation corroboration. |
+| `cboe.py` | 2.4 | The volatility complex direct from cboe.com — VIX, VIXEQ, DSPX, COR1M, VIX3M, VIX9D. |
 | `gamma.py` | 2.3 | Dealer GEX, gamma flip, call/put walls. |
 | `divergence.py` | 2.5 | The three accepted divergence types. |
 | `kernel.py` | 2.1/3/5 | The hierarchy, sequenced as pure functions. |
@@ -89,14 +90,16 @@ step is inspectable in a debugger.
 |---|---|---|
 | RSP / SPY | FMP daily bars (SPY from the local panel when present) | ✅ |
 | 18 futures markets | FMP continuous front-month (`ESUSD`, `ZNUSD`, `CLUSD`, `GCUSD`, `SIUSD`, `HGUSD`, `DXUSD`…) | ✅ |
-| `^VIX` | FMP index EOD | ✅ verified on Starter |
-| `^VIXEQ`, `^VIX3M`, `^VIX9D` | FMP index EOD | ❌ **not on Starter** — attempted, reported, never swallowed |
+| VIX | **cboe.com direct** (FMP `^VIX` as fallback) | ✅ |
+| VIXEQ / DSPX / COR1M / VIX3M / VIX9D | **cboe.com direct** | ✅ free, no key — FMP gates these above Starter |
 | CFTC COT | **cftc.gov direct** — weekly flat file + annual zips | ✅ 2,176 rows / 16 contracts / 136 weeks |
 | Option chains (gamma) | Alpaca snapshots, **both rights, with open interest** | ⚠️ needs a feed that returns OI |
 
-**COT is the case worth noting.** FMP gates it behind Premium — but the CFTC is
-the publisher and puts it online free. Paying a vendor for a public file would
-have been the wrong call, so the layer takes it from the source. History is
+**COT and the whole volatility complex are the same lesson.** FMP gates COT
+behind Premium and gates VIXEQ / VIX3M / VIX9D / COR1M above Starter. In both
+cases the *publisher* — the CFTC, and Cboe — puts the data online free. Paying a
+reseller for a public file would have been the wrong call, so the layer takes
+both from the source. History is
 backfilled from the annual archives (closed years fetched once) and extended
 weekly, cached to `data/crown_cot.parquet` and carried by Daily Persist —
 without that the percentile window resets to one row on every container recycle,
@@ -107,8 +110,9 @@ and every market reads "no history" instead of "crowded long".
 ## Three honesty rules built into the code
 
 **1. A realised proxy never passes as an implied reading.**
-`^VIXEQ` is unavailable on our plan, so when the implied VIXEQ − VIX spread
-cannot be built the layer falls back to
+The implied spread is now the primary reading (Cboe VIXEQ, 3,052 sessions back
+to 2014-06-19). The realised proxy survives only as a last resort for when Cboe
+itself is unreachable:
 
 ```
 mean(30d realised vol across the universe) − 30d realised vol of SPY
@@ -119,6 +123,15 @@ calm? — but it is **realised, not implied**: it lags and carries none of the
 forward-looking volatility risk premium that makes the implied version
 tradeable. `basis` says which produced the reading, the realised one always
 carries a `caveat`, and the page renders a warning banner.
+
+Two independent instruments cross-check the spread, because agreeing is
+evidence and disagreeing is a warning. **DSPX** is Cboe's purpose-built
+dispersion index — the same question, constructed by the people who define the
+inputs. **COR1M** is implied correlation, which is the mechanical other side:
+index variance is constituent variance times correlation, so a collapsing
+correlation *is* a widening spread and it must move opposite (measured −0.61
+against the spread over the common history). When they stop agreeing, the layer
+says so in `degraded` rather than quietly reporting the spread anyway.
 
 **2. A gamma map without open interest is UNAVAILABLE, not flat.**
 Exchange feeds publish OI; they never publish who is long and who is short. The
@@ -141,6 +154,15 @@ computes X, by bisection, at 1 / 5 / 20 sessions ahead.
 
 ## Choices that differ from a naive reading
 
+- **Dispersion is reported as level AND direction, and the tactical flag needs
+  both.** §2.4 gives two framings — the narrative cites an *elevated* spread ahead
+  of 5–7% drawdowns, the practical rule says a *rising* spread is hidden stress.
+  They are not the same state, and on 2026-08-07 they disagreed outright: the
+  spread sat at the **98th percentile of its entire history** while having
+  **fallen 9.2 points in twenty sessions**. So `band` carries the level, `direction`
+  carries the move, `state` combines them (`ELEVATED_EASING` vs `ELEVATED_RISING`),
+  and `hidden_stress` requires both — buying downside into an unwinding spread is
+  buying the end of the move. The elevated *level* stays visible either way.
 - **`DIV_LOOKBACK = 120`, not 60.** A quarter frequently holds only *one*
   confirmed swing high at index level, and a divergence needs two. Too short a
   window does not report "no divergence" — it reports "no second pivot", and the
@@ -187,9 +209,6 @@ plain words.
 
 ## Not yet built
 
-- **True implied VIXEQ** — buildable from Alpaca chains as an equal-weighted
-  average 30-day ATM IV across S&P constituents (~100–500 chain calls). Would
-  replace the realised proxy and is the single biggest upgrade to §2.4.
 - **Gamma in the daily run** — currently on-demand only, pending a confirmed
   open-interest feed (Alpaca snapshots, or IBKR `get_option_data` / Tiger
   `get_option_briefs`).

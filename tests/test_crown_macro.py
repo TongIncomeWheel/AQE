@@ -195,6 +195,49 @@ def test_analyse_lists_what_failed_rather_than_dropping_it():
 
 # ──────────────────────────────────────────── §2.4 implied vs realised vol
 
+CBOE_OHLC = ("DATE,OPEN,HIGH,LOW,CLOSE\n"
+             "01/02/2026,17.24,17.24,17.24,17.24\n"
+             "01/05/2026,16.10,16.50,15.90,16.00\n")
+CBOE_SINGLE = ("DATE,VIXEQ\n"
+               "01/02/2026,20.78\n"
+               "01/05/2026,21.40\n")
+
+
+def test_cboe_parses_both_file_shapes_from_the_same_endpoint():
+    """Older indices ship OHLC; VIXEQ and DSPX ship one column named after the
+    symbol. One parser has to serve both or half the complex silently vanishes."""
+    from src.macro.crown import cboe
+    a = cboe.parse_history(CBOE_OHLC, "VIX")
+    b = cboe.parse_history(CBOE_SINGLE, "VIXEQ")
+    assert list(a.columns) == ["date", "close"] and len(a) == 2
+    assert a["close"].iloc[-1] == pytest.approx(16.00)
+    assert list(b.columns) == ["date", "close"] and len(b) == 2
+    assert b["close"].iloc[-1] == pytest.approx(21.40)
+
+
+def test_cboe_finds_the_header_rather_than_assuming_row_zero():
+    from src.macro.crown import cboe
+    with_preamble = "Cboe disclaimer line\n\n" + CBOE_SINGLE
+    assert len(cboe.parse_history(with_preamble, "VIXEQ")) == 2
+
+
+def test_cboe_returns_empty_on_a_shape_it_cannot_read():
+    from src.macro.crown import cboe
+    assert cboe.parse_history("nothing,useful\n1,2\n", "VIX").empty
+    assert cboe.parse_history("", "VIX").empty
+
+
+def test_the_vixeq_source_is_the_publisher_not_a_reseller():
+    """FMP gates VIXEQ above our plan; Cboe computes it and publishes it free.
+    If this ever points back at a vendor, the implied spread silently becomes
+    unavailable again and the realised proxy takes over unnoticed."""
+    from src.macro.crown import cboe
+    assert "cboe.com" in cboe.CBOE_URL
+    assert cboe.SERIES["vixeq"] == "VIXEQ"
+    for key in ("vix", "vixeq", "dspx", "cor1m"):
+        assert key in cboe.CORE or key in cboe.SERIES
+
+
 def test_a_realised_proxy_never_passes_as_an_implied_reading():
     """The single most important labelling rule in this layer."""
     n = 600
@@ -220,6 +263,63 @@ def test_the_implied_spread_is_used_when_it_is_actually_available():
     assert r["dispersion"]["basis"] == "implied"
     assert r["dispersion"]["band"] == "ELEVATED"
     assert r["dispersion"]["caveat"] is None
+
+
+def _spread_series(spread_path):
+    """VIX flat at 15, VIXEQ shaped so the spread follows `spread_path`."""
+    n = len(spread_path)
+    d = pd.bdate_range("2023-01-02", periods=n)
+    vix = pd.DataFrame({"date": d, "close": np.full(n, 15.0)})
+    vixeq = pd.DataFrame({"date": d, "close": 15.0 + np.asarray(spread_path, float)})
+    return vix, vixeq
+
+
+def test_an_elevated_spread_that_is_EASING_is_not_hidden_stress():
+    """The case that actually showed up on 2026-08-07: the spread sat at the
+    98th percentile of its whole history while having fallen 9.2 points in
+    twenty sessions. §2.4's practical rule is directional — buying downside into
+    an unwinding spread buys the end of the move."""
+    path = list(np.full(560, 5.0)) + list(np.linspace(34.0, 24.0, 40))
+    r = VOL.analyse(*_spread_series(path))
+    d = r["dispersion"]
+    assert d["band"] == "ELEVATED"
+    assert d["direction"] == "FALLING"
+    assert d["state"] == "ELEVATED_EASING"
+    assert r["rules"]["hidden_stress"] is False          # the tactical flag
+    assert r["rules"]["dispersion_elevated"] is True     # the level, still visible
+
+
+def test_an_elevated_spread_that_is_RISING_is_hidden_stress():
+    path = list(np.full(560, 5.0)) + list(np.linspace(14.0, 30.0, 40))
+    r = VOL.analyse(*_spread_series(path))
+    assert r["dispersion"]["state"] == "ELEVATED_RISING"
+    assert r["rules"]["hidden_stress"] is True
+
+
+def test_a_small_wobble_is_not_a_direction():
+    path = list(np.full(560, 5.0)) + list(np.full(40, 20.0) + np.array(
+        [0.1 * (-1) ** i for i in range(40)]))
+    assert VOL.analyse(*_spread_series(path))["dispersion"]["direction"] == "FLAT"
+
+
+def test_dispersion_and_implied_correlation_must_move_opposite():
+    """Index variance is constituent variance times correlation, so they are two
+    sides of one number. If they ever agree in sign, the spread is wrong."""
+    n = 600
+    d = pd.bdate_range("2023-01-02", periods=n)
+    hi_disp = pd.DataFrame({"date": d, "close": np.r_[np.full(n - 1, 20.0), 40.0]})
+    lo_corr = pd.DataFrame({"date": d, "close": np.r_[np.full(n - 1, 30.0), 7.0]})
+    ok = VOL.corroboration(hi_disp, lo_corr)
+    assert ok["agrees"] is True
+
+    hi_corr = pd.DataFrame({"date": d, "close": np.r_[np.full(n - 1, 10.0), 55.0]})
+    bad = VOL.corroboration(hi_disp, hi_corr)
+    assert bad["agrees"] is False and "DISAGREE" in bad["note"]
+
+
+def test_corroboration_degrades_to_None_rather_than_inventing_agreement():
+    c = VOL.corroboration(None, None)
+    assert c["dspx"] is None and c["agrees"] is None
 
 
 def test_a_high_vix_is_flagged_as_already_priced_not_as_a_sell():
@@ -316,18 +416,29 @@ def _hb(regime="broadening", rng_pos="mid", conf=0.65):
             "bias": "b", "passes_gate": True}
 
 
-def _vol(band="NORMAL", low_vix=False):
-    return {"dispersion": {"band": band, "basis": "implied"},
-            "rules": {"very_low_vix": low_vix, "hidden_stress": band == "ELEVATED",
+def _vol(band="NORMAL", low_vix=False, direction="FLAT"):
+    return {"dispersion": {"band": band, "basis": "implied", "direction": direction},
+            "rules": {"very_low_vix": low_vix,
+                      "hidden_stress": band == "ELEVATED" and direction == "RISING",
+                      "dispersion_elevated": band == "ELEVATED",
                       "already_priced": False}}
 
 
 def test_hidden_stress_outranks_a_healthy_looking_regime():
     """§2.4's whole point: the spread shows up BEFORE the index admits anything."""
     d = K.run(_hb(), CTA.cta_flow_analysis({"a": 0.1}), {"regime": "POSITIVE"},
-              _vol("ELEVATED"), {"any_bearish": False})
+              _vol("ELEVATED", direction="RISING"), {"any_bearish": False})
     assert d["expression"]["family"] == "HIDDEN_STRESS_DOWNSIDE"
     assert d["expression"]["match"] == "exact"
+
+
+def test_the_tactical_family_does_not_fire_on_an_unwinding_spread():
+    """Elevated-but-easing must not route to buying downside."""
+    d = K.run(_hb(), CTA.cta_flow_analysis({"a": 0.1}), {"regime": "POSITIVE"},
+              _vol("ELEVATED", direction="FALLING"), {"any_bearish": False})
+    assert d["expression"]["family"] != "HIDDEN_STRESS_DOWNSIDE"
+    # ...but the elevated LEVEL is still visible to anyone reading the block.
+    assert d["expression"]["all_conditions"]["dispersion_elevated"] is True
 
 
 def test_each_family_reports_the_conditions_it_failed():

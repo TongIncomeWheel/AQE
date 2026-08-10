@@ -46,6 +46,10 @@ def _conditions(hb: dict, cta: dict, gam: dict, vol: dict, div: dict) -> dict:
         "gamma_negative":   gam.get("regime") == "NEGATIVE",
         "dispersion_normal": band in ("NORMAL", "CALM"),
         "dispersion_elevated": band == "ELEVATED",
+        # Elevated AND rising. An elevated spread that is unwinding is stress
+        # LEAVING the market, and buying downside into it buys the end of the
+        # move — so the tactical family needs the direction, not just the level.
+        "hidden_stress": bool(rules.get("hidden_stress")),
         "very_low_vix":     bool(rules.get("very_low_vix")),
         "cta_risk_on":      cta.get("overall_bias") == "risk_on",
         "cta_low_flip":     float(cta.get("flip_risk") or 0.0) < S.CTA_FLIP_RISK_LO,
@@ -58,7 +62,7 @@ def _conditions(hb: dict, cta: dict, gam: dict, vol: dict, div: dict) -> dict:
 # dispersion spread as the thing that shows up BEFORE the index admits anything,
 # so it must not be outranked by a regime read that still looks healthy.
 RULES: list[tuple[str, tuple[str, ...]]] = [
-    ("HIDDEN_STRESS_DOWNSIDE",  ("dispersion_elevated",)),
+    ("HIDDEN_STRESS_DOWNSIDE",  ("hidden_stress",)),
     ("DIVERGENCE_PAIR_SHORT",   ("bearish_divergence", "narrowing", "cta_high_flip")),
     ("MEAN_REVERSION_PREMIUM",  ("gamma_positive", "very_low_vix", "broadening")),
     ("BROADENING_CARRY",        ("broadening", "range_not_extreme", "gamma_positive",

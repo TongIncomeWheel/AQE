@@ -74,9 +74,12 @@ TRADING_DAYS = 252
 # §2.4 — VIX structure
 # ═══════════════════════════════════════════════════════════════════════
 
-VIX_SYMBOL = "^VIX"            # verified available on our FMP Starter plan
-# Verified NOT available on Starter (probed 2026-08-09). Each is attempted and
-# degrades loudly rather than silently vanishing.
+# FMP symbols. These are now only a FALLBACK: Cboe computes every one of these
+# indices and publishes the full history free (see cboe.py), so the primary
+# source is the publisher. `^VIX` works on our Starter plan; `^VIXEQ`, `^VIX3M`
+# and `^VIX9D` do NOT (probed 2026-08-09) — which is exactly why going to Cboe
+# matters rather than being a nicety.
+VIX_SYMBOL = "^VIX"
 VIXEQ_SYMBOL = "^VIXEQ"        # Cboe S&P 500 Constituent Volatility Index
 VIX3M_SYMBOL = "^VIX3M"
 VIX9D_SYMBOL = "^VIX9D"
@@ -86,8 +89,18 @@ VIX9D_SYMBOL = "^VIX9D"
 # because the spread's level drifts with the vol regime and a fixed number would
 # read as "elevated" for a year at a time.
 DISPERSION_WINDOW = 504        # 2 years of percentile history
-DISPERSION_ELEVATED_PCTL = 0.80    # §2.4 "rising spread -> hidden stress"
+DISPERSION_ELEVATED_PCTL = 0.80    # §2.4 "elevated spread has predicted 5-7% drawdowns"
 DISPERSION_CALM_PCTL = 0.20
+
+# §2.4's PRACTICAL rule is directional — "Rising VIXEQ-VIX spread -> hidden
+# stress" — while the narrative cites an ELEVATED spread ahead of drawdowns.
+# Those are not the same state, and on 2026-08-07 they disagreed: the spread sat
+# at the 98th percentile of its whole history while having fallen 9.2 points in
+# twenty sessions. So level and direction are reported separately, and the
+# tactical flag needs both — you want to be buying downside as stress BUILDS,
+# not as it unwinds.
+DISPERSION_RISE_WINDOW = 20        # sessions
+DISPERSION_RISE_EPS = 0.5          # vol points; below this the move is noise
 VIX_VERY_LOW = 15.0            # §2.4 / §3 Example 5 "very low VIX"
 VIX_ELEVATED = 25.0            # §2.4 "already priced" — not a fresh sell signal
 

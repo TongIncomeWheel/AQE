@@ -49,6 +49,10 @@ def _members() -> list[tuple]:
         # market reading "no history" instead of "crowded long", which is a
         # different answer wearing the same shape.
         "crown_cot.parquet",
+        # Crown's volatility complex from Cboe (VIX / VIXEQ / DSPX / COR1M /
+        # VIX3M / VIX9D). Cheap to re-pull, but caching it means the page and
+        # the percentile windows are live the moment a container comes back.
+        "crown_cboe.parquet",
     ]
     # QS's memory (recipe_hits trail + regime series) rides inside aqe.db above,
     # which is why that file is load-bearing rather than incidental: without it

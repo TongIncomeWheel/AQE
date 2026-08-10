@@ -282,28 +282,62 @@ st.caption("VIX is **not** a fear gauge here. It is the price of 30-day SPX vol.
 if not vol:
     st.info("Not computed — the process stopped at the Heartbeat gate.")
 
-v1, v2, v3, v4 = st.columns(4)
+v1, v2, v3, v4, v5 = st.columns(5)
 v1.metric("VIX", _num(vol.get("vix")))
-v2.metric("Dispersion spread", _num(disp.get("spread")),
+v2.metric("VIXEQ (single-stock)", _num(disp.get("single_stock_vol")))
+v3.metric("Spread", _num(disp.get("spread")),
           delta=(f"{disp.get('spread_20d_change'):+.2f} (20d)"
                  if disp.get("spread_20d_change") is not None else None))
-v3.metric("Spread percentile", _pct(disp.get("percentile")))
-v4.metric("Band", str(disp.get("band", "—")))
+v4.metric("Percentile (2y)", _pct(disp.get("percentile")),
+          help=f"Full history: {_pct(disp.get('percentile_full_history'))}")
+v5.metric("State", str(disp.get("state", "—")).replace("_", " "))
+
+if disp.get("state") == "ELEVATED_EASING":
+    st.info(
+        "**Elevated but easing.** The spread sits in the top band, yet it has "
+        f"*fallen* {abs(disp.get('spread_20d_change') or 0):.2f} points over 20 "
+        "sessions. §2.4's practical rule is directional — a **rising** spread is "
+        "hidden stress. An elevated spread that is unwinding is stress *leaving* "
+        "the market, and buying downside into it buys the end of the move. Level "
+        "and direction are shown separately because they routinely disagree."
+    )
 
 if disp.get("basis") == "realised":
     st.warning(
         "**This is the REALISED proxy, not the implied VIXEQ − VIX spread.** "
-        "`^VIXEQ` is not available on our FMP Starter plan, so this is the mean "
-        "30-day realised vol across the universe minus SPY's. It asks the same "
-        "question of the data we hold, but it lags and carries none of the "
-        "forward-looking volatility risk premium that makes the implied version "
-        "tradeable. Do not read it as the number §2.4 describes."
+        "The Cboe VIXEQ series could not be fetched, so this is the mean 30-day "
+        "realised vol across the universe minus SPY's. It asks the same question "
+        "of bars we hold, but it lags and carries none of the forward-looking "
+        "volatility risk premium that makes the implied version tradeable."
     )
+elif vol.get("source") == "cboe":
+    st.caption("Source: **cboe.com** direct — Cboe computes these indices and "
+               "publishes the full history free. FMP gates VIXEQ, VIX3M and "
+               "VIX9D above our plan.")
+
+corr = vol.get("corroboration") or {}
+if corr.get("dspx") is not None:
+    cc1, cc2, cc3 = st.columns(3)
+    cc1.metric("DSPX (Cboe dispersion)", _num(corr.get("dspx")),
+               help="Cboe's purpose-built S&P 500 Dispersion Index — the same "
+                    "question, built by the people who define the inputs.")
+    cc2.metric("DSPX percentile", _pct(corr.get("dspx_percentile")))
+    cc3.metric("Implied correlation", _num(corr.get("implied_correlation")),
+               delta=_pct(corr.get("correlation_percentile")) + " pctl",
+               delta_color="off",
+               help="Index variance is constituent variance × correlation, so a "
+                    "collapsing correlation IS a widening spread. It must move "
+                    "opposite — if it stops, the spread is wrong.")
+    if corr.get("agrees") is False:
+        st.warning(f"⚠️ {corr.get('note')}")
+    else:
+        st.caption(corr.get("note") or "")
 
 rules = vol.get("rules") or {}
 r1, r2, r3 = st.columns(3)
 r1.metric("Hidden stress", "YES" if rules.get("hidden_stress") else "no",
-          help="Elevated dispersion → favour defined-risk downside or reduce risk.")
+          help="Dispersion elevated AND rising → favour defined-risk downside "
+               "or reduce risk. Level alone is not the rule.")
 r2.metric("Very low VIX", "YES" if rules.get("very_low_vix") else "no",
           help=f"VIX < {S.VIX_VERY_LOW}. With positive gamma → premium-selling.")
 r3.metric("Already priced", "YES" if rules.get("already_priced") else "no",

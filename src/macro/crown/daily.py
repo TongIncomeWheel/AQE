@@ -105,12 +105,19 @@ def run_crown(*, client=None, refresh_cot: bool = True,
     vol_read = vol_mod.analyse(
         vix=vixes.get("vix"), vixeq=vixes.get("vixeq"),
         vix3m=vixes.get("vix3m"), vix9d=vixes.get("vix9d"),
+        dspx=vixes.get("dspx"), cor1m=vixes.get("cor1m"),
         panel=feeds.panel_for_dispersion(), spy=spy)
+    vol_read["source"] = vixes.get("source")
     if vixes.get("unavailable"):
-        degraded.append("VIX complex unavailable on our FMP plan: "
+        degraded.append("volatility series unavailable: "
                         + ", ".join(vixes["unavailable"]))
     if vol_read.get("status") == "DEGRADED_REALISED_PROXY":
-        degraded.append("dispersion is the REALISED proxy, not implied VIXEQ-VIX")
+        degraded.append("dispersion fell back to the REALISED proxy — the Cboe "
+                        "VIXEQ series could not be fetched")
+    corr = vol_read.get("corroboration") or {}
+    if corr.get("agrees") is False:
+        degraded.append("DSPX and implied correlation disagree with the "
+                        "VIXEQ-VIX spread — treat the dispersion read with caution")
     elif vol_read.get("status") != "OK":
         degraded.append(f"volatility regime unavailable: {vol_read.get('reason')}")
 

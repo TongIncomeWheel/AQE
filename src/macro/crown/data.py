@@ -140,19 +140,42 @@ def futures_bars(client: FMPClient | None = None) -> tuple[dict, list[str]]:
     return frames, bad
 
 
-def vix_bars(client: FMPClient | None = None) -> dict:
-    """The VIX complex. `^VIX` is expected to work; the rest are expected to fail
-    on our plan, and the dict says which did."""
-    c = _client(client)
+def vix_bars(client: FMPClient | None = None, *, refresh: bool = True) -> dict:
+    """The volatility complex — **Cboe first**, FMP only as a fallback for VIX.
+
+    Cboe computes these indices and publishes their full history free, so there
+    is nothing to gain from a reseller and one thing to lose: FMP gates VIXEQ,
+    VIX3M and VIX9D above our plan, which is what forced the realised proxy in
+    the first place. With Cboe the implied spread is simply available.
+    """
+    from . import cboe
+
     out = {"vix": None, "vixeq": None, "vix3m": None, "vix9d": None,
-           "unavailable": []}
-    for key, sym in (("vix", S.VIX_SYMBOL), ("vixeq", S.VIXEQ_SYMBOL),
-                     ("vix3m", S.VIX3M_SYMBOL), ("vix9d", S.VIX9D_SYMBOL)):
-        df = fetch_bars(sym, client=c)
-        if len(df):
+           "dspx": None, "cor1m": None, "unavailable": [], "source": None}
+
+    if refresh:
+        st = cboe.refresh()
+        if not st.get("ok"):
+            out["unavailable"].append(f"Cboe: {st.get('reason')}")
+
+    frames = cboe.series_frames()
+    for key in ("vix", "vixeq", "vix3m", "vix9d", "dspx", "cor1m"):
+        df = frames.get(key)
+        if df is not None and len(df):
             out[key] = df
         else:
-            out["unavailable"].append(sym)
+            out["unavailable"].append(f"Cboe {cboe.SERIES.get(key, key)}")
+    if any(out[k] is not None for k in ("vix", "vixeq")):
+        out["source"] = "cboe"
+
+    # FMP can still cover VIX if Cboe is unreachable. It cannot cover VIXEQ,
+    # which is the whole reason Cboe is primary.
+    if out["vix"] is None:
+        df = fetch_bars(S.VIX_SYMBOL, client=_client(client))
+        if len(df):
+            out["vix"], out["source"] = df, "fmp_fallback"
+        else:
+            out["unavailable"].append(S.VIX_SYMBOL)
     return out
 
 
