@@ -81,8 +81,16 @@ def run_crown(*, client=None, refresh_cot: bool = True,
     if proxied:
         pairs = ", ".join(f"{k}->{fut_sources[k]['symbol']}" for k in proxied)
         degraded.append(
-            f"CTA markets on an ETF proxy rather than the future ({pairs}) "
-            "— trend direction holds, absolute levels are not the contract's")
+            f"These markets are using a tracking fund instead of the futures "
+            f"contract ({pairs}). The trend direction is still right, but the "
+            "prices are the fund's, so do not quote a flip level from them.")
+    via_yahoo = sorted(k for k, v in fut_sources.items() if v["via"] == "yahoo_futures")
+    if via_yahoo:
+        degraded.append(
+            f"These markets came from Yahoo rather than our data provider "
+            f"({', '.join(via_yahoo)}). They are the real futures contracts, so "
+            "the flip levels are quotable, but Yahoo is a free feed with no "
+            "uptime guarantee.")
     stale_markets = sorted(k for k, v in fut_sources.items() if v["stale"])
     if stale_markets:
         detail = ", ".join(

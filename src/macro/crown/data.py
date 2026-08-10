@@ -182,24 +182,37 @@ def futures_bars(client: FMPClient | None = None) -> tuple[dict, list[str], dict
     which leg each market actually came from, so a proxy is never mistaken for
     the future itself.
     """
+    from . import yahoo as _yahoo
+
     c = _client(client)
     frames, bad, sources = {}, [], {}
+
+    def _usable(df) -> bool:
+        return len(df) >= S.CTA_MIN_HISTORY and not is_stale(df)
+
     for key, meta in MARKETS.items():
-        sym = meta["fmp"]
+        sym, fb = meta["fmp"], meta.get("fallback")
         df = fetch_bars(sym, client=c)
         used, stale = "futures", False
 
-        if len(df) < S.CTA_MIN_HISTORY or is_stale(df):
-            fb = meta.get("fallback")
-            alt = fetch_bars(fb, client=c) if fb else pd.DataFrame()
-            if len(alt) >= S.CTA_MIN_HISTORY and not is_stale(alt):
-                df, sym, used = alt, fb, "etf_fallback"
-            elif len(df) >= S.CTA_MIN_HISTORY:
-                used, stale = "futures", True      # keep it, but say it is stale
+        if not _usable(df):
+            # Yahoo carries the contracts our plan gates. It goes ahead of the
+            # ETF because the ETF costs us the flip levels, and behind FMP
+            # because FMP is the paid, supported source where it works at all.
+            ydf = _yahoo.fetch_market(key)
+            if _usable(ydf):
+                df, sym, used = ydf, _yahoo.SYMBOLS.get(key, key), "yahoo_futures"
             else:
-                bad.append(f"{key} ({meta['fmp']}"
-                           + (f" / {fb}" if fb else "") + ")")
-                continue
+                alt = fetch_bars(fb, client=c) if fb else pd.DataFrame()
+                if _usable(alt):
+                    df, sym, used = alt, fb, "etf_fallback"
+                elif len(df) >= S.CTA_MIN_HISTORY:
+                    used, stale = "futures", True   # keep it, but say it is stale
+                else:
+                    bad.append(f"{key} ({meta['fmp']}"
+                               + (f" / {_yahoo.SYMBOLS.get(key)}" if key in _yahoo.SYMBOLS else "")
+                               + (f" / {fb}" if fb else "") + ")")
+                    continue
 
         frames[key] = df
         sources[key] = {"symbol": sym, "via": used, "stale": stale,
