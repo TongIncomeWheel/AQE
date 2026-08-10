@@ -44,48 +44,21 @@ HOW_TO_READ = {
                 "fitted or backtested and no base rate was measured.",
     "readings": "The four stages behind the call: breadth, positioning, "
                 "volatility and divergence.",
-    "flip_levels": "The prices at which systematic trend funds change from "
-                   "buyer to seller in each market. Arithmetic from a public "
-                   "model, not anyone's actual book. Rows sourced from an ETF "
-                   "proxy carry the fund's price, not the contract's, and "
-                   "should not be quoted as a contract level.",
     "what_changed": "Only the moves since the last run that would change what "
                     "a PM does. An empty list means today continues yesterday.",
     "what_is_coming": "Scheduled moments when the reading above can change. "
                       "Each carries what it tests, not a forecast.",
-    "key_levels": "Every line in the sand, sorted nearest first. Most are NOT "
-                  "prices — a breadth ratio, a volatility gap and a "
-                  "correlation percentile all have levels that change the "
-                  "regime when they break.",
+    "key_levels": "EVERY line in the sand this layer knows about, in one list "
+                  "sorted nearest first. Most are NOT prices: a breadth ratio, "
+                  "a volatility gap and a correlation percentile all have "
+                  "levels that change the regime when they break. Rows with "
+                  "kind='trend followers' are where systematic funds turn from "
+                  "buyer to seller, and any row with quotable_as_contract "
+                  "false carries a tracking fund's price rather than the "
+                  "contract's.",
     "limits": "What was missing or degraded in this run. Read before trusting "
               "anything above.",
 }
-
-
-def _flip_rows(crown: dict) -> list[dict]:
-    """Every market's 1-day flip level, flattened and sorted by nearness."""
-    fresh = ((crown.get("freshness") or {}).get("cta_markets") or {})
-    rows = []
-    for key, m in (crown.get("cta_markets") or {}).items():
-        if m.get("signal") is None:
-            continue
-        src = (fresh.get(key) or {}).get("via", "unknown")
-        for f in (m.get("flips") or []):
-            if f.get("horizon") != 1 or f.get("level") is None:
-                continue
-            rows.append({
-                "market": key,
-                "name": m.get("label"),
-                "sector": m.get("sector"),
-                "trend_signal": m.get("signal"),
-                "price_now": f.get("spot"),
-                "flip_level": f.get("level"),
-                "distance_pct": f.get("distance_pct"),
-                "direction": f.get("direction"),
-                "price_source": src,
-                "quotable_as_contract": src in ("futures", "yahoo_futures"),
-            })
-    return sorted(rows, key=lambda r: abs(r.get("distance_pct") or 999))
 
 
 def _limits(crown: dict, scen: dict) -> list[str]:
@@ -277,7 +250,6 @@ def build_llm_export(crown: dict, scenarios: dict | None = None) -> dict:
                                    "what_it_tests")}
             for e in ((crown.get("calendar") or {}).get("events") or [])],
         "key_levels": ((crown.get("key_levels") or {}).get("levels") or []),
-        "flip_levels": _flip_rows(crown),
         "how_to_read": HOW_TO_READ,
         "limits": _limits(crown, scen),
     }

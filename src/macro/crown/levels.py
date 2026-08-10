@@ -82,7 +82,7 @@ def price_levels(crown: dict) -> list[dict]:
     return rows
 
 
-def trend_flip_levels(crown: dict, limit: int = 6) -> list[dict]:
+def trend_flip_levels(crown: dict, limit: int | None = None) -> list[dict]:
     """Where systematic money changes side, across every market we read."""
     fresh = ((crown.get("freshness") or {}).get("cta_markets") or {})
     rows = []
@@ -94,7 +94,7 @@ def trend_flip_levels(crown: dict, limit: int = 6) -> list[dict]:
             if f.get("horizon") != 1 or f.get("level") is None:
                 continue
             selling = f.get("direction") == "sell_below"
-            rows.append(_row(
+            row = _row(
                 "trend followers", f"{m.get('label', key)} flip", f.get("spot"),
                 f.get("level"), "price",
                 ("Trend-following funds turn from buyer to seller here, and "
@@ -102,9 +102,15 @@ def trend_flip_levels(crown: dict, limit: int = 6) -> list[dict]:
                  "together." if selling else
                  "Trend-following funds turn from seller to buyer here."),
                 distance_pct=f.get("distance_pct"), source=src,
-                quotable=src in ("futures", "yahoo_futures")))
+                quotable=src in ("futures", "yahoo_futures"))
+            # Kept from the old standalone flip table so one list can serve
+            # both jobs: the nearest-line summary and the market-by-market read.
+            row.update({"market": key, "sector": m.get("sector"),
+                        "trend_signal": m.get("signal"),
+                        "direction": f.get("direction")})
+            rows.append(row)
     rows.sort(key=lambda r: abs(r.get("distance_pct") or 999))
-    return rows[:limit]
+    return rows if limit is None else rows[:limit]
 
 
 def breadth_levels(crown: dict) -> list[dict]:

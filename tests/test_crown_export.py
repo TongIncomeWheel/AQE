@@ -79,8 +79,14 @@ SCEN = {"leading": "DISPERSION_REGIME", "contested": False,
                        "missing_conditions": []}]}
 
 
+LEVELS_CROWN = CROWN
+
+
 def doc():
-    return build_llm_export(CROWN, SCEN)
+    from src.macro.crown.levels import build
+    c = dict(CROWN)
+    c["key_levels"] = build(CROWN)
+    return build_llm_export(c, SCEN)
 
 
 # ───────────────────────────── the plain English wraps the data
@@ -89,7 +95,7 @@ def test_the_plain_english_comes_first_and_carries_the_whole_reading():
     d = doc()
     keys = list(d)
     assert keys.index("read_me_first") < keys.index("readings")
-    assert keys.index("read_me_first") < keys.index("flip_levels")
+    assert keys.index("read_me_first") < keys.index("key_levels")
     r = d["read_me_first"]
     assert r["headline"] and r["why"] and r["so_what"]
     assert r["what_would_change_it"]
@@ -99,7 +105,7 @@ def test_it_says_what_it_is_without_needing_the_kernel_document():
     d = doc()
     assert "positioning, breadth and regime" in d["what_this_is"]
     assert d["status_means"], "a bare status code means nothing to a reader"
-    for block in ("read_me_first", "the_call", "flip_levels", "limits"):
+    for block in ("read_me_first", "the_call", "key_levels", "limits"):
         assert block in d["how_to_read"]
 
 
@@ -118,34 +124,30 @@ def test_the_runtime_record_keeps_what_the_reading_copy_drops():
     assert "series" not in json.dumps(doc()["readings"]["breadth"])
 
 
-# ───────────────────────────── the flip levels are the actionable table
+# ───────────────────────────── ONE levels table, no duplicate
 
-def test_flip_levels_are_flat_and_sorted_by_nearness():
-    rows = doc()["flip_levels"]
-    dists = [abs(r["distance_pct"]) for r in rows]
-    assert dists == sorted(dists), "the nearest trigger must be first"
-    assert rows[0]["market"] == "ZT"
-
-
-def test_only_the_one_day_horizon_is_published():
-    """Three horizons per market is a nested table nobody reads. The 1-day
-    level is the one that answers 'where does this turn'."""
-    rows = doc()["flip_levels"]
-    assert len([r for r in rows if r["market"] == "ES"]) == 1
-    assert rows[0]["flip_level"] == 103.65
+def test_there_is_only_one_levels_table():
+    """key_levels and a separate flip_levels overlapped by six rows in
+    different shapes, so a model read the same levels twice."""
+    d = doc()
+    assert "flip_levels" not in d, "the duplicate table is back"
+    assert d["key_levels"], "the surviving table must carry the levels"
 
 
-def test_a_market_with_no_signal_is_left_out_rather_than_shown_as_zero():
-    assert all(r["market"] != "NOSIG" for r in doc()["flip_levels"])
+def test_the_one_table_still_carries_the_per_market_flip_fields():
+    """Merging must not lose what the dropped table knew."""
+    from src.macro.crown.levels import build
+    rows = [r for r in build(LEVELS_CROWN)["levels"]
+            if r["kind"] == "trend followers"]
+    assert rows and all({"market", "sector", "trend_signal", "direction"}
+                        <= set(r) for r in rows)
 
 
-def test_each_level_says_whether_it_can_be_quoted_as_a_contract():
-    """An ETF proxy gives the right direction and the wrong price. A reader who
-    quotes one as a contract level is quoting the fund."""
-    by = {r["market"]: r for r in doc()["flip_levels"]}
-    assert by["ES"]["quotable_as_contract"] is True       # yahoo_futures
-    assert by["ZT"]["quotable_as_contract"] is False      # etf_fallback
-    assert "should not be quoted" in doc()["how_to_read"]["flip_levels"]
+def test_every_market_reaches_the_table_not_just_the_nearest_few():
+    from src.macro.crown.levels import build
+    rows = [r for r in build(LEVELS_CROWN)["levels"]
+            if r["kind"] == "trend followers"]
+    assert len(rows) == 2, "both markets with a signal must appear"
 
 
 # ───────────────────────────── the limits travel with it
@@ -179,7 +181,7 @@ def test_how_current_is_answerable_per_source():
 def test_an_empty_crown_read_does_not_raise():
     d = build_llm_export({}, {})
     assert d["artifact"] == "aqe_crown_macro"
-    assert d["flip_levels"] == []
+    assert d["key_levels"] == []
     assert d["limits"]
 
 
