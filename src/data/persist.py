@@ -71,6 +71,10 @@ def _members() -> list[tuple]:
         "crown_macro.json",
         # The macro scenario read (Crown x Macro Weather merge point).
         "macro_scenarios.json",
+        # The Crown reading copy — the plain-English-first file the committee
+        # and the AIC actually open. Published to Drive too, but persisted so a
+        # recycle does not leave the page without it.
+        "aqe_crown_macro.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]

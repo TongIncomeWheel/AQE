@@ -78,6 +78,7 @@ and "NONE" is not.
 | `data.py` | — | All network. The engines stay pure. |
 | `explain.py` | — | The regime in **plain English**, generated from the finished read every run. |
 | `daily.py` | 4 | One call; `crown_status` degrades loudly. |
+| `export.py` | — | The **reading copy** for Drive: plain English first, series dropped, limits attached. |
 | `../scenarios.py` | — | **The first merge point**: Macro Weather × Crown → ranked scenario reads. Deliberately outside `crown/`. |
 
 No LangGraph dependency. §6 states the intelligence lives in the pure functions

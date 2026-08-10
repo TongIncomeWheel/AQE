@@ -359,9 +359,14 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # page runs it on demand. Wrapped like QS: this is an ADDITION to a working
     # real-money pipeline and must never take the export down with it.
     print(f"{_el()} [daily] Step 6f: Crown macro layer...")
+    _cr = None
     try:
         from src.macro.crown.daily import run_crown as _crown_run
-        _cr = _crown_run(with_gamma=False)
+        # Gamma is ON in the daily now that an open-interest feed exists
+        # (Alpaca trading API, Tiger as fallback). It costs two chain pulls and
+        # is wrapped like everything else here, so a failure degrades the gamma
+        # block rather than the run.
+        _cr = _crown_run(with_gamma=True)
         _hb, _dec = _cr.get("heartbeat", {}), _cr.get("decision", {})
         print(f"  status {_cr['crown_status']} · heartbeat {_hb.get('regime')} "
               f"(conf {_hb.get('confidence')}) · "
@@ -391,7 +396,24 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         for _d in _sc.get("degraded", []):
             print(f"  [WARN] scenarios: {_d}")
     except Exception as exc:  # noqa: BLE001
+        _sc = None
         print(f"  [WARN] Macro scenarios failed: {exc}")
+
+    # Step 6h: publish the Crown READING copy where the committee can read it.
+    # The runtime artifact stays local (it carries the full chart series); this
+    # is the trimmed, plain-English-first version that goes to Drive beside the
+    # daily export, because that is the only place an outside reader looks.
+    print(f"{_el()} [daily] Step 6h: Crown reading copy -> Drive...")
+    try:
+        from src.macro.crown.export import publish_reading_copy
+        _pub = publish_reading_copy(_cr, _sc)
+        if _pub.get("ok"):
+            print(f"  {_pub['filename']}: {_pub['bytes']:,} bytes"
+                  + (f" · Drive {_pub['drive']}" if _pub.get("drive") else ""))
+        else:
+            print(f"  [WARN] Crown reading copy: {_pub.get('reason')}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] Crown reading copy failed: {exc}")
 
     # Step 7: Output
     print("[daily] Step 7: Output...")
