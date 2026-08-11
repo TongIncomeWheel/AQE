@@ -1,0 +1,41 @@
+{
+ "voice": "druckenmiller",
+ "extract_sha": {
+  "new_market_wizards": "441d56269b9e1b3c14f23cf69e533179dad6627c6935929ea30e403a52e44899"
+ },
+ "direction": "BOOK -> CARD. A 10-line hand-written stub card existed (skills/voice-druckenmiller/SKILL.md); this is the first grounded extraction of the source behind it.",
+ "charter_status": "THE 412-LINE PM VOICE CHARTER WAS NOT RETRIEVABLE AT BUILD TIME. It was specified at /root/.claude/uploads/3e2261c1-116a-5b53-abe3-41edd6b8e9ff/823961fa-DRUCKENMILLER_VOICE_CHARTER.md; that path does not exist in this container (the uploads mount survives only to 2026-08-10) and the document is not in the project doc set, not in the repo and not in git history. Three consequences, all of which the PM must reconcile. (1) NUMBERING IS NOT THE CHARTER'S. C1-C27 here are derived from the NMW text itself, cross-checked against the 10-line stub canon in skills/voice-druckenmiller/SKILL.md and against canon/native/druckenmiller.md. They are NOT the charter's C1-C23 and must not be assumed to correspond; a later reconciliation pass against the charter should expect to renumber. (2) RECOGNISERS ARE NOT THE CHARTER'S R1-R8. The eight below are derived from the principles in this file and from the real field inventory in contracts/aqe_export.schema.json. The count matches the charter's by coincidence of instruction, not because the content was carried across. (3) THE CHARTER'S §9 HOUSE-CONFLICT SECTION WAS NOT AVAILABLE. The three conflicts recorded here as pm_override (C14, C15, C16) were identified from the NMW text against the three house rules named in the build instruction — two independent risk gates, the mandatory bracket object, and 1R sizing. If the charter's §9 names conflicts this extraction did not reach, they are missing from this lock and must be added when the charter resurfaces.",
+ "source_registry": "ONLY NMW EXISTS. The voice charter proposes a three-source registry — NMW, a 2015 Lost Tree Club talk (LTC15), and scattered 2010-2025 public interviews (PUB). LTC15 and PUB have NOT been supplied to this build and are NOT cited anywhere in this lock; no page, quote or extract id in this file refers to them, and none may be invented later. Any charter principle that rests on them stays unsourced by construction — that is exactly what C25, C26 and C27 are. The seat's native brief also registers two further candidate sources, `druckenmiller_talks` (SDT) and George Soros' The Alchemy of Finance (AOF, adjacent); neither was supplied either and neither is cited. AOF is deliberately NOT listed in `sources` above even though Soros' currency theory appears in this canon at C4 — it appears there because Druckenmiller states it inside the NMW interview at p.247, so the citation is NMW's and not Soros'. This lock is grounded on one source, one chapter, 28 pages, 45 extract records.",
+ "card_supported_by_book": [
+  "Liquidity moves markets (stub line 1) — CONFIRMED as the timing catalyst, NMW p.240 (C1, C3). The \"earnings second\" half is confirmed only as a per-sector driver for bank stocks, NMW p.234, not as a market-level ranking.",
+  "It is not whether you are right (stub line 3) — CONFIRMED verbatim, NMW p.253 (C12).",
+  "Cut losers fast, ride winners hard; preservation of capital then home runs (stub line 5) — CONFIRMED, NMW pp.252-254 (C11, C13, C20).",
+  "Bonds, currencies and credit speak before equities (stub line 6) — CONFIRMED and stronger than the stub states, NMW pp.240, 248-249, 251 (C4, C5, C8).",
+  "When wrong, change your mind fast (stub line 9) — CONFIRMED, NMW pp.244, 255 (C11)."
+ ],
+ "card_unsupported_by_book": [
+  "Stub line 2, \"never invest in the present — position for the world 18 months out\" — NOT IN NMW at all. The nearest statement is a two-to-three-year anticipation specific to chemical capacity expansion, p.234. The number 18 is unverified. -> C25 unsourced_retained.",
+  "Stub line 8, \"combine top-down macro with bottom-up confirmation — both must agree\" — both halves present, the conjunction as a gate is not. NMW contains counter-examples where macro alone carried the position (pp.247-248). -> C26 unsourced_retained.",
+  "Stub lines 7 and 10, the graduated LIGHT/NORMAL/AGGRESSIVE sizing tone — NMW's stated remedy for a hostile read is binary (100 percent cash, possibly net short, pp.237, 255), not graduated. -> C27 unsourced_retained.",
+  "Stub line 4, \"concentrate when conviction is high; diversification can be an excuse not to think\" — the conviction half is confirmed (p.253, C15) but the concentration anecdote the stub leans on is explicitly RETRACTED by the author at p.236. -> C24 records the retraction so the anecdote cannot be cited as licence."
+ ],
+ "canon_conflicts_with_house_law": [
+  "C14 P&L-licensed aggression vs 1R sizing / dynCap (Charter §4.5) — house wins, pm_override.",
+  "C15 conviction-scaled sizing (\"courage to be a pig\") vs 1R sizing, dynCap ceiling and beta gate (§4.5) — house wins, pm_override.",
+  "C16 exposure to zero and net short vs the portfolio stop-out gate (§1.3, §6A, Binding row I) and the long-only US-equity mandate — house wins, pm_override."
+ ],
+ "not_computable_in_aegis": [
+  "Market-level valuation (dividend yield, price/book, P/E) — absent from both schemas. Blocks nothing, because C1 forbids using it for timing anyway; it does block C2's magnitude estimate.",
+  "Central-bank policy rate, balance sheet, any explicit liquidity series — NOT_SERVED. This is the seat's first-order input (C1, C3) and it is available only through cross-asset proxies (intermarket.tlt/uup/hyg, macro_weather.*). Every liquidity read this seat issues is a labelled proxy.",
+  "Advance-decline line and new-high/new-low counts — NOT_SERVED. The January 1991 breadth read (C6) is not reproducible; intermarket.spy_iwm.spread plus srm[] rotation are proxies only.",
+  "Positioning, sentiment surveys, fund cash levels, put/call, short interest — NOT_SERVED entirely. C7 cannot be executed.",
+  "Sector fundamental drivers: capacity, supply, capex, earnings, expansion announcements — NOT_SERVED. C22 cannot be executed at all and C21 can only be answered with rotation, never with the \"why\" it actually demands."
+ ],
+ "engine_asks_ranked": [
+  "1. Sector-specific fundamental driver field (capacity/supply/capex/earnings) — unblocks C21 and C22, the seat's analytical floor.",
+  "2. Positioning / sentiment / fund-cash field — unblocks C7 entirely; currently zero coverage.",
+  "3. Literal market breadth (advance-decline, new-high/new-low counts) — upgrades C6 from proxy to real.",
+  "4. An explicit policy/liquidity series — upgrades C1 and C3 from cross-asset proxy to the first-order read the canon actually specifies."
+ ],
+ "honest_summary": "One source, one chapter, 28 pages, 45 verbatim-verified extract records. 21 of 27 principles are verified against text that was read; 3 are pm_override where the canon genuinely disagrees with house law and the house wins; 3 are unsourced_retained because they rest on LTC15/PUB, which do not exist in this build. The single most-quoted line attributed to this trader — \"position for the world 18 months out\" — is NOT in The New Market Wizards, exactly as the seat's native brief predicted, and it is marked unsourced rather than papered over. The seat's first-order input, liquidity, is served only by cross-asset proxy, and its two strongest historical reads (constituent-level breadth, professional positioning) are not served at all. The PM voice charter was unavailable at build time, so the C- and R- numbering here is derived from the source and will need reconciling against the charter's."
+}
