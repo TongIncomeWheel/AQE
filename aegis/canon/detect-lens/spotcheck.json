@@ -1,0 +1,56 @@
+{
+  "voice": "detect-lens",
+  "date": "2026-08-11",
+  "by": "build agent (PM countersign pending)",
+  "basis": "CODE-LEVEL verification: each cited file was re-opened at the cited line after the lock was drafted and the line's exact text confirmed against the claim. For this seat -- the only non-human voice, whose primary source is executing engine code, not a book -- code-level citation is STRONGER than page-level spot-checking: the source runs, so what it does is testable, not merely quotable. Files pinned by sha256 in canon.lock.yaml extract_sha.aqe_engine_source.",
+  "extract_sha": "280be600a71a67b9d0a2c6aeae6405317498ebf0993dbc77ded91e6650e36719",
+  "sampled": 5,
+  "confirmed": 5,
+  "checks": [
+    {
+      "principle": "C5",
+      "file": "src/engines/lens_consensus.py",
+      "line": 12,
+      "claim": "NO WEIGHTING -- four attempts to fit weights all failed; count unweighted, zero fitted parameters",
+      "line_text_expected": "* NO WEIGHTING. We never earned one; four attempts to fit weights all failed.",
+      "line_text_found": "* NO WEIGHTING. We never earned one; four attempts to fit weights all failed.",
+      "confirmed": true
+    },
+    {
+      "principle": "C14",
+      "file": "src/engines/signal_radar.py",
+      "line": 51,
+      "claim": "runner_setup verbatim M15 rule constants: base_days<=15, ret_5d>14.5, resist_score<=8.5",
+      "line_text_expected": "RUNNER_RULE = {\"base_days_max\": 15.0, \"ret_5d_min\": 14.5, \"resist_score_max\": 8.5}",
+      "line_text_found": "RUNNER_RULE = {\"base_days_max\": 15.0, \"ret_5d_min\": 14.5, \"resist_score_max\": 8.5}",
+      "confirmed": true
+    },
+    {
+      "principle": "C21",
+      "file": "src/engines/divergence.py",
+      "line": 110,
+      "claim": "freshness gate: anchor pivot within fresh_bars + pivot_right of the last bar",
+      "line_text_expected": "fresh = (n - 1 - p2) <= (fresh_bars + pivot_right)",
+      "line_text_found": "fresh = (n - 1 - p2) <= (fresh_bars + pivot_right)",
+      "confirmed": true
+    },
+    {
+      "principle": "C23",
+      "file": "src/engines/pin_bar.py",
+      "line": 60,
+      "claim": "bullish pin geometry: lower wick >= wick_ratio*range AND body <= body_ratio*range",
+      "line_text_expected": "if (lower_wick >= wick_ratio * rng and body <= body_ratio * rng",
+      "line_text_found": "if (lower_wick >= wick_ratio * rng and body <= body_ratio * rng",
+      "confirmed": true
+    },
+    {
+      "principle": "C27",
+      "file": "src/engines/smart_money_knn.py",
+      "line": 203,
+      "claim": "knn_significant is a plain two-sided threshold on knn_prob vs min_score -- the exact line the lost charter's C24 quoted verbatim",
+      "line_text_expected": "significant = bool(knn_prob >= min_score or knn_prob <= (1.0 - min_score))",
+      "line_text_found": "significant = bool(knn_prob >= min_score or knn_prob <= (1.0 - min_score))",
+      "confirmed": true
+    }
+  ]
+}
