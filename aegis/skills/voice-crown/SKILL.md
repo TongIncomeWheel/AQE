@@ -23,31 +23,35 @@ chat-upload-only, never entered the repo — see canon §0/sources).
 
 ---
 
-## ⚠ BUILD STATUS — read this before anything else
+## ⚠ BUILD STATUS — corrected 2026-08-11
 
-**There is no engine behind this card.** The charter this canon is built from (§0, §11)
-describes `src/macro/crown/{heartbeat,cta,cot,gamma,vol,cboe,divergence,kernel,daily,
-explain,levels,calendar,changes}.py`, four docs under `docs/AQE_CROWN_*.md`, a schema-backed
-artifact at `output/crown_macro.json`, and a test suite at `tests/test_crown_*.py`. A
-full-repo search on 2026-08-11 found **none of it** — no `src/macro/`, no Crown docs, no
-Crown tests, no Crown contract schema. This card is canon + skill only. It cannot be spawned
-into a live premarket run and produce a real reading.
+**The engine exists and is live — it runs in AQE, not in this repo.** The first version of
+this card said "NOT BUILT." That was wrong. Ash corrected it directly: *"you dont need the
+crown engines, that is already incorporated into AQE. what you need is the Nickcrown output
+from AQE, and the methodology. everything else is calculated for you."* A git-repo search for
+`src/macro/crown/` had come up empty and the conclusion drawn from that was wrong — the search
+only covered this git checkout, and AQE computes and publishes to Google Drive, not to this
+repo. Checked directly against Drive: `aqe_crown_macro.json` (file id
+`1LTwT8Tg9T4bBPnQLwNozbxrXKT625Yb7`, 24,545 bytes), sitting in the **same folder** as the live
+`aqe_daily_export.json` (folder id `1CJMoI19Zf_ZFeU5_5uhW9l92IB8fVger`), `generated_at
+2026-08-11T08:49:23+08:00` — today, real, running.
 
-**If spawned today anyway: refuse, do not fabricate.** Every field this card references
-below (`heartbeat.*`, `cta.*`, `cot.*`, `gamma.*`, `volatility.*`, `divergence.*`) is a
-PROPOSED field name drawn from the charter's own concept map, not a live contract. An agent
-running this card with no `output/crown_macro.json` to read has no data — inventing a
-plausible-sounding regime read from memory would violate this voice's own C29 ("stale is not
-present"), C30 ("a missing input is refused, not zeroed") and C33 ("a skipped check must
-never look like a passed check"). The correct output in that state is:
+**What is genuinely still missing (verified by absence, not assumed):** no
+`contracts/crown_macro.schema.json` in this repo; the premarket skill's "AQE pull" step
+(step 3) fetches and validates only `aqe_daily_export.json` against
+`contracts/aqe_export.schema.json` — `aqe_crown_macro.json` is not in that path; and
+committee-pm step 8 is not wired to inject it (step 8 currently references a separate,
+simpler "Crown Macro Letter" — a PM-supplied weekly qualitative bellwether letter per
+decision D-59, already built and already live, but a different and much simpler thing than
+this numeric artifact). So: **compute done by AQE, ingestion into Aegis not yet built.**
 
-> `crown_status: NOT_BUILT — src/macro/crown/ does not exist. No reading possible. This
-> is a refusal (C30), not a market call.`
-
-Building the engine is a separate, not-yet-requested task (five Python modules, a schema,
-orchestrator wiring at daily steps 6f/6g/6h, and Drive artifact wiring). This card documents
-the METHOD Ash signed off on so that build, whenever it happens, has a locked spec to build
-against — it does not claim the build exists.
+**Until ingestion is wired, fetch it manually.** An orchestrator or voice using this card
+today should pull `aqe_crown_macro.json` from the AQE Drive folder directly (same folder as
+the daily export) rather than assume it arrives automatically through premarket step 3. The
+artifact's own `status` field (`OK` / `DEGRADED`) and `limits` array are the authoritative
+freshness signal — read them before trusting anything else in the file; this is the
+artifact's own live implementation of C29/C30/C33 (a degraded run declares itself degraded
+and names what's missing, it does not silently zero out).
 
 ---
 
@@ -66,34 +70,53 @@ A sequence, not a table of contents (C2). Step 2 is the signature move: an unrea
 is not a market you take a smaller position in — it is one where the process stops and
 nothing downstream is computed (C3, R3).
 
-### The five instruments (canon §3 — kernel-cited, not repo-verified)
+### The five instruments — canon §3 concepts mapped to REAL `aqe_crown_macro.json` fields
+(corrected 2026-08-11, verified by direct inspection — see canon `recognisers` for the full
+dotted-path list)
 
-1. **Heartbeat** — RSP/SPY ratio. `broadening` / `narrowing` / `neutral`, plus
-   `range_position` (top/mid/bottom of its own 252-day range) and `confidence`. Regime and
-   range position are ONE reading (C10) — a tired wave (regime at the extreme of its range)
-   is more actionable than a live one (C11, R4).
-2. **CTA** — Moskowitz-Ooi-Pedersen time-series momentum (2/6/12mo) + Faber 10-month
-   average, vol-normalised, across the trend-fund complex. `flip_risk` (share of markets at
-   a trend extreme) is fragility, not conviction — it cuts size even when `overall_bias`
-   looks clean (C15, R8). The tradeable output is the flip level, not the positioning
-   estimate (C14).
-3. **COT** — CFTC large-speculator positioning, Friday 15:30 ET, reporting the prior
-   Tuesday. Percentile only, never raw contract count (C17). Crowded = ≥85th or ≤15th of its
-   own 3-year range (R7). Context, never timing (C16).
-4. **Gamma** — dealer hedging. Positive gamma damps moves (sell rallies/buy dips); negative
-   gamma amplifies them. The flip is the zero-crossing of cumulative gamma, a regime
-   boundary, not a support level (C18). It is a model, not a measurement — the
-   customer-long/dealer-short convention is an assumption and ships as one (C19, R9).
-5. **Volatility structure** — VIXEQ minus VIX is the actual tool, not headline VIX. Level
-   and direction are separate questions and both must be stated (C21): `ELEVATED_RISING` =
-   hidden stress building (R5); `ELEVATED_EASING` = stress leaving — buying downside into an
-   unwinding spread buys the end of the move (R6). A high VIX alone is not a sell — it means
-   protection is already expensive (C22, R11).
-6. **Divergence** — exactly three types only: classic oscillator, cross-asset
-   non-confirmation, positioning-vs-price (C24). A single-horizon read is a readout, not a
-   trigger (C26) — both 5d and 20d windows must agree (0.6% false-positive rate vs 14.1% for
-   20d alone). Divergence earns its weight by agreement, not existence: one flag is a straw,
-   four that line up is a pile (C25, R10).
+1. **Breadth (canon: "Heartbeat")** — `readings.breadth.regime` (observed: `neutral`; the
+   artifact also uses `broadening`/`narrowing`), `.position_in_12_month_range` (top/mid/bottom
+   — NOT a 252-day window as the charter prose says; the live artifact uses 12 months),
+   `.confidence`, `.passed_the_gate` (a direct boolean gate — see R3), `.change_5d_pct`,
+   `.change_20d_pct`, `.change_60d_pct`. Regime and range position are ONE reading (C10) — a
+   tired wave (regime at the extreme of its range) is more actionable than a live one (C11, R4).
+2. **Trend funds (canon: "CTA")** — `readings.positioning.trend_funds.bias`, `.markets_read`
+   (observed: 18), `.share_at_an_extreme` (the real name for what the charter calls
+   `flip_risk`), `.size_dial` (the real name for `size_adjustment`), `.by_sector`. Flip levels
+   themselves live in the top-level `key_levels[]` array (`kind: "trend followers"`, with
+   `market`, `sector`, `trend_signal`, `direction: buy_above`/`sell_below`). High
+   `share_at_an_extreme` is fragility, not conviction — it cuts size even when `.bias` looks
+   clean (C15, R8). The tradeable output is the flip level in `key_levels`, not the
+   positioning estimate (C14).
+3. **COT (canon: same name)** — `readings.positioning.large_speculators.crowded_long` /
+   `.crowded_short` (ticker lists, e.g. observed `DX, GC, HG, YM, ZF, ZT, ZW` long and
+   `NG, NQ, SI, ZB, ZN` short on 2026-08-11), `.as_of`, `.note`. The live artifact exposes
+   crowding as list membership, not a per-market percentile field — read the lists directly
+   rather than inventing a percentile that isn't served (R7). Context, never timing (C16); the
+   artifact states its own staleness in `.note`.
+4. **Option dealers (canon: "Gamma")** — `readings.positioning.option_dealers.regime`
+   (`POSITIVE`/`NEGATIVE`), `.means`, `.detail.<TICKER>.{spot, total_gex, gamma_flip,
+   flip_distance_pct, call_wall{strike,gex,share_of_side,vs_even_share}, put_wall{...},
+   assumption}` — observed live for SPY and QQQ. The flip is a regime boundary, not a support
+   level (C18); `.assumption` states the customer-long/dealer-short convention explicitly on
+   every reading (C19, R9), matching this card's own honesty requirement almost verbatim.
+5. **Volatility structure** — `readings.volatility.vix`, `.single_stock_vol`, `.gap` (the real
+   name for VIXEQ-minus-VIX), `.gap_vs_history`, `.gap_change_20d`, `.state`
+   (`ELEVATED_EASING` observed live 2026-08-11; `ELEVATED_RISING` is the charter's paired
+   state), `.measured_from`, `.implied_correlation`, `.term_structure` (`CONTANGO` observed).
+   Level and direction are separate fields and both must be read (C21) — R5/R6 depend on
+   reading `.gap_vs_history` (level) and `.gap_change_20d` (direction) together, never one alone.
+6. **Divergence** — `readings.divergence.warnings_lit` (an integer count, observed: 12),
+   `.which` (list of named flags, e.g. `breadth_ma`), `.note`. The live artifact's own note
+   states the agreement rule directly: no single warning is a reason to act; they matter when
+   several point the same way (C25, R10).
+
+**Cross-cutting: `key_levels[]`** (32 entries observed) carries every "line in the sand" this
+layer knows about in one list, sorted nearest-first — most are NOT prices (a breadth ratio, a
+volatility gap, a correlation percentile all have levels). Each entry: `kind`, `what`, `now`,
+`level`, `unit`, `distance_pct`, `if_it_breaks`, `source`, `quotable_as_contract`, plus
+`market`/`sector`/`trend_signal`/`direction` on trend-follower rows. This is the artifact's own
+answer to canon C36 (carry the falsifiers) and the charter's Block 4 ("what would change it").
 
 ---
 
@@ -114,12 +137,20 @@ refusals, F1-F4).
 Hidden stress is checked FIRST on purpose — the vol gap shows up before the index admits
 anything (C7, C20). A partial match ("closest family, 3 of 4 conditions") beats a bare
 "NONE" (C7). Tactical families CAP the multiplier rather than compounding it against another
-voice's size opinion (C6).
+voice's size opinion (C6). **Confirmed live**, `the_call.expression_family` = `BROADENING_CARRY`
+observed 2026-08-11, `match_quality: partial`, `size_multiplier: 1.0`, with
+`conditions_met`/`conditions_not_met` arrays naming exactly which of the family's conditions
+fired — the real artifact carries this exact structure, not a proposed shape.
 
-**Output shape, always four blocks in this order (canon §8):** Headline (one sentence, what
-kind of market) → Why (4-6 reasons, every one carrying its number, C39) → So what (family +
-multiplier, arithmetic shown) → What would change it (real levels, e.g. "if the S&P trades
-below 7,014, trend funds start selling" — never a sentiment, C36).
+**Output shape, always four blocks in this order (canon §8) — and the live artifact already
+implements it as `read_me_first`:** Headline (`read_me_first.headline`, one sentence) → Why
+(`read_me_first.why[]`, 4-6 reasons each carrying its number, C39) → So what
+(`read_me_first.so_what`, family + multiplier stated in words) → What would change it
+(`read_me_first.what_would_change_it[]`, real levels, e.g. observed live "If gold trades
+above 4,452.07 (0.7% away), trend funds start buying" — never a sentiment, C36). A `caveats[]`
+array (empty when clean) rides alongside. `the_call` and `key_levels[]` carry the same
+information in machine-readable form for anything downstream that needs the raw numbers
+rather than the prose.
 
 ---
 
@@ -135,24 +166,29 @@ below 7,014, trend funds start selling" — never a sentiment, C36).
 
 ---
 
-## Standing checklist (once the engine exists — see Build Status above)
+## Standing checklist — fetch `aqe_crown_macro.json` from the AQE Drive folder first (see
+Build Status above; there is no automatic feed into committee-pm yet)
 
-1. Read `heartbeat.*`. If `confidence < 0.40`: stop, report `EARLY_EXIT`, leave every
-   downstream field empty because it never ran (R3). Do not proceed to step 2.
-2. Read `cta.*` and `cot.*` together. State `flip_risk` and the COT percentile before any
-   directional bias — crowding cuts size even on a clean-looking bias (R7, R8).
-3. Read `gamma.*`. State the flip level and the dealer-convention assumption explicitly on
-   every reading that depends on it (R9).
-4. Read `volatility.*`. State level AND direction separately — never collapse
-   `ELEVATED_RISING` and `ELEVATED_EASING` into one "elevated" read (R5, R6, R11).
-5. Read `divergence.*`. Require agreement across horizons/types before naming a warning
-   (R10). One flag alone is never acted on.
-6. Only now: name the closest expression family (or the closest partial match with what it
-   failed), compute the size multiplier with arithmetic shown, cap it at 1.15x, and state
-   what would change the read.
-7. If any input is missing or stale past its freshness window: refuse that section
-   explicitly (`NOT_SERVED` / `EARLY_EXIT`), never substitute a guess or a zero (C30, C32,
-   C33).
+1. Check `status` and `limits[]` FIRST, before reading anything else. `status: DEGRADED` means
+   read `limits[]` and know what's compromised before trusting any field below it — this is
+   the artifact's own gate, sharper than anything this card needs to compute itself.
+2. Read `readings.breadth.passed_the_gate`. If `false`: stop, treat the run as EARLY_EXIT,
+   do not read downstream sections as if they ran cleanly (R3).
+3. Read `readings.positioning.trend_funds.*` and `readings.positioning.large_speculators.*`
+   together. State `share_at_an_extreme` and the crowded-long/crowded-short lists before any
+   directional bias — crowding cuts size even on a clean-looking `.bias` (R7, R8).
+4. Read `readings.positioning.option_dealers.*`. State `gamma_flip` and `.assumption`
+   explicitly on every reading that depends on it (R9).
+5. Read `readings.volatility.*`. State `.gap_vs_history` (level) AND `.gap_change_20d`
+   (direction) separately — never collapse `ELEVATED_RISING` and `ELEVATED_EASING` into one
+   "elevated" read (R5, R6, R11).
+6. Read `readings.divergence.warnings_lit` and `.which`. Require agreement with the
+   breadth/volatility read before naming a warning (R10). One flag alone is never acted on.
+7. Read `the_call` directly — `expression_family`, `match_quality`, `size_multiplier`,
+   `conditions_met`/`conditions_not_met` are already computed; this card's job is to relay
+   them faithfully and explain them in the committee's language, not to recompute them.
+8. Relay `read_me_first` verbatim as the four-block output (Headline/Why/So
+   what/What-would-change-it) — it is already written in the artifact's own plain English.
 
 **Not mine at all:** single-name setups, entries, stops, position sizing in dollar or share
 terms, probability estimates of any kind. Those are the operator's, per the four refusals.
