@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pma_candidate_set",
+  "description": "S3 output. What is on the table today — the pool the voices nominate from, framed, not analysed. S3 never drops a name the export served and never adds one it didn't.",
+  "x_version": "0.1",
+  "type": "object",
+  "required": ["artifact", "run_date", "generated_at", "staleness", "frame", "universe", "near_misses", "notes"],
+  "properties": {
+    "artifact": {"const": "pma_candidate_set"},
+    "run_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "generated_at": {"type": "string"},
+    "staleness": {
+      "type": "object",
+      "required": ["export_date", "staleness_days", "pm_ack"],
+      "properties": {
+        "export_date": {"type": "string"},
+        "staleness_days": {"type": "integer"},
+        "pm_ack": {"type": ["string", "null"]}
+      }
+    },
+    "frame": {
+      "type": "object",
+      "required": ["universe_count", "by_source", "by_sector", "by_gics_gate", "lens_positive_distribution", "valid_bracket_count", "held_count", "held_tickers"],
+      "properties": {
+        "universe_count": {"type": "integer"},
+        "by_source": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "by_sector": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "by_gics_gate": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "lens_positive_distribution": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "valid_bracket_count": {"type": "integer"},
+        "held_count": {"type": "integer"},
+        "held_tickers": {"type": "array", "items": {"type": "string"}},
+        "held_book_not_in_universe": {
+          "type": "array", "items": {"type": "string"},
+          "description": "Held names the scan did NOT serve today — declared so no voice 'discovers' them and the PM sees the book/scan overlap honestly."
+        }
+      }
+    },
+    "universe": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "held"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "held": {"type": "boolean"}
+        },
+        "description": "Rows are the export's daily_list rows VERBATIM (all served fields carried, nothing re-ordered, nothing re-scored)."
+      }
+    },
+    "near_misses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "source"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "source": {"type": "string"},
+          "conviction": {"type": ["integer", "null"]},
+          "note": {"type": ["string", "null"]}
+        }
+      },
+      "description": "Surfaced, never nominated (D-37). The export has no near_miss field — v0.1 adapts: signal_radar runner/premove setups whose tickers are NOT in daily_list. Recorded as a card-vs-reality note."
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

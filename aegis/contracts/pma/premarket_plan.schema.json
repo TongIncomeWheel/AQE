@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pma_premarket_plan",
+  "description": "S7 output. One page the PM can act on from a phone. Fixed order: headline, weather pair, actionable ideas, watch table, key levels, what-would-change, declared gaps. Always a DRAFT.",
+  "x_version": "0.1",
+  "type": "object",
+  "required": ["artifact", "run_date", "generated_at", "headline", "weather_pair", "actionable_ideas", "watch_table", "key_levels", "what_would_change", "declared_gaps", "status_line"],
+  "properties": {
+    "artifact": {"const": "pma_premarket_plan"},
+    "run_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "generated_at": {"type": "string"},
+    "headline": {"type": "string", "description": "Day type + data-quality flags in one sentence. Staleness and DEGRADED upstream status MUST appear here."},
+    "weather_pair": {
+      "type": "object",
+      "required": ["crown_now", "druckenmiller_next"],
+      "properties": {
+        "crown_now": {"type": ["object", "null"]},
+        "druckenmiller_next": {"type": ["object", "null"]},
+        "label": {"type": "string", "description": "Explicitly context, not gate."}
+      }
+    },
+    "actionable_ideas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "conviction", "why_data", "bear_case"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "conviction": {"type": "integer"},
+          "entry_frame": {"type": ["object", "null"], "description": "Bracket verbatim from AQE where served."},
+          "why_data": {"type": "array", "items": {"type": "object"}},
+          "bear_case": {"type": "string"},
+          "rogers_flag": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "watch_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "count": {"type": ["integer", "null"]},
+          "seats": {"type": "array", "items": {"type": "string"}},
+          "promote_condition": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "key_levels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["what", "level", "if_it_breaks"],
+        "properties": {
+          "what": {"type": "string"},
+          "now": {"type": ["number", "null"]},
+          "level": {"type": "number"},
+          "unit": {"type": ["string", "null"]},
+          "distance_pct": {"type": ["number", "null"]},
+          "if_it_breaks": {"type": "string"},
+          "source": {"type": "string"}
+        }
+      }
+    },
+    "what_would_change": {"type": "array", "items": {"type": "string"}},
+    "declared_gaps": {"type": "array", "items": {"type": "string"}},
+    "status_line": {"const": "DRAFT — PM approval required. Nothing is staged, nothing is armed."}
+  }
+}

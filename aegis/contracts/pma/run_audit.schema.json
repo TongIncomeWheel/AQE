@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pma_run_audit",
+  "description": "S8 output — the learning loop. What was asked vs served, seat health, bridge integrity, plan traceability, gaps carried. Accumulated audits are the empirical feed for the Voice-Data-Requirements register.",
+  "x_version": "0.1",
+  "type": "object",
+  "required": ["artifact", "run_date", "generated_at", "stages_present", "data_demand", "seat_health", "bridge_integrity", "plan_traceability", "gaps_carried"],
+  "properties": {
+    "artifact": {"const": "pma_run_audit"},
+    "run_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "generated_at": {"type": "string"},
+    "stages_present": {
+      "type": "object",
+      "description": "Which stage artifacts existed on disk when the audit ran — an honest partial-run map.",
+      "additionalProperties": {"type": "boolean"}
+    },
+    "data_demand": {
+      "type": "object",
+      "description": "Per voice: fields cited vs menu vs served. Partial when voices have not run — declared, not faked.",
+      "properties": {
+        "status": {"type": "string"},
+        "per_voice": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "fields_cited": {"type": "array", "items": {"type": "string"}},
+              "not_served_declared": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      },
+      "required": ["status", "per_voice"]
+    },
+    "seat_health": {
+      "type": "object",
+      "required": ["status", "shortfalls"],
+      "properties": {
+        "status": {"type": "string"},
+        "shortfalls": {"type": "array", "items": {"type": "string"}},
+        "stage_timings_s": {"type": "object"}
+      }
+    },
+    "bridge_integrity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artifact", "schema", "valid"],
+        "properties": {
+          "artifact": {"type": "string"},
+          "schema": {"type": "string"},
+          "valid": {"type": "boolean"},
+          "errors": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "plan_traceability": {
+      "type": "object",
+      "required": ["status", "checked", "unresolved"],
+      "properties": {
+        "status": {"type": "string"},
+        "checked": {"type": "integer"},
+        "unresolved": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "gaps_carried": {"type": "array", "items": {"type": "string"}}
+  }
+}

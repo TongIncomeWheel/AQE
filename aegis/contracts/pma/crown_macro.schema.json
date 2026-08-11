@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "aqe_crown_macro",
+  "description": "Structural contract for the Nick Crown macro file. AQE owns this artifact: the schema catches breakage (missing blocks), not evolution — extra keys are always allowed.",
+  "x_version": "0.1",
+  "type": "object",
+  "required": ["artifact", "version", "kernel_version", "what_this_is", "generated_at", "status", "status_means", "read_me_first", "the_call", "how_current", "scenario", "readings", "what_changed", "what_is_coming", "key_levels", "how_to_read", "limits"],
+  "properties": {
+    "artifact": {"const": "aqe_crown_macro"},
+    "version": {"type": "string"},
+    "kernel_version": {"type": "string"},
+    "what_this_is": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "status": {"type": "string"},
+    "status_means": {"type": "string"},
+    "read_me_first": {
+      "type": "object",
+      "required": ["headline", "why", "so_what", "what_would_change_it"],
+      "properties": {
+        "headline": {"type": "string"},
+        "why": {"type": "array", "items": {"type": "string"}},
+        "so_what": {"type": "string"},
+        "what_would_change_it": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "the_call": {
+      "type": "object",
+      "required": ["expression_family", "match_quality", "size_multiplier"],
+      "properties": {
+        "expression_family": {"type": "string"},
+        "match_quality": {"type": "string"},
+        "size_multiplier": {"type": "number"},
+        "conditions_met": {"type": "array", "items": {"type": "string"}},
+        "conditions_not_met": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "how_current": {
+      "type": "object",
+      "required": ["today", "oldest_source_days_behind"],
+      "properties": {
+        "today": {"type": "string"},
+        "oldest_source_days_behind": {"type": "number"}
+      }
+    },
+    "scenario": {"type": "object"},
+    "readings": {
+      "type": "object",
+      "required": ["breadth", "positioning", "volatility", "divergence"],
+      "properties": {
+        "breadth": {"type": "object"},
+        "positioning": {
+          "type": "object",
+          "required": ["trend_funds", "large_speculators", "option_dealers"],
+          "properties": {
+            "trend_funds": {"type": "object"},
+            "large_speculators": {"type": "object"},
+            "option_dealers": {"type": "object"}
+          }
+        },
+        "volatility": {"type": "object"},
+        "divergence": {"type": "object"}
+      }
+    },
+    "what_changed": {"type": "array"},
+    "what_is_coming": {"type": "array"},
+    "key_levels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "what", "level"],
+        "properties": {
+          "kind": {"type": "string"},
+          "what": {"type": "string"},
+          "now": {"type": ["number", "null"]},
+          "level": {"type": "number"},
+          "distance_pct": {"type": ["number", "null"]},
+          "if_it_breaks": {"type": "string"}
+        }
+      }
+    },
+    "how_to_read": {"type": "object"},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

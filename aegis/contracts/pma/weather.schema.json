@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pma_weather",
+  "description": "S5 output (weather half). Crown NOW relayed VERBATIM from the crown file (never re-generated); Druckenmiller NEXT is an LLM brief. Context, never gate (D-4).",
+  "x_version": "0.1",
+  "type": "object",
+  "required": ["artifact", "run_date", "generated_at", "crown", "druckenmiller"],
+  "properties": {
+    "artifact": {"const": "pma_weather"},
+    "run_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "generated_at": {"type": "string"},
+    "crown": {
+      "type": "object",
+      "required": ["present"],
+      "properties": {
+        "present": {"type": "boolean"},
+        "status": {"type": ["string", "null"]},
+        "read_me_first": {"type": ["object", "null"], "description": "Verbatim from the crown file."},
+        "the_call": {"type": ["object", "null"], "description": "Verbatim from the crown file."},
+        "limits": {"type": "array", "items": {"type": "string"}},
+        "absent_note": {"type": ["string", "null"], "description": "When present=false: exactly what the plan says instead."}
+      }
+    },
+    "druckenmiller": {
+      "type": "object",
+      "required": ["present"],
+      "properties": {
+        "present": {"type": "boolean"},
+        "cross_asset_read": {"type": ["string", "null"]},
+        "risk_stance": {"type": ["string", "null"]},
+        "regime_caveat": {"type": ["string", "null"]},
+        "sector_winds": {"type": "array", "items": {"type": "object"}},
+        "sizing_tone": {"type": ["string", "null"]},
+        "so_what": {"type": ["string", "null"]},
+        "absent_note": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
