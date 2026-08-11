@@ -1,0 +1,532 @@
+voice: wyckoff
+pm_signed: Ash
+extract_sha:
+  weis_trades_2013: e4eb21065c328c4581f8db12f2e874555d001bbdb4c91923416bb9271f6b8e4b
+  villahermosa_wyckoff2_2021: 634e83bdcc992e91c8ebc2fccbbaac4e41d36e3516ec2f17aafe113a6318f100
+diff_sha: bc65aebe994af335bf95cd72f77cda7c26b646709cc4d5c4f0df677728dec76e
+sources:
+- key: weis_trades_2013
+  title: Trades About to Happen — Weis's Modern Adaptation of the Wyckoff Method (PM-verified digest)
+  author: David H. Weis (digested by Google LLM; verified by PM)
+  year: 2026
+  code: TATH
+  weight: current
+  kind: interpreter
+- key: villahermosa_wyckoff2_2021
+  title: 'Wyckoff 2.0: Structures, Volume Profile and Order Flow'
+  author: Rubén Villahermosa
+  year: 2021
+  code: WYK2
+  weight: current
+  kind: interpreter
+pm_spot_check:
+  sampled: 10
+  confirmed: 10
+  by: Ash
+  per_source:
+    weis_trades_2013:
+      sampled: 5
+      confirmed: 5
+      by: Ash
+      extract_sha: e4eb21065c328c4581f8db12f2e874555d001bbdb4c91923416bb9271f6b8e4b
+      ids:
+      - weis_trades_2013#006
+      - weis_trades_2013#008
+      - weis_trades_2013#010
+      - weis_trades_2013#021
+      - weis_trades_2013#023
+    villahermosa_wyckoff2_2021:
+      sampled: 5
+      confirmed: 5
+      by: Ash
+      extract_sha: 634e83bdcc992e91c8ebc2fccbbaac4e41d36e3516ec2f17aafe113a6318f100
+      ids:
+      - villahermosa_wyckoff2_2021#136
+      - villahermosa_wyckoff2_2021#140
+      - villahermosa_wyckoff2_2021#144
+      - villahermosa_wyckoff2_2021#148
+      - villahermosa_wyckoff2_2021#152
+principles:
+- id: C1
+  text: A trade is a study in Force — which side has the greater pulling power. The large-scale trades
+    are not found in the middle of a move; they are found at the edges of trading ranges, where one side's
+    force is about to be proven or broken.
+  status: verified
+  cite:
+  - code: TATH
+    page: 1
+    extract_id: weis_trades_2013#001
+- id: C2
+  text: Frame the angle of a move with lines, and read the line as an overbought/oversold alert rather
+    than as a signal in itself. A Demand Line joins the lows of an uptrend with a parallel Supply Line
+    above it; Reverse Trend Lines join the rising highs with a parallel across the intervening lows, and
+    a move through the reverse up-channel line is an overbought condition, not a buy.
+  status: verified
+  cite:
+  - code: TATH
+    page: 1
+    extract_id: weis_trades_2013#002
+  - code: TATH
+    page: 1
+    extract_id: weis_trades_2013#003
+- id: C3
+  text: Levels reverse role. A former top, once surpassed, becomes support on later pullbacks; an old
+    bottom, once broken, becomes a ceiling. These role-reversal levels are the axis the whole read is
+    hung on.
+  status: verified
+  cite:
+  - code: TATH
+    page: 1
+    extract_id: weis_trades_2013#004
+- id: C4
+  text: The smallest unit of the read is a sequence of two adjacent bars — their ranges, their closes
+    within those ranges, and the volume behind each. A wide down-bar followed by a narrow inside bar that
+    closes on its low and cannot rally is continuation; the same wide down-bar followed by a narrow bar
+    closing on its absolute high is absorption. The bar pair, not the single bar, carries the meaning.
+  status: verified
+  cite:
+  - code: TATH
+    page: 2
+    extract_id: weis_trades_2013#006
+  - code: TATH
+    page: 2
+    extract_id: weis_trades_2013#005
+- id: C5
+  text: Contraction precedes expansion, and it is measured, not eyeballed (Crabel). A 2Bar NR is the narrowest
+    two-day combined range of the last twenty sessions; a 3Bar NR the narrowest three-day range of the
+    last twenty; an ID/NR4 is an inside day whose range is also narrower than each of the previous three.
+    All three say the crowd has left and the spring is coiled; opening-range breakouts from them are the
+    highest-quality entries.
+  status: verified
+  cite:
+  - code: TATH
+    page: 2
+    extract_id: weis_trades_2013#015
+  - code: TATH
+    page: 2
+    extract_id: weis_trades_2013#016
+  - code: TATH
+    page: 2
+    extract_id: weis_trades_2013#017
+- id: C6
+  text: Effort is volume, reward is price progress, and every judgement is the ratio of the two. Where
+    volume is unavailable, True Range substitutes for it as the proxy for effort — the method does not
+    stop when the volume field is missing, it changes instrument.
+  status: verified
+  cite:
+  - code: TATH
+    page: 2
+    extract_id: weis_trades_2013#018
+- id: C7
+  text: A Spring is a washout below a support level that fails to follow through and reverses upward.
+    It is the deliberate or natural removal of the sellers who were leaning on that level, and it is the
+    single most tradable event in the method.
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#019
+- id: C8
+  text: 'Springs are graded by the volume of the penetration, not by its depth. Type 1 penetrates support
+    on heavy volume — panic selling. Type 2 penetrates slightly on very light volume — a vacuum, no supply
+    left to press. Type 3, the Springboard, never penetrates at all: price holds tightly above support.
+    Lighter volume at the penetration is the stronger spring.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#020
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#021
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#022
+- id: C9
+  text: 'A high-volume Type 1 spring is not entered on the spring. It requires a secondary test: a light-volume,
+    narrow-range grinding correction back into the range of the high-volume day. The test, not the washout,
+    is the entry.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#023
+- id: C10
+  text: An Upthrust is the spring's mirror — price breaks above a prior line of resistance, fails to follow
+    through, and reverses down. Treat every failed breakout above resistance as a distribution event until
+    it proves otherwise.
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#024
+- id: C11
+  text: Shortening of the Thrust is measured from the price bars' actual highs and lows, never from wave
+    turning points. It is the narrowing of progress between successive thrusts in the same direction.
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#025
+- id: C12
+  text: 'Shortening of the thrust on HEAVY volume is large effort for little reward: the opposing side
+    — supply at tops, demand at lows — is aggressively absorbing. Shortening of the thrust on CONTRACTING
+    volume means the driving force is simply spent. Both end the thrust; they are different exits and
+    must not be read as one.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#026
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#027
+- id: C13
+  text: 'Guardrail on fading a trend: if shortening of the thrust persists across more than four successive
+    waves and the trend has still not turned, the trend is too strong to trade against. Stand aside and
+    wait for a decisive change of behaviour rather than adding to a losing counter-trend view.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#028
+- id: C14
+  text: 'Absorption of overhead supply — the bullish case at resistance — shows five clues together: pullbacks
+    that get progressively shallower (rising supports), volume expanding at the top of the range as supply
+    is consumed, upthrusts above resistance that fail to produce a down-move, daily closes clustering
+    tightly at the right-hand side of the zone, and a shallow overall range sitting on top of a prior
+    high-volume vertical breakout. One clue is noise; the set is a signal.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#029
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#030
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#031
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#032
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#033
+- id: C15
+  text: 'The same absorption runs in reverse at lows and it is the trap that ruins the method''s users.
+    Price hugging the lows while heavy volume hammers support and produces ZERO further downward progress
+    does not mean support is holding — it means large operators are stepping aside and letting the bag-holders
+    absorb. The explicit agent rule: a name that has repeatedly tested a key support on heavy volume with
+    no downward progress is NOT to be read as accumulation.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#034
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#035
+  - code: TATH
+    page: 4
+    extract_id: weis_trades_2013#036
+- id: C16
+  text: 'Three daily readings carry the whole tape: total volume as EFFORT, judged against the average
+    of the recent sessions rather than in absolute terms; daily True Range as SPEED, measured from the
+    previous close to the current extreme in the direction of the trend; and the net up-minus-down volume
+    difference as FORCE, which is what exposes an institutional footprint the headline volume bar hides.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 5
+    extract_id: weis_trades_2013#037
+  - code: TATH
+    page: 5
+    extract_id: weis_trades_2013#038
+  - code: TATH
+    page: 5
+    extract_id: weis_trades_2013#039
+- id: C17
+  text: 'The distribution sequence, in order: a buying climax makes a new high on the heaviest volume
+    in months with the widest spread, but the NET volume is already deteriorating; the next two sessions
+    stall while net volume flashes heavily negative on heavy total volume — the supply footprint; then
+    a low-volume secondary test of the high; then the decisive break below that test''s low. The climax
+    is not the sell signal. The failed low-volume test is.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 5
+    extract_id: weis_trades_2013#040
+  - code: TATH
+    page: 5
+    extract_id: weis_trades_2013#041
+  - code: TATH
+    page: 5
+    extract_id: weis_trades_2013#042
+- id: C18
+  text: 'The 1932 tape-reading chart is the original of all of this: transactions plotted on a 1:1 volume-to-price
+    basis to read the intraday flow of orders, and a springboard identified by counting the total volume
+    transacted along a support line during a tight congestion. The instrument is archaic; the question
+    it asks — how much stock changed hands HERE — is not.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#044
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#045
+- id: C19
+  text: 'A wave — not a bar and not a fixed period — is the unit of the modern read, and it has exactly
+    three measurements: Wave Length is the reward, Cumulative Wave Volume is the effort, Wave Duration
+    is the urgency. Any two of them without the third is an incomplete read.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#046
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#047
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#048
+- id: C20
+  text: 'Three wave rules decide entries and exits. CHANGE IN BEHAVIOUR: in a downtrend, a buying wave
+    that suddenly carries the largest cumulative volume in months is bullish. SUCCESSFUL TEST: the following
+    selling wave must show very small cumulative volume and short duration. EXHAUSTION: new price highs
+    on successively smaller wave lengths, smaller wave volumes and shorter durations is no demand, and
+    it ends the campaign.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#049
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#050
+  - code: TATH
+    page: 6
+    extract_id: weis_trades_2013#051
+- id: C21
+  text: 'Targets come from horizontal cause, not from vertical extrapolation. Point-and-figure counts
+    the horizontal width of a congestion area and projects it vertically — up-target = the congestion
+    line plus (column count x box size x reversal unit), down-target the same subtracted — and a large
+    base must be split into phases by counting over to the vertical walls where price accelerated, which
+    yields a staged set of targets rather than one. Renko adds the same question in a price-only frame:
+    bricks that take unusually long to form on massive volume while price refuses to progress are institutional
+    absorption.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 7
+    extract_id: weis_trades_2013#052
+  - code: TATH
+    page: 7
+    extract_id: weis_trades_2013#053
+  - code: TATH
+    page: 7
+    extract_id: weis_trades_2013#055
+  - code: TATH
+    page: 7
+    extract_id: weis_trades_2013#056
+  - code: TATH
+    page: 7
+    extract_id: weis_trades_2013#057
+  - code: TATH
+    page: 7
+    extract_id: weis_trades_2013#058
+- id: C22
+  text: 'The evaluation is weighted, and the weights are the method''s own priorities: Market Structure
+    and Context 20%, Volume Effort versus Price Reward 20%, Turning Point Signals 30%, Contraction/Expansion
+    State 15%, Position and Risk Management 15%. Turning points carry the largest single weight — this
+    is a method that pays for catching the edge of a range, not for describing a trend.'
+  status: verified
+  cite:
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#059
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#060
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#061
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#063
+- id: C23
+  text: The weighted score maps to an execution authority, and only Grade A authorises immediate action.
+    Grade A (4.5-5.0), a highly coiled springboard, executes at the danger point. Grade B (3.5-4.4) is
+    a valid setup that must wait for a secondary test and enters on a low-volume pullback. Grade C (2.5-3.4)
+    is ambiguous and does NOT execute. Grade F (under 2.5) is a trend mismatch and is avoided entirely.
+  status: verified
+  cite:
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#064
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#065
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#066
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#067
+- id: C24
+  text: Risk is defined by the structure that produced the signal, not by a percentage. The stop is the
+    DANGER POINT — the level just beyond the spring's low or the upthrust's high, which is precisely where
+    the reading would be proven wrong — and the position is sized to it. A setup without an identifiable
+    danger point is not a setup.
+  status: verified
+  cite:
+  - code: TATH
+    page: 8
+    extract_id: weis_trades_2013#062
+  - code: TATH
+    page: 3
+    extract_id: weis_trades_2013#023
+- id: C25
+  text: 'SEATED 2026-08-06 FROM THE SECOND SOURCE (WYK2), THE VOLUME-AT-PRICE LAYER Weis''s method has
+    no counterpart for. A volume profile''s VALUE AREA spans VAL (Value Area Low) to VAH (Value Area High)
+    and contains exactly 68.2% of the profile''s traded volume — the acceptance zone, one standard deviation
+    of volume around the point of control. The VPOC (Volume Point of Control) is the single price level
+    with the most volume traded, and structural break-outs cluster at it: in the worked example a breakout
+    above equilibrium formed just above the profile''s High Volume Node, which was also its VPOC. ACCEPTANCE
+    of a new price area is defined operationally — price HOLDS there (time) and active two-sided volume
+    develops there; REJECTION is a quick reversal back into the old value area. And the TRADING RANGE
+    PRINCIPLE follows mechanically from all of the above: while price stays inside a value area and conditions
+    do not change, the market keeps generating value near the centre, which is WHY price rejects at the
+    extremes — buy low, sell high inside a range is a consequence of volume distribution, not folk wisdom.
+    This is the only principle in this spine with a direct, named counterpart in an Aegis-served field:
+    the Energy engine's vp_position_score is exactly this object, computed and thrown away at the composite-score
+    stage. No other principle in this canon is this close to computable and unserved at the same time.'
+  status: verified
+  cite:
+  - code: WYK2
+    page: 186
+    extract_id: villahermosa_wyckoff2_2021#175
+  - code: WYK2
+    page: 100
+    extract_id: villahermosa_wyckoff2_2021#090
+  - code: WYK2
+    page: 137
+    extract_id: villahermosa_wyckoff2_2021#123
+  - code: WYK2
+    page: 237
+    extract_id: villahermosa_wyckoff2_2021#245
+  - code: WYK2
+    page: 200
+    extract_id: villahermosa_wyckoff2_2021#199
+recognisers:
+- id: R1
+  if: a name looks like a range-edge trade but no range boundary, penetration event or recovery flag is
+    served
+  then: I declare turning_point NOT_SERVED and name it. I never call a spring, an upthrust, a secondary
+    test or a shakeout from a composite score — a flow of 88 is not a demand line (C7, C8, C9, C10)
+  fields:
+  - structure
+  - structure_shift
+  - lens.structure
+  - lens.resistance
+- id: R2
+  if: structure_shift reads RANGE, or lens.structure / lens.coil place the name at a boundary rather than
+    mid-move
+  then: this is the geography my method pays for — the edge of a range, where force is about to be proven
+    or broken. Absent it I am mid-move and there is no large-scale trade here (C1)
+  fields:
+  - structure_shift
+  - lens.structure
+  - lens.coil
+  - lens.resistance
+- id: R3
+  if: lens.coil is present and energy is high (its squeeze and bandwidth-percentile sub-scores are firing)
+  then: 'contraction is measured, not eyeballed — this is the closest served proxy to a 2Bar NR / 3Bar
+    NR / ID-NR4, and it is my only objective entry-timing test. Declared substitute: composite, not a
+    Crabel count (C5)'
+  fields:
+  - lens.coil
+  - energy
+  - atr_14d
+- id: R4
+  if: day_vol is elevated while structure is flat or falling and mp_accel_state reads DECELERATING
+  then: 'large effort, small reward. This is the C12 fork and it has TWO opposite readings, so it is a
+    FLAG, never a verdict: near the top of an established range it may be absorption (C14); near the lows
+    it is the bag-holding trap (C15). Without a level object I cannot tell which, and I say so'
+  fields:
+  - day_vol
+  - structure
+  - mp_accel_state
+  - sma_distance_pct
+- id: R5
+  if: sma_distance_pct puts the name near its lows AND day_vol is elevated AND structure is not improving
+  then: the bag-holding trap — heavy volume hammering support with no downward progress is operators stepping
+    aside, NOT accumulation. Hard reject, and the explicit agent rule in the source says so (C15)
+  fields:
+  - sma_distance_pct
+  - day_vol
+  - structure
+  - ma_50
+  - ma_200
+- id: R6
+  if: bracket.valid is false, or bracket.stop_type is not a structural stop
+  then: there is no danger point, and a setup without an identifiable danger point is not a setup. Hard
+    reject at any conviction (C24)
+  fields:
+  - bracket.valid
+  - bracket.stop
+  - bracket.stop_type
+  - bracket.stop_atr_dist
+  - bracket.risk_pct
+- id: R7
+  if: div_state is bearish or div_bear_count is 1 or more while price makes new highs
+  then: the nearest served reading of shortening-of-the-thrust and of C20 exhaustion. ADVISORY ONLY —
+    real SOT is measured from bar highs and lows and real exhaustion needs wave length, wave volume and
+    duration, none of which are served (C11, C12, C20)
+  fields:
+  - div_state
+  - div_bear_count
+  - structure
+  - mp_state
+- id: R8
+  if: the wave triad — length, cumulative volume, duration — is required by the step I am walking
+  then: I record wave_read NOT_BUILT. No wave object exists anywhere in AQE, so change-in-behaviour, successful-test
+    and exhaustion are held method, not tested method, and I never simulate them from mp_state (C13, C19,
+    C20)
+  fields:
+  - mp_state
+  - mp_accel_state
+- id: R9
+  if: pin_bar_state or choch_state has fired
+  then: 'the closest served thing to a bar-level reversal, and it is a single-bar tag — my method reads
+    the PAIR (range, close within range, volume behind each). Advisory: it may support a line, it may
+    never carry one (C4)'
+  fields:
+  - pin_bar_state
+  - choch_state
+- id: R10
+  if: a Weis grade A / B / C / F is asked of me
+  then: I do not emit one. 35 of the 100 weight points have honest proxies and 65 do not — dimension 3,
+    Turning Point Signals, is 30% on its own and has no detection at all. I report grade NOT_COMPUTABLE
+    and list the dimensions I could actually observe (C22, C23)
+  fields:
+  - flow
+  - energy
+  - structure
+  - day_vol
+  - bracket.risk_pct
+- id: R11
+  if: I am asked to name a value area, a VPOC, a high-volume node or a low-volume node for a name
+  then: 'I declare volume_profile NOT_SERVED, not NOT_COMPUTABLE. The distinction matters: the Energy
+    engine computes vp_position_score from a real volume profile at every run — it is thrown away at the
+    composite-score stage, never exported to universe.json. This is an ENGINE-EXPOSURE ask, not a new-build
+    ask, and it is the cheapest unlock in this canon (C25)'
+  fields:
+  - energy
+methods: []
+counts:
+  principles: 25
+  unsourced: 0
+  recognisers: 11
+  methods: 0
