@@ -563,9 +563,11 @@ def s7(args):
                     "rogers_flag": "; ".join(chal_by_ticker.get(v["ticker"], [])) or None,
                 })
             elif v["verdict"] == "HOLD-FOR-CONDITIONS":
+                # Post-debate supporters (Round 2 SUPPORT), per PM ruling — not who nominated.
+                seats = (v.get("stance_split") or {}).get("support", []) or []
                 watch.append({"ticker": v["ticker"],
-                              "count": len(v.get("nominating_seats", [])) or None,
-                              "seats": v.get("nominating_seats", []),
+                              "count": len(seats) or None,
+                              "seats": seats,
                               "promote_condition": "; ".join(v.get("conditions", [])) or None})
 
     # 5. key levels — nearest crown levels ride with their "if it breaks" lines
