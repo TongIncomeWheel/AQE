@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PMA S6 Pass D — CIO synthesis (portfolio-level, one per run)",
+  "type": "object",
+  "required": ["run_date", "coherence", "concentration", "regime_consistency", "strongest_not_advancing", "blind_spots"],
+  "properties": {
+    "run_date": {"type": "string", "format": "date"},
+    "coherence": {
+      "type": "object",
+      "required": ["verdict", "reason"],
+      "properties": {
+        "verdict": {"enum": ["one_view", "mixed", "contradictory"]},
+        "reason": {"type": "string"}
+      }
+    },
+    "concentration": {
+      "type": "object",
+      "description": "FLAG ONLY — never a block. Position-level risk gates live outside PMA.",
+      "properties": {
+        "by_sector": {"type": "object"},
+        "flags": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "regime_consistency": {
+      "type": "object",
+      "required": ["verdict", "crown_family", "reason"],
+      "properties": {
+        "verdict": {"enum": ["expressing", "neutral", "fighting"]},
+        "crown_family": {"type": "string"},
+        "reason": {"type": "string"}
+      }
+    },
+    "strongest_not_advancing": {
+      "type": "object",
+      "properties": {
+        "ticker": {"type": ["string", "null"]},
+        "why_not": {"type": "string"}
+      }
+    },
+    "blind_spots": {
+      "type": "array",
+      "description": "Union of bear unanswerable_gaps + ingest degraded flags + empty seats",
+      "items": {"type": "string"}
+    }
+  }
+}

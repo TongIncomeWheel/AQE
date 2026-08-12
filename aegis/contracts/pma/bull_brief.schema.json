@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PMA S6 Pass A — bull brief (one per deliberation-set name, FULL tier only)",
+  "type": "object",
+  "required": ["ticker", "run_date", "thesis", "claims", "strongest_single_claim", "dropped_claims"],
+  "properties": {
+    "ticker": {"type": "string"},
+    "run_date": {"type": "string", "format": "date"},
+    "tier": {"enum": ["FULL"]},
+    "thesis": {"type": "string", "description": "One paragraph. The defensible case, not advocacy."},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["statement", "field", "value", "from_seat"],
+        "properties": {
+          "statement": {"type": "string"},
+          "field": {"type": "string", "description": "Real field name from the day's data"},
+          "value": {},
+          "from_seat": {"type": "string"}
+        }
+      }
+    },
+    "entry_frame": {
+      "type": "object",
+      "description": "Bracket verbatim from AQE, or NOT_SERVED",
+      "properties": {
+        "entry": {"type": ["number", "null"]},
+        "stop": {"type": ["number", "null"]},
+        "served": {"type": "boolean"},
+        "note": {"type": "string"}
+      }
+    },
+    "dropped_claims": {
+      "type": "array",
+      "description": "Claims the bull could not anchor to a field+value and therefore discarded. Itself a signal.",
+      "items": {"type": "string"}
+    },
+    "strongest_single_claim": {"type": "string"},
+    "blind_to": {
+      "type": "array",
+      "description": "Asserted at build time: nomination_count, rogers challenge, bear brief",
+      "items": {"type": "string"}
+    }
+  }
+}
