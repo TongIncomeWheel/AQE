@@ -1,83 +1,105 @@
 ---
 name: premarket-analysis
-description: "PMA — the analysis-only morning kernel. Turns the day's AQE export + Nick Crown macro file into an actionable, PM-reviewable trading plan via eight staged skills bridged by JSON files. No brokers, no held book, no orders, no position sizing — the FRAME. Trigger: /premarket-analysis."
+description: "PMA — the analysis-only morning kernel. Turns the day's AQE export + Nick Crown macro file into a CIO decision page via eight staged skills bridged by JSON files in the repo. Adversarial deliberation (bull/bear/judge) at its core. No brokers, no held book, no orders, no sizing — the FRAME. Trigger: /premarket-analysis."
 ---
 
-# /premarket-analysis — the morning analysis kernel (v0.1, design milestone 2026-08-11)
+# /premarket-analysis — the morning analysis kernel (v0.2, design 2026-08-12)
 
-**What this is.** One command that runs the committee's *thinking* for the day: ingest the
-data AQE already calculated, frame the market, let every voice read it in isolation, challenge
-the consensus, deliberate, and hand the PM one actionable plan. Everything between stages
-travels as a JSON file — that is the bridge, and it is also the audit trail.
+**What this is.** One command that runs the committee's *thinking*: pull the day's data into
+the repo, frame the market, let every seat read it in isolation, challenge the consensus,
+argue each idea adversarially, and hand the CIO one decision page. Every stage boundary is a
+JSON file in git — that is the bridge, the audit trail, and the reason any morning's reasoning
+can be reconstructed six weeks later.
 
-**What this is NOT (v0.1 scope, PM directive 2026-08-11).** No held-book work, no per-position
-management, no broker pulls, no order staging, no dollar sizing. Those live in the existing
-`/premarket` + `/committee-pm` + gatekeeper machinery. This kernel is analysis-only and can
-run standalone. Constitution law 1 is untouched: nothing here places, sizes, or arms anything.
-
-**Output.** `data/pma/DATE/premarket_plan.json` + a phone-readable `plan.md`. The plan is a
-DRAFT until the PM says otherwise. Silence never trades.
+**What this is NOT (v0.2 scope, PM directive).** No held-book work, no per-position management,
+no broker pulls, no order staging, no dollar sizing. Those live in the existing `/premarket` +
+gatekeeper machinery. PMA is analysis-only and runs standalone. Constitution law 1 untouched:
+nothing here places, sizes, or arms anything.
 
 ---
 
-## The pipeline — 8 stages, JSON in / JSON out
+## Source of record: the repo, not Drive
+
+**PM ruling 2026-08-12 — nothing sits in Drive.** AQE writes there; Aegis does not read from
+there. S1 is the only component permitted to touch Drive, and its single job is to land the
+day's data in the repo at a fixed path:
 
 ```
-S1 INGEST            Drive → aqe_daily_export.json + aqe_crown_macro.json   → ingest_receipt.json
-S2 MARKET FRAME      what kind of day is this? (deterministic distill)      → market_frame.json
-S3 CANDIDATE FRAME   what is on the table today? (deterministic distill)    → candidate_set.json
-S4 VOICE SWARM       10 isolated voices read S2+S3 via JSON packets         → voices/<voice>.json + tally.json
-S5 CHALLENGE+WEATHER rogers challenges the tally; crown NOW + druck NEXT    → challenge.json + weather.json
-S6 DELIBERATION      one isolated committee-desk pass → verdicts            → committee_read.json
-S7 PLAN ASSEMBLY     deterministic render → the PM's one page               → premarket_plan.json + plan.md
-S8 SELF-AUDIT        what was asked vs served; gaps; voice health           → run_audit.json
+data/aqe/<YYYY-MM-DD>/  aqe_daily_export.json.gz · aqe_crown_macro.json · manifest.json
+data/aqe/latest.json    the only pointer anything follows
+data/pma/<YYYY-MM-DD>/  every stage output for that run
 ```
 
-Stage cards live in `stages/S1_ingest.md` … `stages/S8_audit.md`. Contracts in
-`contracts/pma/`. Each stage reads ONLY the JSON of prior stages — no stage reaches around
-the bridge, because the bridge is what makes the run inspectable afterwards.
+Gzipping the export (~2.6 MB → ~250 KB) is what makes daily commits affordable: ~90 MB/yr in
+tree, pruned to monthly archives after 90 days. Every stage after S1 reads the repo.
 
-**Control vs judgment (D-16).** The orchestrator running this card is control plane:
-sequence, validate, move on. Judgment happens ONLY inside spawned agents: the ten voices
-(S4), the challenge seat (S5), the committee desk (S6). S1/S2/S3/S7/S8 are deterministic —
-same inputs, same outputs, no model opinion.
+---
 
-**Isolation (anti-anchoring).** Each S4 voice is a FRESH agent: its own methodology card +
-its JSON packet + its ledger memory. No voice sees another voice, the tally, or any hint of
-ordering. Crown/Druckenmiller/Rogers run AFTER the tally by design — weather and challenge
-inform, they never gate (D-4, D-97).
+## The pipeline
 
-## Failure ladder (every failure is declared, never silent)
+```
+S1 INGEST       Drive → repo, validate, staleness           → ingest_receipt.json
+S2 MARKET FRAME what kind of day is this?                    → market_frame.json
+S3 CANDIDATES   what is on the table?                        → candidate_set.json
+S4 VOICE SWARM  11 isolated seats, inline JSON packets       → voices/*.json + tally.json
+S5 CHALLENGE    rogers challenges the tally                  → challenge.json
+   + WEATHER    crown NOW (verbatim) · druckenmiller NEXT    → weather.json
+S6 DELIBERATION bull → bear → judge, per name; then CIO      → committee_read.json + cio_synthesis.json
+S7 CIO OUTPUT   the decision page, fixed order               → premarket_plan.json + plan.md
+S8 SELF-AUDIT   asked-vs-served, traceability, gaps          → run_audit.json
+```
 
-- **S1 fails (file missing / stale / schema-invalid):** STOP. No plan. Emit `ingest_receipt.json`
-  with the exact failure. A missing input is refused, not zeroed (Crown C30).
-- **Crown file missing but export fine:** run WITHOUT the macro layer; plan headline carries
-  "Crown macro absent — regime read is AQE-only" (precedent: 2026-07-21 "bellwether letters
-  not supplied — context absent, declared").
-- **A voice returns nothing/invalid:** re-spawn once; still bad → empty seat recorded in
+Stage cards: `stages/S1_ingest.md` … `stages/S8_audit.md`. Contracts: `contracts/pma/`.
+Each stage reads only prior stages' JSON — no stage reaches around the bridge, because the
+bridge is what makes the run inspectable.
+
+**S6 is the committee.** S1–S3 are plumbing, S7–S8 are formatting. The design weight sits in
+S4 (manufacturing independence) and S6 (adversarial argument). Read those two cards first.
+
+---
+
+## Control plane vs judgment plane (D-16)
+
+The orchestrator running this card is **control**: sequence, validate, move on. It forms no
+market opinion. Judgment happens ONLY inside spawned agents — the 11 voices (S4), rogers +
+druckenmiller (S5), and bull/bear/judge/CIO (S6). S1, S2, S3, S7, S8 are deterministic: same
+inputs, same outputs, no model in the path.
+
+## Isolation
+
+Each S4 seat is a fresh agent: its own card, its own inline packet, its own ledger memory. No
+seat sees another seat, the tally, or any ordering hint (candidate rows are shuffled per seat).
+Weather and challenge run strictly after the tally so they cannot steer what they react to.
+
+**Packets are inlined, never passed as paths.** Compiled voice agents are toolless; handed a
+path, they fabricate rather than fail (finding F1, 2026-08-11 — four seats invented file
+listings and market values in test). This is a correctness rule, not a preference.
+
+## Failure ladder — every failure is declared, never silent
+
+- **Export missing / invalid / tripwired** → STOP. No plan.
+- **Crown missing** → run continues AQE-only; the headline says so.
+- **Anything DEGRADED** → propagates verbatim into the plan headline. Data quality is read
+  before ideas.
+- **A seat returns nothing/invalid** → one re-spawn; still bad → empty seat in
   `tally.json.shortfalls`, run continues at ≥8 seats, S8 flags it.
-- **Deliberation fails:** no ADVANCE possible; plan ships watch-table-only with the failure
-  in the headline.
-- **Anything DEGRADED upstream (`status: DEGRADED` in the crown file, tripwire warnings in
-  the export):** propagates into the plan headline. The PM sees data quality before ideas.
+- **Deliberation fails** → no ADVANCE; watch-table-only plan with the failure in the headline.
+- **Drive unreachable** → fall back to the newest date already in the repo, mark staleness.
 
 ## Reuse, not clone
 
-Existing machinery this kernel calls rather than re-implements: `tools/tripwires.py` (S1),
-`tools/voice_memory.py render` (S4 packets), `tools/nomination_ledger.py record` (S4 tally →
-ledger), `contracts/nomination.schema.json` (the voice bridge contract, unchanged),
-`contracts/aqe_export.schema.json` (S1 validation). New contracts are pma-scoped and live in
-`contracts/pma/`.
+`tools/tripwires.py` · `tools/voice_memory.py render` · `tools/nomination_ledger.py record` ·
+`contracts/nomination.schema.json` (the voice bridge, unchanged) · `contracts/aqe_export.schema.json`.
+New contracts are pma-scoped under `contracts/pma/`.
 
-## The self-learning loop (S8 is not decoration)
+## The learning loop
 
-Every run's `run_audit.json` records which fields each voice ASKED for vs what the feed
-SERVED, which seats shortfell, and what the plan could not say because data was missing.
-Accumulated audits are the empirical input to the Voice-Data-Requirements register and the
-AQE change-request (bridge plan, Phases 1–3) — the kernel measures its own gaps daily instead
-of waiting for a one-off study.
+S8 writes a run audit daily: what each seat asked for vs what the feed served, which seats
+shortfell, whether every plan anchor resolves to real data. Accumulated audits turn "what does
+the committee need from AQE?" into a measurement rather than a workshop — feeding the
+requirements register and the AQE change request directly.
 
 ## Open design decisions
 
-All framed with recommended answers in plain English in
-`aegis/design/pma_design_decisions_2026-08-11.md`. Nothing in this card overrides a PM ruling.
+Framed with recommended answers in plain English in
+`aegis/design/pma_design_decisions_2026-08-11.md`. Nothing here overrides a PM ruling.
