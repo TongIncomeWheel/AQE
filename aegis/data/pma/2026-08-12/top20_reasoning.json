@@ -1,0 +1,2335 @@
+{
+ "artifact": "top20_reasoning",
+ "run_date": "2026-08-12",
+ "source": {
+  "tally": "aegis/data/pma/2026-08-12/tally.json",
+  "voices": "aegis/data/pma/2026-08-12/voices/*.json (11 seats)",
+  "levels_and_scores": "aegis/data/pma/2026-08-12/candidate_set.json (162 rows)",
+  "sector_grade_and_gate": "aegis/data/pma/2026-08-12/market_frame.json sectors[]"
+ },
+ "method": ["Ranked order is the tally as regenerated 2026-08-12.", "Every backer reason is verbatim from that seat nomination file. No paraphrase.", "fields_cited values are resolved from the candidate_set row for that ticker (or the seat own field_values block where it published one). No number is invented.", "objections are verbatim strings from the seats own adverse containers (crown_cuts_against, crown_conflicts, funnel drops, rejected_at_step, packet_conflicts, data_gaps, not_served) where the ticker is named.", "why_not_top5 is composed only from served fields (nomination_count, max_conviction, bracket.valid, risk_pct, structure_shift, gics_gate, sector entry_gate, sma_distance_pct, lens_positive)."],
+ "top5": ["ACGL", "SHO", "CSX", "SYY", "SARO"],
+ "cards": [
+  {
+   "ticker": "ACGL",
+   "rank": 1,
+   "nomination_count": 8,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "livermore",
+     "conviction": 2,
+     "reason": "Best base in my eligible set: structure 71.6, structure_shift RANGE, sma_distance_pct 8.39, smallest absorbable loss — ma20 stop 100.91 off entry 103.88, risk_pct 2.86, rr 2.06. XLF grade DEPLOY. Capped at 2: mp_accel_state DECELERATING and sector_trend_state 'Momentum Fading — Hold, Don't Add'.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "BUILDING"},
+      {"field": "mp_accel_state", "value": "DECELERATING"},
+      {"field": "structure", "value": 71.6},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "atr_14d", "value": 2.34},
+      {"field": "entry", "value": 103.88},
+      {"field": "bracket.stop", "value": 100.91},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.86},
+      {"field": "gics_sector", "value": "XLF"},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"},
+      {"field": "rank", "value": 29},
+      {"field": "held", "value": false}
+     ]
+    },
+    {
+     "voice": "lynch",
+     "conviction": 2,
+     "reason": "Insurance economics I can name but not test: XLF carries the frame's only clean sector gate; served, ACGL is 8.39% over ma_50 95.84 at 103.88, structure_shift RANGE, rank 29. Reserves and combined ratio - the actual quality question - are category NOT_SERVED.",
+     "fields_cited": [
+      {"field": "gics_sector", "value": "XLF"},
+      {"field": "gics_sector_name", "value": "Financials"},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "ma_50", "value": 95.84},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "rank", "value": 29},
+      {"field": "bracket.valid", "value": true}
+     ]
+    },
+    {
+     "voice": "minervini",
+     "conviction": 4,
+     "reason": "Trend Template served-6 PASS: entry 103.88 > ma_50 95.84 > ma_100 95.63 > ma_200 94.56; LEADER, rs_spy_20d +5.11, sma_distance_pct 8.39. The other bracket.valid=true passer: stop 100.91 (ma20), risk_pct 2.86, rr_tp2 2.06. Cuts against: sector_trend_state reads Momentum Fading - Hold, Don't Add.",
+     "fields_cited": [
+      {"field": "entry", "value": 103.88},
+      {"field": "ma_20", "value": 100.91},
+      {"field": "ma_50", "value": 95.84},
+      {"field": "ma_100", "value": 95.63},
+      {"field": "ma_200", "value": 94.56},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rs_spy_20d", "value": 5.11},
+      {"field": "structure", "value": 71.6},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "flow", "value": 76.3},
+      {"field": "energy", "value": 72.3},
+      {"field": "bracket.valid", "value": true},
+      {"field": "gics_sector", "value": "XLF"},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"},
+      {"field": "bracket.stop", "value": 100.91},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.risk_pct", "value": 2.86}
+     ]
+    },
+    {
+     "voice": "oneil",
+     "conviction": 3,
+     "reason": "rs_leadership=LEADER, lens.leadership=strong, rank=29, gics_sector=XLF (Crown entry_gate PASS). structure=71.6, structure_shift=RANGE, lens.coil/structure/resistance all ok. bracket.valid=true, risk_pct=2.86, rr=2.06. sma_distance_pct=8.39 vs set median 9.31 - not extended.",
+     "fields_cited": [
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rank", "value": 29},
+      {"field": "gics_sector", "value": "XLF"},
+      {"field": "structure", "value": 71.6},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens", "value": {"leadership": "strong", "coil": "ok", "insti_money": "ok", "structure": "ok", "resistance": "ok", "extension": null, "sector": "strong"}},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.86},
+      {"field": "bracket.rr", "value": 2.06},
+      {"field": "bracket.stop", "value": 100.91},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "ma_200", "value": 94.56},
+      {"field": "entry", "value": 103.88},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"},
+      {"field": "rvol", "value": 1.01}
+     ]
+    },
+    {
+     "voice": "raschke",
+     "conviction": 3,
+     "reason": "RETRACEMENT / Holy-Grail shape (C7). mp_state BUILDING, structure_shift RANGE, sma_distance_pct 8.39; lens leadership strong, structure ok, resistance ok - no warn on the path. Stop 100.91 ma20, 1.27 ATR out, risk_pct 2.86, rr_tp2 2.06. mp_accel DECELERATING = proxy not rising.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "BUILDING"},
+      {"field": "mp_accel_state", "value": "DECELERATING"},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "structure", "value": 71.6},
+      {"field": "lens", "value": {"leadership": "strong", "coil": "ok", "insti_money": "ok", "structure": "ok", "resistance": "ok", "extension": null, "sector": "strong"}},
+      {"field": "entry", "value": 103.88},
+      {"field": "atr_14d", "value": 2.34},
+      {"field": "atr_caution", "value": false},
+      {"field": "rank", "value": 29},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.stop", "value": 100.91},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.risk_pct", "value": 2.86},
+      {"field": "bracket", "value": {"price": 103.88, "price_source": "eod_close", "stop": 100.91, "stop_type": "ma20", "stop_atr_dist": 1.27, "stop_date": null, "risk": 2.97, "risk_pct": 2.86, "targets": [{"type": "resistance", "price": 105.09, "tp": "TP1", "r": 0.41, "atr_dist": 0.52, "date": "2026-07-07", "vol_ratio": 0.73, "vol_validated": false}, {"type": "fib_1272", "price": 110.0, "tp": "TP2", "r": 2.06, "atr_dist": 2.62}, {"type": "fib_1618", "price": 116.24, "tp": "TP3", "r": 4.16, "atr_dist": 5.29}, {"type": "fib_2000", "price": 123.13, "tp": null, "r": 6.48, "atr_dist": 8.23}, {"type": "fib_2618", "price": 134.28, "tp": null, "r": 10.24, "atr_dist": 13.0}], "rr": 2.06, "rr_tp1": 0.41, "rr_tp2": 2.06, "rr_tp3": 4.16, "atr_fallback_stop": 101.54, "valid": true, "invalid_reason": null}}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 3,
+     "reason": "Frame's strongest sector: XLF grade DEPLOY, RRG LEADING, entry_gate PASS. entry 103.88 vs ma_20 100.91 = +2.94%, sma_distance_pct 8.39 — a dip at the average, not an extension. bracket.stop 100.91 = 2.86% risk distance. Row sector_trend_state says 'Momentum Fading' — conflict noted.",
+     "fields_cited": [
+      {"field": "entry", "value": 103.88},
+      {"field": "ma_20", "value": 100.91},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "bracket.stop", "value": 100.91},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"}
+     ]
+    },
+    {
+     "voice": "steenbarger",
+     "conviction": 3,
+     "reason": "Only fully-ordered higher-timeframe stack in a PASS-gate sector with zero lens warnings: price 103.88 > ma_50 95.84 > ma_100 95.63 > ma_200 94.56, structure 71.6, bracket.valid true at risk_pct 2.86. MA separation is thin (1.4% 50-vs-200) so this is a young trend, sized as hypothesis not conviction.",
+     "fields_cited": [
+      {"field": "ma_50", "value": 95.84},
+      {"field": "ma_100", "value": 95.63},
+      {"field": "ma_200", "value": 94.56},
+      {"field": "structure", "value": 71.6},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.86},
+      {"field": "gics_sector_name", "value": "Financials"},
+      {"field": "lens_warnings", "value": 0}
+     ]
+    },
+    {
+     "voice": "wyckoff",
+     "conviction": 2,
+     "reason": "Only name of the four with its sector at its back - XLF grade DEPLOY, RRG LEADING, entry_gate PASS. RANGE, flow 76.3, risk_pct 2.86. Two demerits: rr 2.06 sits on the 2.0 gate, and div_state BEARISH with div_bear_count 1 (advisory SOT flag only).",
+     "fields_cited": [
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens.coil", "value": "ok"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "flow", "value": 76.3},
+      {"field": "energy", "value": 72.3},
+      {"field": "bracket.stop", "value": 100.91},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.rr", "value": 2.06},
+      {"field": "bracket.risk_pct", "value": 2.86},
+      {"field": "sma_distance_pct", "value": 8.39},
+      {"field": "div_state", "value": "BEARISH"},
+      {"field": "div_bear_count", "value": 1}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 103.88,
+    "stop": 100.91,
+    "stop_type": "ma20",
+    "risk_pct": 2.86,
+    "rr": 2.06,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 101.54,
+    "rr_tp1": 0.41,
+    "rr_tp2": 2.06,
+    "stop_atr_dist": 1.27,
+    "targets": [
+     {"type": "resistance", "price": 105.09, "tp": "TP1", "r": 0.41, "atr_dist": 0.52, "date": "2026-07-07", "vol_ratio": 0.73, "vol_validated": false},
+     {"type": "fib_1272", "price": 110.0, "tp": "TP2", "r": 2.06, "atr_dist": 2.62},
+     {"type": "fib_1618", "price": 116.24, "tp": "TP3", "r": 4.16, "atr_dist": 5.29},
+     {"type": "fib_2000", "price": 123.13, "tp": null, "r": 6.48, "atr_dist": 8.23},
+     {"type": "fib_2618", "price": 134.28, "tp": null, "r": 10.24, "atr_dist": 13.0}
+    ],
+    "sma_distance_pct": 8.39,
+    "ma_20": 100.91,
+    "ma_50": 95.84,
+    "ma_100": 95.63,
+    "ma_200": 94.56,
+    "atr_14d": 2.34
+   },
+   "sector": "XLF",
+   "sector_name": "Financials",
+   "sector_grade": "DEPLOY",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 73.3,
+    "structure": 71.6,
+    "energy": 72.3,
+    "flow": 76.3,
+    "mp": 72.0,
+    "mp_state": "BUILDING",
+    "elder": 7.0,
+    "lens_positive": 2,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 5.11,
+    "rvol": 1.01,
+    "beta_30d": -0.9,
+    "universe_rank": 29
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "lynch",
+     "source": "market_frame_read.crown_cuts_against[2]",
+     "text": "Financials XLF is grade DEPLOY / entry_gate PASS - Crown supports the sector - but the row's own sector_trend_state reads 'Momentum Fading - Hold, Don't Add'. The frame and the row disagree.\nKept at 2 and the disagreement is disclosed rather than resolved; I have no fundamental with which to break the tie."
+    },
+    {
+     "voice": "minervini",
+     "source": "declared.crown_conflicts[2]",
+     "text": "CB, ACGL, JPM: XLF is graded DEPLOY with entry_gate PASS and RRG LEADING, yet every XLF name in my set carries sector_trend_state 'Momentum Fading - Hold, Don't Add'. The sector map and the name-level tag disagree; I took the sector grade and am flagging the disagreement rather than papering over it."
+    },
+    {
+     "voice": "seow",
+     "source": "declared.packet_conflicts[0]",
+     "text": "The two sector layers disagree on 5 of 11 sectors. Row field sector_trend_state vs frame sectors[].entry_gate: XLF rows all read 'Momentum Fading — Hold, Don't Add' while the frame marks XLF grade DEPLOY / LEADING / entry_gate PASS (32 rows affected, includes ACGL, FNF, V); XLE same shape (3 rows); XLK rows read 'Recovering From Weakness — Watch for Entry' while the frame marks it entry_gate BLOCKED (18 rows, includes held VRSK); XLRE rows read 'Momentum Building — Add' against frame entry_gate CAUTION (24 rows, includes SHO); XLU the same (7 rows). I resolved every case conservatively — a name had to clear BOTH layers — but the PM should know the packet is internally inconsistent on sector state, and that ACGL and FNF are on this sheet only because I let the frame's PASS outrank the row's 'Fading'."
+    },
+    {
+     "voice": "thorp",
+     "source": "declared.rejected_at_step_3_r3",
+     "text": "20 of the 27 valid-bracket names failed R3 on bracket.rr_tp1 vs the R-cost of a one-ATR gap, including every one of the calmest six: SHO (0.74R vs 1.68R), V (0.30 vs 1.90), SYY (0.59 vs 1.87), CSX (0.90 vs 1.58), ACGL (0.41 vs 1.79), FNF (0.41 vs 1.59). EFX was the worst at 0.13R against 1.72R."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "market_frame_read.crown_cuts_against_three_of_four",
+     "text": "Crown/SRM entry gates: SYY and KHC sit in XLP (grade HOLD, entry_gate CAUTION, macro_headwind_flag HEADWIND); SHO sits in XLRE (HOLD / CAUTION / HEADWIND). Only ACGL has its sector at its back (XLF, DEPLOY, RRG LEADING, entry_gate PASS). Three of my four are filed INTO a declared macro headwind."
+    }
+   ],
+   "why_not_top5": null
+  },
+  {
+   "ticker": "SHO",
+   "rank": 2,
+   "nomination_count": 8,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "elder-lens",
+     "conviction": 3,
+     "reason": "elder_5d 10,10,6,6,9 - two bars at 6 then a reclaim to 9 on the last bar: permission event, with elder_pattern=CORRECTION_REENTRY confirming the dip-and-reclaim shape. mp=35 mp_state=FADING is the weak leg: the force behind the reclaim is thin and decaying.",
+     "fields_cited": [
+      {"field": "elder", "value": 9.0},
+      {"field": "elder_5d", "value": [10, 10, 6, 6, 9]},
+      {"field": "elder_pattern", "value": "CORRECTION_REENTRY"},
+      {"field": "mp", "value": 35.0},
+      {"field": "mp_state", "value": "FADING"}
+     ]
+    },
+    {
+     "voice": "livermore",
+     "conviction": 2,
+     "reason": "sma_distance_pct 4.35 — tightest to its own trend in my eligible set, the normal-pullback zone C5 asks for, not a chase. mp_accel_state ACCELERATING, structure 71.6, structure_shift RANGE, ma20 stop 11.48 off entry 11.82, risk_pct 2.88, rr 2.68. Capped at 2: mp_state FADING, XLRE gate CAUTION.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "FADING"},
+      {"field": "mp_accel_state", "value": "ACCELERATING"},
+      {"field": "structure", "value": 71.6},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 4.35},
+      {"field": "atr_14d", "value": 0.23},
+      {"field": "entry", "value": 11.82},
+      {"field": "bracket.stop", "value": 11.48},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.88},
+      {"field": "gics_sector", "value": "XLRE"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "rank", "value": 114},
+      {"field": "held", "value": false}
+     ]
+    },
+    {
+     "voice": "lynch",
+     "conviction": 1,
+     "reason": "The nearest thing to an Asset Play shape in the packet - hotels - and the Asset Play test (assets at spot vs historical cost, the debt that erodes them, the unlocking catalyst) is exactly NOT_SERVED. Served: sma_distance_pct 4.35, least extended of the 27 bracket.valid names; structure_shift RANGE.",
+     "fields_cited": [
+      {"field": "gics_sector", "value": "XLRE"},
+      {"field": "gics_sector_name", "value": "Real Estate"},
+      {"field": "sma_distance_pct", "value": 4.35},
+      {"field": "ma_50", "value": 11.33},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.stop", "value": 11.48}
+     ]
+    },
+    {
+     "voice": "oneil",
+     "conviction": 2,
+     "reason": "rs_leadership=LEADER, lens.leadership=ok, lens.resistance=strong, structure=71.6, structure_shift=RANGE, lens.coil=ok. bracket.valid=true, risk_pct=2.88, rr=2.68. sma_distance_pct=4.35, tightest in the valid set. Cuts against Crown: XLRE entry_gate=CAUTION, macro_headwind_flag=HEADWIND.",
+     "fields_cited": [
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rank", "value": 114},
+      {"field": "gics_sector", "value": "XLRE"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "structure", "value": 71.6},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens", "value": {"leadership": "ok", "coil": "ok", "insti_money": "strong", "structure": "ok", "resistance": "strong", "extension": null, "sector": "strong"}},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.88},
+      {"field": "bracket.rr", "value": 2.68},
+      {"field": "bracket.stop", "value": 11.48},
+      {"field": "sma_distance_pct", "value": 4.35},
+      {"field": "ma_200", "value": 9.79},
+      {"field": "entry", "value": 11.82},
+      {"field": "rvol", "value": 1.17}
+     ]
+    },
+    {
+     "voice": "raschke",
+     "conviction": 2,
+     "reason": "RETRACEMENT / Anti shape (C6), proxy only. mp_state FADING but mp_accel_state ACCELERATING - a pullback hooking back up; %K/%D NOT_SERVED so this is the weakest read of my five. sma_distance_pct 4.35, closest to its mean of any nominee (C20). Stop 11.48 ma20, 1.45 ATR, risk_pct 2.88.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "FADING"},
+      {"field": "mp_accel_state", "value": "ACCELERATING"},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 4.35},
+      {"field": "structure", "value": 71.6},
+      {"field": "lens", "value": {"leadership": "ok", "coil": "ok", "insti_money": "strong", "structure": "ok", "resistance": "strong", "extension": null, "sector": "strong"}},
+      {"field": "entry", "value": 11.82},
+      {"field": "atr_14d", "value": 0.23},
+      {"field": "atr_caution", "value": false},
+      {"field": "rank", "value": 114},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.stop", "value": 11.48},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.risk_pct", "value": 2.88},
+      {"field": "bracket", "value": {"price": 11.82, "price_source": "eod_close", "stop": 11.48, "stop_type": "ma20", "stop_atr_dist": 1.45, "stop_date": null, "risk": 0.34, "risk_pct": 2.88, "targets": [{"type": "resistance", "price": 12.07, "tp": "TP1", "r": 0.74, "atr_dist": 1.07, "date": "2026-06-22", "vol_ratio": 1.09, "vol_validated": false}, {"type": "fib_1272", "price": 12.73, "tp": "TP2", "r": 2.68, "atr_dist": 3.89}, {"type": "fib_1618", "price": 13.57, "tp": "TP3", "r": 5.15, "atr_dist": 7.48}, {"type": "fib_2000", "price": 14.5, "tp": null, "r": 7.88, "atr_dist": 11.45}, {"type": "fib_2618", "price": 16.0, "tp": null, "r": 12.29, "atr_dist": 17.86}], "rr": 2.68, "rr_tp1": 0.74, "rr_tp2": 2.68, "rr_tp3": 5.15, "atr_fallback_stop": 11.59, "valid": true, "invalid_reason": null}}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 3,
+     "reason": "Shallowest extension in the set: sma_distance_pct 4.35, entry 11.82 vs ma_20 11.48 = +2.96%. bracket.stop 11.48 = 2.88% risk. sector_trend_state 'Momentum Building - Add', but frame XLRE is HEADWIND / entry_gate CAUTION and IWM roc20 -2.31 cuts against a small name.",
+     "fields_cited": [
+      {"field": "entry", "value": 11.82},
+      {"field": "ma_20", "value": 11.48},
+      {"field": "sma_distance_pct", "value": 4.35},
+      {"field": "bracket.stop", "value": 11.48},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"}
+     ]
+    },
+    {
+     "voice": "steenbarger",
+     "conviction": 2,
+     "reason": "Clean ordered stack price 11.82 > ma_50 11.33 > ma_100 10.41 > ma_200 9.79, lens_warnings 0, bracket.valid true, risk_pct 2.88, rr_tp2 2.68. CROWN CUTS AGAINST: XLRE entry_gate CAUTION on macro HEADWIND — regime label does not endorse this sector, so size cannot be justified on environment match.",
+     "fields_cited": [
+      {"field": "ma_50", "value": 11.33},
+      {"field": "ma_100", "value": 10.41},
+      {"field": "ma_200", "value": 9.79},
+      {"field": "structure", "value": 71.6},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.88},
+      {"field": "gics_sector_name", "value": "Real Estate"},
+      {"field": "lens_warnings", "value": 0}
+     ]
+    },
+    {
+     "voice": "wyckoff",
+     "conviction": 2,
+     "reason": "RANGE, lens.resistance strong, energy 80.7, and mp_accel_state ACCELERATING is the only reward reading in my four. Danger point is a DECLARED SUBSTITUTE - ma20 11.48, not a price-memory low. Crown cuts against: XLRE entry_gate CAUTION, macro HEADWIND.",
+     "fields_cited": [
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens.coil", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "energy", "value": 80.7},
+      {"field": "mp_accel_state", "value": "ACCELERATING"},
+      {"field": "bracket.stop", "value": 11.48},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.rr", "value": 2.68},
+      {"field": "bracket.risk_pct", "value": 2.88},
+      {"field": "sma_distance_pct", "value": 4.35},
+      {"field": "atr_caution", "value": false}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 11.82,
+    "stop": 11.48,
+    "stop_type": "ma20",
+    "risk_pct": 2.88,
+    "rr": 2.68,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 11.59,
+    "rr_tp1": 0.74,
+    "rr_tp2": 2.68,
+    "stop_atr_dist": 1.45,
+    "targets": [
+     {"type": "resistance", "price": 12.07, "tp": "TP1", "r": 0.74, "atr_dist": 1.07, "date": "2026-06-22", "vol_ratio": 1.09, "vol_validated": false},
+     {"type": "fib_1272", "price": 12.73, "tp": "TP2", "r": 2.68, "atr_dist": 3.89},
+     {"type": "fib_1618", "price": 13.57, "tp": "TP3", "r": 5.15, "atr_dist": 7.48},
+     {"type": "fib_2000", "price": 14.5, "tp": null, "r": 7.88, "atr_dist": 11.45},
+     {"type": "fib_2618", "price": 16.0, "tp": null, "r": 12.29, "atr_dist": 17.86}
+    ],
+    "sma_distance_pct": 4.35,
+    "ma_20": 11.48,
+    "ma_50": 11.33,
+    "ma_100": 10.41,
+    "ma_200": 9.79,
+    "atr_14d": 0.23
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 64.1,
+    "structure": 71.6,
+    "energy": 80.7,
+    "flow": 61.8,
+    "mp": 35.0,
+    "mp_state": "FADING",
+    "elder": 9.0,
+    "lens_positive": 3,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": -2.22,
+    "rvol": 1.17,
+    "beta_30d": -0.12,
+    "universe_rank": 114
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "elder-lens",
+     "source": "declared.crown_conflicts[3]",
+     "text": "sectors[XLRE] entry_gate=CAUTION, macro_headwind_flag=HEADWIND."
+    },
+    {
+     "voice": "elder-lens",
+     "source": "declared.not_served[1]",
+     "text": "THE TRUE TRIGGER of this reversed seat. Highest-value item in the backlog. Every 'permission event' in this file is the <=6 -> >=7 decode standing in for it. That proxy misclassifies both ways: a 6 -> 7 step (PAYX, SHO, HR) may be blue->blue with no colour change at all, and a genuine red->blue transition inside the 2-6 band is invisible to me.\nimpulse_colour on two consecutive bars (transition event)"
+    },
+    {
+     "voice": "lynch",
+     "source": "market_frame_read.crown_cuts_against[1]",
+     "text": "Real Estate XLRE - grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION.\nConviction 1. The Asset Play shape is the only reason it is here and the Asset Play test is NOT_SERVED. Crown's headwind stands unopposed by anything I can produce."
+    },
+    {
+     "voice": "oneil",
+     "source": "market_frame_read.crown_cuts_against[1]",
+     "text": "SHO - gics_sector=XLRE, Crown entry_gate=CAUTION, macro_headwind_flag=HEADWIND, grade=HOLD. The name's own sector_trend_state reads 'Momentum Building - Add'. Crown overrules the optimism; conviction held to 2 for exactly this reason."
+    },
+    {
+     "voice": "raschke",
+     "source": "declared.not_served[2]",
+     "text": "%K / %D stochastic (C6, R4) - the Anti is DEFINED by the 7/10 stochastic hook. SHO is nominated on shape resemblance at conviction 2 for exactly this reason."
+    },
+    {
+     "voice": "seow",
+     "source": "declared.crown_cuts_against[3]",
+     "text": "Cutting against SHO: sector_trend_state reads 'Momentum Building — Add' but the frame marks XLRE macro_headwind_flag HEADWIND / entry_gate CAUTION, and cross_asset breadth shows SPY roc20 1.39 vs IWM roc20 -2.31, spread 3.7 — large over small. SHO at entry 11.82 is the smallest name on my sheet."
+    },
+    {
+     "voice": "seow",
+     "source": "declared.packet_conflicts[0]",
+     "text": "The two sector layers disagree on 5 of 11 sectors. Row field sector_trend_state vs frame sectors[].entry_gate: XLF rows all read 'Momentum Fading — Hold, Don't Add' while the frame marks XLF grade DEPLOY / LEADING / entry_gate PASS (32 rows affected, includes ACGL, FNF, V); XLE same shape (3 rows); XLK rows read 'Recovering From Weakness — Watch for Entry' while the frame marks it entry_gate BLOCKED (18 rows, includes held VRSK); XLRE rows read 'Momentum Building — Add' against frame entry_gate CAUTION (24 rows, includes SHO); XLU the same (7 rows). I resolved every case conservatively — a name had to clear BOTH layers — but the PM should know the packet is internally inconsistent on sector state, and that ACGL and FNF are on this sheet only because I let the frame's PASS outrank the row's 'Fading'."
+    },
+    {
+     "voice": "steenbarger",
+     "source": "declared.crown_cuts_against",
+     "text": "Crown status DEGRADED (7 limits), family BROADENING_CARRY, match_quality 'partial', size_multiplier 1.0, conditions_not_met: broadening, gamma_positive, dispersion_normal. Headline: 'A market with no clear breadth lead, calm on the surface but with single stocks moving very differently underneath.' Cross-asset breadth confirms: SPY roc20 1.39 vs IWM roc20 -2.31. This cuts directly against the momentum caveat and specifically against SHO (XLRE CAUTION/HEADWIND) and SYY (XLP CAUTION/HEADWIND); both were capped at conviction 2 for that reason."
+    },
+    {
+     "voice": "thorp",
+     "source": "declared.rejected_at_step_3_r3",
+     "text": "20 of the 27 valid-bracket names failed R3 on bracket.rr_tp1 vs the R-cost of a one-ATR gap, including every one of the calmest six: SHO (0.74R vs 1.68R), V (0.30 vs 1.90), SYY (0.59 vs 1.87), CSX (0.90 vs 1.58), ACGL (0.41 vs 1.79), FNF (0.41 vs 1.59). EFX was the worst at 0.13R against 1.72R."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "market_frame_read.crown_cuts_against_three_of_four",
+     "text": "Crown/SRM entry gates: SYY and KHC sit in XLP (grade HOLD, entry_gate CAUTION, macro_headwind_flag HEADWIND); SHO sits in XLRE (HOLD / CAUTION / HEADWIND). Only ACGL has its sector at its back (XLF, DEPLOY, RRG LEADING, entry_gate PASS). Three of my four are filed INTO a declared macro headwind."
+    }
+   ],
+   "why_not_top5": null
+  },
+  {
+   "ticker": "CSX",
+   "rank": 3,
+   "nomination_count": 7,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "livermore",
+     "conviction": 3,
+     "reason": "The only STRONG mp_state in the bracket-valid set. structure 66.3, structure_shift RANGE (base intact, no adverse break), sma_distance_pct 8.44 — near its trend, not chasing it. ma20 stop 49.80 off entry 51.80, risk_pct 3.86, rr 2.05. XLI sector_trend_state 'Momentum Building — Add'.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "STRONG"},
+      {"field": "mp_accel_state", "value": "FLAT"},
+      {"field": "structure", "value": 66.3},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 8.44},
+      {"field": "atr_14d", "value": 1.16},
+      {"field": "entry", "value": 51.8},
+      {"field": "bracket.stop", "value": 49.8},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 3.86},
+      {"field": "gics_sector", "value": "XLI"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "rank", "value": 39},
+      {"field": "held", "value": false}
+     ]
+    },
+    {
+     "voice": "lynch",
+     "conviction": 2,
+     "reason": "Rail is a Cyclical shape I can describe, and the Cyclical test - inventories against demand, futures against spot - is NOT_SERVED. Served only: sector_trend_state 'Momentum Building - Add', 8.44% over ma_50 47.77 at 51.80, structure_shift RANGE, rank 39. Provisional sector read.",
+     "fields_cited": [
+      {"field": "gics_sector", "value": "XLI"},
+      {"field": "gics_sector_name", "value": "Industrials"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "sma_distance_pct", "value": 8.44},
+      {"field": "ma_50", "value": 47.77},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "rank", "value": 39},
+      {"field": "bracket.valid", "value": true}
+     ]
+    },
+    {
+     "voice": "minervini",
+     "conviction": 4,
+     "reason": "TT served PASS: entry 51.80 > ma_50 47.77 > ma_100 44.98 > ma_200 41.01; LEADER, rs_spy_20d +7.30. sma_distance_pct 8.44 - near the pivot, not chased. One of only 2 passers with bracket.valid=true: stop 49.80 (ma20), risk_pct 3.86, rr_tp2 2.05. XLI Momentum Building - Add.",
+     "fields_cited": [
+      {"field": "entry", "value": 51.8},
+      {"field": "ma_20", "value": 49.8},
+      {"field": "ma_50", "value": 47.77},
+      {"field": "ma_100", "value": 44.98},
+      {"field": "ma_200", "value": 41.01},
+      {"field": "sma_distance_pct", "value": 8.44},
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rs_spy_20d", "value": 7.3},
+      {"field": "structure", "value": 66.3},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "flow", "value": 85.5},
+      {"field": "energy", "value": 59.7},
+      {"field": "bracket.valid", "value": true},
+      {"field": "gics_sector", "value": "XLI"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "bracket.stop", "value": 49.8},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.risk_pct", "value": 3.86}
+     ]
+    },
+    {
+     "voice": "oneil",
+     "conviction": 3,
+     "reason": "rs_leadership=LEADER, lens.leadership=strong, rank=39, gics_sector=XLI (Crown entry_gate PASS), sector_trend_state='Momentum Building - Add'. structure=66.3, structure_shift=RANGE. bracket.valid=true, risk_pct=3.86, rr=2.05. Against it: lens.coil=warn, rvol=1.35 under the 1.40 volume proxy.",
+     "fields_cited": [
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rank", "value": 39},
+      {"field": "gics_sector", "value": "XLI"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "structure", "value": 66.3},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens", "value": {"leadership": "strong", "coil": "warn", "insti_money": "ok", "structure": "ok", "resistance": "warn", "extension": null, "sector": "strong"}},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 3.86},
+      {"field": "bracket.rr", "value": 2.05},
+      {"field": "bracket.stop", "value": 49.8},
+      {"field": "sma_distance_pct", "value": 8.44},
+      {"field": "ma_200", "value": 41.01},
+      {"field": "entry", "value": 51.8},
+      {"field": "rvol", "value": 1.35}
+     ]
+    },
+    {
+     "voice": "raschke",
+     "conviction": 4,
+     "reason": "RETRACEMENT / Holy-Grail shape (C7). mp_state STRONG is the strongest trend read in the whole valid-bracket set; structure_shift RANGE (inside swing), sma_distance_pct 8.44 - a pullback distance, not a chase. Stop 49.8 ma20, 1.72 ATR out, risk_pct 3.86, rr_tp2 2.05.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "STRONG"},
+      {"field": "mp_accel_state", "value": "FLAT"},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 8.44},
+      {"field": "structure", "value": 66.3},
+      {"field": "lens", "value": {"leadership": "strong", "coil": "warn", "insti_money": "ok", "structure": "ok", "resistance": "warn", "extension": null, "sector": "strong"}},
+      {"field": "entry", "value": 51.8},
+      {"field": "atr_14d", "value": 1.16},
+      {"field": "atr_caution", "value": false},
+      {"field": "rank", "value": 39},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.stop", "value": 49.8},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.risk_pct", "value": 3.86},
+      {"field": "bracket", "value": {"price": 51.8, "price_source": "eod_close", "stop": 49.8, "stop_type": "ma20", "stop_atr_dist": 1.72, "stop_date": null, "risk": 2.0, "risk_pct": 3.86, "targets": [{"type": "prior_high", "price": 53.6, "tp": "TP1", "r": 0.9, "atr_dist": 1.55}, {"type": "fib_1272", "price": 55.9, "tp": "TP2", "r": 2.05, "atr_dist": 3.53}, {"type": "fib_1618", "price": 58.82, "tp": "TP3", "r": 3.51, "atr_dist": 6.04}, {"type": "fib_2000", "price": 62.05, "tp": null, "r": 5.12, "atr_dist": 8.81}, {"type": "fib_2618", "price": 67.27, "tp": null, "r": 7.73, "atr_dist": 13.3}], "rr": 2.05, "rr_tp1": 0.9, "rr_tp2": 2.05, "rr_tp3": 3.51, "atr_fallback_stop": 50.64, "valid": true, "invalid_reason": null}}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 3,
+     "reason": "entry 51.80 vs ma_20 49.80 = +4.02% with sma_distance_pct 8.44 — inside the up-move, not extended. bracket.stop 49.80 = 3.86% under entry, so C15 gives a real size. sector_trend_state 'Momentum Building - Add' and frame XLI entry_gate PASS agree.",
+     "fields_cited": [
+      {"field": "entry", "value": 51.8},
+      {"field": "ma_20", "value": 49.8},
+      {"field": "sma_distance_pct", "value": 8.44},
+      {"field": "bracket.stop", "value": 49.8},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"}
+     ]
+    },
+    {
+     "voice": "steenbarger",
+     "conviction": 3,
+     "reason": "Widest genuine higher-timeframe separation in the packet's valid-bracket set: price 51.8 > ma_50 47.77 > ma_100 44.98 > ma_200 41.01, PASS-gate sector Industrials, bracket.valid true, risk_pct 3.86, atr_14d 1.16. Caveat: structure 66.3 is mid-pack and lens_warnings 2.",
+     "fields_cited": [
+      {"field": "ma_50", "value": 47.77},
+      {"field": "ma_100", "value": 44.98},
+      {"field": "ma_200", "value": 41.01},
+      {"field": "structure", "value": 66.3},
+      {"field": "atr_14d", "value": 1.16},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 3.86},
+      {"field": "gics_sector_name", "value": "Industrials"},
+      {"field": "lens_warnings", "value": 2}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 51.8,
+    "stop": 49.8,
+    "stop_type": "ma20",
+    "risk_pct": 3.86,
+    "rr": 2.05,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 50.64,
+    "rr_tp1": 0.9,
+    "rr_tp2": 2.05,
+    "stop_atr_dist": 1.72,
+    "targets": [
+     {"type": "prior_high", "price": 53.6, "tp": "TP1", "r": 0.9, "atr_dist": 1.55},
+     {"type": "fib_1272", "price": 55.9, "tp": "TP2", "r": 2.05, "atr_dist": 3.53},
+     {"type": "fib_1618", "price": 58.82, "tp": "TP3", "r": 3.51, "atr_dist": 6.04},
+     {"type": "fib_2000", "price": 62.05, "tp": null, "r": 5.12, "atr_dist": 8.81},
+     {"type": "fib_2618", "price": 67.27, "tp": null, "r": 7.73, "atr_dist": 13.3}
+    ],
+    "sma_distance_pct": 8.44,
+    "ma_20": 49.8,
+    "ma_50": 47.77,
+    "ma_100": 44.98,
+    "ma_200": 41.01,
+    "atr_14d": 1.16
+   },
+   "sector": "XLI",
+   "sector_name": "Industrials",
+   "sector_grade": "HOLD",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 72.4,
+    "structure": 66.3,
+    "energy": 59.7,
+    "flow": 85.5,
+    "mp": 78.0,
+    "mp_state": "STRONG",
+    "elder": 7.0,
+    "lens_positive": 2,
+    "lens_warnings": 2,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 7.3,
+    "rvol": 1.35,
+    "beta_30d": -0.23,
+    "universe_rank": 39
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "lynch",
+     "source": "declared.not_served[2]",
+     "text": "Directly blocks the Cyclical read on CSX and the distribution read on staples. Cheapest high-value ask on my list.\nNOT_SERVED\nSupply Chain Ratio / inventory vs sales (C14)"
+    },
+    {
+     "voice": "seow",
+     "source": "data_gaps[3]",
+     "text": "On my menu but disowned by my own canon: canon/seow/diff.json records mp_state as provisionally_unsupported — no momentum-persistence construct exists in this deck. I did not read it for any of the nine picks, and note that CSX (STRONG) would not have moved on it either way."
+    },
+    {
+     "voice": "thorp",
+     "source": "declared.rejected_at_step_3_r3",
+     "text": "20 of the 27 valid-bracket names failed R3 on bracket.rr_tp1 vs the R-cost of a one-ATR gap, including every one of the calmest six: SHO (0.74R vs 1.68R), V (0.30 vs 1.90), SYY (0.59 vs 1.87), CSX (0.90 vs 1.58), ACGL (0.41 vs 1.79), FNF (0.41 vs 1.59). EFX was the worst at 0.13R against 1.72R."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[3]",
+     "text": "CSX, IP, SARO dropped on lens.coil warn. This is my only objective entry-timing test and a name that fails it is not rescued by conviction."
+    }
+   ],
+   "why_not_top5": null
+  },
+  {
+   "ticker": "SYY",
+   "rank": 4,
+   "nomination_count": 5,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 3,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=1; leadership=warn; coil=strong; insti_money=strong; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=2; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 1},
+      {"field": "lens.leadership", "value": "warn"},
+      {"field": "lens.coil", "value": "strong"},
+      {"field": "lens.insti_money", "value": "strong"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 2},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    },
+    {
+     "voice": "raschke",
+     "conviction": 3,
+     "reason": "BREAKOUT / Crabel contraction shape (C12). lens.coil=strong with atr_caution=false and sma_distance_pct 6.01. The only nominee with a literal swing_low stop at 82.02 - C17 as written - 1.15 ATR out, risk_pct 2.46 (tightest of my five), rr_tp2 3.56. Crown VIX 15.28 caps this one.",
+     "fields_cited": [
+      {"field": "lens", "value": {"leadership": "warn", "coil": "strong", "insti_money": "strong", "structure": "ok", "resistance": "strong", "extension": null, "sector": "strong"}},
+      {"field": "atr_14d", "value": 1.81},
+      {"field": "atr_caution", "value": false},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 6.01},
+      {"field": "structure", "value": 68.4},
+      {"field": "mp_state", "value": "FADING"},
+      {"field": "mp_accel_state", "value": "DECELERATING"},
+      {"field": "entry", "value": 84.09},
+      {"field": "rank", "value": 102},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.stop", "value": 82.02},
+      {"field": "bracket.stop_type", "value": "swing_low"},
+      {"field": "bracket.risk_pct", "value": 2.46},
+      {"field": "bracket", "value": {"price": 84.09, "price_source": "eod_close", "stop": 82.02, "stop_type": "swing_low", "stop_atr_dist": 1.15, "stop_date": "2026-02-03", "risk": 2.07, "risk_pct": 2.46, "targets": [{"type": "resistance", "price": 85.31, "tp": "TP1", "r": 0.59, "atr_dist": 0.68, "date": "2026-07-07", "vol_ratio": 0.78, "vol_validated": false}, {"type": "resistance", "price": 91.46, "tp": "TP2", "r": 3.56, "atr_dist": 4.08, "date": "2026-03-02", "vol_ratio": 0.64, "vol_validated": false}, {"type": "fib_1272", "price": 94.52, "tp": "TP3", "r": 5.04, "atr_dist": 5.77}, {"type": "fib_1618", "price": 97.92, "tp": null, "r": 6.68, "atr_dist": 7.65}, {"type": "fib_2000", "price": 101.68, "tp": null, "r": 8.5, "atr_dist": 9.73}, {"type": "fib_2618", "price": 107.75, "tp": null, "r": 11.43, "atr_dist": 13.09}], "rr": 3.56, "rr_tp1": 0.59, "rr_tp2": 3.56, "rr_tp3": 5.04, "atr_fallback_stop": 82.28, "valid": true, "invalid_reason": null, "stop_vol_ratio": 0.98, "stop_vol_validated": false}}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 3,
+     "reason": "Closest dip to the only average this author owns: entry 84.09 vs ma_20 82.86 = +1.48%. bracket.stop 82.02 sits 2.46% under entry — the tightest in the surviving set, so C15 sizes the largest position per 2% of book. sma_distance_pct 6.01 is not an extension.",
+     "fields_cited": [
+      {"field": "entry", "value": 84.09},
+      {"field": "ma_20", "value": 82.86},
+      {"field": "sma_distance_pct", "value": 6.01},
+      {"field": "bracket.stop", "value": 82.02},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"}
+     ]
+    },
+    {
+     "voice": "steenbarger",
+     "conviction": 2,
+     "reason": "Lowest defined risk in the valid-bracket set: bracket.valid true, risk_pct 2.46, lens_warnings 1, price 84.09 above ma_50 79.32 / ma_100 78.32 / ma_200 78.43. Two counts against: those MAs are converged within 1.3% (range, not trend) and XLP entry_gate is CAUTION on macro HEADWIND.",
+     "fields_cited": [
+      {"field": "ma_50", "value": 79.32},
+      {"field": "ma_100", "value": 78.32},
+      {"field": "ma_200", "value": 78.43},
+      {"field": "structure", "value": 68.4},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 2.46},
+      {"field": "gics_sector_name", "value": "Consumer Staples"},
+      {"field": "lens_warnings", "value": 1}
+     ]
+    },
+    {
+     "voice": "wyckoff",
+     "conviction": 3,
+     "reason": "The only name in 162 with a true danger point: swing_low 82.02, 1.15 ATR below entry 84.09, risk 2.46%, rr 3.56. RANGE geography, lens.coil strong (the tightest bucket), lens.resistance strong. Effort half unreadable - day_vol absent.",
+     "fields_cited": [
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens.coil", "value": "strong"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "energy", "value": 80.7},
+      {"field": "bracket.stop", "value": 82.02},
+      {"field": "bracket.stop_type", "value": "swing_low"},
+      {"field": "bracket.stop_atr_dist", "value": 1.15},
+      {"field": "bracket.risk_pct", "value": 2.46},
+      {"field": "bracket.rr", "value": 3.56},
+      {"field": "sma_distance_pct", "value": 6.01},
+      {"field": "atr_14d", "value": 1.81},
+      {"field": "atr_caution", "value": false},
+      {"field": "div_state", "value": "NONE"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 84.09,
+    "stop": 82.02,
+    "stop_type": "swing_low",
+    "risk_pct": 2.46,
+    "rr": 3.56,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 82.28,
+    "rr_tp1": 0.59,
+    "rr_tp2": 3.56,
+    "stop_atr_dist": 1.15,
+    "targets": [
+     {"type": "resistance", "price": 85.31, "tp": "TP1", "r": 0.59, "atr_dist": 0.68, "date": "2026-07-07", "vol_ratio": 0.78, "vol_validated": false},
+     {"type": "resistance", "price": 91.46, "tp": "TP2", "r": 3.56, "atr_dist": 4.08, "date": "2026-03-02", "vol_ratio": 0.64, "vol_validated": false},
+     {"type": "fib_1272", "price": 94.52, "tp": "TP3", "r": 5.04, "atr_dist": 5.77},
+     {"type": "fib_1618", "price": 97.92, "tp": null, "r": 6.68, "atr_dist": 7.65},
+     {"type": "fib_2000", "price": 101.68, "tp": null, "r": 8.5, "atr_dist": 9.73},
+     {"type": "fib_2618", "price": 107.75, "tp": null, "r": 11.43, "atr_dist": 13.09}
+    ],
+    "sma_distance_pct": 6.01,
+    "ma_20": 82.86,
+    "ma_50": 79.32,
+    "ma_100": 78.32,
+    "ma_200": 78.43,
+    "atr_14d": 1.81
+   },
+   "sector": "XLP",
+   "sector_name": "Consumer Staples",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 65.2,
+    "structure": 68.4,
+    "energy": 80.7,
+    "flow": 60.5,
+    "mp": 46.0,
+    "mp_state": "FADING",
+    "elder": 7.0,
+    "lens_positive": 4,
+    "lens_warnings": 1,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 0.15,
+    "rvol": 0.65,
+    "beta_30d": -0.11,
+    "universe_rank": 102
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "raschke",
+     "source": "data_gaps[0]",
+     "text": "On my menu and ABSENT from all 162 candidate rows. This is the single hardest failure for this seat: with no volume-per-day and no bar range series, Crabel's ID/NR4/NR7 (C12) and the 6d/100d HV<50% gate (C13) cannot be computed at all. My entire BREAKOUT branch runs on lens.coil as a proxy, and I nominated exactly one name from it (SYY) as a result."
+    },
+    {
+     "voice": "raschke",
+     "source": "declared.not_served[5]",
+     "text": "C23 whipsaw protection - the straddle's opposite-side DOUBLE-SIZED stop-and-reverse cannot be armed in a long-only single-bracket system. My one breakout nomination (SYY) is the long half of a straddle I cannot complete."
+    },
+    {
+     "voice": "seow",
+     "source": "declared.crown_cuts_against[2]",
+     "text": "Sector map vs row field, cutting against SYY, NOMD and KHC: all three sit in XLP, which the frame marks grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION. Three of my nine picks are in a headwind sector. I did not upgrade any of them past conviction 3 for this reason."
+    },
+    {
+     "voice": "steenbarger",
+     "source": "declared.crown_cuts_against",
+     "text": "Crown status DEGRADED (7 limits), family BROADENING_CARRY, match_quality 'partial', size_multiplier 1.0, conditions_not_met: broadening, gamma_positive, dispersion_normal. Headline: 'A market with no clear breadth lead, calm on the surface but with single stocks moving very differently underneath.' Cross-asset breadth confirms: SPY roc20 1.39 vs IWM roc20 -2.31. This cuts directly against the momentum caveat and specifically against SHO (XLRE CAUTION/HEADWIND) and SYY (XLP CAUTION/HEADWIND); both were capped at conviction 2 for that reason."
+    },
+    {
+     "voice": "thorp",
+     "source": "declared.rejected_at_step_3_r3",
+     "text": "20 of the 27 valid-bracket names failed R3 on bracket.rr_tp1 vs the R-cost of a one-ATR gap, including every one of the calmest six: SHO (0.74R vs 1.68R), V (0.30 vs 1.90), SYY (0.59 vs 1.87), CSX (0.90 vs 1.58), ACGL (0.41 vs 1.79), FNF (0.41 vs 1.59). EFX was the worst at 0.13R against 1.72R."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "market_frame_read.crown_cuts_against_three_of_four",
+     "text": "Crown/SRM entry gates: SYY and KHC sit in XLP (grade HOLD, entry_gate CAUTION, macro_headwind_flag HEADWIND); SHO sits in XLRE (HOLD / CAUTION / HEADWIND). Only ACGL has its sector at its back (XLF, DEPLOY, RRG LEADING, entry_gate PASS). Three of my four are filed INTO a declared macro headwind."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "data_gaps[2]",
+     "text": "null on 135 of 162. Where present it is dominated by moving averages (ma20 x12, ma50 x2, ma100 x2, ma200 x1, ma_cluster x2) versus only 6 price-memory swing lows and 2 fib levels. Only SYY of my four has a true danger point; the other three carry a declared MA substitute."
+    }
+   ],
+   "why_not_top5": null
+  },
+  {
+   "ticker": "SARO",
+   "rank": 5,
+   "nomination_count": 4,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "livermore",
+     "conviction": 3,
+     "reason": "mp_state BUILDING with mp_accel_state ACCELERATING — the only such name that also clears my no-chase and leading-group gates. structure_shift RANGE, sma_distance_pct 8.32, atr_14d 1.00, ma20 stop 28.37 off entry 29.53, risk_pct 3.93, rr 3.22 (best in my eligible set). XLI 'Momentum Building — Add'.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "BUILDING"},
+      {"field": "mp_accel_state", "value": "ACCELERATING"},
+      {"field": "structure", "value": 64.2},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 8.32},
+      {"field": "atr_14d", "value": 1.0},
+      {"field": "entry", "value": 29.53},
+      {"field": "bracket.stop", "value": 28.37},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 3.93},
+      {"field": "gics_sector", "value": "XLI"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "rank", "value": 77},
+      {"field": "held", "value": false}
+     ]
+    },
+    {
+     "voice": "raschke",
+     "conviction": 3,
+     "reason": "RETRACEMENT / Holy-Grail shape (C7). The ONLY valid-bracket name where both halves of my ADX substitute agree: mp_state BUILDING + mp_accel_state ACCELERATING. structure_shift RANGE, sma_distance_pct 8.32. Stop 28.37 ma20, 1.16 ATR out, risk_pct 3.93, rr_tp2 3.22.",
+     "fields_cited": [
+      {"field": "mp_state", "value": "BUILDING"},
+      {"field": "mp_accel_state", "value": "ACCELERATING"},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "sma_distance_pct", "value": 8.32},
+      {"field": "structure", "value": 64.2},
+      {"field": "lens", "value": {"leadership": "ok", "coil": "warn", "insti_money": "ok", "structure": "ok", "resistance": "warn", "extension": null, "sector": "strong"}},
+      {"field": "entry", "value": 29.53},
+      {"field": "atr_14d", "value": 1.0},
+      {"field": "atr_caution", "value": false},
+      {"field": "rank", "value": 77},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.stop", "value": 28.37},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.risk_pct", "value": 3.93},
+      {"field": "bracket", "value": {"price": 29.53, "price_source": "eod_close", "stop": 28.37, "stop_type": "ma20", "stop_atr_dist": 1.16, "stop_date": null, "risk": 1.16, "risk_pct": 3.93, "targets": [{"type": "resistance", "price": 31.02, "tp": "TP1", "r": 1.28, "atr_dist": 1.49, "date": "2026-07-06", "vol_ratio": 0.87, "vol_validated": false}, {"type": "resistance", "price": 33.26, "tp": "TP2", "r": 3.22, "atr_dist": 3.73, "date": "2026-02-26", "vol_ratio": 1.72, "vol_validated": true}, {"type": "fib_1272", "price": 34.52, "tp": "TP3", "r": 4.3, "atr_dist": 4.99}, {"type": "fib_1618", "price": 36.12, "tp": null, "r": 5.68, "atr_dist": 6.58}, {"type": "fib_2000", "price": 37.89, "tp": null, "r": 7.21, "atr_dist": 8.35}, {"type": "fib_2618", "price": 40.75, "tp": null, "r": 9.67, "atr_dist": 11.21}], "rr": 3.22, "rr_tp1": 1.28, "rr_tp2": 3.22, "rr_tp3": 4.3, "atr_fallback_stop": 28.53, "valid": true, "invalid_reason": null}}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 2,
+     "reason": "entry 29.53 vs ma_20 28.37 = +4.09%, sma_distance_pct 8.32 — still a dip inside the move. bracket.stop 28.37 = 3.93% under entry, wide enough to shrink size under C15. sector_trend_state 'Momentum Building - Add' with frame XLI entry_gate PASS.",
+     "fields_cited": [
+      {"field": "entry", "value": 29.53},
+      {"field": "ma_20", "value": 28.37},
+      {"field": "sma_distance_pct", "value": 8.32},
+      {"field": "bracket.stop", "value": 28.37},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"}
+     ]
+    },
+    {
+     "voice": "steenbarger",
+     "conviction": 2,
+     "reason": "PASS-gate Industrials with the best reward geometry among gate-clean names: bracket.valid true, risk_pct 3.93, rr_tp2 3.22. Context is only PARTIAL — price 29.53 clears ma_50 27.26 and ma_100 26.8 but ma_200 27.84 sits above ma_100, so the long stack is not yet ordered. Conviction capped there.",
+     "fields_cited": [
+      {"field": "ma_50", "value": 27.26},
+      {"field": "ma_100", "value": 26.8},
+      {"field": "ma_200", "value": 27.84},
+      {"field": "structure", "value": 64.2},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 3.93},
+      {"field": "gics_sector_name", "value": "Industrials"},
+      {"field": "lens_warnings", "value": 2}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 29.53,
+    "stop": 28.37,
+    "stop_type": "ma20",
+    "risk_pct": 3.93,
+    "rr": 3.22,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 28.53,
+    "rr_tp1": 1.28,
+    "rr_tp2": 3.22,
+    "stop_atr_dist": 1.16,
+    "targets": [
+     {"type": "resistance", "price": 31.02, "tp": "TP1", "r": 1.28, "atr_dist": 1.49, "date": "2026-07-06", "vol_ratio": 0.87, "vol_validated": false},
+     {"type": "resistance", "price": 33.26, "tp": "TP2", "r": 3.22, "atr_dist": 3.73, "date": "2026-02-26", "vol_ratio": 1.72, "vol_validated": true},
+     {"type": "fib_1272", "price": 34.52, "tp": "TP3", "r": 4.3, "atr_dist": 4.99},
+     {"type": "fib_1618", "price": 36.12, "tp": null, "r": 5.68, "atr_dist": 6.58},
+     {"type": "fib_2000", "price": 37.89, "tp": null, "r": 7.21, "atr_dist": 8.35},
+     {"type": "fib_2618", "price": 40.75, "tp": null, "r": 9.67, "atr_dist": 11.21}
+    ],
+    "sma_distance_pct": 8.32,
+    "ma_20": 28.37,
+    "ma_50": 27.26,
+    "ma_100": 26.8,
+    "ma_200": 27.84,
+    "atr_14d": 1.0
+   },
+   "sector": "XLI",
+   "sector_name": "Industrials",
+   "sector_grade": "HOLD",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 67.9,
+    "structure": 64.2,
+    "energy": 70.6,
+    "flow": 84.2,
+    "mp": 43.0,
+    "mp_state": "BUILDING",
+    "elder": 10.0,
+    "lens_positive": 1,
+    "lens_warnings": 2,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LAGGARD",
+    "rs_spy_20d": 3.55,
+    "rvol": 1.31,
+    "beta_30d": 0.94,
+    "universe_rank": 77
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[3]",
+     "text": "CSX, IP, SARO dropped on lens.coil warn. This is my only objective entry-timing test and a name that fails it is not rescued by conviction."
+    }
+   ],
+   "why_not_top5": null
+  },
+  {
+   "ticker": "KHC",
+   "rank": 6,
+   "nomination_count": 4,
+   "max_conviction": 2,
+   "backers": [
+    {
+     "voice": "lynch",
+     "conviction": 1,
+     "reason": "A Stalwart shape in staples at 26.22, 8.48% over ma_50 24.17, structure_shift RANGE, rank 24. The Stalwart test is relative P/E against its own history plus the diworseification check - both NOT_SERVED. sector_trend_state reads 'Momentum Fading - Hold, Don't Add', which cuts against adding.",
+     "fields_cited": [
+      {"field": "gics_sector_name", "value": "Consumer Staples"},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"},
+      {"field": "sma_distance_pct", "value": 8.48},
+      {"field": "ma_50", "value": 24.17},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "rank", "value": 24},
+      {"field": "bracket.valid", "value": true}
+     ]
+    },
+    {
+     "voice": "oneil",
+     "conviction": 2,
+     "reason": "rs_leadership=LEADER, rank=24, structure=66.3, structure_shift=RANGE, lens.coil=ok, lens.structure=ok. bracket.valid=true, risk_pct=3.62, rr=2.42, sma_distance_pct=8.48. rvol=1.32. Against it: lens.leadership=warn, lens.resistance=warn, Crown XLP entry_gate=CAUTION on macro HEADWIND.",
+     "fields_cited": [
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rank", "value": 24},
+      {"field": "gics_sector", "value": "XLP"},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"},
+      {"field": "structure", "value": 66.3},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens", "value": {"leadership": "warn", "coil": "ok", "insti_money": "ok", "structure": "ok", "resistance": "warn", "extension": null, "sector": "strong"}},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.risk_pct", "value": 3.62},
+      {"field": "bracket.rr", "value": 2.42},
+      {"field": "bracket.stop", "value": 25.27},
+      {"field": "sma_distance_pct", "value": 8.48},
+      {"field": "ma_200", "value": 23.93},
+      {"field": "entry", "value": 26.22},
+      {"field": "rvol", "value": 1.32}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 2,
+     "reason": "entry 26.22 vs ma_20 25.27 = +3.76%, sma_distance_pct 8.48 — a dip, not an extension. bracket.stop 25.27 = 3.62% risk. Capped at 2: sector_trend_state 'Momentum Fading - Hold, Don't Add' and frame XLP macro_headwind_flag HEADWIND / entry_gate CAUTION.",
+     "fields_cited": [
+      {"field": "entry", "value": 26.22},
+      {"field": "ma_20", "value": 25.27},
+      {"field": "sma_distance_pct", "value": 8.48},
+      {"field": "bracket.stop", "value": 25.27},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"}
+     ]
+    },
+    {
+     "voice": "wyckoff",
+     "conviction": 2,
+     "reason": "Weakest of the four and filed with its flaws on the line: RANGE and energy 81.5, but lens.resistance warn (bottom tercile of the resistance read), risk_pct 3.62 the widest, div_bear_count 2, mp FADING/DECELERATING. Whether that is absorption or exhaustion needs day_vol, which is absent.",
+     "fields_cited": [
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "lens.coil", "value": "ok"},
+      {"field": "lens.resistance", "value": "warn"},
+      {"field": "energy", "value": 81.5},
+      {"field": "flow", "value": 73.7},
+      {"field": "mp_state", "value": "FADING"},
+      {"field": "mp_accel_state", "value": "DECELERATING"},
+      {"field": "bracket.stop", "value": 25.27},
+      {"field": "bracket.stop_type", "value": "ma20"},
+      {"field": "bracket.rr", "value": 2.42},
+      {"field": "bracket.risk_pct", "value": 3.62},
+      {"field": "div_state", "value": "BEARISH"},
+      {"field": "div_bear_count", "value": 2},
+      {"field": "sma_distance_pct", "value": 8.48}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 26.22,
+    "stop": 25.27,
+    "stop_type": "ma20",
+    "risk_pct": 3.62,
+    "rr": 2.42,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 25.52,
+    "rr_tp1": 0.96,
+    "rr_tp2": 2.42,
+    "stop_atr_dist": 1.36,
+    "sma_distance_pct": 8.48,
+    "ma_20": 25.27,
+    "ma_50": 24.17,
+    "ma_100": 23.41,
+    "ma_200": 23.93,
+    "atr_14d": 0.7
+   },
+   "sector": "XLP",
+   "sector_name": "Consumer Staples",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 74.2,
+    "structure": 66.3,
+    "energy": 81.5,
+    "flow": 73.7,
+    "mp": 72.0,
+    "mp_state": "FADING",
+    "elder": 9.0,
+    "lens_positive": 1,
+    "lens_warnings": 2,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 9.25,
+    "rvol": 1.32,
+    "beta_30d": -0.17,
+    "universe_rank": 24
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "lynch",
+     "source": "market_frame_read.crown_cuts_against[0]",
+     "text": "Consumer Staples XLP - grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION. Also sector_trend_state 'Momentum Fading - Hold, Don't Add' on the row itself.\nHeld at conviction 1 for that reason. Crown's read and the row agree against adding; I nominate only as a Stalwart-shaped candidate for the PM's fundamental check, not as an entry."
+    },
+    {
+     "voice": "oneil",
+     "source": "market_frame_read.crown_cuts_against[2]",
+     "text": "KHC - gics_sector=XLP, Crown entry_gate=CAUTION, macro_headwind_flag=HEADWIND, grade=HOLD, and sector_trend_state='Momentum Fading - Hold, Don't Add'. Both reads are negative on the group; only rank=24 and rvol=1.32 keep it on the sheet at conviction 2."
+    },
+    {
+     "voice": "seow",
+     "source": "declared.crown_cuts_against[2]",
+     "text": "Sector map vs row field, cutting against SYY, NOMD and KHC: all three sit in XLP, which the frame marks grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION. Three of my nine picks are in a headwind sector. I did not upgrade any of them past conviction 3 for this reason."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "market_frame_read.crown_cuts_against_three_of_four",
+     "text": "Crown/SRM entry gates: SYY and KHC sit in XLP (grade HOLD, entry_gate CAUTION, macro_headwind_flag HEADWIND); SHO sits in XLRE (HOLD / CAUTION / HEADWIND). Only ACGL has its sector at its back (XLF, DEPLOY, RRG LEADING, entry_gate PASS). Three of my four are filed INTO a declared macro headwind."
+    }
+   ],
+   "why_not_top5": "4 backers, level with rank 5 SARO, but max_conviction 2 vs SARO's 3 broke the tie downward; sector XLP entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "ELF",
+   "rank": 7,
+   "nomination_count": 2,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "elder-lens",
+     "conviction": 4,
+     "reason": "elder_5d 10,10,5,5,10 - two bars parked at 5 (ambiguous/red band) then a reclaim to 10: the permission event on the last bar, C4's red-giving-way. elder_pattern=CORRECTION_REENTRY is the menu-legal dip-and-reclaim. mp=83 with mp_state=FADING, so the force behind it is decaying, not building.",
+     "fields_cited": [
+      {"field": "elder", "value": 10.0},
+      {"field": "elder_5d", "value": [10, 10, 5, 5, 10]},
+      {"field": "elder_pattern", "value": "CORRECTION_REENTRY"},
+      {"field": "mp", "value": 83.0},
+      {"field": "mp_state", "value": "FADING"}
+     ]
+    },
+    {
+     "voice": "thorp",
+     "conviction": 2,
+     "reason": "Only name with sc_m_gate_detail 5/5 and sc_p_gate_detail 4/6, bracket.rr 3.72, rr_tp1 2.50R vs a 1.78R gapped loss (1.40x). Ranked LAST of my four anyway: atr_14d 4.24 / bracket.price 84.01 = 5.05% vol, rank 20/27, at the passing-set Q3 boundary 5.11 — R1 demotes it behind calmer names.",
+     "fields_cited": [
+      {"field": "atr_14d", "value": 4.24},
+      {"field": "bracket.price", "value": 84.01},
+      {"field": "bracket.stop", "value": 78.6},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.rr", "value": 3.72},
+      {"field": "bracket.rr_tp1", "value": 2.5},
+      {"field": "bracket.rr_tp2", "value": 3.72},
+      {"field": "bracket.risk_pct", "value": 6.44},
+      {"field": "bracket.stop_atr_dist", "value": 1.28},
+      {"field": "sc_momentum", "value": 78.2},
+      {"field": "sc_m_gate_detail", "value": {"flow": true, "energy": true, "structure": true, "mp": true, "elder": true}},
+      {"field": "sc_p_gate_detail", "value": {"flow": true, "energy": true, "structure": true, "mp": true, "bq": false, "k39": false}}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 84.01,
+    "stop": 78.6,
+    "stop_type": "ma200",
+    "risk_pct": 6.44,
+    "rr": 3.72,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 79.77,
+    "rr_tp1": 2.5,
+    "rr_tp2": 3.72,
+    "stop_atr_dist": 1.28,
+    "sma_distance_pct": 29.27,
+    "ma_20": 76.02,
+    "ma_50": 64.99,
+    "ma_100": 65.94,
+    "ma_200": 78.6,
+    "atr_14d": 4.24
+   },
+   "sector": "XLP",
+   "sector_name": "Consumer Staples",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 78.2,
+    "structure": 84.2,
+    "energy": 75.6,
+    "flow": 73.7,
+    "mp": 83.0,
+    "mp_state": "FADING",
+    "elder": 10.0,
+    "lens_positive": 2,
+    "lens_warnings": 2,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 23.2,
+    "rvol": 0.84,
+    "beta_30d": 1.55,
+    "universe_rank": 7
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "elder-lens",
+     "source": "declared.crown_conflicts[0]",
+     "text": "sectors[XLP] entry_gate=CAUTION, grade=HOLD, macro_headwind_flag=HEADWIND. Crown's sector read cuts against my top pick."
+    },
+    {
+     "voice": "thorp",
+     "source": "declared.crown_conflicts_by_name",
+     "text": "All four of my survivors sit in sectors Crown grades CAUTION or BLOCKED. Not one landed in XLF or XLE, the two DEPLOY / entry_gate PASS sectors. That is a real conflict between my worst-case arithmetic and the regime read, and the PM should see it stated rather than buried."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[6]",
+     "text": "ELF dropped at sma_distance_pct +29.27 (entry 84.01 vs ma_50 64.99) with a ma200 stop at 78.6 and 6.44% risk. That is the middle of a move, not the edge of a range."
+    }
+   ],
+   "why_not_top5": "only 2 backers (top 5 floor is 4); risk_pct 6.44% above the 4% ceiling Raschke applied; sector XLP entry_gate=CAUTION (grade HOLD, macro HEADWIND); sma_distance_pct 29.27% — extended, not at the edge of a base."
+  },
+  {
+   "ticker": "AOS",
+   "rank": 8,
+   "nomination_count": 2,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "lynch",
+     "conviction": 1,
+     "reason": "Unloved inside a rising sector: rs_leadership LAGGARD, rs_spy_20d -0.22, price 62.44 under ma_200 66.01, only 5.81% over ma_50 59.01, sector_trend_state 'Momentum Building - Add'. Honest caveat: structure_shift BEARISH_CHOCH, and without fundamentals I cannot separate unloved from broken.",
+     "fields_cited": [
+      {"field": "rs_leadership", "value": "LAGGARD"},
+      {"field": "rs_spy_20d", "value": -0.22},
+      {"field": "sma_distance_pct", "value": 5.81},
+      {"field": "ma_50", "value": 59.01},
+      {"field": "ma_200", "value": 66.01},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"},
+      {"field": "structure_shift", "value": "BEARISH_CHOCH"},
+      {"field": "bracket.valid", "value": true}
+     ]
+    },
+    {
+     "voice": "seow",
+     "conviction": 3,
+     "reason": "Both sector layers agree: sector_trend_state 'Momentum Building - Add' and frame XLI entry_gate PASS. entry 62.44 vs ma_20 60.59 = +3.05%, a shallow dip not an extension (sma_distance_pct 5.81). bracket.stop 60.59 = 2.96% risk distance, sizeable under C15.",
+     "fields_cited": [
+      {"field": "entry", "value": 62.44},
+      {"field": "ma_20", "value": 60.59},
+      {"field": "sma_distance_pct", "value": 5.81},
+      {"field": "bracket.stop", "value": 60.59},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 62.44,
+    "stop": 60.59,
+    "stop_type": "ma20",
+    "risk_pct": 2.96,
+    "rr": 2.56,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 60.78,
+    "rr_tp1": 0.33,
+    "rr_tp2": 2.56,
+    "stop_atr_dist": 1.12,
+    "sma_distance_pct": 5.81,
+    "ma_20": 60.59,
+    "ma_50": 59.01,
+    "ma_100": 61.85,
+    "ma_200": 66.01,
+    "atr_14d": 1.66
+   },
+   "sector": "XLI",
+   "sector_name": "Industrials",
+   "sector_grade": "HOLD",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 66.0,
+    "structure": 71.6,
+    "energy": 71.4,
+    "flow": 78.9,
+    "mp": 33.0,
+    "mp_state": "BUILDING",
+    "elder": 9.0,
+    "lens_positive": 3,
+    "lens_warnings": 2,
+    "structure_shift": "BEARISH_CHOCH",
+    "rs_leadership": "LAGGARD",
+    "rs_spy_20d": -0.22,
+    "rvol": 0.91,
+    "beta_30d": 0.94,
+    "universe_rank": 93
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "lynch",
+     "source": "market_frame_read.crown_cuts_against[3]",
+     "text": "Industrials XLI grade HOLD, RRG LEADING/ENTERING, entry_gate PASS - supportive. But both rows carry structure_shift BEARISH_CHOCH.\nDisclosed on the face of both reasons. structure_shift is on my menu and I do not suppress it because it is inconvenient."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[2]",
+     "text": "AOS, CAG, EFX, EVLV, FNF, NOMD, RCL, RYAN dropped as BEARISH_CHOCH - a change of character mid-move is not a range edge."
+    }
+   ],
+   "why_not_top5": "only 2 backers (top 5 floor is 4); structure_shift=BEARISH_CHOCH (Wyckoff and Livermore both cut BEARISH_CHOCH names outright)."
+  },
+  {
+   "ticker": "NOMD",
+   "rank": 9,
+   "nomination_count": 2,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "seow",
+     "conviction": 2,
+     "reason": "entry 11.92 vs ma_20 11.52 = +3.47% with bracket.stop 11.52 = 3.36% risk distance. sma_distance_pct 11.19 is the most stretched I will accept off ma_50. sector_trend_state 'Momentum Fading - Hold, Don't Add' and frame XLP HEADWIND both argue against — held to 2.",
+     "fields_cited": [
+      {"field": "entry", "value": 11.92},
+      {"field": "ma_20", "value": 11.52},
+      {"field": "sma_distance_pct", "value": 11.19},
+      {"field": "bracket.stop", "value": 11.52},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"}
+     ]
+    },
+    {
+     "voice": "thorp",
+     "conviction": 3,
+     "reason": "Calmest name that survives my worst-case test: atr_14d 0.33 / bracket.price 11.92 = 2.77% vol, 9th of 27 in the passing set (Q2). bracket.rr_tp1 2.90R pays 1.59x the 1.82R a one-ATR gap through bracket.stop 11.52 costs. bracket.rr 3.33, bracket.risk_pct 3.36.",
+     "fields_cited": [
+      {"field": "atr_14d", "value": 0.33},
+      {"field": "bracket.price", "value": 11.92},
+      {"field": "bracket.stop", "value": 11.52},
+      {"field": "bracket.valid", "value": true},
+      {"field": "bracket.rr", "value": 3.33},
+      {"field": "bracket.rr_tp1", "value": 2.9},
+      {"field": "bracket.rr_tp2", "value": 3.33},
+      {"field": "bracket.risk_pct", "value": 3.36},
+      {"field": "bracket.stop_atr_dist", "value": 1.2},
+      {"field": "sc_momentum", "value": 65.4},
+      {"field": "sc_m_gate_detail", "value": {"flow": false, "energy": true, "structure": true, "mp": true, "elder": true}},
+      {"field": "sc_p_gate_detail", "value": {"flow": false, "energy": true, "structure": true, "mp": true, "bq": false, "k39": false}}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 11.92,
+    "stop": 11.52,
+    "stop_type": "ma20",
+    "risk_pct": 3.36,
+    "rr": 3.33,
+    "bracket_valid": true,
+    "bracket_invalid_reason": null,
+    "atr_fallback_stop": 11.59,
+    "rr_tp1": 2.9,
+    "rr_tp2": 3.33,
+    "stop_atr_dist": 1.2,
+    "sma_distance_pct": 11.19,
+    "ma_20": 11.52,
+    "ma_50": 10.72,
+    "ma_100": 10.23,
+    "ma_200": 11.21,
+    "atr_14d": 0.33
+   },
+   "sector": "XLP",
+   "sector_name": "Consumer Staples",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 65.4,
+    "structure": 82.1,
+    "energy": 85.7,
+    "flow": 36.8,
+    "mp": 61.0,
+    "mp_state": "FADING",
+    "elder": 7.0,
+    "lens_positive": 3,
+    "lens_warnings": 3,
+    "structure_shift": "BEARISH_CHOCH",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 5.81,
+    "rvol": 0.5,
+    "beta_30d": -0.25,
+    "universe_rank": 99
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "seow",
+     "source": "declared.crown_cuts_against[2]",
+     "text": "Sector map vs row field, cutting against SYY, NOMD and KHC: all three sit in XLP, which the frame marks grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION. Three of my nine picks are in a headwind sector. I did not upgrade any of them past conviction 3 for this reason."
+    },
+    {
+     "voice": "thorp",
+     "source": "declared.crown_conflicts_by_name",
+     "text": "All four of my survivors sit in sectors Crown grades CAUTION or BLOCKED. Not one landed in XLF or XLE, the two DEPLOY / entry_gate PASS sectors. That is a real conflict between my worst-case arithmetic and the regime read, and the PM should see it stated rather than buried."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[2]",
+     "text": "AOS, CAG, EFX, EVLV, FNF, NOMD, RCL, RYAN dropped as BEARISH_CHOCH - a change of character mid-move is not a range edge."
+    }
+   ],
+   "why_not_top5": "only 2 backers (top 5 floor is 4); structure_shift=BEARISH_CHOCH (Wyckoff and Livermore both cut BEARISH_CHOCH names outright); sector XLP entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "CURB",
+   "rank": 10,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 4,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=0; leadership=strong; coil=ok; insti_money=strong; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=1; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 0},
+      {"field": "lens.leadership", "value": "strong"},
+      {"field": "lens.coil", "value": "ok"},
+      {"field": "lens.insti_money", "value": "strong"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 1},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 31.54,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 30.87,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 5.18,
+    "ma_20": 30.8,
+    "ma_50": 29.99,
+    "ma_100": 28.53,
+    "ma_200": 26.32,
+    "atr_14d": 0.67
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 64.8,
+    "structure": 71.6,
+    "energy": 71.4,
+    "flow": 73.7,
+    "mp": 35.0,
+    "mp_state": "FADING",
+    "elder": 9.0,
+    "lens_positive": 4,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": -1.76,
+    "rvol": 0.7,
+    "beta_30d": -0.65,
+    "universe_rank": 107
+   },
+   "held": false,
+   "objections": [],
+   "why_not_top5": "single nominator (detect-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; sector XLRE entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "DHC",
+   "rank": 11,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 4,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=0; leadership=strong; coil=strong; insti_money=ok; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=2; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 0},
+      {"field": "lens.leadership", "value": "strong"},
+      {"field": "lens.coil", "value": "strong"},
+      {"field": "lens.insti_money", "value": "ok"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 2},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 9.41,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 9.1,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 5.35,
+    "ma_20": 9.17,
+    "ma_50": 8.93,
+    "ma_100": 8.14,
+    "ma_200": 6.64,
+    "atr_14d": 0.31
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 68.2,
+    "structure": 68.4,
+    "energy": 87.4,
+    "flow": 78.9,
+    "mp": 23.0,
+    "mp_state": "FADING",
+    "elder": 9.0,
+    "lens_positive": 4,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "IN-LINE",
+    "rs_spy_20d": -2.23,
+    "rvol": 0.74,
+    "beta_30d": 0.1,
+    "universe_rank": 72
+   },
+   "held": false,
+   "objections": [],
+   "why_not_top5": "single nominator (detect-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; sector XLRE entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "HST",
+   "rank": 12,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 4,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=0; leadership=strong; coil=ok; insti_money=strong; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=1; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 0},
+      {"field": "lens.leadership", "value": "strong"},
+      {"field": "lens.coil", "value": "ok"},
+      {"field": "lens.insti_money", "value": "strong"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 1},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 24.97,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 24.42,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 5.13,
+    "ma_20": 23.77,
+    "ma_50": 23.75,
+    "ma_100": 21.93,
+    "ma_200": 19.98,
+    "atr_14d": 0.55
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 67.4,
+    "structure": 71.6,
+    "energy": 79.8,
+    "flow": 73.7,
+    "mp": 35.0,
+    "mp_state": "FADING",
+    "elder": 9.0,
+    "lens_positive": 4,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "IN-LINE",
+    "rs_spy_20d": -1.74,
+    "rvol": 0.83,
+    "beta_30d": 0.37,
+    "universe_rank": 84
+   },
+   "held": false,
+   "objections": [],
+   "why_not_top5": "single nominator (detect-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; sector XLRE entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "KRG",
+   "rank": 13,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 4,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=0; leadership=strong; coil=ok; insti_money=strong; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=2; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 0},
+      {"field": "lens.leadership", "value": "strong"},
+      {"field": "lens.coil", "value": "ok"},
+      {"field": "lens.insti_money", "value": "strong"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 2},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 29.48,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 28.96,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 4.57,
+    "ma_20": 28.91,
+    "ma_50": 28.19,
+    "ma_100": 26.9,
+    "ma_200": 25.16,
+    "atr_14d": 0.52
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 60.6,
+    "structure": 68.4,
+    "energy": 67.2,
+    "flow": 73.7,
+    "mp": 23.0,
+    "mp_state": "FADING",
+    "elder": 8.0,
+    "lens_positive": 4,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": -0.53,
+    "rvol": 0.62,
+    "beta_30d": -0.55,
+    "universe_rank": 128
+   },
+   "held": false,
+   "objections": [],
+   "why_not_top5": "single nominator (detect-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; sector XLRE entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "ORI",
+   "rank": 14,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 4,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=0; leadership=ok; coil=strong; insti_money=strong; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=1; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 0},
+      {"field": "lens.leadership", "value": "ok"},
+      {"field": "lens.coil", "value": "strong"},
+      {"field": "lens.insti_money", "value": "strong"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 1},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 43.07,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 42.12,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 7.95,
+    "ma_20": 41.64,
+    "ma_50": 39.9,
+    "ma_100": 40.07,
+    "ma_200": 41.39,
+    "atr_14d": 0.95
+   },
+   "sector": "XLF",
+   "sector_name": "Financials",
+   "sector_grade": "DEPLOY",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 64.9,
+    "structure": 72.6,
+    "energy": 77.3,
+    "flow": 53.9,
+    "mp": 55.0,
+    "mp_state": "FADING",
+    "elder": 9.0,
+    "lens_positive": 4,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 3.08,
+    "rvol": 1.12,
+    "beta_30d": -0.63,
+    "universe_rank": 106
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[0]",
+     "text": "83% of the field carries invalid_reason 'no valid bracket - no structural support passes the 3 gates (atr>=1.0, rr>=2.0, risk%<=regime ceiling)'. This single gate, not my geography or contraction tests, is what caps this seat today. 34 names failed ONLY this gate - CDP, NMRK, ORI, AWK, HWM, EBC, PDM, CB, BAC, SJM, SWK and others passed every Wyckoff test I could run and had no level to be wrong against."
+    }
+   ],
+   "why_not_top5": "single nominator (detect-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry."
+  },
+  {
+   "ticker": "PAYX",
+   "rank": 15,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "elder-lens",
+     "conviction": 4,
+     "reason": "elder_5d 7,7,6,6,10 - two bars at 6 drop into the ambiguous band and the last bar reclaims to 10, a textbook permission event. mp=86 and mp_state=STRONG is the strongest force confirmation on any transition name in the packet. elder_pattern is null, so the dip-and-reclaim shape is unconfirmed.",
+     "fields_cited": [
+      {"field": "elder", "value": 10.0},
+      {"field": "elder_5d", "value": [7, 7, 6, 6, 10]},
+      {"field": "elder_pattern", "value": null},
+      {"field": "mp", "value": 86.0},
+      {"field": "mp_state", "value": "STRONG"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 115.48,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 112.12,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 13.19,
+    "ma_20": 108.9,
+    "ma_50": 102.02,
+    "ma_100": 97.22,
+    "ma_200": 103.75,
+    "atr_14d": 3.36
+   },
+   "sector": "XLI",
+   "sector_name": "Industrials",
+   "sector_grade": "HOLD",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 64.5,
+    "structure": 85.3,
+    "energy": 61.3,
+    "flow": 39.5,
+    "mp": 86.0,
+    "mp_state": "STRONG",
+    "elder": 10.0,
+    "lens_positive": 2,
+    "lens_warnings": 3,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 14.21,
+    "rvol": 1.07,
+    "beta_30d": -0.51,
+    "universe_rank": 111
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "elder-lens",
+     "source": "declared.not_served[1]",
+     "text": "THE TRUE TRIGGER of this reversed seat. Highest-value item in the backlog. Every 'permission event' in this file is the <=6 -> >=7 decode standing in for it. That proxy misclassifies both ways: a 6 -> 7 step (PAYX, SHO, HR) may be blue->blue with no colour change at all, and a genuine red->blue transition inside the 2-6 band is invisible to me.\nimpulse_colour on two consecutive bars (transition event)"
+    },
+    {
+     "voice": "elder-lens",
+     "source": "data_gaps[1]",
+     "text": "null on 37 of 162 rows (23%). On those names checklist step 2's pattern confirmation and step 3's INTERRUPTED trend-failure filter both return no_data. PAYX - my joint-highest-conviction name - is one of them: elder_pattern=null, so its dip-and-reclaim shape is asserted from elder_5d alone."
+    }
+   ],
+   "why_not_top5": "single nominator (elder-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry."
+  },
+  {
+   "ticker": "PDM",
+   "rank": 16,
+   "nomination_count": 1,
+   "max_conviction": 4,
+   "backers": [
+    {
+     "voice": "detect-lens",
+     "conviction": 4,
+     "reason": "lens_positive=4/6 (packet max; extension=null so 6 lenses evaluable, 4/5 non-null strong); lens_warnings=0; leadership=ok; coil=strong; insti_money=strong; structure=ok; resistance=strong; sector=strong; runner_setup=false runner_conviction=2; premove_setup=false premove_conviction=0",
+     "fields_cited": [
+      {"field": "lens_positive", "value": 4},
+      {"field": "lens_warnings", "value": 0},
+      {"field": "lens.leadership", "value": "ok"},
+      {"field": "lens.coil", "value": "strong"},
+      {"field": "lens.insti_money", "value": "strong"},
+      {"field": "lens.structure", "value": "ok"},
+      {"field": "lens.resistance", "value": "strong"},
+      {"field": "lens.sector", "value": "strong"},
+      {"field": "runner_setup", "value": false},
+      {"field": "runner_conviction", "value": 2},
+      {"field": "premove_setup", "value": false},
+      {"field": "premove_conviction", "value": 0}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 9.78,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 9.53,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 8.55,
+    "ma_20": 9.56,
+    "ma_50": 9.01,
+    "ma_100": 8.2,
+    "ma_200": 8.24,
+    "atr_14d": 0.25
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 65.7,
+    "structure": 71.6,
+    "energy": 84.0,
+    "flow": 68.4,
+    "mp": 28.0,
+    "mp_state": "FADING",
+    "elder": 7.0,
+    "lens_positive": 4,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 1.78,
+    "rvol": 0.47,
+    "beta_30d": 0.16,
+    "universe_rank": 97
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[0]",
+     "text": "83% of the field carries invalid_reason 'no valid bracket - no structural support passes the 3 gates (atr>=1.0, rr>=2.0, risk%<=regime ceiling)'. This single gate, not my geography or contraction tests, is what caps this seat today. 34 names failed ONLY this gate - CDP, NMRK, ORI, AWK, HWM, EBC, PDM, CB, BAC, SJM, SWK and others passed every Wyckoff test I could run and had no level to be wrong against."
+    }
+   ],
+   "why_not_top5": "single nominator (detect-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; sector XLRE entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "AHR",
+   "rank": 17,
+   "nomination_count": 1,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "minervini",
+     "conviction": 3,
+     "reason": "Trend Template served-6 PASS: entry 57.45 > ma_50 51.15 > ma_100 50.54 > ma_200 49.16; LEADER +11.26; structure 93.7, the highest in the entire passing set. Crown cuts against it: XLRE entry_gate CAUTION on macro headwind with TLT roc20 -4.13 and the dollar bid. bracket.valid=false.",
+     "fields_cited": [
+      {"field": "entry", "value": 57.45},
+      {"field": "ma_20", "value": 55.16},
+      {"field": "ma_50", "value": 51.15},
+      {"field": "ma_100", "value": 50.54},
+      {"field": "ma_200", "value": 49.16},
+      {"field": "sma_distance_pct", "value": 12.32},
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rs_spy_20d", "value": 11.26},
+      {"field": "structure", "value": 93.7},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "flow", "value": 61.8},
+      {"field": "energy", "value": 71.4},
+      {"field": "bracket.valid", "value": false},
+      {"field": "gics_sector", "value": "XLRE"},
+      {"field": "sector_trend_state", "value": "Momentum Building — Add"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 57.45,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 56.08,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 12.32,
+    "ma_20": 55.16,
+    "ma_50": 51.15,
+    "ma_100": 50.54,
+    "ma_200": 49.16,
+    "atr_14d": 1.37
+   },
+   "sector": "XLRE",
+   "sector_name": "Real Estate",
+   "sector_grade": "HOLD",
+   "sector_gate": "CAUTION",
+   "sector_gate_reason": "Macro headwind",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 75.3,
+    "structure": 93.7,
+    "energy": 71.4,
+    "flow": 61.8,
+    "mp": 83.0,
+    "mp_state": "FADING",
+    "elder": 7.0,
+    "lens_positive": 2,
+    "lens_warnings": 2,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 11.26,
+    "rvol": 0.49,
+    "beta_30d": -0.47,
+    "universe_rank": 18
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "minervini",
+     "source": "declared.crown_conflicts[0]",
+     "text": "AHR (and the whole XLRE cohort that dominates my passing set - 13 of 43): sector_trend_state says Momentum Building - Add, but Crown's sector map has XLRE entry_gate CAUTION on macro HEADWIND, and cross_asset shows TLT roc20 -4.13 with the dollar RISING (UUP roc20 +0.49). Rates up plus dollar bid is a direct headwind to a REIT. I nominated one XLRE name, the strongest by structure, and stopped there."
+    }
+   ],
+   "why_not_top5": "single nominator (minervini) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; sector XLRE entry_gate=CAUTION (grade HOLD, macro HEADWIND)."
+  },
+  {
+   "ticker": "AVAV",
+   "rank": 18,
+   "nomination_count": 1,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "elder-lens",
+     "conviction": 3,
+     "reason": "elder_5d 3,7,9,4,10 - the last bar reclaims to 10 from 4, a permission event, with elder_pattern=CORRECTION_REENTRY. mp=49 mp_state=BUILDING - force is low but rising rather than decaying, which is the direction this seat wants behind a reclaim.",
+     "fields_cited": [
+      {"field": "elder", "value": 10.0},
+      {"field": "elder_5d", "value": [3, 7, 9, 4, 10]},
+      {"field": "elder_pattern", "value": "CORRECTION_REENTRY"},
+      {"field": "mp", "value": 49.0},
+      {"field": "mp_state", "value": "BUILDING"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 154.24,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 143.52,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": -6.89,
+    "ma_20": 153.99,
+    "ma_50": 165.65,
+    "ma_100": 180.26,
+    "ma_200": 240.98,
+    "atr_14d": 10.72
+   },
+   "sector": "XLI",
+   "sector_name": "Industrials",
+   "sector_grade": "HOLD",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Building — Add",
+   "scores": {
+    "sc_momentum": 43.8,
+    "structure": 26.3,
+    "energy": 36.6,
+    "flow": 59.2,
+    "mp": 49.0,
+    "mp_state": "BUILDING",
+    "elder": 10.0,
+    "lens_positive": 2,
+    "lens_warnings": 3,
+    "structure_shift": "BEARISH_CHOCH",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 10.42,
+    "rvol": 0.39,
+    "beta_30d": 0.54,
+    "universe_rank": 155
+   },
+   "held": false,
+   "objections": [],
+   "why_not_top5": "single nominator (elder-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; structure_shift=BEARISH_CHOCH (Wyckoff and Livermore both cut BEARISH_CHOCH names outright)."
+  },
+  {
+   "ticker": "BBY",
+   "rank": 19,
+   "nomination_count": 1,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "elder-lens",
+     "conviction": 3,
+     "reason": "elder_5d 7,10,7,5,10 - drops to 5, then the last bar reclaims 10. Permission event plus elder_pattern=CORRECTION_REENTRY. mp=65 mp_state=FADING: mid-pack force and decaying, so the reclaim is not yet confirmed by momentum persistence.",
+     "fields_cited": [
+      {"field": "elder", "value": 10.0},
+      {"field": "elder_5d", "value": [7, 10, 7, 5, 10]},
+      {"field": "elder_pattern", "value": "CORRECTION_REENTRY"},
+      {"field": "mp", "value": 65.0},
+      {"field": "mp_state", "value": "FADING"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 88.45,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 85.84,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 17.47,
+    "ma_20": 82.19,
+    "ma_50": 75.3,
+    "ma_100": 68.83,
+    "ma_200": 70.57,
+    "atr_14d": 2.62
+   },
+   "sector": "XLY",
+   "sector_name": "Consumer Discretionary",
+   "sector_grade": "AVOID",
+   "sector_gate": "BLOCKED",
+   "sector_gate_reason": "AVOID grade",
+   "sector_macro_headwind_flag": "HEADWIND",
+   "row_gics_gate": "BLOCKED",
+   "sector_trend_state": "Declining — Avoid",
+   "scores": {
+    "sc_momentum": 71.9,
+    "structure": 76.8,
+    "energy": 71.4,
+    "flow": 73.7,
+    "mp": 65.0,
+    "mp_state": "FADING",
+    "elder": 10.0,
+    "lens_positive": 0,
+    "lens_warnings": 2,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 12.44,
+    "rvol": 0.8,
+    "beta_30d": 0.72,
+    "universe_rank": 46
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "elder-lens",
+     "source": "declared.crown_conflicts[1]",
+     "text": "sectors[XLY] entry_gate=BLOCKED, grade=AVOID, rrg_quadrant=LAGGING. Crown blocks this sector outright; the transition is real but the frame refuses it."
+    }
+   ],
+   "why_not_top5": "single nominator (elder-lens) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry; row gics_gate=BLOCKED; sector XLY entry_gate=BLOCKED (grade AVOID, macro HEADWIND); sma_distance_pct 17.47% — extended, not at the edge of a base; lens_positive=0."
+  },
+  {
+   "ticker": "CB",
+   "rank": 20,
+   "nomination_count": 1,
+   "max_conviction": 3,
+   "backers": [
+    {
+     "voice": "minervini",
+     "conviction": 3,
+     "reason": "Trend Template served-6 PASS: entry 358.91 > ma_50 335.33 > ma_100 330.89 > ma_200 317.10; LEADER +3.73; sma_distance_pct 7.03 - tightest extension of the XLF passers, flow 85.5, energy 77.3. Cuts against: sector_trend_state Momentum Fading - Hold, Don't Add, and bracket.valid=false.",
+     "fields_cited": [
+      {"field": "entry", "value": 358.91},
+      {"field": "ma_20", "value": 351.01},
+      {"field": "ma_50", "value": 335.33},
+      {"field": "ma_100", "value": 330.89},
+      {"field": "ma_200", "value": 317.1},
+      {"field": "sma_distance_pct", "value": 7.03},
+      {"field": "rs_leadership", "value": "LEADER"},
+      {"field": "rs_spy_20d", "value": 3.73},
+      {"field": "structure", "value": 71.6},
+      {"field": "structure_shift", "value": "RANGE"},
+      {"field": "flow", "value": 85.5},
+      {"field": "energy", "value": 77.3},
+      {"field": "bracket.valid", "value": false},
+      {"field": "gics_sector", "value": "XLF"},
+      {"field": "sector_trend_state", "value": "Momentum Fading — Hold, Don't Add"}
+     ]
+    }
+   ],
+   "levels": {
+    "entry": 358.91,
+    "stop": null,
+    "stop_type": null,
+    "risk_pct": null,
+    "rr": null,
+    "bracket_valid": false,
+    "bracket_invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)",
+    "atr_fallback_stop": 350.69,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "stop_atr_dist": null,
+    "sma_distance_pct": 7.03,
+    "ma_20": 351.01,
+    "ma_50": 335.33,
+    "ma_100": 330.89,
+    "ma_200": 317.1,
+    "atr_14d": 8.22
+   },
+   "sector": "XLF",
+   "sector_name": "Financials",
+   "sector_grade": "DEPLOY",
+   "sector_gate": "PASS",
+   "sector_gate_reason": "Grade + RRG + macro aligned",
+   "sector_macro_headwind_flag": "NEUTRAL",
+   "row_gics_gate": "PASS",
+   "sector_trend_state": "Momentum Fading — Hold, Don't Add",
+   "scores": {
+    "sc_momentum": 71.8,
+    "structure": 71.6,
+    "energy": 77.3,
+    "flow": 85.5,
+    "mp": 43.0,
+    "mp_state": "BUILDING",
+    "elder": 10.0,
+    "lens_positive": 2,
+    "lens_warnings": 0,
+    "structure_shift": "RANGE",
+    "rs_leadership": "LEADER",
+    "rs_spy_20d": 3.73,
+    "rvol": 0.82,
+    "beta_30d": -1.1,
+    "universe_rank": 48
+   },
+   "held": false,
+   "objections": [
+    {
+     "voice": "minervini",
+     "source": "declared.crown_conflicts[2]",
+     "text": "CB, ACGL, JPM: XLF is graded DEPLOY with entry_gate PASS and RRG LEADING, yet every XLF name in my set carries sector_trend_state 'Momentum Fading - Hold, Don't Add'. The sector map and the name-level tag disagree; I took the sector grade and am flagging the disagreement rather than papering over it."
+    },
+    {
+     "voice": "wyckoff",
+     "source": "funnel.steps[0]",
+     "text": "83% of the field carries invalid_reason 'no valid bracket - no structural support passes the 3 gates (atr>=1.0, rr>=2.0, risk%<=regime ceiling)'. This single gate, not my geography or contraction tests, is what caps this seat today. 34 names failed ONLY this gate - CDP, NMRK, ORI, AWK, HWM, EBC, PDM, CB, BAC, SJM, SWK and others passed every Wyckoff test I could run and had no level to be wrong against."
+    }
+   ],
+   "why_not_top5": "single nominator (minervini) against 4-8 backers in the top 5; bracket.valid=false — no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling), so no stop, no size, no entry."
+  }
+ ]
+}
