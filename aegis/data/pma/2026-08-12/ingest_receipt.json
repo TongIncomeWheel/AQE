@@ -1,0 +1,69 @@
+{
+ "artifact": "pma_ingest_receipt",
+ "run_date": "2026-08-12",
+ "generated_at": "2026-08-12T07:57:15+00:00",
+ "files": {
+  "export": {
+   "found": true,
+   "path": "/root/.aegis_sync_checkout/aegis/data/aqe/2026-08-12/aqe_daily_export.json",
+   "fetched_at": "2026-08-12T07:57:15+00:00",
+   "generated_at": "2026-07-28",
+   "staleness_days": 15,
+   "schema_valid": true,
+   "schema_errors": [
+    "held_positions/0/exposure: None is not of type 'number'",
+    "held_positions/0/live_px: None is not of type 'number'",
+    "held_positions/0/unreal_usd: None is not of type 'number'",
+    "held_positions/1/exposure: None is not of type 'number'",
+    "held_positions/1/live_px: None is not of type 'number'",
+    "held_positions/1/unreal_usd: None is not of type 'number'",
+    "held_positions/2/exposure: None is not of type 'number'",
+    "held_positions/2/live_px: None is not of type 'number'",
+    "held_positions/2/unreal_usd: None is not of type 'number'",
+    "held_positions/3/exposure: None is not of type 'number'",
+    "... (truncated)"
+   ],
+   "tripwire_result": {
+    "exit_code": 0,
+    "output": "tripwires clean: 162 rows"
+   },
+   "status": null,
+   "oldest_source_days_behind": null,
+   "degraded_flags": [
+    "full aqe_export.schema.json validation failed (11 recorded error(s), e.g. held_positions/0/exposure: None is not of type 'number'); all 20 required top-level keys present — proceeding on the structural basis, drift recorded in notes"
+   ],
+   "validation_basis": "structural_fallback"
+  },
+  "crown": {
+   "found": true,
+   "path": "/root/.aegis_sync_checkout/aegis/data/aqe/2026-08-12/aqe_crown_macro.json",
+   "fetched_at": "2026-08-12T07:57:16+00:00",
+   "generated_at": "2026-08-12T11:48:49+08:00",
+   "staleness_days": 0,
+   "schema_valid": true,
+   "schema_errors": [],
+   "tripwire_result": null,
+   "status": "DEGRADED",
+   "oldest_source_days_behind": 1,
+   "degraded_flags": [
+    "crown status DEGRADED — limits[] carried verbatim downstream",
+    "These markets came from Yahoo rather than our data provider (CL, DX, HG, NG, NQ, RTY, YM, ZB, ZC, ZF, ZN, ZS, ZT, ZW). They are the real futures contracts, so the flip levels are quotable, but Yahoo is a free feed with no uptime guarantee.",
+    "gamma unavailable — QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set",
+    "economic calendar unavailable: FMP HTTP 404 for https://financialmodelingprep.com/stable/economics-calendar: []",
+    "No dealer-positioning reading today, so nothing here accounts for option hedging flows.",
+    "Two macro scenarios fit today's data almost equally well. Treat the overlap between them as the honest read rather than the winner.",
+    "A scenario score is the share of that story's conditions currently met. It is not a probability and was never fitted to history.",
+    "This layer does not size, does not name a ticker and places nothing. It produces a family of expressions and a multiplier on the PM's own risk budget."
+   ]
+  }
+ },
+ "crown_absent": false,
+ "proceed": true,
+ "blocking_reason": null,
+ "pm_ack": "DRY-RUN 2026-08-12 — export is 15 days stale (2026-07-28); today's 2.79MB export cannot transit the Drive connector without credentials (gap G4). Crown macro IS today's live file. Frame test only, NOT for trading.",
+ "notes": [
+  "card-vs-reality: export predates schema x_field_renames (rvol -> day_vol); validated with the schema's own rename equivalence applied. The export on disk is unchanged.",
+  "card-vs-reality: this export fails the current aqe_export.schema.json (x_version 1.2.0) beyond the documented renames — sample: held_positions/0/exposure: None is not of type 'number'; held_positions/0/live_px: None is not of type 'number'; held_positions/0/unreal_usd: None is not of type 'number'. Schema postdates the export or the exporter drifted; filed as a design finding, not silently fixed.",
+  "export is 15 day(s) stale (export date 2026-07-28, run date 2026-08-12); proceeding ONLY on explicit acknowledgement, recorded verbatim in pm_ack"
+ ]
+}
