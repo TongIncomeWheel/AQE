@@ -155,9 +155,95 @@ def restore_snapshot_bytes(raw: bytes, only: list[str] | None = None) -> dict:
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
-def save_snapshot() -> dict:
-    """Zip the present runtime artifacts and upload to the AQE Drive folder."""
+def _meta_for(built: dict) -> dict:
+    meta = {"saved_at": built["saved_at"], "files": built["files"],
+            "bytes": built["bytes"]}
+    try:
+        exp = OUTPUT_DIR / "aqe_daily_export.json"
+        if exp.exists():
+            meta["export_date"] = json.loads(exp.read_text()).get("exported_at")
+    except Exception:  # noqa: BLE001
+        pass
+    return meta
+
+
+def save_snapshot_github(built: dict | None = None) -> dict:
+    """Publish the snapshot as a GitHub RELEASE ASSET — the primary store.
+
+    A release asset, not a commit, and the distinction is load-bearing. This zip
+    carries `panel_daily`, `ma_panel` (~2,000 tickers), `scores_daily` and
+    `aqe.db`, so it runs to tens or hundreds of megabytes. Git keeps every
+    version of every committed file forever, so committing it daily would add
+    its full size to the repository permanently, every day, and clone times
+    would be unusable within a month. A release asset is replaced in place: one
+    current state, nothing accumulating, and it never enters git history.
+
+    The metadata JSON is small and text, so that one *is* committed, into the
+    same output folder as the daily artifacts. That way a reader can see when
+    the state was last written without downloading a hundred megabytes.
+    """
+    built = built or build_snapshot_bytes()
+    if not built.get("ok"):
+        return built
+    try:
+        from src.data import github_sync as gh
+        if not gh.is_configured():
+            return {"ok": False, "reason": "GITHUB_TOKEN not set"}
+
+        up = gh.upload_asset(SNAPSHOT_FILENAME, built["blob"])
+        if not up.get("ok"):
+            return {"ok": False, "reason": f"release upload failed: {up.get('reason')}"}
+
+        meta = _meta_for(built)
+        meta["store"] = "github_release"
+        meta["tag"] = gh.SNAPSHOT_TAG
+        gh.put_output(SNAPSHOT_META, json.dumps(meta, indent=2),
+                      f"data: state snapshot meta {meta['saved_at']}")
+        return {"ok": True, "store": "github_release", **meta}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
+def save_snapshot_everywhere() -> dict:
+    """Write the snapshot to BOTH stores from ONE zip.
+
+    GitHub is the primary and Drive is the backup, per the 2026-08-12 directive.
+    Both are attempted regardless of the other's result and both outcomes are
+    reported, because "it saved" hiding a failed leg is the silent-empty failure
+    CLAUDE.md forbids — a restore would then quietly come from whichever copy
+    happened to survive.
+
+    The zip is built ONCE and handed to both, so the two stores can never hold
+    different state from the same run.
+    """
     built = build_snapshot_bytes()
+    if not built.get("ok"):
+        return built
+    gh_res = save_snapshot_github(built)
+    dr_res = save_snapshot(built)
+    return {
+        "ok": bool(gh_res.get("ok") or dr_res.get("ok")),
+        "primary_ok": bool(gh_res.get("ok")),
+        "backup_ok": bool(dr_res.get("ok")),
+        "github": gh_res,
+        "drive": dr_res,
+        "bytes": built["bytes"],
+        "files": built["files"],
+        "saved_at": built["saved_at"],
+        "reason": None if (gh_res.get("ok") and dr_res.get("ok")) else
+                  f"github: {gh_res.get('reason') or 'ok'} | "
+                  f"drive: {dr_res.get('reason') or 'ok'}",
+    }
+
+
+def save_snapshot(built: dict | None = None) -> dict:
+    """Zip the present runtime artifacts and upload to the AQE Drive folder.
+
+    Kept as the BACKUP leg. `built` lets a caller pass a zip that was already
+    made, so a dual-write does not build it twice and cannot produce two stores
+    holding different bytes.
+    """
+    built = built or build_snapshot_bytes()
     if not built.get("ok"):
         return built
     blob = built["blob"]
@@ -171,19 +257,7 @@ def save_snapshot() -> dict:
         if not up.get("ok"):
             return {"ok": False, "reason": f"upload failed: {up.get('reason')}"}
 
-        meta = {
-            "saved_at": built["saved_at"],
-            "files": built["files"],
-            "bytes": built["bytes"],
-        }
-        # Best-effort export timestamp for context.
-        try:
-            exp = OUTPUT_DIR / "aqe_daily_export.json"
-            if exp.exists():
-                meta["export_date"] = json.loads(exp.read_text())\
-                    .get("exported_at")
-        except Exception:  # noqa: BLE001
-            pass
+        meta = _meta_for(built)
         gdrive_uploader.upload_or_replace(
             SNAPSHOT_META, json.dumps(meta, indent=2), mime="application/json")
 
@@ -192,12 +266,51 @@ def save_snapshot() -> dict:
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
+def load_snapshot_github(only: list[str] | None = None) -> dict:
+    """Restore from the GitHub release asset — the primary read path."""
+    try:
+        from src.data import github_sync as gh
+        if not gh.is_configured():
+            return {"ok": False, "reason": "GITHUB_TOKEN not set"}
+        got = gh.download_asset(SNAPSHOT_FILENAME)
+        if not got.get("ok"):
+            return {"ok": False, "reason": got.get("reason") or "no snapshot asset"}
+        res = restore_snapshot_bytes(got["blob"], only=only)
+        if res.get("ok"):
+            res["store"] = "github_release"
+            res["saved_at"] = got.get("updated_at")
+        return res
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
+def load_snapshot_best(only: list[str] | None = None) -> dict:
+    """Restore from GitHub, falling back to Drive, and SAY WHICH ONE.
+
+    The store that answered is reported in `store` and the other leg's reason is
+    kept in `tried`. A restore that silently came from the backup while the
+    primary was broken would hide the breakage until the day the backup is gone
+    too, which is the whole failure mode this pairing exists to prevent.
+    """
+    primary = load_snapshot_github(only=only)
+    if primary.get("ok"):
+        return primary
+    backup = load_snapshot(only=only)
+    backup["tried"] = {"github": primary.get("reason")}
+    if backup.get("ok"):
+        backup["store"] = "drive_backup"
+    else:
+        backup["reason"] = (f"github: {primary.get('reason')} | "
+                            f"drive: {backup.get('reason')}")
+    return backup
+
+
 def load_snapshot(only: list[str] | None = None) -> dict:
     """Download the snapshot zip from Drive and extract into DATA_DIR/OUTPUT_DIR.
 
-    Pass `only` to restore specific members (see restore_snapshot_bytes) when
-    the caller wants one artifact back and must NOT roll everything else to
-    whenever the zip was written.
+    The BACKUP read path. Pass `only` to restore specific members (see
+    restore_snapshot_bytes) when the caller wants one artifact back and must NOT
+    roll everything else to whenever the zip was written.
     """
     try:
         from src.data import gdrive_uploader
@@ -218,12 +331,30 @@ def load_snapshot(only: list[str] | None = None) -> dict:
 
 
 def snapshot_status() -> dict | None:
-    """Meta of the last saved snapshot ({saved_at, files, bytes}). None if none."""
+    """Meta of the last saved snapshot ({saved_at, files, bytes}). None if none.
+
+    Asks GitHub first, since that is now the primary store, and falls back to
+    Drive so a token-less local run still shows something.
+    """
+    try:
+        from src.data import github_sync as gh
+        if gh.is_configured():
+            got = gh.get_file(f"{gh.OUTPUT_DIR_IN_REPO}/{SNAPSHOT_META}")
+            if got.get("ok"):
+                meta = json.loads(got["text"])
+                meta.setdefault("store", "github_release")
+                return meta
+    except Exception:  # noqa: BLE001
+        pass
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
             return None
         txt = gdrive_uploader.download_text(SNAPSHOT_META)
-        return json.loads(txt) if txt else None
+        if not txt:
+            return None
+        meta = json.loads(txt)
+        meta.setdefault("store", "drive_backup")
+        return meta
     except Exception:  # noqa: BLE001
         return None

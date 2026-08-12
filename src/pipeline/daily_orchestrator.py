@@ -457,15 +457,44 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive export failed: {exc}")
 
-    # Step 8b: Daily-persist snapshot — zip the runtime parquets/outputs to Drive
-    # so a restart can restore the last run without a full re-pull.
+    # Step 8a-2: publish the day's artifacts into the repo (aegis/output/).
+    # GitHub is the primary store as of 2026-08-12; the Drive write above stays
+    # as the backup leg. Both run every day so the book is never in one place.
+    print(f"{_el()} [daily] Step 8a-2: GitHub output publish...")
+    try:
+        from src.data import github_sync as _gh
+        gh_out = _gh.publish_daily_outputs(stamp=str(run_date or ""))
+        if gh_out.get("ok"):
+            print(f"  GitHub output: {gh_out.get('written')} file(s) -> "
+                  f"{_gh.repo()}/{_gh.OUTPUT_DIR_IN_REPO}")
+        else:
+            print(f"  [WARN] GitHub output: {gh_out.get('reason')}")
+        if gh_out.get("absent"):
+            print(f"  [WARN] GitHub output: not on disk to publish: "
+                  f"{gh_out['absent']}")
+    except Exception as exc:
+        print(f"  [WARN] GitHub output publish failed: {exc}")
+
+    # Step 8b: Daily-persist snapshot — zip the runtime parquets/outputs to BOTH
+    # stores from one zip, so a restart can restore the last run without a full
+    # re-pull. GitHub release asset is primary, Drive is the backup.
     print(f"{_el()} [daily] Step 8b: persist snapshot...")
     try:
-        from src.data.persist import save_snapshot
-        snap = save_snapshot()
+        from src.data.persist import save_snapshot_everywhere
+        snap = save_snapshot_everywhere()
         if snap.get("ok"):
+            _where = []
+            if snap.get("primary_ok"):
+                _where.append("GitHub release")
+            if snap.get("backup_ok"):
+                _where.append("Drive")
             print(f"  Persist snapshot: {len(snap.get('files', []))} files "
-                  f"({snap.get('bytes', 0) / 1e6:.1f} MB) -> Drive")
+                  f"({snap.get('bytes', 0) / 1e6:.1f} MB) -> {' + '.join(_where)}")
+            # One leg down is not a failure, but it must never pass silently —
+            # a restore would then come from whichever copy happened to survive.
+            if not (snap.get("primary_ok") and snap.get("backup_ok")):
+                print(f"  [WARN] Persist snapshot: only one store took it — "
+                      f"{snap.get('reason')}")
         else:
             print(f"  Persist snapshot: skipped ({snap.get('reason')})")
     except Exception as exc:

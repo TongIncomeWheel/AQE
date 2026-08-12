@@ -287,6 +287,21 @@ def table_with_copy(df, *, key: str, label: str = "📋 Copy for AIC",
 APP_PASSWORD_ENV = "AQE_APP_PASSWORD"
 
 
+def _autoload_once() -> None:
+    """Restore the runtime state on a cold container, once per process.
+
+    Called from `require_login()` AFTER the sign-in check, so it runs on every
+    page of every module — Scanner, Option scanner, Crown Macro — and never for
+    an unauthenticated visitor. On a warm container it is one `exists()` check.
+    Never raises: a store being unreachable must not stop the app from opening.
+    """
+    try:
+        from src.ui.bootstrap import autoload_with_spinner
+        autoload_with_spinner()
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def require_login() -> None:
     """Password-gate the whole app at the front door.
 
@@ -325,8 +340,10 @@ def require_login() -> None:
 
     expected = os.environ.get(APP_PASSWORD_ENV)
     if not expected:
+        _autoload_once()
         return  # no password configured -> app is open (local use)
     if st.session_state.get("aqe_authenticated"):
+        _autoload_once()
         return  # already signed in this session
 
     st.title("AQE — sign in")
@@ -336,6 +353,7 @@ def require_login() -> None:
         if hmac.compare_digest(pw or "", expected):
             st.session_state["aqe_authenticated"] = True
             st.session_state.pop("_aqe_login_pw", None)  # don't retain plaintext
+            _autoload_once()
             st.rerun()
         else:
             st.error("Incorrect password.")

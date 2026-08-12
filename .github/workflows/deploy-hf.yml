@@ -7,6 +7,12 @@ name: Deploy to HuggingFace Space
 on:
   push:
     branches: [main]
+    # The daily run now commits its output into the repo (aegis/output/). Without
+    # this guard every daily commit would rebuild the Space — destroying the
+    # container that had just written the file, on a schedule. Data commits must
+    # never trigger a deploy; only source changes do.
+    paths-ignore:
+      - 'aegis/output/**'
   workflow_dispatch: {}
 
 concurrency:

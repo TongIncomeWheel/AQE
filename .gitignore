@@ -33,6 +33,9 @@ data/*.db-shm
 data/open_positions.json
 # daily picks (the canonical record is aqe_daily_export.json which IS committed)
 output/shortlist.json
+# Runtime working copy. The published copy lives in aegis/output/ and is
+# written by the daily run — this one must never be committed again.
+output/aqe_daily_export.json
 output/calibration_report_*.txt
 output/dashboard.txt
 # Crown macro read — runtime state, rebuilt every run and carried across a
@@ -81,7 +84,9 @@ spend-agent/
 
 # --- KEEP these (negate the broader rules above) ---------------------------
 # The cloud Scanner reads only these committed JSONs:
-!output/aqe_daily_export.json
+# The daily export now lives in ONE place: aegis/output/ (GitHub is the
+# primary store as of 2026-08-12). The old root copy was a second
+# location for the same file, which is what one-spot was meant to end.
 !output/recipes.json
 !data/active_recipe.json
 !data/sector_map.json

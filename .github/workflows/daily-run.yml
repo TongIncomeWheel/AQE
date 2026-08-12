@@ -19,6 +19,12 @@ concurrency:
   group: aqe-daily
   cancel-in-progress: false
 
+# The run now publishes its own output into the repo (aegis/output/) and the
+# state snapshot to a release. In Actions the built-in token can do both once
+# it is granted write, so the CI path needs no PAT — only the HF Space does.
+permissions:
+  contents: write
+
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -37,5 +43,6 @@ jobs:
           GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
           GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AQE_FORCE: ${{ inputs.force }}
         run: python -m scripts.daily_backstop
