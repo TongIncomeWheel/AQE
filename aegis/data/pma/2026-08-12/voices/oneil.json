@@ -1,0 +1,664 @@
+{
+ "voice": "oneil",
+ "date": "2026-08-12",
+ "universe_file": "aegis/data/pma/2026-08-12/packets/oneil.json",
+ "round": 1,
+ "staleness_declaration": {
+  "export_date": "2026-07-28",
+  "staleness_days": 15,
+  "pm_ack": "DRY-RUN 2026-08-12 - export is 15 days stale (2026-07-28); today's 2.79MB export cannot transit the Drive connector without credentials (gap G4). Crown macro IS today's live file. Frame test only, NOT for trading.",
+  "oneil_note": "Every price, rvol, ma_50, ma_200, structure and bracket value I cite is the 2026-07-28 close. A CAN SLIM breakout entry is a same-day decision priced within 5% of the pivot (C17); a 15-day-old print cannot support one. These are frame-test nominations, not buyable pivots."
+ },
+ "market_frame_read": {
+  "market_gate": "DELEGATED",
+  "why": "C1 makes the Confirmed Uptrend a hard pass/fail before any stock is scored, and C3 requires a follow-through day (index up >=1.5-2.0% on rising volume, days 4-7 of an attempted rally) with C2's distribution-day count. The packet frame carries a regime LABEL (regime.trend=TRENDING, regime.hurst=0.603, risk_tone=YELLOW) but no index price/volume, no distribution-day count and no follow-through day. I therefore write no market read. Every nomination below is valid ONLY into a confirmed uptrend; if the index is under distribution, all four are void.",
+  "momentum_caveat_relayed": "market_frame.momentum_caveat: 'Tape reads TRENDING (hurst 0.603, VIX 18.7, regime YELLOW): Momentum strategies favoured.' Relayed verbatim, not adopted as a market read.",
+  "frame_internally_split": "run.degraded: export VIX 18.7 is 15d stale while today's live Crown carries VIX 15.28 - the two halves of the frame are 15 days apart. I cite both and rely on neither.",
+  "crown_cuts_against": [
+   "Crown status=DEGRADED, match_quality=partial, family=BROADENING_CARRY, conditions_not_met=[broadening, gamma_positive, dispersion_normal]. Crown headline: 'A market with no clear breadth lead'. C9 asks me to buy the leader of a leading group; a tape with no breadth lead is the tape where leadership reads are least reliable.",
+   "SHO - gics_sector=XLRE, Crown entry_gate=CAUTION, macro_headwind_flag=HEADWIND, grade=HOLD. The name's own sector_trend_state reads 'Momentum Building - Add'. Crown overrules the optimism; conviction held to 2 for exactly this reason.",
+   "KHC - gics_sector=XLP, Crown entry_gate=CAUTION, macro_headwind_flag=HEADWIND, grade=HOLD, and sector_trend_state='Momentum Fading - Hold, Don't Add'. Both reads are negative on the group; only rank=24 and rvol=1.32 keep it on the sheet at conviction 2.",
+   "ACGL (XLF, entry_gate=PASS, grade=DEPLOY) and CSX (XLI, entry_gate=PASS, grade=HOLD) are the only two nominees Crown does not argue with.",
+   "Crown key level 'RSP/SPY 20-day average' now=0.286402 vs level=0.287185, distance_pct=0.27: 'The average stock crossing below its own recent trend against the index.' Breadth is 0.27% from turning against me - directly adverse to a group-leadership method.",
+   "Crown key level 'Single-stock vs index gap - elevated band' now=23.23 vs level=23.058: dispersion is already above the band, i.e. the index is hiding what individual names are doing."
+  ],
+  "blocked_by_crown_not_nominated": "SNOW (rank 81, rs_leadership=LEADER, structure=76.8, bracket.valid=true, risk_pct=7.3) and BILL (rank 113, rs_leadership=LEADER, structure=81.9, bracket.valid=true, risk_pct=6.66) both cleared my stop and base gates and were dropped because gics_sector=XLK carries Crown entry_gate=BLOCKED (HEADWIND macro + LAGGING RRG). SNOW also fails on rvol=0.75, BILL on rvol=0.98."
+ },
+ "standing_lesson": {
+  "governing_today": "R10 + C16 (and the WHAT I CANNOT SEE block on my card).",
+  "text": "R10 governs: the fundamental half (C4, C5, C6, C8, C11) cannot be tested from this file, so I declare it and never infer earnings, ROE, sales, sponsorship or insider ownership from price and volume. C16 governs second and it bites hardest: NOT ONE name in the 162 that also clears leadership, base and stop reaches the volume threshold. The lesson that decides today is the one that cost Thorp his seat integrity on 22 Jul - flow=76.3 on ACGL and lens.insti_money=strong on SHO look exactly like my I letter and are NOT sponsorship counts. They are same-day price/volume proxies, they are advisory only, and not one of them carries a passing step above."
+ },
+ "declared": {
+  "fundamentals": "NOT_AVAILABLE - C (current quarterly EPS/sales), A (3-yr EPS, ROE>=17%, cash flow), S (absolute share volume, buybacks, insider %, debt trend) and I (sponsor COUNT and its quarterly trend) are all untestable in this packet. Four of my seven letters are declared, not tested.",
+  "base_stage": "NOT_AVAILABLE - C19's third/fourth-stage base count cannot be enforced at all; I do not guess the stage.",
+  "market_gate": "DELEGATED - see market_frame_read. No market read written by me.",
+  "rs_measure": "rs_leadership (substitute - no IBD RS Rating). rs_spy_20d is 20-day and is the wrong horizon for a 12-month rating (C10); it is reported nowhere as a passing step. The RS<70 sell rule cannot be enforced as written.",
+  "volume_measure": "DOUBLE substitute this run. Canon says +40-50% above the 50-day average (C16). My card's substitute is day_vol vs the name's own 20-day average - and day_vol is ABSENT from all 162 rows in this packet. I fell back to rvol, which the packet menu carries, and recorded every volume step as no_data rather than pass.",
+  "advisory_only_never_a_vote": [
+   "flow",
+   "lens.insti_money",
+   "rs_spy_20d"
+  ],
+  "not_mine_at_all": [
+   "elder",
+   "elder_5d",
+   "mp_state",
+   "knn_prob",
+   "beta_30d"
+  ],
+  "provenance": "My source is CSKB, a PM-verified digest of O'Neil's book, not the book. Every citation's page is the DIGEST's PART number (I-VIII). I have no printed page numbers and do not offer any.",
+  "scorecard_withheld": "I do not report the digest's Part VII 100-point score: 60 of its 100 points are fundamentals and IBD SmartSelect ratings that Aegis does not hold.",
+  "not_served": [
+   {
+    "need": "Quarterly EPS YoY growth, EPS acceleration, sales growth >=25% (C4, C5)",
+    "letter": "C",
+    "consequence": "The single most weighted letter in CAN SLIM is untested on all four names. Any of them could be a technically sound base on collapsing earnings and I would not see it."
+   },
+   {
+    "need": "Three-year annual EPS growth 25-50%, ROE >=17%, cash flow per share >= EPS+20% (C6)",
+    "letter": "A",
+    "consequence": "Untested. No quality screen behind the price action."
+   },
+   {
+    "need": "Absolute average daily share volume, buyback %, insider ownership %, debt/equity trend (C8)",
+    "letter": "S",
+    "consequence": "Even the liquidity half fails - rvol is a RATIO to the name's own average, not a share count, so I cannot confirm any of these positions can be exited."
+   },
+   {
+    "need": "Institutional sponsor COUNT, its quarterly trend, fund quality (C11)",
+    "letter": "I",
+    "consequence": "Untested. flow and lens.insti_money are same-day proxies and are explicitly barred from standing in for this."
+   },
+   {
+    "need": "A 12-month weighted RS Rating (C10)",
+    "letter": "L",
+    "consequence": "SUBSTITUTED with categorical rs_leadership. The RS>=80 buy filter and the RS<70 sell rule cannot be applied as written."
+   },
+   {
+    "need": "Index price/volume, distribution-day count, follow-through day (C1, C2, C3)",
+    "letter": "M",
+    "consequence": "DELEGATED. The gate that decides three stocks in four is not mine to close today."
+   },
+   {
+    "need": "day_vol (the field my own card's R4 names)",
+    "letter": "-",
+    "consequence": "ABSENT from all 162 rows in this packet though it is listed on the packet menu. My C16 breakout-volume test could not be run as written on ANY name."
+   },
+   {
+    "need": "high_52w and a labelled pivot / handle peak",
+    "letter": "N",
+    "consequence": "Absent. C7's new-high confirmation is untestable, and because entry equals bracket.price on all 162 rows, C17's 'never more than 5% past the pivot' - the rule that decides my entry price - has no pivot to measure from."
+   },
+   {
+    "need": "A labelled base-stage count (C19)",
+    "letter": "-",
+    "consequence": "Absent. A fourth-stage breakout - a sell in my canon - would read to me exactly like a first-stage one."
+   },
+   {
+    "need": "Base geometry: base length in weeks, cup depth %, handle depth and slope, prior uptrend % (C12, C13, C14, C18)",
+    "letter": "-",
+    "consequence": "Absent. structure / structure_shift / lens.coil are a composite substitute; not one of the four nominees has a base I can measure against canon arithmetic."
+   },
+   {
+    "need": "Group rank (position 1, 2 or 3 within the industry group) (C9)",
+    "letter": "L",
+    "consequence": "The packet carries a universe-wide rank (1-162) and gics_sector, but no within-group ordering. The core 'buy the number 1, 2 or 3 name' test is unproven on every nomination - marked partial, never pass."
+   },
+   {
+    "need": "lens.extension",
+    "letter": "-",
+    "consequence": "Present as a key but null in all 162 rows - my extension cross-check had to fall back to sma_distance_pct against the set median."
+   }
+  ]
+ },
+ "shortfall_reason": "Four names, not ten, and every one of them is watch-grade rather than buy-grade. The arithmetic: 162 candidates; 135 carry bracket.valid=false and are rejected outright under C20/R6, leaving 27. Of those 27, rs_leadership=LEADER on 15. Dropping BEARISH_CHOCH structure_shift (no sound base survives a bearish change of character - R3) leaves 10. Removing V (held=true, goes to held_review) and the XLK names SNOW/BILL/MDB (Crown entry_gate=BLOCKED) leaves 6. ELF (rvol 0.84, sma_distance_pct 29.27 vs median 9.31 - extended AND unbought) and SYY (rvol 0.65) fail volume outright. Four remain. THE HONEST HEADLINE: filtering the whole 162 for LEADER + bracket.valid + non-CHOCH + rvol>=1.40 returns an EMPTY SET. Not one name in this universe is a leader breaking out of an intact base on decisive volume. Under C16 as written - below +40% is a hard rejection, not a weaker buy - the strictly correct output today is ZERO nominations. I file four at capped conviction instead of zero because day_vol, the field R4 actually names, is missing from the packet rather than failing in it, and because structure_shift=RANGE on all four says no breakout day has occurred yet - so the volume test is not yet due, which the schema records as no_data, not fail. RYAN is the name to watch: rvol=1.63 is the only real volume among LEADERs with a valid bracket, but structure_shift=BEARISH_CHOCH and lens.structure=warn fail R3 and nothing downstream rescues a broken base. No name here is buyable at conviction 4 or 5; the ceiling is 3 and I am concentrating (C23) rather than padding to ten.",
+ "nominations": [
+  {
+   "ticker": "ACGL",
+   "conviction": 3,
+   "reason": "rs_leadership=LEADER, lens.leadership=strong, rank=29, gics_sector=XLF (Crown entry_gate PASS). structure=71.6, structure_shift=RANGE, lens.coil/structure/resistance all ok. bracket.valid=true, risk_pct=2.86, rr=2.06. sma_distance_pct=8.39 vs set median 9.31 - not extended.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "gics_sector",
+    "structure",
+    "structure_shift",
+    "lens",
+    "bracket.valid",
+    "bracket.risk_pct",
+    "bracket.rr",
+    "bracket.stop",
+    "sma_distance_pct",
+    "ma_200",
+    "entry",
+    "sector_trend_state",
+    "rvol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership=LEADER; lens.leadership=strong; rank=29 of 162; gics_sector=XLF. Top-3-in-group not provable - no group rank field.",
+     "verdict": "partial",
+     "fields": [
+      "rs_leadership",
+      "rank",
+      "gics_sector",
+      "lens"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13",
+      "C14",
+      "C18"
+     ],
+     "observed": "base_measure substitute: structure=71.6, structure_shift=RANGE, lens.coil=ok, lens.structure=ok, lens.resistance=ok. No cup depth/handle/weeks in packet.",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "lens"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C15",
+      "C16"
+     ],
+     "observed": "day_vol ABSENT from all 162 rows. Substitute-of-substitute rvol=1.01 - below the 1.40 C16 proxy. Breakout volume NOT confirmed.",
+     "verdict": "no_data",
+     "fields": [
+      "day_vol",
+      "rvol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C21",
+      "C24"
+     ],
+     "observed": "entry=103.88 equals bracket.price=103.88 so pivot distance is uncomputable. sma_distance_pct=8.39 vs median 9.31. entry vs ma_200=94.56 is +9.9% - far under the 70% climax line.",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.price",
+      "sma_distance_pct",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "bracket.valid=true, bracket.stop=100.91, risk_pct=2.86 (inside the 8% wall), rr=2.06 - short of the 3:1 C22 arithmetic.",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.risk_pct",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C24",
+      "C25"
+     ],
+     "observed": "lens.sector=strong and sector_trend_state='Momentum Fading - Hold, Don't Add' - group confirms, so not a Lone Ranger, but the group is fading not leading.",
+     "verdict": "partial",
+     "fields": [
+      "lens",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C19",
+      "C23"
+     ],
+     "observed": "declared block filed; base_stage NOT_AVAILABLE (C19 uncheckable). Ranked 1 of 4 on leadership then base then volume.",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "structure",
+      "rvol"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CSX",
+   "conviction": 3,
+   "reason": "rs_leadership=LEADER, lens.leadership=strong, rank=39, gics_sector=XLI (Crown entry_gate PASS), sector_trend_state='Momentum Building - Add'. structure=66.3, structure_shift=RANGE. bracket.valid=true, risk_pct=3.86, rr=2.05. Against it: lens.coil=warn, rvol=1.35 under the 1.40 volume proxy.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "gics_sector",
+    "sector_trend_state",
+    "structure",
+    "structure_shift",
+    "lens",
+    "bracket.valid",
+    "bracket.risk_pct",
+    "bracket.rr",
+    "bracket.stop",
+    "sma_distance_pct",
+    "ma_200",
+    "entry",
+    "rvol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership=LEADER; lens.leadership=strong; rank=39 of 162; gics_sector=XLI. No group-rank field, so the strict 1-2-3 test is unproven.",
+     "verdict": "partial",
+     "fields": [
+      "rs_leadership",
+      "rank",
+      "gics_sector",
+      "lens"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13",
+      "C14",
+      "C18"
+     ],
+     "observed": "structure=66.3, structure_shift=RANGE, lens.structure=ok but lens.coil=warn - tightness is the weak leg. lens.resistance=warn (overhead supply).",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "lens"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C15",
+      "C16"
+     ],
+     "observed": "day_vol ABSENT. rvol=1.35 - highest of the four nominees but still under the 1.40 proxy for C16's +40%. Not a confirmed breakout.",
+     "verdict": "no_data",
+     "fields": [
+      "day_vol",
+      "rvol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C21",
+      "C24"
+     ],
+     "observed": "entry=51.80 = bracket.price, so pivot distance uncomputable. sma_distance_pct=8.44 vs median 9.31. entry vs ma_200=41.01 is +26.3% - under the 70% climax line.",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.price",
+      "sma_distance_pct",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "bracket.valid=true, bracket.stop=49.80, risk_pct=3.86 (inside 8%), rr=2.05 - below the 3:1 C22 target ratio.",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.risk_pct",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C24",
+      "C25"
+     ],
+     "observed": "lens.sector=strong, sector_trend_state='Momentum Building - Add' - the group confirms; best group backdrop in my four. No Lone Ranger flag.",
+     "verdict": "pass",
+     "fields": [
+      "lens",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C19",
+      "C23"
+     ],
+     "observed": "declared block filed; base_stage NOT_AVAILABLE. Ranked 2 of 4 - leadership ties ACGL, base integrity weaker (coil warn), volume better.",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "structure",
+      "rvol"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "SHO",
+   "conviction": 2,
+   "reason": "rs_leadership=LEADER, lens.leadership=ok, lens.resistance=strong, structure=71.6, structure_shift=RANGE, lens.coil=ok. bracket.valid=true, risk_pct=2.88, rr=2.68. sma_distance_pct=4.35, tightest in the valid set. Cuts against Crown: XLRE entry_gate=CAUTION, macro_headwind_flag=HEADWIND.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "gics_sector",
+    "sector_trend_state",
+    "structure",
+    "structure_shift",
+    "lens",
+    "bracket.valid",
+    "bracket.risk_pct",
+    "bracket.rr",
+    "bracket.stop",
+    "sma_distance_pct",
+    "ma_200",
+    "entry",
+    "rvol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership=LEADER; lens.leadership=ok (not strong); rank=114 of 162; gics_sector=XLRE. Weakest leadership of the four.",
+     "verdict": "partial",
+     "fields": [
+      "rs_leadership",
+      "rank",
+      "gics_sector",
+      "lens"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13",
+      "C14",
+      "C18"
+     ],
+     "observed": "structure=71.6, structure_shift=RANGE, lens.coil=ok, lens.structure=ok, lens.resistance=strong - the cleanest overhead-supply read in my set.",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "lens"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C15",
+      "C16"
+     ],
+     "observed": "day_vol ABSENT. rvol=1.17 - under the 1.40 proxy. Volume is ordinary, not institutional arrival.",
+     "verdict": "no_data",
+     "fields": [
+      "day_vol",
+      "rvol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C21",
+      "C24"
+     ],
+     "observed": "entry=11.82 = bracket.price, pivot distance uncomputable. sma_distance_pct=4.35, well under median 9.31. entry vs ma_200=9.79 is +20.7%, under the 70% climax line.",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.price",
+      "sma_distance_pct",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "bracket.valid=true, bracket.stop=11.48, risk_pct=2.88 (inside 8%), rr=2.68 - nearest of my four to the 3:1 C22 arithmetic.",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.risk_pct",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C24",
+      "C25"
+     ],
+     "observed": "lens.sector=strong, sector_trend_state='Momentum Building - Add'. But Crown says XLRE entry_gate=CAUTION on macro HEADWIND - the two reads disagree.",
+     "verdict": "partial",
+     "fields": [
+      "lens",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C19",
+      "C23"
+     ],
+     "observed": "declared block filed; base_stage NOT_AVAILABLE. Ranked 3 of 4 - base and stop are best, leadership only 'ok'.",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "structure",
+      "rvol"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "KHC",
+   "conviction": 2,
+   "reason": "rs_leadership=LEADER, rank=24, structure=66.3, structure_shift=RANGE, lens.coil=ok, lens.structure=ok. bracket.valid=true, risk_pct=3.62, rr=2.42, sma_distance_pct=8.48. rvol=1.32. Against it: lens.leadership=warn, lens.resistance=warn, Crown XLP entry_gate=CAUTION on macro HEADWIND.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "gics_sector",
+    "sector_trend_state",
+    "structure",
+    "structure_shift",
+    "lens",
+    "bracket.valid",
+    "bracket.risk_pct",
+    "bracket.rr",
+    "bracket.stop",
+    "sma_distance_pct",
+    "ma_200",
+    "entry",
+    "rvol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership=LEADER and rank=24 (best rank of my four), but lens.leadership=warn - the two leadership reads disagree on this name.",
+     "verdict": "partial",
+     "fields": [
+      "rs_leadership",
+      "rank",
+      "gics_sector",
+      "lens"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13",
+      "C14",
+      "C18"
+     ],
+     "observed": "structure=66.3 (lowest of my four), structure_shift=RANGE, lens.coil=ok, lens.structure=ok, lens.resistance=warn - overhead supply unresolved.",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "lens"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C15",
+      "C16"
+     ],
+     "observed": "day_vol ABSENT. rvol=1.32 - under the 1.40 proxy for C16. Not a confirmed breakout.",
+     "verdict": "no_data",
+     "fields": [
+      "day_vol",
+      "rvol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C21",
+      "C24"
+     ],
+     "observed": "entry=26.22 = bracket.price, pivot distance uncomputable. sma_distance_pct=8.48 vs median 9.31. entry vs ma_200=23.93 is +9.6%, far under the 70% climax line.",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.price",
+      "sma_distance_pct",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "bracket.valid=true, bracket.stop=25.27, risk_pct=3.62 (inside 8%), rr=2.42.",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.risk_pct",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C24",
+      "C25"
+     ],
+     "observed": "lens.sector=strong but sector_trend_state='Momentum Fading - Hold, Don't Add' and Crown XLP entry_gate=CAUTION. Group is not leading.",
+     "verdict": "partial",
+     "fields": [
+      "lens",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C19",
+      "C23"
+     ],
+     "observed": "declared block filed; base_stage NOT_AVAILABLE. Ranked 4 of 4 - lowest structure, split leadership read, cautioned sector.",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "structure",
+      "rvol"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "held=true. rs_leadership=LEADER, entry=362.53 sits above ma_50=337.31 and ma_200=329.89, so R8's 10-week-line failure test does not trigger. structure=81.1, lens.structure=ok, lens.resistance=strong, lens.sector=strong. bracket.valid=true with risk_pct=2.29. No add: lens.leadership=warn, sector_trend_state='Momentum Fading - Hold, Don't Add', and C21 pyramiding needs a pivot I do not have."
+  },
+  {
+   "ticker": "VRSK",
+   "verdict": "KEEP",
+   "line": "held=true. rs_leadership=LEADER, entry=206.66 above ma_50=182.27 and ma_200=199.95 - R8 does not trigger, structure=86.3 is the strongest in the packet. But bracket.valid=false ('no structural support passes the 3 gates') so there is no enforceable stop on the sheet, lens.coil=warn and lens.insti_money=warn, and gics_sector=XLK carries Crown entry_gate=BLOCKED. Hold, never add."
+  },
+  {
+   "ticker": "NU",
+   "verdict": "TIGHTEN",
+   "line": "held=true. rs_leadership=IN-LINE, not LEADER - under C10 a holding that loses leadership is sold, and the only reason I say TIGHTEN rather than EXIT-CASE is that rs_leadership is a declared substitute for the RS Rating and cannot carry the RS<70 rule as written. entry=14.53 is above ma_50=13.03 (R8 not triggered) but BELOW ma_200=15.13. structure_shift=null, bracket.valid=false, rvol=0.65."
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "day_vol",
+   "impact": "On the packet menu but ABSENT from all 162 candidate rows. This is the field my card's R4 names for the C16 breakout-volume gate - the third of my seven checklist steps. Every nomination's step 3 is recorded no_data as a result. Source it (FMP daily volume vs 50-day average, which would also retire my 20-day substitute) and re-run me."
+  },
+  {
+   "field": "lens.extension",
+   "impact": "Key present, value null in all 162 rows. C17's extension check had to fall back to sma_distance_pct against the set median (9.305)."
+  },
+  {
+   "field": "high_52w",
+   "impact": "Not emitted. C7's new-high confirmation cannot be tested, and with entry == bracket.price on all 162 rows there is no pivot to measure the 5% rule against."
+  },
+  {
+   "field": "bracket.stop",
+   "impact": "null on 135 of 162 rows with invalid_reason 'no valid bracket - no structural support passes the 3 gates'. C20 is the one rule I can enforce exactly, and it eliminated 83% of the universe before any CAN SLIM test ran."
+  },
+  {
+   "field": "group_rank",
+   "impact": "No within-industry-group ordering is emitted (rank is universe-wide 1-162). C9's 'buy strictly the number 1, 2 or 3 stock in the group' is unprovable, so step 1 is partial on all four nominations."
+  },
+  {
+   "field": "structure_shift",
+   "impact": "null on 7 rows (including held name NU), and the emitted vocabulary is only RANGE (129) / BEARISH_CHOCH (26) - there is no value that signals a COMPLETED consolidation or a breakout event. R3 cannot distinguish a sound finished base from an unresolved range."
+  }
+ ]
+}
