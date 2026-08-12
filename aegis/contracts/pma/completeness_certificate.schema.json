@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PMA S6 — deliberation completeness certificate. NO MODEL PRODUCES THIS FILE.",
+  "description": "The round-trip proof. Every obligation the deliberation created, and whether it was discharged. The consensus close is BLOCKED until this certificate says the round is complete or explicitly records why it is not. Purely mechanical: the orchestrator tracks whether an obligation was met, never whether the answer was good.",
+  "type": "object",
+  "required": ["run_date", "rule_version", "roster", "coverage", "obligations", "exchanges", "quorum", "close"],
+  "properties": {
+    "run_date": {"type": "string", "format": "date"},
+    "rule_version": {"type": "string"},
+
+    "roster": {
+      "type": "object",
+      "description": "Who was required to speak, who did, who did not.",
+      "required": ["expected", "responded", "absent"],
+      "properties": {
+        "expected": {"type": "array", "items": {"type": "string"}},
+        "responded": {"type": "array", "items": {"type": "string"}},
+        "absent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["voice", "reason", "retries"],
+            "properties": {
+              "voice": {"type": "string"},
+              "reason": {"enum": ["invalid_output", "spawn_failure", "timeout", "empty_return"]},
+              "retries": {"type": "integer"},
+              "last_error": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+
+    "coverage": {
+      "type": "object",
+      "description": "The voice x name matrix. Every responding seat must hold a stance on every name in the narrowed set — silence is not a permitted answer.",
+      "required": ["names", "matrix", "cells_expected", "cells_present", "missing"],
+      "properties": {
+        "names": {"type": "array", "items": {"type": "string"}},
+        "matrix": {
+          "type": "object",
+          "description": "voice -> ticker -> stance",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN"]}
+          }
+        },
+        "cells_expected": {"type": "integer"},
+        "cells_present": {"type": "integer"},
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {"voice": {"type": "string"}, "ticker": {"type": "string"}}
+          }
+        }
+      }
+    },
+
+    "obligations": {
+      "type": "array",
+      "description": "Each mandatory element of the deliberation, tracked individually from creation to discharge.",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "owed_by", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "type": {
+            "enum": [
+              "O1_stance_on_every_name",
+              "O2_opposing_argument_on_oppose",
+              "O3_self_counter_at_high_conviction",
+              "O4_falsifier_present",
+              "O5_conviction_change_reason",
+              "O6_rogers_challenge_answered",
+              "O7_direct_challenge_reply",
+              "O8_steenbarger_audit_coverage"
+            ]
+          },
+          "owed_by": {"type": "string", "description": "The seat that owes the response"},
+          "raised_by": {"type": ["string", "null"], "description": "The seat that created the obligation (O6/O7)"},
+          "ticker": {"type": ["string", "null"]},
+          "status": {
+            "enum": ["discharged", "open", "waived", "contested"],
+            "description": "discharged = a reply exists (PROCEDURAL, not a judgement that the reply was good). contested = replied to but the raiser's conviction did not move. waived = the seat was absent after retries; reason recorded."
+          },
+          "discharged_in_round": {"type": ["integer", "null"]},
+          "waive_reason": {"type": ["string", "null"]}
+        }
+      }
+    },
+
+    "exchanges": {
+      "type": "array",
+      "description": "The inter-agent debate trail. One entry per directed utterance between seats.",
+      "items": {
+        "type": "object",
+        "required": ["round", "from_voice", "to_voice", "ticker", "kind"],
+        "properties": {
+          "round": {"type": "integer", "minimum": 2},
+          "from_voice": {"type": "string"},
+          "to_voice": {"type": "string"},
+          "ticker": {"type": "string"},
+          "kind": {"enum": ["challenge", "rebuttal", "concession"]},
+          "obligation_id": {"type": ["string", "null"]},
+          "moved_conviction": {
+            "type": ["boolean", "null"],
+            "description": "COMPUTED: did the addressee's conviction change after this exchange? Determines contested vs resolved."
+          }
+        }
+      }
+    },
+
+    "rounds": {
+      "type": "array",
+      "description": "What actually ran. Round 2 = full cross-examination (all seats). Round 3 = rebuttal, ONLY seats carrying an open O7.",
+      "items": {
+        "type": "object",
+        "required": ["round", "voices_spawned", "trigger"],
+        "properties": {
+          "round": {"type": "integer"},
+          "voices_spawned": {"type": "array", "items": {"type": "string"}},
+          "trigger": {"enum": ["scheduled_cross_examination", "open_direct_challenges", "none"]},
+          "obligations_opened": {"type": "integer"},
+          "obligations_discharged": {"type": "integer"}
+        }
+      }
+    },
+
+    "quorum": {
+      "type": "object",
+      "required": ["required_seats", "responding_seats", "met"],
+      "properties": {
+        "required_seats": {"type": "integer", "description": "Minimum responding seats for the deliberation to stand"},
+        "responding_seats": {"type": "integer"},
+        "met": {"type": "boolean"}
+      }
+    },
+
+    "close": {
+      "type": "object",
+      "required": ["complete", "reason", "open_count", "contested_count"],
+      "properties": {
+        "complete": {"type": "boolean"},
+        "reason": {
+          "enum": [
+            "all_obligations_discharged",
+            "rebuttal_cap_reached_remaining_contested",
+            "quorum_failure",
+            "seat_failures_waived"
+          ]
+        },
+        "open_count": {"type": "integer"},
+        "contested_count": {"type": "integer"},
+        "contested_names": {
+          "type": "array",
+          "description": "Names where an exchange ended without the raiser's conviction moving. Deadlock is a legitimate outcome and is PRINTED, not resolved by the orchestrator.",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}
