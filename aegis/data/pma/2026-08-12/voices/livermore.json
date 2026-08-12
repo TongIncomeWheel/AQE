@@ -1,0 +1,309 @@
+{
+  "voice": "livermore",
+  "date": "2026-08-12",
+  "universe_file": "aegis/data/pma/2026-08-12/packets/livermore.json",
+  "declared": {
+    "seat_status": "NOT A STANDING SEAT. Charter Amendment §0.3 names nine voices; Livermore is not one of them. This card was built on the PM's explicit instruction, seat ruling still pending. Round 1 output is filed as advisory, not as a tenth vote.",
+    "canon_status": "GROUNDED, PENDING SIGN-OFF. canon/livermore/principles.yaml (22 principles, 10 recognisers) and diff.json exist and validate clean; canon.lock.yaml does NOT exist at /root/.aegis_sync_checkout/aegis/canon/livermore/. I cite real C-ids from my compiled canon block rather than 'UNGROUNDED', but the lock is absent and I say so.",
+    "governing_principle_today": "C2 — the market's own price action is always right; opinions are frequently wrong, so wait for price action to confirm before acting. Today I have NO current price action: every candidate field is 15 days old (run.staleness_days 15, export_date 2026-07-28). C2 therefore governs by forbidding, not by permitting — I cannot claim confirmation from a tape I have not seen. The operative gate underneath it is C9: never enter unless the maximum loss is predetermined and absorbable, which is why bracket.valid was my first cut (162 rows -> 27).",
+    "my_card_carries_no_standing_lessons_block": "My methodology card has a Canon block (C1-C22) and a Recognisers table (R1-R10) but no numbered STANDING LESSON section. I name the governing principle above from the canon block instead of inventing a lesson id.",
+    "translation_disclosure_C18_C20": "MANDATORY, FILED EVERY TIME: Livermore's 6-point DANGER SIGNAL, 3-point reclassification and 12-point Key Price are 1940 dollar amounts calibrated to stocks above ~$30. They do NOT travel literally to a universe spanning $5.45 (EVLV) to $996.57 (GEV). Wherever I speak of a danger-signal size below I mean a multiple of atr_14d, and that multiplier is MY OWN translation, never Livermore's literal number (R2).",
+    "state_analogue_C18": "mp_state / mp_accel_state is read as the modern engine analogue of my six-column Market Key (Secondary Rally / Natural Rally / Upward Trend / Downward Trend / Natural Reaction / Secondary Reaction). Structural resemblance, NOT an identical statistic. I still apply my own C7/C19/C20 thresholds on top of it (R3).",
+    "inside_information": "NEVER (C11). No reason below rests on a tip, a rumour, or an unverified explanation of a move. Every reason cites a packet field value only.",
+    "staleness_carried": "run.pm_ack: DRY-RUN 2026-08-12 — export is 15 days stale (2026-07-28); today's 2.79MB export cannot transit the Drive connector without credentials (gap G4). Crown macro IS today's live file. Frame test only, NOT for trading. This declaration attaches to every nomination below without exception.",
+    "frame_halves_are_15_days_apart": "run.degraded: the momentum caveat's own VIX (18.7) is the 15-day-stale export value; today's live Crown carries VIX 15.28. The regime read and the candidate rows are not contemporaneous. I do not treat the two as one observation.",
+    "momentum_caveat_respected": "market_frame.momentum_caveat: hurst 0.603, trend TRENDING, vix 18.7, implication 'Momentum strategies favoured', risk_tone YELLOW. A trending tape is the only condition under which C5 (buy the confirming new high after a normal pullback) is even the right method — so the caveat supports my method in principle. But its hurst and VIX are 15 days old, so I claim support in kind, not in degree.",
+    "crown_cuts_against_me": "Crown status DEGRADED (7 limits), family BROADENING_CARRY, match_quality 'partial', size_multiplier 1.0, headline 'A market with no clear breadth lead, calm on the surface but with single stocks moving very differently underneath.' conditions_not_met: broadening, gamma_positive, dispersion_normal. This cuts directly against C12/C13/C14 — my entire method rests on LEADING GROUPS and on two related stocks confirming each other. Crown says there is no clear breadth lead and dispersion is abnormal, i.e. the group signal I depend on is precisely the thing the macro layer reports as absent. Two key_levels sharpen it: 'RSP/SPY 20-day average' now 0.286402 vs level 0.287185, distance_pct 0.27 — the average stock is a quarter of a percent from crossing below its own trend against the index; and 'Single-stock vs index gap — elevated band' now 23.23 vs level 23.058, distance_pct -0.74 — already through the elevated band. I have capped every conviction below at 3 for this reason and nominated four names instead of ten.",
+    "not_served": [
+      {
+        "item": "TAPE READING — the actual reason I existed",
+        "detail": "I read the tape: the sequence of prints, the speed of the ticker, where size appeared and where it withdrew. The packet carries no intraday print sequence, no time-and-sales, no order flow. Every value here is a single end-of-day scalar (bracket.price_source 'eod_close') and it is 15 days old. NOT_SERVED, and this is the largest single gap in this seat."
+      },
+      {
+        "item": "ORDER-FILL DIFFICULTY as a strength signal (C-cite #101)",
+        "detail": "My own confirmation that I was right was that successive buys got HARDER to fill at higher prices. My card names day_vol as the nearest proxy and still requires me to declare fill_difficulty: NOT_SERVED (R5). Today it is worse than that: day_vol is ON MY MENU but is ABSENT FROM ALL 162 CANDIDATE ROWS. I have not even the proxy. Filed in data_gaps."
+      },
+      {
+        "item": "TEST ORDERS to probe support and demand depth (C-cite #103/#104)",
+        "detail": "NOT APPLICABLE inside Aegis. My method placed a moderate market order and watched the rally-back to measure real demand. Aegis does not place live probing orders. This is method I hold and cannot execute here."
+      },
+      {
+        "item": "GROUP LEADERSHIP CONFIRMATION — the two-stock Key Price (C14, R8)",
+        "detail": "PARTIALLY SERVED, BY MY OWN WORKAROUND, AND I SAY SO. A genuine group trend change is confirmed only by the combined action of TWO related stocks, never one. The packet carries no pairing field — it is rank-3 on my card's engine-asks list precisely because it is not emitted. I approximated it by reading same-gics_sector peers' mp_state/mp_accel_state/structure_shift from the candidate rows. That approximation is mine, not an engine output, and it is 15 days stale like everything else."
+      },
+      {
+        "item": "THE CONFIRMING NEW HIGH — the entry trigger itself (C5, R1)",
+        "detail": "STRUCTURALLY UNSERVABLE IN THIS PACKET, and this is the finding the PM should read twice. C5 requires (a) established uptrend, (b) normal pullback, (c) a SUBSEQUENT NEW HIGH confirming the pullback is over. Across all 162 rows structure_shift takes only three values: RANGE (129), BEARISH_CHOCH (26), null (7). There is no bullish break-of-structure value anywhere in the packet. RANGE means the base has not broken either way — it is the ABSENCE of my trigger, not the presence of it. Therefore NOT ONE name in this packet can satisfy step 1 in full. Every checklist_trace below records step 1 as 'partial' for this reason, never 'pass'. My nominations are eligibility reads, not triggered entries."
+      },
+      {
+        "item": "PROFIT-BANKING ON DOUBLED CAPITAL (C10, R10)",
+        "detail": "PM-FACING ADVISORY ONLY, not a per-name nomination action. The packet carries no cost basis or open-gain field for the three held names, so I cannot raise the C10 question against any specific position today. Declared rather than skipped."
+      },
+      {
+        "item": "MP_STATE TRANSITION LOGIC as a relative-move parameter",
+        "detail": "Rank-1 engine ask on my card and still not emitted. Exposing whatever internal logic drives mp_state transitions as a relative-move parameter would let me state my C18-C20 translation PRECISELY instead of approximately via atr_14d. Until then every danger-signal number I give is an approximation I am obliged to label."
+      },
+      {
+        "item": "PYRAMIDING (C6, R6)",
+        "detail": "Advisory on DIRECTION only — add to a long solely at successively higher prices, never into weakness. Aegis's own dynCap/1R sizing sets the dollar amount. I set no size and name no dollar figure anywhere in this file."
+      }
+    ],
+    "fields_i_did_not_vote_on": "Per my card: pin_bar_state, choch_state, div_state, div_bear_count, elder, elder_5d are advisory only and never a passing step — none appear on my menu today in any case. knn_prob, knn_significant, beta_30d, accum, cmf, mfi, vol_validated, vol_ratio are not mine at all; vol_ratio and vol_validated appear inside bracket.targets and I did not read them.",
+    "screen_audit": "162 candidates -> C9 gate (bracket.valid true, i.e. a predetermined absorbable maximum loss exists) 27 -> C8/C5 gate (drop structure_shift BEARISH_CHOCH, an abnormal move that must be respected) 19 -> C5 gate (drop sma_distance_pct <= 0, i.e. no established uptrend to pull back within — never buy on low price alone) 15 -> C5 no-chase gate (drop sma_distance_pct > 12, far above the recent high) 11 -> C12 leading-group gate (drop sector entry_gate BLOCKED) 7 -> held-book removal (V goes to held_review) 6 -> C13/C2 conviction floor (drop KHC, SYY: mp_state FADING with mp_accel_state DECELERATING in an XLP sector graded HOLD/CAUTION with macro_headwind_flag HEADWIND — no trend to enter) 4."
+  },
+  "nominations": [
+    {
+      "ticker": "CSX",
+      "conviction": 3,
+      "reason": "The only STRONG mp_state in the bracket-valid set. structure 66.3, structure_shift RANGE (base intact, no adverse break), sma_distance_pct 8.44 — near its trend, not chasing it. ma20 stop 49.80 off entry 51.80, risk_pct 3.86, rr 2.05. XLI sector_trend_state 'Momentum Building — Add'.",
+      "fields_cited": ["mp_state", "mp_accel_state", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "gics_sector", "sector_trend_state", "rank", "held"],
+      "declared": {
+        "trend_confirmation": "PARTIAL (C5) — structure 66.3 and structure_shift RANGE give me the base, sma_distance_pct 8.44 gives me proximity to the high, but the CONFIRMING NEW HIGH leg has no field in this packet. Not a PASS and I will not call it one.",
+        "danger_signal_threshold": "TRANSLATED via atr_14d 1.16, NOT the literal 6 points (C7, C18-C20). My translation, disclosed: a single-day reaction of roughly one atr_14d (~1.16, ~2.2% of entry 51.80) from that day's high is my danger signal, and it fires EARLIER than the ma20 bracket.stop at 49.80 (bracket.stop_atr_dist 1.72). R4: the bracket is house law and I do not contest it; the danger signal is my independent, earlier warning.",
+        "state_analogue": "mp_state STRONG / mp_accel_state FLAT read as my six-column classifier's modern equivalent (C18) — Upward Trend column, but flat acceleration means it is not extending. Analogue, not identical.",
+        "fill_difficulty": "NOT_SERVED — day_vol is on my menu and absent from every row in this packet, so I have not even the proxy R5 permits.",
+        "inside_information": "NEVER (C11).",
+        "staleness": "All values 15 days stale (export 2026-07-28)."
+      },
+      "checklist_trace": [
+        {
+          "step": 1,
+          "canon_ref": ["C5", "C16", "C21"],
+          "observed": "structure 66.3, structure_shift RANGE, sma_distance_pct 8.44, mp_state STRONG. Base intact and price near its trend — but no field in the packet carries a confirming new high.",
+          "verdict": "partial",
+          "fields": ["structure", "structure_shift", "sma_distance_pct", "mp_state"]
+        },
+        {
+          "step": 2,
+          "canon_ref": ["C7", "C9", "C18", "C19", "C20"],
+          "observed": "bracket.valid true, stop 49.80 ma20 off entry 51.80, risk_pct 3.86, rr 2.05. atr_14d 1.16 -> my translated danger signal ~1 ATR (~2.2%), earlier than the stop at 1.72 ATR.",
+          "verdict": "pass",
+          "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct", "entry", "atr_14d"]
+        },
+        {
+          "step": 3,
+          "canon_ref": ["C12", "C13", "C14"],
+          "observed": "XLI, sector_trend_state 'Momentum Building — Add'. Peer key-price check: PCAR, RTX, MMM all STRONG+ACCELERATING with structure_shift RANGE; SARO BUILDING+ACCELERATING. Second name confirms.",
+          "verdict": "pass",
+          "fields": ["gics_sector", "gics_sector_name", "sector_trend_state", "mp_state", "mp_accel_state", "structure_shift"]
+        },
+        {
+          "step": 4,
+          "canon_ref": ["C4", "C6"],
+          "observed": "held false — no existing position, so pyramiding does not arise. Advisory only if entered: add solely above entry 51.80 and never below stop 49.80. I set no size.",
+          "verdict": "no_data",
+          "fields": ["held", "entry", "bracket.stop"]
+        },
+        {
+          "step": 5,
+          "canon_ref": ["C11", "C18", "C22"],
+          "observed": "Translation filed: atr_14d 1.16 substitutes for the literal 6-point threshold, my own multiplier. day_vol absent so fill_difficulty NOT_SERVED. No tip or rumour relied on. 15-day staleness carried.",
+          "verdict": "pass",
+          "fields": ["atr_14d", "day_vol"]
+        }
+      ]
+    },
+    {
+      "ticker": "SARO",
+      "conviction": 3,
+      "reason": "mp_state BUILDING with mp_accel_state ACCELERATING — the only such name that also clears my no-chase and leading-group gates. structure_shift RANGE, sma_distance_pct 8.32, atr_14d 1.00, ma20 stop 28.37 off entry 29.53, risk_pct 3.93, rr 3.22 (best in my eligible set). XLI 'Momentum Building — Add'.",
+      "fields_cited": ["mp_state", "mp_accel_state", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "gics_sector", "sector_trend_state", "rank", "held"],
+      "declared": {
+        "trend_confirmation": "PARTIAL (C5) — structure 64.2 is the weakest base of my four and structure_shift RANGE again withholds the confirming new high. What carries it is mp_accel_state ACCELERATING, which is the one field in the packet that speaks to a trend still extending.",
+        "danger_signal_threshold": "TRANSLATED via atr_14d 1.00, NOT the literal 6 points (C7, C18-C20). My translation, disclosed: ~1 atr_14d (~1.00, ~3.4% of entry 29.53) single-day reaction from the day's high. Note this is essentially coincident with bracket.stop_atr_dist 1.16 — unusually little separation between my early warning and the house stop, which I flag rather than smooth over.",
+        "state_analogue": "mp_state BUILDING / mp_accel_state ACCELERATING read as the Upward Trend column still being written in black ink (C18). Analogue, not identical.",
+        "fill_difficulty": "NOT_SERVED — day_vol absent from all rows.",
+        "inside_information": "NEVER (C11).",
+        "staleness": "All values 15 days stale (export 2026-07-28)."
+      },
+      "checklist_trace": [
+        {
+          "step": 1,
+          "canon_ref": ["C5", "C16", "C21"],
+          "observed": "structure 64.2, structure_shift RANGE, sma_distance_pct 8.32, mp_state BUILDING, mp_accel_state ACCELERATING. Near trend, not chasing. No confirming-new-high field exists.",
+          "verdict": "partial",
+          "fields": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state"]
+        },
+        {
+          "step": 2,
+          "canon_ref": ["C7", "C9", "C18", "C19", "C20"],
+          "observed": "bracket.valid true, stop 28.37 ma20 off entry 29.53, risk_pct 3.93, rr 3.22. atr_14d 1.00 -> translated danger signal ~1 ATR (~3.4%), sitting almost on the stop (stop_atr_dist 1.16).",
+          "verdict": "pass",
+          "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct", "entry", "atr_14d"]
+        },
+        {
+          "step": 3,
+          "canon_ref": ["C12", "C13", "C14"],
+          "observed": "gics_sector XLI, sector_trend_state 'Momentum Building — Add'. My two-stock key price: CSX (STRONG, RANGE, sma 8.44) is the confirming second name; HON and DRS also BUILDING+ACCELERATING RANGE.",
+          "verdict": "pass",
+          "fields": ["gics_sector", "gics_sector_name", "sector_trend_state", "mp_state", "mp_accel_state", "structure_shift"]
+        },
+        {
+          "step": 4,
+          "canon_ref": ["C4", "C6"],
+          "observed": "held false. Pyramiding advisory only: successive buys above 29.53 solely on strength, never toward stop 28.37. Aegis 1R sizing sets the amount, not me.",
+          "verdict": "no_data",
+          "fields": ["held", "entry", "bracket.stop"]
+        },
+        {
+          "step": 5,
+          "canon_ref": ["C11", "C18", "C22"],
+          "observed": "Translation filed: atr_14d 1.00 as my own substitute for the 1940 6-point threshold. day_vol absent, fill_difficulty NOT_SERVED. No tip relied on. 15-day staleness carried.",
+          "verdict": "pass",
+          "fields": ["atr_14d", "day_vol"]
+        }
+      ]
+    },
+    {
+      "ticker": "ACGL",
+      "conviction": 2,
+      "reason": "Best base in my eligible set: structure 71.6, structure_shift RANGE, sma_distance_pct 8.39, smallest absorbable loss — ma20 stop 100.91 off entry 103.88, risk_pct 2.86, rr 2.06. XLF grade DEPLOY. Capped at 2: mp_accel_state DECELERATING and sector_trend_state 'Momentum Fading — Hold, Don't Add'.",
+      "fields_cited": ["mp_state", "mp_accel_state", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "gics_sector", "sector_trend_state", "rank", "held"],
+      "declared": {
+        "trend_confirmation": "PARTIAL (C5) — structure 71.6 is the strongest base among my four and sma_distance_pct 8.39 sits in the normal-pullback band, but structure_shift RANGE again means the confirming new high is unobservable.",
+        "danger_signal_threshold": "TRANSLATED via atr_14d 2.34, NOT the literal 6 points (C7, C18-C20). My translation, disclosed: ~1 atr_14d (~2.34, ~2.3% of entry 103.88) single-day reaction from the day's high, which fires earlier than the ma20 stop at bracket.stop_atr_dist 1.27.",
+        "state_analogue": "mp_state BUILDING / mp_accel_state DECELERATING read as my Natural Rally column rather than a clean Upward Trend (C18). C19 is the binding caution here: a Natural Rally of any size does NOT by itself signal a trend resumption — a FURTHER move beyond the prior rally high is required, and I cannot observe one in this packet. That, not the sector grade, is why this is a 2.",
+        "internal_field_conflict_flagged": "The packet disagrees with itself on XLF and I refuse to pick the flattering half. market_frame.sectors[XLF] reads grade DEPLOY, rrg_quadrant LEADING, entry_gate PASS — while every XLF candidate row carries sector_trend_state 'Momentum Fading — Hold, Don't Add'. Peer key-price evidence sides with DEPLOY (SF, SCHW, NU, PRU, MET all STRONG+ACCELERATING); but two XLF names with valid brackets, RYAN and FNF, carry structure_shift BEARISH_CHOCH. Under C14 a peer failing to make new highs with the group is itself grounds to revise an opinion. Conflict unresolved, conviction capped.",
+        "fill_difficulty": "NOT_SERVED — day_vol absent from all rows.",
+        "inside_information": "NEVER (C11).",
+        "staleness": "All values 15 days stale (export 2026-07-28)."
+      },
+      "checklist_trace": [
+        {
+          "step": 1,
+          "canon_ref": ["C5", "C16", "C21"],
+          "observed": "structure 71.6, structure_shift RANGE, sma_distance_pct 8.39, mp_state BUILDING. Base is the best of my four; confirming-new-high leg unobservable packet-wide.",
+          "verdict": "partial",
+          "fields": ["structure", "structure_shift", "sma_distance_pct", "mp_state"]
+        },
+        {
+          "step": 2,
+          "canon_ref": ["C7", "C9", "C18", "C19", "C20"],
+          "observed": "bracket.valid true, stop 100.91 ma20 off entry 103.88, risk_pct 2.86 (lowest in my set), rr 2.06. atr_14d 2.34 -> translated danger signal ~1 ATR (~2.3%), ahead of stop_atr_dist 1.27.",
+          "verdict": "pass",
+          "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct", "entry", "atr_14d"]
+        },
+        {
+          "step": 3,
+          "canon_ref": ["C12", "C13", "C14"],
+          "observed": "XLF grade DEPLOY / LEADING / entry_gate PASS, but row sector_trend_state 'Momentum Fading — Hold, Don't Add'. Peers SF/SCHW/NU/PRU/MET STRONG+ACCELERATING; RYAN and FNF BEARISH_CHOCH. Mixed.",
+          "verdict": "partial",
+          "fields": ["gics_sector", "gics_sector_name", "sector_trend_state", "mp_state", "mp_accel_state", "structure_shift"]
+        },
+        {
+          "step": 4,
+          "canon_ref": ["C4", "C6"],
+          "observed": "held false for ACGL. Note XLF stablemates V and NU are held true — concentration in one group is consistent with C12, not a red flag (R7), but the PM should see it. No size set by me.",
+          "verdict": "no_data",
+          "fields": ["held", "gics_sector", "entry", "bracket.stop"]
+        },
+        {
+          "step": 5,
+          "canon_ref": ["C11", "C18", "C22"],
+          "observed": "Translation filed: atr_14d 2.34 as my own substitute for the literal 6 points. day_vol absent, fill_difficulty NOT_SERVED. No tip relied on. 15-day staleness carried.",
+          "verdict": "pass",
+          "fields": ["atr_14d", "day_vol"]
+        }
+      ]
+    },
+    {
+      "ticker": "SHO",
+      "conviction": 2,
+      "reason": "sma_distance_pct 4.35 — tightest to its own trend in my eligible set, the normal-pullback zone C5 asks for, not a chase. mp_accel_state ACCELERATING, structure 71.6, structure_shift RANGE, ma20 stop 11.48 off entry 11.82, risk_pct 2.88, rr 2.68. Capped at 2: mp_state FADING, XLRE gate CAUTION.",
+      "fields_cited": ["mp_state", "mp_accel_state", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "gics_sector", "sector_trend_state", "rank", "held"],
+      "declared": {
+        "trend_confirmation": "PARTIAL (C5) — sma_distance_pct 4.35 is the cleanest normal-pullback read in the whole bracket-valid set and structure 71.6 is a sound base, but structure_shift RANGE withholds the confirming new high and mp_state FADING argues the established uptrend leg is weakening. Two of three legs, at best.",
+        "danger_signal_threshold": "TRANSLATED via atr_14d 0.23, NOT the literal 6 points (C7, C18-C20). This name is the sharpest illustration of why the literal number is unusable: at entry 11.82, a 6-dollar reaction would be more than half the stock. My translation, disclosed: ~1 atr_14d (~0.23, ~1.9% of entry) single-day reaction from the day's high, ahead of the ma20 stop at stop_atr_dist 1.45.",
+        "state_analogue": "mp_state FADING / mp_accel_state ACCELERATING is an internally tense read — in my six-column terms, a Natural Reaction column with the reaction itself picking up pace, which is not a buy signal, set against a sector_trend_state of 'Momentum Building — Add'. C8 governs: I must distinguish a normal reaction from an abnormal one, and this packet gives me no way to tell which this is. Hence 2, not 3.",
+        "fill_difficulty": "NOT_SERVED — day_vol absent from all rows. Acute here: at entry 11.82 with atr_14d 0.23 this is the smallest-priced name I am putting forward, exactly where a fill-difficulty read would matter most.",
+        "inside_information": "NEVER (C11).",
+        "staleness": "All values 15 days stale (export 2026-07-28)."
+      },
+      "checklist_trace": [
+        {
+          "step": 1,
+          "canon_ref": ["C5", "C8", "C16"],
+          "observed": "sma_distance_pct 4.35 (tightest of my four), structure 71.6, structure_shift RANGE, mp_state FADING, mp_accel_state ACCELERATING. Pullback leg clean, uptrend leg contested, new-high leg unobservable.",
+          "verdict": "partial",
+          "fields": ["sma_distance_pct", "structure", "structure_shift", "mp_state", "mp_accel_state"]
+        },
+        {
+          "step": 2,
+          "canon_ref": ["C7", "C9", "C18", "C19", "C20"],
+          "observed": "bracket.valid true, stop 11.48 ma20 off entry 11.82, risk 0.34, risk_pct 2.88, rr 2.68. atr_14d 0.23 -> translated danger signal ~1 ATR (~1.9%), earlier than stop_atr_dist 1.45.",
+          "verdict": "pass",
+          "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct", "entry", "atr_14d"]
+        },
+        {
+          "step": 3,
+          "canon_ref": ["C12", "C13", "C14"],
+          "observed": "XLRE sector_trend_state 'Momentum Building — Add' but grade HOLD, entry_gate CAUTION, HEADWIND. C14 peer check fails: of 24 XLRE rows 17 are mp_state FADING. No confirming second name.",
+          "verdict": "fail",
+          "fields": ["gics_sector", "gics_sector_name", "sector_trend_state", "mp_state", "mp_accel_state"]
+        },
+        {
+          "step": 4,
+          "canon_ref": ["C4", "C6"],
+          "observed": "held false. Pyramiding advisory only and I would withhold it here: with mp_state FADING and step 3 failed, additions would be adding into weakness, which C4/C6 forbid outright.",
+          "verdict": "no_data",
+          "fields": ["held", "mp_state", "entry", "bracket.stop"]
+        },
+        {
+          "step": 5,
+          "canon_ref": ["C11", "C18", "C22"],
+          "observed": "Translation filed: atr_14d 0.23 substitutes for the literal 6 points — at entry 11.82 the literal number would exceed half the share price. day_vol absent. No tip. 15-day staleness carried.",
+          "verdict": "pass",
+          "fields": ["atr_14d", "entry", "day_vol"]
+        }
+      ]
+    }
+  ],
+  "shortfall_reason": "FOUR of a possible ten, and the shortfall is the honest finding — not a scarcity of tickers but a scarcity of the one thing my method requires. (1) STRUCTURAL: C5 needs an established uptrend, a normal pullback, and a CONFIRMING NEW HIGH. Across all 162 rows structure_shift is only ever RANGE (129), BEARISH_CHOCH (26) or null (7). No bullish break-of-structure value exists in this packet, so not one name can trigger my entry; every step 1 below reads 'partial' and my four names are eligibility reads, not entries. (2) C9 is a hard gate, not a preference: only 27 of 162 rows carry bracket.valid true, i.e. a predetermined absorbable maximum loss. I do not enter without one, so 135 names were never candidates. (3) C12/C13 leading groups: the sectors graded DEPLOY are XLF and XLE only; XLK, XLY and XLC are entry_gate BLOCKED, which removed the strongest-momentum names in the file. (4) C5 no-chase removed real quality — IP (rank 90) is BUILDING+ACCELERATING with structure 82.1 and rr_tp1 4.61, the best risk-reward in the bracket-valid set, and I dropped it anyway on sma_distance_pct 19.1 (far above its own recent high) compounded by XLY grade AVOID / entry_gate BLOCKED. Two named canon failures beat one good number. Likewise MDB (BUILDING+ACCELERATING, rr 2.85) dropped on sma_distance_pct -7.54 — below its trend is not a pullback within an uptrend, and buying it would be buying on low price alone, which C5 forbids. (5) Crown's own read caps the whole list: 'no clear breadth lead' with dispersion already through its elevated band is the negation of the group leadership C12/C13/C14 rest on, so nothing above went past conviction 3. (6) And beneath all of it, the data is 15 days old and C2 says price action decides — I have no current price action, only a fortnight-old photograph of some. Padding to ten would have meant nominating FADING+DECELERATING names in HEADWIND sectors (KHC, SYY) and calling that conviction. A short honest list beats a padded one (A-C2).",
+  "held_review": [
+    {
+      "ticker": "V",
+      "verdict": "KEEP",
+      "line": "KEEP the position, DO NOT ADD (C6, R6). mp_state FADING with mp_accel_state DECELERATING is weakness, and adding into weakness is the one thing C4/C6 forbid without exception — pyramid only at successively higher prices, never toward the stop. The position itself is sound: structure 81.1, structure_shift RANGE (no adverse break), sma_distance_pct 7.48, bracket.valid true with ma20 stop 354.22 off 362.53, risk_pct 2.29, rr 2.15. My translated danger signal (atr_14d 7.46, ~1 ATR ~2.1% single-day reaction from the day's high — my multiplier, not Livermore's literal 6 points) sits ahead of that stop at stop_atr_dist 1.11 and is where I would step off the track. C10 profit-banking: cannot be raised, the packet carries no cost basis or open-gain field. 15 days stale."
+    },
+    {
+      "ticker": "NU",
+      "verdict": "KEEP",
+      "line": "KEEP. The strongest held read in the packet: mp_state STRONG with mp_accel_state ACCELERATING, sma_distance_pct 11.53 — an Upward Trend column still being written in black ink (C18, analogue not identical). C15 applies directly: a disproportionate share of a move happens in its final stretch, so do not exit on a minor reaction. TWO CAUTIONS. First, structure_shift is NULL for this row — I cannot check for an adverse change of character, so my C8 normal-versus-abnormal test is blind here; filed in data_gaps. Second, bracket.valid is FALSE with stop null, so there is no predetermined maximum loss on an open position, which is exactly the condition C9 exists to prevent. That is a bracket problem for the PM, not a reason to sell a working trend. 15 days stale."
+    },
+    {
+      "ticker": "VRSK",
+      "verdict": "TIGHTEN",
+      "line": "TIGHTEN. mp_state STRONG but mp_accel_state DECELERATING — in my six-column terms the trend is rolling into a Natural Reaction, and C19 says a return toward the pivotal point is not itself a trend change, so I do not call an exit. What forces TIGHTEN is the combination: sma_distance_pct 13.38 is stretched well above its own trend, gics_sector XLK carries grade TURNING, rrg_quadrant LAGGING and entry_gate BLOCKED ('HEADWIND macro + LAGGING RRG'), and bracket.valid is FALSE with bracket.stop null — no predetermined maximum loss on an open, extended position in a blocked group. C9 is unambiguous that the maximum loss is decided at or immediately after entry, not improvised later. Ask the engine for a valid bracket or reduce. My danger signal here is translated via atr_14d, my own multiplier, never the literal 6 points. 15 days stale."
+    }
+  ],
+  "data_gaps": [
+    {
+      "field": "day_vol",
+      "impact": "ON MY MENU, ABSENT FROM ALL 162 CANDIDATE ROWS (null/missing in 162 of 162). day_vol is the only field my card permits as a partial proxy for order-fill difficulty (R5, C-cite #101) — the signal by which I originally confirmed I was right, namely that successive buys grew harder to fill at higher prices. Without it I have neither the signal nor its proxy. Also removes any relative-volume read on whether the RANGE structures are being accumulated or merely drifting."
+    },
+    {
+      "field": "structure_shift",
+      "impact": "PRESENT BUT NEVER BULLISH. Values across 162 rows: RANGE 129, BEARISH_CHOCH 26, null 7. There is no bullish break-of-structure state in this packet, so C5's confirming-new-high leg — my actual entry trigger — cannot be evaluated for ANY name. Separately null for 7 rows, one of which is the held position NU (rank 28), leaving my C8 normal-versus-abnormal test blind on an open trade. Request: emit a bullish counterpart to BEARISH_CHOCH, or a discrete new-high/breakout confirmation field."
+    },
+    {
+      "field": "mp_accel_state",
+      "impact": "Null on 3 of 162 rows (including held NU, rank 28, and XLF TRV rank 3). Where null I cannot read the acceleration half of my C18 trend-state analogue and step 1 degrades accordingly."
+    },
+    {
+      "field": "mp_state transition parameter",
+      "impact": "NOT EMITTED — rank-1 engine ask on my card. Whatever internal logic drives mp_state transitions is not exposed as a relative-move parameter, so my C18-C20 reclassification thresholds (the 6/3/12-point rules) can only be approximated through atr_14d rather than stated precisely. Every danger-signal figure in this file is consequently an approximation I am obliged to label as my own translation."
+    },
+    {
+      "field": "group_confirmation_pair",
+      "impact": "NOT EMITTED — rank-3 engine ask on my card. C14/R8 require a second related name's confirming action before a group trend call is treated as real, my own two-stock Key Price rule. With no pairing field I approximated it by hand from same-gics_sector peers' mp_state/mp_accel_state/structure_shift. That approximation is mine, not an engine output."
+    },
+    {
+      "field": "bracket.valid",
+      "impact": "False on 135 of 162 rows (83%), including two of the three held positions (NU, VRSK) which therefore carry no predetermined maximum loss while open. Not a defect in my read but the single largest constraint on it — C9 makes bracket.valid a gate rather than a preference, so 83% of the universe was ineligible before any judgement of mine was applied."
+    },
+    {
+      "field": "run.staleness_days",
+      "impact": "15. Every candidate value derives from the 2026-07-28 export while market_frame.crown is today's live file — the two halves of the frame are a fortnight apart (run.degraded: export VIX 18.7 versus live Crown VIX 15.28). C2 makes present price action the arbiter and I have none. This is the binding limitation on the entire file, and per run.pm_ack it is a frame test, NOT for trading."
+    }
+  ]
+}
