@@ -1,0 +1,179 @@
+{
+  "voice": "thorp",
+  "date": "2026-08-12",
+  "universe_file": "data/pma/2026-08-12/packets/thorp.json",
+  "nominations": [
+    {
+      "ticker": "NOMD",
+      "reason": "Calmest name that survives my worst-case test: atr_14d 0.33 / bracket.price 11.92 = 2.77% vol, 9th of 27 in the passing set (Q2). bracket.rr_tp1 2.90R pays 1.59x the 1.82R a one-ATR gap through bracket.stop 11.52 costs. bracket.rr 3.33, bracket.risk_pct 3.36.",
+      "conviction": 3,
+      "fields_cited": ["atr_14d", "bracket.price", "bracket.stop", "bracket.valid", "bracket.rr", "bracket.rr_tp1", "bracket.rr_tp2", "bracket.risk_pct", "bracket.stop_atr_dist", "sc_momentum", "sc_m_gate_detail", "sc_p_gate_detail"],
+      "worst_case": {
+        "vol_measure": "atr_pct (substitute)",
+        "vol_pct": 2.77,
+        "vol_rank_in_passing_set": "9 of 27 (Q2, set quartiles 2.66 / 3.81 / 5.11)",
+        "loss_boundary": 11.52,
+        "loss_boundary_source": "bracket.stop (bracket.valid true, stop_atr_dist 1.20)",
+        "gap_loss_price": 11.19,
+        "gap_loss_pct": 6.12,
+        "gap_loss_R": 1.82,
+        "gap_basis": "computed from atr_14d 0.33 against bracket.stop 11.52 (not atr_fallback_stop)",
+        "unwatched_loss_price": 11.26,
+        "unwatched_loss_pct": 5.54,
+        "unwatched_basis": "2 x atr_14d below bracket.price — this book is not watched intraday between scheduled reviews (C9/R4); assumption stated, not measured",
+        "r3_verdict": "PASS — nameable first exit 2.90R exceeds gapped loss 1.82R"
+      },
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C11", "C12", "C2"], "observed": "bracket.valid true; priced against structural stop 11.52 at stop_atr_dist 1.20, bracket.rr 3.33, bracket.risk_pct 3.36. sc_momentum 65.4 is a score, not the edge.", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_atr_dist", "bracket.rr", "bracket.risk_pct", "sc_momentum"]},
+        {"step": 2, "canon_ref": ["C13", "C14", "C15"], "observed": "No loser count, no cost-net figure, no n in packet. Component-removal proxy only: sc_m_gate_detail 4/5 (flow false), sc_p_gate_detail 3/6 (flow, bq, k39 false).", "verdict": "partial", "fields": ["sc_m_gate_detail", "sc_p_gate_detail"]},
+        {"step": 3, "canon_ref": ["C1", "C2", "C4", "C9"], "observed": "loss_boundary 11.52; one-ATR gap to 11.19 = 6.12% = 1.82R; unwatched 2xATR = 11.26 = 5.54%. rr_tp1 2.90R > 1.82R.", "verdict": "pass", "fields": ["bracket.stop", "atr_14d", "bracket.price", "bracket.rr_tp1"]},
+        {"step": 4, "canon_ref": ["C5", "C6", "C24"], "observed": "atr_pct 2.77 (substitute for range_over_mid); rank 9/27 ascending, Q2 of passing set. Tiebreak on liquidity impossible: day_vol null on all 162 rows.", "verdict": "partial", "fields": ["atr_14d", "bracket.price", "day_vol"]},
+        {"step": 5, "canon_ref": ["C19", "C20", "C21"], "observed": "Passing set 27/162 (16.7%), median bracket.rr 2.85; no trailing median in packet so R7 compression test cannot be run. Frame VIX 18.7 (stale) vs live 15.28.", "verdict": "no_data", "fields": ["bracket.valid", "bracket.rr"]}
+      ],
+      "frame_conflict": "XLP entry_gate CAUTION (grade HOLD, macro HEADWIND) — Crown cuts against this pick. beta_30d -0.25 stated as not-from-canon context only.",
+      "advisory_not_voted": "knn_prob 0.40 (k not stated in packet) — advisory, carried no weight."
+    },
+    {
+      "ticker": "IP",
+      "reason": "Best worst-case arithmetic in the whole passing set: bracket.rr_tp1 4.61R against a 1.92R one-ATR gap through bracket.stop 40.71 = 2.40x margin, bracket.rr 6.14. Vol atr_14d 1.57 / bracket.price 42.41 = 3.70%, rank 13/27 (Q2). Nominated with knn_prob 0.00.",
+      "conviction": 3,
+      "fields_cited": ["atr_14d", "bracket.price", "bracket.stop", "bracket.valid", "bracket.rr", "bracket.rr_tp1", "bracket.rr_tp2", "bracket.risk_pct", "bracket.stop_atr_dist", "sc_momentum", "sc_m_gate_detail", "sc_p_gate_detail", "knn_prob"],
+      "worst_case": {
+        "vol_measure": "atr_pct (substitute)",
+        "vol_pct": 3.7,
+        "vol_rank_in_passing_set": "13 of 27 (Q2, set quartiles 2.66 / 3.81 / 5.11)",
+        "loss_boundary": 40.71,
+        "loss_boundary_source": "bracket.stop (swing_low, bracket.valid true, stop_atr_dist 1.08)",
+        "gap_loss_price": 39.14,
+        "gap_loss_pct": 7.71,
+        "gap_loss_R": 1.92,
+        "gap_basis": "computed from atr_14d 1.57 against bracket.stop 40.71 (not atr_fallback_stop)",
+        "unwatched_loss_price": 39.27,
+        "unwatched_loss_pct": 7.4,
+        "unwatched_basis": "2 x atr_14d below bracket.price (C9/R4); assumption stated, not measured",
+        "r3_verdict": "PASS — widest margin of the 27, 4.61R nameable gain vs 1.92R gapped loss"
+      },
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C11", "C12", "C2"], "observed": "bracket.valid true, swing_low stop 40.71 at stop_atr_dist 1.08, bracket.rr 6.14, bracket.risk_pct 4.01. Loss boundary is a structural price, not a shape.", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_atr_dist", "bracket.rr", "bracket.risk_pct"]},
+        {"step": 2, "canon_ref": ["C13", "C14", "C15"], "observed": "No base rate, no loser count, no cost assumption in packet. Component proxy: sc_m_gate_detail 3/5 (energy, mp false), sc_p_gate_detail 4/6 (energy, bq false). Weakest gate set of my four.", "verdict": "partial", "fields": ["sc_m_gate_detail", "sc_p_gate_detail"]},
+        {"step": 3, "canon_ref": ["C1", "C2", "C4", "C9"], "observed": "loss_boundary 40.71; one-ATR gap to 39.14 = 7.71% = 1.92R; unwatched 2xATR = 39.27 = 7.40%. rr_tp1 4.61R covers it 2.40x.", "verdict": "pass", "fields": ["bracket.stop", "atr_14d", "bracket.price", "bracket.rr_tp1"]},
+        {"step": 4, "canon_ref": ["C5", "C6", "C24"], "observed": "atr_pct 3.70, rank 13/27, Q2 — calmer than the passing-set median 3.81. Ranks below NOMD (2.77) per C6. day_vol null, so R8 cost tiebreak not run.", "verdict": "partial", "fields": ["atr_14d", "bracket.price", "day_vol"]},
+        {"step": 5, "canon_ref": ["C19", "C20", "C21"], "observed": "27/162 pass; no trailing series in packet for the R7 compression test. Live Crown VIX 15.28 sits below the 15.0 premium-selling threshold by -1.83%.", "verdict": "no_data", "fields": ["bracket.valid"]}
+      ],
+      "frame_conflict": "XLY entry_gate BLOCKED (grade AVOID, RRG LAGGING/DEEPENING) — Crown cuts hard against this pick; R8 treats a blocked sector as outside the fitted universe, which is why conviction is capped at 3 despite the best worst-case margin on the board. beta_30d 0.53 is not-from-canon context.",
+      "advisory_not_voted": "knn_prob 0.00, knn_significant true — advisory, carried no weight in either direction."
+    },
+    {
+      "ticker": "RCL",
+      "reason": "Passes R3 by the thinnest margin I will accept: bracket.rr_tp1 2.28R vs a 1.94R one-ATR gap through bracket.stop 292.63 = 1.18x. Vol atr_14d 11.61 / bracket.price 305.04 = 3.81%, exactly the passing-set median, rank 14/27. bracket.rr 4.14, bracket.risk_pct 4.07.",
+      "conviction": 2,
+      "fields_cited": ["atr_14d", "bracket.price", "bracket.stop", "bracket.valid", "bracket.rr", "bracket.rr_tp1", "bracket.rr_tp2", "bracket.risk_pct", "bracket.stop_atr_dist", "sc_momentum", "sc_m_gate_detail", "sc_p_gate_detail"],
+      "worst_case": {
+        "vol_measure": "atr_pct (substitute)",
+        "vol_pct": 3.81,
+        "vol_rank_in_passing_set": "14 of 27 — the median of the passing set exactly",
+        "loss_boundary": 292.63,
+        "loss_boundary_source": "bracket.stop (ma20, bracket.valid true, stop_atr_dist 1.07)",
+        "gap_loss_price": 281.02,
+        "gap_loss_pct": 7.87,
+        "gap_loss_R": 1.94,
+        "gap_basis": "computed from atr_14d 11.61 against bracket.stop 292.63 (not atr_fallback_stop)",
+        "unwatched_loss_price": 281.82,
+        "unwatched_loss_pct": 7.61,
+        "unwatched_basis": "2 x atr_14d below bracket.price (C9/R4); assumption stated, not measured",
+        "r3_verdict": "PASS, marginal — 1.18x cover. C22 says cut the weight of anything sitting close to the threshold that would have rejected it; conviction 2 is that cut."
+      },
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C11", "C12", "C2"], "observed": "bracket.valid true, ma20 stop 292.63 at stop_atr_dist 1.07, bracket.rr 4.14, bracket.risk_pct 4.07. sc_momentum 57.7 is the lowest of my four.", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_atr_dist", "bracket.rr", "bracket.risk_pct", "sc_momentum"]},
+        {"step": 2, "canon_ref": ["C13", "C14", "C15"], "observed": "sc_m_gate_detail 4/5 (mp false) but sc_p_gate_detail only 2/6 (structure, mp, bq, k39 all false) — weakest persistence evidence of my four. No loser count anywhere.", "verdict": "partial", "fields": ["sc_m_gate_detail", "sc_p_gate_detail"]},
+        {"step": 3, "canon_ref": ["C1", "C2", "C4", "C9", "C22"], "observed": "loss_boundary 292.63; one-ATR gap to 281.02 = 7.87% = 1.94R vs rr_tp1 2.28R. Cover 1.18x — nearest to rejection of anything I filed.", "verdict": "partial", "fields": ["bracket.stop", "atr_14d", "bracket.price", "bracket.rr_tp1"]},
+        {"step": 4, "canon_ref": ["C5", "C6", "C24"], "observed": "atr_pct 3.81 = passing-set median, rank 14/27. Ranks below NOMD 2.77 and IP 3.70 on C6. day_vol null so the C24/R8 cost tiebreak could not be run.", "verdict": "partial", "fields": ["atr_14d", "bracket.price", "day_vol"]},
+        {"step": 5, "canon_ref": ["C19", "C20", "C21"], "observed": "No trailing edge series in packet; R7 not testable. Crown dispersion_normal is in conditions_not_met, so a 15-day-old atr_14d likely understates today's single-name range.", "verdict": "no_data", "fields": ["atr_14d"]}
+      ],
+      "frame_conflict": "XLY entry_gate BLOCKED (grade AVOID) — Crown cuts hard against. Also breadth: SPY roc20 1.39 vs IWM -2.31, no broadening. beta_30d 1.48 stated as not-from-canon context only, never ranked on.",
+      "advisory_not_voted": "knn_prob 0.60 — advisory, carried no weight."
+    },
+    {
+      "ticker": "ELF",
+      "reason": "Only name with sc_m_gate_detail 5/5 and sc_p_gate_detail 4/6, bracket.rr 3.72, rr_tp1 2.50R vs a 1.78R gapped loss (1.40x). Ranked LAST of my four anyway: atr_14d 4.24 / bracket.price 84.01 = 5.05% vol, rank 20/27, at the passing-set Q3 boundary 5.11 — R1 demotes it behind calmer names.",
+      "conviction": 2,
+      "fields_cited": ["atr_14d", "bracket.price", "bracket.stop", "bracket.valid", "bracket.rr", "bracket.rr_tp1", "bracket.rr_tp2", "bracket.risk_pct", "bracket.stop_atr_dist", "sc_momentum", "sc_m_gate_detail", "sc_p_gate_detail"],
+      "worst_case": {
+        "vol_measure": "atr_pct (substitute)",
+        "vol_pct": 5.05,
+        "vol_rank_in_passing_set": "20 of 27 — at the Q3 boundary (5.11); R1 territory",
+        "loss_boundary": 78.6,
+        "loss_boundary_source": "bracket.stop (ma200, bracket.valid true, stop_atr_dist 1.28)",
+        "gap_loss_price": 74.36,
+        "gap_loss_pct": 11.49,
+        "gap_loss_R": 1.78,
+        "gap_basis": "computed from atr_14d 4.24 against bracket.stop 78.60 (not atr_fallback_stop)",
+        "unwatched_loss_price": 75.53,
+        "unwatched_loss_pct": 10.09,
+        "unwatched_basis": "2 x atr_14d below bracket.price (C9/R4); assumption stated, not measured",
+        "r3_verdict": "PASS at 1.40x cover, but the absolute damage is the worst I filed — 11.49% of price on one gapped night, on bracket.risk_pct 6.44. Size to the 10.09% unwatched number, not to the stop."
+      },
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C11", "C12", "C2"], "observed": "bracket.valid true, ma200 stop 78.60 at stop_atr_dist 1.28, bracket.rr 3.72, bracket.risk_pct 6.44 — the widest risk_pct I accepted.", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_atr_dist", "bracket.rr", "bracket.risk_pct"]},
+        {"step": 2, "canon_ref": ["C13", "C14", "C15"], "observed": "Strongest component evidence in my set: sc_m_gate_detail 5/5, sc_p_gate_detail 4/6 (bq, k39 false), sc_momentum 78.2. Still no loser count, no n, no cost-net restatement.", "verdict": "partial", "fields": ["sc_m_gate_detail", "sc_p_gate_detail", "sc_momentum"]},
+        {"step": 3, "canon_ref": ["C1", "C2", "C4", "C9"], "observed": "loss_boundary 78.60; one-ATR gap to 74.36 = 11.49% = 1.78R vs rr_tp1 2.50R; unwatched 2xATR = 75.53 = 10.09%.", "verdict": "pass", "fields": ["bracket.stop", "atr_14d", "bracket.price", "bracket.rr_tp1"]},
+        {"step": 4, "canon_ref": ["C5", "C6", "C24", "C22"], "observed": "atr_pct 5.05, rank 20/27, at Q3 5.11. R1: ranks below every calmer name I filed despite the best gate evidence. Vol settles ordering, not score.", "verdict": "partial", "fields": ["atr_14d", "bracket.price", "day_vol"]},
+        {"step": 5, "canon_ref": ["C19", "C20", "C21"], "observed": "R7 untestable — no trailing median in packet. Crown single-stock vs index vol gap 23.23 sits above its 23.058 elevated band, so a stale ATR understates the tail here most of all.", "verdict": "no_data", "fields": ["atr_14d"]}
+      ],
+      "frame_conflict": "XLP entry_gate CAUTION (grade HOLD, macro HEADWIND) — Crown cuts against. beta_30d 1.55 is not-from-canon context only.",
+      "advisory_not_voted": "knn_prob 0.80 — the HIGHEST advisory reading in my four, and this name is ranked LAST. That inversion is the deliberate proof that the 2026-08-06 knn drift is closed."
+    }
+  ],
+  "held_review": [
+    {
+      "ticker": "V",
+      "verdict": "TIGHTEN",
+      "line": "bracket.valid true, stop 354.22 at stop_atr_dist 1.11, and vol atr_14d 7.46 / bracket.price 362.53 = 2.06% is the 2nd calmest of the 27. But bracket.rr_tp1 is 0.30R while a one-ATR gap through the stop costs 4.35% = 1.90R: the first bankable exit pays a sixth of one bad night. Hold, do not add, and treat 354.22 as the written loss boundary (C2/C8: close into the upper boundary, adjust into the lower)."
+    },
+    {
+      "ticker": "NU",
+      "verdict": "TIGHTEN",
+      "line": "bracket.valid FALSE — no engine stop, so there is no stated loss boundary and by C2 this position is guessed, not sized. sc_m_gate_detail 5/5 and sc_momentum 73.4 are the best of the held names present, so the case is not exit — the case is to write bracket.atr_fallback_stop 14.03 (-3.44% from bracket.price 14.53) down as the loss boundary now."
+    },
+    {
+      "ticker": "VRSK",
+      "verdict": "EXIT-CASE",
+      "line": "bracket.valid FALSE (no structural support passes the 3 gates) so no loss boundary exists; sc_m_gate_detail 2/5 with flow and energy both false; XLK entry_gate BLOCKED (HEADWIND macro + LAGGING RRG). atr_fallback_stop 199.82 is -3.31% from bracket.price 206.66 and atr_14d 6.84 means one typical day gaps clean through it. Unnameable worst case plus a blocked sector is my exit case."
+    }
+  ],
+  "shortfall_reason": "Four of ten, deliberately. 162 candidates, 27 carry a valid bracket (16.7%) — the other 135 have bracket.valid false and therefore no stateable loss boundary, which is a C2 failure before any signal is read. Of those 27, only 7 pass R3 on the nameable first exit (bracket.rr_tp1 >= the R-cost of a one-ATR gap through bracket.stop); the passing set's median bracket.rr_tp1 is 0.96R against gapped losses of 1.6-2.0R, i.e. most of today's brackets do not pay for one bad overnight at the first exit. Three of the seven survivors (MDB, HNGE, EVC) were dropped at step 2 because sc_m_gate_detail read 0/5, 0/5 and 1/5 — a composite with no confirming component is a fitted number with no stated reason it exists (C12). C21: filing four on a day that offered four is the output of a working method, not a shortfall. No name exceeds conviction 3 because the packet carries no base rate, no loser count and no cost-net figure — C13/C15 are unmet across the entire board, and a 4 or 5 would be unearned.",
+  "data_gaps": [
+    {"field": "day_vol", "impact": "NULL on all 162 rows. This is my declared substitute liquidity measure and the step-4 / C24 / R8 tiebreak variable. With it absent I could not break ties on turnover at all — the step is recorded 'partial' on every nomination. Please source (FMP volume vs own 20d average) and re-run."},
+    {"field": "bracket.stop", "impact": "NULL on 135 of 162 rows (bracket.valid false). Without a stop there is no loss boundary and no worst-case arithmetic, so 83% of the packet is unreadable to my step 3 regardless of its momentum score."},
+    {"field": "sc_p_gate_detail", "impact": "The 'bq' sub-gate reads false on every one of my four nominations and on most of the passing set. If that is a genuine universal fail it is signal; if it is a broken component it is silently degrading every persistence read in the packet. Please confirm which."}
+  ],
+  "declared": {
+    "governing_standing_lesson": "The 2026-08-06 PM audit finding on my card: knn_prob / knn_significant may NEVER carry my vote at any conviction, and beta_30d is not mine as a ranking or tiebreak criterion. Enforced and made checkable today — IP was nominated with knn_prob 0.00 and ranked 2nd; ELF carries the highest knn_prob in my set (0.80) and is ranked LAST. Ordering came from atr_pct alone. beta_30d appears only as labelled not-from-canon context.",
+    "staleness": "Export is 15 days stale (2026-07-28 data, 2026-08-12 run) per run.pm_ack. Every price, atr_14d, bracket level and gate detail I cite is a 2026-07-28 observation. My gap_loss and unwatched_loss numbers are therefore floors, not estimates. DRY RUN — frame test only, NOT for trading, on the PM's own acknowledgement.",
+    "frame_split": "The two halves of the frame are 15 days apart and disagree. market_frame.momentum_caveat reads TRENDING / 'momentum strategies favoured' off hurst 0.603 and VIX 18.7 — a 15-day-old VIX. Today's live Crown carries VIX 15.28, sitting -1.83% from the 15.0 premium-selling threshold whose own note says 'below this the tape favours selling premium over chasing breakouts'. Under C19/R7 that is the pricing condition the momentum caveat rests on visibly compressing. I did not size to the momentum read; it is the single largest reason nothing here exceeds conviction 3.",
+    "dispersion_warning": "Crown conditions_not_met includes dispersion_normal, and the single-stock vs index vol gap reads 23.23 against an elevated band of 23.058. Elevated dispersion plus a 15-day-old atr_14d means my volatility ranking is built on an understated input. The rank ORDER is likely still right (all names share the same staleness); the absolute gap_loss_pct figures are not.",
+    "vol_measure": "atr_pct (substitute) = atr_14d / bracket.price. Declared substitution, as required every time: high_52w / low_52w are not on my packet menu, so the canon C5 measure range_over_mid could not be computed. Read against today's passing set (n=27, quartiles 2.66 / 3.81 / 5.11), never against a fixed number.",
+    "liquidity_measure": "UNAVAILABLE — day_vol is on the menu but null on all 162 rows. The C24 / R8 round-trip-cost tiebreak was not run on any pair today.",
+    "r3_interpretation": "R3 was applied against bracket.rr_tp1, not bracket.rr. TP1 is the only target the engine anchors to a dated prior level; TP2/TP3 are fib projections. Since the packet carries no base rate for reaching TP2, C1 forbids me from sizing to it — I size to the gain I can name. Stated openly because it is the single most consequential choice in this file: on bracket.rr the whole 27 would pass; on bracket.rr_tp1 only 7 do.",
+    "crown_conflicts_by_name": {
+      "NOMD": "XLP entry_gate CAUTION — macro HEADWIND",
+      "IP": "XLY entry_gate BLOCKED — grade AVOID, RRG LAGGING/DEEPENING",
+      "RCL": "XLY entry_gate BLOCKED — grade AVOID; breadth also against (SPY roc20 1.39 vs IWM -2.31)",
+      "ELF": "XLP entry_gate CAUTION — macro HEADWIND",
+      "note": "All four of my survivors sit in sectors Crown grades CAUTION or BLOCKED. Not one landed in XLF or XLE, the two DEPLOY / entry_gate PASS sectors. That is a real conflict between my worst-case arithmetic and the regime read, and the PM should see it stated rather than buried."
+    },
+    "not_served": [
+      {"need": "Base rates / backtested edge", "canon": "C12, C13, C14, R6", "detail": "The packet carries no hit rate, no loser count, no trade count and no benchmark against random selection or against the rule with one component removed. My step 2 is therefore 'partial' on every single nomination — I can show a structure priced against a stop, but I cannot show a MEASURED edge. This is the largest hole in my read and it caps every conviction at 3."},
+      {"need": "Costs, slippage, fill assumptions", "canon": "C15, C24, R8", "detail": "No spread, no avg_daily_volume, no commission or fill model. Every R-multiple I quote is gross. On a name like RCL at 1.18x R3 cover, a realistic round-trip cost could flip the sign of the whole decision."},
+      {"need": "high_52w / low_52w", "canon": "C5, R2", "detail": "The canon volatility measure (high-to-low range over its midpoint) cannot be computed. atr_pct substituted and labelled on every line, as required."},
+      {"need": "Compounded rate on a log scale", "canon": "C16", "detail": "No return series of any kind in the packet, so the reliability test (straightness of the log line) cannot be run on the engine that produced these brackets."},
+      {"need": "Trailing series of the passing-set edge", "canon": "C19, C20, R7", "detail": "I can see today's passing count (27/162) and median bracket.rr (2.85) but have no trailing median to compare them to. The R7 'is the edge compressing' test is recorded no_data on every nomination, not passed."},
+      {"need": "Implied vs realised volatility", "canon": "C7, C23, R5", "detail": "No implied vol and no 11-month monthly midpoint series, so the C23/R5 cheap-to-model check is out of reach entirely. Noted because Crown's VIX 15.28 read makes it the live question today."},
+      {"need": "Held book completeness", "canon": "C10, C22", "detail": "market_frame.summary_counts reports held_count 12, but only 3 held names (V, NU, VRSK) appear in my menu-sliced candidate rows. I have reviewed the 3 I can see and cannot speak to the other 9 — do not read my held_review as a full book review."},
+      {"need": "Kelly-fraction sizing", "canon": "C25", "detail": "UNSOURCED and not asserted. Beat the Market is silent on it. My sizing statements here rest on C1/C2/C4/C9 only. Likewise 'correlation as hidden leverage' — beta_30d is not a Thorp variable and was not used."}
+    ],
+    "advisory_fields_excluded_from_all_votes": ["knn_prob", "knn_significant", "beta_30d"],
+    "rejected_at_step_3_r3": "20 of the 27 valid-bracket names failed R3 on bracket.rr_tp1 vs the R-cost of a one-ATR gap, including every one of the calmest six: SHO (0.74R vs 1.68R), V (0.30 vs 1.90), SYY (0.59 vs 1.87), CSX (0.90 vs 1.58), ACGL (0.41 vs 1.79), FNF (0.41 vs 1.59). EFX was the worst at 0.13R against 1.72R.",
+    "rejected_at_step_2": "MDB (sc_m_gate_detail 0/5, sc_p_gate_detail 0/6), HNGE (0/5, 1/6) and EVC (1/5, 3/6) cleared R3 but were dropped: a composite score with no confirming component is a fitted number with no stated reason the effect exists (C12)."
+  }
+}
