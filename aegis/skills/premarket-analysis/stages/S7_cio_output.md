@@ -1,71 +1,93 @@
-# S7 — CIO OUTPUT (deterministic render)
+# S7 — THE CIO REPORT · 5 sections, plain English, delivered twice
 
-Everything is already decided upstream. S7 arranges it for one reader making one decision:
-**what do I do with today?** Deterministic — no model runs here, so the plan can never say
-something the committee did not conclude.
+**PM specification, 2026-08-12.** The report is written **in chat** so it is read where the PM
+actually is, **and** to a fixed GitHub path so it is durable and diffable. Both, every run.
 
-## Design premise
+- **Chat:** the full report, plain English, simple tables.
+- **File:** `aegis/reports/pma/<YYYY-MM-DD>.md` — fixed location, one file per run date, plus
+  `aegis/reports/pma/latest.md` overwritten each run so there is always one path that means "today".
 
-A CIO does not need a research report at 08:00. They need, in this order: *what kind of day is
-this · what changed · what am I being asked to do · what is the best argument against it · what
-would change my mind · what am I blind to.* Fixed order every day, so a two-minute read on a
-phone builds the same mental model every time.
+Deterministic render. No model runs at this stage — everything is already decided upstream, S7
+only arranges it. Every sentence is a template, a number traced to a field, or a verbatim quote
+attributed to a named seat.
 
-## The page — fixed order, always
+## Style rules (all five sections)
 
-**1 · HEADLINE** — one sentence: day type + data quality.
-> "YELLOW, trending tape (hurst 0.603, VIX 18.7) — momentum favoured. Crown: stock-picker's
-> market, BROADENING_CARRY at 1.0×, partial match. Crown ran DEGRADED — economic calendar absent."
+- **Plain English.** No RB keys, no acronyms without their meaning, no internal jargon. "The
+  average stock is losing to the index" — not "breadth ratio narrowing".
+- **Simple tables.** Few columns. Every number carries its unit.
+- **Every table earns its place with an impact line** — what it means and what to do. A table
+  with no "so what" is deleted.
+- **Absence is printed, never omitted.** A missing seat, a stale file, a field the committee
+  needed and did not have — all appear.
 
-**2 · WHAT CHANGED** — diff against yesterday's `premarket_plan.json`: regime flips, Crown
-family changes, names entering/leaving the deliberation set, verdict reversals. *An empty list
-says "today continues yesterday" — which is itself information.*
+---
 
-**3 · THE WEATHER PAIR** — Crown NOW (four blocks, compressed) then Druckenmiller NEXT (the
-so-what). Explicitly labelled context, never gate. Their `differs_on[]` is printed — the
-disagreement is the information.
+## SECTION 1 · MACRO — what kind of day is this?
 
-**4 · CIO SYNTHESIS** — from S6 Pass D: coherence, concentration, regime consistency, the
-strongest thing not advancing, the blind spots. **This sits above the ideas on purpose** — the
-shape of the day frames how you read the list, not the other way round.
+Headline in one sentence: day type + data confidence.
 
-**5 · ACTIONABLE IDEAS** — every ADVANCE, one block each:
-> **HBAN** — conviction 4 · 4 seats (lynch, oneil, minervini, wyckoff)
-> Buy over 18.40, stop 17.82 · frame-fit: aligned
-> **Why (data):** relative-volume 1.4× · risk 2.4% · reward:risk 2.8 · 5/6 lenses strong
-> **Against it:** "Extended 12% over the 50-day with volume already spiked — the move may be
-> late" (rogers, TIMING flag; judge: outweighed because base structure reset on 08-04)
-> **Decisive:** the bull's volume-dry-up claim survived the bear's timing attack on data
-> **Dissent:** thorp abstained — volatility rank top-quartile
+| Table | Columns | Impact line |
+|---|---|---|
+| **Market state** | Reading · Value · What it means | one sentence on what today permits |
+| **The two weather reads** | Crown NOW · Druckenmiller NEXT · Agree/Differ | where they disagree, because that is the information |
+| **Levels that matter today** | What · Now · Level · Distance · If it breaks | the nearest one, and what it changes |
+| **Data confidence** | File · Age (trading days) · Gap · Verdict | from S0 Part B, verbatim |
 
-Every line carries its numbers in plain labels. Bear case is mandatory and never softened.
+Ends with **"What would change this read"** — real levels, never sentiment.
 
-**6 · WATCH TABLE** (collapsed) — HOLD-FOR-CONDITIONS + high-interest non-advanced names:
-name · count · seats · **the specific observable that would promote it**.
+## SECTION 2 · HELD — what to do with what we already own
 
-**7 · KEY LEVELS TODAY** — nearest Crown `key_levels` + AQE regime levels, each with its "if it
-breaks" sentence. Most are not prices — a breadth ratio, a vol gap, a correlation percentile
-all have levels that change the regime when they break.
+**Exits before entries** — this section sits above new ideas on purpose. What you free
+determines what you can afford.
 
-**8 · WHAT WOULD CHANGE THIS PLAN** — falsifiers, verbatim from Crown's
-`what_would_change_it` plus every HOLD condition. The block with teeth: real levels, never sentiment.
+| Table | Columns | Impact line |
+|---|---|---|
+| **Position verdicts** | Ticker · Verdict (Run/Take-partial/Tighten/Exit) · Conviction · Who dissented · Why (2 numbers) | count by verdict |
+| **Positions without a stop** | Ticker · Why it matters | the risk carried right now |
+| **Capital freed** | From exits · From trims · Total | what Section 3–4 can afford |
+| **Not reviewed** | Ticker · Why not seen | honest coverage statement |
 
-**9 · DECLARED GAPS** — what today's run could not see: absent files, empty seats, NOT_SERVED
-fields that mattered, staleness acks reprinted verbatim.
+## SECTION 3 · DELIBERATION STAGE 1 — what each voice found alone
 
-**Status line, always last:**
+Eleven seats, isolated, no cross-talk. This is the raw independent read.
+
+| Table | Columns | Impact line |
+|---|---|---|
+| **Who nominated what** | Ticker · Seats backing · Highest conviction · Which seats | where independent agreement clustered |
+| **Seat participation** | Seat · Nominated · Shortfall reason · Grounding | any seat running card-only is named here |
+| **What the committee could not see** | Missing field · Seats blocked · What it disabled | the AQE change request, generated as a by-product |
+
+Agreement here is **evidence about the seats, not about the asset** — it becomes a view only
+after Stage 2.
+
+## SECTION 4 · DELIBERATION STAGE 2 — what survived the argument
+
+The same seats, now seeing each other, plus the two challenge functions.
+
+| Table | Columns | Impact line |
+|---|---|---|
+| **Verdicts** | Ticker · Verdict · Conviction · Backed by · Opposed by · What capped it | count advancing |
+| **The strongest case against each** | Ticker · The argument · Who made it · Answered? | which idea is least defended |
+| **Contested** | Ticker · The disagreement · Both positions | deadlock is printed, never broken by the system |
+| **Convictions that moved** | Ticker · Seat · From → To · What moved it | where the debate actually did work |
+| **Watch list** | Ticker · Backed after debate by · What would promote it | |
+
+Rogers asks whether the crowd is wrong. Steenbarger asks whether **we** are wrong about our own
+certainty. Both are reported; neither blocks.
+
+## SECTION 5 · SUMMARY AND RUN-THROUGH
+
+The audit trail, in plain English.
+
+| Table | Columns |
+|---|---|
+| **What ran** | Stage · Status · Duration · Output |
+| **Voices** | Expected · Loaded · Ungrounded · Unavailable · Quorum met |
+| **Completeness** | Obligations created · Discharged · Contested · Waived |
+| **Where the data came from** | Input · Source · Timestamp · Age |
+| **What we could not do today** | Gap · Impact on the plan |
+| **Actions for the PM** | Decision needed · By when |
+
+Ends with the status line, always last:
 `DRAFT — PM approval required. Nothing is staged, nothing is armed.`
-
-## Outputs
-
-- `data/pma/<date>/premarket_plan.json` — machine record (`contracts/pma/premarket_plan.schema.json`)
-- `data/pma/<date>/plan.md` — the phone render: plain words, numbers always shown, no acronym
-  without its meaning, no RB keys
-
-## Rules
-
-- **No number without provenance.** Every value traces to a field in the day's data; S8
-  re-checks this and flags any that does not resolve.
-- **No idea without its bear case.** A one-sided line is a rendering bug.
-- **Absence is printed, not omitted.** A missing seat, a degraded input, a NOT_SERVED field that
-  mattered — all appear. The plan's honesty is the product.
