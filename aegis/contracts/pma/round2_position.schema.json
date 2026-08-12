@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PMA S6a — one seat's Round 2 cross-examination positions (one file per voice)",
+  "type": "object",
+  "required": ["voice", "run_date", "positions"],
+  "properties": {
+    "voice": {"type": "string"},
+    "run_date": {"type": "string", "format": "date"},
+    "positions": {
+      "type": "array",
+      "description": "MANDATORY: one entry per name in the narrowed set. Silence on a name the committee is considering is not permitted.",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "stance", "what_would_make_me_wrong"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "stance": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN"]},
+          "conviction": {"type": ["integer", "null"], "minimum": 1, "maximum": 5},
+          "conviction_change_reason": {
+            "type": ["string", "null"],
+            "description": "REQUIRED if conviction moved from Round 1. Must name the peer case or challenge entry that moved it."
+          },
+          "opposing_argument": {
+            "type": ["string", "null"],
+            "description": "REQUIRED on every OPPOSE, and on every SUPPORT at conviction >= 4 — high conviction must show it has looked."
+          },
+          "answers_challenge": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["challenge_ref", "response"],
+              "properties": {
+                "challenge_ref": {"type": "string"},
+                "response": {"type": "string"},
+                "conceded": {"type": "boolean"}
+              }
+            }
+          },
+          "what_would_make_me_wrong": {"type": "string"},
+          "abstain_reason": {
+            "type": ["string", "null"],
+            "description": "REQUIRED on ABSTAIN. 'Outside my canon' is valid and useful — it tells the PM the name sits outside that seat's competence."
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["statement", "field", "value"],
+              "properties": {"statement": {"type": "string"}, "field": {"type": "string"}, "value": {}}
+            }
+          }
+        }
+      }
+    },
+    "conviction_audit": {
+      "type": "array",
+      "description": "steenbarger ONLY — is the COMMITTEE wrong about its own certainty? Psychological failure modes in the group's conviction, distinct from rogers' question of whether the CROWD is wrong.",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "flag", "reason"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "flag": {"enum": ["unanimity", "conviction_inflation", "prior_day_attachment", "revenge_nomination", "none"]},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "declared": {
+      "type": "object",
+      "properties": {"not_served": {"type": "array", "items": {"type": "string"}}}
+    }
+  }
+}

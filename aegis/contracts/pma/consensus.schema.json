@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PMA S6b — deterministic consensus. NO MODEL PRODUCES THIS FILE.",
+  "description": "Verdict is arithmetic over the seats' Round 2 positions; every prose field is a verbatim quote attributed to a named seat. Nothing here is generated. This is how the orchestrator stays an orchestrator.",
+  "type": "object",
+  "required": ["run_date", "rule_version", "names", "portfolio_view"],
+  "properties": {
+    "run_date": {"type": "string", "format": "date"},
+    "rule_version": {
+      "type": "string",
+      "description": "Version of the published consensus rule applied, so any verdict can be re-derived from the same positions later."
+    },
+    "names": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "verdict", "conviction", "stance_split", "falsifiers"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "verdict": {"enum": ["ADVANCE", "HOLD-FOR-CONDITIONS", "PASS"]},
+          "conviction": {"type": "integer", "minimum": 1, "maximum": 5},
+          "conviction_cap_applied": {
+            "type": ["string", "null"],
+            "enum": ["not_served_field", "steenbarger_audit", "unanswered_rogers_flag", "support_count", null],
+            "description": "Which cap bound the conviction, if any. Caps only ever lower; nothing raises conviction above what the seats themselves gave."
+          },
+          "stance_split": {
+            "type": "object",
+            "required": ["support", "oppose", "abstain"],
+            "properties": {
+              "support": {"type": "array", "items": {"type": "string"}},
+              "oppose": {"type": "array", "items": {"type": "string"}},
+              "abstain": {"type": "array", "items": {"type": "string"}}
+            }
+          },
+          "decisive_exchange": {
+            "type": ["object", "null"],
+            "description": "COMPUTED, not judged: the peer case or challenge entry that moved the most convictions between Round 1 and Round 2.",
+            "properties": {"ref": {"type": "string"}, "convictions_moved": {"type": "integer"}}
+          },
+          "bear_case": {
+            "type": ["string", "null"],
+            "description": "Strongest OPPOSE argument, or the strongest self-authored counter-argument from a high-conviction supporter. VERBATIM. Mandatory on ADVANCE."
+          },
+          "bear_case_from": {"type": ["string", "null"], "description": "Attributed seat"},
+          "dissent": {
+            "type": "array",
+            "description": "Named minority position, preserved never averaged.",
+            "items": {
+              "type": "object",
+              "properties": {"voice": {"type": "string"}, "position": {"type": "string"}}
+            }
+          },
+          "falsifiers": {
+            "type": "array",
+            "description": "Union of every seat's what_would_make_me_wrong for this name.",
+            "items": {"type": "string"}
+          },
+          "data_anchors": {
+            "type": "array",
+            "items": {"type": "object", "properties": {"field": {"type": "string"}, "value": {}}}
+          },
+          "conditions": {
+            "type": "array",
+            "description": "HOLD-FOR-CONDITIONS only: the observable that would promote it.",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    },
+    "portfolio_view": {
+      "type": "object",
+      "description": "Arithmetic only. Flags, never blocks — position-level risk gates live outside PMA.",
+      "required": ["concentration", "frame_alignment", "strongest_not_advancing", "blind_spots"],
+      "properties": {
+        "concentration": {"type": "object", "description": "Sector/factor counts across the ADVANCE set"},
+        "frame_alignment": {
+          "type": "object",
+          "properties": {
+            "crown_family": {"type": "string"},
+            "aligned_count": {"type": "integer"},
+            "contradicting_count": {"type": "integer"}
+          }
+        },
+        "strongest_not_advancing": {
+          "type": "object",
+          "properties": {
+            "ticker": {"type": ["string", "null"]},
+            "stopped_by_rule": {"type": "string", "description": "Which clause of the consensus rule stopped it"}
+          }
+        },
+        "blind_spots": {
+          "type": "array",
+          "description": "Union of NOT_SERVED fields that mattered + ingest degraded flags + empty seats",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}
