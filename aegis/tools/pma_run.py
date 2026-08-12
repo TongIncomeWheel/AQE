@@ -509,7 +509,7 @@ def s7(args):
     if frame is None:
         print("[pma] S7 needs market_frame.json — run s2 first.", file=sys.stderr)
         sys.exit(1)
-    committee = _maybe(run_date, "committee_read.json")
+    committee = _maybe(run_date, "consensus.json")
     weather = _maybe(run_date, "weather.json")
     challenge = _maybe(run_date, "challenge.json")
     cand = _maybe(run_date, "candidate_set.json")
@@ -517,7 +517,7 @@ def s7(args):
     gaps = list(frame.get("declared_gaps", []))
     stale = frame["staleness"]
     if committee is None:
-        gaps.append("committee_read.json absent — no verdicts; plan ships without actionable ideas")
+        gaps.append("consensus.json absent — no verdicts; plan ships without actionable ideas")
     if weather is None:
         gaps.append("weather.json absent — weather pair rendered from the crown relay in market_frame only")
     if challenge is None:
@@ -554,7 +554,7 @@ def s7(args):
             chal_by_ticker.setdefault(e.get("ticker"), []).append(e.get("text") or e.get("summary") or "")
     bracket_by_ticker = {r["ticker"]: r.get("bracket") for r in (cand or {}).get("universe", [])}
     if committee:
-        for v in committee.get("verdicts", []):
+        for v in committee.get("names", []):
             if v["verdict"] == "ADVANCE":
                 ideas.append({
                     "ticker": v["ticker"], "conviction": v["conviction"],
@@ -582,7 +582,7 @@ def s7(args):
     if c["present"] and crown_file_path and os.path.exists(crown_file_path):
         would_change.extend(load_json(crown_file_path)["read_me_first"].get("what_would_change_it", []))
     if committee:
-        for v in committee.get("verdicts", []):
+        for v in committee.get("names", []):
             would_change.extend(v.get("conditions", []))
 
     plan = {
@@ -656,7 +656,7 @@ STAGE_ARTIFACTS = [
     ("market_frame.json", "market_frame.schema.json"),
     ("candidate_set.json", "candidate_set.schema.json"),
     ("weather.json", "weather.schema.json"),
-    ("committee_read.json", "committee_read.schema.json"),
+    ("consensus.json", "consensus.schema.json"),
     ("premarket_plan.json", "premarket_plan.schema.json"),
 ]
 
