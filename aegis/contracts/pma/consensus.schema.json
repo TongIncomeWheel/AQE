@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "PMA S6b — deterministic consensus. NO MODEL PRODUCES THIS FILE.",
-  "description": "Verdict is arithmetic over the seats' Round 2 positions; every prose field is a verbatim quote attributed to a named seat. Nothing here is generated. This is how the orchestrator stays an orchestrator.",
+  "description": "Verdict is arithmetic over the seats' Round 2/3 positions; every prose field is a verbatim quote attributed to a named seat. Nothing here is generated. Supersedes the retired pma_committee_read schema (v0.1), whose per-name frame_consistency and challenge_response fields are carried forward below as AGGREGATIONS of seat output rather than as a desk agent's synthesis. NOTE: unrelated to plan.schema.json's held_actions[].committee_read enum (D-34), which is a different, live, legacy field.",
   "type": "object",
   "required": ["run_date", "rule_version", "names", "portfolio_view"],
   "properties": {
@@ -10,18 +10,22 @@
       "type": "string",
       "description": "Version of the published consensus rule applied, so any verdict can be re-derived from the same positions later."
     },
+    "deliberation_set_rule": {
+      "type": "string",
+      "description": "The narrowing rule that produced this set (RB:committee.deliberation_threshold), recorded so the input population is reproducible."
+    },
     "names": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["ticker", "verdict", "conviction", "stance_split", "falsifiers"],
+        "required": ["ticker", "verdict", "conviction", "stance_split", "falsifiers", "frame_fit"],
         "properties": {
           "ticker": {"type": "string"},
           "verdict": {"enum": ["ADVANCE", "HOLD-FOR-CONDITIONS", "PASS"]},
           "conviction": {"type": "integer", "minimum": 1, "maximum": 5},
           "conviction_cap_applied": {
             "type": ["string", "null"],
-            "enum": ["not_served_field", "steenbarger_audit", "unanswered_rogers_flag", "support_count", null],
+            "enum": ["not_served_field", "steenbarger_audit", "contested", "unanswered_rogers_flag", "support_count", null],
             "description": "Which cap bound the conviction, if any. Caps only ever lower; nothing raises conviction above what the seats themselves gave."
           },
           "stance_split": {
@@ -33,22 +37,53 @@
               "abstain": {"type": "array", "items": {"type": "string"}}
             }
           },
+          "contested": {
+            "type": "boolean",
+            "description": "An exchange closed without the raiser's conviction moving. A legitimate terminal state — printed, never resolved by the orchestrator."
+          },
           "decisive_exchange": {
             "type": ["object", "null"],
-            "description": "COMPUTED, not judged: the peer case or challenge entry that moved the most convictions between Round 1 and Round 2.",
+            "description": "COMPUTED, not judged: the exchange that moved the most convictions between rounds.",
             "properties": {"ref": {"type": "string"}, "convictions_moved": {"type": "integer"}}
           },
           "bear_case": {
             "type": ["string", "null"],
-            "description": "Strongest OPPOSE argument, or the strongest self-authored counter-argument from a high-conviction supporter. VERBATIM. Mandatory on ADVANCE."
+            "description": "Strongest OPPOSE argument, or strongest self-authored counter from a high-conviction supporter. VERBATIM. Mandatory on ADVANCE."
           },
           "bear_case_from": {"type": ["string", "null"], "description": "Attributed seat"},
           "dissent": {
             "type": "array",
-            "description": "Named minority position, preserved never averaged.",
+            "description": "Named minority positions, preserved never averaged. (v0.1 carried a single string; an array is required to keep multiple dissenters distinct.)",
             "items": {
               "type": "object",
+              "required": ["voice", "position"],
               "properties": {"voice": {"type": "string"}, "position": {"type": "string"}}
+            }
+          },
+          "frame_fit": {
+            "type": "object",
+            "description": "PORTED FROM v0.1 committee_read.frame_consistency. Per-name regime fit. A contradiction does NOT kill an idea — Crown is weather, not a gate — but it must be argued by a named seat, and the argument is that seat's own words.",
+            "required": ["fits_crown_family", "fits_momentum_caveat"],
+            "properties": {
+              "fits_crown_family": {"type": ["boolean", "null"]},
+              "fits_momentum_caveat": {"type": ["boolean", "null"]},
+              "argued_by": {"type": ["string", "null"], "description": "Seat that argued the contradiction"},
+              "argument": {"type": ["string", "null"], "description": "VERBATIM quote from that seat. Never generated."}
+            }
+          },
+          "challenge_responses": {
+            "type": "array",
+            "description": "PORTED FROM v0.1 committee_read.challenge_response, but as attributed per-entry records rather than one summary string. Aggregated verbatim from round2_position.answers_challenge — the substance of how each rogers entry was met, alongside the completeness certificate's record of WHETHER it was met.",
+            "items": {
+              "type": "object",
+              "required": ["challenge_ref", "responded_by", "response"],
+              "properties": {
+                "challenge_ref": {"type": "string"},
+                "challenge_axis": {"enum": ["CROWDING", "CERTAINTY", "TIMING", "CATALYST"]},
+                "responded_by": {"type": "string"},
+                "response": {"type": "string", "description": "VERBATIM from the seat"},
+                "conceded": {"type": "boolean"}
+              }
             }
           },
           "falsifiers": {
@@ -58,7 +93,12 @@
           },
           "data_anchors": {
             "type": "array",
-            "items": {"type": "object", "properties": {"field": {"type": "string"}, "value": {}}}
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["field", "value"],
+              "properties": {"field": {"type": "string"}, "value": {}, "label": {"type": "string"}}
+            }
           },
           "conditions": {
             "type": "array",
