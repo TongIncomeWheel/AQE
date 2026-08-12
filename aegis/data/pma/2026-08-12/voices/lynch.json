@@ -1,0 +1,770 @@
+{
+ "voice": "lynch",
+ "date": "2026-08-12",
+ "universe_file": "aegis/data/pma/2026-08-12/packets/lynch.json",
+ "staleness_declaration": {
+  "export_date": "2026-07-28",
+  "staleness_days": 15,
+  "pm_ack": "DRY-RUN 2026-08-12 — export is 15 days stale (2026-07-28); today's 2.79MB export cannot transit the Drive connector without credentials (gap G4). Crown macro IS today's live file. Frame test only, NOT for trading.",
+  "carried": "Every price, ma and sma_distance_pct below is 15 days old (export 2026-07-28). Frame test only, NOT for trading. My method is the least price-sensitive on the committee - I own no fundamental field at all - but the entry-extension readings I do cite (sma_distance_pct vs ma_50 / ma_200) are the part staleness damages most.",
+  "frame_split": "run.degraded: export VIX 18.7 vs today's live Crown VIX 15.28 - the two halves of the frame are 15 days apart. I do not reconcile them; C1 makes me a sceptic of macro timing either way."
+ },
+ "declared": {
+  "category": "NOT_SERVED",
+  "math_library": "NOT_COMPUTABLE",
+  "fail_gates": "NOT_TESTABLE",
+  "two_minute_drill": "NOT_POSSIBLE (no business data)",
+  "stop_position": "DEFERRED_TO_HOUSE_LAW (C21 overridden)",
+  "sector_read": "gics_sector + sector_trend_state (weak substitute for category)",
+  "not_served": [
+   {
+    "element": "Lynch category placement (C2, C5, C6)",
+    "needs": "multi-year growth rate, dividend policy, market cap vs peers, asset mix, business description",
+    "status": "NOT_SERVED",
+    "impact": "C6 makes every other test conditional on the category. With no category the correct metric is unknown even where the metric exists. Every nomination below is therefore provisional by construction."
+   },
+   {
+    "element": "The Mathematical Library (C7-C13)",
+    "needs": "EPS, long-term growth, P/E, dividend yield, cash, long-term debt, equity, OCF, CapEx, market cap",
+    "status": "NOT_COMPUTABLE",
+    "impact": "PEG, yield-adjusted PEG, net cash floor, effective P/E, equity ratio and FCF yield cannot be produced. No number in this file is a valuation."
+   },
+   {
+    "element": "Supply Chain Ratio / inventory vs sales (C14)",
+    "needs": "inventory and revenue, two consecutive quarters",
+    "status": "NOT_SERVED",
+    "impact": "Directly blocks the Cyclical read on CSX and the distribution read on staples. Cheapest high-value ask on my list."
+   },
+   {
+    "element": "Bank debt vs funded debt (C15)",
+    "needs": "long-term debt split by kind, maturity schedule",
+    "status": "NOT_SERVED",
+    "impact": "A filings-footnote read, not a feed field. No turnaround survivability claim is available."
+   },
+   {
+    "element": "Capital intensity (C16)",
+    "needs": "CapEx against operating cash flow",
+    "status": "NOT_SERVED",
+    "impact": "I can note that a rail and a data business have different reinvestment shapes; I cannot test it. The observation is not evidence."
+   },
+   {
+    "element": "Institutional ownership (C17, C24)",
+    "needs": "ownership percentage",
+    "status": "NOT_SERVED",
+    "impact": "Two thresholds ride on it - 60% Fast Grower sell signal, 75% Fail Gate 3. Overlaps the O'Neil seat's sponsorship ask."
+   },
+   {
+    "element": "The Two-Minute Drill (C3)",
+    "needs": "business, product, segments, expansion progress",
+    "status": "NOT_POSSIBLE",
+    "impact": "Largely not automatable - a PM input, not an engine output. I do not write a drill about a chart and call it Lynch (R5)."
+   },
+   {
+    "element": "The three automatic fail gates (C24)",
+    "needs": "all of the above",
+    "status": "NOT_TESTABLE",
+    "impact": "A gate I could not test is never a gate the name passed. Read every conviction below as capped by this line."
+   },
+   {
+    "element": "Panic / tax-loss window (C23)",
+    "needs": "depressed price plus the calendar",
+    "status": "PARTIAL - DID NOT FIRE",
+    "impact": "run_date 2026-08-12 is outside Oct-Dec. Of 162 rows only 9 carry a negative sma_distance_pct and the deepest is EVLV at -7.80 with structure 23.2. No panic entry exists in this packet."
+   },
+   {
+    "element": "Exit discipline (C20, C22)",
+    "needs": "valuation history, verified-intact story",
+    "status": "PARTIAL",
+    "impact": "I keep the discipline and never the trigger. 'Fully valued' and 'story intact' both go to the PM."
+   }
+  ],
+  "governing_principle_today": "C4 - missing data is REQUESTED, never inferred. With 47 fields on the export and not one of them a fundamental, my honest standing today is question-asker and discipline, not nominator. C6 rides second: no single generic formula applies across kinds of stocks, and I cannot assign the kind.",
+  "recognisers_fired": [
+   "R1 - no fundamental data on any of 162 rows: category NOT_SERVED, math_library NOT_COMPUTABLE",
+   "R2 - every metric step invoked C4 as a named engine ask, no proxy substituted",
+   "R3 - fail gates reported NOT_TESTABLE; silence is not a pass",
+   "R4 - gics_sector + sector_trend_state taken as a weak provisional read, never a verdict",
+   "R5 - two_minute_drill NOT_POSSIBLE",
+   "R7 - stop_position DEFERRED_TO_HOUSE_LAW on all six names and all three held names",
+   "R9 - the window was checked and did NOT fire; nothing below rests on C23"
+  ],
+  "struck_instruction": "The old card licensed structure / flow / energy / mp as a proxy for earnings trajectory. That instruction is struck. A price composite is never a fundamental, and structure 84.2 is not a balance sheet."
+ },
+ "market_frame_read": {
+  "momentum_caveat_respected": "market_frame.momentum_caveat: 'Tape reads TRENDING (hurst 0.603, VIX 18.7, regime YELLOW): Momentum strategies favoured.' This cuts against my seat structurally, not incidentally - C1 is scepticism of market timing and C22/C23 buy depressed prices, which is the opposite trade. I did not chase it: five of six names sit under +8.5% from ma_50, and AOS and EFX are below their own ma_200. If the committee wants a momentum expression, it should come from Minervini or O'Neil, not from me.",
+  "crown_cuts_against": [
+   {
+    "pick": "KHC",
+    "crown": "Consumer Staples XLP - grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION. Also sector_trend_state 'Momentum Fading - Hold, Don't Add' on the row itself.",
+    "my_position": "Held at conviction 1 for that reason. Crown's read and the row agree against adding; I nominate only as a Stalwart-shaped candidate for the PM's fundamental check, not as an entry."
+   },
+   {
+    "pick": "SHO",
+    "crown": "Real Estate XLRE - grade HOLD, macro_headwind_flag HEADWIND, entry_gate CAUTION.",
+    "my_position": "Conviction 1. The Asset Play shape is the only reason it is here and the Asset Play test is NOT_SERVED. Crown's headwind stands unopposed by anything I can produce."
+   },
+   {
+    "pick": "ACGL",
+    "crown": "Financials XLF is grade DEPLOY / entry_gate PASS - Crown supports the sector - but the row's own sector_trend_state reads 'Momentum Fading - Hold, Don't Add'. The frame and the row disagree.",
+    "my_position": "Kept at 2 and the disagreement is disclosed rather than resolved; I have no fundamental with which to break the tie."
+   },
+   {
+    "pick": "EFX / AOS",
+    "crown": "Industrials XLI grade HOLD, RRG LEADING/ENTERING, entry_gate PASS - supportive. But both rows carry structure_shift BEARISH_CHOCH.",
+    "my_position": "Disclosed on the face of both reasons. structure_shift is on my menu and I do not suppress it because it is inconvenient."
+   },
+   {
+    "pick": "whole list",
+    "crown": "Crown status DEGRADED, match_quality partial, family BROADENING_CARRY, conditions_not_met [broadening, gamma_positive, dispersion_normal]; headline: 'no clear breadth lead, calm on the surface but with single stocks moving very differently underneath.'",
+    "my_position": "A dispersion tape is where bottom-up work should pay - and it is exactly the work this packet does not let me do. That is the finding, and it is a finding about the data plumbing, not about the market."
+   }
+  ],
+  "sector_gate_note": "Technology XLK is entry_gate BLOCKED (HEADWIND macro + LAGGING RRG) and Consumer Discretionary XLY is grade AVOID. I nominated from neither. Energy XLE is DEPLOY/PASS but carries zero bracket.valid rows in this packet, so nothing there was available to put forward."
+ },
+ "nominations": [
+  {
+   "ticker": "ACGL",
+   "reason": "Insurance economics I can name but not test: XLF carries the frame's only clean sector gate; served, ACGL is 8.39% over ma_50 95.84 at 103.88, structure_shift RANGE, rank 29. Reserves and combined ratio - the actual quality question - are category NOT_SERVED.",
+   "conviction": 2,
+   "fields_cited": [
+    "gics_sector",
+    "gics_sector_name",
+    "sector_trend_state",
+    "sma_distance_pct",
+    "ma_50",
+    "structure_shift",
+    "rank",
+    "bracket.valid"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C4",
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "16-field record: structure 71.6, rank 29. No EPS, P/E, PEG, growth, dividend, cash, debt, inventory, sales, OCF, CapEx, cap or ownership field exists.",
+     "verdict": "no_data",
+     "fields": [
+      "structure",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "gics_sector XLF (Financials), sector_trend_state 'Momentum Fading — Hold, Don't Add'. A sector is not a Lynch category; provisional read only.",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "gics_sector_name",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C4"
+     ],
+     "observed": "No business, product, segment or expansion field in the packet. The three drill questions are filed to the PM unanswered, not answered off a chart.",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "held false - no rotation or target question arises. bracket.valid true, bracket.stop 100.91: house law, I defer (C21 pm_override).",
+     "verdict": "no_data",
+     "fields": [
+      "held",
+      "bracket.valid",
+      "bracket.stop"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "run_date 2026-08-12 is outside the Oct-Dec tax-loss window and sma_distance_pct +8.39 is a premium, not a depressed price. C23 does not fire.",
+     "verdict": "fail",
+     "fields": [
+      "sma_distance_pct",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Five engine asks filed and ranked this run: lynch_category, fundamentals layer, supply_chain_ratio + inventory_bubble, institutional_ownership_pct, bank-vs-funded debt split.",
+     "verdict": "pass",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CSX",
+   "reason": "Rail is a Cyclical shape I can describe, and the Cyclical test - inventories against demand, futures against spot - is NOT_SERVED. Served only: sector_trend_state 'Momentum Building - Add', 8.44% over ma_50 47.77 at 51.80, structure_shift RANGE, rank 39. Provisional sector read.",
+   "conviction": 2,
+   "fields_cited": [
+    "gics_sector",
+    "gics_sector_name",
+    "sector_trend_state",
+    "sma_distance_pct",
+    "ma_50",
+    "structure_shift",
+    "rank",
+    "bracket.valid"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C4",
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "16-field record: structure 66.3, rank 39. No EPS, P/E, PEG, growth, dividend, cash, debt, inventory, sales, OCF, CapEx, cap or ownership field exists.",
+     "verdict": "no_data",
+     "fields": [
+      "structure",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "gics_sector XLI (Industrials), sector_trend_state 'Momentum Building — Add'. A sector is not a Lynch category; provisional read only.",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "gics_sector_name",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C4"
+     ],
+     "observed": "No business, product, segment or expansion field in the packet. The three drill questions are filed to the PM unanswered, not answered off a chart.",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "held false - rotation question does not arise. bracket.valid true, bracket.stop 49.80: deferred to house law (C21 pm_override).",
+     "verdict": "no_data",
+     "fields": [
+      "held",
+      "bracket.valid",
+      "bracket.stop"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "August is outside the Oct-Dec window; sma_distance_pct +8.44 and price 51.80 sits above ma_200 41.01. Not a depressed-price entry.",
+     "verdict": "fail",
+     "fields": [
+      "sma_distance_pct",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Five engine asks filed and ranked this run: lynch_category, fundamentals layer, supply_chain_ratio + inventory_bubble, institutional_ownership_pct, bank-vs-funded debt split.",
+     "verdict": "pass",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "EFX",
+   "reason": "Price 177.31 is below ma_200 192.94 yet 6.82% over ma_50 165.98 - recovering off a lower base rather than an extended chase, which is where my method prefers to look. sector_trend_state 'Momentum Building - Add'. Against it: structure_shift BEARISH_CHOCH. No valuation claim is possible.",
+   "conviction": 2,
+   "fields_cited": [
+    "sma_distance_pct",
+    "ma_50",
+    "ma_200",
+    "sector_trend_state",
+    "gics_sector",
+    "structure_shift",
+    "structure",
+    "bracket.valid"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C4",
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "16-field record: structure 82.1, rank 64. No EPS, P/E, PEG, growth, dividend, cash, debt, inventory, sales, OCF, CapEx, cap or ownership field exists.",
+     "verdict": "no_data",
+     "fields": [
+      "structure",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "gics_sector XLI (Industrials), sector_trend_state 'Momentum Building — Add'. A sector is not a Lynch category; provisional read only.",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "gics_sector_name",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C4"
+     ],
+     "observed": "No business, product, segment or expansion field in the packet. The three drill questions are filed to the PM unanswered, not answered off a chart.",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "held false. bracket.valid true, bracket.stop 165.98 (ma_cluster): stop_position DEFERRED_TO_HOUSE_LAW.",
+     "verdict": "no_data",
+     "fields": [
+      "held",
+      "bracket.valid",
+      "bracket.stop"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "Below ma_200 192.94 is a discount to its own trend, but the month is August, not Oct-Dec, and 'fundamentally sound' is the half I cannot see. C23 does not fire.",
+     "verdict": "fail",
+     "fields": [
+      "sma_distance_pct",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Five engine asks filed and ranked this run: lynch_category, fundamentals layer, supply_chain_ratio + inventory_bubble, institutional_ownership_pct, bank-vs-funded debt split.",
+     "verdict": "pass",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "AOS",
+   "reason": "Unloved inside a rising sector: rs_leadership LAGGARD, rs_spy_20d -0.22, price 62.44 under ma_200 66.01, only 5.81% over ma_50 59.01, sector_trend_state 'Momentum Building - Add'. Honest caveat: structure_shift BEARISH_CHOCH, and without fundamentals I cannot separate unloved from broken.",
+   "conviction": 1,
+   "fields_cited": [
+    "rs_leadership",
+    "rs_spy_20d",
+    "sma_distance_pct",
+    "ma_50",
+    "ma_200",
+    "sector_trend_state",
+    "structure_shift",
+    "bracket.valid"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C4",
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "16-field record: structure 71.6, rank 93. No EPS, P/E, PEG, growth, dividend, cash, debt, inventory, sales, OCF, CapEx, cap or ownership field exists.",
+     "verdict": "no_data",
+     "fields": [
+      "structure",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "gics_sector XLI (Industrials), sector_trend_state 'Momentum Building — Add'. A sector is not a Lynch category; provisional read only.",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "gics_sector_name",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C4"
+     ],
+     "observed": "No business, product, segment or expansion field in the packet. The three drill questions are filed to the PM unanswered, not answered off a chart.",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "held false. bracket.valid true, bracket.stop 60.59: house law owns the stop, I do not argue it (C21 pm_override).",
+     "verdict": "no_data",
+     "fields": [
+      "held",
+      "bracket.valid",
+      "bracket.stop"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "Price 62.44 is under ma_200 66.01 - the shallowest kind of discount - and still +5.81% over ma_50 59.01. Calendar is August, outside Oct-Dec. C23 does not fire.",
+     "verdict": "fail",
+     "fields": [
+      "sma_distance_pct",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Five engine asks filed and ranked this run: lynch_category, fundamentals layer, supply_chain_ratio + inventory_bubble, institutional_ownership_pct, bank-vs-funded debt split.",
+     "verdict": "pass",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "SHO",
+   "reason": "The nearest thing to an Asset Play shape in the packet - hotels - and the Asset Play test (assets at spot vs historical cost, the debt that erodes them, the unlocking catalyst) is exactly NOT_SERVED. Served: sma_distance_pct 4.35, least extended of the 27 bracket.valid names; structure_shift RANGE.",
+   "conviction": 1,
+   "fields_cited": [
+    "gics_sector",
+    "gics_sector_name",
+    "sma_distance_pct",
+    "ma_50",
+    "structure_shift",
+    "bracket.valid",
+    "bracket.stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C4",
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "16-field record: structure 71.6, rank 114. No EPS, P/E, PEG, growth, dividend, cash, debt, inventory, sales, OCF, CapEx, cap or ownership field exists.",
+     "verdict": "no_data",
+     "fields": [
+      "structure",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "gics_sector XLRE (Real Estate), sector_trend_state 'Momentum Building — Add'. A sector is not a Lynch category; provisional read only.",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "gics_sector_name",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C4"
+     ],
+     "observed": "No business, product, segment or expansion field in the packet. The three drill questions are filed to the PM unanswered, not answered off a chart.",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "held false. bracket.valid true, bracket.stop 11.48: deferred to house law entirely (C21 pm_override).",
+     "verdict": "no_data",
+     "fields": [
+      "held",
+      "bracket.valid",
+      "bracket.stop"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "sma_distance_pct +4.35 over ma_50 11.33 is mildly extended, not depressed, and the month is August. C23 does not fire.",
+     "verdict": "fail",
+     "fields": [
+      "sma_distance_pct",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Five engine asks filed and ranked this run: lynch_category, fundamentals layer, supply_chain_ratio + inventory_bubble, institutional_ownership_pct, bank-vs-funded debt split.",
+     "verdict": "pass",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "KHC",
+   "reason": "A Stalwart shape in staples at 26.22, 8.48% over ma_50 24.17, structure_shift RANGE, rank 24. The Stalwart test is relative P/E against its own history plus the diworseification check - both NOT_SERVED. sector_trend_state reads 'Momentum Fading - Hold, Don't Add', which cuts against adding.",
+   "conviction": 1,
+   "fields_cited": [
+    "gics_sector_name",
+    "sector_trend_state",
+    "sma_distance_pct",
+    "ma_50",
+    "structure_shift",
+    "rank",
+    "bracket.valid"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C4",
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "16-field record: structure 66.3, rank 24. No EPS, P/E, PEG, growth, dividend, cash, debt, inventory, sales, OCF, CapEx, cap or ownership field exists.",
+     "verdict": "no_data",
+     "fields": [
+      "structure",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "gics_sector XLP (Consumer Staples), sector_trend_state 'Momentum Fading — Hold, Don't Add'. A sector is not a Lynch category; provisional read only.",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "gics_sector_name",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C4"
+     ],
+     "observed": "No business, product, segment or expansion field in the packet. The three drill questions are filed to the PM unanswered, not answered off a chart.",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "held false. bracket.valid true, bracket.stop 25.27: DEFERRED_TO_HOUSE_LAW.",
+     "verdict": "no_data",
+     "fields": [
+      "held",
+      "bracket.valid",
+      "bracket.stop"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "Price 26.22 is above ma_50 24.17 and ma_200 23.93; nothing here is a panic price and August is outside the Oct-Dec window.",
+     "verdict": "fail",
+     "fields": [
+      "sma_distance_pct",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Five engine asks filed and ranked this run: lynch_category, fundamentals layer, supply_chain_ratio + inventory_bubble, institutional_ownership_pct, bank-vs-funded debt split.",
+     "verdict": "pass",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ]
+  }
+ ],
+ "shortfall_reason": "Six of ten by choice, and six is generous for this seat on this packet. Every test I own - PEG, yield-adjusted PEG, net cash floor, effective P/E, equity ratio, FCF yield, supply chain ratio, the six-category placement, the three fail gates - takes a fundamental as its input, and the record carries none. What remains is a weak provisional sector read (R4) which my card says can never carry a verdict alone, so nothing is above conviction 2 and half the list is at 1. The C23 panic/tax-loss window, the one place my method touches served data, was checked and did not fire: the calendar is August, and only 9 of 162 rows show a negative sma_distance_pct, the deepest EVLV at -7.80 on structure 23.2. Padding to ten would mean ranking names by a price composite and calling it Lynch. I can see the price of a business and I cannot see the business.",
+ "held_review": [
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Rotation question, not a target question (C20, R6). Served: price 362.53, 7.48% over ma_50 337.31, structure_shift RANGE, rs_leadership LEADER, sector_trend_state 'Momentum Fading - Hold, Don't Add'. I cannot call it fully valued without a P/E history - that verification goes to the PM. bracket.valid true, bracket.stop 354.22 (ma20): DEFERRED_TO_HOUSE_LAW (C21 pm_override, R7)."
+  },
+  {
+   "ticker": "VRSK",
+   "verdict": "KEEP",
+   "line": "Price 206.66 sits 13.38% over ma_50 182.27 and just above ma_200 199.95 - recovery off a base, not a name I can call fully valued, because 'fully valued' needs a P/E history I do not have (C20, R6). structure_shift RANGE, rs_leadership LEADER. bracket.valid FALSE (invalid_reason: no structural support passes the 3 gates) - a house risk-gate matter I defer on completely (R7)."
+  },
+  {
+   "ticker": "NU",
+   "verdict": "KEEP",
+   "line": "Price 14.53 is 11.53% over ma_50 13.03 but still below ma_200 15.13 - a drawdown in a story I cannot verify as intact. C22 says down 25% I am a buyer PROVIDED the story is intact, and the proviso is the whole rule: verification goes to the PM, not to me (R8). structure_shift is NULL on this row and bracket.valid is FALSE. No add, no exit case from this seat."
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "bracket.stop",
+   "impact": "NULL on 135 of 162 rows (bracket.valid false). Not my call to make - stop_position is DEFERRED_TO_HOUSE_LAW - but it removes 135 names from actionability before my read even begins, which is why the six below all come from the 27-row valid set."
+  },
+  {
+   "field": "structure_shift",
+   "impact": "NULL on 7 rows (GPK, BX, KMPR, YMM, CERT, VLTO, NU). One of them, NU, is a held position I was asked to review - the character-of-trend field is simply absent for a name in the book."
+  },
+  {
+   "field": "ma_200",
+   "impact": "NULL on 1 row (JAN). Removes the only long-base reference on that name, which is the reading I lean on to tell a discount from a chase."
+  }
+ ],
+ "engine_asks_ranked": [
+  {
+   "rank": 1,
+   "ask": "lynch_category",
+   "why": "Highest-leverage ask on this seat. C6 makes every other test conditional on it; without a category the correct metric is unknown even if the metric were served. Derived from growth rate, dividend policy, cap and asset mix."
+  },
+  {
+   "rank": 2,
+   "ask": "fundamentals layer joined into the universe row",
+   "why": "eps_ttm, eps_growth_lt, pe, peg, dividend_yield, net_cash_per_share, effective_pe, equity_ratio, fcf_yield, capex_to_ocf. FMP already serves all of these through the connector; the work is the join and point-in-time discipline, not acquisition."
+  },
+  {
+   "rank": 3,
+   "ask": "supply_chain_ratio + inventory_bubble",
+   "why": "Two line items, two quarters, one ratio. Lights up C14 and Fail Gate 2. Cheapest high-value item on the list - and it is the exact test CSX and the staples names needed today."
+  },
+  {
+   "rank": 4,
+   "ask": "institutional_ownership_pct",
+   "why": "Carries two thresholds (60% Fast Grower sell signal, 75% Fail Gate 3) and overlaps directly with the O'Neil seat's outstanding sponsorship ask. One engine, two voices served."
+  },
+  {
+   "rank": 5,
+   "ask": "bank-vs-funded debt split",
+   "why": "Scoped separately - a filings read, not a feed field. C15: the kind of debt matters more than the amount."
+  }
+ ],
+ "packet_problems": [
+  "market_frame.summary_counts.held_count = 12, but only 3 of the 162 rows in my menu-sliced packet carry held = true (V, VRSK, NU). Either 9 held positions are outside the candidate slice or the count is wrong; my held_review can only cover the 3 rows I can see, and I am declaring the shortfall rather than papering over it.",
+  "run.degraded already flags it and it is worth repeating: the frame is internally split - export VIX 18.7 (2026-07-28) against today's live Crown VIX 15.28. The tape half and the macro half of my frame are 15 days apart.",
+  "Crown ran DEGRADED with 7 limits (Yahoo-sourced futures, gamma unavailable on both QQQ and SPY for missing Alpaca and Tiger credentials, economic calendar limited). match_quality is 'partial' and 3 of 5 family conditions are not met.",
+  "market_frame.data_quality.flagged_count = 0 while 143 of 162 rows are missing at least one of bracket.stop / structure_shift / ma_200. The data-quality flagger is not seeing the nulls my menu sees."
+ ],
+ "two_minute_drill_questions_to_pm": [
+  "For each of the six: what does this company actually sell, to whom, and in plain language - the question I am structurally unable to answer from a 16-field row (C3).",
+  "What must go right for it to work, and what stands in the way? Both are business answers, not chart answers.",
+  "Named missing parameters, per C4: segment detail, inventory change over the last two quarters, and off-balance-sheet items. Those three are the ones the source itself tells me to ask for by name."
+ ]
+}
