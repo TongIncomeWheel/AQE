@@ -1,0 +1,1016 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-08-12",
+ "universe_file": "data/pma/2026-08-12/packets/elder-lens.json",
+ "nominations": [
+  {
+   "ticker": "ELF",
+   "reason": "elder_5d 10,10,5,5,10 - two bars parked at 5 (ambiguous/red band) then a reclaim to 10: the permission event on the last bar, C4's red-giving-way. elder_pattern=CORRECTION_REENTRY is the menu-legal dip-and-reclaim. mp=83 with mp_state=FADING, so the force behind it is decaying, not building.",
+   "conviction": 4,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=10,10,5,5,10; elder_pattern=CORRECTION_REENTRY; mp_state=FADING. Permission event on last bar: prior bar 5 (<=6), last bar 10 (>=7). Deepest two-bar dip in the set before reclaim.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 4 not 5: transition is clean and pattern-confirmed, but mp_state=FADING (not STRONG) so R8 is incomplete, and the rising-average leg is unverifiable on this menu.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "PAYX",
+   "reason": "elder_5d 7,7,6,6,10 - two bars at 6 drop into the ambiguous band and the last bar reclaims to 10, a textbook permission event. mp=86 and mp_state=STRONG is the strongest force confirmation on any transition name in the packet. elder_pattern is null, so the dip-and-reclaim shape is unconfirmed.",
+   "conviction": 4,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=7,7,6,6,10; elder_pattern=None; mp_state=STRONG. Permission event on last bar: prior bar 6 (<=6), last bar 10 (>=7). mp_state=STRONG confirms the force behind the reclaim.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=None (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 4 not 5: elder_pattern=null means R8's dip-and-reclaim confirmation is absent; the dip only reached 6, the shallowest legal reading of red giving way.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "BBY",
+   "reason": "elder_5d 7,10,7,5,10 - drops to 5, then the last bar reclaims 10. Permission event plus elder_pattern=CORRECTION_REENTRY. mp=65 mp_state=FADING: mid-pack force and decaying, so the reclaim is not yet confirmed by momentum persistence.",
+   "conviction": 3,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=7,10,7,5,10; elder_pattern=CORRECTION_REENTRY; mp_state=FADING. Permission event on last bar: prior bar 5 (<=6), last bar 10 (>=7); elder_pattern=CORRECTION_REENTRY.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 3: transition is real and pattern-confirmed, but mp=65 FADING is a weaker force read than ELF/PAYX and the trend leg is unverified.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "AVAV",
+   "reason": "elder_5d 3,7,9,4,10 - the last bar reclaims to 10 from 4, a permission event, with elder_pattern=CORRECTION_REENTRY. mp=49 mp_state=BUILDING - force is low but rising rather than decaying, which is the direction this seat wants behind a reclaim.",
+   "conviction": 3,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=3,7,9,4,10; elder_pattern=CORRECTION_REENTRY; mp_state=BUILDING. Permission event on last bar: prior bar 4 (<=6), last bar 10 (>=7); elder_pattern=CORRECTION_REENTRY.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 3: the elder_5d series 3,7,9,4,10 is choppy - it has crossed the 6/7 boundary twice in five bars, so the transition is less clean than ELF's; mp=49 is only mid-pack.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "SF",
+   "reason": "No permission event - elder_5d 7,10,7,10,10 never dips into the <=6 band. Nominated purely on R8's menu-legal analogue: elder_pattern=CORRECTION_REENTRY with mp_state=STRONG and mp=87, the highest force reading of any pattern-confirmed name in the packet. elder=10.",
+   "conviction": 3,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=7,10,7,10,10; elder_pattern=CORRECTION_REENTRY; mp_state=STRONG. NO permission event (elder_5d 7,10,7,10,10 - prior bar 10, not <=6). R8 route only: CORRECTION_REENTRY + mp_state=STRONG.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 3: strong on force (mp=87 STRONG) and pattern, but this is not a C4 transition; a 7,10,7,10,10 tail is nearer C20's summer than spring. Not raised on plateau logic (C24) - it is raised on t",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "SHO",
+   "reason": "elder_5d 10,10,6,6,9 - two bars at 6 then a reclaim to 9 on the last bar: permission event, with elder_pattern=CORRECTION_REENTRY confirming the dip-and-reclaim shape. mp=35 mp_state=FADING is the weak leg: the force behind the reclaim is thin and decaying.",
+   "conviction": 3,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=9 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=10,10,6,6,9; elder_pattern=CORRECTION_REENTRY; mp_state=FADING. Permission event on last bar: prior bar 6 (<=6), last bar 9 (>=7); elder_pattern=CORRECTION_REENTRY.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 3: shape is the cleanest of the low-force names, but mp=35 FADING is bottom-third force - Elder never acts on the reclaim alone and the confirming leg is weak.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "GENI",
+   "reason": "elder_5d 10,3,4,3,10 - the last bar reclaims 10 from 3, the deepest permission event in the packet, with elder_pattern=CORRECTION_REENTRY. mp=62 mp_state=BUILDING. The series is violent, not orderly: three bars in the red-certain/ambiguous band then a full jump.",
+   "conviction": 2,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=10,3,4,3,10; elder_pattern=CORRECTION_REENTRY; mp_state=BUILDING. Permission event on last bar: prior bar 3 (<=6), last bar 10 (>=7); elder_pattern=CORRECTION_REENTRY.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 2: the 10,3,4,3,10 series is whipsaw, exactly what C1 warns the Impulse System does when run mechanically. The depth of the reclaim is as much a warning as a signal.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "HR",
+   "reason": "elder_5d 10,6,6,6,9 - three bars pinned at 6 in the ambiguous band, then a reclaim to 9. Permission event, elder_pattern=CORRECTION_REENTRY. mp=43 mp_state=FADING - low force and decaying, so the reclaim has little behind it.",
+   "conviction": 2,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=9 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=10,6,6,6,9; elder_pattern=CORRECTION_REENTRY; mp_state=FADING. Permission event on last bar: prior bar 6 (<=6), last bar 9 (>=7); elder_pattern=CORRECTION_REENTRY.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 2: legal transition but the dip only reached 6 (ambiguous, never certainly red) and mp=43 FADING gives no force confirmation.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "ticker": "JAN",
+   "reason": "No permission event - elder_5d 10,10,7,10,10 never drops into the <=6 band. R8 route only: elder_pattern=CORRECTION_REENTRY with mp_state=STRONG and mp=83. elder=10. Raised on the pattern field, not on the height of the reading.",
+   "conviction": 2,
+   "fields_cited": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C1",
+      "C3"
+     ],
+     "observed": "elder=10 (>=7) -> Impulse state>=2, not red; ban lifted. Permission is a gate passed, not a reason.",
+     "verdict": "pass",
+     "fields": [
+      "elder"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "elder_5d=10,10,7,10,10; elder_pattern=CORRECTION_REENTRY; mp_state=STRONG. NO permission event (elder_5d 10,10,7,10,10 - prior bar 10). R8 route only: CORRECTION_REENTRY + mp_state=STRONG.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "elder_pattern=CORRECTION_REENTRY (not INTERRUPTED, so trend leg not failed); no price-EMA slope field on menu - rising-average leg UNVERIFIED.",
+     "verdict": "partial",
+     "fields": [
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C15",
+      "C17",
+      "C18",
+      "C19"
+     ],
+     "observed": "No entry/stop/risk field on my 6-field menu (bracket, ATR, channel width, account equity all off-menu). Risk-before-reward could not be graded.",
+     "verdict": "no_data",
+     "fields": []
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22",
+      "C24"
+     ],
+     "observed": "Conviction 2: a 10,10,7,10,10 tail is a high plateau - C20 summer, C6 says Elder buys the pullback not the plateau. Only R8's pattern+STRONG pairing keeps it on the list at all.",
+     "verdict": "pass",
+     "fields": [
+      "elder_5d",
+      "elder_pattern",
+      "mp",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C4"
+     ],
+     "observed": "Not a held name in this packet; single-bar-drop exit test does not apply. `held` is off-menu in any case.",
+     "verdict": "no_data",
+     "fields": []
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "NU",
+   "verdict": "KEEP",
+   "line": "elder_5d 10,10,7,7,10 - last bar 10 > prior 7, NO single-bar drop, so C4's green-going-away exit does not fire. elder=10, elder_pattern=CORRECTION_REENTRY, mp=76 mp_state=STRONG. Keep."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "elder_5d 6,2,0,2,7 - last bar 7 > prior 2, no single-bar drop; in fact a permission event (2 -> 7). But elder_pattern=INTERRUPTED, so the trend leg has FAILED and this is a keep, not an add. mp=76 mp_state=FADING."
+  },
+  {
+   "ticker": "VRSK",
+   "verdict": "KEEP",
+   "line": "elder_5d 7,4,5,9,10 - last bar 10 > prior 9, no single-bar drop. elder=10, elder_pattern=ACCELERATION, mp=82 mp_state=STRONG. C4's profit-taking trigger has not fired. Keep."
+  }
+ ],
+ "shortfall_reason": "9 of 10, deliberately. 54 of 162 names carry the permission event (elder_5d[-1]>=7 with elder_5d[-2]<=6), but 46 of those 54 read elder_pattern=INTERRUPTED, which my card step 3 rules a FAILED trend leg - Elder never acts on a force reading with a broken trend above it (C9). That leaves 8 pattern-clean transitions; I took 7 of them and dropped DRI (elder_5d 0,3,3,3,8 but mp=16, the weakest force in the whole set). I added 2 R8-route names (SF, JAN: elder_pattern=CORRECTION_REENTRY + mp_state=STRONG) which have NO transition. No name earned conviction 5: not one of the four checklist legs beyond permission could be fully verified on a 6-field menu, and C22 forbids sizing a read down as the answer to a murky tape - the honest response is a shorter list. CENSOR DUTY (this seat's standing obligation): 2 names in the packet read elder<=1 and are therefore RED - buying is FORBIDDEN on them today regardless of which voice raises them: GEV (elder=0, elder_5d 6,0,3,0,0) and HNGE (elder=0, elder_5d 2,0,0,0,0). The committee owns that veto even though this seat nominates neither.",
+ "declared": {
+  "standing_lesson": "SEAT DIRECTION (PM ruling 2026-08-05) governs today: this seat was pointed the wrong way and was reversed. It fires on a colour VANISHING, not on force holding high. C1+C3+C4 are the spine - the Impulse System forbids, it does not propose; permission (elder>=7) is a gate passed, never a reason nominated; the signal is the transition bar itself. The old 'sustained force' thesis survives only as C24 (UNSOURCED) and no name on this list is raised on it. SECOND LESSON: C22 - buy, short, or stand aside, and the third is a decision. With regime YELLOW, Crown DEGRADED and a 15-day-stale export, sizing the read down is NOT the sanctioned response; a shorter list is.",
+  "staleness": "run.staleness_days=15. Export dated 2026-07-28, read on 2026-08-12. pm_ack: 'DRY-RUN 2026-08-12 - export is 15 days stale (2026-07-28); today's 2.79MB export cannot transit the Drive connector without credentials (gap G4). Crown macro IS today's live file. Frame test only, NOT for trading.' EVERY elder / elder_5d / elder_pattern / mp value cited in this file is 15 days old. A transition bar is a SINGLE-BAR event (C4); a 15-day-old transition bar is not a tradeable signal, it is a frame exercise. Nothing here may be staged.",
+  "frame_read": "market_frame.momentum_caveat: 'Tape reads TRENDING (hurst 0.603, VIX 18.7, regime YELLOW): Momentum strategies favoured.' That caveat cuts AGAINST this seat's whole direction: a momentum-favouring tape rewards the plateau/continuation read that the 2026-08-05 reversal explicitly demoted to C24, and penalises the pullback buyer this seat now is. I did not re-point the seat to suit the frame. Separately the frame is internally 15 days split: momentum_caveat.vix=18.7 is from the stale export while today's live Crown key level reads VIX now=15.28 - the two halves of the frame disagree by 3.4 vol points.",
+  "crown_conflicts": [
+   {
+    "ticker": "ELF",
+    "note": "sectors[XLP] entry_gate=CAUTION, grade=HOLD, macro_headwind_flag=HEADWIND. Crown's sector read cuts against my top pick."
+   },
+   {
+    "ticker": "BBY",
+    "note": "sectors[XLY] entry_gate=BLOCKED, grade=AVOID, rrg_quadrant=LAGGING. Crown blocks this sector outright; the transition is real but the frame refuses it."
+   },
+   {
+    "ticker": "GENI",
+    "note": "sectors[XLC] entry_gate=BLOCKED, grade=AVOID. Crown blocks. Deepest reclaim in the packet sits in the worst-graded sector."
+   },
+   {
+    "ticker": "SHO",
+    "note": "sectors[XLRE] entry_gate=CAUTION, macro_headwind_flag=HEADWIND."
+   },
+   {
+    "ticker": "HR",
+    "note": "sectors[XLRE] entry_gate=CAUTION, macro_headwind_flag=HEADWIND."
+   },
+   {
+    "ticker": "JAN",
+    "note": "sectors[XLRE] entry_gate=CAUTION, macro_headwind_flag=HEADWIND. Already my weakest structural case."
+   },
+   {
+    "ticker": "PAYX",
+    "note": "sectors[XLI] entry_gate=PASS, grade=HOLD, macro NEUTRAL - frame does NOT cut against."
+   },
+   {
+    "ticker": "AVAV",
+    "note": "sectors[XLI] entry_gate=PASS, macro NEUTRAL - frame does NOT cut against."
+   },
+   {
+    "ticker": "SF",
+    "note": "sectors[XLF] entry_gate=PASS, grade=DEPLOY, rrg LEADING - the only pick with an outright sector tailwind."
+   },
+   {
+    "ticker": "ALL",
+    "note": "crown.status=DEGRADED with 7 limits; family BROADENING_CARRY match_quality=partial; conditions_not_met include 'dispersion_normal'. A dispersion-elevated tape is the worst backdrop for a seat that buys single-name pullbacks - the index hides what the names are doing (crown key level: single-stock vs index gap now=23.23 vs level=23.058). This is the single largest frame argument against the whole list."
+   }
+  ],
+  "not_served": [
+   {
+    "need": "impulse_state (per-bar Impulse colour: fast-EMA slope + MACD-Histogram slope, 3-state)",
+    "canon": "C2, C3, R1",
+    "impact": "THE VETO ITSELF. elder.py computes this colour and then discards it into a 0-10 blend. I substituted the >=7 / <=1 decode, which is a lossy proxy: a value of 2-6 cannot say WHICH of the two slopes fell, so C2's disagreement (blue) case is destroyed. Exporting impulse_state is plumbing, not new maths.",
+    "severity": "critical"
+   },
+   {
+    "need": "impulse_colour on two consecutive bars (transition event)",
+    "canon": "C4, R2",
+    "impact": "THE TRUE TRIGGER of this reversed seat. Highest-value item in the backlog. Every 'permission event' in this file is the <=6 -> >=7 decode standing in for it. That proxy misclassifies both ways: a 6 -> 7 step (PAYX, SHO, HR) may be blue->blue with no colour change at all, and a genuine red->blue transition inside the 2-6 band is invisible to me.",
+    "severity": "critical"
+   },
+   {
+    "need": "signed Force Index series + its 2-bar EMA (close-to-close delta x volume, sign retained, unbounded)",
+    "canon": "C5, C6, R3",
+    "impact": "This seat is NAMED after an instrument it does not have. There is no Force Index anywhere in elder.py. Elder's actual buy trigger is the 2-bar force EMA dipping UNDER ZERO in a rising market - it cannot be expressed on a 0-10 scale with no negative region. Not one nomination in this file used Elder's buy trigger.",
+    "severity": "critical"
+   },
+   {
+    "need": "13-bar EMA of the Force Index (per-name regime layer)",
+    "canon": "C7, R4",
+    "impact": "Elder's regime layer is per-name force above/below zero, NOT a market-wide tape colour. Without it I am forced to lean on the market-wide market_frame regime, which C7 says is the wrong object.",
+    "severity": "high"
+   },
+   {
+    "need": "fitted price channel (coefficient tuned to contain 90-95% of the last 50-100 bars): upper wall, lower wall, channel slope, channel height",
+    "canon": "C11, C12, C14, R5",
+    "impact": "ONE BUILD, THREE RULES. Without it I cannot refuse to initiate above the upper wall (C11), cannot classify per-name regime as trending vs flat (C12), and cannot compute the TRADE GRADE - the share of entry-day channel height captured - which C14 says OUTRANKS both fill grades. This seat is currently ungradeable after the fact.",
+    "severity": "critical"
+   },
+   {
+    "need": "weekly_trend_direction - a weekly resample read BEFORE the daily",
+    "canon": "C21, R6",
+    "impact": "The higher-timeframe censor. C21 calls the ~5:1 ratio a CONTROL, not a preference, which makes weekly the required partner of a daily book. Cheapest item on the backlog. My card's menu names elder_context, but (a) elder_context is HOURLY - the wrong direction entirely - and (b) it is ABSENT from this packet, so I have no higher-timeframe read of any kind today.",
+    "severity": "critical"
+   },
+   {
+    "need": "price EMA slope (exponential, with a slope sign)",
+    "canon": "C9, C10",
+    "impact": "Checklist step 3 - 'is the trend above it still rising' - returned partial/no_data for EVERY nomination in this file. C9 is explicit: never act on a force reading alone; the long wants force weakness AND a rising average together. I have delivered exactly half of Elder's buy condition on all 9 names. I used elder_pattern != INTERRUPTED as a crude negative filter, which proves only that the trend has not been flagged broken, never that it is rising.",
+    "severity": "critical"
+   },
+   {
+    "need": "bracket object: entry, stop, stop_type, risk-per-share, rr",
+    "canon": "C15, C17, C18, C19, R10, R12",
+    "impact": "Checklist step 4 - 'grade the risk BEFORE the reward' - could not run at all. C17's ordering (dollar risk -> entry -> stop) exists precisely to stop the allowance being back-fitted, and R10 says a missing or invalid bracket means NO NOMINATION. NOTE: the packet rows DO carry a bracket object, but bracket is NOT on my 6-field menu, so I did not read it. This is the sharpest menu/data mismatch in the run - the field exists and the rule that needs it exists, and the menu stands between them.",
+    "severity": "critical"
+   },
+   {
+    "need": "ATR / SafeZone / noise-band width, and pin-bar (kangaroo tail) level",
+    "canon": "C19, R12",
+    "impact": "C19 requires the stop to sit OUTSIDE a measured noise band and never beyond a kangaroo tail's tip. With no band measurement I cannot validate any stop the desk proposes, only accept it.",
+    "severity": "high"
+   },
+   {
+    "need": "daily volume series with per-extreme comparison",
+    "canon": "C23",
+    "impact": "Elder's OWN persistence test is a VOLUME test - a trend runs while volume is steady or climbing and expires in a burst or a drastic shrinkage. The packet gives me mp (a momentum-persistence score) instead, which is not the same object. Every 'force behind the reclaim' judgement in this file leaned on mp as a substitute for a volume read Elder actually specified.",
+    "severity": "high"
+   },
+   {
+    "need": "ma_20, ma_50 (and exponential equivalents with slopes)",
+    "canon": "C10, R9",
+    "impact": "R9's pullback-into-value-under-a-rising-stack test could not run. Off menu; and the available fields are SIMPLE averages where Elder specifies exponential, with no slope field.",
+    "severity": "medium"
+   },
+   {
+    "need": "choch_state / structure_shift",
+    "canon": "R11",
+    "impact": "I can nominate a name whose uptrend structure has already broken. Flagged, not assumed. Off menu.",
+    "severity": "high"
+   },
+   {
+    "need": "held flag (properly, on-menu) and the full held book",
+    "canon": "C4, R7",
+    "impact": "R7's single-bar-drop TIGHTEN/EXIT test needs `held`. The packet DOES carry held, but it is off my 6-field menu; I read it solely to populate the contract-required held_review array and declare that here. Worse: market_frame.summary_counts.held_count=12 but only 3 rows in this packet read held=true (NU, V, VRSK). NINE HELD POSITIONS ARE INVISIBLE TO THIS SEAT, so my held_review is 3/12 complete and the exit censor did not run on the other nine.",
+    "severity": "critical"
+   },
+   {
+    "need": "account equity, commission and slippage estimates",
+    "canon": "C15, C16, C17",
+    "impact": "C15's 2% cap must absorb slippage and commissions ON TOP OF the stop distance, and C16's 6% monthly circuit breaker needs accumulated month-to-date losses. Neither input exists in this packet, so this seat cannot size anything and did not try. Separately flagged (card sizing note): sizing.py r_size() carries no cost term, and high_conviction_r 2.0 x one_r_pct_of_dyncap 1.5 reaches 3% of dynCap against Elder's 2% ceiling - a PM risk-parameter question, not a voice question.",
+    "severity": "high"
+   },
+   {
+    "need": "fill prices and the entry-day / exit-day bars",
+    "canon": "C13, C14",
+    "impact": "Elder grades both fills against their OWN day's bar and grades the trade against the entry-day channel height. None of the three grades can be computed, so this seat generates no after-the-fact feedback at all.",
+    "severity": "medium"
+   },
+   {
+    "need": "two of Elder's three texts",
+    "canon": "n/a",
+    "impact": "trading_living_1993 and my_trading_room_2002 are registered and still PENDING. Nothing in this file may be asserted as REFUTED by Elder - only as unsupported by the Study Guide (PDF pp.103-155, extract 510f96f6, 456 records).",
+    "severity": "medium"
+   }
+  ],
+  "menu_audit": {
+   "menu_declared_by_packet": [
+    "ticker",
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "mp_state",
+    "mp"
+   ],
+   "card_menu": [
+    "elder",
+    "elder_5d",
+    "elder_pattern",
+    "elder_context",
+    "mp",
+    "mp_state"
+   ],
+   "on_card_absent_from_packet": [
+    "elder_context"
+   ],
+   "in_packet_rows_but_off_menu": [
+    "bracket",
+    "held",
+    "gics_sector",
+    "gics_sector_name",
+    "source",
+    "rank"
+   ],
+   "note": "The packet rows ship 6 fields BEYOND the declared 6-field menu. I did not use bracket/gics_sector/source/rank to build any nomination reason; sector appears only as market_frame cross-reference in declared.crown_conflicts, and `held` only to populate the contract-required held_review. Recorded here so the data-requirements audit sees both directions of the mismatch: a menu field missing from the data (elder_context) and data present that the menu forbids (bracket - the single field my step 4 most needs)."
+  },
+  "engine_gap_summary": "6 of Elder's 12 recognisers (R1-R6) are NOT_AVAILABLE and NONE of them needs new data - all six are daily-bar arithmetic on bars AQE already holds. A further 6 (R7-R12) are computable but read fields outside this voice's menu. Effective coverage today: 0 of 12 recognisers ran as written. Every nomination in this file rests on the >=7/<=6 decode proxy plus elder_pattern, and nothing else."
+ },
+ "data_gaps": [
+  {
+   "field": "elder_context",
+   "impact": "Named on this seat's card menu but ABSENT from every candidate row in the packet. It is HOURLY, which C21 says is the wrong direction anyway (weekly is the required partner of a daily book), but its total absence means this seat had NO higher-timeframe censor of any kind today."
+  },
+  {
+   "field": "elder_pattern",
+   "impact": "null on 37 of 162 rows (23%). On those names checklist step 2's pattern confirmation and step 3's INTERRUPTED trend-failure filter both return no_data. PAYX - my joint-highest-conviction name - is one of them: elder_pattern=null, so its dip-and-reclaim shape is asserted from elder_5d alone."
+  },
+  {
+   "field": "held",
+   "impact": "market_frame.summary_counts.held_count=12 but only 3 candidate rows read held=true. 9 held positions never reached this seat, so R7's single-bar-drop exit censor ran on 3 of 12 positions."
+  }
+ ]
+}
