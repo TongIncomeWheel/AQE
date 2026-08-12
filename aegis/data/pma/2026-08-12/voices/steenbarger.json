@@ -1,0 +1,105 @@
+{
+  "voice": "steenbarger",
+  "date": "2026-08-12",
+  "universe_file": "aegis/data/pma/2026-08-12/packets/steenbarger.json",
+  "nominations": [
+    {
+      "ticker": "ACGL",
+      "reason": "Only fully-ordered higher-timeframe stack in a PASS-gate sector with zero lens warnings: price 103.88 > ma_50 95.84 > ma_100 95.63 > ma_200 94.56, structure 71.6, bracket.valid true at risk_pct 2.86. MA separation is thin (1.4% 50-vs-200) so this is a young trend, sized as hypothesis not conviction.",
+      "conviction": 3,
+      "fields_cited": ["ma_50", "ma_100", "ma_200", "structure", "bracket.valid", "bracket.risk_pct", "gics_sector_name", "lens_warnings"],
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C5"], "observed": "price 103.88 above ma_50 95.84 > ma_100 95.63 > ma_200 94.56; structure 71.6; structure_shift RANGE", "verdict": "pass", "fields": ["ma_50", "ma_100", "ma_200", "structure", "structure_shift", "bracket"]},
+        {"step": 2, "canon_ref": ["C3", "C4"], "observed": "regime YELLOW/TRENDING hurst 0.603; gics_sector_name Financials, srm XLF grade DEPLOY entry_gate PASS. No conditional-edge estimate exists.", "verdict": "partial", "fields": ["gics_sector_name"]},
+        {"step": 3, "canon_ref": ["C7"], "observed": "Invalidation stated: structure_shift printing BEARISH_CHOCH, or a close back under ma_50 95.84 — distinct from bracket.stop 100.91. Contract carries no field for it.", "verdict": "partial", "fields": ["structure_shift", "ma_50", "bracket.stop"]},
+        {"step": 4, "canon_ref": ["C12", "C15", "C17"], "observed": "lens_warnings 0; case rests on 4 fields not a pile; XLF exposure in my list = 1 of 5 names; no subcomponent hunted after the decision", "verdict": "pass", "fields": ["lens_warnings", "gics_sector_name"]},
+        {"step": 5, "canon_ref": ["C16"], "observed": "Not a filler: survives the bracket.valid gate that 135 of 162 rows fail, and the MA-order gate", "verdict": "pass", "fields": ["bracket.valid"]}
+      ]
+    },
+    {
+      "ticker": "CSX",
+      "reason": "Widest genuine higher-timeframe separation in the packet's valid-bracket set: price 51.8 > ma_50 47.77 > ma_100 44.98 > ma_200 41.01, PASS-gate sector Industrials, bracket.valid true, risk_pct 3.86, atr_14d 1.16. Caveat: structure 66.3 is mid-pack and lens_warnings 2.",
+      "conviction": 3,
+      "fields_cited": ["ma_50", "ma_100", "ma_200", "structure", "atr_14d", "bracket.valid", "bracket.risk_pct", "gics_sector_name", "lens_warnings"],
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C5"], "observed": "price 51.8 above ma_50 47.77 > ma_100 44.98 > ma_200 41.01 — 16.5% 50-vs-200 spread; structure 66.3; structure_shift RANGE", "verdict": "pass", "fields": ["ma_50", "ma_100", "ma_200", "structure", "structure_shift", "bracket"]},
+        {"step": 2, "canon_ref": ["C3", "C4"], "observed": "regime YELLOW/TRENDING; gics_sector_name Industrials, srm XLI grade HOLD, RRG LEADING/ENTERING, entry_gate PASS. Environment MATCH is label-only.", "verdict": "partial", "fields": ["gics_sector_name"]},
+        {"step": 3, "canon_ref": ["C7"], "observed": "Invalidation: structure_shift flipping RANGE to BEARISH_CHOCH, or ma_50 47.77 rolling over — separate from bracket.stop 49.8", "verdict": "partial", "fields": ["structure_shift", "ma_50", "bracket.stop"]},
+        {"step": 4, "canon_ref": ["C12", "C15", "C17"], "observed": "lens_warnings 2 (advisory, not a vote); XLI is 2 of my 5 names — flagged as my only sector cluster", "verdict": "partial", "fields": ["lens_warnings", "gics_sector_name"]},
+        {"step": 5, "canon_ref": ["C16"], "observed": "Kept on trend structure alone, not on sc_momentum 72.4 which is advisory only on my card", "verdict": "pass", "fields": ["sc_momentum", "bracket.valid"]}
+      ]
+    },
+    {
+      "ticker": "SHO",
+      "reason": "Clean ordered stack price 11.82 > ma_50 11.33 > ma_100 10.41 > ma_200 9.79, lens_warnings 0, bracket.valid true, risk_pct 2.88, rr_tp2 2.68. CROWN CUTS AGAINST: XLRE entry_gate CAUTION on macro HEADWIND — regime label does not endorse this sector, so size cannot be justified on environment match.",
+      "conviction": 2,
+      "fields_cited": ["ma_50", "ma_100", "ma_200", "structure", "bracket.valid", "bracket.risk_pct", "gics_sector_name", "lens_warnings"],
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C5"], "observed": "price 11.82 > ma_50 11.33 > ma_100 10.41 > ma_200 9.79; structure 71.6; structure_shift RANGE", "verdict": "pass", "fields": ["ma_50", "ma_100", "ma_200", "structure", "structure_shift", "bracket"]},
+        {"step": 2, "canon_ref": ["C3", "C4"], "observed": "gics_sector_name Real Estate: srm XLRE grade HOLD, macro_headwind HEADWIND, entry_gate CAUTION — environment does NOT match; conviction capped at 2 for that reason", "verdict": "fail", "fields": ["gics_sector_name"]},
+        {"step": 3, "canon_ref": ["C7"], "observed": "Invalidation: structure_shift to BEARISH_CHOCH or loss of ma_50 11.33; atr_14d 0.23 means the whole stop distance is ~1.5 ATR — noise can void it. Separate from bracket.stop 11.48", "verdict": "partial", "fields": ["structure_shift", "ma_50", "atr_14d", "bracket.stop"]},
+        {"step": 4, "canon_ref": ["C12", "C15", "C17"], "observed": "lens_warnings 0 — cleanest warning read in the valid-bracket set alongside ACGL; single XLRE name, no cluster", "verdict": "pass", "fields": ["lens_warnings", "gics_sector_name"]},
+        {"step": 5, "canon_ref": ["C16"], "observed": "Sector gate argues abstain; trend structure argues nominate — held at conviction 2 rather than resolved by preference", "verdict": "partial", "fields": ["gics_sector_name", "bracket.valid"]}
+      ]
+    },
+    {
+      "ticker": "SARO",
+      "reason": "PASS-gate Industrials with the best reward geometry among gate-clean names: bracket.valid true, risk_pct 3.93, rr_tp2 3.22. Context is only PARTIAL — price 29.53 clears ma_50 27.26 and ma_100 26.8 but ma_200 27.84 sits above ma_100, so the long stack is not yet ordered. Conviction capped there.",
+      "conviction": 2,
+      "fields_cited": ["ma_50", "ma_100", "ma_200", "structure", "bracket.valid", "bracket.risk_pct", "gics_sector_name", "lens_warnings"],
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C5"], "observed": "price 29.53 above all three MAs but ma_200 27.84 > ma_100 26.8 — repair, not an established higher-timeframe trend; structure 64.2", "verdict": "partial", "fields": ["ma_50", "ma_100", "ma_200", "structure", "bracket"]},
+        {"step": 2, "canon_ref": ["C3", "C4"], "observed": "gics_sector_name Industrials, srm XLI entry_gate PASS under regime YELLOW/TRENDING; no conditional edge statistic available", "verdict": "partial", "fields": ["gics_sector_name"]},
+        {"step": 3, "canon_ref": ["C7"], "observed": "Invalidation: failure to reclaim/hold ma_200 27.84, or structure_shift to BEARISH_CHOCH — distinct from bracket.stop 28.37", "verdict": "partial", "fields": ["ma_200", "structure_shift", "bracket.stop"]},
+        {"step": 4, "canon_ref": ["C12", "C15", "C17"], "observed": "lens_warnings 2, advisory only; second XLI name in my list — cluster declared, not hidden", "verdict": "partial", "fields": ["lens_warnings", "gics_sector_name"]},
+        {"step": 5, "canon_ref": ["C16"], "observed": "Nominated at 2, not at 3: the geometry is the attraction and geometry alone is not context", "verdict": "pass", "fields": ["bracket.valid"]}
+      ]
+    },
+    {
+      "ticker": "SYY",
+      "reason": "Lowest defined risk in the valid-bracket set: bracket.valid true, risk_pct 2.46, lens_warnings 1, price 84.09 above ma_50 79.32 / ma_100 78.32 / ma_200 78.43. Two counts against: those MAs are converged within 1.3% (range, not trend) and XLP entry_gate is CAUTION on macro HEADWIND.",
+      "conviction": 2,
+      "fields_cited": ["ma_50", "ma_100", "ma_200", "structure", "bracket.valid", "bracket.risk_pct", "gics_sector_name", "lens_warnings"],
+      "checklist_trace": [
+        {"step": 1, "canon_ref": ["C5"], "observed": "ma_50 79.32 / ma_100 78.32 / ma_200 78.43 all inside 1.3% — flat MA bundle; price 84.09 above; structure 68.4, structure_shift RANGE", "verdict": "partial", "fields": ["ma_50", "ma_100", "ma_200", "structure", "structure_shift", "bracket"]},
+        {"step": 2, "canon_ref": ["C3", "C4"], "observed": "gics_sector_name Consumer Staples: srm XLP macro_headwind HEADWIND, entry_gate CAUTION. Regime says momentum; the sector gate says caution — mismatch declared", "verdict": "fail", "fields": ["gics_sector_name"]},
+        {"step": 3, "canon_ref": ["C7"], "observed": "Invalidation: MA bundle turning down together, or structure_shift to BEARISH_CHOCH — separate from bracket.stop 82.02", "verdict": "partial", "fields": ["ma_50", "ma_100", "ma_200", "structure_shift", "bracket.stop"]},
+        {"step": 4, "canon_ref": ["C12", "C15", "C17"], "observed": "lens_warnings 1; single XLP name; case rests on defined risk plus a flat-base read, not on a pile of fields", "verdict": "pass", "fields": ["lens_warnings", "gics_sector_name"]},
+        {"step": 5, "canon_ref": ["C16"], "observed": "Held at 2 — a tight stop is a risk fact, never a thesis; sector gate CAUTION forbids more", "verdict": "partial", "fields": ["bracket.risk_pct", "gics_sector_name"]}
+      ]
+    }
+  ],
+  "held_review": [
+    {"ticker": "V", "verdict": "KEEP", "line": "bracket.valid true, stop 354.22, risk_pct 2.29, lens_warnings 1, price 362.53 above ma_50 337.31/ma_100 324.5/ma_200 329.89. But rr_tp1 0.3 — resistance at 365.02 is directly overhead. Hold; NO add — C9 forbids an add on unrealised gain, an add needs a new signal event."},
+    {"ticker": "VRSK", "verdict": "TIGHTEN", "line": "No defined risk: bracket.valid false ('no structural support passes the 3 gates'), so risk_pct is null and I cannot state what is being risked. MA order inverted (ma_50 182.27 < ma_100 184.01 < ma_200 199.95) with price 206.66 far above; lens_warnings 3; XLK entry_gate BLOCKED (HEADWIND macro + LAGGING RRG). Needs a PM-set stop, not a wider one."},
+    {"ticker": "NU", "verdict": "EXIT-CASE", "line": "Higher-timeframe alignment is lost: ma_50 13.03 < ma_100 13.71 < ma_200 15.13, price 14.53 under ma_200. bracket.valid false so no risk is definable. C6: loss of alignment is an exit, never a reason to widen the stop. structure 84.2 and lens_warnings 0 argue the other way — flagged as a genuine conflict, not resolved by me."}
+  ],
+  "shortfall_reason": "5 of 10, deliberately. Three hard facts closed the list. (1) 135 of 162 rows carry bracket.valid=false with invalid_reason 'no structural support passes the 3 gates' — without a valid bracket there is no defined risk, and C7 requires an entry to be a moderate-size hypothesis with risk written down first. (2) Not one of the 162 rows carries a bullish structure_shift: 129 RANGE, 26 BEARISH_CHOCH, 7 null. The market_frame momentum caveat ('TRENDING, hurst 0.603, momentum strategies favoured') is not corroborated by a single name in my own packet, and Crown's own headline says 'no clear breadth lead' with the 'broadening' condition NOT met. Under C3/C16 that contradiction means the premise is suspect, not that I should hunt harder. (3) Of the 27 valid-bracket rows, only 7 sit above all three MAs with the stack ordered, and 3 of those 7 are in BLOCKED sectors (XLK/XLY/XLC). Padding to 10 would require dropping either the bracket gate or the context gate. C16: abstention is a first-class output.",
+  "data_gaps": [
+    {"field": "day_vol", "impact": "On my menu and on my card as advisory crowding/behaviour context, but ABSENT from all 162 candidate rows — not null, not present at all. My crowding guard (checklist step 4) ran on lens_warnings and sector clustering only."},
+    {"field": "structure_shift", "impact": "null on 7 rows (GPK, YMM, BX, VLTO, CERT, KMPR, NU). Those names cannot be read for C5 context or for my stated invalidation observable; NU is a held position, so the held book is affected."},
+    {"field": "ma_100", "impact": "null on JAN — higher-timeframe context unreadable, name excluded under R4."},
+    {"field": "ma_200", "impact": "null on JAN — same."},
+    {"field": "bracket.stop", "impact": "null on 135 of 162 rows alongside bracket.valid=false and risk_pct null; no risk statement is possible for 83% of the packet."}
+  ],
+  "declared": {
+    "governing_principle_today": "C16 — abstention is a first-class output. The packet's own contradiction (regime says momentum favoured; zero of 162 names print a bullish structure_shift) is exactly the 'contradictory evidence means the premises are wrong' case. Hard gate applied alongside it: C5 (context or nothing) via R4, and C7 (defined risk) via bracket.valid.",
+    "staleness": "CARRIED. run.staleness_days = 15; export_date 2026-07-28 vs run_date 2026-08-12. run.pm_ack: 'DRY-RUN 2026-08-12 — export is 15 days stale; today's 2.79MB export cannot transit the Drive connector without credentials (gap G4). Crown macro IS today's live file. Frame test only, NOT for trading.' Every MA, structure, bracket and sc_momentum value I cite is 15 sessions old; the trend structure I claim as 'higher-timeframe context' may already have broken. This output is a frame test, not a trade list.",
+    "frame_internal_conflict": "run.degraded: export VIX 18.7 is 15d stale while today's live Crown carries VIX 15.28 — the momentum caveat is computed off the stale half (regime.vix 18.7) while Crown's key_levels are live. The two halves of the frame are 15 days apart and I have flagged this rather than picked a winner.",
+    "crown_cuts_against": "Crown status DEGRADED (7 limits), family BROADENING_CARRY, match_quality 'partial', size_multiplier 1.0, conditions_not_met: broadening, gamma_positive, dispersion_normal. Headline: 'A market with no clear breadth lead, calm on the surface but with single stocks moving very differently underneath.' Cross-asset breadth confirms: SPY roc20 1.39 vs IWM roc20 -2.31. This cuts directly against the momentum caveat and specifically against SHO (XLRE CAUTION/HEADWIND) and SYY (XLP CAUTION/HEADWIND); both were capped at conviction 2 for that reason.",
+    "not_served": [
+      {"item": "Emotional / energy / ego state (C18-C21)", "status": "NOT_SERVED, permanently and by design", "note": "I am an isolated agent reading numeric fields. I have no emotional state. These principles are pm_only and govern the PM at the approval gate. No nomination above cites them (R9)."},
+      {"item": "Forward-return separation vs baseline (C1, C2)", "status": "NOT_SERVED / NOT_MEASURED", "note": "No per-field edge statistic reaches me at nomination time. Every field I cited above — structure, sc_momentum, bracket geometry, MA stack order — is UNPROVEN in the R1 sense: described, never leaned on as measured edge."},
+      {"item": "Regime-conditional performance per lens (C4)", "status": "HALF_SERVED", "note": "regime label (YELLOW / TRENDING / hurst 0.603) and srm sector gates exist; the conditional edge estimate for any lens GIVEN this regime does not. Size may NOT be justified on environment match alone for any name above."},
+      {"item": "Explicit invalidation observable (C7)", "status": "NOT_SERVED_BY_CONTRACT", "note": "The nomination schema carries no invalidation field. I have written one per name inside checklist_trace step 3, distinct from bracket.stop, rather than skip the thought."},
+      {"item": "First-class ABSTAIN verdict (C16)", "status": "NOT_SERVED_BY_CONTRACT", "note": "I cannot formally return 'my fields conflict, I stand aside' for the other 157 names. shortfall_reason is the closest the contract allows."},
+      {"item": "day_vol", "status": "NOT_SERVED_BY_PACKET", "note": "Menu-listed, absent from every row. See data_gaps."},
+      {"item": "Ledger memory of my own prior nominations (C12, C15)", "status": "NOT_SERVED", "note": "I cannot see how many of my own recent nominations already cluster in XLF/XLI. Sector-cluster check ran on TODAY's list only: XLF 1, XLI 2, XLRE 1, XLP 1."},
+      {"item": "Realised-exit vs bracket-level comparison (R11, C21 detection half)", "status": "NOT_SERVED", "note": "No realised-exit data in the packet, so the measurable half of C21 cannot be surfaced for the PM this round."}
+    ],
+    "psychology_claims": "NONE. No claim is made about my own or the market's emotional state, confidence, fear or discipline. C18-C22 are PM-facing (R9) or philosophy (R10) and gate nothing here.",
+    "advisory_only_fields": "sc_momentum, lens_warnings, day_vol — used as context and as disqualifiers, never as a standalone reason to nominate. No nomination above rests on sc_momentum.",
+    "round": "R1 nomination only. The conviction-audit duty (unanimity, conviction inflation, attachment, revenge) is a Round 2 function and was NOT exercised here.",
+    "canon_status": "22 principles grounded 2026-08-10 from traderfeed_public, PENDING SIGN-OFF. No canon.lock.yaml exists at aegis/canon/steenbarger/ — only principles.yaml and diff.json. Canon refs used are from the compiled card block; nothing is locked."
+  }
+}
