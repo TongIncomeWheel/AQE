@@ -160,7 +160,7 @@ def _chart(tk: str):
 
 def _rec_from_adhoc(a: dict) -> dict:
     """Shape an ad-hoc score_tickers() result like an export record so the chart
-    panel + DSL zones render identically for off-list tickers. PTRS/RVol/RS/sector
+    panel + DSL zones render identically for off-list tickers. RVol/RS/sector
     need the full pipeline, so they stay null (shown as — and noted)."""
     lv = a.get("levels") or {}
     try:
@@ -174,7 +174,6 @@ def _rec_from_adhoc(a: dict) -> dict:
     return {
         "_tier": "ad-hoc (freshly scored)", "_adhoc": True, "_as_of": a.get("as_of"),
         "sc_momentum": a.get("sc_momentum"), "sc_momentum_raw": a.get("sc_momentum_raw"),
-        "ptrs": None,
         "flow": a.get("flow"), "energy": a.get("energy"),
         "structure": a.get("structure"), "mp": a.get("mp"),
         "elder": a.get("elder"), "mp_state": a.get("mp_state"),
@@ -365,7 +364,6 @@ with left:
         mp_filter = fb.multiselect("MP state", ["STRONG", "BUILDING", "FADING"], default=[])
         g1, g2, g3 = st.columns(3)
         sc_min = g1.slider("Raw SC ≥", 0, 100, 0, step=5)
-        ptrs_min = g2.slider("PTRS ≥", 0, 100, 0, step=5)
         pr_min = g3.slider("PipeRank ≥", 0, 100, 0, step=5)
 
     def _keep(tk: str) -> bool:
@@ -375,8 +373,6 @@ with left:
             return False
         r = rec_lookup.get(tk, {})
         if sc_min and (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < sc_min:
-            return False
-        if ptrs_min and (r.get("ptrs") or 0) < ptrs_min:
             return False
         if pr_min and (r.get("pipe_rank") or 0) < pr_min:
             return False
@@ -641,7 +637,7 @@ with left:
     st.subheader(f"{sel} — AQE numbers")
     if rec and rec.get("_adhoc"):
         st.caption(f"🧮 **Freshly scored** on the latest FMP bar ({rec.get('_as_of')}) "
-                   "— full engine suite, but PTRS / RVol / RS / sector need the daily "
+                   "— full engine suite, but RVol / RS / sector need the daily "
                    "pipeline so they show as —.")
     else:
         _asof = export.get("exported_at") or export.get("date") or "last run"
@@ -670,7 +666,6 @@ with left:
                    "Structure/MP under threshold) so the composite is hard-capped at "
                    "49.0; the true uncapped score shows as 'raw'. End-of-day, from the "
                    "last pipeline run.")
-    m1.metric("PTRS", _f(r.get("ptrs"), ".1f"))
     m2.metric("Flow", _f(r.get("flow"), ".0f"))
     m2.metric("Energy", _f(r.get("energy"), ".0f"))
     m2.metric("Structure", _f(r.get("structure"), ".0f"))
@@ -719,7 +714,6 @@ with left:
             f"",
             f"SCORES  SC_MOM {_f(r.get('sc_momentum'), '.1f')} "
             f"(raw {_f(r.get('sc_momentum_raw'), '.1f')}) | "
-            f"PTRS {_f(r.get('ptrs'), '.1f')} | "
             f"Flow {_f(r.get('flow'), '.0f')} | Energy {_f(r.get('energy'), '.0f')} | "
             f"Structure {_f(r.get('structure'), '.0f')} | MP {_f(r.get('mp'), '.0f')} | "
             f"Elder {_f(r.get('elder'), '.1f')} | MP state {r.get('mp_state') or '—'}",
@@ -758,7 +752,7 @@ with left:
 
         _lines += [
             "",
-            "Advise: entry/add/hold/trim/exit decision + sizing per PTRS × regime. "
+            "Advise: entry/add/hold/trim/exit decision + sizing per SC_MOMENTUM disposition x regime. "
             "Charter v1.9.2. Risk 3% ($2,100) FULL / $1,050 HALF / $525 QUARTER.",
         ]
 

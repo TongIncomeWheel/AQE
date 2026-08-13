@@ -130,7 +130,7 @@ def build_lens_ranking(records: list[dict]) -> dict:
     """
     ranked = sorted(records, key=lambda r: (-(r.get("lens_positive") or 0),
                                             r.get("lens_warnings") or 0,
-                                            -(r.get("ptrs") or 0)))
+                                            -(r.get("sc_momentum") or 0)))
     return {
         "method": ("Count of lenses reading `strong`. UNWEIGHTED — no weighting was ever "
                    "earned, so none is applied. Sort only: nothing is filtered, capped, or "
@@ -156,7 +156,7 @@ def build_lens_ranking(records: list[dict]) -> dict:
 
 LENS_GLOSSARY = {
     "lens_ranking": "PART 1 of the AIC read — every scored name ordered by how many lenses "
-                    "agree (`positive` desc, then `warnings` asc, then ptrs). A READING "
+                    "agree (`positive` desc, then `warnings` asc, then sc_momentum). A READING "
                     "ORDER, not a verdict, and not a filter: nothing is eliminated and the "
                     "count carries no proven edge. The FULL per-name data is Part 2 = "
                     "`daily_list`, unchanged.",

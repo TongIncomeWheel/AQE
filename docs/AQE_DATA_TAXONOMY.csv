@@ -1,0 +1,198 @@
+field,parent,level,output,state,represents,source,formula,weight
+date,,block,str,,"Scan date, US close",src/data/drive_sync.py:build_export,,
+exported_at,,block,iso8601,,"Write time, SGT",src/data/drive_sync.py:build_export,,
+market,,block,str,,Market descriptor,src/data/drive_sync.py:build_export,,
+regime,,block,dict,,"VIX bucket, Hurst, size ceiling",src/data/drive_sync.py:build_export,,
+intermarket,,block,dict,,Cross-asset context,src/data/drive_sync.py:build_export,,
+srm,,block,list,,One graded row per GICS sector,src/data/drive_sync.py:build_export,,
+srm_signals,,block,dict,,Sector-level signals,src/data/drive_sync.py:build_export,,
+macro_weather,,block,dict,,7-instrument direction read,src/data/drive_sync.py:build_export,,
+regime_stop_pct_ceiling,,block,float,,"Regime cap on stop width, percent",src/data/drive_sync.py:build_export,,
+spy_roc_20d,,block,float,,SPY 20-day rate of change,src/data/drive_sync.py:build_export,,
+thematic_baskets,,block,dict,,"35 baskets, graded, with RRG position",src/data/drive_sync.py:build_export,,
+sector_map_version,,block,str,,GICS map version in force,src/data/drive_sync.py:build_export,,
+sector_map_gaps,,block,list,,Unclassified tickers,src/data/drive_sync.py:build_export,,
+field_schema,,block,dict,,Self-described field types,src/data/drive_sync.py:build_export,,
+field_schema_enums,,block,dict,,Permitted values per categorical field,src/data/drive_sync.py:build_export,,
+field_glossary,,block,dict,,Self-described field meanings,src/data/drive_sync.py:build_export,,
+held_positions_status,,block,enum,,live | cache_fallback | unknown,src/data/drive_sync.py:build_export,,
+held_positions,,block,list,,PM live book from the trade journal,src/data/drive_sync.py:build_export,,
+held_book,,block,dict,,"Beta-adjusted exposure, gap scenarios, sector weights",src/data/drive_sync.py:build_export,,
+daily_list,,block,list,,"Every scored ticker, full field set",src/data/drive_sync.py:build_export,,
+lens_ranking,,block,dict,,Same names ordered by lens agreement,src/data/drive_sync.py:build_export,,
+summary,,block,dict,,Run counts,src/data/drive_sync.py:build_export,,
+signal_radar,,block,dict,,Radar tag totals,src/data/drive_sync.py:build_export,,
+data_quality,,block,dict,,Scored records carrying a null core field,src/data/drive_sync.py:build_export,,
+sc_momentum,,composite,0-100,,"Momentum pipeline composite, 1-3 week hold",src/engines/scoring.py:SC_M_WEIGHTS,"0.30*flow + 0.30*energy + 0.20*structure + 0.20*mp; uncapped, no floors applied",
+sc_momentum_raw,sc_momentum,composite,0-100,,Ungated composite; equals sc_momentum in v1.8.0,src/engines/scoring.py,same weighted average before gate flags,
+sc_m_gates,sc_momentum,leaf,bool,true|false,All momentum gate floors cleared,src/engines/scoring.py:SC_M_GATES,elder>=6.5 AND flow>=60 AND energy>=60 AND structure>=55 AND mp>=55,
+sc_position,,composite,0-100,,"Base-building composite, 3-6 week hold",src/engines/scoring.py:SC_P_WEIGHTS,0.10*flow + 0.30*energy + 0.20*structure + 0.05*mp + 0.35*bq,
+sc_p_gates,sc_position,leaf,bool,true|false,All position gate floors cleared,src/engines/scoring.py:SC_P_GATES,flow>=40 AND energy>=60 AND structure>=65 AND mp>=40 AND bq>=60 AND k39,
+flow,sc_momentum,engine,0-100,,Money flow: institutional accumulation vs distribution,src/engines/flow.py,"clip(flow_score+accum_score+volume_score+skew_score+ext, 0, 38) / 38 * 100",0.30 of sc_momentum; 0.10 of sc_position
+flow_score,flow,component,0-17,,MFI + CMF + Heikin-Ashi bar quality,src/engines/flow.py:110,"clip(mfi_cmf_bands + ha_bands, upper=17); ha_bands: count>=2->2, >=3->4, >=5->6",17 of 38
+accum_score,flow,component,0-7.5,,A/D line short vs long linear-regression slope,src/engines/flow.py:120-124,"ad=rollsum(A/D,60); s=linreg(ad,10); l=linreg(ad,20); s>0->1.5; s>l*0.85->3.0; s>l->5.5; s>l*1.1->7.5",7.5 of 38
+volume_score,flow,component,0-7.5,,Volume trend plus spike,src/engines/flow.py:130-138,"vtr=sma(v,5)/sma(v,20): >0.9->2, >1.05->4, >1.2->5.5; spk=v/sma(v,20): >1.5->1, >2.0->2; clip(sum, upper=7.5)",7.5 of 38
+skew_score,flow,component,0-3.5,,Up-volume vs down-volume over 10 bars,src/engines/flow.py:148-151,"udr=sum(up_vol,10)/sum(down_vol,10): >=0.8->1.5, >1.2->2.5, >1.5->3.5",3.5 of 38
+ext_score,flow,component,-8 to +5,,Extension from 20-bar range and EMA20,src/engines/flow.py:159-190,range position and EMA20 distance banded; negative when overextended,-8..+5 of 38
+energy,sc_momentum,engine,0-100,,"Stored energy: compression, position, exhaustion",src/engines/energy.py,"clip((vp_position+price_action+squeeze+exhaustion+atr) / 59.5 * 100, 0, 100)",0.30 of sc_momentum; 0.30 of sc_position
+vp_position_score,energy,component,0-17.5,,Range-position proxy for volume-profile location,src/engines/energy.py:61,"clip(en_psc + en_lvn_proxy, upper=17.5); true VP array is diagnostic only",17.5 of 59.5
+price_action_score,energy,component,0-12.5,,"Higher lows, range tightness, pullback depth",src/engines/energy.py:69-100,"structure(<=5: hl>=1->1.5,>=2->3,>=3->4,>=4->5) + tightness(<=4.5) + pullback(<25%->1,<15%->2,<10%->2.5,<5%->3); x0.7 if pos50<45, x0.5 if pos50<30",12.5 of 59.5
+squeeze_score,energy,component,0-12.5,,Bollinger/Keltner squeeze and bandwidth percentile,src/engines/energy.py:117-124,"no squeeze: bwp<50->4, bwp<30->8.5; in squeeze: 5, bwp<50->7.5, bwp<35->10, bwp<20->12.5",12.5 of 59.5
+exhaustion_score,energy,component,0-10,,"Penalty for climactic, divergent or wide-spread bars",src/engines/energy.py:167-168,"10 + climactic_penalty + divergence_penalty + wide_spread_penalty, floored at 0; only applied once the trend is mature",10 of 59.5
+atr_score,energy,component,0-7,,ATR expansion inside the productive band,src/engines/energy.py:182-189,"atr_expansion_pct in [20,80] -> 7; >=0 -> 1; >=-10 -> 0.5; >80 -> 4; >150 -> 2",7 of 59.5
+structure,sc_momentum,engine,0-100,,"Relative strength, base quality, overhead supply",src/engines/structure.py,"clip((rs_spy+rs_accel+base+ms_pos+resist+wk+earn) / 95 * 100, 0, 100)",0.20 of sc_momentum; 0.20 of sc_position
+rs_spy_score,structure,component,0-15,,Relative performance vs SPY,src/engines/structure.py:45-50,"rs_vs_spy: >-3->3, >0->6, >2->10, >5->12, >10->15",15 of 95
+rs_accel_score,structure,component,0-15,,Change in relative strength,src/engines/structure.py:56-61,"rs_accel: >-5->3, >-2->6, >0->9, >2->12, >5->15",15 of 95
+base_score,structure,component,0-15,,"Base duration and quality, with post-breakout decay",src/engines/structure.py:178,"clip(base_raw * higher_lows_multiplier, upper=15); base_days tiers <3->0,<5->3,5-7->6,7-10->10,10-25->15,25-30->12,30-35->8,>35->5; multiplier <2 lows->0.6, >=2->0.8, >=4->1.0",15 of 95
+ms_pos,structure,component,0-15,,Position in the 50-bar range,src/engines/structure.py:187-192,"ms_p50: >=45->4, >=60->7, >=75->10, >=85->13, >=95->15",15 of 95
+resist_score,structure,component,0-10,,Clear air overhead; high means little resistance,src/engines/structure.py:196-200,"dist_to_resist: <=15->3, <=8->5, <=3->10, <=0->7",10 of 95
+wk_score,structure,component,0-15,,Weekly close vs weekly SMA10,src/engines/structure.py:205-212,"wk_close vs wk_sma10: >0.93x->2, >0.97x->5, >1.00x->10, and rising->15; 7.5 when no weekly data",15 of 95
+earn_score,structure,component,0-10,,Distance to the next earnings date,src/engines/structure.py:docstring,"days_to_earnings: <=5->0, <=10->4, <=20->7, >20 or unknown->10",10 of 95
+mp,sc_momentum,engine,0-100,,Momentum persistence: will the move keep going,src/engines/mp.py,"clip(abs_mom + adx + rel_mom + trend, 0, 100)",0.20 of sc_momentum; 0.05 of sc_position
+abs_mom_score,mp,component,0-30,,20-day ROC z-score against its own 50-day distribution,src/engines/mp.py:48,"z=(roc20-sma(roc20,50))/stdev(roc20,50): >=2->30, >=1.5->26, >=1->22, >=0.5->16, >=0->10, >=-0.5->5, else 0",30 of 100
+adx_score,mp,component,0-25,,"Trend strength, only when DI is bullish",src/engines/mp.py:58-62,"adx>=20 and di_bullish->12, >=25->18, >=30->22, >=40->25",25 of 100
+rel_mom_score,mp,component,0-25,,20-day excess return vs SPY,src/engines/mp.py:70,"excess: >=15->25, >=10->22, >=5->18, >=2->13, >=0->8, >=-3->3, else 0",25 of 100
+trend_score,mp,component,0-20,,Moving-average stacking,src/engines/mp.py:84-94,above MA20 only->5; above MA50->8; MA50 rising->12; stacked basic->16; fully stacked->20,20 of 100
+mp_state,mp,leaf,label,BUILDING|STRONG|FADING,Phase label for the momentum reading,src/engines/mp.py,banded on mp,
+mp_accel,mp,leaf,float,,"Additive momentum acceleration, outside the Pine spec",src/engines/mp.py,change in momentum; dead zone +/-0.10,
+mp_accel_state,mp_accel,leaf,label,ACCELERATING|FLAT|DECELERATING,Acceleration band,src/engines/mp.py:ACCEL_UP/ACCEL_DN,">0.10 up, <-0.10 down, else flat",
+elder,,engine,0-10,,Elder Impulse: trend and momentum agreeing,src/engines/elder.py,state_score + slope_score + hist_score,
+elder_state_score,elder,component,0|2|4,,Impulse colour,src/engines/elder.py,"green->4, blue->2, red->0",4 of 10
+elder_slope_score,elder,component,0-3,,3-bar EMA13 slope percent,src/engines/elder.py,banded 0-3,3 of 10
+elder_hist_score,elder,component,0-3,,MACD histogram trend,src/engines/elder.py,"MACD(12,26,9 EMA signal) histogram direction, banded 0-3",3 of 10
+elder_pattern,elder,leaf,label,ACCELERATION|ACCUMULATION_BASE|CORRECTION_REENTRY|INTERRUPTED|SUSTAINED,Named impulse sequence,src/engines/elder_context.py,5-state classifier,
+bq,sc_position,engine,0-100,,Base quality for the position pipeline,src/engines/bq.py,bq_range_tight + bq_vol_dry + bq_base_dur + bq_ema_conv; already 0-100,0.35 of sc_position
+bq_range_tight,bq,component,0-30,,Range tightness,src/engines/bq.py,"ATR(5)/ATR(20) ratio, banded",30 of 100
+bq_vol_dry,bq,component,0-25,,Volume dry-up,src/engines/bq.py,"SMA(vol,5)/SMA(vol,20), banded",25 of 100
+bq_base_dur,bq,component,0-20,,Base duration,src/engines/bq.py,3-mode detector with latch and decay,20 of 100
+bq_ema_conv,bq,component,0-25,,EMA convergence,src/engines/bq.py,"EMA spread / ATR(20), banded",25 of 100
+k39_gate,sc_position,leaf,bool,true|false,Weekly stochastic and OBV confirmation,src/engines/k39.py,"stoch(weekly,39)>50 AND obv_weekly>sma(obv_weekly,30); mapped to daily as-of, no look-ahead",
+pipe_rank,,engine,0-100,,Pre-screen rank used to order the scoring queue,src/engines/pipeline_rank.py,"percentile blend of 12-month return, base and liquidity",
+pipe_tier,pipe_rank,leaf,label,A-TIER|B|C-WATCH|D-SKIP,Tier label from pipe_rank,src/engines/pipeline_rank.py,banded on pipe_rank,
+disposition,sc_momentum,leaf,label,FULL|HALF|QUARTER|REJECT,"Ticker-quality ceiling; the PM sizes, AQE does not",src/analyzer/ptrs.py:compute_disposition,"sc_momentum >=60->FULL(1.0), >=50->HALF(0.5), >=45->QUARTER(0.25), else REJECT(0.0)",
+max_size,disposition,leaf,0-1,,Fraction of a full risk unit permitted by ticker quality,src/analyzer/ptrs.py:DISPOSITION_CUTS,1.0 | 0.5 | 0.25 | 0.0,
+on_longlist,,leaf,bool,true|false,Longlist membership,src/longlist_screen.py:passes,sc_momentum_raw >= 65 AND elder >= 7,
+on_elder,,leaf,bool,true|false,Standalone Elder list membership,src/longlist_screen.py,elder >= 8,
+on_qs,,leaf,bool,true|false,Quiet Strength emitted a read for this name,src/engines/qs_daily.py,qs block present and scored,
+lens_positive,,leaf,0-6,,Count of lenses reading strong,src/engines/lens_consensus.py,"unweighted count over leadership, coil, insti_money, structure, resistance, sector; extension never counts",
+lens_warnings,,leaf,0-6,,Count of lenses reading warn,src/engines/lens_consensus.py,"unweighted count, same six lenses",
+atr_14d,market_stats,leaf,usd,,14-day Average True Range in USD (the volatility unit).,src/data/drive_sync.py:_FIELD_GLOSSARY,,volatility
+atr_caution,market_stats,leaf,boolean,,True if the structural stop was too tight for the regime (risk% near the regime ceiling).,src/data/drive_sync.py:_FIELD_GLOSSARY,,flag
+atr_quarter_risk_pct,market_stats,leaf,pct,,The atr_quarter_stop distance as a % of entry — i.e,src/data/drive_sync.py:_FIELD_GLOSSARY,,risk_metric
+atr_quarter_stop,market_stats,leaf,usd,,"A VOLATILITY stop: entry minus 0.25 x ATR14 (the ""Nick Crown"" level)",src/data/drive_sync.py:_FIELD_GLOSSARY,,stop
+beta_252d,market_stats,leaf,ratio,,1-year beta vs SPY (cov/var).,src/data/drive_sync.py:_FIELD_GLOSSARY,,risk_metric
+beta_30d,market_stats,leaf,,,30-day beta vs SPY — the portfolio-gate window (D-6).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+bracket,bracket_engine,leaf,usd,,THE bracket — the single source of truth for stop + targets (mechanical DSL/TP is retired),src/data/drive_sync.py:_FIELD_GLOSSARY,,stop
+candle_d,patterns,leaf,label,,"CANDLESTICK LENS, DAILY — the shape of the LAST completed daily bar, or null for an ordinary bar",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+candle_d_dir,patterns,leaf,label,,BULLISH / BEARISH / NEUTRAL for candle_d,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+candle_w,patterns,leaf,label,,"CANDLESTICK LENS, WEEKLY — the same read on the last completed WEEKLY bar, from panel_weekly",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+candle_w_date,patterns,leaf,date,,Date of the weekly bar candle_w read — so a stale weekly panel is visible rather than silently reported as this week.,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+candle_w_dir,patterns,leaf,label,,BULLISH / BEARISH / NEUTRAL for candle_w.,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+choch_date,smart_money_knn,leaf,date,,Date of the latest CHoCH event (null when choch_state=NONE).,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+choch_state,smart_money_knn,leaf,label,BULLISH|BEARISH|NONE,"Change-of-Character (swing-break trend flip), the LATEST detected event: BULLISH = close broke above the last confirmed swing high while the prior trend was flat/down; BEARISH mirr",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+day_vol,,leaf,,,"(formerly `rvol` — same number, same formula, renamed 2026-08-05) The DAY'S VOLUME MULTIPLE: today's volume divided by this name's own prior 20-day average",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+div_bear_count,divergence,leaf,score,,How many of the 5 oscillators confirm the bearish divergence (0-5).,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+div_bull_count,divergence,leaf,score,,How many of the 5 oscillators confirm the bullish divergence (0-5),src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+div_date,divergence,leaf,date,,Date of the confirming (newer) pivot anchoring the divergence.,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+div_oscs,divergence,leaf,label,,"Which oscillators fired, comma-joined — bullish names bare, bearish names prefixed '-' (e.g",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+div_state,divergence,leaf,label,BULLISH|BEARISH|MIXED|NONE,"Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a lower pivot low while ≥1 oscillat",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+elder_5d,,leaf,,,Elder impulse read over a 5-day context (list of recent impulse states).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+elder_context,,leaf,,,Hourly VWAP/VCP/exhaustion context object behind the elder read (elder_context.py).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+entry,,leaf,usd,,Reference entry = prior close-of-day,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+fib_236,fibonacci,leaf,usd,,23.6% Fibonacci retracement of swing_low->swing_high (USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,fib_support
+fib_236/382/500/618/786,fibonacci,leaf,,,Fib RETRACEMENT supports below the swing high — potential pullback/STOP levels (absolute USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+fib_382,fibonacci,leaf,usd,,38.2% Fibonacci retracement (USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,fib_support
+fib_500,fibonacci,leaf,usd,,50% retracement (USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,fib_support
+fib_618,fibonacci,leaf,usd,,61.8% Fibonacci retracement (USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,fib_support
+fib_786,fibonacci,leaf,usd,,78.6% Fibonacci retracement (USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,fib_support
+fib_swing_high,fibonacci,leaf,usd,,Upper anchor (swing high) of the Fibonacci retracement.,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+fib_swing_low,fibonacci,leaf,usd,,Lower anchor (swing low) of the Fibonacci retracement.,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+fib_swing_low/high,fibonacci,leaf,,,Anchors of the current detected up-swing (absolute USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+fip_spike_excluded,fip,leaf,,,UNDOCUMENTED — AQE owner to define (FIP spike-exclusion flag; confirm semantics).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+fip_window_effective,fip,leaf,,,UNDOCUMENTED — AQE owner to define (effective FIP window; confirm semantics).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+floor,,leaf,,,UNDOCUMENTED — AQE owner to define (meaning not recoverable from code comments).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+gics_gate,srm,leaf,,PASS|WATCH|CAUTION|BLOCKED,Sector entry gate PASS/WATCH/CAUTION/BLOCKED (srm.sector_entry_gate: grade+RRG+macro).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+gics_sector,srm,leaf,,,GICS sector ETF code the name maps to.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+gics_sector_name,srm,leaf,,,GICS sector name.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+held,,leaf,,,Flag: name is currently held.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+held_sl,,leaf,,,"(held_positions only) The trade's OWN stop as tracked by the PM/broker in the Aegis journal — `stop_live_broker` if the broker confirms one, else the journal's `stop_reference`",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+held_tp1,,leaf,,,"(held_positions only) PM ruling 2026-07-29: the Aegis journal's own tp1 is unpopulated on held names, so this is AQE's own computed bracket.targets TP1 price instead of an empty fi",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+held_tp2,,leaf,,,"(held_positions only) Same as held_tp1, but bracket.targets TP2.",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+hl_score,health,leaf,score,,Health composite (0-100),src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+hl_state,health,leaf,label,HOLD|TIGHTEN|EXIT,Health state label (held only): HOLD_ADD / HOLD / TIGHTEN / EXIT.,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+in_ledger,,leaf,,,Flag: name is currently tracked in the nomination ledger.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+inside_bar,pin_bar,leaf,boolean,,True if the LAST bar's range is fully inside the PRIOR bar's range (high < prev_high AND low > prev_low) — a one-bar consolidation pause.,src/data/drive_sync.py:_FIELD_GLOSSARY,,flag
+knn_neighbors_used,smart_money_knn,leaf,score,,How many historical analog events the knn_prob is averaged over (0 if none found).,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+knn_prob,smart_money_knn,leaf,ratio,,K-NEAREST-NEIGHBORS directional probability (0-1) for the current CHoCH: the win-rate of the K most similar HISTORICAL CHoCH events on this SAME ticker (matched on 3 features — vol,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+knn_significant,smart_money_knn,leaf,boolean,,True iff knn_prob clears a fixed threshold in either direction (≥60% or ≤40% by default),src/data/drive_sync.py:_FIELD_GLOSSARY,,flag
+knn_tp1,smart_money_knn,leaf,usd,,"Nearest kNN-implied target (USD): current price ± half the neighbors' mean favorable excursion, signed by the CHoCH direction",src/data/drive_sync.py:_FIELD_GLOSSARY,,target
+knn_tp2,smart_money_knn,leaf,usd,,"Mid kNN-implied target: current price ± the neighbors' MEDIAN favorable excursion, signed by direction.",src/data/drive_sync.py:_FIELD_GLOSSARY,,target
+knn_tp3,smart_money_knn,leaf,usd,,"Far kNN-implied target: current price ± the neighbors' 75th-percentile favorable excursion, signed by direction.",src/data/drive_sync.py:_FIELD_GLOSSARY,,target
+last_pivot_high,,leaf,usd,,"{price, date} — the MOST RECENT confirmed fractal pivot high, wherever it sits relative to today's close",src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+lens,lens_consensus,leaf,,,"Per-lens read: strong/ok/warn/-- for leadership, coil, insti_money, structure, resistance, sector",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+live_px,,leaf,,,(held_positions only) Current mark for a held ticker = the same FMP close every other field on the record is scored against (see cob_price) — not a broker/journal field,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+ma_100,moving_averages,leaf,usd,,100-day simple moving average of close.,src/data/drive_sync.py:_FIELD_GLOSSARY,,moving_average
+ma_20,moving_averages,leaf,usd,,20-day simple moving average of close.,src/data/drive_sync.py:_FIELD_GLOSSARY,,moving_average
+ma_20/50/100/200,moving_averages,leaf,,,Simple moving averages (absolute USD) — dynamic support/resistance.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+ma_200,moving_averages,leaf,usd,,200-day simple moving average of close.,src/data/drive_sync.py:_FIELD_GLOSSARY,,moving_average
+ma_50,moving_averages,leaf,usd,,50-day simple moving average of close.,src/data/drive_sync.py:_FIELD_GLOSSARY,,moving_average
+malformed_bracket,,leaf,boolean,,True if the structural stop sits within 0.5% of price (bracket unusable — stop virtually at entry).,src/data/drive_sync.py:_FIELD_GLOSSARY,,flag
+mover_subtype,signal_radar,leaf,label,,DETECTION sub-type label (explosive / trend / tight_base / squeeze) — the family whose z-score profile the name matches best (M16c),src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern,patterns,leaf,label,,"CHART-PATTERN LENS — the classic formation this name is currently sitting inside, or null",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_alt,patterns,leaf,label,,"Other shapes this same chart also matched, or null",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_days,patterns,leaf,decimal,,Days from the start of the formation to today,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_direction,patterns,leaf,label,,BULLISH or BEARISH,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_fit,patterns,leaf,score,,"0-1, how TEXTBOOK the shape is — cup: depth, rim symmetry, handle size, handle volume; double bottom: how level the two lows are and how real the bounce between them; triangle: how",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_invalidation,patterns,leaf,usd,,"Below this the shape is gone whatever the fit score says (USD): the handle low (or cup low) for a cup, the lower of the two lows for a double bottom, the LAST rising low for an asc",src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+pattern_stage,patterns,leaf,label,,How far along the shape is,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_start,patterns,leaf,,,Date the formation began (left rim / first low / first ceiling touch).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+pattern_trigger,patterns,leaf,usd,,"The level that CONFIRMS the shape (USD): the rim for a cup, the NECKLINE (the peak between the two lows) for a double bottom, the flat ceiling for an ascending triangle",src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+pattern_w,patterns,leaf,label,,"CHART-PATTERN LENS, WEEKLY — the same nine shapes read off WEEKLY bars",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_w_dir,patterns,leaf,label,,BULLISH or BEARISH for pattern_w,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_w_stage,patterns,leaf,label,,Stage of the weekly formation — see pattern_stage.,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+pattern_w_trigger,patterns,leaf,usd,,The level that would confirm the WEEKLY shape (USD).,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+pib_pattern,pin_bar,leaf,boolean,,"True if the SECOND-TO-LAST bar was a pin bar AND the last bar is an inside bar relative to it — the 'rejection, then pause' combo pattern",src/data/drive_sync.py:_FIELD_GLOSSARY,,flag
+pin_bar_date,pin_bar,leaf,date,,Date of the pin bar (null when pin_bar_state=NONE).,src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+pin_bar_level,pin_bar,leaf,usd,,"The pin bar's rejection extreme (USD): the LOW for a bullish pin (a candidate support), the HIGH for a bearish pin (candidate resistance)",src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+pin_bar_state,pin_bar,leaf,label,NONE|BULLISH_PIN|BEARISH_PIN,"Candlestick REJECTION pattern on the LAST closed bar (pure geometry, no lookahead): BULLISH_PIN = long lower wick (≥66% of range) + small body (≤40%) + small upper wick (≤40%) — th",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+premove_conviction,signal_radar,leaf,score,,DETECTION conviction (0-4): count of M18 launcher-fingerprint legs present,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+premove_conviction_label,signal_radar,leaf,label,,"Human-readable pre-move conviction = word + number, e.g",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+premove_setup,signal_radar,leaf,boolean,,"DETECTION tag (bool): name is QUIET now but coiled to launch — very young base + squeeze on + well below the recent high (M18 rule, applies only to quiet-pond names)",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+qs,qs,leaf,,,The Quiet Strength read (nested),src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.engine.qs_persist,qs,leaf,,,How many of the PRIOR 5 stored sessions the name also qualified as QS (recipe_hits >= 3),src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.engine.recipe_hits,qs,leaf,,,How many of the frozen book's 40 recipes the name satisfies,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.objective,qs,leaf,,,"The MECHANICAL yardstick the probability was measured against: target_2atr = close + 2xATR14, give_up_2atr = close - 2xATR14",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.odds.extrapolated,qs,leaf,,,TRUE when the name sat OUTSIDE today's QS-eligible set (its volume did not beat its own 10-day average),src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.odds.p,qs,leaf,,,Probability of reaching the QS OBJECTIVE (+2xATR14 within 20 sessions) read from a table of historical look-alikes matched on (recipe_hits band x lens_total band x persistence band,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.state,qs,leaf,,,"EARLY = quietly strong, not yet moving",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs.unevaluable_vetoes,qs,leaf,,,Vetoes that could NOT be evaluated because an input was missing/NaN,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs_market,qs,leaf,,,"The MARKET row, read FIRST because it can cancel the day: plain-English regime description, the base rate the average stock hits its target in this regime, the stance action line, ",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+qs_status,qs,leaf,,,"'live' (QS ran), 'error' (it failed — reason in the pipeline log), or 'not_run'",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+rank,,leaf,,,Overall daily rank of the name in the scored universe.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+role,,leaf,,entry|reference|stop|target|fib_support|moving_average|risk_metric|volatility|ratio|signal|flag,,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+rs_down_day_20d,market_stats,leaf,pct,,All-weather leadership: stock's avg outperformance vs SPY on SPY DOWN days (last 20 sessions),src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+rs_leadership,market_stats,leaf,label,LEADER|IN-LINE|LAGGARD,"Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, LAGGARD (<−0.25).",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+rs_spy_20d,market_stats,leaf,,,20-day relative strength vs SPY (%).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+runner_conviction,signal_radar,leaf,score,,DETECTION conviction (0-4): how many of the four M15 legs (short base / strong 5d momentum / clear overhead / room below the 20d high) are in their favourable tercile,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+runner_conviction_label,signal_radar,leaf,label,,"Human-readable conviction = word + number, e.g",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+runner_setup,signal_radar,leaf,boolean,,DETECTION tag (bool): name is already moving with another leg — short young base + strong 5-day thrust + clear overhead (M15 rule),src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+sc_m_gate_detail,,leaf,label,,"Per-engine SC_MOMENTUM gate pass/fail (dict): {flow, energy, structure, mp, elder} each True/False vs the SC_M_GATES threshold — so you read WHICH check a name is failing without r",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+sc_p_gate_detail,,leaf,label,,"Per-engine SC_POSITION gate pass/fail (dict): {flow, energy, structure, mp, bq, k39} each True/False vs the SC_P_GATES threshold (k39 = the weekly confirmation gate; null if unavai",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+sector_rrg_direction,srm,leaf,label,ENTERING|DEEPENING|EXITING,The ticker's sector RRG direction of travel: ENTERING / DEEPENING / EXITING / STABLE.,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+sector_rrg_quadrant,srm,leaf,label,LEADING|WEAKENING|LAGGING|IMPROVING,The ticker's sector RRG quadrant vs SPY: LEADING / IMPROVING / WEAKENING / LAGGING.,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+sector_trend_state,srm,leaf,label,"Declining — Avoid|Momentum Fading — Hold, Don't Add|Recovering From Weakness — Watch for Entry|Leading — Deploy",The ticker's GICS-sector SRM trend-state for the day (e.g,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+side,,leaf,,below_entry|above_entry|at_entry|n/a,,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+sma_distance_pct,,leaf,,,"Percent distance of price from its SMA — extension (large + = extended, ~0 = at support).",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+source,,leaf,,,Data-source tag for the record.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+structure_shift,,leaf,label,RANGE|BULLISH_BOS|ABOVE_STRUCTURE|BEARISH_CHOCH,"BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close is above the last CONFIRMED pivot high AND still within 2% of it — a break that JUST HAPP",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+structure_shift_ref,,leaf,usd,,"The level the shift is measured against (USD): the broken confirmed pivot high for BULLISH_BOS/ABOVE_STRUCTURE, the broken swing anchor low for BEARISH_CHOCH; null for RANGE.",src/data/drive_sync.py:_FIELD_GLOSSARY,,reference
+subcomponents,,leaf,score,,"The engine SUB-SCORES behind each headline read — nested by engine, so the AIC sees WHY an engine scored what it did (context, never a gate)",src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+thematic_basket,srm_thematic,leaf,,,Thematic basket the name belongs to (srm thematic layer).,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+thematic_grade,srm_thematic,leaf,,DEPLOY|HOLD|TURNING|WATCH|AVOID,"The PRIMARY thematic basket's grade — the theme's OWN reading, UNCAPPED since 2026-08-05",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+thematic_parent_gics,srm_thematic,leaf,,,Parent GICS sector of the thematic basket.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+thematic_parent_grade,srm_thematic,leaf,,DEPLOY|HOLD|TURNING|WATCH|AVOID,Grade of the parent GICS sector.,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+thematic_rrg_direction,srm_thematic,leaf,label,ENTERING|DEEPENING|EXITING,The ticker's PRIMARY thematic basket's RRG direction (ENTERING / DEEPENING / EXITING / STABLE).,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+thematic_rrg_quadrant,srm_thematic,leaf,label,LEADING|WEAKENING|LAGGING|IMPROVING,The ticker's PRIMARY thematic basket's RRG quadrant vs SPY (LEADING / IMPROVING / WEAKENING / LAGGING).,src/data/drive_sync.py:_FIELD_GLOSSARY,,signal
+unit,,leaf,,usd|r_multiple|ratio|pct|atr|decimal|score|label|boolean|date,,src/data/drive_sync.py:_FIELD_GLOSSARY,,
+unreal_usd,,leaf,,,"(held_positions only) NOT YET WIRED — currently reads a journal field the Aegis journal's 2026-07-28 restructure retired, so this is always null",src/data/drive_sync.py:_FIELD_GLOSSARY,,
+vol_30d_ann,market_stats,leaf,decimal,,30-day annualised realised volatility (decimal: 0.18 = 18%),src/data/drive_sync.py:_FIELD_GLOSSARY,,volatility

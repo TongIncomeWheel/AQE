@@ -21,7 +21,6 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from src.analyzer.ptrs import compute_ptrs
 from src.data.sector_mapper import (
     ETF_TO_NAME,
     SECTOR_MAP_DRIVE_FILENAME,
@@ -326,10 +325,10 @@ _FIELD_GLOSSARY = {
                    "AQE's field is annualised — same number). For"
                    "sizing/VaR, not a target.",
     "beta_252d": "1-year beta vs SPY (cov/var).",
-    "ptrs": "= SC_MOMENTUM verbatim (PM ruling: the Sector-Health adjustment is DROPPED — "
-            "sector context is read separately and qualitatively via `srm`/RRG, not "
-            "double-counted into a per-ticker score). Disposition/sizing is the "
-            "committee's call — AQE exports no sizing.",
+    "ptrs": "RETIRED 2026-08-13 — no longer emitted. It carried SC_MOMENTUM verbatim "
+            "after the Sector-Health term was dropped, so it was an alias, not a "
+            "second reading. Kept here only so an export written before that date "
+            "stays readable. Use sc_momentum.",
     # Enrichment Spec v2.0 — new per-record signals + cleanup flags
     "rs_down_day_20d": "All-weather leadership: stock's avg outperformance vs SPY on SPY "
                        "DOWN days (last 20 sessions). Positive = beats SPY when market "
@@ -1392,7 +1391,7 @@ def _held_sc_gates(s) -> dict:
             "sc_p_gates": _gp["pass"], "sc_p_gate_detail": _gp["detail"]}
 
 
-def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
+def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades,
                           regime_level=None):
     """Merge each PTJ held position with AQE's current engine read on it.
 
@@ -1463,7 +1462,6 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades, ptrs_fn,
             # --- AQE engine read ---
             "sc_momentum": round(sc, 1) if sc is not None else None,
             "sc_momentum_raw": round(sg("sc_momentum_raw") or sc, 1) if (sg("sc_momentum_raw") or sc) is not None else None,
-            "ptrs": ptrs_fn(sc, tk) if sc is not None else None,
             "pipe_rank": round(sg("pipe_rank"), 1) if sg("pipe_rank") is not None else None,
             "flow": round(sg("flow_100"), 0) if sg("flow_100") is not None else None,
             "energy": round(sg("energy_100"), 0) if sg("energy_100") is not None else None,
@@ -1567,16 +1565,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     }
 
     # ---- Shared helpers (loaded once, used by all four lists) ----
-    # PTRS = SC_MOM + SH (sector only). Regime handles VIX sizing separately.
     sector_grades = {r["etf"]: {"grade": r["grade"], "sh": r["sh_value"]} for r in srm_gics} if srm_gics else sl.get("srm_detail", {})
-
-    def _ptrs(sc_mom, ticker):
-        # PM ruling: PTRS drops the Sector-Health adjustment (that is a committee
-        # deliberation; SRM grade + sector/thematic RRG give the qualitative read).
-        # PTRS = the engine score, no sector discount.
-        r = compute_ptrs(sc_mom, 0.0)
-        v = r.get("ptrs")
-        return round(v, 1) if v is not None and v == v else 0.0
 
     def _floor(rm):
         e = rm.get("engines", {})
@@ -1671,7 +1660,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         export["held_positions_status"] = "unknown"
     _v21_lk["held"] = {h.get("ticker") for h in _held if h.get("ticker")}
     export["held_positions"] = _build_held_positions(
-        _held, dsl_all, betas, _v21_lk, sm, sector_grades, _ptrs,
+        _held, dsl_all, betas, _v21_lk, sm, sector_grades,
         regime_level=regime_level)
 
     # Portfolio Hedge Layer (Charter §4C) — beta-adj book exposure + gap losses.
@@ -1711,7 +1700,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                 _rdhl_lookup[_tk] = _rd_hl_vals
     _v21_lk["rdhl"] = _rdhl_lookup
 
-    # Top Picks = candidates (PTRS-ranked shortlist) — SAME schema as longlist
+    # Top Picks = candidates (SC_MOMENTUM-ranked shortlist) — SAME schema as longlist
     for c in sl.get("candidates", []):
         tk = c["ticker"]
         e = c["engines"]
@@ -1723,7 +1712,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "ticker": tk,
             "sc_momentum": round(sc_val, 1),
             "sc_momentum_raw": round(c.get("sc_momentum_raw", sc_val), 1),
-            "ptrs": round(c.get("ptrs", 0), 1),
             "pipe_rank": round(c.get("pipe_rank", 0), 1),
             "fip_spike_excluded": c.get("fip_spike_excluded", False),
             "fip_window_effective": c.get("fip_window_effective", 252),
@@ -1759,7 +1747,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "ticker": tk,
             "sc_momentum": round(pe_sc, 1),
             "sc_momentum_raw": round(pe_raw, 1),
-            "ptrs": _ptrs(pe_sc, tk),
             "pipe_rank": round(pe.get("pipe_rank", 0), 1),
             "fip_spike_excluded": pe.get("fip_spike_excluded", False),
             "fip_window_effective": pe.get("fip_window_effective", 252),
@@ -1784,7 +1771,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     longlist_tickers: set[str] = set()
     sorted_rm = sorted(sl.get("recipe_matches", []),
                        key=lambda rm: (
-                           _ptrs(rm.get("sc_momentum", 0) or 0, rm["ticker"]),
+                           rm.get("sc_momentum", 0) or 0,
                            rm.get("pipe_rank", 0),
                            _floor(rm),
                        ),
@@ -1800,7 +1787,6 @@ def build_export(shortlist: dict | None = None) -> dict:
             "ticker": rm["ticker"],
             "sc_momentum": round(sc_val, 1),
             "sc_momentum_raw": round(rm.get("sc_momentum_raw", sc_val), 1),
-            "ptrs": _ptrs(sc_val, rm["ticker"]),
             "pipe_rank": round(rm.get("pipe_rank", 0), 1),
             "fip_spike_excluded": rm.get("fip_spike_excluded", False),
             "fip_window_effective": rm.get("fip_window_effective", 252),
@@ -1852,9 +1838,9 @@ def build_export(shortlist: dict | None = None) -> dict:
                 sc_df[c] = pd.to_numeric(sc_df[c], errors="coerce").fillna(0)
         sc_df["_floor"] = sc_df[
             ["flow_100", "energy_100", "structure_100", "mp_100"]].min(axis=1)
-        # PTRS = engine score, no Sector-Health adjustment (PM ruling; SRM/RRG
+        # Ranked on SC_MOMENTUM (PM ruling; SRM/RRG
         # carry the sector read separately).
-        sc_df["_ptrs"] = sc_df["sc_momentum"].fillna(0).round(1)
+        sc_df["_sc"] = sc_df["sc_momentum"].fillna(0).round(1)
         sc_df = sc_df[~sc_df["ticker"].isin(set(GICS_ETFS) | {"SPY"})].copy()
 
         def _wl_record(wr, rank, source):
@@ -1878,7 +1864,6 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "ticker": tk,
                 "sc_momentum": round(wsc, 1),
                 "sc_momentum_raw": round(float(wr.get(raw_col, wsc)), 1),
-                "ptrs": round(float(wr["_ptrs"]), 1),
                 "pipe_rank": round(wpr, 1),
                 "fip_spike_excluded": bool(wr.get("fip_spike_excluded", False)),
                 "fip_window_effective": int(wr.get("fip_window_effective", 252)),
@@ -1908,10 +1893,10 @@ def build_export(shortlist: dict | None = None) -> dict:
                 **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
             }
 
-        # Watchlist — raw SC_MOM ≥ 70, ranked PTRS → PipeRank → Floor.
+        # Watchlist — raw SC_MOM ≥ 70, ranked SC_MOM → PipeRank → Floor.
         # Broad candidate set — raw SC_MOM ≥ 50 (UI sliders trim upward).
         _wl = sc_df[sc_df[raw_col] >= 50].sort_values(
-            ["_ptrs", "pipe_rank", "_floor"], ascending=False).reset_index(drop=True)
+            ["_sc", "pipe_rank", "_floor"], ascending=False).reset_index(drop=True)
         for i, (_, wr) in enumerate(_wl.iterrows(), 1):
             export["watchlist"].append(_wl_record(wr, i, "watchlist"))
 
@@ -1919,7 +1904,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         if "elder_score" in sc_df.columns:
             _el = sc_df[
                 pd.to_numeric(sc_df["elder_score"], errors="coerce").round() >= 8
-            ].sort_values(["_ptrs", "pipe_rank", "_floor"],
+            ].sort_values(["_sc", "pipe_rank", "_floor"],
                           ascending=False).reset_index(drop=True)
             for i, (_, wr) in enumerate(_el.iterrows(), 1):
                 export["elder_list"].append(_wl_record(wr, i, "elder_list"))
@@ -1955,7 +1940,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             else:
                 _merged[_tk] = _r
     # Longlist tier = the longlist SCREEN, full stop (PM ruling, 26 Jun 2026):
-    # SC_MOM > 64 AND PTRS >= 60 AND Elder >= 7. ONE definition — `longlist_screen`
+    # SC_MOM > 64 AND Elder >= 7. ONE definition — `longlist_screen`
     # is the single source of truth the Scanner sliders also default to, so what you
     # SEE == what FIRES (the alert engine monitors `longlist`). The broad raw-SC>=50
     # pool is gone — it was noise blasting random alerts every evening. on_longlist
@@ -1964,7 +1949,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     from src.longlist_screen import passes as _ll_passes
     _longlist = sorted(
         (_r for _r in _merged.values() if _ll_passes(_r)),
-        key=lambda r: (r.get("ptrs") or 0), reverse=True)
+        key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_longlist, 1):
         _r["rank"] = _i
         _r["source"] = "longlist"
@@ -1979,7 +1964,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         if (_r.get("elder") or 0) >= 8 and _r.get("ticker") not in _el_seen:
             _el_seen.add(_r.get("ticker"))
             _elderlist.append(dict(_r))          # copy; re-tagged below
-    _elderlist = sorted(_elderlist, key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    _elderlist = sorted(_elderlist, key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_elderlist, 1):
         _r["rank"] = _i
         _r["source"] = "elder_list"
@@ -2097,7 +2082,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- THE DAILY LIST — collapse longlist ∪ elder ∪ signal-ledger into ONE
     # list (PM ruling). Each name appears ONCE, flagged so the AIC reads
     # membership + correspondence in a single row (no cross-checking 3 lists).
-    # `on_longlist` = passed the longlist screen (SC_MOM≥65 & PTRS≥60 & Elder≥7,
+    # `on_longlist` = passed the longlist screen (SC_MOM≥65 & Elder≥7,
     # via longlist_screen.passes on `_longlist`) — the REAL membership (the stale
     # recipe-set badge is gone). Elder is folded in because event-driven
     # SUPER-RUNNERS hit Elder≥8 WITHOUT the normal scoring/structure sequence.
@@ -2166,7 +2151,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["qs_market"] = _qs_market
     export["qs_status"] = _qs_status
 
-    _daily_list = sorted(_dl.values(), key=lambda r: (r.get("ptrs") or 0), reverse=True)
+    _daily_list = sorted(_dl.values(), key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
     compute_lens_consensus(_daily_list)                      # Part 2 gains 3 keys
@@ -2252,7 +2237,7 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
-        "ticker", "sc_momentum", "ptrs", "flow", "energy", "structure",
+        "ticker", "sc_momentum", "flow", "energy", "structure",
         "mp", "elder", "entry", "atr_14d",
         "beta_30d", "elder_5d", "mp_state", "pipe_rank", "floor",
         # DSG-18 flat fib ladder

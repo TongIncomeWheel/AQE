@@ -6,7 +6,7 @@ Steps:
 3. Stage 2: Full scoring for top-50 candidates
 4. SRM sector grading
 5. Regime detection (VIX + Hurst)
-6. PTRS computation with context modifiers
+6. Disposition (ticker-quality ceiling) from SC_MOMENTUM
 7. Output: shortlist JSON + text dashboard
 
 Run:
@@ -49,7 +49,7 @@ from src.engines.srm import (
     BASKET_CONSTITUENTS,
 )
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
-from src.analyzer.ptrs import compute_ptrs, classify_vix_regime
+from src.analyzer.ptrs import compute_disposition, classify_vix_regime
 from src.analyzer.regime import compute_regime
 
 STAGE2_MAX = 50
@@ -250,11 +250,11 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     regime = _compute_regime(spy)
     print(f"  VIX regime: {regime['vix_regime']} | Hurst: {regime['hurst']:.3f} ({regime['hurst_regime']})")
 
-    # Step 6: PTRS + disposition
-    print("[daily] Step 6: PTRS computation...")
+    # Step 6: disposition — the ticker-quality half of the sizing chain
+    print("[daily] Step 6: disposition...")
     vix = regime.get("vix", 18.0)
-    candidates = _compute_ptrs_all(scores, sector_grades, vix, regime)
-    candidates.sort(key=lambda c: c.get("ptrs", 0), reverse=True)
+    candidates = _compute_disposition_all(scores, sector_grades, vix, regime)
+    candidates.sort(key=lambda c: c.get("sc_momentum", 0), reverse=True)
 
     # Step 6b: BC layer (if outcome data exists)
     outcome_path = DATA_DIR / "optimizer_results.json"
@@ -292,7 +292,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # The backtest edge is from the signal day. Stale picks = no edge.
     pre_filter = len(shortlist)
     shortlist = _filter_fresh_signals(shortlist)
-    shortlist.sort(key=lambda c: c.get("ptrs", 0), reverse=True)
+    shortlist.sort(key=lambda c: c.get("sc_momentum", 0), reverse=True)
     print(f"  {len(shortlist)} with fresh signal (last {SIGNAL_MAX_AGE} trading days)")
     if len(shortlist) < pre_filter:
         print(f"  Removed {pre_filter - len(shortlist)} stale picks (cross-up > {SIGNAL_MAX_AGE}d ago)")
@@ -694,7 +694,7 @@ def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
                   run_date: date | None = None) -> dict:
     """Grade all sectors using SRM + DSG-18 RRG + DSG-19 macro overlay.
 
-    trend_days=10 adds sh_trend + grade_trend (10-bar history) so PTRS
+    trend_days=10 adds sh_trend + grade_trend (10-bar history) so a caller
     context and the export JSON show momentum direction, not just today's grade.
     """
     sector_grades = grade_all_sectors(panel, trend_days=trend_days)
@@ -757,36 +757,29 @@ def _compute_regime(spy: pd.DataFrame) -> dict:
     return compute_regime(closes, vix, lookback=60)
 
 
-def _compute_ptrs_all(
+def _compute_disposition_all(
     scores: list[dict],
     sector_grades: dict,
     vix: float,
     regime: dict,
 ) -> list[dict]:
-    """Compute PTRS for all scored candidates.
+    """Disposition ceiling for every scored candidate, from SC_MOMENTUM.
 
-    PTRS = SC_MOMENTUM verbatim. The legacy Sector-Health (+SH) term is DROPPED
-    (PM ruling, AIC Charter Amendment v2.8, 2026-07) — sector context is now a
-    committee-level qualitative read via `srm`/RRG, not a per-ticker score
-    penalty. This must match drive_sync.py's `_ptrs()`/`compute_ptrs(sc_mom,
-    0.0)` bit-for-bit: this function feeds `shortlist.json`'s `candidates[]`,
-    which the export copies verbatim into `top_picks` — a stale `+SH` value
-    here would leak into the live daily_list PTRS (and the longlist PTRS≥60
-    gate) for any ticker whose export record is sourced from top_picks. Fixed
-    2026-07-15 (was still computing real SH after the rest of the pipeline
-    moved to 0.0 — see docs/MATHLAB_PTRS_CHANGELOG.md).
-    Regime/VIX handles macro sizing separately — no double penalty.
+    PTRS was retired on 2026-08-13. It had carried SC_MOMENTUM verbatim ever
+    since the Sector-Health term was dropped (PM ruling, AIC Charter Amendment
+    v2.8, 2026-07), so the export was publishing one number under two names and
+    two code paths had to be kept bit-identical to stop them drifting apart.
+
+    The thresholds survive the alias, because they are real: 60 / 50 / 45 on
+    SC_MOMENTUM give FULL / HALF / QUARTER, and that is the ticker-quality half
+    of the sizing chain. Regime handles the macro half. AQE still exports no
+    size — this is a ceiling, and the trade call is the PM's.
     """
     candidates = []
     for s in scores:
         ticker = s["ticker"]
 
-        ptrs_result = compute_ptrs(
-            engine_score=s["sc_momentum"],
-            sh=0.0,
-        )
-
-        candidate = {**s, **ptrs_result}
+        candidate = {**s, **compute_disposition(s["sc_momentum"])}
         dyn_map = load_sector_map()
         candidate["sector"] = TICKER_TO_SECTOR.get(ticker, dyn_map.get(ticker, "UNKNOWN"))
         candidate["sector_grade"] = _get_grade_for_ticker(ticker, sector_grades)
@@ -1197,7 +1190,6 @@ def _build_output(
             "sc_momentum": round(c.get("sc_momentum", 0), 1),
             "sc_momentum_raw": round(c.get("sc_momentum_raw", c.get("sc_momentum", 0)), 1),
             "sc_position": round(c.get("sc_position", 0), 1),
-            "ptrs": c.get("ptrs", 0),
             "disposition": c.get("disposition", "REJECT"),
             "mp_state": c.get("mp_state", ""),
             "pipe_rank": round(c.get("pipe_rank", 0), 1),
@@ -1467,7 +1459,7 @@ def _build_output(
 # The daily_list carries all of these; inner lists carry a compact subset.
 AEGIS_CORE_FIELDS = [
     "ticker", "close", "atr14",
-    "sc_momentum", "sc_momentum_raw", "sc_position", "ptrs", "disposition",
+    "sc_momentum", "sc_momentum_raw", "sc_position", "disposition",
     "flow_100", "energy_100", "structure_100", "mp_100", "elder_score", "bq_100",
     "mp_state", "pipe_rank", "fip_quality", "fip_spike_excluded", "fip_window_effective",
     "entry", "stop", "r_size", "be_trigger", "target_1r", "target_2r", "target_3r",
@@ -1482,7 +1474,7 @@ AEGIS_CORE_FIELDS = [
 
 INNER_COMPACT_FIELDS = [
     "ticker", "close", "atr14",
-    "sc_momentum", "sc_position", "ptrs", "disposition",
+    "sc_momentum", "sc_position", "disposition",
     "pipe_rank", "fip_quality",
     "flow_100", "energy_100", "structure_100", "mp_100", "elder_score",
     "entry", "stop", "r_size", "target_1r", "target_2r", "target_3r", "shares",
@@ -1553,7 +1545,6 @@ def _build_aegis_export(
             "sc_momentum": round(c.get("sc_momentum", 0), 1),
             "sc_momentum_raw": round(c.get("sc_momentum_raw", c.get("sc_momentum", 0)), 1),
             "sc_position": round(c.get("sc_position", 0), 1),
-            "ptrs": c.get("ptrs", 0),
             "disposition": c.get("disposition", "REJECT"),
             # Engines
             "flow_100": round(c.get("flow_100", 0), 1),
@@ -1688,7 +1679,7 @@ def _format_dashboard(output: dict) -> str:
     else:
         lines.append("-" * 88)
         lines.append(
-            f"  {'#':>2} {'Ticker':<6} {'SC_M':>5} {'PTRS':>5} {'Disp':<5} "
+            f"  {'#':>2} {'Ticker':<6} {'SC_M':>5} {'Disp':<5} "
             f"{'Flow':>4} {'Enrg':>4} {'Strc':>4} {'MP':>4} {'Eldr':>4} "
             f"{'Sector':<7} {'Rcp':>3} {'Sig':>5} {'Dir':<6}"
         )
@@ -1704,7 +1695,7 @@ def _format_dashboard(output: dict) -> str:
             direction = sig.get("direction", "")
             lines.append(
                 f"  {c['rank']:>2} {c['ticker']:<6} {c['sc_momentum']:>5.1f} "
-                f"{c['ptrs']:>5.1f} {c['disposition']:<5} "
+                f"{c['disposition']:<5} "
                 f"{eng['flow']:>4.0f} {eng['energy']:>4.0f} {eng['structure']:>4.0f} "
                 f"{eng['mp']:>4.0f} {eng['elder']:>4.1f} "
                 f"{ctx['sector_grade']:<7} {rcp:>3} {sig_label:>5} {direction:<6}"

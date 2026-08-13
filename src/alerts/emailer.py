@@ -127,7 +127,7 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
     base = (f"AIC — {tk} ({'HELD' if t['is_held'] else t.get('source')}): "
             f"{t['label']} @ live {t['live_px']}. "
             f"SC {_fmt(g('sc_momentum'), 1)}/raw {_fmt(g('sc_momentum_raw'), 1)} · "
-            f"PTRS {_fmt(g('ptrs'), 1)} · MP {g('mp_state') or '—'} · "
+            f"MP {g('mp_state') or '—'} · "
             f"Flow {_fmt(g('flow'), 0)} En {_fmt(g('energy'), 0)} "
             f"St {_fmt(g('structure'), 0)} MP {_fmt(g('mp'), 0)} Eld {_fmt(g('elder'), 1)} · "
             f"{_bracket_str(rec)} · β30d {_fmt(g('beta_30d'), 2)} · "
@@ -147,7 +147,8 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
                  f"SL {_fmt(g('held_sl'))} unreal ${_fmt(g('unreal_usd'), 0)}. "
                  "Advise hold / trim / stop mgmt.")
     else:
-        base += " Advise entry decision + size per PTRS × regime. Charter v1.9.2."
+        base += (" Advise entry decision + size per SC_MOMENTUM disposition x"
+                 " regime. Charter v1.9.2.")
     return base
 
 
@@ -215,7 +216,7 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
         chg = (f"{t['chg_pct']:+.1f}%" if t.get("chg_pct") is not None else "—")
         head = (f"  {t['ticker']:6} [{tag:8}] {t['live_px']:>9}  {chg:>7} vs COB"
                 f" · SC {_fmt(rec.get('sc_momentum_raw') or rec.get('sc_momentum'), 0)}"
-                f" PTRS {_fmt(rec.get('ptrs'), 0)}")
+                )
         if compact:
             return head + _sig(t)
         return (head
@@ -247,7 +248,7 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
             f"<div><span style='background:{color};color:#fff;font-weight:700;font-size:11px;"
             f"padding:1px 7px;border-radius:9px'>{badge}</span> "
             f"<b style='font-size:15px'>{t['ticker']}</b> "
-            f"<span style='color:#555;font-size:12px'>SC {sc} · PTRS {_fmt(rec.get('ptrs'),1)} "
+            f"<span style='color:#555;font-size:12px'>SC {sc} "
             f"· {rec.get('mp_state') or '—'} · β30d {_fmt(rec.get('beta_30d'),2)}</span></div>"
             f"<div style='font-size:13px;margin-top:2px'><b>{t['label']}</b> · "
             f"live {t['live_px']} · {t['note']}</div>"
@@ -333,7 +334,7 @@ def send_test() -> dict:
     ]
     export = {"date": "TEST", "regime": {"level": "TEST"},
               "daily_list": [{"ticker": "TEST1", "sc_momentum": 78, "sc_momentum_raw": 78,
-                            "ptrs": 64, "mp_state": "STRONG", "flow": 82, "energy": 70,
+                            "mp_state": "STRONG", "flow": 82, "energy": 70,
                             "structure": 62, "mp": 60, "elder": 8, "beta_30d": 1.4,
                             "bracket": {"price": 100.0, "price_source": "eod_close",
                                         "stop": 96.5, "stop_type": "swing_low_1",
@@ -342,7 +343,7 @@ def send_test() -> dict:
                                                      "r": 3.3, "atr_dist": 2.3}],
                                         "rr": 3.3, "valid": True, "invalid_reason": None},
                             "gics_sector": "XLK", "gics_gate": "PASS"}],
-              "held_positions": [{"ticker": "ODFL", "sc_momentum": 62, "ptrs": 58,
+              "held_positions": [{"ticker": "ODFL", "sc_momentum": 62,
                                   "mp_state": "BUILDING", "entry": 239.45, "qty": 65,
                                   "held_sl": 230, "unreal_usd": 317, "beta_30d": 1.17,
                                   "bracket": {"price": 239.45, "stop": 228.0,

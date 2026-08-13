@@ -58,7 +58,12 @@ def compute_ptrs(
     sh: float,
     **_kwargs,
 ) -> dict:
-    """Compute PTRS and disposition for a single candidate.
+    """RETIRED 2026-08-13 — use compute_disposition(sc_momentum).
+
+    Kept so the research backtests that recorded a PTRS column still
+    import and reproduce. Not called from the daily pipeline.
+
+    Compute PTRS and disposition for a single candidate.
 
     PTRS = engine_score + sh. Every production call site passes sh=0.0 (the
     Sector-Health term is retired — see the module docstring); the parameter
@@ -116,3 +121,26 @@ def compute_ptrs_batch(
     ptrs_df = pd.DataFrame(results)
     ptrs_df.columns = [f"ptrs_{c}" if c != "ptrs" else c for c in ptrs_df.columns]
     return pd.concat([signals.reset_index(drop=True), ptrs_df.reset_index(drop=True)], axis=1)
+
+# ── after the 2026-08-13 retirement ──────────────────────────────────────
+
+DISPOSITION_CUTS = ((60.0, "FULL", 1.0), (50.0, "HALF", 0.5),
+                    (45.0, "QUARTER", 0.25))
+
+
+def compute_disposition(sc_momentum: float) -> dict:
+    """Disposition and max_size from SC_MOMENTUM. Replaces compute_ptrs().
+
+    PTRS was retired on 2026-08-13: every production call site passed sh=0.0,
+    so PTRS returned SC_MOMENTUM unchanged and the export carried the same
+    number under two names. The thresholds it fed are real and stay — they are
+    the ticker-quality half of the sizing chain — so they now read from
+    SC_MOMENTUM directly instead of through an alias.
+
+    Sizing itself remains the PM's: this returns a ceiling, not a size.
+    """
+    sc = float(sc_momentum or 0.0)
+    for cut, disp, size in DISPOSITION_CUTS:
+        if sc >= cut:
+            return {"disposition": disp, "max_size": size}
+    return {"disposition": "REJECT", "max_size": 0.0}

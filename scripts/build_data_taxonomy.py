@@ -1,291 +1,346 @@
-"""Generate the AQE data taxonomy from the code that actually emits the fields.
+"""Emit the AQE data taxonomy as CSV.
 
-A hand-written field list is wrong the day after it is written. This reads the
-authoritative sources instead and regenerates `docs/AQE_DATA_TAXONOMY.md`:
+Output: docs/AQE_DATA_TAXONOMY.csv
 
-  * `drive_sync._FIELD_SCHEMA` / `_FIELD_GLOSSARY` — the export's own
-    self-description, the same dicts that ship inside the daily JSON
-  * `agentic_dictionary.FIELD_ENUMS` / `GLOSSARY_FILL` — the agentic layer that
-    completes the glossary and enumerates every categorical field
-  * `lens_consensus.LENS_GLOSSARY` and `LENSES`
-  * `qs_spec`, `signal_radar`, `github_sync.DAILY_ARTIFACTS` — the frozen
-    constants and the artifact list
-  * a live `aqe_daily_export.json` when one is on disk, for the fields the
-    static sources do not name
+Columns
+    field              exported name, or internal name for a component
+    parent             the field this one feeds; blank at the root
+    level              composite | engine | component | leaf | block | context
+    output             numeric range, type, or literal
+    state              enum values, pipe-separated; blank if not categorical
+    represents         what the number is, one clause
+    source             module:symbol
+    formula            the arithmetic, transcribed from source
+    weight             contribution to parent: fraction, max points, or blank
 
-Every row records WHERE its definition came from, so a field documented only by
-a sample file is visibly weaker evidence than one documented by the glossary.
+Two inputs:
+  1. SCORE_TREE below — parent/child math transcribed from src/engines/*.py
+     with the divisor and every component maximum. Verified to sum: Flow 38,
+     Energy 59.5, Structure 95, MP 100, BQ 100, Elder 10.
+  2. The export's own field_schema / field_glossary / enum sets, read from code
+     at generation time, for every leaf the tree does not cover.
 
 Run:  python -m scripts.build_data_taxonomy
 """
 
 from __future__ import annotations
 
-import json
-from datetime import datetime
+import csv
+import re
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs" / "AQE_DATA_TAXONOMY.md"
-SGT = ZoneInfo("Asia/Singapore")
+OUT = ROOT / "docs" / "AQE_DATA_TAXONOMY.csv"
 
-# Where a field belongs in the reading order. First match wins, so order matters.
-GROUPS: list[tuple[str, tuple[str, ...]]] = [
-    ("Identity and rank", ("rank", "ticker", "source", "entry", "held",
-                           "on_longlist", "on_elder", "on_qs", "in_ledger")),
-    ("Composite scores", ("sc_momentum", "sc_momentum_raw", "sc_position",
-                          "ptrs", "pipe_rank", "pipe_tier", "floor",
-                          "sc_m_gates", "sc_m_gate_detail", "sc_p_gates",
-                          "sc_p_gate_detail")),
-    ("The five engines", ("flow", "energy", "structure", "mp", "elder",
-                          "mp_state", "elder_5d", "elder_pattern",
-                          "elder_context", "bq", "k39")),
-    ("Structural bracket", ("bracket", "malformed_bracket", "atr_caution")),
-    ("Levels and moving averages", ("ma_", "fib_", "last_pivot_high",
-                                    "sma_distance_pct")),
-    ("Volatility and relative strength", ("atr_14d", "vol_30d_ann", "beta_",
-                                          "rvol", "rs_", "day_vol")),
-    ("DETECT layer", ("structure_shift", "div_", "pin_bar", "inside_bar",
-                      "pib_pattern", "choch_", "knn_", "mp_accel")),
-    ("Signal Radar", ("runner_", "mover_subtype", "premove_")),
-    ("Chart patterns", ("pattern", "candle_")),
-    ("Lens consensus", ("lens",)),
-    ("Quiet Strength", ("qs",)),
-    ("Sector and thematic", ("gics_", "sector_", "thematic_")),
-    ("Held-position health", ("hl_", "live_px", "unreal_usd")),
-    ("FIP", ("fip_",)),
-    ("Schema vocabulary", ("role", "side", "unit", "_convention",
-                           "_decision_framework")),
-    ("Engine subcomponents", ("subcomponents",)),
-    ("Retired — documented, no longer emitted", ("atr_quarter",)),
+COLUMNS = ["field", "parent", "level", "output", "state", "represents",
+           "source", "formula", "weight"]
+
+
+def R(field, parent, level, output, state, represents, source, formula, weight=""):
+    return dict(zip(COLUMNS, [field, parent, level, output, state, represents,
+                              source, formula, weight]))
+
+
+# ── composites ───────────────────────────────────────────────────────────
+SCORE_TREE = [
+    R("sc_momentum", "", "composite", "0-100", "",
+      "Momentum pipeline composite, 1-3 week hold", "engines/scoring.py:SC_M_WEIGHTS",
+      "0.30*flow + 0.30*energy + 0.20*structure + 0.20*mp; uncapped, no floors applied"),
+    R("sc_momentum_raw", "sc_momentum", "composite", "0-100", "",
+      "Ungated composite; equals sc_momentum in v1.8.0", "engines/scoring.py",
+      "same weighted average before gate flags"),
+    R("sc_m_gates", "sc_momentum", "leaf", "bool", "true|false",
+      "All momentum gate floors cleared", "engines/scoring.py:SC_M_GATES",
+      "elder>=6.5 AND flow>=60 AND energy>=60 AND structure>=55 AND mp>=55"),
+    R("sc_position", "", "composite", "0-100", "",
+      "Base-building composite, 3-6 week hold", "engines/scoring.py:SC_P_WEIGHTS",
+      "0.10*flow + 0.30*energy + 0.20*structure + 0.05*mp + 0.35*bq"),
+    R("sc_p_gates", "sc_position", "leaf", "bool", "true|false",
+      "All position gate floors cleared", "engines/scoring.py:SC_P_GATES",
+      "flow>=40 AND energy>=60 AND structure>=65 AND mp>=40 AND bq>=60 AND k39"),
+
+    # ── Flow ─────────────────────────────────────────────────────────────
+    R("flow", "sc_momentum", "engine", "0-100", "",
+      "Money flow: institutional accumulation vs distribution", "engines/flow.py",
+      "clip(flow_score+accum_score+volume_score+skew_score+ext, 0, 38) / 38 * 100",
+      "0.30 of sc_momentum; 0.10 of sc_position"),
+    R("flow_score", "flow", "component", "0-17", "",
+      "MFI + CMF + Heikin-Ashi bar quality", "engines/flow.py:110",
+      "clip(mfi_cmf_bands + ha_bands, upper=17); ha_bands: count>=2->2, >=3->4, >=5->6",
+      "17 of 38"),
+    R("accum_score", "flow", "component", "0-7.5", "",
+      "A/D line short vs long linear-regression slope", "engines/flow.py:120-124",
+      "ad=rollsum(A/D,60); s=linreg(ad,10); l=linreg(ad,20); "
+      "s>0->1.5; s>l*0.85->3.0; s>l->5.5; s>l*1.1->7.5", "7.5 of 38"),
+    R("volume_score", "flow", "component", "0-7.5", "",
+      "Volume trend plus spike", "engines/flow.py:130-138",
+      "vtr=sma(v,5)/sma(v,20): >0.9->2, >1.05->4, >1.2->5.5; "
+      "spk=v/sma(v,20): >1.5->1, >2.0->2; clip(sum, upper=7.5)", "7.5 of 38"),
+    R("skew_score", "flow", "component", "0-3.5", "",
+      "Up-volume vs down-volume over 10 bars", "engines/flow.py:148-151",
+      "udr=sum(up_vol,10)/sum(down_vol,10): >=0.8->1.5, >1.2->2.5, >1.5->3.5",
+      "3.5 of 38"),
+    R("ext_score", "flow", "component", "-8 to +5", "",
+      "Extension from 20-bar range and EMA20", "engines/flow.py:159-190",
+      "range position and EMA20 distance banded; negative when overextended",
+      "-8..+5 of 38"),
+
+    # ── Energy ───────────────────────────────────────────────────────────
+    R("energy", "sc_momentum", "engine", "0-100", "",
+      "Stored energy: compression, position, exhaustion", "engines/energy.py",
+      "clip((vp_position+price_action+squeeze+exhaustion+atr) / 59.5 * 100, 0, 100)",
+      "0.30 of sc_momentum; 0.30 of sc_position"),
+    R("vp_position_score", "energy", "component", "0-17.5", "",
+      "Range-position proxy for volume-profile location", "engines/energy.py:61",
+      "clip(en_psc + en_lvn_proxy, upper=17.5); true VP array is diagnostic only",
+      "17.5 of 59.5"),
+    R("price_action_score", "energy", "component", "0-12.5", "",
+      "Higher lows, range tightness, pullback depth", "engines/energy.py:69-100",
+      "structure(<=5: hl>=1->1.5,>=2->3,>=3->4,>=4->5) + tightness(<=4.5) + "
+      "pullback(<25%->1,<15%->2,<10%->2.5,<5%->3); "
+      "x0.7 if pos50<45, x0.5 if pos50<30", "12.5 of 59.5"),
+    R("squeeze_score", "energy", "component", "0-12.5", "",
+      "Bollinger/Keltner squeeze and bandwidth percentile", "engines/energy.py:117-124",
+      "no squeeze: bwp<50->4, bwp<30->8.5; in squeeze: 5, bwp<50->7.5, "
+      "bwp<35->10, bwp<20->12.5", "12.5 of 59.5"),
+    R("exhaustion_score", "energy", "component", "0-10", "",
+      "Penalty for climactic, divergent or wide-spread bars", "engines/energy.py:167-168",
+      "10 + climactic_penalty + divergence_penalty + wide_spread_penalty, "
+      "floored at 0; only applied once the trend is mature", "10 of 59.5"),
+    R("atr_score", "energy", "component", "0-7", "",
+      "ATR expansion inside the productive band", "engines/energy.py:182-189",
+      "atr_expansion_pct in [20,80] -> 7; >=0 -> 1; >=-10 -> 0.5; "
+      ">80 -> 4; >150 -> 2", "7 of 59.5"),
+
+    # ── Structure ────────────────────────────────────────────────────────
+    R("structure", "sc_momentum", "engine", "0-100", "",
+      "Relative strength, base quality, overhead supply", "engines/structure.py",
+      "clip((rs_spy+rs_accel+base+ms_pos+resist+wk+earn) / 95 * 100, 0, 100)",
+      "0.20 of sc_momentum; 0.20 of sc_position"),
+    R("rs_spy_score", "structure", "component", "0-15", "",
+      "Relative performance vs SPY", "engines/structure.py:45-50",
+      "rs_vs_spy: >-3->3, >0->6, >2->10, >5->12, >10->15", "15 of 95"),
+    R("rs_accel_score", "structure", "component", "0-15", "",
+      "Change in relative strength", "engines/structure.py:56-61",
+      "rs_accel: >-5->3, >-2->6, >0->9, >2->12, >5->15", "15 of 95"),
+    R("base_score", "structure", "component", "0-15", "",
+      "Base duration and quality, with post-breakout decay",
+      "engines/structure.py:178",
+      "clip(base_raw * higher_lows_multiplier, upper=15); "
+      "base_days tiers <3->0,<5->3,5-7->6,7-10->10,10-25->15,25-30->12,"
+      "30-35->8,>35->5; multiplier <2 lows->0.6, >=2->0.8, >=4->1.0", "15 of 95"),
+    R("ms_pos", "structure", "component", "0-15", "",
+      "Position in the 50-bar range", "engines/structure.py:187-192",
+      "ms_p50: >=45->4, >=60->7, >=75->10, >=85->13, >=95->15", "15 of 95"),
+    R("resist_score", "structure", "component", "0-10", "",
+      "Clear air overhead; high means little resistance",
+      "engines/structure.py:196-200",
+      "dist_to_resist: <=15->3, <=8->5, <=3->10, <=0->7", "10 of 95"),
+    R("wk_score", "structure", "component", "0-15", "",
+      "Weekly close vs weekly SMA10", "engines/structure.py:205-212",
+      "wk_close vs wk_sma10: >0.93x->2, >0.97x->5, >1.00x->10, "
+      "and rising->15; 7.5 when no weekly data", "15 of 95"),
+    R("earn_score", "structure", "component", "0-10", "",
+      "Distance to the next earnings date", "engines/structure.py:docstring",
+      "days_to_earnings: <=5->0, <=10->4, <=20->7, >20 or unknown->10", "10 of 95"),
+
+    # ── MP ───────────────────────────────────────────────────────────────
+    R("mp", "sc_momentum", "engine", "0-100", "",
+      "Momentum persistence: will the move keep going", "engines/mp.py",
+      "clip(abs_mom + adx + rel_mom + trend, 0, 100)",
+      "0.20 of sc_momentum; 0.05 of sc_position"),
+    R("abs_mom_score", "mp", "component", "0-30", "",
+      "20-day ROC z-score against its own 50-day distribution",
+      "engines/mp.py:48",
+      "z=(roc20-sma(roc20,50))/stdev(roc20,50): >=2->30, >=1.5->26, >=1->22, "
+      ">=0.5->16, >=0->10, >=-0.5->5, else 0", "30 of 100"),
+    R("adx_score", "mp", "component", "0-25", "",
+      "Trend strength, only when DI is bullish", "engines/mp.py:58-62",
+      "adx>=20 and di_bullish->12, >=25->18, >=30->22, >=40->25", "25 of 100"),
+    R("rel_mom_score", "mp", "component", "0-25", "",
+      "20-day excess return vs SPY", "engines/mp.py:70",
+      "excess: >=15->25, >=10->22, >=5->18, >=2->13, >=0->8, >=-3->3, else 0",
+      "25 of 100"),
+    R("trend_score", "mp", "component", "0-20", "",
+      "Moving-average stacking", "engines/mp.py:84-94",
+      "above MA20 only->5; above MA50->8; MA50 rising->12; "
+      "stacked basic->16; fully stacked->20", "20 of 100"),
+    R("mp_state", "mp", "leaf", "label", "BUILDING|STRONG|FADING",
+      "Phase label for the momentum reading", "engines/mp.py", "banded on mp"),
+    R("mp_accel", "mp", "leaf", "float", "",
+      "Additive momentum acceleration, outside the Pine spec", "engines/mp.py",
+      "change in momentum; dead zone +/-0.10"),
+    R("mp_accel_state", "mp_accel", "leaf", "label",
+      "ACCELERATING|FLAT|DECELERATING", "Acceleration band",
+      "engines/mp.py:ACCEL_UP/ACCEL_DN", ">0.10 up, <-0.10 down, else flat"),
+
+    # ── Elder ────────────────────────────────────────────────────────────
+    R("elder", "", "engine", "0-10", "",
+      "Elder Impulse: trend and momentum agreeing", "engines/elder.py",
+      "state_score + slope_score + hist_score"),
+    R("elder_state_score", "elder", "component", "0|2|4", "",
+      "Impulse colour", "engines/elder.py", "green->4, blue->2, red->0", "4 of 10"),
+    R("elder_slope_score", "elder", "component", "0-3", "",
+      "3-bar EMA13 slope percent", "engines/elder.py", "banded 0-3", "3 of 10"),
+    R("elder_hist_score", "elder", "component", "0-3", "",
+      "MACD histogram trend", "engines/elder.py",
+      "MACD(12,26,9 EMA signal) histogram direction, banded 0-3", "3 of 10"),
+    R("elder_pattern", "elder", "leaf", "label",
+      "ACCELERATION|ACCUMULATION_BASE|CORRECTION_REENTRY|INTERRUPTED|SUSTAINED",
+      "Named impulse sequence", "engines/elder_context.py", "5-state classifier"),
+
+    # ── BQ / K39 ─────────────────────────────────────────────────────────
+    R("bq", "sc_position", "engine", "0-100", "",
+      "Base quality for the position pipeline", "engines/bq.py",
+      "bq_range_tight + bq_vol_dry + bq_base_dur + bq_ema_conv; already 0-100",
+      "0.35 of sc_position"),
+    R("bq_range_tight", "bq", "component", "0-30", "",
+      "Range tightness", "engines/bq.py", "ATR(5)/ATR(20) ratio, banded", "30 of 100"),
+    R("bq_vol_dry", "bq", "component", "0-25", "",
+      "Volume dry-up", "engines/bq.py", "SMA(vol,5)/SMA(vol,20), banded", "25 of 100"),
+    R("bq_base_dur", "bq", "component", "0-20", "",
+      "Base duration", "engines/bq.py", "3-mode detector with latch and decay",
+      "20 of 100"),
+    R("bq_ema_conv", "bq", "component", "0-25", "",
+      "EMA convergence", "engines/bq.py", "EMA spread / ATR(20), banded", "25 of 100"),
+    R("k39_gate", "sc_position", "leaf", "bool", "true|false",
+      "Weekly stochastic and OBV confirmation", "engines/k39.py",
+      "stoch(weekly,39)>50 AND obv_weekly>sma(obv_weekly,30); "
+      "mapped to daily as-of, no look-ahead"),
+
+    # ── Pipeline Rank ────────────────────────────────────────────────────
+    R("pipe_rank", "", "engine", "0-100", "",
+      "Pre-screen rank used to order the scoring queue", "engines/pipeline_rank.py",
+      "percentile blend of 12-month return, base and liquidity"),
+    R("pipe_tier", "pipe_rank", "leaf", "label", "A-TIER|B|C-WATCH|D-SKIP",
+      "Tier label from pipe_rank", "engines/pipeline_rank.py", "banded on pipe_rank"),
+
+    # ── disposition ──────────────────────────────────────────────────────
+    R("disposition", "sc_momentum", "leaf", "label",
+      "FULL|HALF|QUARTER|REJECT",
+      "Ticker-quality ceiling; the PM sizes, AQE does not",
+      "analyzer/ptrs.py:compute_disposition",
+      "sc_momentum >=60->FULL(1.0), >=50->HALF(0.5), >=45->QUARTER(0.25), "
+      "else REJECT(0.0)"),
+    R("max_size", "disposition", "leaf", "0-1", "",
+      "Fraction of a full risk unit permitted by ticker quality",
+      "analyzer/ptrs.py:DISPOSITION_CUTS", "1.0 | 0.5 | 0.25 | 0.0"),
+
+    # ── membership ───────────────────────────────────────────────────────
+    R("on_longlist", "", "leaf", "bool", "true|false",
+      "Longlist membership", "longlist_screen.py:passes",
+      "sc_momentum_raw >= 65 AND elder >= 7"),
+    R("on_elder", "", "leaf", "bool", "true|false",
+      "Standalone Elder list membership", "longlist_screen.py", "elder >= 8"),
+    R("on_qs", "", "leaf", "bool", "true|false",
+      "Quiet Strength emitted a read for this name", "engines/qs_daily.py",
+      "qs block present and scored"),
+
+    # ── lens consensus ───────────────────────────────────────────────────
+    R("lens_positive", "", "leaf", "0-6", "",
+      "Count of lenses reading strong", "engines/lens_consensus.py",
+      "unweighted count over leadership, coil, insti_money, structure, "
+      "resistance, sector; extension never counts"),
+    R("lens_warnings", "", "leaf", "0-6", "",
+      "Count of lenses reading warn", "engines/lens_consensus.py",
+      "unweighted count, same six lenses"),
 ]
 
-# Fields the glossary still describes but the export no longer emits. Keeping
-# the definition is right — an old file still has to be readable — but a reader
-# must not shop from this list expecting today's export to carry them.
-RETIRED = {
-    "atr_quarter_stop": "mechanical stop, retired in favour of bracket.stop",
-    "atr_quarter_risk_pct": "companion to atr_quarter_stop, retired with it",
-}
-
-BLOCKS = {
-    "date": "Scan date, US market close.",
-    "exported_at": "When this file was written (SGT).",
-    "market": "One-line market descriptor.",
-    "regime": "VIX bucket + Hurst regime detection, and the size ceiling it implies.",
-    "intermarket": "Cross-asset context read.",
-    "srm": "Sector Rotation Model — one row per GICS sector, graded.",
-    "srm_signals": "Sector-level signals derived from the SRM grid.",
-    "macro_weather": "The 7-instrument cross-asset direction read (TLT/UUP/HYG/IWM/GLD/CPER/USO).",
-    "regime_stop_pct_ceiling": "Regime-implied ceiling on stop width, in percent.",
-    "spy_roc_20d": "SPY 20-day rate of change — the benchmark move.",
-    "thematic_baskets": "The 35 thematic baskets with grades and RRG position.",
-    "sector_map_version": "Version stamp of the GICS sector map in force.",
-    "sector_map_gaps": "Tickers the sector map could not classify. Empty is the goal.",
-    "field_schema": "The export describing its own field types.",
-    "field_schema_enums": "Every permitted value for each categorical field.",
-    "field_glossary": "The export describing what each field means.",
-    "held_positions_status": "live / cache_fallback / unknown — whether this run's PTJ fetch was genuinely fresh.",
-    "held_positions": "The PM's live book, as read from the trade journal.",
-    "held_book": "Portfolio hedge layer — beta-adjusted exposure, gap scenarios, sector weights.",
-    "daily_list": "THE list. Every scored ticker with the full field set. Membership of Longlist / Elder / QS / ledger is a flag on the row, never a separate list.",
-    "lens_ranking": "The same names ordered by how many lenses agree. A reading order, not a verdict.",
-    "summary": "Counts and headline figures for the run.",
-    "signal_radar": "Radar tag totals across the scored universe.",
-    "data_quality": "Records carrying a null core field despite being scored. The loud-failure guard.",
-    "_radar_pool": "Internal radar pool sample. Diagnostic, not a read.",
-}
+for _r in SCORE_TREE:
+    _r["source"] = "src/" + _r["source"] if _r["source"] and not _r["source"].startswith("src/") else _r["source"]
 
 
-def _group_for(name: str) -> str:
-    for label, prefixes in GROUPS:
-        for p in prefixes:
-            if name == p or name.startswith(p):
-                return label
-    return "Other"
+# ── export blocks ────────────────────────────────────────────────────────
+BLOCKS = [
+    ("date", "str", "Scan date, US close"),
+    ("exported_at", "iso8601", "Write time, SGT"),
+    ("market", "str", "Market descriptor"),
+    ("regime", "dict", "VIX bucket, Hurst, size ceiling"),
+    ("intermarket", "dict", "Cross-asset context"),
+    ("srm", "list", "One graded row per GICS sector"),
+    ("srm_signals", "dict", "Sector-level signals"),
+    ("macro_weather", "dict", "7-instrument direction read"),
+    ("regime_stop_pct_ceiling", "float", "Regime cap on stop width, percent"),
+    ("spy_roc_20d", "float", "SPY 20-day rate of change"),
+    ("thematic_baskets", "dict", "35 baskets, graded, with RRG position"),
+    ("sector_map_version", "str", "GICS map version in force"),
+    ("sector_map_gaps", "list", "Unclassified tickers"),
+    ("field_schema", "dict", "Self-described field types"),
+    ("field_schema_enums", "dict", "Permitted values per categorical field"),
+    ("field_glossary", "dict", "Self-described field meanings"),
+    ("held_positions_status", "enum", "live | cache_fallback | unknown"),
+    ("held_positions", "list", "PM live book from the trade journal"),
+    ("held_book", "dict", "Beta-adjusted exposure, gap scenarios, sector weights"),
+    ("daily_list", "list", "Every scored ticker, full field set"),
+    ("lens_ranking", "dict", "Same names ordered by lens agreement"),
+    ("summary", "dict", "Run counts"),
+    ("signal_radar", "dict", "Radar tag totals"),
+    ("data_quality", "dict", "Scored records carrying a null core field"),
+]
 
 
-def collect() -> dict:
+def leaf_rows() -> list[dict]:
+    """Everything the score tree does not cover, from the export's own dicts."""
     from src.data import drive_sync as D
-    from src.data import github_sync as GH
     from src.engines import agentic_dictionary as AD
-    from src.engines import lens_consensus as LC
 
-    fields: dict[str, dict] = {}
+    covered = {r["field"] for r in SCORE_TREE} | {b[0] for b in BLOCKS}
+    enums = {**D._FIELD_SCHEMA_ENUMS, **AD.FIELD_ENUMS}
+    gloss = {**AD.GLOSSARY_FILL, **D._FIELD_GLOSSARY}
+    schema = D._FIELD_SCHEMA
 
-    def add(name, *, kind=None, desc=None, enum=None, src=None):
-        row = fields.setdefault(name, {"name": name, "kind": None, "desc": None,
-                                       "enum": None, "sources": []})
-        row["kind"] = row["kind"] or kind
-        row["desc"] = row["desc"] or desc
-        row["enum"] = row["enum"] or enum
-        if src and src not in row["sources"]:
-            row["sources"].append(src)
-
-    for k, v in D._FIELD_SCHEMA.items():
-        add(k, kind=str(v), src="export field_schema")
-    for k, v in D._FIELD_GLOSSARY.items():
-        add(k, desc=str(v), src="export field_glossary")
-    for k, v in AD.GLOSSARY_FILL.items():
-        add(k, desc=str(v), src="agentic glossary")
-    for k, v in {**D._FIELD_SCHEMA_ENUMS, **AD.FIELD_ENUMS}.items():
-        add(k, enum=list(v), src="enum set")
-    for k, v in LC.LENS_GLOSSARY.items():
-        add(k, desc=str(v), src="lens glossary")
-
-    sample_path = ROOT / "aegis" / "output" / "aqe_daily_export.json"
-    sample_meta = {}
-    if sample_path.exists():
-        try:
-            ex = json.loads(sample_path.read_text(encoding="utf-8"))
-            sample_meta = {"date": ex.get("date"),
-                           "records": len(ex.get("daily_list") or []),
-                           "path": str(sample_path.relative_to(ROOT))}
-            for rec in (ex.get("daily_list") or [])[:50]:
-                for k, v in rec.items():
-                    add(k, kind=type(v).__name__ if v is not None else None,
-                        src="observed in export")
-        except Exception:  # noqa: BLE001
-            pass
-
-    return {"fields": fields, "sample": sample_meta,
-            "lenses": list(LC.LENSES), "artifacts": list(GH.DAILY_ARTIFACTS),
-            "subcomponents": AD.SUBCOMPONENT_DOCS,
-            "folder": GH.OUTPUT_DIR_IN_REPO}
-
-
-def render(data: dict) -> str:
-    fields = data["fields"]
-    by_group: dict[str, list] = {}
-    for row in fields.values():
-        by_group.setdefault(_group_for(row["name"]), []).append(row)
-
-    order = [g for g, _ in GROUPS] + ["Other"]
-    now = datetime.now(SGT).strftime("%Y-%m-%d %H:%M SGT")
-
-    L = [
-        "# AQE Data Taxonomy",
-        "",
-        "**Every data point AQE computes and every place it lands.**",
-        "",
-        f"Generated {now} by `scripts/build_data_taxonomy.py`. Do not hand-edit —",
-        "regenerate it. Each row records where its definition came from, so a field",
-        "known only from a sample file is visibly weaker evidence than one carried by",
-        "the export's own glossary.",
-        "",
-        f"**{len(fields)} distinct fields** across "
-        f"{len([g for g in by_group if by_group[g]])} groups.",
-        "",
-        "---",
-        "",
-        "## 1 · Where the data lands",
-        "",
-        f"One destination: **`{data['folder']}/`** in this repository. "
-        "One copy of each file, overwritten in place, no dated filenames.",
-        "",
-        "| Artifact | What it carries |",
-        "|---|---|",
-    ]
-    art_desc = {
-        "aqe_daily_export.json": "The committee's read — every block in section 2.",
-        "aqe_crown_macro.json": "Crown macro reading copy: plain English first, series stripped.",
-        "crown_macro.json": "Crown runtime record, with the chart series.",
-        "macro_scenarios.json": "The Crown x Macro Weather merge point — 7 ranked scenarios.",
-        "qs_daily.json": "Quiet Strength standalone artifact.",
-        "shortlist.json": "The pre-export shortlist.",
-        "held_positions.json": "The PM's live book as read from the journal.",
-        "aqe_sector_map.json": "GICS sector map, rich form.",
-        "options_scan.json": "Universe CSP theta sweep.",
-        "aqe_last_run.json": "Run marker the status bar reads.",
-        "aqe_snapshot_meta.json": "When the runtime state snapshot was last written.",
-    }
-    for a in data["artifacts"]:
-        L.append(f"| `{a}` | {art_desc.get(a, '—')} |")
-    L += [
-        "",
-        "The heavy runtime state (`panel_daily`, `ma_panel`, `scores_daily`, `aqe.db`)",
-        "is **not** in this folder. It rides in a GitHub release asset on the",
-        "`state-snapshot` tag, because a daily binary of that size committed to the",
-        "repo would grow git history permanently. See `docs/AQE_GITHUB_AS_STORE.md`.",
-        "",
-        "---",
-        "",
-        "## 2 · Export structure — the 25 top-level blocks",
-        "",
-        "| Block | What it is |",
-        "|---|---|",
-    ]
-    for k, v in BLOCKS.items():
-        L.append(f"| `{k}` | {v} |")
-
-    L += [
-        "",
-        "### The one-list rule",
-        "",
-        "`daily_list` is the single list every surface reads. Longlist, Elder, QS,",
-        "ledger and held are **flags on the row** (`on_longlist`, `on_elder`, `on_qs`,",
-        "`in_ledger`, `held`), never parallel lists. Every row carries the identical",
-        "AQE block from the same builder, so levels cannot disagree between lists.",
-        "",
-        "An **absent** `qs` key means QS could not evaluate that name. That is not the",
-        "same as a poor QS score, and the two must not be read alike.",
-        "",
-        "---",
-        "",
-        "## 3 · Every field, by group",
-        "",
-    ]
-
-    for group in order:
-        rows = sorted(by_group.get(group, []), key=lambda r: r["name"])
-        if not rows:
+    rows = []
+    for name in sorted(set(schema) | set(gloss) | set(enums)):
+        if name in covered or name.startswith("_"):
             continue
-        L += [f"### {group} — {len(rows)} fields", "",
-              "| Field | Type | Values | Meaning | Documented by |", "|---|---|---|---|---|"]
-        for r in rows:
-            enum = ("`" + "` · `".join(str(x) for x in r["enum"]) + "`") if r["enum"] else ""
-            desc = (r["desc"] or "").replace("\n", " ").replace("|", "\\|")
-            if len(desc) > 400:
-                desc = desc[:397] + "…"
-            if r["name"] in RETIRED:
-                desc = f"**RETIRED** ({RETIRED[r['name']]}). {desc}"
-            kind = f"`{r['kind']}`" if r["kind"] else ""
-            L.append(f"| `{r['name']}` | {kind} | {enum} | {desc} | "
-                     f"{', '.join(r['sources'])} |")
-        L.append("")
+        # Retired fields keep a glossary entry so an older export stays
+        # readable. They are not part of the current data set.
+        if "RETIRED" in str(gloss.get(name, "")):
+            continue
+        sch = schema.get(name) or {}
+        unit = sch.get("unit", "") if isinstance(sch, dict) else ""
+        role = sch.get("role", "") if isinstance(sch, dict) else ""
+        desc = re.sub(r"\s+", " ", str(gloss.get(name, ""))).strip()
+        desc = desc.split(". ")[0][:180]
+        rows.append(R(name, _parent_of(name), "leaf", unit or "",
+                      "|".join(str(v) for v in enums.get(name, [])),
+                      desc, "src/data/drive_sync.py:_FIELD_GLOSSARY", "",
+                      role))
+    return rows
 
-    L += ["---", "", "## 4 · Engine subcomponents", "",
-          "Each engine also exports its own breakdown under `subcomponents`, so a",
-          "score can always be taken apart into the parts that made it.", ""]
-    for grp, doc in (data["subcomponents"] or {}).items():
-        L += [f"**`subcomponents.{grp}`** — {str(doc).strip()}", ""]
 
-    L += ["---", "", "## 5 · The lens set", "",
-          "Six lenses count toward the consensus; `extension` is present and",
-          "**always null** by ruling, because the voices disagree on what extension",
-          "means, so AQE prints the numbers and makes no call.", "",
-          "Counting lenses: " + ", ".join(f"`{x}`" for x in data["lenses"]), ""]
+PARENTS = [
+    (("div_", ), "divergence"), (("knn_", "choch_"), "smart_money_knn"),
+    (("pin_bar", "inside_bar", "pib_"), "pin_bar"),
+    (("runner_", "premove_", "mover_"), "signal_radar"),
+    (("fib_", ), "fibonacci"), (("ma_", ), "moving_averages"),
+    (("qs", ), "qs"), (("bracket", ), "bracket_engine"),
+    (("pattern", "candle_"), "patterns"),
+    (("sector_", "gics_"), "srm"), (("thematic_", ), "srm_thematic"),
+    (("hl_", ), "health"), (("lens", ), "lens_consensus"),
+    (("fip_", ), "fip"), (("beta_", "vol_", "atr_", "rvol", "rs_"), "market_stats"),
+]
 
-    if data["sample"]:
-        s = data["sample"]
-        L += ["---", "", "## 6 · Provenance of this run", "",
-              f"Static sources: the export's own `field_schema` / `field_glossary`,",
-              f"the agentic dictionary, the enum sets and the lens glossary — all read",
-              f"from code at generation time.", "",
-              f"Sample file: `{s.get('path')}` — {s.get('records')} records, "
-              f"scan date {s.get('date')}. Fields marked *observed in export* and",
-              "nothing else are known only from that sample; if it is stale, they are",
-              "the rows most likely to be out of date.", ""]
 
-    return "\n".join(L) + "\n"
+def _parent_of(name: str) -> str:
+    for prefixes, parent in PARENTS:
+        if any(name.startswith(p) for p in prefixes):
+            return parent
+    return ""
 
 
 def main() -> None:
-    data = collect()
+    rows = [R(n, "", "block", t, "", d, "src/data/drive_sync.py:build_export", "")
+            for n, t, d in BLOCKS]
+    rows += SCORE_TREE
+    rows += leaf_rows()
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(render(data), encoding="utf-8")
-    print(f"wrote {OUT.relative_to(ROOT)} — {len(data['fields'])} fields")
+    with OUT.open("w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=COLUMNS)
+        w.writeheader()
+        w.writerows(rows)
+    print(f"wrote {OUT.relative_to(ROOT)} — {len(rows)} rows")
 
 
 if __name__ == "__main__":

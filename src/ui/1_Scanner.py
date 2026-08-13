@@ -72,7 +72,6 @@ from src.data.panel_builder import PANEL_DAILY
 from src.scanner.score_runner import SCORES_DAILY
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
 from src.engines.srm import GICS_ETFS
-from src.analyzer.ptrs import compute_ptrs
 
 # ---------------------------------------------------------------------------
 # Page config — MUST be first Streamlit call
@@ -618,37 +617,6 @@ def _load_sector_lookup() -> dict[str, str]:
 def _ticker_sector(ticker: str) -> str:
     """Look up human-readable sector for a ticker."""
     return _load_sector_lookup().get(ticker, "—")
-
-
-def _quick_ptrs(sc_mom: float, ticker: str, sector_grades: dict) -> float:
-    """PTRS for any ticker (ad-hoc scorer) = SC_MOM verbatim.
-
-    The legacy Sector-Health (+SH) term is DROPPED (PM ruling, AIC Charter
-    Amendment v2.8, 2026-07) — must match the daily_list/held_positions PTRS
-    (drive_sync.py's `_ptrs()`) bit-for-bit, or the ad-hoc scorer silently
-    shows the PM a different PTRS than the live feed for the same ticker.
-    `ticker`/`sector_grades` kept for call-site compatibility (unused).
-    """
-    result = compute_ptrs(sc_mom, 0.0)
-    ptrs = result.get("ptrs")
-    return round(ptrs, 1) if ptrs is not None and ptrs == ptrs else 0.0
-
-
-@st.cache_data(ttl=600, show_spinner=False)
-def _load_sector_sh_map() -> dict[str, int]:
-    """Return {ticker: SH_value} for every ticker in sector_map.json."""
-    sm = load_sector_map()  # {ticker: 'XLK', ...}
-    return sm  # we'll resolve SH at call time
-
-
-def _vectorized_ptrs(df: pd.DataFrame, sector_grades: dict) -> pd.Series:
-    """PTRS for a full DataFrame = SC_MOM verbatim (vectorized).
-
-    The legacy Sector-Health (+SH) term is DROPPED (PM ruling, AIC Charter
-    Amendment v2.8, 2026-07) — see `_quick_ptrs`. `sector_grades` kept for
-    call-site compatibility (unused).
-    """
-    return df["sc_momentum"].fillna(0).round(1)
 
 
 def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
@@ -1283,8 +1251,6 @@ else:
         "thematic rotation (grades + RRG)."
     )
 
-# PTRS context — used by longlist and watchlist tables below
-# PTRS = SC_MOM + SH (sector only). Regime handles VIX sizing separately.
 _sector_grades = sl.get("srm_detail", {})
 _sector_map_raw = load_sector_map()  # {ticker: 'XLK'} for rank explainer
 
@@ -1444,7 +1410,7 @@ _EXPORT_COL_ORDER = [
     "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
     "qs_vetoes", "qs_extrapolated", "qs_not_listed",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
-    "sc_momentum", "sc_momentum_raw", "ptrs", "pipe_rank", "floor",
+    "sc_momentum", "sc_momentum_raw", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
     "beta_30d", "beta_60d", "day_vol", "rs_spy_20d", "sma_distance_pct",
     "pattern", "pattern_stage", "pattern_trigger",
@@ -1693,7 +1659,7 @@ if _held:
     _HELD_COLS = [
         "ticker", "qty", "entry", "live_px", "unreal_usd", "held_sl", "held_tp1",
         "held_tp2", "trade_date", "ptj_sector", "gics_gate",
-        "sc_momentum", "ptrs", "pipe_rank", "flow", "energy", "structure", "mp",
+        "sc_momentum", "pipe_rank", "flow", "energy", "structure", "mp",
         "mp_state", "elder", "beta_30d", "beta_60d", "day_vol", "rs_spy_20d",
         "sma_distance_pct", "sector_corr", "atr_14d", "bracket", "notes",
     ]
@@ -1724,7 +1690,7 @@ st.subheader("Daily list")
 active_recipe = sl.get("active_recipe", {})
 st.caption(
     "**ONE list — Longlist, Elder and QS are columns on it, not separate lists.** "
-    "`on_longlist` = SC_MOM > 64 AND PTRS ≥ 60 AND Elder ≥ 7. `on_elder` = also "
+    "`on_longlist` = SC_MOM > 64 AND Elder ≥ 7. `on_elder` = also "
     "Elder ≥ 8. `on_qs` = cleared the Quiet Strength engine's emit rule. A name can "
     "carry any combination; **tick QS alone to see what the third lens is adding.** "
     "The sliders now start at ZERO so this really is the whole list — tick **Longlist** "
@@ -1826,7 +1792,7 @@ if _ll_recs:
     f1, f2, f3, f4 = st.columns([1, 1, 1, 1.4])
     # SLIDERS START AT ZERO, so the default view is the WHOLE daily_list.
     #
-    # They used to default to the Longlist thresholds (SC 65 / PTRS 60 /
+    # They used to default to the Longlist thresholds (SC 65 /
     # Elder 7), which quietly made the Longlist the default view and left the
     # list checkboxes below with nothing to do: on the 2026-08-06 board ticking
     # "Longlist" changed 192 rows into 192 rows, and ticking "QS" produced an
@@ -1840,11 +1806,9 @@ if _ll_recs:
     # each control does one thing and every one of them visibly bites.
     # Tick Longlist for the old default view; the thresholds are unchanged and
     # still printed in the caption below.
-    from src.longlist_screen import MIN_SC, MIN_PTRS, MIN_ELDER
+    from src.longlist_screen import MIN_SC, MIN_ELDER
     _min_sc = f1.slider("Min SC_MOM", 0, 100, 0, key="sig_sc",
                         help=f"Longlist membership uses {MIN_SC}.")
-    _min_ptrs = f2.slider("Min PTRS", 0, 100, 0, key="sig_ptrs",
-                          help=f"Longlist membership uses {MIN_PTRS}.")
     _min_elder = f3.slider("Min Elder", 0, 10, 0, key="sig_elder",
                            help=f"Longlist membership uses {MIN_ELDER}; the "
                                 f"Elder list uses 8.")
@@ -1922,8 +1886,6 @@ if _ll_recs:
     def _keep(r: dict) -> bool:
         if (r.get("sc_momentum_raw") or r.get("sc_momentum") or 0) < _min_sc:
             return False
-        if (r.get("ptrs") or 0) < _min_ptrs:
-            return False
         if (r.get("elder") or 0) < _min_elder:
             return False
         if _mp_sel:
@@ -1970,7 +1932,7 @@ if _ll_recs:
         return True
 
     _filtered = sorted([r for r in _ll_recs if _keep(r)],
-                       key=lambda r: (r.get("ptrs") or 0), reverse=True)
+                       key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     _n_el = sum(1 for r in _filtered if r.get("on_elder"))
     _n_qs = sum(1 for r in _filtered if r.get("on_qs"))
     _n_qso = sum(1 for r in _filtered if r.get("on_qs")
@@ -2152,7 +2114,6 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
     macro_f = sd.get("macro_headwind_flag", "—")
     entry_gate = sd.get("entry_gate", "—")
 
-    ptrs = _quick_ptrs(sc, tk, sector_grades) if sc is not None else 0.0
 
     regime_lvl = regime.get("level", "—")
     vix = regime.get("vix", 0)
@@ -2160,7 +2121,7 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
     lines = [
         f"AIC — {tk} (ad-hoc scan, {r.get('as_of', '?')}):",
         f"SC {_fmt(sc, '.1f')}/raw {_fmt(raw, '.1f')} gate {gate} · "
-        f"PTRS {_fmt(ptrs, '.1f')} · MP {r.get('mp_state') or '—'}",
+        f"MP {r.get('mp_state') or '—'}",
         f"Flow {_fmt(r.get('flow'), '.0f')} · Energy {_fmt(r.get('energy'), '.0f')} · "
         f"Structure {_fmt(r.get('structure'), '.0f')} · MP {_fmt(r.get('mp'), '.0f')} · "
         f"Elder {_fmt(r.get('elder'), '.1f')} (5d: {_elder5_str(r.get('elder_5d'))}) · "
@@ -2174,7 +2135,8 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
         f"PipeRank {_fmt(r.get('pipe_rank'), '.1f')}"
         + (f"  [FIP spike-excluded, {r.get('fip_window_effective', 252)}d window]"
            if r.get("fip_spike_excluded") else ""),
-        "Advise: entry decision + size per PTRS x regime. Charter v1.9.3.",
+        "Advise: entry decision + size per SC_MOMENTUM disposition x regime. "
+        "Charter v1.9.3.",
     ]
     return "\n".join(lines)
 
@@ -2182,7 +2144,7 @@ def _aic_blurb(r: dict, regime: dict, srm_detail: dict, sector_grades: dict) -> 
 def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> dict:
     """Shape an ad-hoc score result into the EXPORT record schema, so it renders
     through the same `_export_table()` as the Longlist/Elder tables → identical
-    columns (PTRS, GICS gate, sector_corr, RVOL/RS/SMA, the elder_pattern +
+    columns (GICS gate, sector_corr, RVOL/RS/SMA, the elder_pattern +
     ecx_* context block, and the DSG-18 structural levels/targets).
     """
     from src.data.drive_sync import _v21_record_fields, _subcomponents, _new_engine_fields
@@ -2191,7 +2153,6 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
     lv = r.get("levels") or {}            # already the shape _v21_record_fields reads
     sc = r.get("sc_momentum")
     raw = r.get("sc_momentum_raw")
-    ptrs = _quick_ptrs(sc, tk, sector_grades) if sc is not None else None
 
     # Per-ticker lookup feeding _v21_record_fields (same keys the pipeline builds).
     lk = {
@@ -2216,7 +2177,7 @@ def _adhoc_export_record(r: dict, idx: int, sm: dict, sector_grades: dict) -> di
 
     rec = {
         "rank": idx, "ticker": tk, "source": "adhoc", "pe": False,
-        "sc_momentum": sc, "sc_momentum_raw": raw, "ptrs": ptrs,
+        "sc_momentum": sc, "sc_momentum_raw": raw,
         "pipe_rank": r.get("pipe_rank"),
         "flow": r.get("flow"), "energy": r.get("energy"),
         "structure": r.get("structure"), "mp": r.get("mp"),
@@ -2252,7 +2213,7 @@ if _adhoc_results:
     if _ok:
         st.caption(
             "Full longlist schema — the SAME columns as the Longlist / Elder tables "
-            "(PTRS, GICS gate, sector_corr, RVOL, RS vs SPY, SMA-distance, "
+            "(GICS gate, sector_corr, RVOL, RS vs SPY, SMA-distance, "
             "elder_pattern + ecx_* context, structural levels/targets, DSL/TP/Fib). "
             "As-of = the latest bar scored — may be fresher than the tables above. "
             "`source` = adhoc; sector_corr is blank (needs the parent-ETF panel)."

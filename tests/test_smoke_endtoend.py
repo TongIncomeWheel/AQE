@@ -348,25 +348,49 @@ def test_compute_ptrs_batch_matches_live_feed():
     assert list(out["ptrs"]) == list(out["sc_momentum"])
 
 
-def test_orchestrator_ptrs_matches_live_feed():
-    """The 2026-07-15 incident: _compute_ptrs_all still computed real SH after
-    the rest of the pipeline moved to sh=0.0 — its output leaked into
-    export['top_picks'] and could survive into the final daily_list PTRS (and
-    the longlist PTRS>=60 gate) for any ticker sourced from top_picks. Pin the
-    fix: PTRS must equal SC_MOMENTUM verbatim regardless of sector_grades."""
-    from src.pipeline.daily_orchestrator import _compute_ptrs_all
+def test_sector_health_never_moves_the_disposition():
+    """The 2026-07-15 incident, kept after PTRS was retired.
+
+    Back then `_compute_ptrs_all` still applied a real Sector-Health term after
+    the rest of the pipeline had moved to sh=0.0, and its output leaked into
+    `top_picks` and from there into the live feed. PTRS is gone as of
+    2026-08-13, but the guarantee it was protecting is not: sector context is a
+    committee read via SRM/RRG and must never discount a per-ticker score.
+    """
+    from src.pipeline.daily_orchestrator import _compute_disposition_all
 
     scores = [
         {"ticker": "AAPL", "sc_momentum": 72.3},
         {"ticker": "XOM", "sc_momentum": 40.0},
     ]
-    # sector_grades with real SH values — must NOT move the result.
+    # Real SH values on both sides of zero — neither may move the result.
     sector_grades = {"XLK": {"sh": 3, "grade": "DEPLOY"},
                      "XLE": {"sh": -8, "grade": "AVOID"}}
-    candidates = _compute_ptrs_all(scores, sector_grades, vix=18.0, regime={})
-    for c in candidates:
-        assert c["ptrs"] == c["sc_momentum"]
-        assert c["sh"] == 0.0
+    candidates = _compute_disposition_all(scores, sector_grades, vix=18.0, regime={})
+
+    assert [c["sc_momentum"] for c in candidates] == [72.3, 40.0]
+    assert [c["disposition"] for c in candidates] == ["FULL", "REJECT"]
+    assert all("ptrs" not in c and "sh" not in c for c in candidates)
+
+
+def test_ptrs_is_retired_and_stays_retired():
+    """It carried SC_MOMENTUM verbatim, so the export published one number
+    under two names and two code paths had to be kept bit-identical."""
+    from src.data import drive_sync as D
+    from src.pipeline import daily_orchestrator as O
+
+    # The glossary keeps the definition so an older export stays readable...
+    assert "RETIRED" in D._FIELD_GLOSSARY["ptrs"]
+    # ...but nothing emits it any more.
+    assert "ptrs" not in D._FIELD_SCHEMA
+    assert not hasattr(O, "_compute_ptrs_all")
+
+    from src.longlist_screen import passes
+    import src.longlist_screen as LS
+    assert not hasattr(LS, "MIN_PTRS"), "the redundant longlist leg is back"
+    # SC_MOM >= 65 already implied PTRS >= 60, so membership cannot have moved.
+    assert passes({"sc_momentum_raw": 66, "elder": 8})
+    assert not passes({"sc_momentum_raw": 64, "elder": 8})
 
 
 def test_srm_grade_basic():

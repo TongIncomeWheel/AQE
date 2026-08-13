@@ -6,7 +6,7 @@ backtester implementation.
 
 Grades: DEPLOY / HOLD / TURNING / WATCH / AVOID
 
-For PTRS integration, the grade maps to SH (Sector Health) values:
+Historical note — the grade once mapped to an SH (Sector Health) term:
     DEPLOY  → +3
     HOLD    → 0
     TURNING → -3
