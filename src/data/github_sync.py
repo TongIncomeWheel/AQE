@@ -357,6 +357,7 @@ DAILY_ARTIFACTS = (
     "aqe_crown_macro.json",       # Crown reading copy, plain English first
     "crown_macro.json",           # Crown runtime record, carries the series
     "macro_scenarios.json",       # the Crown x Macro Weather merge point
+    "aqe_macro_pack.json",        # Crown+MacroWeather+SRM+Thematic, one door
     "qs_daily.json",              # QS standalone artifact
     "shortlist.json",
     "held_positions.json",

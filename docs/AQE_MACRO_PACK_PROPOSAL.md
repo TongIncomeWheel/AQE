@@ -210,7 +210,7 @@ because they came back quiet"*:
    "check these two first" rule applies to the pack exactly as it applies
    to Crown alone.
 
-## 6 · What this needs from the PM before it's built
+## 6 · What this needed from the PM before it was built
 
 1. **Confirm the shape** — one new read-only module, one new artifact,
    no changes to Crown/SRM/Macro Weather/Thematic's own code or tests.
@@ -227,4 +227,22 @@ because they came back quiet"*:
    already run — reading their outputs, adding nothing to the critical
    path's own runtime beyond one more read-only pass.
 
-Not implemented in this pass. Say the word and it's the next piece of work.
+**Signed off 2026-08-13. Built exactly to this shape** — no changes to
+Crown/SRM/Macro Weather/Thematic's own code, one new metric, one new
+artifact:
+
+- `src/macro/pack.py` — `build_pack()` (pure) + `run_pack()`/`load_pack()`
+  (I/O). `tests/test_macro_pack.py` — 22 tests, including a static-analysis
+  check that the module never imports a Crown internal beyond
+  `crown.daily.load_crown` and that `crown/kernel.py` never references it
+  back.
+- Runs as **Step 8a-1** in `daily_orchestrator.py`, after Step 8 has written
+  `aqe_daily_export.json` (SRM's sector grades and Thematic Rotation's
+  basket grades live there) — see `docs/AQE_CROWN_DAILY_AND_OUTPUT.md` §1.
+- `aqe_macro_pack.json` rides in `github_sync.DAILY_ARTIFACTS` and
+  `persist.py`'s snapshot file list, same as the other four macro artifacts.
+- The two gaps the Committee Card consistency check (§5) found before
+  sign-off — undefined EARLY_EXIT/UNAVAILABLE behavior, and
+  `crown_status`/`oldest_leg` buried instead of surfaced — are both closed
+  in the shipped code: §3.3's artifact shape and §3.5 above are exactly
+  what `build_pack()` returns.

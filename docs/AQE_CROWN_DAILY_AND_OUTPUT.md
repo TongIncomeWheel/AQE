@@ -14,9 +14,13 @@ scripts\run_daily.bat          →  python -m src.pipeline.daily_orchestrator
 ```
 
 Crown is **step 6f**, scenarios are **6g**, the reading copy is **6h**. All three
-sit inside the same orchestrator, between the QS engine and the export build. In
-the cloud the same thing happens automatically at **08:30 SGT Tue–Sat** through
-`daily_job.py`, with the GitHub Action as a backstop.
+sit inside the same orchestrator, between the QS engine and the export build.
+**The macro pack is step 8a-1** — it has to run after Step 8 has written
+`aqe_daily_export.json` (SRM's sector grades and Thematic Rotation's basket
+grades live there) and after Crown/scenarios have already written theirs, so
+it sits later in the same run, not beside 6f-6h. In the cloud the same thing
+happens automatically at **08:30 SGT Tue–Sat** through `daily_job.py`, with
+the GitHub Action as a backstop.
 
 You will see this in the run log:
 
@@ -27,7 +31,19 @@ You will see this in the run log:
   leading DISPERSION_REGIME (100% of conditions) · runner-up REFLATION
 [daily] Step 6h: Crown reading copy -> Drive...
   aqe_crown_macro.json: 14,066 bytes · Drive ok
+...
+[daily] Step 8a-1: Macro pack...
+  Macro pack: OK (crown DEGRADED)
 ```
+
+**The macro pack** (`docs/AQE_MACRO_PACK_PROPOSAL.md`, PM-signed 2026-08-13,
+implementation in `src/macro/pack.py`) is a fifth, read-only module — it
+does not change Crown, SRM, Macro Weather or Thematic Rotation, it reads
+their finished output and adds exactly one new computation: whether each
+sector's and theme's current grade agrees with what the leading scenario
+implies for it. On `crown_status: EARLY_EXIT`/`UNAVAILABLE` its
+`sector_read`/`thematic_read` are absent from the artifact entirely — same
+discipline Crown itself uses, not smoothed into an empty list.
 
 **Gamma is now ON in the daily run.** It was off while there was no working
 open-interest feed. Each step is wrapped the same way QS is: a Crown failure

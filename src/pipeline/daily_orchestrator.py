@@ -459,6 +459,24 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive export failed: {exc}")
 
+    # Step 8a-1: the macro pack — the fifth, read-only door onto Crown/Macro
+    # Weather/SRM/Thematic Rotation (docs/AQE_MACRO_PACK_PROPOSAL.md, PM-signed
+    # 2026-08-13). Must run HERE, after Step 8 has written aqe_daily_export.json
+    # (srm[]/thematic_baskets[] live there) and after Crown (6f) + scenarios
+    # (6g) have already written their own artifacts — it reads all three,
+    # recomputes nothing, and mutates none of them.
+    print(f"{_el()} [daily] Step 8a-1: Macro pack...")
+    try:
+        from src.macro.pack import run_pack
+        pack_out = run_pack()
+        print(f"  Macro pack: {pack_out.get('pack_status')} "
+              f"(crown {pack_out.get('crown_status')})")
+        if pack_out.get("pack_status") == "PARTIAL":
+            print(f"  Macro pack: sector/thematic coherence withheld this run "
+                  f"— {(pack_out.get('limits') or [''])[0]}")
+    except Exception as exc:
+        print(f"  [WARN] Macro pack failed: {exc}")
+
     # Step 8a-2: publish the day's artifacts into the repo (aegis/output/).
     # GitHub is the primary store as of 2026-08-12; the Drive write above stays
     # as the backup leg. Both run every day so the book is never in one place.

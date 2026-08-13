@@ -75,6 +75,11 @@ def _members() -> list[tuple]:
         # and the AIC actually open. Published to Drive too, but persisted so a
         # recycle does not leave the page without it.
         "aqe_crown_macro.json",
+        # The macro pack — Crown+Macro Weather+SRM+Thematic, one door
+        # (docs/AQE_MACRO_PACK_PROPOSAL.md). Reads the three above plus the
+        # daily export; persisted so a recycle doesn't leave it stale until
+        # the next full run.
+        "aqe_macro_pack.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]
