@@ -1256,7 +1256,7 @@ BLOCKS = [
      "removed 2026-08-13; src/analyzer/regime.py itself retired the same "
      "day as a redundant wrapper — Crown/Macro Weather/Druckenmiller now "
      "own the regime read)",
-     "src/analyzer/ptrs.py:classify_vix_regime"),
+     "src/engines/bracket_engine.py:classify_vix_regime"),
     ("intermarket", "dict", "Cross-asset context",
      "engines/srm.py:compute_intermarket,enrich_sectors_intermarket:928-1050"),
     ("srm", "list", "One graded row per GICS sector",

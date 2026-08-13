@@ -48,6 +48,25 @@ def regime_stop_ceiling(regime_level: str | None) -> float:
     return REGIME_STOP_CEILINGS.get((regime_level or "GREEN").upper(), 12.0)
 
 
+def classify_vix_regime(vix: float) -> str:
+    """VIX -> GREEN/YELLOW/ORANGE/RED, the input to regime_stop_ceiling above.
+
+    Moved here 2026-08-13 from src/analyzer/ptrs.py, itself retired the same
+    day: after PTRS and the disposition ceiling were both removed earlier
+    that day, the file existed only to hold this one function — "no point
+    keeping one .py for essentially one data pull" (PM). This is the
+    function's one real structural consumer, so it lives beside it now
+    instead of behind a single-purpose module."""
+    if vix > 30:
+        return "RED"
+    elif vix > 25:
+        return "ORANGE"
+    elif vix > 18:
+        return "YELLOW"
+    else:
+        return "GREEN"
+
+
 def _num(*vals) -> bool:
     for v in vals:
         try:

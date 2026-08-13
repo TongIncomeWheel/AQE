@@ -687,23 +687,20 @@ TURNING<WATCH<AVOID). RRG computed identically for the basket index vs SPY. Pure
 panel math, 0 FMP calls. Baskets do NOT add names to the scan universe — governing
 rule; constituents are pulled into the panel for grading only.
 
-## 10. PTRS — `src/analyzer/ptrs.py`
+## 10. PTRS — retired 2026-08-13
 
-```
-ptrs = engine_score + sh
-```
-**Current production behavior**: every live call site passes `sh=0.0`, so
-**`ptrs == sc_momentum` (or `sc_position`) verbatim** — the Sector-Health adjustment
-was formally retired (AIC Charter Amendment v2.8, 2026-07). Sector context is read
-separately/qualitatively via `srm`/RRG rather than double-counted into the per-ticker
-score.
-
-**Disposition** (sizing tier, quality-only — VIX handled separately by regime):
-`≥60→FULL(100%)`, `[50,60)→HALF(50%)`, `[45,50)→QUARTER(25%)`, `<45→REJECT(0%)`.
-
-**Regime sizing** (VIX-based, applied on top, no double penalty):
-`GREEN→FULL, YELLOW→QUARTER, ORANGE→QUARTER, RED→NONE`. **Final size =
-min(PTRS disposition, regime max_new_size).**
+`ptrs = engine_score + sh` (Sector-Health adjustment) was formally retired
+already (AIC Charter Amendment v2.8, 2026-07) — every live call site passed
+`sh=0.0`, so `ptrs` was `sc_momentum`/`sc_position` verbatim, a re-read with
+no consumer past the shortlist floor. Retired for real 2026-08-13 (PM: "it
+is unused any anybody, total crap shit") along with the disposition ceiling
+built to replace it (`FULL`/`HALF`/`QUARTER`/`REJECT` on SC_MOMENTUM
+thresholds — the same re-read problem one level up) and the VIX-driven
+`FULL`/`QUARTER`/`NONE` regime size tier that combined with it. The
+shortlist floor is now a direct `SC_MOMENTUM >= SHORTLIST_MIN_SC` (45.0)
+comparison in `daily_orchestrator.py`. `src/analyzer/ptrs.py` — which by
+then held only `classify_vix_regime`, unrelated to any of the above — was
+itself retired the same day; see §12.
 
 ## 11. Portfolio Hedge Layer — `src/analyzer/held_book.py` (Charter §4C, held only)
 
@@ -721,13 +718,17 @@ Book-level: `loss_per_1pct_gap_usd = beta_adj_exposure_usd × 0.01`;
 gap-down scenario, beta-scaled. `sector_weights`: exposure share per GICS ETF (all
 11 sectors present, 0.0 where unheld).
 
-## 12. Regime detection — `src/analyzer/ptrs.py:classify_vix_regime`
+## 12. Regime detection — `src/engines/bracket_engine.py:classify_vix_regime`
 
 `src/analyzer/regime.py` was retired 2026-08-13 (PM: "we don't need a regime.py now
 — that's what Nick Crown covers, Macro Weather provides, Druckenmiller uses"). Its
 sole surviving computation, `classify_vix_regime`, already lived in `ptrs.py` — the
-file was a thin wrapper around it, and after Hurst was removed the same day (below)
-it had no computation of its own left to justify the indirection.
+file was a thin wrapper around it, and after Hurst was removed the same day it had
+no computation of its own left to justify the indirection. `ptrs.py` was then
+retired too, the same day (PM: "no point keeping 1 PY for essentially 1 data pull")
+once PTRS/disposition (§10) left it holding only this one function —
+`classify_vix_regime` now lives in `bracket_engine.py`, beside its one real
+structural consumer, `regime_stop_ceiling`.
 
 - **VIX regime** (`classify_vix_regime`): `≤18→GREEN, (18,25]→YELLOW, (25,30]→ORANGE, >30→RED`.
   This is the STRUCTURAL input to the bracket engine's stop-ceiling gate (§5.1's

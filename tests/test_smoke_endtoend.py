@@ -13,7 +13,7 @@ import pytest
 
 from src.analyzer import metrics as M
 from src.analyzer.baselines import random_baseline, spy_baseline
-from src.analyzer.ptrs import classify_vix_regime
+from src.engines.bracket_engine import classify_vix_regime
 from src.analyzer.recipe import Recipe, apply_filter
 from src.engines.srm import grade_sector_etf, GRADE_TO_SH
 from src.engines import bq, elder, energy, flow, k39, mp, scoring, structure
@@ -333,21 +333,23 @@ def test_ptrs_and_disposition_are_both_retired():
     """PTRS carried SC_MOMENTUM verbatim; the disposition ceiling built to
     replace it (2026-08-13) was the same re-read with no consumer past the
     shortlist floor, which is now a direct SC_MOMENTUM comparison. Both are
-    gone rather than kept as unused apparatus."""
-    from src.analyzer import ptrs as P
+    gone rather than kept as unused apparatus. src/analyzer/ptrs.py itself
+    was retired the same day (PM: "no point keeping 1 PY for essentially 1
+    data pull") once PTRS/disposition left it holding only the VIX
+    classifier — that function now lives beside its one real consumer,
+    bracket_engine.regime_stop_ceiling."""
+    import importlib.util
+
     from src.data import drive_sync as D
     from src.pipeline import daily_orchestrator as O
 
+    assert importlib.util.find_spec("src.analyzer.ptrs") is None
+
     # The glossary keeps the ptrs definition so an older export stays
-    # readable... but nothing emits it, and the module that computed it now
-    # holds only the VIX classifier, which is real and still used.
+    # readable, but nothing emits it.
     assert "RETIRED" in D._FIELD_GLOSSARY["ptrs"]
     assert "ptrs" not in D._FIELD_SCHEMA
     assert not hasattr(O, "_compute_ptrs_all")
-    assert not hasattr(P, "compute_ptrs")
-    assert not hasattr(P, "compute_ptrs_batch")
-    assert not hasattr(P, "compute_disposition")
-    assert not hasattr(P, "DISPOSITION_CUTS")
     assert not hasattr(O, "_compute_disposition_all")
     assert not hasattr(O, "compute_disposition")
 

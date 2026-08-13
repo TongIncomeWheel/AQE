@@ -167,13 +167,14 @@ def test_the_gate_floors_match_scoring_py():
 def test_disposition_is_gone_from_the_taxonomy():
     """PTRS, then the disposition ceiling built to replace it, were both a
     re-read of SC_MOMENTUM through a threshold table with no consumer.
-    Retired 2026-08-13 rather than kept as documented, unused apparatus."""
+    Retired 2026-08-13 rather than kept as documented, unused apparatus.
+    src/analyzer/ptrs.py itself was retired the same day once that left it
+    holding only classify_vix_regime, moved to bracket_engine.py."""
+    import importlib.util
     f = by_field()
     assert "disposition" not in f
     assert "max_size" not in f
-    from src.analyzer import ptrs as P
-    assert not hasattr(P, "compute_disposition")
-    assert not hasattr(P, "DISPOSITION_CUTS")
+    assert importlib.util.find_spec("src.analyzer.ptrs") is None
 
 
 def test_the_shortlist_floor_matches_the_orchestrator():
@@ -363,7 +364,7 @@ def test_every_block_cites_its_real_calculator_not_build_export():
     glossary. Only fields build_export genuinely computes inline (simple
     literals/timestamps/aggregates) may still cite it."""
     f = by_field()
-    delegated = {"regime": "ptrs.py", "srm": "srm.py",
+    delegated = {"regime": "bracket_engine.py", "srm": "srm.py",
                 "macro_weather": "srm.py", "intermarket": "srm.py",
                 "thematic_baskets": "srm.py", "held_book": "held_book.py",
                 "data_quality": "_compute_data_quality",

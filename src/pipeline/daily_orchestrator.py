@@ -49,7 +49,7 @@ from src.engines.srm import (
     BASKET_CONSTITUENTS,
 )
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
-from src.analyzer.ptrs import classify_vix_regime
+from src.engines.bracket_engine import classify_vix_regime
 
 STAGE2_MAX = 50
 PIPE_RANK_CUTOFF = 60

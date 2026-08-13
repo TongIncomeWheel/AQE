@@ -2,7 +2,7 @@ field,parent,level,output,state,represents,source,formula,weight,used_by,ships_i
 date,,block,str,,"Scan date, US close",src/data/drive_sync.py:build_export,,,,top-level export key
 exported_at,,block,iso8601,,"Write time, SGT",src/data/drive_sync.py:build_export,,,,top-level export key
 market,,block,str,,Market descriptor,src/data/drive_sync.py:build_export,,,,top-level export key
-regime,,block,dict,,"VIX bucket only — the structural input to the bracket engine's stop-ceiling gate, not a market-regime narrative (Hurst removed 2026-08-13; src/analyzer/regime.py itself retired the same day as a redundant wrapper — Crown/Macro Weather/Druckenmiller now own the regime read)",src/analyzer/ptrs.py:classify_vix_regime,,,,top-level export key
+regime,,block,dict,,"VIX bucket only — the structural input to the bracket engine's stop-ceiling gate, not a market-regime narrative (Hurst removed 2026-08-13; src/analyzer/regime.py itself retired the same day as a redundant wrapper — Crown/Macro Weather/Druckenmiller now own the regime read)",src/engines/bracket_engine.py:classify_vix_regime,,,,top-level export key
 intermarket,,block,dict,,Cross-asset context,"engines/srm.py:compute_intermarket,enrich_sectors_intermarket:928-1050",,,,top-level export key
 srm,,block,list,,One graded row per GICS sector,engines/srm.py:grade_all_sectors:293-334,,,,top-level export key
 macro_weather,,block,dict,,7-instrument direction read,engines/srm.py:compute_macro_weather:789-928,,,,top-level export key
