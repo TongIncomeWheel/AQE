@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CSV_PATH = ROOT / "docs" / "AQE_DATA_TAXONOMY.csv"
 
 COLUMNS = ["field", "parent", "level", "output", "state", "represents",
-           "source", "formula", "weight"]
+           "source", "formula", "weight", "used_by"]
 
 
 def rows():
@@ -201,7 +201,7 @@ def test_every_enum_field_also_carries_a_real_formula():
 
 def test_the_srm_grade_ladder_matches_the_engine():
     from src.engines.srm import ACCEL_MIN_DIVERGENCE, ACCEL_MIN_ROC5, TREND_MIN_ROC20
-    f = by_field()["gics_grade"]["formula"]
+    f = by_field()["grade"]["formula"]
     assert f"roc20>{TREND_MIN_ROC20}" in f
     assert f"roc5>={ACCEL_MIN_ROC5}" in f
     assert f"divergence>={ACCEL_MIN_DIVERGENCE}" in f
@@ -228,6 +228,89 @@ def test_previously_incomplete_enums_are_fixed_at_the_source():
     assert "STABLE" in FIELD_ENUMS["sector_rrg_direction"]
     assert "STABLE" in FIELD_ENUMS["thematic_rrg_direction"]
     assert "NO_DATA" in FIELD_ENUMS["thematic_grade"]
+
+
+# ── source integrity: never the glossary, never a malformed key ─────────
+
+def test_almost_nothing_still_cites_the_glossary_as_its_source():
+    """field_glossary describes fields; it does not compute them. Citing it
+    as 'source' was citing documentation as evidence. Only the three schema
+    vocabulary entries (role/side/unit — not data fields, the enum
+    vocabulary itself) are allowed to remain that way."""
+    still_glossary = [r["field"] for r in rows()
+                      if "_FIELD_GLOSSARY" in r["source"]]
+    assert set(still_glossary) == {"role", "side", "unit"}, \
+        f"unexpected glossary-only sources: {still_glossary}"
+
+
+def test_malformed_glossary_keys_never_become_rows():
+    """field_glossary carries 3 keys that join several real field names
+    with a slash — one entry documenting five fields at once. Iterating
+    that dict naively turns each into a fake row."""
+    from scripts.build_data_taxonomy import MALFORMED_GLOSSARY_KEYS
+    field_names = {r["field"] for r in rows()}
+    assert not (field_names & MALFORMED_GLOSSARY_KEYS)
+
+
+def test_the_dropped_malformed_keys_real_fields_still_have_their_own_rows():
+    """The fix must not lose coverage — each individual field the combined
+    key was describing needs its own row with its own real formula."""
+    f = by_field()
+    for field in ("fib_236", "fib_382", "fib_500", "fib_618", "fib_786",
+                 "fib_swing_low", "fib_swing_high",
+                 "ma_20", "ma_50", "ma_100", "ma_200"):
+        assert f[field]["formula"], f"{field} lost its formula in the fix"
+
+
+# ── two naming corrections found while sourcing every field ─────────────
+
+def test_structure_field_names_match_the_engines_own_columns():
+    """structure.py's DataFrame column is ms_pos_score, not 'ms_pos' — this
+    taxonomy used the shorter name until the mismatch was found while
+    tracing what QS actually reads (QS's LENSES dict uses ms_pos_score)."""
+    f = by_field()
+    assert "ms_pos_score" in f
+    assert "ms_pos" not in f
+
+
+def test_pipeline_rank_field_names_match_the_engines_own_columns():
+    """pipeline_rank.py's local variable is ret_score but its DataFrame
+    column — and score_runner.py's merged name — is ret_12m_score."""
+    f = by_field()
+    assert "ret_12m_score" in f
+    assert "ret_score" not in f
+
+
+# ── used_by: consumers confirmed by direct read, not guessed ────────────
+
+def test_qs_lens_inputs_are_marked_as_used_by_qs():
+    """Every field QS's own LENSES dict reads (qs_spec.py:31-37) should say
+    so, so a reader can tell this isn't just an AQE-internal number."""
+    f = by_field()
+    for field in ("en_pos50", "ms_pos_score", "roc_zscore", "abs_mom_score",
+                 "rel_mom_score", "accum_score", "mfi", "cmf", "rs_vs_spy",
+                 "bq_range_tight", "bq_ema_conv", "squeeze_score"):
+        assert "QS" in f[field]["used_by"], f"{field} used_by not marked"
+
+
+def test_lens_consensus_inputs_are_marked():
+    f = by_field()
+    assert "lens_consensus" in f["gics_gate"]["used_by"]
+
+
+def test_longlist_and_elder_gates_declare_their_own_consumer():
+    f = by_field()
+    assert "alert" in f["on_longlist"]["used_by"].lower()
+    assert "alert" in f["on_elder"]["used_by"].lower()
+
+
+def test_the_integrity_findings_doc_exists_and_names_its_key_findings():
+    """The completeness/duplicate audit that produced most of the fixes
+    above lives in a companion doc, not just in commit messages."""
+    text = (ROOT / "docs" / "AQE_DATA_INTEGRITY_FINDINGS.md").read_text(encoding="utf-8")
+    for phrase in ("ms_pos_score", "ret_12m_score", "on_elder",
+                  "MALFORMED_GLOSSARY_KEYS", "stair_hl_count", "rt_ratio"):
+        assert phrase in text, f"findings doc lost its note on {phrase}"
 
 
 # ── the retirement ───────────────────────────────────────────────────────

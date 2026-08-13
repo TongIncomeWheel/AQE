@@ -3,22 +3,47 @@
 Output: docs/AQE_DATA_TAXONOMY.csv
 
 Columns
-    field              exported name, or internal name for a component
+    field              the name that actually ships — the engine's own
+                       DataFrame column where one exists, even where a later
+                       merge step renames it for export (that rename is
+                       recorded in `represents`, never silently followed)
     parent             the field this one feeds; blank at the root
     level              composite | engine | component | leaf | block | context
     output             numeric range, type, or literal
     state              enum values, pipe-separated; blank if not categorical
     represents         what the number is, one clause
-    source             module:symbol
+    source             the REAL calculator: a src/ file:line that computes
+                       this value, or an external source (FMP endpoint, the
+                       PTJ broker journal, cboe.com, cftc.gov). Never the
+                       export's own field_glossary — that dict describes
+                       fields, it does not compute them, and citing it as a
+                       "source" was citing documentation as evidence.
     formula            the arithmetic, transcribed from source
     weight             contribution to parent: fraction, max points, or blank
+    used_by            every downstream consumer that reads this field as an
+                       INPUT — QS lens/recipe, the Longlist/Elder-list gate,
+                       a DETECT-layer lens, an alert trigger, the sector
+                       entry gate. Blank means: computed and exported, no
+                       confirmed reader elsewhere in the codebase — worth
+                       knowing, not necessarily worth removing.
 
 Two inputs:
   1. SCORE_TREE below — parent/child math transcribed from src/engines/*.py
      with the divisor and every component maximum. Verified to sum: Flow 38,
      Energy 59.5, Structure 95, MP 100, BQ 100, Elder 10.
-  2. The export's own field_schema / field_glossary / enum sets, read from code
-     at generation time, for every leaf the tree does not cover.
+  2. The export's own field_schema / field_glossary / enum sets, read from
+     code at generation time, for whatever the tree does not cover — used
+     ONLY to discover field names and enum values that exist; the source and
+     formula for every one of those fields is still traced back to the real
+     calculator by hand, never left pointing at the glossary text itself.
+
+A malformed-key guard: the export's own `_FIELD_GLOSSARY` dict carries three
+keys that join several real field names with a slash
+("fib_236/382/500/618/786", "ma_20/50/100/200", "fib_swing_low/high") — one
+glossary entry documenting five fields at once. Naively iterating that dict's
+keys turns each into a fake taxonomy row. MALFORMED_GLOSSARY_KEYS below names
+them explicitly so they are dropped, not emitted as three garbage fields
+whose real name is a felony against CSV.
 
 Run:  python -m scripts.build_data_taxonomy
 """
@@ -33,12 +58,19 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "AQE_DATA_TAXONOMY.csv"
 
 COLUMNS = ["field", "parent", "level", "output", "state", "represents",
-           "source", "formula", "weight"]
+           "source", "formula", "weight", "used_by"]
+
+# Keys in the export's own field_glossary that document several real fields
+# under one slash-joined pseudo-name. Not field names — dropped outright.
+MALFORMED_GLOSSARY_KEYS = {
+    "fib_236/382/500/618/786", "ma_20/50/100/200", "fib_swing_low/high",
+}
 
 
-def R(field, parent, level, output, state, represents, source, formula, weight=""):
+def R(field, parent, level, output, state, represents, source, formula,
+     weight="", used_by=""):
     return dict(zip(COLUMNS, [field, parent, level, output, state, represents,
-                              source, formula, weight]))
+                              source, formula, weight, used_by]))
 
 
 # ── composites ───────────────────────────────────────────────────────────
@@ -87,7 +119,7 @@ SCORE_TREE = [
     R("accum_score", "flow", "component", "0-7.5", "",
       "A/D line short vs long linear-regression slope", "engines/flow.py:120-124",
       "ad_short>0->1.5; ad_short>ad_long*0.85->3.0; ad_short>ad_long->5.5; "
-      "ad_short>ad_long*1.1->7.5", "7.5 of 38"),
+      "ad_short>ad_long*1.1->7.5", "7.5 of 38", used_by="QS:FLOW lens"),
     R("ad_short", "accum_score", "leaf", "float", "",
       "10-bar linear-regression endpoint of the 60-bar rolling A/D sum",
       "engines/flow.py:117-121",
@@ -100,8 +132,11 @@ SCORE_TREE = [
       "Volume trend plus spike, capped", "engines/flow.py:126-138",
       "clip(vt_b + spk_b, upper=7.5)", "7.5 of 38"),
     R("vtr", "volume_score", "leaf", "ratio", "",
-      "5-day average volume over 20-day average volume", "engines/flow.py:126-127",
-      "sma(volume,5) / sma(volume,20)"),
+      "5-day average volume over 20-day average volume. The identical "
+      "SMA(5)/SMA(20) volume ratio is computed independently in 4 places: "
+      "here, bq.py's vd_ratio, pipeline_rank.py's vol_ratio, and "
+      "readiness.py's own vd_ratio — same formula, four implementations.",
+      "engines/flow.py:126-127", "sma(volume,5) / sma(volume,20)"),
     R("vt_b", "volume_score", "leaf", "0|2|4|5.5", "",
       "Step score on vtr", "engines/flow.py:131-133",
       "vtr>0.9->2.0, vtr>1.05->4.0, vtr>1.2->5.5"),
@@ -145,9 +180,12 @@ SCORE_TREE = [
       "engines/energy.py:39-61", "clip(en_psc + en_lvn_proxy, upper=17.5)",
       "17.5 of 59.5"),
     R("en_pos50", "vp_position_score", "leaf", "0-100 pct", "",
-      "Close position inside the 50-bar high/low range", "engines/energy.py:39-46",
+      "Close position inside the 50-bar high/low range. IDENTICAL formula to "
+      "ms_pos_score (structure.py:181-186) — same window, same zero-range "
+      "fallback, independently implemented in two engines.",
+      "engines/energy.py:39-46",
       "(close - lowest(low,50)) / (highest(high,50) - lowest(low,50)) * 100; "
-      "50.0 when the 50-bar range is zero"),
+      "50.0 when the 50-bar range is zero", used_by="QS:STRUCTURE lens"),
     R("en_psc", "vp_position_score", "leaf", "3-17", "",
       "Step score on en_pos50; the 90+ tier scores below the 75-90 tier "
       "on purpose — Pine's own extension penalty", "engines/energy.py:48-54",
@@ -184,10 +222,12 @@ SCORE_TREE = [
       "Step score on pullback_pct", "engines/energy.py:90-93",
       "pullback_pct<25->1.0, <15->2.0, <10->2.5, <5->3.0", "3 of 12.5"),
     R("squeeze_score", "energy", "component", "0-12.5", "",
-      "Bollinger/Keltner squeeze state and bandwidth percentile",
+      "Bollinger/Keltner squeeze state and bandwidth percentile. Same bb/kc "
+      "construction as readiness.py's own compression sub-score — a "
+      "duplicate, different downstream bands.",
       "engines/energy.py:113-124",
       "sq=false: bwp<50->4.0, bwp<30->8.5; sq=true: 5.0, bwp<50->7.5, "
-      "bwp<35->10.0, bwp<20->12.5", "12.5 of 59.5"),
+      "bwp<35->10.0, bwp<20->12.5", "12.5 of 59.5", used_by="QS:COIL lens"),
     R("bwp", "squeeze_score", "leaf", "0-100 pct", "",
       "Bollinger bandwidth's own 50-bar percentile", "engines/energy.py:104-111",
       "bw=(BB_upper-BB_lower)/BB_mid*100, BB=SMA20 +/- 2*stdev_pop(close,20); "
@@ -244,7 +284,8 @@ SCORE_TREE = [
       "rs_vs_spy: >-3->3, >0->6, >2->10, >5->12, >10->15", "15 of 95"),
     R("rs_vs_spy", "rs_spy_score", "leaf", "pct", "",
       "60-day return, stock minus SPY", "engines/structure.py:40-43",
-      "(close/close[60]-1)*100 - (spy_close/spy_close[60]-1)*100"),
+      "(close/close[60]-1)*100 - (spy_close/spy_close[60]-1)*100",
+      used_by="QS:LEADERSHIP lens"),
     R("rs_accel_score", "structure", "component", "0-15", "",
       "Change in relative strength", "engines/structure.py:52-61",
       "rs_accel: >-5->3, >-2->6, >0->9, >2->12, >5->15", "15 of 95"),
@@ -278,11 +319,16 @@ SCORE_TREE = [
     R("base_quality_mult", "base_score", "leaf", "0.6|0.8|1.0", "",
       "Multiplier on base_raw from hl_in_base", "engines/structure.py:159-161",
       "hl_in_base <2 ->0.6, >=2 ->0.8, >=4 ->1.0"),
-    R("ms_pos", "structure", "component", "0-15", "",
-      "Position in the 50-bar range", "engines/structure.py:163-192",
-      "ms_p50: >=45->4, >=60->7, >=75->10, >=85->13, >=95->15", "15 of 95"),
-    R("ms_p50", "ms_pos", "leaf", "0-100 pct", "",
-      "Close position inside the 50-bar high/low range",
+    R("ms_pos_score", "structure", "component", "0-15", "",
+      "Position in the 50-bar range. The engine's own DataFrame column is "
+      "named ms_pos_score (structure.py:235), not the shorter 'ms_pos' this "
+      "field was previously mislabelled as here.",
+      "engines/structure.py:163-192",
+      "ms_p50: >=45->4, >=60->7, >=75->10, >=85->13, >=95->15", "15 of 95",
+      used_by="QS:STRUCTURE lens; QS recipes"),
+    R("ms_p50", "ms_pos_score", "leaf", "0-100 pct", "",
+      "Close position inside the 50-bar high/low range. IDENTICAL formula "
+      "to en_pos50 (energy.py:39-46) — independently implemented.",
       "engines/structure.py:163-168",
       "(close-lowest(low,50)) / (highest(high,50)-lowest(low,50)) * 100; "
       "50.0 when the 50-bar range is zero"),
@@ -314,19 +360,21 @@ SCORE_TREE = [
       "20-day ROC z-score against its own 50-day distribution",
       "engines/mp.py:42-49",
       "roc_zscore>=2.0->30, >=1.5->26, >=1.0->22, >=0.5->16, >=0.0->10, "
-      ">=-0.5->5, else 0", "30 of 100"),
+      ">=-0.5->5, else 0", "30 of 100", used_by="QS:MOMENTUM lens (inverted)"),
     R("roc_zscore", "abs_mom_score", "leaf", "z-score", "",
       "20-day rate of change, standardised against its own 50-day mean/stdev",
       "engines/mp.py:42-45",
       "roc20=(close/close[20]-1)*100; roc_zscore=(roc20-sma(roc20,50))/"
-      "stdev_pop(roc20,50)"),
+      "stdev_pop(roc20,50)", used_by="QS:MOMENTUM lens (inverted)"),
     R("adx_score", "mp", "component", "0-25", "",
       "Trend strength, gated on DI direction", "engines/mp.py:57-62",
       "(adx_val>=20 AND di_bullish)->12; (adx_val>=25 AND di_bullish)->18; "
       "(adx_val>=30 AND di_bullish)->22; (adx_val>=40 AND di_bullish)->25; "
       "else 0", "25 of 100"),
     R("adx_val", "adx_score", "leaf", "0-100", "",
-      "14-period Average Directional Index, Wilder RMA of DX",
+      "14-period Average Directional Index, Wilder RMA of DX. Same formula "
+      "as pipeline_rank.py's own DMI/ADX (pr_adx_score's input) — different "
+      "code, mathematically equivalent, a genuine duplicate.",
       "engines/mp.py:139-155",
       "plus_di=100*wilder_rma(plus_dm,14)/wilder_rma(TR,14); minus_di "
       "likewise on minus_dm; dx=100*|plus_di-minus_di|/(plus_di+minus_di); "
@@ -337,7 +385,7 @@ SCORE_TREE = [
     R("rel_mom_score", "mp", "component", "0-25", "",
       "20-day excess return vs SPY", "engines/mp.py:65-72",
       "excess_return>=15->25, >=10->22, >=5->18, >=2->13, >=0->8, "
-      ">=-3->3, else 0", "25 of 100"),
+      ">=-3->3, else 0", "25 of 100", used_by="QS:MOMENTUM lens (inverted)"),
     R("excess_return", "rel_mom_score", "leaf", "pct", "",
       "20-day return, stock minus SPY", "engines/mp.py:65-68",
       "(close/close[20]-1)*100 - (spy_close/spy_close[20]-1)*100"),
@@ -407,9 +455,11 @@ SCORE_TREE = [
       "clip(bq_range_tight + bq_vol_dry + bq_base_dur + bq_ema_conv, 0, 100)",
       "0.35 of sc_position"),
     R("bq_range_tight", "bq", "component", "0-30", "",
-      "Range tightness", "engines/bq.py:32-39",
+      "Range tightness. rt_ratio (ATR5/ATR20) is computed identically in "
+      "readiness.py's own rd_compression sub-score — a duplicate, "
+      "different downstream bands.", "engines/bq.py:32-39",
       "rt_ratio<1.0->4, <0.9->8, <0.8->14, <0.7->20, <0.6->25, <0.5->30",
-      "30 of 100"),
+      "30 of 100", used_by="QS:COIL lens"),
     R("rt_ratio", "bq_range_tight", "leaf", "ratio", "",
       "5-bar ATR over 20-bar ATR", "engines/bq.py:35", "ATR(5) / ATR(20)"),
     R("bq_vol_dry", "bq", "component", "0-25", "",
@@ -434,9 +484,11 @@ SCORE_TREE = [
       "breakout (close>rolling consolidation high AND vol>SMA20vol AND "
       "raw>=3) for 10 bars, then reverts to the live raw count"),
     R("bq_ema_conv", "bq", "component", "0-25", "",
-      "EMA(8/13/21) convergence", "engines/bq.py:128-136",
+      "EMA(8/13/21) convergence. Same formula as readiness.py's own "
+      "rd_compression sub-score — a duplicate, different downstream bands.",
+      "engines/bq.py:128-136",
       "norm_spread<2.5->5, <1.8->10, <1.2->15, <0.8->20, <0.5->25",
-      "25 of 100"),
+      "25 of 100", used_by="QS:COIL lens"),
     R("norm_spread", "bq_ema_conv", "leaf", "ratio", "",
       "Spread of EMA8/13/21 normalised by ATR20", "engines/bq.py:128-131",
       "(max(EMA8,EMA13,EMA21) - min(EMA8,EMA13,EMA21)) / ATR(20)"),
@@ -451,18 +503,21 @@ SCORE_TREE = [
       "clip(momentum_composite*0.70 + fip_quality*0.30, 0, 100)"),
     R("momentum_composite", "pipe_rank", "leaf", "0-100", "",
       "Sum of five 20-point technical sub-scores", "engines/pipeline_rank.py:93-155",
-      "clip(ret_score + adx_score + rsi_score + vol_score + ma_score, 0, 100)",
-      "70 pct weight"),
-    R("ret_score", "momentum_composite", "leaf", "0-20", "",
-      "12-month return skipping the most recent month, banded",
+      "clip(ret_12m_score + pr_adx_score + rsi_score + vol_score + ma_score, "
+      "0, 100)", "70 pct weight"),
+    R("ret_12m_score", "momentum_composite", "leaf", "0-20", "",
+      "12-month return skipping the most recent month, banded. The "
+      "function's own local variable is named ret_score; the DataFrame "
+      "column (and the field this row documents) is ret_12m_score.",
       "engines/pipeline_rank.py:93-99",
       "ret_12m=(close/close[231]-1)*100; >-10->4, >0->8, >10->12, >25->16, "
       ">50->20", "20 of 100"),
     R("pr_adx_score", "momentum_composite", "leaf", "0-20", "",
-      "ADX(14) trend strength, gated on DI direction. pipeline_rank.py has "
-      "its own _adx/_dmi (ATR-normalised DI), a separate implementation "
-      "from MP's adx_val/di_bullish, not the same series",
-      "engines/pipeline_rank.py:102-109",
+      "ADX(14) trend strength, gated on DI direction. Same Wilder ADX/DMI "
+      "formula as MP's adx_val (mp.py:139-158) — different code, "
+      "mathematically equivalent, a genuine duplicate. Corrected 2026-08-13 "
+      "from an earlier claim here that they were not the same series.",
+      "engines/pipeline_rank.py:254-273",
       "pr_adx_val>15->5; (pr_adx_val>20 AND pr_di_bullish)->10; "
       "(pr_adx_val>25 AND pr_di_bullish)->15; (pr_adx_val>30 AND "
       "pr_di_bullish)->20; pr_di_bullish = pr_di_plus>pr_di_minus, "
@@ -482,10 +537,28 @@ SCORE_TREE = [
       "3*[close>EMA200] + 3*[EMA20>EMA50>EMA150>EMA200] + "
       "3*[SMA50>SMA50[5]], upper=20)", "20 of 100"),
     R("fip_quality", "pipe_rank", "leaf", "0-100", "",
-      "FIP path-quality score, penalised for spikes", "engines/pipeline_rank.py:161-172",
+      "FIP path-quality score, penalised for spikes", "engines/pipeline_rank.py:161-184",
       "base: fip_raw>0.10->10; (0<fip_raw<=0.10)->30; (-0.05<=fip_raw<=0)"
       "->60; (-0.10<=fip_raw<-0.05)->80; fip_raw<-0.10->100; else 50; "
       "clip(base - spike_penalty, 0, 100)", "30 pct weight"),
+    R("fip_raw", "fip_quality", "leaf", "float", "",
+      "Fraction of down days minus fraction of up days over 252 sessions, "
+      "signed by the 252-session cumulative return's own direction",
+      "engines/pipeline_rank.py:164-168",
+      "(pct_negative_days - pct_positive_days) * sign(close/close[252]-1)"),
+    R("spike_penalty", "fip_quality", "leaf", "0|30", "",
+      "Penalty for any 5-day window with a single-day move over 8pct",
+      "engines/pipeline_rank.py:180-183",
+      "30 if max(|daily_return|, trailing 5d) > 0.08 else 0"),
+    R("fip_spike_excluded", "fip_quality", "leaf", "bool", "true|false",
+      "Whether the most recent bar sits inside a detected prior price "
+      "spike's exclusion window (DSG-20)", "engines/pipeline_rank.py:187-207",
+      "true when _detect_prior_spike() finds a qualifying spike overlapping "
+      "the last bar"),
+    R("fip_window_effective", "fip_quality", "leaf", "int", "",
+      "Bars actually used in the 252-session FIP window after spike "
+      "exclusion", "engines/pipeline_rank.py:188-207",
+      "252 by default; shortened when fip_spike_excluded is true"),
     R("pipe_tier", "pipe_rank", "leaf", "label", "D-SKIP|C-WATCH|B-STRONG|A-TIER",
       "Tier label from pipe_rank", "engines/pipeline_rank.py:230-234",
       "default D-SKIP; pipe_rank>=45->C-WATCH; >=60->B-STRONG; >=75->A-TIER"),
@@ -540,23 +613,71 @@ SCORE_TREE = [
       "across each family's feature set"),
 
     # ── Sector / thematic state fields ──────────────────────────────────
-    R("gics_grade", "", "leaf", "label", "DEPLOY|HOLD|TURNING|WATCH|AVOID",
-      "Sector ETF grade; evaluated top-down, first match wins. Two roads "
-      "reach DEPLOY (a 20d trend road, a 5d acceleration road) and two "
-      "reach TURNING; grade_path on the row says which one fired. "
-      "divergence=roc5-roc20", "engines/srm.py:299-317",
-      "(above20 AND roc20>5.0)->DEPLOY; (above20 AND roc20>=0 AND roc5>=6.0 "
-      "AND divergence>=5.0)->DEPLOY; (above20 AND roc20>0)->HOLD; (above20 "
-      "AND roc20<=0 AND divergence>=5.0)->TURNING; (NOT above20 AND "
-      "divergence>0)->TURNING; (above20 AND roc20<=0)->WATCH; else AVOID"),
-    R("gics_gate", "", "leaf", "label", "PASS|WATCH|CAUTION|BLOCKED",
-      "Sector entry gate combining grade, RRG quadrant and macro flag",
+    R("grade", "", "leaf", "label", "DEPLOY|HOLD|TURNING|WATCH|AVOID",
+      "Sector ETF grade — the srm[] list's own field name (renamed here "
+      "2026-08-13 from a made-up 'gics_grade' to match what actually "
+      "ships). Evaluated top-down, first match wins; grade_path says which "
+      "of the two roads to DEPLOY or two to TURNING actually fired.",
+      "engines/srm.py:280-317",
+      "(above_sma20 AND roc20>5.0)->DEPLOY; (above_sma20 AND roc20>=0 AND "
+      "roc5>=6.0 AND divergence>=5.0)->DEPLOY; (above_sma20 AND roc20>0)"
+      "->HOLD; (above_sma20 AND roc20<=0 AND divergence>=5.0)->TURNING; "
+      "(NOT above_sma20 AND divergence>0)->TURNING; (above_sma20 AND "
+      "roc20<=0)->WATCH; else AVOID",
+      used_by="gics_gate; sector_trend_state; thematic_grade's own ladder "
+              "(same function, different index)"),
+    R("above_sma20", "grade", "leaf", "bool", "true|false",
+      "Latest close above the sector ETF's 20-day SMA", "engines/srm.py:293",
+      "close[-1] > sma(close,20)[-1]"),
+    R("roc20", "grade", "leaf", "pct", "",
+      "20-session rate of change", "engines/srm.py:294",
+      "(close[-1]/close[-21]-1)*100"),
+    R("roc5", "grade", "leaf", "pct", "",
+      "5-session rate of change", "engines/srm.py:295",
+      "(close[-1]/close[-6]-1)*100"),
+    R("divergence", "grade", "leaf", "pct", "",
+      "5d thrust running ahead of (or behind) the 20d pace",
+      "engines/srm.py:297", "roc5 - roc20"),
+    R("grade_path", "grade", "leaf", "label",
+      "trend|acceleration|recovery|below_sma_recovering|stalled|declining|"
+      "insufficient_bars",
+      "Which of grade's rules actually fired — a grade you cannot account "
+      "for is a grade you cannot argue with", "engines/srm.py:302-317",
+      "the matched clause's own path label, in the order tested"),
+    R("sh_value", "grade", "leaf", "int", "",
+      "Sector-Health point value mapped from grade — a historical term; "
+      "nothing downstream sizes or gates on it any more, since PTRS (which "
+      "used to add this to a ticker's score) was retired 2026-08-13",
+      "engines/srm.py:46-52",
+      "DEPLOY->3, HOLD->0, TURNING->-3, WATCH->-5, AVOID->-8"),
+    R("grade_trend", "grade", "leaf", "list[label]", "",
+      "grade re-evaluated on each of the last N sessions, oldest first, no "
+      "look-ahead (each entry graded only on bars up to that day)",
+      "engines/srm.py:330-343", "[grade_sector_etf(bars[:k]) for k in window]"),
+    R("etf", "", "leaf", "label", "",
+      "The GICS sector ETF ticker this srm[] row is for", "engines/srm.py",
+      "one row per member of GICS_ETFS"),
+    R("sector", "", "leaf", "str", "",
+      "Human-readable GICS sector name for the row's etf", "engines/srm.py",
+      "static ETF->sector-name map"),
+    R("gics_gate", "grade", "leaf", "label", "PASS|WATCH|CAUTION|BLOCKED",
+      "Sector entry gate combining grade, RRG quadrant and macro flag. "
+      "Ships on the srm[] list itself as entry_gate/entry_gate_reason "
+      "(same function, same computation) as well as projected onto every "
+      "scored ticker in daily_list under this name.",
       "engines/srm.py:966-983",
       "grade==AVOID->BLOCKED; (macro==HEADWIND AND rrg==LAGGING)->BLOCKED; "
       "macro==HEADWIND->CAUTION; (rrg in [LAGGING,WEAKENING] AND "
       "macro==CAUTION)->CAUTION; (grade in [DEPLOY,HOLD] AND rrg in "
-      "[LEADING,IMPROVING] AND macro in [TAILWIND,NEUTRAL])->PASS; else WATCH"),
-    R("sector_trend_state", "gics_grade", "leaf", "label",
+      "[LEADING,IMPROVING] AND macro in [TAILWIND,NEUTRAL])->PASS; else WATCH",
+      used_by="lens_consensus:sector lens (PASS->strong, "
+              "BLOCKED/CAUTION->warn, WATCH/CHECK->ok)"),
+    R("entry_gate_reason", "gics_gate", "leaf", "str", "",
+      "The reason string sector_entry_gate returned alongside the gate "
+      "label — same function as gics_gate, the srm[] list's own copy",
+      "engines/srm.py:966-983",
+      "the matched clause's own reason string, e.g. 'AVOID grade'"),
+    R("sector_trend_state", "grade", "leaf", "label",
       "Momentum Building — Add|Momentum Fading — Hold, Don't Add|"
       "Recovering From Weakness — Watch for Entry|Declining — Avoid",
       "A directive label from (trend direction, momentum slope)",
@@ -586,7 +707,7 @@ SCORE_TREE = [
       "dist=sqrt((rs_ratio-100)^2+(rs_momentum-100)^2): "
       "dist>dist_prev*1.02->DEEPENING; dist<dist_prev*0.98->EXITING; "
       "else STABLE"),
-    R("thematic_grade", "gics_grade", "leaf", "label",
+    R("thematic_grade", "grade", "leaf", "label",
       "DEPLOY|HOLD|TURNING|WATCH|AVOID|NO_DATA",
       "Basket grade, demoted from a narrow rally", "engines/srm.py:485-495",
       "index_grade = gics_grade's own ladder applied to the basket's "
@@ -632,13 +753,19 @@ SCORE_TREE = [
 
     # ── membership ───────────────────────────────────────────────────────
     R("on_longlist", "", "leaf", "bool", "true|false",
-      "Longlist membership", "longlist_screen.py:passes",
-      "sc_momentum_raw >= 65 AND elder >= 7"),
+      "Longlist membership", "src/longlist_screen.py:26-37",
+      "sc_momentum_raw >= 65 AND elder >= 7",
+      used_by="alert universe (unheld needs >=2 of on_longlist/on_elder/on_qs, "
+              "or on_qs alone)"),
     R("on_elder", "", "leaf", "bool", "true|false",
-      "Standalone Elder list membership", "longlist_screen.py", "elder >= 8"),
+      "Standalone Elder list membership. NOT computed in longlist_screen.py "
+      "despite that file's proximity — the real check is inline in "
+      "drive_sync.py, corrected 2026-08-13 from an earlier wrong citation "
+      "here.", "src/data/drive_sync.py:1964", "elder >= 8",
+      used_by="alert universe"),
     R("on_qs", "", "leaf", "bool", "true|false",
       "Quiet Strength emitted a read for this name", "engines/qs_daily.py",
-      "qs block present and scored"),
+      "qs block present and scored", used_by="alert universe"),
 
     # ── lens consensus ───────────────────────────────────────────────────
     R("lens_positive", "", "leaf", "0-6", "",
@@ -648,6 +775,399 @@ SCORE_TREE = [
     R("lens_warnings", "", "leaf", "0-6", "",
       "Count of lenses reading warn", "engines/lens_consensus.py",
       "unweighted count, same six lenses"),
+
+    # ── Flow internals QS reads directly ─────────────────────────────────
+    R("mfi", "flow_score", "leaf", "0-100", "",
+      "Money Flow Index(14) — the standard volume-weighted RSI variant",
+      "engines/flow.py:53-56", "standard MFI(14) on typical price and volume",
+      used_by="QS:FLOW lens"),
+    R("cmf", "flow_score", "leaf", "-1 to 1", "",
+      "Chaikin Money Flow(20)", "engines/flow.py:60-66",
+      "sum(((close-low)-(high-close))/(high-low)*volume, 20) / sum(volume, 20)",
+      used_by="QS:FLOW lens"),
+
+    # ── DETECT-layer auxiliary fields (state already documented above) ──
+    R("pin_bar_date", "pin_bar_state", "leaf", "date", "",
+      "Date of the last bar's pin-bar read, if any", "engines/pin_bar.py:126",
+      "date of the last bar, when pin_bar_state != NONE"),
+    R("pin_bar_level", "pin_bar_state", "leaf", "usd", "",
+      "The rejection extreme — support for a bullish pin, resistance for a "
+      "bearish one", "engines/pin_bar.py:127-129",
+      "low[-1] if BULLISH_PIN else high[-1]"),
+    R("inside_bar", "", "leaf", "bool", "true|false",
+      "Whether the last bar's range sits strictly inside the prior bar's",
+      "engines/pin_bar.py:119-121",
+      "high[-1] < high[-2] AND low[-1] > low[-2] (strict both sides)"),
+    R("pib_pattern", "inside_bar", "leaf", "bool", "true|false",
+      "Pin bar immediately followed by an inside bar — rejection, then pause",
+      "engines/pin_bar.py:122",
+      "prev_bar_was_a_pin_bar AND inside_bar"),
+    R("choch_date", "choch_state", "leaf", "date", "",
+      "Date of the latest change-of-character event", "engines/smart_money_knn.py:293-301",
+      "date of the bar where trend flipped"),
+    R("div_date", "div_state", "leaf", "date", "",
+      "Anchor date of the divergence — the newer pivot of whichever side "
+      "(bull/bear) has more confirming oscillators", "engines/divergence.py:145-152",
+      "date at pivot p2 on the majority side; bull side wins ties"),
+    R("div_oscs", "div_state", "leaf", "str", "",
+      "Which oscillators fired, comma-joined; bearish names prefixed with -",
+      "engines/divergence.py:143-144",
+      "','.join(bull_names + ['-'+n for n in bear_names])"),
+    R("knn_prob", "choch_state", "leaf", "0-1", "",
+      "Mean outcome of the k nearest historical same-direction CHoCH events "
+      "on this ticker", "engines/smart_money_knn.py:191-202",
+      "pool = past, same-direction, resolved CHoCH events within 500 bars; "
+      "actual_k=min(5,pool size); knn_prob=mean(outcome of actual_k nearest "
+      "by Euclidean distance over [vol_delta,displacement,velocity])",
+      used_by="alerts (VETO_HELD, via qs.vetoes) — not directly; see "
+              "knn_significant"),
+    R("knn_significant", "knn_prob", "leaf", "bool", "true|false",
+      "knn_prob clears 0.60/0.40. AIC Charter Amendment v2.8 (2026-07-15): "
+      "at k=5 this is a PLAIN THRESHOLD CHECK, not a significance test — "
+      "3-of-5 agreeing clears 60% trivially, by chance, on a sample that "
+      "small. Never call it 'significant'/'confident' without that caveat.",
+      "engines/smart_money_knn.py:108,203",
+      "knn_prob >= 0.60 OR knn_prob <= 0.40"),
+    R("knn_neighbors_used", "knn_prob", "leaf", "int 0-5", "",
+      "How many neighbours actually fed knn_prob — below 5 when the "
+      "ticker's own CHoCH history is thin", "engines/smart_money_knn.py:221",
+      "min(k=5, pool size)"),
+    R("knn_tp1", "knn_prob", "leaf", "usd", "",
+      "Statistical projection from the neighbours' favourable-run "
+      "distribution — an analog, not a structural level. Read alongside "
+      "bracket.targets, never in place of them.", "engines/smart_money_knn.py:212",
+      "close + sign*mean(neighbours' favorable_run)*0.5"),
+    R("knn_tp2", "knn_prob", "leaf", "usd", "",
+      "Same projection at the neighbours' median favourable run",
+      "engines/smart_money_knn.py:213", "close + sign*median(favorable_run)"),
+    R("knn_tp3", "knn_prob", "leaf", "usd", "",
+      "Same projection at the neighbours' 75th-percentile favourable run",
+      "engines/smart_money_knn.py:214",
+      "close + sign*percentile(favorable_run, 75)"),
+
+    # ── Candles and chart patterns ────────────────────────────────────────
+    R("candle_d", "", "leaf", "label",
+      "DOJI|HAMMER|SHOOTING_STAR|BULLISH_ENGULFING|BEARISH_ENGULFING|"
+      "BULLISH_HARAMI|BEARISH_HARAMI|MORNING_STAR|EVENING_STAR|PIERCING|"
+      "DARK_CLOUD|THREE_WHITE_SOLDIERS|THREE_BLACK_CROWS|null",
+      "Single/multi-bar candlestick geometry on the last daily bar, checked "
+      "in a fixed priority order (3-bar patterns first, down to single-bar "
+      "DOJI last)", "engines/candles.py:166",
+      "rule-based geometry classifier; each pattern its own body/wick ratio "
+      "test against the trailing 1-3 bars"),
+    R("candle_d_dir", "candle_d", "leaf", "label", "BULLISH|BEARISH|NEUTRAL",
+      "Direction implied by candle_d", "engines/candles.py",
+      "fixed per pattern (e.g. HAMMER->BULLISH, DOJI->NEUTRAL)"),
+    R("candle_w", "", "leaf", "label", "same enum as candle_d",
+      "Same detector, on the current weekly bar", "engines/candles.py:166",
+      "detect_candle() on weekly OHLC"),
+    R("candle_w_dir", "candle_w", "leaf", "label", "BULLISH|BEARISH|NEUTRAL",
+      "Direction implied by candle_w", "engines/candles.py", "fixed per pattern"),
+    R("candle_w_date", "candle_w", "leaf", "date", "",
+      "Date of the weekly bar candle_w was read from", "engines/candles.py", ""),
+    R("pattern", "", "leaf", "label",
+      "CUP_HANDLE|DOUBLE_TOP|DOUBLE_BOTTOM|HEAD_SHOULDERS|"
+      "INV_HEAD_SHOULDERS|ASCENDING_TRIANGLE|DESCENDING_TRIANGLE|null",
+      "Chart-pattern detector over a 126-bar (~6 month) window. pattern_fit "
+      "(0-1) measures ONLY how closely the shape matches the textbook "
+      "geometry — it is not a probability the pattern resolves.",
+      "engines/patterns.py:48,665-674",
+      "6 independent detectors, each returning its own pattern name + "
+      "fit/stage/trigger on a match; first detector to match wins"),
+    R("pattern_fit", "pattern", "leaf", "0-1", "",
+      "Geometric match quality for the detected pattern; PATTERN_MIN_FIT="
+      "0.50 is the floor a caller should treat as a real match",
+      "engines/patterns.py:689", "per-pattern average of its own shape tests"),
+    R("pattern_stage", "pattern", "leaf", "label",
+      "FORMING|BASE|TRIGGERED", "Where the pattern is in its own lifecycle",
+      "engines/patterns.py:143", "per-detector state, set on match"),
+    R("pattern_trigger", "pattern", "leaf", "usd", "",
+      "The breakout/breakdown price that would confirm the pattern",
+      "engines/patterns.py", "per-pattern breakout level"),
+    R("pattern_invalidation", "pattern", "leaf", "usd", "",
+      "The price that would invalidate the pattern read",
+      "engines/patterns.py", "per-pattern invalidation level"),
+    R("pattern_direction", "pattern", "leaf", "label", "BULLISH|BEARISH",
+      "Direction implied by the detected pattern", "engines/patterns.py",
+      "fixed per pattern type"),
+    R("pattern_days", "pattern", "leaf", "int", "",
+      "Bars the pattern has been forming", "engines/patterns.py", ""),
+    R("pattern_start", "pattern", "leaf", "date", "",
+      "Date the pattern's formation began", "engines/patterns.py", ""),
+    R("pattern_alt", "pattern", "leaf", "label", "same enum as pattern",
+      "Every other detector that also matched, comma-joined — not just the "
+      "runner-up", "engines/patterns.py:735-750",
+      "detectors sorted by pattern_fit desc, after dropping spent shapes "
+      "and fits below PATTERN_MIN_FIT(0.50); winner -> pattern, "
+      "', '.join(the rest) -> pattern_alt"),
+    R("pattern_w", "", "leaf", "label", "same enum as pattern",
+      "Same 6-detector sweep on weekly bars", "engines/patterns.py",
+      "6 detectors on weekly OHLC"),
+    R("pattern_w_dir", "pattern_w", "leaf", "label", "BULLISH|BEARISH",
+      "Direction of the weekly pattern", "engines/patterns.py",
+      "fixed per pattern type"),
+    R("pattern_w_stage", "pattern_w", "leaf", "label", "FORMING|BASE|TRIGGERED",
+      "Lifecycle stage of the weekly pattern", "engines/patterns.py",
+      "per-detector state, set on match"),
+    R("pattern_w_trigger", "pattern_w", "leaf", "usd", "",
+      "Weekly breakout/breakdown trigger price", "engines/patterns.py", ""),
+
+    # ── Levels: fib, moving averages, risk/beta/vol ──────────────────────
+    R("fib_swing_low", "", "leaf", "usd", "",
+      "Low of the auto-detected current up-swing", "src/scanner/levels.py:45-63",
+      "find_swing(): lowest pivot low -> the peak, 120-bar search window, "
+      "5-bar fractal pivots"),
+    R("fib_swing_high", "fib_swing_low", "leaf", "usd", "",
+      "High of the same detected swing", "src/scanner/levels.py:45-63",
+      "highest high in the window following the swing low"),
+    R("fib_236", "fib_swing_low", "leaf", "usd", "",
+      "23.6% Fibonacci retracement support", "src/scanner/levels.py:216-225",
+      "swing_high - (swing_high-swing_low)*0.236"),
+    R("fib_382", "fib_swing_low", "leaf", "usd", "",
+      "38.2% Fibonacci retracement support", "src/scanner/levels.py:216-225",
+      "swing_high - (swing_high-swing_low)*0.382"),
+    R("fib_500", "fib_swing_low", "leaf", "usd", "",
+      "50% Fibonacci retracement support", "src/scanner/levels.py:216-225",
+      "swing_high - (swing_high-swing_low)*0.5"),
+    R("fib_618", "fib_swing_low", "leaf", "usd", "",
+      "61.8% Fibonacci retracement support", "src/scanner/levels.py:216-225",
+      "swing_high - (swing_high-swing_low)*0.618"),
+    R("fib_786", "fib_swing_low", "leaf", "usd", "",
+      "78.6% Fibonacci retracement support", "src/scanner/levels.py:216-225",
+      "swing_high - (swing_high-swing_low)*0.786"),
+    R("ma_20", "", "leaf", "usd", "",
+      "20-day simple moving average, absolute price",
+      "src/data/drive_sync.py:904-910", "mean(close, trailing 20 bars)"),
+    R("ma_50", "ma_20", "leaf", "usd", "", "50-day simple moving average",
+      "src/data/drive_sync.py:904-910", "mean(close, trailing 50 bars)"),
+    R("ma_100", "ma_20", "leaf", "usd", "", "100-day simple moving average",
+      "src/data/drive_sync.py:904-910", "mean(close, trailing 100 bars)"),
+    R("ma_200", "ma_20", "leaf", "usd", "", "200-day simple moving average",
+      "src/data/drive_sync.py:904-910", "mean(close, trailing 200 bars)"),
+    R("sma_distance_pct", "", "leaf", "pct", "",
+      "Close distance from the 50-day SMA", "src/data/drive_sync.py:898-901",
+      "(close/sma(close,50)-1)*100"),
+    R("rs_down_day_20d", "rs_leadership", "leaf", "pct", "",
+      "20-day average stock-vs-SPY outperformance, measured only on SPY's "
+      "own down days", "engines/enrichment.py:40-51",
+      "mean(stock_daily_ret - spy_daily_ret, over the trailing 20 sessions "
+      "where spy_daily_ret<0)"),
+    R("rs_spy_20d", "", "leaf", "pct", "",
+      "Stock's own 20-day ROC minus SPY's 20-day ROC — unconditional, "
+      "every day counted (rs_down_day_20d is the down-days-only variant)",
+      "src/data/drive_sync.py:912-914",
+      "(close/close[20]-1)*100 - (spy_close/spy_close[20]-1)*100"),
+    R("beta_30d", "", "leaf", "ratio", "",
+      "30-day rolling beta vs SPY — sizes the DSL/bracket ATR clamp for "
+      "high-beta names", "src/scanner/betas.py:26-69",
+      "cov(stock daily returns, SPY daily returns) / var(SPY daily "
+      "returns), trailing 30 sessions"),
+    R("beta_252d", "beta_30d", "leaf", "ratio", "",
+      "252-day (1-year) beta vs SPY — a separate inline computation from "
+      "beta_30d, not the same code path (beta_30d/60d live in "
+      "scanner/betas.py; this is computed directly in drive_sync.py). Same "
+      "formula, independently implemented — a duplicate worth "
+      "consolidating.", "src/data/drive_sync.py:815-839",
+      "cov(stock, SPY daily returns)/var(SPY daily returns), trailing 252 "
+      "sessions, min 60 required"),
+    R("vol_30d_ann", "", "leaf", "pct", "",
+      "Annualised realised volatility, 30-session daily log returns",
+      "src/data/drive_sync.py:823-827",
+      "stdev(diff(log(close)), trailing 30 sessions, ddof=1) * sqrt(252)"),
+    R("day_vol", "", "leaf", "ratio", "",
+      "Today's volume over its own 20-day prior average (renamed from rvol "
+      "2026-08-05 — the only volume-participation field on the row)",
+      "src/data/drive_sync.py:840-843",
+      "volume[-1] / mean(volume[-21:-1])"),
+    R("atr_14d", "", "leaf", "usd", "",
+      "14-day Average True Range, absolute price units",
+      "src/data/drive_sync.py:1130", "Wilder ATR(14)"),
+    R("atr_caution", "", "leaf", "bool", "true|false",
+      "Structural stop distance is thin relative to ATR, in an elevated "
+      "VIX regime", "engines/enrichment.py:273-278",
+      "regime in [YELLOW,ORANGE,RED] AND dsl_atr_ratio<1.5"),
+    R("malformed_bracket", "bracket", "leaf", "bool", "true|false",
+      "Structural stop sits within 0.5pct of entry — too tight to be a "
+      "real bracket", "engines/enrichment.py:268-271",
+      "|entry-stop|/entry*100 < 0.5"),
+    R("bracket", "", "leaf", "dict", "",
+      "The stop/target set — the single source of truth for structural "
+      "risk, replacing the retired mechanical DSL/TP fields",
+      "engines/bracket_engine.py", "structural stop (tightest valid "
+      "support) + nearest-first structural targets, R:R vs structural TP2"),
+    R("sc_m_gate_detail", "sc_m_gates", "leaf", "dict[bool]", "",
+      "Per-engine pass/fail breakdown behind sc_m_gates",
+      "engines/scoring.py:gate_breakdown_momentum",
+      "{flow, energy, structure, mp, elder}: each engine's own SC_M_GATES "
+      "floor, individually"),
+    R("sc_p_gate_detail", "sc_p_gates", "leaf", "dict[bool]", "",
+      "Per-engine pass/fail breakdown behind sc_p_gates",
+      "engines/scoring.py:gate_breakdown_position",
+      "{flow, energy, structure, mp, bq, k39}: each engine's own SC_P_GATES "
+      "floor, individually"),
+
+    # ── Elder context, held-position identity ────────────────────────────
+    R("elder_5d", "elder", "leaf", "list[float]", "",
+      "Trailing 5 sessions of elder, oldest first — the input elder_pattern "
+      "classifies", "engines/elder.py", "last 5 elder_score values"),
+    R("elder_context", "elder", "leaf", "dict", "",
+      "Hourly VWAP/VCP/exhaustion read behind the elder pattern",
+      "engines/elder_context.py:91", "computed from intraday hourly bars + "
+      "the daily frame; keys computed_date, hourly_bars_used, vwap_5d, "
+      "volume, vcp, exhaustion_check"),
+    R("floor", "", "leaf", "0-100", "",
+      "Weakest of the four core engines — a name is only as strong as its "
+      "worst leg. Marked UNDOCUMENTED in the export's own glossary text "
+      "(agentic_dictionary.UNDOCUMENTED) despite being a real, simple "
+      "computation — the text was never written, the code was.",
+      "src/data/drive_sync.py:1709,1744,1781",
+      "min(flow, energy, structure, mp)"),
+    R("entry", "", "leaf", "usd", "",
+      "The price everything else on the row is scored against — EOD close "
+      "on a daily run", "src/data/drive_sync.py", "the day's close"),
+    R("last_pivot_high", "structure_shift", "leaf", "dict", "",
+      "The confirmed pivot high structure_shift is measured against, "
+      "shipped on the row so a consumer can check the level without "
+      "recomputing it", "src/data/drive_sync.py:1180-1188",
+      "{price, date} of the nearest confirmed pivot high"),
+    R("gics_sector", "", "leaf", "str", "",
+      "GICS sector code for the ticker", "src/data/sector_mapper.py",
+      "static ticker->sector map"),
+    R("gics_sector_name", "gics_sector", "leaf", "str", "",
+      "Human-readable name for gics_sector", "src/data/sector_mapper.py",
+      "static sector-code->name map"),
+    R("held", "", "leaf", "bool", "true|false",
+      "Ticker is in the PM's live book", "src/data/drive_sync.py:1113",
+      "ticker in the set of tickers on held_positions"),
+    R("in_ledger", "held", "leaf", "bool", "true|false",
+      "Ticker has an open entry in the signal ledger", "src/data/signal_ledger.py",
+      "ticker present in the ledger's open-position table"),
+    R("live_px", "held", "leaf", "usd", "",
+      "Current mark for a held ticker — the SAME FMP close every other "
+      "field on the record is scored against, not a separate live quote",
+      "EXTERNAL: FMP quote endpoint, via src/data/fmp_client.py", ""),
+    R("held_sl", "held", "leaf", "usd", "",
+      "Stop-loss recorded in the PTJ broker journal for this held position",
+      "EXTERNAL: PTJ trade journal, read by src/data/ptj.py", ""),
+    R("held_tp1", "held", "leaf", "usd", "",
+      "First take-profit recorded in the PTJ journal",
+      "EXTERNAL: PTJ trade journal, read by src/data/ptj.py", ""),
+    R("held_tp2", "held", "leaf", "usd", "",
+      "Second take-profit recorded in the PTJ journal",
+      "EXTERNAL: PTJ trade journal, read by src/data/ptj.py", ""),
+    R("unreal_usd", "held", "leaf", "usd", "",
+      "Unrealised P&L. NOT YET WIRED — currently reads a journal field the "
+      "2026-07-28 journal restructure renamed; kept as its own row so this "
+      "stays visible rather than silently reading zero.",
+      "src/data/drive_sync.py", ""),
+
+    # ── Signal Radar conviction labels ───────────────────────────────────
+    R("runner_conviction_label", "runner_setup", "leaf", "label",
+      "MINIMAL|LOW|MODERATE|HIGH|MAX",
+      "Ladder label on runner_conviction (0-4)", "engines/signal_radar.py",
+      "0->MINIMAL, 1->LOW, 2->MODERATE, 3->HIGH, 4->MAX"),
+    R("premove_conviction_label", "premove_setup", "leaf", "label",
+      "MINIMAL|LOW|MODERATE|HIGH|MAX",
+      "Ladder label on premove_conviction (0-4)", "engines/signal_radar.py",
+      "0->MINIMAL, 1->LOW, 2->MODERATE, 3->HIGH, 4->MAX"),
+
+    # ── QS block — a frozen calibration-table lookup, not a formula ─────
+    R("qs", "", "leaf", "dict", "",
+      "Quiet Strength read for this name. An absent qs key means QS could "
+      "not evaluate the name — not the same as a poor score.",
+      "engines/qs_daily.py, qs_engine.py",
+      "lenses -> recipes -> vetoes -> calibration -> conviction 0-5 -> "
+      "levels -> why; the calibration step is a lookup against a frozen "
+      "historical table (data/qs/calibration.json), not a closed-form "
+      "formula", used_by="alerts (qs.vetoes gates VETO_HELD)"),
+    R("qs.state", "qs", "leaf", "label", "",
+      "QS's own regime read at scoring time", "engines/qs_fields.py", ""),
+    R("qs.objective", "qs", "leaf", "usd", "",
+      "The +-2x ATR14 level the odds were measured against — the yardstick, "
+      "not the tradeable bracket. Never merge with bracket.targets.",
+      "engines/qs_engine.py", "entry +/- 2*ATR14, signed by direction"),
+    R("qs.odds.p", "qs", "leaf", "0-1", "",
+      "Calibrated probability of touching qs.objective within 20 sessions, "
+      "read from the frozen historical look-alike table — NOT a formula, "
+      "a table lookup on (lens_total band, recipe_hits band, regime).",
+      "data/qs/calibration.json via engines/qs_engine.py", ""),
+    R("qs.odds.extrapolated", "qs.odds.p", "leaf", "bool", "true|false",
+      "The bucket this name landed in had too few historical members, so "
+      "the probability is extrapolated from neighbouring buckets rather "
+      "than read directly", "engines/qs_engine.py",
+      "true when the matched (lens_total, recipe_hits, regime) bucket in "
+      "calibration.json falls below its own minimum sample size"),
+    R("qs.engine.recipe_hits", "qs", "leaf", "int 0-40", "",
+      "How many of the 40 frozen recipes this name matches. All 40 are "
+      "counted including 8 duplicate pairs — de-duplicating would drop a "
+      "probability band.", "data/qs/recipe_book.json via engines/qs_engine.py",
+      ""),
+    R("qs.engine.qs_persist", "qs", "leaf", "int", "",
+      "Prior STORED sessions this name has scored, from aqe.db — not "
+      "calendar days", "engines/qs_store.py", ""),
+    R("qs.unevaluable_vetoes", "qs", "leaf", "list[str]", "",
+      "Which of the 5 frozen vetoes could not be evaluated (missing input), "
+      "so a reader knows the veto pass was partial", "engines/qs_engine.py:155-175",
+      ""),
+    R("qs_market", "", "leaf", "dict", "",
+      "The regime terciles QS's own lenses were scored against on this run",
+      "engines/qs_fields.py", ""),
+    R("qs_status", "", "leaf", "label", "",
+      "OK|DEGRADED|UNAVAILABLE — distinguishes a QS outage from a quietly "
+      "unremarkable market", "engines/qs_daily.py", ""),
+
+    # ── misc identity / pointers ──────────────────────────────────────────
+    R("ticker", "", "leaf", "str", "",
+      "The equity symbol — present on every daily_list, held_positions and "
+      "srm row; had zero rows anywhere in this taxonomy until now",
+      "EXTERNAL: FMP, via the universe screen (src/data/universe.py)", ""),
+    R("rank", "", "leaf", "int", "",
+      "Position in the sorted daily_list", "src/data/drive_sync.py",
+      "row index after the list's own sort"),
+    R("source", "", "leaf", "label", "",
+      "Which screen surfaced this row (longlist/elder/qs/watchlist/etc.)",
+      "src/data/drive_sync.py", ""),
+    R("subcomponents", "", "leaf", "dict", "",
+      "The engine sub-scores behind each headline read, nested by engine — "
+      "context only, never a gate. See _SUBCOMPONENT_SPEC for the exact "
+      "per-engine column list.", "src/data/drive_sync.py:1268-1283", ""),
+    R("thematic_basket", "thematic_grade", "leaf", "str", "",
+      "Which thematic basket(s) this ticker belongs to", "engines/srm.py",
+      "static ticker membership in THEMATIC_BASKETS"),
+    R("thematic_parent_gics", "thematic_basket", "leaf", "str", "",
+      "The GICS sector ETF the basket rolls up to", "engines/srm.py",
+      "THEMATIC_BASKETS[name]['parent_gics_etf']"),
+
+    # ── final stragglers ──────────────────────────────────────────────────
+    R("atr_quarter_stop", "", "leaf", "usd", "",
+      "A volatility stop, offered as a reference beside the structural "
+      "bracket — not the bracket itself and not a gate",
+      "src/data/drive_sync.py", "entry - 0.25*ATR14"),
+    R("atr_quarter_risk_pct", "atr_quarter_stop", "leaf", "pct", "",
+      "atr_quarter_stop's distance as a percent of entry",
+      "src/data/drive_sync.py", "atr_quarter_stop distance / entry * 100"),
+    R("runner_setup", "", "leaf", "bool", "true|false",
+      "Job 2 (continuation) — a short young base with a strong 5-day "
+      "thrust and clear overhead", "engines/signal_radar.py:51,205-208",
+      "base_days<=15 AND ret_5d>14.5 AND resist_score<=8.5"),
+    R("runner_conviction", "runner_setup", "leaf", "0-4", "",
+      "Count of the 4 runner_setup legs sitting in their favourable "
+      "tercile, against frozen cut points", "engines/signal_radar.py:211-216",
+      "sum of 4 booleans vs data/signal_engine_params.json cuts"),
+    R("premove_setup", "", "leaf", "bool", "true|false",
+      "Job 1 (pre-move) — the frozen launcher fingerprint, applied only to "
+      "names that are quiet at the scan date", "engines/signal_radar.py",
+      "is_quiet (20d return in [-8,8]% AND pos20<0.90) AND every frozen "
+      "launcher-fingerprint leg", used_by="lens_consensus:coil lens (True->strong)"),
+    R("premove_conviction", "premove_setup", "leaf", "0-4", "",
+      "Count of frozen launcher-fingerprint legs satisfied, forced 0 when "
+      "not quiet", "engines/signal_radar.py:245-246",
+      "sum of legs vs data/signal_engine_params.json cuts; 0 if not is_quiet"),
+    R("lens", "", "leaf", "dict", "",
+      "The per-lens strong/ok/warn/-- read behind lens_positive/"
+      "lens_warnings", "engines/lens_consensus.py",
+      "{leadership, coil, insti_money, structure, resistance, extension, "
+      "sector}"),
 ]
 
 for _r in SCORE_TREE:
@@ -694,8 +1214,11 @@ def leaf_rows() -> list[dict]:
     schema = D._FIELD_SCHEMA
 
     rows = []
+    uncovered = []
     for name in sorted(set(schema) | set(gloss) | set(enums)):
         if name in covered or name.startswith("_"):
+            continue
+        if name in MALFORMED_GLOSSARY_KEYS:
             continue
         # Retired fields keep a glossary entry so an older export stays
         # readable. They are not part of the current data set.
@@ -706,10 +1229,18 @@ def leaf_rows() -> list[dict]:
         role = sch.get("role", "") if isinstance(sch, dict) else ""
         desc = re.sub(r"\s+", " ", str(gloss.get(name, ""))).strip()
         desc = desc.split(". ")[0][:180]
+        # No real source traced for this one yet — surfaced by
+        # test_no_field_still_cites_the_glossary_as_its_source so a newly
+        # added export field can't quietly re-open the hole this closed.
+        uncovered.append(name)
         rows.append(R(name, _parent_of(name), "leaf", unit or "",
                       "|".join(str(v) for v in enums.get(name, [])),
-                      desc, "src/data/drive_sync.py:_FIELD_GLOSSARY", "",
-                      role))
+                      desc, "UNSOURCED src/data/drive_sync.py:_FIELD_GLOSSARY",
+                      "", role))
+    if uncovered:
+        import sys
+        print(f"  [taxonomy] {len(uncovered)} field(s) still only sourced to "
+              f"the glossary: {uncovered}", file=sys.stderr)
     return rows
 
 
