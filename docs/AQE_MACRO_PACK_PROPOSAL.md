@@ -103,21 +103,56 @@ instead of requiring someone to notice it by hand.
 
 ### 3.3 The artifact
 
-`aqe_macro_pack.json`, plain-English-first like Crown's own reading copy:
+`aqe_macro_pack.json`, plain-English-first like Crown's own reading copy, and
+opening with the same two-field trust check the Committee Card puts first —
+**check these before you trust any of it** applies to the pack exactly as it
+applies to Crown alone, so the pack surfaces them at its own top level
+rather than making a reader open the nested `crown` block to find them:
 
 ```
-read_me_first        one paragraph: regime, leading scenario, headline coherence
-crown                Crown's own plain_english block, verbatim (no re-narration)
-scenario             the leading scenario + its runner-up + falsifiers, verbatim
-sector_read          every sector's grade/gate, tagged AGREES / DISAGREES /
-                     UNTESTED against the leading scenario, sorted by
-                     disagreement first (the most useful row is on top)
-thematic_read         same tagging, one level down, grouped by parent sector
-what_changed          diff vs the previous run, reusing Crown's own changes.py
-                      pattern — silence is a real answer
-limits                every standing caveat from Crown + scenarios, carried
-                     forward verbatim, never re-derived
+pack_status           OK / DEGRADED / PARTIAL — see §3.5. Read this FIRST.
+crown_status          Crown's own status, copied to the top level, verbatim
+oldest_leg            Crown's freshness.oldest_leg, copied to the top level
+read_me_first         one paragraph: regime, leading scenario, headline coherence
+crown                 Crown's own plain_english block, verbatim (no re-narration)
+scenario              the leading scenario + its runner-up + falsifiers, verbatim
+sector_read           every sector's grade/gate, tagged AGREES / DISAGREES /
+                      UNTESTED against the leading scenario, sorted by
+                      disagreement first (the most useful row is on top).
+                      Absent entirely — not empty — when pack_status is
+                      PARTIAL for the reason in §3.5.
+thematic_read          same tagging, one level down, grouped by parent sector.
+                       Same absent-not-empty rule.
+what_changed           diff vs the previous run, reusing Crown's own changes.py
+                       pattern — silence is a real answer
+limits                 every standing caveat from Crown + scenarios, carried
+                      forward verbatim, never re-derived
 ```
+
+### 3.5 The EARLY_EXIT case — the one place this needed tightening
+
+The Committee Card's central rule: *"a market you cannot read is not one you
+take a smaller position in"* — on `crown_status: EARLY_EXIT` or
+`UNAVAILABLE`, Crown's own downstream sections are empty **because they
+never ran**, not because they came back quiet, and that distinction is
+enforced in code and tested.
+
+The pack inherits this exactly, because `sector_read`/`thematic_read` are
+*derived from* the leading scenario, and there is no leading scenario to
+derive from when Crown never produced a regime read. So:
+
+- `crown_status` is `EARLY_EXIT`/`UNAVAILABLE` → `pack_status: PARTIAL`,
+  `sector_read`/`thematic_read` are **absent from the JSON entirely**, and
+  `read_me_first` states the reason in one sentence ("Crown's own gate
+  stopped the process this run — no regime read, so no sector coherence
+  either.") — never a coherence tag computed against nothing.
+- `crown_status: DEGRADED` (ran, something missing or on a proxy) →
+  `pack_status: DEGRADED`, sections still populate, and `limits` carries
+  Crown's own `degraded` list forward unchanged.
+- Two close scenarios (`scenarios.py`'s own `contested: true`) → coherence
+  still computes against the leading one, but `read_me_first` states the
+  contest exists, so a reader isn't shown false confidence in what "the"
+  leading scenario implies.
 
 ### 3.4 What it explicitly does not do
 
@@ -151,7 +186,31 @@ and it needs both running side by side first" (per `AQE_CROWN_MACRO_LAYER.md`,
 "Not yet built"). A pack that reports agreement and disagreement *preserves*
 that measurement. A pack that silently merges the numbers destroys it.
 
-## 5 · What this needs from the PM before it's built
+## 5 · Consistency check against the Committee Card — 2026-08-13
+
+Checked directly against `docs/AQE_CROWN_COMMITTEE_CARD.md` (the PM asked for
+this before signing off). Clean on all four standing refusals — the pack
+sizes nothing, names no ticker, places nothing, and the coherence tag is a
+category, never a number, so it can't drift into reading like QS's
+calibrated probability sitting next to it.
+
+Two real gaps found, both versions of the card's central rule — *"a market
+you cannot read is not one you take a smaller position in"* / *"on
+`EARLY_EXIT` the sections below are empty because they never ran, not
+because they came back quiet"*:
+
+1. The original draft never stated what the pack does on
+   `crown_status: EARLY_EXIT`/`UNAVAILABLE`. Left unstated, a coherence tag
+   could have silently computed against a scenario that was never produced —
+   exactly the failure the card exists to prevent. Closed in §3.5.
+2. The card puts `crown_status`/`freshness.oldest_leg` first, before
+   trusting anything else. The original draft buried Crown's status inside
+   a nested block. Closed in §3.3 — the pack now surfaces its own
+   `pack_status`/`crown_status`/`oldest_leg` at the top level, so the
+   "check these two first" rule applies to the pack exactly as it applies
+   to Crown alone.
+
+## 6 · What this needs from the PM before it's built
 
 1. **Confirm the shape** — one new read-only module, one new artifact,
    no changes to Crown/SRM/Macro Weather/Thematic's own code or tests.
