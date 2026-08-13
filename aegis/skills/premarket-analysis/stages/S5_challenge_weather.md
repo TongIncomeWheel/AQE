@@ -37,7 +37,7 @@ that entry and the fact is noted, not silently dropped.
 
 **No model runs here.** AQE already computed and wrote the reading — headline, reasons with
 numbers, the call, what would change it. Re-generating that with an LLM adds hallucination
-risk and nothing else. S5b copies from `data/aqe/<date>/aqe_crown_macro.json`:
+risk and nothing else. S5b copies from `aegis/output/aqe_crown_macro.json`:
 
 `read_me_first` (all four blocks verbatim) · `the_call` (expression_family, match_quality,
 size_multiplier, conditions_met/not_met) · `status` + `limits[]` · nearest `key_levels`.

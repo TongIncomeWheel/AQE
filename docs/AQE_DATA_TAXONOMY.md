@@ -2,7 +2,7 @@
 
 **Every data point AQE computes and every place it lands.**
 
-Generated 2026-08-13 11:27 SGT by `scripts/build_data_taxonomy.py`. Do not hand-edit —
+Generated 2026-08-13 11:33 SGT by `scripts/build_data_taxonomy.py`. Do not hand-edit —
 regenerate it. Each row records where its definition came from, so a field
 known only from a sample file is visibly weaker evidence than one carried by
 the export's own glossary.

@@ -25,8 +25,8 @@ there. S1 is the only component permitted to touch Drive, and its single job is 
 day's data in the repo at a fixed path:
 
 ```
-data/aqe/<YYYY-MM-DD>/  aqe_daily_export.json.gz · aqe_crown_macro.json · manifest.json
-data/aqe/latest.json    the only pointer anything follows
+aegis/output/           aqe_daily_export.json · aqe_crown_macro.json · manifest.json
+                        Fixed names, overwritten daily. No date folder, no pointer.
 data/pma/<YYYY-MM-DD>/  every stage output for that run
 ```
 

@@ -286,3 +286,46 @@ def test_the_salvage_never_tries_to_pull_a_panel_through_the_contents_api():
     from src.ui import bootstrap as B
     assert not any(n.endswith(".parquet") for n in B._SALVAGE)
     assert not any(n.endswith(".db") for n in B._SALVAGE)
+
+
+# ── ONE destination, and it has to stay that way ─────────────────────────
+
+def test_there_is_exactly_one_daily_file_destination():
+    """Two designs for this landed on the same day and both claimed the same
+    ruling. The PM picked aegis/output/ on 2026-08-13; this pins it so a second
+    location cannot quietly reappear."""
+    import subprocess
+    tracked = subprocess.run(["git", "ls-files"], capture_output=True,
+                             text=True).stdout.split()
+    rivals = [p for p in tracked if p.startswith("aegis/data/aqe/")]
+    assert not rivals, f"a second AQE data location is back: {rivals}"
+
+
+def test_no_dated_run_folder_holds_a_daily_aqe_artifact():
+    """A dated copy of the export is a second destination wearing a date."""
+    import re
+    import subprocess
+    tracked = subprocess.run(["git", "ls-files"], capture_output=True,
+                             text=True).stdout.split()
+    dated = [p for p in tracked
+             if re.search(r"/\d{4}-\d{2}-\d{2}/", p)
+             and any(a.split(".")[0] in p for a in gh.DAILY_ARTIFACTS)]
+    assert not dated, f"daily artifacts found under dated folders: {dated}"
+
+
+def test_the_pma_contract_points_at_the_surviving_destination():
+    """S1 is the boundary that moves the day's data into the repo. If it still
+    names the retired path, the committee reads a folder nothing writes."""
+    s1 = open("aegis/skills/premarket-analysis/stages/S1_ingest.md",
+              encoding="utf-8").read()
+    assert "aegis/output/" in s1
+    assert "data/aqe/<date>/" not in s1 and "data/aqe/<YYYY-MM-DD>/" not in s1
+
+
+def test_the_fixed_path_freshness_check_is_still_mandated():
+    """A dated path fails loudly when a day is missing. A fixed path always
+    reads, so staleness is the only guard left and it must not be optional."""
+    s1 = open("aegis/skills/premarket-analysis/stages/S1_ingest.md",
+              encoding="utf-8").read()
+    assert "Freshness" in s1
+    assert "not optional" in s1

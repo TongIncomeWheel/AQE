@@ -1,7 +1,7 @@
 # CENTRAL TOOL & DATA CATALOG (the hub — voices and orchestrators pull through here only)
 | Name | What | Where | Who may call | Notes |
 |---|---|---|---|---|
-| AQE export | scores, brackets, detect, lens, held book — verbatim source of all analytics | GitHub repo engine → data/aqe/ | all (via working read) | validate + tripwires before ANY read |
+| AQE export | scores, brackets, detect, lens, held book — verbatim source of all analytics | GitHub repo engine → aegis/output/ | all (via working read) | validate + tripwires before ANY read |
 | Universe screen | daily tradable universe (D-3) | tools/universe_screen.py (FMP) | Premarket orchestrator | the only universe voices see |
 | Tiger MCP | equity/ETF spot, positions, orders, preview-confirm staging | REUSED — PM's Google Cloud service (endpoint in config/endpoints.json) | orchestrators | primary live spot |
 | Alpaca MCP | options chain / Greeks / IV, 15-min delayed | REUSED — PM's Google Cloud service | hedge tooling only | never for spot |
