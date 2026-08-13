@@ -188,6 +188,48 @@ def test_the_longlist_rule_matches_the_screen():
     assert f"elder >= {MIN_ELDER}" in f
 
 
+# ── state fields carry the calculation that produces the label ──────────
+
+def test_every_enum_field_also_carries_a_real_formula():
+    """A label with no derivation is a value with no source. Every field
+    that names states in its enum column must show how it lands on one."""
+    schema_vocab = {"role", "side", "unit"}
+    for r in rows():
+        if r["state"] and r["field"] not in schema_vocab:
+            assert r["formula"], f"{r['field']} lists states but no formula"
+
+
+def test_the_srm_grade_ladder_matches_the_engine():
+    from src.engines.srm import ACCEL_MIN_DIVERGENCE, ACCEL_MIN_ROC5, TREND_MIN_ROC20
+    f = by_field()["gics_grade"]["formula"]
+    assert f"roc20>{TREND_MIN_ROC20}" in f
+    assert f"roc5>={ACCEL_MIN_ROC5}" in f
+    assert f"divergence>={ACCEL_MIN_DIVERGENCE}" in f
+
+
+def test_the_bos_extension_cap_matches_the_export():
+    from src.data.drive_sync import BOS_MAX_EXTENSION_PCT
+    f = by_field()["structure_shift"]["formula"]
+    assert f"ext_pct<={BOS_MAX_EXTENSION_PCT}" in f
+
+
+def test_the_hl_state_bands_match_health_py():
+    f = by_field()["hl_state"]["formula"]
+    assert ">=30->TIGHTEN" in f and ">=50->HOLD" in f and ">=75->HOLD_ADD" in f
+
+
+def test_previously_incomplete_enums_are_fixed_at_the_source():
+    """hl_state was missing HOLD_ADD, the two RRG-direction fields were
+    missing STABLE, thematic_grade was missing NO_DATA — all real values the
+    engines emit that the export's own self-description didn't list. Fixed
+    in agentic_dictionary.py, not just papered over in the taxonomy."""
+    from src.engines.agentic_dictionary import FIELD_ENUMS
+    assert "HOLD_ADD" in FIELD_ENUMS["hl_state"]
+    assert "STABLE" in FIELD_ENUMS["sector_rrg_direction"]
+    assert "STABLE" in FIELD_ENUMS["thematic_rrg_direction"]
+    assert "NO_DATA" in FIELD_ENUMS["thematic_grade"]
+
+
 # ── the retirement ───────────────────────────────────────────────────────
 
 def test_ptrs_is_absent_from_the_taxonomy():

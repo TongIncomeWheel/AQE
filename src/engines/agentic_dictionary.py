@@ -37,12 +37,20 @@ FIELD_ENUMS = {
     "sector_trend_state": ["Declining — Avoid", "Momentum Fading — Hold, Don't Add",
                             "Recovering From Weakness — Watch for Entry", "Leading — Deploy"],
     "sector_rrg_quadrant": ["LEADING", "WEAKENING", "LAGGING", "IMPROVING"],
-    "sector_rrg_direction": ["ENTERING", "DEEPENING", "EXITING"],
-    "thematic_grade": ["DEPLOY", "HOLD", "TURNING", "WATCH", "AVOID"],
+    # STABLE was missing — srm._rrg_direction returns it whenever the
+    # quadrant hasn't changed and distance-from-center hasn't moved >2%
+    # either way. Found while depth-checking every state field against its
+    # source (2026-08-13); every prior consumer of this list read 3 of the
+    # 4 real values.
+    "sector_rrg_direction": ["ENTERING", "DEEPENING", "STABLE", "EXITING"],
+    # NO_DATA was missing — srm.grade_thematic_baskets returns it when a
+    # basket has fewer than min_constituents present in the panel.
+    "thematic_grade": ["DEPLOY", "HOLD", "TURNING", "WATCH", "AVOID", "NO_DATA"],
     "thematic_parent_grade": ["DEPLOY", "HOLD", "TURNING", "WATCH", "AVOID"],
     "thematic_rrg_quadrant": ["LEADING", "WEAKENING", "LAGGING", "IMPROVING"],
-    "thematic_rrg_direction": ["ENTERING", "DEEPENING", "EXITING"],
-    "hl_state": ["HOLD", "TIGHTEN", "EXIT"],                           # health.py
+    "thematic_rrg_direction": ["ENTERING", "DEEPENING", "STABLE", "EXITING"],
+    # HOLD_ADD was missing — health.py's top hl_score band (>=75).
+    "hl_state": ["HOLD_ADD", "HOLD", "TIGHTEN", "EXIT"],                # health.py
 }
 
 # ── Glossary fills for the 45 fields the production glossary omits ──

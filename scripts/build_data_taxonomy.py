@@ -497,6 +497,139 @@ SCORE_TREE = [
     # pipeline/daily_orchestrator.py) — not a scored value, so it has no row
     # here; see the taxonomy note in that file.
 
+    # ── DETECT layer state fields ───────────────────────────────────────
+    # These carry a categorical label (an enum) rather than a number, but the
+    # label is itself computed from thresholds like everything else here —
+    # "what state it's in" is not exempt from "how it was calculated".
+    R("structure_shift", "", "leaf", "label",
+      "BULLISH_BOS|ABOVE_STRUCTURE|BEARISH_CHOCH|RANGE|null",
+      "Close vs the most recent CONFIRMED swing pivot", "data/drive_sync.py:1160-1206",
+      "ext_pct=(entry/confirmed_pivot_high-1)*100 when entry>confirmed_pivot_high: "
+      "ext_pct<=2.0->BULLISH_BOS, ext_pct>2.0->ABOVE_STRUCTURE; "
+      "entry<swing_low->BEARISH_CHOCH; else RANGE; null if no swing found"),
+    R("structure_shift_ref", "structure_shift", "leaf", "usd", "",
+      "The level structure_shift is measured against", "data/drive_sync.py:1198-1206",
+      "confirmed_pivot_high for BULLISH_BOS/ABOVE_STRUCTURE; swing_low for "
+      "BEARISH_CHOCH; null for RANGE"),
+    R("div_state", "", "leaf", "label", "BULLISH|BEARISH|MIXED|NONE",
+      "Regular divergence direction at the last two confirmed pivots",
+      "engines/divergence.py:132-141",
+      "bull_count>0 AND bear_count==0->BULLISH; bear_count>0 AND "
+      "bull_count==0->BEARISH; both>0->MIXED; else NONE"),
+    R("div_bull_count", "div_state", "leaf", "0-5", "",
+      "Oscillators confirming bullish divergence", "engines/divergence.py:107-118",
+      "count over 5 oscillators of (osc[p2]>osc[p1]) at the last 2 confirmed "
+      "pivot lows p1<p2, gated on price making a lower low and p2 being fresh"),
+    R("div_bear_count", "div_state", "leaf", "0-5", "",
+      "Oscillators confirming bearish divergence", "engines/divergence.py:119-130",
+      "count over 5 oscillators of (osc[p2]<osc[p1]) at the last 2 confirmed "
+      "pivot highs p1<p2, gated on price making a higher high and p2 fresh"),
+    R("choch_state", "", "leaf", "label", "BULLISH|BEARISH|NONE",
+      "Direction of the latest change-of-character event",
+      "engines/smart_money_knn.py:293-301",
+      "trend<=0 AND close>last_confirmed_swing_high -> trend=1 -> BULLISH; "
+      "trend>=0 AND close<last_confirmed_swing_low -> trend=-1 -> BEARISH"),
+    R("pin_bar_state", "", "leaf", "label", "BULLISH_PIN|BEARISH_PIN|NONE",
+      "Rejection-candle geometry on the last closed bar", "engines/pin_bar.py:46-65",
+      "lower_wick>=0.66*range AND body<=0.4*range AND upper_wick<=0.4*range "
+      "->BULLISH_PIN; mirrored on upper_wick->BEARISH_PIN; else NONE"),
+    R("mover_subtype", "", "leaf", "label", "explosive|trend|tight_base|squeeze",
+      "The z-scored feature family the name resembles most",
+      "engines/signal_radar.py:219-229",
+      "argmax over 4 families of mean((feature-frozen_mean)/frozen_std) "
+      "across each family's feature set"),
+
+    # ── Sector / thematic state fields ──────────────────────────────────
+    R("gics_grade", "", "leaf", "label", "DEPLOY|HOLD|TURNING|WATCH|AVOID",
+      "Sector ETF grade; evaluated top-down, first match wins. Two roads "
+      "reach DEPLOY (a 20d trend road, a 5d acceleration road) and two "
+      "reach TURNING; grade_path on the row says which one fired. "
+      "divergence=roc5-roc20", "engines/srm.py:299-317",
+      "(above20 AND roc20>5.0)->DEPLOY; (above20 AND roc20>=0 AND roc5>=6.0 "
+      "AND divergence>=5.0)->DEPLOY; (above20 AND roc20>0)->HOLD; (above20 "
+      "AND roc20<=0 AND divergence>=5.0)->TURNING; (NOT above20 AND "
+      "divergence>0)->TURNING; (above20 AND roc20<=0)->WATCH; else AVOID"),
+    R("gics_gate", "", "leaf", "label", "PASS|WATCH|CAUTION|BLOCKED",
+      "Sector entry gate combining grade, RRG quadrant and macro flag",
+      "engines/srm.py:966-983",
+      "grade==AVOID->BLOCKED; (macro==HEADWIND AND rrg==LAGGING)->BLOCKED; "
+      "macro==HEADWIND->CAUTION; (rrg in [LAGGING,WEAKENING] AND "
+      "macro==CAUTION)->CAUTION; (grade in [DEPLOY,HOLD] AND rrg in "
+      "[LEADING,IMPROVING] AND macro in [TAILWIND,NEUTRAL])->PASS; else WATCH"),
+    R("sector_trend_state", "gics_grade", "leaf", "label",
+      "Momentum Building — Add|Momentum Fading — Hold, Don't Add|"
+      "Recovering From Weakness — Watch for Entry|Declining — Avoid",
+      "A directive label from (trend direction, momentum slope)",
+      "engines/srm.py:234-244",
+      "(above_sma20, divergence>0): (T,T)->Momentum Building — Add; "
+      "(T,F)->Momentum Fading — Hold, Don't Add; (F,T)->Recovering From "
+      "Weakness — Watch for Entry; (F,F)->Declining — Avoid"),
+    R("sector_rrg_quadrant", "", "leaf", "label",
+      "LEADING|IMPROVING|WEAKENING|LAGGING",
+      "Relative-Rotation-Graph quadrant vs SPY", "engines/srm.py:662-669",
+      "(rs_ratio>=100 AND rs_momentum>=100)->LEADING; (rs_ratio<100 AND "
+      "rs_momentum>=100)->IMPROVING; (rs_ratio>=100 AND rs_momentum<100)"
+      "->WEAKENING; else LAGGING"),
+    R("rs_ratio", "sector_rrg_quadrant", "leaf", "float ~100", "",
+      "Sector/SPY price ratio, normalised to 100 at the start of the window",
+      "engines/srm.py:585-591",
+      "rs_line=sector_close/spy_close over the trailing 42 bars; "
+      "rs_ratio=100*rs_line[-1]/rs_line[0]"),
+    R("rs_momentum", "sector_rrg_quadrant", "leaf", "float ~100", "",
+      "10-bar rate of change of rs_ratio's own normalised series, offset by 100",
+      "engines/srm.py:592-597", "100*(rs_norm[-1]/rs_norm[-11]-1)+100"),
+    R("sector_rrg_direction", "sector_rrg_quadrant", "leaf", "label",
+      "ENTERING|DEEPENING|STABLE|EXITING",
+      "Quadrant-change first, then distance-from-center trend",
+      "engines/srm.py:672-684",
+      "quadrant changed since yesterday->ENTERING; else "
+      "dist=sqrt((rs_ratio-100)^2+(rs_momentum-100)^2): "
+      "dist>dist_prev*1.02->DEEPENING; dist<dist_prev*0.98->EXITING; "
+      "else STABLE"),
+    R("thematic_grade", "gics_grade", "leaf", "label",
+      "DEPLOY|HOLD|TURNING|WATCH|AVOID|NO_DATA",
+      "Basket grade, demoted from a narrow rally", "engines/srm.py:485-495",
+      "index_grade = gics_grade's own ladder applied to the basket's "
+      "equal-weight constituent index vs SPY; grade = HOLD[narrow] if "
+      "index_grade==DEPLOY AND breadth<0.60 else index_grade"),
+    R("basket_breadth", "thematic_grade", "leaf", "0-1 pct", "",
+      "Fraction of basket constituents above their OWN 20-day SMA",
+      "engines/srm.py:372-382",
+      "count(constituent close > constituent's own SMA20) / n_measurable"),
+    R("thematic_parent_grade", "thematic_grade", "leaf", "label",
+      "DEPLOY|HOLD|TURNING|WATCH|AVOID",
+      "The parent GICS sector's own gics_grade, carried for context — no "
+      "longer clamps thematic_grade (retired 2026-08-05, see "
+      "parent_capped_grade for the old clamped value)",
+      "engines/srm.py:418-424", "sector_grades[parent_gics_etf].grade"),
+    R("thematic_rrg_quadrant", "thematic_grade", "leaf", "label",
+      "LEADING|IMPROVING|WEAKENING|LAGGING",
+      "Same RRG quadrant function as sector_rrg_quadrant, on the basket's "
+      "own equal-weight index vs SPY", "engines/srm.py:418-420,600",
+      "gics_rrg_quadrant(rs_ratio, rs_momentum) computed on the basket index"),
+    R("thematic_rrg_direction", "thematic_rrg_quadrant", "leaf", "label",
+      "ENTERING|DEEPENING|STABLE|EXITING",
+      "Same RRG direction function as sector_rrg_direction, on the basket",
+      "engines/srm.py:672-684", "sector_rrg_direction's formula, basket index"),
+
+    # ── Held-position state ──────────────────────────────────────────────
+    # Held-only. hl_trend/hl_flow/hl_rs/hl_risk are its own 4-part composite,
+    # sub-scored to the same depth as Flow/Energy/etc. would take another full
+    # pass — held here at composite level since hl_state is the state field.
+    R("hl_score", "", "engine", "0-100", "",
+      "Composite trend-integrity read for a held position",
+      "engines/health.py:10-18",
+      "clip(hl_trend + hl_flow + hl_rs + hl_risk, 0, 100); "
+      "hl_trend 0-35, hl_flow 0-25, hl_rs 0-20, hl_risk -20-0"),
+    R("hl_state", "hl_score", "leaf", "label", "HOLD_ADD|HOLD|TIGHTEN|EXIT",
+      "Held-position action band on hl_score", "engines/health.py:190-193",
+      "default EXIT; hl_score>=30->TIGHTEN; >=50->HOLD; >=75->HOLD_ADD"),
+    R("rs_leadership", "", "leaf", "label", "LEADER|IN-LINE|LAGGARD",
+      "20-day average outperformance vs SPY on SPY's own down days",
+      "engines/enrichment.py:48-58",
+      "avg_outperf=mean(stock_ret-spy_ret over days where spy_ret<0, 20d); "
+      "avg_outperf>0.25->LEADER; avg_outperf<-0.25->LAGGARD; else IN-LINE"),
+
     # ── membership ───────────────────────────────────────────────────────
     R("on_longlist", "", "leaf", "bool", "true|false",
       "Longlist membership", "longlist_screen.py:passes",
