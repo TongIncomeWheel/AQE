@@ -44,98 +44,139 @@ def R(field, parent, level, output, state, represents, source, formula, weight="
 # ── composites ───────────────────────────────────────────────────────────
 SCORE_TREE = [
     R("sc_momentum", "", "composite", "0-100", "",
-      "Momentum pipeline composite, 1-3 week hold", "engines/scoring.py:SC_M_WEIGHTS",
-      "0.30*flow + 0.30*energy + 0.20*structure + 0.20*mp; uncapped, no floors applied"),
+      "Momentum pipeline composite, 1-3 week hold; no engine floor is "
+      "applied to it, floors gate separately via sc_m_gates",
+      "engines/scoring.py:_sc_momentum_raw",
+      "clip(0.30*flow + 0.30*energy + 0.20*structure + 0.20*mp, 0, 100)"),
     R("sc_momentum_raw", "sc_momentum", "composite", "0-100", "",
-      "Ungated composite; equals sc_momentum in v1.8.0", "engines/scoring.py",
-      "same weighted average before gate flags"),
+      "The same weighted average, read before sc_m_gates is applied",
+      "engines/scoring.py:_sc_momentum_raw", "sc_momentum_raw = sc_momentum"),
     R("sc_m_gates", "sc_momentum", "leaf", "bool", "true|false",
-      "All momentum gate floors cleared", "engines/scoring.py:SC_M_GATES",
-      "elder>=6.5 AND flow>=60 AND energy>=60 AND structure>=55 AND mp>=55"),
+      "All momentum gate floors cleared", "engines/scoring.py:_sc_m_gates",
+      "flow>=60 AND energy>=60 AND structure>=55 AND mp>=55 "
+      "AND elder>=6.5"),
     R("sc_position", "", "composite", "0-100", "",
-      "Base-building composite, 3-6 week hold", "engines/scoring.py:SC_P_WEIGHTS",
-      "0.10*flow + 0.30*energy + 0.20*structure + 0.05*mp + 0.35*bq"),
+      "Base-building composite, 3-6 week hold", "engines/scoring.py:_sc_position_raw",
+      "clip(0.10*flow + 0.30*energy + 0.20*structure + 0.05*mp + 0.35*bq, "
+      "0, 100)"),
     R("sc_p_gates", "sc_position", "leaf", "bool", "true|false",
       "All position gate floors cleared", "engines/scoring.py:SC_P_GATES",
-      "flow>=40 AND energy>=60 AND structure>=65 AND mp>=40 AND bq>=60 AND k39"),
+      "flow>=40 AND energy>=60 AND structure>=65 AND mp>=40 AND bq>=60 "
+      "AND k39_gate"),
 
     # ── Flow ─────────────────────────────────────────────────────────────
     R("flow", "sc_momentum", "engine", "0-100", "",
-      "Money flow: institutional accumulation vs distribution", "engines/flow.py",
-      "clip(flow_score+accum_score+volume_score+skew_score+ext, 0, 38) / 38 * 100",
-      "0.30 of sc_momentum; 0.10 of sc_position"),
+      "Money flow: institutional accumulation vs distribution", "engines/flow.py:193-194",
+      "clip(flow_score+accum_score+volume_score+skew_score+ext_score, 0, 38) "
+      "/ 38 * 100", "0.30 of sc_momentum; 0.10 of sc_position"),
     R("flow_score", "flow", "component", "0-17", "",
-      "MFI + CMF joint band, plus Heikin-Ashi consecutive-bar count",
+      "MFI/CMF joint band, plus Heikin-Ashi consecutive-quality count",
       "engines/flow.py:69-110", "clip(fl_fb + ha_b, upper=17)", "17 of 38"),
     R("fl_fb", "flow_score", "leaf", "0-11", "",
       "MFI/CMF joint threshold band", "engines/flow.py:69-73",
-      "mfi>38 or cmf>-0.05 ->2.5; mfi>42 and cmf>0 ->5.0; "
-      "mfi>48 and cmf>0.02 ->8.0; mfi>55 and cmf>0.05 ->11.0", "11 of 17"),
+      "(mfi>38 OR cmf>-0.05)->2.5; (mfi>42 AND cmf>0)->5.0; "
+      "(mfi>48 AND cmf>0.02)->8.0; (mfi>55 AND cmf>0.05)->11.0", "11 of 17"),
+    R("hac", "ha_b", "leaf", "int 0-10", "",
+      "Count of the trailing 10 bars whose Heikin-Ashi body sits inside "
+      "0.5x ATR20 of the prior bar's open/close midpoint", "engines/flow.py:78-99",
+      "hc=(O+H+L+C)/4; ho[t]=(O+C)/2, ho[t-i]=(O[t-i-1]+C[t-i-1])/2 for "
+      "i=1..9; count over i=0..9 of |hc[t-i]-ho[t-i]| < 0.5*ATR20[t]"),
     R("ha_b", "flow_score", "leaf", "0|2|4|6", "",
-      "Heikin-Ashi consecutive-bar quality count, banded",
-      "engines/flow.py:105-107",
-      "count(qualifying HA bars in trailing window) >=2->2, >=3->4, >=5->6",
-      "6 of 17"),
+      "Step score on hac", "engines/flow.py:105-107",
+      "hac>=2->2.0, hac>=3->4.0, hac>=5->6.0", "6 of 17"),
     R("accum_score", "flow", "component", "0-7.5", "",
       "A/D line short vs long linear-regression slope", "engines/flow.py:120-124",
-      "ad=rollsum(A/D,60); s=linreg(ad,10); l=linreg(ad,20); "
-      "s>0->1.5; s>l*0.85->3.0; s>l->5.5; s>l*1.1->7.5", "7.5 of 38"),
+      "ad_short>0->1.5; ad_short>ad_long*0.85->3.0; ad_short>ad_long->5.5; "
+      "ad_short>ad_long*1.1->7.5", "7.5 of 38"),
+    R("ad_short", "accum_score", "leaf", "float", "",
+      "10-bar linear-regression endpoint of the 60-bar rolling A/D sum",
+      "engines/flow.py:117-121",
+      "ad=rollsum(((2*close-low-high)/(high-low))*volume, 60); "
+      "linreg_endpoint(ad, 10)"),
+    R("ad_long", "accum_score", "leaf", "float", "",
+      "20-bar linear-regression endpoint of the same 60-bar rolling A/D sum",
+      "engines/flow.py:117-122", "linreg_endpoint(ad, 20)"),
     R("volume_score", "flow", "component", "0-7.5", "",
-      "Volume trend plus spike", "engines/flow.py:130-138",
-      "vtr=sma(v,5)/sma(v,20): >0.9->2, >1.05->4, >1.2->5.5; "
-      "spk=v/sma(v,20): >1.5->1, >2.0->2; clip(sum, upper=7.5)", "7.5 of 38"),
+      "Volume trend plus spike, capped", "engines/flow.py:126-138",
+      "clip(vt_b + spk_b, upper=7.5)", "7.5 of 38"),
+    R("vtr", "volume_score", "leaf", "ratio", "",
+      "5-day average volume over 20-day average volume", "engines/flow.py:126-127",
+      "sma(volume,5) / sma(volume,20)"),
+    R("vt_b", "volume_score", "leaf", "0|2|4|5.5", "",
+      "Step score on vtr", "engines/flow.py:131-133",
+      "vtr>0.9->2.0, vtr>1.05->4.0, vtr>1.2->5.5"),
+    R("spk", "volume_score", "leaf", "ratio", "",
+      "Current bar's volume over the 20-day average", "engines/flow.py:128",
+      "volume / sma(volume,20)"),
+    R("spk_b", "volume_score", "leaf", "0|1|2", "",
+      "Step score on spk", "engines/flow.py:129-130",
+      "spk>1.5->1.0, spk>2.0->2.0"),
     R("skew_score", "flow", "component", "0-3.5", "",
       "Up-volume vs down-volume over 10 bars", "engines/flow.py:148-151",
-      "udr=sum(up_vol,10)/sum(down_vol,10): >=0.8->1.5, >1.2->2.5, >1.5->3.5",
-      "3.5 of 38"),
+      "udr>=0.8->1.5, udr>1.2->2.5, udr>1.5->3.5", "3.5 of 38"),
+    R("udr", "skew_score", "leaf", "ratio", "",
+      "10-bar sum of up-close volume over 10-bar sum of down-close volume",
+      "engines/flow.py:141-146",
+      "up_vol=volume where close[t]>close[t-1] else 0; dn_vol=volume where "
+      "close[t]<=close[t-1] else 0; sum(up_vol,10) / sum(dn_vol,10)"),
     R("ext_score", "flow", "component", "-8 to +5", "",
-      "Extension from 20-bar range and EMA20", "engines/flow.py:159-190",
-      "range position and EMA20 distance banded; negative when overextended",
-      "-8..+5 of 38"),
+      "Extension penalty/bonus, evaluated top-down until one condition fires",
+      "engines/flow.py:172-189",
+      "(is_nh AND vr>1.5 AND cr>0.6)->5.0; (pp>85 AND vr>1.2 AND cr>0.5)"
+      "->3.0; (de>12 AND vr>2.0 AND cr<0.4)->-8.0; (de>8 AND NOT isc AND "
+      "cr<0.4)->-5.0; pp<25->3.0; else 0.0"),
+    R("pp", "ext_score", "leaf", "0-100 pct", "",
+      "Close position inside the 20-bar high/low range", "engines/flow.py:156-162",
+      "(close-lowest(low,20)) / (highest(high,20)-lowest(low,20)) * 100; "
+      "50.0 when the 20-bar range is zero"),
+    R("de", "ext_score", "leaf", "pct", "",
+      "Close distance from EMA20, as a percent of EMA20",
+      "engines/flow.py:163-164", "(close-EMA20) / EMA20 * 100"),
 
     # ── Energy ───────────────────────────────────────────────────────────
     R("energy", "sc_momentum", "engine", "0-100", "",
-      "Stored energy: compression, position, exhaustion", "engines/energy.py",
-      "clip((vp_position+price_action+squeeze+exhaustion+atr) / 59.5 * 100, 0, 100)",
+      "Stored energy: compression, position, exhaustion", "engines/energy.py:192-194",
+      "clip((vp_position_score+price_action_score+squeeze_score+"
+      "exhaustion_score+atr_score) / 59.5 * 100, 0, 100)",
       "0.30 of sc_momentum; 0.30 of sc_position"),
     R("vp_position_score", "energy", "component", "0-17.5", "",
-      "Range-position proxy for volume-profile location", "engines/energy.py:39-61",
-      "clip(en_psc + en_lvn_proxy, upper=17.5); true VP array (POC/VAH/VAL) "
-      "is diagnostic only in Pine and not computed here", "17.5 of 59.5"),
+      "Range-position proxy for volume-profile location. The true VP array "
+      "(POC/VAH/VAL) is diagnostic only in Pine and is not computed here.",
+      "engines/energy.py:39-61", "clip(en_psc + en_lvn_proxy, upper=17.5)",
+      "17.5 of 59.5"),
     R("en_pos50", "vp_position_score", "leaf", "0-100 pct", "",
       "Close position inside the 50-bar high/low range", "engines/energy.py:39-46",
       "(close - lowest(low,50)) / (highest(high,50) - lowest(low,50)) * 100; "
       "50.0 when the 50-bar range is zero"),
     R("en_psc", "vp_position_score", "leaf", "3-17", "",
-      "Step score banding en_pos50, with an extension penalty at the top",
-      "engines/energy.py:48-54",
-      "en_pos50 <30->3, >=30->5, >=45->8, >=60->12, >=75->17, >=90->15 "
-      "(90+ scores LESS than 75-90 on purpose — Pine's own extension penalty)",
-      "17 of 17.5"),
+      "Step score on en_pos50; the 90+ tier scores below the 75-90 tier "
+      "on purpose — Pine's own extension penalty", "engines/energy.py:48-54",
+      "en_pos50<30->3.0, en_pos50>=30->5.0, >=45->8.0, >=60->12.0, "
+      ">=75->17.0, >=90->15.0"),
     R("en_lvn_proxy", "vp_position_score", "leaf", "0|1.5", "",
       "Low-volume-node proxy: tight 5-bar range high in the 50-bar range",
       "engines/energy.py:56-60",
-      "1.5 if (en_pos50>75) AND (highest(high,5)-lowest(low,5) < 2*ATR20) else 0",
-      "1.5 of 17.5"),
+      "(en_pos50>75 AND (highest(high,5)-lowest(low,5))<2*ATR20)->1.5; else 0"),
     R("price_action_score", "energy", "component", "0-12.5", "",
       "Higher lows, range tightness, pullback depth, discounted low in range",
       "engines/energy.py:69-100",
-      "clip(structure_score + tightness_score + pullback_score, ...) then "
-      "x0.7 if en_pos50<45, x0.5 if en_pos50<30", "12.5 of 59.5"),
+      "pa_raw = structure_score + tightness_score + pullback_score; "
+      "pa_raw*0.7 if en_pos50<45; pa_raw*0.5 if en_pos50<30; else pa_raw",
+      "12.5 of 59.5"),
     R("hl_count", "price_action_score", "leaf", "0-4", "",
       "Count of the last 4 bars making a higher low", "engines/energy.py:64-67",
       "sum over i=0..3 of (low[t-i] > low[t-i-1])"),
     R("structure_score", "price_action_score", "leaf", "0-5", "",
       "Step score on hl_count", "engines/energy.py:68-72",
-      "hl_count >=1->1.5, >=2->3.0, >=3->4.0, >=4->5.0", "5 of 12.5"),
+      "hl_count>=1->1.5, >=2->3.0, >=3->4.0, >=4->5.0", "5 of 12.5"),
     R("compression_ratio", "price_action_score", "leaf", "ratio", "",
       "5-bar range as a fraction of the 20-bar range", "engines/energy.py:74-76",
       "(highest(high,5)-lowest(low,5)) / (highest(high,20)-lowest(low,20))"),
     R("tightness_score", "price_action_score", "leaf", "0-4.5", "",
       "Step score on compression_ratio, boosted while trending",
       "engines/energy.py:77-86",
-      "ratio<0.9->1.0, <0.7->2.0, <0.5->3.5, <0.3->4.5; "
-      "+1.5 (capped 4.5) if close>EMA20 AND close>close[5]", "4.5 of 12.5"),
+      "base: ratio<0.9->1.0, <0.7->2.0, <0.5->3.5, <0.3->4.5; "
+      "clip(base+1.5, upper=4.5) if close>EMA20 AND close>close[5]", "4.5 of 12.5"),
     R("pullback_pct", "price_action_score", "leaf", "0-100 pct", "",
       "Pullback from the 20-bar high", "engines/energy.py:88-89",
       "(highest(high,20) - close) / highest(high,20) * 100"),
@@ -143,40 +184,51 @@ SCORE_TREE = [
       "Step score on pullback_pct", "engines/energy.py:90-93",
       "pullback_pct<25->1.0, <15->2.0, <10->2.5, <5->3.0", "3 of 12.5"),
     R("squeeze_score", "energy", "component", "0-12.5", "",
-      "Bollinger/Keltner squeeze and bandwidth percentile", "engines/energy.py:102-124",
-      "no squeeze: bwp<50->4, bwp<30->8.5; in squeeze (bb inside keltner): 5, "
-      "bwp<50->7.5, bwp<35->10, bwp<20->12.5", "12.5 of 59.5"),
+      "Bollinger/Keltner squeeze state and bandwidth percentile",
+      "engines/energy.py:113-124",
+      "sq=false: bwp<50->4.0, bwp<30->8.5; sq=true: 5.0, bwp<50->7.5, "
+      "bwp<35->10.0, bwp<20->12.5", "12.5 of 59.5"),
     R("bwp", "squeeze_score", "leaf", "0-100 pct", "",
-      "Bollinger bandwidth percentile of its own 50-bar range",
-      "engines/energy.py:104-111",
-      "bw=(BB_upper-BB_lower)/BB_mid*100 (BB: SMA20 +/- 2*stdev20); "
-      "bwp=(bw-lowest(bw,50))/(highest(bw,50)-lowest(bw,50))*100"),
+      "Bollinger bandwidth's own 50-bar percentile", "engines/energy.py:104-111",
+      "bw=(BB_upper-BB_lower)/BB_mid*100, BB=SMA20 +/- 2*stdev_pop(close,20); "
+      "bwp=(bw-lowest(bw,50)) / (highest(bw,50)-lowest(bw,50)) * 100"),
+    R("sq", "squeeze_score", "leaf", "bool", "true|false",
+      "Bollinger Bands sitting inside Keltner Channels", "engines/energy.py:112",
+      "BB_lower>KC_lower AND BB_upper<KC_upper, KC=SMA20 +/- 1.5*ATR20"),
     R("exhaustion_score", "energy", "component", "0-10", "",
       "Penalty for climactic, divergent or wide-spread bars, applied only "
       "once the trend is mature", "engines/energy.py:126-167",
       "en_trend_bars>=15: clip(10 + climactic_penalty + divergence_penalty "
-      "+ wide_spread_penalty, lower=0); else 10 unconditionally", "10 of 59.5"),
+      "+ wide_spread_penalty, lower=0); en_trend_bars<15: 10.0", "10 of 59.5"),
     R("en_trend_bars", "exhaustion_score", "leaf", "int >=0", "",
       "Consecutive bars closing above EMA20", "engines/energy.py:129-134",
-      "running count, resets to 0 on any close <= EMA20"),
+      "en_trend_bars[t] = en_trend_bars[t-1]+1 if close[t]>EMA20[t] else 0"),
     R("climactic_penalty", "exhaustion_score", "leaf", "-4|-2.5|0", "",
-      "Penalty for a high-volume bar with a weak price gain",
-      "engines/energy.py:138-141",
-      "vol/SMA20vol>3.0 AND gain%<2 ->-4.0; >2.5 AND gain%<3 ->-2.5; else 0"),
+      "Penalty for a high-volume bar with a weak price gain; later clauses "
+      "override earlier ones where both match", "engines/energy.py:138-141",
+      "(vol_ratio>2.5 AND gain_pct<3)->-2.5; (vol_ratio>3.0 AND gain_pct<2)"
+      "->-4.0 [overrides]; else 0; vol_ratio=volume/SMA20vol, "
+      "gain_pct=(close/close[1]-1)*100"),
     R("divergence_penalty", "exhaustion_score", "leaf", "-3|-2|0", "",
-      "Penalty for a new price high with MFI or MACD not confirming",
+      "Penalty for a new price high with MFI or MACD not confirming; later "
+      "clauses override earlier ones where both match",
       "engines/energy.py:143-151",
-      "new 10-bar high AND MFI(14)<its 5-bar-prior max ->-3.0; "
-      "new high AND MACD-line<its 5-bar-prior max ->-2.0; else 0"),
+      "(price_new_high AND MACD_line<max(MACD_line[1..5]))->-2.0; "
+      "(price_new_high AND MFI14<max(MFI14[1..5]))->-3.0 [overrides]; else 0; "
+      "price_new_high = high==highest(high,10)"),
     R("wide_spread_penalty", "exhaustion_score", "leaf", "-3|-1.5|0", "",
-      "Penalty for an abnormally wide bar on high volume",
+      "Penalty for an abnormally wide bar on high volume with no follow-through",
       "engines/energy.py:153-161",
-      "range/ATR20>2.0 AND vol/SMA20vol>2.0 AND no next-bar follow-through "
-      "->-3.0; range/ATR20>1.5 AND vol/SMA20vol>1.5 ->-1.5; else 0"),
+      "(bar_range_ratio>2.0 AND vol_ratio>2.0 AND NOT follow_through)"
+      "->-3.0; (bar_range_ratio>1.5 AND vol_ratio>1.5)->-1.5; else 0; "
+      "bar_range_ratio=(high-low)/ATR20, follow_through=close[1]<close AND high[1]<high"),
     R("atr_score", "energy", "component", "0-7", "",
-      "ATR expansion inside the productive band", "engines/energy.py:182-189",
-      "atr_expansion_pct in [20,80] -> 7; >=15 -> 5.5; >=10 -> 4.0; "
-      ">150 -> 2.0; >80 -> 4.0; >=0 -> 1.0; >=-10 -> 0.5; else 0", "7 of 59.5"),
+      "ATR expansion inside the productive band; the resolved bands below "
+      "(not the code's override order) are the ones that actually apply",
+      "engines/energy.py:182-189",
+      "pct<-10->0.0; -10<=pct<0->0.5; 0<=pct<10->1.0; 10<=pct<15->4.0; "
+      "15<=pct<20->5.5; 20<=pct<=80->7.0; 80<pct<=150->4.0; pct>150->2.0",
+      "7 of 59.5"),
     R("atr_expansion_pct", "atr_score", "leaf", "pct", "",
       "5-bar ATR average vs 20-bar ATR average, percent change",
       "engines/energy.py:170-172",
@@ -242,12 +294,16 @@ SCORE_TREE = [
       "Distance from close to the 50-bar high", "engines/structure.py:194",
       "(highest(high,50) - close) / close * 100"),
     R("wk_score", "structure", "component", "0-15", "",
-      "Weekly close vs weekly SMA10", "engines/structure.py:202-212",
-      "no weekly data->7.5; else wk_close vs wk_sma10: >0.93x->2, >0.97x->5, "
-      ">1.00x->10, and rising->15", "15 of 95"),
+      "Weekly close vs weekly SMA10; 7.5 when no weekly data is available",
+      "engines/structure.py:202-212",
+      "no weekly data: 7.5; else: wk_close>wk_sma10*0.93->2.0, "
+      "wk_close>wk_sma10*0.97->5.0, wk_close>wk_sma10->10.0, "
+      "(wk_close>wk_sma10 AND wk_rising)->15.0; wk_rising=wk_sma10>wk_sma10[1]",
+      "15 of 95"),
     R("earn_score", "structure", "component", "0-10", "",
-      "Distance to the next earnings date", "engines/structure.py:docstring",
-      "days_to_earnings: <=5->0, <=10->4, <=20->7, >20 or unknown->10", "10 of 95"),
+      "Distance to the next earnings date", "src/data/earnings.py:earn_proximity_score:116-126",
+      "days<=5->0.0, days<=10->4.0, days<=20->7.0, days>20 or unknown->10.0",
+      "10 of 95"),
 
     # ── MP ───────────────────────────────────────────────────────────────
     R("mp", "sc_momentum", "engine", "0-100", "",
@@ -257,43 +313,54 @@ SCORE_TREE = [
     R("abs_mom_score", "mp", "component", "0-30", "",
       "20-day ROC z-score against its own 50-day distribution",
       "engines/mp.py:42-49",
-      "z=roc_zscore: >=2->30, >=1.5->26, >=1->22, >=0.5->16, >=0->10, "
+      "roc_zscore>=2.0->30, >=1.5->26, >=1.0->22, >=0.5->16, >=0.0->10, "
       ">=-0.5->5, else 0", "30 of 100"),
     R("roc_zscore", "abs_mom_score", "leaf", "z-score", "",
       "20-day rate of change, standardised against its own 50-day mean/stdev",
       "engines/mp.py:42-45",
-      "roc20=(close/close[20]-1)*100; z=(roc20-sma(roc20,50))/"
+      "roc20=(close/close[20]-1)*100; roc_zscore=(roc20-sma(roc20,50))/"
       "stdev_pop(roc20,50)"),
     R("adx_score", "mp", "component", "0-25", "",
-      "Trend strength, only when DI is bullish", "engines/mp.py:57-62",
-      "adx_val>=20 and di_bullish->12, >=25->18, >=30->22, >=40->25", "25 of 100"),
+      "Trend strength, gated on DI direction", "engines/mp.py:57-62",
+      "(adx_val>=20 AND di_bullish)->12; (adx_val>=25 AND di_bullish)->18; "
+      "(adx_val>=30 AND di_bullish)->22; (adx_val>=40 AND di_bullish)->25; "
+      "else 0", "25 of 100"),
     R("adx_val", "adx_score", "leaf", "0-100", "",
-      "14-period Average Directional Index (Wilder)", "engines/mp.py:57",
-      "standard ADX from +DI/-DI (Wilder-smoothed directional movement)"),
+      "14-period Average Directional Index, Wilder RMA of DX",
+      "engines/mp.py:139-155",
+      "plus_di=100*wilder_rma(plus_dm,14)/wilder_rma(TR,14); minus_di "
+      "likewise on minus_dm; dx=100*|plus_di-minus_di|/(plus_di+minus_di); "
+      "adx_val=wilder_rma(dx,14)"),
     R("di_bullish", "adx_score", "leaf", "bool", "true|false",
       "+DI above -DI — directional gate on the ADX score",
       "engines/mp.py:58", "plus_di > minus_di"),
     R("rel_mom_score", "mp", "component", "0-25", "",
       "20-day excess return vs SPY", "engines/mp.py:65-72",
-      "excess_return: >=15->25, >=10->22, >=5->18, >=2->13, >=0->8, "
+      "excess_return>=15->25, >=10->22, >=5->18, >=2->13, >=0->8, "
       ">=-3->3, else 0", "25 of 100"),
     R("excess_return", "rel_mom_score", "leaf", "pct", "",
       "20-day return, stock minus SPY", "engines/mp.py:65-68",
       "(close/close[20]-1)*100 - (spy_close/spy_close[20]-1)*100"),
     R("trend_score", "mp", "component", "0-20", "",
-      "Moving-average stacking", "engines/mp.py:74-94",
-      "above EMA20 only, not above SMA50 ->5; above SMA50, SMA50 not "
-      "rising ->8; above SMA50 and rising, not above EMA20 ->12; above "
-      "both and SMA50 rising but EMA20 not ->16; above both and both "
-      "rising ->20", "20 of 100"),
+      "Moving-average stacking; the five clauses are mutually exclusive by "
+      "construction. above20=close>EMA20, above50=close>SMA50, "
+      "ma20_rising=EMA20>EMA20[3], ma50_rising=SMA50>SMA50[5]",
+      "engines/mp.py:74-94",
+      "(above20 AND NOT above50)->5; (above50 AND NOT ma50_rising)->8; "
+      "(above50 AND ma50_rising AND NOT above20)->12; (above20 AND above50 "
+      "AND ma50_rising AND NOT ma20_rising)->16; (above20 AND above50 AND "
+      "ma20_rising AND ma50_rising)->20; else 0", "20 of 100"),
     R("mp_state", "mp", "leaf", "label", "BUILDING|STRONG|FADING",
-      "Phase label for the momentum reading", "engines/mp.py", "banded on mp"),
+      "Phase label for the momentum reading", "engines/mp.py:104-107",
+      "default FADING; (mp_rising AND mp<75)->BUILDING; (mp_rising AND "
+      "mp>=75)->STRONG; mp_rising = mp_score>mp_score[3]"),
     R("mp_accel", "mp", "leaf", "float", "",
-      "Additive momentum acceleration, outside the Pine spec", "engines/mp.py",
-      "change in momentum; dead zone +/-0.10"),
+      "Additive momentum acceleration, outside the Pine spec", "engines/mp.py:113",
+      "sma(roc_zscore.diff(5), 3)"),
     R("mp_accel_state", "mp_accel", "leaf", "label",
-      "ACCELERATING|FLAT|DECELERATING", "Acceleration band",
-      "engines/mp.py:ACCEL_UP/ACCEL_DN", ">0.10 up, <-0.10 down, else flat"),
+      "ACCELERATING|FLAT|DECELERATING", "Step score on mp_accel",
+      "engines/mp.py:115-117",
+      "default FLAT; mp_accel>0.10->ACCELERATING; mp_accel<-0.10->DECELERATING"),
 
     # ── Elder ────────────────────────────────────────────────────────────
     R("elder", "", "engine", "0-10", "",
@@ -322,13 +389,22 @@ SCORE_TREE = [
       "Bar-over-bar change in the MACD histogram", "engines/elder.py:71",
       "hist - hist[1]"),
     R("elder_pattern", "elder", "leaf", "label",
-      "ACCELERATION|ACCUMULATION_BASE|CORRECTION_REENTRY|INTERRUPTED|SUSTAINED",
-      "Named impulse sequence", "engines/elder_context.py", "5-state classifier"),
+      "SUSTAINED|CORRECTION_REENTRY|ACCELERATION|ACCUMULATION_BASE|"
+      "INTERRUPTED|null",
+      "Rule match over the last 5 rounded elder scores (v[0..4]=T-4..T-0), "
+      "checked in this order — first match wins", "engines/elder_context.py:19-47",
+      "(count(v>=9)>=4 AND min(v)>=8)->SUSTAINED; (interior v[i]<=7 after an "
+      "earlier v>=9, with v[-1]>=9)->CORRECTION_REENTRY; (v[0]<=6 or v[1]<=6, "
+      "AND v[-1]>=9 AND v[-2]>=9 AND v[-1]>=v[0])->ACCELERATION; "
+      "(max(v)<=8 AND min(v)<=6 AND v non-decreasing)->ACCUMULATION_BASE; "
+      "(any v[i]<=5 for i>=1)->INTERRUPTED; else null"),
 
     # ── BQ / K39 ─────────────────────────────────────────────────────────
     R("bq", "sc_position", "engine", "0-100", "",
-      "Base quality for the position pipeline", "engines/bq.py",
-      "bq_range_tight + bq_vol_dry + bq_base_dur + bq_ema_conv; already 0-100",
+      "Base quality for the position pipeline; the four components already "
+      "sum to 0-100 so there is no divisor, unlike Flow/Energy/Structure",
+      "engines/bq.py:139",
+      "clip(bq_range_tight + bq_vol_dry + bq_base_dur + bq_ema_conv, 0, 100)",
       "0.35 of sc_position"),
     R("bq_range_tight", "bq", "component", "0-30", "",
       "Range tightness", "engines/bq.py:32-39",
@@ -344,14 +420,19 @@ SCORE_TREE = [
       "5-day average volume over 20-day average volume", "engines/bq.py:43-45",
       "SMA(volume,5) / SMA(volume,20)"),
     R("bq_base_dur", "bq", "component", "0-20", "",
-      "Base duration", "engines/bq.py:52-125",
-      "same 3-mode/latch/decay mechanism as structure's base_score, with a "
-      "60-bar pivot and an 8% band, and its own tiers: 3-4d->4, 5-6d->8, "
-      "7-9d->14, 10-25d->20, 25-35d->14, >35d->8", "20 of 100"),
+      "Base duration, step score on bq_base_days", "engines/bq.py:118-124",
+      "(3<=days<=4)->4.0, (5<=days<=6)->8.0, (7<=days<=9)->14.0, "
+      "(10<=days<=25)->20.0, (25<=days<=35)->14.0, days>35->8.0, else 0",
+      "20 of 100"),
     R("bq_base_days", "bq_base_dur", "leaf", "int >=0", "",
-      "BQ's own base-day count — same mechanism as structure.base_days but a "
-      "distinct instance (60-bar pivot, 8% band, not shared state)",
-      "engines/bq.py:60-116", "see bq_base_dur formula"),
+      "Bars in a qualifying base — BQ's own instance of the mechanism "
+      "structure.base_days also uses, with a 60-bar pivot and an 8% band, "
+      "not shared state with it", "engines/bq.py:60-116",
+      "in_band_basic=(highest(high,60)-close)<=0.08*highest(high,60); "
+      "in_base=in_band_basic OR mode2_staircase OR mode3_smooth (both gated "
+      "by in_band_basic); raw count of consecutive in_base bars, LATCHED on "
+      "breakout (close>rolling consolidation high AND vol>SMA20vol AND "
+      "raw>=3) for 10 bars, then reverts to the live raw count"),
     R("bq_ema_conv", "bq", "component", "0-25", "",
       "EMA(8/13/21) convergence", "engines/bq.py:128-136",
       "norm_spread<2.5->5, <1.8->10, <1.2->15, <0.8->20, <0.5->25",
@@ -366,10 +447,48 @@ SCORE_TREE = [
 
     # ── Pipeline Rank ────────────────────────────────────────────────────
     R("pipe_rank", "", "engine", "0-100", "",
-      "Pre-screen rank used to order the scoring queue", "engines/pipeline_rank.py",
-      "percentile blend of 12-month return, base and liquidity"),
-    R("pipe_tier", "pipe_rank", "leaf", "label", "A-TIER|B|C-WATCH|D-SKIP",
-      "Tier label from pipe_rank", "engines/pipeline_rank.py", "banded on pipe_rank"),
+      "Pre-screen rank used to order the scoring queue", "engines/pipeline_rank.py:157",
+      "clip(momentum_composite*0.70 + fip_quality*0.30, 0, 100)"),
+    R("momentum_composite", "pipe_rank", "leaf", "0-100", "",
+      "Sum of five 20-point technical sub-scores", "engines/pipeline_rank.py:93-155",
+      "clip(ret_score + adx_score + rsi_score + vol_score + ma_score, 0, 100)",
+      "70 pct weight"),
+    R("ret_score", "momentum_composite", "leaf", "0-20", "",
+      "12-month return skipping the most recent month, banded",
+      "engines/pipeline_rank.py:93-99",
+      "ret_12m=(close/close[231]-1)*100; >-10->4, >0->8, >10->12, >25->16, "
+      ">50->20", "20 of 100"),
+    R("pr_adx_score", "momentum_composite", "leaf", "0-20", "",
+      "ADX(14) trend strength, gated on DI direction. pipeline_rank.py has "
+      "its own _adx/_dmi (ATR-normalised DI), a separate implementation "
+      "from MP's adx_val/di_bullish, not the same series",
+      "engines/pipeline_rank.py:102-109",
+      "pr_adx_val>15->5; (pr_adx_val>20 AND pr_di_bullish)->10; "
+      "(pr_adx_val>25 AND pr_di_bullish)->15; (pr_adx_val>30 AND "
+      "pr_di_bullish)->20; pr_di_bullish = pr_di_plus>pr_di_minus, "
+      "pr_di_plus=100*wilder_rma(plus_dm,14)/ATR(14)", "20 of 100"),
+    R("rsi_score", "momentum_composite", "leaf", "0-20", "",
+      "RSI(14) momentum zone, with an overbought penalty",
+      "engines/pipeline_rank.py:111-119",
+      "rsi>30->5; rsi>40->10; rsi>50->15; (50<=rsi<=70)->20; rsi>80->10",
+      "20 of 100"),
+    R("vol_score", "momentum_composite", "leaf", "0-20", "",
+      "5-day vs 20-day average volume, banded", "engines/pipeline_rank.py:121-127",
+      "vol_ratio=sma(volume,5)/sma(volume,20); >0.7->5, >0.9->10, >1.0->15, "
+      ">1.2->20", "20 of 100"),
+    R("ma_score", "momentum_composite", "leaf", "0-20", "",
+      "Moving-average stack, additive not banded", "engines/pipeline_rank.py:129-144",
+      "clip(4*[close>EMA20] + 4*[close>EMA50] + 3*[close>EMA150] + "
+      "3*[close>EMA200] + 3*[EMA20>EMA50>EMA150>EMA200] + "
+      "3*[SMA50>SMA50[5]], upper=20)", "20 of 100"),
+    R("fip_quality", "pipe_rank", "leaf", "0-100", "",
+      "FIP path-quality score, penalised for spikes", "engines/pipeline_rank.py:161-172",
+      "base: fip_raw>0.10->10; (0<fip_raw<=0.10)->30; (-0.05<=fip_raw<=0)"
+      "->60; (-0.10<=fip_raw<-0.05)->80; fip_raw<-0.10->100; else 50; "
+      "clip(base - spike_penalty, 0, 100)", "30 pct weight"),
+    R("pipe_tier", "pipe_rank", "leaf", "label", "D-SKIP|C-WATCH|B-STRONG|A-TIER",
+      "Tier label from pipe_rank", "engines/pipeline_rank.py:230-234",
+      "default D-SKIP; pipe_rank>=45->C-WATCH; >=60->B-STRONG; >=75->A-TIER"),
 
     # PTRS and the disposition ceiling that briefly replaced it are both
     # retired (2026-08-13). Both were a re-read of SC_MOMENTUM through a

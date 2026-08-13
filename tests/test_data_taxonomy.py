@@ -76,6 +76,31 @@ def test_no_prose_paragraphs_leaked_into_a_cell():
             assert len(val) <= 320, f"{r['field']}.{col} is {len(val)} chars"
 
 
+def test_every_field_name_is_unique():
+    """The field column is the row's identity. A repeat silently shadows
+    one row's data with another's wherever anything keys off the name."""
+    names = [r["field"] for r in rows()]
+    dupes = {n for n in names if names.count(n) > 1}
+    assert not dupes, f"repeated field names: {dupes}"
+
+
+def test_formula_cells_hold_calculation_not_narration():
+    """represents is the prose column. formula is not — it must read as an
+    expression a reader could evaluate, not a description of one."""
+    import re
+    banned = [r"\bno squeeze\b", r"\bin squeeze\b", r"\bsame as\b",
+              r"\bsame mechanism\b", r"\balready 0-100\b",
+              r"\bunconditionally\b", r"\bbanded on\b", r"\bsee \w",
+              r"\bdocstring\b", r"\.\.\.", r"\bonly when\b",
+              r"\bnot above\b", r"\band rising->\b"]
+    pattern = re.compile("|".join(banned), re.IGNORECASE)
+    for r in rows():
+        if not r["formula"]:
+            continue
+        m = pattern.search(r["formula"])
+        assert not m, f"{r['field']}.formula narrates instead of computing: {m.group()!r}"
+
+
 # ── the transcription matches the engines ────────────────────────────────
 
 def test_composite_weights_match_scoring_py():
