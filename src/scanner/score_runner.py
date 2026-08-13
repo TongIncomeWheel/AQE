@@ -24,7 +24,7 @@ import pandas as pd
 from src.data.earnings import load_earnings
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
-from src.engines import bq, divergence, elder, energy, flow, health, k39, mp, pin_bar, pipeline_rank, readiness, scoring, smart_money_knn, structure
+from src.engines import bq, divergence, elder, energy, flow, health, k39, mp, pin_bar, pipeline_rank, readiness, scoring, smart_money_knn, squeeze_breakout, structure, vwap
 from src.engines.utils import atr
 
 
@@ -71,6 +71,11 @@ SCORE_COLUMNS = [
     # ── Smart Money kNN — CHoCH + instance-based learning (last bar only) ──
     "choch_state", "choch_date", "knn_prob", "knn_significant",
     "knn_neighbors_used", "knn_tp1", "knn_tp2", "knn_tp3",
+    # ── Squeeze Breakout + Volume (last bar only) ──
+    "squeeze_breakout_state", "squeeze_breakout_date",
+    "squeeze_breakout_volume_confirmed", "was_squeezed",
+    # ── Rolling 14-day VWAP (last bar only) ──
+    "vwap_14d", "vwap_14d_position",
 ]
 
 
@@ -143,6 +148,9 @@ def build_scores() -> None:
             # Smart Money CHoCH + kNN — also a LAST-BAR read (the latest CHoCH,
             # scored against the ticker's own historical CHoCH events).
             sm = smart_money_knn.compute_smart_money(d)
+            # Squeeze breakout + volume, and rolling 14D VWAP — both LAST-BAR reads.
+            sb = squeeze_breakout.compute_squeeze_breakout(d)
+            vw = vwap.compute_vwap(d, length=14)
         except Exception as exc:
             print(f"  !! {ticker}: {exc}", file=sys.stderr)
             continue
@@ -366,6 +374,21 @@ def build_scores() -> None:
             float(sm["tp2"]) if sm["tp2"] is not None else np.nan)
         row.loc[_last_ix, "knn_tp3"] = (
             float(sm["tp3"]) if sm["tp3"] is not None else np.nan)
+        # Squeeze breakout — LAST BAR ONLY.
+        row["squeeze_breakout_state"] = None
+        row["squeeze_breakout_date"] = None
+        row["squeeze_breakout_volume_confirmed"] = None
+        row["was_squeezed"] = None
+        row.loc[_last_ix, "squeeze_breakout_state"] = sb["squeeze_breakout_state"]
+        row.loc[_last_ix, "squeeze_breakout_date"] = sb["squeeze_breakout_date"]
+        row.loc[_last_ix, "squeeze_breakout_volume_confirmed"] = sb["squeeze_breakout_volume_confirmed"]
+        row.loc[_last_ix, "was_squeezed"] = sb["was_squeezed"]
+        # Rolling 14D VWAP — LAST BAR ONLY.
+        row["vwap_14d"] = np.nan
+        row["vwap_14d_position"] = None
+        row.loc[_last_ix, "vwap_14d"] = (
+            float(vw["vwap_14d"]) if vw["vwap_14d"] is not None else np.nan)
+        row.loc[_last_ix, "vwap_14d_position"] = vw["vwap_14d_position"]
         out_rows.append(row[SCORE_COLUMNS])
 
     if not out_rows:

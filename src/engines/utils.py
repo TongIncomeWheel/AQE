@@ -201,6 +201,38 @@ def change(x: pd.Series, n: int = 1) -> pd.Series:
     return x.diff(n)
 
 
+def bollinger_keltner_squeeze(
+    high: pd.Series, low: pd.Series, close: pd.Series,
+    bb_len: int = 20, bb_mult: float = 2.0,
+    kc_len: int = 20, kc_mult: float = 1.5, width_lookback: int = 50,
+) -> dict[str, pd.Series]:
+    """TTM-style squeeze: Bollinger Bands(bb_len, bb_mult) fully inside
+    Keltner Channel(kc_len, ATR x kc_mult). The one squeeze test AQE uses —
+    energy.py's squeeze_score and engines/squeeze_breakout.py both call this,
+    so there is exactly one place the definition can drift.
+
+    Returns bb_mid/bb_upper/bb_lower, bb_width_pct (BB width's own percentile
+    over the last `width_lookback` bars, 0-100), and `squeeze` (bool: BB
+    inside KC)."""
+    bb_mid = sma(close, bb_len)
+    bb_dev = bb_mult * stdev_pop(close, bb_len)
+    bb_upper = bb_mid + bb_dev
+    bb_lower = bb_mid - bb_dev
+    bb_width = ((bb_upper - bb_lower) / bb_mid.replace(0.0, np.nan) * 100.0).fillna(0.0)
+    bwl = lowest(bb_width, width_lookback)
+    bwh = highest(bb_width, width_lookback)
+    bwr = bwh - bwl
+    bb_width_pct = ((bb_width - bwl) / bwr.replace(0.0, np.nan) * 100.0).fillna(50.0)
+    kc_range = atr(high, low, close, n=kc_len)
+    kc_upper = bb_mid + kc_range * kc_mult
+    kc_lower = bb_mid - kc_range * kc_mult
+    squeeze = (bb_lower > kc_lower) & (bb_upper < kc_upper)
+    return {
+        "bb_mid": bb_mid, "bb_upper": bb_upper, "bb_lower": bb_lower,
+        "bb_width_pct": bb_width_pct, "bb_width_lowest": bwl, "squeeze": squeeze,
+    }
+
+
 # ----- Heikin Ashi ---------------------------------------------------------
 
 

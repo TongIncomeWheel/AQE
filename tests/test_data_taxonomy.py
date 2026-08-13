@@ -363,7 +363,7 @@ def test_every_block_cites_its_real_calculator_not_build_export():
     glossary. Only fields build_export genuinely computes inline (simple
     literals/timestamps/aggregates) may still cite it."""
     f = by_field()
-    delegated = {"regime": "regime.py", "srm": "srm.py",
+    delegated = {"regime": "ptrs.py", "srm": "srm.py",
                 "macro_weather": "srm.py", "intermarket": "srm.py",
                 "thematic_baskets": "srm.py", "held_book": "held_book.py",
                 "data_quality": "_compute_data_quality",

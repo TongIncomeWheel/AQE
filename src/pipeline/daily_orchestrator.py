@@ -50,7 +50,6 @@ from src.engines.srm import (
 )
 from src.data.sector_mapper import load_sector_map, ETF_TO_NAME
 from src.analyzer.ptrs import classify_vix_regime
-from src.analyzer.regime import compute_regime
 
 STAGE2_MAX = 50
 PIPE_RANK_CUTOFF = 60
@@ -771,7 +770,7 @@ def _compute_regime() -> dict:
     except Exception:
         pass
 
-    return compute_regime(vix)
+    return {"vix": round(vix, 1), "vix_regime": classify_vix_regime(vix)}
 
 
 # Below this, a candidate does not reach the shortlist. PTRS, then a

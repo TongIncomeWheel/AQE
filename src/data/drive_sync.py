@@ -7,7 +7,10 @@ REST API only — there are NO local Drive-mount writes.
   aqe_daily_export.json  (scan + SRM combined, overwritten each run)
 
 The committee reads this one file. SRM grading is embedded as the export's
-`srm` / `srm_signals` sections, so there is no separate SRM file.
+`srm` section, so there is no separate SRM file. (`srm_signals` — a
+DEPLOY/HOLD/.../AVOID bucketed view of the same `srm[]` rows — was retired
+2026-08-13: derivable from `srm[].grade`/`entry_gate` with zero code readers
+found anywhere in the codebase.)
 A copy is also written to the local OUTPUT_DIR — that is the app's own working
 file (read by the UI in cloud mode), not a user-facing Drive folder.
 
@@ -316,6 +319,26 @@ _FIELD_GLOSSARY = {
               "excursion, signed by direction.",
     "knn_tp3": "Far kNN-implied target: current price ± the neighbors' 75th-percentile "
               "favorable excursion, signed by direction.",
+    "squeeze_breakout_state": "Bollinger-squeeze breakout on the LAST closed bar (pure "
+                              "geometry, no lookahead): BREAKOUT_UP/BREAKOUT_DOWN = price "
+                              "crossed the Bollinger Band(20,2) THIS bar, having been "
+                              "squeezed (Bollinger inside Keltner(20, ATRx1.5) — the same "
+                              "test squeeze_score is built on) on the PRIOR bar. NONE = no "
+                              "breakout. Never a gate, context only.",
+    "squeeze_breakout_date": "Date of the breakout (null when squeeze_breakout_state=NONE).",
+    "squeeze_breakout_volume_confirmed": "True if volume on the breakout bar was above its "
+                                         "own 20-bar average. Never filters "
+                                         "squeeze_breakout_state — a low-volume breakout "
+                                         "stays visible, just flagged unconfirmed. Null when "
+                                         "squeeze_breakout_state=NONE.",
+    "was_squeezed": "Is the LAST bar itself currently squeezed (Bollinger inside Keltner), "
+                    "independent of whether a breakout just fired.",
+    "vwap_14d": "Rolling 14-session volume-weighted average price: "
+               "sum(typical_price x volume, 14) / sum(volume, 14), typical_price = "
+               "(high+low+close)/3. A longer-horizon companion to elder_context's 5-day "
+               "HOURLY vwap_5d, not a duplicate of it — different bar granularity and "
+               "lookback, same VWAP formula.",
+    "vwap_14d_position": "ABOVE or BELOW — the last close vs vwap_14d.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -614,6 +637,13 @@ _FIELD_SCHEMA = {
     "knn_tp1":                 _fs("target", "usd", "n/a"),
     "knn_tp2":                 _fs("target", "usd", "n/a"),
     "knn_tp3":                 _fs("target", "usd", "n/a"),
+    # Squeeze breakout + volume, and rolling 14D VWAP (context only, never a gate)
+    "squeeze_breakout_state":              _fs("signal", "label", "n/a"),
+    "squeeze_breakout_date":               _fs("reference", "date", "n/a"),
+    "squeeze_breakout_volume_confirmed":   _fs("flag", "boolean", "n/a"),
+    "was_squeezed":                        _fs("flag", "boolean", "n/a"),
+    "vwap_14d":                            _fs("reference", "usd", "n/a"),
+    "vwap_14d_position":                   _fs("signal", "label", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -655,29 +685,26 @@ def _rank_explain(pipe_rank: float, floor: float, sc_mom: float,
     return "; ".join(parts) if parts else ""
 
 
-def _build_srm_gics() -> tuple[list[dict], dict, dict, dict]:
+def _build_srm_gics() -> tuple[list[dict], dict, dict]:
     """Full 11-sector SRM grading with trend data + DSG-18/19 intermarket.
 
-    Returns (srm_gics_array, srm_signals_dict, macro_weather_dict, intermarket_dict).
+    Returns (srm_gics_array, macro_weather_dict, intermarket_dict).
     srm_gics: one row per sector (sorted DEPLOY→AVOID) with grade, sh_value,
               roc20, roc5, divergence, above_sma20, sh_trend, grade_trend,
               + DSG-18 RRG fields + DSG-19 macro fields + combined gate.
-    srm_signals: {deploy, hold, turning, watch, avoid, blocked} ETF lists.
     macro_weather: global macro weather summary.
     intermarket: §3A.6 COB intermarket brief (UUP/TLT/HYG/SPY-IWM + posture).
     """
     import pandas as pd
     from src.data.paths import PANEL_DAILY as panel_path
 
-    empty_signals = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
-
     if not panel_path.exists():
-        return [], empty_signals, {}, {}
+        return [], {}, {}
     panel = pd.read_parquet(panel_path, columns=["date", "ticker", "close"])
     etfs_plus = set(GICS_ETFS) | {"SPY"}
     panel = panel[panel["ticker"].isin(etfs_plus)]
     if panel.empty:
-        return [], empty_signals, {}, {}
+        return [], {}, {}
 
     graded = grade_all_sectors(panel, trend_days=10)
 
@@ -753,17 +780,7 @@ def _build_srm_gics() -> tuple[list[dict], dict, dict, dict]:
 
     rows.sort(key=lambda r: grade_order.get(r["grade"], 3))
 
-    signals: dict[str, list[str]] = {"deploy": [], "hold": [], "turning": [], "watch": [], "avoid": [], "blocked": []}
-    for r in rows:
-        g = r["grade"].lower()
-        if g in signals:
-            signals[g].append(r["etf"])
-        if g == "avoid" or g == "no_data":
-            signals["blocked"].append(r["etf"])
-        if r.get("entry_gate") == "BLOCKED" and r["etf"] not in signals["blocked"]:
-            signals["blocked"].append(r["etf"])
-
-    return rows, signals, macro_weather, intermarket
+    return rows, macro_weather, intermarket
 
 
 def _compute_v21_lookups(sm: dict) -> dict:
@@ -1327,6 +1344,9 @@ _NEW_ENGINE_NULL = {
     "choch_state": None, "choch_date": None, "knn_prob": None,
     "knn_significant": None, "knn_neighbors_used": None,
     "knn_tp1": None, "knn_tp2": None, "knn_tp3": None,
+    "squeeze_breakout_state": None, "squeeze_breakout_date": None,
+    "squeeze_breakout_volume_confirmed": None, "was_squeezed": None,
+    "vwap_14d": None, "vwap_14d_position": None,
 }
 
 
@@ -1358,6 +1378,12 @@ def _new_engine_fields(row) -> dict:
         "knn_tp1": _sub_val(get("knn_tp1")),
         "knn_tp2": _sub_val(get("knn_tp2")),
         "knn_tp3": _sub_val(get("knn_tp3")),
+        "squeeze_breakout_state": _sub_str(get("squeeze_breakout_state")),
+        "squeeze_breakout_date": _sub_str(get("squeeze_breakout_date")),
+        "squeeze_breakout_volume_confirmed": _sub_bool(get("squeeze_breakout_volume_confirmed")),
+        "was_squeezed": _sub_bool(get("was_squeezed")),
+        "vwap_14d": _sub_val(get("vwap_14d")),
+        "vwap_14d_position": _sub_str(get("vwap_14d_position")),
     }
 
 
@@ -1540,7 +1566,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         pass
 
     # Full 11-sector SRM grading + DSG-18/19 intermarket (spec §2)
-    srm_gics, srm_signals, macro_weather, intermarket = _build_srm_gics()
+    srm_gics, macro_weather, intermarket = _build_srm_gics()
 
     export: dict = {
         "date": sl.get("date", ""),
@@ -1552,10 +1578,12 @@ def build_export(shortlist: dict | None = None) -> dict:
         "intermarket": intermarket,
         # Full SRM schema — combined into this one file (no separate SRM file).
         # `srm` is the canonical sector-grade list the AIC reader + protocols
-        # consume; `srm_signals` carries the deploy/hold/.../avoid ETF buckets.
-        # (The srm_gics/srm_deploy/srm_avoid aliases were dropped — duplicates.)
+        # consume. (`srm_signals` — a deploy/hold/.../avoid bucketed VIEW of
+        # these same rows — retired 2026-08-13: zero code readers anywhere,
+        # trivially derivable from srm[].grade/entry_gate if ever needed.
+        # srm_gics/srm_deploy/srm_avoid aliases were dropped earlier — same
+        # defect, duplicates.)
         "srm": srm_gics,
-        "srm_signals": srm_signals,
         "macro_weather": macro_weather,
         "top_picks": [],
         "edge_list": [],
@@ -2255,9 +2283,10 @@ def build_export(shortlist: dict | None = None) -> dict:
         "subcomponents",
         # Structure shift (BOS/CHoCH — null when no swing detected)
         "structure_shift",
-        # Momentum acceleration + divergence + pin-bar + smart-money kNN
-        # (null until the next scores run)
+        # Momentum acceleration + divergence + pin-bar + smart-money kNN +
+        # squeeze breakout + rolling VWAP (null until the next scores run)
         "mp_accel", "div_state", "pin_bar_state", "choch_state",
+        "squeeze_breakout_state", "vwap_14d",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]

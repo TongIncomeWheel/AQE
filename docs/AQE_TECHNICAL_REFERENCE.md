@@ -75,7 +75,6 @@ locally and to a single pinned Drive folder. This is the file the committee read
 | `regime` | VIX level only (`vix`, `level`) — Hurst exponent removed 2026-08-13, see §12 |
 | `intermarket` | Raw COB numbers only (UUP/TLT/HYG, SPY-IWM spread) — **no assessment**, the committee interprets |
 | `srm` | All 11 GICS sectors graded (DEPLOY→AVOID) + RRG quadrant/direction + macro headwind + combined entry gate |
-| `srm_signals` | The same grades bucketed into deploy/hold/turning/watch/avoid/blocked ETF lists |
 | `macro_weather` | TLT/UUP/HYG/IWM/GLD/CPER/USO direction reads + the copper/gold reflation tell |
 | `thematic_baskets` | 35 thematic baskets (Mag7, AI Infra, Semiconductors, …), each graded and capped at its parent GICS sector — context only, never adds scan names |
 | `daily_list` | **Part 2 of the AIC read** — every scored ticker, full field set (see §4) |
@@ -96,7 +95,7 @@ Roughly 60 fields per ticker, grouped:
 - **Composite scores**: `sc_momentum`, `ptrs`, `pipe_rank`, and the five engine reads (Flow/Energy/Structure/MP/Elder) plus BQ/K39 where relevant, with per-engine **gate breakdown** (which specific floor a name is failing, not just pass/fail).
 - **`subcomponents`** — the ~46 nightly sub-scores behind the six engine reads, so the committee sees *why* an engine scored what it did.
 - **THE BRACKET** — one nested object: the operative stop (tightest structural level passing all 3 charter gates), the target ladder, R:R, volume-validated levels. Single source of truth for stop/targets; mechanical DSL/TP fields are retired.
-- **DETECT layer** — `structure_shift` (BOS/CHoCH), `div_state` (price/oscillator divergence), `pin_bar_state`/`inside_bar`, `choch_state` + kNN instance-based confidence, `mp_accel` (momentum acceleration). Data only, never a gate.
+- **DETECT layer** — `structure_shift` (BOS/CHoCH), `div_state` (price/oscillator divergence), `pin_bar_state`/`inside_bar`, `choch_state` + kNN instance-based confidence, `mp_accel` (momentum acceleration), `squeeze_breakout_state` + `vwap_14d`. Data only, never a gate.
 - **`lens`, `lens_positive`, `lens_warnings`** — the lens-consensus reading aid (§5).
 - **Signal Radar tags** — `runner_setup`/`premove_setup` + conviction, detection-rate labels, never sizing.
 - **Sector/thematic context** — GICS gate, sector trend state, RRG quadrant/direction, primary thematic basket.
@@ -534,6 +533,39 @@ only, never a gate. `structure_shift_ref` = the level it's measured against.
 `BULLISH_BOS` mathematically unreachable. Now uses the nearest confirmed pivot
 instead, same source `overhead_resistance()` the bracket already computes.)
 
+### 5.6 Squeeze Breakout + Volume — `src/engines/squeeze_breakout.py`
+
+Port of "Bollinger Squeeze Breakout + Volume" (Pine v6, AIScripts), added 2026-08-13.
+A DISCRETE last-bar event, distinct from `squeeze_score` (Energy's continuous 0-12.5
+sub-score, §4): was the market squeezed the bar BEFORE this one, and did price just
+cross a Bollinger Band THIS bar, on above-average volume. Shares its squeeze test
+with `squeeze_score` — `src/engines/utils.py:bollinger_keltner_squeeze` — rather
+than recomputing a second, looser definition (the source Pine strategy's own
+squeeze rule, BB width `<0.8×` its 50-bar average, is a strict subset of AQE's
+Bollinger-inside-Keltner test, so nothing is lost by sharing it).
+
+- **Squeeze**: Bollinger(20, 2σ) fully inside Keltner(20, ATR×1.5).
+- `squeeze_breakout_state`: `BREAKOUT_UP` = was squeezed on the PRIOR bar AND
+  `close` crosses above the upper Bollinger Band this bar. `BREAKOUT_DOWN` mirrors
+  it on the lower band. `NONE` otherwise.
+- `squeeze_breakout_volume_confirmed`: volume on the breakout bar above its own
+  20-bar average. Never filters `squeeze_breakout_state` — a low-volume breakout
+  stays visible, just flagged unconfirmed.
+- `was_squeezed`: is the LAST bar itself currently squeezed, independent of
+  whether a breakout just fired. Data only, never a gate.
+
+### 5.7 Rolling 14-day VWAP — `src/engines/vwap.py`
+
+Added 2026-08-13, alongside the squeeze breakout detector. A different instrument
+from `elder_context.py`'s `vwap_5d` (a 5-day HOURLY intraday-anchored VWAP used for
+Elder-impulse exhaustion checks) — this is a rolling VWAP over `length` DAILY bars
+(default 14), the standard volume-weighted price anchor built from the same EOD
+panel every other engine reads. Two VWAPs, two horizons, two purposes.
+
+`vwap_14d = Σ(typical_price × volume, 14) / Σ(volume, 14)`, `typical_price =
+(high+low+close)/3` (Pine `hlc3`). `vwap_14d_position`: `ABOVE` if the last close is
+at or above `vwap_14d`, else `BELOW`.
+
 ## 6. Health Score — `src/engines/health.py` (held positions ONLY — the HOLD decision)
 
 "Should I stay in this position?" — trend integrity, distinct from entry timing.
@@ -689,14 +721,24 @@ Book-level: `loss_per_1pct_gap_usd = beta_adj_exposure_usd × 0.01`;
 gap-down scenario, beta-scaled. `sector_weights`: exposure share per GICS ETF (all
 11 sectors present, 0.0 where unheld).
 
-## 12. Regime detection — `src/analyzer/regime.py`
+## 12. Regime detection — `src/analyzer/ptrs.py:classify_vix_regime`
+
+`src/analyzer/regime.py` was retired 2026-08-13 (PM: "we don't need a regime.py now
+— that's what Nick Crown covers, Macro Weather provides, Druckenmiller uses"). Its
+sole surviving computation, `classify_vix_regime`, already lived in `ptrs.py` — the
+file was a thin wrapper around it, and after Hurst was removed the same day (below)
+it had no computation of its own left to justify the indirection.
 
 - **VIX regime** (`classify_vix_regime`): `≤18→GREEN, (18,25]→YELLOW, (25,30]→ORANGE, >30→RED`.
+  This is the STRUCTURAL input to the bracket engine's stop-ceiling gate (§5.1's
+  Charter §4.2 gate 3, `regime_stop_ceiling`) — a mechanical risk-width cap, not a
+  market-regime narrative. It still ships on the export (`regime.vix`,
+  `regime.level`) because the bracket needs it; the narrative READ of what regime
+  the market is in is Crown/Macro Weather/Druckenmiller's job now, not AQE's.
 - Hurst exponent (trend/mean-revert classification on SPY log-returns) was removed
-  2026-08-13 — its own accuracy note showed ~73% of genuinely random markets still
-  received a TRENDING or MEAN_REVERT label at the 60-day lookback, and the
+  the same day — its own accuracy note showed ~73% of genuinely random markets
+  still received a TRENDING or MEAN_REVERT label at the 60-day lookback, and the
   "implication" text it produced read as a trade decision, which AQE does not make.
-  `regime` is VIX-only now (`vix`, `vix_regime`).
 
 ## 13. Betas — `src/scanner/betas.py`
 

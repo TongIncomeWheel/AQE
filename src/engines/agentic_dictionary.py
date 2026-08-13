@@ -1,25 +1,19 @@
-"""Agentic AQE — the data-contract augmentation layer (D-24 / D-29).
+"""Hand-verified field-enum and glossary-fill reference data.
 
-PURPOSE
--------
-AQE already computes every field. What the AGENTIC consumer (Aegis's voices) needs on
-top is: a definition, an enum set, and a method for EVERY exported field — so an agent
-reads understanding, not a bare number. This module is that layer.
+Formerly the augmentation layer behind the "Agentic AQE" Streamlit page
+(`src/ui/pages/7_Agentic_AQE.py`), which patched a LOCALLY-LOADED COPY of
+the export with this data purely for its own display — `augment_export()`
+was never wired into the production export builder
+(`src/data/drive_sync.py:build_export`), so none of this ever reached the
+shipped `aqe_daily_export.json`. The page was retired 2026-08-13 (PM:
+"totally out of date and not in use").
 
-NON-BREAKING BY CONSTRUCTION
-----------------------------
-It does NOT change any existing calculation, field, or the production export. It only
-ADDS to two already-present-but-incomplete export blocks:
-  * field_glossary       (was 52/97 fields) -> complete
-  * field_schema_enums   (was 3 fields)     -> every categorical field
-Call `augment_export(export_dict)` at the end of the export builder to fill them in
-place. Existing consumers see the same fields plus richer metadata; nothing is removed.
-
-PROVENANCE
-----------
-Definitions/methods transposed from src/engines/*.py docstrings; enum sets from engine
-string literals UNION observed values in the live feed. The 3 genuinely-undocumented
-fields are marked UNDOCUMENTED for the AQE owner to define — never guessed.
+What survives: `scripts/build_data_taxonomy.py`'s `leaf_rows()` imports
+FIELD_ENUMS and GLOSSARY_FILL below as real, hand-verified data — enum
+sets transposed from engine source + observed live values, glossary text
+for fields the production `_FIELD_GLOSSARY` (drive_sync.py) omits. That
+made this file load-bearing for the data taxonomy even after the page
+that originally justified it went away, so it stays.
 """
 from __future__ import annotations
 
@@ -101,44 +95,3 @@ GLOSSARY_FILL = {
     "fip_spike_excluded": "UNDOCUMENTED — AQE owner to define (FIP spike-exclusion flag; confirm semantics).",
     "fip_window_effective": "UNDOCUMENTED — AQE owner to define (effective FIP window; confirm semantics).",
 }
-
-# ── Subcomponent documentation (the sub-scores behind each engine composite) ──
-SUBCOMPONENT_DOCS = {
-    "flow": "MFI + CMF + Heikin-Ashi quality (flow_score), A/D linreg (accum_score), volume trend/spike (volume_score), up/down skew (skew_score); diagnostics mfi, cmf, ha_quality_count.",
-    "energy": "range-position proxy (vp_position_score), price action, squeeze, exhaustion, ATR; diagnostics en_pos50, en_trend_bars.",
-    "structure": "RS-vs-SPY, RS-acceleration, base, market-structure position, resistance, weekly, earnings sub-scores; diagnostics rs_vs_spy, rs_accel, base_days, bd_mode.",
-    "mp": "absolute momentum, ADX, relative momentum, trend sub-scores; diagnostics roc_zscore, excess_return, adx_val, di_bullish.",
-    "bq": "Base Quality: range tightness (ATR5/ATR20), volume dry-up, base duration, EMA convergence; used by SC_POSITION.",
-    "pipe": "Pipeline rank inputs: 12m return, ADX, RSI, volume, MA sub-scores, momentum_composite, pipe_tier.",
-}
-
-UNDOCUMENTED = ["floor", "fip_spike_excluded", "fip_window_effective"]
-
-
-def augment_export(export: dict) -> dict:
-    """Fill field_glossary + field_schema_enums IN PLACE, non-destructively.
-    Existing entries win (never overwrite AQE's own definition); we only ADD missing keys."""
-    fg = export.setdefault("field_glossary", {})
-    for k, v in GLOSSARY_FILL.items():
-        fg.setdefault(k, v)
-    fse = export.setdefault("field_schema_enums", {})
-    for k, v in FIELD_ENUMS.items():
-        fse.setdefault(k, v)
-    export["_agentic_subcomponent_docs"] = SUBCOMPONENT_DOCS
-    export["_agentic_dictionary_version"] = "1.0"
-    return export
-
-
-def coverage(export: dict) -> dict:
-    """Report glossary/enum coverage after augmentation — for the Agentic AQE tab."""
-    row = next((r for r in export.get("daily_list", []) if isinstance(r, dict)), {})
-    fields = [f for f in row if not f.startswith("_")]
-    fg = export.get("field_glossary", {})
-    fse = export.get("field_schema_enums", {})
-    return {
-        "total_fields": len(fields),
-        "glossary_covered": sum(1 for f in fields if f in fg),
-        "enum_fields": len(fse),
-        "undocumented": [f for f in UNDOCUMENTED if f in fields],
-        "subcomponent_engines": list(SUBCOMPONENT_DOCS),
-    }

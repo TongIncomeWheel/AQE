@@ -758,14 +758,6 @@ def test_non_monotonic_dates_raise_or_handle():
     assert (f_sorted["flow_100"].dropna() <= 100).all()
 
 
-def test_regime_computation():
-    """compute_regime returns VIX-only structure (Hurst removed 2026-08-13)."""
-    from src.analyzer.regime import compute_regime
-    result = compute_regime(vix=22.0)
-    assert result["vix_regime"] == "YELLOW"
-    assert "hurst" not in result
-
-
 def test_capacity_check():
     """Capacity check flags small-volume tickers."""
     from src.analyzer.capacity import check_capacity

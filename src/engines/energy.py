@@ -100,19 +100,8 @@ def compute(
     price_action_score = price_action_score.where(~(en_pos50 < 30), pa_raw * 0.5)
 
     # ---- Component 3: Squeeze (Pine 145-159) ----
-    bb = U.sma(close, 20)
-    bd = 2.0 * U.stdev_pop(close, 20)
-    bu = bb + bd
-    bl = bb - bd
-    bw = ((bu - bl) / bb.replace(0.0, np.nan) * 100.0).fillna(0.0)
-    bwl = U.lowest(bw, 50)
-    bwh = U.highest(bw, 50)
-    bwr = (bwh - bwl)
-    bwp = ((bw - bwl) / bwr.replace(0.0, np.nan) * 100.0).fillna(50.0)
-    kcr = U.atr(high, low, close, n=20)
-    kcu = bb + kcr * 1.5
-    kcl = bb - kcr * 1.5
-    sq = (bl > kcl) & (bu < kcu)
+    _sqz = U.bollinger_keltner_squeeze(high, low, close)
+    bwl, bwp, sq = _sqz["bb_width_lowest"], _sqz["bb_width_pct"], _sqz["squeeze"]
 
     squeeze_score = pd.Series(0.0, index=close.index)
     # bottom-up so highest-priority branch wins.

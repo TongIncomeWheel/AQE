@@ -631,6 +631,18 @@ SCORE_TREE = [
       "Rejection-candle geometry on the last closed bar", "engines/pin_bar.py:46-65",
       "lower_wick>=0.66*range AND body<=0.4*range AND upper_wick<=0.4*range "
       "->BULLISH_PIN; mirrored on upper_wick->BEARISH_PIN; else NONE"),
+    R("squeeze_breakout_state", "", "leaf", "label", "BREAKOUT_UP|BREAKOUT_DOWN|NONE",
+      "Bollinger-squeeze breakout event on the last closed bar",
+      "engines/squeeze_breakout.py:compute_squeeze_breakout",
+      "was squeezed (bb inside kc) on the PRIOR bar AND close crosses "
+      "bb_upper this bar ->BREAKOUT_UP; crosses bb_lower ->BREAKOUT_DOWN; "
+      "else NONE. Shares its squeeze test with squeeze_score "
+      "(engines/utils.py:bollinger_keltner_squeeze) rather than recomputing "
+      "a second definition."),
+    R("vwap_14d_position", "", "leaf", "label", "ABOVE|BELOW",
+      "Last close vs the rolling 14-session VWAP",
+      "engines/vwap.py:compute_vwap",
+      "close>=vwap_14d -> ABOVE; else BELOW"),
     R("mover_subtype", "", "leaf", "label", "explosive|trend|tight_base|squeeze",
       "The z-scored feature family the name resembles most",
       "engines/signal_radar.py:219-229",
@@ -841,6 +853,25 @@ SCORE_TREE = [
     R("choch_date", "choch_state", "leaf", "date", "",
       "Date of the latest change-of-character event", "engines/smart_money_knn.py:293-301",
       "date of the bar where trend flipped"),
+    R("squeeze_breakout_date", "squeeze_breakout_state", "leaf", "date", "",
+      "Date of the breakout, if any", "engines/squeeze_breakout.py:compute_squeeze_breakout",
+      "date of the last bar, when squeeze_breakout_state != NONE"),
+    R("squeeze_breakout_volume_confirmed", "squeeze_breakout_state", "leaf", "bool",
+      "true|false",
+      "Was volume on the breakout bar above its own 20-bar average",
+      "engines/squeeze_breakout.py:compute_squeeze_breakout",
+      "squeeze_breakout_state==NONE -> null; else volume[-1] > "
+      "sma(volume, 20)[-1]"),
+    R("was_squeezed", "", "leaf", "bool", "true|false",
+      "Is the last bar itself currently squeezed, independent of a breakout",
+      "engines/squeeze_breakout.py:compute_squeeze_breakout",
+      "engines/utils.py:bollinger_keltner_squeeze's own squeeze boolean, "
+      "read at the last bar"),
+    R("vwap_14d", "vwap_14d_position", "leaf", "usd", "",
+      "Rolling 14-session volume-weighted average price",
+      "engines/vwap.py:compute_vwap",
+      "sum(typical_price*volume, 14) / sum(volume, 14), typical_price = "
+      "(high+low+close)/3"),
     R("div_date", "div_state", "leaf", "date", "",
       "Anchor date of the divergence — the newer pivot of whichever side "
       "(bull/bear) has more confirming oscillators", "engines/divergence.py:145-152",
@@ -1053,9 +1084,9 @@ SCORE_TREE = [
       "volume, vcp, exhaustion_check"),
     R("floor", "", "leaf", "0-100", "",
       "Weakest of the four core engines — a name is only as strong as its "
-      "worst leg. Marked UNDOCUMENTED in the export's own glossary text "
-      "(agentic_dictionary.UNDOCUMENTED) despite being a real, simple "
-      "computation — the text was never written, the code was.",
+      "worst leg. Missing from the export's own _FIELD_GLOSSARY despite "
+      "being a real, simple computation — the text was never written, the "
+      "code was.",
       "src/data/drive_sync.py:1709,1744,1781",
       "min(flow, energy, structure, mp)"),
     R("entry", "", "leaf", "usd", "",
@@ -1220,16 +1251,16 @@ BLOCKS = [
     ("date", "str", "Scan date, US close", "src/data/drive_sync.py:build_export"),
     ("exported_at", "iso8601", "Write time, SGT", "src/data/drive_sync.py:build_export"),
     ("market", "str", "Market descriptor", "src/data/drive_sync.py:build_export"),
-    ("regime", "dict", "VIX bucket (Hurst removed 2026-08-13 — no sizing/trend "
-     "read ships from AQE)",
-     "src/analyzer/regime.py:compute_regime"),
+    ("regime", "dict", "VIX bucket only — the structural input to the bracket "
+     "engine's stop-ceiling gate, not a market-regime narrative (Hurst "
+     "removed 2026-08-13; src/analyzer/regime.py itself retired the same "
+     "day as a redundant wrapper — Crown/Macro Weather/Druckenmiller now "
+     "own the regime read)",
+     "src/analyzer/ptrs.py:classify_vix_regime"),
     ("intermarket", "dict", "Cross-asset context",
      "engines/srm.py:compute_intermarket,enrich_sectors_intermarket:928-1050"),
     ("srm", "list", "One graded row per GICS sector",
      "engines/srm.py:grade_all_sectors:293-334"),
-    ("srm_signals", "dict", "Sector-level signals",
-     "src/data/drive_sync.py:_build_srm_gics:658-730 (buckets grade_all_sectors "
-     "output by grade)"),
     ("macro_weather", "dict", "7-instrument direction read",
      "engines/srm.py:compute_macro_weather:789-928"),
     ("regime_stop_pct_ceiling", "float", "Regime cap on stop width, percent",
@@ -1245,13 +1276,11 @@ BLOCKS = [
     ("sector_map_gaps", "list", "Unclassified tickers",
      "src/data/sector_mapper.py"),
     ("field_schema", "dict", "Self-described field types",
-     "src/data/drive_sync.py:_FIELD_SCHEMA, engines/agentic_dictionary.py"),
+     "src/data/drive_sync.py:_FIELD_SCHEMA"),
     ("field_schema_enums", "dict", "Permitted values per categorical field",
-     "src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS, engines/agentic_dictionary.py:"
-     "FIELD_ENUMS"),
+     "src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS"),
     ("field_glossary", "dict", "Self-described field meanings",
-     "src/data/drive_sync.py:_FIELD_GLOSSARY, engines/agentic_dictionary.py:"
-     "GLOSSARY_FILL"),
+     "src/data/drive_sync.py:_FIELD_GLOSSARY"),
     ("held_positions_status", "enum", "live | cache_fallback | unknown",
      "src/data/ptj.py"),
     ("held_positions", "list", "PM live book from the trade journal",
