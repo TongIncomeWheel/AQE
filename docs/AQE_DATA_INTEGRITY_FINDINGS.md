@@ -21,13 +21,18 @@ dict, which describes fields in prose. Citing it as a field's *source* was
 citing documentation as evidence: the glossary doesn't compute anything, it
 describes what something else computed.
 
-After this pass, **3 rows** remain sourced that way — `role`, `side`, `unit`,
-which are not data fields at all but the schema's own controlled vocabulary,
-and are exempted deliberately. Every other field now cites the real
-calculator (a `src/engines/*.py` or `src/data/*.py` line that computes it) or
-an explicit external source: **EXTERNAL: FMP quote endpoint**, **EXTERNAL: PTJ
-trade journal**. `test_almost_nothing_still_cites_the_glossary_as_its_source`
-pins this so it can't quietly regress.
+After this pass — tightened further in a same-day follow-up (§9) once
+`_FIELD_SCHEMA`/`_FIELD_GLOSSARY` themselves turned out to be an unreliable
+ground truth — **exactly 1 row** remains sourced that way: `field_glossary`,
+the export block whose entire content literally IS that dict, where citing
+it is the true and only answer, not laziness. `role`/`side`/`unit` are now
+sourced to `_FIELD_SCHEMA_ENUMS` instead (§9d), since that dict — not the
+glossary, which carries no text for any of the three — is where their real
+content lives. Every other field cites the real calculator (a
+`src/engines/*.py` or `src/data/*.py` line that computes it) or an explicit
+external source: **EXTERNAL: FMP quote endpoint**, **EXTERNAL: PTJ trade
+journal**. `test_nothing_cites_the_glossary_as_its_source` pins this with
+zero tolerance.
 
 The generator (`scripts/build_data_taxonomy.py`) now prints any field it still
 can't source to stderr on every run, rather than letting a newly-added export
@@ -197,7 +202,95 @@ structure, mp)`; the DSG-20 prior-spike-exclusion mechanism in
 `pipeline_rank.py:187-207`) — the code was never actually undefined, only the
 glossary *text* was never written.
 
-## 9 · What this pass did not attempt
+## 9 · Second pass, 2026-08-13 — what's printed vs. what's a reference figure
+
+Prompted directly: *"what data is printed to the output JSON, and label
+everything else as a reference or calculation figure."* Added a `ships_in_
+export` column, computed from real registries rather than hand-typed —
+**not** from `_FIELD_SCHEMA`/`_FIELD_GLOSSARY`, which this pass discovered
+are themselves an unreliable ground truth for "is this on daily_list" (§9a).
+Primary source is now a live export file's own keys, read at generation time.
+
+### 9a · The schema dicts don't cover what they claim to
+
+`_FIELD_SCHEMA`/`_FIELD_GLOSSARY` were the first thing tried as the ground
+truth for "does this ship on daily_list". They are wrong for exactly the
+fields that matter most: **`flow`, `energy`, `structure`, `mp`, `sc_momentum`,
+`on_longlist`, `gics_gate`, `elder`** — the export's most fundamental
+fields — are in **neither dict**, despite being on every scored ticker's
+record. `_FIELD_SCHEMA` holds 81 keys, `_FIELD_GLOSSARY` holds 99; a live
+`daily_list[0]` carries 97 keys of its own, and the overlap is partial in
+both directions. Fixed by reading a live export's own `daily_list[0]`,
+`held_positions[0]` and `srm[0]` keys directly at generation time and using
+the schema dicts only as a fallback for whatever the one sampled record
+happens not to carry.
+
+### 9b · Block-level sources were the same defect, one level up
+
+Asked directly why every top-level block (`regime`, `srm`, `macro_weather`,
+`intermarket`, `thematic_baskets`, `held_book`, `lens_ranking`, `data_
+quality`) cited `src/data/drive_sync.py:build_export` as its source.
+`build_export` **assembles** these blocks from other functions' output — it
+does not compute any of them. Fixed per block: `regime` →
+`analyzer/regime.py:compute_regime`; `srm` → `engines/srm.py:
+grade_all_sectors`; `macro_weather`/`intermarket` → `engines/srm.py:
+compute_macro_weather`/`compute_intermarket`; `thematic_baskets` →
+`engines/srm.py:grade_thematic_baskets`; `held_book` → `analyzer/
+held_book.py:build_held_book`; `lens_ranking` → `engines/lens_consensus.py:
+build_lens_ranking`; `data_quality` → `_compute_data_quality`. Only `date`,
+`exported_at`, `market` and `summary` genuinely are computed inline in
+`build_export` itself (verified, not assumed) and still cite it correctly.
+
+### 9c · `sc_position`, `bq`, `k39_gate`, `fip_quality` are computed and never exported
+
+Checked across **all 162 records** of a live `daily_list`, not just one: **the
+entire SC_POSITION pipeline never appears.** `sc_position` itself, `bq` (its
+base-quality engine), `k39_gate`, `pipe_tier`, `momentum_composite` and
+`fip_quality` are all genuinely computed (`score_runner.py` writes them to
+`scores_daily.parquet`) but **none reach the JSON**, on any record — not
+null-stripped, structurally absent. `pipe_rank` itself does ship; its own
+sub-diagnostics do not.
+
+This is a different kind of "not exported" from an ordinary calculation
+intermediate like `fl_fb` or `hac` — those are steps on the way to a score
+that DOES ship. SC_POSITION is a complete, independent second composite
+(CLAUDE.md's own "Sizing chain" section describes AQE as computing two
+composites) that a committee member cannot currently see anywhere in the
+daily export. Worth a PM decision: wire it into `daily_list`, or confirm it
+is deliberately retired and should stop being computed at all.
+
+### 9d · Two more real-field discoveries while building the classifier
+
+- **`role`/`side`/`unit` have no glossary text at all** (confirmed empty
+  strings) — their actual content is the enum lists in
+  `_FIELD_SCHEMA_ENUMS`, and they're re-sourced there. They are not data
+  fields; every `field_schema[name]` entry carries its own `role`/`unit`/
+  `side`, so they exist nested, not as a scalar of their own.
+- **`basket_breadth` → `breadth_pct`, and a sibling field found alongside
+  it, `parent_capped_grade`.** The taxonomy had invented `basket_breadth`;
+  `srm.py`'s own key is `breadth_pct` (`srm.py:372-382,516`).
+  `parent_capped_grade` — what `thematic_grade` would read if still clamped
+  at the parent GICS grade, the retired 2026-08-05 rule, kept on the row for
+  anyone who wants the old conservative reading — had no row at all.
+
+### 9e · `field_glossary`'s own fate
+
+Traced every consumer of `_FIELD_GLOSSARY` in the codebase: it is read in
+exactly one place, `drive_sync.py:1645`, to populate the exported
+`field_glossary` JSON block. Nothing else in AQE reads it. It is not dead
+code — the committee/AIC may read that block live — but it is a
+hand-maintained duplicate of exactly the information this taxonomy now
+carries with far more rigor (real formulas, real sources, `used_by`,
+`ships_in_export`), and the standing plan is to retire it once this exercise
+is complete. Recommended next step, **not done in this pass** because it
+changes what a live production export actually contains: regenerate
+`field_glossary`'s content FROM this taxonomy CSV at export time (one source
+of truth, no drift), rather than deleting the block outright — that is a
+`src/data/drive_sync.py` change and belongs in its own reviewed commit, with
+the PM confirming nothing downstream depends on the current hand-written
+prose specifically.
+
+## 10 · What this pass did not attempt
 
 - Full geometric derivation of all 13 candlestick patterns
   (`engines/candles.py`) or all 6 chart-pattern detectors

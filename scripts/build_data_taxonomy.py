@@ -26,6 +26,20 @@ Columns
                        entry gate. Blank means: computed and exported, no
                        confirmed reader elsewhere in the codebase — worth
                        knowing, not necessarily worth removing.
+    ships_in_export    WHERE this value actually lands in
+                       aqe_daily_export.json — "daily_list" (every scored
+                       ticker), "held_positions only", "subcomponents.<eng>"
+                       (nested, only when subcomponents is populated, and
+                       sometimes under a RENAMED key — stated explicitly when
+                       it differs from `field`), "srm[]"/"thematic_baskets[]"/
+                       "qs{}"/"lens_ranking" (their own blocks), or
+                       "NOT EXPORTED — reference/calculation figure only" for
+                       an internal intermediate an engine computes and
+                       discards on the way to a score that IS exported.
+                       Computed from the real registries (_FIELD_SCHEMA,
+                       _SUBCOMPONENT_SPEC, the held-only glossary markers),
+                       not hand-typed, so it can't drift from what the code
+                       actually does.
 
 Two inputs:
   1. SCORE_TREE below — parent/child math transcribed from src/engines/*.py
@@ -58,7 +72,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "AQE_DATA_TAXONOMY.csv"
 
 COLUMNS = ["field", "parent", "level", "output", "state", "represents",
-           "source", "formula", "weight", "used_by"]
+           "source", "formula", "weight", "used_by", "ships_in_export"]
 
 # Keys in the export's own field_glossary that document several real fields
 # under one slash-joined pseudo-name. Not field names — dropped outright.
@@ -68,9 +82,10 @@ MALFORMED_GLOSSARY_KEYS = {
 
 
 def R(field, parent, level, output, state, represents, source, formula,
-     weight="", used_by=""):
+     weight="", used_by="", ships_in_export=""):
     return dict(zip(COLUMNS, [field, parent, level, output, state, represents,
-                              source, formula, weight, used_by]))
+                              source, formula, weight, used_by,
+                              ships_in_export]))
 
 
 # ── composites ───────────────────────────────────────────────────────────
@@ -88,7 +103,12 @@ SCORE_TREE = [
       "flow>=60 AND energy>=60 AND structure>=55 AND mp>=55 "
       "AND elder>=6.5"),
     R("sc_position", "", "composite", "0-100", "",
-      "Base-building composite, 3-6 week hold", "engines/scoring.py:_sc_position_raw",
+      "Base-building composite, 3-6 week hold. CONFIRMED NEVER EXPORTED: "
+      "computed into scores_daily, absent from all 162 records of a live "
+      "daily_list — not null-stripped, genuinely never wired into the "
+      "export. Unlike an intermediate such as fl_fb, this is a full, real "
+      "composite that simply never reaches the JSON.",
+      "engines/scoring.py:_sc_position_raw",
       "clip(0.10*flow + 0.30*energy + 0.20*structure + 0.05*mp + 0.35*bq, "
       "0, 100)"),
     R("sc_p_gates", "sc_position", "leaf", "bool", "true|false",
@@ -449,8 +469,8 @@ SCORE_TREE = [
 
     # ── BQ / K39 ─────────────────────────────────────────────────────────
     R("bq", "sc_position", "engine", "0-100", "",
-      "Base quality for the position pipeline; the four components already "
-      "sum to 0-100 so there is no divisor, unlike Flow/Energy/Structure",
+      "Base quality for sc_position, which never reaches the export (see "
+      "that row) — so bq doesn't either, despite being fully computed",
       "engines/bq.py:139",
       "clip(bq_range_tight + bq_vol_dry + bq_base_dur + bq_ema_conv, 0, 100)",
       "0.35 of sc_position"),
@@ -493,7 +513,8 @@ SCORE_TREE = [
       "Spread of EMA8/13/21 normalised by ATR20", "engines/bq.py:128-131",
       "(max(EMA8,EMA13,EMA21) - min(EMA8,EMA13,EMA21)) / ATR(20)"),
     R("k39_gate", "sc_position", "leaf", "bool", "true|false",
-      "Weekly stochastic and OBV confirmation", "engines/k39.py",
+      "Weekly stochastic and OBV confirmation. Never reaches the export, "
+      "same as sc_position/bq — see sc_position's row.", "engines/k39.py",
       "stoch(weekly,39)>50 AND obv_weekly>sma(obv_weekly,30); "
       "mapped to daily as-of, no look-ahead"),
 
@@ -560,7 +581,11 @@ SCORE_TREE = [
       "exclusion", "engines/pipeline_rank.py:188-207",
       "252 by default; shortened when fip_spike_excluded is true"),
     R("pipe_tier", "pipe_rank", "leaf", "label", "D-SKIP|C-WATCH|B-STRONG|A-TIER",
-      "Tier label from pipe_rank", "engines/pipeline_rank.py:230-234",
+      "Tier label from pipe_rank. pipe_rank ITSELF ships on every daily_list "
+      "row; this tier, and every one of its sub-scores below "
+      "(momentum_composite, fip_quality, ret_12m_score...), does not — "
+      "confirmed absent from all 162 records of a live export.",
+      "engines/pipeline_rank.py:230-234",
       "default D-SKIP; pipe_rank>=45->C-WATCH; >=60->B-STRONG; >=75->A-TIER"),
 
     # PTRS and the disposition ceiling that briefly replaced it are both
@@ -713,10 +738,21 @@ SCORE_TREE = [
       "index_grade = gics_grade's own ladder applied to the basket's "
       "equal-weight constituent index vs SPY; grade = HOLD[narrow] if "
       "index_grade==DEPLOY AND breadth<0.60 else index_grade"),
-    R("basket_breadth", "thematic_grade", "leaf", "0-1 pct", "",
-      "Fraction of basket constituents above their OWN 20-day SMA",
-      "engines/srm.py:372-382",
-      "count(constituent close > constituent's own SMA20) / n_measurable"),
+    R("breadth_pct", "thematic_grade", "leaf", "0-100 pct", "",
+      "Fraction of basket constituents above their OWN 20-day SMA — the "
+      "real srm.py key is breadth_pct, not 'basket_breadth' as this row was "
+      "named before being checked against the source",
+      "engines/srm.py:372-382,516",
+      "100 * count(constituent close > constituent's own SMA20) / "
+      "n_measurable"),
+    R("parent_capped_grade", "thematic_grade", "leaf", "label",
+      "DEPLOY|HOLD|TURNING|WATCH|AVOID|NO_DATA",
+      "What thematic_grade WOULD read if still clamped at the parent GICS "
+      "grade — the old, more conservative rule, published so it survives "
+      "even though thematic_grade itself no longer applies it "
+      "(retired 2026-08-05)", "engines/srm.py:363-373",
+      "thematic_grade if GRADE_ORDER[thematic]>=GRADE_ORDER[parent] else "
+      "parent_grade"),
     R("thematic_parent_grade", "thematic_grade", "leaf", "label",
       "DEPLOY|HOLD|TURNING|WATCH|AVOID",
       "The parent GICS sector's own gics_grade, carried for context — no "
@@ -1175,31 +1211,62 @@ for _r in SCORE_TREE:
 
 
 # ── export blocks ────────────────────────────────────────────────────────
+# Every block's REAL calculator — not build_export, which only assembles
+# blocks other functions already computed. Citing the assembler as "source"
+# was the same defect as citing the glossary: correct that a value passes
+# through that line, wrong that it's computed there. Found and fixed
+# 2026-08-13 after being asked directly why every block cited the same file.
 BLOCKS = [
-    ("date", "str", "Scan date, US close"),
-    ("exported_at", "iso8601", "Write time, SGT"),
-    ("market", "str", "Market descriptor"),
-    ("regime", "dict", "VIX bucket, Hurst, size ceiling"),
-    ("intermarket", "dict", "Cross-asset context"),
-    ("srm", "list", "One graded row per GICS sector"),
-    ("srm_signals", "dict", "Sector-level signals"),
-    ("macro_weather", "dict", "7-instrument direction read"),
-    ("regime_stop_pct_ceiling", "float", "Regime cap on stop width, percent"),
-    ("spy_roc_20d", "float", "SPY 20-day rate of change"),
-    ("thematic_baskets", "dict", "35 baskets, graded, with RRG position"),
-    ("sector_map_version", "str", "GICS map version in force"),
-    ("sector_map_gaps", "list", "Unclassified tickers"),
-    ("field_schema", "dict", "Self-described field types"),
-    ("field_schema_enums", "dict", "Permitted values per categorical field"),
-    ("field_glossary", "dict", "Self-described field meanings"),
-    ("held_positions_status", "enum", "live | cache_fallback | unknown"),
-    ("held_positions", "list", "PM live book from the trade journal"),
-    ("held_book", "dict", "Beta-adjusted exposure, gap scenarios, sector weights"),
-    ("daily_list", "list", "Every scored ticker, full field set"),
-    ("lens_ranking", "dict", "Same names ordered by lens agreement"),
-    ("summary", "dict", "Run counts"),
-    ("signal_radar", "dict", "Radar tag totals"),
-    ("data_quality", "dict", "Scored records carrying a null core field"),
+    ("date", "str", "Scan date, US close", "src/data/drive_sync.py:build_export"),
+    ("exported_at", "iso8601", "Write time, SGT", "src/data/drive_sync.py:build_export"),
+    ("market", "str", "Market descriptor", "src/data/drive_sync.py:build_export"),
+    ("regime", "dict", "VIX bucket, Hurst, size ceiling",
+     "src/analyzer/regime.py:compute_regime"),
+    ("intermarket", "dict", "Cross-asset context",
+     "engines/srm.py:compute_intermarket,enrich_sectors_intermarket:928-1050"),
+    ("srm", "list", "One graded row per GICS sector",
+     "engines/srm.py:grade_all_sectors:293-334"),
+    ("srm_signals", "dict", "Sector-level signals",
+     "src/data/drive_sync.py:_build_srm_gics:658-730 (buckets grade_all_sectors "
+     "output by grade)"),
+    ("macro_weather", "dict", "7-instrument direction read",
+     "engines/srm.py:compute_macro_weather:789-928"),
+    ("regime_stop_pct_ceiling", "float", "Regime cap on stop width, percent",
+     "src/analyzer/regime.py:compute_regime"),
+    ("spy_roc_20d", "float", "SPY 20-day rate of change",
+     "src/data/drive_sync.py:_compute_enrichment_lookups:813 (build_export "
+     "only copies it from that lookup, computed alongside vol_30d_ann/"
+     "beta_252d/day_vol)"),
+    ("thematic_baskets", "dict", "35 baskets, graded, with RRG position",
+     "engines/srm.py:grade_thematic_baskets:408-495"),
+    ("sector_map_version", "str", "GICS map version in force",
+     "src/data/sector_mapper.py"),
+    ("sector_map_gaps", "list", "Unclassified tickers",
+     "src/data/sector_mapper.py"),
+    ("field_schema", "dict", "Self-described field types",
+     "src/data/drive_sync.py:_FIELD_SCHEMA, engines/agentic_dictionary.py"),
+    ("field_schema_enums", "dict", "Permitted values per categorical field",
+     "src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS, engines/agentic_dictionary.py:"
+     "FIELD_ENUMS"),
+    ("field_glossary", "dict", "Self-described field meanings",
+     "src/data/drive_sync.py:_FIELD_GLOSSARY, engines/agentic_dictionary.py:"
+     "GLOSSARY_FILL"),
+    ("held_positions_status", "enum", "live | cache_fallback | unknown",
+     "src/data/ptj.py"),
+    ("held_positions", "list", "PM live book from the trade journal",
+     "src/data/ptj.py (EXTERNAL: the PTJ broker journal)"),
+    ("held_book", "dict", "Beta-adjusted exposure, gap scenarios, sector weights",
+     "src/analyzer/held_book.py:build_held_book:30"),
+    ("daily_list", "list", "Every scored ticker, full field set",
+     "src/data/drive_sync.py:_v21_record_fields (per-row assembly of every "
+     "engine's own output — the row itself has no single calculator, each "
+     "field does)"),
+    ("lens_ranking", "dict", "Same names ordered by lens agreement",
+     "engines/lens_consensus.py:build_lens_ranking:121-154"),
+    ("summary", "dict", "Run counts", "src/data/drive_sync.py:build_export"),
+    ("signal_radar", "dict", "Radar tag totals", "engines/signal_radar.py"),
+    ("data_quality", "dict", "Scored records carrying a null core field",
+     "src/data/drive_sync.py:_compute_data_quality:2296"),
 ]
 
 
@@ -1229,9 +1296,23 @@ def leaf_rows() -> list[dict]:
         role = sch.get("role", "") if isinstance(sch, dict) else ""
         desc = re.sub(r"\s+", " ", str(gloss.get(name, ""))).strip()
         desc = desc.split(". ")[0][:180]
+        if name in ("role", "side", "unit"):
+            # These three are not data fields — they're the schema's own
+            # controlled vocabulary. They have no glossary text at all
+            # (confirmed empty); their real content is the enum list
+            # itself, in _FIELD_SCHEMA_ENUMS, not the glossary.
+            rows.append(R(name, "", "leaf", "label", "|".join(
+                        str(v) for v in D._FIELD_SCHEMA_ENUMS.get(name, [])),
+                        f"Schema vocabulary dimension, not a data field — "
+                        f"every field.{name} value in field_schema is drawn "
+                        f"from this enum",
+                        "src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS", "",
+                        role))
+            continue
         # No real source traced for this one yet — surfaced by
-        # test_no_field_still_cites_the_glossary_as_its_source so a newly
-        # added export field can't quietly re-open the hole this closed.
+        # test_almost_nothing_still_cites_the_glossary_as_its_source so a
+        # newly added export field can't quietly re-open the hole this
+        # closed.
         uncovered.append(name)
         rows.append(R(name, _parent_of(name), "leaf", unit or "",
                       "|".join(str(v) for v in enums.get(name, [])),
@@ -1264,11 +1345,159 @@ def _parent_of(name: str) -> str:
     return ""
 
 
+# Fields that live only inside the srm[] sector list, not projected onto any
+# per-ticker daily_list row. Hand-verified against drive_sync.py — these are
+# NOT in _FIELD_SCHEMA because they were never meant to be a per-ticker field.
+# _FIELD_SCHEMA / _FIELD_GLOSSARY turned out NOT to be a reliable "is this on
+# daily_list" test — a direct read of a live export found 97 keys on a
+# daily_list record, including sc_momentum, flow, energy, structure, mp,
+# on_longlist, gics_gate: the export's most fundamental fields, none of them
+# in either schema dict. Those two dicts document a SUBSET of what ships, not
+# the full set, so a field's absence from them proves nothing. The live
+# export file is the only reliable ground truth for what actually landed in
+# JSON on a real run — read it directly at generation time.
+EXPORT_SAMPLE = ROOT / "aegis" / "output" / "aqe_daily_export.json"
+
+# The SRM list's own field names differ from what gets PROJECTED onto a
+# scored ticker (confirmed from a live srm[0] read): the list itself carries
+# grade/roc20/roc5/divergence/above_sma20/grade_path/sh_value/grade_trend/
+# sh_trend/etf/sector/entry_gate/entry_gate_reason/macro_headwind_flag/
+# macro_headwind_score/rrg_quadrant/rrg_direction/rrg_rs_ratio/
+# rrg_rs_momentum/rrg_grade_override/trend_state — note trend_state and
+# rrg_quadrant/rrg_direction, NOT "sector_"-prefixed; the sector_-prefixed
+# names are the separate per-ticker projected fields.
+SRM_LIST_FIELDS = {
+    "grade", "above_sma20", "roc20", "roc5", "divergence", "grade_path",
+    "sh_value", "grade_trend", "sh_trend", "etf", "sector", "entry_gate",
+    "entry_gate_reason", "macro_headwind_flag", "macro_headwind_score",
+    "rrg_quadrant", "rrg_direction", "rrg_rs_ratio", "rrg_rs_momentum",
+    "rrg_grade_override", "trend_state",
+}
+# None of these are projected onto daily_list under the SAME name (the
+# projected names carry a sector_/rrg_ prefix instead), so every one of them
+# is srm[]-only.
+SRM_LIST_ONLY = set(SRM_LIST_FIELDS)
+
+# thematic_baskets[] is empty on every record in the stale 2026-07-28 sample
+# (no basket matched), so its per-entry keys can't be read live — confirmed
+# instead from the dict literal that builds it, drive_sync.py:1078-1089.
+THEMATIC_LIST_FIELDS = {
+    "basket", "grade", "grade_path", "breadth_pct", "parent_capped_grade",
+    "parent_gics", "parent_grade", "rrg_quadrant", "rrg_direction",
+}
+# grade/grade_path/parent_gics/parent_grade/rrg_quadrant/rrg_direction ALSO
+# reach daily_list, flattened from the FIRST basket onto
+# thematic_grade/thematic_parent_gics/thematic_parent_grade/
+# thematic_rrg_quadrant/thematic_rrg_direction (drive_sync.py:1091-1096) —
+# under different names, so those are classified "daily_list" via the live
+# sample, not listed here. Only the fields with no flattened daily_list
+# sibling are basket-list-only.
+THEMATIC_LIST_ONLY = {"basket", "breadth_pct", "parent_capped_grade"}
+
+QS_BLOCK_PREFIX = "qs."
+QS_BLOCK_ONLY = {"qs_market", "qs_status"}
+
+# The PTJ broker-journal fields that ride on held_positions only, confirmed
+# from a live held_positions[0] read: cob_price, exposure, notes,
+# position_type, ptj_sector, ptj_srm_grade, qty, trade_date.
+_JOURNAL_ONLY = {"cob_price", "exposure", "notes", "position_type",
+                 "ptj_sector", "ptj_srm_grade", "qty", "trade_date"}
+
+
+def _load_live_export_keys() -> dict:
+    """{'daily_list', 'held_positions', 'srm'} -> the real key set observed
+    on a live export record. Empty sets if no export is on disk — the
+    classifier falls back to the schema dicts + hand-verified sets above,
+    it does not fail."""
+    if not EXPORT_SAMPLE.exists():
+        return {"daily_list": set(), "held_positions": set(), "srm": set()}
+    try:
+        import json
+        d = json.loads(EXPORT_SAMPLE.read_text(encoding="utf-8"))
+        dl = set((d.get("daily_list") or [{}])[0].keys())
+        hp = set((d.get("held_positions") or [{}])[0].keys())
+        srm = set((d.get("srm") or [{}])[0].keys())
+        return {"daily_list": dl, "held_positions": hp, "srm": srm}
+    except Exception:  # noqa: BLE001
+        return {"daily_list": set(), "held_positions": set(), "srm": set()}
+
+
+def classify_export_location(name: str) -> str:
+    """WHERE this field actually lands in aqe_daily_export.json, or the
+    honest 'not exported' answer for a pure calculation intermediate.
+
+    Primary ground truth is a LIVE export file's own keys (daily_list[0],
+    held_positions[0], srm[0]) — _FIELD_SCHEMA/_FIELD_GLOSSARY were tried
+    first and found to cover only a subset of what actually ships (see
+    EXPORT_SAMPLE's comment). Falls back to the schema dicts and the
+    hand-verified srm[]/thematic[]/qs{}/journal sets above for anything the
+    one sampled record happens not to carry (a null-stripped or
+    conditional field).
+    """
+    from src.data import drive_sync as D
+
+    live = _load_live_export_keys()
+
+    if name in ("role", "side", "unit"):
+        return ("field_schema{}'s own entries — every field_schema[name] "
+               "dict carries a role/unit/side; not a scalar of its own")
+    if name.startswith(QS_BLOCK_PREFIX) or name in QS_BLOCK_ONLY:
+        return "qs{} block"
+    if name in _JOURNAL_ONLY:
+        return "held_positions only (PTJ broker journal passthrough)"
+    if name in THEMATIC_LIST_ONLY:
+        return "daily_list[].thematic_baskets[] (nested, per-basket)"
+
+    # daily_list checked before srm[]-only, because several names exist on
+    # BOTH (e.g. 'grade' does not, but this ordering matters generally) —
+    # a field actually observed on a scored ticker is definitively exported
+    # there regardless of what else shares its name elsewhere.
+    if name in live["daily_list"]:
+        return "daily_list"
+    if name in live["held_positions"]:
+        return "held_positions only"
+    if name in SRM_LIST_ONLY and name in live["srm"]:
+        return "srm[] block only (not projected per-ticker)"
+    if name in SRM_LIST_ONLY:
+        return "srm[] block only (not projected per-ticker)"
+
+    held_glossary_only = {k for k, v in D._FIELD_GLOSSARY.items()
+                          if "held_positions only" in str(v)
+                          or "held only" in str(v).lower()}
+    if name in held_glossary_only:
+        return "held_positions only"
+    if name in D._FIELD_SCHEMA or name in D._FIELD_GLOSSARY:
+        return "daily_list"
+
+    for engine, cols in D._SUBCOMPONENT_SPEC.items():
+        if name in cols:
+            return f"subcomponents.{engine}"
+
+    # Known merge-time renames: the field documents the ENGINE's own raw
+    # column (this taxonomy's stated principle), but the export only ships
+    # the renamed name inside subcomponents. Stated explicitly rather than
+    # left to look unexported.
+    renamed = {
+        "ret_12m_score": "subcomponents.pipe (as pr_ret_12m)",
+        "rsi_score": "subcomponents.pipe (as pr_rsi_score)",
+        "vol_score": "subcomponents.pipe (as pr_vol_score)",
+        "ma_score": "subcomponents.pipe (as pr_ma_score)",
+    }
+    if name in renamed:
+        return renamed[name]
+
+    return "NOT EXPORTED — reference/calculation figure only"
+
+
 def main() -> None:
-    rows = [R(n, "", "block", t, "", d, "src/data/drive_sync.py:build_export", "")
-            for n, t, d in BLOCKS]
+    rows = [R(n, "", "block", t, "", d, src, "", ships_in_export="top-level export key")
+            for n, t, d, src in BLOCKS]
     rows += SCORE_TREE
     rows += leaf_rows()
+
+    for r in rows:
+        if not r["ships_in_export"] and r["level"] != "block":
+            r["ships_in_export"] = classify_export_location(r["field"])
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with OUT.open("w", newline="", encoding="utf-8") as fh:

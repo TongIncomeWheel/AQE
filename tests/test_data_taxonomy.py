@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CSV_PATH = ROOT / "docs" / "AQE_DATA_TAXONOMY.csv"
 
 COLUMNS = ["field", "parent", "level", "output", "state", "represents",
-           "source", "formula", "weight", "used_by"]
+           "source", "formula", "weight", "used_by", "ships_in_export"]
 
 
 def rows():
@@ -232,14 +232,19 @@ def test_previously_incomplete_enums_are_fixed_at_the_source():
 
 # ── source integrity: never the glossary, never a malformed key ─────────
 
-def test_almost_nothing_still_cites_the_glossary_as_its_source():
+def test_nothing_cites_the_glossary_as_its_source():
     """field_glossary describes fields; it does not compute them. Citing it
-    as 'source' was citing documentation as evidence. Only the three schema
-    vocabulary entries (role/side/unit — not data fields, the enum
-    vocabulary itself) are allowed to remain that way."""
+    as 'source' was citing documentation as evidence. Zero tolerance: the
+    one row allowed to name it is 'field_glossary' itself — the export
+    BLOCK whose entire content literally IS that dict, where citing it is
+    not laziness but the true and only answer. role/side/unit are not data
+    fields — they're the schema's own controlled vocabulary — and are
+    sourced to _FIELD_SCHEMA_ENUMS, not the glossary, since that's where
+    their actual content (the enum lists) lives; the glossary carries no
+    text for any of the three."""
     still_glossary = [r["field"] for r in rows()
                       if "_FIELD_GLOSSARY" in r["source"]]
-    assert set(still_glossary) == {"role", "side", "unit"}, \
+    assert still_glossary == ["field_glossary"], \
         f"unexpected glossary-only sources: {still_glossary}"
 
 
@@ -311,6 +316,61 @@ def test_the_integrity_findings_doc_exists_and_names_its_key_findings():
     for phrase in ("ms_pos_score", "ret_12m_score", "on_elder",
                   "MALFORMED_GLOSSARY_KEYS", "stair_hl_count", "rt_ratio"):
         assert phrase in text, f"findings doc lost its note on {phrase}"
+
+
+# ── ships_in_export: labelling what's actually in the JSON ──────────────
+
+def test_the_fundamental_composites_are_correctly_marked_as_exported():
+    """The classifier's first version relied on _FIELD_SCHEMA/_FIELD_GLOSSARY
+    as ground truth for 'is this on daily_list' and got it badly wrong: flow,
+    energy, structure, mp, sc_momentum, on_longlist and gics_gate — the
+    export's most fundamental fields — are in neither dict, so they all
+    misclassified as unexported. Fixed by reading a live export's own keys
+    as the real ground truth."""
+    f = by_field()
+    for field in ("flow", "energy", "structure", "mp", "sc_momentum",
+                 "on_longlist", "gics_gate", "elder"):
+        assert f[field]["ships_in_export"] == "daily_list", \
+            f"{field} misclassified as {f[field]['ships_in_export']!r}"
+
+
+def test_sc_position_and_its_engines_are_marked_as_never_exported():
+    """A real finding, not a modelling choice: sc_position, bq, k39_gate,
+    fip_quality, pipe_tier and momentum_composite are fully computed but
+    absent from every one of 162 records in a live export. Different in
+    kind from an ordinary calculation intermediate."""
+    f = by_field()
+    for field in ("sc_position", "bq", "k39_gate"):
+        assert "NOT EXPORTED" in f[field]["ships_in_export"]
+
+
+def test_a_reasonable_share_of_fields_are_pure_calculation_intermediates():
+    """Roughly a fifth of everything this taxonomy documents never reaches
+    the JSON at all — that's not a bug in the taxonomy, it's the honest
+    shape of the calculation: an engine computes intermediates on the way
+    to a score that DOES ship. Sanity bound so a classifier regression
+    (e.g. everything reading as unexported) gets caught."""
+    n = len(rows())
+    not_exported = sum(1 for r in rows()
+                       if "NOT EXPORTED" in r["ships_in_export"])
+    assert 0.10 * n < not_exported < 0.35 * n, \
+        f"{not_exported}/{n} marked unexported — outside the expected band"
+
+
+def test_every_block_cites_its_real_calculator_not_build_export():
+    """build_export only ASSEMBLES blocks other functions computed — citing
+    it for regime/srm/macro_weather/etc. was the same defect as citing the
+    glossary. Only fields build_export genuinely computes inline (simple
+    literals/timestamps/aggregates) may still cite it."""
+    f = by_field()
+    delegated = {"regime": "regime.py", "srm": "srm.py",
+                "macro_weather": "srm.py", "intermarket": "srm.py",
+                "thematic_baskets": "srm.py", "held_book": "held_book.py",
+                "data_quality": "_compute_data_quality",
+                "lens_ranking": "lens_consensus.py"}
+    for field, must_contain in delegated.items():
+        assert must_contain in f[field]["source"], \
+            f"{field} still points at the assembler, not its real calculator"
 
 
 # ── the retirement ───────────────────────────────────────────────────────
