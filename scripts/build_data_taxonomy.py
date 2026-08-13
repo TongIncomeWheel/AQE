@@ -1220,7 +1220,8 @@ BLOCKS = [
     ("date", "str", "Scan date, US close", "src/data/drive_sync.py:build_export"),
     ("exported_at", "iso8601", "Write time, SGT", "src/data/drive_sync.py:build_export"),
     ("market", "str", "Market descriptor", "src/data/drive_sync.py:build_export"),
-    ("regime", "dict", "VIX bucket, Hurst, size ceiling",
+    ("regime", "dict", "VIX bucket (Hurst removed 2026-08-13 — no sizing/trend "
+     "read ships from AQE)",
      "src/analyzer/regime.py:compute_regime"),
     ("intermarket", "dict", "Cross-asset context",
      "engines/srm.py:compute_intermarket,enrich_sectors_intermarket:928-1050"),
@@ -1232,7 +1233,7 @@ BLOCKS = [
     ("macro_weather", "dict", "7-instrument direction read",
      "engines/srm.py:compute_macro_weather:789-928"),
     ("regime_stop_pct_ceiling", "float", "Regime cap on stop width, percent",
-     "src/analyzer/regime.py:compute_regime"),
+     "src/engines/bracket_engine.py:regime_stop_ceiling"),
     ("spy_roc_20d", "float", "SPY 20-day rate of change",
      "src/data/drive_sync.py:_compute_enrichment_lookups:813 (build_export "
      "only copies it from that lookup, computed alongside vol_30d_ann/"

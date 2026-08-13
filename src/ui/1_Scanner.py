@@ -749,15 +749,8 @@ def _recipe_label(recipe: dict) -> str:
 # 1. Regime context bar
 # ---------------------------------------------------------------------------
 regime = sl.get("regime", {})
-c1, c2, c3 = st.columns(3)
-with c1:
-    vix_val = regime.get("vix", 0)
-    st.metric("VIX", _fmt(vix_val, ".1f"), delta=regime.get("level", "---"), delta_color="off")
-with c2:
-    hurst_val = regime.get("hurst", 0)
-    st.metric("Hurst", _fmt(hurst_val, ".2f"), delta=regime.get("trend", "---"), delta_color="off")
-with c3:
-    st.metric("Max New Size", sl.get("max_new_size", "---"))
+vix_val = regime.get("vix", 0)
+st.metric("VIX", _fmt(vix_val, ".1f"), delta=regime.get("level", "---"), delta_color="off")
 
 st.divider()
 

@@ -90,7 +90,7 @@ Signed off 2026-08-13 (`docs/AQE_MACRO_PACK_PROPOSAL.md`). Reads Crown, the scen
 Flow / Energy / Structure / MP / Elder / BQ / K39 / Pipeline Rank / SC_MOMENTUM+SC_POSITION composites — full formulas in the reference doc §Part II.1-3. `bracket_engine.py` is **the** stop/target source of truth (structural, 3-charter-gates validated; mechanical DSL/TP fields are retired from the export). `srm.py` — sector grading + RRG + macro overlay + 35 thematic baskets (context layer, never adds scan names). DETECT layer (`divergence.py`, `pin_bar.py`, `smart_money_knn.py`, `signal_radar.py`) and `lens_consensus.py` (the unweighted lens-agreement reading aid) are data-only — never gates, never sizing.
 
 ### Daily pipeline (`src/pipeline/daily_orchestrator.py`)
-PTJ pull -> incremental price pull -> earnings refresh -> score-cache refresh -> Pipeline Rank screen -> full scoring -> SRM grading -> regime detection -> PTRS + disposition -> recipe screens (longlist/watchlist/Precision Edge) -> **QS engine** -> output JSON + Drive export -> daily-persist snapshot.
+PTJ pull -> incremental price pull -> earnings refresh -> score-cache refresh -> Pipeline Rank screen -> full scoring -> SRM grading -> regime detection (VIX only) -> shortlist gate (SC_MOMENTUM >= SHORTLIST_MIN_SC) -> recipe screens (longlist/watchlist/Precision Edge) -> **QS engine** -> output JSON + Drive export -> daily-persist snapshot.
 
 ### ONE list, membership as columns
 `daily_list` is the single list every surface reads. Longlist / Elder / QS / ledger / held are **flags on it** (`on_longlist`, `on_elder`, `on_qs`, `in_ledger`, `held`), never parallel lists — the committee reads membership in one row instead of cross-referencing three. Every row carries the identical AQE block (bracket, ATR, fibs, MAs, beta, vol, DETECT, sector) from the same `_v21_record_fields()` call, so levels cannot disagree between lists, **plus** its full `qs` block if QS scored it — including names QS did not emit, so a Longlist-only name still shows its QS read. An *absent* `qs` key means QS could not evaluate the name; that is not the same as a poor QS score.
@@ -102,8 +102,7 @@ Streamlit multi-page app: regime, SRM, Thematic Rotation, Detect Lens Ranking, t
 Longlist: SC >= 75, Flow >= 80, Energy >= 64, Structure >= 60, MP >= 60, Elder >= 7, Phase = ANY. Stored in `data/active_recipe.json` (`longlist` + `precision` sections). Full watchlist/Precision-Edge thresholds: reference doc §Part I §14.
 
 ### Sizing chain
-PTRS disposition (ticker quality) x Regime max_new_size (VIX macro) = final position size.
-- FULL = 3% risk ($2100), HALF = 1.5% ($1050), QUARTER = 0.75% ($525)
+Fixed: risk per trade is always 3% ($2,100 on the $70K base). AQE does not compute or export a VIX/regime-driven size tier (the old FULL/HALF/QUARTER `max_new_size` concept, and PTRS disposition before it, were both removed as violations of "AQE makes no decisions, no sizing" — 2026-08-13 and earlier respectively). Sizing modulation is the PM/AIC's call outside AQE.
 - Shares = risk_budget / bracket.risk (1R)
 
 ### Intraday Momentum & Bracket / Options scanner

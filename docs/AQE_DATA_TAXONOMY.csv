@@ -2,12 +2,12 @@ field,parent,level,output,state,represents,source,formula,weight,used_by,ships_i
 date,,block,str,,"Scan date, US close",src/data/drive_sync.py:build_export,,,,top-level export key
 exported_at,,block,iso8601,,"Write time, SGT",src/data/drive_sync.py:build_export,,,,top-level export key
 market,,block,str,,Market descriptor,src/data/drive_sync.py:build_export,,,,top-level export key
-regime,,block,dict,,"VIX bucket, Hurst, size ceiling",src/analyzer/regime.py:compute_regime,,,,top-level export key
+regime,,block,dict,,VIX bucket (Hurst removed 2026-08-13 — no sizing/trend read ships from AQE),src/analyzer/regime.py:compute_regime,,,,top-level export key
 intermarket,,block,dict,,Cross-asset context,"engines/srm.py:compute_intermarket,enrich_sectors_intermarket:928-1050",,,,top-level export key
 srm,,block,list,,One graded row per GICS sector,engines/srm.py:grade_all_sectors:293-334,,,,top-level export key
 srm_signals,,block,dict,,Sector-level signals,src/data/drive_sync.py:_build_srm_gics:658-730 (buckets grade_all_sectors output by grade),,,,top-level export key
 macro_weather,,block,dict,,7-instrument direction read,engines/srm.py:compute_macro_weather:789-928,,,,top-level export key
-regime_stop_pct_ceiling,,block,float,,"Regime cap on stop width, percent",src/analyzer/regime.py:compute_regime,,,,top-level export key
+regime_stop_pct_ceiling,,block,float,,"Regime cap on stop width, percent",src/engines/bracket_engine.py:regime_stop_ceiling,,,,top-level export key
 spy_roc_20d,,block,float,,SPY 20-day rate of change,"src/data/drive_sync.py:_compute_enrichment_lookups:813 (build_export only copies it from that lookup, computed alongside vol_30d_ann/beta_252d/day_vol)",,,,top-level export key
 thematic_baskets,,block,dict,,"35 baskets, graded, with RRG position",engines/srm.py:grade_thematic_baskets:408-495,,,,top-level export key
 sector_map_version,,block,str,,GICS map version in force,src/data/sector_mapper.py,,,,top-level export key

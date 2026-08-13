@@ -317,13 +317,15 @@ def s2(args):
         gaps.append(f"export is {exp_stale} day(s) stale — pm_ack: {receipt['pm_ack']}")
     reg = export["regime"]
 
-    # momentum caveat: the hurst/trend implication in one plain sentence, said once here
-    caveat_text = (
-        f"Tape reads {reg['trend']} (hurst {reg['hurst']}, VIX {reg['vix']}, regime {reg['level']}): "
-        f"{reg['implication']}."
-    )
-    if reg["trend"] != "TRENDING":
-        caveat_text += " A non-trending tape is a caveat on every momentum idea downstream."
+    # risk-tone caveat: VIX regime in one plain sentence, said once here. Hurst
+    # trend/mean-revert classification was removed from AQE 2026-08-13 (PM:
+    # "totally useless now") — its own accuracy note showed ~73% of genuinely
+    # random markets still got a TRENDING/MEAN_REVERT label. Crown's own
+    # positioning/breadth/divergence read (crown_block below) is the real
+    # regime-before-price signal now.
+    caveat_text = f"Tape reads {reg['level']} (VIX {reg['vix']})."
+    if reg["level"] in ("ORANGE", "RED"):
+        caveat_text += " Elevated volatility is a caveat on every idea downstream."
 
     # crown block
     if crown:
@@ -396,9 +398,8 @@ def s2(args):
         "risk_tone": {"value": reg["level"], "source": "regime.level"},
         "momentum_caveat": {
             "text": caveat_text,
-            "hurst": reg["hurst"], "trend": reg["trend"],
-            "implication": reg["implication"], "vix": reg["vix"],
-            "sources": ["regime.hurst", "regime.trend", "regime.implication", "regime.vix"],
+            "vix": reg["vix"],
+            "sources": ["regime.level", "regime.vix"],
         },
         "crown": crown_block,
         "sectors": sectors,
@@ -525,7 +526,7 @@ def s7(args):
 
     # 1. headline — day type + data quality, staleness + DEGRADED always visible
     c = frame["crown"]
-    head = f"{frame['risk_tone']['value']} tape, {frame['momentum_caveat']['trend']} (hurst {frame['momentum_caveat']['hurst']})"
+    head = f"{frame['risk_tone']['value']} tape (VIX {frame['momentum_caveat']['vix']})"
     if c["present"]:
         head += f"; Crown: {c['family']} at {c['size_multiplier']}x ({c['match_quality']} match)"
         if c["status"] == "DEGRADED":

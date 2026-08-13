@@ -5,8 +5,8 @@ Steps:
 2. Stage 1: Pipeline Rank for full universe (cheap — daily bars only)
 3. Stage 2: Full scoring for top-50 candidates
 4. SRM sector grading
-5. Regime detection (VIX + Hurst)
-6. Disposition (ticker-quality ceiling) from SC_MOMENTUM
+5. Regime detection (VIX)
+6. Shortlist gate: SC_MOMENTUM >= SHORTLIST_MIN_SC
 7. Output: shortlist JSON + text dashboard
 
 Run:
@@ -247,8 +247,8 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
 
     # Step 5: Regime detection
     print("[daily] Step 5: Regime detection...")
-    regime = _compute_regime(spy)
-    print(f"  VIX regime: {regime['vix_regime']} | Hurst: {regime['hurst']:.3f} ({regime['hurst_regime']})")
+    regime = _compute_regime()
+    print(f"  VIX regime: {regime['vix_regime']} (VIX {regime['vix']:.1f})")
 
     # Step 6: attach sector context to every scored candidate
     print("[daily] Step 6: candidates...")
@@ -753,11 +753,8 @@ def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
     return sector_grades
 
 
-def _compute_regime(spy: pd.DataFrame) -> dict:
-    """Get VIX regime + Hurst exponent."""
-    spy_sorted = spy.sort_values("date")
-    closes = spy_sorted["close"].values
-
+def _compute_regime() -> dict:
+    """Get VIX regime."""
     # Use last close as VIX proxy if no real VIX data
     # In production this would call FMP quote for ^VIX
     vix = 18.0  # default; will be overridden by FMP quote when available
@@ -774,7 +771,7 @@ def _compute_regime(spy: pd.DataFrame) -> dict:
     except Exception:
         pass
 
-    return compute_regime(closes, vix, lookback=60)
+    return compute_regime(vix)
 
 
 # Below this, a candidate does not reach the shortlist. PTRS, then a
@@ -1176,16 +1173,6 @@ def _build_output(
     """Build the final output JSON structure."""
     vix_regime = classify_vix_regime(regime.get("vix", 18.0))
 
-    # Max new entry size based on regime
-    if vix_regime == "RED":
-        max_new_size = "NONE"
-    elif vix_regime == "ORANGE":
-        max_new_size = "QUARTER"
-    elif vix_regime == "YELLOW":
-        max_new_size = "QUARTER"
-    else:
-        max_new_size = "FULL"
-
     candidates_out = []
     for i, c in enumerate(shortlist[:15], 1):
         close = c.get("close", 0)
@@ -1442,11 +1429,7 @@ def _build_output(
         "regime": {
             "vix": regime.get("vix", 18.0),
             "level": vix_regime,
-            "hurst": regime.get("hurst", 0.50),
-            "trend": regime.get("hurst_regime", "RANDOM"),
-            "implication": regime.get("implication", ""),
         },
-        "max_new_size": max_new_size,
         "candidates": candidates_out,
         "precision_edge": precision_out,
         "precision_recipe": precision_recipe or {},
@@ -1482,7 +1465,7 @@ AEGIS_CORE_FIELDS = [
     "sector", "sector_grade", "sh", "ra", "rl", "cm",
     "precision", "bc_score", "bc_tier", "bc_modifier",
     "squeeze_score",
-    "vix_regime", "hurst", "hurst_regime", "max_new_size",
+    "vix_regime",
 ]
 
 INNER_COMPACT_FIELDS = [
@@ -1512,12 +1495,6 @@ def _build_aegis_export(
     Returns the file path written.
     """
     vix_regime = classify_vix_regime(regime.get("vix", 18.0))
-    if vix_regime == "RED":
-        max_new_size = "NONE"
-    elif vix_regime in ("ORANGE", "YELLOW"):
-        max_new_size = "QUARTER"
-    else:
-        max_new_size = "FULL"
 
     # Build set lookups for tagging
     sl_tickers = {c["ticker"] for c in (shortlist or [])}
@@ -1606,9 +1583,6 @@ def _build_aegis_export(
             "squeeze_score": round(c.get("squeeze_score", 0), 1),
             # Regime context
             "vix_regime": vix_regime,
-            "hurst": round(regime.get("hurst", 0.5), 3),
-            "hurst_regime": regime.get("hurst_regime", "RANDOM"),
-            "max_new_size": max_new_size,
         }
         daily_list.append(record)
 
@@ -1626,10 +1600,7 @@ def _build_aegis_export(
         "regime": {
             "vix": regime.get("vix", 18.0),
             "level": vix_regime,
-            "hurst": regime.get("hurst", 0.5),
-            "trend": regime.get("hurst_regime", "RANDOM"),
         },
-        "max_new_size": max_new_size,
         "daily_list": daily_list,
         "inner_top10": inner_top10,
         "inner_top25": inner_top25,
@@ -1669,9 +1640,7 @@ def _format_dashboard(output: dict) -> str:
     lines.append("=" * 70)
 
     r = output["regime"]
-    lines.append(f"  Regime: VIX {r['vix']:.1f} ({r['level']}) | Hurst {r['hurst']:.3f} ({r['trend']})")
-    lines.append(f"  Max new entry size: {output['max_new_size']}")
-    lines.append(f"  {r['implication']}")
+    lines.append(f"  Regime: VIX {r['vix']:.1f} ({r['level']})")
     lines.append("")
 
     srm = output.get("srm_summary", {})
