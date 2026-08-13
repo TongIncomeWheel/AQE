@@ -139,15 +139,21 @@ def test_the_gate_floors_match_scoring_py():
             assert f"{k}>={v:g}" in fp, f"sc_p_gates lost {k}"
 
 
-def test_the_disposition_cuts_match_the_code():
-    import re
-    from src.analyzer.ptrs import DISPOSITION_CUTS
-    f = by_field()["disposition"]["formula"]
-    parsed = [(float(c), lbl, float(s))
-              for c, lbl, s in re.findall(r">=([\d.]+)->(\w+)\(([\d.]+)\)", f)]
-    assert parsed == [tuple(x) for x in DISPOSITION_CUTS], \
-        f"taxonomy says {parsed}, code says {DISPOSITION_CUTS}"
-    assert "REJECT(0.0)" in f, "the reject floor is missing"
+def test_disposition_is_gone_from_the_taxonomy():
+    """PTRS, then the disposition ceiling built to replace it, were both a
+    re-read of SC_MOMENTUM through a threshold table with no consumer.
+    Retired 2026-08-13 rather than kept as documented, unused apparatus."""
+    f = by_field()
+    assert "disposition" not in f
+    assert "max_size" not in f
+    from src.analyzer import ptrs as P
+    assert not hasattr(P, "compute_disposition")
+    assert not hasattr(P, "DISPOSITION_CUTS")
+
+
+def test_the_shortlist_floor_matches_the_orchestrator():
+    from src.pipeline.daily_orchestrator import SHORTLIST_MIN_SC
+    assert SHORTLIST_MIN_SC == 45.0
 
 
 def test_the_longlist_rule_matches_the_screen():

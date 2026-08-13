@@ -3,7 +3,7 @@
 Schedule (SGT, Tuesday–Saturday):
   05:30 — Universe CSP theta scan (Alpaca → options_scan.json to the CSP Drive folder)
   06:00 — Universe refresh (FMP screener → mcap/$2B + SMA20/50 + volume)
-  08:30 — Daily pipeline (pull → score → SRM → disposition → publish)
+  08:30 — Daily pipeline (pull → score → SRM → candidates → publish)
 Sunday and Monday (SGT) are skipped (US markets closed Sat/Sun).
 
 The 05:30 CSP scan runs ~1h after the US close and 3h before the pipeline, so the
@@ -13,7 +13,7 @@ How it works:
 - A daemon thread (started once per process) checks the SGT clock every minute.
 - On a run day, once the time is past 08:30 and the pipeline hasn't run today, it
   launches `python -m src.pipeline.daily_orchestrator` (full pull → score → SRM →
-  disposition → publish). The export lands in aegis/output/ and on Drive.
+  candidates → publish). The export lands in aegis/output/ and on Drive.
 - A "last run" marker (status, time, counts) is written locally AND to Drive so
   the in-app status bar survives container restarts and never double-runs a day.
 

@@ -112,7 +112,7 @@ def run(export_path: str, bars_dir: str, scope: list[str],
             f"stop {(p.get('operative_stop') or {}).get('price')} R:R {p.get('rr')} "
             f"{p.get('shares')}sh" for p in enters)
         print(f"  Intraday momentum read ({lvl} regime): {lines}. "
-              "Recommend entry decision + size per SC_MOMENTUM disposition x regime; "
+              "Recommend entry decision + size per SC_MOMENTUM x regime; "
               "AQE makes no call.")
     else:
         print("  No actionable intraday setups — all names stand down.")

@@ -147,8 +147,7 @@ def _aic_line(tk: str, rec: dict, t: dict) -> str:
                  f"SL {_fmt(g('held_sl'))} unreal ${_fmt(g('unreal_usd'), 0)}. "
                  "Advise hold / trim / stop mgmt.")
     else:
-        base += (" Advise entry decision + size per SC_MOMENTUM disposition x"
-                 " regime. Charter v1.9.2.")
+        base += " Advise entry decision + size per SC_MOMENTUM x regime. Charter v1.9.2."
     return base
 
 

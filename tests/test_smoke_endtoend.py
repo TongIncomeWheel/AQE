@@ -13,7 +13,7 @@ import pytest
 
 from src.analyzer import metrics as M
 from src.analyzer.baselines import random_baseline, spy_baseline
-from src.analyzer.ptrs import classify_vix_regime, compute_ptrs, compute_ptrs_batch
+from src.analyzer.ptrs import classify_vix_regime
 from src.analyzer.recipe import Recipe, apply_filter
 from src.engines.srm import grade_sector_etf, GRADE_TO_SH
 from src.engines import bq, elder, energy, flow, k39, mp, scoring, structure
@@ -302,88 +302,58 @@ def test_vix_regime_classification():
     assert classify_vix_regime(35.0) == "RED"
 
 
-def test_ptrs_disposition_bands():
-    # PTRS = engine_score + SH only (no VIX/RA — regime handles macro separately)
-
-    # High engine score + positive sector → FULL
-    r = compute_ptrs(engine_score=65.0, sh=3.0)
-    assert r["disposition"] == "FULL"
-    assert r["ptrs"] == 68.0  # 65 + 3
-
-    # Mediocre score → HALF
-    r2 = compute_ptrs(engine_score=52.0, sh=0.0)
-    assert r2["disposition"] == "HALF"
-    assert r2["ptrs"] == 52.0
-
-    # Below threshold → REJECT
-    r3 = compute_ptrs(engine_score=35.0, sh=-5.0)
-    assert r3["disposition"] == "REJECT"
-    assert r3["ptrs"] == 30.0
-
-    # Borderline QUARTER
-    r4 = compute_ptrs(engine_score=48.0, sh=0.0)
-    assert r4["disposition"] == "QUARTER"
-    assert r4["max_size"] == 0.25
-
-    # VIX regime is separate from PTRS (tested via classify_vix_regime)
-    assert classify_vix_regime(15.0) == "GREEN"
-    assert classify_vix_regime(20.0) == "YELLOW"
-    assert classify_vix_regime(28.0) == "ORANGE"
-    assert classify_vix_regime(35.0) == "RED"
-
-
-def test_compute_ptrs_batch_matches_live_feed():
-    """Regression guard (AIC Charter Amendment v2.8, 2026-07-15): batch/backtest
-    PTRS must be bit-for-bit identical to the live feed's PTRS = SC_MOMENTUM
-    verbatim. sector_grades carries NONZERO SH values on purpose — if the legacy
-    +SH fork ever reopens in compute_ptrs_batch, this test catches it."""
-    signals = pd.DataFrame({
-        "ticker": ["AAPL", "MSFT", "NVDA"],
-        "sc_momentum": [72.3, 55.0, 88.9],
-    })
-    # A sector_grades dict that WOULD move PTRS under the old +SH formula.
-    sector_grades = {"XLK": {"sh": 3}, "XLF": {"sh": -8}}
-    out = compute_ptrs_batch(signals, sector_grades)
-    assert list(out["ptrs"]) == [72.3, 55.0, 88.9]
-    assert list(out["ptrs"]) == list(out["sc_momentum"])
-
-
-def test_sector_health_never_moves_the_disposition():
-    """The 2026-07-15 incident, kept after PTRS was retired.
+def test_sector_health_never_moves_a_per_ticker_candidate():
+    """The 2026-07-15 incident, kept after both PTRS and disposition are gone.
 
     Back then `_compute_ptrs_all` still applied a real Sector-Health term after
     the rest of the pipeline had moved to sh=0.0, and its output leaked into
-    `top_picks` and from there into the live feed. PTRS is gone as of
-    2026-08-13, but the guarantee it was protecting is not: sector context is a
-    committee read via SRM/RRG and must never discount a per-ticker score.
+    `top_picks` and from there into the live feed. Neither PTRS nor the
+    disposition ceiling that briefly replaced it survived past 2026-08-13 —
+    both were a re-read of SC_MOMENTUM with no consumer — but the guarantee
+    they were protecting is still live: sector context is a committee read via
+    SRM/RRG and must never touch a per-ticker score.
     """
-    from src.pipeline.daily_orchestrator import _compute_disposition_all
+    from src.pipeline.daily_orchestrator import _compute_candidates
 
     scores = [
         {"ticker": "AAPL", "sc_momentum": 72.3},
         {"ticker": "XOM", "sc_momentum": 40.0},
     ]
-    # Real SH values on both sides of zero — neither may move the result.
+    # Real SH values on both sides of zero — neither may move sc_momentum.
     sector_grades = {"XLK": {"sh": 3, "grade": "DEPLOY"},
                      "XLE": {"sh": -8, "grade": "AVOID"}}
-    candidates = _compute_disposition_all(scores, sector_grades, vix=18.0, regime={})
+    candidates = _compute_candidates(scores, sector_grades)
 
     assert [c["sc_momentum"] for c in candidates] == [72.3, 40.0]
-    assert [c["disposition"] for c in candidates] == ["FULL", "REJECT"]
-    assert all("ptrs" not in c and "sh" not in c for c in candidates)
+    assert all("ptrs" not in c and "sh" not in c and "disposition" not in c
+              and "max_size" not in c for c in candidates)
 
 
-def test_ptrs_is_retired_and_stays_retired():
-    """It carried SC_MOMENTUM verbatim, so the export published one number
-    under two names and two code paths had to be kept bit-identical."""
+def test_ptrs_and_disposition_are_both_retired():
+    """PTRS carried SC_MOMENTUM verbatim; the disposition ceiling built to
+    replace it (2026-08-13) was the same re-read with no consumer past the
+    shortlist floor, which is now a direct SC_MOMENTUM comparison. Both are
+    gone rather than kept as unused apparatus."""
+    from src.analyzer import ptrs as P
     from src.data import drive_sync as D
     from src.pipeline import daily_orchestrator as O
 
-    # The glossary keeps the definition so an older export stays readable...
+    # The glossary keeps the ptrs definition so an older export stays
+    # readable... but nothing emits it, and the module that computed it now
+    # holds only the VIX classifier, which is real and still used.
     assert "RETIRED" in D._FIELD_GLOSSARY["ptrs"]
-    # ...but nothing emits it any more.
     assert "ptrs" not in D._FIELD_SCHEMA
     assert not hasattr(O, "_compute_ptrs_all")
+    assert not hasattr(P, "compute_ptrs")
+    assert not hasattr(P, "compute_ptrs_batch")
+    assert not hasattr(P, "compute_disposition")
+    assert not hasattr(P, "DISPOSITION_CUTS")
+    assert not hasattr(O, "_compute_disposition_all")
+    assert not hasattr(O, "compute_disposition")
+
+    assert "disposition" not in D._FIELD_SCHEMA
+    assert "disposition" not in O.AEGIS_CORE_FIELDS
+    assert "disposition" not in O.INNER_COMPACT_FIELDS
 
     from src.longlist_screen import passes
     import src.longlist_screen as LS
@@ -391,6 +361,9 @@ def test_ptrs_is_retired_and_stays_retired():
     # SC_MOM >= 65 already implied PTRS >= 60, so membership cannot have moved.
     assert passes({"sc_momentum_raw": 66, "elder": 8})
     assert not passes({"sc_momentum_raw": 64, "elder": 8})
+
+    # The one surviving floor: a plain SC_MOMENTUM comparison, no label table.
+    assert O.SHORTLIST_MIN_SC == 45.0
 
 
 def test_srm_grade_basic():
@@ -969,8 +942,7 @@ def test_shortlist_format():
         "flow_100": 80.0, "energy_100": 70.0, "structure_100": 75.0,
         "mp_100": 65.0, "elder_score": 8.0, "bq_100": 55.0,
         "mp_state": "STRONG", "close": 150.0, "atr14": 3.5,
-        "ptrs": 80.0, "cm": 5.0, "sh": 3, "ra": 5.0, "rl": -3.0,
-        "regime": "YELLOW", "disposition": "FULL", "max_size": 0.25,
+        "cm": 5.0, "ra": 5.0, "rl": -3.0, "regime": "YELLOW",
         "sector": "XLK", "sector_grade": "DEPLOY",
     }]
     output = _build_output(date(2026, 5, 17), fake_regime, fake_grades, fake_shortlist)
@@ -978,7 +950,7 @@ def test_shortlist_format():
     assert output["regime"]["level"] == "YELLOW"
     assert len(output["candidates"]) == 1
     assert output["candidates"][0]["ticker"] == "NVDA"
-    assert output["candidates"][0]["disposition"] == "FULL"
+    assert "disposition" not in output["candidates"][0]
     dashboard = _format_dashboard(output)
     assert "NVDA" in dashboard
     assert "AQE DAILY SHORTLIST" in dashboard

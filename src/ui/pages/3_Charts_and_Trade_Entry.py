@@ -752,7 +752,7 @@ with left:
 
         _lines += [
             "",
-            "Advise: entry/add/hold/trim/exit decision + sizing per SC_MOMENTUM disposition x regime. "
+            "Advise: entry/add/hold/trim/exit decision + sizing per SC_MOMENTUM x regime. "
             "Charter v1.9.2. Risk 3% ($2,100) FULL / $1,050 HALF / $525 QUARTER.",
         ]
 
