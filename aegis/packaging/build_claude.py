@@ -163,8 +163,52 @@ VOICE_MENUS = {
  "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
  "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade","macro_weather","srm","sector_rrg_quadrant",
                   "sector_rrg_direction","thematic_parent_gics","thematic_parent_grade","thematic_rrg_quadrant","thematic_rrg_direction","regime","intermarket"],
- "crown":        ["ticker","macro_weather","srm","sector_rrg_quadrant","sector_rrg_direction","sector_trend_state","thematic_basket","thematic_grade",
-                  "thematic_parent_gics","thematic_parent_grade","thematic_rrg_quadrant","thematic_rrg_direction","regime","intermarket"],
+ # CROWN IS STANDALONE (PM directive 2026-08-09; enforced by tests/test_crown_macro.py::
+ # test_the_layer_declares_itself_standalone). Its menu is built ONLY from Crown's own kernel
+ # outputs in `aqe_crown_macro.json` (src/macro/crown/export.py:build_llm_export), published to
+ # the same Drive folder as aqe_daily_export.json. NOTHING from SRM / Macro Weather / Thematic
+ # RRG / regime / intermarket may appear here — that is the coupling the directive forbids and
+ # the reason Crown's marginal information is measurable at all. Ordered to mirror the kernel's
+ # own hierarchy (v1.5 §2.1/§4): heartbeat -> THE GATE -> positioning -> volatility ->
+ # divergence -> the call. No ticker: this seat refuses to look at a single name.
+ "crown":        [# 0 · the artifact's own freshness/health gate, read FIRST
+                  "status","limits","generated_at",
+                  # 1 · Heartbeat — RSP/SPY breadth
+                  "readings.breadth.regime","readings.breadth.position_in_12_month_range",
+                  "readings.breadth.days_in_this_regime","readings.breadth.change_5d_pct",
+                  "readings.breadth.change_20d_pct","readings.breadth.change_60d_pct",
+                  "readings.breadth.confidence",
+                  # 2 · THE GATE — confidence < 0.40 stops the process (EARLY_EXIT)
+                  "readings.breadth.passed_the_gate",
+                  # 3 · Positioning — CTA / COT / dealer gamma
+                  "readings.positioning.trend_funds.bias",
+                  "readings.positioning.trend_funds.markets_read",
+                  "readings.positioning.trend_funds.share_at_an_extreme",
+                  "readings.positioning.trend_funds.size_dial",
+                  "readings.positioning.trend_funds.by_sector",
+                  "readings.positioning.large_speculators.crowded_long",
+                  "readings.positioning.large_speculators.crowded_short",
+                  "readings.positioning.large_speculators.as_of",
+                  "readings.positioning.option_dealers.available",
+                  "readings.positioning.option_dealers.regime",
+                  "readings.positioning.option_dealers.detail",
+                  # 4 · Volatility complex — the VIXEQ-VIX gap is the key tool
+                  "readings.volatility.vix","readings.volatility.single_stock_vol",
+                  "readings.volatility.gap","readings.volatility.gap_vs_history",
+                  "readings.volatility.gap_change_20d","readings.volatility.state",
+                  "readings.volatility.measured_from",
+                  "readings.volatility.implied_correlation",
+                  "readings.volatility.term_structure",
+                  # 5 · Divergence
+                  "readings.divergence.warnings_lit","readings.divergence.which",
+                  # 6 · Output — a FAMILY and a multiplier, never a ticker or an order
+                  "the_call.expression_family","the_call.match_quality",
+                  "the_call.size_multiplier","the_call.how_the_size_was_reached",
+                  "the_call.structure","the_call.conditions_met",
+                  "the_call.conditions_not_met",
+                  "key_levels","what_changed",
+                  "read_me_first.headline","read_me_first.why",
+                  "read_me_first.so_what","read_me_first.what_would_change_it"],
  "detect-lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
  "elder-lens":   ["ticker","elder","elder_5d","elder_pattern","mp_state","mp"],
 }
