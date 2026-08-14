@@ -52,7 +52,22 @@ CONSUMED = [
     "knn_prob", "knn_threshold_clear", "atr_caution", "runner_setup", "mover_subtype",
     "pin_bar_state", "sc_m_gates", "sc_m_gate_detail", "sc_p_gate_detail", "lens",
     "lens_positive", "source", "held", "bracket", "subcomponents",
+    # PM ruling 2026-08-14 — sector-rotation / thematic-participation ROW fields, routed to the
+    # druckenmiller and crown menus. Row-level twins of the srm[] block; without them on the
+    # consumed set those two menus arrive null.
+    "sector_rrg_quadrant", "sector_rrg_direction",
+    "thematic_basket", "thematic_grade", "thematic_parent_gics", "thematic_parent_grade",
+    "thematic_rrg_quadrant", "thematic_rrg_direction",
 ]
+
+# --- TOP-LEVEL blocks carried through VERBATIM (PM ruling 2026-08-14). These are whole-market
+# objects, not per-name fields, so a row-level trim cannot reach them: `srm` is the 11-row sector
+# table, `macro_weather` / `regime` / `intermarket` are single market-weather objects. They ride
+# alongside `names` under their own top-level keys, copied unchanged — no reshaping, no derivation.
+# A block absent from the export is simply absent here (never a fabricated null).
+# NOTE: `thematic_baskets` (the 35-basket top-level block) is deliberately NOT carried — the
+# thematic read the voices need is the per-name thematic_* row fields above.
+BLOCKS = ["macro_weather", "srm", "regime", "intermarket"]
 
 # --- Fields AQE renamed, old name -> new name. Applied on READ so an ARCHIVED export
 # (or an in-flight one written by an engine build older than the rename) still fills the
@@ -74,10 +89,11 @@ def build(export, export_path=None):
     fixed-shape universe = the FULL AQE longlist, each record trimmed to the consumed
     field set. The kernel applies NO screen of its own — AQE's export IS the screened
     longlist (D-66), so voices nominate from every name AQE scored. near_misses is []:
-    nothing is cut kernel-side, so D-37's 'no silent early cut' holds trivially."""
+    nothing is cut kernel-side, so D-37's 'no silent early cut' holds trivially.
+    The BLOCKS (market-weather / sector-rotation objects) ride alongside, copied verbatim."""
     dl = export.get("daily_list", []) or []
     names = [_trim(r) for r in dl]
-    return {
+    out = {
         "date": export.get("date"),
         "source": {"kind": "aqe_daily_export", "export_date": export.get("date"),
                    "export_path": export_path},
@@ -85,6 +101,10 @@ def build(export, export_path=None):
         "names": names,
         "near_misses": [],
     }
+    for b in BLOCKS:
+        if b in export:
+            out[b] = export[b]   # verbatim; the kernel derives nothing from these
+    return out
 
 
 def from_export(export_path):
@@ -95,10 +115,17 @@ def from_export(export_path):
 def _selftest():
     export = {
         "date": "2026-07-21",
+        # top-level blocks — carried verbatim; thematic_baskets is NOT carried
+        "macro_weather": {"tlt_direction": "FLAT", "regime_description": "risk-on"},
+        "srm": [{"etf": "XLV", "sector": "Healthcare", "rrg_quadrant": "WEAKENING"}],
+        "regime": {"vix": 18.8, "level": "YELLOW"},
+        "intermarket": {"as_of": "2026-07-21", "tlt": {"close": 84.52}},
+        "thematic_baskets": [{"basket": "AI Infra", "grade": "DEPLOY"}],   # block bloat, must NOT be carried
         "daily_list": [
             # trimmed, bloat dropped
             {"ticker": "AAA", "sc_momentum": 82.5, "rank": 1, "flow": 88.0, "structure": 86.0,
              "gics_sector_name": "Financials", "subcomponents": None, "held": False,
+             "sector_rrg_quadrant": "LEADING", "thematic_basket": "AI Infra", "thematic_grade": "DEPLOY",
              "fib_236": 53.89, "pipe_rank": 52.4, "thematic_baskets": [{"x": 1}]},   # last 3 = bloat, must drop
             # a low-score name is STILL in the universe (kernel screens nothing — voices see it)
             {"ticker": "BBB", "sc_momentum": 40.0, "rank": 120, "flow": 60.0},
@@ -117,10 +144,21 @@ def _selftest():
     aaa = u["names"][0]
     for dropped in ("fib_236", "pipe_rank", "thematic_baskets"):
         assert dropped not in aaa, ("bloat field leaked", dropped)
-    for kept in ("ticker", "sc_momentum", "flow", "structure", "subcomponents", "held"):
+    for kept in ("ticker", "sc_momentum", "flow", "structure", "subcomponents", "held",
+                 "sector_rrg_quadrant", "thematic_basket", "thematic_grade"):
         assert kept in aaa, ("consumed field lost", kept)
+    # PM ruling 2026-08-14: the four market-weather / sector-rotation blocks ride through VERBATIM
+    for b in BLOCKS:
+        assert b in u, ("top-level block not carried", b)
+        assert u[b] == export[b], ("block was reshaped, not copied verbatim", b)
+    # the 35-basket block is still NOT carried — the per-name thematic_* fields are the voices' read
+    assert "thematic_baskets" not in u, "thematic_baskets block leaked into the universe"
+    # a block absent from the export is absent here, never a fabricated null
+    u2 = build({k: v for k, v in export.items() if k not in BLOCKS}, export_path="X")
+    for b in BLOCKS:
+        assert b not in u2, ("absent block was fabricated", b)
     print("universe_build.py selftest: PASS  (FULL AQE longlist, no kernel screen; "
-          "trimmed to consumed set; near_misses empty)")
+          "trimmed to consumed set; near_misses empty; 4 top-level blocks carried verbatim)")
 
 
 def main(argv=None):
