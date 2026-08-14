@@ -27,7 +27,7 @@ analytical half is fully served — the committee can absolutely judge whether a
 `elder` · `sc_m_gates`/`sc_p_gates` with per-gate detail · full `subcomponents` breakdown ·
 `ma_20/50/100/200` · `sma_distance_pct` · `rs_spy_20d` · `structure_shift` · `choch_state` ·
 `div_state` + `div_bull_count`/`div_bear_count` · `hl_state` · `pin_bar_state` · `inside_bar` ·
-fib levels · `knn_prob` + `knn_tp1/2/3` + `knn_significant` · `runner_setup` / `premove_setup`
+fib levels · `knn_prob` + `knn_tp1/2/3` + `knn_threshold_clear` · `runner_setup` / `premove_setup`
 with conviction labels · `atr_14d` · `vol_30d_ann` · `beta_30d`/`beta_252d` · `rvol` ·
 `bracket` · `gics_sector` + `gics_gate` · **`entry`** · **`qty`** · `held: true`.
 

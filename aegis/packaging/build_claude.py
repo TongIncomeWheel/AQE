@@ -158,7 +158,7 @@ VOICE_MENUS = {
  "wyckoff":      ["ticker","flow","energy","mp_state","mp_accel_state","choch_state","day_vol","bracket.stop","bracket.rr"],
  "raschke":      ["ticker","elder","elder_5d","energy","atr_14d","mp_accel_state","structure_shift","bracket.stop","bracket.risk_pct"],
  "steenbarger":  ["ticker","gics_sector_name","sc_momentum","lens_warnings","day_vol"],
- "thorp":        ["ticker","sc_momentum","bracket.rr","bracket.rr_tp1","bracket.rr_tp2","knn_prob","knn_significant","sc_m_gate_detail","sc_p_gate_detail","beta_30d"],
+ "thorp":        ["ticker","sc_momentum","bracket.rr","bracket.rr_tp1","bracket.rr_tp2","knn_prob","knn_threshold_clear","sc_m_gate_detail","sc_p_gate_detail","beta_30d"],
  "seow":         ["ticker","ma_20","ma_50","ma_100","ma_200","sma_distance_pct","mp_state","sector_trend_state","entry","bracket.stop"],
  "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
  "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade"],

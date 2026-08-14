@@ -397,7 +397,7 @@ used in arguments.
 | Structure state | `structure.py` / `bracket_engine.py` | `structure_shift`, `structure_shift_ref` |
 | Divergence | `divergence.py` | `div_state`, `div_bull_count`, `div_bear_count`, `div_oscs`, `div_date` |
 | Rejection candles | `pin_bar.py` | `pin_bar_state`, `pin_bar_level`, `inside_bar`, `pib_pattern` |
-| Change of character | `smart_money_knn.py` | `choch_state`, `knn_prob`, `knn_significant`, `knn_tp1/2/3` |
+| Change of character | `smart_money_knn.py` | `choch_state`, `knn_prob`, `knn_threshold_clear`, `knn_tp1/2/3` |
 | Radar tags | `signal_radar.py` | `runner_setup`, `runner_conviction`, `mover_subtype`, `premove_setup`, `premove_conviction` |
 | Enum sets + glossary | `agentic_dictionary.py` | `field_schema_enums`, `field_glossary` |
 

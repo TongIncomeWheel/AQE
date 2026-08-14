@@ -13,7 +13,7 @@ WHY THIS EXISTS (Lane-2 consolidation, handoff/08, PM sign-off 2026-07-22):
 THE 8 DETECTION LANES (each a distinct "momentum coming in" signal):
   1. sc_m_gates            all 5 momentum sub-gates pass (flow/energy/structure/mp/elder)
   2. choch_state==BULLISH  bullish change-of-character (Wyckoff structural turn)
-  3. knn_significant       Thorp's quant edge fired
+  3. knn_threshold_clear       Thorp's quant edge fired
   4. detect_lens >= N      the 6-lens detect count (OR-booster, one lane, NEVER the gate)
   5. rs_leadership==LEADER relative-strength leader
   6. structure >= N        structural quality
@@ -69,7 +69,7 @@ def lanes_for(rec, detect_positive, p):
         L.append("5gates")
     if rec.get("choch_state") == "BULLISH":
         L.append("CHoCH+")
-    if rec.get("knn_significant") is True:
+    if rec.get("knn_threshold_clear") is True:
         L.append("KNN")
     if _num(detect_positive) >= p["lane_detect"]:
         L.append("detect%d" % int(detect_positive))
@@ -116,7 +116,7 @@ def load_params(section):
 
 def _selftest():
     # BILL-style record: 5gates + bullish CHoCH + KNN + LEADER + structure + flow, detect 0.
-    bill = {"sc_m_gates": True, "choch_state": "BULLISH", "knn_significant": True,
+    bill = {"sc_m_gates": True, "choch_state": "BULLISH", "knn_threshold_clear": True,
             "rs_leadership": "LEADER", "structure": 78.9, "flow": 84.2,
             "mp_accel_state": "DECELERATING"}
     pa = load_params("alert_universe")
@@ -124,7 +124,7 @@ def _selftest():
     assert fired == ["5gates", "CHoCH+", "KNN", "LEADER", "struct", "flow"], fired
     assert lane_count(bill, 0, pa) == len(fired) == 6, fired
     # detect lane fires only at/above lane_detect; accel fires for FLAT/BUILDING/ACCEL.
-    etsy = {"sc_m_gates": True, "choch_state": "BULLISH", "knn_significant": True,
+    etsy = {"sc_m_gates": True, "choch_state": "BULLISH", "knn_threshold_clear": True,
             "rs_leadership": "LEADER", "structure": 69.5, "flow": 67.1,
             "mp_accel_state": "FLAT"}
     fired2 = lanes_for(etsy, 4, pa)   # detect 4 >= lane_detect(4) -> fires

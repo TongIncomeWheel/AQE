@@ -571,13 +571,13 @@ principles:
   text: >-
     THE SIGNIFICANCE CAVEAT (was C24 in the lost charter; the claim was
     verified against the code before the loss and re-verified at build time).
-    knn_significant is computed as "significant = bool(knn_prob >= min_score
+    knn_threshold_clear is computed as "significant = bool(knn_prob >= min_score
     or knn_prob <= (1.0 - min_score))" with min_score defaulting to 0.60.
     AIC Charter Amendment v2.8 (2026-07-15) ruling, carried in the engine
     itself: at the default k=5 this is a PLAIN THRESHOLD CHECK, not a
     statistical significance test -- 3-of-5 neighbors agreeing clears 60%
     trivially, including by chance, on a small n. This seat must never
-    describe knn_significant as "significant" or "confident" without this
+    describe knn_threshold_clear as "significant" or "confident" without this
     caveat attached, in the export glossary or anywhere else.
   status: verified
   cite:
@@ -596,7 +596,7 @@ principles:
     against PAST, RESOLVED, SAME-DIRECTION events on the SAME ticker within
     window_len bars -- the ticker's own history, never a cross-sectional
     model. An empty pool degrades ONLY the kNN fields (knn_prob null,
-    knn_significant false, knn_neighbors_used 0, TPs null) while choch_state /
+    knn_threshold_clear false, knn_neighbors_used 0, TPs null) while choch_state /
     choch_date still report the real, detected CHoCH; the FULL null result is
     reserved for no CHoCH ever detected or degenerate input. Never raises.
   status: verified
@@ -746,9 +746,9 @@ recognisers:
   - lens_positive
   - lens_warnings
 - id: R7
-  if: knn_prob or knn_significant is cited on a name, by me or to me
+  if: knn_prob or knn_threshold_clear is cited on a name, by me or to me
   then: >-
-    I attach the C27 caveat every time: knn_significant is a plain threshold
+    I attach the C27 caveat every time: knn_threshold_clear is a plain threshold
     check (knn_prob >= 0.60 or <= 0.40 at default k=5), NOT statistical
     significance -- 3-of-5 neighbors clears it by chance. I report
     knn_neighbors_used alongside, and I never present knn_tp1/2/3 as
@@ -758,7 +758,7 @@ recognisers:
   - choch_state
   - choch_date
   - knn_prob
-  - knn_significant
+  - knn_threshold_clear
   - knn_neighbors_used
   - knn_tp1
   - knn_tp2

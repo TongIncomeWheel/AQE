@@ -181,11 +181,11 @@ def from_files(tally_path, export_path, params=None, event_blocked=None):
 
 def _selftest():
     dl = [
-        {"ticker": "SHO", "sc_momentum": 68.1, "sc_m_gates": False, "choch_state": "BULLISH", "knn_significant": True,
+        {"ticker": "SHO", "sc_momentum": 68.1, "sc_m_gates": False, "choch_state": "BULLISH", "knn_threshold_clear": True,
          "rs_leadership": "LEADER", "structure": 60, "flow": 70, "mp_accel_state": "BUILDING", "sma_distance_pct": 5},
-        {"ticker": "DINO", "sc_momentum": 79.7, "sc_m_gates": False, "choch_state": "RANGE", "knn_significant": False,
+        {"ticker": "DINO", "sc_momentum": 79.7, "sc_m_gates": False, "choch_state": "RANGE", "knn_threshold_clear": False,
          "rs_leadership": "LEADER", "structure": 68, "flow": 90, "mp_accel_state": "DECELERATING", "sma_distance_pct": 25},
-        {"ticker": "DJT", "sc_momentum": 75.2, "sc_m_gates": True, "choch_state": "BULLISH", "knn_significant": True,
+        {"ticker": "DJT", "sc_momentum": 75.2, "sc_m_gates": True, "choch_state": "BULLISH", "knn_threshold_clear": True,
          "rs_leadership": "LEADER", "structure": 80, "flow": 80, "mp_accel_state": "FLAT", "sma_distance_pct": 15},
     ]
     lens = {"SHO": 5, "DINO": 1, "DJT": 1}

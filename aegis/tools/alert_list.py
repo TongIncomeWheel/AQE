@@ -384,7 +384,7 @@ def _selftest():
         "date": "2026-07-21",
         "daily_list": [
             {"ticker": "AAA", "sc_momentum": 82.0, "sc_m_gates": True, "choch_state": "BULLISH",
-             "knn_significant": True, "rs_leadership": "LEADER", "structure": 80.0, "flow": 80.0,
+             "knn_threshold_clear": True, "rs_leadership": "LEADER", "structure": 80.0, "flow": 80.0,
              "mp_accel_state": "FLAT", "elder_5d": None, "elder": 9.0, "entry": 100.0,
              "bracket": {"price": 100.0, "stop": 95.0,
                          "targets": [{"type": "prior_high", "price": 104.0}]}},

@@ -34,7 +34,7 @@ THE CASTING MAT:
 THE 8 DETECTION LANES (each a distinct "momentum coming in" signal):
   1. sc_m_gates            all 5 momentum sub-gates pass (flow/energy/structure/mp/elder)
   2. choch_state==BULLISH  bullish change-of-character (Wyckoff structural turn)
-  3. knn_significant       Thorp's quant edge fired
+  3. knn_threshold_clear       Thorp's quant edge fired
   4. detect_lens >= 4/6    the 6-lens detect count (leadership/coil/insti/structure/resistance/sector)
   5. rs_leadership==LEADER relative-strength leader
   6. structure >= 72       structural quality
@@ -156,15 +156,15 @@ def from_export(export_path, params=None, event_blocked=None):
 def _selftest():
     # BILL: 0/6 detect, but 5gates + bullish CHoCH + KNN + LEADER + structure + flow -> must be Tier 1.
     bill = {"ticker": "BILL", "sc_momentum": 77.4, "sc_m_gates": True, "choch_state": "BULLISH",
-            "knn_significant": True, "rs_leadership": "LEADER", "structure": 78.9, "flow": 84.2,
+            "knn_threshold_clear": True, "rs_leadership": "LEADER", "structure": 78.9, "flow": 84.2,
             "mp_accel_state": "DECELERATING", "sma_distance_pct": 20.3, "mp_state": "FADING"}
     # ETSY: detect 2, 5gates + CHoCH + KNN + LEADER + accel -> Tier 1.
     etsy = {"ticker": "ETSY", "sc_momentum": 73.6, "sc_m_gates": True, "choch_state": "BULLISH",
-            "knn_significant": True, "rs_leadership": "LEADER", "structure": 69.5, "flow": 67.1,
+            "knn_threshold_clear": True, "rs_leadership": "LEADER", "structure": 69.5, "flow": 67.1,
             "mp_accel_state": "FLAT", "sma_distance_pct": 18.8, "mp_state": "FADING"}
     # DINO: high sc but only LEADER + flow -> Tier 3 (stale/extended).
     dino = {"ticker": "DINO", "sc_momentum": 79.7, "sc_m_gates": False, "choch_state": "RANGE",
-            "knn_significant": False, "rs_leadership": "LEADER", "structure": 68.4, "flow": 90.8,
+            "knn_threshold_clear": False, "rs_leadership": "LEADER", "structure": 68.4, "flow": 90.8,
             "mp_accel_state": "DECELERATING", "sma_distance_pct": 25.0, "mp_state": "STRONG"}
     # NOISE: sc below floor -> excluded entirely.
     noise = {"ticker": "NOISE", "sc_momentum": 55.0, "rs_leadership": "LEADER"}

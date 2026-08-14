@@ -97,7 +97,7 @@ quality_flags:                 # D-39: thresholds for the restored voice quality
   range_tight_min: 12          # bq.bq_range_tight minimum (paired with base_dur) for a tight base
   overextended_sma_pct: 25.0   # sma_distance_pct at/above -> extended, late to chase
   rs_down_day_min: 2.0         # rs_down_day_20d at/above -> resilient on down days
-  knn_prob_min: 0.6            # knn_prob at/above (AND knn_significant) -> favorable historical edge
+  knn_prob_min: 0.6            # knn_prob at/above (AND knn_threshold_clear) -> favorable historical edge
 data_sources:
   ptj:                                    # D-21/D-41, retired-Drive form D-84: the Aegis book source of truth (held book + dynCap mark)
     store: >-
@@ -161,7 +161,7 @@ alert_universe:                   # D-77: the WIRED implementation of the flag_c
   lanes:                         # the 8 momentum-incoming detection lanes counted per name (D-77 enrichment over D-57 score_factors)
     - sc_m_gates                 # all 5 momentum sub-gates pass (flow/energy/structure/mp/elder)
     - choch_bullish              # choch_state == BULLISH (Wyckoff structural turn) — the key add BILL had that detect-lens missed
-    - knn_significant            # Thorp quant edge fired
+    - knn_threshold_clear            # Thorp quant edge fired
     - detect_lens                # 6-lens positive >= lane_detect (one lane, not the gate)
     - rs_leadership              # LEADER
     - structure                  # >= lane_structure

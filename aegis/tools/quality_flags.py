@@ -41,7 +41,7 @@ FLAG_CATALOG = {
     "impulse_accelerating": ("strength", "impulse strengthening (Elder ACCELERATION/SUSTAINED or MP ACCELERATING)", ["elder_pattern", "mp_accel_state"]),
     "rs_leader":            ("strength", "relative-strength leadership vs SPY", ["rs_leadership"]),
     "rs_resilient":         ("strength", "holds up on the tape's down days (positive RS on down days)", ["rs_down_day_20d"]),
-    "knn_favorable":        ("context",  "historical k-NN analogue set leans up with significance", ["knn_prob", "knn_significant"]),
+    "knn_favorable":        ("context",  "historical k-NN analogue set leans up, threshold cleared", ["knn_prob", "knn_threshold_clear"]),
     "bullish_divergence":   ("strength", "bullish oscillator divergence — momentum turning up", ["div_state"]),
     "bearish_divergence":   ("caution",  "bearish oscillator divergence — reversal/exhaustion risk", ["div_state", "div_bear_count"]),
     "overextended":         ("caution",  "extended far above its SMA — late to chase", ["sma_distance_pct"]),
@@ -128,7 +128,7 @@ def derive(rec: dict, p: dict | None = None) -> dict:
     rdd = rec.get("rs_down_day_20d")
     if rdd is not None and rdd >= th["rs_down_day_min"]:
         add(S, "rs_resilient", f"holds up on down days (RS {rdd})", {"rs_down_day_20d": rdd})
-    kp, ks = rec.get("knn_prob"), rec.get("knn_significant")
+    kp, ks = rec.get("knn_prob"), rec.get("knn_threshold_clear")
     if kp is not None and ks and kp >= th["knn_prob_min"]:
         add(X, "knn_favorable", f"kNN {int(kp*100)}% up (significant)", {"knn_prob": kp})
 
