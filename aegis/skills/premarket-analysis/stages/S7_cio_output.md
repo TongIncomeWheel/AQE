@@ -1,7 +1,8 @@
 # S7 — THE CIO REPORT · 5 sections, plain English, delivered twice
 
-**PM specification, 2026-08-12.** The report is written **in chat** so it is read where the PM
-actually is, **and** to a fixed GitHub path so it is durable and diffable. Both, every run.
+**PM specification, 2026-08-12. Ordering rule added 2026-08-14.** The report is written **in chat**
+so it is read where the PM actually is, **and** to a fixed GitHub path so it is durable and diffable.
+Both, every run.
 
 - **Chat:** the full report, plain English, simple tables.
 - **File:** `aegis/reports/pma/<YYYY-MM-DD>.md` — fixed location, one file per run date, plus
@@ -23,12 +24,55 @@ attributed to a named seat.
 
 ---
 
+## THE ORDERING RULE — sector and theme come first, everywhere
+
+**PM ruling, 2026-08-14.** Sector rotation and thematic participation are the macro headwind that
+sits on top of every single-name decision. No voice owns them as a nomination test, so the
+**orchestrator** owns them as a **presentation rule**, applied to every name-bearing table in
+Sections 2, 3 and 4:
+
+1. **Group by sector strength first.** Names are bucketed by their sector's standing in the
+   rotation model — `srm[].grade` (DEPLOY / HOLD / TURNING / WATCH / AVOID), refined by
+   `srm[].rrg_quadrant` (LEADING / IMPROVING / WEAKENING / LAGGING) and `rrg_direction`.
+   Strongest bucket printed first. A name in an AVOID or LAGGING sector is never printed above a
+   name in a DEPLOY or LEADING one, regardless of its own score.
+2. **Then by theme inside each bucket.** Within a sector group, order by
+   `thematic_grade` / `thematic_parent_grade`, then `thematic_rrg_quadrant`. A name with no
+   thematic membership prints last inside its sector group, labelled **"no theme"** — printed,
+   never hidden.
+3. **Then by whatever that table's own ranking is** (nomination count, conviction, verdict).
+
+Each sector group carries a **one-line header** in plain English before its names:
+
+> **Energy — deploy, leading and improving. Headwind: none flagged.**
+> **Utilities — avoid, lagging. Headwind: flagged (score 0.7). Anything here is swimming upstream.**
+
+The headwind line reads `srm[].macro_headwind_flag` and `macro_headwind_score`. Where the flag is
+set, the header says so in words, and every name inside that group inherits the caveat without it
+being restated per row.
+
+**This is presentation, not a gate.** Nothing is filtered, demoted, capped or blocked by sector or
+theme. A strong name in a weak sector still advances if the committee advanced it — it just
+appears under a header that tells the PM what it is fighting. If a future PM ruling wants sector
+to actually bind a decision, that belongs in a voice canon or the consensus rule, not here.
+
+**Where the data comes from:** `srm[]` and `macro_weather` (top-level blocks, carried verbatim into
+`universe.json`), and the per-name `sector_trend_state`, `sector_rrg_quadrant`,
+`sector_rrg_direction`, `thematic_basket`, `thematic_grade`, `thematic_parent_gics`,
+`thematic_parent_grade`, `thematic_rrg_quadrant`, `thematic_rrg_direction`. If a run arrives
+without `srm[]`, S7 prints the tables ungrouped and says so in Section 5's gap table — it does not
+guess an ordering.
+
+---
+
 ## SECTION 1 · MACRO — what kind of day is this?
 
 Headline in one sentence: day type + data confidence.
 
 | Table | Columns | Impact line |
 |---|---|---|
+| **Where the strength is** | Sector · Grade · Rotation quadrant · Direction · Headwind flagged? | the two sectors to be in and the two to avoid today — this table sets the order of every table below |
+| **Themes running** | Theme · Grade · Parent sector · Participation · Quadrant | which themes are actually being bought, not just which are talked about |
 | **Market state** | Reading · Value · What it means | one sentence on what today permits |
 | **The two weather reads** | Crown NOW · Druckenmiller NEXT · Agree/Differ | where they disagree, because that is the information |
 | **Levels that matter today** | What · Now · Level · Distance · If it breaks | the nearest one, and what it changes |
@@ -41,6 +85,9 @@ Ends with **"What would change this read"** — real levels, never sentiment.
 **Exits before entries** — this section sits above new ideas on purpose. What you free
 determines what you can afford.
 
+Grouped by sector strength, then theme, per the ordering rule. A held position sitting in an
+AVOID / LAGGING sector is a fact the PM should see before the verdict, not after.
+
 | Table | Columns | Impact line |
 |---|---|---|
 | **Position verdicts** | Ticker · Verdict (Run/Take-partial/Tighten/Exit) · Conviction · Who dissented · Why (2 numbers) | count by verdict |
@@ -52,9 +99,11 @@ determines what you can afford.
 
 Eleven seats, isolated, no cross-talk. This is the raw independent read.
 
+Name tables grouped by sector strength, then theme.
+
 | Table | Columns | Impact line |
 |---|---|---|
-| **Who nominated what** | Ticker · Seats backing · Highest conviction · Which seats | where independent agreement clustered |
+| **Who nominated what** | Ticker · Seats backing · Highest conviction · Which seats | where independent agreement clustered — and whether it clustered inside one sector, which is a concentration warning, not a confirmation |
 | **Seat participation** | Seat · Nominated · Shortfall reason · Grounding | any seat running card-only is named here |
 | **What the committee could not see** | Missing field · Seats blocked · What it disabled | the AQE change request, generated as a by-product |
 
@@ -64,6 +113,8 @@ after Stage 2.
 ## SECTION 4 · DELIBERATION STAGE 2 — what survived the argument
 
 The same seats, now seeing each other, plus the two challenge functions.
+
+Name tables grouped by sector strength, then theme.
 
 | Table | Columns | Impact line |
 |---|---|---|
