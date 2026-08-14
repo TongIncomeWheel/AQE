@@ -355,10 +355,10 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
 
     # Step 6f: Nick Crown Macro Layer — kernel v1.4, STANDALONE.
     # Reads nothing from SRM / Macro Weather / Thematic RRG and feeds nothing to
-    # them; merge and de-dup is a later PM decision (2026-08-09). Gamma is OFF
-    # here because it needs Alpaca option chains with open interest — the Crown
-    # page runs it on demand. Wrapped like QS: this is an ADDITION to a working
-    # real-money pipeline and must never take the export down with it.
+    # them; merge and de-dup is a later PM decision (2026-08-09). Gamma is ON
+    # here (see with_gamma=True below) now that an Alpaca/Tiger open-interest
+    # feed exists. Wrapped like QS: this is an ADDITION to a working real-money
+    # pipeline and must never take the export down with it.
     print(f"{_el()} [daily] Step 6f: Crown macro layer...")
     _cr = None
     try:
