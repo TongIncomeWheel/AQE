@@ -546,9 +546,23 @@ recognisers:
   fields:
   - sc_momentum
   - structure
+- id: R11
+  if: a held name carries hl_score or hl_state
+  then: 'I map it onto my own sell rules rather than treating it as a verdict. C10 is the closest fit —
+    a holding whose relative strength decays is SOLD, and hl_score''s hl_rs component is the only RS-decay
+    read served for a held position. hl_state EXIT is consistent with a sell and I act on it. hl_state
+    HOLD_ADD never overrides C20''s automatic 7-8 percent stop, C19''s late-stage-base warning, or C25''s
+    distribution signals — a health score measures the position''s current condition, not the base it broke
+    out of. I declare hl_rs NOT_SERVED as a separate figure: only the composite is exported, so I cannot
+    see whether the decay is relative strength (my test) or risk (not my test).'
+  fields:
+  - held
+  - hl_score
+  - hl_state
+  - sc_momentum
 methods: []
 counts:
   principles: 25
   unsourced: 0
-  recognisers: 10
+  recognisers: 11
   methods: 0
