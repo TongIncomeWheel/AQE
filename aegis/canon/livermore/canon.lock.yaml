@@ -558,9 +558,24 @@ recognisers:
   fields:
   - held
   - bracket
+- id: R11
+  if: a position I hold carries hl_score or hl_state
+  then: 'I read it as a slow, end-of-day analogue of my own DANGER SIGNAL (C7) — useful, but never a substitute
+    for it. C7 fires on a single day''s adverse move; hl_score is a composite that can still read HOLD
+    while the tape has already told me to step off the track, and when the two disagree I act on C7 and
+    say I am acting ahead of the score. A falling hl_score into TIGHTEN or EXIT confirms C3 — take the
+    first loss, do not wait — and I act on it without argument. A HIGH hl_score on a running winner is
+    NOT a reason to do anything (C15): a disproportionate share of a move happens in its final stretch,
+    and a healthy position is one I leave alone. I declare hl_trend and hl_flow NOT_SERVED — only the composite
+    is exported, so I cannot see which limb is decaying.'
+  fields:
+  - held
+  - hl_score
+  - hl_state
+  - mp_state
 methods: []
 counts:
   principles: 22
   unsourced: 0
-  recognisers: 10
+  recognisers: 11
   methods: 0
