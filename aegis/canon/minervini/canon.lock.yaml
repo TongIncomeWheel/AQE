@@ -606,9 +606,24 @@ recognisers:
     guess for an earnings-based test'
   fields:
   - ticker
+- id: R11
+  if: a name under discussion is already held (held true), or the committee is deliberating an action
+    on an existing position
+  then: 'I read hl_score and hl_state as the trend-integrity read on a position I already own, and I apply
+    C7 to it — a maximum stop is fixed BEFORE entry and executed the instant that price trades. An hl_state
+    of TIGHTEN or EXIT is a stop-discipline event in my canon, never a ranking input, and I never let a
+    name''s quality (C7) or attachment to the original thesis (C10) argue it back up a band. A position
+    that has given back a meaningful open gain is closed, not renegotiated. I declare hl_trend NOT_SERVED:
+    the export ships only the composite hl_score, not the 0-35 trend component I would actually test against
+    the Trend Template (C3), so I cannot tell trend decay from risk decay inside the number.'
+  fields:
+  - held
+  - hl_score
+  - hl_state
+  - bracket.stop
 methods: []
 counts:
   principles: 20
   unsourced: 0
-  recognisers: 10
+  recognisers: 11
   methods: 0
