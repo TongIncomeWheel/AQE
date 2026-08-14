@@ -1,8 +1,8 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Daily Universe File",
- "x_version": "2.0.0",
- "x_note": "The ONE universe file every voice reads (BL-011). Produced by tools/universe_build.py from output/aqe_daily_export.json — the AQE export IS the scored universe (D-66, handoff/08 Lane 1). ONE fixed shape: {date, source, count, names[], near_misses[]}. Tightened 2026-07-22 to REJECT the drifted hand-assembled shapes (e.g. {date, regime, vix, candidates, held} with no names[]).",
+ "x_version": "2.1.0",
+ "x_note": "The ONE universe file every voice reads (BL-011). Produced by tools/universe_build.py from output/aqe_daily_export.json — the AQE export IS the scored universe (D-66, handoff/08 Lane 1). ONE fixed shape: {date, source, count, names[], near_misses[]} plus the four verbatim market-weather blocks {macro_weather, srm, regime, intermarket} added 2026-08-14 (PM ruling) for the druckenmiller + crown menus. Tightened 2026-07-22 to REJECT the drifted hand-assembled shapes (e.g. {date, regime, vix, candidates, held} with no names[]) — note `regime` is now a LEGITIMATE top-level block, but it never substitutes for names[], which stays required.",
  "x_consumed_fields": [
   "ticker", "rank", "sc_momentum", "sc_momentum_raw", "flow", "energy", "structure",
   "mp", "mp_state", "mp_accel_state", "elder", "elder_5d", "elder_pattern", "entry",
@@ -11,8 +11,12 @@
   "sector_trend_state", "structure_shift", "choch_state", "div_bear_count", "div_state",
   "knn_prob", "knn_threshold_clear", "atr_caution", "runner_setup", "mover_subtype",
   "pin_bar_state", "sc_m_gates", "sc_m_gate_detail", "sc_p_gate_detail", "lens",
-  "lens_positive", "source", "held", "bracket", "subcomponents"
+  "lens_positive", "source", "held", "bracket", "subcomponents",
+  "sector_rrg_quadrant", "sector_rrg_direction",
+  "thematic_basket", "thematic_grade", "thematic_parent_gics", "thematic_parent_grade",
+  "thematic_rrg_quadrant", "thematic_rrg_direction"
  ],
+ "x_carried_blocks": ["macro_weather", "srm", "regime", "intermarket"],
  "type": "object",
  "required": ["date", "source", "count", "names"],
  "properties": {
@@ -56,6 +60,23 @@
      "near_miss_reason": {"type": "string"}
     }
    }
+  },
+  "macro_weather": {
+   "type": "object",
+   "description": "OPTIONAL carried block (x_carried_blocks) — the AQE macro_weather object copied VERBATIM from the export: cross-asset direction/ROC for TLT, UUP, HYG, IWM, GLD, CPER, USO and the copper/gold ratio, plus regime_description. Whole-market, not per-name. The kernel derives nothing from it; shape is owned by contracts/aqe_export.schema.json."
+  },
+  "srm": {
+   "type": "array",
+   "description": "OPTIONAL carried block (x_carried_blocks) — the AQE srm[] sector-rotation table copied VERBATIM from the export: one row per sector ETF with grade, trend_state, sh_value, ROC and the RRG quadrant/direction. The per-name twins of these live on names[] as sector_rrg_quadrant / sector_rrg_direction / sector_trend_state.",
+   "items": {"type": "object"}
+  },
+  "regime": {
+   "type": "object",
+   "description": "OPTIONAL carried block (x_carried_blocks) — the AQE regime object copied VERBATIM from the export (vix, level, and whatever else AQE stamps). NOT a substitute for names[]: the 2026-07-22 tightening rejects a universe that carries regime INSTEAD of a scored longlist, and names[] remains required."
+  },
+  "intermarket": {
+   "type": "object",
+   "description": "OPTIONAL carried block (x_carried_blocks) — the AQE intermarket object copied VERBATIM from the export: as_of plus the UUP / TLT / HYG / SPY-vs-IWM cross-asset reads. Whole-market, not per-name."
   }
  }
 }
