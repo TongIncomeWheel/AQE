@@ -69,7 +69,7 @@ SCORE_COLUMNS = [
     # ── Pin Bar / Inside Bar pattern (last bar only) ──
     "pin_bar_state", "pin_bar_date", "pin_bar_level", "inside_bar", "pib_pattern",
     # ── Smart Money kNN — CHoCH + instance-based learning (last bar only) ──
-    "choch_state", "choch_date", "knn_prob", "knn_significant",
+    "choch_state", "choch_date", "knn_prob", "knn_threshold_clear",
     "knn_neighbors_used", "knn_tp1", "knn_tp2", "knn_tp3",
     # ── Squeeze Breakout + Volume (last bar only) ──
     "squeeze_breakout_state", "squeeze_breakout_date",
@@ -357,7 +357,7 @@ def build_scores() -> None:
         row["choch_state"] = None
         row["choch_date"] = None
         row["knn_prob"] = np.nan
-        row["knn_significant"] = None
+        row["knn_threshold_clear"] = None
         row["knn_neighbors_used"] = np.nan
         row["knn_tp1"] = np.nan
         row["knn_tp2"] = np.nan
@@ -366,7 +366,7 @@ def build_scores() -> None:
         row.loc[_last_ix, "choch_date"] = sm["choch_date"]
         row.loc[_last_ix, "knn_prob"] = (
             float(sm["knn_prob"]) if sm["knn_prob"] is not None else np.nan)
-        row.loc[_last_ix, "knn_significant"] = sm["knn_significant"]
+        row.loc[_last_ix, "knn_threshold_clear"] = sm["knn_threshold_clear"]
         row.loc[_last_ix, "knn_neighbors_used"] = float(sm["knn_neighbors_used"])
         row.loc[_last_ix, "knn_tp1"] = (
             float(sm["tp1"]) if sm["tp1"] is not None else np.nan)

@@ -17,7 +17,7 @@ _NULL = {
     "choch_state": "NONE",
     "choch_date": None,
     "knn_prob": None,
-    "knn_significant": False,
+    "knn_threshold_clear": False,
     "knn_neighbors_used": 0,
     "tp1": None,
     "tp2": None,
@@ -137,7 +137,7 @@ def test_determinism_two_calls_identical():
     assert out1 == out2
 
 
-def test_knn_significant_unanimous_neighbors():
+def test_knn_threshold_clear_unanimous_neighbors():
     # Zero noise -> every repeated bullish breakout leg is geometrically
     # clean, so the k nearest neighbors' outcomes are unanimous and
     # knn_prob lands exactly at 0.0 or 1.0.
@@ -146,4 +146,4 @@ def test_knn_significant_unanimous_neighbors():
     out = compute_smart_money(df, swing_len=3, lookahead=5, window_len=100, k=3)
     assert out["knn_prob"] is not None
     assert out["knn_prob"] in (0.0, 1.0)
-    assert out["knn_significant"] is True
+    assert out["knn_threshold_clear"] is True

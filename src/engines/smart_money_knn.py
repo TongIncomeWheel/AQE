@@ -43,13 +43,13 @@ Algorithm
    fewer if the pool is smaller), `knn_prob` = the neighbors' mean
    outcome. TP1/2/3 project the neighbors' `favorable_run` distribution
    (mean*0.5 / median / p75) from TODAY's close, signed by direction.
-   `knn_significant` = `knn_prob` clears `min_score` in either direction.
+   `knn_threshold_clear` = `knn_prob` clears `min_score` in either direction.
    AIC Charter Amendment v2.8 (2026-07-15) ruling: at the default k=5 this
    is a PLAIN THRESHOLD CHECK, not a statistical significance test — 3-of-5
    neighbors agreeing clears 60% trivially, including by chance, on a small
    n. Do not describe it as "significant"/"confident" in the export glossary
    or anywhere else without this caveat attached (see `field_glossary`'s
-   `knn_significant` entry in `drive_sync.py` for the exact wording).
+   `knn_threshold_clear` entry in `drive_sync.py` for the exact wording).
 
 Judgment calls (the spec had a couple of intentionally loose spots):
   * "prev_i far/absent" (vol_delta windowing): the interval `[prev_i, i]`
@@ -64,7 +64,7 @@ Judgment calls (the spec had a couple of intentionally loose spots):
   * Empty kNN pool vs. no CHoCH at all: the Return-dict field description
     ("`knn_prob`: ... None if pool empty/insufficient") is treated as
     authoritative over the looser Step-4 prose — an empty pool degrades
-    ONLY the kNN fields (`knn_prob`/`knn_significant`/`knn_neighbors_used`/
+    ONLY the kNN fields (`knn_prob`/`knn_threshold_clear`/`knn_neighbors_used`/
     `tp1-3`) to their null values, while `choch_state`/`choch_date` still
     report the real, detected CHoCH. The FULL null result (`choch_state`
     also "NONE") is reserved for when no CHoCH was ever detected, or the
@@ -90,7 +90,7 @@ def _null_result() -> dict:
         "choch_state": "NONE",
         "choch_date": None,
         "knn_prob": None,
-        "knn_significant": False,
+        "knn_threshold_clear": False,
         "knn_neighbors_used": 0,
         "tp1": None,
         "tp2": None,
@@ -181,7 +181,7 @@ def compute_smart_money(
                 "choch_state": query_state,
                 "choch_date": query_date,
                 "knn_prob": None,
-                "knn_significant": False,
+                "knn_threshold_clear": False,
                 "knn_neighbors_used": 0,
                 "tp1": None,
                 "tp2": None,
@@ -217,7 +217,7 @@ def compute_smart_money(
             "choch_state": query_state,
             "choch_date": query_date,
             "knn_prob": knn_prob,
-            "knn_significant": significant,
+            "knn_threshold_clear": significant,
             "knn_neighbors_used": actual_k,
             "tp1": tp1,
             "tp2": tp2,

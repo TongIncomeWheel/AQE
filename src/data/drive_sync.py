@@ -302,13 +302,14 @@ _FIELD_GLOSSARY = {
                 "simple (3 hand-picked features, no training beyond the ticker's own history) "
                 "and should be read as one more context signal, not a probability of profit. "
                 "Null when there's no CHoCH or too few historical analogs to query.",
-    "knn_significant": "True iff knn_prob clears a fixed threshold in either direction (≥60% or "
-                       "≤40% by default). CAVEAT (AIC Charter Amendment v2.8, 2026-07-15 ruling): "
-                       "this is a plain threshold check on a SMALL neighbor count (k=5 by "
-                       "default), NOT a statistical significance test — at k=5, 3-of-5 agreeing "
-                       "clears the 60% bar trivially, including by chance. Carries no p-value or "
-                       "confidence-interval semantics. Read as 'the threshold was crossed', not "
-                       "'the analogs meaningfully agree'.",
+    "knn_threshold_clear": "True iff knn_prob clears a fixed threshold in either direction "
+                           "(≥60% or ≤40% by default). CAVEAT (AIC Charter Amendment v2.8, "
+                           "2026-07-15 ruling): this is a plain threshold check on a SMALL "
+                           "neighbor count (k=5 by default), NOT a statistical significance "
+                           "test — at k=5, 3-of-5 agreeing clears the 60% bar trivially, "
+                           "including by chance. Carries no p-value or confidence-interval "
+                           "semantics. Read as 'the threshold was crossed', not 'the analogs "
+                           "meaningfully agree'.",
     "knn_neighbors_used": "How many historical analog events the knn_prob is averaged over "
                           "(0 if none found).",
     "knn_tp1": "Nearest kNN-implied target (USD): current price ± half the neighbors' mean "
@@ -621,17 +622,17 @@ _FIELD_SCHEMA = {
     "div_oscs":                _fs("signal", "label", "n/a"),
     "div_date":                _fs("reference", "date", "n/a"),
     # Pin bar / inside bar (candlestick geometry — data only)
-    "pin_bar_state":           _fs("signal", "label", "n/a"),
-    "pin_bar_date":            _fs("reference", "date", "n/a"),
-    "pin_bar_level":           _fs("reference", "usd", "n/a"),
-    "inside_bar":              _fs("flag", "boolean", "n/a"),
-    "pib_pattern":             _fs("flag", "boolean", "n/a"),
+    "pin_bar_state":                _fs("signal", "label", "n/a"),
+    "pin_bar_date":                 _fs("reference", "date", "n/a"),
+    "pin_bar_level":                _fs("reference", "usd", "n/a"),
+    "inside_bar":                   _fs("flag", "boolean", "n/a"),
+    "pib_pattern":                  _fs("flag", "boolean", "n/a"),
     # Smart Money kNN — CHoCH + instance-based learning (context only, never a gate)
-    "choch_state":             _fs("signal", "label", "n/a"),
-    "choch_date":              _fs("reference", "date", "n/a"),
-    "knn_prob":                _fs("signal", "ratio", "n/a"),
-    "knn_significant":         _fs("flag", "boolean", "n/a"),
-    "knn_neighbors_used":      _fs("signal", "score", "n/a"),
+    "choch_state":                  _fs("signal", "label", "n/a"),
+    "choch_date":                   _fs("reference", "date", "n/a"),
+    "knn_prob":                     _fs("signal", "ratio", "n/a"),
+    "knn_threshold_clear":          _fs("flag", "boolean", "n/a"),
+    "knn_neighbors_used":           _fs("signal", "score", "n/a"),
     # side is n/a (not a fixed above/below-entry field): direction depends on
     # choch_state — above entry for BULLISH, below entry for BEARISH.
     "knn_tp1":                 _fs("target", "usd", "n/a"),
@@ -1342,7 +1343,7 @@ _NEW_ENGINE_NULL = {
     "pin_bar_state": None, "pin_bar_date": None, "pin_bar_level": None,
     "inside_bar": None, "pib_pattern": None,
     "choch_state": None, "choch_date": None, "knn_prob": None,
-    "knn_significant": None, "knn_neighbors_used": None,
+    "knn_threshold_clear": None, "knn_neighbors_used": None,
     "knn_tp1": None, "knn_tp2": None, "knn_tp3": None,
     "squeeze_breakout_state": None, "squeeze_breakout_date": None,
     "squeeze_breakout_volume_confirmed": None, "was_squeezed": None,
@@ -1373,7 +1374,7 @@ def _new_engine_fields(row) -> dict:
         "choch_state": _sub_str(get("choch_state")),
         "choch_date": _sub_str(get("choch_date")),
         "knn_prob": _sub_val(get("knn_prob")),
-        "knn_significant": _sub_bool(get("knn_significant")),
+        "knn_threshold_clear": _sub_bool(get("knn_threshold_clear")),
         "knn_neighbors_used": _sub_int(get("knn_neighbors_used")),
         "knn_tp1": _sub_val(get("knn_tp1")),
         "knn_tp2": _sub_val(get("knn_tp2")),

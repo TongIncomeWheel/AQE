@@ -51,7 +51,7 @@ _REQUIRED_KEYS = (
     # pin bar / inside bar
     "pin_bar_state", "pin_bar_date", "pin_bar_level", "inside_bar", "pib_pattern",
     # smart-money CHoCH + kNN
-    "choch_state", "choch_date", "knn_prob", "knn_significant",
+    "choch_state", "choch_date", "knn_prob", "knn_threshold_clear",
     "knn_neighbors_used", "knn_tp1", "knn_tp2", "knn_tp3",
     # momentum acceleration
     "mp_accel", "mp_accel_state",

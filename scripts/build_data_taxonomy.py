@@ -887,8 +887,8 @@ SCORE_TREE = [
       "actual_k=min(5,pool size); knn_prob=mean(outcome of actual_k nearest "
       "by Euclidean distance over [vol_delta,displacement,velocity])",
       used_by="alerts (VETO_HELD, via qs.vetoes) — not directly; see "
-              "knn_significant"),
-    R("knn_significant", "knn_prob", "leaf", "bool", "true|false",
+              "knn_threshold_clear"),
+    R("knn_threshold_clear", "knn_prob", "leaf", "bool", "true|false",
       "knn_prob clears 0.60/0.40. AIC Charter Amendment v2.8 (2026-07-15): "
       "at k=5 this is a PLAIN THRESHOLD CHECK, not a significance test — "
       "3-of-5 agreeing clears 60% trivially, by chance, on a sample that "

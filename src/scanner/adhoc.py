@@ -367,7 +367,7 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         **div,
         **pb,
         "choch_state": sm["choch_state"], "choch_date": sm["choch_date"],
-        "knn_prob": sm["knn_prob"], "knn_significant": sm["knn_significant"],
+        "knn_prob": sm["knn_prob"], "knn_threshold_clear": sm["knn_threshold_clear"],
         "knn_neighbors_used": sm["knn_neighbors_used"],
         "knn_tp1": sm["tp1"], "knn_tp2": sm["tp2"], "knn_tp3": sm["tp3"],
         # Momentum acceleration (MP engine, additive columns).

@@ -513,7 +513,7 @@ current CHoCH against every past same-direction CHoCH on the SAME ticker.
 - **kNN query**: pool = past SAME-direction, resolved events within the trailing
   500 bars; `dist = Euclidean(3 features)`; `k=5` nearest; `knn_prob =
   mean(outcomes of the k nearest)`.
-- `knn_significant = knn_prob≥0.60 OR ≤0.40`. **Caveat (AIC Charter Amendment v2.8,
+- `knn_threshold_clear = knn_prob≥0.60 OR ≤0.40`. **Caveat (AIC Charter Amendment v2.8,
   2026-07-15 ruling): this is a plain threshold check at k=5, NOT a statistical
   significance test** — 3-of-5 agreeing clears the 60% bar trivially, including by
   chance. No p-value/confidence-interval semantics.
