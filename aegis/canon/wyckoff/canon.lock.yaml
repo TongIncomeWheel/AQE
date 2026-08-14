@@ -400,7 +400,7 @@ principles:
     do not change, the market keeps generating value near the centre, which is WHY price rejects at the
     extremes — buy low, sell high inside a range is a consequence of volume distribution, not folk wisdom.
     This is the only principle in this spine with a direct, named counterpart in an Aegis-served field:
-    the Energy engine's vp_position_score is exactly this object, computed and thrown away at the composite-score
+    the Energy engine''s vp_position_score is exactly this object, computed and thrown away at the composite-score
     stage. No other principle in this canon is this close to computable and unserved at the same time.'
   status: verified
   cite:
@@ -524,9 +524,25 @@ recognisers:
     ask, and it is the cheapest unlock in this canon (C25)'
   fields:
   - energy
+- id: R12
+  if: a held name carries hl_score or hl_state
+  then: 'I treat it as a CONDITION read, never a STRUCTURAL one. My stop is the DANGER POINT (C24) — the
+    level just beyond the spring''s low or the upthrust''s high — and no health band moves it. A deteriorating
+    hl_score tells me the position is weakening; it does not tell me whether the structure that produced
+    the signal is broken, which is the only question that closes a Wyckoff trade. Where hl_state reads
+    EXIT and the structural low is still intact I say so plainly and let the PM adjudicate rather than
+    defer to the score; where hl_state reads HOLD and the danger point has been violated, the danger point
+    wins. I declare hl_flow NOT_SERVED: only the composite is exported, so I cannot separate effort-versus-reward
+    decay (C6) from risk decay inside the score.'
+  fields:
+  - held
+  - hl_score
+  - hl_state
+  - structure_shift
+  - bracket.stop
 methods: []
 counts:
   principles: 25
   unsourced: 0
-  recognisers: 11
+  recognisers: 12
   methods: 0
