@@ -231,6 +231,30 @@ with st.sidebar:
             except Exception as exc:                                            # noqa: BLE001
                 st.text(f"  status: error: {exc}")
 
+            # --- GitHub sync status (primary store) ---
+            st.text("")
+            st.text("GitHub sync (cloud → aegis/output/ on main):")
+            try:
+                from src.data import github_sync as _gh
+                if not _gh.is_configured():
+                    st.text("  status: GITHUB_TOKEN not set -- daily output "
+                             "will only reach Drive")
+                else:
+                    if st.button("Test GitHub token", key="github_test_btn",
+                                 help="One read-only repo lookup — confirms the "
+                                      "PAT is valid and has write access. "
+                                      "No commit."):
+                        with st.spinner("Validating GitHub PAT..."):
+                            res = _gh.test_credentials()
+                            if res.get("ok"):
+                                st.success(res["message"])
+                            else:
+                                st.error(f"GitHub failed: {res.get('reason')}")
+                    else:
+                        st.text("  status: configured (click button to validate)")
+            except Exception as exc:                                            # noqa: BLE001
+                st.text(f"  status: error: {exc}")
+
         if not FMP_KEY_SET:
             if CLOUD_HOST == "huggingface":
                 st.error(

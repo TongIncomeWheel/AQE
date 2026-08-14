@@ -64,6 +64,63 @@ def test_without_a_token_every_call_states_a_reason(monkeypatch):
         assert res["reason"], "a failure with no reason is a silent failure"
 
 
+def test_test_credentials_without_a_token_states_a_reason(monkeypatch):
+    _no_token(monkeypatch)
+    res = gh.test_credentials()
+    assert res["ok"] is False and res["reason"]
+
+
+def test_test_credentials_rejects_a_bad_pat(monkeypatch):
+    monkeypatch.setenv("GITHUB_TOKEN", "x")
+
+    class R:
+        status_code = 401
+
+        def raise_for_status(self):
+            raise AssertionError("should not be called on 401")
+
+    monkeypatch.setattr(gh.requests, "get", lambda *a, **k: R())
+    res = gh.test_credentials()
+    assert res["ok"] is False and "rejected" in res["reason"]
+
+
+def test_test_credentials_flags_a_read_only_pat(monkeypatch):
+    """A token that authenticates but lacks Contents: write must fail before
+    the first real publish does, not after."""
+    monkeypatch.setenv("GITHUB_TOKEN", "x")
+
+    class R:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"full_name": "TongIncomeWheel/AQE", "permissions": {"push": False}}
+
+    monkeypatch.setattr(gh.requests, "get", lambda *a, **k: R())
+    res = gh.test_credentials()
+    assert res["ok"] is False and "push/write" in res["reason"]
+
+
+def test_test_credentials_confirms_write_access(monkeypatch):
+    monkeypatch.setenv("GITHUB_TOKEN", "x")
+
+    class R:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"full_name": "TongIncomeWheel/AQE", "permissions": {"push": True}}
+
+    monkeypatch.setattr(gh.requests, "get", lambda *a, **k: R())
+    res = gh.test_credentials()
+    assert res["ok"] is True
+    assert res["repo"] == "TongIncomeWheel/AQE"
+
+
 def test_publish_outputs_reports_a_reason_when_unconfigured(monkeypatch):
     _no_token(monkeypatch)
     res = gh.publish_outputs({"a.json": "{}"})

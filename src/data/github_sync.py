@@ -87,6 +87,33 @@ def is_configured() -> bool:
     return bool(token())
 
 
+def test_credentials() -> dict:
+    """One cheap read-only call to prove the PAT is valid AND has write access
+    to this repo — the two ways a token can look configured but still fail on
+    the first real publish. No commit, no write, safe to click repeatedly."""
+    if not is_configured():
+        return {"ok": False, "reason": "GITHUB_TOKEN not set"}
+    try:
+        r = requests.get(f"{API}/repos/{repo()}", headers=_headers(), timeout=TIMEOUT)
+        if r.status_code == 401:
+            return {"ok": False, "reason": "token rejected (bad or expired PAT)"}
+        if r.status_code == 404:
+            return {"ok": False,
+                     "reason": f"{repo()} not found, or token has no access to it"}
+        r.raise_for_status()
+        info = r.json()
+        can_push = bool((info.get("permissions") or {}).get("push"))
+        if not can_push:
+            return {"ok": False,
+                     "reason": f"token can read {repo()} but lacks push/write "
+                               "access — needs Contents: read+write"}
+        return {"ok": True, "repo": info.get("full_name"), "branch": branch(),
+                "message": f"GitHub OK — write access to {info.get('full_name')} "
+                           f"confirmed"}
+    except Exception as exc:  # noqa: BLE001
+        return _fail(exc, "test credentials")
+
+
 def _headers(accept: str = "application/vnd.github+json") -> dict:
     return {"Authorization": f"Bearer {token()}",
             "Accept": accept,
