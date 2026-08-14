@@ -161,7 +161,10 @@ VOICE_MENUS = {
  "thorp":        ["ticker","sc_momentum","bracket.rr","bracket.rr_tp1","bracket.rr_tp2","knn_prob","knn_threshold_clear","sc_m_gate_detail","sc_p_gate_detail","beta_30d"],
  "seow":         ["ticker","ma_20","ma_50","ma_100","ma_200","sma_distance_pct","mp_state","sector_trend_state","entry","bracket.stop"],
  "minervini":    ["ticker","structure","elder","rs_spy_20d","rs_leadership","mp_state","bracket.stop","bracket.risk_pct","sma_distance_pct"],
- "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade"],
+ "druckenmiller":["ticker","gics_sector_name","sc_momentum","beta_30d","sector_trend_state","thematic_basket","thematic_grade","macro_weather","srm","sector_rrg_quadrant",
+                  "sector_rrg_direction","thematic_parent_gics","thematic_parent_grade","thematic_rrg_quadrant","thematic_rrg_direction","regime","intermarket"],
+ "crown":        ["macro_weather","srm","sector_rrg_quadrant","sector_rrg_direction","sector_trend_state","thematic_basket","thematic_grade","thematic_parent_gics",
+                  "thematic_parent_grade","thematic_rrg_quadrant","thematic_rrg_direction","regime","intermarket"],
  "detect-lens":  ["ticker","lens","lens_positive","lens_warnings","runner_setup","runner_conviction","premove_setup","premove_conviction"],
  "elder-lens":   ["ticker","elder","elder_5d","elder_pattern","mp_state","mp"],
 }
