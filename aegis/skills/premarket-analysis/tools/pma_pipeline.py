@@ -39,6 +39,28 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
 # instead of shipping a leak that's only caught by grepping a TSV after the fact.
 QS_FORBIDDEN = ("qs", "on_qs")
 
+# NO-BLANK-DATA, 2026-08-17 (PM standing rule: "no blank data, all fields available and used").
+# Two independent per-ticker checks, both against the RAW export (not the trim), because a gap
+# that only shows up after CONSUMED/menu slicing is a gap the pipeline created, not one it found.
+#
+# CORE_TECHNICAL_FIELDS mirrors the export's own data_quality.flagged definition exactly (verified
+# 2026-08-17: the export flags 7 tickers -- AUB, ELS, EQR, FITB, KSS, NNN, OKTA, all source=="qs" --
+# on precisely this field set). A ticker null on ALL of these has nothing for any voice to assess
+# honestly, so it is held out of every nominator TSV entirely (not served as a wall of "null") and
+# written to no_technical_coverage.json instead. It stays in candidate_set.json -- it can still
+# carry a QS card line at S7 (PM request, render-only, regardless of deliberation).
+CORE_TECHNICAL_FIELDS = ["sc_momentum", "flow", "energy", "structure", "mp", "elder", "entry"]
+
+# PATTERN_FIELDS are NOT covered by the export's own data_quality self-check -- verified 2026-08-17
+# against the live export: 14 tickers (all source=="longlist", core fields present and real) come
+# back null on every field in this set. That is a real, undeclared upstream gap in the pattern-
+# detection engine, not a "no signal" state (contrast: elder_pattern/thematic_basket/thematic_grade/
+# ma_200 nulls elsewhere in the export ARE legitimate no-signal/structural states and are NOT
+# treated as gaps here). These tickers are NOT excluded -- they have real technical data on
+# everything else -- but the gap is reported loudly per run so it doesn't quietly undercount.
+PATTERN_FIELDS = ["pin_bar_state", "inside_bar", "choch_state", "div_state", "knn_prob",
+                   "squeeze_breakout_state", "was_squeezed"]
+
 def load(p): return json.load(open(p))
 def save(p, o):
     json.dump(o, open(p, "w"), indent=1)
@@ -80,8 +102,19 @@ def _slice(row, menu):
             out[f] = row.get(f)
     return out
 
+def _cell(x):
+    """TSV cell serializer. None must never render as a blank cell -- a blank cell is
+    indistinguishable from an empty string or a parsing glitch. Write the literal token
+    "null" instead, so a seat can never misread absence as an empty value (2026-08-17,
+    PM standing rule: no blank data)."""
+    if x is None:
+        return "null"
+    if isinstance(x, (dict, list)):
+        return json.dumps(x)
+    return x
+
 def cmd_packets(a):
-    CS, menus = load(a.candidates), load(a.menus)
+    CS, menus, D = load(a.candidates), load(a.menus), load(a.export)
     os.makedirs(a.outdir, exist_ok=True)
     rng = random.Random(a.date)  # deterministic per-date shuffle
     # v4.2 architecture: nominators are S4 voices only (excludes S5a/S5b challenge/specialist agents and macro voices)
@@ -93,9 +126,23 @@ def cmd_packets(a):
             continue
         breach = [f for f in menus[v] if f in QS_FORBIDDEN or f.startswith("qs.")]
         assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
+
+    # NO-BLANK-DATA per-ticker checks (2026-08-17), against the raw export rows directly.
+    raw_by_ticker = {r["ticker"]: r for r in D["daily_list"]}
+    no_coverage = sorted(t for t, r in raw_by_ticker.items()
+                          if all(r.get(f) is None for f in CORE_TECHNICAL_FIELDS))
+    pattern_gap = sorted(t for t, r in raw_by_ticker.items()
+                          if t not in no_coverage and all(r.get(f) is None for f in PATTERN_FIELDS))
+    if no_coverage:
+        save(os.path.join(a.outdir, "no_technical_coverage.json"),
+             {"excluded_from_nominator_tsvs": no_coverage,
+              "reason": f"all of {CORE_TECHNICAL_FIELDS} null -- nothing for any voice to honestly assess",
+              "note": "still present in candidate_set.json; may still carry a QS card line at S7"})
+
+    universe = [r for r in CS["universe"] if r["ticker"] not in no_coverage]
     dead = {}
     for v in nominators:
-        rows = [_slice(r, menus[v]) for r in CS["universe"]]
+        rows = [_slice(r, menus[v]) for r in universe]
         # a menu field that is None on EVERY row is a dead column -- report, never hide
         d = [f for f in menus[v] if all(r.get(f) is None for r in rows)]
         if d:
@@ -106,22 +153,26 @@ def cmd_packets(a):
             w = csv.DictWriter(f, fieldnames=menus[v], delimiter="\t")
             w.writeheader()
             for r in rows:
-                w.writerow({k: json.dumps(x) if isinstance(x, (dict, list)) else x for k, x in r.items()})
+                w.writerow({k: _cell(x) for k, x in r.items()})
     # macro packets: crown + druckenmiller read global blocks, NEVER qs_market (R3)
-    D = load(a.export)
     for name, blocks in (("crown", ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"]),
                          ("druckenmiller", ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"])):
         pk = {b: D.get(b) for b in blocks}
         txt = json.dumps(pk)
         assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
         save(os.path.join(a.outdir, f"{name}.json"), pk)
-    print(f"receipt: {len(nominators)} nominator TSVs + 2 macro packets; R3 assertion passed")
+    print(f"receipt: {len(nominators)} nominator TSVs + 2 macro packets; R3 assertion passed; "
+          f"{len(universe)}/{len(CS['universe'])} names served to nominators ({len(no_coverage)} held out, no coverage)")
     if dead:
         print("WARNING missing_menu_fields (null on every row, seat is served a blank column):")
         for v, fs in sorted(dead.items()):
             print(f"  {v}: {', '.join(fs)}")
     else:
         print("receipt: missing_menu_fields none -- every menu field resolved on at least one row")
+    if no_coverage:
+        print(f"WARNING no_technical_coverage ({len(no_coverage)} tickers, excluded from nominator TSVs, see no_technical_coverage.json): {', '.join(no_coverage)}")
+    if pattern_gap:
+        print(f"WARNING pattern_field_gap ({len(pattern_gap)} tickers, NOT excluded, upstream pattern-detection engine gap, undeclared by export data_quality): {', '.join(pattern_gap)}")
 
 def cmd_tally(a):
     noms = load(a.nominations)  # list of {voice, nominations:[{ticker, conviction, reason, fields}]}

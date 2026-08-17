@@ -10,8 +10,9 @@ Caps only ever LOWER conviction: steenbarger audit flag → cap 3 · support < 3
 
 ## Phase map (nomination → cap), named for plain reference
 PHASE 1 SWARM · 9 nominators (elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff,
-  weis), blind, full 279-name universe, free nomination + conviction 1-5. kratter and ceponas join
-  once their books are ingested (target 11).
+  weis), blind, full universe LESS names held out for zero technical coverage (see NO-BLANK-DATA
+  below — 7 held out on the 2026-08-17 export, 272/279 served), free nomination + conviction 1-5.
+  kratter and ceponas join once their books are ingested (target 11).
 PHASE 2 TALLY · mechanical count per ticker: seat_count, conviction_sum. No judgment.
 PHASE 3 QUALIFY · mechanical threshold: seat_count>=2 OR solo conviction>=4. No sector/fundamental term.
 PHASE 4 CAP · qualifiers ranked and truncated to `deliberation_cap` (below). This is the ranking step —
@@ -41,6 +42,51 @@ its sources are `src/engines/*.py` + the AQE field dictionary, 33 principles, ci
 It reads NO BOOKS — "the only non-human seat -- its canon is running code, not a book."
 There is no overlap. The PM's ruling that weis and detect-lens are complementary stands: detect-lens
 reports what the engine computed; weis interprets what the tape did.
+
+## NO-BLANK-DATA (standing rule, 2026-08-17 — PM: "there should be no blank data, all fields
+should be available and used") — closed against the live export, no open instance
+Two failure modes were live before this fix, found by a full per-ticker (not per-column) null
+audit of every seated voice's menu against the real daily export:
+1. **Buried, not blank.** `bracket.valid==false` on 233/279 rows (84% of the universe) — the
+   correct engine behaviour, not a fault, since most names don't clear all three structural
+   bracket gates (atr>=1.0, rr>=2.0, risk% <= regime ceiling). The engine's own fallback
+   (`bracket.atr_fallback_stop` + `bracket.invalid_reason`) already existed for exactly this case,
+   but only `oneil`/`thorp`/`weis` had it as a named column. Every other bracket-reading seat either
+   read the bare `bracket` object (the fallback was technically present but unlabelled inside a JSON
+   blob — present in the data, not "used" in any meaningful sense) or, in `seow`'s case, had no
+   fallback path at all — genuinely blind on stop/risk data for 84% of names.
+   FIX: bare `bracket` retired everywhere; every bracket-reading seat now carries explicit
+   `bracket.valid` / `bracket.stop` / `bracket.stop_type` / `bracket.risk_pct` /
+   `bracket.atr_fallback_stop` / `bracket.invalid_reason` columns. `elder-lens` and `druckenmiller`
+   carry NO bracket fields — by design, not gap: neither voice makes an entry/stop/risk call
+   (elder-lens is Elder Ray oscillator/pulse pattern-reading only; druckenmiller is macro/sector/
+   theme only), so a bracket column would sit unused, which the rule forbids in the other direction.
+2. **Blank cells reading as ambiguous.** TSV writer rendered `None` as an empty cell — indistinguishable
+   from a genuinely empty string or a parsing artifact. FIX: every null now serializes as the literal
+   token `null` in every TSV cell, no exceptions.
+
+Two further per-ticker gaps, found the same audit pass, are NOT column-level (missing_menu_fields
+below stays empty either way — every field resolves on SOME row) and needed a different treatment:
+- **NO_TECHNICAL_COVERAGE** — 7 tickers on the 2026-08-17 export (AUB, ELS, EQR, FITB, KSS, NNN,
+  OKTA; all `source=="qs"`), null on every one of `sc_momentum/flow/energy/structure/mp/elder/entry`
+  — this matches the export's own `data_quality.flagged` block exactly. Nothing exists for any voice
+  to honestly assess, so `pma_pipeline.py packets` now holds these out of every nominator TSV
+  entirely (never serves a wall of `null`) and writes them to `no_technical_coverage.json`. They
+  remain in `candidate_set.json` and can still carry a QS card line at S7 (PM request, render-only).
+- **PATTERN_FIELD_GAP** — 14 tickers on the 2026-08-17 export (ABNB, P, TPG, TEVA, NESR, BETA, PYPL,
+  BILL, WPM, APO, DLR, SSRM, NBIS, LITE; all `source=="longlist"`, core fields real and present) null
+  on every one of `pin_bar_state/inside_bar/choch_state/div_state/knn_prob/squeeze_breakout_state/
+  was_squeezed`. This is NOT caught by the export's own `data_quality` self-check — an undeclared
+  upstream gap in the pattern-detection engine, not a "no signal" state. NOT excluded (these names
+  have real technical data on everything else); `pma_pipeline.py packets` prints a loud
+  `pattern_field_gap` WARNING every run instead so it can't quietly undercount. This is a
+  data-engineering-owned gap, not something the pipeline can manufacture — reported, not patched.
+
+**Ruled legitimate, no fix applied (do not re-flag as a bug):** `elder_pattern` null on 44% of rows
+(categorical "no pattern currently detected", a real state) · `thematic_basket`/`thematic_grade`
+null on 69% (ticker isn't in any tracked thematic basket, a real state) · `ma_200` null on exactly 4
+tickers where `ma_50`/`ma_100` are both populated (insufficient trading history for a 200-day
+average — young listings, a structural null).
 
 ## Phase 4 ranking key (corrected 2026-08-17 — was underspecified, caused an unresolved 3-way tie at cap=12)
 Sort qualifiers descending on, in order:
@@ -132,7 +178,9 @@ Three families, all must PASS to publish:
                 R1 (zero bracket-gate breaches) · R3 (QS absent from every seat packet;
                 crown_agreement filed) · Phase-4 ranking key fully resolves (no undeclared ties) ·
                 SEAT INDEPENDENCE (no two canon.lock.yaml files share a source) ·
-                FIELD SERVICE (packets receipt missing_menu_fields is empty, else DEGRADED declared)
+                FIELD SERVICE (packets receipt missing_menu_fields is empty, else DEGRADED declared;
+                no_technical_coverage exclusions and pattern_field_gap flags both DECLARED in the
+                header verbatim, never silently absorbed — see NO-BLANK-DATA)
   COMPLETENESS  every card carries all 6 score elements + List/Elder/SRM/Thematic + levels +
                 Committee/Risk/Condition/QS lines · every HOLD-FOR-CONDITIONS carries a condition line ·
                 every ADVANCE carries attributed opposing case + falsifier · near-miss list present ·
