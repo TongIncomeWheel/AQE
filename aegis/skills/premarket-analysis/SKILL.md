@@ -1,119 +1,52 @@
 ---
-name: premarket-analysis
-description: "PMA — the analysis-only morning kernel. Turns the day's AQE export + Nick Crown macro file into a CIO decision page via eight staged skills bridged by JSON files in the repo. Bounded inter-agent debate among the grounded seats, with a provable completeness certificate. No brokers, no held book, no orders, no sizing — the FRAME. Trigger: /premarket-analysis."
+name: pma
+description: "PMA — Premarket Analysis, the committee morning. Trigger: /pma. One command, repeatable by hand or on a scheduler: pulls the day's AQE export + Crown macro file from the repo, spawns the macro voices and the 10-seat blind swarm, tallies, ranks to the Phase-4 cap, runs challenge + fundamentals + Round-2 deliberation on the capped set, closes consensus arithmetically, auto-brackets everything phase-3+, renders the fixed 6-section CIO report with ticker cards, passes the S7Q quality gate, publishes to git + project doc + on screen. Analysis only — no brokers, no orders, no sizing (constitution law 1 untouched). v4.2, PM-ratified 2026-08-17; validated end-to-end on the 2026-08-17 dry run (25 spawns, 0 errors)."
 ---
 
-# /premarket-analysis — the morning analysis kernel (v0.4, design 2026-08-12)
+# /pma — PREMARKET ANALYSIS (v4.2 operational card — supersedes the v0.4 design card)
 
-**What this is.** One command that runs the committee's *thinking*: pull the day's data into
-the repo, frame the market, let every seat read it in isolation, challenge the consensus, argue
-it out between the seats under a completeness contract, and hand the CIO one decision page.
-Every stage boundary is a JSON file in git — that is the bridge, the audit trail, and the
-reason any morning's reasoning can be reconstructed six weeks later.
+**Source of truth: `TongIncomeWheel/AQE` branch `main`. Everything this run reads and writes lives there.**
+Inputs: `aegis/output/aqe_daily_export.json` + `aegis/output/aqe_crown_macro.json` (fixed names, overwritten daily — the ONLY data sources, never Drive).
+Code: `aegis/skills/premarket-analysis/tools/pma_pipeline.py` + `contracts/voice_menus.json` (fetch fresh from main every run — never a cached copy).
+Spec annex: `aegis/skills/premarket-analysis/stages/S6B_post_committee.md` (post-committee contract — consensus rule, ranking key, ledger, card contract, S7Q families). On any conflict, S6B wins.
+State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (rolling repeat ledger) · `aegis/reports/pma/<date>.md` + `latest.md`.
 
-**What this is NOT (v0.4 scope, PM directive).** No held-book work, no per-position management,
-no broker pulls, no order staging, no dollar sizing. Those live in the existing `/premarket` +
-gatekeeper machinery. PMA is analysis-only and runs standalone. Constitution law 1 untouched:
-nothing here places, sizes, or arms anything.
+**Control vs judgment (D-16).** The session running this card is CONTROL: fetch, validate, spawn, collect, run the tool, render, publish. It forms no market opinion. Judgment happens only inside spawned voice agents. Every arithmetic step runs through `pma_pipeline.py` — same inputs, same outputs, no model in the path.
 
----
+**Unattended rule.** A scheduled firing has no PM watching. Never block on a question: apply the failure ladder, declare every degradation in the report header, and publish. The report footer is always: "DRAFT — PM approval required. Nothing is staged, nothing is armed."
 
-## Source of record: the repo, not Drive
+## Procedure
 
-**PM ruling 2026-08-12 — nothing sits in Drive.** AQE writes there; Aegis does not read from
-there. S1 is the only component permitted to touch Drive, and its single job is to land the
-day's data in the repo at a fixed path:
+**S0 · PREFLIGHT.** Confirm the GitHub MCP connector answers (one `get_file_contents` on `aegis/output/`). If absent → STOP, no plan, page the PM: the run cannot read its inputs or persist its outputs. Confirm the `aegis-voices` agent types are available (they ship in the aegis-voices plugin). Note UTC/SGT date; the run date is the SGT calendar date.
 
-```
-aegis/output/           aqe_daily_export.json · aqe_crown_macro.json · manifest.json
-                        Fixed names, overwritten daily. No date folder, no pointer.
-data/pma/<YYYY-MM-DD>/  every stage output for that run
-```
+**S1 · INGEST.** Fetch both input files from `main` (always `ref: refs/heads/main`, never a pinned SHA). Validate: export has `daily_list`, `srm`, `regime`, `macro_weather`; crown file parses. Record staleness (export date vs run date) and every DEGRADED flag — they travel verbatim into the report header. Export missing/invalid → STOP. Crown missing → continue AQE-only, headline says so. Fetch `pma_pipeline.py`, `voice_menus.json`, `S6B_post_committee.md`, and `data/pma/phase4_ledger.json` to the working dir.
 
-Gzipping the export (~2.6 MB → ~250 KB) is what makes daily commits affordable: ~90 MB/yr in
-tree, pruned to monthly archives after 90 days. Every stage after S1 reads the repo.
+**S2 · TRIM + PACKETS (tool).** `pma_pipeline.py trim` → `candidate_set.json` (full CONSUMED trim, keeps `source`/`on_longlist`/`in_ledger`/`elder*`). Then `pma_pipeline.py packets` → per-voice menu-sliced shuffled TSVs + crown/druckenmiller macro packets. The tool asserts R3 (no `qs_market` in any seat packet) and fails loudly on breach. `qs_market` is PM-only: it appears in the report's macro section as the PM's regime read, never in any seat's input.
 
----
+**P0 · MACRO VOICES (2 spawns, parallel).** Spawn `aegis-voices:voice-druckenmiller` and the crown voice with their JSON packets INLINED in the prompt (never a path — toolless agents fabricate when handed paths, finding F1). Crown reads its own macro file + the export's sector/theme layer (R6). Druckenmiller reads all macro weather + Crown DATA POINTS, never Crown's prose, never QS (R3); he MUST file `agrees_on`/`differs_on` vs Crown — conflicts are surfaced to the PM, never resolved by the committee.
 
-## The pipeline
+**S4 · SWARM (10 spawns, parallel, blind).** One isolated spawn per nominator (`detect-lens, elder-lens, livermore, minervini, oneil, raschke, seow, steenbarger, thorp, wyckoff` — Lynch and Rogers are NOT nominators). Each gets: its own agent card (the plugin agent type carries it) + its own TSV packet inlined + nothing else. No tally, no other voices, no ordering hints. Each returns nominations with ticker, conviction 1–5, reason, `fields_cited`. One re-spawn on invalid return; still bad → seat marked `absent`, quorum check at S6 (≥8).
 
-```
-S1 INGEST       Drive → repo, validate, staleness          → ingest_receipt.json
-S2 MARKET FRAME what kind of day is this?                   → market_frame.json
-S3 CANDIDATES   what is on the table?                       → candidate_set.json
-S4 ROUND 1      11 isolated seats, inline packets           → voices/*.json + tally.json
-S5 CHALLENGE    rogers: is the CROWD wrong?                 → challenge.json
-   + WEATHER    crown NOW (verbatim) · druckenmiller NEXT   → weather.json
-S6 ROUND 2      all seats cross-examine; stance on EVERY name → round2/*.json
-   ROUND 3      rebuttal — only seats holding an open O7    → round3/*.json
-   CONSENSUS    arithmetic close, no model                  → consensus.json
-                                                            + completeness_certificate.json
-S7 CIO OUTPUT   the decision page, fixed order              → premarket_plan.json + plan.md
-S8 SELF-AUDIT   asked-vs-served, traceability, re-derive    → run_audit.json
-```
+**PHASES 2–4 · TALLY → QUALIFY → RANK → CAP (tool).** `pma_pipeline.py tally` then `rank --cap 20`. Qualification: seat_count ≥2 OR solo conviction ≥4. Ranking key (fixed, v4.2): seat_count → conviction_sum → SRM support (sector `entry_gate`: PASS>CAUTION>WATCH>BLOCKED) → thematic support (DEPLOY grade or LEADING/IMPROVING rrg) → sc_momentum. Top-20 = deliberation set. **No gate anywhere in this chain — no sector, fundamental, or bracket term (R1).** Then `pma_pipeline.py ledger` — append ALL qualifiers (survivors + cap-cut) to `phase4_ledger.json`; any ticker at ≥2 appearances in the trailing 5 sessions gets a REPEAT flag → PM manual look.
 
-Stage cards: `stages/S1_ingest.md` … `stages/S8_audit.md`. Contracts: `contracts/pma/`.
-Each stage reads only prior stages' JSON — no stage reaches around the bridge, because the
-bridge is what makes the run inspectable.
+**S5 · CHALLENGE + FUNDAMENTALS (2 spawns, after the cap).** Rogers gets the deliberation set + nomination counts → challenge document (crowding, certainty, timing). Lynch activates ONLY on the deliberation set (R5/R7): FMP MCP + web grounding, six-category quick pass per name, every figure with source+date; his memo joins the Round-2 packet. If FMP/web is unavailable in this session, Lynch files with an explicit "fundamentals unserved" flag per name — the run continues, degradation declared.
 
-**S6 is the committee.** S1–S3 are plumbing, S7–S8 are formatting. The design weight sits in
-S4 (manufacturing independence) and S6 (bounded debate + provable completeness). Read those two
-cards first.
+**S6 · ROUND 2 (11 spawns: 10 nominators + lynch as a seat).** Every seat files SUPPORT/OPPOSE/ABSTAIN on EVERY deliberation-set name plus the obligation register (O1–O8: opposing argument on every OPPOSE, self-counter on high-conviction SUPPORT, falsifier, conviction-change reason, Rogers-challenge answer, direct-challenge replies, Steenbarger conviction_audit). Packets carry: the name's full universe row + all Round-1 reasons (attributed) + Rogers' challenge + Lynch's memo. Quorum <8 → no ADVANCE possible, watch-table-only run.
 
----
+**S6.5 · CONSENSUS + SYNTHESIS (tool + compile).** `pma_pipeline.py consensus`: ADVANCE = support>oppose AND support≥2 AND median support conviction ≥3; else support≥2 → HOLD-FOR-CONDITIONS; else PASS. Caps only lower conviction (steenbarger flag→3, support<3→4, non-ADVANCE→3). Compile per-name verdict records: split, strongest opposing case (verbatim, attributed), falsifiers, fundamental line. **Every HOLD-FOR-CONDITIONS gets a mandatory observable condition line** — from a seat's filed promotion condition, else synthesized from the strongest opposing case. No persuasion narration anywhere.
 
-## Control plane vs judgment plane (D-16)
+**S6.6 · AUTO-BRACKET (R8, tool-read).** Every deliberation-set name gets levels verbatim from its export `bracket` block: structural stop/TP/R:R if `valid`, else `atr_fallback_stop` labelled FB + nearest overhead levels. Informational only — filters nothing, ranks nothing, vetoes nothing (R1).
 
-The orchestrator running this card is **control**: sequence, validate, spawn, collect, count,
-cap, render. It forms no market opinion. Judgment happens ONLY inside spawned agents — the 11
-seats (S4, S6 R2, S6 R3), rogers and druckenmiller (S5). S1, S2, S3, the consensus close, S7
-and S8 are deterministic: same inputs, same outputs, no model in the path.
+**S7 · RENDER.** Fixed 6 sections: 1 Macro position (Crown + Druckenmiller + the PM-only QS read, conflicts surfaced) · 2 Sector & thematics (SRM table + baskets) · 3 Held book review (from export `held_book`; if stale, one line saying so — the PM refreshes via PTJ) · 4 Shortlist as TICKER CARDS · 5 Near misses (every cap-cut qualifier, one row each, never grouped) · 6 Action plan addressed to the PM. Card contract (no omissions): header (ticker·verdict·conviction+cap reason·vote S-O-A·sector) · List line (source track + Elder score/pattern/5d + SRM gate + thematic) · scores (conviction/detect/coil/momentum/accumulation/structure) · levels (px/stop[structural|FB]/TP1-2/R:R/ATR) · Committee/Risk/Condition lines · REPEAT flag if ledgered ≥2x/5.
 
-**The bias guarantee, testable every run:** every prose sentence in the plan is either a
-template string, a number traced to a field in the day's data, or a verbatim quote attributed
-to a named seat. S8 fails the run on anything else.
+**S7Q · QUALITY GATE (tool).** `pma_pipeline.py gate` — mechanical checks: every ADVANCE has support>oppose; every HOLD has a Condition line; all 6 sections present; List/Elder present; zero persuasion phrasing; DRAFT footer. FAIL → fix at the owning stage, max 2 loops, residuals DECLARED in the footer. Never publish silently defective.
 
-## Isolation
+**S7P · PUBLISH.** Push to `main`: `data/pma/<date>/` (candidate_set, tally, phase4, consensus, run record) + updated `phase4_ledger.json` + `aegis/reports/pma/<date>.md` + `aegis/reports/pma/latest.md`. Write the report to the claude.ai project doc (`claude/pma_brief_<date>.md`). Print the full report on screen. If the session can send files, send the .md.
 
-Each S4 seat is a fresh agent: its own card, its own inline packet, its own ledger memory. No
-seat sees another seat, the tally, or any ordering hint (candidate rows are shuffled per seat).
-Weather and challenge run strictly after the tally so they cannot steer what they react to.
+**S8 · AUDIT.** Write `data/pma/<date>/run_audit.json`: seats spawned/responded, stage receipts, gate result, degradations, spawn count, wall time. This is the learning loop's input.
 
-**Packets are inlined, never passed as paths.** Compiled voice agents are toolless; handed a
-path, they fabricate rather than fail (finding F1, 2026-08-11 — four seats invented file
-listings and market values in test). This is a correctness rule, not a preference.
+## PM parameters (change here + S6B together)
+`deliberation_cap=20` · `solo_high_conviction_min=4` · `phase4_window=5 sessions, repeat_threshold=2` · `max_quality_loops=2` · `cards_soft_max=5 actionable`.
 
-## Completeness
-
-The consensus close is **blocked** until `completeness_certificate.json` exists: an 8-type
-obligation register, a voice×name coverage matrix, the full exchange trail, quorum, and a close
-reason. Obligations discharge procedurally (a reply exists) — never substantively (the reply
-was good). Deadlock records as `contested` and is printed, not resolved by the orchestrator.
-
-## Failure ladder — every failure is declared, never silent
-
-- **Export missing / invalid / tripwired** → STOP. No plan.
-- **Crown missing** → run continues AQE-only; the headline says so.
-- **Anything DEGRADED** → propagates verbatim into the plan headline.
-- **A seat returns nothing/invalid** → one re-spawn; still bad → `absent`, obligations waived
-  with reason, S8 flags it.
-- **Quorum not met** → deliberation does not stand: no ADVANCE, watch-table-only.
-- **Drive unreachable** → fall back to the newest date already in the repo, mark staleness.
-
-## Reuse, not clone
-
-`tools/tripwires.py` · `tools/voice_memory.py render` · `tools/nomination_ledger.py record` ·
-`contracts/nomination.schema.json` (the R1 voice bridge, unchanged) ·
-`contracts/aqe_export.schema.json`. New contracts are pma-scoped under `contracts/pma/`.
-
-## The learning loop
-
-S8 writes a run audit daily: what each seat asked for vs what the feed served, which seats
-shortfell, whether every plan anchor resolves to real data, and an independent re-derivation of
-the completeness certificate. Accumulated audits turn "what does the committee need from AQE?"
-into a measurement rather than a workshop.
-
-## Open design decisions
-
-Framed with recommended answers in plain English in
-`aegis/design/pma_design_decisions_2026-08-11.md`. Nothing here overrides a PM ruling.
+## Failure ladder (unattended-safe)
+Export missing/invalid → STOP, no plan · Crown missing → AQE-only, declared · seat absent after re-spawn → quorum math, declared · FMP absent → Lynch files unserved flags · GitHub write fails at S7P → report still prints on screen + project doc, push retried once, failure declared · anything DEGRADED → verbatim in the header.
