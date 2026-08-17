@@ -40,10 +40,26 @@ def cmd_trim(a):
     print(f"receipt: {len(rows)} names trimmed; sources={dict(collections.Counter(r['source'] for r in rows))}")
 
 def _slice(row, menu):
+    """Resolve a menu field against a universe row.
+
+    Dotted names resolve into nested dicts at ANY depth. Before 2026-08-17 this
+    special-cased `bracket.` only, so every other dotted field on a menu
+    (energy.squeeze_score, bq.bq_base_dur, bq.bq_range_tight, lens.coil,
+    lens.structure, lens.resistance) silently resolved to None -- minervini,
+    oneil, raschke and wyckoff had been served blank columns for those fields.
+    Fixed generically; `missing_menu_fields` in the packets receipt now reports
+    any menu field that resolves to None for EVERY row, so a dead field is
+    loud instead of silent.
+    """
     out = {}
     for f in menu:
-        if f.startswith("bracket."):
-            out[f] = (row.get("bracket") or {}).get(f.split(".", 1)[1])
+        if "." in f:
+            cur = row
+            for part in f.split("."):
+                cur = cur.get(part) if isinstance(cur, dict) else None
+                if cur is None:
+                    break
+            out[f] = cur
         else:
             out[f] = row.get(f)
     return out
@@ -54,8 +70,13 @@ def cmd_packets(a):
     rng = random.Random(a.date)  # deterministic per-date shuffle
     # v4.2 architecture: nominators are S4 voices only (excludes S5a/S5b challenge/specialist agents and macro voices)
     nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller", "steenbarger", "detect-lens", "~~CONFIG_NOTE~~")]
+    dead = {}
     for v in nominators:
         rows = [_slice(r, menus[v]) for r in CS["universe"]]
+        # a menu field that is None on EVERY row is a dead column -- report, never hide
+        d = [f for f in menus[v] if all(r.get(f) is None for r in rows)]
+        if d:
+            dead[v] = d
         rng.shuffle(rows)
         p = os.path.join(a.outdir, f"{v}.tsv")
         with open(p, "w", newline="") as f:
@@ -72,6 +93,12 @@ def cmd_packets(a):
         assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
         save(os.path.join(a.outdir, f"{name}.json"), pk)
     print(f"receipt: {len(nominators)} nominator TSVs + 2 macro packets; R3 assertion passed")
+    if dead:
+        print("WARNING missing_menu_fields (null on every row, seat is served a blank column):")
+        for v, fs in sorted(dead.items()):
+            print(f"  {v}: {', '.join(fs)}")
+    else:
+        print("receipt: missing_menu_fields none -- every menu field resolved on at least one row")
 
 def cmd_tally(a):
     noms = load(a.nominations)  # list of {voice, nominations:[{ticker, conviction, reason, fields}]}
