@@ -9,13 +9,14 @@ Caps only ever LOWER conviction: steenbarger audit flag → cap 3 · support < 3
 (The prior rule advanced names with more OPPOSE than SUPPORT; caught by the S7Q gate on the 2026-08-17 dry run.)
 
 ## Phase map (nomination → cap), named for plain reference
-PHASE 1 SWARM · 10 nominators, blind, full 279-name universe, free nomination + conviction 1-5.
+PHASE 1 SWARM · 10 nominators (elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff, weis, ceponas, kratter), blind, full 279-name universe, free nomination + conviction 1-5.
 PHASE 2 TALLY · mechanical count per ticker: seat_count, conviction_sum. No judgment.
 PHASE 3 QUALIFY · mechanical threshold: seat_count>=2 OR solo conviction>=4. No sector/fundamental term.
 PHASE 4 CAP · qualifiers ranked and truncated to `deliberation_cap` (below). This is the ranking step —
   everything that reaches Phase 4 is logged to the rolling ledger (see below) whether or not it survives the cap.
-PHASE 5 CHALLENGE + FUNDAMENTALS · Rogers + Lynch activate ONLY on names that survive the Phase 4 cap.
-PHASE 6 ROUND 2/3 DELIBERATION · full obligation register, consensus rule, on the capped set only.
+PHASE 5a CHALLENGE · Rogers + Steenbarger activate ONLY on names that survive the Phase 4 cap.
+PHASE 5b FUNDAMENTALS + LENS · Lynch + Detect-lens activate ONLY on names that survive the Phase 4 cap.
+PHASE 6 ROUND 2/3 DELIBERATION · full obligation register, consensus rule, on the capped set only. 12 seats vote: 10 nominators + Lynch + Detect-lens.
 
 ## Phase 4 ranking key (corrected 2026-08-17 — was underspecified, caused an unresolved 3-way tie at cap=12)
 Sort qualifiers descending on, in order:

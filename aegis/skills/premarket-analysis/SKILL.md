@@ -21,17 +21,19 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **S1 · INGEST.** Fetch both input files from `main` (always `ref: refs/heads/main`, never a pinned SHA). Validate: export has `daily_list`, `srm`, `regime`, `macro_weather`; crown file parses. Record staleness (export date vs run date) and every DEGRADED flag — they travel verbatim into the report header. Export missing/invalid → STOP. Crown missing → continue AQE-only, headline says so. Fetch `pma_pipeline.py`, `voice_menus.json`, `S6B_post_committee.md`, and `data/pma/phase4_ledger.json` to the working dir.
 
-**S2 · TRIM + PACKETS (tool).** `pma_pipeline.py trim` → `candidate_set.json` (full CONSUMED trim, keeps `source`/`on_longlist`/`in_ledger`/`elder*`). Then `pma_pipeline.py packets` → per-voice menu-sliced shuffled TSVs + crown/druckenmiller macro packets. The tool asserts R3 (no `qs_market` in any seat packet) and fails loudly on breach. `qs_market` is PM-only: it appears in the report's macro section as the PM's regime read, never in any seat's input.
+**S2 · TRIM + PACKETS (tool).** `pma_pipeline.py trim` → `candidate_set.json` (full 279-row CONSUMED trim, keeps `source`/`on_longlist`/`in_ledger`/`elder*`). Then `pma_pipeline.py packets` → per-voice menu-sliced shuffled TSVs + crown/druckenmiller macro packets. The tool asserts R3 (no `qs_market` in any seat packet) and fails loudly on breach. `qs_market` is PM-only: it appears in the report's macro section as the PM's regime read, never in any seat's input.
 
 **P0 · MACRO VOICES (2 spawns, parallel).** Spawn `aegis-voices:voice-druckenmiller` and the crown voice with their JSON packets INLINED in the prompt (never a path — toolless agents fabricate when handed paths, finding F1). Crown reads its own macro file + the export's sector/theme layer (R6). Druckenmiller reads all macro weather + Crown DATA POINTS, never Crown's prose, never QS (R3); he MUST file `agrees_on`/`differs_on` vs Crown — conflicts are surfaced to the PM, never resolved by the committee.
 
-**S4 · SWARM (10 spawns, parallel, blind).** One isolated spawn per nominator (`detect-lens, elder-lens, livermore, minervini, oneil, raschke, seow, steenbarger, thorp, wyckoff` — Lynch and Rogers are NOT nominators). Each gets: its own agent card (the plugin agent type carries it) + its own TSV packet inlined + nothing else. No tally, no other voices, no ordering hints. Each returns nominations with ticker, conviction 1–5, reason, `fields_cited`. One re-spawn on invalid return; still bad → seat marked `absent`, quorum check at S6 (≥8).
+**S4 · SWARM (10 spawns, parallel, blind).** One isolated spawn per nominator: `elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff` + three momentum specialists (weis, ceponas, kratter). Each gets: its own agent card (the plugin agent type carries it) + its own TSV packet inlined + nothing else. No tally, no other voices, no ordering hints. Each returns nominations with ticker, conviction 1–5, reason, `fields_cited`. One re-spawn on invalid return; still bad → seat marked `absent`, quorum check at S6 (≥8). Lynch, Rogers, steenbarger, detect-lens are NOT nominators.
 
 **PHASES 2–4 · TALLY → QUALIFY → RANK → CAP (tool).** `pma_pipeline.py tally` then `rank --cap 20`. Qualification: seat_count ≥2 OR solo conviction ≥4. Ranking key (fixed, v4.2): seat_count → conviction_sum → SRM support (sector `entry_gate`: PASS>CAUTION>WATCH>BLOCKED) → thematic support (DEPLOY grade or LEADING/IMPROVING rrg) → sc_momentum. Top-20 = deliberation set. **No gate anywhere in this chain — no sector, fundamental, or bracket term (R1).** Then `pma_pipeline.py ledger` — append ALL qualifiers (survivors + cap-cut) to `phase4_ledger.json`; any ticker at ≥2 appearances in the trailing 5 sessions gets a REPEAT flag → PM manual look.
 
-**S5 · CHALLENGE + FUNDAMENTALS (2 spawns, after the cap).** Rogers gets the deliberation set + nomination counts → challenge document (crowding, certainty, timing). Lynch activates ONLY on the deliberation set (R5/R7): FMP MCP + web grounding, six-category quick pass per name, every figure with source+date; his memo joins the Round-2 packet. If FMP/web is unavailable in this session, Lynch files with an explicit "fundamentals unserved" flag per name — the run continues, degradation declared.
+**S5a · CHALLENGE (2 spawns, after the cap).** Rogers and Steenbarger get the deliberation set + nomination counts → challenge documents (Rogers: crowding, certainty, timing risk; Steenbarger: conviction audit, structural weakness, conviction change risk). Both documents join the Round-2 packet.
 
-**S6 · ROUND 2 (11 spawns: 10 nominators + lynch as a seat).** Every seat files SUPPORT/OPPOSE/ABSTAIN on EVERY deliberation-set name plus the obligation register (O1–O8: opposing argument on every OPPOSE, self-counter on high-conviction SUPPORT, falsifier, conviction-change reason, Rogers-challenge answer, direct-challenge replies, Steenbarger conviction_audit). Packets carry: the name's full universe row + all Round-1 reasons (attributed) + Rogers' challenge + Lynch's memo. Quorum <8 → no ADVANCE possible, watch-table-only run.
+**S5b · FUNDAMENTALS + LENS (2 spawns, after the cap).** Lynch activates ONLY on the deliberation set (R5/R7): FMP MCP + web grounding, six-category quick pass per name, every figure with source+date. Detect-lens activates on the deliberation set: technical structure assessment, pattern confirmation, momentum lens. Both memos join the Round-2 packet. If FMP/web is unavailable in this session, Lynch files with an explicit "fundamentals unserved" flag per name — the run continues, degradation declared.
+
+**S6 · ROUND 2 (12 spawns: 10 nominators + lynch + detect-lens as voting seats).** Every seat files SUPPORT/OPPOSE/ABSTAIN on EVERY deliberation-set name plus the obligation register (O1–O8: opposing argument on every OPPOSE, self-counter on high-conviction SUPPORT, falsifier, conviction-change reason, Rogers/Steenbarger challenge answer, direct-challenge replies, Steenbarger conviction_audit). Packets carry: the name's full universe row + all Round-1 reasons (attributed) + Rogers' and Steenbarger's challenges + Lynch's fundamentals memo + Detect-lens's technical lens assessment. Quorum <8 → no ADVANCE possible, watch-table-only run.
 
 **S6.5 · CONSENSUS + SYNTHESIS (tool + compile).** `pma_pipeline.py consensus`: ADVANCE = support>oppose AND support≥2 AND median support conviction ≥3; else support≥2 → HOLD-FOR-CONDITIONS; else PASS. Caps only lower conviction (steenbarger flag→3, support<3→4, non-ADVANCE→3). Compile per-name verdict records: split, strongest opposing case (verbatim, attributed), falsifiers, fundamental line. **Every HOLD-FOR-CONDITIONS gets a mandatory observable condition line** — from a seat's filed promotion condition, else synthesized from the strongest opposing case. No persuasion narration anywhere.
 
@@ -41,9 +43,28 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **S7Q · QUALITY GATE (tool).** `pma_pipeline.py gate` — mechanical checks: every ADVANCE has support>oppose; every HOLD has a Condition line; all 6 sections present; List/Elder present; zero persuasion phrasing; DRAFT footer. FAIL → fix at the owning stage, max 2 loops, residuals DECLARED in the footer. Never publish silently defective.
 
-**S7P · PUBLISH.** Push to `main`: `data/pma/<date>/` (candidate_set, tally, phase4, consensus, run record) + updated `phase4_ledger.json` + `aegis/reports/pma/<date>.md` + `aegis/reports/pma/latest.md`. Write the report to the claude.ai project doc (`claude/pma_brief_<date>.md`). Print the full report on screen. If the session can send files, send the .md.
+**S7P · PUBLISH.** Push to `main`: `data/pma/<date>/` (candidate_set, tally, phase4, consensus, run record) + updated `phase4_ledger.json` + `aegis/reports/pma/<date>.md` + `aegis/reports/pma/latest.md`. Write the report to the claude.ai project doc (`claude/pma_dryrun_brief_<date>.md` naming continues as `claude/pma_brief_<date>.md`). Print the full report on screen. If the session can send files, send the .md.
 
 **S8 · AUDIT.** Write `data/pma/<date>/run_audit.json`: seats spawned/responded, stage receipts, gate result, degradations, spawn count, wall time. This is the learning loop's input.
+
+## Voice roster (v4.2 architecture — 2026-08-17 update)
+
+**S4 Nominators (10):**
+- Locked & live: elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff
+- Pending canon ingest: weis, ceponas, kratter (3 momentum specialists to be added on book provision)
+
+**S5a Challenge (2):**
+- Rogers (locked)
+- Steenbarger (locked; moved from S4 nominator to challenge role)
+
+**S5b Fundamentals + Lens (2):**
+- Lynch (locked; fundamentals + Round-2 voting seat)
+- Detect-lens (locked; technical lens + Round-2 voting seat)
+
+**S6 Round-2 Voting (12 seats):**
+- 10 nominators from S4 (includes 3 pending)
+- Lynch (voting + fundamentals)
+- Detect-lens (voting + technical lens)
 
 ## PM parameters (change here + S6B together)
 `deliberation_cap=20` · `solo_high_conviction_min=4` · `phase4_window=5 sessions, repeat_threshold=2` · `max_quality_loops=2` · `cards_soft_max=5 actionable`.

@@ -52,7 +52,8 @@ def cmd_packets(a):
     CS, menus = load(a.candidates), load(a.menus)
     os.makedirs(a.outdir, exist_ok=True)
     rng = random.Random(a.date)  # deterministic per-date shuffle
-    nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller")]
+    # v4.2 architecture: nominators are S4 voices only (excludes S5a/S5b challenge/specialist agents and macro voices)
+    nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller", "steenbarger", "detect-lens", "~~CONFIG_NOTE~~")]
     for v in nominators:
         rows = [_slice(r, menus[v]) for r in CS["universe"]]
         rng.shuffle(rows)
@@ -62,12 +63,13 @@ def cmd_packets(a):
             w.writeheader()
             for r in rows:
                 w.writerow({k: json.dumps(x) if isinstance(x, (dict, list)) else x for k, x in r.items()})
+    # macro packets: crown + druckenmiller read global blocks, NEVER qs_market (R3)
     D = load(a.export)
-    for name in ("crown", "druckenmiller"):
-        blocks = ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"]
+    for name, blocks in (("crown", ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"]),
+                         ("druckenmiller", ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"])):
         pk = {b: D.get(b) for b in blocks}
         txt = json.dumps(pk)
-        assert "qs_market" not in txt, f"R3 breach in {name} packet"
+        assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
         save(os.path.join(a.outdir, f"{name}.json"), pk)
     print(f"receipt: {len(nominators)} nominator TSVs + 2 macro packets; R3 assertion passed")
 
@@ -134,8 +136,7 @@ def cmd_consensus(a):
 
 def cmd_ledger(a):
     led = load(a.ledger) if os.path.exists(a.ledger) else {"window_sessions": 5, "retention_sessions": 20, "repeat_threshold": 2, "entries": []}
-    P4 = load(a.phase4)
-    tickers = P4["deliberation_set"] + [d.split("(")[0] for d in P4["dropped"]]
+    tickers = load(a.phase4)["deliberation_set"] + [d.split("(")[0] for d in load(a.phase4)["dropped"]]
     led["entries"] = [e for e in led["entries"] if e["date"] != a.date] + [{"date": a.date, "tickers": tickers}]
     led["entries"] = sorted(led["entries"], key=lambda e: e["date"])[-led["retention_sessions"]:]
     window = led["entries"][-led["window_sessions"]:]
