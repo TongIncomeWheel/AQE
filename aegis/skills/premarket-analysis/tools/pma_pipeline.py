@@ -21,7 +21,10 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "div_state","div_bear_count","knn_prob","atr_caution","runner_setup","runner_conviction_label",
     "premove_setup","mover_subtype","pin_bar_state","inside_bar","lens","lens_positive","lens_warnings",
     "source","held","in_ledger","on_longlist","thematic_basket","thematic_grade","thematic_rrg_quadrant",
-    "vol_30d_ann","gics_gate","bracket"]
+    "vol_30d_ann","gics_gate","bracket",
+    "ma_100","premove_conviction","runner_conviction","sc_m_gate_detail","sc_p_gate_detail",
+    "squeeze_breakout_state","was_squeezed","squeeze_breakout_volume_confirmed","squeeze_breakout_date",
+    "elder_context","knn_threshold_clear"]
 
 def load(p): return json.load(open(p))
 def save(p, o):
@@ -44,12 +47,10 @@ def _slice(row, menu):
 
     Dotted names resolve into nested dicts at ANY depth. Before 2026-08-17 this
     special-cased `bracket.` only, so every other dotted field on a menu
-    (energy.squeeze_score, bq.bq_base_dur, bq.bq_range_tight, lens.coil,
-    lens.structure, lens.resistance) silently resolved to None -- minervini,
-    oneil, raschke and wyckoff had been served blank columns for those fields.
-    Fixed generically; `missing_menu_fields` in the packets receipt now reports
-    any menu field that resolves to None for EVERY row, so a dead field is
-    loud instead of silent.
+    silently resolved to None -- minervini, oneil, raschke and wyckoff had been
+    served blank columns for those fields. Fixed generically; the packets
+    receipt now reports any menu field that resolves to None for EVERY row, so
+    a dead field is loud instead of silent.
     """
     out = {}
     for f in menu:
