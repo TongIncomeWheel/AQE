@@ -1,6 +1,6 @@
 ---
 name: pma
-description: "PMA — Premarket Analysis, the committee morning. Trigger: /pma. One command, repeatable by hand or on a scheduler: pulls the day's AQE export + Crown macro file from the repo, spawns the macro voices and the 10-seat blind swarm, tallies, ranks to the Phase-4 cap, runs challenge + fundamentals + Round-2 deliberation on the capped set, closes consensus arithmetically, auto-brackets everything phase-3+, renders the fixed 6-section CIO report with ticker cards, passes the S7Q quality gate, publishes to git + project doc + on screen. Analysis only — no brokers, no orders, no sizing (constitution law 1 untouched). v4.2, PM-ratified 2026-08-17; validated end-to-end on the 2026-08-17 dry run (25 spawns, 0 errors)."
+description: "PMA — Premarket Analysis, the committee morning. Trigger: /pma. One command, repeatable by hand or on a scheduler: pulls the day's AQE export + Crown macro file from the repo, spawns the macro voices and the blind nomination swarm, tallies, ranks to the Phase-4 cap, runs challenge + fundamentals + Round-2 deliberation on the capped set, closes consensus arithmetically, auto-brackets everything phase-3+, renders the fixed 6-section CIO report with ticker cards, passes the S7Q quality gate, publishes to git + project doc + on screen. Analysis only — no brokers, no orders, no sizing (constitution law 1 untouched). v4.2, PM-ratified 2026-08-17; validated end-to-end on the 2026-08-17 dry run (25 spawns, 0 errors)."
 ---
 
 # /pma — PREMARKET ANALYSIS (v4.2 operational card — supersedes the v0.4 design card)
@@ -25,7 +25,7 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **P0 · MACRO VOICES (2 spawns, parallel).** Spawn `aegis-voices:voice-druckenmiller` and the crown voice with their JSON packets INLINED in the prompt (never a path — toolless agents fabricate when handed paths, finding F1). Crown reads its own macro file + the export's sector/theme layer (R6). Druckenmiller reads all macro weather + Crown DATA POINTS, never Crown's prose, never QS (R3); he MUST file `agrees_on`/`differs_on` vs Crown — conflicts are surfaced to the PM, never resolved by the committee.
 
-**S4 · SWARM (10 spawns, parallel, blind).** One isolated spawn per nominator: `elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff` + three momentum specialists (weis, ceponas, kratter). Each gets: its own agent card (the plugin agent type carries it) + its own TSV packet inlined + nothing else. No tally, no other voices, no ordering hints. Each returns nominations with ticker, conviction 1–5, reason, `fields_cited`. One re-spawn on invalid return; still bad → seat marked `absent`, quorum check at S6 (≥8). Lynch, Rogers, steenbarger, detect-lens are NOT nominators.
+**S4 · SWARM (8 spawns today, 10 once ruled — parallel, blind).** One isolated spawn per nominator: `elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff` (8 live) + `weis, kratter` (canon grounded 2026-08-17, **seating blocked pending the detect-lens decomposition ruling** — both already sit inside detect-lens as C19-C24 and C1-C5; seating them without decomposing detect-lens double-counts one method into `seat_count`). **`ceponas` is NOT seated** — his canon is Level 2 depth + Time & Sales, ruled NOT_APPLICABLE premarket 2026-08-09; a ceponas packet would carry zero readable fields. Each gets: its own agent card (the plugin agent type carries it) + its own TSV packet inlined + nothing else. No tally, no other voices, no ordering hints. Each returns nominations with ticker, conviction 1–5, reason, `fields_cited`. One re-spawn on invalid return; still bad → seat marked `absent`, quorum check at S6 (≥8). Lynch, Rogers, steenbarger, detect-lens are NOT nominators.
 
 **PHASES 2–4 · TALLY → QUALIFY → RANK → CAP (tool).** `pma_pipeline.py tally` then `rank --cap 20`. Qualification: seat_count ≥2 OR solo conviction ≥4. Ranking key (fixed, v4.2): seat_count → conviction_sum → SRM support (sector `entry_gate`: PASS>CAUTION>WATCH>BLOCKED) → thematic support (DEPLOY grade or LEADING/IMPROVING rrg) → sc_momentum. Top-20 = deliberation set. **No gate anywhere in this chain — no sector, fundamental, or bracket term (R1).** Then `pma_pipeline.py ledger` — append ALL qualifiers (survivors + cap-cut) to `phase4_ledger.json`; any ticker at ≥2 appearances in the trailing 5 sessions gets a REPEAT flag → PM manual look.
 
@@ -33,7 +33,7 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **S5b · FUNDAMENTALS + LENS (2 spawns, after the cap).** Lynch activates ONLY on the deliberation set (R5/R7): FMP MCP + web grounding, six-category quick pass per name, every figure with source+date. Detect-lens activates on the deliberation set: technical structure assessment, pattern confirmation, momentum lens. Both memos join the Round-2 packet. If FMP/web is unavailable in this session, Lynch files with an explicit "fundamentals unserved" flag per name — the run continues, degradation declared.
 
-**S6 · ROUND 2 (12 spawns: 10 nominators + lynch + detect-lens as voting seats).** Every seat files SUPPORT/OPPOSE/ABSTAIN on EVERY deliberation-set name plus the obligation register (O1–O8: opposing argument on every OPPOSE, self-counter on high-conviction SUPPORT, falsifier, conviction-change reason, Rogers/Steenbarger challenge answer, direct-challenge replies, Steenbarger conviction_audit). Packets carry: the name's full universe row + all Round-1 reasons (attributed) + Rogers' and Steenbarger's challenges + Lynch's fundamentals memo + Detect-lens's technical lens assessment. Quorum <8 → no ADVANCE possible, watch-table-only run.
+**S6 · ROUND 2 (10 spawns today: 8 nominators + lynch + detect-lens as voting seats; 12 once weis/kratter are ruled in).** Every seat files SUPPORT/OPPOSE/ABSTAIN on EVERY deliberation-set name plus the obligation register (O1–O8: opposing argument on every OPPOSE, self-counter on high-conviction SUPPORT, falsifier, conviction-change reason, Rogers/Steenbarger challenge answer, direct-challenge replies, Steenbarger conviction_audit). Packets carry: the name's full universe row + all Round-1 reasons (attributed) + Rogers' and Steenbarger's challenges + Lynch's fundamentals memo + Detect-lens's technical lens assessment. Quorum <8 → no ADVANCE possible, watch-table-only run. **NOTE:** at 10 voting seats the quorum floor of 8 is 80% of the room — one absent seat leaves almost no margin. Re-derive the floor when the roster changes.
 
 **S6.5 · CONSENSUS + SYNTHESIS (tool + compile).** `pma_pipeline.py consensus`: ADVANCE = support>oppose AND support≥2 AND median support conviction ≥3; else support≥2 → HOLD-FOR-CONDITIONS; else PASS. Caps only lower conviction (steenbarger flag→3, support<3→4, non-ADVANCE→3). Compile per-name verdict records: split, strongest opposing case (verbatim, attributed), falsifiers, fundamental line. **Every HOLD-FOR-CONDITIONS gets a mandatory observable condition line** — from a seat's filed promotion condition, else synthesized from the strongest opposing case. No persuasion narration anywhere.
 
@@ -49,9 +49,10 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 ## Voice roster (v4.2 architecture — 2026-08-17 update)
 
-**S4 Nominators (10):**
+**S4 Nominators (8 live, 10 once ruled):**
 - Locked & live: elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff
-- Pending canon ingest: weis, ceponas, kratter (3 momentum specialists to be added on book provision)
+- **Grounded, seating BLOCKED:** weis (23 principles, `aegis/canon/weis/`, 2026-08-17), kratter — both already inside detect-lens (C19-C24, C1-C5). Seating requires the PM to decompose detect-lens first, else `seat_count` double-counts one method.
+- **Not seated:** ceponas — Level 2/tape canon, zero servable premarket fields, ruled NOT_APPLICABLE 2026-08-09.
 
 **S5a Challenge (2):**
 - Rogers (locked)
@@ -61,8 +62,8 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 - Lynch (locked; fundamentals + Round-2 voting seat)
 - Detect-lens (locked; technical lens + Round-2 voting seat)
 
-**S6 Round-2 Voting (12 seats):**
-- 10 nominators from S4 (includes 3 pending)
+**S6 Round-2 Voting (10 today, 12 once ruled):**
+- 8 nominators from S4 (10 once weis/kratter are ruled in)
 - Lynch (voting + fundamentals)
 - Detect-lens (voting + technical lens)
 

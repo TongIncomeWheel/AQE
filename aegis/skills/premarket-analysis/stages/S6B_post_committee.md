@@ -9,14 +9,33 @@ Caps only ever LOWER conviction: steenbarger audit flag → cap 3 · support < 3
 (The prior rule advanced names with more OPPOSE than SUPPORT; caught by the S7Q gate on the 2026-08-17 dry run.)
 
 ## Phase map (nomination → cap), named for plain reference
-PHASE 1 SWARM · 10 nominators (elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff, weis, ceponas, kratter), blind, full 279-name universe, free nomination + conviction 1-5.
+PHASE 1 SWARM · 8 nominators live (elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff), blind,
+  full 279-name universe, free nomination + conviction 1-5. Two more (weis, kratter) are grounded but
+  SEATING-BLOCKED pending the detect-lens decomposition ruling — both already sit inside detect-lens
+  (C19-C24 Weis, C1-C5 Kratter), so seating them un-decomposed makes one method vote twice into
+  seat_count and manufactures 2-seat qualification. ceponas is NOT seated: Level 2/tape canon, zero
+  servable premarket fields (ruled NOT_APPLICABLE 2026-08-09). Target once ruled: 10.
 PHASE 2 TALLY · mechanical count per ticker: seat_count, conviction_sum. No judgment.
 PHASE 3 QUALIFY · mechanical threshold: seat_count>=2 OR solo conviction>=4. No sector/fundamental term.
 PHASE 4 CAP · qualifiers ranked and truncated to `deliberation_cap` (below). This is the ranking step —
   everything that reaches Phase 4 is logged to the rolling ledger (see below) whether or not it survives the cap.
 PHASE 5a CHALLENGE · Rogers + Steenbarger activate ONLY on names that survive the Phase 4 cap.
 PHASE 5b FUNDAMENTALS + LENS · Lynch + Detect-lens activate ONLY on names that survive the Phase 4 cap.
-PHASE 6 ROUND 2/3 DELIBERATION · full obligation register, consensus rule, on the capped set only. 12 seats vote: 10 nominators + Lynch + Detect-lens.
+PHASE 6 ROUND 2/3 DELIBERATION · full obligation register, consensus rule, on the capped set only.
+  10 seats vote today: 8 nominators + Lynch + Detect-lens. 12 once weis/kratter are ruled in.
+  QUORUM NOTE: the standing quorum floor is 8. At 10 voting seats that floor is 80% of the room —
+  a single absent seat leaves almost no margin. Re-derive the floor when the roster changes.
+
+## SEAT INDEPENDENCE (new, 2026-08-17 — the reason weis/kratter are blocked)
+The tally's entire epistemic claim is that seats are INDEPENDENT. `seat_count >= 2` means two
+analysts converged. If two seats carry the SAME author's doctrine, a name they both flag records
+2 seats while representing one method. That manufactures qualification, and it does so
+preferentially on the setups that doctrine is best at — so the corruption concentrates in exactly
+the names most likely to reach the cap. It is not random noise.
+BEFORE SEATING ANY NEW VOICE: diff its canon against every seated canon. Overlapping source
+material must be decomposed (one author, one seat) or the new seat must not be seated.
+Open instance: detect-lens is a FOUR-BOOK composite (Kratter C1-C5, Ceponas C6-C11, Clenow
+C12-C18, Weis C19-C24). Three of those four authors are queued as standalone seats.
 
 ## Phase 4 ranking key (corrected 2026-08-17 — was underspecified, caused an unresolved 3-way tie at cap=12)
 Sort qualifiers descending on, in order:
@@ -30,7 +49,7 @@ This closes the design gap flagged same day: at cap=12, TAK/NWS/LYV tied 2-seats
 no defined tiebreak. Re-run under this key: NWS and LYV rank above TAK on SRM support (Comm Svcs PASS
 vs Healthcare CAUTION) — same outcome as the original run, now traceable rather than arbitrary.
 
-## PHASE 4 · TICKER LEDGER (new — deterministic, 0 spawns, runs every session regardless of publish outcome)
+## PHASE 4 · TICKER LEDGER (deterministic, 0 spawns, runs every session regardless of publish outcome)
 Every session, log the full Phase-4 list (every ticker that reached ranking, cap survivors AND
 cap-dropped alike — the point is repeat *interest*, not repeat *selection*) to a persistent, append-only
 ledger: `data/pma/phase4_ledger.json`, one dated entry per session:
@@ -90,7 +109,8 @@ same as shortlist cards — near-miss status does not exempt a name from the sam
 Three families, all must PASS to publish:
   QUALITY       quorum >= 8 · coverage matrix complete · consensus rule correctly applied ·
                 R1 (zero bracket-gate breaches) · R3 (QS absent from every seat packet;
-                crown_agreement filed) · Phase-4 ranking key fully resolves (no undeclared ties)
+                crown_agreement filed) · Phase-4 ranking key fully resolves (no undeclared ties) ·
+                SEAT INDEPENDENCE (no two seated canons share a source author)
   COMPLETENESS  every card carries all 6 score elements + List/Elder/SRM/Thematic + levels +
                 Committee/Risk/Condition lines · every HOLD-FOR-CONDITIONS carries a condition line ·
                 every ADVANCE carries attributed opposing case + falsifier · near-miss list present ·
