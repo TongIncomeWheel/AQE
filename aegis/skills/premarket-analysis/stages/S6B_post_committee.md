@@ -9,12 +9,9 @@ Caps only ever LOWER conviction: steenbarger audit flag → cap 3 · support < 3
 (The prior rule advanced names with more OPPOSE than SUPPORT; caught by the S7Q gate on the 2026-08-17 dry run.)
 
 ## Phase map (nomination → cap), named for plain reference
-PHASE 1 SWARM · 8 nominators live (elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff), blind,
-  full 279-name universe, free nomination + conviction 1-5. Two more (weis, kratter) are grounded but
-  SEATING-BLOCKED pending the detect-lens decomposition ruling — both already sit inside detect-lens
-  (C19-C24 Weis, C1-C5 Kratter), so seating them un-decomposed makes one method vote twice into
-  seat_count and manufactures 2-seat qualification. ceponas is NOT seated: Level 2/tape canon, zero
-  servable premarket fields (ruled NOT_APPLICABLE 2026-08-09). Target once ruled: 10.
+PHASE 1 SWARM · 9 nominators (elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff,
+  weis), blind, full 279-name universe, free nomination + conviction 1-5. kratter and ceponas join
+  once their books are ingested (target 11).
 PHASE 2 TALLY · mechanical count per ticker: seat_count, conviction_sum. No judgment.
 PHASE 3 QUALIFY · mechanical threshold: seat_count>=2 OR solo conviction>=4. No sector/fundamental term.
 PHASE 4 CAP · qualifiers ranked and truncated to `deliberation_cap` (below). This is the ranking step —
@@ -22,20 +19,28 @@ PHASE 4 CAP · qualifiers ranked and truncated to `deliberation_cap` (below). Th
 PHASE 5a CHALLENGE · Rogers + Steenbarger activate ONLY on names that survive the Phase 4 cap.
 PHASE 5b FUNDAMENTALS + LENS · Lynch + Detect-lens activate ONLY on names that survive the Phase 4 cap.
 PHASE 6 ROUND 2/3 DELIBERATION · full obligation register, consensus rule, on the capped set only.
-  10 seats vote today: 8 nominators + Lynch + Detect-lens. 12 once weis/kratter are ruled in.
-  QUORUM NOTE: the standing quorum floor is 8. At 10 voting seats that floor is 80% of the room —
-  a single absent seat leaves almost no margin. Re-derive the floor when the roster changes.
+  11 seats vote: 9 nominators + Lynch + Detect-lens.
+  QUORUM NOTE: the standing floor is 8, leaving 3 seats of margin at 11. Re-derive on roster change.
 
-## SEAT INDEPENDENCE (new, 2026-08-17 — the reason weis/kratter are blocked)
-The tally's entire epistemic claim is that seats are INDEPENDENT. `seat_count >= 2` means two
-analysts converged. If two seats carry the SAME author's doctrine, a name they both flag records
-2 seats while representing one method. That manufactures qualification, and it does so
-preferentially on the setups that doctrine is best at — so the corruption concentrates in exactly
-the names most likely to reach the cap. It is not random noise.
-BEFORE SEATING ANY NEW VOICE: diff its canon against every seated canon. Overlapping source
-material must be decomposed (one author, one seat) or the new seat must not be seated.
-Open instance: detect-lens is a FOUR-BOOK composite (Kratter C1-C5, Ceponas C6-C11, Clenow
-C12-C18, Weis C19-C24). Three of those four authors are queued as standalone seats.
+## SEAT INDEPENDENCE (standing check, 2026-08-17 — no open instance)
+The tally's epistemic claim is that seats are INDEPENDENT. `seat_count >= 2` means two analysts
+converged. If two seats carried the SAME author's doctrine, a name they both flag would record
+2 seats while representing one method — manufacturing qualification, concentrated on the setups
+that doctrine is best at rather than spread randomly.
+BEFORE SEATING ANY NEW VOICE: diff its canon sources against every seated canon's sources.
+CHECK AGAINST `canon.lock.yaml` FILES ONLY — the signed, deployed artifacts — never against
+project prose, which may describe superseded designs.
+
+### Correction note (2026-08-17) — a wrong finding, recorded rather than deleted
+A blocking collision was asserted between `weis` and `detect-lens` based on the project doc
+`canon_detect_lens_24_principles_2026-08-10.md`, which described detect-lens as a four-book
+composite carrying Weis as C19-C24. That document was a PROPOSAL — it states on its own face
+"PENDING YOUR SIGN-OFF. Nothing here is locked" — and was never deployed. The DEPLOYED lock,
+`aegis/canon/detect-lens/canon.lock.yaml` (pm_signed: Ash), was rebuilt CODE-FIRST on 2026-08-11:
+its sources are `src/engines/*.py` + the AQE field dictionary, 33 principles, cited by file+line.
+It reads NO BOOKS — "the only non-human seat -- its canon is running code, not a book."
+There is no overlap. The PM's ruling that weis and detect-lens are complementary stands: detect-lens
+reports what the engine computed; weis interprets what the tape did.
 
 ## Phase 4 ranking key (corrected 2026-08-17 — was underspecified, caused an unresolved 3-way tie at cap=12)
 Sort qualifiers descending on, in order:
@@ -49,7 +54,7 @@ This closes the design gap flagged same day: at cap=12, TAK/NWS/LYV tied 2-seats
 no defined tiebreak. Re-run under this key: NWS and LYV rank above TAK on SRM support (Comm Svcs PASS
 vs Healthcare CAUTION) — same outcome as the original run, now traceable rather than arbitrary.
 
-## PHASE 4 · TICKER LEDGER (deterministic, 0 spawns, runs every session regardless of publish outcome)
+## PHASE 4 · TICKER LEDGER (new — deterministic, 0 spawns, runs every session regardless of publish outcome)
 Every session, log the full Phase-4 list (every ticker that reached ranking, cap survivors AND
 cap-dropped alike — the point is repeat *interest*, not repeat *selection*) to a persistent, append-only
 ledger: `data/pma/phase4_ledger.json`, one dated entry per session:
@@ -110,7 +115,8 @@ Three families, all must PASS to publish:
   QUALITY       quorum >= 8 · coverage matrix complete · consensus rule correctly applied ·
                 R1 (zero bracket-gate breaches) · R3 (QS absent from every seat packet;
                 crown_agreement filed) · Phase-4 ranking key fully resolves (no undeclared ties) ·
-                SEAT INDEPENDENCE (no two seated canons share a source author)
+                SEAT INDEPENDENCE (no two canon.lock.yaml files share a source) ·
+                FIELD SERVICE (packets receipt missing_menu_fields is empty, else DEGRADED declared)
   COMPLETENESS  every card carries all 6 score elements + List/Elder/SRM/Thematic + levels +
                 Committee/Risk/Condition lines · every HOLD-FOR-CONDITIONS carries a condition line ·
                 every ADVANCE carries attributed opposing case + falsifier · near-miss list present ·
