@@ -1,13 +1,13 @@
 {
  "_source": "AQE live export + src/engines/*.py (D-24 spec). One place; AQE conforms to this.",
  "_conventions": {
-  "_convention": "LONG setups: STOPS are BELOW entry, TARGETS are ABOVE entry. Values are absolute USD prices unless the name ends in _rr/_ratio/_pct/_ann (ratios) or is a list/object. 'rr'/'r' = reward-to-risk in R, where 1R = bracket.risk (= price − bracket.stop, the structural risk unit).",
-  "_decision_framework": "AQE reads the trade lifecycle in three distinct stages — do NOT conflate them; each answers a different question, so there is no 'picking at random': (1) DETECT — is a move brewing? = Signal Radar (runner_setup = a name already moving with another leg; premove_setup = a pre-move, ~12-day lead). These are DETECTION tags, not entries. (2) ENTER — is it time to buy, and where? = the bracket (stop/targets/R:R) + the live alert engine (buy-zone / breakout / near-stop levels). The PM/AIC pulls the trigger here. (3) HOLD — should an OPEN position stay on? = Health (hl_score/hl_state, on held_positions ONLY): HOLD_ADD / HOLD / TIGHTEN / EXIT on trend integrity. Readiness (the old rd_* entry-timing composite) is intentionally NOT in this feed — it overlapped premove_setup + the alert levels, so DETECT and ENTER already cover entry timing. AQE makes NO decision at any stage; it supplies the data and levels, the AIC decides."
+  "_convention": "LONG setups: STOPS are BELOW entry, TARGETS are ABOVE entry. Values are absolute USD prices unless the name ends in _rr/_ratio/_pct/_ann (ratios) or is a list/object. 'rr'/'r' = reward-to-risk in R, where 1R = bracket.risk (= price \\u2212 bracket.stop, the structural risk unit).",
+  "_decision_framework": "AQE reads the trade lifecycle in three distinct stages \\u2014 do NOT conflate them; each answers a different question, so there is no 'picking at random': (1) DETECT \\u2014 is a move brewing? = Signal Radar (runner_setup = a name already moving with another leg; premove_setup = a pre-move, ~12-day lead). These are DETECTION tags, not entries. (2) ENTER \\u2014 is it time to buy, and where? = the bracket (stop/targets/R:R) + the live alert engine (buy-zone / breakout / near-stop levels). The PM/AIC pulls the trigger here. (3) HOLD \\u2014 should an OPEN position stay on? = Health (hl_score/hl_state, on held_positions ONLY): HOLD_ADD / HOLD / TIGHTEN / EXIT on trend integrity. Readiness (the old rd_* entry-timing composite) is intentionally NOT in this feed \\u2014 it overlapped premove_setup + the alert levels, so DETECT and ENTER already cover entry timing. AQE makes NO decision at any stage; it supplies the data and levels, the AIC decides."
  },
  "fields": {
   "atr_14d": {
    "definition": "14-day Average True Range in USD (the volatility unit).",
-   "method": "14-day Average True Range (USD) — volatility unit.",
+   "method": "14-day Average True Range (USD) \\u2014 volatility unit.",
    "type": "float",
    "enum": null,
    "glossary_gap": false,
@@ -33,7 +33,7 @@
    "undocumented": false
   },
   "beta_30d": {
-   "definition": "30-day beta vs SPY — the portfolio-gate window (D-6).",
+   "definition": "30-day beta vs SPY \\u2014 the portfolio-gate window (D-6).",
    "method": "30-day beta vs SPY (the gate window, D-6).",
    "type": "float",
    "enum": null,
@@ -42,8 +42,8 @@
    "undocumented": false
   },
   "bracket": {
-   "definition": "THE bracket — the single source of truth for stop + targets (mechanical DSL/TP is retired). A nested object: {price, price_source (eod_close on the daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib that the stop sits on), stop_atr_dist (risk in ATRs — read this, not raw USD), risk (=price−stop, the R unit to size against), risk_pct, targets[{type,tp (TP1/2/3),price,r,atr_dist}] (structural resistance/MA/fib ABOVE price, nearest-first — TAKE PROFIT against these), rr (R:R to the structural TP2), rr_tp1/rr_tp2/rr_tp3 (R:R to each of the first three targets), atr_fallback_stop (= 1×ATR below price — the reference stop when valid=false, i.e. no structural level exists today), valid, invalid_reason}. PM RULING R1 (2026-08-14): THE BRACKET IS NEVER A GATE. It is PRE-ENTRY information the PM reviews via the bracket skill, which the PM activates. valid=false means only that the engine found no structural level at today's close — report it as context if read, and NEVER let it block, veto, downgrade, filter or discourage a nomination, a shortlist place, or a deliberation verdict. Analysis of the NAME and analysis of the ENTRY are separate steps; the PM owns the entry step. STOP is below price, TARGETS above; R and ATR distances are relative, not absolute noise. VOLUME VALIDATION: dated levels carry vol_ratio (pivot-bar volume / trailing 20-bar avg) + vol_validated (ratio ≥ 1.2) — a level DEFENDED on high volume is a stronger level; the stop's own read is stop_date + stop_vol_ratio + stop_vol_validated (present when the stop is swing-based). Data only, at every stage of the committee.",
-   "method": "bracket_engine.py: structural single-source bracket (stop/targets), volume-validated. valid=false = no structural level found — information for the PM's bracket-skill review, never a gate (PM ruling R1, 2026-08-14).",
+   "definition": "THE bracket \\u2014 the single source of truth for stop + targets (mechanical DSL/TP is retired). A nested object: {price, price_source (eod_close on the daily run / live_15min on a live pull), stop, stop_type (swing_low/ma/fib that the stop sits on), stop_atr_dist (risk in ATRs \\u2014 read this, not raw USD), risk (=price\\u2212stop, the R unit to size against), risk_pct, targets[{type,tp (TP1/2/3),price,r,atr_dist}] (structural resistance/MA/fib ABOVE price, nearest-first \\u2014 TAKE PROFIT against these), rr (R:R to the structural TP2), rr_tp1/rr_tp2/rr_tp3 (R:R to each of the first three targets), atr_fallback_stop (= 1\\u00d7ATR below price \\u2014 the reference stop when valid=false, i.e. no structural level exists today), valid, invalid_reason}. PM RULING R1 (2026-08-14): THE BRACKET IS NEVER A GATE. It is PRE-ENTRY information the PM reviews via the bracket skill, which the PM activates. valid=false means only that the engine found no structural level at today's close \\u2014 report it as context if read, and NEVER let it block, veto, downgrade, filter or discourage a nomination, a shortlist place, or a deliberation verdict. Analysis of the NAME and analysis of the ENTRY are separate steps; the PM owns the entry step. STOP is below price, TARGETS above; R and ATR distances are relative, not absolute noise. VOLUME VALIDATION: dated levels carry vol_ratio (pivot-bar volume / trailing 20-bar avg) + vol_validated (ratio \\u2265 1.2) \\u2014 a level DEFENDED on high volume is a stronger level; the stop's own read is stop_date + stop_vol_ratio + stop_vol_validated (present when the stop is swing-based). Data only, at every stage of the committee.",
+   "method": "bracket_engine.py: structural single-source bracket (stop/targets), volume-validated. valid=false = no structural level found \\u2014 information for the PM's bracket-skill review, never a gate (PM ruling R1, 2026-08-14).",
    "type": "dict",
    "enum": null,
    "glossary_gap": false,
@@ -100,7 +100,7 @@
    "undocumented": false
   },
   "div_oscs": {
-   "definition": "Which oscillators fired, comma-joined — bullish names bare, bearish names prefixed '-' (e.g. 'rsi,mfi,-obv'). Null when none.",
+   "definition": "Which oscillators fired, comma-joined \\u2014 bullish names bare, bearish names prefixed '-' (e.g. 'rsi,mfi,-obv'). Null when none.",
    "method": "",
    "type": "NoneType",
    "enum": null,
@@ -109,7 +109,7 @@
    "undocumented": false
   },
   "div_state": {
-   "definition": "Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a lower pivot low while ≥1 oscillator made a higher low (downmove losing internal energy); BEARISH mirror on highs; MIXED = both; NONE. Oscillators tested: RSI, MFI, CMF, MACD, OBV — all AQE-computed. Context only, never a gate.",
+   "definition": "Regular price-vs-oscillator DIVERGENCE at the last close (non-repainting: confirmed pivots only, freshness-gated ~10 bars): BULLISH = price made a lower pivot low while \\u22651 oscillator made a higher low (downmove losing internal energy); BEARISH mirror on highs; MIXED = both; NONE. Oscillators tested: RSI, MFI, CMF, MACD, OBV \\u2014 all AQE-computed. Context only, never a gate.",
    "method": "divergence.py: regular divergence price vs 5 oscillators at confirmed pivots.",
    "type": "str",
    "enum": [
@@ -184,7 +184,7 @@
   },
   "fib_236": {
    "definition": "23.6% Fibonacci retracement of swing_low->swing_high (USD).",
-   "method": "23.6% Fibonacci retracement of swing_low→swing_high.",
+   "method": "23.6% Fibonacci retracement of swing_low\\u2192swing_high.",
    "type": "float",
    "enum": null,
    "glossary_gap": false,
@@ -246,7 +246,7 @@
    "undocumented": false
   },
   "fip_spike_excluded": {
-   "definition": "UNDOCUMENTED — AQE owner to define (FIP spike-exclusion flag; confirm semantics).",
+   "definition": "UNDOCUMENTED \\u2014 AQE owner to define (FIP spike-exclusion flag; confirm semantics).",
    "method": "",
    "type": "bool",
    "enum": null,
@@ -255,7 +255,7 @@
    "undocumented": true
   },
   "fip_window_effective": {
-   "definition": "UNDOCUMENTED — AQE owner to define (effective FIP window; confirm semantics).",
+   "definition": "UNDOCUMENTED \\u2014 AQE owner to define (effective FIP window; confirm semantics).",
    "method": "",
    "type": "int",
    "enum": null,
@@ -264,7 +264,7 @@
    "undocumented": true
   },
   "floor": {
-   "definition": "UNDOCUMENTED — AQE owner to define (meaning not recoverable from code comments).",
+   "definition": "UNDOCUMENTED \\u2014 AQE owner to define (meaning not recoverable from code comments).",
    "method": "",
    "type": "float",
    "enum": null,
@@ -332,7 +332,7 @@
    "undocumented": false
   },
   "inside_bar": {
-   "definition": "True if the LAST bar's range is fully inside the PRIOR bar's range (high < prev_high AND low > prev_low) — a one-bar consolidation pause.",
+   "definition": "True if the LAST bar's range is fully inside the PRIOR bar's range (high < prev_high AND low > prev_low) \\u2014 a one-bar consolidation pause.",
    "method": "",
    "type": "bool",
    "enum": null,
@@ -350,8 +350,8 @@
    "undocumented": false
   },
   "knn_prob": {
-   "definition": "K-NEAREST-NEIGHBORS directional probability (0-1) for the current CHoCH: the win-rate of the K most similar HISTORICAL CHoCH events on this SAME ticker (matched on 3 features — volume-delta, ATR-normalised displacement, velocity — via Euclidean distance), where 'win' = the move's max favorable excursion exceeded its max adverse excursion within a fixed lookahead. This IS genuine instance-based learning (a real kNN), not a black box — but it's simple (3 hand-picked features, no training beyond the ticker's own history) and should be read as one more context signal, not a probability of profit. Null when there's no CHoCH or too few historical analogs to query.",
-   "method": "smart_money_knn.py: kNN over ticker's own CHoCH history → directional probability.",
+   "definition": "K-NEAREST-NEIGHBORS directional probability (0-1) for the current CHoCH: the win-rate of the K most similar HISTORICAL CHoCH events on this SAME ticker (matched on 3 features \\u2014 volume-delta, ATR-normalised displacement, velocity \\u2014 via Euclidean distance), where 'win' = the move's max favorable excursion exceeded its max adverse excursion within a fixed lookahead. This IS genuine instance-based learning (a real kNN), not a black box \\u2014 but it's simple (3 hand-picked features, no training beyond the ticker's own history) and should be read as one more context signal, not a probability of profit. Null when there's no CHoCH or too few historical analogs to query.",
+   "method": "smart_money_knn.py: kNN over ticker's own CHoCH history \\u2192 directional probability.",
    "type": "float",
    "enum": null,
    "glossary_gap": false,
@@ -359,7 +359,7 @@
    "undocumented": false
   },
   "knn_threshold_clear": {
-   "definition": "True iff knn_prob clears a fixed threshold in either direction (≥60% or ≤40% by default). CAVEAT (AIC Charter Amendment v2.8, 2026-07-15 ruling): this is a plain threshold check on a SMALL neighbor count (k=5 by default), NOT a statistical significance test — at k=5, 3-of-5 agreeing clears the 60% bar trivially, including by chance. Carries no p-value or confidence-interval semantics. Read as 'the threshold was crossed', not 'the analogs meaningfully agree'.",
+   "definition": "True iff knn_prob clears a fixed threshold in either direction (\\u226560% or \\u226440% by default). CAVEAT (AIC Charter Amendment v2.8, 2026-07-15 ruling): this is a plain threshold check on a SMALL neighbor count (k=5 by default), NOT a statistical significance test \\u2014 at k=5, 3-of-5 agreeing clears the 60% bar trivially, including by chance. Carries no p-value or confidence-interval semantics. Read as 'the threshold was crossed', not 'the analogs meaningfully agree'.",
    "method": "smart_money_knn.py: threshold flag (NOT a significance test).",
    "type": "bool",
    "enum": null,
@@ -368,7 +368,7 @@
    "undocumented": false
   },
   "knn_tp1": {
-   "definition": "Nearest kNN-implied target (USD): current price ± half the neighbors' mean favorable excursion, signed by the CHoCH direction. A statistical projection from historical analogs, NOT a structural level — read alongside bracket.targets, never in place of them.",
+   "definition": "Nearest kNN-implied target (USD): current price \\u00b1 half the neighbors' mean favorable excursion, signed by the CHoCH direction. A statistical projection from historical analogs, NOT a structural level \\u2014 read alongside bracket.targets, never in place of them.",
    "method": "",
    "type": "float",
    "enum": null,
@@ -377,7 +377,7 @@
    "undocumented": false
   },
   "knn_tp2": {
-   "definition": "Mid kNN-implied target: current price ± the neighbors' MEDIAN favorable excursion, signed by direction.",
+   "definition": "Mid kNN-implied target: current price \\u00b1 the neighbors' MEDIAN favorable excursion, signed by direction.",
    "method": "",
    "type": "float",
    "enum": null,
@@ -386,7 +386,7 @@
    "undocumented": false
   },
   "knn_tp3": {
-   "definition": "Far kNN-implied target: current price ± the neighbors' 75th-percentile favorable excursion, signed by direction.",
+   "definition": "Far kNN-implied target: current price \\u00b1 the neighbors' 75th-percentile favorable excursion, signed by direction.",
    "method": "",
    "type": "float",
    "enum": null,
@@ -395,7 +395,7 @@
    "undocumented": false
   },
   "lens": {
-   "definition": "Per-lens read: strong/ok/warn/-- for leadership, coil, insti_money, structure, resistance, sector. `extension` is ALWAYS null — the voices disagree on what extension means, so AQE prints the numbers (subcomponents.flow.ext_score, energy.en_pos50/exhaustion_score/atr_score) and makes no call. Every verdict comes from a label AQE already computes, or from top/bottom-third position in TODAY's list. No fitted thresholds anywhere. '--' = no data; absence is never agreement.",
+   "definition": "Per-lens read: strong/ok/warn/-- for leadership, coil, insti_money, structure, resistance, sector. `extension` is ALWAYS null \\u2014 the voices disagree on what extension means, so AQE prints the numbers (subcomponents.flow.ext_score, energy.en_pos50/exhaustion_score/atr_score) and makes no call. Every verdict comes from a label AQE already computes, or from top/bottom-third position in TODAY's list. No fitted thresholds anywhere. '--' = no data; absence is never agreement.",
    "method": "lens_consensus.py + per-lens checks: {leadership,coil,insti_money,structure,resistance,extension,sector}.",
    "type": "dict",
    "enum": null,
@@ -404,7 +404,7 @@
    "undocumented": false
   },
   "lens_positive": {
-   "definition": "Count of lenses reading `strong` (0-6). UNWEIGHTED — no weighting was ever earned. Sort on it to tier the read; it is a READING AID, not a prediction, and whether 5-of-6 beats 2-of-6 is untested. Never a gate: nothing is eliminated, every name keeps its full block.",
+   "definition": "Count of lenses reading `strong` (0-6). UNWEIGHTED \\u2014 no weighting was ever earned. Sort on it to tier the read; it is a READING AID, not a prediction, and whether 5-of-6 beats 2-of-6 is untested. Never a gate: nothing is eliminated, every name keeps its full block.",
    "method": "lens_consensus.py: count of lenses reading positive.",
    "type": "int",
    "enum": null,
@@ -458,7 +458,7 @@
    "undocumented": false
   },
   "malformed_bracket": {
-   "definition": "True if the structural stop sits within 0.5% of price (bracket unusable — stop virtually at entry).",
+   "definition": "True if the structural stop sits within 0.5% of price (bracket unusable \\u2014 stop virtually at entry).",
    "method": "",
    "type": "bool",
    "enum": null,
@@ -467,7 +467,7 @@
    "undocumented": false
   },
   "mover_subtype": {
-   "definition": "DETECTION sub-type label (explosive / trend / tight_base / squeeze) — the family whose z-score profile the name matches best (M16c). Context only; not a gate.",
+   "definition": "DETECTION sub-type label (explosive / trend / tight_base / squeeze) \\u2014 the family whose z-score profile the name matches best (M16c). Context only; not a gate.",
    "method": "mover classification subtype.",
    "type": "str",
    "enum": null,
@@ -485,8 +485,8 @@
    "undocumented": false
   },
   "mp_accel": {
-   "definition": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is building; negative = rolling over. Flags inflection BEFORE the level/mp_state confirms — read alongside mp_state (which is a knife-edge when the score plateaus). Additive diagnostic, not part of the Pine spec.",
-   "method": "mp.py: 2nd derivative — 5-bar change of MP roc z-score.",
+   "definition": "Momentum ACCELERATION (2nd derivative): 5-bar change of the MP momentum z-score (roc_zscore), smoothed 3 bars. Positive = momentum itself is building; negative = rolling over. Flags inflection BEFORE the level/mp_state confirms \\u2014 read alongside mp_state (which is a knife-edge when the score plateaus). Additive diagnostic, not part of the Pine spec.",
+   "method": "mp.py: 2nd derivative \\u2014 5-bar change of MP roc z-score.",
    "type": "float",
    "enum": null,
    "glossary_gap": false,
@@ -494,7 +494,7 @@
    "undocumented": false
   },
   "mp_accel_state": {
-   "definition": "Label for mp_accel with a ±0.10 dead-zone: ACCELERATING / DECELERATING / FLAT.",
+   "definition": "Label for mp_accel with a \\u00b10.10 dead-zone: ACCELERATING / DECELERATING / FLAT.",
    "method": "mp.py: label over mp_accel {ACCELERATING/DECELERATING/...}.",
    "type": "str",
    "enum": [
@@ -538,7 +538,7 @@
    "undocumented": false
   },
   "pib_pattern": {
-   "definition": "True if the SECOND-TO-LAST bar was a pin bar AND the last bar is an inside bar relative to it — the 'rejection, then pause' combo pattern. Independent of pin_bar_state (which only reads the LAST bar itself).",
+   "definition": "True if the SECOND-TO-LAST bar was a pin bar AND the last bar is an inside bar relative to it \\u2014 the 'rejection, then pause' combo pattern. Independent of pin_bar_state (which only reads the LAST bar itself).",
    "method": "",
    "type": "bool",
    "enum": null,
@@ -565,7 +565,7 @@
    "undocumented": false
   },
   "pin_bar_state": {
-   "definition": "Candlestick REJECTION pattern on the LAST closed bar (pure geometry, no lookahead): BULLISH_PIN = long lower wick (≥66% of range) + small body (≤40%) + small upper wick (≤40%) — the market pushed down and got rejected; BEARISH_PIN mirrors it (long upper wick). NONE = no pattern. Filtered so the bar's range must be ≥2× the prior bar's range (rejects 'pin bars' that are just noise inside an already-tiny range).",
+   "definition": "Candlestick REJECTION pattern on the LAST closed bar (pure geometry, no lookahead): BULLISH_PIN = long lower wick (\\u226566% of range) + small body (\\u226440%) + small upper wick (\\u226440%) \\u2014 the market pushed down and got rejected; BEARISH_PIN mirrors it (long upper wick). NONE = no pattern. Filtered so the bar's range must be \\u22652\\u00d7 the prior bar's range (rejects 'pin bars' that are just noise inside an already-tiny range).",
    "method": "pin_bar.py: pin/inside-bar candlestick geometry on last bar.",
    "type": "str",
    "enum": [
@@ -605,7 +605,7 @@
    "undocumented": false
   },
   "premove_setup": {
-   "definition": "DETECTION tag (bool): name is QUIET now but coiled to launch — very young base + squeeze on + well below the recent high (M18 rule, applies only to quiet-pond names). Historical launches came a median ~12 trading days after the tag — a pre-move radar, not a same-day trigger. NOT a gate, NOT sizing; % elsewhere = detection rate, not win rate.",
+   "definition": "DETECTION tag (bool): name is QUIET now but coiled to launch \\u2014 very young base + squeeze on + well below the recent high (M18 rule, applies only to quiet-pond names). Historical launches came a median ~12 trading days after the tag \\u2014 a pre-move radar, not a same-day trigger. NOT a gate, NOT sizing; % elsewhere = detection rate, not win rate.",
    "method": "signal_radar.py: %-radar pre-move tag (about to run).",
    "type": "bool",
    "enum": null,
@@ -614,7 +614,7 @@
    "undocumented": false
   },
   "ptrs": {
-   "definition": "= SC_MOMENTUM verbatim (PM ruling: the Sector-Health adjustment is DROPPED — sector context is read separately and qualitatively via `srm`/RRG, not double-counted into a per-ticker score). Disposition/sizing is the committee's call — AQE exports no sizing.",
+   "definition": "= SC_MOMENTUM verbatim (PM ruling: the Sector-Health adjustment is DROPPED \\u2014 sector context is read separately and qualitatively via `srm`/RRG, not double-counted into a per-ticker score). Disposition/sizing is the committee's call \\u2014 AQE exports no sizing.",
    "method": "",
    "type": "float",
    "enum": null,
@@ -641,7 +641,7 @@
    "undocumented": false
   },
   "rs_leadership": {
-   "definition": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, LAGGARD (<−0.25).",
+   "definition": "Classification from rs_down_day_20d: LEADER (>+0.25), IN-LINE, LAGGARD (<\\u22120.25).",
    "method": "relative-strength leadership label.",
    "type": "str",
    "enum": [
@@ -681,7 +681,7 @@
    "undocumented": false
   },
   "runner_setup": {
-   "definition": "DETECTION tag (bool): name is already moving with another leg — short young base + strong 5-day thrust + clear overhead (M15 rule). NOT a gate, NOT sizing; the PM decides entry/bracket/size live. Any % reported for this tag elsewhere is a DETECTION RATE (how often tagged names historically touched a level, price-path only) — never a win rate.",
+   "definition": "DETECTION tag (bool): name is already moving with another leg \\u2014 short young base + strong 5-day thrust + clear overhead (M15 rule). NOT a gate, NOT sizing; the PM decides entry/bracket/size live. Any % reported for this tag elsewhere is a DETECTION RATE (how often tagged names historically touched a level, price-path only) \\u2014 never a win rate.",
    "method": "signal_radar.py: %-radar continuation tag (will keep running).",
    "type": "bool",
    "enum": null,
@@ -699,7 +699,7 @@
    "undocumented": false
   },
   "sc_m_gate_detail": {
-   "definition": "Per-engine SC_MOMENTUM gate pass/fail (dict): {flow, energy, structure, mp, elder} each True/False vs the SC_M_GATES threshold — so you read WHICH check a name is failing without recomputing. false = that engine is below its floor.",
+   "definition": "Per-engine SC_MOMENTUM gate pass/fail (dict): {flow, energy, structure, mp, elder} each True/False vs the SC_M_GATES threshold \\u2014 so you read WHICH check a name is failing without recomputing. false = that engine is below its floor.",
    "method": "scoring.py: per-engine SC_MOMENTUM gate pass/fail.",
    "type": "dict",
    "enum": null,
@@ -708,7 +708,7 @@
    "undocumented": false
   },
   "sc_m_gates": {
-   "definition": "SC_MOMENTUM qualification gate (bool): True iff EVERY engine floor passes — Flow≥60, Energy≥60, Structure≥55, MP≥55, Elder≥6.5 (Pine SC_M_GATES). It does NOT cap the score (composite is uncapped); it flags whether the momentum read is fully gated. See sc_m_gate_detail for which specific check fails.",
+   "definition": "SC_MOMENTUM qualification gate (bool): True iff EVERY engine floor passes \\u2014 Flow\\u226560, Energy\\u226560, Structure\\u226555, MP\\u226555, Elder\\u22656.5 (Pine SC_M_GATES). It does NOT cap the score (composite is uncapped); it flags whether the momentum read is fully gated. See sc_m_gate_detail for which specific check fails.",
    "method": "scoring.py: overall SC_MOMENTUM gate flag.",
    "type": "bool",
    "enum": null,
@@ -744,7 +744,7 @@
    "undocumented": false
   },
   "sc_p_gates": {
-   "definition": "SC_POSITION qualification gate (bool): True iff every engine floor passes — Flow≥40, Energy≥60, Structure≥65, MP≥40, BQ≥60 (Pine SC_P_GATES) AND the K39 weekly gate. Does NOT cap the score. See sc_p_gate_detail for the breakdown.",
+   "definition": "SC_POSITION qualification gate (bool): True iff every engine floor passes \\u2014 Flow\\u226540, Energy\\u226560, Structure\\u226565, MP\\u226540, BQ\\u226560 (Pine SC_P_GATES) AND the K39 weekly gate. Does NOT cap the score. See sc_p_gate_detail for the breakdown.",
    "method": "scoring.py: overall SC_POSITION gate flag.",
    "type": "bool",
    "enum": null,
@@ -780,21 +780,21 @@
    "undocumented": false
   },
   "sector_trend_state": {
-   "definition": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum Building — Add' / 'Momentum Fading — Hold' / 'Recovering' / 'Declining'). Context; the gate is gics_gate, unchanged.",
-   "method": "srm.py: sector ETF grade DEPLOY/HOLD/TURNING/WATCH/AVOID → SH.",
+   "definition": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum Building \\u2014 Add' / 'Momentum Fading \\u2014 Hold' / 'Recovering' / 'Declining'). Context; the gate is gics_gate, unchanged.",
+   "method": "srm.py: sector ETF grade DEPLOY/HOLD/TURNING/WATCH/AVOID \\u2192 SH.",
    "type": "str",
    "enum": [
-    "Declining — Avoid",
-    "Momentum Fading — Hold, Don't Add",
-    "Recovering From Weakness — Watch for Entry",
-    "Leading — Deploy"
+    "Declining \\u2014 Avoid",
+    "Momentum Fading \\u2014 Hold, Don't Add",
+    "Recovering From Weakness \\u2014 Watch for Entry",
+    "Leading \\u2014 Deploy"
    ],
    "glossary_gap": false,
    "method_gap": false,
    "undocumented": false
   },
   "sma_distance_pct": {
-   "definition": "Percent distance of price from its SMA — extension (large + = extended, ~0 = at support).",
+   "definition": "Percent distance of price from its SMA \\u2014 extension (large + = extended, ~0 = at support).",
    "method": "% distance of price from SMA (extension).",
    "type": "float",
    "enum": null,
@@ -821,7 +821,7 @@
    "undocumented": false
   },
   "structure_shift": {
-   "definition": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED pivot high (break of structure — trend continuation/ignition); BEARISH_CHOCH = close broke BELOW the up-swing's anchor low (character change — the up-structure failed); RANGE = inside the swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling FIX_CONFIRMED_PIVOT: the bullish test previously compared against the current swing's window-max high, which always includes today's own bar — making BULLISH_BOS mathematically unreachable. Now compares against the nearest confirmed pivot high instead.)",
+   "definition": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a gate): BULLISH_BOS = COB close broke ABOVE the nearest CONFIRMED pivot high (break of structure \\u2014 trend continuation/ignition); BEARISH_CHOCH = close broke BELOW the up-swing's anchor low (character change \\u2014 the up-structure failed); RANGE = inside the swing. Null when no swing is detected. (Fixed 2026-07-16, AIC ruling FIX_CONFIRMED_PIVOT: the bullish test previously compared against the current swing's window-max high, which always includes today's own bar \\u2014 making BULLISH_BOS mathematically unreachable. Now compares against the nearest confirmed pivot high instead.)",
    "method": "structure/smart_money: BOS/CHoCH vs confirmed anchors (data only).",
    "type": "str",
    "enum": [
@@ -843,7 +843,7 @@
    "undocumented": false
   },
   "subcomponents": {
-   "definition": "The engine SUB-SCORES behind each headline read — nested by engine, so the AIC sees WHY an engine scored what it did (context, never a gate). flow: {flow_score (MFI+CMF+HA core), accum_score, volume_score, skew_score, ext_score (extension penalty), mfi, cmf, ha_quality_count}. energy: {vp_position_score (volume-profile position), price_action_score, squeeze_score (BB/KC squeeze — the TTM-squeeze read), exhaustion_score, atr_score, en_pos50, en_trend_bars}. structure: {rs_spy_score, rs_accel_score, base_score, ms_pos_score (market structure), resist_score (overhead), wk_score (weekly trend = HTF bias), earn_score, rs_vs_spy (raw), rs_accel (raw), base_days, bd_mode}. mp: {abs_mom_score, mp_adx_score, rel_mom_score, trend_score, roc_zscore (momentum z), excess_return (vs SPY %), adx_val, di_bullish}. bq: {bq_range_tight, bq_vol_dry, bq_base_dur, bq_ema_conv, bq_base_days}. pipe: {pr_ret_12m, pr_adx_score, pr_rsi_score, pr_vol_score, pr_ma_score (MA-stack alignment), momentum_composite, pipe_tier}. Readiness sub-scores are intentionally NOT here (hidden per the decision-framework ruling) and Health sub-scores stay held-only/dropped.",
+   "definition": "The engine SUB-SCORES behind each headline read \\u2014 nested by engine, so the AIC sees WHY an engine scored what it did (context, never a gate). flow: {flow_score (MFI+CMF+HA core), accum_score, volume_score, skew_score, ext_score (extension penalty), mfi, cmf, ha_quality_count}. energy: {vp_position_score (volume-profile position), price_action_score, squeeze_score (BB/KC squeeze \\u2014 the TTM-squeeze read), exhaustion_score, atr_score, en_pos50, en_trend_bars}. structure: {rs_spy_score, rs_accel_score, base_score, ms_pos_score (market structure), resist_score (overhead), wk_score (weekly trend = HTF bias), earn_score, rs_vs_spy (raw), rs_accel (raw), base_days, bd_mode}. mp: {abs_mom_score, mp_adx_score, rel_mom_score, trend_score, roc_zscore (momentum z), excess_return (vs SPY %), adx_val, di_bullish}. bq: {bq_range_tight, bq_vol_dry, bq_base_dur, bq_ema_conv, bq_base_days}. pipe: {pr_ret_12m, pr_adx_score, pr_rsi_score, pr_vol_score, pr_ma_score (MA-stack alignment), momentum_composite, pipe_tier}. Readiness sub-scores are intentionally NOT here (hidden per the decision-framework ruling) and Health sub-scores stay held-only/dropped.",
    "method": "",
    "type": "dict",
    "enum": null,
@@ -945,7 +945,7 @@
    "undocumented": false
   },
   "vol_30d_ann": {
-   "definition": "30-day annualised realised volatility (decimal: 0.18 = 18%). This IS the Charter §4.5 operative sizing vol (the charter calls it 'vol_30d'; AQE's field is annualised — same number). Forsizing/VaR, not a target.",
+   "definition": "30-day annualised realised volatility (decimal: 0.18 = 18%). This IS the Charter \\u00a74.5 operative sizing vol (the charter calls it 'vol_30d'; AQE's field is annualised \\u2014 same number). Forsizing/VaR, not a target.",
    "method": "30-day annualised volatility (decimal fraction).",
    "type": "float",
    "enum": null,
@@ -954,7 +954,7 @@
    "undocumented": false
   },
   "bq": {
-   "definition": "Base-quality engine — measures how tight and mature a consolidation is (bq.py).",
+   "definition": "Base-quality engine \\u2014 measures how tight and mature a consolidation is (bq.py).",
    "method": "bq.py: composites base duration, range tightness, volatility dry-up and EMA convergence into a base-quality read.",
    "type": "float",
    "enum": null,
@@ -963,7 +963,7 @@
    "undocumented": false
   },
   "bq.bq_base_dur": {
-   "definition": "Base duration in days — how long the current consolidation/base has held (longer, tighter bases are higher quality; feeds the tight_base quality flag).",
+   "definition": "Base duration in days \\u2014 how long the current consolidation/base has held (longer, tighter bases are higher quality; feeds the tight_base quality flag).",
    "method": "bq.py: count of bars in the identified base window.",
    "type": "int",
    "enum": null,
@@ -972,7 +972,7 @@
    "undocumented": false
   },
   "bq.bq_range_tight": {
-   "definition": "Range-tightness score of the base — higher = tighter price range within the base (volatility contraction; paired with base duration for the tight_base flag).",
+   "definition": "Range-tightness score of the base \\u2014 higher = tighter price range within the base (volatility contraction; paired with base duration for the tight_base flag).",
    "method": "bq.py: inverse of normalized high-low range across the base window, scaled.",
    "type": "float",
    "enum": null,
