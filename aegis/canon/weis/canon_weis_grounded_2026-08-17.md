@@ -1,0 +1,1 @@
+GROUNDED CANON - see project doc claude/canon_weis_2026-08-17_grounded.md for authoritative copy. Placeholder pending PM ruling on detect-lens decomposition.
