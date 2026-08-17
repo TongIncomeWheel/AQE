@@ -21,7 +21,7 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **S1 · INGEST.** Fetch both input files from `main` (always `ref: refs/heads/main`, never a pinned SHA). Validate: export has `daily_list`, `srm`, `regime`, `macro_weather`; crown file parses. Record staleness (export date vs run date) and every DEGRADED flag — they travel verbatim into the report header. Export missing/invalid → STOP. Crown missing → continue AQE-only, headline says so. Fetch `pma_pipeline.py`, `voice_menus.json`, `S6B_post_committee.md`, and `data/pma/phase4_ledger.json` to the working dir.
 
-**S2 · TRIM + PACKETS (tool).** `pma_pipeline.py trim` → `candidate_set.json` (full 279-row CONSUMED trim, keeps `source`/`on_longlist`/`in_ledger`/`elder*`). Then `pma_pipeline.py packets` → per-voice menu-sliced shuffled TSVs + crown/druckenmiller macro packets. The tool asserts R3 (no `qs_market` in any seat packet) and fails loudly on breach. `qs_market` is PM-only: it appears in the report's macro section as the PM's regime read, never in any seat's input. **The packets receipt prints `missing_menu_fields` — any menu field null on every row. Non-empty = a seat is being served a blank column: treat as a DEGRADED flag, declare it in the report header (field-audit rule, 2026-08-17).**
+**S2 · TRIM + PACKETS (tool).** `pma_pipeline.py trim` → `candidate_set.json` (full 279-row CONSUMED trim, keeps `source`/`on_longlist`/`in_ledger`/`elder*`). Then `pma_pipeline.py packets` → per-voice menu-sliced shuffled TSVs + crown/druckenmiller macro packets. The tool asserts R3 (no `qs_market` in any seat packet, AND no voice menu may name `qs`/`on_qs`) and fails loudly on breach. `qs_market` and the per-ticker `qs` block are PM-only: they appear on the report (macro section + every ticker card, respectively) as the PM's own read, never in any seat's input.
 
 **P0 · MACRO VOICES (2 spawns, parallel).** Spawn `aegis-voices:voice-druckenmiller` and the crown voice with their JSON packets INLINED in the prompt (never a path — toolless agents fabricate when handed paths, finding F1). Crown reads its own macro file + the export's sector/theme layer (R6). Druckenmiller reads all macro weather + Crown DATA POINTS, never Crown's prose, never QS (R3); he MUST file `agrees_on`/`differs_on` vs Crown — conflicts are surfaced to the PM, never resolved by the committee.
 
@@ -39,9 +39,9 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **S6.6 · AUTO-BRACKET (R8, tool-read).** Every deliberation-set name gets levels verbatim from its export `bracket` block: structural stop/TP/R:R if `valid`, else `atr_fallback_stop` labelled FB + nearest overhead levels. Informational only — filters nothing, ranks nothing, vetoes nothing (R1).
 
-**S7 · RENDER.** Fixed 6 sections: 1 Macro position (Crown + Druckenmiller + the PM-only QS read, conflicts surfaced) · 2 Sector & thematics (SRM table + baskets) · 3 Held book review (from export `held_book`; if stale, one line saying so — the PM refreshes via PTJ) · 4 Shortlist as TICKER CARDS · 5 Near misses (every cap-cut qualifier, one row each, never grouped) · 6 Action plan addressed to the PM. Card contract (no omissions): header (ticker·verdict·conviction+cap reason·vote S-O-A·sector) · List line (source track + Elder score/pattern/5d + SRM gate + thematic) · scores (conviction/detect/coil/momentum/accumulation/structure) · levels (px/stop[structural|FB]/TP1-2/R:R/ATR) · Committee/Risk/Condition lines · REPEAT flag if ledgered ≥2x/5.
+**S7 · RENDER.** Fixed 6 sections: 1 Macro position (Crown + Druckenmiller + the PM-only QS read, conflicts surfaced) · 2 Sector & thematics (SRM table + baskets) · 3 Held book review (from export `held_book`; if stale, one line saying so — the PM refreshes via PTJ) · 4 Shortlist as TICKER CARDS · 5 Near misses (every cap-cut qualifier, one row each, never grouped) · 6 Action plan addressed to the PM. Card contract (no omissions): header (ticker·verdict·conviction+cap reason·vote S-O-A·sector) · List line (source track + Elder score/pattern/5d + SRM gate + thematic) · scores (conviction/detect/coil/momentum/accumulation/structure) · levels (px/stop[structural|FB]/TP1-2/R:R/ATR) · Committee/Risk/Condition lines · **QS line (MANDATORY, every card, shortlist and near-miss alike — render-only, from `candidate_set.json`'s per-ticker `qs` block, never seen by any voice; print even when `qs.signal == "NONE"`, absence is information too)** · REPEAT flag if ledgered ≥2x/5.
 
-**S7Q · QUALITY GATE (tool).** `pma_pipeline.py gate` — mechanical checks: every ADVANCE has support>oppose; every HOLD has a Condition line; all 6 sections present; List/Elder present; zero persuasion phrasing; DRAFT footer. FAIL → fix at the owning stage, max 2 loops, residuals DECLARED in the footer. Never publish silently defective.
+**S7Q · QUALITY GATE (tool).** `pma_pipeline.py gate` — mechanical checks: every ADVANCE has support>oppose; every HOLD has a Condition line; all 6 sections present; List/Elder/QS present; zero persuasion phrasing; DRAFT footer. FAIL → fix at the owning stage, max 2 loops, residuals DECLARED in the footer. Never publish silently defective.
 
 **S7P · PUBLISH.** Push to `main`: `data/pma/<date>/` (candidate_set, tally, phase4, consensus, run record) + updated `phase4_ledger.json` + `aegis/reports/pma/<date>.md` + `aegis/reports/pma/latest.md`. Write the report to the claude.ai project doc (`claude/pma_dryrun_brief_<date>.md` naming continues as `claude/pma_brief_<date>.md`). Print the full report on screen. If the session can send files, send the .md.
 
@@ -51,7 +51,7 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 
 **S4 Nominators (9 live, 11 once kratter + ceponas land):**
 - elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff
-- **weis** — 23 principles, `aegis/canon/weis/`, grounded 2026-08-17, 34-field menu. The failed-breakout seat: buys the break that does not follow through. No canon overlap with detect-lens, which is CODE-grounded (`src/engines/*.py`, 33 principles, pm_signed Ash) and reads no books.
+- **weis** — 23 principles, `aegis/canon/weis/`, grounded 2026-08-17, 32-field menu. The failed-breakout seat: buys the break that does not follow through. No canon overlap with detect-lens, which is CODE-grounded (`src/engines/*.py`, 33 principles, pm_signed Ash) and reads no books.
 - Pending their books: kratter, ceponas.
 
 **S5a Challenge (2):**
@@ -67,20 +67,8 @@ State: `data/pma/<date>/` (run artifacts) · `data/pma/phase4_ledger.json` (roll
 - Lynch (voting + fundamentals)
 - Detect-lens (voting + technical lens)
 
-## Field-audit rule (2026-08-17)
-Every field on every seat menu MUST resolve to real data on the live export. The packets receipt
-prints `missing_menu_fields` per run; any dead column is a DEGRADED flag in the report header and
-an S8 audit entry. Root causes fixed 2026-08-17: (1) `_slice` resolved only `bracket.*` dotted
-fields — all other dotted fields silently nulled; (2) CONSUMED dropped `ma_100`,
-`runner_conviction`, `premove_conviction`, `sc_m_gate_detail`, `sc_p_gate_detail` which exist in
-the raw export; (3) menus named phantom fields (`energy.squeeze_score`, `bq.*`,
-`knn_significant`, `rvol`) — remapped to `squeeze_breakout_*`, `elder_context.vcp.*`,
-`knn_threshold_clear`; rvol dropped. The per-ticker `qs.*` block is PM-ONLY (R3): it must never
-appear on a seat menu even when a needed field only exists there — use the nearest non-QS proxy
-and declare it.
-
 ## PM parameters (change here + S6B together)
 `deliberation_cap=20` · `solo_high_conviction_min=4` · `phase4_window=5 sessions, repeat_threshold=2` · `max_quality_loops=2` · `cards_soft_max=5 actionable`.
 
 ## Failure ladder (unattended-safe)
-Export missing/invalid → STOP, no plan · Crown missing → AQE-only, declared · seat absent after re-spawn → quorum math, declared · FMP absent → Lynch files unserved flags · missing_menu_fields non-empty → DEGRADED flag in header · GitHub write fails at S7P → report still prints on screen + project doc, push retried once, failure declared · anything DEGRADED → verbatim in the header.
+Export missing/invalid → STOP, no plan · Crown missing → AQE-only, declared · seat absent after re-spawn → quorum math, declared · FMP absent → Lynch files unserved flags · GitHub write fails at S7P → report still prints on screen + project doc, push retried once, failure declared · anything DEGRADED → verbatim in the header.

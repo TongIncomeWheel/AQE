@@ -24,7 +24,20 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "vol_30d_ann","gics_gate","bracket",
     "ma_100","premove_conviction","runner_conviction","sc_m_gate_detail","sc_p_gate_detail",
     "squeeze_breakout_state","was_squeezed","squeeze_breakout_volume_confirmed","squeeze_breakout_date",
-    "elder_context","knn_threshold_clear"]
+    "elder_context","knn_threshold_clear",
+    # QS -- the PM's own proprietary regime/signal read. Captured here (2026-08-17, PM request)
+    # SOLELY for the S7 card QS line, shown on every card after deliberation closes, whether or
+    # not that name was ever nominated. R3 is unchanged and still absolute: this field must never
+    # reach a seat packet. Enforced two ways -- (1) no voice_menus.json entry may name it (checked
+    # in cmd_packets, fails loudly), (2) it isn't in any menu today, so it never round-trips through
+    # _slice. "qs" is undocumented in aegis/contracts/*.schema.json despite being live in the daily
+    # export -- schema drift, flagged separately, not blocking.
+    "qs", "on_qs"]
+
+# Any menu field naming these is a same-class breach as qs_market in the macro packets below --
+# checked once per nominator before packets are written, so a future menu edit fails the build
+# instead of shipping a leak that's only caught by grepping a TSV after the fact.
+QS_FORBIDDEN = ("qs", "on_qs")
 
 def load(p): return json.load(open(p))
 def save(p, o):
@@ -47,10 +60,12 @@ def _slice(row, menu):
 
     Dotted names resolve into nested dicts at ANY depth. Before 2026-08-17 this
     special-cased `bracket.` only, so every other dotted field on a menu
-    silently resolved to None -- minervini, oneil, raschke and wyckoff had been
-    served blank columns for those fields. Fixed generically; the packets
-    receipt now reports any menu field that resolves to None for EVERY row, so
-    a dead field is loud instead of silent.
+    (energy.squeeze_score, bq.bq_base_dur, bq.bq_range_tight, lens.coil,
+    lens.structure, lens.resistance) silently resolved to None -- minervini,
+    oneil, raschke and wyckoff had been served blank columns for those fields.
+    Fixed generically; `missing_menu_fields` in the packets receipt now reports
+    any menu field that resolves to None for EVERY row, so a dead field is
+    loud instead of silent.
     """
     out = {}
     for f in menu:
@@ -71,6 +86,13 @@ def cmd_packets(a):
     rng = random.Random(a.date)  # deterministic per-date shuffle
     # v4.2 architecture: nominators are S4 voices only (excludes S5a/S5b challenge/specialist agents and macro voices)
     nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller", "steenbarger", "detect-lens", "~~CONFIG_NOTE~~")]
+    # R3, menu-level: no seat's menu may name qs/on_qs (or any qs.* subfield) -- checked BEFORE any
+    # TSV is written, so a future menu edit that adds one fails the build loudly instead of shipping.
+    for v in menus:
+        if v == "~~CONFIG_NOTE~~":
+            continue
+        breach = [f for f in menus[v] if f in QS_FORBIDDEN or f.startswith("qs.")]
+        assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
     dead = {}
     for v in nominators:
         rows = [_slice(r, menus[v]) for r in CS["universe"]]
@@ -189,6 +211,7 @@ def cmd_gate(a):
     for token, label in [("MACRO", "S1 macro"), ("SECTOR", "S2 sector"), ("HELD", "S3 held book"),
                           ("NEAR MISS", "S5 near misses"), ("ACTION", "S6 action plan"),
                           ("List", "list membership"), ("Elder", "elder field"),
+                          ("QS", "QS read (PM-only, render-only, every card)"),
                           ("DRAFT", "draft footer")]:
         chk(token.lower() in brief.lower(), "Q4", f"brief carries {label}")
     chk("persuad" not in brief.lower(), "Q4n", "zero persuasion narration")

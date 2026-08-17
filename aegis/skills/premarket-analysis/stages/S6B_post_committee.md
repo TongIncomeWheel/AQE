@@ -103,11 +103,27 @@ CARD contract (every card, every element, no omissions):
   lines   Committee: (consensus recommendation, 1-2 sentences, executive) ·
           Risk: (strongest opposing case + fundamental flag) ·
           Condition: (MANDATORY on every HOLD-FOR-CONDITIONS — see S6.5) ·
-          Repeat: (only if Phase-4 ledger count >= 2 of trailing 5 — "REPEAT Nx/5, PM manual look")
+          Repeat: (only if Phase-4 ledger count >= 2 of trailing 5 — "REPEAT Nx/5, PM manual look") ·
+          QS: (MANDATORY on every card, shortlist and near-miss alike — see below)
+
+**QS line (new, 2026-08-17, PM request).** Every card carries the PM's own QS regime read for that
+ticker, sourced verbatim from `candidate_set.json`'s per-ticker `qs` block — RENDER-ONLY, added
+after S6.5 consensus closes, regardless of whether the name was ever nominated, deliberated, or
+carries a verdict at all. Format: `QS: <signal> · conv <conviction_word>(<conviction>) · edge
+<odds.edge as %> · target +<objective.target_pct>% (2xATR) / give-up <path.typical_dip_pct>%`. If
+`qs.signal == "NONE"` and `qs.eligible == false`, still print the line — do not suppress it; that
+absence of a QS read is itself information. This does NOT relax R3: QS never entered any seat
+packet at any stage before this point — `pma_pipeline.py packets` hard-fails the build if any
+voice menu names `qs`/`on_qs`, checked before a single TSV is written. R3 governs seat INPUT only;
+this is PM-facing OUTPUT, after deliberation, and the two are not in tension.
+Note: `qs`/`on_qs` are live in the daily export but undocumented in
+`aegis/contracts/aqe_export.schema.json` / `universe.schema.json` — schema drift, not a blocker,
+worth closing when convenient.
+
 Language rule: consensus and recommendation only. No persuasion narration. Every number traceable
 to a stage artifact; a number with no source is deleted, not patched.
 NEAR MISSES = every name that qualified for deliberation but was cut by the cap, plus radar names
-outside the daily list. Always printed, never silently dropped. Carries List/Elder/SRM/Thematic/Repeat
+outside the daily list. Always printed, never silently dropped. Carries List/Elder/SRM/Thematic/Repeat/QS
 same as shortlist cards — near-miss status does not exempt a name from the same disclosure fields.
 
 ## S7Q · PERFORMANCE AUDIT (interim gate BEFORE publishing to PM — tools/s7q_gate)
@@ -118,7 +134,7 @@ Three families, all must PASS to publish:
                 SEAT INDEPENDENCE (no two canon.lock.yaml files share a source) ·
                 FIELD SERVICE (packets receipt missing_menu_fields is empty, else DEGRADED declared)
   COMPLETENESS  every card carries all 6 score elements + List/Elder/SRM/Thematic + levels +
-                Committee/Risk/Condition lines · every HOLD-FOR-CONDITIONS carries a condition line ·
+                Committee/Risk/Condition/QS lines · every HOLD-FOR-CONDITIONS carries a condition line ·
                 every ADVANCE carries attributed opposing case + falsifier · near-miss list present ·
                 staleness + DEGRADED flags in header
   COMPOSITION   report follows the 6-section contract · shortlist appears ONCE, as cards ·
