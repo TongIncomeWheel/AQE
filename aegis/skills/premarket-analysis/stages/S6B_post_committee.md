@@ -1,4 +1,4 @@
-# PMA · POST-COMMITTEE PIPELINE — S6.5 → S7P (v4.2, PM-ratified rulings applied)
+# PMA · POST-COMMITTEE PIPELINE — S6.5 → S7P (v4.3, PM-ratified rulings applied)
 **Owner: Alfred (orchestrator — sequencing and completeness only, no market opinion).**
 **This file is the persistent definition of everything that happens AFTER the S6 consensus closes and BEFORE the PM sees the daily PMA.**
 
@@ -114,6 +114,16 @@ Ledger retention: keep 20 trading sessions rolling, prune older on write. First 
 rule goes live cannot produce a REPEAT flag (insufficient history) — expected, not a defect; state it
 in the report footer until the window fills.
 
+**Downstream consumer (added 2026-08-18, closes the "reconstruct by hand" gap on §4 of the report).**
+`phase4_ledger.json` is the INPUT that drives `data/pma/verdict_ledger.json` and the REPEAT WATCH
+table — see S6.7 below. The ledger itself does not change: it still logs every Phase-4 name, cap
+survivors and cap-dropped alike, deterministically, every session. What changed is that a cap-dropped
+name is no longer a dead end for accountability — `pma_pipeline.py record-verdicts` now reads the
+same session's rank/deliberation output and writes a `NEAR-MISS` row to `verdict_ledger.json` for
+every ticker Phase 4 dropped before a vote, so a REPEAT-flagged ticker's full history (verdict AND
+price, every appearance) is always mechanically recoverable — no PM memory or hand transcription
+required.
+
 ## S6.5 · SYNTHESIS (deterministic + Alfred, 0 spawns)
 Compile per-name verdict records from round2/*.json: verdict, conviction + cap, stance split,
 strongest opposing argument (verbatim, attributed), falsifier set, fundamental memo line, promotion
@@ -136,9 +146,41 @@ from AQE data.** Deterministic, 0 spawns, never a gate:
 - All levels carry their price basis (prior close). Live refresh remains the PM's /bracket call at the open.
 Levels are information on the card. They filter nothing, rank nothing, veto nothing (R1).
 
+## S6.7 · LOCK VERDICTS + REPEAT WATCH (tool, mandatory — PM standing rule, 2026-08-18:
+"I want it automated, not by hand, which means gaps and forget will occur.")
+**Deterministic, 0 spawns. Runs every session, after S6.6, before S7 render — never optional, never
+deferred to "reconstruct by hand if the data's missing."**
+1. `pma_pipeline.py record-verdicts --date <date> --consensus <consensus.json> --phase4 <rank/deliberation
+   output>` — writes one WRITE-ONCE row per `(date, ticker)` to `data/pma/verdict_ledger.json`:
+   - every consensus-closed name (ADVANCE / HOLD-FOR-CONDITIONS / PASS) with its verdict, conviction,
+     support/oppose/abstain split, reference price + price source, bracket, and `record_source: "live"`.
+   - every Phase-4 `dropped` (cap-cut) name gets a `NEAR-MISS` row — verdict `NEAR-MISS`, no vote split
+     (never voted), reference price from the universe row's entry/bracket, `record_source: "live"`,
+     `event_based.status: "not_applicable"` (cut before any argument, nothing to event-grade).
+   - a row already present for that `(date, ticker)` is never overwritten — the ledger is append-only,
+     one truth per day per name.
+   - the one-time historical exception (2026-08-17 rows, written by hand on 2026-08-18 before this tool
+     existed) is tagged `record_source: "backfilled_manual_2026-08-18"` — declared, not hidden, and the
+     ONLY rows in the ledger not produced by this step. No future session repeats that exception; if a
+     gap is ever found, it is logged as a gap in the tool's own output (see next), never silently
+     re-typed.
+2. `pma_pipeline.py repeat-watch --date <date>` — reads `phase4_ledger.json`'s `repeat_flags` +
+   `verdict_ledger.json`, and for every REPEAT-flagged ticker walks its full appearance history,
+   computing `% vs last COB` from each pair of consecutive `ref_price` values and pulling `state`
+   straight from the matching verdict row. Writes `data/pma/<date>/repeat_watch.json`:
+   `{ "as_of": <date>, "rows": [{ticker, date, pct_vs_last_close, state, gap}], "markdown": "<table>" }`.
+   If a `(date, ticker)` the ledger flags has no matching verdict_ledger row, the row's `gap` field
+   states why (e.g. "no verdict_ledger row -- record-verdicts was not run, or predates the ledger") —
+   the tool NEVER invents a number or silently drops the row.
+3. §4 of the rendered report (REPEAT WATCH) is the `markdown` field of `repeat_watch.json`, pasted
+   verbatim — never hand-typed, never re-derived by Alfred. S7Q's Q6r family (below) fails the gate
+   if §4 doesn't match the tool's own output.
+
 ## S7 · RENDER (deterministic, 0 spawns) — fixed report contract
-Six sections, this order: 1 Macro position + highlights · 2 Sector & thematics · 3 Held book review ·
-4 Shortlist as TICKER CARDS · 5 Near misses (PM manual look) · 6 Action plan / next steps.
+Eight sections, this order: 1 Regime (three reads) · 2 Sector & thematic alignment · 3 Held book review ·
+4 REPEAT WATCH (S6.7 tool output, verbatim — visibility only, not fed to the R2 committee vote, PM
+ruling 2026-08-18) · 5 QS LIST (full ticker-level regime-model shortlist, PM-only, render-only) ·
+6 Shortlist as TICKER CARDS · 7 Near misses (PM manual look) · 8 Action plan / next steps.
 CARD contract (every card, every element, no omissions):
   header  ticker · verdict · conviction(+cap reason) · vote S-O-A · sector
   list    List (longlist/elder_list/qs/radar-runner sourcing) · Elder (score + pattern + 5d trace) ·
@@ -173,7 +215,7 @@ outside the daily list. Always printed, never silently dropped. Carries List/Eld
 same as shortlist cards — near-miss status does not exempt a name from the same disclosure fields.
 
 ## S7Q · PERFORMANCE AUDIT (interim gate BEFORE publishing to PM — tools/s7q_gate)
-Three families, all must PASS to publish:
+Four families, all must PASS to publish:
   QUALITY       quorum >= 8 · coverage matrix complete · consensus rule correctly applied ·
                 R1 (zero bracket-gate breaches) · R3 (QS absent from every seat packet;
                 crown_agreement filed) · Phase-4 ranking key fully resolves (no undeclared ties) ·
@@ -185,15 +227,23 @@ Three families, all must PASS to publish:
                 Committee/Risk/Condition/QS lines · every HOLD-FOR-CONDITIONS carries a condition line ·
                 every ADVANCE carries attributed opposing case + falsifier · near-miss list present ·
                 staleness + DEGRADED flags in header
-  COMPOSITION   report follows the 6-section contract · shortlist appears ONCE, as cards ·
+  COMPOSITION   report follows the 8-section contract (S7) · shortlist appears ONCE, as cards ·
                 zero narration phrasing · action plan addressed to PM
+  Q6r           (2026-08-18, closes "gaps and forget will occur") — `repeat_watch.json` exists for
+                this session · it covers every ticker in `phase4_ledger.json`'s `repeat_flags` for
+                this date (none missing) · every repeat-flagged ticker's name actually appears in the
+                rendered §4 text. This is a PROVENANCE check, not a numbers check — a hand-typed §4
+                fails Q6r even if its numbers happen to be correct, because the point is that the
+                tool ran, not that a human got the math right this one time.
 FAIL → route to owning stage (render fails re-render; missing obligations re-open S6 close; seat
-breach re-runs that seat). Max 2 loops. Whatever still fails is DECLARED in the footer — the PMA
-never ships a silent defect, and never ships without this gate's PASS record attached.
+breach re-runs that seat; Q6r fails route back to S6.7 — run record-verdicts + repeat-watch, then
+re-render §4 from the tool's own markdown). Max 2 loops. Whatever still fails is DECLARED in the
+footer — the PMA never ships a silent defect, and never ships without this gate's PASS record attached.
 
 ## S7P · PUBLISH
-data/pma/<date>/ (all stage artifacts, git, including phase4_ledger.json append) ·
-aegis/reports/pma/<date>.md + latest.md · project doc · AND printed in full on screen for the PM.
+data/pma/<date>/ (all stage artifacts, git, including phase4_ledger.json append, verdict_ledger.json
+update, and repeat_watch.json) · aegis/reports/pma/<date>.md + latest.md (byte-identical) · project doc ·
+AND printed in full on screen for the PM.
 Footer always: "DRAFT — PM approval required. Nothing is staged, nothing is armed."
 
 ## S8 · LEARNING LOOP
