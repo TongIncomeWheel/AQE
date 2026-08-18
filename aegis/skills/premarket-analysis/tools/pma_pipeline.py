@@ -9,13 +9,25 @@ Subcommands:
   consensus  round2 stances -> verdicts (support>oppose AND support>=2 AND median>=3)
   ledger     append today's phase-4 list to phase4_ledger.json; emit REPEAT flags (>=2 of trailing 5)
   gate       S7Q mechanical checks (quality/completeness families that are greppable)
-  record-verdicts  lock today's consensus verdicts + entry price + bracket into verdict_ledger.json
-                    (PM standing rule, 2026-08-18: "lock this so we can see track record" -- WRITE-ONCE,
-                    a (date,ticker) row is never overwritten by a later run, only its grading sub-object
-                    is filled in later by `grade`)
+  record-verdicts  lock today's consensus verdicts + entry price + bracket into verdict_ledger.json,
+                    AND every cap-dropped Phase-4 name as a NEAR-MISS row (PM standing rule,
+                    2026-08-18: "lock this so we can see track record" -- WRITE-ONCE, a (date,ticker)
+                    row is never overwritten by a later run, only its grading sub-object is filled in
+                    later by `grade`). Every row this writes carries "record_source": "live" -- the
+                    mechanical marker that distinguishes a normal run from the one-time
+                    "backfilled_manual_2026-08-18" rows used to seed 2026-08-17 history before this
+                    command covered near-misses.
   grade      revisit past locked verdicts against today's prices: fixed-horizon return grade (N sessions
              after the call) + event-based grade (stop/TP hit, ADVANCE only -- see doc string on cmd_grade
              for the honest HOLD-FOR-CONDITIONS gap)
+  repeat-watch     mechanical §4 generator (PM standing rule, 2026-08-18: "I want it automated, not by
+                    hand, which means gaps and forget will occur" otherwise) -- cross-references
+                    phase4_ledger.json's repeat_flags against verdict_ledger.json's row history to
+                    produce, per repeat ticker, one row per appearance date with % vs the previous
+                    appearance's ref_price and the verdict/state actually recorded that date. Zero hand
+                    transcription: if a repeat ticker's appearance has no matching verdict_ledger row
+                    (a real gap -- e.g. history predates this ledger), the row says so explicitly
+                    instead of silently omitting it or being invented from memory.
 Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
 """
 import json, sys, os, csv, random, statistics, argparse, collections, datetime
@@ -271,11 +283,20 @@ def _bdays_between(d1, d2):
     return n
 
 def cmd_record_verdicts(a):
-    """PM standing rule (2026-08-18): 'lock this so we can see track record.' Locks each of today's
-    consensus verdicts, WITH the reference price and full bracket the verdict was actually made
-    against, into verdict_ledger.json. This is the accountability ledger -- it is deliberately
-    separate from phase4_ledger.json (which only tracks ticker repetition, never a verdict or an
-    outcome).
+    """PM standing rule (2026-08-18): 'lock this so we can see track record' -- and (2026-08-18,
+    second ruling, same day): 'I want it automated, not by hand, which means gaps and forget will
+    occur' otherwise. Locks EVERY Phase-4 name today, not just the deliberated ones:
+      - names that reached consensus get their real verdict (ADVANCE/HOLD-FOR-CONDITIONS/PASS),
+        WITH the reference price and full bracket the verdict was actually made against.
+      - names that qualified for Phase 4 but were CUT BY THE CAP before deliberation (never voted
+        on) get a NEAR-MISS row instead -- ref_price pulled from candidate_set.json's `entry` (or
+        `bracket.price` if entry is null), no conviction/support/oppose/abstain (not applicable,
+        never argued).
+    This is the accountability ledger -- deliberately separate from phase4_ledger.json (which only
+    tracks ticker repetition, never a verdict or an outcome). Every row gets "record_source": "live"
+    so a downstream reader (repeat-watch, a human) can always tell a normal automated run from the
+    one-time "backfilled_manual_2026-08-18" rows used to seed 2026-08-17 history before this command
+    covered near-misses.
 
     WRITE-ONCE per (date, ticker): if this is re-run for a date already in the ledger, existing
     rows are left untouched (not overwritten) -- a verdict, once locked, does not move. Re-running
@@ -306,6 +327,7 @@ def cmd_record_verdicts(a):
             "ref_price": ref_price,
             "ref_price_source": (row or {}).get("bracket", {}).get("price_source") if row else None,
             "bracket": bracket,
+            "record_source": "live",
             "fixed_horizon": {"horizon_sessions": a.horizon_sessions, "status": "pending"},
             "event_based": {"status": "pending" if bracket and bracket.get("valid") and c["verdict"] == "ADVANCE"
                              else "not_applicable",
@@ -315,10 +337,99 @@ def cmd_record_verdicts(a):
                                            else "PASS has no bracket to event-grade; fixed-horizon return is the only check")}
         })
         added.append(c["ticker"])
+    near_miss_added = []
+    if os.path.exists(a.phase4):
+        p4 = load(a.phase4)
+        dropped_tickers = [d.split("(")[0] for d in p4.get("dropped", [])]
+        for t in dropped_tickers:
+            key = (a.date, t)
+            if key in existing:
+                skipped.append(t)
+                continue
+            row = uni.get(t)
+            ref_price = (row or {}).get("entry")
+            if ref_price is None:
+                ref_price = ((row or {}).get("bracket") or {}).get("price")
+            if ref_price is None:
+                no_ref.append(t)
+            led["rows"].append({
+                "date": a.date, "ticker": t, "verdict": "NEAR-MISS", "conviction": None,
+                "support": None, "oppose": None, "abstain": None,
+                "ref_price": ref_price,
+                "ref_price_source": "entry" if (row or {}).get("entry") is not None else (((row or {}).get("bracket") or {}).get("price_source") if ref_price is not None else None),
+                "bracket": (row or {}).get("bracket"),
+                "record_source": "live",
+                "fixed_horizon": {"horizon_sessions": a.horizon_sessions, "status": "pending"},
+                "event_based": {"status": "not_applicable", "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."}
+            })
+            near_miss_added.append(t)
+    else:
+        print(f"WARNING: {a.phase4} not found -- NEAR-MISS rows for cap-dropped names were NOT recorded this run. "
+              f"Pass --phase4 explicitly if it lives elsewhere; repeat-watch will show a gap for any cap-dropped ticker until this is fixed.")
     save(a.ledger, led)
     print(f"receipt: {len(added)} verdicts locked for {a.date} ({', '.join(added) if added else 'none'}); "
+          f"{len(near_miss_added)} NEAR-MISS rows locked for cap-dropped names ({', '.join(near_miss_added) if near_miss_added else 'none'}); "
           f"{len(skipped)} already locked, left untouched; "
           f"{len(no_ref)} locked with no reference price found ({', '.join(no_ref) if no_ref else 'none'})")
+
+def cmd_repeat_watch(a):
+    """PM standing rule (2026-08-18): '[I want it] automated, not by hand, which means gaps and
+    forget will occur [otherwise].' Generates the CIO brief's REPEAT WATCH section (§4) mechanically
+    from phase4_ledger.json (which tickers repeated, and on which dates) cross-referenced against
+    verdict_ledger.json (what price/verdict was actually locked on each of those dates). No hand
+    transcription, no re-typing numbers into brief prose.
+
+    For each repeat-flagged ticker, one output row per appearance date (oldest first), each carrying:
+      - pct_vs_last_close: % change of that date's ref_price vs the PREVIOUS appearance's ref_price
+        (null, with a reason, on a ticker's first appearance or if either price is missing)
+      - state: the verdict actually locked for that (date, ticker) in verdict_ledger.json --
+        ADVANCE / HOLD-FOR-CONDITIONS / PASS / NEAR-MISS
+      - a "gap" field, populated (not blank) whenever verdict_ledger.json has NO row for that
+        (date, ticker) at all -- this happens for history older than either ledger, or if
+        record-verdicts was never run for that date. A gap is reported as a gap, never silently
+        skipped and never invented.
+
+    Emits both a JSON structure (--out) and a ready-to-paste markdown table (printed to stdout and
+    included in the JSON under "markdown") so the brief section can be generated by copying tool
+    output, not by manual cross-referencing.
+    """
+    led = load(a.ledger) if os.path.exists(a.ledger) else {"entries": [], "repeat_flags": []}
+    vled = load(a.verdicts) if os.path.exists(a.verdicts) else {"rows": []}
+    vrows = {(r["date"], r["ticker"]): r for r in vled.get("rows", [])}
+    repeat_tickers = [f["ticker"] for f in led.get("repeat_flags", [])]
+    out_rows = []
+    gaps = []
+    for t in sorted(repeat_tickers):
+        dates = sorted(e["date"] for e in led["entries"] if t in e.get("tickers", []))
+        prev_price = None
+        for i, d in enumerate(dates):
+            vrow = vrows.get((d, t))
+            if vrow is None:
+                out_rows.append({"ticker": t, "date": d, "pct_vs_last_close": None, "state": None,
+                                  "gap": "no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger"})
+                gaps.append(f"{t}@{d}")
+                continue
+            price = vrow.get("ref_price")
+            if i == 0 or prev_price is None or price is None:
+                pct = None
+            else:
+                pct = round((price - prev_price) / prev_price * 100, 2)
+            out_rows.append({"ticker": t, "date": d, "pct_vs_last_close": pct, "state": vrow.get("verdict"), "gap": None})
+            if price is not None:
+                prev_price = price
+    md_lines = ["| Ticker | Date Appeared | % vs last COB | State |", "|---|---|---|---|"]
+    for r in out_rows:
+        pct_s = "— (first appearance)" if r["pct_vs_last_close"] is None and r["gap"] is None and not any(
+            x["ticker"] == r["ticker"] and x["date"] < r["date"] for x in out_rows) else (
+            f"{r['pct_vs_last_close']:+.2f}%" if r["pct_vs_last_close"] is not None else "— (gap, see note)")
+        state_s = r["state"] or f"GAP: {r['gap']}"
+        md_lines.append(f"| **{r['ticker']}** | {r['date']} | {pct_s} | {state_s} |")
+    markdown = "\n".join(md_lines)
+    result = {"as_of": a.date, "rows": out_rows, "markdown": markdown, "gaps": gaps}
+    save(a.out, result)
+    print(markdown)
+    print(f"receipt: {len(out_rows)} rows across {len(repeat_tickers)} repeat ticker(s); "
+          f"{len(gaps)} gap(s) with no verdict_ledger match ({', '.join(gaps) if gaps else 'none'})")
 
 def cmd_grade(a):
     """Revisit every 'pending' row in verdict_ledger.json against a supplied current-price map and
@@ -398,6 +509,24 @@ def cmd_gate(a):
                           ("DRAFT", "draft footer")]:
         chk(token.lower() in brief.lower(), "Q4", f"brief carries {label}")
     chk("persuad" not in brief.lower(), "Q4n", "zero persuasion narration")
+    # Q6r: REPEAT WATCH (§4) must come from repeat-watch's own output, never hand-typed (PM standing
+    # rule, 2026-08-18). If phase4_ledger.json currently has any repeat_flags, repeat_watch.json must
+    # exist AND every flagged ticker's rows must actually appear in the brief text -- a brief that
+    # hand-writes its own repeat table without running the tool fails this even if the numbers happen
+    # to be right, because the point is the source, not just the output looking correct today.
+    if os.path.exists(a.ledger_phase4):
+        p4l = load(a.ledger_phase4)
+        flagged = [f["ticker"] for f in p4l.get("repeat_flags", [])]
+        if flagged:
+            if not os.path.exists(a.repeat_watch):
+                chk(False, "Q6r", f"repeat_watch.json exists ({a.repeat_watch} not found -- run `pma_pipeline.py repeat-watch` before rendering §4)")
+            else:
+                rw = load(a.repeat_watch)
+                rw_tickers = {r["ticker"] for r in rw.get("rows", [])}
+                missing = [t for t in flagged if t not in rw_tickers]
+                chk(not missing, "Q6r", f"repeat_watch.json covers every phase4_ledger repeat flag (missing: {missing or 'none'})")
+                for t in flagged:
+                    chk(t in brief, "Q6r", f"{t}: repeat-flagged ticker appears in brief §4")
     print(f"RESULT: {len(fails)} FAIL")
     sys.exit(1 if fails else 0)
 
@@ -410,10 +539,12 @@ if __name__ == "__main__":
     s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=20); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--out", default="phase4.json")
     s = sub.add_parser("consensus"); s.add_argument("--round2", required=True); s.add_argument("--out", default="consensus.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
-    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json")
-    s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
+    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json")
+    s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
+    s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank,
      "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
-     "record-verdicts": cmd_record_verdicts, "grade": cmd_grade}[a.cmd](a)
+     "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
+     "repeat-watch": cmd_repeat_watch}[a.cmd](a)
