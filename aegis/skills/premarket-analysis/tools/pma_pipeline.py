@@ -9,9 +9,16 @@ Subcommands:
   consensus  round2 stances -> verdicts (support>oppose AND support>=2 AND median>=3)
   ledger     append today's phase-4 list to phase4_ledger.json; emit REPEAT flags (>=2 of trailing 5)
   gate       S7Q mechanical checks (quality/completeness families that are greppable)
+  record-verdicts  lock today's consensus verdicts + entry price + bracket into verdict_ledger.json
+                    (PM standing rule, 2026-08-18: "lock this so we can see track record" -- WRITE-ONCE,
+                    a (date,ticker) row is never overwritten by a later run, only its grading sub-object
+                    is filled in later by `grade`)
+  grade      revisit past locked verdicts against today's prices: fixed-horizon return grade (N sessions
+             after the call) + event-based grade (stop/TP hit, ADVANCE only -- see doc string on cmd_grade
+             for the honest HOLD-FOR-CONDITIONS gap)
 Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
 """
-import json, sys, os, csv, random, statistics, argparse, collections
+import json, sys, os, csv, random, statistics, argparse, collections, datetime
 
 SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
@@ -247,6 +254,131 @@ def cmd_ledger(a):
     save(a.ledger, led)
     print(f"receipt: {len(tickers)} logged for {a.date}; REPEAT flags: " + (", ".join(f"{t} {c}x/{len(window)}" for t, c in repeats) or "none (window has " + str(len(window)) + " sessions)"))
 
+def _bdays_between(d1, d2):
+    """Simple Mon-Fri business-day count between two YYYY-MM-DD dates. No market-holiday calendar
+    wired in (a real, disclosed gap) -- this will occasionally overcount by a day around a US
+    holiday. Good enough for a 5-session horizon check; flagged here rather than silently assumed
+    exact."""
+    a, b = datetime.date.fromisoformat(d1), datetime.date.fromisoformat(d2)
+    if b < a:
+        return 0
+    n = 0
+    cur = a
+    while cur < b:
+        cur += datetime.timedelta(days=1)
+        if cur.weekday() < 5:
+            n += 1
+    return n
+
+def cmd_record_verdicts(a):
+    """PM standing rule (2026-08-18): 'lock this so we can see track record.' Locks each of today's
+    consensus verdicts, WITH the reference price and full bracket the verdict was actually made
+    against, into verdict_ledger.json. This is the accountability ledger -- it is deliberately
+    separate from phase4_ledger.json (which only tracks ticker repetition, never a verdict or an
+    outcome).
+
+    WRITE-ONCE per (date, ticker): if this is re-run for a date already in the ledger, existing
+    rows are left untouched (not overwritten) -- a verdict, once locked, does not move. Re-running
+    only adds rows for tickers not already present that date. This is what "lock" means here.
+    """
+    cons = load(a.consensus)
+    CS = load(a.candidates)
+    uni = {r["ticker"]: r for r in CS["universe"]}
+    led = load(a.ledger) if os.path.exists(a.ledger) else {"schema": "verdict_ledger.v1", "horizon_sessions_default": a.horizon_sessions, "rows": []}
+    existing = {(r["date"], r["ticker"]) for r in led["rows"]}
+    added, skipped, no_ref = [], [], []
+    for c in cons:
+        key = (a.date, c["ticker"])
+        if key in existing:
+            skipped.append(c["ticker"])
+            continue
+        row = uni.get(c["ticker"])
+        ref_price = row.get("entry") if row else None
+        bracket = row.get("bracket") if row else None
+        if ref_price is None:
+            no_ref.append(c["ticker"])  # locked anyway -- a missing reference price is itself a fact worth keeping, never silently dropped
+        led["rows"].append({
+            "date": a.date,
+            "ticker": c["ticker"],
+            "verdict": c["verdict"],
+            "conviction": c["conviction"],
+            "support": len(c["split"]["support"]), "oppose": len(c["split"]["oppose"]), "abstain": len(c["split"]["abstain"]),
+            "ref_price": ref_price,
+            "ref_price_source": (row or {}).get("bracket", {}).get("price_source") if row else None,
+            "bracket": bracket,
+            "fixed_horizon": {"horizon_sessions": a.horizon_sessions, "status": "pending"},
+            "event_based": {"status": "pending" if bracket and bracket.get("valid") and c["verdict"] == "ADVANCE"
+                             else "not_applicable",
+                             "note": None if (bracket and bracket.get("valid") and c["verdict"] == "ADVANCE")
+                                     else ("no valid bracket -- event grading needs a stop/TP to check against" if c["verdict"] == "ADVANCE"
+                                           else "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade" if c["verdict"] == "HOLD-FOR-CONDITIONS"
+                                           else "PASS has no bracket to event-grade; fixed-horizon return is the only check")}
+        })
+        added.append(c["ticker"])
+    save(a.ledger, led)
+    print(f"receipt: {len(added)} verdicts locked for {a.date} ({', '.join(added) if added else 'none'}); "
+          f"{len(skipped)} already locked, left untouched; "
+          f"{len(no_ref)} locked with no reference price found ({', '.join(no_ref) if no_ref else 'none'})")
+
+def cmd_grade(a):
+    """Revisit every 'pending' row in verdict_ledger.json against a supplied current-price map and
+    grade it two ways:
+
+    FIXED-HORIZON (all verdict types): once >= horizon_sessions business days have passed since the
+    row's date, compute return_pct off ref_price. ADVANCE is graded correct/wrong on direction
+    (>+1% = correct, <-1% = wrong, else inconclusive); PASS is graded on whether it avoided a real
+    rally (return < +5% = correct pass, >= +5% = missed move); HOLD-FOR-CONDITIONS is recorded
+    informationally only (return_pct, no correct/wrong label) because a HOLD is not a directional
+    bet by itself.
+
+    EVENT-BASED (ADVANCE with a valid bracket only, today): checks the supplied price against the
+    row's own locked stop and TP2. Price <= stop -> stopped_out. Price >= TP2 -> tp2_hit. Otherwise
+    stays in_progress (left pending for the next grade run, never force-closed early).
+
+    KNOWN GAP, stated plainly rather than faked: HOLD-FOR-CONDITIONS event grading (did the actual
+    stated condition -- e.g. 'close through the ma200 stop' -- trigger?) is NOT implemented here.
+    The condition line is synthesized as free text in the CIO brief, not captured as a structured
+    field anywhere in the pipeline today, so there is nothing machine-checkable to grade it against.
+    Closing this needs the condition captured as a structured {field, operator, level} at the point
+    the brief is built, not reverse-parsed from prose later. Flagged, not silently skipped.
+    """
+    led = load(a.ledger)
+    prices = load(a.prices)  # {"TICKER": price, ...}
+    fixed_graded, event_graded, still_pending = [], [], []
+    for r in led["rows"]:
+        px = prices.get(r["ticker"])
+        # --- fixed horizon ---
+        if r["fixed_horizon"]["status"] == "pending":
+            bdays = _bdays_between(r["date"], a.date)
+            if bdays >= r["fixed_horizon"]["horizon_sessions"] and px is not None and r["ref_price"]:
+                ret = round((px - r["ref_price"]) / r["ref_price"] * 100, 2)
+                if r["verdict"] == "ADVANCE":
+                    assess = "correct" if ret > 1.0 else ("wrong" if ret < -1.0 else "inconclusive")
+                elif r["verdict"] == "PASS":
+                    assess = "correct" if ret < 5.0 else "missed_move"
+                else:
+                    assess = "informational"
+                r["fixed_horizon"].update({"status": "graded", "grade_date": a.date, "price_then": r["ref_price"],
+                                            "price_now": px, "return_pct": ret, "assessment": assess})
+                fixed_graded.append(f"{r['ticker']}:{assess}({ret:+.1f}%)")
+            elif px is None:
+                still_pending.append(r["ticker"])
+        # --- event based (ADVANCE + valid bracket only) ---
+        if r["event_based"]["status"] == "pending" and px is not None:
+            stop, tp2 = r["bracket"]["stop"], r["bracket"]["rr_tp2"] and next((t["price"] for t in r["bracket"]["targets"] if t.get("tp") == "TP2"), None)
+            if stop is not None and px <= stop:
+                r["event_based"].update({"status": "graded", "grade_date": a.date, "event": "stopped_out", "price_at_event": px})
+                event_graded.append(f"{r['ticker']}:stopped_out")
+            elif tp2 is not None and px >= tp2:
+                r["event_based"].update({"status": "graded", "grade_date": a.date, "event": "tp2_hit", "price_at_event": px})
+                event_graded.append(f"{r['ticker']}:tp2_hit")
+            else:
+                r["event_based"]["last_checked"] = {"date": a.date, "price": px}
+    save(a.ledger, led)
+    print(f"receipt: fixed-horizon graded {len(fixed_graded)} ({', '.join(fixed_graded) or 'none'}); "
+          f"event triggers {len(event_graded)} ({', '.join(event_graded) or 'none'}); "
+          f"{len(still_pending)} still waiting on a price ({', '.join(still_pending) if still_pending else 'none'})")
+
 def cmd_gate(a):
     brief = open(a.brief).read()
     cons = load(a.consensus)
@@ -279,6 +411,9 @@ if __name__ == "__main__":
     s = sub.add_parser("consensus"); s.add_argument("--round2", required=True); s.add_argument("--out", default="consensus.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json")
+    s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
+    s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     a = p.parse_args()
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank,
-     "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate}[a.cmd](a)
+     "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
+     "record-verdicts": cmd_record_verdicts, "grade": cmd_grade}[a.cmd](a)
