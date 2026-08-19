@@ -1,0 +1,19 @@
+{
+ "date": "2026-08-18",
+ "generated_at": "2026-08-19T08:10:00Z",
+ "source": "MANUAL BACKFILL — recovered by the orchestrating Claude session during the D-99/D-100/D-101/D-102 incident response (2026-08-19), NOT produced by a full run_post_market.sh execution for 2026-08-18 itself. No real 2026-08-18 (or earlier) journal file exists on disk or in git — data/journal/ and data/eod/ are git-untracked runtime state per PM ruling 2026-08-13 (commit c68f656), and this pipeline was never actually invoked end-to-end before this incident. This file's ONLY purpose is to supply `open_positions` containing AVAV at its true pre-close entry so that 2026-08-19's run_post_market.sh can match AVAV's recovered stop-out fill against it via journal_build.py's `_closed_trades` (which reads only `open_positions` from the prior-journal file — see tools/journal_build.py `_carry`/`_closed_trades`). It is NOT a claim that this accurately represents the fund's full 2026-08-18 EOD book (open_positions here contains only the one ticker needed for the match) and MUST NOT be treated as a historical book-of-record for any ticker other than AVAV. AVAV entry (100 sh @ 189.45) confirmed via Tiger get_transactions(symbol=AVAV): BUY 100 @ 189.45 on 2026-08-11 02:13:01 UTC (order_id 44234989621088260).",
+ "open_positions": [
+  {
+   "ticker": "AVAV",
+   "broker": "TIGER",
+   "qty": 100,
+   "entry": 189.45,
+   "entry_date": "2026-08-11",
+   "mark_price": null,
+   "unrealised_usd": null
+  }
+ ],
+ "closed_trades": [],
+ "metrics": {"gross_exposure_usd": 0.0},
+ "dyncap": {"value": null, "one_r": null, "method": "not applicable — this file is a minimal backfill for open_positions matching only, see `source` note"}
+}

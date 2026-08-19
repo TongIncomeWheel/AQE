@@ -210,6 +210,15 @@ def _staged_structures(staged):
         staged = staged.get("structures") or staged.get("staged") or []
     out = {}
     for st in staged or []:
+        if not isinstance(st, dict):
+            # D-103: run_post_market.sh falls back to data/persistent/aegis_membership.json (a
+            # bare list of ticker strings) as --staged on days with no real staged_orders.json —
+            # that fallback is meant for held_book_refresh.py's equity classify, which reads
+            # --staged as a membership allowlist, NOT for this tool's "staged hedge orders"
+            # meaning. A plain ticker string here is never a real staged structure; skip it
+            # rather than crash the whole option-membership job on every run that has no staged
+            # hedge orders (i.e. nearly every day).
+            continue
         legs = st.get("legs") or []
         sid = st.get("structure_id") or structure_id(legs)
         if not sid:
