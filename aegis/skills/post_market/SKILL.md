@@ -29,6 +29,14 @@ Two things the script deliberately does NOT do, because a shell script cannot cr
 
 It is also not order-capable. Nothing here places, sizes or arms anything — only staging-gatekeeper ever does (constitution law 1).
 
+**2026-08-19 INCIDENT (D-99/D-100/D-101/D-102):** a manual PTJ run on 2026-08-18 never actually invoked `run_post_market.sh` — it called a subset of the underlying tools by hand, which is how four real defects shipped silently for weeks. All four are now fixed IN the script (not worked around outside it):
+- **D-99** — dynCap was rolled by `journal_build.py build` (job 2) BEFORE Aegis-membership classification ran, so its unrealised-P&L component summed over the full co-mingled broker book (Income Wheel, Protege9, Ryan's personal names), not just Aegis holdings. Fixed: a new job, **recompute dynCap**, runs right after both membership-classify jobs and before hedge derivation, sourcing realised P&L from the archive ledger so re-runs stay idempotent.
+- **D-100** — Tiger's `get_filled_orders` MCP tool silently drops stop-triggered equity closes. Confirmed on AVAV: its 2026-08-18 stop-out never appeared in `get_filled_orders` on the 08-18 OR 08-19 pull, despite being present in `get_transactions(symbol=AVAV)` the whole time — the loss was real at the broker and invisible in the book of record. Fixed: a new **reconcile vanished positions** job is now a HARD GATE right after the payload-directory check — it diffs yesterday's held tickers against today's broker pull and HALTS (exit 2) if any vanished ticker has no matching fill in the saved payload, rather than letting `journal_build` quietly build a journal with the position simply gone.
+- **D-101** — `journal_build.py`'s date parser could not handle epoch-millisecond timestamps (only ever exercised once D-100 produced the first real closed_trade in this fund's history) and silently produced garbage dates like `"1787-05-98"`. Fixed in `journal_build.py`.
+- **D-102** — `archive_ledger.py`'s merge expects `{exitDate, pnlUsd, ...}` but `journal_build.py`'s `closed_trades` use `{closed_date, realised_usd, ...}` — the archive step used to hand the raw extract straight to `archive_ledger.py`, so any real close would have been archived with `pnlUsd` defaulting to 0.0 and `exitDate` null. Fixed: the archive job now converts the extract through `journal_closed_to_archive_format.py` before merging.
+
+If the reconcile gate halts (an unexplained vanished position), the script does NOT try to self-heal by calling `get_transactions` — that is a live MCP call a deterministic script cannot make. The orchestrating session must recover the fill and append it to `tiger_filled_orders.json`, then re-run.
+
 ---
 
 ## Step 1 — Pull both brokers, save every payload
@@ -67,21 +75,23 @@ bash scripts/run_post_market.sh <YYYY-MM-DD>
 
 Optional: `--pull DIR` if the payloads are somewhere other than `data/eod/<DATE>/broker_pull`. `--rehearsal` runs every step for real against the real payloads but writes the journal and all run artefacts to `data/eod/<DATE>/rehearsal/`, leaves the archive untouched, turns both pushes into `git_sync --dry-run`, and **never stamps the gate** — use it before the close, and the first time you run the batch after changing anything.
 
-The thirteen jobs it runs, in this order:
+The fifteen jobs it runs, in this order:
 
 | # | Job | Fatal? |
 |---|---|---|
 | 0 | payload-dir contract — is there anything to build from | yes |
+| 0.5 | `reconcile_vanished_positions.py` — HARD GATE (D-100): any position that vanished from the broker book with no matching fill on file halts the run | **yes** |
 | 1 | `preflight.py` — can this session save its own work | no |
-| 2 | `journal_build.py build` — reconcile both brokers into one journal, roll dynCap | **yes** |
+| 2 | `journal_build.py build` — reconcile both brokers into one journal, roll a first-pass dynCap | **yes** |
 | 3 | `held_book_refresh.py classify` — Aegis equity membership | **yes** |
 | 4 | `option_book.py classify` — option membership by contract | **yes** |
+| 3.5 | `recompute_dyncap.py` — D-99 fix: recompute dynCap AFTER both membership-classify jobs, Aegis-only, sourced from the archive ledger | **yes** |
 | 5 | `option_book.py derive-hedge` — rebuild the hedge from confirmed legs | **yes** |
 | 6 | `held_book_refresh.py carry-forward` — prior snapshots, stop references | **yes** |
 | 7 | `journal_build.py verify` — read the file back off disk and re-validate | **yes** |
 | 8 | `git_sync.py` — **push #1, the book of record** | no |
 | 9 | `portfolio_metrics.py compute` — metrics written into the journal | no |
-| 10 | `archive_ledger.py merge` — append today's closed trades | no |
+| 10 | `journal_closed_to_archive_format.py` then `archive_ledger.py merge` — D-102 fix: convert today's closed trades into the archive's field names, then append them | no |
 | 11 | `daily_flow_audit.py --render` — the flight recorder | no |
 | 12 | `git_sync.py` — **push #2, metrics + archive + audit** | no |
 | 13 | `phase_gate.py stamp` — the only thing tomorrow's Phase 0 reads | — |
@@ -100,7 +110,7 @@ The thirteen jobs it runs, in this order:
 |---|---|---|---|
 | **0** | `ok` | every job passed | Relay the checklist. `run_ok`. |
 | **1** | `partial` | the book of record is sound but the run is degraded — one broker only, a push that did not land, a later job that failed | Relay the checklist naming the failing lines. **PAGE.** |
-| **2** | `fail` | halt — the journal could not be built or does not satisfy its contract, so nothing downstream may run | Relay the halt reason. **PAGE.** |
+| **2** | `fail` | halt — the journal could not be built or does not satisfy its contract, or D-100's reconcile gate found an unexplained vanished position, so nothing downstream may run | Relay the halt reason. **PAGE.** |
 
 The script prints a flat pass/fail line per job and writes the same thing to `data/eod/<DATE>/post_market_run.json`, with the full transcript at `post_market_run.log`.
 
@@ -122,7 +132,7 @@ This section explains *why* the jobs above do what they do. It is reference, not
 
 **Metrics are computed for real and written INTO the journal (job 9)** — PM: "the portfolio check figures should be inside the journal so that's a proper snapshot of the portfolio, not just list of positions." Gross exposure, leverage, net-beta-dollar, NAV-β (gate window RB:risk.gates.portfolio_beta), sector concentration, and 1-month parametric VaR (reusing `tools/calculators/var_parametric.py`, not a second implementation). **One consistent data source:** per-position beta and annualised volatility come from FMP price history via `tools/historical_store.py` — the same source and method as the market-factor volatility inside the VaR calc — NOT from the AQE snapshot. AQE is read only for `sector`, a classification, not a computed statistic. **Confirmed positions only:** anything still `pending_review` is excluded from every number and named in `excluded_pending_review`, never blended in until the PM confirms it. A position with no `aqe_snapshot` is EXCLUDED and named, never defaulted to zero; `computed_from_aqe_dated` states which AQE date the sector data reflects (frequently NOT today's — post-market always runs before premarket refreshes it), and `mixed_vintage: true` fires if held names carry different AQE dates. **No stop audit here** — that comparison is only fresh right after premarket's stop-update step. Recomputed unconditionally every run: it is a deterministic call against a pre-seeded local store, so skipping it would only ever risk a stale number for zero benefit.
 
-**Archive integrity gate (job 10).** `archive_ledger.py merge` raises if `sum(by_trading_day) != YTD`; on that error nothing is written and the run degrades — an archive that fails its own arithmetic is never shipped. Zero closed trades is a legitimate no-op and writes nothing. **Closed trades with no archive file to file them into is a real gap, and the batch reports it as a failure rather than a quiet skip.**
+**Archive integrity gate (job 10).** `archive_ledger.py merge` raises if `sum(by_trading_day) != YTD`; on that error nothing is written and the run degrades — an archive that fails its own arithmetic is never shipped. Zero closed trades is a legitimate no-op and writes nothing. **Closed trades with no archive file to file them into is a real gap, and the batch reports it as a failure rather than a quiet skip.** **D-102 fix:** `journal_build.py`'s `closed_trades` use `{closed_date, realised_usd, ...}`, which `archive_ledger.py merge` cannot read directly (it wants `{exitDate, pnlUsd, ...}`) — before this fix, every real close would have been archived with `pnlUsd: 0.0` and `exitDate: null`. `journal_closed_to_archive_format.py` now converts the extract first. A missing archive file is seeded from an in-memory empty store rather than failing the job — this fund's first-ever close (AVAV, 2026-08-18) is what exposed there was no archive on disk yet at all.
 
 ---
 
