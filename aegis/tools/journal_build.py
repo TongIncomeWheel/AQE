@@ -288,12 +288,28 @@ def _num(v):
 
 
 def _date_only(s):
+    """D-101 fix: this previously regex-matched digit patterns only, so a raw epoch-millisecond
+    trade_time (e.g. 1787059812246, what Tiger's get_transactions/get_filled_orders actually
+    return for trade_time/order_time — see A_FILL_TIME) fell through to the 8-digit fallback and
+    produced garbage like '1787-05-98' (first 8 digits of the epoch, sliced as if it were
+    YYYYMMDD). Never caught before because no closed_trade had ever been booked (D-100 was the
+    first). Epoch ms/seconds are now detected and converted properly before any digit-pattern
+    fallback is tried."""
     if not s:
         return None
+    if isinstance(s, (int, float)) or (isinstance(s, str) and re.match(r"^\d+$", s.strip())):
+        n = int(s)
+        try:
+            if n > 10**12:      # milliseconds since epoch
+                return datetime.fromtimestamp(n / 1000.0, tz=timezone.utc).strftime("%Y-%m-%d")
+            if n > 10**9:       # seconds since epoch (10-digit)
+                return datetime.fromtimestamp(n, tz=timezone.utc).strftime("%Y-%m-%d")
+        except (ValueError, OSError, OverflowError):
+            pass
     m = re.search(r"(\d{4})[-/](\d{2})[-/](\d{2})", str(s))
     if m:
         return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
-    m = re.match(r"^(\d{8})", str(s).strip())
+    m = re.match(r"^(\d{8})$", str(s).strip())
     if m:
         d = m.group(1)
         return f"{d[0:4]}-{d[4:6]}-{d[6:8]}"
@@ -1308,7 +1324,7 @@ def main():
     b.add_argument("--json", action="store_true")
     b.set_defaults(func=cmd_build)
 
-    # The batch needs the same "most recent journal before <date>" answer that build uses for
+    # The batch needs the same "most recent journal before --date" answer that build uses for
     # its carry, to hand to held_book_refresh carry-forward --prior. One implementation.
     p = sub.add_parser("prior", help="print the most recent journal path before --date")
     p.add_argument("--date", required=True)
