@@ -33,8 +33,9 @@ summarising, no "cleaning" — into a directory, and this tool reads that direct
         tiger_stock_positions.json      tiger_option_positions.json
         tiger_filled_orders.json        tiger_order_transactions.json
         tiger_account_summary.json
-        ibkr_account_positions.json     ibkr_account_orders.json
-        ibkr_account_trades.json        ibkr_account_summary.json
+        ibkr_account_positions.json     ibkr_account_orders.json        (D-104: retired, see below —
+        ibkr_account_trades.json        ibkr_account_summary.json        harmless to still pull/save,
+                                                                          never read into the book)
 
 Verbatim matters twice over: it is the audit trail that never existed, and it is what lets this
 tool be fixed against real payloads instead of imagined ones.
@@ -58,10 +59,11 @@ THE HONESTY RULES, which are the whole point:
     refresh. This tool records execution truth only.
 
 EXIT CODES — the same three-way grammar as phase_gate / aqe_coverage / artefact_check, mapped
-onto post_market's own failure ladder:
-    0  FULL           both brokers pulled and reconciled
-    1  PARTIAL_SOURCES one broker pulled; journal written from it, page but the run continues
-    2  PROVISIONAL / cannot build — neither broker, or rows that cannot be mapped. Page and
+onto post_market's own failure ladder. D-104 (PM ruling, 2026-08-19): IBKR is retired from the
+Aegis book — Tiger is the sole broker source, so PARTIAL_SOURCES ("one of two brokers") is no
+longer a reachable state; the ladder collapses to two rungs:
+    0  FULL          Tiger pulled and reconciled
+    2  PROVISIONAL / cannot build — Tiger absent, or rows that cannot be mapped. Page and
        halt held-list mutations downstream.
 
 Deterministic (law 4) — no model, no network, no clock-derived business logic (the run date is
@@ -676,20 +678,19 @@ def build(date, pull_dir, prior_journal=None, allocated=None, one_r_pct=1.5,
             if leg:
                 legs.append(leg)
 
+    # D-104 (PM ruling, 2026-08-19): IBKR retired from the Aegis book. "Tiger (default broker;
+    # IBKR if in use)" is no longer the rule — Tiger is now the SOLE broker source read into
+    # open_positions/option_positions/closed_trades. An ibkr_account_positions.json /
+    # ibkr_account_trades.json payload may still be present in a pull (harmless to save, and
+    # useful for audit of other, non-Aegis books on the same IBKR account) but its rows are no
+    # longer ingested here. This mirrors the same retirement already ratified for bracket.py's
+    # spot-quote path (D-98: Tiger primary, FMP fallback, IBKR retired) — the two ran on
+    # different clocks and the post-market side never caught up until now.
     if ibkr_pos_present:
-        connectors.append("IBKR")
-        sources_present.append("IBKR")
-        # IBKR returns option rows inside the SAME payload as equities — split by asset class
-        # here, do not expect a second call (post_market step 2, Charter §0.5).
-        for row in _rows(ibkr_pos):
-            if _is_option_row(row):
-                leg = _option_leg(row, "IBKR", flags, unmappable)
-                if leg:
-                    legs.append(leg)
-                continue
-            pos = _equity_position(row, "IBKR", flags, unmappable)
-            if pos:
-                equities.append(pos)
+        _flag(flags, "-", "ibkr_ignored",
+              "ibkr_account_positions.json was present in this pull but IBKR is retired from "
+              "the Aegis book (D-104, PM ruling 2026-08-19) — its rows were NOT read into "
+              "open_positions or option_positions. Tiger is the sole broker source.", "low")
 
     for pos in equities:
         if pos.pop("_entry_missing", False):
@@ -710,7 +711,9 @@ def build(date, pull_dir, prior_journal=None, allocated=None, one_r_pct=1.5,
             prior = obj or {}
 
     fills = _fills([p for p in (tiger_fills_a, tiger_fills_b) if p is not None], "TIGER")
-    fills += _fills([p for p in (ibkr_trades,) if p is not None], "IBKR")
+    # D-104: IBKR fills are no longer read into Aegis close-matching either — see the ibkr_pos
+    # retirement note above. (ibkr_trades is still loaded above so an absent-vs-unreadable
+    # distinction is possible if this is ever revisited, but it is deliberately unused here.)
     closed, unmatched_fills = _closed_trades(fills, prior.get("open_positions"), date)
 
     for f in unmatched_fills:
@@ -728,7 +731,9 @@ def build(date, pull_dir, prior_journal=None, allocated=None, one_r_pct=1.5,
     # An absent option payload and an empty one are different facts (post_market's empty-book
     # rule). Absent = the pull did not happen, keep what we had. Present-and-empty = a real
     # answer, and derive-hedge is the thing entitled to act on it.
-    option_pull_ran = tiger_opt_present or ibkr_pos_present
+    # D-104: only Tiger's option pull counts — an IBKR-only pull is no longer "the option pull
+    # ran" for Aegis purposes, since IBKR rows are ignored regardless of presence.
+    option_pull_ran = tiger_opt_present
     if not option_pull_ran:
         legs = copy.deepcopy(prior.get("option_positions") or [])
         if legs:
@@ -759,19 +764,17 @@ def build(date, pull_dir, prior_journal=None, allocated=None, one_r_pct=1.5,
                   f"rebuild it from the confirmed legs. Coverage is UNKNOWN until it does.",
                   "high")
 
+    # D-104: IBKR is retired from the Aegis book — Tiger is the SOLE broker source, so
+    # sources_present can now only ever be [] or ["TIGER"]. The old three-way FULL/
+    # PARTIAL_SOURCES/PROVISIONAL grammar existed to distinguish "both brokers", "one of two",
+    # and "neither" — with one broker left, "one of two" no longer exists as a state. FULL now
+    # means Tiger reported; PROVISIONAL means it didn't and there is no book of record.
     if not sources_present:
         status = "PROVISIONAL"
         exit_code = 2
-        notes.append("Neither broker payload was present — no book of record could be built "
-                     "from execution truth.")
-    elif len(sources_present) == 1:
-        status = "PARTIAL_SOURCES"
-        exit_code = 1
-        missing = "IBKR" if "TIGER" in sources_present else "TIGER"
-        notes.append(f"{missing} payload absent — journal reconciled from "
-                     f"{sources_present[0]} alone.")
-        _flag(flags, "-", "partial_sources",
-              f"{missing} did not report this run; the book is one broker's view only", "high")
+        notes.append("Tiger's payload was not present — no book of record could be built from "
+                     "execution truth. (IBKR's absence never affects this: IBKR is retired "
+                     "from the Aegis book, D-104.)")
     else:
         status = "FULL"
         exit_code = 0
@@ -1051,38 +1054,27 @@ def selftest():
     })
     prior_ledger = {"realised_pnl_usd": -3142.93}
 
-    # ---- 1. the happy path, both brokers, MCP text-envelope on one of them
+    # ---- 1. the happy path — Tiger only (D-104: IBKR retired, Tiger is the sole broker
+    # source). MCP text-envelope on the one payload we do have.
     _write(os.path.join(pull, TIGER_FILES["stock_positions"]), {
         "content": [{"type": "text", "text": json.dumps([
             {"symbol": "AMPL", "quantity": 571, "average_cost": 9.7494,
              "latest_price": 9.69, "unrealized_pnl": -32.77, "currency": "USD"},
         ])}]})
-    _write(os.path.join(pull, IBKR_FILES["positions"]), [
-        {"contract": {"symbol": "HBAN", "secType": "STK"}, "position": 300,
-         "avgCost": 18.40, "marketPrice": 18.95, "currency": "USD"},
-        {"contract": {"symbol": "XLF   260821P00051000", "secType": "OPT", "strike": 51.0,
-                      "right": "P", "lastTradeDateOrContractMonth": "20260821"},
-         "position": -6, "avgCost": 118.0, "marketPrice": 1.02, "currency": "USD"},
-    ])
     j, r = build(D, pull, prior_journal=prior_path, allocated=75000.0, one_r_pct=1.5,
                  prior_ledger=prior_ledger, now_utc="2026-07-28T21:00:00Z")
-    check("both brokers -> FULL, exit 0", r["status"] == "FULL" and r["exit_code"] == 0, r)
-    check("two equity rows", r["equity_rows"] == 2, r["equity_rows"])
-    check("IBKR option row split out of the equity payload",
-          r["option_legs"] == 1 and j["option_positions"][0]["underlying"] == "XLF",
-          j["option_positions"])
-    check("short leg keeps its sign", j["option_positions"][0]["qty"] == -6.0)
+    check("Tiger alone -> FULL, exit 0", r["status"] == "FULL" and r["exit_code"] == 0, r)
+    check("one equity row", r["equity_rows"] == 1, r["equity_rows"])
     check("MCP text envelope unwrapped", j["open_positions"][0]["ticker"] == "AMPL")
     check("entry_date carried from prior, not stamped today",
           j["open_positions"][0]["entry_date"] == "2026-07-10")
     check("stop_reference carried from prior",
           j["open_positions"][0]["stop_reference"] == 8.9)
     check("aqe_snapshot carried but never invented",
-          j["open_positions"][0].get("aqe_snapshot") == {"gics_sector": "Technology"}
-          and "aqe_snapshot" not in j["open_positions"][1])
+          j["open_positions"][0].get("aqe_snapshot") == {"gics_sector": "Technology"})
     check("schema valid", validate(j) == [], validate(j))
 
-    # dynCap arithmetic: 75000 + (-3142.93 + 0) + (-32.77 + 165.0)
+    # dynCap arithmetic: 75000 + (-3142.93 + 0) + (-32.77)
     unreal = sum(p["unrealised_usd"] for p in j["open_positions"])
     check("dyncap = allocated + realised + unrealised",
           abs(j["dyncap"]["value"] - (75000.0 - 3142.93 + round(unreal, 2))) < 0.02,
@@ -1090,22 +1082,45 @@ def selftest():
     check("1R is 1.5% of dyncap",
           abs(j["dyncap"]["one_r"] - round(j["dyncap"]["value"] * 0.015, 2)) < 0.01)
 
+    # ---- 1b. D-104 regression: an IBKR payload can still land in the pull dir (nothing stops
+    # the harness saving it), but it must never move the needle — not on equity_rows, not on
+    # status, not silently.
+    _write(os.path.join(pull, IBKR_FILES["positions"]), [
+        {"contract": {"symbol": "HBAN", "secType": "STK"}, "position": 300,
+         "avgCost": 18.40, "marketPrice": 18.95, "currency": "USD"},
+    ])
+    j1b, r1b = build(D, pull, prior_journal=prior_path, allocated=75000.0, one_r_pct=1.5,
+                      prior_ledger=prior_ledger, now_utc="2026-07-28T21:00:00Z")
+    check("D-104: an IBKR payload present changes nothing — still one equity row",
+          r1b["equity_rows"] == 1 and r1b["status"] == "FULL", r1b)
+    check("D-104: IBKR presence is flagged, not silently ignored",
+          any(f["type"] == "ibkr_ignored" for f in j1b["review_flags"]), j1b["review_flags"])
+    os.remove(os.path.join(pull, IBKR_FILES["positions"]))  # back to the Tiger-only fixture
+
     # ---- 2. determinism
     j2, r2 = build(D, pull, prior_journal=prior_path, allocated=75000.0, one_r_pct=1.5,
                    prior_ledger=prior_ledger, now_utc="2026-07-28T21:00:00Z")
     check("deterministic", json.dumps(j, sort_keys=True) == json.dumps(j2, sort_keys=True))
 
-    # ---- 3. one broker missing -> PARTIAL_SOURCES, exit 1, still writes a book
-    os.remove(os.path.join(pull, IBKR_FILES["positions"]))
+    # ---- 3. Tiger absent -> PROVISIONAL, exit 2 (D-104: there is no second broker to fall
+    # back to anymore — Tiger missing means no book of record, full stop)
+    os.remove(os.path.join(pull, TIGER_FILES["stock_positions"]))
+    j3prov, r3prov = build(D, pull, prior_journal=prior_path, allocated=75000.0, one_r_pct=1.5,
+                            prior_ledger=prior_ledger, now_utc="2026-07-28T21:00:00Z")
+    check("Tiger absent -> PROVISIONAL exit 2",
+          r3prov["status"] == "PROVISIONAL" and r3prov["exit_code"] == 2, r3prov)
+    check("Tiger absent produces zero equity rows", r3prov["equity_rows"] == 0)
+    _write(os.path.join(pull, TIGER_FILES["stock_positions"]), {
+        "content": [{"type": "text", "text": json.dumps([
+            {"symbol": "AMPL", "quantity": 571, "average_cost": 9.7494,
+             "latest_price": 9.69, "unrealized_pnl": -32.77, "currency": "USD"},
+        ])}]})  # restore for the tests below, which reuse `pull`
+
+    # ---- 4. option payload ABSENT -> prior legs carried, not emptied (Tiger never wrote
+    # tiger_option_positions.json in this fixture, so this is naturally exercised by every
+    # build above too — j3 below is just the current state of `pull`)
     j3, r3 = build(D, pull, prior_journal=prior_path, allocated=75000.0, one_r_pct=1.5,
                    prior_ledger=prior_ledger, now_utc="2026-07-28T21:00:00Z")
-    check("one broker -> PARTIAL_SOURCES exit 1",
-          r3["status"] == "PARTIAL_SOURCES" and r3["exit_code"] == 1, r3)
-    check("partial still produces a usable book", r3["equity_rows"] == 1)
-    check("partial raises a high flag",
-          any(f["type"] == "partial_sources" for f in j3["review_flags"]))
-
-    # ---- 4. option payload ABSENT -> prior legs carried, not emptied
     check("absent option pull carries prior legs",
           len(j3["option_positions"]) == 1
           and j3["option_positions"][0]["underlying"] == "XLK",
@@ -1223,10 +1238,11 @@ def selftest():
           all("aqe_snapshot" not in p or p["aqe_snapshot"]
               for p in j["open_positions"]))
 
-    # ---- 11a. IBKR's real payload shape. These are verbatim rows from a live
-    # get_account_positions pull (28 Jul 2026). IBKR ships no structured strike/right/expiry
-    # anywhere — one description string is the whole contract. The first live rehearsal of the
-    # batch halted at exit 2 on exactly these rows, so they are pinned here.
+    # ---- 11a. D-104: IBKR is retired from the Aegis book (PM ruling, 2026-08-19). These are
+    # the same verbatim rows from a live get_account_positions pull (28 Jul 2026) that used to
+    # be pinned here as a successful IBKR-parsing test — now pinned as a successful IGNORE test:
+    # the payload is present, but none of it may reach open_positions/option_positions, and its
+    # presence is flagged so a silent no-op never looks the same as "the pull didn't happen".
     ibkr_real = os.path.join(tmp, "ibkr_real")
     _write(os.path.join(ibkr_real, IBKR_FILES["positions"]), [
         {"contract_id": 891706384, "contract_description": "AEHR Jul31'26 80 PUT @AMEX",
@@ -1249,24 +1265,15 @@ def selftest():
     ])
     jr, rr = build(D, ibkr_real, prior_journal=None, allocated=75000.0, one_r_pct=1.5,
                    prior_ledger=None, now_utc="2026-07-28T21:00:00Z")
-    check("IBKR real payload maps with zero unmappable rows", rr["unmappable"] == 0,
-          [f for f in jr["review_flags"] if f["type"] == "unmappable_row"])
-    aehr = next((l for l in jr["option_positions"] if l["underlying"] == "AEHR"), None)
-    check("IBKR description parsed to a full contract",
-          aehr is not None and aehr["right"] == "P" and aehr["strike"] == 80.0
-          and aehr["expiry"] == "2026-07-31" and aehr["qty"] == 1.0, aehr)
-    duol = next((l for l in jr["option_positions"] if l["underlying"] == "DUOL"), None)
-    check("IBKR short leg keeps its negative sign",
-          duol is not None and duol["qty"] == -1.0 and duol["right"] == "C"
-          and duol["strike"] == 220.0, duol)
-    check("IBKR bare-symbol equity mapped from the description",
-          sorted(p["ticker"] for p in jr["open_positions"]) == ["CHYM", "ICHR"],
-          [p["ticker"] for p in jr["open_positions"]])
-    check("IBKR short equity keeps its negative size",
-          next(p["qty"] for p in jr["open_positions"] if p["ticker"] == "ICHR") == -100)
-    check("HKD sleeve skipped, never converted",
-          any(f["type"] == "non_usd_row" for f in jr["review_flags"])
-          and not any(p["ticker"] == "992" for p in jr["open_positions"]))
+    check("D-104: IBKR payload present but zero rows read into the book",
+          jr["open_positions"] == [] and jr["option_positions"] == [], jr)
+    check("D-104: IBKR presence is flagged, not silently swallowed",
+          any(f["type"] == "ibkr_ignored" for f in jr["review_flags"]),
+          jr["review_flags"])
+    check("D-104: IBKR never appears in connectors/sources_present",
+          "IBKR" not in (jr.get("broker_sync", {}).get("connectors") or []))
+    # the description parser itself is retained (still a correct, tested primitive — it is just
+    # no longer WIRED to any live ingestion path) —
     check("a description that is not a contract is never half-parsed",
           _parse_broker_description("700 @SEHK") is None
           and _parse_broker_description("CHYM") is None
