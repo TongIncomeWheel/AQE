@@ -1,4 +1,4 @@
-# PMA · POST-COMMITTEE PIPELINE — S6.5 → S7P (v4.3, PM-ratified rulings applied)
+# PMA · POST-COMMITTEE PIPELINE — S6.5 → S7P (v4.4, PM-ratified rulings applied)
 **Owner: Alfred (orchestrator — sequencing and completeness only, no market opinion).**
 **This file is the persistent definition of everything that happens AFTER the S6 consensus closes and BEFORE the PM sees the daily PMA.**
 
@@ -176,11 +176,68 @@ deferred to "reconstruct by hand if the data's missing."**
    verbatim — never hand-typed, never re-derived by Alfred. S7Q's Q6r family (below) fails the gate
    if §4 doesn't match the tool's own output.
 
+## S6.8 · PM LENS (tool, mandatory — PM ruling 2026-08-19: "lets have both … we stick to the
+committee doing their filtering as-is now, but we also flash these names as 'PM lens' — this is to
+ensure coverage and not prematurely blocking names or over-using tokens to look at too big a list
+of candidates.")
+**Deterministic, 0 spawns, 0 tokens. Runs every session, after S6.7, before S7 render.**
+
+`pm_lens.py --export <aqe_daily_export.json> --phase4 <rank/deliberation output> --out
+data/pma/<date>/pm_lens.json` scores EVERY export row against the PM's own six manual checks:
+
+  C1  LISTS      on_longlist AND on_elder (both lists, not just one)
+  C2  RS         rs_leadership in (LEADER, IN-LINE)                    [excludes LAGGARD]
+  C3  SECTOR     sector_rrg_quadrant in (IMPROVING, LEADING), AND thematic_rrg_quadrant likewise
+                 IF the name carries a basket. A NULL basket is NOT a fail — 129 of 194 rows on
+                 2026-08-18 had no basket at all; absence is not weakness.
+  C4  STRUCTURE  structure_shift in (ABOVE_STRUCTURE, BULLISH_BOS)
+  C5  VWAP       5d VWAP position ABOVE and slope RISING, AND 14d position ABOVE
+  C6  LENS       lens count >= 4 of 6 strong, AND coil strong, AND insti_money strong.
+                 The coil/insti_money requirement sits ON TOP of the >=4 count — it is NOT a
+                 requirement that all six lenses be strong. (PM, verbatim: "4 out of 6 lens to be
+                 strong - with an additional layer that coil and insti_money are strong".)
+                 The six lenses: leadership, coil, insti_money, structure, resistance, sector.
+                 `extension` is always null in AQE by design and is NOT a lens.
+
+Names at >= `pm_lens_min_checks` (default 5 of 6) are FLAGGED.
+
+**VOCABULARY — two different sixes, never interchange them.** CHECK SCORE is out of 6 CHECKS.
+LENS COUNT is out of 6 LENSES. They are different numbers; a row can be 5/6 checks with 2/6 lenses.
+Never print one as the other and never write "all six" without saying which.
+
+**THIS LAYER BLOCKS NOTHING.** It removes no name from the longlist, from any voice's menu, from
+the tally, or from the deliberation set. The committee's own filtering is UNCHANGED and runs exactly
+as before; PM LENS runs beside it. It cannot cut, and it must never be described as a gate.
+
+**TWO THINGS ARE DELIBERATELY NOT CHECKS.**
+  `bracket.valid` — entry mechanics, never name quality. PM standing rule, restated 2026-08-19.
+  The committee has cleared ADVANCE names carrying bracket.valid=False (EQNR, BBVA, 2026-08-18):
+  name analysis stands, entry is the PM's own step. Bracket must never appear as a screen term.
+  QS — ranking/display only. Measured on the 2026-08-18 export, `qs.odds.edge` is positive on
+  194 of 194 rows (values cluster 0.067–0.117), so a binary "on_qs OR edge>0" test passes
+  everything and cannot discriminate. It sorts the flagged list ("higher = better", per the PM)
+  and never includes or excludes. Demoting it from a check changed the flagged list by ZERO names.
+
+**THE COVERAGE CROSS-REFERENCE IS THE POINT.** With `--phase4`, each flagged name is tagged:
+  DELIBERATED            the committee saw and argued it — coverage worked
+  NOMINATED_CUT_BY_CAP   nominated, then dropped by the cap — already visible in §8 near misses
+  UNSEEN                 ZERO nominations. The committee never looked at it.
+UNSEEN is the gap this tool exists for. Every section of the brief (ADVANCE/HOLD/PASS/NEAR-MISS)
+requires a nomination to exist first, so an UNSEEN name appears NOWHERE else in the report. TER on
+2026-08-18 was exactly that: 5 of 6 checks passed, zero nominations, zero mentions anywhere; the PM
+found it by eye a day later, off-sequence. An UNSEEN name is never suppressed, never restated as a
+verdict, and never dressed up as a recommendation — it is a name the committee did not look at.
+
 ## S7 · RENDER (deterministic, 0 spawns) — fixed report contract
-Eight sections, this order: 1 Regime (three reads) · 2 Sector & thematic alignment · 3 Held book review ·
+Nine sections, this order: 1 Regime (three reads) · 2 Sector & thematic alignment · 3 Held book review ·
 4 REPEAT WATCH (S6.7 tool output, verbatim — visibility only, not fed to the R2 committee vote, PM
 ruling 2026-08-18) · 5 QS LIST (full ticker-level regime-model shortlist, PM-only, render-only) ·
-6 Shortlist as TICKER CARDS · 7 Near misses (PM manual look) · 8 Action plan / next steps.
+6 PM LENS (S6.8 tool output, verbatim — the `markdown` field of pm_lens.json, never hand-written;
+render EVERY run, and if nothing is flagged say so explicitly rather than dropping the section;
+each row carries whether the committee actually saw that name, and any UNSEEN name gets one plain
+line saying the committee never looked at it — PM-only visibility, never a verdict, never fed to
+the committee) · 7 Shortlist as TICKER CARDS · 8 Near misses (PM manual look) · 9 Action plan /
+next steps.
 CARD contract (every card, every element, no omissions):
   header  ticker · verdict · conviction(+cap reason) · vote S-O-A · sector
   list    List (longlist/elder_list/qs/radar-runner sourcing) · Elder (score + pattern + 5d trace) ·
@@ -215,7 +272,7 @@ outside the daily list. Always printed, never silently dropped. Carries List/Eld
 same as shortlist cards — near-miss status does not exempt a name from the same disclosure fields.
 
 ## S7Q · PERFORMANCE AUDIT (interim gate BEFORE publishing to PM — tools/s7q_gate)
-Four families, all must PASS to publish:
+Five families, all must PASS to publish:
   QUALITY       quorum >= 8 · coverage matrix complete · consensus rule correctly applied ·
                 R1 (zero bracket-gate breaches) · R3 (QS absent from every seat packet;
                 crown_agreement filed) · Phase-4 ranking key fully resolves (no undeclared ties) ·
@@ -227,7 +284,7 @@ Four families, all must PASS to publish:
                 Committee/Risk/Condition/QS lines · every HOLD-FOR-CONDITIONS carries a condition line ·
                 every ADVANCE carries attributed opposing case + falsifier · near-miss list present ·
                 staleness + DEGRADED flags in header
-  COMPOSITION   report follows the 8-section contract (S7) · shortlist appears ONCE, as cards ·
+  COMPOSITION   report follows the 9-section contract (S7) · shortlist appears ONCE, as cards ·
                 zero narration phrasing · action plan addressed to PM
   Q6r           (2026-08-18, closes "gaps and forget will occur") — `repeat_watch.json` exists for
                 this session · it covers every ticker in `phase4_ledger.json`'s `repeat_flags` for
@@ -235,14 +292,22 @@ Four families, all must PASS to publish:
                 rendered §4 text. This is a PROVENANCE check, not a numbers check — a hand-typed §4
                 fails Q6r even if its numbers happen to be correct, because the point is that the
                 tool ran, not that a human got the math right this one time.
+  Q7L           (2026-08-19, closes "strong on my checks but invisible in the brief") —
+                `pm_lens.json` exists for this session · §6 of the rendered report IS that file's
+                own `markdown` field · every ticker it tags UNSEEN actually appears in the rendered
+                brief text. Like Q6r this is a PROVENANCE check, not a numbers check: a hand-written
+                §6, or an omitted §6, fails Q7L even if the names happen to be right. If the tool
+                itself failed to run, §6 must say so explicitly in the report and the failure must
+                appear in the header — a silently missing §6 is never acceptable.
 FAIL → route to owning stage (render fails re-render; missing obligations re-open S6 close; seat
 breach re-runs that seat; Q6r fails route back to S6.7 — run record-verdicts + repeat-watch, then
-re-render §4 from the tool's own markdown). Max 2 loops. Whatever still fails is DECLARED in the
+re-render §4 from the tool's own markdown; Q7L fails route back to S6.8 — re-run pm_lens.py, then
+re-render §6 from the tool's own markdown). Max 2 loops. Whatever still fails is DECLARED in the
 footer — the PMA never ships a silent defect, and never ships without this gate's PASS record attached.
 
 ## S7P · PUBLISH
 data/pma/<date>/ (all stage artifacts, git, including phase4_ledger.json append, verdict_ledger.json
-update, and repeat_watch.json) · aegis/reports/pma/<date>.md + latest.md (byte-identical) · project doc ·
+update, repeat_watch.json, and pm_lens.json) · aegis/reports/pma/<date>.md + latest.md (byte-identical) · project doc ·
 AND printed in full on screen for the PM.
 Footer always: "DRAFT — PM approval required. Nothing is staged, nothing is armed."
 
@@ -256,4 +321,7 @@ deliberation_cap (**20**, raised 2026-08-17 from the original default of 12 — 
 starved thin-nomination/high-sector-weight sectors, e.g. Technology at 29% of the universe but only
 2 qualifiers, both cut; at 20 both surface) ·
 phase4_ledger_window (5 trading sessions, repeat threshold >=2) ·
+pm_lens_min_checks (**5** of 6 CHECKS — PM LENS is visibility-only and blocks nothing, so a looser
+threshold costs display noise at worst, never a missed name. Measured on 2026-08-18: a strict 6-of-6
+returns 1 name of 194; C6/lens is the sole binding check, and relaxing to 5 gives 13) ·
 max_quality_loops (2) · cards_soft_max (5 actionable; extras render with a note).
