@@ -1,0 +1,88 @@
+{
+ "plugin": "aegis-core",
+ "version": "1.2.0",
+ "previous_version": "1.1.0-draft",
+ "kernel_build": "86525f9",
+ "built_at": "2026-08-19",
+ "built_from": "TongIncomeWheel/AQE @ main",
+ "artifact": {
+  "filename": "aegis-core.plugin",
+  "bytes": 531545,
+  "sha256": "a81083efa161da325574618e3c13c973c980da5d03776e543d7030caa05a847b",
+  "file_count": 147,
+  "delivered_to_pm": "2026-08-19, Cowork session"
+ },
+ "why": "The installed aegis-core plugin shipped 9 skills and NO `pma` entry, so `/pma` was never a real slash command -- the premarket card only ever ran by hand, executed straight from the repo. This build adds it. PM, 2026-08-19: 'package and commit the FUCKING SKILL then. I dont want things in a container and loss.'",
+ "change": "ADD skills/pma/ (no existing skill touched; the other 9 ship byte-identical)",
+ "skills_before": [
+  "bracket",
+  "committee-desk",
+  "committee-pm",
+  "market_hours",
+  "premarket",
+  "print-trade-journal",
+  "ptj",
+  "recover",
+  "staging-gatekeeper"
+ ],
+ "skills_after": [
+  "bracket",
+  "committee-desk",
+  "committee-pm",
+  "market_hours",
+  "pma",
+  "premarket",
+  "print-trade-journal",
+  "ptj",
+  "recover",
+  "staging-gatekeeper"
+ ],
+ "pma_payload": [
+  {
+   "in_plugin": "skills/pma/SKILL.md",
+   "from_repo": "aegis/skills/premarket-analysis/SKILL.md",
+   "bytes": 17986,
+   "version": "v4.4",
+   "note": "frontmatter `name: pma` is what makes /pma trigger"
+  },
+  {
+   "in_plugin": "skills/pma/stages/S6B_post_committee.md",
+   "from_repo": "aegis/skills/premarket-analysis/stages/S6B_post_committee.md",
+   "bytes": 26668,
+   "version": "v4.4"
+  },
+  {
+   "in_plugin": "skills/pma/tools/pma_pipeline.py",
+   "from_repo": "aegis/skills/premarket-analysis/tools/pma_pipeline.py",
+   "bytes": 36580
+  },
+  {
+   "in_plugin": "skills/pma/tools/pm_lens.py",
+   "from_repo": "aegis/skills/premarket-analysis/tools/pm_lens.py",
+   "bytes": 18160
+  },
+  {
+   "in_plugin": "skills/pma/contracts/voice_menus.json",
+   "from_repo": "aegis/skills/premarket-analysis/contracts/voice_menus.json",
+   "bytes": 10158
+  }
+ ],
+ "source_of_truth_rule": "The REPO is source of truth, never the bundled copy. SKILL.md's own rule is 'fetch fresh from main every run -- never a cached copy'. The bundled tools/stages/contracts are an OFFLINE FALLBACK so a run can proceed if GitHub is unreachable. On any disagreement main wins, and S6B_post_committee.md wins over SKILL.md.",
+ "rebuild_recipe": [
+  "1. Copy the installed plugin: cp -a ~/.claude/plugins/synced/aegis-core /tmp/aegis-core-pma",
+  "2. Strip __pycache__ and *.pyc",
+  "3. mkdir -p skills/pma/{stages,tools,contracts}",
+  "4. curl each file in pma_payload[] from raw.githubusercontent.com/TongIncomeWheel/AQE/main/<from_repo>",
+  "5. Bump .claude-plugin/plugin.json version + description",
+  "6. Write skills/pma/README.md stating the source-of-truth rule above",
+  "7. cd /tmp/aegis-core-pma && zip -qr aegis-core.plugin . -x '*.DS_Store' -x '*__pycache__*' -x '*.pyc'",
+  "8. Deliver the .plugin to the PM; it is installed from the chat, not written to disk by the agent"
+ ],
+ "verification_performed": [
+  "SKILL.md frontmatter reads `name: pma`",
+  "SKILL.md contains 'S6.8 . PM LENS', 'v4.4 operational card', and the Q7L gate family",
+  "python3 -m py_compile passed on both bundled tools",
+  "archive lists all 5 pma payload files at their expected byte sizes; 147 files total"
+ ],
+ "known_gap": "aegis-core is a GENERATED plugin ('Generated; do not hand-edit'), produced from the kernel via aegis/packaging/build_claude.py. This build was assembled by copying the installed plugin and adding skills/pma/, NOT by re-running the generator. The next kernel regeneration will DROP skills/pma unless the generator itself is taught to emit it. That is the durable fix and it is not done -- tracked here so the loss is predictable rather than silent."
+}
