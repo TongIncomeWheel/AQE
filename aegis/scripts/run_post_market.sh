@@ -10,6 +10,38 @@
 # again. This script IS that order. It cannot drift, it cannot skip a step
 # because a context was long, and it returns one exit code.
 #
+# 2026-08-19 INCIDENT (D-99/D-100/D-101/D-102): a manual PTJ run on 2026-08-18
+# never actually invoked this script — it called a subset of the underlying
+# tools by hand, which is how four real defects shipped silently for weeks:
+#   D-99  — dynCap was computed by journal_build.py's `build` BEFORE Aegis-
+#           membership classification ran, so its unrealised-P&L component
+#           summed over the full co-mingled broker book (Income Wheel,
+#           Protege9, Ryan's personal names), not just Aegis holdings. Fixed:
+#           tools/recompute_dyncap.py now runs as its own job right after
+#           equity+option membership classify, before carry-forward.
+#   D-100 — Tiger's get_filled_orders MCP tool silently drops stop-triggered
+#           equity closes. Confirmed on AVAV: its 2026-08-18 stop-out never
+#           appeared in get_filled_orders on the 08-18 OR 08-19 pull, despite
+#           being present in get_transactions(symbol=AVAV) the whole time. The
+#           loss was real at the broker and invisible in the book of record.
+#           Fixed: tools/reconcile_vanished_positions.py is now a HARD GATE
+#           right after the payload contract check — it diffs yesterday's
+#           held tickers against today's broker pull, and HALTS (exit 2) if
+#           any vanished ticker has no matching fill in the saved payload,
+#           rather than letting journal_build quietly build a journal with
+#           the position simply gone and nothing recorded.
+#   D-101 — journal_build.py's `_date_only()` could not parse epoch-
+#           millisecond timestamps (only ever exercised once D-100 produced
+#           the first real closed_trade in this fund's history) and silently
+#           produced garbage dates like "1787-05-98". Fixed in journal_build.py.
+#   D-102 — archive_ledger.py's merge expects {exitDate, pnlUsd, ...} but
+#           journal_build.py's closed_trades use {closed_date, realised_usd,
+#           ...} — this script used to hand the raw extract straight to
+#           archive_ledger.py, so any real close would have been archived
+#           with pnlUsd defaulting to 0.0 and exitDate null. Fixed:
+#           tools/journal_closed_to_archive_format.py converts the extract
+#           before the merge step below.
+#
 # WHAT IT DOES NOT DO — the hard seams a shell script cannot cross:
 #   * It does not call Tiger or IBKR. Those are MCP connectors, not CLIs. The
 #     harness pulls both brokers and saves the raw payloads to
@@ -20,6 +52,17 @@
 #     (D-75); a printed line is a draft, not a delivery.
 #   * It does not place, size or arm anything. Nothing here is order-capable —
 #     only staging-gatekeeper ever is (constitution law 1).
+#   * If D-100's gate halts the run (an unexplained vanished position), it
+#     does NOT try to self-heal by calling get_transactions — that is a live
+#     MCP call this deterministic script cannot make. The orchestrating
+#     Claude session must recover the fill and append it to
+#     tiger_filled_orders.json, then re-run.
+#   * If a git push is blocked by this session's own sandbox proxy (a real,
+#     observed failure mode distinct from a bad token or network outage — see
+#     git_sync.py's --check), this script reports it as a failed push (worse 1)
+#     and does NOT attempt an MCP-based push itself; a shell script cannot
+#     call an MCP tool. The orchestrating Claude session must complete the
+#     push via the GitHub MCP connector's push_files tool.
 #
 # NOTHING IS SCHEDULED. There is no task, cron or trigger that runs this. It
 # is started by hand, every time.
@@ -38,9 +81,10 @@
 #   1  degraded but the book of record is sound — one broker only, a push that
 #      did not land, a later step that failed. Gate stamped partial. PAGE.
 #   2  halt. The journal could not be built or does not satisfy its contract,
-#      so nothing downstream may run (ordering rule Arch-F9). Gate stamped
-#      fail BEFORE exiting — a run that dies without stamping leaves tomorrow's
-#      Phase 0 waiting forever on something that is never coming. PAGE.
+#      or D-100's reconcile gate found an unexplained vanish, so nothing
+#      downstream may run (ordering rule Arch-F9). Gate stamped fail BEFORE
+#      exiting — a run that dies without stamping leaves tomorrow's Phase 0
+#      waiting forever on something that is never coming. PAGE.
 #
 set -uo pipefail
 
@@ -66,12 +110,10 @@ done
 
 EOD="data/eod/$DATE"
 JOURNAL="data/journal/aegis_journal_$DATE.json"
+ALLOCATED="${AEGIS_ALLOCATED_CAPITAL:-75000}"
 # OUT is where THIS RUN's own artefacts land — its log, its summary, the closed-trade
 # extract, the git_sync receipts. A rehearsal moves all of them under rehearsal/ so the
-# live shelf is left exactly as the last real run left it. The first rehearsal (28 Jul)
-# redirected only the journal and wrote six side artefacts into the live day folder,
-# overwriting that day's real flow audit. A rehearsal that mutates the live shelf is not
-# a rehearsal.
+# live shelf is left exactly as the last real run left it.
 OUT="$EOD"
 PUSH_ARG=()
 if (( REHEARSAL )); then
@@ -82,6 +124,7 @@ fi
 ARCHIVE="data/persistent/aegis_trade_journal_ARCHIVE_master.json"
 EXCLUSIONS="data/persistent/non_aegis_exclusions.json"
 MEMBERSHIP="data/persistent/option_membership.json"
+EQUITY_MEMBERSHIP="data/persistent/aegis_membership.json"
 STAGED="$EOD/staged_orders.json"
 LOG="$OUT/post_market_run.log"
 SUMMARY="$OUT/post_market_run.json"
@@ -107,9 +150,6 @@ finish() {
     1) status=partial ;;
     *) status=fail ;;
   esac
-  # A rehearsal must NEVER stamp. The stamp is the one thing tomorrow's Phase 0 reads;
-  # stamping it from a run that wrote no book of record would green-light the next phase
-  # against a journal that does not exist.
   if (( REHEARSAL )); then
     record "gate stamped" skipped "rehearsal — would have been $status"
   else
@@ -177,18 +217,15 @@ step() {
 }
 
 say "==============================================="
-say "POST-MARKET $DATE   (deterministic batch, D-93)"
+say "POST-MARKET $DATE   (deterministic batch, D-93 + D-99/D-100/D-101/D-102 fixes)"
 say "started $(date -u '+%Y-%m-%dT%H:%M:%SZ') UTC / $(TZ=Asia/Singapore date '+%Y-%m-%d %H:%M') SGT"
 say "repo: $ROOT"
 say "==============================================="
 
 # --------------------------------------------------------------- 0. inputs
-# The payload directory is this script's entire input contract. If the harness
-# did not save the pulls, say so here rather than building a book out of
-# nothing and calling it the record.
 if [[ ! -d "$PULL" ]]; then
   record "broker payloads" FAIL "$PULL does not exist"
-  say "No broker payloads at $PULL — the harness must pull Tiger and IBKR and save"
+  say "No broker payloads at $PULL — the harness must pull Tiger and save"
   say "them there before this script runs. Nothing was built."
   finish 2 "broker payload directory missing"
 fi
@@ -196,49 +233,72 @@ PAYLOADS=$(find "$PULL" -maxdepth 1 -name '*.json' | wc -l | tr -d ' ')
 record "broker payloads" pass "$PAYLOADS file(s) in $PULL"
 say "$PAYLOADS payload file(s) found in $PULL"
 
+# --------------------------------------------------------- 0.5 (D-100) reconcile
+# HARD GATE: diff yesterday's held equity tickers against today's stock_positions pull.
+# Any ticker that vanished with NO matching fill in tiger_filled_orders.json halts the run —
+# get_filled_orders is known to silently drop stop-triggered equity closes, and a vanished
+# position with nothing recorded is a real, capital-affecting event, not a data nicety.
+PRIOR="$(python3 tools/journal_build.py prior --date "$DATE")"
+if [[ -n "$PRIOR" ]] && [[ -f "$PRIOR" ]] && [[ -f "$PULL/tiger_stock_positions.json" ]] && [[ -f "$PULL/tiger_filled_orders.json" ]]; then
+  RECON_OUT="$(python3 tools/reconcile_vanished_positions.py --prior "$PRIOR" \
+    --stock-positions "$PULL/tiger_stock_positions.json" \
+    --filled-orders "$PULL/tiger_filled_orders.json" 2>&1)"
+  RECON_RC=$?
+  printf '%s\n' "$RECON_OUT" | sed 's/^/    /'
+  if (( RECON_RC != 0 )); then
+    record "reconcile vanished positions (D-100)" FAIL "unexplained vanish — see output above"
+    say ""
+    say "HALT: a position vanished from the broker book with no matching fill on file."
+    say "Recover the missing fill (get_transactions per ticker, live MCP call — the"
+    say "orchestrating Claude session must do this, not this script) and append it to"
+    say "$PULL/tiger_filled_orders.json before re-running."
+    finish 2 "D-100 reconcile gate: unexplained vanished position"
+  fi
+  record "reconcile vanished positions (D-100)" pass
+else
+  record "reconcile vanished positions (D-100)" skipped "no prior journal or incomplete payload — nothing to reconcile"
+fi
+
 # --------------------------------------------------------------- 1. preflight
-# Non-fatal on purpose (post_market step 1): the journal still writes without a
-# push credential. But a run that cannot push is degraded, not clean — this is
-# now the only book of record there is.
 step "preflight" 0 python3 tools/preflight.py || worse 1
 
 # --------------------------------------------------------------- 2. journal
-# Operation 1: reconcile both payloads into the book. Exit 1 = one broker only
-# (PARTIAL_SOURCES — a real book, page anyway). Exit 2 = no book could be
-# built, or a row could not be mapped; halt.
 step "journal build" 1 python3 tools/journal_build.py build --date "$DATE" --pull "$PULL" \
-     --out "$JOURNAL"
+     --allocated "$ALLOCATED" --out "$JOURNAL"
 
 # --------------------------------------------------------- 3. Aegis membership
-# Operations 1a/1b/1c/2. Each mutates the journal in place. These are fatal:
-# the file they leave behind IS the book, and a half-classified book is worse
-# than none — an unclassified fill is another strategy's position sitting in
-# Aegis's risk numbers.
 STAGED_ARG=()
 if [[ -f "$STAGED" ]]; then
   STAGED_ARG=(--staged "$STAGED")
   say "staged-orders list: $STAGED"
+elif [[ -f "$EQUITY_MEMBERSHIP" ]]; then
+  STAGED_ARG=(--staged "$EQUITY_MEMBERSHIP")
+  say "known continuing AEGIS membership: $EQUITY_MEMBERSHIP (so holdings don't re-land in pending_review every day)"
 else
-  say "no staged-orders list at $STAGED — every unmatched fill lands as pending_review,"
-  say "which is the designed behaviour, not a fault."
+  say "no staged-orders list and no known-membership file — every unmatched fill lands as"
+  say "pending_review, which is the designed behaviour, not a fault."
 fi
 
+# held_book_refresh.load_exclusions / option_book.load_membership both already treat a missing
+# file as an empty store (FileNotFoundError -> {}) — no need to pre-create either path, which
+# matters in --rehearsal: writing a fresh persistent file on a rehearsal run would itself be a
+# live-shelf mutation, exactly what --rehearsal promises not to do.
 step "equity membership" 1 python3 tools/held_book_refresh.py classify \
-     --journal "$JOURNAL" --exclusions "$EXCLUSIONS" "${STAGED_ARG[@]}"
+     --journal "$JOURNAL" --exclusions "$EXCLUSIONS" "${STAGED_ARG[@]}" --out "$JOURNAL"
 
 step "option membership" 1 python3 tools/option_book.py classify \
-     --journal "$JOURNAL" --membership "$MEMBERSHIP" "${STAGED_ARG[@]}"
+     --journal "$JOURNAL" --membership "$MEMBERSHIP" "${STAGED_ARG[@]}" --out "$JOURNAL"
 
-# derive-hedge is the ONLY writer of the `hedge` record. journal_build carries
-# a prior record but never edits one, and quarantines a malformed one — this is
-# the step entitled to rebuild it from the confirmed legs.
-step "hedge derivation" 1 python3 tools/option_book.py derive-hedge --journal "$JOURNAL"
+# --------------------------------------------------------- 3.5 (D-99) dynCap
+# HARD FIX: journal_build's own dynCap (job 2 above) was computed BEFORE this classify step —
+# its unrealised-P&L sum still included every co-mingled broker holding. Recompute now, over the
+# post-classification (Aegis-only) open_positions, sourcing realised P&L from the archive ledger
+# (idempotent — see tools/recompute_dyncap.py's own docstring for why a running counter broke).
+step "recompute dynCap (D-99)" 1 python3 tools/recompute_dyncap.py \
+     --journal "$JOURNAL" --allocated "$ALLOCATED" --one-r-pct 1.5 --out "$JOURNAL"
 
-# --prior is the most recent journal before today. Resolved by journal_build's own
-# _latest_prior so there is exactly one answer to "which journal came before this one" —
-# omitting it silently carries nothing forward, which reads identically to having nothing
-# to carry.
-PRIOR="$(python3 tools/journal_build.py prior --date "$DATE")"
+step "hedge derivation" 1 python3 tools/option_book.py derive-hedge --journal "$JOURNAL" --out "$JOURNAL"
+
 PRIOR_ARG=()
 if [[ -n "$PRIOR" ]]; then
   PRIOR_ARG=(--prior "$PRIOR")
@@ -247,17 +307,12 @@ else
   say "no prior journal exists — nothing to carry forward (first run, not a fault)"
 fi
 step "carry-forward" 1 python3 tools/held_book_refresh.py carry-forward \
-     --journal "$JOURNAL" "${PRIOR_ARG[@]}"
+     --journal "$JOURNAL" "${PRIOR_ARG[@]}" --out "$JOURNAL"
 
 # --------------------------------------------------------------- 4. verify
-# Four tools have now rewritten the file journal_build validated. Read it back
-# off disk and re-check the contract. Fatal — Arch-F9.
 step "journal verified" 1 python3 tools/journal_build.py verify --date "$DATE" --journal "$JOURNAL"
 
 # --------------------------------------------------------------- 5. push #1
-# The book of record reaches GitHub the moment it is sound, before the later
-# steps get a chance to fail. Every run is a fresh clone in a fresh session; a
-# file that only ever reached local disk is invisible to tomorrow forever.
 say ""
 say "--- push (book of record)"
 if python3 tools/git_sync.py -m "post-market $DATE: journal" "${PUSH_ARG[@]}" \
@@ -271,6 +326,8 @@ if python3 tools/git_sync.py -m "post-market $DATE: journal" "${PUSH_ARG[@]}" \
   else
     record "GitHub push (journal)" FAIL "committed locally, not pushed"
     say "    committed locally but NOT pushed — see $OUT/git_sync_result.json"
+    say "    if this is a sandbox git-proxy block, the orchestrating Claude session must"
+    say "    complete the push via the GitHub MCP connector's push_files tool."
     worse 1
   fi
 else
@@ -280,24 +337,20 @@ fi
 sed 's/^/    /' "$OUT/git_sync_result.json" | head -20
 
 # --------------------------------------------------------------- 6. metrics
-# Not fatal: a journal without metrics is still a true book, and the failure is
-# named in the checklist rather than taking the record down with it.
-step "portfolio metrics" 0 python3 tools/portfolio_metrics.py compute --journal "$JOURNAL"
+step "portfolio metrics" 0 python3 tools/portfolio_metrics.py compute --journal "$JOURNAL" --out "$JOURNAL"
 
 # --------------------------------------------------------------- 7. archive
 say ""
 say "--- archive ledger"
 CLOSED_TMP="$OUT/closed_trades_$DATE.json"
-# The extract is written ONLY when there is something to extract. An empty [] on the
-# shelf is worse than no file: it gets committed, and a later reader cannot tell "we
-# closed nothing today" from "the extract ran before the closes were booked".
+ARCHIVE_FMT_TMP="$OUT/closed_trades_archive_format_$DATE.json"
 CLOSED_N=$(python3 - "$JOURNAL" "$CLOSED_TMP" <<'PY'
 import json, os, sys
 closed = json.load(open(sys.argv[1])).get("closed_trades") or []
 if closed:
     json.dump(closed, open(sys.argv[2], "w"), indent=1)
 elif os.path.exists(sys.argv[2]):
-    os.remove(sys.argv[2])          # a stale extract from an earlier run of the same day
+    os.remove(sys.argv[2])
 print(len(closed))
 PY
 )
@@ -306,17 +359,22 @@ say "    $CLOSED_N closed trade(s) today"
 if (( CLOSED_N == 0 )); then
   record "archive ledger" skipped "no closed trades today"
   say "    no closed trades — archive untouched (the tool's own no_op rule)"
-elif [[ ! -f "$ARCHIVE" ]]; then
-  # Closed trades with nowhere to file them is a real gap, not a quiet skip.
-  record "archive ledger" FAIL "$CLOSED_N closed trade(s) but $ARCHIVE does not exist"
-  say "    $CLOSED_N closed trade(s) and no archive file at $ARCHIVE — NOT filed."
-  worse 1
 else
+  # D-102 FIX: journal_build's closed_trades schema ({closed_date, realised_usd, ...}) does not
+  # match archive_ledger.py's expected input ({exitDate, pnlUsd, ...}) — convert first, or every
+  # real close gets archived with pnlUsd=0.0 and exitDate=null.
+  python3 tools/journal_closed_to_archive_format.py --journal "$JOURNAL" --out "$ARCHIVE_FMT_TMP" | sed 's/^/    /'
+  # A missing archive is seeded from an in-memory empty store, NEVER by writing to $ARCHIVE
+  # directly — doing that unconditionally would itself mutate the live shelf on a rehearsal run.
+  ARCHIVE_READ="$ARCHIVE"
+  if [[ ! -f "$ARCHIVE" ]]; then
+    ARCHIVE_READ="$OUT/empty_archive_seed.json"
+    echo '{"archive_meta": {}, "closed_trades_ledger": []}' > "$ARCHIVE_READ"
+    say "    no archive on disk yet — merging against an empty seed (first-ever close in this fund's history)"
+  fi
   ARCH_TMP="$OUT/archive_merged_$DATE.json"
-  if python3 tools/archive_ledger.py merge --archive "$ARCHIVE" --closed "$CLOSED_TMP" \
+  if python3 tools/archive_ledger.py merge --archive "$ARCHIVE_READ" --closed "$ARCHIVE_FMT_TMP" \
        --today "$DATE" --out "$ARCH_TMP" 2>&1 | tee -a "$LOG" | sed 's/^/    /'; then
-    # The integrity gate lives inside the tool (it raises if the per-day sums
-    # don't reconcile to YTD). Only a clean merge is allowed to overwrite.
     if (( REHEARSAL )); then
       record "archive ledger" skipped "rehearsal — merge computed, archive not overwritten"
       say "    rehearsal: merge succeeded, archive left untouched ($ARCH_TMP kept)"
@@ -332,11 +390,6 @@ else
 fi
 
 # --------------------------------------------------------------- 8. flow audit
-# daily_flow_audit.py writes to data/eod/<DATE>/ with no --out — the path is baked in,
-# because the audit's whole job is to reconstruct that day's shelf in place. Rather than
-# widen that tool's interface for the sake of a rehearsal, a rehearsal stashes whatever
-# is already there, lets the audit write, moves the fresh pair into rehearsal/, and puts
-# the originals back. Net effect on the live shelf: nothing.
 FA_JSON="$EOD/flow_audit_$DATE.json"
 FA_HTML="$EOD/flow_audit_$DATE.html"
 if (( REHEARSAL )); then
@@ -352,11 +405,6 @@ if (( REHEARSAL )); then
 fi
 
 # --------------------------------------------------------------- 9. push #2
-# The hole this closes: git_sync used to run once, in step 2, BEFORE metrics,
-# the archive append and the audit existed. A fresh clone therefore read a
-# journal with an empty `metrics` key until the following day's run overwrote
-# it. Both pushes stay — the first protects the book, the second ships the rest
-# of the same run.
 say ""
 say "--- push (metrics, archive, audit)"
 if python3 tools/git_sync.py -m "post-market $DATE: metrics, archive, audit" "${PUSH_ARG[@]}" \
