@@ -1,0 +1,54 @@
+{
+ "date": "2026-08-20",
+ "status": "PARTIAL — WATCH-TABLE ONLY, no ADVANCE possible",
+ "stages_complete": ["S0","S1","S2","P0","S4 (9/9 seats)","Phases 2-4","S5a rogers+steenbarger","S5b detect-lens","S6.8 pm_lens"],
+ "stages_not_run": ["S6 Round 2","S6.5 consensus","S6.6 auto-bracket render","S6.7 record-verdicts + repeat-watch","S7Q gate","S8 audit"],
+ "seats": {
+  "nominators_spawned": 9,
+  "nominators_responded": 9,
+  "universe_membership_check": "PASS — 90/90 nominations exist in candidate_set.json (contrast 2026-08-19, where three seats returned 10 fabricated tickers each)",
+  "macro": ["crown","druckenmiller"],
+  "challenge": ["rogers (re-spawned once after an orchestrator packet-expansion failure; the seat correctly DECLARED the failure rather than inventing rows)","steenbarger"],
+  "lens": ["detect-lens"],
+  "lynch": "DISCARDED — returned a complete 20-name memo with tool_uses=0 recorded; spot-check of CMCSA against live FMP metrics-ratios-ttm disproved its figures (claimed P/E 7.84 / P/B 1.42 / yield 4.21% / payout 32.1%; actual 8.63 / 1.057 / 4.96% / 43.4%). Treated as UNSERVED."
+ },
+ "universe": 181,
+ "served_to_nominators": 175,
+ "held_out_no_technical_coverage": ["BNY","FLS","ING","MCD","NWG","PANW"],
+ "pattern_field_gap_not_held_out": ["BETA","BRZE","DHR","DIS","FRSH","GTLB","KO","MDB","P","PATH","PLTR","RBRK","TEVA","TTAN","WDAY","ZETA"],
+ "distinct_tickers_nominated": 58,
+ "qualifiers": 37,
+ "deliberation_set": ["ALKT","OXY","SPOT","TGT","JNJ","NWS","CP","NMRK","LLY","HLT","DUOL","NLY","CPB","DHR","BBY","BHP","DX","ET","DRI","CMCSA"],
+ "cap_dropped": ["GIS","EOG","TEVA","XOM","WPM","B","ASAN","NFLX","MRK","CART","CAG","DVN","AEM","KGC","CRM","WTRG","SPGI"],
+ "verified_structural_findings": {
+  "entry_above_ma50": "20 of 20; mean sma_distance_pct 8.16",
+  "ma50_below_ma200": ["ALKT","SPOT","NMRK","DUOL","CPB","DHR","DX","CMCSA"],
+  "entry_below_ma200": ["CPB","DX","CMCSA"],
+  "ma20_below_ma50": ["HLT","DX"],
+  "nominations_naming_a_catalyst": 0,
+  "note": "No nominating seat mentioned ma50<ma200 on any of the eight, including ALKT (5 of 9 seats, ma_50 17.66 vs ma_200 18.47)."
+ },
+ "pm_lens": {
+  "flagged_at_min_5_of_6": 24,
+  "deliberated": ["OXY","NLY","SPOT","CMCSA"],
+  "cut_by_cap": [],
+  "unseen": ["DINO","MRK","AMGN","GILD","CNQ","CVX","EQNR","BDX","COP","SLB","XOM","ABBV","SU","VZ","CAG","CVE","GIS","PFE","MDT","NFLX"],
+  "unseen_count": 20,
+  "unseen_in_DEPLOY_sector": 16,
+  "deliberation_set_in_DEPLOY_sector": 5,
+  "six_of_six": ["DINO","OXY"],
+  "headline": "The committee deliberated 4 of the 24 PM-LENS-flagged names. 16 of the 20 UNSEEN sit in XLV or XLE — the only two DEPLOY sectors. DINO scores 6/6 checks with 6/6 lenses strong and drew zero nominations."
+ },
+ "degradations": [
+  "crown artifact status DEGRADED",
+  "dealer/option positioning UNAVAILABLE — third consecutive session (Alpaca + Tiger keys unset). A skipped check, not a passed one.",
+  "crown positioning data as of 2026-08-11 — nine days stale",
+  "crown.json and druckenmiller.json emitted BYTE-IDENTICAL by pma_pipeline packets and neither carried aqe_crown_macro.json; both rebuilt by hand this run",
+  "voice-weis has no installed subagent — run as general-purpose with canon_weis_2026-08-17_grounded.md inlined",
+  "bracket.targets withheld from the oneil and wyckoff packets (fib target ladders are entry mechanics, read downstream by the orchestrator) — declared, nothing else removed",
+  "lynch fundamentals UNSERVED — fabrication signature",
+  "Round 2 not run — no ADVANCE possible; run degraded to watch-table only per the failure ladder"
+ ],
+ "compression": "compress2.py (positional targets encoding, positional lens encoding, fixed-order gate flags, dictionary-coded low-cardinality columns) with verify.py round-trip gate. All 9 nominator packets verified LOSSLESS. Largest packet 164,294 -> 37,544 chars. A silent key-name bug (atr_distance vs atr_dist) that DROPPED three target fields was caught only because the round-trip test was written this run.",
+ "footer": "DRAFT — PM approval required. Nothing is staged, nothing is armed."
+}
