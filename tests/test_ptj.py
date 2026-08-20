@@ -1,7 +1,14 @@
 """Tests for src/data/ptj.py — the PTJ status tracking added after the
 2026-07-15 incident where a failed Drive fetch silently rendered as an
 empty (indistinguishable from genuinely-flat) held book on a real-money
-export. A fetch failure must be LOUD (status != "live"), never silent."""
+export. A fetch failure must be LOUD (status != "live"), never silent.
+
+D-84 (2026-07-2x) retired Drive as the PTJ store — fetch_latest_ptj() now reads
+the latest dated journal from aegis/data/journal/ in git via github_sync,
+instead of polling a Drive folder. The Drive-fixture tests below were rewritten
+to mock github_sync instead of gdrive_uploader; the cache-contract tests
+(status tracking, fallback-on-failure) are unchanged since they mock
+fetch_latest_ptj() directly and never cared which backend it used."""
 
 from __future__ import annotations
 
@@ -67,153 +74,87 @@ def test_load_ptj_cache_survives_missing_file(tmp_path):
     assert ptj.load_held_positions() == []
 
 
-class _FakeFilesList:
-    def __init__(self, response):
-        self._response = response
-
-    def execute(self):
-        return self._response
-
-
-class _FakeGetMedia:
-    def __init__(self, content):
-        self._content = content
-
-    def execute(self):
-        return self._content
-
-
-class _FakeFiles:
-    """Stub for service.files() — routes list()/get_media() to fixtures."""
-
-    def __init__(self, list_response, content_by_id):
-        self._list_response = list_response
-        self._content_by_id = content_by_id
-
-    def list(self, **kwargs):
-        return _FakeFilesList(self._list_response)
-
-    def get_media(self, fileId):
-        return _FakeGetMedia(self._content_by_id[fileId])
-
-
-class _FakeService:
-    def __init__(self, list_response, content_by_id):
-        self._files = _FakeFiles(list_response, content_by_id)
-
-    def files(self):
-        return self._files
-
-
-def test_fetch_latest_ptj_skips_archive_file_with_newer_modtime(monkeypatch):
-    """Regression for the 2026-07-16 incident: an ARCHIVE_master.json summary
-    (open_positions stripped of entry/livePx) landed in the SAME top-level PTJ
-    folder with a NEWER modifiedTime than the actual daily journal, so
-    "most-recently-modified file wins" picked the archive and every held
-    position shipped with entry=null. The filename shape filter must reject it."""
-    list_response = {"files": [
-        {"id": "archive1", "name": "aegis_trade_journal_ARCHIVE_master.json",
-         "modifiedTime": "2026-07-15T23:32:27.272Z", "mimeType": "application/json"},
-        {"id": "real1", "name": "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY",
-         "modifiedTime": "2026-07-15T15:34:01.825Z", "mimeType": "application/json"},
-    ]}
-    content_by_id = {
-        "archive1": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111}]}),
-        "real1": json.dumps({"open_positions": [
-            {"ticker": "IBM", "qty": 111, "entry": 263.14, "livePx": 216.97},
-        ]}),
-    }
-
-    from src.data import gdrive_uploader
-    monkeypatch.setattr(gdrive_uploader, "is_configured", lambda: True)
-    monkeypatch.setattr(gdrive_uploader.DriveConfig, "from_env", classmethod(lambda cls: object()))
-    monkeypatch.setattr(
-        gdrive_uploader, "_build_service",
-        lambda cfg: _FakeService(list_response, content_by_id),
-    )
-
-    result = ptj.fetch_latest_ptj()
-    assert result is not None
-    assert result["_ptj_file"] == "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY"
-    assert result["open_positions"][0]["entry"] == 263.14
-    assert result["open_positions"][0]["livePx"] == 216.97
-
-
-def test_ptj_name_regex_matches_real_journals_and_rejects_artifacts():
+def test_journal_name_regex_matches_dated_journals_and_rejects_others():
     real_names = [
-        # New convention (PM ruling 2026-07-16): dated CoB snapshots, accumulate.
-        "aegis_trade_journal_2026-07-16_PTJ.json",
-        "aegis_trade_journal_2026-07-17_PTJ.json",
-        # Pre-2026-07-16 versioned shape — still accepted for continuity.
-        "aegis_trade_journal_2026-07-14_v2.9.1_CORRECTED.json",
-        "aegis_trade_journal_2026-07-15_v2.9.2_INTRADAY",
-        "aegis_trade_journal_2026-06-08_v2.8_eod_sync",
+        "aegis_journal_2026-08-19.json",
+        "aegis_journal_2026-08-20.json",
+        "aegis_journal_2026-07-21.json",
     ]
     non_journal_names = [
         "aegis_trade_journal_ARCHIVE_master.json",
-        "aegis_trade_journal_ARCHIVE_master",
+        "aegis_journal_2026-08-19.json.bak",
+        "aegis_journal.json",
         "some_other_file.json",
     ]
     for name in real_names:
-        assert ptj._PTJ_NAME_RE.match(name), name
+        assert ptj._JOURNAL_NAME_RE.match(name), name
     for name in non_journal_names:
-        assert not ptj._PTJ_NAME_RE.match(name), name
+        assert not ptj._JOURNAL_NAME_RE.match(name), name
 
 
-def test_fetch_latest_ptj_uses_new_ptj_naming_convention(monkeypatch):
-    """The PM's new standing convention: aegis_trade_journal_YYYY-MM-DD_PTJ.json,
-    dated CoB snapshots that accumulate (never overwritten), vs the ARCHIVE
-    master which overwrites daily and must always be ignored."""
-    list_response = {"files": [
-        {"id": "archive1", "name": "aegis_trade_journal_ARCHIVE_master.json",
-         "modifiedTime": "2026-07-17T23:59:59.000Z", "mimeType": "application/json"},
-        {"id": "ptj_16", "name": "aegis_trade_journal_2026-07-16_PTJ.json",
-         "modifiedTime": "2026-07-16T09:00:00.000Z", "mimeType": "application/json"},
-        {"id": "ptj_17", "name": "aegis_trade_journal_2026-07-17_PTJ.json",
-         "modifiedTime": "2026-07-17T09:00:00.000Z", "mimeType": "application/json"},
+def test_fetch_latest_ptj_picks_latest_dated_journal_by_filename(monkeypatch):
+    """aegis/data/journal/ is kept to dated snapshots only by the post-market
+    pipeline (the running ARCHIVE master lives at a different path entirely),
+    so no archive-file-exclusion logic is needed here — but "most recent" must
+    still be decided by the DATE IN THE FILENAME, not github_sync's listing
+    order, since the Contents API does not guarantee any particular order."""
+    list_response = {"ok": True, "files": [
+        {"name": "aegis_journal_2026-08-18.json", "sha": "a", "size": 100},
+        {"name": "aegis_journal_2026-08-19.json", "sha": "b", "size": 200},
     ]}
-    content_by_id = {
-        "archive1": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111}]}),
-        "ptj_16": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 200.0}]}),
-        "ptj_17": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 205.0}]}),
+    file_by_path = {
+        "aegis/data/journal/aegis_journal_2026-08-18.json":
+            {"ok": True, "text": json.dumps({"date": "2026-08-18",
+             "open_positions": [{"ticker": "IBM", "qty": 111, "entry": 200.0}]})},
+        "aegis/data/journal/aegis_journal_2026-08-19.json":
+            {"ok": True, "text": json.dumps({"date": "2026-08-19",
+             "open_positions": [{"ticker": "IBM", "qty": 111, "entry": 205.0}]})},
     }
-    from src.data import gdrive_uploader
-    monkeypatch.setattr(gdrive_uploader, "is_configured", lambda: True)
-    monkeypatch.setattr(gdrive_uploader.DriveConfig, "from_env", classmethod(lambda cls: object()))
-    monkeypatch.setattr(
-        gdrive_uploader, "_build_service",
-        lambda cfg: _FakeService(list_response, content_by_id),
-    )
+
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+    monkeypatch.setattr(github_sync, "list_dir", lambda path: list_response)
+    monkeypatch.setattr(github_sync, "get_file", lambda path: file_by_path[path])
 
     result = ptj.fetch_latest_ptj()
-    assert result["_ptj_file"] == "aegis_trade_journal_2026-07-17_PTJ.json"
+    assert result is not None
+    assert result["_ptj_file"] == "aegis_journal_2026-08-19.json"
     assert result["open_positions"][0]["entry"] == 205.0
 
 
-def test_fetch_latest_ptj_sorts_by_filename_date_not_raw_modtime(monkeypatch):
-    """Extra safety guard (2026-07-16 ruling): the date IN THE FILENAME is the
-    primary sort key, not Drive's modifiedTime alone — so a metadata quirk
-    (e.g. an older-dated file re-saved/touched later, bumping its
-    modifiedTime) can't make a stale journal look newest."""
-    list_response = {"files": [
-        # Older calendar date, but a LATER modifiedTime than the real latest.
-        {"id": "stale", "name": "aegis_trade_journal_2026-07-15_PTJ.json",
-         "modifiedTime": "2026-07-17T23:00:00.000Z", "mimeType": "application/json"},
-        {"id": "actual_latest", "name": "aegis_trade_journal_2026-07-16_PTJ.json",
-         "modifiedTime": "2026-07-16T09:00:00.000Z", "mimeType": "application/json"},
+def test_fetch_latest_ptj_maps_option_positions_to_options_field(monkeypatch):
+    """The journal schema names option legs "option_positions"; the PTJ cache
+    contract (refresh_held_positions) expects "options" — fetch_latest_ptj()
+    must bridge that naming gap."""
+    list_response = {"ok": True, "files": [
+        {"name": "aegis_journal_2026-08-19.json", "sha": "b", "size": 200},
     ]}
-    content_by_id = {
-        "stale": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 199.0}]}),
-        "actual_latest": json.dumps({"open_positions": [{"ticker": "IBM", "qty": 111, "entry": 201.0}]}),
+    file_by_path = {
+        "aegis/data/journal/aegis_journal_2026-08-19.json":
+            {"ok": True, "text": json.dumps({
+                "date": "2026-08-19",
+                "open_positions": [{"ticker": "IBM", "qty": 111}],
+                "option_positions": [{"ticker": "IBM", "right": "CALL"}],
+            })},
     }
-    from src.data import gdrive_uploader
-    monkeypatch.setattr(gdrive_uploader, "is_configured", lambda: True)
-    monkeypatch.setattr(gdrive_uploader.DriveConfig, "from_env", classmethod(lambda cls: object()))
-    monkeypatch.setattr(
-        gdrive_uploader, "_build_service",
-        lambda cfg: _FakeService(list_response, content_by_id),
-    )
+
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+    monkeypatch.setattr(github_sync, "list_dir", lambda path: list_response)
+    monkeypatch.setattr(github_sync, "get_file", lambda path: file_by_path[path])
 
     result = ptj.fetch_latest_ptj()
-    assert result["_ptj_file"] == "aegis_trade_journal_2026-07-16_PTJ.json"
-    assert result["open_positions"][0]["entry"] == 201.0
+    assert result["options"] == [{"ticker": "IBM", "right": "CALL"}]
+
+
+def test_fetch_latest_ptj_returns_none_when_github_not_configured(monkeypatch):
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: False)
+    assert ptj.fetch_latest_ptj() is None
+
+
+def test_fetch_latest_ptj_returns_none_when_journal_dir_empty(monkeypatch):
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+    monkeypatch.setattr(github_sync, "list_dir", lambda path: {"ok": True, "files": []})
+    assert ptj.fetch_latest_ptj() is None

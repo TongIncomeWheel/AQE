@@ -1,15 +1,29 @@
-"""Pre-Trade Journal (PTJ) reader — the daily held-positions feed from Drive.
+"""Pre-Trade Journal (PTJ) reader — the daily held-positions feed from git.
 
-The PM/AIC writes a dated CoB snapshot, `aegis_trade_journal_YYYY-MM-DD_PTJ.json`
-(accumulates, one per day), to a dedicated Drive folder each day, alongside a
-separately-maintained `aegis_trade_journal_ARCHIVE_master.json` running master
-(overwrites daily — NOT a snapshot, and must always be ignored). AQE reads the
-latest REAL journal by the date encoded in its filename (not raw Drive
-modifiedTime, which an unrelated artifact can spoof — see _PTJ_NAME_RE).
+D-84 (2026-07-2x, PM-ratified) retired Google Drive as the PTJ store on the
+write side: `aegis/data/journal/aegis_journal_YYYY-MM-DD.json`, committed to
+this repo's main branch by the post-market pipeline (`aegis/tools/git_sync.py`),
+is now the ONE book of record — "a second Drive copy of the same JSON had no
+upside once GitHub already held it as a version-controlled backup."
+
+This reader was never updated to match: until this fix it still polled a Drive
+folder that nothing writes to anymore, so `held_positions.json` silently froze
+on whatever the last real Drive upload was (2026-07-21) while the actual book
+kept moving in git. Discovered 2026-08-20 when a same-day correction (adding
+OXY/MRK to the Aegis book) landed on GitHub but never reached AQE's own
+held-positions feed.
+
+Fix: read the latest dated journal straight out of git via `github_sync` (the
+same client AQE already uses for its own daily-output writes), instead of
+Drive. AQE reads the latest journal by the date encoded in its filename — see
+_JOURNAL_NAME_RE — from `aegis/data/journal/`, which the post-market pipeline
+keeps to dated snapshots only (no ARCHIVE-file-style pollution risk: the
+running master lives at a different path, `aegis/data/persistent/`, and is
+never written into this directory).
+
 We extract the OPEN (held) positions and cache them locally so the engine can
 flag held names and the UI/Charts can show entry vs current price.
 
-Folder: GDRIVE_PTJ_FOLDER_ID (default = the AEGIS Trade Journal Drive folder).
 Failures degrade to the local cache, then to empty — never raise.
 """
 
@@ -21,74 +35,58 @@ import re
 
 from src.data.paths import OUTPUT_DIR
 
+PTJ_CACHE = OUTPUT_DIR / "held_positions.json"
+
+# RETIRED (D-84, this fix) — no longer read by fetch_latest_ptj() below, which
+# now reads git instead of Drive. Left defined (not deleted) only because
+# scripts/cleanup_ptj_folder.py + .github/workflows/ptj-cleanup.yml still
+# import it; that script tidies a Drive folder nothing writes to anymore and
+# should itself be retired/disabled — flagged separately, not done here.
 PTJ_FOLDER_ID = (
     os.environ.get("GDRIVE_PTJ_FOLDER_ID")
     or "15PR74ws_kTXTqCcEfRGga_jjHrMvbCEM"
 )
-PTJ_CACHE = OUTPUT_DIR / "held_positions.json"
 
-# Naming convention (PM ruling, 2026-07-16, in effect after the ARCHIVE-file
-# incident): daily CoB PTJ snapshots are dated + accumulate —
-# aegis_trade_journal_YYYY-MM-DD_PTJ.json. The pre-2026-07-16 versioned shape
-# (aegis_trade_journal_YYYY-MM-DD_v<version>[_CORRECTED|_eod_sync|_INTRADAY])
-# is still accepted for continuity with anything already in the folder. Both
-# require a literal YYYY-MM-DD right after the fixed prefix, which structurally
-# excludes aegis_trade_journal_ARCHIVE_master.json — the running master that
-# OVERWRITES daily rather than accumulating a dated snapshot, and whose
-# open_positions are deliberately stripped of entry/livePx/sl/tp. That file is
-# ALSO excluded by exact name below, belt-and-suspenders.
-_PTJ_NAME_RE = re.compile(r"^aegis_trade_journal_(\d{4}-\d{2}-\d{2})_(?:PTJ|v)", re.IGNORECASE)
-_ARCHIVE_FILENAME = "aegis_trade_journal_archive_master.json"
+# aegis/tools/git_sync.py's dated book-of-record filename convention.
+JOURNAL_DIR_IN_REPO = "aegis/data/journal"
+_JOURNAL_NAME_RE = re.compile(r"^aegis_journal_(\d{4}-\d{2}-\d{2})\.json$")
 
 
 def fetch_latest_ptj() -> dict | None:
-    """Download + parse the most-recent REAL journal in the PTJ folder.
+    """Download + parse the most-recent book-of-record journal from git.
 
-    "Real journal" = filename matches the dated PTJ shape (see _PTJ_NAME_RE) —
-    this excludes non-journal artifacts (e.g. the running ARCHIVE_master
-    rollup) that may land in the same folder. Extra safety guard (2026-07-16
-    ruling): "most recent" is decided by the DATE ENCODED IN THE FILENAME
-    first, not Drive's mutable `modifiedTime` alone — modifiedTime only breaks
-    ties between same-day corrections/re-uploads. This is what caught out the
-    old "just take modifiedTime desc" rule when an unrelated artifact got a
-    newer modifiedTime than the actual latest journal.
+    "Most recent" is decided by the DATE ENCODED IN THE FILENAME — the same
+    invariant the old Drive reader enforced (a file's git commit time is not
+    used as the tiebreaker key; the post-market pipeline never writes two
+    same-day journals under different names, so filename-date alone is
+    sufficient here, unlike the old multi-file-per-day Drive folder).
     """
     try:
-        from src.data import gdrive_uploader
-        if not gdrive_uploader.is_configured():
+        from src.data import github_sync
+        if not github_sync.is_configured():
             return None
-        cfg = gdrive_uploader.DriveConfig.from_env()
-        if cfg is None:
+        listing = github_sync.list_dir(JOURNAL_DIR_IN_REPO)
+        if not listing.get("ok"):
             return None
-        service = gdrive_uploader._build_service(cfg)
-        q = f"'{PTJ_FOLDER_ID}' in parents and trashed = false"
-        res = service.files().list(
-            q=q, orderBy="modifiedTime desc",
-            fields="files(id,name,modifiedTime,mimeType)", pageSize=25,
-        ).execute()
         candidates = []
-        for f in (res.get("files") or []):
-            if f.get("mimeType") == "application/vnd.google-apps.folder":
-                continue
+        for f in (listing.get("files") or []):
             name = f.get("name") or ""
-            if name.strip().lower() == _ARCHIVE_FILENAME:
-                continue
-            m = _PTJ_NAME_RE.match(name)
-            if not m:
-                continue
-            candidates.append((m.group(1), f.get("modifiedTime") or "", f))
+            m = _JOURNAL_NAME_RE.match(name)
+            if m:
+                candidates.append((m.group(1), name))
         if not candidates:
             return None
-        # Primary sort: date IN THE FILENAME. Secondary: modifiedTime (breaks
-        # ties on same-day corrections/re-uploads).
-        candidates.sort(key=lambda c: (c[0], c[1]), reverse=True)
-        latest = candidates[0][2]
-        content = service.files().get_media(fileId=latest["id"]).execute()
-        if isinstance(content, bytes):
-            content = content.decode("utf-8")
-        data = json.loads(content)
-        data["_ptj_file"] = latest.get("name")
-        data["_ptj_modified"] = latest.get("modifiedTime")
+        candidates.sort(key=lambda c: c[0], reverse=True)
+        _, latest_name = candidates[0]
+        result = github_sync.get_file(f"{JOURNAL_DIR_IN_REPO}/{latest_name}")
+        if not result.get("ok"):
+            return None
+        data = json.loads(result["text"])
+        data["_ptj_file"] = latest_name
+        data["_ptj_modified"] = data.get("date")
+        # Journal schema names option legs "option_positions"; the PTJ cache
+        # contract below (refresh_held_positions) expects "options".
+        data.setdefault("options", data.get("option_positions") or [])
         return data
     except Exception:  # noqa: BLE001
         return None
@@ -97,7 +95,7 @@ def fetch_latest_ptj() -> dict | None:
 def refresh_held_positions() -> list[dict]:
     """Fetch the latest PTJ, extract held positions, cache locally. Returns them.
 
-    Falls back to the local cache when Drive is unavailable — but NEVER lets a
+    Falls back to the local cache when GitHub is unavailable — but NEVER lets a
     failed live fetch silently masquerade as a genuine flat book: the cache
     always carries a `status` ("live" | "cache_fallback") so downstream
     readers (the export, the Scanner UI) can tell "PTJ fetch failed this run"
@@ -142,12 +140,12 @@ def load_ptj_cache() -> dict:
 
 
 def load_held_positions() -> list[dict]:
-    """Held (open) positions from the local cache — no Drive call."""
+    """Held (open) positions from the local cache — no GitHub call."""
     return load_ptj_cache().get("positions") or []
 
 
 def ptj_status() -> str:
-    """'live' (this run fetched fresh from Drive), 'cache_fallback' (Drive fetch
+    """'live' (this run fetched fresh from git), 'cache_fallback' (GitHub fetch
     failed/unreachable and we fell back to whatever was last cached — possibly
     stale or, on a freshly-restarted container, empty), or 'unknown' (no cache
     file has ever been written)."""

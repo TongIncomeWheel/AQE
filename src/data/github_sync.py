@@ -206,12 +206,17 @@ def put_output(filename: str, content: str | bytes, message: str | None = None) 
                     message or f"data: {filename}")
 
 
-def list_output() -> dict:
-    """What is currently in the output folder. {ok, files:[{name, sha, size}]}."""
+def list_dir(path: str) -> dict:
+    """What is currently in an arbitrary repo directory. {ok, files:[{name, sha, size}]}.
+
+    Generic form of list_output() — same contract, any path in the repo (not just
+    OUTPUT_DIR_IN_REPO). Added for readers outside the daily-output folder, e.g.
+    src/data/ptj.py listing aegis/data/journal/ (D-84: git is the PTJ store now).
+    """
     if not is_configured():
         return _not_configured()
     try:
-        r = requests.get(f"{API}/repos/{repo()}/contents/{OUTPUT_DIR_IN_REPO}",
+        r = requests.get(f"{API}/repos/{repo()}/contents/{path}",
                          headers=_headers(), params={"ref": branch()},
                          timeout=TIMEOUT)
         if r.status_code == 404:
@@ -219,12 +224,17 @@ def list_output() -> dict:
         r.raise_for_status()
         rows = r.json()
         if not isinstance(rows, list):
-            return {"ok": False, "reason": "output path is not a directory"}
+            return {"ok": False, "reason": f"{path} is not a directory"}
         return {"ok": True, "files": [{"name": f.get("name"), "sha": f.get("sha"),
                                        "size": f.get("size")}
                                       for f in rows if f.get("type") == "file"]}
     except Exception as exc:  # noqa: BLE001
-        return _fail(exc, "list output")
+        return _fail(exc, f"list {path}")
+
+
+def list_output() -> dict:
+    """What is currently in the output folder. {ok, files:[{name, sha, size}]}."""
+    return list_dir(OUTPUT_DIR_IN_REPO)
 
 
 def delete_file(path: str, message: str, sha: str | None = None) -> dict:
