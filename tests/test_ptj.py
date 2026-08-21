@@ -32,6 +32,7 @@ def test_ptj_status_unknown_when_no_cache_ever_written():
 
 
 def test_refresh_live_fetch_success_marks_status_live(monkeypatch):
+    monkeypatch.setattr(ptj, "_published_floor", lambda: None)
     monkeypatch.setattr(ptj, "fetch_latest_ptj", lambda: {
         "open_positions": [{"ticker": "IBM", "qty": 111}],
         "_ptj_file": "aegis_trade_journal_x.json",
@@ -45,6 +46,7 @@ def test_refresh_live_fetch_success_marks_status_live(monkeypatch):
 
 
 def test_refresh_fetch_failure_falls_back_but_flags_cache_fallback(monkeypatch):
+    monkeypatch.setattr(ptj, "_published_floor", lambda: None)
     # Seed a prior "live" cache, as if yesterday's run succeeded.
     monkeypatch.setattr(ptj, "fetch_latest_ptj", lambda: {
         "open_positions": [{"ticker": "IBM", "qty": 111}],
@@ -53,13 +55,67 @@ def test_refresh_fetch_failure_falls_back_but_flags_cache_fallback(monkeypatch):
     ptj.refresh_held_positions()
     assert ptj.ptj_status() == "live"
 
-    # Now simulate today's Drive fetch failing outright (returns None).
+    # Now simulate today's git fetch failing outright (returns None).
     monkeypatch.setattr(ptj, "fetch_latest_ptj", lambda: None)
     held = ptj.refresh_held_positions()
     # The prior positions are preserved (not silently wiped)...
     assert held == [{"ticker": "IBM", "qty": 111}]
     # ...but the status makes clear this was NOT a live read this run.
     assert ptj.ptj_status() == "cache_fallback"
+
+
+def test_refresh_rejects_a_fetch_older_than_the_published_floor(monkeypatch):
+    """2026-08-21 incident: the HF Space and the GitHub Actions backstop both
+    ran the daily pipeline within seconds of each other. One fetched a stale
+    journal (for reasons still under investigation) and its publish landed
+    last, silently regressing the book back to a month-old snapshot. This is
+    the guard that makes that class of bug impossible: a fetch is only ever
+    accepted if it is at least as current as what is already published."""
+    monkeypatch.setattr(ptj, "_published_floor", lambda: {
+        "source_file": "aegis_journal_2026-08-20.json", "modified": "2026-08-20",
+        "positions": [{"ticker": "OXY", "qty": 304}], "options": [], "status": "live",
+    })
+    monkeypatch.setattr(ptj, "fetch_latest_ptj", lambda: {
+        "open_positions": [{"ticker": "AMPL", "qty": 571}],
+        "_ptj_file": "aegis_trade_journal_2026-07-21_PTJ.json",
+        "_ptj_modified": "2026-07-21T21:23:45.099Z",
+        "snapshot": None,
+    })
+    held = ptj.refresh_held_positions()
+    # The already-published (newer) book wins, not the stale fetch.
+    assert held == [{"ticker": "OXY", "qty": 304}]
+    assert ptj.ptj_status() == "stale_fetch_rejected"
+    cache = ptj.load_ptj_cache()
+    assert cache["rejected_fetch"]["source_file"] == "aegis_trade_journal_2026-07-21_PTJ.json"
+
+
+def test_refresh_accepts_a_fetch_newer_than_the_published_floor(monkeypatch):
+    monkeypatch.setattr(ptj, "_published_floor", lambda: {
+        "source_file": "aegis_journal_2026-08-19.json", "modified": "2026-08-19",
+        "positions": [{"ticker": "OLD", "qty": 1}], "options": [], "status": "live",
+    })
+    monkeypatch.setattr(ptj, "fetch_latest_ptj", lambda: {
+        "open_positions": [{"ticker": "NEW", "qty": 2}],
+        "_ptj_file": "aegis_journal_2026-08-20.json",
+        "_ptj_modified": "2026-08-20", "snapshot": None,
+    })
+    held = ptj.refresh_held_positions()
+    assert held == [{"ticker": "NEW", "qty": 2}]
+    assert ptj.ptj_status() == "live"
+
+
+def test_refresh_accepts_a_fetch_when_the_floor_is_unreadable(monkeypatch):
+    """No floor (GitHub unreachable, nothing published yet) means nothing to
+    enforce — the guard must never block a fetch it cannot evaluate."""
+    monkeypatch.setattr(ptj, "_published_floor", lambda: None)
+    monkeypatch.setattr(ptj, "fetch_latest_ptj", lambda: {
+        "open_positions": [{"ticker": "IBM", "qty": 111}],
+        "_ptj_file": "aegis_journal_2026-08-20.json",
+        "_ptj_modified": "2026-08-20", "snapshot": None,
+    })
+    held = ptj.refresh_held_positions()
+    assert held == [{"ticker": "IBM", "qty": 111}]
+    assert ptj.ptj_status() == "live"
 
 
 def test_refresh_fetch_failure_with_no_prior_cache_returns_empty_but_flagged(monkeypatch):

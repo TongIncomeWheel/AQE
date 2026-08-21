@@ -25,6 +25,20 @@ We extract the OPEN (held) positions and cache them locally so the engine can
 flag held names and the UI/Charts can show entry vs current price.
 
 Failures degrade to the local cache, then to empty — never raise.
+
+Monotonic guard (2026-08-21, this fix): two publishers can race — the HF
+Space's in-app scheduler and the GitHub Actions backstop both run the full
+pipeline independently, and whichever finishes last wins the write. Discovered
+when a Space run — for reasons still under investigation, most likely a
+container that has not actually picked up a code change — fetched an OLDER
+journal than a GitHub Actions run had already published seconds earlier, and
+overwrote the correct book with a stale one. The fetch itself is not the bug;
+publishing something OLDER than what is already live is. So this reader never
+trusts "I fetched successfully" alone: before accepting a fetch, it checks the
+`modified` date already published on GitHub and refuses to regress behind it,
+regardless of which process or which code version produced the older read.
+This makes the class of bug impossible to reproduce, not just this instance
+of it — no restart, redeploy, or process-lifecycle assumption required.
 """
 
 from __future__ import annotations
@@ -92,17 +106,55 @@ def fetch_latest_ptj() -> dict | None:
         return None
 
 
+def _published_floor() -> dict | None:
+    """The held-positions book already live on GitHub right now — the floor a
+    fresh fetch is never allowed to regress behind. Read from the remote, not
+    local disk: a container that never re-syncs its checkout would otherwise
+    compare a stale fetch against an equally stale local file and see no
+    regression at all. Returns None (no floor, nothing to enforce) if GitHub
+    is unreachable or nothing has been published yet."""
+    try:
+        from src.data import github_sync
+        res = github_sync.get_file(f"{github_sync.OUTPUT_DIR_IN_REPO}/held_positions.json")
+        if not res.get("ok"):
+            return None
+        return json.loads(res["text"])
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def refresh_held_positions() -> list[dict]:
     """Fetch the latest PTJ, extract held positions, cache locally. Returns them.
 
     Falls back to the local cache when GitHub is unavailable — but NEVER lets a
     failed live fetch silently masquerade as a genuine flat book: the cache
-    always carries a `status` ("live" | "cache_fallback") so downstream
-    readers (the export, the Scanner UI) can tell "PTJ fetch failed this run"
-    apart from "the book is actually empty". Real-money system — a silent
-    empty is worse than a stale-but-labeled one.
+    always carries a `status` ("live" | "cache_fallback" | "stale_fetch_rejected")
+    so downstream readers (the export, the Scanner UI) can tell "PTJ fetch
+    failed this run" apart from "the book is actually empty". Real-money
+    system — a silent empty is worse than a stale-but-labeled one.
+
+    A successful fetch is ALSO not automatically trusted: it is checked against
+    the book already published on GitHub, and rejected if it would regress the
+    date backward (see the monotonic-guard note in the module docstring).
     """
     ptj = fetch_latest_ptj()
+    if ptj:
+        floor = _published_floor()
+        floor_date = floor.get("modified") if floor else None
+        fetched_date = ptj.get("_ptj_modified")
+        if floor_date and fetched_date and fetched_date < floor_date:
+            cache = dict(floor)
+            cache["status"] = "stale_fetch_rejected"
+            cache["rejected_fetch"] = {
+                "source_file": ptj.get("_ptj_file"), "modified": fetched_date,
+                "reason": f"older than the already-published book ({floor_date})",
+            }
+            try:
+                OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+                PTJ_CACHE.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+            except Exception:  # noqa: BLE001
+                pass
+            return cache.get("positions") or []
     if not ptj:
         prior = load_ptj_cache()
         prior["status"] = "cache_fallback"

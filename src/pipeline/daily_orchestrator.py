@@ -92,14 +92,14 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive sector-map restore: {exc}")
 
-    # Step 0b: Pull the latest held-positions journal (PTJ) from Drive so the
+    # Step 0b: Pull the latest held-positions journal (PTJ) from git so the
     # export can flag held names and attach the engine's read on them.
     _held = []
     try:
         from src.data.ptj import refresh_held_positions, ptj_status
         _held = refresh_held_positions()
         _status = ptj_status()
-        _tag = "" if _status == "live" else f"  [WARN] status={_status} — NOT a live Drive fetch, do not trust as a flat-book read"
+        _tag = "" if _status == "live" else f"  [WARN] status={_status} — not a fresh fetch this run, do not trust as a flat-book read"
         print(f"[daily] Step 0b: Held positions from PTJ — {len(_held)} ({_status}){_tag}")
     except Exception as exc:
         print(f"  [WARN] PTJ fetch: {exc}")
