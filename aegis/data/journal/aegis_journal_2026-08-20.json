@@ -3,14 +3,14 @@
  "dyncap": {
   "value": 73321.15,
   "one_r": 1099.82,
-  "method": "D-99 fix: recomputed AFTER Aegis-membership classify by tools/recompute_dyncap.py: allocated 75000.00 + realised -1520.98 (archived -1396.81 + not-yet-archived -124.17) + unrealised -157.87 (AEGIS-confirmed/pending_review positions only — non-Aegis excluded_non_aegis names and hedge MTM both excluded) = 73321.15. 1R = 1.5% [RB:capital.one_r_pct_of_dyncap]. AEGIS book only [RB:identity.capital_segregation]."
+  "method": "D-99 fix: recomputed AFTER Aegis-membership classify by tools/recompute_dyncap.py: allocated 75000.00 + realised -1520.98 (archived -1520.98 + not-yet-archived 0.00) + unrealised -157.87 (AEGIS-confirmed/pending_review positions only — non-Aegis excluded_non_aegis names and hedge MTM both excluded) = 73321.15. 1R = 1.5% [RB:capital.one_r_pct_of_dyncap]. AEGIS book only [RB:identity.capital_segregation]."
  },
  "open_positions": [
   {
    "ticker": "BFLY",
    "qty": 883.0,
    "entry": 9.2642,
-   "entry_date": "2026-08-19",
+   "entry_date": "2026-08-18",
    "stop_reference": null,
    "stop_live_broker": null,
    "stop_match": null,
@@ -31,7 +31,7 @@
    "entry": 271.4838,
    "entry_date": "2026-08-20",
    "stop_reference": null,
-   "stop_live_broker": null,
+   "stop_live_broker": 262.32,
    "stop_match": null,
    "tp1": null,
    "tp2": null,
@@ -88,7 +88,7 @@
    "entry": 60.1338,
    "entry_date": "2026-08-19",
    "stop_reference": null,
-   "stop_live_broker": null,
+   "stop_live_broker": 57.93,
    "stop_match": null,
    "tp1": null,
    "tp2": null,
@@ -107,7 +107,7 @@
    "entry": 361.4496,
    "entry_date": "2026-08-19",
    "stop_reference": null,
-   "stop_live_broker": null,
+   "stop_live_broker": 356.45,
    "stop_match": null,
    "tp1": null,
    "tp2": null,
@@ -254,7 +254,7 @@
   {
    "occ_symbol": "",
    "underlying": "COIN",
-   "right": "P",
+   "right": "C",
    "strike": 140.0,
    "expiry": "2026-09-18",
    "qty": -1.0,
@@ -268,9 +268,9 @@
    "theta": null,
    "vega": null,
    "iv": null,
-   "contract_key": "COIN|P|140.000|2026-09-18",
+   "contract_key": "COIN|C|140.000|2026-09-18",
    "aegis_status": "pending_review",
-   "structure_id": "OPT:COIN|P|140.000|2026-09-18"
+   "structure_id": "OPT:COIN|C|140.000|2026-09-18"
   },
   {
    "occ_symbol": "",
@@ -1419,6 +1419,97 @@
    "since": null
   },
   {
+   "ticker": "CRCL",
+   "type": "entry_date_estimated",
+   "detail": "No single BUY fill in this pull matches CRCL's current qty of 600 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-08-19) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.",
+   "severity": "low",
+   "since": null
+  },
+  {
+   "ticker": "KO",
+   "type": "entry_date_unknown",
+   "detail": "No prior journal and no matching BUY fill in this pull for KO — entry_date stamped with today's run date (2026-08-20) as a placeholder, NOT a confirmed entry date.",
+   "severity": "medium",
+   "since": null
+  },
+  {
+   "ticker": "MARA",
+   "type": "entry_date_unknown",
+   "detail": "No prior journal and no matching BUY fill in this pull for MARA — entry_date stamped with today's run date (2026-08-20) as a placeholder, NOT a confirmed entry date.",
+   "severity": "medium",
+   "since": null
+  },
+  {
+   "ticker": "MCD",
+   "type": "entry_date_unknown",
+   "detail": "No prior journal and no matching BUY fill in this pull for MCD — entry_date stamped with today's run date (2026-08-20) as a placeholder, NOT a confirmed entry date.",
+   "severity": "medium",
+   "since": null
+  },
+  {
+   "ticker": "NVDA",
+   "type": "entry_date_unknown",
+   "detail": "No prior journal and no matching BUY fill in this pull for NVDA — entry_date stamped with today's run date (2026-08-20) as a placeholder, NOT a confirmed entry date.",
+   "severity": "medium",
+   "since": null
+  },
+  {
+   "ticker": "BFLY",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for BFLY — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "CRCL",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for CRCL — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "GE",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for GE — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "GOLD",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for GOLD — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "KO",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for KO — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "MARA",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for MARA — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "MCD",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for MCD — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
+   "ticker": "NVDA",
+   "type": "no_live_stop",
+   "detail": "No working SELL stop order found at the broker for NVDA — this position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
+   "severity": "high",
+   "since": null
+  },
+  {
    "ticker": "COIN",
    "type": "option_pending_review",
    "detail": "option leg COIN|C|150.000|2027-12-17 is not part of any staged Aegis hedge and has no recorded PM decision — held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
@@ -1595,7 +1686,7 @@
   }
  ],
  "broker_sync": {
-  "last_sync_utc": "2026-08-20T18:51:36Z",
+  "last_sync_utc": "2026-08-21T04:38:46Z",
   "sync_phase": "POST_MARKET",
   "connectors": [
    "TIGER"
@@ -1615,6 +1706,7 @@
   "payloads_present": [
    "tiger_account_summary.json",
    "tiger_filled_orders.json",
+   "tiger_open_orders.json",
    "tiger_option_positions.json",
    "tiger_stock_positions.json"
   ]
