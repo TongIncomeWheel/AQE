@@ -1,6 +1,6 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-08-21T12:24:15+08:00",
+  "generated_at": "2026-08-21T12:58:42+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
   "oldest_leg": "2026-08-20",
@@ -140,6 +140,14 @@
       "coherence_reason": "scenario implies a headwind for this sector (bias -2.50); grade reads bullish (inherited from parent sector XLK)"
     },
     {
+      "name": "Payments",
+      "grade": "HOLD",
+      "gate": null,
+      "parent_gics": "XLK",
+      "coherence": "DISAGREES",
+      "coherence_reason": "scenario implies a headwind for this sector (bias -2.50); grade reads bullish (inherited from parent sector XLK)"
+    },
+    {
       "name": "Gaming_Streaming",
       "grade": "DEPLOY",
       "gate": null,
@@ -150,14 +158,6 @@
     {
       "name": "Cloud_Computing",
       "grade": "DEPLOY",
-      "gate": null,
-      "parent_gics": "XLK",
-      "coherence": "DISAGREES",
-      "coherence_reason": "scenario implies a headwind for this sector (bias -2.50); grade reads bullish (inherited from parent sector XLK)"
-    },
-    {
-      "name": "Payments",
-      "grade": "HOLD",
       "gate": null,
       "parent_gics": "XLK",
       "coherence": "DISAGREES",
@@ -292,14 +292,13 @@
       "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLI)"
     }
   ],
-  "read_me_first": "A narrow market, with volatility around normal. Best fit: an inflation shock — commodities and rates up together. Leading scenario: INFLATION_SHOCK. Two stories fit the tape about equally. 5 sectors currently disagree with that story, 5 agree.",
+  "read_me_first": "A narrow market, with volatility around normal. Leading scenario: INFLATION_SHOCK. Two stories fit the tape about equally. 5 sectors currently disagree with that story, 5 agree.",
   "crown": {
-    "headline": "A narrow market, with volatility around normal. Best fit: an inflation shock — commodities and rates up together.",
+    "headline": "A narrow market, with volatility around normal.",
     "regime_words": "narrowing · normal",
     "because": [
       "A handful of big names are carrying the index — the average stock is falling behind.",
       "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 16.0, lower than 74% of the past two years.",
-      "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and none is at an extreme — the positioning is not crowded.",
       "Big speculators are unusually long the dollar, the S&P, gold and 4 others; unusually short natural gas, the Nasdaq and the long bond (CFTC data to 2026-08-11).",
       "1 warning sign lit: the crowd is already positioned this way. A further 12 showed up on individual markets. No single one of these is a reason to sell. They matter when several point the same way as the breadth reading."
@@ -309,11 +308,12 @@
       "If the dollar trades above 99.32 (0.6% away), trend funds start buying.",
       "If the 2-year trades above 103.64 (0.6% away), trend funds start buying.",
       "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get.",
-      "Watch for the average stock keeping pace with the index again. That ends the leadership trade and starts the breadth trade.",
-      "This reading would strengthen if USO flat (roc5 7.61%, roc20 -3.55%) reversed."
+      "Watch for the average stock keeping pace with the index again. That ends the leadership trade and starts the breadth trade."
     ],
-    "caveats": [],
-    "as_of": "2026-08-21T12:21:39+08:00",
+    "caveats": [
+      "No dealer-positioning read today, so nothing above accounts for option hedging flows."
+    ],
+    "as_of": "2026-08-21T12:57:48+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
@@ -454,15 +454,18 @@
     ]
   },
   "limits": [
+    "No dealer-positioning read today, so nothing above accounts for option hedging flows.",
     "Crown: These markets came from Yahoo rather than our data provider (CL, DX, HG, NG, NQ, RTY, YM, ZB, ZC, ZF, ZN, ZS, ZT, ZW). They are the real futures contracts, so the flip levels are quotable, but Yahoo is a free feed with no uptime guarantee.",
+    "Crown: gamma unavailable — QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set",
     "Crown: economic calendar unavailable: FMP HTTP 404 for https://financialmodelingprep.com/stable/economics-calendar: []",
+    "Crown: no held or listed name reports in the window",
     "This pack does not size. It reports agreement/disagreement only.",
     "This pack does not name a ticker. Sector and theme rows are the finest grain.",
     "Coherence is a category (AGREES/DISAGREES/UNTESTED), never a probability — same rule as the scenario scores it is built from."
   ],
   "what_changed": {
-    "available": true,
+    "available": false,
     "changes": [],
-    "note": "Nothing that changes a decision moved."
+    "note": "No previous pack to compare against."
   }
 }
