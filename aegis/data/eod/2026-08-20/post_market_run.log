@@ -237,3 +237,223 @@ POST-MARKET 2026-08-20 — exit 1 (gate: partial)
 
 log:     data/eod/2026-08-20/post_market_run.log
 summary: data/eod/2026-08-20/post_market_run.json
+===============================================
+POST-MARKET 2026-08-20   (deterministic batch, D-93 + D-99/D-100/D-101/D-102 fixes)
+started 2026-08-21T04:38:46Z UTC / 2026-08-21 12:38 SGT
+repo: /root/work/AQE/aegis
+===============================================
+5 payload file(s) found in data/eod/2026-08-20/broker_pull
+
+--- preflight
+AEGIS PREFLIGHT — ACTION NEEDED ✗
+  config/.env: MISSING  ·  gitignored: yes ✓
+  ✗ MISSING GITHUB_PAT — autonomous git commit/push at post-market (no GitHub connector exists — D-48)
+      → Paste in chat:  Save GITHUB_PAT=<fine-grained PAT, Contents:Read+Write on TongIncomeWheel/AQE> into aegis/config/.env
+  Market data + book: FMP, Tiger, IBKR, Google Drive are OAuth CONNECTORS (no local secret). Only GITHUB_PAT lives in config/.env.
+
+--- journal build
+JOURNAL BUILD 2026-08-20 — FULL (exit 0)
+  equity rows 11 · option legs 57 · closes booked 2 · unmatched fills 5
+  dynCap -29,902.73 · 1R -448.54
+  high-severity flags: 8
+known continuing AEGIS membership: data/persistent/aegis_membership.json (so holdings don't re-land in pending_review every day)
+
+--- equity membership
+{
+ "op": "classify",
+ "out": "data/journal/aegis_journal_2026-08-20.json",
+ "confirmed": [
+  "BFLY",
+  "CME",
+  "GE",
+  "GOLD",
+  "OXY",
+  "V"
+ ],
+ "excluded_non_aegis": [
+  "CRCL",
+  "KO",
+  "MARA",
+  "MCD",
+  "NVDA"
+ ],
+ "pending_review": []
+}
+
+--- option membership
+{
+ "op": "classify",
+ "out": "data/journal/aegis_journal_2026-08-20.json",
+ "confirmed": [],
+ "dropped_not_aegis": [],
+ "pending_review": [
+  "COIN|P|145.000|2026-08-21",
+  "COIN|P|165.000|2026-08-21",
+  "COIN|P|150.000|2026-08-28",
+  "COIN|P|135.000|2026-09-04",
+  "COIN|P|135.000|2026-09-18",
+  "COIN|P|140.000|2026-09-18",
+  "COIN|C|150.000|2027-12-17",
+  "CRCL|C|75.000|2026-08-21",
+  "CRCL|P|65.000|2026-08-21",
+  "CRCL|C|75.000|2026-08-28",
+  "CRCL|C|70.000|2026-09-04",
+  "CRCL|C|75.000|2026-09-04",
+  "CRCL|C|75.000|2026-09-11",
+  "CRCL|C|80.000|2026-09-18",
+  "CRCL|C|85.000|2026-09-18",
+  "CRCL|P|65.000|2026-09-18",
+  "CRDO|P|225.000|2026-09-04",
+  "CRWD|P|175.000|2026-09-18",
+  "ECHO|C|100.000|2026-09-04",
+  "ECHO|C|105.000|2026-10-16",
+  "ECHO|C|120.000|2026-10-16",
+  "GLW|P|175.000|2026-08-21",
+  "IBIT|P|33.000|2026-09-18",
+  "ICHR|P|55.000|2026-09-18",
+  "INTC|C|120.000|2026-09-18",
+  "INTC|C|130.000|2026-12-18",
+  "MARA|C|11.500|2026-08-21",
+  "MARA|P|11.000|2026-08-21",
+  "MARA|C|11.500|2026-08-28",
+  "MARA|C|12.000|2026-08-28",
+  "MARA|P|10.500|2026-08-28",
+  "MARA|P|11.000|2026-08-28",
+  "MARA|C|11.500|2026-09-04",
+  "MARA|P|10.500|2026-09-04",
+  "MARA|C|11.000|2026-09-11",
+  "MARA|C|11.500|2026-09-11",
+  "MARA|P|8.500|2026-09-11",
+  "MARA|P|9.000|2026-09-11",
+  "MARA|C|12.000|2026-09-18",
+  "MARA|C|13.000|2026-09-18",
+  "MARA|P|9.000|2026-09-18",
+  "MRVL|P|200.000|2026-08-21",
+  "MSFT|C|500.000|2026-09-18",
+  "MSFT|C|450.000|2027-06-17",
+  "NBIS|P|165.000|2026-09-18",
+  "RBRK|P|90.000|2026-09-18",
+  "RBRK|C|105.000|2027-01-15",
+  "RBRK|C|125.000|2027-01-15",
+  "SPY|P|710.000|2026-09-18",
+  "SPY|P|750.000|2026-09-18",
+  "TTMI|C|170.000|2026-09-18",
+  "TTMI|C|155.000|2026-10-16",
+  "VIX|C|17.000|2026-09-16",
+  "XLF|P|51.000|2026-08-21",
+  "XLF|P|54.000|2026-08-21",
+  "XLK|P|165.000|2026-08-21",
+  "XLK|P|175.000|2026-08-21"
+ ],
+ "unidentifiable": [],
+ "incomplete_structures": []
+}
+
+--- recompute dynCap (D-99)
+DYNCAP RECOMPUTE — AEGIS-only: value 73,321.15 · 1R 1,099.82
+cumulative realised P&L (archive + not-yet-archived): -1,520.98
+
+--- hedge derivation
+{
+ "op": "derive-hedge",
+ "out": "data/journal/aegis_journal_2026-08-20.json",
+ "hedge": null,
+ "structures_found": 0,
+ "note": "no confirmed Aegis option structure in the book"
+}
+prior journal: /root/work/AQE/aegis/data/journal/aegis_journal_2026-08-19.json
+
+--- carry-forward
+{
+ "op": "carry-forward",
+ "out": "data/journal/aegis_journal_2026-08-20.json",
+ "carried": [],
+ "no_prior_data": [
+  "BFLY",
+  "CME",
+  "GE",
+  "GOLD",
+  "OXY",
+  "V"
+ ],
+ "already_had": []
+}
+
+--- journal verified
+JOURNAL VERIFY 2026-08-20 — ok (data/journal/aegis_journal_2026-08-20.json)
+
+--- push (book of record)
+    committed locally but NOT pushed — see data/eod/2026-08-20/git_sync_result.json
+    if this is a sandbox git-proxy block, the orchestrating Claude session must
+    complete the push via the GitHub MCP connector's push_files tool.
+
+--- portfolio metrics
+{
+ "as_of": "2026-08-20",
+ "gross_exposure_usd": 0.0,
+ "leverage": 0.0,
+ "net_beta_dollar": 0.0,
+ "nav_beta": 0.0,
+ "sector_concentration_pct": {},
+ "var": {
+  "var_95_1m_usd": 0.0,
+  "systematic_ann_usd": 0.0,
+  "idiosyncratic_ann_usd": 0.0,
+  "net_beta_dollar": 0.0,
+  "gross_exposure_usd": 0.0,
+  "market_vol_ann_pct": 15.74,
+  "method": "single-factor parametric (variance-covariance), 95% 1-month, z=1.645 (D-42)",
+  "dyncap_usd": 73321.15,
+  "var_pct_of_dyncap": 0.0,
+  "soft_pct": 18.0,
+  "hard_pct": 20.0,
+  "soft_breach": false,
+  "var_ok": true
+ },
+ "computed_from_aqe_dated": [],
+ "mixed_vintage": false,
+ "excluded_no_aqe_data": [
+  "BFLY",
+  "CME",
+  "GE",
+  "GOLD",
+  "OXY",
+  "V"
+ ],
+ "excluded_pending_review": [],
+ "missing_beta_or_vol": [],
+ "unmarked_cost_basis_proxy": [],
+ "note": "positions in excluded_no_aqe_data/excluded_pending_review/missing_beta_or_vol are OMITTED from leverage/nav_beta/sector/VaR, not defaulted to zero. Beta/vol come from historical_store.py (FMP), sector from the AQE snapshot — see module docstring. Stop audit is NOT computed here — see premarket's stop-update, the only place the comparison is fresh."
+}
+
+--- archive ledger
+    2 closed trade(s) today
+{"summary": {"added": 0, "replaced": 2, "no_op": false, "total_trades": 3, "ytd_realized_pnl_usd": -1520.98}}
+
+--- flow audit
+wrote /root/work/AQE/aegis/data/eod/2026-08-20/flow_audit_2026-08-20.json
+wrote /root/work/AQE/aegis/data/eod/2026-08-20/flow_audit_2026-08-20.html
+
+--- push (metrics, archive, audit)
+
+POST-MARKET 2026-08-20 — exit 1 (gate: partial)
+-----------------------------------------------
+  broker payloads          pass  — 5 file(s) in data/eod/2026-08-20/broker_pull
+  reconcile vanished positions (D-100) pass
+  preflight                DEGRADED  — exit 1
+  journal build            pass
+  equity membership        pass
+  option membership        pass
+  recompute dynCap (D-99)  pass
+  hedge derivation         pass
+  carry-forward            pass
+  journal verified         pass
+  GitHub push (journal)    FAIL  — committed locally, not pushed
+  portfolio metrics        pass
+  archive ledger           pass  — 2 trade(s) filed
+  flow audit               pass
+  GitHub push (final)      FAIL  — committed locally, not pushed
+  gate stamped             pass  — partial
+
+log:     data/eod/2026-08-20/post_market_run.log
+summary: data/eod/2026-08-20/post_market_run.json
