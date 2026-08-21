@@ -77,7 +77,7 @@ def test_held_equity_tickers_run_the_full_chain_in_order(monkeypatch):
     assert result["tickers"] == ["IBM", "OXY"]  # option leg excluded, sorted
     steps = [c[0] for c in calls]
     assert steps == ["pull", "scores", "export", "publish"]
-    assert calls[0] == ("pull", ("IBM", "OXY"))
+    assert calls[0] == ("pull", ("IBM", "OXY", "SPY"))  # SPY: the scoring benchmark
     assert calls[3] == ("publish", ("aqe_daily_export.json", "held_positions.json"))
 
 
@@ -108,3 +108,40 @@ def test_a_stale_fetch_rejection_is_surfaced_but_does_not_abort(monkeypatch):
     result = rh.refresh_held()
     assert result["ok"] is True
     assert result["tickers"] == ["OXY"]
+
+
+def test_a_ticker_left_unscored_after_build_scores_is_warned_loudly(monkeypatch, capsys, tmp_path):
+    """2026-08-21 incident: build_scores() silently produced zero rows for
+    every held ticker on a runner with no SPY benchmark data, and nothing in
+    the pipeline said so — the gap was only visible later, in the export's
+    data_quality block. This is the check that would have caught it in the
+    run's own log, immediately."""
+    from src.data import ptj
+    monkeypatch.setattr(ptj, "refresh_held_positions",
+                        lambda: [{"ticker": "GOLD", "type": "STK"}])
+    monkeypatch.setattr(ptj, "ptj_status", lambda: "live")
+    monkeypatch.setattr(ptj, "load_ptj_cache", lambda: {})
+
+    from src.data import panel_builder
+    monkeypatch.setattr(panel_builder, "pull_tickers",
+                        lambda tickers, **k: {"pulled": len(tickers), "skipped_current": 0,
+                                              "failed": [], "total_tickers": len(tickers)})
+    from src.scanner import score_runner
+    monkeypatch.setattr(score_runner, "build_scores", lambda: None)  # writes nothing
+
+    import pandas as pd
+    from src.data import paths
+    scores_path = tmp_path / "scores_daily.parquet"
+    pd.DataFrame({"ticker": []}).to_parquet(scores_path, index=False)  # 0 rows
+    monkeypatch.setattr(paths, "SCORES_DAILY", scores_path)
+
+    from src.data import drive_sync
+    monkeypatch.setattr(drive_sync, "export_to_drive", lambda *a, **k: {"status": "ok"})
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "publish_daily_outputs",
+                        lambda names=None, **k: {"ok": True, "written": len(names or ())})
+
+    result = rh.refresh_held()
+    assert result["ok"] is True
+    out = capsys.readouterr().out
+    assert "GOLD" in out and "NO score row" in out

@@ -64,7 +64,16 @@ def refresh_held() -> dict:
     print(f"[refresh_held] Step 2: price pull for {len(tickers)} held "
           f"ticker(s): {tickers}")
     from src.data.panel_builder import pull_tickers
-    pull_result = pull_tickers(tickers)
+    from src.data.universe import BENCHMARK
+    # SPY is a hard dependency for scoring (RS-vs-SPY, beta, excess return —
+    # mp.compute/structure.compute/health.compute/readiness.compute all take
+    # spy_daily). On a container with no persisted panel (a fresh GitHub
+    # Actions runner, unlike the HF Space's warm local disk) the panel would
+    # otherwise contain ONLY the held tickers, spy_daily would come back
+    # empty, and every held ticker's score computation would fail silently —
+    # discovered 2026-08-21 when this produced a scores_daily.parquet with 0
+    # rows and no warning anywhere.
+    pull_result = pull_tickers(sorted(set(tickers) | {BENCHMARK}))
     if pull_result.get("failed"):
         print(f"  [WARN] {len(pull_result['failed'])} held ticker(s) failed "
               f"to price this run: {pull_result['failed']} — scoring will "
@@ -73,6 +82,18 @@ def refresh_held() -> dict:
     print("[refresh_held] Step 3: recompute scores...")
     from src.scanner.score_runner import build_scores
     build_scores()
+
+    from src.data.paths import SCORES_DAILY
+    import pandas as _pd
+    scored_tickers: set = set()
+    if SCORES_DAILY.exists():
+        scored_tickers = set(_pd.read_parquet(SCORES_DAILY, columns=["ticker"])["ticker"])
+    unscored = sorted(set(tickers) - scored_tickers)
+    if unscored:
+        print(f"  [WARN] {len(unscored)} held ticker(s) have NO score row "
+              f"after this run: {unscored} — their export fields will read "
+              f"null. Usually too little price history (<60 bars) or a "
+              f"per-ticker engine failure; check the [score] lines above.")
 
     print("[refresh_held] Step 4: rebuild export (held block + scores "
           "refreshed; daily_list/lens_ranking unchanged from the last full "

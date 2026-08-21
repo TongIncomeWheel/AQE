@@ -79,6 +79,27 @@ SCORE_COLUMNS = [
 ]
 
 
+def scoreable_tickers(panel_tickers, *, scan_universe, basket_constituents,
+                      held_tickers=()) -> list[str]:
+    """Which tickers in the panel actually get scored, sorted.
+
+    Score the scan universe only. Thematic-basket constituents that aren't in
+    the scan universe live in the panel purely for SECTOR grading — they must
+    never reach a screen (longlist / watchlist / edge), so keep them out of
+    the score cache (Thematic Basket Map v2.0: baskets don't add scan names).
+
+    A held position is the one exception: it must NEVER be excluded here just
+    because it also happens to be a thematic-basket constituent outside the
+    scan universe — that would directly contradict panel_builder.py's own
+    promise ("as long as we have the ticker, we can source this" for held
+    names). Found 2026-08-21: GOLD and JPM, both held and both basket-only,
+    silently scored as fully null in the export with no warning anywhere in
+    the pipeline.
+    """
+    basket_only = (set(basket_constituents) - set(scan_universe)) - set(held_tickers)
+    return sorted(t for t in panel_tickers if t not in basket_only)
+
+
 def build_scores() -> None:
     if not PANEL_DAILY.exists():
         print(f"ERROR: {PANEL_DAILY} does not exist. Run build_panel.bat first.", file=sys.stderr)
@@ -108,16 +129,17 @@ def build_scores() -> None:
     if earnings_cal:
         print(f"  Earnings calendar loaded: {len(earnings_cal)} tickers")
 
-    # Score the scan universe only. Thematic-basket constituents that aren't in
-    # the scan universe live in the panel purely for SECTOR grading — they must
-    # never reach a screen (longlist / watchlist / edge), so keep them out of the
-    # score cache (Thematic Basket Map v2.0: baskets don't add scan names).
     from src.engines.srm import BASKET_CONSTITUENTS
     from src.data.universe import load_universe
-    _scan = set(load_universe(include_benchmark=True))
-    _basket_only = BASKET_CONSTITUENTS - _scan
-
-    tickers = sorted(t for t in daily_groups.keys() if t not in _basket_only)
+    try:
+        from src.data.ptj import load_held_positions
+        _held_tickers = {p.get("ticker") for p in load_held_positions()
+                         if p.get("ticker") and p.get("type", "STK") == "STK"}
+    except Exception:  # noqa: BLE001
+        _held_tickers = set()
+    tickers = scoreable_tickers(
+        daily_groups.keys(), scan_universe=load_universe(include_benchmark=True),
+        basket_constituents=BASKET_CONSTITUENTS, held_tickers=_held_tickers)
     out_rows: list[pd.DataFrame] = []
     t0 = time.monotonic()
     for ticker in iter_with_progress(tickers, label="score"):
