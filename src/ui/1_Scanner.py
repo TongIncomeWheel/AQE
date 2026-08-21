@@ -297,6 +297,16 @@ with st.sidebar:
             st.warning(f"Follow-on scans skipped: {type(_exc).__name__}: {_exc}")
         st.rerun()
 
+    if st.button("Refresh held book only", use_container_width=True,
+                 disabled=(CLOUD_MODE and not FMP_KEY_SET),
+                 help="Fast, targeted path: PTJ journal + prices for held "
+                      "tickers only + score recompute + export rebuild + "
+                      "GitHub publish. Doesn't touch the ~800-name scan "
+                      "universe. Use this instead of the full pipeline when "
+                      "only the held book needs fixing."):
+        run_module_streaming("src.pipeline.refresh_held", "Held-book refresh", prog, stat)
+        st.rerun()
+
     with st.expander("Data Refresh", expanded=False):
         if st.button("Rebuild prices",
                      disabled=(CLOUD_MODE and not FMP_KEY_SET)):

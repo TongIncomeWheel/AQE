@@ -1,0 +1,37 @@
+name: AQE held-book refresh
+
+# Manual-only, fast, targeted incident-response path (2026-08-21): refreshes
+# the PTJ journal, prices ONLY the held tickers, recomputes scores, rebuilds
+# the export, publishes to GitHub. Does not touch the ~800-name scan
+# universe or its FMP quota. See src/pipeline/refresh_held.py for why this
+# exists as a separate path from the full daily pipeline.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: aqe-daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Held-book refresh
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m src.pipeline.refresh_held

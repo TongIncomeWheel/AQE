@@ -221,5 +221,82 @@ def _next_pull_start(existing: pd.DataFrame, ticker: str, earliest: date) -> dat
     return last + timedelta(days=1)
 
 
+def pull_tickers(tickers: list[str], history_years: int | None = None) -> dict:
+    """Refresh price bars for an EXPLICIT ticker list, not the ~800-name scan
+    universe — the low-blast-radius pull behind the held-book-only refresh
+    (src/pipeline/refresh_held.py). Merges into the existing daily/weekly
+    parquet by (date, ticker) rather than replacing them, so every other
+    ticker's cached data is untouched.
+
+    Built after the 2026-08-21 incident where a full-universe pull died mid-way
+    (a transient FMP connection drop at ticker 358/820) and took the held book
+    down with it, even though only ~12 of those 820 names were actually held.
+    """
+    if history_years is None:
+        history_years = _default_history_years()
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    today = _us_market_date()
+    earliest = today - timedelta(days=int(history_years * 365.25))
+    tickers = sorted(set(tickers))
+
+    client = FMPClient()
+    existing_daily = _load_existing(PANEL_DAILY)
+    pulled_rows: list[pd.DataFrame] = []
+    pulled, skipped_current, failed = 0, 0, []
+
+    for ticker in iter_with_progress(tickers, label="held"):
+        from_dt = _next_pull_start(existing_daily, ticker, earliest)
+        if from_dt > today:
+            skipped_current += 1
+            continue
+        try:
+            df = client.get_daily_bars(ticker, from_date=from_dt, to_date=today)
+        except (FMPQuotaError, FMPError) as exc:
+            print(f"  !! {ticker}: {exc}", file=sys.stderr)
+            failed.append(ticker)
+            continue
+        if df.empty:
+            print(f"  -- {ticker}: no bars returned", file=sys.stderr)
+            failed.append(ticker)
+            continue
+        df["ticker"] = ticker
+        pulled_rows.append(df[["date", "ticker", "open", "high", "low", "close", "volume"]])
+        pulled += 1
+
+    print(f"[panel:held-only] pulled={pulled}, cached/current={skipped_current}, "
+          f"failed={len(failed)} ({failed}), total_tickers={len(tickers)}", flush=True)
+
+    if pulled_rows:
+        new_rows = pd.concat(pulled_rows, ignore_index=True)
+        merged = (
+            pd.concat([existing_daily, new_rows], ignore_index=True)
+            .drop_duplicates(subset=["date", "ticker"], keep="last")
+            .sort_values(["ticker", "date"], kind="stable")
+            .reset_index(drop=True)
+        )
+        merged.to_parquet(PANEL_DAILY, index=False)
+
+        # Weekly resample for just the touched tickers, spliced into the
+        # existing weekly panel (same merge-not-replace discipline as daily).
+        existing_weekly = _load_existing(PANEL_WEEKLY)
+        weekly_rows: list[pd.DataFrame] = []
+        for ticker, group in merged[merged["ticker"].isin(tickers)].groupby("ticker", sort=False):
+            weekly = resample_to_weekly(group[["date", "open", "high", "low", "close", "volume"]])
+            if weekly.empty:
+                continue
+            weekly["ticker"] = ticker
+            weekly_rows.append(weekly[["date", "ticker", "open", "high", "low", "close", "volume"]])
+        if weekly_rows:
+            new_weekly = pd.concat(weekly_rows, ignore_index=True)
+            if not existing_weekly.empty:
+                existing_weekly = existing_weekly[~existing_weekly["ticker"].isin(tickers)]
+            weekly_merged = (pd.concat([existing_weekly, new_weekly], ignore_index=True)
+                             if not existing_weekly.empty else new_weekly)
+            weekly_merged.to_parquet(PANEL_WEEKLY, index=False)
+
+    return {"pulled": pulled, "skipped_current": skipped_current,
+            "failed": failed, "total_tickers": len(tickers)}
+
+
 if __name__ == "__main__":
     build_panel()

@@ -66,3 +66,72 @@ def test_build_panel_survives_ptj_failure(_wired, monkeypatch):
 
     daily = pd.read_parquet(panel_builder.PANEL_DAILY)
     assert "AAPL" in set(daily["ticker"].unique())
+
+
+# pull_tickers() — the low-blast-radius held-book-only price refresh
+# (src/pipeline/refresh_held.py), built after the 2026-08-21 incident where a
+# full ~800-ticker pull died mid-way on a transient FMP connection drop and
+# took the held-book refresh down with it. Merges into the existing panel by
+# (date, ticker) rather than replacing it.
+
+def test_pull_tickers_pulls_only_the_given_tickers_and_leaves_others_untouched(_wired):
+    # Seed an existing panel with a ticker NOT in the requested pull.
+    existing = pd.DataFrame({
+        "date": pd.bdate_range("2025-01-02", periods=5),
+        "ticker": "MSFT", "open": 1.0, "high": 1.0, "low": 1.0,
+        "close": 1.0, "volume": 1.0,
+    })
+    existing.to_parquet(panel_builder.PANEL_DAILY, index=False)
+
+    result = panel_builder.pull_tickers(["IBM"], history_years=1)
+
+    daily = pd.read_parquet(panel_builder.PANEL_DAILY)
+    tickers = set(daily["ticker"].unique())
+    assert tickers == {"MSFT", "IBM"}
+    assert result["pulled"] == 1
+    assert result["failed"] == []
+
+
+def test_pull_tickers_incremental_pull_skips_an_already_current_ticker(_wired, monkeypatch):
+    from datetime import date as _date
+    monkeypatch.setattr(panel_builder, "_us_market_date", lambda: _date(2025, 1, 8))
+    existing = pd.DataFrame({
+        "date": pd.bdate_range("2025-01-02", periods=5),  # through 2025-01-08
+        "ticker": "IBM", "open": 1.0, "high": 1.0, "low": 1.0,
+        "close": 1.0, "volume": 1.0,
+    })
+    existing.to_parquet(panel_builder.PANEL_DAILY, index=False)
+
+    result = panel_builder.pull_tickers(["IBM"], history_years=1)
+    assert result["pulled"] == 0
+    assert result["skipped_current"] == 1
+
+
+def test_pull_tickers_a_failed_ticker_is_reported_not_raised(_wired, monkeypatch):
+    class _FlakyClient:
+        def get_daily_bars(self, ticker, from_date=None, to_date=None):
+            from src.data.fmp_client import FMPError
+            raise FMPError("boom")
+    monkeypatch.setattr(panel_builder, "FMPClient", _FlakyClient)
+
+    result = panel_builder.pull_tickers(["ZZZZ"], history_years=1)  # must not raise
+    assert result["pulled"] == 0
+    assert result["failed"] == ["ZZZZ"]
+
+
+def test_pull_tickers_dedups_overlapping_dates_keeping_the_new_pull(_wired):
+    """A re-pull of an already-cached range must replace, not duplicate, the
+    overlapping rows — same discipline as build_panel()."""
+    existing = pd.DataFrame({
+        "date": pd.bdate_range("2025-01-02", periods=5),
+        "ticker": "IBM", "open": 999.0, "high": 999.0, "low": 999.0,
+        "close": 999.0, "volume": 999.0,
+    })
+    existing.to_parquet(panel_builder.PANEL_DAILY, index=False)
+
+    panel_builder.pull_tickers(["IBM"], history_years=1)
+
+    daily = pd.read_parquet(panel_builder.PANEL_DAILY)
+    ibm = daily[daily["ticker"] == "IBM"]
+    assert len(ibm) == len(ibm.drop_duplicates(subset=["date"]))
+    assert (ibm["close"] != 999.0).all(), "the fresh pull must win over stale cached rows"
