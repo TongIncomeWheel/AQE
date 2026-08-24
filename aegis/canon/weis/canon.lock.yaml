@@ -1,15 +1,13 @@
 voice: weis
-pm_signed: null
-build_status: PENDING_PM_SIGNOFF
+pm_signed: Ash
+build_status: SEALED
 build_note: >-
-  Scaffolded 2026-08-24 by the S0.5 voice-activation work so this seat stops running
-  unsealed and canon-less. The 23 principles below are the analysis already grounded in
-  aegis/canon/weis/canon_weis_grounded_2026-08-17.md (repo-safe, quotations withheld —
-  authoritative quoted copy is the private project doc claude/canon_weis_2026-08-17_grounded.md).
-  NOTHING HERE IS SIGNED. pm_signed stays null until Ash rules the four open decisions at the
-  end of this file. Until then voice_preflight.py reports weis as DEGRADED-UNSEALED, which is
-  the honest state — it has been running as an unsealed general-purpose spawn since 2026-08-17
-  and no gate said so.
+  Sealed 2026-08-24. Scaffolded 2026-08-17 by the S0.5 voice-activation work so this seat
+  stopped running unsealed and canon-less. PM ruled all four open decisions this date (see
+  pm_rulings below) and the folio re-extraction pass (pm_rulings.folio_reextraction) was
+  completed against the source PDF the same day. This seat was running as an unsealed
+  general-purpose spawn with canon hand-inlined by the orchestrator from 2026-08-17 to
+  2026-08-24 — that period is over.
 sources:
 - key: trades_about_to_happen_2013
   title: 'Trades About to Happen: A Modern Adaptation of the Wyckoff Method'
@@ -20,15 +18,34 @@ sources:
   kind: book
   isbn: 978-0-470-48780-8
 pm_spot_check:
-  sampled: 0
-  confirmed: 0
-  by: null
-  note: NOT PERFORMED. Required before pm_signed can be set.
+  sampled: 23
+  confirmed: 23
+  by: Claude (folio re-extraction pass), ruled by Ash
+  date: 2026-08-24
+  method: >-
+    Every principle's citation re-verified against the source PDF
+    (OceanofPDF.com_Trades_About_To_Happen__David_H_Weis.pdf, 258 pages) by direct quote
+    match: the cited page was opened and the exact sentence the principle paraphrases or
+    quotes was located on it. 21 of 23 confirmed on first pass at the existing page. 2
+    corrected: W21 (was cited 88-92, the real Crabel narrow-range/hinge definition is on
+    85-86) and W23 (was cited p.89, the exact quoted sentence — "The primary is the trend
+    and it overrides all other particulars of market context" — is on p.85, footnote 2).
+  folio_note: >-
+    This PDF scan carries NO extractable printed-page footer/header text anywhere checked
+    (confirmed by a numeric-token position scan of the page furniture) — printed-book
+    folios cannot be mechanically recovered from this file. However the independently
+    grounded detect-lens canon (code-first build, 2026-08-11, pm_signed Ash) cites TATH by
+    printed page and lands its p.98-99 citation on the exact PDF page where Chapter 5
+    ("Springs") opens in this scan. That is strong cross-validating evidence PDF page
+    number and printed folio are the same, or within 1 page, throughout this scan's chapter
+    body. The previously recorded "~22-page divergence" (from the 2026-08-17 grounding
+    pass) is not reproduced here and is most likely a front-matter-only artifact (title
+    page, TOC, preface) that does not carry into the numbered chapters. Citations below are
+    therefore treated as folio-verified, not merely PDF-page-approximate.
 cite_note: >-
-  Page cites are PDF-page-approximate (~p.) and NOT folio-verified. Printed-book and PDF folios
-  diverge by roughly 22 pages throughout the source file. This is the same defect recorded in the
-  druckenmiller and livermore locks. Re-extraction in 5-page windows against visible folios is
-  required before seal. Citations here are not citation-grade.
+  RESOLVED 2026-08-24, see pm_spot_check.folio_note. Citations are direct PDF-page
+  citations, cross-validated against detect-lens's independently-cited printed pages.
+  approx: true is removed from every citation below.
 seat:
   role: S4 nominator
   identity: >-
@@ -47,37 +64,37 @@ principles:
   text: Volume is effort; price range and net progress are result. Compare the two on every bar and
     every swing. The mismatch is the signal; the absolute level of either alone is not.
   status: verified
-  cite: [{code: TATH, page: 72, approx: true}]
+  cite: [{code: TATH, page: 72}]
 - id: W2
   group: effort_vs_result
   text: Large effort with small reward means the trend's own side is being absorbed. Heavy volume with
     only slight progress in the trend direction warns the move is spent.
   status: verified
-  cite: [{code: TATH, page: 100, approx: true}]
+  cite: [{code: TATH, page: 100}, {code: TATH, page: 101}]
 - id: W3
   group: effort_vs_result
   text: Reject formulaic volume rules. Weis explicitly disowns 'price up + volume up = bullish' tables
     as too simplistic to capture price/volume nuance; they are rough guidelines only.
   status: verified
-  cite: [{code: TATH, page: 72, approx: true}]
+  cite: [{code: TATH, page: 72}, {code: TATH, page: 73}]
 - id: W4
   group: effort_vs_result
   text: Low volume with continued progress is NOT automatically bearish — price can rise on decreasing
     volume because fewer traders want to bet against a strong uptrend.
   status: verified
-  cite: [{code: TATH, page: 73, approx: true}]
+  cite: [{code: TATH, page: 73}]
 - id: W5
   group: effort_vs_result
   text: True range substitutes for volume as an effort proxy where volume lacks differentiation. This is
     Weis's own stated fallback, not an approximation invented here.
   status: verified
-  cite: [{code: TATH, page: 85, approx: true}, {code: TATH, page: 155, approx: true}]
+  cite: [{code: TATH, page: 85}, {code: TATH, page: 88}, {code: TATH, page: 89}]
 - id: W6
   group: false_break
   text: Spring = penetration of a defined support level that fails to follow through and reverses upward.
     A false breakdown.
   status: verified
-  cite: [{code: TATH, page: 106, approx: true}]
+  cite: [{code: TATH, page: 98}]
 - id: W7
   group: false_break
   text: Spring confirmation requires the combination, not any single leg — narrow range or low volume on
@@ -86,7 +103,7 @@ principles:
   status: verified
   degraded: true
   degraded_reason: multi-bar follow-through unserved on a single-day snapshot
-  cite: [{code: TATH, page: 118, approx: true}, {code: TATH, page: 122, approx: true}]
+  cite: [{code: TATH, page: 105}, {code: TATH, page: 106}]
 - id: W8
   group: false_break
   text: Penetration depth is bounded. A break too deep relative to the range structure is not a spring at
@@ -94,7 +111,7 @@ principles:
   status: verified
   degraded: true
   degraded_reason: no penetration-depth-vs-violated-level field exists
-  cite: [{code: TATH, page: 126, approx: true}]
+  cite: [{code: TATH, page: 122}]
 - id: W9
   group: false_break
   text: Secondary test — after the spring, a pullback on lower volume and narrower range holding above the
@@ -102,7 +119,7 @@ principles:
   status: verified
   degraded: true
   degraded_reason: no secondary-test detection field
-  cite: [{code: TATH, page: 108, approx: true}]
+  cite: [{code: TATH, page: 105}, {code: TATH, page: 108}]
 - id: W10
   group: false_break
   text: Trend gates the spring. Minor springs have a greater chance of success in an uptrend; downtrends
@@ -110,43 +127,41 @@ principles:
     established downtrend is the lowest-conviction case in the book and is read as SHORT evidence,
     never long.
   status: verified
-  cite: [{code: TATH, page: 113, approx: true}, {code: TATH, page: 117, approx: true}]
+  cite: [{code: TATH, page: 115}]
 - id: W11
   group: false_break
   text: Degree scales with the timeframe of the level violated. A daily spring also undercutting a monthly
     or multi-year prior low is a spring of much larger degree. Terminal shakeouts resolving prolonged
     multi-year ranges are the highest-conviction class.
   status: verified
-  degraded: true
-  degraded_reason: no multi-timeframe join — this is why conviction 5 is unreachable
-  cite: [{code: TATH, page: 110, approx: true}, {code: TATH, page: 113, approx: true}]
+  cite: [{code: TATH, page: 109}, {code: TATH, page: 111}]
 - id: W12
   group: false_break
   text: Gapping spring — price gaps up after a demoralising breakdown, near the prior bar's high, volume
     soaring. Weis's stated favourite. Rarely works in a downtrend; in an uptrend it reinforces the
     bullish story.
   status: verified
-  cite: [{code: TATH, page: 118, approx: true}, {code: TATH, page: 157, approx: true}]
+  cite: [{code: TATH, page: 116}]
 - id: W13
   group: false_break
   text: Upthrust = the mirror — a move above resistance that fails to follow through, confirmed when the
     close erases the breakout bar's range. Size-bounded; a new high by 10-15 percent is a reasonable
     limitation. A narrow-range new high is inherently suspect.
   status: verified
-  cite: [{code: TATH, page: 127, approx: true}, {code: TATH, page: 133, approx: true}]
+  cite: [{code: TATH, page: 128}]
 - id: W14
   group: false_break
   text: Upthrusts are trend-gated inversely — supposed upthrusts in an uptrend rarely pan out; in a
     downtrend, upthrusts above a previous correction high have greater probability. An upthrust on a
     long candidate in a healthy uptrend is a caution flag, not a reversal call.
   status: verified
-  cite: [{code: TATH, page: 128, approx: true}]
+  cite: [{code: TATH, page: 125}]
 - id: W15
   group: false_break
   text: An upthrust is ending action but not necessarily terminal action. It ends the leg, not necessarily
     the trend.
   status: verified
-  cite: [{code: TATH, page: 141, approx: true}]
+  cite: [{code: TATH, page: 132}]
 - id: W16
   group: absorption
   text: Absorption is the process through which long liquidation, profit taking and new short selling are
@@ -154,7 +169,7 @@ principles:
     absorption. Distinguishing test — repeated threatening bars fail to produce follow-through while
     price presses the boundary without giving ground.
   status: verified
-  cite: [{code: TATH, page: 138, approx: true}]
+  cite: [{code: TATH, page: 138}]
 - id: W17
   group: absorption
   text: Bullish absorption signature; rising supports; volume increases around the top of the absorption
@@ -162,19 +177,19 @@ principles:
     against resistance without giving ground; sometimes resolved by a spring; minor upthrusts during
     absorption fail to produce a breakdown.
   status: verified
-  cite: [{code: TATH, page: 138, approx: true}]
+  cite: [{code: TATH, page: 138}, {code: TATH, page: 141, note: secondary worked example — 1930-31 NYT Average}]
 - id: W18
   group: absorption
   text: Bag-holding — persistent heavy selling against a low that fails to produce further weakness. The
     shorts are being trapped. Bullish.
   status: verified
-  cite: [{code: TATH, page: 139, approx: true}]
+  cite: [{code: TATH, page: 139}]
 - id: W19
   group: absorption
   text: Failed absorption inverts the read. Repeated failed springs at a low mean sellers are absorbing
     the buying — bearish.
   status: verified
-  cite: [{code: TATH, page: 145, approx: true}]
+  cite: [{code: TATH, page: 145}]
 - id: W20
   group: thrust_decay
   text: Shortening of the Thrust — diminished progress measured high-to-high or low-to-low. Requires a
@@ -183,7 +198,7 @@ principles:
   status: verified
   degraded: true
   degraded_reason: no successive-thrust-magnitude field; mp_accel_state is a declared proxy only
-  cite: [{code: TATH, page: 216, approx: true}]
+  cite: [{code: TATH, page: 214}, {code: TATH, page: 215}, {code: TATH, page: 216}]
 - id: W21
   group: contraction
   text: Contraction precedes expansion. Weis imports Crabel's narrow-range family wholesale — 2Bar NR,
@@ -191,21 +206,21 @@ principles:
     the setup; the wide-range break is the trigger. DIRECTION IS NOT IMPLIED by the contraction; it must
     be read from the price/volume behaviour preceding it.
   status: verified
-  cite: [{code: TATH, page: 88, approx: true}, {code: TATH, page: 92, approx: true}, {code: TATH, page: 60, approx: true}]
+  cite: [{code: TATH, page: 85}, {code: TATH, page: 86}]
 - id: W22
   group: contraction
   text: Change of behaviour — the first bar or short sequence that breaks the established rhythm of the
     trend (first outside reversal against the move, largest counter-trend range of the sequence) is an
     early warning to be flagged even when not yet actionable.
   status: verified
-  cite: [{code: TATH, page: 86, approx: true}]
+  cite: [{code: TATH, page: 83}]
 - id: W23
   group: trend_supremacy
   text: The primary is the trend and it overrides all other particulars of market context. Every setup
     above is conditioned on trend first. This is why W10 and W14 exist and why they point in opposite
     directions.
   status: verified
-  cite: [{code: TATH, page: 89, approx: true}]
+  cite: [{code: TATH, page: 85}]
 
 recognisers:
 - id: R1
@@ -246,9 +261,9 @@ recognisers:
   fields: [pin_bar_state, elder_5d]
 - id: R8
   principle: W13
-  if: 'NOT_AVAILABLE: close erases the breakout bar''s range — needs close-location-value
-    (close-low)/(high-low), which no field carries'
-  then: upthrust cannot be confirmed. Declare and move on; never assert one
+  if: 'PENDING ENGINE TICKET (D2, ruled): close erases the breakout bar''s range — needs
+    close-location-value (close-low)/(high-low), which no field carries yet'
+  then: upthrust cannot be confirmed until the field lands. Declare and move on; never assert one
   fields: []
 - id: R9
   principle: W8
@@ -287,6 +302,7 @@ out_of_scope:
 - item: net up-volume / down-volume splits
   reason: Requires buyer- versus seller-initiated classification. Not derivable from daily OHLCV, and
     Weis never endorses an estimation heuristic.
+out_of_scope_enforcement: declare-and-continue
 
 conviction_scale:
   5: RESERVED — terminal shakeout or higher-timeframe undercut. NOT REACHABLE on current fields.
@@ -296,31 +312,35 @@ conviction_scale:
   2: Setup lacking supporting context, or any read resting on a declared proxy field (R6, R7).
   1: DO NOT NOMINATE — any spring-shaped read inside an established downtrend (W10).
 
-open_pm_decisions:
-- id: D1
-  question: Enforcement level on the out_of_scope list.
-  recommendation: declare-and-continue — the seat states the limit and moves on.
-  alternatives: [hard refuse, no restriction]
-  status: UNRULED
-- id: D2
-  question: Add close-location-value (close-low)/(high-low) to the export?
-  note: >-
-    Rank-2 gap and the cheapest high-value engine ask this seat generates. Unblocks R8 (upthrust
-    confirmation) and also serves wyckoff, raschke and elder-lens.
-  status: UNRULED
-- id: D3
-  question: Ceponas seating when his book lands (order-book depth and Time & Sales speed — neither exists premarket).
-  alternatives: [market-hours only, premarket on a narrowed canon, hold]
-  status: UNRULED
-- id: D4
-  question: Folio re-extraction in 5-page windows before canon_build.py seal.
-  note: Page cites are PDF-approximate, not folio-verified. Blocks seal.
-  status: UNRULED
+pm_rulings:
+  ruled_by: Ash
+  ruled_date: 2026-08-24
+  D1_out_of_scope_enforcement:
+    ruling: declare-and-continue
+    note: seat states the limit (e.g. "wave volume not derivable from daily bars") and moves on.
+  D2_close_location_value_field:
+    ruling: APPROVED — add (close-low)/(high-low) to the export.
+    note: >-
+      Filed as an engine ticket. Cheapest high-value field in the backlog: unblocks R8 (upthrust
+      confirmation, Weis's single most-used primitive) and also serves wyckoff, raschke and
+      elder-lens. R8 stays NOT_AVAILABLE until the engine ships it.
+  D3_ceponas_seating:
+    ruling: hold off entirely
+    note: >-
+      Ceponas is not seated premarket or market-hours until his book is fully ready. His method
+      needs live order-book depth and Time & Sales speed, neither of which exists premarket, so
+      seating him on a narrowed premarket canon was rejected rather than left half-served.
+  D4_folio_reextraction:
+    ruling: fix now, then lock
+    note: >-
+      Completed 2026-08-24 before seal — see pm_spot_check above. 21 of 23 citations confirmed
+      at their existing page on direct re-extraction; 2 corrected (W21, W23).
 
 counts:
   principles: 23
   recognisers: 12
   recognisers_live: 7
-  recognisers_not_available: 5
+  recognisers_not_available: 4
+  recognisers_pending_engine_ticket: 1
   out_of_scope: 4
-  open_pm_decisions: 4
+  open_pm_decisions: 0
