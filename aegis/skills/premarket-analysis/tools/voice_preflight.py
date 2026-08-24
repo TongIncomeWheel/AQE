@@ -15,8 +15,8 @@ Answers two questions per seat and never mixes them:
 
        DERIVED          the value is fully determined by fields that ARE populated — it is a
                         missing LABEL, not missing information.
-                        Action: orchestrator computes it at packet build (field_derive.py)
-                        and tags it "<field>_source": "derived". Not a blocker.
+                        Action: --apply fills it here and tags it "<field>_source": "derived".
+                        Not a blocker.
 
        SUBSTITUTE_LIVE  a named fallback field is populated and IS ON THIS SEAT'S MENU.
                         Action: packet serves the fallback under a labelled column and the
@@ -38,7 +38,10 @@ Usage:
   python3 voice_preflight.py --export aqe_daily_export.json \
       --menus contracts/voice_menus.json --canon aegis/canon \
       --agents-dir ~/.claude/plugins/synced/aegis-voices/agents \
-      --out activation.json [--strict]
+      --out activation.json --apply --strict
+
+--apply writes the DERIVED fields back into the export in place, so the same command that
+finds the gap is the one that closes it. Without it the tool only reports.
 """
 import argparse, json, os, sys, glob
 
@@ -83,10 +86,10 @@ NON_BLOCKING = {"SUBSTITUTE_LIVE", "DERIVED"}
 
 # Fields the orchestrator can compute deterministically at packet build. See field_derive.py.
 try:
-    from field_derive import DERIVATIONS
+    from field_derive import DERIVATIONS, derive_all
 except ImportError:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from field_derive import DERIVATIONS
+    from field_derive import DERIVATIONS, derive_all
 
 
 def flatten(d, prefix=""):
@@ -169,6 +172,9 @@ def main():
     ap.add_argument("--min-coverage", type=float, default=0.5)
     ap.add_argument("--strict", action="store_true",
                     help="exit non-zero if any voice is NOT ACTIVATED or BLOCKED on data")
+    ap.add_argument("--apply", action="store_true",
+                    help="write the DERIVED fields back into --export in place, so the gate "
+                         "that finds the gap is also the step that closes it")
     a = ap.parse_args()
 
     exp = json.load(open(a.export))
@@ -176,6 +182,12 @@ def main():
     if not rows:
         print("STOP: export has no daily_list", file=sys.stderr)
         return 2
+    if a.apply:
+        filled = derive_all(rows)
+        json.dump(exp, open(a.export, "w"), indent=1)
+        for f, c in sorted(filled.items()):
+            print(f"AUTO-FILLED {f}: {c}/{len(rows)} rows ({c/len(rows):.0%}), "
+                  f"tagged {f}_source=derived")
     cov, n = export_coverage(rows)
     menus = json.load(open(a.menus))
 
