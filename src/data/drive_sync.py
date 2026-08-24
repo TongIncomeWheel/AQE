@@ -112,10 +112,10 @@ _FIELD_GLOSSARY = {
                "bracket.targets TP1 price instead of an empty field. Null when the "
                "bracket has no valid TP1 (see bracket.valid).",
     "held_tp2": "(held_positions only) Same as held_tp1, but bracket.targets TP2.",
-    "unreal_usd": "(held_positions only) NOT YET WIRED — currently reads a journal "
-                  "field the Aegis journal's 2026-07-28 restructure retired, so this "
-                  "is always null. PM ruling 2026-07-29: leave as-is for now; the real "
-                  "fix is a proper qty×(live_px−entry) calculation, not a rename.",
+    "unreal_usd": "(held_positions only) qty × (live_px − entry), computed by AQE — "
+                  "not a broker/journal field (PM ruling 2026-07-29, wired 2026-08-21: "
+                  "the Aegis journal's own unrealised-P&L field was retired in its "
+                  "D-84 restructure). Null only if qty/entry/live_px isn't available.",
     "atr_14d": "14-day Average True Range in USD (the volatility unit).",
     "atr_quarter_stop": "A VOLATILITY stop: entry minus 0.25 x ATR14 (the \"Nick Crown\" "
                         "level). A REFERENCE beside the bracket, NOT a replacement — "
@@ -1459,16 +1459,23 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades,
         _held_stop = p.get("stop_live_broker")
         if _held_stop is None:
             _held_stop = p.get("stop_reference")
+        # unreal_usd: PM ruling 2026-07-29 — the real fix is qty×(live_px−entry),
+        # not a rename onto whichever journal field happens to be populated
+        # this week. entry/live_px are the exact values placed on this same
+        # record below, so this is consistent with what a reader actually sees.
+        _qty, _entry, _live_px = p.get("qty"), _num(p.get("entry")), sg("close")
+        _unreal_usd = (round(_qty * (_live_px - _entry), 2)
+                       if None not in (_qty, _entry, _live_px) else None)
         out.append({
             "ticker": tk,
             "position_type": p.get("type") or "STK",
             # --- the trade (from PTJ) ---
-            "qty": p.get("qty"),
-            "entry": _num(p.get("entry")),
+            "qty": _qty,
+            "entry": _entry,
             # live_px: no live/mark field survives on the journal's own
             # open_positions row post D-84 (`mark_price` is usually null) — use
             # the same FMP close the rest of the record is scored against.
-            "live_px": sg("close"),
+            "live_px": _live_px,
             "held_sl": _num(_held_stop),
             # held_tp1/2: the journal's own tp1/tp2 are unpopulated on the
             # Aegis side — surface AQE's own computed bracket targets instead
@@ -1476,11 +1483,7 @@ def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades,
             "held_tp1": _tp_by_type.get("TP1"),
             "held_tp2": _tp_by_type.get("TP2"),
             "trade_date": p.get("tradeDate") or p.get("entryDate") or p.get("entry_date"),
-            # unreal_usd: PM ruling 2026-07-29 — leave as-is (a real calculation,
-            # not a rename) until sized properly. Still reads the retired
-            # camelCase key on purpose, so it stays null rather than silently
-            # picking up the journal's own unrealised_usd (a different basis).
-            "unreal_usd": _num(p.get("unrealUsd")),
+            "unreal_usd": _unreal_usd,
             "exposure": _num(p.get("exposure")),
             "ptj_sector": p.get("sector"),
             "ptj_srm_grade": p.get("srmGrade"),
