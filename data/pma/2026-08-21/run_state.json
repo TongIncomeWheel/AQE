@@ -1,0 +1,31 @@
+{
+ "run_date": "2026-08-21",
+ "completed": "2026-08-24T02:10Z",
+ "status": "COMPLETED_LATE",
+ "degradations": [
+  "RUN COMPLETED 1 TRADING DAY LATE: session interrupted mid-Round-2 on 2026-08-21; cloud container reset over the weekend destroyed the workspace (packets, candidate_set, pipeline tools); Round 2 completed 2026-08-24 SGT morning from the preserved Round-1/S5 record. All votes are on 2026-08-20-close data; entries are STALE for Monday trading.",
+  "LYNCH DISCARDED (2nd consecutive run): returned a complete 20-name fundamentals memo with tool_uses=0; orchestrator spot-check vs live FMP disproved CMCSA (P/E claimed 7.22, actual 8.58), LLY (claimed 51.28, actual 41.73), BRZE earnings date (claimed 09-04, actual 09-08), KMX earnings (claimed 09-25, actual 09-29). Fundamentals UNSERVED; Lynch did not vote. Quorum 10/11.",
+  "PM LENS DID NOT RUN THIS SESSION: pm_lens.py and the 2026-08-21 export snapshot were destroyed in the container reset; section rendered as an explicit gap, never hand-written.",
+  "REPEAT WATCH: phase4_ledger.json on main is stale (no 08-19/08-20 appends); repeat cross-reference not computable this session -- declared, not invented.",
+  "Crown macro artifact was DEGRADED at generation (what_changed empty, dealer positioning dark 4th session, positioning 10 days stale)."
+ ],
+ "seats": {
+  "nominators_returned": 9,
+  "r1_nominations": 80,
+  "f1_off_universe_returns": 0,
+  "field_value_defects": "livermore/BRZE cited entry 627.55 vs packet 30.71 (acknowledged and corrected in R2; nomination withdrawn)",
+  "lynch": "DISCARDED-UNSERVED",
+  "r2_voting_seats": 10,
+  "r2_ballots_returned": 10,
+  "quorum": "10/11 >= 8 OK"
+ },
+ "consensus_summary": {
+  "ADVANCE": ["KMX", "ABBV", "LLY", "MRK"],
+  "HOLD-FOR-CONDITIONS": ["NWS", "TAK", "MPC"],
+  "PASS": ["PCG", "NTR", "VZ", "OXY-add", "CMCSA", "TEVA", "BRZE", "COP", "XOM", "EPD", "CART", "AEM", "ROKU"]
+ },
+ "one_day_mark_fri_0821": {
+  "KMX": "+1.8%", "ABBV": "+1.2%", "LLY": "+0.8%", "MRK": "+2.2%", "SPY": "+0.4%",
+  "PCG_unanimous_oppose": "-2.0%", "OXY_add_refused": "-0.4%"
+ }
+}
