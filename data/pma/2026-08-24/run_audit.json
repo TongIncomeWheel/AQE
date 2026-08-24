@@ -1,0 +1,91 @@
+{
+ "run_date": "2026-08-24",
+ "card_version": "pma v4.4",
+ "export": {"generated_at": "2026-08-24 13:24:25 SGT", "rows": 199, "stale": false},
+ "crown": {"generated_at": "2026-08-24T13:24:23+08:00", "status": "DEGRADED",
+           "stored_call": "DIVERGENCE_PAIR_SHORT@0.65",
+           "voice_call": "NARROWING_CONCENTRATED@0.60",
+           "contested": true,
+           "how_current": {"positioning_as_of": "2026-08-18", "volatility_as_of": "2026-08-21", "oldest_source_days_behind": 3}},
+ "activation": {"voices_activated": 14, "ready_to_run": true, "blocked": 0},
+ "seats": {
+   "nominators_expected": 9,
+   "nominators_ran": 6,
+   "nominators_absent": ["raschke", "oneil", "wyckoff"],
+   "absent_reason": "orchestrator packet-inlining context budget exhausted; F1 forbids serving a seat a file path, so these seats were NOT run rather than run unsafely",
+   "challenge_ran": ["rogers", "steenbarger"],
+   "fundamentals_ran": false,
+   "lens_ran": ["detect-lens"],
+   "round2_voting_seats_expected": 11,
+   "round2_voting_seats_filed": 8,
+   "round2_seats": ["seow", "elder-lens", "minervini", "livermore", "weis", "thorp", "lynch", "detect-lens"],
+   "quorum_floor": 8,
+   "quorum_met": true,
+   "quorum_margin": 0
+ },
+ "f1_controls": {
+   "packets_inlined": true,
+   "packets_as_paths": false,
+   "universe_membership_check": "PASS - every ticker in every seat return exists in candidate_set.json",
+   "tool_uses_per_round2_seat": 0,
+   "tool_uses_note": "Round-2 seats are judgment-only with the packet fully inlined; zero tool calls is the CORRECT signature here. The F1 fabrication signature is zero tool calls WITH a file path served, which did not occur.",
+   "off_universe_tickers_returned": 0,
+   "seats_discarded_and_respawned": 0
+ },
+ "round2_reserve": {
+   "occurred": true,
+   "reason": "orchestrator context break between S6 and S6.5; the original ballots were not persisted to disk before the break",
+   "packet_identity": "identical - r2_context.md + r2_rows_compact.tsv + attributed Round-1 reasons, all preserved on disk and re-served verbatim",
+   "declared_in_brief": true
+ },
+ "stage_receipts": {
+   "S0_preflight": "ok",
+   "S1_ingest": "ok",
+   "S2_trim_packets": "ok - 199 universe, per-voice menu-sliced TSVs",
+   "P0_macro": "ok - crown + druckenmiller",
+   "S4_swarm": "DEGRADED - 6 of 9",
+   "phases_2_4": "ok - tally, rank --cap 20, 21 qualifiers, 1 dropped (RHI)",
+   "S5a_challenge": "ok",
+   "S5b_fundamentals_lens": "DEGRADED - lynch fundamentals UNSERVED, detect-lens ok",
+   "S6_round2": "ok - 8 seats x 20 names, obligation register O1-O8 discharged",
+   "S6_5_consensus": "ok - pma_pipeline.py consensus",
+   "S6_6_autobracket": "ok - levels verbatim from export bracket blocks",
+   "S6_7_lock_verdicts": "ok - 20 verdicts + 1 NEAR-MISS locked; repeat-watch 14 rows / 7 tickers / 1 declared gap (MRK@2026-08-17)",
+   "S6_8_pm_lens": "ok - 36 flagged at >=5/6, 28 UNSEEN",
+   "S7_render": "ok - 9 sections",
+   "S7Q_gate": "PASS - 0 FAIL, exit 0; Q7L and Q0U verified separately, both PASS",
+   "S7P_publish": "GitHub MCP create_or_update_file (git push remains proxy-blocked for this repo); candidate_set.json 1.2MB and pm_lens.json 405KB held local for size, all other artifacts pushed",
+   "S8_audit": "this file"
+ },
+ "verdicts": {"ADVANCE": 7, "HOLD-FOR-CONDITIONS": 6, "PASS": 7, "NEAR-MISS": 1},
+ "advance": ["MDLZ", "OXY", "GEO", "PBR-A", "NVS", "KO", "RELY"],
+ "hold": ["ROKU", "DBX", "CSX", "FCX", "MRK", "RVMD"],
+ "pass": ["TOST", "CME", "UNP", "KGC", "TEM", "EL", "CXW"],
+ "unanimous_oppose": ["KGC", "TEM", "EL"],
+ "seat_reversals_from_round1": {
+   "livermore": "reversed KGC, TEM, EL from SUPPORT 4 to OPPOSE on MA ordering; cut FCX, MRK, GEO 4->3; zero of six Round-1 conviction-4s survived at 4",
+   "seow": "reversed CSX, UNP, NVS from SUPPORT to OPPOSE on its own unapplied relative-strength gate",
+   "elder-lens": "cut DBX, TOST, RELY 4->3 conceding the calibration charge; raised CSX 3->4",
+   "minervini": "cut KO, ROKU, RVMD 4->3; WITHDREW CXW to de-duplicate against GEO",
+   "thorp": "cut CME 4->3 on condition decay",
+   "weis": "reversed UNP to OPPOSE on the unpaid break"
+ },
+ "degradations": [
+   "6 of 9 nominators ran (raschke, oneil, wyckoff absent)",
+   "Round 2 re-served after an orchestrator context break, identical packet",
+   "Lynch fundamentals UNSERVED - no fundamental figure anywhere in the brief",
+   "Crown status DEGRADED, positioning 6 days behind",
+   "Crown voice contests its own stored the_call",
+   "79% of universe has no gate-passing structural stop",
+   "pattern_field_gap on 17 tickers",
+   "repeat-watch gap: MRK@2026-08-17 has no verdict_ledger row"
+ ],
+ "architectural_finding": {
+   "id": "D-106",
+   "title": "Nominator swarm does not scale to 9 seats x 199 names under F1 inlining in one orchestrator context",
+   "evidence": "3 of 9 nominator seats could not be run; PM LENS then flagged 28 names with zero nominations, including the entire gold complex (WPM, AU, GFI, AEM, NEM, SSRM) on the session where Gold_Miners led every basket at +34.56/20d",
+   "proposed_fix": "chunked/paged nominator stage or a per-seat sub-orchestrator; NOT a relaxation of F1"
+ },
+ "spawn_count": 8,
+ "gate_result": "PASS"
+}
