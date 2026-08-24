@@ -1,0 +1,29 @@
+{
+ "note": "DELTA ONLY. The 2026-08-24 slice of the accountability ledger. The full data/pma/verdict_ledger.json on main is one session behind: git push is proxy-blocked for this repo and the full 74KB file could not be safely round-tripped through the MCP file API. Merge this into data/pma/verdict_ledger.json (WRITE-ONCE per date+ticker), or re-run: pma_pipeline.py record-verdicts --consensus data/pma/2026-08-24/consensus.json --candidates <candidate_set> --phase4 data/pma/2026-08-24/phase4.json --ledger data/pma/verdict_ledger.json --date 2026-08-24",
+ "date": "2026-08-24",
+ "row_count": 21,
+ "verdicts": {"ADVANCE": 7, "HOLD-FOR-CONDITIONS": 6, "PASS": 7, "NEAR-MISS": 1},
+ "rows": [
+  {"ticker": "MDLZ",  "verdict": "ADVANCE",             "conviction": 3,    "S": 7,    "O": 1,    "A": 0,    "ref_price": 64.45,  "stop": 62.78,  "stop_type": "atr_fallback_or_structural::ma20",     "risk_pct": 2.59, "rr": 2.75, "tp1": 66.65,  "tp1_r": 1.32},
+  {"ticker": "GEO",   "verdict": "ADVANCE",             "conviction": 3,    "S": 5,    "O": 1,    "A": 2,    "ref_price": 32.71,  "stop": 31.47,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "KO",    "verdict": "ADVANCE",             "conviction": 3,    "S": 4,    "O": 2,    "A": 2,    "ref_price": 91.10,  "stop": 89.49,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "CSX",   "verdict": "HOLD-FOR-CONDITIONS", "conviction": 3,    "S": 2,    "O": 5,    "A": 1,    "ref_price": 51.59,  "stop": 50.57,  "stop_type": "ma20",          "risk_pct": 1.98, "rr": 4.23, "tp1": 53.60,  "tp1_r": 1.97},
+  {"ticker": "UNP",   "verdict": "PASS",                "conviction": 2,    "S": 0,    "O": 7,    "A": 1,    "ref_price": 308.05, "stop": 296.10, "stop_type": "ma20",          "risk_pct": 3.88, "rr": 2.05, "tp1": 315.99, "tp1_r": 0.66},
+  {"ticker": "KGC",   "verdict": "PASS",                "conviction": 2,    "S": 0,    "O": 8,    "A": 0,    "ref_price": 32.76,  "stop": 31.54,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "FCX",   "verdict": "HOLD-FOR-CONDITIONS", "conviction": 3,    "S": 2,    "O": 5,    "A": 1,    "ref_price": 76.66,  "stop": 73.66,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "ROKU",  "verdict": "HOLD-FOR-CONDITIONS", "conviction": 2,    "S": 3,    "O": 2,    "A": 3,    "ref_price": 157.49, "stop": 155.35, "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "TEM",   "verdict": "PASS",                "conviction": 2,    "S": 0,    "O": 8,    "A": 0,    "ref_price": 72.69,  "stop": 68.27,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "MRK",   "verdict": "HOLD-FOR-CONDITIONS", "conviction": 3,    "S": 2,    "O": 5,    "A": 1,    "ref_price": 152.55, "stop": 148.14, "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "EL",    "verdict": "PASS",                "conviction": 2,    "S": 0,    "O": 8,    "A": 0,    "ref_price": 101.94, "stop": 98.29,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "OXY",   "verdict": "ADVANCE",             "conviction": 3,    "S": 7,    "O": 0,    "A": 1,    "ref_price": 61.30,  "stop": 57.93,  "stop_type": "fib_618",       "risk_pct": 5.50, "rr": 3.07, "tp1": 67.45,  "tp1_r": 1.82},
+  {"ticker": "RVMD",  "verdict": "HOLD-FOR-CONDITIONS", "conviction": 3,    "S": 2,    "O": 3,    "A": 3,    "ref_price": 209.46, "stop": 199.80, "stop_type": "ma20",          "risk_pct": 4.61, "rr": 2.32, "tp1": 220.34, "tp1_r": 1.13},
+  {"ticker": "PBR-A", "verdict": "ADVANCE",             "conviction": 4,    "S": 5,    "O": 2,    "A": 1,    "ref_price": 17.22,  "stop": 16.45,  "stop_type": "ma20",          "risk_pct": 4.47, "rr": 3.45, "tp1": 19.34,  "tp1_r": 2.75},
+  {"ticker": "NVS",   "verdict": "ADVANCE",             "conviction": 3,    "S": 5,    "O": 3,    "A": 0,    "ref_price": 158.86, "stop": 155.48, "stop_type": "ma20",          "risk_pct": 2.13, "rr": 2.02, "tp1": 160.34, "tp1_r": 0.44},
+  {"ticker": "DBX",   "verdict": "HOLD-FOR-CONDITIONS", "conviction": 3,    "S": 3,    "O": 4,    "A": 1,    "ref_price": 34.47,  "stop": 33.25,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "CXW",   "verdict": "PASS",                "conviction": 2,    "S": 0,    "O": 4,    "A": 4,    "ref_price": 34.01,  "stop": 32.48,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "TOST",  "verdict": "PASS",                "conviction": 3,    "S": 1,    "O": 7,    "A": 0,    "ref_price": 36.64,  "stop": 35.36,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "RELY",  "verdict": "ADVANCE",             "conviction": 3,    "S": 3,    "O": 2,    "A": 3,    "ref_price": 26.67,  "stop": 25.46,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null},
+  {"ticker": "CME",   "verdict": "PASS",                "conviction": 3,    "S": 1,    "O": 6,    "A": 1,    "ref_price": 274.98, "stop": 265.59, "stop_type": "ma20",          "risk_pct": 3.41, "rr": 3.52, "tp1": 292.33, "tp1_r": 1.85},
+  {"ticker": "RHI",   "verdict": "NEAR-MISS",           "conviction": null, "S": null, "O": null, "A": null, "ref_price": 44.75,  "stop": 42.79,  "stop_type": "atr_fallback",  "risk_pct": null, "rr": null, "tp1": null,   "tp1_r": null}
+ ]
+}
