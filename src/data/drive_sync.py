@@ -1856,6 +1856,14 @@ def build_export(shortlist: dict | None = None) -> dict:
     import pandas as pd
     from src.data.paths import SCORES_DAILY as scores_path
 
+    # {ticker: scores_daily row} — built once, used by every _wl_record() call
+    # below AND by the QS-only branch further down, so a QS-only name gets the
+    # exact same score lookup as every other list instead of skipping it.
+    # _wl_record itself is only DEFINED inside the block below (needs sc_df),
+    # so both default to falsy when scores_daily is missing entirely.
+    _sc_by_tk: dict = {}
+    _wl_record = None
+
     if scores_path.exists():
         sc_df = pd.read_parquet(scores_path)
         sc_df["date"] = pd.to_datetime(sc_df["date"]).dt.normalize()
@@ -1874,6 +1882,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         # carry the sector read separately).
         sc_df["_sc"] = sc_df["sc_momentum"].fillna(0).round(1)
         sc_df = sc_df[~sc_df["ticker"].isin(set(GICS_ETFS) | {"SPY"})].copy()
+        _sc_by_tk = {r["ticker"]: r for _, r in sc_df.iterrows()}
 
         def _wl_record(wr, rank, source):
             tk = wr["ticker"]
@@ -1945,7 +1954,6 @@ def build_export(shortlist: dict | None = None) -> dict:
         # every runner/pre-move name, so the alert engine can watch for an EARLY
         # move. Pre-movers matter most: they are quiet and below every list.
         if _radar is not None:
-            _sc_by_tk = {r["ticker"]: r for _, r in sc_df.iterrows()}
             _rr = 0
             for _grp, _src in (("premove_setup", "radar-premove"),
                                ("runner_setup", "radar-runner")):
@@ -2163,15 +2171,35 @@ def build_export(shortlist: dict | None = None) -> dict:
             elif _qrow.get("emitted"):
                 # QS-only name — build the full AQE record for it so the row is
                 # as data-rich as any other, then attach the QS read.
-                _d = dsl_all.get(_tk, {})
-                _rec = {
-                    "ticker": _tk, "source": "qs",
-                    "pe": _tk in pe_tickers,
-                    **_v21_record_fields(_tk, _d, _v21_lk, sm, sector_grades,
-                                         regime_level=regime_level),
-                    "on_longlist": False, "on_elder": False, "in_ledger": False,
-                    "qs": _qrow, "on_qs": True,
-                }
+                #
+                # Bug fixed 2026-08-24: this used to build the record from
+                # _v21_record_fields() alone, which supplies bracket/sector/
+                # pattern/DETECT fields but NEVER sc_momentum/flow/energy/
+                # structure/mp/elder/entry — those come from the SAME
+                # scores_daily lookup every other list (_wl_record) already
+                # uses. A QS-only name was scored by core AQE exactly like
+                # every other ticker (confirmed directly against
+                # scores_daily.parquet); the row just never fetched it, so
+                # every QS-only name showed as fully null in data_quality
+                # despite being genuinely scored.
+                _wr = _sc_by_tk.get(_tk)
+                if _wl_record is not None and _wr is not None:
+                    _rec = {**_wl_record(_wr, 0, "qs"),
+                            "on_longlist": False, "on_elder": False,
+                            "in_ledger": False, "qs": _qrow, "on_qs": True}
+                else:
+                    # Genuinely unscored by core AQE (e.g. QS's own ad-hoc
+                    # path, which can read a name outside the eligible
+                    # population) — the null fields are then honest, not a bug.
+                    _d = dsl_all.get(_tk, {})
+                    _rec = {
+                        "ticker": _tk, "source": "qs",
+                        "pe": _tk in pe_tickers,
+                        **_v21_record_fields(_tk, _d, _v21_lk, sm, sector_grades,
+                                             regime_level=regime_level),
+                        "on_longlist": False, "on_elder": False, "in_ledger": False,
+                        "qs": _qrow, "on_qs": True,
+                    }
                 _dl[_tk] = _rec
         if not _qs.get("ok"):
             print(f"  [WARN] QS layer unavailable: {_qs.get('reason')}")
