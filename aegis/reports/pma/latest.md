@@ -1,18 +1,33 @@
-# PMA latest → 2026-08-21 (completed 2026-08-24)
+# AEGIS PREMARKET — LATEST
 
-Full brief: `aegis/reports/pma/2026-08-21.md`
-Data: `data/pma/2026-08-21/` (consensus.json · run_state.json · verdict_rows.json)
+**Latest run: 2026-08-24 (SGT).** Full brief: [`aegis/reports/pma/2026-08-24.md`](./2026-08-24.md)
 
-**RUN COMPLETED LATE** — interrupted mid-Round-2 Friday, workspace reset over the weekend, finished Monday 08-24 SGT from the preserved record. All verdicts are on 08-20-close data. Entries STALE for Monday; fresh /pma required before tonight's open (repo export is still the 08-21 post-market correction).
+## Headline
 
-## Verdicts (10 seats; Lynch discarded — 2nd consecutive fabrication, tool_uses=0)
-
-| Verdict | Names |
+| | |
 |---|---|
-| **ADVANCE** | KMX 8-2 c3 (61.05/58.90) · ABBV 8-0 c3 (261.83/255.71) · LLY 7-0 c3 (1245.69/1203.71) · MRK 7-1 c3 (149.25/144.96) |
-| HOLD | NWS 4-3 (range-high break on 1.4× vol) · TAK 3-4 (retest holds 18.13 on 1.2× vol) · MPC 2-7 (tight base near ma20/50 then volume break) |
-| PASS | PCG 0-9 · OXY-add 0-9 · XOM 0-9 · VZ 0-8 · AEM 1-8 · CMCSA 1-7 · BRZE 0-7 · ROKU 0-7 · COP 1-6 · CART 1-5 · NTR 0-5 · EPD 0-4 · TEVA 1-4 |
+| Regime | VIX 15.1 **GREEN** vs QS **T3V1 / STAND_DOWN RED** (44.3% measured hit rate, −10.5pp) — unresolved |
+| Posture | **DEFENSIVE.** Manage the book; new risk only on a pullback with a real stop |
+| Voting seats | 8 of 11 (quorum floor 8, met exactly, zero margin) |
+| Verdicts | **7 ADVANCE · 6 HOLD-FOR-CONDITIONS · 7 PASS · 1 NEAR-MISS** |
+| ADVANCE | MDLZ (7-1-0) · OXY (7-0-1, HELD) · PBR-A (5-2-1, conv 4) · GEO (5-1-2) · NVS (5-3-0) · KO (4-2-2) · RELY (3-2-3) |
+| Actionable, structural stop | **PBR-A** 16.45 (rr 3.45) · **NVS** 155.48 (risk 2.13%) · **MDLZ** 62.78 (risk 2.59%) |
+| Unanimous PASS | **KGC, TEM, EL** — all 0-8-0, all with ma50 below ma200 |
+| Quality gate | **PASS — 0 FAIL** |
 
-**One-day mark (Fri close):** all 4 ADVANCE up, avg +1.5% vs SPY +0.4%. PCG (R1 favourite → unanimous R2 oppose) −2.0%. AEM (passed on entry structure) +1.9%.
+## Declared degradations
 
-DRAFT — PM approval required. Nothing is staged, nothing is armed.
+1. 6 of 9 nominators ran (raschke, oneil, wyckoff absent — orchestrator packet-inlining budget; F1 forbids serving a path).
+2. Round 2 re-served after an orchestrator context break, identical packet.
+3. Lynch fundamentals UNSERVED — no fundamental figure anywhere in the brief.
+4. Crown DEGRADED (positioning 6 days behind) and contesting its own stored call.
+5. 79% of the universe has no gate-passing structural stop — expectancy uncomputable, not zero.
+6. `pattern_field_gap` on 17 tickers.
+7. Repeat-watch gap: MRK@2026-08-17 has no verdict-ledger row.
+8. **28 PM LENS names drew zero nominations**, including the whole gold complex (WPM, AU, GFI, AEM, NEM, SSRM) on the day Gold_Miners led every basket at +34.56/20d. That is the direct cost of item 1.
+
+## Run artifacts
+
+`data/pma/2026-08-24/` — consensus.json · repeat_watch.json · verdict_ledger_delta.json · run_audit.json
+
+**DRAFT — PM approval required. Nothing is staged, nothing is armed.**
