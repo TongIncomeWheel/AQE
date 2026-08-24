@@ -100,7 +100,22 @@ def scoreable_tickers(panel_tickers, *, scan_universe, basket_constituents,
     return sorted(t for t in panel_tickers if t not in basket_only)
 
 
-def build_scores() -> None:
+def build_scores(only_tickers: list[str] | None = None) -> None:
+    """Score the panel and write scores_daily.parquet.
+
+    only_tickers=None (default, used by the full daily pipeline): score
+    everything in the panel, replacing the whole file — unchanged behavior.
+
+    only_tickers=[...]: score ONLY the given tickers and MERGE the result
+    into the existing file (upsert by ticker — every other ticker's cached
+    rows are left untouched). Every engine call in the scoring loop below
+    operates on one ticker's own daily/weekly frame plus spy_daily; nothing
+    here compares tickers to each other, so there is no correctness reason a
+    targeted refresh needs to re-touch the other ~800 cached tickers. Added
+    2026-08-21 for src/pipeline/refresh_held.py, which was re-scoring the
+    entire cached universe just to refresh a dozen held names — correct, but
+    far slower than "held book only" implies.
+    """
     if not PANEL_DAILY.exists():
         print(f"ERROR: {PANEL_DAILY} does not exist. Run build_panel.bat first.", file=sys.stderr)
         return
@@ -140,6 +155,9 @@ def build_scores() -> None:
     tickers = scoreable_tickers(
         daily_groups.keys(), scan_universe=load_universe(include_benchmark=True),
         basket_constituents=BASKET_CONSTITUENTS, held_tickers=_held_tickers)
+    if only_tickers is not None:
+        _want = set(only_tickers)
+        tickers = [t for t in tickers if t in _want]
     out_rows: list[pd.DataFrame] = []
     t0 = time.monotonic()
     for ticker in iter_with_progress(tickers, label="score"):
@@ -419,12 +437,21 @@ def build_scores() -> None:
 
     out = pd.concat(out_rows, ignore_index=True)
     out = out.dropna(subset=["sc_momentum"]).reset_index(drop=True)
+
+    if only_tickers is not None and SCORES_DAILY.exists():
+        # Upsert: keep every cached ticker NOT in this targeted run untouched,
+        # replace the ones we just recomputed.
+        prior = pd.read_parquet(SCORES_DAILY)
+        prior = prior[~prior["ticker"].isin(set(out["ticker"]))]
+        out = pd.concat([prior, out], ignore_index=True)
+
     out.to_parquet(SCORES_DAILY, index=False)
 
     elapsed = time.monotonic() - t0
+    scope = f" ({len(only_tickers)} requested)" if only_tickers is not None else ""
     print(
         f"Wrote {SCORES_DAILY.name}: {len(out):,} rows across "
-        f"{out['ticker'].nunique()} tickers in {elapsed:.1f}s"
+        f"{out['ticker'].nunique()} tickers in {elapsed:.1f}s{scope}"
     )
 
 

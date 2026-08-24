@@ -55,8 +55,8 @@ def test_held_equity_tickers_run_the_full_chain_in_order(monkeypatch):
     monkeypatch.setattr(panel_builder, "pull_tickers", _pull)
 
     from src.scanner import score_runner
-    def _scores():
-        calls.append(("scores",))
+    def _scores(only_tickers=None):
+        calls.append(("scores", tuple(only_tickers or ())))
     monkeypatch.setattr(score_runner, "build_scores", _scores)
 
     from src.data import drive_sync
@@ -78,6 +78,7 @@ def test_held_equity_tickers_run_the_full_chain_in_order(monkeypatch):
     steps = [c[0] for c in calls]
     assert steps == ["pull", "scores", "export", "publish"]
     assert calls[0] == ("pull", ("IBM", "OXY", "SPY"))  # SPY: the scoring benchmark
+    assert calls[1] == ("scores", ("IBM", "OXY"))  # scoped, no SPY, no wider universe
     assert calls[3] == ("publish", ("aqe_daily_export.json", "held_positions.json"))
 
 
@@ -98,7 +99,7 @@ def test_a_stale_fetch_rejection_is_surfaced_but_does_not_abort(monkeypatch):
                         lambda tickers, **k: {"pulled": 1, "skipped_current": 0,
                                               "failed": [], "total_tickers": 1})
     from src.scanner import score_runner
-    monkeypatch.setattr(score_runner, "build_scores", lambda: None)
+    monkeypatch.setattr(score_runner, "build_scores", lambda only_tickers=None: None)
     from src.data import drive_sync
     monkeypatch.setattr(drive_sync, "export_to_drive", lambda *a, **k: {"status": "ok"})
     from src.data import github_sync
@@ -127,7 +128,7 @@ def test_a_ticker_left_unscored_after_build_scores_is_warned_loudly(monkeypatch,
                         lambda tickers, **k: {"pulled": len(tickers), "skipped_current": 0,
                                               "failed": [], "total_tickers": len(tickers)})
     from src.scanner import score_runner
-    monkeypatch.setattr(score_runner, "build_scores", lambda: None)  # writes nothing
+    monkeypatch.setattr(score_runner, "build_scores", lambda only_tickers=None: None)  # writes nothing
 
     import pandas as pd
     from src.data import paths

@@ -11,18 +11,26 @@ This module refreshes ONLY what the held book needs and nothing else:
 
   1. The PTJ journal itself (src.data.ptj — carries the 2026-08-21 monotonic
      guard, so a stale fetch here can't regress what's already published).
-  2. Fresh price bars for the held tickers ONLY (src.data.panel_builder.
-     pull_tickers) — ~10 FMP calls instead of ~800, low failure surface, and
-     merges into the existing panel rather than replacing it.
-  3. A full score recompute (src.scanner.score_runner.build_scores) — pure
-     computation over the (now held-freshened) cached panel, no FMP calls.
-     Runs for every ticker in the panel, not just held names, because several
-     engines (Pipeline Rank, RS leadership, sector RRG) are cross-sectional
-     and need the full universe's distribution to score anyone correctly.
-  4. A full export rebuild (src.data.drive_sync.export_to_drive) — again pure
-     computation from cached parquet + shortlist.json. daily_list/lens_ranking
-     are whatever the last full pipeline run produced; held_positions/
-     held_book are freshly recomputed from steps 1-3.
+  2. Fresh price bars for the held tickers ONLY, plus SPY (src.data.
+     panel_builder.pull_tickers) — ~10 FMP calls instead of ~800, low failure
+     surface, merges into the existing panel rather than replacing it.
+  3. Scores for the held tickers ONLY (src.scanner.score_runner.build_scores
+     with only_tickers=...). Every engine call (flow/energy/structure/mp/
+     elder/bq/k39/readiness/health/pipeline_rank) operates on one ticker's
+     own daily/weekly frame plus spy_daily — nothing compares tickers to each
+     other — so this is a genuine subset, upserted into the cached scores
+     file rather than re-touching the other ~800 tickers. 2026-08-21: this
+     used to unconditionally re-score the entire cached universe on every
+     run, which is why "held book only" didn't feel anywhere near as fast as
+     the name implied.
+  4. An export rebuild (src.data.drive_sync.export_to_drive) — pure
+     computation from cached parquet + shortlist.json, no FMP calls except
+     one bounded, best-effort exception: the Elder 5d hourly-context fetch
+     for longlist/elder-list names, which this module doesn't need (it never
+     touches those lists) and disables via AQE_ELDER_CTX_HOURLY=0.
+     daily_list/lens_ranking are whatever the last full pipeline run
+     produced; held_positions/held_book are freshly recomputed from steps
+     1-3.
   5. Publish the two artifacts that actually changed to GitHub.
 
 Safe to run standalone, any time, without touching FMP quota for the ~790
@@ -36,10 +44,18 @@ Run:
 
 from __future__ import annotations
 
+import os
 import sys
 
 
 def refresh_held() -> dict:
+    # Never re-fetch Elder hourly context for longlist/elder-list names —
+    # this module doesn't touch those lists, so it would be pure waste (up
+    # to 400 FMP calls). Safe to set unconditionally: this process only ever
+    # runs as its own subprocess (the Scanner button, the .bat, or the
+    # workflow_dispatch job), never imported into a shared long-lived one.
+    os.environ["AQE_ELDER_CTX_HOURLY"] = "0"
+
     from src.data import ptj
 
     print("[refresh_held] Step 1: PTJ journal refresh...")
@@ -81,7 +97,7 @@ def refresh_held() -> dict:
 
     print("[refresh_held] Step 3: recompute scores...")
     from src.scanner.score_runner import build_scores
-    build_scores()
+    build_scores(only_tickers=tickers)
 
     from src.data.paths import SCORES_DAILY
     import pandas as _pd
