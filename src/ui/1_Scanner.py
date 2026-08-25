@@ -307,6 +307,20 @@ with st.sidebar:
         run_module_streaming("src.pipeline.refresh_held", "Held-book refresh", prog, stat)
         st.rerun()
 
+    # Voice packets only — the same exception-management shape as the held-book
+    # button above. Needs NO FMP key and re-runs nothing: the packets are a
+    # pure re-slice of the already-published export, so this is safe to press
+    # any time the daily succeeded but the split did not (2026-08-25: the HF
+    # Space ran the pipeline from an image that predated the split step, so
+    # the export updated and the packets did not).
+    if st.button("Refresh voice packets only", use_container_width=True,
+                 help="Re-slices the CURRENT daily export into the 11 per-voice "
+                      "packet files and publishes them. No FMP pull, no "
+                      "re-scoring — it only rebuilds what the committee reads. "
+                      "Use when the daily ran but the packets are stale."):
+        run_module_streaming("src.pipeline.voice_packets", "Voice packets", prog, stat)
+        st.rerun()
+
     with st.expander("Data Refresh", expanded=False):
         if st.button("Rebuild prices",
                      disabled=(CLOUD_MODE and not FMP_KEY_SET)):

@@ -295,6 +295,23 @@ def test_sync_republishes_only_what_actually_changed(export_file, tmp_path, monk
                 f"{voice} republished but its menu has no sc_momentum"
 
 
+def test_bare_invocation_defaults_to_sync():
+    """The Scanner button and the .bat both run `python -m
+    src.pipeline.voice_packets` with no arguments — if that errored on a
+    missing subcommand, neither would work. Guards the CLI contract they
+    depend on."""
+    import subprocess, sys as _sys
+    r = subprocess.run([_sys.executable, "-m", "src.pipeline.voice_packets"],
+                       capture_output=True, text=True, cwd=str(vp.PROJECT_ROOT))
+    # It may well fail further on (no GITHUB_TOKEN in CI, no export on disk) —
+    # what must NOT happen is argparse rejecting the call before any work
+    # starts, which is what a required subcommand would do.
+    combined = r.stdout + r.stderr
+    assert "arguments are required" not in combined, \
+        "bare invocation must not be rejected for a missing subcommand"
+    assert "invalid choice" not in combined
+
+
 def test_sync_without_an_export_fails_rather_than_claiming_success(tmp_path):
     res = vp.sync(tmp_path / "nope.json")
     assert res["ok"] is False

@@ -297,12 +297,18 @@ def sync(export_path: Path | None = None) -> dict:
 
 def _cli() -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    sub = p.add_subparsers(dest="cmd", required=True)
+    # `sync` is the default with no subcommand: it is the only one that both
+    # rebuilds AND publishes, so it is what "run the voice packets" means to
+    # anyone who is not reasoning about internals. Also what lets the Scanner
+    # button and the .bat work — both invoke `python -m <module>` bare.
+    sub = p.add_subparsers(dest="cmd", required=False)
     for name in ("build", "verify", "sync"):
         s = sub.add_parser(name)
         s.add_argument("--export", default=None)
         s.add_argument("--date", default=None)
     a = p.parse_args()
+    if not a.cmd:
+        a = argparse.Namespace(cmd="sync", export=None, date=None)
 
     if a.cmd == "sync":
         res = sync(a.export)
