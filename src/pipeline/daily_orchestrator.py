@@ -494,6 +494,43 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] GitHub output publish failed: {exc}")
 
+    # Step 8a-3: split the finished export into per-voice packet files
+    # (committee request 2026-08-25). Derived VIEW of the export — no new
+    # data, no scoring, no decision. Runs here, once, automatically, because
+    # doing it by hand is how it silently stops happening. Verified against
+    # the master immediately after writing, so a packet set that does not
+    # match the export it claims to come from is LOUD on the same run rather
+    # than discovered by a voice reading stale columns. Wrapped like QS and
+    # Crown: this is an ADDITION to a real-money pipeline and must never take
+    # the export down with it.
+    print(f"{_el()} [daily] Step 8a-3: voice packets...")
+    try:
+        from src.pipeline import voice_packets as _vp
+        _pk = _vp.build()
+        if not _pk.get("ok"):
+            print(f"  [WARN] voice packets: {_pk.get('reason')}")
+        else:
+            print(f"  Voice packets: {len(_pk['files'])} file(s) -> {_pk['dir']}")
+            _chk = _vp.verify()
+            if _chk.get("ok"):
+                print(f"  Sync check: IN SYNC ({_chk['checked']} file(s) match the export)")
+            else:
+                # Should be unreachable — we just built them from this export.
+                # If it fires, the split and the master genuinely disagree and
+                # nothing downstream should trust the packets.
+                print("  [WARN] voice packets OUT OF SYNC with the export "
+                      "immediately after build — do not trust these packets:")
+                for _d in _chk.get("drift", []):
+                    print(f"    {_d}")
+            _pub = _vp.publish(_pk["run_date"])
+            if _pub.get("ok"):
+                print(f"  Voice packets published: {_pub['written']}/{_pub['total']} "
+                      f"-> aegis/data/pma/{_pk['run_date']}/")
+            else:
+                print(f"  [WARN] voice packets publish: {_pub.get('reason')}")
+    except Exception as exc:  # noqa: BLE001 — never breaks the export
+        print(f"  [WARN] Voice packet split failed: {exc}")
+
     # Step 8b: Daily-persist snapshot — zip the runtime parquets/outputs to BOTH
     # stores from one zip, so a restart can restore the last run without a full
     # re-pull. GitHub release asset is primary, Drive is the backup.
