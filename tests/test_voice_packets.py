@@ -17,8 +17,19 @@ import pytest
 
 from src.pipeline import voice_packets as vp
 
-NOMINATORS = ["elder-lens", "livermore", "minervini", "oneil", "raschke",
-              "seow", "thorp", "weis", "wyckoff"]
+# The full 14-voice roster, per voice_packet_file_instruction v2 (2026-08-25).
+# GROUP_A + GROUP_B are the 11 voices that get a real file; GROUP_C's 4 get
+# none BY DESIGN — they activate only after the Phase-4 cap, on a bundle
+# compiled during that morning's own run, so there is no static file to name.
+# Asserting Group C's absence matters as much as Group A's presence: adding
+# one of them to the nominator list would quietly serve it the 199-name
+# universe it is specifically not supposed to see.
+GROUP_A = ["elder-lens", "livermore", "minervini", "oneil", "raschke",
+           "seow", "thorp", "weis", "wyckoff"]
+GROUP_B = ["crown", "druckenmiller"]
+GROUP_C = ["rogers", "steenbarger", "lynch", "detect-lens"]
+
+NOMINATORS = GROUP_A
 
 
 def _row(ticker: str, **over):
@@ -93,6 +104,41 @@ def test_each_voice_gets_only_its_own_columns(export_file):
     for voice in NOMINATORS:
         header = (outdir / f"{voice}.tsv").read_text(encoding="utf-8").split("\n")[0]
         assert header.split("\t") == menus[voice], f"{voice} columns != its menu"
+
+
+def test_the_packet_set_is_exactly_the_eleven_voices_with_a_file(export_file):
+    """v2's tally, asserted mechanically: 9 nominators + 2 macro = 11 files,
+    no more and no fewer. A new name appearing here is a voice being served
+    data nobody signed off on; one disappearing is a voice left blind."""
+    res = vp.build(export_file)
+    expected = {f"{v}.tsv" for v in GROUP_A} | {f"{v}.json" for v in GROUP_B}
+    assert set(res["files"]) == expected
+
+
+def test_group_c_voices_never_get_a_packet_file(export_file):
+    """rogers/steenbarger/lynch/detect-lens work off the post-cap 20-name
+    deliberation bundle, never the 199-name universe. A file here would hand
+    them exactly the input the design withholds."""
+    vp.build(export_file)
+    names = {p.name for p in vp.packets_dir("2026-08-24").iterdir()}
+    for voice in GROUP_C:
+        assert f"{voice}.tsv" not in names and f"{voice}.json" not in names, \
+            f"{voice} must not get a static packet file"
+
+
+def test_macro_packets_carry_the_macro_blocks_and_never_qs_market(export_file):
+    """Group B's R3: the macro pair reads global blocks, but `qs_market` is
+    PM-only and must never appear in either packet."""
+    vp.build(export_file)
+    outdir = vp.packets_dir("2026-08-24")
+
+    for voice in GROUP_B:
+        raw = (outdir / f"{voice}.json").read_text(encoding="utf-8")
+        assert "qs_market" not in raw, f"R3 breach: qs_market in {voice}.json"
+        pk = json.loads(raw)
+        for block in ("date", "market", "regime", "intermarket", "srm",
+                      "macro_weather", "thematic_baskets"):
+            assert block in pk, f"{voice}.json missing the {block} block"
 
 
 def test_verify_is_in_sync_immediately_after_build(export_file):

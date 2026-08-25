@@ -1,11 +1,27 @@
 """Per-voice packet files — the daily split of the master export, plus a
 drift check that proves the split still matches its source.
 
-Committee request (2026-08-25, voice_packet_file_instruction): each S4
-nominator voice reads exactly one file named for itself, holding only that
-voice's own columns. Harness limitation, not a data change — nothing here
-computes, scores, or decides anything. `aqe_daily_export.json` remains the
-one master; these files are a pre-sliced VIEW of it and nothing else.
+Committee request (2026-08-25, voice_packet_file_instruction v2): a voice
+reads exactly one file named for itself, holding only that voice's own
+columns. Harness limitation, not a data change — nothing here computes,
+scores, or decides anything. `aqe_daily_export.json` remains the one master;
+these files are a pre-sliced VIEW of it and nothing else.
+
+The 14-voice roster splits three ways, and this module writes 11 files:
+
+  Group A (9)  elder-lens, livermore, minervini, oneil, raschke, seow,
+               thorp, weis, wyckoff -> `<voice>.tsv`, columns from that
+               voice's `voice_menus.json` entry (6 fields up to 38).
+  Group B (2)  crown, druckenmiller -> `<voice>.json`, macro blocks only
+               (date/market/regime/intermarket/srm/macro_weather/
+               thematic_baskets), never the PM-only `qs_market`.
+  Group C (4)  rogers, steenbarger, lynch, detect-lens -> NO FILE, by
+               design, not a gap. They activate only after the Phase-4 cap,
+               on the 20-name deliberation set, from a bundle compiled
+               during that morning's own run (nominators' Round-1 reasoning,
+               challenge write-ups, and so on). None of that exists on disk
+               before the run starts, so there is nothing to pre-slice.
+               Lynch does live research and is never served a file at all.
 
 Why this module is thin on purpose
 ----------------------------------
