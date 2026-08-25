@@ -1,0 +1,156 @@
+{
+ "run_date": "2026-08-25",
+ "artifact": "pma_run_audit",
+ "schema": "v4.4",
+ "wall_clock": {
+  "swarm_start_utc": "06:34",
+  "round2_end_utc": "08:49",
+  "total_minutes": 135,
+  "note": "2-CPU container; agent concurrency ~2. One container reclaim at 06:31 UTC destroyed an in-flight swarm and its transcript; the run was rebuilt from scratch and relaunched."
+ },
+ "seats": {
+  "s4_nominators_expected": 9,
+  "s4_nominators_returned": 9,
+  "s4_seats": [
+   "elder-lens",
+   "livermore",
+   "minervini",
+   "oneil",
+   "raschke",
+   "seow",
+   "thorp",
+   "weis",
+   "wyckoff"
+  ],
+  "s4_absent": [],
+  "p0_macro": [
+   "crown",
+   "druckenmiller"
+  ],
+  "s5a_challenge": [
+   "rogers",
+   "steenbarger"
+  ],
+  "s5b_fundamentals_lens": [
+   "lynch",
+   "detect-lens"
+  ],
+  "s6_voting_expected": 11,
+  "s6_voting_returned": 11,
+  "s6_seats": [
+   "detect-lens",
+   "elder-lens",
+   "livermore",
+   "lynch",
+   "minervini",
+   "oneil",
+   "raschke",
+   "seow",
+   "thorp",
+   "weis",
+   "wyckoff"
+  ],
+  "s6_absent": [],
+  "quorum_floor": 8,
+  "quorum_met": true,
+  "quorum_margin": 3
+ },
+ "universe_membership_check": {
+  "result": "PASS",
+  "off_universe_tickers": 0,
+  "detail": "every ticker returned by all 9 nominator seats exists in candidate_set.json (207 names)"
+ },
+ "packet_integrity": {
+  "method": "every courier payload diffed byte-for-byte against its source file before use",
+  "nominator_chunks_verified": 15,
+  "macro_payloads_verified": 4,
+  "corruptions_detected": [
+   {
+    "seat": "oneil",
+    "chunk": "lines 1-70",
+    "line": 69,
+    "ticker": "MO",
+    "defect": "90-character fabricated entry inserted into bracket.targets JSON",
+    "action": "entire seat return discarded and re-run (F1)"
+   },
+   {
+    "seat": "weis",
+    "chunk": "lines 1-208",
+    "line": 193,
+    "ticker": "CMCSA",
+    "defect": "', ' replaced with a TAB character, shifting every subsequent column",
+    "action": "entire seat return discarded and re-run (F1)"
+   },
+   {
+    "seat": "round2_packet",
+    "chunk": "lines 222-443",
+    "line": 352,
+    "ticker": "V",
+    "defect": "full stop moved inside Rogers challenge prose",
+    "action": "declared, immaterial — no data value altered"
+   },
+   {
+    "seat": "round2_packet",
+    "chunk": "lines 222-443",
+    "line": 416,
+    "ticker": "PGR",
+    "defect": "word 'one' added inside detect-lens memo prose",
+    "action": "declared, immaterial — no data value altered"
+   }
+  ],
+  "rerun_result": "all 9 re-run chunks byte-exact after the courier prompt was hardened with the two specific failure modes named",
+  "macro_payload_note": "crown/druckenmiller payloads differed only by \\uXXXX escape decoding; parsed to identical JSON objects"
+ },
+ "tool_calls_per_seat": {
+  "note": "F1 signature check — a nominator returning content with zero tool calls and no inlined packet is the fabrication signature. Every seat here received its packet INLINE in the prompt and made zero tool calls by design, which is correct for these agent types (tools: []). Integrity was proven instead by each seat independently reporting packet_rows_received / first / last ticker, all verified against source.",
+  "all_seats_reported_rows": 207,
+  "all_seats_first_last_verified": true
+ },
+ "stage_receipts": {
+  "S1_ingest": "export 2026-08-25 11:04:41 SGT, 207 names; crown 2026-08-25T11:04:38+08:00 DEGRADED",
+  "S2_packets": "regenerated locally from today's export; later verified byte-identical to AQE's re-published set",
+  "S4_swarm": "60 tickers nominated across 9 seats",
+  "phase4": "31 qualified, top 20 to deliberation, 11 cut by cap",
+  "S5a": "rogers + steenbarger filed on all 20",
+  "S5b": "lynch filed on all 20 (fundamentals effectively unserved); detect-lens filed on all 20",
+  "S6": "11 seats x 20 names = 220 stances filed",
+  "S6.5": "consensus: 2 ADVANCE, 10 HOLD-FOR-CONDITIONS, 8 PASS",
+  "S6.7": "20 verdicts + 11 NEAR-MISS rows locked; repeat_watch 28 rows, 10 declared gaps",
+  "S6.8": "pm_lens 207 scored, 23 flagged, 18 UNSEEN"
+ },
+ "gate": {
+  "S7Q": "PASS",
+  "fails": 0,
+  "loops_used": 1,
+  "loop_1_fail": "Q4n persuasion-narration substring matched a word inside a verbatim minervini quote; resolved with a square-bracket editorial substitution, declared in the brief header"
+ },
+ "degradations": [
+  "AQE published 2026-08-24 packets under a 2026-08-25 export; caught by byte-diff, regenerated locally",
+  "two courier payloads corrupted; both seats discarded and re-run",
+  "Crown DEGRADED: Yahoo futures fallback on 14 of 18 CTA markets; FMP economics calendar HTTP 404; scenario contested",
+  "Crown stored call contested by its own voice (BROADENING_CARRY vs DISPERSION_SELECTION)",
+  "FMP Starter plan: entire quote endpoint Premium-gated, so all fundamental gates untestable",
+  "pattern_field_gap on 8 tickers",
+  "repeat-watch: 10 declared gaps, record-verdicts did not run 2026-08-24",
+  "held-book betas all negative, NAV-weighted beta -0.5505 — flagged for PM verification"
+ ],
+ "counts": {
+  "universe": 207,
+  "nominated": 60,
+  "qualified": 31,
+  "deliberated": 20,
+  "cap_dropped": 11,
+  "advance": 2,
+  "hold": 10,
+  "pass": 8,
+  "pm_lens_flagged": 23,
+  "pm_lens_unseen": 18
+ },
+ "spawn_count": {
+  "swarm_workflow": 30,
+  "rerun_workflow": 11,
+  "s5_workflow": 7,
+  "round2_workflow": 13,
+  "total": 61
+ }
+}
