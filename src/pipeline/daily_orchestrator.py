@@ -525,7 +525,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
             _pub = _vp.publish(_pk["run_date"])
             if _pub.get("ok"):
                 print(f"  Voice packets published: {_pub['written']}/{_pub['total']} "
-                      f"-> aegis/data/pma/{_pk['run_date']}/")
+                      f"-> {_vp.OUTPUT_PACKETS_IN_REPO}/")
             else:
                 print(f"  [WARN] voice packets publish: {_pub.get('reason')}")
     except Exception as exc:  # noqa: BLE001 — never breaks the export

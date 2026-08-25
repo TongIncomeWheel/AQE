@@ -45,9 +45,9 @@ exists to detect.
 What it adds
 ------------
   build()   run the trim+packets pair against the finished daily export and
-            write `aegis/data/pma/<run-date>/packets/`. Wired into the daily
-            orchestrator (Step 8a-3) so it happens once, automatically, after
-            the export is written — not by hand, not remembered.
+            write `output/packets/`. Wired into the daily orchestrator
+            (Step 8a-3) so it happens once, automatically, after the export
+            is written — not by hand, not remembered.
   verify()  re-derive the packets from the CURRENT master into a scratch dir
             and compare byte-for-byte against what is on disk. Any drift is
             named per file. This is the check that the packets a voice is
@@ -75,7 +75,7 @@ import tempfile
 import types
 from pathlib import Path
 
-from src.data.paths import EXPORT_JSON, PROJECT_ROOT
+from src.data.paths import EXPORT_JSON, OUTPUT_DIR, PROJECT_ROOT
 
 # The PM-ratified pipeline tool. Its directory name is hyphenated
 # ("premarket-analysis"), so it is not importable as a package — load it
@@ -85,7 +85,19 @@ PMA_PIPELINE = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
                 / "tools" / "pma_pipeline.py")
 VOICE_MENUS = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
                / "contracts" / "voice_menus.json")
-PMA_DATA_DIR = PROJECT_ROOT / "aegis" / "data" / "pma"
+
+# PM ruling 2026-08-25: the packets land beside the daily export and the Crown
+# file, not in a separate dated tree — one delivery destination for everything
+# the committee reads. Local `output/packets/` mirrors repo
+# `aegis/output/packets/`, the same local->repo mapping every other artifact
+# uses. A `packets/` subfolder rather than 11 loose files because a flat
+# `crown.json` would sit beside `crown_macro.json` AND `aqe_crown_macro.json`
+# — three crown-ish names, two macro reads and one voice packet, which is
+# exactly the kind of ambiguity a committee reader should never have to
+# resolve. Overwritten in place each run like every other output; git history
+# holds the prior days.
+PACKETS_DIRNAME = "packets"
+OUTPUT_PACKETS_IN_REPO = "aegis/output/packets"
 
 
 def _load_pma_pipeline():
@@ -101,8 +113,12 @@ def _load_pma_pipeline():
     return mod
 
 
-def packets_dir(run_date: str) -> Path:
-    return PMA_DATA_DIR / run_date / "packets"
+def packets_dir(run_date: str | None = None) -> Path:
+    """Local packet dir. `run_date` is accepted and ignored — the packets are
+    a CURRENT-copy artifact like every other file in output/, not a dated
+    tree. The date still identifies the run (it stamps candidate_set.json and
+    seeds the shuffle); it just no longer forks the path."""
+    return OUTPUT_DIR / PACKETS_DIRNAME
 
 
 def _run_date_of(export_path: Path) -> str:
@@ -199,9 +215,10 @@ def publish(run_date: str) -> dict:
 
     The daily run happens on an ephemeral container (GitHub Actions runner /
     HF Space), so a packet written only to local disk is gone by the time any
-    voice looks for it. `aegis/data/pma/` is already a tracked path, and the
-    committee reads the repo — so the packets go there, same store and same
-    token as the Step 8a-2 output publish.
+    voice looks for it. They go to `aegis/output/packets/` — the same repo,
+    branch, store and token as the daily export and the Crown file, one
+    delivery destination for everything the committee reads (PM ruling
+    2026-08-25).
     """
     from src.data import github_sync
 
@@ -211,16 +228,20 @@ def publish(run_date: str) -> dict:
     if not github_sync.is_configured():
         return {"ok": False, "reason": "GITHUB_TOKEN not set — packets stay local only"}
 
-    # candidate_set.json rides along: it is the same derived-from-master
-    # artifact, written by the same trim step, and PMA's later stages (rank)
-    # read it. Publishing packets without it would strand them.
+    # candidate_set.json rides along: same derived-from-master artifact, same
+    # trim step, and PMA's later stages (rank) read it. But it is published
+    # BESIDE packets/, never inside it — CONSUMED deliberately keeps `qs` on
+    # it for the PM's S7 card, so it is not seat-safe. Everything inside
+    # packets/ is a file some voice may open; keeping the one QS-carrying
+    # artifact out of that folder makes "packets/ is seat-safe" a structural
+    # property rather than a convention (asserted in tests).
     items: list[tuple[str, Path]] = []
     cs = outdir.parent / "candidate_set.json"
     if cs.exists():
-        items.append((f"aegis/data/pma/{run_date}/candidate_set.json", cs))
+        items.append((f"{github_sync.OUTPUT_DIR_IN_REPO}/candidate_set.json", cs))
     for p in sorted(outdir.iterdir()):
         if p.is_file():
-            items.append((f"aegis/data/pma/{run_date}/packets/{p.name}", p))
+            items.append((f"{OUTPUT_PACKETS_IN_REPO}/{p.name}", p))
 
     msg = f"data: voice packets {run_date}"
     failed: list[str] = []

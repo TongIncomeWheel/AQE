@@ -59,8 +59,8 @@ def export_file(tmp_path):
 
 
 @pytest.fixture(autouse=True)
-def _isolated_pma_dir(tmp_path, monkeypatch):
-    monkeypatch.setattr(vp, "PMA_DATA_DIR", tmp_path / "pma")
+def _isolated_output_dir(tmp_path, monkeypatch):
+    monkeypatch.setattr(vp, "OUTPUT_DIR", tmp_path / "output")
     yield
 
 
@@ -139,6 +139,28 @@ def test_macro_packets_carry_the_macro_blocks_and_never_qs_market(export_file):
         for block in ("date", "market", "regime", "intermarket", "srm",
                       "macro_weather", "thematic_baskets"):
             assert block in pk, f"{voice}.json missing the {block} block"
+
+
+def test_everything_inside_packets_is_seat_safe(export_file):
+    """The folder-level invariant: every file in packets/ is one some voice
+    may open, so NO file in there may carry the PM-only qs read.
+    candidate_set.json deliberately keeps `qs` (CONSUMED, for the S7 card) —
+    it therefore lives BESIDE packets/, never inside it."""
+    vp.build(export_file)
+    outdir = vp.packets_dir()
+
+    for p in sorted(outdir.iterdir()):
+        raw = p.read_text(encoding="utf-8")
+        assert "qs_market" not in raw, f"R3 breach: qs_market in packets/{p.name}"
+        if p.suffix == ".tsv":
+            cols = raw.split("\n")[0].split("\t")
+            assert "qs" not in cols and "on_qs" not in cols, \
+                f"R3 breach: qs column in packets/{p.name}"
+
+    # ...and the QS-carrying trim output is outside that folder.
+    cs = outdir.parent / "candidate_set.json"
+    assert cs.exists(), "candidate_set.json should be written beside packets/"
+    assert cs.parent != outdir, "candidate_set.json must NOT live inside packets/"
 
 
 def test_verify_is_in_sync_immediately_after_build(export_file):
