@@ -1,0 +1,52 @@
+name: AQE voice packets sync
+
+# Backstop for the Step 8a-3 packet split (2026-08-25 incident).
+#
+# Step 8a-3 only runs if the process running the daily pipeline HAS it. On
+# 2026-08-25 the HF Space started the daily 140 seconds after that step landed
+# on main, so its image predated the code: the export updated, the packets did
+# not, and the committee read a day-old set. Nothing failed loudly because
+# there was nothing there to fail.
+#
+# GitHub Actions checks out main fresh on every run, so it CANNOT execute a
+# stale image — which is exactly the property the Space lacks. This job
+# rebuilds the packets from whatever export is currently published and pushes
+# only the files whose content actually differs. A healthy day is a no-op that
+# writes no commit; a Space that missed the step is repaired within the hour.
+#
+# 04:00 UTC = 12:00 SGT — after the Space's 08:30 SGT run and the 09:30 SGT
+# GitHub backstop have both finished, on the same Tue-Sat trading days.
+on:
+  schedule:
+    - cron: "0 4 * * 2-6"
+  workflow_dispatch: {}
+
+concurrency:
+  group: aqe-voice-packets
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      # The published export is the master. Put it where EXPORT_JSON expects
+      # so the sync compares against exactly what the committee reads.
+      - name: Stage the published export
+        run: |
+          mkdir -p output
+          cp aegis/output/aqe_daily_export.json output/aqe_daily_export.json
+      - name: Sync voice packets to the published export
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m src.pipeline.voice_packets sync

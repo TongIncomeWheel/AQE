@@ -230,6 +230,77 @@ def test_verify_reports_never_built_rather_than_claiming_sync(export_file):
     assert any("does not exist" in d for d in res["drift"])
 
 
+def _fake_publisher(monkeypatch, seen):
+    """Stand in for github_sync, recording what would be pushed and honouring
+    the `unchanged` no-op contract put_file actually implements."""
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+
+    def _put(path, content, message):
+        prior = seen.get(path)
+        seen[path] = content
+        return {"ok": True, "unchanged": prior == content}
+    monkeypatch.setattr(github_sync, "put_file", _put)
+
+
+def test_sync_repairs_packets_a_stale_pipeline_never_wrote(export_file, monkeypatch):
+    """THE 2026-08-25 failure: the export is published but the packets were
+    never built for it, because the process running the daily did not have
+    Step 8a-3. sync() must notice and repair, not report success on absence."""
+    seen: dict = {}
+    _fake_publisher(monkeypatch, seen)
+
+    assert not vp.packets_dir().exists(), "precondition: no packets yet"
+    res = vp.sync(export_file)
+
+    assert res["ok"] is True
+    assert res["was_in_sync"] is False          # it found the gap...
+    assert res["changed"], "...and actually republished something"
+    assert any("packets/wyckoff.tsv" in p for p in seen)
+
+
+def test_sync_is_a_no_op_when_the_packets_already_match(export_file, monkeypatch):
+    """A healthy day must cost nothing and write no commit — otherwise the
+    backstop churns the repo daily for no reason."""
+    seen: dict = {}
+    _fake_publisher(monkeypatch, seen)
+
+    vp.sync(export_file)          # first run publishes
+    res = vp.sync(export_file)    # second run: identical content
+
+    assert res["ok"] is True
+    assert res["was_in_sync"] is True
+    assert res["changed"] == [], "identical content must not be republished"
+
+
+def test_sync_republishes_only_what_actually_changed(export_file, tmp_path, monkeypatch):
+    """When the master moves, only the packets whose columns carry the
+    changed field should be rewritten."""
+    seen: dict = {}
+    _fake_publisher(monkeypatch, seen)
+    vp.sync(export_file)
+
+    d = json.loads(export_file.read_text(encoding="utf-8"))
+    d["daily_list"][0]["sc_momentum"] = 91.5
+    changed_export = tmp_path / "changed.json"
+    changed_export.write_text(json.dumps(d), encoding="utf-8")
+
+    res = vp.sync(changed_export)
+    assert res["ok"] is True
+    menus = json.loads(vp.VOICE_MENUS.read_text(encoding="utf-8"))
+    for name in res["changed"]:
+        voice = name.replace(".tsv", "").replace(".json", "")
+        if voice in GROUP_A:
+            assert "sc_momentum" in menus[voice], \
+                f"{voice} republished but its menu has no sc_momentum"
+
+
+def test_sync_without_an_export_fails_rather_than_claiming_success(tmp_path):
+    res = vp.sync(tmp_path / "nope.json")
+    assert res["ok"] is False
+    assert "not found" in res["reason"]
+
+
 def test_build_on_a_missing_export_fails_loudly(tmp_path):
     res = vp.build(tmp_path / "nope.json")
     assert res["ok"] is False

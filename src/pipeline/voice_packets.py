@@ -245,23 +245,80 @@ def publish(run_date: str) -> dict:
 
     msg = f"data: voice packets {run_date}"
     failed: list[str] = []
+    changed: list[str] = []
     for repo_path, local in items:
         res = github_sync.put_file(repo_path, local.read_text(encoding="utf-8"), msg)
         if not res.get("ok"):
             failed.append(f"{local.name}: {res.get('reason')}")
+        elif not res.get("unchanged"):
+            changed.append(local.name)
     return {"ok": not failed, "written": len(items) - len(failed),
-            "total": len(items), "failed": failed,
+            "total": len(items), "changed": changed, "failed": failed,
             "reason": "; ".join(failed) if failed else None}
+
+
+def sync(export_path: Path | None = None) -> dict:
+    """Make the published packets match the published export — repairing
+    them if they do not.
+
+    Exists because Step 8a-3 only runs if the process running the pipeline
+    HAS it. 2026-08-25: the HF Space ran the daily 140 seconds after the step
+    landed on main, so its image predated the code entirely — the export
+    updated, the packets did not, and AIC read a day-old set. Nothing threw;
+    there was nothing to throw.
+
+    This is the backstop, and it is deliberately driven by GitHub Actions,
+    which checks out main fresh on every run and therefore cannot execute a
+    stale image. It does not care which path produced the export or what code
+    that path was running: it rebuilds the packets from whatever export is
+    currently published and pushes any file whose content actually differs.
+    Identical content is a no-op (github_sync.put_file reports `unchanged`),
+    so a healthy day costs nothing and writes no commit.
+    """
+    export_path = Path(export_path or EXPORT_JSON)
+    if not export_path.exists():
+        return {"ok": False, "reason": f"{export_path} not found — nothing to sync against"}
+
+    before = verify(export_path)
+    built = build(export_path)
+    if not built.get("ok"):
+        return {"ok": False, "reason": built.get("reason")}
+
+    pub = publish(built["run_date"])
+    if not pub.get("ok"):
+        return {"ok": False, "run_date": built["run_date"],
+                "reason": pub.get("reason")}
+
+    return {"ok": True, "run_date": built["run_date"],
+            "was_in_sync": bool(before.get("ok")),
+            "changed": pub.get("changed") or [],
+            "drift_found": before.get("drift") or []}
 
 
 def _cli() -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = p.add_subparsers(dest="cmd", required=True)
-    for name in ("build", "verify"):
+    for name in ("build", "verify", "sync"):
         s = sub.add_parser(name)
         s.add_argument("--export", default=None)
         s.add_argument("--date", default=None)
     a = p.parse_args()
+
+    if a.cmd == "sync":
+        res = sync(a.export)
+        if not res.get("ok"):
+            print(f"[voice-packets] SYNC FAILED: {res.get('reason')}", file=sys.stderr)
+            return 1
+        if res["was_in_sync"] and not res["changed"]:
+            print(f"[voice-packets] already current ({res['run_date']}) — nothing to do")
+        else:
+            print(f"[voice-packets] REPAIRED ({res['run_date']}): "
+                  f"{len(res['changed'])} file(s) republished")
+            for d in res["drift_found"]:
+                print(f"  was: {d}")
+            for c in res["changed"]:
+                print(f"  now: {c}")
+        return 0
 
     if a.cmd == "build":
         res = build(a.export, a.date)
