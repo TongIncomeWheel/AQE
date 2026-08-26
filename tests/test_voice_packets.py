@@ -245,6 +245,7 @@ def _fake_publisher(monkeypatch, seen):
     the `unchanged` no-op contract put_file actually implements."""
     from src.data import github_sync
     monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+    monkeypatch.setattr(github_sync, "test_credentials", lambda: {"ok": True})
 
     def _put(path, content, message):
         prior = seen.get(path)
@@ -343,3 +344,26 @@ def test_publish_without_a_token_says_so_rather_than_silently_skipping(
     res = vp.publish("2026-08-24")
     assert res["ok"] is False
     assert "GITHUB_TOKEN" in res["reason"]
+
+
+def test_publish_with_an_unscoped_token_gives_one_clear_reason_not_a_wall_of_403s(
+        export_file, monkeypatch):
+    """2026-08-26: a token that reads but can't write (e.g. this session's
+    proxy-injected git credential, which is not a real Contents-API PAT) used
+    to fail all 11 files individually, each with its own raw HTTPError text --
+    reads as 'broken' rather than 'wrong token scope'. One auth check up
+    front, one sentence, no wasted PUT attempts."""
+    vp.build(export_file)
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+    monkeypatch.setattr(github_sync, "test_credentials",
+                         lambda: {"ok": False, "reason": "token can read but lacks "
+                                                          "push/write access"})
+    calls = []
+    monkeypatch.setattr(github_sync, "put_file",
+                         lambda *a, **k: calls.append(a) or {"ok": True})
+
+    res = vp.publish("2026-08-24")
+    assert res["ok"] is False
+    assert "lacks push/write access" in res["reason"]
+    assert not calls, "must not attempt any file write once the auth check fails"

@@ -228,6 +228,13 @@ def publish(run_date: str) -> dict:
     if not github_sync.is_configured():
         return {"ok": False, "reason": "GITHUB_TOKEN not set — packets stay local only"}
 
+    # One cheap read-only call up front, so an auth/scope problem surfaces as
+    # ONE clear sentence instead of up to 11 near-identical raw HTTPErrors (one
+    # per file) that read as "broken" rather than "token needs a scope fix".
+    cred = github_sync.test_credentials()
+    if not cred.get("ok"):
+        return {"ok": False, "reason": f"GitHub auth check failed: {cred.get('reason')}"}
+
     # candidate_set.json rides along: same derived-from-master artifact, same
     # trim step, and PMA's later stages (rank) read it. But it is published
     # BESIDE packets/, never inside it — CONSUMED deliberately keeps `qs` on
