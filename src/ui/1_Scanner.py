@@ -136,6 +136,17 @@ with st.sidebar:
     prog = st.empty()
     stat = st.empty()
 
+    # run_module_streaming's own success/error message lives in `stat`, an
+    # st.empty() recreated fresh on every script run -- the st.rerun() every
+    # action button fires right after wipes it before it's readable. Re-show
+    # the same message here, persisted in session_state, so a completed (or
+    # failed) refresh stays visible until the next action instead of flashing
+    # and vanishing (2026-08-26: reported as "the button looks stale, the
+    # sidebar doesn't tell me if it's done").
+    _last_status = st.session_state.get("last_action_status")
+    if _last_status:
+        (st.success if _last_status["ok"] else st.error)(_last_status["message"])
+
     if CLOUD_MODE:
         st.markdown("### Cloud mode")
         host_label = {"huggingface": "Hugging Face Space",

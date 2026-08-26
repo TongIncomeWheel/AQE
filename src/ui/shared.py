@@ -410,9 +410,22 @@ def load_json(filename: str) -> dict | list | None:
 # ---------- subprocess runner ----------
 
 def run_module_streaming(module: str, label: str, progress_placeholder, status_placeholder) -> int:
-    """Run `python -m <module>` and stream stdout to a Streamlit placeholder."""
+    """Run `python -m <module>` and stream stdout to a Streamlit placeholder.
+
+    Every caller of this follows it with `st.rerun()` (to refresh whatever the
+    module just changed -- exported data, packet files, etc.). `prog`/`stat`
+    are fresh `st.empty()` placeholders recreated on every script run, so
+    whatever they show here is wiped the instant that rerun fires -- the
+    success/error message below was visible for at most one animation frame,
+    which is not "loud" by CLAUDE.md's own standard, it just LOOKS stale/dead.
+    Stash the same message in session_state so the sidebar can re-show it
+    after the rerun (see the top of `with st.sidebar:` in 1_Scanner.py) --
+    persistent until the next action, not gone before it can be read.
+    """
     from datetime import datetime
     from zoneinfo import ZoneInfo
+
+    import streamlit as st
 
     proc = subprocess.Popen(
         [sys.executable, "-u", "-m", module],
@@ -430,9 +443,13 @@ def run_module_streaming(module: str, label: str, progress_placeholder, status_p
     rc = proc.wait()
     now_sgt = datetime.now(ZoneInfo("Asia/Singapore")).strftime("%Y-%m-%d %H:%M:%S SGT")
     if rc == 0:
-        status_placeholder.success(f"{label} finished — {now_sgt}")
+        msg = f"{label} finished — {now_sgt}"
+        status_placeholder.success(msg)
+        st.session_state["last_action_status"] = {"ok": True, "message": msg}
     else:
-        status_placeholder.error(f"{label} exited with code {rc}. Last output:\n" + "\n".join(buf[-5:]))
+        msg = f"{label} exited with code {rc}. Last output:\n" + "\n".join(buf[-5:])
+        status_placeholder.error(msg)
+        st.session_state["last_action_status"] = {"ok": False, "message": msg}
     return rc
 
 
