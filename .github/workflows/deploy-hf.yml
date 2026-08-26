@@ -59,7 +59,18 @@ jobs:
           # the inherited index first so the exclusion actually takes effect.
           git rm -r --cached . > /dev/null
           git add -A -- ':!aegis'
-          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded — HF storage rejects its binary content)"
+          # src/pipeline/voice_packets.py (runs on this same Space) loads these
+          # two files from inside aegis/ at runtime via importlib -- the PM-
+          # ratified packet-slicing rules live there on purpose, not duplicated
+          # into src/, so the Scanner's "Refresh voice packets only" button and
+          # the two can never disagree about what a packet contains (2026-08-25).
+          # The blanket aegis/ exclusion above starved that import on HF
+          # (FileNotFoundError at /app/aegis/.../pma_pipeline.py, 2026-08-26)
+          # even though it's present on GitHub main -- re-add exactly these two,
+          # never the rest of aegis/ (still rejected by HF's storage backend).
+          git add -f aegis/skills/premarket-analysis/tools/pma_pipeline.py \
+                     aegis/skills/premarket-analysis/contracts/voice_menus.json
+          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded except the two files voice_packets.py needs at runtime — HF storage rejects the rest of aegis/'s binary content)"
 
           echo "Pushing ${ORIG_SHA} (aegis/ excluded) to HF Space..."
           ok=0

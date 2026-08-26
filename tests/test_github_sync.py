@@ -313,6 +313,24 @@ def test_the_actions_backstop_may_write_its_own_output():
     assert "permissions:" in wf and "contents: write" in wf
 
 
+def test_the_hf_mirror_still_carries_what_voice_packets_needs_at_runtime():
+    """2026-08-26: src/pipeline/voice_packets.py (runs on the Space) loads
+    pma_pipeline.py + voice_menus.json from inside aegis/ via importlib at
+    runtime. The orphan-commit step excludes aegis/ wholesale (HF's storage
+    rejects the rest of its binary content) -- without an explicit re-add,
+    that starves the import on HF specifically (FileNotFoundError at
+    /app/aegis/.../pma_pipeline.py) even though the file is present on
+    GitHub main, since the bare repo checkout there never goes through this
+    orphan-commit step at all."""
+    wf = open(".github/workflows/deploy-hf.yml", encoding="utf-8").read()
+    assert ":!aegis" in wf, "the broad exclusion this re-add must run after"
+    assert "git add -f aegis/skills/premarket-analysis/tools/pma_pipeline.py" in wf
+    assert "aegis/skills/premarket-analysis/contracts/voice_menus.json" in wf
+    # the re-add must come AFTER the exclusion, or a later `git add -A` could
+    # re-exclude what was just carved back in
+    assert wf.index(":!aegis") < wf.index("git add -f aegis/skills")
+
+
 def test_the_repo_folder_is_the_last_resort_when_the_snapshot_is_gone(monkeypatch, tmp_path):
     """Removing the old committed root copy must not cost the cold path. The
     replacement is better: it fetches the CURRENT export, not a frozen one."""
