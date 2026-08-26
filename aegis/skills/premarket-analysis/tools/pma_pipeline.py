@@ -454,6 +454,153 @@ def cmd_rank(a):
                  "dropped": dropped})
     print(f"receipt: {len(qual)} qualified, top {min(a.cap, len(qual))} to deliberation, {len(dropped)} cut by cap")
 
+R2_VOTING_SEATS = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp",
+                   "weis", "wyckoff", "lynch", "detect-lens"]
+
+def _load_document(path, label):
+    """A whole-deliberation-set document (Rogers'/Steenbarger's challenge doc, Lynch's fundamentals
+    memo, Detect-lens's technical memo) captured VERBATIM from that voice's own S5a/S5b spawn output
+    -- the orchestrator reads it once and saves it as-is to this file, never retypes or summarizes it
+    (Phase 2, D-106: a courier that regenerates text while relaying it is where drift becomes
+    possible; a courier that copies a file's exact bytes cannot misremember a value). Missing is a
+    declared degradation, not a silently empty string -- S6's obligation register (O1-O8) depends on
+    this content actually existing for every seat to answer against."""
+    if not os.path.exists(path):
+        return None, f"{label} document missing ({path}) -- S5a/S5b did not file, or wasn't saved before this step ran"
+    d = load(path)
+    text = d.get("document_text")
+    if not text:
+        return None, f"{label} document at {path} has no document_text -- filed but empty"
+    return text, None
+
+def cmd_round2packets(a):
+    """Assembles the Round-2 evidence pack for all 11 voting seats, deterministically -- this is the
+    single biggest remaining cost point in a run (the R2 pack was measured at ~75% of a run's token
+    cost) and, until now, the ONE place in the whole pipeline still assembled BY HAND by the
+    orchestrating session, retyping the same material into 11 separate spawn prompts (exactly the
+    'courier should just be a courier' problem, D-106) -- this closes it with the same
+    round-trip-verified, assert-hard-gate discipline as Phase 1's cmd_packets.
+
+    Inputs (all produced by earlier pipeline stages -- nothing new needs to be captured elsewhere):
+      --candidates   candidate_set.json          full universe rows
+      --menus        voice_menus.json            same per-voice field menus R1 uses
+      --phase4       rank/deliberation output    deliberation_set: [ticker, ...]
+      --tally        tally.json                  per-ticker "reasons": [{voice, reason, conviction,
+                                                  fields}, ...] -- this already IS the attributed R1
+                                                  case; nothing new needs to be captured for it either.
+      --rogers / --steenbarger / --lynch / --detectlens
+                     {"voice": <name>, "document_text": "<verbatim S5a/S5b output>"} -- ONE document
+                     per voice, covering the whole deliberation set, exactly as that voice already
+                     produces it today. No new output contract on any of these 4 voices was needed:
+                     the orchestrator saves their existing free-text document to this file, unedited,
+                     instead of retyping it into 11 prompts by hand.
+
+    Per-seat field slicing (1.4, REFINED beyond the plan's literal wording -- flagged, not hidden).
+    Pure own-menu-only slicing (the plan's literal wording) would let a voting seat receive another
+    seat's attributed R1 argument citing a field ("bracket.stop", "rs_leadership", ...) that isn't on
+    the reading seat's OWN menu -- meaning it could be handed a citation it has no way to check. That
+    is a live reasoning-quality risk (a seat can't honestly rebut a number it can't see), not just a
+    byte count, so each seat's row is sliced to the UNION of (a) its own R1 menu fields and (b) every
+    field any OTHER seat's attributed R1 reason cites for that name. This is still strictly smaller
+    than today's practice (the complete, unsliced CONSUMED row for every seat on every name) on every
+    real row exercised during this build, and it costs some of the theoretical -176KB estimate in
+    exchange for removing that risk entirely -- flagged here for visibility, not decided silently.
+
+    Self-case exclusion (1.5, held to the APPROVED SCOPE -- Round-1 case only). A seat's own R1
+    reason is dropped from its own packet (it already knows what it argued -- no committee member
+    needs their own words served back to them to vote). This does NOT extend to the S5a/S5b
+    documents (Lynch's own fundamentals memo, Detect-lens's own technical memo) -- those are single
+    whole-deliberation-set documents, not per-seat-attributable the way an R1 nomination is, and the
+    approved plan scoped 1.5 to 'Round-1 case' specifically. Extending self-exclusion to those two
+    documents would require a NEW per-ticker structured-output contract on 2 more voice agents --
+    a real footprint increase this build deliberately avoided. Revisit only if the PM wants it.
+
+    R3 defense-in-depth: re-asserts the QS_FORBIDDEN check against every seat's own menu AND against
+    every field any R1 reason cites -- own_menu alone would miss a forbidden field that only reaches
+    a packet via a citation. The same check cmd_packets already runs at R1, re-verified here rather
+    than assumed still true, because this is a second serving of the same universe rows through a
+    second code path.
+
+    Degradation handling: a missing rogers/steenbarger/lynch/detect-lens file is NOT silently treated
+    as an empty string -- it is a declared gap, because Round 2 without a challenge/memo pass
+    materially changes what the obligation register requires seats to answer (e.g., a Rogers-challenge
+    reply, O5, cannot be honestly filed against a challenge that was never delivered).
+
+    Orchestrator note (binds how this tool's OUTPUT is used, not this tool itself): per F1, every
+    seat's packet must still be INLINED into that seat's spawn prompt -- read this file's JSON and
+    paste it, never hand a voice a path. This tool removes the hand-assembly step; it does not
+    change the inlining rule.
+    """
+    CS, menus = load(a.candidates), load(a.menus)
+    P4 = load(a.phase4)
+    tally = load(a.tally)
+    deliberation_set = P4["deliberation_set"]
+    uni = {r["ticker"]: r for r in CS["universe"]}
+    missing_rows = [t for t in deliberation_set if t not in uni]
+    assert not missing_rows, f"round2packets: deliberation-set ticker(s) not found in candidate_set.json: {missing_rows}"
+
+    reasons_by_ticker = {t["ticker"]: t["reasons"] for t in tally}
+
+    # R3, full depth: the earlier per-seat check below only re-verifies each seat's OWN
+    # menu. What actually reaches disk is own_menu UNION cited_fields (any field another
+    # seat's R1 reason names) -- a forbidden field could in principle reach a packet through
+    # a citation even with a clean menu. R1's cmd_packets already prevents a nominator from
+    # ever seeing a QS field to cite in the first place, so this is currently a no-op against
+    # real data (checked 2026-08-26: every real reason's "fields" list is empty) -- but it is
+    # the actual defense-in-depth the docstring below claims, not just the menu-only half of it.
+    all_cited_fields = sorted({f for reasons in reasons_by_ticker.values()
+                                for r in reasons for f in (r.get("fields") or [])})
+    cited_breach = [f for f in all_cited_fields if f in QS_FORBIDDEN or f.startswith("qs.")]
+    assert not cited_breach, (f"R3 breach: R1 reason(s) cite QS-forbidden field(s) {cited_breach} "
+                              f"-- a nominator's own R1 packet should never have contained one")
+
+    rogers_doc, rogers_gap = _load_document(a.rogers, "rogers challenge")
+    steenbarger_doc, steenbarger_gap = _load_document(a.steenbarger, "steenbarger challenge")
+    lynch_doc, lynch_gap = _load_document(a.lynch, "lynch fundamentals memo")
+    detectlens_doc, detectlens_gap = _load_document(a.detectlens, "detect-lens technical memo")
+    degradations = [g for g in (rogers_gap, steenbarger_gap, lynch_gap, detectlens_gap) if g]
+
+    os.makedirs(a.outdir, exist_ok=True)
+    missing_seats = [v for v in R2_VOTING_SEATS if v not in menus]
+    assert not missing_seats, f"round2packets: voice_menus.json is missing menu(s) for voting seat(s) {missing_seats}"
+    voting_seats = [v for v in R2_VOTING_SEATS if v in menus]
+
+    total_naive = total_actual = 0
+    for v in voting_seats:
+        own_menu = menus[v]
+        breach = [f for f in own_menu if f in QS_FORBIDDEN or f.startswith("qs.")]
+        assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
+        names_out = []
+        for t in deliberation_set:
+            row = uni[t]
+            all_reasons = reasons_by_ticker.get(t, [])
+            reasons = [r for r in all_reasons if r["voice"] != v]  # 1.5: own R1 case only, approved scope
+            cited_fields = sorted({f for r in all_reasons for f in (r.get("fields") or [])})
+            field_union = sorted(set(own_menu) | set(cited_fields))
+            sliced = _slice(row, field_union)
+
+            naive_row = {f: row.get(f) for f in CONSUMED}
+            total_naive += len(json.dumps({"row": naive_row, "r1_reasons": all_reasons}))
+            total_actual += len(json.dumps({"row": sliced, "r1_reasons": reasons}))
+
+            names_out.append({"ticker": t, "row": sliced, "r1_reasons": reasons})
+        out = {
+            "date": a.date, "voice": v, "deliberation_cap": len(deliberation_set),
+            "rogers_challenge_doc": rogers_doc, "steenbarger_challenge_doc": steenbarger_doc,
+            "lynch_memo_doc": lynch_doc, "detect_lens_memo_doc": detectlens_doc,
+            "names": names_out,
+        }
+        save(os.path.join(a.outdir, f"{v}.json"), out)
+
+    pct = (1 - total_actual / max(total_naive, 1)) * 100
+    print(f"receipt: {len(voting_seats)} Round-2 packets written to {a.outdir}; "
+          f"{len(deliberation_set)} names each; per-name row+reasons bytes {total_naive} -> {total_actual} "
+          f"({pct:.1f}% smaller vs today's full-row/full-reasons practice, per-voice-menu+cited-fields "
+          f"union, own R1 case dropped). Challenge/memo documents inlined verbatim, unchanged, "
+          f"identically across all {len(voting_seats)} seats.")
+    for g in degradations:
+        print(f"WARNING {g}")
+
 def cmd_consensus(a):
     R2 = load(a.round2)  # list of {voice, stances:[{ticker, stance, conviction, ...}]}
     by_t = collections.defaultdict(lambda: {"support": [], "oppose": [], "abstain": [], "conv": []})
@@ -762,6 +909,17 @@ if __name__ == "__main__":
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=20); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--out", default="phase4.json")
+    s = sub.add_parser("round2packets")
+    s.add_argument("--candidates", default="candidate_set.json")
+    s.add_argument("--menus", required=True)
+    s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--tally", default="tally.json")
+    s.add_argument("--rogers", required=True)
+    s.add_argument("--steenbarger", required=True)
+    s.add_argument("--lynch", required=True)
+    s.add_argument("--detectlens", required=True)
+    s.add_argument("--date", required=True)
+    s.add_argument("--outdir", default="round2")
     s = sub.add_parser("consensus"); s.add_argument("--round2", required=True); s.add_argument("--out", default="consensus.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json")
@@ -770,6 +928,7 @@ if __name__ == "__main__":
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank,
+     "round2packets": cmd_round2packets,
      "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
      "repeat-watch": cmd_repeat_watch}[a.cmd](a)
