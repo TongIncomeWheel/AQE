@@ -15,6 +15,16 @@ import json
 
 import pytest
 
+
+def _header_line(text: str) -> str:
+    """The real tab-delimited header, skipping any leading '# DICT ...' legend
+    lines cmd_packets may prepend (2026-08-26 compression change) -- those are
+    comments, not the column row, and must never be mistaken for it."""
+    for line in text.split("\n"):
+        if not line.startswith("#"):
+            return line
+    return ""
+
 from src.pipeline import voice_packets as vp
 
 # The full 14-voice roster, per voice_packet_file_instruction v2 (2026-08-25).
@@ -88,7 +98,7 @@ def test_no_packet_leaks_the_pm_only_qs_fields(export_file):
     outdir = vp.packets_dir("2026-08-24")
 
     for voice in NOMINATORS:
-        header = (outdir / f"{voice}.tsv").read_text(encoding="utf-8").split("\n")[0]
+        header = _header_line((outdir / f"{voice}.tsv").read_text(encoding="utf-8"))
         cols = header.split("\t")
         assert "qs" not in cols and "on_qs" not in cols, f"R3 breach in {voice}"
         assert not any(c.startswith("qs.") for c in cols), f"R3 breach in {voice}"
@@ -102,7 +112,7 @@ def test_each_voice_gets_only_its_own_columns(export_file):
     outdir = vp.packets_dir("2026-08-24")
 
     for voice in NOMINATORS:
-        header = (outdir / f"{voice}.tsv").read_text(encoding="utf-8").split("\n")[0]
+        header = _header_line((outdir / f"{voice}.tsv").read_text(encoding="utf-8"))
         assert header.split("\t") == menus[voice], f"{voice} columns != its menu"
 
 
@@ -153,7 +163,7 @@ def test_everything_inside_packets_is_seat_safe(export_file):
         raw = p.read_text(encoding="utf-8")
         assert "qs_market" not in raw, f"R3 breach: qs_market in packets/{p.name}"
         if p.suffix == ".tsv":
-            cols = raw.split("\n")[0].split("\t")
+            cols = _header_line(raw).split("\t")
             assert "qs" not in cols and "on_qs" not in cols, \
                 f"R3 breach: qs column in packets/{p.name}"
 

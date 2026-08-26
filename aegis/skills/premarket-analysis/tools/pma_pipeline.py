@@ -30,7 +30,7 @@ Subcommands:
                     instead of silently omitting it or being invented from memory.
 Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
 """
-import json, sys, os, csv, random, statistics, argparse, collections, datetime
+import json, sys, os, csv, random, statistics, argparse, collections, datetime, re
 
 SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
@@ -132,21 +132,160 @@ def _cell(x):
         return json.dumps(x)
     return x
 
+# ---- STRUCTURAL FLATTENERS (nested JSON -> compact scalar string, fully reversible) ----
+# decode_fn exists ONLY for the self-verification baked into cmd_packets below -- packets are
+# terminal output, never re-parsed by any AQE tool or by a voice's own tooling (voices run
+# tools:[]).
+#
+# bracket.targets' own field shape has ALREADY drifted once between AQE snapshots seen during
+# this work (an earlier sample carried type/price/date/atr_dist/vol_ratio/vol_validated; the
+# live 2026-08-17 export carries type/tp/price/r with tp and r null on every row). Rather than
+# hardcode a field list that broke the first time it was checked against real data, the encoder
+# DISCOVERS the field set from the actual targets being encoded, declares that order in the
+# packet's own DICT legend, and encodes generically. This is why the round-trip gate below is
+# non-negotiable, not a nice-to-have: a schema-agnostic encoder is exactly the kind of code that
+# looks right and silently isn't, without it.
+
+_TARGET_TYPE_CODE = {
+    "resistance": "R", "support": "S", "prior_high": "P",
+    "fib_1272": "A", "fib_1618": "B", "fib_2618": "C", "fib_2000": "D",
+}
+_TARGET_TYPE_DECODE = {v: k for k, v in _TARGET_TYPE_CODE.items()}
+# Extend this map if a new fib_/pivot type appears -- an unrecognized type still round-trips
+# via the '[type]' literal fallback below, it just doesn't compress as tightly.
+
+def _target_field_order(targets):
+    """Discover this run's actual bracket.targets field set, in first-seen order, 'type' pinned
+    first (it gets its own short code). Never hardcoded -- see module docstring above."""
+    order, seen = ["type"], {"type"}
+    for t in targets:
+        for k in t:
+            if k not in seen:
+                order.append(k); seen.add(k)
+    return order
+
+def _target_val_token(v):
+    if v is True: return "T"
+    if v is False: return "F"
+    if v is None: return "n"
+    if isinstance(v, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", v):
+        s = v.replace("-", "")
+        return s[2:8]  # YYYY-MM-DD -> YYMMDD
+    return str(v)
+
+def _target_val_untoken(s):
+    if s == "T": return True
+    if s == "F": return False
+    if s == "n": return None
+    if re.match(r"^\d{6}$", s):
+        return f"20{s[:2]}-{s[2:4]}-{s[4:]}"
+    try:
+        return float(s) if "." in s else int(s)
+    except ValueError:
+        return s
+
+def _encode_targets(targets, field_order):
+    """[{type, ...whatever fields this run's export actually carries}, ...] -> a pipe-joined,
+    @-delimited compact string. 'type' is compressed via _TARGET_TYPE_CODE; every other field
+    is written positionally per field_order (declared once in the packet's DICT legend, so a
+    human or voice can reconstruct any row without a separate lookup). None -> 'n', True/False
+    -> 'T'/'F', an ISO date -> YYMMDD. Nothing is silently dropped -- an unmapped type falls
+    back to a literal '[type]' token instead of losing information."""
+    if not targets:
+        return ""
+    parts = []
+    for t in targets:
+        vals = []
+        for f in field_order:
+            if f == "type":
+                vals.append(_TARGET_TYPE_CODE.get(t.get("type"), f"[{t.get('type')}]"))
+            else:
+                vals.append(_target_val_token(t.get(f)))
+        parts.append("@".join(vals))
+    return "|".join(parts)
+
+def _decode_targets(s, field_order):
+    """Inverse of _encode_targets. Self-verification only -- never called by a voice or any
+    downstream consumer; packets are terminal output."""
+    if not s:
+        return []
+    out = []
+    for part in s.split("|"):
+        vals = part.split("@")
+        if len(vals) != len(field_order):
+            raise ValueError(f"_decode_targets: expected {len(field_order)} fields, got {len(vals)}: {part!r}")
+        t = {}
+        for f, v in zip(field_order, vals):
+            if f == "type":
+                t["type"] = v[1:-1] if v.startswith("[") else _TARGET_TYPE_DECODE.get(v, v)
+            else:
+                t[f] = _target_val_untoken(v)
+        out.append(t)
+    return out
+
+_LENS_KEYS = ["leadership", "coil", "insti_money", "structure", "resistance", "extension", "sector"]
+_LENS_CODE = {"strong": "s", "ok": "o", "warn": "w"}
+_LENS_DECODE = {v: k for k, v in _LENS_CODE.items()}
+# Verified against the live export (2026-08-17): a fourth literal value '--' also occurs
+# alongside strong/ok/warn/null. It is intentionally NOT given a short code -- the fallback
+# below writes it out literally, so it round-trips correctly without the legend needing to
+# anticipate every value a future lens revision might emit.
+
+def _encode_lens(lens):
+    """lens: {leadership,coil,insti_money,structure,resistance,extension,sector} -> fixed-order
+    comma string, e.g. 'w,s,w,o,w,-,s'. null -> '-'. Any value outside {strong,ok,warn} (e.g.
+    the literal '--' seen in real data) is written out literally -- never silently dropped."""
+    if not lens:
+        return ""
+    out = []
+    for k in _LENS_KEYS:
+        v = lens.get(k)
+        out.append("-" if v is None else _LENS_CODE.get(v, v))
+    return ",".join(out)
+
+def _decode_lens(s):
+    """Inverse of _encode_lens. Self-verification only."""
+    if not s:
+        return {}
+    vals = s.split(",")
+    if len(vals) != len(_LENS_KEYS):
+        raise ValueError(f"_decode_lens: expected {len(_LENS_KEYS)} fields, got {len(vals)}: {s!r}")
+    return {k: (None if v == "-" else _LENS_DECODE.get(v, v)) for k, v in zip(_LENS_KEYS, vals)}
+
+# ---- CODEBOOK ENCODING (repeated long strings -> short per-field codes + a legend) ----
+DICT_MAX_CARD_RATIO = 0.6   # encode a field only if distinct-values <= this fraction of rows
+DICT_MIN_AVG_LEN = 6        # and only if its values average longer than this many characters
+# Both are named constants so they can be tuned without touching the algorithm, per PM
+# direction that this should "self-tune as the universe changes," not be hand-guessed per field.
+
+def _build_codebook(values):
+    """values: a field's stringified values across every row being served (post-flatten,
+    pre-shuffle). Returns None if the field doesn't clear the encoding threshold, else
+    (code_map: value->code, legend_line). null values are never encoded -- the existing
+    no-blank-data 'null' token stays untouched so absence is never ambiguous with a code."""
+    real = [v for v in values if v not in (None, "", "null")]
+    if not real:
+        return None
+    distinct = sorted(set(real))
+    n = len(real)
+    avg_len = sum(len(v) for v in real) / n
+    if len(distinct) > n * DICT_MAX_CARD_RATIO or avg_len <= DICT_MIN_AVG_LEN:
+        return None
+    code_map = {v: str(i + 1) for i, v in enumerate(distinct)}
+    legend = "; ".join(f"{c}={v}" for v, c in code_map.items())
+    return code_map, legend
+
 def cmd_packets(a):
     CS, menus, D = load(a.candidates), load(a.menus), load(a.export)
     os.makedirs(a.outdir, exist_ok=True)
-    rng = random.Random(a.date)  # deterministic per-date shuffle
-    # v4.2 architecture: nominators are S4 voices only (excludes S5a/S5b challenge/specialist agents and macro voices)
+    rng = random.Random(a.date)
     nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller", "steenbarger", "detect-lens", "~~CONFIG_NOTE~~")]
-    # R3, menu-level: no seat's menu may name qs/on_qs (or any qs.* subfield) -- checked BEFORE any
-    # TSV is written, so a future menu edit that adds one fails the build loudly instead of shipping.
     for v in menus:
         if v == "~~CONFIG_NOTE~~":
             continue
         breach = [f for f in menus[v] if f in QS_FORBIDDEN or f.startswith("qs.")]
         assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
 
-    # NO-BLANK-DATA per-ticker checks (2026-08-17), against the raw export rows directly.
     raw_by_ticker = {r["ticker"]: r for r in D["daily_list"]}
     no_coverage = sorted(t for t, r in raw_by_ticker.items()
                           if all(r.get(f) is None for f in CORE_TECHNICAL_FIELDS))
@@ -159,29 +298,115 @@ def cmd_packets(a):
               "note": "still present in candidate_set.json; may still carry a QS card line at S7"})
 
     universe = [r for r in CS["universe"] if r["ticker"] not in no_coverage]
+
+    # --- PHASE 1 COMPRESSION (2026-08-26) ---
+    # Two mechanical, content-preserving steps, both self-verified before any byte reaches
+    # disk. This changes ENCODING ONLY: every fact a voice could read before, it can still
+    # read -- same tickers, same rows, same information, fewer bytes carrying it. Neither step
+    # touches which rows exist or which columns a voice's menu grants it (D-29 untouched).
+    #
+    # Step A -- flatten nested JSON fields (bracket.targets, lens) to compact scalar strings.
+    #           bracket.targets' field SET is discovered from this run's own data (see
+    #           _target_field_order docstring: the schema already drifted once between two
+    #           real snapshots seen during development, which is exactly why this is
+    #           discovered, not hardcoded, and why every encode is immediately decoded and
+    #           asserted equal to the original before use. A mismatch raises and the run
+    #           stops -- there is no path from "encoded" to "on disk" that skips this check.
+    # Step B -- dictionary-encode any remaining scalar column whose values repeat heavily
+    #           (see _build_codebook). Each voice's TSV gets a "# DICT <field>: legend" line
+    #           for every encoded field it actually has on its own menu.
+    all_targets = [t for r in universe for t in ((r.get("bracket") or {}).get("targets") or [])]
+    target_field_order = _target_field_order(all_targets)
+
+    all_fields = sorted({f for v in nominators for f in menus[v]})
+    raw_bytes_by_ticker = {}   # true pre-compression size, captured before any encoding touches it
+    flat_cache = {}
+    for r in universe:
+        sliced = _slice(r, all_fields)
+        raw_bytes_by_ticker[r["ticker"]] = {f: len(str(_cell(v))) for f, v in sliced.items()}
+        flat = {}
+        for f, v in sliced.items():
+            if f == "bracket.targets" and v is not None:
+                encoded = _encode_targets(v, target_field_order)
+                decoded = _decode_targets(encoded, target_field_order) if encoded else []
+                # bracket.targets' own key-set varies PER TARGET, even within one type on one
+                # day (e.g. fib_1272 carries r/tp on some rows, not others -- confirmed against
+                # real 2026-08-25 data). Encoding can't tell "key absent" from "key present as
+                # None" -- both write the 'n' token -- so decode always reconstructs the full
+                # discovered field_order. Compare against v padded the same way: this changes
+                # nothing about what's encoded or written, only what "equal" means for a source
+                # dict that legitimately never had some of these keys.
+                padded = [{**{k: None for k in target_field_order}, **t} for t in v]
+                assert decoded == padded, (f"FLATTEN ROUND-TRIP FAILED on {f} for {r['ticker']}: "
+                                      f"{v!r} -> {encoded!r} -> {decoded!r}")
+                flat[f] = encoded
+            elif f == "lens" and v is not None:
+                encoded = _encode_lens(v)
+                decoded = _decode_lens(encoded) if encoded else {}
+                assert decoded == v, (f"FLATTEN ROUND-TRIP FAILED on {f} for {r['ticker']}: "
+                                      f"{v!r} -> {encoded!r} -> {decoded!r}")
+                flat[f] = encoded
+            else:
+                flat[f] = v
+        flat_cache[r["ticker"]] = flat
+
+    codebooks = {}
+    for f in all_fields:
+        vals = [str(flat_cache[r["ticker"]][f]) if flat_cache[r["ticker"]].get(f) is not None else None
+                for r in universe]
+        cb = _build_codebook(vals)
+        codebooks[f] = cb
+        if cb:
+            code_map, _ = cb
+            reverse = {c: val for val, c in code_map.items()}
+            for r in universe:
+                v = flat_cache[r["ticker"]].get(f)
+                if v is not None and str(v) in code_map:
+                    coded = code_map[str(v)]
+                    assert reverse[coded] == str(v), f"DICT ROUND-TRIP FAILED on {f} for {r['ticker']}"
+                    flat_cache[r["ticker"]][f] = coded
+    # --- END PHASE 1 COMPRESSION ---
+
     dead = {}
+    total_before = total_after = 0
     for v in nominators:
-        rows = [_slice(r, menus[v]) for r in universe]
-        # a menu field that is None on EVERY row is a dead column -- report, never hide
-        d = [f for f in menus[v] if all(r.get(f) is None for r in rows)]
+        menu = menus[v]
+        used_dicts = {f: codebooks[f][1] for f in menu if codebooks.get(f)}
+        rows = [{f: flat_cache[r["ticker"]].get(f) for f in menu} for r in universe]
+        d = [f for f in menu if all(r.get(f) is None for r in rows)]
         if d:
             dead[v] = d
+        before_bytes = sum(raw_bytes_by_ticker[r["ticker"]].get(f, 0) for r in universe for f in menu)
         rng.shuffle(rows)
         p = os.path.join(a.outdir, f"{v}.tsv")
-        with open(p, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=menus[v], delimiter="\t")
+        with open(p, "w", newline="") as f_out:
+            if "bracket.targets" in menu:
+                f_out.write(f"# DICT bracket.targets fields (in order): {','.join(target_field_order)}; "
+                            f"type codes: {_TARGET_TYPE_CODE}\n")
+            for field, legend in sorted(used_dicts.items()):
+                f_out.write(f"# DICT {field}: {legend}\n")
+            w = csv.DictWriter(f_out, fieldnames=menu, delimiter="\t")
             w.writeheader()
             for r in rows:
                 w.writerow({k: _cell(x) for k, x in r.items()})
-    # macro packets: crown + druckenmiller read global blocks, NEVER qs_market (R3)
+        after_bytes = os.path.getsize(p)
+        total_before += before_bytes; total_after += after_bytes
+        pct = (1 - after_bytes / max(before_bytes, 1)) * 100
+        n_flat = len([f for f in menu if f in ("bracket.targets", "lens")])
+        print(f"  {v}.tsv: ~{before_bytes} -> {after_bytes} bytes ({pct:.1f}% smaller), "
+              f"{n_flat} field(s) flattened, {len(used_dicts)} field(s) dict-encoded, round-trip OK")
+
     for name, blocks in (("crown", ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"]),
                          ("druckenmiller", ["date","market","regime","intermarket","srm","macro_weather","thematic_baskets"])):
         pk = {b: D.get(b) for b in blocks}
         txt = json.dumps(pk)
         assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
         save(os.path.join(a.outdir, f"{name}.json"), pk)
+
+    pct_total = (1 - total_after / max(total_before, 1)) * 100
     print(f"receipt: {len(nominators)} nominator TSVs + 2 macro packets; R3 assertion passed; "
-          f"{len(universe)}/{len(CS['universe'])} names served to nominators ({len(no_coverage)} held out, no coverage)")
+          f"{len(universe)}/{len(CS['universe'])} names served to nominators ({len(no_coverage)} held out, no coverage); "
+          f"total packet bytes {total_before} -> {total_after} ({pct_total:.1f}% smaller), all encodings round-trip verified")
     if dead:
         print("WARNING missing_menu_fields (null on every row, seat is served a blank column):")
         for v, fs in sorted(dead.items()):
