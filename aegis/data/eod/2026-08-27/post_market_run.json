@@ -1,0 +1,24 @@
+{
+ "date": "2026-08-27",
+ "exit_code": 1,
+ "gate_status": "partial",
+ "note": "deterministic batch completed degraded — see data/eod/2026-08-27/post_market_run.json",
+ "jobs": [
+  {"job": "broker payloads", "status": "pass", "detail": "5 file(s) in data/eod/2026-08-27/broker_pull"},
+  {"job": "reconcile vanished positions (D-100)", "status": "pass", "detail": ""},
+  {"job": "preflight", "status": "DEGRADED", "detail": "exit 1"},
+  {"job": "journal build", "status": "pass", "detail": ""},
+  {"job": "equity membership", "status": "pass", "detail": ""},
+  {"job": "option membership", "status": "pass", "detail": ""},
+  {"job": "recompute dynCap (D-99)", "status": "pass", "detail": ""},
+  {"job": "hedge derivation", "status": "pass", "detail": ""},
+  {"job": "carry-forward", "status": "pass", "detail": ""},
+  {"job": "journal verified", "status": "pass", "detail": ""},
+  {"job": "GitHub push (journal)", "status": "FAIL", "detail": "committed locally, not pushed"},
+  {"job": "portfolio metrics", "status": "pass", "detail": ""},
+  {"job": "archive ledger", "status": "skipped", "detail": "no closed trades today"},
+  {"job": "flow audit", "status": "pass", "detail": ""},
+  {"job": "GitHub push (final)", "status": "FAIL", "detail": "committed locally, not pushed"},
+  {"job": "gate stamped", "status": "pass", "detail": "partial"}
+ ]
+}
