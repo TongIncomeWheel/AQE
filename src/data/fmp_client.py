@@ -275,7 +275,25 @@ class FMPClient:
 
     def _get_json(self, url: str, params: dict) -> dict | list:
         self._throttle()
-        resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
+        try:
+            resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
+        except requests.exceptions.RequestException as exc:
+            # A transient connection drop here used to propagate straight out of
+            # _get_json uncaught -- neither FMPError nor FMPQuotaError, so it slid
+            # right past the per-ticker try/except in build_panel()/pull_tickers()
+            # (src/data/panel_builder.py) and took the ENTIRE ~800-ticker pull down
+            # with it (2026-08-21: died at ticker 358/820; recurred 2026-08-27 at
+            # ticker 398/819, 'Connection aborted... RemoteDisconnected', leaving
+            # panel_daily.parquet completely unwritten for the run since the crash
+            # happened before that file's own write step ever ran). One retry after
+            # a short pause, matching the 429/invalid-key retry-once pattern below;
+            # a second failure becomes a normal FMPError so the calling loop logs
+            # it and moves on to the next ticker instead of the whole run dying.
+            time.sleep(5)
+            try:
+                resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
+            except requests.exceptions.RequestException as exc2:
+                raise FMPError(f"network error calling {url}: {exc2}") from exc2
         if resp.status_code == 429:
             # FMP rate-limit hit. Back off a full minute and retry once.
             time.sleep(60)
