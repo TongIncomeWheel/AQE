@@ -2295,6 +2295,14 @@ def build_export(shortlist: dict | None = None) -> dict:
         _order += [k for k in sorted(_all_keys) if k not in _order]
         export[_lname] = [{k: _rec.get(k) for k in _order} for _rec in _rows]
 
+    # ---- Scored-universe collapse guard — BLOCKS export (2026-08-27) ----
+    # daily_list/longlist/elder_list are all DERIVED from _sc_by_tk (the latest
+    # scores_daily.parquet, keyed by ticker) -- nothing downstream can tell "a
+    # genuinely quiet day, few names qualify" apart from "the price/score pull
+    # failed or was interrupted for most of the ~800-name universe". See
+    # _assert_scored_universe_not_collapsed's own docstring for the incident.
+    _assert_scored_universe_not_collapsed(len(_sc_by_tk))
+
     # ---- Permanent schema validation — BLOCKS export on missing fields ----
     _REQUIRED_FIELDS = [
         "ticker", "sc_momentum", "flow", "energy", "structure",
@@ -2340,6 +2348,51 @@ def build_export(shortlist: dict | None = None) -> dict:
         export.get("daily_list") or [], export.get("held_positions") or [])
 
     return export
+
+
+# How few scored tickers is too few to trust. Set far below the ~700-850
+# tickers the universe screen (mcap>=$2B, 10-day avg vol>=1.5M) normally
+# yields and far above anything a legitimately quiet market could shrink it
+# to — tripping it means the scoring pass itself failed for most of the
+# universe, not that few names qualify.
+MIN_SCORED_UNIVERSE = 200
+
+
+def _assert_scored_universe_not_collapsed(n_scored: int) -> None:
+    """BLOCKS export (raises) if the scored universe has collapsed.
+
+    2026-08-27 incident: daily_list/longlist/elder_list are all DERIVED from
+    the latest scores_daily.parquet, keyed by ticker (_sc_by_tk in
+    build_export) — nothing downstream can tell "a genuinely quiet day, few
+    names qualify" apart from "the price/score pull failed or was
+    interrupted for most of the ~800-name universe". A partial pull (a cold
+    refresh_held container with no persisted scores_daily — see
+    src/pipeline/refresh_held.py Step 0 — or a full-pipeline run interrupted
+    mid-universe, echoing the 2026-08-21 FMP-drop precedent) left
+    scores_daily.parquet holding ~6-11 tickers, almost entirely the held
+    book (panel_builder always prices those regardless of the wider
+    universe's state). Every downstream check still passed — each of those
+    few rows was fully, validly scored — so a 6-name daily_list published
+    straight over the prior day's real ~200-name one with no error anywhere.
+    This is exactly the "40 of 900 tickers, no error" failure CLAUDE.md
+    forbids, just at list-size granularity rather than field granularity,
+    which is why _REQUIRED_FIELDS (key-level) and _compute_data_quality
+    (value-level, below) never caught it — both only ever look AT a row
+    that's already there; neither can notice that most of the universe never
+    became a row at all. BLOCKS rather than warns (unlike
+    _compute_data_quality) so a collapsed run fails loudly and the last
+    known-good export stays live, instead of a near-empty list quietly
+    overwriting it.
+    """
+    if n_scored < MIN_SCORED_UNIVERSE:
+        raise ValueError(
+            f"SCORED UNIVERSE COLLAPSED: scores_daily.parquet has only "
+            f"{n_scored} ticker(s) (expected >= {MIN_SCORED_UNIVERSE}) -- "
+            f"refusing to publish a daily_list built from it over the last "
+            f"known-good export. The price/score pull almost certainly failed "
+            f"or was interrupted for most of the universe -- fix the pull, "
+            f"don't patch around this check."
+        )
 
 
 # Fields that, for a ticker which made it into daily_list/held_positions at all

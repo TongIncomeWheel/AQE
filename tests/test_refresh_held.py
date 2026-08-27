@@ -16,6 +16,18 @@ import pytest
 from src.pipeline import refresh_held as rh
 
 
+@pytest.fixture(autouse=True)
+def _warm_state_by_default(monkeypatch):
+    """Step 0 (2026-08-27) calls src.ui.bootstrap.autoload_state -- without a
+    mock every test would hit the real local filesystem (and, on a genuinely
+    cold machine, the real network) depending on ambient state, which is
+    exactly the non-determinism this file's own docstring says these tests
+    avoid by mocking every downstream module. Default to "already warm";
+    the two tests below override this to exercise the cold/failed paths."""
+    from src.ui import bootstrap
+    monkeypatch.setattr(bootstrap, "autoload_state", lambda: {"state": "warm"})
+
+
 def test_no_held_equity_tickers_skips_pricing_and_export(monkeypatch):
     """An option-only or genuinely flat book must not trigger a price pull,
     score recompute, or export rebuild — there is nothing to refresh."""
@@ -146,3 +158,79 @@ def test_a_ticker_left_unscored_after_build_scores_is_warned_loudly(monkeypatch,
     assert result["ok"] is True
     out = capsys.readouterr().out
     assert "GOLD" in out and "NO score row" in out
+
+
+def test_a_cold_container_is_restored_before_anything_else_runs(monkeypatch, capsys):
+    """2026-08-27 incident: refresh-held.yml runs on a bare GitHub Actions
+    runner with no persisted data/ at all. build_scores(only_tickers=...)
+    then wrote a scores_daily.parquet holding ONLY the held tickers (nothing
+    to merge into), and the export rebuild computed daily_list from that --
+    publishing a ~6-name list (5 of them the held book) over the real
+    ~200-name one. Step 0 must run, and run FIRST, so a cold container
+    restores the real universe before the narrow held-ticker update ever
+    touches scores_daily.parquet."""
+    calls = []
+    from src.ui import bootstrap
+    def _autoload():
+        calls.append("restore")
+        return {"state": "restored", "store": "github_release", "files": 6}
+    monkeypatch.setattr(bootstrap, "autoload_state", _autoload)
+
+    from src.data import ptj
+    monkeypatch.setattr(ptj, "refresh_held_positions",
+                        lambda: (calls.append("ptj") or [{"ticker": "OXY", "type": "STK"}]))
+    monkeypatch.setattr(ptj, "ptj_status", lambda: "live")
+
+    from src.data import panel_builder
+    monkeypatch.setattr(panel_builder, "pull_tickers",
+                        lambda tickers, **k: (calls.append("pull") or
+                                              {"pulled": 1, "skipped_current": 0,
+                                               "failed": [], "total_tickers": 1}))
+    from src.scanner import score_runner
+    monkeypatch.setattr(score_runner, "build_scores",
+                        lambda only_tickers=None: calls.append("scores"))
+    from src.data import drive_sync
+    monkeypatch.setattr(drive_sync, "export_to_drive",
+                        lambda *a, **k: (calls.append("export") or {"status": "ok"}))
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "publish_daily_outputs",
+                        lambda names=None, **k: (calls.append("publish") or
+                                                 {"ok": True, "written": len(names or ())}))
+
+    result = rh.refresh_held()
+    assert result["ok"] is True
+    assert calls[0] == "restore", "state restore must run before PTJ/pull/scores/export"
+    out = capsys.readouterr().out
+    assert "restored from github_release" in out
+
+
+def test_a_failed_restore_on_a_cold_container_is_warned_loudly(monkeypatch, capsys):
+    """If the restore itself fails (both stores unreachable), that must not
+    be swallowed -- the run proceeds (per existing behaviour: a degraded
+    held-book refresh is still better than none), but the log must say,
+    unambiguously, that daily_list may come out collapsed as a result."""
+    from src.ui import bootstrap
+    monkeypatch.setattr(bootstrap, "autoload_state",
+                        lambda: {"state": "failed", "reason": "both stores unreachable"})
+
+    from src.data import ptj
+    monkeypatch.setattr(ptj, "refresh_held_positions",
+                        lambda: [{"ticker": "OXY", "type": "STK"}])
+    monkeypatch.setattr(ptj, "ptj_status", lambda: "live")
+    from src.data import panel_builder
+    monkeypatch.setattr(panel_builder, "pull_tickers",
+                        lambda tickers, **k: {"pulled": 1, "skipped_current": 0,
+                                              "failed": [], "total_tickers": 1})
+    from src.scanner import score_runner
+    monkeypatch.setattr(score_runner, "build_scores", lambda only_tickers=None: None)
+    from src.data import drive_sync
+    monkeypatch.setattr(drive_sync, "export_to_drive", lambda *a, **k: {"status": "ok"})
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "publish_daily_outputs",
+                        lambda names=None, **k: {"ok": True, "written": len(names or ())})
+
+    result = rh.refresh_held()
+    assert result["ok"] is True  # degrades, does not abort
+    out = capsys.readouterr().out
+    assert "both stores unreachable" in out
+    assert "collapse" in out

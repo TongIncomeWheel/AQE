@@ -6,7 +6,12 @@ the export (a single thin-history ticker must not take down the whole feed)."""
 
 from __future__ import annotations
 
-from src.data.drive_sync import _compute_data_quality, _HARD_REQUIRED_NONNULL
+import pytest
+
+from src.data.drive_sync import (
+    _compute_data_quality, _HARD_REQUIRED_NONNULL,
+    _assert_scored_universe_not_collapsed, MIN_SCORED_UNIVERSE,
+)
 
 
 def _good_record(ticker="AAPL"):
@@ -84,3 +89,35 @@ def test_stk_rows_without_position_type_default_to_checked():
     bad["bracket"] = None
     dq = _compute_data_quality([], [bad])
     assert dq["flagged_count"] == 1
+
+
+# ── the scored-universe collapse guard (2026-08-27) ─────────────────────────
+# daily_list/longlist/elder_list are all DERIVED from the scored universe, so
+# _compute_data_quality above (which only inspects rows that already made it
+# in) can never notice that most of the universe never became a row at all.
+# This guard catches that: a collapsed price/score pull left scores_daily
+# holding ~6-11 tickers (almost entirely the held book), and a 6-name
+# daily_list published straight over the prior day's real ~200-name one with
+# no error anywhere. Unlike _compute_data_quality, this one BLOCKS.
+
+def test_a_healthy_universe_size_passes_clean():
+    _assert_scored_universe_not_collapsed(700)   # must not raise
+
+
+def test_the_actual_2026_08_27_collapse_size_is_blocked():
+    with pytest.raises(ValueError, match="SCORED UNIVERSE COLLAPSED"):
+        _assert_scored_universe_not_collapsed(6)
+
+
+def test_the_threshold_is_exclusive_at_the_boundary():
+    _assert_scored_universe_not_collapsed(MIN_SCORED_UNIVERSE)  # exactly at floor: OK
+    with pytest.raises(ValueError):
+        _assert_scored_universe_not_collapsed(MIN_SCORED_UNIVERSE - 1)
+
+
+def test_the_error_names_the_actual_and_expected_counts_for_a_fast_diagnosis():
+    with pytest.raises(ValueError) as exc:
+        _assert_scored_universe_not_collapsed(11)
+    msg = str(exc.value)
+    assert "11" in msg
+    assert str(MIN_SCORED_UNIVERSE) in msg

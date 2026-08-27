@@ -9,6 +9,19 @@ inside it went down with it.
 
 This module refreshes ONLY what the held book needs and nothing else:
 
+  0. Restore runtime state if this container is cold (src.ui.bootstrap.
+     autoload_state — the SAME check every Streamlit page already runs at its
+     own boot). 2026-08-27: refresh-held.yml runs this on a bare GitHub
+     Actions runner with no persisted data/ at all -- unlike the HF Space's
+     warm local disk, `data/scores_daily.parquet` did not exist yet when step
+     3 wrote it, so it came out holding ONLY the held tickers this run just
+     scored. Step 4 then computed daily_list from that file and published a
+     6-name export (5 of them the held book) over the real ~200-name one,
+     exactly the "40 of 900 tickers, no error" failure bootstrap.py's own
+     docstring warns about -- just reached through a pipeline entrypoint
+     instead of a UI page, which is why it had never been wired in here. A
+     warm container (the HF Space, or a repeat Actions run this session)
+     answers instantly and changes nothing.
   1. The PTJ journal itself (src.data.ptj — carries the 2026-08-21 monotonic
      guard, so a stale fetch here can't regress what's already published).
   2. Fresh price bars for the held tickers ONLY, plus SPY (src.data.
@@ -29,8 +42,8 @@ This module refreshes ONLY what the held book needs and nothing else:
      for longlist/elder-list names, which this module doesn't need (it never
      touches those lists) and disables via AQE_ELDER_CTX_HOURLY=0.
      daily_list/lens_ranking are whatever the last full pipeline run
-     produced; held_positions/held_book are freshly recomputed from steps
-     1-3.
+     produced, PROVIDED step 0 found (or restored) that state — held_
+     positions/held_book are freshly recomputed from steps 1-3 regardless.
   5. Publish the two artifacts that actually changed to GitHub.
 
 Safe to run standalone, any time, without touching FMP quota for the ~790
@@ -55,6 +68,20 @@ def refresh_held() -> dict:
     # runs as its own subprocess (the Scanner button, the .bat, or the
     # workflow_dispatch job), never imported into a shared long-lived one.
     os.environ["AQE_ELDER_CTX_HOURLY"] = "0"
+
+    print("[refresh_held] Step 0: restore runtime state if this container is cold...")
+    from src.ui.bootstrap import autoload_state
+    auto = autoload_state()
+    state = auto.get("state")
+    if state == "warm":
+        print("  already warm — nothing to restore")
+    elif state == "restored":
+        print(f"  restored from {auto.get('store')} ({auto.get('files')} file(s))"
+              + (" [DEGRADED: fell back off the primary store]" if auto.get("degraded") else ""))
+    else:
+        print(f"  [WARN] state={state}: {auto.get('reason')} — if this container has no "
+              f"cached universe scores, the rebuilt export's daily_list will collapse to "
+              f"just the held tickers this run touches (2026-08-27 incident)")
 
     from src.data import ptj
 
