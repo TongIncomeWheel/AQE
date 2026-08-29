@@ -54,6 +54,12 @@ DEFAULT_PATHS = [
     # Named exactly, not as the whole output/ directory: this one file is tracked, the rest of
     # output/ (shortlist, calibration reports, dashboard) is gitignored on purpose.
     "aegis/output/aqe_daily_export.json",
+    # PMA v5 ruling #4 (2026-08-28): the pre-sliced Round-1 voice packets + their stamp travel
+    # in the SAME commit as the export — that same-commit atomicity is guard condition (i) of
+    # the ruling (files born together and stamped together cannot drift). Emitted by
+    # emit_packets.py at premarket_data step 6b; the PMA morning run verifies the stamp at
+    # PREPARE and falls back to local slicing if this directory is absent or mismatched.
+    "aegis/output/voice_packets",
 ]
 
 
