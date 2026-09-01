@@ -246,13 +246,30 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             timeout=_PIPELINE_TIMEOUT,
         )
         rc = proc.returncode
-        exported_at, _ = _feed_status()
+        exported_at, feed_today = _feed_status()
+        # 2026-09-01 incident: rc==0 alone used to mean "success" -- but
+        # daily_orchestrator's own Step 8 (src/pipeline/daily_orchestrator.py)
+        # wraps export_to_drive() in a blanket except-and-warn that never
+        # re-raises, so ANY failure inside it (a genuine bug, or the
+        # universe-collapse guard in drive_sync.py correctly refusing to
+        # publish) reduces to one buried WARN line and the rest of the
+        # pipeline still runs to a clean exit. That let a run report
+        # "status: success" here while aqe_daily_export.json sat unrefreshed
+        # for days -- the one check that would have caught it (did the feed
+        # actually update for TODAY) already existed, just only in the
+        # TimeoutExpired/Exception branches below, never on the plain rc==0
+        # path most runs actually take. A clean subprocess exit is necessary
+        # but not sufficient; the export must ALSO be dated today.
+        ok = rc == 0 and feed_today
         marker.update({
-            "status": "success" if rc == 0 else "failed",
+            "status": "success" if ok else ("failed" if rc != 0 else "partial"),
             "rc": rc,
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
-            "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if rc != 0 else "",
+            "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if not ok else "",
+            **({} if ok else {"reason": "pipeline exited 0 but the export was not "
+                                         "refreshed for today -- see the tail for "
+                                         "which step actually failed"}),
         })
     except subprocess.TimeoutExpired as exc:
         # The orchestrator writes + uploads the export at Step 8, BEFORE the heavy
