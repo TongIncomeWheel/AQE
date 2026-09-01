@@ -3,7 +3,7 @@
   "version": "1.0",
   "kernel_version": "1.4",
   "what_this_is": "The Nick Crown macro layer: positioning, breadth and regime read BEFORE any individual stock. It answers what kind of market this is, and therefore which family of trades is allowed today. It is deliberately separate from AQE's stock scanner and sector work.",
-  "generated_at": "2026-09-01T14:52:35+08:00",
+  "generated_at": "2026-09-01T14:58:37+08:00",
   "status": "DEGRADED",
   "status_means": "it ran, but something was missing or on a substitute source — see limits",
   "read_me_first": {
@@ -11,18 +11,19 @@
     "why": [
       "The average stock is keeping up with the index — the rally is broad.",
       "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 14.9, lower than 90% of the past two years.",
-      "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and 1 of those positions are stretched. Crowded trades unwind quickly, so the size guidance is cut.",
       "Big speculators are unusually long the dollar, gold, copper and 6 others; unusually short natural gas and the long bond (CFTC data to 2026-08-25).",
       "1 warning sign lit: price is climbing while momentum falls. A further 13 showed up on individual markets. No single one of these is a reason to sell. They matter when several point the same way as the breadth reading."
     ],
     "so_what": "Own the average stock, not just the leaders — and collect premium against it. That is the closest fit rather than a clean one — 1 of its conditions are not met. Size at 1.00x your normal risk.",
     "what_would_change_it": [
-      "If the dollar trades above 99.59 (0.1% away), trend funds start buying.",
+      "If the dollar trades above 99.62 (0.1% away), trend funds start buying.",
       "If the 2-year trades above 103.59 (1.0% away), trend funds start buying.",
       "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
     ],
-    "caveats": []
+    "caveats": [
+      "No dealer-positioning read today, so nothing above accounts for option hedging flows."
+    ]
   },
   "the_call": {
     "expression_family": "BROADENING_CARRY",
@@ -86,12 +87,12 @@
         "extreme_means": "how crowded the trade is. High is fragile, not confident.",
         "size_dial": 1.0,
         "by_sector": {
-          "ags": 0.6929,
-          "energy": 0.1318,
-          "equity": 0.4154,
-          "fx": -0.0175,
-          "metals": 0.2962,
-          "rates": -0.5586
+          "ags": 0.6953,
+          "energy": 0.133,
+          "equity": 0.4144,
+          "fx": -0.0076,
+          "metals": 0.2951,
+          "rates": -0.5603
         }
       },
       "large_speculators": {
@@ -114,50 +115,11 @@
         "note": "CFTC data covering Tuesday, published Friday, so always at least three days old. It cannot time anything."
       },
       "option_dealers": {
-        "available": true,
-        "regime": "NEGATIVE",
-        "means": "dealers amplify moves — expect bigger swings",
-        "detail": {
-          "SPY": {
-            "spot": 767.05,
-            "total_gex": -3813450997.48,
-            "gamma_flip": null,
-            "flip_distance_pct": null,
-            "call_wall": {
-              "strike": 770.0,
-              "gex": 825365173.45,
-              "share_of_side": 0.0759,
-              "vs_even_share": 15.64
-            },
-            "put_wall": {
-              "strike": 765.0,
-              "gex": 2082992861.66,
-              "share_of_side": 0.1418,
-              "vs_even_share": 23.4
-            },
-            "assumption": "Customers are long calls and long puts, so dealers are long call gamma and short put gamma. This is the standard convention, NOT observed data — exchange feeds publish open interest, never who is on which side."
-          },
-          "QQQ": {
-            "spot": 716.76,
-            "total_gex": -787774627.87,
-            "gamma_flip": null,
-            "flip_distance_pct": null,
-            "call_wall": {
-              "strike": 720.0,
-              "gex": 527012616.45,
-              "share_of_side": 0.0816,
-              "vs_even_share": 17.31
-            },
-            "put_wall": {
-              "strike": 700.0,
-              "gex": 968178922.89,
-              "share_of_side": 0.1337,
-              "vs_even_share": 22.05
-            },
-            "assumption": "Customers are long calls and long puts, so dealers are long call gamma and short put gamma. This is the standard convention, NOT observed data — exchange feeds publish open interest, never who is on which side."
-          }
-        },
-        "why_not": null
+        "available": false,
+        "regime": "UNKNOWN",
+        "means": null,
+        "detail": {},
+        "why_not": "QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set"
       }
     },
     "volatility": {
@@ -184,46 +146,6 @@
   "what_changed": [],
   "what_is_coming": [
     {
-      "date": "2026-09-01",
-      "day": "Tuesday",
-      "time_et": null,
-      "event": "GTLB earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
-    },
-    {
-      "date": "2026-09-02",
-      "day": "Wednesday",
-      "time_et": null,
-      "event": "CXM earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
-    },
-    {
-      "date": "2026-09-03",
-      "day": "Thursday",
-      "time_et": null,
-      "event": "ASAN earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
-    },
-    {
-      "date": "2026-09-03",
-      "day": "Thursday",
-      "time_et": null,
-      "event": "PATH earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
-    },
-    {
-      "date": "2026-09-03",
-      "day": "Thursday",
-      "time_et": null,
-      "event": "GWRE earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
-    },
-    {
       "date": "2026-09-08",
       "day": "Tuesday",
       "time_et": null,
@@ -236,28 +158,17 @@
     {
       "kind": "trend followers",
       "what": "US dollar flip",
-      "now": 99.533,
-      "level": 99.5854,
+      "now": 99.539,
+      "level": 99.6234,
       "unit": "price",
-      "distance_pct": 0.05,
+      "distance_pct": 0.08,
       "if_it_breaks": "Trend-following funds turn from seller to buyer here.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "DX",
       "sector": "fx",
-      "trend_signal": -0.0175,
+      "trend_signal": -0.0076,
       "direction": "buy_above"
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "SPY put wall",
-      "now": 767.05,
-      "level": 765.0,
-      "unit": "price",
-      "distance_pct": -0.27,
-      "if_it_breaks": "The heaviest put positioning below the market. It usually acts as support, and losing it removes the cushion.",
-      "source": null,
-      "quotable_as_contract": true
     },
     {
       "kind": "breadth",
@@ -267,28 +178,6 @@
       "unit": "ratio",
       "distance_pct": 0.35,
       "if_it_breaks": "The average stock crossing below its own recent trend against the index. It turns before the regime label does.",
-      "source": null,
-      "quotable_as_contract": true
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "SPY call wall",
-      "now": 767.05,
-      "level": 770.0,
-      "unit": "price",
-      "distance_pct": 0.38,
-      "if_it_breaks": "The heaviest call positioning above the market. Rallies into it tend to meet dealer selling unless momentum forces through.",
-      "source": null,
-      "quotable_as_contract": true
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "QQQ call wall",
-      "now": 716.76,
-      "level": 720.0,
-      "unit": "price",
-      "distance_pct": 0.45,
-      "if_it_breaks": "The heaviest call positioning above the market. Rallies into it tend to meet dealer selling unless momentum forces through.",
       "source": null,
       "quotable_as_contract": true
     },
@@ -306,7 +195,7 @@
     {
       "kind": "trend followers",
       "what": "UST 2Y note flip",
-      "now": 102.6094,
+      "now": 102.6055,
       "level": 103.5914,
       "unit": "price",
       "distance_pct": 0.96,
@@ -315,48 +204,37 @@
       "quotable_as_contract": true,
       "market": "ZT",
       "sector": "rates",
-      "trend_signal": -0.5686,
+      "trend_signal": -0.57,
       "direction": "buy_above"
     },
     {
       "kind": "trend followers",
       "what": "UST 5Y note flip",
-      "now": 105.6328,
+      "now": 105.625,
       "level": 108.0865,
       "unit": "price",
-      "distance_pct": 2.32,
+      "distance_pct": 2.33,
       "if_it_breaks": "Trend-following funds turn from seller to buyer here.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "ZF",
       "sector": "rates",
-      "trend_signal": -0.62,
+      "trend_signal": -0.6215,
       "direction": "buy_above"
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "QQQ put wall",
-      "now": 716.76,
-      "level": 700.0,
-      "unit": "price",
-      "distance_pct": -2.34,
-      "if_it_breaks": "The heaviest put positioning below the market. It usually acts as support, and losing it removes the cushion.",
-      "source": null,
-      "quotable_as_contract": true
     },
     {
       "kind": "trend followers",
       "what": "UST 10Y note flip",
-      "now": 107.5625,
+      "now": 107.5469,
       "level": 111.0474,
       "unit": "price",
-      "distance_pct": 3.24,
+      "distance_pct": 3.25,
       "if_it_breaks": "Trend-following funds turn from seller to buyer here.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "ZN",
       "sector": "rates",
-      "trend_signal": -0.5687,
+      "trend_signal": -0.5706,
       "direction": "buy_above"
     },
     {
@@ -399,32 +277,47 @@
     {
       "kind": "trend followers",
       "what": "UST bond flip",
-      "now": 108.3438,
+      "now": 108.3125,
       "level": 114.0494,
       "unit": "price",
-      "distance_pct": 5.27,
+      "distance_pct": 5.3,
       "if_it_breaks": "Trend-following funds turn from seller to buyer here.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "ZB",
       "sector": "rates",
-      "trend_signal": -0.477,
+      "trend_signal": -0.4789,
       "direction": "buy_above"
     },
     {
       "kind": "trend followers",
       "what": "Dow flip",
-      "now": 53265.0,
-      "level": 50130.3735,
+      "now": 53257.0,
+      "level": 50130.3659,
       "unit": "price",
-      "distance_pct": -5.88,
+      "distance_pct": -5.87,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "YM",
       "sector": "equity",
-      "trend_signal": 0.4012,
+      "trend_signal": 0.4002,
       "direction": "sell_below"
+    },
+    {
+      "kind": "trend followers",
+      "what": "Natural gas flip",
+      "now": 2.926,
+      "level": 3.1346,
+      "unit": "price",
+      "distance_pct": 7.13,
+      "if_it_breaks": "Trend-following funds turn from seller to buyer here.",
+      "source": "yahoo_futures",
+      "quotable_as_contract": true,
+      "market": "NG",
+      "sector": "energy",
+      "trend_signal": -0.1485,
+      "direction": "buy_above"
     },
     {
       "kind": "trend followers",
@@ -443,32 +336,17 @@
     },
     {
       "kind": "trend followers",
-      "what": "Natural gas flip",
-      "now": 2.925,
-      "level": 3.1346,
-      "unit": "price",
-      "distance_pct": 7.17,
-      "if_it_breaks": "Trend-following funds turn from seller to buyer here.",
-      "source": "yahoo_futures",
-      "quotable_as_contract": true,
-      "market": "NG",
-      "sector": "energy",
-      "trend_signal": -0.1491,
-      "direction": "buy_above"
-    },
-    {
-      "kind": "trend followers",
       "what": "Russell 2000 flip",
-      "now": 2960.8999,
-      "level": 2748.0461,
+      "now": 2959.8999,
+      "level": 2748.0451,
       "unit": "price",
-      "distance_pct": -7.19,
+      "distance_pct": -7.16,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "RTY",
       "sector": "equity",
-      "trend_signal": 0.4064,
+      "trend_signal": 0.4045,
       "direction": "sell_below"
     },
     {
@@ -489,16 +367,16 @@
     {
       "kind": "trend followers",
       "what": "Nasdaq 100 flip",
-      "now": 29534.75,
-      "level": 26905.1693,
+      "now": 29526.0,
+      "level": 26905.1612,
       "unit": "price",
-      "distance_pct": -8.9,
+      "distance_pct": -8.88,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "NQ",
       "sector": "equity",
-      "trend_signal": 0.335,
+      "trend_signal": 0.334,
       "direction": "sell_below"
     },
     {
@@ -515,16 +393,16 @@
     {
       "kind": "trend followers",
       "what": "Soybeans flip",
-      "now": 1299.25,
-      "level": 1139.941,
+      "now": 1299.0,
+      "level": 1139.9408,
       "unit": "price",
-      "distance_pct": -12.26,
+      "distance_pct": -12.24,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "ZS",
       "sector": "ags",
-      "trend_signal": 0.6247,
+      "trend_signal": 0.6241,
       "direction": "sell_below"
     },
     {
@@ -545,31 +423,31 @@
     {
       "kind": "trend followers",
       "what": "Copper flip",
-      "now": 6.712,
+      "now": 6.7035,
       "level": 5.7284,
       "unit": "price",
-      "distance_pct": -14.65,
+      "distance_pct": -14.55,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "HG",
       "sector": "metals",
-      "trend_signal": 0.5976,
+      "trend_signal": 0.5942,
       "direction": "sell_below"
     },
     {
       "kind": "trend followers",
       "what": "WTI crude flip",
-      "now": 86.43,
-      "level": 71.0596,
+      "now": 86.57,
+      "level": 71.0597,
       "unit": "price",
-      "distance_pct": -17.78,
+      "distance_pct": -17.92,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "CL",
       "sector": "energy",
-      "trend_signal": 0.3249,
+      "trend_signal": 0.3278,
       "direction": "sell_below"
     },
     {
@@ -586,31 +464,31 @@
     {
       "kind": "trend followers",
       "what": "Corn flip",
-      "now": 537.75,
-      "level": 432.448,
+      "now": 538.5,
+      "level": 432.4487,
       "unit": "price",
-      "distance_pct": -19.58,
+      "distance_pct": -19.69,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "ZC",
       "sector": "ags",
-      "trend_signal": 0.6904,
+      "trend_signal": 0.6919,
       "direction": "sell_below"
     },
     {
       "kind": "trend followers",
       "what": "Wheat flip",
-      "now": 775.0,
-      "level": 576.4055,
+      "now": 778.5,
+      "level": 576.4086,
       "unit": "price",
-      "distance_pct": -25.63,
+      "distance_pct": -25.96,
       "if_it_breaks": "Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together.",
       "source": "yahoo_futures",
       "quotable_as_contract": true,
       "market": "ZW",
       "sector": "ags",
-      "trend_signal": 0.7635,
+      "trend_signal": 0.7699,
       "direction": "sell_below"
     },
     {
@@ -649,8 +527,10 @@
   },
   "limits": [
     "These markets came from Yahoo rather than our data provider (CL, DX, HG, NG, NQ, RTY, YM, ZB, ZC, ZF, ZN, ZS, ZT, ZW). They are the real futures contracts, so the flip levels are quotable, but Yahoo is a free feed with no uptime guarantee.",
+    "gamma unavailable — QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set",
     "DSPX and implied correlation disagree with the VIXEQ-VIX spread — treat the dispersion read with caution",
     "economic calendar unavailable: FMP HTTP 404 for https://financialmodelingprep.com/stable/economics-calendar: []",
+    "No dealer-positioning reading today, so nothing here accounts for option hedging flows.",
     "Two macro scenarios fit today's data almost equally well. Treat the overlap between them as the honest read rather than the winner.",
     "A scenario score is the share of that story's conditions currently met. It is not a probability and was never fitted to history.",
     "This layer does not size, does not name a ticker and places nothing. It produces a family of expressions and a multiplier on the PM's own risk budget."
