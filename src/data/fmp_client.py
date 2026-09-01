@@ -55,8 +55,18 @@ def _effective_rate_limit() -> int:
             return max(10, min(v, 500))
         except ValueError:
             pass
-    # Cloud detection: HF Spaces sets SPACE_ID; Streamlit Cloud sets STREAMLIT_SERVER_PORT
-    if os.environ.get("SPACE_ID") or os.environ.get("SPACE_HOST"):
+    # Cloud detection: HF Spaces sets SPACE_ID; Streamlit Cloud sets STREAMLIT_SERVER_PORT.
+    # GitHub Actions runners are ALSO a cloud datacenter IP (Azure) but were missing
+    # from this check entirely -- every full-pipeline run there hammered FMP at the
+    # full 250/min instead of the already-proven-safer 80/min HF gets. 2026-08-21,
+    # recurred 2026-08-27 and again 2026-09-01: repeated 'RemoteDisconnected' mid-pull
+    # on Actions specifically, at a different ticker each time -- consistent with FMP
+    # throttling/dropping connections from an unrecognised-as-cloud datacenter IP
+    # pulling too fast, not a one-off blip (the 2026-08-27 fix added a single retry;
+    # it wasn't enough on its own because the SAME connection kept dropping on both
+    # the original call and the retry, seconds apart).
+    if (os.environ.get("SPACE_ID") or os.environ.get("SPACE_HOST")
+            or os.environ.get("GITHUB_ACTIONS") == "true"):
         return CLOUD_RATE_LIMIT_PER_MIN
     return DEFAULT_RATE_LIMIT_PER_MIN
 
@@ -273,27 +283,37 @@ class FMPClient:
 
     # ---------- internals ----------
 
+    # A transient connection drop here used to propagate straight out of
+    # _get_json uncaught -- neither FMPError nor FMPQuotaError, so it slid right
+    # past the per-ticker try/except in build_panel()/pull_tickers()
+    # (src/data/panel_builder.py) and took the ENTIRE ~800-ticker pull down with
+    # it. 2026-08-21: died at ticker 358/820. 2026-08-27: recurred at 398/819
+    # ('Connection aborted... RemoteDisconnected') -- fixed with a single 5s
+    # retry, but that proved NOT enough: 2026-09-01 recurred again at 116/823,
+    # the connection dropping on both the original call AND that one retry,
+    # seconds apart -- a more persistent throttle than a single blip, most
+    # likely GitHub Actions' datacenter IP being throttled by FMP the same way
+    # cloud IPs already are (see _effective_rate_limit -- Actions was missing
+    # from that detection until this same fix). Backs off through
+    # _NETWORK_RETRY_DELAYS_S before giving up and converting to FMPError, at
+    # which point the calling loop logs it and moves on to the next ticker
+    # instead of the whole run dying.
+    _NETWORK_RETRY_DELAYS_S = (5, 15)
+
     def _get_json(self, url: str, params: dict) -> dict | list:
         self._throttle()
-        try:
-            resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
-        except requests.exceptions.RequestException as exc:
-            # A transient connection drop here used to propagate straight out of
-            # _get_json uncaught -- neither FMPError nor FMPQuotaError, so it slid
-            # right past the per-ticker try/except in build_panel()/pull_tickers()
-            # (src/data/panel_builder.py) and took the ENTIRE ~800-ticker pull down
-            # with it (2026-08-21: died at ticker 358/820; recurred 2026-08-27 at
-            # ticker 398/819, 'Connection aborted... RemoteDisconnected', leaving
-            # panel_daily.parquet completely unwritten for the run since the crash
-            # happened before that file's own write step ever ran). One retry after
-            # a short pause, matching the 429/invalid-key retry-once pattern below;
-            # a second failure becomes a normal FMPError so the calling loop logs
-            # it and moves on to the next ticker instead of the whole run dying.
-            time.sleep(5)
+        resp = None
+        last_exc: Exception | None = None
+        for attempt in range(len(self._NETWORK_RETRY_DELAYS_S) + 1):
+            if attempt > 0:
+                time.sleep(self._NETWORK_RETRY_DELAYS_S[attempt - 1])
             try:
                 resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
-            except requests.exceptions.RequestException as exc2:
-                raise FMPError(f"network error calling {url}: {exc2}") from exc2
+                break
+            except requests.exceptions.RequestException as exc:
+                last_exc = exc
+        if resp is None:
+            raise FMPError(f"network error calling {url}: {last_exc}") from last_exc
         if resp.status_code == 429:
             # FMP rate-limit hit. Back off a full minute and retry once.
             time.sleep(60)

@@ -12,7 +12,10 @@ from __future__ import annotations
 
 import requests
 
-from src.data.fmp_client import FMPClient, FMPConfig, FMPError
+from src.data.fmp_client import (
+    FMPClient, FMPConfig, FMPError, CLOUD_RATE_LIMIT_PER_MIN,
+    DEFAULT_RATE_LIMIT_PER_MIN, _effective_rate_limit,
+)
 
 
 class _Resp:
@@ -54,6 +57,30 @@ def test_a_transient_connection_drop_is_retried_and_then_succeeds(monkeypatch):
     assert len(df) == 1, "the successful retry's data must be returned, not lost"
 
 
+def test_the_2026_09_01_shape_two_drops_then_success_still_recovers(monkeypatch):
+    """The actual incident: the connection dropped on the original call AND
+    the first retry, seconds apart -- a single retry (2026-08-27's fix) was
+    not enough. The backoff must go deeper than one retry."""
+    client = _client()
+    monkeypatch.setattr("time.sleep", lambda *_: None)
+
+    calls = []
+
+    def _get(*_a, **_k):
+        calls.append(1)
+        if len(calls) <= 2:
+            raise requests.exceptions.ConnectionError(
+                "Connection aborted.", requests.exceptions.RequestException("boom"))
+        return _Resp(200, [{"date": "2025-01-02", "open": 1, "high": 1,
+                            "low": 1, "close": 1, "volume": 1}])
+
+    monkeypatch.setattr(client._session, "get", _get)
+
+    df = client.get_daily_bars("AAPL")
+    assert len(calls) == 3, "must survive two consecutive connection drops"
+    assert len(df) == 1
+
+
 def test_a_connection_drop_that_persists_becomes_a_normal_fmperror(monkeypatch):
     """Callers (build_panel/pull_tickers) already catch FMPError per-ticker and
     move on to the next ticker -- this is what makes that safety net reachable
@@ -93,3 +120,27 @@ def test_a_healthy_call_never_pays_the_retry_cost(monkeypatch):
 
     client.get_daily_bars("AAPL")
     assert len(calls) == 1
+
+
+# ── GitHub Actions must get the same conservative rate limit as HF (2026-09-01) ──
+# The cloud-IP detection already existed for HF/Streamlit Cloud (FMP throttles
+# datacenter IPs harder than per-key), but GitHub Actions runners -- also a
+# cloud datacenter IP (confirmed Azure in its own job logs) -- were missing
+# from the check entirely, so every Actions run pulled at the full 250/min
+# instead of the already-proven-safer 80/min. That's the second half of why
+# the connection kept dropping specifically on Actions.
+
+def test_github_actions_gets_the_cloud_rate_limit(monkeypatch):
+    monkeypatch.delenv("FMP_RATE_LIMIT_PER_MIN", raising=False)
+    monkeypatch.delenv("SPACE_ID", raising=False)
+    monkeypatch.delenv("SPACE_HOST", raising=False)
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    assert _effective_rate_limit() == CLOUD_RATE_LIMIT_PER_MIN
+
+
+def test_a_plain_local_run_still_gets_the_full_rate(monkeypatch):
+    monkeypatch.delenv("FMP_RATE_LIMIT_PER_MIN", raising=False)
+    monkeypatch.delenv("SPACE_ID", raising=False)
+    monkeypatch.delenv("SPACE_HOST", raising=False)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    assert _effective_rate_limit() == DEFAULT_RATE_LIMIT_PER_MIN
