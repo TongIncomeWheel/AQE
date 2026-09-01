@@ -28,7 +28,9 @@ too.
 
 from __future__ import annotations
 
+import json
 import threading
+import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -37,6 +39,20 @@ _SGT = ZoneInfo("Asia/Singapore")
 _lock = threading.Lock()
 _done = False
 _result: dict = {"state": "not_attempted"}
+
+# 2026-09-01: the "force" restore below already existed and is now also wired
+# to a Scanner button ("Check GitHub for newer data") -- but relying on a
+# human to notice and click it doesn't scale. The scheduled GitHub Actions
+# backstop succeeding while the Space's own run did not is a ROUTINE event
+# (it exists FOR exactly that), yet this container has no automatic way to
+# notice: autoload_state only ever re-syncs on a MISSING local state, never a
+# STALE one. check_github_freshness (below) closes that -- called on every
+# page load, throttled by this interval so it stays a cheap background check
+# (~1 small GitHub read) rather than a call on every widget interaction
+# (Streamlit reruns the whole script on each one).
+_FRESHNESS_CHECK_INTERVAL_S = 300
+_freshness_lock = threading.Lock()
+_last_freshness_check = 0.0
 
 # The files whose absence means this container cannot answer anything useful.
 # Deliberately the price/score spine plus the export, not every artifact: a
@@ -187,6 +203,64 @@ def autoload_with_spinner(force: bool = False) -> dict:
 
     with st.spinner("Restoring the last run from GitHub…"):
         return autoload_state(force=force)
+
+
+def check_github_freshness() -> dict:
+    """Self-healing check: is GitHub's export newer than this container's own?
+    If so, restore the full state so this container catches up automatically.
+
+    autoload_state only ever restores on a MISSING local state (cold start).
+    A container that already has SOME export -- even one from a run that
+    happened on a different machine days ago -- reads as "warm" and is never
+    revisited. 2026-09-01: the scheduled GitHub Actions backstop published a
+    genuinely fresh export while this container's own scheduled run had not,
+    and there was no path back from GitHub to the live page short of a
+    manual force-restore. That gap is routine, not rare -- the backstop
+    exists FOR the case where the Space's own run doesn't happen -- so it
+    cannot depend on someone noticing and clicking a button.
+
+    Throttled to _FRESHNESS_CHECK_INTERVAL_S so this stays one small GitHub
+    read per interval, not a call on every widget interaction (Streamlit
+    reruns the whole script on each one). Never raises -- a network hiccup
+    here must not stop the page from rendering with whatever it already has.
+    """
+    global _last_freshness_check
+    with _freshness_lock:
+        now = time.monotonic()
+        if (now - _last_freshness_check) < _FRESHNESS_CHECK_INTERVAL_S:
+            return {"checked": False, "reason": "throttled"}
+        _last_freshness_check = now
+
+    try:
+        from src.data.paths import EXPORT_JSON
+        if not EXPORT_JSON.exists():
+            return {"checked": False, "reason": "no local export yet -- "
+                                                 "autoload_state's own cold path covers this"}
+        local = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
+        local_stamp = local.get("exported_at") or local.get("date") or ""
+
+        from src.data import github_sync
+        if not github_sync.is_configured():
+            return {"checked": False, "reason": "GITHUB_TOKEN not set"}
+        remote = github_sync.get_file(f"{github_sync.OUTPUT_DIR_IN_REPO}/aqe_daily_export.json")
+        if not remote.get("ok"):
+            return {"checked": False, "reason": remote.get("reason")}
+        remote_stamp = (json.loads(remote["text"]).get("exported_at")
+                        or json.loads(remote["text"]).get("date") or "")
+
+        # exported_at is always "YYYY-MM-DD HH:MM:SS SGT" (see drive_sync.py),
+        # so lexicographic comparison is a valid time comparison.
+        if not remote_stamp or remote_stamp <= local_stamp:
+            return {"checked": True, "newer_on_github": False}
+
+        res = autoload_state(force=True)
+        res["checked"] = True
+        res["newer_on_github"] = True
+        res["was"] = local_stamp
+        res["now"] = remote_stamp
+        return res
+    except Exception as exc:  # noqa: BLE001
+        return {"checked": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
 def render_status_line() -> None:

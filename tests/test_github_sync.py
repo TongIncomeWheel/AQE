@@ -298,6 +298,109 @@ def test_the_app_still_opens_when_every_store_is_down(monkeypatch):
     assert res["state"] == "failed" and "network gone" in res["reason"]
 
 
+# ── the self-healing freshness check (2026-09-01) ────────────────────────
+# autoload_state above only ever restores a MISSING local state. A container
+# that already has SOME export -- even a stale one from a scheduled GitHub
+# Actions backstop run on a different machine, or vice versa -- reads as
+# "warm" and is never revisited. check_github_freshness closes that: it
+# compares timestamps and force-restores automatically when GitHub is ahead,
+# so a routine event (the backstop succeeding while the Space's own run did
+# not) self-heals instead of needing a human to notice and click a button.
+
+def _export(tmp_path, exported_at):
+    import json as _json
+    p = tmp_path / "aqe_daily_export.json"
+    p.write_text(_json.dumps({"date": exported_at[:10], "exported_at": exported_at}),
+                 encoding="utf-8")
+    return p
+
+
+def test_github_ahead_of_local_triggers_a_force_restore(monkeypatch, tmp_path):
+    from src.ui import bootstrap as B
+    from src.data import paths as P
+    import json as _json
+
+    monkeypatch.setattr(B, "_last_freshness_check", 0.0)
+    monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-08-29 16:22:08 SGT"))
+
+    from src.data import github_sync as G
+    monkeypatch.setattr(G, "is_configured", lambda: True)
+    monkeypatch.setattr(G, "get_file", lambda path: {
+        "ok": True,
+        "text": _json.dumps({"date": "2026-09-01", "exported_at": "2026-09-01 14:58:41 SGT"}),
+    })
+
+    calls = []
+    monkeypatch.setattr(B, "autoload_state",
+                        lambda force=False: calls.append(force) or {"state": "restored", "files": 17})
+
+    res = B.check_github_freshness()
+    assert res["checked"] is True
+    assert res["newer_on_github"] is True
+    assert calls == [True], "must force a real restore, not the cheap warm no-op"
+    assert res["was"] == "2026-08-29 16:22:08 SGT"
+    assert res["now"] == "2026-09-01 14:58:41 SGT"
+
+
+def test_github_not_ahead_of_local_does_nothing(monkeypatch, tmp_path):
+    from src.ui import bootstrap as B
+    from src.data import paths as P
+    import json as _json
+
+    monkeypatch.setattr(B, "_last_freshness_check", 0.0)
+    monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-09-01 14:58:41 SGT"))
+
+    from src.data import github_sync as G
+    monkeypatch.setattr(G, "is_configured", lambda: True)
+    monkeypatch.setattr(G, "get_file", lambda path: {
+        "ok": True,
+        "text": _json.dumps({"date": "2026-09-01", "exported_at": "2026-09-01 14:58:41 SGT"}),
+    })
+
+    calls = []
+    monkeypatch.setattr(B, "autoload_state", lambda force=False: calls.append(force))
+
+    res = B.check_github_freshness()
+    assert res == {"checked": True, "newer_on_github": False}
+    assert calls == [], "a container that is already current must not be restored"
+
+
+def test_the_check_is_throttled_not_run_on_every_page_view(monkeypatch, tmp_path):
+    from src.ui import bootstrap as B
+    from src.data import paths as P
+    import time as _time
+
+    monkeypatch.setattr(B, "_last_freshness_check", _time.monotonic())
+    monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-08-29 16:22:08 SGT"))
+
+    from src.data import github_sync as G
+    calls = []
+    monkeypatch.setattr(G, "get_file", lambda path: calls.append(1) or {"ok": True, "text": "{}"})
+
+    res = B.check_github_freshness()
+    assert res == {"checked": False, "reason": "throttled"}
+    assert calls == [], "a call inside the throttle window must not hit GitHub at all"
+
+
+def test_a_network_failure_never_raises(monkeypatch, tmp_path):
+    from src.ui import bootstrap as B
+    from src.data import paths as P
+
+    monkeypatch.setattr(B, "_last_freshness_check", 0.0)
+    monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-08-29 16:22:08 SGT"))
+
+    from src.data import github_sync as G
+    monkeypatch.setattr(G, "is_configured", lambda: True)
+
+    def _boom(path):
+        raise RuntimeError("network gone")
+    monkeypatch.setattr(G, "get_file", _boom)
+
+    res = B.check_github_freshness()          # must not raise
+    assert res["checked"] is False
+    assert "network gone" in res["reason"]
+
+
 # ── the deploy guard ─────────────────────────────────────────────────────
 
 def test_a_data_commit_cannot_trigger_an_hf_rebuild():

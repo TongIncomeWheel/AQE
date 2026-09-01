@@ -288,16 +288,44 @@ APP_PASSWORD_ENV = "AQE_APP_PASSWORD"
 
 
 def _autoload_once() -> None:
-    """Restore the runtime state on a cold container, once per process.
+    """Restore the runtime state on a cold container, once per process, and
+    self-heal a warm one whose local data has fallen behind GitHub.
 
     Called from `require_login()` AFTER the sign-in check, so it runs on every
     page of every module — Scanner, Option scanner, Crown Macro — and never for
-    an unauthenticated visitor. On a warm container it is one `exists()` check.
-    Never raises: a store being unreachable must not stop the app from opening.
+    an unauthenticated visitor. On a warm, current container both checks below
+    are cheap (an `exists()` check, then a throttled GitHub read at most once
+    per 5 minutes) and change nothing. Never raises: a store being unreachable
+    must not stop the app from opening.
+
+    2026-09-01: autoload_with_spinner alone only ever restores on a MISSING
+    local state -- a container that already has SOME export, even one from a
+    scheduled GitHub Actions backstop run on a DIFFERENT machine days ago vs
+    this Space's own newer publish (or the reverse: this Space warm and
+    correct while Actions is the one that's stale), reads as "warm" and is
+    never revisited. check_github_freshness closes that other half: it
+    compares timestamps and force-restores automatically when GitHub is
+    ahead, so this page shows what the pipeline actually last produced
+    without anyone needing to notice and click a button.
     """
     try:
-        from src.ui.bootstrap import autoload_with_spinner
+        from src.ui.bootstrap import autoload_with_spinner, check_github_freshness
         autoload_with_spinner()
+        check_github_freshness()
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _render_boot_status() -> None:
+    """Surface what _autoload_once() just did (or didn't) -- restored,
+    caught up from a newer GitHub copy, degraded, or failed. bootstrap.
+    render_status_line() already existed for exactly this but was never
+    actually called from any page, so a restore (or a restore FAILURE) was
+    invisible even though the underlying check ran correctly. Silent when
+    there is nothing to say (a warm, already-current container)."""
+    try:
+        from src.ui.bootstrap import render_status_line
+        render_status_line()
     except Exception:  # noqa: BLE001
         pass
 
@@ -341,9 +369,11 @@ def require_login() -> None:
     expected = os.environ.get(APP_PASSWORD_ENV)
     if not expected:
         _autoload_once()
+        _render_boot_status()
         return  # no password configured -> app is open (local use)
     if st.session_state.get("aqe_authenticated"):
         _autoload_once()
+        _render_boot_status()
         return  # already signed in this session
 
     st.title("AQE — sign in")
