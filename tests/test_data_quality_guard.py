@@ -11,6 +11,7 @@ import pytest
 from src.data.drive_sync import (
     _compute_data_quality, _HARD_REQUIRED_NONNULL,
     _assert_scored_universe_not_collapsed, MIN_SCORED_UNIVERSE,
+    _elder_and_longlist_tickers,
 )
 
 
@@ -121,3 +122,43 @@ def test_the_error_names_the_actual_and_expected_counts_for_a_fast_diagnosis():
     msg = str(exc.value)
     assert "11" in msg
     assert str(MIN_SCORED_UNIVERSE) in msg
+
+
+# ── the AIC quick-start index (2026-09-01 PM ruling) ────────────────────────
+# candidate_set.json and shortlist.json both read as "the list for AIC" but
+# neither is: candidate_set.json is the PMA packet-splitter's own CONSUMED-
+# trimmed intermediate, shortlist.json is build_export's own upstream
+# Pipeline-Rank input. Neither was ever built around "on_longlist AND
+# on_elder" -- there was no rule that produced that. elder_and_longlist_
+# tickers IS that rule, computed as a pure view over daily_list's own flags
+# so it can never itself drift out of sync with what it's describing.
+
+def _row(ticker, on_longlist, on_elder):
+    return {"ticker": ticker, "on_longlist": on_longlist, "on_elder": on_elder}
+
+
+def test_only_names_on_both_longlist_and_elder_are_included():
+    rows = [
+        _row("BOTH", True, True),
+        _row("LONGLIST_ONLY", True, False),
+        _row("ELDER_ONLY", False, True),
+        _row("NEITHER", False, False),
+    ]
+    assert _elder_and_longlist_tickers(rows) == ["BOTH"]
+
+
+def test_preserves_daily_lists_own_sc_momentum_order():
+    """daily_list is already ranked by sc_momentum descending before this is
+    called -- the index must not re-sort or reorder it a second way."""
+    rows = [_row("HIGH", True, True), _row("MID", True, True), _row("LOW", True, True)]
+    assert _elder_and_longlist_tickers(rows) == ["HIGH", "MID", "LOW"]
+
+
+def test_empty_daily_list_gives_an_empty_index_not_an_error():
+    assert _elder_and_longlist_tickers([]) == []
+
+
+def test_missing_flags_default_to_excluded_not_a_crash():
+    """A row missing on_longlist/on_elder entirely (should not happen, but
+    the check must degrade to 'not included' rather than raising)."""
+    assert _elder_and_longlist_tickers([{"ticker": "BARE"}]) == []

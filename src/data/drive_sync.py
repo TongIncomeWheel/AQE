@@ -94,6 +94,14 @@ _FIELD_GLOSSARY = {
         "already cover entry timing. AQE makes NO decision at any stage; it supplies "
         "the data and levels, the AIC decides."
     ),
+    "elder_and_longlist_tickers": "PM ruling 2026-09-01: a quick-start index for the "
+             "AIC, not a new list — tickers from daily_list where on_longlist AND "
+             "on_elder are both true, ranked by sc_momentum (same order as daily_list "
+             "itself). Ticker names only; the full row for each is one lookup away in "
+             "daily_list, so nothing here is duplicated data or a second source of "
+             "truth. Superset is daily_list in full; this is the intersection, not a "
+             "third option — start here when you want the fast read, start from "
+             "daily_list when you want everything.",
     "entry": "Reference entry = prior close-of-day. The live fill is the IBKR price at "
              "bracket time, NOT this value.",
     "live_px": "(held_positions only) Current mark for a held ticker = the same FMP "
@@ -2218,10 +2226,32 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["daily_list"] = _daily_list
     export["lens_ranking"] = build_lens_ranking(_daily_list)  # Part 1
 
+    # ---- AIC quick-start index (2026-09-01, PM ruling) — a materialized VIEW
+    # over daily_list's own on_longlist/on_elder flags, not a new list with its
+    # own trimming logic. candidate_set.json and shortlist.json both read as
+    # "the list for AIC" but neither one is: candidate_set.json is the PMA
+    # packet-splitter's own intermediate (CONSUMED field trim, built by
+    # pma_pipeline.py's cmd_trim for cmd_packets, published alongside for the
+    # PM's own S7 card — never designed around what AIC needs); shortlist.json
+    # is build_export's OWN upstream input (the Pipeline-Rank-screen gate,
+    # SC_MOMENTUM >= SHORTLIST_MIN_SC), not a committee-facing artifact either.
+    # Neither has any relationship to "on_longlist AND on_elder" -- there was
+    # never a rule that produced that, which is exactly the complaint.
+    #
+    # This key IS that rule, computed here so it can never drift: same file,
+    # same build, zero extra publish/sync path -- the exact failure class this
+    # whole day was spent fixing (files falling out of sync with each other).
+    # Tickers only, ranked by sc_momentum -- the full row for each is already
+    # one lookup away in daily_list, so nothing is duplicated or ever risks
+    # disagreeing with the row it's describing.
+    _elder_and_longlist = _elder_and_longlist_tickers(_daily_list)
+    export["elder_and_longlist_tickers"] = _elder_and_longlist
+
     export["summary"] = {
         "daily_count": len(_daily_list),
         "longlist_count": sum(1 for r in _daily_list if r.get("on_longlist")),
         "elder_count": sum(1 for r in _daily_list if r.get("on_elder")),
+        "elder_and_longlist_count": len(_elder_and_longlist),
         "ledger_count": sum(1 for r in _daily_list if r.get("in_ledger")),
         "qs_count": sum(1 for r in _daily_list if r.get("on_qs")),
         "qs_scored_count": sum(1 for r in _daily_list if r.get("qs")),
@@ -2348,6 +2378,17 @@ def build_export(shortlist: dict | None = None) -> dict:
         export.get("daily_list") or [], export.get("held_positions") or [])
 
     return export
+
+
+def _elder_and_longlist_tickers(daily_list: list[dict]) -> list[str]:
+    """Tickers on BOTH on_longlist and on_elder, in daily_list's own order
+    (already ranked by sc_momentum descending). PM ruling 2026-09-01 -- see
+    the elder_and_longlist_tickers entry in _FIELD_GLOSSARY for why this
+    exists instead of another trimmed file like candidate_set.json/
+    shortlist.json. Pure function, no I/O, so this rule is directly testable
+    without exercising the rest of build_export's heavy machinery."""
+    return [r["ticker"] for r in daily_list
+            if r.get("on_longlist") and r.get("on_elder")]
 
 
 # How few scored tickers is too few to trust. Set far below the ~700-850
