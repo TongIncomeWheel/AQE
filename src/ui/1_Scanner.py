@@ -332,6 +332,32 @@ with st.sidebar:
         run_module_streaming("src.pipeline.voice_packets", "Voice packets", prog, stat)
         st.rerun()
 
+    # 2026-09-01: the GitHub Actions backstop publishes straight to the repo —
+    # a totally separate machine from this container. Once this container is
+    # warm (has ANY local export, even a stale one), src.ui.bootstrap's own
+    # autoload only ever runs on a MISSING state, never a STALE one, so a
+    # successful Actions run is invisible here until something forces a
+    # re-pull. bootstrap.autoload_state's docstring already referred to "the
+    # UI button" for exactly this -- it was never actually wired to one.
+    if st.button("Check GitHub for newer data", use_container_width=True,
+                 help="This container only restores itself automatically when "
+                      "its own local export is MISSING, not when GitHub simply "
+                      "has something newer (e.g. the scheduled Actions backstop "
+                      "ran on its own and published straight to the repo). "
+                      "Use this to force a re-pull and see what's actually on "
+                      "GitHub right now."):
+        from src.ui.bootstrap import autoload_with_spinner
+        res = autoload_with_spinner(force=True)
+        if res.get("state") == "restored":
+            msg = (f"Restored from {res.get('store')} — "
+                   f"{res.get('files')} file(s), snapshot of "
+                   f"{res.get('saved_at') or 'unknown date'}.")
+            st.session_state["last_action_status"] = {"ok": True, "message": msg}
+        else:
+            msg = f"Could not restore: {res.get('reason', 'unknown reason')}"
+            st.session_state["last_action_status"] = {"ok": False, "message": msg}
+        st.rerun()
+
     with st.expander("Data Refresh", expanded=False):
         if st.button("Rebuild prices",
                      disabled=(CLOUD_MODE and not FMP_KEY_SET)):
