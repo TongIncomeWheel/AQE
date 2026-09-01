@@ -1,6 +1,6 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-09-01T14:53:01+08:00",
+  "generated_at": "2026-09-01T15:00:21+08:00",
   "pack_status": "PARTIAL",
   "crown_status": "DEGRADED",
   "oldest_leg": "2026-08-31",
@@ -12,19 +12,20 @@
     "because": [
       "The average stock is keeping up with the index — the rally is broad.",
       "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 14.9, lower than 90% of the past two years.",
-      "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and 1 of those positions are stretched. Crowded trades unwind quickly, so the size guidance is cut.",
       "Big speculators are unusually long the dollar, gold, copper and 6 others; unusually short natural gas and the long bond (CFTC data to 2026-08-25).",
       "1 warning sign lit: price is climbing while momentum falls. A further 13 showed up on individual markets. No single one of these is a reason to sell. They matter when several point the same way as the breadth reading."
     ],
     "so_what": "Own the average stock, not just the leaders — and collect premium against it. That is the closest fit rather than a clean one — 1 of its conditions are not met. Size at 1.00x your normal risk.",
     "watch_for": [
-      "If the dollar trades above 99.59 (0.1% away), trend funds start buying.",
+      "If the dollar trades above 99.62 (0.1% away), trend funds start buying.",
       "If the 2-year trades above 103.59 (1.0% away), trend funds start buying.",
       "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
     ],
-    "caveats": [],
-    "as_of": "2026-09-01T14:52:35+08:00",
+    "caveats": [
+      "No dealer-positioning read today, so nothing above accounts for option hedging flows."
+    ],
+    "as_of": "2026-09-01T14:58:37+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
@@ -79,7 +80,7 @@
         "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
         "evidence": [
           "VIX 14.92",
-          "CTA sector spread 1.25"
+          "CTA sector spread 1.26"
         ],
         "missing_conditions": [
           "implied correlation 10.06 (25% pctl)",
@@ -90,7 +91,7 @@
       },
       {
         "scenario": "REFLATION",
-        "score": 0.2353,
+        "score": 0.2354,
         "coverage": 1.0,
         "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
         "expression": "Cyclicals, financials, small caps, energy. Short duration.",
@@ -157,7 +158,7 @@
           "CPER flat (roc5 -0.17%, roc20 0.91%)",
           "GLD flat (roc5 -4.28%, roc20 9.88%)",
           "HYG up (roc5 0.14%, roc20 0.63%)",
-          "CTA fx bias -0.02"
+          "CTA fx bias -0.01"
         ],
         "unavailable": [],
         "can_lead": true
@@ -166,7 +167,9 @@
   },
   "limits": [
     "No scenario currently leads (either no clean macro story is expressing, or the scenario read itself is unavailable) — sector coherence needs a leading scenario to compare against.",
+    "No dealer-positioning read today, so nothing above accounts for option hedging flows.",
     "Crown: These markets came from Yahoo rather than our data provider (CL, DX, HG, NG, NQ, RTY, YM, ZB, ZC, ZF, ZN, ZS, ZT, ZW). They are the real futures contracts, so the flip levels are quotable, but Yahoo is a free feed with no uptime guarantee.",
+    "Crown: gamma unavailable — QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set",
     "Crown: DSPX and implied correlation disagree with the VIXEQ-VIX spread — treat the dispersion read with caution",
     "Crown: economic calendar unavailable: FMP HTTP 404 for https://financialmodelingprep.com/stable/economics-calendar: []",
     "This pack does not size. It reports agreement/disagreement only.",
@@ -174,8 +177,8 @@
     "Coherence is a category (AGREES/DISAGREES/UNTESTED), never a probability — same rule as the scenario scores it is built from."
   ],
   "what_changed": {
-    "available": true,
+    "available": false,
     "changes": [],
-    "note": "Nothing that changes a decision moved."
+    "note": "No previous pack to compare against."
   }
 }
