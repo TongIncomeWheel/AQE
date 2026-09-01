@@ -1294,6 +1294,12 @@ BLOCKS = [
     ("lens_ranking", "dict", "Same names ordered by lens agreement",
      "engines/lens_consensus.py:build_lens_ranking:121-154"),
     ("summary", "dict", "Run counts", "src/data/drive_sync.py:build_export"),
+    ("elder_and_longlist_tickers", "list",
+     "PM ruling 2026-09-01: AIC quick-start index — tickers where "
+     "on_longlist AND on_elder are both true, in daily_list's own "
+     "sc_momentum order. A pure view over flags daily_list already carries, "
+     "not a new trimmed list (unlike candidate_set.json/shortlist.json).",
+     "src/data/drive_sync.py:_elder_and_longlist_tickers"),
     ("signal_radar", "dict", "Radar tag totals", "engines/signal_radar.py"),
     ("data_quality", "dict", "Scored records carrying a null core field",
      "src/data/drive_sync.py:_compute_data_quality:2296"),
