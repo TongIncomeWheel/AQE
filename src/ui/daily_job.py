@@ -239,6 +239,25 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             pass
         return None, False
 
+    def _packets_status(stdout: str) -> str:
+        """Did Step 8a-3 (voice packets) actually publish? Independent of the
+        overall run's rc/status -- 2026-09-01: the export refreshed cleanly
+        (rc==0, feed_today True) while candidate_set.json + all 11 packet
+        files sat stuck on a THREE-DAYS-OLD run, invisible because Step 8a-3
+        (src/pipeline/daily_orchestrator.py) is wrapped in its own
+        except-and-warn, and daily_backstop.py only ever prints/keeps `tail`
+        when the overall run is not "success" -- an otherwise-clean run
+        discarded every line telling you the publish had failed. Scans the
+        captured stdout regardless of overall outcome so this can never again
+        be silent; matches the exact print()s Step 8a-3 emits."""
+        for line in reversed((stdout or "").splitlines()):
+            if "Voice packets published:" in line:
+                return line.strip()
+            if ("[WARN] voice packets" in line
+                    or "[WARN] Voice packet split failed" in line):
+                return line.strip()
+        return "unknown -- Step 8a-3 produced no recognizable output"
+
     try:
         proc = subprocess.run(
             [sys.executable, "-u", "-m", "src.pipeline.daily_orchestrator"],
@@ -266,6 +285,7 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "rc": rc,
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
+            "packets_status": _packets_status(proc.stdout),
             "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if not ok else "",
             **({} if ok else {"reason": "pipeline exited 0 but the export was not "
                                          "refreshed for today -- see the tail for "
@@ -284,6 +304,7 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "status": "partial" if feed_today else "failed",
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
+            "packets_status": _packets_status(partial),
             "reason": (f"TimeoutExpired after {_PIPELINE_TIMEOUT}s"
                        + (" — feed EXPORTED OK; a tail step (snapshot/ledger/MA "
                           "scan) ran long. Trading feed is current."

@@ -99,3 +99,42 @@ def test_a_stale_export_run_captures_a_tail_for_diagnosis(_wired, monkeypatch):
     marker = J._run_pipeline_and_record(now)
 
     assert marker.get("tail"), "a silently-stale run must still leave a diagnosable tail"
+
+
+# ── packets_status: independent of the overall run's rc/status (2026-09-01) ──
+# The actual incident: the export refreshed cleanly (rc==0, feed_today True,
+# an otherwise genuine "success") while candidate_set.json + all 11 voice
+# packet files sat stuck on a run from days earlier. Step 8a-3 (voice packets,
+# src/pipeline/daily_orchestrator.py) is wrapped in its own except-and-warn,
+# and `tail` was only ever captured on a non-"success" overall run -- so an
+# otherwise-clean run discarded every line saying the publish had failed.
+# packets_status must be recorded regardless of whether the overall run
+# counts as success, exactly like exported_at already is.
+
+def test_packets_status_is_recorded_even_on_an_overall_success(_wired, monkeypatch):
+    now = datetime(2026, 9, 1, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-01")
+    stdout = ("[daily] Step 8a-3: voice packets...\n"
+              "  [WARN] voice packets publish: GITHUB_TOKEN not set\n")
+    monkeypatch.setattr(subprocess, "run",
+                         lambda *a, **k: _FakeProc(returncode=0, stdout=stdout))
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert marker["status"] == "success", "the export itself genuinely did refresh"
+    assert "voice packets publish" in marker["packets_status"], (
+        "a packets-publish failure must be visible even when the overall run "
+        "is reported as a success -- this is exactly what went undetected"
+    )
+
+
+def test_packets_status_reports_a_clean_publish(_wired, monkeypatch):
+    now = datetime(2026, 9, 1, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-01")
+    stdout = "  Voice packets published: 11/11 -> aegis/output/packets/\n"
+    monkeypatch.setattr(subprocess, "run",
+                         lambda *a, **k: _FakeProc(returncode=0, stdout=stdout))
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert "published: 11/11" in marker["packets_status"]
