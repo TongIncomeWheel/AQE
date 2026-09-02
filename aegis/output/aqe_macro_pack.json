@@ -1,9 +1,9 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-09-02T07:00:09+08:00",
+  "generated_at": "2026-09-02T08:38:52+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
-  "oldest_leg": "2026-08-31",
+  "oldest_leg": "2026-09-01",
   "what_this_is": "One read assembled from four already-independent systems — Crown (regime/positioning/volatility), the Macro Weather x Crown scenario read, SRM sector grades and Thematic Rotation. Nothing here is a new gate or a new score beyond one thing: whether a sector's or theme's current grade agrees with what the leading scenario implies for it.",
   "sector_read": [
     {
@@ -212,13 +212,13 @@
       "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLC)"
     }
   ],
-  "read_me_first": "A broad market, and quiet. Leading scenario: INFLATION_SHOCK. Two stories fit the tape about equally. 1 sector currently disagree with that story, 6 agree.",
+  "read_me_first": "A broad market, with volatility around normal. Best fit: an inflation shock — commodities and rates up together. Leading scenario: INFLATION_SHOCK. Two stories fit the tape about equally. 1 sector currently disagree with that story, 6 agree.",
   "crown": {
-    "headline": "A broad market, and quiet.",
+    "headline": "A broad market, with volatility around normal. Best fit: an inflation shock — commodities and rates up together.",
     "regime_words": "broadening · normal",
     "because": [
       "The average stock is keeping up with the index — the rally is broad.",
-      "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 14.9, lower than 90% of the past two years.",
+      "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 16.3, lower than 67% of the past two years.",
       "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and 1 of those positions are stretched. Crowded trades unwind quickly, so the size guidance is cut.",
       "Big speculators are unusually long the dollar, gold, copper and 6 others; unusually short natural gas and the long bond (CFTC data to 2026-08-25).",
@@ -228,10 +228,11 @@
     "watch_for": [
       "If the dollar trades below 99.59 (0.1% away), trend funds start selling.",
       "If the 2-year trades above 103.59 (1.1% away), trend funds start buying.",
-      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
+      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get.",
+      "This reading would strengthen if GLD flat (roc5 -7.32%, roc20 6.04%) reversed."
     ],
     "caveats": [],
-    "as_of": "2026-09-02T06:58:33+08:00",
+    "as_of": "2026-09-02T08:37:12+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
@@ -252,7 +253,7 @@
           "USO up (roc5 11.77%, roc20 21.78%)",
           "TLT down (roc5 -1.92%, roc20 -1.15%)",
           "UUP up (roc5 0.97%, roc20 0.18%)",
-          "CTA energy bias +0.18"
+          "CTA energy bias +0.19"
         ],
         "missing_conditions": [
           "GLD flat (roc5 -7.32%, roc20 6.04%)"
@@ -270,7 +271,7 @@
           "UUP up (roc5 0.97%, roc20 0.18%)",
           "CPER down (roc5 -4.15%, roc20 -2.67%)",
           "HYG down (roc5 -1.03%, roc20 -0.57%)",
-          "CTA fx bias +0.00"
+          "CTA fx bias +0.01"
         ],
         "missing_conditions": [
           "GLD flat (roc5 -7.32%, roc20 6.04%)"
@@ -317,31 +318,14 @@
         "can_lead": true
       },
       {
-        "scenario": "DISPERSION_REGIME",
-        "score": 0.3333,
-        "coverage": 1.0,
-        "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
-        "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
-        "evidence": [
-          "VIX 14.92",
-          "CTA sector spread 1.29"
-        ],
-        "missing_conditions": [
-          "implied correlation 12.64 (47% pctl)",
-          "dispersion NORMAL (spread 20.88)"
-        ],
-        "unavailable": [],
-        "can_lead": true
-      },
-      {
         "scenario": "REFLATION",
-        "score": 0.2368,
+        "score": 0.2369,
         "coverage": 1.0,
         "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
         "expression": "Cyclicals, financials, small caps, energy. Short duration.",
         "evidence": [
           "TLT down (roc5 -1.92%, roc20 -1.15%)",
-          "CTA energy bias +0.18",
+          "CTA energy bias +0.19",
           "CTA rates bias -0.58"
         ],
         "missing_conditions": [
@@ -370,6 +354,23 @@
         ],
         "unavailable": [],
         "can_lead": true
+      },
+      {
+        "scenario": "DISPERSION_REGIME",
+        "score": 0.1667,
+        "coverage": 1.0,
+        "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
+        "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
+        "evidence": [
+          "CTA sector spread 1.29"
+        ],
+        "missing_conditions": [
+          "implied correlation 12.64 (47% pctl)",
+          "dispersion NORMAL (spread 19.88)",
+          "VIX 16.34"
+        ],
+        "unavailable": [],
+        "can_lead": true
       }
     ]
   },
@@ -383,10 +384,7 @@
   ],
   "what_changed": {
     "available": true,
-    "changes": [
-      "Pack status moved from PARTIAL to DEGRADED.",
-      "Newly disagreeing with the leading scenario: XLV."
-    ],
-    "note": ""
+    "changes": [],
+    "note": "Nothing that changes a decision moved."
   }
 }
