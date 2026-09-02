@@ -1,0 +1,35 @@
+{
+  "voice": "lynch",
+  "seat_kind": "challenge",
+  "nominations": [],
+  "declared": {
+    "data_source": "fundamentals_pack.json inlined, no mid-run fetch",
+    "coverage_note": "all 20 deliberation-set names served; per-ticker caveats honored as noted in the pack",
+    "currency_flags": ["DB reports in EUR", "UMC reports in TWD — do not mix market_cap/revenue with USD peers"],
+    "canon_standing": {
+      "math_library": "PARTIALLY_COMPUTABLE — pack serves pe, peg, fwd_peg, p_b, p_s, p_fcf, debt_to_equity, margins, dividend_yield. C8 (Lynch PEG), C12 (equity ratio) and C13 (FCF yield) ARE testable this run. C10/C11 (net cash floor, effective P/E) remain NOT_COMPUTABLE.",
+      "category": "NOT_SERVED — no lynch_category field. Category reads below are PROVISIONAL from margin/yield/leverage shape only.",
+      "fail_gates": "NOT_TESTABLE — Gate 1 (debt KIND split) absent, Gate 2 (inventory vs sales) absent, Gate 3 half-testable (PEG served, institutional ownership not). No gate reported PASS.",
+      "two_minute_drill": "NOT_POSSIBLE (C3) — no business description/segment data in the pack. Every verdict is a RATIO verdict, not a story verdict.",
+      "peg_methodology_caveat": "FMP peg is trailing and FMP-computed. A NEGATIVE PEG means declining earnings, NOT a bargain. Seven names carry negative trailing PEG (CNH, DE, LNG, KHC, SLB, CTVA, BOX), five negative forward PEG (KHC, EQT, CVX, UMC, PBR).",
+      "stop_position": "DEFERRED_TO_HOUSE_LAW (C21 pm_override) — no position on any bracket/stop/risk gate."
+    }
+  },
+  "fundamentals_judgment_summary": "Verdicts by ticker — WELL GARP_FAIL, CNH QUALITY_CONCERN, DE GARP_FAIL, AAPL GARP_FAIL, LNG QUALITY_CONCERN, DB VALUE_TRAP_RISK, CVS GARP_FAIL, GEN QUALITY_CONCERN, KHC NOT_MEANINGFUL, SLB GARP_PASS, EQT VALUE_TRAP_RISK, CTVA GARP_FAIL, ADM GARP_FAIL, CVX GARP_PASS, BOX GARP_FAIL, KVYO NOT_MEANINGFUL, T QUALITY_CONCERN, UMC QUALITY_CONCERN, OKE QUALITY_CONCERN, PBR VALUE_TRAP_RISK. Full rationale, key_fields_cited and red_flags per ticker preserved verbatim in lynch_doc.json at this same commit.",
+  "asks": [
+    "lynch_category field (Slow Grower / Stalwart / Fast Grower / Cyclical / Turnaround / Asset Play) — highest-leverage ask; half the verdicts rest on a PROVISIONAL category inferred from margin/yield/leverage shape.",
+    "Explicit long-term earnings growth rate alongside PEG — 12 of 20 names carry a negative trailing or forward PEG (earnings-decline signal, not a bargain) and the raw rate is needed to gauge severity.",
+    "Cash and net-cash-per-share to compute C10 net cash floor and C11 effective P/E — dark for AAPL, EQT and others judged on headline P/E Lynch would overrule.",
+    "Inventory and revenue for two consecutive quarters — Fail Gate 2 currently NOT_TESTABLE for all 20 names; decisive for CNH, DE, ADM, CTVA.",
+    "Long-term debt split by KIND (bank vs funded, maturity ladder) — Fail Gate 1 untestable; most important for GEN (Z 1.45), T (0.97), OKE (1.70), CNH (D/E 3.39), LNG (D/E 4.29).",
+    "Institutional ownership percentage — Fail Gate 3 half-testable on BOX and KVYO.",
+    "Payout ratio / dividend coverage — untestable on T (4.27%), OKE (4.43%), KHC (6.18% against a TTM loss), PBR (7.80%).",
+    "Sector-relative and own-history P/E context — the Stalwart test could not be run on AAPL, DE, CVX.",
+    "USD-normalized market_cap/revenue for DB (EUR) and UMC (TWD) — currently uncomparable to USD peers.",
+    "Captive-finance-arm segmentation for DE (D/E 2.29) and CNH (D/E 3.39) — consolidated D/E conflates manufacturing and finance-receivable leverage.",
+    "REIT FFO/AFFO for WELL — pe 124.59/peg 15.93 are GAAP-EPS artefacts of depreciation; verdict would be better evidenced with the operative metric.",
+    "Process ask: the fundamentals pack should precede every CHALLENGE round; add a one-line per-ticker business description so the Two-Minute Drill becomes partially answerable."
+  ],
+  "no_challenge_reason": null,
+  "note": "Full fundamentals_judgment array (20 tickers, complete rationale/key_fields_cited/red_flags) is preserved verbatim in lynch_doc.json at this same commit — see that file for per-ticker detail."
+}

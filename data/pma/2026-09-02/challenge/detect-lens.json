@@ -1,0 +1,46 @@
+{
+  "voice": "detect-lens",
+  "seat_kind": "challenge",
+  "nominations": [],
+  "declared": {
+    "data_source": "packet inlined above (nominations + universe rows), no mid-run fetch",
+    "coverage_note": "all 20 deliberation-set names present in the packet; every one carries a universe_row and at least 2 nomination reasons",
+    "canon_status": "HAND-TRANSCRIBED, UNGROUNDED — no lock, no sealed extract, citations not re-verifiable (see PROVENANCE). Structure reads below are mechanical field reads, not canon-cited claims.",
+    "mandate_note": "CHALLENGE seat mandate expands my read beyond my nomination-time data menu: I am directed to read structure_shift, choch_state, bracket.valid, ma_20/50/100/200, sector_trend_state, div_state, vcp/squeeze context and gics_gate. Declared so the auditor sees the menu expansion is instructed, not self-granted. I still read no composite as a vote.",
+    "tape_read": "NOT_APPLICABLE — challenge round runs off an EOD packet (price_source eod_close, elder_context computed_date 2026-09-01). No live Level 2 or tape supplied; none inferred from bars.",
+    "spread_read": "NOT_APPLICABLE — same basis as tape_read.",
+    "ranking_formula": "sc_momentum appears in the packet and is NOT Clenow's regression-slope-x-R². I did not rank on it and did not treat it as a trend-quality measure.",
+    "gap_filter": "NOT_SERVED — no single-day gap-magnitude field exists; atr_14d/vol_30d_ann are dispersion, not gap events.",
+    "trend_filter": "ma_20/ma_50/ma_100/ma_200 stack order, SERVED — this is the spine of every read below.",
+    "sizing_shape": "atr_14d + bracket.risk_pct where bracket.valid=true (8 of 20 names), SERVED. Reported as context only.",
+    "exit_philosophy": "N/A this round — no entries proposed. Where I cite bracket.stop it is descriptive of where the engine found structure, never a recommendation.",
+    "bracket_ruling": "PM RULING R1 honoured: bracket.valid=false is reported as context on 12 of the 20 names and is NEVER used to downgrade, veto or filter any name.",
+    "verdict_legend": {
+      "CONFIRMED_STRUCTURE": "structure_shift is ABOVE_STRUCTURE or BULLISH_BOS AND the moving-average stack is ordered price > ma_20 > ma_50 > ma_100 > ma_200",
+      "RANGE_BOUND": "structure_shift RANGE, and/or choch_state BEARISH, and/or a flat (sub-1%) ma_20/ma_50 pair — price inside the swing",
+      "BROKEN_STRUCTURE": "price below ma_50 or ma_200, or ma_200 sitting above the shorter averages — the long-term stack is not repaired regardless of the last-bar event",
+      "DIVERGENT_FROM_NOMINATORS": "the structural facts materially contradict a load-bearing claim in a nomination reason",
+      "DATA_THIN": "three or more lens slots read '--' and/or three or more structure fields are null"
+    },
+    "seat_level_findings": [
+      "runner_setup is FALSE and premove_setup is FALSE on all 20 names. Not one M15 or M18 detection tag fires in this deliberation set. The runner_conviction/premove_conviction sub-counts present (UMC 3/3, CVS 2/3 highest) are leg-counts on untagged names — context only, never a tag.",
+      "lens tiering is ORTHOGONAL to seat count today. lens_positive: DB/CVS/EQT/CVX 4 · WELL/UMC/OKE 3 · AAPL/KHC/ADM 2 · CNH/LNG/GEN/SLB/BOX/T/PBR 1 · DE/CTVA/KVYO 0. The three most-seated names (WELL 5 seats, CNH 4, DE 3) sit at 3, 1 and 0 strong lenses. DE — three nominators at conviction 4, unanimous — carries ZERO strong lenses.",
+      "sma_distance_pct is measured from ma_50, not ma_20. Verified arithmetically on WELL 240.42/236.05=1.85, AAPL 325.13/312.94=3.90, CTVA 87.73/82.84=5.90, KVYO 20.64/17.49=18.02, GEN 30.02/27.28=10.03, UMC 20.47/21.35=-4.10, CVS 97.60/101.13=-3.49, OKE 95.69/91.24=4.88, T 26.00/23.33=11.46, PBR 20.33/17.94=13.29. Several nomination reasons describe it as distance from the 20MA.",
+      "vcp_tightness_pct = current_range_pct_5d / base_range_pct. HIGHER means LESS contraction. Verified: PBR 14.8/14.8=100.0, SLB 15.1/19.1=78.9, ADM 7.9/11.0=71.2, BOX 10.7/15.3=69.5, AAPL 5.8/8.5=68.3, T 4.0/15.4=26.1. Only ONE name in the set is genuinely contracted — T at 26.1 — and no nominator cited it. Three nomination reasons cite tightness values in the 68-71 range as evidence OF contraction, in the same rows where vcp_label reads VCP_ABSENT.",
+      "elder_context.volume.up_bar_vol_ratio < 1.0 (down bars carrying more volume than up bars over 5 days) on five names: PBR 0.80, UMC 0.84, DB 0.85, GEN 0.96, SLB 0.97."
+    ]
+  },
+  "structure_reads_summary": "See detect-lens_doc.json for the full 20-row structural read and per-ticker disagreements_with_nominators (WELL RANGE_BOUND, CNH/DE/LNG/ADM/CVX/BOX CONFIRMED_STRUCTURE, AAPL/DB/CTVA/EQT DIVERGENT_FROM_NOMINATORS, CVS/KHC/OKE RANGE_BOUND, SLB/PBR DATA_THIN, KVYO/T/UMC BROKEN_STRUCTURE, GEN CONFIRMED_STRUCTURE).",
+  "asks": [
+    "VOLUME FIELD CONFLICT (7 of 20 rows): day_vol > 1.0 while elder_context.volume.vol_above_20d_avg reads FALSE on AAPL (1.27), CVS (1.05), ADM (1.03), CTVA (1.21), KVYO (1.38), T (0.93 — consistent), PBR (1.60). Nomination reasons on AAPL, ADM, KVYO and PBR all lean on day_vol as the participation leg. Please rule which clock governs — day_vol is daily-bar volume vs 20-day average, elder_context is derived from 40 hourly bars — and state it in the field dictionary so voices stop citing one against the other.",
+    "SQUEEZE CONFIRMATION THRESHOLD: ADM carries squeeze_breakout_volume_confirmed = TRUE with day_vol 1.03 and vol_above_20d_avg FALSE. Two seats read the same row and reached opposite volume conclusions (minervini 'volume confirmed', weis 'light effort'). What volume test does squeeze_breakout_volume_confirmed actually apply? UMC's confirmation (day_vol 1.56, vol_above_20d_avg true) and ADM's should not carry the same label if the evidence differs this much.",
+    "rs_leadership LABELLING: UMC is labelled LEADER at rs_spy_20d 0.46; BOX is labelled IN-LINE at rs_spy_20d 11.94; KVYO IN-LINE at 9.30; CVS carries lens.leadership 'strong' at rs_spy_20d -5.29 with rs_leadership IN-LINE. The label, the lens and the underlying number disagree across rows. Request the rule (absolute threshold vs today's-list tercile) be documented, since three nomination reasons cite the LEADER label as evidence.",
+    "sma_distance_pct BASELINE: verified on ten rows as distance from ma_50, not ma_20 (WELL 1.85, AAPL 3.90, CTVA 5.90, OKE 4.88, GEN 10.03, T 11.46, PBR 13.29, KVYO 18.02, UMC -4.10, CVS -3.49). Several reasons describe it as distance from the 20MA, and on CTVA and GEN the two numbers differ materially (5.90 vs 10.1, and 10.03 vs 3.4). Request the dictionary line be restated to the voices before the next round.",
+    "vcp_tightness_pct DIRECTION: the field is current_range_pct_5d / base_range_pct, so HIGHER = LESS contraction (verified: PBR 100.0, SLB 78.9, ADM 71.2, BOX 69.5, AAPL 68.3, T 26.1). Three nomination reasons cite values in the 68-71 band as evidence OF contraction, in rows where vcp_label reads VCP_ABSENT. Request a plain-English gloss on the field so the direction cannot be misread.",
+    "NULL-BLOCK REPAIR on SLB, CTVA and PBR: all three carry choch_state, div_state, div_bear_count, knn_prob, pin_bar_state, inside_bar and the full squeeze block as null, plus four of six lens slots as '--'. All three are source=longlist and all three were nominated at conviction 3-4. This is a declared data gap, not a clean read — lens_positive on those rows is computed over a two-slot panel. Request an AQE re-trigger before these three carry weight at the crown.",
+    "DETECTION TAGS ARE SILENT: runner_setup and premove_setup are FALSE on all 20 names. The M15/M18 radar contributes nothing to this deliberation set. Flagging so the desk does not read the non-zero runner_conviction / premove_conviction leg-counts (UMC 3/3, CVS 2/3) as tags — they are leg counts on untagged names.",
+    "tape_read and spread_read declared NOT_APPLICABLE for this round (EOD packet, no live Level 2). If the PM wants a tape read on any of these 20 during the Intraday Review Pod, supply it and I will apply the C6-C9 vocabulary to what he actually says; I will not infer it from bars."
+  ],
+  "no_challenge_reason": null,
+  "note": "Full structure_reads array (20 tickers, complete notes and disagreements_with_nominators) is preserved verbatim in detect-lens_doc.json at this same commit — see that file for per-ticker detail."
+}
