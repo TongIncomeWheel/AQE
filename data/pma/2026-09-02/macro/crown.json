@@ -1,0 +1,36 @@
+{
+  "voice": "crown",
+  "date": "2026-09-02",
+  "expression_family": "BROADENING_CARRY",
+  "size_multiplier": 1.0,
+  "match_quality": "partial",
+  "recognisers_fired": [
+    {
+      "id": "R1",
+      "finding": "Breadth regime is broadening, but position_in_12_month_range is mid, not top — this reads as a live broadening move to own, not a late one to fade (5 days in regime, confidence 0.65).",
+      "field_ref": "readings.breadth.regime=broadening; readings.breadth.position_in_12_month_range=mid"
+    },
+    {
+      "id": "R7",
+      "finding": "Large speculators are crowded long dollar, gold, copper and 6 others, crowded short nat gas and the long bond. CFTC data is dated 2026-08-25 — 8 days stale as of today — so this is context on where pain trades sit, not a timing signal.",
+      "field_ref": "readings.positioning.large_speculators.crowded_long/crowded_short, as_of=2026-08-25"
+    },
+    {
+      "id": "R10",
+      "finding": "13 divergence warnings are lit, but the 'which' list is empty — no specifics to cross-check against breadth. Treat as an unconfirmed pile, not a signal, until named; this is itself a coverage gap worth flagging, not a clean read.",
+      "field_ref": "readings.divergence.warnings_lit=13; readings.divergence.which=[]"
+    }
+  ],
+  "read_summary": "Broad market: breadth is broadening from mid-range (live, not late). Index vol is calm (VIX 16.3, 33rd pctile) but the single-stock/index gap is elevated-vs-history yet easing (gap_change_20d -9.35) — stress leaving, not building. Dealers sit NEGATIVE gamma (amplify moves), which is the one condition BROADENING_CARRY fails — partial match. Trend funds are mixed with only 1 of 18 markets stretched, so no size cut is warranted (dial 1.0x). Big specs are crowded long dollar/gold/copper/ags, short nat gas/bond (CFTC stale 8 days — context only). Scenario is contested: INFLATION_SHOCK leads DOLLAR_SQUEEZE by just 12%, with gold's own move missing to confirm either. 13 divergence warnings are lit but none are itemized, so no read on whether they agree with breadth.",
+  "conditions_met": ["broadening", "range_not_extreme", "dispersion_normal", "cta_low_flip"],
+  "conditions_not_met": ["gamma_positive"],
+  "caveats": [
+    "Status DEGRADED — ran on a substitute source for part of the input; treat downstream reads as flagged, not clean (see limits).",
+    "13 futures contracts (incl. DX, GC/HG proxy via CL, NG, the index and rate futures) came from Yahoo rather than the primary provider — quotable levels, but no uptime guarantee.",
+    "Dispersion read is contested internally: DSPX and implied correlation disagree with the VIXEQ-VIX spread — do not lean on the dispersion-normal condition alone.",
+    "Economic calendar unavailable (FMP HTTP 404) — no event-risk overlay on this read.",
+    "Scenario score (0.75) is a share of conditions met, not a probability, and was never fitted to history. INFLATION_SHOCK vs DOLLAR_SQUEEZE are within 12% of each other — the overlap is the honest read, not a resolved call.",
+    "CFTC positioning is dated 2026-08-25 (8 days stale) — crowding context only, cannot time anything off it.",
+    "13 divergence warnings are lit with no itemization provided — coverage on this field is incomplete; do not read 'no warnings named' as 'no warnings exist.'"
+  ]
+}
