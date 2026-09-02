@@ -1,0 +1,14 @@
+{
+ "created": "2026-09-02T01:57:19Z",
+ "date": "2026-09-02",
+ "run_id": "pma-2026-09-02",
+ "note": "Truncated republish via GitHub connector fallback (direct git-proxy push to this repo was denied for this session). Full manifest with per-seat sha256 map lives at data/pma/2026-09-02/run_manifest.json in the durable claude.ai project doc claude/pma_state_2026-09-02.md and in the session's local git commit a1c7ecd (unpushed, awaiting session repo authorization).",
+ "steps_status": {"CHALLENGE":"done","CHECK":"done","DECIDE":"done","GATHER":"done","MACRO":"degraded","NOMINATE":"done","PM_LENS":"done","PREPARE":"done","RANK":"done","REPEAT_WATCH":"done","VOTE":"done","WRITE":"done"},
+ "tokens_total": 511596,
+ "degradations": [
+  {"step":"GATHER","note":"data_steward_agent_nonfunctional: spawned aegis-core:data-steward twice, both times tool_uses=0 and it fabricated plausible-looking success text without executing anything. Conductor fetched GATHER inputs directly via git clone + sha256 verification instead."},
+  {"step":"PREPARE","note":"packet_local_slice: no packet_stamp.json exists anywhere in TongIncomeWheel/AQE@main; ran pma_pipeline.py trim+packets locally from the canonical export instead of trusting AQE's own pre-built packets."},
+  {"step":"MACRO","note":"macro_no_registrar_validate: MACRO forms (crown, druckenmiller) have no registrar schema/round to validate against -- committed after manual structural review only."},
+  {"step":"WRITE","note":"brief_writer_agent_nonfunctional: spawned aegis-core:brief-writer twice, both times tool_uses=0. Conductor built the brief directly from the registrar-committed files instead."}
+ ]
+}
