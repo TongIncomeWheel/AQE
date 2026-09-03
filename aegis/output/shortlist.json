@@ -1,6 +1,6 @@
 {
   "date": "2026-09-03",
-  "refreshed_at": "2026-09-03 14:06:06 SGT",
+  "refreshed_at": "2026-09-03 14:10:05 SGT",
   "regime": {
     "vix": 15.2,
     "level": "GREEN"
@@ -97,7 +97,7 @@
         "mp_state": "BUILDING",
         "close": 11.07,
         "atr14": 0.241,
-        "earn_days": null,
+        "earn_days": 71.0,
         "earn_warning": false
       },
       "context": {
@@ -149,7 +149,7 @@
         "mp_state": "BUILDING",
         "close": 17.51,
         "atr14": 0.538,
-        "earn_days": null,
+        "earn_days": 68.0,
         "earn_warning": false
       },
       "context": {
@@ -379,6 +379,66 @@
         }
       },
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "OKE",
+      "levels": {
+        "entry": 96.01,
+        "stop": 90.93,
+        "r_size": 5.08,
+        "be_trigger": 98.55,
+        "target_1r": 101.09,
+        "target_2r": 106.17,
+        "target_3r": 111.25,
+        "shares": 413,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 47.4,
+        "energy": 63.0,
+        "structure": 74.7,
+        "mp": 72.0,
+        "elder": 9.0
+      },
+      "mp_state": "BUILDING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.03,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 88.58,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 22.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
     }
   ],
   "precision_recipe": {
@@ -480,6 +540,67 @@
       }
     },
     {
+      "ticker": "SLB",
+      "sc_momentum": 79.9,
+      "sc_momentum_raw": 79.9,
+      "pipe_rank": 84.5,
+      "fip_quality": 60.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 88.2,
+        "energy": 68.1,
+        "structure": 80.0,
+        "mp": 85.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "squeeze": 4.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 58.13,
+        "stop": 54.3,
+        "r_size": 3.83,
+        "be_trigger": 60.05,
+        "target_1r": 61.96,
+        "target_2r": 65.79,
+        "target_3r": 69.62,
+        "shares": 548,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "OKE",
+      "sc_momentum": 62.5,
+      "sc_momentum_raw": 62.5,
+      "pipe_rank": 77.2,
+      "fip_quality": 80.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 47.4,
+        "energy": 63.0,
+        "structure": 74.7,
+        "mp": 72.0,
+        "elder": 9.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 96.01,
+        "stop": 90.93,
+        "r_size": 5.08,
+        "be_trigger": 98.55,
+        "target_1r": 101.09,
+        "target_2r": 106.17,
+        "target_3r": 111.25,
+        "shares": 413,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "PBR-A",
       "sc_momentum": 76.3,
       "sc_momentum_raw": 76.3,
@@ -537,36 +658,6 @@
         "target_2r": 54.05,
         "target_3r": 56.56,
         "shares": 836,
-        "risk_dollars": 2100.0
-      }
-    },
-    {
-      "ticker": "ADBE",
-      "sc_momentum": 75.4,
-      "sc_momentum_raw": 75.4,
-      "pipe_rank": 64.9,
-      "fip_quality": 60.0,
-      "fip_spike_excluded": false,
-      "fip_window_effective": 252,
-      "engines": {
-        "flow": 81.6,
-        "energy": 75.6,
-        "structure": 80.0,
-        "mp": 61.0,
-        "elder": 7.0
-      },
-      "mp_state": "FADING",
-      "squeeze": 8.5,
-      "on_shortlist": false,
-      "levels": {
-        "entry": 279.79,
-        "stop": 259.44,
-        "r_size": 20.35,
-        "be_trigger": 289.97,
-        "target_1r": 300.14,
-        "target_2r": 320.49,
-        "target_3r": 340.84,
-        "shares": 103,
         "risk_dollars": 2100.0
       }
     },
@@ -3210,7 +3301,7 @@
     "total_universe": 672,
     "passed_pipeline_rank": 6,
     "on_shortlist": 6,
-    "precision_edge_count": 1,
-    "recipe_match_count": 7
+    "precision_edge_count": 2,
+    "recipe_match_count": 8
   }
 }
