@@ -1,6 +1,6 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-09-03T14:14:20+08:00",
+  "generated_at": "2026-09-03T14:40:02+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
   "oldest_leg": "2026-09-02",
@@ -268,14 +268,13 @@
       "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLK)"
     }
   ],
-  "read_me_first": "A market with no clear breadth lead, with volatility around normal. Best fit: an inflation shock — commodities and rates up together. Leading scenario: INFLATION_SHOCK. Two stories fit the tape about equally. 3 sectors currently disagree with that story, 3 agree.",
+  "read_me_first": "A market with no clear breadth lead, with volatility around normal. Leading scenario: INFLATION_SHOCK. Two stories fit the tape about equally. 3 sectors currently disagree with that story, 3 agree.",
   "crown": {
-    "headline": "A market with no clear breadth lead, with volatility around normal. Best fit: an inflation shock — commodities and rates up together.",
+    "headline": "A market with no clear breadth lead, with volatility around normal.",
     "regime_words": "neutral · normal",
     "because": [
       "Breadth is going sideways — neither the big names nor the average stock is leading.",
       "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 15.2, lower than 85% of the past two years.",
-      "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and none is at an extreme — the positioning is not crowded.",
       "Big speculators are unusually long the dollar, gold, copper and 6 others; unusually short natural gas and the long bond (CFTC data to 2026-08-25).",
       "No warning signs are lit — price and everything behind it agree."
@@ -284,11 +283,12 @@
     "watch_for": [
       "If the dollar trades above 99.83 (0.5% away), trend funds start buying.",
       "If the 2-year trades above 103.54 (0.9% away), trend funds start buying.",
-      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get.",
-      "This reading would strengthen if GLD flat (roc5 -4.4%, roc20 3.37%) reversed."
+      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
     ],
-    "caveats": [],
-    "as_of": "2026-09-03T14:12:30+08:00",
+    "caveats": [
+      "No dealer-positioning read today, so nothing above accounts for option hedging flows."
+    ],
+    "as_of": "2026-09-03T14:38:29+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
@@ -375,7 +375,7 @@
       },
       {
         "scenario": "REFLATION",
-        "score": 0.2324,
+        "score": 0.2326,
         "coverage": 1.0,
         "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
         "expression": "Cyclicals, financials, small caps, energy. Short duration.",
@@ -430,7 +430,9 @@
     ]
   },
   "limits": [
+    "No dealer-positioning read today, so nothing above accounts for option hedging flows.",
     "Crown: These markets came from Yahoo rather than our data provider (CL, DX, HG, NG, NQ, RTY, YM, ZB, ZC, ZF, ZN, ZS, ZT, ZW). They are the real futures contracts, so the flip levels are quotable, but Yahoo is a free feed with no uptime guarantee.",
+    "Crown: gamma unavailable — QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set",
     "Crown: DSPX and implied correlation disagree with the VIXEQ-VIX spread — treat the dispersion read with caution",
     "Crown: economic calendar unavailable: FMP HTTP 404 for https://financialmodelingprep.com/stable/economics-calendar: []",
     "This pack does not size. It reports agreement/disagreement only.",
@@ -438,8 +440,8 @@
     "Coherence is a category (AGREES/DISAGREES/UNTESTED), never a probability — same rule as the scenario scores it is built from."
   ],
   "what_changed": {
-    "available": true,
+    "available": false,
     "changes": [],
-    "note": "Nothing that changes a decision moved."
+    "note": "No previous pack to compare against."
   }
 }
