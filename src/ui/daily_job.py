@@ -144,6 +144,23 @@ def _write_marker(marker: dict) -> None:
             )
     except Exception:  # noqa: BLE001
         pass
+    # 2026-09-04: this write happens in THIS process, AFTER daily_orchestrator's
+    # own subprocess (and its Step 8a-2 GitHub publish, which runs mid-subprocess
+    # and so never sees this marker) has already exited. On a persistent HF Space
+    # container the local write above is enough -- the same process keeps serving
+    # pages. On a GitHub Actions runner the local write is DISCARDED the moment
+    # the job ends and is never otherwise pushed anywhere durable, so the true,
+    # final status of an Actions-run backstop was invisible outside that one job's
+    # own log -- exactly what made a genuinely successful 2026-09-03 backstop run
+    # look, from the published marker alone, like nothing had run since 2026-09-02.
+    # Push it to GitHub too so it survives regardless of which environment ran it.
+    try:
+        from src.data import github_sync
+        if github_sync.is_configured():
+            github_sync.put_output(MARKER_FILENAME, content,
+                                   message=f"data: daily output {marker.get('date_sgt', '')}")
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def _read_drive_marker() -> dict | None:
