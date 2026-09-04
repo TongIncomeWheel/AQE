@@ -301,7 +301,7 @@ def render(rep):
         if items:
             out.append("  %s:" % label)
             out.extend("    - " + s for s in items)
-    return "\\n".join(out)
+    return "\n".join(out)
 
 
 # --------------------------------------------------------------------------- selftest
@@ -371,7 +371,7 @@ def _selftest():
     j = {"open_positions": [{"ticker": "HHH"}, {"ticker": "AAA"}, {"ticker": "ZZZ"}]}
     r = check(base(), journal=j, today="2026-07-28")
     assert r["held_coverage"]["uncovered"] == ["ZZZ"], r["held_coverage"]
-    assert r["held_coverage"]["by_source"] == {"AAA": "daily_list", "HHH": "held_positions"}, \\
+    assert r["held_coverage"]["by_source"] == {"AAA": "daily_list", "HHH": "held_positions"}, \
         r["held_coverage"]["by_source"]
     assert r["verdict"] == "DEGRADED", r["degraded"]
 
