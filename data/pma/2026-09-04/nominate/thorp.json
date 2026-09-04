@@ -1,0 +1,182 @@
+{
+ "voice": "thorp",
+ "date": "2026-09-04",
+ "nominations": [
+  {
+   "ticker": "CB",
+   "reason": "Calmest name that survives its own worst case: atr_14d 5.88 on price 348.25 = 1.69% vol, Q1 of today's 43 bracketed names. TP1 pays 2.83R against 1.98R if the 342.22 stop gaps by one ATR. Unwatched loss 3.42% of price - the smallest in the passing set.",
+   "conviction": 4,
+   "checklist_trace": [
+    {
+     "step": "1 - measured edge, not a shape",
+     "observed": "Mispriced against its own structural ladder: rr_tp1 2.83, rr_tp2 4.37, risk 6.03 (risk_pct 1.73), stop 342.22 at 1.03 ATR. bracket.valid True, so the loss boundary is a stated price."
+    },
+    {
+     "step": "2 - is the evidence honest",
+     "observed": "No trade-count, loser-count or spread field in packet; no performance number can be restated net of costs (C15). Step is no_data - I applied a 0.25R cost haircut to every R3 margin instead."
+    },
+    {
+     "step": "3 - size from the worst case (write the number)",
+     "observed": "loss_boundary 342.22; gap_loss 1.98R = 1 + 5.88/6.03; unwatched_loss 3.42% of price (12.35 on 348.25). Net margin 0.85R over the gapped case. atr_caution False."
+    },
+    {
+     "step": "4 - rank on volatility vs today's set",
+     "observed": "vol_measure: atr_pct (substitute) 1.69% - Q1, calmest quartile of the 43-name passing set (Q1 2.21 / med 3.41 / Q3 4.99). liquidity_measure: day_vol (substitute) 1.20."
+    },
+    {
+     "step": "5 - is the edge still there",
+     "observed": "Only 43 of 164 names carry a valid bracket and just 6 clear R3 net of the haircut. The passing count is narrow (R7) - this is a list to size small, not a reason to add."
+    }
+   ]
+  },
+  {
+   "ticker": "GME",
+   "reason": "Widest margin over the worst case in the set: TP1 4.46R against 1.74R if the 18.55 stop is gapped by one ATR (0.50). Vol 2.60% = Q2. Unwatched loss 6.14% of price. Only 2/5 momentum gates fire (flow, elder), so the stated reason is thin - discounted, not ignored.",
+   "conviction": 4,
+   "checklist_trace": [
+    {
+     "step": "1 - measured edge, not a shape",
+     "observed": "rr_tp1 4.46 / rr_tp2 4.99 against risk 0.68 (risk_pct 3.54), stop 18.55 at 1.36 ATR. sc_m_gate_detail 11 = flow and elder only: 2 of 5 engines above floor (C12 partial)."
+    },
+    {
+     "step": "2 - is the evidence honest",
+     "observed": "No trade-count, loser-count or spread field in packet; no performance number can be restated net of costs (C15). Step is no_data - I applied a 0.25R cost haircut to every R3 margin instead."
+    },
+    {
+     "step": "3 - size from the worst case (write the number)",
+     "observed": "loss_boundary 18.55; gap_loss 1.74R = 1 + 0.50/0.68; unwatched_loss 6.14% of price (1.18 on 19.23). Net margin 2.72R - the largest cushion over the gapped case on the board."
+    },
+    {
+     "step": "4 - rank on volatility vs today's set",
+     "observed": "vol_measure: atr_pct (substitute) 2.60% - Q2 of the 43-name passing set. liquidity_measure: day_vol (substitute) 1.18, above its own 20d norm."
+    },
+    {
+     "step": "5 - is the edge still there",
+     "observed": "Only 43 of 164 names carry a valid bracket and just 6 clear R3 net of the haircut. The passing count is narrow (R7) - this is a list to size small, not a reason to add."
+    }
+   ]
+  },
+  {
+   "ticker": "NFLX",
+   "reason": "The only name pairing all 5 momentum gates with sub-median volatility: atr 2.24 on 82.67 = 2.71%, Q2. TP1 2.47R against a 1.63R gapped-stop loss, a 0.84R net margin. Loss boundary 79.10, unwatched loss 7.03% of price.",
+   "conviction": 4,
+   "checklist_trace": [
+    {
+     "step": "1 - measured edge, not a shape",
+     "observed": "rr_tp1 2.47 / rr_tp2 3.37 against risk 3.57 (risk_pct 4.32), stop 79.10 at 1.60 ATR. sc_m_gate_detail 18 = all five engines above floor; sc_p_gate_detail 18. sc_momentum 74.1."
+    },
+    {
+     "step": "2 - is the evidence honest",
+     "observed": "No trade-count, loser-count or spread field in packet; no performance number can be restated net of costs (C15). Step is no_data - I applied a 0.25R cost haircut to every R3 margin instead."
+    },
+    {
+     "step": "3 - size from the worst case (write the number)",
+     "observed": "loss_boundary 79.10; gap_loss 1.63R = 1 + 2.24/3.57; unwatched_loss 7.03% of price (5.81 on 82.67). Net margin 0.84R. atr_caution False."
+    },
+    {
+     "step": "4 - rank on volatility vs today's set",
+     "observed": "vol_measure: atr_pct (substitute) 2.71% - Q2, below the 3.41 median of the passing set. liquidity_measure: day_vol (substitute) 0.87, slightly under its own 20d norm."
+    },
+    {
+     "step": "5 - is the edge still there",
+     "observed": "Only 43 of 164 names carry a valid bracket and just 6 clear R3 net of the haircut. The passing count is narrow (R7) - this is a list to size small, not a reason to add."
+    }
+   ]
+  },
+  {
+   "ticker": "DOCS",
+   "reason": "Largest measured margin on the board - TP1 4.92R against a 1.53R gapped loss - but 5.17% vol is Q4 and day_vol 0.33 says a third of normal participation, so the round trip is the unpriced cost. Unwatched loss 14.83% of price sizes it small.",
+   "conviction": 2,
+   "checklist_trace": [
+    {
+     "step": "1 - measured edge, not a shape",
+     "observed": "rr_tp1 4.92 / rr_tp2 7.01 against risk 2.62 (risk_pct 9.67), stop 24.48 at 1.87 ATR. sc_m_gate_detail 3 = structure, mp, elder: 3 of 5 engines above floor."
+    },
+    {
+     "step": "2 - is the evidence honest",
+     "observed": "No trade-count, loser-count or spread field in packet; no performance number can be restated net of costs (C15). Step is no_data - I applied a 0.25R cost haircut to every R3 margin instead."
+    },
+    {
+     "step": "3 - size from the worst case (write the number)",
+     "observed": "loss_boundary 24.48; gap_loss 1.53R = 1 + 1.40/2.62; unwatched_loss 14.83% of price (4.02 on 27.10). Net margin 3.39R, but the loss is nearly a sixth of the position."
+    },
+    {
+     "step": "4 - rank on volatility vs today's set",
+     "observed": "vol_measure: atr_pct (substitute) 5.17% - Q4, wildest quartile. liquidity_measure: day_vol (substitute) 0.33 - a third of its own 20d norm, the worst turnover proxy in my passing set (C24/R8)."
+    },
+    {
+     "step": "5 - is the edge still there",
+     "observed": "Only 43 of 164 names carry a valid bracket and just 6 clear R3 net of the haircut. The passing count is narrow (R7) - this is a list to size small, not a reason to add."
+    }
+   ]
+  },
+  {
+   "ticker": "RBLX",
+   "reason": "Clears the worst case with room: TP1 2.36R against 1.75R if 38.54 gaps by one ATR (2.24). But 5.40% vol is Q4 and only 2/5 momentum gates fire, so there is no stated reason the effect exists. Unwatched loss 12.55% of price caps the size.",
+   "conviction": 2,
+   "checklist_trace": [
+    {
+     "step": "1 - measured edge, not a shape",
+     "observed": "rr_tp1 2.36 / rr_tp2 3.88 against risk 2.97 (risk_pct 7.15), stop 38.54 at 1.33 ATR. sc_m_gate_detail 11 = flow and elder only, 2 of 5 (C12 partial). knn_threshold_clear False - advisory, not used."
+    },
+    {
+     "step": "2 - is the evidence honest",
+     "observed": "No trade-count, loser-count or spread field in packet; no performance number can be restated net of costs (C15). Step is no_data - I applied a 0.25R cost haircut to every R3 margin instead."
+    },
+    {
+     "step": "3 - size from the worst case (write the number)",
+     "observed": "loss_boundary 38.54; gap_loss 1.75R = 1 + 2.24/2.97; unwatched_loss 12.55% of price (5.21 on 41.51). Net margin 0.61R."
+    },
+    {
+     "step": "4 - rank on volatility vs today's set",
+     "observed": "vol_measure: atr_pct (substitute) 5.40% - Q4, wildest quartile of the passing set. liquidity_measure: day_vol (substitute) 0.68, below its own 20d norm."
+    },
+    {
+     "step": "5 - is the edge still there",
+     "observed": "Only 43 of 164 names carry a valid bracket and just 6 clear R3 net of the haircut. The passing count is narrow (R7) - this is a list to size small, not a reason to add."
+    }
+   ]
+  },
+  {
+   "ticker": "MSTR",
+   "reason": "Strongest stated reason on the board (5/5 momentum gates, sc_momentum 84.2) but the wildest name that passes: 6.03% vol, risk_pct 11.90, unwatched loss 17.93% of price. TP1 2.23R against 1.51R gapped. Signal strength does not buy it out of that worst case - size to the worst case.",
+   "conviction": 2,
+   "checklist_trace": [
+    {
+     "step": "1 - measured edge, not a shape",
+     "observed": "rr_tp1 2.23 / rr_tp2 3.03 against risk 17.24 (risk_pct 11.90), stop 127.58 at 1.97 ATR. sc_m_gate_detail 18 and sc_p_gate_detail 18 - every engine above floor."
+    },
+    {
+     "step": "2 - is the evidence honest",
+     "observed": "No trade-count, loser-count or spread field in packet; no performance number can be restated net of costs (C15). Step is no_data - I applied a 0.25R cost haircut to every R3 margin instead."
+    },
+    {
+     "step": "3 - size from the worst case (write the number)",
+     "observed": "loss_boundary 127.58; gap_loss 1.51R = 1 + 8.73/17.24; unwatched_loss 17.93% of price (25.97 on 144.82) - the largest untouched loss I am willing to file. Net margin 0.72R."
+    },
+    {
+     "step": "4 - rank on volatility vs today's set",
+     "observed": "vol_measure: atr_pct (substitute) 6.03% - top of Q4, the widest in the passing set. liquidity_measure: day_vol (substitute) 1.71, the busiest of my six - the only reason it ranks above nothing."
+    },
+    {
+     "step": "5 - is the edge still there",
+     "observed": "Only 43 of 164 names carry a valid bracket and just 6 clear R3 net of the haircut. The passing count is narrow (R7) - this is a list to size small, not a reason to add."
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "BRZE",
+   "read": "TIGHTEN. Valid bracket but it fails my own R3: the nearest target pays 0.70R while a gap through the 30.71 stop by one ATR (1.55) costs 1.61R. Unwatched loss 12.30% of price on a 7.64% risk_pct. The measured edge to TP1 no longer covers the worst case - cut size or move the boundary up, do not add."
+  },
+  {
+   "ticker": "HNGE",
+   "read": "TIGHTEN. bracket.valid False (invalid_reason 2 - no structural support clears the gates), so I cannot state a loss boundary against structure (C2) and there is no target ladder to measure an expected gain against, which makes R3 unevaluable. Working off atr_fallback_stop 86.23 (1 ATR of 4.54 under 90.76), the unwatched loss is 9.99% of price. Held on tolerance, not on a measured edge."
+  },
+  {
+   "ticker": "V",
+   "read": "KEEP. bracket.valid False (invalid_reason 2) so there is no structural exit and no measured gain - but it is by far the calmest of the three: atr 6.56 on 378.75 = 1.73% vol, Q1 against today's set. Against atr_fallback_stop 372.19 the unwatched loss is 3.46% of price. Smallest worst case in the held book; nothing here demands action, and nothing here is a measured edge either."
+  }
+ ]
+}

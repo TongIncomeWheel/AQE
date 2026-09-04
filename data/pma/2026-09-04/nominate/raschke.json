@@ -1,0 +1,205 @@
+{
+ "voice": "raschke",
+ "date": "2026-09-04",
+ "nominations": [
+  {
+   "ticker": "GNW",
+   "reason": "Breakout family (C12/C13): volatility contracted (was_squeezed) then BREAKOUT_UP with volume confirmed on day_vol 2.29; mp BUILDING/ACCELERATING. Structural fib_618 stop 10.14 under 10.38 entry = 2.31% risk - a real C17 swing stop, not a percentage.",
+   "conviction": 4,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "BULLISH_BOS, structure 68.4, was_squeezed True -> BREAKOUT type, not test/retracement/climax."
+    },
+    {
+     "step": "2 match named pattern (C12/C13 Crabel)",
+     "observed": "squeeze_breakout_state BREAKOUT_UP, volume_confirmed True, day_vol 2.29 vs prior 20d avg."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; bar_range_history NOT_SERVED - squeeze state is the served proxy for ID/NR4."
+    },
+    {
+     "step": "4 the stop (C17/C20)",
+     "observed": "bracket.valid True, stop 10.14 stop_type fib_618, risk_pct 2.31. div_state BEARISH count 2 = caution."
+    }
+   ]
+  },
+  {
+   "ticker": "BSBR",
+   "reason": "Breakout family (C12/C13): was_squeezed then BREAKOUT_UP, volume confirmed, day_vol 1.52, structure 81.1 with BULLISH_BOS. Structural fib_786 stop 5.82 under 6.02 entry = 3.32% risk. Contraction then expansion with the invalidation level close by (C20).",
+   "conviction": 4,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "structure_shift BULLISH_BOS, was_squeezed True -> BREAKOUT type."
+    },
+    {
+     "step": "2 match named pattern (C12/C13)",
+     "observed": "BREAKOUT_UP, squeeze_breakout_volume_confirmed True, day_vol 1.52, mp_state BUILDING."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "bar_range_history NOT_SERVED - no NR4/NR7 count or 6d/100d HV ratio; adx NOT_SERVED."
+    },
+    {
+     "step": "4 the stop (C17)",
+     "observed": "bracket.valid True, stop 5.82 stop_type fib_786, risk_pct 3.32, atr_14d 0.14."
+    }
+   ]
+  },
+  {
+   "ticker": "NFLX",
+   "reason": "Retracement family, Holy Grail shape (C7): structure 78.9 plus BULLISH_BOS = established trend; mp_state STRONG with mp_accel DECELERATING = the first pullback, read against the 20-EMA. Stop is ma20 79.10 vs 82.67 entry, 4.32% risk. adx NOT_SERVED, declared.",
+   "conviction": 4,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "BULLISH_BOS with mp_accel_state DECELERATING -> RETRACEMENT inside an up-structure, not a breakout."
+    },
+    {
+     "step": "2 match named pattern (C7)",
+     "observed": "mp_state STRONG, structure 78.9, sma_distance_pct 9.80; stop_type ma20 is literally the C7 20-EMA pullback reference."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "adx NOT_SERVED (R3) - mp_state STRONG is my nearest served proxy for 'trend strong enough'; stochastic_kd NOT_SERVED."
+    },
+    {
+     "step": "4 the stop (C17)",
+     "observed": "bracket.valid True, stop 79.10 ma20, risk_pct 4.32, atr_caution False, day_vol 0.87."
+    }
+   ]
+  },
+  {
+   "ticker": "STAG",
+   "reason": "Test family, Turtle Soup shape (C3/C20): price -2.02% under its SMA with BEARISH_CHOCH = a fresh low made against an earlier base; div_state BULLISH, day_vol 1.28. Stop swing_low_3 37.04 vs 37.70 = 1.75% risk, the tightest structural double-stop-point in the file.",
+   "conviction": 3,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "BEARISH_CHOCH with sma_distance_pct -2.02 -> TEST of a prior extreme, the failed-breakdown family."
+    },
+    {
+     "step": "2 match named pattern (C3/C20)",
+     "observed": "was_squeezed True, div_state BULLISH, day_vol 1.28 above normal on the low - the fail-to-sustain read."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "n_day_extreme substituted by sma_distance_pct + structure_shift (R2) - no literal rolling 20-day low field exists."
+    },
+    {
+     "step": "4 the stop (C17/C20)",
+     "observed": "bracket.valid True, stop 37.04 swing_low_3, risk_pct 1.75 - lowest structural risk on my sheet."
+    }
+   ]
+  },
+  {
+   "ticker": "SNOW",
+   "reason": "Breakout family (C12/C13): was_squeezed then BREAKOUT_UP, volume confirmed, day_vol 5.04 = outright range expansion. Structural ma20 stop 327.91 vs 356.47. Capped for risk: 8.01% risk_pct and 20.79% above SMA is not a low-risk entry location (C20).",
+   "conviction": 3,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "ABOVE_STRUCTURE, was_squeezed True, BREAKOUT_UP -> BREAKOUT type."
+    },
+    {
+     "step": "2 match named pattern (C12/C13)",
+     "observed": "day_vol 5.04, squeeze_breakout_volume_confirmed True - the strongest expansion signal in the packet."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "bar_range_history NOT_SERVED; adx NOT_SERVED. C19 windfall caution already live: sma_distance_pct 20.79, atr_14d 17.86."
+    },
+    {
+     "step": "4 the stop (C17/C20)",
+     "observed": "bracket.valid True, stop 327.91 ma20, risk_pct 8.01 - structural but wide; C20 ranks this below GNW/BSBR."
+    }
+   ]
+  },
+  {
+   "ticker": "TRP",
+   "reason": "Test family (C3/C20): -4.58% below its SMA after a contraction (was_squeezed True), div_state BULLISH, day_vol 1.31 above normal. Structural swing_low_1 stop 61.08 under 62.88 entry = 2.86% risk - invalidation sits right at the level being tested.",
+   "conviction": 3,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "structure_shift RANGE with sma_distance_pct -4.58 -> price at the low end of the swing, TEST family."
+    },
+    {
+     "step": "2 match named pattern (C3)",
+     "observed": "was_squeezed True, div_state BULLISH, day_vol 1.31, elder_pattern INTERRUPTED."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "n_day_extreme approximated by sma_distance_pct (R2); adx and stochastic_kd NOT_SERVED."
+    },
+    {
+     "step": "4 the stop (C17)",
+     "observed": "bracket.valid True, stop 61.08 swing_low_1, risk_pct 2.86, atr_14d 1.39."
+    }
+   ]
+  },
+  {
+   "ticker": "VRNS",
+   "reason": "Retracement family (C6/C7 shape): BULLISH_BOS with structure 73.7, elder CORRECTION_REENTRY and mp_accel ACCELERATING = the hook back up after a pullback, on day_vol 2.17. Structural ma50 stop 43.67 vs 46.51 = 6.11% risk. stochastic_kd and adx NOT_SERVED.",
+   "conviction": 3,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "BULLISH_BOS, elder_pattern CORRECTION_REENTRY -> RETRACEMENT within an established up-structure."
+    },
+    {
+     "step": "2 match named pattern (C6 the Anti)",
+     "observed": "mp_state FADING with mp_accel_state ACCELERATING - short cycle turning back up under a longer up-structure; day_vol 2.17."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "stochastic_kd NOT_SERVED (R4) - mp_accel_state is a declared substitute for the 7/10 %K-%D hook, never the real oscillator."
+    },
+    {
+     "step": "4 the stop (C17)",
+     "observed": "bracket.valid True, stop 43.67 ma50, risk_pct 6.11 - structural but wide, which is why conviction is 3 not 4."
+    }
+   ]
+  },
+  {
+   "ticker": "AEP",
+   "reason": "Test family (C3): -3.72% under SMA, BEARISH_CHOCH after a contraction, div_state BULLISH, elder ACCUMULATION_BASE. Structural swing_low_2 stop 122.25 vs 124.71 = 1.97% risk. Held to conviction 2: day_vol 0.70 is below-normal participation on the test.",
+   "conviction": 2,
+   "checklist_trace": [
+    {
+     "step": "1 classify (C2)",
+     "observed": "BEARISH_CHOCH, sma_distance_pct -3.72 -> TEST of a prior low."
+    },
+    {
+     "step": "2 match named pattern (C3)",
+     "observed": "was_squeezed True, div_state BULLISH, elder_pattern ACCUMULATION_BASE, but day_vol 0.70 - thin participation."
+    },
+    {
+     "step": "3 declare approximations",
+     "observed": "n_day_extreme approximated (R2); adx NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE (R8)."
+    },
+    {
+     "step": "4 the stop (C17/C20)",
+     "observed": "bracket.valid True, stop 122.25 swing_low_2, risk_pct 1.97 - tight structural invalidation is the whole case here."
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "BRZE",
+   "read": "TIGHTEN - C19 windfall protection. sma_distance_pct 23.74 with mp_state FADING and mp_accel DECELERATING: a large open extension whose impulse is rolling over. The ma20 stop at 30.71 is 7.64% away, far too loose to protect that gain. C18 says minimise time in the market - take the windfall or trail it tight, do not let it erode."
+  },
+  {
+   "ticker": "HNGE",
+   "read": "TIGHTEN toward EXIT-CASE. bracket.valid False, invalid_reason 2 (no structural support passes the gates), so C17's one-or-two-ticks-beyond-the-swing stop cannot be constructed at all - the only reference is atr_fallback_stop 86.23, a volatility distance, which is exactly the percentage/dollar stop C17 forbids. mp FADING and DECELERATING on day_vol 0.71. No defined risk point means no position I would defend."
+  },
+  {
+   "ticker": "V",
+   "read": "EXIT-CASE on risk definition. bracket.valid False, invalid_reason 2 - no structural level, and the atr_fallback_stop 372.19 prints ABOVE the 361.45 reference entry, so I have no usable risk point in either direction. div_state BEARISH with div_bear_count 3 of 5, day_vol 0.58, mp FADING and DECELERATING. Nothing in my taxonomy supports holding a name I cannot place a structural stop on."
+  }
+ ],
+ "shortfall_reason": "8 of 10. C2 is a closed taxonomy and I do not nominate outside it. The CLIMAX family returned zero by rule (R9/C10: Spike-and-Ledge, Fakeout-Shakeout, Three Little Indians and Wolfe Waves are named in the source as purely subjective and un-backtestable - I will not call one off a composite score). Beyond these 8, remaining names either fit no setup family or carry no structural level for a C17 stop (bracket.valid False, atr fallback only), and padding with those would be the breach."
+}
