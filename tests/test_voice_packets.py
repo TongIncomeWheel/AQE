@@ -346,24 +346,50 @@ def test_publish_without_a_token_says_so_rather_than_silently_skipping(
     assert "GITHUB_TOKEN" in res["reason"]
 
 
-def test_publish_with_an_unscoped_token_gives_one_clear_reason_not_a_wall_of_403s(
+def test_publish_with_a_hard_failed_token_gives_one_clear_reason_not_a_wall_of_403s(
         export_file, monkeypatch):
-    """2026-08-26: a token that reads but can't write (e.g. this session's
+    """2026-08-26: a token that's flatly rejected (e.g. this session's
     proxy-injected git credential, which is not a real Contents-API PAT) used
     to fail all 11 files individually, each with its own raw HTTPError text --
     reads as 'broken' rather than 'wrong token scope'. One auth check up
-    front, one sentence, no wasted PUT attempts."""
+    front, one sentence, no wasted PUT attempts -- but only when the check is
+    CONCLUSIVE (hard_fail: True): bad/missing token, rejected PAT, repo
+    unreachable."""
     vp.build(export_file)
     from src.data import github_sync
     monkeypatch.setattr(github_sync, "is_configured", lambda: True)
     monkeypatch.setattr(github_sync, "test_credentials",
-                         lambda: {"ok": False, "reason": "token can read but lacks "
-                                                          "push/write access"})
+                         lambda: {"ok": False, "hard_fail": True,
+                                  "reason": "token rejected (bad or expired PAT)"})
     calls = []
     monkeypatch.setattr(github_sync, "put_file",
                          lambda *a, **k: calls.append(a) or {"ok": True})
 
     res = vp.publish("2026-08-24")
     assert res["ok"] is False
-    assert "lacks push/write access" in res["reason"]
+    assert "rejected" in res["reason"]
     assert not calls, "must not attempt any file write once the auth check fails"
+
+
+def test_publish_still_attempts_real_writes_when_the_permissions_signal_is_only_soft(
+        export_file, monkeypatch):
+    """2026-09-04 incident: the same PAT read permissions.push=false on one
+    GitHub Actions run and permissions.push=true on another run the same day,
+    while BOTH runs' real Contents-API writes succeeded. A soft "ok: False,
+    hard_fail: False" from the preflight must not skip the real writes below
+    it -- that is exactly what silently dropped a whole day's voice packets
+    even though the token could genuinely write."""
+    vp.build(export_file)
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "is_configured", lambda: True)
+    monkeypatch.setattr(github_sync, "test_credentials",
+                         lambda: {"ok": False, "hard_fail": False,
+                                  "reason": "token read repo with permissions.push=false "
+                                            "(unreliable, not conclusive)"})
+    calls = []
+    monkeypatch.setattr(github_sync, "put_file",
+                         lambda *a, **k: calls.append(a) or {"ok": True})
+
+    res = vp.publish("2026-08-24")
+    assert res["ok"] is True
+    assert calls, "a soft/ambiguous permissions signal must not block the real writes"

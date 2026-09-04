@@ -84,9 +84,12 @@ def test_test_credentials_rejects_a_bad_pat(monkeypatch):
     assert res["ok"] is False and "rejected" in res["reason"]
 
 
-def test_test_credentials_flags_a_read_only_pat(monkeypatch):
-    """A token that authenticates but lacks Contents: write must fail before
-    the first real publish does, not after."""
+def test_test_credentials_flags_a_read_only_pat_but_not_as_a_hard_fail(monkeypatch):
+    """2026-09-04 incident: the same PAT read permissions.push=true on one run
+    and permissions.push=false on another run the same day, while BOTH runs'
+    real Contents-API writes succeeded -- this field is not conclusive, so it
+    must come back ok: False but hard_fail: False, leaving it to the caller to
+    still attempt the real write rather than skip it outright."""
     monkeypatch.setenv("GITHUB_TOKEN", "x")
 
     class R:
@@ -100,7 +103,27 @@ def test_test_credentials_flags_a_read_only_pat(monkeypatch):
 
     monkeypatch.setattr(gh.requests, "get", lambda *a, **k: R())
     res = gh.test_credentials()
-    assert res["ok"] is False and "push/write" in res["reason"]
+    assert res["ok"] is False
+    assert res["hard_fail"] is False
+    assert "push" in res["reason"]
+
+
+def test_test_credentials_hard_fails_when_unconfigured_or_rejected(monkeypatch):
+    """Unlike the ambiguous permissions.push case, no-token and a rejected PAT
+    are conclusive -- a caller may skip the real write entirely on these."""
+    _no_token(monkeypatch)
+    assert gh.test_credentials()["hard_fail"] is True
+
+    monkeypatch.setenv("GITHUB_TOKEN", "x")
+
+    class R401:
+        status_code = 401
+
+        def raise_for_status(self):
+            raise AssertionError("should not be called on 401")
+
+    monkeypatch.setattr(gh.requests, "get", lambda *a, **k: R401())
+    assert gh.test_credentials()["hard_fail"] is True
 
 
 def test_test_credentials_confirms_write_access(monkeypatch):

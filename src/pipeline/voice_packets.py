@@ -228,11 +228,16 @@ def publish(run_date: str) -> dict:
     if not github_sync.is_configured():
         return {"ok": False, "reason": "GITHUB_TOKEN not set — packets stay local only"}
 
-    # One cheap read-only call up front, so an auth/scope problem surfaces as
-    # ONE clear sentence instead of up to 11 near-identical raw HTTPErrors (one
-    # per file) that read as "broken" rather than "token needs a scope fix".
+    # One cheap read-only call up front, so a DEFINITELY-broken token (missing,
+    # rejected, repo unreachable) surfaces as ONE clear sentence instead of up
+    # to 11 near-identical raw HTTPErrors. Only bail here on hard_fail: the
+    # permissions.push field this call also inspects is unreliable (observed
+    # 2026-09-03: same PAT read push=true on one run and push=false minutes
+    # later on another, while both runs' real Contents-API writes succeeded)
+    # -- a soft "ok: False" from this preflight must not block the real
+    # writes below, which are self-diagnosing per file regardless.
     cred = github_sync.test_credentials()
-    if not cred.get("ok"):
+    if not cred.get("ok") and cred.get("hard_fail"):
         return {"ok": False, "reason": f"GitHub auth check failed: {cred.get('reason')}"}
 
     # candidate_set.json rides along: same derived-from-master artifact, same

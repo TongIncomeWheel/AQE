@@ -90,28 +90,44 @@ def is_configured() -> bool:
 def test_credentials() -> dict:
     """One cheap read-only call to prove the PAT is valid AND has write access
     to this repo — the two ways a token can look configured but still fail on
-    the first real publish. No commit, no write, safe to click repeatedly."""
+    the first real publish. No commit, no write, safe to click repeatedly.
+
+    ``hard_fail`` marks the cases proven fatal by this call alone (bad token,
+    repo unreachable, or the call itself blew up) — a caller may skip the real
+    write entirely on those. The ``permissions.push`` field is NOT one of
+    them: on a 2026-09-03 run it read false for a token that, in the same run
+    minutes apart, successfully wrote aqe_daily_export.json via this exact
+    Contents API — GitHub's classic permissions object is documented as
+    unreliable for some token types (observed here: same PAT, same day, one
+    run read push=true and another read push=false). So that case comes back
+    ``ok: False, hard_fail: False`` — worth a warning, not a block; the real
+    write is still authoritative and a caller should attempt it anyway."""
     if not is_configured():
-        return {"ok": False, "reason": "GITHUB_TOKEN not set"}
+        return {"ok": False, "hard_fail": True, "reason": "GITHUB_TOKEN not set"}
     try:
         r = requests.get(f"{API}/repos/{repo()}", headers=_headers(), timeout=TIMEOUT)
         if r.status_code == 401:
-            return {"ok": False, "reason": "token rejected (bad or expired PAT)"}
+            return {"ok": False, "hard_fail": True,
+                     "reason": "token rejected (bad or expired PAT)"}
         if r.status_code == 404:
-            return {"ok": False,
+            return {"ok": False, "hard_fail": True,
                      "reason": f"{repo()} not found, or token has no access to it"}
         r.raise_for_status()
         info = r.json()
         can_push = bool((info.get("permissions") or {}).get("push"))
         if not can_push:
-            return {"ok": False,
-                     "reason": f"token can read {repo()} but lacks push/write "
-                               "access — needs Contents: read+write"}
-        return {"ok": True, "repo": info.get("full_name"), "branch": branch(),
+            return {"ok": False, "hard_fail": False,
+                     "reason": f"token read {repo()} with permissions.push=false "
+                               "(this field is unreliable for some token types — "
+                               "not treated as conclusive)"}
+        return {"ok": True, "hard_fail": False, "repo": info.get("full_name"),
+                "branch": branch(),
                 "message": f"GitHub OK — write access to {info.get('full_name')} "
                            f"confirmed"}
     except Exception as exc:  # noqa: BLE001
-        return _fail(exc, "test credentials")
+        result = _fail(exc, "test credentials")
+        result["hard_fail"] = True
+        return result
 
 
 def _headers(accept: str = "application/vnd.github+json") -> dict:
