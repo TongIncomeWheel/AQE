@@ -47,8 +47,12 @@ import sys
 # here because something downstream reads it and would produce a wrong number (not an error) if it
 # were missing. It is deliberately NOT the full 97-field record — demanding fields nobody reads
 # manufactures failures.
+# `ptrs` REMOVED 2026-09-04 (PM ruling): AQE RETIRED the field on 2026-08-13 -- its own
+# field_glossary in every export says "no longer emitted... it carried SC_MOMENTUM verbatim,
+# so it was an alias, not a second reading. Use sc_momentum." Demanding a deliberately retired
+# alias made coverage return exit 2 (blocking) on 100% of rows of every healthy export.
 REQUIRED_ROW_FIELDS = [
-    "ticker", "rank", "sc_momentum", "ptrs", "pipe_rank", "flow", "energy", "structure",
+    "ticker", "rank", "sc_momentum", "pipe_rank", "flow", "energy", "structure",
     "elder", "mp", "beta_30d", "atr_14d", "gics_sector", "entry", "bracket",
 ]
 
@@ -63,7 +67,7 @@ REQUIRED_ROW_FIELDS = [
 # publishes the same names' live price and exposure under `held_book.positions`, which is where
 # the hedge math reads them. Demanding them here would fail every healthy export forever.
 REQUIRED_HELD_FIELDS = [
-    "ticker", "qty", "entry", "sc_momentum", "ptrs", "flow", "energy", "structure", "elder",
+    "ticker", "qty", "entry", "sc_momentum", "flow", "energy", "structure", "elder",
     "mp", "beta_30d", "atr_14d", "gics_sector", "bracket",
 ]
 
@@ -297,7 +301,7 @@ def render(rep):
         if items:
             out.append("  %s:" % label)
             out.extend("    - " + s for s in items)
-    return "\n".join(out)
+    return "\\n".join(out)
 
 
 # --------------------------------------------------------------------------- selftest
@@ -367,7 +371,7 @@ def _selftest():
     j = {"open_positions": [{"ticker": "HHH"}, {"ticker": "AAA"}, {"ticker": "ZZZ"}]}
     r = check(base(), journal=j, today="2026-07-28")
     assert r["held_coverage"]["uncovered"] == ["ZZZ"], r["held_coverage"]
-    assert r["held_coverage"]["by_source"] == {"AAA": "daily_list", "HHH": "held_positions"}, \
+    assert r["held_coverage"]["by_source"] == {"AAA": "daily_list", "HHH": "held_positions"}, \\
         r["held_coverage"]["by_source"]
     assert r["verdict"] == "DEGRADED", r["degraded"]
 
