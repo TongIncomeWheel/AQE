@@ -1,0 +1,254 @@
+{
+  "voice": "steenbarger",
+  "date": "2026-09-04",
+  "findings": [
+    {
+      "id": "F1",
+      "scope": "SET-LEVEL",
+      "claim": "The PM's question answered directly: NO. The elder and momentum fields do vary today, and conviction does not track that variation — if anything it runs against it. The restored variance bought the committee nothing because the seats are not reading these fields as discriminators.",
+      "evidence": "Fields vary: elder_5d last value spans 7-10 (distinct 7,8,9,10); sc_momentum 49.2 (CB) to 82.0 (SLDE), sd 8.26; structure 31.6 (GME) to 91.6 (CTVA), sd 15.05; AQE rank 6 to 143. Conviction is uncorrelated or inversely correlated with every one: corr(conviction_sum, elder) = -0.319; corr(conviction_sum, sc_momentum) = -0.039; corr(conviction_sum, structure) = -0.304; corr(conviction_sum, AQE rank) = -0.026. Split on elder: the 8 names at elder 10 (CVX, VRNS, JNJ, DOCS, SLDE, BSBR, TAK, GME) draw mean 1.50 seats at mean per-seat conviction 3.50; the 5 names at elder 7 (BBY, NFLX, MET, MDT, CTVA) draw mean 2.00 seats at mean 3.60. The strongest elder reading in the set attracts fewer seats and lower conviction than the weakest."
+    },
+    {
+      "id": "F2",
+      "scope": "SET-LEVEL",
+      "claim": "Conviction sum is a headcount, not a conviction reading — and per-seat conviction runs INVERSE to headcount. The ranking metric rewards the names the individual seats believe in least. This is convergence without independence (C15) inverted: the more eyes on a name, the weaker each reading.",
+      "evidence": "corr(conviction_sum, seat_count) = +0.907 — the rank is 82% explained by how many seats filed. corr(mean_per_seat_conviction, seat_count) = -0.471. The 7 single-seat names average 4.00 per seat; the 11 multi-seat names average 3.18. BBY tops the set at 4 seats / sum 12 with the LOWEST mean conviction on the board (3.0: minervini 4, seow 2, weis 3, wyckoff 3) and the second-lowest structure in the set (50.5). Only 2 of 18 names drew 3+ seats (BBY 4, GNW 3); 16 of 18 rest on one or two readers."
+    },
+    {
+      "id": "F3",
+      "scope": "SET-LEVEL",
+      "claim": "Confirmation-shopping, measured. div_state is cited when it reads BULLISH and never when it reads BEARISH. This is the cleanest breach in the packet and it sits entirely inside my own data menu.",
+      "evidence": "div_state appears in exactly 2 of 32 seat filings — weis and wyckoff, both on BBY, where div reads BULLISH / div_bear_count 0. Four names carry BEARISH divergence: TAK (div_bear_count 3, the highest in the set), GNW (2), CVX (1), JNJ (1). Those four names drew 8 seat filings between them (livermore x4, minervini x3, raschke x1). div_state is mentioned in ZERO of the 8. The bearish_divergence CAUTION flag is anchored to exactly these two fields and fired unread."
+    },
+    {
+      "id": "F4",
+      "scope": "SET-LEVEL",
+      "claim": "lens_warnings is a dead field in this deliberation. Not one seat in 32 filings named a lens reading 'warn', including on the name carrying the most warnings in the set.",
+      "evidence": "0 of 32 reason lines contain a lens warning citation. 11 of 18 names carry at least one lens at 'warn': GME 3 (leadership, structure, resistance), VRNS 2, DOCS 2, MDT 2, SPGI 2, TAK 2, BBY 1, NFLX 1, CVX 1, JNJ 1, CTVA 1. GME carries the highest warning count in the set and drew a single filing (thorp conv 4) that names none of them."
+    },
+    {
+      "id": "F5",
+      "scope": "SET-LEVEL",
+      "claim": "No regime label, no environment match, no size justification (C3/C4, R3). 15 of 18 names sit in a sector state AQE itself labels do-not-add, and 30 of 32 filings never name it. Where a seat did name it, it did not move the number.",
+      "evidence": "sector_trend_state across the set: 'Momentum Fading - Hold, Don't Add' on 14 names, 'Declining - Avoid' on 1 (CTVA), 'Recovering From Weakness - Watch for Entry' on 3 (BBY, WELL, GME). Not one name carries a constructive sector label. sector_trend_state is cited in 2 of 32 filings: seow on BBY ('sector_trend_state 3') and minervini on CTVA ('Caution named: sector_trend_state Declining - Avoid') — the latter filed at conviction 4, minervini's maximum, with no visible discount. Compounding the confusion, the per-name lens 'sector' field reads 'strong' on GNW, NFLX, CB, CVX, VRNS, MET, JNJ, UBS, DOCS, SLDE, BSBR, MDT, SPGI and TAK while the header on those same names says Momentum Fading. Two sector fields disagree in direction and no seat reconciles them."
+    },
+    {
+      "id": "F6",
+      "scope": "SET-LEVEL",
+      "claim": "The single-seat conviction 4s carry no information. Seven of seven land on exactly 4 with zero variance, which is the signature of a qualification threshold, not of seven independent readings that happened to agree. Nobody should read those 4s as strength.",
+      "evidence": "SLDE, BSBR, MDT, SPGI, TAK, CTVA, GME — all single-nominator, all conviction exactly 4, sd 0.00. The brief's own qualification rule admits single nominators only at conviction >= solo_high_conviction_min, so a 4 here means 'cleared the bar', nothing more. Across all 32 filings the distribution is {2: 4, 3: 12, 4: 16} — mean 3.375, and not one seat in the entire packet used the top of its own scale. Half of every filing sits on the same number."
+    },
+    {
+      "id": "F7",
+      "scope": "SET-LEVEL",
+      "claim": "8 of 18 names have no structural stop at all, and one seat holds half of them. Livermore does not decline these — he substitutes an ATR percentage for the missing level, four times, in near-identical language. That converts an invalidation LEVEL into a volatility number, which is exactly the C7/R5 failure: an assertion, not a hypothesis.",
+      "evidence": "BRACKET INVALID (no structural support passes atr>=1.0, rr>=2.0, risk% ceiling) on CVX, MET, JNJ, UBS, SLDE, SPGI, TAK, CTVA. Livermore filed on 4 of the 8 (CVX, MET, JNJ, TAK) and wrote in each: CVX 'Danger unit atr_14d 3.91 on 211.29 = 1.85%, my ATR translation'; MET 'No structural stop; danger unit atr_14d 1.89 on 99.23 = 1.9%'; JNJ 'Danger unit atr_14d 5.66 on 278.43 = 2.03%'; TAK 'Tightest danger unit in my list: atr_14d 0.29 on 18.71 = 1.55%'. The engine says no level the market defends exists at these prices; the ATR translation does not create one."
+    },
+    {
+      "id": "F8",
+      "scope": "SET-LEVEL",
+      "claim": "Higher-timeframe context is asserted, not shown, on half the set (C5/R4). Nine of 18 names have a moving-average stack that is NOT ordered 20>50>100>200, and three trade BELOW their own 200-day. No seat names the disorder on any of them.",
+      "evidence": "Stack not ordered on NFLX, CB, VRNS, DOCS, BSBR, MDT, SPGI, CTVA, GME (9/18). Entry below ma_200: NFLX 82.67 vs ma200 87.04 (-5.02%), DOCS 27.10 vs 28.97 (-6.45%), GME 19.23 vs 22.19 (-13.34%). VRNS has ma20 43.17 BELOW ma50 43.67; CTVA has ma20 80.86 below both ma50 83.23 and ma100 81.34; MDT has ma100 83.07 and ma50 86.46 both below ma200 89.73."
+    },
+    {
+      "id": "F9",
+      "scope": "NFLX",
+      "claim": "Raschke's 'established trend' and thorp's 'all 5 momentum gates' both rest on a 20/50 relationship inside a longer-timeframe DOWNtrend, and the stop is placed on the near MA with a farther MA sitting between it and the entry. Price must break the 100-day before it can reach the stop on the 20-day.",
+      "evidence": "entry 82.67; ma20 79.10, ma50 75.29, ma100 81.35, ma200 87.04. Entry is 5.02% below its own 200-day and ma100 > ma50 — the stack is inverted at the long end. bracket.stop 79.10 equals ma20 to the cent; ma100 81.35 lies between entry 82.67 and that stop. Raschke: 'structure 78.9 plus BULLISH_BOS = established trend... read against the 20-EMA. Stop is ma20 79.10 vs 82.67 entry, 4.32% risk.' Thorp: 'Loss boundary 79.10.' Neither line names ma100 or ma200."
+    },
+    {
+      "id": "F10",
+      "scope": "TAK",
+      "claim": "Livermore's two-name Key Price confirmation is circular. TAK is confirmed by JNJ and JNJ is confirmed by TAK, both nominated by livermore, and the confirming leg is one he himself flagged as unconfirmed by volume. That is convergence manufactured by a single reader, which under C15 is not corroboration at all.",
+      "evidence": "livermore on JNJ (conv 3): 'Second XLV break, confirming TAK under my two-name Key Price rule (C14)... day_vol 0.92 is below-normal participation - noted against the break.' livermore on TAK (conv 4): 'JNJ confirms XLV.' The same closed loop runs in XLF: livermore on GNW (conv 4) then on MET (conv 3) 'XLF Key Price partner to GNW (C14): a second BULLISH_BOS in the same group confirms the turn is not one name's false move.' TAK additionally carries div_bear_count 3, the highest in the set, uncited. Livermore filed 6 of the 32 seat filings (tied with minervini for the most)."
+    },
+    {
+      "id": "F11",
+      "scope": "GNW",
+      "claim": "Three seats independently cite the same tight stop as the name's headline virtue, and none observes that the stop sits ABOVE the entire moving-average stack. A routine pullback to the rising 20-day is a stop-out before the trend structure is tested. The tightness is not risk control; it is a stop placed inside the pullback zone.",
+      "evidence": "entry 10.38, bracket.stop 10.14 (fib_618), risk 2.31%, atr_14d 0.21 so risk = 1.14 ATR. ma20 9.96, ma50 9.82, ma100 9.36, ma200 8.98 — the stop is 1.81% ABOVE ma20, a further 0.86 ATR of room between the stop and the 20-day. minervini: 'Tightest stop-to-entry math in the pass list.' livermore: 'Max loss predetermined: stop 10.14 fib_618, risk 2.31%.' raschke: 'a real C17 swing stop, not a percentage.' All three cite day_vol 2.29 as confirmation; none cites div BEARISH / div_bear_count 2 on the same record."
+    },
+    {
+      "id": "F12",
+      "scope": "VRNS",
+      "claim": "Both seats call the ma50 stop 'structural' on a name whose 20-day has already crossed under its 50-day, which puts the stop ABOVE the nearest moving average, at the widest risk in the valid-bracket set, with first structural resistance barely beyond 1R.",
+      "evidence": "entry 46.51, stop 43.67 = ma50 exactly, risk 6.11% (widest of the 10 valid brackets). ma20 43.17 sits BELOW ma50 43.67 — the stop is +1.16% above the 20-day. rr_tp1 is only 1.07 against rr_tp2 2.77, so the quoted 2.77 R:R requires trading through the nearest overhead level. mp_state FADING (livermore's own named caution), rs LAGGARD, rs_down_day_20d -1.31, lens leadership and resistance both 'warn' (uncited)."
+    },
+    {
+      "id": "F13",
+      "scope": "SET-LEVEL",
+      "claim": "Seats quote R:R to TP2 while the first structural level sits inside 1R. On four names the quoted reward depends entirely on trading straight through nearby resistance, and only wyckoff flags it.",
+      "evidence": "rr_tp1 below 1.0 with rr_tp2 quoted as the case: BSBR rr_tp1 0.05 / rr_tp2 2.75 (raschke cites the breakout, not the 0.05); MDT 0.48 / 2.01; WELL 0.28 / 2.02 (seow cites 'tightest risk on my list at 2.90%'); BBY 0.74 / 2.37. Wyckoff is the only seat to name the exposure, twice: on BBY 'structure 50.5 - reward unproven' and on MDT 'rr 2.01 at the floor'."
+    },
+    {
+      "id": "F14",
+      "scope": "SET-LEVEL",
+      "claim": "The two highest-AQE-ranked names in the deliberation set are also the two most under-observed records, and each drew exactly one seat at the threshold conviction. Conviction is being filed over missing observables rather than despite them.",
+      "evidence": "SLDE (rank 6) and CTVA (rank 8): both have 5 of 7 lens fields unserved (leadership, coil, insti_money, resistance all '--', extension None), both div None/None so div_state and div_bear_count are absent, both mp accel 'None', both BRACKET INVALID. Each drew one filing at conviction 4 (oneil on SLDE, minervini on CTVA). Neither filing declares the missing fields as a data gap. SLDE additionally sits 16.09% above its SMA on oneil's own reading ('sma_distance 16.09 vs median 7.84: late, not rejected')."
+    },
+    {
+      "id": "F15",
+      "scope": "GME",
+      "claim": "The weakest structural record in the packet carries a maximum-conviction filing built purely on price geometry, by a seat that concedes in the same line that most of its own gates fail.",
+      "evidence": "structure 31.6 (lowest of 18), structure_shift BEARISH_CHOCH (the only one in the set), MA stack fully inverted ma20 18.44 < ma50 20.30 < ma100 21.64 < ma200 22.19, entry 19.23 = 13.34% below its 200-day, sma_dist -5.29%, 3 lens warnings (the most in the set), energy 45.0. thorp conv 4: 'Widest margin over the worst case in the set: TP1 4.46R against 1.74R if the 18.55 stop is gapped by one ATR... Only 2/5 momentum gates fire (flow, elder), so the stated reason is thin - discounted, not ignored.' The discount is not present in the conviction: thorp filed 4 on NFLX where he says all 5 gates fire, and 4 here where 2 do."
+    },
+    {
+      "id": "F16",
+      "scope": "SET-LEVEL",
+      "claim": "The held book is unreconciled and invisible. The brief's own header disagrees with itself on how many held names exist, and none of them reached the deliberation set, so no seat's held-book verdict is auditable in this packet.",
+      "evidence": "Line 2 states 'held 2'; line 4 states 'Held book: BRZE, HNGE, V' — three names. None of BRZE, HNGE or V appears among the 18 deliberation names. My card requires held names in universe to be reviewed with the same checklist and given a KEEP/TIGHTEN/EXIT-CASE verdict; nothing in this brief lets me confirm that happened for any of the three."
+    },
+    {
+      "id": "F17",
+      "scope": "SET-LEVEL",
+      "claim": "Model behaviour exists in this packet and should be named, because it proves the discipline was available to every seat. Two seats declared their own condition unmet AND moved the number; the O-A seats below declared it unmet and did not.",
+      "evidence": "weis on WELL (conv 2): 'Held to 2: the preceding read is chop, not a failed break - elder_5d [4,0,8,3,9] gives no rhythm, and choch_state is BEARISH' — the failure-of-weakness precondition is his framework's core and he priced its absence. thorp on DOCS (conv 2): 'day_vol 0.33 says a third of normal participation, so the round trip is the unpriced cost... Unwatched loss 14.83% of price sizes it small.' Both are the lowest convictions those seats filed. Contrast minervini on CTVA and thorp on GME, where a declared adverse condition left the conviction at 4."
+    }
+  ],
+  "obligations": [
+    {
+      "seat": "seow",
+      "ticker": "BBY",
+      "class": "O-A",
+      "what_is_owed": "You wrote 'entry 87.49 is +2.95% ABOVE ma_20: the dip to the rising average has not happened yet, so this is a watch, not a completed pullback' — and filed at conviction 2. State in Round 2 whether the completed pullback is a HARD entry condition in your framework or a weight. If hard: withdraw BBY until price trades at or below ma_20 84.98 and re-file then. If a weight: give the arithmetic — what does 'not yet arrived' subtract, and why does the residual still clear your own filing bar? BBY currently ranks first in the set on conviction sum 12 while carrying the lowest mean per-seat conviction (3.0) and structure 50.5."
+    },
+    {
+      "seat": "elder-lens",
+      "ticker": "DOCS",
+      "class": "O-A",
+      "what_is_owed": "You wrote 'No permission event - [10,10,7,7,10] never went under 7 - so R8 carries this one' and 'the last bar sits at 10, which is summer (C20), so this is my weaker trigger' — then filed at conviction 3. On UBS, where the permission event DID fire ([9,9,4,6,9], 4 then 9, your own words), you filed at conviction 2. Answer both halves: (1) is the permission event a hard gate for this seat, and if it is, withdraw DOCS; (2) explain the inversion — why the name missing your primary trigger outranks the name that has it by a full conviction point."
+    },
+    {
+      "seat": "elder-lens",
+      "ticker": "UBS",
+      "class": "O-A",
+      "what_is_owed": "You wrote 'mp_state FADING at mp 55 cuts against the rising-trend leg C9 demands, and with no slope field on my menu nothing settles it. Taken small.' State whether C9's rising-trend leg is a hard precondition. 'Nothing settles it' is a declared no_data condition, not a pass — under my R8 the correct output when a required field cannot be evaluated is an explicit stand-aside, not a reduced-size file. If you keep UBS, name what evidence would settle the slope question and what you would do if it came back against you. Note UBS also carries BRACKET INVALID with atr_fallback_stop 54.79."
+    },
+    {
+      "seat": "minervini",
+      "ticker": "CTVA",
+      "class": "O-A",
+      "what_is_owed": "You wrote 'Caution named: sector_trend_state Declining - Avoid' and filed at conviction 4, your maximum, with no visible discount — the only 'Declining - Avoid' name in the set. Your own template treats group/sector condition as a gate, not a garnish. State whether sector state is hard for you. If hard, withdraw. If a weight, show what the caution cost: you filed 4 on CTVA (Declining), 4 on GNW and 4 on BBY (both non-Declining) — demonstrate the discount, because the numbers do not show one. Also address that CTVA has 5 of 7 lens fields unserved, div_state absent, ma20 80.86 below both ma50 83.23 and ma100 81.34, and BRACKET INVALID."
+    },
+    {
+      "seat": "thorp",
+      "ticker": "GME",
+      "class": "O-A",
+      "what_is_owed": "You wrote 'Only 2/5 momentum gates fire (flow, elder), so the stated reason is thin - discounted, not ignored' and filed conviction 4 — identical to the 4 you filed on NFLX where you wrote 'the only name pairing all 5 momentum gates'. Show where the discount landed, in a number. If 2/5 and 5/5 both produce a 4, your gate count does not enter your conviction and should be withdrawn as a stated reason. Separately: your R-multiple case (TP1 4.46R vs 1.74R gapped loss) is computed off bracket.stop 18.55 on a name with structure_shift BEARISH_CHOCH, structure 31.6, entry 13.34% below ma200 22.19, and a fully inverted MA stack — state whether your method has ANY input that can reject a favourable R-multiple, or whether it is unconditional on trend context."
+    },
+    {
+      "seat": "livermore",
+      "ticker": "CVX",
+      "class": "O-A",
+      "what_is_owed": "You declared two of your own conditions failing in one line — 'No structural stop (valid False); VG is a thin Key Price partner' — and filed conviction 4. Your C14 requires a second name in the group to confirm the move; you have named the partner as thin. State whether C14 confirmation is hard. If it is, either name the qualifying XLE partner from today's 164-name universe with its structure_shift, or withdraw. Also state whether a name with no structural stop can carry your maximum conviction as a general rule, given you filed on 4 of the 8 BRACKET INVALID names in this set (CVX, MET, JNJ, TAK)."
+    },
+    {
+      "seat": "livermore",
+      "ticker": "JNJ",
+      "class": "O-A",
+      "what_is_owed": "You wrote 'day_vol 0.92 is below-normal participation - noted against the break' — a break-to-new-high without volume is your own disqualifier, not a footnote — and you then used this same JNJ break to confirm TAK ('Second XLV break, confirming TAK under my two-name Key Price rule'). Answer: (1) is volume expansion hard on a break for you, and if so withdraw JNJ; (2) if JNJ is withdrawn or discounted, TAK loses its stated confirmation — restate TAK's case without it. Do not resolve this by citing TAK back at JNJ; JNJ and TAK cannot confirm each other when both are your own filings."
+    },
+    {
+      "seat": "wyckoff",
+      "ticker": "BBY",
+      "class": "O-A",
+      "what_is_owed": "You declared two conditions short in one line — 'lens.coil only ok - contraction partial' and 'structure 50.5 - reward unproven' — and filed conviction 3 on the name that now leads the set. State whether 'reward unproven' at structure 50.5 (second-lowest in the 18) is a condition that can be carried at conviction 3, or whether your own framework requires the contraction to complete first. BBY's rr_tp1 is 0.74, so the 2.37 you quote requires trading through the nearest structural level; say explicitly which of the two you are underwriting."
+    },
+    {
+      "seat": "raschke",
+      "ticker": "NFLX",
+      "class": "O-B",
+      "what_is_owed": "You quoted a moving-average stop: 'Stop is ma20 79.10 vs 82.67 entry, 4.32% risk.' Name the level actually honored. ma100 81.35 sits BETWEEN your entry 82.67 and that stop, and ma200 87.04 sits 5.02% ABOVE your entry — so price breaks the 100-day before it can reach your invalidation, and the 'established trend' you cite is a 20-over-50 relationship (79.10 > 75.29) inside a stack that is inverted at the long end (ma100 81.35 > ma50 75.29). Answer three things: which MA is the invalidation, what the 100-day break means for the thesis if it is not the stop, and whether your Holy Grail retracement setup is valid at all on a name trading below its own 200-day."
+    },
+    {
+      "seat": "thorp",
+      "ticker": "NFLX",
+      "class": "O-B",
+      "what_is_owed": "You called 79.10 the 'loss boundary' and computed a 1.63R gapped-stop loss and 0.84R net margin against it. 79.10 is not a boundary, it is ma_20 to the cent, and it is a moving number that rises each session while your R arithmetic is fixed at today's close. State whether your margin calculation re-computes as ma_20 rises, and state what happens to the 0.84R net margin when price reaches ma100 81.35 — the level between entry and your boundary that your calculation does not contain."
+    },
+    {
+      "seat": "livermore",
+      "ticker": "VRNS",
+      "class": "O-B",
+      "what_is_owed": "You quoted 'stop 43.67 ma50, risk 6.11%'. Name the level actually honored: ma20 is 43.17, BELOW your ma50 stop, so the 20-day has already crossed under the 50 and your stop sits 1.16% ABOVE the nearest moving average. A pullback to the 20-day is a stop-out before any structural test occurs. State whether a ma50 stop is defensible when the 20 is beneath it, and reconcile 'the cleanest new-high entry' with mp_state FADING and rs LAGGARD on the same record."
+    },
+    {
+      "seat": "raschke",
+      "ticker": "VRNS",
+      "class": "O-B",
+      "what_is_owed": "You called 43.67 a 'Structural ma50 stop' at 6.11% risk — the widest risk of the 10 valid brackets in this set. Name the level actually honored, given ma20 43.17 sits below it. Then reconcile the R:R you are underwriting: rr_tp1 is 1.07 and rr_tp2 is 2.77, so at 6.11% risk the first structural resistance is essentially at 1R and the quoted reward requires trading through it. State which target the 'hook back up after a pullback' is aiming at."
+    },
+    {
+      "seat": "wyckoff",
+      "ticker": "MDT",
+      "class": "O-B",
+      "what_is_owed": "You quoted 'the reclaimed ma_200 89.73 (role reversal, C3): 1.48 ATR, risk 3.62%, rr 2.01 at the floor.' Name the level actually honored. ma20 91.38 sits BETWEEN entry 93.10 and your ma200 stop, so the 20-day is what price touches first, 1.81% above your invalidation. Further, ma50 86.46 and ma100 83.07 are both BELOW the ma200 89.73 — the stack is inverted, which means the 200 was reclaimed from beneath very recently. Give the reclaim date and the volume on it: a role-reversal axis that has not yet been retested and defended is a hypothesis, not a danger point."
+    },
+    {
+      "seat": "minervini",
+      "ticker": "BBY",
+      "class": "O-B",
+      "what_is_owed": "You quoted 'stop 83.75 on the ma_cluster'; seow wrote 'stop 83.75 sits on the 50'; wyckoff wrote 'Danger point ma_cluster 83.75'. Name the level actually honored, because there is no cluster at 83.75. ma50 is 83.75, ma20 is 84.98 (1.45% above it), and ma100 74.89 / ma200 71.39 are 10.6% and 14.8% BELOW it. The stop rests on one moving average with the 20-day above it and nothing else nearby. State whether the invalidation is the 20-day at 84.98 (touched first) or the 50-day at 83.75, and whether 'ma_cluster' language survived into your conviction 4 as support the record does not contain."
+    },
+    {
+      "seat": "thorp",
+      "ticker": "GME",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong, stated before entry, and not bracket.stop 18.55 or any level derived from it. Your entire case is price geometry (TP1 4.46R against a 1.74R gapped loss), which can only be disconfirmed by price — that is an assertion, not a hypothesis (C7/R5). Candidates already on this record that you did not read: lens leadership / structure / resistance all at 'warn' (3, the most in the set), energy 45.0, day_vol 1.18. Name the field, the threshold, and the number of sessions within which it must hold."
+    },
+    {
+      "seat": "livermore",
+      "ticker": "TAK",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong, not the atr_fallback_stop 18.42 and not a price level. Your invalidation today is 'atr_14d 0.29 on 18.71 = 1.55%, my ATR translation' — a volatility unit, not an observation. Two non-price fields on this record cut against you and appear in neither of your XLV filings: div BEARISH with div_bear_count 3, the highest in the deliberation set, and lens coil / insti_money both at 'warn'. State whether div_bear_count reaching 4 or 5, or day_vol on the group's confirming name (JNJ, 0.92) failing to expand above 1.0, would retire this read — and if neither would, say what could."
+    },
+    {
+      "seat": "minervini",
+      "ticker": "GNW",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong. Your case is 'squeeze_breakout_state BREAKOUT_UP on day_vol 2.29 = C6 expansion' — so state the participation condition that retires it: at what day_vol reading, over how many sessions, does a single 2.29 day become a one-day event rather than accumulation? Then address the field all three GNW seats skipped: div BEARISH with div_bear_count 2 on the same record. State whether a bearish divergence confirmed by 2 of 5 oscillators is compatible with 'flat-base breakout, not a chase' at conviction 4, or whether it retires the setup."
+    },
+    {
+      "seat": "raschke",
+      "ticker": "BSBR",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong, not the fib_786 stop 5.82. Then answer what your line omits: rr_tp1 is 0.05 — the first structural level sits five hundredths of an R above entry 6.02 — while you quote the contraction-then-expansion case on rr_tp2 2.75. State which you are underwriting. Also name the higher-timeframe context you enter with (C5): the stack is disordered, ma200 5.93 > ma20 5.76 > ma100 5.57 > ma50 5.51, and entry 6.02 is only 1.52% above the 200-day."
+    },
+    {
+      "seat": "oneil",
+      "ticker": "SLDE",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong. This is the most under-observed record in the deliberation set and it carries your maximum conviction as its only filing: 5 of 7 lens fields unserved ('--' on leadership, coil, insti_money, resistance; extension None), div_state and div_bear_count both absent, mp accel None, and BRACKET INVALID with only atr_fallback_stop 24.00. Declare those as data gaps rather than filing over them. Then state the disconfirmer: you cite day_vol 2.67 as the decisive volume — name the reading and the window at which follow-through failure retires the breakout, given you also wrote 'sma_distance 16.09 vs median 7.84: late, not rejected'."
+    },
+    {
+      "seat": "elder-lens",
+      "ticker": "SPGI",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong. You filed conviction 4 — your highest in this packet — on a single trigger, the permission event '[10,7,7,4,9]: 4 then 9 on the last bar', and you explicitly note 'Trend slope and bracket sit outside my menu.' A one-bar trigger with the surrounding context declared out of scope needs a stated disconfirmer or it is untestable. Name it. Note also that this record carries BRACKET INVALID (atr_fallback_stop 438.63), lens leadership and insti_money both 'warn', and entry 450.58 sitting only 0.83% above ma200 446.85 with ma20 426.98 / ma50 425.00 / ma100 420.25 all far below — the permission event is firing at the 200-day, not off a base."
+    },
+    {
+      "seat": "thorp",
+      "ticker": "DOCS",
+      "class": "O-C",
+      "what_is_owed": "You already named the right observable — 'day_vol 0.33 says a third of normal participation, so the round trip is the unpriced cost' — and honored it by filing at 2. Complete it into a pre-stated disconfirmer: name the day_vol threshold and window at which you retire the position rather than merely size it small. Then add the context you did not read: entry 27.10 is 6.45% BELOW ma200 28.97 and rs is LAGGARD, so the 9.67% risk to stop 24.48 is being taken against a name under its own long-term average with a third of normal participation."
+    },
+    {
+      "seat": "seow",
+      "ticker": "WELL",
+      "class": "O-C",
+      "what_is_owed": "Give ONE non-price observable that would prove this read wrong. You cite 'Chart stop 234.11 = tightest risk on my list at 2.90%' as the case's strength; state what retires the read that is not that level. On this record rr_tp1 is 0.28 against the rr_tp2 2.02 you are implicitly underwriting — the first structural resistance sits at roughly a quarter of your risk — and weis, filing the same name at 2, read the preceding action as 'chop, not a failed break' with choch_state BEARISH and elder_5d [4,0,8,3,9] giving 'no rhythm'. Address the convergence of the two independent readings on the same weakness (C15)."
+    }
+  ],
+  "declarations": [
+    "edge_proven: NOT_MEASURED for every field cited here. No forward-return separation statistic vs a non-pattern baseline reaches this seat at deliberation time (C1/C2, R1). Every correlation in the findings above is a same-day cross-sectional association between conviction and a field across 18 names — it describes how the committee filed, never whether any field has edge. Nothing here licenses retiring a field; it licenses asking the seats to justify their weighting.",
+    "environment_match: HALF_SERVED (C3/C4, R3). sector_trend_state and the lens sector field give me regime LABELS; no field gives any seat's historical performance conditional on those labels. F5 therefore shows that the label was unread, not that reading it would have improved the set.",
+    "invalidation: NOT_SERVED_BY_CONTRACT (C7, R5). bracket.stop is a price level, not a stated disconfirming observation, and the nomination contract carries no field for one. Every O-C obligation is a request for something the schema cannot currently hold — the seats must answer it in prose in Round 2, and Design & Review should consider whether the contract needs an invalidation field.",
+    "Sample and scope: N=18 names, 32 seat filings, one session. Under C10 a short run is not evidence of decay, so nothing here is a finding against any seat's process — only against what that seat wrote today. Correlations on n=18 are descriptive; I attach no significance claim to them.",
+    "Menu discipline (D-29): I read only my own data taxonomy — ticker, gics_sector_name, sc_momentum, lens_warnings, day_vol, ma_50/100/200, structure, structure_shift, atr_14d, bracket and its sub-fields, div_state, div_bear_count. ma_20 and entry price appear in the brief's data rows and I used them to locate stops relative to the MA stack. Where I quote vcp_tightness_pct, base_range_pct, flow, energy, mp_state, rs, elder_5d values or any fundamental, I am quoting a seat's own reason line back to it as that seat's claim — those are not my readings and I make no independent judgment on them.",
+    "Visibility limit: I see each seat's attributed Round-1 reason LINE in this brief, not its full nomination.json or checklist_trace. A seat that logged a condition, a data_gap or a disconfirmer inside its trace but did not surface it in the reason line will read here as if it omitted it. Every O-A and O-C obligation is answerable by pointing at that trace, and a seat that can do so discharges it immediately.",
+    "psychology_claims: NONE (R9). C18-C21 are pm_only. Nothing in this filing asserts a state of mind, confidence, fear or discipline for any seat or for the market. 'Confirmation-shopping' in F3 is a description of a citation COUNT — 2 of 32, zero on the four adverse records — not an attribution of motive.",
+    "Abstention is not first-class in this contract (C16, R8) and that gap is doing visible work today: elder-lens on UBS wrote 'nothing settles it' and filed at 2, and elder-lens on DOCS wrote 'no permission event' and filed at 3. With no ABSTAIN verdict available, an unresolvable read has nowhere to go except a low-conviction filing, which then enters the tally as support. F2 shows the tally cannot distinguish the two.",
+    "F6 is deliberately double-edged: I cannot separate 'seven seats independently converged on 4' from 'the qualification threshold admits singles only at 4'. The brief's own rule (single nominator AND conviction >= solo_high_conviction_min) makes the second reading the likely one. Either way the conclusion holds — a single-seat 4 in this set carries no information about strength, and the committee should not price it as if it did.",
+    "I am a CHALLENGE seat and filed no nominations. I take no position for or against any of the 18 names. Nothing above is a verdict, a veto, or a downgrade: under PM RULING R1 (2026-08-14) bracket.valid is never a gate, and where I cite BRACKET INVALID (F7, F14, and the CVX/SPGI/SLDE obligations) it is context on what invalidation evidence exists, never a reason to block a name."
+  ]
+}
