@@ -3,322 +3,17 @@
  "horizon_sessions_default": 5,
  "rows": [
   {
-   "date": "2026-08-17",
-   "ticker": "COLB",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 32.69,
-   "ref_price_source": "bracket.price (run.json tally record, Aug-17 run)",
-   "bracket": null,
-   "record_source": "backfilled_manual_2026-08-18",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote on 2026-08-17 -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-17",
-   "ticker": "CVX",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 5,
-   "oppose": 5,
-   "abstain": 1,
-   "ref_price": 200.01,
-   "ref_price_source": "bracket.price (Fri close basis, PMA_REPORT_2026-08-17_v2.md)",
-   "bracket": null,
-   "record_source": "backfilled_manual_2026-08-18",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "backfilled row -- full bracket dict not re-extracted from the Aug-17 report text, only the price; event-grading needs the full bracket object which record-verdicts captures automatically going forward"
-   }
-  },
-  {
-   "date": "2026-08-17",
-   "ticker": "IBKR",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 4,
-   "oppose": 7,
-   "abstain": 0,
-   "ref_price": 92.06,
-   "ref_price_source": "bracket.price (Fri close basis, PMA_REPORT_2026-08-17_v2.md)",
-   "bracket": null,
-   "record_source": "backfilled_manual_2026-08-18",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "backfilled row -- full bracket dict not re-extracted from the Aug-17 report text, only the price"
-   }
-  },
-  {
-   "date": "2026-08-17",
-   "ticker": "XOM",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 4,
-   "oppose": 7,
-   "abstain": 0,
-   "ref_price": 160.09,
-   "ref_price_source": "bracket.price (Fri close basis, PMA_REPORT_2026-08-17_v2.md)",
-   "bracket": null,
-   "record_source": "backfilled_manual_2026-08-18",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "backfilled row -- full bracket dict not re-extracted from the Aug-17 report text, only the price"
-   }
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "AMBP",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 3,
-   "oppose": 5,
-   "abstain": 3,
-   "ref_price": 5.22,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 5.22,
-    "price_source": "eod_close",
-    "stop": 4.96,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.28,
-    "stop_date": null,
-    "risk": 0.26,
-    "risk_pct": 4.98,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 5.43,
-      "tp": "TP1",
-      "r": 0.81,
-      "atr_dist": 1.03,
-      "date": "2026-07-23",
-      "vol_ratio": 1.73,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 5.77,
-      "tp": "TP2",
-      "r": 2.12,
-      "atr_dist": 2.71
-     },
-     {
-      "type": "fib_1618",
-      "price": 6.14,
-      "tp": "TP3",
-      "r": 3.54,
-      "atr_dist": 4.53
-     },
-     {
-      "type": "fib_2000",
-      "price": 6.56,
-      "tp": null,
-      "r": 5.15,
-      "atr_dist": 6.6
-     },
-     {
-      "type": "fib_2618",
-      "price": 7.23,
-      "tp": null,
-      "r": 7.73,
-      "atr_dist": 9.9
-     }
-    ],
-    "rr": 2.12,
-    "rr_tp1": 0.81,
-    "rr_tp2": 2.12,
-    "rr_tp3": 3.54,
-    "atr_fallback_stop": 5.02,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "APO",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 1,
-   "oppose": 6,
-   "abstain": 4,
-   "ref_price": 134.54,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 134.54,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 135.34,
-      "date": "2026-05-06",
-      "atr_dist": 0.16,
-      "vol_ratio": 1.01,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 141.73,
-      "date": "2026-06-18",
-      "atr_dist": 1.45,
-      "vol_ratio": 1.83,
-      "vol_validated": true
-     },
-     {
-      "type": "prior_high",
-      "price": 144.33,
-      "atr_dist": 1.98
-     },
-     {
-      "type": "fib_1272",
-      "price": 151.88,
-      "atr_dist": 3.5
-     },
-     {
-      "type": "fib_1618",
-      "price": 161.49,
-      "atr_dist": 5.45
-     },
-     {
-      "type": "fib_2000",
-      "price": 172.09,
-      "atr_dist": 7.59
-     },
-     {
-      "type": "fib_2618",
-      "price": 189.25,
-      "atr_dist": 11.05
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 129.59,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "ARMK",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 2,
-   "oppose": 6,
-   "abstain": 3,
-   "ref_price": 61.8,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 61.8,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 62.65,
-      "atr_dist": 0.64
-     },
-     {
-      "type": "fib_1272",
-      "price": 64.67,
-      "atr_dist": 2.16
-     },
-     {
-      "type": "fib_1618",
-      "price": 67.24,
-      "atr_dist": 4.1
-     },
-     {
-      "type": "fib_2000",
-      "price": 70.08,
-      "atr_dist": 6.24
-     },
-     {
-      "type": "fib_2618",
-      "price": 74.67,
-      "atr_dist": 9.7
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 60.47,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "BBVA",
+   "date": "2026-08-31",
+   "ticker": "UBS",
    "verdict": "ADVANCE",
    "conviction": 3,
-   "support": 5,
+   "support": 8,
    "oppose": 2,
-   "abstain": 4,
-   "ref_price": 28.8,
+   "abstain": 1,
+   "ref_price": 54.9,
    "ref_price_source": "eod_close",
    "bracket": {
-    "price": 28.8,
+    "price": 54.9,
     "price_source": "eod_close",
     "stop": null,
     "stop_type": null,
@@ -328,39 +23,43 @@
     "risk_pct": null,
     "targets": [
      {
-      "type": "prior_high",
-      "price": 28.94,
-      "atr_dist": 0.28
+      "type": "resistance",
+      "price": 55.15,
+      "date": "2026-07-15",
+      "atr_dist": 0.33,
+      "vol_ratio": 1.29,
+      "vol_validated": true
      },
      {
       "type": "fib_1272",
-      "price": 30.04,
-      "atr_dist": 2.48
+      "price": 56.83,
+      "atr_dist": 2.51
      },
      {
       "type": "fib_1618",
-      "price": 31.44,
-      "atr_dist": 5.27
+      "price": 58.96,
+      "atr_dist": 5.28
      },
      {
       "type": "fib_2000",
-      "price": 32.98,
+      "price": 61.31,
       "atr_dist": 8.34
      },
      {
       "type": "fib_2618",
-      "price": 35.48,
-      "atr_dist": 13.33
+      "price": 65.12,
+      "atr_dist": 13.29
      }
     ],
     "rr": null,
     "rr_tp1": null,
     "rr_tp2": null,
     "rr_tp3": null,
-    "atr_fallback_stop": 28.3,
+    "atr_fallback_stop": 54.13,
     "valid": false,
     "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
    },
+   "record_source": "live",
    "fixed_horizon": {
     "horizon_sessions": 5,
     "status": "pending"
@@ -368,282 +67,20 @@
    "event_based": {
     "status": "not_applicable",
     "note": "no valid bracket -- event grading needs a stop/TP to check against"
-   },
-   "record_source": "live"
+   }
   },
   {
-   "date": "2026-08-18",
-   "ticker": "COLB",
-   "verdict": "ADVANCE",
-   "conviction": 3,
-   "support": 6,
+   "date": "2026-08-31",
+   "ticker": "WTRG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 4,
    "oppose": 4,
-   "abstain": 1,
-   "ref_price": 32.34,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 32.34,
-    "price_source": "eod_close",
-    "stop": 31.7,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.04,
-    "stop_date": null,
-    "risk": 0.64,
-    "risk_pct": 1.98,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 32.77,
-      "tp": "TP1",
-      "r": 0.67,
-      "atr_dist": 0.7,
-      "date": "2026-07-02",
-      "vol_ratio": 1.08,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 33.67,
-      "tp": "TP2",
-      "r": 2.08,
-      "atr_dist": 2.17,
-      "date": "2026-07-16",
-      "vol_ratio": 1.17,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 34.44,
-      "tp": "TP3",
-      "r": 3.28,
-      "atr_dist": 3.43
-     },
-     {
-      "type": "fib_1618",
-      "price": 35.42,
-      "tp": null,
-      "r": 4.81,
-      "atr_dist": 5.02
-     },
-     {
-      "type": "fib_2000",
-      "price": 36.5,
-      "tp": null,
-      "r": 6.5,
-      "atr_dist": 6.79
-     },
-     {
-      "type": "fib_2618",
-      "price": 38.25,
-      "tp": null,
-      "r": 9.23,
-      "atr_dist": 9.64
-     }
-    ],
-    "rr": 2.08,
-    "rr_tp1": 0.67,
-    "rr_tp2": 2.08,
-    "rr_tp3": 3.28,
-    "atr_fallback_stop": 31.73,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "pending",
-    "note": null
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "CVX",
-   "verdict": "ADVANCE",
-   "conviction": 3,
-   "support": 5,
-   "oppose": 0,
-   "abstain": 6,
-   "ref_price": 202.7,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 202.7,
-    "price_source": "eod_close",
-    "stop": 194.35,
-    "stop_type": "fib_618",
-    "stop_atr_dist": 1.92,
-    "stop_date": null,
-    "risk": 8.35,
-    "risk_pct": 4.12,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 214.71,
-      "tp": "TP1",
-      "r": 1.44,
-      "atr_dist": 2.76,
-      "date": "2026-03-30",
-      "vol_ratio": 0.69,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 223.67,
-      "tp": "TP2",
-      "r": 2.51,
-      "atr_dist": 4.81
-     },
-     {
-      "type": "fib_1618",
-      "price": 235.07,
-      "tp": "TP3",
-      "r": 3.88,
-      "atr_dist": 7.43
-     },
-     {
-      "type": "fib_2000",
-      "price": 247.66,
-      "tp": null,
-      "r": 5.38,
-      "atr_dist": 10.32
-     },
-     {
-      "type": "fib_2618",
-      "price": 268.02,
-      "tp": null,
-      "r": 7.82,
-      "atr_dist": 15.0
-     }
-    ],
-    "rr": 2.51,
-    "rr_tp1": 1.44,
-    "rr_tp2": 2.51,
-    "rr_tp3": 3.88,
-    "atr_fallback_stop": 198.34,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "pending",
-    "note": null
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "DVN",
-   "verdict": "ADVANCE",
-   "conviction": 4,
-   "support": 7,
-   "oppose": 1,
    "abstain": 3,
-   "ref_price": 47.57,
+   "ref_price": 41.1,
    "ref_price_source": "eod_close",
    "bracket": {
-    "price": 47.57,
-    "price_source": "eod_close",
-    "stop": 45.93,
-    "stop_type": "fib_618",
-    "stop_atr_dist": 1.19,
-    "stop_date": null,
-    "risk": 1.64,
-    "risk_pct": 3.45,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 50.37,
-      "tp": "TP1",
-      "r": 1.71,
-      "atr_dist": 2.02,
-      "date": "2026-05-19",
-      "vol_ratio": 0.81,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 51.95,
-      "tp": "TP2",
-      "r": 2.67,
-      "atr_dist": 3.17,
-      "date": "2026-05-05",
-      "vol_ratio": 1.22,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 52.71,
-      "tp": "TP3",
-      "r": 3.13,
-      "atr_dist": 3.72,
-      "date": "2026-03-30",
-      "vol_ratio": 0.64,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 55.69,
-      "tp": null,
-      "r": 4.95,
-      "atr_dist": 5.87
-     },
-     {
-      "type": "fib_1618",
-      "price": 59.49,
-      "tp": null,
-      "r": 7.27,
-      "atr_dist": 8.62
-     },
-     {
-      "type": "fib_2000",
-      "price": 63.68,
-      "tp": null,
-      "r": 9.82,
-      "atr_dist": 11.65
-     },
-     {
-      "type": "fib_2618",
-      "price": 70.46,
-      "tp": null,
-      "r": 13.96,
-      "atr_dist": 16.55
-     }
-    ],
-    "rr": 2.67,
-    "rr_tp1": 1.71,
-    "rr_tp2": 2.67,
-    "rr_tp3": 3.13,
-    "atr_fallback_stop": 46.19,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "pending",
-    "note": null
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "EQNR",
-   "verdict": "ADVANCE",
-   "conviction": 3,
-   "support": 6,
-   "oppose": 3,
-   "abstain": 2,
-   "ref_price": 41.82,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 41.82,
+    "price": 41.1,
     "price_source": "eod_close",
     "stop": null,
     "stop_type": null,
@@ -654,530 +91,144 @@
     "targets": [
      {
       "type": "resistance",
-      "price": 42.06,
-      "date": "2026-03-19",
-      "atr_dist": 0.2,
-      "vol_ratio": 2.49,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 43.46,
-      "date": "2026-03-31",
-      "atr_dist": 1.36,
-      "vol_ratio": 0.97,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 47.54,
-      "atr_dist": 4.75
-     },
-     {
-      "type": "fib_1618",
-      "price": 52.74,
-      "atr_dist": 9.06
-     },
-     {
-      "type": "fib_2000",
-      "price": 58.47,
-      "atr_dist": 13.82
-     },
-     {
-      "type": "fib_2618",
-      "price": 67.75,
-      "atr_dist": 21.52
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 40.62,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "no valid bracket -- event grading needs a stop/TP to check against"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "EVRG",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 0,
-   "oppose": 10,
-   "abstain": 1,
-   "ref_price": 83.93,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 83.93,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 84.09,
-      "date": "2026-05-01",
-      "atr_dist": 0.11,
-      "vol_ratio": 0.97,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 85.27,
-      "date": "2026-04-09",
-      "atr_dist": 0.95,
-      "vol_ratio": 0.92,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 88.12,
-      "date": "2026-07-17",
-      "atr_dist": 2.97,
-      "vol_ratio": 0.84,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 90.42,
-      "atr_dist": 4.6
-     },
-     {
-      "type": "fib_1618",
-      "price": 92.71,
-      "atr_dist": 6.22
-     },
-     {
-      "type": "fib_2000",
-      "price": 95.24,
-      "atr_dist": 8.01
-     },
-     {
-      "type": "fib_2618",
-      "price": 99.33,
-      "atr_dist": 10.91
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 82.52,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "FIGR",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 0,
-   "oppose": 8,
-   "abstain": 3,
-   "ref_price": 35.76,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 35.76,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 37.5,
-      "date": "2026-04-17",
-      "atr_dist": 0.73,
-      "vol_ratio": 1.53,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 42.27,
-      "date": "2026-03-11",
-      "atr_dist": 2.72,
-      "vol_ratio": 1.54,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 44.67,
-      "date": "2026-05-15",
-      "atr_dist": 3.73,
-      "vol_ratio": 1.33,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 47.26,
-      "atr_dist": 4.81
-     },
-     {
-      "type": "fib_1618",
-      "price": 50.57,
-      "atr_dist": 6.2
-     },
-     {
-      "type": "fib_2000",
-      "price": 54.21,
-      "atr_dist": 7.72
-     },
-     {
-      "type": "fib_2618",
-      "price": 60.11,
-      "atr_dist": 10.19
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 33.37,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "IBKR",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 4,
-   "abstain": 4,
-   "ref_price": 94.33,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 94.33,
-    "price_source": "eod_close",
-    "stop": 90.41,
-    "stop_type": "ma_cluster",
-    "stop_atr_dist": 1.23,
-    "stop_date": null,
-    "risk": 3.92,
-    "risk_pct": 4.16,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 97.77,
-      "tp": "TP1",
-      "r": 0.88,
-      "atr_dist": 1.08,
-      "date": "2026-07-15",
-      "vol_ratio": 0.76,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 102.93,
-      "tp": "TP2",
-      "r": 2.19,
-      "atr_dist": 2.7
-     },
-     {
-      "type": "fib_1618",
-      "price": 109.41,
-      "tp": "TP3",
-      "r": 3.85,
-      "atr_dist": 4.74
-     },
-     {
-      "type": "fib_2000",
-      "price": 116.56,
-      "tp": null,
-      "r": 5.67,
-      "atr_dist": 6.99
-     },
-     {
-      "type": "fib_2618",
-      "price": 128.13,
-      "tp": null,
-      "r": 8.62,
-      "atr_dist": 10.62
-     }
-    ],
-    "rr": 2.19,
-    "rr_tp1": 0.88,
-    "rr_tp2": 2.19,
-    "rr_tp3": 3.85,
-    "atr_fallback_stop": 91.15,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "MS",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 3,
-   "oppose": 7,
-   "abstain": 1,
-   "ref_price": 218.21,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 218.21,
-    "price_source": "eod_close",
-    "stop": 212.18,
-    "stop_type": "fib_786",
-    "stop_atr_dist": 1.1,
-    "stop_date": null,
-    "risk": 6.03,
-    "risk_pct": 2.76,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 219.16,
-      "tp": "TP1",
-      "r": 0.16,
-      "atr_dist": 0.17,
-      "date": "2026-06-04",
-      "vol_ratio": 0.95,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 230.47,
-      "tp": "TP2",
-      "r": 2.03,
-      "atr_dist": 2.24,
-      "date": "2026-06-18",
-      "vol_ratio": 1.88,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 239.19,
-      "tp": "TP3",
-      "r": 3.48,
-      "atr_dist": 3.83
-     },
-     {
-      "type": "fib_1618",
-      "price": 248.03,
-      "tp": null,
-      "r": 4.95,
-      "atr_dist": 5.45
-     },
-     {
-      "type": "fib_2000",
-      "price": 257.78,
-      "tp": null,
-      "r": 6.56,
-      "atr_dist": 7.23
-     },
-     {
-      "type": "fib_2618",
-      "price": 273.56,
-      "tp": null,
-      "r": 9.18,
-      "atr_dist": 10.11
-     }
-    ],
-    "rr": 2.03,
-    "rr_tp1": 0.16,
-    "rr_tp2": 2.03,
-    "rr_tp3": 3.48,
-    "atr_fallback_stop": 212.73,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "NTAP",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 5,
-   "abstain": 3,
-   "ref_price": 204.2,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 204.2,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 209.06,
-      "atr_dist": 0.65
-     },
-     {
-      "type": "fib_1272",
-      "price": 223.42,
-      "atr_dist": 2.59
-     },
-     {
-      "type": "fib_1618",
-      "price": 241.69,
-      "atr_dist": 5.05
-     },
-     {
-      "type": "fib_2000",
-      "price": 261.86,
-      "atr_dist": 7.76
-     },
-     {
-      "type": "fib_2618",
-      "price": 294.49,
-      "atr_dist": 12.16
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 196.77,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "OXY",
-   "verdict": "ADVANCE",
-   "conviction": 3,
-   "support": 7,
-   "oppose": 3,
-   "abstain": 1,
-   "ref_price": 59.04,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 59.04,
-    "price_source": "eod_close",
-    "stop": 56.72,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.41,
-    "stop_date": null,
-    "risk": 2.32,
-    "risk_pct": 3.93,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 60.5,
-      "tp": "TP1",
-      "r": 0.63,
-      "atr_dist": 0.89,
-      "date": "2026-06-03",
+      "price": 41.23,
+      "date": "2026-04-02",
+      "atr_dist": 0.15,
       "vol_ratio": 0.7,
       "vol_validated": false
      },
      {
+      "type": "prior_high",
+      "price": 41.84,
+      "atr_dist": 0.85
+     },
+     {
+      "type": "fib_1272",
+      "price": 42.54,
+      "atr_dist": 1.66
+     },
+     {
+      "type": "fib_1618",
+      "price": 43.42,
+      "atr_dist": 2.68
+     },
+     {
+      "type": "fib_2000",
+      "price": 44.4,
+      "atr_dist": 3.81
+     },
+     {
+      "type": "fib_2618",
+      "price": 45.98,
+      "atr_dist": 5.63
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 40.23,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "NFLX",
+   "verdict": "ADVANCE",
+   "conviction": 3,
+   "support": 5,
+   "oppose": 3,
+   "abstain": 3,
+   "ref_price": 81.72,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 81.72,
+    "price_source": "eod_close",
+    "stop": 77.48,
+    "stop_type": "ma20",
+    "stop_atr_dist": 1.86,
+    "stop_date": null,
+    "risk": 4.24,
+    "risk_pct": 5.19,
+    "targets": [
+     {
       "type": "resistance",
-      "price": 67.45,
+      "price": 91.48,
+      "tp": "TP1",
+      "r": 2.3,
+      "atr_dist": 4.29,
+      "date": "2026-05-19",
+      "vol_ratio": 0.99,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 94.7,
       "tp": "TP2",
-      "r": 3.63,
-      "atr_dist": 5.12,
-      "date": "2026-03-31",
-      "vol_ratio": 1.58,
+      "r": 3.06,
+      "atr_dist": 5.7,
+      "date": "2026-05-01",
+      "vol_ratio": 0.72,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 108.95,
+      "tp": "TP3",
+      "r": 6.42,
+      "atr_dist": 11.96,
+      "date": "2026-04-16",
+      "vol_ratio": 1.67,
       "vol_validated": true
      },
      {
       "type": "fib_1272",
-      "price": 71.64,
-      "tp": "TP3",
-      "r": 5.43,
-      "atr_dist": 7.68
+      "price": 113.92,
+      "tp": null,
+      "r": 7.59,
+      "atr_dist": 14.15
      },
      {
       "type": "fib_1618",
-      "price": 76.97,
+      "price": 120.23,
       "tp": null,
-      "r": 7.73,
-      "atr_dist": 10.93
+      "r": 9.08,
+      "atr_dist": 16.92
      },
      {
       "type": "fib_2000",
-      "price": 82.85,
+      "price": 127.21,
       "tp": null,
-      "r": 10.26,
-      "atr_dist": 14.51
+      "r": 10.73,
+      "atr_dist": 19.99
      },
      {
       "type": "fib_2618",
-      "price": 92.37,
+      "price": 138.49,
       "tp": null,
-      "r": 14.37,
-      "atr_dist": 20.31
+      "r": 13.39,
+      "atr_dist": 24.94
      }
     ],
-    "rr": 3.63,
-    "rr_tp1": 0.63,
-    "rr_tp2": 3.63,
-    "rr_tp3": 5.43,
-    "atr_fallback_stop": 57.4,
+    "rr": 3.06,
+    "rr_tp1": 2.3,
+    "rr_tp2": 3.06,
+    "rr_tp3": 6.42,
+    "atr_fallback_stop": 79.44,
     "valid": true,
     "invalid_reason": null
    },
+   "record_source": "live",
    "fixed_horizon": {
     "horizon_sessions": 5,
     "status": "pending"
@@ -1185,1455 +236,159 @@
    "event_based": {
     "status": "pending",
     "note": null
-   },
-   "record_source": "live"
+   }
   },
   {
-   "date": "2026-08-18",
-   "ticker": "RVMD",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 0,
+   "date": "2026-08-31",
+   "ticker": "UL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 3,
+   "support": 2,
    "oppose": 8,
-   "abstain": 3,
-   "ref_price": 212.0,
+   "abstain": 1,
+   "ref_price": 65.07,
    "ref_price_source": "eod_close",
    "bracket": {
-    "price": 212.0,
+    "price": 65.07,
     "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
+    "stop": 63.48,
+    "stop_type": "ma20",
+    "stop_atr_dist": 1.49,
     "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
+    "risk": 1.59,
+    "risk_pct": 2.44,
     "targets": [
      {
-      "type": "prior_high",
-      "price": 215.97,
-      "atr_dist": 0.53
+      "type": "resistance",
+      "price": 67.44,
+      "tp": "TP1",
+      "r": 1.49,
+      "atr_dist": 2.22,
+      "date": "2026-07-28",
+      "vol_ratio": 3.23,
+      "vol_validated": true
      },
      {
       "type": "fib_1272",
-      "price": 226.28,
-      "atr_dist": 1.92
+      "price": 69.49,
+      "tp": "TP2",
+      "r": 2.78,
+      "atr_dist": 4.14
      },
      {
       "type": "fib_1618",
-      "price": 239.39,
-      "atr_dist": 3.68
+      "price": 72.1,
+      "tp": "TP3",
+      "r": 4.42,
+      "atr_dist": 6.58
      },
      {
       "type": "fib_2000",
-      "price": 253.87,
-      "atr_dist": 5.63
+      "price": 74.98,
+      "tp": null,
+      "r": 6.23,
+      "atr_dist": 9.28
      },
      {
       "type": "fib_2618",
-      "price": 277.29,
-      "atr_dist": 8.77
+      "price": 79.64,
+      "tp": null,
+      "r": 9.16,
+      "atr_dist": 13.64
      }
     ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 204.56,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+    "rr": 2.78,
+    "rr_tp1": 1.49,
+    "rr_tp2": 2.78,
+    "rr_tp3": 4.42,
+    "atr_fallback_stop": 64.0,
+    "valid": true,
+    "invalid_reason": null
    },
+   "record_source": "live",
    "fixed_horizon": {
     "horizon_sessions": 5,
     "status": "pending"
    },
    "event_based": {
     "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   },
-   "record_source": "live"
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
   },
   {
-   "date": "2026-08-18",
-   "ticker": "SE",
+   "date": "2026-08-31",
+   "ticker": "TENB",
    "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 3,
-   "abstain": 5,
-   "ref_price": 119.45,
+   "conviction": 2,
+   "support": 2,
+   "oppose": 8,
+   "abstain": 1,
+   "ref_price": 37.67,
    "ref_price_source": "eod_close",
    "bracket": {
-    "price": 119.45,
+    "price": 37.67,
     "price_source": "eod_close",
-    "stop": 112.24,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.47,
+    "stop": 35.33,
+    "stop_type": "ma_cluster",
+    "stop_atr_dist": 1.02,
     "stop_date": null,
-    "risk": 7.21,
-    "risk_pct": 6.04,
+    "risk": 2.34,
+    "risk_pct": 6.21,
     "targets": [
      {
-      "type": "prior_high",
-      "price": 131.94,
+      "type": "resistance",
+      "price": 40.19,
       "tp": "TP1",
-      "r": 1.73,
-      "atr_dist": 2.55
+      "r": 1.08,
+      "atr_dist": 1.1,
+      "date": "2026-08-14",
+      "vol_ratio": 0.53,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 43.67,
+      "tp": "TP2",
+      "r": 2.56,
+      "atr_dist": 2.63,
+      "date": "2026-07-15",
+      "vol_ratio": 0.91,
+      "vol_validated": false
      },
      {
       "type": "fib_1272",
-      "price": 141.28,
-      "tp": "TP2",
-      "r": 3.03,
-      "atr_dist": 4.46
-     },
-     {
-      "type": "fib_1618",
-      "price": 153.17,
+      "price": 48.61,
       "tp": "TP3",
       "r": 4.68,
-      "atr_dist": 6.88
+      "atr_dist": 4.79
+     },
+     {
+      "type": "fib_1618",
+      "price": 54.9,
+      "tp": null,
+      "r": 7.36,
+      "atr_dist": 7.54
      },
      {
       "type": "fib_2000",
-      "price": 166.29,
+      "price": 61.84,
       "tp": null,
-      "r": 6.5,
-      "atr_dist": 9.56
+      "r": 10.33,
+      "atr_dist": 10.58
      },
      {
       "type": "fib_2618",
-      "price": 187.52,
+      "price": 73.07,
       "tp": null,
-      "r": 9.44,
-      "atr_dist": 13.89
+      "r": 15.13,
+      "atr_dist": 15.5
      }
     ],
-    "rr": 3.03,
-    "rr_tp1": 1.73,
-    "rr_tp2": 3.03,
+    "rr": 2.56,
+    "rr_tp1": 1.08,
+    "rr_tp2": 2.56,
     "rr_tp3": 4.68,
-    "atr_fallback_stop": 114.55,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "SHAZ",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 3,
-   "oppose": 4,
-   "abstain": 4,
-   "ref_price": 76.9,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 76.9,
-    "price_source": "eod_close",
-    "stop": 68.38,
-    "stop_type": "ma50",
-    "stop_atr_dist": 1.04,
-    "stop_date": null,
-    "risk": 8.52,
-    "risk_pct": 11.08,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 84.59,
-      "tp": "TP1",
-      "r": 0.9,
-      "atr_dist": 0.94,
-      "date": "2026-07-09",
-      "vol_ratio": 1.17,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 97.48,
-      "tp": "TP2",
-      "r": 2.42,
-      "atr_dist": 2.51,
-      "date": "2026-06-17",
-      "vol_ratio": 4.25,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 108.59,
-      "tp": "TP3",
-      "r": 3.72,
-      "atr_dist": 3.86
-     },
-     {
-      "type": "fib_1618",
-      "price": 122.73,
-      "tp": null,
-      "r": 5.38,
-      "atr_dist": 5.59
-     },
-     {
-      "type": "fib_2000",
-      "price": 138.33,
-      "tp": null,
-      "r": 7.21,
-      "atr_dist": 7.49
-     },
-     {
-      "type": "fib_2618",
-      "price": 163.58,
-      "tp": null,
-      "r": 10.17,
-      "atr_dist": 10.57
-     }
-    ],
-    "rr": 2.42,
-    "rr_tp1": 0.9,
-    "rr_tp2": 2.42,
-    "rr_tp3": 3.72,
-    "atr_fallback_stop": 68.7,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "TPG",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 2,
-   "oppose": 6,
-   "abstain": 3,
-   "ref_price": 51.77,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 51.77,
-    "price_source": "eod_close",
-    "stop": 49.35,
-    "stop_type": "ma200",
-    "stop_atr_dist": 1.17,
-    "stop_date": null,
-    "risk": 2.42,
-    "risk_pct": 4.67,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 55.5,
-      "tp": "TP1",
-      "r": 1.54,
-      "atr_dist": 1.8
-     },
-     {
-      "type": "fib_1272",
-      "price": 59.47,
-      "tp": "TP2",
-      "r": 3.18,
-      "atr_dist": 3.72
-     },
-     {
-      "type": "fib_1618",
-      "price": 64.51,
-      "tp": "TP3",
-      "r": 5.26,
-      "atr_dist": 6.16
-     },
-     {
-      "type": "fib_2000",
-      "price": 70.08,
-      "tp": null,
-      "r": 7.57,
-      "atr_dist": 8.85
-     },
-     {
-      "type": "fib_2618",
-      "price": 79.09,
-      "tp": null,
-      "r": 11.29,
-      "atr_dist": 13.21
-     }
-    ],
-    "rr": 3.18,
-    "rr_tp1": 1.54,
-    "rr_tp2": 3.18,
-    "rr_tp3": 5.26,
-    "atr_fallback_stop": 49.7,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "WPM",
-   "verdict": "PASS",
-   "conviction": 3,
-   "support": 1,
-   "oppose": 6,
-   "abstain": 4,
-   "ref_price": 136.61,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 136.61,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 145.61,
-      "date": "2026-05-11",
-      "atr_dist": 1.93,
-      "vol_ratio": 1.18,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 154.17,
-      "date": "2026-04-17",
-      "atr_dist": 3.77,
-      "vol_ratio": 1.07,
-      "vol_validated": false
-     },
-     {
-      "type": "prior_high",
-      "price": 165.76,
-      "atr_dist": 6.27
-     },
-     {
-      "type": "fib_1272",
-      "price": 168.87,
-      "atr_dist": 6.93
-     },
-     {
-      "type": "fib_1618",
-      "price": 172.82,
-      "atr_dist": 7.78
-     },
-     {
-      "type": "fib_2000",
-      "price": 177.19,
-      "atr_dist": 8.72
-     },
-     {
-      "type": "fib_2618",
-      "price": 184.25,
-      "atr_dist": 10.24
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 131.96,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "XOM",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 6,
-   "oppose": 3,
-   "abstain": 2,
-   "ref_price": 161.52,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 161.52,
-    "price_source": "eod_close",
-    "stop": 156.25,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.45,
-    "stop_date": null,
-    "risk": 5.27,
-    "risk_pct": 3.26,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 163.68,
-      "tp": "TP1",
-      "r": 0.41,
-      "atr_dist": 0.6,
-      "date": "2026-05-20",
-      "vol_ratio": 1.08,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 176.41,
-      "tp": "TP2",
-      "r": 2.83,
-      "atr_dist": 4.1,
-      "date": "2026-03-30",
-      "vol_ratio": 1.23,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 184.23,
-      "tp": "TP3",
-      "r": 4.31,
-      "atr_dist": 6.26
-     },
-     {
-      "type": "fib_1618",
-      "price": 194.18,
-      "tp": null,
-      "r": 6.2,
-      "atr_dist": 9.0
-     },
-     {
-      "type": "fib_2000",
-      "price": 205.16,
-      "tp": null,
-      "r": 8.28,
-      "atr_dist": 12.03
-     },
-     {
-      "type": "fib_2618",
-      "price": 222.93,
-      "tp": null,
-      "r": 11.65,
-      "atr_dist": 16.93
-     }
-    ],
-    "rr": 2.83,
-    "rr_tp1": 0.41,
-    "rr_tp2": 2.83,
-    "rr_tp3": 4.31,
-    "atr_fallback_stop": 157.89,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   },
-   "record_source": "live"
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "T",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 24.68,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 24.68,
-    "price_source": "eod_close",
-    "stop": 23.82,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.38,
-    "stop_date": null,
-    "risk": 0.86,
-    "risk_pct": 3.48,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 25.32,
-      "tp": "TP1",
-      "r": 0.74,
-      "atr_dist": 1.03,
-      "date": "2026-07-28",
-      "vol_ratio": 0.63,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 26.76,
-      "tp": "TP2",
-      "r": 2.42,
-      "atr_dist": 3.35,
-      "date": "2026-04-23",
-      "vol_ratio": 1.21,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 29.07,
-      "tp": "TP3",
-      "r": 5.1,
-      "atr_dist": 7.07,
-      "date": "2026-03-04",
-      "vol_ratio": 1.01,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 29.44,
-      "tp": null,
-      "r": 5.53,
-      "atr_dist": 7.67,
-      "date": "2026-03-24",
-      "vol_ratio": 0.89,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 30.18,
-      "tp": null,
-      "r": 6.4,
-      "atr_dist": 8.86
-     },
-     {
-      "type": "fib_1618",
-      "price": 31.11,
-      "tp": null,
-      "r": 7.48,
-      "atr_dist": 10.35
-     },
-     {
-      "type": "fib_2000",
-      "price": 32.15,
-      "tp": null,
-      "r": 8.69,
-      "atr_dist": 12.03
-     },
-     {
-      "type": "fib_2618",
-      "price": 33.82,
-      "tp": null,
-      "r": 10.63,
-      "atr_dist": 14.72
-     }
-    ],
-    "rr": 2.42,
-    "rr_tp1": 0.74,
-    "rr_tp2": 2.42,
-    "rr_tp3": 5.1,
-    "atr_fallback_stop": 24.06,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "FLR",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 54.74,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 54.74,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 54.79,
-      "date": "2026-06-22",
-      "atr_dist": 0.02,
-      "vol_ratio": 0.9,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 57.93,
-      "date": "2026-08-10",
-      "atr_dist": 1.27,
-      "vol_ratio": 1.71,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 60.97,
-      "atr_dist": 2.47
-     },
-     {
-      "type": "fib_1618",
-      "price": 64.83,
-      "atr_dist": 4.0
-     },
-     {
-      "type": "fib_2000",
-      "price": 69.09,
-      "atr_dist": 5.69
-     },
-     {
-      "type": "fib_2618",
-      "price": 75.99,
-      "atr_dist": 8.43
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 52.22,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-18",
-   "ticker": "CLX",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 105.94,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 105.94,
-    "price_source": "eod_close",
-    "stop": 101.49,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.46,
-    "stop_date": null,
-    "risk": 4.45,
-    "risk_pct": 4.2,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 108.89,
-      "tp": "TP1",
-      "r": 0.66,
-      "atr_dist": 0.97,
-      "date": "2026-04-10",
-      "vol_ratio": 0.76,
-      "vol_validated": false
-     },
-     {
-      "type": "prior_high",
-      "price": 128.9,
-      "tp": "TP2",
-      "r": 5.16,
-      "atr_dist": 7.53
-     },
-     {
-      "type": "fib_1272",
-      "price": 130.69,
-      "tp": "TP3",
-      "r": 5.56,
-      "atr_dist": 8.11
-     },
-     {
-      "type": "fib_1618",
-      "price": 132.96,
-      "tp": null,
-      "r": 6.07,
-      "atr_dist": 8.86
-     },
-     {
-      "type": "fib_2000",
-      "price": 135.47,
-      "tp": null,
-      "r": 6.64,
-      "atr_dist": 9.68
-     },
-     {
-      "type": "fib_2618",
-      "price": 139.53,
-      "tp": null,
-      "r": 7.55,
-      "atr_dist": 11.01
-     }
-    ],
-    "rr": 5.16,
-    "rr_tp1": 0.66,
-    "rr_tp2": 5.16,
-    "rr_tp3": 5.56,
-    "atr_fallback_stop": 102.89,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "WELL",
-   "verdict": "ADVANCE",
-   "conviction": 3,
-   "support": 6,
-   "oppose": 4,
-   "abstain": 1,
-   "ref_price": 240.01,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 240.01,
-    "price_source": "eod_close",
-    "stop": 234.11,
-    "stop_type": "fib_786",
-    "stop_atr_dist": 1.2,
-    "stop_date": null,
-    "risk": 5.9,
-    "risk_pct": 2.46,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 255.2,
-      "tp": "TP1",
-      "r": 2.57,
-      "atr_dist": 3.08,
-      "date": "2026-07-28",
-      "vol_ratio": 1.57,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 262.5,
-      "tp": "TP2",
-      "r": 3.81,
-      "atr_dist": 4.56
-     },
-     {
-      "type": "fib_1618",
-      "price": 271.78,
-      "tp": "TP3",
-      "r": 5.38,
-      "atr_dist": 6.44
-     },
-     {
-      "type": "fib_2000",
-      "price": 282.03,
-      "tp": null,
-      "r": 7.12,
-      "atr_dist": 8.52
-     },
-     {
-      "type": "fib_2618",
-      "price": 298.61,
-      "tp": null,
-      "r": 9.93,
-      "atr_dist": 11.88
-     }
-    ],
-    "rr": 3.81,
-    "rr_tp1": 2.57,
-    "rr_tp2": 3.81,
-    "rr_tp3": 5.38,
-    "atr_fallback_stop": 235.08,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "pending",
-    "note": null
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "ACGL",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 1,
-   "oppose": 9,
-   "abstain": 1,
-   "ref_price": 101.14,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 101.14,
-    "price_source": "eod_close",
-    "stop": 98.92,
-    "stop_type": "ma_cluster",
-    "stop_atr_dist": 1.07,
-    "stop_date": null,
-    "risk": 2.22,
-    "risk_pct": 2.19,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 105.09,
-      "tp": "TP1",
-      "r": 1.78,
-      "atr_dist": 1.9,
-      "date": "2026-07-07",
-      "vol_ratio": 0.73,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 107.09,
-      "tp": "TP2",
-      "r": 2.68,
-      "atr_dist": 2.86,
-      "date": "2026-07-28",
-      "vol_ratio": 1.16,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 109.68,
-      "tp": "TP3",
-      "r": 3.85,
-      "atr_dist": 4.11
-     },
-     {
-      "type": "fib_1618",
-      "price": 112.97,
-      "tp": null,
-      "r": 5.33,
-      "atr_dist": 5.69
-     },
-     {
-      "type": "fib_2000",
-      "price": 116.6,
-      "tp": null,
-      "r": 6.96,
-      "atr_dist": 7.44
-     },
-     {
-      "type": "fib_2618",
-      "price": 122.48,
-      "tp": null,
-      "r": 9.61,
-      "atr_dist": 10.26
-     }
-    ],
-    "rr": 2.68,
-    "rr_tp1": 1.78,
-    "rr_tp2": 2.68,
-    "rr_tp3": 3.85,
-    "atr_fallback_stop": 99.06,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "CART",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 7,
-   "abstain": 1,
-   "ref_price": 51.78,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 51.78,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 51.91,
-      "atr_dist": 0.07
-     },
-     {
-      "type": "fib_1272",
-      "price": 54.58,
-      "atr_dist": 1.41
-     },
-     {
-      "type": "fib_1618",
-      "price": 57.97,
-      "atr_dist": 3.12
-     },
-     {
-      "type": "fib_2000",
-      "price": 61.72,
-      "atr_dist": 5.01
-     },
-     {
-      "type": "fib_2618",
-      "price": 67.78,
-      "atr_dist": 8.07
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 49.8,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "FLYW",
-   "verdict": "PASS",
-   "conviction": 3,
-   "support": 1,
-   "oppose": 10,
-   "abstain": 0,
-   "ref_price": 19.42,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 19.42,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 19.73,
-      "atr_dist": 0.43
-     },
-     {
-      "type": "fib_1272",
-      "price": 20.85,
-      "atr_dist": 2.0
-     },
-     {
-      "type": "fib_1618",
-      "price": 22.28,
-      "atr_dist": 4.01
-     },
-     {
-      "type": "fib_2000",
-      "price": 23.86,
-      "atr_dist": 6.22
-     },
-     {
-      "type": "fib_2618",
-      "price": 26.41,
-      "atr_dist": 9.79
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 18.71,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "MDLZ",
-   "verdict": "ADVANCE",
-   "conviction": 3,
-   "support": 6,
-   "oppose": 4,
-   "abstain": 1,
-   "ref_price": 64.7,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 64.7,
-    "price_source": "eod_close",
-    "stop": 62.98,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.21,
-    "stop_date": null,
-    "risk": 1.72,
-    "risk_pct": 2.66,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 66.65,
-      "tp": "TP1",
-      "r": 1.13,
-      "atr_dist": 1.38,
-      "date": "2026-07-29",
-      "vol_ratio": 2.1,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 69.05,
-      "tp": "TP2",
-      "r": 2.53,
-      "atr_dist": 3.07
-     },
-     {
-      "type": "fib_1618",
-      "price": 72.11,
-      "tp": "TP3",
-      "r": 4.31,
-      "atr_dist": 5.23
-     },
-     {
-      "type": "fib_2000",
-      "price": 75.48,
-      "tp": null,
-      "r": 6.27,
-      "atr_dist": 7.61
-     },
-     {
-      "type": "fib_2618",
-      "price": 80.94,
-      "tp": null,
-      "r": 9.44,
-      "atr_dist": 11.47
-     }
-    ],
-    "rr": 2.53,
-    "rr_tp1": 1.13,
-    "rr_tp2": 2.53,
-    "rr_tp3": 4.31,
-    "atr_fallback_stop": 63.28,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "pending",
-    "note": null
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "KO",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 6,
-   "abstain": 2,
-   "ref_price": 91.99,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 91.99,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 92.49,
-      "atr_dist": 0.31
-     },
-     {
-      "type": "fib_1272",
-      "price": 94.35,
-      "atr_dist": 1.48
-     },
-     {
-      "type": "fib_1618",
-      "price": 96.71,
-      "atr_dist": 2.96
-     },
-     {
-      "type": "fib_2000",
-      "price": 99.32,
-      "atr_dist": 4.59
-     },
-     {
-      "type": "fib_2618",
-      "price": 103.54,
-      "atr_dist": 7.23
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 90.39,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "BHP",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 4,
-   "oppose": 7,
-   "abstain": 0,
-   "ref_price": 97.13,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 97.13,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 97.83,
-      "atr_dist": 0.28
-     },
-     {
-      "type": "fib_1272",
-      "price": 100.92,
-      "atr_dist": 1.53
-     },
-     {
-      "type": "fib_1618",
-      "price": 104.84,
-      "atr_dist": 3.12
-     },
-     {
-      "type": "fib_2000",
-      "price": 109.18,
-      "atr_dist": 4.87
-     },
-     {
-      "type": "fib_2618",
-      "price": 116.19,
-      "atr_dist": 7.71
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 94.66,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "NTR",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 7,
-   "abstain": 1,
-   "ref_price": 74.29,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 74.29,
-    "price_source": "eod_close",
-    "stop": 72.25,
-    "stop_type": "swing_low",
-    "stop_atr_dist": 1.06,
-    "stop_date": "2026-03-04",
-    "risk": 2.04,
-    "risk_pct": 2.75,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 77.74,
-      "tp": "TP1",
-      "r": 1.69,
-      "atr_dist": 1.79,
-      "date": "2026-05-05",
-      "vol_ratio": 1.17,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 85.36,
-      "tp": "TP2",
-      "r": 5.43,
-      "atr_dist": 5.74,
-      "date": "2026-03-13",
-      "vol_ratio": 1.32,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 88.93,
-      "tp": "TP3",
-      "r": 7.18,
-      "atr_dist": 7.6
-     },
-     {
-      "type": "fib_1618",
-      "price": 93.46,
-      "tp": null,
-      "r": 9.4,
-      "atr_dist": 9.95
-     },
-     {
-      "type": "fib_2000",
-      "price": 98.47,
-      "tp": null,
-      "r": 11.85,
-      "atr_dist": 12.55
-     },
-     {
-      "type": "fib_2618",
-      "price": 106.57,
-      "tp": null,
-      "r": 15.82,
-      "atr_dist": 16.75
-     }
-    ],
-    "rr": 5.43,
-    "rr_tp1": 1.69,
-    "rr_tp2": 5.43,
-    "rr_tp3": 7.18,
-    "atr_fallback_stop": 72.36,
-    "valid": true,
-    "invalid_reason": null,
-    "stop_vol_ratio": 1.04,
-    "stop_vol_validated": false
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "V",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 5,
-   "oppose": 5,
-   "abstain": 1,
-   "ref_price": 382.41,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 382.41,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 383.43,
-      "atr_dist": 0.14
-     },
-     {
-      "type": "fib_1272",
-      "price": 392.93,
-      "atr_dist": 1.43
-     },
-     {
-      "type": "fib_1618",
-      "price": 405.02,
-      "atr_dist": 3.08
-     },
-     {
-      "type": "fib_2000",
-      "price": 418.36,
-      "atr_dist": 4.9
-     },
-     {
-      "type": "fib_2618",
-      "price": 439.95,
-      "atr_dist": 7.84
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 375.07,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "PGR",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 2,
-   "oppose": 8,
-   "abstain": 1,
-   "ref_price": 223.92,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 223.92,
-    "price_source": "eod_close",
-    "stop": 215.43,
-    "stop_type": "ma50",
-    "stop_atr_dist": 1.57,
-    "stop_date": null,
-    "risk": 8.49,
-    "risk_pct": 3.79,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 239.38,
-      "tp": "TP1",
-      "r": 1.82,
-      "atr_dist": 2.86,
-      "date": "2026-07-07",
-      "vol_ratio": 0.87,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 253.03,
-      "tp": "TP2",
-      "r": 3.43,
-      "atr_dist": 5.38
-     },
-     {
-      "type": "fib_1618",
-      "price": 270.39,
-      "tp": "TP3",
-      "r": 5.47,
-      "atr_dist": 8.59
-     },
-     {
-      "type": "fib_2000",
-      "price": 289.56,
-      "tp": null,
-      "r": 7.73,
-      "atr_dist": 12.14
-     },
-     {
-      "type": "fib_2618",
-      "price": 320.57,
-      "tp": null,
-      "r": 11.38,
-      "atr_dist": 17.87
-     }
-    ],
-    "rr": 3.43,
-    "rr_tp1": 1.82,
-    "rr_tp2": 3.43,
-    "rr_tp3": 5.47,
-    "atr_fallback_stop": 218.51,
+    "atr_fallback_stop": 35.39,
     "valid": true,
     "invalid_reason": null
    },
@@ -2648,1098 +403,79 @@
    }
   },
   {
-   "date": "2026-08-25",
-   "ticker": "SNY",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 1,
-   "oppose": 9,
-   "abstain": 1,
-   "ref_price": 45.69,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 45.69,
-    "price_source": "eod_close",
-    "stop": 44.34,
-    "stop_type": "ma100",
-    "stop_atr_dist": 1.66,
-    "stop_date": null,
-    "risk": 1.35,
-    "risk_pct": 2.95,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 48.35,
-      "tp": "TP1",
-      "r": 1.97,
-      "atr_dist": 3.28,
-      "date": "2026-03-31",
-      "vol_ratio": 0.84,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 49.29,
-      "tp": "TP2",
-      "r": 2.67,
-      "atr_dist": 4.43
-     },
-     {
-      "type": "fib_1618",
-      "price": 50.17,
-      "tp": "TP3",
-      "r": 3.32,
-      "atr_dist": 5.52
-     },
-     {
-      "type": "fib_2000",
-      "price": 51.14,
-      "tp": null,
-      "r": 4.04,
-      "atr_dist": 6.71
-     },
-     {
-      "type": "fib_2618",
-      "price": 52.71,
-      "tp": null,
-      "r": 5.2,
-      "atr_dist": 8.65
-     }
-    ],
-    "rr": 2.67,
-    "rr_tp1": 1.97,
-    "rr_tp2": 2.67,
-    "rr_tp3": 3.32,
-    "atr_fallback_stop": 44.88,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "LW",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 0,
-   "oppose": 10,
-   "abstain": 1,
-   "ref_price": 54.8,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 54.8,
-    "price_source": "eod_close",
-    "stop": 53.16,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.04,
-    "stop_date": null,
-    "risk": 1.64,
-    "risk_pct": 2.99,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 55.69,
-      "tp": "TP1",
-      "r": 0.54,
-      "atr_dist": 0.56,
-      "date": "2026-07-29",
-      "vol_ratio": 0.76,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 58.59,
-      "tp": "TP2",
-      "r": 2.31,
-      "atr_dist": 2.4
-     },
-     {
-      "type": "fib_1618",
-      "price": 62.28,
-      "tp": "TP3",
-      "r": 4.56,
-      "atr_dist": 4.73
-     },
-     {
-      "type": "fib_2000",
-      "price": 66.35,
-      "tp": null,
-      "r": 7.04,
-      "atr_dist": 7.3
-     },
-     {
-      "type": "fib_2618",
-      "price": 72.94,
-      "tp": null,
-      "r": 11.06,
-      "atr_dist": 11.47
-     }
-    ],
-    "rr": 2.31,
-    "rr_tp1": 0.54,
-    "rr_tp2": 2.31,
-    "rr_tp3": 4.56,
-    "atr_fallback_stop": 53.22,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "INVH",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 1,
-   "oppose": 9,
-   "abstain": 1,
-   "ref_price": 30.46,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 30.46,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 30.71,
-      "date": "2026-07-07",
-      "atr_dist": 0.5,
-      "vol_ratio": 0.51,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 31.31,
-      "atr_dist": 1.69
-     },
-     {
-      "type": "fib_1618",
-      "price": 31.85,
-      "atr_dist": 2.77
-     },
-     {
-      "type": "fib_2000",
-      "price": 32.44,
-      "atr_dist": 3.94
-     },
-     {
-      "type": "fib_2618",
-      "price": 33.4,
-      "atr_dist": 5.86
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 29.96,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "VTR",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 2,
-   "oppose": 8,
-   "abstain": 1,
-   "ref_price": 93.47,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 93.47,
-    "price_source": "eod_close",
-    "stop": 89.56,
-    "stop_type": "swing_low",
-    "stop_atr_dist": 1.79,
-    "stop_date": "2026-07-10",
-    "risk": 3.91,
-    "risk_pct": 4.18,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 94.6,
-      "tp": "TP1",
-      "r": 0.29,
-      "atr_dist": 0.52,
-      "date": "2026-07-07",
-      "vol_ratio": 0.83,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 101.6,
-      "tp": "TP2",
-      "r": 2.08,
-      "atr_dist": 3.71,
-      "date": "2026-07-28",
-      "vol_ratio": 1.36,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 104.87,
-      "tp": "TP3",
-      "r": 2.92,
-      "atr_dist": 5.21
-     },
-     {
-      "type": "fib_1618",
-      "price": 109.04,
-      "tp": null,
-      "r": 3.98,
-      "atr_dist": 7.11
-     },
-     {
-      "type": "fib_2000",
-      "price": 113.64,
-      "tp": null,
-      "r": 5.16,
-      "atr_dist": 9.21
-     },
-     {
-      "type": "fib_2618",
-      "price": 121.08,
-      "tp": null,
-      "r": 7.06,
-      "atr_dist": 12.61
-     }
-    ],
-    "rr": 2.08,
-    "rr_tp1": 0.29,
-    "rr_tp2": 2.08,
-    "rr_tp3": 2.92,
-    "atr_fallback_stop": 91.28,
-    "valid": true,
-    "invalid_reason": null,
-    "stop_vol_ratio": 0.71,
-    "stop_vol_validated": false
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "AMH",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 2,
-   "support": 2,
-   "oppose": 8,
-   "abstain": 1,
-   "ref_price": 34.81,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 34.81,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 35.07,
-      "date": "2026-08-06",
-      "atr_dist": 0.46,
-      "vol_ratio": 1.31,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 35.68,
-      "atr_dist": 1.53
-     },
-     {
-      "type": "fib_1618",
-      "price": 36.45,
-      "atr_dist": 2.89
-     },
-     {
-      "type": "fib_2000",
-      "price": 37.3,
-      "atr_dist": 4.38
-     },
-     {
-      "type": "fib_2618",
-      "price": 38.68,
-      "atr_dist": 6.81
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 34.24,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "HLN",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 1,
-   "oppose": 8,
-   "abstain": 2,
-   "ref_price": 10.16,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 10.16,
-    "price_source": "eod_close",
-    "stop": 9.92,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.26,
-    "stop_date": null,
-    "risk": 0.24,
-    "risk_pct": 2.36,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 10.25,
-      "tp": "TP1",
-      "r": 0.37,
-      "atr_dist": 0.47,
-      "date": "2026-07-17",
-      "vol_ratio": 1.03,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 10.64,
-      "tp": "TP2",
-      "r": 2.0,
-      "atr_dist": 2.51,
-      "date": "2026-03-17",
-      "vol_ratio": 0.95,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 10.82,
-      "tp": "TP3",
-      "r": 2.75,
-      "atr_dist": 3.46
-     },
-     {
-      "type": "fib_1618",
-      "price": 11.05,
-      "tp": null,
-      "r": 3.71,
-      "atr_dist": 4.66
-     },
-     {
-      "type": "fib_2000",
-      "price": 11.3,
-      "tp": null,
-      "r": 4.75,
-      "atr_dist": 5.97
-     },
-     {
-      "type": "fib_2618",
-      "price": 11.71,
-      "tp": null,
-      "r": 6.46,
-      "atr_dist": 8.12
-     }
-    ],
-    "rr": 2.0,
-    "rr_tp1": 0.37,
-    "rr_tp2": 2.0,
-    "rr_tp3": 2.75,
-    "atr_fallback_stop": 9.97,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "T",
-   "verdict": "PASS",
-   "conviction": 2,
-   "support": 0,
-   "oppose": 10,
-   "abstain": 1,
-   "ref_price": 25.69,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 25.69,
-    "price_source": "eod_close",
-    "stop": 25.11,
-    "stop_type": "ma200",
-    "stop_atr_dist": 1.01,
-    "stop_date": null,
-    "risk": 0.58,
-    "risk_pct": 2.26,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 26.76,
-      "tp": "TP1",
-      "r": 1.84,
-      "atr_dist": 1.86,
-      "date": "2026-04-23",
-      "vol_ratio": 1.21,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 29.44,
-      "tp": "TP2",
-      "r": 6.47,
-      "atr_dist": 6.52,
-      "date": "2026-03-24",
-      "vol_ratio": 0.89,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 30.18,
-      "tp": "TP3",
-      "r": 7.74,
-      "atr_dist": 7.81
-     },
-     {
-      "type": "fib_1618",
-      "price": 31.11,
-      "tp": null,
-      "r": 9.34,
-      "atr_dist": 9.43
-     },
-     {
-      "type": "fib_2000",
-      "price": 32.15,
-      "tp": null,
-      "r": 11.14,
-      "atr_dist": 11.23
-     },
-     {
-      "type": "fib_2618",
-      "price": 33.82,
-      "tp": null,
-      "r": 14.02,
-      "atr_dist": 14.14
-     }
-    ],
-    "rr": 6.47,
-    "rr_tp1": 1.84,
-    "rr_tp2": 6.47,
-    "rr_tp3": 7.74,
-    "atr_fallback_stop": 25.12,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "CL",
-   "verdict": "PASS",
-   "conviction": 3,
-   "support": 1,
-   "oppose": 6,
-   "abstain": 4,
-   "ref_price": 92.55,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 92.55,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 93.08,
-      "date": "2026-06-24",
-      "atr_dist": 0.25
-     },
-     {
-      "type": "resistance",
-      "price": 94.15,
-      "date": "2026-08-06",
-      "atr_dist": 0.77
-     },
-     {
-      "type": "resistance",
-      "price": 95.46,
-      "date": "2026-07-28",
-      "atr_dist": 1.4
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 90.46,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "KMX",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 3,
-   "oppose": 7,
-   "abstain": 1,
-   "ref_price": 62.8,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 62.8,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 63.15,
-      "atr_dist": 0.17
-     },
-     {
-      "type": "fib_1272",
-      "price": 65.03,
-      "atr_dist": 1.06
-     },
-     {
-      "type": "fib_1618",
-      "price": 67.43,
-      "atr_dist": 2.19
-     },
-     {
-      "type": "fib_2000",
-      "price": 70.08,
-      "atr_dist": 3.45
-     },
-     {
-      "type": "fib_2618",
-      "price": 74.36,
-      "atr_dist": 5.47
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 60.69,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "NWS",
-   "verdict": "HOLD-FOR-CONDITIONS",
-   "conviction": 3,
-   "support": 2,
-   "oppose": 8,
-   "abstain": 1,
-   "ref_price": 35.05,
-   "ref_price_source": "eod_close",
-   "bracket": {
-    "price": 35.05,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 35.31,
-      "date": "2026-08-06",
-      "atr_dist": 0.29,
-      "vol_ratio": 1.65,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 36.86,
-      "atr_dist": 1.99
-     },
-     {
-      "type": "fib_1618",
-      "price": 38.84,
-      "atr_dist": 4.17
-     },
-     {
-      "type": "fib_2000",
-      "price": 41.02,
-      "atr_dist": 6.57
-     },
-     {
-      "type": "fib_2618",
-      "price": 44.55,
-      "atr_dist": 10.46
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 34.14,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "CME",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 279.17,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 279.17,
-    "price_source": "eod_close",
-    "stop": 268.75,
-    "stop_type": "ma100",
-    "stop_atr_dist": 1.64,
-    "stop_date": null,
-    "risk": 10.42,
-    "risk_pct": 3.73,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 292.33,
-      "tp": "TP1",
-      "r": 1.26,
-      "atr_dist": 2.07,
-      "date": "2026-05-04",
-      "vol_ratio": 0.7,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 308.01,
-      "tp": "TP2",
-      "r": 2.77,
-      "atr_dist": 4.54,
-      "date": "2026-05-19",
-      "vol_ratio": 0.92,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 312.68,
-      "tp": "TP3",
-      "r": 3.22,
-      "atr_dist": 5.27,
-      "date": "2026-04-07",
-      "vol_ratio": 0.74,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 316.75,
-      "tp": null,
-      "r": 3.61,
-      "atr_dist": 5.91,
-      "date": "2026-03-17",
-      "vol_ratio": 0.56,
-      "vol_validated": false
-     }
-    ],
-    "rr": 2.77,
-    "rr_tp1": 1.26,
-    "rr_tp2": 2.77,
-    "rr_tp3": 3.22,
-    "atr_fallback_stop": 272.81,
-    "valid": true,
-    "invalid_reason": null
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "TEVA",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 36.93,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 36.93,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 36.99,
-      "date": "2026-05-07",
-      "atr_dist": 0.06,
-      "vol_ratio": 1.56,
-      "vol_validated": true
-     },
-     {
-      "type": "prior_high",
-      "price": 37.83,
-      "atr_dist": 0.9
-     },
-     {
-      "type": "fib_1272",
-      "price": 40.07,
-      "atr_dist": 3.15
-     },
-     {
-      "type": "fib_1618",
-      "price": 42.92,
-      "atr_dist": 6.01
-     },
-     {
-      "type": "fib_2000",
-      "price": 46.06,
-      "atr_dist": 9.16
-     },
-     {
-      "type": "fib_2618",
-      "price": 51.15,
-      "atr_dist": 14.26
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 35.93,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
+   "date": "2026-08-31",
    "ticker": "RIO",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 104.8,
-   "ref_price_source": "entry",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 6,
+   "oppose": 4,
+   "abstain": 1,
+   "ref_price": 103.3,
+   "ref_price_source": "eod_close",
    "bracket": {
-    "price": 104.8,
+    "price": 103.3,
     "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
+    "stop": 99.84,
+    "stop_type": "fib_786",
+    "stop_atr_dist": 1.5,
     "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
+    "risk": 3.46,
+    "risk_pct": 3.35,
     "targets": [
      {
       "type": "resistance",
       "price": 107.4,
+      "tp": "TP1",
+      "r": 1.18,
+      "atr_dist": 1.77,
       "date": "2026-06-15",
-      "atr_dist": 1.07,
       "vol_ratio": 1.14,
       "vol_validated": false
      },
      {
       "type": "resistance",
       "price": 112.21,
+      "tp": "TP2",
+      "r": 2.58,
+      "atr_dist": 3.85,
       "date": "2026-06-02",
-      "atr_dist": 3.04,
       "vol_ratio": 0.84,
       "vol_validated": false
      },
      {
       "type": "fib_1272",
       "price": 116.99,
-      "atr_dist": 5.0
+      "tp": "TP3",
+      "r": 3.96,
+      "atr_dist": 5.92
      },
      {
       "type": "fib_1618",
       "price": 122.6,
-      "atr_dist": 7.3
+      "tp": null,
+      "r": 5.58,
+      "atr_dist": 8.34
      },
      {
       "type": "fib_2000",
       "price": 128.79,
-      "atr_dist": 9.84
+      "tp": null,
+      "r": 7.37,
+      "atr_dist": 11.02
      },
      {
       "type": "fib_2618",
       "price": 138.81,
-      "atr_dist": 13.96
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 102.36,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "TECK",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 70.2,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 70.2,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 71.25,
-      "date": "2026-06-02",
-      "atr_dist": 0.47,
-      "vol_ratio": 1.51,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 74.72,
-      "atr_dist": 2.0
-     },
-     {
-      "type": "fib_1618",
-      "price": 79.13,
-      "atr_dist": 3.96
-     },
-     {
-      "type": "fib_2000",
-      "price": 84.0,
-      "atr_dist": 6.11
-     },
-     {
-      "type": "fib_2618",
-      "price": 91.88,
-      "atr_dist": 9.61
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 67.94,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "A",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 153.43,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 153.43,
-    "price_source": "eod_close",
-    "stop": 146.53,
-    "stop_type": "ma20",
-    "stop_atr_dist": 1.63,
-    "stop_date": null,
-    "risk": 6.9,
-    "risk_pct": 4.5,
-    "targets": [
-     {
-      "type": "prior_high",
-      "price": 160.51,
-      "tp": "TP1",
-      "r": 1.03,
-      "atr_dist": 1.67
-     },
-     {
-      "type": "fib_1272",
-      "price": 167.24,
-      "tp": "TP2",
-      "r": 2.0,
-      "atr_dist": 3.26
-     },
-     {
-      "type": "fib_1618",
-      "price": 175.79,
-      "tp": "TP3",
-      "r": 3.24,
-      "atr_dist": 5.28
-     },
-     {
-      "type": "fib_2000",
-      "price": 185.24,
       "tp": null,
-      "r": 4.61,
-      "atr_dist": 7.52
-     },
-     {
-      "type": "fib_2618",
-      "price": 200.52,
-      "tp": null,
-      "r": 6.82,
-      "atr_dist": 11.13
+      "r": 10.26,
+      "atr_dist": 15.35
      }
     ],
-    "rr": 2.0,
-    "rr_tp1": 1.03,
-    "rr_tp2": 2.0,
-    "rr_tp3": 3.24,
-    "atr_fallback_stop": 149.2,
+    "rr": 2.58,
+    "rr_tp1": 1.18,
+    "rr_tp2": 2.58,
+    "rr_tp3": 3.96,
+    "atr_fallback_stop": 100.99,
     "valid": true,
     "invalid_reason": null
    },
@@ -3750,366 +486,21 @@
    },
    "event_based": {
     "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
    }
   },
   {
-   "date": "2026-08-25",
-   "ticker": "EOG",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 150.21,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 150.21,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 151.87,
-      "date": "2026-03-30",
-      "atr_dist": 0.44,
-      "vol_ratio": 0.85,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 159.17,
-      "atr_dist": 2.39
-     },
-     {
-      "type": "fib_1618",
-      "price": 166.17,
-      "atr_dist": 4.26
-     },
-     {
-      "type": "fib_2000",
-      "price": 173.89,
-      "atr_dist": 6.32
-     },
-     {
-      "type": "fib_2618",
-      "price": 186.39,
-      "atr_dist": 9.66
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 146.46,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "WTRG",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 41.34,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 41.34,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 41.39,
-      "date": "2026-07-29",
-      "atr_dist": 0.05,
-      "vol_ratio": 1.0,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 42.59,
-      "atr_dist": 1.34
-     },
-     {
-      "type": "fib_1618",
-      "price": 43.54,
-      "atr_dist": 2.36
-     },
-     {
-      "type": "fib_2000",
-      "price": 44.59,
-      "atr_dist": 3.49
-     },
-     {
-      "type": "fib_2618",
-      "price": 46.29,
-      "atr_dist": 5.31
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 40.41,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "AWK",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 139.91,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 139.91,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 141.21,
-      "date": "2026-03-12",
-      "atr_dist": 0.4,
-      "vol_ratio": 1.29,
-      "vol_validated": true
-     },
-     {
-      "type": "fib_1272",
-      "price": 144.6,
-      "atr_dist": 1.46
-     },
-     {
-      "type": "fib_1618",
-      "price": 148.85,
-      "atr_dist": 2.78
-     },
-     {
-      "type": "fib_2000",
-      "price": 153.55,
-      "atr_dist": 4.25
-     },
-     {
-      "type": "fib_2618",
-      "price": 161.15,
-      "atr_dist": 6.61
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 34.24,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "PCG",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 18.11,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 18.11,
-    "price_source": "eod_close",
-    "stop": null,
-    "stop_type": null,
-    "stop_atr_dist": null,
-    "stop_date": null,
-    "risk": null,
-    "risk_pct": null,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 18.44,
-      "date": "2026-07-28",
-      "atr_dist": 0.64,
-      "vol_ratio": 1.38,
-      "vol_validated": true
-     },
-     {
-      "type": "resistance",
-      "price": 18.75,
-      "date": "2026-03-17",
-      "atr_dist": 1.25,
-      "vol_ratio": 1.28,
-      "vol_validated": true
-     }
-    ],
-    "rr": null,
-    "rr_tp1": null,
-    "rr_tp2": null,
-    "rr_tp3": null,
-    "atr_fallback_stop": 17.6,
-    "valid": false,
-    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
-   "ticker": "EIX",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 73.97,
-   "ref_price_source": "entry",
-   "bracket": {
-    "price": 73.97,
-    "price_source": "eod_close",
-    "stop": 70.54,
-    "stop_type": "swing_low",
-    "stop_atr_dist": 1.43,
-    "stop_date": "2026-06-17",
-    "risk": 3.43,
-    "risk_pct": 4.64,
-    "targets": [
-     {
-      "type": "resistance",
-      "price": 76.22,
-      "tp": "TP1",
-      "r": 0.66,
-      "atr_dist": 0.94,
-      "date": "2026-04-09",
-      "vol_ratio": 0.89,
-      "vol_validated": false
-     },
-     {
-      "type": "resistance",
-      "price": 81.62,
-      "tp": "TP2",
-      "r": 2.23,
-      "atr_dist": 3.2,
-      "date": "2026-07-28",
-      "vol_ratio": 1.1,
-      "vol_validated": false
-     },
-     {
-      "type": "fib_1272",
-      "price": 84.63,
-      "tp": "TP3",
-      "r": 3.11,
-      "atr_dist": 4.45
-     },
-     {
-      "type": "fib_1618",
-      "price": 88.47,
-      "tp": null,
-      "r": 4.23,
-      "atr_dist": 6.06
-     },
-     {
-      "type": "fib_2000",
-      "price": 92.7,
-      "tp": null,
-      "r": 5.46,
-      "atr_dist": 7.83
-     },
-     {
-      "type": "fib_2618",
-      "price": 99.55,
-      "tp": null,
-      "r": 7.46,
-      "atr_dist": 10.69
-     }
-    ],
-    "rr": 2.23,
-    "rr_tp1": 0.66,
-    "rr_tp2": 2.23,
-    "rr_tp3": 3.11,
-    "atr_fallback_stop": 71.58,
-    "valid": true,
-    "invalid_reason": null,
-    "stop_vol_ratio": 1.22,
-    "stop_vol_validated": true
-   },
-   "record_source": "live",
-   "fixed_horizon": {
-    "horizon_sessions": 5,
-    "status": "pending"
-   },
-   "event_based": {
-    "status": "not_applicable",
-    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
-   }
-  },
-  {
-   "date": "2026-08-25",
+   "date": "2026-08-31",
    "ticker": "RELY",
-   "verdict": "NEAR-MISS",
-   "conviction": null,
-   "support": null,
-   "oppose": null,
-   "abstain": null,
-   "ref_price": 26.59,
-   "ref_price_source": "entry",
+   "verdict": "ADVANCE",
+   "conviction": 3,
+   "support": 6,
+   "oppose": 2,
+   "abstain": 3,
+   "ref_price": 26.55,
+   "ref_price_source": "eod_close",
    "bracket": {
-    "price": 26.59,
+    "price": 26.55,
     "price_source": "eod_close",
     "stop": null,
     "stop_type": null,
@@ -4122,29 +513,29 @@
       "type": "resistance",
       "price": 26.74,
       "date": "2026-08-14",
-      "atr_dist": 0.13,
+      "atr_dist": 0.17,
       "vol_ratio": 1.21,
       "vol_validated": true
      },
      {
       "type": "fib_1272",
       "price": 28.46,
-      "atr_dist": 1.61
+      "atr_dist": 1.71
      },
      {
       "type": "fib_1618",
       "price": 30.13,
-      "atr_dist": 3.04
+      "atr_dist": 3.21
      },
      {
       "type": "fib_2000",
       "price": 31.98,
-      "atr_dist": 4.63
+      "atr_dist": 4.86
      },
      {
       "type": "fib_2618",
       "price": 34.96,
-      "atr_dist": 7.19
+      "atr_dist": 7.53
      }
     ],
     "rr": null,
@@ -4162,7 +553,2824 @@
    },
    "event_based": {
     "status": "not_applicable",
+    "note": "no valid bracket -- event grading needs a stop/TP to check against"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "SLB",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 3,
+   "support": 2,
+   "oppose": 5,
+   "abstain": 4,
+   "ref_price": 57.33,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 57.33,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 58.12,
+      "date": "2026-06-04",
+      "atr_dist": 0.46,
+      "vol_ratio": 0.77,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 60.48,
+      "atr_dist": 1.85
+     },
+     {
+      "type": "fib_1618",
+      "price": 62.58,
+      "atr_dist": 3.09
+     },
+     {
+      "type": "fib_2000",
+      "price": 64.91,
+      "atr_dist": 4.46
+     },
+     {
+      "type": "fib_2618",
+      "price": 68.67,
+      "atr_dist": 6.67
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 55.63,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "ETSY",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 1,
+   "oppose": 10,
+   "abstain": 0,
+   "ref_price": 83.59,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 83.59,
+    "price_source": "eod_close",
+    "stop": 80.03,
+    "stop_type": "fib_786",
+    "stop_atr_dist": 1.09,
+    "stop_date": null,
+    "risk": 3.56,
+    "risk_pct": 4.26,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 87.14,
+      "tp": "TP1",
+      "r": 1.0,
+      "atr_dist": 1.09,
+      "date": "2026-07-15",
+      "vol_ratio": 1.32,
+      "vol_validated": true
+     },
+     {
+      "type": "fib_1272",
+      "price": 90.72,
+      "tp": "TP2",
+      "r": 2.0,
+      "atr_dist": 2.18
+     },
+     {
+      "type": "fib_1618",
+      "price": 94.21,
+      "tp": "TP3",
+      "r": 2.98,
+      "atr_dist": 3.25
+     },
+     {
+      "type": "fib_2000",
+      "price": 98.07,
+      "tp": null,
+      "r": 4.07,
+      "atr_dist": 4.43
+     },
+     {
+      "type": "fib_2618",
+      "price": 104.31,
+      "tp": null,
+      "r": 5.82,
+      "atr_dist": 6.34
+     }
+    ],
+    "rr": 2.0,
+    "rr_tp1": 1.0,
+    "rr_tp2": 2.0,
+    "rr_tp3": 2.98,
+    "atr_fallback_stop": 80.32,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "MO",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 11,
+   "abstain": 0,
+   "ref_price": 68.65,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 68.65,
+    "price_source": "eod_close",
+    "stop": 66.84,
+    "stop_type": "ma20",
+    "stop_atr_dist": 1.1,
+    "stop_date": null,
+    "risk": 1.81,
+    "risk_pct": 2.64,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 73.75,
+      "tp": "TP1",
+      "r": 2.82,
+      "atr_dist": 3.11,
+      "date": "2026-06-11",
+      "vol_ratio": 0.95,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 75.28,
+      "tp": "TP2",
+      "r": 3.66,
+      "atr_dist": 4.04,
+      "date": "2026-07-17",
+      "vol_ratio": 1.06,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 77.06,
+      "tp": "TP3",
+      "r": 4.65,
+      "atr_dist": 5.13,
+      "date": "2026-07-28",
+      "vol_ratio": 1.47,
+      "vol_validated": true
+     },
+     {
+      "type": "fib_1272",
+      "price": 79.02,
+      "tp": null,
+      "r": 5.73,
+      "atr_dist": 6.32
+     },
+     {
+      "type": "fib_1618",
+      "price": 81.5,
+      "tp": null,
+      "r": 7.1,
+      "atr_dist": 7.84
+     },
+     {
+      "type": "fib_2000",
+      "price": 84.25,
+      "tp": null,
+      "r": 8.62,
+      "atr_dist": 9.51
+     },
+     {
+      "type": "fib_2618",
+      "price": 88.69,
+      "tp": null,
+      "r": 11.07,
+      "atr_dist": 12.22
+     }
+    ],
+    "rr": 3.66,
+    "rr_tp1": 2.82,
+    "rr_tp2": 3.66,
+    "rr_tp3": 4.65,
+    "atr_fallback_stop": 67.01,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "STAG",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 10,
+   "abstain": 1,
+   "ref_price": 37.18,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 37.18,
+    "price_source": "eod_close",
+    "stop": 36.5,
+    "stop_type": "swing_low_2",
+    "stop_atr_dist": 1.16,
+    "stop_date": "2026-08-11",
+    "risk": 0.68,
+    "risk_pct": 1.83,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 38.7,
+      "tp": "TP1",
+      "r": 2.24,
+      "atr_dist": 2.6,
+      "date": "2026-05-27",
+      "vol_ratio": 0.69,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 39.3,
+      "tp": "TP2",
+      "r": 3.12,
+      "atr_dist": 3.63,
+      "date": "2026-05-08",
+      "vol_ratio": 0.83,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 39.74,
+      "tp": "TP3",
+      "r": 3.76,
+      "atr_dist": 4.38,
+      "date": "2026-07-07",
+      "vol_ratio": 1.61,
+      "vol_validated": true
+     },
+     {
+      "type": "resistance",
+      "price": 42.61,
+      "tp": null,
+      "r": 7.99,
+      "atr_dist": 9.3,
+      "date": "2026-07-17",
+      "vol_ratio": 0.83,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 43.86,
+      "tp": null,
+      "r": 9.82,
+      "atr_dist": 11.44
+     },
+     {
+      "type": "fib_1618",
+      "price": 45.44,
+      "tp": null,
+      "r": 12.15,
+      "atr_dist": 14.14
+     },
+     {
+      "type": "fib_2000",
+      "price": 47.19,
+      "tp": null,
+      "r": 14.72,
+      "atr_dist": 17.14
+     },
+     {
+      "type": "fib_2618",
+      "price": 50.02,
+      "tp": null,
+      "r": 18.88,
+      "atr_dist": 21.99
+     }
+    ],
+    "rr": 3.12,
+    "rr_tp1": 2.24,
+    "rr_tp2": 3.12,
+    "rr_tp3": 3.76,
+    "atr_fallback_stop": 36.6,
+    "valid": true,
+    "invalid_reason": null,
+    "stop_vol_ratio": 0.7,
+    "stop_vol_validated": false
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "ICE",
+   "verdict": "ADVANCE",
+   "conviction": 3,
+   "support": 6,
+   "oppose": 3,
+   "abstain": 2,
+   "ref_price": 162.33,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 162.33,
+    "price_source": "eod_close",
+    "stop": 158.42,
+    "stop_type": "fib_618",
+    "stop_atr_dist": 1.19,
+    "stop_date": null,
+    "risk": 3.91,
+    "risk_pct": 2.41,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 168.2,
+      "tp": "TP1",
+      "r": 1.5,
+      "atr_dist": 1.79,
+      "date": "2026-04-08",
+      "vol_ratio": 0.78,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 172.5,
+      "tp": "TP2",
+      "r": 2.6,
+      "atr_dist": 3.09
+     },
+     {
+      "type": "fib_1618",
+      "price": 177.98,
+      "tp": "TP3",
+      "r": 4.0,
+      "atr_dist": 4.76
+     },
+     {
+      "type": "fib_2000",
+      "price": 184.02,
+      "tp": null,
+      "r": 5.55,
+      "atr_dist": 6.6
+     },
+     {
+      "type": "fib_2618",
+      "price": 193.8,
+      "tp": null,
+      "r": 8.05,
+      "atr_dist": 9.58
+     }
+    ],
+    "rr": 2.6,
+    "rr_tp1": 1.5,
+    "rr_tp2": 2.6,
+    "rr_tp3": 4.0,
+    "atr_fallback_stop": 159.04,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "pending",
+    "note": null
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "T",
+   "verdict": "ADVANCE",
+   "conviction": 3,
+   "support": 8,
+   "oppose": 2,
+   "abstain": 1,
+   "ref_price": 26.01,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 26.01,
+    "price_source": "eod_close",
+    "stop": 25.13,
+    "stop_type": "ma200",
+    "stop_atr_dist": 1.59,
+    "stop_date": null,
+    "risk": 0.88,
+    "risk_pct": 3.38,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 26.76,
+      "tp": "TP1",
+      "r": 0.85,
+      "atr_dist": 1.36,
+      "date": "2026-04-23",
+      "vol_ratio": 1.21,
+      "vol_validated": true
+     },
+     {
+      "type": "resistance",
+      "price": 29.44,
+      "tp": "TP2",
+      "r": 3.9,
+      "atr_dist": 6.2,
+      "date": "2026-03-24",
+      "vol_ratio": 0.89,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 30.18,
+      "tp": "TP3",
+      "r": 4.74,
+      "atr_dist": 7.54
+     },
+     {
+      "type": "fib_1618",
+      "price": 31.11,
+      "tp": null,
+      "r": 5.8,
+      "atr_dist": 9.22
+     },
+     {
+      "type": "fib_2000",
+      "price": 32.15,
+      "tp": null,
+      "r": 6.98,
+      "atr_dist": 11.1
+     },
+     {
+      "type": "fib_2618",
+      "price": 33.82,
+      "tp": null,
+      "r": 8.87,
+      "atr_dist": 14.12
+     }
+    ],
+    "rr": 3.9,
+    "rr_tp1": 0.85,
+    "rr_tp2": 3.9,
+    "rr_tp3": 4.74,
+    "atr_fallback_stop": 25.46,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "pending",
+    "note": null
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "TGT",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 3,
+   "oppose": 6,
+   "abstain": 2,
+   "ref_price": 163.18,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 163.18,
+    "price_source": "eod_close",
+    "stop": 156.15,
+    "stop_type": "ma20",
+    "stop_atr_dist": 1.4,
+    "stop_date": null,
+    "risk": 7.03,
+    "risk_pct": 4.31,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 170.75,
+      "tp": "TP1",
+      "r": 1.08,
+      "atr_dist": 1.51
+     },
+     {
+      "type": "fib_1272",
+      "price": 177.42,
+      "tp": "TP2",
+      "r": 2.03,
+      "atr_dist": 2.83
+     },
+     {
+      "type": "fib_1618",
+      "price": 185.92,
+      "tp": "TP3",
+      "r": 3.23,
+      "atr_dist": 4.52
+     },
+     {
+      "type": "fib_2000",
+      "price": 195.29,
+      "tp": null,
+      "r": 4.57,
+      "atr_dist": 6.38
+     },
+     {
+      "type": "fib_2618",
+      "price": 210.46,
+      "tp": null,
+      "r": 6.73,
+      "atr_dist": 9.4
+     }
+    ],
+    "rr": 2.03,
+    "rr_tp1": 1.08,
+    "rr_tp2": 2.03,
+    "rr_tp3": 3.23,
+    "atr_fallback_stop": 158.15,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "RELX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 3,
+   "oppose": 6,
+   "abstain": 2,
+   "ref_price": 36.54,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 36.54,
+    "price_source": "eod_close",
+    "stop": 35.59,
+    "stop_type": "ma200",
+    "stop_atr_dist": 1.01,
+    "stop_date": null,
+    "risk": 0.95,
+    "risk_pct": 2.6,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 37.78,
+      "tp": "TP1",
+      "r": 1.31,
+      "atr_dist": 1.32,
+      "date": "2026-04-21",
+      "vol_ratio": 0.97,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 38.58,
+      "tp": "TP2",
+      "r": 2.15,
+      "atr_dist": 2.17,
+      "date": "2026-07-29",
+      "vol_ratio": 0.94,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 40.24,
+      "tp": "TP3",
+      "r": 3.89,
+      "atr_dist": 3.94
+     },
+     {
+      "type": "fib_1618",
+      "price": 42.36,
+      "tp": null,
+      "r": 6.13,
+      "atr_dist": 6.2
+     },
+     {
+      "type": "fib_2000",
+      "price": 44.7,
+      "tp": null,
+      "r": 8.59,
+      "atr_dist": 8.69
+     },
+     {
+      "type": "fib_2618",
+      "price": 48.48,
+      "tp": null,
+      "r": 12.57,
+      "atr_dist": 12.72
+     }
+    ],
+    "rr": 2.15,
+    "rr_tp1": 1.31,
+    "rr_tp2": 2.15,
+    "rr_tp3": 3.89,
+    "atr_fallback_stop": 35.6,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "FCX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 3,
+   "support": 2,
+   "oppose": 5,
+   "abstain": 4,
+   "ref_price": 76.45,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 76.45,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 80.24,
+      "atr_dist": 1.34
+     },
+     {
+      "type": "fib_1272",
+      "price": 84.23,
+      "atr_dist": 2.75
+     },
+     {
+      "type": "fib_1618",
+      "price": 89.31,
+      "atr_dist": 4.54
+     },
+     {
+      "type": "fib_2000",
+      "price": 94.91,
+      "atr_dist": 6.52
+     },
+     {
+      "type": "fib_2618",
+      "price": 103.98,
+      "atr_dist": 9.72
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 73.62,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "SLDE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 4,
+   "oppose": 2,
+   "abstain": 5,
+   "ref_price": 23.48,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 23.48,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 23.75,
+      "atr_dist": 0.37
+     },
+     {
+      "type": "fib_1272",
+      "price": 24.87,
+      "atr_dist": 1.9
+     },
+     {
+      "type": "fib_1618",
+      "price": 26.29,
+      "atr_dist": 3.85
+     },
+     {
+      "type": "fib_2000",
+      "price": 27.86,
+      "atr_dist": 6.0
+     },
+     {
+      "type": "fib_2618",
+      "price": 30.4,
+      "atr_dist": 9.48
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 22.75,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "DT",
+   "verdict": "PASS",
+   "conviction": 3,
+   "support": 1,
+   "oppose": 6,
+   "abstain": 4,
+   "ref_price": 53.67,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 53.67,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 54.61,
+      "atr_dist": 0.47
+     },
+     {
+      "type": "fib_1272",
+      "price": 56.74,
+      "atr_dist": 1.54
+     },
+     {
+      "type": "fib_1618",
+      "price": 59.44,
+      "atr_dist": 2.89
+     },
+     {
+      "type": "fib_2000",
+      "price": 62.43,
+      "atr_dist": 4.39
+     },
+     {
+      "type": "fib_2618",
+      "price": 67.26,
+      "atr_dist": 6.82
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 51.68,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "NOW",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 10,
+   "abstain": 1,
+   "ref_price": 144.71,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 144.71,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 145.72,
+      "atr_dist": 0.16
+     },
+     {
+      "type": "fib_1272",
+      "price": 153.37,
+      "atr_dist": 1.33
+     },
+     {
+      "type": "fib_1618",
+      "price": 163.1,
+      "atr_dist": 2.83
+     },
+     {
+      "type": "fib_2000",
+      "price": 173.85,
+      "atr_dist": 4.48
+     },
+     {
+      "type": "fib_2618",
+      "price": 191.23,
+      "atr_dist": 7.16
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 138.21,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "CRWD",
+   "verdict": "PASS",
+   "conviction": 3,
+   "support": 1,
+   "oppose": 9,
+   "abstain": 1,
+   "ref_price": 218.4,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 218.4,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 227.5,
+      "date": "2026-08-14",
+      "atr_dist": 0.75,
+      "vol_ratio": 0.9,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 244.02,
+      "atr_dist": 2.12
+     },
+     {
+      "type": "fib_1618",
+      "price": 263.03,
+      "atr_dist": 3.7
+     },
+     {
+      "type": "fib_2000",
+      "price": 284.02,
+      "atr_dist": 5.43
+     },
+     {
+      "type": "fib_2618",
+      "price": 317.97,
+      "atr_dist": 8.24
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 206.32,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "CXM",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 8.16,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 8.16,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 8.18,
+      "atr_dist": 0.07
+     },
+     {
+      "type": "fib_1272",
+      "price": 8.93,
+      "atr_dist": 2.78
+     },
+     {
+      "type": "fib_1618",
+      "price": 9.87,
+      "atr_dist": 6.17
+     },
+     {
+      "type": "fib_2000",
+      "price": 10.92,
+      "atr_dist": 9.96
+     },
+     {
+      "type": "fib_2618",
+      "price": 12.61,
+      "atr_dist": 16.06
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 7.88,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
     "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "GWRE",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 205.85,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 205.85,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 207.47,
+      "atr_dist": 0.2
+     },
+     {
+      "type": "fib_1272",
+      "price": 228.23,
+      "atr_dist": 2.71
+     },
+     {
+      "type": "fib_1618",
+      "price": 254.63,
+      "atr_dist": 5.92
+     },
+     {
+      "type": "fib_2000",
+      "price": 283.78,
+      "atr_dist": 9.45
+     },
+     {
+      "type": "fib_2618",
+      "price": 330.94,
+      "atr_dist": 15.17
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 197.6,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "VLO",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 352.36,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 352.36,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 353.0,
+      "atr_dist": 0.06
+     },
+     {
+      "type": "fib_1272",
+      "price": 369.74,
+      "atr_dist": 1.66
+     },
+     {
+      "type": "fib_1618",
+      "price": 391.03,
+      "atr_dist": 3.7
+     },
+     {
+      "type": "fib_2000",
+      "price": 414.54,
+      "atr_dist": 5.94
+     },
+     {
+      "type": "fib_2618",
+      "price": 452.57,
+      "atr_dist": 9.58
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 341.9,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "WAY",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 26.24,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 26.24,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 27.17,
+      "date": "2026-04-21",
+      "atr_dist": 0.79,
+      "vol_ratio": 0.89,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 28.86,
+      "atr_dist": 2.23
+     },
+     {
+      "type": "fib_1618",
+      "price": 31.02,
+      "atr_dist": 4.06
+     },
+     {
+      "type": "fib_2000",
+      "price": 33.4,
+      "atr_dist": 6.09
+     },
+     {
+      "type": "fib_2618",
+      "price": 37.25,
+      "atr_dist": 9.36
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 25.06,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "FROG",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 98.74,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 98.74,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 99.22,
+      "date": "2026-07-07",
+      "atr_dist": 0.08,
+      "vol_ratio": 0.65,
+      "vol_validated": false
+     },
+     {
+      "type": "prior_high",
+      "price": 105.76,
+      "atr_dist": 1.17
+     },
+     {
+      "type": "fib_1272",
+      "price": 111.12,
+      "atr_dist": 2.07
+     },
+     {
+      "type": "fib_1618",
+      "price": 117.95,
+      "atr_dist": 3.21
+     },
+     {
+      "type": "fib_2000",
+      "price": 125.48,
+      "atr_dist": 4.47
+     },
+     {
+      "type": "fib_2618",
+      "price": 137.67,
+      "atr_dist": 6.51
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 92.76,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "SN",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 191.23,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 191.23,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 194.54,
+      "atr_dist": 0.59
+     },
+     {
+      "type": "fib_1272",
+      "price": 199.17,
+      "atr_dist": 1.42
+     },
+     {
+      "type": "fib_1618",
+      "price": 205.06,
+      "atr_dist": 2.47
+     },
+     {
+      "type": "fib_2000",
+      "price": 211.56,
+      "atr_dist": 3.63
+     },
+     {
+      "type": "fib_2618",
+      "price": 222.08,
+      "atr_dist": 5.52
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 185.64,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "ticker": "EFX",
+   "verdict": "NEAR-MISS",
+   "conviction": null,
+   "support": null,
+   "oppose": null,
+   "abstain": null,
+   "ref_price": 194.35,
+   "ref_price_source": "entry",
+   "bracket": {
+    "price": 194.35,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 200.09,
+      "date": "2026-04-20",
+      "atr_dist": 0.89,
+      "vol_ratio": 1.31,
+      "vol_validated": true
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 187.9,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "BBY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 7,
+   "oppose": 4,
+   "abstain": 0,
+   "ref_price": 87.49,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 87.49,
+    "price_source": "eod_close",
+    "stop": 83.75,
+    "stop_type": "ma_cluster",
+    "stop_atr_dist": 1.09,
+    "stop_date": null,
+    "risk": 3.74,
+    "risk_pct": 4.27,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 90.26,
+      "tp": "TP1",
+      "r": 0.74,
+      "atr_dist": 0.81,
+      "date": "2026-08-19",
+      "vol_ratio": 0.93,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 96.37,
+      "tp": "TP2",
+      "r": 2.37,
+      "atr_dist": 2.59
+     },
+     {
+      "type": "fib_1618",
+      "price": 102.86,
+      "tp": "TP3",
+      "r": 4.11,
+      "atr_dist": 4.48
+     },
+     {
+      "type": "fib_2000",
+      "price": 110.03,
+      "tp": null,
+      "r": 6.03,
+      "atr_dist": 6.57
+     },
+     {
+      "type": "fib_2618",
+      "price": 121.62,
+      "tp": null,
+      "r": 9.13,
+      "atr_dist": 9.95
+     }
+    ],
+    "rr": 2.37,
+    "rr_tp1": 0.74,
+    "rr_tp2": 2.37,
+    "rr_tp3": 4.11,
+    "atr_fallback_stop": 84.06,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "GNW",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 3,
+   "support": 4,
+   "oppose": 7,
+   "abstain": 0,
+   "ref_price": 10.38,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 10.38,
+    "price_source": "eod_close",
+    "stop": 10.14,
+    "stop_type": "fib_618",
+    "stop_atr_dist": 1.13,
+    "stop_date": null,
+    "risk": 0.24,
+    "risk_pct": 2.31,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 10.69,
+      "tp": "TP1",
+      "r": 1.29,
+      "atr_dist": 1.46
+     },
+     {
+      "type": "fib_1272",
+      "price": 10.93,
+      "tp": "TP2",
+      "r": 2.29,
+      "atr_dist": 2.58
+     },
+     {
+      "type": "fib_1618",
+      "price": 11.24,
+      "tp": "TP3",
+      "r": 3.58,
+      "atr_dist": 4.04
+     },
+     {
+      "type": "fib_2000",
+      "price": 11.58,
+      "tp": null,
+      "r": 5.0,
+      "atr_dist": 5.63
+     },
+     {
+      "type": "fib_2618",
+      "price": 12.13,
+      "tp": null,
+      "r": 7.29,
+      "atr_dist": 8.22
+     }
+    ],
+    "rr": 2.29,
+    "rr_tp1": 1.29,
+    "rr_tp2": 2.29,
+    "rr_tp3": 3.58,
+    "atr_fallback_stop": 10.17,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "NFLX",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 11,
+   "abstain": 0,
+   "ref_price": 82.67,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 82.67,
+    "price_source": "eod_close",
+    "stop": 79.1,
+    "stop_type": "ma20",
+    "stop_atr_dist": 1.6,
+    "stop_date": null,
+    "risk": 3.57,
+    "risk_pct": 4.32,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 91.48,
+      "tp": "TP1",
+      "r": 2.47,
+      "atr_dist": 3.94,
+      "date": "2026-05-19",
+      "vol_ratio": 0.99,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 94.7,
+      "tp": "TP2",
+      "r": 3.37,
+      "atr_dist": 5.38,
+      "date": "2026-05-01",
+      "vol_ratio": 0.72,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 108.95,
+      "tp": "TP3",
+      "r": 7.36,
+      "atr_dist": 11.74,
+      "date": "2026-04-16",
+      "vol_ratio": 1.67,
+      "vol_validated": true
+     },
+     {
+      "type": "fib_1272",
+      "price": 113.92,
+      "tp": null,
+      "r": 8.75,
+      "atr_dist": 13.96
+     },
+     {
+      "type": "fib_1618",
+      "price": 120.23,
+      "tp": null,
+      "r": 10.52,
+      "atr_dist": 16.78
+     },
+     {
+      "type": "fib_2000",
+      "price": 127.21,
+      "tp": null,
+      "r": 12.48,
+      "atr_dist": 19.9
+     },
+     {
+      "type": "fib_2618",
+      "price": 138.49,
+      "tp": null,
+      "r": 15.64,
+      "atr_dist": 24.94
+     }
+    ],
+    "rr": 3.37,
+    "rr_tp1": 2.47,
+    "rr_tp2": 3.37,
+    "rr_tp3": 7.36,
+    "atr_fallback_stop": 80.43,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "CB",
+   "verdict": "ADVANCE",
+   "conviction": 4,
+   "support": 6,
+   "oppose": 4,
+   "abstain": 1,
+   "ref_price": 348.25,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 348.25,
+    "price_source": "eod_close",
+    "stop": 342.22,
+    "stop_type": "swing_low_2",
+    "stop_atr_dist": 1.03,
+    "stop_date": "2026-08-04",
+    "risk": 6.03,
+    "risk_pct": 1.73,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 365.29,
+      "tp": "TP1",
+      "r": 2.83,
+      "atr_dist": 2.9,
+      "date": "2026-07-07",
+      "vol_ratio": 0.94,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 374.58,
+      "tp": "TP2",
+      "r": 4.37,
+      "atr_dist": 4.48
+     },
+     {
+      "type": "fib_1618",
+      "price": 385.61,
+      "tp": "TP3",
+      "r": 6.2,
+      "atr_dist": 6.36
+     },
+     {
+      "type": "fib_2000",
+      "price": 397.78,
+      "tp": null,
+      "r": 8.21,
+      "atr_dist": 8.43
+     },
+     {
+      "type": "fib_2618",
+      "price": 417.48,
+      "tp": null,
+      "r": 11.48,
+      "atr_dist": 11.78
+     }
+    ],
+    "rr": 4.37,
+    "rr_tp1": 2.83,
+    "rr_tp2": 4.37,
+    "rr_tp3": 6.2,
+    "atr_fallback_stop": 342.38,
+    "valid": true,
+    "invalid_reason": null,
+    "stop_vol_ratio": 0.75,
+    "stop_vol_validated": false
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "pending",
+    "note": null
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "CVX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 3,
+   "support": 3,
+   "oppose": 7,
+   "abstain": 1,
+   "ref_price": 211.29,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 211.29,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 214.71,
+      "date": "2026-03-30",
+      "atr_dist": 0.88,
+      "vol_ratio": 0.69,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 219.91,
+      "atr_dist": 2.21
+     },
+     {
+      "type": "fib_1618",
+      "price": 226.53,
+      "atr_dist": 3.9
+     },
+     {
+      "type": "fib_2000",
+      "price": 233.84,
+      "atr_dist": 5.77
+     },
+     {
+      "type": "fib_2618",
+      "price": 245.66,
+      "atr_dist": 8.79
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 207.38,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "VRNS",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 11,
+   "abstain": 0,
+   "ref_price": 46.51,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 46.51,
+    "price_source": "eod_close",
+    "stop": 43.67,
+    "stop_type": "ma50",
+    "stop_atr_dist": 1.23,
+    "stop_date": null,
+    "risk": 2.84,
+    "risk_pct": 6.11,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 49.54,
+      "tp": "TP1",
+      "r": 1.07,
+      "atr_dist": 1.31,
+      "date": "2026-07-15",
+      "vol_ratio": 0.75,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 54.38,
+      "tp": "TP2",
+      "r": 2.77,
+      "atr_dist": 3.4
+     },
+     {
+      "type": "fib_1618",
+      "price": 60.53,
+      "tp": "TP3",
+      "r": 4.94,
+      "atr_dist": 6.05
+     },
+     {
+      "type": "fib_2000",
+      "price": 67.33,
+      "tp": null,
+      "r": 7.33,
+      "atr_dist": 8.99
+     },
+     {
+      "type": "fib_2618",
+      "price": 78.32,
+      "tp": null,
+      "r": 11.2,
+      "atr_dist": 13.73
+     }
+    ],
+    "rr": 2.77,
+    "rr_tp1": 1.07,
+    "rr_tp2": 2.77,
+    "rr_tp3": 4.94,
+    "atr_fallback_stop": 44.19,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "MET",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 3,
+   "support": 5,
+   "oppose": 5,
+   "abstain": 1,
+   "ref_price": 99.23,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 99.23,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 100.93,
+      "date": "2026-08-06",
+      "atr_dist": 0.9,
+      "vol_ratio": 1.03,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 102.84,
+      "atr_dist": 1.92
+     },
+     {
+      "type": "fib_1618",
+      "price": 105.27,
+      "atr_dist": 3.2
+     },
+     {
+      "type": "fib_2000",
+      "price": 107.95,
+      "atr_dist": 4.63
+     },
+     {
+      "type": "fib_2618",
+      "price": 112.29,
+      "atr_dist": 6.93
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 97.34,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "JNJ",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 3,
+   "oppose": 6,
+   "abstain": 2,
+   "ref_price": 278.43,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 278.43,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 281.07,
+      "atr_dist": 0.47
+     },
+     {
+      "type": "fib_1272",
+      "price": 285.76,
+      "atr_dist": 1.29
+     },
+     {
+      "type": "fib_1618",
+      "price": 291.72,
+      "atr_dist": 2.35
+     },
+     {
+      "type": "fib_2000",
+      "price": 298.31,
+      "atr_dist": 3.51
+     },
+     {
+      "type": "fib_2618",
+      "price": 308.96,
+      "atr_dist": 5.39
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 272.77,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "UBS",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 3,
+   "oppose": 5,
+   "abstain": 3,
+   "ref_price": 55.7,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 55.7,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 55.99,
+      "atr_dist": 0.32
+     },
+     {
+      "type": "fib_1272",
+      "price": 56.84,
+      "atr_dist": 1.25
+     },
+     {
+      "type": "fib_1618",
+      "price": 57.91,
+      "atr_dist": 2.42
+     },
+     {
+      "type": "fib_2000",
+      "price": 59.1,
+      "atr_dist": 3.72
+     },
+     {
+      "type": "fib_2618",
+      "price": 61.02,
+      "atr_dist": 5.83
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 54.79,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "DOCS",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 11,
+   "abstain": 0,
+   "ref_price": 27.1,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 27.1,
+    "price_source": "eod_close",
+    "stop": 24.48,
+    "stop_type": "swing_low_1",
+    "stop_atr_dist": 1.87,
+    "stop_date": "2026-08-26",
+    "risk": 2.62,
+    "risk_pct": 9.67,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 40.0,
+      "tp": "TP1",
+      "r": 4.92,
+      "atr_dist": 9.19,
+      "date": "2026-08-07",
+      "vol_ratio": 9.17,
+      "vol_validated": true
+     },
+     {
+      "type": "fib_1272",
+      "price": 45.47,
+      "tp": "TP2",
+      "r": 7.01,
+      "atr_dist": 13.09
+     },
+     {
+      "type": "fib_1618",
+      "price": 52.43,
+      "tp": "TP3",
+      "r": 9.67,
+      "atr_dist": 18.05
+     },
+     {
+      "type": "fib_2000",
+      "price": 60.12,
+      "tp": null,
+      "r": 12.6,
+      "atr_dist": 23.54
+     },
+     {
+      "type": "fib_2618",
+      "price": 72.55,
+      "tp": null,
+      "r": 17.35,
+      "atr_dist": 32.39
+     }
+    ],
+    "rr": 7.01,
+    "rr_tp1": 4.92,
+    "rr_tp2": 7.01,
+    "rr_tp3": 9.67,
+    "atr_fallback_stop": 25.7,
+    "valid": true,
+    "invalid_reason": null,
+    "stop_vol_ratio": 0.24,
+    "stop_vol_validated": false
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "WELL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 2,
+   "oppose": 7,
+   "abstain": 2,
+   "ref_price": 241.09,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 241.09,
+    "price_source": "eod_close",
+    "stop": 234.11,
+    "stop_type": "fib_786",
+    "stop_atr_dist": 1.45,
+    "stop_date": null,
+    "risk": 6.98,
+    "risk_pct": 2.9,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 243.04,
+      "tp": "TP1",
+      "r": 0.28,
+      "atr_dist": 0.4,
+      "date": "2026-08-26",
+      "vol_ratio": 0.8,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 255.2,
+      "tp": "TP2",
+      "r": 2.02,
+      "atr_dist": 2.93,
+      "date": "2026-07-28",
+      "vol_ratio": 1.57,
+      "vol_validated": true
+     },
+     {
+      "type": "fib_1272",
+      "price": 262.5,
+      "tp": "TP3",
+      "r": 3.07,
+      "atr_dist": 4.44
+     },
+     {
+      "type": "fib_1618",
+      "price": 271.78,
+      "tp": null,
+      "r": 4.4,
+      "atr_dist": 6.37
+     },
+     {
+      "type": "fib_2000",
+      "price": 282.03,
+      "tp": null,
+      "r": 5.87,
+      "atr_dist": 8.5
+     },
+     {
+      "type": "fib_2618",
+      "price": 298.61,
+      "tp": null,
+      "r": 8.24,
+      "atr_dist": 11.94
+     }
+    ],
+    "rr": 2.02,
+    "rr_tp1": 0.28,
+    "rr_tp2": 2.02,
+    "rr_tp3": 3.07,
+    "atr_fallback_stop": 236.27,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "SLDE",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 8,
+   "abstain": 3,
+   "ref_price": 24.73,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 24.73,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "prior_high",
+      "price": 25.09,
+      "atr_dist": 0.49
+     },
+     {
+      "type": "fib_1272",
+      "price": 26.57,
+      "atr_dist": 2.51
+     },
+     {
+      "type": "fib_1618",
+      "price": 28.46,
+      "atr_dist": 5.08
+     },
+     {
+      "type": "fib_2000",
+      "price": 30.54,
+      "atr_dist": 7.92
+     },
+     {
+      "type": "fib_2618",
+      "price": 33.91,
+      "atr_dist": 12.51
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 24.0,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "BSBR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 3,
+   "oppose": 8,
+   "abstain": 0,
+   "ref_price": 6.02,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 6.02,
+    "price_source": "eod_close",
+    "stop": 5.82,
+    "stop_type": "fib_786",
+    "stop_atr_dist": 1.47,
+    "stop_date": null,
+    "risk": 0.2,
+    "risk_pct": 3.32,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 6.03,
+      "tp": "TP1",
+      "r": 0.05,
+      "atr_dist": 0.07,
+      "date": "2026-05-06",
+      "vol_ratio": 1.13,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 6.57,
+      "tp": "TP2",
+      "r": 2.75,
+      "atr_dist": 4.04,
+      "date": "2026-04-14",
+      "vol_ratio": 0.84,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 6.83,
+      "tp": "TP3",
+      "r": 4.05,
+      "atr_dist": 5.96
+     },
+     {
+      "type": "fib_1618",
+      "price": 7.16,
+      "tp": null,
+      "r": 5.7,
+      "atr_dist": 8.38
+     },
+     {
+      "type": "fib_2000",
+      "price": 7.53,
+      "tp": null,
+      "r": 7.55,
+      "atr_dist": 11.1
+     },
+     {
+      "type": "fib_2618",
+      "price": 8.12,
+      "tp": null,
+      "r": 10.5,
+      "atr_dist": 15.44
+     }
+    ],
+    "rr": 2.75,
+    "rr_tp1": 0.05,
+    "rr_tp2": 2.75,
+    "rr_tp3": 4.05,
+    "atr_fallback_stop": 5.88,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "MDT",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "conviction": 2,
+   "support": 5,
+   "oppose": 6,
+   "abstain": 0,
+   "ref_price": 93.1,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 93.1,
+    "price_source": "eod_close",
+    "stop": 89.73,
+    "stop_type": "ma200",
+    "stop_atr_dist": 1.48,
+    "stop_date": null,
+    "risk": 3.37,
+    "risk_pct": 3.62,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 94.72,
+      "tp": "TP1",
+      "r": 0.48,
+      "atr_dist": 0.71,
+      "date": "2026-08-19",
+      "vol_ratio": 0.81,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 99.88,
+      "tp": "TP2",
+      "r": 2.01,
+      "atr_dist": 2.99
+     },
+     {
+      "type": "fib_1618",
+      "price": 105.57,
+      "tp": "TP3",
+      "r": 3.7,
+      "atr_dist": 5.49
+     },
+     {
+      "type": "fib_2000",
+      "price": 111.85,
+      "tp": null,
+      "r": 5.56,
+      "atr_dist": 8.26
+     },
+     {
+      "type": "fib_2618",
+      "price": 122.01,
+      "tp": null,
+      "r": 8.58,
+      "atr_dist": 12.73
+     }
+    ],
+    "rr": 2.01,
+    "rr_tp1": 0.48,
+    "rr_tp2": 2.01,
+    "rr_tp3": 3.7,
+    "atr_fallback_stop": 90.83,
+    "valid": true,
+    "invalid_reason": null
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "SPGI",
+   "verdict": "PASS",
+   "conviction": 3,
+   "support": 1,
+   "oppose": 8,
+   "abstain": 2,
+   "ref_price": 450.58,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 450.58,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 456.7,
+      "date": "2026-04-22",
+      "atr_dist": 0.51,
+      "vol_ratio": 0.72,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 486.57,
+      "atr_dist": 3.01
+     },
+     {
+      "type": "fib_1618",
+      "price": 517.81,
+      "atr_dist": 5.63
+     },
+     {
+      "type": "fib_2000",
+      "price": 552.29,
+      "atr_dist": 8.51
+     },
+     {
+      "type": "fib_2618",
+      "price": 608.08,
+      "atr_dist": 13.18
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 438.63,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "TAK",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 1,
+   "oppose": 9,
+   "abstain": 1,
+   "ref_price": 18.71,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 18.71,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 18.9,
+      "date": "2026-04-01",
+      "atr_dist": 0.65,
+      "vol_ratio": 1.44,
+      "vol_validated": true
+     },
+     {
+      "type": "fib_1272",
+      "price": 19.2,
+      "atr_dist": 1.67
+     },
+     {
+      "type": "fib_1618",
+      "price": 19.59,
+      "atr_dist": 3.0
+     },
+     {
+      "type": "fib_2000",
+      "price": 20.02,
+      "atr_dist": 4.47
+     },
+     {
+      "type": "fib_2618",
+      "price": 20.71,
+      "atr_dist": 6.83
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 18.42,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "CTVA",
+   "verdict": "PASS",
+   "conviction": 2,
+   "support": 0,
+   "oppose": 10,
+   "abstain": 1,
+   "ref_price": 88.64,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 88.64,
+    "price_source": "eod_close",
+    "stop": null,
+    "stop_type": null,
+    "stop_atr_dist": null,
+    "stop_date": null,
+    "risk": null,
+    "risk_pct": null,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 90.97,
+      "date": "2026-07-29",
+      "atr_dist": 0.99,
+      "vol_ratio": 1.15,
+      "vol_validated": false
+     },
+     {
+      "type": "fib_1272",
+      "price": 93.14,
+      "atr_dist": 1.92
+     },
+     {
+      "type": "fib_1618",
+      "price": 95.91,
+      "atr_dist": 3.09
+     },
+     {
+      "type": "fib_2000",
+      "price": 98.96,
+      "atr_dist": 4.39
+     },
+     {
+      "type": "fib_2618",
+      "price": 103.9,
+      "atr_dist": 6.5
+     }
+    ],
+    "rr": null,
+    "rr_tp1": null,
+    "rr_tp2": null,
+    "rr_tp3": null,
+    "atr_fallback_stop": 86.29,
+    "valid": false,
+    "invalid_reason": "no valid bracket — no structural support passes the 3 gates (atr≥1.0, rr≥2.0, risk%≤regime ceiling)"
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
+   }
+  },
+  {
+   "date": "2026-09-04",
+   "ticker": "GME",
+   "verdict": "PASS",
+   "conviction": 3,
+   "support": 1,
+   "oppose": 10,
+   "abstain": 0,
+   "ref_price": 19.23,
+   "ref_price_source": "eod_close",
+   "bracket": {
+    "price": 19.23,
+    "price_source": "eod_close",
+    "stop": 18.55,
+    "stop_type": "swing_low_2",
+    "stop_atr_dist": 1.36,
+    "stop_date": "2026-08-03",
+    "risk": 0.68,
+    "risk_pct": 3.54,
+    "targets": [
+     {
+      "type": "resistance",
+      "price": 22.26,
+      "tp": "TP1",
+      "r": 4.46,
+      "atr_dist": 6.06,
+      "date": "2026-07-28",
+      "vol_ratio": 1.15,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 22.62,
+      "tp": "TP2",
+      "r": 4.99,
+      "atr_dist": 6.78,
+      "date": "2026-07-15",
+      "vol_ratio": 0.59,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 23.11,
+      "tp": "TP3",
+      "r": 5.71,
+      "atr_dist": 7.76,
+      "date": "2026-07-02",
+      "vol_ratio": 0.87,
+      "vol_validated": false
+     },
+     {
+      "type": "resistance",
+      "price": 23.68,
+      "tp": null,
+      "r": 6.54,
+      "atr_dist": 8.9,
+      "date": "2026-06-03",
+      "vol_ratio": 2.39,
+      "vol_validated": true
+     },
+     {
+      "type": "prior_high",
+      "price": 26.88,
+      "tp": null,
+      "r": 11.25,
+      "atr_dist": 15.3
+     },
+     {
+      "type": "fib_1272",
+      "price": 28.07,
+      "tp": null,
+      "r": 13.0,
+      "atr_dist": 17.68
+     },
+     {
+      "type": "fib_1618",
+      "price": 29.58,
+      "tp": null,
+      "r": 15.22,
+      "atr_dist": 20.7
+     },
+     {
+      "type": "fib_2000",
+      "price": 31.25,
+      "tp": null,
+      "r": 17.68,
+      "atr_dist": 24.04
+     },
+     {
+      "type": "fib_2618",
+      "price": 33.95,
+      "tp": null,
+      "r": 21.65,
+      "atr_dist": 29.44
+     }
+    ],
+    "rr": 4.99,
+    "rr_tp1": 4.46,
+    "rr_tp2": 4.99,
+    "rr_tp3": 5.71,
+    "atr_fallback_stop": 18.73,
+    "valid": true,
+    "invalid_reason": null,
+    "stop_vol_ratio": 8.29,
+    "stop_vol_validated": true
+   },
+   "record_source": "live",
+   "fixed_horizon": {
+    "horizon_sessions": 5,
+    "status": "pending"
+   },
+   "event_based": {
+    "status": "not_applicable",
+    "note": "PASS has no bracket to event-grade; fixed-horizon return is the only check"
    }
   }
  ]
