@@ -102,6 +102,70 @@ _FIELD_GLOSSARY = {
              "truth. Superset is daily_list in full; this is the intersection, not a "
              "third option — start here when you want the fast read, start from "
              "daily_list when you want everything.",
+    "high_52w": "Highest CLOSE over the trailing 252 sessions — a close-to-close range, "
+                "not intraday high. Null with under 252 sessions of history.",
+    "low_52w": "Lowest CLOSE over the trailing 252 sessions. Same close-to-close "
+               "convention and history floor as high_52w.",
+    "pct_from_52w_high": "(entry / high_52w − 1) × 100. Negative = below the 52-week "
+                         "high, 0 = at it. Minervini Trend Template reads this against "
+                         "'within 25% of the 52-week high'.",
+    "ret_6m": "Total return %, close now vs close 126 sessions ago (same 'N-session-ago "
+              "close' convention as rs_spy_20d's 20-day ROC). The input rs_rank_pct is "
+              "ranked on.",
+    "ret_12m": "Total return %, close now vs close 252 sessions ago. O'Neil's 12-month "
+               "relative-strength window.",
+    "rs_rank_pct": "ret_6m's percentile (0-100) across the WHOLE SCORED UNIVERSE that day "
+                   "— a cross-sectional rank, not a stock's own history. Minervini reads "
+                   "RS>=70, O'Neil RS>=80 against this.",
+    "cci_20": "Commodity Channel Index, 20-period: (typical price − its own 20-bar SMA) "
+              "/ (0.015 × mean absolute deviation of typical price over the same 20 "
+              "bars), where typical price = (high+low+close)/3. seow's canon instrument "
+              "— a buy trigger reads CCI < -100.",
+    "pivot_high": "The level a break of structure just broke through if one is CURRENTLY "
+                  "in progress (structure_shift_ref, when structure_shift == "
+                  "BULLISH_BOS), else the most recent confirmed pivot high regardless of "
+                  "side (last_pivot_high.price). Replaces the entry-vs-bracket.price test "
+                  "several cards could never run because AQE carries no separate 'pivot' "
+                  "concept — this is that concept, expressed from fields already on the "
+                  "row.",
+    "pct_from_pivot": "(entry / pivot_high − 1) × 100. O'Neil's own read: 0-5% is the buy "
+                      "zone, 5-10% is a late buy carrying a warning, over 10% is a "
+                      "rejection (C17).",
+    "extension_atr_20": "(entry − ma_20) / atr_14d — how far price sits above/below its "
+                        "own 20-day average, in ATR units. A common 'how extended is "
+                        "this' read across the technical seats, independent of price "
+                        "scale.",
+    "elder_hi7_streak": "Consecutive TRAILING sessions (from today backward) with elder "
+                        ">= 7, read off elder_5d. Capped at 5 since elder_5d only carries "
+                        "the last 5 sessions — a longer run is not distinguishable from "
+                        "exactly 5 here. DOOR 2 reads elder_hi7_streak >= 3.",
+    "next_earnings_date": "The raw next-earnings date (YYYY-MM-DD) from the cached FMP "
+                          "earnings calendar, or null if unknown/not upcoming. The "
+                          "existing earn_score subcomponent only ever exposed a DERIVED "
+                          "proximity bucket; this is the actual date every card's event "
+                          "window and catalyst rule needs.",
+    "days_to_earnings": "BUSINESS days (weekends excluded) from today to "
+                        "next_earnings_date, or null if unknown/past. Deliberately NOT "
+                        "the same unit as the earn_score subcomponent's own day-count "
+                        "(that one is calendar days and its thresholds are frozen against "
+                        "that unit) — this is a fresh field, not a re-derivation of it.",
+    "stack_state": "ALIGNED/REPAIRING/ROLLING/INVERTED from the MA20/50/100/200 order. "
+                   "ALIGNED = ma_20 > ma_50 and ma_100 > ma_200 (full bullish stack); "
+                   "INVERTED = the full bearish mirror; REPAIRING = the short end has "
+                   "recrossed bullish but the long end hasn't caught up yet; ROLLING = "
+                   "the short end has turned down while the long end is still bullish. "
+                   "weis's hard rule 5.",
+    "signal_hit_rate_20d": "Live-computed (NOT a frozen quarterly table like QS or the "
+                           "retired chart-pattern calibration): the share of "
+                           "(ticker, day) samples in the SAME (elder_pattern, "
+                           "structure_shift) cell as this row, over the trailing 60 "
+                           "sessions across the whole scored universe, that closed HIGHER "
+                           "20 sessions later. Null on a cell with zero samples yet — "
+                           "'no_analogues', never shown as a measured zero. See "
+                           "src/engines/signal_hitrate.py.",
+    "signal_n": "The sample size behind signal_hit_rate_20d for this row's own "
+               "(elder_pattern, structure_shift) cell. 0 (with signal_hit_rate_20d null) "
+               "means no analogues yet, not a measured 0% hit rate.",
     "entry": "Reference entry = prior close-of-day. The live fill is the IBKR price at "
              "bracket time, NOT this value.",
     "live_px": "(held_positions only) Current mark for a held ticker = the same FMP "
@@ -351,7 +415,9 @@ _FIELD_GLOSSARY = {
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
-    "ma_20/50/100/200": "Simple moving averages (absolute USD) — dynamic support/resistance.",
+    "ma_20/40/50/100/150/200": "Simple moving averages (absolute USD) — dynamic "
+                              "support/resistance. 40 (seow) and 150 (minervini Trend "
+                              "Template) added 2026-09-05.",
     "vol_30d_ann": "30-day annualised realised volatility (decimal: 0.18 = 18%). This IS "
                    "the Charter §4.5 operative sizing vol (the charter calls it 'vol_30d'; "
                    "AQE's field is annualised — same number). For"
@@ -572,10 +638,29 @@ _FIELD_SCHEMA = {
     "fib_618":        _fs("fib_support", "usd", "n/a"),
     "fib_786":        _fs("fib_support", "usd", "n/a"),
     "ma_20":          _fs("moving_average", "usd", "n/a"),
+    "ma_40":          _fs("moving_average", "usd", "n/a"),
     "ma_50":          _fs("moving_average", "usd", "n/a"),
     "ma_100":         _fs("moving_average", "usd", "n/a"),
+    "ma_150":         _fs("moving_average", "usd", "n/a"),
     "ma_200":         _fs("moving_average", "usd", "n/a"),
     "vol_30d_ann":    _fs("volatility", "decimal", "n/a"),
+    # 2026-09-05 voice packet spec (docs/specs/aqe_voice_packet_spec_2026-09-05.md §2)
+    "high_52w":          _fs("reference", "usd", "n/a"),
+    "low_52w":           _fs("reference", "usd", "n/a"),
+    "pct_from_52w_high": _fs("signal", "pct", "n/a"),
+    "ret_6m":            _fs("signal", "pct", "n/a"),
+    "ret_12m":           _fs("signal", "pct", "n/a"),
+    "rs_rank_pct":       _fs("signal", "pct", "n/a"),
+    "cci_20":            _fs("signal", "score", "n/a"),
+    "pivot_high":        _fs("reference", "usd", "n/a"),
+    "pct_from_pivot":    _fs("signal", "pct", "n/a"),
+    "extension_atr_20":  _fs("signal", "ratio", "n/a"),
+    "elder_hi7_streak":  _fs("signal", "score", "n/a"),
+    "next_earnings_date": _fs("reference", "date", "n/a"),
+    "days_to_earnings":  _fs("reference", "decimal", "n/a"),
+    "stack_state":       _fs("signal", "label", "n/a"),
+    "signal_hit_rate_20d": _fs("signal", "pct", "n/a"),
+    "signal_n":          _fs("signal", "score", "n/a"),
     "beta_252d":      _fs("risk_metric", "ratio", "n/a"),
     # Enrichment Spec v2.0 (setup_state + breakout_* hidden — Signal Radar overlap)
     "rs_down_day_20d":      _fs("signal", "pct", "n/a"),
@@ -800,7 +885,12 @@ def _compute_v21_lookups(sm: dict) -> dict:
     """
     out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
            "vol30": {}, "beta252": {}, "pattern": {}, "candle": {},
-           "spy_roc_20d": None}
+           "spy_roc_20d": None,
+           # 2026-09-05 voice packet spec additions (docs/specs/
+           # aqe_voice_packet_spec_2026-09-05.md §2): 52-week range, 6/12-month
+           # total return + its cross-sectional percentile, and CCI-20.
+           "hi52w": {}, "lo52w": {}, "ret6m": {}, "ret12m": {},
+           "rs_rank_pct": {}, "cci20": {}}
     try:
         import numpy as np
         import pandas as pd
@@ -927,9 +1017,12 @@ def _compute_v21_lookups(sm: dict) -> dict:
                 sma50 = float(np.nanmean(cl[-50:]))
                 if sma50 > 0:
                     out["sma"][tk] = round((float(cl[-1]) / sma50 - 1) * 100, 2)
-            # absolute MA ladder (20/50/100/200) — for live MA-support alerts
+            # absolute MA ladder (20/40/50/100/150/200) — for live MA-support
+            # alerts + stack_state (40/150 added 2026-09-05: seow canon and
+            # minervini Trend Template respectively both need a rung the
+            # original 20/50/100/200 ladder never carried).
             ma = {}
-            for w in (20, 50, 100, 200):
+            for w in (20, 40, 50, 100, 150, 200):
                 if len(cl) >= w:
                     m = float(np.nanmean(cl[-w:]))
                     if m > 0:
@@ -940,6 +1033,30 @@ def _compute_v21_lookups(sm: dict) -> dict:
             if len(cl) >= 21 and spy_roc is not None and cl[-21] > 0:
                 roc = (float(cl[-1]) / float(cl[-21]) - 1) * 100
                 out["rs"][tk] = round(roc - spy_roc, 2)
+            # 52-week range (highest/lowest CLOSE, trailing 252 sessions —
+            # spec is explicit this is a close-to-close range, not intraday
+            # high/low) + ret_6m/ret_12m total return, same "N-session-ago
+            # close" convention as rs_spy_20d's 20d ROC above.
+            if len(cl) >= 252:
+                out["hi52w"][tk] = round(float(np.nanmax(cl[-252:])), 2)
+                out["lo52w"][tk] = round(float(np.nanmin(cl[-252:])), 2)
+            if len(cl) >= 127 and cl[-127] > 0:
+                out["ret6m"][tk] = round((float(cl[-1]) / float(cl[-127]) - 1) * 100, 2)
+            if len(cl) >= 253 and cl[-253] > 0:
+                out["ret12m"][tk] = round((float(cl[-1]) / float(cl[-253]) - 1) * 100, 2)
+            # cci_20 = Commodity Channel Index (seow canon instrument): typical
+            # price (H+L+C)/3, distance from its own 20-bar mean in units of
+            # mean absolute deviation.
+            if len(cl) >= 20:
+                _hi20 = g["high"].to_numpy(dtype=float)[-20:]
+                _lo20 = g["low"].to_numpy(dtype=float)[-20:]
+                _tp = (_hi20 + _lo20 + cl[-20:]) / 3.0
+                _tp_sma = float(np.nanmean(_tp))
+                _mean_dev = float(np.nanmean(np.abs(_tp - _tp_sma)))
+                if _mean_dev > 0 and np.isfinite(_tp[-1]):
+                    _cci = (_tp[-1] - _tp_sma) / (0.015 * _mean_dev)
+                    if np.isfinite(_cci):
+                        out["cci20"][tk] = round(float(_cci), 2)
             # sector_corr = 60d Pearson corr of daily returns vs parent ETF
             etf = sm.get(tk)
             if etf and etf in rets.columns and tk in rets.columns:
@@ -950,6 +1067,12 @@ def _compute_v21_lookups(sm: dict) -> dict:
                         cls = ("IDIOSYNCRATIC" if c < 0.30
                                else "MIXED" if c < 0.70 else "SECTOR_DEPENDENT")
                         out["corr"][tk] = (round(c, 2), cls)
+        # rs_rank_pct = ret_6m's percentile (0-100) across the scored
+        # universe — a cross-sectional pass, only possible once every
+        # ticker's own ret_6m is in hand.
+        if out["ret6m"]:
+            _s = pd.Series(out["ret6m"])
+            out["rs_rank_pct"] = (_s.rank(pct=True) * 100).round(2).to_dict()
     except Exception:  # noqa: BLE001 — never let enrichment break the export
         pass
     return out
@@ -1004,6 +1127,44 @@ def _compute_enrichment_lookups(dsl_all: dict, betas: dict,
     return out
 
 
+def _elder_hi7_streak(elder5) -> int | None:
+    """Consecutive TRAILING bars with elder >= 7, counted backward from the
+    most recent reading in `elder5` (spec: docs/specs/aqe_voice_packet_spec_
+    2026-09-05.md §2, DOOR 2). `elder5` only carries the last 5 sessions
+    (ELDER_HISTORY_DAYS, src/scanner/levels.py) so the max streak this can
+    report is 5 -- a genuinely longer run would need the full elder_score
+    history, which the row does not carry. None on no/empty history."""
+    if not elder5:
+        return None
+    streak = 0
+    for v in reversed(elder5):
+        if not _is_num(v) or v < 7:
+            break
+        streak += 1
+    return streak
+
+
+def _stack_state(ma20, ma50, ma100, ma200) -> str | None:
+    """ALIGNED/REPAIRING/ROLLING/INVERTED from the MA20/50/100/200 order (spec:
+    docs/specs/aqe_voice_packet_spec_2026-09-05.md §2, weis hard rule 5).
+
+    ALIGNED/INVERTED are the two full bullish/bearish stacks. REPAIRING is a
+    bullish repair in progress (the short end has recrossed above, the long
+    end hasn't caught up yet); ROLLING is the mirror -- a bearish rollover in
+    progress (the short end has turned down while the long end is still up)."""
+    if not _is_num(ma20, ma50, ma100, ma200):
+        return None
+    short_bull = ma20 > ma50
+    long_bull = ma100 > ma200
+    if short_bull and long_bull:
+        return "ALIGNED"
+    if not short_bull and not long_bull:
+        return "INVERTED"
+    if short_bull and not long_bull:
+        return "REPAIRING"
+    return "ROLLING"
+
+
 def _is_num(*vals) -> bool:
     """True if every value is a finite number."""
     return all(isinstance(v, (int, float)) and v == v and v not in (float("inf"), float("-inf"))
@@ -1027,7 +1188,24 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "sector_rrg_quadrant": None, "sector_rrg_direction": None,
         "thematic_rrg_quadrant": None, "thematic_rrg_direction": None,
         "day_vol": None, "rs_spy_20d": None, "sma_distance_pct": None,
-        "ma_20": None, "ma_50": None, "ma_100": None, "ma_200": None,
+        "ma_20": None, "ma_40": None, "ma_50": None, "ma_100": None,
+        "ma_150": None, "ma_200": None,
+        # 2026-09-05 voice packet spec additions (docs/specs/
+        # aqe_voice_packet_spec_2026-09-05.md §2)
+        "high_52w": None, "low_52w": None, "pct_from_52w_high": None,
+        "ret_6m": None, "ret_12m": None, "rs_rank_pct": None,
+        "cci_20": None, "pivot_high": None, "pct_from_pivot": None,
+        "extension_atr_20": None,
+        # elder_hi7_streak is deliberately NOT defaulted here: every call site
+        # sets it in the row's own dict literal BEFORE spreading in this
+        # function's return value (same reason elder_5d isn't defaulted here
+        # either) -- a None default in this dict would silently clobber the
+        # real value the instant it's spread in (2026-09-05 bug, caught
+        # against real data: VLO's elder_5d=[10,10,10,10,10] produced a
+        # correct streak of 5 at the call site, then this dict's own
+        # elder_hi7_streak: None overwrote it on every single row).
+        "next_earnings_date": None, "days_to_earnings": None,
+        "stack_state": None, "signal_hit_rate_20d": None, "signal_n": None,
         # DSG-18 fib ladder (flat — retracement supports + swing anchors)
         "fib_swing_low": None, "fib_swing_high": None,
         "fib_236": None, "fib_382": None, "fib_500": None,
@@ -1134,10 +1312,25 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["rs_spy_20d"] = (lk.get("rs") or {}).get(tk)
         fields["sma_distance_pct"] = (lk.get("sma") or {}).get(tk)
         _ma = (lk.get("ma") or {}).get(tk) or {}
-        for w in (20, 50, 100, 200):
+        for w in (20, 40, 50, 100, 150, 200):
             if _ma.get(w) is not None:
                 fields[f"ma_{w}"] = _ma[w]
         fields["held"] = tk in (lk.get("held") or set())
+
+        # ── 52-week range, 6/12-month return + rank, CCI-20 ────────────────
+        fields["high_52w"] = (lk.get("hi52w") or {}).get(tk)
+        fields["low_52w"] = (lk.get("lo52w") or {}).get(tk)
+        fields["ret_6m"] = (lk.get("ret6m") or {}).get(tk)
+        fields["ret_12m"] = (lk.get("ret12m") or {}).get(tk)
+        fields["rs_rank_pct"] = (lk.get("rs_rank_pct") or {}).get(tk)
+        fields["cci_20"] = (lk.get("cci20") or {}).get(tk)
+        _entry0 = d.get("entry")
+        if _is_num(fields["high_52w"]) and fields["high_52w"] > 0 and _is_num(_entry0):
+            fields["pct_from_52w_high"] = round(100.0 * (_entry0 / fields["high_52w"] - 1.0), 2)
+
+        # ── stack_state — MA20/40/50/100/150/200 order (weis hard rule 5) ──
+        fields["stack_state"] = _stack_state(fields.get("ma_20"), fields.get("ma_50"),
+                                             fields.get("ma_100"), fields.get("ma_200"))
 
         # ── DSG-18 fib ladder (flat) ───────────────────────────────────────
         _fib = d.get("fib") or {}
@@ -1237,6 +1430,22 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             else:
                 fields["structure_shift"] = "RANGE"
                 fields["structure_shift_ref"] = None
+
+        # ── pivot_high / pct_from_pivot / extension_atr_20 (2026-09-05) ────
+        # pivot_high: the level a break of structure broke through if one just
+        # happened (structure_shift_ref), else the most recent confirmed pivot
+        # high regardless of side (last_pivot_high.price) — replaces the dead
+        # entry-vs-bracket.price test oneil/minervini/livermore's C17/C5 cards
+        # could never run (oneil C17, minervini C5, livermore C5).
+        fields["pivot_high"] = (fields["structure_shift_ref"]
+                                if fields.get("structure_shift") == "BULLISH_BOS"
+                                else _confirmed_high)
+        if _is_num(fields["pivot_high"]) and fields["pivot_high"] > 0 and _is_num(_entry_px):
+            fields["pct_from_pivot"] = round(100.0 * (_entry_px / fields["pivot_high"] - 1.0), 2)
+        if (_is_num(fields.get("ma_20")) and _is_num(fields.get("atr_14d"))
+                and fields["atr_14d"] and _is_num(_entry_px)):
+            fields["extension_atr_20"] = round(
+                (_entry_px - fields["ma_20"]) / fields["atr_14d"], 2)
 
         # ── Health score (hold-decision, held_positions only) ─────────────
         # Readiness (rd_*) is HIDDEN from the AIC feed — the engine still runs
@@ -1765,6 +1974,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "mp_state": _mp_states.get(tk, c.get("mp_state", "")),
             "entry": c["levels"].get("entry"),
             "elder_5d": elder5.get(tk),
+            "elder_hi7_streak": _elder_hi7_streak(elder5.get(tk)),
             "rank_explain": _rank_explain(
                 c.get("pipe_rank", 0), floor, sc_val,
                 tk in pe_tickers, tk, sm, sector_grades,
@@ -1800,6 +2010,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "mp_state": _mp_states.get(tk, pe.get("mp_state", "")),
             "entry": pe["levels"].get("entry"),
             "elder_5d": elder5.get(tk),
+            "elder_hi7_streak": _elder_hi7_streak(elder5.get(tk)),
             "rank_explain": _rank_explain(
                 pe.get("pipe_rank", 0), floor, pe_sc,
                 True, tk, sm, sector_grades,
@@ -1840,6 +2051,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             "mp_state": _mp_states.get(rm["ticker"], rm.get("mp_state", "")),
             "entry": rm["levels"].get("entry"),
             "elder_5d": elder5.get(rm["ticker"]),
+            "elder_hi7_streak": _elder_hi7_streak(elder5.get(rm["ticker"])),
             "rank_explain": _rank_explain(
                 rm.get("pipe_rank", 0), floor, sc_val,
                 rm.get("pe_qualified", False), rm["ticker"],
@@ -1935,6 +2147,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                 "mp_state": _mp_states.get(tk, str(wr.get("mp_state", ""))),
                 "entry": d.get("entry"),
                 "elder_5d": elder5.get(tk),
+                "elder_hi7_streak": _elder_hi7_streak(elder5.get(tk)),
                 "rank_explain": _rank_explain(
                     wpr, wfl, wsc, tk in pe_tickers, tk, sm, sector_grades),
                 "source": source,
@@ -2049,6 +2262,26 @@ def build_export(shortlist: dict | None = None) -> dict:
             except Exception:  # noqa: BLE001
                 _hourly = {}
 
+        # next_earnings_date / days_to_earnings (2026-09-05 voice packet spec
+        # §2) — the cached calendar `daily_orchestrator` Step 1b already
+        # refreshed; a missing/stale cache degrades to null fields, never a
+        # blocked export.
+        try:
+            from src.data.earnings import (business_days_to_earnings, load_earnings,
+                                           next_earnings_date)
+            _earn_cal = load_earnings()
+        except Exception:  # noqa: BLE001
+            _earn_cal = {}
+
+        # signal_hit_rate_20d / signal_n (§2) — one global (elder_pattern x
+        # structure_shift) table built ONCE per run from the same panel groups
+        # already loaded for elder_context, then looked up per row.
+        try:
+            from src.engines import signal_hitrate as _shr
+            _shr_table = _shr.build_table(_grp)
+        except Exception:  # noqa: BLE001
+            _shr_table, _shr = {}, None
+
         def _attach_elder(_rows):
             for _r in _rows:
                 _tk = _r.get("ticker")
@@ -2065,6 +2298,13 @@ def build_export(shortlist: dict | None = None) -> dict:
                 _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
                 _r["elder_context"] = compute_elder_context(
                     _e5, _hourly.get(_tk) or [], _daily, resistance_price=_res)
+                if _earn_cal and _tk:
+                    _r["next_earnings_date"] = next_earnings_date(_tk, _earn_cal)
+                    _r["days_to_earnings"] = business_days_to_earnings(
+                        _tk, datetime.now(ZoneInfo("Asia/Singapore")).date(), _earn_cal)
+                if _shr is not None:
+                    _r["signal_hit_rate_20d"], _r["signal_n"] = _shr.lookup(
+                        _shr_table, _r["elder_pattern"], _r.get("structure_shift"))
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)

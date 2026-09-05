@@ -43,7 +43,13 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "vol_30d_ann","gics_gate","bracket",
     "ma_100","premove_conviction","runner_conviction","sc_m_gate_detail","sc_p_gate_detail",
     "squeeze_breakout_state","was_squeezed","squeeze_breakout_volume_confirmed","squeeze_breakout_date",
-    "elder_context","knn_threshold_clear",
+    "elder_context","knn_threshold_clear","pin_bar_level",
+    # 2026-09-05 voice packet spec (docs/specs/aqe_voice_packet_spec_2026-09-05.md
+    # §2) -- 18 new export fields, only the ones an actual seat menu references.
+    "high_52w","low_52w","pct_from_52w_high","ret_12m","rs_rank_pct",
+    "ma_150","ma_40","cci_20","pivot_high","pct_from_pivot","extension_atr_20",
+    "elder_hi7_streak","next_earnings_date","days_to_earnings","stack_state",
+    "signal_hit_rate_20d","signal_n",
     # QS -- the PM's own proprietary regime/signal read. Captured here (2026-08-17, PM request)
     # SOLELY for the S7 card QS line, shown on every card after deliberation closes, whether or
     # not that name was ever nominated. R3 is unchanged and still absolute: this field must never
@@ -57,6 +63,13 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
 # checked once per nominator before packets are written, so a future menu edit fails the build
 # instead of shipping a leak that's only caught by grepping a TSV after the fact.
 QS_FORBIDDEN = ("qs", "on_qs")
+
+# Chart-pattern fields are OUT of every seat packet (PM ruling 2026-09-05, spec
+# docs/specs/aqe_voice_packet_spec_2026-09-05.md §0). No menu has ever named
+# one, so this has always been true in practice -- this makes it a checked
+# build-time invariant instead of an incidental fact of the current menus,
+# same discipline as QS_FORBIDDEN above.
+PATTERN_FORBIDDEN_PREFIX = "pattern"
 
 # NO-BLANK-DATA, 2026-08-17 (PM standing rule: "no blank data, all fields available and used").
 # Two independent per-ticker checks, both against the RAW export (not the trim), because a gap
@@ -285,6 +298,11 @@ def cmd_packets(a):
             continue
         breach = [f for f in menus[v] if f in QS_FORBIDDEN or f.startswith("qs.")]
         assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
+        pat_breach = [f for f in menus[v]
+                      if f == PATTERN_FORBIDDEN_PREFIX or f.startswith(PATTERN_FORBIDDEN_PREFIX + "_")
+                      or f.startswith(PATTERN_FORBIDDEN_PREFIX + ".")]
+        assert not pat_breach, (f"pattern-field breach: {v}'s menu names {pat_breach} -- "
+                                 "chart-pattern fields are out of every seat packet (PM ruling 2026-09-05)")
 
     raw_by_ticker = {r["ticker"]: r for r in D["daily_list"]}
     no_coverage = sorted(t for t, r in raw_by_ticker.items()

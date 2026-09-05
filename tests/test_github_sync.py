@@ -343,7 +343,14 @@ def test_github_ahead_of_local_triggers_a_force_restore(monkeypatch, tmp_path):
     from src.data import paths as P
     import json as _json
 
-    monkeypatch.setattr(B, "_last_freshness_check", 0.0)
+    # time.monotonic() is anchored to an arbitrary starting point (often
+    # process/system boot), not to 0 -- on a container that has been up for
+    # under _FRESHNESS_CHECK_INTERVAL_S seconds, a literal 0.0 here does NOT
+    # look "long ago" and the throttle guard fires anyway. Go comfortably
+    # further back than the interval, relative to the real clock.
+    import time as _time
+    monkeypatch.setattr(B, "_last_freshness_check",
+                        _time.monotonic() - B._FRESHNESS_CHECK_INTERVAL_S - 1)
     monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-08-29 16:22:08 SGT"))
 
     from src.data import github_sync as G
@@ -370,7 +377,14 @@ def test_github_not_ahead_of_local_does_nothing(monkeypatch, tmp_path):
     from src.data import paths as P
     import json as _json
 
-    monkeypatch.setattr(B, "_last_freshness_check", 0.0)
+    # time.monotonic() is anchored to an arbitrary starting point (often
+    # process/system boot), not to 0 -- on a container that has been up for
+    # under _FRESHNESS_CHECK_INTERVAL_S seconds, a literal 0.0 here does NOT
+    # look "long ago" and the throttle guard fires anyway. Go comfortably
+    # further back than the interval, relative to the real clock.
+    import time as _time
+    monkeypatch.setattr(B, "_last_freshness_check",
+                        _time.monotonic() - B._FRESHNESS_CHECK_INTERVAL_S - 1)
     monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-09-01 14:58:41 SGT"))
 
     from src.data import github_sync as G
@@ -409,7 +423,14 @@ def test_a_network_failure_never_raises(monkeypatch, tmp_path):
     from src.ui import bootstrap as B
     from src.data import paths as P
 
-    monkeypatch.setattr(B, "_last_freshness_check", 0.0)
+    # time.monotonic() is anchored to an arbitrary starting point (often
+    # process/system boot), not to 0 -- on a container that has been up for
+    # under _FRESHNESS_CHECK_INTERVAL_S seconds, a literal 0.0 here does NOT
+    # look "long ago" and the throttle guard fires anyway. Go comfortably
+    # further back than the interval, relative to the real clock.
+    import time as _time
+    monkeypatch.setattr(B, "_last_freshness_check",
+                        _time.monotonic() - B._FRESHNESS_CHECK_INTERVAL_S - 1)
     monkeypatch.setattr(P, "EXPORT_JSON", _export(tmp_path, "2026-08-29 16:22:08 SGT"))
 
     from src.data import github_sync as G

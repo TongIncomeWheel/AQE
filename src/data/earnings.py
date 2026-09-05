@@ -57,12 +57,17 @@ def pull_earnings_calendar(
             "to": end.strftime("%Y-%m-%d"),
             "apikey": client.config.api_key,
         }
-        client._throttle()
-        resp = client._session.get(url, params=params, timeout=client.config.timeout_seconds)
-        if resp.ok:
-            data = resp.json()
-            if isinstance(data, list):
-                all_entries.extend(data)
+        # 2026-09-05 bug fix: this used to call client._session.get() directly
+        # and silently drop a non-2xx response (`if resp.ok:` with no else) --
+        # no retry, no exception, no log line. A single transient 404/network
+        # blip therefore made next_earnings_date/days_to_earnings null FOREVER
+        # for that run with no trace of why. _get_json() is the same wrapper
+        # every other FMP call in this codebase goes through: it retries
+        # network errors, backs off on 429, and raises FMPError loudly on a
+        # real failure -- "a failed data fetch must be LOUD" (CLAUDE.md).
+        data = client._get_json(url, params=params)
+        if isinstance(data, list):
+            all_entries.extend(data)
 
     universe = _load_universe()
 
@@ -98,6 +103,14 @@ def load_earnings() -> dict[str, str]:
     return data.get("earnings", {})
 
 
+def next_earnings_date(ticker: str, cal: dict[str, str]) -> str | None:
+    """The raw "YYYY-MM-DD" next earnings date for a ticker, or None if
+    unknown. `earn_score`/`days_to_earnings` only ever exposed the DERIVED
+    proximity bucket/day-count -- every card's event window and catalyst rule
+    needs the actual date (spec: docs/specs/aqe_voice_packet_spec_2026-09-05.md)."""
+    return cal.get(ticker) or None
+
+
 def days_to_earnings(ticker: str, as_of: date, cal: dict[str, str]) -> float | None:
     """Days until next earnings for a ticker. Returns None if unknown."""
     earn_str = cal.get(ticker)
@@ -111,6 +124,27 @@ def days_to_earnings(ticker: str, as_of: date, cal: dict[str, str]) -> float | N
     if delta < 0:
         return None
     return float(delta)
+
+
+def business_days_to_earnings(ticker: str, as_of: date, cal: dict[str, str]) -> int | None:
+    """BUSINESS days (weekends excluded) to next earnings -- the export field
+    `days_to_earnings` (spec: docs/specs/aqe_voice_packet_spec_2026-09-05.md).
+
+    Deliberately separate from `days_to_earnings()` above: that one is
+    CALENDAR days and feeds earn_proximity_score()'s frozen thresholds --
+    changing its unit would silently re-rate every existing score."""
+    import numpy as np
+
+    earn_str = cal.get(ticker)
+    if not earn_str:
+        return None
+    try:
+        earn_date = datetime.strptime(earn_str, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+    if earn_date < as_of:
+        return None
+    return int(np.busday_count(as_of, earn_date))
 
 
 def earn_proximity_score(days: float | None) -> float:

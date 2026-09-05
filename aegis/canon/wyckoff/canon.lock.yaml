@@ -470,15 +470,13 @@ recognisers:
   - ma_50
   - ma_200
 - id: R6
-  if: bracket.valid is false, or bracket.stop_type is not a structural stop
+  if: bracket.stop_type is not a structural stop
   then: there is no danger point, and a setup without an identifiable danger point is not a setup. Hard
     reject at any conviction (C24)
   fields:
-  - bracket.valid
   - bracket.stop
   - bracket.stop_type
   - bracket.stop_atr_dist
-  - bracket.risk_pct
 - id: R7
   if: div_state is bearish or div_bear_count is 1 or more while price makes new highs
   then: the nearest served reading of shortening-of-the-thrust and of C20 exhaustion. ADVISORY ONLY —

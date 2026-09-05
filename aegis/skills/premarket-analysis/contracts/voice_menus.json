@@ -1,5 +1,5 @@
 {
- "~~CONFIG_NOTE~~": "v4.2 roster 2026-08-17. S4 nominators: elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff, weis (9). S5a challenge: rogers, steenbarger. S5b fundamentals+lens: lynch, detect-lens. S6 voting: 9 nominators + lynch + detect-lens (11). kratter/ceponas menus pending their books. detect-lens canon is CODE-grounded (src/engines/*.py, 33 principles, pm_signed Ash) - no book overlap with weis. FIELD AUDIT 2026-08-17: phantom fields remapped to real export fields (energy.squeeze_score->squeeze_breakout_*; bq.bq_range_tight->elder_context.vcp.vcp_tightness_pct; bq.bq_base_dur->elder_context.vcp.base_range_pct [range-% proxy for base duration, true base_days lives under PM-only qs.*]; knn_significant->knn_threshold_clear; rvol dropped, not emitted). qs.* per-ticker block is PM-ONLY (R3) and must never appear on a seat menu. NO-BLANK-DATA AUDIT 2026-08-17 (PM standing rule: 'no blank data, all fields available and used'): bracket.valid==false on 233/279 rows (84%) -- engine's own fallback path (bracket.atr_fallback_stop + bracket.invalid_reason) was wired into only oneil/thorp/weis; every other bracket-reading seat (detect-lens, livermore, lynch, minervini, raschke, rogers, seow, steenbarger, wyckoff) either read the bare 'bracket' blob (fallback was technically present but buried, unlabelled, effectively unused) or had no fallback path at all (seow, blind on stop data 84% of the time). FIX: bare 'bracket' fields retired everywhere in favour of explicit bracket.valid/bracket.stop/bracket.stop_type/bracket.risk_pct/bracket.atr_fallback_stop/bracket.invalid_reason columns on every bracket-reading seat, so the fallback is a named, always-populated field instead of something to fish out of a JSON blob. elder-lens and druckenmiller carry NO bracket fields BY DESIGN, not gap -- elder-lens's canon is Elder Ray oscillator/pulse pattern-reading only (5-field menu, never touches entry/stop/risk), druckenmiller is macro-only (sector/theme/beta, never a single-name entry call) -- neither voice makes a stop/risk judgment call so a bracket column would sit unused on principle, which is the thing this rule forbids in the other direction. TSV null-token: None now serializes to the literal string 'null' in every TSV cell (not blank) so a seat can never mistake missing data for an empty string or a parsing artifact. NO_TECHNICAL_COVERAGE (7 tickers, self-flagged by the export's own data_quality block: AUB/ELS/EQR/FITB/KSS/NNN/OKTA, source=qs, core fields sc_momentum/flow/energy/structure/mp/elder/entry ALL null): excluded from every nominator TSV by pma_pipeline.py packets (cannot honestly be assessed on zero data) -- they stay in candidate_set.json and still get a QS card line at S7 if source data supports one; see no_technical_coverage.json per run. UPSTREAM PATTERN-FIELD GAP (14 tickers, NOT self-flagged by the export: ABNB/P/TPG/TEVA/NESR/BETA/PYPL/BILL/WPM/APO/DLR/SSRM/NBIS/LITE -- all source=longlist, core fields present, but pin_bar_state/inside_bar/choch_state/div_state/knn_prob/squeeze_breakout_state/was_squeezed all null): NOT excluded -- these names have real momentum/structure/flow data, just missing the pattern-recognition layer. pma_pipeline.py packets now prints a loud PATTERN_FIELD_GAP receipt per run flagging these; this is a data-engineering-owned upstream gap (the pattern engine did not run/return for these 14 names), not something the pipeline can manufacture -- reported, not silently patched. RULED LEGITIMATE (not gaps, no fix applied): elder_pattern null on 123/279 rows (44%) = categorical 'no pattern currently detected', a real state, not missing data. thematic_basket/thematic_grade null on 192/279 (69%) = ticker does not belong to any tracked thematic basket, also a real state. ma_200 null on exactly 4 tickers (BETA, SUNB, NAVN, SHAZ) while ma_50/ma_100 are populated on all 4 = insufficient trading history for a 200-day average (young listings), a structural null, not an engine bug. None of these three get NO_TECHNICAL_COVERAGE or PATTERN_FIELD_GAP treatment.",
+ "~~CONFIG_NOTE~~": "v4.2 roster 2026-08-17. S4 nominators: elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff, weis (9). S5a challenge: rogers, steenbarger. S5b fundamentals+lens: lynch, detect-lens. S6 voting: 9 nominators + lynch + detect-lens (11). kratter/ceponas menus pending their books. detect-lens canon is CODE-grounded (src/engines/*.py, 33 principles, pm_signed Ash) - no book overlap with weis. FIELD AUDIT 2026-08-17: phantom fields remapped to real export fields (energy.squeeze_score->squeeze_breakout_*; bq.bq_range_tight->elder_context.vcp.vcp_tightness_pct; bq.bq_base_dur->elder_context.vcp.base_range_pct [range-% proxy for base duration, true base_days lives under PM-only qs.*]; knn_significant->knn_threshold_clear; rvol dropped, not emitted). qs.* per-ticker block is PM-ONLY (R3) and must never appear on a seat menu. NO-BLANK-DATA AUDIT 2026-08-17 (PM standing rule: 'no blank data, all fields available and used'): bracket.valid==false on 233/279 rows (84%) -- engine's own fallback path (bracket.atr_fallback_stop + bracket.invalid_reason) was wired into only oneil/thorp/weis; every other bracket-reading seat (detect-lens, livermore, lynch, minervini, raschke, rogers, seow, steenbarger, wyckoff) either read the bare 'bracket' blob (fallback was technically present but buried, unlabelled, effectively unused) or had no fallback path at all (seow, blind on stop data 84% of the time). FIX: bare 'bracket' fields retired everywhere in favour of explicit bracket.valid/bracket.stop/bracket.stop_type/bracket.risk_pct/bracket.atr_fallback_stop/bracket.invalid_reason columns on every bracket-reading seat, so the fallback is a named, always-populated field instead of something to fish out of a JSON blob. elder-lens and druckenmiller carry NO bracket fields BY DESIGN, not gap -- elder-lens's canon is Elder Ray oscillator/pulse pattern-reading only (5-field menu, never touches entry/stop/risk), druckenmiller is macro-only (sector/theme/beta, never a single-name entry call) -- neither voice makes a stop/risk judgment call so a bracket column would sit unused on principle, which is the thing this rule forbids in the other direction. TSV null-token: None now serializes to the literal string 'null' in every TSV cell (not blank) so a seat can never mistake missing data for an empty string or a parsing artifact. NO_TECHNICAL_COVERAGE (7 tickers, self-flagged by the export's own data_quality block: AUB/ELS/EQR/FITB/KSS/NNN/OKTA, source=qs, core fields sc_momentum/flow/energy/structure/mp/elder/entry ALL null): excluded from every nominator TSV by pma_pipeline.py packets (cannot honestly be assessed on zero data) -- they stay in candidate_set.json and still get a QS card line at S7 if source data supports one; see no_technical_coverage.json per run. UPSTREAM PATTERN-FIELD GAP (14 tickers, NOT self-flagged by the export: ABNB/P/TPG/TEVA/NESR/BETA/PYPL/BILL/WPM/APO/DLR/SSRM/NBIS/LITE -- all source=longlist, core fields present, but pin_bar_state/inside_bar/choch_state/div_state/knn_prob/squeeze_breakout_state/was_squeezed all null): NOT excluded -- these names have real momentum/structure/flow data, just missing the pattern-recognition layer. pma_pipeline.py packets now prints a loud PATTERN_FIELD_GAP receipt per run flagging these; this is a data-engineering-owned upstream gap (the pattern engine did not run/return for these 14 names), not something the pipeline can manufacture -- reported, not silently patched. RULED LEGITIMATE (not gaps, no fix applied): elder_pattern null on 123/279 rows (44%) = categorical 'no pattern currently detected', a real state, not missing data. thematic_basket/thematic_grade null on 192/279 (69%) = ticker does not belong to any tracked thematic basket, also a real state. ma_200 null on exactly 4 tickers (BETA, SUNB, NAVN, SHAZ) while ma_50/ma_100 are populated on all 4 = insufficient trading history for a 200-day average (young listings), a structural null, not an engine bug. None of these three get NO_TECHNICAL_COVERAGE or PATTERN_FIELD_GAP treatment. VOICE PACKET SPEC 2026-09-05 (docs/specs/aqe_voice_packet_spec_2026-09-05.md): 18 fields added to the export (high_52w/low_52w/pct_from_52w_high/ret_6m/ret_12m/rs_rank_pct/ma_150/ma_40/cci_20/pivot_high/pct_from_pivot/extension_atr_20/elder_hi7_streak/next_earnings_date/days_to_earnings/stack_state/signal_hit_rate_20d/signal_n), routed onto the seat menus that asked for them below. Bracket fields (bracket.valid/bracket.rr*/bracket.risk_pct) ride along for information only from this revision on -- PM ruling R1: no seat may reject a setup on them, they stay on every menu that already carried them, only the reject-language in oneil/raschke/wyckoff's canon.lock.yaml R6 changed. Chart-pattern fields (pattern*) are excluded from every seat packet by a build-time assertion in pma_pipeline.py (same enforcement style as R3's qs_market check) -- they were never on a menu, this just makes that structural rather than incidental. lynch and detect-lens both had columns DROPPED this revision (lynch: ma_20/ma_50/ma_200/structure/structure_shift/rs_leadership/rs_spy_20d -- card marks the technical read as advisory-only, not lynch's own test; detect-lens: sc_momentum/structure/energy/flow -- card header 'never reads composites', structure_shift is unaffected and stays).",
  "detect-lens": [
   "ticker",
   "lens",
@@ -17,13 +17,12 @@
   "bracket.stop",
   "bracket.valid",
   "bracket.risk_pct",
-  "sc_momentum",
-  "structure",
   "structure_shift",
-  "energy",
-  "flow",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "stack_state",
+  "elder_context.exhaustion_check.exhaustion_flag",
+  "pct_from_52w_high"
  ],
  "druckenmiller": [
   "ticker",
@@ -40,7 +39,16 @@
   "elder_5d",
   "elder_pattern",
   "mp_state",
-  "mp"
+  "mp",
+  "elder_hi7_streak",
+  "ma_20",
+  "ma_50",
+  "entry",
+  "structure_shift",
+  "choch_state",
+  "pin_bar_state",
+  "pin_bar_level",
+  "elder_context.volume.up_bar_vol_ratio"
  ],
  "livermore": [
   "ticker",
@@ -62,7 +70,13 @@
   "bracket.valid",
   "bracket.risk_pct",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "high_52w",
+  "pct_from_52w_high",
+  "pivot_high",
+  "pct_from_pivot",
+  "rs_rank_pct",
+  "next_earnings_date"
  ],
  "lynch": [
   "ticker",
@@ -70,15 +84,8 @@
   "gics_sector_name",
   "sector_trend_state",
   "sma_distance_pct",
-  "ma_20",
-  "ma_50",
-  "ma_200",
-  "structure",
-  "structure_shift",
   "rank",
   "held",
-  "rs_leadership",
-  "rs_spy_20d",
   "bracket.valid",
   "bracket.stop",
   "bracket.atr_fallback_stop",
@@ -119,7 +126,15 @@
   "div_state",
   "div_bear_count",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "high_52w",
+  "low_52w",
+  "pct_from_52w_high",
+  "ma_150",
+  "rs_rank_pct",
+  "pivot_high",
+  "pct_from_pivot",
+  "next_earnings_date"
  ],
  "oneil": [
   "ticker",
@@ -156,7 +171,14 @@
   "rs_down_day_20d",
   "div_state",
   "div_bear_count",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "high_52w",
+  "pct_from_52w_high",
+  "ret_12m",
+  "rs_rank_pct",
+  "pivot_high",
+  "pct_from_pivot",
+  "next_earnings_date"
  ],
  "raschke": [
   "ticker",
@@ -183,7 +205,10 @@
   "div_state",
   "div_bear_count",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "extension_atr_20",
+  "pivot_high",
+  "next_earnings_date"
  ],
  "rogers": [
   "ticker",
@@ -207,7 +232,10 @@
   "bracket.stop_type",
   "bracket.risk_pct",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "next_earnings_date",
+  "days_to_earnings",
+  "rs_rank_pct"
  ],
  "seow": [
   "ticker",
@@ -223,7 +251,10 @@
   "atr_caution",
   "bracket.valid",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "ma_40",
+  "cci_20",
+  "extension_atr_20"
  ],
  "steenbarger": [
   "ticker",
@@ -243,7 +274,9 @@
   "div_state",
   "div_bear_count",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "rs_rank_pct",
+  "pct_from_52w_high"
  ],
  "thorp": [
   "ticker",
@@ -265,7 +298,11 @@
   "sc_p_gate_detail",
   "beta_30d",
   "atr_caution",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "signal_hit_rate_20d",
+  "signal_n",
+  "high_52w",
+  "vol_30d_ann"
  ],
  "weis": [
   "ticker",
@@ -302,7 +339,11 @@
   "bracket.valid",
   "bracket.atr_fallback_stop",
   "bracket.risk_pct",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "stack_state",
+  "next_earnings_date",
+  "days_to_earnings",
+  "elder_context.volume.up_bar_vol_ratio"
  ],
  "wyckoff": [
   "ticker",
@@ -342,6 +383,10 @@
   "elder_context.vcp.vcp_tightness_pct",
   "elder_pattern",
   "bracket.atr_fallback_stop",
-  "bracket.invalid_reason"
+  "bracket.invalid_reason",
+  "elder_context.volume.up_bar_vol_ratio",
+  "elder_context.volume.vol_trend_5d",
+  "pivot_high",
+  "extension_atr_20"
  ]
 }

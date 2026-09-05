@@ -507,14 +507,6 @@ recognisers:
   - entry
   - bracket.price
   - sma_distance_pct
-- id: R6
-  if: bracket.risk_pct exceeds 8%, or bracket.valid is false
-  then: the position cannot be taken as mine — a stop wider than 7-8% below cost is not an O'Neil position
-    at any size (C20)
-  fields:
-  - bracket.risk_pct
-  - bracket.stop
-  - bracket.valid
 - id: R7
   if: price is 70% or more above ma_200
   then: this is a climax reading, not an entry — an extended name that far above its 200-day is sold into
@@ -564,5 +556,5 @@ methods: []
 counts:
   principles: 25
   unsourced: 0
-  recognisers: 11
+  recognisers: 10
   methods: 0

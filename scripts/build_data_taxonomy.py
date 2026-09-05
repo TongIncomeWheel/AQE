@@ -53,11 +53,11 @@ Two inputs:
 
 A malformed-key guard: the export's own `_FIELD_GLOSSARY` dict carries three
 keys that join several real field names with a slash
-("fib_236/382/500/618/786", "ma_20/50/100/200", "fib_swing_low/high") — one
-glossary entry documenting five fields at once. Naively iterating that dict's
-keys turns each into a fake taxonomy row. MALFORMED_GLOSSARY_KEYS below names
-them explicitly so they are dropped, not emitted as three garbage fields
-whose real name is a felony against CSV.
+("fib_236/382/500/618/786", "ma_20/40/50/100/150/200", "fib_swing_low/high")
+-- one glossary entry documenting several fields at once. Naively iterating
+that dict's keys turns each into a fake taxonomy row. MALFORMED_GLOSSARY_KEYS
+below names them explicitly so they are dropped, not emitted as garbage
+fields whose real name is a felony against CSV.
 
 Run:  python -m scripts.build_data_taxonomy
 """
@@ -77,7 +77,7 @@ COLUMNS = ["field", "parent", "level", "output", "state", "represents",
 # Keys in the export's own field_glossary that document several real fields
 # under one slash-joined pseudo-name. Not field names — dropped outright.
 MALFORMED_GLOSSARY_KEYS = {
-    "fib_236/382/500/618/786", "ma_20/50/100/200", "fib_swing_low/high",
+    "fib_236/382/500/618/786", "ma_20/40/50/100/150/200", "fib_swing_low/high",
 }
 
 
@@ -1011,6 +1011,85 @@ SCORE_TREE = [
       "src/data/drive_sync.py:904-910", "mean(close, trailing 100 bars)"),
     R("ma_200", "ma_20", "leaf", "usd", "", "200-day simple moving average",
       "src/data/drive_sync.py:904-910", "mean(close, trailing 200 bars)"),
+    # ── 2026-09-05 voice packet spec additions (docs/specs/
+    # aqe_voice_packet_spec_2026-09-05.md §2) ──────────────────────────────
+    R("ma_40", "ma_20", "leaf", "usd", "", "40-day simple moving average -- "
+      "seow canon instrument", "src/data/drive_sync.py:1023",
+      "mean(close, trailing 40 bars)"),
+    R("ma_150", "ma_20", "leaf", "usd", "", "150-day simple moving average -- "
+      "minervini Trend Template criteria 1/2/4", "src/data/drive_sync.py:1023",
+      "mean(close, trailing 150 bars)"),
+    R("high_52w", "", "leaf", "usd", "",
+      "Highest CLOSE over the trailing 252 sessions (close-to-close, not "
+      "intraday high)", "src/data/drive_sync.py:1039",
+      "max(close, trailing 252 bars)"),
+    R("low_52w", "high_52w", "leaf", "usd", "",
+      "Lowest CLOSE over the trailing 252 sessions",
+      "src/data/drive_sync.py:1040", "min(close, trailing 252 bars)"),
+    R("pct_from_52w_high", "high_52w", "leaf", "pct", "",
+      "Entry's distance from high_52w", "src/data/drive_sync.py:1327",
+      "(entry/high_52w-1)*100"),
+    R("ret_6m", "", "leaf", "pct", "",
+      "Total return, close now vs 126 sessions ago -- the rs_rank_pct input",
+      "src/data/drive_sync.py:1042", "(close[-1]/close[-127]-1)*100"),
+    R("ret_12m", "", "leaf", "pct", "",
+      "Total return, close now vs 252 sessions ago -- O'Neil's 12-month RS "
+      "window", "src/data/drive_sync.py:1044", "(close[-1]/close[-253]-1)*100"),
+    R("rs_rank_pct", "ret_6m", "leaf", "pct", "",
+      "ret_6m's percentile across the whole scored universe that day -- a "
+      "cross-sectional rank, not a stock's own history",
+      "src/data/drive_sync.py:1071-1073",
+      "rank(ret_6m, pct=True)*100 across every scored ticker"),
+    R("cci_20", "", "leaf", "score", "",
+      "Commodity Channel Index, 20-period -- seow canon instrument, buy "
+      "trigger reads CCI < -100", "src/data/drive_sync.py:1049-1057",
+      "tp=(high+low+close)/3; (tp[-1]-mean(tp,20)) / "
+      "(0.015*mean(abs(tp-mean(tp,20)),20))"),
+    R("pivot_high", "structure_shift_ref", "leaf", "usd", "",
+      "The level a break of structure just broke through if one is CURRENTLY "
+      "in progress, else the most recent confirmed pivot high regardless of "
+      "side -- replaces the entry-vs-bracket.price test several cards could "
+      "never run", "src/data/drive_sync.py:1438-1440",
+      "structure_shift_ref if structure_shift=='BULLISH_BOS' else "
+      "last_pivot_high.price"),
+    R("pct_from_pivot", "pivot_high", "leaf", "pct", "",
+      "Entry's distance from pivot_high -- O'Neil C17: 0-5% buy zone, 5-10% "
+      "late buy, >10% rejection", "src/data/drive_sync.py:1441-1442",
+      "(entry/pivot_high-1)*100"),
+    R("extension_atr_20", "", "leaf", "ratio", "",
+      "Distance of entry from its own 20-day MA, in ATR units",
+      "src/data/drive_sync.py:1444-1446", "(entry-ma_20)/atr_14d"),
+    R("elder_hi7_streak", "", "leaf", "int 0-5", "",
+      "Consecutive trailing sessions with elder>=7, read off elder_5d "
+      "(capped at 5, elder_5d's own length) -- DOOR 2 reads >= 3",
+      "src/data/drive_sync.py:1128-1141",
+      "count trailing elder_5d values >= 7, stopping at the first below 7"),
+    R("next_earnings_date", "", "leaf", "date", "",
+      "Raw next-earnings date from the cached FMP earnings calendar -- the "
+      "actual date every card's event window/catalyst rule needs (earn_score "
+      "only ever exposed a derived proximity bucket)",
+      "src/data/earnings.py:next_earnings_date", "cal.get(ticker)"),
+    R("days_to_earnings", "next_earnings_date", "leaf", "int", "",
+      "BUSINESS days (weekends excluded) to next_earnings_date -- a "
+      "different unit from earn_score's own frozen calendar-day thresholds",
+      "src/data/earnings.py:business_days_to_earnings",
+      "numpy.busday_count(today, next_earnings_date)"),
+    R("stack_state", "", "leaf", "label", "ALIGNED|REPAIRING|ROLLING|INVERTED",
+      "MA20/50/100/200 order read as a single trend-stack state -- weis hard "
+      "rule 5", "src/data/drive_sync.py:1145-1160",
+      "ALIGNED: ma20>ma50 and ma100>ma200; INVERTED: neither; REPAIRING: "
+      "ma20>ma50 only; ROLLING: ma100>ma200 only"),
+    R("signal_hit_rate_20d", "", "leaf", "pct", "",
+      "Live-computed (trailing 60 sessions, NOT a frozen table): share of "
+      "(ticker,day) samples in the same (elder_pattern, structure_shift) "
+      "cell, across the whole scored universe, that closed higher 20 "
+      "sessions later. Null on a cell with zero samples -- 'no_analogues'.",
+      "src/engines/signal_hitrate.py:build_table,lookup",
+      "hits/n per (elder_pattern, structure_shift) cell, trailing 60 "
+      "start-points with a realised 20-session outcome"),
+    R("signal_n", "signal_hit_rate_20d", "leaf", "int", "",
+      "Sample size behind signal_hit_rate_20d for this row's own cell",
+      "src/engines/signal_hitrate.py:build_table,lookup", ""),
     R("sma_distance_pct", "", "leaf", "pct", "",
       "Close distance from the 50-day SMA", "src/data/drive_sync.py:898-901",
       "(close/sma(close,50)-1)*100"),

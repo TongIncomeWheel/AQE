@@ -25,6 +25,10 @@ R3 is asserted twice: pma_pipeline.py packets fails loudly if qs_market leaks
 into a seat packet (build-time), and this script independently scans every
 emitted packet for the byte-pattern as a second lock before stamping.
 
+Chart-pattern fields (pattern*) get the identical two-lock treatment (PM
+ruling 2026-09-05): pma_pipeline.py packets refuses a menu naming one at
+build time, and this script's byte-scan below is the second lock.
+
 INVARIANT (PM clarification 2026-08-28): packets are spawn-time inputs only,
 consumed once, never read again. Everything downstream reads the canonical
 export + saved forms. If a packet and the export disagree, the export wins and
@@ -44,6 +48,17 @@ then commits aegis/output/ in the same commit as the export itself.
 import argparse, datetime, glob, hashlib, json, os, shutil, subprocess, sys, tempfile
 
 R3_FORBIDDEN = (b"qs_market",)
+
+# Chart-pattern lens fields (PM ruling 2026-09-05) -- checked as EXACT column
+# names in a TSV header, never a raw substring: "pattern" alone is a
+# substring of the legitimate field "elder_pattern", so a naive byte-scan
+# would false-positive on every seat packet that carries it.
+PATTERN_FIELDS_FORBIDDEN = {
+    "pattern", "pattern_direction", "pattern_stage", "pattern_trigger",
+    "pattern_invalidation", "pattern_days", "pattern_fit", "pattern_start",
+    "pattern_alt", "pattern_w", "pattern_w_dir", "pattern_w_stage",
+    "pattern_w_trigger",
+}
 
 
 def sha256_file(path):
@@ -82,7 +97,12 @@ def main():
         run([sys.executable, a.pipeline, "packets", "--candidates", cs, "--export", a.export,
              "--menus", a.menus, "--date", a.date, "--outdir", pk])
 
-        # Second R3 lock: independent byte-scan of every emitted seat packet.
+        # Second lock, independent of pma_pipeline.py's own build-time checks:
+        # R3 (qs_market) as a raw byte-scan -- that string never legitimately
+        # appears in a seat packet, substring or not. Chart-pattern fields
+        # (PM ruling 2026-09-05) as an EXACT column-name check against each
+        # TSV's own header row, since "pattern" is a substring of the
+        # legitimate field "elder_pattern".
         breaches = []
         for path in sorted(glob.glob(os.path.join(pk, "*"))):
             if os.path.basename(path).startswith(("crown", "druck")):
@@ -92,6 +112,12 @@ def main():
             for pat in R3_FORBIDDEN:
                 if pat in blob:
                     breaches.append(f"{os.path.basename(path)}: contains {pat.decode()}")
+            if path.endswith(".tsv"):
+                header = blob.decode("utf-8", "replace").splitlines()[0] if blob else ""
+                cols = set(header.split("\t"))
+                pat_breach = cols & PATTERN_FIELDS_FORBIDDEN
+                if pat_breach:
+                    breaches.append(f"{os.path.basename(path)}: pattern field(s) {sorted(pat_breach)}")
         if breaches:
             print("FATAL R3 BREACH — refusing to stamp:", *breaches, sep="\n  ", file=sys.stderr)
             return 1
