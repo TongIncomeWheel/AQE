@@ -447,6 +447,7 @@ def _aqe_leader(row):
 
 def cmd_rank(a):
     """RANK + ADMIT (v5.3, PM rulings 2026-09-05).
+
     Four doors into the deliberation set, union, then a cap:
       DOOR 1  SEATS       nominated by >= 2 seats. ALWAYS kept -- these are the committee's own picks.
       DOOR 2  ELDER+LENS  elder >= 7 on each of the last 3 bars AND >= 3 of 6 lenses strong.
