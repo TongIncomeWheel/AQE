@@ -1,0 +1,128 @@
+---
+name: premarket
+description: "Aegis process skill — PREMARKET. The one command that prepares the day's data. Step 0 closes the book by calling PTJ in CLOSE mode (broker pull, batch, git push, janitor, archive, stamp); the rest fetches today's AQE export, proves it is complete, refreshes the held book and stops, checks the files, pushes, stamps, and prints the report on screen. Deterministic tools only — no voices, no committee, no judgment-tier spawn. The committee (`/committee-pm`) is gated on this skill's stamp."
+model: sonnet  # sonnet [RB:model_tiers.control] — PINNED, not inherited (D-92). packaging/build_claude.py hard-fails the build if this literal ever drifts from charter/parameters.yaml.
+---
+
+# PROCESS: PREMARKET — PREPARE THE DAY'S DATA
+
+**The PM types two commands a day. This is the first.** It has two halves, back to back, in one session:
+
+| Half | What it does | Where the procedure is written |
+|---|---|---|
+| **0 — close the book** | Pull both brokers, run the deterministic batch **for real**, push to git, clean the book, append the archive, stamp the gate. | **`skills/ptj/SKILL.md`, MODE C.** Open that file and follow it. Do not restate it here. |
+| **1–12 — prepare the data** | AQE export, universe, held-book refresh, trailing stops, dynCap, metrics, file check, push, stamp, print on screen. | Below. |
+
+**Half 0 is not a different process from `/ptj`.** It is the same run with the rehearsal flag off: same broker pull, same 13 jobs. The four jobs a view turns off — two git pushes, the archive append, the gate stamp — are exactly the "print it to git, clean the book, keep the history" work that makes a close a close. There is ONE description of that procedure in this repo, in `skills/ptj/SKILL.md`. If you are about to write a second one, stop.
+
+**Why the rest of this exists.** Preparing the day's data and deliberating on it are unlike jobs. Deliberation costs 12 judgment-tier spawns — 11 voices plus the committee desk, the most expensive thing this system does. Bundled together, every data problem was found *after* paying for that, and every retry re-paid. **PM ruling: split them.** This skill runs deterministic tools, proves the data is actually complete, saves it where the next session can see it, and stops. It answers exactly one question: **has AQE processed the whole universe and every correlated score, including on the held book — yes or no.**
+
+## STEP 0 — CLOSE THE BOOK (PTJ, CLOSE MODE)
+
+Read `skills/ptj/SKILL.md` and run **MODE C** end to end. Nothing about the pull or the batch is repeated here — that file is the only copy.
+
+Then read its result, and only then continue:
+
+| PTJ MODE C ended | Do this |
+|---|---|
+| exit 0 — gate stamped `ok` | Continue to step 1. Say one line: "Book closed and pushed." |
+| exit 1 — degraded, gate stamped | Continue to step 1. Carry the degraded lines into step 12's report verbatim. |
+| exit 2 — halted | **Stop here.** Do not touch AQE. Page with what failed. The lever is `/recover post-market`. |
+| the two brokers disagreed, or a payload was short | Follow PTJ's own failure ladder. It owns that decision, not this file. |
+
+**One confirmation, not two.** The PM types `/premarket` once and this runs both halves without stopping to ask permission in the middle. It stops only to page.
+
+**Model note (D-16, pinned D-92):** control plane — sonnet [RB:model_tiers.control] — and **that tier is now pinned in this file's own frontmatter rather than inherited from whatever session happens to run it.** An inherited tier meant the cheap half cost whatever the caller cost, which quietly gave back the saving the split was created to make. The pin cites its charter key and `packaging/build_claude.py` hard-fails the build if the two ever disagree, so the tier stays PM-tunable in one place and the pin can never outlive it. There is real bounded judgment here (retry-or-page, how to read a DEGRADED coverage verdict) but **NOT ONE judgment-tier agent is ever spawned in this skill.** That boundary is the entire economic point of the split: if you find yourself wanting a voice's opinion, you are in the wrong half. Every step below is a deterministic tool call (constitution law 4 — no model, no network in the data plane) plus one Drive fetch.
+
+**Order-blind (constitution law 1).** This half reads, computes, writes state and pushes. It places, sizes and arms nothing. Only the `staging-gatekeeper` may do that, and it is never invoked from here.
+
+## PROCEDURE
+
+1. **Preflight (D-49, amended v5.3 2026-09-05).** Run `tools/preflight.py`. It prints the **push path**: native git if `GITHUB_PAT` is present, otherwise the GitHub connector. **A missing PAT is NOT a stop and is NOT a page.** The sandbox git proxy returns 403 for this repo regardless of any token, so the connector is the normal push path on Cowork, and `config/.env` — gitignored, wiped with every fresh container — is optional. (The prior rule paged the PM every fresh morning for a key that would not have worked.)
+
+2. **Gate — quiet, but it stays (PM ruling).** Run `python3 tools/phase_gate.py check --for premarket_data --json`. Step 0 just stamped this gate itself, so on a normal day this reads READY and you say nothing about it — **do not narrate a check that passed.** It stays in the sequence because it is the one thing that proves the close really landed on disk rather than merely reporting that it did, and because this skill still behaves correctly if some future path reaches it without step 0. **0 = READY → step 3. 1 = NOT_READY** → step 0 did not stamp; something in the close was skipped. Say that plainly and stop. **2 = BLOCKED** (the close ran and failed, or the journal it claims is not on disk) → page with the check's `reasons` verbatim and stop; the lever is `/recover post-market`.
+   - `--for premarket_data` is the phase key inside `phase_gate.py`, not a name anyone types. It stays as written. The gate's default target demands today's AQE export be on disk, which would deadlock the very step that downloads it.
+
+3. **Claim the day (exactly-once).** Run `python3 tools/phase_gate.py claim --phase premarket_data`. **Won → proceed. Lost → today's data half already ran; do nothing, say nothing, exit.** A fresh session has no memory, so the latch lives on disk; this is what makes repeated firing safe. `--release` is the deliberate-manual-rerun lever.
+
+4. **AQE pull — from the Drive "AQE" folder, with BOUNDED RETRY before any stand-down (D-66 + D-70).** The AQE engine writes `aqe_daily_export.json` to the Google Drive folder named **"AQE"** (id `1CJMoI19Zf_ZFeU5_5uhW9l92IB8fVger`) on its daily run (observed: starts ~08:30 SGT, exports ~08:43, finishes ~08:44 — a ~14-min job). That folder IS the feed. Search it for `aqe_daily_export.json`, download to `output/aqe_daily_export.json`. **On MISSING or STALE this is `feed_pull` — a transient class (RB:self_heal), not a stand-down:** retry per `tools/self_heal.py premarket --failure feed_pull --max-retries 3` (+5, +10, +10 min). AQE running a few minutes behind self-heals silently — no page, no PM action. **Only after the budget is spent** is it a genuine AQE-side failure: page (`tools/notify.py run_fail --loop premarket_data --step "AQE export pull" --last-good <last known-good date>`), stamp `fail` at step 11, and stop. The kernel never controls, kicks, or re-triggers AQE itself — the manual fix is that the PM confirms AQE finished on their box and then says "rerun the premarket data half".
+
+5. **Validate, then two DIFFERENT checks — do not collapse them into one.**
+   - **Schema:** validate the file against `contracts/aqe_export.schema.json`. A schema failure is structural, never transient — page and stamp `fail`.
+   - **`tools/tripwires.py` — ANOMALY.** Asks *is what is here believable?* Blocks on anomaly. A BLOCK is a **gate**: stand down, never auto-heal (RB:self_heal.stand_down), page, stamp `fail`.
+   - **`python3 tools/aqe_coverage.py check --export output/aqe_daily_export.json --journal data/journal/aegis_journal_YYYY-MM-DD.json --today YYYY-MM-DD` — COMPLETENESS + FRESHNESS.** Asks *is all of it here?* — a wholly different question, which is why it is a second tool and not a branch inside the first. This is the PM's actual ask made mechanical: every scored row carries every consumed field, every held name in the journal is covered by today's export (in either block), every dated sub-block agrees with the export date, and the summary counts reconcile against the blocks they claim to count. Three-way exit code, same grammar as the gate: **0 = complete → proceed. 1 = INCOMPLETE → transient, go back to step 4's retry budget** (the usual cause is the export being a day behind, i.e. AQE has not published today's run yet). **2 = DEGRADED-but-blocking → page and stamp `fail`.** Non-blocking DEGRADED findings and `noted:` lines are carried into step 12's report verbatim, never swallowed — they are the PM's call, not this skill's.
+
+6. **Universe build — AFTER the pull, not before it (order corrected, D-91).** Run `python3 tools/universe_build.py build --export output/aqe_daily_export.json` → `data/sod/DATE/universe.json`, the only file voices will nominate from tomorrow morning of the judgement half. The old combined skill built the universe at step 2 and pulled the export at step 3, which read whatever export happened to be on disk — usually the previous day's. **The AQE daily export IS the fully-scored universe (D-66); the kernel does not re-screen FMP** — `tools/universe_screen.py` is retired off this path. The builder emits one fixed schema-enforced shape (`contracts/universe.schema.json`), each name trimmed to the consumed field set, plus a `near_misses` list (D-37) surfaced rather than silently cut. **The DATA TAXONOMY IS MANDATORY (D-53):** the universe file must carry the full union of the voice menus per name (`elder_5d`, `elder_pattern`, `mp_state`, `mp_accel_state`, `structure_shift`, `sma_distance_pct`, `day_vol` (renamed from `rvol` 2026-08-05), `rs_spy_20d`, `rs_leadership`, `ma_20/50/100/200`, `atr_14d`, the full `bracket` block, `lens`/`lens_positive`, `sector_trend_state`, `beta_30d`, the composites). A universe reduced to a thin score summary is an INVALID run — and catching that HERE, for the cost of one deterministic tool call, is precisely what the split buys: the alternative is discovering it after eleven voices have already read half-blind and said so.
+
+7. **Held book — the mechanical half of it (D-33/D-84/D-85; Operations 4 and 5 of `print-trade-journal`).** The judgement — RUN / TAKE-PARTIAL / TIGHTEN / EXIT per name — is the **committee's**, and it stays in the expensive half. The **math** is deterministic and belongs here:
+   - `python3 tools/held_book_refresh.py refresh --journal data/journal/aegis_journal_YYYY-MM-DD.json --export output/aqe_daily_export.json` — a targeted per-ticker MERGE that overwrites only `aqe_snapshot`, `aqe_snapshot_as_of` and `aqe_snapshot_source` on each held name. It never touches the execution-truth fields post-market wrote this morning: this is the update, not an overwrite, the PM asked for. **It reads BOTH export blocks (D-91).** AQE publishes a held name under `daily_list` only if it independently made the scored longlist — on 25 Jul that was 2 of 12 — and under `held_positions` for all of them. The refresh used to index `daily_list` alone, so ten of twelve held names were declared "absent from today's export" and kept a stale snapshot **every single day** while their fresh record sat in the other block of the same file. That was not cosmetic: `trailing_stop.py` takes its structural stop from `aqe_snapshot.bracket`, so those ten names were being risk-managed off a stop that never moved. A name genuinely absent from both blocks keeps its stale snapshot and is flagged `not_in_todays_export`, never silently blanked.
+   - **Trailing stops — recomputed HERE and only here (D-84).** Run the exits math (`tools/calculators/trailing_stop.py`): the mechanical FLOOR per name, breakeven→structure ratchet, **never lowers**. Its `aqe_operative_stop` input comes from the `bracket` the refresh above just wrote into `aqe_snapshot` — one source, not a second in-memory read of the export.
+   - `python3 tools/held_book_refresh.py stop-update --journal data/journal/aegis_journal_YYYY-MM-DD.json --stops <ticker: new-stop map>` — writes each new floor into `stop_reference` and recomputes `stop_match` against the broker's live stop. A MISMATCH here is normal (the broker order usually is not staged yet), flagged in `review_flags`, never a reason to stop.
+   - **The hedge assessment does NOT run here.** Its Phase 1 crosses the coverage matrix with the macro posture and the SRM read — that is judgement, and it stays with the committee. This half only guarantees the inputs it will read are fresh and pushed.
+
+8. **dynCap + portfolio metrics — the numbers every size tomorrow is computed against.**
+   - `python3 tools/dyncap_ledger.py update <journal.json>` — dynCap = allocation + realised + unrealised = current Aegis equity (D-41, mark-to-market). It de-sizes in drawdown, by the PM's explicit choice. A stale mark is never used, so this refresh happens on the fresh book, here.
+   - `python3 tools/portfolio_metrics.py compute --journal data/journal/aegis_journal_YYYY-MM-DD.json` — recomputed unconditionally (deterministic and free). **Read `sector_concentration_pct` on the way past.** It takes sector from the held snapshot, and until D-91 the snapshot key it asked for (`sector`) was a name no AQE export has ever carried — the real key is `gics_sector` — so the copy was dropped in silence and every sector-concentration figure this module ever emitted was 100% "UNKNOWN": one bucket, concentration trivially maxed, the gate meaningless. It resolves now. If it reads 100% UNKNOWN again, that is a regression, not a book state — say so.
+
+9. **CHECK THE FILES — before the push, because a push cannot repair a hole (D-92).** Run `python3 tools/artefact_check.py check --date <DATE> --json`. Steps 4–8 each *claimed* to write a file. This is the one step that goes and looks. It is a third, distinct question from the two at step 5 and must not be folded into either: `tripwires.py` asks *is what is here believable*, `aqe_coverage.py` asks *is all of the EXPORT here*, and this asks **are all of the FILES here** — the export, `data/sod/DATE/universe.json`, the journal, and the dynCap ledger; do they parse; do they carry this run's date; and is there anything real inside them.
+   - **Why it earns its place rather than being trusted prose.** A run can pass both step-5 checks on a flawless export and still hand the expensive half nothing: the builder can write into yesterday's date folder, the held-book refresh can error after the export was already validated, the universe can come out schema-legal but stripped of the voice menu. None of those are export defects, so no amount of re-reading the export finds them. The check also verifies the thing that actually bites — that the open positions carry an `aqe_snapshot_as_of` of **this** run's date, i.e. that the refresh at step 7 landed rather than merely returning zero.
+   - **Three-way exit code, same grammar as everything else.** **0 = COMPLETE → push.** **1 = MISSING** — a contracted file is simply not on disk, so the step that writes it did not run; re-run that step, then re-check. Not a page. **2 = INVALID** — the files are there and at least one is wrong (stale-dated, empty, thin, or a held book that never refreshed). Time does not fix that: **page, stamp `fail`, and do not push a run whose own outputs contradict each other.** MISSING deliberately outranks INVALID in the verdict, because telling the PM his universe is thin is noise when the real answer is that the builder never ran.
+   - **`--date` is passed in, never read from the clock**, so re-checking a past day reproduces that day's verdict exactly.
+
+10. **PUSH — this step IS the process (D-91, the reason for the split's shape).** Run `python3 tools/git_sync.py -m "premarket data half <DATE>: AQE export, universe, held-book refresh, stops, dynCap"`. **The judgement half runs in its OWN session with its OWN fresh checkout.** A file that only ever reached this container's local disk is invisible to it, forever — the push is the only "saved" moment there is. `DEFAULT_PATHS` now carries `aegis/output/aqe_daily_export.json` for exactly this reason (D-91); without it the judgement half would clone, find no export, and stand the morning down while the file it needed sat on a container that no longer exists.
+   - **Verify, do not take the tool's word (the 9c discipline).** Require `ok: true` and `pushed: true` in the returned JSON. **A `"nothing to commit (clean)"` result at this step is a finding, not a success** — today's export should never be byte-identical to what is already on origin; read it as "the pull at step 4 returned the same file as last time" and check it against the coverage verdict before believing anything.
+   - **Native push 403 from the git proxy is EXPECTED on Cowork.** `git_sync.py` reports `pushed: false`. The conductor then pushes the changed files via the GitHub connector (`push_files`), verifies blob SHAs, and records the connector commit SHA in the stamp note. That IS the push. Files over ~100KB cannot go through the connector (today: `universe.json`) — list them as unpushed; the judgement half runs in this same session and reads them from disk.
+   - **Push failure is a `fail` stamp only when BOTH paths fail.**
+   - **Never let the token near `.git/config`.** `git_sync.py` injects it transiently into the push URL and scrubs it from all output; that is the only lawful path.
+
+11. **Stamp — the handoff, and the whole contract with the expensive half.** Run `python3 tools/phase_gate.py stamp --phase premarket_data --status <ok|fail> --note "<one line>"`.
+   - **`ok`** only when: the export pulled fresh, schema-validated, tripwires clear, coverage exit 0, universe built, held book refreshed, stops written, metrics computed, **the artefact check at step 9 exit 0**, **and the push confirmed**. Anything less is not ok.
+   - **`fail`** when a step above says fail. A `fail` stamp is a fact, not an admission — and it is exactly what turns the judgement half's answer from "keep waiting" (which would loop all morning) into "page the PM now, do not spend the swarm."
+   - **No stamp at all** on the transient path (retry budget not yet spent, export simply not published). Absent reads as NOT_READY, which is the correct "come back later."
+
+12. **PRINT IT ON SCREEN — do not send the PM a file (PM ruling, supersedes D-92).** Run `python3 tools/artefact_check.py report --date <DATE>`. It writes `data/sod/DATE/premarket_data_report.md` for the record and prints the path. **The file is the record; the screen is the delivery.** Read it and render it into the chat reply as tables. **Do not call the file-delivery tool.** The PM has said plainly he does not want this on his phone — he wants to read it where he is standing.
+   - **Why it is still generated by a tool.** Every number in it is read off the artefacts at render time, so **the report cannot claim something the files do not say.** You are transcribing it to screen, not composing it. If a number in the report looks wrong, print the wrong number and say it looks wrong. Never quietly correct it.
+   - **What goes on screen, in this order:** (a) one verdict line; (b) a table of the files with status and what is actually inside them; (c) the coverage answer in the PM's own words — *did AQE process the whole universe and every correlated score, including on the held book*; (d) held names covered, rows scored; (e) **every blocking and `noted:` line from steps 5 and 9, verbatim** — those are his call, never swallowed; (f) whether the push landed.
+   - **Multi-row data goes in a markdown table** (PM standing instruction: "show me in tabular form pls else hard to read"). Plain words. No RB keys, no raw acronyms, no decision tags — he does not read them and has said so.
+   - **Close with exactly two lines, in this order:**
+     1. **Ask whether to run the committee next** — "Run `/committee-pm` next?" — and nothing more. Do not fire it. Do not schedule it. Ask and stop.
+     2. **Remind him to switch to opus.** The committee is 12 judgment-tier spawns; the tier travels with each agent file, but the session driving them should be opus too. One line: "Switch to opus before you do."
+   - This is a real chat message (D-75 — `notify.py`'s print is a draft, not delivery; what reaches the PM is built from this session's actual final reply).
+
+## WHERE THIS SITS IN THE CHAIN
+
+The daily chain is **two typed commands**, plus one view the PM can run any time.
+
+| Command | What it is |
+|---|---|
+| `/ptj` | Live look at the book. Pulls both brokers, runs the batch in rehearsal, prints. Changes nothing. Run it as often as you like. |
+| `/ptj fa` | The same picture read off disk. No pull, no batch, instant. |
+| **`/premarket`** | **This skill.** Closes the book for real, then prepares the AQE data. |
+| `/committee-pm` | The committee — 11 voices plus the desk. Gated on this skill's `ok` stamp. |
+
+The closing message names what the PM types next.
+
+| This run ended | Say next | Why |
+|---|---|---|
+| stamped `ok`, push landed | **`/committee-pm`** (and switch to opus) | All three preconditions are now true: the book closed, today's export is on disk, this skill stamped `ok`. |
+| stamped `ok`, push did NOT land | fix the token, re-run | `/committee-pm` runs in its own fresh checkout. Work that only exists on this container is work it will never see. |
+| stamped `fail` | `/repull`, then this command again | Never run `/committee-pm` on a fail stamp. Eleven judgement voices on absent data is the exact thing the split exists to stop. |
+
+## THE HANDOFF — WHO FIRES THE COMMITTEE
+**Nothing in this skill fires anything.** It stamps; the stamp is a fact on disk, not a trigger. `/committee-pm` gates itself on `phase_gate.py check --for premarket_build`, which requires this skill's `ok` stamp for today **plus** today's export on disk — deliberately checked twice, because it runs in its own fresh checkout and a missing push would otherwise be discovered twelve agent spawns too late. **NOTHING IS SCHEDULED.** Every run starts because the PM typed it. Do not write, imply, or report that any of this runs on its own.
+
+## WHAT THIS SKILL MUST NOT DO
+Spawn a voice, the committee-desk, or any judgment-tier agent · build a plan, a tally, a conviction funnel or an alert list · run the event filter, the macro brief or the SRM weather · assess or size a hedge · produce an order preview or touch the staging-gatekeeper · decide RUN/TRIM/EXIT on a held name · stamp `ok` on an unverified push · **stamp `ok` on an artefact check it did not run, or push past one that came back MISSING or INVALID** · **send the report to the PM as a file** · **restate the broker pull or the batch here instead of calling PTJ MODE C.** Every one of those either belongs to the committee, or rebuilds a second copy of a procedure that already has exactly one.
+
+## ON FAILURE (RB:exceptions — the ladder governs; records to data/sod/DATE/exceptions/)
+- **Step 0 halted (PTJ exit 2)** → stop. Do not touch AQE. Page with what PTJ said, verbatim. The lever is `/recover post-market`.
+- **Missing token at step 1** → page and stop. This half cannot deliver without a push.
+- **Feed missing/stale** → bounded retry (RB:self_heal), then page + `fail` stamp. Never proceed on nothing — the 18–20 Jul empty-Ledger sessions traced to exactly that.
+- **Schema failure, tripwire BLOCK, or coverage exit 2** → stand down, page, stamp `fail`. A gate is never auto-healed; the PM is the only override and it is recorded.
+- **Coverage exit 1** → transient. Back to the retry budget; no stamp, no page until the budget is spent.
+- **Artefact check exit 1 (MISSING)** → a contracted file is not on disk, so the step that writes it did not run. Re-run **that step only**, then re-check. No page, no `fail` stamp — a step that has not run is not a fault, and re-running the whole half to fix one absent file is how a cheap process stops being cheap.
+- **Artefact check exit 2 (INVALID)** → the files are present and wrong. Page, stamp `fail`, **do not push**. A pushed set of artefacts that contradict each other is worse than no push at all: the judgement half would clone it, find every file where it expects one, and spend eleven voices on it.
+- **Push fails** → retry once, then page and stamp `fail`. Local-only work is work that did not happen.
+- **The report tool cannot render** → the run still stands on its stamp; print the artefact table on screen by hand as the fallback, say the generator failed, and record it. A missing document is a rendering failure, never a reason to change the verdict the files already earned.
+- **This skill errors in a way it cannot classify** → stamp `fail` and page. Fail-closed: an unexplained data half must never leave a stamp the swarm would read as a green light.
+- **Weekend / market holiday** → post-market does not run, so step 2 reads NOT_READY all day and nothing happens. That is quiet, correct, and costs nothing — which is the point of doing this check before the expensive session rather than inside it.

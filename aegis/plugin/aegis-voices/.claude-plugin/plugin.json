@@ -1,0 +1,29 @@
+{
+ "name": "aegis-voices",
+ "version": "1.5.0",
+ "kernel_build": "86525f9",
+ "layer": "knowledge",
+ "description": "Aegis committee voices — 15 isolated agents (9 S4 nominators incl. weis, 2 challenge, 2 fundamentals+lens, crown + druckenmiller macro), their methodology cards, the nomination contract, and the S0.5 voice activation + data readiness check. No process loops, no order path.",
+ "changelog": [
+  {
+   "version": "1.2.0",
+   "date": "2026-08-24",
+   "changes": [
+    "ADD tools/field_derive.py — fills numbers the engine leaves null but that are fully determined by numbers it does emit. First case: bracket.stop_type was null on 78% of rows, which read as a data gap and blocked six seats. It is not a gap: on every one of those rows bracket.valid is false and bracket.atr_fallback_stop is populated 100%, so the stop in force is the ATR fallback and the engine simply never wrote the label. The orchestrator now writes it at packet build, tagged stop_type_source=derived so the seat can see it was not measured. Also emits bracket.stop_eff, the stop actually in force.",
+    "voice_preflight.py now classifies every missing number into one of four outcomes, each with an action: DERIVED (orchestrator fills it, no engine change), SUBSTITUTE_LIVE (a populated fallback is already on the seat's menu), MENU_BUG (fallback exists but is not on the menu — one line in voice_menus.json), ENGINE_TICKET (nothing anywhere, engine must emit). Only the last two block.",
+    "voice_preflight.py prints READY TO RUN: YES/NO and exits non-zero under --strict. As of 2026-08-24 against the live export: 11/11 voices ACTIVATED, zero blockers, READY TO RUN: YES.",
+    "voice_preflight.py --apply writes the derived fields back into the export in place, so the gate that finds the gap is the step that closes it. Everything downstream sees the filled fields with no further wiring."
+   ]
+  },
+  {
+   "version": "1.1.0",
+   "date": "2026-08-24",
+   "changes": [
+    "ADD agents/voice-weis.md + skills/voice-weis/SKILL.md — the weis seat had NO agent file and was being run as a general-purpose spawn with its canon pasted in by hand every run, differently each time. This is the fix for that.",
+    "ADD tools/voice_preflight.py — the voice activation check. Answers two separate questions per seat: (1) can this voice run at all (agent file + readable book) and (2) is today's export complete for it. Mixing those two is what allowed a half-served voice to return ten confident nominations with nothing flagging it.",
+    "canon_index.json now carries weis (UNSIGNED — pm_signed null, 4 open PM decisions).",
+    "Description corrected: said '13 isolated nominator agents', there were 14 agent files and not all of them are nominators."
+   ]
+  }
+ ]
+}
