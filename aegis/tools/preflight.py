@@ -28,16 +28,22 @@ ENVFILE = os.path.join(ROOT, "config", ".env")
 
 # name -> (required?, why, fix one-liner the PM can paste in chat)
 SECRETS = {
-    "GITHUB_PAT": (True,
-        "autonomous git commit/push at post-market (no GitHub connector exists — D-48)",
-        "Paste in chat:  Save GITHUB_PAT=<fine-grained PAT, Contents:Read+Write on TongIncomeWheel/AQE> into aegis/config/.env"),
+    # v5.3 (2026-09-05): NOT required. The sandbox git proxy returns 403 for this repo regardless of
+    # any token ("not in this session's authorized repository set"), and the GitHub connector
+    # (push_files) is the working push path and needs no local secret. A missing PAT is therefore a
+    # WARNING that names the push path, never a stop. The old "no GitHub connector exists — D-48"
+    # premise is false on Cowork. Also: config/.env is gitignored and dies with every fresh container,
+    # so treating it as required guaranteed a page to the PM every single morning.
+    "GITHUB_PAT": (False,
+        "native git push (optional — the connector path needs no secret; the sandbox proxy blocks native push for this repo anyway)",
+        "Optional. Push goes via the GitHub connector (push_files)."),
     "FMP_API_KEY": (False,
         "only if FMP is used via raw REST; on Cowork FMP is an OAuth connector (no local secret needed)",
         "Optional — connector-based on Cowork."),
 }
 
-CONNECTORS_NOTE = ("Market data + book: FMP, Tiger, IBKR, Google Drive are OAuth CONNECTORS "
-                   "(no local secret). Only GITHUB_PAT lives in config/.env.")
+CONNECTORS_NOTE = ("Market data + book: FMP, Tiger, Google Drive and GitHub are OAuth CONNECTORS "
+                   "(no local secret). config/.env is optional and is wiped with every fresh container.")
 
 
 def _env_file_values():
@@ -71,9 +77,10 @@ def check():
         ignored = True if r.returncode == 0 else (False if r.returncode == 1 else None)
     except Exception:
         ignored = None
+    push_path = "native git (GITHUB_PAT present)" if "GITHUB_PAT" in present else "GitHub connector (push_files) — no local secret needed"
     return {"ready": not missing, "present": present, "missing": missing,
             "env_file_exists": os.path.exists(ENVFILE), "env_gitignored": ignored,
-            "note": CONNECTORS_NOTE}
+            "push_path": push_path, "note": CONNECTORS_NOTE}
 
 
 def _card(s):
@@ -86,6 +93,7 @@ def _card(s):
     for m in s["missing"]:
         L.append(f"  ✗ MISSING {m['name']} — {m['why']}")
         L.append(f"      → {m['fix']}")
+    L.append("  push path: " + s.get("push_path", "?"))
     L.append("  " + s["note"])
     return "\n".join(L)
 

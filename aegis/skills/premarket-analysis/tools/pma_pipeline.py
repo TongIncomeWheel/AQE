@@ -30,7 +30,7 @@ Subcommands:
                     instead of silently omitting it or being invented from memory.
 Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
 """
-import json, sys, os, csv, random, statistics, argparse, collections, datetime, re
+import json, re, sys, os, csv, random, statistics, argparse, collections, datetime
 
 SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
@@ -433,26 +433,83 @@ def cmd_tally(a):
     save(a.out, sorted(out, key=lambda x: (-x["count"], -x["sumc"])))
     print(f"receipt: {len(out)} tickers nominated across {len(noms)} seats")
 
+def _lens_strong_count(row):
+    l = row.get("lens") or {}
+    return sum(1 for v in l.values() if v == "strong")
+
+def _elder_hi7_streak3(row):
+    e = row.get("elder_5d") or []
+    return len(e) >= 3 and all(isinstance(x, (int, float)) and x >= 7 for x in e[-3:])
+
+def _aqe_leader(row):
+    return (row.get("elder_pattern") in ("SUSTAINED", "ACCELERATION")
+            and row.get("rs_leadership") == "LEADER" and row.get("mp_state") == "STRONG")
+
 def cmd_rank(a):
+    """RANK + ADMIT (v5.3, PM rulings 2026-09-05).
+    Four doors into the deliberation set, union, then a cap:
+      DOOR 1  SEATS       nominated by >= 2 seats. ALWAYS kept -- these are the committee's own picks.
+      DOOR 2  ELDER+LENS  elder >= 7 on each of the last 3 bars AND >= 3 of 6 lenses strong.
+      DOOR 3  PM_LENS     >= pm_lens_min checks on the PM's own six (read from pm_lens.json, so
+                          PM-LENS now runs BEFORE this step; it still never reaches any seat).
+      DOOR 4  AQE_LEADER  elder_pattern in {SUSTAINED, ACCELERATION} AND rs_leadership LEADER AND mp_state STRONG.
+    Doors 2-4 fill the remaining slots to --cap by AQE rank. The one-seat-at-conviction-4 exception
+    is CLOSED (--solo-min retired). Every admitted name carries its doors so Round 2 can see how it
+    arrived. Ordering of DOOR-1 names keeps the v4.2 key (seat_count > conviction_sum > srm > thematic
+    > sc_momentum); door 2-4 names follow, by AQE rank.
+
+    Why: on 2026-09-04, 32 names carried SUSTAINED/ACCELERATION, 10 were nominated, 3 voted, 0
+    advanced -- leaders died at nomination because every card's "am I chasing" test had a precise
+    field and its "is this a leader" test did not. The doors make the committee LOOK at what AQE,
+    Elder and the PM's own checks flag; the committee still votes on every name the same way.
+    Bracket fields play no part in any door (R1)."""
     tally, CS, D = load(a.tally), load(a.candidates), load(a.export)
     uni = {r["ticker"]: r for r in CS["universe"]}
     srm = {s["sector"]: s for s in D["srm"]}
-    qual = [t for t in tally if t["count"] >= 2 or t["maxc"] >= a.solo_min]
-    def key(t):
-        r = uni.get(t["ticker"], {})
+    tal = {t["ticker"]: t for t in tally}
+    doors = collections.defaultdict(list)
+    for t in tally:
+        if t["count"] >= 2: doors[t["ticker"]].append("SEATS")
+    for tk, r in uni.items():
+        if _elder_hi7_streak3(r) and _lens_strong_count(r) >= 3: doors[tk].append("ELDER+LENS")
+        if _aqe_leader(r): doors[tk].append("AQE_LEADER")
+    pm_flagged = []
+    if a.pm_lens and os.path.exists(a.pm_lens):
+        PL = load(a.pm_lens)
+        for row in (PL.get("flagged") or PL.get("rows") or PL.get("names") or []):
+            tk = row.get("ticker") if isinstance(row, dict) else row
+            score = row.get("check_score", row.get("checks_passed", a.pm_lens_min)) if isinstance(row, dict) else a.pm_lens_min
+            if tk in uni and score >= a.pm_lens_min:
+                doors[tk].append("PM_LENS"); pm_flagged.append(tk)
+    def key1(tk):
+        t = tal.get(tk, {"count": 0, "sumc": 0}); r = uni.get(tk, {})
         s = srm.get(r.get("gics_sector_name"), {})
-        srm_rank = SRM_RANK.get(s.get("entry_gate", ""), 0)
         them = 1 if (r.get("thematic_grade") == "DEPLOY" or r.get("thematic_rrg_quadrant") in ("LEADING", "IMPROVING")) else 0
-        return (t["count"], t["sumc"], srm_rank, them, r.get("sc_momentum") or 0, t["ticker"])
-    ranked = sorted(qual, key=key, reverse=True)
-    cut = ranked[:a.cap]
-    dropped = [f"{t['ticker']}({t['count']}s/c{t['maxc']})" for t in ranked[a.cap:]]
-    save(a.out, {"cap": a.cap, "qualifying": len(qual),
-                 "ranking_key": "seat_count > conviction_sum > srm_entry_gate > thematic_support > sc_momentum",
-                 "deliberation_set": [t["ticker"] for t in cut],
-                 "ranked": [{"ticker": t["ticker"], "seats": t["count"], "sumc": t["sumc"], "srm": srm.get(uni.get(t["ticker"], {}).get("gics_sector_name"), {}).get("entry_gate"), "sc_m": uni.get(t["ticker"], {}).get("sc_momentum")} for t in ranked],
+        return (t["count"], t["sumc"], SRM_RANK.get(s.get("entry_gate", ""), 0), them, r.get("sc_momentum") or 0, tk)
+    door1 = sorted([tk for tk, d in doors.items() if "SEATS" in d], key=key1, reverse=True)
+    rest = sorted([tk for tk, d in doors.items() if "SEATS" not in d], key=lambda tk: (uni[tk].get("rank") or 9999, tk))
+    slots = max(a.cap - len(door1), 0)
+    admitted = door1 + rest[:slots]
+    dropped = [f"{tk}({'+'.join(doors[tk])} rank{uni[tk].get('rank')})" for tk in rest[slots:]]
+    def row(tk):
+        t = tal.get(tk, {}); r = uni.get(tk, {})
+        return {"ticker": tk, "doors": doors[tk], "seats": t.get("count", 0), "sumc": t.get("sumc", 0),
+                "aqe_rank": r.get("rank"), "srm": srm.get(r.get("gics_sector_name"), {}).get("entry_gate"),
+                "sc_m": r.get("sc_momentum"), "elder_5d": r.get("elder_5d"), "elder_pattern": r.get("elder_pattern"),
+                "lens_strong": _lens_strong_count(r)}
+    save(a.out, {"cap": a.cap, "admitted": len(admitted), "union": len(doors),
+                 "doors_rule": {"SEATS": "nominated by >=2 seats (always kept)",
+                                "ELDER+LENS": "elder>=7 on each of last 3 bars AND >=3/6 lenses strong",
+                                "PM_LENS": f">={a.pm_lens_min} of the PM's 6 checks",
+                                "AQE_LEADER": "elder_pattern SUSTAINED|ACCELERATION AND rs_leadership LEADER AND mp_state STRONG"},
+                 "ranking_key": "DOOR1 by seat_count > conviction_sum > srm_entry_gate > thematic_support > sc_momentum; then DOORS 2-4 by AQE rank",
+                 "deliberation_set": admitted,
+                 "ranked": [row(tk) for tk in admitted],
                  "dropped": dropped})
-    print(f"receipt: {len(qual)} qualified, top {min(a.cap, len(qual))} to deliberation, {len(dropped)} cut by cap")
+    by_door = collections.Counter(d for tk in admitted for d in doors[tk])
+    never_nominated = sum(1 for tk in admitted if tal.get(tk, {}).get("count", 0) == 0)
+    print(f"receipt: union {len(doors)} across 4 doors -> {len(admitted)} admitted (cap {a.cap}), {len(dropped)} cut; "
+          f"by door {dict(by_door)}; {never_nominated} admitted names no seat nominated; pm_lens flagged {len(pm_flagged)}")
 
 R2_VOTING_SEATS = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp",
                    "weis", "wyckoff", "lynch", "detect-lens"]
@@ -600,6 +657,78 @@ def cmd_round2packets(a):
           f"identically across all {len(voting_seats)} seats.")
     for g in degradations:
         print(f"WARNING {g}")
+
+def cmd_r2digest(a):
+    """ROUND-2 PACKET, TOOL-BUILT (v5.3, PM ruling 2026-09-05). One text file every voting seat reads.
+
+    Replaces the hand-assembled deliberation brief + raw-JSON challenge paste that ran 183KB on
+    2026-09-04. Two rules: (1) every data field comes straight from the export under its REAL
+    name -- the hand-built version printed `stop_basis` (does not exist) and manufactured a data
+    gap; (2) the four challenge documents are reduced to what a voter acts on: findings and
+    obligations in full, per-name grades as one line each, declarations/method-limits dropped.
+    Target <= 70KB. Bracket fields are printed for information; the header restates PM ruling R1."""
+    D = load(a.export); rows = {r["ticker"]: r for r in D["daily_list"]}
+    for r in D.get("held_positions", []) or []:
+        rows.setdefault(r["ticker"], r)
+    P4 = load(a.phase4); T = load(a.tally); TL = T["tally"] if isinstance(T, dict) and "tally" in T else T
+    tal = {x["ticker"]: x for x in TL}
+    FP = load(a.fundamentals)["tickers"] if a.fundamentals and os.path.exists(a.fundamentals) else {}
+    ds = P4["deliberation_set"]; doors = {r["ticker"]: r.get("doors", []) for r in P4.get("ranked", [])}
+    L = [f"AEGIS {a.run_id} -- ROUND 2 VOTE PACKET (tool-built, identical for every voting seat)",
+         f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
+         "PM RULING R1 (binding): bracket validity, risk% and R:R are INFORMATION, never a reason to reject. Judge on signals.",
+         "DOORS: how each name reached this vote -- SEATS (>=2 nominators) | ELDER+LENS (elder>=7 x3 bars AND >=3 lenses strong) | PM_LENS (>=5/6) | AQE_LEADER (SUSTAINED/ACCELERATION + LEADER + STRONG). A name with no SEATS door was nominated by nobody.",
+         ""]
+    if a.macro:
+        for mf in a.macro:
+            if os.path.exists(mf):
+                m = load(mf)
+                L.append(f"MACRO [{m.get('voice')}] family={m.get('expression_family')} size={m.get('size_multiplier', m.get('size_posture'))} | {str(m.get('so_what',''))[:400]}")
+        L.append("")
+    L.append("=" * 90)
+    for t in ds:
+        r = rows.get(t, {}); x = tal.get(t, {}); f = FP.get(t, {}); b = r.get("bracket") or {}
+        L.append(f"### {t}  doors={','.join(doors.get(t, [])) or 'SEATS'}  seats={x.get('count', 0)} conv_sum={x.get('sumc', 0)}")
+        L.append(f"  AQE rank {r.get('rank')} | sc_mom {r.get('sc_momentum')} | {r.get('gics_sector_name')} / {r.get('sector_trend_state')} | entry {r.get('entry')} | source {r.get('source')}")
+        L.append(f"  structure {r.get('structure')} {r.get('structure_shift')} | sma_dist {r.get('sma_distance_pct')}% | ma20 {r.get('ma_20')} ma50 {r.get('ma_50')} ma100 {r.get('ma_100')} ma200 {r.get('ma_200')}")
+        L.append(f"  atr {r.get('atr_14d')} | day_vol {r.get('day_vol')} | flow {r.get('flow')} | energy {r.get('energy')} | mp {r.get('mp_state')}/{r.get('mp_accel_state')} | rs {r.get('rs_leadership')} spy20 {r.get('rs_spy_20d')} downday {r.get('rs_down_day_20d')}")
+        L.append(f"  elder {r.get('elder')} {r.get('elder_5d')} {r.get('elder_pattern')} | div {r.get('div_state')}/{r.get('div_bear_count')} | lens {r.get('lens')}")
+        if b.get("valid"):
+            L.append(f"  bracket VALID: stop {b.get('stop')} ({b.get('stop_type')}) risk {b.get('risk_pct')}% rr_tp1 {b.get('rr_tp1')} rr_tp2 {b.get('rr_tp2')}   [information only -- R1]")
+        else:
+            L.append(f"  bracket INVALID ({b.get('invalid_reason')}) atr_fallback_stop {b.get('atr_fallback_stop')}   [information only -- R1]")
+        if f:
+            L.append(f"  fundamentals: pe {f.get('pe_ratio')} peg {f.get('peg_ratio')} fwd_peg {f.get('forward_peg')} fcf_yld {f.get('free_cash_flow_yield')} d/e {f.get('debt_to_equity')} net_margin {f.get('net_profit_margin')} rev_g {f.get('revenue_growth_yoy')} eps_g {f.get('eps_growth_yoy')} piotroski {f.get('piotroski_score')} altman {f.get('altman_z')}" + (f" | NOTE: {f['note'][:160]}" if f.get('note') else ""))
+        for rs in (x.get("reasons") or []):
+            L.append(f"   R1 [{rs.get('voice')} conv {rs.get('conviction')}] {rs.get('reason')}")
+        L.append("")
+    L.append("=" * 90)
+    L.append("CHALLENGE ROUND -- findings and obligations in full; per-name grades one line each; method declarations omitted.")
+    def digest(name, path):
+        if not path or not os.path.exists(path):
+            L.append(f"--- {name.upper()}: NOT FILED ---"); return
+        c = load(path)
+        L.append(f"--- {name.upper()} ---")
+        for fd in c.get("findings", []) or []:
+            sc = fd.get("scope", ""); tag = fd.get("id") or fd.get("axis") or fd.get("kind") or ""
+            L.append(f"  [{sc}{(' ' + tag) if tag else ''}] {str(fd.get('claim', ''))[:a.claim_chars]}")
+            if fd.get("evidence"): L.append(f"      evidence: {str(fd['evidence'])[:a.evidence_chars]}")
+            owed = fd.get("what_is_owed") or fd.get("addressed_to")
+            if owed: L.append(f"      owed: {owed}")
+        for ob in c.get("obligations", []) or []:
+            L.append(f"  OBLIGATION {ob.get('seat')} on {ob.get('ticker')} [{ob.get('class') or ob.get('obligation')}]: {str(ob.get('what_is_owed'))[:a.evidence_chars]}")
+        for v in c.get("verdicts", []) or []:
+            L.append(f"  {v.get('ticker')}: {v.get('grade')} ({v.get('category')}) -- {str(v.get('read', ''))[:220]}")
+        for rd in c.get("reads", []) or []:
+            L.append(f"  {rd.get('ticker')}: {rd.get('grade')} -- {str(rd.get('structure_read') or rd.get('structure') or '')[:200]}")
+        L.append("")
+    digest("rogers", a.rogers); digest("steenbarger", a.steenbarger); digest("lynch", a.lynch); digest("detect-lens", a.detectlens)
+    txt = "\n".join(L); open(a.out, "w").write(txt)
+    import hashlib
+    print(f"wrote {a.out}: {len(txt)} bytes, {txt.count(chr(10)) + 1} lines, md5 {hashlib.md5(txt.encode()).hexdigest()}")
+    if len(txt) > a.max_bytes:
+        print(f"WARNING r2digest exceeds --max-bytes {a.max_bytes}: trim per-name reads or findings evidence")
+
 
 def cmd_consensus(a):
     R2 = load(a.round2)  # list of {voice, stances:[{ticker, stance, conviction, ...}]}
@@ -899,6 +1028,53 @@ def cmd_gate(a):
                 chk(not missing, "Q6r", f"repeat_watch.json covers every phase4_ledger repeat flag (missing: {missing or 'none'})")
                 for t in flagged:
                     chk(t in brief, "Q6r", f"{t}: repeat-flagged ticker appears in brief §4")
+    # ---- Q-EXEC: EXECUTIVE FORM (PM ruling 2026-09-05 -- tables and one-liners, never prose;
+    # consensus view, never who voted what). Mechanical presence/absence checks only.
+    body, _, appendix = brief.partition("APPENDIX A")
+    lines = body.split("\n")
+    # QX1: the first table on the page is the verdict table and names every deliberated ticker
+    first_tbl = []
+    for i, ln in enumerate(lines):
+        if ln.strip().startswith("|"):
+            j = i
+            while j < len(lines) and lines[j].strip().startswith("|"):
+                first_tbl.append(lines[j]); j += 1
+            break
+    ft = "\n".join(first_tbl)
+    chk(bool(first_tbl) and "verdict" in ft.lower(), "QX1", "first table on the page is the VERDICT table")
+    for c in cons:
+        chk(c["ticker"] in ft, "QX1", f"{c['ticker']} appears in the verdict table")
+    # QX2: no roll-call language in the body. Seat names and vote-count words belong in Appendix A only.
+    seats = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp", "weis", "wyckoff",
+             "lynch", "detect-lens", "rogers", "steenbarger"]
+    low = body.lower()
+    leaked = [w for w in seats if re.search(r"\b" + re.escape(w) + r"\b", low)]
+    chk(not leaked, "QX2", f"no seat names in the body (found: {leaked or 'none'})")
+    tally_words = [w for w in ("support", "oppose", "abstain", "supporters", "opposers") if re.search(r"\b" + w + r"s?\b", low)]
+    chk(not tally_words, "QX2", f"no vote-tally words in the body (found: {tally_words or 'none'})")
+    # QX3: no paragraph longer than two sentences (tables, headings, bullets exempt)
+    paras, cur = [], []
+    for ln in lines:
+        st = ln.strip()
+        if not st:
+            if cur: paras.append(" ".join(cur)); cur = []
+            continue
+        if st.startswith(("|", "#", "-", "*", ">")) or re.match(r"^\d+[.)]", st):
+            if cur: paras.append(" ".join(cur)); cur = []
+            continue
+        cur.append(st)
+    if cur: paras.append(" ".join(cur))
+    long_paras = [pp[:60] for pp in paras if len(re.findall(r"[.!?](\s|$)", pp)) > 2]
+    chk(not long_paras, "QX3", f"no paragraph exceeds two sentences (offenders: {len(long_paras)}; first: {long_paras[:1]})")
+    # QX4: macro section is tabular -- at least two tables between the §1 heading and the §2 heading
+    m1 = re.search(r"^#+\s*(§?\s*1\b|1\.|.*MACRO)", body, re.M | re.I)
+    m2 = re.search(r"^#+\s*(§?\s*2\b|2\.|.*SECTOR)", body, re.M | re.I)
+    if m1 and m2 and m2.start() > m1.start():
+        sec1 = body[m1.start():m2.start()]
+        n_tbl = len(re.findall(r"(?:^\|.*\n)+", sec1, re.M))
+        chk(n_tbl >= 2, "QX4", f"macro section is tabular (tables found: {n_tbl}, need >=2)")
+    else:
+        chk(False, "QX4", "macro (§1) and sector (§2) headings found in order")
     print(f"RESULT: {len(fails)} FAIL")
     sys.exit(1 if fails else 0)
 
@@ -908,7 +1084,7 @@ if __name__ == "__main__":
     s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
-    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=20); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--out", default="phase4.json")
+    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json")
     s = sub.add_parser("round2packets")
     s.add_argument("--candidates", default="candidate_set.json")
     s.add_argument("--menus", required=True)
@@ -920,6 +1096,7 @@ if __name__ == "__main__":
     s.add_argument("--detectlens", required=True)
     s.add_argument("--date", required=True)
     s.add_argument("--outdir", default="round2")
+    s = sub.add_parser("r2digest"); s.add_argument("--export", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--tally", default="tally.json"); s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--rogers"); s.add_argument("--steenbarger"); s.add_argument("--lynch"); s.add_argument("--detectlens"); s.add_argument("--macro", nargs="*", default=[]); s.add_argument("--run-id", default="pma"); s.add_argument("--max-bytes", type=int, default=70000); s.add_argument("--claim-chars", type=int, default=400); s.add_argument("--evidence-chars", type=int, default=300); s.add_argument("--out", default="VOTE_PACKET.txt")
     s = sub.add_parser("consensus"); s.add_argument("--round2", required=True); s.add_argument("--out", default="consensus.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json")
@@ -929,6 +1106,6 @@ if __name__ == "__main__":
     a = p.parse_args()
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank,
      "round2packets": cmd_round2packets,
-     "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
+     "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
      "repeat-watch": cmd_repeat_watch}[a.cmd](a)
