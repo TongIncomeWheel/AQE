@@ -29,9 +29,25 @@ Scoreboard shape (run_manifest.json):
   "degradations": [], "flags": []
 }
 
-v5 §6b bracket-basis lint: a vote/nomination whose stated basis is bracket
-validity ALONE is flagged (never rejected) so the pattern is visible on the
-scoreboard instead of covert. The crowding audit itself lives in purity_check.py.
+v5 §6b bracket-basis lint (flag): a vote/nomination whose stated basis is
+bracket validity ALONE is flagged so the pattern is visible on the scoreboard
+instead of covert. The crowding audit itself lives in purity_check.py.
+
+R1 ENFORCEMENT (reject) — PM ruling 2026-08-14, restated 2026-09-05, made
+mechanical 2026-09-06 after the same card regression surfaced a third time:
+"a bracket, its validity, its risk%, its stop type and its R:R are NEVER a
+reason to reject a name. The committee chooses on momentum and structure; the
+bracket is the PM's last step to narrow a chosen idea." A card can say the
+wrong thing; the registrar cannot let it through. Therefore:
+  * Round 2: an OPPOSE whose `reason` / `opposing_case` uses a bracket term as a
+    disqualifier (bracket + reject-verb in the same text) => REJECT the form.
+  * Round 1: a `shortfall_reason` that cites a bracket term => REJECT the form
+    (a seat may not nominate fewer names because brackets were invalid).
+  * Any other bracket mention (SUPPORT/ABSTAIN reason, conviction_change) is
+    still flagged BRACKET_BASIS / BRACKET_MENTION for the scoreboard, never
+    rejected — stating the invalidation level is exactly what R1 asks for.
+The rejection text tells the seat what to re-file: judge on signals, state the
+level as information. One re-spawn, then absent — same ladder as any REJECT.
 """
 import argparse, datetime, hashlib, json, os, re, sys
 
@@ -42,6 +58,25 @@ R2_LIMITS = {"reason": 500, "conviction_change": 250, "opposing_case": 300,
              "o_a_note": 250, "o_b_stop_honored": 150, "o_c_invalidation": 250}
 BRACKET_ONLY = re.compile(r"bracket[._ ]?(valid|invalid)", re.I)
 SIGNAL_WORDS = re.compile(r"(structure|momentum|volume|rs_|elder|mp_|div_|squeeze|vwap|flow|energy|sector|leader|conviction|base|coil|stack|ma_\d)", re.I)
+# R1 enforcement vocabulary. BRACKET_TERM = any way a seat can point at the engine bracket;
+# REJECT_VERB = any way a seat can turn it into a disqualifier. Both in one OPPOSE text (or a
+# BRACKET_TERM anywhere in a shortfall_reason) is an R1 violation => REJECT.
+BRACKET_TERM = re.compile(
+    r"(bracket[._ ]?(valid|invalid|rr|risk|stop|price|atr)"
+    r"|malformed[_ ]bracket"
+    r"|atr[_ ]fallback"
+    r"|risk[_ ]?pct"
+    r"|\brr[_ ]?tp\d?\b|\brr\s*[<>=]|\bR:R\b|reward[- ]to[- ]risk|risk[- ]?reward"
+    r"|no (valid|usable|tradeable|tradable|structural) (bracket|stop)"
+    r"|bracket (is|was) (invalid|false|missing|unusable|absent)"
+    r"|stop (is |sits )?(too )?wide"
+    r"|(invalid|missing|unusable|no) bracket)", re.I)
+REJECT_VERB = re.compile(
+    r"(reject|disqualif|cannot (be )?(take|taken|own|hold|enter|buy)|can't (take|own|enter|buy)"
+    r"|not (a|my) (setup|position|trade)|no setup|untradeable|untradable|not tradeable|not tradable"
+    r"|rules? (it |this |the name )?out|throws? (it |this )?out|excluded?|fails?\b|fatal"
+    r"|hard (pass|no)|at any (size|conviction)|no (entry|nomination)|do not nominate|cannot nominate"
+    r"|oppose[sd]? (because|on|for)|too (wide|thin|large|big|risky))", re.I)
 
 
 def _now():
@@ -96,6 +131,24 @@ def _bracket_lint(texts):
     return False
 
 
+def _bracket_as_reject(texts):
+    """R1 enforcement: True when a bracket term is used as a disqualifier.
+    Returns the matched bracket term + verb so the rejection names them."""
+    joined = " ".join(t for t in texts if t)
+    bt = BRACKET_TERM.search(joined)
+    if not bt:
+        return None
+    rv = REJECT_VERB.search(joined)
+    if not rv:
+        return None
+    return (bt.group(0), rv.group(0))
+
+
+R1_TEXT = ("R1 VIOLATION — bracket is never a reject (PM ruling 2026-08-14 / 2026-09-06). "
+           "The committee chooses on momentum and structure; the bracket is the PM's last step. "
+           "Re-file judging on signals; state the bracket/invalidation level as information only.")
+
+
 def validate_round1(form, universe):
     errs, flags = [], []
     for req in ("voice", "date", "nominations", "held_review"):
@@ -122,6 +175,12 @@ def validate_round1(form, universe):
                 _bounded(errs, step, "observed", 200, f"{w}.trace")
         if _bracket_lint([n.get("reason", "")]):
             flags.append(f"BRACKET_BASIS:{t}")
+        elif BRACKET_TERM.search(n.get("reason", "") or ""):
+            flags.append(f"BRACKET_MENTION:{t}")
+    sf = form.get("shortfall_reason")
+    if isinstance(sf, str) and BRACKET_TERM.search(sf):
+        errs.append(f"shortfall_reason cites a bracket term ({BRACKET_TERM.search(sf).group(0)!r}) — "
+                    f"a seat may not nominate fewer names because engine brackets were invalid. {R1_TEXT}")
     return errs, flags
 
 
@@ -163,8 +222,16 @@ def validate_round2(form, universe, deliberation_set):
             src = v.get("obligations") if field.startswith("o_") else v
             if isinstance(src, dict):
                 _bounded(errs, src, field, cap, w)
-        if _bracket_lint([v.get("reason", ""), v.get("opposing_case") or ""]):
+        texts = [v.get("reason", ""), v.get("opposing_case") or "", v.get("conviction_change") or ""]
+        if stance == "OPPOSE":
+            hit = _bracket_as_reject(texts)
+            if hit:
+                errs.append(f"{w}: OPPOSE on {t} uses a bracket as the disqualifier "
+                            f"({hit[0]!r} + {hit[1]!r}). {R1_TEXT}")
+        if _bracket_lint(texts):
             flags.append(f"BRACKET_BASIS:{t}")
+        elif BRACKET_TERM.search(" ".join(x for x in texts if x)):
+            flags.append(f"BRACKET_MENTION:{t}")
     if deliberation_set is not None:
         ds = set(deliberation_set)
         missing, extra = ds - seen, seen - ds
