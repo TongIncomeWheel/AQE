@@ -1,15 +1,22 @@
 {
  "name": "aegis-core",
- "version": "1.7.0",
- "description": "Aegis process and orchestration — loops, desks, order path and tooling. Includes /pma (Premarket Analysis committee, v5.3 CONDUCTOR): map + scoreboard architecture, verified-read seat spawn, two-wave vote, four admission doors, tool-built R2 digest, executive-form brief. Voices ship separately in aegis-voices (same kernel_build).",
+ "version": "1.7.2",
+ "description": "Aegis committee and orchestration — the analytics side only: /pma (Premarket Analysis committee, v5.3 CONDUCTOR), /committee-pm, committee-desk, /bracket, /market_hours, /recover, staging-gatekeeper. The book close and premarket data prep (/daily, /ptj, /premarket, print-trade-journal) live in the aegis-daily plugin; the voices live in aegis-voices. Same kernel_build across all three.",
  "kernel_build": "cf837be",
  "layer": "process",
  "changelog": [
   {
-   "version": "1.7.0",
+   "version": "1.7.2",
    "date": "2026-09-06",
    "changes": [
-    "PM ruling 2026-09-06: /ptj and /premarket (the book close and the premarket data prep) moved OUT of aegis-core into their own plugin, aegis-daily, alongside the new scheduled /daily command. aegis-core keeps the judgment side: /pma, /committee-pm, /committee-desk, /bracket, /market_hours, /recover, /staging-gatekeeper. Install both plugins."
+    "R1 made mechanical — bracket is never a reject. registrar.py validate now REJECTS (a) any Round-2 OPPOSE whose reason/opposing_case uses a bracket term (bracket.valid/rr/risk_pct/stop_type, 'no usable stop', 'stop too wide', 'R:R too thin'...) as the disqualifier, and (b) any Round-1 shortfall_reason that cites a bracket. One re-spawn carrying the R1 text, then absent — same ladder as any REJECT. Other bracket mentions are flagged BRACKET_BASIS / BRACKET_MENTION on the scoreboard, never rejected. Conductor card discipline #7 updated to match. PM: 'the AIC chooses ticker ideas on a momentum book — strongest momentum and structures. Brackets are the last step for the PM to narrow a trade idea further.'"
+   ]
+  },
+  {
+   "version": "1.7.1",
+   "date": "2026-09-06",
+   "changes": [
+    "PM ruling 2026-09-06: aegis-core is the analytics/orchestration plugin only. /ptj, /premarket and print-trade-journal (everything PTJ and premarket-data-prep) moved to the aegis-daily plugin. Remaining committee skills still cite the premarket stamp as a prerequisite gate — they check it, they never perform the data fetch. aegis-voices untouched."
    ]
   },
   {

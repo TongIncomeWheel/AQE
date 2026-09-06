@@ -1,10 +1,20 @@
 {
  "name": "aegis-voices",
- "version": "1.5.0",
+ "version": "1.5.1",
  "kernel_build": "86525f9",
  "layer": "knowledge",
  "description": "Aegis committee voices — 15 isolated agents (9 S4 nominators incl. weis, 2 challenge, 2 fundamentals+lens, crown + druckenmiller macro), their methodology cards, the nomination contract, and the S0.5 voice activation + data readiness check. No process loops, no order path.",
  "changelog": [
+  {
+   "version": "1.5.1",
+   "date": "2026-09-06",
+   "changes": [
+    "R1 closed everywhere it was still open — bracket is never a reject. A sweep found four cards still turning a bracket into a reject somewhere a seat can read it: oneil R6 ('cannot be taken as mine at any size'), elder-lens R10 ('do not nominate the name at all' — never on the 09-05 list), raschke R6 and wyckoff R6 ('hard reject at any conviction') in their skill cards and canon locks, and steenbarger R5 ('block', citing bracket.valid). Every one rewritten: nominate/vote on momentum and structure as if the bracket were clean; STATE the engine's stop as information; when the engine bracket is invalid or missing, name your own invalidation level from structure. Never a reject, never a non-nomination, never a conviction cap.",
+    "HOUSE RULE R1 block inserted at the top of all 13 voting seats' runtime cards (agents/voice-*.md) — it binds the seat and overrides any card line below it, so a stale line can no longer win. Same rule written into skills/voice-common/SKILL.md (the shared engine).",
+    "canon/{oneil,raschke,wyckoff,elder-lens}/canon.lock.yaml rule text corrected to match (governance layer; extract hashes untouched — the lock hashes the source extract, not the derived rules).",
+    "Enforced mechanically on the aegis-core side by registrar.py (aegis-core 1.7.2)."
+   ]
+  },
   {
    "version": "1.2.0",
    "date": "2026-08-24",
