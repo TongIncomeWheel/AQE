@@ -354,17 +354,24 @@ with st.sidebar:
         st.rerun()
 
     # Voice packets only — the same exception-management shape as the held-book
-    # button above. Needs NO FMP key and re-runs nothing: the packets are a
-    # pure re-slice of the already-published export, so this is safe to press
-    # any time the daily succeeded but the split did not (2026-08-25: the HF
-    # Space ran the pipeline from an image that predated the split step, so
-    # the export updated and the packets did not).
-    if st.button("Refresh voice packets only", use_container_width=True,
-                 help="Re-slices the CURRENT daily export into the 11 per-voice "
-                      "packet files and publishes them. No FMP pull, no "
-                      "re-scoring — it only rebuilds what the committee reads. "
-                      "Use when the daily ran but the packets are stale."):
-        run_module_streaming("src.pipeline.voice_packets", "Voice packets", prog, stat)
+    # button above. Needs NO FMP key and re-runs nothing: both the candidate
+    # list and the packets are a pure re-slice of the already-published
+    # export, so this is safe to press any time the daily succeeded but the
+    # split did not (2026-08-25: the HF Space ran the pipeline from an image
+    # that predated the split step, so the export updated and the packets
+    # did not). 2026-09-06 relabelled: this rebuilds BOTH candidate_set.json
+    # (the Layer 0 -- on_longlist AND on_elder -- feed to the AIC) AND all 11
+    # per-voice packets from it in one pass (src.pipeline.voice_packets'
+    # sync(), which trims THEN slices THEN publishes) -- the old label named
+    # only the second half and was read as skipping the candidate list.
+    if st.button("Refresh AIC feed + voice packets", use_container_width=True,
+                 help="Rebuilds BOTH candidate_set.json (the Layer 0 "
+                      "on_longlist-AND-on_elder feed the committee reads) AND "
+                      "all 11 per-voice packet files from the CURRENT daily "
+                      "export, then publishes both to GitHub. No FMP pull, no "
+                      "re-scoring. Use when the daily ran but either the "
+                      "candidate list or the packets look stale."):
+        run_module_streaming("src.pipeline.voice_packets", "AIC feed + voice packets", prog, stat)
         st.rerun()
 
     # 2026-09-06: manual-only now, never auto-triggered by anything. Fetching
