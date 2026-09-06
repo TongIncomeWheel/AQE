@@ -59,10 +59,16 @@
 #     tiger_filled_orders.json, then re-run.
 #   * If a git push is blocked by this session's own sandbox proxy (a real,
 #     observed failure mode distinct from a bad token or network outage — see
-#     git_sync.py's --check), this script reports it as a failed push (worse 1)
-#     and does NOT attempt an MCP-based push itself; a shell script cannot
-#     call an MCP tool. The orchestrating Claude session must complete the
-#     push via the GitHub MCP connector's push_files tool.
+#     git_sync.py's --check), this script does NOT attempt an MCP-based push
+#     itself — a shell script cannot call an MCP tool — and, as of D-111
+#     (2026-09-06), does NOT report this specific known signature as a
+#     failure either: it is the routine, every-run shape of a push here, not
+#     a finding, and treating it as one manufactured a false alarm every day.
+#     The orchestrating Claude session ALWAYS completes the push via the
+#     GitHub MCP connector's push_files tool, unconditionally (D-110) — this
+#     is a mandatory follow-up regardless of what this script reports, not a
+#     step gated on seeing a failure here. A push failure that does NOT match
+#     the known sandbox-proxy signature is still reported as a real failure.
 #
 # NOTHING IS SCHEDULED. There is no task, cron or trigger that runs this. It
 # is started by hand, every time.
@@ -77,9 +83,16 @@
 #
 # EXIT CODES — the same three-way grammar as phase_gate / aqe_coverage /
 # artefact_check / journal_build:
-#   0  every job passed. Gate stamped ok.
+#   0  every job passed. Gate stamped ok. (D-111, 2026-09-06: the routine sandbox
+#      git-proxy push block no longer counts against this — it is expected on
+#      every run here and self-heals via the mandatory GitHub-connector delivery
+#      in the same session (D-110), so a run whose ONLY finding is that known
+#      signature is a normal 0, not a 1. Don't mistake this for the push being
+#      skipped or unverified — D-110's connector push + verify still runs, every
+#      time, unconditionally; only the misleading "failure" label was removed.)
 #   1  degraded but the book of record is sound — one broker only, a push that
-#      did not land, a later step that failed. Gate stamped partial. PAGE.
+#      failed for a reason OTHER than the known sandbox block, a later step
+#      that failed. Gate stamped partial. PAGE.
 #   2  halt. The journal could not be built or does not satisfy its contract,
 #      or D-100's reconcile gate found an unexplained vanish, so nothing
 #      downstream may run (ordering rule Arch-F9). Gate stamped fail BEFORE
@@ -132,6 +145,13 @@ mkdir -p "$EOD" "$OUT" data/journal
 
 WORST=0          # highest exit code any step reached
 RESULTS=()       # "name|status|detail" per job, for the closing checklist
+
+# D-111: the exact, byte-for-byte signature of the sandbox git-proxy blocking a native push —
+# every run here hits this, every time, and it always self-heals via the GitHub connector (D-110,
+# mandatory regardless of this script's own exit code). Matched against git_sync.py's own JSON
+# output so the two push jobs below can tell this ROUTINE, expected condition apart from a real,
+# unrecognized push failure that still deserves to page.
+GIT_PROXY_BLOCK_SIGNATURE='access denied by the git proxy'
 
 say() { printf '%s\n' "$*" | tee -a "$LOG"; }
 
@@ -324,6 +344,16 @@ step "carry-forward" 1 python3 tools/held_book_refresh.py carry-forward \
 step "journal verified" 1 python3 tools/journal_build.py verify --date "$DATE" --journal "$JOURNAL"
 
 # --------------------------------------------------------------- 5. push #1
+# D-111 (PM ruling 2026-09-06 — "why even show the fail which is useless, inaccurate... remove it
+# to avoid false alarms"). The sandbox git proxy blocking a native push with this EXACT signature
+# is not a finding — it is the normal, 100%-of-runs shape of every push in this environment, and
+# it self-heals every time via the GitHub connector (D-110, mandatory, unconditional, runs
+# regardless of what this script reports). Recording it as "FAIL" and degrading the run to
+# "partial" was itself the bug: it manufactured a page-worthy-looking alarm out of a routine,
+# always-expected, always-fixed event, and trained everyone reading the log to ignore red text —
+# which is exactly how the REAL 2026-09-04 gap (a push that landed but never got re-stamped) went
+# unnoticed. Only an UNRECOGNIZED push failure — one that doesn't match this known signature —
+# still counts as a real finding and still degrades the run.
 say ""
 say "--- push (book of record)"
 if python3 tools/git_sync.py -m "post-market $DATE: journal" "${PUSH_ARG[@]}" \
@@ -334,11 +364,15 @@ if python3 tools/git_sync.py -m "post-market $DATE: journal" "${PUSH_ARG[@]}" \
   elif grep -q '"pushed": true' "$OUT/git_sync_result.json"; then
     record "GitHub push (journal)" pass
     say "    pushed"
+  elif grep -q "$GIT_PROXY_BLOCK_SIGNATURE" "$OUT/git_sync_result.json"; then
+    record "GitHub push (journal)" expected "sandbox git-proxy block (every run, not a fault) — GitHub connector delivers this next"
+    say "    committed locally — native push blocked by the sandbox git proxy, exactly as every"
+    say "    run here. This is expected, not a fault, and does not affect the verdict. The"
+    say "    connector delivery + verify (D-110) is mandatory and runs next regardless."
   else
-    record "GitHub push (journal)" FAIL "committed locally, not pushed"
-    say "    committed locally but NOT pushed — see $OUT/git_sync_result.json"
-    say "    if this is a sandbox git-proxy block, the orchestrating Claude session must"
-    say "    complete the push via the GitHub MCP connector's push_files tool."
+    record "GitHub push (journal)" FAIL "committed locally, not pushed — reason does not match the known sandbox block"
+    say "    committed locally but NOT pushed, for a reason that is NOT the routine sandbox"
+    say "    git-proxy block — this IS a real finding. See $OUT/git_sync_result.json and page."
     worse 1
   fi
 else
@@ -450,8 +484,14 @@ if python3 tools/git_sync.py -m "post-market $DATE: metrics, archive, audit" "${
   elif grep -q '"reason": "nothing to commit' "$OUT/git_sync_result_final.json" 2>/dev/null; then
     record "GitHub push (final)" pass "nothing new to push"
     say "    nothing new since the first push"
+  elif grep -q "$GIT_PROXY_BLOCK_SIGNATURE" "$OUT/git_sync_result_final.json"; then
+    # D-111 — see push #1's comment. Same routine, expected, self-healing condition.
+    record "GitHub push (final)" expected "sandbox git-proxy block (every run, not a fault) — GitHub connector delivers this next"
+    say "    committed locally — native push blocked by the sandbox git proxy, as expected."
   else
-    record "GitHub push (final)" FAIL "committed locally, not pushed"
+    record "GitHub push (final)" FAIL "committed locally, not pushed — reason does not match the known sandbox block"
+    say "    committed locally but NOT pushed, for a reason that is NOT the routine sandbox"
+    say "    git-proxy block — this IS a real finding. See $OUT/git_sync_result_final.json and page."
     worse 1
   fi
 else
