@@ -353,18 +353,19 @@ def require_login() -> None:
 
     import streamlit as st
 
-    # Start the HF keep-alive pinger + daily scheduler once per process (no-ops
-    # locally). Placed here because every page calls require_login() right after
-    # set_page_config.
-    try:
-        from src.ui.keepalive import start_keepalive
-        start_keepalive()
-        from src.ui.daily_job import start_daily_job
-        start_daily_job()
-        from src.ui.alert_job import start_alert_job
-        start_alert_job()
-    except Exception:  # noqa: BLE001
-        pass
+    # 2026-09-06: keepalive/daily_job/alert_job used to be started HERE, but
+    # this function only runs when Streamlit executes the app script for a
+    # real browser session -- confirmed empirically that a plain HTTP GET
+    # (exactly what an uptime/keepalive monitor sends) never triggers that.
+    # On a Space redeployed many times a day, that meant the scheduler only
+    # re-armed itself when a human happened to open the app, which is not
+    # guaranteed before the next run is due. They now start from
+    # scripts/scheduler_daemon.py, launched directly by the container
+    # entrypoint (see Dockerfile) -- one scheduler per container, independent
+    # of any page visit. Do not restart them here too: each start_*() call
+    # protects against duplicate threads only WITHIN one process, so doing it
+    # from both this process and the standalone daemon would race two
+    # independent schedulers against each other at the same 08:30 instant.
 
     expected = os.environ.get(APP_PASSWORD_ENV)
     if not expected:

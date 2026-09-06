@@ -25,6 +25,8 @@ COPY . ./
 # panel/score parquets can be (re)built into AQE_DATA_DIR at runtime.
 RUN mkdir -p /app/data /app/output && chmod -R 777 /app/data /app/output
 
+RUN chmod +x docker-entrypoint.sh
+
 EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
@@ -34,8 +36,9 @@ HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 # next to the script passed to `streamlit run`; streamlit_app.py at the repo
 # root has no sibling pages/, which hid the pages on HF. On HF, secrets arrive
 # as env vars, so the streamlit_app.py st.secrets->env bridge isn't needed here.
-ENTRYPOINT ["streamlit", "run", "src/ui/1_Scanner.py", \
-            "--server.port=8501", \
-            "--server.address=0.0.0.0", \
-            "--server.headless=true", \
-            "--browser.gatherUsageStats=false"]
+#
+# docker-entrypoint.sh starts the standalone scheduler (keepalive/daily_job/
+# alert_job) as an independent background process before execing Streamlit
+# (2026-09-06 fix -- see the script for why this can no longer live inside
+# the Streamlit app's own require_login() path).
+ENTRYPOINT ["./docker-entrypoint.sh"]
