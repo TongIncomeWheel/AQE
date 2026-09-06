@@ -1,7 +1,24 @@
 {
  "name": "aegis-core",
  "version": "1.5.2",
- "description": "Aegis process and orchestration — loops, desks, order path and tooling. Includes /pma (Premarket Analysis committee, v5.3 CONDUCTOR: snapshot-every-tick, verified-read seat spawn, two-wave vote, four admission doors, tool-built R2 digest, executive-form brief: map + scoreboard architecture, forms not essays, registrar validation on arrival, data-steward + brief-writer workers, PM-LENS independent lane, signal-strength purity gate, stamp-verified pre-sliced packets, brief always lands). 1.5.2: dynCap single-writer fix (recompute_dyncap.py writes the full ledger; premarket step 8 reads, never recomputes). 1.5.1: re-synced contracts/voice_menus.json, pma_pipeline.py and emit_packets.py against the 2026-09-05 AQE voice-packet-spec build (18 new export fields routed onto seat menus; chart-pattern fields excluded as a checked build-time invariant). Voices ship separately in aegis-voices (same kernel_build).",
+ "description": "Aegis process and orchestration — loops, desks, order path and tooling. Includes /pma (Premarket Analysis committee, v5.3 CONDUCTOR): map + scoreboard architecture, verified-read seat spawn, two-wave vote, four admission doors, tool-built R2 digest, executive-form brief. Voices ship separately in aegis-voices (same kernel_build).",
  "kernel_build": "cf837be",
- "layer": "process"
+ "layer": "process",
+ "changelog": [
+  {
+   "version": "1.5.2",
+   "date": "2026-09-05",
+   "changes": [
+    "dynCap single-writer fix: tools/recompute_dyncap.py (PTJ CLOSE job 3.5, runs right after Aegis-membership classify) now writes the complete, schema-conformant ledger straight to data/persistent/dyncap_ledger.json — allocation, realised, unrealised, dyncap_usd, counts, mark timestamp, all in one shape, validated against contracts/dyncap_ledger.schema.json before write (fail-closed).",
+    "premarket step 8 no longer recomputes dynCap via tools/dyncap_ledger.py update — that path's from_ptj() summed unrealised P&L over ALL open positions with no aegis_status filter, i.e. could reintroduce the exact D-99 co-mingled-book bug this ledger exists to close. Step 8 now only reads the file job 3.5 already wrote. PM ruling 2026-09-05: \"should be done as part of the PTJ step.\""
+   ]
+  },
+  {
+   "version": "1.5.1",
+   "date": "2026-09-05",
+   "changes": [
+    "Re-synced contracts/voice_menus.json, pma_pipeline.py and emit_packets.py against the 2026-09-05 AQE voice-packet-spec build: 18 new export fields routed onto seat menus; chart-pattern fields excluded as a checked build-time invariant."
+   ]
+  }
+ ]
 }
