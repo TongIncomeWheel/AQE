@@ -455,6 +455,46 @@ else
 fi
 step "overnight brief (D-108)" 0 python3 tools/overnight_brief.py build "${BRIEF_ARGS[@]}"
 
+# ------------------------------------------------------------ 7b. portfolio ledger (D-114)
+# PM ruling 2026-09-06: "we will never have a proper portfolio trade journal but purely a daily
+# held book ... accurate YTD, MTD, WTD daily portfolio stats published." The journal is one day's
+# book; the archive is realised-only. This appends today's close as ONE ROW to the persistent
+# day-by-day series (Aegis NAV = dynCap, realised, unrealised, exposure, risk) and recomputes
+# WTD/MTD/QTD/YTD/inception as NAV change with realised split out, plus the ISO-week table.
+# Pure read of files the jobs above already wrote (law 4). A rehearsal writes the updated ledger
+# under $OUT and leaves the live shelf untouched. The rendered markdown is the record the PM reads;
+# it is pushed with everything else at push #2 (data/persistent is in git_sync's DEFAULT_PATHS).
+LEDGER="data/persistent/portfolio_ledger.json"
+LEDGER_OUT="$LEDGER"
+if (( REHEARSAL )); then LEDGER_OUT="$OUT/portfolio_ledger_$DATE.json"; fi
+PL_ARGS=(--journal "$JOURNAL" --ledger "$LEDGER" --out "$LEDGER_OUT" --allocated "$ALLOCATED")
+if [[ -f "$ARCHIVE_FOR_BRIEF" ]]; then PL_ARGS+=(--archive "$ARCHIVE_FOR_BRIEF"); fi
+if [[ -f "$PULL/tiger_account_summary.json" ]]; then PL_ARGS+=(--account-summary "$PULL/tiger_account_summary.json"); fi
+step "portfolio ledger (D-114)" 0 python3 tools/portfolio_ledger.py update "${PL_ARGS[@]}"
+PL_MD="$OUT/portfolio_stats_$DATE.md"
+if [[ -f "$LEDGER_OUT" ]]; then
+  step "portfolio stats render (D-114)" 0 python3 tools/portfolio_ledger.py render --ledger "$LEDGER_OUT" --out "$PL_MD"
+fi
+
+# ------------------------------------------------------------ 7c. trade journal (D-115)
+# PM ruling 2026-09-06: "what you don't have is a persistent trade-level trade journal. I can't go
+# back in time and see what trades were bought and sold at what prices, qty, dates, P&L." Every
+# broker fill ever pulled (keyed by the broker's fill id, so re-reading adds nothing), stock
+# round-trips by FIFO with entry/exit/qty/fees/net/%/days/R, open lots, Aegis-only stats, and a
+# reconciliation against the latest journal's positions and the archive ledger — findings, never
+# silent corrections. Reads today's saved pull + the journals on disk (law 4). Rehearsal writes
+# under $OUT and leaves the live store untouched. Pushed at push #2 with data/persistent.
+TJ="data/persistent/trade_journal.json"
+TJ_OUT="$TJ"
+if (( REHEARSAL )); then TJ_OUT="$OUT/trade_journal_$DATE.json"; fi
+TJ_ARGS=(--pull "$PULL" --journal-dir data/journal --store "$TJ" --out "$TJ_OUT")
+if [[ -f "$ARCHIVE_FOR_BRIEF" ]]; then TJ_ARGS+=(--archive "$ARCHIVE_FOR_BRIEF"); fi
+step "trade journal (D-115)" 0 python3 tools/trade_journal.py update "${TJ_ARGS[@]}"
+TJ_MD="$OUT/trade_journal_$DATE.md"
+if [[ -f "$TJ_OUT" ]]; then
+  step "trade journal render (D-115)" 0 python3 tools/trade_journal.py render --store "$TJ_OUT" --out "$TJ_MD"
+fi
+
 # --------------------------------------------------------------- 8. flow audit
 FA_JSON="$EOD/flow_audit_$DATE.json"
 FA_HTML="$EOD/flow_audit_$DATE.html"
