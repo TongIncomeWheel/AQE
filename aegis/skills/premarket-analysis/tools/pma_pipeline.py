@@ -103,11 +103,34 @@ def cmd_trim(a):
     rows = []
     for r in D["daily_list"]:
         row = {k: r.get(k) for k in CONSUMED}
-        row["on_longlist"] = (r.get("source") == "longlist")
+        # BUG FIX (2026-09-06): this used to derive on_longlist from
+        # `source == "longlist"` -- i.e. "was this row's PRIMARY source the
+        # longlist screen", not "does it actually clear the longlist
+        # criteria". A name sourced from elder_list or qs that ALSO clears
+        # longlist was reported here as on_longlist=false, silently
+        # overwriting the correct value CONSUMED already pulled from the row
+        # two lines up. Now it's the row's own real flag, matching
+        # elder_and_longlist_tickers' own definition exactly.
+        row["on_longlist"] = bool(r.get("on_longlist"))
+        row["on_elder"] = bool(r.get("on_elder"))
         row["in_ledger"] = bool(r.get("in_ledger"))
         rows.append(row)
+
+    # LAYER 0 (PM ruling 2026-09-06): the committee only ever sees names on
+    # BOTH lists -- on_longlist AND on_elder, the same intersection already
+    # surfaced to the AIC as the export's own elder_and_longlist_tickers
+    # view. Applied HERE, the very first step of the pipeline, so no
+    # nomination, vote, or packet downstream ever sees a name that only
+    # cleared one list. Motivation: observed runners were disproportionately
+    # names on both lists, and the wider single-list candidate pool was
+    # diluting the committee's attention rather than sharpening it.
+    before = len(rows)
+    rows = [r for r in rows if r["on_longlist"] and r["on_elder"]]
+
     save(a.out, {"run_date": a.date, "universe": rows})
-    print(f"receipt: {len(rows)} names trimmed; sources={dict(collections.Counter(r['source'] for r in rows))}")
+    print(f"receipt: {len(rows)} names trimmed (LAYER 0: on_longlist AND on_elder -- "
+          f"{before - len(rows)} of {before} excluded); "
+          f"sources={dict(collections.Counter(r['source'] for r in rows))}")
 
 def _slice(row, menu):
     """Resolve a menu field against a universe row.

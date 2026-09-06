@@ -29,6 +29,15 @@ Chart-pattern fields (pattern*) get the identical two-lock treatment (PM
 ruling 2026-09-05): pma_pipeline.py packets refuses a menu naming one at
 build time, and this script's byte-scan below is the second lock.
 
+LAYER 0 (PM ruling 2026-09-06): the committee now only ever sees names on
+BOTH lists -- on_longlist AND on_elder -- the same intersection already
+surfaced to the AIC as the export's own elder_and_longlist_tickers view.
+pma_pipeline.py's cmd_trim applies the actual filter; this script is the
+daily assurance check that it never drifts from that view: candidate_set.json's
+own universe, and every seat packet's actual served ticker set (minus any
+NO_TECHNICAL_COVERAGE holdouts), must match elder_and_longlist_tickers
+exactly. A mismatch refuses to stamp, same as an R3 breach.
+
 INVARIANT (PM clarification 2026-08-28): packets are spawn-time inputs only,
 consumed once, never read again. Everything downstream reads the canonical
 export + saved forms. If a packet and the export disagree, the export wins and
@@ -122,6 +131,50 @@ def main():
             print("FATAL R3 BREACH — refusing to stamp:", *breaches, sep="\n  ", file=sys.stderr)
             return 1
 
+        # LAYER 0 ASSURANCE (PM ruling 2026-09-06): candidate_set.json's own
+        # universe, and every seat packet's actual served ticker set, must
+        # match the export's elder_and_longlist_tickers view EXACTLY (minus
+        # any NO_TECHNICAL_COVERAGE holdouts, read and subtracted -- never
+        # silently ignored). This is the daily proof the two never drift
+        # apart, not just a claim.
+        with open(a.export, encoding="utf-8") as f:
+            export_doc = json.load(f)
+        layer0 = set(export_doc.get("elder_and_longlist_tickers") or [])
+        with open(cs, encoding="utf-8") as f:
+            cs_doc = json.load(f)
+        cs_tickers = {r["ticker"] for r in cs_doc["universe"]}
+
+        layer0_breaches = []
+        if cs_tickers != layer0:
+            layer0_breaches.append(
+                f"candidate_set.json universe ({len(cs_tickers)}) != "
+                f"elder_and_longlist_tickers ({len(layer0)}): diff "
+                f"{sorted(cs_tickers.symmetric_difference(layer0))}")
+
+        held_out = set()
+        no_cov_path = os.path.join(pk, "no_technical_coverage.json")
+        if os.path.exists(no_cov_path):
+            with open(no_cov_path, encoding="utf-8") as f:
+                held_out = set(json.load(f).get("excluded_from_nominator_tsvs") or [])
+        expected_served = layer0 - held_out
+
+        for path in sorted(glob.glob(os.path.join(pk, "*.tsv"))):
+            with open(path, encoding="utf-8") as f:
+                lines = f.read().splitlines()
+            if not lines or "ticker" not in lines[0].split("\t"):
+                continue
+            ti = lines[0].split("\t").index("ticker")
+            served = {ln.split("\t")[ti] for ln in lines[1:] if ln}
+            if served != expected_served:
+                layer0_breaches.append(
+                    f"{os.path.basename(path)}: served {len(served)} name(s), "
+                    f"expected {len(expected_served)} (Layer 0 minus holdouts); "
+                    f"diff {sorted(served.symmetric_difference(expected_served))}")
+        if layer0_breaches:
+            print("FATAL LAYER 0 BREACH — refusing to stamp:", *layer0_breaches,
+                  sep="\n  ", file=sys.stderr)
+            return 1
+
         # Publish atomically: clear-and-replace outdir, then stamp.
         if os.path.isdir(a.outdir):
             shutil.rmtree(a.outdir)
@@ -145,6 +198,8 @@ def main():
             "menus_sha256": sha256_file(a.menus),
             "files": files,
             "r3_scan": "clean",
+            "layer0_scan": "clean",
+            "layer0_count": len(layer0),
             "note": ("Round-1 seat packets pre-sliced by the nightly AQE job (v5 ruling #4). "
                      "Spawn-time inputs only — consumed once, never read downstream. "
                      "PREPARE must verify every hash here AND menus_sha256 against the current "

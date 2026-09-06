@@ -44,11 +44,16 @@ NOMINATORS = GROUP_A
 
 def _row(ticker: str, **over):
     """A daily_list row with the core technical fields populated, so it is not
-    held out by the no-blank-data rule."""
+    held out by the no-blank-data rule. on_longlist/on_elder both True by
+    default so it clears Layer 0 (PM ruling 2026-09-06: the committee only
+    ever sees names on BOTH lists) -- otherwise every test here would be
+    silently handed an empty candidate set regardless of what it means to
+    exercise."""
     r = {
         "ticker": ticker, "source": "longlist", "sc_momentum": 55.0,
         "flow": 40.0, "energy": 60.0, "structure": 50.0, "mp": 30.0,
         "elder": 7.0, "entry": 100.0, "atr_14d": 2.0, "in_ledger": False,
+        "on_longlist": True, "on_elder": True,
         "bracket": {"stop": 95.0, "targets": []},
         "qs": {"signal": "STRONG"}, "on_qs": True,   # PM-only, must not leak
     }
