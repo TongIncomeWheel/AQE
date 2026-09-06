@@ -35,8 +35,3 @@ def test_not_twice_same_day():
 def test_skips_sunday_and_monday_sgt():
     assert J._should_run_csp_scan(_sgt(2026, 7, 12, 5, 30), None) is False  # Sun
     assert J._should_run_csp_scan(_sgt(2026, 7, 13, 5, 30), None) is False  # Mon
-
-
-def test_csp_window_precedes_pipeline():
-    # The CSP catch-up window closes before the pipeline's run time — no contention.
-    assert J.CSP_SCAN_WINDOW_END_HOUR <= J.RUN_HOUR

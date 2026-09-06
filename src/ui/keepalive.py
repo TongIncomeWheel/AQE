@@ -6,9 +6,12 @@ Space's own public URL; that counts as traffic and resets the idle timer.
 
 Scope + limits:
 - Active ONLY on HF (when `SPACE_HOST` is present). No-op locally.
-- Keeps a *running* container awake. It cannot resurrect one that has already
-  slept — for guaranteed wake-ups (e.g. the 9am run) use an EXTERNAL uptime
-  monitor (cron-job.org / UptimeRobot) hitting the Space URL.
+- Keeps a *running* container awake for a responsive UX. It cannot resurrect
+  one that has already slept — an EXTERNAL uptime monitor (cron-job.org /
+  UptimeRobot) hitting the Space URL still matters for that. The daily
+  pipeline itself no longer depends on this container being awake at any
+  particular time (2026-09-06): it's triggered externally via GitHub Actions
+  workflow_dispatch, not the in-app scheduler.
 - Interval via `KEEPALIVE_MINUTES` env (default 90). Floor of 1 minute.
 """
 

@@ -38,9 +38,10 @@ Full per-module math and the complete export field list: `docs/AQE_TECHNICAL_REF
 - `held_book.py` (`src/analyzer/`) — Portfolio Hedge Layer: beta-adjusted book exposure, gap-loss scenarios, GICS sector weights, from `held_positions`. Carries both β30d and β60d bases side by side (no gate call on which is "correct").
 
 ### Cloud uptime + daily auto-run (HF Space)
-- `src/ui/keepalive.py` — pings the Space's own URL so HF doesn't sleep (paired with an external UptimeRobot monitor).
-- `src/ui/daily_job.py` — in-app scheduler: full pipeline at **08:30 SGT Tue–Sat**, universe CSP theta scan at **05:30 SGT**. Writes an `aqe_last_run.json` marker (local + Drive) for the Scanner status bar.
-- GitHub Actions backstops (`.github/workflows/daily-run.yml`, `alerts.yml`) re-run the pipeline/alerts if the Space didn't already, sharing Drive-side dedup state so nothing double-fires.
+- `src/ui/keepalive.py` — pings the Space's own URL so HF doesn't sleep (paired with an external UptimeRobot monitor). No longer load-bearing for the daily pipeline's timing (see below) — it's about a responsive UX, not arming a scheduled run.
+- `src/ui/daily_job.py` — in-app scheduler for the CSP theta scan (**05:30 SGT**) and universe refresh (**06:00 SGT**) only. **The main daily pipeline is NOT auto-fired here** (PM ruling 2026-09-06, after two prior fixes to this same in-app scheduler): it's triggered externally by a Claude-scheduled Routine dispatching `.github/workflows/daily-run.yml` (`workflow_dispatch`) each morning alongside the PTJ command, with the Scanner sidebar's "Bootstrap + run daily pipeline" button as the manual fallback. Writes an `aqe_last_run.json` marker (local + Drive + GitHub) for the Scanner status bar, which also now shows a per-file GitHub-publish breakdown, not just a timestamp.
+- `scripts/scheduler_daemon.py` starts keepalive/daily_job/alert_job as an independent OS process at container boot (`docker-entrypoint.sh`) — not gated behind a real browser session, which a plain HTTP keepalive ping can never trigger (Streamlit only executes the app script for an actual session).
+- `.github/workflows/daily-run.yml` has no `schedule:` trigger any more — GitHub's own cron queue was observed firing it 4-5+ hours late most days (a documented platform characteristic, not a bug here). `alerts.yml` is unrelated (live intraday alerts) and still runs on its own schedule.
 - `earnings.py` — FMP earnings calendar. `db.py` — SQLite state store.
 
 ### Live alerts (`src/alerts/` + `src/ui/pages/3_Charts_and_Trade_Entry.py`)

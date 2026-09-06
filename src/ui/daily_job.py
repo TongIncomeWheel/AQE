@@ -1,31 +1,40 @@
-"""In-app daily scheduler — universe refresh + pipeline, each market morning.
+"""In-app scheduler — universe/CSP pre-market jobs. The main daily pipeline is
+NO LONGER auto-fired from here (2026-09-06 PM decision).
 
 Schedule (SGT, Tuesday–Saturday):
   05:30 — Universe CSP theta scan (Alpaca → options_scan.json to the CSP Drive folder)
   06:00 — Universe refresh (FMP screener → mcap/$2B + SMA20/50 + volume)
-  08:30 — Daily pipeline (pull → score → SRM → candidates → publish)
 Sunday and Monday (SGT) are skipped (US markets closed Sat/Sun).
 
-The 05:30 CSP scan runs ~1h after the US close and 3h before the pipeline, so the
-options sweep never contends with the AQE feed run.
+The 05:30 CSP scan runs ~1h after the US close, before the 06:00 universe
+refresh, so the options sweep never contends with it.
 
-How it works:
-- A daemon thread (started once per process) checks the SGT clock every minute.
-- On a run day, once the time is past 08:30 and the pipeline hasn't run today, it
-  launches `python -m src.pipeline.daily_orchestrator` (full pull → score → SRM →
-  candidates → publish). The export lands in aegis/output/ and on Drive.
-- A "last run" marker (status, time, counts) is written locally AND to Drive so
-  the in-app status bar survives container restarts and never double-runs a day.
+The daily pipeline itself (`_run_pipeline_and_record`, and the MA Proximity
+Scan that rides along right after it) is triggered EXTERNALLY now — a
+Claude-scheduled Routine dispatches the `daily-run.yml` GitHub Actions
+workflow each morning as part of the same sequential job as the PTJ command,
+and the "Bootstrap + run daily pipeline" Scanner sidebar button covers a
+manual run. Both call `_run_pipeline_and_record` directly.
+
+Why: this used to auto-fire here at 08:30, gated on a real browser session
+having started the scheduler thread (require_login()) -- which a keepalive/
+uptime ping can never do (Streamlit only executes the app script for an
+actual WebSocket session, not a bare HTTP request) -- and on a Space rebuilt
+many times a day, that state kept getting wiped. A 2026-09-06 fix moved the
+thread startup to scripts/scheduler_daemon.py (container-boot, no page-visit
+dependency), which made this reliable again -- but the PM then decided a
+single external trigger (Claude + PTJ, with a manual UX button as fallback)
+is simpler and more predictable than reconciling three independent
+schedulers (HF in-app, GitHub's own flaky `schedule:` cron, and this one),
+and asked for the in-app and GitHub-cron paths torn out rather than kept as
+a redundant safety net. This file still owns the CSP scan and universe
+refresh -- those were never part of that decision.
 
 Requirements:
-- The container must be awake at 08:30 — keep it up with the UptimeRobot monitor
-  (every ~30 min). This scheduler can't wake a sleeping container by itself.
+- The container must be awake for the 05:30/06:00 jobs to fire -- keep it up
+  with an external uptime monitor. This scheduler can't wake a sleeping
+  container by itself.
 - Active only on HF (SPACE_HOST set) unless AQE_ENABLE_SCHEDULER=1 forces it on.
-
-Reliability note: an in-process scheduler is best-effort. For guaranteed runs
-regardless of Space state, an external cron (e.g. GitHub Actions) running the
-orchestrator would be more robust — but this keeps everything in the app per
-the current design.
 """
 
 from __future__ import annotations
@@ -41,28 +50,25 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 SGT = ZoneInfo("Asia/Singapore")
-RUN_HOUR = 8
-RUN_MIN = 30
-# Catch late wake-ups: still run if the Space only came up after 08:30, up to noon.
-WINDOW_END_HOUR = 12
 # Python weekday(): Mon=0 .. Sun=6. Skip Sunday(6) and Monday(0).
 SKIP_WEEKDAYS = {6, 0}
 
 # Universe CSP theta scan runs at 05:30 SGT — ~1h after the US close, BEFORE the
-# 06:00 universe refresh + 08:30 pipeline, so the options sweep never contends with
-# the AQE feed. Publishes options_scan.json to the dedicated CSP Drive folder.
+# 06:00 universe refresh. Publishes options_scan.json to the dedicated CSP Drive
+# folder.
 CSP_SCAN_HOUR = 5
 CSP_SCAN_MIN = 30
-CSP_SCAN_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00 (before AQE)
+CSP_SCAN_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00
 
-# Universe auto-refresh runs at 06:00 SGT — 2.5 hours before the pipeline.
+# Universe auto-refresh runs at 06:00 SGT.
 UNIVERSE_HOUR = 6
 UNIVERSE_MIN = 0
 UNIVERSE_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00
 
-# MA Proximity Scanner — runs DAILY right after the 08:30 pipeline (in the run
-# block below), against a persisted ma_panel so it stays incremental. Decoupled
-# from the pipeline's critical path so a slow FMP pull can't fail the trading feed.
+# MA Proximity Scanner — runs right after `_run_pipeline_and_record`'s own feed
+# publish (see that function), against a persisted ma_panel so it stays
+# incremental. Decoupled from the pipeline's critical path so a slow FMP pull
+# can't fail the trading feed.
 
 MARKER_FILENAME = "aqe_last_run.json"
 
@@ -78,15 +84,6 @@ def _is_run_day(d) -> bool:
     return d.weekday() not in SKIP_WEEKDAYS
 
 
-def _should_run(now: datetime, last_run_date_iso: str | None) -> bool:
-    """True if it's a run day, past 08:30 (within window), not already run today."""
-    if not _is_run_day(now.date()):
-        return False
-    if now.hour >= WINDOW_END_HOUR:
-        return False
-    if now.hour < RUN_HOUR or (now.hour == RUN_HOUR and now.minute < RUN_MIN):
-        return False
-    return last_run_date_iso != now.date().isoformat()
 
 
 def _should_refresh_universe(now: datetime,
@@ -115,7 +112,10 @@ def _should_run_csp_scan(now: datetime, last_csp_date_iso: str | None) -> bool:
 
 
 def next_run_hint() -> str:
-    return "08:30 SGT, Tue–Sat"
+    # 2026-09-06: there is no more in-app 08:30 auto-fire to name a time for --
+    # the daily pipeline is triggered externally (a Claude-scheduled Routine
+    # alongside PTJ) or manually from this UX's own sidebar button.
+    return "via the morning PTJ+AQE task, or manually from the sidebar"
 
 
 # ---------------------------------------------------------------------------
@@ -357,6 +357,18 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "reason": f"{type(exc).__name__}: {exc}",
         })
     _write_marker(marker)
+    # MA Proximity Scan rides along right after the feed, on whatever actually
+    # triggered this run (external dispatch or the manual UX button) -- no
+    # longer a separate 08:30 branch in the (now removed) in-app scheduler
+    # loop. Decoupled from the pipeline's own critical path: it runs AFTER
+    # the marker is already written, so a slow/failing MA scan can never turn
+    # a genuine feed success into a reported failure.
+    try:
+        _, feed_today_now = _feed_status()
+        if feed_today_now:
+            _run_ma_scan_and_record(now)
+    except Exception:  # noqa: BLE001
+        pass
     return marker
 
 
@@ -463,47 +475,22 @@ def _run_ma_scan_and_record(now: datetime) -> None:
 
 
 def _loop() -> None:
-    # Seed last-run date from the persisted marker so a restart doesn't re-run.
-    last = last_run_status()
-    last_date = last.get("date_sgt") if last else None
     last_universe_date: str | None = None
-    last_ma_date: str | None = None
     last_csp_date: str | None = _csp_scan_seed_date()
     while True:
         try:
             now = datetime.now(SGT)
-            # 05:30 SGT — universe CSP theta scan (before the refresh + pipeline)
+            # 05:30 SGT — universe CSP theta scan (before the refresh)
             if _should_run_csp_scan(now, last_csp_date):
                 _run_csp_scan_and_record(now)
                 last_csp_date = now.date().isoformat()
-            # 06:00 SGT — universe refresh (before the pipeline)
+            # 06:00 SGT — universe refresh
             if _should_refresh_universe(now, last_universe_date):
                 _refresh_universe_and_record(now)
                 last_universe_date = now.date().isoformat()
-            # 08:30 SGT — daily pipeline (trading feed), then the MA scan DAILY
-            # right after it. The MA scan runs AFTER the feed is published, so a
-            # slow FMP pull can never delay/fail the trading feed (it stays
-            # decoupled from the pipeline's critical path), but on the same
-            # daily cadence. It publishes its own JSON to the MA-scan Drive folder.
-            if _should_run(now, last_date):
-                _run_pipeline_and_record(now)
-                last_date = now.date().isoformat()
-                if last_ma_date != now.date().isoformat():
-                    _run_ma_scan_and_record(now)
-                    last_ma_date = now.date().isoformat()
-                # ...and the CSP scan, if its own 05:30 window was missed.
-                #
-                # THE WINDOWS DID NOT OVERLAP, so it could never catch up. The
-                # CSP slot is 05:30-08:00 and the pipeline slot is 08:30-12:00:
-                # any morning the Space was not awake in that first window —
-                # which is every morning it restarted overnight — the pipeline
-                # ran and the options sweep silently did not, with no path back.
-                # The MA scan has ridden along here since it was decoupled; the
-                # options scan should have too. Its own marker still guards
-                # against a double run when 05:30 DID fire.
-                if last_csp_date != now.date().isoformat():
-                    _run_csp_scan_and_record(now)
-                    last_csp_date = now.date().isoformat()
+            # The daily pipeline itself (+ the MA scan that rides along right
+            # after it) is triggered externally now -- see the module
+            # docstring. Nothing to check for it here.
         except Exception:  # noqa: BLE001
             pass
         time.sleep(60)

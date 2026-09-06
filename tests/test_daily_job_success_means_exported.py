@@ -199,6 +199,55 @@ def test_artifacts_published_is_none_when_the_receipt_line_never_printed(_wired,
     assert marker["artifacts_published"] is None
 
 
+# ── MA scan follows the pipeline directly (2026-09-06) ──────────────────────
+# The in-app scheduler loop that used to call _run_ma_scan_and_record() right
+# after _run_pipeline_and_record() is gone (the main pipeline is no longer
+# auto-fired there at all -- see the module docstring). The MA scan must not
+# silently stop running just because its old caller was removed: it now
+# rides along inside _run_pipeline_and_record() itself, so it fires
+# regardless of what triggered the pipeline (external workflow_dispatch or
+# the manual UX button).
+
+def test_ma_scan_runs_after_a_genuine_feed_refresh(_wired, monkeypatch):
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-06")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0))
+    calls = []
+    monkeypatch.setattr(J, "_run_ma_scan_and_record", lambda now: calls.append(now))
+
+    J._run_pipeline_and_record(now)
+
+    assert calls == [now]
+
+
+def test_ma_scan_does_not_run_when_the_feed_never_refreshed(_wired, monkeypatch):
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-08-29")  # stale
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0))
+    calls = []
+    monkeypatch.setattr(J, "_run_ma_scan_and_record", lambda now: calls.append(now))
+
+    J._run_pipeline_and_record(now)
+
+    assert calls == []
+
+
+def test_a_failing_ma_scan_never_turns_a_real_success_into_a_failure(_wired, monkeypatch):
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-06")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0))
+
+    def _boom(now):
+        raise RuntimeError("MA scan blew up")
+    monkeypatch.setattr(J, "_run_ma_scan_and_record", _boom)
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert marker["status"] == "success", (
+        "the feed itself genuinely refreshed -- a broken downstream MA scan "
+        "must not be reported as a pipeline failure")
+
+
 def test_artifacts_published_survives_a_timeout(_wired, monkeypatch):
     """The TimeoutExpired branch captures partial stdout -- Step 8a-2 runs
     well before the slow tail steps, so its receipt should still be there."""

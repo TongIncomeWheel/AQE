@@ -1,11 +1,18 @@
-"""GitHub Actions backstop for the daily run.
+"""GitHub Actions entrypoint for the daily run.
 
-The HF Space runs the pipeline in-app at 08:30 SGT (Tue–Sat). This backstop runs
-on GitHub's schedulers ~1h later and executes the pipeline ONLY if the Space
-hasn't already done today's run — covering days the Space was asleep or down.
+2026-09-06 PM decision: this is now the primary, ONLY automatic trigger for
+the daily pipeline -- fired externally via workflow_dispatch on
+.github/workflows/daily-run.yml (a Claude-scheduled Routine dispatches it
+each morning alongside the PTJ command; see that workflow file for the full
+history). The in-app HF scheduler no longer auto-fires the pipeline itself
+(src/ui/daily_job.py), and GitHub's own `schedule:` cron was removed from
+that workflow -- it was firing this workflow 4-5+ hours late most days, a
+documented platform characteristic, not something this script could fix.
 
-It reuses the same logic + marker as the in-app job, so the Scanner status bar
-stays accurate regardless of which path actually ran.
+Still dedups against an already-successful run today (e.g. via the AQE UX's
+own "Bootstrap + run daily pipeline" manual button) using the same marker
+logic the pipeline function itself writes, so triggering this twice in one
+day -- or on top of a manual run -- is a safe no-op, not a double-run.
 
 Run:  python -m scripts.daily_backstop
 Needs env: FMP_API_KEY, GOOGLE_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN
@@ -44,7 +51,7 @@ def main() -> int:
         lr = last_run_status()
         if (lr and lr.get("date_sgt") == now.date().isoformat()
                 and lr.get("status") == "success"):
-            print(f"[backstop] {stamp}: today already ran via the Space "
+            print(f"[backstop] {stamp}: today already ran successfully "
                   f"({lr.get('finished_at')}) — skipping.")
             return 0
         print(f"[backstop] {stamp}: no successful run today — running pipeline now.")
