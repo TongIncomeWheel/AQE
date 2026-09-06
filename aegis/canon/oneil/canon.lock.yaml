@@ -507,6 +507,15 @@ recognisers:
   - entry
   - bracket.price
   - sma_distance_pct
+- id: R6
+  if: bracket.risk_pct exceeds 8%, or bracket.valid is false
+  then: nominate (or vote) on leadership, base and volume as if the bracket were clean, and STATE on the
+    line that the engine's stop sits wider than the 7-8% O'Neil would defend (C20) — a caution for the PM's
+    bracketing step. NEVER a reject, non-nomination or conviction cap. PM RULING R1 (2026-08-14, restated 2026-09-05, absolute 2026-09-06) — a bracket, its validity, its risk%, its stop type and its R:R are NEVER a reason to reject, not nominate, oppose, or cap conviction on a name. The committee chooses on momentum and structure; the bracket is the PM's last step to narrow a chosen idea.
+  fields:
+  - bracket.risk_pct
+  - bracket.stop
+  - bracket.valid
 - id: R7
   if: price is 70% or more above ma_200
   then: this is a climax reading, not an entry — an extended name that far above its 200-day is sold into
@@ -556,5 +565,5 @@ methods: []
 counts:
   principles: 25
   unsourced: 0
-  recognisers: 10
+  recognisers: 11
   methods: 0
