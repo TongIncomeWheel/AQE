@@ -3,15 +3,14 @@
   "version": "1.0",
   "kernel_version": "1.4",
   "what_this_is": "The Nick Crown macro layer: positioning, breadth and regime read BEFORE any individual stock. It answers what kind of market this is, and therefore which family of trades is allowed today. It is deliberately separate from AQE's stock scanner and sector work.",
-  "generated_at": "2026-09-06T17:04:24+08:00",
+  "generated_at": "2026-09-06T17:38:39+08:00",
   "status": "DEGRADED",
   "status_means": "it ran, but something was missing or on a substitute source — see limits",
   "read_me_first": {
-    "headline": "A market with no clear breadth lead, and quiet. Best fit: a stock-picker's market — the index tells you very little about the average name.",
+    "headline": "A market with no clear breadth lead, and quiet.",
     "why": [
       "Breadth is going sideways — neither the big names nor the average stock is leading.",
       "Single stocks are moving about as much as the index. The index itself is quiet, with VIX at 14.5, lower than 94% of the past two years.",
-      "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and none is at an extreme — the positioning is not crowded.",
       "Big speculators are unusually long gold, copper, the Dow and 4 others; unusually short crude, natural gas and the long bond (CFTC data to 2026-09-01).",
       "No warning signs are lit — price and everything behind it agree."
@@ -20,10 +19,11 @@
     "what_would_change_it": [
       "If the dollar trades above 99.65 (0.5% away), trend funds start buying.",
       "If the 2-year trades above 103.58 (1.0% away), trend funds start buying.",
-      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get.",
-      "This reading would strengthen if dispersion NORMAL (spread 21.27) reversed."
+      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
     ],
-    "caveats": []
+    "caveats": [
+      "No dealer-positioning read today, so nothing above accounts for option hedging flows."
+    ]
   },
   "the_call": {
     "expression_family": "BROADENING_CARRY",
@@ -120,50 +120,11 @@
         "note": "CFTC data covering Tuesday, published Friday, so always at least three days old. It cannot time anything."
       },
       "option_dealers": {
-        "available": true,
-        "regime": "NEGATIVE",
-        "means": "dealers amplify moves — expect bigger swings",
-        "detail": {
-          "SPY": {
-            "spot": 770.19,
-            "total_gex": -1722166589.48,
-            "gamma_flip": null,
-            "flip_distance_pct": null,
-            "call_wall": {
-              "strike": 775.0,
-              "gex": 1051074532.07,
-              "share_of_side": 0.0806,
-              "vs_even_share": 15.89
-            },
-            "put_wall": {
-              "strike": 760.0,
-              "gex": 1768795327.12,
-              "share_of_side": 0.1199,
-              "vs_even_share": 20.26
-            },
-            "assumption": "Customers are long calls and long puts, so dealers are long call gamma and short put gamma. This is the standard convention, NOT observed data — exchange feeds publish open interest, never who is on which side."
-          },
-          "QQQ": {
-            "spot": 718.96,
-            "total_gex": -1245580665.52,
-            "gamma_flip": null,
-            "flip_distance_pct": null,
-            "call_wall": {
-              "strike": 730.0,
-              "gex": 639001304.68,
-              "share_of_side": 0.0897,
-              "vs_even_share": 17.57
-            },
-            "put_wall": {
-              "strike": 700.0,
-              "gex": 1118213580.04,
-              "share_of_side": 0.1336,
-              "vs_even_share": 18.57
-            },
-            "assumption": "Customers are long calls and long puts, so dealers are long call gamma and short put gamma. This is the standard convention, NOT observed data — exchange feeds publish open interest, never who is on which side."
-          }
-        },
-        "why_not": null
+        "available": false,
+        "regime": "UNKNOWN",
+        "means": null,
+        "detail": {},
+        "why_not": "QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set"
       }
     },
     "volatility": {
@@ -194,22 +155,6 @@
       "event": "BRZE earnings",
       "kind": "earnings",
       "what_it_tests": "You hold this. It is the report most able to move your book."
-    },
-    {
-      "date": "2026-09-10",
-      "day": "Thursday",
-      "time_et": null,
-      "event": "ORCL earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
-    },
-    {
-      "date": "2026-09-11",
-      "day": "Friday",
-      "time_et": null,
-      "event": "KR earnings",
-      "kind": "earnings",
-      "what_it_tests": "On today's list, so a reaction here changes a name you may act on."
     }
   ],
   "key_levels": [
@@ -227,17 +172,6 @@
       "sector": "fx",
       "trend_signal": -0.0923,
       "direction": "buy_above"
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "SPY call wall",
-      "now": 770.19,
-      "level": 775.0,
-      "unit": "price",
-      "distance_pct": 0.62,
-      "if_it_breaks": "The heaviest call positioning above the market. Rallies into it tend to meet dealer selling unless momentum forces through.",
-      "source": null,
-      "quotable_as_contract": true
     },
     {
       "kind": "breadth",
@@ -266,28 +200,6 @@
       "direction": "buy_above"
     },
     {
-      "kind": "dealer positioning",
-      "what": "SPY put wall",
-      "now": 770.19,
-      "level": 760.0,
-      "unit": "price",
-      "distance_pct": -1.32,
-      "if_it_breaks": "The heaviest put positioning below the market. It usually acts as support, and losing it removes the cushion.",
-      "source": null,
-      "quotable_as_contract": true
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "QQQ call wall",
-      "now": 718.96,
-      "level": 730.0,
-      "unit": "price",
-      "distance_pct": 1.54,
-      "if_it_breaks": "The heaviest call positioning above the market. Rallies into it tend to meet dealer selling unless momentum forces through.",
-      "source": null,
-      "quotable_as_contract": true
-    },
-    {
       "kind": "trend followers",
       "what": "UST 5Y note flip",
       "now": 105.5391,
@@ -301,17 +213,6 @@
       "sector": "rates",
       "trend_signal": -0.5755,
       "direction": "buy_above"
-    },
-    {
-      "kind": "dealer positioning",
-      "what": "QQQ put wall",
-      "now": 718.96,
-      "level": 700.0,
-      "unit": "price",
-      "distance_pct": -2.64,
-      "if_it_breaks": "The heaviest put positioning below the market. It usually acts as support, and losing it removes the cushion.",
-      "source": null,
-      "quotable_as_contract": true
     },
     {
       "kind": "volatility",
@@ -629,8 +530,10 @@
   },
   "limits": [
     "These markets came from Yahoo rather than our data provider (CL, DX, HG, NG, NQ, RTY, YM, ZB, ZC, ZF, ZN, ZS, ZT, ZW). They are the real futures contracts, so the flip levels are quotable, but Yahoo is a free feed with no uptime guarantee.",
+    "gamma unavailable — QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set",
     "DSPX and implied correlation disagree with the VIXEQ-VIX spread — treat the dispersion read with caution",
     "economic calendar unavailable: FMP HTTP 404 for https://financialmodelingprep.com/stable/economics-calendar: []",
+    "No dealer-positioning reading today, so nothing here accounts for option hedging flows.",
     "Two macro scenarios fit today's data almost equally well. Treat the overlap between them as the honest read rather than the winner.",
     "A scenario score is the share of that story's conditions currently met. It is not a probability and was never fitted to history.",
     "This layer does not size, does not name a ticker and places nothing. It produces a family of expressions and a multiplier on the PM's own risk budget."
