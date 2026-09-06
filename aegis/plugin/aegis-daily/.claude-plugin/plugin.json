@@ -1,0 +1,19 @@
+{
+ "name": "aegis-daily",
+ "version": "1.0.0",
+ "description": "AEGIS DAILY — the book close and its handoff to AQE, in its own plugin. /daily is the one scheduled command: (1) close the book via PTJ and push the journal to GitHub, (2) print the trade journal on screen and prove the file AQE reads is on main, (3) trigger the AQE daily run and watch it land. Also carries /ptj (VIEW, FA, CLOSE) and /premarket (the post-AQE data prep that gates /pma). Deterministic tools only — no voices, no committee, no orders. Split out of aegis-core 2026-09-06 (PM ruling).",
+ "kernel_build": "cf837be",
+ "layer": "process",
+ "changelog": [
+  {
+   "version": "1.0.0",
+   "date": "2026-09-06",
+   "changes": [
+    "New plugin. PM ruling 2026-09-06: everything to do with PTJ and premarket data prep lives here, not in aegis-core.",
+    "skills/daily — the scheduled three-stage command: close → show → trigger AQE. Stage 3 fires .github/workflows/daily-run.yml by pushing aegis/triggers/aqe_daily_run.json (D-113: the sandbox cannot call the Actions API, so the workflow now also listens on a push to that one path-filtered file) and watches aegis/output/aqe_last_run.json for today's status:success, paging on failure or after 45 minutes and never retrying on its own.",
+    "skills/ptj — moved from aegis-core unchanged, except Step 2b now points at /daily Stage 3 instead of carrying its own AQE-trigger text.",
+    "skills/premarket — moved from aegis-core. Step 0 is now idempotent: if phase_gate reads premarket_data READY for today (i.e. /daily already closed the book), it skips the close instead of re-pulling the broker and re-pushing the same journal. The rest (export pull, coverage, held-book refresh, stops, artefact check, push, stamp, print) is unchanged and now runs AFTER AQE has published, which is the order it always needed."
+   ]
+  }
+ ]
+}

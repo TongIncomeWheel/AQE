@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Zip the two plugin trees into installable .plugin files. Copies aegis/skills/premarket-analysis into
+"""Zip the three plugin trees into installable .plugin files. Copies aegis/skills/premarket-analysis into
 aegis-core/skills/pma first so the editable original wins. Output: aegis/plugin/dist/*.plugin"""
 import os, shutil, zipfile
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 src = os.path.join(ROOT, "skills", "premarket-analysis"); dst = os.path.join(HERE, "aegis-core", "skills", "pma")
+os.makedirs(dst, exist_ok=True)
 for name in ("SKILL.md",):
     shutil.copy(os.path.join(src, name), os.path.join(dst, name))
 for sub in ("tools", "contracts", "stages"):
@@ -16,7 +17,7 @@ for t in ("preflight.py", "aqe_coverage.py"):
     p = os.path.join(ROOT, "tools", t)
     if os.path.exists(p): shutil.copy(p, os.path.join(HERE, "aegis-core", "tools", t))
 os.makedirs(os.path.join(HERE, "dist"), exist_ok=True)
-for plug in ("aegis-core", "aegis-voices"):
+for plug in ("aegis-core", "aegis-daily", "aegis-voices"):
     out = os.path.join(HERE, "dist", plug + ".plugin"); base = os.path.join(HERE, plug)
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for dp, dn, fn in os.walk(base):
