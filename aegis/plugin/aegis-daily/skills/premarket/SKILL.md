@@ -19,7 +19,7 @@ model: sonnet  # sonnet [RB:model_tiers.control] — PINNED, not inherited (D-92
 
 ## STEP 0 — CLOSE THE BOOK (PTJ, CLOSE MODE) — ONLY IF `/daily` HAS NOT ALREADY
 
-**Check first (D-113, 2026-09-06).** On a scheduled day the book is closed by `/daily` Stage 1 *before* AQE runs, and this skill runs *after* AQE has published. So: run `python3 tools/phase_gate.py check --for premarket_data --json`. **If it reads READY for today's expected trading day, the book is already closed and pushed — skip the rest of Step 0, say one line "Book already closed by /daily at <run_at_utc>", and go to step 1.** Closing it a second time re-pulls the broker, rewrites the same journal and pushes again for nothing.
+**Check first (D-113, 2026-09-06).** On a scheduled day the book is closed by `/daily` Stage 1 first, and this skill runs later, after AQE has published its export. So: run `python3 tools/phase_gate.py check --for premarket_data --json`. **If it reads READY for today's expected trading day, the book is already closed and pushed — skip the rest of Step 0, say one line "Book already closed by /daily at <run_at_utc>", and go to step 1.** Closing it a second time re-pulls the broker, rewrites the same journal and pushes again for nothing.
 
 Only if it reads NOT_READY (no stamp for today): read `skills/ptj/SKILL.md` and run **MODE C** end to end. Nothing about the pull or the batch is repeated here — that file is the only copy.
 
@@ -99,7 +99,7 @@ The daily chain is **two typed commands**, plus one view the PM can run any time
 |---|---|
 | `/ptj` | Live look at the book. Pulls both brokers, runs the batch in rehearsal, prints. Changes nothing. Run it as often as you like. |
 | `/ptj fa` | The same picture read off disk. No pull, no batch, instant. |
-| `/daily` | Scheduled. Closes the book (PTJ MODE C), shows it, triggers the AQE daily run and watches it land. |
+| `/daily` | Scheduled. Closes the book (PTJ MODE C), shows it, prints and files the portfolio journal (D-114). Does not trigger AQE — that pipeline has its own Claude Code routine. |
 | **`/premarket`** | **This skill.** Once AQE has published: pulls the export, proves it is complete, refreshes the held book and stops, pushes, stamps. Closes the book itself only if `/daily` did not. |
 | `/committee-pm` | The committee — 11 voices plus the desk. Gated on this skill's `ok` stamp. |
 

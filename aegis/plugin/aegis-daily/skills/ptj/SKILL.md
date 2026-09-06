@@ -93,7 +93,7 @@ bash scripts/run_post_market.sh <YYYY-MM-DD>
 
 Optional: `--pull DIR` if the payloads are somewhere other than `data/eod/<DATE>/broker_pull`. `--rehearsal` runs every step for real against the real payloads but writes the journal and all run artefacts to `data/eod/<DATE>/rehearsal/`, leaves the archive untouched, turns both pushes into `git_sync --dry-run`, and **never stamps the gate** — use it before the close, and the first time you run the batch after changing anything.
 
-The thirteen jobs it runs, plus D-108's overnight brief (job 10.5, added 2026-09-06), in this order:
+The thirteen jobs it runs, plus D-108's overnight brief (job 10.5), D-114's portfolio ledger (jobs 10.6-10.7) and D-115's trade journal (jobs 10.8-10.9), all added 2026-09-06, in this order:
 
 | # | Job | Fatal? |
 |---|---|---|
@@ -109,11 +109,19 @@ The thirteen jobs it runs, plus D-108's overnight brief (job 10.5, added 2026-09
 | 9 | `portfolio_metrics.py compute` — metrics written into the journal | no |
 | 10 | `archive_ledger.py merge` — append today's closed trades | no |
 | 10.5 | `overnight_brief.py build` (D-108) — what changed overnight, realised MTD/WTD/YTD, open risk, book beta/exposure, assembled into one file | no |
+| 10.6 | `portfolio_ledger.py update` (D-114) — **the portfolio journal**: appends today's close as one row to `data/persistent/portfolio_ledger.json` (Aegis NAV, realised, unrealised, exposure, risk) and recomputes WTD/MTD/QTD/YTD/inception as NAV change, realised split out, plus the ISO-week table | no |
+| 10.7 | `portfolio_ledger.py render` (D-114) — writes `data/eod/<DATE>/portfolio_stats_<DATE>.md`, the tables Step 3 prints | no |
+| 10.8 | `trade_journal.py update` (D-115) — **the trade journal**: every broker fill ever pulled into `data/persistent/trade_journal.json` (keyed by fill id), FIFO round-trips with entry/exit/qty/fees/net/%/days/R, open lots, Aegis stats, reconciliation vs the latest positions and the archive | no |
+| 10.9 | `trade_journal.py render` (D-115) — writes `data/eod/<DATE>/trade_journal_<DATE>.md` | no |
 | 11 | `daily_flow_audit.py --render` — the flight recorder | no |
-| 12 | `git_sync.py` — **push #2, metrics + archive + audit + overnight brief** | no |
+| 12 | `git_sync.py` — **push #2, metrics + archive + audit + overnight brief + portfolio ledger + trade journal** | no |
 | 13 | `phase_gate.py stamp` — the only thing tomorrow's Phase 0 reads | — |
 
 **D-108, overnight brief (job 10.5).** PM ruling 2026-09-06: PTJ ran clean but nothing surfaced what was sold or changed overnight, realised MTD/WTD/YTD P&L, open risk, or book beta/exposure — the PM was reconstructing it from memory or the broker screen. Book beta and exposure were already computed every run by job 9; MTD/YTD were already computed every run by job 10 — both were a **relay gap, not a computation gap**. WTD was a genuine gap, closed by D-107 in `archive_ledger.py`. Open risk (dollars at stake if every held equity's live stop filled right now) did not exist anywhere before this job. `overnight_brief.py` is a pure read+assemble step over what jobs 2-10 already put on disk — today's journal, the prior day's journal, and the archive ledger — no new broker calls, no judgement (law 4). Writes `data/eod/<DATE>/overnight_brief_<DATE>.json`; a rehearsal run writes it under `rehearsal/` like every other job. Step 3 below folds its contents into what gets relayed to the PM.
+
+**D-114, the portfolio journal (jobs 10.6-10.7).** PM ruling 2026-09-06: "we will never have a proper portfolio trade journal but purely a daily held book ... I can't manage a portfolio without that." The journal is one day's book; the archive ledger is realised-only, so a book down 5% mark-to-market with no closes read "MTD 0". `portfolio_ledger.py` is the missing series: one row per close date keyed by close date (idempotent), Aegis NAV taken as dynCap (allocation + cumulative realised + Aegis-only unrealised — never the co-mingled Tiger account NAV, which is stored on the row as reference only), and every period figure computed as **NAV change** with realised split out and the baseline named (the row before the period, or the allocation if the series began inside the period). Seeded 2026-09-06 from the 14 real journals back to the 2026-08-18 close. Read-only over what jobs 2-10 already wrote (law 4). A rehearsal writes its ledger under `rehearsal/` and never touches the live shelf.
+
+**D-115, the trade journal (jobs 10.8-10.9).** PM ruling 2026-09-06: "I can't go back in time and see what trades were bought and sold at what prices, qty, dates, P&L — a simple mechanical record." `trade_journal.py` keeps every broker fill ever pulled (the union of each day's saved `tiger_filled_orders.json`, keyed by Tiger's fill id, so a re-read adds nothing), builds stock round-trips by FIFO — date in, entry, qty, date out, exit, gross, fees, net, %, days held, R where the stop at entry is known — lists open lots, computes Aegis-only stats (win rate, profit factor, expectancy, avg hold), and reconciles against the latest journal's positions and the archive ledger. Reconciliation lines are **findings, never corrections** — the PM rules on them. Positions older than the first saved pull are seeded from the earliest journal that carried them and say so on the row. Seeded 2026-09-06 from 153 fills back to 2026-08-12; the first reconciliation found the archive had booked HNGE's 31-Aug exit off the post-re-buy average cost (−406 vs the fills' −631) and that IBKR's 1-Sep exit has no fill in any saved pull.
 
 **Why two pushes.** The single push used to sit at job 8 only, before metrics, the archive append and the audit existed. A fresh clone therefore read a journal with an empty `metrics` key until the following day's run overwrote it. The first push protects the book the moment it is verified; the second ships the rest of the same run.
 
@@ -134,9 +142,9 @@ Do not re-derive positions, P&L, dynCap or metrics by hand in any mode, and do n
 
 ---
 
-## Step 2b — What fires AQE after the close
+## Step 2b — Nothing here fires AQE
 
-Nothing in this file. Triggering the AQE daily run and watching it land is **Stage 3 of `skills/daily/SKILL.md`** (D-113) — the scheduled command that calls this file's MODE C as its Stage 1. PTJ closes the book; `/daily` hands it to AQE. Keep it that way: one place per job.
+This skill closes the book and pushes it. It does not trigger, dispatch, or wait on the AQE daily pipeline — that pipeline is run from its own Claude Code routine (PM decision 2026-09-06; the Cowork connector cannot call the GitHub Actions API, so nothing in this plugin pretends to). AQE reads the journal this skill pushed to `data/journal/` on `main`; that push IS the handoff.
 
 ---
 
@@ -154,7 +162,9 @@ Read the journal (MODE A: `data/eod/DATE/rehearsal/` · MODE B: the latest file 
 4. **Realised P&L** (D-107/D-108) — MTD, WTD and YTD in one line each, straight from `overnight_brief.py`'s `realized_pnl`.
 5. **Open risk** (D-108) — total dollars at stake if every held equity's live stop filled right now, plus any name with `unknown_stop` named explicitly (never folded into the total as zero).
 6. **Capital** — dynCap, 1R, gross exposure, leverage, **book beta**, **book exposure**, 1-month VaR. Book beta and book exposure are always relayed as their own line, never left implicit inside "leverage" — that was the actual gap the PM flagged, the numbers were already computed every run.
-7. **Anything not clean** — every `auto_included_unrecognized` equity name (D-106: already confirmed and counted, but call it out by name since the PM's only lever is to reject it afterward), every `pending_review` OPTION leg (real capital, excluded from every metric until confirmed — equity fills no longer use this status, options still do), the hedge record or its absence, `mixed_vintage` if it fired, any position excluded for want of an AQE snapshot.
+7. **Portfolio journal** (D-114, from `data/eod/DATE/portfolio_stats_DATE.md` — print the file's tables, do not recompute): the periods table (WTD · MTD · QTD · YTD · inception — start NAV, end NAV, total P&L, return, realised, unrealised change, trades W/L, max drawdown), the ISO-week table, and the last-10-closes table. If a period's start NAV is the allocation rather than a prior close, the file says so under the table — print that line too. This is the answer to "what is the book doing", as opposed to item 1's "what is the book holding".
+8. **Trade journal** (D-115, from `data/eod/DATE/trade_journal_DATE.md` — print the file's tables, do not recompute): the Aegis stats line, closed trades **since the last run** in full (all columns), the open lots table, and every line under "Reconciliation" and "Flags" verbatim — those are the PM's call. The full closed-trade history stays in the file and on GitHub; on screen, print the last ten unless the PM asks for more.
+9. **Anything not clean** — every `auto_included_unrecognized` equity name (D-106: already confirmed and counted, but call it out by name since the PM's only lever is to reject it afterward), every `pending_review` OPTION leg (real capital, excluded from every metric until confirmed — equity fills no longer use this status, options still do), the hedge record or its absence, `mixed_vintage` if it fired, any position excluded for want of an AQE snapshot.
 
 Then one plain closing line: what the book is worth, what is at risk, and anything genuinely needing a decision.
 
