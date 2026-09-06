@@ -40,11 +40,28 @@ EXIT CODES (this is the whole interface — the Phase 0 scheduled task branches 
 Deterministic (law 4). Reads only; writes only its own stamp file. Places nothing
 (constitution law 1).
 
+WEEKENDS AND HOLIDAYS (D-109, PM ruling 2026-09-06)
+  "I might want to run PMA on a Sunday or a Monday, and the data just needs to be
+  at least as of last trading day COB." Every date comparison in `check` (post-
+  market's run_date, premarket_data's run_date, the export's own date) is made
+  against the most recent TRADING day on or before the date being checked, not
+  the literal calendar date. On an ordinary weekday the two are identical, so
+  nothing about a normal Tue-Sat post-market/premarket run changes. The
+  exception exists only for non-trading days and only ever looks BACKWARD: a
+  gate check run on an ordinary Tuesday still demands Tuesday's own data, and a
+  Friday's stamp does not carry forward into Monday. Weekends are handled
+  automatically; a rarer named holiday (a market closure that isn't a weekend)
+  goes in `data/persistent/market_holidays.json` (a flat JSON array of
+  "YYYY-MM-DD" strings) — missing file = weekends-only, never an error. The
+  response JSON always carries both `date` (the literal date checked) and
+  `expected_trading_day` (what a stamp/export must actually be dated), so a
+  caller relaying this to the PM can say "last trading day" when they differ.
+
 Usage:
   python3 tools/phase_gate.py stamp --phase post_market --status ok \\
         --journal-date 2026-07-27 [--note "..."]
-  python3 tools/phase_gate.py check --for premarket_data  [--date 2026-07-28] [--json]
-  python3 tools/phase_gate.py check --for premarket_build [--date 2026-07-28] [--json]
+  python3 tools/phase_gate.py check --for premarket_data  [--date 2026-07-28] [--holidays FILE] [--json]
+  python3 tools/phase_gate.py check --for premarket_build [--date 2026-07-28] [--holidays FILE] [--json]
   python3 tools/phase_gate.py show
   python3 tools/phase_gate.py selftest
 """
@@ -61,14 +78,51 @@ STATE = os.environ.get(
 )
 JOURNAL_DIR = os.path.join(ROOT, "data", "journal")
 EXPORT_PATH = os.environ.get("AEGIS_AQE_EXPORT", os.path.join(ROOT, "output", "aqe_daily_export.json"))
+HOLIDAYS_PATH = os.environ.get("AEGIS_MARKET_HOLIDAYS",
+                               os.path.join(ROOT, "data", "persistent", "market_holidays.json"))
 
-X_VERSION = "1.0.0"
+X_VERSION = "1.1.0"
 
 READY, NOT_READY, BLOCKED = 0, 1, 2
 
 
 def _today(explicit=None):
     return explicit or _dt.date.today().isoformat()
+
+
+def _load_holidays(path=None):
+    """Market holiday list — a flat JSON array of "YYYY-MM-DD" strings, e.g. US market closures.
+    Missing or unreadable file reads as no known holidays, never an error (PM ruling 2026-09-06):
+    a gate that hard-fails because an optional calendar file is absent would be worse than one
+    that just falls back to weekends-only. This file is deliberately hand-maintained, not fetched
+    — the kernel has no market-calendar data source of its own."""
+    try:
+        with open(path or HOLIDAYS_PATH) as fh:
+            return set(json.load(fh))
+    except Exception:
+        return set()
+
+
+def _is_trading_day(date_str, holidays):
+    y, m, d = (int(x) for x in date_str.split("-"))
+    return _dt.date(y, m, d).weekday() < 5 and date_str not in holidays
+
+
+def _last_trading_day(date_str, holidays, max_back=10):
+    """D-109 (PM ruling 2026-09-06 — 'I might want to run PMA on a Sunday or a Monday, and the
+    data just needs to be at least as of last trading day COB'): the most recent trading day
+    ON OR BEFORE date_str, walking backward over weekends (the common case) and any date in
+    `holidays` (the rarer case). If date_str is itself already a trading day, it IS the answer —
+    this only ever looks backward, never forward, so a gate check run mid-week still demands
+    TODAY's data; the exception exists for non-trading days, not as a general grace period.
+    `max_back` bounds the walk (a corrupt holiday list spanning weeks must not hang the gate)."""
+    y, m, d = (int(x) for x in date_str.split("-"))
+    cur = _dt.date(y, m, d)
+    for _ in range(max_back + 1):
+        if _is_trading_day(cur.isoformat(), holidays):
+            return cur.isoformat()
+        cur -= _dt.timedelta(days=1)
+    return date_str   # gave up — fall back to the literal date rather than loop forever
 
 
 def _load():
@@ -166,6 +220,15 @@ GATES_FOR = {
 
 def check(args):
     date = _today(args.date)
+    holidays = _load_holidays(getattr(args, "holidays", None))
+    # D-109 (PM ruling 2026-09-06): "I might want to run PMA on a Sunday or a Monday, and the
+    # data just needs to be at least as of last trading day COB." `date` stays the literal
+    # calendar date being checked (weekends/holidays are the common case this run happens on);
+    # `expected` is what a stamp or export must actually be dated to satisfy the gate — the most
+    # recent trading day on or before `date`. On an ordinary weekday the two are identical, so
+    # every existing check keeps behaving exactly as before; the exception only ever fires on a
+    # non-trading day, and only ever looks BACKWARD (a Tuesday still demands Tuesday's data).
+    expected = _last_trading_day(date, holidays)
     export_path = args.export or EXPORT_PATH
     target = getattr(args, "for_phase", None) or "premarket_data"
     if target not in GATES_FOR:
@@ -191,10 +254,16 @@ def check(args):
             verdict = BLOCKED
             reasons.append("post_market stamped %s on %s: %s"
                            % (pm.get("status"), pm.get("run_date"), pm.get("note") or "no note"))
-        elif pm.get("run_date") != date:
-            # Ran, but not for today. Time can still fix this (today's run is pending).
+        elif pm.get("run_date") != expected:
+            # Ran, but not as of the expected trading day (COB). On a weekday this means today's
+            # run is still pending — time fixes it. On a weekend/holiday it means even the LAST
+            # trading day's post-market is missing, which time alone will not fix until that
+            # trading day's run actually happens.
             verdict = max(verdict, NOT_READY)
-            reasons.append("last post_market run was %s, expected %s" % (pm.get("run_date"), date))
+            reasons.append("last post_market run was %s, expected %s%s"
+                           % (pm.get("run_date"), expected,
+                              " (last trading day COB, since %s is not a trading day)" % date
+                              if expected != date else ""))
         # --- gate 2: the journal it claims actually exists ---------------------
         jok, jnote = _journal_ok(pm.get("journal_date"))
         journal = (jok, jnote)
@@ -220,17 +289,21 @@ def check(args):
             reasons.append("%s stamped %s on %s: %s"
                            % (need, upstream.get("status"), upstream.get("run_date"),
                               upstream.get("note") or "no note"))
-        elif upstream.get("run_date") != date:
+        elif upstream.get("run_date") != expected:
             verdict = max(verdict, NOT_READY)
-            reasons.append("last %s run was %s, expected %s"
-                           % (need, upstream.get("run_date"), date))
+            reasons.append("last %s run was %s, expected %s%s"
+                           % (need, upstream.get("run_date"), expected,
+                              " (last trading day COB, since %s is not a trading day)" % date
+                              if expected != date else ""))
 
-    # --- gate 3: today's AQE export is published ------------------------------
+    # --- gate 3: the expected trading day's AQE export is published -----------
     # Applied ONLY where it is a real check. For the cheap half it was a deadlock:
     # that process is the one that FETCHES the export, so gating its start on the
     # export already being on disk meant it could never start on a normal morning.
+    # Checked against `expected` (last trading day COB), not the literal calendar date, for the
+    # same D-109 reason as the two stamp checks above.
     if gates["export"]:
-        eok, edate, enote = _export_ok(date, export_path)
+        eok, edate, enote = _export_ok(expected, export_path)
         if not eok:
             # AQE is an external box on its own schedule; a late export is the normal
             # transient case, never a hard block.
@@ -243,6 +316,9 @@ def check(args):
     label = {READY: "READY", NOT_READY: "NOT_READY", BLOCKED: "BLOCKED"}[verdict]
     out = {
         "date": date,
+        "expected_trading_day": expected,   # D-109: last trading day COB, may differ from `date`
+                                            # on a weekend/holiday — everything above is checked
+                                            # against THIS, not the literal calendar date.
         "for": target,
         "verdict": label,
         "exit_code": verdict,
@@ -264,7 +340,10 @@ def check(args):
     if args.json:
         print(json.dumps(out, indent=1))
     else:
-        print("PHASE GATE %s (for %s) — %s" % (date, target, label))
+        header = "PHASE GATE %s (for %s) — %s" % (date, target, label)
+        if expected != date:
+            header += "  [non-trading day; expecting %s COB]" % expected
+        print(header)
         for r in reasons:
             print("  - %s" % r)
         if not reasons:
@@ -323,8 +402,9 @@ def selftest(args):
     class A:
         pass
 
-    def run_check(date, for_phase="premarket_build"):
+    def run_check(date, for_phase="premarket_build", holidays=None):
         a = A(); a.date = date; a.json = True; a.export = export_path; a.for_phase = for_phase
+        a.holidays = holidays
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             code = check(a)
@@ -416,6 +496,48 @@ def selftest(args):
     except SystemExit:
         pass
 
+    # 7c. D-109 (PM ruling 2026-09-06): running the gate ON a weekend, with everything stamped
+    # as of last Friday's close, must read READY — not NOT_READY just because Friday != today.
+    # 2026-07-31 = Friday, 2026-08-01 = Saturday, 2026-08-02 = Sunday, 2026-08-03 = Monday.
+    stamp_data("2026-07-31")  # premarket_data ok, Friday
+    s.date = "2026-07-31"; s.journal_date = "2026-07-31"; s.status = "ok"; s.note = None
+    with contextlib.redirect_stdout(io.StringIO()):
+        stamp(s)  # post_market ok, Friday
+    with open(os.path.join(JOURNAL_DIR, "aegis_journal_2026-07-31.json"), "w") as fh:
+        json.dump({"date": "2026-07-31", "dyncap_usd": 1}, fh)
+    with open(export_path, "w") as fh:
+        json.dump({"date": "2026-07-31", "daily_list": [{"ticker": "AAA"}]}, fh)
+
+    code, r = run_check("2026-08-01")   # Saturday
+    assert code == READY, "Saturday with Friday's COB data on file must be READY: %s" % r
+    assert r["expected_trading_day"] == "2026-07-31", r
+
+    code, r = run_check("2026-08-02")   # Sunday
+    assert code == READY, "Sunday with Friday's COB data on file must be READY: %s" % r
+    assert r["expected_trading_day"] == "2026-07-31", r
+
+    # 7d. but the exception only ever looks BACKWARD. Monday still demands Monday's own data —
+    # Friday's stamp does not carry a grace period INTO the next trading day.
+    code, r = run_check("2026-08-03")   # Monday
+    assert code == NOT_READY, "Monday must still require Monday's own data, not Friday's: %s" % r
+    assert r["expected_trading_day"] == "2026-08-03", r
+
+    # 7e. holidays work the same way, and are the rarer case the PM named explicitly. Mark Monday
+    # 2026-08-03 itself as a market holiday: the expected trading day for a check run ON that
+    # Monday should skip back over Sat/Sun AND the holiday to Friday — so Friday's data (still on
+    # file from 7c) reads READY on the holiday itself, without needing Monday's own run.
+    holidays_path = os.path.join(tmp, "market_holidays.json")
+    with open(holidays_path, "w") as fh:
+        json.dump(["2026-08-03"], fh)
+    code, r = run_check("2026-08-03", holidays=holidays_path)
+    assert code == READY, "a declared market holiday must fall back to last trading day COB: %s" % r
+    assert r["expected_trading_day"] == "2026-07-31", r
+    # and Tuesday the 4th (an ordinary trading day, not in the holiday list) goes right back to
+    # demanding its own data — the holiday file doesn't grant a blanket grace period either.
+    code, r = run_check("2026-08-04", holidays=holidays_path)
+    assert code == NOT_READY, "an ordinary trading day must still demand its own data: %s" % r
+    assert r["expected_trading_day"] == "2026-08-04", r
+
     # 8. the claim latch: first firing of the day wins, every later one loses
     def run_claim(date, release=False):
         c = A(); c.phase = "premarket_build"; c.date = date; c.release = release
@@ -436,9 +558,11 @@ def selftest(args):
 
     print("phase_gate selftest OK — no stamp/stale stamp = NOT_READY (retry), "
           "failed post-market or missing journal = BLOCKED (page), late or stale export = NOT_READY, "
-          "all current = READY; and the two premarket halves gate DIFFERENTLY — the cheap data "
+          "all current = READY; the two premarket halves gate DIFFERENTLY — the cheap data "
           "half starts with no export on disk (deadlock broken), the expensive half waits for "
-          "both the export and the data half's ok stamp.")
+          "both the export and the data half's ok stamp; and (D-109) a weekend or declared "
+          "holiday checks against last trading day COB instead of the literal calendar date, "
+          "but never grants a grace period INTO the next ordinary trading day.")
     return 0
 
 
@@ -458,6 +582,9 @@ def main():
     p2 = sub.add_parser("check", help="Phase 0's gate: is it safe to fire the next process?")
     p2.add_argument("--date")
     p2.add_argument("--export")
+    p2.add_argument("--holidays", help="D-109: path to a market-holidays JSON file (flat list of "
+                    "YYYY-MM-DD strings). Defaults to data/persistent/market_holidays.json; "
+                    "missing file = weekends-only, never an error.")
     p2.add_argument("--for", dest="for_phase", default="premarket_data",
                     choices=sorted(GATES_FOR),
                     help="which downstream process you are about to fire — the gates differ "
