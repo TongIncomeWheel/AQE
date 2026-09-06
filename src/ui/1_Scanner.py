@@ -324,18 +324,19 @@ with st.sidebar:
     if st.button(pipeline_btn_label, type="primary", use_container_width=True,
                  disabled=(CLOUD_MODE and not FMP_KEY_SET)):
         run_module_streaming("src.pipeline.daily_orchestrator", "Daily pipeline", prog, stat)
-        # The MORNING run is pipeline + MA scan + CSP scan. A manual run that
-        # quietly did less than the scheduled one is the exact class of surprise
-        # this session has spent the day removing, so the button does the same
-        # three things. Each is best-effort and cannot fail the feed.
+        # CSP scan rides along on a manual run too, matching the scheduled
+        # morning sequence. The MA Proximity Scan does NOT (2026-09-06 PM
+        # decision): fetching MA bars for ~5,000 tickers one at a time under
+        # FMP's cloud rate limit takes 40+ minutes, which is exactly what got
+        # a GitHub-Actions-triggered run killed at the 45-min timeout even
+        # though the real feed had already published successfully -- it's
+        # now a separate, explicit "Run MA Proximity Scan" button below,
+        # never bundled into any other trigger.
         try:
             from datetime import datetime as _dt
             from zoneinfo import ZoneInfo as _Z
-            from src.ui.daily_job import (_run_csp_scan_and_record,
-                                          _run_ma_scan_and_record)
+            from src.ui.daily_job import _run_csp_scan_and_record
             _now = _dt.now(_Z("Asia/Singapore"))
-            stat.write("MA proximity scan…")
-            _run_ma_scan_and_record(_now)
             stat.write("Options CSP universe scan…")
             _run_csp_scan_and_record(_now)
         except Exception as _exc:  # noqa: BLE001
@@ -364,6 +365,32 @@ with st.sidebar:
                       "re-scoring — it only rebuilds what the committee reads. "
                       "Use when the daily ran but the packets are stale."):
         run_module_streaming("src.pipeline.voice_packets", "Voice packets", prog, stat)
+        st.rerun()
+
+    # 2026-09-06: manual-only now, never auto-triggered by anything. Fetching
+    # MA bars for ~5,000 tickers one at a time under FMP's rate limit takes
+    # 40+ minutes -- fine to click and wait on here, fatal when it ran
+    # automatically inside a GitHub-Actions-triggered run with a 45-min
+    # timeout (it got the whole job killed even though the real feed had
+    # already published fine).
+    if st.button("Run MA Proximity Scan", use_container_width=True,
+                 disabled=(CLOUD_MODE and not FMP_KEY_SET),
+                 help="Scans the full universe for names near a key moving "
+                      "average. Independent of the daily feed — safe to run "
+                      "any time, but can take 30-40+ minutes against the "
+                      "full ~5,000-ticker universe under FMP's rate limit."):
+        from datetime import datetime as _dt
+        from zoneinfo import ZoneInfo as _Z
+        from src.ui.daily_job import _run_ma_scan_and_record
+        with st.spinner("Running MA proximity scan — this can take 30-40+ minutes…"):
+            try:
+                _run_ma_scan_and_record(_dt.now(_Z("Asia/Singapore")))
+                st.session_state["last_action_status"] = {
+                    "ok": True, "message": "MA proximity scan complete."}
+            except Exception as _exc:  # noqa: BLE001
+                st.session_state["last_action_status"] = {
+                    "ok": False,
+                    "message": f"MA proximity scan failed: {type(_exc).__name__}: {_exc}"}
         st.rerun()
 
     # 2026-09-01: the GitHub Actions backstop publishes straight to the repo —

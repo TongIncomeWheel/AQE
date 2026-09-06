@@ -199,53 +199,32 @@ def test_artifacts_published_is_none_when_the_receipt_line_never_printed(_wired,
     assert marker["artifacts_published"] is None
 
 
-# ── MA scan follows the pipeline directly (2026-09-06) ──────────────────────
-# The in-app scheduler loop that used to call _run_ma_scan_and_record() right
-# after _run_pipeline_and_record() is gone (the main pipeline is no longer
-# auto-fired there at all -- see the module docstring). The MA scan must not
-# silently stop running just because its old caller was removed: it now
-# rides along inside _run_pipeline_and_record() itself, so it fires
-# regardless of what triggered the pipeline (external workflow_dispatch or
-# the manual UX button).
+# ── MA scan is never auto-triggered by the pipeline (2026-09-06) ───────────
+# Briefly (same day) the MA scan rode along inside _run_pipeline_and_record()
+# so it wouldn't silently stop firing once the in-app scheduler's own 08:30
+# branch was removed. That created a worse problem: fetching MA bars for
+# ~5,000 tickers one at a time under FMP's cloud rate limit takes 40+
+# minutes, and running it inside a GitHub-Actions-triggered call got the
+# whole job killed at the workflow's 45-min timeout (conclusion: cancelled)
+# even though the real feed had already published successfully moments
+# earlier -- confirmed against a real forced run (GH Actions run #79,
+# 2026-09-06). The MA scan is now manual-only, triggered from its own
+# "Run MA Proximity Scan" button in the Scanner sidebar
+# (src/ui/1_Scanner.py) -- _run_pipeline_and_record() must never call it.
 
-def test_ma_scan_runs_after_a_genuine_feed_refresh(_wired, monkeypatch):
+def test_pipeline_never_auto_triggers_the_ma_scan(_wired, monkeypatch):
     now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
     _write_export(_wired, "2026-09-06")
     monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0))
     calls = []
     monkeypatch.setattr(J, "_run_ma_scan_and_record", lambda now: calls.append(now))
-
-    J._run_pipeline_and_record(now)
-
-    assert calls == [now]
-
-
-def test_ma_scan_does_not_run_when_the_feed_never_refreshed(_wired, monkeypatch):
-    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
-    _write_export(_wired, "2026-08-29")  # stale
-    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0))
-    calls = []
-    monkeypatch.setattr(J, "_run_ma_scan_and_record", lambda now: calls.append(now))
-
-    J._run_pipeline_and_record(now)
-
-    assert calls == []
-
-
-def test_a_failing_ma_scan_never_turns_a_real_success_into_a_failure(_wired, monkeypatch):
-    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
-    _write_export(_wired, "2026-09-06")
-    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0))
-
-    def _boom(now):
-        raise RuntimeError("MA scan blew up")
-    monkeypatch.setattr(J, "_run_ma_scan_and_record", _boom)
 
     marker = J._run_pipeline_and_record(now)
 
-    assert marker["status"] == "success", (
-        "the feed itself genuinely refreshed -- a broken downstream MA scan "
-        "must not be reported as a pipeline failure")
+    assert calls == [], (
+        "the MA scan must not be triggered by _run_pipeline_and_record() at "
+        "all -- it is manual-only now (Scanner sidebar button)")
+    assert marker["status"] == "success"
 
 
 def test_artifacts_published_survives_a_timeout(_wired, monkeypatch):

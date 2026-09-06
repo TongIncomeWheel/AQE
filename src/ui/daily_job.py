@@ -357,18 +357,16 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "reason": f"{type(exc).__name__}: {exc}",
         })
     _write_marker(marker)
-    # MA Proximity Scan rides along right after the feed, on whatever actually
-    # triggered this run (external dispatch or the manual UX button) -- no
-    # longer a separate 08:30 branch in the (now removed) in-app scheduler
-    # loop. Decoupled from the pipeline's own critical path: it runs AFTER
-    # the marker is already written, so a slow/failing MA scan can never turn
-    # a genuine feed success into a reported failure.
-    try:
-        _, feed_today_now = _feed_status()
-        if feed_today_now:
-            _run_ma_scan_and_record(now)
-    except Exception:  # noqa: BLE001
-        pass
+    # 2026-09-06 PM decision: the MA Proximity Scan no longer rides along here
+    # at all. It used to fire right after the feed -- fine on the HF Space
+    # (no hard timeout), but fatal when this same function runs under GitHub
+    # Actions' daily-run.yml: fetching MA bars for ~5,000 tickers one at a
+    # time under FMP's cloud rate limit ran well past the workflow's 45-min
+    # ceiling and got the whole job killed (conclusion: cancelled), even
+    # though the real feed had already published successfully moments
+    # earlier. It's now a manual, on-demand action from the Scanner UX
+    # sidebar (see src/ui/1_Scanner.py) instead of an automatic step of any
+    # trigger path.
     return marker
 
 
