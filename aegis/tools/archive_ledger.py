@@ -13,6 +13,17 @@ recompute the rollups — deterministic (law 4), no model judgement.
 MERGE RULE (Golden Rule, preserved from the retired skill): if a trade's (ticker, exitDate)
 already exists in the ledger, the NEWER value replaces it (idempotent re-runs never duplicate).
 
+D-107 (PM, 2026-09-06 — "I don't know what is the book's realised MTD, WTD and YTD
+profit/loss"): YTD/QTD/MTD were already computed into `metrics` every run and never once read by
+anything downstream — a real number sitting unused, not a missing one. WTD was the one rollup
+genuinely absent, added here by ISO calendar week (`_iso_week_key`). All four periods also get a
+stable `{PERIOD}_current` key (`YTD_current`, `QTD_current`, `MTD_current`, `WTD_current`)
+alongside the dated key (`MTD_2026-09`, `WTD_2026-W37`, ...) whose exact label changes every
+period — so a caller (e.g. `tools/overnight_brief.py`) never has to reconstruct that label just
+to ask "what's the realised P&L as of today." The `merge()` summary now also returns
+`mtd_realized_pnl_usd` / `wtd_realized_pnl_usd` alongside the pre-existing `ytd_realized_pnl_usd`,
+so the one-line run summary printed to stderr carries all three without a second read of the file.
+
 WHAT THIS DOES: reads the archive as a plain local file, merges, and the orchestrating
 post_market session writes the returned JSON straight back to the SAME local path — a normal
 overwrite. `tools/git_sync.py` then commits it under `data/persistent` (already in its
@@ -29,7 +40,18 @@ Usage:
 import json
 import argparse
 import sys
+import datetime
 from collections import defaultdict
+
+
+def _iso_week_key(date_str):
+    """D-107: ISO calendar week key for a YYYY-MM-DD date string, e.g. '2026-W37'. ISO weeks
+    (not calendar-month weeks) so a week never splits across the key in an ambiguous way — every
+    date has exactly one ISO (year, week) pair, including the Dec/Jan boundary weeks that a naive
+    day-of-month bucketing would get wrong."""
+    y, m, d = (int(x) for x in date_str.split("-"))
+    iso_year, iso_week, _ = datetime.date(y, m, d).isocalendar()
+    return f"{iso_year}-W{iso_week:02d}"
 
 
 def _normalize_trade(t):
@@ -110,6 +132,12 @@ def merge(archive, new_closed_trades, today):
     ytd = [t for t in all_trades if t["exitDate"].startswith(year)]
     qtd = [t for t in ytd if _period_key(t["exitDate"], "QTD") == _period_key(today, "QTD")]
     mtd = [t for t in ytd if t["exitDate"][:7] == today[:7]]
+    # D-107 (PM: "I don't know what is the book's realised MTD, WTD and YTD profit/loss" —
+    # WTD was the one rollup this ledger never computed; ISO week, see _iso_week_key. Pulled
+    # from all_trades, not ytd, so a week that straddles a year boundary (Dec 29 - Jan 4, ISO
+    # week 1) is not silently dropped by the YTD-year filter.
+    today_week = _iso_week_key(today)
+    wtd = [t for t in all_trades if _iso_week_key(t["exitDate"]) == today_week]
 
     by_sector = defaultdict(list)
     for t in ytd:
@@ -122,6 +150,14 @@ def merge(archive, new_closed_trades, today):
         "YTD_2026": _agg(ytd),
         "QTD_Q" + str((int(today[5:7]) - 1) // 3 + 1) + "_" + year: _agg(qtd),
         "MTD_" + today[:7]: _agg(mtd),
+        "WTD_" + today_week: _agg(wtd),
+        # D-107: stable "_current" aliases so a caller never has to reconstruct the exact
+        # dated key (the QTD/MTD/WTD labels above all change shape every period) — these four
+        # always mean "as of `today`, whatever period label that implies."
+        "YTD_current": _agg(ytd),
+        "QTD_current": _agg(qtd),
+        "MTD_current": _agg(mtd),
+        "WTD_current": _agg(wtd),
         "by_sector_YTD": {sec: _agg(ts) for sec, ts in sorted(by_sector.items())},
         "by_trading_day": {
             day: {**_agg(ts), "trades": [t["ticker"] for t in ts]}
@@ -151,7 +187,11 @@ def merge(archive, new_closed_trades, today):
     updated["unresolved_pm_review_items"] = archive.get("unresolved_pm_review_items", [])
 
     return updated, {"added": added, "replaced": replaced, "no_op": False,
-                      "total_trades": len(all_trades), "ytd_realized_pnl_usd": ytd_sum}
+                      "total_trades": len(all_trades), "ytd_realized_pnl_usd": ytd_sum,
+                      # D-107: MTD/WTD surfaced in the same summary line every run prints —
+                      # these were being computed into metrics and never once read by anything.
+                      "mtd_realized_pnl_usd": metrics["MTD_current"]["realized_pnl_usd"],
+                      "wtd_realized_pnl_usd": metrics["WTD_current"]["realized_pnl_usd"]}
 
 
 def _selftest():
@@ -175,7 +215,13 @@ def _selftest():
             "broker": "TIGER", "type": "STK"}]
     updated, summary = merge(archive, new, "2026-07-20")
     assert summary == {"added": 1, "replaced": 0, "no_op": False, "total_trades": 3,
-                        "ytd_realized_pnl_usd": 216.06}, summary
+                        "ytd_realized_pnl_usd": 216.06, "mtd_realized_pnl_usd": 216.06,
+                        # D-107: 2026-07-20 is ISO week 30; CMG (7/17) and IBM (7/14) both fall
+                        # in ISO week 29 — WTD correctly picks up only the same-week DDOG trade,
+                        # not the whole month.
+                        "wtd_realized_pnl_usd": 250.0}, summary
+    assert updated["metrics"]["WTD_2026-W30"]["trade_count"] == 1, updated["metrics"]
+    assert updated["metrics"]["WTD_current"] == updated["metrics"]["WTD_2026-W30"]
     assert updated["unresolved_pm_review_items"] == ["existing item — must survive the merge"]
     assert updated["archive_meta"]["coverage_through"] == "2026-07-20"
     # idempotent re-run of the SAME trade -> replace, not duplicate

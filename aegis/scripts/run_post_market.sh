@@ -342,6 +342,7 @@ step "portfolio metrics" 0 python3 tools/portfolio_metrics.py compute --journal 
 # --------------------------------------------------------------- 7. archive
 say ""
 say "--- archive ledger"
+ARCHIVE_FOR_BRIEF="$ARCHIVE"   # D-108: which archive file overnight_brief.py reads below
 CLOSED_TMP="$OUT/closed_trades_$DATE.json"
 ARCHIVE_FMT_TMP="$OUT/closed_trades_archive_format_$DATE.json"
 CLOSED_N=$(python3 - "$JOURNAL" "$CLOSED_TMP" <<'PY'
@@ -378,6 +379,7 @@ else
     if (( REHEARSAL )); then
       record "archive ledger" skipped "rehearsal — merge computed, archive not overwritten"
       say "    rehearsal: merge succeeded, archive left untouched ($ARCH_TMP kept)"
+      ARCHIVE_FOR_BRIEF="$ARCH_TMP"   # today's true rollups, without touching the live shelf
     else
       mv "$ARCH_TMP" "$ARCHIVE"
       record "archive ledger" pass "$CLOSED_N trade(s) filed"
@@ -388,6 +390,25 @@ else
     worse 1
   fi
 fi
+
+# ----------------------------------------------------- 7.5 (D-108) overnight brief
+# PM ruling 2026-09-06: PTJ ran clean but nothing assembled "what changed overnight, what's my
+# open risk, what's my realised MTD/WTD/YTD, what's my book beta/exposure" into one place — the
+# PM was reconstructing it from memory or the broker screen. Pure read+assemble over what every
+# job above this point already produced: today's journal (membership-classified, dynCap-recomputed,
+# metrics-computed), the prior day's journal (for the overnight diff), and the archive ledger (for
+# the realised rollups, WTD added by D-107). No new broker calls, no judgement (law 4).
+BRIEF="$OUT/overnight_brief_$DATE.json"
+BRIEF_ARGS=(--journal "$JOURNAL" --out "$BRIEF")
+if [[ -n "$PRIOR" ]]; then
+  BRIEF_ARGS+=(--prior "$PRIOR")
+fi
+if [[ -f "$ARCHIVE_FOR_BRIEF" ]]; then
+  BRIEF_ARGS+=(--archive "$ARCHIVE_FOR_BRIEF")
+else
+  say "    no archive on disk yet — overnight brief will show all-zero realised P&L (true, not a fault)"
+fi
+step "overnight brief (D-108)" 0 python3 tools/overnight_brief.py build "${BRIEF_ARGS[@]}"
 
 # --------------------------------------------------------------- 8. flow audit
 FA_JSON="$EOD/flow_audit_$DATE.json"

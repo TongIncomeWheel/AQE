@@ -93,7 +93,7 @@ bash scripts/run_post_market.sh <YYYY-MM-DD>
 
 Optional: `--pull DIR` if the payloads are somewhere other than `data/eod/<DATE>/broker_pull`. `--rehearsal` runs every step for real against the real payloads but writes the journal and all run artefacts to `data/eod/<DATE>/rehearsal/`, leaves the archive untouched, turns both pushes into `git_sync --dry-run`, and **never stamps the gate** — use it before the close, and the first time you run the batch after changing anything.
 
-The thirteen jobs it runs, in this order:
+The thirteen jobs it runs, plus D-108's overnight brief (job 10.5, added 2026-09-06), in this order:
 
 | # | Job | Fatal? |
 |---|---|---|
@@ -108,9 +108,12 @@ The thirteen jobs it runs, in this order:
 | 8 | `git_sync.py` — **push #1, the book of record** | no |
 | 9 | `portfolio_metrics.py compute` — metrics written into the journal | no |
 | 10 | `archive_ledger.py merge` — append today's closed trades | no |
+| 10.5 | `overnight_brief.py build` (D-108) — what changed overnight, realised MTD/WTD/YTD, open risk, book beta/exposure, assembled into one file | no |
 | 11 | `daily_flow_audit.py --render` — the flight recorder | no |
-| 12 | `git_sync.py` — **push #2, metrics + archive + audit** | no |
+| 12 | `git_sync.py` — **push #2, metrics + archive + audit + overnight brief** | no |
 | 13 | `phase_gate.py stamp` — the only thing tomorrow's Phase 0 reads | — |
+
+**D-108, overnight brief (job 10.5).** PM ruling 2026-09-06: PTJ ran clean but nothing surfaced what was sold or changed overnight, realised MTD/WTD/YTD P&L, open risk, or book beta/exposure — the PM was reconstructing it from memory or the broker screen. Book beta and exposure were already computed every run by job 9; MTD/YTD were already computed every run by job 10 — both were a **relay gap, not a computation gap**. WTD was a genuine gap, closed by D-107 in `archive_ledger.py`. Open risk (dollars at stake if every held equity's live stop filled right now) did not exist anywhere before this job. `overnight_brief.py` is a pure read+assemble step over what jobs 2-10 already put on disk — today's journal, the prior day's journal, and the archive ledger — no new broker calls, no judgement (law 4). Writes `data/eod/<DATE>/overnight_brief_<DATE>.json`; a rehearsal run writes it under `rehearsal/` like every other job. Step 3 below folds its contents into what gets relayed to the PM.
 
 **Why two pushes.** The single push used to sit at job 8 only, before metrics, the archive append and the audit existed. A fresh clone therefore read a journal with an empty `metrics` key until the following day's run overwrote it. The first push protects the book the moment it is verified; the second ships the rest of the same run.
 
@@ -140,9 +143,12 @@ Do not re-derive positions, P&L, dynCap or metrics by hand in any mode, and do n
 Read the journal (MODE A: `data/eod/DATE/rehearsal/` · MODE B: the latest file in `data/journal/` · MODE C: `data/journal/`) and show, in **markdown tables** (PM standing instruction: "show me in tabular form pls else hard to read"):
 
 1. **Held book** — ticker · qty · avg cost · mark · unrealised · % of book. Sorted by weight, biggest first.
-2. **The day** — day P&L, and P&L since entry per name where the journal carries it.
-3. **Capital** — dynCap, 1R, gross exposure, leverage, net beta, 1-month VaR.
-4. **Anything not clean** — every `pending_review` name (real capital, excluded from every metric until confirmed), the hedge record or its absence, `mixed_vintage` if it fired, any position excluded for want of an AQE snapshot.
+2. **Overnight** (D-108, from `overnight_brief.py`'s `overnight_changes`) — what opened, what closed (with realised P&L per name), and any live stop that moved. This is the PM not needing to check the broker or rely on memory — say plainly "nothing changed overnight" when all three are empty, don't just omit the section.
+3. **The day** — day P&L, and P&L since entry per name where the journal carries it.
+4. **Realised P&L** (D-107/D-108) — MTD, WTD and YTD in one line each, straight from `overnight_brief.py`'s `realized_pnl`.
+5. **Open risk** (D-108) — total dollars at stake if every held equity's live stop filled right now, plus any name with `unknown_stop` named explicitly (never folded into the total as zero).
+6. **Capital** — dynCap, 1R, gross exposure, leverage, **book beta**, **book exposure**, 1-month VaR. Book beta and book exposure are always relayed as their own line, never left implicit inside "leverage" — that was the actual gap the PM flagged, the numbers were already computed every run.
+7. **Anything not clean** — every `pending_review` name (real capital, excluded from every metric until confirmed), the hedge record or its absence, `mixed_vintage` if it fired, any position excluded for want of an AQE snapshot.
 
 Then one plain closing line: what the book is worth, what is at risk, and anything genuinely needing a decision.
 
