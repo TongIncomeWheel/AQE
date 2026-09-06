@@ -1,10 +1,17 @@
 {
  "name": "aegis-daily",
- "version": "1.2.0",
+ "version": "1.2.1",
  "description": "AEGIS DAILY — the trade journal procedure, in its own plugin. /daily is the one scheduled command: (1) close the book via PTJ and push the journal to GitHub, (2) print the trade journal on screen and prove it is filed on main, (3) print and file the portfolio journal (D-114: day-by-day Aegis NAV with WTD/MTD/QTD/YTD as NAV change) and the trade journal (D-115: every broker fill, FIFO round-trips with entry/exit/qty/fees/net P&L/days/R, open lots, Aegis stats, reconciliation findings). Also carries /ptj (VIEW, FA, CLOSE), print-trade-journal, and /premarket (the post-AQE data prep that gates /pma). Cowork is the runtime, GitHub is storage. Deterministic tools only — no voices, no committee, no orders, and it never triggers AQE.",
  "kernel_build": "cf837be",
  "layer": "process",
  "changelog": [
+  {
+   "version": "1.2.1",
+   "date": "2026-09-06",
+   "changes": [
+    "Trade journal renders AEGIS ONLY (PM ruling): closed trades, open positions and the fills behind them. Non-Aegis names and option legs stay in the raw fill store solely for FIFO matching and never print, count, or flag."
+   ]
+  },
   {
    "version": "1.2.0",
    "date": "2026-09-06",

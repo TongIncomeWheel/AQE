@@ -29,10 +29,12 @@ the position (`entry`, `entry_date`, `qty`). Seeds are flagged `journal_seed` on
 their `entry_date` is "first seen in a journal", not a fill time — the row says so. This is
 mechanical and honest; it is not a claim the fill happened that day.
 
-AEGIS OR NOT. The Tiger account is co-mingled. Every fill is tagged: `non_aegis` if the ticker is on
-data/persistent/non_aegis_exclusions.json, `aegis` if on data/persistent/aegis_membership.json or
-carried as confirmed in any journal, else `unclassified`. The stats block is Aegis-only; the fills
-and trades tables keep everything, tagged, because a record with holes is not a record.
+AEGIS ONLY (PM ruling 2026-09-06: "I only want Aegis trades captured for closed and open trades").
+The Tiger account is co-mingled, so every fill is tagged on ingest — `non_aegis` if the ticker is on
+data/persistent/non_aegis_exclusions.json, `aegis` if on data/persistent/aegis_membership.json, in the
+archive ledger, or carried as confirmed in any journal, else `unclassified` — and ONLY Aegis rows are
+rendered, counted, or flagged. Non-Aegis and option fills stay in the raw store solely so FIFO matching
+is complete and idempotent; they never print.
 
 CROSS-CHECK. Given --archive, the Aegis net realised total is compared with the archive ledger's
 closed-trade total and any difference is printed and flagged — two independent paths to the same
@@ -283,7 +285,8 @@ def build_trades(store, seeds, stops, tag, journal_dir=None):
                         "r_multiple": None, "partial": False, "entry_fill_ids": []})
             row["flags"].append("unmatched_sell_no_entry_on_record" + (" (broker P&L used)" if f.get("broker_realized_pnl") is not None else ""))
             trades.append(row)
-            flags.append(f"{tk} {f['date']}: sell of {f['qty']:g} with no entry on record")
+            if tag(tk) == "aegis":
+                flags.append(f"{tk} {f['date']}: sell of {f['qty']:g} with no entry on record")
             continue
         cost = sum(c["take"] * c["price"] for c in consumed)
         entry_px = cost / matched
@@ -311,7 +314,8 @@ def build_trades(store, seeds, stops, tag, journal_dir=None):
                 row["flags"].append("entry_date_is_first_seen_in_journal_not_fill_time")
         if remaining > 1e-9:
             row["flags"].append(f"sold {f['qty']:g}, only {matched:g} matched to entries on record")
-            flags.append(f"{tk} {f['date']}: sold {f['qty']:g}, only {matched:g} matched")
+            if tag(tk) == "aegis":
+                flags.append(f"{tk} {f['date']}: sold {f['qty']:g}, only {matched:g} matched")
         if f.get("broker_realized_pnl") is not None and abs(f["broker_realized_pnl"] - row["net_pnl_usd"]) > max(2.0, abs(row["net_pnl_usd"]) * 0.02):
             row["flags"].append(f"broker P&L {f['broker_realized_pnl']:+.2f} differs from computed {row['net_pnl_usd']:+.2f}")
         trades.append(row)
@@ -360,8 +364,7 @@ def rebuild(store, journal_dir, archive=None):
     store["seeds"] = seeds
     trades, open_lots, flags = build_trades(store, seeds, stops, tag, journal_dir)
     store["trades"], store["open_lots"] = trades, open_lots
-    store["stats"] = {"aegis": compute_stats(trades, "aegis"), "non_aegis": compute_stats(trades, "non_aegis"),
-                      "unclassified": compute_stats(trades, "unclassified")}
+    store["stats"] = {"aegis": compute_stats(trades, "aegis")}
     # reconciliation 1: fills-derived open Aegis lots vs the latest journal's open positions
     recon = {"vs_latest_journal": [], "vs_archive": []}
     jps = sorted(glob.glob(os.path.join(journal_dir, "aegis_journal_*.json"))) if journal_dir else []
@@ -426,10 +429,15 @@ def _f(x, d=2, signed=True):
 
 
 def render(store, fills_n=60):
+    """The record, AEGIS ONLY (PM ruling 2026-09-06): closed trades, open lots, Aegis stock fills.
+    Non-Aegis names and option legs never print — they exist in the store solely so lot matching is
+    complete and idempotent."""
     st = store.get("stats", {}).get("aegis", {})
+    trades = [t for t in store.get("trades", []) if t["tag"] == "aegis"]
+    lots = [l for l in store.get("open_lots", []) if l["tag"] == "aegis"]
     out = [f"# Aegis trade journal — fills through {(store.get('latest_fill_utc') or '—')[:16]} UTC", ""]
     if st.get("trades"):
-        out += ["## Aegis closed-trade stats (net of fees)", "",
+        out += ["## Closed-trade stats (net of fees)", "",
                 "| Trades | W / L | Win rate | Net P&L | Gross | Fees | Avg win | Avg loss | Profit factor | Expectancy | Avg hold | Avg R (n) | Best | Worst |",
                 "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
                 f"| {st['trades']} | {st['wins']} / {st['losses']} | {st['win_rate_pct']}% | {_f(st['net_pnl_usd'])} | {_f(st['gross_pnl_usd'])} | "
@@ -438,28 +446,29 @@ def render(store, fills_n=60):
                 f"{st['avg_r'] if st['avg_r'] is not None else '—'} ({st['r_known']}) | {_f(st['best_usd'])} | {_f(st['worst_usd'])} |", ""]
     cc = store.get("stats", {}).get("cross_check")
     if cc:
-        out += [f"_Cross-check vs archive ledger: journal Aegis net {_f(cc['journal_aegis_net_usd'])} on {cc['archive_trade_count_vs_journal'][1]} trades · "
+        out += [f"_Cross-check vs archive ledger: trade journal net {_f(cc['journal_aegis_net_usd'])} on {cc['archive_trade_count_vs_journal'][1]} trades · "
                 f"archive {_f(cc['archive_realised_usd'])} on {cc['archive_closed_trades']} trades · difference {_f(cc['difference_usd'])}._", ""]
     out += ["## Closed trades (newest first)", "",
-            "| Out | In | Ticker | Qty | Entry | Exit | Gross | Fees | Net P&L | % | Days | R | Tag | Notes |",
-            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
-    for t in reversed(store.get("trades", [])):
+            "| Out | In | Ticker | Qty | Entry | Exit | Gross | Fees | Net P&L | % | Days | R | Notes |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for t in reversed(trades):
         notes = "; ".join(t.get("flags", [])) + (" partial" if t.get("partial") and "partial" not in "".join(t.get("flags", [])) else "")
         out.append(f"| {t['exit_date'] or '—'} | {t['entry_date'] or '—'} | {t['ticker']} | {t['qty']:g} | {_f(t['entry_price'], 4, False)} | "
                    f"{_f(t['exit_price'], 4, False)} | {_f(t['gross_pnl_usd'])} | {_f(t['fees_usd'], signed=False)} | {_f(t['net_pnl_usd'])} | "
                    f"{_f(t['pnl_pct'])} | {t['holding_days'] if t['holding_days'] is not None else '—'} | "
-                   f"{t.get('r_multiple') if t.get('r_multiple') is not None else '—'} | {t['tag']} | {notes.strip() or ''} |")
-    out += ["", "## Open lots", "", "| Ticker | Qty | Entry | Entry date | Days | Cost | Tag | Notes |", "|---|---|---|---|---|---|---|---|"]
-    for l in sorted(store.get("open_lots", []), key=lambda l: (l["tag"] != "aegis", l["ticker"])):
+                   f"{t.get('r_multiple') if t.get('r_multiple') is not None else '—'} | {notes.strip() or ''} |")
+    out += ["", "## Open positions", "", "| Ticker | Qty | Entry | Entry date | Days | Cost | Notes |", "|---|---|---|---|---|---|---|"]
+    for l in sorted(lots, key=lambda l: l["entry_date"] or ""):
         out.append(f"| {l['ticker']} | {l['qty']:g} | {_f(l['entry_price'], 4, False)} | {l['entry_date'] or '—'} | "
-                   f"{l['days_held'] if l['days_held'] is not None else '—'} | {_f(l['cost_usd'], signed=False)} | {l['tag']} | {'; '.join(l.get('flags', []))} |")
-    fills = sorted(store.get("fills", {}).values(), key=lambda f: (f["time_utc"] or ""), reverse=True)[:fills_n]
-    out += ["", f"## Fills — last {len(fills)} of {store.get('fill_count', 0)} on record (all instruments, newest first)", "",
-            "| Time UTC | Ticker | Type | Side | Qty | Price | Comm+GST | Broker P&L | Tag |", "|---|---|---|---|---|---|---|---|---|"]
-    for f in fills:
-        inst = f["sec_type"] + (f" {f['right']} {f['strike']} {f['expiry']}" if f["sec_type"] == "OPT" and f.get("strike") else "")
-        out.append(f"| {(f['time_utc'] or '—')[:16]} | {f['ticker']} | {inst} | {f['action']} | {f['qty']:g} | {_f(f['price'], 4, False)} | "
-                   f"{_f(_fee(f), signed=False)} | {_f(f.get('broker_realized_pnl'))} | {f.get('tag', '')} |")
+                   f"{l['days_held'] if l['days_held'] is not None else '—'} | {_f(l['cost_usd'], signed=False)} | {'; '.join(l.get('flags', []))} |")
+    fills = sorted((f for f in store.get("fills", {}).values() if f.get("tag") == "aegis" and f.get("sec_type") == "STK"),
+                   key=lambda f: (f["time_utc"] or ""), reverse=True)
+    shown = fills[:fills_n]
+    out += ["", f"## Fills — last {len(shown)} of {len(fills)} Aegis stock fills on record (newest first)", "",
+            "| Time UTC | Ticker | Side | Qty | Price | Comm+GST | Broker P&L |", "|---|---|---|---|---|---|---|"]
+    for f in shown:
+        out.append(f"| {(f['time_utc'] or '—')[:16]} | {f['ticker']} | {f['action']} | {f['qty']:g} | {_f(f['price'], 4, False)} | "
+                   f"{_f(_fee(f), signed=False)} | {_f(f.get('broker_realized_pnl'))} |")
     rc = store.get("reconciliation") or {}
     if rc.get("vs_latest_journal") or rc.get("vs_archive"):
         out += ["", "## Reconciliation — findings, not corrections (the PM rules on these)", ""]
@@ -569,7 +578,7 @@ def selftest():
         rebuild(store, os.path.join(tmp, "journal"), archive)
         assert len(store["fills"]) == n0 and json.dumps(store["trades"], sort_keys=True) == t0
         md = render(store)
-        assert "| ZZZ |" in md and "journal_seed" in md and "## Open lots" in md and "OPT" in md
+        assert "| ZZZ |" in md and "journal_seed" in md and "## Open positions" in md and "NNN" not in md and "OPT" not in md
         print("trade_journal selftest OK — fills unioned by broker id (idempotent), FIFO round-trips with weighted "
               "entry/partials/fees/R, pre-window sells matched to a flagged journal seed, non-Aegis kept and tagged, "
               "Aegis-only stats, archive cross-check, options kept in the fills log, render complete.")
