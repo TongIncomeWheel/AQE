@@ -1,10 +1,24 @@
 {
  "name": "aegis-core",
- "version": "1.5.2",
+ "version": "1.6.0",
  "description": "Aegis process and orchestration — loops, desks, order path and tooling. Includes /pma (Premarket Analysis committee, v5.3 CONDUCTOR): map + scoreboard architecture, verified-read seat spawn, two-wave vote, four admission doors, tool-built R2 digest, executive-form brief. Voices ship separately in aegis-voices (same kernel_build).",
  "kernel_build": "cf837be",
  "layer": "process",
  "changelog": [
+  {
+   "version": "1.6.0",
+   "date": "2026-09-06",
+   "changes": [
+    "D-106: unrecognized equity fills AUTO-INCLUDE as confirmed Aegis positions (flagged auto_included_unrecognized, high severity) instead of parking in pending_review; PM's only lever is held_book_refresh.py reject, which now also strips the persistent membership file.",
+    "D-107: WTD realized P&L rollup added to archive_ledger.py, keyed by ISO calendar week, alongside the existing MTD/YTD rollups.",
+    "D-108: new tools/overnight_brief.py — pure read+assemble step (PTJ CLOSE job 10.5) producing overnight opened/closed/stop-changed, realised MTD/WTD/YTD, open risk (equity-only, Aegis-confirmed-only, unknown-stop names named not zeroed), and book beta/exposure — closing a relay gap, not a computation gap. ptj/SKILL.md's job table and Step 3 print spec updated to require it.",
+    "D-109: phase_gate.py's freshness checks now compare against last-trading-day close-of-book (weekend + optional charter-declared-holiday aware) instead of the literal calendar date, so /pma run on a weekend or Monday correctly expects Friday's close instead of demanding same-day data it cannot have. Never grants forward grace into an ordinary trading day. New --holidays flag.",
+    "D-109 (pma side): the PMA GATHER step now calls phase_gate.py check --for premarket_build as its Step 0 and halts with a PM prompt on NOT_READY/BLOCKED instead of silently proceeding on stale premarket data.",
+    "D-110: mandatory, unconditional GitHub-connector push + independent verify checklist after every PTJ CLOSE run, closing a real incident (2026-09-04) where a clean run sat gate-stamped partial for two days because the re-stamp step was skipped.",
+    "D-111: run_post_market.sh now recognizes the exact, routine, always-self-healing sandbox git-proxy-403 push block by its literal error signature and records it as expected (self-stamping the gate ok) instead of FAIL — a genuinely different push failure still records FAIL and still degrades the run. D-110's push-verify checklist still runs every time; its only remaining manual lever is downgrading the gate to partial if verification itself ever fails.",
+    "D-112: new Step 2b in ptj/SKILL.md — after PTJ CLOSE, dispatch the AQE daily pipeline (daily-run.yml workflow_dispatch) and poll to completion, paging the PM on failure/timeout and never auto-retrying. Currently degrades to an explicit manual-fallback flag in the Step 3 report, since no available GitHub connector or session-authorized path can call the Actions API yet — this is documented so it fails loud, not silently, until Actions-API access exists."
+   ]
+  },
   {
    "version": "1.5.2",
    "date": "2026-09-05",

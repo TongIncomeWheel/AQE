@@ -134,6 +134,19 @@ Do not re-derive positions, P&L, dynCap or metrics by hand in any mode, and do n
 
 ---
 
+## Step 2b — AQE daily pipeline trigger (after PTJ, D-112)
+
+PM ruling 2026-09-06: once PTJ CLOSE (Step 2 above) finishes — success, partial, or halted, doesn't matter, this always runs — the AQE daily pipeline (`.github/workflows/daily-run.yml` on `TongIncomeWheel/AQE`, job `run: python -m scripts.daily_backstop`) must also fire for the day. That workflow's own file comment says it now has exactly one automatic trigger: "a Claude-scheduled Routine dispatches this workflow each weekday morning as part of the same sequential job as the PTJ command" — this step is that dispatch.
+
+**Known limitation, current as of 2026-09-06 — read before running this step.** Firing and polling a GitHub Actions workflow needs the GitHub REST Actions API (`workflow_dispatch`, run-status polling, job logs). Neither is available today: the GitHub MCP connector this kernel uses for pushes has no Actions-API tools, and a direct authenticated call to `api.github.com` for this repo is rejected by the session's own proxy (`403 — GitHub access to this repository is not enabled for this session`) — the same category of block as the git-push proxy block (D-111), except there is no connector fallback for it the way there is for `git push`. Do not fabricate a "dispatched" or "completed" status — if you cannot actually call the Actions API from wherever this step is running, say so plainly and use the fallback below.
+
+1. **Try the real thing first.** If whatever is executing this skill DOES have a working path to the GitHub Actions API for `TongIncomeWheel/AQE` (a connector with Actions tools, an authorized `gh`/curl call, or the PM's own device via the desktop bridge) — dispatch `daily-run.yml` on `main` via `workflow_dispatch` (no inputs needed; leave `force` at its default `false` so it still skips cleanly if a run already succeeded today). Poll the run's status every ~3-5 minutes, up to 45 minutes (the 45-minute job timeout in the workflow file is real — a run legitimately can take close to that long against FMP's rate limits, so don't call it stuck before then).
+   - `conclusion: success` — note it in the Step 3 report and move on, no page needed.
+   - `conclusion: failure` or `cancelled`, or still `in_progress` past 45 minutes — page the PM immediately with the run URL, its conclusion/status, and the last few lines of the job log if reachable. **Never retry or re-dispatch a failure automatically** — a real failure usually means something needs a human look, not a blind re-run.
+2. **Fallback — no working Actions-API path (the current default state).** Do not silently skip this and do not claim it ran. Flag it in the Step 3 report exactly like any other blocking/noted line: "AQE daily pipeline was NOT auto-dispatched today — no authorized path to the GitHub Actions API from this session. Run it manually via the AQE UI's own 'Bootstrap + run daily pipeline' sidebar button (the workflow file's documented fallback), or tell Claude once Actions-API access exists so this step can be wired for real." This is a reporting-accuracy requirement (same discipline as D-111): a fabricated pass here is strictly worse than an honest "couldn't do it."
+
+---
+
 ## Step 3 — Print it, then read the exit code
 
 **MODE A and MODE B print the same thing; MODE C prints it and then it is also the book of record.**
