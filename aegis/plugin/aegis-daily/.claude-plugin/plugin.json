@@ -1,18 +1,41 @@
 {
  "name": "aegis-daily",
- "version": "1.0.0",
- "description": "AEGIS DAILY — the book close and its handoff to AQE, in its own plugin. /daily is the one scheduled command: (1) close the book via PTJ and push the journal to GitHub, (2) print the trade journal on screen and prove the file AQE reads is on main, (3) trigger the AQE daily run and watch it land. Also carries /ptj (VIEW, FA, CLOSE) and /premarket (the post-AQE data prep that gates /pma). Deterministic tools only — no voices, no committee, no orders. Split out of aegis-core 2026-09-06 (PM ruling).",
+ "version": "1.2.0",
+ "description": "AEGIS DAILY — the trade journal procedure, in its own plugin. /daily is the one scheduled command: (1) close the book via PTJ and push the journal to GitHub, (2) print the trade journal on screen and prove it is filed on main, (3) print and file the portfolio journal (D-114: day-by-day Aegis NAV with WTD/MTD/QTD/YTD as NAV change) and the trade journal (D-115: every broker fill, FIFO round-trips with entry/exit/qty/fees/net P&L/days/R, open lots, Aegis stats, reconciliation findings). Also carries /ptj (VIEW, FA, CLOSE), print-trade-journal, and /premarket (the post-AQE data prep that gates /pma). Cowork is the runtime, GitHub is storage. Deterministic tools only — no voices, no committee, no orders, and it never triggers AQE.",
  "kernel_build": "cf837be",
  "layer": "process",
  "changelog": [
   {
+   "version": "1.2.0",
+   "date": "2026-09-06",
+   "changes": [
+    "D-115 trade journal: new tools/trade_journal.py (PTJ CLOSE jobs 10.8-10.9). Every broker fill ever pulled is kept in data/persistent/trade_journal.json keyed by the broker's fill id (idempotent); stock round-trips built by FIFO — date in, entry, qty, date out, exit, gross, fees, net, %, days held, R where the stop at entry is known; open lots; Aegis-only stats; reconciliation against the latest journal's positions and the archive ledger, reported as findings. Positions older than the first saved pull are seeded from the earliest journal that carried them, flagged on the row. Seeded from 153 fills back to 2026-08-12.",
+    "First reconciliation findings recorded for the PM: the archive booked HNGE 31-Aug off the post-re-buy average cost (-406.37 vs -630.60 per fills and the broker); IBKR's 1-Sep exit (-887.22) has no sell fill in any saved pull; V (20 sh) is open per the journals with no buy fill on record; the archive is gross of sell commissions. Aegis realised net of all fees per fills: -5,293.48 on 13 trades vs the archive's -5,043.74.",
+    "portfolio_ledger.py: close dates now derived from when each journal was built (US/Eastern) rather than its label — journals through 2026-09-03 were labelled with the close date, from 2026-09-04 with the next trading day; the build timestamp is true under both. Re-seeded.",
+    "/daily Stage 3 prints both ledgers and every reconciliation line verbatim, then confirms both are on main."
+   ]
+  },
+  {
+   "version": "1.1.0",
+   "date": "2026-09-06",
+   "changes": [
+    "D-114 portfolio journal: new tools/portfolio_ledger.py (PTJ CLOSE jobs 10.6-10.7) appends one row per close to data/persistent/portfolio_ledger.json — Aegis NAV (= dynCap, never the co-mingled Tiger NAV), realised, unrealised, exposure, risk — and recomputes WTD/MTD/QTD/YTD/inception as NAV change with realised split out and the baseline named, plus an ISO-week table and the last ten closes, rendered to data/eod/DATE/portfolio_stats_DATE.md. Seeded from the 14 real journals back to the 2026-08-18 close. /daily Stage 3 prints it and confirms it is on main.",
+    "All AQE-trigger instructions removed from this plugin (PM ruling 2026-09-06). The Cowork connector cannot call the GitHub Actions API; the AQE daily pipeline runs from its own Claude Code routine. /daily, /ptj and /premarket never dispatch, poll or wait on it.",
+    "premarket Step 0 stays idempotent: if phase_gate reads premarket_data READY for the day, /daily already closed the book and the close is skipped."
+   ]
+  },
+  {
+   "version": "1.0.1",
+   "date": "2026-09-06",
+   "changes": [
+    "print-trade-journal moved here from aegis-core."
+   ]
+  },
+  {
    "version": "1.0.0",
    "date": "2026-09-06",
    "changes": [
-    "New plugin. PM ruling 2026-09-06: everything to do with PTJ and premarket data prep lives here, not in aegis-core.",
-    "skills/daily — the scheduled three-stage command: close → show → trigger AQE. Stage 3 fires .github/workflows/daily-run.yml by pushing aegis/triggers/aqe_daily_run.json (D-113: the sandbox cannot call the Actions API, so the workflow now also listens on a push to that one path-filtered file) and watches aegis/output/aqe_last_run.json for today's status:success, paging on failure or after 45 minutes and never retrying on its own.",
-    "skills/ptj — moved from aegis-core unchanged, except Step 2b now points at /daily Stage 3 instead of carrying its own AQE-trigger text.",
-    "skills/premarket — moved from aegis-core. Step 0 is now idempotent: if phase_gate reads premarket_data READY for today (i.e. /daily already closed the book), it skips the close instead of re-pulling the broker and re-pushing the same journal. The rest (export pull, coverage, held-book refresh, stops, artefact check, push, stamp, print) is unchanged and now runs AFTER AQE has published, which is the order it always needed."
+    "New plugin. /ptj and /premarket moved out of aegis-core; /daily added."
    ]
   }
  ]
