@@ -138,3 +138,81 @@ def test_packets_status_reports_a_clean_publish(_wired, monkeypatch):
     marker = J._run_pipeline_and_record(now)
 
     assert "published: 11/11" in marker["packets_status"]
+
+
+# ── artifacts_published: what actually reached GitHub, not just a timestamp ──
+# (2026-09-06) The status bar used to show only "Last refreshed: <time>",
+# which says WHEN something last happened but nothing about WHAT reached
+# GitHub -- a run can finish clean while some artifact silently fails to
+# publish, exactly the same shape of gap packets_status closed for voice
+# packets specifically. daily_orchestrator.py now prints one JSON receipt
+# line (ARTIFACTS_PUBLISH_JSON:) right after Step 8a-2; this parses it.
+
+def test_artifacts_published_parses_the_receipt_line(_wired, monkeypatch):
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-06")
+    stdout = (
+        "  GitHub output: 9 file(s) -> TongIncomeWheel/AQE/aegis/output\n"
+        'ARTIFACTS_PUBLISH_JSON: {"total": 11, "written": 9, '
+        '"failed": ["qs_daily.json"], "absent": ["options_scan.json"]}\n'
+    )
+    monkeypatch.setattr(subprocess, "run",
+                         lambda *a, **k: _FakeProc(returncode=0, stdout=stdout))
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert marker["artifacts_published"] == {
+        "total": 11, "written": 9,
+        "failed": ["qs_daily.json"], "absent": ["options_scan.json"],
+    }
+
+
+def test_artifacts_published_is_recorded_even_on_an_overall_success(_wired, monkeypatch):
+    """The exact shape of the risk this closes: the export refreshes fine
+    (overall status: success) while an artifact silently fails to publish."""
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-06")
+    stdout = ('ARTIFACTS_PUBLISH_JSON: {"total": 11, "written": 10, '
+              '"failed": ["aqe_macro_pack.json"], "absent": []}\n')
+    monkeypatch.setattr(subprocess, "run",
+                         lambda *a, **k: _FakeProc(returncode=0, stdout=stdout))
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert marker["status"] == "success", "the export itself genuinely did refresh"
+    assert marker["artifacts_published"]["failed"] == ["aqe_macro_pack.json"], (
+        "a partial artifacts-publish failure must be visible even when the "
+        "overall run is reported as a success"
+    )
+
+
+def test_artifacts_published_is_none_when_the_receipt_line_never_printed(_wired, monkeypatch):
+    """An older run (predating this fix) or one that crashed before Step
+    8a-2 must degrade to None, not a fabricated all-zeros shape."""
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-06")
+    monkeypatch.setattr(subprocess, "run",
+                         lambda *a, **k: _FakeProc(returncode=0, stdout="no receipt here\n"))
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert marker["artifacts_published"] is None
+
+
+def test_artifacts_published_survives_a_timeout(_wired, monkeypatch):
+    """The TimeoutExpired branch captures partial stdout -- Step 8a-2 runs
+    well before the slow tail steps, so its receipt should still be there."""
+    now = datetime(2026, 9, 6, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-09-06")
+    partial = ('ARTIFACTS_PUBLISH_JSON: {"total": 11, "written": 11, '
+               '"failed": [], "absent": []}\n' + "line\n" * 25)
+
+    def _boom(*a, **k):
+        raise subprocess.TimeoutExpired(cmd="x", timeout=1, output=partial)
+    monkeypatch.setattr(subprocess, "run", _boom)
+
+    marker = J._run_pipeline_and_record(now)
+
+    assert marker["artifacts_published"] == {
+        "total": 11, "written": 11, "failed": [], "absent": [],
+    }

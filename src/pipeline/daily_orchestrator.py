@@ -491,6 +491,18 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         if gh_out.get("absent"):
             print(f"  [WARN] GitHub output: not on disk to publish: "
                   f"{gh_out['absent']}")
+        # Machine-readable receipt for the Scanner UI status line (2026-09-06):
+        # a bare timestamp told a reader WHEN something last happened, never
+        # WHAT reached GitHub -- "the run looked fine but half the files never
+        # published" was invisible. daily_job.py's marker-status parser scans
+        # stdout for this exact line, same pattern as the voice-packets receipt
+        # just below.
+        print("ARTIFACTS_PUBLISH_JSON: " + json.dumps({
+            "total": len(_gh.DAILY_ARTIFACTS),
+            "written": gh_out.get("written", 0),
+            "failed": gh_out.get("failed", []),
+            "absent": gh_out.get("absent", []),
+        }))
     except Exception as exc:
         print(f"  [WARN] GitHub output publish failed: {exc}")
 

@@ -96,19 +96,53 @@ try:
     _lr = last_run_status()
     if _lr is None:
         st.info(f"⏱️ Auto-run scheduled {next_run_hint()}. No run recorded yet.")
-    elif _lr.get("status") == "success":
-        _picks = _lr.get("top_picks")
-        _pk = f" · {_picks} top picks" if _picks is not None else ""
-        st.success(
-            f"✅ Last auto-run {_lr.get('finished_at', '?')} — pushed to Drive"
-            f"{_pk}. Next: {next_run_hint()}."
-        )
     else:
-        _why = _lr.get("reason") or f"exit code {_lr.get('rc', '?')}"
-        st.warning(
-            f"⚠️ Last auto-run {_lr.get('finished_at', _lr.get('started_at','?'))} "
-            f"FAILED ({_why}). Next: {next_run_hint()}."
-        )
+        # What actually reached GitHub this run (2026-09-06) -- a timestamp
+        # alone says WHEN something last happened, never WHAT published. A run
+        # can finish clean while some artifact silently fails to publish;
+        # that used to be invisible unless you went digging through logs.
+        _art = _lr.get("artifacts_published")
+        _art_ok = bool(_art) and not _art.get("failed") and not _art.get("absent")
+        _art_summary = ""
+        if _art:
+            _art_summary = f" · {_art.get('written', 0)}/{_art.get('total', '?')} files → GitHub"
+            if not _art_ok:
+                _art_summary += (f" ({len(_art.get('failed') or [])} failed, "
+                                 f"{len(_art.get('absent') or [])} missing)")
+
+        if _lr.get("status") == "success" and _art_ok:
+            _picks = _lr.get("top_picks")
+            _pk = f" · {_picks} top picks" if _picks is not None else ""
+            st.success(
+                f"✅ Last auto-run {_lr.get('finished_at', '?')} — pushed to Drive"
+                f"{_pk}{_art_summary}. Next: {next_run_hint()}."
+            )
+        elif _lr.get("status") == "success":
+            st.warning(
+                f"⚠️ Last auto-run {_lr.get('finished_at', '?')} completed, but "
+                f"NOT everything reached GitHub{_art_summary}. Next: {next_run_hint()}."
+            )
+        else:
+            _why = _lr.get("reason") or f"exit code {_lr.get('rc', '?')}"
+            st.warning(
+                f"⚠️ Last auto-run {_lr.get('finished_at', _lr.get('started_at','?'))} "
+                f"FAILED ({_why}){_art_summary}. Next: {next_run_hint()}."
+            )
+
+        if _art:
+            with st.expander("What actually reached GitHub this run", expanded=not _art_ok):
+                st.caption(f"{_art.get('written', 0)} of {_art.get('total', '?')} "
+                          f"daily artifact files published.")
+                if _art.get("failed"):
+                    st.error("Failed to publish: " + ", ".join(_art["failed"]))
+                if _art.get("absent"):
+                    st.warning("Not on disk this run (never produced, never "
+                              "attempted): " + ", ".join(_art["absent"]))
+                if _art_ok:
+                    st.success("Every daily artifact file published successfully.")
+        elif _lr.get("status") == "success":
+            st.caption("This run predates the artifacts-published receipt "
+                      "(2026-09-06) — no per-file breakdown available for it.")
 except Exception:  # noqa: BLE001
     pass
 

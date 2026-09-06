@@ -275,6 +275,24 @@ def _run_pipeline_and_record(now: datetime) -> dict:
                 return line.strip()
         return "unknown -- Step 8a-3 produced no recognizable output"
 
+    def _artifacts_published(stdout: str) -> dict | None:
+        """Which of the DAILY_ARTIFACTS files (Step 8a-2) actually reached
+        GitHub this run -- the status bar used to show only a bare
+        timestamp, which says WHEN something last happened but nothing about
+        WHAT reached GitHub. A run can report an on-time timestamp while half
+        the artifacts silently failed to publish; this makes that visible
+        instead of assumed. Scans for the exact JSON receipt line
+        src/pipeline/daily_orchestrator.py prints right after Step 8a-2.
+        Returns None if the line was never printed (older run / crashed
+        before that step) rather than fabricating a shape."""
+        for line in reversed((stdout or "").splitlines()):
+            if line.startswith("ARTIFACTS_PUBLISH_JSON:"):
+                try:
+                    return json.loads(line.split(":", 1)[1].strip())
+                except Exception:  # noqa: BLE001
+                    return None
+        return None
+
     try:
         proc = subprocess.run(
             [sys.executable, "-u", "-m", "src.pipeline.daily_orchestrator"],
@@ -303,6 +321,7 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
             "packets_status": _packets_status(proc.stdout),
+            "artifacts_published": _artifacts_published(proc.stdout),
             "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if not ok else "",
             **({} if ok else {"reason": "pipeline exited 0 but the export was not "
                                          "refreshed for today -- see the tail for "
@@ -322,6 +341,7 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
             "packets_status": _packets_status(partial),
+            "artifacts_published": _artifacts_published(partial),
             "reason": (f"TimeoutExpired after {_PIPELINE_TIMEOUT}s"
                        + (" — feed EXPORTED OK; a tail step (snapshot/ledger/MA "
                           "scan) ran long. Trading feed is current."
