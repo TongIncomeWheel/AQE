@@ -130,6 +130,55 @@ def test_the_two_positioning_clauses_are_not_joined_by_a_second_and():
     assert "; " in cot_line
 
 
+# ─────────────────────────── CTA + COT are translated into ONE takeaway ───
+# PM feedback (2026-09-06): "I don't get how CTA and COT is used" -- both
+# were reported as isolated facts with nothing tying them into what a reader
+# should actually take away. This is the synthesis sentence that closes that
+# gap: it must always follow the two raw facts, and it must say something
+# DIFFERENT depending on whether positioning is actually crowded.
+
+def test_a_crowded_positioning_read_is_named_fragile():
+    """Default fixture: cta flip_risk=0.25 over 8 markets (2 extremes) AND 3
+    COT names crowded -- both signals say the same thing, so this must read
+    as fragile, not clean."""
+    pe = E.explain(crown(), SCEN)
+    synthesis = next(b for b in pe["because"] if b.startswith("Together,"))
+    assert "fragile" in synthesis
+    assert "clean setup" not in synthesis
+
+
+def test_an_uncrowded_positioning_read_is_named_clean():
+    """Neither signal shows a crowd: cta flip_risk zeroed (no extremes) AND
+    no COT names crowded -- must read as clean, not fragile."""
+    c = crown(crowded_long=(), crowded_short=())
+    c["cta"]["flip_risk"] = 0.0
+    pe = E.explain(c, SCEN)
+    synthesis = next(b for b in pe["because"] if b.startswith("Together,"))
+    assert "clean setup" in synthesis
+    assert "fragile" not in synthesis
+
+
+def test_the_synthesis_always_follows_the_two_raw_positioning_facts():
+    """Read order matters: raw CTA fact, raw COT fact, THEN what they mean
+    together -- never the synthesis floating disconnected from the facts it
+    is summarising."""
+    pe = E.explain(crown(), SCEN)
+    idx_cta = next(i for i, b in enumerate(pe["because"]) if "Trend-following" in b)
+    idx_cot = next(i for i, b in enumerate(pe["because"]) if "speculators" in b)
+    idx_synth = next(i for i, b in enumerate(pe["because"]) if b.startswith("Together,"))
+    assert idx_cta < idx_synth
+    assert idx_cot < idx_synth
+
+
+def test_the_synthesis_is_absent_when_cta_never_reported():
+    """No cta.overall_bias/n_markets (e.g. a degraded run) -- nothing to
+    synthesise, and the sentence must not fabricate one from cot alone."""
+    c = crown()
+    c["cta"] = {}
+    pe = E.explain(c, SCEN)
+    assert not any(b.startswith("Together,") for b in pe["because"])
+
+
 def test_sentences_do_not_end_in_a_double_period():
     for b in _all_text(E.explain(crown(), SCEN)).split(" "):
         assert ".." not in b

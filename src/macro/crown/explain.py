@@ -267,6 +267,38 @@ def _cot_reason(cot: dict) -> str | None:
             f"(CFTC data to {cot.get('as_of')}).")
 
 
+def _positioning_synthesis(cta: dict, cot: dict) -> str | None:
+    """What CTA + COT mean TOGETHER for the book -- Nick Crown's own framing
+    is that trend-following positioning (where the next automatic flip sits)
+    and speculative crowding (how one-sided current bets already are) answer
+    ONE question: is this market fragile or clean? Before this fix, they were
+    reported as two disconnected facts (_cta_reason/_cot_reason above) with
+    nothing tying them into what a reader should actually take away -- named
+    directly as a gap (2026-09-06: "I don't get how CTA and COT is used").
+
+    Fragile = a crowd is already built up (CTA extremes and/or several COT
+    names crowded): if price crosses a nearby flip level, the SAME funds get
+    forced to reverse, accelerating the move rather than fading it. Clean =
+    no crowd on either side: a real move here has to come from fresh buying
+    or selling, not from people being flushed out."""
+    if not cta.get("overall_bias") or not cta.get("n_markets"):
+        return None
+    n = cta.get("n_markets") or 0
+    cta_extremes = round(float(cta.get("flip_risk") or 0.0) * n)
+    cot_ok = (cot or {}).get("status") == "OK"
+    cot_crowded = (len((cot.get("crowded_long") or []) + (cot.get("crowded_short") or []))
+                  if cot_ok else 0)
+
+    if cta_extremes > 0 or cot_crowded >= 3:
+        return ("Together, that is a fragile setup, not a confident one: a lot of "
+                "money is already leaning the same way, so a break past the levels "
+                "below would force that SAME money to reverse fast, accelerating "
+                "whatever move already started rather than fading it.")
+    return ("Together, that is a clean setup: no crowd built up on either side and "
+            "no automatic trigger nearby, so a real move here would have to come "
+            "from fresh buying or selling, not from a crowd being forced out.")
+
+
 def _divergence_reason(div: dict) -> str | None:
     fired = div.get("types_fired") or []
     if not fired:
@@ -390,6 +422,7 @@ def explain(crown: dict, scenarios: dict | None = None) -> dict:
         _gamma_reason(crown.get("gamma") or {}),
         _cta_reason(crown.get("cta") or {}),
         _cot_reason(crown.get("cot") or {}),
+        _positioning_synthesis(crown.get("cta") or {}, crown.get("cot") or {}),
         _divergence_reason(crown.get("divergence") or {}),
     ) if r]
 
