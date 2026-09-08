@@ -1,0 +1,446 @@
+{
+ "created": "2026-09-08T04:06:08Z",
+ "date": "2026-09-08",
+ "degradations": [
+  {
+   "at": "2026-09-08T04:06:20Z",
+   "note": "TOOL DEFECT FIXED IN-RUN (R6): preflight_run.py stamp seeded GATHER as a bare dict, so registrar.commit raised KeyError:'files' on every artifact and the step ticked done with zero files recorded. Root cause fixed in stamp_tool_hashes (canonical step shape), scoreboard re-initialised, tools re-stamped, preflight re-run PASS. Needs upstream push to AQE main.",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-09-08T04:29:01Z",
+   "note": "TOOL CHANGED MID-RUN, DECLARED (R7/R6): pma_pipeline.py r2digest refused all four challenge documents because steenbarger/lynch/detect-lens filed under keys the reader did not know (conviction_audit, process_findings, repeat_exposure, obligation_register, assessments, structures). The refusal was correct - it is the 2026-09-07 anti-silent-drop guard working. Fixed by widening the reader's declared contract in the one place that contract lives (no per-seat adapter, R6). 65/65 tests still pass. Tools re-stamped. GAP FOR UPSTREAM: there is no contracts/challenge.schema.json - the challenge document shape is unwritten, which is why three of four seats guessed differently.",
+   "step": "CHALLENGE"
+  },
+  {
+   "at": "2026-09-08T04:39:04Z",
+   "note": "R1 ENFORCEMENT DEFECT FIXED IN-RUN (R6/R7): registrar._bracket_as_reject rejected oneil's whole form on 12 of 16 votes because his opposing_case text read 'No bracket cited' / 'Not a bracket objection' - the seat DECLARING R1 compliance - matched BRACKET_TERM, while an unrelated 'fails' about volume elsewhere in the same field matched REJECT_VERB. The old test required no proximity and had no negation awareness, so it punished the exact compliance R1 exists to produce and would have cost the run a voter. Fixed: disclaimer clauses stripped, and bracket term + reject verb must now co-occur in the SAME sentence. Verified against 6 genuine-violation cases (all still REJECT) and 6 compliance cases (all now pass); 65/65 suite green. Needs upstream push.",
+   "step": "VOTE"
+  }
+ ],
+ "flags": [],
+ "run_id": "pma-2026-09-08",
+ "seats": {
+  "CHALLENGE/detect-lens": {
+   "file": "forms/challenge/detect-lens.json",
+   "flags": [],
+   "sha256": "289e842bc28a8ce3bf25d361a12cfcf9b770d5ff68e112ceaaffa6fe6fe2e266",
+   "status": "committed"
+  },
+  "CHALLENGE/lynch": {
+   "file": "forms/challenge/lynch.json",
+   "flags": [],
+   "sha256": "3b398b45f024befbdc48fc9f308c017bd870acd27d777d7fc854e3294e830a11",
+   "status": "committed"
+  },
+  "CHALLENGE/rogers": {
+   "file": "forms/challenge/rogers.json",
+   "flags": [],
+   "sha256": "39fe7cec3a3a877d3e6156e397ee326aba7fc15876f586bda4e92a3c8db4d1c0",
+   "status": "committed"
+  },
+  "CHALLENGE/steenbarger": {
+   "file": "forms/challenge/steenbarger.json",
+   "flags": [],
+   "sha256": "2e672bec3f05df027e06ec4793c8ca7934f1c64b52f8beed84f51aec6a2ece66",
+   "status": "committed"
+  },
+  "MACRO/crown": {
+   "file": "forms/macro/crown.json",
+   "flags": [],
+   "sha256": "7f5b6ed9cc093901ef3a091bab34647bce7b4bc4ba27f8fe5000e0cd0f5f3fa3",
+   "status": "committed"
+  },
+  "MACRO/druckenmiller": {
+   "file": "forms/macro/druckenmiller.json",
+   "flags": [],
+   "sha256": "944762163a61da2eca22d6e0edbe4ccc78a0c33716269e761c32146fe14382b4",
+   "status": "committed"
+  },
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "163b4199dc1f1cad3d914220b9bafba664e143b7555ab24420845d5a7b9bcb5c",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "83f8f5bfa9f98939c8f67dc082a129935b6596a97e9a98cf8f2363e70cc64c82",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "910ad37e1c0d350e6d1f4105a349868df793661a0dde8a01f0a2c3f27a0578ab",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "8bafa0ebf942fe9cc7864df5e493b1215834e648f6a486a1b533ac33d44a9565",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [
+    "BRACKET_MENTION:VRNS"
+   ],
+   "sha256": "fe708ae3f8163f680dfb689bc6ebea3e5734a6413f966e3f858140a12e72030d",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "ad98e7ce21fd615ff1b125e2974459c169e113f83a157a28ebaa6d7638da763a",
+   "status": "committed"
+  },
+  "NOMINATE/thorp": {
+   "file": "forms/r1/thorp.json",
+   "flags": [],
+   "sha256": "f0a10c8fda42fa906cdcaeeb97e5d9401c1e77b0cc7bd4dfd67d9085abb77e31",
+   "status": "committed"
+  },
+  "NOMINATE/weis": {
+   "file": "forms/r1/weis.json",
+   "flags": [],
+   "sha256": "f9c2c6d4fc98c5bb7af8126c38eb17b3d7cb026aa24ee7577f7ccb6dc9f49b77",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "8f170941adb9b36577da8aa7aa77fe499fae77fced98682bd8f4972c998ae7a0",
+   "status": "committed"
+  },
+  "VOTE/detect-lens": {
+   "file": "forms/r2/detect-lens.json",
+   "flags": [],
+   "sha256": "a526e8ecfaaff63e4989ad0232a549dbfc5b3c595c1372729c3467828c209f83",
+   "status": "committed"
+  },
+  "VOTE/elder-lens": {
+   "file": "forms/r2/elder-lens.json",
+   "flags": [],
+   "sha256": "9ac2e4fd28c5b002e6929fe3e35ef4fdc97d4b06897b7378fa2f3b8d928f60ce",
+   "status": "committed"
+  },
+  "VOTE/livermore": {
+   "file": "forms/r2/livermore.json",
+   "flags": [],
+   "sha256": "2b901697ecff55d4a89dfb76eb7e2aac1c4d9ded2edc1d58959cb0b846eb8193",
+   "status": "committed"
+  },
+  "VOTE/lynch": {
+   "file": "forms/r2/lynch.json",
+   "flags": [],
+   "sha256": "762306058a3144a43c0270469f454295cd59314e524d19ecb2b6e9029abdeafd",
+   "status": "committed"
+  },
+  "VOTE/minervini": {
+   "file": "forms/r2/minervini.json",
+   "flags": [],
+   "sha256": "a44901cb4270d0c39a072a94c1921bcc626425ad00d13953e5850bfb36b425d3",
+   "status": "committed"
+  },
+  "VOTE/oneil": {
+   "file": "forms/r2/oneil.json",
+   "flags": [],
+   "sha256": "1eae669d253fcf607960f9361c85ef1bca3c958b839a016b9920ea03862d814f",
+   "status": "committed"
+  },
+  "VOTE/raschke": {
+   "file": "forms/r2/raschke.json",
+   "flags": [],
+   "sha256": "37147e6721a632bb2688ae81395d3718224d586ea03ae6c9dbe517fdb4bc8f68",
+   "status": "committed"
+  },
+  "VOTE/seow": {
+   "file": "forms/r2/seow.json",
+   "flags": [],
+   "sha256": "6ec9cf40ef194cd18b88fd5f4481281c3ed1e8b610d8847af5b0c187ff3a30d8",
+   "status": "committed"
+  },
+  "VOTE/thorp": {
+   "file": "forms/r2/thorp.json",
+   "flags": [],
+   "sha256": "c5afead49e15ab7f541229176f77937a1043c623aeb30832ea774762334359ac",
+   "status": "committed"
+  },
+  "VOTE/weis": {
+   "file": "forms/r2/weis.json",
+   "flags": [],
+   "sha256": "be8f66c47553e03664c020ac286f4e070a556a0b4861b115661689dce241cda3",
+   "status": "committed"
+  },
+  "VOTE/wyckoff": {
+   "file": "forms/r2/wyckoff.json",
+   "flags": [],
+   "sha256": "f403e07c09e2e70795560783bb0ba7fe725b79e8a4b660cbc1b04c2ba33e4851",
+   "status": "committed"
+  },
+  "WRITE/brief-writer": {
+   "file": "pma_brief_2026-09-08.md",
+   "flags": [],
+   "sha256": "296290da5373ca4d88039f86837b03ae82c6dc44109b4766009a5c5e1d1f33c5",
+   "status": "committed"
+  }
+ },
+ "steps": {
+  "CHALLENGE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 94082,
+    "spawns": 4
+   },
+   "files": {
+    "forms/challenge/detect-lens.json": "289e842bc28a8ce3bf25d361a12cfcf9b770d5ff68e112ceaaffa6fe6fe2e266",
+    "forms/challenge/lynch.json": "3b398b45f024befbdc48fc9f308c017bd870acd27d777d7fc854e3294e830a11",
+    "forms/challenge/rogers.json": "39fe7cec3a3a877d3e6156e397ee326aba7fc15876f586bda4e92a3c8db4d1c0",
+    "forms/challenge/steenbarger.json": "2e672bec3f05df027e06ec4793c8ca7934f1c64b52f8beed84f51aec6a2ece66"
+   },
+   "finished": "2026-09-08T04:27:31Z",
+   "notes": [
+    "4/4; read-proof PASS 4/4; rogers crowding HIGH (day_vol in 31/37 reasons, 7 of 16 in Fading/Declining sectors); steenbarger 10 conviction mismatches + 3 process FAILs; lynch 11 of 16 fundamentals contradict technicals, fail gates NOT_TESTABLE on all 16; detect-lens 7 ENTRYABLE / 8 WATCH_ONLY / 1 BROKEN"
+   ],
+   "started": "2026-09-08T04:27:31Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CHECK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-09-08T04:53:02Z",
+   "notes": [
+    "gate 0 FAIL after 1 quality loop (23 FAIL -> 7 -> 0). Fixed: verdict table moved above the run-integrity table (QX1), vote-tally vocabulary cleared from the body (QX2), 4-sentence header line collapsed (QX3), SLDE/VLO removed from the trade list into section 8 (Q9D), condition column relabelled so every HOLD carries a Condition line (Q2h). No verdict, conviction, ranking or cap was touched."
+   ],
+   "started": "2026-09-08T04:53:02Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "DECIDE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 347925,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {
+    "brackets.json": "05a8f7025abf319669cecad4625a36d7f892e3c086df463aa72c02506a3b2313",
+    "consensus.json": "2eb8b818e046187df7c2b97c6edbc4cd4fa8c8c9e882b82eb13e841729fe5498",
+    "round2_all.json": "e022967a181df977e73fcc25f4e71935ec077e96cb741cc1209996962f11872b",
+    "verdict_ledger.json": "6fcdad617960bc6c93b8db67e4cbcdace0f2f5111f413313864ee42643e4cd3e"
+   },
+   "finished": "2026-09-08T04:39:56Z",
+   "notes": [
+    "6 ADVANCE (VRNS WFC MFG BBY MU AM), 7 HOLD-FOR-CONDITIONS (MET ADM DELL CVNA SLDE VLO ORCL), 3 PASS (CNH PRCH GTLB); computed by pma_pipeline consensus, never hand-tallied; 16 verdicts locked write-once before the brief (R8); brackets attached render-only after ranking, 3/16 structural"
+   ],
+   "started": "2026-09-08T04:39:56Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 1955698,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {
+    "aqe_crown_macro.json": "3c32aada6df7097e4122109f0dbe77c8b4ce181855ace1656854c70d955d1698",
+    "aqe_daily_export.json": "c97b1ad755f24e949317738d30f82108e11847adb243097fd3538c605ed75876",
+    "candidate_set.json": "b51668fb2d8f9fccc61e0fbbda2f515a73b6828da02918300d0232ef46e4c9bd",
+    "data_health.json": "1d463481a8d8f573c594d32e5674f83642b880fc410c8cd69d434b0f3e0b65bb",
+    "fundamentals_pack.json": "3d1a8a93cdedaf69b6d110fee9e9470b0f794f2838d4af30240c42fa74b9b2d1",
+    "phase4_ledger.json": "9040e5b92f5ebb349eb4787a57c8322857d27099f9e169e8b9cf0c5a68bdbed9",
+    "verdict_ledger.json": "b7baa759550a5a642e7022beade5c8a2229318378e12e814eebdc60ead4c5860"
+   },
+   "finished": "2026-09-08T04:06:20Z",
+   "notes": [
+    "AQE@e7f4f80; export 2026-09-06 = Fri 2026-09-04 US COB (Mon 2026-09-07 = US Labor Day); 26-name universe; FMP pack 26/26 fully served"
+   ],
+   "started": "2026-09-08T04:06:20Z",
+   "status": "done",
+   "tokens": 0,
+   "tool_hashes": {
+    "emit_packets.py": "d04b6a4bf99f0ce7e7bcd6491bf516c4f8410ada8556e535a9eb3e4f6eac3aee",
+    "field_derive.py": "d45a953aae333ce08342865ae9e736a2ec951e72f04c7e541092e715ef3d1180",
+    "momentum_floor.py": "94cdbfe3e33094f56a965e8998848f75c4dc6039173c5740155653b6176914c5",
+    "pm_lens.py": "0016b82852531f37cde861c4ab0661434b6d3acef3c318fd24d5cf8915e14cd2",
+    "pma_pipeline.py": "e849a42a6f6b3cd4b87431231188c59d87d462148d486adfc5ac5c8ae3f1e579",
+    "preflight_run.py": "40130eeda2db315ef6842e2301cb2a3e34d73ebef36bbbf11d5c66dd290e02f5",
+    "purity_check.py": "a7310c30786827b8076cfc628f2b3c842736f8b1e745eb16de1110c193633d43",
+    "registrar.py": "beadd6535f340f558324ba19bce992a79826127149931601aa216676ac9020a1",
+    "voice_preflight.py": "a7fb433a9c387fd1893283c73539fcd30daaf9109439d9ea53fe8b1ba6d5e13d"
+   }
+  },
+  "MACRO": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 26880,
+    "spawns": 2
+   },
+   "files": {
+    "forms/macro/crown.json": "7f5b6ed9cc093901ef3a091bab34647bce7b4bc4ba27f8fe5000e0cd0f5f3fa3",
+    "forms/macro/druckenmiller.json": "944762163a61da2eca22d6e0edbe4ccc78a0c33716269e761c32146fe14382b4"
+   },
+   "finished": "2026-09-08T04:16:53Z",
+   "notes": [
+    "2/2 seats; read-proof PASS both; crown R9 NOT_SERVED (option_dealers.available=false) - declared, not inferred; druckenmiller zero tickers confirmed"
+   ],
+   "started": "2026-09-08T04:16:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 166458,
+    "spawns": 9
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "163b4199dc1f1cad3d914220b9bafba664e143b7555ab24420845d5a7b9bcb5c",
+    "forms/r1/livermore.json": "83f8f5bfa9f98939c8f67dc082a129935b6596a97e9a98cf8f2363e70cc64c82",
+    "forms/r1/minervini.json": "910ad37e1c0d350e6d1f4105a349868df793661a0dde8a01f0a2c3f27a0578ab",
+    "forms/r1/oneil.json": "8bafa0ebf942fe9cc7864df5e493b1215834e648f6a486a1b533ac33d44a9565",
+    "forms/r1/raschke.json": "fe708ae3f8163f680dfb689bc6ebea3e5734a6413f966e3f858140a12e72030d",
+    "forms/r1/seow.json": "ad98e7ce21fd615ff1b125e2974459c169e113f83a157a28ebaa6d7638da763a",
+    "forms/r1/thorp.json": "f0a10c8fda42fa906cdcaeeb97e5d9401c1e77b0cc7bd4dfd67d9085abb77e31",
+    "forms/r1/weis.json": "f9c2c6d4fc98c5bb7af8126c38eb17b3d7cb026aa24ee7577f7ccb6dc9f49b77",
+    "forms/r1/wyckoff.json": "8f170941adb9b36577da8aa7aa77fe499fae77fced98682bd8f4972c998ae7a0"
+   },
+   "finished": "2026-09-08T04:16:53Z",
+   "notes": [
+    "9/9 seats returned (barrier 8/9); read-proof PASS 9/9; registrar validate OK 9/9; oneil and seow filed ZERO nominations with stated shortfall - a legitimate return, counted for quorum"
+   ],
+   "started": "2026-09-08T04:16:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 231271,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {
+    "pm_lens.json": "913c0bca34506ac451e4d08313ca5dc01e1a56b3cfd30b79a45e1e3704f9b5db"
+   },
+   "finished": "2026-09-08T04:18:31Z",
+   "notes": [
+    "4 flagged at 5/6 checks (MFG, WFC, PRCH, GTLB); all four deliberated; zero UNSEEN this run; independent lane - fed nothing upstream"
+   ],
+   "started": "2026-09-08T04:18:30Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 6157,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {
+    "packets_manifest.json": "78c22867ccb8cacf08455c320f6e22bb42e40ff62c6b8dedaeb9608af9bdba98"
+   },
+   "finished": "2026-09-08T04:07:17Z",
+   "notes": [
+    "11/11 seats have packets; 26/26 universe coverage each; zero off-universe; zero qs_market; consumed as published (R5)"
+   ],
+   "started": "2026-09-08T04:07:17Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 112079,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {
+    "nominations_all.json": "2550f600471b2db8d2197bc03f0ae9018c655cf9eaa24c5eb6bcb12aae2a8885",
+    "phase4.json": "dee71a7aac9450998968a7f6e489db7dbb09801dc9141c449be41c2c5476ba05",
+    "phase4_ledger.json": "35a84da878580bc5b00f97d19c39b442d1aaa4f1a00d0914dc234c5031a8ac94",
+    "tally.json": "ada56684d5a4e517eac8cc621aac8f75c516f5b064cd412a9d7a298706103f61"
+   },
+   "finished": "2026-09-08T04:18:21Z",
+   "notes": [
+    "21 tickers tallied across 9 seats; union 16 across 4 doors, 16 admitted (cap 20), 0 cut; doors SEATS=14 ELDER+LENS=3 PM_LENS=4 AQE_LEADER=2; PRCH admitted with zero seats (UNSEEN/TER gap); no sector term in the key (R4)"
+   ],
+   "started": "2026-09-08T04:18:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "REPEAT-WATCH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 3309,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {
+    "purity_check.json": "585fbd7dae20d2c8b38e808afd2fcdd26497bbfcd56213bc63f47f45a9c067a9",
+    "repeat_watch.json": "b3e5f702a4a4829d1770753445a49d7ee3d1b01349ebbc36cbb7414b75a14c2f"
+   },
+   "finished": "2026-09-08T04:40:35Z",
+   "notes": [
+    "repeat-watch: 15 rows across 7 repeat tickers, ZERO gaps with no verdict-ledger match; purity invariance PASS (rank byte-identical with bracket/fundamental fields stripped); crowding gap +6% vs 30% warn threshold - consensus is not tracking bracket availability"
+   ],
+   "started": "2026-09-08T04:40:35Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "VOTE": {
+   "cost": {
+    "inlined_bytes": 58047,
+    "returned_bytes": 471750,
+    "spawns": 11
+   },
+   "files": {
+    "forms/r2/detect-lens.json": "a526e8ecfaaff63e4989ad0232a549dbfc5b3c595c1372729c3467828c209f83",
+    "forms/r2/elder-lens.json": "9ac2e4fd28c5b002e6929fe3e35ef4fdc97d4b06897b7378fa2f3b8d928f60ce",
+    "forms/r2/livermore.json": "2b901697ecff55d4a89dfb76eb7e2aac1c4d9ded2edc1d58959cb0b846eb8193",
+    "forms/r2/lynch.json": "762306058a3144a43c0270469f454295cd59314e524d19ecb2b6e9029abdeafd",
+    "forms/r2/minervini.json": "a44901cb4270d0c39a072a94c1921bcc626425ad00d13953e5850bfb36b425d3",
+    "forms/r2/oneil.json": "1eae669d253fcf607960f9361c85ef1bca3c958b839a016b9920ea03862d814f",
+    "forms/r2/raschke.json": "37147e6721a632bb2688ae81395d3718224d586ea03ae6c9dbe517fdb4bc8f68",
+    "forms/r2/seow.json": "6ec9cf40ef194cd18b88fd5f4481281c3ed1e8b610d8847af5b0c187ff3a30d8",
+    "forms/r2/thorp.json": "c5afead49e15ab7f541229176f77937a1043c623aeb30832ea774762334359ac",
+    "forms/r2/weis.json": "be8f66c47553e03664c020ac286f4e070a556a0b4861b115661689dce241cda3",
+    "forms/r2/wyckoff.json": "f403e07c09e2e70795560783bb0ba7fe725b79e8a4b660cbc1b04c2ba33e4851"
+   },
+   "finished": "2026-09-08T04:39:04Z",
+   "notes": [
+    "11/11 seats voted (barrier 8/11); read-proof PASS 11/11; all 16 deliberation names voted by every seat; registrar validate OK 11/11; oneil carries 14 BRACKET_MENTION flags (mention is permitted, rejection is not)"
+   ],
+   "started": "2026-09-08T04:39:04Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "WRITE": {
+   "cost": {
+    "inlined_bytes": 74786,
+    "returned_bytes": 103108,
+    "spawns": 1
+   },
+   "files": {
+    "pma_brief_2026-09-08.md": "296290da5373ca4d88039f86837b03ae82c6dc44109b4766009a5c5e1d1f33c5"
+   },
+   "finished": "2026-09-08T04:49:38Z",
+   "notes": [
+    "brief filed, 15 sections, 9038 words; read-proof PASS; sections 4, 6 and A verbatim from their tools"
+   ],
+   "started": "2026-09-08T04:49:38Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
+}
