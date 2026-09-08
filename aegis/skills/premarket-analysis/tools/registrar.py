@@ -131,17 +131,48 @@ def _bracket_lint(texts):
     return False
 
 
+# A seat writing "no bracket cited", "not a bracket objection", "bracket not relevant" is
+# DECLARING COMPLIANCE with R1, not breaching it. These clauses are stripped before the test.
+BRACKET_DISCLAIMER = re.compile(
+    r"([^.;\n]*\b(not|no|never|neither|nor)\b[^.;\n]{0,80}?\bbracket\b[^.;\n]{0,80}?"
+    r"(cited|relevant|objection|basis|reason|invoked|used|considered|part of)[^.;\n]*"
+    r"|[^.;\n]*\bbracket\b[^.;\n]{0,60}?\b(not|never)\b[^.;\n]{0,60}?"
+    r"(cited|relevant|invoked|used|considered|a factor|the basis|my instrument|apply|applies)[^.;\n]*"
+    r"|[^.;\n]*\bbracket\b[^.;\n]{0,60}?(information only|as information|is information)[^.;\n]*"
+    r"|[^.;\n]*\br1\b[^.;\n]{0,80}?\bbracket\b[^.;\n]*)", re.I)
+
+
 def _bracket_as_reject(texts):
-    """R1 enforcement: True when a bracket term is used as a disqualifier.
-    Returns the matched bracket term + verb so the rejection names them."""
-    joined = " ".join(t for t in texts if t)
-    bt = BRACKET_TERM.search(joined)
-    if not bt:
-        return None
-    rv = REJECT_VERB.search(joined)
-    if not rv:
-        return None
-    return (bt.group(0), rv.group(0))
+    """R1 enforcement: True when a bracket term is used as a DISQUALIFIER.
+    Returns the matched bracket term + verb so the rejection names them.
+
+    FIXED 2026-09-08. The old test searched the whole joined text for a bracket term and,
+    independently, anywhere at all for a reject verb, and treated any co-occurrence as a
+    violation. It rejected oneil's entire Round-2 form on 12 of 16 votes whose opposing_case
+    read "No bracket cited" / "Not a bracket objection" -- the seat's own explicit statement
+    that it was NOT using a bracket -- paired with a "fails" that belonged to a volume sentence
+    several clauses away. The rule punished precisely the compliance it exists to produce, and
+    would have marked the seat absent and cost the run a voter.
+
+    Two corrections, both of which narrow the false positive without loosening R1:
+      1. DISCLAIMER-AWARE -- clauses that explicitly deny a bracket basis are removed first.
+      2. SENTENCE-LOCAL -- the bracket term and the reject verb must occur in the SAME sentence.
+         A real violation ("bracket.valid is false, so this cannot be taken") is one sentence.
+         A bracket named as information in one sentence and "fails" applied to volume in another
+         is two claims, and was never one violation.
+    """
+    hit = None
+    for t in texts:
+        if not t:
+            continue
+        cleaned = BRACKET_DISCLAIMER.sub(" ", t)
+        for sentence in re.split(r"[.;]\s+|\n", cleaned):
+            bt = BRACKET_TERM.search(sentence)
+            if bt:
+                rv = REJECT_VERB.search(sentence)
+                if rv and hit is None:
+                    hit = (bt.group(0), rv.group(0))
+    return hit
 
 
 R1_TEXT = ("R1 VIOLATION — bracket is never a reject (PM ruling 2026-08-14 / 2026-09-06). "
@@ -277,6 +308,74 @@ def cmd_validate(a):
     return 1 if errs else 0
 
 
+# ---------------------------------------------------------------------------
+# COST METER (added 2026-09-07 after the 2026-09-06 run reported tokens=0 on
+# every step -- the field existed, nothing ever wrote it, and the PM's token
+# meter read zero for a run that cost over a million. The conductor cannot
+# observe its own token count, so the meter measures what IS observable and
+# derives from it: bytes inlined into each spawn, bytes returned, spawn count.
+# est_tokens = bytes / BYTES_PER_TOKEN. Approximate on purpose; a number with a
+# stated basis beats a zero.)
+# ---------------------------------------------------------------------------
+BYTES_PER_TOKEN = 4.0
+
+
+def _blank_step():
+    return {"status": "pending", "files": {}, "tokens": 0, "notes": [],
+            "cost": {"spawns": 0, "inlined_bytes": 0, "returned_bytes": 0}}
+
+
+def _cost(step):
+    return step.setdefault("cost", {"spawns": 0, "inlined_bytes": 0, "returned_bytes": 0})
+
+
+def _est_tokens(step):
+    """Bytes that passed through a MODEL context. A tool step moves bytes between files without
+    any of them entering a context window, so it costs ~0 tokens however large the file is --
+    counting them made the first meter read 933k on GATHER, which is arithmetic, not cost."""
+    c = _cost(step)
+    if c.get("tool_only"):
+        return step.get("tokens", 0)
+    derived = int((c["inlined_bytes"] + c["returned_bytes"]) / BYTES_PER_TOKEN)
+    return max(step.get("tokens", 0), derived)
+
+
+def _mins(step):
+    a, b = step.get("started"), step.get("finished")
+    if not (a and b):
+        return None
+    try:
+        f = "%Y-%m-%dT%H:%M:%SZ"
+        return round((datetime.datetime.strptime(b, f) - datetime.datetime.strptime(a, f)).total_seconds() / 60, 1)
+    except Exception:
+        return None
+
+
+def cmd_meter(a):
+    """Record what a step actually consumed. Call once per spawn wave."""
+    m = load_manifest(a.manifest)
+    if m is None:
+        print("ERROR: scoreboard missing", file=sys.stderr)
+        return 1
+    step = m["steps"].setdefault(a.step, _blank_step())
+    step.setdefault("started", _now())
+    c = _cost(step)
+    c["spawns"] += a.spawns
+    for f in (a.inlined or []):
+        if os.path.exists(f):
+            c["inlined_bytes"] += os.path.getsize(f)
+    c["inlined_bytes"] += a.inlined_bytes
+    c["returned_bytes"] += a.returned_bytes
+    if a.tool_only:
+        c["tool_only"] = True
+    if a.tokens:
+        step["tokens"] = step.get("tokens", 0) + a.tokens
+    save_manifest(a.manifest, m)
+    print(f"meter: {a.step} spawns={c['spawns']} inlined={c['inlined_bytes']}B "
+          f"returned={c['returned_bytes']}B est_tokens={_est_tokens(step)}")
+    return 0
+
+
 def cmd_init(a):
     m = {"run_id": f"pma-{a.date}", "date": a.date, "created": _now(),
          "steps": {}, "seats": {}, "degradations": [], "flags": []}
@@ -291,8 +390,10 @@ def cmd_commit(a):
         print("ERROR: scoreboard missing — run `registrar.py init` first", file=sys.stderr)
         return 1
     digest = sha256_file(a.file)
-    step = m["steps"].setdefault(a.step, {"status": "in_flight", "files": {},
-                                          "tokens": 0, "started": _now(), "notes": []})
+    step = m["steps"].setdefault(a.step, _blank_step())
+    step.setdefault("started", _now())
+    if a.file not in step["files"]:
+        _cost(step)["returned_bytes"] += os.path.getsize(a.file)   # every committed artifact is a return
     step["files"][a.file] = digest
     if a.seat:
         key = f"{a.step}/{a.seat}"
@@ -310,11 +411,12 @@ def cmd_tick(a):
     if m is None:
         print("ERROR: scoreboard missing", file=sys.stderr)
         return 1
-    step = m["steps"].setdefault(a.step, {"status": "pending", "files": {}, "tokens": 0, "notes": []})
+    step = m["steps"].setdefault(a.step, _blank_step())
+    step.setdefault("started", _now())
     if a.status:
         step["status"] = a.status
         if a.status == "in_flight":
-            step["started"] = _now()
+            step.setdefault("started", _now())   # write-once: a re-tick must never reset the clock
         if a.status in ("done", "degraded", "failed"):
             step["finished"] = _now()
     if a.tokens:
@@ -337,10 +439,15 @@ def cmd_status(a):
         return 1
     print(f"RUN {m['run_id']}  (created {m.get('created')})")
     total_tokens = 0
+    total_spawns = 0
+    print(f"  {'step':14s} {'status':9s} {'files':>5s} {'spawns':>6s} {'est_tok':>9s} {'mins':>6s}  where")
     for name, s in m["steps"].items():
-        total_tokens += s.get("tokens", 0)
-        nfiles = len(s.get("files", {}))
-        print(f"  {name:14s} {s.get('status','?'):9s} files={nfiles} tokens={s.get('tokens',0)}")
+        est = _est_tokens(s); total_tokens += est
+        c = _cost(s); total_spawns += c["spawns"]
+        mn = _mins(s)
+        print(f"  {name:14s} {s.get('status','?'):9s} {len(s.get('files', {})):5d} "
+              f"{c['spawns']:6d} {est:9,d} {(str(mn) if mn is not None else '-'):>6s}  "
+              f"{'tool' if c.get('tool_only') else 'model'}")
     committed = [k for k, v in m["seats"].items() if v.get("status") == "committed"]
     absent = [k for k, v in m["seats"].items() if v.get("status") == "absent"]
     flags = [f"{k}:{','.join(v['flags'])}" for k, v in m["seats"].items() if v.get("flags")]
@@ -351,7 +458,9 @@ def cmd_status(a):
         print("  degradations:")
         for d in m["degradations"]:
             print(f"    - [{d['step']}] {d['note']}")
-    print(f"  tokens total: {total_tokens}")
+    print(f"  TOTAL  spawns {total_spawns}  est_tokens {total_tokens:,}  "
+          f"(basis: {BYTES_PER_TOKEN} bytes/token over inlined+returned bytes; "
+          f"conductor overhead NOT included)")
     return 0
 
 
@@ -373,10 +482,20 @@ def main():
     s.add_argument("--tokens", type=int, default=0); s.add_argument("--note", default=None)
     s.add_argument("--degradation", default=None); s.add_argument("--seat-absent", dest="seat_absent", default=None)
     s.add_argument("--seat", default=None)
+    s = sub.add_parser("meter", help="record spawns and bytes moved for a step (the PM's token meter)")
+    s.add_argument("--step", required=True)
+    s.add_argument("--spawns", type=int, default=0)
+    s.add_argument("--inlined", action="append", default=None,
+                   help="path whose bytes were pasted into a spawn prompt; repeatable")
+    s.add_argument("--inlined-bytes", dest="inlined_bytes", type=int, default=0)
+    s.add_argument("--returned-bytes", dest="returned_bytes", type=int, default=0)
+    s.add_argument("--tokens", type=int, default=0, help="exact count, when the caller knows it")
+    s.add_argument("--tool-only", dest="tool_only", action="store_true",
+                   help="this step moved bytes between files only -- nothing entered a model context")
     sub.add_parser("status")
     a = p.parse_args()
     return {"init": cmd_init, "validate": cmd_validate, "commit": cmd_commit,
-            "tick": cmd_tick, "status": cmd_status}[a.cmd](a)
+            "tick": cmd_tick, "meter": cmd_meter, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":
