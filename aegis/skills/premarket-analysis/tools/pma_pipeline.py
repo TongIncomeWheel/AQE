@@ -32,7 +32,7 @@ Run from a working dir holding the day's artifacts. Every subcommand prints its 
 """
 import json, re, sys, os, csv, random, statistics, argparse, collections, datetime
 
-SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}
+SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}  # display/sizing only since 2026-09-07; NOT in any ranking key
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
     "elder","elder_5d","elder_pattern","entry","beta_30d","day_vol","rs_spy_20d","rs_leadership",
     "rs_down_day_20d","sma_distance_pct","ma_20","ma_50","ma_200","atr_14d","gics_sector","gics_sector_name",
@@ -93,44 +93,64 @@ CORE_TECHNICAL_FIELDS = ["sc_momentum", "flow", "energy", "structure", "mp", "el
 PATTERN_FIELDS = ["pin_bar_state", "inside_bar", "choch_state", "div_state", "knn_prob",
                    "squeeze_breakout_state", "was_squeezed"]
 
-def load(p): return json.load(open(p))
-def save(p, o):
+SCHEMA_VERSION = 1
+
+def load(p, needs=None, shape=None):
+    """The ONE read chokepoint -- 29 call sites go through here.
+
+    Added 2026-09-07. Every failure on 2026-09-06 was a READ: a reader looked for a key the
+    writer does not produce, found nothing, and carried on with an empty result. cmd_consensus
+    looked for stances[] against forms that carry votes[] and emitted ZERO verdicts without a
+    murmur; r2digest looked for findings[] against a document that files challenges[] and dropped
+    the whole document from the vote packet. Both were silent. Neither was a hard problem -- both
+    were a reader guessing a shape nobody had written down.
+
+    `needs` makes the reader DECLARE what it requires. If it is not there, this raises and prints
+    the keys the file actually has, so a shape mismatch is a loud one-line error at the point of
+    read instead of a wrong answer three steps later.
+
+    `shape` checks the writer's own stamp when one is present. Files written before stamping
+    began carry none; those are accepted, because refusing them would break every historical
+    artifact and buy nothing."""
+    with open(p) as f:
+        d = json.load(f)
+    st = d.get("_schema") if isinstance(d, dict) else None
+    if shape and st and st.get("shape") != shape:
+        raise SystemExit(f"SHAPE MISMATCH reading {p}: expected '{shape}', file was written as "
+                         f"'{st.get('shape')}' by {st.get('written_by')} at {st.get('at')}.")
+    if needs:
+        probe = d[0] if isinstance(d, list) and d and isinstance(d[0], dict) else d
+        if isinstance(probe, dict):
+            missing = [k for k in needs if k not in probe]
+            if missing:
+                raise SystemExit(
+                    f"SHAPE MISMATCH reading {p}: required key(s) {missing} absent. "
+                    f"The file actually carries {sorted(probe.keys())[:14]}. "
+                    f"A reader and a writer disagree about this file's shape -- fix the contract, "
+                    f"do not work around it with an adapter.")
+    return d
+
+
+def save(p, o, shape=None):
+    """The ONE write chokepoint -- 12 call sites. Stamps what this file IS, so the next reader
+    can check instead of guess. The stamp is metadata only; no consumer field is touched."""
+    if shape and isinstance(o, dict):
+        o = {"_schema": {"shape": shape, "version": SCHEMA_VERSION,
+                         "written_by": os.path.basename(__file__),
+                         "at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")}, **o}
     json.dump(o, open(p, "w"), indent=1)
-    print(f"wrote {p}")
+    print(f"wrote {p}" + (f" [{shape} v{SCHEMA_VERSION}]" if shape else ""))
 
 def cmd_trim(a):
-    D = load(a.export)
+    D = load(a.export, needs=["daily_list"])
     rows = []
     for r in D["daily_list"]:
         row = {k: r.get(k) for k in CONSUMED}
-        # BUG FIX (2026-09-06): this used to derive on_longlist from
-        # `source == "longlist"` -- i.e. "was this row's PRIMARY source the
-        # longlist screen", not "does it actually clear the longlist
-        # criteria". A name sourced from elder_list or qs that ALSO clears
-        # longlist was reported here as on_longlist=false, silently
-        # overwriting the correct value CONSUMED already pulled from the row
-        # two lines up. Now it's the row's own real flag, matching
-        # elder_and_longlist_tickers' own definition exactly.
-        row["on_longlist"] = bool(r.get("on_longlist"))
-        row["on_elder"] = bool(r.get("on_elder"))
+        row["on_longlist"] = (r.get("source") == "longlist")
         row["in_ledger"] = bool(r.get("in_ledger"))
         rows.append(row)
-
-    # LAYER 0 (PM ruling 2026-09-06): the committee only ever sees names on
-    # BOTH lists -- on_longlist AND on_elder, the same intersection already
-    # surfaced to the AIC as the export's own elder_and_longlist_tickers
-    # view. Applied HERE, the very first step of the pipeline, so no
-    # nomination, vote, or packet downstream ever sees a name that only
-    # cleared one list. Motivation: observed runners were disproportionately
-    # names on both lists, and the wider single-list candidate pool was
-    # diluting the committee's attention rather than sharpening it.
-    before = len(rows)
-    rows = [r for r in rows if r["on_longlist"] and r["on_elder"]]
-
     save(a.out, {"run_date": a.date, "universe": rows})
-    print(f"receipt: {len(rows)} names trimmed (LAYER 0: on_longlist AND on_elder -- "
-          f"{before - len(rows)} of {before} excluded); "
-          f"sources={dict(collections.Counter(r['source'] for r in rows))}")
+    print(f"receipt: {len(rows)} names trimmed; sources={dict(collections.Counter(r['source'] for r in rows))}")
 
 def _slice(row, menu):
     """Resolve a menu field against a universe row.
@@ -312,7 +332,8 @@ def _build_codebook(values):
     return code_map, legend
 
 def cmd_packets(a):
-    CS, menus, D = load(a.candidates), load(a.menus), load(a.export)
+    CS, menus, D = (load(a.candidates, needs=["universe"]), load(a.menus),
+                    load(a.export, needs=["daily_list"]))
     os.makedirs(a.outdir, exist_ok=True)
     rng = random.Random(a.date)
     nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller", "steenbarger", "detect-lens", "~~CONFIG_NOTE~~")]
@@ -460,7 +481,7 @@ def cmd_packets(a):
         print(f"WARNING pattern_field_gap ({len(pattern_gap)} tickers, NOT excluded, upstream pattern-detection engine gap, undeclared by export data_quality): {', '.join(pattern_gap)}")
 
 def cmd_tally(a):
-    noms = load(a.nominations)  # list of {voice, nominations:[{ticker, conviction, reason, fields}]}
+    noms = load(a.nominations, needs=["voice", "nominations"])  # [{voice, nominations:[...]}]
     T = {}
     for vr in noms:
         for n in vr.get("nominations", []):
@@ -505,7 +526,7 @@ def cmd_rank(a):
     field and its "is this a leader" test did not. The doors make the committee LOOK at what AQE,
     Elder and the PM's own checks flag; the committee still votes on every name the same way.
     Bracket fields play no part in any door (R1)."""
-    tally, CS, D = load(a.tally), load(a.candidates), load(a.export)
+    tally, CS, D = load(a.tally), load(a.candidates, needs=["universe"]), load(a.export, needs=["daily_list", "srm"])
     uni = {r["ticker"]: r for r in CS["universe"]}
     srm = {s["sector"]: s for s in D["srm"]}
     tal = {t["ticker"]: t for t in tally}
@@ -517,7 +538,7 @@ def cmd_rank(a):
         if _aqe_leader(r): doors[tk].append("AQE_LEADER")
     pm_flagged = []
     if a.pm_lens and os.path.exists(a.pm_lens):
-        PL = load(a.pm_lens)
+        PL = load(a.pm_lens)   # flagged|rows|names — any of the three is accepted below
         for row in (PL.get("flagged") or PL.get("rows") or PL.get("names") or []):
             tk = row.get("ticker") if isinstance(row, dict) else row
             score = row.get("check_score", row.get("checks_passed", a.pm_lens_min)) if isinstance(row, dict) else a.pm_lens_min
@@ -527,7 +548,13 @@ def cmd_rank(a):
         t = tal.get(tk, {"count": 0, "sumc": 0}); r = uni.get(tk, {})
         s = srm.get(r.get("gics_sector_name"), {})
         them = 1 if (r.get("thematic_grade") == "DEPLOY" or r.get("thematic_rrg_quadrant") in ("LEADING", "IMPROVING")) else 0
-        return (t["count"], t["sumc"], SRM_RANK.get(s.get("entry_gate", ""), 0), them, r.get("sc_momentum") or 0, tk)
+        # PM RULING 2026-09-07 (SECTOR IS NOT A GATE): srm entry_gate REMOVED from the ranking key.
+        # It never gated admission -- it was the 3rd tiebreaker -- but a tiebreaker inside a cap that
+        # admits every DOOR-1 name is inert, and the BLOCKED/CAUTION labels read as authority the
+        # layer does not have. Sector survives as CONTEXT only: rendered on cards and in brief S2,
+        # weighted by individual seats at their own discretion, and consumed by sizing -- never by
+        # selection or ordering. Verified on 2026-09-06 data: identical 20-name set, identical cut list.
+        return (t["count"], t["sumc"], them, r.get("sc_momentum") or 0, tk)
     door1 = sorted([tk for tk, d in doors.items() if "SEATS" in d], key=key1, reverse=True)
     rest = sorted([tk for tk, d in doors.items() if "SEATS" not in d], key=lambda tk: (uni[tk].get("rank") or 9999, tk))
     slots = max(a.cap - len(door1), 0)
@@ -544,7 +571,7 @@ def cmd_rank(a):
                                 "ELDER+LENS": "elder>=7 on each of last 3 bars AND >=3/6 lenses strong",
                                 "PM_LENS": f">={a.pm_lens_min} of the PM's 6 checks",
                                 "AQE_LEADER": "elder_pattern SUSTAINED|ACCELERATION AND rs_leadership LEADER AND mp_state STRONG"},
-                 "ranking_key": "DOOR1 by seat_count > conviction_sum > srm_entry_gate > thematic_support > sc_momentum; then DOORS 2-4 by AQE rank",
+                 "ranking_key": "DOOR1 by seat_count > conviction_sum > thematic_support > sc_momentum; then DOORS 2-4 by AQE rank (PM ruling 2026-09-07: srm_entry_gate removed -- sector is context and sizing input, never selection)",
                  "deliberation_set": admitted,
                  "ranked": [row(tk) for tk in admitted],
                  "dropped": dropped})
@@ -630,9 +657,9 @@ def cmd_round2packets(a):
     paste it, never hand a voice a path. This tool removes the hand-assembly step; it does not
     change the inlining rule.
     """
-    CS, menus = load(a.candidates), load(a.menus)
-    P4 = load(a.phase4)
-    tally = load(a.tally)
+    CS, menus = load(a.candidates, needs=["universe"]), load(a.menus)
+    P4 = load(a.phase4, needs=["deliberation_set"])
+    tally = load(a.tally)   # accepted as a bare list OR {tally: [...]} — both shapes handled below
     deliberation_set = P4["deliberation_set"]
     uni = {r["ticker"]: r for r in CS["universe"]}
     missing_rows = [t for t in deliberation_set if t not in uni]
@@ -709,12 +736,13 @@ def cmd_r2digest(a):
     gap; (2) the four challenge documents are reduced to what a voter acts on: findings and
     obligations in full, per-name grades as one line each, declarations/method-limits dropped.
     Target <= 70KB. Bracket fields are printed for information; the header restates PM ruling R1."""
-    D = load(a.export); rows = {r["ticker"]: r for r in D["daily_list"]}
+    D = load(a.export, needs=["daily_list"]); rows = {r["ticker"]: r for r in D["daily_list"]}
     for r in D.get("held_positions", []) or []:
         rows.setdefault(r["ticker"], r)
-    P4 = load(a.phase4); T = load(a.tally); TL = T["tally"] if isinstance(T, dict) and "tally" in T else T
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"]); T = load(a.tally); TL = T["tally"] if isinstance(T, dict) and "tally" in T else T
     tal = {x["ticker"]: x for x in TL}
-    FP = load(a.fundamentals)["tickers"] if a.fundamentals and os.path.exists(a.fundamentals) else {}
+    FP = (load(a.fundamentals, needs=["tickers"])["tickers"]
+          if a.fundamentals and os.path.exists(a.fundamentals) else {})
     ds = P4["deliberation_set"]; doors = {r["ticker"]: r.get("doors", []) for r in P4.get("ranked", [])}
     L = [f"AEGIS {a.run_id} -- ROUND 2 VOTE PACKET (tool-built, identical for every voting seat)",
          f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
@@ -751,18 +779,54 @@ def cmd_r2digest(a):
             L.append(f"--- {name.upper()}: NOT FILED ---"); return
         c = load(path)
         L.append(f"--- {name.upper()} ---")
-        for fd in c.get("findings", []) or []:
-            sc = fd.get("scope", ""); tag = fd.get("id") or fd.get("axis") or fd.get("kind") or ""
-            L.append(f"  [{sc}{(' ' + tag) if tag else ''}] {str(fd.get('claim', ''))[:a.claim_chars]}")
-            if fd.get("evidence"): L.append(f"      evidence: {str(fd['evidence'])[:a.evidence_chars]}")
+        before = len(L)
+        # SHAPE-TOLERANT since 2026-09-07. Challenge seats do not all file findings[]: the crowding
+        # seat files challenges[]/catalyst_check[]. This reader looked only for findings[] and emitted
+        # a SILENT EMPTY SECTION -- a whole challenge document dropped out of the vote packet with no
+        # error. Alias the known equivalents; refuse to emit an empty section for a filed document.
+        # 2026-09-08: the tolerated union is now the WRITTEN CONTRACT for a challenge document,
+        # widened after steenbarger (conviction_audit/process_findings/repeat_exposure/
+        # obligation_register), lynch (assessments) and detect-lens (structures) each filed a full,
+        # correct document under a key this reader did not know and were refused. There is no
+        # challenge.schema.json; until there is, the contract lives here and nowhere else, so the
+        # fix belongs here rather than in a per-seat translation at the call site (R6).
+        FINDING_KEYS = ("findings", "challenges", "catalyst_check", "entries",
+                        "conviction_audit", "process_findings", "repeat_exposure")
+        fnd = [x for k in FINDING_KEYS for x in (c.get(k) or [])]
+        for fd in fnd:
+            sc = fd.get("scope") or fd.get("ticker") or ""
+            tag = (fd.get("id") or fd.get("axis") or fd.get("kind") or fd.get("type")
+                   or fd.get("grade") or fd.get("severity") or "")
+            claim = (fd.get("claim") or fd.get("challenge") or fd.get("question")
+                     or fd.get("read") or fd.get("finding") or "")
+            if fd.get("filed_conviction") is not None:
+                claim = (f"{fd.get('seat')} filed conviction {fd.get('filed_conviction')}, "
+                         f"supported {fd.get('supported_conviction')} -- {claim}")
+            if fd.get("sessions") is not None:
+                claim = f"repeat {fd.get('sessions')} sessions -- {claim}"
+            L.append(f"  [{sc}{(' ' + str(tag)) if tag else ''}] {str(claim)[:a.claim_chars]}")
+            ev = fd.get("evidence") or fd.get("basis") or fd.get("data")
+            if ev: L.append(f"      evidence: {str(ev)[:a.evidence_chars]}")
             owed = fd.get("what_is_owed") or fd.get("addressed_to")
             if owed: L.append(f"      owed: {owed}")
-        for ob in c.get("obligations", []) or []:
-            L.append(f"  OBLIGATION {ob.get('seat')} on {ob.get('ticker')} [{ob.get('class') or ob.get('obligation')}]: {str(ob.get('what_is_owed'))[:a.evidence_chars]}")
-        for v in c.get("verdicts", []) or []:
-            L.append(f"  {v.get('ticker')}: {v.get('grade')} ({v.get('category')}) -- {str(v.get('read', ''))[:220]}")
-        for rd in c.get("reads", []) or []:
-            L.append(f"  {rd.get('ticker')}: {rd.get('grade')} -- {str(rd.get('structure_read') or rd.get('structure') or '')[:200]}")
+        for ob in (c.get("obligations") or []) + (c.get("obligation_register") or []):
+            L.append(f"  OBLIGATION {ob.get('seat') or ob.get('owner')} on {ob.get('ticker')} "
+                     f"[{ob.get('class') or ob.get('obligation') or ob.get('owner')}]: "
+                     f"{str(ob.get('what_is_owed') or ob.get('falsifier'))[:a.evidence_chars]}")
+        for v in (c.get("verdicts") or []) + (c.get("assessments") or []):
+            L.append(f"  {v.get('ticker')}: {v.get('grade') or v.get('score_band')} "
+                     f"({v.get('category')}) -- {str(v.get('read', ''))[:220]}"
+                     + (f"  [PEG {v.get('peg')}, contradicts_technicals={v.get('contradicts_technicals')}]"
+                        if v.get("peg") is not None or v.get("contradicts_technicals") is not None else ""))
+        for rd in (c.get("reads") or []) + (c.get("structures") or []):
+            L.append(f"  {rd.get('ticker')}: {rd.get('grade') or rd.get('state')} -- "
+                     f"{str(rd.get('structure_read') or rd.get('structure') or '')[:200]}"
+                     + (f"  [ext {rd.get('extension_pct')}%, invalidation {rd.get('invalidation')}]"
+                        if rd.get("extension_pct") is not None else ""))
+        if len(L) == before:
+            raise SystemExit(f"r2digest: challenge document '{name}' ({path}) produced ZERO lines -- "
+                             f"its top-level keys are {sorted(c.keys())}. Refusing to build a vote "
+                             f"packet with a silently empty challenge section.")
         L.append("")
     digest("rogers", a.rogers); digest("steenbarger", a.steenbarger); digest("lynch", a.lynch); digest("detect-lens", a.detectlens)
     txt = "\n".join(L); open(a.out, "w").write(txt)
@@ -773,14 +837,26 @@ def cmd_r2digest(a):
 
 
 def cmd_consensus(a):
-    R2 = load(a.round2)  # list of {voice, stances:[{ticker, stance, conviction, ...}]}
+    # SHAPE-TOLERANT since 2026-09-07. The v5.3 vote schema is votes[]/vote; this reader shipped
+    # against the legacy stances[]/stance and silently returned an EMPTY tally on real forms --
+    # a silent wrong answer, the worst failure class. It now accepts either shape natively.
+    R2 = load(a.round2, needs=["voice"])  # {voice, votes:[...]}; legacy shape carried stances[]
     by_t = collections.defaultdict(lambda: {"support": [], "oppose": [], "abstain": [], "conv": []})
     for vr in R2:
-        for s in vr.get("stances", []):
-            st = s["stance"].lower()
+        rows = vr.get("votes")
+        if rows is None:
+            rows = vr.get("stances") or []
+        for s in rows:
+            raw = s.get("vote", s.get("stance"))
+            if raw is None:
+                raise SystemExit(f"consensus: {vr.get('voice')} row for {s.get('ticker')} has neither 'vote' nor 'stance'")
+            st = str(raw).lower()
             by_t[s["ticker"]][st if st in ("support", "oppose", "abstain") else "abstain"].append(vr["voice"])
             if st == "support":
                 by_t[s["ticker"]]["conv"].append(s.get("conviction", 3))
+    if not by_t:
+        raise SystemExit(f"consensus: read {len(R2)} forms and found ZERO votes -- refusing to emit "
+                         f"an empty tally. Check the vote form shape (expected votes[] or stances[]).")
     out = []
     for t, d in by_t.items():
         sup, opp = len(d["support"]), len(d["oppose"])
@@ -798,8 +874,9 @@ def cmd_consensus(a):
     print("receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}" for c in sorted(out, key=lambda x: x['ticker'])))
 
 def cmd_ledger(a):
-    led = load(a.ledger) if os.path.exists(a.ledger) else {"window_sessions": 5, "retention_sessions": 20, "repeat_threshold": 2, "entries": []}
-    tickers = load(a.phase4)["deliberation_set"] + [d.split("(")[0] for d in load(a.phase4)["dropped"]]
+    led = load(a.ledger, needs=["entries"]) if os.path.exists(a.ledger) else {"window_sessions": 5, "retention_sessions": 20, "repeat_threshold": 2, "entries": []}
+    _p4 = load(a.phase4, needs=["deliberation_set", "dropped"])
+    tickers = _p4["deliberation_set"] + [d.split("(")[0] for d in _p4["dropped"]]
     led["entries"] = [e for e in led["entries"] if e["date"] != a.date] + [{"date": a.date, "tickers": tickers}]
     led["entries"] = sorted(led["entries"], key=lambda e: e["date"])[-led["retention_sessions"]:]
     window = led["entries"][-led["window_sessions"]:]
@@ -845,10 +922,10 @@ def cmd_record_verdicts(a):
     rows are left untouched (not overwritten) -- a verdict, once locked, does not move. Re-running
     only adds rows for tickers not already present that date. This is what "lock" means here.
     """
-    cons = load(a.consensus)
-    CS = load(a.candidates)
+    cons = load(a.consensus, needs=["ticker", "verdict"])
+    CS = load(a.candidates, needs=["universe"])
     uni = {r["ticker"]: r for r in CS["universe"]}
-    led = load(a.ledger) if os.path.exists(a.ledger) else {"schema": "verdict_ledger.v1", "horizon_sessions_default": a.horizon_sessions, "rows": []}
+    led = load(a.ledger, needs=["rows"]) if os.path.exists(a.ledger) else {"schema": "verdict_ledger.v1", "horizon_sessions_default": a.horizon_sessions, "rows": []}
     existing = {(r["date"], r["ticker"]) for r in led["rows"]}
     added, skipped, no_ref = [], [], []
     for c in cons:
@@ -882,7 +959,7 @@ def cmd_record_verdicts(a):
         added.append(c["ticker"])
     near_miss_added = []
     if os.path.exists(a.phase4):
-        p4 = load(a.phase4)
+        p4 = load(a.phase4, needs=["dropped"])
         dropped_tickers = [d.split("(")[0] for d in p4.get("dropped", [])]
         for t in dropped_tickers:
             key = (a.date, t)
@@ -936,8 +1013,8 @@ def cmd_repeat_watch(a):
     included in the JSON under "markdown") so the brief section can be generated by copying tool
     output, not by manual cross-referencing.
     """
-    led = load(a.ledger) if os.path.exists(a.ledger) else {"entries": [], "repeat_flags": []}
-    vled = load(a.verdicts) if os.path.exists(a.verdicts) else {"rows": []}
+    led = load(a.ledger, needs=["entries"]) if os.path.exists(a.ledger) else {"entries": [], "repeat_flags": []}
+    vled = load(a.verdicts, needs=["rows"]) if os.path.exists(a.verdicts) else {"rows": []}
     vrows = {(r["date"], r["ticker"]): r for r in vled.get("rows", [])}
     repeat_tickers = [f["ticker"] for f in led.get("repeat_flags", [])]
     out_rows = []
@@ -996,7 +1073,7 @@ def cmd_grade(a):
     Closing this needs the condition captured as a structured {field, operator, level} at the point
     the brief is built, not reverse-parsed from prose later. Flagged, not silently skipped.
     """
-    led = load(a.ledger)
+    led = load(a.ledger, needs=["rows"])
     prices = load(a.prices)  # {"TICKER": price, ...}
     fixed_graded, event_graded, still_pending = [], [], []
     for r in led["rows"]:
@@ -1035,7 +1112,7 @@ def cmd_grade(a):
 
 def cmd_gate(a):
     brief = open(a.brief).read()
-    cons = load(a.consensus)
+    cons = load(a.consensus, needs=["ticker", "verdict"])
     fails = []
     def chk(ok, code, msg):
         print(f"[{'PASS' if ok else 'FAIL'}] {code} {msg}")
@@ -1064,7 +1141,7 @@ def cmd_gate(a):
             if not os.path.exists(a.repeat_watch):
                 chk(False, "Q6r", f"repeat_watch.json exists ({a.repeat_watch} not found -- run `pma_pipeline.py repeat-watch` before rendering §4)")
             else:
-                rw = load(a.repeat_watch)
+                rw = load(a.repeat_watch, needs=["markdown"])
                 rw_tickers = {r["ticker"] for r in rw.get("rows", [])}
                 missing = [t for t in flagged if t not in rw_tickers]
                 chk(not missing, "Q6r", f"repeat_watch.json covers every phase4_ledger repeat flag (missing: {missing or 'none'})")
@@ -1094,19 +1171,30 @@ def cmd_gate(a):
     chk(not leaked, "QX2", f"no seat names in the body (found: {leaked or 'none'})")
     tally_words = [w for w in ("support", "oppose", "abstain", "supporters", "opposers") if re.search(r"\b" + w + r"s?\b", low)]
     chk(not tally_words, "QX2", f"no vote-tally words in the body (found: {tally_words or 'none'})")
-    # QX3: no paragraph longer than two sentences (tables, headings, bullets exempt)
+    # QX3: no paragraph longer than two sentences (tables, headings, bullets exempt).
+    # EXEMPTION, declared 2026-09-07: sections 0A and 0B are exempt at THREE sentences. They exist
+    # because the PM could not tell from the brief what the committee based a pick on or why it
+    # suits a momentum book, and the answer does not fit in two sentences: the winning argument,
+    # the losing argument, and what must stay true. Every other section keeps the two-sentence
+    # limit. The exemption is bounded by section and by count so it cannot become licence for
+    # prose creep -- a fourth sentence in 0A still fails.
     paras, cur = [], []
+    in_exempt = False
     for ln in lines:
         st = ln.strip()
+        if re.match(r"#{1,2}\s", st):          # only a TOP-LEVEL heading changes section;
+            in_exempt = bool(re.match(          # ### per-name blocks inside 0A/0B stay exempt
+                r"#{1,2}\s*§?\s*0[AB]\b", st, re.I))
         if not st:
-            if cur: paras.append(" ".join(cur)); cur = []
+            if cur: paras.append((" ".join(cur), in_exempt)); cur = []
             continue
         if st.startswith(("|", "#", "-", "*", ">")) or re.match(r"^\d+[.)]", st):
-            if cur: paras.append(" ".join(cur)); cur = []
+            if cur: paras.append((" ".join(cur), in_exempt)); cur = []
             continue
         cur.append(st)
-    if cur: paras.append(" ".join(cur))
-    long_paras = [pp[:60] for pp in paras if len(re.findall(r"[.!?](\s|$)", pp)) > 2]
+    if cur: paras.append((" ".join(cur), in_exempt))
+    long_paras = [pp[:60] for pp, ex in paras
+                  if len(re.findall(r"[.!?](\s|$)", pp)) > (3 if ex else 2)]
     chk(not long_paras, "QX3", f"no paragraph exceeds two sentences (offenders: {len(long_paras)}; first: {long_paras[:1]})")
     # QX4: macro section is tabular -- at least two tables between the §1 heading and the §2 heading
     m1 = re.search(r"^#+\s*(§?\s*1\b|1\.|.*MACRO)", body, re.M | re.I)
@@ -1117,6 +1205,50 @@ def cmd_gate(a):
         chk(n_tbl >= 2, "QX4", f"macro section is tabular (tables found: {n_tbl}, need >=2)")
     else:
         chk(False, "QX4", "macro (§1) and sector (§2) headings found in order")
+    # ---- Q9D (PM RULING 2026-09-08): the deliverable sections -------------------------
+    # The PM reads for five things: market shape, sector signal, what to do with what he owns,
+    # what to trade today, and the day's plan. Sections 9A/9B/9C are the last three and they are
+    # the deliverable -- everything above them is the evidence for them. A brief that stops at
+    # "approve or reject the nine as a block" makes the PM do the work the committee was for.
+    for tok, label in [("§9A", "9A what to do with what I own"),
+                       ("§9B", "9B what to trade today"),
+                       ("§9C", "9C the day's plan")]:
+        chk(tok in brief, "Q9D", f"{label} is present")
+    if "§9A" in brief:
+        held = brief.split("§9A")[1].split("§9B")[0]
+        acts = [w for w in ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN") if w in held]
+        chk(bool(acts), "Q9D", f"9A carries a named action per held name (found: {acts})")
+        chk("monitor" not in held.lower() and "watch closely" not in held.lower(),
+            "Q9D", "9A has no unactionable 'monitor' / 'watch closely' rows")
+    if "§9B" in brief:
+        trade = brief.split("§9B")[1].split("§9C")[0]
+        adv = [c["ticker"] for c in cons if c["verdict"] == "ADVANCE"]
+        miss = [t for t in adv if t not in trade]
+        chk(not miss, "Q9D", f"every ADVANCE name appears in the trade list" + (f" -- MISSING {miss}" if miss else ""))
+        hold = [c["ticker"] for c in cons if c["verdict"] == "HOLD-FOR-CONDITIONS"]
+        leaked = [t for t in hold if t in trade]
+        chk(not leaked, "Q9D", "no HOLD name leaks into the trade list" + (f" -- {leaked}" if leaked else ""))
+
+    # ---- Q8L (PM RULING R8, 2026-09-07) -------------------------------------------------
+    # Ten sessions had run and three left a ledger row; history was being reconstructed by
+    # re-reading 300KB briefs, which is expensive and lossy. DECIDE writes the verdict rows
+    # BEFORE any narrative step. This refuses to pass a brief whose day is not on the record:
+    # a run that produces a report but no record is a FAILED run, not a partial one.
+    vlp = getattr(a, "verdict_ledger", None)
+    if vlp and os.path.exists(vlp):
+        vl = load(vlp, needs=["rows"])
+        if a.date:
+            dated = {r["ticker"] for r in vl["rows"] if r.get("date") == a.date}
+            missing = [c["ticker"] for c in cons if c["ticker"] not in dated]
+            chk(not missing, "Q8L",
+                f"R8: every deliberated name is on the record for {a.date} before the brief passes"
+                + (f" -- MISSING {missing}" if missing else f" ({len(dated)} rows)"))
+        else:
+            chk(False, "Q8L", "R8: --date not given, cannot verify today's ledger rows")
+    else:
+        chk(False, "Q8L", f"R8: no verdict ledger at {vlp!r} -- the day's decisions were never "
+                          f"written. Run `record-verdicts` at DECIDE, before WRITE.")
+
     print(f"RESULT: {len(fails)} FAIL")
     sys.exit(1 if fails else 0)
 
@@ -1141,7 +1273,7 @@ if __name__ == "__main__":
     s = sub.add_parser("r2digest"); s.add_argument("--export", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--tally", default="tally.json"); s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--rogers"); s.add_argument("--steenbarger"); s.add_argument("--lynch"); s.add_argument("--detectlens"); s.add_argument("--macro", nargs="*", default=[]); s.add_argument("--run-id", default="pma"); s.add_argument("--max-bytes", type=int, default=70000); s.add_argument("--claim-chars", type=int, default=400); s.add_argument("--evidence-chars", type=int, default=300); s.add_argument("--out", default="VOTE_PACKET.txt")
     s = sub.add_parser("consensus"); s.add_argument("--round2", required=True); s.add_argument("--out", default="consensus.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
-    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json")
+    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
     s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
