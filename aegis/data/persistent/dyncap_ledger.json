@@ -1,5 +1,10 @@
 {
- "realised_pnl_usd": -5043.74,
- "as_of_date": "2026-09-07",
- "note": "INFORMATIONAL SNAPSHOT ONLY — not read back by recompute_dyncap.py. Source of truth is data/persistent/aegis_trade_journal_ARCHIVE_master.json plus this journal's not-yet-archived closed_trades. Written for ops_status.py / morning_summary.py display only."
+ "allocated_capital_usd": 75000.0,
+ "realised_pnl_usd": -4932.53,
+ "unrealised_pnl_usd": 971.37,
+ "dyncap_usd": 71038.84,
+ "closed_count": 15,
+ "open_count": 2,
+ "marked_asof": "2026-09-08",
+ "note": "dynCap = allocation + realised + UNREALISED = current Aegis equity, mark-to-market (D-41). Computed AFTER Aegis-membership classify, AEGIS-only (D-99): realised sourced from the archive ledger + not-yet-archived closes (idempotent on re-run); unrealised excludes excluded_non_aegis positions. Single writer of this file -- tools/recompute_dyncap.py, run as PTJ CLOSE job 3.5. `premarket` step 8 reads this, it does not recompute it (2026-09-05)."
 }
