@@ -34,6 +34,9 @@ Acceptance test for the whole handoff (write it first, `tests/test_export_additi
 | `days_since_swing_high` | sessions since `last_pivot_high.date` | seow R7 |
 | `gap_risk_flag` | days_to_earnings is not null and ≤ 10 | thorp R4 |
 | `cohort_hit_rate_20d`, `cohort_n` | **copies** of `signal_hit_rate_20d` / `signal_n` under an honest name. The old keys stay. | thorp R6/R7, all readers |
+| `adx_14` | Wilder ADX(14); `mp.py` already computes an ADX term inside the MP composite — expose the same series | raschke R3 (canon declares adx NOT_SERVED) |
+| `stoch_k_14`, `stoch_d_3` | fast %K(14) and %D(3) on daily bars | raschke R4 (canon declares stochastic_kd NOT_SERVED) |
+| `bar_range_5d` (list, oldest→newest), `nr4_flag`, `nr7_flag`, `hv_ratio_6_100` | per-bar high−low for the last 5 bars; narrowest-range-of-4/7 flags; 6-day vs 100-day historical-vol ratio | raschke R5 (canon declares bar_range_history NOT_SERVED) |
 
 Top level (beside `spy_roc_20d`): `spy_ret_63d`; `hitrate_window: {"lookback_sessions": 60, "horizon_sessions": 20, "from": "t-79", "to": "t-20"}` (seow R8, thorp R6).
 

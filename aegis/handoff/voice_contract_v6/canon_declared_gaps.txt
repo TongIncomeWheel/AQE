@@ -1,0 +1,32 @@
+[detect-lens R11] IF: a candidate may be event-driven (earnings, binary catalyst)
+   THEN: I apply the EVENT-DRIVEN exclusion (C33) procedurally: no event flag is served in the field set -- event_flag NOT_SERVED -- so I flag the exclusion question to the committee's blocking event filter (Charter s0.3a) rather than inferring event status from price or volume fields, and I never nominate past an exclusion the committee has declared
+
+[druckenmiller R1] valuation NOT_SERVED — no dividend yield, price/book, P/E or market-level valuation series in aqe_export or universe.
+
+[druckenmiller R5] positioning / sentiment / consensus-cash NOT_SERVED — no positioning survey, fund cash level, put/call, short interest or COT-equivalent. Named engine ask, ranked second by the canon.
+
+[druckenmiller R6] sector-specific FUNDAMENTAL driver NOT_SERVED — no capacity, supply, capex, earnings or announcement data; only rotation/RS reads substitute. Top-ranked engine ask for this canon.
+
+[livermore R5] fill_difficulty NOT_SERVED — day_vol is a relative-volume scalar, not a record of how hard successive orders were to execute.
+
+[lynch R1] category NOT_SERVED, math_library NOT_COMPUTABLE — no fundamental data accompanies the name; a structure score of 78 is not a balance sheet.
+
+[minervini R2] vcp_detail NOT_SERVED — C4/C5 require a countable, contracting base with a specific volume signature (C6) that the composite structure score does not expose as contraction count or depth. Nominates on Trend Template + momentum only.
+
+[minervini R4] earnings_growth NOT_SERVED, company_category NOT_SERVED — C12 growth profile and C13/C20 six-category sort need fundamentals/earnings history the universe file does not carry.
+
+[raschke R2] exact_20day_extreme NOT_SERVED — no rolling N-day high/low field, only composite structure and distance-off-average. (Handoff §2a: hi_20d/lo_20d/hi_50d/lo_50d.)
+
+[raschke R3] adx NOT_SERVED — no ADX/directional-index field; mp_state/mp_accel_state used as nearest proxy. (Handoff §2a: adx_14.)
+
+[raschke R4] stochastic_kd NOT_SERVED — no %K/%D field. (Handoff §2a: stoch_k_14/stoch_d_3.)
+
+[raschke R5] bar_range_history NOT_SERVED — no per-bar range series for NR4/NR7 or 6/100-day HV ratio. (Handoff §2a: bar_range_5d, nr4_flag, nr7_flag, hv_ratio_6_100.)
+
+[rogers R9] commodity_cycle NOT_SERVED — no commodity price, input cost, production or inventory field; sector_trend_state is a weak proxy, labelled as such.
+
+[wyckoff R1] turning_point NOT_SERVED — no range boundary, penetration event or recovery flag; never calls a spring/upthrust/secondary test/shakeout from a composite. (Handoff §4.)
+
+[wyckoff R11] volume_profile NOT_SERVED — the canon believes energy's vp_position_score comes from a real volume profile that is thrown away; it does not (energy.py#L40-L61 is position-in-50-day-range + tightness proxy). A real VPOC/value-area is a NEW BUILD (Handoff §4) and the canon text needs correcting.
+
+[wyckoff R12] hl_score/hl_state read as CONDITION not STRUCTURE; stop is the danger point, no health band moves it.
