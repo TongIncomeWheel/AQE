@@ -46,10 +46,19 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "elder_context","knn_threshold_clear","pin_bar_level",
     # 2026-09-05 voice packet spec (docs/specs/aqe_voice_packet_spec_2026-09-05.md
     # §2) -- 18 new export fields, only the ones an actual seat menu references.
-    "high_52w","low_52w","pct_from_52w_high","ret_12m","rs_rank_pct",
+    "high_52w","low_52w","pct_from_52w_high","ret_12m","rs_rank_pct","fib_swing_low",
     "ma_150","ma_40","cci_20","pivot_high","pct_from_pivot","extension_atr_20",
     "elder_hi7_streak","next_earnings_date","days_to_earnings","stack_state",
     "signal_hit_rate_20d","signal_n",
+    # AQE_INSTRUCTIONS.md §2 (voice-data-contract-v6, 2026-09-10) -- new
+    # per-row fields. spy_ret_63d/hitrate_window are top-level, not row
+    # fields, so they don't belong here.
+    "bar_open","bar_high","bar_low","bar_close","prior_bar_high","prior_bar_low",
+    "ma_20_slope_5d_pct","ret_63d","pct_run_10d","base_low_20d",
+    "days_since_swing_high","bar_range_5d","hi_20d","lo_20d","hi_50d","lo_50d",
+    "pos_in_50d_range_pct","nr4_flag","nr7_flag","hv_ratio_6_100","adx_14",
+    "stoch_k_14","stoch_d_3","rvol_20d","gap_risk_flag",
+    "cohort_hit_rate_20d","cohort_n",
     # QS -- the PM's own proprietary regime/signal read. Captured here (2026-08-17, PM request)
     # SOLELY for the S7 card QS line, shown on every card after deliberation closes, whether or
     # not that name was ever nominated. R3 is unchanged and still absolute: this field must never

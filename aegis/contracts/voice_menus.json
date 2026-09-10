@@ -1,5 +1,5 @@
 {
- "~~CONFIG_NOTE~~": "v6 DATA CONTRACT (2026-09-09): menus are GENERATED from aegis/canon/<voice>/binding.yaml \u2014 a field is on a menu only if a PM-signed canon rule reads it (fit EXACT or PROXY) or it is in the COMMON identity block. Hand edits are overwritten by render.py. Glossary sha stamped below (recomputed against the in-repo-generated glossary.lock.json, 69f94832a2bf...).",
+ "~~CONFIG_NOTE~~": "v6 DATA CONTRACT (2026-09-09): menus are GENERATED from aegis/canon/<voice>/binding.yaml \u2014 a field is on a menu only if a PM-signed canon rule reads it (fit EXACT or PROXY) or it is in the COMMON identity block. Hand edits are overwritten by render.py. Glossary sha stamped below.",
  "detect-lens": [
   "ticker",
   "entry",
@@ -24,6 +24,7 @@
   "knn_tp1",
   "knn_tp2",
   "knn_tp3",
+  "lens",
   "lens.coil",
   "lens.insti_money",
   "lens.leadership",
@@ -31,6 +32,7 @@
   "lens.sector",
   "lens.structure",
   "lens_positive",
+  "lens_ranking",
   "lens_warnings",
   "mover_subtype",
   "mp",
@@ -88,8 +90,6 @@
   "macro_weather.uup_direction",
   "regime.level",
   "regime.vix",
-  "regime_stop_pct_ceiling",
-  "spy_roc_20d",
   "srm[].entry_gate",
   "srm[].grade",
   "srm[].macro_headwind_flag",
@@ -100,9 +100,9 @@
   "srm[].rrg_rs_ratio",
   "srm[].sector",
   "srm[].trend_state",
-  "thematic_baskets.*.grade",
-  "thematic_baskets.*.rrg_direction",
-  "thematic_baskets.*.rrg_quadrant"
+  "thematic_baskets[].grade",
+  "thematic_baskets[].rrg_direction",
+  "thematic_baskets[].rrg_quadrant"
  ],
  "elder-lens": [
   "ticker",
@@ -226,6 +226,7 @@
   "ma_50",
   "rank",
   "rs_leadership",
+  "rvol_20d",
   "sc_momentum",
   "sector_trend_state",
   "sma_distance_pct",
@@ -249,6 +250,7 @@
   "bracket.targets",
   "bracket.valid",
   "day_vol",
+  "lens",
   "lens.coil",
   "lens.insti_money",
   "lens.leadership",
@@ -256,6 +258,7 @@
   "lens.sector",
   "lens.structure",
   "lens_positive",
+  "lens_ranking",
   "lens_warnings",
   "mp_accel_state",
   "mp_state",
@@ -298,14 +301,22 @@
   "held",
   "atr_14d",
   "days_to_earnings",
-  "bracket.risk_pct",
-  "bracket.stop",
+  "bar_high",
+  "bar_low",
+  "bar_open",
+  "bar_range_5d",
+  "base_low_20d",
   "bracket.targets",
   "cci_20",
+  "days_since_swing_high",
   "fib_swing_low",
   "ma_20",
+  "ma_20_slope_5d_pct",
   "ma_40",
-  "srm[].roc20"
+  "pct_run_10d",
+  "prior_bar_high",
+  "prior_bar_low",
+  "ret_63d"
  ],
  "steenbarger": [
   "ticker",
@@ -337,11 +348,12 @@
   "bracket.risk_pct",
   "bracket.rr",
   "bracket.stop",
+  "cohort_hit_rate_20d",
+  "cohort_n",
   "elder_context.volume.avg_vol_20d",
+  "gap_risk_flag",
   "high_52w",
   "low_52w",
-  "signal_hit_rate_20d",
-  "signal_n",
   "vol_30d_ann"
  ],
  "weis": [
@@ -399,6 +411,5 @@
   "sma_distance_pct",
   "structure",
   "structure_shift"
- ],
- "_glossary_sha256": "69f94832a2bfd15c9fba73d07311f900c8589d47388a032e6a0a3c7858d1923e"
+ ]
 }

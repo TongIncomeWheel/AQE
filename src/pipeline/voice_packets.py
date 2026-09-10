@@ -83,8 +83,12 @@ from src.data.paths import EXPORT_JSON, OUTPUT_DIR, PROJECT_ROOT
 # hand, so the two can never disagree about what a packet contains.
 PMA_PIPELINE = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
                 / "tools" / "pma_pipeline.py")
-VOICE_MENUS = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
-               / "contracts" / "voice_menus.json")
+# AQE_INSTRUCTIONS.md §5 (voice-data-contract-v6, 2026-09-10): canonical v6
+# menus, generated from aegis/canon/<voice>/canon.lock.yaml via
+# aegis/handoff/voice_contract_v6/{bind,render}.py. Supersedes the old
+# 1.13.0-era aegis/skills/premarket-analysis/contracts/voice_menus.json,
+# which is now stale (it predates every §2 field this session added).
+VOICE_MENUS = PROJECT_ROOT / "aegis" / "contracts" / "voice_menus.json"
 
 # PM ruling 2026-08-25: the packets land beside the daily export and the Crown
 # file, not in a separate dated tree — one delivery destination for everything

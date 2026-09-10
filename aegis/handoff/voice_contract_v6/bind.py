@@ -34,7 +34,7 @@ ALIAS = {
     "close": ("entry", "EXACT", "entry == last daily close (drive_sync: round(close,2))"),
     "realised_vol_30d": ("vol_30d_ann", "EXACT", "annualised (x sqrt(252)); rule thresholds must be in annualised terms"),
     "avg_daily_volume": ("elder_context.volume.avg_vol_20d", "PROXY", "20-day mean, absent on 9 radar/QS-only rows"),
-    "rvol": (None, "DERIVABLE", "day_vol / elder_context.volume.avg_vol_20d — engine holds both; publish as rvol_20d"),
+    "rvol": ("rvol_20d", "EXACT", ""),
     # --- bracket vocabulary ---
     "entry_price": ("entry", "EXACT", ""), "stop_price": ("bracket.stop", "EXACT", "null when bracket.valid false (71.7% today)"),
     "stop_distance_pct": ("bracket.risk_pct", "EXACT", "percent not fraction; null when bracket invalid"),
@@ -42,21 +42,34 @@ ALIAS = {
     "target": ("bracket.targets", "PROXY", "AQE targets, not the seat's own"),
     "current_stop": ("held_positions[].held_sl", "HELD_BOOK", ""),
     "monthly_high_11": ("high_52w", "PROXY", "52-week not 11-month"), "monthly_low_11": ("low_52w", "PROXY", "52-week not 11-month"),
-    # --- OHLC bars: not in the export at all ---
-    "low": (None, "ABSENT", "last bar low — engine has the panel; publish bar_low"),
-    "high": (None, "ABSENT", "publish bar_high"), "open": (None, "ABSENT", "publish bar_open"),
-    "prior_bar_high": (None, "ABSENT", "publish prior_bar_high"), "prior_bar_low": (None, "ABSENT", "publish prior_bar_low"),
-    "prior_day_low": (None, "ABSENT", "= prior_bar_low"),
-    "sma20_slope_5d": (None, "DERIVABLE", "ma_20 today vs 5 sessions ago; publish sign + pct"),
-    "pct_run_10d": (None, "DERIVABLE", "close/close[-10]-1; publish"),
-    "days_since_swing_high": (None, "DERIVABLE", "sessions since last_pivot_high.date; engine holds the pivot"),
-    "pullback_bar_range": (None, "ABSENT", "needs OHLC"),
-    "stock_pct_change_63d": (None, "DERIVABLE", "ret_6m is 126d; publish ret_63d"),
-    "index_pct_change_63d": (None, "DERIVABLE", "SPY 63d; publish spy_ret_63d at top level"),
-    "industry_group_pct_change_63d": ("srm[].roc20", "PROXY", "sector ETF 20d not industry-group 63d"),
+    # --- OHLC bars: delivered 2026-09-10 (AQE_INSTRUCTIONS.md §2) ---
+    "low": ("bar_low", "EXACT", ""),
+    "high": ("bar_high", "EXACT", ""), "open": ("bar_open", "EXACT", ""),
+    "prior_bar_high": ("prior_bar_high", "EXACT", ""), "prior_bar_low": ("prior_bar_low", "EXACT", ""),
+    "prior_day_low": ("prior_bar_low", "EXACT", "= prior_bar_low"),
+    "sma20_slope_5d": ("ma_20_slope_5d_pct", "EXACT", ""),
+    "pct_run_10d": ("pct_run_10d", "EXACT", ""),
+    "days_since_swing_high": ("days_since_swing_high", "PROXY",
+                              "business-day count (weekends excluded, exchange holidays not) — "
+                              "an approximation, not an exact trading-session count"),
+    "pullback_bar_range": ("bar_range_5d", "PROXY",
+                           "last 5 bars unconditionally, not bars scoped to the detected pullback "
+                           "specifically — coarser than the canon's own definition"),
+    "stock_pct_change_63d": ("ret_63d", "EXACT", ""),
+    "index_pct_change_63d": (None, "DERIVABLE",
+                             "computed as spy_ret_63d, but that's a top-level export constant "
+                             "and nominator TSVs are row-sliced only -- no per-row delivery "
+                             "mechanism exists yet, so serving it would be a permanently-null "
+                             "column, not real data"),
+    "industry_group_pct_change_63d": (None, "DERIVABLE",
+                                      "sector ETF 20d roc exists at srm[].roc20 (top-level, "
+                                      "keyed by sector, not industry-group 63d anyway), but "
+                                      "nominator TSVs are row-sliced only -- no per-ticker "
+                                      "lookup into a top-level array exists yet, so this was "
+                                      "being served as a permanently-null column"),
     "most_recent_swing_low": ("fib_swing_low", "PROXY", "fib swing, not the seat's own swing definition"),
     "prior_support": ("fib_swing_low", "PROXY", ""), "support_level": ("fib_swing_low", "PROXY", ""),
-    "base_low": (None, "DERIVABLE", "min low of the 20-day base; engine holds it (elder_context computes base range)"),
+    "base_low": ("base_low_20d", "EXACT", ""),
     "breakout_bar_low": (None, "ABSENT", "needs OHLC + breakout-bar identification"),
     # --- held book / runtime ---
     "days_held": ("held_positions[].trade_date", "HELD_BOOK", "derive from trade_date"),
@@ -67,11 +80,11 @@ ALIAS = {
     "universe_membership": ("source", "EXACT", "source label says which list the row came from"),
     "setup_flag": (None, "OUTPUT", "the seat's own output"), "signal_id": (None, "OUTPUT", ""),
     "expected_hold_days": (None, "OUTPUT", "canon constant"), "monitoring_interval": (None, "OUTPUT", ""),
-    "gap_risk_flag": (None, "DERIVABLE", "days_to_earnings <= hold horizon; engine holds days_to_earnings"),
+    "gap_risk_flag": ("gap_risk_flag", "EXACT", ""),
     # --- thorp statistics ---
     "candidate_set_vol_rank": (None, "DERIVABLE", "rank of vol_30d_ann within candidate_set; pipeline can compute"),
-    "backtest_trade_count": ("signal_n", "PROXY", "cohort n for (elder_pattern,structure_shift), not the seat's own signal"),
-    "signal_edge_current": ("signal_hit_rate_20d", "PROXY", "cohort hit-rate, close-higher-in-20, not R-adjusted"),
+    "backtest_trade_count": ("cohort_n", "EXACT", ""),
+    "signal_edge_current": ("cohort_hit_rate_20d", "EXACT", ""),
     "signal_edge_trailing_median": (None, "ABSENT", "needs hit-rate history; engine keeps one table per run"),
     "rules_generated_count": (None, "OUTPUT", ""), "sample_start": (None, "ABSENT", "hit-rate window t-79..t-20 is fixed; publish as constant"),
     "sample_end": (None, "ABSENT", ""), "candidates_passing_count": (None, "DERIVABLE", "len(candidate_set)"),
