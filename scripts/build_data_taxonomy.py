@@ -1314,6 +1314,103 @@ SCORE_TREE = [
       "lens_warnings", "engines/lens_consensus.py",
       "{leadership, coil, insti_money, structure, resistance, extension, "
       "sector}"),
+
+    # ── AQE_INSTRUCTIONS.md §2 (voice-data-contract-v6, 2026-09-10,
+    # ADDITIVE ONLY) — raw-bar + short-window technical reads, computed off
+    # the same OHLCV panel enrich_record already holds ──────────────────
+    R("bar_open", "", "leaf", "usd", "",
+      "Last completed daily bar open", "engines/enrichment.py:compute_bar_fields",
+      "stock_daily.open.iloc[-1]"),
+    R("bar_high", "", "leaf", "usd", "",
+      "Last completed daily bar high", "engines/enrichment.py:compute_bar_fields",
+      "stock_daily.high.iloc[-1]"),
+    R("bar_low", "", "leaf", "usd", "",
+      "Last completed daily bar low", "engines/enrichment.py:compute_bar_fields",
+      "stock_daily.low.iloc[-1]"),
+    R("bar_close", "", "leaf", "usd", "",
+      "Last completed daily bar close", "engines/enrichment.py:compute_bar_fields",
+      "stock_daily.close.iloc[-1]"),
+    R("prior_bar_high", "bar_high", "leaf", "usd", "",
+      "High of the bar immediately before the last completed bar",
+      "engines/enrichment.py:compute_bar_fields", "stock_daily.high.iloc[-2]"),
+    R("prior_bar_low", "bar_low", "leaf", "usd", "",
+      "Low of the bar immediately before the last completed bar",
+      "engines/enrichment.py:compute_bar_fields", "stock_daily.low.iloc[-2]"),
+    R("ma_20_slope_5d_pct", "ma_20", "leaf", "pct", "",
+      "5-session slope of the 20-day moving average",
+      "engines/enrichment.py:compute_bar_fields",
+      "(ma_20 / ma_20[-5] - 1) * 100"),
+    R("ret_63d", "", "leaf", "pct", "",
+      "~1-quarter (63 trading day) return", "engines/enrichment.py:compute_bar_fields",
+      "close[-1] / close[-64] - 1, as pct"),
+    R("pct_run_10d", "", "leaf", "pct", "",
+      "10-session return, a short-run extension read",
+      "engines/enrichment.py:compute_bar_fields", "close[-1] / close[-11] - 1, as pct"),
+    R("base_low_20d", "", "leaf", "usd", "",
+      "Minimum low over the last 20 bars — base-of-consolidation reference",
+      "engines/enrichment.py:compute_bar_fields", "min(low[-20:])"),
+    R("bar_range_5d", "", "leaf", "list", "",
+      "High-low range for each of the last 5 bars, oldest to newest",
+      "engines/enrichment.py:compute_bar_fields",
+      "[high[i]-low[i] for the last 5 bars]"),
+    R("hi_20d", "", "leaf", "usd", "", "Rolling 20-day high",
+      "engines/enrichment.py:compute_bar_fields", "max(high[-20:])"),
+    R("lo_20d", "", "leaf", "usd", "", "Rolling 20-day low",
+      "engines/enrichment.py:compute_bar_fields", "min(low[-20:])"),
+    R("hi_50d", "", "leaf", "usd", "",
+      "Rolling 50-day high — same window Energy's en_pos50 uses "
+      "(engines/energy.py:40), recomputed here as the raw level",
+      "engines/enrichment.py:compute_bar_fields", "max(high[-50:])"),
+    R("lo_50d", "", "leaf", "usd", "", "Rolling 50-day low, same window as hi_50d",
+      "engines/enrichment.py:compute_bar_fields", "min(low[-50:])"),
+    R("pos_in_50d_range_pct", "", "leaf", "pct", "",
+      "Position within the 50-day high-low range; flat range defaults to "
+      "50.0 (same edge-case rule as Energy's en_pos50, engines/energy.py:43-46)",
+      "engines/enrichment.py:compute_bar_fields",
+      "(close-lo50)/(hi50-lo50)*100, else 50.0 if hi50==lo50"),
+    R("nr4_flag", "", "leaf", "bool", "true|false",
+      "Narrowest range of the last 4 bars (Raschke NR4)",
+      "engines/enrichment.py:compute_bar_fields", "range[-1] <= min(range[-4:])"),
+    R("nr7_flag", "", "leaf", "bool", "true|false",
+      "Narrowest range of the last 7 bars (Raschke NR7)",
+      "engines/enrichment.py:compute_bar_fields", "range[-1] <= min(range[-7:])"),
+    R("hv_ratio_6_100", "", "leaf", "ratio", "",
+      "6-day vs 100-day annualised historical volatility — a "
+      "volatility-contraction read", "engines/enrichment.py:compute_bar_fields",
+      "std(pct_change[-6:])*sqrt(252) / std(pct_change[-100:])*sqrt(252)"),
+    R("adx_14", "", "leaf", "0-100", "",
+      "Wilder ADX(14), recomputed from the raw OHLC panel using the same "
+      "Wilder DMI as engines/mp.py's _dmi() so it agrees with MP's own "
+      "read without depending on the score cache",
+      "engines/enrichment.py:compute_bar_fields (calls engines/mp.py:_dmi)",
+      "Wilder RMA of |DI+-DI-|/(DI+ +DI-)*100, n=14"),
+    R("stoch_k_14", "", "leaf", "0-100", "", "Fast stochastic %K(14)",
+      "engines/enrichment.py:compute_bar_fields",
+      "(close-low14)/(high14-low14)*100"),
+    R("stoch_d_3", "stoch_k_14", "leaf", "0-100", "",
+      "3-period SMA of stoch_k_14 — the stochastic %D signal line",
+      "engines/enrichment.py:compute_bar_fields", "SMA(stoch_k_14, 3)"),
+    R("rvol_20d", "", "leaf", "ratio", "",
+      "Relative volume vs the 20-day average. Computed in _attach_elder, "
+      "not enrich_record -- elder_context.volume.avg_vol_20d (the "
+      "denominator) doesn't exist yet at enrich_record() time",
+      "src/data/drive_sync.py:_attach_elder",
+      "day_vol / elder_context.volume.avg_vol_20d"),
+    R("gap_risk_flag", "days_to_earnings", "leaf", "bool", "true|false",
+      "Earnings print within the next 10 trading days. Informational only "
+      "(FIP/earnings are never filters)", "src/data/drive_sync.py:_attach_elder",
+      "days_to_earnings is not null and <= 10"),
+    R("cohort_hit_rate_20d", "signal_hit_rate_20d", "leaf", "pct", "",
+      "Seat-facing alias Thorp's canon reads",
+      "src/data/drive_sync.py:_attach_elder", "= signal_hit_rate_20d"),
+    R("cohort_n", "signal_n", "leaf", "score", "",
+      "Seat-facing alias Thorp's canon reads",
+      "src/data/drive_sync.py:_attach_elder", "= signal_n"),
+    R("days_since_swing_high", "last_pivot_high", "leaf", "score", "",
+      "Business days since last_pivot_high.date (weekends excluded, "
+      "exchange holidays not -- an approximation, not an exact "
+      "trading-session count)", "src/data/drive_sync.py:_v21_record_fields",
+      "np.busday_count(last_pivot_high.date, today)"),
 ]
 
 for _r in SCORE_TREE:
@@ -1348,6 +1445,15 @@ BLOCKS = [
      "src/data/drive_sync.py:_compute_enrichment_lookups:813 (build_export "
      "only copies it from that lookup, computed alongside vol_30d_ann/"
      "beta_252d/day_vol)"),
+    ("spy_ret_63d", "float", "SPY's own ~1-quarter (63 trading day) return -- "
+     "the index benchmark for ret_63d/pct_run_10d comparisons",
+     "src/data/drive_sync.py:_compute_v21_lookups (same SPY series spy_roc_20d "
+     "is computed from)"),
+    ("hitrate_window", "dict", "AQE_INSTRUCTIONS.md §2 -- the fixed cohort "
+     "window signal_hit_rate_20d/cohort_hit_rate_20d are measured over "
+     "({lookback_sessions: 60, horizon_sessions: 20}), published as a "
+     "constant so a reader never has to infer it",
+     "src/data/drive_sync.py:export_to_drive"),
     ("thematic_baskets", "dict", "35 baskets, graded, with RRG position",
      "engines/srm.py:grade_thematic_baskets:408-495"),
     ("sector_map_version", "str", "GICS map version in force",

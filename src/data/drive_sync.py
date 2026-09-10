@@ -2428,6 +2428,13 @@ def build_export(shortlist: dict | None = None) -> dict:
                 _res = _st[0].get("price") if _st and isinstance(_st[0], dict) else None
                 _r["elder_context"] = compute_elder_context(
                     _e5, _hourly.get(_tk) or [], _daily, resistance_price=_res)
+                # AQE_INSTRUCTIONS.md §2 — rvol_20d needs elder_context.volume.
+                # avg_vol_20d, which doesn't exist yet at enrich_record() time
+                # (elder_context is computed here, later); compute it here
+                # instead of leaving enrich_record's elder_ctx=None branch dead.
+                _avg_vol_20d = ((_r["elder_context"] or {}).get("volume") or {}).get("avg_vol_20d")
+                if _avg_vol_20d and _g is not None and not _g.empty:
+                    _r["rvol_20d"] = round(float(_g["volume"].iloc[-1]) / _avg_vol_20d, 2)
                 if _earn_cal and _tk:
                     _r["next_earnings_date"] = next_earnings_date(_tk, _earn_cal)
                     _r["days_to_earnings"] = business_days_to_earnings(

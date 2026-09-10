@@ -8,6 +8,8 @@ srm,,block,list,,One graded row per GICS sector,engines/srm.py:grade_all_sectors
 macro_weather,,block,dict,,7-instrument direction read,engines/srm.py:compute_macro_weather:789-928,,,,top-level export key
 regime_stop_pct_ceiling,,block,float,,"Regime cap on stop width, percent",src/engines/bracket_engine.py:regime_stop_ceiling,,,,top-level export key
 spy_roc_20d,,block,float,,SPY 20-day rate of change,"src/data/drive_sync.py:_compute_enrichment_lookups:813 (build_export only copies it from that lookup, computed alongside vol_30d_ann/beta_252d/day_vol)",,,,top-level export key
+spy_ret_63d,,block,float,,SPY's own ~1-quarter (63 trading day) return -- the index benchmark for ret_63d/pct_run_10d comparisons,src/data/drive_sync.py:_compute_v21_lookups (same SPY series spy_roc_20d is computed from),,,,top-level export key
+hitrate_window,,block,dict,,"AQE_INSTRUCTIONS.md §2 -- the fixed cohort window signal_hit_rate_20d/cohort_hit_rate_20d are measured over ({lookback_sessions: 60, horizon_sessions: 20}), published as a constant so a reader never has to infer it",src/data/drive_sync.py:export_to_drive,,,,top-level export key
 thematic_baskets,,block,dict,,"35 baskets, graded, with RRG position",engines/srm.py:grade_thematic_baskets:408-495,,,,top-level export key
 sector_map_version,,block,str,,GICS map version in force,src/data/sector_mapper.py,,,,top-level export key
 sector_map_gaps,,block,list,,Unclassified tickers,src/data/sector_mapper.py,,,,top-level export key
@@ -287,6 +289,33 @@ runner_conviction,runner_setup,leaf,0-4,,"Count of the 4 runner_setup legs sitti
 premove_setup,,leaf,bool,true|false,"Job 1 (pre-move) — the frozen launcher fingerprint, applied only to names that are quiet at the scan date",src/engines/signal_radar.py,"is_quiet (20d return in [-8,8]% AND pos20<0.90) AND every frozen launcher-fingerprint leg",,lens_consensus:coil lens (True->strong),daily_list
 premove_conviction,premove_setup,leaf,0-4,,"Count of frozen launcher-fingerprint legs satisfied, forced 0 when not quiet",src/engines/signal_radar.py:245-246,sum of legs vs data/signal_engine_params.json cuts; 0 if not is_quiet,,,daily_list
 lens,,leaf,dict,,The per-lens strong/ok/warn/-- read behind lens_positive/lens_warnings,src/engines/lens_consensus.py,"{leadership, coil, insti_money, structure, resistance, extension, sector}",,,daily_list
+bar_open,,leaf,usd,,Last completed daily bar open,src/engines/enrichment.py:compute_bar_fields,stock_daily.open.iloc[-1],,,daily_list
+bar_high,,leaf,usd,,Last completed daily bar high,src/engines/enrichment.py:compute_bar_fields,stock_daily.high.iloc[-1],,,daily_list
+bar_low,,leaf,usd,,Last completed daily bar low,src/engines/enrichment.py:compute_bar_fields,stock_daily.low.iloc[-1],,,daily_list
+bar_close,,leaf,usd,,Last completed daily bar close,src/engines/enrichment.py:compute_bar_fields,stock_daily.close.iloc[-1],,,daily_list
+prior_bar_high,bar_high,leaf,usd,,High of the bar immediately before the last completed bar,src/engines/enrichment.py:compute_bar_fields,stock_daily.high.iloc[-2],,,daily_list
+prior_bar_low,bar_low,leaf,usd,,Low of the bar immediately before the last completed bar,src/engines/enrichment.py:compute_bar_fields,stock_daily.low.iloc[-2],,,daily_list
+ma_20_slope_5d_pct,ma_20,leaf,pct,,5-session slope of the 20-day moving average,src/engines/enrichment.py:compute_bar_fields,(ma_20 / ma_20[-5] - 1) * 100,,,daily_list
+ret_63d,,leaf,pct,,~1-quarter (63 trading day) return,src/engines/enrichment.py:compute_bar_fields,"close[-1] / close[-64] - 1, as pct",,,daily_list
+pct_run_10d,,leaf,pct,,"10-session return, a short-run extension read",src/engines/enrichment.py:compute_bar_fields,"close[-1] / close[-11] - 1, as pct",,,daily_list
+base_low_20d,,leaf,usd,,Minimum low over the last 20 bars — base-of-consolidation reference,src/engines/enrichment.py:compute_bar_fields,min(low[-20:]),,,daily_list
+bar_range_5d,,leaf,list,,"High-low range for each of the last 5 bars, oldest to newest",src/engines/enrichment.py:compute_bar_fields,[high[i]-low[i] for the last 5 bars],,,daily_list
+hi_20d,,leaf,usd,,Rolling 20-day high,src/engines/enrichment.py:compute_bar_fields,max(high[-20:]),,,daily_list
+lo_20d,,leaf,usd,,Rolling 20-day low,src/engines/enrichment.py:compute_bar_fields,min(low[-20:]),,,daily_list
+hi_50d,,leaf,usd,,"Rolling 50-day high — same window Energy's en_pos50 uses (engines/energy.py:40), recomputed here as the raw level",src/engines/enrichment.py:compute_bar_fields,max(high[-50:]),,,daily_list
+lo_50d,,leaf,usd,,"Rolling 50-day low, same window as hi_50d",src/engines/enrichment.py:compute_bar_fields,min(low[-50:]),,,daily_list
+pos_in_50d_range_pct,,leaf,pct,,"Position within the 50-day high-low range; flat range defaults to 50.0 (same edge-case rule as Energy's en_pos50, engines/energy.py:43-46)",src/engines/enrichment.py:compute_bar_fields,"(close-lo50)/(hi50-lo50)*100, else 50.0 if hi50==lo50",,,daily_list
+nr4_flag,,leaf,bool,true|false,Narrowest range of the last 4 bars (Raschke NR4),src/engines/enrichment.py:compute_bar_fields,range[-1] <= min(range[-4:]),,,daily_list
+nr7_flag,,leaf,bool,true|false,Narrowest range of the last 7 bars (Raschke NR7),src/engines/enrichment.py:compute_bar_fields,range[-1] <= min(range[-7:]),,,daily_list
+hv_ratio_6_100,,leaf,ratio,,6-day vs 100-day annualised historical volatility — a volatility-contraction read,src/engines/enrichment.py:compute_bar_fields,std(pct_change[-6:])*sqrt(252) / std(pct_change[-100:])*sqrt(252),,,daily_list
+adx_14,,leaf,0-100,,"Wilder ADX(14), recomputed from the raw OHLC panel using the same Wilder DMI as engines/mp.py's _dmi() so it agrees with MP's own read without depending on the score cache",src/engines/enrichment.py:compute_bar_fields (calls engines/mp.py:_dmi),"Wilder RMA of |DI+-DI-|/(DI+ +DI-)*100, n=14",,,daily_list
+stoch_k_14,,leaf,0-100,,Fast stochastic %K(14),src/engines/enrichment.py:compute_bar_fields,(close-low14)/(high14-low14)*100,,,daily_list
+stoch_d_3,stoch_k_14,leaf,0-100,,3-period SMA of stoch_k_14 — the stochastic %D signal line,src/engines/enrichment.py:compute_bar_fields,"SMA(stoch_k_14, 3)",,,daily_list
+rvol_20d,,leaf,ratio,,"Relative volume vs the 20-day average. Computed in _attach_elder, not enrich_record -- elder_context.volume.avg_vol_20d (the denominator) doesn't exist yet at enrich_record() time",src/data/drive_sync.py:_attach_elder,day_vol / elder_context.volume.avg_vol_20d,,,daily_list
+gap_risk_flag,days_to_earnings,leaf,bool,true|false,Earnings print within the next 10 trading days. Informational only (FIP/earnings are never filters),src/data/drive_sync.py:_attach_elder,days_to_earnings is not null and <= 10,,,daily_list
+cohort_hit_rate_20d,signal_hit_rate_20d,leaf,pct,,Seat-facing alias Thorp's canon reads,src/data/drive_sync.py:_attach_elder,= signal_hit_rate_20d,,,daily_list
+cohort_n,signal_n,leaf,score,,Seat-facing alias Thorp's canon reads,src/data/drive_sync.py:_attach_elder,= signal_n,,,daily_list
+days_since_swing_high,last_pivot_high,leaf,score,,"Business days since last_pivot_high.date (weekends excluded, exchange holidays not -- an approximation, not an exact trading-session count)",src/data/drive_sync.py:_v21_record_fields,"np.busday_count(last_pivot_high.date, today)",,,daily_list
 role,,leaf,label,entry|reference|stop|target|fib_support|moving_average|risk_metric|volatility|ratio|signal|flag,"Schema vocabulary dimension, not a data field — every field.role value in field_schema is drawn from this enum",src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS,,,,field_schema{}'s own entries — every field_schema[name] dict carries a role/unit/side; not a scalar of its own
 side,,leaf,label,below_entry|above_entry|at_entry|n/a,"Schema vocabulary dimension, not a data field — every field.side value in field_schema is drawn from this enum",src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS,,,,field_schema{}'s own entries — every field_schema[name] dict carries a role/unit/side; not a scalar of its own
 unit,,leaf,label,usd|r_multiple|ratio|pct|atr|decimal|score|label|boolean|date,"Schema vocabulary dimension, not a data field — every field.unit value in field_schema is drawn from this enum",src/data/drive_sync.py:_FIELD_SCHEMA_ENUMS,,,,field_schema{}'s own entries — every field_schema[name] dict carries a role/unit/side; not a scalar of its own
