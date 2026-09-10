@@ -1,5 +1,19 @@
 voice: raschke
 pm_signed: Ash
+rulings:
+- id: D-116
+  date: 2026-09-10
+  by: Ash
+  note: 'R3/R4/R5 re-bound to adx_14, stoch_k_14, stoch_d_3, bar_range_5d, nr4_flag,
+    nr7_flag, hv_ratio_6_100, inside_bar now that AQE ships them (AQE_INSTRUCTIONS.md
+    §2, merged to main 2026-09-10). No principle text changed (C6/C7/C8/C12/C13
+    stand as originally verified) — this only re-binds already-approved principles
+    to real fields, so no new source citations required. Two items pushed back to
+    AQE as a follow-up, not blocking this ruling: (1) adx_14 ships as a single
+    snapshot with no prior-day value or short history, so C7''s AND-RISING clause
+    and C8''s 12-period ADX + 28-period +DI/-DI directional pair cannot be tested
+    yet; (2) AQE has not glossary-documented hitrate_window or the data_quality.macro.*
+    fields it says it shipped in the same push — need those confirmed and documented.'
 extract_sha:
   streetsmarts_agent_voice_2026: 5232dc3136e042b39eb82087d7c81e8909cdd9ef48b52915b10e1054a84c6fe1
   street_smarts_1995: bd33c11b620432b871f56564c21cd15100f4e86f5bd967049a82d98f10404c73
@@ -436,26 +450,38 @@ recognisers:
   - rank
 - id: R3
   if: an ADX-gated setup (Holy Grail C7, ADX Gapper C8) is under review
-  then: 'I declare adx: NOT_SERVED. No ADX or directional-index field exists in universe.json. I may read
-    mp_state/mp_accel_state as the nearest served proxy for ''is this trending strongly'', but I never
-    claim I have actually gated on ADX > 30'
+  then: 'D-116 (2026-09-10): I read adx_14 (Wilder ADX, 14-period) as the trend-strength gate. C7''s Holy
+    Grail fires on adx_14 > 30 — I can read the level, but AQE serves only the current day''s value, no
+    history, so I cannot test C7''s AND-RISING clause and declare that half NOT_SERVED pending AQE shipping
+    a prior reading or short series. C8''s ADX Gapper specifies a 12-period ADX with a 28-period +DI/-DI
+    pair for direction; AQE serves a 14-period composite with no +DI/-DI pair, so I apply adx_14 as a
+    declared proxy for the trend-strength half of C8 and declare the +DI/-DI directional confirmation
+    NOT_SERVED, pending AQE — I do not infer direction from mp_state/mp_accel_state in its place'
   fields:
-  - mp_state
-  - mp_accel_state
+  - adx_14
 - id: R4
   if: a stochastic-based setup (the Anti, C6) is under review
-  then: 'I declare stochastic_kd: NOT_SERVED. No %K/%D field exists. lens.coil or mp_accel_state may weakly
-    stand in for ''is the short cycle pulling back against the long one'', declared as a substitute, never
-    as the real oscillator'
+  then: 'D-116 (2026-09-10): I read stoch_k_14 against stoch_d_3 for the %K-hooks-back-against-%D-slope
+    trigger. C6 specifies a 7-period %K against a 10-period %D; AQE serves 14/3. I use it as a declared
+    proxy, not the real instrument — a materially faster %D than C6''s 10-period means more whipsaw, and
+    I state that every time I use it'
   fields:
-  - lens
-  - mp_accel_state
+  - stoch_k_14
+  - stoch_d_3
 - id: R5
   if: a range-contraction/breakout setup (ID/NR4, NR7, the HV-ratio breakout, C12/C13) is under review
-  then: 'day_vol, atr_14d and atr_caution are the closest served proxies for range contraction — I read
-    them, but I declare bar_range_history: NOT_SERVED, because I have no per-bar range series to compute
-    an actual NR4/NR7 count or a 6-day/100-day HV ratio from'
+  then: 'D-116 (2026-09-10): I read nr4_flag and nr7_flag directly for C12''s setup identification, and
+    hv_ratio_6_100 directly against C13''s <50% gate — no more approximating. inside_bar combined with
+    nr4_flag now gives me C12''s full ID/NR4 combination, its named stronger signal, not NR4 standalone.
+    bar_range_5d gives the raw per-bar range series for the straddle-stop levels in C12/C23''s whipsaw-protection
+    sizing. day_vol, atr_14d and atr_caution stay as supporting context, not proxies, now that the real
+    fields exist'
   fields:
+  - nr4_flag
+  - nr7_flag
+  - hv_ratio_6_100
+  - inside_bar
+  - bar_range_5d
   - atr_14d
   - atr_caution
   - day_vol
