@@ -282,6 +282,97 @@ def cleanup_flags(entry: float | None, stop: float | None,
     return out
 
 
+# ────────────────────────────────────────────────────────────────────────────
+# 5. Bar/technical fields (AQE_INSTRUCTIONS.md voice-data-contract-v6 §2) — pure
+# functions on the same daily OHLCV panel `enrich_record` already holds. Each
+# degrades to None/[] on insufficient history, never raises.
+# ────────────────────────────────────────────────────────────────────────────
+
+def compute_bar_fields(stock_daily: pd.DataFrame) -> dict:
+    """Raw-bar + short-window technical reads for one ticker.
+
+    All of these are additive, seat-facing fields (seow/raschke/oneil/thorp —
+    see AQE_INSTRUCTIONS.md §2); none feed a gate or a size decision.
+    """
+    out: dict = {
+        "bar_open": None, "bar_high": None, "bar_low": None, "bar_close": None,
+        "prior_bar_high": None, "prior_bar_low": None,
+        "ma_20_slope_5d_pct": None, "ret_63d": None, "pct_run_10d": None,
+        "base_low_20d": None, "bar_range_5d": None,
+        "hi_20d": None, "lo_20d": None, "hi_50d": None, "lo_50d": None,
+        "pos_in_50d_range_pct": None,
+        "nr4_flag": None, "nr7_flag": None, "hv_ratio_6_100": None,
+        "adx_14": None, "stoch_k_14": None, "stoch_d_3": None,
+        "rvol_20d": None,
+    }
+    if stock_daily is None or stock_daily.empty:
+        return out
+
+    o = stock_daily["open"].astype(float).to_numpy()
+    h = stock_daily["high"].astype(float).to_numpy()
+    l = stock_daily["low"].astype(float).to_numpy()
+    c = stock_daily["close"].astype(float).to_numpy()
+    v = stock_daily["volume"].astype(float).to_numpy()
+    n = len(c)
+    if n < 2:
+        return out
+
+    out["bar_open"], out["bar_high"] = round(float(o[-1]), 2), round(float(h[-1]), 2)
+    out["bar_low"], out["bar_close"] = round(float(l[-1]), 2), round(float(c[-1]), 2)
+    out["prior_bar_high"] = round(float(h[-2]), 2)
+    out["prior_bar_low"] = round(float(l[-2]), 2)
+
+    rng = h - l
+    out["bar_range_5d"] = [round(float(x), 2) for x in rng[-5:]] if n >= 5 else None
+    if n >= 4:
+        out["nr4_flag"] = bool(rng[-1] <= rng[-4:].min())
+    if n >= 7:
+        out["nr7_flag"] = bool(rng[-1] <= rng[-7:].min())
+
+    if n >= 21:
+        ma20 = pd.Series(c).rolling(20).mean().to_numpy()
+        if ma20[-6] and ma20[-6] == ma20[-6]:
+            out["ma_20_slope_5d_pct"] = round((ma20[-1] / ma20[-6] - 1) * 100, 2)
+    if n >= 64:
+        out["ret_63d"] = round((c[-1] / c[-64] - 1) * 100, 2)
+    if n >= 11:
+        out["pct_run_10d"] = round((c[-1] / c[-11] - 1) * 100, 2)
+    if n >= 20:
+        out["base_low_20d"] = round(float(l[-20:].min()), 2)
+        out["hi_20d"] = round(float(h[-20:].max()), 2)
+        out["lo_20d"] = round(float(l[-20:].min()), 2)
+    if n >= 50:
+        hi50, lo50 = float(h[-50:].max()), float(l[-50:].min())
+        out["hi_50d"], out["lo_50d"] = round(hi50, 2), round(lo50, 2)
+        rng50 = hi50 - lo50
+        out["pos_in_50d_range_pct"] = round((c[-1] - lo50) / rng50 * 100, 2) if rng50 != 0 else 50.0
+    if n >= 101:
+        rets = pd.Series(c).pct_change()
+        hv6 = float(rets.iloc[-6:].std() * (252 ** 0.5))
+        hv100 = float(rets.iloc[-100:].std() * (252 ** 0.5))
+        if hv100 and hv100 == hv100 and hv100 != 0:
+            out["hv_ratio_6_100"] = round(hv6 / hv100, 3)
+    if n >= 15:
+        try:
+            from src.engines.mp import _dmi
+            _, _, adx_series = _dmi(pd.Series(h), pd.Series(l), pd.Series(c), n=14)
+            adx_last = adx_series.iloc[-1]
+            out["adx_14"] = round(float(adx_last), 2) if adx_last == adx_last else None
+        except Exception:  # noqa: BLE001 — additive, never blocks the export
+            pass
+    if n >= 14:
+        hs, ls, cs = pd.Series(h), pd.Series(l), pd.Series(c)
+        hi14_series = hs.rolling(14).max()
+        lo14_series = ls.rolling(14).min()
+        rng14_series = (hi14_series - lo14_series).replace(0.0, np.nan)
+        k_series = ((cs - lo14_series) / rng14_series * 100).fillna(50.0)
+        out["stoch_k_14"] = round(float(k_series.iloc[-1]), 2)
+        if n >= 16:
+            out["stoch_d_3"] = round(float(k_series.iloc[-3:].mean()), 2)
+
+    return out
+
+
 def compute_effective_atr(atr14: float,
                           highs_5d: np.ndarray,
                           lows_5d: np.ndarray,
@@ -338,6 +429,15 @@ def enrich_record(
     flags = cleanup_flags(entry, stop, dsl_risk, beta_60d,
                           dsl_atr_ratio, regime_level)
     out.update(flags)
+
+    # Bar/technical fields (§2) — computable off raw OHLCV alone, independent
+    # of the 21-bar floor below that gates the older setup/breakout signals.
+    out.update(compute_bar_fields(stock_daily))
+    if stock_daily is not None and not stock_daily.empty:
+        avg_vol_20d = _ctx_get(elder_ctx, "volume", "avg_vol_20d")
+        day_vol = float(stock_daily["volume"].iloc[-1])
+        if avg_vol_20d:
+            out["rvol_20d"] = round(day_vol / avg_vol_20d, 2)
 
     if stock_daily is None or stock_daily.empty:
         return out

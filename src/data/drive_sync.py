@@ -601,6 +601,50 @@ _FIELD_GLOSSARY.update({
                  "or 'not_run'. Distinguishes a QS OUTAGE from a genuinely quiet "
                  "market. An empty QS list with status='live' means nothing "
                  "qualified; with status='error' it means nothing was checked.",
+    # AQE_INSTRUCTIONS.md §2 (voice-data-contract-v6, 2026-09-10, ADDITIVE ONLY)
+    "bar_open": "Last completed daily bar open, USD.",
+    "bar_high": "Last completed daily bar high, USD.",
+    "bar_low": "Last completed daily bar low, USD.",
+    "bar_close": "Last completed daily bar close, USD.",
+    "prior_bar_high": "High of the bar immediately before the last completed bar, USD.",
+    "prior_bar_low": "Low of the bar immediately before the last completed bar, USD.",
+    "ma_20_slope_5d_pct": "5-session slope of the 20-day moving average: "
+                          "(ma_20 / ma_20[-5] - 1) * 100. Positive = MA rising.",
+    "ret_63d": "~1-quarter (63 trading day) return: close/close[-63]-1, pct.",
+    "pct_run_10d": "10-session return, a short-run extension read: close/close[-10]-1, pct.",
+    "base_low_20d": "Minimum low over the last 20 bars — base-of-consolidation reference, USD.",
+    "days_since_swing_high": "Business days since last_pivot_high.date (weekends excluded, "
+                             "exchange holidays not — an approximation, not an exact "
+                             "trading-session count). Null with no pivot high detected yet.",
+    "bar_range_5d": "High-low range for each of the last 5 bars, oldest to newest, USD.",
+    "hi_20d": "Rolling 20-day high, USD.", "lo_20d": "Rolling 20-day low, USD.",
+    "hi_50d": "Rolling 50-day high, USD — same window Energy's en_pos50 already uses "
+              "(src/engines/energy.py) but exposed here as the raw level.",
+    "lo_50d": "Rolling 50-day low, USD — same window as hi_50d.",
+    "pos_in_50d_range_pct": "Position within the 50-day high-low range: "
+                            "(close-lo50)/(hi50-lo50)*100. Flat range (hi50==lo50) "
+                            "defaults to 50.0 (same edge-case rule as Energy's en_pos50).",
+    "nr4_flag": "True if today's bar has the narrowest range of the last 4 bars (Raschke NR4).",
+    "nr7_flag": "True if today's bar has the narrowest range of the last 7 bars (Raschke NR7).",
+    "hv_ratio_6_100": "Ratio of 6-day to 100-day annualised historical volatility — a "
+                      "volatility-contraction read. Null with fewer than 100 bars.",
+    "adx_14": "Wilder ADX(14) — recomputed here from the raw OHLC panel using the same "
+              "Wilder DMI as src/engines/mp.py's _dmi(), so it agrees with MP's own read "
+              "without depending on the score cache. Null with fewer than 15 bars.",
+    "stoch_k_14": "Fast stochastic %K(14): (close-low14)/(high14-low14)*100.",
+    "stoch_d_3": "3-period SMA of stoch_k_14 — the stochastic %D signal line.",
+    "rvol_20d": "Relative volume vs the 20-day average: day_vol / "
+               "elder_context.volume.avg_vol_20d. Null when avg_vol_20d is unavailable.",
+    "gap_risk_flag": "True if an earnings print falls within the next 10 trading days "
+                     "(days_to_earnings is not null and <= 10). Informational, never a gate "
+                     "(FIP/earnings are never filters — see CLAUDE.md).",
+    "cohort_hit_rate_20d": "Copy of signal_hit_rate_20d under the name Thorp's canon reads.",
+    "cohort_n": "Copy of signal_n under the name Thorp's canon reads.",
+    "spy_ret_63d": "SPY's own ~1-quarter (63 trading day) return, top-level — the index "
+                  "benchmark for ret_63d/pct_run_10d comparisons.",
+    "hitrate_window": "The fixed cohort window signal_hit_rate_20d/cohort_hit_rate_20d are "
+                      "measured over: {lookback_sessions: 60, horizon_sessions: 20}. A constant, "
+                      "published so a reader never has to infer it.",
 })
 
 # HARD GUARD — machine-readable schema the AIC keys off STRUCTURALLY (not prose).
@@ -744,6 +788,34 @@ _FIELD_SCHEMA = {
     "sector_rrg_direction":   _fs("signal", "label", "n/a"),
     "thematic_rrg_quadrant":  _fs("signal", "label", "n/a"),
     "thematic_rrg_direction": _fs("signal", "label", "n/a"),
+    # AQE_INSTRUCTIONS.md §2 (voice-data-contract-v6, ADDITIVE ONLY)
+    "bar_open":  _fs("reference", "usd", "at_entry"),
+    "bar_high":  _fs("reference", "usd", "above_entry"),
+    "bar_low":   _fs("reference", "usd", "below_entry"),
+    "bar_close": _fs("reference", "usd", "at_entry"),
+    "prior_bar_high": _fs("reference", "usd", "above_entry"),
+    "prior_bar_low":  _fs("reference", "usd", "below_entry"),
+    "ma_20_slope_5d_pct": _fs("signal", "pct", "n/a"),
+    "ret_63d":       _fs("signal", "pct", "n/a"),
+    "pct_run_10d":   _fs("signal", "pct", "n/a"),
+    "base_low_20d":  _fs("reference", "usd", "below_entry"),
+    "days_since_swing_high": _fs("signal", "score", "n/a"),
+    "bar_range_5d":  _fs("signal", "usd", "n/a"),
+    "hi_20d": _fs("reference", "usd", "above_entry"),
+    "lo_20d": _fs("reference", "usd", "below_entry"),
+    "hi_50d": _fs("reference", "usd", "above_entry"),
+    "lo_50d": _fs("reference", "usd", "below_entry"),
+    "pos_in_50d_range_pct": _fs("signal", "pct", "n/a"),
+    "nr4_flag": _fs("flag", "boolean", "n/a"),
+    "nr7_flag": _fs("flag", "boolean", "n/a"),
+    "hv_ratio_6_100": _fs("volatility", "ratio", "n/a"),
+    "adx_14":       _fs("signal", "score", "n/a"),
+    "stoch_k_14":   _fs("signal", "score", "n/a"),
+    "stoch_d_3":    _fs("signal", "score", "n/a"),
+    "rvol_20d":     _fs("signal", "ratio", "n/a"),
+    "gap_risk_flag": _fs("flag", "boolean", "n/a"),
+    "cohort_hit_rate_20d": _fs("signal", "pct", "n/a"),
+    "cohort_n":            _fs("signal", "score", "n/a"),
 }
 
 
@@ -885,7 +957,7 @@ def _compute_v21_lookups(sm: dict) -> dict:
     """
     out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
            "vol30": {}, "beta252": {}, "pattern": {}, "candle": {},
-           "spy_roc_20d": None,
+           "spy_roc_20d": None, "spy_ret_63d": None,
            # 2026-09-05 voice packet spec additions (docs/specs/
            # aqe_voice_packet_spec_2026-09-05.md §2): 52-week range, 6/12-month
            # total return + its cross-sectional percentile, and CCI-20.
@@ -927,6 +999,10 @@ def _compute_v21_lookups(sm: dict) -> dict:
             if len(spy) >= 21 and float(spy["close"].iloc[-21]) > 0:
                 spy_roc = (float(spy["close"].iloc[-1]) / float(spy["close"].iloc[-21]) - 1) * 100
         out["spy_roc_20d"] = round(float(spy_roc), 2) if spy_roc is not None else None
+        spy_ret_63d = None
+        if SPY_DAILY.exists() and len(spy) >= 64 and float(spy["close"].iloc[-64]) > 0:
+            spy_ret_63d = (float(spy["close"].iloc[-1]) / float(spy["close"].iloc[-64]) - 1) * 100
+        out["spy_ret_63d"] = round(float(spy_ret_63d), 2) if spy_ret_63d is not None else None
 
         # Daily returns pivot for sector correlation + 252d beta
         close_piv = p.pivot_table(index="date", columns="ticker", values="close")
@@ -1206,6 +1282,17 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # elder_hi7_streak: None overwrote it on every single row).
         "next_earnings_date": None, "days_to_earnings": None,
         "stack_state": None, "signal_hit_rate_20d": None, "signal_n": None,
+        # AQE_INSTRUCTIONS.md §2 (voice-data-contract-v6, ADDITIVE ONLY) — new
+        # keys only, no existing key renamed/removed/re-valued.
+        "bar_open": None, "bar_high": None, "bar_low": None, "bar_close": None,
+        "prior_bar_high": None, "prior_bar_low": None,
+        "ma_20_slope_5d_pct": None, "ret_63d": None, "pct_run_10d": None,
+        "base_low_20d": None, "days_since_swing_high": None, "bar_range_5d": None,
+        "hi_20d": None, "lo_20d": None, "hi_50d": None, "lo_50d": None,
+        "pos_in_50d_range_pct": None,
+        "nr4_flag": None, "nr7_flag": None, "hv_ratio_6_100": None,
+        "adx_14": None, "stoch_k_14": None, "stoch_d_3": None, "rvol_20d": None,
+        "gap_risk_flag": None, "cohort_hit_rate_20d": None, "cohort_n": None,
         # DSG-18 fib ladder (flat — retracement supports + swing anchors)
         "fib_swing_low": None, "fib_swing_high": None,
         "fib_236": None, "fib_382": None, "fib_500": None,
@@ -1408,6 +1495,20 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         fields["last_pivot_high"] = ({"price": _confirmed_high,
                                       "date": _lph.get("date")}
                                      if _is_num(_confirmed_high) else None)
+        # AQE_INSTRUCTIONS.md §2 — sessions since the pivot. Business-day count
+        # (weekends excluded, exchange holidays not) — a documented approximation,
+        # not an exact trading-session count.
+        _piv_date = _lph.get("date")
+        if _piv_date:
+            try:
+                import numpy as _np
+                _d0 = _np.datetime64(str(_piv_date)[:10], "D")
+                _d1 = _np.datetime64(
+                    datetime.now(ZoneInfo("Asia/Singapore")).date().isoformat(), "D")
+                fields["days_since_swing_high"] = (
+                    int(_np.busday_count(_d0, _d1)) if _d1 >= _d0 else None)
+            except Exception:  # noqa: BLE001
+                fields["days_since_swing_high"] = None
         if _is_num(_entry_px) and _is_num(_ssl):
             if _is_num(_confirmed_high) and _entry_px > _confirmed_high:
                 # A BREAK is an EVENT, not a standing state. Above the pivot
@@ -1465,7 +1566,17 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         # read + bracket-quality flags ride on the record.
         _enr = (lk.get("enrichment") or {}).get(tk, {})
         for _ek in ("rs_down_day_20d", "rs_leadership",
-                     "atr_caution", "malformed_bracket"):
+                     "atr_caution", "malformed_bracket",
+                     # AQE_INSTRUCTIONS.md §2 — bar/technical fields, computed
+                     # in enrichment.compute_bar_fields off the same OHLCV panel
+                     "bar_open", "bar_high", "bar_low", "bar_close",
+                     "prior_bar_high", "prior_bar_low",
+                     "ma_20_slope_5d_pct", "ret_63d", "pct_run_10d",
+                     "base_low_20d", "bar_range_5d",
+                     "hi_20d", "lo_20d", "hi_50d", "lo_50d",
+                     "pos_in_50d_range_pct", "nr4_flag", "nr7_flag",
+                     "hv_ratio_6_100", "adx_14", "stoch_k_14", "stoch_d_3",
+                     "rvol_20d"):
             if _ek in _enr and _enr[_ek] is not None:
                 fields[_ek] = _enr[_ek]
 
@@ -1841,6 +1952,10 @@ def build_export(shortlist: dict | None = None) -> dict:
     # ---- AQE v2.1 enrichment (day_vol, rs_spy, sma_distance, sector_corr) ----
     _v21_lk = _compute_v21_lookups(sm)
     export["spy_roc_20d"] = _v21_lk.get("spy_roc_20d")
+    export["spy_ret_63d"] = _v21_lk.get("spy_ret_63d")
+    # AQE_INSTRUCTIONS.md §2 — hit-rate cohort window is fixed (signal_hitrate.py);
+    # publish the constant so a reader never has to infer it.
+    export["hitrate_window"] = {"lookback_sessions": 60, "horizon_sessions": 20}
 
     # ---- Enrichment Spec v2.0 (rs_down_day, breakout_conviction, cleanup) ----
     _v21_lk["enrichment"] = _compute_enrichment_lookups(
@@ -1925,6 +2040,11 @@ def build_export(shortlist: dict | None = None) -> dict:
     from src.data.paths import SCORES_DAILY as _scores_path
     _mp_states: dict[str, str] = {}
     _rdhl_lookup: dict[str, dict] = {}
+    # AQE_INSTRUCTIONS.md §3 — the raw scores_daily row per ticker, needed by
+    # _new_engine_fields() below for the top_picks/edge_list/longlist paths
+    # (the de-duped, filtered `_sc_by_tk` used by _wl_record isn't built until
+    # later in this function).
+    _raw_row_by_tk: dict = {}
     if _scores_path.exists():
         _rdhl_cols = ["date", "ticker", "mp_state"]
         # Only Health is stamped onto records (held_positions only). Readiness
@@ -1935,6 +2055,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         _sc["date"] = pd.to_datetime(_sc["date"]).dt.normalize()
         _latest = _sc[_sc["date"] == _sc["date"].max()]
         _mp_states = dict(zip(_latest["ticker"], _latest["mp_state"].astype(str)))
+        _raw_row_by_tk = {_row["ticker"]: _row for _, _row in _latest.iterrows()}
         for _, _row in _latest.iterrows():
             _tk = _row["ticker"]
             _rd_hl_vals = {}
@@ -1981,6 +2102,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "top_picks",
             "pe": tk in pe_tickers,
+            # AQE_INSTRUCTIONS.md §3 — see edge_list note above.
+            **(_new_engine_fields(_raw_row_by_tk[tk]) if tk in _raw_row_by_tk else {}),
             **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
 
@@ -2017,6 +2140,10 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "edge_list",
             "pe": True,
+            # AQE_INSTRUCTIONS.md §3 — this path bypassed _new_engine_fields(),
+            # leaving DETECT (div_*/choch_*/knn_*/pin_bar_*/squeeze_*/vwap_14d)
+            # null for every edge_list-sourced daily_list row.
+            **(_new_engine_fields(_raw_row_by_tk[tk]) if tk in _raw_row_by_tk else {}),
             **_v21_record_fields(tk, d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
     longlist_tickers: set[str] = set()
@@ -2059,6 +2186,9 @@ def build_export(shortlist: dict | None = None) -> dict:
             ),
             "source": "longlist",
             "pe": bool(rm.get("pe_qualified")),
+            # AQE_INSTRUCTIONS.md §3 — see edge_list note above.
+            **(_new_engine_fields(_raw_row_by_tk[rm["ticker"]])
+               if rm["ticker"] in _raw_row_by_tk else {}),
             **_v21_record_fields(rm["ticker"], d, _v21_lk, sm, sector_grades, regime_level=regime_level),
         })
 
@@ -2302,9 +2432,15 @@ def build_export(shortlist: dict | None = None) -> dict:
                     _r["next_earnings_date"] = next_earnings_date(_tk, _earn_cal)
                     _r["days_to_earnings"] = business_days_to_earnings(
                         _tk, datetime.now(ZoneInfo("Asia/Singapore")).date(), _earn_cal)
+                # AQE_INSTRUCTIONS.md §2 — earnings-window flag, informational only
+                _dte = _r.get("days_to_earnings")
+                _r["gap_risk_flag"] = bool(_dte is not None and _dte <= 10)
                 if _shr is not None:
                     _r["signal_hit_rate_20d"], _r["signal_n"] = _shr.lookup(
                         _shr_table, _r["elder_pattern"], _r.get("structure_shift"))
+                # AQE_INSTRUCTIONS.md §2 — seat-facing aliases Thorp's canon reads
+                _r["cohort_hit_rate_20d"] = _r["signal_hit_rate_20d"]
+                _r["cohort_n"] = _r["signal_n"]
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)
@@ -2616,6 +2752,14 @@ def build_export(shortlist: dict | None = None) -> dict:
     # see here".
     export["data_quality"] = _compute_data_quality(
         export.get("daily_list") or [], export.get("held_positions") or [])
+    # AQE_INSTRUCTIONS.md §4 — declare silent defaults so a failed VIX quote
+    # (18.0/GREEN fallback, daily_orchestrator.py:808) or a stale macro cache
+    # is VISIBLE, never a silent-empty read.
+    export["data_quality"]["macro"] = {
+        "vix_source": "default" if (sl.get("regime", {}) or {}).get("vix") == 18.0 else "fmp",
+        "intermarket_cache_date": (export.get("intermarket") or {}).get("as_of"),
+        "srm_cache_date": export.get("date"),
+    }
 
     return export
 
