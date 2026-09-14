@@ -27,6 +27,21 @@ pm_spot_check:
       - new_trading_living_sg_2014#0003-017
       - new_trading_living_sg_2014#0003-033
       - new_trading_living_sg_2014#0005-004
+pm_rulings:
+- id: D-117
+  date: 2026-09-14
+  by: Ash
+  summary: 'R1/R2 were blocked NOT_AVAILABLE pending a true per-bar impulse-colour field
+    that does not exist in AQE. PM decision: AQE already exposes elder_5d (trailing
+    5-day composite Elder score) and elder_pattern (trajectory classification of
+    that series) on this seat''s own menu -- close enough to bind now as a declared
+    PROXY rather than leave the seat blind on its two highest-value rules. R1/R2
+    amended below, bound to elder_5d/elder_pattern, honestly labelled PROXY not
+    EXACT. R3-R6 remain genuinely ABSENT -- no existing AQE field or internal computation
+    can proxy a signed Force Index series or a fitted price channel or a weekly
+    resample -- and are formally filed as an AQE-build ask, feasible engine work,
+    in https://github.com/TongIncomeWheel/AQE/issues/5. No SLA; elder-lens runs
+    on R1/R2 (proxy) + R7-R12 in the meantime.'
 principles:
 - id: C1
   text: The Impulse System exists to forbid, not to propose. Its stated role is to mark the bars on which
@@ -468,51 +483,70 @@ principles:
   status: unsourced_retained
 recognisers:
 - id: R1
-  if: 'NOT_AVAILABLE: impulse_colour_last_bar == RED — needs a fast-EMA slope and a MACD-Histogram slope,
-    neither of which exists as a field'
-  then: 'veto every long on the name for as long as the bar prints red, and lift the veto on the first
-    bar that is not red. To build it: a fast EMA of close, a MACD-Histogram series, their one-bar slopes,
-    and a three-state per-bar colour field. The elder 0-to-10 score cannot substitute, because a mid-range
-    value cannot say which of the two components is falling'
-  fields: []
+  if: 'PROXY (D-117, not EXACT — no per-bar red/green/blue colour field exists in AQE): elder_5d[-1] <
+    elder_5d[-2] — the trailing 5-day composite Elder score''s most recent reading is lower than the one
+    before it'
+  then: 'veto new longs on the name while the composite is falling, as the working stand-in for "the bar
+    prints red." Declared PROXY, not EXACT, by PM ruling D-117 (2026-09-14): the elder composite blends
+    the slope and acceleration terms into one 0-to-10 number and cannot isolate which of Elder''s two
+    governing slopes (fast-EMA, MACD-Histogram) is driving the fall, so a name can trip this proxy while
+    genuinely in Elder''s blue (permitted) state, or fail to trip it while briefly red on a component
+    basis the composite is absorbing elsewhere. Lift the veto the first bar elder_5d turns back up. A
+    true per-bar colour field is filed as an AQE-build ask alongside R3/R4 (same missing signed series) —
+    see https://github.com/TongIncomeWheel/AQE/issues/5'
+  fields:
+  - elder_5d
 - id: R2
-  if: 'NOT_AVAILABLE: impulse_colour_last_bar != impulse_colour_prior_bar — needs the same per-bar colour
-    on two consecutive bars'
-  then: 'raise the transition, not the level: red giving way is the buy-permission event, green giving
-    way on a held name is the profit-taking event. Requires the R1 colour field plus one bar of history
-    on it. This is the single highest-value item in the backlog, because Elder''s best signals live here
-    and the card currently reads only the presence of strength'
-  fields: []
+  if: 'PROXY (D-117, not EXACT): elder_pattern == ''CORRECTION_REENTRY'' (buy-permission analogue) OR
+    (held == true AND elder_pattern == ''INTERRUPTED'') (profit-taking analogue) — elder_pattern classifies
+    the SHAPE of the trailing 5-day elder_5d trajectory, not a literal per-bar colour transition'
+  then: 'raise CORRECTION_REENTRY as the working stand-in for red giving way (the buy-permission event),
+    and raise INTERRUPTED on a held name as the stand-in for green giving way (the profit-taking event).
+    Declared PROXY, not EXACT, by PM ruling D-117: elder_pattern classifies a 5-bar trajectory shape, so
+    it can lag the true one-bar transition Elder describes by several sessions, and can fire on shapes
+    that are not colour transitions at all. This remains the single highest-value AQE-build ask in the
+    backlog (see R1, issue #5) — a true per-bar colour field would let R1/R2 run EXACT instead of PROXY.
+    See also R7 (held, single-bar elder_5d drop) and R8 (elder_pattern + mp_state), pre-existing PM-approved
+    narrower analogues built on the same two fields'
+  fields:
+  - elder_pattern
+  - held
 - id: R3
-  if: 'NOT_AVAILABLE: force_index_ema_2 < 0 AND price_ema_slope > 0 — needs a signed Force Index series
-    and a 2-bar EMA of it'
+  if: 'NOT_AVAILABLE (D-117 AQE-build ask, issue #5 — https://github.com/TongIncomeWheel/AQE/issues/5):
+    force_index_ema_2 < 0 AND price_ema_slope > 0 — needs a signed Force Index series and a 2-bar EMA
+    of it'
   then: 'time the long here: a dip of the short force smoothing under zero while the price average rises
     is Elder''s buy trigger. To build it: (close - close[1]) * volume as a signed series, a 2-period EMA
     of it, and a zero line. Note this fires on WEAKNESS inside a rising market, so it cannot be expressed
-    on a 0-to-10 scale that has no negative region'
+    on a 0-to-10 scale that has no negative region. Filed as a feasible AQE-build ask under D-117 (2026-09-14) —
+    reuses OHLCV data already ingested daily, no new data source required'
   fields: []
 - id: R4
-  if: 'NOT_AVAILABLE: force_index_ema_13 > 0 — needs a 13-bar EMA of the same signed Force Index series'
+  if: 'NOT_AVAILABLE (D-117 AQE-build ask, issue #5): force_index_ema_13 > 0 — needs a 13-bar EMA of the
+    same signed Force Index series'
   then: treat the name as being in a bullish zone and read crossings of zero as trend reversals. This
     is Elder's regime layer and it is PER NAME, computed from that name's own price and volume; it would
     replace, for this seat, the market-wide tape colour the card scales by. Needs the R3 series plus a
-    13-bar EMA and its crossing events
+    13-bar EMA and its crossing events. Filed as a feasible AQE-build ask under D-117 (2026-09-14) — same
+    build as R3, one more EMA length
   fields: []
 - id: R5
-  if: 'NOT_AVAILABLE: price > channel_upper — needs a fitted moving-average channel (coefficient tuned
-    to hold 90-95% of the last 50-100 bars)'
+  if: 'NOT_AVAILABLE (D-117 AQE-build ask, issue #5): price > channel_upper — needs a fitted moving-average
+    channel (coefficient tuned to hold 90-95% of the last 50-100 bars)'
   then: refuse to initiate a long above the upper wall. The same channel is the denominator of the trade
     grade and the reference target for a rally, so one build unlocks three rules. sma_distance_pct is
     the nearest existing field and is a crude stand-in only — it is outside this voice's menu and it measures
-    distance from a simple average, not containment of recent action
+    distance from a simple average, not containment of recent action. Filed as a feasible AQE-build ask
+    under D-117 (2026-09-14) — same category of computation as AQE's existing Bollinger/ATR work
   fields: []
 - id: R6
-  if: 'NOT_AVAILABLE: weekly_trend_direction == UP — needs a weekly resample of the daily bars, read BEFORE
-    the daily'
+  if: 'NOT_AVAILABLE (D-117 AQE-build ask, issue #5): weekly_trend_direction == UP — needs a weekly resample
+    of the daily bars, read BEFORE the daily'
   then: 'permit daily longs only while the weekly trend is up, and otherwise stand aside. This is cheap
     and entirely computable: aggregate five daily bars into one weekly bar and take a trend read on it.
     elder_context is an HOURLY object and is a step in the wrong direction — Elder''s ratio is five to
-    one UPWARD from the traded timeframe'
+    one UPWARD from the traded timeframe. Filed as a feasible AQE-build ask under D-117 (2026-09-14) —
+    a resample plus an existing trend-classification pattern applied one timeframe up'
   fields: []
 - id: R7
   if: held == true AND elder_5d[-1] < elder_5d[-2]
