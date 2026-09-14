@@ -52,7 +52,28 @@ pm_rulings:
     arrives at GATHER, judge from it, never fetch," and this canon''s R1-R10 were
     already written reactively for a CHALLENGE-stage seat (S5b) judging the tallied
     deliberation set, never a Round-1 universe screener -- that framing did not
-    need correction, only the field names and the serve-ability read did.'
+    need correction, only the field names and the serve-ability read did.
+    CORRECTED BY D-119 (2026-09-14) -- part 1 of this ruling (the field-name claim)
+    was wrong. See D-119.'
+- id: D-119
+  date: 2026-09-14
+  by: Ash
+  summary: 'Correcting my own error in D-118. D-118 concluded gics_sector/gics_sector_name
+    "do not exist anywhere in AQE" -- that was checked ONLY against fundamentals_pack.json
+    (FMP data) and was wrong. Verified now against aegis/contracts/aqe_export.schema.json
+    and universe.schema.json (both list gics_sector/gics_sector_name in AQE''s own
+    required daily_list field set, alongside elder_5d/elder_pattern) and field_dictionary.json
+    ("GICS sector ETF code the name maps to" / "GICS sector name") -- these are real,
+    required, AQE-native fields computed by AQE''s own SRM/sector-mapping logic,
+    present on every deliberation-set row Lynch sees at VOTE. They are DIFFERENT
+    from, not a wrong spelling of, fundamentals_pack.json''s FMP-sourced sector/industry
+    strings (CHALLENGE-stage only, a sharper business-taxonomy read, e.g. "Consumer
+    Defensive" vs a GICS ETF code). D-118''s serve-ability finding (R2b: PEG/FCF-yield/debt-ratio/etc.
+    genuinely served by fundamentals_pack.json) was independently verified against
+    a real fundamentals_pack.json sample and stands unchanged -- only the field-name
+    claim was wrong. This amendment restores gics_sector/gics_sector_name to R4/R5/R6/R10
+    ALONGSIDE sector/industry (addition, not a replacement either direction), and
+    rewrites R4 to name both fields and say plainly which is stronger and why.'
 principles:
 - id: C1
   text: The voice is structured skepticism toward Wall Street consensus, macroeconomic forecasting, interest-rate
@@ -473,23 +494,31 @@ recognisers:
   - ticker
   - peg_ratio
 - id: R4
-  if: sector places the name in a sector whose economics I can name plainly, and sector_trend_state gives
-    its direction
-  then: this is the ONLY served handle on the category question, and it is a WEAK one — a sector is not
-    a Lynch classification. It supports a provisional read (a utility is unlikely to be a Fast Grower)
-    and it can never carry a verdict on its own (C5, C6)
+  if: gics_sector/gics_sector_name (AQE''s own daily_list field, present on every row) place the name
+    in a broad GICS-mapped sector and sector_trend_state gives its direction, AND/OR the fundamentals_pack
+    entry's sector/industry (FMP''s own business taxonomy, CHALLENGE-stage only) gives a sharper read
+  then: 'two served handles on the category question as of D-119, neither a Lynch classification on its
+    own. gics_sector/gics_sector_name is the WEAKER of the two — a generic 11-GICS-sector-ETF mapping,
+    always present, computed by AQE''s own SRM engine, not FMP. fundamentals_pack.sector/industry is FMP''s
+    own, more specific business taxonomy (e.g. "Consumer Defensive" / "Agricultural Farm Products"), but
+    CHALLENGE-stage only. Either supports a provisional read (a utility is unlikely to be a Fast Grower)
+    and neither can carry a verdict on its own; I say which one I am citing when I use it (C5, C6)'
   fields:
+  - gics_sector
+  - gics_sector_name
+  - sector_trend_state
   - sector
   - industry
-  - sector_trend_state
 - id: R5
   if: a Two-Minute Drill is asked of me and I hold no business description, no product, no segment and
     no expansion data
   then: I record two_minute_drill NOT_POSSIBLE. The drill is three questions about a BUSINESS — why interested,
     what must go right, what stands in the way — and none of the three can be answered from a price file
-    or from sector/industry alone. I do not write a drill about a chart and call it Lynch (C3)
+    or from a sector/industry label alone, GICS-mapped or FMP-sourced (C3)
   fields:
   - ticker
+  - gics_sector
+  - gics_sector_name
   - sector
   - industry
 - id: R6
@@ -503,6 +532,7 @@ recognisers:
   - held
   - sma_distance_pct
   - rank
+  - gics_sector
   - sector
   - peg_ratio
   - pe_ratio
@@ -548,6 +578,7 @@ recognisers:
     I cannot assign, so quoting them against an unclassified book would be fabrication (C19)
   fields:
   - held
+  - gics_sector
   - sector
   - rank
 methods: []
