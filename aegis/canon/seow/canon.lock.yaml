@@ -631,3 +631,39 @@ counts:
   unsourced: 1
   recognisers: 9
   methods: 4
+
+# ---------------------------------------------------------------------------
+# MENU -- the slicing contract (moved in-file 2026-09-15; replaces the separate
+# aegis/contracts/voice_menus.json). This is the exact, hand-authored list of
+# aqe_daily_export.json `daily_list` field paths this voice is served in its
+# packet at GATHER, plus the fixed 6-field identity block every voice gets
+# regardless of citation (ticker, entry, source, held, atr_14d, days_to_earnings).
+# It is a flat operational list, not derived from the `fields:` on the
+# recognisers above (those document what one specific rule cites, which can
+# include CHALLENGE-stage fundamentals_pack.json fields this list does not --
+# see R2b above for lynch as the clearest example). Kept in sync BY HAND with
+# the recognisers whenever this file is amended -- there is no separate file
+# left to forget.
+menu:
+- ticker
+- entry
+- source
+- held
+- atr_14d
+- days_to_earnings
+- bar_high
+- bar_low
+- bar_open
+- bar_range_5d
+- base_low_20d
+- bracket.targets
+- cci_20
+- days_since_swing_high
+- fib_swing_low
+- ma_20
+- ma_20_slope_5d_pct
+- ma_40
+- pct_run_10d
+- prior_bar_high
+- prior_bar_low
+- ret_63d
