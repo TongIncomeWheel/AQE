@@ -29,7 +29,7 @@ def test_the_snapshot_is_a_release_asset_not_a_commit():
     text = open(src, encoding="utf-8").read()
     assert "uploads.github.com" in text, "release upload path is gone"
     # The snapshot must never be routed through the contents (commit) API.
-    assert "put_file(f\"{OUTPUT_DIR_IN_REPO}/aqe_state_snapshot" not in text
+    assert "put_file(f\"{OUTPUT_DIR_IN_REPO}/aqe_state_snapshot\" not in text
 
 
 def test_every_daily_artifact_is_named_once(monkeypatch):
@@ -462,17 +462,23 @@ def test_the_actions_backstop_may_write_its_own_output():
 
 def test_the_hf_mirror_still_carries_what_voice_packets_needs_at_runtime():
     """2026-08-26: src/pipeline/voice_packets.py (runs on the Space) loads
-    pma_pipeline.py + voice_menus.json from inside aegis/ via importlib at
-    runtime. The orphan-commit step excludes aegis/ wholesale (HF's storage
-    rejects the rest of its binary content) -- without an explicit re-add,
-    that starves the import on HF specifically (FileNotFoundError at
+    pma_pipeline.py from inside aegis/ via importlib at runtime. The
+    orphan-commit step excludes aegis/ wholesale (HF's storage rejects the
+    rest of its binary content) -- without an explicit re-add, that starves
+    the import on HF specifically (FileNotFoundError at
     /app/aegis/.../pma_pipeline.py) even though the file is present on
     GitHub main, since the bare repo checkout there never goes through this
-    orphan-commit step at all."""
+    orphan-commit step at all.
+
+    2026-09-15: pma_pipeline.py now also reads each voice's own
+    canon.lock.yaml for its `menu:` block at packet-build time (the
+    standalone voice_menus.json this test used to check for is retired), so
+    the re-add must carry the canon files too or the same FileNotFoundError
+    comes back one file later."""
     wf = open(".github/workflows/deploy-hf.yml", encoding="utf-8").read()
     assert ":!aegis" in wf, "the broad exclusion this re-add must run after"
     assert "git add -f aegis/skills/premarket-analysis/tools/pma_pipeline.py" in wf
-    assert "aegis/skills/premarket-analysis/contracts/voice_menus.json" in wf
+    assert "aegis/canon/*/canon.lock.yaml" in wf
     # the re-add must come AFTER the exclusion, or a later `git add -A` could
     # re-exclude what was just carved back in
     assert wf.index(":!aegis") < wf.index("git add -f aegis/skills")

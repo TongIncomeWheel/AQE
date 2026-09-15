@@ -107,17 +107,31 @@ def _load_pma_pipeline_module():
 
 
 def _load_voice_menus():
-    with open("aegis/skills/premarket-analysis/contracts/voice_menus.json") as f:
-        return json.load(f)
+    """2026-09-15: the standalone voice_menus.json (this test used to read a STALE second copy
+    of it, under aegis/skills/premarket-analysis/contracts/ -- diverged for weeks from the real
+    one at aegis/contracts/, caught only while retiring both in favour of this) is gone. Each
+    voice's menu now lives inside its own canon.lock.yaml; load it the same way pma_pipeline.py
+    itself does, so this test can never again check a copy the real pipeline doesn't read."""
+    return _load_pma_pipeline_module().load_menus_from_canon("aegis/canon")
 
 
 def test_every_menu_field_used_by_a_seat_is_carried_by_consumed():
+    """Scoped to the 9 Group-A nominator seats only (src/pipeline/voice_packets.py's own
+    documented split): those are the only voices whose packet is actually sliced from
+    candidate_set.json via CONSUMED. druckenmiller and crown (Group B) are built from the
+    export's macro sections directly; rogers, steenbarger, lynch, detect-lens (Group C) are
+    built later, mid-run, from a CHALLENGE-stage bundle, not from candidate_set.json at all --
+    checking their menu fields against CONSUMED was never meaningful and this test used to pass
+    only because it was silently reading a stale second copy of voice_menus.json that happened
+    not to trip it (found and retired 2026-09-15 along with the merge into canon.lock.yaml)."""
     pp = _load_pma_pipeline_module()
     menus = _load_voice_menus()
     consumed = set(pp.CONSUMED)
+    group_a = {"elder-lens", "livermore", "minervini", "oneil", "raschke",
+               "seow", "thorp", "weis", "wyckoff"}
     missing = set()
     for seat, cols in menus.items():
-        if seat.startswith("~~"):
+        if seat not in group_a:
             continue
         for c in cols:
             top = c.split(".")[0]

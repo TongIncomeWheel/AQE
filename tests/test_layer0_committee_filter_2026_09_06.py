@@ -75,14 +75,22 @@ def export_file(tmp_path):
 
 
 @pytest.fixture
-def menus_file(tmp_path):
+def canon_dir(tmp_path):
+    """2026-09-15: the standalone voice_menus.json fixture this replaces is gone -- each voice's
+    menu now lives inside its own canon.lock.yaml as a `menu:` block. Build the minimal two-voice
+    version of that here so this test still exercises the real --canon-dir CLI contract
+    emit_packets.py/pma_pipeline.py actually run in production, not a mocked-out shortcut."""
     menus = {
         "elder-lens": ["ticker", "elder", "elder_5d", "mp_state", "mp"],
         "livermore": ["ticker", "rank", "held", "entry", "bracket.valid", "bracket.stop"],
     }
-    p = tmp_path / "voice_menus.json"
-    p.write_text(json.dumps(menus), encoding="utf-8")
-    return p
+    root = tmp_path / "canon"
+    for voice, fields in menus.items():
+        d = root / voice
+        d.mkdir(parents=True)
+        lines = ["voice: " + voice, "menu:"] + [f"- {f}" for f in fields]
+        (d / "canon.lock.yaml").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return root
 
 
 # ── cmd_trim: the actual filter ─────────────────────────────────────────────
@@ -130,10 +138,10 @@ def test_cmd_trim_matches_elder_and_longlist_tickers_exactly(export_file, tmp_pa
 
 # ── emit_packets.py: the daily assurance check ──────────────────────────────
 
-def test_emit_packets_layer0_scan_is_clean_on_a_correct_export(export_file, menus_file, tmp_path):
+def test_emit_packets_layer0_scan_is_clean_on_a_correct_export(export_file, canon_dir, tmp_path):
     outdir = tmp_path / "voice_packets"
     r = _run([sys.executable, EMIT_PACKETS,
-              "--export", str(export_file), "--menus", str(menus_file),
+              "--export", str(export_file), "--canon-dir", str(canon_dir),
               "--pipeline", PMA_PIPELINE, "--outdir", str(outdir), "--date", "2026-09-06"])
     assert r.returncode == 0, r.stderr
 
@@ -149,7 +157,7 @@ def test_emit_packets_layer0_scan_is_clean_on_a_correct_export(export_file, menu
     assert served == {"BOTH1", "BOTH2"}
 
 
-def test_emit_packets_refuses_to_stamp_on_a_layer0_drift(export_file, menus_file, tmp_path):
+def test_emit_packets_refuses_to_stamp_on_a_layer0_drift(export_file, canon_dir, tmp_path):
     """Corrupt elder_and_longlist_tickers so it disagrees with what
     cmd_trim's own on_longlist/on_elder flags would produce -- this is
     exactly the class of drift the assurance check exists to catch."""
@@ -159,7 +167,7 @@ def test_emit_packets_refuses_to_stamp_on_a_layer0_drift(export_file, menus_file
 
     outdir = tmp_path / "voice_packets"
     r = _run([sys.executable, EMIT_PACKETS,
-              "--export", str(export_file), "--menus", str(menus_file),
+              "--export", str(export_file), "--canon-dir", str(canon_dir),
               "--pipeline", PMA_PIPELINE, "--outdir", str(outdir), "--date", "2026-09-06"])
 
     assert r.returncode == 1
