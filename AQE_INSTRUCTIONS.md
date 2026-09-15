@@ -52,4 +52,4 @@ Rows entering `daily_list` via the shortlist merge (`drive_sync.py#L2192-L2202`)
 ## Done =
 §1 green · §2 keys present on 120/120 rows (null only where the engine has < N bars) · §3 rows no longer null · §4 key present · §5 packets contain only menu fields, stamp carries both shas · every new key in the glossary.
 
-Reference material (not instructions): `aegis/handoff/voice_contract_v6/` on this branch; full bundle in the PM's Cowork chat (`aqe_data_contract_v6_2026-09-09.tar.gz`).
+Reference material (not instructions): `aegis/handoff/voice_contract_v6/` on this branch; full bundle in the PM's Cowork chat (`aqe_data_contract_v6_2026-09-09.tar.gz`). **SUPERSEDED 2026-09-15** — that folder's generator read `aegis/contracts/voice_menus.json`, which no longer exists; each voice's menu now lives inside its own `canon/<voice>/canon.lock.yaml`. See the superseded notice at the top of `aegis/handoff/10_VOICE_DATA_CONTRACT_V6.md`.

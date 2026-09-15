@@ -1,5 +1,12 @@
 # voice_contract_v6 — pickup point for Claude Code on AQE
 
+**SUPERSEDED 2026-09-15.** See the notice at the top of `../10_VOICE_DATA_CONTRACT_V6.md`. This
+folder's generator (`bind.py`/`render.py`) reads `aegis/contracts/voice_menus.json`, which no
+longer exists — each voice's menu now lives inside its own `canon/<voice>/canon.lock.yaml`.
+Nothing here should be run against the current repo. Kept as historical record only.
+
+---
+
 **Read first:** `../10_VOICE_DATA_CONTRACT_V6.md` — the instructions. Governing rule: ADDITIVE ONLY on `aqe_daily_export.json`; voice packets narrow, the main file only grows.
 
 ## What is on this branch
