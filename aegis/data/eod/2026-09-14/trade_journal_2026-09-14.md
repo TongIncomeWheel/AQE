@@ -4,22 +4,20 @@
 
 | Trades | W / L | Win rate | Net P&L | Gross | Fees | Avg win | Avg loss | Profit factor | Expectancy | Avg hold | Avg R (n) | Best | Worst |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 17 | 5 / 12 | 29.4% | -6,048.14 | -5,964.96 | 83.18 | +307.07 | -631.96 | 0.2 | -355.77 | 6.7d | -0.45 (2) | +515.90 | -1,396.81 |
+| 15 | 5 / 10 | 33.3% | -4,086.68 | -4,018.90 | 67.78 | +307.07 | -562.20 | 0.27 | -272.45 | 7.2d | -0.45 (2) | +515.90 | -1,396.81 |
 
-_Cross-check vs archive ledger: trade journal net -6,048.14 on 17 trades · archive -5,790.56 on 17 trades · difference -257.58._
+_Cross-check vs archive ledger: trade journal net -4,086.68 on 15 trades · archive -5,790.56 on 17 trades · difference +1,703.88._
 
 ## Closed trades (newest first)
 
 | Out | In | Ticker | Qty | Entry | Exit | Gross | Fees | Net P&L | % | Days | R | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-09-14 | 2026-09-09 | CPER | 319 | 41.1900 | 38.2000 | -953.81 | 9.40 | -963.21 | -7.26 | 5 | — |  |
 | 2026-09-09 | 2026-08-31 | HNGE | 145 | 90.1500 | 90.8600 | +102.95 | 5.62 | +97.33 | +0.79 | 9 | 0.17 |  |
 | 2026-09-08 | 2026-08-21 | BRZE | 184 | 31.0500 | 30.7075 | -63.02 | 2.77 | -65.79 | -1.10 | 18 | — |  |
 | 2026-09-08 | 2026-08-19 | V | 20 | 361.4496 | 370.3000 | +177.01 | 0.00 | +177.01 | +2.45 | 20 | — | journal_seed; entry_date_is_first_seen_in_journal_not_fill_time |
 | 2026-09-03 | 2026-08-24 | WEAT | 345 | 25.4500 | 26.4500 | +345.00 | 4.91 | +340.09 | +3.93 | 10 | — |  |
 | 2026-09-02 | 2026-08-20 | CME | 71 | 271.4500 | 278.7500 | +518.30 | 2.40 | +515.90 | +2.69 | 13 | — |  |
 | 2026-09-01 | 2026-08-26 | IBKR | 160 | 97.1000 | 91.5717 | -884.53 | 2.69 | -887.22 | -5.69 | 6 | — | exit_from_journal_no_broker_fill_on_record (aegis_journal_2026-09-01.json) — confirm via get_transactions |
-| 2026-09-01 | 2026-08-31 | GLD | 105 | 406.4500 | 397.0000 | -992.25 | 6.00 | -998.25 | -2.33 | 1 | — |  |
 | 2026-08-31 | 2026-08-27 | HNGE | 96 | 92.4500 | 85.9352 | -625.42 | 5.18 | -630.60 | -7.05 | 4 | -1.06 |  |
 | 2026-08-26 | 2026-08-19 | OXY | 304 | 60.1196 | 57.7896 | -708.32 | 4.31 | -712.63 | -3.88 | 7 | — |  |
 | 2026-08-25 | 2026-08-24 | NTR | 203 | 74.9300 | 72.2900 | -535.92 | 6.14 | -542.06 | -3.52 | 1 | — |  |
@@ -34,28 +32,20 @@ _Cross-check vs archive ledger: trade journal net -6,048.14 on 17 trades · arch
 
 | Ticker | Qty | Entry | Entry date | Days | Cost | Notes |
 |---|---|---|---|---|---|---|
-| PAVE | 145 | 54.9793 | 2026-09-08 | 6 | 7,972.00 |  |
-| WEAT | 545 | 26.4500 | 2026-09-09 | 5 | 14,415.25 |  |
-| GLD | 108 | 405.1090 | 2026-09-09 | 5 | 43,751.77 |  |
-| CPER | 540 | 38.2000 | 2026-09-14 | 0 | 20,628.00 |  |
+| PAVE | 145 | 54.9793 | 2026-09-08 | 7 | 7,972.00 |  |
+| WEAT | 545 | 26.4500 | 2026-09-09 | 6 | 14,415.25 |  |
 
-## Fills — last 32 of 32 Aegis stock fills on record (newest first)
+## Fills — last 26 of 26 Aegis stock fills on record (newest first)
 
 | Time UTC | Ticker | Side | Qty | Price | Comm+GST | Broker P&L |
 |---|---|---|---|---|---|---|
-| 2026-09-14T13:37 | CPER | BUY | 540 | 38.2000 | 7.65 | +0.00 |
-| 2026-09-14T13:30 | CPER | SELL | 319 | 38.2000 | 4.87 | -963.21 |
-| 2026-09-09T18:41 | CPER | BUY | 319 | 41.1900 | 4.53 | +0.00 |
 | 2026-09-09T17:43 | HNGE | SELL | 145 | 90.8600 | 2.98 | +97.33 |
-| 2026-09-09T17:25 | GLD | BUY | 108 | 405.1090 | 2.52 | +0.00 |
 | 2026-09-09T17:22 | WEAT | BUY | 545 | 26.4500 | 7.74 | +0.00 |
 | 2026-09-08T19:48 | PAVE | BUY | 145 | 54.9793 | 2.65 | +0.00 |
 | 2026-09-08T13:31 | BRZE | SELL | 184 | 30.7075 | 0.00 | -65.80 |
 | 2026-09-08T13:30 | V | SELL | 20 | 370.3000 | 0.00 | +177.01 |
 | 2026-09-03T13:58 | WEAT | SELL | 345 | 26.4500 | 0.00 | — |
 | 2026-09-02T14:09 | CME | SELL | 71 | 278.7500 | 0.00 | — |
-| 2026-09-01T18:42 | GLD | SELL | 105 | 397.0000 | 3.48 | -998.25 |
-| 2026-08-31T18:57 | GLD | BUY | 105 | 406.4500 | 2.52 | +0.00 |
 | 2026-08-31T18:12 | HNGE | BUY | 145 | 90.1500 | 2.64 | +0.00 |
 | 2026-08-31T13:30 | HNGE | SELL | 96 | 85.9352 | 2.69 | -630.60 |
 | 2026-08-27T17:58 | HNGE | BUY | 96 | 92.4500 | 2.49 | +0.00 |
@@ -79,10 +69,12 @@ _Cross-check vs archive ledger: trade journal net -6,048.14 on 17 trades · arch
 ## Reconciliation — findings, not corrections (the PM rules on these)
 
 - **HNGE 2026-08-31**: archive -406.37 · trade journal net -630.60 (gross -625.42) — material difference beyond fees — archive entry price or qty differs from the fills
+- **GLD 2026-09-01**: archive -994.77 · trade journal net — — in archive, NO trade in journal (GLD rejected as non-Aegis 2026-09-15 — this archived close predates that ruling and has not yet been removed from the archive; PM decision needed)
+- **CPER 2026-09-14**: archive -958.34 · trade journal net — — in archive, NO trade in journal (CPER rejected as non-Aegis 2026-09-15 — this archived close predates that ruling and has not yet been removed from the archive; PM decision needed)
 
 _The archive ledger books P&L off the journal's average cost (buy commission included, sell commission not); this trade journal books FIFO lots net of all fees, which is what the broker's own realised P&L reports. Small differences are fees; large ones are findings._
 
 ## Flags
 
 - HNGE 2026-08-31: archive -406.37 vs fills net -630.60 (diff -224.23)
-- cross-check: trade journal Aegis net -6048.14 vs archive -5790.56 (diff -257.58)
+- cross-check: trade journal Aegis net -4086.68 vs archive -5790.56 (diff +1703.88)
