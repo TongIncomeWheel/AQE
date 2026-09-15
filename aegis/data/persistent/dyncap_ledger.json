@@ -1,10 +1,8 @@
 {
- "allocated_capital_usd": 75000.0,
- "realised_pnl_usd": -5790.56,
- "unrealised_pnl_usd": -403.49,
- "dyncap_usd": 68805.95,
- "closed_count": 17,
- "open_count": 2,
- "marked_asof": "2026-09-14",
- "note": "dynCap = allocation + realised + UNREALISED = current Aegis equity, mark-to-market (D-41). Computed AFTER Aegis-membership classify, AEGIS-only (D-99): realised sourced from the archive ledger + not-yet-archived closes (idempotent on re-run); unrealised excludes excluded_non_aegis positions. Single writer of this file -- tools/recompute_dyncap.py, run as PTJ CLOSE job 3.5. `premarket` step 8 reads this, it does not recompute it (2026-09-05)."
+ "date": "2026-09-15",
+ "dyncap": {
+  "value": 62380.5,
+  "one_r": 935.71,
+  "method": "D-99 fix: recomputed AFTER Aegis-membership classify by tools/recompute_dyncap.py: allocated 75000.00 + realised -5790.56 (archived -5790.56 + not-yet-archived 0.00) + unrealised -6828.94 (AEGIS-confirmed/pending_review positions only -- non-Aegis excluded_non_aegis names and hedge MTM both excluded) = 62380.50. 1R = 1.5% [RB:capital.one_r_pct_of_dyncap]. AEGIS book only [RB:identity.capital_segregation]."
+ }
 }
