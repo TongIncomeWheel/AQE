@@ -837,3 +837,68 @@ counts:
   unsourced: 4
   recognisers: 12
   methods: 0
+
+# ---------------------------------------------------------------------------
+# MENU -- the slicing contract (moved in-file 2026-09-15; replaces the separate
+# aegis/contracts/voice_menus.json). This is the exact, hand-authored list of
+# aqe_daily_export.json `daily_list` field paths this voice is served in its
+# packet at GATHER, plus the fixed 6-field identity block every voice gets
+# regardless of citation (ticker, entry, source, held, atr_14d, days_to_earnings).
+# It is a flat operational list, not derived from the `fields:` on the
+# recognisers above (those document what one specific rule cites, which can
+# include CHALLENGE-stage fundamentals_pack.json fields this list does not --
+# see R2b above for lynch as the clearest example). Kept in sync BY HAND with
+# the recognisers whenever this file is amended -- there is no separate file
+# left to forget.
+menu:
+- ticker
+- entry
+- source
+- held
+- atr_14d
+- days_to_earnings
+- choch_date
+- choch_state
+- div_bear_count
+- div_bull_count
+- div_date
+- div_oscs
+- div_state
+- elder
+- energy
+- flow
+- inside_bar
+- knn_neighbors_used
+- knn_prob
+- knn_threshold_clear
+- knn_tp1
+- knn_tp2
+- knn_tp3
+- lens
+- lens.coil
+- lens.insti_money
+- lens.leadership
+- lens.resistance
+- lens.sector
+- lens.structure
+- lens_positive
+- lens_ranking
+- lens_warnings
+- mover_subtype
+- mp
+- pib_pattern
+- pin_bar_date
+- pin_bar_level
+- pin_bar_state
+- premove_conviction
+- premove_conviction_label
+- premove_setup
+- runner_conviction
+- runner_conviction_label
+- runner_setup
+- sc_momentum
+- structure
+- subcomponents.energy.atr_score
+- subcomponents.energy.en_pos50
+- subcomponents.energy.exhaustion_score
+- subcomponents.flow.ext_score
