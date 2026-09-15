@@ -619,3 +619,66 @@ counts:
   extract_records: 45
   chunks: 8
   source_pages: 229-256
+
+# ---------------------------------------------------------------------------
+# MENU -- the slicing contract (moved in-file 2026-09-15; replaces the separate
+# aegis/contracts/voice_menus.json). This is the exact, hand-authored list of
+# aqe_daily_export.json `daily_list` field paths this voice is served in its
+# packet at GATHER, plus the fixed 6-field identity block every voice gets
+# regardless of citation (ticker, entry, source, held, atr_14d, days_to_earnings).
+# It is a flat operational list, not derived from the `fields:` on the
+# recognisers above (those document what one specific rule cites, which can
+# include CHALLENGE-stage fundamentals_pack.json fields this list does not --
+# see R2b above for lynch as the clearest example). Kept in sync BY HAND with
+# the recognisers whenever this file is amended -- there is no separate file
+# left to forget.
+menu:
+- ticker
+- entry
+- source
+- held
+- atr_14d
+- days_to_earnings
+- bracket.invalid_reason
+- bracket.risk_pct
+- bracket.rr
+- bracket.rr_tp1
+- bracket.stop
+- bracket.stop_type
+- bracket.targets
+- bracket.valid
+- intermarket.hyg.hyg_tlt_spread
+- intermarket.hyg.roc20
+- intermarket.spy_iwm.iwm_roc20
+- intermarket.spy_iwm.spread
+- intermarket.spy_iwm.spy_roc20
+- intermarket.tlt.above_sma20
+- intermarket.tlt.roc20
+- intermarket.tlt.roc5
+- intermarket.uup.roc20
+- intermarket.uup.roc5
+- macro_weather.copper_gold_direction
+- macro_weather.copper_gold_roc20
+- macro_weather.cper_direction
+- macro_weather.gld_direction
+- macro_weather.hyg_direction
+- macro_weather.iwm_direction
+- macro_weather.regime_description
+- macro_weather.tlt_direction
+- macro_weather.uso_direction
+- macro_weather.uup_direction
+- regime.level
+- regime.vix
+- srm[].entry_gate
+- srm[].grade
+- srm[].macro_headwind_flag
+- srm[].macro_headwind_score
+- srm[].rrg_direction
+- srm[].rrg_quadrant
+- srm[].rrg_rs_momentum
+- srm[].rrg_rs_ratio
+- srm[].sector
+- srm[].trend_state
+- thematic_baskets[].grade
+- thematic_baskets[].rrg_direction
+- thematic_baskets[].rrg_quadrant

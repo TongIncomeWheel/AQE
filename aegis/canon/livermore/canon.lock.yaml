@@ -566,7 +566,7 @@ recognisers:
     say I am acting ahead of the score. A falling hl_score into TIGHTEN or EXIT confirms C3 — take the
     first loss, do not wait — and I act on it without argument. A HIGH hl_score on a running winner is
     NOT a reason to do anything (C15): a disproportionate share of a move happens in its final stretch,
-    and a healthy position is one I leave alone. I declare hl_trend and hl_flow NOT_SERVED — only the composite
+    and a healthy position is one I leave alone. I declare hl_trend and hl_flow NOT_SERVED: only the composite
     is exported, so I cannot see which limb is decaying.'
   fields:
   - held
@@ -579,3 +579,41 @@ counts:
   unsourced: 0
   recognisers: 11
   methods: 0
+
+# ---------------------------------------------------------------------------
+# MENU -- the slicing contract (moved in-file 2026-09-15; replaces the separate
+# aegis/contracts/voice_menus.json). This is the exact, hand-authored list of
+# aqe_daily_export.json `daily_list` field paths this voice is served in its
+# packet at GATHER, plus the fixed 6-field identity block every voice gets
+# regardless of citation (ticker, entry, source, held, atr_14d, days_to_earnings).
+# It is a flat operational list, not derived from the `fields:` on the
+# recognisers above (those document what one specific rule cites, which can
+# include CHALLENGE-stage fundamentals_pack.json fields this list does not --
+# see R2b above for lynch as the clearest example). Kept in sync BY HAND with
+# the recognisers whenever this file is amended -- there is no separate file
+# left to forget.
+menu:
+- ticker
+- entry
+- source
+- held
+- atr_14d
+- days_to_earnings
+- bracket.invalid_reason
+- bracket.risk_pct
+- bracket.rr
+- bracket.rr_tp1
+- bracket.stop
+- bracket.stop_type
+- bracket.targets
+- bracket.valid
+- day_vol
+- gics_sector
+- gics_sector_name
+- mp_accel_state
+- mp_state
+- rank
+- sector_trend_state
+- sma_distance_pct
+- structure
+- structure_shift
