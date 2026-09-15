@@ -8,7 +8,6 @@ wasting time.** This stage is what enforces that, and it ends in a binary.
 ```
 python3 aegis/skills/premarket-analysis/tools/voice_preflight.py \
   --export aegis/output/aqe_daily_export.json \
-  --menus  aegis/skills/premarket-analysis/contracts/voice_menus.json \
   --canon  aegis/canon \
   --agents-dir ~/.claude/plugins/synced/aegis-voices/agents \
   --out    data/pma/<date>/activation.json --strict
@@ -32,7 +31,7 @@ Three artefacts already exist and were never reconciled with each other:
 | Layer | File | Says |
 |---|---|---|
 | CANON | `aegis/canon/<seat>/canon.lock.yaml` | which **fields** each recogniser needs (`recognisers[].fields`) |
-| MENU | `contracts/voice_menus.json` | which fields the seat is actually **served** |
+| MENU | `aegis/canon/<seat>/canon.lock.yaml`'s own `menu:` block | which fields the seat is actually **served** (2026-09-15: merged into the same file as CANON above — one file, not two, per the D-119 voice-card fix) |
 | EXPORT | `aegis/output/aqe_daily_export.json` | which fields **exist and are populated** today |
 
 **S0.5 reads all three and reconciles them before the swarm spawns.**
@@ -66,7 +65,7 @@ four outcomes and prints the action that closes it.
 |---|---|---|---|
 | `DERIVED` | The value is fully determined by fields that ARE populated. It is a missing **label**, not missing information. | Orchestrator computes it at packet build (`tools/field_derive.py`) and tags it `<field>_source: "derived"` so the seat can see it was labelled, not measured. | No |
 | `SUBSTITUTE_LIVE` | A populated fallback carries the same information and is already on this seat's menu. | Packet serves the fallback under a labelled column; the seat declares the substitution in `notes`. | No |
-| `MENU_BUG` | The fallback is populated but is **not** on this seat's menu, so the seat is blind to data sitting right there. | Add one field name to `voice_menus.json`. One-line fix. | **Yes** |
+| `MENU_BUG` | The fallback is populated but is **not** on this seat's menu, so the seat is blind to data sitting right there. | Add one field name to that seat's `canon.lock.yaml`'s `menu:` block. One-line fix. | **Yes** |
 | `ENGINE_TICKET` | Nothing anywhere in the export carries it. | The engine must emit it. PM ruling if it is a risk parameter. | **Yes** |
 
 Nulls that are a **real state** are not gaps and are never counted: no thematic basket, no
