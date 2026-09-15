@@ -3,7 +3,7 @@
 All arithmetic between the model stages lives HERE: same inputs, same outputs, no model in the path.
 Subcommands:
   trim       raw export -> candidate_set.json (CONSUMED trim; keeps source/on_longlist/in_ledger/elder*)
-  packets    candidate_set + voice_menus -> per-voice shuffled TSVs + crown/druck JSON packets (QS byte-stripped)
+  packets    candidate_set + each voice's own canon.lock.yaml `menu:` block -> per-voice shuffled TSVs + crown/druck JSON packets (QS byte-stripped)
   tally      nominations dir/file -> tally.json (seat_count, conviction_sum per ticker)
   rank       tally + candidate_set + export srm -> qualify -> 5-key rank -> cap -> deliberation_set.json
   consensus  round2 stances -> verdicts (support>oppose AND support>=2 AND median>=3)
@@ -30,7 +30,7 @@ Subcommands:
                     instead of silently omitting it or being invented from memory.
 Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
 """
-import json, re, sys, os, csv, random, statistics, argparse, collections, datetime
+import json, re, sys, os, csv, glob, random, statistics, argparse, collections, datetime
 
 SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}  # display/sizing only since 2026-09-07; NOT in any ranking key
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
@@ -62,7 +62,7 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     # QS -- the PM's own proprietary regime/signal read. Captured here (2026-08-17, PM request)
     # SOLELY for the S7 card QS line, shown on every card after deliberation closes, whether or
     # not that name was ever nominated. R3 is unchanged and still absolute: this field must never
-    # reach a seat packet. Enforced two ways -- (1) no voice_menus.json entry may name it (checked
+    # reach a seat packet. Enforced two ways -- (1) no voice's canon.lock.yaml `menu:` entry may name it (checked
     # in cmd_packets, fails loudly), (2) it isn't in any menu today, so it never round-trips through
     # _slice. "qs" is undocumented in aegis/contracts/*.schema.json despite being live in the daily
     # export -- schema drift, flagged separately, not blocking.
@@ -103,6 +103,50 @@ PATTERN_FIELDS = ["pin_bar_state", "inside_bar", "choch_state", "div_state", "kn
                    "squeeze_breakout_state", "was_squeezed"]
 
 SCHEMA_VERSION = 1
+
+
+def load_menus_from_canon(canon_dir):
+    """Each voice's slicing menu -- the flat list of aqe_daily_export.json field paths its
+    packet is cut to -- now lives INSIDE that voice's own canon.lock.yaml, as a top-level
+    `menu:` block (merged 2026-09-15). This retires the standalone aegis/contracts/voice_menus.json,
+    which was a second, separately-maintained file that could (and did) drift from the methodology
+    it was supposed to match -- see D-117/D-118/D-119 (2026-09-14), each of which required a
+    hand-edit to canon.lock.yaml that the old menu file did not automatically pick up. There is now
+    exactly one file per voice; both AQE's own nightly packet build (src/pipeline/voice_packets.py)
+    and this run's packet build call the SAME function here, so they can never read two different
+    menus for the same voice.
+
+    Tiny hand-rolled reader, not PyYAML -- this tool has zero external deps by design (same
+    discipline as registrar.py: it must run on any box). The only shape ever read is a top-level
+    `menu:` key followed by `- field` list lines running to the end of the recogniser's own block;
+    every canon.lock.yaml in this repo writes it that way, and cmd_packets below still asserts on
+    the RESULT (R3 / pattern-field breaches) exactly as when the list came from JSON, so a malformed
+    or missing menu fails loudly at build time rather than silently shipping nothing.
+    """
+    menus = {}
+    for path in sorted(glob.glob(os.path.join(canon_dir, "*", "canon.lock.yaml"))):
+        voice = os.path.basename(os.path.dirname(path))
+        with open(path) as f:
+            lines = f.read().splitlines()
+        fields = None
+        for i, line in enumerate(lines):
+            if line == "menu:":
+                fields = []
+                for later in lines[i + 1:]:
+                    if later.startswith("- "):
+                        fields.append(later[2:].strip())
+                    elif later.strip() == "":
+                        continue
+                    else:
+                        break
+                break
+        if fields is not None:
+            menus[voice] = fields
+    if not menus:
+        raise SystemExit(f"load_menus_from_canon: no voice under {canon_dir!r} carries a `menu:` "
+                          f"block -- nothing to slice packets from")
+    return menus
+
 
 def load(p, needs=None, shape=None):
     """The ONE read chokepoint -- 29 call sites go through here.
@@ -341,7 +385,7 @@ def _build_codebook(values):
     return code_map, legend
 
 def cmd_packets(a):
-    CS, menus, D = (load(a.candidates, needs=["universe"]), load(a.menus),
+    CS, menus, D = (load(a.candidates, needs=["universe"]), load_menus_from_canon(a.canon_dir),
                     load(a.export, needs=["daily_list"]))
     os.makedirs(a.outdir, exist_ok=True)
     rng = random.Random(a.date)
@@ -618,7 +662,7 @@ def cmd_round2packets(a):
 
     Inputs (all produced by earlier pipeline stages -- nothing new needs to be captured elsewhere):
       --candidates   candidate_set.json          full universe rows
-      --menus        voice_menus.json            same per-voice field menus R1 uses
+      --canon-dir    aegis/canon                  same per-voice `menu:` blocks R1 uses (canon.lock.yaml)
       --phase4       rank/deliberation output    deliberation_set: [ticker, ...]
       --tally        tally.json                  per-ticker "reasons": [{voice, reason, conviction,
                                                   fields}, ...] -- this already IS the attributed R1
@@ -666,7 +710,7 @@ def cmd_round2packets(a):
     paste it, never hand a voice a path. This tool removes the hand-assembly step; it does not
     change the inlining rule.
     """
-    CS, menus = load(a.candidates, needs=["universe"]), load(a.menus)
+    CS, menus = load(a.candidates, needs=["universe"]), load_menus_from_canon(a.canon_dir)
     P4 = load(a.phase4, needs=["deliberation_set"])
     tally = load(a.tally)   # accepted as a bare list OR {tally: [...]} — both shapes handled below
     deliberation_set = P4["deliberation_set"]
@@ -697,7 +741,7 @@ def cmd_round2packets(a):
 
     os.makedirs(a.outdir, exist_ok=True)
     missing_seats = [v for v in R2_VOTING_SEATS if v not in menus]
-    assert not missing_seats, f"round2packets: voice_menus.json is missing menu(s) for voting seat(s) {missing_seats}"
+    assert not missing_seats, f"round2packets: canon.lock.yaml is missing a `menu:` block for voting seat(s) {missing_seats}"
     voting_seats = [v for v in R2_VOTING_SEATS if v in menus]
 
     total_naive = total_actual = 0
@@ -1265,12 +1309,13 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
-    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets")
+    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--canon-dir", dest="canon_dir", default="aegis/canon", help="voice canon dir -- each voice's own canon.lock.yaml carries its `menu:` block (replaces --menus/voice_menus.json, retired 2026-09-15)"); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json")
     s = sub.add_parser("round2packets")
     s.add_argument("--candidates", default="candidate_set.json")
-    s.add_argument("--menus", required=True)
+    s.add_argument("--canon-dir", dest="canon_dir", default="aegis/canon",
+                    help="voice canon dir -- see packets --canon-dir")
     s.add_argument("--phase4", default="phase4.json")
     s.add_argument("--tally", default="tally.json")
     s.add_argument("--rogers", required=True)
