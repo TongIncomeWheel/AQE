@@ -1,49 +1,11 @@
 {
  "date": "2026-09-14",
  "dyncap": {
-  "value": 67587.45,
-  "one_r": 1013.81,
-  "method": "D-99 fix: recomputed AFTER Aegis-membership classify by tools/recompute_dyncap.py: allocated 75000.00 + realised -5790.56 (archived -4832.22 + not-yet-archived -958.34) + unrealised -1621.99 (AEGIS-confirmed/pending_review positions only -- non-Aegis excluded_non_aegis names and hedge MTM both excluded) = 67587.45. 1R = 1.5% [RB:capital.one_r_pct_of_dyncap]. AEGIS book only [RB:identity.capital_segregation]."
+  "value": 68805.95,
+  "one_r": 1032.09,
+  "method": "D-99 fix: recomputed AFTER Aegis-membership classify by tools/recompute_dyncap.py: allocated 75000.00 + realised -5790.56 (archived -5790.56 + not-yet-archived 0.00) + unrealised -403.49 (AEGIS-confirmed/pending_review positions only -- non-Aegis excluded_non_aegis names and hedge MTM both excluded) = 68805.95. 1R = 1.5% [RB:capital.one_r_pct_of_dyncap]. AEGIS book only [RB:identity.capital_segregation]."
  },
  "open_positions": [
-  {
-   "ticker": "CPER",
-   "qty": 540.0,
-   "entry": 38.2142,
-   "entry_date": "2026-09-09",
-   "stop_reference": null,
-   "stop_live_broker": null,
-   "stop_match": null,
-   "tp1": null,
-   "tp2": null,
-   "tp3": null,
-   "trigger": null,
-   "broker": "TIGER",
-   "mark_price": 38.176,
-   "unrealised_usd": -20.61,
-   "aegis_status": "confirmed",
-   "aqe_snapshot": null,
-   "aqe_snapshot_as_of": null
-  },
-  {
-   "ticker": "GLD",
-   "qty": 108.0,
-   "entry": 405.1323,
-   "entry_date": "2026-09-09",
-   "stop_reference": null,
-   "stop_live_broker": null,
-   "stop_match": null,
-   "tp1": null,
-   "tp2": null,
-   "tp3": null,
-   "trigger": null,
-   "broker": "TIGER",
-   "mark_price": 394.0408,
-   "unrealised_usd": -1197.89,
-   "aegis_status": "confirmed",
-   "aqe_snapshot": null,
-   "aqe_snapshot_as_of": null
-  },
   {
    "ticker": "PAVE",
    "qty": 145.0,
@@ -555,7 +517,7 @@
    "gross_exposure_usd": 0.0,
    "market_vol_ann_pct": 15.74,
    "method": "single-factor parametric (variance-covariance), 95% 1-month, z=1.645 (D-42)",
-   "dyncap_usd": 67587.45,
+   "dyncap_usd": 68805.95,
    "var_pct_of_dyncap": 0.0,
    "soft_pct": 18.0,
    "hard_pct": 20.0,
@@ -565,8 +527,6 @@
   "computed_from_aqe_dated": [],
   "mixed_vintage": false,
   "excluded_no_aqe_data": [
-   "CPER",
-   "GLD",
    "PAVE",
    "WEAT"
   ],
@@ -576,258 +536,42 @@
   "note": "positions in excluded_no_aqe_data/excluded_pending_review/missing_beta_or_vol are OMITTED from leverage/nav_beta/sector/VaR, not defaulted to zero. Beta/vol come from historical_store.py (FMP), sector from the AQE snapshot -- see module docstring. Stop audit is NOT computed here -- see premarket's stop-update, the only place the comparison is fresh."
  },
  "review_flags": [
-  {
-   "ticker": "COIN",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +1 COIN @ -4.87 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "COIN",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +3 COIN @ -1.61 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "CPER",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +540 CPER @ 38.2 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "CPER",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +319 CPER @ 41.19 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "CRCL",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled -100 CRCL @ 75.0 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "HNGE",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled -145 HNGE @ 90.86 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "INTC",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +1 INTC @ 2.71 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "INTC",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +1 INTC @ 3.32 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MARA",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +10 MARA @ -0.12 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MARA",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +20 MARA @ 0.0 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MARA",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +40 MARA @ 0.03 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MARA",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +15 MARA @ 0.16 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MARA",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +12 MARA @ 0.21 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MP",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +3 MP @ -0.25 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "NVDA",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +3 NVDA @ -56.81 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "TLT",
-   "type": "unmatched_fill",
-   "detail": "TIGER filled +35 TLT @ 0.15 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "CRCL",
-   "type": "entry_date_estimated",
-   "detail": "No single BUY fill in this pull matches CRCL's current qty of 300 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-09-12) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "MARA",
-   "type": "entry_date_estimated",
-   "detail": "No single BUY fill in this pull matches MARA's current qty of 16300 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-09-08) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "NVDA",
-   "type": "entry_date_estimated",
-   "detail": "No single BUY fill in this pull matches NVDA's current qty of 0.45155 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-09-08) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.",
-   "severity": "low",
-   "since": null
-  },
-  {
-   "ticker": "GLW",
-   "type": "entry_date_unknown",
-   "detail": "No prior journal and no matching BUY fill in this pull for GLW -- entry_date stamped with today's run date (2026-09-14) as a placeholder, NOT a confirmed entry date.",
-   "severity": "medium",
-   "since": null
-  },
-  {
-   "ticker": "KO",
-   "type": "entry_date_unknown",
-   "detail": "No prior journal and no matching BUY fill in this pull for KO -- entry_date stamped with today's run date (2026-09-14) as a placeholder, NOT a confirmed entry date.",
-   "severity": "medium",
-   "since": null
-  },
-  {
-   "ticker": "MCD",
-   "type": "entry_date_unknown",
-   "detail": "No prior journal and no matching BUY fill in this pull for MCD -- entry_date stamped with today's run date (2026-09-14) as a placeholder, NOT a confirmed entry date.",
-   "severity": "medium",
-   "since": null
-  },
-  {
-   "ticker": "-",
-   "type": "open_orders_pull_absent",
-   "detail": "No tiger_open_orders.json in this pull -- stop_live_broker was NOT refreshed this run; whatever it carried forward (if anything) is unverified as of today.",
-   "severity": "medium",
-   "since": null
-  },
-  {
-   "ticker": "COHR",
-   "type": "option_pending_review",
-   "detail": "option leg COHR|C|300.000|2027-12-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "CRCL",
-   "type": "option_pending_review",
-   "detail": "option leg CRCL|P|90.000|2026-10-16 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "KKR",
-   "type": "option_pending_review",
-   "detail": "option leg KKR|C|80.000|2027-09-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "LEU",
-   "type": "option_pending_review",
-   "detail": "option leg LEU|P|140.000|2026-10-16 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "MARA",
-   "type": "option_pending_review",
-   "detail": "option leg MARA|P|11.000|2026-10-16 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "MP",
-   "type": "option_pending_review",
-   "detail": "option leg MP|P|53.000|2026-10-09 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "NFLX",
-   "type": "option_pending_review",
-   "detail": "option leg NFLX|C|60.000|2027-09-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "SOFI",
-   "type": "option_pending_review",
-   "detail": "option leg SOFI|C|13.000|2027-09-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "TLT",
-   "type": "option_pending_review",
-   "detail": "option leg TLT|C|84.000|2026-09-30 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket",
-   "severity": "medium",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "CPER",
-   "type": "no_aqe_data",
-   "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it",
-   "severity": "high",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "GLD",
-   "type": "no_aqe_data",
-   "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it",
-   "severity": "high",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "PAVE",
-   "type": "no_aqe_data",
-   "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it",
-   "severity": "high",
-   "since": "2026-09-14"
-  },
-  {
-   "ticker": "WEAT",
-   "type": "no_aqe_data",
-   "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it",
-   "severity": "high",
-   "since": "2026-09-14"
-  }
+  {"ticker": "COIN", "type": "unmatched_fill", "detail": "TIGER filled +1 COIN @ -4.87 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "COIN", "type": "unmatched_fill", "detail": "TIGER filled +3 COIN @ -1.61 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "CPER", "type": "unmatched_fill", "detail": "TIGER filled +540 CPER @ 38.2 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "CPER", "type": "unmatched_fill", "detail": "TIGER filled +319 CPER @ 41.19 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "CRCL", "type": "unmatched_fill", "detail": "TIGER filled -100 CRCL @ 75.0 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "HNGE", "type": "unmatched_fill", "detail": "TIGER filled -145 HNGE @ 90.86 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "INTC", "type": "unmatched_fill", "detail": "TIGER filled +1 INTC @ 2.71 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "INTC", "type": "unmatched_fill", "detail": "TIGER filled +1 INTC @ 3.32 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "MARA", "type": "unmatched_fill", "detail": "TIGER filled +10 MARA @ -0.12 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "MARA", "type": "unmatched_fill", "detail": "TIGER filled +20 MARA @ 0.0 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "MARA", "type": "unmatched_fill", "detail": "TIGER filled +40 MARA @ 0.03 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "MARA", "type": "unmatched_fill", "detail": "TIGER filled +15 MARA @ 0.16 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "MARA", "type": "unmatched_fill", "detail": "TIGER filled +12 MARA @ 0.21 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "MP", "type": "unmatched_fill", "detail": "TIGER filled +3 MP @ -0.25 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "NVDA", "type": "unmatched_fill", "detail": "TIGER filled +3 NVDA @ -56.81 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "TLT", "type": "unmatched_fill", "detail": "TIGER filled +35 TLT @ 0.15 but that ticker was not in yesterday's Aegis book -- not booked as an Aegis close. Another strategy on the same account, or a new Aegis entry pending membership review.", "severity": "low", "since": null},
+  {"ticker": "CRCL", "type": "entry_date_estimated", "detail": "No single BUY fill in this pull matches CRCL's current qty of 300 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-09-12) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.", "severity": "low", "since": null},
+  {"ticker": "MARA", "type": "entry_date_estimated", "detail": "No single BUY fill in this pull matches MARA's current qty of 16300 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-09-08) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.", "severity": "low", "since": null},
+  {"ticker": "NVDA", "type": "entry_date_estimated", "detail": "No single BUY fill in this pull matches NVDA's current qty of 0.45155 exactly (partial builds across multiple fills, or a qty change since); entry_date set to the earliest BUY fill found (2026-09-08) rather than a today's-run-date guess, but treat it as an estimate, not confirmed fact.", "severity": "low", "since": null},
+  {"ticker": "GLW", "type": "entry_date_unknown", "detail": "No prior journal and no matching BUY fill in this pull for GLW -- entry_date stamped with today's run date (2026-09-14) as a placeholder, NOT a confirmed entry date.", "severity": "medium", "since": null},
+  {"ticker": "KO", "type": "entry_date_unknown", "detail": "No prior journal and no matching BUY fill in this pull for KO -- entry_date stamped with today's run date (2026-09-14) as a placeholder, NOT a confirmed entry date.", "severity": "medium", "since": null},
+  {"ticker": "MCD", "type": "entry_date_unknown", "detail": "No prior journal and no matching BUY fill in this pull for MCD -- entry_date stamped with today's run date (2026-09-14) as a placeholder, NOT a confirmed entry date.", "severity": "medium", "since": null},
+  {"ticker": "-", "type": "open_orders_pull_absent", "detail": "No tiger_open_orders.json in this pull -- stop_live_broker was NOT refreshed this run; whatever it carried forward (if anything) is unverified as of today.", "severity": "medium", "since": null},
+  {"ticker": "COHR", "type": "option_pending_review", "detail": "option leg COHR|C|300.000|2027-12-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "CRCL", "type": "option_pending_review", "detail": "option leg CRCL|P|90.000|2026-10-16 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "KKR", "type": "option_pending_review", "detail": "option leg KKR|C|80.000|2027-09-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "LEU", "type": "option_pending_review", "detail": "option leg LEU|P|140.000|2026-10-16 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "MARA", "type": "option_pending_review", "detail": "option leg MARA|P|11.000|2026-10-16 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "MP", "type": "option_pending_review", "detail": "option leg MP|P|53.000|2026-10-09 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "NFLX", "type": "option_pending_review", "detail": "option leg NFLX|C|60.000|2027-09-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "SOFI", "type": "option_pending_review", "detail": "option leg SOFI|C|13.000|2027-09-17 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "TLT", "type": "option_pending_review", "detail": "option leg TLT|C|84.000|2026-09-30 is not part of any staged Aegis hedge and has no recorded PM decision -- held in the book and risk-visible, but excluded from the hedge record until the PM confirms or rejects it once at premarket", "severity": "medium", "since": "2026-09-14"},
+  {"ticker": "CPER", "type": "no_aqe_data", "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it", "severity": "high", "since": "2026-09-14"},
+  {"ticker": "GLD", "type": "no_aqe_data", "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it", "severity": "high", "since": "2026-09-14"},
+  {"ticker": "PAVE", "type": "no_aqe_data", "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it", "severity": "high", "since": "2026-09-14"},
+  {"ticker": "WEAT", "type": "no_aqe_data", "detail": "held position has never been refreshed with AQE data -- excluded from leverage/beta/sector/VaR until the next premarket refresh finds it", "severity": "high", "since": "2026-09-14"}
  ],
  "broker_sync": {
   "last_sync_utc": "2026-09-14T21:40:54Z",
