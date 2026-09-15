@@ -29,7 +29,7 @@ def test_the_snapshot_is_a_release_asset_not_a_commit():
     text = open(src, encoding="utf-8").read()
     assert "uploads.github.com" in text, "release upload path is gone"
     # The snapshot must never be routed through the contents (commit) API.
-    assert "put_file(f\"{OUTPUT_DIR_IN_REPO}/aqe_state_snapshot\" not in text
+    assert "put_file(f\"{OUTPUT_DIR_IN_REPO}/aqe_state_snapshot" not in text
 
 
 def test_every_daily_artifact_is_named_once(monkeypatch):
