@@ -24,7 +24,8 @@ Answers two questions per seat and never mixes them:
 
        MENU_BUG         a populated fallback exists but is NOT on this seat's menu, so the
                         seat is blind to data that is sitting right there.
-                        Action: add the field to voice_menus.json. One-line fix. BLOCKS.
+                        Action: add the field to canon.lock.yaml's `menu:` block for that
+                        seat. One-line fix. BLOCKS.
 
        ENGINE_TICKET    no substitute exists anywhere in the export.
                         Action: the engine must emit it. BLOCKS until ruled on.
@@ -36,9 +37,13 @@ Exit: 0 all good · 1 a voice is NOT ACTIVATED · 2 quorum failed · 3 a voice i
 
 Usage:
   python3 voice_preflight.py --export aqe_daily_export.json \
-      --menus contracts/voice_menus.json --canon aegis/canon \
+      --canon aegis/canon \
       --agents-dir ~/.claude/plugins/synced/aegis-voices/agents \
       --out activation.json --apply --strict
+
+MERGED 2026-09-15: --menus is gone. Each voice's slicing menu now lives inside its own
+canon.lock.yaml (`menu:` block) -- the same file --canon already points at -- so this tool
+reads both the rules and the menu from one place per voice instead of two.
 
 --apply writes the DERIVED fields back into the export in place, so the same command that
 finds the gap is the one that closes it. Without it the tool only reports.
@@ -49,6 +54,20 @@ try:
     import yaml
 except ImportError:
     yaml = None
+
+
+def load_menus_from_canon(canon_dir):
+    """Same function pma_pipeline.py runs at packet-build time, imported by path so this tool
+    and the actual slicer can never read two different menus (2026-09-15 merge). Not reimplemented
+    here -- this is the tools/ directory's own convention (see voice_packets.py's _load_pma_pipeline
+    for the identical pattern) precisely so there is exactly one place this logic lives."""
+    import importlib.util
+    pipeline_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pma_pipeline.py")
+    spec = importlib.util.spec_from_file_location("pma_pipeline", pipeline_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.load_menus_from_canon(canon_dir)
+
 
 # Seats needing information the AQE export does not carry. The orchestrator fetches, verifies
 # and inlines it. The seat NEVER fetches its own: on 2026-08-20 and again on 2026-08-21 the
@@ -155,7 +174,7 @@ def classify_gap(field, menu, cov, n):
                         sub)
             return ("MENU_BUG",
                     f"{sub} is populated {cov[sub]/n:.0%} but is NOT on this seat's menu — "
-                    f"add \"{sub}\" to voice_menus.json[\"{{seat}}\"]",
+                    f"add \"{sub}\" to canon.lock.yaml[\"{{seat}}\"]'s menu: block",
                     sub)
     return ("ENGINE_TICKET",
             f"no populated substitute for {field} anywhere in the export — engine must emit it",
@@ -165,7 +184,6 @@ def classify_gap(field, menu, cov, n):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--export", required=True)
-    ap.add_argument("--menus", required=True)
     ap.add_argument("--canon", required=True)
     ap.add_argument("--agents-dir", default="")
     ap.add_argument("--out", default="activation.json")
@@ -189,7 +207,7 @@ def main():
             print(f"AUTO-FILLED {f}: {c}/{len(rows)} rows ({c/len(rows):.0%}), "
                   f"tagged {f}_source=derived")
     cov, n = export_coverage(rows)
-    menus = json.load(open(a.menus))
+    menus = load_menus_from_canon(a.canon)
 
     installed = set()
     if a.agents_dir and os.path.isdir(os.path.expanduser(a.agents_dir)):

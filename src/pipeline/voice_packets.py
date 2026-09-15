@@ -11,7 +11,7 @@ The 14-voice roster splits three ways, and this module writes 11 files:
 
   Group A (9)  elder-lens, livermore, minervini, oneil, raschke, seow,
                thorp, weis, wyckoff -> `<voice>.tsv`, columns from that
-               voice's `voice_menus.json` entry (6 fields up to 38).
+               voice's own canon.lock.yaml `menu:` block (6 fields up to 38).
   Group B (2)  crown, druckenmiller -> `<voice>.json`, macro blocks only
                (date/market/regime/intermarket/srm/macro_weather/
                thematic_baskets), never the PM-only `qs_market`.
@@ -83,12 +83,18 @@ from src.data.paths import EXPORT_JSON, OUTPUT_DIR, PROJECT_ROOT
 # hand, so the two can never disagree about what a packet contains.
 PMA_PIPELINE = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
                 / "tools" / "pma_pipeline.py")
-# AQE_INSTRUCTIONS.md §5 (voice-data-contract-v6, 2026-09-10): canonical v6
-# menus, generated from aegis/canon/<voice>/canon.lock.yaml via
-# aegis/handoff/voice_contract_v6/{bind,render}.py. Supersedes the old
-# 1.13.0-era aegis/skills/premarket-analysis/contracts/voice_menus.json,
-# which is now stale (it predates every §2 field this session added).
-VOICE_MENUS = PROJECT_ROOT / "aegis" / "contracts" / "voice_menus.json"
+# MERGED 2026-09-15: the slicing menu now lives INSIDE each voice's own
+# canon.lock.yaml (a top-level `menu:` block), not in a separate file. This
+# retires both the old 1.13.0-era aegis/skills/premarket-analysis/contracts/
+# voice_menus.json AND the never-finished aegis/handoff/voice_contract_v6/
+# generator effort (AQE_INSTRUCTIONS.md §5) that tried to keep a *third*
+# file in sync with canon and was blocked for months on a glossary file that
+# never made it into the repo. There is now exactly one file per voice, and
+# both AQE's own nightly build() below and the PMA run's own packet build
+# read it through the same function, pma_pipeline.py's
+# `load_menus_from_canon()` -- so the two can no longer read two different
+# menus for the same voice, which was the actual defect this replaces.
+VOICE_CANON_DIR = PROJECT_ROOT / "aegis" / "canon"
 
 # PM ruling 2026-08-25: the packets land beside the daily export and the Crown
 # file, not in a separate dated tree — one delivery destination for everything
@@ -150,7 +156,7 @@ def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
             export=str(export_path), date=run_date, out=str(candidates)))
         pma.cmd_packets(types.SimpleNamespace(
             candidates=str(candidates), export=str(export_path),
-            menus=str(VOICE_MENUS), date=run_date, outdir=str(outdir)))
+            canon_dir=str(VOICE_CANON_DIR), date=run_date, outdir=str(outdir)))
     finally:
         if quiet:
             sys.stdout.close()

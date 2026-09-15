@@ -49,10 +49,19 @@ packets via subprocess, so there is exactly one slicer in the codebase.
 Integration: nightly job calls
   python3 aegis/skills/premarket-analysis/tools/emit_packets.py \
       --export aegis/output/aqe_daily_export.json \
-      --menus  aegis/skills/premarket-analysis/contracts/voice_menus.json \
+      --canon-dir aegis/canon \
       --pipeline aegis/skills/premarket-analysis/tools/pma_pipeline.py \
       --outdir aegis/output/voice_packets --date <SGT date>
 then commits aegis/output/ in the same commit as the export itself.
+
+MERGED 2026-09-15: each voice's slicing menu now lives inside its own
+canon.lock.yaml (a `menu:` block), not the retired standalone
+aegis/contracts/voice_menus.json. `menus_sha256` in the stamp below is now a
+fingerprint of the RESOLVED per-voice menus (pma_pipeline.py's own
+`load_menus_from_canon()` output, hashed as sorted-key JSON) rather than one
+file's bytes -- it still changes if and only if a served field list changes,
+and PREPARE's stamp check compares against the same fingerprint recomputed
+the same way.
 """
 import argparse, datetime, glob, hashlib, json, os, shutil, subprocess, sys, tempfile
 
@@ -78,6 +87,19 @@ def sha256_file(path):
     return h.hexdigest()
 
 
+def menus_fingerprint_sha256(pipeline_path, canon_dir):
+    """Hash of the RESOLVED per-voice slicing menus (not any single file's bytes) -- changes if
+    and only if a served field actually changes for some voice. Loads pma_pipeline.py's own
+    load_menus_from_canon() by path so this stays the one place that logic lives (same discipline
+    as the trim/packets subprocess calls above -- no reimplementation)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pma_pipeline", pipeline_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    menus = mod.load_menus_from_canon(canon_dir)
+    return hashlib.sha256(json.dumps(menus, sort_keys=True).encode()).hexdigest()
+
+
 def run(cmd):
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
@@ -88,13 +110,13 @@ def run(cmd):
 def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--export", required=True, help="aqe_daily_export.json (already written by the nightly job)")
-    p.add_argument("--menus", required=True, help="contracts/voice_menus.json (slicing contract)")
+    p.add_argument("--canon-dir", dest="canon_dir", required=True, help="aegis/canon (each voice's own canon.lock.yaml `menu:` block is the slicing contract)")
     p.add_argument("--pipeline", required=True, help="path to pma_pipeline.py (the ONE slicer)")
     p.add_argument("--outdir", required=True, help="e.g. aegis/output/voice_packets")
     p.add_argument("--date", required=True, help="run date (SGT calendar date)")
     a = p.parse_args()
 
-    for f in (a.export, a.menus, a.pipeline):
+    for f in (a.export, a.canon_dir, a.pipeline):
         if not os.path.exists(f):
             print(f"FATAL: input missing: {f}", file=sys.stderr)
             return 2
@@ -104,7 +126,7 @@ def main():
         pk = os.path.join(td, "packets")
         run([sys.executable, a.pipeline, "trim", "--export", a.export, "--date", a.date, "--out", cs])
         run([sys.executable, a.pipeline, "packets", "--candidates", cs, "--export", a.export,
-             "--menus", a.menus, "--date", a.date, "--outdir", pk])
+             "--canon-dir", a.canon_dir, "--date", a.date, "--outdir", pk])
 
         # Second lock, independent of pma_pipeline.py's own build-time checks:
         # R3 (qs_market) as a raw byte-scan -- that string never legitimately
@@ -195,7 +217,7 @@ def main():
             "date": a.date,
             "generated_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "export_sha256": sha256_file(a.export),
-            "menus_sha256": sha256_file(a.menus),
+            "menus_sha256": menus_fingerprint_sha256(a.pipeline, a.canon_dir),
             "files": files,
             "r3_scan": "clean",
             "layer0_scan": "clean",
