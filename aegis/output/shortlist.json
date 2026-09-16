@@ -1,108 +1,56 @@
 {
-  "date": "2026-09-15",
-  "refreshed_at": "2026-09-15 08:51:32 SGT",
+  "date": "2026-09-16",
+  "refreshed_at": "2026-09-16 08:52:59 SGT",
   "regime": {
-    "vix": 17.1,
+    "vix": 17.2,
     "level": "GREEN"
   },
   "candidates": [
     {
       "rank": 1,
-      "ticker": "SMFG",
-      "sc_momentum": 53.8,
-      "sc_momentum_raw": 53.8,
-      "sc_position": 48.7,
-      "mp_state": "FADING",
-      "pipe_rank": 0,
-      "fip_spike_excluded": false,
-      "fip_window_effective": 252,
-      "engines": {
-        "flow": 40.8,
-        "energy": 62.2,
-        "structure": 71.6,
-        "mp": 43.0,
-        "elder": 10.0,
-        "bq": 27.0
-      },
-      "levels": {
-        "entry": 27.24,
-        "stop": 26.21,
-        "r_size": 1.03,
-        "be_trigger": 27.75,
-        "target_1r": 28.27,
-        "target_2r": 29.3,
-        "target_3r": 30.33,
-        "shares": 2038,
-        "risk_dollars": 2100.0
-      },
-      "signal": {
-        "date": "2026-09-11",
-        "age": 1,
-        "sc_at_signal": 54.4,
-        "direction": "fading"
-      },
-      "diagnostics": {
-        "mp_state": "FADING",
-        "close": 27.24,
-        "atr14": 0.517,
-        "earn_days": 59.0,
-        "earn_warning": false
-      },
-      "context": {
-        "sector": "XLF",
-        "sector_grade": "TURNING",
-        "sh": 0,
-        "ra": 0,
-        "rl": 0,
-        "cm": 0
-      },
-      "precision_edge": false
-    },
-    {
-      "rank": 2,
-      "ticker": "CART",
-      "sc_momentum": 50.9,
-      "sc_momentum_raw": 50.9,
-      "sc_position": 49.7,
+      "ticker": "ILMN",
+      "sc_momentum": 69.1,
+      "sc_momentum_raw": 69.1,
+      "sc_position": 52.9,
       "mp_state": "BUILDING",
       "pipe_rank": 0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
-        "flow": 43.4,
-        "energy": 64.7,
-        "structure": 63.2,
-        "mp": 29.0,
-        "elder": 5.0,
-        "bq": 34.0
+        "flow": 78.9,
+        "energy": 63.0,
+        "structure": 59.8,
+        "mp": 73.0,
+        "elder": 7.0,
+        "bq": 30.0
       },
       "levels": {
-        "entry": 49.48,
-        "stop": 46.03,
-        "r_size": 3.45,
-        "be_trigger": 51.2,
-        "target_1r": 52.93,
-        "target_2r": 56.38,
-        "target_3r": 59.83,
-        "shares": 608,
+        "entry": 222.29,
+        "stop": 203.93,
+        "r_size": 18.36,
+        "be_trigger": 231.47,
+        "target_1r": 240.65,
+        "target_2r": 259.01,
+        "target_3r": 277.37,
+        "shares": 114,
         "risk_dollars": 2100.0
       },
       "signal": {
-        "date": "2026-09-14",
+        "date": "2026-09-15",
         "age": 0,
-        "sc_at_signal": 50.9,
+        "sc_at_signal": 69.1,
         "direction": "RISING"
       },
       "diagnostics": {
         "mp_state": "BUILDING",
-        "close": 49.48,
-        "atr14": 1.724,
-        "earn_days": 55.0,
+        "close": 222.29,
+        "atr14": 9.181,
+        "earn_days": 43.0,
         "earn_warning": false
       },
       "context": {
-        "sector": "XLY",
-        "sector_grade": "TURNING",
+        "sector": "XLV",
+        "sector_grade": "AVOID",
         "sh": 0,
         "ra": 0,
         "rl": 0,
@@ -115,20 +63,20 @@
     {
       "ticker": "CNH",
       "levels": {
-        "entry": 13.75,
-        "stop": 12.6,
-        "r_size": 1.15,
-        "be_trigger": 14.32,
-        "target_1r": 14.9,
-        "target_2r": 16.05,
-        "target_3r": 17.2,
-        "shares": 1826,
+        "entry": 14.0,
+        "stop": 12.84,
+        "r_size": 1.16,
+        "be_trigger": 14.58,
+        "target_1r": 15.16,
+        "target_2r": 16.32,
+        "target_3r": 17.48,
+        "shares": 1810,
         "risk_dollars": 2100.0
       },
       "engines": {
         "flow": 73.7,
-        "energy": 68.1,
-        "structure": 70.5,
+        "energy": 70.6,
+        "structure": 76.8,
         "mp": 97.0,
         "elder": 7.0
       },
@@ -138,7 +86,7 @@
       "context": {},
       "subcomp_values": {
         "roc_zscore": {
-          "value": 2.32,
+          "value": 2.48,
           "threshold": 1.94,
           "engine": "Energy",
           "label": "ROC Z-Score",
@@ -147,6 +95,186 @@
         },
         "k39_value": {
           "value": 83.24,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "MTCH",
+      "levels": {
+        "entry": 44.4,
+        "stop": 41.82,
+        "r_size": 2.58,
+        "be_trigger": 45.69,
+        "target_1r": 46.98,
+        "target_2r": 49.56,
+        "target_3r": 52.14,
+        "shares": 813,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 82.9,
+        "energy": 73.1,
+        "structure": 74.7,
+        "mp": 71.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 1.95,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 92.63,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "ARE",
+      "levels": {
+        "entry": 52.93,
+        "stop": 49.33,
+        "r_size": 3.6,
+        "be_trigger": 54.73,
+        "target_1r": 56.53,
+        "target_2r": 60.13,
+        "target_3r": 63.73,
+        "shares": 583,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 73.7,
+        "energy": 69.7,
+        "structure": 72.6,
+        "mp": 60.0,
+        "elder": 7.0
+      },
+      "mp_state": "BUILDING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.49,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 57.64,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 22.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "CDW",
+      "levels": {
+        "entry": 153.74,
+        "stop": 140.45,
+        "r_size": 13.29,
+        "be_trigger": 160.39,
+        "target_1r": 167.03,
+        "target_2r": 180.32,
+        "target_3r": 193.61,
+        "shares": 158,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 42.1,
+        "energy": 63.0,
+        "structure": 85.3,
+        "mp": 75.0,
+        "elder": 10.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.13,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 93.02,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -213,46 +341,196 @@
   "recipe_matches": [
     {
       "ticker": "SLDE",
-      "sc_momentum": 84.1,
-      "sc_momentum_raw": 84.1,
+      "sc_momentum": 80.7,
+      "sc_momentum_raw": 80.7,
       "pipe_rank": 84.5,
       "fip_quality": 60.0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
-        "flow": 100.0,
-        "energy": 68.9,
+        "flow": 82.9,
+        "energy": 70.6,
         "structure": 81.1,
-        "mp": 86.0,
+        "mp": 92.0,
         "elder": 10.0
       },
-      "mp_state": "FADING",
+      "mp_state": "STRONG",
+      "squeeze": 4.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 26.48,
+        "stop": 24.96,
+        "r_size": 1.52,
+        "be_trigger": 27.24,
+        "target_1r": 28.0,
+        "target_2r": 29.52,
+        "target_3r": 31.04,
+        "shares": 1381,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "BP",
+      "sc_momentum": 78.0,
+      "sc_momentum_raw": 78.0,
+      "pipe_rank": 80.7,
+      "fip_quality": 80.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 86.8,
+        "energy": 77.3,
+        "structure": 73.7,
+        "mp": 70.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
       "squeeze": 8.5,
       "on_shortlist": false,
       "levels": {
-        "entry": 26.23,
-        "stop": 24.68,
-        "r_size": 1.55,
-        "be_trigger": 27.0,
-        "target_1r": 27.78,
-        "target_2r": 29.33,
-        "target_3r": 30.88,
-        "shares": 1354,
+        "entry": 46.96,
+        "stop": 44.93,
+        "r_size": 2.03,
+        "be_trigger": 47.98,
+        "target_1r": 48.99,
+        "target_2r": 51.02,
+        "target_3r": 53.05,
+        "shares": 1034,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "DBX",
+      "sc_momentum": 79.3,
+      "sc_momentum_raw": 79.3,
+      "pipe_rank": 78.2,
+      "fip_quality": 60.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 96.1,
+        "energy": 73.1,
+        "structure": 78.9,
+        "mp": 64.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 8.5,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 37.63,
+        "stop": 35.24,
+        "r_size": 2.39,
+        "be_trigger": 38.83,
+        "target_1r": 40.02,
+        "target_2r": 42.41,
+        "target_3r": 44.8,
+        "shares": 878,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "MTCH",
+      "sc_momentum": 75.9,
+      "sc_momentum_raw": 75.9,
+      "pipe_rank": 77.2,
+      "fip_quality": 80.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 82.9,
+        "energy": 73.1,
+        "structure": 74.7,
+        "mp": 71.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 8.5,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 44.4,
+        "stop": 41.82,
+        "r_size": 2.58,
+        "be_trigger": 45.69,
+        "target_1r": 46.98,
+        "target_2r": 49.56,
+        "target_3r": 52.14,
+        "shares": 813,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "BWIN",
+      "sc_momentum": 79.6,
+      "sc_momentum_raw": 79.6,
+      "pipe_rank": 71.3,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": true,
+      "fip_window_effective": 209,
+      "engines": {
+        "flow": 100.0,
+        "energy": 79.8,
+        "structure": 68.4,
+        "mp": 60.0,
+        "elder": 8.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 12.5,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 32.49,
+        "stop": 29.87,
+        "r_size": 2.62,
+        "be_trigger": 33.8,
+        "target_1r": 35.11,
+        "target_2r": 37.73,
+        "target_3r": 40.35,
+        "shares": 801,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "TMO",
+      "sc_momentum": 77.6,
+      "sc_momentum_raw": 77.6,
+      "pipe_rank": 66.4,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 94.7,
+        "energy": 71.4,
+        "structure": 73.7,
+        "mp": 65.0,
+        "elder": 7.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 8.5,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 641.39,
+        "stop": 609.57,
+        "r_size": 31.82,
+        "be_trigger": 657.3,
+        "target_1r": 673.21,
+        "target_2r": 705.03,
+        "target_3r": 736.85,
+        "shares": 65,
         "risk_dollars": 2100.0
       }
     },
     {
       "ticker": "CNH",
-      "sc_momentum": 76.0,
-      "sc_momentum_raw": 76.0,
+      "sc_momentum": 78.1,
+      "sc_momentum_raw": 78.1,
       "pipe_rank": 65.7,
       "fip_quality": 30.0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
         "flow": 73.7,
-        "energy": 68.1,
-        "structure": 70.5,
+        "energy": 70.6,
+        "structure": 76.8,
         "mp": 97.0,
         "elder": 7.0
       },
@@ -261,44 +539,136 @@
       "on_shortlist": true,
       "pe_qualified": true,
       "levels": {
-        "entry": 13.75,
-        "stop": 12.6,
-        "r_size": 1.15,
-        "be_trigger": 14.32,
-        "target_1r": 14.9,
-        "target_2r": 16.05,
-        "target_3r": 17.2,
-        "shares": 1826,
+        "entry": 14.0,
+        "stop": 12.84,
+        "r_size": 1.16,
+        "be_trigger": 14.58,
+        "target_1r": 15.16,
+        "target_2r": 16.32,
+        "target_3r": 17.48,
+        "shares": 1810,
         "risk_dollars": 2100.0
       }
     },
     {
-      "ticker": "META",
-      "sc_momentum": 79.3,
-      "sc_momentum_raw": 79.3,
-      "pipe_rank": 55.2,
+      "ticker": "KR",
+      "sc_momentum": 78.0,
+      "sc_momentum_raw": 78.0,
+      "pipe_rank": 58.6,
+      "fip_quality": 60.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 84.2,
+        "energy": 72.3,
+        "structure": 83.2,
+        "mp": 72.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 8.5,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 62.25,
+        "stop": 58.96,
+        "r_size": 3.29,
+        "be_trigger": 63.9,
+        "target_1r": 65.54,
+        "target_2r": 68.83,
+        "target_3r": 72.12,
+        "shares": 638,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "CDW",
+      "sc_momentum": 63.6,
+      "sc_momentum_raw": 63.6,
+      "pipe_rank": 47.5,
       "fip_quality": 30.0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
-        "flow": 88.2,
-        "energy": 68.1,
-        "structure": 86.3,
-        "mp": 76.0,
+        "flow": 42.1,
+        "energy": 63.0,
+        "structure": 85.3,
+        "mp": 75.0,
         "elder": 10.0
       },
       "mp_state": "STRONG",
-      "squeeze": 0.0,
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 153.74,
+        "stop": 140.45,
+        "r_size": 13.29,
+        "be_trigger": 160.39,
+        "target_1r": 167.03,
+        "target_2r": 180.32,
+        "target_3r": 193.61,
+        "shares": 158,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "ARE",
+      "sc_momentum": 69.6,
+      "sc_momentum_raw": 69.6,
+      "pipe_rank": 43.2,
+      "fip_quality": 60.0,
+      "fip_spike_excluded": true,
+      "fip_window_effective": 209,
+      "engines": {
+        "flow": 73.7,
+        "energy": 69.7,
+        "structure": 72.6,
+        "mp": 60.0,
+        "elder": 7.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 52.93,
+        "stop": 49.33,
+        "r_size": 3.6,
+        "be_trigger": 54.73,
+        "target_1r": 56.53,
+        "target_2r": 60.13,
+        "target_3r": 63.73,
+        "shares": 583,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "NTSK",
+      "sc_momentum": 80.6,
+      "sc_momentum_raw": 80.6,
+      "pipe_rank": 0.0,
+      "fip_quality": 0.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 100.0,
+        "energy": 75.6,
+        "structure": 71.6,
+        "mp": 68.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 8.5,
       "on_shortlist": false,
       "levels": {
-        "entry": 665.6,
-        "stop": 622.98,
-        "r_size": 42.62,
-        "be_trigger": 686.91,
-        "target_1r": 708.22,
-        "target_2r": 750.84,
-        "target_3r": 793.46,
-        "shares": 49,
+        "entry": 17.47,
+        "stop": 15.29,
+        "r_size": 2.18,
+        "be_trigger": 18.56,
+        "target_1r": 19.65,
+        "target_2r": 21.83,
+        "target_3r": 24.01,
+        "shares": 963,
         "risk_dollars": 2100.0
       }
     }
@@ -316,8 +686,10 @@
     "squeeze_min": 0
   },
   "srm_summary": {
+    "DEPLOY": [
+      "XLE"
+    ],
     "HOLD": [
-      "XLE",
       "XLC"
     ],
     "TURNING": [
@@ -339,19 +711,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -3.02,
-      "roc5": -1.6,
+      "roc20": -3.46,
+      "roc5": -2.2,
       "above_sma20": false,
-      "rrg_rs_ratio": 102.42,
-      "rrg_rs_momentum": 100.35,
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING",
+      "rrg_rs_ratio": 102.69,
+      "rrg_rs_momentum": 99.78,
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "ENTERING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 99.67,
-          "rs_momentum": 104.0
-        },
         {
           "rs_ratio": 101.84,
           "rs_momentum": 103.85
@@ -367,6 +735,10 @@
         {
           "rs_ratio": 102.42,
           "rs_momentum": 100.35
+        },
+        {
+          "rs_ratio": 102.69,
+          "rs_momentum": 99.78
         }
       ],
       "macro_headwind_score": -1.64,
@@ -378,19 +750,15 @@
       "grade": "AVOID",
       "trend_state": "Declining \u2014 Avoid",
       "sh": -8,
-      "roc20": 0.23,
-      "roc5": -2.16,
+      "roc20": 0.37,
+      "roc5": 0.32,
       "above_sma20": false,
-      "rrg_rs_ratio": 102.29,
-      "rrg_rs_momentum": 99.1,
+      "rrg_rs_ratio": 102.14,
+      "rrg_rs_momentum": 99.57,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 102.42,
-          "rs_momentum": 95.36
-        },
         {
           "rs_ratio": 101.41,
           "rs_momentum": 95.47
@@ -406,6 +774,10 @@
         {
           "rs_ratio": 102.29,
           "rs_momentum": 99.1
+        },
+        {
+          "rs_ratio": 102.14,
+          "rs_momentum": 99.57
         }
       ],
       "macro_headwind_score": -0.44,
@@ -417,19 +789,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -1.94,
-      "roc5": -1.84,
+      "roc20": -1.27,
+      "roc5": -0.79,
       "above_sma20": false,
-      "rrg_rs_ratio": 99.15,
-      "rrg_rs_momentum": 99.25,
+      "rrg_rs_ratio": 99.17,
+      "rrg_rs_momentum": 99.77,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING",
+      "rrg_direction": "EXITING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 101.38,
-          "rs_momentum": 98.1
-        },
         {
           "rs_ratio": 100.0,
           "rs_momentum": 98.31
@@ -445,6 +813,10 @@
         {
           "rs_ratio": 99.15,
           "rs_momentum": 99.25
+        },
+        {
+          "rs_ratio": 99.17,
+          "rs_momentum": 99.77
         }
       ],
       "macro_headwind_score": -0.1,
@@ -453,22 +825,18 @@
       "entry_gate_reason": "Grade TURNING / RRG LAGGING / Macro NEUTRAL"
     },
     "XLE": {
-      "grade": "HOLD",
+      "grade": "DEPLOY",
       "trend_state": "Momentum Fading \u2014 Hold, Don't Add",
-      "sh": 0,
-      "roc20": 4.23,
-      "roc5": 0.73,
+      "sh": 3,
+      "roc20": 5.35,
+      "roc5": 1.79,
       "above_sma20": true,
-      "rrg_rs_ratio": 111.66,
-      "rrg_rs_momentum": 104.1,
+      "rrg_rs_ratio": 112.18,
+      "rrg_rs_momentum": 104.39,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING",
-      "rrg_grade_override": "WATCH_UP",
+      "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 115.9,
-          "rs_momentum": 102.3
-        },
         {
           "rs_ratio": 113.11,
           "rs_momentum": 105.72
@@ -484,30 +852,30 @@
         {
           "rs_ratio": 111.66,
           "rs_momentum": 104.1
+        },
+        {
+          "rs_ratio": 112.18,
+          "rs_momentum": 104.39
         }
       ],
       "macro_headwind_score": -0.38,
       "macro_headwind_flag": "CAUTION",
       "entry_gate": "WATCH",
-      "entry_gate_reason": "Grade HOLD / RRG LEADING / Macro CAUTION"
+      "entry_gate_reason": "Grade DEPLOY / RRG LEADING / Macro CAUTION"
     },
     "XLI": {
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -8.89,
-      "roc5": -3.05,
+      "roc20": -9.38,
+      "roc5": -3.19,
       "above_sma20": false,
-      "rrg_rs_ratio": 93.07,
-      "rrg_rs_momentum": 97.0,
+      "rrg_rs_ratio": 92.36,
+      "rrg_rs_momentum": 97.64,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 94.5,
-          "rs_momentum": 97.12
-        },
         {
           "rs_ratio": 93.59,
           "rs_momentum": 96.74
@@ -523,6 +891,10 @@
         {
           "rs_ratio": 93.07,
           "rs_momentum": 97.0
+        },
+        {
+          "rs_ratio": 92.36,
+          "rs_momentum": 97.64
         }
       ],
       "macro_headwind_score": -1.06,
@@ -534,19 +906,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -4.53,
-      "roc5": -1.79,
+      "roc20": -5.03,
+      "roc5": -2.73,
       "above_sma20": false,
-      "rrg_rs_ratio": 94.89,
-      "rrg_rs_momentum": 97.35,
+      "rrg_rs_ratio": 94.26,
+      "rrg_rs_momentum": 96.32,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 95.83,
-          "rs_momentum": 96.04
-        },
         {
           "rs_ratio": 95.23,
           "rs_momentum": 95.78
@@ -562,6 +930,10 @@
         {
           "rs_ratio": 94.89,
           "rs_momentum": 97.35
+        },
+        {
+          "rs_ratio": 94.26,
+          "rs_momentum": 96.32
         }
       ],
       "macro_headwind_score": -1.5,
@@ -573,19 +945,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -1.94,
-      "roc5": -0.19,
+      "roc20": -1.12,
+      "roc5": -0.35,
       "above_sma20": false,
-      "rrg_rs_ratio": 97.07,
-      "rrg_rs_momentum": 99.89,
+      "rrg_rs_ratio": 96.46,
+      "rrg_rs_momentum": 99.79,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 98.45,
-          "rs_momentum": 95.77
-        },
         {
           "rs_ratio": 96.48,
           "rs_momentum": 96.43
@@ -601,6 +969,10 @@
         {
           "rs_ratio": 97.07,
           "rs_momentum": 99.89
+        },
+        {
+          "rs_ratio": 96.46,
+          "rs_momentum": 99.79
         }
       ],
       "macro_headwind_score": 0.1,
@@ -612,19 +984,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -4.75,
-      "roc5": -1.84,
+      "roc20": -3.93,
+      "roc5": -1.89,
       "above_sma20": false,
-      "rrg_rs_ratio": 93.59,
-      "rrg_rs_momentum": 98.02,
+      "rrg_rs_ratio": 93.06,
+      "rrg_rs_momentum": 98.89,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "STABLE",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 97.34,
-          "rs_momentum": 96.53
-        },
         {
           "rs_ratio": 95.43,
           "rs_momentum": 96.14
@@ -640,6 +1008,10 @@
         {
           "rs_ratio": 93.59,
           "rs_momentum": 98.02
+        },
+        {
+          "rs_ratio": 93.06,
+          "rs_momentum": 98.89
         }
       ],
       "macro_headwind_score": -0.74,
@@ -651,19 +1023,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -5.62,
-      "roc5": -2.92,
+      "roc20": -6.47,
+      "roc5": -4.9,
       "above_sma20": false,
-      "rrg_rs_ratio": 90.74,
-      "rrg_rs_momentum": 98.96,
+      "rrg_rs_ratio": 89.77,
+      "rrg_rs_momentum": 99.09,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 94.31,
-          "rs_momentum": 100.21
-        },
         {
           "rs_ratio": 92.29,
           "rs_momentum": 99.6
@@ -679,6 +1047,10 @@
         {
           "rs_ratio": 90.74,
           "rs_momentum": 98.96
+        },
+        {
+          "rs_ratio": 89.77,
+          "rs_momentum": 99.09
         }
       ],
       "macro_headwind_score": 0.1,
@@ -688,21 +1060,17 @@
     },
     "XLC": {
       "grade": "HOLD",
-      "trend_state": "Momentum Building \u2014 Add",
+      "trend_state": "Momentum Fading \u2014 Hold, Don't Add",
       "sh": 0,
-      "roc20": 1.88,
-      "roc5": 2.71,
+      "roc20": 2.9,
+      "roc5": 2.25,
       "above_sma20": true,
-      "rrg_rs_ratio": 100.78,
-      "rrg_rs_momentum": 102.97,
+      "rrg_rs_ratio": 101.14,
+      "rrg_rs_momentum": 103.61,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "ENTERING",
       "rrg_grade_override": "WATCH_UP",
       "rrg_history": [
-        {
-          "rs_ratio": 98.46,
-          "rs_momentum": 98.96
-        },
         {
           "rs_ratio": 97.6,
           "rs_momentum": 98.37
@@ -718,6 +1086,10 @@
         {
           "rs_ratio": 100.78,
           "rs_momentum": 102.97
+        },
+        {
+          "rs_ratio": 101.14,
+          "rs_momentum": 103.61
         }
       ],
       "macro_headwind_score": -1.64,
@@ -729,19 +1101,15 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -3.9,
-      "roc5": -3.72,
+      "roc20": -2.89,
+      "roc5": -2.33,
       "above_sma20": false,
-      "rrg_rs_ratio": 97.89,
-      "rrg_rs_momentum": 96.0,
+      "rrg_rs_ratio": 98.53,
+      "rrg_rs_momentum": 97.51,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING",
+      "rrg_direction": "EXITING",
       "rrg_grade_override": null,
       "rrg_history": [
-        {
-          "rs_ratio": 100.6,
-          "rs_momentum": 96.62
-        },
         {
           "rs_ratio": 99.84,
           "rs_momentum": 96.35
@@ -757,6 +1125,10 @@
         {
           "rs_ratio": 97.89,
           "rs_momentum": 96.0
+        },
+        {
+          "rs_ratio": 98.53,
+          "rs_momentum": 97.51
         }
       ],
       "macro_headwind_score": -1.68,
@@ -771,19 +1143,19 @@
       "index_grade": "HOLD",
       "parent_capped_grade": "TURNING",
       "grade_path": "trend",
-      "breadth_pct": 71.4,
-      "breadth_note": "5/7 above own 20D SMA",
-      "pattern": "DOUBLE_TOP",
-      "pattern_direction": "BEARISH",
-      "pattern_stage": "BASE",
-      "pattern_trigger": 0.88,
-      "pattern_days": 74,
-      "pattern_fit": 0.541,
+      "breadth_pct": 57.1,
+      "breadth_note": "4/7 above own 20D SMA",
+      "pattern": "ASC_TRIANGLE",
+      "pattern_direction": "BULLISH",
+      "pattern_stage": "TRIGGERED",
+      "pattern_trigger": 1.0,
+      "pattern_days": 43,
+      "pattern_fit": 0.53,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": 2.71,
-      "roc5": 1.01,
-      "divergence": -1.7,
+      "roc20": 3.33,
+      "roc5": 0.65,
+      "divergence": -2.68,
       "above_sma20": true,
       "coverage": "7/7",
       "constituents_used": [
@@ -795,30 +1167,30 @@
         "META",
         "TSLA"
       ],
-      "rrg_rs_ratio": 101.25,
-      "rrg_rs_momentum": 102.91,
+      "rrg_rs_ratio": 101.85,
+      "rrg_rs_momentum": 102.61,
       "rrg_quadrant": "LEADING",
-      "rrg_direction": "ENTERING",
+      "rrg_direction": "DEEPENING",
       "rrg_history": [
         {
-          "rs_ratio": 100.49,
-          "rs_momentum": 102.7
+          "rs_ratio": 101.42,
+          "rs_momentum": 103.04
         },
         {
-          "rs_ratio": 101.38,
-          "rs_momentum": 103.03
-        },
-        {
-          "rs_ratio": 101.6,
+          "rs_ratio": 101.62,
           "rs_momentum": 103.68
         },
         {
-          "rs_ratio": 99.77,
-          "rs_momentum": 102.96
+          "rs_ratio": 99.79,
+          "rs_momentum": 102.93
         },
         {
-          "rs_ratio": 101.25,
-          "rs_momentum": 102.91
+          "rs_ratio": 101.27,
+          "rs_momentum": 102.9
+        },
+        {
+          "rs_ratio": 101.85,
+          "rs_momentum": 102.61
         }
       ]
     },
@@ -827,19 +1199,19 @@
       "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
       "grade_path": "below_sma_recovering",
-      "breadth_pct": 16.7,
-      "breadth_note": "2/12 above own 20D SMA",
-      "pattern": null,
-      "pattern_direction": null,
-      "pattern_stage": null,
-      "pattern_trigger": null,
-      "pattern_days": null,
-      "pattern_fit": null,
+      "breadth_pct": 25.0,
+      "breadth_note": "3/12 above own 20D SMA",
+      "pattern": "FALLING_WEDGE",
+      "pattern_direction": "BULLISH",
+      "pattern_stage": "FORMING",
+      "pattern_trigger": 0.93,
+      "pattern_days": 72,
+      "pattern_fit": 0.858,
       "parent_gics": "XLRE",
       "parent_grade": "TURNING",
-      "roc20": -9.53,
-      "roc5": -4.28,
-      "divergence": 5.25,
+      "roc20": -9.63,
+      "roc5": -8.02,
+      "divergence": 1.6,
       "above_sma20": false,
       "coverage": "12/12",
       "constituents_used": [
@@ -856,38 +1228,38 @@
         "WULF",
         "SBAC"
       ],
-      "rrg_rs_ratio": 103.71,
-      "rrg_rs_momentum": 100.86,
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING",
+      "rrg_rs_ratio": 101.61,
+      "rrg_rs_momentum": 99.46,
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 100.39,
-          "rs_momentum": 106.05
+          "rs_ratio": 101.18,
+          "rs_momentum": 101.28
         },
         {
-          "rs_ratio": 101.1,
-          "rs_momentum": 101.36
+          "rs_ratio": 101.0,
+          "rs_momentum": 99.95
         },
         {
-          "rs_ratio": 100.92,
-          "rs_momentum": 100.06
+          "rs_ratio": 103.57,
+          "rs_momentum": 101.74
         },
         {
-          "rs_ratio": 103.39,
-          "rs_momentum": 101.75
+          "rs_ratio": 103.72,
+          "rs_momentum": 100.75
         },
         {
-          "rs_ratio": 103.71,
-          "rs_momentum": 100.86
+          "rs_ratio": 101.61,
+          "rs_momentum": 99.46
         }
       ]
     },
     "AI_Software": {
-      "grade": "HOLD",
-      "index_grade": "HOLD",
+      "grade": "TURNING",
+      "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
-      "grade_path": "trend",
+      "grade_path": "below_sma_recovering",
       "breadth_pct": 44.4,
       "breadth_note": "4/9 above own 20D SMA",
       "pattern": null,
@@ -898,10 +1270,10 @@
       "pattern_fit": null,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": 1.26,
-      "roc5": 0.8,
-      "divergence": -0.46,
-      "above_sma20": true,
+      "roc20": 1.65,
+      "roc5": 2.21,
+      "divergence": 0.55,
+      "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
         "PLTR",
@@ -914,30 +1286,30 @@
         "AI",
         "CRM"
       ],
-      "rrg_rs_ratio": 114.07,
-      "rrg_rs_momentum": 96.72,
+      "rrg_rs_ratio": 112.78,
+      "rrg_rs_momentum": 93.64,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
         {
-          "rs_ratio": 108.59,
-          "rs_momentum": 98.51
+          "rs_ratio": 107.38,
+          "rs_momentum": 98.01
         },
         {
-          "rs_ratio": 107.13,
-          "rs_momentum": 98.0
+          "rs_ratio": 106.63,
+          "rs_momentum": 98.2
         },
         {
-          "rs_ratio": 106.38,
-          "rs_momentum": 98.19
+          "rs_ratio": 107.0,
+          "rs_momentum": 90.51
         },
         {
-          "rs_ratio": 106.75,
-          "rs_momentum": 90.55
+          "rs_ratio": 114.29,
+          "rs_momentum": 96.66
         },
         {
-          "rs_ratio": 114.07,
-          "rs_momentum": 96.72
+          "rs_ratio": 112.78,
+          "rs_momentum": 93.64
         }
       ]
     },
@@ -946,19 +1318,19 @@
       "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
       "grade_path": "below_sma_recovering",
-      "breadth_pct": 20.0,
-      "breadth_note": "3/15 above own 20D SMA",
+      "breadth_pct": 26.7,
+      "breadth_note": "4/15 above own 20D SMA",
       "pattern": "FALLING_WEDGE",
       "pattern_direction": "BULLISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 1.02,
-      "pattern_days": 70,
-      "pattern_fit": 0.886,
+      "pattern_trigger": 1.0,
+      "pattern_days": 71,
+      "pattern_fit": 0.881,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -11.46,
-      "roc5": -4.4,
-      "divergence": 7.06,
+      "roc20": -12.58,
+      "roc5": -5.07,
+      "divergence": 7.52,
       "above_sma20": false,
       "coverage": "15/15",
       "constituents_used": [
@@ -978,30 +1350,30 @@
         "MCHP",
         "ARM"
       ],
-      "rrg_rs_ratio": 90.15,
-      "rrg_rs_momentum": 96.85,
+      "rrg_rs_ratio": 91.56,
+      "rrg_rs_momentum": 97.24,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 85.7,
-          "rs_momentum": 101.05
+          "rs_ratio": 90.42,
+          "rs_momentum": 100.81
         },
         {
-          "rs_ratio": 90.4,
-          "rs_momentum": 100.84
+          "rs_ratio": 87.11,
+          "rs_momentum": 98.27
         },
         {
-          "rs_ratio": 87.13,
-          "rs_momentum": 98.22
+          "rs_ratio": 91.01,
+          "rs_momentum": 98.56
         },
         {
-          "rs_ratio": 91.06,
-          "rs_momentum": 98.5
+          "rs_ratio": 90.12,
+          "rs_momentum": 96.94
         },
         {
-          "rs_ratio": 90.15,
-          "rs_momentum": 96.85
+          "rs_ratio": 91.56,
+          "rs_momentum": 97.24
         }
       ]
     },
@@ -1015,14 +1387,14 @@
       "pattern": "FALLING_WEDGE",
       "pattern_direction": "BULLISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 1.0,
-      "pattern_days": 68,
-      "pattern_fit": 0.964,
+      "pattern_trigger": 0.97,
+      "pattern_days": 69,
+      "pattern_fit": 0.966,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -20.16,
-      "roc5": -6.09,
-      "divergence": 14.07,
+      "roc20": -23.97,
+      "roc5": -10.21,
+      "divergence": 13.75,
       "above_sma20": false,
       "coverage": "11/11",
       "constituents_used": [
@@ -1038,51 +1410,51 @@
         "SNPS",
         "CDNS"
       ],
-      "rrg_rs_ratio": 84.1,
-      "rrg_rs_momentum": 94.45,
+      "rrg_rs_ratio": 84.73,
+      "rrg_rs_momentum": 94.01,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 85.46,
-          "rs_momentum": 99.97
+          "rs_ratio": 89.74,
+          "rs_momentum": 99.42
         },
         {
-          "rs_ratio": 90.18,
-          "rs_momentum": 99.44
+          "rs_ratio": 85.31,
+          "rs_momentum": 97.54
         },
         {
-          "rs_ratio": 85.74,
-          "rs_momentum": 97.59
+          "rs_ratio": 87.2,
+          "rs_momentum": 96.3
         },
         {
-          "rs_ratio": 87.49,
-          "rs_momentum": 96.39
+          "rs_ratio": 83.88,
+          "rs_momentum": 94.38
         },
         {
-          "rs_ratio": 84.1,
-          "rs_momentum": 94.45
+          "rs_ratio": 84.73,
+          "rs_momentum": 94.01
         }
       ]
     },
     "Enterprise_Software": {
-      "grade": "HOLD",
-      "index_grade": "HOLD",
+      "grade": "DEPLOY",
+      "index_grade": "DEPLOY",
       "parent_capped_grade": "TURNING",
       "grade_path": "trend",
-      "breadth_pct": 71.4,
-      "breadth_note": "15/21 above own 20D SMA",
+      "breadth_pct": 61.9,
+      "breadth_note": "13/21 above own 20D SMA",
       "pattern": "RISING_WEDGE",
       "pattern_direction": "BEARISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 1.33,
-      "pattern_days": 72,
-      "pattern_fit": 0.849,
+      "pattern_trigger": 1.36,
+      "pattern_days": 73,
+      "pattern_fit": 0.848,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": 4.18,
-      "roc5": -0.33,
-      "divergence": -4.51,
+      "roc20": 6.12,
+      "roc5": 2.48,
+      "divergence": -3.64,
       "above_sma20": true,
       "coverage": "21/21",
       "constituents_used": [
@@ -1108,30 +1480,30 @@
         "CRM",
         "HUBS"
       ],
-      "rrg_rs_ratio": 123.03,
-      "rrg_rs_momentum": 98.04,
+      "rrg_rs_ratio": 122.5,
+      "rrg_rs_momentum": 97.12,
       "rrg_quadrant": "WEAKENING",
-      "rrg_direction": "ENTERING",
+      "rrg_direction": "DEEPENING",
       "rrg_history": [
         {
-          "rs_ratio": 122.39,
-          "rs_momentum": 99.81
+          "rs_ratio": 117.15,
+          "rs_momentum": 100.55
         },
         {
-          "rs_ratio": 116.9,
-          "rs_momentum": 100.49
+          "rs_ratio": 118.89,
+          "rs_momentum": 101.42
         },
         {
-          "rs_ratio": 118.59,
-          "rs_momentum": 101.34
+          "rs_ratio": 118.46,
+          "rs_momentum": 94.61
         },
         {
-          "rs_ratio": 118.17,
-          "rs_momentum": 94.53
+          "rs_ratio": 123.36,
+          "rs_momentum": 98.11
         },
         {
-          "rs_ratio": 123.03,
-          "rs_momentum": 98.04
+          "rs_ratio": 122.5,
+          "rs_momentum": 97.12
         }
       ]
     },
@@ -1140,19 +1512,19 @@
       "index_grade": "WATCH",
       "parent_capped_grade": "WATCH",
       "grade_path": "stalled",
-      "breadth_pct": 61.5,
-      "breadth_note": "8/13 above own 20D SMA",
+      "breadth_pct": 53.8,
+      "breadth_note": "7/13 above own 20D SMA",
       "pattern": "CUP_HANDLE",
       "pattern_direction": "BULLISH",
       "pattern_stage": "HANDLE",
-      "pattern_trigger": 1.22,
-      "pattern_days": 72,
-      "pattern_fit": 0.614,
+      "pattern_trigger": 1.23,
+      "pattern_days": 73,
+      "pattern_fit": 0.608,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -2.5,
-      "roc5": 1.95,
-      "divergence": 4.45,
+      "roc20": -1.59,
+      "roc5": 1.28,
+      "divergence": 2.87,
       "above_sma20": true,
       "coverage": "13/13",
       "constituents_used": [
@@ -1170,30 +1542,30 @@
         "DBX",
         "AKAM"
       ],
-      "rrg_rs_ratio": 112.14,
-      "rrg_rs_momentum": 98.89,
+      "rrg_rs_ratio": 111.29,
+      "rrg_rs_momentum": 98.44,
       "rrg_quadrant": "WEAKENING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 109.37,
-          "rs_momentum": 100.51
+          "rs_ratio": 110.5,
+          "rs_momentum": 103.28
         },
         {
-          "rs_ratio": 110.35,
-          "rs_momentum": 103.31
+          "rs_ratio": 108.95,
+          "rs_momentum": 102.58
         },
         {
-          "rs_ratio": 108.78,
-          "rs_momentum": 102.59
+          "rs_ratio": 108.86,
+          "rs_momentum": 97.57
         },
         {
-          "rs_ratio": 108.7,
-          "rs_momentum": 97.59
+          "rs_ratio": 112.31,
+          "rs_momentum": 98.82
         },
         {
-          "rs_ratio": 112.14,
-          "rs_momentum": 98.89
+          "rs_ratio": 111.29,
+          "rs_momentum": 98.44
         }
       ]
     },
@@ -1201,9 +1573,9 @@
       "grade": "DEPLOY",
       "index_grade": "DEPLOY",
       "parent_capped_grade": "TURNING",
-      "grade_path": "acceleration",
-      "breadth_pct": 91.7,
-      "breadth_note": "11/12 above own 20D SMA",
+      "grade_path": "trend",
+      "breadth_pct": 100.0,
+      "breadth_note": "12/12 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -1212,9 +1584,9 @@
       "pattern_fit": null,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": 2.48,
-      "roc5": 9.27,
-      "divergence": 6.8,
+      "roc20": 8.08,
+      "roc5": 13.29,
+      "divergence": 5.21,
       "above_sma20": true,
       "coverage": "13/13",
       "constituents_used": [
@@ -1232,30 +1604,30 @@
         "QLYS",
         "RPD"
       ],
-      "rrg_rs_ratio": 109.9,
-      "rrg_rs_momentum": 104.16,
+      "rrg_rs_ratio": 110.96,
+      "rrg_rs_momentum": 104.6,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 103.49,
-          "rs_momentum": 100.26
+          "rs_ratio": 102.97,
+          "rs_momentum": 104.19
         },
         {
-          "rs_ratio": 103.05,
-          "rs_momentum": 104.27
+          "rs_ratio": 95.63,
+          "rs_momentum": 102.39
         },
         {
-          "rs_ratio": 95.71,
-          "rs_momentum": 102.46
+          "rs_ratio": 96.02,
+          "rs_momentum": 88.4
         },
         {
-          "rs_ratio": 96.06,
-          "rs_momentum": 88.46
+          "rs_ratio": 109.88,
+          "rs_momentum": 104.14
         },
         {
-          "rs_ratio": 109.9,
-          "rs_momentum": 104.16
+          "rs_ratio": 110.96,
+          "rs_momentum": 104.6
         }
       ]
     },
@@ -1274,9 +1646,9 @@
       "pattern_fit": null,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -14.16,
-      "roc5": -1.07,
-      "divergence": 13.09,
+      "roc20": -15.83,
+      "roc5": -6.43,
+      "divergence": 9.41,
       "above_sma20": false,
       "coverage": "5/5",
       "constituents_used": [
@@ -1286,30 +1658,30 @@
         "RGTI",
         "INFQ"
       ],
-      "rrg_rs_ratio": 110.08,
-      "rrg_rs_momentum": 98.97,
+      "rrg_rs_ratio": 107.93,
+      "rrg_rs_momentum": 96.95,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 97.78,
-          "rs_momentum": 98.75
+          "rs_ratio": 102.19,
+          "rs_momentum": 92.62
         },
         {
-          "rs_ratio": 102.39,
-          "rs_momentum": 92.6
+          "rs_ratio": 97.91,
+          "rs_momentum": 95.46
         },
         {
-          "rs_ratio": 98.12,
-          "rs_momentum": 95.55
+          "rs_ratio": 103.03,
+          "rs_momentum": 92.28
         },
         {
-          "rs_ratio": 103.27,
-          "rs_momentum": 92.41
+          "rs_ratio": 109.84,
+          "rs_momentum": 98.91
         },
         {
-          "rs_ratio": 110.08,
-          "rs_momentum": 98.97
+          "rs_ratio": 107.93,
+          "rs_momentum": 96.95
         }
       ]
     },
@@ -1320,17 +1692,17 @@
       "grade_path": "below_sma_recovering",
       "breadth_pct": 10.0,
       "breadth_note": "1/10 above own 20D SMA",
-      "pattern": "FALLING_WEDGE",
-      "pattern_direction": "BULLISH",
-      "pattern_stage": "FORMING",
-      "pattern_trigger": 0.88,
-      "pattern_days": 74,
-      "pattern_fit": 0.66,
+      "pattern": null,
+      "pattern_direction": null,
+      "pattern_stage": null,
+      "pattern_trigger": null,
+      "pattern_days": null,
+      "pattern_fit": null,
       "parent_gics": "XLI",
       "parent_grade": "TURNING",
-      "roc20": -22.29,
-      "roc5": -2.34,
-      "divergence": 19.95,
+      "roc20": -21.25,
+      "roc5": -4.66,
+      "divergence": 16.59,
       "above_sma20": false,
       "coverage": "10/10",
       "constituents_used": [
@@ -1345,30 +1717,30 @@
         "KTOS",
         "AVAV"
       ],
-      "rrg_rs_ratio": 103.9,
-      "rrg_rs_momentum": 96.39,
+      "rrg_rs_ratio": 104.01,
+      "rrg_rs_momentum": 97.78,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 97.3,
-          "rs_momentum": 96.14
+          "rs_ratio": 96.04,
+          "rs_momentum": 92.94
         },
         {
-          "rs_ratio": 96.25,
-          "rs_momentum": 92.99
+          "rs_ratio": 93.84,
+          "rs_momentum": 93.96
         },
         {
-          "rs_ratio": 94.02,
-          "rs_momentum": 94.0
+          "rs_ratio": 96.65,
+          "rs_momentum": 92.96
         },
         {
-          "rs_ratio": 96.83,
-          "rs_momentum": 93.01
+          "rs_ratio": 103.67,
+          "rs_momentum": 96.34
         },
         {
-          "rs_ratio": 103.9,
-          "rs_momentum": 96.39
+          "rs_ratio": 104.01,
+          "rs_momentum": 97.78
         }
       ]
     },
@@ -1387,9 +1759,9 @@
       "pattern_fit": null,
       "parent_gics": "XLI",
       "parent_grade": "TURNING",
-      "roc20": -11.84,
-      "roc5": -1.35,
-      "divergence": 10.5,
+      "roc20": -11.32,
+      "roc5": -1.59,
+      "divergence": 9.73,
       "above_sma20": false,
       "coverage": "13/13",
       "constituents_used": [
@@ -1407,30 +1779,30 @@
         "CW",
         "HEI"
       ],
-      "rrg_rs_ratio": 98.66,
-      "rrg_rs_momentum": 94.16,
+      "rrg_rs_ratio": 98.23,
+      "rrg_rs_momentum": 94.51,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 97.21,
-          "rs_momentum": 93.26
-        },
-        {
           "rs_ratio": 96.39,
-          "rs_momentum": 93.44
+          "rs_momentum": 93.42
         },
         {
           "rs_ratio": 97.85,
-          "rs_momentum": 93.25
+          "rs_momentum": 93.23
         },
         {
           "rs_ratio": 97.34,
-          "rs_momentum": 92.99
+          "rs_momentum": 92.97
         },
         {
-          "rs_ratio": 98.66,
-          "rs_momentum": 94.16
+          "rs_ratio": 98.67,
+          "rs_momentum": 94.15
+        },
+        {
+          "rs_ratio": 98.23,
+          "rs_momentum": 94.51
         }
       ]
     },
@@ -1441,17 +1813,17 @@
       "grade_path": "below_sma_recovering",
       "breadth_pct": 7.7,
       "breadth_note": "1/13 above own 20D SMA",
-      "pattern": "INV_HEAD_SHOULDERS",
-      "pattern_direction": "BULLISH",
+      "pattern": "HEAD_SHOULDERS",
+      "pattern_direction": "BEARISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 1.02,
-      "pattern_days": 41,
-      "pattern_fit": 0.527,
+      "pattern_trigger": 0.89,
+      "pattern_days": 37,
+      "pattern_fit": 0.725,
       "parent_gics": "XLI",
       "parent_grade": "TURNING",
-      "roc20": -12.19,
-      "roc5": -5.39,
-      "divergence": 6.8,
+      "roc20": -13.22,
+      "roc5": -7.22,
+      "divergence": 5.99,
       "above_sma20": false,
       "coverage": "13/13",
       "constituents_used": [
@@ -1469,30 +1841,30 @@
         "VST",
         "CEG"
       ],
-      "rrg_rs_ratio": 93.94,
-      "rrg_rs_momentum": 98.71,
+      "rrg_rs_ratio": 92.78,
+      "rrg_rs_momentum": 98.63,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 97.44,
-          "rs_momentum": 102.67
-        },
-        {
           "rs_ratio": 97.2,
-          "rs_momentum": 101.59
+          "rs_momentum": 101.57
         },
         {
           "rs_ratio": 94.82,
-          "rs_momentum": 98.5
+          "rs_momentum": 98.48
         },
         {
           "rs_ratio": 96.94,
-          "rs_momentum": 101.06
+          "rs_momentum": 101.05
         },
         {
           "rs_ratio": 93.94,
-          "rs_momentum": 98.71
+          "rs_momentum": 98.7
+        },
+        {
+          "rs_ratio": 92.78,
+          "rs_momentum": 98.63
         }
       ]
     },
@@ -1501,19 +1873,19 @@
       "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
       "grade_path": "below_sma_recovering",
-      "breadth_pct": 0.0,
-      "breadth_note": "0/13 above own 20D SMA",
+      "breadth_pct": 7.7,
+      "breadth_note": "1/13 above own 20D SMA",
       "pattern": "FALLING_WEDGE",
       "pattern_direction": "BULLISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 0.99,
-      "pattern_days": 69,
+      "pattern_trigger": 1.0,
+      "pattern_days": 70,
       "pattern_fit": 0.651,
       "parent_gics": "XLI",
       "parent_grade": "TURNING",
-      "roc20": -9.66,
-      "roc5": -3.95,
-      "divergence": 5.71,
+      "roc20": -10.82,
+      "roc5": -3.9,
+      "divergence": 6.92,
       "above_sma20": false,
       "coverage": "13/13",
       "constituents_used": [
@@ -1531,17 +1903,13 @@
         "GTES",
         "LGN"
       ],
-      "rrg_rs_ratio": 91.56,
-      "rrg_rs_momentum": 97.14,
+      "rrg_rs_ratio": 91.2,
+      "rrg_rs_momentum": 98.06,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
         {
-          "rs_ratio": 93.88,
-          "rs_momentum": 99.41
-        },
-        {
-          "rs_ratio": 93.83,
+          "rs_ratio": 93.84,
           "rs_momentum": 98.55
         },
         {
@@ -1550,11 +1918,15 @@
         },
         {
           "rs_ratio": 93.79,
-          "rs_momentum": 97.83
+          "rs_momentum": 97.82
         },
         {
           "rs_ratio": 91.56,
           "rs_momentum": 97.14
+        },
+        {
+          "rs_ratio": 91.2,
+          "rs_momentum": 98.06
         }
       ]
     },
@@ -1565,17 +1937,17 @@
       "grade_path": "below_sma_recovering",
       "breadth_pct": 33.3,
       "breadth_note": "3/9 above own 20D SMA",
-      "pattern": "HEAD_SHOULDERS",
-      "pattern_direction": "BEARISH",
+      "pattern": "FALLING_WEDGE",
+      "pattern_direction": "BULLISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 0.92,
-      "pattern_days": 62,
-      "pattern_fit": 0.801,
+      "pattern_trigger": 0.95,
+      "pattern_days": 72,
+      "pattern_fit": 0.832,
       "parent_gics": "XLI",
       "parent_grade": "TURNING",
-      "roc20": -16.49,
-      "roc5": -2.77,
-      "divergence": 13.72,
+      "roc20": -16.01,
+      "roc5": -4.09,
+      "divergence": 11.92,
       "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
@@ -1589,30 +1961,30 @@
         "KTOS",
         "AVAV"
       ],
-      "rrg_rs_ratio": 97.62,
-      "rrg_rs_momentum": 99.96,
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "EXITING",
+      "rrg_rs_ratio": 97.08,
+      "rrg_rs_momentum": 101.06,
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 94.86,
-          "rs_momentum": 102.38
+          "rs_ratio": 96.37,
+          "rs_momentum": 100.67
         },
         {
-          "rs_ratio": 96.28,
-          "rs_momentum": 100.73
+          "rs_ratio": 93.7,
+          "rs_momentum": 100.43
         },
         {
-          "rs_ratio": 93.54,
-          "rs_momentum": 100.46
+          "rs_ratio": 97.86,
+          "rs_momentum": 99.98
         },
         {
-          "rs_ratio": 97.81,
-          "rs_momentum": 100.0
+          "rs_ratio": 97.68,
+          "rs_momentum": 99.98
         },
         {
-          "rs_ratio": 97.62,
-          "rs_momentum": 99.96
+          "rs_ratio": 97.08,
+          "rs_momentum": 101.06
         }
       ]
     },
@@ -1631,9 +2003,9 @@
       "pattern_fit": null,
       "parent_gics": "XLI",
       "parent_grade": "TURNING",
-      "roc20": -9.89,
-      "roc5": -2.27,
-      "divergence": 7.62,
+      "roc20": -9.11,
+      "roc5": -1.41,
+      "divergence": 7.7,
       "above_sma20": false,
       "coverage": "12/12",
       "constituents_used": [
@@ -1650,51 +2022,51 @@
         "RXO",
         "LYFT"
       ],
-      "rrg_rs_ratio": 84.38,
-      "rrg_rs_momentum": 96.64,
+      "rrg_rs_ratio": 84.51,
+      "rrg_rs_momentum": 98.02,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 86.13,
-          "rs_momentum": 95.18
+          "rs_ratio": 84.89,
+          "rs_momentum": 93.28
         },
         {
-          "rs_ratio": 84.85,
-          "rs_momentum": 93.23
+          "rs_ratio": 85.88,
+          "rs_momentum": 93.71
         },
         {
-          "rs_ratio": 85.84,
-          "rs_momentum": 93.67
+          "rs_ratio": 85.71,
+          "rs_momentum": 95.31
         },
         {
-          "rs_ratio": 85.66,
-          "rs_momentum": 95.29
+          "rs_ratio": 84.41,
+          "rs_momentum": 96.66
         },
         {
-          "rs_ratio": 84.38,
-          "rs_momentum": 96.64
+          "rs_ratio": 84.51,
+          "rs_momentum": 98.02
         }
       ]
     },
     "Nuclear_Energy": {
-      "grade": "TURNING",
-      "index_grade": "TURNING",
-      "parent_capped_grade": "TURNING",
-      "grade_path": "below_sma_recovering",
+      "grade": "AVOID",
+      "index_grade": "AVOID",
+      "parent_capped_grade": "AVOID",
+      "grade_path": "declining",
       "breadth_pct": 0.0,
       "breadth_note": "0/6 above own 20D SMA",
       "pattern": "FALLING_WEDGE",
       "pattern_direction": "BULLISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 0.89,
-      "pattern_days": 71,
-      "pattern_fit": 0.881,
+      "pattern_trigger": 0.87,
+      "pattern_days": 72,
+      "pattern_fit": 0.883,
       "parent_gics": "XLE",
-      "parent_grade": "HOLD",
-      "roc20": -14.88,
-      "roc5": -10.81,
-      "divergence": 4.08,
+      "parent_grade": "DEPLOY",
+      "roc20": -15.13,
+      "roc5": -17.45,
+      "divergence": -2.31,
       "above_sma20": false,
       "coverage": "6/6",
       "constituents_used": [
@@ -1705,30 +2077,30 @@
         "NNE",
         "BWXT"
       ],
-      "rrg_rs_ratio": 96.76,
-      "rrg_rs_momentum": 91.38,
+      "rrg_rs_ratio": 94.37,
+      "rrg_rs_momentum": 90.59,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 101.45,
-          "rs_momentum": 107.76
+          "rs_ratio": 104.71,
+          "rs_momentum": 98.99
         },
         {
-          "rs_ratio": 105.0,
-          "rs_momentum": 99.08
+          "rs_ratio": 98.6,
+          "rs_momentum": 96.88
         },
         {
-          "rs_ratio": 98.83,
-          "rs_momentum": 96.99
+          "rs_ratio": 92.89,
+          "rs_momentum": 87.8
         },
         {
-          "rs_ratio": 92.97,
-          "rs_momentum": 87.73
+          "rs_ratio": 96.62,
+          "rs_momentum": 91.43
         },
         {
-          "rs_ratio": 96.76,
-          "rs_momentum": 91.38
+          "rs_ratio": 94.37,
+          "rs_momentum": 90.59
         }
       ]
     },
@@ -1742,14 +2114,14 @@
       "pattern": "FALLING_WEDGE",
       "pattern_direction": "BULLISH",
       "pattern_stage": "FORMING",
-      "pattern_trigger": 0.67,
-      "pattern_days": 71,
-      "pattern_fit": 0.917,
+      "pattern_trigger": 0.65,
+      "pattern_days": 72,
+      "pattern_fit": 1.0,
       "parent_gics": "XLU",
       "parent_grade": "TURNING",
-      "roc20": -10.83,
-      "roc5": -2.44,
-      "divergence": 8.39,
+      "roc20": -9.31,
+      "roc5": -7.47,
+      "divergence": 1.84,
       "above_sma20": false,
       "coverage": "11/11",
       "constituents_used": [
@@ -1765,40 +2137,40 @@
         "EOSE",
         "WOLF"
       ],
-      "rrg_rs_ratio": 81.63,
-      "rrg_rs_momentum": 102.52,
+      "rrg_rs_ratio": 81.11,
+      "rrg_rs_momentum": 103.83,
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
         {
-          "rs_ratio": 82.65,
-          "rs_momentum": 110.22
+          "rs_ratio": 82.28,
+          "rs_momentum": 103.8
         },
         {
-          "rs_ratio": 82.48,
-          "rs_momentum": 103.99
+          "rs_ratio": 78.33,
+          "rs_momentum": 101.61
         },
         {
-          "rs_ratio": 78.56,
-          "rs_momentum": 101.78
+          "rs_ratio": 78.03,
+          "rs_momentum": 100.66
         },
         {
-          "rs_ratio": 78.32,
-          "rs_momentum": 100.77
+          "rs_ratio": 81.28,
+          "rs_momentum": 102.41
         },
         {
-          "rs_ratio": 81.63,
-          "rs_momentum": 102.52
+          "rs_ratio": 81.11,
+          "rs_momentum": 103.83
         }
       ]
     },
     "Oil_Services": {
-      "grade": "AVOID",
-      "index_grade": "AVOID",
-      "parent_capped_grade": "AVOID",
-      "grade_path": "declining",
-      "breadth_pct": 25.0,
-      "breadth_note": "2/8 above own 20D SMA",
+      "grade": "TURNING",
+      "index_grade": "TURNING",
+      "parent_capped_grade": "TURNING",
+      "grade_path": "below_sma_recovering",
+      "breadth_pct": 37.5,
+      "breadth_note": "3/8 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -1806,10 +2178,10 @@
       "pattern_days": null,
       "pattern_fit": null,
       "parent_gics": "XLE",
-      "parent_grade": "HOLD",
-      "roc20": -3.79,
-      "roc5": -4.36,
-      "divergence": -0.57,
+      "parent_grade": "DEPLOY",
+      "roc20": -4.65,
+      "roc5": -4.34,
+      "divergence": 0.31,
       "above_sma20": false,
       "coverage": "8/8",
       "constituents_used": [
@@ -1822,30 +2194,30 @@
         "NESR",
         "PUMP"
       ],
-      "rrg_rs_ratio": 103.4,
-      "rrg_rs_momentum": 98.94,
+      "rrg_rs_ratio": 102.61,
+      "rrg_rs_momentum": 97.82,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 109.34,
-          "rs_momentum": 106.92
+          "rs_ratio": 108.7,
+          "rs_momentum": 109.95
         },
         {
-          "rs_ratio": 108.65,
-          "rs_momentum": 109.96
-        },
-        {
-          "rs_ratio": 104.96,
+          "rs_ratio": 105.03,
           "rs_momentum": 106.91
         },
         {
-          "rs_ratio": 105.15,
-          "rs_momentum": 103.04
+          "rs_ratio": 105.22,
+          "rs_momentum": 103.05
         },
         {
-          "rs_ratio": 103.4,
-          "rs_momentum": 98.94
+          "rs_ratio": 103.46,
+          "rs_momentum": 98.95
+        },
+        {
+          "rs_ratio": 102.61,
+          "rs_momentum": 97.82
         }
       ]
     },
@@ -1854,8 +2226,8 @@
       "index_grade": "AVOID",
       "parent_capped_grade": "AVOID",
       "grade_path": "declining",
-      "breadth_pct": 50.0,
-      "breadth_note": "5/10 above own 20D SMA",
+      "breadth_pct": 20.0,
+      "breadth_note": "2/10 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -1863,10 +2235,10 @@
       "pattern_days": null,
       "pattern_fit": null,
       "parent_gics": "XLE",
-      "parent_grade": "HOLD",
-      "roc20": 0.04,
-      "roc5": -1.14,
-      "divergence": -1.18,
+      "parent_grade": "DEPLOY",
+      "roc20": 0.13,
+      "roc5": -2.78,
+      "divergence": -2.91,
       "above_sma20": false,
       "coverage": "10/10",
       "constituents_used": [
@@ -1881,30 +2253,30 @@
         "HESM",
         "AROC"
       ],
-      "rrg_rs_ratio": 100.36,
-      "rrg_rs_momentum": 101.03,
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING",
+      "rrg_rs_ratio": 98.98,
+      "rrg_rs_momentum": 99.85,
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 104.23,
-          "rs_momentum": 103.5
-        },
-        {
-          "rs_ratio": 102.05,
+          "rs_ratio": 102.02,
           "rs_momentum": 104.48
         },
         {
-          "rs_ratio": 101.84,
+          "rs_ratio": 101.8,
           "rs_momentum": 101.31
         },
         {
-          "rs_ratio": 102.98,
+          "rs_ratio": 102.95,
           "rs_momentum": 101.75
         },
         {
-          "rs_ratio": 100.36,
-          "rs_momentum": 101.03
+          "rs_ratio": 100.32,
+          "rs_momentum": 101.02
+        },
+        {
+          "rs_ratio": 98.98,
+          "rs_momentum": 99.85
         }
       ]
     },
@@ -1913,8 +2285,8 @@
       "index_grade": "AVOID",
       "parent_capped_grade": "AVOID",
       "grade_path": "declining",
-      "breadth_pct": 0.0,
-      "breadth_note": "0/11 above own 20D SMA",
+      "breadth_pct": 9.1,
+      "breadth_note": "1/11 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -1923,9 +2295,9 @@
       "pattern_fit": null,
       "parent_gics": "XLB",
       "parent_grade": "TURNING",
-      "roc20": -7.26,
-      "roc5": -7.26,
-      "divergence": -0.01,
+      "roc20": -9.82,
+      "roc5": -10.39,
+      "divergence": -0.57,
       "above_sma20": false,
       "coverage": "11/11",
       "constituents_used": [
@@ -1941,30 +2313,30 @@
         "SQM",
         "TGB"
       ],
-      "rrg_rs_ratio": 107.22,
-      "rrg_rs_momentum": 90.76,
+      "rrg_rs_ratio": 106.8,
+      "rrg_rs_momentum": 91.38,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 112.8,
-          "rs_momentum": 98.51
-        },
-        {
           "rs_ratio": 113.26,
-          "rs_momentum": 96.78
+          "rs_momentum": 96.79
         },
         {
-          "rs_ratio": 104.22,
-          "rs_momentum": 93.19
+          "rs_ratio": 104.18,
+          "rs_momentum": 93.18
         },
         {
-          "rs_ratio": 105.6,
-          "rs_momentum": 91.27
+          "rs_ratio": 105.58,
+          "rs_momentum": 91.23
         },
         {
-          "rs_ratio": 107.22,
-          "rs_momentum": 90.76
+          "rs_ratio": 107.21,
+          "rs_momentum": 90.71
+        },
+        {
+          "rs_ratio": 106.8,
+          "rs_momentum": 91.38
         }
       ]
     },
@@ -1983,9 +2355,9 @@
       "pattern_fit": null,
       "parent_gics": "XLB",
       "parent_grade": "TURNING",
-      "roc20": 7.39,
-      "roc5": -4.05,
-      "divergence": -11.44,
+      "roc20": 5.31,
+      "roc5": -3.45,
+      "divergence": -8.76,
       "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
@@ -1999,30 +2371,30 @@
         "AGI",
         "RGLD"
       ],
-      "rrg_rs_ratio": 130.4,
-      "rrg_rs_momentum": 97.43,
+      "rrg_rs_ratio": 130.55,
+      "rrg_rs_momentum": 98.74,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 129.2,
-          "rs_momentum": 96.64
+          "rs_ratio": 133.19,
+          "rs_momentum": 96.33
         },
         {
-          "rs_ratio": 133.17,
-          "rs_momentum": 96.35
+          "rs_ratio": 128.38,
+          "rs_momentum": 96.4
         },
         {
-          "rs_ratio": 128.35,
-          "rs_momentum": 96.41
+          "rs_ratio": 129.82,
+          "rs_momentum": 96.55
         },
         {
-          "rs_ratio": 129.8,
-          "rs_momentum": 96.57
+          "rs_ratio": 130.43,
+          "rs_momentum": 97.41
         },
         {
-          "rs_ratio": 130.4,
-          "rs_momentum": 97.43
+          "rs_ratio": 130.55,
+          "rs_momentum": 98.74
         }
       ]
     },
@@ -2041,9 +2413,9 @@
       "pattern_fit": null,
       "parent_gics": "XLB",
       "parent_grade": "TURNING",
-      "roc20": 10.25,
-      "roc5": -3.28,
-      "divergence": -13.54,
+      "roc20": 12.16,
+      "roc5": -2.27,
+      "divergence": -14.42,
       "above_sma20": true,
       "coverage": "8/8",
       "constituents_used": [
@@ -2056,30 +2428,30 @@
         "FMC",
         "BG"
       ],
-      "rrg_rs_ratio": 104.87,
-      "rrg_rs_momentum": 105.01,
+      "rrg_rs_ratio": 105.1,
+      "rrg_rs_momentum": 104.68,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 111.63,
-          "rs_momentum": 107.69
-        },
-        {
-          "rs_ratio": 108.94,
+          "rs_ratio": 108.98,
           "rs_momentum": 108.74
         },
         {
-          "rs_ratio": 108.9,
+          "rs_ratio": 108.94,
           "rs_momentum": 108.05
         },
         {
-          "rs_ratio": 107.06,
-          "rs_momentum": 107.9
+          "rs_ratio": 107.12,
+          "rs_momentum": 107.92
         },
         {
-          "rs_ratio": 104.87,
-          "rs_momentum": 105.01
+          "rs_ratio": 104.96,
+          "rs_momentum": 105.06
+        },
+        {
+          "rs_ratio": 105.1,
+          "rs_momentum": 104.68
         }
       ]
     },
@@ -2098,9 +2470,9 @@
       "pattern_fit": null,
       "parent_gics": "XLF",
       "parent_grade": "TURNING",
-      "roc20": -4.81,
-      "roc5": -3.29,
-      "divergence": 1.52,
+      "roc20": -4.55,
+      "roc5": -2.38,
+      "divergence": 2.17,
       "above_sma20": false,
       "coverage": "10/10",
       "constituents_used": [
@@ -2115,15 +2487,11 @@
         "RF",
         "WFC"
       ],
-      "rrg_rs_ratio": 95.42,
-      "rrg_rs_momentum": 99.23,
+      "rrg_rs_ratio": 96.11,
+      "rrg_rs_momentum": 99.86,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
-        {
-          "rs_ratio": 99.26,
-          "rs_momentum": 100.16
-        },
         {
           "rs_ratio": 99.12,
           "rs_momentum": 100.37
@@ -2133,12 +2501,16 @@
           "rs_momentum": 100.75
         },
         {
-          "rs_ratio": 96.99,
+          "rs_ratio": 97.0,
           "rs_momentum": 101.63
         },
         {
           "rs_ratio": 95.42,
-          "rs_momentum": 99.23
+          "rs_momentum": 99.24
+        },
+        {
+          "rs_ratio": 96.11,
+          "rs_momentum": 99.86
         }
       ]
     },
@@ -2147,19 +2519,19 @@
       "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
       "grade_path": "below_sma_recovering",
-      "breadth_pct": 22.2,
-      "breadth_note": "2/9 above own 20D SMA",
-      "pattern": "DOUBLE_BOTTOM",
-      "pattern_direction": "BULLISH",
-      "pattern_stage": "BASE",
-      "pattern_trigger": 1.15,
-      "pattern_days": 68,
-      "pattern_fit": 0.582,
+      "breadth_pct": 0.0,
+      "breadth_note": "0/9 above own 20D SMA",
+      "pattern": null,
+      "pattern_direction": null,
+      "pattern_stage": null,
+      "pattern_trigger": null,
+      "pattern_days": null,
+      "pattern_fit": null,
       "parent_gics": "XLF",
       "parent_grade": "TURNING",
-      "roc20": -5.46,
-      "roc5": -3.71,
-      "divergence": 1.75,
+      "roc20": -6.9,
+      "roc5": -5.78,
+      "divergence": 1.12,
       "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
@@ -2173,52 +2545,52 @@
         "KEEL",
         "SOFI"
       ],
-      "rrg_rs_ratio": 95.86,
-      "rrg_rs_momentum": 98.67,
+      "rrg_rs_ratio": 95.13,
+      "rrg_rs_momentum": 96.0,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
         {
+          "rs_ratio": 94.29,
+          "rs_momentum": 95.8
+        },
+        {
+          "rs_ratio": 91.93,
+          "rs_momentum": 96.04
+        },
+        {
+          "rs_ratio": 92.78,
+          "rs_momentum": 94.74
+        },
+        {
+          "rs_ratio": 95.97,
+          "rs_momentum": 98.55
+        },
+        {
           "rs_ratio": 95.13,
-          "rs_momentum": 101.24
-        },
-        {
-          "rs_ratio": 94.1,
-          "rs_momentum": 95.82
-        },
-        {
-          "rs_ratio": 91.7,
-          "rs_momentum": 96.03
-        },
-        {
-          "rs_ratio": 92.6,
-          "rs_momentum": 94.8
-        },
-        {
-          "rs_ratio": 95.86,
-          "rs_momentum": 98.67
+          "rs_momentum": 96.0
         }
       ]
     },
     "Crypto_Digital": {
-      "grade": "DEPLOY",
-      "index_grade": "DEPLOY",
-      "parent_capped_grade": "TURNING",
-      "grade_path": "trend",
-      "breadth_pct": 75.0,
-      "breadth_note": "9/12 above own 20D SMA",
-      "pattern": "FALLING_WEDGE",
-      "pattern_direction": "BULLISH",
-      "pattern_stage": "FORMING",
-      "pattern_trigger": 0.93,
-      "pattern_days": 72,
-      "pattern_fit": 0.817,
+      "grade": "AVOID",
+      "index_grade": "AVOID",
+      "parent_capped_grade": "AVOID",
+      "grade_path": "declining",
+      "breadth_pct": 50.0,
+      "breadth_note": "6/12 above own 20D SMA",
+      "pattern": null,
+      "pattern_direction": null,
+      "pattern_stage": null,
+      "pattern_trigger": null,
+      "pattern_days": null,
+      "pattern_fit": null,
       "parent_gics": "XLF",
       "parent_grade": "TURNING",
-      "roc20": 9.73,
-      "roc5": -3.47,
-      "divergence": -13.2,
-      "above_sma20": true,
+      "roc20": 1.88,
+      "roc5": -10.18,
+      "divergence": -12.06,
+      "above_sma20": false,
       "coverage": "12/12",
       "constituents_used": [
         "MSTR",
@@ -2234,30 +2606,30 @@
         "CORZ",
         "WULF"
       ],
-      "rrg_rs_ratio": 102.78,
-      "rrg_rs_momentum": 110.55,
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "DEEPENING",
+      "rrg_rs_ratio": 99.5,
+      "rrg_rs_momentum": 103.4,
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 97.87,
-          "rs_momentum": 112.58
+          "rs_ratio": 99.36,
+          "rs_momentum": 104.12
         },
         {
-          "rs_ratio": 99.08,
-          "rs_momentum": 104.22
+          "rs_ratio": 95.65,
+          "rs_momentum": 104.13
         },
         {
-          "rs_ratio": 95.4,
-          "rs_momentum": 104.18
+          "rs_ratio": 96.69,
+          "rs_momentum": 103.16
         },
         {
-          "rs_ratio": 96.49,
-          "rs_momentum": 103.28
+          "rs_ratio": 103.05,
+          "rs_momentum": 110.51
         },
         {
-          "rs_ratio": 102.78,
-          "rs_momentum": 110.55
+          "rs_ratio": 99.5,
+          "rs_momentum": 103.4
         }
       ]
     },
@@ -2266,8 +2638,8 @@
       "index_grade": "HOLD",
       "parent_capped_grade": "TURNING",
       "grade_path": "trend",
-      "breadth_pct": 90.0,
-      "breadth_note": "9/10 above own 20D SMA",
+      "breadth_pct": 60.0,
+      "breadth_note": "6/10 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -2276,9 +2648,9 @@
       "pattern_fit": null,
       "parent_gics": "XLF",
       "parent_grade": "TURNING",
-      "roc20": 0.25,
-      "roc5": 0.49,
-      "divergence": 0.24,
+      "roc20": 1.17,
+      "roc5": 1.59,
+      "divergence": 0.42,
       "above_sma20": true,
       "coverage": "10/10",
       "constituents_used": [
@@ -2293,30 +2665,30 @@
         "CB",
         "AIG"
       ],
-      "rrg_rs_ratio": 102.64,
-      "rrg_rs_momentum": 102.86,
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "DEEPENING",
+      "rrg_rs_ratio": 99.4,
+      "rrg_rs_momentum": 103.33,
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 100.42,
-          "rs_momentum": 98.85
+          "rs_ratio": 98.57,
+          "rs_momentum": 100.54
         },
         {
-          "rs_ratio": 98.58,
-          "rs_momentum": 100.55
+          "rs_ratio": 101.12,
+          "rs_momentum": 100.68
         },
         {
-          "rs_ratio": 101.13,
-          "rs_momentum": 100.69
+          "rs_ratio": 103.25,
+          "rs_momentum": 101.88
         },
         {
-          "rs_ratio": 103.24,
-          "rs_momentum": 101.89
-        },
-        {
-          "rs_ratio": 102.64,
+          "rs_ratio": 102.67,
           "rs_momentum": 102.86
+        },
+        {
+          "rs_ratio": 99.4,
+          "rs_momentum": 103.33
         }
       ]
     },
@@ -2325,19 +2697,19 @@
       "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
       "grade_path": "below_sma_recovering",
-      "breadth_pct": 25.0,
-      "breadth_note": "2/8 above own 20D SMA",
+      "breadth_pct": 12.5,
+      "breadth_note": "1/8 above own 20D SMA",
       "pattern": "RISING_WEDGE",
       "pattern_direction": "BEARISH",
       "pattern_stage": "TRIGGERED",
-      "pattern_trigger": 1.1,
-      "pattern_days": 72,
+      "pattern_trigger": 1.09,
+      "pattern_days": 73,
       "pattern_fit": 0.856,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -4.27,
-      "roc5": -2.19,
-      "divergence": 2.08,
+      "roc20": -3.5,
+      "roc5": -0.38,
+      "divergence": 3.11,
       "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
@@ -2351,30 +2723,30 @@
         "FISV",
         "FOUR"
       ],
-      "rrg_rs_ratio": 96.2,
-      "rrg_rs_momentum": 99.11,
+      "rrg_rs_ratio": 95.93,
+      "rrg_rs_momentum": 98.94,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 100.41,
-          "rs_momentum": 93.02
+          "rs_ratio": 97.17,
+          "rs_momentum": 92.05
         },
         {
-          "rs_ratio": 97.13,
-          "rs_momentum": 92.04
+          "rs_ratio": 100.01,
+          "rs_momentum": 94.34
         },
         {
-          "rs_ratio": 99.98,
-          "rs_momentum": 94.35
+          "rs_ratio": 97.85,
+          "rs_momentum": 96.53
         },
         {
-          "rs_ratio": 97.84,
-          "rs_momentum": 96.55
+          "rs_ratio": 96.21,
+          "rs_momentum": 99.1
         },
         {
-          "rs_ratio": 96.2,
-          "rs_momentum": 99.11
+          "rs_ratio": 95.93,
+          "rs_momentum": 98.94
         }
       ]
     },
@@ -2383,8 +2755,8 @@
       "index_grade": "HOLD",
       "parent_capped_grade": "HOLD",
       "grade_path": "trend",
-      "breadth_pct": 76.9,
-      "breadth_note": "10/13 above own 20D SMA",
+      "breadth_pct": 53.8,
+      "breadth_note": "7/13 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -2393,9 +2765,9 @@
       "pattern_fit": null,
       "parent_gics": "XLC",
       "parent_grade": "HOLD",
-      "roc20": 2.47,
-      "roc5": 3.44,
-      "divergence": 0.97,
+      "roc20": 2.65,
+      "roc5": 3.1,
+      "divergence": 0.45,
       "above_sma20": true,
       "coverage": "13/13",
       "constituents_used": [
@@ -2413,30 +2785,30 @@
         "RBLX",
         "NFLX"
       ],
-      "rrg_rs_ratio": 107.1,
-      "rrg_rs_momentum": 103.21,
+      "rrg_rs_ratio": 107.58,
+      "rrg_rs_momentum": 103.48,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 101.42,
-          "rs_momentum": 96.52
+          "rs_ratio": 99.18,
+          "rs_momentum": 93.66
         },
         {
-          "rs_ratio": 99.17,
-          "rs_momentum": 93.55
+          "rs_ratio": 101.59,
+          "rs_momentum": 97.75
         },
         {
-          "rs_ratio": 101.57,
-          "rs_momentum": 97.64
-        },
-        {
-          "rs_ratio": 101.62,
-          "rs_momentum": 100.1
+          "rs_ratio": 101.69,
+          "rs_momentum": 100.26
         },
         {
           "rs_ratio": 107.1,
-          "rs_momentum": 103.21
+          "rs_momentum": 103.29
+        },
+        {
+          "rs_ratio": 107.58,
+          "rs_momentum": 103.48
         }
       ]
     },
@@ -2455,9 +2827,9 @@
       "pattern_fit": null,
       "parent_gics": "XLY",
       "parent_grade": "TURNING",
-      "roc20": -3.74,
-      "roc5": -1.46,
-      "divergence": 2.28,
+      "roc20": -4.88,
+      "roc5": -2.39,
+      "divergence": 2.5,
       "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
@@ -2471,30 +2843,30 @@
         "JD",
         "BIDU"
       ],
-      "rrg_rs_ratio": 98.03,
-      "rrg_rs_momentum": 96.79,
+      "rrg_rs_ratio": 96.26,
+      "rrg_rs_momentum": 96.73,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 97.77,
-          "rs_momentum": 95.28
+          "rs_ratio": 96.44,
+          "rs_momentum": 93.22
         },
         {
-          "rs_ratio": 96.57,
-          "rs_momentum": 93.21
+          "rs_ratio": 95.78,
+          "rs_momentum": 94.72
         },
         {
-          "rs_ratio": 95.88,
-          "rs_momentum": 94.7
+          "rs_ratio": 94.61,
+          "rs_momentum": 95.33
         },
         {
-          "rs_ratio": 94.68,
-          "rs_momentum": 95.3
+          "rs_ratio": 97.92,
+          "rs_momentum": 96.8
         },
         {
-          "rs_ratio": 98.03,
-          "rs_momentum": 96.79
+          "rs_ratio": 96.26,
+          "rs_momentum": 96.73
         }
       ]
     },
@@ -2503,8 +2875,8 @@
       "index_grade": "TURNING",
       "parent_capped_grade": "TURNING",
       "grade_path": "below_sma_recovering",
-      "breadth_pct": 16.7,
-      "breadth_note": "2/12 above own 20D SMA",
+      "breadth_pct": 8.3,
+      "breadth_note": "1/12 above own 20D SMA",
       "pattern": null,
       "pattern_direction": null,
       "pattern_stage": null,
@@ -2513,9 +2885,9 @@
       "pattern_fit": null,
       "parent_gics": "XLY",
       "parent_grade": "TURNING",
-      "roc20": -11.76,
-      "roc5": -2.01,
-      "divergence": 9.75,
+      "roc20": -11.3,
+      "roc5": -1.95,
+      "divergence": 9.35,
       "above_sma20": false,
       "coverage": "12/12",
       "constituents_used": [
@@ -2532,30 +2904,30 @@
         "BIRK",
         "DKNG"
       ],
-      "rrg_rs_ratio": 86.4,
-      "rrg_rs_momentum": 96.65,
+      "rrg_rs_ratio": 86.46,
+      "rrg_rs_momentum": 97.96,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "STABLE",
+      "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 85.78,
-          "rs_momentum": 93.92
+          "rs_ratio": 85.7,
+          "rs_momentum": 92.74
         },
         {
-          "rs_ratio": 85.46,
-          "rs_momentum": 92.71
+          "rs_ratio": 86.91,
+          "rs_momentum": 93.82
         },
         {
-          "rs_ratio": 86.64,
-          "rs_momentum": 93.72
+          "rs_ratio": 87.1,
+          "rs_momentum": 96.48
         },
         {
-          "rs_ratio": 86.87,
-          "rs_momentum": 96.39
+          "rs_ratio": 86.69,
+          "rs_momentum": 96.77
         },
         {
-          "rs_ratio": 86.4,
-          "rs_momentum": 96.65
+          "rs_ratio": 86.46,
+          "rs_momentum": 97.96
         }
       ]
     },
@@ -2574,9 +2946,9 @@
       "pattern_fit": null,
       "parent_gics": "XLY",
       "parent_grade": "TURNING",
-      "roc20": -9.44,
-      "roc5": -4.24,
-      "divergence": 5.2,
+      "roc20": -8.34,
+      "roc5": -1.21,
+      "divergence": 7.13,
       "above_sma20": false,
       "coverage": "8/8",
       "constituents_used": [
@@ -2589,30 +2961,30 @@
         "MAS",
         "TREX"
       ],
-      "rrg_rs_ratio": 86.35,
-      "rrg_rs_momentum": 94.01,
+      "rrg_rs_ratio": 88.13,
+      "rrg_rs_momentum": 96.13,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 88.96,
-          "rs_momentum": 92.52
+          "rs_ratio": 89.56,
+          "rs_momentum": 91.83
         },
         {
-          "rs_ratio": 89.62,
-          "rs_momentum": 91.84
-        },
-        {
-          "rs_ratio": 87.28,
+          "rs_ratio": 87.21,
           "rs_momentum": 90.39
         },
         {
-          "rs_ratio": 88.34,
+          "rs_ratio": 88.27,
           "rs_momentum": 94.27
         },
         {
-          "rs_ratio": 86.35,
+          "rs_ratio": 86.29,
           "rs_momentum": 94.01
+        },
+        {
+          "rs_ratio": 88.13,
+          "rs_momentum": 96.13
         }
       ]
     },
@@ -2627,13 +2999,13 @@
       "pattern_direction": "BEARISH",
       "pattern_stage": "TRIGGERED",
       "pattern_trigger": 1.35,
-      "pattern_days": 71,
-      "pattern_fit": 0.991,
+      "pattern_days": 72,
+      "pattern_fit": 0.99,
       "parent_gics": "XLV",
       "parent_grade": "AVOID",
-      "roc20": 15.55,
-      "roc5": -2.71,
-      "divergence": -18.25,
+      "roc20": 13.88,
+      "roc5": 0.01,
+      "divergence": -13.87,
       "above_sma20": false,
       "coverage": "10/10",
       "constituents_used": [
@@ -2648,30 +3020,30 @@
         "LLY",
         "PFE"
       ],
-      "rrg_rs_ratio": 119.15,
-      "rrg_rs_momentum": 100.48,
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "ENTERING",
+      "rrg_rs_ratio": 118.43,
+      "rrg_rs_momentum": 99.22,
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "DEEPENING",
       "rrg_history": [
         {
-          "rs_ratio": 119.35,
-          "rs_momentum": 96.26
+          "rs_ratio": 117.54,
+          "rs_momentum": 92.71
         },
         {
-          "rs_ratio": 117.21,
-          "rs_momentum": 92.74
-        },
-        {
-          "rs_ratio": 120.56,
+          "rs_ratio": 120.88,
           "rs_momentum": 95.26
         },
         {
-          "rs_ratio": 119.66,
-          "rs_momentum": 97.47
+          "rs_ratio": 120.01,
+          "rs_momentum": 97.51
         },
         {
-          "rs_ratio": 119.15,
-          "rs_momentum": 100.48
+          "rs_ratio": 119.54,
+          "rs_momentum": 100.55
+        },
+        {
+          "rs_ratio": 118.43,
+          "rs_momentum": 99.22
         }
       ]
     },
@@ -2690,9 +3062,9 @@
       "pattern_fit": null,
       "parent_gics": "XLV",
       "parent_grade": "AVOID",
-      "roc20": -7.66,
-      "roc5": -3.21,
-      "divergence": 4.45,
+      "roc20": -6.29,
+      "roc5": 0.66,
+      "divergence": 6.95,
       "above_sma20": false,
       "coverage": "10/10",
       "constituents_used": [
@@ -2707,30 +3079,30 @@
         "ALGN",
         "ZBH"
       ],
-      "rrg_rs_ratio": 97.83,
-      "rrg_rs_momentum": 96.22,
+      "rrg_rs_ratio": 99.62,
+      "rrg_rs_momentum": 96.15,
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING",
+      "rrg_direction": "EXITING",
       "rrg_history": [
         {
-          "rs_ratio": 97.43,
-          "rs_momentum": 92.83
+          "rs_ratio": 96.5,
+          "rs_momentum": 93.7
         },
         {
-          "rs_ratio": 96.57,
-          "rs_momentum": 93.73
+          "rs_ratio": 100.4,
+          "rs_momentum": 93.84
         },
         {
-          "rs_ratio": 100.45,
-          "rs_momentum": 93.87
+          "rs_ratio": 99.46,
+          "rs_momentum": 94.78
         },
         {
-          "rs_ratio": 99.51,
-          "rs_momentum": 94.79
+          "rs_ratio": 97.78,
+          "rs_momentum": 96.2
         },
         {
-          "rs_ratio": 97.83,
-          "rs_momentum": 96.22
+          "rs_ratio": 99.62,
+          "rs_momentum": 96.15
         }
       ]
     },
@@ -2749,9 +3121,9 @@
       "pattern_fit": null,
       "parent_gics": "XLRE",
       "parent_grade": "TURNING",
-      "roc20": -3.75,
-      "roc5": -1.64,
-      "divergence": 2.11,
+      "roc20": -2.72,
+      "roc5": -1.83,
+      "divergence": 0.88,
       "above_sma20": false,
       "coverage": "14/14",
       "constituents_used": [
@@ -2770,30 +3142,30 @@
         "SBAC",
         "OHI"
       ],
-      "rrg_rs_ratio": 94.21,
-      "rrg_rs_momentum": 98.49,
+      "rrg_rs_ratio": 93.58,
+      "rrg_rs_momentum": 98.94,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "STABLE",
       "rrg_history": [
         {
-          "rs_ratio": 97.79,
-          "rs_momentum": 97.09
+          "rs_ratio": 96.24,
+          "rs_momentum": 97.14
         },
         {
-          "rs_ratio": 96.31,
-          "rs_momentum": 97.19
+          "rs_ratio": 96.11,
+          "rs_momentum": 96.99
         },
         {
-          "rs_ratio": 96.18,
-          "rs_momentum": 97.04
+          "rs_ratio": 97.04,
+          "rs_momentum": 98.79
         },
         {
-          "rs_ratio": 97.11,
-          "rs_momentum": 98.84
+          "rs_ratio": 94.14,
+          "rs_momentum": 98.45
         },
         {
-          "rs_ratio": 94.21,
-          "rs_momentum": 98.49
+          "rs_ratio": 93.58,
+          "rs_momentum": 98.94
         }
       ]
     },
@@ -2807,14 +3179,14 @@
       "pattern": "DOUBLE_BOTTOM",
       "pattern_direction": "BULLISH",
       "pattern_stage": "BASE",
-      "pattern_trigger": 1.03,
-      "pattern_days": 55,
-      "pattern_fit": 0.545,
+      "pattern_trigger": 1.02,
+      "pattern_days": 56,
+      "pattern_fit": 0.572,
       "parent_gics": "XLC",
       "parent_grade": "HOLD",
-      "roc20": 0.26,
-      "roc5": 2.16,
-      "divergence": 1.9,
+      "roc20": 1.77,
+      "roc5": 3.27,
+      "divergence": 1.5,
       "above_sma20": true,
       "coverage": "8/8",
       "constituents_used": [
@@ -2827,60 +3199,60 @@
         "APP",
         "GOOG"
       ],
-      "rrg_rs_ratio": 95.59,
-      "rrg_rs_momentum": 102.05,
+      "rrg_rs_ratio": 95.83,
+      "rrg_rs_momentum": 103.41,
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
         {
-          "rs_ratio": 88.84,
-          "rs_momentum": 96.8
+          "rs_ratio": 87.05,
+          "rs_momentum": 91.14
         },
         {
-          "rs_ratio": 87.3,
-          "rs_momentum": 90.9
+          "rs_ratio": 89.08,
+          "rs_momentum": 96.68
         },
         {
-          "rs_ratio": 89.31,
-          "rs_momentum": 96.48
+          "rs_ratio": 88.21,
+          "rs_momentum": 98.05
         },
         {
-          "rs_ratio": 88.42,
-          "rs_momentum": 97.79
+          "rs_ratio": 95.27,
+          "rs_momentum": 102.18
         },
         {
-          "rs_ratio": 95.59,
-          "rs_momentum": 102.05
+          "rs_ratio": 95.83,
+          "rs_momentum": 103.41
         }
       ]
     }
   },
   "macro_weather": {
     "tlt_direction": "FALLING",
-    "tlt_roc5": -1.56,
+    "tlt_roc5": -1.81,
     "uup_direction": "RISING",
-    "uup_roc5": 0.32,
+    "uup_roc5": 0.82,
     "hyg_direction": "FALLING",
-    "hyg_roc5": -0.8,
+    "hyg_roc5": -0.94,
     "iwm_direction": "FALLING",
-    "iwm_roc5": -2.74,
+    "iwm_roc5": -3.23,
     "gld_direction": "FALLING",
-    "gld_roc5": -3.42,
+    "gld_roc5": -1.39,
     "cper_direction": "FALLING",
-    "cper_roc5": -4.23,
+    "cper_roc5": -4.68,
     "uso_direction": "RISING",
-    "uso_roc5": 10.36,
+    "uso_roc5": 10.84,
     "copper_gold_direction": "FALLING",
-    "copper_gold_roc5": -0.83,
-    "copper_gold_roc20": -2.27,
+    "copper_gold_roc5": -3.34,
+    "copper_gold_roc20": -0.87,
     "regime_description": "Rising rates, dollar bid, credit softening, narrow tape, gold soft, copper weak (slowing), oil rising (inflation), copper/gold deflation tilt (risk-off).",
-    "snapshot_date": "2026-09-15"
+    "snapshot_date": "2026-09-16"
   },
   "meta": {
-    "total_universe": 670,
-    "passed_pipeline_rank": 2,
-    "on_shortlist": 2,
-    "precision_edge_count": 1,
-    "recipe_match_count": 3
+    "total_universe": 664,
+    "passed_pipeline_rank": 1,
+    "on_shortlist": 1,
+    "precision_edge_count": 4,
+    "recipe_match_count": 11
   }
 }
