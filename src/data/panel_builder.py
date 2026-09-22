@@ -76,6 +76,13 @@ def build_panel(history_years: int | None = None) -> None:
             _seen.add(_etf)
             _extra_etfs.append(_etf)
 
+    # Always pull QQQ — VALEN Dashboard's market-trend read (src/valen/trend.py)
+    # needs SPY AND QQQ on the same panel every engine already reads from, so
+    # it never disagrees with the rest of AQE about what "today's close" was.
+    if "QQQ" not in _seen:
+        tickers.append("QQQ")
+        _seen.add("QQQ")
+
     # Always pull thematic-basket constituents for SECTOR grading context. Like
     # the GICS ETFs, they're graded (grade_thematic_baskets) but NOT screened —
     # basket membership is a context layer and must not add names to the scan
@@ -108,8 +115,8 @@ def build_panel(history_years: int | None = None) -> None:
         pass
 
     # Prioritize critical tickers so they get pulled before any quota cap:
-    # 1) SPY (benchmark), 2) GICS sector ETFs (SRM), 3) everything else.
-    priority = {BENCHMARK} | set(_GICS_ETFS)
+    # 1) SPY (benchmark) + QQQ, 2) GICS sector ETFs (SRM), 3) everything else.
+    priority = {BENCHMARK, "QQQ"} | set(_GICS_ETFS)
     tickers = sorted(tickers, key=lambda t: (0 if t in priority else 1, t))
 
     # Break the count down. The pull is ALWAYS larger than the scan universe —

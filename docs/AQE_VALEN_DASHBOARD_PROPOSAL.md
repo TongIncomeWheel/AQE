@@ -1,6 +1,9 @@
 # VALEN Dashboard — proposal
 
-**Status:** DRAFT, awaiting PM sign-off. Nothing in here is built yet.
+**Status:** Phase 1 SHIPPED (2026-09-22) — `src/valen/`, Step 6i of the daily
+pipeline, the 🧭 VALEN Dashboard page, live market-hours refresh, and
+`tests/test_valen.py`. Phases 2/3 (whole-market breadth, Theme Leaders,
+Rotation, the no-buy list) remain DRAFT pending the PM decisions in §9.
 **Source:** *The VIV System — 21 Building Blocks to Profitability*, v1.3, September 2026 (the
 handbook), cross-checked against the web edition at `valensontrades.com/playbook`, which states
 several thresholds the PDF leaves implicit.
@@ -372,17 +375,26 @@ because it is cheap and it is the piece that most directly prevents losses.
 
 ## 7. Phasing
 
-**Phase 1 — the card.** Trend rows (needs QQQ + 20-week SMA), extension strip (VIX/VIX3M is free
-from Crown), stance, `explain.py`, the page, the artifact. Breadth rows render as `UNAVAILABLE`
-until Phase 2 — honestly absent rather than quietly wrong.
+**Phase 1 — the card. SHIPPED 2026-09-22.** Trend rows (SPY/QQQ, daily 10/20 + weekly 10/20 +
+rising-5d — `src/valen/trend.py`), extension strip (VIX/VIX3M reused from `crown.vol`, SPY/QQQ
+ATR-multiple-from-50-day — `src/valen/extension.py`), stance (`src/valen/stance.py`), `explain.py`,
+the page (`src/ui/pages/7_VALEN_Dashboard.py`), the artifact (Step 6i,
+`output/aqe_valen_dashboard.json`), and click-to-refresh live market-hours data
+(`src/valen/live.py`). Breadth rows render as `UNAVAILABLE` and the one-word `stance` is
+correspondingly `DEGRADED` until Phase 2 — honestly absent rather than quietly wrong; trend and
+extension render regardless. `tests/test_valen.py` covers the math, the DEGRADED-without-breadth
+behaviour, the stance flip rules (ready for Phase 2 to exercise for real), the jargon prohibition,
+and card.py's artifact-only blindness rule.
 
-**Phase 2 — breadth and groups.** The ma_scanner widening and the four instruments, the six-row
-checklist, Theme Leaders, the Rotation table, and the `in_theme` flag on `daily_list`.
+**Phase 2 — breadth and groups.** The ma_scanner widening and the four whole-market instruments,
+the six-row checklist, Theme Leaders, the Rotation table, and the `in_theme` flag on `daily_list`.
+Needs the PM call in §9.1 first.
 
 **Phase 3 — the no-buy list** as a per-row checklist over fields that already exist.
 
-Phase 1 is genuinely useful alone: stance + trend + extension + the rotation read answers "how hard
-do I push, and where" without a single new data source beyond QQQ.
+Phase 1 alone answers "how hard do I push" (stance — once Phase 2 unblocks it) and "is the tape
+extended" (trend + extension) without a single new data source beyond QQQ. The neighbourhood read
+(where the money is going) is Phase 2 — it needs the group ranking this proposal scoped there.
 
 ---
 

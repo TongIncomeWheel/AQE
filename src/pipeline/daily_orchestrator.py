@@ -416,6 +416,20 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] Crown reading copy failed: {exc}")
 
+    # Step 6i: VALEN Dashboard — VIV System Part 1 (Weather) + rotation,
+    # ported into AQE's own idiom. Wrapped like Crown/QS: an ADDITION to a
+    # working real-money pipeline, never allowed to take the export down.
+    # See docs/AQE_VALEN_DASHBOARD_PROPOSAL.md.
+    print(f"{_el()} [daily] Step 6i: VALEN Dashboard...")
+    try:
+        from src.valen.daily import run_valen, write_artifacts as _valen_write
+        _vl = run_valen()
+        _vl_paths = _valen_write(_vl)
+        print(f"  status {_vl['status']} · regime {_vl['trend'].get('regime')} · "
+              f"{_vl_paths['published']}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] VALEN Dashboard failed: {exc}")
+
     # Step 7: Output
     print("[daily] Step 7: Output...")
     output = _build_output(run_date, regime, sector_grades, shortlist, recipe_matches,
