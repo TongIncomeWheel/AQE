@@ -1125,6 +1125,12 @@ SCORE_TREE = [
       "2026-08-05 — the only volume-participation field on the row)",
       "src/data/drive_sync.py:840-843",
       "volume[-1] / mean(volume[-21:-1])"),
+    R("last_close", "", "leaf", "usd", "",
+      "Most recent daily close — the raw reference price every engine/"
+      "indicator on the row is computed from, distinct from entry/bracket "
+      "levels",
+      "src/data/drive_sync.py:panel_daily.parquet close, _compute_v21_lookups",
+      "close[-1]"),
     R("atr_14d", "", "leaf", "usd", "",
       "14-day Average True Range, absolute price units",
       "src/data/drive_sync.py:1130", "Wilder ATR(14)"),

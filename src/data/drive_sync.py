@@ -528,6 +528,9 @@ _FIELD_GLOSSARY = {
                "the row — there is deliberately no second one under another name. "
                "Charter docs, archived exports and voice menus written before the "
                "rename say `rvol`; they mean this field.",
+    "last_close": "The most recent daily close from panel_daily.parquet (the same "
+                  "bar every engine/indicator on the row is computed from) — the "
+                  "raw reference price, separate from entry/bracket levels.",
 }
 _FIELD_GLOSSARY.update(LENS_GLOSSARY)
 
@@ -957,6 +960,7 @@ def _compute_v21_lookups(sm: dict) -> dict:
     """
     out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
            "vol30": {}, "beta252": {}, "pattern": {}, "candle": {},
+           "last_close": {},
            "spy_roc_20d": None, "spy_ret_63d": None,
            # 2026-09-05 voice packet spec additions (docs/specs/
            # aqe_voice_packet_spec_2026-09-05.md §2): 52-week range, 6/12-month
@@ -1012,6 +1016,8 @@ def _compute_v21_lookups(sm: dict) -> dict:
         for tk, g in p.groupby("ticker", sort=False):
             cl = g["close"].to_numpy(dtype=float)
             vol = g["volume"].to_numpy(dtype=float)
+            if len(cl):
+                out["last_close"][tk] = round(float(cl[-1]), 2)
             # vol_30d_ann = std of daily log returns over last 30 sessions, annualised
             if len(cl) >= 31:
                 logret = np.diff(np.log(cl[-31:]))
@@ -1263,7 +1269,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "sector_trend_state": None,
         "sector_rrg_quadrant": None, "sector_rrg_direction": None,
         "thematic_rrg_quadrant": None, "thematic_rrg_direction": None,
-        "day_vol": None, "rs_spy_20d": None, "sma_distance_pct": None,
+        "day_vol": None, "last_close": None, "rs_spy_20d": None, "sma_distance_pct": None,
         "ma_20": None, "ma_40": None, "ma_50": None, "ma_100": None,
         "ma_150": None, "ma_200": None,
         # 2026-09-05 voice packet spec additions (docs/specs/
@@ -1387,6 +1393,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             fields["thematic_rrg_quadrant"] = primary["rrg_quadrant"]
             fields["thematic_rrg_direction"] = primary["rrg_direction"]
         fields["day_vol"] = (lk.get("day_vol") or {}).get(tk)
+        fields["last_close"] = (lk.get("last_close") or {}).get(tk)
         fields.update((lk.get("candle") or {}).get(tk) or {})
         _pat = (lk.get("pattern") or {}).get(tk) or {}
         for _k in ("pattern", "pattern_direction", "pattern_stage",
@@ -2253,6 +2260,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             return {
                 "rank": rank,
                 "ticker": tk,
+                "last_close": None,  # position fixed 3rd; real value set by
+                                      # the _v21_record_fields spread below
                 "sc_momentum": round(wsc, 1),
                 "sc_momentum_raw": round(float(wr.get(raw_col, wsc)), 1),
                 "pipe_rank": round(wpr, 1),
@@ -2584,7 +2593,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                     # population) — the null fields are then honest, not a bug.
                     _d = dsl_all.get(_tk, {})
                     _rec = {
-                        "ticker": _tk, "source": "qs",
+                        "ticker": _tk, "last_close": None, "source": "qs",
                         "pe": _tk in pe_tickers,
                         **_v21_record_fields(_tk, _d, _v21_lk, sm, sector_grades,
                                              regime_level=regime_level),
