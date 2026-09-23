@@ -53,9 +53,8 @@ def _extension_sentence(extension: dict) -> str | None:
                         f"stressed")
     if not bits:
         return None
-    return " ".join(b[0].upper() + b[1:] + "." if not b.endswith(".") else b
-                     for b in [bits[0]]) + (
-        (" " + " ".join(bits[1:]) + ".") if len(bits) > 1 else "")
+    return " ".join((b[0].upper() + b[1:] + ".") if not b.endswith(".") else b
+                     for b in bits)
 
 
 def _watch_for_lines(watch_for: list[dict]) -> list[str]:
