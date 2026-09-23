@@ -59,18 +59,34 @@ jobs:
           # the inherited index first so the exclusion actually takes effect.
           git rm -r --cached . > /dev/null
           git add -A -- ':!aegis'
-          # src/pipeline/voice_packets.py (runs on this same Space) loads these
-          # two files from inside aegis/ at runtime via importlib -- the PM-
-          # ratified packet-slicing rules live there on purpose, not duplicated
-          # into src/, so the Scanner's "Refresh voice packets only" button and
-          # the two can never disagree about what a packet contains (2026-08-25).
-          # The blanket aegis/ exclusion above starved that import on HF
-          # (FileNotFoundError at /app/aegis/.../pma_pipeline.py, 2026-08-26)
-          # even though it's present on GitHub main -- re-add exactly these two,
+          # src/pipeline/voice_packets.py (runs on this same Space) loads
+          # pma_pipeline.py from inside aegis/ at runtime via importlib -- the
+          # PM-ratified packet-slicing rules live there on purpose, not
+          # duplicated into src/, so the Scanner's "Refresh voice packets
+          # only" button and the CLI path can never disagree about what a
+          # packet contains (2026-08-25). The blanket aegis/ exclusion above
+          # starved that import on HF (FileNotFoundError at
+          # /app/aegis/.../pma_pipeline.py, 2026-08-26) even though it's
+          # present on GitHub main -- re-add exactly what's load-bearing,
           # never the rest of aegis/ (still rejected by HF's storage backend).
+          #
+          # 2026-09-15 (D-119) retired the standalone voice_menus.json this
+          # step used to re-add alongside it -- its content moved into a
+          # `menu:` block inside each voice's own aegis/canon/<voice>/
+          # canon.lock.yaml, no single successor file. pma_pipeline.py now
+          # reads menus via load_menus_from_canon() against --canon-dir
+          # (default aegis/canon), so that whole directory is what needs
+          # re-adding now (all canon.lock.yaml/spotcheck.json -- small text,
+          # confirmed no binary content, unlike the rest of aegis/).
+          # Discovered 2026-09-23: this line silently broke EVERY deploy for
+          # over a week (git add -f on a path that no longer existed kills
+          # the whole `set -e` script) with no alert anywhere it would be
+          # seen -- the exact "must be LOUD, never silently empty" failure
+          # mode CLAUDE.md warns about, just in the deploy pipeline instead
+          # of a data fetch.
           git add -f aegis/skills/premarket-analysis/tools/pma_pipeline.py \
-                     aegis/skills/premarket-analysis/contracts/voice_menus.json
-          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded except the two files voice_packets.py needs at runtime — HF storage rejects the rest of aegis/'s binary content)"
+                     aegis/canon
+          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded except pma_pipeline.py + aegis/canon/, which voice_packets.py needs at runtime — HF storage rejects the rest of aegis/'s binary content)"
 
           echo "Pushing ${ORIG_SHA} (aegis/ excluded) to HF Space..."
           ok=0
