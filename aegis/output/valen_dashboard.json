@@ -1,0 +1,112 @@
+{
+  "date": "2026-09-23",
+  "exported_at": "2026-09-23 13:49:54 SGT",
+  "basis": "eod",
+  "trend": {
+    "rows": {
+      "SPY": {
+        "symbol": "SPY",
+        "basis": "eod",
+        "last_price": 773.38,
+        "sma_10": 762.8,
+        "sma_20": 765.19,
+        "daily_buy_signal": false,
+        "weekly_sma_10": 764.02,
+        "weekly_sma_20": 753.98,
+        "weekly_buy_signal": true,
+        "sma_5": 765.04,
+        "above_rising_5d": true
+      },
+      "QQQ": {
+        "symbol": "QQQ",
+        "basis": "eod",
+        "last_price": 747.46,
+        "sma_10": 718.56,
+        "sma_20": 716.69,
+        "daily_buy_signal": true,
+        "weekly_sma_10": 715.89,
+        "weekly_sma_20": 716.54,
+        "weekly_buy_signal": false,
+        "sma_5": 726.4,
+        "above_rising_5d": true
+      }
+    },
+    "regime": "CHOP"
+  },
+  "extension": {
+    "index_atr": {
+      "SPY": {
+        "atr_multiple_from_50d": 1.89,
+        "stretched": false,
+        "formula_basis": "aqe_house"
+      },
+      "QQQ": {
+        "atr_multiple_from_50d": 3.66,
+        "stretched": false,
+        "formula_basis": "aqe_house"
+      }
+    },
+    "vix_vix3m": {
+      "vix": 14.21,
+      "vix3m": 17.61,
+      "ratio": 0.8069,
+      "uncertainty": false,
+      "calm": true,
+      "basis": "eod",
+      "live_vix_ts": null
+    }
+  },
+  "breadth": {
+    "pct_above_40d": {
+      "status": "UNAVAILABLE",
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)",
+      "population_needed": "us_nasdaq_nyse_mcap_gt_1b"
+    },
+    "monthly_risers": {
+      "status": "UNAVAILABLE",
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)",
+      "population_needed": "us_nasdaq_nyse_mcap_gt_1b"
+    },
+    "five_day_count": {
+      "status": "UNAVAILABLE",
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)",
+      "population_needed": "us_nasdaq_nyse_mcap_gt_1b"
+    },
+    "daily_count_green": {
+      "status": "UNAVAILABLE",
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)",
+      "population_needed": "us_nasdaq_nyse_mcap_gt_1b"
+    }
+  },
+  "curated_panel_context": {
+    "status": "OK",
+    "pct_above_20d": 34.3,
+    "n": 836,
+    "n_above": 287,
+    "population": "aqe_curated_universe",
+    "washed_out": false,
+    "overheated": false
+  },
+  "stance": {
+    "stance": null,
+    "status": "DEGRADED",
+    "reason": "whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green",
+    "rules": {},
+    "watch_for": []
+  },
+  "plain_english": {
+    "headline": "SPY's daily, weekly and 5-day trend checks disagree with each other \u2014 that is chop, and chop is where breakouts get sold.",
+    "because": [
+      "SPY's daily, weekly and 5-day trend checks disagree with each other \u2014 that is chop, and chop is where breakouts get sold.",
+      "SPY sits 1.89 ATRs above its 50-day line (not stretched). QQQ sits 3.66 ATRs above its 50-day line (not stretched) VIX/VIX3M is 0.81, below 0.82 \u2014 calm."
+    ],
+    "so_what": null,
+    "watch_for": [],
+    "caveats": [
+      "The one-word stance is not shown: it depends on whole-market breadth (how many stocks are above their 40-day line, how many moved 25%+ this month) that AQE does not yet compute across the full market \u2014 whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+    ],
+    "as_of": "2026-09-23T05:49:54Z",
+    "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
+  },
+  "status": "DEGRADED"
+}
