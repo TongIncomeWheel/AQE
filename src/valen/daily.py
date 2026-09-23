@@ -29,7 +29,7 @@ import pandas as pd
 from src.data.paths import OUTPUT_DIR, PANEL_DAILY, PANEL_WEEKLY
 from src.macro.crown import cboe
 
-from . import card, explain, extension, spec, stance, trend
+from . import card, explain, extension, groups as groups_mod, spec, stance, trend
 
 LOCAL_PATH = OUTPUT_DIR / "valen_dashboard.json"
 PUBLISHED_PATH = OUTPUT_DIR / "aqe_valen_dashboard.json"
@@ -80,8 +80,19 @@ def run_valen() -> dict:
                for k in ("pct_above_40d", "monthly_risers",
                         "five_day_count", "daily_count_green")}
 
+    # The Neighbourhood (pieces 02/03) — where the money is going, and
+    # whether a group is leading from its highs or just bouncing off its
+    # lows. Reuses AQE's 35 thematic baskets; see groups.py module docstring.
+    try:
+        full_panel_ohlc = pd.read_parquet(
+            PANEL_DAILY, columns=["date", "ticker", "open", "high", "low", "close", "volume"])
+        gr = groups_mod.compute_groups(full_panel_ohlc)
+    except Exception as exc:  # noqa: BLE001
+        gr = {"status": "UNAVAILABLE", "reason": str(exc), "groups": [],
+              "theme_leaders": {}, "rotation": []}
+
     st = stance.compute_stance(t, ext, breadth)
-    pe = explain.explain(t, ext, st)
+    pe = explain.explain(t, ext, st, gr)
 
     artifact = {
         "date": _today_sgt(),
@@ -91,6 +102,7 @@ def run_valen() -> dict:
         "extension": ext,
         "breadth": breadth,
         "curated_panel_context": curated_context,
+        "groups": gr,
         "stance": st,
         "plain_english": pe,
         "status": st.get("status", "UNAVAILABLE"),
@@ -112,6 +124,9 @@ def write_artifacts(artifact: dict) -> dict:
         "regime": card.regime_word(artifact),
         "extension": card.extension_rows(artifact),
         "breadth": card.breadth_rows(artifact),
+        "neighbourhood": card.neighbourhood_lines(artifact),
+        "theme_leaders": card.theme_leaders_table(artifact),
+        "rotation": card.rotation_table(artifact),
     }
     PUBLISHED_PATH.write_text(json.dumps(published, indent=2, default=str), encoding="utf-8")
     return {"local": str(LOCAL_PATH), "published": str(PUBLISHED_PATH)}

@@ -57,6 +57,21 @@ def _extension_sentence(extension: dict) -> str | None:
                      for b in bits)
 
 
+def _neighbourhood_sentence(groups: dict) -> str | None:
+    if (groups or {}).get("status") != "OK":
+        return None
+    by_name = {g["name"]: g for g in (groups.get("groups") or [])}
+    tl = groups.get("theme_leaders") or {}
+    week, month = tl.get("one_week") or [], tl.get("one_month") or []
+    both = [by_name[g]["display_name"] for g in week if g in month][:3]
+    if both:
+        return ("Real leadership this week: " + ", ".join(both)
+                + " — strong on both the weekly and monthly read.")
+    if week and week[0] in by_name:
+        return f"This week's strongest group: {by_name[week[0]]['display_name']}."
+    return None
+
+
 def _watch_for_lines(watch_for: list[dict]) -> list[str]:
     out = []
     for row in watch_for:
@@ -69,11 +84,14 @@ def _watch_for_lines(watch_for: list[dict]) -> list[str]:
     return out
 
 
-def explain(trend: dict, extension: dict, stance: dict) -> dict:
+def explain(trend: dict, extension: dict, stance: dict, groups: dict | None = None) -> dict:
     """Returns {headline, because, so_what, watch_for, caveats, as_of, note}
     — same key set as crown/explain.py's plain_english, for one shared
-    rendering idiom across the two macro pages."""
-    because = [s for s in (_trend_sentence(trend), _extension_sentence(extension)) if s]
+    rendering idiom across the two macro pages. `groups` is optional so
+    existing callers (and tests) built before the Neighbourhood piece
+    shipped keep working unchanged."""
+    because = [s for s in (_trend_sentence(trend), _extension_sentence(extension),
+                          _neighbourhood_sentence(groups or {})) if s]
 
     stance_word = _STANCE_WORDS.get(stance.get("stance"))
     caveats: list[str] = []

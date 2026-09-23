@@ -86,6 +86,47 @@ def caveats(valen: dict) -> list[str]:
     return (valen.get("plain_english") or {}).get("caveats") or []
 
 
+def neighbourhood_lines(valen: dict) -> list[str]:
+    """The Neighbourhood column's bullets — piece 02's own reading rules
+    applied to the ranked groups: real leadership (on both the week and
+    month lists), leading from highs vs merely bouncing off lows."""
+    groups = valen.get("groups") or {}
+    if groups.get("status") != "OK":
+        return []
+    by_name = {g["name"]: g for g in (groups.get("groups") or [])}
+    tl = groups.get("theme_leaders") or {}
+    week, month = tl.get("one_week") or [], tl.get("one_month") or []
+    both = [by_name[g]["display_name"] for g in week if g in month][:5]
+    rotation = groups.get("rotation") or []
+    leading = [g["display_name"] for g in rotation
+              if g.get("rotation_state") == "LEADING"][:5]
+    off_floor = [g["display_name"] for g in rotation
+                 if g.get("rotation_state") == "OFF_THE_FLOOR"][:5]
+    lines = []
+    if both:
+        lines.append("On both the week and month lists (real leadership): "
+                     + ", ".join(both))
+    if leading:
+        lines.append("Leading from their own highs, not just bouncing: "
+                     + ", ".join(leading))
+    if off_floor:
+        lines.append("Strong numbers but still well off their highs "
+                     "(a bounce, not leadership yet): " + ", ".join(off_floor))
+    return lines
+
+
+def theme_leaders_table(valen: dict) -> list[dict]:
+    """Every group, ranked three ways at once — Since Open / 1 Week /
+    1 Month. Plain rows; the page builds whatever table it wants from them."""
+    return (valen.get("groups") or {}).get("groups") or []
+
+
+def rotation_table(valen: dict) -> list[dict]:
+    """Same rows, sorted by thrust (this week's push) — the map between
+    the market and the stock, per piece 03."""
+    return (valen.get("groups") or {}).get("rotation") or []
+
+
 def freshness(valen: dict) -> dict:
     return {"as_of": (valen.get("plain_english") or {}).get("as_of"),
             "basis": valen.get("basis", "eod")}

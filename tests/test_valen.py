@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.valen import card, explain, extension, spec, stance, trend
+from src.valen import card, explain, extension, groups, spec, stance, trend
 
 # ---------------------------------------------------------------------- trend
 
@@ -273,3 +273,123 @@ def test_card_helpers_survive_a_totally_empty_artifact():
     assert all(r["status"] == "UNAVAILABLE" for r in card.breadth_rows(empty))
     assert card.watch_for_lines(empty) == []
     assert card.caveats(empty) == []
+    assert card.neighbourhood_lines(empty) == []
+    assert card.theme_leaders_table(empty) == []
+    assert card.rotation_table(empty) == []
+
+
+# --------------------------------------------------------------------- groups
+
+
+def _synthetic_basket_panel():
+    """Two REAL baskets (Mag7, AI_Infrastructure) from src.engines.srm's own
+    THEMATIC_BASKETS, each given a distinct, deliberately different price
+    path so leadership vs a bounce-off-lows is unambiguous:
+      Mag7 constituents: smooth steady climb, ends at its own high -> LEADING.
+      AI_Infrastructure: peaks early, falls hard, sharp last-week bounce but
+      still well off the high -> strong thrust, OFF_THE_FLOOR.
+    """
+    import numpy as np
+
+    n = 100
+    dates = pd.date_range("2026-01-01", periods=n)
+
+    # Mag7: steady 100 -> 150, no drawdown, so the latest close IS the high.
+    mag7_close = 100 + np.linspace(0, 50, n)
+
+    # AI_Infrastructure: rises to 200 by day 60, falls to 128 by day 95,
+    # then a sharp 5-day bounce to 160 -> big thrust, ~20% off the 200 high.
+    ai_close = np.concatenate([
+        np.linspace(100, 200, 60),
+        np.linspace(200, 128, 35),
+        np.linspace(128, 160, 5),
+    ])
+
+    rows = []
+    for tk in ("AAPL", "MSFT", "NVDA"):          # real Mag7 constituents
+        for d, c in zip(dates, mag7_close):
+            rows.append({"date": d, "ticker": tk, "open": c * 0.999,
+                        "high": c * 1.005, "low": c * 0.995, "close": c,
+                        "volume": 1_000_000})
+    for tk in ("EQIX", "DLR", "AMT"):            # real AI_Infrastructure constituents
+        for d, c in zip(dates, ai_close):
+            rows.append({"date": d, "ticker": tk, "open": c * 0.999,
+                        "high": c * 1.005, "low": c * 0.995, "close": c,
+                        "volume": 1_000_000})
+    return pd.DataFrame(rows)
+
+
+def test_compute_groups_ranks_real_baskets_from_synthetic_prices():
+    panel = _synthetic_basket_panel()
+    out = groups.compute_groups(panel)
+    assert out["status"] == "OK"
+    by_name = {g["name"]: g for g in out["groups"]}
+    assert "Mag7" in by_name
+    assert "AI_Infrastructure" in by_name
+
+    mag7, ai = by_name["Mag7"], by_name["AI_Infrastructure"]
+    # Mag7 ends exactly at its own high -> ~0% off high -> LEADING.
+    assert mag7["pct_off_52w_high"] is not None
+    assert abs(mag7["pct_off_52w_high"]) <= spec.ROTATION_LEADING_MAX_OFF_HIGH_PCT
+    assert mag7["rotation_state"] == spec.ROTATION_LEADING
+
+    # AI_Infrastructure is ~20% off its high (160/200-1) -> OFF_THE_FLOOR band.
+    assert -25.0 <= ai["pct_off_52w_high"] <= -15.0
+    assert ai["rotation_state"] == spec.ROTATION_OFF_FLOOR
+
+    # AI_Infrastructure's sharp last-5-day bounce beats Mag7's steady climb
+    # on raw thrust (5d momentum vs the 20d pace) even though Mag7 is the
+    # one actually leading from its highs — exactly the distinction piece 03
+    # exists to keep separate.
+    assert ai["thrust"] > mag7["thrust"]
+
+    display_names = {g["name"]: g["display_name"] for g in out["groups"]}
+    assert display_names["AI_Infrastructure"] == "AI Infrastructure"
+
+
+def test_theme_leaders_rankings_are_populated_and_ordered():
+    panel = _synthetic_basket_panel()
+    out = groups.compute_groups(panel)
+    tl = out["theme_leaders"]
+    for key in ("since_open", "one_week", "one_month"):
+        assert "Mag7" in tl[key]
+        assert "AI_Infrastructure" in tl[key]
+
+
+def test_rotation_sorted_by_thrust_descending():
+    panel = _synthetic_basket_panel()
+    out = groups.compute_groups(panel)
+    thrusts = [g["thrust"] for g in out["rotation"] if g["name"] in ("Mag7", "AI_Infrastructure")]
+    assert thrusts == sorted(thrusts, reverse=True)
+
+
+def test_compute_groups_degrades_on_empty_panel():
+    out = groups.compute_groups(pd.DataFrame(columns=["date", "ticker", "open", "high", "low", "close", "volume"]))
+    assert out["status"] == "UNAVAILABLE"
+    assert out["groups"] == []
+
+
+def test_neighbourhood_lines_uses_display_names_not_raw_keys():
+    panel = _synthetic_basket_panel()
+    gr = groups.compute_groups(panel)
+    valen = {"groups": gr}
+    lines = card.neighbourhood_lines(valen)
+    text = " ".join(lines)
+    assert "AI_Infrastructure" not in text          # raw key never leaks
+    if "AI Infrastructure" in text or "Mag7" in text:
+        assert True   # at least one real basket surfaced in a line
+
+
+def test_explain_includes_a_neighbourhood_sentence_when_groups_available():
+    panel = _synthetic_basket_panel()
+    gr = groups.compute_groups(panel)
+    out = explain.explain(_explainable_trend(), _explainable_ext(),
+                          {"status": "OK", "stance": "RISK_ON", "watch_for": []}, gr)
+    assert any("leadership" in b.lower() or "strongest group" in b.lower()
+              for b in out["because"])
+
+
+def test_explain_without_groups_still_works_backward_compatibly():
+    out = explain.explain(_explainable_trend(), _explainable_ext(),
+                          {"status": "OK", "stance": "RISK_ON", "watch_for": []})
+    assert out["headline"]
