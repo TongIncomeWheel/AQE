@@ -1,0 +1,87 @@
+{
+  "date": "2026-09-23",
+  "exported_at": "2026-09-23 13:49:54 SGT",
+  "basis": "eod",
+  "status": "DEGRADED",
+  "read_me_first": {
+    "headline": "SPY's daily, weekly and 5-day trend checks disagree with each other \u2014 that is chop, and chop is where breakouts get sold.",
+    "because": [
+      "SPY's daily, weekly and 5-day trend checks disagree with each other \u2014 that is chop, and chop is where breakouts get sold.",
+      "SPY sits 1.89 ATRs above its 50-day line (not stretched). QQQ sits 3.66 ATRs above its 50-day line (not stretched) VIX/VIX3M is 0.81, below 0.82 \u2014 calm."
+    ],
+    "so_what": null,
+    "watch_for": [],
+    "caveats": [
+      "The one-word stance is not shown: it depends on whole-market breadth (how many stocks are above their 40-day line, how many moved 25%+ this month) that AQE does not yet compute across the full market \u2014 whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+    ],
+    "as_of": "2026-09-23T05:49:54Z",
+    "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
+  },
+  "stance": {
+    "word": "\u2014",
+    "status": "DEGRADED",
+    "reason": "whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+  },
+  "trend": [
+    {
+      "symbol": "SPY",
+      "last_price": 773.38,
+      "daily_buy_signal": false,
+      "weekly_buy_signal": true,
+      "above_rising_5d": true,
+      "basis": "eod"
+    },
+    {
+      "symbol": "QQQ",
+      "last_price": 747.46,
+      "daily_buy_signal": true,
+      "weekly_buy_signal": false,
+      "above_rising_5d": true,
+      "basis": "eod"
+    }
+  ],
+  "regime": "CHOP",
+  "extension": [
+    {
+      "label": "SPY ATRs above 50-day",
+      "value": 1.89,
+      "flag": false
+    },
+    {
+      "label": "QQQ ATRs above 50-day",
+      "value": 3.66,
+      "flag": false
+    },
+    {
+      "label": "VIX / VIX3M",
+      "value": 0.8069,
+      "flag": false
+    }
+  ],
+  "breadth": [
+    {
+      "label": "Stocks above their 40-day line",
+      "status": "UNAVAILABLE",
+      "value": null,
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)"
+    },
+    {
+      "label": "Monthly big risers (25%+)",
+      "status": "UNAVAILABLE",
+      "value": null,
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)"
+    },
+    {
+      "label": "5-day up/down 4% count",
+      "status": "UNAVAILABLE",
+      "value": null,
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)"
+    },
+    {
+      "label": "Today's count green",
+      "status": "UNAVAILABLE",
+      "value": null,
+      "reason": "whole-market breadth not yet wired \u2014 needs src/scanner/ma_scanner.py widened to a full-tape population (proposal \u00a72.2, \u00a79.1)"
+    }
+  ]
+}
