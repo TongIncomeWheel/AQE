@@ -411,6 +411,8 @@ DAILY_ARTIFACTS = (
     "crown_macro.json",           # Crown runtime record, carries the series
     "macro_scenarios.json",       # the Crown x Macro Weather merge point
     "aqe_macro_pack.json",        # Crown+MacroWeather+SRM+Thematic, one door
+    "aqe_valen_dashboard.json",   # VALEN reading copy, plain English first
+    "valen_dashboard.json",       # VALEN runtime record
     "qs_daily.json",              # QS standalone artifact
     "shortlist.json",
     "held_positions.json",

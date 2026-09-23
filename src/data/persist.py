@@ -80,6 +80,11 @@ def _members() -> list[tuple]:
         # daily export; persisted so a recycle doesn't leave it stale until
         # the next full run.
         "aqe_macro_pack.json",
+        # VALEN Dashboard's read (docs/AQE_VALEN_DASHBOARD_PROPOSAL.md) — same
+        # reason as Crown above: persisted so a recycle doesn't leave the page
+        # without one until the next full run.
+        "aqe_valen_dashboard.json",
+        "valen_dashboard.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]

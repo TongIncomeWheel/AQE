@@ -81,7 +81,8 @@ def status() -> dict:
 # Text artifacts only — the panels are far too big for the contents API and are
 # the reason the snapshot exists at all.
 _SALVAGE = ("aqe_daily_export.json", "aqe_crown_macro.json", "crown_macro.json",
-            "macro_scenarios.json", "qs_daily.json", "held_positions.json")
+            "macro_scenarios.json", "qs_daily.json", "held_positions.json",
+            "aqe_valen_dashboard.json", "valen_dashboard.json")
 
 
 def _salvage_read_only_artifacts() -> dict:
