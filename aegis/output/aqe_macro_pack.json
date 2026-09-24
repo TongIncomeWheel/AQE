@@ -1,6 +1,6 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-09-23T13:51:40+08:00",
+  "generated_at": "2026-09-24T09:08:17+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
   "oldest_leg": "2026-09-22",
@@ -9,18 +9,18 @@
     {
       "name": "XLK",
       "grade": "DEPLOY",
-      "gate": "PASS",
+      "gate": "CAUTION",
       "sector_name": "Technology",
       "rrg_quadrant": "LEADING",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions"
     },
     {
-      "name": "XLC",
-      "grade": "HOLD",
-      "gate": "PASS",
-      "sector_name": "Communication Services",
-      "rrg_quadrant": "LEADING",
+      "name": "XLV",
+      "grade": "TURNING",
+      "gate": "WATCH",
+      "sector_name": "Healthcare",
+      "rrg_quadrant": "IMPROVING",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions"
     },
@@ -36,7 +36,7 @@
     {
       "name": "XLI",
       "grade": "TURNING",
-      "gate": "WATCH",
+      "gate": "BLOCKED",
       "sector_name": "Industrials",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -45,7 +45,7 @@
     {
       "name": "XLY",
       "grade": "TURNING",
-      "gate": "WATCH",
+      "gate": "BLOCKED",
       "sector_name": "Consumer Discretionary",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -54,7 +54,7 @@
     {
       "name": "XLP",
       "grade": "TURNING",
-      "gate": "CAUTION",
+      "gate": "WATCH",
       "sector_name": "Consumer Staples",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -63,7 +63,7 @@
     {
       "name": "XLRE",
       "grade": "TURNING",
-      "gate": "CAUTION",
+      "gate": "BLOCKED",
       "sector_name": "Real Estate",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -72,7 +72,7 @@
     {
       "name": "XLU",
       "grade": "TURNING",
-      "gate": "CAUTION",
+      "gate": "WATCH",
       "sector_name": "Utilities",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -81,18 +81,18 @@
     {
       "name": "XLB",
       "grade": "TURNING",
-      "gate": "WATCH",
+      "gate": "BLOCKED",
       "sector_name": "Materials",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions"
     },
     {
-      "name": "XLV",
+      "name": "XLC",
       "grade": "WATCH",
-      "gate": "WATCH",
-      "sector_name": "Healthcare",
-      "rrg_quadrant": "IMPROVING",
+      "gate": "CAUTION",
+      "sector_name": "Communication Services",
+      "rrg_quadrant": "LEADING",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions"
     },
@@ -101,23 +101,23 @@
       "grade": "AVOID",
       "gate": "BLOCKED",
       "sector_name": "Energy",
-      "rrg_quadrant": "LAGGING",
+      "rrg_quadrant": "WEAKENING",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions"
     }
   ],
   "thematic_read": [
     {
-      "name": "Enterprise_Software",
-      "grade": "AVOID",
+      "name": "Cybersecurity",
+      "grade": "DEPLOY",
       "gate": null,
       "parent_gics": "XLK",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLK)"
     },
     {
-      "name": "Semiconductors",
-      "grade": "DEPLOY",
+      "name": "Enterprise_Software",
+      "grade": "HOLD",
       "gate": null,
       "parent_gics": "XLK",
       "coherence": "UNTESTED",
@@ -132,7 +132,7 @@
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLK)"
     },
     {
-      "name": "Cybersecurity",
+      "name": "Semiconductors",
       "grade": "DEPLOY",
       "gate": null,
       "parent_gics": "XLK",
@@ -140,8 +140,48 @@
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLK)"
     },
     {
-      "name": "Biotech",
+      "name": "Defense_Tech",
+      "grade": "TURNING",
+      "gate": null,
+      "parent_gics": "XLI",
+      "coherence": "UNTESTED",
+      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
+    },
+    {
+      "name": "AI_Infrastructure",
+      "grade": "WATCH",
+      "gate": null,
+      "parent_gics": "XLRE",
+      "coherence": "UNTESTED",
+      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLRE)"
+    },
+    {
+      "name": "Infra_Power",
       "grade": "HOLD",
+      "gate": null,
+      "parent_gics": "XLI",
+      "coherence": "UNTESTED",
+      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
+    },
+    {
+      "name": "MedTech",
+      "grade": "TURNING",
+      "gate": null,
+      "parent_gics": "XLV",
+      "coherence": "UNTESTED",
+      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLV)"
+    },
+    {
+      "name": "Crypto_Digital",
+      "grade": "DEPLOY",
+      "gate": null,
+      "parent_gics": "XLF",
+      "coherence": "UNTESTED",
+      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLF)"
+    },
+    {
+      "name": "Biotech",
+      "grade": "DEPLOY",
       "gate": null,
       "parent_gics": "XLV",
       "coherence": "UNTESTED",
@@ -156,48 +196,8 @@
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLK)"
     },
     {
-      "name": "Crypto_Digital",
-      "grade": "DEPLOY",
-      "gate": null,
-      "parent_gics": "XLF",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLF)"
-    },
-    {
-      "name": "MedTech",
-      "grade": "TURNING",
-      "gate": null,
-      "parent_gics": "XLV",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLV)"
-    },
-    {
-      "name": "Infra_Power",
-      "grade": "HOLD",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
-    },
-    {
-      "name": "Defense_Tech",
-      "grade": "TURNING",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
-    },
-    {
-      "name": "AI_Infrastructure",
-      "grade": "DEPLOY",
-      "gate": null,
-      "parent_gics": "XLRE",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLRE)"
-    },
-    {
       "name": "Social_Media",
-      "grade": "HOLD",
+      "grade": "TURNING",
       "gate": null,
       "parent_gics": "XLC",
       "coherence": "UNTESTED",
@@ -210,22 +210,6 @@
       "parent_gics": "XLK",
       "coherence": "UNTESTED",
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLK)"
-    },
-    {
-      "name": "Transport_Logistics",
-      "grade": "TURNING",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
-    },
-    {
-      "name": "Travel_Leisure",
-      "grade": "TURNING",
-      "gate": null,
-      "parent_gics": "XLY",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLY)"
     },
     {
       "name": "Autonomous_Robotics",
@@ -244,14 +228,6 @@
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLK)"
     },
     {
-      "name": "Space_eVTOL",
-      "grade": "TURNING",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
-    },
-    {
       "name": "Infra_Construction",
       "grade": "TURNING",
       "gate": null,
@@ -260,12 +236,12 @@
       "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
     },
     {
-      "name": "E_Commerce",
+      "name": "Space_eVTOL",
       "grade": "TURNING",
       "gate": null,
-      "parent_gics": "XLY",
+      "parent_gics": "XLI",
       "coherence": "UNTESTED",
-      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLY)"
+      "coherence_reason": "no clear sensitivity read for this sector against the leading scenario's own conditions (inherited from parent sector XLI)"
     }
   ],
   "read_me_first": "A narrow market, calm on the surface but with single stocks moving very differently underneath. Leading scenario: DISPERSION_REGIME. No sector currently has a clear enough macro sensitivity to test against this story.",
@@ -275,27 +251,27 @@
     "because": [
       "A handful of big names are carrying the index — the average stock is falling behind. This has been going on long enough to look tired. Breadth is near the bottom of its 12-month range, which is usually where it turns.",
       "Single stocks are much more volatile than the index, and the gap is still growing. It widened by 2.6 points over the last month and is now wider than 88% of readings in the past two years. Gaps this wide and still growing have come before index falls of 5 to 7 percent. The index itself is quiet, with VIX at 14.2, lower than 96% of the past two years.",
-      "Trend-following funds are mixed across the 18 markets we track, and none is at an extreme — the positioning is not crowded.",
+      "Trend-following funds are mixed across the 18 markets we track, and 3 of those positions are stretched. Crowded trades unwind quickly, so the size guidance is cut.",
       "Big speculators are unusually long gold, copper, corn and 4 others; unusually short natural gas and the long bond (CFTC data to 2026-09-15).",
       "Together, that is a fragile setup, not a confident one: a lot of money is already leaning the same way, so a break past the levels below would force that SAME money to reverse fast, accelerating whatever move already started rather than fading it.",
       "1 warning sign lit: breadth is rolling over toward its own average. A further 10 showed up on individual markets. No single one of these is a reason to sell. They matter when several point the same way as the breadth reading."
     ],
     "so_what": "Buy cheap index downside. Small size — this one is tactical and time-sensitive. Size at 0.50x your normal risk (cut because the trend is crowded).",
     "watch_for": [
-      "If the dollar trades below 99.84 (0.9% away), trend funds start selling.",
-      "If the 2-year trades above 103.30 (1.4% away), trend funds start buying.",
+      "If gold trades below 4,305.14 (0.3% away), trend funds start selling.",
+      "If the dollar trades below 99.84 (1.3% away), trend funds start selling.",
       "Watch for the average stock keeping pace with the index again. That ends the leadership trade and starts the breadth trade."
     ],
     "caveats": [
       "No dealer-positioning read today, so nothing above accounts for option hedging flows."
     ],
-    "as_of": "2026-09-23T13:49:50+08:00",
+    "as_of": "2026-09-24T09:06:16+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
     "leading": "DISPERSION_REGIME",
     "leading_score": 1.0,
-    "runner_up": "REFLATION",
+    "runner_up": "DOLLAR_SQUEEZE",
     "contested": false,
     "reading": "DISPERSION_REGIME is the cleanest fit to the current cross-asset state.",
     "note": "A score is the SHARE OF CONDITIONS MET, not a probability. Nothing here was fitted or backtested and no base rate was measured. The evidence and the missing-conditions lists carry the value; the number only ranks them.",
@@ -310,81 +286,81 @@
           "implied correlation 7.59 (8% pctl)",
           "dispersion ELEVATED (spread 24.87)",
           "VIX 14.21",
-          "CTA sector spread 1.12"
+          "CTA sector spread 1.15"
         ],
         "missing_conditions": [],
         "unavailable": [],
         "can_lead": true
       },
       {
-        "scenario": "REFLATION",
-        "score": 0.4711,
-        "coverage": 1.0,
-        "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
-        "expression": "Cyclicals, financials, small caps, energy. Short duration.",
-        "evidence": [
-          "CPER up (roc5 7.14%, roc20 3.39%)",
-          "COPPER_GOLD up (roc5 5.55%, roc20 10.27%)",
-          "CTA energy bias +0.18",
-          "CTA rates bias -0.62"
-        ],
-        "missing_conditions": [
-          "HYG flat (roc5 0.37%, roc20 -1.29%)",
-          "IWM flat (roc5 0.73%, roc20 -3.61%)",
-          "TLT flat (roc5 1.29%, roc20 -0.98%)"
-        ],
-        "unavailable": [],
-        "can_lead": true
-      },
-      {
         "scenario": "DOLLAR_SQUEEZE",
-        "score": 0.4167,
+        "score": 0.5833,
         "coverage": 1.0,
         "story": "The dollar is the whole story and it is draining everything else — commodities, credit and non-US risk together.",
         "expression": "US large-cap domestic over international and commodities.",
         "evidence": [
-          "UUP up (roc5 0.92%, roc20 1.86%)",
-          "CTA fx bias +0.15"
+          "UUP up (roc5 0.88%, roc20 2.54%)",
+          "HYG down (roc5 -0.41%, roc20 -2.28%)",
+          "CTA fx bias +0.22"
         ],
         "missing_conditions": [
-          "CPER up (roc5 7.14%, roc20 3.39%)",
-          "GLD flat (roc5 1.5%, roc20 -6.24%)",
-          "HYG flat (roc5 0.37%, roc20 -1.29%)"
+          "CPER flat (roc5 5.23%, roc20 -0.37%)",
+          "GLD flat (roc5 0.29%, roc20 -8.22%)"
         ],
         "unavailable": [],
         "can_lead": true
       },
       {
         "scenario": "INFLATION_SHOCK",
-        "score": 0.25,
+        "score": 0.5,
         "coverage": 1.0,
         "story": "Commodity-led repricing. Rates and the dollar rise together, which is the combination that hurts everything at once.",
         "expression": "Real assets, energy, short duration. Multiple compression risk.",
         "evidence": [
-          "UUP up (roc5 0.92%, roc20 1.86%)",
-          "CTA energy bias +0.18"
+          "TLT down (roc5 -0.52%, roc20 -3.61%)",
+          "UUP up (roc5 0.88%, roc20 2.54%)",
+          "CTA energy bias +0.24"
         ],
         "missing_conditions": [
-          "USO flat (roc5 -10.98%, roc20 8.98%)",
-          "GLD flat (roc5 1.5%, roc20 -6.24%)",
-          "TLT flat (roc5 1.29%, roc20 -0.98%)"
+          "USO flat (roc5 -4.7%, roc20 17.98%)",
+          "GLD flat (roc5 0.29%, roc20 -8.22%)"
+        ],
+        "unavailable": [],
+        "can_lead": true
+      },
+      {
+        "scenario": "REFLATION",
+        "score": 0.4779,
+        "coverage": 1.0,
+        "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
+        "expression": "Cyclicals, financials, small caps, energy. Short duration.",
+        "evidence": [
+          "COPPER_GOLD up (roc5 4.93%, roc20 8.56%)",
+          "TLT down (roc5 -0.52%, roc20 -3.61%)",
+          "CTA energy bias +0.24",
+          "CTA rates bias -0.71"
+        ],
+        "missing_conditions": [
+          "CPER flat (roc5 5.23%, roc20 -0.37%)",
+          "HYG down (roc5 -0.41%, roc20 -2.28%)",
+          "IWM down (roc5 -0.7%, roc20 -5.78%)"
         ],
         "unavailable": [],
         "can_lead": true
       },
       {
         "scenario": "LIQUIDITY_STRESS",
-        "score": 0.1875,
+        "score": 0.4375,
         "coverage": 1.0,
         "story": "Flight to quality. The dollar and gold bid together while credit gives way, and CORRELATION rises — everything trades as one thing, which is what makes it a liquidity event rather than a rotation.",
         "expression": "Cut gross. Defined-risk downside. Cash is a position.",
         "evidence": [
-          "UUP up (roc5 0.92%, roc20 1.86%)"
+          "UUP up (roc5 0.88%, roc20 2.54%)",
+          "HYG down (roc5 -0.41%, roc20 -2.28%)"
         ],
         "missing_conditions": [
-          "GLD flat (roc5 1.5%, roc20 -6.24%)",
-          "HYG flat (roc5 0.37%, roc20 -1.29%)",
-          "TLT flat (roc5 1.29%, roc20 -0.98%)",
+          "GLD flat (roc5 0.29%, roc20 -8.22%)",
+          "TLT down (roc5 -0.52%, roc20 -3.61%)",
           "implied correlation at 8% pctl",
           "dispersion ELEVATED"
         ],
@@ -393,18 +369,19 @@
       },
       {
         "scenario": "GROWTH_SCARE",
-        "score": 0.0,
+        "score": 0.3846,
         "coverage": 1.0,
         "story": "Growth decelerating. Credit widens, small caps break, and duration bids as a hedge rather than as a rate call.",
         "expression": "Defensives, quality, long duration. Fade cyclical strength.",
-        "evidence": [],
+        "evidence": [
+          "HYG down (roc5 -0.41%, roc20 -2.28%)",
+          "IWM down (roc5 -0.7%, roc20 -5.78%)"
+        ],
         "missing_conditions": [
-          "CPER up (roc5 7.14%, roc20 3.39%)",
-          "COPPER_GOLD up (roc5 5.55%, roc20 10.27%)",
-          "HYG flat (roc5 0.37%, roc20 -1.29%)",
-          "IWM flat (roc5 0.73%, roc20 -3.61%)",
-          "TLT flat (roc5 1.29%, roc20 -0.98%)",
-          "CTA rates bias -0.62"
+          "CPER flat (roc5 5.23%, roc20 -0.37%)",
+          "COPPER_GOLD up (roc5 4.93%, roc20 8.56%)",
+          "TLT down (roc5 -0.52%, roc20 -3.61%)",
+          "CTA rates bias -0.71"
         ],
         "unavailable": [],
         "can_lead": true
@@ -417,10 +394,10 @@
         "expression": "Long duration equity, small caps, breadth trades.",
         "evidence": [],
         "missing_conditions": [
-          "TLT flat (roc5 1.29%, roc20 -0.98%)",
-          "HYG flat (roc5 0.37%, roc20 -1.29%)",
-          "IWM flat (roc5 0.73%, roc20 -3.61%)",
-          "USO flat (roc5 -10.98%, roc20 8.98%)",
+          "TLT down (roc5 -0.52%, roc20 -3.61%)",
+          "HYG down (roc5 -0.41%, roc20 -2.28%)",
+          "IWM down (roc5 -0.7%, roc20 -5.78%)",
+          "USO flat (roc5 -4.7%, roc20 17.98%)",
           "heartbeat regime = narrowing"
         ],
         "unavailable": [],
