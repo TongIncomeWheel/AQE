@@ -35,7 +35,15 @@ from . import spec as S
 def ensure_ma_panel(ma_panel_path) -> pd.DataFrame | None:
     """The market-wide bar panel, restoring it from the Daily Persist
     snapshot if this run's checkout doesn't have it locally. Returns None
-    (never raises) if it's unavailable by any path."""
+    (never raises) if it's unavailable by any path.
+
+    Uses `persist.load_snapshot_best()` — checks the GitHub release asset
+    (the PRIMARY store per persist.py's own docstring) before falling back
+    to Drive (the backup). `_run_ma_scan_and_record`'s own restore call
+    (the precedent this mirrors) only checks Drive via plain
+    `load_snapshot()`; if the freshest snapshot happens to live in the
+    GitHub release instead, that call would miss it too — worth fixing
+    there as well if this turns out to be the actual gap."""
     if ma_panel_path.exists():
         try:
             return pd.read_parquet(ma_panel_path)
@@ -43,7 +51,7 @@ def ensure_ma_panel(ma_panel_path) -> pd.DataFrame | None:
             pass
     try:
         from src.data import persist
-        res = persist.load_snapshot(only=["ma_panel.parquet"])
+        res = persist.load_snapshot_best(only=["ma_panel.parquet"])
         if res.get("ok") and ma_panel_path.exists():
             return pd.read_parquet(ma_panel_path)
     except Exception:  # noqa: BLE001
