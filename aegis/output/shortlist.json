@@ -1,6 +1,6 @@
 {
   "date": "2026-09-24",
-  "refreshed_at": "2026-09-24 12:03:38 SGT",
+  "refreshed_at": "2026-09-24 12:39:09 SGT",
   "regime": {
     "vix": 15.2,
     "level": "GREEN"
@@ -25,13 +25,13 @@
         "bq": 33.0
       },
       "levels": {
-        "entry": 154.59,
-        "stop": 147.27,
+        "entry": 154.55,
+        "stop": 147.23,
         "r_size": 7.32,
-        "be_trigger": 158.25,
-        "target_1r": 161.91,
-        "target_2r": 169.23,
-        "target_3r": 176.55,
+        "be_trigger": 158.21,
+        "target_1r": 161.87,
+        "target_2r": 169.19,
+        "target_3r": 176.51,
         "shares": 286,
         "risk_dollars": 2100.0
       },
@@ -43,8 +43,8 @@
       },
       "diagnostics": {
         "mp_state": "BUILDING",
-        "close": 154.59,
-        "atr14": 3.661,
+        "close": 154.55,
+        "atr14": 3.66,
         "earn_days": 41.0,
         "earn_warning": false
       },
@@ -252,7 +252,7 @@
       "diagnostics": {
         "mp_state": "BUILDING",
         "close": 95.44,
-        "atr14": 2.178,
+        "atr14": 2.179,
         "earn_days": null,
         "earn_warning": false
       },
@@ -390,12 +390,12 @@
       },
       "levels": {
         "entry": 473.69,
-        "stop": 415.8,
-        "r_size": 57.89,
+        "stop": 415.81,
+        "r_size": 57.88,
         "be_trigger": 502.63,
-        "target_1r": 531.58,
-        "target_2r": 589.47,
-        "target_3r": 647.36,
+        "target_1r": 531.57,
+        "target_2r": 589.45,
+        "target_3r": 647.33,
         "shares": 36,
         "risk_dollars": 2100.0
       },
@@ -408,7 +408,7 @@
       "diagnostics": {
         "mp_state": "BUILDING",
         "close": 473.69,
-        "atr14": 28.946,
+        "atr14": 28.942,
         "earn_days": 35.0,
         "earn_warning": false
       },
@@ -699,6 +699,66 @@
         },
         "k39_value": {
           "value": 51.14,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "NET",
+      "levels": {
+        "entry": 352.46,
+        "stop": 317.27,
+        "r_size": 35.19,
+        "be_trigger": 370.05,
+        "target_1r": 387.65,
+        "target_2r": 422.84,
+        "target_3r": 458.03,
+        "shares": 59,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 59.2,
+        "energy": 64.7,
+        "structure": 71.6,
+        "mp": 83.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 1.94,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 91.96,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -1094,6 +1154,37 @@
         "target_2r": 454.48,
         "target_3r": 501.49,
         "shares": 44,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "NET",
+      "sc_momentum": 68.1,
+      "sc_momentum_raw": 68.1,
+      "pipe_rank": 68.5,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 59.2,
+        "energy": 64.7,
+        "structure": 71.6,
+        "mp": 83.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 352.46,
+        "stop": 317.27,
+        "r_size": 35.19,
+        "be_trigger": 370.05,
+        "target_1r": 387.65,
+        "target_2r": 422.84,
+        "target_3r": 458.03,
+        "shares": 59,
         "risk_dollars": 2100.0
       }
     },
@@ -1725,8 +1816,8 @@
       "pattern_fit": 0.801,
       "parent_gics": "XLK",
       "parent_grade": "DEPLOY",
-      "roc20": 3.31,
-      "roc5": 3.18,
+      "roc20": 3.35,
+      "roc5": 3.21,
       "divergence": -0.14,
       "above_sma20": true,
       "coverage": "9/9",
@@ -1741,8 +1832,8 @@
         "AI",
         "CRM"
       ],
-      "rrg_rs_ratio": 113.85,
-      "rrg_rs_momentum": 105.11,
+      "rrg_rs_ratio": 113.89,
+      "rrg_rs_momentum": 105.15,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
@@ -1763,8 +1854,8 @@
           "rs_momentum": 102.6
         },
         {
-          "rs_ratio": 113.85,
-          "rs_momentum": 105.11
+          "rs_ratio": 113.89,
+          "rs_momentum": 105.15
         }
       ]
     },
@@ -1978,7 +2069,7 @@
       "parent_gics": "XLK",
       "parent_grade": "DEPLOY",
       "roc20": 7.21,
-      "roc5": 4.11,
+      "roc5": 4.12,
       "divergence": -3.1,
       "above_sma20": true,
       "coverage": "13/13",
@@ -1997,7 +2088,7 @@
         "DBX",
         "AKAM"
       ],
-      "rrg_rs_ratio": 115.49,
+      "rrg_rs_ratio": 115.5,
       "rrg_rs_momentum": 103.82,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING",
@@ -2019,7 +2110,7 @@
           "rs_momentum": 105.25
         },
         {
-          "rs_ratio": 115.49,
+          "rs_ratio": 115.5,
           "rs_momentum": 103.82
         }
       ]
@@ -2113,7 +2204,7 @@
         "RGTI",
         "INFQ"
       ],
-      "rrg_rs_ratio": 107.24,
+      "rrg_rs_ratio": 107.23,
       "rrg_rs_momentum": 105.71,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "ENTERING",
@@ -2135,7 +2226,7 @@
           "rs_momentum": 102.7
         },
         {
-          "rs_ratio": 107.24,
+          "rs_ratio": 107.23,
           "rs_momentum": 105.71
         }
       ]
@@ -2296,7 +2387,7 @@
         "VST",
         "CEG"
       ],
-      "rrg_rs_ratio": 96.2,
+      "rrg_rs_ratio": 96.19,
       "rrg_rs_momentum": 99.22,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
@@ -2318,7 +2409,7 @@
           "rs_momentum": 97.47
         },
         {
-          "rs_ratio": 96.2,
+          "rs_ratio": 96.19,
           "rs_momentum": 99.22
         }
       ]
@@ -2520,8 +2611,8 @@
       "parent_gics": "XLE",
       "parent_grade": "AVOID",
       "roc20": -13.48,
-      "roc5": 4.16,
-      "divergence": 17.64,
+      "roc5": 4.17,
+      "divergence": 17.65,
       "above_sma20": false,
       "coverage": "6/6",
       "constituents_used": [
@@ -2532,8 +2623,8 @@
         "NNE",
         "BWXT"
       ],
-      "rrg_rs_ratio": 89.26,
-      "rrg_rs_momentum": 87.13,
+      "rrg_rs_ratio": 89.27,
+      "rrg_rs_momentum": 87.14,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -2554,8 +2645,8 @@
           "rs_momentum": 87.22
         },
         {
-          "rs_ratio": 89.26,
-          "rs_momentum": 87.13
+          "rs_ratio": 89.27,
+          "rs_momentum": 87.14
         }
       ]
     },
@@ -2751,7 +2842,7 @@
       "parent_gics": "XLB",
       "parent_grade": "TURNING",
       "roc20": -9.8,
-      "roc5": 4.04,
+      "roc5": 4.05,
       "divergence": 13.84,
       "above_sma20": false,
       "coverage": "11/11",
@@ -2769,7 +2860,7 @@
         "TGB"
       ],
       "rrg_rs_ratio": 102.59,
-      "rrg_rs_momentum": 93.02,
+      "rrg_rs_momentum": 93.03,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -2791,7 +2882,7 @@
         },
         {
           "rs_ratio": 102.59,
-          "rs_momentum": 93.02
+          "rs_momentum": 93.03
         }
       ]
     },
@@ -2868,7 +2959,7 @@
       "pattern_fit": null,
       "parent_gics": "XLB",
       "parent_grade": "TURNING",
-      "roc20": 0.36,
+      "roc20": 0.37,
       "roc5": -2.8,
       "divergence": -3.16,
       "above_sma20": false,
@@ -2884,7 +2975,7 @@
         "BG"
       ],
       "rrg_rs_ratio": 97.69,
-      "rrg_rs_momentum": 92.1,
+      "rrg_rs_momentum": 92.11,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
@@ -2906,7 +2997,7 @@
         },
         {
           "rs_ratio": 97.69,
-          "rs_momentum": 92.1
+          "rs_momentum": 92.11
         }
       ]
     },
@@ -2926,7 +3017,7 @@
       "parent_gics": "XLF",
       "parent_grade": "TURNING",
       "roc20": -7.64,
-      "roc5": -2.84,
+      "roc5": -2.83,
       "divergence": 4.81,
       "above_sma20": false,
       "coverage": "10/10",
@@ -2942,7 +3033,7 @@
         "RF",
         "WFC"
       ],
-      "rrg_rs_ratio": 89.34,
+      "rrg_rs_ratio": 89.35,
       "rrg_rs_momentum": 91.8,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
@@ -2964,7 +3055,7 @@
           "rs_momentum": 92.56
         },
         {
-          "rs_ratio": 89.34,
+          "rs_ratio": 89.35,
           "rs_momentum": 91.8
         }
       ]
@@ -3220,8 +3311,8 @@
       "pattern_fit": null,
       "parent_gics": "XLC",
       "parent_grade": "WATCH",
-      "roc20": -6.86,
-      "roc5": -3.45,
+      "roc20": -6.85,
+      "roc5": -3.43,
       "divergence": 3.42,
       "above_sma20": false,
       "coverage": "13/13",
@@ -3240,8 +3331,8 @@
         "RBLX",
         "NFLX"
       ],
-      "rrg_rs_ratio": 99.26,
-      "rrg_rs_momentum": 98.87,
+      "rrg_rs_ratio": 99.27,
+      "rrg_rs_momentum": 98.88,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
@@ -3262,8 +3353,8 @@
           "rs_momentum": 98.32
         },
         {
-          "rs_ratio": 99.26,
-          "rs_momentum": 98.87
+          "rs_ratio": 99.27,
+          "rs_momentum": 98.88
         }
       ]
     },
@@ -3283,7 +3374,7 @@
       "parent_gics": "XLY",
       "parent_grade": "TURNING",
       "roc20": -9.31,
-      "roc5": -1.45,
+      "roc5": -1.46,
       "divergence": 7.85,
       "above_sma20": false,
       "coverage": "9/9",
@@ -3298,7 +3389,7 @@
         "JD",
         "BIDU"
       ],
-      "rrg_rs_ratio": 92.82,
+      "rrg_rs_ratio": 92.81,
       "rrg_rs_momentum": 96.9,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
@@ -3320,7 +3411,7 @@
           "rs_momentum": 97.37
         },
         {
-          "rs_ratio": 92.82,
+          "rs_ratio": 92.81,
           "rs_momentum": 96.9
         }
       ]
@@ -3458,8 +3549,8 @@
       "pattern_fit": 0.854,
       "parent_gics": "XLV",
       "parent_grade": "TURNING",
-      "roc20": 0.67,
-      "roc5": 7.63,
+      "roc20": 0.68,
+      "roc5": 7.64,
       "divergence": 6.95,
       "above_sma20": true,
       "coverage": "10/10",
@@ -3475,8 +3566,8 @@
         "LLY",
         "PFE"
       ],
-      "rrg_rs_ratio": 127.36,
-      "rrg_rs_momentum": 108.32,
+      "rrg_rs_ratio": 127.37,
+      "rrg_rs_momentum": 108.33,
       "rrg_quadrant": "LEADING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
@@ -3497,8 +3588,8 @@
           "rs_momentum": 107.26
         },
         {
-          "rs_ratio": 127.36,
-          "rs_momentum": 108.32
+          "rs_ratio": 127.37,
+          "rs_momentum": 108.33
         }
       ]
     },
@@ -3518,7 +3609,7 @@
       "parent_gics": "XLV",
       "parent_grade": "TURNING",
       "roc20": -6.52,
-      "roc5": -1.31,
+      "roc5": -1.3,
       "divergence": 5.22,
       "above_sma20": false,
       "coverage": "10/10",
@@ -3534,7 +3625,7 @@
         "ALGN",
         "ZBH"
       ],
-      "rrg_rs_ratio": 96.58,
+      "rrg_rs_ratio": 96.59,
       "rrg_rs_momentum": 99.58,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
@@ -3556,7 +3647,7 @@
           "rs_momentum": 100.78
         },
         {
-          "rs_ratio": 96.58,
+          "rs_ratio": 96.59,
           "rs_momentum": 99.58
         }
       ]
@@ -3576,7 +3667,7 @@
       "pattern_fit": null,
       "parent_gics": "XLRE",
       "parent_grade": "TURNING",
-      "roc20": -6.47,
+      "roc20": -6.46,
       "roc5": -1.77,
       "divergence": 4.7,
       "above_sma20": false,
@@ -3597,8 +3688,8 @@
         "SBAC",
         "OHI"
       ],
-      "rrg_rs_ratio": 89.85,
-      "rrg_rs_momentum": 95.8,
+      "rrg_rs_ratio": 89.86,
+      "rrg_rs_momentum": 95.81,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -3619,8 +3710,8 @@
           "rs_momentum": 96.42
         },
         {
-          "rs_ratio": 89.85,
-          "rs_momentum": 95.8
+          "rs_ratio": 89.86,
+          "rs_momentum": 95.81
         }
       ]
     },
@@ -3639,8 +3730,8 @@
       "pattern_fit": null,
       "parent_gics": "XLC",
       "parent_grade": "WATCH",
-      "roc20": -5.17,
-      "roc5": -1.59,
+      "roc20": -5.14,
+      "roc5": -1.55,
       "divergence": 3.59,
       "above_sma20": false,
       "coverage": "8/8",
@@ -3654,8 +3745,8 @@
         "APP",
         "GOOG"
       ],
-      "rrg_rs_ratio": 94.35,
-      "rrg_rs_momentum": 103.11,
+      "rrg_rs_ratio": 94.38,
+      "rrg_rs_momentum": 103.14,
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -3676,8 +3767,8 @@
           "rs_momentum": 103.14
         },
         {
-          "rs_ratio": 94.35,
-          "rs_momentum": 103.11
+          "rs_ratio": 94.38,
+          "rs_momentum": 103.14
         }
       ]
     }
@@ -3707,7 +3798,7 @@
     "total_universe": 677,
     "passed_pipeline_rank": 8,
     "on_shortlist": 8,
-    "precision_edge_count": 5,
-    "recipe_match_count": 12
+    "precision_edge_count": 6,
+    "recipe_match_count": 13
   }
 }
