@@ -2087,6 +2087,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         export["top_picks"].append({
             "rank": c["rank"],
             "ticker": tk,
+            "last_close": None,  # position fixed 3rd; real value set by
+                                  # the _v21_record_fields spread below
             "sc_momentum": round(sc_val, 1),
             "sc_momentum_raw": round(c.get("sc_momentum_raw", sc_val), 1),
             "pipe_rank": round(c.get("pipe_rank", 0), 1),
@@ -2125,6 +2127,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         export["edge_list"].append({
             "rank": ei,
             "ticker": tk,
+            "last_close": None,  # position fixed 3rd; real value set by
+                                  # the _v21_record_fields spread below
             "sc_momentum": round(pe_sc, 1),
             "sc_momentum_raw": round(pe_raw, 1),
             "pipe_rank": round(pe.get("pipe_rank", 0), 1),
@@ -2170,6 +2174,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         export["longlist"].append({
             "rank": i,
             "ticker": rm["ticker"],
+            "last_close": None,  # position fixed 3rd; real value set by
+                                  # the _v21_record_fields spread below
             "sc_momentum": round(sc_val, 1),
             "sc_momentum_raw": round(rm.get("sc_momentum_raw", sc_val), 1),
             "pipe_rank": round(rm.get("pipe_rank", 0), 1),

@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.valen import card, explain, extension, groups, spec, stance, trend
+from src.valen import breadth, card, explain, extension, groups, spec, stance, trend
 
 # ---------------------------------------------------------------------- trend
 
@@ -393,3 +393,141 @@ def test_explain_without_groups_still_works_backward_compatibly():
     out = explain.explain(_explainable_trend(), _explainable_ext(),
                           {"status": "OK", "stance": "RISK_ON", "watch_for": []})
     assert out["headline"]
+
+
+# --------------------------------------------------------------------- breadth
+
+
+def test_pct_above_ma_real_math():
+    rows = []
+    for tk, last in (("A", 200.0), ("B", 200.0), ("C", 50.0)):
+        closes = [100.0] * 39 + [last]
+        for i, c in enumerate(closes):
+            rows.append({"date": pd.Timestamp("2026-01-01") + pd.Timedelta(days=i),
+                        "ticker": tk, "close": c})
+    panel = pd.DataFrame(rows)
+    out = breadth.pct_above_ma(panel, 40)
+    assert out["status"] == "OK"
+    assert out["n"] == 3
+    assert out["n_above"] == 2
+    assert out["population"] == spec.POPULATION_US_WIDE
+
+
+def test_daily_mover_counts_real_math():
+    specs = {"A": (100.0, 105.0), "B": (100.0, 95.0), "C": (100.0, 101.0)}
+    rows = []
+    for tk, (prev, last) in specs.items():
+        rows.append({"date": pd.Timestamp("2026-01-01"), "ticker": tk, "close": prev})
+        rows.append({"date": pd.Timestamp("2026-01-02"), "ticker": tk, "close": last})
+    panel = pd.DataFrame(rows)
+    out = breadth.daily_mover_counts(panel, 4.0)
+    assert out["status"] == "OK"
+    assert out["up"] == 1 and out["down"] == 1
+    assert out["green"] is False       # up == down, not strictly more up
+
+
+def test_window_mover_ratio_real_math():
+    dates = pd.date_range("2026-01-01", periods=6)
+    a = [100, 105, 110.25, 115.7625, 121.550625, 127.62815625]  # +5%/day x5
+    b = [100, 95, 95, 95, 95, 95]                                # -5% once
+    c = [100.0] * 6                                              # flat
+    rows = []
+    for tk, series in (("A", a), ("B", b), ("C", c)):
+        for d, v in zip(dates, series):
+            rows.append({"date": d, "ticker": tk, "close": v})
+    panel = pd.DataFrame(rows)
+    out = breadth.window_mover_ratio(panel, 4.0, 5)
+    assert out["status"] == "OK"
+    assert out["up_total"] == 5
+    assert out["down_total"] == 1
+    assert out["value"] == pytest.approx(5.0)
+
+
+def test_window_mover_ratio_undefined_denominator_convention():
+    dates = pd.date_range("2026-01-01", periods=3)
+    a = [100, 105, 110.25]   # +5% twice, no down days at all
+    rows = [{"date": d, "ticker": "A", "close": v} for d, v in zip(dates, a)]
+    out = breadth.window_mover_ratio(pd.DataFrame(rows), 4.0, 2)
+    assert out["status"] == "OK"
+    assert out["down_total"] == 0
+    assert out["value"] == pytest.approx(3.0)   # up_total(2) + 1.0, never inf
+
+
+def test_cumulative_mover_counts_real_math():
+    n = 22
+    dates = pd.date_range("2026-01-01", periods=n)
+    a = np.linspace(100, 130, n)   # +30% over 21 sessions -> riser
+    b = np.linspace(100, 70, n)    # -30% over 21 sessions -> decliner
+    c = [100.0] * n
+    rows = []
+    for tk, series in (("A", a), ("B", b), ("C", c)):
+        for d, v in zip(dates, series):
+            rows.append({"date": d, "ticker": tk, "close": v})
+    panel = pd.DataFrame(rows)
+    out = breadth.cumulative_mover_counts(panel, 25.0, 21)
+    assert out["status"] == "OK"
+    assert out["up"] == 1 and out["down"] == 1
+    assert out["value"] == 1   # value = riser (up) count, what stance reads
+
+
+def test_net_high_low_symmetric_case_nets_to_zero():
+    n = 45
+    dates = pd.date_range("2026-01-01", periods=n)
+    a = np.linspace(100, 200, n)   # a new high every day
+    b = np.linspace(200, 100, n)   # a new low every day
+    rows = []
+    for tk, series in (("A", a), ("B", b)):
+        for d, v in zip(dates, series):
+            rows.append({"date": d, "ticker": tk, "close": v})
+    panel = pd.DataFrame(rows)
+    out = breadth.net_high_low(panel, 252)
+    assert out["status"] == "OK"
+    assert out["avg8"] == pytest.approx(0.0, abs=1e-9)
+    assert out["avg20"] == pytest.approx(0.0, abs=1e-9)
+    assert out["green"] is False       # 8d not STRICTLY above 20d when equal
+
+
+def test_breadth_functions_degrade_on_thin_history():
+    thin = pd.DataFrame([{"date": pd.Timestamp("2026-01-01"), "ticker": "A", "close": 100.0}])
+    assert breadth.pct_above_ma(thin, 40)["status"] == "UNAVAILABLE"
+    assert breadth.daily_mover_counts(thin, 4.0)["status"] == "UNAVAILABLE"
+    assert breadth.window_mover_ratio(thin, 4.0, 5)["status"] == "UNAVAILABLE"
+    assert breadth.net_high_low(thin, 252)["status"] == "UNAVAILABLE"
+
+
+def test_compute_breadth_degrades_cleanly_on_no_panel():
+    out = breadth.compute_breadth(None)
+    for key in ("pct_above_40d", "monthly_risers", "five_day_count", "daily_count_green"):
+        assert out[key]["status"] == "UNAVAILABLE"
+        assert out[key]["population_needed"] == spec.POPULATION_US_WIDE
+
+
+def test_compute_breadth_feeds_stance_to_a_real_verdict():
+    """End-to-end: real breadth math -> stance.compute_stance actually
+    produces a non-DEGRADED stance, using a panel engineered to clear
+    every to-positive rule."""
+    n = 45
+    dates = pd.date_range("2026-01-01", periods=n)
+    rows = []
+    # 10 tickers: 6 flat for 40 days then jump +6%/day for the final 5
+    # sessions (real single-day 4%+ movers, so daily/5-day/10-day counts
+    # all register), landing +33.8% over the trailing 21 sessions (clears
+    # the monthly-riser rule too) -- one construction satisfies every
+    # instrument at once instead of four incompatible ad-hoc shapes.
+    jump = [100.0]
+    for _ in range(5):
+        jump.append(jump[-1] * 1.06)
+    for i in range(10):
+        if i < 6:
+            series = [100.0] * 40 + jump[1:]
+        else:
+            series = [100.0] * n
+        for d, v in zip(dates, series):
+            rows.append({"date": d, "ticker": f"T{i}", "close": v})
+    panel = pd.DataFrame(rows)
+    br = breadth.compute_breadth(panel)
+    for key in ("pct_above_40d", "monthly_risers", "five_day_count", "daily_count_green"):
+        assert br[key]["status"] == "OK", (key, br[key])
+    out = stance.compute_stance({}, {}, br)
+    assert out["status"] == "OK"
+    assert out["stance"] in (spec.STANCE_RISK_ON, spec.STANCE_NEUTRAL, spec.STANCE_RISK_OFF)

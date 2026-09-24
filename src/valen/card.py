@@ -68,6 +68,7 @@ def breadth_rows(valen: dict) -> list[dict]:
         "pct_above_40d": "Stocks above their 40-day line",
         "monthly_risers": "Monthly big risers (25%+)",
         "five_day_count": "5-day up/down 4% count",
+        "ten_day_count": "10-day up/down 4% count",
         "daily_count_green": "Today's count green",
     }
     out = []
@@ -75,6 +76,11 @@ def breadth_rows(valen: dict) -> list[dict]:
         row = breadth.get(key) or {"status": "UNAVAILABLE", "reason": "not computed"}
         out.append({"label": label, "status": row.get("status"),
                     "value": row.get("value"), "reason": row.get("reason")})
+    nhnl = breadth.get("net_high_low") or {"status": "UNAVAILABLE", "reason": "not computed"}
+    out.append({"label": "Net High/Net Low (8d vs 20d)", "status": nhnl.get("status"),
+               "value": (f"{nhnl['avg8']} vs {nhnl['avg20']}"
+                        if nhnl.get("status") == "OK" else None),
+               "reason": nhnl.get("reason")})
     return out
 
 

@@ -2,11 +2,15 @@
 src/macro/crown/daily.py::run_crown(): this is an addition to a working
 real-money pipeline and must never take the export down with it.
 
-Phase 1 scope (docs/AQE_VALEN_DASHBOARD_PROPOSAL.md): market trend (SPY/QQQ),
-extension (VIX/VIX3M + index ATR-multiple-from-50-day), and the stance read —
-which stays DEGRADED (no one-word stance) until Phase 2 wires in a
-market-wide breadth population. The curated-panel % above 20-day is
-computed and shown as labelled CONTEXT, never as T2108 — see extension.py.
+Market trend (SPY/QQQ), extension (VIX/VIX3M + index ATR-multiple-from-
+50-day), whole-market breadth (real, from ma_panel.parquet — see
+breadth.py), and the Neighbourhood (groups + rotation — see groups.py) are
+all computed for real. `stance.status` is only DEGRADED when
+`ensure_ma_panel()` cannot get the breadth panel by any path (this
+checkout's local disk, then the Daily Persist snapshot on Drive) — an
+honest absence, never a fabricated read. The curated-panel % above 20-day
+stays as labelled CONTEXT alongside the real whole-market instruments,
+never confused with T2108 — see extension.py.
 
 Writes two local files, same split as the other four macro artifacts:
   output/valen_dashboard.json      full detail, runtime-local
@@ -26,13 +30,15 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from src.data.paths import OUTPUT_DIR, PANEL_DAILY, PANEL_WEEKLY
+from src.data.paths import DATA_DIR, OUTPUT_DIR, PANEL_DAILY, PANEL_WEEKLY
 from src.macro.crown import cboe
 
+from . import breadth as breadth_mod
 from . import card, explain, extension, groups as groups_mod, spec, stance, trend
 
 LOCAL_PATH = OUTPUT_DIR / "valen_dashboard.json"
 PUBLISHED_PATH = OUTPUT_DIR / "aqe_valen_dashboard.json"
+MA_PANEL_PATH = DATA_DIR / "ma_panel.parquet"
 
 
 def _today_sgt() -> str:
@@ -73,12 +79,17 @@ def run_valen() -> dict:
     except Exception:  # noqa: BLE001
         curated_context = None
 
-    breadth_reason = ("whole-market breadth not yet wired — needs "
-                      "src/scanner/ma_scanner.py widened to a full-tape "
-                      "population (proposal §2.2, §9.1)")
-    breadth = {k: extension.whole_market_breadth_unavailable(breadth_reason)
-               for k in ("pct_above_40d", "monthly_risers",
-                        "five_day_count", "daily_count_green")}
+    # Whole-market breadth (piece 01's four instruments), computed for real
+    # from the ~2000-ticker ma_panel the HF Space's in-app scheduler already
+    # pulls daily — restoring it from the Daily Persist snapshot first if
+    # this run's checkout doesn't have it locally. See breadth.py module
+    # docstring for why the restore step is necessary (GitHub Actions runs
+    # in a separate, ephemeral checkout from the HF Space that builds it).
+    try:
+        ma_panel = breadth_mod.ensure_ma_panel(MA_PANEL_PATH)
+    except Exception:  # noqa: BLE001
+        ma_panel = None
+    breadth = breadth_mod.compute_breadth(ma_panel)
 
     # The Neighbourhood (pieces 02/03) — where the money is going, and
     # whether a group is leading from its highs or just bouncing off its
