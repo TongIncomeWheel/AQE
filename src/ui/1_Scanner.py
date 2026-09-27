@@ -1545,16 +1545,7 @@ if _dq.get("flagged_count"):
                 st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
 
 _EXPORT_COL_ORDER = [
-    "rank", "ticker", "source", "pe", "on_longlist", "on_elder", "on_qs",
-    # QS read, flattened from the nested `qs` block so it sorts/filters/copies
-    # like any other column (the full block stays on the row for the cards).
-    # QS, ordered as the decision reads: is it a pick -> what are the odds ->
-    # what drove them -> where do I trade it -> anything against it.
-    "qs_conviction", "qs_state", "qs_signal",
-    "qs_p_pct", "qs_n", "qs_edge_pts",   # p is never shown without n (STEP 8)
-    "qs_hits_of40", "qs_persist_of5", "qs_lens_of10",
-    "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
-    "qs_vetoes", "qs_extrapolated", "qs_not_listed",
+    "rank", "ticker", "last_close", "source", "pe", "on_longlist", "on_elder",
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1575,6 +1566,17 @@ _EXPORT_COL_ORDER = [
     "elder_pattern", "ecx_vwap_pos", "ecx_vwap_slope", "ecx_vol_trend",
     "ecx_vol_above20d", "ecx_up_dn_ratio", "ecx_vcp_label", "ecx_vcp_tight",
     "ecx_exhaustion",
+    # QS read — pushed to the rightmost columns (PM request, 2026-09-27).
+    # Flattened from the nested `qs` block so it still sorts/filters/copies
+    # like any other column (the full block stays on the row for the cards).
+    # Ordered as the decision reads: is it a pick -> what are the odds ->
+    # what drove them -> where do I trade it -> anything against it.
+    "on_qs",
+    "qs_conviction", "qs_state", "qs_signal",
+    "qs_p_pct", "qs_n", "qs_edge_pts",   # p is never shown without n (STEP 8)
+    "qs_hits_of40", "qs_persist_of5", "qs_lens_of10",
+    "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
+    "qs_vetoes", "qs_extrapolated", "qs_not_listed",
 ]
 
 
