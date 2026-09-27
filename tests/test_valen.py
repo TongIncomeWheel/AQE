@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.valen import breadth, card, explain, extension, groups, spec, stance, trend
+from src.valen import breadth, card, explain, extension, groups, spec, stance, theme, trend
 
 # ---------------------------------------------------------------------- trend
 
@@ -531,3 +531,101 @@ def test_compute_breadth_feeds_stance_to_a_real_verdict():
     out = stance.compute_stance({}, {}, br)
     assert out["status"] == "OK"
     assert out["stance"] in (spec.STANCE_RISK_ON, spec.STANCE_NEUTRAL, spec.STANCE_RISK_OFF)
+
+
+# ----------------------------------------------------------------------- theme
+# The visual layer matching the VIV System webapp's own card (PM request,
+# 2026-09-27, overriding CLAUDE.md's general "no fancy visuals" default for
+# this one page). Same blindness rule as card.py, verified the same way.
+
+
+def test_theme_module_renders_from_its_arguments_alone():
+    src = inspect.getsource(theme)
+    for banned in ("import pandas", "import numpy", "open(", "read_parquet",
+                  "read_csv", "requests", "sqlite3", "json.load",
+                  "from src.data", "from src.macro", "Path("):
+        assert banned not in src, (
+            f"theme.py must render from its arguments alone — found {banned!r}")
+
+
+def test_stance_header_colors_risk_on_green():
+    html = theme.stance_header_html({"word": "RISK ON", "status": "OK"})
+    assert "RISK ON" in html
+    assert theme._GREEN in html
+
+
+def test_stance_header_colors_risk_off_red():
+    html = theme.stance_header_html({"word": "RISK OFF", "status": "OK"})
+    assert "RISK OFF" in html
+    assert theme._RED in html
+
+
+def test_stance_header_falls_back_to_not_shown_when_no_stance_word():
+    html = theme.stance_header_html({"word": "—", "status": "DEGRADED", "reason": "no breadth"})
+    assert "NOT SHOWN" in html
+    assert "no breadth" in html
+
+
+def test_pct_class_positive_negative_zero_and_none():
+    assert theme._pct_class(1.5) == "valen-pos"
+    assert theme._pct_class(-1.5) == "valen-neg"
+    assert theme._pct_class(0.0) == ""
+    assert theme._pct_class(None) == ""
+
+
+def test_fmt_handles_none_bool_and_number():
+    assert theme._fmt(None) == "—"
+    assert theme._fmt(True) == "Yes"
+    assert theme._fmt(False) == "No"
+    assert theme._fmt(3.14159, nd=2) == "3.14"
+    assert theme._fmt(2.5, suffix="%") == "2.50%"
+
+
+def test_names_are_html_escaped_in_theme_leaders_table():
+    rows = [{"display_name": "<script>alert(1)</script>", "since_open_pct": 1.0,
+             "ret_1w_pct": 2.0, "ret_1m_pct": 3.0}]
+    html = theme.theme_leaders_table_html(rows)
+    assert "<script>" not in html
+    assert "&lt;script&gt;" in html
+
+
+def test_theme_leaders_table_ranks_by_1week_descending():
+    rows = [
+        {"display_name": "A", "since_open_pct": 0.0, "ret_1w_pct": 1.0, "ret_1m_pct": 5.0},
+        {"display_name": "B", "since_open_pct": 0.0, "ret_1w_pct": 9.0, "ret_1m_pct": 1.0},
+    ]
+    html = theme.theme_leaders_table_html(rows)
+    assert html.index(">B<") < html.index(">A<")
+
+
+def test_rotation_table_labels_leading_and_off_the_floor():
+    rows = [
+        {"display_name": "Leader", "thrust": 5.0, "ret_1m_pct": 10.0,
+         "pct_off_52w_high": 1.0, "rotation_state": "LEADING"},
+        {"display_name": "Bouncer", "thrust": 4.0, "ret_1m_pct": 8.0,
+         "pct_off_52w_high": 20.0, "rotation_state": "OFF_THE_FLOOR"},
+    ]
+    html = theme.rotation_table_html(rows)
+    assert "LEADING" in html
+    assert "OFF THE FLOOR" in html
+
+
+def test_instruments_html_shows_not_shown_tile_for_missing_value():
+    html = theme.instruments_html([{"label": "VIX / VIX3M", "value": None}])
+    assert "not shown" in html
+    assert "VIX / VIX3M" in html
+
+
+def test_what_would_change_html_empty_list_is_not_shown():
+    html = theme.what_would_change_html([])
+    assert "Not shown" in html
+
+
+def test_neighbourhood_html_empty_ok_status_reads_no_leadership():
+    html = theme.neighbourhood_html([], "OK", None)
+    assert "No group cleared a leadership read today." in html
+
+
+def test_neighbourhood_html_empty_bad_status_shows_reason():
+    html = theme.neighbourhood_html([], "UNAVAILABLE", "no groups scored")
+    assert "no groups scored" in html
