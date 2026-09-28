@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import time
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -142,3 +144,79 @@ def test_multiple_tickers():
 
     result = compute_ma_proximity(bars)
     assert result["ticker"].nunique() <= 3
+
+
+# ---------------------------------------------------------------- build_ma_panel
+# The scheduled "Part 2" job (src/ui/daily_job.py) passes a real time budget
+# so a slow/cold day can never stall its scheduler thread; the manual Scanner
+# button leaves it unbounded. Both paths share this one function.
+
+
+class _FakeFMPClient:
+    """Returns a fixed small bar set instantly — no real network, no sleep.
+    Dated up to "today" so build_ma_panel's own 400-day cutoff filter
+    doesn't drop it (a fixed past date would silently filter to empty)."""
+
+    def get_daily_bars(self, ticker, from_date, to_date):
+        dates = pd.bdate_range(end=pd.Timestamp.today().normalize(), periods=5)
+        return pd.DataFrame({
+            "date": dates, "open": 1.0, "high": 1.0, "low": 1.0,
+            "close": 1.0, "volume": 100,
+        })
+
+
+def test_build_ma_panel_unbounded_by_default(tmp_path, monkeypatch):
+    import src.scanner.ma_scanner as M
+    monkeypatch.setattr(M, "MA_PANEL", tmp_path / "ma_panel.parquet")
+
+    universe = pd.DataFrame({"ticker": ["AAA", "BBB", "CCC"]})
+    panel = M.build_ma_panel(universe, _FakeFMPClient())
+
+    assert set(panel["ticker"].unique()) == {"AAA", "BBB", "CCC"}
+
+
+def test_build_ma_panel_stops_once_the_runtime_budget_is_spent(tmp_path, monkeypatch):
+    """A capped call must save whatever it pulled before the budget hit and
+    return cleanly — never raise, never block past the budget.
+
+    Uses a REAL, tiny clock rather than mocking time.time() globally --
+    time.time() is called by far more than just this loop (date.today(),
+    pandas, pytest's own internals), so patching it process-wide made the
+    call count impossible to predict reliably. A real sleep-per-pull with a
+    generous margin is slower (a few hundred ms) but deterministic."""
+    import src.scanner.ma_scanner as M
+    monkeypatch.setattr(M, "MA_PANEL", tmp_path / "ma_panel.parquet")
+
+    class _SlowFakeClient:
+        def get_daily_bars(self, ticker, from_date, to_date):
+            time.sleep(0.1)
+            dates = pd.bdate_range(end=pd.Timestamp.today().normalize(), periods=5)
+            return pd.DataFrame({
+                "date": dates, "open": 1.0, "high": 1.0, "low": 1.0,
+                "close": 1.0, "volume": 100,
+            })
+
+    universe = pd.DataFrame({"ticker": ["AAA", "BBB", "CCC"]})
+    # Each pull takes ~0.1s; a 0.15s budget lets exactly one full pull
+    # complete (checked BEFORE each ticker) before the second check trips it.
+    panel = M.build_ma_panel(universe, _SlowFakeClient(), max_runtime_seconds=0.15)
+
+    pulled_tickers = set(panel["ticker"].unique()) if not panel.empty else set()
+    assert pulled_tickers, "the budget must still let at least the first ticker through"
+    assert pulled_tickers < {"AAA", "BBB", "CCC"}, (
+        "the budget must stop it short of the full universe")
+    # The partial result must still be persisted, same as a quota hit.
+    assert M.MA_PANEL.exists()
+
+
+def test_build_ma_panel_survives_a_budget_hit_before_any_ticker(tmp_path, monkeypatch):
+    """An already-exhausted (negative) budget must degrade to an empty
+    panel on the very first check, not raise or hang — no timing mock
+    needed since real elapsed time is always >= 0 > any negative budget."""
+    import src.scanner.ma_scanner as M
+    monkeypatch.setattr(M, "MA_PANEL", tmp_path / "ma_panel.parquet")
+
+    universe = pd.DataFrame({"ticker": ["AAA"]})
+    panel = M.build_ma_panel(universe, _FakeFMPClient(), max_runtime_seconds=-1)
+
+    assert panel.empty

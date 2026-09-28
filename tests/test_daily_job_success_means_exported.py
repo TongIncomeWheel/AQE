@@ -227,6 +227,53 @@ def test_pipeline_never_auto_triggers_the_ma_scan(_wired, monkeypatch):
     assert marker["status"] == "success"
 
 
+# ── MA scan is its own budgeted "Part 2" job (2026-09-28) ───────────────────
+
+
+def _wire_ma_scan_fakes(monkeypatch):
+    """Shared fakes for _run_ma_scan_and_record: no real Drive/FMP access,
+    capture whatever max_runtime_seconds run_ma_scan actually received."""
+    from src.data import persist as P
+    from src.data import fmp_client as FC
+    import src.scanner.ma_scanner as ma_scanner_module
+
+    monkeypatch.setattr(P, "load_snapshot", lambda **k: None)
+    monkeypatch.setattr(P, "save_snapshot", lambda **k: None)
+    monkeypatch.setattr(FC, "FMPClient", lambda: object())
+
+    seen = {}
+
+    def fake_run_ma_scan(client=None, publish=True, max_runtime_seconds=None):
+        seen["max_runtime_seconds"] = max_runtime_seconds
+        return {"ok": True, "stats": {"near_any_ma": 0}}
+
+    monkeypatch.setattr(ma_scanner_module, "run_ma_scan", fake_run_ma_scan)
+    return seen
+
+
+def test_ma_scan_forwards_its_runtime_budget_to_run_ma_scan(monkeypatch):
+    """`_run_ma_scan_and_record`'s own `max_runtime_seconds` arg must reach
+    `run_ma_scan` unchanged -- this is what lets the scheduled 09:00 SGT
+    firing bound itself while the manual Scanner button stays unbounded."""
+    seen = _wire_ma_scan_fakes(monkeypatch)
+
+    now = datetime(2026, 9, 28, 9, 0, tzinfo=SGT)
+    J._run_ma_scan_and_record(now, max_runtime_seconds=1500)
+
+    assert seen["max_runtime_seconds"] == 1500
+
+
+def test_ma_scan_manual_call_defaults_to_unbounded(monkeypatch):
+    """No `max_runtime_seconds` arg (the Scanner sidebar's manual button call
+    shape) must reach run_ma_scan as None -- unbounded, an attended click."""
+    seen = _wire_ma_scan_fakes(monkeypatch)
+
+    now = datetime(2026, 9, 28, 14, 0, tzinfo=SGT)
+    J._run_ma_scan_and_record(now)
+
+    assert seen["max_runtime_seconds"] is None
+
+
 def test_artifacts_published_survives_a_timeout(_wired, monkeypatch):
     """The TimeoutExpired branch captures partial stdout -- Step 8a-2 runs
     well before the slow tail steps, so its receipt should still be there."""

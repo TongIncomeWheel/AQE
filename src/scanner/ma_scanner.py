@@ -7,13 +7,23 @@ days each stock has been within ±10% of each MA.
 Use case: finding quality companies that have pulled back to key MAs
 for swing entries or calendar trades.
 
-Runs DAILY alongside the daily pipeline (in the in-app scheduler, right after
-the trading feed is published — decoupled from the pipeline's critical path so a
-slow FMP pull can't fail the feed). Stores results in data/ma_scan.parquet and
-publishes one overwritten JSON (`aqe_ma_scan.json`) to a dedicated Drive folder
-(`MA_SCAN_FOLDER_ID`). The first run pulls ~250 days of bars for the full MA
-universe (~2000 tickers, ~8 min at 250 calls/min); subsequent daily runs are
-incremental (only new bars since last pull, most tickers skipped) so they're fast.
+Runs as its own off-peak "Part 2" job from the HF Space's in-app scheduler
+(`daily_job._run_ma_scan_and_record`, scheduled well after both known daily-
+pipeline trigger times so it never contends with the real feed) — NEVER
+inside the GitHub-Actions-triggered pipeline itself, whose 45-min job timeout
+this scan blew through the one time it rode along there (2026-09-06 incident,
+see daily_job.py's module docstring). Also available on demand from the
+Scanner sidebar's "Run MA Proximity Scan now" button for an attended run.
+
+Stores results in data/ma_scan.parquet and publishes one overwritten JSON
+(`aqe_ma_scan.json`) to a dedicated Drive folder (`MA_SCAN_FOLDER_ID`). The
+first cold pull needs ~250 days of bars for the full MA universe (~2000-5000
+tickers, 30-40+ min under FMP's cloud rate limit); subsequent runs are
+incremental (only new bars since last pull, most tickers skipped) so they're
+fast. The scheduled path bounds its own wall-clock time via
+`max_runtime_seconds` (see `build_ma_panel`) so a slow or cold day never
+blocks the scheduler process — it just picks up the remaining tickers on the
+next scheduled firing, same as a quota hit already does.
 """
 
 from __future__ import annotations
@@ -103,8 +113,20 @@ def get_ma_universe(client: FMPClient | None = None) -> pd.DataFrame:
 def build_ma_panel(
     universe: pd.DataFrame | None = None,
     client: FMPClient | None = None,
+    max_runtime_seconds: float | None = None,
 ) -> pd.DataFrame:
-    """Pull/update daily bars for the MA universe. Incremental."""
+    """Pull/update daily bars for the MA universe. Incremental.
+
+    `max_runtime_seconds` bounds this call's own wall-clock time (checked
+    once per ticker, before each pull) — separate from FMP quota exhaustion.
+    None (the default) means unbounded, for the attended "Run MA Proximity
+    Scan" button where a human clicked it and is deliberately waiting
+    30-40+ minutes for a cold run. The automatic scheduler
+    (`daily_job._run_ma_scan_and_record`) always passes a real budget so a
+    slow day can never block its own process indefinitely — it just saves
+    whatever it got and finishes the rest incrementally on the next
+    scheduled firing, the same way a quota hit already does below.
+    """
     if client is None:
         client = FMPClient()
     if universe is None:
@@ -129,8 +151,16 @@ def build_ma_panel(
     new_frames = []
     pulled = 0
     skipped = 0
+    t_start = time.time()
 
     for ticker in iter_with_progress(tickers, label="ma_bars"):
+        if (max_runtime_seconds is not None
+                and (time.time() - t_start) > max_runtime_seconds):
+            print(f"\n  [MA Scanner] Runtime budget ({max_runtime_seconds:.0f}s) "
+                  f"reached after {pulled} pulls. Saving partial results — the "
+                  f"next scheduled run picks up the remaining tickers "
+                  f"incrementally.")
+            break
         last = last_dates.get(ticker)
         if last and last >= to_date - timedelta(days=1):
             skipped += 1
@@ -297,8 +327,13 @@ def publish_ma_scan(scan: pd.DataFrame, stats: dict) -> dict:
         return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
 
 
-def run_ma_scan(client: FMPClient | None = None, publish: bool = True) -> dict:
+def run_ma_scan(client: FMPClient | None = None, publish: bool = True,
+                max_runtime_seconds: float | None = None) -> dict:
     """Full MA scan: screen universe → pull bars → compute proximity.
+
+    `max_runtime_seconds` is passed straight through to `build_ma_panel` —
+    see its docstring. Leave it None for an attended run; the automatic
+    scheduler always sets a real budget.
 
     Returns dict with scan results and stats.
     """
@@ -312,7 +347,7 @@ def run_ma_scan(client: FMPClient | None = None, publish: bool = True) -> dict:
         return {"ok": False, "reason": "No tickers from screener"}
 
     print("[MA Scanner] Step 2: Pull/update daily bars...")
-    panel = build_ma_panel(universe, client)
+    panel = build_ma_panel(universe, client, max_runtime_seconds=max_runtime_seconds)
     if panel.empty:
         return {"ok": False, "reason": "No bars available"}
 

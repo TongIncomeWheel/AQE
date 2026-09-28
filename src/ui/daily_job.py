@@ -1,20 +1,40 @@
-"""In-app scheduler — universe/CSP pre-market jobs. The main daily pipeline is
-NO LONGER auto-fired from here (2026-09-06 PM decision).
+"""In-app scheduler — universe/CSP pre-market jobs, plus the MA Proximity
+Scan's own off-peak "Part 2" slot. The main daily pipeline is NO LONGER
+auto-fired from here (2026-09-06 PM decision).
 
 Schedule (SGT, Tuesday–Saturday):
   05:30 — Universe CSP theta scan (Alpaca → options_scan.json to the CSP Drive folder)
   06:00 — Universe refresh (FMP screener → mcap/$2B + SMA20/50 + volume)
+  09:00 — MA Proximity Scan ("Part 2" — see below)
 Sunday and Monday (SGT) are skipped (US markets closed Sat/Sun).
 
 The 05:30 CSP scan runs ~1h after the US close, before the 06:00 universe
-refresh, so the options sweep never contends with it.
+refresh, so the options sweep never contends with it. 09:00 sits comfortably
+after both of the daily pipeline's own external trigger times (~05:30 via
+the AEGIS routine, ~08:30 via the dedicated Claude Routine — see below), so
+the MA scan's FMP pulls never overlap the real feed's.
 
-The daily pipeline itself (`_run_pipeline_and_record`, and the MA Proximity
-Scan that rides along right after it) is triggered EXTERNALLY now — a
-Claude-scheduled Routine dispatches the `daily-run.yml` GitHub Actions
-workflow each morning as part of the same sequential job as the PTJ command,
-and the "Bootstrap + run daily pipeline" Scanner sidebar button covers a
-manual run. Both call `_run_pipeline_and_record` directly.
+The daily pipeline itself (`_run_pipeline_and_record`) is triggered
+EXTERNALLY now — a Claude-scheduled Routine dispatches the `daily-run.yml`
+GitHub Actions workflow each morning as part of the same sequential job as
+the PTJ command, and the "Bootstrap + run daily pipeline" Scanner sidebar
+button covers a manual run. Both call `_run_pipeline_and_record` directly,
+and it must NEVER call the MA scan (see `test_pipeline_never_auto_triggers_
+the_ma_scan` and the note on `_run_ma_scan_and_record` below) — that
+coupling is exactly what blew the GitHub Actions 45-min job timeout on
+2026-09-06.
+
+The MA Proximity Scan (`_run_ma_scan_and_record`) is instead its own
+independent "Part 2" job, scheduled here at 09:00 SGT — inside the
+persistent HF Space process, which has no external timeout, so a slow FMP
+pull only delays itself, never the trading feed. It also bounds its own
+wall-clock time per run (`MA_SCAN_MAX_RUNTIME_SECONDS`) so even a bad day
+can't stall this scheduler thread indefinitely; a capped run just saves
+whatever it got and finishes the rest incrementally on the next firing —
+the exact mechanism `build_ma_panel` already uses for an FMP quota hit. It
+remains ALSO available on demand from the Scanner sidebar's "Run MA
+Proximity Scan" button (uncapped there — an attended click, not a scheduled
+one) for whoever wants to force a fresh pull immediately.
 
 Why: this used to auto-fire here at 08:30, gated on a real browser session
 having started the scheduler thread (require_login()) -- which a keepalive/
@@ -65,10 +85,24 @@ UNIVERSE_HOUR = 6
 UNIVERSE_MIN = 0
 UNIVERSE_WINDOW_END_HOUR = 8        # catch late wake-ups up to 08:00
 
-# MA Proximity Scanner — runs right after `_run_pipeline_and_record`'s own feed
-# publish (see that function), against a persisted ma_panel so it stays
-# incremental. Decoupled from the pipeline's critical path so a slow FMP pull
-# can't fail the trading feed.
+# MA Proximity Scan — "Part 2", its own independent off-peak slot (2026-09-28).
+# Runs at 09:00 SGT, well clear of both of the daily pipeline's own external
+# trigger times (~05:30 AEGIS, ~08:30 the dedicated Routine), inside this
+# persistent process only — never inside the GitHub-Actions-triggered
+# pipeline (see the module docstring for the 2026-09-06 incident this avoids).
+# A wide catch-up window (up to 14:00) is fine: nothing downstream needs this
+# same-day, it only feeds tomorrow's VALEN breadth read via Daily Persist.
+MA_SCAN_HOUR = 9
+MA_SCAN_MIN = 0
+MA_SCAN_WINDOW_END_HOUR = 14
+# Per-run wall-clock budget for the SCHEDULED path only (the manual Scanner
+# button stays uncapped). 25 minutes lets a cold ~5,000-ticker universe make
+# real incremental progress each day without ever holding up this
+# single-threaded scheduler anywhere near the 30-40+ min a full cold pull can
+# take — a capped run saves what it got and the next day's firing continues
+# from there, the same way an FMP quota hit already does inside
+# build_ma_panel.
+MA_SCAN_MAX_RUNTIME_SECONDS = 25 * 60
 
 MARKER_FILENAME = "aqe_last_run.json"
 
@@ -109,6 +143,24 @@ def _should_run_csp_scan(now: datetime, last_csp_date_iso: str | None) -> bool:
             or (now.hour == CSP_SCAN_HOUR and now.minute < CSP_SCAN_MIN)):
         return False
     return last_csp_date_iso != now.date().isoformat()
+
+
+def _should_run_ma_scan(now: datetime, last_ma_scan_date_iso: str | None) -> bool:
+    """True if it's a run day, past 09:00 (within window), not scanned today.
+
+    No seed function (unlike CSP scan) — build_ma_panel is incremental by
+    construction (it skips any ticker already pulled today via the panel's
+    own last_dates check), so a container restart re-firing this once more
+    the same day is cheap and harmless, the same tolerance
+    `_should_refresh_universe` already relies on."""
+    if not _is_run_day(now.date()):
+        return False
+    if now.hour >= MA_SCAN_WINDOW_END_HOUR:
+        return False
+    if (now.hour < MA_SCAN_HOUR
+            or (now.hour == MA_SCAN_HOUR and now.minute < MA_SCAN_MIN)):
+        return False
+    return last_ma_scan_date_iso != now.date().isoformat()
 
 
 def next_run_hint() -> str:
@@ -433,21 +485,30 @@ def _run_csp_scan_and_record(now: datetime) -> None:
         print(f"[daily-job] CSP scan failed: {exc}")
 
 
-def _run_ma_scan_and_record(now: datetime) -> None:
-    """Daily MA Proximity Scan — runs right AFTER the trading feed is published
-    (so it never delays/fails the feed). Restore the persisted ma_panel first (so
-    the pull is incremental, not a cold ~2000-ticker re-pull), scan, publish to
-    the MA-scan Drive folder, then persist the freshened panel. Best-effort —
-    never blocks anything; the daily feed is independent.
+def _run_ma_scan_and_record(now: datetime,
+                            max_runtime_seconds: float | None = None) -> None:
+    """MA Proximity Scan — "Part 2", its own independent job (see the module
+    docstring for why it is no longer coupled to the pipeline run at all).
+    Restore the persisted ma_panel first (so the pull is incremental, not a
+    cold ~2000-5000-ticker re-pull), scan, publish to the MA-scan Drive
+    folder, then persist the freshened panel. Best-effort — never raises;
+    the daily feed and this job cannot affect each other.
+
+    `max_runtime_seconds`: None (the default) is unbounded — the Scanner
+    sidebar's manual button calls this attended, expecting to wait 30-40+
+    minutes. The scheduled call from `_loop()` always passes
+    `MA_SCAN_MAX_RUNTIME_SECONDS` so an automatic firing can never run away.
     """
     try:
-        print(f"[daily-job] Daily MA scan starting "
-              f"{now.strftime('%Y-%m-%d %H:%M SGT')}")
+        print(f"[daily-job] MA scan starting "
+              f"{now.strftime('%Y-%m-%d %H:%M SGT')}"
+              + (f" (budget {max_runtime_seconds:.0f}s)"
+                 if max_runtime_seconds is not None else " (unbounded)"))
         # Restore last run's ma_panel so the scan is incremental — and ONLY
         # ma_panel. A full restore here would also roll panel_daily,
         # scores_daily and universe.txt back to whenever the zip was written,
         # discarding bars the pipeline pulled since and forcing a re-pull. The
-        # MA scan runs after the feed is published, so "since" is exactly the
+        # MA scan runs independently of the feed, so "since" is exactly the
         # window that matters.
         try:
             from src.data.persist import load_snapshot
@@ -456,7 +517,7 @@ def _run_ma_scan_and_record(now: datetime) -> None:
             print(f"[daily-job] MA scan: snapshot restore skipped ({exc})")
         from src.scanner.ma_scanner import run_ma_scan
         from src.data.fmp_client import FMPClient
-        result = run_ma_scan(client=FMPClient())
+        result = run_ma_scan(client=FMPClient(), max_runtime_seconds=max_runtime_seconds)
         if result.get("ok"):
             print(f"[daily-job] Daily MA scan: "
                   f"{result['stats']['near_any_ma']} stocks near ≥1 MA")
@@ -475,6 +536,7 @@ def _run_ma_scan_and_record(now: datetime) -> None:
 def _loop() -> None:
     last_universe_date: str | None = None
     last_csp_date: str | None = _csp_scan_seed_date()
+    last_ma_scan_date: str | None = None
     while True:
         try:
             now = datetime.now(SGT)
@@ -486,9 +548,14 @@ def _loop() -> None:
             if _should_refresh_universe(now, last_universe_date):
                 _refresh_universe_and_record(now)
                 last_universe_date = now.date().isoformat()
-            # The daily pipeline itself (+ the MA scan that rides along right
-            # after it) is triggered externally now -- see the module
-            # docstring. Nothing to check for it here.
+            # 09:00 SGT — MA Proximity Scan, "Part 2": its own off-peak slot,
+            # entirely independent of the daily pipeline (which is triggered
+            # externally now — see the module docstring). Time-budgeted so a
+            # slow/cold day can never stall this scheduler thread.
+            if _should_run_ma_scan(now, last_ma_scan_date):
+                _run_ma_scan_and_record(
+                    now, max_runtime_seconds=MA_SCAN_MAX_RUNTIME_SECONDS)
+                last_ma_scan_date = now.date().isoformat()
         except Exception:  # noqa: BLE001
             pass
         time.sleep(60)

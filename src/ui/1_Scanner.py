@@ -374,18 +374,24 @@ with st.sidebar:
         run_module_streaming("src.pipeline.voice_packets", "AIC feed + voice packets", prog, stat)
         st.rerun()
 
-    # 2026-09-06: manual-only now, never auto-triggered by anything. Fetching
-    # MA bars for ~5,000 tickers one at a time under FMP's rate limit takes
-    # 40+ minutes -- fine to click and wait on here, fatal when it ran
-    # automatically inside a GitHub-Actions-triggered run with a 45-min
-    # timeout (it got the whole job killed even though the real feed had
-    # already published fine).
-    if st.button("Run MA Proximity Scan", use_container_width=True,
+    # 2026-09-06: pulled out of the daily pipeline entirely -- fetching MA
+    # bars for ~5,000 tickers one at a time under FMP's rate limit takes
+    # 40+ minutes, fatal when it ran automatically inside a GitHub-Actions-
+    # triggered run with a 45-min timeout (it got the whole job killed even
+    # though the real feed had already published fine).
+    # 2026-09-28: re-automated as its own "Part 2" job, but ONLY inside the
+    # HF Space's persistent in-app scheduler (src/ui/daily_job.py, 09:00 SGT,
+    # time-budgeted so it can never stall that thread) -- never back inside
+    # the pipeline's own critical path. This button forces an uncapped run
+    # right now instead of waiting for that daily 09:00 slot.
+    if st.button("Run MA Proximity Scan now", use_container_width=True,
                  disabled=(CLOUD_MODE and not FMP_KEY_SET),
                  help="Scans the full universe for names near a key moving "
                       "average. Independent of the daily feed — safe to run "
                       "any time, but can take 30-40+ minutes against the "
-                      "full ~5,000-ticker universe under FMP's rate limit."):
+                      "full ~5,000-ticker universe under FMP's rate limit. "
+                      "This also runs automatically every morning at 09:00 "
+                      "SGT — use this button to force it sooner."):
         from datetime import datetime as _dt
         from zoneinfo import ZoneInfo as _Z
         from src.ui.daily_job import _run_ma_scan_and_record
