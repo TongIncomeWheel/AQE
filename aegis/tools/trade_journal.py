@@ -403,7 +403,8 @@ def rebuild(store, journal_dir, archive=None):
                     recon["vs_archive"].append({"ticker": k[0], "exit_date": k[1], "archive_usd": av, "journal_net_usd": tv["net_pnl_usd"],
                                                 "journal_gross_usd": tv["gross_pnl_usd"], "diff_usd": diff,
                                                 "note": "material difference beyond fees — archive entry price or qty differs from the fills"})
-                    flags.append(f"{k[0]} {k[1]}: archive {av:+.2f} vs fills net {tv['net_pnl_usd']:+.2f} (diff {diff:+.2f})")
+                    net_disp = tv['net_pnl_usd'] if tv['net_pnl_usd'] is not None else 0.0
+                    flags.append(f"{k[0]} {k[1]}: archive {av:+.2f} vs fills net {net_disp:+.2f} (diff {diff:+.2f})")
     store["reconciliation"] = recon
     if archive:
         a_total = round(sum(_num(t.get("pnlUsd"), 0.0) for t in arch), 2)
