@@ -459,12 +459,24 @@ def _pma_group_headline(group: list[dict]) -> str:
 
 def _pma_group_sentences(group: list[dict]) -> list[str]:
     """Every distinct committee sentence in the group, primary first, so a
-    reader sees ALL the facts PMA gave for this position, not just one."""
+    reader sees ALL the facts PMA gave for this position, not just one.
+
+    Reads `note` before `action`, not the other way round. pma_levels.py
+    builds `note` as `action` plus a caveat suffix when one applies (an
+    intraday-unconfirmed close_above/close_below: "beyond the line
+    intraday, confirms only on the close"; an unconfirmed volume gate) --
+    `action` is always the bare committee sentence with no caveat. A real
+    production card (2026-09-30, STX) badged WATCHING but its sentence
+    still read "HOLD condition met... actionable for your own decision"
+    with zero indication it hadn't closed yet, because this used to read
+    `action` first and the caveat-bearing `note` was never reached. `note`
+    equals `action` whenever no caveat applies, so this changes nothing
+    for any trigger that fires clean."""
     primary = _pma_primary(group)
     ordered = [primary] + [t for t in group if t is not primary]
     seen, out = set(), []
     for t in ordered:
-        s = (t.get("action") or t.get("note") or "").strip()
+        s = (t.get("note") or t.get("action") or "").strip()
         if s and s not in seen:
             seen.add(s)
             out.append(s)

@@ -771,6 +771,56 @@ def test_pma_rendered_cards_never_show_the_bare_word_warn():
         assert "WARN" not in E._pma_card_html(group)
 
 
+def test_close_above_note_says_note_not_action_when_unconfirmed():
+    """pma_levels.py's own promise: an intraday, not-yet-final close_above
+    appends "beyond the line intraday, confirms only on the close" to
+    `note`, leaving `action` bare. Confirms the raw data still carries the
+    caveat (the emailer test below confirms it actually reaches the
+    reader)."""
+    row = {"ticker": "STX", "class": "HOLD_FOR_CONDITIONS",
+          "triggers": [{"id": "STX-cond", "kind": "close_above", "level": 925.44,
+                       "basis": "daily", "priority": "ACTION",
+                       "action": "HOLD condition met: STX closes above the 925.44 "
+                                "pivot on volume at least 40% above average. The "
+                                "name becomes actionable for your own decision."}]}
+    mid = P.evaluate_pma(row, _q(926.58), MID, False, False)
+    assert mid and mid[0]["priority"] == "WARN"
+    assert mid[0]["action"] == ("HOLD condition met: STX closes above the 925.44 "
+                                "pivot on volume at least 40% above average. The "
+                                "name becomes actionable for your own decision.")
+    assert "confirms only on the close" in mid[0]["note"]
+    assert "confirms only on the close" not in mid[0]["action"]
+
+
+def test_pma_card_shows_the_intraday_caveat_not_the_bare_confirmed_sentence():
+    """A real production card (2026-09-30, STX) badged WATCHING but its
+    sentence still read the fully-confirmed "HOLD condition met... The
+    name becomes actionable for your own decision" with no hint it was
+    still intraday and unconfirmed -- a PM couldn't tell if the card meant
+    "watching" or "conditions met". Root cause: _pma_group_sentences read
+    `action` (always bare) before `note` (carries the caveat when one
+    applies), so the caveat pma_levels.py computed never reached the card.
+    This is the end-to-end guarantee that a WATCHING-badged close_above/
+    close_below card's own sentence says so."""
+    stx = {"ticker": "STX", "is_held": False, "priority": "WARN",
+          "headline_phrase": "closed above its line", "live_px": 926.58,
+          "action": "HOLD condition met: STX closes above the 925.44 pivot on "
+                   "volume at least 40% above average. The name becomes "
+                   "actionable for your own decision.",
+          "note": "HOLD condition met: STX closes above the 925.44 pivot on "
+                  "volume at least 40% above average. The name becomes "
+                  "actionable for your own decision. — beyond the line "
+                  "intraday, confirms only on the close",
+          "kind": "close_above", "level": "STX-cond|warn",
+          "carried": False, "intraday": {}}
+    color, badge = E._pma_group_badge([stx])
+    assert badge == "WATCHING"
+    sentences = E._pma_group_sentences([stx])
+    assert any("confirms only on the close" in s for s in sentences)
+    plain = E._pma_card_plain([stx])
+    assert "confirms only on the close" in plain
+
+
 def test_pma_primary_prefers_action_and_specific_over_generic():
     generic_action = {"priority": "ACTION", "kind": "near_stops"}
     specific_action = {"priority": "ACTION", "kind": "close_below"}
