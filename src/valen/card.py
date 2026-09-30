@@ -181,3 +181,35 @@ def rotation_table(valen: dict) -> list[dict]:
 def freshness(valen: dict) -> dict:
     return {"as_of": (valen.get("plain_english") or {}).get("as_of"),
             "basis": valen.get("basis", "eod")}
+
+
+# ---------------------------------------------------------------------------
+# Parts 2-6 (pieces 04-20) — plain pass-throughs with safe defaults, same
+# "render from the artifact alone" rule. `run_playbook()` (daily.py) writes
+# these keys AFTER Part 1's own write; a page reading an artifact from
+# between those two writes (or an older one predating this pass) gets a
+# clean empty shape here, never a KeyError.
+# ---------------------------------------------------------------------------
+
+def selection_block(valen: dict) -> dict:
+    sel = valen.get("selection") or {}
+    return {"relative_strength": sel.get("relative_strength") or [],
+           "funnel": sel.get("funnel") or [],
+           "no_buy_list": sel.get("no_buy_list") or []}
+
+
+def house_block(valen: dict) -> dict:
+    return {"setups": (valen.get("house") or {}).get("setups") or []}
+
+
+def execution_block(valen: dict) -> dict:
+    ex = valen.get("execution") or {}
+    return {"entries": ex.get("entries") or [],
+           "stop_breaches": ex.get("stop_breaches") or []}
+
+
+def management_block(valen: dict) -> dict:
+    mg = valen.get("management") or {}
+    return {"held_facts": mg.get("held_facts") or [],
+           "streak": mg.get("streak") or {"status": "UNAVAILABLE",
+                                          "reason": "not computed"}}

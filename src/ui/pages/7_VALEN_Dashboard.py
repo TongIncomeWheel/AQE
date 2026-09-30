@@ -1,28 +1,39 @@
-"""VALEN Dashboard — the VIV System's Situational Awareness card, ported
-into AQE (Part 1: Weather, pieces 01-03). Full scope, sources and the two
-constraints this had to resolve: docs/AQE_VALEN_DASHBOARD_PROPOSAL.md.
+"""VALEN Dashboard — the VIV System's 21-piece handbook, ported into AQE
+end to end (2026-09-30), sequenced the way the handbook's own roadmap page
+sequences it: Weather -> Neighbourhood -> House -> When to walk in ->
+After you move in -> Keeping the roof on. Full scope, sources and the
+piece-by-piece reconciliation: docs/AQE_VALEN_DASHBOARD_PROPOSAL.md.
 
-The page owns no maths and, as of 2026-09-27, no presentation logic either
-— every number comes from `src.valen.card`, every pixel from
-`src.valen.theme` (a deliberately custom-styled dark card, matching the
-VIV webapp's own Situational Awareness card rather than plain Streamlit
-widgets — the PM's explicit ask, overriding CLAUDE.md's general "no fancy
-visuals" default for this one page). The nightly read is cached to
-`output/valen_dashboard.json` (Step 6i of the daily pipeline) so a reload
-is free, same pattern as the Crown Macro page.
+The page owns no maths and no presentation logic — every number comes
+from `src.valen.card`, every pixel from `src.valen.theme` (a deliberately
+custom-styled dark card, matching the VIV webapp's own Situational
+Awareness card rather than plain Streamlit widgets — the PM's explicit
+ask, overriding CLAUDE.md's general "no fancy visuals" default for this
+one page). Parts 2-6 (`src.valen.selection`/`house`/`execution`/
+`management`) read fields AQE's own engines already stamp onto
+`daily_list`/`held_positions` — no new scoring, no new FMP calls, except
+piece 20's closed-trade streak (`src.data.trade_history`, a read-only
+reader over the existing Aegis trade journal).
+
+Two pieces are deliberately NOT here: piece 06 ("the earnings staircase" —
+fundamentals growth) needs an FMP integration AQE has never built and
+wasn't added in this pass; piece 21 ("progress over perfection") is the
+PM's own practice, not something software can compute or display.
+
+**AQE still makes no decisions and no sizing (CLAUDE.md).** Every reading
+below is a FACT (a price, a flag, a rank, an R-multiple), never a
+recommendation — pieces 14, 15 and 20's actual sizing/limit RULES ship as
+quoted handbook doctrine in the UI, visibly attributed, never as a number
+this page or the export computed. The nightly read is cached to
+`output/valen_dashboard.json` (Step 6i writes Part 1, Step 8a-1b adds
+Parts 2-6 once the day's export exists) so a reload is free.
 
 Live refresh (market hours): click-to-pull, never auto-polling — same
 house pattern as the "Refresh live levels" button on the Charts & Trade
 Entry page. A live pull recomputes trend + the index/VIX legs of
 extension for THIS page render only; it never overwrites the nightly
-artifact on disk, and whole-market breadth always stays at its last
-nightly read (that computation is not a per-click operation).
-
-**Reading, not sizing.** The one-word stance is a market READING — same
-category as AQE's `regime` field. AQE makes no decisions and no sizing
-(CLAUDE.md). The handbook's own "what I do with each answer" guidance is
-shown below as quoted doctrine, visibly attributed, so the PM/AIC still
-makes every sizing call.
+artifact on disk, and Parts 2-6 always stay at their last nightly read
+(none of them are a per-click computation).
 """
 
 from __future__ import annotations
@@ -54,10 +65,9 @@ st.markdown(T.CSS, unsafe_allow_html=True)
 
 st.title(":compass: VALEN Dashboard")
 st.caption(
-    "The VIV System's Situational Awareness card — market trend, extension "
-    "and rotation, read before any chart. Part 1 (Weather) of the handbook; "
-    "everything downstream (setups, entries, management) stays where AQE "
-    "already builds it — the Signals table, brackets and DETECT layer."
+    "The VIV System's 21 building blocks, in the handbook's own order: "
+    "Weather, Neighbourhood, House, When to walk in, After you move in, "
+    "Keeping the roof on."
 )
 
 # ── run / load — same idiom as the Crown Macro page ────────────────────────
@@ -66,8 +76,8 @@ with left:
     go = st.button("▶️ Run VALEN read", use_container_width=True, type="primary")
 with right:
     st.caption("Reads the same daily panel every AQE engine reads (SPY/QQQ "
-               "bars, the Cboe VIX complex). Cached to "
-               "`output/valen_dashboard.json` — a reload is free.")
+               "bars, the Cboe VIX complex, today's scored export). Cached "
+               "to `output/valen_dashboard.json` — a reload is free.")
 
 if go:
     with st.spinner("Reading the market…"):
@@ -98,8 +108,8 @@ with lc1:
               "Market is closed — showing the last nightly read."))
 with lc2:
     if market_open:
-        st.caption("Market is open. Live refresh does not touch breadth or "
-                   "rotation — those stay at last night's read.")
+        st.caption("Market is open. Live refresh does not touch breadth, "
+                   "rotation, or Parts 2-6 — those stay at last night's read.")
     else:
         st.caption("Market is closed. Live refresh is available 09:45–16:15 ET.")
 
@@ -122,7 +132,16 @@ if live:
     st.caption(f"\U0001f7e2 Live as of {live['pulled_at']} "
               f"(quotes: {', '.join(live['quotes_used']) or 'none'})")
 
-# ── the card ─────────────────────────────────────────────────────────────
+
+def _part_header(n: str, title: str, subtitle: str) -> None:
+    st.markdown(T.part_header_html(n, title, subtitle), unsafe_allow_html=True)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# PART 1 — WEATHER (pieces 01-03) — read the market first
+# ═══════════════════════════════════════════════════════════════════════
+_part_header("1", "Weather", "Is the market paying for breakouts right now?")
+
 banner = C.stance_banner(valen)
 pe = valen.get("plain_english") or {}
 fresh = C.freshness(valen)
@@ -157,14 +176,12 @@ if ctx.get("status") == "OK":
         "**Not T2108** — that needs the full market; this is context "
         "on AQE's own screened names only.")
 
-# ── caveats ──────────────────────────────────────────────────────────────
 caveats = C.caveats(valen)
 if caveats:
     with st.expander("⚠️ What this read cannot see yet", expanded=True):
         for c in caveats:
             st.markdown(f"- {c}")
 
-# ── Theme Leaders + Rotation — pieces 02/03, the full group read ──────────
 gr = valen.get("groups") or {}
 if gr.get("status") == "OK":
     st.markdown('<div class="valen-root">', unsafe_allow_html=True)
@@ -173,7 +190,7 @@ if gr.get("status") == "OK":
 
     st.markdown(
         '<div class="valen-card">'
-        '<div class="valen-header"><span class="valen-title">Theme Leaders</span></div>'
+        '<div class="valen-header"><span class="valen-title">Theme Leaders — piece 02</span></div>'
         '<div class="valen-caption" style="margin-bottom:10px">Every group, ranked three '
         'ways at once. On both lists = real leadership. Strong this week, absent on the '
         'month = new money arriving. Strong month, fading week = a leader resting or '
@@ -189,7 +206,7 @@ if gr.get("status") == "OK":
 
     st.markdown(
         '<div class="valen-card">'
-        '<div class="valen-header"><span class="valen-title">Rotation</span></div>'
+        '<div class="valen-header"><span class="valen-title">Rotation — piece 03</span></div>'
         '<div class="valen-caption" style="margin-bottom:10px">Sorted by thrust (this '
         "week's push). % off 52-week high is the honesty column: LEADING means strong "
         'and near highs; OFF THE FLOOR means the same strong numbers but still 15-25% '
@@ -208,16 +225,13 @@ if gr.get("status") == "OK":
 else:
     st.caption(f"Theme Leaders / Rotation not shown — {gr.get('reason') or 'group read unavailable'}.")
 
-# ── the four instruments, raw values (for anyone who wants the numbers
-# behind the checklist tiles above) ─────────────────────────────────────
 with st.expander("The four instruments — raw values"):
-    for row in C.breadth_rows(valen):
+    for row in breadth_rows_data:
         if row["status"] == "OK":
             st.markdown(f"**{row['label']}:** {row['value']}")
         else:
             st.caption(f"{row['label']}: UNAVAILABLE — {row.get('reason', '')}")
 
-# ── quoted doctrine — NEVER computed, NEVER exported; see module docstring ──
 with st.expander("What the handbook does with each stance — quoted, not computed"):
     st.caption(
         "AQE computes the stance as a market reading only. Sizing is always "
@@ -230,3 +244,146 @@ with st.expander("What the handbook does with each stance — quoted, not comput
         "> **RISK OFF** — the best work you can do is build the "
         "watchlist.\n\n"
         "— *The VIV System*, piece 01")
+
+# ═══════════════════════════════════════════════════════════════════════
+# PART 2 — NEIGHBOURHOOD · SELECTION (pieces 04, 05, 07)
+# ═══════════════════════════════════════════════════════════════════════
+_part_header("2", "Neighbourhood — selection",
+            "Buy what is already outperforming, narrowed to one focus list, "
+            "checked against the trades we refuse to take.")
+
+sel = C.selection_block(valen)
+
+st.markdown(
+    '<div class="valen-root"><div class="valen-card">'
+    '<div class="valen-header"><span class="valen-title">Relative strength — piece 04</span></div>'
+    + T.relative_strength_table_html(sel["relative_strength"]) + '</div></div>',
+    unsafe_allow_html=True)
+if sel["relative_strength"]:
+    with st.expander("📋 Copy for AIC — Relative strength"):
+        rs_df = pd.DataFrame(sel["relative_strength"])
+        table_with_copy(rs_df, key="valen_rs")
+
+col_a, col_b = st.columns(2)
+with col_a:
+    st.markdown(
+        '<div class="valen-root"><div class="valen-card">'
+        '<div class="valen-header"><span class="valen-title">The funnel — piece 05</span></div>'
+        + T.funnel_html(sel["funnel"]) + '</div></div>',
+        unsafe_allow_html=True)
+with col_b:
+    st.markdown(
+        '<div class="valen-root"><div class="valen-card">'
+        '<div class="valen-header"><span class="valen-title">The no-buy list — piece 07</span></div>'
+        '<div class="valen-caption" style="margin-bottom:8px">Candidates tripping 1+ '
+        'refusal flags — a red flag here doesn\'t remove a name from the longlist/Elder/'
+        'QS lenses, it\'s a separate, additive read.</div>'
+        + T.no_buy_html(sel["no_buy_list"]) + '</div></div>',
+        unsafe_allow_html=True)
+
+st.caption("Piece 06 (\"the earnings staircase\" — fundamentals growth) is not built: "
+          "AQE has never pulled income-statement/estimates data from FMP.")
+
+# ═══════════════════════════════════════════════════════════════════════
+# PART 3 — HOUSE (pieces 08-12)
+# ═══════════════════════════════════════════════════════════════════════
+_part_header("3", "House — the setups",
+            "Which chart patterns we buy, and what each must show.")
+
+house = C.house_block(valen)
+st.markdown(
+    '<div class="valen-root"><div class="valen-card">'
+    '<div class="valen-header"><span class="valen-title">Setups flagged today</span></div>'
+    '<div class="valen-caption" style="margin-bottom:8px">08 VCP · 09 Momentum breakout / '
+    'high tight flag · 10 Undercut and rally · 11 Episodic pivot (technical fingerprint '
+    'only — no catalyst feed) · 12 Exhaustion risk (a warning on longs, never a short call).'
+    '</div>' + T.house_setups_html(house["setups"]) + '</div></div>',
+    unsafe_allow_html=True)
+
+# ═══════════════════════════════════════════════════════════════════════
+# PART 4 — WHEN TO WALK IN (pieces 13-16)
+# ═══════════════════════════════════════════════════════════════════════
+_part_header("4", "When to walk in",
+            "The trigger, the size, the limits and the stop.")
+
+execu = C.execution_block(valen)
+st.markdown(
+    '<div class="valen-root"><div class="valen-card">'
+    '<div class="valen-header"><span class="valen-title">How we enter — piece 13</span></div>'
+    '<div class="valen-caption" style="margin-bottom:8px">Trigger, then volume '
+    'confirmation, then the stop bracket_engine already computed — checked in that order, '
+    'exactly like the handbook.</div>' + T.entries_table_html(execu["entries"]) + '</div>'
+    '<div class="valen-card">'
+    '<div class="valen-header"><span class="valen-title">Cutting losers — piece 16</span></div>'
+    '<div class="valen-caption" style="margin-bottom:8px">A fact, never a decision: which '
+    'held positions are already through their own stop.</div>'
+    + T.stop_breaches_html(execu["stop_breaches"]) + '</div></div>',
+    unsafe_allow_html=True)
+
+with st.expander("Sizing is arithmetic (14) & The three limits (15) — quoted, not computed"):
+    st.caption("AQE's charter forbids computing a size or a position limit. The "
+              "handbook's own words, quoted for reference — this is the PM/AIC's "
+              "own arithmetic to do, every time:")
+    st.markdown(
+        "> **Sizing is arithmetic** — decide what you can lose first (your risk "
+        "budget), the share count follows from that and the stop distance. Never "
+        "the other way round.\n\n"
+        "> **The three limits** — one trade, all trades together, and total money "
+        "in the market. Set all three before you place anything.\n\n"
+        "— *The VIV System*, pieces 14–15")
+
+# ═══════════════════════════════════════════════════════════════════════
+# PART 5 — AFTER YOU MOVE IN (pieces 17-19)
+# ═══════════════════════════════════════════════════════════════════════
+_part_header("5", "After you move in",
+            "Take profit while the stock is still going up, trail the rest, "
+            "add only when it proves itself again.")
+
+mgmt = C.management_block(valen)
+st.markdown(
+    '<div class="valen-root"><div class="valen-card">'
+    '<div class="valen-header"><span class="valen-title">Held-position facts — pieces 17–19</span></div>'
+    '<div class="valen-caption" style="margin-bottom:8px">Facts only — R-multiple is an '
+    'APPROXIMATION using the current stop (AQE keeps no frozen entry-time risk). The '
+    'trim/trail/add call itself is always the PM/AIC\'s.</div>'
+    + T.held_facts_table_html(mgmt["held_facts"]) + '</div></div>',
+    unsafe_allow_html=True)
+if mgmt["held_facts"]:
+    with st.expander("📋 Copy for AIC — Held-position facts"):
+        hf_df = pd.DataFrame(mgmt["held_facts"])
+        table_with_copy(hf_df, key="valen_held_facts")
+
+with st.expander("Trim into strength (17), trail the rest (18), adds and pyramids (19) "
+                 "— quoted, not computed"):
+    st.markdown(
+        "> **Trim into strength** — take some profit while the stock is still going up, "
+        "not after it rolls over.\n\n"
+        "> **Trail the rest** — one moving average, daily closes only.\n\n"
+        "> **Adds and pyramids** — add to a winner only when it proves itself again, "
+        "never to average down.\n\n"
+        "— *The VIV System*, pieces 17–19")
+
+# ═══════════════════════════════════════════════════════════════════════
+# PART 6 — KEEPING THE ROOF ON (pieces 20-21)
+# ═══════════════════════════════════════════════════════════════════════
+_part_header("6", "Keeping the roof on",
+            "Cut size in a losing streak, decided in advance — and staying in the game.")
+
+st.markdown(
+    '<div class="valen-root"><div class="valen-card">'
+    '<div class="valen-header"><span class="valen-title">Streak — piece 20</span></div>'
+    '<div class="valen-caption" style="margin-bottom:8px">The fact only — from the '
+    'closed-trade journal. The size-cut RULE itself is quoted below, never computed.'
+    '</div>' + T.streak_html(mgmt["streak"]) + '</div></div>',
+    unsafe_allow_html=True)
+
+with st.expander("Cutting size in a losing streak (20) — quoted, not computed"):
+    st.markdown(
+        "> Decided in advance, so it never has to be argued about mid-streak: "
+        "cut size after a run of losses, by a rule you set before the streak "
+        "started, not in the middle of it.\n\n"
+        "— *The VIV System*, piece 20")
+
+st.caption("Piece 21 (\"progress over perfection\") is the PM's own practice, not "
+          "something a scanner can compute or display — it's intentionally not "
+          "represented here.")

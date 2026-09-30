@@ -164,3 +164,14 @@ POPULATION_US_WIDE = "us_nasdaq_nyse_mcap_gt_1b"  # ma_scanner.get_ma_universe()
 
 FORMULA_BASIS_VIV_PINE = "viv_pine"      # transcribed from the published script
 FORMULA_BASIS_AQE_HOUSE = "aqe_house"    # AQE's own formula, same INTENT
+
+# ---------------------------------------------------------------------------
+# Parts 2-4 (pieces 04-16) — 2026-09-30. Everything here reads fields AQE's
+# own engines already stamp onto daily_list/held_positions; no new scoring.
+# PER_STOCK_ATR_MULT_LAUNCHPAD_BELOW above already anticipates the no-buy
+# list's "stretched" test, reused as-is. This block adds the one genuinely
+# new threshold: how close to earnings counts as "too close to buy."
+# ---------------------------------------------------------------------------
+NO_BUY_EARNINGS_WITHIN_SESSIONS = 5     # piece 07: "earnings within 5 sessions"
+EXHAUSTION_SCORE_MAX = 10.0             # energy.py's inactive/baseline ceiling
+EXHAUSTION_SCORE_WATCH_BELOW = 8.5      # piece 12: any penalty has fired

@@ -40,6 +40,7 @@ from src.data.paths import (
     SPY_DAILY,
     SHORTLIST_PATH,
     DASHBOARD_PATH,
+    EXPORT_JSON,
 )
 from src.data.universe import load_universe
 from src.engines import pipeline_rank, srm
@@ -489,6 +490,33 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
                   f"— {(pack_out.get('limits') or [''])[0]}")
     except Exception as exc:
         print(f"  [WARN] Macro pack failed: {exc}")
+
+    # Step 8a-1b: VALEN playbook — pieces 04-20 (Parts 2-4's read-only half,
+    # Parts 5-6's facts). Same reason as the macro pack just above: these
+    # need the FINISHED daily_list/held_positions (relative strength ranks,
+    # setup flags, brackets, held-position P&L), unlike Part 1 Weather
+    # (Step 6i), which only needs raw price panels and so already ran
+    # earlier. Loads Step 6i's own artifact, adds these sections, re-writes
+    # both VALEN files — an addition to an addition, never allowed to take
+    # either the export or Part 1's own read down with it.
+    print(f"{_el()} [daily] Step 8a-1b: VALEN playbook...")
+    try:
+        from src.valen.daily import load_valen, run_playbook
+        from src.valen.daily import write_artifacts as _valen_write2
+        _vl1 = load_valen()
+        if _vl1 is not None and EXPORT_JSON.exists():
+            _export = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
+            _pb = run_playbook(_export, _vl1)
+            _vl1.update(_pb)
+            _valen_write2(_vl1)
+            print(f"  VALEN playbook: {len(_pb['selection']['relative_strength'])} RS leaders, "
+                  f"{len(_pb['house']['setups'])} setups tagged, "
+                  f"{len(_pb['execution']['entries'])} entry reads, "
+                  f"{len(_pb['management']['held_facts'])} held-position facts")
+        else:
+            print("  [WARN] VALEN playbook skipped — no Part 1 artifact or export to read")
+    except Exception as exc:
+        print(f"  [WARN] VALEN playbook failed: {exc}")
 
     # Step 8a-2: publish the day's artifacts into the repo (aegis/output/).
     # GitHub is the primary store as of 2026-08-12; the Drive write above stays

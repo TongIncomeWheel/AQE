@@ -34,7 +34,8 @@ from src.data.paths import DATA_DIR, OUTPUT_DIR, PANEL_DAILY, PANEL_WEEKLY
 from src.macro.crown import cboe
 
 from . import breadth as breadth_mod
-from . import card, explain, extension, groups as groups_mod, spec, stance, trend
+from . import card, execution, explain, extension, groups as groups_mod
+from . import house, management, selection, spec, stance, trend
 
 LOCAL_PATH = OUTPUT_DIR / "valen_dashboard.json"
 PUBLISHED_PATH = OUTPUT_DIR / "aqe_valen_dashboard.json"
@@ -121,6 +122,70 @@ def run_valen() -> dict:
     return artifact
 
 
+def run_playbook(export: dict, valen_artifact: dict | None = None) -> dict:
+    """Pieces 04-20 (Parts 2-4's read-only half, Parts 5-6's facts) —
+    everything that needs the FINISHED scored export (`daily_list`/
+    `held_positions`), unlike Part 1 Weather which only needs raw price
+    panels and so runs earlier (Step 6i). This runs as its own later
+    pipeline step, after Step 8 has written aqe_daily_export.json — the
+    exact same "read-only door" reason src/macro/pack.py's Step 8a-1
+    already established. Never raises; each section degrades to an empty
+    list on its own failure so one broken piece can't blank the rest.
+
+    `valen_artifact` is Part 1's own already-written artifact (for the
+    no-buy list's "market check red" flag, read from its `stance` block);
+    None is fine — that one flag just never fires.
+    """
+    daily_list = export.get("daily_list") or []
+    held_positions = export.get("held_positions") or []
+    stance_word = ((valen_artifact or {}).get("stance") or {}).get("stance")
+
+    try:
+        rs_leaders = selection.relative_strength_leaders(daily_list)
+    except Exception:  # noqa: BLE001
+        rs_leaders = []
+    try:
+        funnel = selection.funnel_counts(daily_list)
+    except Exception:  # noqa: BLE001
+        funnel = []
+    try:
+        no_buy = selection.no_buy_list(daily_list, market_stance_word=stance_word)
+    except Exception:  # noqa: BLE001
+        no_buy = []
+
+    try:
+        setups = house.house_setups(daily_list)
+    except Exception:  # noqa: BLE001
+        setups = []
+
+    try:
+        entries = execution.entry_candidates(daily_list)
+    except Exception:  # noqa: BLE001
+        entries = []
+    try:
+        breaches = execution.stop_breaches(held_positions)
+    except Exception:  # noqa: BLE001
+        breaches = []
+
+    try:
+        held_facts = management.held_book_facts(held_positions)
+    except Exception:  # noqa: BLE001
+        held_facts = []
+    try:
+        from src.data import trade_history
+        streak = trade_history.load_streak()
+    except Exception as exc:  # noqa: BLE001
+        streak = {"status": "UNAVAILABLE", "reason": str(exc)}
+
+    return {
+        "selection": {"relative_strength": rs_leaders, "funnel": funnel,
+                     "no_buy_list": no_buy},
+        "house": {"setups": setups},
+        "execution": {"entries": entries, "stop_breaches": breaches},
+        "management": {"held_facts": held_facts, "streak": streak},
+    }
+
+
 def write_artifacts(artifact: dict) -> dict:
     """Local write only — see module docstring on Drive publish scope."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -138,6 +203,10 @@ def write_artifacts(artifact: dict) -> dict:
         "neighbourhood": card.neighbourhood_lines(artifact),
         "theme_leaders": card.theme_leaders_table(artifact),
         "rotation": card.rotation_table(artifact),
+        "selection": card.selection_block(artifact),
+        "house": card.house_block(artifact),
+        "execution": card.execution_block(artifact),
+        "management": card.management_block(artifact),
     }
     PUBLISHED_PATH.write_text(json.dumps(published, indent=2, default=str), encoding="utf-8")
     return {"local": str(LOCAL_PATH), "published": str(PUBLISHED_PATH)}

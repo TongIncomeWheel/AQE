@@ -758,3 +758,99 @@ def test_breadth_rows_t2108_moved_out_of_checklist_into_instrument():
     rows = card.breadth_rows({})
     t2108_row = next(r for r in rows if "T2108" in r["label"])
     assert t2108_row["section"] == "instrument"
+
+
+# ------------------------------------------------------- Parts 2-6 integration
+# daily.py's run_playbook() orchestrates selection/house/execution/management
+# against the finished export; card.py's *_block() functions give the page
+# safe defaults when those sections haven't been written yet (e.g. reading
+# an artifact from between Step 6i and Step 8a-1b, or an older one predating
+# this pass).
+
+
+def test_run_playbook_never_raises_on_an_empty_export():
+    from src.valen.daily import run_playbook
+    out = run_playbook({}, None)
+    assert out["selection"]["relative_strength"] == []
+    assert out["house"]["setups"] == []
+    assert out["execution"]["entries"] == []
+    assert out["management"]["held_facts"] == []
+
+
+def test_run_playbook_reads_stance_word_for_no_buy_market_flag():
+    from src.valen.daily import run_playbook
+    daily_list = [{"ticker": "X", "on_longlist": True}]
+    out = run_playbook({"daily_list": daily_list}, {"stance": {"stance": "RISK_OFF"}})
+    flags = out["selection"]["no_buy_list"][0]["flags"]
+    assert any(f["flag"] == "market_red" for f in flags)
+
+
+def test_card_selection_block_defaults_when_absent():
+    assert card.selection_block({}) == {"relative_strength": [], "funnel": [],
+                                        "no_buy_list": []}
+
+
+def test_card_house_block_defaults_when_absent():
+    assert card.house_block({}) == {"setups": []}
+
+
+def test_card_execution_block_defaults_when_absent():
+    assert card.execution_block({}) == {"entries": [], "stop_breaches": []}
+
+
+def test_card_management_block_defaults_and_streak_shape():
+    out = card.management_block({})
+    assert out["held_facts"] == []
+    assert out["streak"]["status"] == "UNAVAILABLE"
+
+
+def test_card_blocks_pass_through_real_data():
+    valen = {"selection": {"relative_strength": [{"ticker": "A"}], "funnel": [],
+                          "no_buy_list": []}}
+    assert card.selection_block(valen)["relative_strength"] == [{"ticker": "A"}]
+
+
+def test_part_header_html_contains_number_title_subtitle():
+    html = theme.part_header_html("2", "Neighbourhood — selection", "Buy what is outperforming.")
+    assert "Part 2 of 6" in html
+    assert "Neighbourhood" in html
+    assert "Buy what is outperforming." in html
+
+
+def test_relative_strength_table_html_empty_reads_not_shown():
+    assert "No relative-strength" in theme.relative_strength_table_html([])
+
+
+def test_funnel_html_empty_reads_not_shown():
+    assert "not shown" in theme.funnel_html([]).lower()
+
+
+def test_no_buy_html_empty_reads_clean():
+    assert "no candidate trips" in theme.no_buy_html([]).lower()
+
+
+def test_house_setups_html_empty_reads_clean():
+    assert "no setup pattern" in theme.house_setups_html([]).lower()
+
+
+def test_entries_table_html_empty_reads_clean():
+    assert "no candidate has a recognised entry" in theme.entries_table_html([]).lower()
+
+
+def test_stop_breaches_html_empty_reads_clean():
+    assert "no held position" in theme.stop_breaches_html([]).lower()
+
+
+def test_held_facts_table_html_empty_reads_clean():
+    assert "no open positions" in theme.held_facts_table_html([]).lower()
+
+
+def test_streak_html_unavailable_reads_not_shown():
+    html = theme.streak_html({"status": "UNAVAILABLE", "reason": "no data"})
+    assert "not shown" in html.lower()
+
+
+def test_doctrine_html_renders_heading_and_body():
+    html = theme.doctrine_html([("Sizing is arithmetic", "decide risk first")])
+    assert "Sizing is arithmetic" in html
+    assert "decide risk first" in html

@@ -139,6 +139,28 @@ CSS = f"""
   box-shadow: 0 0 4px rgba(0,0,0,0.6); }}
 .valen-gauge-scale {{ display: flex; justify-content: space-between; margin-top: 4px; }}
 .valen-gauge-scale span {{ font-size: 9.5px; color: {_TEXT_MUTED}; }}
+
+/* ---- Parts 2-6: funnel, setup tags, doctrine blocks --------------- */
+.valen-funnel-row {{ margin-bottom: 10px; }}
+.valen-funnel-row:last-child {{ margin-bottom: 0; }}
+.valen-funnel-head {{ display: flex; justify-content: space-between; font-size: 12.5px;
+  margin-bottom: 4px; }}
+.valen-funnel-label {{ color: {_TEXT_MUTED}; }}
+.valen-funnel-count {{ color: {_TEXT}; font-weight: 700; font-variant-numeric: tabular-nums; }}
+.valen-funnel-track {{ height: 10px; background: {_TILE_BG}; border-radius: 5px;
+  overflow: hidden; }}
+.valen-funnel-fill {{ height: 100%; background: {_GOLD}; border-radius: 5px; }}
+.valen-tag {{ display: inline-block; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.02em; padding: 2px 8px; border-radius: 5px; margin: 2px 4px 2px 0;
+  background: {_TILE_BG}; border: 1px solid {_BORDER}; color: {_GOLD}; white-space: nowrap; }}
+.valen-flag-pill {{ display: inline-block; font-size: 10px; padding: 2px 8px;
+  border-radius: 999px; margin: 2px 4px 2px 0; background: rgba(248,113,113,0.12);
+  border: 1px solid rgba(248,113,113,0.35); color: {_RED}; white-space: nowrap; }}
+.valen-doctrine {{ border-left: 3px solid {_BORDER}; padding: 6px 14px; margin-bottom: 12px;
+  color: {_TEXT_MUTED}; font-size: 12.5px; line-height: 1.6; }}
+.valen-doctrine:last-child {{ margin-bottom: 0; }}
+.valen-doctrine b {{ color: {_TEXT}; }}
+.valen-empty {{ font-size: 12.5px; color: {_GREY}; font-style: italic; padding: 4px 0; }}
 </style>
 """
 
@@ -283,6 +305,20 @@ def stance_gauge_html(banner: dict) -> str:
            f'<div class="valen-dial-caption">Stance</div></div>')
 
 
+def part_header_html(number: str, title: str, subtitle: str) -> str:
+    """The handbook's own "Part N of 6" section banner — used once per Part
+    on the page to keep the UX sequenced the way the handbook itself
+    sequences it (Weather -> Neighbourhood -> House -> When to walk in ->
+    After you move in -> Keeping the roof on)."""
+    return (
+        '<div class="valen-root"><div class="valen-card" style="padding-bottom:10px">'
+        f'<div class="valen-header"><span class="valen-title">Part {_esc(number)} of 6 — '
+        f'{_esc(title)}</span></div>'
+        f'<div class="valen-caption" style="margin:0">{_esc(subtitle)}</div>'
+        '</div></div>'
+    )
+
+
 def stance_header_html(banner: dict) -> str:
     """`banner` = card.stance_banner(valen)'s return shape."""
     status = banner.get("status", "UNAVAILABLE")
@@ -416,3 +452,174 @@ def rotation_table_html(rows: list[dict], limit: int = 15) -> str:
         '<table class="valen-table"><thead><tr><th></th><th>Group</th>'
         '<th>Thrust</th><th>1 Month</th><th>% off 52w high</th><th>State</th></tr></thead>'
         f'<tbody>{"".join(body)}</tbody></table>')
+
+
+# ---------------------------------------------------------------------------
+# Parts 2-6 (pieces 04-20) — 2026-09-30. Reuses the existing table/pill/LED
+# vocabulary above rather than inventing a new widget per piece.
+# ---------------------------------------------------------------------------
+
+def relative_strength_table_html(rows: list[dict], limit: int = 15) -> str:
+    """Piece 04 — ranked by rs_rank_pct, LEADER/IN-LINE/LAGGARD colour-coded."""
+    if not rows:
+        return '<div class="valen-empty">No relative-strength read today.</div>'
+    lead_color = {"LEADER": _GREEN, "LAGGARD": _RED, "IN-LINE": _GREY}
+    body = []
+    for i, r in enumerate(rows[:limit], 1):
+        color = lead_color.get(r.get("rs_leadership"), _GREY)
+        body.append(
+            f'<tr><td class="valen-rank">{i}</td>'
+            f'<td class="valen-name">{_esc(r.get("ticker"))}</td>'
+            f'<td>{_fmt(r.get("rs_rank_pct"))}</td>'
+            f'<td style="color:{color};font-weight:600;font-size:11px">'
+            f'{_esc(r.get("rs_leadership") or "—")}</td>'
+            f'<td>{_fmt(r.get("pipe_rank"))}</td></tr>')
+    return (
+        '<table class="valen-table"><thead><tr><th></th><th>Ticker</th>'
+        '<th>RS rank</th><th>Leadership</th><th>Pipe rank</th></tr></thead>'
+        f'<tbody>{"".join(body)}</tbody></table>')
+
+
+def funnel_html(stages: list[dict]) -> str:
+    """Piece 05 — survivors at each narrowing stage, bar width relative to
+    the first (widest) stage."""
+    if not stages:
+        return '<div class="valen-empty">Funnel not shown.</div>'
+    base = next((s["count"] for s in stages if s.get("count")), None) or 1
+    rows = []
+    for s in stages:
+        count = s.get("count")
+        if count is None:
+            rows.append(
+                f'<div class="valen-funnel-row"><div class="valen-funnel-head">'
+                f'<span class="valen-funnel-label">{_esc(s["stage"])}</span>'
+                f'<span class="valen-funnel-count" style="color:{_GREY}">'
+                f'{_esc(s.get("reason", "not shown"))}</span></div></div>')
+            continue
+        pct = max(2.0, min(100.0, count / base * 100))
+        rows.append(
+            f'<div class="valen-funnel-row"><div class="valen-funnel-head">'
+            f'<span class="valen-funnel-label">{_esc(s["stage"])}</span>'
+            f'<span class="valen-funnel-count">{count}</span></div>'
+            f'<div class="valen-funnel-track"><div class="valen-funnel-fill" '
+            f'style="width:{pct:.1f}%"></div></div></div>')
+    return "".join(rows)
+
+
+def no_buy_html(rows: list[dict], limit: int = 12) -> str:
+    """Piece 07 — candidates carrying 1+ no-buy flags, worst first."""
+    if not rows:
+        return '<div class="valen-empty">No candidate trips a no-buy flag today.</div>'
+    body = []
+    for r in rows[:limit]:
+        pills = "".join(f'<span class="valen-flag-pill">{_esc(f["label"])}</span>'
+                        for f in r["flags"])
+        body.append(
+            f'<div class="valen-row" style="align-items:flex-start">'
+            f'<span class="valen-row-label" style="min-width:52px">{_esc(r["ticker"])}</span>'
+            f'<span class="valen-row-value" style="text-align:left;white-space:normal">'
+            f'{pills}</span></div>')
+    more = len(rows) - limit
+    more_html = (f'<div class="valen-caption">+{more} more candidate(s) flagged — '
+                f'full list in the export.</div>' if more > 0 else "")
+    return "".join(body) + more_html
+
+
+def house_setups_html(rows: list[dict], limit: int = 20) -> str:
+    """Parts 08-12 — every setup tag a ticker carries, as pills."""
+    if not rows:
+        return '<div class="valen-empty">No setup pattern flagged today.</div>'
+    body = []
+    for r in rows[:limit]:
+        tags = "".join(f'<span class="valen-tag" title="{_esc(t["detail"])}">'
+                       f'{_esc(t["name"])}</span>' for t in r["setups"])
+        body.append(
+            f'<div class="valen-row" style="align-items:flex-start">'
+            f'<span class="valen-row-label" style="min-width:52px">{_esc(r["ticker"])}</span>'
+            f'<span class="valen-row-value" style="text-align:left;white-space:normal">'
+            f'{tags}</span></div>')
+    more = len(rows) - limit
+    more_html = (f'<div class="valen-caption">+{more} more.</div>' if more > 0 else "")
+    return "".join(body) + more_html
+
+
+def entries_table_html(rows: list[dict], limit: int = 15) -> str:
+    """Piece 13 — trigger, volume, stop, read in that fixed order."""
+    if not rows:
+        return '<div class="valen-empty">No candidate has a recognised entry trigger today.</div>'
+    body = []
+    for r in rows[:limit]:
+        vol = r.get("volume_confirmed")
+        vol_html = ('<span class="valen-ok">✓</span>' if vol is True
+                   else ('<span class="valen-fail">✗</span>' if vol is False
+                        else '<span class="valen-muted">—</span>'))
+        valid = r.get("bracket_valid")
+        stop_html = (_fmt(r.get("stop")) if valid else
+                    f'<span class="valen-muted" title="{_esc(r.get("invalid_reason") or "")}">'
+                    f'no valid stop</span>')
+        body.append(
+            f'<tr><td class="valen-name">{_esc(r["ticker"])}</td>'
+            f'<td style="text-align:left">{_esc(r.get("trigger"))}</td>'
+            f'<td>{vol_html}</td><td>{stop_html}</td></tr>')
+    return (
+        '<table class="valen-table"><thead><tr><th>Ticker</th><th>Trigger</th>'
+        '<th>Volume</th><th>Stop</th></tr></thead>'
+        f'<tbody>{"".join(body)}</tbody></table>')
+
+
+def stop_breaches_html(rows: list[dict]) -> str:
+    """Piece 16 — a fact, never a decision: which held positions are
+    already through their own stop."""
+    breached = [r for r in rows if r.get("status") == "OK" and r.get("breached")]
+    if not breached:
+        return '<div class="valen-empty">No held position is through its stop.</div>'
+    items = "".join(
+        f'<li>{_esc(r["ticker"])} — live {_fmt(r["live_px"])} vs stop {_fmt(r["held_sl"])}</li>'
+        for r in breached)
+    return f'<ul class="valen-bullet-list">{items}</ul>'
+
+
+def held_facts_table_html(rows: list[dict]) -> str:
+    """Pieces 17-19's facts — never the trim/trail/add call itself."""
+    if not rows:
+        return '<div class="valen-empty">No open positions.</div>'
+    body = []
+    for r in rows:
+        r_mult = (f'{_fmt(r["r_multiple"])}<span class="valen-stat-sub">approx</span>'
+                 if r.get("r_multiple") is not None else "—")
+        body.append(
+            f'<tr><td class="valen-name">{_esc(r["ticker"])}</td>'
+            f'<td>{_fmt(r.get("unreal_usd"), nd=0)}</td>'
+            f'<td>{r_mult}</td>'
+            f'<td class="{_pct_class(r.get("dist_from_stop_pct"))}">'
+            f'{_fmt(r.get("dist_from_stop_pct"), "%")}</td>'
+            f'<td>{_fmt(r.get("days_held"), nd=0)}</td></tr>')
+    return (
+        '<table class="valen-table"><thead><tr><th>Ticker</th><th>Unrealised $</th>'
+        '<th>R (approx)</th><th>Dist. from stop</th><th>Days held</th></tr></thead>'
+        f'<tbody>{"".join(body)}</tbody></table>')
+
+
+def streak_html(streak: dict) -> str:
+    """Piece 20's context fact — never the sizing rule (that's quoted
+    doctrine, see doctrine_html)."""
+    if streak.get("status") != "OK":
+        return (f'<div class="valen-empty">Streak not shown — '
+               f'{_esc(streak.get("reason", "unavailable"))}.</div>')
+    color = _RED if streak["direction"] == "LOSS" else (
+        _GREEN if streak["direction"] == "WIN" else _GREY)
+    return (f'<div class="valen-stat"><div class="valen-stat-label">Current streak</div>'
+           f'<div class="valen-stat-value" style="color:{color}">'
+           f'{streak["streak"]} {streak["direction"]}'
+           f'<span class="valen-stat-sub">of last {streak["n_considered"]} closed</span>'
+           f'</div></div>')
+
+
+def doctrine_html(entries: list[tuple[str, str]]) -> str:
+    """Pieces 14/15/20's actual sizing rule, and piece 21 — the handbook's
+    own words, quoted, never computed. `entries` is a list of (heading,
+    body) pairs the page supplies."""
+    blocks = "".join(
+        f'<div class="valen-doctrine"><b>{_esc(h)}</b> — {_esc(b)}</div>'
+        for h, b in entries)
+    return blocks
