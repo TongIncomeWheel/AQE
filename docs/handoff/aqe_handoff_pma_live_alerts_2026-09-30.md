@@ -1,7 +1,8 @@
-# AQE handoff v2: watch the PMA committee's levels in the 15-minute alerts
+# AQE handoff v2.1: watch the PMA committee's levels in the 15-minute alerts
 
 **From:** Aegis PMA · **To:** AQE engine (build: Claude Code) · **Date:** 2026-09-30 · **Owner:** Ash (PM)
 **Supersedes:** the 2026-09-29 draft. What changed: the file location is fixed, the PMA side is built and publishing, and the build is mapped onto AQE's existing alert engine rather than a new one.
+**v2.1 (same day, PM ruling R20.1):** the file now carries the last **three** runs, not only today's, because committee levels often trigger a session or two late (§2A). Dedup for PMA alerts lasts the life of a trigger, not one day (§3).
 **Hard line:** alerts only. Nothing in this path places, changes, cancels or sizes an order. Every email is information for the PM to act on himself.
 
 ---
@@ -14,6 +15,7 @@
 | Dated record (written from the next run on) | `aegis/output/pma/levels/<run_date>.json` |
 | Schema | `pma_levels.v1` (below; producer: `aegis-core` 1.19.0 `skills/pma/tools/pma_levels.py`) |
 | When it lands | Once each morning, after the PMA committee run, before the US open |
+| What it covers | **The last three runs** (R20.1, from aegis-core 1.20.0); PMA does the merge, AQE reads one file |
 | First file | Run 2026-09-29, pushed 2026-09-30: 36 rows, 52 triggers, verified byte-for-byte by read-back |
 
 **Why `aegis/output/`.** `.github/workflows/deploy-hf.yml` rebuilds the HF Space on every push to `main` *except* `aegis/output/**`. A levels file written anywhere else would redeploy the Space every morning and kill the container mid-run. Keep every PMA write under `aegis/output/pma/`.
@@ -41,6 +43,24 @@ PMA refuses to publish the file if any of these hold:
 - a committee exit line sits **below** the PM's broker stop (a committee line may never loosen a stop he has).
 
 Rows with `not_structured_yet` are conditions PMA can't yet express as a number (two-legged, "pulls back and holds", Elder turns). **AQE skips them rather than guesses.** 8 of 19 on 2026-09-29.
+
+### 2A. The three-session window (R20.1)
+
+Committee levels often trigger a session or two after they are set, so each morning's file carries the last three runs. PMA does the merge, so AQE never has to reconcile three files.
+
+- **Today wins.** A name voted today carries only today's row; any older level on it is superseded.
+- **Retired, with a reason in `window.retired`:**
+  - a name the committee PASSED today;
+  - a carried row whose own kill or invalidation close is already broken by today's served close;
+  - any HELD or WATCH row from an earlier run (your broker stops and AQE's admission rules are re-read every morning, so only today's are current);
+  - anything older than three runs.
+- **Carried:** every other ADVANCE or HOLD-FOR-CONDITIONS row from the last two runs. These are typically names that left today's room but whose level may still trigger. Carried rows are marked:
+  - `carried: true`;
+  - `origin_run` (the run that set the level);
+  - `age_sessions` (1 or 2);
+  - `last_session_live: true` on the final day.
+- **Trigger ids are stamped with their origin run** (`2026-09-29:PK-cond`), so the same level keeps the same id every day it is carried.
+- **File-level block:** `window: {sessions, runs[], carried[], retired[], rule}`, and `counts.carried`.
 
 ### Row and trigger shape
 
@@ -82,7 +102,12 @@ AQE's poller uses FMP `/stable/quote`, which is 15 minutes delayed on the Starte
 
 **Freshness gate.** Act on the file only if `session` equals today's New York date. Otherwise send one email at the first cycle ("PMA levels are stale: run X, today Y; not being watched") and nothing else from it.
 
-**Dedup.** Use the existing Drive state: key `PMA:{trigger id}` in `fired`, once per trading day. A `daily` close trigger's WARN and its ACTION are separate keys (`…|warn`, `…|close`).
+**Dedup — for the life of the trigger, not one day.** The existing `fired` set resets every morning, which would re-send a carried level each day it stays true.
+- Keep PMA fires in their own Drive set, `pma_fired`, keyed by the stamped trigger id (`PMA:2026-09-29:PK-cond`).
+- Keep a key while that id is still in the current file.
+- Prune any key whose id has left the file (retired, superseded or aged out).
+- A `daily` close trigger's WARN and its ACTION are separate keys (`…|warn`, `…|close`).
+- Result: every level alerts at most once over its three-session life.
 
 **Priority → delivery.**
 - **ACTION** and **WARN**: in the next digest email, which already goes out each cycle there are fresh triggers.
@@ -109,7 +134,7 @@ Work on branch `pma-levels-alerts`; the handoff and example file are already the
    - **Do not** remove or change the existing MOVE/BOS/NEAR_* rules. PMA triggers are an additional source.
    - Suppress the legacy held-name `NEAR_STOP` for a ticker when the levels file carries a `broker_stop` for it, so the PM never gets two stop alerts with different stops.
 3. **`src/alerts/emailer.py`:** render PMA triggers as their own block at the top of the digest, ordered ACTION → WARN, each showing:
-   - subject tag `[AEGIS {priority}] {ticker} {class}`;
+   - subject tag `[AEGIS {priority}] {ticker} {class}`, plus `· set {origin_run}, day {age_sessions+1} of 3` on a carried row;
    - the event (level, price, time in ET and SGT);
    - the committee's `action` text, verbatim;
    - class context: conviction/lane/mark, or for HELD, qty, broker stop and committee line;
@@ -124,14 +149,16 @@ Work on branch `pma-levels-alerts`; the handoff and example file are already the
    - a WATCH row never triggers;
    - a `not_structured_yet` row never triggers;
    - `NEAR_STOP` suppressed when a broker stop is present;
+   - a carried trigger that already fired is not re-sent the next day, and its key is pruned once the row leaves the file;
    - a `volume_min_x` shortfall → no ACTION;
    - volume missing → "volume unconfirmed".
-8. **Acceptance replay:** run `evaluate_pma` over `aegis/output/pma/pma_levels.json` (run 2026-09-29) with synthetic quotes. It must produce:
+8. **Acceptance replay:** run `evaluate_pma` over `aegis/output/pma/pma_levels.json` (run 2026-09-29) with synthetic quotes. That first file predates run-stamping, so its ids read `A-entry`; from the next run they read `2026-09-30:A-entry`. It must produce:
    - at the first cycle: `WEAT-nostop` (ACTION) and `NTRA-ordertype` (ACTION);
    - A at `day_high` 176.10 → `A-entry` ACTION; at 178.90 → also `A-chase` WARN;
    - PK at `day_high` 16.25 → `PK-near` INFO; price 16.30 on the final cycle → `PK-cond` ACTION;
    - MRVL at 238.00 → `MRVL-stopnear` WARN (233.85 + 0.5 × 13.53 = 240.62);
-   - no trigger for any WATCH row, or for TMO/DT/ASX/VEEV/NTAP/CNK/TEAM conditions.
+   - no trigger for any WATCH row, or for TMO/DT/ASX/VEEV/NTAP/CNK/TEAM conditions;
+   - **window:** replay a second day with the same file plus one new run. A trigger that fired on day 1 must not fire again on day 2. A carried row must show "set 2026-09-29, day 2 of 3". A row absent from the new file must have its `pma_fired` key pruned.
 
 **Guardrails to keep in the code:**
 - no broker write scope anywhere in AQE;
