@@ -734,6 +734,43 @@ def test_pma_group_bucket_classification():
     assert E._pma_group_bucket(watch_group) == "watch"
 
 
+def test_pma_badge_never_shows_the_bare_word_warn():
+    """A PM question (2026-09-30): does 'WARN' mean risk to my money or an
+    entry setup to watch? The bare internal priority word answers neither,
+    so the rendered badge must never show it -- a HELD warning reads
+    CAUTION (risk, it's the PM's own book) and a shortlist warning reads
+    WATCHING (entry-side, nothing to lose)."""
+    held_warn = [{"is_held": True, "priority": "WARN", "kind": "near_stops"}]
+    watch_warn = [{"is_held": False, "priority": "WARN", "kind": "approaching_entry"}]
+    _, held_badge = E._pma_group_badge(held_warn)
+    _, watch_badge = E._pma_group_badge(watch_warn)
+    assert held_badge == "HELD · CAUTION"
+    assert watch_badge == "WATCHING"
+    for badge in (held_badge, watch_badge):
+        assert "WARN" not in badge
+
+
+def test_pma_rendered_cards_never_show_the_bare_word_warn():
+    """End-to-end: the same guarantee, through the actual card renderers
+    the emailer sends, for both a HELD risk card and a shortlist watch
+    card."""
+    held = {"ticker": "A", "is_held": True, "priority": "WARN",
+            "headline_phrase": "near your stops", "live_px": 10.0,
+            "action": "Price is close to one of your two stops.",
+            "note": "Price is close to one of your two stops.",
+            "kind": "near_stops", "level": "A-nearstops|2026-09-30",
+            "carried": False, "intraday": {}}
+    watch = {"ticker": "C", "is_held": False, "priority": "WARN",
+             "headline_phrase": "approaching its buy line", "live_px": 30.0,
+             "action": "Getting close to the committee's buy line.",
+             "note": "Getting close to the committee's buy line.",
+             "kind": "approaching_entry", "level": "C-entry|near",
+             "carried": False, "intraday": {}}
+    for group in ([held], [watch]):
+        assert "WARN" not in E._pma_card_plain(group)
+        assert "WARN" not in E._pma_card_html(group)
+
+
 def test_pma_primary_prefers_action_and_specific_over_generic():
     generic_action = {"priority": "ACTION", "kind": "near_stops"}
     specific_action = {"priority": "ACTION", "kind": "close_below"}

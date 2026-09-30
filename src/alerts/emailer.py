@@ -278,9 +278,12 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
 # Card UX rules (AQE Handoff: PMA Live Alerts, 2026-09-30): plain words only
 # — never `trade_above`, a trigger id, a JSON key, SC, beta, R:R or the AIC
 # line in this section. Colour means one thing each: red = your money
-# (HELD), green = a buy condition met, amber = a warning. ACTION first (red,
-# then green), then WARN; INFO never appears intraday (it's evaluated and
-# ledgered same as any trigger, just held for the after-close digest).
+# (HELD), green = a buy condition met, amber = not yet actionable. ACTION
+# first (red, then green), then the amber cards — badged CAUTION (a risk
+# read on a HELD position) or WATCHING (an entry-side read on a shortlist
+# name), never the bare internal word "WARN" (see _pma_group_badge). INFO
+# never appears intraday (it's evaluated and ledgered same as any trigger,
+# just held for the after-close digest).
 # ---------------------------------------------------------------------------
 
 def _pma_dist(current, level):
@@ -418,14 +421,24 @@ def _pma_group_bucket(group: list[dict]) -> str:
 
 
 def _pma_group_badge(group: list[dict]) -> tuple[str, str]:
+    """Never render the bare internal priority word "WARN" — a real PM
+    question (2026-09-30) was whether it meant a risk to their money or
+    just an entry setup to watch, and the plain word answers neither. The
+    HELD section is risk by construction (it's the PM's own book, and the
+    section header already says "needs your attention"), so its WARN
+    triggers (near-stop / an unconfirmed intraday touch of the committee's
+    exit line) badge as CAUTION. Every non-held WARN trigger in this
+    codebase (approaching_entry/approaching_target, a chase line, an
+    unconfirmed intraday touch of a buy line) is entry-side, not risk —
+    it lives in the WATCHING section, so its badge just says WATCHING."""
     if group[0].get("is_held"):
-        label = "ACTION" if any(t.get("priority") == "ACTION" for t in group) else "WARN"
+        label = "ACTION" if any(t.get("priority") == "ACTION" for t in group) else "CAUTION"
         return "#d00", f"HELD · {label}"
     if any(_pma_is_buy_condition(t) for t in group):
         return "#0a8a3a", "BUY CONDITION MET"
     if any(t.get("priority") == "ACTION" for t in group):
         return "#b8860b", "ACTION"
-    return "#d9a441", "WARN"
+    return "#d9a441", "WATCHING"
 
 
 def _pma_primary(group: list[dict]) -> dict:
