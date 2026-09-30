@@ -170,3 +170,85 @@ def recent_history(hours: int = 36) -> list[dict]:
             out.append(e)
     out.sort(key=lambda e: e.get("ts_utc", ""), reverse=True)
     return out
+
+
+# ---------------------------------------------------------------------------
+# PMA fired state — a SEPARATE dedup set, deliberately NOT the daily-reset
+# `fired` set above. A PMA trigger keeps the same id for as long as PMA
+# carries the row (up to three sessions, R20.1), so it must alert at most
+# once over that whole life, not once per calendar day. The AQE Handoff:
+# PMA Live Alerts spec calls this "the life of a trigger."
+#
+# Shape: {"fired": ["ABBV-cond|close", "WEAT-nostop|2026-09-30", ...]}.
+# No "date" field to reset on — pruning is driven entirely by
+# `prune_pma_fired(state, live_ids)`, called once per cycle with the BASE
+# ids (before any `|variant` suffix) still present in the day's PMA levels
+# file. A key whose base id has left the file (the row retired, PASSed, or
+# aged out) is dropped; every other key survives regardless of date, so a
+# `no_stop_order`/`order_config` key deliberately keyed `id|session_date`
+# (they must re-fire once EVERY session, not once ever) still gets pruned
+# the day its row finally disappears, exactly like any other key.
+# ---------------------------------------------------------------------------
+
+PMA_STATE_FILENAME = "aqe_pma_fired.json"
+LOCAL_PMA_STATE = OUTPUT_DIR / PMA_STATE_FILENAME
+
+
+def load_pma_fired_state() -> dict:
+    """Drive first, then local mirror, then empty — same idiom as
+    `load_alert_state`, minus the daily reset."""
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            txt = gdrive_uploader.download_text(PMA_STATE_FILENAME)
+            if txt:
+                data = json.loads(txt)
+                if isinstance(data, dict):
+                    data.setdefault("fired", [])
+                    return data
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        if LOCAL_PMA_STATE.exists():
+            data = json.loads(LOCAL_PMA_STATE.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                data.setdefault("fired", [])
+                return data
+    except Exception:  # noqa: BLE001
+        pass
+    return {"fired": []}
+
+
+def save_pma_fired_state(state: dict) -> None:
+    payload = json.dumps(state, indent=2)
+    try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        LOCAL_PMA_STATE.write_text(payload, encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            gdrive_uploader.upload_or_replace(PMA_STATE_FILENAME, payload,
+                                              mime="application/json")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def is_pma_fired(state: dict, key: str) -> bool:
+    return key in set(state.get("fired") or [])
+
+
+def mark_pma_fired(state: dict, key: str) -> None:
+    if key not in (state.get("fired") or []):
+        state.setdefault("fired", []).append(key)
+
+
+def prune_pma_fired(state: dict, live_base_ids: set[str]) -> int:
+    """Drop every key whose BASE id (before any `|variant` suffix) is not in
+    `live_base_ids` — the row has retired, PASSed, or aged out of the
+    three-session window. Returns the number of keys pruned."""
+    before = state.get("fired") or []
+    kept = [k for k in before if k.split("|", 1)[0] in live_base_ids]
+    state["fired"] = kept
+    return len(before) - len(kept)

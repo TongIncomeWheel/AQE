@@ -138,7 +138,7 @@ def _n(v):
 
 
 def evaluate(ticker: str, source: str, is_held: bool,
-             rec: dict, quote: dict) -> list[dict]:
+             rec: dict, quote: dict, suppress_near_stop: bool = False) -> list[dict]:
     """Return the list of triggered levels for one ticker given its live quote.
 
     The intraday read (COIL / THRUST / FAILED_PUSH) is attached to every
@@ -250,7 +250,12 @@ def evaluate(ticker: str, source: str, is_held: bool,
     # purpose (PM ruling): an R-relative band was more consistent across
     # tickers but harder to picture, and a stop you cannot picture is a stop
     # you will not act on.
-    if stop is not None and stop > 0 and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100):
+    # Suppressed when a PMA row carries a `broker_stop` for this ticker (AQE
+    # Handoff: PMA Live Alerts, 2026-09-30) -- PMA's own within_atr_of/
+    # "Near your stops" already covers it, quoting the SAME broker stop from
+    # Tiger; two stop alerts with two different numbers is worse than one.
+    if (not suppress_near_stop and stop is not None and stop > 0
+            and stop < live <= stop * (1 + C.NEAR_STOP_PCT / 100)):
         add("NEAR_STOP", f"Approaching stop ({'SL' if is_held else 'structural'})",
             stop, f"{(live / stop - 1) * 100:.1f}% above stop {stop:.2f}")
 
@@ -327,7 +332,35 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         summary["reason"] = "no monitored tickers"
         return summary
 
-    tickers = [m["ticker"] for m in mon]
+    # ---- PMA committee levels (AQE Handoff: PMA Live Alerts, 2026-09-30) --
+    # Loaded here, BEFORE the quote fetch, so every non-WATCH PMA ticker
+    # rides in the SAME batch call — these bypass in_alert_universe entirely
+    # (the committee picked them, not AQE's own strength gate).
+    pma_doc = None
+    pma_reason = None
+    pma_broker_stop_tickers: set[str] = set()
+    summary["pma"] = {"enabled": C.PMA_LEVELS_ENABLED, "fresh": False, "new_triggers": 0}
+    if C.PMA_LEVELS_ENABLED:
+        from src.alerts import pma_levels as PMA
+        now_et = datetime.now(ZoneInfo("America/New_York"))
+        pma_doc, pma_reason = PMA.load_pma_levels()
+        if pma_doc is not None and PMA.is_fresh(pma_doc, now_et):
+            summary["pma"]["fresh"] = True
+            pma_broker_stop_tickers = PMA.held_broker_stop_tickers(pma_doc)
+        else:
+            # Stale-or-missing: notice once per day at the first cycle, alert
+            # on nothing. Uses the existing DAILY-reset dedup set (`state`,
+            # loaded below) since "once per day" is exactly its own semantic.
+            summary["pma"]["reason"] = (
+                pma_reason if pma_doc is None
+                else f"stale: file session {pma_doc.get('session')}, today {now_et.date().isoformat()}")
+            pma_doc = None
+
+    tickers = {m["ticker"] for m in mon}
+    if pma_doc is not None:
+        from src.alerts import pma_levels as PMA
+        tickers |= PMA.pma_tickers(pma_doc)
+    tickers = list(tickers)
     _phase(f"monitored set built ({len(tickers)} tickers)")
     try:
         from src.data.fmp_client import FMPClient, FMPError
@@ -343,13 +376,24 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     summary["checked"] = len(quotes)
 
     state = S.load_alert_state()
+
+    if C.PMA_LEVELS_ENABLED and pma_doc is None and pma_reason and not S.is_fired(state, "PMA", "STALE"):
+        S.mark_fired(state, "PMA", "STALE")
+        if send_email:
+            try:
+                from src.alerts.emailer import send_stale_pma_notice
+                send_stale_pma_notice(summary["pma"].get("reason") or pma_reason)
+            except Exception:  # noqa: BLE001
+                pass
+
     fresh: list[dict] = []
     ledger_rows: list[dict] = []
     for m in mon:
         q = quotes.get(m["ticker"])
         if not q:
             continue
-        for t in evaluate(m["ticker"], m["source"], m["is_held"], m["record"], q):
+        for t in evaluate(m["ticker"], m["source"], m["is_held"], m["record"], q,
+                          suppress_near_stop=m["ticker"] in pma_broker_stop_tickers):
             if not S.is_fired(state, t["ticker"], t["level"]):
                 fresh.append(t)
                 S.mark_fired(state, t["ticker"], t["level"])
@@ -363,14 +407,56 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 except Exception:  # noqa: BLE001 — never break a real alert
                     pass
 
-    summary["new_triggers"] = len(fresh)
-    summary["triggers"] = fresh
-    _phase(f"evaluated ({len(fresh)} fresh triggers)")
+    # ---- PMA evaluation — its OWN dedup set (life of a trigger, not a
+    # daily reset — see state.py's pma_fired functions), evaluated per ROW
+    # (a ticker can carry more than one PMA row, e.g. a HELD position and a
+    # separate HOLD_FOR_CONDITIONS "add" idea on the same name).
+    fresh_pma: list[dict] = []
+    if pma_doc is not None:
+        from src.alerts import pma_levels as PMA
+        is_final = PMA.is_final_cycle_of_session(now_et)
+        is_first = PMA.is_first_cycle_of_session(now_et)
+        pma_state = S.load_pma_fired_state()
+        for row in PMA.alertable_rows(pma_doc):
+            q = quotes.get(row.get("ticker"))
+            if not q:
+                continue
+            for t in PMA.evaluate_pma(row, q, now_et, is_final, is_first):
+                if not S.is_pma_fired(pma_state, t["level"]):
+                    fresh_pma.append(t)
+                    S.mark_pma_fired(pma_state, t["level"])
+                    try:
+                        from src.alerts.ledger import build_entry
+                        ledger_rows.append(build_entry(t, row, q, {}))
+                    except Exception:  # noqa: BLE001
+                        pass
+        pruned = S.prune_pma_fired(pma_state, PMA.live_base_ids(pma_doc))
+        S.save_pma_fired_state(pma_state)
+        summary["pma"]["new_triggers"] = len(fresh_pma)
+        summary["pma"]["pruned"] = pruned
+        _phase(f"PMA evaluated ({len(fresh_pma)} fresh, {pruned} pruned)")
+
+        # After-close digest — once per day, at the first cycle inside the
+        # final-cycle window. Uses the legacy daily-reset `state` for its
+        # dedup key since "once per trading day" is exactly that set's own
+        # semantic; a separate key from "PMA"/"STALE" so the two never collide.
+        if is_final and send_email and not S.is_fired(state, "PMA", "AFTERCLOSE"):
+            S.mark_fired(state, "PMA", "AFTERCLOSE")
+            try:
+                from src.alerts.emailer import send_after_close_digest
+                send_after_close_digest(pma_doc, quotes)
+            except Exception:  # noqa: BLE001 — never break the live cycle for this
+                pass
+
+    all_fresh = fresh + fresh_pma
+    summary["new_triggers"] = len(all_fresh)
+    summary["triggers"] = all_fresh
+    _phase(f"evaluated ({len(all_fresh)} fresh triggers)")
 
     # Log every fired trigger to the rolling history (powers the 36h on-screen feed).
-    if fresh:
+    if all_fresh:
         try:
-            S.append_history(fresh)
+            S.append_history(all_fresh)
         except Exception:  # noqa: BLE001
             pass
 
@@ -388,10 +474,10 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         except Exception as exc:  # noqa: BLE001
             summary["ledger_error"] = f"{type(exc).__name__}: {exc}"
 
-    if fresh and send_email:
+    if (fresh or fresh_pma) and send_email:
         try:
             from src.alerts.emailer import send_digest
-            res = send_digest(fresh, export)
+            res = send_digest(fresh, export, pma_triggers=fresh_pma or None)
             summary["emailed"] = bool(res.get("ok"))
             if not res.get("ok"):
                 summary["reason"] = f"email failed: {res.get('reason')}"

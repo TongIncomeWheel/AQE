@@ -63,3 +63,23 @@ ALERT_MINUTES = int(_f("AQE_ALERT_MINUTES", 15))     # FMP Starter = 15-min dela
 # padded so the 15-min-delayed last bar still lands inside the window.
 MARKET_OPEN = (9, 45)    # 09:45 ET
 MARKET_CLOSE = (16, 15)  # 16:15 ET
+
+
+# --- PMA committee levels (AQE Handoff: PMA Live Alerts, 2026-09-30) -------
+def _b(env: str, default: bool) -> bool:
+    v = os.environ.get(env)
+    if v is None:
+        return default
+    return v.strip().lower() not in ("0", "false", "no", "")
+
+
+PMA_LEVELS_ENABLED = _b("PMA_LEVELS_ENABLED", True)
+# Relative to the repo root. aegis/output/** is excluded from deploy-hf.yml's
+# redeploy trigger on purpose (see the handoff doc) — redeploying the Space
+# every morning the committee publishes would kill the container mid-run.
+PMA_LEVELS_PATH = os.environ.get("PMA_LEVELS_PATH", "aegis/output/pma/pma_levels.json")
+
+# % distance bands for the two "approaching" WARN alerts (each once in a
+# trigger's life — see src/alerts/pma_levels.py's dedup).
+HELD_NEAR_PCT = _f("HELD_NEAR_PCT", 3.0)          # held: within X% of either stop
+SHORTLIST_NEAR_PCT = _f("SHORTLIST_NEAR_PCT", 1.5)  # shortlist: within X% of entry
