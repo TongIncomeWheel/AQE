@@ -175,3 +175,17 @@ FORMULA_BASIS_AQE_HOUSE = "aqe_house"    # AQE's own formula, same INTENT
 NO_BUY_EARNINGS_WITHIN_SESSIONS = 5     # piece 07: "earnings within 5 sessions"
 EXHAUSTION_SCORE_MAX = 10.0             # energy.py's inactive/baseline ceiling
 EXHAUSTION_SCORE_WATCH_BELOW = 8.5      # piece 12: any penalty has fired
+
+# ---------------------------------------------------------------------------
+# GEX Traffic Light — 2026-09-30. A Weather companion instrument, piece 01.
+# Frozen exactly as specified (GEX_traffic_light.md), never re-derived.
+# Reuses Crown Macro's own real gamma computation (src/macro/crown/gamma.py:
+# flip/call-wall/put-wall from real options-chain open interest) — this
+# module adds no new data pull, only the traffic-light rule and the read.
+# GEX_TICKER is SPY: one of the spec's own three named underlyings
+# (SPX/SPY/QQQ), and already Crown's own "primary" index-level proxy
+# (gamma.py's analyse()) since Crown has no SPX chain fetch at all.
+# ---------------------------------------------------------------------------
+GEX_TICKER = "SPY"
+GEX_AMBER_ABOVE_FLIP_PCT = 1.0     # rule 3: within 1% above the flip
+GEX_AMBER_NEAR_CALL_WALL_PCT = 0.5  # rule 4: within 0.5% of the call wall

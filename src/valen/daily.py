@@ -34,7 +34,7 @@ from src.data.paths import DATA_DIR, OUTPUT_DIR, PANEL_DAILY, PANEL_WEEKLY
 from src.macro.crown import cboe
 
 from . import breadth as breadth_mod
-from . import card, execution, explain, extension, groups as groups_mod
+from . import card, execution, explain, extension, gex as gex_mod, groups as groups_mod
 from . import house, management, selection, spec, stance, trend
 
 LOCAL_PATH = OUTPUT_DIR / "valen_dashboard.json"
@@ -103,6 +103,18 @@ def run_valen() -> dict:
         gr = {"status": "UNAVAILABLE", "reason": str(exc), "groups": [],
               "theme_leaders": {}, "rotation": []}
 
+    # GEX Traffic Light — a Weather companion instrument. Crown Macro
+    # (Step 6f) has already run by the time VALEN's own Step 6i runs, so
+    # its gamma read is already on disk; no new data pull here. Degrades to
+    # UNAVAILABLE (never a fabricated GREEN/calm reading) if Crown hasn't
+    # run this session or its own gamma fetch failed — see gex.py.
+    try:
+        from src.macro.crown.daily import load_crown
+        crown = load_crown()
+        gex_reading = gex_mod.compute_gex_reading((crown or {}).get("gamma"))
+    except Exception as exc:  # noqa: BLE001
+        gex_reading = {"status": "UNAVAILABLE", "ticker": spec.GEX_TICKER, "reason": str(exc)}
+
     st = stance.compute_stance(t, ext, breadth)
     pe = explain.explain(t, ext, st, gr)
 
@@ -115,6 +127,7 @@ def run_valen() -> dict:
         "breadth": breadth,
         "curated_panel_context": curated_context,
         "groups": gr,
+        "gex": gex_reading,
         "stance": st,
         "plain_english": pe,
         "status": st.get("status", "UNAVAILABLE"),
@@ -200,6 +213,7 @@ def write_artifacts(artifact: dict) -> dict:
         "regime": card.regime_word(artifact),
         "extension": card.extension_rows(artifact),
         "breadth": card.breadth_rows(artifact),
+        "gex": card.gex_block(artifact),
         "neighbourhood": card.neighbourhood_lines(artifact),
         "theme_leaders": card.theme_leaders_table(artifact),
         "rotation": card.rotation_table(artifact),

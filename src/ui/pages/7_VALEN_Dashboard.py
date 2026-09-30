@@ -156,6 +156,9 @@ card_html = (
     + f'<div class="valen-caption">As of {fresh.get("as_of") or valen.get("exported_at") or "—"} '
       f'· basis: {fresh.get("basis", "eod")} · regime: '
       f'{C.regime_word(valen).replace("_", " ")}</div>'
+    + '<div class="valen-col-label" style="margin-top:14px">GEX traffic light — will the '
+      'market be calm or wild?</div>'
+    + T.traffic_light_html(C.gex_block(valen))
     + '<div class="valen-grid2" style="margin-top:16px">'
     + f'<div>{T.trend_checklist_html(C.trend_rows({**valen, "trend": display_trend}), breadth_rows_data)}</div>'
     + f'<div>{T.instruments_html(C.extension_rows({**valen, "extension": display_ext}), breadth_rows_data)}</div>'
@@ -244,6 +247,22 @@ with st.expander("What the handbook does with each stance — quoted, not comput
         "> **RISK OFF** — the best work you can do is build the "
         "watchlist.\n\n"
         "— *The VIV System*, piece 01")
+
+with st.expander("What the GEX traffic light suggests for size — quoted, not computed"):
+    st.caption(
+        "AQE computes the light and the one-line read only — a risk filter, "
+        "never a trade signal and never a sizing number. This is the GEX "
+        "Traffic Light spec's own sizing guide, quoted for reference; the "
+        "PM/AIC still makes every sizing call:")
+    st.markdown(
+        "> 🟢 **Green** — 100% of normal.\n\n"
+        "> 🟠 **Amber** — 75% of normal.\n\n"
+        "> 🔴 **Red** — 50% or less.\n\n"
+        "— *GEX Traffic Light spec*")
+    gex_val = valen.get("gex") or {}
+    if gex_val.get("status") == "OK":
+        st.caption(
+            f"Dealer-side assumption: {gex_val.get('assumption') or '—'}")
 
 # ═══════════════════════════════════════════════════════════════════════
 # PART 2 — NEIGHBOURHOOD · SELECTION (pieces 04, 05, 07)

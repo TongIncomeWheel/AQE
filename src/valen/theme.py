@@ -161,6 +161,21 @@ CSS = f"""
 .valen-doctrine:last-child {{ margin-bottom: 0; }}
 .valen-doctrine b {{ color: {_TEXT}; }}
 .valen-empty {{ font-size: 12.5px; color: {_GREY}; font-style: italic; padding: 4px 0; }}
+
+/* ---- GEX Traffic Light ---------------------------------------------- */
+.valen-tlight-wrap {{ display: flex; align-items: center; gap: 16px; padding: 6px 0; }}
+.valen-tlight-housing {{ background: #0a0a0d; border: 1px solid {_BORDER}; border-radius: 8px;
+  padding: 8px 6px; display: flex; flex-direction: column; gap: 6px; flex: none; }}
+.valen-tlight-bulb {{ width: 20px; height: 20px; border-radius: 50%; background: #222228;
+  opacity: 0.25; }}
+.valen-tlight-bulb.lit-red {{ background: {_RED}; opacity: 1; box-shadow: 0 0 10px {_RED}; }}
+.valen-tlight-bulb.lit-amber {{ background: {_GOLD}; opacity: 1; box-shadow: 0 0 10px {_GOLD}; }}
+.valen-tlight-bulb.lit-green {{ background: {_GREEN}; opacity: 1; box-shadow: 0 0 10px {_GREEN}; }}
+.valen-tlight-body {{ flex: 1; min-width: 0; }}
+.valen-tlight-headline {{ font-size: 15px; font-weight: 700; margin-bottom: 3px; }}
+.valen-tlight-commentary {{ font-size: 13px; color: {_TEXT}; line-height: 1.5; }}
+.valen-tlight-levels {{ font-size: 11.5px; color: {_TEXT_MUTED}; margin-top: 5px;
+  font-variant-numeric: tabular-nums; }}
 </style>
 """
 
@@ -317,6 +332,40 @@ def part_header_html(number: str, title: str, subtitle: str) -> str:
         f'<div class="valen-caption" style="margin:0">{_esc(subtitle)}</div>'
         '</div></div>'
     )
+
+
+def traffic_light_html(gex: dict) -> str:
+    """The GEX Traffic Light — a physical-looking three-bulb housing (red/
+    amber/green, only the current one lit) plus the one-line commentary.
+    Never renders a sizing number — that's quoted doctrine in the page
+    itself, not a field this reads (AQE makes no decisions, no sizing)."""
+    if not gex or gex.get("status") != "OK":
+        reason = (gex or {}).get("reason") or "not computed"
+        return (f'<div class="valen-tlight-wrap">'
+               f'<div class="valen-tlight-housing">'
+               f'<div class="valen-tlight-bulb"></div>'
+               f'<div class="valen-tlight-bulb"></div>'
+               f'<div class="valen-tlight-bulb"></div></div>'
+               f'<div class="valen-tlight-body"><div class="valen-tlight-headline" '
+               f'style="color:{_GREY}">GEX not shown</div>'
+               f'<div class="valen-tlight-commentary">{_esc(reason)}</div></div></div>')
+
+    light = gex.get("light")
+    lit_cls = {"RED": "lit-red", "AMBER": "lit-amber", "GREEN": "lit-green"}.get(light, "")
+    color = {"RED": _RED, "AMBER": _GOLD, "GREEN": _GREEN}.get(light, _GREY)
+    bulbs = "".join(
+        f'<div class="valen-tlight-bulb {lit_cls if key == light else ""}"></div>'
+        for key in ("RED", "AMBER", "GREEN")
+    )
+    levels = (f'{_esc(gex.get("ticker"))} {_fmt(gex.get("price"))} · flip {_fmt(gex.get("flip"))}'
+             + (f' · call wall {_fmt(gex.get("call_wall"))}' if gex.get("call_wall") is not None else '')
+             + (f' · put wall {_fmt(gex.get("put_wall"))}' if gex.get("put_wall") is not None else ''))
+    return (f'<div class="valen-tlight-wrap">'
+           f'<div class="valen-tlight-housing">{bulbs}</div>'
+           f'<div class="valen-tlight-body">'
+           f'<div class="valen-tlight-headline" style="color:{color}">{_esc(light)}</div>'
+           f'<div class="valen-tlight-commentary">{_esc(gex.get("commentary"))}</div>'
+           f'<div class="valen-tlight-levels">{levels}</div></div></div>')
 
 
 def stance_header_html(banner: dict) -> str:

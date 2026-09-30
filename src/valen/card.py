@@ -208,6 +208,10 @@ def execution_block(valen: dict) -> dict:
            "stop_breaches": ex.get("stop_breaches") or []}
 
 
+def gex_block(valen: dict) -> dict:
+    return valen.get("gex") or {"status": "UNAVAILABLE", "reason": "not computed"}
+
+
 def management_block(valen: dict) -> dict:
     mg = valen.get("management") or {}
     return {"held_facts": mg.get("held_facts") or [],

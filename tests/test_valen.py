@@ -854,3 +854,16 @@ def test_doctrine_html_renders_heading_and_body():
     html = theme.doctrine_html([("Sizing is arithmetic", "decide risk first")])
     assert "Sizing is arithmetic" in html
     assert "decide risk first" in html
+
+
+def test_run_valen_includes_gex_key():
+    """run_valen() must always add a gex block -- UNAVAILABLE is a fine
+    real-world answer (Crown's own gamma fetch needs Alpaca/Tiger secrets
+    this sandbox doesn't have), but the key itself must be present so the
+    page's card.gex_block() never falls back to a missing-key default
+    silently in production."""
+    from src.valen.daily import run_valen
+    artifact = run_valen()
+    assert "gex" in artifact
+    assert artifact["gex"]["status"] in ("OK", "UNAVAILABLE")
+    assert artifact["gex"].get("ticker") == "SPY"
