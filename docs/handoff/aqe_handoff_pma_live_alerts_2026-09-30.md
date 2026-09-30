@@ -1,10 +1,11 @@
-# AQE handoff v2.3: watch the PMA committee's levels in the 15-minute alerts
+# AQE handoff v2.3.1: watch the PMA committee's levels in the 15-minute alerts
 
 **From:** Aegis PMA · **To:** AQE engine (build: Claude Code) · **Date:** 2026-09-30 · **Owner:** Ash (PM)
 **Supersedes:** the 2026-09-29 draft. What changed: the file location is fixed, the PMA side is built and publishing, and the build is mapped onto AQE's existing alert engine rather than a new one.
 **v2.1 (same day, PM ruling R20.1):** the file now carries the last **three** runs, not only today's, because committee levels often trigger a session or two late (§2A). Dedup for PMA alerts lasts the life of a trigger, not one day (§3).
 **v2.2:** the existing 15-minute heartbeat email stays exactly as it is; the committee levels become one new section at the top, designed for a phone (§3A).
 **v2.3:** every card shows distance in %. Held names: how far price is from **your broker stop** and from the **committee's stop**, side by side. The day's committee shortlist (ADVANCE and HOLD-FOR-CONDITIONS): how far from the **entry** line and the **first target**. Entry and target never appear on held names (§3B).
+**v2.3.1 (PM, 30 Sep):** delivery is settled. The committee section piggybacks the existing AQE live-alerts feed: same mailbox (`AQE_ALERT_TO` / `AQE_ALERT_FROM`), same email, same cadence, same channel. No new sender, no separate emails, no phone push.
 **Hard line:** alerts only. Nothing in this path places, changes, cancels or sizes an order. Every email is information for the PM to act on himself.
 
 ---
@@ -112,7 +113,7 @@ AQE's poller uses FMP `/stable/quote`, which is 15 minutes delayed on the Starte
 - Result: every level alerts at most once over its three-session life.
 
 **Priority → delivery.**
-- **ACTION** and **WARN**: in the next digest email, which already goes out each cycle there are fresh triggers.
+- **ACTION** and **WARN**: in the next digest email of the existing feed, which already goes out on any cycle with fresh triggers. No separate email, no new channel (PM, v2.3.1).
 - **INFO**: the after-close digest only.
 - **WATCH rows**: the after-close digest only.
 
@@ -200,7 +201,7 @@ Work on branch `pma-levels-alerts`; the handoff and example file are already the
 3. **`src/alerts/emailer.py`:** add the committee section in §3A at the top of the existing digest, above ★ HELD. Leave every existing section, its order and its cards unchanged. The committee cards follow §3A and §3B exactly: three lines plus a levels line on ACTION cards, at most three labelled items on the number line (each with its % in brackets), plain words, colour by meaning, no AIC line. Held cards show your stop and the committee stop; shortlist cards show entry and target; never the other way round. The subject leads with committee items, then the existing subject bits.
 4. **After-close digest:** the last cycle of the session (first poll at or after 16:00 ET) carries a short committee summary at the top of its email: confirmed closes, HOLD invalidations, and the WATCH list (doors, mp, distance from pivot).
 5. **Config (`src/alerts/config.py`):** `PMA_LEVELS_ENABLED` (default true), `PMA_LEVELS_PATH` (default `aegis/output/pma/pma_levels.json`), `HELD_NEAR_PCT` (default 3.0) and `SHORTLIST_NEAR_PCT` (default 1.5).
-6. **Workflow:** add `AQE_GH_TOKEN` to `alerts.yml` env for the fallback fetch. No schedule change is needed: the cron already covers 13:00–21:00 UTC, and the engine's New York market-hours gate handles daylight saving (the SGT window moves to 22:30–05:00 after 1 November).
+6. **Workflow:** for the Space's fallback fetch, reuse whatever GitHub read credential AQE already holds; add an `AQE_GH_TOKEN` secret only if none exists, and say so in the PR. No schedule change is needed: the cron already covers 13:00–21:00 UTC, and the engine's New York market-hours gate handles daylight saving (the SGT window moves to 22:30–05:00 after 1 November).
 7. **Tests (`tests/test_alert_pma_levels.py`):**
    - one test per trigger kind, including the final-cycle close logic and the WARN-then-ACTION pair;
    - stale file → no triggers plus the stale notice;
@@ -234,9 +235,8 @@ Work on branch `pma-levels-alerts`; the handoff and example file are already the
 | Item | Owner |
 |---|---|
 | PMA: express the two-legged and "holds" conditions as structured pairs, so the 8 skipped rows become watchable | PMA (next build) |
-| PMA: publish needs a byte-exact git push. Today the push goes through the GitHub connector as inline text; the first push had a one-digit slip that the read-back caught. Adding `TongIncomeWheel/AQE` to the session's authorised repositories lets `git_sync.py` push files directly. | **PM action** |
-| Mailbox and sender: AQE already emails via `AQE_ALERT_TO` / `AQE_ALERT_FROM`. Confirm that is the mailbox you want. | PM |
-| WARN emails to the inbox or the digest only? Default above: inbox, in the next cycle's digest. | PM |
-| Phone notification for HELD-name ACTIONs | PM |
+| PMA: publish needs a byte-exact git push. Today the push goes through the GitHub connector as inline text; the first push had a one-digit slip that the read-back caught. Adding `TongIncomeWheel/AQE` to the session's authorised repositories lets `git_sync.py` push files directly. | **PM action, deferred (on mobile). Not blocking the AQE build.** |
+| ~~Mailbox, WARN routing, phone push~~ **Settled (v2.3.1):** piggyback the existing AQE live-alerts feed; no change to mailbox, sender, cadence or channel. | Closed |
+| GitHub read credential for the Space's fetch, if AQE doesn't already hold one | Claude Code flags it in the PR |
 
 DRAFT — PM approval required. Nothing is staged, nothing is armed.
