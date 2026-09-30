@@ -52,6 +52,18 @@ jobs:
           AQE_SMTP_USER: ${{ secrets.AQE_SMTP_USER }}
           AQE_SMTP_PASSWORD: ${{ secrets.AQE_SMTP_PASSWORD }}
           AQE_ALERT_TO: ${{ secrets.AQE_ALERT_TO }}
+          # PMA committee levels (AQE Handoff: PMA Live Alerts, 2026-09-30).
+          # This runner's own actions/checkout@v4 above already has today's
+          # aegis/output/pma/pma_levels.json fresh on disk, so the GitHub
+          # contents API fallback in src/alerts/pma_levels.py normally
+          # never fires here (it exists for the HF Space's poller, whose
+          # own checkout is frozen — aegis/output/** never triggers a
+          # redeploy). Passed anyway so that fallback still works from this
+          # runner too. No new secret: reuses the SAME token
+          # src/data/github_sync.py already uses for the daily pipeline's
+          # own GitHub publish step (Contents:read+write on this repo) —
+          # the handoff's proposed separate `AQE_GH_TOKEN` was unnecessary.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ inputs.test }}" = "true" ]; then
             python -m scripts.alert_poll --test-email

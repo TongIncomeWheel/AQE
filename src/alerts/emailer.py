@@ -270,6 +270,348 @@ def _build_bodies(triggers: list[dict], export: dict) -> tuple[str, str, str]:
 
 
 # ---------------------------------------------------------------------------
+# COMMITTEE LEVELS (PMA) — a new section at the very top of the SAME digest,
+# above ★ HELD. Everything below the "existing digest" _build_bodies() call
+# in send_digest() stays byte-identical when there are no PMA triggers —
+# see tests/test_alert_pma_levels.py's golden heartbeat test.
+#
+# Card UX rules (AQE Handoff: PMA Live Alerts, 2026-09-30): plain words only
+# — never `trade_above`, a trigger id, a JSON key, SC, beta, R:R or the AIC
+# line in this section. Colour means one thing each: red = your money
+# (HELD), green = a buy condition met, amber = a warning. ACTION first (red,
+# then green), then WARN; INFO never appears intraday (it's evaluated and
+# ledgered same as any trigger, just held for the after-close digest).
+# ---------------------------------------------------------------------------
+
+def _pma_dist(current, level):
+    """Signed % distance, level relative to current price. Positive means
+    the level sits ABOVE current price (still to go); negative means
+    current price is already past it (through by)."""
+    if level is None or current is None or current == 0:
+        return None
+    return (level - current) / current * 100
+
+
+def _pma_stop_word(current, level) -> str:
+    d = _pma_dist(current, level)
+    return f"{abs(d):.1f}% away" if d is not None else "—"
+
+
+def _pma_level_word(current, level) -> str:
+    """Entry/target phrasing: 'to go' while still below, 'through by' once
+    price has already cleared it — the doc's own two example phrasings."""
+    d = _pma_dist(current, level)
+    if d is None:
+        return "—"
+    return f"{d:.1f}% to go" if d > 0 else f"through by {abs(d):.1f}%"
+
+
+def _pma_number_line(t: dict) -> str:
+    live = t.get("live_px")
+    items = [f"Now {live}"]
+    if t.get("is_held"):
+        b_stop = t.get("broker_stop")
+        items.append(f"Your stop {b_stop} ({_pma_stop_word(live, b_stop)})"
+                     if b_stop is not None else "Your stop — none")
+        c_exit = t.get("committee_exit")
+        if c_exit is not None:
+            items.append(f"Committee stop {c_exit} ({_pma_stop_word(live, c_exit)})")
+    else:
+        entry = t.get("entry_price")
+        if entry is not None:
+            items.append(f"Entry {entry} ({_pma_level_word(live, entry)})")
+        target = t.get("target_price")
+        if target is not None:
+            items.append(f"Target {target} ({_pma_stop_word(live, target)})")
+    return " · ".join(items[:3])
+
+
+def _pma_badge(t: dict) -> tuple[str, str]:
+    """(colour, badge text). HELD is always red regardless of priority — it
+    is the PM's money, that fact outranks whatever fired."""
+    if t.get("is_held"):
+        return "#d00", f"HELD · {t.get('priority')}"
+    if t.get("priority") == "ACTION" and t.get("kind") in ("trade_above", "close_above"):
+        return "#0a8a3a", "BUY CONDITION MET"
+    if t.get("priority") == "ACTION":
+        return "#b8860b", "ACTION"
+    return "#d9a441", "WARN"
+
+
+def _pma_sort_key(t: dict) -> int:
+    """ACTION first (red, then green), then WARN — per the card-order rule."""
+    if t.get("is_held") and t.get("priority") == "ACTION":
+        return 0
+    if t.get("priority") == "ACTION":
+        return 1
+    if t.get("is_held"):
+        return 2
+    return 3
+
+
+def _pma_levels_line(t: dict) -> str:
+    """ACTION cards only — one collapsed line, information only, never sized."""
+    if t.get("priority") != "ACTION":
+        return ""
+    if t.get("is_held"):
+        parts = []
+        if t.get("committee_exit") is not None:
+            parts.append(f"committee exit {t['committee_exit']}")
+        if t.get("broker_stop") is not None:
+            parts.append(f"broker stop {t['broker_stop']}")
+    else:
+        parts = []
+        if t.get("computed_stop") is not None:
+            parts.append(f"stop {t['computed_stop']}")
+        targets = t.get("targets") or []
+        if targets:
+            parts.append("targets " + "/".join(_fmt(p) for p in targets[:3]))
+    if not parts:
+        return ""
+    return "Levels: " + " · ".join(parts) + " — information only, not sized"
+
+
+def _carried_tag(t: dict) -> str:
+    if not t.get("carried"):
+        return ""
+    day = (t.get("age_sessions") or 0) + 1
+    run = t.get("origin_run")
+    try:
+        run_fmt = datetime.strptime(run, "%Y-%m-%d").strftime("%-d %b")
+    except (TypeError, ValueError):
+        run_fmt = run or "—"
+    return f"set {run_fmt} · day {day} of 3"
+
+
+def _pma_headline(t: dict) -> str:
+    return f"{t.get('ticker')} — {t.get('headline_phrase') or 'level triggered'}"
+
+
+def _pma_card_plain(t: dict) -> str:
+    lines = [f"  {_pma_headline(t)}  [{_pma_badge(t)[1]}]",
+            f"    {_pma_number_line(t)}"]
+    sentence = (t.get("action") or t.get("note") or "").strip()
+    if sentence:
+        lines.append(f"    Committee: {sentence}")
+    levels_line = _pma_levels_line(t)
+    if levels_line:
+        lines.append(f"    {levels_line}")
+    tag = _carried_tag(t)
+    if tag:
+        lines.append(f"    ({tag})")
+    return "\n".join(lines)
+
+
+def _pma_card_html(t: dict) -> str:
+    color, badge = _pma_badge(t)
+    sentence = (t.get("action") or t.get("note") or "").strip()
+    levels_line = _pma_levels_line(t)
+    tag = _carried_tag(t)
+    parts = [
+        f"<div style='margin:6px 0;padding:8px 10px;border-left:4px solid {color};"
+        f"background:#fafafa;border-radius:6px;color:#1a1a1a;font-size:14px'>",
+        f"<div><span style='background:{color};color:#fff;font-weight:700;font-size:11px;"
+        f"padding:1px 7px;border-radius:9px'>{badge}</span> ",
+        f"<b style='font-size:15px'>{_pma_headline(t)}</b>",
+    ]
+    if tag:
+        parts.append(f" <span style='color:#888;font-size:10.5px;background:#eee;"
+                     f"padding:1px 6px;border-radius:8px'>{tag}</span>")
+    parts.append("</div>")
+    parts.append(f"<div style='font-size:13px;margin-top:3px'>{_pma_number_line(t)}</div>")
+    if sentence:
+        parts.append(f"<div style='font-size:13px;color:#333;margin-top:2px'>"
+                     f"Committee: {sentence}</div>")
+    if levels_line:
+        parts.append(f"<div style='font-size:11.5px;color:#666;margin-top:3px'>"
+                     f"{levels_line}</div>")
+    parts.append("</div>")
+    return "".join(parts)
+
+
+def _pma_subject_bits(ordered: list[dict], limit: int = 2) -> str:
+    """Two lead items plus a movement tally, e.g. "PK buy line hit · NTRA
+    stop order check · +12 names moving" — plain words only."""
+    bits = []
+    for t in ordered[:limit]:
+        bits.append(f"{t.get('ticker')} {t.get('headline_phrase')}")
+    rest = len(ordered) - len(bits)
+    if rest > 0:
+        bits.append(f"+{rest} more")
+    return " · ".join(bits)
+
+
+def _build_pma_section(pma_triggers: list[dict]) -> tuple[str, str, str]:
+    """Returns (subject_bits, plain_block, html_block). Empty strings when
+    there is nothing to show — INFO-priority triggers never render here
+    (after-close digest only), so an all-INFO cycle reads as "nothing" for
+    this section too, exactly like an empty `pma_triggers` list."""
+    shown = [t for t in (pma_triggers or []) if t.get("priority") != "INFO"]
+    if not shown:
+        return "", "", ""
+    ordered = sorted(shown, key=_pma_sort_key)
+
+    plain = ["COMMITTEE LEVELS (PMA)", ""]
+    plain += [_pma_card_plain(t) for t in ordered]
+    plain.append("")
+    plain_block = "\n".join(plain)
+
+    html = ["<h3 style='margin:0 0 6px;color:#333'>COMMITTEE LEVELS (PMA)</h3>"]
+    html += [_pma_card_html(t) for t in ordered]
+    html_block = "\n".join(html)
+
+    return _pma_subject_bits(ordered), plain_block, html_block
+
+
+# ---------------------------------------------------------------------------
+# After-close digest (build brief item 4) — confirmed closes, HOLD
+# invalidations and the WATCH list, plus the two small tables. A fresh
+# snapshot each time (like every other AQE read), not a replay of the day's
+# earlier intraday alerts.
+# ---------------------------------------------------------------------------
+
+def _pct(price, level):
+    if price is None or level is None or price == 0:
+        return None
+    return round(abs(price - level) / price * 100, 1)
+
+
+def build_after_close_digest(pma_doc: dict, quotes: dict) -> tuple[str, str, str]:
+    """Returns (subject, plain, html). Never raises; a row with no quote or
+    no level just drops out of its table rather than showing a blank."""
+    from src.alerts import pma_levels as PMA
+
+    rows = PMA.alertable_rows(pma_doc)
+    held_rows = [r for r in rows if r.get("class") == "HELD"]
+    shortlist_rows = [r for r in rows if r.get("class") != "HELD"]
+    watch = PMA.watch_rows(pma_doc)
+
+    held_table = []
+    for r in held_rows:
+        price = (quotes.get(r["ticker"]) or {}).get("price")
+        if price is None:
+            continue
+        broker = (r.get("broker_stop") or {}).get("stop")
+        c_exit = r.get("committee_exit")
+        held_table.append({
+            "ticker": r["ticker"], "close": round(price, 2),
+            "your_stop_pct": _pct(price, broker), "committee_stop_pct": _pct(price, c_exit),
+        })
+    held_table.sort(key=lambda x: min(
+        [v for v in (x["your_stop_pct"], x["committee_stop_pct"]) if v is not None] or [999]))
+
+    sl_table = []
+    for r in shortlist_rows:
+        price = (quotes.get(r["ticker"]) or {}).get("price")
+        if price is None:
+            continue
+        levels = r.get("levels") or {}
+        entry_trig = next((t for t in r.get("triggers") or []
+                           if t.get("priority") == "ACTION"
+                           and t.get("kind") in ("trade_above", "close_above")), None)
+        entry = entry_trig.get("level") if entry_trig else None
+        tp = [p for p in (levels.get("tp") or []) if p is not None]
+        target = next((p for p in tp if entry is not None and p > entry), None)
+        day = ((r.get("age_sessions") or 0) + 1) if r.get("carried") else 1
+        sl_table.append({
+            "ticker": r["ticker"], "class": r["class"], "close": round(price, 2),
+            "entry_pct": _pct(price, entry), "target_pct": _pct(price, target),
+            "set_on": r.get("origin_run"), "day": day,
+        })
+    sl_table.sort(key=lambda x: x["entry_pct"] if x["entry_pct"] is not None else 999)
+
+    watch_lines = [
+        f"  {w.get('ticker'):6} doors={'+'.join(w.get('doors') or [])} "
+        f"mp={w.get('mp')} pivot_gap={w.get('pct_from_pivot')}%"
+        for w in watch
+    ]
+
+    subject = (f"[AQE] After close — {len(held_table)} held, "
+              f"{len(sl_table)} on the shortlist, {len(watch)} watch")
+
+    plain_lines = [subject, "", "HELD BOOK vs STOPS (nearest first)"]
+    for h in held_table:
+        plain_lines.append(
+            f"  {h['ticker']:6} close {h['close']:>9}  your stop "
+            f"{_fmt(h['your_stop_pct'], 1) if h['your_stop_pct'] is not None else '—'}%  "
+            f"committee stop {_fmt(h['committee_stop_pct'], 1) if h['committee_stop_pct'] is not None else '—'}%")
+    plain_lines += ["", "SHORTLIST vs ENTRY"]
+    for s in sl_table:
+        tag = f" (set {s['set_on']}, day {s['day']} of 3)" if s["day"] > 1 else ""
+        plain_lines.append(
+            f"  {s['ticker']:6} [{s['class']:20}] close {s['close']:>9}  entry "
+            f"{_fmt(s['entry_pct'],1) if s['entry_pct'] is not None else '—'}%  "
+            f"target {_fmt(s['target_pct'],1) if s['target_pct'] is not None else '—'}%{tag}")
+    plain_lines += ["", f"WATCH ({len(watch)}) — digest only, no analyst nominated these"]
+    plain_lines += watch_lines
+    plain_lines += ["", "DRAFT — PM approval required. Nothing is staged, nothing is armed."]
+    plain = "\n".join(plain_lines)
+
+    def _tr(*cells):
+        return "<tr>" + "".join(f"<td style='padding:3px 8px;font-size:12.5px'>{c}</td>"
+                                for c in cells) + "</tr>"
+
+    html_parts = [f"<h2>{subject}</h2>",
+                  "<h3>Held book vs stops (nearest first)</h3>",
+                  "<table style='border-collapse:collapse'>",
+                  _tr("<b>Ticker</b>", "<b>Close</b>", "<b>Your stop</b>", "<b>Committee stop</b>")]
+    for h in held_table:
+        html_parts.append(_tr(h["ticker"], h["close"],
+                              f"{h['your_stop_pct']}%" if h["your_stop_pct"] is not None else "—",
+                              f"{h['committee_stop_pct']}%" if h["committee_stop_pct"] is not None else "—"))
+    html_parts.append("</table>")
+    html_parts.append("<h3>Shortlist vs entry</h3>")
+    html_parts.append("<table style='border-collapse:collapse'>")
+    html_parts.append(_tr("<b>Ticker</b>", "<b>Class</b>", "<b>Close</b>", "<b>Entry</b>",
+                          "<b>Target</b>", "<b>Set on / day</b>"))
+    for s in sl_table:
+        tag = f"{s['set_on']}, day {s['day']} of 3" if s["day"] > 1 else "today"
+        html_parts.append(_tr(s["ticker"], s["class"], s["close"],
+                              f"{s['entry_pct']}%" if s["entry_pct"] is not None else "—",
+                              f"{s['target_pct']}%" if s["target_pct"] is not None else "—", tag))
+    html_parts.append("</table>")
+    html_parts.append(f"<h3>WATCH ({len(watch)}) — digest only</h3>")
+    html_parts.append("<ul>" + "".join(f"<li>{w.get('ticker')} — "
+                                       f"doors {'+'.join(w.get('doors') or [])}, "
+                                       f"mp {w.get('mp')}, pivot gap {w.get('pct_from_pivot')}%</li>"
+                                       for w in watch) + "</ul>")
+    html_parts.append(_DRAFT_FOOTER_HTML)
+    html = "\n".join(html_parts)
+
+    return subject, plain, html
+
+
+def send_after_close_digest(pma_doc: dict, quotes: dict) -> dict:
+    cfg = _cfg()
+    if not (cfg["resend_key"] or cfg["smtp_pw"]):
+        return {"ok": False, "reason": "no email backend configured"}
+    subject, plain, html = build_after_close_digest(pma_doc, quotes)
+    if cfg["resend_key"]:
+        return _send_resend(cfg, subject, plain, html)
+    return _send_smtp(cfg, subject, plain, html)
+
+
+def send_stale_pma_notice(reason: str) -> dict:
+    """The one-per-day notice when the PMA file is missing or from a
+    session other than today — never a silent skip. Sent standalone, not
+    folded into the regular digest, since there is nothing else to show."""
+    cfg = _cfg()
+    if not (cfg["resend_key"] or cfg["smtp_pw"]):
+        return {"ok": False, "reason": "no email backend configured"}
+    subject = "[AQE] PMA levels are stale — not being watched today"
+    plain = (f"{subject}\n\n{reason}\n\n"
+            "The heartbeat alerts below (MOVE/BOS/NEAR_*) are unaffected.\n\n"
+            "DRAFT — PM approval required. Nothing is staged, nothing is armed.")
+    html = (f"<h3 style='color:#b8860b'>{subject}</h3><p>{reason}</p>"
+           "<p style='color:#666'>The heartbeat alerts (MOVE/BOS/NEAR_*) are unaffected.</p>"
+           "<p style='color:#999;font-size:11px'>DRAFT — PM approval required. "
+           "Nothing is staged, nothing is armed.</p>")
+    if cfg["resend_key"]:
+        return _send_resend(cfg, subject, plain, html)
+    return _send_smtp(cfg, subject, plain, html)
+
+
+# ---------------------------------------------------------------------------
 # Backends
 # ---------------------------------------------------------------------------
 
@@ -307,14 +649,36 @@ def _send_smtp(cfg: dict, subject: str, plain: str, html: str) -> dict:
         return {"ok": False, "reason": f"smtp error: {type(exc).__name__}: {exc}"}
 
 
-def send_digest(triggers: list[dict], export: dict) -> dict:
-    """Send the digest. Resend if its key is set, else Gmail SMTP. Never raises."""
+_DRAFT_FOOTER_PLAIN = "\nDRAFT — PM approval required. Nothing is staged, nothing is armed.\n"
+_DRAFT_FOOTER_HTML = ("<p style='color:#999;font-size:11px;margin-top:14px'>"
+                     "DRAFT — PM approval required. Nothing is staged, nothing is armed.</p>")
+
+
+def send_digest(triggers: list[dict], export: dict,
+                pma_triggers: list[dict] | None = None) -> dict:
+    """Send the digest. Resend if its key is set, else Gmail SMTP. Never raises.
+
+    `pma_triggers` prepends the COMMITTEE LEVELS (PMA) section above the
+    existing heartbeat digest. With no PMA triggers (the default), subject/
+    plain/html are IDENTICAL to before this section existed — no footer, no
+    empty heading, nothing — see tests/test_alert_pma_levels.py's golden
+    heartbeat test.
+    """
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):
         return {"ok": False, "reason": "no email backend (set RESEND_API_KEY or AQE_SMTP_PASSWORD)"}
-    if not triggers:
-        return {"ok": False, "reason": "no triggers"}
-    subject, plain, html = _build_bodies(triggers, export)
+    pma_subject, pma_plain, pma_html = _build_pma_section(pma_triggers or [])
+    if not triggers and not pma_subject:
+        return {"ok": False, "reason": "no actionable triggers "
+                                       "(INFO-only PMA activity waits for the after-close digest)"}
+    subject, plain, html = _build_bodies(triggers, export) if triggers else (
+        "[AQE] 0 names · no heartbeat events", "", "")
+
+    if pma_subject:
+        subject = f"[AQE] PMA: {pma_subject} · {subject.removeprefix('[AQE] ')}"
+        plain = pma_plain + plain + _DRAFT_FOOTER_PLAIN
+        html = pma_html + html + _DRAFT_FOOTER_HTML
+
     if cfg["resend_key"]:
         return _send_resend(cfg, subject, plain, html)
     return _send_smtp(cfg, subject, plain, html)
