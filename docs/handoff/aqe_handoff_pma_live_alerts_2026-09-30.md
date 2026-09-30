@@ -1,8 +1,9 @@
-# AQE handoff v2.1: watch the PMA committee's levels in the 15-minute alerts
+# AQE handoff v2.2: watch the PMA committee's levels in the 15-minute alerts
 
 **From:** Aegis PMA · **To:** AQE engine (build: Claude Code) · **Date:** 2026-09-30 · **Owner:** Ash (PM)
 **Supersedes:** the 2026-09-29 draft. What changed: the file location is fixed, the PMA side is built and publishing, and the build is mapped onto AQE's existing alert engine rather than a new one.
 **v2.1 (same day, PM ruling R20.1):** the file now carries the last **three** runs, not only today's, because committee levels often trigger a session or two late (§2A). Dedup for PMA alerts lasts the life of a trigger, not one day (§3).
+**v2.2:** the existing 15-minute heartbeat email stays exactly as it is; the committee levels become one new section at the top, designed for a phone (§3A).
 **Hard line:** alerts only. Nothing in this path places, changes, cancels or sizes an order. Every email is information for the PM to act on himself.
 
 ---
@@ -116,6 +117,39 @@ AQE's poller uses FMP `/stable/quote`, which is 15 minutes delayed on the Starte
 
 ---
 
+## 3A. Keep the heartbeat; add a committee section on top; design the email for a phone
+
+**The heartbeat stays exactly as it is.** The existing 15-minute cycle, its rules (MOVE, BOS, NEAR_BREAKOUT, NEAR_TARGET, NEAR_STOP), its dedup, its ledger and its digest ("AQE Trade Entry", ★ HELD first, then the event sections) are unchanged. This work adds ONE new section at the very top of that same email, and nothing below it moves.
+
+**When the email goes out:** exactly as today, on any cycle with fresh triggers. A cycle with only PMA triggers still sends; a cycle with only heartbeat triggers sends exactly as today, with no empty committee section.
+
+**The committee section: "COMMITTEE LEVELS (PMA)".** It is built to be read in five seconds on a phone.
+
+- **Subject line:** committee items lead, e.g. `[AQE] PMA: PK buy line hit · NTRA stop order check · +12 names moving`. The existing subject bits follow unchanged.
+- **One card per alert, three lines** (plus one levels line on ACTION cards only, below):
+  1. **Headline in plain words**, ticker first, verb second: `PK — closed above its buy line`, `A — through the chase line: don't buy here`, `MRVL — near your stop`, `WEAT — no stop order`.
+  2. **Three numbers in a row, each labelled:** `Now 16.30 · Line 16.20 · +0.6%`. For a held name: `Now 238.00 · Your stop 233.85 · 1.8% away`. Never more than three numbers on that line.
+  3. **What the committee said**, one sentence, taken from the trigger's `action` text and cut to about 90 characters. For a carried row, add a small grey tag: `set 29 Sep · day 2 of 3`.
+- **Colour means one thing each:** red = your money (HELD); green = a buy condition met (ADVANCE / HOLD condition); amber = a warning (chase line, near stop, intraday touch not yet confirmed). A coloured left bar and a small badge; no emoji walls.
+- **Order:** ACTION cards first (red, then green), then WARN. INFO never appears intraday.
+- **Plain words, not codes.** Write `buy line`, `idea is dead below`, `your stop`, `don't buy above`. Never show `trade_above`, `close_below`, trigger ids, JSON keys, lens tags, SC scores, β or R:R in the committee section. The existing AIC monospace prompt line does NOT appear on committee cards.
+- **Levels are secondary:** the computed stop and targets sit behind a single collapsed line (`Levels: stop 15.23 · targets 16.72 / 17.39 — information only, not sized`), shown only on ACTION cards.
+- **Layout that survives email clients:** table-based layout, inline CSS, max width 600px, body text at least 14px, tap targets at least 44px, readable in dark mode (no light-grey text on white), and a plain-text part that mirrors the cards line for line.
+- **Footer once per email, not per card:** DRAFT — PM approval required. Nothing is staged, nothing is armed.
+
+**A worked card (HTML intent, plain-text mirror):**
+
+```
+PK — closed above its buy line                        [BUY CONDITION MET]
+Now 16.30 · Line 16.20 · +0.6%
+Committee: hold turned actionable — the range top gave way on the close.
+Levels: stop 15.23 · targets 16.72 / 17.39 — information only, not sized
+```
+
+**Test the look, not just the logic.** Render the email from the §4.8 replay to an HTML file and a plain-text file, and attach both to the PR. Screenshot at 390px and 600px widths.
+
+---
+
 ## 4. Build brief for Claude Code (AQE repo)
 
 Work on branch `pma-levels-alerts`; the handoff and example file are already there. Open a PR to `main`. Merging will redeploy the Space once, which is expected.
@@ -133,14 +167,8 @@ Work on branch `pma-levels-alerts`; the handoff and example file are already the
    - Evaluate with `evaluate_pma`, dedupe with the `PMA:` keys, write to the same history and ledger, and pass to `send_digest`.
    - **Do not** remove or change the existing MOVE/BOS/NEAR_* rules. PMA triggers are an additional source.
    - Suppress the legacy held-name `NEAR_STOP` for a ticker when the levels file carries a `broker_stop` for it, so the PM never gets two stop alerts with different stops.
-3. **`src/alerts/emailer.py`:** render PMA triggers as their own block at the top of the digest, ordered ACTION → WARN, each showing:
-   - subject tag `[AEGIS {priority}] {ticker} {class}`, plus `· set {origin_run}, day {age_sessions+1} of 3` on a carried row;
-   - the event (level, price, time in ET and SGT);
-   - the committee's `action` text, verbatim;
-   - class context: conviction/lane/mark, or for HELD, qty, broker stop and committee line;
-   - `levels` labelled "information only, not sized";
-   - the footer **DRAFT — PM approval required. Nothing is staged, nothing is armed.**
-4. **After-close digest:** extend the existing final-cycle email with confirmed closes, HOLD invalidations, and the WATCH list (doors, mp, distance from pivot).
+3. **`src/alerts/emailer.py`:** add the committee section in §3A at the top of the existing digest, above ★ HELD. Leave every existing section, its order and its cards unchanged. The committee cards follow §3A exactly: three lines plus a levels line on ACTION cards, at most three labelled numbers per line, plain words, colour by meaning, no AIC line. The subject leads with committee items, then the existing subject bits.
+4. **After-close digest:** the last cycle of the session (first poll at or after 16:00 ET) carries a short committee summary at the top of its email: confirmed closes, HOLD invalidations, and the WATCH list (doors, mp, distance from pivot).
 5. **Config (`src/alerts/config.py`):** `PMA_LEVELS_ENABLED` (default true) and `PMA_LEVELS_PATH` (default `aegis/output/pma/pma_levels.json`).
 6. **Workflow:** add `AQE_GH_TOKEN` to `alerts.yml` env for the fallback fetch. No schedule change is needed: the cron already covers 13:00–21:00 UTC, and the engine's New York market-hours gate handles daylight saving (the SGT window moves to 22:30–05:00 after 1 November).
 7. **Tests (`tests/test_alert_pma_levels.py`):**
@@ -151,7 +179,9 @@ Work on branch `pma-levels-alerts`; the handoff and example file are already the
    - `NEAR_STOP` suppressed when a broker stop is present;
    - a carried trigger that already fired is not re-sent the next day, and its key is pruned once the row leaves the file;
    - a `volume_min_x` shortfall → no ACTION;
-   - volume missing → "volume unconfirmed".
+   - volume missing → "volume unconfirmed";
+   - **heartbeat unchanged:** a cycle with no PMA triggers renders subject, plain and HTML byte-identical to `main` today (golden test captured before any edit);
+   - **committee card UX:** each card's number line carries at most three numbers, and none of `trade_above`, `close_below`, a trigger id, `SC`, `β`, `R:R` or the AIC line appears in the committee section.
 8. **Acceptance replay:** run `evaluate_pma` over `aegis/output/pma/pma_levels.json` (run 2026-09-29) with synthetic quotes. That first file predates run-stamping, so its ids read `A-entry`; from the next run they read `2026-09-30:A-entry`. It must produce:
    - at the first cycle: `WEAT-nostop` (ACTION) and `NTRA-ordertype` (ACTION);
    - A at `day_high` 176.10 → `A-entry` ACTION; at 178.90 → also `A-chase` WARN;
