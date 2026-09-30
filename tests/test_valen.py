@@ -629,3 +629,132 @@ def test_neighbourhood_html_empty_ok_status_reads_no_leadership():
 def test_neighbourhood_html_empty_bad_status_shows_reason():
     html = theme.neighbourhood_html([], "UNAVAILABLE", "no groups scored")
     assert "no groups scored" in html
+
+
+# ------------------------------------------------- cockpit: gauges/LEDs/dial
+# Added 2026-09-30 after PM feedback that the page still read as flat text
+# rows, not a cockpit -- these are the "easy to read sliders and other
+# illustrations" pieces: banded slider gauges (real spec.py thresholds),
+# LED pass/fail rows, and the stance semicircle dial.
+
+
+def test_gauge_bar_renders_bands_and_pointer_for_a_known_value():
+    html = theme._gauge_bar_html("VIX / VIX3M", 0.90, "vix_vix3m")
+    assert "valen-gauge-track" in html
+    assert "valen-gauge-pointer" in html
+    # 0.90 sits inside the handbook's own gold "uncertainty-approaching" band.
+    assert theme._GOLD in html
+
+
+def test_gauge_bar_unknown_value_reads_not_shown():
+    html = theme._gauge_bar_html("VIX / VIX3M", None, "vix_vix3m")
+    assert "not shown" in html
+    assert "valen-gauge-track" not in html
+
+
+def test_gauge_bar_unknown_kind_falls_back_to_plain_value_not_a_guessed_scale():
+    html = theme._gauge_bar_html("Something new", 42, "not_a_real_kind")
+    assert "42" in html
+    assert "valen-gauge-track" not in html
+
+
+def test_gauge_bar_pointer_position_matches_value_fraction():
+    # ATR scale is 0-8; a value of 4.0 should sit at the 50% mark.
+    html = theme._gauge_bar_html("SPY ATRs above 50-day", 4.0, "atr_multiple")
+    assert "left:50.00%" in html
+
+
+def test_led_row_pass_and_fail_colours():
+    ok_html = theme._led_row_html("Today's count green", "OK", True)
+    fail_html = theme._led_row_html("Today's count green", "OK", False)
+    assert "valen-ok" in ok_html
+    assert "valen-fail" in fail_html
+
+
+def test_led_row_not_shown_when_status_is_not_ok():
+    html = theme._led_row_html("Today's count green", "UNAVAILABLE", None)
+    assert "not shown" in html
+    assert "valen-muted" in html
+
+
+def test_led_row_uses_flag_over_value_when_both_given():
+    """5-day count is a ratio (e.g. 1.35), not itself a boolean -- the LED
+    must read pass/fail off `flag`, and still print the real number."""
+    html = theme._led_row_html("5-day count (1.00+ to pass)", "OK", 1.35, flag=True)
+    assert "valen-ok" in html
+    assert "1.35" in html
+
+
+def test_stance_gauge_highlights_the_right_zone_and_colour():
+    html = theme.stance_gauge_html({"word": "RISK ON", "status": "OK"})
+    assert "RISK ON" in html
+    assert theme._GREEN in html
+
+
+def test_stance_gauge_degrades_to_grey_dial_when_not_shown():
+    html = theme.stance_gauge_html({"word": "—", "status": "DEGRADED"})
+    assert theme._GREY in html
+    assert theme._GREEN not in html and theme._RED not in html
+
+
+def test_instruments_html_merges_extension_and_breadth_instrument_rows():
+    ext_rows = [{"label": "VIX / VIX3M", "value": 0.9, "kind": "vix_vix3m"}]
+    breadth_rows_ = [
+        {"label": "T2108", "section": "instrument", "kind": "pct_0_100", "value": 55.0},
+        {"label": "Today's count green", "section": "checklist", "kind": "bool", "value": True},
+    ]
+    html = theme.instruments_html(ext_rows, breadth_rows_)
+    assert "VIX / VIX3M" in html
+    assert "T2108" in html
+    # Checklist-section rows must NOT leak into the instruments gauge list.
+    assert "Today's count green" not in html
+
+
+def test_instruments_html_works_without_breadth_rows_arg():
+    """Backward compatible with any caller that only passes extension rows."""
+    html = theme.instruments_html([{"label": "VIX / VIX3M", "value": 0.9, "kind": "vix_vix3m"}])
+    assert "VIX / VIX3M" in html
+
+
+# --------------------------------------------- card.py: kind/section tagging
+
+
+def test_extension_rows_carry_a_gauge_kind():
+    empty_kinds = {r["kind"] for r in card.extension_rows({})}
+    assert empty_kinds == {"atr_multiple", "vix_vix3m"}
+
+
+def test_breadth_rows_separate_checklist_from_instrument_sections():
+    sections = {r["section"] for r in card.breadth_rows({})}
+    assert sections == {"checklist", "instrument"}
+
+
+def test_breadth_rows_five_day_count_appears_in_both_sections():
+    """The handbook lists the 5-day count as BOTH a checklist pass/fail line
+    AND one of the four tracked instruments (page 6) -- both must show."""
+    rows = card.breadth_rows({})
+    five_day = [r for r in rows if "5-day" in r["label"]]
+    assert {r["section"] for r in five_day} == {"checklist", "instrument"}
+
+
+def test_breadth_rows_five_day_led_flag_uses_the_real_threshold():
+    valen = {"breadth": {"five_day_count": {"status": "OK", "value": 1.5}}}
+    rows = card.breadth_rows(valen)
+    checklist_row = next(r for r in rows
+                         if r["section"] == "checklist" and "5-day" in r["label"])
+    assert checklist_row["flag"] is True
+
+    valen_low = {"breadth": {"five_day_count": {"status": "OK", "value": 0.4}}}
+    rows_low = card.breadth_rows(valen_low)
+    checklist_row_low = next(r for r in rows_low
+                             if r["section"] == "checklist" and "5-day" in r["label"])
+    assert checklist_row_low["flag"] is False
+
+
+def test_breadth_rows_t2108_moved_out_of_checklist_into_instrument():
+    """2026-09-30 fix: T2108 is one of the handbook's four INSTRUMENTS, not
+    one of the six checklist rows -- it used to be mislabelled into the
+    checklist section."""
+    rows = card.breadth_rows({})
+    t2108_row = next(r for r in rows if "T2108" in r["label"])
+    assert t2108_row["section"] == "instrument"

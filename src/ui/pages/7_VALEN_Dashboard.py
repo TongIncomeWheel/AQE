@@ -127,16 +127,19 @@ banner = C.stance_banner(valen)
 pe = valen.get("plain_english") or {}
 fresh = C.freshness(valen)
 
+breadth_rows_data = C.breadth_rows(valen)
+
 card_html = (
     '<div class="valen-root"><div class="valen-card">'
     + T.stance_header_html(banner)
+    + T.stance_gauge_html(banner)
     + T.headline_banner_html(C.headline(valen), pe.get("so_what"))
     + f'<div class="valen-caption">As of {fresh.get("as_of") or valen.get("exported_at") or "—"} '
       f'· basis: {fresh.get("basis", "eod")} · regime: '
       f'{C.regime_word(valen).replace("_", " ")}</div>'
     + '<div class="valen-grid2" style="margin-top:16px">'
-    + f'<div>{T.trend_checklist_html(C.trend_rows({**valen, "trend": display_trend}), C.breadth_rows(valen))}</div>'
-    + f'<div>{T.instruments_html(C.extension_rows({**valen, "extension": display_ext}))}</div>'
+    + f'<div>{T.trend_checklist_html(C.trend_rows({**valen, "trend": display_trend}), breadth_rows_data)}</div>'
+    + f'<div>{T.instruments_html(C.extension_rows({**valen, "extension": display_ext}), breadth_rows_data)}</div>'
     + '</div>'
     + '<div class="valen-grid2" style="margin-top:16px">'
     + f'<div>{T.what_would_change_html(C.watch_for_lines(valen))}</div>'
