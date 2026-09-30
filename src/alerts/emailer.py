@@ -293,17 +293,42 @@ def _pma_dist(current, level):
 
 
 def _pma_stop_word(current, level) -> str:
-    d = _pma_dist(current, level)
-    return f"{abs(d):.1f}% away" if d is not None else "—"
+    """A DOWNSIDE protective level (a stop). Safe while price sits above it
+    ("X% away"); once price is AT or THROUGH it, that is a breach, not a
+    buffer — said as "BREACHED by X%", never "away". A real production
+    email (2026-09-30) showed "Committee stop 149.28 (1.8% away)" while the
+    card's own headline said the position had already closed below that
+    exact line — this is the fix."""
+    if current is None or level is None or current == 0:
+        return "—"
+    if current > level:
+        return f"{(current - level) / current * 100:.1f}% away"
+    if current == level:
+        return "AT THE LINE"
+    return f"BREACHED by {(level - current) / current * 100:.1f}%"
 
 
 def _pma_level_word(current, level) -> str:
-    """Entry/target phrasing: 'to go' while still below, 'through by' once
-    price has already cleared it — the doc's own two example phrasings."""
+    """The ENTRY trigger level: 'to go' while still below, 'through by'
+    once price has already cleared it — the doc's own two example
+    phrasings (piece: PK's card)."""
     d = _pma_dist(current, level)
     if d is None:
         return "—"
     return f"{d:.1f}% to go" if d > 0 else f"through by {abs(d):.1f}%"
+
+
+def _pma_target_word(current, level) -> str:
+    """The TARGET level (a profit objective, approached from below): 'away'
+    while not yet reached — the doc's own literal example ("Target 185.48
+    (5.7% away)") — and 'reached' once price is at or beyond it. Never
+    "breach" language; hitting a target is the good outcome, unlike a stop."""
+    d = _pma_dist(current, level)
+    if d is None:
+        return "—"
+    if d > 0:
+        return f"{d:.1f}% away"
+    return "reached" if d == 0 else f"reached, +{abs(d):.1f}% through"
 
 
 def _pma_number_line(t: dict) -> str:
@@ -322,31 +347,8 @@ def _pma_number_line(t: dict) -> str:
             items.append(f"Entry {entry} ({_pma_level_word(live, entry)})")
         target = t.get("target_price")
         if target is not None:
-            items.append(f"Target {target} ({_pma_stop_word(live, target)})")
+            items.append(f"Target {target} ({_pma_target_word(live, target)})")
     return " · ".join(items[:3])
-
-
-def _pma_badge(t: dict) -> tuple[str, str]:
-    """(colour, badge text). HELD is always red regardless of priority — it
-    is the PM's money, that fact outranks whatever fired."""
-    if t.get("is_held"):
-        return "#d00", f"HELD · {t.get('priority')}"
-    if t.get("priority") == "ACTION" and t.get("kind") in ("trade_above", "close_above"):
-        return "#0a8a3a", "BUY CONDITION MET"
-    if t.get("priority") == "ACTION":
-        return "#b8860b", "ACTION"
-    return "#d9a441", "WARN"
-
-
-def _pma_sort_key(t: dict) -> int:
-    """ACTION first (red, then green), then WARN — per the card-order rule."""
-    if t.get("is_held") and t.get("priority") == "ACTION":
-        return 0
-    if t.get("priority") == "ACTION":
-        return 1
-    if t.get("is_held"):
-        return 2
-    return 3
 
 
 def _pma_levels_line(t: dict) -> str:
@@ -383,45 +385,144 @@ def _carried_tag(t: dict) -> str:
     return f"set {run_fmt} · day {day} of 3"
 
 
-def _pma_headline(t: dict) -> str:
-    return f"{t.get('ticker')} — {t.get('headline_phrase') or 'level triggered'}"
+# ---- grouping: one card per (ticker, is_held), never two cards saying two
+# things about the same position (a real production email, 2026-09-30,
+# showed separate "closed below its line" and "near your stops" cards for
+# the same USO position — confusing, not two distinct events). Section
+# headers replace a flat colour-sorted list so the grouping a reader
+# actually needs (act now / good news / keep watching) is explicit, not
+# implied by a left border alone.
+_PMA_SECTION_ORDER = [
+    ("held", "🔴 HELD — needs your attention"),
+    ("buy", "🟢 BUY CONDITIONS MET"),
+    ("watch", "🟠 WATCHING"),
+]
 
 
-def _pma_card_plain(t: dict) -> str:
-    lines = [f"  {_pma_headline(t)}  [{_pma_badge(t)[1]}]",
-            f"    {_pma_number_line(t)}"]
-    sentence = (t.get("action") or t.get("note") or "").strip()
-    if sentence:
-        lines.append(f"    Committee: {sentence}")
-    levels_line = _pma_levels_line(t)
+def _pma_group_key(t: dict) -> tuple:
+    return (t.get("ticker"), t.get("is_held"))
+
+
+def _pma_is_buy_condition(t: dict) -> bool:
+    return t.get("priority") == "ACTION" and t.get("kind") in ("trade_above", "close_above")
+
+
+def _pma_group_bucket(group: list[dict]) -> str:
+    """Which section a card belongs in. HELD is its own section regardless
+    of priority — it's the PM's money, that fact outranks whatever fired."""
+    if group[0].get("is_held"):
+        return "held"
+    if any(_pma_is_buy_condition(t) for t in group):
+        return "buy"
+    return "watch"
+
+
+def _pma_group_badge(group: list[dict]) -> tuple[str, str]:
+    if group[0].get("is_held"):
+        label = "ACTION" if any(t.get("priority") == "ACTION" for t in group) else "WARN"
+        return "#d00", f"HELD · {label}"
+    if any(_pma_is_buy_condition(t) for t in group):
+        return "#0a8a3a", "BUY CONDITION MET"
+    if any(t.get("priority") == "ACTION" for t in group):
+        return "#b8860b", "ACTION"
+    return "#d9a441", "WARN"
+
+
+def _pma_primary(group: list[dict]) -> dict:
+    """The trigger whose headline leads the card: ACTION before WARN, and
+    a specific committee trigger before a generic synthesized proximity
+    check ("near your stops" says less than "closed under the committee's
+    exit line 234.65")."""
+    def rank(t):
+        is_generic = t.get("kind") in ("near_stops", "approaching_entry", "approaching_target")
+        return (0 if t.get("priority") == "ACTION" else 1, 1 if is_generic else 0)
+    return sorted(group, key=rank)[0]
+
+
+def _pma_group_headline(group: list[dict]) -> str:
+    primary = _pma_primary(group)
+    return f"{primary.get('ticker')} — {primary.get('headline_phrase') or 'level triggered'}"
+
+
+def _pma_group_sentences(group: list[dict]) -> list[str]:
+    """Every distinct committee sentence in the group, primary first, so a
+    reader sees ALL the facts PMA gave for this position, not just one."""
+    primary = _pma_primary(group)
+    ordered = [primary] + [t for t in group if t is not primary]
+    seen, out = set(), []
+    for t in ordered:
+        s = (t.get("action") or t.get("note") or "").strip()
+        if s and s not in seen:
+            seen.add(s)
+            out.append(s)
+    return out
+
+
+def _pma_group_levels_line(group: list[dict]) -> str:
+    action_t = next((t for t in group if t.get("priority") == "ACTION"), None)
+    return _pma_levels_line(action_t) if action_t else ""
+
+
+def _pma_group_tag(group: list[dict]) -> str:
+    for t in group:
+        tag = _carried_tag(t)
+        if tag:
+            return tag
+    return ""
+
+
+def _pma_group_signature(group: list[dict]) -> str | None:
+    """The tape-read context (COIL/THRUST/FAILED_PUSH) if any trigger in
+    the group carries one — annotation only, same non-alerting role the
+    legacy heartbeat already gives it (see _sig() above)."""
+    for t in group:
+        sig = (t.get("intraday") or {}).get("signature")
+        if sig:
+            return sig
+    return None
+
+
+def _pma_card_plain(group: list[dict]) -> str:
+    rep = group[0]
+    sig = _pma_group_signature(group)
+    sig_tag = f"  ⟨{_SIGNATURE_LABEL.get(sig, sig)}⟩" if sig else ""
+    lines = [f"  {_pma_group_headline(group)}  [{_pma_group_badge(group)[1]}]{sig_tag}",
+            f"    {_pma_number_line(rep)}"]
+    for s in _pma_group_sentences(group):
+        lines.append(f"    · {s}")
+    levels_line = _pma_group_levels_line(group)
     if levels_line:
         lines.append(f"    {levels_line}")
-    tag = _carried_tag(t)
+    tag = _pma_group_tag(group)
     if tag:
         lines.append(f"    ({tag})")
     return "\n".join(lines)
 
 
-def _pma_card_html(t: dict) -> str:
-    color, badge = _pma_badge(t)
-    sentence = (t.get("action") or t.get("note") or "").strip()
-    levels_line = _pma_levels_line(t)
-    tag = _carried_tag(t)
+def _pma_card_html(group: list[dict]) -> str:
+    rep = group[0]
+    color, badge = _pma_group_badge(group)
+    sentences = _pma_group_sentences(group)
+    levels_line = _pma_group_levels_line(group)
+    tag = _pma_group_tag(group)
+    sig = _pma_group_signature(group)
+    sig_html = (f" <span style='color:#888;font-size:10.5px'>"
+               f"⟨{_SIGNATURE_LABEL.get(sig, sig)}⟩</span>" if sig else "")
     parts = [
         f"<div style='margin:6px 0;padding:8px 10px;border-left:4px solid {color};"
         f"background:#fafafa;border-radius:6px;color:#1a1a1a;font-size:14px'>",
         f"<div><span style='background:{color};color:#fff;font-weight:700;font-size:11px;"
         f"padding:1px 7px;border-radius:9px'>{badge}</span> ",
-        f"<b style='font-size:15px'>{_pma_headline(t)}</b>",
+        f"<b style='font-size:15px'>{_pma_group_headline(group)}</b>{sig_html}",
     ]
     if tag:
         parts.append(f" <span style='color:#888;font-size:10.5px;background:#eee;"
                      f"padding:1px 6px;border-radius:8px'>{tag}</span>")
     parts.append("</div>")
-    parts.append(f"<div style='font-size:13px;margin-top:3px'>{_pma_number_line(t)}</div>")
-    if sentence:
+    parts.append(f"<div style='font-size:13px;margin-top:3px'>{_pma_number_line(rep)}</div>")
+    for s in sentences:
         parts.append(f"<div style='font-size:13px;color:#333;margin-top:2px'>"
-                     f"Committee: {sentence}</div>")
+                     f"Committee: {s}</div>")
     if levels_line:
         parts.append(f"<div style='font-size:11.5px;color:#666;margin-top:3px'>"
                      f"{levels_line}</div>")
@@ -429,38 +530,72 @@ def _pma_card_html(t: dict) -> str:
     return "".join(parts)
 
 
-def _pma_subject_bits(ordered: list[dict], limit: int = 2) -> str:
+def _pma_subject_bits(primaries: list[dict], limit: int = 2) -> str:
     """Two lead items plus a movement tally, e.g. "PK buy line hit · NTRA
     stop order check · +12 names moving" — plain words only."""
     bits = []
-    for t in ordered[:limit]:
+    for t in primaries[:limit]:
         bits.append(f"{t.get('ticker')} {t.get('headline_phrase')}")
-    rest = len(ordered) - len(bits)
+    rest = len(primaries) - len(bits)
     if rest > 0:
         bits.append(f"+{rest} more")
     return " · ".join(bits)
+
+
+def _pma_group_sort_key(group: list[dict]):
+    """Within a section, an ACTION-carrying group leads a WARN-only one;
+    ties broken by ticker so the order is stable run to run."""
+    has_action = any(t.get("priority") == "ACTION" for t in group)
+    return (0 if has_action else 1, group[0].get("ticker") or "")
 
 
 def _build_pma_section(pma_triggers: list[dict]) -> tuple[str, str, str]:
     """Returns (subject_bits, plain_block, html_block). Empty strings when
     there is nothing to show — INFO-priority triggers never render here
     (after-close digest only), so an all-INFO cycle reads as "nothing" for
-    this section too, exactly like an empty `pma_triggers` list."""
+    this section too, exactly like an empty `pma_triggers` list.
+
+    Groups triggers by (ticker, is_held) into one card each, then buckets
+    those cards into the three sections above — never a flat list relying
+    on left-border colour alone to convey what's urgent vs. informational.
+    """
     shown = [t for t in (pma_triggers or []) if t.get("priority") != "INFO"]
     if not shown:
         return "", "", ""
-    ordered = sorted(shown, key=_pma_sort_key)
+
+    groups: dict[tuple, list[dict]] = {}
+    order: list[tuple] = []
+    for t in shown:
+        key = _pma_group_key(t)
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(t)
+    all_groups = [groups[k] for k in order]
+
+    buckets: dict[str, list[list[dict]]] = {"held": [], "buy": [], "watch": []}
+    for g in all_groups:
+        buckets[_pma_group_bucket(g)].append(g)
+    for bucket in buckets.values():
+        bucket.sort(key=_pma_group_sort_key)
+
+    subject_primaries = [_pma_primary(g) for section_key, _ in _PMA_SECTION_ORDER
+                         for g in buckets[section_key]]
 
     plain = ["COMMITTEE LEVELS (PMA)", ""]
-    plain += [_pma_card_plain(t) for t in ordered]
-    plain.append("")
-    plain_block = "\n".join(plain)
-
     html = ["<h3 style='margin:0 0 6px;color:#333'>COMMITTEE LEVELS (PMA)</h3>"]
-    html += [_pma_card_html(t) for t in ordered]
-    html_block = "\n".join(html)
+    for section_key, title in _PMA_SECTION_ORDER:
+        group_list = buckets[section_key]
+        if not group_list:
+            continue
+        plain.append(f"{title} ({len(group_list)})")
+        plain += [_pma_card_plain(g) for g in group_list]
+        plain.append("")
+        html.append(f"<div style='font-weight:700;font-size:13px;color:#555;"
+                    f"margin:10px 0 4px'>{title} ({len(group_list)})</div>")
+        html += [_pma_card_html(g) for g in group_list]
 
-    return _pma_subject_bits(ordered), plain_block, html_block
+    return _pma_subject_bits(subject_primaries), "\n".join(plain), "\n".join(html)
 
 
 # ---------------------------------------------------------------------------

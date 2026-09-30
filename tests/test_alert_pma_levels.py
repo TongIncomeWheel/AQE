@@ -5,8 +5,16 @@ Covers every trigger kind, freshness/stale handling, WATCH/not_structured_
 yet exclusion, NEAR_STOP suppression, the life-of-a-trigger dedup + pruning,
 the volume_min_x gate, the golden "heartbeat unchanged" byte-identical
 test, the % distance card rules, card-UX plain-word constraints, and the
-full acceptance replay over the REAL 2026-09-29 pma_levels.json with the
-synthetic quotes the handoff itself specifies.
+full acceptance replay over a FROZEN copy of the real run-2026-09-29
+pma_levels.json (tests/fixtures/pma_levels_2026-09-29.json, taken verbatim
+from git commit 549474e2's version of aegis/output/pma/pma_levels.json)
+with the synthetic quotes the handoff itself specifies.
+
+Deliberately NOT the live aegis/output/pma/pma_levels.json: that path is a
+real production file the PMA committee overwrites every trading morning,
+so an acceptance test pinned to "A"/"PK"/"MRVL"-shaped assertions would
+break the day the committee's own picks changed — which already happened
+once, the day after this suite was first written.
 """
 
 from __future__ import annotations
@@ -25,7 +33,8 @@ from src.alerts import pma_levels as P
 from src.alerts import state as S
 
 ET = ZoneInfo("America/New_York")
-REAL_FILE = Path(__file__).resolve().parents[1] / "aegis/output/pma/pma_levels.json"
+FIXTURE_FILE = (Path(__file__).resolve().parent
+                / "fixtures" / "pma_levels_2026-09-29.json")
 
 
 def _dt(y, m, d, hh, mm):
@@ -40,7 +49,7 @@ def _q(price, hi=None, lo=None, prev=None, vol=None, avg_vol=None, op=None):
 
 @pytest.fixture(scope="module")
 def real_doc():
-    return json.loads(REAL_FILE.read_text(encoding="utf-8"))
+    return json.loads(FIXTURE_FILE.read_text(encoding="utf-8"))
 
 
 @pytest.fixture
@@ -595,3 +604,188 @@ def test_acceptance_after_close_digest_renders_two_tables_and_watch(real_doc):
     assert "SHORTLIST" in plain
     assert "WATCH" in plain
     assert "<table" in html
+
+
+# ------------------------------------------------------- card redesign (PM
+# feedback on the first production email, 2026-09-30): a breached stop must
+# never read "away", the same position must never produce two cards, and
+# the digest must group by what it's asking of the reader, not colour alone.
+
+
+def test_pma_stop_word_away_when_price_is_safely_above():
+    assert E._pma_stop_word(146.59, 141.10) == "3.7% away"
+
+
+def test_pma_stop_word_breached_when_price_is_at_or_below():
+    """The exact real production case (2026-09-30): USO live 146.59,
+    committee exit 149.28 -- price is ALREADY below the stop, so this must
+    never read "away"."""
+    word = E._pma_stop_word(146.59, 149.28)
+    assert "BREACHED" in word
+    assert "1.8%" in word
+    assert "away" not in word.lower()
+
+
+def test_pma_stop_word_at_the_line_when_exactly_equal():
+    assert E._pma_stop_word(100.0, 100.0) == "AT THE LINE"
+
+
+def test_pma_target_word_away_before_reached():
+    assert E._pma_target_word(175.40, 185.48) == "5.7% away"
+
+
+def test_pma_target_word_reached_once_price_clears_it():
+    word = E._pma_target_word(190.0, 185.48)
+    assert "reached" in word.lower()
+    assert "away" not in word.lower()
+
+
+def test_number_line_uses_breach_phrasing_for_held_stops():
+    line = E._pma_number_line({"ticker": "USO", "is_held": True, "live_px": 146.59,
+                              "broker_stop": 141.10, "committee_exit": 149.28})
+    assert "BREACHED by 1.8%" in line
+    assert "149.28 (1.8% away)" not in line
+
+
+def test_same_ticker_triggers_consolidate_into_one_card():
+    """The exact shape of the real duplication bug: two triggers on the
+    same HELD row (a literal committee trigger + the synthesized near-
+    stops check) must produce ONE card, not two."""
+    t1 = {"ticker": "USO", "source": "pma", "is_held": True, "level": "USO-committee|warn",
+         "label": "closed below its line", "live_px": 146.59, "priority": "WARN",
+         "action": "Closed under the committee's exit line 149.28.",
+         "note": "Closed under the committee's exit line 149.28.",
+         "kind": "close_below", "headline_phrase": "closed below its line",
+         "broker_stop": 141.10, "committee_exit": 149.28, "carried": False,
+         "trigger_id": "USO-committee", "intraday": {}}
+    t2 = {"ticker": "USO", "source": "pma", "is_held": True, "level": "USO-nearstops|2026-09-30",
+         "label": "Near your stops", "live_px": 146.59, "priority": "WARN",
+         "action": "Price is close to one of your two stops.",
+         "note": "Price is close to one of your two stops.",
+         "kind": "near_stops", "headline_phrase": "near your stops",
+         "broker_stop": 141.10, "committee_exit": 149.28, "carried": False,
+         "trigger_id": None, "intraday": {}}
+    _, plain, html = E._build_pma_section([t1, t2])
+    assert plain.count("USO —") == 1, "must render exactly one USO card, not two"
+    assert html.count("USO —") == 1
+    # Both committee sentences must still be present, just inside one card.
+    assert "Closed under the committee's exit line" in plain
+    assert "Price is close to one of your two stops" in plain
+
+
+def test_different_is_held_same_ticker_stay_separate_cards():
+    """A ticker can carry both a HELD position and a separate
+    HOLD_FOR_CONDITIONS add-idea (e.g. NTRA in the real file) -- these are
+    genuinely different things and must NOT be merged."""
+    held = {"ticker": "NTRA", "is_held": True, "priority": "WARN",
+           "headline_phrase": "near your stops", "live_px": 350.0,
+           "action": "held note", "note": "held note", "kind": "near_stops",
+           "level": "NTRA-nearstops|2026-09-30", "carried": False, "intraday": {}}
+    add_idea = {"ticker": "NTRA", "is_held": False, "priority": "WARN",
+               "headline_phrase": "approaching its buy line", "live_px": 355.0,
+               "action": "add idea note", "note": "add idea note",
+               "kind": "approaching_entry", "level": "NTRA-entry|near",
+               "carried": False, "intraday": {}}
+    _, plain, _ = E._build_pma_section([held, add_idea])
+    assert plain.count("NTRA —") == 2
+
+
+def test_section_headers_group_held_buy_and_watch_separately():
+    held = {"ticker": "A", "is_held": True, "priority": "ACTION",
+           "headline_phrase": "has no stop order", "live_px": 10.0,
+           "action": "x", "note": "x", "kind": "no_stop_order",
+           "level": "A-nostop|2026-09-30", "carried": False, "intraday": {}}
+    buy = {"ticker": "B", "is_held": False, "priority": "ACTION",
+          "headline_phrase": "trading through a line", "live_px": 20.0,
+          "action": "y", "note": "y", "kind": "close_above",
+          "level": "B-cond|close", "carried": False, "intraday": {}}
+    watch = {"ticker": "C", "is_held": False, "priority": "WARN",
+            "headline_phrase": "approaching its buy line", "live_px": 30.0,
+            "action": "z", "note": "z", "kind": "approaching_entry",
+            "level": "C-entry|near", "carried": False, "intraday": {}}
+    _, plain, _ = E._build_pma_section([held, buy, watch])
+    held_idx = plain.index("HELD — needs your attention")
+    buy_idx = plain.index("BUY CONDITIONS MET")
+    watch_idx = plain.index("WATCHING")
+    assert held_idx < buy_idx < watch_idx, "sections must render in act-first order"
+
+
+def test_held_section_leads_even_when_action_priority_is_elsewhere():
+    """HELD is its own section regardless of priority -- the PM's money
+    outranks whatever triggered it, per the badge rule."""
+    held_warn = {"ticker": "A", "is_held": True, "priority": "WARN",
+                "headline_phrase": "near your stops", "live_px": 10.0,
+                "action": "x", "note": "x", "kind": "near_stops",
+                "level": "A-nearstops|2026-09-30", "carried": False, "intraday": {}}
+    buy_action = {"ticker": "B", "is_held": False, "priority": "ACTION",
+                 "headline_phrase": "trading through a line", "live_px": 20.0,
+                 "action": "y", "note": "y", "kind": "close_above",
+                 "level": "B-cond|close", "carried": False, "intraday": {}}
+    _, plain, _ = E._build_pma_section([held_warn, buy_action])
+    assert plain.index("HELD — needs your attention") < plain.index("BUY CONDITIONS MET")
+
+
+def test_pma_group_bucket_classification():
+    held_group = [{"is_held": True, "priority": "WARN", "kind": "near_stops"}]
+    buy_group = [{"is_held": False, "priority": "ACTION", "kind": "close_above"}]
+    watch_group = [{"is_held": False, "priority": "WARN", "kind": "approaching_entry"}]
+    assert E._pma_group_bucket(held_group) == "held"
+    assert E._pma_group_bucket(buy_group) == "buy"
+    assert E._pma_group_bucket(watch_group) == "watch"
+
+
+def test_pma_primary_prefers_action_and_specific_over_generic():
+    generic_action = {"priority": "ACTION", "kind": "near_stops"}
+    specific_action = {"priority": "ACTION", "kind": "close_below"}
+    warn = {"priority": "WARN", "kind": "close_below"}
+    assert E._pma_primary([generic_action, specific_action]) is specific_action
+    assert E._pma_primary([warn, specific_action]) is specific_action
+
+
+def test_pma_group_sentences_deduplicates_identical_text():
+    t1 = {"priority": "ACTION", "kind": "close_below", "action": "same text", "note": "same text"}
+    t2 = {"priority": "WARN", "kind": "near_stops", "action": "same text", "note": "same text"}
+    t3 = {"priority": "WARN", "kind": "near_stops", "action": "different text", "note": "different text"}
+    sentences = E._pma_group_sentences([t1, t2, t3])
+    assert sentences.count("same text") == 1
+    assert "different text" in sentences
+
+
+# ---------------------------------------------------- intraday context (volume)
+
+
+def test_evaluate_pma_attaches_real_intraday_context_not_a_stub():
+    """Answers the PM's own question: is this only watching price? No --
+    the same COIL/THRUST/FAILED_PUSH + volume-pace read the legacy
+    heartbeat already uses is now attached here too (annotation only, per
+    that module's own discipline -- it never fires its own alert)."""
+    row = {"ticker": "BE", "class": "ADVANCE", "atr_14d": 5.0,
+          "levels": {"stop": 280.0, "tp": [302.99]},
+          "triggers": [{"id": "BE-cond", "kind": "close_above", "level": 288.0,
+                       "basis": "daily", "priority": "ACTION", "action": "x"}]}
+    # A tight, held-near-highs read with the elapsed fraction high enough
+    # to classify -- late-session so MIN_ELAPSED_FRACTION is cleared.
+    quote = {"price": 289.96, "day_high": 290.0, "day_low": 289.8, "prev_close": 288.0}
+    out = P.evaluate_pma(row, quote, FINAL, True, False)
+    assert out
+    assert out[0]["intraday"] != {}
+    assert "signature" in out[0]["intraday"]
+
+
+def test_pma_group_signature_surfaces_on_the_card():
+    t = {"ticker": "BE", "is_held": False, "priority": "ACTION",
+        "headline_phrase": "trading through a line", "live_px": 289.96,
+        "action": "x", "note": "x", "kind": "close_above", "level": "BE-cond|close",
+        "carried": False, "intraday": {"signature": "COIL"}}
+    _, plain, html = E._build_pma_section([t])
+    assert "COIL" in plain
+    assert "COIL" in html
+
+
+def test_pma_group_signature_absent_when_no_intraday_reads():
+    t = {"ticker": "BE", "is_held": False, "priority": "ACTION",
+        "headline_phrase": "trading through a line", "live_px": 289.96,
+        "action": "x", "note": "x", "kind": "close_above", "level": "BE-cond|close",
+        "carried": False, "intraday": {}}
+    _, plain, _ = E._build_pma_section([t])
+    assert "⟨" not in plain

@@ -204,6 +204,19 @@ def evaluate_pma(row: dict, quote: dict, now_et: datetime,
     chg_pct = ((price / prev_close - 1) * 100
               if prev_close and prev_close > 0 else None)
 
+    # Tape-read context (COIL/THRUST/FAILED_PUSH + volume pace) — the SAME
+    # time-normalised range/volume measures the legacy heartbeat already
+    # attaches to every trigger (src/alerts/intraday.py), answering "is
+    # this also watching volume, not just price" honestly: yes, via this
+    # shared read, though there is no VWAP-specific trigger kind in the
+    # PMA handoff spec itself. Annotation only, per that module's own
+    # discipline — it never fires a card of its own.
+    try:
+        from src.alerts import intraday as _I
+        intraday_ctx = _I.measures(quote, _n(row.get("atr_14d")), now_et)
+    except Exception:  # noqa: BLE001
+        intraday_ctx = {}
+
     session_key = now_et.date().isoformat()
     out: list[dict] = []
     atr_band_hit = False
@@ -315,7 +328,7 @@ def evaluate_pma(row: dict, quote: dict, now_et: datetime,
             "live_px": round(price, 2),
             "chg_pct": round(chg_pct, 2) if chg_pct is not None else None,
             "prev_close": round(prev_close, 2) if prev_close else None,
-            "intraday": {},
+            "intraday": intraday_ctx,
             "note": (action_text + note_suffix).strip(),
             "pma_class": row.get("class"),
             "priority": priority,
@@ -331,7 +344,8 @@ def evaluate_pma(row: dict, quote: dict, now_et: datetime,
         out.append(entry)
 
     out.extend(_synthesized_proximity_alerts(row, price, chg_pct, prev_close,
-                                             session_key, ctx, atr_band_hit))
+                                             session_key, ctx, atr_band_hit,
+                                             intraday_ctx))
     return out
 
 
@@ -346,7 +360,7 @@ _SYNTH_SENTENCE = {
 
 
 def _base(row: dict, price: float, chg_pct, prev_close, key: str, label: str,
-          ctx: dict) -> dict:
+          ctx: dict, intraday_ctx: dict | None = None) -> dict:
     sentence = _SYNTH_SENTENCE.get(label, label)
     e = {
         "ticker": row.get("ticker"), "source": "pma",
@@ -355,7 +369,8 @@ def _base(row: dict, price: float, chg_pct, prev_close, key: str, label: str,
         "live_px": round(price, 2),
         "chg_pct": round(chg_pct, 2) if chg_pct is not None else None,
         "prev_close": round(prev_close, 2) if prev_close else None,
-        "intraday": {}, "note": sentence, "pma_class": row.get("class"), "priority": "WARN",
+        "intraday": intraday_ctx or {}, "note": sentence, "pma_class": row.get("class"),
+        "priority": "WARN",
         "action": sentence, "trigger_id": None,
         "kind": ("near_stops" if label == "Near your stops"
                 else "approaching_entry" if label == "Approaching entry"
@@ -371,7 +386,8 @@ def _base(row: dict, price: float, chg_pct, prev_close, key: str, label: str,
 
 def _synthesized_proximity_alerts(row: dict, price: float, chg_pct, prev_close,
                                   session_key: str, ctx: dict,
-                                  atr_band_hit: bool = False) -> list[dict]:
+                                  atr_band_hit: bool = False,
+                                  intraday_ctx: dict | None = None) -> list[dict]:
     """The two "New alert" rows from the handoff's Distance-in-% table —
     AQE's own proximity read on top of whatever the committee's literal
     triggers already cover. "Near your stops" re-arms every morning
@@ -393,7 +409,8 @@ def _synthesized_proximity_alerts(row: dict, price: float, chg_pct, prev_close,
                or (c_dist is not None and c_dist <= C.HELD_NEAR_PCT))
         if near:
             e = _base(row, price, chg_pct, prev_close,
-                      f"{ticker}-nearstops|{session_key}", "Near your stops", ctx)
+                      f"{ticker}-nearstops|{session_key}", "Near your stops", ctx,
+                      intraday_ctx)
             e["broker_stop_dist_pct"] = b_dist
             e["committee_exit_dist_pct"] = c_dist
             out.append(e)
@@ -408,7 +425,7 @@ def _synthesized_proximity_alerts(row: dict, price: float, chg_pct, prev_close,
         dist = round((entry_level - price) / price * 100, 1)
         if dist <= C.SHORTLIST_NEAR_PCT:
             e = _base(row, price, chg_pct, prev_close,
-                      f"{trig_id_base}|near", "Approaching entry", ctx)
+                      f"{trig_id_base}|near", "Approaching entry", ctx, intraday_ctx)
             e["entry_dist_pct"] = dist
             if target is not None:
                 e["target_dist_pct"] = round((target - price) / price * 100, 1)
@@ -417,7 +434,7 @@ def _synthesized_proximity_alerts(row: dict, price: float, chg_pct, prev_close,
         dist = round((target - price) / price * 100, 1)
         if dist <= C.SHORTLIST_NEAR_PCT:
             e = _base(row, price, chg_pct, prev_close,
-                      f"{trig_id_base}|target", "Approaching target", ctx)
+                      f"{trig_id_base}|target", "Approaching target", ctx, intraday_ctx)
             e["target_dist_pct"] = dist
             out.append(e)
     return out
