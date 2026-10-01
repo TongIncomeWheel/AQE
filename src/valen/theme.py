@@ -101,6 +101,7 @@ CSS = f"""
   padding: 5px 0 5px 14px; position: relative; }}
 .valen-bullet-list li::before {{ content: "—"; position: absolute; left: 0; color: {_GOLD}; }}
 .valen-caption {{ font-size: 12px; color: {_TEXT_MUTED}; margin-top: 6px; }}
+.valen-explainer {{ font-size: 10.5px; color: {_GREY}; line-height: 1.4; margin-top: 2px; }}
 
 /* ---- cockpit instruments: gauges, LEDs, the stance dial ------------- */
 .valen-dial-wrap {{ display: flex; flex-direction: column; align-items: center;
@@ -110,9 +111,10 @@ CSS = f"""
 .valen-dial-caption {{ font-size: 11px; color: {_TEXT_MUTED}; margin-top: 2px;
   text-transform: uppercase; letter-spacing: 0.05em; }}
 
+.valen-led-item {{ padding: 6px 0; border-bottom: 1px solid {_BORDER_SOFT}; }}
+.valen-led-item:last-child {{ border-bottom: none; }}
 .valen-led-row {{ display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0; border-bottom: 1px solid {_BORDER_SOFT}; gap: 10px; }}
-.valen-led-row:last-child {{ border-bottom: none; }}
+  gap: 10px; }}
 .valen-led-label {{ display: flex; align-items: center; gap: 8px; color: {_TEXT_MUTED};
   font-size: 12.5px; }}
 .valen-led-dot {{ width: 9px; height: 9px; border-radius: 50%; flex: none;
@@ -229,23 +231,72 @@ _GAUGE_KIND = {
     "mover_ratio": (_RATIO_LO, _RATIO_HI, _RATIO_BANDS, _RATIO_TICKS, ""),
 }
 
+# One-liners answering a standing PM question (2026-10-01): what does this
+# instrument actually measure, and what does the number mean? Gauges are
+# keyed by `kind` (the same reading applies at every window a kind is used
+# at, e.g. the 5-day and 10-day mover ratios); LED checklist rows are keyed
+# by their exact label since two rows can share a `kind` (e.g. "bool") while
+# measuring completely different things.
+_GAUGE_EXPLAINER = {
+    "atr_multiple": ("How many 14-day ATRs price sits above its own 50-day "
+                     "average — a stretch gauge. 6+ is historically "
+                     "overextended; a pause or pullback gets more likely."),
+    "vix_vix3m": ("Spot VIX ÷ the 3-month VIX. Below ~0.82 = calm; above "
+                 "1.00 means near-term fear is pricier than long-term "
+                 "(backwardation) — a stress signal, not a trade trigger."),
+    "pct_0_100": ("% of the wide ($2B+) market trading above its own 40-day "
+                 "average. Under 20% = washed out/oversold; over 80% = "
+                 "euphoric/overbought."),
+    "mover_ratio": ("4%+ up-days ÷ 4%+ down-days over the window. Above "
+                   "1.00 = buyers have had control; below 1.00 = sellers have."),
+}
+
+_LED_EXPLAINER = {
+    "Today's count green": ("More $2B+ stocks closed up 4%+ today than closed "
+                            "down 4%+ — one session only, not a trend."),
+    "5-day count (1.00+ to pass)": ("The same 4%+ up/down ratio as the gauge "
+                                    "below, over the last 5 sessions; 1.00 or "
+                                    "higher passes this line."),
+    "Monthly big risers (25%+ up-count)": ("How many $2B+ stocks jumped 25%+ "
+                                           "over the last 21 sessions — real "
+                                           "momentum breadth, not one-day noise."),
+    "Net High/Net Low (8d vs 20d)": ("New 52-week highs minus new lows, "
+                                     "smoothed two ways; green = the faster "
+                                     "(8-day) average is above the slower "
+                                     "(20-day) one — breakouts are being "
+                                     "rewarded, not sold."),
+}
+
+_TREND_EXPLAINER = (
+    "● = price is above both its 10- and 20-period average (day for "
+    "Daily, week for Weekly) with the fast above the slow — a confirmed "
+    "trend. Rising 5d adds: also above its own 5-day average AND that "
+    "average is climbing — the earliest read on a fresh turn.")
+
 
 def _gauge_bar_html(label: str, value, kind: str, flag=None) -> str:
     """One cockpit instrument: a horizontal banded track with a pointer at
     the current value — the "sliders and illustrations" read, replacing a
     flat stat tile. `kind` looks up the handbook's own frozen bands; an
     unrecognised kind falls back to a plain stat line rather than guessing
-    a scale."""
+    a scale. Carries a one-line explainer (what this measures, what the
+    number means) under every instrument — a standing PM ask (2026-10-01)
+    answered once per `kind` rather than making a reader infer it from the
+    label alone."""
+    explainer = _GAUGE_EXPLAINER.get(kind)
+    explainer_html = f'<div class="valen-explainer">{_esc(explainer)}</div>' if explainer else ""
     if value is None:
         return (f'<div class="valen-gauge"><div class="valen-gauge-head">'
                f'<span class="valen-gauge-label">{_esc(label)}</span>'
-               f'<span class="valen-stat-unavail">not shown</span></div></div>')
+               f'<span class="valen-stat-unavail">not shown</span></div>'
+               f'{explainer_html}</div>')
     spec = _GAUGE_KIND.get(kind)
     flag_html = ' <span class="valen-stat-sub">⚠</span>' if flag else ""
     if spec is None:
         return (f'<div class="valen-gauge"><div class="valen-gauge-head">'
                f'<span class="valen-gauge-label">{_esc(label)}</span>'
-               f'<span class="valen-gauge-value">{_fmt(value)}{flag_html}</span></div></div>')
+               f'<span class="valen-gauge-value">{_fmt(value)}{flag_html}</span></div>'
+               f'{explainer_html}</div>')
     lo, hi, bands, ticks, suffix = spec
     span = hi - lo
     bands_html = "".join(
@@ -261,7 +312,7 @@ def _gauge_bar_html(label: str, value, kind: str, flag=None) -> str:
         f'<span class="valen-gauge-value">{_fmt(value)}{suffix}{flag_html}</span></div>'
         f'<div class="valen-gauge-track">{bands_html}'
         f'<div class="valen-gauge-pointer" style="left:{pos:.2f}%"></div></div>'
-        f'<div class="valen-gauge-scale">{ticks_html}</div></div>'
+        f'<div class="valen-gauge-scale">{ticks_html}</div>{explainer_html}</div>'
     )
 
 
@@ -269,17 +320,25 @@ def _led_row_html(label: str, status: str, value, flag=None,
                   display: str | None = None) -> str:
     """One checklist line: a coloured LED dot (pass/fail/not-shown) plus the
     reading it's judging — the pass/fail-lights read of the handbook's own
-    six-row "market checklist", replacing a flat text row."""
+    six-row "market checklist", replacing a flat text row. Carries a
+    one-line explainer (what this measures, what the number means) keyed by
+    the row's own label, since two rows can share a `kind` ("bool") while
+    reading completely different things."""
+    explainer = _LED_EXPLAINER.get(label)
+    explainer_html = f'<div class="valen-explainer">{_esc(explainer)}</div>' if explainer else ""
     if status != "OK":
-        return (f'<div class="valen-led-row"><span class="valen-led-label">'
+        return (f'<div class="valen-led-item"><div class="valen-led-row">'
+               f'<span class="valen-led-label">'
                f'<span class="valen-led-dot valen-muted"></span>{_esc(label)}</span>'
-               f'<span class="valen-led-value" style="color:{_GREY}">not shown</span></div>')
+               f'<span class="valen-led-value" style="color:{_GREY}">not shown</span></div>'
+               f'{explainer_html}</div>')
     ok = bool(flag) if flag is not None else bool(value)
     dot_cls = "valen-ok" if ok else "valen-fail"
     shown = display if display is not None else _fmt(value)
-    return (f'<div class="valen-led-row"><span class="valen-led-label">'
+    return (f'<div class="valen-led-item"><div class="valen-led-row">'
+           f'<span class="valen-led-label">'
            f'<span class="valen-led-dot {dot_cls}"></span>{_esc(label)}</span>'
-           f'<span class="valen-led-value">{shown}</span></div>')
+           f'<span class="valen-led-value">{shown}</span></div>{explainer_html}</div>')
 
 
 def stance_gauge_html(banner: dict) -> str:
@@ -416,6 +475,7 @@ def trend_checklist_html(trend_rows_: list[dict], breadth_rows_: list[dict]) -> 
     )
     return (f'<div class="valen-col-label">Trend &amp; checklist</div>'
            f'{"".join(rows_html)}'
+           f'<div class="valen-explainer" style="margin-bottom:8px">{_esc(_TREND_EXPLAINER)}</div>'
            f'<div class="valen-col-label" style="margin-top:12px">Market checklist</div>'
            f'{checklist_html}')
 
@@ -444,6 +504,55 @@ def what_would_change_html(watch_for: list[str]) -> str:
     items = "".join(f"<li>{_esc(line)}</li>" for line in watch_for)
     return (f'<div class="valen-col-label">What would change it</div>'
            f'<ul class="valen-bullet-list">{items}</ul>')
+
+
+def _history_arrow(now, past) -> str:
+    if now is None or past is None:
+        return ""
+    if now > past:
+        return " ↑"
+    if now < past:
+        return " ↓"
+    return " →"
+
+
+def history_html(rows: list[dict]) -> str:
+    """"Is the weather turning?" — current vs 5-sessions/21-sessions-ago,
+    independently recomputed from price history each time (never a stored
+    snapshot — see card.history_rows()/history.py), so the turning-point
+    read is available from day one with no backfill wait."""
+    if not rows:
+        return ""
+    body = []
+    for r in rows:
+        label, kind = r.get("label"), r.get("kind")
+        now_v, d5, d1m = r.get("now"), r.get("5d_ago"), r.get("1mo_ago")
+        if kind == "word":
+            now_s = _esc(str(now_v).replace("_", " ")) if now_v else "—"
+            d5_s = _esc(str(d5).replace("_", " ")) if d5 else "—"
+            d1m_s = _esc(str(d1m).replace("_", " ")) if d1m else "—"
+            flag5 = (' <span class="valen-stat-sub">⚠</span>'
+                    if d5 and now_v and d5 != now_v else "")
+            flag1m = (' <span class="valen-stat-sub">⚠</span>'
+                      if d1m and now_v and d1m != now_v else "")
+            body.append(f'<tr><td class="valen-name">{_esc(label)}</td>'
+                       f'<td>{now_s}</td><td>{d5_s}{flag5}</td><td>{d1m_s}{flag1m}</td></tr>')
+        else:
+            body.append(f'<tr><td class="valen-name">{_esc(label)}</td>'
+                       f'<td>{_fmt(now_v)}</td>'
+                       f'<td>{_fmt(d5)}{_history_arrow(now_v, d5)}</td>'
+                       f'<td>{_fmt(d1m)}{_history_arrow(now_v, d1m)}</td></tr>')
+    return (
+        '<div class="valen-col-label">Is the weather turning?</div>'
+        '<div class="valen-explainer" style="margin-bottom:8px">Each column is '
+        'independently recomputed from price history, not a stored snapshot — '
+        'available from day one, no backfill wait. ⚠ on Stance/Trend regime '
+        'marks a point where the read differed from today’s. Arrows on numbers '
+        'show direction only (↑ higher / ↓ lower than today) — AQE makes '
+        'no call on which way is better. GEX has no history here: its read is a '
+        'snapshot of today’s options open interest, which isn’t retained.</div>'
+        '<table class="valen-table"><tr><th></th><th>Now</th><th>5d ago</th>'
+        f'<th>1mo ago</th></tr>{"".join(body)}</table>')
 
 
 def neighbourhood_html(lines: list[str], status: str, reason: str | None) -> str:
