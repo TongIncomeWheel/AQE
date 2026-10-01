@@ -876,3 +876,66 @@ def test_pma_group_signature_absent_when_no_intraday_reads():
         "carried": False, "intraday": {}}
     _, plain, _ = E._build_pma_section([t])
     assert "⟨" not in plain
+
+
+# -------------------------------------------- synthesized sentence clarity
+# A PM complaint (2026-10-01): seeing "approaching target" with no number in
+# reach to answer "what target?", and no sense of whether this is AQE's own
+# read, a committee level, or something to act on. _synth_sentence() must
+# answer all three in the sentence itself, not just the number line above it.
+
+
+def test_approaching_target_sentence_states_the_actual_level():
+    s = P._synth_sentence("Approaching target", {"target_price": 185.48})
+    assert "185.48" in s
+
+
+def test_approaching_target_sentence_names_it_as_the_committees_not_aqes():
+    s = P._synth_sentence("Approaching target", {"target_price": 185.48})
+    assert "committee" in s.lower()
+
+
+def test_approaching_target_sentence_says_no_action_needed():
+    s = P._synth_sentence("Approaching target", {"target_price": 185.48})
+    assert "no action" in s.lower() or "information only" in s.lower()
+
+
+def test_approaching_entry_sentence_states_the_actual_level():
+    s = P._synth_sentence("Approaching entry", {"entry_price": 176.02})
+    assert "176.02" in s
+
+
+def test_approaching_entry_sentence_says_no_action_needed():
+    s = P._synth_sentence("Approaching entry", {"entry_price": 176.02})
+    assert "no action" in s.lower()
+
+
+def test_near_your_stops_sentence_states_both_actual_levels():
+    s = P._synth_sentence("Near your stops",
+                          {"broker_stop": 146.0, "committee_exit": 149.28})
+    assert "146.0" in s and "149.28" in s
+
+
+def test_synth_sentence_degrades_cleanly_when_level_is_missing():
+    """A ctx with no numeric level yet must still read as a sentence, never
+    crash or print 'None'."""
+    s = P._synth_sentence("Approaching target", {})
+    assert s and "None" not in s
+
+
+def test_synth_sentence_unknown_label_falls_back_to_the_label_itself():
+    assert P._synth_sentence("Some new label", {}) == "Some new label"
+
+
+def test_real_production_card_reads_clearly_end_to_end():
+    """The exact 2026-10-01 complaint, rendered through the full card
+    pipeline: a reader must see the ticker, the actual target number, that
+    it's the committee's level, and that nothing is being asked of them."""
+    row = {"ticker": "PK", "class": "ADVANCE"}
+    ctx = {"entry_price": 16.20, "target_price": 16.72}
+    e = P._base(row, 16.30, 0.5, 16.22, "PK-entry|near", "Approaching target", ctx)
+    card = E._pma_card_plain([e])
+    assert "PK" in card
+    assert "16.72" in card
+    assert "committee" in card.lower()
+    assert "no action" in card.lower()

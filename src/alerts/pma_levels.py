@@ -349,19 +349,50 @@ def evaluate_pma(row: dict, quote: dict, now_et: datetime,
     return out
 
 
-_SYNTH_SENTENCE = {
-    "Near your stops": "Price is close to one of your two stops. Your broker "
-                      "stop is the order in force unless the committee's own "
-                      "exit is nearer.",
-    "Approaching entry": "Getting close to the committee's buy line — no "
-                        "condition has triggered yet.",
-    "Approaching target": "Getting close to the first target above the entry.",
-}
+def _synth_sentence(label: str, ctx: dict) -> str:
+    """The plain-English line for an AQE-synthesized proximity alert (never
+    the committee's own literal trigger text, which already ships in plain
+    words from the PMA file itself and needs no rewriting here).
+
+    A PM complaint (2026-10-01): seeing "approaching target" with no number
+    anywhere in reach to answer "what target?", and no sense of whether this
+    is AQE's own observation, a committee-set level, or something to act on.
+    Every sentence below now (1) states the actual committee LEVEL, not just
+    a distance (the number line above already gives distance — this gives
+    the number itself), (2) names it as the COMMITTEE's level, never AQE's
+    own read, and (3) says plainly whether anything is being asked of the
+    reader right now."""
+    if label == "Near your stops":
+        b_stop, c_exit = ctx.get("broker_stop"), ctx.get("committee_exit")
+        bits = []
+        if b_stop is not None:
+            bits.append(f"your broker stop at {b_stop}")
+        if c_exit is not None:
+            bits.append(f"the committee's exit at {c_exit}")
+        levels = " and ".join(bits) if bits else "one of your two stops"
+        return (f"Price is close to {levels}. Your broker stop is the order "
+               "in force unless the committee's own exit is nearer. Review "
+               "your stop placement now.")
+    if label == "Approaching entry":
+        entry = ctx.get("entry_price")
+        lvl = f" at {entry}" if entry is not None else ""
+        return (f"Getting close to the committee's buy line{lvl} — this is "
+               "the price the committee set for a buy condition, not "
+               "AQE's own pick. No condition has triggered yet, so no "
+               "action is needed; this is advance notice only.")
+    if label == "Approaching target":
+        target = ctx.get("target_price")
+        lvl = f" at {target}" if target is not None else ""
+        return (f"Getting close to the committee's first profit target{lvl}, "
+               "set above your entry — not a stop, not a buy line, just "
+               "where the committee expects the first objective to be hit. "
+               "Information only; no action needed.")
+    return label
 
 
 def _base(row: dict, price: float, chg_pct, prev_close, key: str, label: str,
           ctx: dict, intraday_ctx: dict | None = None) -> dict:
-    sentence = _SYNTH_SENTENCE.get(label, label)
+    sentence = _synth_sentence(label, ctx)
     e = {
         "ticker": row.get("ticker"), "source": "pma",
         "is_held": row.get("class") == "HELD",
