@@ -59,6 +59,15 @@ MAX_EXPORT_AGE_DAYS = int(_f("AQE_ALERT_MAX_EXPORT_AGE_DAYS", 4))
 # --- cadence ---
 ALERT_MINUTES = int(_f("AQE_ALERT_MINUTES", 15))     # FMP Starter = 15-min delay
 
+# Hard floor between two digest EMAILS (not between trigger evaluations,
+# which still run every ALERT_MINUTES so nothing misses its window). A PM
+# complaint (2026-10-01): two pollers (the in-app thread, the GitHub Actions
+# backstop) on the same ~15-min cadence could land close enough together to
+# both send — see state.py's digest-batching section. Slightly under
+# ALERT_MINUTES, not equal to it, so ordinary small scheduler jitter between
+# two honest 15-min cycles doesn't itself get gated.
+MIN_DIGEST_GAP_MINUTES = int(_f("AQE_MIN_DIGEST_GAP_MINUTES", 12))
+
 # US market session (Eastern) the alert poll is allowed to email in. Slightly
 # padded so the 15-min-delayed last bar still lands inside the window.
 MARKET_OPEN = (9, 45)    # 09:45 ET

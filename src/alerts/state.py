@@ -252,3 +252,149 @@ def prune_pma_fired(state: dict, live_base_ids: set[str]) -> int:
     kept = [k for k in before if k.split("|", 1)[0] in live_base_ids]
     state["fired"] = kept
     return len(before) - len(kept)
+
+
+# ---------------------------------------------------------------------------
+# Digest batching — a hard floor on email FREQUENCY, separate from trigger
+# dedup above. A PM complaint (2026-10-01): alerts arrived too often, "once
+# every 15 min in one email, not by individual ticker." The two pollers
+# (in-app 15-min thread, GitHub Actions backstop) already dedup which
+# TRIGGERS fire via the shared state above, but this module's own docstring
+# admits the gap: "a collision can at worst send one duplicate" — last-
+# writer-wins on a read-then-write race when both pollers land close
+# together. This closes that gap WITHOUT the data-loss a naive "just skip
+# the send" fix would cause: a trigger already marked fired above will never
+# be evaluated again, so silently dropping its digest would lose it for
+# good, the same "never silently empty" failure CLAUDE.md calls out for a
+# failed data fetch.
+#
+# So every fresh trigger is appended to this shared PENDING queue FIRST,
+# regardless of whether this cycle is allowed to send. A send is attempted
+# only if MIN_DIGEST_GAP_MINUTES have passed since the last SUCCESSFUL send
+# (tracked separately, below) — and when it is, it sends the FULL pending
+# queue (this cycle's triggers plus anything accumulated from cycles that
+# were gated), then clears it. A failed send leaves the queue intact for the
+# next cycle to retry. Net effect: every trigger is still emailed exactly
+# once, but never more often than the gap allows, and a cycle gated by the
+# timer still folds its own content into the next email instead of an
+# eleventh near-simultaneous one.
+# ---------------------------------------------------------------------------
+
+PENDING_DIGEST_FILENAME = "aqe_pending_digest.json"
+LOCAL_PENDING_DIGEST = OUTPUT_DIR / PENDING_DIGEST_FILENAME
+LAST_DIGEST_FILENAME = "aqe_last_digest_sent.json"
+LOCAL_LAST_DIGEST = OUTPUT_DIR / LAST_DIGEST_FILENAME
+
+
+def load_pending_digest() -> dict:
+    """{"legacy": [...], "pma": [...]} — triggers already dedup'd (fired) but
+    not yet emailed. Drive first, then local mirror, then empty."""
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            txt = gdrive_uploader.download_text(PENDING_DIGEST_FILENAME)
+            if txt:
+                data = json.loads(txt)
+                if isinstance(data, dict):
+                    data.setdefault("legacy", [])
+                    data.setdefault("pma", [])
+                    return data
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        if LOCAL_PENDING_DIGEST.exists():
+            data = json.loads(LOCAL_PENDING_DIGEST.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                data.setdefault("legacy", [])
+                data.setdefault("pma", [])
+                return data
+    except Exception:  # noqa: BLE001
+        pass
+    return {"legacy": [], "pma": []}
+
+
+def save_pending_digest(pending: dict) -> None:
+    payload = json.dumps(pending, indent=2, default=str)
+    try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        LOCAL_PENDING_DIGEST.write_text(payload, encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            gdrive_uploader.upload_or_replace(PENDING_DIGEST_FILENAME, payload,
+                                              mime="application/json")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def append_pending_digest(legacy: list[dict], pma: list[dict]) -> dict:
+    """Merge this cycle's fresh triggers into the shared pending queue (by
+    `level`, the same dedup key already used to fire them — so a trigger
+    present in both the queue and this cycle, which should not happen but
+    costs nothing to guard, is never double-listed) and persist it.
+    Returns the merged queue."""
+    pending = load_pending_digest()
+    for bucket, new_items in (("legacy", legacy), ("pma", pma)):
+        seen = {t.get("level") for t in pending[bucket]}
+        for t in new_items or []:
+            if t.get("level") not in seen:
+                pending[bucket].append(t)
+                seen.add(t.get("level"))
+    save_pending_digest(pending)
+    return pending
+
+
+def clear_pending_digest() -> None:
+    save_pending_digest({"legacy": [], "pma": []})
+
+
+def load_last_digest_sent() -> datetime | None:
+    """UTC timestamp of the last SUCCESSFUL digest send, or None if there
+    has never been one (or today's hasn't reset — see `seconds_since_last_
+    digest`, which treats None as "send allowed")."""
+    text = None
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            text = gdrive_uploader.download_text(LAST_DIGEST_FILENAME)
+    except Exception:  # noqa: BLE001
+        pass
+    if not text:
+        try:
+            if LOCAL_LAST_DIGEST.exists():
+                text = LOCAL_LAST_DIGEST.read_text(encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
+    if not text:
+        return None
+    try:
+        data = json.loads(text)
+        return datetime.fromisoformat(data["sent_at_utc"])
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def mark_digest_sent(now_utc: datetime) -> None:
+    payload = json.dumps({"sent_at_utc": now_utc.isoformat()}, indent=2)
+    try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        LOCAL_LAST_DIGEST.write_text(payload, encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            gdrive_uploader.upload_or_replace(LAST_DIGEST_FILENAME, payload,
+                                              mime="application/json")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def seconds_since_last_digest(now_utc: datetime) -> float:
+    """A very large number (never gates) when there is no prior send."""
+    last = load_last_digest_sent()
+    if last is None:
+        return float("inf")
+    return (now_utc - last).total_seconds()

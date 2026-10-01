@@ -50,6 +50,13 @@ output/aqe_valen_dashboard.json
 # PMA live-alerts dedup state — runtime state carried across a container
 # recycle by Daily Persist, not by git. Same split as the artifacts above.
 output/aqe_pma_fired.json
+# Alert ledger — the committee's copy of every fired alert, written locally
+# then synced to Drive (the real source of truth). Same runtime-state split.
+output/aqe_alert_ledger.json
+output/aqe_alert_state.json
+output/aqe_alert_history.json
+output/aqe_pending_digest.json
+output/aqe_last_digest_sent.json
 
 # Voice packets — runtime working copies. The published copies live in
 # aegis/output/packets/ (GitHub is the store), same split as the export

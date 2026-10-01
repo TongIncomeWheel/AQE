@@ -474,15 +474,33 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         except Exception as exc:  # noqa: BLE001
             summary["ledger_error"] = f"{type(exc).__name__}: {exc}"
 
+    # Digest batching (PM complaint, 2026-10-01): hard floor between two
+    # EMAILS, separate from the trigger dedup above — see state.py's own
+    # module docstring on why a fresh trigger is queued FIRST, unconditionally,
+    # rather than only being emailed when this cycle happens to clear the gap
+    # (dropping it instead would lose it for good, since it is already marked
+    # fired above and will never be evaluated again).
+    summary["deferred"] = False
     if (fresh or fresh_pma) and send_email:
-        try:
-            from src.alerts.emailer import send_digest
-            res = send_digest(fresh, export, pma_triggers=fresh_pma or None)
-            summary["emailed"] = bool(res.get("ok"))
-            if not res.get("ok"):
-                summary["reason"] = f"email failed: {res.get('reason')}"
-        except Exception as exc:  # noqa: BLE001
-            summary["reason"] = f"email error: {exc}"
+        pending = S.append_pending_digest(fresh, fresh_pma)
+        now_utc = datetime.now(ZoneInfo("UTC"))
+        if S.seconds_since_last_digest(now_utc) < C.MIN_DIGEST_GAP_MINUTES * 60:
+            summary["deferred"] = True
+            summary["reason"] = (f"batched — another digest went out within the last "
+                                 f"{C.MIN_DIGEST_GAP_MINUTES} min; queued for the next one")
+        else:
+            try:
+                from src.alerts.emailer import send_digest
+                res = send_digest(pending["legacy"], export,
+                                  pma_triggers=pending["pma"] or None)
+                summary["emailed"] = bool(res.get("ok"))
+                if res.get("ok"):
+                    S.clear_pending_digest()
+                    S.mark_digest_sent(now_utc)
+                else:
+                    summary["reason"] = f"email failed: {res.get('reason')}"
+            except Exception as exc:  # noqa: BLE001
+                summary["reason"] = f"email error: {exc}"
 
     _phase("ledger written")
     # Persist dedup state only if we actually recorded new fires (or to roll date)
