@@ -1,15 +1,27 @@
 {
  "x_version": "1.0.0",
  "scope": "Every broker fill ever seen (keyed by broker fill id, idempotent), stock round-trips by FIFO per ticker, open lots, Aegis-only stats. Fills tagged aegis / non_aegis / unclassified from the membership + exclusion files and the journals. Seeds = positions older than the fill window, taken from the earliest journal that carried them, flagged on the row.",
- "fills": {"__PLACEHOLDER__": true},
- "seeds": {"__PLACEHOLDER__": true},
- "journal_booked_closes": [],
- "trades": [],
- "open_lots": [],
- "stats": {},
- "reconciliation": {},
- "flags": [],
- "latest_fill_utc": "2026-10-01T19:44:19+00:00",
- "fill_count": 181,
- "updated_at_utc": "2026-10-01T21:43:15+00:00"
+ "fills": {
+  "44337528245850110": {
+   "id": "44337528245850110",
+   "broker": "TIGER",
+   "time_utc": "2026-08-19T19:28:15+00:00",
+   "date": "2026-08-19",
+   "ticker": "OXY",
+   "sec_type": "STK",
+   "action": "BUY",
+   "qty": 304.0,
+   "price": 60.1196,
+   "commission": 3.95,
+   "gst": 0.36,
+   "broker_realized_pnl": 0.0,
+   "right": null,
+   "strike": null,
+   "expiry": null,
+   "order_type": "LMT",
+   "fill_type": "normal",
+   "first_seen_in": "2026-08-19",
+   "tag": "aegis"
+  }
+ }
 }
