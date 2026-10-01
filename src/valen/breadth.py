@@ -15,9 +15,13 @@ same restore `_run_ma_scan_and_record` itself does
 is a pure function of an already-loaded DataFrame so it can be unit-tested
 without Drive access at all.
 
-Population: `spec.POPULATION_US_WIDE` — all US NASDAQ/NYSE names over $1B
+Population: `spec.POPULATION_US_WIDE` — all US NASDAQ/NYSE names over $2B
 market cap (`ma_scanner.get_ma_universe`), an order of magnitude closer to
-the whole tape than AQE's own curated scan universe. Still not the full
+the whole tape than AQE's own curated scan universe, yet still well short
+of it in ticker count because it carries no liquidity or listing-type
+filter beyond size. $2B (not $1B) by the PM's own call (2026-10-01): it
+matches AQE's own curated-universe quality floor, so sub-$2B noise never
+gets to tilt a macro "is the weather turning" read. Still not the full
 ~7,000-name market the handbook's absolute thresholds (350 monthly risers,
 20/80 on T2108) were calibrated against — see
 docs/AQE_VALEN_DASHBOARD_PROPOSAL.md §2.2. Every value below carries
@@ -207,3 +211,12 @@ def compute_breadth(panel: pd.DataFrame | None) -> dict:
         "quarterly_movers": quarter,
         "net_high_low": nhnl,
     }
+
+
+def compute_breadth_as_of(panel: pd.DataFrame | None, sessions_ago: int) -> dict:
+    """Same shape as compute_breadth(), as of `sessions_ago` trading
+    sessions back — see history.py module docstring. A too-short panel
+    degrades exactly like compute_breadth(None): the honest UNAVAILABLE
+    shape, never a fabricated reading."""
+    from . import history as H
+    return compute_breadth(H.truncate_panel(panel, sessions_ago))

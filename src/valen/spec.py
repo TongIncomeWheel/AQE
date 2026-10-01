@@ -160,7 +160,7 @@ PER_STOCK_ATR_MULT_TRIM_AROUND = 10.0
 # counts, net_high_low) — those require "us_wide" or the field is UNAVAILABLE.
 # ---------------------------------------------------------------------------
 POPULATION_CURATED = "aqe_curated_universe"      # ~493-819 names, see universe.py
-POPULATION_US_WIDE = "us_nasdaq_nyse_mcap_gt_1b"  # ma_scanner.get_ma_universe()
+POPULATION_US_WIDE = "us_nasdaq_nyse_mcap_gt_2b"  # ma_scanner.get_ma_universe()
 
 FORMULA_BASIS_VIV_PINE = "viv_pine"      # transcribed from the published script
 FORMULA_BASIS_AQE_HOUSE = "aqe_house"    # AQE's own formula, same INTENT

@@ -1,8 +1,15 @@
 """MA Proximity Scanner — find stocks near key moving averages.
 
-Scans ALL US-listed stocks above $1B market cap for proximity to their
+Scans ALL US-listed stocks above $2B market cap for proximity to their
 20/50/100/200-day simple moving averages. Tracks how many consecutive
 days each stock has been within ±10% of each MA.
+
+$2B (not $1B) on purpose, matching AQE's own curated-universe floor
+(src/data/universe.py's SCREEN_MCAP) -- the PM's own call (2026-10-01):
+this population doubles as VALEN's whole-market breadth read (see
+src/valen/breadth.py), and sub-$2B names are noisy enough to distort a
+macro "is the weather calm or turning" read without being the quality
+bar AQE already treats as investable. Bumped from $1B 2026-10-01.
 
 Use case: finding quality companies that have pulled back to key MAs
 for swing entries or calendar trades.
@@ -46,7 +53,7 @@ MA_UNIVERSE_CACHE = DATA_DIR / "ma_universe.json"
 PROXIMITY_PCT = 10.0
 MA_PERIODS = [20, 50, 100, 200]
 LOOKBACK_CALENDAR_DAYS = 400  # enough for 200 trading days + buffer
-MIN_MCAP = 1_000_000_000
+MIN_MCAP = 2_000_000_000
 
 # Dedicated Drive folder for the daily MA-scan output (one overwritten JSON).
 MA_SCAN_FOLDER_ID = (
@@ -57,7 +64,7 @@ MA_SCAN_DRIVE_FILENAME = "aqe_ma_scan.json"
 
 
 def get_ma_universe(client: FMPClient | None = None) -> pd.DataFrame:
-    """Screen for all US stocks > $1B market cap.
+    """Screen for all US stocks > $2B market cap.
 
     Returns DataFrame with columns: ticker, name, market_cap, sector, exchange.
     Caches to ma_universe.json for reuse within the same day.

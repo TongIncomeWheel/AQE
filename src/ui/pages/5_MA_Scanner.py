@@ -1,6 +1,6 @@
 """MA Proximity Scanner — stocks near key moving averages.
 
-Shows all US stocks (>$1B market cap) within ±10% of their 20/50/100/200
+Shows all US stocks (>$2B market cap) within ±10% of their 20/50/100/200
 SMA, with consecutive-day streak counts. Updated daily by the pipeline.
 """
 
@@ -22,7 +22,7 @@ st.set_page_config(page_title="AQE — MA Scanner", layout="wide")
 require_login()
 
 st.title("MA Proximity Scanner")
-st.caption("US stocks >$1B within ±10% of key moving averages")
+st.caption("US stocks >$2B within ±10% of key moving averages")
 
 PROXIMITY_PCT = 10.0
 
