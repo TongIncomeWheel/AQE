@@ -1,6 +1,6 @@
 {
   "date": "2026-10-01",
-  "exported_at": "2026-10-01 09:05:59 SGT",
+  "exported_at": "2026-10-01 16:30:44 SGT",
   "basis": "eod",
   "trend": {
     "rows": {
@@ -47,9 +47,9 @@
       }
     },
     "vix_vix3m": {
-      "vix": 16.04,
+      "vix": 16.34,
       "vix3m": 18.37,
-      "ratio": 0.8732,
+      "ratio": 0.8895,
       "uncertainty": false,
       "calm": false,
       "basis": "eod",
@@ -62,21 +62,21 @@
       "value": 18.9,
       "n": 2000,
       "n_above": 378,
-      "population": "us_nasdaq_nyse_mcap_gt_1b"
+      "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     "monthly_risers": {
       "status": "OK",
       "value": 10,
       "up": 10,
       "down": 32,
-      "population": "us_nasdaq_nyse_mcap_gt_1b"
+      "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     "five_day_count": {
       "status": "OK",
       "value": 0.48,
       "up_total": 154,
       "down_total": 321,
-      "population": "us_nasdaq_nyse_mcap_gt_1b"
+      "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     "daily_count_green": {
       "status": "OK",
@@ -89,14 +89,14 @@
       "value": 0.76,
       "up_total": 408,
       "down_total": 538,
-      "population": "us_nasdaq_nyse_mcap_gt_1b"
+      "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     "quarterly_movers": {
       "status": "OK",
       "value": 92,
       "up": 92,
       "down": 100,
-      "population": "us_nasdaq_nyse_mcap_gt_1b"
+      "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     "net_high_low": {
       "status": "OK",
@@ -104,7 +104,7 @@
       "avg20": -84.05,
       "green": false,
       "latest_net": -192,
-      "population": "us_nasdaq_nyse_mcap_gt_1b",
+      "population": "us_nasdaq_nyse_mcap_gt_2b",
       "window_used": 260
     }
   },
@@ -411,11 +411,11 @@
         "name": "Big_Banks",
         "display_name": "Big Banks",
         "parent_gics": "XLF",
-        "since_open_pct": -1.07,
-        "ret_1w_pct": -2.51,
-        "ret_1m_pct": -8.31,
+        "since_open_pct": -1.08,
+        "ret_1w_pct": -2.52,
+        "ret_1m_pct": -8.32,
         "thrust": 5.8,
-        "pct_off_52w_high": -12.35,
+        "pct_off_52w_high": -12.36,
         "rotation_state": "NEITHER",
         "rrg_quadrant": "LAGGING",
         "rrg_direction": "STABLE"
@@ -734,11 +734,11 @@
         "name": "Big_Banks",
         "display_name": "Big Banks",
         "parent_gics": "XLF",
-        "since_open_pct": -1.07,
-        "ret_1w_pct": -2.51,
-        "ret_1m_pct": -8.31,
+        "since_open_pct": -1.08,
+        "ret_1w_pct": -2.52,
+        "ret_1m_pct": -8.32,
         "thrust": 5.8,
-        "pct_off_52w_high": -12.35,
+        "pct_off_52w_high": -12.36,
         "rotation_state": "NEITHER",
         "rrg_quadrant": "LAGGING",
         "rrg_direction": "STABLE"
@@ -1151,7 +1151,7 @@
   "gex": {
     "status": "UNAVAILABLE",
     "ticker": "SPY",
-    "reason": "QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set"
+    "reason": "missing spot price or gamma flip"
   },
   "stance": {
     "stance": "RISK_OFF",
@@ -1188,11 +1188,31 @@
       }
     ]
   },
+  "history": {
+    "5d_ago": {
+      "sessions_ago": 5,
+      "stance": "NEUTRAL",
+      "stance_status": "OK",
+      "regime": "CHOP",
+      "vix_vix3m": 0.8382,
+      "t2108": 35.5,
+      "spy_atr_mult": 1.02
+    },
+    "1mo_ago": {
+      "sessions_ago": 21,
+      "stance": "NEUTRAL",
+      "stance_status": "OK",
+      "regime": "CHOP",
+      "vix_vix3m": 0.9321,
+      "t2108": 65.0,
+      "spy_atr_mult": 2.05
+    }
+  },
   "plain_english": {
     "headline": "Stance: RISK OFF. SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
     "because": [
       "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
-      "SPY sits -0.02 ATRs above its 50-day line (not stretched). QQQ sits 2.67 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.87 \u2014 neither calm nor stressed.",
+      "SPY sits -0.02 ATRs above its 50-day line (not stretched). QQQ sits 2.67 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.89 \u2014 neither calm nor stressed.",
       "Real leadership this week: Chip Equipment, Biotech, Semiconductors \u2014 strong on both the weekly and monthly read."
     ],
     "so_what": "Breadth is against the tape \u2014 build the watchlist, do not push new entries.",
@@ -1203,7 +1223,7 @@
       "5-day up/down 4% count falls under 0.7 (now 0.48)"
     ],
     "caveats": [],
-    "as_of": "2026-10-01T01:05:59Z",
+    "as_of": "2026-10-01T08:30:41Z",
     "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
   },
   "status": "OK",
@@ -1234,7 +1254,7 @@
         "ticker": "MU",
         "rs_rank_pct": 99.52,
         "rs_leadership": "LEADER",
-        "pipe_rank": 73.0,
+        "pipe_rank": 76.5,
         "in_theme": true
       },
       {
@@ -1255,7 +1275,7 @@
         "ticker": "UMC",
         "rs_rank_pct": 98.92,
         "rs_leadership": "LEADER",
-        "pipe_rank": 76.5,
+        "pipe_rank": 80.0,
         "in_theme": false
       },
       {
@@ -1579,6 +1599,15 @@
         ]
       },
       {
+        "ticker": "MRNA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "ADI",
         "flags": [
           {
@@ -1598,15 +1627,6 @@
       },
       {
         "ticker": "UMC",
-        "flags": [
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
-        "ticker": "MRNA",
         "flags": [
           {
             "flag": "market_red",
@@ -1651,6 +1671,15 @@
         ]
       },
       {
+        "ticker": "MU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "DHR",
         "flags": [
           {
@@ -1661,6 +1690,15 @@
       },
       {
         "ticker": "INTC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AVPT",
         "flags": [
           {
             "flag": "market_red",
@@ -1714,7 +1752,7 @@
         ]
       },
       {
-        "ticker": "MU",
+        "ticker": "ONTO",
         "flags": [
           {
             "flag": "market_red",
@@ -1723,7 +1761,7 @@
         ]
       },
       {
-        "ticker": "ONTO",
+        "ticker": "TMO",
         "flags": [
           {
             "flag": "market_red",
@@ -1759,15 +1797,6 @@
         ]
       },
       {
-        "ticker": "AVPT",
-        "flags": [
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
         "ticker": "DDOG",
         "flags": [
           {
@@ -1778,15 +1807,6 @@
       },
       {
         "ticker": "STRC",
-        "flags": [
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
-        "ticker": "TMO",
         "flags": [
           {
             "flag": "market_red",
@@ -1867,6 +1887,15 @@
         ]
       },
       {
+        "ticker": "PEB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "PLTR",
         "flags": [
           {
@@ -1886,15 +1915,6 @@
       },
       {
         "ticker": "DT",
-        "flags": [
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
-        "ticker": "PEB",
         "flags": [
           {
             "flag": "market_red",
@@ -1993,6 +2013,15 @@
         ]
       },
       {
+        "ticker": "ICHR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "AMGN",
         "flags": [
           {
@@ -2003,15 +2032,6 @@
       },
       {
         "ticker": "SN",
-        "flags": [
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
-        "ticker": "ICHR",
         "flags": [
           {
             "flag": "market_red",
@@ -2186,6 +2206,16 @@
         ]
       },
       {
+        "ticker": "MRNA",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
         "ticker": "ADI",
         "setups": [
           {
@@ -2227,16 +2257,6 @@
             "piece": "09",
             "name": "Momentum breakout / high tight flag",
             "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
-          }
-        ]
-      },
-      {
-        "ticker": "MRNA",
-        "setups": [
-          {
-            "piece": "09",
-            "name": "Momentum breakout / high tight flag",
-            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
           }
         ]
       },
@@ -2286,6 +2306,16 @@
         ]
       },
       {
+        "ticker": "MU",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
         "ticker": "DHR",
         "setups": [
           {
@@ -2307,6 +2337,16 @@
             "piece": "09",
             "name": "Momentum breakout / high tight flag",
             "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "AVPT",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=squeeze, squeeze_breakout_state=BREAKOUT_UP"
           }
         ]
       },
@@ -2376,16 +2416,6 @@
         ]
       },
       {
-        "ticker": "MU",
-        "setups": [
-          {
-            "piece": "09",
-            "name": "Momentum breakout / high tight flag",
-            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
-          }
-        ]
-      },
-      {
         "ticker": "ISRG",
         "setups": [
           {
@@ -2407,6 +2437,21 @@
             "piece": "09",
             "name": "Momentum breakout / high tight flag",
             "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TMO",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
           }
         ]
       },
@@ -2456,16 +2501,6 @@
         ]
       },
       {
-        "ticker": "AVPT",
-        "setups": [
-          {
-            "piece": "09",
-            "name": "Momentum breakout / high tight flag",
-            "detail": "mover_subtype=squeeze, squeeze_breakout_state=BREAKOUT_UP"
-          }
-        ]
-      },
-      {
         "ticker": "DDOG",
         "setups": [
           {
@@ -2492,21 +2527,6 @@
             "piece": "09",
             "name": "Momentum breakout / high tight flag",
             "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
-          }
-        ]
-      },
-      {
-        "ticker": "TMO",
-        "setups": [
-          {
-            "piece": "08",
-            "name": "VCP (forming)",
-            "detail": "Contracting, not yet tight enough to trigger"
-          },
-          {
-            "piece": "09",
-            "name": "Momentum breakout / high tight flag",
-            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
           }
         ]
       },
@@ -2596,6 +2616,21 @@
         ]
       },
       {
+        "ticker": "PEB",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
         "ticker": "META",
         "setups": [
           {
@@ -2628,21 +2663,6 @@
       {
         "ticker": "DT",
         "setups": [
-          {
-            "piece": "09",
-            "name": "Momentum breakout / high tight flag",
-            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
-          }
-        ]
-      },
-      {
-        "ticker": "PEB",
-        "setups": [
-          {
-            "piece": "08",
-            "name": "VCP (forming)",
-            "detail": "Contracting, not yet tight enough to trigger"
-          },
           {
             "piece": "09",
             "name": "Momentum breakout / high tight flag",
@@ -2801,6 +2821,16 @@
         ]
       },
       {
+        "ticker": "ICHR",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
         "ticker": "AMGN",
         "setups": [
           {
@@ -2817,16 +2847,6 @@
       },
       {
         "ticker": "SN",
-        "setups": [
-          {
-            "piece": "09",
-            "name": "Momentum breakout / high tight flag",
-            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
-          }
-        ]
-      },
-      {
-        "ticker": "ICHR",
         "setups": [
           {
             "piece": "09",
