@@ -178,6 +178,87 @@ def test_compute_gex_reading_walls_may_be_none():
     assert out["put_wall"] is None
 
 
+# ---------------------------------------------------------- dealer_read
+# A PM ask (2026-10-01): a real SPY session where regime/walls computed
+# fine from real options data but no flip crossing was found in the
+# scanned strike band -- "can't assign red/amber/green" and "can't say
+# anything" are different facts, and VALEN was collapsing a partial real
+# read down to the bare reason string. dealer_positioning_sentence()
+# gives the plain support/resistance/regime read PM asked for instead of
+# four raw numbers to interpret by eye.
+
+
+def test_dealer_positioning_sentence_negative_regime_reads_volatile():
+    u = {"available": True, "regime": "NEGATIVE", "spot": 762.63,
+        "gamma_flip": None, "call_wall": {"strike": 785.0},
+        "put_wall": {"strike": 745.0}}
+    s = gex.dealer_positioning_sentence(u)
+    assert "Volatile market" in s
+    assert "support ~745" in s
+    assert "resistance ~785" in s
+
+
+def test_dealer_positioning_sentence_positive_regime_reads_calm():
+    u = {"available": True, "regime": "POSITIVE", "spot": 739.77,
+        "gamma_flip": 759.59, "call_wall": {"strike": 760.0},
+        "put_wall": {"strike": 730.0}}
+    s = gex.dealer_positioning_sentence(u)
+    assert "Calm market" in s
+    assert "support ~730" in s
+    assert "resistance ~760" in s
+
+
+def test_dealer_positioning_sentence_flip_below_price_reads_breakdown():
+    u = {"available": True, "regime": "POSITIVE", "spot": 600.0,
+        "gamma_flip": 580.0, "call_wall": None, "put_wall": None}
+    s = gex.dealer_positioning_sentence(u)
+    assert "breakdown level ~580" in s
+
+
+def test_dealer_positioning_sentence_flip_above_price_reads_breakout():
+    u = {"available": True, "regime": "NEGATIVE", "spot": 560.0,
+        "gamma_flip": 580.0, "call_wall": None, "put_wall": None}
+    s = gex.dealer_positioning_sentence(u)
+    assert "breakout level ~580" in s
+
+
+def test_dealer_positioning_sentence_unavailable_underlying_is_none():
+    assert gex.dealer_positioning_sentence(None) is None
+    assert gex.dealer_positioning_sentence({"available": False}) is None
+
+
+def test_dealer_positioning_sentence_unknown_regime_is_none():
+    assert gex.dealer_positioning_sentence({"available": True, "regime": "UNKNOWN"}) is None
+
+
+def test_compute_gex_reading_no_flip_still_carries_dealer_read_and_walls():
+    """The exact real-world shape from 2026-10-01: SPY available, real
+    spot/regime/walls, no flip found. The light can't be assigned, but
+    the reading must not go dark -- regime, walls and dealer_read all
+    carry through."""
+    crown_gamma = {"status": "OK", "unavailable": {},
+                   "underlyings": {"SPY": {
+                       "available": True, "spot": 762.63, "gamma_flip": None,
+                       "call_wall": {"strike": 785.0}, "put_wall": {"strike": 745.0},
+                       "total_gex": -7.38e9, "regime": "NEGATIVE"}}}
+    out = gex.compute_gex_reading(crown_gamma)
+    assert out["status"] == "UNAVAILABLE"
+    assert out.get("light") is None
+    assert out["price"] == 762.63
+    assert out["call_wall"] == 785.0
+    assert out["put_wall"] == 745.0
+    assert out["regime"] == "NEGATIVE"
+    assert "Volatile market" in out["dealer_read"]
+    assert "support ~745" in out["dealer_read"]
+    assert "resistance ~785" in out["dealer_read"]
+
+
+def test_compute_gex_reading_ok_also_carries_dealer_read():
+    out = gex.compute_gex_reading(_crown_gamma_ok())
+    assert out["status"] == "OK"
+    assert out["dealer_read"]
+
+
 def test_compute_gex_reading_defaults_to_spy():
     out = gex.compute_gex_reading(_crown_gamma_ok())
     assert out["ticker"] == "SPY"
@@ -286,3 +367,40 @@ def test_traffic_light_html_omits_missing_walls_gracefully():
     html = theme.traffic_light_html(gex_reading)
     assert "call wall" not in html
     assert "put wall" not in html
+
+
+def test_traffic_light_html_ok_state_shows_dealer_read():
+    gex_reading = {"status": "OK", "ticker": "SPY", "price": 600.0, "flip": 580.0,
+                   "call_wall": 590.0, "put_wall": 560.0, "light": "GREEN",
+                   "commentary": "x", "dealer_read": "Calm market: resistance ~590."}
+    html = theme.traffic_light_html(gex_reading)
+    assert "Calm market: resistance ~590." in html
+
+
+def test_traffic_light_html_no_flip_still_shows_dealer_read_and_partial_levels():
+    """The real 2026-10-01 SPY case: no light can be assigned (no flip),
+    but regime/walls/dealer_read came through for real and must still
+    render -- never collapsed to just the bare reason string."""
+    gex_reading = {"status": "UNAVAILABLE", "ticker": "SPY",
+                   "reason": "no gamma flip found in today's strike band",
+                   "price": 762.63, "call_wall": 785.0, "put_wall": 745.0,
+                   "regime": "NEGATIVE",
+                   "dealer_read": "Volatile market: support ~745, resistance ~785."}
+    html = theme.traffic_light_html(gex_reading)
+    assert "GEX not shown" in html
+    assert "no gamma flip found in today" in html and "strike band" in html
+    assert "Volatile market: support ~745, resistance ~785." in html
+    assert "SPY 762.63" in html
+    assert "put wall 745" in html
+    assert "call wall 785" in html
+    assert "lit-" not in html
+
+
+def test_traffic_light_html_unavailable_with_no_partial_data_stays_minimal():
+    """The other UNAVAILABLE case (Crown never ran, or this ticker never
+    came through at all) must still render cleanly with no stray empty
+    divs or a dealer_read that doesn't exist."""
+    html = theme.traffic_light_html({"status": "UNAVAILABLE", "reason": "no feed"})
+    assert "GEX not shown" in html
+    assert "no feed" in html
+    assert "valen-tlight-levels" not in html

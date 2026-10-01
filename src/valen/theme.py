@@ -397,9 +397,29 @@ def traffic_light_html(gex: dict) -> str:
     """The GEX Traffic Light — a physical-looking three-bulb housing (red/
     amber/green, only the current one lit) plus the one-line commentary.
     Never renders a sizing number — that's quoted doctrine in the page
-    itself, not a field this reads (AQE makes no decisions, no sizing)."""
+    itself, not a field this reads (AQE makes no decisions, no sizing).
+
+    "Can't assign red/amber/green" and "can't say anything" are different
+    facts (a real SPY session, 2026-10-01: regime/walls computed fine from
+    real options data, no flip found in the strike band so no light) — the
+    UNAVAILABLE branch still renders `dealer_read` (gex.py's plain-English
+    support/resistance/regime sentence) and whatever of price/walls came
+    through, all bulbs unlit, rather than reducing a partial real read to
+    just the bare reason string."""
     if not gex or gex.get("status") != "OK":
         reason = (gex or {}).get("reason") or "not computed"
+        dealer_read = (gex or {}).get("dealer_read")
+        read_html = (f'<div class="valen-tlight-commentary">{_esc(dealer_read)}</div>'
+                    if dealer_read else "")
+        bits = []
+        if gex and gex.get("price") is not None:
+            bits.append(f'{_esc(gex.get("ticker"))} {_fmt(gex.get("price"))}')
+        if gex and gex.get("put_wall") is not None:
+            bits.append(f'put wall {_fmt(gex.get("put_wall"))}')
+        if gex and gex.get("call_wall") is not None:
+            bits.append(f'call wall {_fmt(gex.get("call_wall"))}')
+        levels_html = (f'<div class="valen-tlight-levels">{" · ".join(bits)}</div>'
+                      if bits else "")
         return (f'<div class="valen-tlight-wrap">'
                f'<div class="valen-tlight-housing">'
                f'<div class="valen-tlight-bulb"></div>'
@@ -407,7 +427,8 @@ def traffic_light_html(gex: dict) -> str:
                f'<div class="valen-tlight-bulb"></div></div>'
                f'<div class="valen-tlight-body"><div class="valen-tlight-headline" '
                f'style="color:{_GREY}">GEX not shown</div>'
-               f'<div class="valen-tlight-commentary">{_esc(reason)}</div></div></div>')
+               f'<div class="valen-tlight-commentary">{_esc(reason)}</div>'
+               f'{read_html}{levels_html}</div></div>')
 
     light = gex.get("light")
     lit_cls = {"RED": "lit-red", "AMBER": "lit-amber", "GREEN": "lit-green"}.get(light, "")
@@ -419,11 +440,15 @@ def traffic_light_html(gex: dict) -> str:
     levels = (f'{_esc(gex.get("ticker"))} {_fmt(gex.get("price"))} · flip {_fmt(gex.get("flip"))}'
              + (f' · call wall {_fmt(gex.get("call_wall"))}' if gex.get("call_wall") is not None else '')
              + (f' · put wall {_fmt(gex.get("put_wall"))}' if gex.get("put_wall") is not None else ''))
+    dealer_read = gex.get("dealer_read")
+    read_html = (f'<div class="valen-tlight-commentary">{_esc(dealer_read)}</div>'
+                if dealer_read else "")
     return (f'<div class="valen-tlight-wrap">'
            f'<div class="valen-tlight-housing">{bulbs}</div>'
            f'<div class="valen-tlight-body">'
            f'<div class="valen-tlight-headline" style="color:{color}">{_esc(light)}</div>'
            f'<div class="valen-tlight-commentary">{_esc(gex.get("commentary"))}</div>'
+           f'{read_html}'
            f'<div class="valen-tlight-levels">{levels}</div></div></div>')
 
 
