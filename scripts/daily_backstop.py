@@ -16,7 +16,10 @@ day -- or on top of a manual run -- is a safe no-op, not a double-run.
 
 Run:  python -m scripts.daily_backstop
 Needs env: FMP_API_KEY, GOOGLE_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN
-(the Drive folders are pinned in code).
+(the Drive folders are pinned in code). Optional: ALPACA_API_KEY_ID/
+ALPACA_API_SECRET_KEY (or TIGER_ID/TIGER_ACCOUNT/TIGER_PRIVATE_KEY as a
+fallback) for Crown Macro's gamma step (feeds VALEN's GEX traffic light);
+without either, gamma reads UNAVAILABLE rather than failing the run.
 """
 
 from __future__ import annotations

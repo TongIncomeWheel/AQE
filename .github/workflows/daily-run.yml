@@ -54,4 +54,19 @@ jobs:
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AQE_FORCE: ${{ inputs.force }}
+          # Crown Macro's gamma step (daily_orchestrator Step 6f, feeds VALEN's
+          # GEX traffic light) needs an options-chain feed. This workflow is
+          # the ONLY automatic trigger for the real daily pipeline (see the
+          # file header) -- a key set only in the HF Space's own secrets, or
+          # only in this repo's secrets but never read here, never reaches
+          # this process either way, and gamma reads UNAVAILABLE forever
+          # regardless of where a key was added. Both must be set as GitHub
+          # Actions repo secrets (Settings -> Secrets and variables ->
+          # Actions) for GEX to compute on the automated run; Tiger is the
+          # documented fallback if Alpaca is unset or fails.
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          TIGER_ID: ${{ secrets.TIGER_ID }}
+          TIGER_ACCOUNT: ${{ secrets.TIGER_ACCOUNT }}
+          TIGER_PRIVATE_KEY: ${{ secrets.TIGER_PRIVATE_KEY }}
         run: python -m scripts.daily_backstop
