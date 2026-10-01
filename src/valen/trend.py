@@ -136,3 +136,21 @@ def compute_market_trend(panel_daily_path, panel_weekly_path,
         weekly = _closes_for(panel_weekly_path, sym)
         rows[sym] = _symbol_row(sym, daily, weekly, live_prices.get(sym))
     return {"rows": rows, "regime": _regime(rows.get("SPY", {}))}
+
+
+def compute_market_trend_as_of(panel_daily_path, panel_weekly_path,
+                                sessions_ago: int) -> dict:
+    """Same shape as compute_market_trend(), but as the panel stood
+    `sessions_ago` trading sessions back — see history.py module docstring
+    on why this needs no new storage. The weekly panel doesn't share the
+    daily panel's one-row-per-session granularity, so it is truncated by
+    the nearest whole number of calendar weeks (5 trading sessions/week)
+    instead."""
+    from . import history as H
+    weeks_ago = round(sessions_ago / 5)
+    rows = {}
+    for sym in S.TREND_SYMBOLS:
+        daily = H.truncate_series(_closes_for(panel_daily_path, sym), sessions_ago)
+        weekly = H.truncate_series(_closes_for(panel_weekly_path, sym), weeks_ago)
+        rows[sym] = _symbol_row(sym, daily, weekly, None)
+    return {"rows": rows, "regime": _regime(rows.get("SPY", {}))}

@@ -16,7 +16,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.valen import breadth, card, explain, extension, groups, spec, stance, theme, trend
+from src.valen import (breadth, card, explain, extension, groups, history, spec,
+                       stance, theme, trend)
 
 # ---------------------------------------------------------------------- trend
 
@@ -685,6 +686,40 @@ def test_led_row_uses_flag_over_value_when_both_given():
     assert "1.35" in html
 
 
+def test_gauge_bar_carries_a_one_line_explainer_per_kind():
+    """A standing PM ask (2026-10-01): what does each instrument measure
+    and what does the number mean? Every known `kind` must answer that,
+    not just show a label and a number."""
+    for kind in ("atr_multiple", "vix_vix3m", "pct_0_100", "mover_ratio"):
+        html = theme._gauge_bar_html("Some label", 1.0, kind)
+        assert "valen-explainer" in html
+        assert theme._GAUGE_EXPLAINER[kind] in html
+
+
+def test_gauge_bar_unavailable_still_carries_its_explainer():
+    html = theme._gauge_bar_html("VIX / VIX3M", None, "vix_vix3m")
+    assert theme._GAUGE_EXPLAINER["vix_vix3m"] in html
+
+
+def test_led_row_carries_a_one_line_explainer_per_label():
+    for label, text in theme._LED_EXPLAINER.items():
+        html = theme._led_row_html(label, "OK", True)
+        assert "valen-explainer" in html
+        assert text in html
+
+
+def test_led_row_unavailable_still_carries_its_explainer():
+    html = theme._led_row_html("Today's count green", "UNAVAILABLE", None)
+    assert theme._LED_EXPLAINER["Today's count green"] in html
+
+
+def test_trend_checklist_carries_the_shared_trend_explainer():
+    rows = [{"symbol": "SPY", "last_price": 601.2, "daily_buy_signal": True,
+            "weekly_buy_signal": True, "above_rising_5d": True, "basis": "eod"}]
+    html = theme.trend_checklist_html(rows, [])
+    assert theme._TREND_EXPLAINER in html
+
+
 def test_stance_gauge_highlights_the_right_zone_and_colour():
     html = theme.stance_gauge_html({"word": "RISK ON", "status": "OK"})
     assert "RISK ON" in html
@@ -867,3 +902,145 @@ def test_run_valen_includes_gex_key():
     assert "gex" in artifact
     assert artifact["gex"]["status"] in ("OK", "UNAVAILABLE")
     assert artifact["gex"].get("ticker") == "SPY"
+
+
+# ------------------------------------------------- history.py: turning points
+# Added 2026-10-01 after PM feedback: the dashboard showed today's weather but
+# not whether it was TURNING. Every instrument here is a pure recompute off
+# panels that already carry full history, so this needs no new storage and
+# has no cold-start gap -- see history.py's own module docstring.
+
+
+def test_truncate_series_drops_the_most_recent_n_bars():
+    s = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
+    out = history.truncate_series(s, 2)
+    assert list(out) == [1.0, 2.0, 3.0]
+
+
+def test_truncate_series_zero_sessions_ago_is_a_no_op():
+    s = pd.Series([1.0, 2.0, 3.0])
+    assert list(history.truncate_series(s, 0)) == [1.0, 2.0, 3.0]
+
+
+def test_truncate_series_not_enough_history_returns_empty_not_an_exception():
+    s = pd.Series([1.0, 2.0])
+    out = history.truncate_series(s, 5)
+    assert out.empty
+
+
+def test_truncate_panel_drops_the_most_recent_n_distinct_dates():
+    df = pd.DataFrame({
+        "date": pd.to_datetime(["2026-09-01", "2026-09-01", "2026-09-02",
+                                "2026-09-03", "2026-09-04"]),
+        "ticker": ["A", "B", "A", "A", "A"],
+        "close": [1.0, 1.0, 2.0, 3.0, 4.0],
+    })
+    out = history.truncate_panel(df, 2)
+    assert set(out["date"].dt.strftime("%Y-%m-%d")) == {"2026-09-01", "2026-09-02"}
+
+
+def test_truncate_panel_not_enough_history_returns_none():
+    df = pd.DataFrame({"date": pd.to_datetime(["2026-09-01", "2026-09-02"]),
+                       "ticker": ["A", "A"], "close": [1.0, 2.0]})
+    assert history.truncate_panel(df, 5) is None
+
+
+def test_truncate_panel_none_input_is_a_no_op():
+    assert history.truncate_panel(None, 5) is None
+
+
+def test_index_atr_multiple_as_of_matches_a_manual_truncation():
+    dates = pd.date_range("2026-01-01", periods=60, freq="B")
+    df = pd.DataFrame({"date": dates, "open": 100.0, "high": 101.0,
+                       "low": 99.0, "close": np.linspace(100, 160, 60)})
+    full = extension.index_atr_multiple(df)
+    truncated_manually = extension.index_atr_multiple(df.iloc[:-5])
+    as_of = extension.index_atr_multiple_as_of(df, 5)
+    assert as_of == truncated_manually
+    assert as_of != full
+
+
+def test_index_atr_multiple_as_of_zero_sessions_matches_now():
+    dates = pd.date_range("2026-01-01", periods=60, freq="B")
+    df = pd.DataFrame({"date": dates, "open": 100.0, "high": 101.0,
+                       "low": 99.0, "close": np.linspace(100, 160, 60)})
+    assert extension.index_atr_multiple_as_of(df, 0) == extension.index_atr_multiple(df)
+
+
+def test_compute_breadth_as_of_matches_a_manual_truncation():
+    dates = pd.bdate_range("2026-01-01", periods=50)
+    rows = []
+    for d in dates:
+        for tk in ("AAA", "BBB", "CCC"):
+            rows.append({"ticker": tk, "date": d, "close": 100.0})
+    panel = pd.DataFrame(rows)
+    manual = breadth.compute_breadth(panel[panel["date"] <= dates[-6]])
+    as_of = breadth.compute_breadth_as_of(panel, 5)
+    assert as_of["pct_above_40d"] == manual["pct_above_40d"]
+
+
+def test_compute_breadth_as_of_not_enough_history_degrades_honestly():
+    dates = pd.bdate_range("2026-01-01", periods=3)
+    panel = pd.DataFrame({"ticker": ["A"] * 3, "date": dates, "close": [1.0, 2.0, 3.0]})
+    out = breadth.compute_breadth_as_of(panel, 10)
+    assert out["pct_above_40d"]["status"] == "UNAVAILABLE"
+
+
+def test_history_rows_shapes_now_vs_5d_vs_1mo():
+    valen = {
+        "stance": {"stance": "RISK_ON"},
+        "trend": {"regime": "UPTREND"},
+        "extension": {"vix_vix3m": {"ratio": 0.78},
+                     "index_atr": {"SPY": {"atr_multiple_from_50d": 2.1}}},
+        "breadth": {"pct_above_40d": {"status": "OK", "value": 62.3}},
+        "history": {
+            "5d_ago": {"stance": "NEUTRAL", "regime": "CHOP", "vix_vix3m": 0.85,
+                      "t2108": 55.0, "spy_atr_mult": 1.8},
+            "1mo_ago": {"stance": "RISK_OFF", "regime": "DOWNTREND", "vix_vix3m": 1.05,
+                       "t2108": 30.0, "spy_atr_mult": 0.5},
+        },
+    }
+    rows = card.history_rows(valen)
+    by_label = {r["label"]: r for r in rows}
+    assert by_label["Stance"]["now"] == "RISK_ON"
+    assert by_label["Stance"]["5d_ago"] == "NEUTRAL"
+    assert by_label["Stance"]["1mo_ago"] == "RISK_OFF"
+    assert by_label["VIX / VIX3M"]["now"] == 0.78
+    assert by_label["T2108"]["now"] == 62.3
+
+
+def test_history_rows_missing_history_key_degrades_to_none_not_an_exception():
+    rows = card.history_rows({})
+    assert all(r["5d_ago"] is None and r["1mo_ago"] is None for r in rows)
+
+
+def test_history_html_flags_a_changed_word_reading():
+    rows = [{"label": "Stance", "kind": "word", "now": "RISK_ON",
+            "5d_ago": "NEUTRAL", "1mo_ago": "RISK_ON"}]
+    html = theme.history_html(rows)
+    table = html.split("<table")[1]  # exclude the static explainer's own ⚠ mention
+    assert table.count("⚠") == 1  # only the 5d_ago cell differs from now
+
+
+def test_history_html_shows_direction_arrows_for_numbers():
+    rows = [{"label": "VIX / VIX3M", "kind": "number", "now": 0.90,
+            "5d_ago": 0.80, "1mo_ago": 1.00}]
+    html = theme.history_html(rows)
+    assert "↑" in html  # rose since 5d ago (0.80 -> 0.90)
+    assert "↓" in html  # fell since 1mo ago (1.00 -> 0.90)
+
+
+def test_history_html_empty_rows_renders_nothing():
+    assert theme.history_html([]) == ""
+
+
+def test_run_valen_includes_history_with_both_lookback_keys():
+    """End-to-end: run_valen() always adds a history block with both
+    lookback points, each carrying its own sessions_ago -- never silently
+    missing, even when breadth is DEGRADED in this sandbox (no ma_panel)."""
+    from src.valen.daily import run_valen
+    artifact = run_valen()
+    assert "history" in artifact
+    assert set(artifact["history"].keys()) == {"5d_ago", "1mo_ago"}
+    assert artifact["history"]["5d_ago"]["sessions_ago"] == 5
+    assert artifact["history"]["1mo_ago"]["sessions_ago"] == 21

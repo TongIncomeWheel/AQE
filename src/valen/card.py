@@ -178,6 +178,34 @@ def rotation_table(valen: dict) -> list[dict]:
     return (valen.get("groups") or {}).get("rotation") or []
 
 
+def history_rows(valen: dict) -> list[dict]:
+    """Current vs 5-sessions-ago (~1wk) vs 21-sessions-ago (~1mo) — the
+    turning-point read (piece 01). Every value here is independently
+    recomputed from price history (src/valen/history.py), never a stored
+    snapshot, so it is available from the day this ships, no backfill
+    wait. GEX is left out on purpose: its gamma read is a snapshot of
+    TODAY's options open interest, with no panel to recompute against."""
+    hist = valen.get("history") or {}
+    d5, d1m = hist.get("5d_ago") or {}, hist.get("1mo_ago") or {}
+    vv = (valen.get("extension") or {}).get("vix_vix3m") or {}
+    t2108 = (valen.get("breadth") or {}).get("pct_above_40d") or {}
+    spy_atr = ((valen.get("extension") or {}).get("index_atr") or {}).get("SPY") or {}
+
+    def _row(label, now_val, key, kind):
+        return {"label": label, "kind": kind, "now": now_val,
+               "5d_ago": d5.get(key), "1mo_ago": d1m.get(key)}
+
+    return [
+        _row("Stance", (valen.get("stance") or {}).get("stance"), "stance", "word"),
+        _row("Trend regime", (valen.get("trend") or {}).get("regime"), "regime", "word"),
+        _row("VIX / VIX3M", vv.get("ratio"), "vix_vix3m", "number"),
+        _row("T2108", t2108.get("value") if t2108.get("status") == "OK" else None,
+            "t2108", "number"),
+        _row("SPY ATRs above 50-day", spy_atr.get("atr_multiple_from_50d"),
+            "spy_atr_mult", "number"),
+    ]
+
+
 def freshness(valen: dict) -> dict:
     return {"as_of": (valen.get("plain_english") or {}).get("as_of"),
             "basis": valen.get("basis", "eod")}

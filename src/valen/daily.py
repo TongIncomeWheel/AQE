@@ -12,6 +12,13 @@ honest absence, never a fabricated read. The curated-panel % above 20-day
 stays as labelled CONTEXT alongside the real whole-market instruments,
 never confused with T2108 — see extension.py.
 
+`history` (piece 01, added 2026-10-01): the same trend/extension/breadth
+reads, recomputed as of 5 and 21 trading sessions back, so a reader can
+see the weather TURNING, not just today's snapshot — see history.py
+module docstring for why this needs no new storage. GEX is excluded from
+history; a gamma read is a snapshot of today's options open interest with
+no panel to recompute against.
+
 Writes two local files, same split as the other four macro artifacts:
   output/valen_dashboard.json      full detail, runtime-local
   output/aqe_valen_dashboard.json  plain-English first, published copy
@@ -35,6 +42,7 @@ from src.macro.crown import cboe
 
 from . import breadth as breadth_mod
 from . import card, execution, explain, extension, gex as gex_mod, groups as groups_mod
+from . import history as history_mod
 from . import house, management, selection, spec, stance, trend
 
 LOCAL_PATH = OUTPUT_DIR / "valen_dashboard.json"
@@ -118,6 +126,34 @@ def run_valen() -> dict:
     st = stance.compute_stance(t, ext, breadth)
     pe = explain.explain(t, ext, st, gr)
 
+    # Turning-point history (piece 01): was the weather different 5
+    # sessions (~1wk) or 21 sessions (~1mo) ago? Every input here is a pure
+    # recompute off the SAME panels already read above, truncated — see
+    # history.py module docstring for why this needs no new storage and
+    # has no cold-start gap. GEX is excluded on purpose (no panel to
+    # truncate for a point-in-time options read); never faked.
+    history: dict = {}
+    for key, n in history_mod.SESSIONS_AGO.items():
+        try:
+            t_h = trend.compute_market_trend_as_of(PANEL_DAILY, PANEL_WEEKLY, n)
+            idx_h = {sym: extension.index_atr_multiple_as_of(idx_df[idx_df["ticker"] == sym], n)
+                    for sym in spec.TREND_SYMBOLS}
+            vv_h = extension.vix_vix3m_as_of(frames.get("vix"), frames.get("vix3m"), n)
+            ext_h = {"index_atr": idx_h, "vix_vix3m": vv_h}
+            breadth_h = breadth_mod.compute_breadth_as_of(ma_panel, n)
+            st_h = stance.compute_stance(t_h, ext_h, breadth_h)
+            t2108_h = breadth_h.get("pct_above_40d") or {}
+            history[key] = {
+                "sessions_ago": n,
+                "stance": st_h.get("stance"), "stance_status": st_h.get("status"),
+                "regime": t_h.get("regime"),
+                "vix_vix3m": vv_h.get("ratio"),
+                "t2108": t2108_h.get("value") if t2108_h.get("status") == "OK" else None,
+                "spy_atr_mult": (idx_h.get("SPY") or {}).get("atr_multiple_from_50d"),
+            }
+        except Exception as exc:  # noqa: BLE001
+            history[key] = {"sessions_ago": n, "stance_status": "UNAVAILABLE", "reason": str(exc)}
+
     artifact = {
         "date": _today_sgt(),
         "exported_at": datetime.now(ZoneInfo("Asia/Singapore")).strftime("%Y-%m-%d %H:%M:%S SGT"),
@@ -129,6 +165,7 @@ def run_valen() -> dict:
         "groups": gr,
         "gex": gex_reading,
         "stance": st,
+        "history": history,
         "plain_english": pe,
         "status": st.get("status", "UNAVAILABLE"),
     }
@@ -214,6 +251,7 @@ def write_artifacts(artifact: dict) -> dict:
         "extension": card.extension_rows(artifact),
         "breadth": card.breadth_rows(artifact),
         "gex": card.gex_block(artifact),
+        "history": card.history_rows(artifact),
         "neighbourhood": card.neighbourhood_lines(artifact),
         "theme_leaders": card.theme_leaders_table(artifact),
         "rotation": card.rotation_table(artifact),

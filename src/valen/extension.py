@@ -51,6 +51,17 @@ def index_atr_multiple(daily_bars: pd.DataFrame) -> dict:
     return out
 
 
+def index_atr_multiple_as_of(daily_bars: pd.DataFrame, sessions_ago: int) -> dict:
+    """Same reading as index_atr_multiple(), as of `sessions_ago` trading
+    sessions back — see history.py module docstring."""
+    if daily_bars is None or daily_bars.empty or sessions_ago <= 0:
+        return index_atr_multiple(daily_bars)
+    df = daily_bars.sort_values("date")
+    if len(df) <= sessions_ago:
+        return index_atr_multiple(df.iloc[0:0])
+    return index_atr_multiple(df.iloc[:-sessions_ago])
+
+
 def vix_vix3m(vix_frame: pd.DataFrame | None, vix3m_frame: pd.DataFrame | None,
               *, live_vix: float | None = None,
               live_vix_ts: str | None = None) -> dict:
@@ -84,6 +95,19 @@ def vix_vix3m(vix_frame: pd.DataFrame | None, vix3m_frame: pd.DataFrame | None,
                  and ts["ratio_30d_3m"] < S.VIX_VIX3M_CALM_BELOW),
         "basis": basis, "live_vix_ts": live_vix_ts if basis != "eod" else None,
     }
+
+
+def vix_vix3m_as_of(vix_frame: pd.DataFrame | None, vix3m_frame: pd.DataFrame | None,
+                    sessions_ago: int) -> dict:
+    """Same reading as vix_vix3m(), as of `sessions_ago` trading sessions
+    back — see history.py module docstring. Never live (there is no "live"
+    for a past session)."""
+    def _trunc(frame):
+        if frame is None or frame.empty or sessions_ago <= 0:
+            return frame
+        f = frame.sort_values("date")
+        return f.iloc[0:0] if len(f) <= sessions_ago else f.iloc[:-sessions_ago]
+    return vix_vix3m(_trunc(vix_frame), _trunc(vix3m_frame))
 
 
 def breadth_pct_above_20d(panel: pd.DataFrame, population: str) -> dict:
