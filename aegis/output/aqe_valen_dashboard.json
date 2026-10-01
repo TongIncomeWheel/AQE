@@ -1,14 +1,14 @@
 {
-  "date": "2026-09-30",
-  "exported_at": "2026-09-30 09:06:51 SGT",
+  "date": "2026-10-01",
+  "exported_at": "2026-10-01 09:05:59 SGT",
   "basis": "eod",
   "status": "OK",
   "read_me_first": {
     "headline": "Stance: RISK OFF. SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
     "because": [
       "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
-      "SPY sits 0.27 ATRs above its 50-day line (not stretched). QQQ sits 2.5 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.89 \u2014 neither calm nor stressed.",
-      "Real leadership this week: Biotech, Chip Equipment, Infra Construction \u2014 strong on both the weekly and monthly read."
+      "SPY sits -0.02 ATRs above its 50-day line (not stretched). QQQ sits 2.67 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.87 \u2014 neither calm nor stressed.",
+      "Real leadership this week: Chip Equipment, Biotech, Semiconductors \u2014 strong on both the weekly and monthly read."
     ],
     "so_what": "Breadth is against the tape \u2014 build the watchlist, do not push new entries.",
     "watch_for": [
@@ -18,7 +18,7 @@
       "5-day up/down 4% count falls under 0.7 (now 0.48)"
     ],
     "caveats": [],
-    "as_of": "2026-09-30T01:06:51Z",
+    "as_of": "2026-10-01T01:05:59Z",
     "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
   },
   "stance": {
@@ -29,7 +29,7 @@
   "trend": [
     {
       "symbol": "SPY",
-      "last_price": 764.2,
+      "last_price": 762.63,
       "daily_buy_signal": false,
       "weekly_buy_signal": false,
       "above_rising_5d": false,
@@ -37,7 +37,7 @@
     },
     {
       "symbol": "QQQ",
-      "last_price": 737.93,
+      "last_price": 739.77,
       "daily_buy_signal": true,
       "weekly_buy_signal": true,
       "above_rising_5d": false,
@@ -48,73 +48,103 @@
   "extension": [
     {
       "label": "SPY ATRs above 50-day",
-      "value": 0.27,
+      "kind": "atr_multiple",
+      "value": -0.02,
       "flag": false
     },
     {
       "label": "QQQ ATRs above 50-day",
-      "value": 2.5,
+      "kind": "atr_multiple",
+      "value": 2.67,
       "flag": false
     },
     {
       "label": "VIX / VIX3M",
-      "value": 0.8883,
+      "kind": "vix_vix3m",
+      "value": 0.8732,
       "flag": false
     }
   ],
   "breadth": [
     {
-      "label": "Stocks above their 40-day line",
+      "label": "Today's count green",
+      "section": "checklist",
+      "kind": "bool",
       "status": "OK",
-      "value": 18.9,
+      "value": false,
       "reason": null
     },
     {
-      "label": "Monthly big risers (25%+)",
+      "label": "5-day count (1.00+ to pass)",
+      "section": "checklist",
+      "kind": "ratio_led",
+      "status": "OK",
+      "value": 0.48,
+      "flag": false,
+      "reason": null
+    },
+    {
+      "label": "Monthly big risers (25%+ up-count)",
+      "section": "checklist",
+      "kind": "count",
       "status": "OK",
       "value": 10,
       "reason": null
     },
     {
+      "label": "Net High/Net Low (8d vs 20d)",
+      "section": "checklist",
+      "kind": "bool",
+      "status": "OK",
+      "value": false,
+      "display": "-99.0 vs -84.05",
+      "reason": null
+    },
+    {
+      "label": "T2108 \u2014 stocks above their 40-day line",
+      "section": "instrument",
+      "kind": "pct_0_100",
+      "status": "OK",
+      "value": 18.9,
+      "reason": null
+    },
+    {
       "label": "5-day up/down 4% count",
+      "section": "instrument",
+      "kind": "mover_ratio",
       "status": "OK",
       "value": 0.48,
       "reason": null
     },
     {
       "label": "10-day up/down 4% count",
+      "section": "instrument",
+      "kind": "mover_ratio",
       "status": "OK",
       "value": 0.76,
       "reason": null
-    },
-    {
-      "label": "Today's count green",
-      "status": "OK",
-      "value": false,
-      "reason": null
-    },
-    {
-      "label": "Net High/Net Low (8d vs 20d)",
-      "status": "OK",
-      "value": "-99.0 vs -84.05",
-      "reason": null
     }
   ],
+  "gex": {
+    "status": "UNAVAILABLE",
+    "ticker": "SPY",
+    "reason": "QQQ: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set; SPY: alpaca: open-interest fetch failed (trading API): Alpaca keys missing: set ALPACA_API_KEY_ID + ALPACA_API_SECRET_KEY as deploy secrets (like FMP_API_KEY). | tiger: secret TIGER_ID not set; secret TIGER_ACCOUNT not set; secret TIGER_PRIVATE_KEY not set"
+  },
   "neighbourhood": [
-    "On both the week and month lists (real leadership): Biotech, Chip Equipment, Infra Construction, Infra Power, Semiconductors",
-    "Leading from their own highs, not just bouncing: Enterprise Software, Mag7, Cybersecurity, Biotech",
-    "Strong numbers but still well off their highs (a bounce, not leadership yet): Defense Tech, Oil Services, Critical Minerals, MedTech, Homebuilders"
+    "On both the week and month lists (real leadership): Chip Equipment, Biotech, Semiconductors, Travel Leisure, Infra Construction",
+    "Leading from their own highs, not just bouncing: Enterprise Software, Biotech, Mag7, Cybersecurity",
+    "Strong numbers but still well off their highs (a bounce, not leadership yet): Oil Services, Defense Tech, MedTech, Critical Minerals, Homebuilders"
   ],
   "theme_leaders": [
     {
       "name": "Mag7",
       "display_name": "Mag7",
       "parent_gics": "XLK",
-      "since_open_pct": -0.54,
-      "ret_1w_pct": -1.84,
-      "ret_1m_pct": 3.75,
-      "thrust": -5.59,
-      "pct_off_52w_high": -2.32,
+      "since_open_pct": 0.23,
+      "ret_1w_pct": -0.64,
+      "ret_1m_pct": 4.97,
+      "thrust": -5.61,
+      "pct_off_52w_high": -1.83,
       "rotation_state": "LEADING",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -123,24 +153,24 @@
       "name": "AI_Infrastructure",
       "display_name": "AI Infrastructure",
       "parent_gics": "XLRE",
-      "since_open_pct": -0.82,
-      "ret_1w_pct": -6.15,
-      "ret_1m_pct": 0.04,
-      "thrust": -6.19,
-      "pct_off_52w_high": -23.89,
+      "since_open_pct": -2.39,
+      "ret_1w_pct": -4.39,
+      "ret_1m_pct": 0.64,
+      "thrust": -5.03,
+      "pct_off_52w_high": -24.89,
       "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "IMPROVING",
-      "rrg_direction": "ENTERING"
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "DEEPENING"
     },
     {
       "name": "AI_Software",
       "display_name": "AI Software",
       "parent_gics": "XLK",
-      "since_open_pct": -0.49,
-      "ret_1w_pct": -4.14,
-      "ret_1m_pct": -10.36,
-      "thrust": 6.22,
-      "pct_off_52w_high": -34.77,
+      "since_open_pct": 0.48,
+      "ret_1w_pct": -3.3,
+      "ret_1m_pct": -6.19,
+      "thrust": 2.89,
+      "pct_off_52w_high": -34.29,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "ENTERING"
@@ -149,11 +179,11 @@
       "name": "Semiconductors",
       "display_name": "Semiconductors",
       "parent_gics": "XLK",
-      "since_open_pct": -0.4,
-      "ret_1w_pct": -0.16,
-      "ret_1m_pct": 8.79,
-      "thrust": -8.95,
-      "pct_off_52w_high": -15.57,
+      "since_open_pct": -0.35,
+      "ret_1w_pct": 0.57,
+      "ret_1m_pct": 11.78,
+      "thrust": -11.21,
+      "pct_off_52w_high": -15.48,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING"
@@ -162,11 +192,11 @@
       "name": "Chip_Equipment",
       "display_name": "Chip Equipment",
       "parent_gics": "XLK",
-      "since_open_pct": 0.08,
-      "ret_1w_pct": 2.83,
-      "ret_1m_pct": 10.77,
-      "thrust": -7.94,
-      "pct_off_52w_high": -23.34,
+      "since_open_pct": 0.7,
+      "ret_1w_pct": 4.15,
+      "ret_1m_pct": 17.61,
+      "thrust": -13.46,
+      "pct_off_52w_high": -22.05,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING"
@@ -175,24 +205,24 @@
       "name": "Enterprise_Software",
       "display_name": "Enterprise Software",
       "parent_gics": "XLK",
-      "since_open_pct": 0.41,
-      "ret_1w_pct": -3.01,
-      "ret_1m_pct": -8.69,
-      "thrust": 5.68,
-      "pct_off_52w_high": -4.28,
+      "since_open_pct": 2.33,
+      "ret_1w_pct": -2.12,
+      "ret_1m_pct": -3.46,
+      "thrust": 1.34,
+      "pct_off_52w_high": -2.42,
       "rotation_state": "LEADING",
       "rrg_quadrant": "WEAKENING",
-      "rrg_direction": "EXITING"
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Cloud_Computing",
       "display_name": "Cloud Computing",
       "parent_gics": "XLK",
-      "since_open_pct": 0.47,
-      "ret_1w_pct": -3.09,
-      "ret_1m_pct": -1.2,
-      "thrust": -1.89,
-      "pct_off_52w_high": -6.48,
+      "since_open_pct": 0.89,
+      "ret_1w_pct": -1.66,
+      "ret_1m_pct": 3.62,
+      "thrust": -5.27,
+      "pct_off_52w_high": -5.86,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -201,11 +231,11 @@
       "name": "Cybersecurity",
       "display_name": "Cybersecurity",
       "parent_gics": "XLK",
-      "since_open_pct": 0.96,
-      "ret_1w_pct": -0.65,
-      "ret_1m_pct": 4.94,
-      "thrust": -5.59,
-      "pct_off_52w_high": -1.96,
+      "since_open_pct": 1.37,
+      "ret_1w_pct": -1.24,
+      "ret_1m_pct": 13.66,
+      "thrust": -14.91,
+      "pct_off_52w_high": -0.37,
       "rotation_state": "LEADING",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -214,24 +244,24 @@
       "name": "Quantum_Computing",
       "display_name": "Quantum Computing",
       "parent_gics": "XLK",
-      "since_open_pct": -3.86,
-      "ret_1w_pct": -2.58,
-      "ret_1m_pct": 3.3,
-      "thrust": -5.88,
-      "pct_off_52w_high": -60.16,
+      "since_open_pct": -0.95,
+      "ret_1w_pct": -2.3,
+      "ret_1m_pct": 6.71,
+      "thrust": -9.01,
+      "pct_off_52w_high": -59.4,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LEADING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "EXITING"
     },
     {
       "name": "Space_eVTOL",
       "display_name": "Space eVTOL",
       "parent_gics": "XLI",
-      "since_open_pct": -5.43,
-      "ret_1w_pct": -9.0,
-      "ret_1m_pct": -7.39,
-      "thrust": -1.62,
-      "pct_off_52w_high": -57.06,
+      "since_open_pct": -1.85,
+      "ret_1w_pct": -5.89,
+      "ret_1m_pct": -5.2,
+      "thrust": -0.69,
+      "pct_off_52w_high": -57.51,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING"
@@ -240,11 +270,11 @@
       "name": "Defense_Tech",
       "display_name": "Defense Tech",
       "parent_gics": "XLI",
-      "since_open_pct": 0.03,
-      "ret_1w_pct": -2.55,
-      "ret_1m_pct": -9.61,
-      "thrust": 7.06,
-      "pct_off_52w_high": -21.46,
+      "since_open_pct": -0.27,
+      "ret_1w_pct": -3.26,
+      "ret_1m_pct": -8.19,
+      "thrust": 4.93,
+      "pct_off_52w_high": -21.81,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -253,25 +283,25 @@
       "name": "Infra_Power",
       "display_name": "Infra Power",
       "parent_gics": "XLI",
-      "since_open_pct": -0.39,
-      "ret_1w_pct": 0.41,
-      "ret_1m_pct": 3.82,
-      "thrust": -3.4,
-      "pct_off_52w_high": -16.67,
+      "since_open_pct": -2.2,
+      "ret_1w_pct": -1.32,
+      "ret_1m_pct": 2.69,
+      "thrust": -4.01,
+      "pct_off_52w_high": -18.44,
       "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "LEADING",
+      "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
     },
     {
       "name": "Infra_Construction",
       "display_name": "Infra Construction",
       "parent_gics": "XLI",
-      "since_open_pct": -0.43,
-      "ret_1w_pct": 0.92,
-      "ret_1m_pct": -0.69,
-      "thrust": 1.62,
-      "pct_off_52w_high": -14.63,
-      "rotation_state": "NEITHER",
+      "since_open_pct": -1.38,
+      "ret_1w_pct": -0.22,
+      "ret_1m_pct": -0.55,
+      "thrust": 0.34,
+      "pct_off_52w_high": -15.6,
+      "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
     },
@@ -279,37 +309,37 @@
       "name": "Autonomous_Robotics",
       "display_name": "Autonomous Robotics",
       "parent_gics": "XLI",
-      "since_open_pct": -2.14,
-      "ret_1w_pct": -4.59,
-      "ret_1m_pct": 0.33,
-      "thrust": -4.92,
-      "pct_off_52w_high": -18.36,
+      "since_open_pct": 0.21,
+      "ret_1w_pct": -2.77,
+      "ret_1m_pct": 3.24,
+      "thrust": -6.01,
+      "pct_off_52w_high": -17.96,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Transport_Logistics",
       "display_name": "Transport Logistics",
       "parent_gics": "XLI",
-      "since_open_pct": 0.14,
-      "ret_1w_pct": -0.86,
-      "ret_1m_pct": -3.09,
-      "thrust": 2.24,
-      "pct_off_52w_high": -15.87,
+      "since_open_pct": -1.74,
+      "ret_1w_pct": -0.69,
+      "ret_1m_pct": -1.53,
+      "thrust": 0.83,
+      "pct_off_52w_high": -16.92,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "EXITING"
+      "rrg_direction": "STABLE"
     },
     {
       "name": "Nuclear_Energy",
       "display_name": "Nuclear Energy",
       "parent_gics": "XLE",
-      "since_open_pct": -2.56,
-      "ret_1w_pct": -9.32,
-      "ret_1m_pct": -13.61,
-      "thrust": 4.29,
-      "pct_off_52w_high": -60.8,
+      "since_open_pct": -0.86,
+      "ret_1w_pct": -6.11,
+      "ret_1m_pct": -12.19,
+      "thrust": 6.08,
+      "pct_off_52w_high": -60.11,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -318,11 +348,11 @@
       "name": "Solar_Renewables",
       "display_name": "Solar Renewables",
       "parent_gics": "XLU",
-      "since_open_pct": 0.63,
-      "ret_1w_pct": -6.49,
-      "ret_1m_pct": -1.14,
-      "thrust": -5.35,
-      "pct_off_52w_high": -47.52,
+      "since_open_pct": -1.47,
+      "ret_1w_pct": -2.95,
+      "ret_1m_pct": 0.39,
+      "thrust": -3.35,
+      "pct_off_52w_high": -47.87,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -331,11 +361,11 @@
       "name": "Oil_Services",
       "display_name": "Oil Services",
       "parent_gics": "XLE",
-      "since_open_pct": -2.35,
-      "ret_1w_pct": -7.61,
-      "ret_1m_pct": -14.63,
-      "thrust": 7.02,
-      "pct_off_52w_high": -24.05,
+      "since_open_pct": -0.81,
+      "ret_1w_pct": -6.92,
+      "ret_1m_pct": -14.76,
+      "thrust": 7.84,
+      "pct_off_52w_high": -24.18,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING"
@@ -344,11 +374,11 @@
       "name": "Midstream_MLP",
       "display_name": "Midstream MLP",
       "parent_gics": "XLE",
-      "since_open_pct": -0.8,
-      "ret_1w_pct": -3.12,
-      "ret_1m_pct": -6.87,
-      "thrust": 3.75,
-      "pct_off_52w_high": -8.23,
+      "since_open_pct": -1.24,
+      "ret_1w_pct": -3.75,
+      "ret_1m_pct": -8.13,
+      "thrust": 4.38,
+      "pct_off_52w_high": -9.0,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -357,11 +387,11 @@
       "name": "Critical_Minerals",
       "display_name": "Critical Minerals",
       "parent_gics": "XLB",
-      "since_open_pct": -0.79,
-      "ret_1w_pct": -5.3,
-      "ret_1m_pct": -9.76,
-      "thrust": 4.46,
-      "pct_off_52w_high": -21.25,
+      "since_open_pct": -1.33,
+      "ret_1w_pct": -4.12,
+      "ret_1m_pct": -8.25,
+      "thrust": 4.13,
+      "pct_off_52w_high": -21.73,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING"
@@ -370,12 +400,12 @@
       "name": "Gold_Miners",
       "display_name": "Gold Miners",
       "parent_gics": "XLB",
-      "since_open_pct": 0.05,
-      "ret_1w_pct": -9.53,
-      "ret_1m_pct": -10.71,
+      "since_open_pct": -2.42,
+      "ret_1w_pct": -7.66,
+      "ret_1m_pct": -8.85,
       "thrust": 1.18,
-      "pct_off_52w_high": -24.9,
-      "rotation_state": "OFF_THE_FLOOR",
+      "pct_off_52w_high": -26.12,
+      "rotation_state": "NEITHER",
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING"
     },
@@ -383,37 +413,37 @@
       "name": "Agri_Commodities",
       "display_name": "Agri Commodities",
       "parent_gics": "XLB",
-      "since_open_pct": 0.26,
-      "ret_1w_pct": -5.5,
-      "ret_1m_pct": -7.16,
-      "thrust": 1.66,
-      "pct_off_52w_high": -11.58,
+      "since_open_pct": -1.22,
+      "ret_1w_pct": -6.04,
+      "ret_1m_pct": -11.45,
+      "thrust": 5.41,
+      "pct_off_52w_high": -12.48,
       "rotation_state": "NEITHER",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING"
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "EXITING"
     },
     {
       "name": "Big_Banks",
       "display_name": "Big Banks",
       "parent_gics": "XLF",
-      "since_open_pct": -0.73,
-      "ret_1w_pct": -2.46,
-      "ret_1m_pct": -7.96,
-      "thrust": 5.5,
-      "pct_off_52w_high": -11.31,
+      "since_open_pct": -1.07,
+      "ret_1w_pct": -2.51,
+      "ret_1m_pct": -8.31,
+      "thrust": 5.8,
+      "pct_off_52w_high": -12.35,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "STABLE"
     },
     {
       "name": "Fintech",
       "display_name": "Fintech",
       "parent_gics": "XLF",
-      "since_open_pct": -0.91,
-      "ret_1w_pct": -8.32,
-      "ret_1m_pct": -11.54,
-      "thrust": 3.22,
-      "pct_off_52w_high": -34.76,
+      "since_open_pct": -2.24,
+      "ret_1w_pct": -5.29,
+      "ret_1m_pct": -9.27,
+      "thrust": 3.98,
+      "pct_off_52w_high": -35.53,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -422,24 +452,24 @@
       "name": "Crypto_Digital",
       "display_name": "Crypto Digital",
       "parent_gics": "XLF",
-      "since_open_pct": -2.95,
-      "ret_1w_pct": -11.1,
-      "ret_1m_pct": 8.91,
-      "thrust": -20.01,
-      "pct_off_52w_high": -29.21,
+      "since_open_pct": -5.65,
+      "ret_1w_pct": -11.37,
+      "ret_1m_pct": 9.67,
+      "thrust": -21.04,
+      "pct_off_52w_high": -32.38,
       "rotation_state": "NEITHER",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING"
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Insurance",
       "display_name": "Insurance",
       "parent_gics": "XLF",
-      "since_open_pct": 0.44,
-      "ret_1w_pct": -1.01,
-      "ret_1m_pct": -2.71,
-      "thrust": 1.7,
-      "pct_off_52w_high": -7.53,
+      "since_open_pct": -1.37,
+      "ret_1w_pct": -2.38,
+      "ret_1m_pct": -4.17,
+      "thrust": 1.79,
+      "pct_off_52w_high": -9.06,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -448,24 +478,24 @@
       "name": "Payments",
       "display_name": "Payments",
       "parent_gics": "XLK",
-      "since_open_pct": -0.75,
-      "ret_1w_pct": -0.87,
-      "ret_1m_pct": -7.9,
-      "thrust": 7.03,
-      "pct_off_52w_high": -25.87,
+      "since_open_pct": -1.55,
+      "ret_1w_pct": -2.02,
+      "ret_1m_pct": -8.16,
+      "thrust": 6.14,
+      "pct_off_52w_high": -26.8,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "STABLE"
+      "rrg_direction": "DEEPENING"
     },
     {
       "name": "Gaming_Streaming",
       "display_name": "Gaming Streaming",
       "parent_gics": "XLC",
-      "since_open_pct": -1.01,
-      "ret_1w_pct": -5.55,
-      "ret_1m_pct": -6.98,
-      "thrust": 1.43,
-      "pct_off_52w_high": -21.22,
+      "since_open_pct": -0.61,
+      "ret_1w_pct": -4.03,
+      "ret_1m_pct": -4.96,
+      "thrust": 0.94,
+      "pct_off_52w_high": -21.11,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "DEEPENING"
@@ -474,11 +504,11 @@
       "name": "E_Commerce",
       "display_name": "E Commerce",
       "parent_gics": "XLY",
-      "since_open_pct": 0.17,
-      "ret_1w_pct": -4.43,
-      "ret_1m_pct": -8.01,
-      "thrust": 3.58,
-      "pct_off_52w_high": -12.65,
+      "since_open_pct": -0.35,
+      "ret_1w_pct": -1.55,
+      "ret_1m_pct": -6.34,
+      "thrust": 4.8,
+      "pct_off_52w_high": -12.17,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -487,11 +517,11 @@
       "name": "Travel_Leisure",
       "display_name": "Travel Leisure",
       "parent_gics": "XLY",
-      "since_open_pct": -1.18,
-      "ret_1w_pct": -0.83,
-      "ret_1m_pct": -3.32,
-      "thrust": 2.49,
-      "pct_off_52w_high": -18.05,
+      "since_open_pct": -1.43,
+      "ret_1w_pct": 0.15,
+      "ret_1m_pct": -2.67,
+      "thrust": 2.82,
+      "pct_off_52w_high": -19.0,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -500,24 +530,24 @@
       "name": "Homebuilders",
       "display_name": "Homebuilders",
       "parent_gics": "XLY",
-      "since_open_pct": -0.73,
-      "ret_1w_pct": -1.86,
-      "ret_1m_pct": -5.41,
-      "thrust": 3.55,
-      "pct_off_52w_high": -18.21,
+      "since_open_pct": -2.44,
+      "ret_1w_pct": -1.01,
+      "ret_1m_pct": -4.32,
+      "thrust": 3.31,
+      "pct_off_52w_high": -19.33,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "STABLE"
     },
     {
       "name": "Biotech",
       "display_name": "Biotech",
       "parent_gics": "XLV",
-      "since_open_pct": 0.57,
-      "ret_1w_pct": 3.29,
-      "ret_1m_pct": 9.64,
-      "thrust": -6.36,
-      "pct_off_52w_high": 0.0,
+      "since_open_pct": -0.45,
+      "ret_1w_pct": 1.45,
+      "ret_1m_pct": 4.03,
+      "thrust": -2.58,
+      "pct_off_52w_high": -2.57,
       "rotation_state": "LEADING",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING"
@@ -526,24 +556,24 @@
       "name": "MedTech",
       "display_name": "MedTech",
       "parent_gics": "XLV",
-      "since_open_pct": 0.15,
-      "ret_1w_pct": -2.09,
-      "ret_1m_pct": -6.07,
-      "thrust": 3.98,
-      "pct_off_52w_high": -15.81,
+      "since_open_pct": -0.61,
+      "ret_1w_pct": -1.62,
+      "ret_1m_pct": -6.32,
+      "thrust": 4.7,
+      "pct_off_52w_high": -16.74,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING"
+      "rrg_direction": "DEEPENING"
     },
     {
       "name": "REITs",
       "display_name": "REITs",
       "parent_gics": "XLRE",
-      "since_open_pct": 0.34,
-      "ret_1w_pct": -3.0,
-      "ret_1m_pct": -5.64,
-      "thrust": 2.64,
-      "pct_off_52w_high": -8.7,
+      "since_open_pct": -1.58,
+      "ret_1w_pct": -2.82,
+      "ret_1m_pct": -6.89,
+      "thrust": 4.07,
+      "pct_off_52w_high": -9.8,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -552,11 +582,11 @@
       "name": "Social_Media",
       "display_name": "Social Media",
       "parent_gics": "XLC",
-      "since_open_pct": -0.67,
-      "ret_1w_pct": -5.25,
-      "ret_1m_pct": -2.4,
-      "thrust": -2.85,
-      "pct_off_52w_high": -28.2,
+      "since_open_pct": -1.27,
+      "ret_1w_pct": -2.71,
+      "ret_1m_pct": -1.15,
+      "thrust": -1.56,
+      "pct_off_52w_high": -28.93,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING"
@@ -564,79 +594,118 @@
   ],
   "rotation": [
     {
-      "name": "Defense_Tech",
-      "display_name": "Defense Tech",
-      "parent_gics": "XLI",
-      "since_open_pct": 0.03,
-      "ret_1w_pct": -2.55,
-      "ret_1m_pct": -9.61,
-      "thrust": 7.06,
-      "pct_off_52w_high": -21.46,
+      "name": "Oil_Services",
+      "display_name": "Oil Services",
+      "parent_gics": "XLE",
+      "since_open_pct": -0.81,
+      "ret_1w_pct": -6.92,
+      "ret_1m_pct": -14.76,
+      "thrust": 7.84,
+      "pct_off_52w_high": -24.18,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Payments",
       "display_name": "Payments",
       "parent_gics": "XLK",
-      "since_open_pct": -0.75,
-      "ret_1w_pct": -0.87,
-      "ret_1m_pct": -7.9,
-      "thrust": 7.03,
-      "pct_off_52w_high": -25.87,
+      "since_open_pct": -1.55,
+      "ret_1w_pct": -2.02,
+      "ret_1m_pct": -8.16,
+      "thrust": 6.14,
+      "pct_off_52w_high": -26.8,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "STABLE"
+      "rrg_direction": "DEEPENING"
     },
     {
-      "name": "Oil_Services",
-      "display_name": "Oil Services",
+      "name": "Nuclear_Energy",
+      "display_name": "Nuclear Energy",
       "parent_gics": "XLE",
-      "since_open_pct": -2.35,
-      "ret_1w_pct": -7.61,
-      "ret_1m_pct": -14.63,
-      "thrust": 7.02,
-      "pct_off_52w_high": -24.05,
-      "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "AI_Software",
-      "display_name": "AI Software",
-      "parent_gics": "XLK",
-      "since_open_pct": -0.49,
-      "ret_1w_pct": -4.14,
-      "ret_1m_pct": -10.36,
-      "thrust": 6.22,
-      "pct_off_52w_high": -34.77,
+      "since_open_pct": -0.86,
+      "ret_1w_pct": -6.11,
+      "ret_1m_pct": -12.19,
+      "thrust": 6.08,
+      "pct_off_52w_high": -60.11,
       "rotation_state": "NEITHER",
-      "rrg_quadrant": "WEAKENING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Enterprise_Software",
-      "display_name": "Enterprise Software",
-      "parent_gics": "XLK",
-      "since_open_pct": 0.41,
-      "ret_1w_pct": -3.01,
-      "ret_1m_pct": -8.69,
-      "thrust": 5.68,
-      "pct_off_52w_high": -4.28,
-      "rotation_state": "LEADING",
-      "rrg_quadrant": "WEAKENING",
+      "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
     },
     {
       "name": "Big_Banks",
       "display_name": "Big Banks",
       "parent_gics": "XLF",
-      "since_open_pct": -0.73,
-      "ret_1w_pct": -2.46,
-      "ret_1m_pct": -7.96,
-      "thrust": 5.5,
-      "pct_off_52w_high": -11.31,
+      "since_open_pct": -1.07,
+      "ret_1w_pct": -2.51,
+      "ret_1m_pct": -8.31,
+      "thrust": 5.8,
+      "pct_off_52w_high": -12.35,
+      "rotation_state": "NEITHER",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "STABLE"
+    },
+    {
+      "name": "Agri_Commodities",
+      "display_name": "Agri Commodities",
+      "parent_gics": "XLB",
+      "since_open_pct": -1.22,
+      "ret_1w_pct": -6.04,
+      "ret_1m_pct": -11.45,
+      "thrust": 5.41,
+      "pct_off_52w_high": -12.48,
+      "rotation_state": "NEITHER",
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "EXITING"
+    },
+    {
+      "name": "Defense_Tech",
+      "display_name": "Defense Tech",
+      "parent_gics": "XLI",
+      "since_open_pct": -0.27,
+      "ret_1w_pct": -3.26,
+      "ret_1m_pct": -8.19,
+      "thrust": 4.93,
+      "pct_off_52w_high": -21.81,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "E_Commerce",
+      "display_name": "E Commerce",
+      "parent_gics": "XLY",
+      "since_open_pct": -0.35,
+      "ret_1w_pct": -1.55,
+      "ret_1m_pct": -6.34,
+      "thrust": 4.8,
+      "pct_off_52w_high": -12.17,
+      "rotation_state": "NEITHER",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "MedTech",
+      "display_name": "MedTech",
+      "parent_gics": "XLV",
+      "since_open_pct": -0.61,
+      "ret_1w_pct": -1.62,
+      "ret_1m_pct": -6.32,
+      "thrust": 4.7,
+      "pct_off_52w_high": -16.74,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "Midstream_MLP",
+      "display_name": "Midstream MLP",
+      "parent_gics": "XLE",
+      "since_open_pct": -1.24,
+      "ret_1w_pct": -3.75,
+      "ret_1m_pct": -8.13,
+      "thrust": 4.38,
+      "pct_off_52w_high": -9.0,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -645,63 +714,37 @@
       "name": "Critical_Minerals",
       "display_name": "Critical Minerals",
       "parent_gics": "XLB",
-      "since_open_pct": -0.79,
-      "ret_1w_pct": -5.3,
-      "ret_1m_pct": -9.76,
-      "thrust": 4.46,
-      "pct_off_52w_high": -21.25,
+      "since_open_pct": -1.33,
+      "ret_1w_pct": -4.12,
+      "ret_1m_pct": -8.25,
+      "thrust": 4.13,
+      "pct_off_52w_high": -21.73,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING"
     },
     {
-      "name": "Nuclear_Energy",
-      "display_name": "Nuclear Energy",
-      "parent_gics": "XLE",
-      "since_open_pct": -2.56,
-      "ret_1w_pct": -9.32,
-      "ret_1m_pct": -13.61,
-      "thrust": 4.29,
-      "pct_off_52w_high": -60.8,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "EXITING"
-    },
-    {
-      "name": "MedTech",
-      "display_name": "MedTech",
-      "parent_gics": "XLV",
-      "since_open_pct": 0.15,
-      "ret_1w_pct": -2.09,
-      "ret_1m_pct": -6.07,
-      "thrust": 3.98,
-      "pct_off_52w_high": -15.81,
-      "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Midstream_MLP",
-      "display_name": "Midstream MLP",
-      "parent_gics": "XLE",
-      "since_open_pct": -0.8,
-      "ret_1w_pct": -3.12,
-      "ret_1m_pct": -6.87,
-      "thrust": 3.75,
-      "pct_off_52w_high": -8.23,
+      "name": "REITs",
+      "display_name": "REITs",
+      "parent_gics": "XLRE",
+      "since_open_pct": -1.58,
+      "ret_1w_pct": -2.82,
+      "ret_1m_pct": -6.89,
+      "thrust": 4.07,
+      "pct_off_52w_high": -9.8,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
     },
     {
-      "name": "E_Commerce",
-      "display_name": "E Commerce",
-      "parent_gics": "XLY",
-      "since_open_pct": 0.17,
-      "ret_1w_pct": -4.43,
-      "ret_1m_pct": -8.01,
-      "thrust": 3.58,
-      "pct_off_52w_high": -12.65,
+      "name": "Fintech",
+      "display_name": "Fintech",
+      "parent_gics": "XLF",
+      "since_open_pct": -2.24,
+      "ret_1w_pct": -5.29,
+      "ret_1m_pct": -9.27,
+      "thrust": 3.98,
+      "pct_off_52w_high": -35.53,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -710,63 +753,37 @@
       "name": "Homebuilders",
       "display_name": "Homebuilders",
       "parent_gics": "XLY",
-      "since_open_pct": -0.73,
-      "ret_1w_pct": -1.86,
-      "ret_1m_pct": -5.41,
-      "thrust": 3.55,
-      "pct_off_52w_high": -18.21,
+      "since_open_pct": -2.44,
+      "ret_1w_pct": -1.01,
+      "ret_1m_pct": -4.32,
+      "thrust": 3.31,
+      "pct_off_52w_high": -19.33,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "STABLE"
     },
     {
-      "name": "Fintech",
-      "display_name": "Fintech",
-      "parent_gics": "XLF",
-      "since_open_pct": -0.91,
-      "ret_1w_pct": -8.32,
-      "ret_1m_pct": -11.54,
-      "thrust": 3.22,
-      "pct_off_52w_high": -34.76,
+      "name": "AI_Software",
+      "display_name": "AI Software",
+      "parent_gics": "XLK",
+      "since_open_pct": 0.48,
+      "ret_1w_pct": -3.3,
+      "ret_1m_pct": -6.19,
+      "thrust": 2.89,
+      "pct_off_52w_high": -34.29,
       "rotation_state": "NEITHER",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
-    },
-    {
-      "name": "REITs",
-      "display_name": "REITs",
-      "parent_gics": "XLRE",
-      "since_open_pct": 0.34,
-      "ret_1w_pct": -3.0,
-      "ret_1m_pct": -5.64,
-      "thrust": 2.64,
-      "pct_off_52w_high": -8.7,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Travel_Leisure",
       "display_name": "Travel Leisure",
       "parent_gics": "XLY",
-      "since_open_pct": -1.18,
-      "ret_1w_pct": -0.83,
-      "ret_1m_pct": -3.32,
-      "thrust": 2.49,
-      "pct_off_52w_high": -18.05,
-      "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "EXITING"
-    },
-    {
-      "name": "Transport_Logistics",
-      "display_name": "Transport Logistics",
-      "parent_gics": "XLI",
-      "since_open_pct": 0.14,
-      "ret_1w_pct": -0.86,
-      "ret_1m_pct": -3.09,
-      "thrust": 2.24,
-      "pct_off_52w_high": -15.87,
+      "since_open_pct": -1.43,
+      "ret_1w_pct": 0.15,
+      "ret_1m_pct": -2.67,
+      "thrust": 2.82,
+      "pct_off_52w_high": -19.0,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -775,207 +792,220 @@
       "name": "Insurance",
       "display_name": "Insurance",
       "parent_gics": "XLF",
-      "since_open_pct": 0.44,
-      "ret_1w_pct": -1.01,
-      "ret_1m_pct": -2.71,
-      "thrust": 1.7,
-      "pct_off_52w_high": -7.53,
+      "since_open_pct": -1.37,
+      "ret_1w_pct": -2.38,
+      "ret_1m_pct": -4.17,
+      "thrust": 1.79,
+      "pct_off_52w_high": -9.06,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
     },
     {
-      "name": "Agri_Commodities",
-      "display_name": "Agri Commodities",
-      "parent_gics": "XLB",
-      "since_open_pct": 0.26,
-      "ret_1w_pct": -5.5,
-      "ret_1m_pct": -7.16,
-      "thrust": 1.66,
-      "pct_off_52w_high": -11.58,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Infra_Construction",
-      "display_name": "Infra Construction",
-      "parent_gics": "XLI",
-      "since_open_pct": -0.43,
-      "ret_1w_pct": 0.92,
-      "ret_1m_pct": -0.69,
-      "thrust": 1.62,
-      "pct_off_52w_high": -14.63,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "IMPROVING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Gaming_Streaming",
-      "display_name": "Gaming Streaming",
-      "parent_gics": "XLC",
-      "since_open_pct": -1.01,
-      "ret_1w_pct": -5.55,
-      "ret_1m_pct": -6.98,
-      "thrust": 1.43,
-      "pct_off_52w_high": -21.22,
-      "rotation_state": "OFF_THE_FLOOR",
+      "name": "Enterprise_Software",
+      "display_name": "Enterprise Software",
+      "parent_gics": "XLK",
+      "since_open_pct": 2.33,
+      "ret_1w_pct": -2.12,
+      "ret_1m_pct": -3.46,
+      "thrust": 1.34,
+      "pct_off_52w_high": -2.42,
+      "rotation_state": "LEADING",
       "rrg_quadrant": "WEAKENING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Gold_Miners",
       "display_name": "Gold Miners",
       "parent_gics": "XLB",
-      "since_open_pct": 0.05,
-      "ret_1w_pct": -9.53,
-      "ret_1m_pct": -10.71,
+      "since_open_pct": -2.42,
+      "ret_1w_pct": -7.66,
+      "ret_1m_pct": -8.85,
       "thrust": 1.18,
-      "pct_off_52w_high": -24.9,
-      "rotation_state": "OFF_THE_FLOOR",
+      "pct_off_52w_high": -26.12,
+      "rotation_state": "NEITHER",
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "EXITING"
+    },
+    {
+      "name": "Gaming_Streaming",
+      "display_name": "Gaming Streaming",
+      "parent_gics": "XLC",
+      "since_open_pct": -0.61,
+      "ret_1w_pct": -4.03,
+      "ret_1m_pct": -4.96,
+      "thrust": 0.94,
+      "pct_off_52w_high": -21.11,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "WEAKENING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "Transport_Logistics",
+      "display_name": "Transport Logistics",
+      "parent_gics": "XLI",
+      "since_open_pct": -1.74,
+      "ret_1w_pct": -0.69,
+      "ret_1m_pct": -1.53,
+      "thrust": 0.83,
+      "pct_off_52w_high": -16.92,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "STABLE"
+    },
+    {
+      "name": "Infra_Construction",
+      "display_name": "Infra Construction",
+      "parent_gics": "XLI",
+      "since_open_pct": -1.38,
+      "ret_1w_pct": -0.22,
+      "ret_1m_pct": -0.55,
+      "thrust": 0.34,
+      "pct_off_52w_high": -15.6,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING"
     },
     {
       "name": "Space_eVTOL",
       "display_name": "Space eVTOL",
       "parent_gics": "XLI",
-      "since_open_pct": -5.43,
-      "ret_1w_pct": -9.0,
-      "ret_1m_pct": -7.39,
-      "thrust": -1.62,
-      "pct_off_52w_high": -57.06,
+      "since_open_pct": -1.85,
+      "ret_1w_pct": -5.89,
+      "ret_1m_pct": -5.2,
+      "thrust": -0.69,
+      "pct_off_52w_high": -57.51,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Cloud_Computing",
-      "display_name": "Cloud Computing",
-      "parent_gics": "XLK",
-      "since_open_pct": 0.47,
-      "ret_1w_pct": -3.09,
-      "ret_1m_pct": -1.2,
-      "thrust": -1.89,
-      "pct_off_52w_high": -6.48,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING"
     },
     {
       "name": "Social_Media",
       "display_name": "Social Media",
       "parent_gics": "XLC",
-      "since_open_pct": -0.67,
-      "ret_1w_pct": -5.25,
-      "ret_1m_pct": -2.4,
-      "thrust": -2.85,
-      "pct_off_52w_high": -28.2,
+      "since_open_pct": -1.27,
+      "ret_1w_pct": -2.71,
+      "ret_1m_pct": -1.15,
+      "thrust": -1.56,
+      "pct_off_52w_high": -28.93,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Infra_Power",
-      "display_name": "Infra Power",
-      "parent_gics": "XLI",
-      "since_open_pct": -0.39,
-      "ret_1w_pct": 0.41,
-      "ret_1m_pct": 3.82,
-      "thrust": -3.4,
-      "pct_off_52w_high": -16.67,
-      "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "ENTERING"
-    },
-    {
-      "name": "Autonomous_Robotics",
-      "display_name": "Autonomous Robotics",
-      "parent_gics": "XLI",
-      "since_open_pct": -2.14,
-      "ret_1w_pct": -4.59,
-      "ret_1m_pct": 0.33,
-      "thrust": -4.92,
-      "pct_off_52w_high": -18.36,
-      "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
-    },
-    {
-      "name": "Solar_Renewables",
-      "display_name": "Solar Renewables",
-      "parent_gics": "XLU",
-      "since_open_pct": 0.63,
-      "ret_1w_pct": -6.49,
-      "ret_1m_pct": -1.14,
-      "thrust": -5.35,
-      "pct_off_52w_high": -47.52,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "LAGGING",
-      "rrg_direction": "DEEPENING"
-    },
-    {
-      "name": "Mag7",
-      "display_name": "Mag7",
-      "parent_gics": "XLK",
-      "since_open_pct": -0.54,
-      "ret_1w_pct": -1.84,
-      "ret_1m_pct": 3.75,
-      "thrust": -5.59,
-      "pct_off_52w_high": -2.32,
-      "rotation_state": "LEADING",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING"
-    },
-    {
-      "name": "Cybersecurity",
-      "display_name": "Cybersecurity",
-      "parent_gics": "XLK",
-      "since_open_pct": 0.96,
-      "ret_1w_pct": -0.65,
-      "ret_1m_pct": 4.94,
-      "thrust": -5.59,
-      "pct_off_52w_high": -1.96,
-      "rotation_state": "LEADING",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING"
-    },
-    {
-      "name": "Quantum_Computing",
-      "display_name": "Quantum Computing",
-      "parent_gics": "XLK",
-      "since_open_pct": -3.86,
-      "ret_1w_pct": -2.58,
-      "ret_1m_pct": 3.3,
-      "thrust": -5.88,
-      "pct_off_52w_high": -60.16,
-      "rotation_state": "NEITHER",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "DEEPENING"
-    },
-    {
-      "name": "AI_Infrastructure",
-      "display_name": "AI Infrastructure",
-      "parent_gics": "XLRE",
-      "since_open_pct": -0.82,
-      "ret_1w_pct": -6.15,
-      "ret_1m_pct": 0.04,
-      "thrust": -6.19,
-      "pct_off_52w_high": -23.89,
-      "rotation_state": "OFF_THE_FLOOR",
-      "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
     },
     {
       "name": "Biotech",
       "display_name": "Biotech",
       "parent_gics": "XLV",
-      "since_open_pct": 0.57,
-      "ret_1w_pct": 3.29,
-      "ret_1m_pct": 9.64,
-      "thrust": -6.36,
-      "pct_off_52w_high": 0.0,
+      "since_open_pct": -0.45,
+      "ret_1w_pct": 1.45,
+      "ret_1m_pct": 4.03,
+      "thrust": -2.58,
+      "pct_off_52w_high": -2.57,
       "rotation_state": "LEADING",
+      "rrg_quadrant": "LEADING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "Solar_Renewables",
+      "display_name": "Solar Renewables",
+      "parent_gics": "XLU",
+      "since_open_pct": -1.47,
+      "ret_1w_pct": -2.95,
+      "ret_1m_pct": 0.39,
+      "thrust": -3.35,
+      "pct_off_52w_high": -47.87,
+      "rotation_state": "NEITHER",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "Infra_Power",
+      "display_name": "Infra Power",
+      "parent_gics": "XLI",
+      "since_open_pct": -2.2,
+      "ret_1w_pct": -1.32,
+      "ret_1m_pct": 2.69,
+      "thrust": -4.01,
+      "pct_off_52w_high": -18.44,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING"
+    },
+    {
+      "name": "AI_Infrastructure",
+      "display_name": "AI Infrastructure",
+      "parent_gics": "XLRE",
+      "since_open_pct": -2.39,
+      "ret_1w_pct": -4.39,
+      "ret_1m_pct": 0.64,
+      "thrust": -5.03,
+      "pct_off_52w_high": -24.89,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "DEEPENING"
+    },
+    {
+      "name": "Cloud_Computing",
+      "display_name": "Cloud Computing",
+      "parent_gics": "XLK",
+      "since_open_pct": 0.89,
+      "ret_1w_pct": -1.66,
+      "ret_1m_pct": 3.62,
+      "thrust": -5.27,
+      "pct_off_52w_high": -5.86,
+      "rotation_state": "NEITHER",
+      "rrg_quadrant": "LEADING",
+      "rrg_direction": "EXITING"
+    },
+    {
+      "name": "Mag7",
+      "display_name": "Mag7",
+      "parent_gics": "XLK",
+      "since_open_pct": 0.23,
+      "ret_1w_pct": -0.64,
+      "ret_1m_pct": 4.97,
+      "thrust": -5.61,
+      "pct_off_52w_high": -1.83,
+      "rotation_state": "LEADING",
+      "rrg_quadrant": "LEADING",
+      "rrg_direction": "EXITING"
+    },
+    {
+      "name": "Autonomous_Robotics",
+      "display_name": "Autonomous Robotics",
+      "parent_gics": "XLI",
+      "since_open_pct": 0.21,
+      "ret_1w_pct": -2.77,
+      "ret_1m_pct": 3.24,
+      "thrust": -6.01,
+      "pct_off_52w_high": -17.96,
+      "rotation_state": "OFF_THE_FLOOR",
+      "rrg_quadrant": "LAGGING",
+      "rrg_direction": "ENTERING"
+    },
+    {
+      "name": "Quantum_Computing",
+      "display_name": "Quantum Computing",
+      "parent_gics": "XLK",
+      "since_open_pct": -0.95,
+      "ret_1w_pct": -2.3,
+      "ret_1m_pct": 6.71,
+      "thrust": -9.01,
+      "pct_off_52w_high": -59.4,
+      "rotation_state": "NEITHER",
+      "rrg_quadrant": "LEADING",
+      "rrg_direction": "EXITING"
+    },
+    {
+      "name": "Semiconductors",
+      "display_name": "Semiconductors",
+      "parent_gics": "XLK",
+      "since_open_pct": -0.35,
+      "ret_1w_pct": 0.57,
+      "ret_1m_pct": 11.78,
+      "thrust": -11.21,
+      "pct_off_52w_high": -15.48,
+      "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING"
     },
@@ -983,40 +1013,2067 @@
       "name": "Chip_Equipment",
       "display_name": "Chip Equipment",
       "parent_gics": "XLK",
-      "since_open_pct": 0.08,
-      "ret_1w_pct": 2.83,
-      "ret_1m_pct": 10.77,
-      "thrust": -7.94,
-      "pct_off_52w_high": -23.34,
+      "since_open_pct": 0.7,
+      "ret_1w_pct": 4.15,
+      "ret_1m_pct": 17.61,
+      "thrust": -13.46,
+      "pct_off_52w_high": -22.05,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "DEEPENING"
     },
     {
-      "name": "Semiconductors",
-      "display_name": "Semiconductors",
+      "name": "Cybersecurity",
+      "display_name": "Cybersecurity",
       "parent_gics": "XLK",
-      "since_open_pct": -0.4,
-      "ret_1w_pct": -0.16,
-      "ret_1m_pct": 8.79,
-      "thrust": -8.95,
-      "pct_off_52w_high": -15.57,
-      "rotation_state": "OFF_THE_FLOOR",
+      "since_open_pct": 1.37,
+      "ret_1w_pct": -1.24,
+      "ret_1m_pct": 13.66,
+      "thrust": -14.91,
+      "pct_off_52w_high": -0.37,
+      "rotation_state": "LEADING",
       "rrg_quadrant": "LEADING",
-      "rrg_direction": "DEEPENING"
+      "rrg_direction": "EXITING"
     },
     {
       "name": "Crypto_Digital",
       "display_name": "Crypto Digital",
       "parent_gics": "XLF",
-      "since_open_pct": -2.95,
-      "ret_1w_pct": -11.1,
-      "ret_1m_pct": 8.91,
-      "thrust": -20.01,
-      "pct_off_52w_high": -29.21,
+      "since_open_pct": -5.65,
+      "ret_1w_pct": -11.37,
+      "ret_1m_pct": 9.67,
+      "thrust": -21.04,
+      "pct_off_52w_high": -32.38,
       "rotation_state": "NEITHER",
-      "rrg_quadrant": "LEADING",
-      "rrg_direction": "EXITING"
+      "rrg_quadrant": "IMPROVING",
+      "rrg_direction": "ENTERING"
     }
-  ]
+  ],
+  "selection": {
+    "relative_strength": [
+      {
+        "ticker": "MXL",
+        "rs_rank_pct": 100.0,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 0,
+        "in_theme": false
+      },
+      {
+        "ticker": "MRNA",
+        "rs_rank_pct": 99.88,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 84.5,
+        "in_theme": true
+      },
+      {
+        "ticker": "ALAB",
+        "rs_rank_pct": 99.64,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 73.0,
+        "in_theme": false
+      },
+      {
+        "ticker": "MU",
+        "rs_rank_pct": 99.52,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 73.0,
+        "in_theme": true
+      },
+      {
+        "ticker": "AMD",
+        "rs_rank_pct": 99.28,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 0,
+        "in_theme": true
+      },
+      {
+        "ticker": "SDGR",
+        "rs_rank_pct": 99.04,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 74.7,
+        "in_theme": false
+      },
+      {
+        "ticker": "UMC",
+        "rs_rank_pct": 98.92,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 76.5,
+        "in_theme": false
+      },
+      {
+        "ticker": "INTC",
+        "rs_rank_pct": 98.8,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 74.0,
+        "in_theme": false
+      },
+      {
+        "ticker": "CRWD",
+        "rs_rank_pct": 98.67,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 80.0,
+        "in_theme": true
+      },
+      {
+        "ticker": "HPE",
+        "rs_rank_pct": 98.43,
+        "rs_leadership": "IN-LINE",
+        "pipe_rank": 79.0,
+        "in_theme": false
+      },
+      {
+        "ticker": "MRVL",
+        "rs_rank_pct": 98.31,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 76.5,
+        "in_theme": true
+      },
+      {
+        "ticker": "OKTA",
+        "rs_rank_pct": 98.19,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 81.0,
+        "in_theme": true
+      },
+      {
+        "ticker": "PANW",
+        "rs_rank_pct": 97.83,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 73.0,
+        "in_theme": true
+      },
+      {
+        "ticker": "STX",
+        "rs_rank_pct": 97.71,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 75.5,
+        "in_theme": false
+      },
+      {
+        "ticker": "RBRK",
+        "rs_rank_pct": 97.59,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 61.5,
+        "in_theme": true
+      }
+    ],
+    "funnel": [
+      {
+        "stage": "Scored universe",
+        "count": 78
+      },
+      {
+        "stage": "On longlist",
+        "count": 49
+      },
+      {
+        "stage": "On longlist AND Elder",
+        "count": 12
+      },
+      {
+        "stage": "QS-scored (third lens)",
+        "count": 1
+      },
+      {
+        "stage": "Precision Edge",
+        "count": null,
+        "reason": "not tracked this run"
+      },
+      {
+        "stage": "Held",
+        "count": 4
+      }
+    ],
+    "no_buy_list": [
+      {
+        "ticker": "WBD",
+        "flags": [
+          {
+            "flag": "stretched",
+            "label": "4.5 ATR extended (20-day basis)"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NBIS",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "theme_weak",
+            "label": "Theme graded AVOID"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ISRG",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TER",
+        "flags": [
+          {
+            "flag": "theme_weak",
+            "label": "Theme graded AVOID"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MGNI",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "META",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SNPS",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CCL",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MKSI",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RCL",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LIN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "YOU",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VVV",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TTAN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GME",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SDGR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "COHU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TWLO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "A",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ADI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ASX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "UMC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MRNA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MRVL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CNK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MXL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FTNT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DHR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "INTC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NTAP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VIA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TEM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TSM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ONTO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CRWD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MSFT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OKTA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AVPT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DDOG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "STRC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TMO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NTNX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WRBY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ALAB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NTRA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LRCX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DOCS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RBRK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PLTR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LITE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PEB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "STX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SHOP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CDNS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ACMR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMAT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NVDA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PANW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HPE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VEEV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "S",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMGN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ICHR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "UCTT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KSS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FROG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PBF",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ELF",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RXO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RVMD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TENB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      }
+    ]
+  },
+  "house": {
+    "setups": [
+      {
+        "ticker": "GME",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "WBD",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "SDGR",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "COHU",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TWLO",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "A",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ADI",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ASX",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "UMC",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "MRNA",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "MRVL",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "MXL",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "FTNT",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "DHR",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          },
+          {
+            "piece": "10",
+            "name": "Undercut and rally",
+            "detail": "pin_bar_state=NONE, div_state=BULLISH"
+          }
+        ]
+      },
+      {
+        "ticker": "INTC",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "NTAP",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "VIA",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "AMD",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TEM",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TSM",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "MU",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ISRG",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ONTO",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TER",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "CRWD",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "OKTA",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP",
+            "detail": "Volatility contraction tightening into a pivot"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "AVPT",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=squeeze, squeeze_breakout_state=BREAKOUT_UP"
+          }
+        ]
+      },
+      {
+        "ticker": "DDOG",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "STRC",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TMO",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ALAB",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "WT",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "NTRA",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          },
+          {
+            "piece": "12",
+            "name": "Exhaustion / blow-off risk",
+            "detail": "exhaustion_score=7.0 (of 10.0, only active after a sustained run) \u2014 a risk flag on an existing long, not a short signal; structure_shift=ABOVE_STRUCTURE, div_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "LRCX",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "DOCS",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=squeeze, squeeze_breakout_state=BREAKOUT_UP"
+          }
+        ]
+      },
+      {
+        "ticker": "RBRK",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "META",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=trend, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "PLTR",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "NBIS",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "DT",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "PEB",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "STX",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "SHOP",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "CDNS",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ACMR",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP",
+            "detail": "Volatility contraction tightening into a pivot"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "AMAT",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "SNPS",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          }
+        ]
+      },
+      {
+        "ticker": "NVDA",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "PANW",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "HPE",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          },
+          {
+            "piece": "12",
+            "name": "Exhaustion / blow-off risk",
+            "detail": "exhaustion_score=7.0 (of 10.0, only active after a sustained run) \u2014 a risk flag on an existing long, not a short signal; structure_shift=ABOVE_STRUCTURE, div_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "VEEV",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "S",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "AMGN",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "SN",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ICHR",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "UCTT",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "KSS",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "FROG",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=BREAKOUT_UP"
+          }
+        ]
+      },
+      {
+        "ticker": "MKSI",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "ELF",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "RXO",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "LIN",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "RVMD",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "YOU",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TENB",
+        "setups": [
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "VVV",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      },
+      {
+        "ticker": "TTAN",
+        "setups": [
+          {
+            "piece": "08",
+            "name": "VCP (forming)",
+            "detail": "Contracting, not yet tight enough to trigger"
+          },
+          {
+            "piece": "09",
+            "name": "Momentum breakout / high tight flag",
+            "detail": "mover_subtype=tight_base, squeeze_breakout_state=NONE"
+          }
+        ]
+      }
+    ]
+  },
+  "execution": {
+    "entries": [
+      {
+        "ticker": "WBD",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "MXL",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "FTNT",
+        "trigger": "Pattern triggered (INV_HEAD_SHOULDERS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "DHR",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "AVPT",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": true,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "STRC",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "LRCX",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": 305.08,
+        "stop_type": "ma50",
+        "risk_pct": 7.13,
+        "bracket_valid": true,
+        "invalid_reason": null
+      },
+      {
+        "ticker": "DOCS",
+        "trigger": "Squeeze breakout (BREAKOUT_UP)",
+        "volume_confirmed": true,
+        "stop": 26.95,
+        "stop_type": "ma200",
+        "risk_pct": 4.9,
+        "bracket_valid": true,
+        "invalid_reason": null
+      },
+      {
+        "ticker": "ICHR",
+        "trigger": "Pattern triggered (FALLING_WEDGE)",
+        "volume_confirmed": false,
+        "stop": 57.7,
+        "stop_type": "ma200",
+        "risk_pct": 6.72,
+        "bracket_valid": true,
+        "invalid_reason": null
+      },
+      {
+        "ticker": "FROG",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": true,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "RCL",
+        "trigger": "Pattern triggered (HEAD_SHOULDERS)",
+        "volume_confirmed": false,
+        "stop": 253.01,
+        "stop_type": "ma20",
+        "risk_pct": 4.83,
+        "bracket_valid": true,
+        "invalid_reason": null
+      }
+    ],
+    "stop_breaches": [
+      {
+        "ticker": "ANET",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      },
+      {
+        "ticker": "CRWD",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      },
+      {
+        "ticker": "FTNT",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      },
+      {
+        "ticker": "MRVL",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      },
+      {
+        "ticker": "NTRA",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      },
+      {
+        "ticker": "USO",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      },
+      {
+        "ticker": "WEAT",
+        "status": "UNKNOWN",
+        "reason": "no stop or live price on this position"
+      }
+    ]
+  },
+  "management": {
+    "held_facts": [
+      {
+        "ticker": "ANET",
+        "entry": 206.6515556,
+        "live_px": 203.59,
+        "held_sl": null,
+        "qty": 45.0,
+        "unreal_usd": -137.77,
+        "days_held": 9,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "BULLISH_BOS"
+      },
+      {
+        "ticker": "CRWD",
+        "entry": 249.5369231,
+        "live_px": 264.75,
+        "held_sl": null,
+        "qty": 26.0,
+        "unreal_usd": 395.54,
+        "days_held": 9,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "ABOVE_STRUCTURE"
+      },
+      {
+        "ticker": "FTNT",
+        "entry": 174.9147826,
+        "live_px": 178.76,
+        "held_sl": null,
+        "qty": 69.0,
+        "unreal_usd": 265.32,
+        "days_held": 9,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "ABOVE_STRUCTURE"
+      },
+      {
+        "ticker": "MRVL",
+        "entry": 258.7404,
+        "live_px": 264.21,
+        "held_sl": null,
+        "qty": 25.0,
+        "unreal_usd": 136.74,
+        "days_held": 10,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "ABOVE_STRUCTURE"
+      },
+      {
+        "ticker": "NTRA",
+        "entry": 388.5805882,
+        "live_px": 413.31,
+        "held_sl": null,
+        "qty": 17.0,
+        "unreal_usd": 420.4,
+        "days_held": 9,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "ABOVE_STRUCTURE"
+      },
+      {
+        "ticker": "USO",
+        "entry": 151.0334722,
+        "live_px": 145.66,
+        "held_sl": null,
+        "qty": 72.0,
+        "unreal_usd": -386.89,
+        "days_held": 7,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "RANGE"
+      },
+      {
+        "ticker": "WEAT",
+        "entry": 26.4642018,
+        "live_px": 24.57,
+        "held_sl": null,
+        "qty": 545.0,
+        "unreal_usd": -1032.34,
+        "days_held": 22,
+        "r_multiple": null,
+        "r_multiple_is_approx": false,
+        "dist_from_stop_pct": null,
+        "structure_shift": "RANGE"
+      }
+    ],
+    "streak": {
+      "status": "OK",
+      "streak": 2,
+      "direction": "LOSS",
+      "n_considered": 18
+    }
+  }
 }
