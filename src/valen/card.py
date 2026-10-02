@@ -206,6 +206,23 @@ def history_rows(valen: dict) -> list[dict]:
     ]
 
 
+def dial_history_dots(valen: dict) -> list[dict]:
+    """Where the stance dial sat 1 and 5 sessions ago — a PM ask
+    (2026-10-02) to compare today's needle against recent history at a
+    glance, right on the dial, rather than reading a separate table. Reuses
+    `history` (src/valen/history.py) — same independently-recomputed-each-
+    time, no-backfill-wait property as history_rows() above. Skips a
+    lookback whose stance read is missing (DEGRADED/UNAVAILABLE) rather
+    than placing a dot for a reading that doesn't exist."""
+    hist = valen.get("history") or {}
+    out = []
+    for tag, label, key in (("1D", "1D ago", "1d_ago"), ("5D", "5D ago", "5d_ago")):
+        stance = (hist.get(key) or {}).get("stance")
+        if stance:
+            out.append({"tag": tag, "label": label, "stance": stance})
+    return out
+
+
 def freshness(valen: dict) -> dict:
     return {"as_of": (valen.get("plain_english") or {}).get("as_of"),
             "basis": valen.get("basis", "eod")}

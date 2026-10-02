@@ -732,6 +732,85 @@ def test_stance_gauge_degrades_to_grey_dial_when_not_shown():
     assert theme._GREEN not in html and theme._RED not in html
 
 
+# ------------------------------------------------- dial history markers
+# A PM ask (2026-10-02): "simple and creative" -- compare today's needle
+# against 1D/5D ago right on the dial, as dots, without a separate table.
+
+
+def test_dial_history_dots_reads_1d_and_5d_from_history():
+    valen = {"history": {"1d_ago": {"stance": "NEUTRAL"},
+                         "5d_ago": {"stance": "RISK_OFF"}}}
+    dots = card.dial_history_dots(valen)
+    assert dots == [{"tag": "1D", "label": "1D ago", "stance": "NEUTRAL"},
+                    {"tag": "5D", "label": "5D ago", "stance": "RISK_OFF"}]
+
+
+def test_dial_history_dots_skips_a_missing_lookback():
+    valen = {"history": {"1d_ago": {"stance": "NEUTRAL"},
+                         "5d_ago": {"stance_status": "UNAVAILABLE"}}}
+    dots = card.dial_history_dots(valen)
+    assert dots == [{"tag": "1D", "label": "1D ago", "stance": "NEUTRAL"}]
+
+
+def test_dial_history_dots_empty_when_no_history_key():
+    assert card.dial_history_dots({}) == []
+
+
+def test_stance_gauge_renders_a_marker_per_history_dot():
+    html = theme.stance_gauge_html(
+        {"word": "RISK ON", "status": "OK"},
+        [{"tag": "1D", "label": "1D ago", "stance": "NEUTRAL"},
+         {"tag": "5D", "label": "5D ago", "stance": "RISK_OFF"}])
+    assert html.count("<line") >= 2  # one tick per history marker
+    assert "1D ago: NEUTRAL" in html
+    assert "5D ago: RISK OFF" in html
+
+
+def test_stance_gauge_markers_carry_a_distinct_tag_each():
+    """A follow-up PM flag (2026-10-02): a first pass used identical plain
+    dots for 1D and 5D with no way to tell them apart without checking the
+    caption below. Each marker must show its OWN tag on the dial itself."""
+    html = theme.stance_gauge_html(
+        {"word": "RISK ON", "status": "OK"},
+        [{"tag": "1D", "label": "1D ago", "stance": "NEUTRAL"},
+         {"tag": "5D", "label": "5D ago", "stance": "RISK_OFF"}])
+    import re
+    tags = re.findall(r'<text[^>]*>(\w+)<title', html)
+    assert sorted(tags) == ["1D", "5D"]
+
+
+def test_stance_gauge_spreads_two_markers_in_the_same_zone():
+    """Two history points landing in the SAME zone must not render at the
+    exact same coordinates -- otherwise one hides the other."""
+    html = theme.stance_gauge_html(
+        {"word": "NEUTRAL", "status": "OK"},
+        [{"tag": "1D", "label": "1D ago", "stance": "RISK_ON"},
+         {"tag": "5D", "label": "5D ago", "stance": "RISK_ON"}])
+    import re
+    coords = re.findall(r'<line x1="([\d.]+)" y1="([\d.]+)"[^>]*stroke="#fff"', html)
+    assert len(coords) == 2
+    assert coords[0] != coords[1]
+
+
+def test_stance_gauge_with_no_history_dots_is_unchanged():
+    """Omitting history_dots (or passing an empty list) must render
+    byte-identical to the dial before this feature existed."""
+    html_default = theme.stance_gauge_html({"word": "RISK ON", "status": "OK"})
+    html_explicit_empty = theme.stance_gauge_html({"word": "RISK ON", "status": "OK"}, [])
+    assert html_default == html_explicit_empty
+    assert "valen-dial-history" not in html_default
+
+
+def test_dial_history_caption_shows_plain_text_not_just_a_hover_title():
+    """A static render (export, screenshot) never shows a hover tooltip --
+    the comparison must also be legible as plain text."""
+    html = theme.stance_gauge_html(
+        {"word": "RISK ON", "status": "OK"},
+        [{"label": "1D ago", "stance": "NEUTRAL"}])
+    assert '<div class="valen-dial-history">' in html
+    assert "1D ago: NEUTRAL" in html
+
+
 def test_instruments_html_merges_extension_and_breadth_instrument_rows():
     ext_rows = [{"label": "VIX / VIX3M", "value": 0.9, "kind": "vix_vix3m"}]
     breadth_rows_ = [
@@ -1034,13 +1113,14 @@ def test_history_html_empty_rows_renders_nothing():
     assert theme.history_html([]) == ""
 
 
-def test_run_valen_includes_history_with_both_lookback_keys():
-    """End-to-end: run_valen() always adds a history block with both
-    lookback points, each carrying its own sessions_ago -- never silently
+def test_run_valen_includes_history_with_all_lookback_keys():
+    """End-to-end: run_valen() always adds a history block with every
+    lookback point, each carrying its own sessions_ago -- never silently
     missing, even when breadth is DEGRADED in this sandbox (no ma_panel)."""
     from src.valen.daily import run_valen
     artifact = run_valen()
     assert "history" in artifact
-    assert set(artifact["history"].keys()) == {"5d_ago", "1mo_ago"}
+    assert set(artifact["history"].keys()) == {"1d_ago", "5d_ago", "1mo_ago"}
+    assert artifact["history"]["1d_ago"]["sessions_ago"] == 1
     assert artifact["history"]["5d_ago"]["sessions_ago"] == 5
     assert artifact["history"]["1mo_ago"]["sessions_ago"] == 21

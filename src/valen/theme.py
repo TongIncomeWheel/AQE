@@ -110,6 +110,8 @@ CSS = f"""
   margin-top: -34px; }}
 .valen-dial-caption {{ font-size: 11px; color: {_TEXT_MUTED}; margin-top: 2px;
   text-transform: uppercase; letter-spacing: 0.05em; }}
+.valen-dial-history {{ font-size: 10.5px; color: {_GREY}; margin-top: 6px;
+  text-align: center; }}
 
 .valen-led-item {{ padding: 6px 0; border-bottom: 1px solid {_BORDER_SOFT}; }}
 .valen-led-item:last-child {{ border-bottom: none; }}
@@ -341,18 +343,85 @@ def _led_row_html(label: str, status: str, value, flag=None,
            f'<span class="valen-led-value">{shown}</span></div>{explainer_html}</div>')
 
 
-def stance_gauge_html(banner: dict) -> str:
+_DIAL_ZONES = [
+    ("RISK_OFF", "M 20 100 A 80 80 0 0 1 60 30.72", _RED, 150),
+    ("NEUTRAL", "M 60 30.72 A 80 80 0 0 1 140 30.72", _GOLD, 90),
+    ("RISK_ON", "M 140 30.72 A 80 80 0 0 1 180 100", _GREEN, 30),
+]
+
+
+def _dial_history_markers_svg(history_dots: list[dict]) -> str:
+    """Slim radial tick marks crossing the dial's coloured band, showing
+    where the stance sat 1 and 5 sessions ago (card.dial_history_dots()) —
+    a PM ask (2026-10-02) to compare today's needle against recent history
+    without leaving the gauge. Two earlier passes (a plain dot, then a
+    filled circle with a digit crammed inside) both read as clutter on a
+    small instrument; a thin white tick — the same device a real
+    speedometer uses for a memory point — plus a tiny label just outside
+    the band is the sleeker version PM feedback asked for. Ticks cross the
+    band at radius 72-90 (the needle only runs center->62, well short of
+    it); two ticks landing in the SAME zone are spread a few degrees apart
+    rather than fully overlapping."""
+    if not history_dots:
+        return ""
+    import math
+    zone_by_key = {z[0]: z for z in _DIAL_ZONES}
+    by_zone: dict[str, list[dict]] = {}
+    for d in history_dots:
+        by_zone.setdefault(d["stance"], []).append(d)
+    parts = []
+    for zone_key, dots in by_zone.items():
+        zinfo = zone_by_key.get(zone_key)
+        if not zinfo:
+            continue
+        _, _, _color, base_angle = zinfo
+        spread = 11.0
+        start = base_angle - spread * (len(dots) - 1) / 2
+        for i, d in enumerate(dots):
+            angle = start + i * spread
+            rad = math.radians(angle)
+            cos_a, sin_a = math.cos(rad), math.sin(rad)
+            x1, y1 = 100 + 72 * cos_a, 100 - 72 * sin_a
+            x2, y2 = 100 + 90 * cos_a, 100 - 90 * sin_a
+            lx, ly = 100 + 98 * cos_a, 100 - 98 * sin_a
+            tag = d.get("tag") or (d.get("label") or "?")[:2]
+            title = f'{_esc(d["label"])}: {_esc(d["stance"].replace("_", " "))}'
+            parts.append(
+                f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
+                f'stroke="#fff" stroke-width="2" stroke-linecap="round" '
+                f'opacity="0.9"><title>{title}</title></line>'
+                f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="middle" '
+                f'dominant-baseline="central" font-size="7.5" font-weight="700" '
+                f'letter-spacing="0.03em" fill="{_TEXT_MUTED}">{_esc(tag)}'
+                f'<title>{title}</title></text>')
+    return "".join(parts)
+
+
+def _dial_history_caption_html(history_dots: list[dict]) -> str:
+    """Plain-text legend under the dial, same facts as the hover titles on
+    the markers above — a static render (export, screenshot) never shows a
+    hover tooltip, so the comparison must also be readable without one."""
+    if not history_dots:
+        return ""
+    bits = " &nbsp; ".join(
+        f"○ {_esc(d['label'])}: {_esc(d['stance'].replace('_', ' '))}"
+        for d in history_dots)
+    return f'<div class="valen-dial-history">{bits}</div>'
+
+
+def stance_gauge_html(banner: dict, history_dots: list[dict] | None = None) -> str:
     """The cockpit centrepiece: a three-zone semicircular dial (RISK OFF /
     NEUTRAL / RISK ON) with a needle over the current zone. The stance is
     categorical by the handbook's own design (piece 01: "it flips when a
     rule is met", never a continuous score), so the needle points at the
-    current zone's centre rather than implying false precision."""
+    current zone's centre rather than implying false precision.
+
+    `history_dots` (optional, card.dial_history_dots()) adds slim radial
+    tick marks for where the stance sat 1 and 5 sessions ago, so today's
+    needle reads against recent history at a glance instead of a separate
+    table."""
     stance_key = (banner.get("word") or "").replace(" ", "_")
-    zones = [
-        ("RISK_OFF", "M 20 100 A 80 80 0 0 1 60 30.72", _RED, 150),
-        ("NEUTRAL", "M 60 30.72 A 80 80 0 0 1 140 30.72", _GOLD, 90),
-        ("RISK_ON", "M 140 30.72 A 80 80 0 0 1 180 100", _GREEN, 30),
-    ]
+    zones = _DIAL_ZONES
     known = stance_key in {z[0] for z in zones}
     arcs = "".join(
         f'<path d="{path}" fill="none" stroke="{color if known else _GREY}" '
@@ -372,11 +441,13 @@ def stance_gauge_html(banner: dict) -> str:
     else:
         needle = f'<circle cx="100" cy="100" r="6" fill="{_GREY}"/>'
         word_color = _GREY
+    markers = _dial_history_markers_svg(history_dots or [])
     label = banner.get("word") or "NOT SHOWN"
-    svg = (f'<svg viewBox="0 0 200 108" width="220" height="119">{arcs}{needle}</svg>')
+    svg = (f'<svg viewBox="0 0 200 108" width="220" height="119">{arcs}{markers}{needle}</svg>')
     return (f'<div class="valen-dial-wrap">{svg}'
            f'<div class="valen-dial-word" style="color:{word_color}">{_esc(label)}</div>'
-           f'<div class="valen-dial-caption">Stance</div></div>')
+           f'<div class="valen-dial-caption">Stance</div>'
+           f'{_dial_history_caption_html(history_dots or [])}</div>')
 
 
 def part_header_html(number: str, title: str, subtitle: str) -> str:

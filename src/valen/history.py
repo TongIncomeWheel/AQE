@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-SESSIONS_AGO = {"5d_ago": 5, "1mo_ago": 21}
+SESSIONS_AGO = {"1d_ago": 1, "5d_ago": 5, "1mo_ago": 21}
 
 
 def truncate_series(closes: pd.Series, sessions_ago: int) -> pd.Series:

@@ -151,7 +151,7 @@ breadth_rows_data = C.breadth_rows(valen)
 card_html = (
     '<div class="valen-root"><div class="valen-card">'
     + T.stance_header_html(banner)
-    + T.stance_gauge_html(banner)
+    + T.stance_gauge_html(banner, C.dial_history_dots(valen))
     + T.headline_banner_html(C.headline(valen), pe.get("so_what"))
     + f'<div class="valen-caption">As of {fresh.get("as_of") or valen.get("exported_at") or "—"} '
       f'· basis: {fresh.get("basis", "eod")} · regime: '
