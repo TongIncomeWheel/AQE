@@ -128,12 +128,12 @@ def test_none_pma_doc_is_a_noop():
 
 
 def test_shadow_mode_fires_the_state_but_sends_zero_emails(monkeypatch):
-    """The single most important acceptance test in the whole handoff
-    (§9): the state machine advances and the ledger gets a line, but
-    NOTHING is emailed while config.PMA_CONDITIONS_MODE stays "shadow"
-    (the default)."""
+    """§9's acceptance rule still holds even though "live" is now the
+    default (PM's own call, 2026-10-02): whenever PMA_CONDITIONS_MODE
+    IS "shadow" (e.g. rolled back for a re-test), the state machine still
+    advances and the ledger still gets a line, but NOTHING is emailed."""
     from src.alerts import config as C
-    assert C.PMA_CONDITIONS_LIVE is False  # the default, unless env overridden
+    monkeypatch.setattr(C, "PMA_CONDITIONS_LIVE", False)
 
     sent = []
     monkeypatch.setattr(CC, "_maybe_email", lambda *a, **k: sent.append(a))

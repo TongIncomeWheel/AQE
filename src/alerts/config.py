@@ -95,11 +95,13 @@ SHORTLIST_NEAR_PCT = _f("SHORTLIST_NEAR_PCT", 1.5)  # shortlist: within X% of en
 
 
 # --- PMA condition alerts (AQE Handoff: D123/R21, 2026-10-02) --------------
-# "shadow" (default): the new condition checks run every cycle and log to
+# "shadow": the new condition checks run every cycle and log to
 # condition_ledger/, but email ZERO new messages — the existing trigger
-# path (above) keeps running exactly as it does today. "live": a state
-# CHANGE (CONDITION MET / FAILED PUSH / CHASED / ANALYST OUT / EXIT LINE)
-# also sends an email. The PM decides the switch at the 15 Oct review —
-# this flag is that switch, nothing else touches it.
-PMA_CONDITIONS_MODE = os.environ.get("PMA_CONDITIONS_MODE", "shadow").strip().lower()
+# path (above) keeps running exactly as it does today. "live" (PM's own
+# call, 2026-10-02): a state CHANGE (CONDITION MET / FAILED PUSH / CHASED /
+# ANALYST OUT / EXIT LINE) also sends an email, as soon as PMA starts
+# publishing a row's own `conditions` block (none do yet in production —
+# this flag just means AQE is ready the moment they do, not that anything
+# fires today).
+PMA_CONDITIONS_MODE = os.environ.get("PMA_CONDITIONS_MODE", "live").strip().lower()
 PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
