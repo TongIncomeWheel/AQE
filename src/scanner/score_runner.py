@@ -24,7 +24,7 @@ import pandas as pd
 from src.data.earnings import load_earnings
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
-from src.engines import bq, divergence, elder, energy, flow, health, k39, mp, pin_bar, pipeline_rank, readiness, scoring, smart_money_knn, squeeze_breakout, structure, vwap
+from src.engines import anchored_vwap, bq, divergence, elder, energy, flow, health, k39, liquidity_sweep, mp, order_flow, pin_bar, pipeline_rank, price_volume_profile, readiness, scoring, smart_money_knn, squeeze_breakout, structure, vwap
 from src.engines.utils import atr
 
 
@@ -76,6 +76,16 @@ SCORE_COLUMNS = [
     "squeeze_breakout_volume_confirmed", "was_squeezed",
     # ── Rolling 14-day VWAP (last bar only) ──
     "vwap_14d", "vwap_14d_position",
+    # ── Anchored VWAP — structure pivot + swing low (last bar only) ──
+    "avwap_structure", "avwap_structure_date", "avwap_structure_position",
+    "avwap_structure_bars", "avwap_swing", "avwap_swing_date",
+    "avwap_swing_position", "avwap_swing_bars",
+    # ── Price volume profile — POC + value area (last bar only) ──
+    "pvp_poc", "pvp_vah", "pvp_val", "pvp_position", "pvp_bars_used",
+    # ── Order-flow / tape-reading proxy (last bar only) ──
+    "of_state", "of_pressure", "of_date", "of_rvol",
+    # ── Liquidity sweep / stop run (last bar only) ──
+    "ls_state", "ls_level", "ls_date", "ls_volume_confirmed",
 ]
 
 
@@ -191,6 +201,10 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             # Squeeze breakout + volume, and rolling 14D VWAP — both LAST-BAR reads.
             sb = squeeze_breakout.compute_squeeze_breakout(d)
             vw = vwap.compute_vwap(d, length=14)
+            avw = anchored_vwap.compute_anchored_vwap(d)
+            pvp = price_volume_profile.compute_price_volume_profile(d)
+            of = order_flow.compute_order_flow(d)
+            ls = liquidity_sweep.compute_liquidity_sweep(d)
         except Exception as exc:
             print(f"  !! {ticker}: {exc}", file=sys.stderr)
             continue
@@ -429,6 +443,64 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         row.loc[_last_ix, "vwap_14d"] = (
             float(vw["vwap_14d"]) if vw["vwap_14d"] is not None else np.nan)
         row.loc[_last_ix, "vwap_14d_position"] = vw["vwap_14d_position"]
+        # Anchored VWAP (structure pivot + swing low) — LAST BAR ONLY.
+        row["avwap_structure"] = np.nan
+        row["avwap_structure_date"] = None
+        row["avwap_structure_position"] = None
+        row["avwap_structure_bars"] = np.nan
+        row["avwap_swing"] = np.nan
+        row["avwap_swing_date"] = None
+        row["avwap_swing_position"] = None
+        row["avwap_swing_bars"] = np.nan
+        row.loc[_last_ix, "avwap_structure"] = (
+            float(avw["avwap_structure"]) if avw["avwap_structure"] is not None else np.nan)
+        row.loc[_last_ix, "avwap_structure_date"] = avw["avwap_structure_date"]
+        row.loc[_last_ix, "avwap_structure_position"] = avw["avwap_structure_position"]
+        row.loc[_last_ix, "avwap_structure_bars"] = (
+            float(avw["avwap_structure_bars"]) if avw["avwap_structure_bars"] is not None else np.nan)
+        row.loc[_last_ix, "avwap_swing"] = (
+            float(avw["avwap_swing"]) if avw["avwap_swing"] is not None else np.nan)
+        row.loc[_last_ix, "avwap_swing_date"] = avw["avwap_swing_date"]
+        row.loc[_last_ix, "avwap_swing_position"] = avw["avwap_swing_position"]
+        row.loc[_last_ix, "avwap_swing_bars"] = (
+            float(avw["avwap_swing_bars"]) if avw["avwap_swing_bars"] is not None else np.nan)
+        # Classic price-level volume profile (POC + value area) — LAST BAR ONLY.
+        row["pvp_poc"] = np.nan
+        row["pvp_vah"] = np.nan
+        row["pvp_val"] = np.nan
+        row["pvp_position"] = None
+        row["pvp_bars_used"] = np.nan
+        row.loc[_last_ix, "pvp_poc"] = (
+            float(pvp["pvp_poc"]) if pvp["pvp_poc"] is not None else np.nan)
+        row.loc[_last_ix, "pvp_vah"] = (
+            float(pvp["pvp_vah"]) if pvp["pvp_vah"] is not None else np.nan)
+        row.loc[_last_ix, "pvp_val"] = (
+            float(pvp["pvp_val"]) if pvp["pvp_val"] is not None else np.nan)
+        row.loc[_last_ix, "pvp_position"] = pvp["pvp_position"]
+        row.loc[_last_ix, "pvp_bars_used"] = (
+            float(pvp["pvp_bars_used"]) if pvp["pvp_bars_used"] is not None else np.nan)
+        # Order-flow / tape-reading PROXY (OHLCV-derived, never real tape) —
+        # LAST BAR ONLY.
+        row["of_state"] = None
+        row["of_pressure"] = np.nan
+        row["of_date"] = None
+        row["of_rvol"] = np.nan
+        row.loc[_last_ix, "of_state"] = of["of_state"]
+        row.loc[_last_ix, "of_pressure"] = (
+            float(of["of_pressure"]) if of["of_pressure"] is not None else np.nan)
+        row.loc[_last_ix, "of_date"] = of["of_date"]
+        row.loc[_last_ix, "of_rvol"] = (
+            float(of["of_rvol"]) if of["of_rvol"] is not None else np.nan)
+        # Liquidity sweep ("stop run") detection — LAST BAR ONLY.
+        row["ls_state"] = None
+        row["ls_level"] = np.nan
+        row["ls_date"] = None
+        row["ls_volume_confirmed"] = None
+        row.loc[_last_ix, "ls_state"] = ls["ls_state"]
+        row.loc[_last_ix, "ls_level"] = (
+            float(ls["ls_level"]) if ls["ls_level"] is not None else np.nan)
+        row.loc[_last_ix, "ls_date"] = ls["ls_date"]
+        row.loc[_last_ix, "ls_volume_confirmed"] = ls["ls_volume_confirmed"]
         out_rows.append(row[SCORE_COLUMNS])
 
     if not out_rows:

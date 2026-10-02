@@ -95,7 +95,7 @@ Roughly 60 fields per ticker, grouped:
 - **Composite scores**: `sc_momentum`, `ptrs`, `pipe_rank`, and the five engine reads (Flow/Energy/Structure/MP/Elder) plus BQ/K39 where relevant, with per-engine **gate breakdown** (which specific floor a name is failing, not just pass/fail).
 - **`subcomponents`** — the ~46 nightly sub-scores behind the six engine reads, so the committee sees *why* an engine scored what it did.
 - **THE BRACKET** — one nested object: the operative stop (tightest structural level passing all 3 charter gates), the target ladder, R:R, volume-validated levels. Single source of truth for stop/targets; mechanical DSL/TP fields are retired.
-- **DETECT layer** — `structure_shift` (BOS/CHoCH), `div_state` (price/oscillator divergence), `pin_bar_state`/`inside_bar`, `choch_state` + kNN instance-based confidence, `mp_accel` (momentum acceleration), `squeeze_breakout_state` + `vwap_14d`. Data only, never a gate.
+- **DETECT layer** — `structure_shift` (BOS/CHoCH), `div_state` (price/oscillator divergence), `pin_bar_state`/`inside_bar`, `choch_state` + kNN instance-based confidence, `mp_accel` (momentum acceleration), `squeeze_breakout_state` + `vwap_14d`, `avwap_structure`/`avwap_swing` (anchored VWAP), `pvp_poc`/`pvp_vah`/`pvp_val` (price volume profile), `of_state` (order-flow proxy), `ls_state` (liquidity sweep). Data only, never a gate.
 - **`lens`, `lens_positive`, `lens_warnings`** — the lens-consensus reading aid (§5).
 - **Signal Radar tags** — `runner_setup`/`premove_setup` + conviction, detection-rate labels, never sizing.
 - **Sector/thematic context** — GICS gate, sector trend state, RRG quadrant/direction, primary thematic basket.
@@ -565,6 +565,70 @@ panel every other engine reads. Two VWAPs, two horizons, two purposes.
 `vwap_14d = Σ(typical_price × volume, 14) / Σ(volume, 14)`, `typical_price =
 (high+low+close)/3` (Pine `hlc3`). `vwap_14d_position`: `ABOVE` if the last close is
 at or above `vwap_14d`, else `BELOW`.
+
+### 5.8 Anchored VWAP — `src/engines/anchored_vwap.py`
+
+Added 2026-10-02. VWAP run forward from a chosen EVENT bar rather than a rolling
+window (§5.7) or a session open — the classic "anchor to a swing/pivot and run the
+volume-weighted average forward" indicator, on DAILY bars (no intraday pull, so it
+runs for the full scan universe, unlike `src/alerts/live_measures.py`'s
+session-anchored VWAP built for the ~50-name D123 condition-watch set only). Two
+anchors, both reusing `src/scanner/levels.py`'s single pivot/swing definition:
+
+- `avwap_structure` / `avwap_structure_position` / `avwap_structure_date` /
+  `avwap_structure_bars`: anchored to `last_pivot_high`'s own date — the same level
+  `structure_shift` measures a break against.
+- `avwap_swing` / `avwap_swing_position` / `avwap_swing_date` / `avwap_swing_bars`:
+  anchored to the fib ladder's `swing_low`'s own date.
+
+Either anchor is `null` when no confirmed pivot/swing exists yet. Data only, never
+a gate.
+
+### 5.9 Price Volume Profile — `src/engines/price_volume_profile.py`
+
+Added 2026-10-02. Classic volume-by-PRICE (not volume-by-time — distinct from both
+`vol_profile.py`'s historical target/stop simulation and `live_measures.py`'s
+time-of-day profile). Daily-bar approximation: each of the trailing 60 sessions'
+volume is split across a 24-bin price grid by a triangular kernel peaking at that
+day's own typical price `(high+low+close)/3`, falling to zero at that day's own
+high/low (no intraday data is pulled for the full universe).
+
+- `pvp_poc`: the bin carrying the most volume (Point of Control).
+- `pvp_vah` / `pvp_val`: Value Area High/Low — grown outward from `pvp_poc`, always
+  into the heavier neighbour, until 70% of the lookback's volume is covered.
+- `pvp_position`: `ABOVE_VALUE` / `INSIDE_VALUE` / `BELOW_VALUE` — last close vs
+  `[pvp_val, pvp_vah]`. `pvp_bars_used`: how many of the trailing 60 sessions had
+  usable volume. Data only, never a gate.
+
+### 5.10 Order-flow / tape-reading proxy — `src/engines/order_flow.py`
+
+Added 2026-10-02. **Explicitly a proxy, never real tape or bid/ask data** — FMP's
+daily panel carries neither, so there is no real order flow to read. The closest
+honest OHLCV-only reading: a LAST-BAR categorical event requiring both directional
+conviction and volume confirmation, distinct from Flow's `cmf` (§3), a SMOOTHED
+10-bar average.
+
+`of_pressure` = the money-flow multiplier `((close-low)-(high-close))/(high-low)`,
+-1..1 (+1 closed at the bar's high, -1 at its low). `of_state` = `AGGRESSIVE_BUY`
+when `of_pressure >= 0.6` AND volume clears 1.5× its own 20-bar average;
+`AGGRESSIVE_SELL` mirrors it at `<= -0.6`; else `NONE`. `of_rvol` = that volume
+ratio; `of_date` = the bar's date (`null` when `of_state=NONE`). Data only, never
+a gate.
+
+### 5.11 Liquidity sweep ("stop run") — `src/engines/liquidity_sweep.py`
+
+Added 2026-10-02. A wick through a prior CONFIRMED pivot — where stops cluster —
+that closes back on the other side the same bar. Reuses the single pivot
+definition (§5.5) via `last_confirmed_pivot_high` and the new mirror
+`last_confirmed_pivot_low` (`src/scanner/levels.py`), scanned on the bars BEFORE
+today so a sweep can never use its own bar as the level it broke.
+
+`ls_state`: `BULLISH_SWEEP` = today's low wicked below the most recent confirmed
+pivot low, close recovered back above it. `BEARISH_SWEEP` mirrors it on a pivot
+high. `NONE` otherwise. `ls_level` = the swept pivot's price; `ls_date` = the sweep
+bar's date; `ls_volume_confirmed` = was the sweep bar's volume above its own 20-bar
+average (never filters `ls_state`, same pattern as
+`squeeze_breakout_volume_confirmed`). Data only, never a gate.
 
 ## 6. Health Score — `src/engines/health.py` (held positions ONLY — the HOLD decision)
 

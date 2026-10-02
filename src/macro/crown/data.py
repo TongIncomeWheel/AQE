@@ -339,7 +339,7 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
     not carry open interest, `oi_available` is False and `contracts` is empty:
     a gamma profile built on assumed OI would be fiction with a number on it.
     """
-    from src.options.providers.alpaca import (_http_get, parse_occ_symbol)
+    from src.options.providers.alpaca import (_get, _http_get, parse_occ_symbol)
 
     today = today or date.today()
     getter = http_get or _http_get
@@ -374,7 +374,7 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
                            f"{underlying} — check the Alpaca key has trading "
                            "scope, not just market data")}
 
-    greeks, token, saw_any, saw_greeks = {}, None, False, False
+    greeks, ivs, token, saw_any, saw_greeks = {}, {}, None, False, False
     try:
         for _ in range(12):
             if token:
@@ -386,6 +386,17 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
                 if g is not None:
                     saw_greeks = True
                     greeks[occ] = float(g)
+                # IV is on the snapshot alongside greeks, not inside the greeks
+                # dict itself — same two-key lookup options/providers/alpaca.py
+                # uses for the CSP chain. Missing IV degrades that one contract
+                # out of the spot-shock reprice (gamma.py); it never blocks the
+                # real-strike cumulative method, which doesn't need IV at all.
+                iv = _get(snap, "impliedVolatility", "implied_volatility")
+                if iv is not None:
+                    try:
+                        ivs[occ] = float(iv)
+                    except (TypeError, ValueError):
+                        pass
             token = resp.get("next_page_token")
             if not token:
                 break
@@ -404,7 +415,7 @@ def fetch_gamma_chain(underlying: str, spot: float, *, today: date | None = None
             continue
         rows.append({"occ": occ, "strike": float(strike), "right": right,
                      "dte": (expiry - today).days, "gamma": gamma,
-                     "open_interest": float(oi)})
+                     "open_interest": float(oi), "iv": ivs.get(occ)})
 
     if not saw_any:
         reason = "the chain endpoint returned no snapshots"

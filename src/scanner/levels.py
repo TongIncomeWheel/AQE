@@ -213,6 +213,39 @@ def last_confirmed_pivot_high(
     return None
 
 
+def last_confirmed_pivot_low(
+    low: np.ndarray,
+    dates: np.ndarray,
+    k: int = PIVOT_K,
+    window: int = SWING_WINDOW,
+) -> dict | None:
+    """The MOST RECENT confirmed fractal pivot low — regardless of where
+    price sits relative to it. Mirrors `last_confirmed_pivot_high` exactly
+    (same fractal, same recency-not-side selection) for the LOW side, which
+    `recent_pivot_lows()` deliberately does not give: that function filters
+    to lows BELOW the close (support candidates), the same one-sided filter
+    `overhead_resistance()` applies to highs — correct for "what could serve
+    as a stop" and unusable for "what level did today's wick sweep", which
+    needs the most recent pivot low on EITHER side of price (built for
+    `engines/liquidity_sweep.py`'s bullish-sweep case: today's own low wicks
+    BELOW this pivot's price, then today's close recovers back above it).
+
+    Returns {price, date, bars_ago} for the latest pivot, or None.
+    """
+    n = len(low)
+    if n < 2 * k + 1:
+        return None
+    start = max(0, n - window)
+    l = low[start:]
+    d = dates[start:]
+    for i in range(len(l) - k - 1, k - 1, -1):
+        if l[i] <= l[i - k:i + k + 1].min():
+            return {"price": round(float(l[i]), 2),
+                    "date": str(pd.Timestamp(d[i]).date()),
+                    "bars_ago": int(len(l) - 1 - i)}
+    return None
+
+
 def fib_levels(swing_low: float, swing_high: float) -> dict:
     """Fibonacci retracements (support) and extensions (targets) for a swing."""
     rng = swing_high - swing_low

@@ -648,6 +648,105 @@ SCORE_TREE = [
       "engines/signal_radar.py:219-229",
       "argmax over 4 families of mean((feature-frozen_mean)/frozen_std) "
       "across each family's feature set"),
+    R("avwap_structure_position", "", "leaf", "label", "ABOVE|BELOW",
+      "Last close vs the anchored VWAP run forward from the most recent "
+      "CONFIRMED pivot high — the same level structure_shift breaks against",
+      "engines/anchored_vwap.py:compute_anchored_vwap",
+      "close>=avwap_structure -> ABOVE; else BELOW"),
+    R("avwap_structure", "avwap_structure_position", "leaf", "usd", "",
+      "Anchored VWAP run forward from last_pivot_high.date through today",
+      "engines/anchored_vwap.py:compute_anchored_vwap",
+      "sum(typical_price*volume, from last_pivot_high.date) / "
+      "sum(volume, from last_pivot_high.date); typical_price=(high+low+close)/3"),
+    R("avwap_structure_date", "avwap_structure_position", "leaf", "date", "",
+      "Anchor date of avwap_structure",
+      "engines/anchored_vwap.py:compute_anchored_vwap", "= last_pivot_high.date"),
+    R("avwap_structure_bars", "avwap_structure_position", "leaf", "score", "",
+      "Sessions from the structure anchor through today, inclusive",
+      "engines/anchored_vwap.py:compute_anchored_vwap",
+      "count(bars from last_pivot_high.date through today)"),
+    R("avwap_swing_position", "", "leaf", "label", "ABOVE|BELOW",
+      "Last close vs the anchored VWAP run forward from the up-swing's "
+      "anchor low — the same level the fib ladder and structure_shift's "
+      "BEARISH_CHOCH side measure against",
+      "engines/anchored_vwap.py:compute_anchored_vwap",
+      "close>=avwap_swing -> ABOVE; else BELOW"),
+    R("avwap_swing", "avwap_swing_position", "leaf", "usd", "",
+      "Anchored VWAP run forward from the up-swing's low through today",
+      "engines/anchored_vwap.py:compute_anchored_vwap",
+      "sum(typical_price*volume, from swing_low_idx) / "
+      "sum(volume, from swing_low_idx); typical_price=(high+low+close)/3"),
+    R("avwap_swing_date", "avwap_swing_position", "leaf", "date", "",
+      "Anchor date of avwap_swing (= fib_swing_low's own date)",
+      "engines/anchored_vwap.py:compute_anchored_vwap", "= fib_swing_low_date"),
+    R("avwap_swing_bars", "avwap_swing_position", "leaf", "score", "",
+      "Sessions from the swing anchor through today, inclusive",
+      "engines/anchored_vwap.py:compute_anchored_vwap",
+      "count(bars from swing_low_idx through today)"),
+    R("pvp_position", "", "leaf", "label", "ABOVE_VALUE|INSIDE_VALUE|BELOW_VALUE",
+      "Last close vs the trailing-60-session price volume profile's value area",
+      "engines/price_volume_profile.py:compute_price_volume_profile",
+      "close>pvp_vah -> ABOVE_VALUE; close<pvp_val -> BELOW_VALUE; "
+      "else INSIDE_VALUE"),
+    R("pvp_poc", "pvp_position", "leaf", "usd", "",
+      "Point of Control — the price bin carrying the most volume over the "
+      "trailing 60 sessions, each day's volume split by a triangular "
+      "kernel peaking at (high+low+close)/3",
+      "engines/price_volume_profile.py:compute_price_volume_profile",
+      "argmax(bin_volume) over a 24-bin price grid spanning the lookback's "
+      "[low, high]"),
+    R("pvp_vah", "pvp_position", "leaf", "usd", "",
+      "Value Area High — top of the band holding 70% of the lookback's volume",
+      "engines/price_volume_profile.py:compute_price_volume_profile",
+      "grow bins outward from pvp_poc, heavier neighbour first, until "
+      "covered>=0.70*total_volume"),
+    R("pvp_val", "pvp_position", "leaf", "usd", "",
+      "Value Area Low — bottom of that same 70% band",
+      "engines/price_volume_profile.py:compute_price_volume_profile",
+      "grow bins outward from pvp_poc, heavier neighbour first, until "
+      "covered>=0.70*total_volume"),
+    R("pvp_bars_used", "pvp_position", "leaf", "score", "",
+      "How many of the trailing 60 sessions carried volume and a valid "
+      "high>=low range",
+      "engines/price_volume_profile.py:compute_price_volume_profile",
+      "count(bars in lookback with volume>0 and high>=low)"),
+    R("of_state", "", "leaf", "label", "AGGRESSIVE_BUY|AGGRESSIVE_SELL|NONE",
+      "Order-flow / tape-reading PROXY (OHLCV-derived, not real tape or "
+      "bid/ask data) -- a lopsided close on confirmed volume, on the last "
+      "bar only",
+      "engines/order_flow.py:compute_order_flow",
+      "pressure>=0.6 AND rvol>=1.5 -> AGGRESSIVE_BUY; pressure<=-0.6 AND "
+      "rvol>=1.5 -> AGGRESSIVE_SELL; else NONE"),
+    R("of_pressure", "of_state", "leaf", "decimal", "",
+      "The last bar's money-flow multiplier",
+      "engines/order_flow.py:compute_order_flow",
+      "((close-low)-(high-close)) / (high-low)"),
+    R("of_date", "of_state", "leaf", "date", "",
+      "Date of the last bar (null when of_state=NONE)",
+      "engines/order_flow.py:compute_order_flow",
+      "of_state!=NONE -> last bar's date; else null"),
+    R("of_rvol", "of_state", "leaf", "ratio", "",
+      "Last bar's volume vs its own trailing 20-bar average",
+      "engines/order_flow.py:compute_order_flow",
+      "volume[-1] / mean(volume[-21:-1])"),
+    R("ls_state", "", "leaf", "label", "BULLISH_SWEEP|BEARISH_SWEEP|NONE",
+      "Liquidity sweep ('stop run'): a wick through a prior CONFIRMED pivot "
+      "that closes back on the other side the same bar",
+      "engines/liquidity_sweep.py:compute_liquidity_sweep",
+      "low<pivot_low.price<close -> BULLISH_SWEEP; "
+      "high>pivot_high.price>close -> BEARISH_SWEEP; else NONE"),
+    R("ls_level", "ls_state", "leaf", "usd", "",
+      "The swept pivot's price",
+      "engines/liquidity_sweep.py:compute_liquidity_sweep",
+      "ls_state!=NONE -> the broken pivot's price; else null"),
+    R("ls_date", "ls_state", "leaf", "date", "",
+      "Date of the sweep bar",
+      "engines/liquidity_sweep.py:compute_liquidity_sweep",
+      "ls_state!=NONE -> last bar's date; else null"),
+    R("ls_volume_confirmed", "ls_state", "leaf", "bool", "true|false",
+      "Was volume on the sweep bar above its own 20-bar average",
+      "engines/liquidity_sweep.py:compute_liquidity_sweep",
+      "ls_state==NONE -> null; else volume[-1] > mean(volume[-21:-1])"),
 
     # ── Sector / thematic state fields ──────────────────────────────────
     R("grade", "", "leaf", "label", "DEPLOY|HOLD|TURNING|WATCH|AVOID",

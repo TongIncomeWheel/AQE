@@ -220,6 +220,92 @@ def test_analyse_lists_what_failed_rather_than_dropping_it():
     assert "QQQ" in out["unavailable"]
 
 
+# ──────────────────────────────── §2.3 gamma — spot-shock reprice (option #1)
+
+
+def _chain_iv(call_oi, put_oi, gamma=0.03, dte=10, iv=0.20):
+    """Same shape as `_chain` plus IV, since the spot-shock reprice needs it."""
+    return ([{"strike": k, "right": "CALL", "gamma": gamma, "open_interest": v,
+             "dte": dte, "iv": iv} for k, v in call_oi.items()]
+           + [{"strike": k, "right": "PUT", "gamma": gamma, "open_interest": v,
+              "dte": dte, "iv": iv} for k, v in put_oi.items()])
+
+
+def test_spot_shock_finds_a_flip_the_real_ladder_method_cannot():
+    """The documented failure this rebuild exists to fix: puts dominate so
+    heavily, concentrated so far OTM, that the real-strike cumulative sum
+    never climbs back across zero by the top of the ladder (flip=None) — but
+    repricing at a hypothetical spot near the calls finds one, because gamma
+    decays on both tails as a contract moves off the money."""
+    contracts = _chain_iv({102: 1000, 104: 800}, {86: 20000, 88: 15000},
+                          dte=20, iv=0.25)
+    r = GAM.gamma_profile(contracts, 100.0)
+    assert r["flip_cumulative_strike"] is None
+    assert r["flip_method"] == "spot_shock"
+    assert r["gamma_flip"] is not None
+    assert r["spot_shock"]["available"] is True
+    assert r["spot_shock"]["flip"] == r["gamma_flip"]
+
+
+def test_spot_shock_degrades_to_cumulative_without_any_iv():
+    """No IV anywhere in the chain -> the reprice cannot run at all, and
+    gamma_flip must fall back to the old method rather than go missing."""
+    r = GAM.gamma_profile(_chain({100: 5000}, {95: 1000}), 100.0)
+    assert r["flip_method"] == "cumulative_strike"
+    assert r["spot_shock"]["available"] is False
+    assert r["spot_shock"]["iv_coverage_pct"] == 0.0
+    assert "implied vol" in r["spot_shock"]["reason"]
+    assert r["gamma_flip"] == r["flip_cumulative_strike"]
+
+
+def test_spot_shock_gated_by_the_iv_coverage_floor():
+    """A reprice built on a sliver of the book would overstate its own
+    precision -- below GAMMA_SPOT_SHOCK_MIN_IV_COVERAGE it must decline and
+    say exactly why, not publish a shocked number anyway."""
+    contracts = [
+        {"strike": 100, "right": "CALL", "gamma": 0.03, "open_interest": 5000,
+         "dte": 10, "iv": 0.20},
+        {"strike": 102, "right": "CALL", "gamma": 0.02, "open_interest": 3000, "dte": 10},
+        {"strike": 104, "right": "CALL", "gamma": 0.015, "open_interest": 2000, "dte": 10},
+        {"strike": 95, "right": "PUT", "gamma": 0.03, "open_interest": 1000, "dte": 10},
+    ]
+    r = GAM.gamma_profile(contracts, 100.0)
+    assert r["flip_method"] == "cumulative_strike"
+    ss = r["spot_shock"]
+    assert ss["available"] is False
+    assert ss["contracts_used"] == 1
+    assert ss["iv_coverage_pct"] == 0.25
+    assert "below the 50%" in ss["reason"]
+
+
+def test_spot_shock_reports_a_genuinely_one_sided_book_honestly():
+    """Calls dominate at EVERY strike across the whole band -> there is no
+    flip to find, in either method, and the reprice must say so rather than
+    force a crossing that isn't there."""
+    call_oi = {90: 2000, 95: 3000, 100: 4000, 105: 3000, 110: 2000}
+    put_oi = {90: 500, 95: 500, 100: 500, 105: 500, 110: 500}
+    r = GAM.gamma_profile(_chain_iv(call_oi, put_oi), 100.0)
+    assert r["gamma_flip"] is None
+    assert r["spot_shock"]["available"] is False
+    assert r["spot_shock"]["iv_coverage_pct"] == 1.0
+    assert "genuinely one-sided" in r["spot_shock"]["reason"]
+
+
+def test_spot_shock_grid_matches_the_configured_point_count():
+    r = GAM.gamma_profile(_chain_iv({102: 1000}, {98: 1000}), 100.0)
+    ss = r["spot_shock"]
+    assert ss["grid_points"] == S.GAMMA_SPOT_SHOCK_GRID_POINTS
+    assert len(ss["profile"]) == S.GAMMA_SPOT_SHOCK_GRID_POINTS
+
+
+def test_existing_gamma_fixtures_are_unaffected_by_the_spot_shock_addition():
+    """Every fixture above this section carries no IV -- confirms the new
+    method is purely additive for callers that predate it."""
+    r = GAM.gamma_profile(_chain({100: 9000, 105: 6000}, {95: 200}), 100.0)
+    assert r["flip_method"] == "cumulative_strike"
+    assert r["gamma_flip"] == r["flip_cumulative_strike"]
+
+
 # ──────────────────────────────────────────── §2.4 implied vs realised vol
 
 CBOE_OHLC = ("DATE,OPEN,HIGH,LOW,CLOSE\n"

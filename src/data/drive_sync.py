@@ -412,6 +412,59 @@ _FIELD_GLOSSARY = {
                "HOURLY vwap_5d, not a duplicate of it — different bar granularity and "
                "lookback, same VWAP formula.",
     "vwap_14d_position": "ABOVE or BELOW — the last close vs vwap_14d.",
+    "avwap_structure": "Anchored VWAP run forward from the most recent CONFIRMED pivot "
+                       "high (last_pivot_high) through today — the same level "
+                       "structure_shift measures a break against. Volume-weighted "
+                       "typical price (high+low+close)/3, cumulative from the anchor "
+                       "bar, not a rolling window. Null when no confirmed pivot exists "
+                       "yet (short history).",
+    "avwap_structure_date": "Date of the structure anchor (= last_pivot_high.date).",
+    "avwap_structure_position": "ABOVE or BELOW — the last close vs avwap_structure.",
+    "avwap_structure_bars": "Sessions from the structure anchor through today, inclusive.",
+    "avwap_swing": "Anchored VWAP run forward from the up-swing's anchor low "
+                   "(fib_swing_low's own date) through today — the same level the fib "
+                   "ladder and structure_shift's BEARISH_CHOCH side measure against. "
+                   "Null when no swing is detected.",
+    "avwap_swing_date": "Date of the swing anchor (= fib_swing_low's date).",
+    "avwap_swing_position": "ABOVE or BELOW — the last close vs avwap_swing.",
+    "avwap_swing_bars": "Sessions from the swing anchor through today, inclusive.",
+    "pvp_poc": "Price Volume Profile Point of Control — the price level carrying the "
+              "most volume over the trailing 60 sessions. Daily-bar approximation: "
+              "each day's volume is split across a price grid by a triangular kernel "
+              "peaking at that day's own typical price (high+low+close)/3, not true "
+              "tick-level volume-by-price (which needs intraday data this engine "
+              "deliberately does not pull for the full scan universe).",
+    "pvp_vah": "Value Area High — the top of the narrowest price band holding 70% of "
+              "the trailing 60 sessions' volume, grown outward from pvp_poc.",
+    "pvp_val": "Value Area Low — the bottom of that same 70% band.",
+    "pvp_position": "ABOVE_VALUE | INSIDE_VALUE | BELOW_VALUE — the last close vs "
+                    "[pvp_val, pvp_vah].",
+    "pvp_bars_used": "How many of the trailing 60 sessions actually carried volume "
+                     "and a valid high>=low range.",
+    "of_state": "Order-flow / tape-reading PROXY — NOT real tape or bid/ask data "
+               "(FMP's feed carries neither). AGGRESSIVE_BUY/SELL on the LAST bar "
+               "when its close is lopsided within its own range (|money-flow "
+               "multiplier|>=0.6) AND volume clears 1.5x its own 20-bar average; "
+               "else NONE. A last-bar categorical event, distinct from flow.py's "
+               "cmf (a smoothed 10-bar average feeding the scored Flow composite).",
+    "of_pressure": "The last bar's money-flow multiplier ((close-low)-(high-close))"
+                  "/(high-low), -1..1. +1 closed at the bar's high, -1 at its low.",
+    "of_date": "Date of the last bar (null when of_state=NONE).",
+    "of_rvol": "Last bar's volume / its own trailing 20-bar average.",
+    "ls_state": "Liquidity sweep ('stop run') detection: BULLISH_SWEEP = today's low "
+               "wicked below the most recent CONFIRMED pivot low, then today's close "
+               "recovered back above it. BEARISH_SWEEP mirrors it on a pivot high. "
+               "NONE otherwise. Data only, never a gate — the pivot is the same "
+               "fractal definition structure_shift and the fib ladder use, scanned on "
+               "the bars BEFORE today so a sweep can never use its own bar as the "
+               "level it broke.",
+    "ls_level": "The swept pivot's price (null when ls_state=NONE).",
+    "ls_date": "Date of the sweep bar (null when ls_state=NONE).",
+    "ls_volume_confirmed": "True if the sweep bar's volume cleared its own 20-bar "
+                           "average. Never gates ls_state — an unconfirmed sweep "
+                           "stays visible, just flagged (same pattern as "
+                           "squeeze_breakout_volume_confirmed). Null when "
+                           "ls_state=NONE.",
     "fib_swing_low/high": "Anchors of the current detected up-swing (absolute USD).",
     "fib_236/382/500/618/786": "Fib RETRACEMENT supports below the swing high — potential "
                                "pullback/STOP levels (absolute USD).",
@@ -785,6 +838,32 @@ _FIELD_SCHEMA = {
     "was_squeezed":                        _fs("flag", "boolean", "n/a"),
     "vwap_14d":                            _fs("reference", "usd", "n/a"),
     "vwap_14d_position":                   _fs("signal", "label", "n/a"),
+    # Anchored VWAP — structure pivot + swing low (context only, never a gate)
+    "avwap_structure":                     _fs("reference", "usd", "n/a"),
+    "avwap_structure_date":                _fs("reference", "date", "n/a"),
+    "avwap_structure_position":            _fs("signal", "label", "n/a"),
+    "avwap_structure_bars":                _fs("reference", "score", "n/a"),
+    "avwap_swing":                         _fs("reference", "usd", "n/a"),
+    "avwap_swing_date":                    _fs("reference", "date", "n/a"),
+    "avwap_swing_position":                _fs("signal", "label", "n/a"),
+    "avwap_swing_bars":                    _fs("reference", "score", "n/a"),
+    # Price volume profile — POC + value area (context only, never a gate)
+    "pvp_poc":                             _fs("reference", "usd", "n/a"),
+    "pvp_vah":                             _fs("reference", "usd", "n/a"),
+    "pvp_val":                             _fs("reference", "usd", "n/a"),
+    "pvp_position":                        _fs("signal", "label", "n/a"),
+    "pvp_bars_used":                       _fs("reference", "score", "n/a"),
+    # Order-flow / tape-reading proxy (OHLCV-derived, never real tape — context
+    # only, never a gate)
+    "of_state":                            _fs("signal", "label", "n/a"),
+    "of_pressure":                         _fs("reference", "decimal", "n/a"),
+    "of_date":                             _fs("reference", "date", "n/a"),
+    "of_rvol":                             _fs("reference", "ratio", "n/a"),
+    # Liquidity sweep / stop run (context only, never a gate)
+    "ls_state":                            _fs("signal", "label", "n/a"),
+    "ls_level":                            _fs("reference", "usd", "n/a"),
+    "ls_date":                             _fs("reference", "date", "n/a"),
+    "ls_volume_confirmed":                 _fs("flag", "boolean", "n/a"),
     # Sector (SRM) + thematic rotation DIRECTION per ticker
     "sector_trend_state":     _fs("signal", "label", "n/a"),
     "sector_rrg_quadrant":    _fs("signal", "label", "n/a"),
@@ -1683,6 +1762,15 @@ _NEW_ENGINE_NULL = {
     "squeeze_breakout_state": None, "squeeze_breakout_date": None,
     "squeeze_breakout_volume_confirmed": None, "was_squeezed": None,
     "vwap_14d": None, "vwap_14d_position": None,
+    "avwap_structure": None, "avwap_structure_date": None,
+    "avwap_structure_position": None, "avwap_structure_bars": None,
+    "avwap_swing": None, "avwap_swing_date": None,
+    "avwap_swing_position": None, "avwap_swing_bars": None,
+    "pvp_poc": None, "pvp_vah": None, "pvp_val": None,
+    "pvp_position": None, "pvp_bars_used": None,
+    "of_state": None, "of_pressure": None, "of_date": None, "of_rvol": None,
+    "ls_state": None, "ls_level": None, "ls_date": None,
+    "ls_volume_confirmed": None,
 }
 
 
@@ -1720,6 +1808,27 @@ def _new_engine_fields(row) -> dict:
         "was_squeezed": _sub_bool(get("was_squeezed")),
         "vwap_14d": _sub_val(get("vwap_14d")),
         "vwap_14d_position": _sub_str(get("vwap_14d_position")),
+        "avwap_structure": _sub_val(get("avwap_structure")),
+        "avwap_structure_date": _sub_str(get("avwap_structure_date")),
+        "avwap_structure_position": _sub_str(get("avwap_structure_position")),
+        "avwap_structure_bars": _sub_int(get("avwap_structure_bars")),
+        "avwap_swing": _sub_val(get("avwap_swing")),
+        "avwap_swing_date": _sub_str(get("avwap_swing_date")),
+        "avwap_swing_position": _sub_str(get("avwap_swing_position")),
+        "avwap_swing_bars": _sub_int(get("avwap_swing_bars")),
+        "pvp_poc": _sub_val(get("pvp_poc")),
+        "pvp_vah": _sub_val(get("pvp_vah")),
+        "pvp_val": _sub_val(get("pvp_val")),
+        "pvp_position": _sub_str(get("pvp_position")),
+        "pvp_bars_used": _sub_int(get("pvp_bars_used")),
+        "of_state": _sub_str(get("of_state")),
+        "of_pressure": _sub_val(get("of_pressure")),
+        "of_date": _sub_str(get("of_date")),
+        "of_rvol": _sub_val(get("of_rvol")),
+        "ls_state": _sub_str(get("ls_state")),
+        "ls_level": _sub_val(get("ls_level")),
+        "ls_date": _sub_str(get("ls_date")),
+        "ls_volume_confirmed": _sub_bool(get("ls_volume_confirmed")),
     }
 
 
@@ -2754,7 +2863,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         # Momentum acceleration + divergence + pin-bar + smart-money kNN +
         # squeeze breakout + rolling VWAP (null until the next scores run)
         "mp_accel", "div_state", "pin_bar_state", "choch_state",
-        "squeeze_breakout_state", "vwap_14d",
+        "squeeze_breakout_state", "vwap_14d", "avwap_structure", "avwap_swing",
+        "pvp_poc", "of_state", "ls_state",
     ]
     for _rec in export.get("daily_list") or []:
         _missing = [f for f in _REQUIRED_FIELDS if f not in _rec]

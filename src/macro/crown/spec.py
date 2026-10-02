@@ -145,6 +145,20 @@ GAMMA_WALL_DOMINANCE = 2.5     # x the even share (1 / number of strikes)
 # tape already is, and "positive gamma" stops being a comfortable statement.
 GAMMA_FLIP_NEAR_PCT = 1.0
 
+# DERIVED — spot-shock reprice (the SpotGamma/SqueezeMetrics method): re-price
+# every contract's gamma at a grid of hypothetical spot levels spanning the
+# same +/-15% band above, instead of reading gamma at today's real spot only.
+# Fixes the documented failure mode where the REAL strike ladder never changes
+# sign inside the band (one whole side of the book), so the old cumulative
+# method returns no flip at all even though a repriced curve almost always
+# crosses — gamma decays on both tails as a contract moves away from the money.
+GAMMA_SPOT_SHOCK_GRID_POINTS = 61   # odd -> includes spot itself
+# A reprice on sparse IV coverage would overstate its own precision — this is
+# the floor below which we fall back to the real-strike cumulative method and
+# SAY SO (flip_method), rather than silently publish a shocked flip built on
+# a fraction of the book.
+GAMMA_SPOT_SHOCK_MIN_IV_COVERAGE = 0.50
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # §2.5 — Divergence
