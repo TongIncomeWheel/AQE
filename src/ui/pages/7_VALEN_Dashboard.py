@@ -163,6 +163,7 @@ card_html = (
       'move (amplifies it); green = dealers hedge AGAINST it (dampens it). A risk read, '
       'never a trade signal.</div>'
     + T.traffic_light_html(C.gex_block(valen))
+    + f'<div style="margin-top:16px">{T.macro_cockpit_html(C.crown_cockpit_gauge_rows(valen), C.crown_divergence_row(valen), C.crown_cot_row(valen))}</div>'
     + '<div class="valen-grid2" style="margin-top:16px">'
     + f'<div>{T.trend_checklist_html(C.trend_rows({**valen, "trend": display_trend}), breadth_rows_data)}</div>'
     + f'<div>{T.instruments_html(C.extension_rows({**valen, "extension": display_ext}), breadth_rows_data)}</div>'

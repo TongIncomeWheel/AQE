@@ -257,6 +257,54 @@ def gex_block(valen: dict) -> dict:
     return valen.get("gex") or {"status": "UNAVAILABLE", "reason": "not computed"}
 
 
+def crown_cockpit_block(valen: dict) -> dict:
+    """The five Crown-sourced cockpit readings (crown_cockpit.py) — same
+    pass-through shape as gex_block() above, one entry per widget, each
+    independently OK/UNAVAILABLE."""
+    cc = valen.get("crown_cockpit") or {}
+    default = {"status": "UNAVAILABLE", "reason": "not computed"}
+    return {k: cc.get(k) or default for k in
+           ("breadth_range", "cta_crowding", "dispersion", "divergence", "cot")}
+
+
+def _cockpit_tag(reading: dict, key: str) -> str | None:
+    if reading.get("status") != "OK":
+        return None
+    v = reading.get(key)
+    return str(v).replace("_", " ").title() if v else None
+
+
+def crown_cockpit_gauge_rows(valen: dict) -> list[dict]:
+    """Breadth range / CTA crowding / dispersion as banded gauges — the
+    SAME `_gauge_bar_html` primitive VALEN's own Part 1 instruments
+    already use (theme.py), just three more `kind`s. `tag` carries the
+    run's own category word (regime/bias/state) next to a label that
+    otherwise stays fixed, so the `kind`-keyed explainer still applies."""
+    cc = crown_cockpit_block(valen)
+    br, cta, disp = cc["breadth_range"], cc["cta_crowding"], cc["dispersion"]
+    return [
+        {"label": "Breadth — 12mo range position", "kind": "breadth_range_pct",
+         "value": br.get("range_pct"), "tag": _cockpit_tag(br, "regime")},
+        {"label": "Trend-fund crowding", "kind": "cta_crowding_pct",
+         "value": cta.get("flip_risk_pct"), "tag": _cockpit_tag(cta, "bias")},
+        {"label": "Dispersion", "kind": "dispersion_pct",
+         "value": disp.get("percentile_pct"), "tag": _cockpit_tag(disp, "state")},
+    ]
+
+
+def crown_divergence_row(valen: dict) -> dict:
+    """How many of Crown's 8 named divergence checks are lit, plus which
+    ones — theme.py renders this as a stat tile with tag pills, not a
+    gauge (there is no meaningful 0-100 scale for a small fixed count)."""
+    return crown_cockpit_block(valen)["divergence"]
+
+
+def crown_cot_row(valen: dict) -> dict:
+    """Which futures markets large speculators are crowded into (COT,
+    straight from cftc.gov) — theme.py renders this as tag pills."""
+    return crown_cockpit_block(valen)["cot"]
+
+
 def management_block(valen: dict) -> dict:
     mg = valen.get("management") or {}
     return {"held_facts": mg.get("held_facts") or [],

@@ -132,6 +132,7 @@ CSS = f"""
 .valen-gauge-head {{ display: flex; justify-content: space-between; align-items: baseline;
   margin-bottom: 6px; gap: 10px; }}
 .valen-gauge-label {{ font-size: 12px; color: {_TEXT_MUTED}; }}
+.valen-gauge-tag {{ font-size: 11px; color: {_GREY}; }}
 .valen-gauge-value {{ font-size: 15px; font-weight: 700; color: {_TEXT};
   font-variant-numeric: tabular-nums; white-space: nowrap; }}
 .valen-gauge-value .valen-stat-sub {{ margin-left: 4px; }}
@@ -226,11 +227,25 @@ _RATIO_LO, _RATIO_HI = 0.0, 3.0
 _RATIO_BANDS = [(0.0, 0.5, _RED), (0.5, 2.0, _GREEN), (2.0, 3.0, _GOLD)]
 _RATIO_TICKS = [0.0, 0.5, 2.0, 3.0]
 
+# Crown-sourced gauges (macro cockpit, 2026-10-02) — crown/spec.py's own
+# frozen CTA_FLIP_RISK_LO/HI (0.20/0.40) breakpoints, transcribed as the
+# 0-100 scale the gauge primitive already renders in. Breadth range and
+# dispersion reuse pct_0_100's own 20/80 bands under their own kind names
+# (never literally "pct_0_100") so each can carry its OWN explainer text —
+# two gauges sharing a `kind` would also share one explainer, which is
+# exactly the trap _LED_EXPLAINER's by-label keying exists to avoid.
+_CTA_LO, _CTA_HI = 0.0, 100.0
+_CTA_BANDS = [(0.0, 20.0, _GREEN), (20.0, 40.0, _GREY), (40.0, 100.0, _RED)]
+_CTA_TICKS = [0.0, 20.0, 40.0, 100.0]
+
 _GAUGE_KIND = {
     "atr_multiple": (_ATR_LO, _ATR_HI, _ATR_BANDS, _ATR_TICKS, ""),
     "vix_vix3m": (_VIX_LO, _VIX_HI, _VIX_BANDS, _VIX_TICKS, ""),
     "pct_0_100": (_PCT100_LO, _PCT100_HI, _PCT100_BANDS, _PCT100_TICKS, "%"),
     "mover_ratio": (_RATIO_LO, _RATIO_HI, _RATIO_BANDS, _RATIO_TICKS, ""),
+    "breadth_range_pct": (_PCT100_LO, _PCT100_HI, _PCT100_BANDS, _PCT100_TICKS, "%"),
+    "dispersion_pct": (_PCT100_LO, _PCT100_HI, _PCT100_BANDS, _PCT100_TICKS, "%"),
+    "cta_crowding_pct": (_CTA_LO, _CTA_HI, _CTA_BANDS, _CTA_TICKS, "%"),
 }
 
 # One-liners answering a standing PM question (2026-10-01): what does this
@@ -251,6 +266,20 @@ _GAUGE_EXPLAINER = {
                  "euphoric/overbought."),
     "mover_ratio": ("4%+ up-days ÷ 4%+ down-days over the window. Above "
                    "1.00 = buyers have had control; below 1.00 = sellers have."),
+    "breadth_range_pct": ("Where the average stock (RSP/SPY) sits in its own "
+                         "12-month range — Crown's heartbeat read, before any "
+                         "individual stock. Near 0% = bottom of the range "
+                         "(often where a narrowing phase is exhausted); near "
+                         "100% = top (often late, not early)."),
+    "dispersion_pct": ("How much more individual stocks are moving than the "
+                      "index, as a percentile of its own history (Crown). "
+                      "Over 80% = the index is hiding what single names are "
+                      "doing; under 20% = stocks are moving together and "
+                      "selection stops paying."),
+    "cta_crowding_pct": ("Share of the 18 markets Crown tracks where trend-"
+                        "following funds are already at a crowded extreme. "
+                        "Over 40% = a lot of money leaning the same way — "
+                        "fragile, not confident; under 20% = a clean trend."),
 }
 
 _LED_EXPLAINER = {
@@ -276,7 +305,7 @@ _TREND_EXPLAINER = (
     "average is climbing — the earliest read on a fresh turn.")
 
 
-def _gauge_bar_html(label: str, value, kind: str, flag=None) -> str:
+def _gauge_bar_html(label: str, value, kind: str, flag=None, tag: str | None = None) -> str:
     """One cockpit instrument: a horizontal banded track with a pointer at
     the current value — the "sliders and illustrations" read, replacing a
     flat stat tile. `kind` looks up the handbook's own frozen bands; an
@@ -284,19 +313,25 @@ def _gauge_bar_html(label: str, value, kind: str, flag=None) -> str:
     a scale. Carries a one-line explainer (what this measures, what the
     number means) under every instrument — a standing PM ask (2026-10-01)
     answered once per `kind` rather than making a reader infer it from the
-    label alone."""
+    label alone.
+
+    `tag` (optional) is a small muted word next to the label for a reading
+    whose CATEGORY varies run to run (e.g. CTA's "mixed"/"risk_on" bias,
+    breadth's "narrowing"/"widening" regime) — the label itself stays
+    stable so `kind`-keyed explainers above still apply."""
+    tag_html = f' <span class="valen-gauge-tag">({_esc(tag)})</span>' if tag else ""
     explainer = _GAUGE_EXPLAINER.get(kind)
     explainer_html = f'<div class="valen-explainer">{_esc(explainer)}</div>' if explainer else ""
     if value is None:
         return (f'<div class="valen-gauge"><div class="valen-gauge-head">'
-               f'<span class="valen-gauge-label">{_esc(label)}</span>'
+               f'<span class="valen-gauge-label">{_esc(label)}{tag_html}</span>'
                f'<span class="valen-stat-unavail">not shown</span></div>'
                f'{explainer_html}</div>')
     spec = _GAUGE_KIND.get(kind)
     flag_html = ' <span class="valen-stat-sub">⚠</span>' if flag else ""
     if spec is None:
         return (f'<div class="valen-gauge"><div class="valen-gauge-head">'
-               f'<span class="valen-gauge-label">{_esc(label)}</span>'
+               f'<span class="valen-gauge-label">{_esc(label)}{tag_html}</span>'
                f'<span class="valen-gauge-value">{_fmt(value)}{flag_html}</span></div>'
                f'{explainer_html}</div>')
     lo, hi, bands, ticks, suffix = spec
@@ -310,7 +345,7 @@ def _gauge_bar_html(label: str, value, kind: str, flag=None) -> str:
     ticks_html = "".join(f"<span>{t:g}{suffix}</span>" for t in ticks)
     return (
         f'<div class="valen-gauge"><div class="valen-gauge-head">'
-        f'<span class="valen-gauge-label">{_esc(label)}</span>'
+        f'<span class="valen-gauge-label">{_esc(label)}{tag_html}</span>'
         f'<span class="valen-gauge-value">{_fmt(value)}{suffix}{flag_html}</span></div>'
         f'<div class="valen-gauge-track">{bands_html}'
         f'<div class="valen-gauge-pointer" style="left:{pos:.2f}%"></div></div>'
@@ -586,10 +621,78 @@ def instruments_html(extension_rows_: list[dict], breadth_rows_: list[dict] | No
     if breadth_rows_:
         rows += [r for r in breadth_rows_ if r.get("section") == "instrument"]
     gauges = "".join(
-        _gauge_bar_html(row["label"], row.get("value"), row.get("kind"), row.get("flag"))
+        _gauge_bar_html(row["label"], row.get("value"), row.get("kind"), row.get("flag"),
+                        row.get("tag"))
         for row in rows
     )
     return f'<div class="valen-col-label">Instruments</div>{gauges}'
+
+
+def _tag_pills_html(items: list[str], empty_word: str = "none") -> str:
+    if not items:
+        return f'<span class="valen-stat-unavail">{_esc(empty_word)}</span>'
+    return "".join(f'<span class="valen-tag">{_esc(t)}</span>' for t in items)
+
+
+def macro_cockpit_html(gauge_rows: list[dict], divergence: dict, cot: dict) -> str:
+    """"Macro cockpit" — a new Part 1 sub-section (PM ask, 2026-10-02: "how
+    Crown and VALEN can be combined... more cockpit illustration within
+    VALEN's structure," answered "all 5," placed as "a new sub-section
+    inside Part 1"). Every reading here is Crown's own, read-only, given
+    VALEN's gauge/LED/tag face — the exact pattern GEX's traffic light
+    already established; this module computes nothing Crown doesn't
+    already compute. All five share Crown's own top-level status
+    (crown_cockpit.crown_status_ok()), so a fully degraded Crown run shows
+    ONE banner here, not five separate "not shown" placeholders."""
+    gauges_shown = any(r.get("value") is not None for r in gauge_rows)
+    if not gauges_shown and divergence.get("status") != "OK" and cot.get("status") != "OK":
+        reason = divergence.get("reason") or cot.get("reason") or "not computed"
+        return (
+            '<div class="valen-col-label">Macro cockpit — Crown Macro</div>'
+            '<div class="valen-explainer" style="margin-bottom:8px">Five Crown Macro '
+            'readings given a VALEN gauge/LED/tag face — breadth range, trend-fund '
+            'crowding, dispersion, divergence checks, and COT crowding. Crown '
+            'computes these independently of VALEN; VALEN only visualizes them.</div>'
+            f'<div class="valen-stat-unavail">Crown macro not shown — {_esc(reason)}</div>')
+
+    gauges_html = "".join(
+        _gauge_bar_html(r["label"], r.get("value"), r.get("kind"), r.get("flag"), r.get("tag"))
+        for r in gauge_rows)
+
+    div_ok = divergence.get("status") == "OK"
+    div_value = (f'{divergence.get("count")} of {divergence.get("total")}' if div_ok
+                else "not shown")
+    div_types = _tag_pills_html(
+        [t.replace("_", " ") for t in (divergence.get("types_fired") or [])]
+    ) if div_ok else ""
+    div_html = (
+        '<div class="valen-stat"><div class="valen-stat-label">Divergence checks lit</div>'
+        f'<div class="valen-stat-value">{_esc(div_value)}</div>'
+        + (f'<div style="margin-top:6px">{div_types}</div>' if div_ok else '')
+        + '<div class="valen-explainer">How many of Crown’s 8 independent '
+          'divergence checks (RSI, cross-asset, VIX, breadth, positioning and '
+          'more) are lit right now. One alone is a straw; several agreeing is '
+          'what the handbook calls a pile of them.</div></div>')
+
+    cot_ok = cot.get("status") == "OK"
+    cot_html = (
+        '<div class="valen-stat"><div class="valen-stat-label">COT — crowded positioning</div>'
+        + (f'<div style="margin-top:2px"><span class="valen-gauge-tag">Crowded long: </span>'
+           f'{_tag_pills_html(cot.get("crowded_long") or [])}</div>'
+           f'<div style="margin-top:4px"><span class="valen-gauge-tag">Crowded short: </span>'
+           f'{_tag_pills_html(cot.get("crowded_short") or [])}</div>'
+           if cot_ok else '<div class="valen-stat-unavail">not shown</div>')
+        + '<div class="valen-explainer">Which futures markets large speculators are '
+          'already crowded into, straight from cftc.gov — at least three days old '
+          'by the time it lands here, so it never times anything, only shows where '
+          'the crowd already is.</div></div>')
+
+    return (
+        '<div class="valen-col-label">Macro cockpit — Crown Macro</div>'
+        '<div class="valen-explainer" style="margin-bottom:8px">Five Crown Macro '
+        'readings given a VALEN gauge/LED/tag face — Crown computes these '
+        'independently of VALEN; VALEN only visualizes them.</div>'
+        f'{gauges_html}{div_html}{cot_html}')
 
 
 def what_would_change_html(watch_for: list[str]) -> str:

@@ -42,6 +42,7 @@ from src.macro.crown import cboe
 
 from . import breadth as breadth_mod
 from . import card, execution, explain, extension, gex as gex_mod, groups as groups_mod
+from . import crown_cockpit as crown_cockpit_mod
 from . import history as history_mod
 from . import house, management, selection, spec, stance, trend
 
@@ -119,9 +120,26 @@ def run_valen() -> dict:
     try:
         from src.macro.crown.daily import load_crown
         crown = load_crown()
+    except Exception:  # noqa: BLE001
+        crown = None
+    try:
         gex_reading = gex_mod.compute_gex_reading((crown or {}).get("gamma"))
     except Exception as exc:  # noqa: BLE001
         gex_reading = {"status": "UNAVAILABLE", "ticker": spec.GEX_TICKER, "reason": str(exc)}
+
+    # Macro cockpit (piece 01) — five more Crown readings given a VALEN
+    # gauge/LED/tag face, the same read-only pattern GEX already
+    # established (see crown_cockpit.py module docstring). Still no new
+    # data pull: the SAME `crown` read above. A PM ask (2026-10-02), "how
+    # Crown and VALEN can be combined... more cockpit illustration within
+    # VALEN's structure" — answered "all 5."
+    try:
+        crown_cockpit = crown_cockpit_mod.compute_crown_cockpit(crown)
+    except Exception as exc:  # noqa: BLE001
+        reason = str(exc)
+        crown_cockpit = {k: {"status": "UNAVAILABLE", "reason": reason} for k in
+                        ("breadth_range", "cta_crowding", "dispersion",
+                         "divergence", "cot")}
 
     st = stance.compute_stance(t, ext, breadth)
     pe = explain.explain(t, ext, st, gr)
@@ -164,6 +182,7 @@ def run_valen() -> dict:
         "curated_panel_context": curated_context,
         "groups": gr,
         "gex": gex_reading,
+        "crown_cockpit": crown_cockpit,
         "stance": st,
         "history": history,
         "plain_english": pe,
@@ -251,6 +270,7 @@ def write_artifacts(artifact: dict) -> dict:
         "extension": card.extension_rows(artifact),
         "breadth": card.breadth_rows(artifact),
         "gex": card.gex_block(artifact),
+        "crown_cockpit": card.crown_cockpit_block(artifact),
         "history": card.history_rows(artifact),
         "neighbourhood": card.neighbourhood_lines(artifact),
         "theme_leaders": card.theme_leaders_table(artifact),
