@@ -741,6 +741,89 @@ def build_after_close_digest(pma_doc: dict, quotes: dict) -> tuple[str, str, str
     return subject, plain, html
 
 
+# ---------------------------------------------------------------------------
+# AQE handoff D123/R21 (2026-10-02) — condition state-change emails. Only
+# called when config.PMA_CONDITIONS_LIVE is true (condition_cycle.py's own
+# gate); shadow mode never reaches this function at all. §6: "an email
+# goes out only on a change of state" — one call here IS one such change,
+# never a per-trigger-touch re-send.
+# ---------------------------------------------------------------------------
+
+_CONDITION_STATE_LABEL = {
+    "CONDITION_MET": ("🟢 CONDITION MET", "#0a8a3a"),
+    "FAILED_PUSH": ("🟠 FAILED PUSH", "#d9a441"),
+    "CHASED": ("🟠 CHASED", "#d9a441"),
+    "ANALYST_OUT": ("🟠 ANALYST OUT", "#d9a441"),
+    "EXIT_LINE_HELD": ("🔴 EXIT LINE", "#d00"),
+    "EXIT_LINE_WARN": ("🟠 EXIT LINE", "#d9a441"),
+}
+
+
+def _condition_sentences(row: dict, eval_result: dict, live: dict) -> list[str]:
+    """Plain words PMA sent (`plain`), the live numbers behind them —
+    never trade_above/close_below/a trigger id (same §2.5 house rule the
+    committee section already holds to)."""
+    out = []
+    shared = (row.get("conditions") or {}).get("shared") or {}
+    for e in (shared.get("buy") or []) + (shared.get("confirm") or []):
+        plain = e.get("plain")
+        if plain:
+            out.append(plain)
+    vol_x = (live.get("vol_x") or {}).get("so_far")
+    if vol_x is not None:
+        out.append(f"Volume {vol_x:.1f}× normal for the time of day.")
+    vwap_info = live.get("vwap") or {}
+    if vwap_info.get("vwap") is not None and not vwap_info.get("provisional"):
+        h1 = live.get("last_hourly_close")
+        side = "Above" if (h1 is not None and h1 > vwap_info["vwap"]) else "Below"
+        out.append(f"{side} today's VWAP {vwap_info['vwap']:.2f}.")
+    chase = shared.get("chase")
+    if chase and chase.get("plain"):
+        out.append(f"Chase line: {chase['plain']}.")
+    if eval_result.get("exit_warn") or eval_result.get("exit_hit"):
+        ex = eval_result.get("exit_hit") or eval_result.get("exit_warn")
+        if ex and ex.get("plain"):
+            out.append(f"Exit line: {ex['plain']}.")
+    return out
+
+
+def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
+                               fired_states: list[str], live: dict) -> tuple[str, str, str]:
+    """Returns (subject, plain, html) for a condition state-change
+    notice — built so it can be unit-tested independent of send."""
+    primary = fired_states[0]
+    label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
+    lit, n_counting = eval_result.get("lit") or [], eval_result.get("n_counting") or 0
+    headline = f"{ticker} · {label}"
+    if primary == "CONDITION_MET" and n_counting:
+        headline += f" · {len(lit)} of {n_counting} analysts"
+    sentences = _condition_sentences(row, eval_result, live)
+
+    subject = f"[AQE] {headline}"
+    plain = (f"{headline}\n" + "\n".join(f"- {s}" for s in sentences)
+            + "\n\nInformation only. Nothing placed, changed, cancelled or sized.")
+    html = (f"<div style='border-left:4px solid {color};padding:8px 12px;"
+           f"background:#fafafa;border-radius:6px;color:#1a1a1a'>"
+           f"<b style='font-size:15px'>{headline}</b>"
+           + "".join(f"<div style='font-size:13px;margin-top:3px'>{s}</div>"
+                     for s in sentences)
+           + "<div style='font-size:11px;color:#999;margin-top:6px'>Information only. "
+             "Nothing placed, changed, cancelled or sized.</div></div>")
+    return subject, plain, html
+
+
+def send_condition_state_email(ticker: str, row: dict, eval_result: dict,
+                               fired_states: list[str], live: dict) -> dict:
+    cfg = _cfg()
+    if not (cfg["resend_key"] or cfg["smtp_pw"]):
+        return {"ok": False, "reason": "no email backend configured"}
+    subject, plain, html = build_condition_state_body(ticker, row, eval_result,
+                                                       fired_states, live)
+    if cfg["resend_key"]:
+        return _send_resend(cfg, subject, plain, html)
+    return _send_smtp(cfg, subject, plain, html)
+
+
 def send_after_close_digest(pma_doc: dict, quotes: dict) -> dict:
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):

@@ -436,6 +436,23 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         summary["pma"]["pruned"] = pruned
         _phase(f"PMA evaluated ({len(fresh_pma)} fresh, {pruned} pruned)")
 
+        # AQE Handoff: D123/R21 condition alerts (2026-10-02) — runs for
+        # EVERY row carrying a `conditions` block, in BOTH shadow and live
+        # mode (only the email send itself is gated by config.
+        # PMA_CONDITIONS_LIVE inside condition_cycle.py). A back-compat
+        # levels file with no `conditions` anywhere makes this a no-op.
+        try:
+            from . import condition_cycle as CC
+            cc_summary = CC.run_condition_cycle(pma_doc, quotes, now_et,
+                                                run_date=pma_doc.get("run_date")
+                                                or now_et.date().isoformat())
+            summary["pma_conditions"] = cc_summary
+            if cc_summary.get("enabled"):
+                _phase(f"conditions evaluated ({cc_summary['rows']} rows, "
+                      f"{len(cc_summary.get('fired') or {})} fired)")
+        except Exception as exc:  # noqa: BLE001 — never break the live cycle for this
+            summary["pma_conditions"] = {"enabled": False, "error": str(exc)}
+
         # After-close digest — once per day, at the first cycle inside the
         # final-cycle window. Uses the legacy daily-reset `state` for its
         # dedup key since "once per trading day" is exactly that set's own
@@ -446,6 +463,18 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 from src.alerts.emailer import send_after_close_digest
                 send_after_close_digest(pma_doc, quotes)
             except Exception:  # noqa: BLE001 — never break the live cycle for this
+                pass
+
+        # §7's daily digest for the condition ledger — written once, at
+        # the same final-cycle gate as the PMA after-close digest, so PMA's
+        # scorecard has a same-day summary rather than needing to parse
+        # the whole JSONL.
+        if is_final and not S.is_fired(state, "PMA", "CONDITIONS_SUMMARY"):
+            S.mark_fired(state, "PMA", "CONDITIONS_SUMMARY")
+            try:
+                from . import condition_ledger as CL
+                CL.write_summary(pma_doc.get("run_date") or now_et.date().isoformat())
+            except Exception:  # noqa: BLE001
                 pass
 
     all_fresh = fresh + fresh_pma

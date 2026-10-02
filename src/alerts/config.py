@@ -92,3 +92,14 @@ PMA_LEVELS_PATH = os.environ.get("PMA_LEVELS_PATH", "aegis/output/pma/pma_levels
 # trigger's life — see src/alerts/pma_levels.py's dedup).
 HELD_NEAR_PCT = _f("HELD_NEAR_PCT", 3.0)          # held: within X% of either stop
 SHORTLIST_NEAR_PCT = _f("SHORTLIST_NEAR_PCT", 1.5)  # shortlist: within X% of entry
+
+
+# --- PMA condition alerts (AQE Handoff: D123/R21, 2026-10-02) --------------
+# "shadow" (default): the new condition checks run every cycle and log to
+# condition_ledger/, but email ZERO new messages — the existing trigger
+# path (above) keeps running exactly as it does today. "live": a state
+# CHANGE (CONDITION MET / FAILED PUSH / CHASED / ANALYST OUT / EXIT LINE)
+# also sends an email. The PM decides the switch at the 15 Oct review —
+# this flag is that switch, nothing else touches it.
+PMA_CONDITIONS_MODE = os.environ.get("PMA_CONDITIONS_MODE", "shadow").strip().lower()
+PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
