@@ -33,6 +33,24 @@ def _n(v) -> float | None:
         return None
 
 
+def entry_level(entry: dict) -> float | None:
+    """The price level a word is judged against. PMA ships two shapes
+    (seen in the real pma_levels.json, 2026-10-03): the SHARED block's
+    words carry `level: 32.01`, while every per-seat word and the chase
+    line carry `levels: [28.18]`. Reading only `level` left every seat
+    word with a price -- and every chase line -- at NOT_YET forever, so
+    the analysts count and CHASED silently under-fired in production."""
+    if not isinstance(entry, dict):
+        return None
+    lv = _n(entry.get("level"))
+    if lv is not None:
+        return lv
+    levels = entry.get("levels")
+    if isinstance(levels, list) and levels:
+        return _n(levels[0])
+    return None
+
+
 def evaluate_word(entry: dict, ctx: dict) -> str:
     """One word, one verdict. `ctx` keys used: price, day_high, day_low,
     open, last_hourly_close, hourly_closes (list, oldest first), vwap
@@ -50,7 +68,7 @@ def evaluate_word(entry: dict, ctx: dict) -> str:
     if w not in S.CONDITION_WORDS:
         return "UNKNOWN_WORD"
 
-    level = _n(entry.get("level"))
+    level = entry_level(entry)
     x = _n(entry.get("x"))
     price = ctx.get("price")
     is_final = bool(ctx.get("is_final_cycle"))

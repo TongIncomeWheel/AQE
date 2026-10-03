@@ -809,6 +809,48 @@ def _word_category(w: str | None) -> str:
     return "Condition"
 
 
+def _word_plain(entry: dict) -> str:
+    """Plain English for a word that arrived without `plain` -- PMA's
+    per-seat words do (2026-10-03), the shared ones don't. PMA's own
+    `plain` is always preferred when present; this is AQE's reading of
+    condition_spec.py's vocabulary, never a raw word name in the inbox."""
+    if entry.get("plain"):
+        return entry["plain"]
+    from .condition_evaluator import entry_level
+    w = entry.get("w") or "condition"
+    lv = entry_level(entry)
+    x = entry.get("x")
+    L = f"{lv:.2f}" if lv is not None else "the level"
+    X = f"{float(x):g}" if isinstance(x, (int, float)) else None
+    table = {
+        "close_above": f"daily close above {L}", "close_below": f"daily close below {L}",
+        "h1_close_above": f"hourly close above {L}", "h1_close_below": f"hourly close below {L}",
+        "trade_above": f"trades above {L}", "trade_below": f"trades below {L}",
+        "reclaim": f"dips under then reclaims {L}", "reject": f"pokes above then rejects {L}",
+        "in_zone": f"pulls back into the zone near {L}",
+        "vol_x_ge": f"volume ≥{X}× normal for the time of day" if X else "volume above normal",
+        "vol_x_le": f"volume ≤{X}× normal for the time of day" if X else "volume below normal",
+        "above_vwap_s": "holds above today's VWAP",
+        "below_vwap_s": (f"{X} hourly closes below today's VWAP" if X
+                         else "an hourly close below today's VWAP"),
+        "rs_today_gt_spy": "outperforming SPY today",
+        "fade_atr_ge": f"fades ≥{X} ATR off the high" if X else "fades off the high",
+        "clv_ge": f"closes in the upper part of its range (CLV ≥{X})" if X else "closes near the high",
+        "clv_le": f"closes in the lower part of its range (CLV ≤{X})" if X else "closes near the low",
+        "red_bar": "closes red on the day",
+        "choch_bearish": "bearish CHoCH on the daily (COB)",
+        "ma_above": "above its moving average (COB)",
+        "age_ge": f"setup at least {X} sessions old (COB)" if X else "setup age (COB)",
+        "elder_ge": f"Elder impulse ≥{X} (COB)" if X else "Elder impulse (COB)",
+        "elder_le": f"Elder impulse ≤{X} (COB)" if X else "Elder impulse (COB)",
+    }
+    if w in table:
+        return table[w]
+    if w.startswith("elder_"):
+        return f"{w.replace('_', ' ')} (COB)"
+    return w.replace("_", " ")
+
+
 def _condition_lines(results: list[tuple[dict, str]]) -> list[str]:
     """One labeled, scannable line per word: '{Category}: {MET/NOT MET/
     WATCHING} — {plain}'. Still the committee's own `plain` text, never the
@@ -817,12 +859,61 @@ def _condition_lines(results: list[tuple[dict, str]]) -> list[str]:
     added in front of it."""
     out = []
     for entry, result in results:
-        plain = entry.get("plain")
-        if not plain:
-            continue
         out.append(f"{_word_category(entry.get('w'))}: {_RESULT_TAG.get(result, result)} "
-                   f"— {plain}")
+                   f"— {_word_plain(entry)}")
     return out
+
+
+_MARK = {"TRUE": "✓", "FALSE": "✗", "NOT_YET": "◌", "UNKNOWN_WORD": "?"}
+
+
+def _voice_lines(row: dict, eval_result: dict) -> list[str]:
+    """One line per voice with ITS OWN criteria marked pass/fail -- the
+    PM's chosen alternative (2026-10-03) to a live committee: PMA logs
+    what each seat is looking for (`conditions.analysts[].buy/confirm/
+    wrong`), AQE marks each word ✓/✗/◌ every cycle. Highest-conviction
+    seats first, capped by config.CONDITION_CARD_MAX_SEATS; the rest fold
+    into one '+N more' line with their overall marks."""
+    from . import config as C
+    detail = eval_result.get("analyst_detail") or {}
+    if not detail:
+        return []
+    meta = {a.get("seat"): a for a in (row.get("conditions") or {}).get("analysts") or []}
+    lit, wrong = set(eval_result.get("lit") or []), set(eval_result.get("wrong_lit") or [])
+
+    def overall(seat: str) -> str:
+        return "✗" if seat in wrong else ("✓" if seat in lit else "◌")
+
+    seats = [s for s, d in detail.items() if (d or {}).get("counts", True)]
+    seats.sort(key=lambda s: -(_n_or(meta.get(s, {}).get("conviction"), 0)))
+    cap = max(1, C.CONDITION_CARD_MAX_SEATS)
+    shown, rest = seats[:cap], seats[cap:]
+
+    def bucket(name: str, results: list) -> str | None:
+        if not results:
+            return None
+        words = ", ".join(f"{_MARK.get(r, '?')} {_word_plain(e)}" for e, r in results)
+        return f"{name} {words}"
+
+    lines = []
+    for s in shown:
+        d = detail[s]
+        conv = meta.get(s, {}).get("conviction")
+        tag = f" ({conv:g})" if isinstance(conv, (int, float)) else ""
+        parts = [p for p in (bucket("buy", d.get("buy") or []),
+                             bucket("confirm", d.get("confirm") or []),
+                             bucket("wrong", d.get("wrong") or [])) if p]
+        lines.append(f"{overall(s)} {s}{tag} — " + " · ".join(parts))
+    if rest:
+        lines.append("+" + f"{len(rest)} more: " + " · ".join(f"{overall(s)} {s}" for s in rest))
+    return lines
+
+
+def _n_or(v, default):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return default
 
 
 def _bracket_line(row: dict) -> str | None:
@@ -832,9 +923,10 @@ def _bracket_line(row: dict) -> str | None:
     reads (src/alerts/pma_levels.py), never recomputed here. Omitted
     entirely (never a partial or fabricated bracket) when any one of
     entry/stop/a target above entry is missing."""
+    from .condition_evaluator import entry_level as _lvl
     shared = (row.get("conditions") or {}).get("shared") or {}
-    entry_level = next((e.get("level") for e in (shared.get("buy") or [])
-                       if e.get("level") is not None), None)
+    entry_level = next((_lvl(e) for e in (shared.get("buy") or [])
+                       if _lvl(e) is not None), None)
     if entry_level is None:
         return None
     levels = row.get("levels") or {}
@@ -905,9 +997,10 @@ def _card_summary(primary: str, row: dict, eval_result: dict) -> str | None:
     """The one plain sentence under the headline, built from the card's own
     numbers (PM 2026-10-03: the one-liner under each example card read
     clearer than the card itself). Never a recommendation."""
+    from .condition_evaluator import entry_level as _lvl
     shared = (row.get("conditions") or {}).get("shared") or {}
-    buy_level = next((e.get("level") for e in (shared.get("buy") or [])
-                     if e.get("level") is not None), None)
+    buy_level = next((_lvl(e) for e in (shared.get("buy") or [])
+                     if _lvl(e) is not None), None)
     n_lit, n_counting = eval_result.get("n_lit") or 0, eval_result.get("n_counting") or 0
     if primary == "CONDITION_MET":
         seats = f" — {n_lit} of {n_counting} analyst seats lit" if n_counting else ""
@@ -922,7 +1015,7 @@ def _card_summary(primary: str, row: dict, eval_result: dict) -> str | None:
         return (f"{cleared}, then an hourly close back under{tail}. "
                 f"Still watched: it re-qualifies on the next hourly close{back}.")
     if primary == "CHASED":
-        lvl = (shared.get("chase") or {}).get("level")
+        lvl = _lvl(shared.get("chase") or {})
         where = f" {lvl:.2f}" if lvl is not None else ""
         met = "Buy conditions met" if eval_result.get("buy_met") else "Buy conditions not met"
         return f"{met}, but price already ran past the chase line{where}."
@@ -955,6 +1048,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
     analysts = _analysts_line(eval_result)
     if analysts:
         lines.append(analysts)
+    lines += [f"  {v}" for v in _voice_lines(row, eval_result)]
 
     vol_x = (live.get("vol_x") or {}).get("so_far")
     if vol_x is not None:

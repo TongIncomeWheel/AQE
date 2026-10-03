@@ -201,6 +201,54 @@ def test_analysts_line_marks_lit_seats_with_a_tick_and_invalidated_with_a_cross(
     assert "ANALYST INVALIDATED" not in plain
 
 
+def test_each_voice_gets_its_own_criteria_line_with_marks():
+    """PM 2026-10-03: PMA logs what each voice is looking for; AQE marks
+    each word pass/fail on the card. Seat words have no `plain`, so the
+    text comes from AQE's own vocabulary reading, never a raw word name."""
+    row = _row()
+    row["conditions"]["analysts"] = [
+        {"seat": "minervini", "conviction": 3, "counts": True},
+        {"seat": "detect-lens", "conviction": 4, "counts": True},
+    ]
+    detail = {
+        "minervini": {"counts": True,
+                      "buy": [({"w": "h1_close_above", "levels": [62.15]}, "TRUE")],
+                      "confirm": [({"w": "vol_x_ge", "x": 1.4}, "FALSE")],
+                      "wrong": [({"w": "close_below", "levels": [60.0]}, "NOT_YET")]},
+        "detect-lens": {"counts": True,
+                        "buy": [({"w": "rs_today_gt_spy"}, "TRUE"),
+                                ({"w": "above_vwap_s"}, "TRUE")],
+                        "confirm": [({"w": "vol_x_ge", "x": 1.0}, "TRUE")],
+                        "wrong": [({"w": "choch_bearish"}, "NOT_YET")]},
+    }
+    ev = _eval_result(buy_met=False, lit=["detect-lens"], analyst_detail=detail)
+    _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["FAILED_PUSH"], _live())
+    # highest conviction first
+    assert ("  ✓ detect-lens (4) — buy ✓ outperforming SPY today, ✓ holds above today's VWAP"
+            " · confirm ✓ volume ≥1× normal for the time of day"
+            " · wrong ◌ bearish CHoCH on the daily (COB)") in plain
+    assert ("  ◌ minervini (3) — buy ✓ hourly close above 62.15"
+            " · confirm ✗ volume ≥1.4× normal for the time of day"
+            " · wrong ◌ daily close below 60.00") in plain
+    assert "h1_close_above" not in plain and "vol_x_ge" not in plain
+
+
+def test_voice_lines_are_capped_and_the_rest_folded(monkeypatch):
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "CONDITION_CARD_MAX_SEATS", 1)
+    row = _row()
+    row["conditions"]["analysts"] = [{"seat": "a", "conviction": 5, "counts": True},
+                                     {"seat": "b", "conviction": 2, "counts": True},
+                                     {"seat": "c", "conviction": 1, "counts": True}]
+    detail = {s: {"counts": True, "buy": [({"w": "above_vwap_s"}, "TRUE")],
+                  "confirm": [], "wrong": []} for s in ("a", "b", "c")}
+    ev = _eval_result(lit=["a", "b"], wrong_lit=["c"], analyst_detail=detail)
+    _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["CONDITION_MET"], _live())
+    assert "  ✓ a (5) — buy ✓ holds above today's VWAP" in plain
+    assert "  +2 more: ✓ b · ✗ c" in plain
+    assert "b (2)" not in plain
+
+
 def test_card_summary_one_liner_sits_under_the_headline():
     """PM 2026-10-03: the one-liner under each example card read clearer
     than the card -- so the card now opens with one, built from its own

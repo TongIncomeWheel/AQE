@@ -105,3 +105,8 @@ SHORTLIST_NEAR_PCT = _f("SHORTLIST_NEAR_PCT", 1.5)  # shortlist: within X% of en
 # fires today).
 PMA_CONDITIONS_MODE = os.environ.get("PMA_CONDITIONS_MODE", "live").strip().lower()
 PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
+
+# How many voices get their own criteria line on a condition card (PM
+# 2026-10-03: "limit the voices instead of all"). Highest conviction first;
+# the rest are folded into one "+N more" line, never dropped silently.
+CONDITION_CARD_MAX_SEATS = int(_f("CONDITION_CARD_MAX_SEATS", 3))

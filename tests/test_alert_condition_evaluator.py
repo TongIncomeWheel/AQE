@@ -49,6 +49,28 @@ def test_h1_close_above_true():
     assert out == "TRUE"
 
 
+def test_a_word_with_a_levels_list_is_judged_not_left_at_not_yet():
+    """PMA's real per-seat words and chase line ship `levels: [x]` (list),
+    not `level: x` (scalar, the shared block). Reading only `level` left
+    every one of them NOT_YET forever in production (2026-10-03)."""
+    assert E.evaluate_word({"w": "h1_close_above", "levels": [99.5]},
+                           _ctx(last_hourly_close=100.0)) == "TRUE"
+    assert E.evaluate_word({"w": "close_below", "levels": [101.0]},
+                           _ctx(is_final_cycle=True)) == "TRUE"
+    assert E.entry_level({"level": 5.0, "levels": [9.0]}) == 5.0   # scalar wins
+    assert E.entry_level({"levels": []}) is None
+
+
+def test_chase_with_a_levels_list_can_actually_fire():
+    row = _row_with_conditions(shared={
+        "buy": [{"w": "h1_close_above", "level": 62.15}], "confirm": [],
+        "no_shared_buy": False,
+        "chase": {"w": "close_above", "levels": [70.0], "when": "EOD"}})
+    out = E.evaluate_conditions(row, _ctx(price=71.0, last_hourly_close=63.0),
+                                datetime(2026, 10, 2, 15, 50, tzinfo=_ET))
+    assert out["chased"] is True
+
+
 def test_h1_close_above_not_yet_without_hourly_close():
     out = E.evaluate_word({"w": "h1_close_above", "level": 99.5},
                           _ctx(last_hourly_close=None))
