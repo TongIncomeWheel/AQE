@@ -891,7 +891,14 @@ def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
     bracket = _bracket_line(row)
     if bracket:
         lines.append(bracket)
-    lines.append(_entry_readiness_line(primary, eval_result))
+    # A pure exit-only row (no shared buy words, no analysts) is a HELD
+    # position with nothing prospective to enter -- "Entry readiness:
+    # WATCHING" on an EXIT LINE notice would misname what's actually going
+    # on. Shown only when the row carries an actual entry side to read.
+    has_entry_side = bool(shared.get("buy")) or bool(
+        (row.get("conditions") or {}).get("analysts"))
+    if has_entry_side:
+        lines.append(_entry_readiness_line(primary, eval_result))
 
     subject = f"[AQE] {headline}"
     plain = (f"{headline}\n" + "\n".join(f"- {s}" for s in lines)

@@ -140,6 +140,33 @@ def test_entry_readiness_reports_a_state_never_an_instruction():
         assert banned not in plain_watch.lower()
 
 
+def test_entry_readiness_omitted_on_a_pure_exit_only_row():
+    """A row with only `exits` and no shared buy / analysts is a HELD
+    position with nothing prospective to enter -- 'Entry readiness:
+    WATCHING' on an EXIT LINE notice would misname what's going on."""
+    row = {"ticker": "PLTR",
+          "conditions": {"shared": {"buy": [], "confirm": [], "chase": None},
+                        "exits": [{"w": "close_below", "value": 162.0,
+                                   "plain": "closes below the committee stop 162.00"}]}}
+    ev = {"buy_met": False, "lit": [], "wrong_lit": [], "chased": False,
+         "exit_warn": None,
+         "exit_hit": {"w": "close_below", "value": 162.0,
+                     "plain": "closes below the committee stop 162.00"},
+         "n_counting": 0, "n_lit": 0, "no_shared_buy": False,
+         "shared_buy_detail": [], "shared_confirm_detail": []}
+    live = {"vol_x": {"so_far": 1.4}, "vwap": {"vwap": 165.3, "provisional": False},
+           "last_hourly_close": 160.5}
+    _, plain, _ = E.build_condition_state_body("PLTR", row, ev, ["EXIT_LINE_HELD"], live)
+    assert "Entry readiness" not in plain
+    assert "Exit line: closes below the committee stop 162.00." in plain
+
+
+def test_entry_readiness_still_shows_when_a_buy_side_exists():
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
+    assert "Entry readiness: MET" in plain
+
+
 def test_failed_push_and_exit_line_labels_render():
     _, plain, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["FAILED_PUSH"], _live())
