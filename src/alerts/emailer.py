@@ -749,13 +749,20 @@ def build_after_close_digest(pma_doc: dict, quotes: dict) -> tuple[str, str, str
 # never a per-trigger-touch re-send.
 # ---------------------------------------------------------------------------
 
+# Human-facing wording only. The state NAMES (the dict keys) are the
+# handoff's own vocabulary and ride in the condition ledger PMA's scorecard
+# reads cross-repo, so they stay as they are; what a PM sees in the inbox
+# is sharpened here (PM feedback 2026-10-03: "what is exit line held? what
+# is analyst out?"). EXIT_LINE_HELD vs _WARN splits on whether the row is
+# a position actually HELD (class == "HELD") -- not on hourly-vs-daily
+# close, which the body's own "Exit line:" sentence states separately.
 _CONDITION_STATE_LABEL = {
-    "CONDITION_MET": ("🟢 CONDITION MET", "#0a8a3a"),
-    "FAILED_PUSH": ("🟠 FAILED PUSH", "#d9a441"),
-    "CHASED": ("🟠 CHASED", "#d9a441"),
-    "ANALYST_OUT": ("🟠 ANALYST OUT", "#d9a441"),
-    "EXIT_LINE_HELD": ("🔴 EXIT LINE", "#d00"),
-    "EXIT_LINE_WARN": ("🟠 EXIT LINE", "#d9a441"),
+    "CONDITION_MET": ("🟢 BUY CONDITIONS MET", "#0a8a3a"),
+    "FAILED_PUSH": ("🟠 PUSH FAILED — closed back under", "#d9a441"),
+    "CHASED": ("🟠 EXTENDED — past the chase line", "#d9a441"),
+    "ANALYST_OUT": ("🟠 ANALYST INVALIDATED", "#d9a441"),
+    "EXIT_LINE_HELD": ("🔴 EXIT LINE CROSSED — HELD POSITION", "#d00"),
+    "EXIT_LINE_WARN": ("🟠 EXIT LINE CROSSED — not held", "#d9a441"),
 }
 
 # Which scannable category a condition word belongs under (PM ask,
@@ -865,6 +872,10 @@ def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
     headline = f"{ticker} · {label}"
     if primary == "CONDITION_MET" and n_counting:
         headline += f" · {len(lit)} of {n_counting} analysts"
+    elif primary == "ANALYST_OUT" and eval_result.get("wrong_lit"):
+        # Name the seat(s) whose own "wrong" rule fired -- "ANALYST OUT"
+        # alone never said which one dropped out of the count.
+        headline += " · " + ", ".join(eval_result["wrong_lit"]) + " out"
 
     lines: list[str] = []
     lines += _condition_lines(eval_result.get("shared_buy_detail") or [])
@@ -883,10 +894,16 @@ def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
     chase = shared.get("chase")
     if chase and chase.get("plain"):
         lines.append(f"Chase line: {chase['plain']}.")
-    if eval_result.get("exit_warn") or eval_result.get("exit_hit"):
-        ex = eval_result.get("exit_hit") or eval_result.get("exit_warn")
-        if ex and ex.get("plain"):
-            lines.append(f"Exit line: {ex['plain']}.")
+    # exit_hit = a DAILY close below the committee's exit level (the §5
+    # definition of the exit actually being hit); exit_warn = only an
+    # HOURLY close below it so far. Said in words -- the headline's
+    # held/not-held split is a different axis and must not be read as this.
+    if eval_result.get("exit_hit") and eval_result["exit_hit"].get("plain"):
+        lines.append(f"Exit line: {eval_result['exit_hit']['plain']} — "
+                     "DAILY close below it (confirmed).")
+    elif eval_result.get("exit_warn") and eval_result["exit_warn"].get("plain"):
+        lines.append(f"Exit line: {eval_result['exit_warn']['plain']} — "
+                     "hourly close below it, not yet a daily close.")
 
     bracket = _bracket_line(row)
     if bracket:

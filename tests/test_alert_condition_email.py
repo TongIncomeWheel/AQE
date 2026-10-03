@@ -46,8 +46,8 @@ def test_build_condition_state_body_includes_ticker_and_state():
     subject, plain, html = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
     assert "HPE" in subject
-    assert "CONDITION MET" in plain
-    assert "CONDITION MET" in html
+    assert "BUY CONDITIONS MET" in plain
+    assert "BUY CONDITIONS MET" in html
 
 
 def test_build_condition_state_body_shows_analyst_count():
@@ -158,7 +158,49 @@ def test_entry_readiness_omitted_on_a_pure_exit_only_row():
            "last_hourly_close": 160.5}
     _, plain, _ = E.build_condition_state_body("PLTR", row, ev, ["EXIT_LINE_HELD"], live)
     assert "Entry readiness" not in plain
-    assert "Exit line: closes below the committee stop 162.00." in plain
+    assert ("Exit line: closes below the committee stop 162.00 — DAILY close below it "
+            "(confirmed).") in plain
+
+
+def test_exit_line_headline_says_held_vs_not_held_and_body_says_hourly_vs_daily():
+    """EXIT_LINE_HELD/_WARN split on whether the row is a position actually
+    HELD -- a different axis from hourly-vs-daily close, which the body
+    line must state in words (PM 2026-10-03: 'what is exit line held?')."""
+    row = {"ticker": "PLTR",
+          "conditions": {"shared": {"buy": [], "confirm": [], "chase": None},
+                        "exits": [{"w": "close_below", "value": 162.0,
+                                   "plain": "closes below the committee stop 162.00"}]}}
+    ex = {"w": "close_below", "value": 162.0,
+         "plain": "closes below the committee stop 162.00"}
+    base = {"buy_met": False, "lit": [], "wrong_lit": [], "chased": False,
+           "n_counting": 0, "n_lit": 0, "no_shared_buy": False,
+           "shared_buy_detail": [], "shared_confirm_detail": []}
+    live = {"vol_x": {"so_far": 1.4}, "vwap": {"vwap": 165.3, "provisional": False},
+           "last_hourly_close": 161.2}
+
+    held_warn = dict(base, exit_warn=ex, exit_hit=None)
+    _, plain, _ = E.build_condition_state_body("PLTR", row, held_warn, ["EXIT_LINE_HELD"], live)
+    assert "EXIT LINE CROSSED — HELD POSITION" in plain
+    assert "hourly close below it, not yet a daily close" in plain
+
+    watch_hit = dict(base, exit_warn=None, exit_hit=ex)
+    _, plain2, _ = E.build_condition_state_body("PLTR", row, watch_hit, ["EXIT_LINE_WARN"], live)
+    assert "EXIT LINE CROSSED — not held" in plain2
+    assert "DAILY close below it (confirmed)" in plain2
+
+
+def test_analyst_out_headline_names_the_seat_that_dropped():
+    ev = _eval_result(buy_met=False, lit=["seow"], wrong_lit=["raschke"])
+    subject, plain, _ = E.build_condition_state_body(
+        "DKNG", _row(), ev, ["ANALYST_OUT"], _live())
+    assert "ANALYST INVALIDATED · raschke out" in subject
+    assert "ANALYST INVALIDATED · raschke out" in plain
+
+
+def test_chased_label_reads_as_extended_past_the_chase_line():
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(chased=True), ["CHASED"], _live())
+    assert "EXTENDED — past the chase line" in plain
 
 
 def test_entry_readiness_still_shows_when_a_buy_side_exists():
@@ -170,10 +212,10 @@ def test_entry_readiness_still_shows_when_a_buy_side_exists():
 def test_failed_push_and_exit_line_labels_render():
     _, plain, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["FAILED_PUSH"], _live())
-    assert "FAILED PUSH" in plain
+    assert "PUSH FAILED — closed back under" in plain
     _, plain2, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["EXIT_LINE_HELD"], _live())
-    assert "EXIT LINE" in plain2
+    assert "EXIT LINE CROSSED — HELD POSITION" in plain2
 
 
 def test_send_condition_state_email_no_backend_configured(monkeypatch):
