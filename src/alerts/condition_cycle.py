@@ -58,6 +58,11 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
 
     state = CS.load_condition_state()
     any_fired = False
+    # One email per CYCLE, not per ticker (PM 2026-10-03: "I don't want
+    # individual ticker based alerts. The alerts should run every 15mins").
+    # Every row that changed state this cycle becomes one card in a single
+    # digest sent after the loop.
+    cards: list[tuple] = []
 
     for row in rows:
         ticker = row.get("ticker")
@@ -116,14 +121,22 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 now=now_et.astimezone(ZoneInfo("Asia/Singapore")))
             CL.append_line(run_date, line)
 
-            if fired_states:
-                _maybe_email(ticker, row, eval_result, fired_states, live)
+            # ANALYST_OUT stays in the ledger (PMA's scorecard reads it) but
+            # is NOT a card of its own (PM 2026-10-03: "analyst fail is
+            # nonsense ... it wouldn't be published") -- it shows as a ✗ on
+            # that seat inside whichever card the name next earns.
+            card_states = [s for s in fired_states if s != "ANALYST_OUT"]
+            if card_states:
+                cards.append((ticker, row, eval_result, card_states, live))
         except Exception:  # noqa: BLE001 — one name's failure never blocks the rest
             summary["errors"] += 1
             continue
 
     if any_fired:
         CS.save_condition_state(state)
+    if cards:
+        summary["cards"] = [c[0] for c in cards]
+        _maybe_email_digest(cards, now_et)
 
     return summary
 
@@ -136,16 +149,16 @@ def _num(v) -> float | None:
         return None
 
 
-def _maybe_email(ticker: str, row: dict, eval_result: dict, fired_states: list[str],
-                 live: dict) -> None:
+def _maybe_email_digest(cards: list[tuple], now_et: datetime) -> None:
     """§7: "In shadow, nothing in §6 is emailed." The config flag is the
     ONLY gate — everything above (evaluation, state, ledger) runs
-    identically in both modes."""
+    identically in both modes. `cards` = [(ticker, row, eval_result,
+    fired_states, live), ...] for this cycle; one send for all of them."""
     from . import config as C
     if not C.PMA_CONDITIONS_LIVE:
         return
     try:
-        from .emailer import send_condition_state_email
-        send_condition_state_email(ticker, row, eval_result, fired_states, live)
+        from .emailer import send_condition_digest
+        send_condition_digest(cards, now_et)
     except Exception:  # noqa: BLE001
         pass

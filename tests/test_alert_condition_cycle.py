@@ -136,7 +136,7 @@ def test_shadow_mode_fires_the_state_but_sends_zero_emails(monkeypatch):
     monkeypatch.setattr(C, "PMA_CONDITIONS_LIVE", False)
 
     sent = []
-    monkeypatch.setattr(CC, "_maybe_email", lambda *a, **k: sent.append(a))
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
 
     quotes = {"HPE": {"price": 64.2, "prev_close": 61.0, "day_high": 64.5,
                       "day_low": 61.9, "open": 62.0},
@@ -147,19 +147,21 @@ def test_shadow_mode_fires_the_state_but_sends_zero_emails(monkeypatch):
     assert summary["enabled"] is True
     assert "HPE" in summary["fired"]
     assert "CONDITION_MET" in summary["fired"]["HPE"]
-    # _maybe_email was CALLED (the wiring reaches it)...
-    assert sent
-    # ...but send_condition_state_email itself must never actually be
-    # invoked while PMA_CONDITIONS_LIVE is False -- verified directly below.
+    # _maybe_email_digest was CALLED once with HPE's card (the wiring reaches it)...
+    assert len(sent) == 1
+    assert [c[0] for c in sent[0][0]] == ["HPE"]
+    # ...but send_condition_digest itself must never actually be invoked
+    # while PMA_CONDITIONS_LIVE is False -- verified directly below.
 
 
 def test_maybe_email_is_a_noop_in_shadow_mode(monkeypatch):
     from src.alerts import config as C
     monkeypatch.setattr(C, "PMA_CONDITIONS_LIVE", False)
     calls = []
-    monkeypatch.setattr("src.alerts.emailer.send_condition_state_email",
+    monkeypatch.setattr("src.alerts.emailer.send_condition_digest",
                        lambda *a, **k: calls.append(a))
-    CC._maybe_email("HPE", {}, {}, ["CONDITION_MET"], {})
+    CC._maybe_email_digest([("HPE", {}, {}, ["CONDITION_MET"], {})],
+                           datetime(2026, 10, 2, 11, 0, tzinfo=_ET))
     assert calls == []
 
 
@@ -167,11 +169,56 @@ def test_maybe_email_sends_in_live_mode(monkeypatch):
     from src.alerts import config as C
     monkeypatch.setattr(C, "PMA_CONDITIONS_LIVE", True)
     calls = []
-    monkeypatch.setattr("src.alerts.emailer.send_condition_state_email",
+    monkeypatch.setattr("src.alerts.emailer.send_condition_digest",
                        lambda *a, **k: calls.append(a) or {"ok": True})
-    CC._maybe_email("HPE", {}, {}, ["CONDITION_MET"], {})
+    CC._maybe_email_digest([("HPE", {}, {}, ["CONDITION_MET"], {})],
+                           datetime(2026, 10, 2, 11, 0, tzinfo=_ET))
     assert len(calls) == 1
-    assert calls[0][0] == "HPE"
+    assert calls[0][0][0][0] == "HPE"
+
+
+def test_two_rows_firing_in_one_cycle_make_one_digest_not_two_emails(monkeypatch):
+    """PM 2026-10-03: no per-ticker alerts -- one email per 15-min cycle
+    carrying every card that changed state."""
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    doc = _pma_doc_with_conditions()
+    second = dict(doc["rows"][0], ticker="DELL")
+    doc["rows"].append(second)
+    quotes = {"HPE": {"price": 64.2, "prev_close": 61.0, "day_high": 64.5,
+                      "day_low": 61.9, "open": 62.0},
+             "DELL": {"price": 64.2, "prev_close": 61.0, "day_high": 64.5,
+                      "day_low": 61.9, "open": 62.0},
+             "SPY": {"price": 500.5, "prev_close": 499.0}}
+    summary = CC.run_condition_cycle(doc, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
+                                     run_date="2026-10-02")
+    assert set(summary["fired"]) == {"HPE", "DELL"}
+    assert len(sent) == 1
+    assert sorted(c[0] for c in sent[0][0]) == ["DELL", "HPE"]
+
+
+def test_analyst_out_alone_is_ledgered_but_never_becomes_a_card(monkeypatch):
+    """PM 2026-10-03: "analyst fail is nonsense ... it wouldn't be
+    published." The state still fires for the ledger (PMA's scorecard reads
+    it); it just never produces an email card on its own."""
+    import src.data.fmp_client as FC
+    monkeypatch.setattr(FC, "FMPClient", lambda: _FakeClient(below_level=True))
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    doc = _pma_doc_with_conditions()
+    # buy stays unmet (bars close under 62.15); raschke's own "wrong" rule
+    # (traded above 59) fires off day_high.
+    doc["rows"][0]["conditions"]["analysts"].append(
+        {"seat": "raschke", "counts": True, "buy": [], "confirm": [],
+         "wrong": [{"w": "trade_above", "level": 59.0}]})
+    quotes = {"HPE": {"price": 60.0, "prev_close": 61.0, "day_high": 60.5,
+                      "day_low": 59.5, "open": 60.0},
+             "SPY": {"price": 500.5, "prev_close": 499.0}}
+    summary = CC.run_condition_cycle(doc, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
+                                     run_date="2026-10-02")
+    assert summary["fired"]["HPE"] == ["ANALYST_OUT"]
+    assert sent == []
+    assert "cards" not in summary
 
 
 # -------------------------------------------------------------- ledger wiring

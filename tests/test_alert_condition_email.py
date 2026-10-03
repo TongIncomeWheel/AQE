@@ -93,8 +93,8 @@ def test_each_committee_word_renders_as_a_labeled_scan_line():
     Category: VERDICT line."""
     _, plain, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
-    assert "Structure: MET — an hourly candle closes above pivot_high 62.15" in plain
-    assert "Volume: MET — volume at least 1.4x normal for the time of day" in plain
+    assert "Structure: ✓ MET — an hourly candle closes above pivot_high 62.15" in plain
+    assert "Volume: ✓ MET — volume at least 1.4x normal for the time of day" in plain
 
 
 def test_a_not_yet_word_renders_as_watching_not_false():
@@ -104,8 +104,8 @@ def test_a_not_yet_word_renders_as_watching_not_false():
     ev = _eval_result(buy_met=False,
                       shared_buy_detail=[(row["conditions"]["shared"]["buy"][0], "NOT_YET")])
     _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["FAILED_PUSH"], _live())
-    assert "Structure: WATCHING" in plain
-    assert "Structure: NOT MET" not in plain
+    assert "Structure: ◌ WATCHING" in plain
+    assert "✗ NOT MET" not in plain
 
 
 def test_bracket_line_shows_entry_stop_target_and_rr():
@@ -131,11 +131,11 @@ def test_entry_readiness_reports_a_state_never_an_instruction():
     (MET/WATCHING), never tell anyone to act."""
     _, plain_met, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(buy_met=True), ["CONDITION_MET"], _live())
-    assert "Entry readiness: MET" in plain_met
+    assert "Entry readiness: ✓ MET" in plain_met
 
     _, plain_watch, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(buy_met=False), ["FAILED_PUSH"], _live())
-    assert "Entry readiness: WATCHING" in plain_watch
+    assert "Entry readiness: ◌ WATCHING" in plain_watch
     for banned in ("enter now", "watch for entry", "buy now"):
         assert banned not in plain_watch.lower()
 
@@ -189,12 +189,45 @@ def test_exit_line_headline_says_held_vs_not_held_and_body_says_hourly_vs_daily(
     assert "DAILY close below it (confirmed)" in plain2
 
 
-def test_analyst_out_headline_names_the_seat_that_dropped():
-    ev = _eval_result(buy_met=False, lit=["seow"], wrong_lit=["raschke"])
-    subject, plain, _ = E.build_condition_state_body(
-        "DKNG", _row(), ev, ["ANALYST_OUT"], _live())
-    assert "ANALYST INVALIDATED · raschke out" in subject
-    assert "ANALYST INVALIDATED · raschke out" in plain
+def test_analysts_line_marks_lit_seats_with_a_tick_and_invalidated_with_a_cross():
+    """PM 2026-10-03: an analyst failing is not an alert, it's a ✗ on the
+    seat inside whichever card the name earns."""
+    ev = _eval_result(buy_met=False, lit=["seow"], wrong_lit=["raschke"],
+                      analyst_detail={"seow": {"counts": True}, "raschke": {"counts": True},
+                                      "weis": {"counts": True}})
+    _, plain, _ = E.build_condition_state_body("DKNG", _row(), ev, ["FAILED_PUSH"], _live())
+    assert "Analysts: ✓ seow · ✗ raschke (invalidated) · ◌ weis" in plain
+    assert "ANALYST INVALIDATED" not in plain
+
+
+def test_card_summary_one_liner_sits_under_the_headline():
+    """PM 2026-10-03: the one-liner under each example card read clearer
+    than the card -- so the card now opens with one, built from its own
+    numbers."""
+    row = _row()
+    ev = _eval_result(buy_met=False,
+                      shared_confirm_detail=[(row["conditions"]["shared"]["confirm"][0], "FALSE")])
+    _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["FAILED_PUSH"], _live())
+    assert plain.splitlines()[1] == (
+        "Cleared 62.15, then an hourly close back under — Volume confirm never came.")
+    _, plain_met, _ = E.build_condition_state_body(
+        "HPE", row, _eval_result(), ["CONDITION_MET"], _live())
+    assert plain_met.splitlines()[1] == "All buy conditions met — 2 of 3 analyst seats lit."
+
+
+def test_digest_stacks_every_card_under_one_subject_and_one_footer():
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    now = datetime(2026, 10, 2, 14, 30, tzinfo=ZoneInfo("America/New_York"))
+    row2 = dict(_row(), ticker="DELL")
+    cards = [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live()),
+             ("DELL", row2, _eval_result(buy_met=False), ["FAILED_PUSH"], _live())]
+    subject, plain, html = E.build_condition_digest(cards, now)
+    assert subject == "[AQE] 14:30 ET conditions · 2 cards · BUY MET 1 · PUSH FAILED 1"
+    assert "HPE ·" in plain and "DELL ·" in plain
+    assert plain.count("Information only.") == 1
+    assert html.count("Information only.") == 1
+    assert "14:30 ET · 2 names changed state this cycle" in plain
 
 
 def test_chased_label_reads_as_extended_past_the_chase_line():
@@ -206,7 +239,7 @@ def test_chased_label_reads_as_extended_past_the_chase_line():
 def test_entry_readiness_still_shows_when_a_buy_side_exists():
     _, plain, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
-    assert "Entry readiness: MET" in plain
+    assert "Entry readiness: ✓ MET" in plain
 
 
 def test_failed_push_and_exit_line_labels_render():
@@ -218,9 +251,12 @@ def test_failed_push_and_exit_line_labels_render():
     assert "EXIT LINE CROSSED — HELD POSITION" in plain2
 
 
-def test_send_condition_state_email_no_backend_configured(monkeypatch):
+def test_send_condition_digest_no_backend_configured(monkeypatch):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
     monkeypatch.delenv("RESEND_API_KEY", raising=False)
     monkeypatch.delenv("AQE_SMTP_PASSWORD", raising=False)
-    res = E.send_condition_state_email("HPE", _row(), _eval_result(),
-                                       ["CONDITION_MET"], _live())
+    res = E.send_condition_digest(
+        [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())],
+        datetime(2026, 10, 2, 14, 30, tzinfo=ZoneInfo("America/New_York")))
     assert res["ok"] is False

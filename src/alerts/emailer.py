@@ -760,7 +760,9 @@ _CONDITION_STATE_LABEL = {
     "CONDITION_MET": ("🟢 BUY CONDITIONS MET", "#0a8a3a"),
     "FAILED_PUSH": ("🟠 PUSH FAILED — closed back under", "#d9a441"),
     "CHASED": ("🟠 EXTENDED — past the chase line", "#d9a441"),
-    "ANALYST_OUT": ("🟠 ANALYST INVALIDATED", "#d9a441"),
+    # ANALYST_OUT is deliberately absent: it is never a card of its own
+    # (PM 2026-10-03) -- condition_cycle filters it out before cards are
+    # built; the seat shows as ✗ on the Analysts line instead.
     "EXIT_LINE_HELD": ("🔴 EXIT LINE CROSSED — HELD POSITION", "#d00"),
     "EXIT_LINE_WARN": ("🟠 EXIT LINE CROSSED — not held", "#d9a441"),
 }
@@ -784,8 +786,14 @@ _WORD_CATEGORY = {
     "clv_ge": "Close location", "clv_le": "Close location",
     "red_bar": "Candle",
 }
-_RESULT_TAG = {"TRUE": "MET", "FALSE": "NOT MET", "NOT_YET": "WATCHING",
-              "UNKNOWN_WORD": "UNKNOWN"}
+# PM 2026-10-03: "each criteria in the card can have a simple tick or X."
+# ◌ (not ✗) for NOT_YET -- the data isn't ready, the condition hasn't failed.
+_RESULT_TAG = {"TRUE": "✓ MET", "FALSE": "✗ NOT MET", "NOT_YET": "◌ WATCHING",
+              "UNKNOWN_WORD": "? UNKNOWN"}
+_DIGEST_SHORT = {"CONDITION_MET": "BUY MET", "FAILED_PUSH": "PUSH FAILED",
+                 "CHASED": "EXTENDED", "EXIT_LINE_HELD": "EXIT HELD",
+                 "EXIT_LINE_WARN": "EXIT WATCH"}
+_DISCLAIMER = "Information only. Nothing placed, changed, cancelled or sized."
 
 
 def _word_category(w: str | None) -> str:
@@ -846,40 +854,99 @@ def _entry_readiness_line(primary: str, eval_result: dict) -> str:
     this reports where the buy condition stands (MET / WATCHING / NOT MET);
     whether to act on it is the PM/AIC's call, made outside this email."""
     if eval_result.get("buy_met"):
-        return "Entry readiness: MET"
+        return "Entry readiness: ✓ MET"
     if primary == "FAILED_PUSH":
-        return "Entry readiness: WATCHING — prior push failed, waiting for the next attempt"
+        return "Entry readiness: ◌ WATCHING — prior push failed, waiting for the next attempt"
     if eval_result.get("no_shared_buy"):
         n_lit = eval_result.get("n_lit") or 0
         n_counting = eval_result.get("n_counting") or 0
-        return f"Entry readiness: WATCHING — {n_lit} of {n_counting} analysts lit"
-    return "Entry readiness: WATCHING"
+        return f"Entry readiness: ◌ WATCHING — {n_lit} of {n_counting} analysts lit"
+    return "Entry readiness: ◌ WATCHING"
 
 
-def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
-                               fired_states: list[str], live: dict) -> tuple[str, str, str]:
-    """Returns (subject, plain, html) for a condition state-change
-    notice — built so it can be unit-tested independent of send.
+def _analysts_line(eval_result: dict) -> str | None:
+    """'Analysts: ✓ minervini · ✓ oneil · ✗ raschke (invalidated) · ◌ weis'.
+    ✓ = that seat's own buy+confirm words are all true right now; ✗ = its
+    own 'wrong' word fired (the former ANALYST OUT, now a mark on the card
+    rather than an alert of its own); ◌ = neither yet. Seats come from the
+    row's own analyst roster (counting seats only) plus whatever is lit."""
+    lit = list(eval_result.get("lit") or [])
+    wrong = list(eval_result.get("wrong_lit") or [])
+    detail = eval_result.get("analyst_detail") or {}
+    roster = [s for s, d in detail.items() if (d or {}).get("counts", True)]
+    seats = roster + [s for s in lit + wrong if s not in roster]
+    if not seats:
+        return None
+    marks = []
+    for s in seats:
+        if s in wrong:
+            marks.append(f"✗ {s} (invalidated)")
+        elif s in lit:
+            marks.append(f"✓ {s}")
+        else:
+            marks.append(f"◌ {s}")
+    return "Analysts: " + " · ".join(marks)
 
-    Line order mirrors a PM ask (2026-10-03) for a scannable, labeled
-    structure rather than a flowing paragraph: each committee word as its
-    own Category: MET/NOT MET/WATCHING line, the live volume/VWAP numbers
-    behind them, chase/exit lines, a bracket summary, then where entry
-    readiness stands overall."""
+
+def _first_unmet_category(eval_result: dict) -> str | None:
+    for entry, result in ((eval_result.get("shared_buy_detail") or [])
+                          + (eval_result.get("shared_confirm_detail") or [])):
+        if result != "TRUE":
+            return _word_category(entry.get("w"))
+    return None
+
+
+def _card_summary(primary: str, row: dict, eval_result: dict) -> str | None:
+    """The one plain sentence under the headline, built from the card's own
+    numbers (PM 2026-10-03: the one-liner under each example card read
+    clearer than the card itself). Never a recommendation."""
+    shared = (row.get("conditions") or {}).get("shared") or {}
+    buy_level = next((e.get("level") for e in (shared.get("buy") or [])
+                     if e.get("level") is not None), None)
+    n_lit, n_counting = eval_result.get("n_lit") or 0, eval_result.get("n_counting") or 0
+    if primary == "CONDITION_MET":
+        seats = f" — {n_lit} of {n_counting} analyst seats lit" if n_counting else ""
+        return f"All buy conditions met{seats}."
+    if primary == "FAILED_PUSH":
+        cleared = f"Cleared {buy_level:.2f}" if buy_level is not None else "Cleared the buy level"
+        unmet = _first_unmet_category(eval_result)
+        tail = f" — {unmet} confirm never came" if unmet else ""
+        return f"{cleared}, then an hourly close back under{tail}."
+    if primary == "CHASED":
+        lvl = (shared.get("chase") or {}).get("level")
+        where = f" {lvl:.2f}" if lvl is not None else ""
+        met = "Buy conditions met" if eval_result.get("buy_met") else "Buy conditions not met"
+        return f"{met}, but price already ran past the chase line{where}."
+    if primary in ("EXIT_LINE_HELD", "EXIT_LINE_WARN"):
+        ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
+        who = "A position you hold" if primary == "EXIT_LINE_HELD" else "A watch name you don't own"
+        how = ("DAILY close confirmed" if eval_result.get("exit_hit")
+               else "an hourly close so far")
+        val = ex.get("value")
+        at = f" {val:.2f}" if isinstance(val, (int, float)) else ""
+        return f"{who}: {how} below the committee exit line{at}."
+    return None
+
+
+def build_condition_card(ticker: str, row: dict, eval_result: dict,
+                         fired_states: list[str], live: dict) -> dict:
+    """One card = {headline, color, summary, lines}. Line order (PM ask,
+    2026-10-03): the one-sentence summary, each committee word as its own
+    'Category: ✓/✗/◌ — plain' line, the Analysts ✓/✗ line, the live
+    volume/VWAP numbers, chase/exit lines, the bracket, entry readiness."""
     primary = fired_states[0]
     label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
     lit, n_counting = eval_result.get("lit") or [], eval_result.get("n_counting") or 0
     headline = f"{ticker} · {label}"
     if primary == "CONDITION_MET" and n_counting:
         headline += f" · {len(lit)} of {n_counting} analysts"
-    elif primary == "ANALYST_OUT" and eval_result.get("wrong_lit"):
-        # Name the seat(s) whose own "wrong" rule fired -- "ANALYST OUT"
-        # alone never said which one dropped out of the count.
-        headline += " · " + ", ".join(eval_result["wrong_lit"]) + " out"
 
     lines: list[str] = []
     lines += _condition_lines(eval_result.get("shared_buy_detail") or [])
     lines += _condition_lines(eval_result.get("shared_confirm_detail") or [])
+    analysts = _analysts_line(eval_result)
+    if analysts:
+        lines.append(analysts)
 
     vol_x = (live.get("vol_x") or {}).get("so_far")
     if vol_x is not None:
@@ -917,26 +984,70 @@ def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
     if has_entry_side:
         lines.append(_entry_readiness_line(primary, eval_result))
 
-    subject = f"[AQE] {headline}"
-    plain = (f"{headline}\n" + "\n".join(f"- {s}" for s in lines)
-            + "\n\nInformation only. Nothing placed, changed, cancelled or sized.")
-    html = (f"<div style='border-left:4px solid {color};padding:8px 12px;"
-           f"background:#fafafa;border-radius:6px;color:#1a1a1a'>"
-           f"<b style='font-size:15px'>{headline}</b>"
-           + "".join(f"<div style='font-size:13px;margin-top:3px'>{s}</div>"
-                     for s in lines)
-           + "<div style='font-size:11px;color:#999;margin-top:6px'>Information only. "
-             "Nothing placed, changed, cancelled or sized.</div></div>")
+    return {"headline": headline, "color": color,
+            "summary": _card_summary(primary, row, eval_result), "lines": lines}
+
+
+def _card_plain(card: dict) -> str:
+    head = card["headline"] + (f"\n{card['summary']}" if card.get("summary") else "")
+    return head + "\n" + "\n".join(f"- {s}" for s in card["lines"])
+
+
+def _card_html(card: dict) -> str:
+    summary = (f"<div style='font-size:13px;margin-top:2px;color:#444'>"
+               f"<i>{card['summary']}</i></div>" if card.get("summary") else "")
+    return (f"<div style='border-left:4px solid {card['color']};padding:8px 12px;"
+            f"background:#fafafa;border-radius:6px;color:#1a1a1a;margin-bottom:10px'>"
+            f"<b style='font-size:15px'>{card['headline']}</b>{summary}"
+            + "".join(f"<div style='font-size:13px;margin-top:3px'>{s}</div>"
+                      for s in card["lines"])
+            + "</div>")
+
+
+def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
+                               fired_states: list[str], live: dict) -> tuple[str, str, str]:
+    """(subject, plain, html) for ONE card as a standalone notice — kept so
+    a single card stays unit-testable on its own; the live path sends
+    `build_condition_digest` (one email per 15-min cycle)."""
+    card = build_condition_card(ticker, row, eval_result, fired_states, live)
+    subject = f"[AQE] {card['headline']}"
+    plain = _card_plain(card) + f"\n\n{_DISCLAIMER}"
+    html = (_card_html(card)
+            + f"<div style='font-size:11px;color:#999;margin-top:6px'>{_DISCLAIMER}</div>")
     return subject, plain, html
 
 
-def send_condition_state_email(ticker: str, row: dict, eval_result: dict,
-                               fired_states: list[str], live: dict) -> dict:
+def build_condition_digest(cards: list[tuple], now_et) -> tuple[str, str, str]:
+    """ONE email per 15-min cycle (PM 2026-10-03: no per-ticker alerts).
+    `cards` = [(ticker, row, eval_result, fired_states, live), ...] — every
+    name whose state changed this cycle, each rendered as its own card
+    under one subject and one footer."""
+    built = [build_condition_card(*c) for c in cards]
+    counts: dict[str, int] = {}
+    for _t, _r, _e, states, _l in cards:
+        key = _DIGEST_SHORT.get(states[0], states[0])
+        counts[key] = counts.get(key, 0) + 1
+    tally = " · ".join(f"{k} {v}" for k, v in counts.items())
+    stamp = now_et.strftime("%H:%M ET")
+    n = len(built)
+    subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
+    header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
+
+    plain = (header + "\n\n" + "\n\n".join(_card_plain(c) for c in built)
+             + f"\n\n{_DISCLAIMER}")
+    html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}</div>"
+            + "".join(_card_html(c) for c in built)
+            + f"<div style='font-size:11px;color:#999;margin-top:4px'>{_DISCLAIMER}</div>")
+    return subject, plain, html
+
+
+def send_condition_digest(cards: list[tuple], now_et) -> dict:
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):
         return {"ok": False, "reason": "no email backend configured"}
-    subject, plain, html = build_condition_state_body(ticker, row, eval_result,
-                                                       fired_states, live)
+    if not cards:
+        return {"ok": False, "reason": "no cards this cycle"}
+    subject, plain, html = build_condition_digest(cards, now_et)
     if cfg["resend_key"]:
         return _send_resend(cfg, subject, plain, html)
     return _send_smtp(cfg, subject, plain, html)
