@@ -206,6 +206,21 @@ def test_buy_met_true_when_shared_buy_and_confirm_both_true():
     assert out["lit"] == ["minervini"]
 
 
+def test_shared_buy_and_confirm_detail_expose_the_per_word_verdict():
+    """The condition-state email needs each SHARED word's own TRUE/FALSE/
+    NOT_YET, not just the all-true buy_met aggregate -- these were computed
+    to reach buy_met and then discarded until this field existed."""
+    row = _row_with_conditions()
+    live = _ctx(last_hourly_close=63.0, vol_x={"so_far": 1.6})
+    out = E.evaluate_conditions(row, live, datetime(2026, 10, 2, 11, 0, tzinfo=_ET))
+    assert len(out["shared_buy_detail"]) == 1
+    entry, result = out["shared_buy_detail"][0]
+    assert entry["w"] == "h1_close_above" and result == "TRUE"
+    assert len(out["shared_confirm_detail"]) == 1
+    entry2, result2 = out["shared_confirm_detail"][0]
+    assert entry2["w"] == "vol_x_ge" and result2 == "TRUE"
+
+
 def test_buy_met_false_when_confirm_not_met():
     row = _row_with_conditions()
     live = _ctx(last_hourly_close=63.0, vol_x={"so_far": 0.8})  # confirm fails

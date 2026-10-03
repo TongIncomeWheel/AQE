@@ -25,9 +25,16 @@ def _row():
     }
 
 
-def _eval_result():
-    return {"buy_met": True, "lit": ["minervini", "detect-lens"], "wrong_lit": [],
-           "chased": False, "exit_warn": None, "exit_hit": None, "n_counting": 3}
+def _eval_result(**overrides):
+    row = _row()
+    shared = row["conditions"]["shared"]
+    base = {"buy_met": True, "lit": ["minervini", "detect-lens"], "wrong_lit": [],
+           "chased": False, "exit_warn": None, "exit_hit": None, "n_counting": 3,
+           "n_lit": 2, "no_shared_buy": False,
+           "shared_buy_detail": [(e, "TRUE") for e in shared["buy"]],
+           "shared_confirm_detail": [(e, "TRUE") for e in shared["confirm"]]}
+    base.update(overrides)
+    return base
 
 
 def _live():
@@ -74,9 +81,63 @@ def test_build_condition_state_body_never_renders_a_sizing_claim():
     _, plain, html = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
     assert "placed, changed, cancelled or sized" in plain.lower()
-    for banned in ("buy now", "sell now", "position size"):
+    for banned in ("buy now", "sell now", "position size", "enter now"):
         assert banned not in plain.lower()
         assert banned not in html.lower()
+
+
+def test_each_committee_word_renders_as_a_labeled_scan_line():
+    """PM ask (2026-10-03): simple labeled lines, not a flowing paragraph --
+    'MA levels...met or bounced', 'Vwap...hit or not', 'Liquidity and
+    volume...met or not with numbers'. Each shared word gets its own
+    Category: VERDICT line."""
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
+    assert "Structure: MET — an hourly candle closes above pivot_high 62.15" in plain
+    assert "Volume: MET — volume at least 1.4x normal for the time of day" in plain
+
+
+def test_a_not_yet_word_renders_as_watching_not_false():
+    """NOT_YET must never be reported as NOT MET -- the condition isn't
+    failed, the data behind it just isn't ready yet (handoff §5/§9)."""
+    row = _row()
+    ev = _eval_result(buy_met=False,
+                      shared_buy_detail=[(row["conditions"]["shared"]["buy"][0], "NOT_YET")])
+    _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["FAILED_PUSH"], _live())
+    assert "Structure: WATCHING" in plain
+    assert "Structure: NOT MET" not in plain
+
+
+def test_bracket_line_shows_entry_stop_target_and_rr():
+    row = _row()
+    row["levels"] = {"stop": 60.00, "tp": [64.00, 68.00]}
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", row, _eval_result(), ["CONDITION_MET"], _live())
+    # entry 62.15, stop 60.00 -> risk 2.15; first target above entry is 64.00
+    # -> reward 1.85 -> R:R 0.9.
+    assert "Bracket: entry 62.15 · stop 60.00 · target 64.00 · R:R 0.9" in plain
+
+
+def test_bracket_line_omitted_when_levels_are_missing():
+    """Never a partial or fabricated bracket -- omitted entirely rather
+    than showing entry with no stop/target."""
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())
+    assert "Bracket:" not in plain
+
+
+def test_entry_readiness_reports_a_state_never_an_instruction():
+    """AQE makes no decisions (CLAUDE.md) -- this must read as a state
+    (MET/WATCHING), never tell anyone to act."""
+    _, plain_met, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(buy_met=True), ["CONDITION_MET"], _live())
+    assert "Entry readiness: MET" in plain_met
+
+    _, plain_watch, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(buy_met=False), ["FAILED_PUSH"], _live())
+    assert "Entry readiness: WATCHING" in plain_watch
+    for banned in ("enter now", "watch for entry", "buy now"):
+        assert banned not in plain_watch.lower()
 
 
 def test_failed_push_and_exit_line_labels_render():

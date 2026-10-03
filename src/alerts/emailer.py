@@ -758,55 +758,149 @@ _CONDITION_STATE_LABEL = {
     "EXIT_LINE_WARN": ("🟠 EXIT LINE", "#d9a441"),
 }
 
+# Which scannable category a condition word belongs under (PM ask,
+# 2026-10-03: simple labeled lines -- "MA levels... met or bounced",
+# "Vwap... hit or not", "Liquidity and volume... met or not with numbers" --
+# rather than a flowing paragraph). Keyed off condition_spec.py's own word
+# sets so a label never has to be guessed per-row.
+_WORD_CATEGORY = {
+    "close_above": "Structure", "close_below": "Structure",
+    "h1_close_above": "Structure", "h1_close_below": "Structure",
+    "trade_above": "Structure", "trade_below": "Structure",
+    # reclaim IS the "wicked through then bounced back" read -- same word,
+    # the plain text is what actually names the level.
+    "reclaim": "Structure", "reject": "Structure", "in_zone": "Structure",
+    "vol_x_ge": "Volume", "vol_x_le": "Volume",
+    "above_vwap_s": "VWAP", "below_vwap_s": "VWAP",
+    "rs_today_gt_spy": "Relative strength",
+    "fade_atr_ge": "Extension",
+    "clv_ge": "Close location", "clv_le": "Close location",
+    "red_bar": "Candle",
+}
+_RESULT_TAG = {"TRUE": "MET", "FALSE": "NOT MET", "NOT_YET": "WATCHING",
+              "UNKNOWN_WORD": "UNKNOWN"}
 
-def _condition_sentences(row: dict, eval_result: dict, live: dict) -> list[str]:
-    """Plain words PMA sent (`plain`), the live numbers behind them —
-    never trade_above/close_below/a trigger id (same §2.5 house rule the
-    committee section already holds to)."""
+
+def _word_category(w: str | None) -> str:
+    if w in _WORD_CATEGORY:
+        return _WORD_CATEGORY[w]
+    from . import condition_spec as _CS
+    if w and _CS.is_cob_word(w):
+        return "Daily read"
+    return "Condition"
+
+
+def _condition_lines(results: list[tuple[dict, str]]) -> list[str]:
+    """One labeled, scannable line per word: '{Category}: {MET/NOT MET/
+    WATCHING} — {plain}'. Still the committee's own `plain` text, never the
+    raw word name or level (§2.5 house rule: never trade_above/close_below/
+    a trigger id in a reader-facing line) -- only a category + verdict
+    added in front of it."""
     out = []
-    shared = (row.get("conditions") or {}).get("shared") or {}
-    for e in (shared.get("buy") or []) + (shared.get("confirm") or []):
-        plain = e.get("plain")
-        if plain:
-            out.append(plain)
-    vol_x = (live.get("vol_x") or {}).get("so_far")
-    if vol_x is not None:
-        out.append(f"Volume {vol_x:.1f}× normal for the time of day.")
-    vwap_info = live.get("vwap") or {}
-    if vwap_info.get("vwap") is not None and not vwap_info.get("provisional"):
-        h1 = live.get("last_hourly_close")
-        side = "Above" if (h1 is not None and h1 > vwap_info["vwap"]) else "Below"
-        out.append(f"{side} today's VWAP {vwap_info['vwap']:.2f}.")
-    chase = shared.get("chase")
-    if chase and chase.get("plain"):
-        out.append(f"Chase line: {chase['plain']}.")
-    if eval_result.get("exit_warn") or eval_result.get("exit_hit"):
-        ex = eval_result.get("exit_hit") or eval_result.get("exit_warn")
-        if ex and ex.get("plain"):
-            out.append(f"Exit line: {ex['plain']}.")
+    for entry, result in results:
+        plain = entry.get("plain")
+        if not plain:
+            continue
+        out.append(f"{_word_category(entry.get('w'))}: {_RESULT_TAG.get(result, result)} "
+                   f"— {plain}")
     return out
+
+
+def _bracket_line(row: dict) -> str | None:
+    """Entry/stop/target/R:R for a glance-read bracket line. Entry is the
+    committee's own shared buy level; stop/targets come from row['levels']
+    — the SAME field the existing trigger-based COMMITTEE LEVELS section
+    reads (src/alerts/pma_levels.py), never recomputed here. Omitted
+    entirely (never a partial or fabricated bracket) when any one of
+    entry/stop/a target above entry is missing."""
+    shared = (row.get("conditions") or {}).get("shared") or {}
+    entry_level = next((e.get("level") for e in (shared.get("buy") or [])
+                       if e.get("level") is not None), None)
+    if entry_level is None:
+        return None
+    levels = row.get("levels") or {}
+    stop = levels.get("stop")
+    if stop is None:
+        return None
+    target = next((t for t in (levels.get("tp") or [])
+                  if t is not None and t > entry_level), None)
+    if target is None:
+        return None
+    risk = entry_level - stop
+    if risk <= 0:
+        return None
+    rr = (target - entry_level) / risk
+    return (f"Bracket: entry {entry_level:.2f} · stop {stop:.2f} · "
+           f"target {target:.2f} · R:R {rr:.1f}")
+
+
+def _entry_readiness_line(primary: str, eval_result: dict) -> str:
+    """A STATE, never an instruction. AQE makes no decisions (CLAUDE.md) —
+    this reports where the buy condition stands (MET / WATCHING / NOT MET);
+    whether to act on it is the PM/AIC's call, made outside this email."""
+    if eval_result.get("buy_met"):
+        return "Entry readiness: MET"
+    if primary == "FAILED_PUSH":
+        return "Entry readiness: WATCHING — prior push failed, waiting for the next attempt"
+    if eval_result.get("no_shared_buy"):
+        n_lit = eval_result.get("n_lit") or 0
+        n_counting = eval_result.get("n_counting") or 0
+        return f"Entry readiness: WATCHING — {n_lit} of {n_counting} analysts lit"
+    return "Entry readiness: WATCHING"
 
 
 def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
                                fired_states: list[str], live: dict) -> tuple[str, str, str]:
     """Returns (subject, plain, html) for a condition state-change
-    notice — built so it can be unit-tested independent of send."""
+    notice — built so it can be unit-tested independent of send.
+
+    Line order mirrors a PM ask (2026-10-03) for a scannable, labeled
+    structure rather than a flowing paragraph: each committee word as its
+    own Category: MET/NOT MET/WATCHING line, the live volume/VWAP numbers
+    behind them, chase/exit lines, a bracket summary, then where entry
+    readiness stands overall."""
     primary = fired_states[0]
     label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
     lit, n_counting = eval_result.get("lit") or [], eval_result.get("n_counting") or 0
     headline = f"{ticker} · {label}"
     if primary == "CONDITION_MET" and n_counting:
         headline += f" · {len(lit)} of {n_counting} analysts"
-    sentences = _condition_sentences(row, eval_result, live)
+
+    lines: list[str] = []
+    lines += _condition_lines(eval_result.get("shared_buy_detail") or [])
+    lines += _condition_lines(eval_result.get("shared_confirm_detail") or [])
+
+    vol_x = (live.get("vol_x") or {}).get("so_far")
+    if vol_x is not None:
+        lines.append(f"Live: volume {vol_x:.1f}× normal for the time of day.")
+    vwap_info = live.get("vwap") or {}
+    if vwap_info.get("vwap") is not None and not vwap_info.get("provisional"):
+        h1 = live.get("last_hourly_close")
+        side = "Above" if (h1 is not None and h1 > vwap_info["vwap"]) else "Below"
+        lines.append(f"Live: {side} today's VWAP {vwap_info['vwap']:.2f}.")
+
+    shared = (row.get("conditions") or {}).get("shared") or {}
+    chase = shared.get("chase")
+    if chase and chase.get("plain"):
+        lines.append(f"Chase line: {chase['plain']}.")
+    if eval_result.get("exit_warn") or eval_result.get("exit_hit"):
+        ex = eval_result.get("exit_hit") or eval_result.get("exit_warn")
+        if ex and ex.get("plain"):
+            lines.append(f"Exit line: {ex['plain']}.")
+
+    bracket = _bracket_line(row)
+    if bracket:
+        lines.append(bracket)
+    lines.append(_entry_readiness_line(primary, eval_result))
 
     subject = f"[AQE] {headline}"
-    plain = (f"{headline}\n" + "\n".join(f"- {s}" for s in sentences)
+    plain = (f"{headline}\n" + "\n".join(f"- {s}" for s in lines)
             + "\n\nInformation only. Nothing placed, changed, cancelled or sized.")
     html = (f"<div style='border-left:4px solid {color};padding:8px 12px;"
            f"background:#fafafa;border-radius:6px;color:#1a1a1a'>"
            f"<b style='font-size:15px'>{headline}</b>"
            + "".join(f"<div style='font-size:13px;margin-top:3px'>{s}</div>"
-                     for s in sentences)
+                     for s in lines)
            + "<div style='font-size:11px;color:#999;margin-top:6px'>Information only. "
              "Nothing placed, changed, cancelled or sized.</div></div>")
     return subject, plain, html

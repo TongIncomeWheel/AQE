@@ -254,4 +254,12 @@ def evaluate_conditions(row: dict, live: dict, now_et) -> dict | None:
         "analyst_detail": analyst_detail,
         "no_shared_buy": no_shared_buy,
         "unknown_words": unknown_words,
+        # Per-word (entry, TRUE/FALSE/NOT_YET/UNKNOWN_WORD) detail for the
+        # SHARED buy/confirm block -- computed above to reach buy_met, but
+        # previously discarded. The condition-state email (handoff §6)
+        # needs the per-word verdict, not just the all-true aggregate, to
+        # show which specific line is met/not-met/still-watching rather
+        # than only the combined yes/no.
+        "shared_buy_detail": shared_buy,
+        "shared_confirm_detail": shared_confirm,
     }
