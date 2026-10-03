@@ -162,10 +162,10 @@ def test_entry_readiness_omitted_on_a_pure_exit_only_row():
             "(confirmed).") in plain
 
 
-def test_exit_line_headline_says_held_vs_not_held_and_body_says_hourly_vs_daily():
-    """EXIT_LINE_HELD/_WARN split on whether the row is a position actually
-    HELD -- a different axis from hourly-vs-daily close, which the body
-    line must state in words (PM 2026-10-03: 'what is exit line held?')."""
+def test_exit_line_card_says_hourly_vs_daily_in_words():
+    """Only a HELD position's exit line is a card (PM 2026-10-03: "why
+    would I care about an exit I don't own?"). Hourly-vs-daily close is
+    stated in words on the body line and the summary."""
     row = {"ticker": "PLTR",
           "conditions": {"shared": {"buy": [], "confirm": [], "chase": None},
                         "exits": [{"w": "close_below", "value": 162.0,
@@ -182,11 +182,12 @@ def test_exit_line_headline_says_held_vs_not_held_and_body_says_hourly_vs_daily(
     _, plain, _ = E.build_condition_state_body("PLTR", row, held_warn, ["EXIT_LINE_HELD"], live)
     assert "EXIT LINE CROSSED — HELD POSITION" in plain
     assert "hourly close below it, not yet a daily close" in plain
+    assert "A position you hold: an hourly close so far below the committee exit line 162.00." in plain
 
-    watch_hit = dict(base, exit_warn=None, exit_hit=ex)
-    _, plain2, _ = E.build_condition_state_body("PLTR", row, watch_hit, ["EXIT_LINE_WARN"], live)
-    assert "EXIT LINE CROSSED — not held" in plain2
+    held_hit = dict(base, exit_warn=None, exit_hit=ex)
+    _, plain2, _ = E.build_condition_state_body("PLTR", row, held_hit, ["EXIT_LINE_HELD"], live)
     assert "DAILY close below it (confirmed)" in plain2
+    assert "EXIT_LINE_WARN" not in E._CONDITION_STATE_LABEL   # never a card
 
 
 def test_analysts_line_marks_lit_seats_with_a_tick_and_invalidated_with_a_cross():
@@ -209,7 +210,8 @@ def test_card_summary_one_liner_sits_under_the_headline():
                       shared_confirm_detail=[(row["conditions"]["shared"]["confirm"][0], "FALSE")])
     _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["FAILED_PUSH"], _live())
     assert plain.splitlines()[1] == (
-        "Cleared 62.15, then an hourly close back under — Volume confirm never came.")
+        "Cleared 62.15, then an hourly close back under — Volume confirm never came. "
+        "Still watched: it re-qualifies on the next hourly close back above 62.15.")
     _, plain_met, _ = E.build_condition_state_body(
         "HPE", row, _eval_result(), ["CONDITION_MET"], _live())
     assert plain_met.splitlines()[1] == "All buy conditions met — 2 of 3 analyst seats lit."
@@ -223,7 +225,7 @@ def test_digest_stacks_every_card_under_one_subject_and_one_footer():
     cards = [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live()),
              ("DELL", row2, _eval_result(buy_met=False), ["FAILED_PUSH"], _live())]
     subject, plain, html = E.build_condition_digest(cards, now)
-    assert subject == "[AQE] 14:30 ET conditions · 2 cards · BUY MET 1 · PUSH FAILED 1"
+    assert subject == "[AQE] 14:30 ET conditions · 2 cards · BUY MET 1 · BACK UNDER 1"
     assert "HPE ·" in plain and "DELL ·" in plain
     assert plain.count("Information only.") == 1
     assert html.count("Information only.") == 1
@@ -245,7 +247,7 @@ def test_entry_readiness_still_shows_when_a_buy_side_exists():
 def test_failed_push_and_exit_line_labels_render():
     _, plain, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["FAILED_PUSH"], _live())
-    assert "PUSH FAILED — closed back under" in plain
+    assert "BACK UNDER THE LEVEL — breakout didn't hold" in plain
     _, plain2, _ = E.build_condition_state_body(
         "HPE", _row(), _eval_result(), ["EXIT_LINE_HELD"], _live())
     assert "EXIT LINE CROSSED — HELD POSITION" in plain2

@@ -221,6 +221,29 @@ def test_analyst_out_alone_is_ledgered_but_never_becomes_a_card(monkeypatch):
     assert "cards" not in summary
 
 
+def test_exit_line_on_a_name_not_held_is_ledgered_but_never_a_card(monkeypatch):
+    """PM 2026-10-03: "why would I care about an exit I don't own?" Only a
+    HELD position's exit line becomes a card; a watch name's crossing is
+    kept in the ledger and nothing more."""
+    import src.data.fmp_client as FC
+    monkeypatch.setattr(FC, "FMPClient", lambda: _FakeClient(below_level=True))
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    doc = {"run_date": "2026-10-02",
+           "rows": [{"ticker": "HPE", "class": "WATCH", "atr_14d": 2.0,
+                     "conditions": {"shared": {"buy": [], "confirm": []},
+                                    "analysts": [],
+                                    # bars close at 60.0 -> hourly close under 61
+                                    "exits": [{"w": "close_below", "value": 61.0}]}}]}
+    quotes = {"HPE": {"price": 60.0, "prev_close": 61.0, "day_high": 60.5,
+                      "day_low": 59.5, "open": 60.0},
+             "SPY": {"price": 500.5, "prev_close": 499.0}}
+    summary = CC.run_condition_cycle(doc, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
+                                     run_date="2026-10-02")
+    assert summary["fired"]["HPE"] == ["EXIT_LINE_WARN"]
+    assert sent == []
+
+
 # -------------------------------------------------------------- ledger wiring
 
 

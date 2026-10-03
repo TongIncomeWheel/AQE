@@ -121,11 +121,15 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 now=now_et.astimezone(ZoneInfo("Asia/Singapore")))
             CL.append_line(run_date, line)
 
-            # ANALYST_OUT stays in the ledger (PMA's scorecard reads it) but
-            # is NOT a card of its own (PM 2026-10-03: "analyst fail is
-            # nonsense ... it wouldn't be published") -- it shows as a ✗ on
-            # that seat inside whichever card the name next earns.
-            card_states = [s for s in fired_states if s != "ANALYST_OUT"]
+            # Two states stay in the ledger (PMA's scorecard reads it) but
+            # are NOT cards of their own (PM 2026-10-03): ANALYST_OUT
+            # ("analyst fail is nonsense ... it wouldn't be published") shows
+            # as a ✗ on that seat inside whichever card the name next earns;
+            # EXIT_LINE_WARN is a name the PM does NOT hold crossing an exit
+            # line ("why would I care about an exit I don't own?") -- only a
+            # HELD position's exit line is worth an email.
+            card_states = [s for s in fired_states
+                           if s not in ("ANALYST_OUT", "EXIT_LINE_WARN")]
             if card_states:
                 cards.append((ticker, row, eval_result, card_states, live))
         except Exception:  # noqa: BLE001 — one name's failure never blocks the rest

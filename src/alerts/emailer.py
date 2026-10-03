@@ -758,13 +758,18 @@ def build_after_close_digest(pma_doc: dict, quotes: dict) -> tuple[str, str, str
 # close, which the body's own "Exit line:" sentence states separately.
 _CONDITION_STATE_LABEL = {
     "CONDITION_MET": ("🟢 BUY CONDITIONS MET", "#0a8a3a"),
-    "FAILED_PUSH": ("🟠 PUSH FAILED — closed back under", "#d9a441"),
+    # Was "PUSH FAILED" -- PM 2026-10-03: "if it failed there must be a
+    # reason why we're still watching it." It IS still watched: the state
+    # machine re-enters CONDITION_MET on the next qualifying hourly close,
+    # so the label says what happened, and the card's summary line says
+    # what would put it back in play.
+    "FAILED_PUSH": ("🟠 BACK UNDER THE LEVEL — breakout didn't hold", "#d9a441"),
     "CHASED": ("🟠 EXTENDED — past the chase line", "#d9a441"),
-    # ANALYST_OUT is deliberately absent: it is never a card of its own
-    # (PM 2026-10-03) -- condition_cycle filters it out before cards are
-    # built; the seat shows as ✗ on the Analysts line instead.
+    # ANALYST_OUT and EXIT_LINE_WARN are deliberately absent: neither is a
+    # card of its own (PM 2026-10-03) -- condition_cycle filters both out
+    # before cards are built. An invalidated seat shows as ✗ on the
+    # Analysts line; an exit line on a name the PM doesn't hold isn't news.
     "EXIT_LINE_HELD": ("🔴 EXIT LINE CROSSED — HELD POSITION", "#d00"),
-    "EXIT_LINE_WARN": ("🟠 EXIT LINE CROSSED — not held", "#d9a441"),
 }
 
 # Which scannable category a condition word belongs under (PM ask,
@@ -790,9 +795,8 @@ _WORD_CATEGORY = {
 # ◌ (not ✗) for NOT_YET -- the data isn't ready, the condition hasn't failed.
 _RESULT_TAG = {"TRUE": "✓ MET", "FALSE": "✗ NOT MET", "NOT_YET": "◌ WATCHING",
               "UNKNOWN_WORD": "? UNKNOWN"}
-_DIGEST_SHORT = {"CONDITION_MET": "BUY MET", "FAILED_PUSH": "PUSH FAILED",
-                 "CHASED": "EXTENDED", "EXIT_LINE_HELD": "EXIT HELD",
-                 "EXIT_LINE_WARN": "EXIT WATCH"}
+_DIGEST_SHORT = {"CONDITION_MET": "BUY MET", "FAILED_PUSH": "BACK UNDER",
+                 "CHASED": "EXTENDED", "EXIT_LINE_HELD": "EXIT HELD"}
 _DISCLAIMER = "Information only. Nothing placed, changed, cancelled or sized."
 
 
@@ -856,7 +860,8 @@ def _entry_readiness_line(primary: str, eval_result: dict) -> str:
     if eval_result.get("buy_met"):
         return "Entry readiness: ✓ MET"
     if primary == "FAILED_PUSH":
-        return "Entry readiness: ◌ WATCHING — prior push failed, waiting for the next attempt"
+        return ("Entry readiness: ◌ WATCHING — re-qualifies on the next hourly close "
+                "back above the level")
     if eval_result.get("no_shared_buy"):
         n_lit = eval_result.get("n_lit") or 0
         n_counting = eval_result.get("n_counting") or 0
@@ -911,20 +916,23 @@ def _card_summary(primary: str, row: dict, eval_result: dict) -> str | None:
         cleared = f"Cleared {buy_level:.2f}" if buy_level is not None else "Cleared the buy level"
         unmet = _first_unmet_category(eval_result)
         tail = f" — {unmet} confirm never came" if unmet else ""
-        return f"{cleared}, then an hourly close back under{tail}."
+        back = f" back above {buy_level:.2f}" if buy_level is not None else " back above the level"
+        # Why it's still on the list: the state machine re-enters BUY
+        # CONDITIONS MET on the next qualifying hourly close.
+        return (f"{cleared}, then an hourly close back under{tail}. "
+                f"Still watched: it re-qualifies on the next hourly close{back}.")
     if primary == "CHASED":
         lvl = (shared.get("chase") or {}).get("level")
         where = f" {lvl:.2f}" if lvl is not None else ""
         met = "Buy conditions met" if eval_result.get("buy_met") else "Buy conditions not met"
         return f"{met}, but price already ran past the chase line{where}."
-    if primary in ("EXIT_LINE_HELD", "EXIT_LINE_WARN"):
+    if primary == "EXIT_LINE_HELD":
         ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
-        who = "A position you hold" if primary == "EXIT_LINE_HELD" else "A watch name you don't own"
         how = ("DAILY close confirmed" if eval_result.get("exit_hit")
                else "an hourly close so far")
         val = ex.get("value")
         at = f" {val:.2f}" if isinstance(val, (int, float)) else ""
-        return f"{who}: {how} below the committee exit line{at}."
+        return f"A position you hold: {how} below the committee exit line{at}."
     return None
 
 
