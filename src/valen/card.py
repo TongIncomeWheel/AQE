@@ -275,8 +275,8 @@ def _cockpit_tag(reading: dict, key: str) -> str | None:
 
 
 def crown_cockpit_gauge_rows(valen: dict) -> list[dict]:
-    """Breadth range / CTA crowding / dispersion as banded gauges — the
-    SAME `_gauge_bar_html` primitive VALEN's own Part 1 instruments
+    """Breadth range / CTA crowding / dispersion as bulb traffic lights — the
+    SAME `_bulb_gauge_html` primitive VALEN's own Part 1 instruments
     already use (theme.py), just three more `kind`s. `tag` carries the
     run's own category word (regime/bias/state) next to a label that
     otherwise stays fixed, so the `kind`-keyed explainer still applies."""

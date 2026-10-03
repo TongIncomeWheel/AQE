@@ -639,30 +639,33 @@ def test_neighbourhood_html_empty_bad_status_shows_reason():
 # LED pass/fail rows, and the stance semicircle dial.
 
 
-def test_gauge_bar_renders_bands_and_pointer_for_a_known_value():
-    html = theme._gauge_bar_html("VIX / VIX3M", 0.90, "vix_vix3m")
-    assert "valen-gauge-track" in html
-    assert "valen-gauge-pointer" in html
+def test_gauge_bar_renders_a_bulb_per_band_lighting_the_matching_one():
+    html = theme._bulb_gauge_html("VIX / VIX3M", 0.90, "vix_vix3m")
+    assert html.count("valen-light-bulb") == 3        # 3 bands -> 3 bulbs
     # 0.90 sits inside the handbook's own gold "uncertainty-approaching" band.
-    assert theme._GOLD in html
+    assert "background:" + theme._GOLD + ";opacity:1" in html
+    assert "Uncertainty building" in html              # the band's own commentary
 
 
 def test_gauge_bar_unknown_value_reads_not_shown():
-    html = theme._gauge_bar_html("VIX / VIX3M", None, "vix_vix3m")
+    html = theme._bulb_gauge_html("VIX / VIX3M", None, "vix_vix3m")
     assert "not shown" in html
-    assert "valen-gauge-track" not in html
+    assert "valen-light-bulb" not in html
 
 
 def test_gauge_bar_unknown_kind_falls_back_to_plain_value_not_a_guessed_scale():
-    html = theme._gauge_bar_html("Something new", 42, "not_a_real_kind")
+    html = theme._bulb_gauge_html("Something new", 42, "not_a_real_kind")
     assert "42" in html
-    assert "valen-gauge-track" not in html
+    assert "valen-light-bulb" not in html
 
 
-def test_gauge_bar_pointer_position_matches_value_fraction():
-    # ATR scale is 0-8; a value of 4.0 should sit at the 50% mark.
-    html = theme._gauge_bar_html("SPY ATRs above 50-day", 4.0, "atr_multiple")
-    assert "left:50.00%" in html
+def test_gauge_bar_bulb_count_matches_the_kinds_own_band_count():
+    # atr_multiple has only 2 bands (green/red, no amber) -- 2 bulbs, not 3.
+    html = theme._bulb_gauge_html("SPY ATRs above 50-day", 4.0, "atr_multiple")
+    assert html.count("valen-light-bulb") == 2
+    assert "Normal stretch" in html
+    html_hot = theme._bulb_gauge_html("SPY ATRs above 50-day", 7.0, "atr_multiple")
+    assert "Overextended" in html_hot
 
 
 def test_led_row_pass_and_fail_colours():
@@ -691,14 +694,24 @@ def test_gauge_bar_carries_a_one_line_explainer_per_kind():
     and what does the number mean? Every known `kind` must answer that,
     not just show a label and a number."""
     for kind in ("atr_multiple", "vix_vix3m", "pct_0_100", "mover_ratio"):
-        html = theme._gauge_bar_html("Some label", 1.0, kind)
+        html = theme._bulb_gauge_html("Some label", 1.0, kind)
         assert "valen-explainer" in html
         assert theme._GAUGE_EXPLAINER[kind] in html
 
 
 def test_gauge_bar_unavailable_still_carries_its_explainer():
-    html = theme._gauge_bar_html("VIX / VIX3M", None, "vix_vix3m")
+    html = theme._bulb_gauge_html("VIX / VIX3M", None, "vix_vix3m")
     assert theme._GAUGE_EXPLAINER["vix_vix3m"] in html
+
+
+def test_every_gauge_kind_has_commentary_for_every_one_of_its_own_bands():
+    """A bulb with nothing to say defeats the point of a glance-read light
+    -- every band colour a kind's own spec defines must resolve to a real
+    one-line commentary, not fall through silently."""
+    for kind, (lo, hi, bands, _ticks, _suffix) in theme._GAUGE_KIND.items():
+        comm = theme._GAUGE_COMMENTARY.get(kind, {})
+        for _b_lo, _b_hi, color in bands:
+            assert color in comm, f"{kind} band {color!r} has no commentary"
 
 
 def test_led_row_carries_a_one_line_explainer_per_label():

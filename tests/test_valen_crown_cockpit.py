@@ -229,7 +229,7 @@ def test_macro_cockpit_html_shows_one_shared_banner_when_fully_degraded():
                                     card.crown_divergence_row(valen),
                                     card.crown_cot_row(valen))
     assert "Crown macro not shown" in html
-    assert html.count("valen-gauge-track") == 0
+    assert html.count("valen-light-bulb") == 0
     assert "Divergence checks lit" not in html
 
 

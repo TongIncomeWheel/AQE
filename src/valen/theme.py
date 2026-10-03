@@ -136,14 +136,10 @@ CSS = f"""
 .valen-gauge-value {{ font-size: 15px; font-weight: 700; color: {_TEXT};
   font-variant-numeric: tabular-nums; white-space: nowrap; }}
 .valen-gauge-value .valen-stat-sub {{ margin-left: 4px; }}
-.valen-gauge-track {{ position: relative; height: 8px; border-radius: 4px;
-  overflow: hidden; background: {_TILE_BG}; }}
-.valen-gauge-band {{ position: absolute; top: 0; bottom: 0; opacity: 0.55; }}
-.valen-gauge-pointer {{ position: absolute; top: -3px; width: 2px; height: 14px;
-  background: {_TEXT}; border-radius: 1px; transform: translateX(-1px);
-  box-shadow: 0 0 4px rgba(0,0,0,0.6); }}
-.valen-gauge-scale {{ display: flex; justify-content: space-between; margin-top: 4px; }}
-.valen-gauge-scale span {{ font-size: 9.5px; color: {_TEXT_MUTED}; }}
+.valen-light-housing {{ background: #0a0a0d; border: 1px solid {_BORDER}; border-radius: 6px;
+  padding: 5px 4px; display: flex; flex-direction: row; gap: 4px; flex: none; }}
+.valen-light-bulb {{ width: 11px; height: 11px; border-radius: 50%; background: #222228;
+  opacity: 0.25; }}
 
 /* ---- Parts 2-6: funnel, setup tags, doctrine blocks --------------- */
 .valen-funnel-row {{ margin-bottom: 10px; }}
@@ -282,6 +278,54 @@ _GAUGE_EXPLAINER = {
                         "fragile, not confident; under 20% = a clean trend."),
 }
 
+# One-line read for whichever of `kind`'s own frozen bands (above) the
+# current value falls in, keyed by that band's own colour (so a kind with
+# two bands gets two lines, one with three gets three — never invented).
+# PM ask (2026-10-03): "every indicator... a singular visual like a traffic
+# light for one glance read" — the same bulb-housing + one-liner GEX's
+# traffic light already uses (`traffic_light_html`), given to every other
+# single-value instrument. Deliberately NOT forced into red/amber/green:
+# pct_0_100/breadth_range_pct/dispersion_pct are "neutral vs extreme" reads
+# where EITHER extreme deserves a look, not a danger/safe call, so their
+# bulbs stay the handbook's own blue/grey/orange rather than a misleading
+# red light on what might be a constructive oversold setup.
+_GAUGE_COMMENTARY = {
+    "atr_multiple": {
+        _GREEN: "Normal stretch from the 50-day average.",
+        _RED: "Overextended above the 50-day average — a pause or pullback is more likely.",
+    },
+    "vix_vix3m": {
+        _GREEN: "Calm — near-term fear priced below long-term.",
+        _GOLD: "Uncertainty building — term structure flattening.",
+        _RED: "Stressed — near-term fear pricier than long-term (backwardation).",
+    },
+    "pct_0_100": {
+        "#5aa9e6": "Oversold — washed out, often near a bottom.",
+        _GREY: "Neutral — nothing extreme.",
+        "#e6a15a": "Overbought — euphoric, often late rather than early.",
+    },
+    "mover_ratio": {
+        _RED: "Sellers have control.",
+        _GREEN: "Buyers have control.",
+        _GOLD: "Buyers stretched — momentum may be overextended.",
+    },
+    "breadth_range_pct": {
+        "#5aa9e6": "Near the bottom of its 12-month range.",
+        _GREY: "Mid-range — nothing extreme.",
+        "#e6a15a": "Near the top of its range — often late, not early.",
+    },
+    "dispersion_pct": {
+        "#5aa9e6": "Stocks moving together — selection isn't paying right now.",
+        _GREY: "Normal dispersion.",
+        "#e6a15a": "Stocks diverging sharply — the index is hiding real moves underneath.",
+    },
+    "cta_crowding_pct": {
+        _GREEN: "A clean trend — positioning isn't crowded.",
+        _GREY: "Some crowding building.",
+        _RED: "Crowded — a lot of trend-following money leaning the same way, fragile.",
+    },
+}
+
 _LED_EXPLAINER = {
     "Today's count green": ("More $2B+ stocks closed up 4%+ today than closed "
                             "down 4%+ — one session only, not a trend."),
@@ -305,15 +349,20 @@ _TREND_EXPLAINER = (
     "average is climbing — the earliest read on a fresh turn.")
 
 
-def _gauge_bar_html(label: str, value, kind: str, flag=None, tag: str | None = None) -> str:
-    """One cockpit instrument: a horizontal banded track with a pointer at
-    the current value — the "sliders and illustrations" read, replacing a
-    flat stat tile. `kind` looks up the handbook's own frozen bands; an
+def _bulb_gauge_html(label: str, value, kind: str, flag=None, tag: str | None = None) -> str:
+    """One cockpit instrument as a glance-read light: a small bulb housing
+    (one bulb per distinct colour `kind`'s own frozen bands define, lit for
+    whichever band `value` falls in) plus a one-line read of what that band
+    means — the exact visual language the GEX traffic light already
+    established (`traffic_light_html`), given to every other single-value
+    instrument on the page (PM ask, 2026-10-03: "every indicator... a
+    singular visual like a traffic light for one glance read" — this
+    replaced the earlier banded-track-with-pointer gauge entirely, not just
+    alongside it). `kind` looks up the handbook's own frozen bands; an
     unrecognised kind falls back to a plain stat line rather than guessing
-    a scale. Carries a one-line explainer (what this measures, what the
-    number means) under every instrument — a standing PM ask (2026-10-01)
-    answered once per `kind` rather than making a reader infer it from the
-    label alone.
+    a scale. Carries the one-line explainer (what this measures) under
+    every instrument too — a standing PM ask (2026-10-01) answered once per
+    `kind` rather than making a reader infer it from the label alone.
 
     `tag` (optional) is a small muted word next to the label for a reading
     whose CATEGORY varies run to run (e.g. CTA's "mixed"/"risk_on" bias,
@@ -334,22 +383,38 @@ def _gauge_bar_html(label: str, value, kind: str, flag=None, tag: str | None = N
                f'<span class="valen-gauge-label">{_esc(label)}{tag_html}</span>'
                f'<span class="valen-gauge-value">{_fmt(value)}{flag_html}</span></div>'
                f'{explainer_html}</div>')
-    lo, hi, bands, ticks, suffix = spec
-    span = hi - lo
-    bands_html = "".join(
-        f'<div class="valen-gauge-band" style="left:{(b_lo - lo) / span * 100:.2f}%;'
-        f'width:{(b_hi - b_lo) / span * 100:.2f}%;background:{color}"></div>'
-        for b_lo, b_hi, color in bands
+    _lo, _hi, bands, _ticks, suffix = spec
+
+    # One bulb per DISTINCT band colour, in the order the bands are defined
+    # — a 2-band kind (atr_multiple) gets 2 bulbs, a 3-band kind gets 3,
+    # never a fixed 3-slot red/amber/green that would misrepresent a kind
+    # whose bands aren't that shape.
+    colors_in_order: list[str] = []
+    for _b_lo, _b_hi, c in bands:
+        if c not in colors_in_order:
+            colors_in_order.append(c)
+    active_color = colors_in_order[0] if colors_in_order else _GREY
+    for b_lo, b_hi, c in bands:
+        if b_lo <= float(value) <= b_hi:
+            active_color = c
+            break
+    bulbs = "".join(
+        f'<div class="valen-light-bulb" style="background:{c};'
+        + ('opacity:1;box-shadow:0 0 6px ' + c if c == active_color else 'opacity:0.25')
+        + '"></div>'
+        for c in colors_in_order
     )
-    pos = max(0.0, min(1.0, (float(value) - lo) / span)) * 100
-    ticks_html = "".join(f"<span>{t:g}{suffix}</span>" for t in ticks)
+    commentary = _GAUGE_COMMENTARY.get(kind, {}).get(active_color)
+    commentary_html = (f'<div class="valen-tlight-commentary" style="margin-top:4px">'
+                       f'{_esc(commentary)}</div>' if commentary else "")
+
     return (
         f'<div class="valen-gauge"><div class="valen-gauge-head">'
         f'<span class="valen-gauge-label">{_esc(label)}{tag_html}</span>'
         f'<span class="valen-gauge-value">{_fmt(value)}{suffix}{flag_html}</span></div>'
-        f'<div class="valen-gauge-track">{bands_html}'
-        f'<div class="valen-gauge-pointer" style="left:{pos:.2f}%"></div></div>'
-        f'<div class="valen-gauge-scale">{ticks_html}</div>{explainer_html}</div>'
+        f'<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
+        f'<div class="valen-light-housing">{bulbs}</div></div>'
+        f'{commentary_html}{explainer_html}</div>'
     )
 
 
@@ -613,16 +678,17 @@ def trend_checklist_html(trend_rows_: list[dict], breadth_rows_: list[dict]) -> 
 
 def instruments_html(extension_rows_: list[dict], breadth_rows_: list[dict] | None = None) -> str:
     """The four-plus tracked instruments (VIX/VIX3M, SPY/QQQ ATR multiples,
-    T2108, the 5-day/10-day mover ratio) as banded slider gauges — the
-    "easy to read sliders" read replacing flat stat tiles. `breadth_rows_`
-    is optional so existing callers/tests that only pass extension rows
-    keep working; instrument-section breadth rows are appended when given."""
+    T2108, the 5-day/10-day mover ratio) as glance-read bulb lights — a
+    one-line commentary replacing the earlier banded-track gauge's pointer-
+    on-a-scale read. `breadth_rows_` is optional so existing callers/tests
+    that only pass extension rows keep working; instrument-section breadth
+    rows are appended when given."""
     rows = list(extension_rows_)
     if breadth_rows_:
         rows += [r for r in breadth_rows_ if r.get("section") == "instrument"]
     gauges = "".join(
-        _gauge_bar_html(row["label"], row.get("value"), row.get("kind"), row.get("flag"),
-                        row.get("tag"))
+        _bulb_gauge_html(row["label"], row.get("value"), row.get("kind"), row.get("flag"),
+                         row.get("tag"))
         for row in rows
     )
     return f'<div class="valen-col-label">Instruments</div>{gauges}'
@@ -656,7 +722,7 @@ def macro_cockpit_html(gauge_rows: list[dict], divergence: dict, cot: dict) -> s
             f'<div class="valen-stat-unavail">Crown macro not shown — {_esc(reason)}</div>')
 
     gauges_html = "".join(
-        _gauge_bar_html(r["label"], r.get("value"), r.get("kind"), r.get("flag"), r.get("tag"))
+        _bulb_gauge_html(r["label"], r.get("value"), r.get("kind"), r.get("flag"), r.get("tag"))
         for r in gauge_rows)
 
     div_ok = divergence.get("status") == "OK"
