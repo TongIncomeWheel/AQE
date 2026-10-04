@@ -93,6 +93,8 @@ def _pma_doc_without_conditions() -> dict:
 def _isolate(tmp_path, monkeypatch):
     from src.alerts import condition_data as CD, condition_ledger as CL
     monkeypatch.setattr(CD, "VOLUME_PROFILE_DIR", tmp_path / "vp")
+    monkeypatch.setattr(CD, "DAILY_HISTORY_DIR", tmp_path / "dh")   # never the repo tree
+    monkeypatch.setattr(CD, "_panel_history", lambda tickers, today: {})
     monkeypatch.setattr(CL, "LEDGER_DIR", tmp_path / "ledger")
     monkeypatch.setattr(CS, "CONDITION_STATE_PATH", tmp_path / "state.json")
     import src.data.fmp_client as FC
