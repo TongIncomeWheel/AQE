@@ -30,12 +30,23 @@ def rows_with_conditions(pma_doc: dict | None) -> list[dict]:
 
 
 def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
-                        run_date: str) -> dict:
+                        run_date: str, export: dict | None = None) -> dict:
     """Returns a summary dict for the caller's own cycle summary. Mutates
     and persists condition_state.json; appends one ledger line per row
-    with `conditions`, every cycle, regardless of whether anything fired."""
-    summary = {"enabled": False, "rows": 0, "fired": {}, "errors": 0}
+    with `conditions`, every cycle, regardless of whether anything fired.
+
+    Rows = PMA rows carrying `conditions` + AQE-default rows synthesized
+    from `export` (committee rows that arrived without conditions, and
+    Longlist/Elder names outside the book -- condition_defaults.py)."""
+    summary = {"enabled": False, "rows": 0, "fired": {}, "errors": 0, "defaults": 0}
     rows = rows_with_conditions(pma_doc)
+    try:
+        from . import condition_defaults as DEF
+        defaults = DEF.synthesize_rows(export, pma_doc)
+    except Exception:  # noqa: BLE001 -- defaults must never take the committee rows down
+        defaults = []
+    rows = rows + defaults
+    summary["defaults"] = len(defaults)
     if not rows:
         return summary
     summary["enabled"] = True

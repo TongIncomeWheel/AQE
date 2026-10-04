@@ -360,6 +360,14 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     if pma_doc is not None:
         from src.alerts import pma_levels as PMA
         tickers |= PMA.pma_tickers(pma_doc)
+    # AQE-default condition names (Longlist/Elder outside the committee
+    # book) -- single-lens names fail monitored()'s strength gate and
+    # would otherwise have no quote for the condition cycle to read.
+    try:
+        from src.alerts import condition_defaults as DEF
+        tickers |= DEF.default_tickers(export, pma_doc)
+    except Exception:  # noqa: BLE001
+        pass
     tickers = list(tickers)
     _phase(f"monitored set built ({len(tickers)} tickers)")
     try:
@@ -407,6 +415,27 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 except Exception:  # noqa: BLE001 — never break a real alert
                     pass
 
+    # AQE Handoff: D123/R21 condition alerts (2026-10-02) + AQE-default rows
+    # (2026-10-04) — one 15-min digest; runs in BOTH shadow and live mode
+    # (only the email send itself is gated by config.PMA_CONDITIONS_LIVE
+    # inside condition_cycle.py). Deliberately OUTSIDE the `pma_doc` guard
+    # below: a stale/missing PMA file stops committee rows, not the
+    # Longlist/Elder defaults.
+    try:
+        from . import condition_cycle as CC
+        _now_et = datetime.now(ZoneInfo("America/New_York"))
+        cc_summary = CC.run_condition_cycle(
+            pma_doc, quotes, _now_et,
+            run_date=((pma_doc or {}).get("run_date") or _now_et.date().isoformat()),
+            export=export)
+        summary["pma_conditions"] = cc_summary
+        if cc_summary.get("enabled"):
+            _phase(f"conditions evaluated ({cc_summary['rows']} rows, "
+                  f"{cc_summary.get('defaults', 0)} AQE-default, "
+                  f"{len(cc_summary.get('fired') or {})} fired)")
+    except Exception as exc:  # noqa: BLE001 — never break the live cycle for this
+        summary["pma_conditions"] = {"enabled": False, "error": str(exc)}
+
     # ---- PMA evaluation — its OWN dedup set (life of a trigger, not a
     # daily reset — see state.py's pma_fired functions), evaluated per ROW
     # (a ticker can carry more than one PMA row, e.g. a HELD position and a
@@ -435,23 +464,6 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         summary["pma"]["new_triggers"] = len(fresh_pma)
         summary["pma"]["pruned"] = pruned
         _phase(f"PMA evaluated ({len(fresh_pma)} fresh, {pruned} pruned)")
-
-        # AQE Handoff: D123/R21 condition alerts (2026-10-02) — runs for
-        # EVERY row carrying a `conditions` block, in BOTH shadow and live
-        # mode (only the email send itself is gated by config.
-        # PMA_CONDITIONS_LIVE inside condition_cycle.py). A back-compat
-        # levels file with no `conditions` anywhere makes this a no-op.
-        try:
-            from . import condition_cycle as CC
-            cc_summary = CC.run_condition_cycle(pma_doc, quotes, now_et,
-                                                run_date=pma_doc.get("run_date")
-                                                or now_et.date().isoformat())
-            summary["pma_conditions"] = cc_summary
-            if cc_summary.get("enabled"):
-                _phase(f"conditions evaluated ({cc_summary['rows']} rows, "
-                      f"{len(cc_summary.get('fired') or {})} fired)")
-        except Exception as exc:  # noqa: BLE001 — never break the live cycle for this
-            summary["pma_conditions"] = {"enabled": False, "error": str(exc)}
 
         # After-close digest — once per day, at the first cycle inside the
         # final-cycle window. Uses the legacy daily-reset `state` for its

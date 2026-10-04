@@ -110,3 +110,20 @@ PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
 # 2026-10-03: "limit the voices instead of all"). Highest conviction first;
 # the rest are folded into one "+N more" line, never dropped silently.
 CONDITION_CARD_MAX_SEATS = int(_f("CONDITION_CARD_MAX_SEATS", 3))
+
+# --- AQE-default conditions (PM ruling 2026-10-04: universe = committee
+# book + AQE Longlist/Elder). See condition_defaults.py.
+CONDITION_DEFAULTS_ENABLED = _b("CONDITION_DEFAULTS_ENABLED", True)
+# Which AQE lists feed default-watched names: "longlist", "elder", or both.
+CONDITION_DEFAULT_SOURCES = os.environ.get("CONDITION_DEFAULT_SOURCES", "longlist,elder")
+# WATCH is the committee's "not yet" bucket -- off unless the PM flips it.
+CONDITION_DEFAULTS_INCLUDE_WATCH = _b("CONDITION_DEFAULTS_INCLUDE_WATCH", False)
+CONDITION_DEFAULT_VOL_X = _f("CONDITION_DEFAULT_VOL_X", 1.0)
+CONDITION_DEFAULT_CHASE_PCT = _f("CONDITION_DEFAULT_CHASE_PCT", 3.0)
+# A breakout line further than this above the last close is not armed --
+# an hourly close through a level 13% away isn't worth 15-min bar pulls
+# every cycle (2026-10-03 export: p90 of candidate lines sat 13% away).
+CONDITION_DEFAULT_MAX_LEVEL_PCT = _f("CONDITION_DEFAULT_MAX_LEVEL_PCT", 6.0)
+# Hard ceiling on default-watched names per cycle (FMP: one 15-min bar
+# pull per name per cycle, 80 calls/min on cloud IPs).
+CONDITION_MAX_WATCHED = int(_f("CONDITION_MAX_WATCHED", 120))

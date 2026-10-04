@@ -1041,6 +1041,10 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
     headline = f"{ticker} · {label}"
     if primary == "CONDITION_MET" and n_counting:
         headline += f" · {len(lit)} of {n_counting} analysts"
+    if row.get("aqe_default"):
+        # Said on every such card: these are AQE's own default criteria
+        # (condition_defaults.py), not committee words.
+        headline += " · AQE default criteria"
 
     lines: list[str] = []
     lines += _condition_lines(eval_result.get("shared_buy_detail") or [])

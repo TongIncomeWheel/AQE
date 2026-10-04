@@ -221,6 +221,36 @@ def test_analyst_out_alone_is_ledgered_but_never_becomes_a_card(monkeypatch):
     assert "cards" not in summary
 
 
+def test_an_aqe_default_row_is_evaluated_and_its_card_says_so(monkeypatch):
+    """PM 2026-10-04: Longlist/Elder names outside the committee book ride
+    the same cycle under AQE-default criteria, labelled as such."""
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "longlist,elder")
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    export = {"daily_list": [{"ticker": "HPE", "entry": 61.0, "atr_14d": 2.0,
+                              "last_pivot_high": {"price": 62.15}, "prior_bar_high": 61.5,
+                              "on_longlist": True, "on_elder": False,
+                              "bracket": {"valid": True, "stop": 59.0, "targets": []}}],
+              "held_positions": []}
+    quotes = {"HPE": {"price": 64.2, "prev_close": 61.0, "day_high": 64.5,
+                      "day_low": 61.9, "open": 62.0},
+             "SPY": {"price": 500.5, "prev_close": 499.0}}
+    summary = CC.run_condition_cycle(None, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
+                                     run_date="2026-10-02", export=export)
+    assert summary["defaults"] == 1 and summary["enabled"] is True
+    assert summary["fired"]["HPE"] == ["CONDITION_MET"]
+    assert len(sent) == 1
+    ticker, row, ev, states, live = sent[0][0][0]
+    assert row["aqe_default"] is True and row["class"] == "AQE_LONGLIST"
+    from src.alerts import emailer as E
+    subject, plain, _ = E.build_condition_state_body(ticker, row, ev, states, live)
+    assert "AQE default criteria" in subject
+    assert "an hourly candle closes above 62.15 (AQE default)" in plain
+    assert "Bracket: entry 62.15 · stop 59.00" not in plain      # no target -> no bracket line
+
+
 def test_exit_line_on_a_name_not_held_is_ledgered_but_never_a_card(monkeypatch):
     """PM 2026-10-03: "why would I care about an exit I don't own?" Only a
     HELD position's exit line becomes a card; a watch name's crossing is
