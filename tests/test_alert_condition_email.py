@@ -249,6 +249,17 @@ def test_voice_lines_are_capped_and_the_rest_folded(monkeypatch):
     assert "b (2)" not in plain
 
 
+def test_live_elder_line_shows_provisional_score_beside_last_close():
+    live = dict(_live(), elder={"elder_live": 9, "impulse_live": "GREEN",
+                                 "elder_prev": 8, "impulse_prev": "NEUTRAL"})
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(), ["CONDITION_MET"], live)
+    assert "Live: Elder impulse 9/10 GREEN ▲ (provisional) — 8 at last close." in plain
+    _, plain2, _ = E.build_condition_state_body(
+        "HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())   # no elder -> no line
+    assert "Elder impulse" not in plain2
+
+
 def test_card_summary_one_liner_sits_under_the_headline():
     """PM 2026-10-03: the one-liner under each example card read clearer
     than the card -- so the card now opens with one, built from its own

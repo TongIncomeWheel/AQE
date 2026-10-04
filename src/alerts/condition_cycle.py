@@ -63,6 +63,12 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         return summary
 
     profiles = CD.ensure_volume_profiles(client, tickers, today)
+    # Daily history for the live Elder read -- cached once per day, panel
+    # fast path only when fresh (see condition_data.ensure_daily_history).
+    try:
+        histories = CD.ensure_daily_history(client, tickers, today)
+    except Exception:  # noqa: BLE001 -- a card line, never the cycle
+        histories = {}
 
     spy_bars_today = CD.fetch_today_bars(client, "SPY", today)
     spy_quote = quotes.get("SPY")
@@ -106,6 +112,18 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                            # that mapping exists, never guessed.
             }
 
+            # Live Elder (provisional, PM ask 2026-10-04) -- display + ledger
+            # only; never evaluates a PMA COB word (handoff §5).
+            try:
+                import pandas as _pd
+                from . import live_elder as LE
+                hist = histories.get(ticker) or []
+                live["elder"] = LE.elder_live(_pd.DataFrame(hist) if hist else None,
+                                              live["price"], today)
+            except Exception:  # noqa: BLE001
+                live["elder"] = {"elder_live": None, "impulse_live": None,
+                                 "elder_prev": None, "impulse_prev": None}
+
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:
                 continue
@@ -129,6 +147,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             line = CL.build_ledger_line(
                 ticker, eval_result, fired_states, vol_x=vol_x,
                 session_vwap=vwap_info, rs_today=rs, legacy_vol_pace=legacy_pace,
+                elder_live=live.get("elder"),
                 now=now_et.astimezone(ZoneInfo("Asia/Singapore")))
             CL.append_line(run_date, line)
 

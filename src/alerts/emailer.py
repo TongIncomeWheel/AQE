@@ -1062,6 +1062,18 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         h1 = live.get("last_hourly_close")
         side = "Above" if (h1 is not None and h1 > vwap_info["vwap"]) else "Below"
         lines.append(f"Live: {side} today's VWAP {vwap_info['vwap']:.2f}.")
+    # Live Elder (PM 2026-10-04): the nightly 0-10 score re-run with the
+    # live price as today's close -- provisional until the bell, so it is
+    # shown beside the last completed session's own score.
+    el = live.get("elder") or {}
+    if el.get("elder_live") is not None:
+        prev = (f" — {el['elder_prev']} at last close" if el.get("elder_prev") is not None else "")
+        arrow = ""
+        if el.get("elder_prev") is not None:
+            d = el["elder_live"] - el["elder_prev"]
+            arrow = " ▲" if d > 0 else (" ▼" if d < 0 else " =")
+        lines.append(f"Live: Elder impulse {el['elder_live']}/10 {el.get('impulse_live') or ''}"
+                     f"{arrow} (provisional){prev}.")
 
     shared = (row.get("conditions") or {}).get("shared") or {}
     chase = shared.get("chase")

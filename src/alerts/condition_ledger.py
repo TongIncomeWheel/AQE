@@ -31,7 +31,7 @@ def _summary_path(date_str: str) -> Path:
 def build_ledger_line(ticker: str, eval_result: dict, fired_states: list[str], *,
                       vol_x: dict | None = None, session_vwap: dict | None = None,
                       rs_today: float | None = None, legacy_vol_pace: float | None = None,
-                      old_trigger: dict | None = None,
+                      old_trigger: dict | None = None, elder_live: dict | None = None,
                       now: datetime | None = None) -> dict:
     """One line's worth of fact, independent of whether anything fired —
     a quiet cycle is logged too, so "nothing happened" is a recorded
@@ -56,6 +56,9 @@ def build_ledger_line(ticker: str, eval_result: dict, fired_states: list[str], *
         "session_vwap": session_vwap,
         "rs_today": rs_today,
         "old_trigger": old_trigger,
+        # Live (provisional) Elder at this cycle -- so the scorecard can
+        # later ask whether intraday impulse said anything the close didn't.
+        "elder_live": elder_live,
     }
 
 

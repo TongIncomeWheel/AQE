@@ -121,9 +121,9 @@ CONDITION_DEFAULTS_INCLUDE_WATCH = _b("CONDITION_DEFAULTS_INCLUDE_WATCH", False)
 CONDITION_DEFAULT_VOL_X = _f("CONDITION_DEFAULT_VOL_X", 1.0)
 CONDITION_DEFAULT_CHASE_PCT = _f("CONDITION_DEFAULT_CHASE_PCT", 3.0)
 # A breakout line further than this above the last close is not armed --
-# an hourly close through a level 13% away isn't worth 15-min bar pulls
-# every cycle (2026-10-03 export: p90 of candidate lines sat 13% away).
-CONDITION_DEFAULT_MAX_LEVEL_PCT = _f("CONDITION_DEFAULT_MAX_LEVEL_PCT", 6.0)
+# PM 2026-10-04: "tighten to 2%, else it's too far a watch level and
+# becomes noise" (first cut was 6%; the 2026-10-03 export's p90 sat 13%).
+CONDITION_DEFAULT_MAX_LEVEL_PCT = _f("CONDITION_DEFAULT_MAX_LEVEL_PCT", 2.0)
 # Hard ceiling on default-watched names per cycle (FMP: one 15-min bar
 # pull per name per cycle, 80 calls/min on cloud IPs).
 CONDITION_MAX_WATCHED = int(_f("CONDITION_MAX_WATCHED", 120))
