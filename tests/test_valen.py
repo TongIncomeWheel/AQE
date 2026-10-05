@@ -659,6 +659,21 @@ def test_gauge_bar_unknown_kind_falls_back_to_plain_value_not_a_guessed_scale():
     assert "valen-light-bulb" not in html
 
 
+def test_mover_ratio_bands_follow_the_specs_own_edges_not_a_one_point_oh_line():
+    """PM caught a 0.76 reading as green 'Buyers have control' (2026-10-05).
+    spec: sellers below 0.50, buyers above 2.00, balanced between."""
+    from src.valen import spec as S
+    low = theme._bulb_gauge_html("10-day up/down 4% count", 0.3, "mover_ratio")
+    mid = theme._bulb_gauge_html("10-day up/down 4% count", 0.76, "mover_ratio")
+    high = theme._bulb_gauge_html("10-day up/down 4% count", 2.4, "mover_ratio")
+    assert "Sellers have control" in low
+    assert "Balanced" in mid and "Buyers have control" not in mid
+    assert "Buyers have control" in high
+    # the band edges ARE the spec's frozen constants
+    edges = {b_lo for b_lo, _b_hi, _c in theme._RATIO_BANDS} | {b_hi for _l, b_hi, _c in theme._RATIO_BANDS}
+    assert S.MOVER_RATIO_SELLERS_BELOW in edges and S.MOVER_RATIO_BUYERS_ABOVE in edges
+
+
 def test_gauge_bar_bulb_count_matches_the_kinds_own_band_count():
     # atr_multiple has only 2 bands (green/red, no amber) -- 2 bulbs, not 3.
     html = theme._bulb_gauge_html("SPY ATRs above 50-day", 4.0, "atr_multiple")
@@ -918,7 +933,7 @@ def test_card_selection_block_defaults_when_absent():
 
 
 def test_card_house_block_defaults_when_absent():
-    assert card.house_block({}) == {"setups": []}
+    assert card.house_block({}) == {"setups": [], "computed": False}
 
 
 def test_card_execution_block_defaults_when_absent():
@@ -1137,3 +1152,69 @@ def test_run_valen_includes_history_with_all_lookback_keys():
     assert artifact["history"]["1d_ago"]["sessions_ago"] == 1
     assert artifact["history"]["5d_ago"]["sessions_ago"] == 5
     assert artifact["history"]["1mo_ago"]["sessions_ago"] == 21
+
+
+# --- 2026-10-05: Theme Leaders read + Parts 2-6 loud-missing ---------------
+
+def _tl_rows():
+    # 7 groups; 1W and 1M rankings deliberately disagree.
+    return [
+        {"display_name": "Both", "ret_1w_pct": 9.0, "ret_1m_pct": 20.0, "since_open_pct": 0.1},
+        {"display_name": "WeekOnly", "ret_1w_pct": 8.0, "ret_1m_pct": -5.0, "since_open_pct": 0.1},
+        {"display_name": "MonthOnly", "ret_1w_pct": -1.0, "ret_1m_pct": 18.0, "since_open_pct": 0.1},
+        {"display_name": "G4", "ret_1w_pct": 5.0, "ret_1m_pct": 10.0, "since_open_pct": 0.1},
+        {"display_name": "G5", "ret_1w_pct": 4.0, "ret_1m_pct": 9.0, "since_open_pct": 0.1},
+        {"display_name": "G6", "ret_1w_pct": 3.0, "ret_1m_pct": 8.0, "since_open_pct": 0.1},
+        {"display_name": "Neither", "ret_1w_pct": -2.0, "ret_1m_pct": -9.0, "since_open_pct": 0.1},
+    ]
+
+
+def test_theme_reads_apply_the_handbooks_top_five_on_each_list_rule():
+    out = {r["display_name"]: r for r in card.theme_reads(_tl_rows())}
+    assert out["Both"]["theme_read"] == card.THEME_READ_BOTH
+    assert out["WeekOnly"]["theme_read"] == card.THEME_READ_WEEK
+    assert out["MonthOnly"]["theme_read"] == card.THEME_READ_MONTH
+    assert out["Neither"]["theme_read"] == card.THEME_READ_NONE
+    assert out["Both"]["rank_1w"] == 1 and out["Both"]["rank_1m"] == 1
+    assert spec.THEME_TOP_N == 5
+
+
+def test_theme_reads_put_in_theme_groups_first():
+    order = [r["display_name"] for r in card.theme_reads(_tl_rows())]
+    assert order[0] == "Both"
+    assert order[-1] == "Neither"
+    assert order.index("WeekOnly") < order.index("MonthOnly")
+
+
+def test_theme_leaders_table_shows_the_read_and_every_group():
+    rows = _tl_rows() + [{"display_name": f"X{i}", "ret_1w_pct": -10.0 - i,
+                          "ret_1m_pct": -20.0, "since_open_pct": 0.0} for i in range(20)]
+    html = theme.theme_leaders_table_html(rows)
+    assert "In-theme?" in html and "BOTH LISTS" in html and "WEEK ONLY" in html
+    assert ">X19<" in html  # no 15-row cap
+
+
+def test_playbook_missing_is_reported_not_rendered_as_empty():
+    assert card.playbook_missing_reason({"house": {"setups": []},
+                                         "playbook_status": {"status": "OK"}}) is None
+    reason = card.playbook_missing_reason({"trend": {}})
+    assert reason and "Part 1 only" in reason
+    assert card.house_block({"trend": {}})["computed"] is False
+
+
+def test_run_valen_full_reattaches_parts_2_to_6(monkeypatch, tmp_path):
+    import json as _json
+    from src.data import paths as P
+    from src.valen import daily as D
+    exp = tmp_path / "aqe_daily_export.json"
+    exp.write_text(_json.dumps({"daily_list": [], "held_positions": []}))
+    monkeypatch.setattr(P, "EXPORT_JSON", exp)
+    monkeypatch.setattr(D, "run_valen", lambda: {"trend": {}})
+    art = D.run_valen_full()
+    assert art["playbook_status"]["status"] == "OK"
+    assert "house" in art and card.house_block(art)["computed"] is True
+
+    monkeypatch.setattr(P, "EXPORT_JSON", tmp_path / "missing.json")
+    art = D.run_valen_full()
+    assert art["playbook_status"]["status"] == "UNAVAILABLE"
+    assert card.house_block(art)["computed"] is False

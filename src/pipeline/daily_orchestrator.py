@@ -508,6 +508,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
             _export = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
             _pb = run_playbook(_export, _vl1)
             _vl1.update(_pb)
+            _vl1["playbook_status"] = {"status": "OK"}
             _valen_write2(_vl1)
             print(f"  VALEN playbook: {len(_pb['selection']['relative_strength'])} RS leaders, "
                   f"{len(_pb['house']['setups'])} setups tagged, "

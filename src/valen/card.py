@@ -172,6 +172,49 @@ def theme_leaders_table(valen: dict) -> list[dict]:
     return (valen.get("groups") or {}).get("groups") or []
 
 
+THEME_READ_BOTH = "BOTH_LISTS"
+THEME_READ_WEEK = "WEEK_ONLY"
+THEME_READ_MONTH = "MONTH_ONLY"
+THEME_READ_NONE = "NOT_IN_THEME"
+
+THEME_READ_TEXT = {
+    THEME_READ_BOTH: "In-theme: top 5 this week AND this month",
+    THEME_READ_WEEK: "In-theme: top 5 this week only (new money arriving)",
+    THEME_READ_MONTH: "In-theme: top 5 this month only (resting or fading)",
+    THEME_READ_NONE: "Not in-theme",
+}
+_THEME_READ_ORDER = [THEME_READ_BOTH, THEME_READ_WEEK, THEME_READ_MONTH, THEME_READ_NONE]
+
+
+def theme_reads(rows: list[dict], top_n: int = S.THEME_TOP_N) -> list[dict]:
+    """Piece 02's written rule applied to every group: rank on the 1-week
+    list and the 1-month list separately, mark the top `top_n` on each.
+    A group on either list is in-theme; which list(s) it is on is the
+    read (both = real leadership, week only = new money, month only = a
+    leader resting or ending). Returns new dicts with `rank_1w`,
+    `rank_1m`, `theme_read`, `theme_read_text`, ordered both-lists first,
+    then week-only, month-only, the rest -- each block by 1-week return.
+    A group missing a return gets no rank on that list, never a guess."""
+    def _ranks(key):
+        have = sorted((r for r in rows if r.get(key) is not None),
+                      key=lambda r: r[key], reverse=True)
+        return {id(r): i for i, r in enumerate(have, 1)}
+    r1w, r1m = _ranks("ret_1w_pct"), _ranks("ret_1m_pct")
+    out = []
+    for r in rows:
+        w, m = r1w.get(id(r)), r1m.get(id(r))
+        in_w = w is not None and w <= top_n
+        in_m = m is not None and m <= top_n
+        read = (THEME_READ_BOTH if in_w and in_m else THEME_READ_WEEK if in_w
+                else THEME_READ_MONTH if in_m else THEME_READ_NONE)
+        out.append({**r, "rank_1w": w, "rank_1m": m, "theme_read": read,
+                    "theme_read_text": THEME_READ_TEXT[read]})
+    out.sort(key=lambda r: (_THEME_READ_ORDER.index(r["theme_read"]),
+                            -(r.get("ret_1w_pct") if r.get("ret_1w_pct") is not None
+                              else float("-inf"))))
+    return out
+
+
 def rotation_table(valen: dict) -> list[dict]:
     """Same rows, sorted by thrust (this week's push) — the map between
     the market and the stock, per piece 03."""
@@ -243,8 +286,23 @@ def selection_block(valen: dict) -> dict:
            "no_buy_list": sel.get("no_buy_list") or []}
 
 
+def playbook_missing_reason(valen: dict) -> str | None:
+    """None when Parts 2-6 were computed for this artifact; otherwise the
+    reason, so the page says "not computed" instead of rendering empty
+    lists that read like a quiet market (CLAUDE.md: a failed read must be
+    LOUD, never silently empty)."""
+    st = valen.get("playbook_status") or {}
+    if st.get("status") == "OK" or ("house" in valen and not st):
+        return None
+    if st.get("reason"):
+        return st["reason"]
+    return ("this saved read has Part 1 only. Parts 2-6 need the finished "
+            "daily export and are added by the nightly pipeline (Step 8a-1b)")
+
+
 def house_block(valen: dict) -> dict:
-    return {"setups": (valen.get("house") or {}).get("setups") or []}
+    return {"setups": (valen.get("house") or {}).get("setups") or [],
+            "computed": playbook_missing_reason(valen) is None}
 
 
 def execution_block(valen: dict) -> dict:

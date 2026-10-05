@@ -255,6 +255,33 @@ def run_playbook(export: dict, valen_artifact: dict | None = None) -> dict:
     }
 
 
+def run_valen_full() -> dict:
+    """Part 1 rebuilt fresh PLUS Parts 2-6 re-attached from today's export.
+
+    The page's "Run VALEN read" button used to call run_valen() alone and
+    write the result over valen_dashboard.json -- which silently deleted
+    Step 8a-1b's selection/house/execution/management sections, so Part 3
+    read "No setup pattern flagged today" when nothing had been computed
+    at all (PM caught it 2026-10-05). Now the button re-runs both halves.
+    If the export is missing or the playbook fails, the artifact carries a
+    `playbook_status` saying so, and the page shows that instead of an
+    empty list."""
+    from src.data.paths import EXPORT_JSON
+    art = run_valen()
+    if not EXPORT_JSON.exists():
+        art["playbook_status"] = {"status": "UNAVAILABLE",
+                                  "reason": "no daily export on disk to read"}
+        return art
+    try:
+        export = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
+        art.update(run_playbook(export, art))
+        art["playbook_status"] = {"status": "OK"}
+    except Exception as exc:  # noqa: BLE001 -- Part 1 still renders
+        art["playbook_status"] = {"status": "UNAVAILABLE",
+                                  "reason": f"playbook failed: {exc}"}
+    return art
+
+
 def write_artifacts(artifact: dict) -> dict:
     """Local write only — see module docstring on Drive publish scope."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

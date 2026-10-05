@@ -220,7 +220,12 @@ _PCT100_BANDS = [(0.0, 20.0, "#5aa9e6"), (20.0, 80.0, _GREY), (80.0, 100.0, "#e6
 _PCT100_TICKS = [0.0, 20.0, 80.0, 100.0]
 
 _RATIO_LO, _RATIO_HI = 0.0, 3.0
-_RATIO_BANDS = [(0.0, 0.5, _RED), (0.5, 2.0, _GREEN), (2.0, 3.0, _GOLD)]
+# spec.MOVER_RATIO_SELLERS_BELOW = 0.50 / MOVER_RATIO_BUYERS_ABOVE = 2.00:
+# sellers hold control under 0.50, buyers over 2.00, and the band between
+# is BALANCED -- neither side. It was painted green and captioned "Buyers
+# have control" (PM caught 0.76 reading green, 2026-10-05); the checklist's
+# 1.00 pass line is a different handbook row, not this instrument's edge.
+_RATIO_BANDS = [(0.0, 0.5, _RED), (0.5, 2.0, _GREY), (2.0, 3.0, _GREEN)]
 _RATIO_TICKS = [0.0, 0.5, 2.0, 3.0]
 
 # Crown-sourced gauges (macro cockpit, 2026-10-02) — crown/spec.py's own
@@ -261,7 +266,9 @@ _GAUGE_EXPLAINER = {
                  "average. Under 20% = washed out/oversold; over 80% = "
                  "euphoric/overbought."),
     "mover_ratio": ("4%+ up-days ÷ 4%+ down-days over the window. Above "
-                   "1.00 = buyers have had control; below 1.00 = sellers have."),
+                   "2.00 = buyers have had control; below 0.50 = sellers have; "
+                   "between = balanced, neither side in charge. (The checklist "
+                   "1.00 pass line is a separate, looser test.)"),
     "breadth_range_pct": ("Where the average stock (RSP/SPY) sits in its own "
                          "12-month range — Crown's heartbeat read, before any "
                          "individual stock. Near 0% = bottom of the range "
@@ -306,8 +313,8 @@ _GAUGE_COMMENTARY = {
     },
     "mover_ratio": {
         _RED: "Sellers have control.",
+        _GREY: "Balanced — neither buyers nor sellers in control.",
         _GREEN: "Buyers have control.",
-        _GOLD: "Buyers stretched — momentum may be overextended.",
     },
     "breadth_range_pct": {
         "#5aa9e6": "Near the bottom of its 12-month range.",
@@ -831,26 +838,56 @@ def neighbourhood_html(lines: list[str], status: str, reason: str | None) -> str
            f'<ul class="valen-bullet-list">{items}</ul>')
 
 
-def theme_leaders_table_html(rows: list[dict], limit: int = 15) -> str:
-    """Ranked by 1-week return, colour-coded green/positive red/negative,
-    matching the reference's Theme Leaders table exactly."""
-    ranked = sorted((r for r in rows if r.get("ret_1w_pct") is not None),
-                    key=lambda r: r["ret_1w_pct"], reverse=True)[:limit]
+_THEME_READ_STYLE = {
+    "BOTH_LISTS": (_GREEN, "BOTH LISTS"),
+    "WEEK_ONLY": (_GOLD, "WEEK ONLY"),
+    "MONTH_ONLY": (_GOLD, "MONTH ONLY"),
+    "NOT_IN_THEME": (_GREY, "—"),
+}
+
+
+def _theme_rank_cell(pct, rank, top_n: int) -> str:
+    """Return % plus its rank on that list; a top-N rank is gold + bold so
+    the eye finds the marked rows without reading a single number."""
+    if pct is None:
+        return '<td>—</td>'
+    marked = rank is not None and rank <= top_n
+    tag = (f' <span style="color:{_GOLD};font-weight:700">#{rank}</span>' if marked
+           else f' <span style="color:{_TEXT_MUTED}">#{rank}</span>' if rank else '')
+    return f'<td class="{_pct_class(pct)}">{_fmt(pct, "%")}{tag}</td>'
+
+
+def theme_leaders_table_html(rows: list[dict], limit: int | None = None) -> str:
+    """Piece 02's rule made visible: every group gets its rank on the
+    1-week list and the 1-month list, the top 5 on each marked, and a
+    one-word read of which list(s) it is on. In-theme groups lead the
+    table. Today's since-open move is context, last column. Shows every
+    group (no cap) unless `limit` is passed."""
+    from . import card as _card
+    from . import spec as _S
+    top_n = _S.THEME_TOP_N
+    ranked = _card.theme_reads(rows, top_n)
+    if limit:
+        ranked = ranked[:limit]
+    if not ranked:
+        return '<div class="valen-empty">No group read today.</div>'
     body = []
-    for i, r in enumerate(ranked, 1):
+    for r in ranked:
+        color, label = _THEME_READ_STYLE.get(r["theme_read"], (_GREY, "—"))
         body.append(
-            f'<tr><td class="valen-rank">{i}</td>'
-            f'<td class="valen-name">{_esc(r.get("display_name"))}</td>'
-            f'<td class="{_pct_class(r.get("since_open_pct"))}">'
-            f'{_fmt(r.get("since_open_pct"), "%")}</td>'
-            f'<td class="{_pct_class(r.get("ret_1w_pct"))}">'
-            f'{_fmt(r.get("ret_1w_pct"), "%")}</td>'
-            f'<td class="{_pct_class(r.get("ret_1m_pct"))}">'
-            f'{_fmt(r.get("ret_1m_pct"), "%")}</td></tr>')
+            f'<tr><td class="valen-name">{_esc(r.get("display_name"))}</td>'
+            f'<td style="color:{color};font-weight:600;font-size:11px;'
+            f'text-transform:uppercase;text-align:left" '
+            f'title="{_esc(r["theme_read_text"])}">{_esc(label)}</td>'
+            + _theme_rank_cell(r.get("ret_1w_pct"), r.get("rank_1w"), top_n)
+            + _theme_rank_cell(r.get("ret_1m_pct"), r.get("rank_1m"), top_n)
+            + f'<td class="{_pct_class(r.get("since_open_pct"))}">'
+            f'{_fmt(r.get("since_open_pct"), "%")}</td></tr>')
     return (
-        '<table class="valen-table"><thead><tr><th></th><th>Group</th>'
-        '<th>Since Open</th><th>1 Week</th><th>1 Month</th></tr></thead>'
-        f'<tbody>{"".join(body)}</tbody></table>')
+        '<table class="valen-table"><thead><tr><th>Group</th>'
+        '<th style="text-align:left">In-theme?</th>'
+        '<th>1 Week (rank)</th><th>1 Month (rank)</th><th>Today, from open</th>'
+        f'</tr></thead><tbody>{"".join(body)}</tbody></table>')
 
 
 def rotation_table_html(rows: list[dict], limit: int = 15) -> str:
@@ -948,12 +985,13 @@ def no_buy_html(rows: list[dict], limit: int = 12) -> str:
     return "".join(body) + more_html
 
 
-def house_setups_html(rows: list[dict], limit: int = 20) -> str:
-    """Parts 08-12 — every setup tag a ticker carries, as pills."""
+def house_setups_html(rows: list[dict], limit: int | None = None) -> str:
+    """Parts 08-12 — every setup tag a ticker carries, as pills. Every
+    tagged name shows (no cap) unless `limit` is passed."""
     if not rows:
         return '<div class="valen-empty">No setup pattern flagged today.</div>'
     body = []
-    for r in rows[:limit]:
+    for r in (rows[:limit] if limit else rows):
         tags = "".join(f'<span class="valen-tag" title="{_esc(t["detail"])}">'
                        f'{_esc(t["name"])}</span>' for t in r["setups"])
         body.append(

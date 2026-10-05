@@ -59,7 +59,8 @@ from src.data.paths import PANEL_DAILY, PANEL_WEEKLY  # noqa: E402
 from src.valen import card as C  # noqa: E402
 from src.valen import live as L  # noqa: E402
 from src.valen import theme as T  # noqa: E402
-from src.valen.daily import load_valen, run_valen, write_artifacts  # noqa: E402
+from src.valen import spec as S  # noqa: E402
+from src.valen.daily import load_valen, run_valen_full, write_artifacts  # noqa: E402
 
 st.markdown(T.CSS, unsafe_allow_html=True)
 
@@ -82,7 +83,7 @@ with right:
 if go:
     with st.spinner("Reading the market…"):
         try:
-            valen = run_valen()
+            valen = run_valen_full()
             write_artifacts(valen)
         except Exception as exc:  # noqa: BLE001
             st.error(f"VALEN run failed: {exc}")
@@ -199,18 +200,23 @@ if gr.get("status") == "OK":
 
     st.markdown(
         '<div class="valen-card">'
-        '<div class="valen-header"><span class="valen-title">Theme Leaders — piece 02</span></div>'
-        '<div class="valen-caption" style="margin-bottom:10px">Every group, ranked three '
-        'ways at once. On both lists = real leadership. Strong this week, absent on the '
-        'month = new money arriving. Strong month, fading week = a leader resting or '
-        'ending.</div>' + T.theme_leaders_table_html(tl_rows) + '</div>',
+        '<div class="valen-header"><span class="valen-title">Theme Leaders — which groups are in-theme (piece 02)</span></div>'
+        '<div class="valen-caption" style="margin-bottom:10px">The handbook\'s rule: '
+        'rank every group on its 1-week return and its 1-month return, and mark the top '
+        f'{S.THEME_TOP_N} on each list (gold #). A stock whose group is marked is '
+        '<b>in-theme</b>. <b>Both lists</b> = real leadership. <b>Week only</b> = new money '
+        'just arriving. <b>Month only</b> = a leader resting or fading. Everything else is '
+        'not in-theme. Today\'s from-open move is context only.</div>'
+        + T.theme_leaders_table_html(tl_rows) + '</div>',
         unsafe_allow_html=True)
     with st.expander("📋 Copy for AIC — Theme Leaders"):
         tl_df = pd.DataFrame([
-            {"Group": r["display_name"], "Since Open %": r.get("since_open_pct"),
-             "1 Week %": r.get("ret_1w_pct"), "1 Month %": r.get("ret_1m_pct")}
-            for r in tl_rows
-        ]).sort_values("1 Week %", ascending=False)
+            {"Group": r["display_name"], "In-theme?": r["theme_read_text"],
+             "1 Week %": r.get("ret_1w_pct"), "1W rank": r.get("rank_1w"),
+             "1 Month %": r.get("ret_1m_pct"), "1M rank": r.get("rank_1m"),
+             "Today from open %": r.get("since_open_pct")}
+            for r in C.theme_reads(tl_rows)
+        ])
         table_with_copy(tl_df, key="valen_theme_leaders")
 
     st.markdown(
@@ -277,6 +283,10 @@ _part_header("2", "Neighbourhood — selection",
             "Buy what is already outperforming, narrowed to one focus list, "
             "checked against the trades we refuse to take.")
 
+_pb_missing = C.playbook_missing_reason(valen)
+if _pb_missing:
+    st.error("Parts 2-6 NOT computed for this read — " + _pb_missing
+             + ". Empty tables below mean missing data, not an empty market.")
 sel = C.selection_block(valen)
 
 st.markdown(
@@ -316,6 +326,10 @@ _part_header("3", "House — the setups",
             "Which chart patterns we buy, and what each must show.")
 
 house = C.house_block(valen)
+if not house["computed"]:
+    st.error("Setups NOT computed for this read — " + C.playbook_missing_reason(valen)
+             + ". An empty list below would mean nothing, not a quiet market. "
+             "Press **Run VALEN read** to rebuild with today's export.")
 st.markdown(
     '<div class="valen-root"><div class="valen-card">'
     '<div class="valen-header"><span class="valen-title">Setups flagged today</span></div>'

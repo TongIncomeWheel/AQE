@@ -141,6 +141,10 @@ ROTATION_NEITHER = "NEITHER"
 
 # Theme Leaders — three rankings run at once (piece 02 + web edition).
 THEME_LEADER_WINDOWS = ("since_open", "1_week", "1_month")
+# Piece 02, "How I read it": "I track how every group performed over the
+# past week and the past month, and I mark the top five on each list. A
+# stock whose group is on those lists is in-theme."
+THEME_TOP_N = 5
 
 # ---------------------------------------------------------------------------
 # PER-STOCK EXTENSION (piece 17 / appendix "ATR% Multiple From MA") — for the
