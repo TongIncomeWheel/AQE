@@ -952,6 +952,42 @@ def _ema_lines(live: dict) -> list[str]:
     return out
 
 
+def _session_lines(live: dict) -> list[str]:
+    """U&R intraday reference figures (PM 2026-10-06, from the PM's U&R
+    write-up): the opening-range high, the low of the day, and whether the
+    hourly closes have just reclaimed (or lost) VWAP. FIGURES ONLY -- none of
+    it feeds buy_met. Each line is left out when its data isn't there."""
+    px = live.get("price")
+    out = []
+    orr = live.get("opening_range")
+    if orr and px:
+        hi, lo = orr["high"], orr["low"]
+        if px > hi:
+            where = f"spot {(px / hi - 1) * 100:.1f}% above the opening-range high"
+        elif px < lo:
+            where = f"spot {(1 - px / lo) * 100:.1f}% below the opening-range low"
+        else:
+            where = "spot inside the opening range"
+        out.append(f"Opening range (first 15 min): high {hi:.2f} · low {lo:.2f} — {where}")
+    day_lo, day_hi = live.get("day_low"), live.get("day_high")
+    if day_lo and px:
+        tail = f" · high of day {day_hi:.2f}" if day_hi else ""
+        out.append(f"Low of day {day_lo:.2f}{tail} — spot {(px / day_lo - 1) * 100:.1f}% "
+                   "above the low of day")
+    vw = (live.get("vwap") or {})
+    closes = live.get("hourly_closes") or []
+    if vw.get("vwap") is not None and not vw.get("provisional") and len(closes) >= 2:
+        v = vw["vwap"]
+        if closes[-1] > v and closes[-2] <= v:
+            out.append(f"VWAP {v:.2f}: reclaimed — the last hourly close is back above it "
+                       "after closing below")
+        elif closes[-1] <= v and closes[-2] > v:
+            out.append(f"VWAP {v:.2f}: lost — the last hourly close fell back under it")
+        elif closes[-1] > v and any(c <= v for c in closes[:-1]):
+            out.append(f"VWAP {v:.2f}: holding above after an earlier close below it today")
+    return out
+
+
 def _spot_line(row: dict, live: dict) -> str | None:
     """Where price is NOW against the entry line -- the number the card
     never showed (PM 2026-10-06: "it doesn't give the spot price")."""
@@ -1155,6 +1191,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         side = "Above" if (h1 is not None and h1 > vwap_info["vwap"]) else "Below"
         lines.append(f"Live: {side} today's VWAP {vwap_info['vwap']:.2f}.")
     lines += _ema_lines(live)
+    lines += _session_lines(live)
     # Live Elder (PM 2026-10-04): the nightly 0-10 score re-run with the
     # live price as today's close -- provisional until the bell, so it is
     # shown beside the last completed session's own score.

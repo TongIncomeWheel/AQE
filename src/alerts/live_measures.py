@@ -176,6 +176,26 @@ def hourly(bars_15m: list[dict]) -> list[dict]:
     return candles
 
 
+def opening_range(bars_15m: list[dict]) -> dict | None:
+    """High/low of the FIRST 15-minute bar of today's regular session (the
+    09:30 bar). The U&R write-up uses a 5-minute opening range; FMP's
+    intraday feed here is 15-minute, so this is the opening 15 minutes and
+    the card says so. None before the first bar exists."""
+    first = None
+    for b in bars_15m or []:
+        dt = _parse_bar_dt(b)
+        if dt is None or dt.hour * 60 + dt.minute != S.SESSION_OPEN_MIN:
+            continue
+        first = b
+        break
+    if first is None:
+        return None
+    hi, lo = _f(first.get("high")), _f(first.get("low"))
+    if hi is None or lo is None:
+        return None
+    return {"high": hi, "low": lo}
+
+
 def session_vwap(hourly_candles: list[dict]) -> dict:
     """§4.4: sum(typical x volume) / sum(volume) over today's completed
     hourly candles, typical = (H+L+C)/3. `provisional: True` before

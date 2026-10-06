@@ -112,6 +112,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 "hourly_closes": [c["close"] for c in candles],
                 "vwap": vwap_info,
                 "vol_x": vol_x,
+                "opening_range": LM.opening_range(today_bars),
                 "rs_today": rs,
                 "atr": _num(row.get("atr_14d")),
                 "cob": {},  # see live_measures.py / module notes: COB word

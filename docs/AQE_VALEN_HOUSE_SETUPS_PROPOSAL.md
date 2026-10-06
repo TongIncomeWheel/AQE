@@ -152,3 +152,19 @@ panel already loaded nightly. Wrapped like Crown/QS: a grader failure marks
 2. **Momentum Breakout pole floor.** HTF is fixed at 90-100%. The broader Momentum Breakout has no number in the handbook. Pick one (e.g. 50% in ≤12 weeks) or ship HTF only.
 3. **Piece 12 framing.** Proposal: warnings on held + candidate longs only, never a short list. Confirm.
 4. **Earnings-day EP.** Needs past earnings dates per ticker (FMP earnings calendar). OK to add that pull?
+
+
+## Addendum 2026-10-06 — the PM's own U&R reference levels
+
+From the PM's pasted U&R write-up (third-party, unverified; NOT the handbook).
+Built as **separately-named grades** beside the handbook's swing-low U&R, which is
+unchanged: "Undercut and rally — Daily EMA8 / EMA10 / EMA21 / SMA50 / Weekly EMA9 /
+support gap / round number". Constants `PM_UNR_*` (taken as written: the MA list,
+the 1.25%–3.5% buffer-stop zone) and `IMPL_*` (AQE's measurement where the write-up
+names a level but no number: undercut depth, gap size/volume, round-number steps).
+Only live shapes (Triggered / Ready / Watch / Past pivot) are recorded for these
+looser levels — on 800 random uptrends a failed grade was the norm, not a finding.
+The buffer-stop zone is shown as a reference figure; the handbook's "stop under one
+daily range" stays the hard rule. Intraday reference lines on the alert cards (all
+figures only, none feeds a condition): opening-range high/low (first 15 min — the
+feed is 15-minute, the write-up uses 5), low of day, VWAP reclaimed / lost.

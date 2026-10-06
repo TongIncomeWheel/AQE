@@ -232,6 +232,27 @@ HB_UNR_STOP_MAX_ATR = 1.0              # "stop at the pullback low, under one da
 IMPL_PULLBACK_ZIGZAG_PCT = 5.0         # a pullback counted for "1st/2nd/3rd pullback"
 IMPL_UNR_RS_RANK_MIN = 70.0            # "relative strength still holding"
 
+# 10b Undercut and rally -- the OTHER reference levels (PM 2026-10-06, from the
+# PM's own U&R write-up: third-party, unverified, NOT the handbook). Prefix
+# PM_* = taken from that write-up as given; IMPL_* = AQE's measurement where
+# the write-up names a level without a number. Same no-tuning discipline.
+# The handbook's own swing-low U&R (above) is unchanged and stays the signed-off
+# grade; each of these is its own, separately-named grade ("Undercut and
+# rally -- Daily EMA8" ...), never folded into it.
+PM_UNR_DAILY_EMA_SPANS = (8, 10, 21)    # "Daily 8 EMA / 10 EMA", "21 EMA"
+PM_UNR_DAILY_SMA_SPAN = 50              # "50 SMA"
+PM_UNR_WEEKLY_EMA_SPAN = 9              # "Weekly 9 EMA"
+PM_UNR_STOP_BUFFER_PCT = (1.25, 3.5)    # "stops 1.25% to 3.5% below the reclaimed level"
+IMPL_MAUR_MIN_UNDERCUT_ATR = 0.10       # a moving average is pierced shallowly: a tenth
+                                        # of a daily range under it counts as an undercut
+IMPL_GAP_MIN_PCT = 3.0                  # "gap up ... surged on high volume": the gap
+IMPL_GAP_VOL_MULT = 1.5                 # ... opens >= 3% over the prior high on >= 1.5x
+IMPL_GAP_LOOKBACK = 120                 # normal volume, within the last 120 sessions
+IMPL_GAP_MAX_LEVELS = 2                 # the two most recent unfilled gaps
+IMPL_ROUND_STEPS = ((20.0, 1.0), (50.0, 5.0), (200.0, 10.0), (500.0, 50.0),
+                    (float("inf"), 100.0))   # price < first -> step second: "$100, $500"
+IMPL_WEEKLY_MIN_WEEKS = 20              # a settled weekly EMA9 needs >2x its span
+
 # 11 Episodic pivot, p.37.
 HB_EP_GAP_MIN_PCT = 10.0               # "opens 10% or more above yesterday's close"
 HB_EP_EARNINGS_EXPANSION_PCT = 4.0     # "or a 4%-plus expansion on an earnings day"

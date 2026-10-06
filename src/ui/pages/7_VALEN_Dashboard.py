@@ -338,7 +338,7 @@ st.markdown(
     '<div class="valen-header"><span class="valen-title">The five setups, graded</span></div>'
     '<div class="valen-caption" style="margin-bottom:8px">Every name on the daily list '
     'and every held position, measured against the handbook\'s own checklist: '
-    '08 VCP · 09 High tight flag · 10 Undercut and rally · 11 Episodic pivot (earnings-day '
+    '08 VCP · 09 High tight flag · 10 Undercut and rally (the handbook\'s swing-low version, plus your U&R levels: daily EMA8/10/21 and SMA50, weekly EMA9, support gaps, round numbers — only live shapes are listed for those) · 11 Episodic pivot (earnings-day '
     'gaps confirmed; any other gap is a technical fingerprint, AQE has no news feed) · '
     '12 Parabolic / failed leader as <b>risk warnings on longs only</b>, never a short call. '
     '<b>Ready</b> = every rule passes, waiting on the trigger. <b>Triggered</b> = the trigger '

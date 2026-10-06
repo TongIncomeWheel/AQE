@@ -252,3 +252,102 @@ def test_grade_universe_absent_ticker_is_absent_not_empty():
 def test_every_threshold_in_spec_is_labelled_hb_or_impl():
     names = [n for n in dir(S) if n.startswith(("HB_", "IMPL_"))]
     assert len(names) > 30
+
+
+# ------------------------------------------- 10b U&R against the other levels
+
+def _uptrend(n=160, a=40.0, b=100.0):
+    return _ramp(a, b, n)
+
+
+def _find(grades, fragment):
+    return [g for g in grades if fragment in g["setup"]]
+
+
+def test_ma_undercut_and_rally_daily_ema21_triggers_on_the_reclaim():
+    base = _uptrend()
+    # three quiet bars, a flush through EMA21, then a close back above it
+    ema21 = pd.Series(base).ewm(span=21, adjust=False).mean().iloc[-1]
+    c = base + [ema21 * 1.01, ema21 * 1.005, ema21 * 0.995, ema21 * 1.012]
+    lows = list(np.asarray(c) * 0.988)
+    lows[-2] = ema21 * 0.985          # the undercut
+    lows[-1] = ema21 * 0.988          # undercut again, closes back above
+    g = SU.grade_unr_levels(SU.Bars(_frame(c, lows=lows, wick=0.012)), rs_rank=85, in_theme=True)
+    hit = _find(g, "Daily EMA21")
+    assert hit, [x["setup"] for x in g]
+    assert hit[0]["ref_kind"] == "ma" and hit[0]["piece"] == "10"
+    assert hit[0]["status"] in ("TRIGGERED", "WATCH", "PAST_PIVOT")   # never FAILED
+    assert any("Buffer-stop zone" in x["rule"] for x in hit[0]["checks"])
+
+
+def test_no_undercut_means_no_ma_grade():
+    c = _uptrend() + [100.5, 101.0, 101.5]
+    assert SU.grade_unr_levels(SU.Bars(_frame(c))) == []
+
+
+def test_a_falling_50_day_is_not_an_uptrend_for_any_reference_level():
+    c = _ramp(100, 60, 160) + [61, 62, 61]
+    assert SU.grade_unr_levels(SU.Bars(_frame(c))) == []
+
+
+def test_weekly_ema9_is_computed_from_resampled_weekly_closes():
+    b = SU.Bars(_frame(_uptrend(200)))
+    w = SU._weekly_ema9(b)
+    assert w is not None and 40 < w < 100
+    assert SU._weekly_ema9(SU.Bars(_frame(_uptrend(60)))) is None   # too little history
+
+
+def test_support_gap_found_only_when_it_gapped_on_volume_and_held():
+    c = _ramp(50, 60, 100) + [66.0] + _ramp(66.5, 70, 40)           # +10% gap
+    o = list(np.concatenate([[c[0]], c[:-1]]))
+    o[100] = 66.0
+    lows = list(np.asarray(c) * 0.997)
+    lows[100] = 65.9
+    highs = list(np.asarray(c) * 1.003)
+    v = [1e6] * len(c)
+    v[100] = 4e6
+    b = SU.Bars(_frame(c, vols=v, opens=o, lows=lows, highs=highs))
+    gaps = SU._support_gaps(b, win0=b.n - 10)
+    assert gaps and abs(gaps[0] - highs[99]) < 1e-6
+    v2 = [1e6] * len(c)                                             # same gap, no volume
+    b2 = SU.Bars(_frame(c, vols=v2, opens=o, lows=lows, highs=highs))
+    assert SU._support_gaps(b2, win0=b2.n - 10) == []
+
+
+def test_round_number_undercut_is_the_highest_one_dipped_under_and_reclaimed():
+    c = _ramp(60, 104, 150) + [103.0, 101.5, 102.0, 101.0, 102.5]
+    lows = list(np.asarray(c) * 0.997)
+    lows[-3] = 99.4                    # flushed through 100, closed back above
+    b = SU.Bars(_frame(c, lows=lows))
+    atr = float(b.atr[-1])
+    assert SU._round_level(b, win0=b.n - 10, atr=atr) == 100.0
+
+
+def test_grade_ticker_returns_the_new_grades_alongside_the_handbook_ones():
+    base = _uptrend()
+    ema21 = pd.Series(base).ewm(span=21, adjust=False).mean().iloc[-1]
+    c = base + [ema21 * 1.01, ema21 * 1.005, ema21 * 0.995, ema21 * 1.012]
+    lows = list(np.asarray(c) * 0.988)
+    lows[-2] = ema21 * 0.985
+    lows[-1] = ema21 * 0.988
+    out = SU.grade_ticker(_frame(c, lows=lows, wick=0.012), rs_rank=80, in_theme=True)
+    assert any(g["setup"].startswith("Undercut and rally — Daily") for g in out)
+    assert all(isinstance(g, dict) for g in out)
+
+
+def test_new_thresholds_are_labelled_pm_or_impl_and_the_buffer_matches_the_writeup():
+    assert S.PM_UNR_STOP_BUFFER_PCT == (1.25, 3.5)
+    assert S.PM_UNR_DAILY_EMA_SPANS == (8, 10, 21)
+    assert S.PM_UNR_WEEKLY_EMA_SPAN == 9
+
+
+def test_failed_shapes_are_not_recorded_for_the_looser_levels():
+    # a name whose undercut stop is wider than one daily range fails a hard
+    # rule -> no grade at all for that level (the handbook U&R still records it)
+    base = _uptrend()
+    ema21 = pd.Series(base).ewm(span=21, adjust=False).mean().iloc[-1]
+    c = base + [ema21 * 1.01, ema21 * 1.005, ema21 * 0.995, ema21 * 1.012]
+    lows = list(np.asarray(c) * 0.988)
+    lows[-2] = ema21 * 0.80            # a flush far deeper than one daily range
+    g = SU.grade_unr_levels(SU.Bars(_frame(c, lows=lows, wick=0.012)), rs_rank=85, in_theme=True)
+    assert not _find(g, "Daily EMA21")

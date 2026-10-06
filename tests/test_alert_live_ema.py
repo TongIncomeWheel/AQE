@@ -149,3 +149,60 @@ def test_ema_matches_a_hand_computed_recursion_on_a_random_walk():
         return e
     assert r["ema8"] == pytest.approx(ema(8), abs=0.006)
     assert r["ema20"] == pytest.approx(ema(20), abs=0.006)
+
+
+# --- U&R intraday reference figures: opening range, low of day, VWAP reclaim --
+
+from src.alerts import live_measures as LM
+
+
+def test_opening_range_is_the_first_session_bar_only():
+    bars = [{"date": "2026-10-06 09:30:00", "high": 62.4, "low": 61.5, "close": 62.0},
+            {"date": "2026-10-06 09:45:00", "high": 63.9, "low": 61.9, "close": 63.5}]
+    assert LM.opening_range(bars) == {"high": 62.4, "low": 61.5}
+    assert LM.opening_range([bars[1]]) is None
+    assert LM.opening_range([]) is None
+
+
+def test_session_lines_read_spot_against_orb_low_of_day_and_vwap():
+    live = {"price": 63.0, "opening_range": {"high": 62.4, "low": 61.5},
+            "day_low": 61.2, "day_high": 63.5,
+            "vwap": {"vwap": 62.0, "provisional": False},
+            "hourly_closes": [61.5, 61.8, 62.6]}
+    lines = E._session_lines(live)
+    assert lines[0] == ("Opening range (first 15 min): high 62.40 · low 61.50 — "
+                        "spot 1.0% above the opening-range high")
+    assert lines[1] == "Low of day 61.20 · high of day 63.50 — spot 2.9% above the low of day"
+    assert lines[2].startswith("VWAP 62.00: reclaimed")
+
+
+def test_vwap_lost_holding_and_no_line_cases():
+    base = {"price": 61.0, "vwap": {"vwap": 62.0, "provisional": False}}
+    assert E._session_lines({**base, "hourly_closes": [62.5, 61.4]})[-1].startswith("VWAP 62.00: lost")
+    assert E._session_lines({**base, "hourly_closes": [61.0, 62.5, 62.8]})[-1].startswith(
+        "VWAP 62.00: holding above after an earlier close below")
+    assert E._session_lines({**base, "hourly_closes": [62.5, 62.8]}) == []      # nothing new
+    assert E._session_lines({**base, "vwap": {"vwap": 62.0, "provisional": True},
+                             "hourly_closes": [61, 63]}) == []
+
+
+def test_spot_inside_or_below_the_opening_range_is_said_so():
+    inside = E._session_lines({"price": 62.0, "opening_range": {"high": 62.4, "low": 61.5}})
+    below = E._session_lines({"price": 61.0, "opening_range": {"high": 62.4, "low": 61.5}})
+    assert inside[0].endswith("spot inside the opening range")
+    assert "below the opening-range low" in below[0]
+    assert E._session_lines({}) == []
+
+
+def test_session_figures_never_reach_the_buy_decision():
+    row = {"conditions": {"shared": {"buy": [{"w": "h1_close_above", "level": 100.0}],
+                                     "confirm": [{"w": "vol_x_ge", "x": 1.0}]},
+                          "exits": [], "analysts": []}}
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    now = datetime(2026, 10, 6, 11, 5, tzinfo=ZoneInfo("America/New_York"))
+    base = {"last_hourly_close": 100.6, "price": 100.4, "vol_x": {"so_far": 1.5}}
+    hostile = {"opening_range": {"high": 120.0, "low": 119.0}, "day_low": 100.3,
+               "ema": {"m15": {"stack": "below"}}}
+    assert CE.evaluate_conditions(row, dict(base), now)["buy_met"] is True
+    assert CE.evaluate_conditions(row, {**base, **hostile}, now)["buy_met"] is True

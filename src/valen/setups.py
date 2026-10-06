@@ -202,6 +202,9 @@ class Bars:
         self.c = df["close"].to_numpy(float)
         self.v = df["volume"].to_numpy(float)
         self.n = len(df)
+        cs = pd.Series(self.c)
+        self.ema = {n: cs.ewm(span=n, adjust=False).mean().to_numpy()
+                    for n in S.PM_UNR_DAILY_EMA_SPANS}
         self.sma10 = _sma(self.c, 10)
         self.sma20 = _sma(self.c, 20)
         self.sma50 = _sma(self.c, 50)
@@ -450,6 +453,160 @@ def grade_unr(b: Bars, rs_rank: float | None = None, in_theme: bool | None = Non
 
 
 # ---------------------------------------------------------------------------
+# 10b — Undercut and rally against the OTHER reference levels (PM 2026-10-06)
+#       moving averages (daily EMA8/10/21, SMA50, weekly EMA9), support gaps,
+#       round numbers. Same shape as the handbook's swing-low U&R, one grade
+#       per reference level that was actually undercut in the window.
+# ---------------------------------------------------------------------------
+
+def _weekly_ema9(b: Bars) -> float | None:
+    """Weekly EMA9 of the weekly closes, the current (incomplete) week
+    included as its latest close -- the level a chartist sees today."""
+    if b.n < S.IMPL_WEEKLY_MIN_WEEKS * 5:
+        return None
+    w = (pd.Series(b.c, index=pd.to_datetime(b.dates)).resample("W-FRI").last().dropna())
+    if len(w) < S.IMPL_WEEKLY_MIN_WEEKS:
+        return None
+    return float(w.ewm(span=S.PM_UNR_WEEKLY_EMA_SPAN, adjust=False).mean().iloc[-1])
+
+
+def _support_gaps(b: Bars, win0: int) -> list[float]:
+    """Bottoms of recent gap-up windows (the prior day's high) that held as
+    support until the undercut window: opened >= IMPL_GAP_MIN_PCT over the
+    prior high on >= IMPL_GAP_VOL_MULT x normal volume, and no close beneath
+    the level since, before `win0`. Most recent first."""
+    t = b.n - 1
+    out = []
+    for i in range(t - 1, max(1, t - S.IMPL_GAP_LOOKBACK), -1):
+        prev_hi = b.h[i - 1]
+        if prev_hi <= 0 or np.isnan(b.vol50[i - 1]):
+            continue
+        gap = (b.l[i] / prev_hi - 1.0) * 100.0
+        if gap < S.IMPL_GAP_MIN_PCT or b.v[i] < S.IMPL_GAP_VOL_MULT * b.vol50[i - 1]:
+            continue
+        if i + 1 < win0 and np.any(b.c[i + 1:win0] < prev_hi):
+            continue                                    # support already given up
+        if prev_hi >= b.c[t] * 1.0001 and not np.any(b.l[win0:t + 1] < prev_hi):
+            continue
+        out.append(float(prev_hi))
+        if len(out) >= S.IMPL_GAP_MAX_LEVELS:
+            break
+    return out
+
+
+def _round_level(b: Bars, win0: int, atr: float) -> float | None:
+    """The highest round number price dipped under (by a real margin) inside
+    the window after trading above it just before: "$100, $500"."""
+    t = b.n - 1
+    px = b.c[t]
+    step = next(st for lim, st in S.IMPL_ROUND_STEPS if px < lim)
+    lo_w = float(b.l[win0:t + 1].min())
+    k = int(px // step)
+    while k * step > lo_w:
+        r = k * step
+        if r < px and lo_w < r - S.IMPL_MAUR_MIN_UNDERCUT_ATR * atr and b.c[win0 - 1] > r:
+            return float(r)
+        k -= 1
+        if k <= 0:
+            break
+    return None
+
+
+def _grade_level_unr(b: Bars, name: str, kind: str, ref: np.ndarray, win0: int, atr: float,
+                     rs_rank, in_theme) -> dict | None:
+    """One reference level (per-bar array `ref`), undercut inside the window
+    then reclaimed. None when the level was never really undercut."""
+    t = b.n - 1
+    thr = S.IMPL_MAUR_MIN_UNDERCUT_ATR * atr
+    under = [i for i in range(win0, t + 1) if b.l[i] < ref[i] - thr]
+    if not under:
+        return None
+    u = under[0]
+    pull_low = float(b.l[u:t + 1].min())
+    level = float(ref[t])
+    reclaim_today = b.c[t] > ref[t] and (b.c[t - 1] <= ref[t - 1] or b.l[t] < ref[t] - thr)
+    reclaim_before = (bool(np.any(b.c[u:t] > ref[u:t])) and b.c[t] > ref[t]
+                      and not reclaim_today)
+    pb_no = count_bases(b.h, b.l, S.IMPL_PULLBACK_ZIGZAG_PCT, end=t + 1)
+    top = max(0, u - 20) + int(np.argmax(b.h[max(0, u - 20):u + 1]))
+    low_pos = u + int(np.argmin(b.l[u:t + 1]))
+    dry = not np.isnan(b.vol50[top]) and b.v[top:low_pos + 1].mean() < b.vol50[top]
+    stop_dist = max(level, b.c[t]) - pull_low
+    rs_ok = None if rs_rank is None else rs_rank >= S.IMPL_UNR_RS_RANK_MIN
+    lo_b, hi_b = S.PM_UNR_STOP_BUFFER_PCT
+    checks = [
+        _check("50-day still rising", _r(b.sma50[t]), PASS if b.rising(b.sma50, t) else FAIL,
+               hard=True),
+        _check("Young trend: 1st, 2nd or 3rd pullback", f"pullback #{pb_no}",
+               PASS if pb_no <= S.HB_MAX_YOUNG_BASE else FAIL, hard=True),
+        _check("Volume drying up on the way down", None, PASS if dry else FAIL),
+        _check(f"A real dip below {name}", f"low {pull_low:.2f} under {level:.2f}", PASS),
+        _check("Then a real reclaim (close back above)", _r(b.c[t]),
+               PASS if (reclaim_today or reclaim_before) else NOT_YET),
+        _check("Stop at the undercut low, under one daily range",
+               f"{stop_dist:.2f} vs ATR {atr:.2f}",
+               PASS if stop_dist <= S.HB_UNR_STOP_MAX_ATR * atr else FAIL, hard=True),
+        _check("Buffer-stop zone, 1.25%–3.5% under the level (reference only)",
+               f"{level * (1 - hi_b / 100):.2f}–{level * (1 - lo_b / 100):.2f}", INFO),
+        _check("Relative strength still holding", _r(rs_rank, 0),
+               INFO if rs_ok is None else (PASS if rs_ok else FAIL)),
+        _check("Group still being bought (in-theme)", None,
+               INFO if in_theme is None else (PASS if in_theme else FAIL)),
+    ]
+    status, fails = _status(checks, triggered=reclaim_today, past=reclaim_before)
+    return _grade("10", f"Undercut and rally — {name}", status, fails, checks,
+                  pivot=level, stop=pull_low, ref_kind=kind, ref_name=name,
+                  note=("Reclaim on the latest bar." if status == TRIGGERED else
+                        "Reference level from the PM's U&R write-up, not the handbook. "
+                        "The reclaim is the signal."))
+
+
+def grade_unr_levels(b: Bars, rs_rank: float | None = None,
+                     in_theme: bool | None = None) -> list[dict]:
+    """Every OTHER U&R reference level that was undercut and is being (or has
+    been) reclaimed: daily EMA8/10/21 and SMA50, weekly EMA9, support gaps,
+    round numbers. Empty list = none is undercut-and-rally-shaped right now
+    (FAILED shapes are not recorded for these looser levels -- see below)."""
+    t = b.n - 1
+    if b.n < 80 or np.isnan(b.atr[t]):
+        return []
+    above_50 = b.c[t] > b.sma50[t] and b.rising(b.sma50, t)
+    if not b.rising(b.sma50, t):
+        return []                                       # a falling 50-day is not an uptrend
+    win0 = t - S.IMPL_UNR_WINDOW + 1
+    atr = float(b.atr[t])
+    refs: list[tuple[str, str, np.ndarray]] = []
+    for n in S.PM_UNR_DAILY_EMA_SPANS:
+        refs.append((f"Daily EMA{n}", "ma", b.ema[n]))
+    refs.append((f"Daily SMA{S.PM_UNR_DAILY_SMA_SPAN}", "ma", b.sma50))
+    w9 = _weekly_ema9(b)
+    if w9 is not None:
+        refs.append((f"Weekly EMA{S.PM_UNR_WEEKLY_EMA_SPAN}", "ma", np.full(b.n, w9)))
+    for k, g in enumerate(_support_gaps(b, win0), 1):
+        refs.append((f"support gap {g:.2f}", "gap", np.full(b.n, g)))
+    rl = _round_level(b, win0, atr)
+    if rl is not None:
+        refs.append((f"round number {rl:g}", "round", np.full(b.n, rl)))
+    out = []
+    for name, kind, ref in refs:
+        if np.any(np.isnan(ref[win0 - 1:])):
+            continue
+        # an uptrend stock: above its 50-day, except when the 50-day IS the level
+        if name != f"Daily SMA{S.PM_UNR_DAILY_SMA_SPAN}" and not above_50:
+            continue
+        g = _grade_level_unr(b, name, kind, ref, win0, atr, rs_rank, in_theme)
+        # Only a LIVE shape is recorded for these looser levels. A stock pokes
+        # its EMA8 constantly; a FAILED grade there (stop wider than a daily
+        # range, an old trend) is the usual case, not a finding -- on 800
+        # random uptrends it was ~1,400 grades. The handbook's own swing-low
+        # U&R still records its FAILED grades. "No grade" here means "not
+        # undercut-and-rally-shaped", the same as for any other setup.
+        if g and g["status"] != FAILED:
+            out.append(g)
+    return out
+
+
+# ---------------------------------------------------------------------------
 # 11 — Episodic pivot (p.37), day one + the Delayed EP
 # ---------------------------------------------------------------------------
 
@@ -661,6 +818,7 @@ def grade_ticker(df: pd.DataFrame, *, rs_rank: float | None = None,
     out = []
     for fn, kw in ((grade_vcp, {}), (grade_htf, {}),
                    (grade_unr, {"rs_rank": rs_rank, "in_theme": in_theme}),
+                   (grade_unr_levels, {"rs_rank": rs_rank, "in_theme": in_theme}),
                    (grade_ep, {"earnings_dates": earnings_dates}),
                    (warn_parabolic, {}), (warn_failed_leader, {"spy_close": spy_close})):
         try:
@@ -668,9 +826,10 @@ def grade_ticker(df: pd.DataFrame, *, rs_rank: float | None = None,
         except Exception as exc:  # noqa: BLE001 -- one grader never blanks the others
             g = {"piece": "?", "setup": fn.__name__, "status": "ERROR", "error": str(exc),
                  "checks": [], "fails": []}
-        if g:
-            g["as_of"] = str(b.dates[-1])
-            out.append(g)
+        for one in (g if isinstance(g, list) else [g]):
+            if one:
+                one["as_of"] = str(b.dates[-1])
+                out.append(one)
     out.sort(key=lambda g: STATUS_ORDER.index(g["status"]) if g["status"] in STATUS_ORDER else 99)
     return out
 
