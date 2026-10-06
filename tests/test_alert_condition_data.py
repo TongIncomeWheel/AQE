@@ -21,6 +21,7 @@ class _FakeClient:
 
 def test_ensure_volume_profiles_builds_only_missing_tickers(tmp_path, monkeypatch):
     monkeypatch.setattr(CD, "VOLUME_PROFILE_DIR", tmp_path)
+    monkeypatch.setattr(CD, "INTRADAY_SEED_DIR", tmp_path / "seed")
     client = _FakeClient()
     today = date(2026, 10, 2)
     CD.ensure_volume_profiles(client, ["A", "B"], today)
@@ -35,6 +36,7 @@ def test_ensure_volume_profiles_builds_only_missing_tickers(tmp_path, monkeypatc
 
 def test_ensure_volume_profiles_caches_empty_on_fetch_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(CD, "VOLUME_PROFILE_DIR", tmp_path)
+    monkeypatch.setattr(CD, "INTRADAY_SEED_DIR", tmp_path / "seed")
 
     class _BoomClient:
         def get_intraday_bars(self, *a, **k):
@@ -46,6 +48,7 @@ def test_ensure_volume_profiles_caches_empty_on_fetch_failure(tmp_path, monkeypa
 
 def test_profiles_persist_across_cache_loads(tmp_path, monkeypatch):
     monkeypatch.setattr(CD, "VOLUME_PROFILE_DIR", tmp_path)
+    monkeypatch.setattr(CD, "INTRADAY_SEED_DIR", tmp_path / "seed")
     client = _FakeClient()
     today = date(2026, 10, 2)
     CD.ensure_volume_profiles(client, ["A"], today)
@@ -56,6 +59,7 @@ def test_profiles_persist_across_cache_loads(tmp_path, monkeypatch):
 
 def test_load_cached_profiles_empty_when_no_file(tmp_path, monkeypatch):
     monkeypatch.setattr(CD, "VOLUME_PROFILE_DIR", tmp_path)
+    monkeypatch.setattr(CD, "INTRADAY_SEED_DIR", tmp_path / "seed")
     assert CD.load_cached_profiles("2026-10-02") == {}
 
 

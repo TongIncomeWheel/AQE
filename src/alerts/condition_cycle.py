@@ -77,6 +77,8 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     except Exception:  # noqa: BLE001 -- a card line, never the cycle
         histories = {}
 
+    seeds = CD.load_cached_seeds(today.isoformat())   # EMA warm-up, built with the profiles
+
     spy_bars_today = CD.fetch_today_bars(client, "SPY", today)
     spy_quote = quotes.get("SPY")
 
@@ -130,6 +132,15 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             except Exception:  # noqa: BLE001
                 live["elder"] = {"elder_live": None, "impulse_live": None,
                                  "elder_prev": None, "impulse_prev": None}
+
+            # EMA8 / EMA20 figures (PM 2026-10-06) -- display only, never an
+            # input to evaluate_conditions.
+            try:
+                from . import live_ema as LEMA
+                live["ema"] = LEMA.build(seeds.get(ticker), today_bars,
+                                         histories.get(ticker), live["price"])
+            except Exception:  # noqa: BLE001
+                live["ema"] = {"m15": None, "daily": None}
 
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:

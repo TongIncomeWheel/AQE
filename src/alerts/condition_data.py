@@ -17,6 +17,11 @@ from src.data.paths import PROJECT_ROOT
 
 VOLUME_PROFILE_DIR = PROJECT_ROOT / "aegis" / "output" / "alerts" / "volume_profile"
 PROFILE_HISTORY_CALENDAR_DAYS = 30  # covers the last 20 trading sessions
+# Warm-up closes for the live EMA8/EMA20 (live_ema.py): the last SEED_BARS
+# regular-session 15-min closes of PRIOR sessions, cut from the SAME morning
+# pull the volume profile already makes -- no extra FMP calls.
+INTRADAY_SEED_DIR = PROJECT_ROOT / "aegis" / "output" / "alerts" / "intraday_seed"
+SEED_BARS = 200
 
 
 def _cache_path(date_str: str) -> Path:
@@ -57,9 +62,12 @@ def ensure_volume_profiles(client, tickers: list[str], today: date) -> dict[str,
     "no vol_x reading today", not a repeated failing call)."""
     from . import live_measures as LM
 
+    from . import live_ema as LE
+
     date_str = today.isoformat()
     cached = load_cached_profiles(date_str)
-    missing = [t for t in tickers if t not in cached]
+    seeds = load_cached_seeds(date_str)
+    missing = [t for t in tickers if t not in cached or t not in seeds]
     if not missing:
         return cached
 
@@ -72,10 +80,34 @@ def ensure_volume_profiles(client, tickers: list[str], today: date) -> dict[str,
         except Exception:  # noqa: BLE001
             bars = []
         cached[tk] = LM.volume_profile(bars or [])
+        seeds[tk] = LE.session_closes(bars or [], before_date=date_str)[-SEED_BARS:]
         changed = True
     if changed:
         save_cached_profiles(date_str, cached)
+        save_cached_seeds(date_str, seeds)
     return cached
+
+
+def load_cached_seeds(date_str: str) -> dict[str, list[float]]:
+    """{ticker: [prior-session 15-min closes, oldest first]} -- same-day
+    scratch cache, local file only."""
+    path = INTRADAY_SEED_DIR / f"{date_str}.json"
+    try:
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                return {tk: [float(c) for c in (v or [])] for tk, v in data.items()}
+    except Exception:  # noqa: BLE001
+        pass
+    return {}
+
+
+def save_cached_seeds(date_str: str, seeds: dict[str, list[float]]) -> None:
+    try:
+        INTRADAY_SEED_DIR.mkdir(parents=True, exist_ok=True)
+        (INTRADAY_SEED_DIR / f"{date_str}.json").write_text(json.dumps(seeds), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
 
 
 DAILY_HISTORY_DIR = PROJECT_ROOT / "aegis" / "output" / "alerts" / "daily_history"

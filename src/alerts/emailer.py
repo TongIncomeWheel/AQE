@@ -934,6 +934,24 @@ def _effective_entry(row: dict) -> float | None:
     return max(lv) if lv else None
 
 
+def _ema_lines(live: dict) -> list[str]:
+    """EMA8 / EMA20 on the 15-min and daily charts (PM 2026-10-06). Figures
+    only: where each average sits, how far spot is from it, which is on top,
+    and which way each is pointing. Nothing here is a condition or a signal.
+    A timeframe without enough history is left out, never faked."""
+    ema = live.get("ema") or {}
+    out = []
+    for key, label in (("m15", "15-min"), ("daily", "daily")):
+        r = ema.get(key)
+        if not r:
+            continue
+        out.append(
+            f"EMA {label}: EMA8 {r['ema8']:.2f} (spot {r['spot_vs_8_pct']:+.1f}%) · "
+            f"EMA20 {r['ema20']:.2f} (spot {r['spot_vs_20_pct']:+.1f}%) · "
+            f"8 {r['stack']} 20 · EMA8 {r['slope8']}, EMA20 {r['slope20']}")
+    return out
+
+
 def _spot_line(row: dict, live: dict) -> str | None:
     """Where price is NOW against the entry line -- the number the card
     never showed (PM 2026-10-06: "it doesn't give the spot price")."""
@@ -1136,6 +1154,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         h1 = live.get("last_hourly_close")
         side = "Above" if (h1 is not None and h1 > vwap_info["vwap"]) else "Below"
         lines.append(f"Live: {side} today's VWAP {vwap_info['vwap']:.2f}.")
+    lines += _ema_lines(live)
     # Live Elder (PM 2026-10-04): the nightly 0-10 score re-run with the
     # live price as today's close -- provisional until the bell, so it is
     # shown beside the last completed session's own score.
