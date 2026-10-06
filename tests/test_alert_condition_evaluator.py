@@ -371,3 +371,42 @@ def test_not_yet_never_fires_a_state():
     live = _ctx(last_hourly_close=63.0, vol_x={"so_far": None})  # NOT_YET
     out = E.evaluate_conditions(row, live, datetime(2026, 10, 2, 11, 0, tzinfo=_ET))
     assert out["buy_met"] is False
+
+
+# --- 2026-10-06: spot below the entry must not read as an entry -------------
+
+def test_h1_close_above_is_false_when_spot_has_slipped_back_under_the_line():
+    """PM: "at times the spot is below the entry but still it flags out as
+    entry." The last completed hourly close was above 100, price is now 99.2."""
+    ctx = {"last_hourly_close": 100.6, "price": 99.2}
+    assert E.evaluate_word({"w": "h1_close_above", "level": 100.0}, ctx) == "FALSE"
+
+
+def test_h1_close_above_still_true_when_spot_holds_the_line():
+    ctx = {"last_hourly_close": 100.6, "price": 100.3}
+    assert E.evaluate_word({"w": "h1_close_above", "level": 100.0}, ctx) == "TRUE"
+
+
+def test_h1_close_above_without_a_spot_falls_back_to_the_hourly_close():
+    ctx = {"last_hourly_close": 100.6}
+    assert E.evaluate_word({"w": "h1_close_above", "level": 100.0}, ctx) == "TRUE"
+
+
+def test_h1_close_below_exit_words_still_judge_the_close_only():
+    # the guard is for ENTRY lines; an exit/invalidation line is not softened
+    ctx = {"last_hourly_close": 99.0, "price": 101.0}
+    assert E.evaluate_word({"w": "h1_close_below", "level": 100.0}, ctx) == "TRUE"
+
+
+def test_buy_met_turns_false_when_spot_fades_so_the_state_machine_reports_back_under():
+    row = {"conditions": {"shared": {"buy": [{"w": "h1_close_above", "level": 100.0}],
+                                     "confirm": [{"w": "vol_x_ge", "x": 1.0}]}, "exits": [],
+                                "analysts": []}}
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    now = datetime(2026, 10, 6, 11, 5, tzinfo=ZoneInfo("America/New_York"))
+    up = E.evaluate_conditions(row, {"last_hourly_close": 100.6, "price": 100.4,
+                                      "vol_x": {"so_far": 1.5}}, now)
+    down = E.evaluate_conditions(row, {"last_hourly_close": 100.6, "price": 99.4,
+                                        "vol_x": {"so_far": 1.5}}, now)
+    assert up["buy_met"] is True and down["buy_met"] is False

@@ -106,6 +106,14 @@ SHORTLIST_NEAR_PCT = _f("SHORTLIST_NEAR_PCT", 1.5)  # shortlist: within X% of en
 PMA_CONDITIONS_MODE = os.environ.get("PMA_CONDITIONS_MODE", "live").strip().lower()
 PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
 
+# The OLD intraday email (heartbeat MOVE/BOS/BUY_ZONE/NEAR_* triggers + the
+# COMMITTEE LEVELS section) is RETIRED -- PM 2026-10-06: it landed beside the
+# condition cards as a second, older-format mail, and its "Hit buy price"
+# fired on the day's RANGE crossing the level even when spot had since
+# fallen back below it. Triggers are still evaluated, logged to history and
+# ledgered for the committee; only the email is off. Flip to true to restore.
+LEGACY_DIGEST_EMAIL = _b("LEGACY_DIGEST_EMAIL", False)
+
 # How many voices get their own criteria line on a condition card (PM
 # 2026-10-03: "limit the voices instead of all"). Highest conviction first;
 # the rest are folded into one "+N more" line, never dropped silently.

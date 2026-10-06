@@ -115,6 +115,9 @@ def _base_export():
 
 
 def _wire_common(monkeypatch, export):
+    # The old intraday digest is retired by default (PM 2026-10-06); these
+    # tests exercise the preserved legacy path, so switch it back on.
+    monkeypatch.setattr(C, "LEGACY_DIGEST_EMAIL", True)
     monkeypatch.setattr(E, "load_export", lambda: export)
     monkeypatch.setattr(E, "in_market_window", lambda: True)
     monkeypatch.setattr(E, "_export_age_days", lambda _e: 0)
@@ -239,3 +242,21 @@ def test_a_cycle_with_no_fresh_triggers_never_touches_the_gate(monkeypatch):
 def FC_mod():
     import src.data.fmp_client as FC
     return FC.FMPClient
+
+
+def test_legacy_digest_is_retired_by_default_but_triggers_are_still_logged(monkeypatch):
+    """PM 2026-10-06: two mails (old format + new cards). The old one is off:
+    nothing sent, nothing queued -- the trigger is still evaluated, marked
+    fired and returned in the summary so history/ledger keep it."""
+    export = _base_export()
+    _wire_common(monkeypatch, export)
+    monkeypatch.setattr(C, "LEGACY_DIGEST_EMAIL", False)
+    sent = []
+    import src.alerts.emailer as EM
+    monkeypatch.setattr(EM, "send_digest",
+                        lambda *a, **k: sent.append(1) or {"ok": True})
+    summary = E.run_alert_cycle(send_email=True)
+    assert summary["new_triggers"] >= 1
+    assert summary["emailed"] is False and not sent
+    assert S.load_pending_digest() == {"legacy": [], "pma": []}
+    assert "retired" in (summary["reason"] or "")

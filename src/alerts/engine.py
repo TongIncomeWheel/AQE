@@ -522,7 +522,14 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     # (dropping it instead would lose it for good, since it is already marked
     # fired above and will never be evaluated again).
     summary["deferred"] = False
-    if (fresh or fresh_pma) and send_email:
+    if (fresh or fresh_pma) and send_email and not C.LEGACY_DIGEST_EMAIL:
+        # Retired old-format mail (config.LEGACY_DIGEST_EMAIL): the triggers
+        # above are already in history + the ledger; the 15-min condition
+        # cards are the one intraday email. Nothing queued either -- a
+        # pending queue nobody drains would only grow.
+        summary["reason"] = ("legacy intraday digest retired — triggers logged, "
+                             "condition cards are the email")
+    elif (fresh or fresh_pma) and send_email:
         pending = S.append_pending_digest(fresh, fresh_pma)
         now_utc = datetime.now(ZoneInfo("UTC"))
         if S.seconds_since_last_digest(now_utc) < C.MIN_DIGEST_GAP_MINUTES * 60:

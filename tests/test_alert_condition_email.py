@@ -108,14 +108,70 @@ def test_a_not_yet_word_renders_as_watching_not_false():
     assert "✗ NOT MET" not in plain
 
 
-def test_bracket_line_shows_entry_stop_target_and_rr():
+def test_bracket_shows_the_whole_ladder_with_each_targets_own_r():
     row = _row()
-    row["levels"] = {"stop": 60.00, "tp": [64.00, 68.00]}
+    row["levels"] = {"stop": 60.00, "tp": [64.00, 68.00, 72.00]}
     _, plain, _ = E.build_condition_state_body(
         "HPE", row, _eval_result(), ["CONDITION_MET"], _live())
-    # entry 62.15, stop 60.00 -> risk 2.15; first target above entry is 64.00
-    # -> reward 1.85 -> R:R 0.9.
-    assert "Bracket: entry 62.15 · stop 60.00 · target 64.00 · R:R 0.9" in plain
+    # entry 62.15, stop 60.00 -> risk 2.15
+    assert "Bracket: entry 62.15 · stop 60.00 (risk 2.15) · " in plain
+    assert "TP1 64.00 (0.9R)" in plain and "TP2 68.00 (2.7R)" in plain
+    assert "TP3 72.00 (4.6R)" in plain
+    # the headline R:R is to TP2 (the bracket gate's own yardstick), not TP1
+    assert "R:R to TP2 2.7 — clears the 2.0 gate" in plain
+
+
+def test_tp1_at_the_entry_is_labelled_not_skipped_and_rr_is_to_tp2():
+    """PM 2026-10-06: R:R under 1, some 0.2. Real file: TP1 equals the entry
+    (GTLB 50.67/50.67). That used to be skipped and the NEXT target shown as
+    'the target'; now the ladder is whole and says TP1 has no room."""
+    row = _row()
+    row["levels"] = {"stop": 60.00, "tp": [62.15, 66.45, 70.75]}
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", row, _eval_result(), ["CONDITION_MET"], _live())
+    assert "TP1 62.15 (at/below entry — no room)" in plain
+    assert "R:R to TP2 2.0" in plain
+
+
+def test_rr_under_one_is_said_plainly():
+    row = _row()
+    row["levels"] = {"stop": 55.00, "tp": [63.00, 64.00]}
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", row, _eval_result(), ["CONDITION_MET"], _live())
+    assert "R:R to TP2 0.3 — under 1R" in plain
+
+
+def test_entry_is_the_highest_shared_buy_line_not_the_first_listed():
+    """Real file: NTNX buy [72.75, 71.08], ZETA [32.01, 32.8] -- every shared
+    buy word must be true, so price must clear the HIGHEST line."""
+    row = _row()
+    row["conditions"]["shared"]["buy"] = [
+        {"w": "h1_close_above", "level": 32.01, "plain": "x"},
+        {"w": "h1_close_above", "level": 32.80, "plain": "y"}]
+    row["levels"] = {"stop": 31.19, "tp": [32.81, 34.36, 36.33]}
+    _, plain, _ = E.build_condition_state_body(
+        "ZETA", row, _eval_result(), ["CONDITION_MET"], _live())
+    assert "Bracket: entry 32.80 · stop 31.19" in plain
+
+
+def test_card_shows_the_spot_price_in_headline_and_a_spot_line():
+    row = _row()
+    live = _live()
+    live["price"] = 63.00
+    sub, plain, _ = E.build_condition_state_body(
+        "HPE", row, _eval_result(), ["CONDITION_MET"], live)
+    assert "HPE @ 63.00" in sub
+    assert "Spot 63.00 · 1.4% above the entry line 62.15" in plain
+
+
+def test_card_says_when_spot_is_below_the_entry_line():
+    row = _row()
+    live = _live()
+    live["price"] = 61.00
+    _, plain, _ = E.build_condition_state_body(
+        "HPE", row, _eval_result(buy_met=False), ["FAILED_PUSH"], live)
+    assert "Spot 61.00 · 1.9% BELOW the entry line 62.15" in plain
+    assert "Spot is 61.00." in plain       # the FAILED_PUSH summary names it too
 
 
 def test_bracket_line_omitted_when_levels_are_missing():
@@ -269,7 +325,7 @@ def test_card_summary_one_liner_sits_under_the_headline():
                       shared_confirm_detail=[(row["conditions"]["shared"]["confirm"][0], "FALSE")])
     _, plain, _ = E.build_condition_state_body("HPE", row, ev, ["FAILED_PUSH"], _live())
     assert plain.splitlines()[1] == (
-        "Cleared 62.15, then an hourly close back under — Volume confirm never came. "
+        "Cleared 62.15, then fell back under — Volume confirm never came. "
         "Still watched: it re-qualifies on the next hourly close back above 62.15.")
     _, plain_met, _ = E.build_condition_state_body(
         "HPE", row, _eval_result(), ["CONDITION_MET"], _live())

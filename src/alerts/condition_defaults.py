@@ -71,9 +71,13 @@ def _levels_block(rec: dict, line: float) -> dict | None:
         stop = _n(b.get("atr_fallback_stop"))
     if stop is None:
         return None
-    tps = [p for p in (_n((t or {}).get("price")) for t in (b.get("targets") or []))
-           if p is not None and p > line][:2]
-    return {"stop": round(stop, 2), "tp": [round(p, 2) for p in tps]}
+    # The bracket's targets IN ITS OWN ORDER (TP1, TP2, TP3), none dropped:
+    # the card labels them by position and measures each one's R from the
+    # entry line, so filtering "above the line" here would silently turn TP2
+    # into "TP1" and break the R:R-to-TP2 yardstick (PM 2026-10-06).
+    tps = [_n((t or {}).get("price")) for t in (b.get("targets") or [])][:3]
+    return {"stop": round(stop, 2),
+            "tp": [round(p, 2) if p is not None else None for p in tps]}
 
 
 def build_default_conditions(rec: dict) -> dict | None:

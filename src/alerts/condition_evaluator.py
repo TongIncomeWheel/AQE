@@ -84,6 +84,15 @@ def evaluate_word(entry: dict, ctx: dict) -> str:
         if h1 is None or level is None:
             return "NOT_YET"
         ok = h1 > level if w == "h1_close_above" else h1 < level
+        # PM 2026-10-06: "at times the spot is below the entry but still it
+        # flags out as entry." The last COMPLETED hourly candle can sit
+        # above the line while price has since slipped back under it. An
+        # entry condition is only live while spot is still at or above the
+        # line, so a faded breakout reads NOT MET (and, if it was MET, the
+        # state machine reports it BACK UNDER THE LEVEL). The mirror word
+        # (an exit/invalidation line) is left alone: it judges the close.
+        if w == "h1_close_above" and ok and price is not None and price < level:
+            ok = False
         return "TRUE" if ok else "FALSE"
 
     if w == "trade_above" or w == "trade_below":

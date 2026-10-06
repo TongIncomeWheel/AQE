@@ -119,7 +119,9 @@ def test_bracket_line_reads_the_exports_own_stop_and_targets():
     ex = _export(_rec("LL1", 100.0, lph=103.0, longlist=True, stop=97.0,
                       targets=(101.0, 110.0, 120.0)))
     row = D.synthesize_rows(ex, {"rows": []})[0]
-    assert row["levels"] == {"stop": 97.0, "tp": [110.0, 120.0]}   # only targets above the line
+    # the bracket's own ladder, in its own order -- none dropped, so the card's
+    # TP1/TP2/TP3 labels and the R:R-to-TP2 yardstick keep their meaning
+    assert row["levels"] == {"stop": 97.0, "tp": [101.0, 110.0, 120.0]}
 
 
 def test_invalid_bracket_falls_back_to_the_atr_stop():

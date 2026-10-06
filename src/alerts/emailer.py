@@ -916,33 +916,100 @@ def _n_or(v, default):
         return default
 
 
-def _bracket_line(row: dict) -> str | None:
-    """Entry/stop/target/R:R for a glance-read bracket line. Entry is the
-    committee's own shared buy level; stop/targets come from row['levels']
-    — the SAME field the existing trigger-based COMMITTEE LEVELS section
-    reads (src/alerts/pma_levels.py), never recomputed here. Omitted
-    entirely (never a partial or fabricated bracket) when any one of
-    entry/stop/a target above entry is missing."""
+def _effective_entry(row: dict) -> float | None:
+    """The line the buy is judged against. Shared buy words are ALL-must-be-
+    true, so when the committee ships several h1-close-above levels (real
+    file, 2026-10-05: NTNX [72.75, 71.08], ZETA [32.01, 32.8]) the entry is
+    the HIGHEST one -- price has to clear every line. Reading the first
+    listed level (as this used to) put the entry below the true trigger and
+    mis-stated every R."""
     from .condition_evaluator import entry_level as _lvl
     shared = (row.get("conditions") or {}).get("shared") or {}
-    entry_level = next((_lvl(e) for e in (shared.get("buy") or [])
-                       if _lvl(e) is not None), None)
-    if entry_level is None:
+    lv = [x for x in (_lvl(e) for e in (shared.get("buy") or [])
+                      if (e or {}).get("w") in ("h1_close_above", "close_above",
+                                                "trade_above"))
+          if x is not None]
+    if not lv:
+        lv = [x for x in (_lvl(e) for e in (shared.get("buy") or [])) if x is not None]
+    return max(lv) if lv else None
+
+
+def _spot_line(row: dict, live: dict) -> str | None:
+    """Where price is NOW against the entry line -- the number the card
+    never showed (PM 2026-10-06: "it doesn't give the spot price")."""
+    px = live.get("price")
+    if px is None:
         return None
+    entry = _effective_entry(row)
+    if entry is None or entry <= 0:
+        return f"Spot {px:.2f}"
+    pct = (px / entry - 1.0) * 100.0
+    if px >= entry:
+        return f"Spot {px:.2f} · {pct:.1f}% above the entry line {entry:.2f}"
+    return (f"Spot {px:.2f} · {abs(pct):.1f}% BELOW the entry line {entry:.2f} "
+            "— not at the entry right now")
+
+
+def _rr_gate() -> float:
+    try:
+        from src.engines.bracket_engine import RR_MIN
+        return float(RR_MIN)
+    except Exception:  # noqa: BLE001
+        return 2.0
+
+
+def _bracket_line(row: dict) -> list[str]:
+    """Entry / stop / the whole target ladder, each target with its OWN R
+    measured from the entry line, then one verdict line on R:R to TP2.
+
+    PM 2026-10-06: "the TP displayed is completely nonsense as all of them
+    are R:R under 1... some even 0.2." Cause: this used to print the FIRST
+    target above entry. In the committee file TP1 is the nearest level --
+    often equal to the entry itself (GTLB 50.67/50.67, HPE 70.29/70.29) or a
+    few tenths of an R away (NTNX 74.42 vs entry 72.75 = 0.4R) -- while the
+    file's own rr_to_tp2 is measured to the SECOND target. So the ladder is
+    shown whole, TP1/TP2/TP3 by their position in the file, and the headline
+    R:R is to TP2, the same yardstick bracket_engine's gate uses. A target
+    at or under the entry says so instead of being skipped. Empty list
+    (never a partial or fabricated bracket) when entry/stop/targets are
+    missing or the stop is not below the entry."""
+    entry = _effective_entry(row)
     levels = row.get("levels") or {}
-    stop = levels.get("stop")
-    if stop is None:
-        return None
-    target = next((t for t in (levels.get("tp") or [])
-                  if t is not None and t > entry_level), None)
-    if target is None:
-        return None
-    risk = entry_level - stop
+    stop = _n_or(levels.get("stop"), None)
+    tps = [t for t in (levels.get("tp") or [])]
+    tps = [_n_or(t, None) for t in tps]
+    if entry is None or stop is None or not any(t is not None for t in tps):
+        return []
+    risk = entry - stop
     if risk <= 0:
-        return None
-    rr = (target - entry_level) / risk
-    return (f"Bracket: entry {entry_level:.2f} · stop {stop:.2f} · "
-           f"target {target:.2f} · R:R {rr:.1f}")
+        return []
+    parts, rr_by_idx = [], {}
+    for i, t in enumerate(tps, 1):
+        if t is None:
+            continue
+        r = (t - entry) / risk
+        rr_by_idx[i] = r
+        if t <= entry + 1e-9:
+            parts.append(f"TP{i} {t:.2f} (at/below entry — no room)")
+        else:
+            parts.append(f"TP{i} {t:.2f} ({r:.1f}R)")
+    head = (f"Bracket: entry {entry:.2f} · stop {stop:.2f} (risk {risk:.2f}) · "
+            + " · ".join(parts))
+    idx = 2 if 2 in rr_by_idx else (max(rr_by_idx) if rr_by_idx else None)
+    out = [head]
+    if idx is not None:
+        r = rr_by_idx[idx]
+        gate = _rr_gate()
+        if r < 1.0:
+            verdict = "under 1R — the stop is wider than the move to that target"
+        elif r < gate:
+            verdict = f"below the {gate:.1f} gate"
+        else:
+            verdict = f"clears the {gate:.1f} gate"
+        out.append(f"R:R to TP{idx} {r:.1f} — {verdict}")
+    if levels.get("gates_clear") is False:
+        out.append("Committee levels: the AQE bracket gates are not all clear for this name.")
+    return out
 
 
 def _entry_readiness_line(primary: str, eval_result: dict) -> str:
@@ -993,14 +1060,15 @@ def _first_unmet_category(eval_result: dict) -> str | None:
     return None
 
 
-def _card_summary(primary: str, row: dict, eval_result: dict) -> str | None:
+def _card_summary(primary: str, row: dict, eval_result: dict,
+                  live: dict | None = None) -> str | None:
     """The one plain sentence under the headline, built from the card's own
     numbers (PM 2026-10-03: the one-liner under each example card read
     clearer than the card itself). Never a recommendation."""
     from .condition_evaluator import entry_level as _lvl
     shared = (row.get("conditions") or {}).get("shared") or {}
-    buy_level = next((_lvl(e) for e in (shared.get("buy") or [])
-                     if _lvl(e) is not None), None)
+    buy_level = _effective_entry(row)
+    spot = (live or {}).get("price")
     n_lit, n_counting = eval_result.get("n_lit") or 0, eval_result.get("n_counting") or 0
     if primary == "CONDITION_MET":
         seats = f" — {n_lit} of {n_counting} analyst seats lit" if n_counting else ""
@@ -1012,7 +1080,8 @@ def _card_summary(primary: str, row: dict, eval_result: dict) -> str | None:
         back = f" back above {buy_level:.2f}" if buy_level is not None else " back above the level"
         # Why it's still on the list: the state machine re-enters BUY
         # CONDITIONS MET on the next qualifying hourly close.
-        return (f"{cleared}, then an hourly close back under{tail}. "
+        now = (f" Spot is {spot:.2f}." if spot is not None else "")
+        return (f"{cleared}, then fell back under{tail}.{now} "
                 f"Still watched: it re-qualifies on the next hourly close{back}.")
     if primary == "CHASED":
         lvl = _lvl(shared.get("chase") or {})
@@ -1038,7 +1107,9 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
     primary = fired_states[0]
     label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
     lit, n_counting = eval_result.get("lit") or [], eval_result.get("n_counting") or 0
-    headline = f"{ticker} · {label}"
+    spot = live.get("price")
+    at = f" @ {spot:.2f}" if spot is not None else ""
+    headline = f"{ticker}{at} · {label}"
     if primary == "CONDITION_MET" and n_counting:
         headline += f" · {len(lit)} of {n_counting} analysts"
     if row.get("aqe_default"):
@@ -1047,6 +1118,9 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         headline += " · AQE default criteria"
 
     lines: list[str] = []
+    spot_line = _spot_line(row, live)
+    if spot_line:
+        lines.append(spot_line)
     lines += _condition_lines(eval_result.get("shared_buy_detail") or [])
     lines += _condition_lines(eval_result.get("shared_confirm_detail") or [])
     analysts = _analysts_line(eval_result)
@@ -1090,9 +1164,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         lines.append(f"Exit line: {eval_result['exit_warn']['plain']} — "
                      "hourly close below it, not yet a daily close.")
 
-    bracket = _bracket_line(row)
-    if bracket:
-        lines.append(bracket)
+    lines += _bracket_line(row)
     # A pure exit-only row (no shared buy words, no analysts) is a HELD
     # position with nothing prospective to enter -- "Entry readiness:
     # WATCHING" on an EXIT LINE notice would misname what's actually going
@@ -1103,7 +1175,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         lines.append(_entry_readiness_line(primary, eval_result))
 
     return {"headline": headline, "color": color,
-            "summary": _card_summary(primary, row, eval_result), "lines": lines}
+            "summary": _card_summary(primary, row, eval_result, live), "lines": lines}
 
 
 def _card_plain(card: dict) -> str:
