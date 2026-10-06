@@ -933,7 +933,8 @@ def test_card_selection_block_defaults_when_absent():
 
 
 def test_card_house_block_defaults_when_absent():
-    assert card.house_block({}) == {"setups": [], "computed": False}
+    hb = card.house_block({})
+    assert hb["setups"] == [] and hb["computed"] is False and hb["graded"] is False
 
 
 def test_card_execution_block_defaults_when_absent():
@@ -972,7 +973,7 @@ def test_no_buy_html_empty_reads_clean():
 
 
 def test_house_setups_html_empty_reads_clean():
-    assert "no setup pattern" in theme.house_setups_html([]).lower()
+    assert "no setup present" in theme.house_setups_html([]).lower()
 
 
 def test_entries_table_html_empty_reads_clean():

@@ -83,6 +83,57 @@ def pull_earnings_calendar(
     return result
 
 
+EARNINGS_HISTORY_PATH = DATA_DIR / "earnings_history.json"
+EARNINGS_HISTORY_KEEP_DAYS = 400
+
+
+def pull_recent_earnings(client: FMPClient | None = None, days_back: int = 45,
+                         today: date | None = None) -> dict[str, list[str]]:
+    """PAST earnings dates, {ticker: ["YYYY-MM-DD", ...]}, from the same
+    /stable/earnings-calendar endpoint the forward pull uses, pointed
+    backwards. One call per run. VALEN piece 11 needs it: an episodic pivot
+    counts a 4%+ expansion on an EARNINGS DAY, the one catalyst class AQE
+    can actually confirm. No universe filter -- a held name outside the
+    universe needs its dates too. Raises loudly on a failed fetch."""
+    if client is None:
+        client = FMPClient()
+    today = today or date.today()
+    params = {"from": (today - timedelta(days=days_back)).strftime("%Y-%m-%d"),
+              "to": today.strftime("%Y-%m-%d"), "apikey": client.config.api_key}
+    data = client._get_json(f"{FMP_STABLE}/earnings-calendar", params=params)
+    out: dict[str, list[str]] = {}
+    for entry in data if isinstance(data, list) else []:
+        sym, d = entry.get("symbol", ""), (entry.get("date") or "")[:10]
+        if sym and d:
+            out.setdefault(sym, []).append(d)
+    return out
+
+
+def merge_earnings_history(new: dict[str, list[str]], today: date | None = None) -> dict:
+    """Merge one pull into the rolling file, keep the last ~400 days."""
+    today = today or date.today()
+    cutoff = (today - timedelta(days=EARNINGS_HISTORY_KEEP_DAYS)).isoformat()
+    hist = load_earnings_history()
+    for sym, dates in new.items():
+        hist[sym] = sorted({*hist.get(sym, []), *dates})
+    hist = {s: [d for d in ds if d >= cutoff] for s, ds in hist.items()}
+    hist = {s: ds for s, ds in hist.items() if ds}
+    payload = {"updated": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+               "count": len(hist), "earnings": hist}
+    EARNINGS_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    EARNINGS_HISTORY_PATH.write_text(json.dumps(payload), encoding="utf-8")
+    return hist
+
+
+def load_earnings_history() -> dict[str, list[str]]:
+    if not EARNINGS_HISTORY_PATH.exists():
+        return {}
+    try:
+        return json.loads(EARNINGS_HISTORY_PATH.read_text(encoding="utf-8")).get("earnings", {})
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def save_earnings(cal: dict[str, str]) -> Path:
     """Save earnings calendar to JSON."""
     payload = {

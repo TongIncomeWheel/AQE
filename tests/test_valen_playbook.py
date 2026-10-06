@@ -143,69 +143,31 @@ def test_no_buy_list_sorted_worst_first():
 # ---------------------------------------------------------------- Part 3 House
 
 
-def test_house_vcp_setup_detected():
-    row = _row(elder_context={"vcp": {"vcp_label": "VCP_SETUP"}})
-    tags = house.classify_setups(row)
-    assert any(t["piece"] == "08" for t in tags)
+def _g(status, setup="VCP", piece="08"):
+    return {"piece": piece, "setup": setup, "status": status, "checks": [], "fails": []}
 
 
-def test_house_momentum_breakout_from_mover_subtype():
-    row = _row(mover_subtype="tight_base")
-    tags = house.classify_setups(row)
-    assert any(t["piece"] == "09" for t in tags)
+def test_house_retired_the_detect_field_proxies():
+    # PM 2026-10-05: DETECT fields are context, never called setups again.
+    assert not hasattr(house, "classify_setups")
+    row = _row(ticker="X", mover_subtype="tight_base", pin_bar_state="BULLISH_PIN",
+               squeeze_breakout_state="BREAKOUT_UP", on_longlist=True)
+    assert house.house_setups([row]) == []
 
 
-def test_house_momentum_breakout_from_squeeze_state():
-    row = _row(squeeze_breakout_state="BREAKOUT_UP")
-    tags = house.classify_setups(row)
-    assert any(t["piece"] == "09" for t in tags)
-
-
-def test_house_undercut_and_rally_from_pin_bar():
-    row = _row(pin_bar_state="BULLISH_PIN")
-    tags = house.classify_setups(row)
-    assert any(t["piece"] == "10" for t in tags)
-
-
-def test_house_undercut_and_rally_from_div_and_bos():
-    row = _row(div_state="BULLISH", structure_shift="BULLISH_BOS")
-    tags = house.classify_setups(row)
-    assert any(t["piece"] == "10" for t in tags)
-
-
-def test_house_episodic_pivot_is_labelled_technical_fingerprint_only():
-    row = _row(premove_setup=True, mover_subtype="explosive")
-    tags = house.classify_setups(row)
-    ep = next(t for t in tags if t["piece"] == "11")
-    assert "technical fingerprint" in ep["name"].lower()
-    assert "no catalyst" in ep["detail"].lower() or "no catalyst" in ep["detail"]
-
-
-def test_house_exhaustion_risk_below_threshold():
-    from src.valen import spec as S
-    row = _row(subcomponents={"energy": {"exhaustion_score": S.EXHAUSTION_SCORE_WATCH_BELOW - 1}})
-    tags = house.classify_setups(row)
-    assert any(t["piece"] == "12" for t in tags)
-    detail = next(t for t in tags if t["piece"] == "12")["detail"]
-    assert "not a short signal" in detail
-
-
-def test_house_exhaustion_at_baseline_is_not_flagged():
-    from src.valen import spec as S
-    row = _row(subcomponents={"energy": {"exhaustion_score": S.EXHAUSTION_SCORE_MAX}})
-    tags = house.classify_setups(row)
-    assert not any(t["piece"] == "12" for t in tags)
-
-
-def test_house_clean_row_has_no_tags():
-    assert house.classify_setups(_row()) == []
-
-
-def test_house_setups_filters_to_candidates_by_default():
-    rows = [_row(ticker="A", on_qs=True, pin_bar_state="BULLISH_PIN"),
-           _row(ticker="B", pin_bar_state="BULLISH_PIN")]
+def test_house_setups_reads_graded_rows_best_status_first():
+    rows = [_row(ticker="F", setups=[_g("FAILED")]),
+            _row(ticker="R", setups=[_g("READY")]),
+            _row(ticker="T", setups=[_g("TRIGGERED", "Undercut and rally", "10")]),
+            _row(ticker="N", setups=[])]
     out = house.house_setups(rows)
-    assert [r["ticker"] for r in out] == ["A"]
+    assert [r["ticker"] for r in out] == ["T", "R", "F"]
+
+
+def test_house_setups_includes_held_positions_for_piece_12_warnings():
+    held = [{"ticker": "H", "setups": [_g("WARNING", "Failed leader — risk warning on a long", "12")]}]
+    out = house.house_setups([], held)
+    assert out[0]["ticker"] == "H" and out[0]["held"] is True
 
 
 # ------------------------------------------------------------- Part 4 Execution

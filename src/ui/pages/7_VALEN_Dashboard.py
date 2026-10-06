@@ -330,14 +330,31 @@ if not house["computed"]:
     st.error("Setups NOT computed for this read — " + C.playbook_missing_reason(valen)
              + ". An empty list below would mean nothing, not a quiet market. "
              "Press **Run VALEN read** to rebuild with today's export.")
+elif not house["graded"]:
+    st.error("Setups NOT graded — " + str(house["grade_reason"])
+             + ". Nothing below was checked; this is not a quiet market.")
 st.markdown(
     '<div class="valen-root"><div class="valen-card">'
-    '<div class="valen-header"><span class="valen-title">Setups flagged today</span></div>'
-    '<div class="valen-caption" style="margin-bottom:8px">08 VCP · 09 Momentum breakout / '
-    'high tight flag · 10 Undercut and rally · 11 Episodic pivot (technical fingerprint '
-    'only — no catalyst feed) · 12 Exhaustion risk (a warning on longs, never a short call).'
-    '</div>' + T.house_setups_html(house["setups"]) + '</div></div>',
+    '<div class="valen-header"><span class="valen-title">The five setups, graded</span></div>'
+    '<div class="valen-caption" style="margin-bottom:8px">Every name on the daily list '
+    'and every held position, measured against the handbook\'s own checklist: '
+    '08 VCP · 09 High tight flag · 10 Undercut and rally · 11 Episodic pivot (earnings-day '
+    'gaps confirmed; any other gap is a technical fingerprint, AQE has no news feed) · '
+    '12 Parabolic / failed leader as <b>risk warnings on longs only</b>, never a short call. '
+    '<b>Ready</b> = every rule passes, waiting on the trigger. <b>Triggered</b> = the trigger '
+    'happened on the latest bar. Pivot and stop are levels, not instructions. '
+    'Click a name for its ✓ / ✗ / ◌ checklist.</div>'
+    + T.house_setups_html(house["setups"]) + '</div></div>',
     unsafe_allow_html=True)
+if house["graded"] and house.get("earnings_history") is False:
+    st.warning("Past earnings dates were unavailable for this grade, so no gap could be "
+               "confirmed as an earnings-day episodic pivot (piece 11). Gaps of 10%+ "
+               "are still graded, as technical fingerprints.")
+if house["graded"] and house.get("in_theme") is False:
+    st.caption("Group read unavailable: the undercut-and-rally 'group still being bought' "
+               "check shows as not checked.")
+if house["not_graded"]:
+    st.caption("Not graded (no price history on the panel): " + ", ".join(house["not_graded"]))
 
 # ═══════════════════════════════════════════════════════════════════════
 # PART 4 — WHEN TO WALK IN (pieces 13-16)

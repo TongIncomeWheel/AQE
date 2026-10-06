@@ -44,6 +44,9 @@ def _members() -> list[tuple]:
         # leave the pipeline with no list at all. Drive restore covers this too;
         # this is the belt to that braces.
         "universe.txt",
+        # Past earnings dates (VALEN piece 11's earnings-day episodic pivot).
+        # Built up one 45-day window per run, so it is history worth keeping.
+        "earnings_history.json",
         # Crown's COT history. The CFTC publishes one snapshot a week, so this
         # file IS the percentile window — without it a recycle leaves every
         # market reading "no history" instead of "crowded long", which is a

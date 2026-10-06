@@ -1367,6 +1367,25 @@ SCORE_TREE = [
       "OK|DEGRADED|UNAVAILABLE — distinguishes a QS outage from a quietly "
       "unremarkable market", "engines/qs_daily.py", ""),
 
+    # ── VALEN Part 3 — the five setups, measured (2026-10-05) ──────────────
+    R("setups", "", "leaf", "list[dict]", "",
+      "Handbook pieces 08-12 graded as checklists: VCP, high tight flag, "
+      "undercut and rally, episodic pivot (+ Delayed EP), and piece 12 as "
+      "LONG-ONLY risk warnings. Each grade carries status, pivot/stop levels, "
+      "checks (PASS/FAIL/NOT_YET/INFO) and fails. Absent key = not graded; "
+      "empty list = graded, no setup present.",
+      "valen/setups.py via valen/setups_daily.py (attached in drive_sync.build_export)",
+      "status = FAILED if any hard rule fails, else PAST_PIVOT if triggered on "
+      "an earlier bar, else WATCH if any rule FAIL/NOT_YET, else TRIGGERED "
+      "(trigger on latest bar) or READY; thresholds valen/spec.py HB_*/IMPL_*",
+      used_by="VALEN page Part 3"),
+    R("setups_status", "", "leaf", "dict", "live|error",
+      "Whether the setup grading ran this export — distinguishes 'nothing "
+      "checked' from 'nothing present'; lists names that could not be graded",
+      "valen/setups_daily.py:attach_setup_grades",
+      "'live' when grade_universe ran over the panel; 'error' + the exception "
+      "text when loading or grading raised (rows then carry no `setups`)"),
+
     # ── misc identity / pointers ──────────────────────────────────────────
     R("ticker", "", "leaf", "str", "",
       "The equity symbol — present on every daily_list, held_positions and "
@@ -1769,6 +1788,10 @@ def classify_export_location(name: str) -> str:
                "dict carries a role/unit/side; not a scalar of its own")
     if name.startswith(QS_BLOCK_PREFIX) or name in QS_BLOCK_ONLY:
         return "qs{} block"
+    if name == "setups":
+        return "daily_list[] + held_positions[] (VALEN Part 3 grades)"
+    if name == "setups_status":
+        return "export top level"
     if name in _JOURNAL_ONLY:
         return "held_positions only (PTJ broker journal passthrough)"
     if name in THEMATIC_LIST_ONLY:

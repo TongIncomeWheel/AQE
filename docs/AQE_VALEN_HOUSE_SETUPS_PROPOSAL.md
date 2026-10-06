@@ -1,6 +1,10 @@
 # VALEN Part 3 — House (the five setups): deep dive + build proposal
 
-Status: **PROPOSAL — needs PM sign-off before build** (2026-10-05)
+Status: **SIGNED OFF + BUILT** (2026-10-05). PM rulings: (1) retire the proxies -- yes;
+(2) **high tight flag only**, no looser Momentum Breakout grade ("closer to the VALEN method");
+(3) piece 12 **long-only** warnings; (4) past earnings dates pull -- yes.
+Code: `src/valen/setups.py` (graders), `src/valen/setups_daily.py` (export glue),
+`src/valen/house.py` (page reader), thresholds in `src/valen/spec.py` (`HB_*` / `IMPL_*`).
 Source: VIV handbook *21 Building Blocks to Profitability*, pages 30-40 (pieces 08-12).
 Current code: `src/valen/house.py` (shipped 2026-09-30).
 

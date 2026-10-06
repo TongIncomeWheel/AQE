@@ -657,6 +657,22 @@ _FIELD_GLOSSARY.update({
                  "or 'not_run'. Distinguishes a QS OUTAGE from a genuinely quiet "
                  "market. An empty QS list with status='live' means nothing "
                  "qualified; with status='error' it means nothing was checked.",
+    "setups": "VALEN Part 3 (handbook pieces 08-12), MEASURED: a list of setup "
+              "grades for this name -- VCP (08), High tight flag (09), Undercut and "
+              "rally (10), Episodic pivot / Delayed EP (11), and two LONG-ONLY risk "
+              "warnings (12: parabolic, failed leader; never a short call). Each grade: "
+              "piece, setup, status (TRIGGERED = every rule passes and the trigger "
+              "happened on the latest bar; READY = every rule passes, waiting on the "
+              "trigger; WATCH = shape present, a required rule not met yet; PAST_PIVOT "
+              "= triggered on an earlier bar; FAILED = a no-partial-credit rule broke; "
+              "WARNING/CRACKED/BROKEN for piece 12), pivot and stop (LEVELS, not "
+              "instructions), checks (rule, measured value, PASS/FAIL/NOT_YET/INFO), "
+              "fails (plain reasons). Absent key = not graded (no price history); "
+              "empty list = graded, no setup present. Thresholds: src/valen/spec.py "
+              "HB_* (handbook, page-cited) and IMPL_* (AQE's own measurement).",
+    "setups_status": "'live' (setups graded), 'error' (reason given). With 'error' "
+                     "every row's missing `setups` means nothing was checked, NOT a "
+                     "quiet tape. Also lists names that could not be graded.",
     # AQE_INSTRUCTIONS.md §2 (voice-data-contract-v6, 2026-09-10, ADDITIVE ONLY)
     "bar_open": "Last completed daily bar open, USD.",
     "bar_high": "Last completed daily bar high, USD.",
@@ -2726,6 +2742,20 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["qs_market"] = _qs_market
     export["qs_status"] = _qs_status
 
+    # ---- VALEN Part 3: the five setups, MEASURED (2026-10-05, PM sign-off on
+    # docs/AQE_VALEN_HOUSE_SETUPS_PROPOSAL.md). Every daily_list row and held
+    # position gets its own `setups` checklist grades, so the committee, the
+    # alert cards and the VALEN page read the same thing. Absent `setups` =
+    # not graded (no price history); `setups: []` = graded, nothing present.
+    try:
+        from src.valen.setups_daily import attach_setup_grades as _attach_setups
+        export["setups_status"] = _attach_setups(
+            list(_dl.values()), export.get("held_positions") or [])
+    except Exception as _exc:  # noqa: BLE001 -- additive, never breaks the export
+        export["setups_status"] = {"status": "error", "reason": str(_exc), "graded": 0}
+    if export["setups_status"].get("status") != "live":
+        print(f"  [WARN] VALEN setups not graded: {export['setups_status'].get('reason')}")
+
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
@@ -2765,6 +2795,10 @@ def build_export(shortlist: dict | None = None) -> dict:
         "qs_only_count": sum(1 for r in _daily_list if r.get("on_qs")
                              and not r.get("on_longlist") and not r.get("on_elder")),
         "qs_status": export.get("qs_status", "not_run"),
+        "setups_status": (export.get("setups_status") or {}).get("status", "not_run"),
+        "setups_triggered_or_ready": sum(
+            1 for r in _daily_list for g in (r.get("setups") or [])
+            if g.get("status") in ("TRIGGERED", "READY")),
         "held_count": len(export.get("held_positions") or []),
         "held_positions_status": export.get("held_positions_status", "unknown"),
     }

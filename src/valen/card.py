@@ -301,8 +301,17 @@ def playbook_missing_reason(valen: dict) -> str | None:
 
 
 def house_block(valen: dict) -> dict:
-    return {"setups": (valen.get("house") or {}).get("setups") or [],
-            "computed": playbook_missing_reason(valen) is None}
+    h = valen.get("house") or {}
+    status = h.get("status") or {}
+    graded = status.get("status") == "live"
+    return {"setups": h.get("setups") or [],
+            "computed": playbook_missing_reason(valen) is None,
+            "graded": graded,
+            "grade_reason": None if graded else (status.get("reason")
+                                                or "setups were not graded for this read"),
+            "not_graded": status.get("not_graded") or [],
+            "earnings_history": status.get("earnings_history"),
+            "in_theme": status.get("in_theme")}
 
 
 def execution_block(valen: dict) -> dict:

@@ -223,9 +223,12 @@ def run_playbook(export: dict, valen_artifact: dict | None = None) -> dict:
         no_buy = []
 
     try:
-        setups = house.house_setups(daily_list)
+        setups = house.house_setups(daily_list, held_positions)
     except Exception:  # noqa: BLE001
         setups = []
+    setups_status = export.get("setups_status") or {
+        "status": "not_run",
+        "reason": "this export predates measured setups (no setups_status)"}
 
     try:
         entries = execution.entry_candidates(daily_list)
@@ -249,7 +252,7 @@ def run_playbook(export: dict, valen_artifact: dict | None = None) -> dict:
     return {
         "selection": {"relative_strength": rs_leaders, "funnel": funnel,
                      "no_buy_list": no_buy},
-        "house": {"setups": setups},
+        "house": {"setups": setups, "status": setups_status},
         "execution": {"entries": entries, "stop_breaches": breaches},
         "management": {"held_facts": held_facts, "streak": streak},
     }

@@ -985,23 +985,82 @@ def no_buy_html(rows: list[dict], limit: int = 12) -> str:
     return "".join(body) + more_html
 
 
+_SETUP_STATUS_STYLE = {
+    "TRIGGERED": (_GREEN, "Triggered today"),
+    "READY": (_GREEN, "Ready: every rule passes, waiting on the trigger"),
+    "BROKEN": (_RED, "Risk: broke support (piece 12, long-only warning)"),
+    "CRACKED": (_RED, "Risk: parabolic cracked (piece 12, long-only warning)"),
+    "WARNING": (_GOLD, "Risk warnings on longs (piece 12)"),
+    "WATCH": (_GOLD, "Watch: shape present, a rule not met yet"),
+    "PAST_PIVOT": (_GREY, "Past the pivot: triggered on an earlier bar"),
+    "FAILED": (_GREY, "Failed: a no-partial-credit rule broke"),
+}
+_CHECK_MARK = {"PASS": ("✓", _GREEN), "FAIL": ("✗", _RED),
+               "NOT_YET": ("◌", _GOLD), "INFO": ("·", _TEXT_MUTED)}
+
+
+def _setup_checklist_html(g: dict) -> str:
+    lines = []
+    for c in g.get("checks") or []:
+        mark, color = _CHECK_MARK.get(c.get("result"), ("·", _TEXT_MUTED))
+        val = c.get("value")
+        val_html = (f' <span style="color:{_TEXT_MUTED}">{_esc(val)}</span>'
+                    if val not in (None, "") else "")
+        lines.append(f'<div style="font-size:11.5px;padding:1px 0">'
+                     f'<span style="color:{color};font-weight:700;display:inline-block;'
+                     f'width:14px">{mark}</span>{_esc(c.get("rule"))}{val_html}</div>')
+    if g.get("note"):
+        lines.append(f'<div class="valen-caption" style="margin-top:4px">{_esc(g["note"])}</div>')
+    return "".join(lines)
+
+
 def house_setups_html(rows: list[dict], limit: int | None = None) -> str:
-    """Parts 08-12 — every setup tag a ticker carries, as pills. Every
-    tagged name shows (no cap) unless `limit` is passed."""
+    """Part 3 -- every graded setup, grouped by status (best first). Each
+    name shows its pivot/stop levels and the handbook checklist, ✓ / ✗ / ◌.
+    No cap unless `limit` is passed. FAILED and PAST_PIVOT groups are
+    collapsed: they are the record of what was checked, not a to-do list."""
     if not rows:
-        return '<div class="valen-empty">No setup pattern flagged today.</div>'
-    body = []
-    for r in (rows[:limit] if limit else rows):
-        tags = "".join(f'<span class="valen-tag" title="{_esc(t["detail"])}">'
-                       f'{_esc(t["name"])}</span>' for t in r["setups"])
-        body.append(
-            f'<div class="valen-row" style="align-items:flex-start">'
-            f'<span class="valen-row-label" style="min-width:52px">{_esc(r["ticker"])}</span>'
-            f'<span class="valen-row-value" style="text-align:left;white-space:normal">'
-            f'{tags}</span></div>')
-    more = len(rows) - limit
-    more_html = (f'<div class="valen-caption">+{more} more.</div>' if more > 0 else "")
-    return "".join(body) + more_html
+        return '<div class="valen-empty">Graded every name: no setup present today.</div>'
+    rows = rows[:limit] if limit else rows
+    by_status: dict[str, list] = {}
+    for r in rows:
+        for g in r.get("grades") or []:
+            by_status.setdefault(g.get("status"), []).append((r, g))
+    out = []
+    for status, (color, title) in _SETUP_STATUS_STYLE.items():
+        items = by_status.get(status) or []
+        if not items:
+            continue
+        body = []
+        for r, g in items:
+            badges = "".join(f'<span class="valen-tag">{b}</span>' for b, on in
+                             (("HELD", r.get("held")), ("LONGLIST", r.get("on_longlist")),
+                              ("ELDER", r.get("on_elder")), ("QS", r.get("on_qs"))) if on)
+            lv = []
+            if g.get("pivot") is not None:
+                word = "support" if g.get("piece") == "12" else "pivot"
+                lv.append(f'{word} {g["pivot"]:.2f}')
+            if g.get("stop") is not None:
+                lv.append(f'stop {g["stop"]:.2f}')
+            fails = g.get("fails") or []
+            summary = (f'<span style="color:{_TEXT_MUTED}"> -- {_esc("; ".join(fails[:2]))}</span>'
+                       if fails and status in ("WATCH", "FAILED") else "")
+            body.append(
+                '<details style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'
+                f'<summary style="cursor:pointer;font-size:12.5px">'
+                f'<b>{_esc(r["ticker"])}</b> · {_esc(g.get("setup"))} '
+                f'<span style="color:{_TEXT_MUTED}">{_esc(" · ".join(lv))}</span> {badges}'
+                f'{summary}</summary>'
+                f'<div style="padding:4px 0 4px 18px">{_setup_checklist_html(g)}</div></details>')
+        head = (f'<span style="display:inline-block;color:{color};font-weight:700;'
+                f'font-size:11px;text-transform:uppercase;letter-spacing:.04em;'
+                f'margin:10px 0 4px">{_esc(title)} ({len(items)})</span>')
+        if status in ("FAILED", "PAST_PIVOT"):
+            out.append(f'<details><summary style="cursor:pointer">{head}</summary>'
+                       f'{"".join(body)}</details>')
+        else:
+            out.append(f'<div>{head}</div>' + "".join(body))
+    return "".join(out)
 
 
 def entries_table_html(rows: list[dict], limit: int = 15) -> str:

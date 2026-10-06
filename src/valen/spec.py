@@ -177,8 +177,91 @@ FORMULA_BASIS_AQE_HOUSE = "aqe_house"    # AQE's own formula, same INTENT
 # new threshold: how close to earnings counts as "too close to buy."
 # ---------------------------------------------------------------------------
 NO_BUY_EARNINGS_WITHIN_SESSIONS = 5     # piece 07: "earnings within 5 sessions"
-EXHAUSTION_SCORE_MAX = 10.0             # energy.py's inactive/baseline ceiling
-EXHAUSTION_SCORE_WATCH_BELOW = 8.5      # piece 12: any penalty has fired
+
+# ---------------------------------------------------------------------------
+# PART 3 — HOUSE: the five setups, MEASURED (2026-10-05, PM sign-off on
+# docs/AQE_VALEN_HOUSE_SETUPS_PROPOSAL.md: retire the DETECT-field proxies,
+# high tight flag only for piece 09, piece 12 long-only, earnings-day EP).
+# Two kinds of constant, kept visibly apart:
+#   HB_*   transcribed from the handbook, page cited. Never tuned.
+#   IMPL_* AQE's own measurement choice where the handbook gives a picture,
+#          not a number ("clean and steady", "obvious on sight"). Each one
+#          says what words it measures. Changing one is a PM call.
+# ---------------------------------------------------------------------------
+# Shared (pieces 08/09/10): the 4% expansion day, p.31 Stage 3.
+HB_EXPANSION_MIN_PCT = 4.0             # "a day that expands 4% or more"
+HB_EXPANSION_BIGGER_THAN_BARS = 5      # "visibly bigger than the last five to ten"
+HB_EXPANSION_CLOSE_TOP_FRAC = 0.30     # "closing in the top 30% of its range"
+HB_MAX_UP_DAYS_INTO_TRIGGER = 2        # "no more than two up-days into it"
+HB_MAX_YOUNG_BASE = 3                  # "the first, second or third base" (p.31, p.35)
+
+# 08 VCP, p.31.
+HB_VCP_MIN_RUN_PCT = 30.0              # "a real run of 30% or more into the base"
+HB_VCP_LAST_PULLBACK_MAX_PCT = 10.0    # "the last pullback is tight -- 10% deep or less"
+IMPL_VCP_SHRINK_RATIO = 0.75           # "each pullback clearly shallower" (handbook
+                                       # example halves: 25/12/6) -- each <= 75% of prior
+IMPL_VCP_BASE_LOOKBACK = 120           # bars searched for the base's high
+IMPL_VCP_RUN_LOOKBACK = 120            # bars searched for the run's origin
+IMPL_VCP_MIN_BASE_BARS = 10            # a base needs at least two weeks to exist
+IMPL_VCP_ZIGZAG_PCT = 2.5              # smallest swing counted as a pullback
+IMPL_RUN_CLEAN_R2 = 0.70               # "clean and steady, not a zig-zag": R^2 of
+                                       # log-close vs time across the run
+
+# 09 high tight flag, p.33. (PM 2026-10-05: HTF only, no looser breakout.)
+HB_HTF_POLE_MIN_PCT = 90.0             # "roughly a double, 90 to 100% or more"
+HB_HTF_POLE_MAX_BARS = 40              # "in eight weeks or less"
+HB_HTF_FLAG_IDEAL_MAX_PCT = 20.0       # "no more than 20 to 25% off the pole high"
+HB_HTF_FLAG_MAX_PCT = 25.0
+HB_HTF_FLAG_MIN_BARS = 15              # "three to five weeks"
+HB_HTF_FLAG_IDEAL_MAX_BARS = 25
+HB_HTF_FLAG_MAX_BARS = 40              # "not stretching much past eight"
+HB_HTF_MAX_FLAG_NUMBER = 2             # "the first or second flag of the run"
+IMPL_HTF_POLE_MIN_BARS = 10            # "near-vertical ... is a blow-off": under two
+                                       # weeks of climb is not a 45-degree pole
+IMPL_HTF_SPIKE_MAX_SHARE = 0.35        # "one big spike day is not a pole": no single
+                                       # day carries > 35% of the pole's log gain
+IMPL_HTF_POLE_R2 = 0.80                # "a steady staircase": R^2 of the climb
+
+# 10 Undercut and rally, p.35.
+IMPL_UNR_WINDOW = 10                   # undercut must be within the last 10 sessions
+IMPL_UNR_SUPPORT_LOOKBACK = 40         # prior low searched 40 sessions back
+IMPL_UNR_PIVOT_SIDE = 3                # a swing low = lowest of 3 bars either side
+IMPL_UNR_MIN_UNDERCUT_ATR = 0.25       # "a REAL dip below": at least a quarter of a
+                                       # daily range under the prior low, not a poke
+HB_UNR_STOP_MAX_ATR = 1.0              # "stop at the pullback low, under one daily range"
+IMPL_PULLBACK_ZIGZAG_PCT = 5.0         # a pullback counted for "1st/2nd/3rd pullback"
+IMPL_UNR_RS_RANK_MIN = 70.0            # "relative strength still holding"
+
+# 11 Episodic pivot, p.37.
+HB_EP_GAP_MIN_PCT = 10.0               # "opens 10% or more above yesterday's close"
+HB_EP_EARNINGS_EXPANSION_PCT = 4.0     # "or a 4%-plus expansion on an earnings day"
+HB_EP_VOLUME_MULT = 3.0                # "at least three times normal by the close"
+HB_EP_STOP_MAX_ATR = 1.5               # "within about one to one-and-a-half daily ranges"
+IMPL_EP_WINDOW = 10                    # gap day searched in the last 10 sessions
+                                       # (day one + the Delayed EP's pause)
+IMPL_EP_NEGLECT_BARS = 63              # "flat or basing for months": 3 months before
+IMPL_EP_NEGLECT_MAX_RUN_PCT = 25.0     # "no big run behind it"
+IMPL_EP_FALLING_KNIFE_PCT = -25.0      # "not out of a falling knife"
+IMPL_EP_FIRST_GAP_LOOKBACK = 126       # "no recent gap of this kind": 6 months
+IMPL_EP_OVERHEAD_PCT = 15.0            # "clear air overhead": no prior 1-yr high
+                                       # within 15% above the close
+
+# 12 Parabolic / breakdown, p.39 -- LONG-ONLY RISK WARNINGS (PM 2026-10-05),
+# never a short signal.
+HB_PARA_MIN_RUN_PCT = 50.0             # "50 to 100% on a big stock" (universe >= $2B)
+IMPL_PARA_RUN_BARS = 20                # "in days to weeks"
+HB_PARA_MIN_UP_STREAK = 3              # "three to five or more up days in a row"
+IMPL_PARA_FAR_ATR_MULT = PER_STOCK_ATR_MULT_RARE_AIR_LOW  # "visibly far above" =
+                                       # the handbook's own rare-air band (piece 17)
+IMPL_FL_RED_DAY_PCT = -3.0             # "big red high-volume days"
+IMPL_FL_RED_DAY_VOL_MULT = 1.5
+IMPL_FL_RED_DAYS_MIN = 2
+IMPL_FL_LOOKBACK = 30
+HB_FL_NO_RECOVERY_SESSIONS = 5         # "50-day lost with no recovery within a few sessions"
+IMPL_FL_DOWN_ON_UP_FRAC = 0.5          # "goes down on days the market goes up"
+HB_FL_SUPPORT_TESTS = 3                # "three or more tests of the same support"
+IMPL_FL_SUPPORT_BAND_PCT = 3.0
+IMPL_FL_MIN_CHECKS = 3                 # of the five failed-leader signs
 
 # ---------------------------------------------------------------------------
 # GEX Traffic Light — 2026-09-30. A Weather companion instrument, piece 01.

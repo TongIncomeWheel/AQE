@@ -171,6 +171,16 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Earnings pull failed: {exc}")
         earnings_cal = load_earnings()
+    # Past earnings dates (VALEN piece 11's earnings-day EP). Separate try:
+    # a failure here must not cost the forward calendar, and must be LOUD --
+    # without it every gap reads "technical fingerprint only".
+    try:
+        from src.data.earnings import merge_earnings_history, pull_recent_earnings
+        _eh = merge_earnings_history(pull_recent_earnings())
+        print(f"  Earnings history: {len(_eh)} tickers with past dates on file")
+    except Exception as exc:
+        print(f"  [WARN] Past-earnings pull failed: {exc} -- piece 11 will mark "
+              f"earnings-day gaps as unconfirmed")
 
     # Step 1c: Rebuild the full-universe score cache if it lags the panel.
     # The watchlist and the recipe / Precision Edge screens all read
