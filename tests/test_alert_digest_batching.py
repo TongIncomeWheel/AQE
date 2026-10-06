@@ -260,3 +260,41 @@ def test_legacy_digest_is_retired_by_default_but_triggers_are_still_logged(monke
     assert summary["emailed"] is False and not sent
     assert S.load_pending_digest() == {"legacy": [], "pma": []}
     assert "retired" in (summary["reason"] or "")
+
+
+# --- 2026-10-06: held-position events are folded into the card digest --------
+
+def test_held_events_selects_only_risk_events_and_only_when_legacy_is_off(monkeypatch):
+    fresh = [{"ticker": "A", "is_held": True, "level": "NEAR_STOP"},
+             {"ticker": "A", "is_held": True, "level": "MOVE"},          # noise: skipped
+             {"ticker": "B", "is_held": False, "level": "NEAR_STOP"},    # not held: skipped
+             {"ticker": "C", "is_held": True, "level": "VETO_HELD"},
+             {"ticker": "D", "is_held": True, "level": "NEAR_TARGET"}]
+    fresh_pma = [{"ticker": "E", "is_held": True, "kind": "near_stops"},
+                 {"ticker": "F", "is_held": False, "kind": "approaching_entry"}]
+    monkeypatch.setattr(C, "LEGACY_DIGEST_EMAIL", False)
+    got = E._held_events(fresh, fresh_pma)
+    assert [t["ticker"] for t in got] == ["A", "C", "D", "E"]
+    monkeypatch.setattr(C, "LEGACY_DIGEST_EMAIL", True)
+    assert E._held_events(fresh, fresh_pma) == []      # never mailed twice
+
+
+def test_a_held_near_stop_reaches_the_single_condition_digest(monkeypatch):
+    export = {"date": "2026-10-01", "daily_list": [],
+              "held_positions": [{"ticker": "H", "held": True, "held_sl": 100.0,
+                                  "entry": 110.0, "atr_14d": 3.0,
+                                  "bracket": {"valid": True, "stop": 98.0, "risk": 12.0,
+                                              "targets": []}}]}
+    _wire_common(monkeypatch, export)
+    monkeypatch.setattr(C, "LEGACY_DIGEST_EMAIL", False)
+    import src.data.fmp_client as FC
+    monkeypatch.setattr(FC.FMPClient, "get_quotes",
+                        lambda self, tks: {"H": {"price": 102.0, "prev_close": 103.0}})
+    import src.alerts.condition_cycle as CC
+    seen = {}
+    monkeypatch.setattr(CC, "_maybe_email_digest",
+                        lambda cards, now, held=None: seen.update(cards=cards, held=held))
+    summary = E.run_alert_cycle(send_email=True)
+    assert summary["emailed"] is False          # the old mail stays off
+    assert [t["ticker"] for t in seen["held"]] == ["H"]
+    assert seen["held"][0]["level"] == "NEAR_STOP"

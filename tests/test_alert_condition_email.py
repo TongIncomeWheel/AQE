@@ -377,3 +377,63 @@ def test_send_condition_digest_no_backend_configured(monkeypatch):
         [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())],
         datetime(2026, 10, 2, 14, 30, tzinfo=ZoneInfo("America/New_York")))
     assert res["ok"] is False
+
+
+# --- 2026-10-06: held-position events ride the SAME single mail -------------
+
+from datetime import datetime as _dt
+from zoneinfo import ZoneInfo as _ZI
+
+_NOW = _dt(2026, 10, 6, 14, 30, tzinfo=_ZI("America/New_York"))
+
+
+def _held_pma_near_stop():
+    return {"ticker": "ANET", "is_held": True, "source": "pma", "level": "x-stopnear",
+            "kind": "near_stops", "label": "Near your stops", "level_price": None,
+            "live_px": 199.10, "chg_pct": -1.2, "priority": "WARN",
+            "broker_stop": 197.05, "committee_exit": 199.84,
+            "action": "Price is close to your broker stop at 197.05."}
+
+
+def test_held_near_stop_card_shows_spot_stop_distance_and_committee_exit():
+    card = E.build_held_card(_held_pma_near_stop())
+    assert card["headline"] == "ANET @ 199.10 · 🟠 NEAR YOUR STOP — HELD POSITION"
+    text = "\n".join(card["lines"])
+    assert "Spot 199.10 · -1.2% on the day" in text
+    assert "Your stop: 197.05 — spot is 1.0% above it" in text
+    assert "Committee exit: 199.84 — spot is 0.4% below it" in text
+
+
+def test_held_legacy_near_stop_uses_the_held_sl_level():
+    ev = {"ticker": "ODFL", "is_held": True, "source": "held", "level": "NEAR_STOP",
+          "level_price": 230.0, "live_px": 235.0, "chg_pct": 0.5,
+          "note": "2.2% above stop 230.00"}
+    card = E.build_held_card(ev)
+    assert "Your stop: 230.00 — spot is 2.2% above it" in "\n".join(card["lines"])
+
+
+def test_held_committee_exit_daily_vs_intraday_is_said_plainly():
+    base = {"ticker": "CRWD", "is_held": True, "kind": "close_below",
+            "level_price": 258.6, "live_px": 255.0, "broker_stop": 247.0}
+    daily = E.build_held_card({**base, "priority": "ACTION"})
+    intra = E.build_held_card({**base, "priority": "WARN"})
+    assert "DAILY close below it (confirmed)" in "\n".join(daily["lines"])
+    assert "confirms only on the close" in "\n".join(intra["lines"])
+
+
+def test_digest_carries_held_events_in_the_same_single_mail():
+    subj, plain, html = E.build_condition_digest(
+        [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())], _NOW,
+        held_events=[_held_pma_near_stop()])
+    assert "2 cards" in subj and "BUY MET 1" in subj and "HELD 1" in subj
+    assert "HPE" in plain and "ANET @ 199.10" in plain
+    assert "ANET" in html
+
+
+def test_digest_with_only_held_events_still_builds():
+    subj, plain, _ = E.build_condition_digest([], _NOW, held_events=[_held_pma_near_stop()])
+    assert "1 card" in subj and "HELD 1" in subj and "NEAR YOUR STOP" in plain
+
+
+def test_send_with_no_cards_and_no_held_events_is_a_noop():
+    assert E.send_condition_digest([], _NOW, []) ["ok"] is False

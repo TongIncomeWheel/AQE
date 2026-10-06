@@ -1207,16 +1207,112 @@ def build_condition_state_body(ticker: str, row: dict, eval_result: dict,
     return subject, plain, html
 
 
-def build_condition_digest(cards: list[tuple], now_et) -> tuple[str, str, str]:
+_HELD_HEAD = {
+    "near_stop": ("🟠 NEAR YOUR STOP — HELD POSITION", "#d9a441"),
+    "near_target": ("🟢 NEAR FIRST TARGET — HELD POSITION", "#0a8a3a"),
+    "exit_cross": ("🔴 COMMITTEE EXIT LINE — HELD POSITION", "#d00"),
+    "veto": ("🔴 QS VETO — HELD POSITION", "#d00"),
+    "order": ("🔴 STOP ORDER CHECK — HELD POSITION", "#d00"),
+    "other": ("🟠 HELD POSITION", "#d9a441"),
+}
+
+
+def _held_kind(ev: dict) -> str:
+    lvl, kind = ev.get("level") or "", ev.get("kind") or ""
+    if lvl == "NEAR_STOP" or kind == "near_stops":
+        return "near_stop"
+    if lvl == "NEAR_TARGET" or kind == "approaching_target":
+        return "near_target"
+    if lvl == "VETO_HELD":
+        return "veto"
+    if kind in ("close_below", "trade_below"):
+        return "exit_cross"
+    if kind in ("no_stop_order", "order_config"):
+        return "order"
+    return "other"
+
+
+def build_held_card(ev: dict) -> dict:
+    """One held-position event as a card, same {headline, color, summary,
+    lines} shape as a condition card so both ride ONE digest (PM 2026-10-06:
+    held names must stay monitored, inside the single card mail -- not a
+    second email). `ev` is an engine/PMA trigger dict for a HELD name; every
+    number on the card comes from it, nothing is recomputed or invented.
+    A fact about a position, never an instruction."""
+    k = _held_kind(ev)
+    label, color = _HELD_HEAD[k]
+    px = ev.get("live_px")
+    at = f" @ {px:.2f}" if px is not None else ""
+    headline = f"{ev.get('ticker')}{at} · {label}"
+
+    lines: list[str] = []
+    chg = ev.get("chg_pct")
+    if px is not None:
+        lines.append(f"Spot {px:.2f}" + (f" · {chg:+.1f}% on the day" if chg is not None else ""))
+
+    def _gap_above(level):  # % spot sits above a level
+        return (px / level - 1.0) * 100.0 if (px and level) else None
+
+    b_stop, c_exit = ev.get("broker_stop"), ev.get("committee_exit")
+    lp = ev.get("level_price")
+    summary = None
+    if k == "near_stop":
+        stop_lv = b_stop if b_stop is not None else lp
+        if stop_lv is not None:
+            g = _gap_above(stop_lv)
+            tail = f" — spot is {g:.1f}% above it" if g is not None else ""
+            lines.append(f"Your stop: {stop_lv:.2f}{tail}")
+        if c_exit is not None:
+            g = _gap_above(c_exit)
+            tail = (f" — spot is {abs(g):.1f}% {'above' if g >= 0 else 'below'} it"
+                    if g is not None else "")
+            lines.append(f"Committee exit: {c_exit:.2f}{tail}")
+        summary = "Price is close to a stop on a position you hold."
+    elif k == "near_target":
+        if lp is not None:
+            g = (1 - px / lp) * 100.0 if px else None
+            lines.append(f"First target: {lp:.2f}" + (f" — {g:.1f}% away" if g is not None else ""))
+        summary = "Price is close to the first target on a position you hold."
+    elif k == "exit_cross":
+        daily = ev.get("priority") != "WARN"
+        if lp is not None:
+            lines.append(f"Committee exit line: {lp:.2f} — "
+                         + ("DAILY close below it (confirmed)" if daily
+                            else "beyond the line intraday, confirms only on the close"))
+        if b_stop is not None:
+            lines.append(f"Your broker stop: {b_stop:.2f}")
+        summary = ("A daily close under the committee's exit line on a position you hold."
+                   if daily else
+                   "Price is through the committee's exit line intraday on a position you hold.")
+    elif k == "veto":
+        summary = ev.get("note") or "A QS veto fired on a position you hold."
+    elif k == "order":
+        summary = ev.get("action") or ev.get("note")
+    else:
+        summary = ev.get("action") or ev.get("note")
+
+    action = (ev.get("action") or "").strip()
+    if action and action != summary and k in ("near_stop", "exit_cross", "near_target"):
+        lines.append(action)
+    return {"headline": headline, "color": color, "summary": summary, "lines": lines}
+
+
+def build_condition_digest(cards: list[tuple], now_et,
+                           held_events: list[dict] | None = None) -> tuple[str, str, str]:
     """ONE email per 15-min cycle (PM 2026-10-03: no per-ticker alerts).
     `cards` = [(ticker, row, eval_result, fired_states, live), ...] — every
     name whose state changed this cycle, each rendered as its own card
     under one subject and one footer."""
+    held_events = held_events or []
     built = [build_condition_card(*c) for c in cards]
     counts: dict[str, int] = {}
     for _t, _r, _e, states, _l in cards:
         key = _DIGEST_SHORT.get(states[0], states[0])
         counts[key] = counts.get(key, 0) + 1
+    # Held-position events ride the SAME mail, after the condition cards.
+    built += [build_held_card(ev) for ev in held_events]
+    if held_events:
+        counts["HELD"] = len(held_events)
     tally = " · ".join(f"{k} {v}" for k, v in counts.items())
     stamp = now_et.strftime("%H:%M ET")
     n = len(built)
@@ -1231,13 +1327,14 @@ def build_condition_digest(cards: list[tuple], now_et) -> tuple[str, str, str]:
     return subject, plain, html
 
 
-def send_condition_digest(cards: list[tuple], now_et) -> dict:
+def send_condition_digest(cards: list[tuple], now_et,
+                          held_events: list[dict] | None = None) -> dict:
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):
         return {"ok": False, "reason": "no email backend configured"}
-    if not cards:
+    if not cards and not held_events:
         return {"ok": False, "reason": "no cards this cycle"}
-    subject, plain, html = build_condition_digest(cards, now_et)
+    subject, plain, html = build_condition_digest(cards, now_et, held_events)
     if cfg["resend_key"]:
         return _send_resend(cfg, subject, plain, html)
     return _send_smtp(cfg, subject, plain, html)

@@ -294,6 +294,23 @@ def _export_age_days(export: dict):
         return None
 
 
+def _held_events(fresh: list[dict], fresh_pma: list[dict]) -> list[dict]:
+    """The HELD-position triggers that fired this cycle, for the single card
+    mail (PM 2026-10-06: "I thought we also monitor held positions? if not
+    then fit it into the cards into 1 single mail"). Held names were always
+    monitored -- but their approaching-stop / approaching-target / veto /
+    committee-exit events only ever reached the inbox through the retired
+    old-format digest. Bounded on purpose: no +/-2% MOVE (a movement tape, not
+    a risk event). Empty when the legacy digest is switched back on, so the
+    same event is never mailed twice."""
+    if C.LEGACY_DIGEST_EMAIL:
+        return []
+    out = [t for t in fresh if t.get("is_held")
+           and t.get("level") in ("NEAR_STOP", "NEAR_TARGET", "VETO_HELD")]
+    out += [t for t in fresh_pma if t.get("is_held")]
+    return out
+
+
 def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     """One poll cycle. Returns a summary dict; never raises.
 
@@ -415,27 +432,6 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 except Exception:  # noqa: BLE001 — never break a real alert
                     pass
 
-    # AQE Handoff: D123/R21 condition alerts (2026-10-02) + AQE-default rows
-    # (2026-10-04) — one 15-min digest; runs in BOTH shadow and live mode
-    # (only the email send itself is gated by config.PMA_CONDITIONS_LIVE
-    # inside condition_cycle.py). Deliberately OUTSIDE the `pma_doc` guard
-    # below: a stale/missing PMA file stops committee rows, not the
-    # Longlist/Elder defaults.
-    try:
-        from . import condition_cycle as CC
-        _now_et = datetime.now(ZoneInfo("America/New_York"))
-        cc_summary = CC.run_condition_cycle(
-            pma_doc, quotes, _now_et,
-            run_date=((pma_doc or {}).get("run_date") or _now_et.date().isoformat()),
-            export=export)
-        summary["pma_conditions"] = cc_summary
-        if cc_summary.get("enabled"):
-            _phase(f"conditions evaluated ({cc_summary['rows']} rows, "
-                  f"{cc_summary.get('defaults', 0)} AQE-default, "
-                  f"{len(cc_summary.get('fired') or {})} fired)")
-    except Exception as exc:  # noqa: BLE001 — never break the live cycle for this
-        summary["pma_conditions"] = {"enabled": False, "error": str(exc)}
-
     # ---- PMA evaluation — its OWN dedup set (life of a trigger, not a
     # daily reset — see state.py's pma_fired functions), evaluated per ROW
     # (a ticker can carry more than one PMA row, e.g. a HELD position and a
@@ -488,6 +484,27 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 CL.write_summary(pma_doc.get("run_date") or now_et.date().isoformat())
             except Exception:  # noqa: BLE001
                 pass
+
+    # AQE Handoff: D123/R21 condition alerts (2026-10-02) + AQE-default rows
+    # (2026-10-04) — one 15-min digest; runs in BOTH shadow and live mode
+    # (only the email send itself is gated by config.PMA_CONDITIONS_LIVE
+    # inside condition_cycle.py). Deliberately OUTSIDE the `pma_doc` guard
+    # below: a stale/missing PMA file stops committee rows, not the
+    # Longlist/Elder defaults.
+    try:
+        from . import condition_cycle as CC
+        _now_et = datetime.now(ZoneInfo("America/New_York"))
+        cc_summary = CC.run_condition_cycle(
+            pma_doc, quotes, _now_et,
+            run_date=((pma_doc or {}).get("run_date") or _now_et.date().isoformat()),
+            export=export, held_events=_held_events(fresh, fresh_pma))
+        summary["pma_conditions"] = cc_summary
+        if cc_summary.get("enabled"):
+            _phase(f"conditions evaluated ({cc_summary['rows']} rows, "
+                  f"{cc_summary.get('defaults', 0)} AQE-default, "
+                  f"{len(cc_summary.get('fired') or {})} fired)")
+    except Exception as exc:  # noqa: BLE001 — never break the live cycle for this
+        summary["pma_conditions"] = {"enabled": False, "error": str(exc)}
 
     all_fresh = fresh + fresh_pma
     summary["new_triggers"] = len(all_fresh)

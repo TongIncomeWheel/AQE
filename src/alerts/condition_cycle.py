@@ -30,7 +30,8 @@ def rows_with_conditions(pma_doc: dict | None) -> list[dict]:
 
 
 def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
-                        run_date: str, export: dict | None = None) -> dict:
+                        run_date: str, export: dict | None = None,
+                        held_events: list[dict] | None = None) -> dict:
     """Returns a summary dict for the caller's own cycle summary. Mutates
     and persists condition_state.json; appends one ledger line per row
     with `conditions`, every cycle, regardless of whether anything fired.
@@ -47,7 +48,13 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         defaults = []
     rows = rows + defaults
     summary["defaults"] = len(defaults)
+    held_events = held_events or []
     if not rows:
+        # No condition rows, but held-position events still go out -- in the
+        # same single mail (PM 2026-10-06).
+        if held_events:
+            summary["held_events"] = [e.get("ticker") for e in held_events]
+            _maybe_email_digest([], now_et, held_events)
         return summary
     summary["enabled"] = True
     summary["rows"] = len(rows)
@@ -170,7 +177,10 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         CS.save_condition_state(state)
     if cards:
         summary["cards"] = [c[0] for c in cards]
-        _maybe_email_digest(cards, now_et)
+    if held_events:
+        summary["held_events"] = [e.get("ticker") for e in held_events]
+    if cards or held_events:
+        _maybe_email_digest(cards, now_et, held_events)
 
     return summary
 
@@ -183,7 +193,8 @@ def _num(v) -> float | None:
         return None
 
 
-def _maybe_email_digest(cards: list[tuple], now_et: datetime) -> None:
+def _maybe_email_digest(cards: list[tuple], now_et: datetime,
+                        held_events: list[dict] | None = None) -> None:
     """§7: "In shadow, nothing in §6 is emailed." The config flag is the
     ONLY gate — everything above (evaluation, state, ledger) runs
     identically in both modes. `cards` = [(ticker, row, eval_result,
@@ -193,6 +204,6 @@ def _maybe_email_digest(cards: list[tuple], now_et: datetime) -> None:
         return
     try:
         from .emailer import send_condition_digest
-        send_condition_digest(cards, now_et)
+        send_condition_digest(cards, now_et, held_events)
     except Exception:  # noqa: BLE001
         pass
