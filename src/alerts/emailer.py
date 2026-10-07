@@ -770,6 +770,8 @@ _CONDITION_STATE_LABEL = {
     # before cards are built. An invalidated seat shows as ✗ on the
     # Analysts line; an exit line on a name the PM doesn't hold isn't news.
     "EXIT_LINE_HELD": ("🔴 EXIT LINE CROSSED — HELD POSITION", "#d00"),
+    # PM 2026-10-07: did the daily-reference undercut-and-rally happen today?
+    "UNR_MET": ("🟢 U&R MET — undercut and rally today", "#0a8a3a"),
 }
 
 # Which scannable category a condition word belongs under (PM ask,
@@ -795,7 +797,7 @@ _WORD_CATEGORY = {
 # ◌ (not ✗) for NOT_YET -- the data isn't ready, the condition hasn't failed.
 _RESULT_TAG = {"TRUE": "✓ MET", "FALSE": "✗ NOT MET", "NOT_YET": "◌ WATCHING",
               "UNKNOWN_WORD": "? UNKNOWN"}
-_DIGEST_SHORT = {"CONDITION_MET": "BUY MET", "FAILED_PUSH": "BACK UNDER",
+_DIGEST_SHORT = {"UNR_MET": "U&R MET", "CONDITION_MET": "BUY MET", "FAILED_PUSH": "BACK UNDER",
                  "CHASED": "EXTENDED", "EXIT_LINE_HELD": "EXIT HELD"}
 _DISCLAIMER = "Information only. Nothing placed, changed, cancelled or sized."
 
@@ -1127,6 +1129,21 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
     if primary == "CONDITION_MET":
         seats = f" — {n_lit} of {n_counting} analyst seats lit" if n_counting else ""
         return f"All buy conditions met{seats}."
+    if primary == "UNR_MET":
+        hits = ((live or {}).get("unr") or {}).get("hits") or []
+        if hits:
+            h = hits[0]
+            return (f"Undercut {h['name']} {h['level']:.2f} (low {h['low']:.2f}) and is back "
+                    f"above it — U&R on a daily level, judged on spot not a close.")
+        return "Undercut and rally on a daily reference level today."
+    if primary == "FAILED_PUSH" and spot is not None and buy_level is not None and spot >= buy_level:
+        # PM 2026-10-07 (CAT): spot 0.7% ABOVE the line was headed "BACK UNDER
+        # THE LEVEL". The buy turned off because a CONFIRM lapsed, not because
+        # price fell back -- say that.
+        unmet = _first_unmet_category(eval_result)
+        what = f"{unmet} confirm" if unmet else "a confirm"
+        return (f"Price is still above {buy_level:.2f} (spot {spot:.2f}) but {what} "
+                f"is not there. Still watched: it re-qualifies when it confirms again.")
     if primary == "FAILED_PUSH":
         cleared = f"Cleared {buy_level:.2f}" if buy_level is not None else "Cleared the buy level"
         unmet = _first_unmet_category(eval_result)
@@ -1152,14 +1169,190 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
     return None
 
 
+def _state_label(primary: str, row: dict, eval_result: dict, live: dict) -> tuple[str, str]:
+    label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
+    spot, entry = live.get("price"), _effective_entry(row)
+    if primary == "FAILED_PUSH" and spot is not None and entry is not None and spot >= entry:
+        return ("🟠 CONFIRMATION LOST — price still above the line", "#d9a441")
+    return label, color
+
+
+def _unr_line(unr: dict, spot: float | None) -> str:
+    st = (unr or {}).get("status")
+    if st == "MET":
+        hits = unr["hits"]
+        what = ", ".join(f"{h['name']} {h['level']:.2f}" for h in hits[:3])
+        more = f" +{len(hits) - 3} more" if len(hits) > 3 else ""
+        low = hits[0]["low"]
+        sp = f"; spot {spot:.2f} is back above" if spot is not None else ""
+        return f"U&R today ✓ MET — undercut {what}{more} (day low {low:.2f}){sp}"
+    if st == "NOT_MET":
+        below = unr.get("below") or []
+        if below:
+            b0 = below[0]
+            sp = f"spot {spot:.2f} " if spot is not None else ""
+            return (f"U&R today ✗ NOT MET — undercut {b0['name']} {b0['level']:.2f} "
+                    f"(low {b0['low']:.2f}) but {sp}is still under it")
+        return f"U&R today ✗ NOT MET — {unr.get('reason') or 'no daily level undercut today'}"
+    return f"U&R today ◌ not checked — {(unr or {}).get('reason') or 'no data'}"
+
+
+_SHORT_CAT = {"Structure": "price", "Volume": "volume", "VWAP": "VWAP",
+              "Relative strength": "RS", "Daily read": "daily read"}
+
+
+def _buy_line(row: dict, eval_result: dict, fired_states: list[str], live: dict) -> str | None:
+    """One line: the committee/AQE buy conditions as marks, plus the entry line."""
+    words = ((eval_result.get("shared_buy_detail") or [])
+             + (eval_result.get("shared_confirm_detail") or []))
+    n_counting = eval_result.get("n_counting") or 0
+    shared = (row.get("conditions") or {}).get("shared") or {}
+    if not words and not n_counting:
+        return None                                    # a pure exit-only held row
+    default = " (AQE default)" if row.get("aqe_default") else ""
+    ok = bool(eval_result.get("buy_met"))
+    head = f"Buy conditions{default} " + ("✓ MET" if ok else "✗ NOT MET")
+    bits = []
+    if words:
+        for e, r in words:
+            cat = _SHORT_CAT.get(_word_category(e.get("w")), _word_category(e.get("w")).lower())
+            bits.append(f"{cat} {_MARK.get(r, '?')}")
+    elif shared.get("no_shared_buy") and n_counting:
+        bits.append(f"{eval_result.get('n_lit') or 0} of {n_counting} analysts lit")
+    entry, spot = _effective_entry(row), live.get("price")
+    if entry is not None:
+        tail = f"entry {entry:.2f}"
+        if spot is not None:
+            tail += f" (spot {(spot / entry - 1) * 100:+.1f}%)"
+        bits.append(tail)
+    return head + (" — " + " · ".join(bits) if bits else "")
+
+
+def _fmt_levels(unr: dict) -> str | None:
+    lv = (unr or {}).get("levels") or []
+    if not lv:
+        return None
+    hit = {h["name"] for h in (unr.get("hits") or [])} | {h["name"] for h in (unr.get("below") or [])}
+    def one(x):
+        mark = "▼" if x["name"] in hit else ""
+        # "Round 850" already carries its number
+        return f"{mark}{x['name']}" if x["name"].startswith("Round ") else \
+            f"{mark}{x['name']} {x['level']:.2f}"
+    return "Levels: " + " · ".join(one(x) for x in lv)
+
+
+def _reference_lines(row: dict, live: dict) -> list[str]:
+    """The 'UnR reference' block: plain numbers only, one short line each."""
+    out = []
+    lv = _fmt_levels(live.get("unr"))
+    if lv:
+        out.append(lv + "   (▼ = undercut today)")
+    today = []
+    orr = live.get("opening_range")
+    if orr:
+        today.append(f"open-range {orr['high']:.2f}/{orr['low']:.2f}")
+    if live.get("day_low") is not None:
+        today.append(f"low {live['day_low']:.2f}")
+    if live.get("day_high") is not None:
+        today.append(f"high {live['day_high']:.2f}")
+    vw = live.get("vwap") or {}
+    if vw.get("vwap") is not None and not vw.get("provisional"):
+        bits = []
+        spot = live.get("price")
+        if spot is not None:
+            bits.append("spot above" if spot > vw["vwap"] else "spot below")
+        closes = live.get("hourly_closes") or []
+        if len(closes) >= 2:
+            if closes[-1] > vw["vwap"] >= closes[-2]:
+                bits.append("hourly close reclaimed it")
+            elif closes[-1] <= vw["vwap"] < closes[-2]:
+                bits.append("hourly close lost it")
+        today.append(f"VWAP {vw['vwap']:.2f}" + (f" ({', '.join(bits)})" if bits else ""))
+    if today:
+        out.append("Today: " + " · ".join(today))
+    ema, parts = live.get("ema") or {}, []
+    for key, lab in (("m15", "15m"), ("daily", "daily")):
+        r = ema.get(key)
+        if r:
+            parts.append(f"{lab} {r['ema8']:.2f}/{r['ema20']:.2f}")
+    if parts:
+        out.append("EMA 8/20: " + " · ".join(parts))
+    misc = []
+    vol_x = (live.get("vol_x") or {}).get("so_far")
+    if vol_x is not None:
+        misc.append(f"volume {vol_x:.1f}×")
+    el = live.get("elder") or {}
+    if el.get("elder_live") is not None:
+        misc.append(f"Elder {el['elder_live']}/10 {el.get('impulse_live') or ''}".rstrip())
+    chase = ((row.get("conditions") or {}).get("shared") or {}).get("chase")
+    from .condition_evaluator import entry_level as _lvl
+    cl = _lvl(chase) if chase else None
+    if cl is not None:
+        misc.append(f"chase line {cl:.2f}")
+    if misc:
+        out.append(" · ".join(misc))
+    return out
+
+
+def _build_compact_card(ticker: str, row: dict, eval_result: dict,
+                        fired_states: list[str], live: dict) -> dict:
+    """PM 2026-10-07: "too much info ... what we need to know is if U&R took
+    place (met or not met). Everything else is numbers for reference under
+    UnR reference." Headline = the U&R verdict; then one buy-conditions line,
+    one bracket line, then the reference numbers. Never a recommendation."""
+    unr = live.get("unr") or {}
+    spot = live.get("price")
+    primary = fired_states[0]
+    st = unr.get("status")
+    verdict = {"MET": "🟢 U&R MET", "NOT_MET": "⚪ U&R NOT MET"}.get(st, "◌ U&R NOT CHECKED")
+    at = f" @ {spot:.2f}" if spot is not None else ""
+    headline = f"{ticker}{at} · {verdict}"
+    if row.get("class") == "HELD":
+        headline += " · HELD"
+    color = ("#0a8a3a" if st == "MET" else _state_label(primary, row, eval_result, live)[1])
+
+    lines = [_unr_line(unr, spot)]
+    bl = _buy_line(row, eval_result, fired_states, live)
+    if bl:
+        lines.append(bl)
+    # why this card fired, when it was not the U&R itself
+    why = [x for x in fired_states if x != "UNR_MET"]
+    if why:
+        lbl, _c = _state_label(why[0], row, eval_result, live)
+        if why[0] == "FAILED_PUSH":
+            lines.append(f"State: {lbl}")
+        elif why[0] == "CHASED":
+            lines.append("State: 🟠 EXTENDED — past the chase line")
+        elif why[0] == "EXIT_LINE_HELD":
+            ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
+            lines.append("State: 🔴 EXIT LINE CROSSED — " + (ex.get("plain") or "held position"))
+        elif why[0] == "CONDITION_MET":
+            lines.append("State: 🟢 buy conditions just met")
+    br = _bracket_line(row)
+    if br:
+        lines.append(br[0] + (" · " + br[1] if len(br) > 1 and br[1].startswith("R:R") else ""))
+    lines.append("— UnR reference (levels as of the last close; U&R judged on spot, not a close) —")
+    lines += _reference_lines(row, live)
+    return {"headline": headline, "color": color, "summary": None, "lines": lines}
+
+
 def build_condition_card(ticker: str, row: dict, eval_result: dict,
                          fired_states: list[str], live: dict) -> dict:
-    """One card = {headline, color, summary, lines}. Line order (PM ask,
+    """Dispatch on config.CONDITION_CARD_STYLE ("compact" default / "full")."""
+    from . import config as C
+    if (C.CONDITION_CARD_STYLE or "compact") == "full":
+        return _build_full_card(ticker, row, eval_result, fired_states, live)
+    return _build_compact_card(ticker, row, eval_result, fired_states, live)
+
+
+def _build_full_card(ticker: str, row: dict, eval_result: dict,
+                     fired_states: list[str], live: dict) -> dict:
+    """The previous long, word-by-word card. One card = {headline, color, summary, lines}. Line order (PM ask,
     2026-10-03): the one-sentence summary, each committee word as its own
     'Category: ✓/✗/◌ — plain' line, the Analysts ✓/✗ line, the live
     volume/VWAP numbers, chase/exit lines, the bracket, entry readiness."""
     primary = fired_states[0]
-    label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
+    label, color = _state_label(primary, row, eval_result, live)
     lit, n_counting = eval_result.get("lit") or [], eval_result.get("n_counting") or 0
     spot = live.get("price")
     at = f" @ {spot:.2f}" if spot is not None else ""

@@ -114,6 +114,13 @@ PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
 # ledgered for the committee; only the email is off. Flip to true to restore.
 LEGACY_DIGEST_EMAIL = _b("LEGACY_DIGEST_EMAIL", False)
 
+# Card layout (PM 2026-10-07: "too much info ... what we need to know is if U&R
+# took place (met or not met), everything else is numbers for reference").
+# "compact" = U&R verdict first, one buy-conditions line, one bracket line, then
+# an "UnR reference" block of plain numbers. "full" = the previous long
+# word-by-word layout, kept for debugging and the older tests.
+CONDITION_CARD_STYLE = os.environ.get("CONDITION_CARD_STYLE", "compact").strip().lower()
+
 # How many voices get their own criteria line on a condition card (PM
 # 2026-10-03: "limit the voices instead of all"). Highest conviction first;
 # the rest are folded into one "+N more" line, never dropped silently.

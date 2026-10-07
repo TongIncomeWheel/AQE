@@ -101,6 +101,12 @@ def advance(state: dict, run_date: str, ticker: str, eval_result: dict,
         e["analyst_out"] = True
         _fire_once("ANALYST_OUT")
 
+    # U&R (PM 2026-10-07): the daily-reference undercut-and-rally happened
+    # today. One-shot per name per day, independent of the buy lifecycle.
+    if eval_result.get("unr_met") and not e.get("unr"):
+        e["unr"] = True
+        _fire_once("UNR_MET")
+
     exit_fired = eval_result.get("exit_hit") or eval_result.get("exit_warn")
     if exit_fired and not e["exit_line"]:
         e["exit_line"] = True

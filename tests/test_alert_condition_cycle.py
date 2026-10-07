@@ -64,6 +64,14 @@ class _FakeClient:
                 "low": 63.7, "close": 64.2, "volume": 2000}]
 
 
+
+@pytest.fixture(autouse=True)
+def _long_card_layout(monkeypatch):
+    """These tests pin the previous word-by-word card; the compact U&R-first
+    layout (PM 2026-10-07) has its own tests in test_alert_compact_card.py."""
+    from src.alerts import config as _C
+    monkeypatch.setattr(_C, "CONDITION_CARD_STYLE", "full")
+
 def _pma_doc_with_conditions() -> dict:
     return {
         "run_date": "2026-10-02",

@@ -79,6 +79,8 @@ def test_top_level_keys_are_additive_only():
         "summary", "thematic_baskets", "elder_and_longlist_tickers",
         # §2 additions
         "spy_ret_63d", "hitrate_window",
+        # VALEN Part 3 (2026-10-05): whether the five-setup grading ran
+        "setups_status",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
@@ -117,6 +119,9 @@ def test_v21_record_fields_is_additive_only():
         # daily_list-assembly stage, not by _v21_record_fields itself
         "elder_5d", "elder_pattern", "elder_hi7_streak", "elder_context",
         "lens", "lens_positive", "lens_warnings",
+        # VALEN Part 3 (2026-10-05): the measured setup grades, attached by
+        # setups_daily.attach_setup_grades in build_export next to QS
+        "setups",
     }
     missing = (baseline_row_keys - current_keys) - OUT_OF_SCOPE - DS._NEW_ENGINE_NULL.keys()
     assert not missing, (

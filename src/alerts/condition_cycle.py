@@ -143,9 +143,24 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             except Exception:  # noqa: BLE001
                 live["ema"] = {"m15": None, "daily": None}
 
+            # Same-day U&R verdict on the DAILY reference levels (PM
+            # 2026-10-07). Reads the cached daily history + today's low and
+            # spot; never an input to buy_met.
+            try:
+                from . import live_unr as LU
+                day_low = live["day_low"]
+                if day_low is None:
+                    lows = [b.get("low") for b in today_bars if b.get("low") is not None]
+                    day_low = min(lows) if lows else None
+                live["unr"] = LU.evaluate(histories.get(ticker), live["price"], day_low)
+            except Exception:  # noqa: BLE001
+                live["unr"] = {"status": "UNKNOWN", "hits": [], "below": [], "levels": [],
+                               "reason": "error"}
+
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:
                 continue
+            eval_result["unr_met"] = live["unr"]["status"] == "MET"
 
             is_held = row.get("class") == "HELD"
             fired_states = CS.advance(state, run_date, ticker, eval_result, is_held=is_held)
