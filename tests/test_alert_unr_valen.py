@@ -1,6 +1,7 @@
-"""Valen's U&R, incorporated (PM 2026-10-08): reclaim day (the undercut may be
-yesterday), his two volume marks, the 15-min VWAP entry trigger, stop = low of
-day, the three one-shot states, and the Drive-synced condition state."""
+"""Valen's U&R across the two timeframes (PM 2026-10-09): the DAILY chart picks
+the stock and the day (candidate), the INTRADAY chart picks the entry (a 15-min
+candle closing above VWAP), stop = low of day. The two are not chained: the
+trigger does not wait for the daily level to be reclaimed."""
 
 from __future__ import annotations
 
@@ -20,76 +21,114 @@ from src.alerts import live_unr as LU
 _ET = ZoneInfo("America/New_York")
 
 
-def _history(n=160, a=40.0, b=100.0, end=date(2026, 10, 6), last=None, vols=None):
+def _history(n=160, a=40.0, b=100.0, end=date(2026, 10, 6), vols=None):
     c = np.geomspace(a, b, n)
-    rows = [{"date": str(end - timedelta(days=n - 1 - i)), "open": c[i] * 0.998,
+    return [{"date": str(end - timedelta(days=n - 1 - i)), "open": c[i] * 0.998,
              "high": c[i] * 1.006, "low": c[i] * 0.994, "close": float(c[i]),
              "volume": float((vols or {}).get(i, 1e6))} for i in range(n)]
-    if last:
-        rows[-1].update(last)
-    return rows
 
 
 def _ema21(h):
     return float(pd.Series([r["close"] for r in h]).ewm(span=21, adjust=False).mean().iloc[-1])
 
 
-# --------------------------------------------------------------- reclaim day
-
-def test_an_undercut_yesterday_that_closed_under_is_reclaimed_today():
-    h = _history()
+def _under(h, closes_under, lows_under):
+    """Set the last len(closes_under) sessions' closes to fractions of the
+    EMA21 and their lows to fractions of it. The EMA moves as the closes are
+    lowered, so iterate to a fixed point: the last close really ends UNDER the
+    final EMA21 level."""
+    k = len(closes_under)
     e = _ema21(h)
-    h[-1].update({"low": e * 0.97, "close": e * 0.985})          # undercut AND closed under
-    r = LU.evaluate(h, spot=e * 1.012, day_low=e * 1.004)         # today never dipped
-    assert r["status"] == LU.MET
-    hit = next(x for x in r["hits"] if x["name"] == "EMA21")
-    assert hit["when"] == "yesterday"
+    for _ in range(8):
+        for i, cl in enumerate(closes_under):
+            h[-k + i]["close"] = e * cl
+        e = _ema21(h)
+    for i, lo in enumerate(lows_under):
+        h[-k + i]["low"] = e * lo
+    return e
 
 
-def test_an_undercut_yesterday_that_already_closed_back_above_is_not_todays_reclaim():
-    h = _history()
-    e = _ema21(h)
-    h[-1].update({"low": e * 0.97, "close": e * 1.01})           # reclaim day was yesterday
-    r = LU.evaluate(h, spot=e * 1.02, day_low=e * 1.008)
-    assert not [x for x in r["hits"] if x["name"] == "EMA21"]
+# ------------------------------------------------------------- the candidate
 
-
-def test_an_undercut_today_still_counts_and_says_today():
+def test_undercut_today_and_reclaimed_is_a_candidate_with_the_reclaim_ticked():
     h = _history()
     e = _ema21(h)
     r = LU.evaluate(h, spot=e * 1.012, day_low=e * 0.985)
-    assert next(x for x in r["hits"] if x["name"] == "EMA21")["when"] == "today"
+    assert r["status"] == LU.ARMED
+    a = next(x for x in r["armed"] if x["name"] == "EMA21")
+    assert a["when"] == "today" and a["reclaimed"] is True and a["spot_pct"] > 0
 
 
-def test_stop_is_todays_low_of_day():
+def test_undercut_today_and_still_under_is_still_a_candidate_not_reclaimed():
+    """PM 2026-10-09: the daily reclaim is a tick, not a gate."""
     h = _history()
     e = _ema21(h)
-    assert LU.evaluate(h, spot=e * 1.012, day_low=e * 0.985)["stop"] == round(e * 0.985, 2)
+    r = LU.evaluate(h, spot=e * 0.99, day_low=e * 0.97)
+    a = next(x for x in r["armed"] if x["name"] == "EMA21")
+    assert r["status"] == LU.ARMED and a["reclaimed"] is False and a["spot_pct"] < 0
 
 
-def test_volume_marks_pullback_dry_and_reclaim_above_average():
+def test_an_undercut_two_sessions_ago_still_under_at_the_last_close_is_a_candidate():
+    h = _history()
+    e = _under(h, closes_under=(0.975, 0.99, 0.992), lows_under=(0.96, 0.985, 0.99))
+    r = LU.evaluate(h, spot=e * 1.004, day_low=e * 0.998)        # today never dipped
+    a = next(x for x in r["armed"] if x["name"] == "EMA21")
+    assert r["status"] == LU.ARMED and a["when"] == "yesterday"      # the most recent undercut
+
+
+def test_an_undercut_that_already_closed_back_above_is_not_a_candidate():
+    h = _history()
+    e = _ema21(h)
+    h[-2].update({"low": e * 0.97, "close": e * 0.98})
+    h[-1].update({"close": e * 1.02, "low": e * 1.005})           # reclaim day was yesterday
+    r = LU.evaluate(h, spot=e * 1.03, day_low=e * 1.012)
+    assert not [x for x in r["armed"] if x["name"] == "EMA21"]
+
+
+def test_nothing_undercut_is_not_met_with_the_lookback_in_the_reason():
+    h = _history()
+    e = _ema21(h)
+    r = LU.evaluate(h, spot=e * 1.09, day_low=e * 1.065)
+    assert r["status"] == LU.NOT_MET and "last 3 sessions" in r["reason"]
+
+
+def test_a_falling_ema21_is_not_an_uptrend_pullback():
+    h = _history(a=100.0, b=60.0)
+    r = LU.evaluate(h, spot=61.0, day_low=58.0)
+    assert r["status"] == LU.NOT_MET and "EMA21" in r["reason"]
+
+
+def test_unknown_never_a_silent_not_met_when_data_is_missing():
+    assert LU.evaluate(None, 100.0, 99.0)["status"] == LU.UNKNOWN
+    assert LU.evaluate(_history()[:30], 100.0, 99.0)["status"] == LU.UNKNOWN
+    assert LU.evaluate(_history(), None, 99.0)["status"] == LU.UNKNOWN
+    assert LU.evaluate(_history(), 100.0, None)["status"] == LU.UNKNOWN
+
+
+def test_levels_are_valens_four_types_only():
+    r = LU.evaluate(_history(), spot=101.0, day_low=100.5)
+    names = {x["name"] for x in r["levels"]}
+    assert {"EMA9", "EMA21"} <= names
+    assert names <= {"Swing low", "Trendline", "EMA9", "EMA21", "Gap"}
+    json.dumps(r)                                                    # JSON-safe
+
+
+def test_stop_is_todays_low_of_day_and_volume_marks_never_decide_the_status():
     n = 160
-    h = _history(vols={i: 4e5 for i in range(n - 3, n)})          # last 3 sessions light
-    e = _ema21(h)
-    dry = LU.evaluate(h, spot=e * 1.012, day_low=e * 0.985, vol_x=1.4)
-    assert dry["volume"] == {"pullback_dry": True, "reclaim_x": 1.4, "reclaim_ok": True}
-    heavy = _history(vols={i: 3e6 for i in range(n - 3, n)})
-    r2 = LU.evaluate(heavy, spot=_ema21(heavy) * 1.012, day_low=_ema21(heavy) * 0.985, vol_x=0.6)
-    assert r2["volume"]["pullback_dry"] is False and r2["volume"]["reclaim_ok"] is False
-
-
-def test_volume_marks_never_decide_met():
-    h = _history()
+    h = _history(vols={i: 4e5 for i in range(n - 3, n)})
     e = _ema21(h)
     r = LU.evaluate(h, spot=e * 1.012, day_low=e * 0.985, vol_x=0.2)
-    assert r["status"] == LU.MET and r["volume"]["reclaim_ok"] is False
+    assert r["stop"] == round(e * 0.985, 2) and r["status"] == LU.ARMED
+    assert r["volume"] == {"pullback_dry": True, "reclaim_x": 0.2, "reclaim_ok": False}
+    ok = LU.evaluate(h, spot=e * 1.012, day_low=e * 0.985, vol_x=1.4)
+    assert ok["volume"]["reclaim_ok"] is True
 
 
 def test_a_panel_row_for_today_is_ignored():
-    h = _history(end=date(2026, 10, 7))                            # last row IS today
+    h = _history(end=date(2026, 10, 7))
     e = _ema21(h[:-1])
     r = LU.evaluate(h, spot=e * 1.012, day_low=e * 0.985, today=date(2026, 10, 7))
-    assert r["status"] == LU.MET
+    assert r["status"] == LU.ARMED
 
 
 # -------------------------------------------------------------- VWAP trigger
@@ -110,13 +149,14 @@ def test_triggered_when_a_candle_closes_above_vwap_after_being_below():
             _bar(10, 0, 98.7, 100.4, 98.6, 100.2, 4000)]
     t = LM.vwap_trigger(bars)
     assert t["state"] == "TRIGGERED" and t["was_below"] is True
-    assert t["at"] == "10:15" and t["entry"] == 100.2           # the bar's close time / close
+    assert t["at"] == "10:15" and t["entry"] == 100.2
 
 
-def test_triggered_without_a_wait_when_above_since_the_open():
+def test_above_vwap_since_the_open_is_not_a_trigger_there_was_no_dip_to_reclaim():
     bars = [_bar(9, 30, 100, 101, 99.9, 100.9, 5000), _bar(9, 45, 100.9, 101.5, 100.8, 101.4, 4000)]
-    t = LM.vwap_trigger(bars)
-    assert t["state"] == "TRIGGERED" and t["was_below"] is False
+    assert LM.vwap_trigger(bars)["state"] == "ABOVE"
+    # one bar in: VWAP is just that bar's own average -- never a trigger on its own
+    assert LM.vwap_trigger([_bar(9, 30, 100, 100.4, 99.9, 100.3, 5000)])["state"] == "ABOVE"
 
 
 def test_not_ready_without_bars():
@@ -127,33 +167,45 @@ def test_not_ready_without_bars():
 
 # ------------------------------------------------------------ state machine
 
-def _ev(met=False, trig=False, known=True, **k):
-    return {"buy_met": False, "unr_met": met, "unr_trigger": trig, "unr_known": known, **k}
+def _ev(armed=False, trig=False, spot=None, stop=None, **k):
+    return {"buy_met": False, "unr_armed": armed or trig, "unr_trigger": trig,
+            "unr_spot": spot, "unr_stop": stop, **k}
 
 
-def test_trigger_after_the_met_card_is_its_own_one_shot_card():
+def test_candidate_card_first_then_the_trigger_card_each_once():
     st = {}
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=True)) == ["UNR_MET"]
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=True, trig=True)) == ["UNR_TRIGGER"]
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=True, trig=True)) == []
+    assert CS.advance(st, "2026-10-07", "X", _ev(armed=True)) == ["UNR_ARMED"]
+    assert CS.advance(st, "2026-10-07", "X", _ev(armed=True)) == []
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=101, stop=98)) == ["UNR_TRIGGER"]
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=101, stop=98)) == []
 
 
-def test_trigger_in_the_same_cycle_rides_the_met_card_and_never_repeats():
+def test_a_name_armed_and_triggered_on_the_same_cycle_gets_the_trigger_card_only():
     st = {}
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=True, trig=True)) == ["UNR_MET"]
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=True, trig=True)) == []
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=101, stop=98)) == ["UNR_TRIGGER"]
+    assert CS.advance(st, "2026-10-07", "X", _ev(armed=True)) == []     # no late candidate card
 
 
-def test_failed_fires_once_after_met_and_only_when_judgeable():
+def test_the_trigger_does_not_need_the_daily_level_reclaimed():
+    """The whole point of the fix: nothing in the state machine reads the
+    reclaim. A trigger on an armed name fires on its own."""
     st = {}
-    CS.advance(st, "2026-10-07", "X", _ev(met=True))
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=False, known=False)) == []      # no data
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=False)) == ["UNR_FAILED"]
-    assert CS.advance(st, "2026-10-07", "X", _ev(met=False)) == []
+    CS.advance(st, "2026-10-07", "X", _ev(armed=True))
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=99.0, stop=98.5)) == ["UNR_TRIGGER"]
 
 
-def test_no_failed_without_a_prior_met():
-    assert CS.advance({}, "2026-10-07", "X", _ev(met=False)) == []
+def test_failed_only_after_a_trigger_and_only_under_the_stop_set_at_trigger_time():
+    st = {}
+    CS.advance(st, "2026-10-07", "X", _ev(armed=True))
+    assert CS.advance(st, "2026-10-07", "X", _ev(armed=True, spot=90.0, stop=95.0)) == []   # no trigger yet
+    CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=101.0, stop=98.0))
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=98.5, stop=97.0)) == []    # above 98
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=97.9, stop=97.0)) == ["UNR_FAILED"]
+    assert CS.advance(st, "2026-10-07", "X", _ev(trig=True, spot=90.0, stop=90.0)) == []     # once
+
+
+def test_nothing_fires_for_a_name_that_is_not_armed():
+    assert CS.advance({}, "2026-10-07", "X", _ev()) == []
 
 
 # --------------------------------------------------------------------- card
@@ -175,66 +227,78 @@ def _evr(words=("TRUE", "NOT_YET")):
             "shared_confirm_detail": [(sh["confirm"][0], words[1])]}
 
 
-def _live(trigger=None, status="MET"):
-    unr = {"status": status, "reason": None, "below": [], "stop": 846.2,
-           "hits": ([{"name": "EMA21", "level": 851.4, "low": 846.2, "when": "yesterday",
-                      "spot_pct": 1.6}] if status == "MET" else []),
-           "levels": [{"name": "EMA21", "level": 851.4}],
+def _live(trigger=None, status="ARMED", reclaimed=False, spot=849.0):
+    armed = []
+    if status == "ARMED":
+        pct = round((spot / 851.4 - 1) * 100, 2)
+        armed = [{"name": "EMA21", "level": 851.4, "low": 846.2, "when": "yesterday",
+                  "reclaimed": reclaimed, "spot_pct": pct}]
+    unr = {"status": status, "reason": "no support level undercut in the last 3 sessions",
+           "armed": armed, "stop": 846.2, "levels": [{"name": "EMA21", "level": 851.4}],
            "volume": {"pullback_dry": True, "reclaim_x": 1.3, "reclaim_ok": True}}
-    return {"price": 864.99, "day_low": 846.2, "unr": unr,
+    return {"price": spot, "day_low": 846.2, "unr": unr,
             "vwap_trigger": trigger or {"state": "WAIT", "vwap": 865.28, "last_close": 862.0}}
 
 
-def test_met_card_shows_the_trigger_the_stop_and_the_volume_marks():
-    c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_MET"], _live())
-    assert c["headline"] == "CAT @ 864.99 · 🟢 U&R MET"
-    assert "undercut EMA21 851.40 yesterday" in c["lines"][0]
+def test_candidate_card_says_watch_wait_and_not_reclaimed_yet():
+    c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], _live())
+    assert c["headline"] == "CAT @ 849.00 · 🟡 U&R CANDIDATE"
+    assert c["lines"][0] == ("U&R candidate — undercut EMA21 851.40 yesterday (low 846.20); "
+                             "spot is 0.3% under it, not reclaimed yet ◌")
     assert c["lines"][1] == "Trigger ◌ wait — below VWAP 865.28"
-    assert c["lines"][2] == ("Stop = low of day 846.20 (2.2% under spot) · "
-                             "volume: pullback dry ✓, reclaim 1.3× ✓")
+    assert c["lines"][2].startswith("Stop = low of day 846.20")
 
 
-def test_trigger_card_headline_and_line():
-    trig = {"state": "TRIGGERED", "vwap": 865.28, "last_close": 866.0, "was_below": True,
-            "at": "10:15", "entry": 866.0}
+def test_trigger_card_fires_while_spot_is_still_under_the_daily_level():
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))
-    assert c["headline"] == "CAT @ 864.99 · 🟢 U&R MET · ENTRY TRIGGER"
-    assert c["lines"][1] == ("Trigger ✓ — a 15-min candle closed above VWAP 865.28 "
-                             "at 10:15 (entry ref 866.00)")
+    assert c["headline"] == "CAT @ 849.00 · 🟢 U&R MET · ENTRY TRIGGER"
+    assert "not reclaimed yet ◌" in c["lines"][0]                    # shown, not required
+    assert c["lines"][1] == ("Trigger ✓ — a 15-min candle closed above VWAP 848.50 "
+                             "at 10:15 (entry ref 849.50)")
 
 
-def test_failed_card_says_so_and_shows_no_trigger_or_stop_lines():
-    live = _live(status="NOT_MET")
-    live["unr"]["below"] = [{"name": "EMA21", "level": 851.4, "low": 846.2}]
-    c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_FAILED"], live)
+def test_reclaimed_is_a_tick_on_the_candidate_line():
+    c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"],
+                               _live(reclaimed=True, spot=864.99))
+    assert "spot is back above it ✓ (+1.6%)" in c["lines"][0]
+
+
+def test_failed_card_names_the_stop_and_drops_trigger_and_stop_lines():
+    live = _live()
+    ev = _evr()
+    ev["unr_stop"] = 846.2
+    c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], live)
     assert c["headline"].endswith("🟠 U&R FAILED")
     text = "\n".join(c["lines"])
+    assert "under the low-of-day stop 846.20" in text
     assert "Trigger" not in text and "Stop = low of day" not in text
 
 
-def test_not_met_card_stays_tight_no_trigger_or_stop():
+def test_not_met_card_stays_tight():
     c = E.build_condition_card("CAT", _row(), _evr(("TRUE", "FALSE")), ["CONDITION_MET"],
                                _live(status="NOT_MET"))
-    text = "\n".join(c["lines"])
-    assert "Trigger" not in text and "low of day" not in text.split("UnR reference")[0]
+    assert c["headline"].endswith("⚪ U&R NOT MET")
+    text = "\n".join(c["lines"]).split("UnR reference")[0]
+    assert "Trigger" not in text and "low of day" not in text
 
 
 def test_buy_line_says_watching_while_words_are_pending_not_not_met():
-    """PM 2026-10-08: '✗ NOT MET — price ◌ · volume ◌' read as a failure."""
-    pending = E._buy_line(_row(), _evr(("NOT_YET", "NOT_YET")), ["UNR_MET"], _live())
+    pending = E._buy_line(_row(), _evr(("NOT_YET", "NOT_YET")), ["UNR_ARMED"], _live())
     assert pending.startswith("Buy conditions (AQE default) ◌ WATCHING")
-    failed = E._buy_line(_row(), _evr(("TRUE", "FALSE")), ["UNR_MET"], _live())
+    failed = E._buy_line(_row(), _evr(("TRUE", "FALSE")), ["UNR_ARMED"], _live())
     assert failed.startswith("Buy conditions (AQE default) ✗ NOT MET")
-    mixed = E._buy_line(_row(), _evr(("FALSE", "NOT_YET")), ["UNR_MET"], _live())
-    assert mixed.startswith("Buy conditions (AQE default) ✗ NOT MET")
 
 
 def test_digest_subject_counts_the_new_states():
     subj, _, _ = E.build_condition_digest(
-        [("CAT", _row(), _evr(), ["UNR_TRIGGER"], _live()),
-         ("DOG", _row(), _evr(), ["UNR_FAILED"], _live(status="NOT_MET"))],
+        [("CAT", _row(), _evr(), ["UNR_ARMED"], _live()),
+         ("DOG", _row(), _evr(), ["UNR_TRIGGER"], _live({"state": "TRIGGERED", "vwap": 1,
+                                                          "last_close": 2, "was_below": True, "at": "10:15", "entry": 2.0})),
+         ("EEL", _row(), _evr(), ["UNR_FAILED"], _live())],
         datetime(2026, 10, 7, 11, 0, tzinfo=_ET))
-    assert "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
+    assert "U&R CANDIDATE 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
 
 
 # ----------------------------------------------- Drive-synced condition state
@@ -242,17 +306,18 @@ def test_digest_subject_counts_the_new_states():
 def test_merge_keeps_what_either_poller_already_emailed():
     a = {"2026-10-07:X": {"stage": "CONDITION_MET", "emailed_today": ["CONDITION_MET"],
                           "chased": False, "analyst_out": False, "exit_line": False,
-                          "unr": True, "unr_trigger": False, "unr_failed": False}}
-    b = {"2026-10-07:X": {"stage": "WATCHING", "emailed_today": ["UNR_MET"],
+                          "unr": True, "unr_trigger": True, "unr_failed": False, "unr_stop": 98.0}}
+    b = {"2026-10-07:X": {"stage": "WATCHING", "emailed_today": ["UNR_ARMED"],
                           "chased": True, "analyst_out": False, "exit_line": False,
-                          "unr": False, "unr_trigger": False, "unr_failed": False},
+                          "unr": False, "unr_trigger": False, "unr_failed": False,
+                          "unr_stop": None},
          "2026-10-07:Y": {"stage": "WATCHING", "emailed_today": [], "chased": False,
                           "analyst_out": False, "exit_line": False}}
     m = CS.merge_states(a, b)
     x = m["2026-10-07:X"]
-    assert x["emailed_today"] == ["CONDITION_MET", "UNR_MET"]
-    assert x["stage"] == "CONDITION_MET" and x["unr"] is True and x["chased"] is True
-    assert "2026-10-07:Y" in m
+    assert x["emailed_today"] == ["CONDITION_MET", "UNR_ARMED"]
+    assert x["stage"] == "CONDITION_MET" and x["unr"] and x["unr_trigger"] and x["chased"]
+    assert x["unr_stop"] == 98.0 and "2026-10-07:Y" in m
 
 
 def test_prune_is_relative_to_the_newest_run_date():
@@ -261,23 +326,19 @@ def test_prune_is_relative_to_the_newest_run_date():
 
 
 def test_save_and_load_go_through_drive_and_merge_across_pollers(tmp_path, monkeypatch):
-    """The GitHub backstop starts from a fresh checkout: it must pick up what
-    the in-app poller already emailed, from Drive, not re-send it."""
     import src.data.gdrive_uploader as G
     drive = {}
     monkeypatch.setattr(G, "is_configured", lambda: True)
     monkeypatch.setattr(G, "download_text", lambda name: drive.get(name))
     monkeypatch.setattr(G, "upload_or_replace",
                         lambda name, payload, mime=None: drive.__setitem__(name, payload))
-    # poller A (in-app) emails a card and saves
     monkeypatch.setattr(CS, "CONDITION_STATE_PATH", tmp_path / "a" / "state.json")
     a = {}
-    assert CS.advance(a, "2026-10-07", "CAT", _ev(met=True)) == ["UNR_MET"]
+    assert CS.advance(a, "2026-10-07", "CAT", _ev(armed=True)) == ["UNR_ARMED"]
     CS.save_condition_state(a)
-    # poller B (fresh checkout, no local file) loads and must NOT fire it again
     monkeypatch.setattr(CS, "CONDITION_STATE_PATH", tmp_path / "b" / "state.json")
-    b = CS.load_condition_state()
-    assert CS.advance(b, "2026-10-07", "CAT", _ev(met=True)) == []
+    b = CS.load_condition_state()                               # a fresh checkout
+    assert CS.advance(b, "2026-10-07", "CAT", _ev(armed=True)) == []
     assert json.loads(drive[CS.STATE_FILENAME])["2026-10-07:CAT"]["unr"] is True
 
 
@@ -291,20 +352,18 @@ def test_drive_failures_fall_back_to_the_local_mirror(tmp_path, monkeypatch):
     monkeypatch.setattr(G, "upload_or_replace", boom)
     monkeypatch.setattr(CS, "CONDITION_STATE_PATH", tmp_path / "state.json")
     st = {}
-    CS.advance(st, "2026-10-07", "CAT", _ev(met=True))
-    CS.save_condition_state(st)                       # must not raise
+    CS.advance(st, "2026-10-07", "CAT", _ev(armed=True))
+    CS.save_condition_state(st)
     assert CS.load_condition_state()["2026-10-07:CAT"]["unr"] is True
 
 
-# ------------------------------------------------------- end to end, 2 cycles
+# ---------------------------------------------------------- end to end cycles
 
-def test_two_cycles_met_then_trigger_each_fire_exactly_once(tmp_path, monkeypatch):
+def _cycle_env(tmp_path, monkeypatch, h):
     from src.alerts import condition_cycle as CC
     from src.alerts import condition_data as CD
     from src.alerts import condition_ledger as CL
     import src.data.fmp_client as FC
-    h = _history(end=date(2026, 10, 6))
-    e = _ema21(h)
     (tmp_path / "dh").mkdir()
     (tmp_path / "dh" / "2026-10-07.json").write_text(json.dumps({"HPE": h}))
     monkeypatch.setattr(CD, "VOLUME_PROFILE_DIR", tmp_path / "vp")
@@ -313,8 +372,7 @@ def test_two_cycles_met_then_trigger_each_fire_exactly_once(tmp_path, monkeypatc
     monkeypatch.setattr(CD, "_panel_history", lambda tickers, today: {})
     monkeypatch.setattr(CL, "LEDGER_DIR", tmp_path / "ledger")
     monkeypatch.setattr(CS, "CONDITION_STATE_PATH", tmp_path / "state.json")
-    bars = {"now": [_bar(9, 30, e * 1.0, e * 1.004, e * 0.985, e * 0.99, 9000),
-                    _bar(9, 45, e * 0.99, e * 0.992, e * 0.984, e * 0.986, 8000)]}
+    bars = {"now": []}
 
     class _Client:
         def get_intraday_bars(self, tk, interval="15min", from_date=None, to_date=None):
@@ -331,20 +389,44 @@ def test_two_cycles_met_then_trigger_each_fire_exactly_once(tmp_path, monkeypatc
                                   "confirm": [], "no_shared_buy": False},
                        "exits": [], "analysts": []}}]}
 
-    def run(hh, mm, spot):
-        q = {"HPE": {"price": spot, "prev_close": h[-1]["close"], "day_high": e * 1.02,
-                     "day_low": e * 0.985, "open": e},
+    def run(hh, mm, spot, low):
+        q = {"HPE": {"price": spot, "prev_close": h[-1]["close"], "day_high": spot * 1.02,
+                     "day_low": low, "open": spot},
              "SPY": {"price": 500.0, "prev_close": 499.0}}
         return CC.run_condition_cycle(doc, q, datetime(2026, 10, 7, hh, mm, tzinfo=_ET),
                                       run_date="2026-10-07")
+    return run, bars, sent
 
-    s1 = run(10, 5, e * 1.012)                    # reclaimed, candles still under VWAP
-    assert s1["fired"]["HPE"] == ["UNR_MET"]
-    _t, _r, _ev2, _st, live1 = sent[-1][0][0]
-    assert live1["vwap_trigger"]["state"] == "WAIT"
-    bars["now"] = bars["now"] + [_bar(10, 0, e * 0.994, e * 1.02, e * 0.993, e * 1.015, 9000)]
-    s2 = run(10, 20, e * 1.016)                   # a candle now closes above VWAP
+
+def test_candidate_then_trigger_while_still_under_the_level_then_failed(tmp_path, monkeypatch):
+    """The scenario that exposed the bug: the VWAP candle closes while spot is
+    still just under the daily level. It must send the trigger card."""
+    h = _history(end=date(2026, 10, 6))
+    e = _ema21(h)
+    run, bars, sent = _cycle_env(tmp_path, monkeypatch, h)
+    bars["now"] = [_bar(9, 30, e * 0.985, e * 0.99, e * 0.975, e * 0.978, 9000),
+                   _bar(9, 45, e * 0.978, e * 0.982, e * 0.972, e * 0.974, 8000)]
+    s1 = run(10, 5, e * 0.976, e * 0.972)              # undercut today, candles under VWAP
+    assert s1["fired"]["HPE"] == ["UNR_ARMED"]
+    live1 = sent[-1][0][0][4]
+    assert live1["vwap_trigger"]["state"] == "WAIT" and live1["unr"]["armed"][0]["reclaimed"] is False
+    bars["now"] = bars["now"] + [_bar(10, 0, e * 0.974, e * 0.995, e * 0.973, e * 0.99, 9000)]
+    s2 = run(10, 20, e * 0.99, e * 0.972)              # candle above VWAP; spot STILL under level
     assert s2["fired"]["HPE"] == ["UNR_TRIGGER"]
-    assert run(10, 35, e * 1.017)["fired"] == {}
-    s4 = run(10, 50, e * 0.99)                    # slips back under every reclaimed level
+    live2 = sent[-1][0][0][4]
+    assert live2["unr"]["armed"][0]["reclaimed"] is False        # trigger did not wait for it
+    assert run(10, 35, e * 0.992, e * 0.972)["fired"] == {}
+    s4 = run(10, 50, e * 0.965, e * 0.965)             # trades under the stop set at the trigger
     assert s4["fired"]["HPE"] == ["UNR_FAILED"]
+
+
+def test_a_name_armed_from_yesterday_sends_one_candidate_card_at_the_open(tmp_path, monkeypatch):
+    """Including a name that opens strong: above VWAP with no dip to reclaim is
+    still a CANDIDATE, never an instant entry."""
+    h = _history(end=date(2026, 10, 6))
+    e = _under(h, closes_under=(0.975, 0.99, 0.992), lows_under=(0.96, 0.985, 0.99))
+    run, bars, sent = _cycle_env(tmp_path, monkeypatch, h)
+    bars["now"] = [_bar(9, 30, e * 0.992, e * 0.996, e * 0.99, e * 0.994, 9000)]
+    s = run(9, 50, e * 0.995, e * 0.99)
+    assert s["fired"]["HPE"] == ["UNR_ARMED"]
+    assert run(10, 5, e * 0.996, e * 0.99)["fired"] == {}

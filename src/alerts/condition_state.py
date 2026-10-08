@@ -84,6 +84,7 @@ def merge_states(a: dict, b: dict) -> dict:
             m[f] = bool(x.get(f)) or bool(y.get(f))
         sx, sy = x.get("stage", STAGE_WATCHING), y.get("stage", STAGE_WATCHING)
         m["stage"] = sy if sy != STAGE_WATCHING else sx
+        m["unr_stop"] = y.get("unr_stop") if y.get("unr_stop") is not None else x.get("unr_stop")
         out[key] = m
     return out
 
@@ -139,7 +140,8 @@ def _entry(state: dict, run_date: str, ticker: str) -> dict:
     return state.setdefault(key, {"stage": STAGE_WATCHING, "emailed_today": [],
                                   "chased": False, "analyst_out": False,
                                   "exit_line": False, "unr": False,
-                                  "unr_trigger": False, "unr_failed": False})
+                                  "unr_trigger": False, "unr_failed": False,
+                                  "unr_stop": None})
 
 
 def advance(state: dict, run_date: str, ticker: str, eval_result: dict,
@@ -176,27 +178,34 @@ def advance(state: dict, run_date: str, ticker: str, eval_result: dict,
         e["analyst_out"] = True
         _fire_once("ANALYST_OUT")
 
-    # U&R (PM 2026-10-07/08, Valen's setup). Three one-shots per name per day,
-    # independent of the buy lifecycle:
-    #   UNR_MET      the reclaim day: a support level was undercut and spot is
-    #                back above it.
-    #   UNR_TRIGGER  AFTER that card, the 15-min VWAP trigger (a candle closes
-    #                above VWAP) arrives -- his entry. If it is already true on
-    #                the same cycle as UNR_MET it rides on that card instead.
-    #   UNR_FAILED   AFTER UNR_MET, spot is back under every reclaimed level.
-    #                Only when U&R could actually be judged (never on missing
-    #                data).
-    unr_new = False
-    if eval_result.get("unr_met") and not e.get("unr"):
+    # U&R (PM 2026-10-07/08/09, Valen's setup). The daily chart picks the
+    # stock, the intraday chart picks the entry; the two are NOT chained.
+    # Three one-shots per name per day, independent of the buy lifecycle:
+    #   UNR_ARMED    the daily CANDIDATE: a support level was undercut and the
+    #                reclaim day is the one to watch. The heads-up.
+    #   UNR_TRIGGER  a 15-min candle closed above VWAP on an armed name -- his
+    #                entry. Fires whether or not spot is back above the daily
+    #                level yet. If it is true on the same cycle the name is
+    #                first armed, it is the only card (no separate candidate).
+    #   UNR_FAILED   after the trigger, spot trades under the low of day that
+    #                was the stop at trigger time.
+    stop = eval_result.get("unr_stop")
+    armed_new = False
+    if eval_result.get("unr_armed") and not e.get("unr"):
         e["unr"] = True
-        unr_new = True
-        _fire_once("UNR_MET")
-    if eval_result.get("unr_trigger") and e.get("unr") and not e.get("unr_trigger"):
-        e["unr_trigger"] = True
-        if not unr_new:
+        armed_new = True
+        if eval_result.get("unr_trigger"):
+            e["unr_trigger"], e["unr_stop"] = True, stop
             _fire_once("UNR_TRIGGER")
-    if (e.get("unr") and not eval_result.get("unr_met") and eval_result.get("unr_known")
-            and not e.get("unr_failed")):
+        else:
+            _fire_once("UNR_ARMED")
+    if (eval_result.get("unr_trigger") and e.get("unr") and not e.get("unr_trigger")
+            and not armed_new):
+        e["unr_trigger"], e["unr_stop"] = True, stop
+        _fire_once("UNR_TRIGGER")
+    spot = eval_result.get("unr_spot")
+    if (e.get("unr_trigger") and not e.get("unr_failed") and spot is not None
+            and e.get("unr_stop") is not None and spot < e["unr_stop"]):
         e["unr_failed"] = True
         _fire_once("UNR_FAILED")
 

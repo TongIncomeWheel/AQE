@@ -225,10 +225,10 @@ def vwap_trigger(bars_15m: list[dict]) -> dict:
     uses 5-minute -- FMP's feed here is 15-minute and delayed). VWAP is
     cumulative from the open over every bar so far. Reads the latest bar:
 
-      TRIGGERED  its close is above the VWAP at that point. `at` = the close
-                 time of the bar that first closed above (after the last bar
-                 that closed under it), `entry` = that bar's close,
-                 `was_below` = whether any earlier bar closed under VWAP.
+      TRIGGERED  its close is above the VWAP AND an earlier bar today closed
+                 under it: the candle that reclaimed VWAP. `at` = that bar's
+                 close time, `entry` = its close.
+      ABOVE      above VWAP since the first bar: nothing to reclaim, no trigger.
       WAIT       its close is under VWAP ("below VWAP: wait").
       NOT_READY  no usable bars yet.
     Figures and a state, never an instruction."""
@@ -264,8 +264,14 @@ def vwap_trigger(bars_15m: list[dict]) -> dict:
     i = len(rows) - 1
     while i > 0 and rows[i - 1][1] > rows[i - 1][2]:
         i -= 1
+    if i == 0:
+        # Above VWAP since the very first bar: there was no "below VWAP: wait"
+        # to reclaim, so no trigger candle. (With one bar in, VWAP is just that
+        # bar's own average, so "above" would be true for half of all names.)
+        out["state"] = "ABOVE"
+        return out
     cross_dt, cross_c, _ = rows[i]
-    out.update({"state": "TRIGGERED", "was_below": i > 0, "entry": round(cross_c, 2),
+    out.update({"state": "TRIGGERED", "was_below": True, "entry": round(cross_c, 2),
                 "at": (cross_dt + timedelta(minutes=15)).strftime("%H:%M")})
     return out
 

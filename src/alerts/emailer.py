@@ -771,9 +771,9 @@ _CONDITION_STATE_LABEL = {
     # Analysts line; an exit line on a name the PM doesn't hold isn't news.
     "EXIT_LINE_HELD": ("🔴 EXIT LINE CROSSED — HELD POSITION", "#d00"),
     # PM 2026-10-07: did the daily-reference undercut-and-rally happen today?
-    "UNR_MET": ("🟢 U&R MET — reclaim day", "#0a8a3a"),
-    "UNR_TRIGGER": ("🟢 U&R ENTRY TRIGGER — 15-min candle closed above VWAP", "#0a8a3a"),
-    "UNR_FAILED": ("🟠 U&R FAILED — back under the level", "#d9a441"),
+    "UNR_ARMED": ("🟡 U&R CANDIDATE — watch the reclaim today", "#b8860b"),
+    "UNR_TRIGGER": ("🟢 U&R MET · ENTRY TRIGGER — 15-min candle closed above VWAP", "#0a8a3a"),
+    "UNR_FAILED": ("🟠 U&R FAILED — under the stop", "#d9a441"),
 }
 
 # Which scannable category a condition word belongs under (PM ask,
@@ -799,7 +799,7 @@ _WORD_CATEGORY = {
 # ◌ (not ✗) for NOT_YET -- the data isn't ready, the condition hasn't failed.
 _RESULT_TAG = {"TRUE": "✓ MET", "FALSE": "✗ NOT MET", "NOT_YET": "◌ WATCHING",
               "UNKNOWN_WORD": "? UNKNOWN"}
-_DIGEST_SHORT = {"UNR_MET": "U&R MET", "UNR_TRIGGER": "U&R ENTRY", "UNR_FAILED": "U&R FAILED", "CONDITION_MET": "BUY MET", "FAILED_PUSH": "BACK UNDER",
+_DIGEST_SHORT = {"UNR_ARMED": "U&R CANDIDATE", "UNR_TRIGGER": "U&R ENTRY", "UNR_FAILED": "U&R FAILED", "CONDITION_MET": "BUY MET", "FAILED_PUSH": "BACK UNDER",
                  "CHASED": "EXTENDED", "EXIT_LINE_HELD": "EXIT HELD"}
 _DISCLAIMER = "Information only. Nothing placed, changed, cancelled or sized."
 
@@ -1132,16 +1132,16 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
         seats = f" — {n_lit} of {n_counting} analyst seats lit" if n_counting else ""
         return f"All buy conditions met{seats}."
     if primary == "UNR_TRIGGER":
-        return "A 15-min candle closed above VWAP after the U&R reclaim — Valen's entry trigger."
+        return "A 15-min candle closed above VWAP on a U&R candidate — Valen's entry trigger."
     if primary == "UNR_FAILED":
-        return "Spot is back under the undercut level — the U&R did not hold."
-    if primary == "UNR_MET":
-        hits = ((live or {}).get("unr") or {}).get("hits") or []
-        if hits:
-            h = hits[0]
-            return (f"Undercut {h['name']} {h['level']:.2f} (low {h['low']:.2f}) and is back "
-                    f"above it — U&R on a daily level, judged on spot not a close.")
-        return "Undercut and rally on a daily support level."
+        return "Spot is under the low of day that was the stop at the trigger — the U&R failed."
+    if primary == "UNR_ARMED":
+        armed = ((live or {}).get("unr") or {}).get("armed") or []
+        if armed:
+            h = armed[0]
+            return (f"Undercut {h['name']} {h['level']:.2f} (low {h['low']:.2f}) — a reclaim-day "
+                    "candidate. Entry is the first 15-min candle that closes above VWAP.")
+        return "A daily support level was undercut — a reclaim-day candidate."
     if primary == "FAILED_PUSH" and spot is not None and buy_level is not None and spot >= buy_level:
         # PM 2026-10-07 (CAT): spot 0.7% ABOVE the line was headed "BACK UNDER
         # THE LEVEL". The buy turned off because a CONFIRM lapsed, not because
@@ -1184,22 +1184,23 @@ def _state_label(primary: str, row: dict, eval_result: dict, live: dict) -> tupl
 
 
 def _unr_line(unr: dict, spot: float | None) -> str:
+    """The daily half: which support level was undercut and where spot is now
+    against it. The reclaim is a tick, not a requirement (PM 2026-10-09)."""
     st = (unr or {}).get("status")
-    if st == "MET":
-        hits = unr["hits"]
-        what = ", ".join(f"{h['name']} {h['level']:.2f}" for h in hits[:3])
-        more = f" +{len(hits) - 3} more" if len(hits) > 3 else ""
-        low = hits[0]["low"]
-        when = " yesterday" if hits[0].get("when") == "yesterday" else ""
-        sp = f"; spot {spot:.2f} is back above" if spot is not None else ""
-        return f"U&R ✓ MET (reclaim day) — undercut {what}{when}{more} (low {low:.2f}){sp}"
+    if st == "ARMED":
+        armed = unr["armed"]
+        a0 = armed[0]
+        more = f" +{len(armed) - 1} more" if len(armed) > 1 else ""
+        pct = a0.get("spot_pct")
+        if a0.get("reclaimed"):
+            where = f"spot is back above it ✓ (+{pct:.1f}%)" if pct is not None else "spot is back above it ✓"
+        else:
+            where = (f"spot is {abs(pct):.1f}% under it, not reclaimed yet ◌"
+                     if pct is not None else "spot is under it, not reclaimed yet ◌")
+        when = "" if a0["when"] == "today" else f" {a0['when']}"
+        return (f"U&R candidate — undercut {a0['name']} {a0['level']:.2f}{when}"
+                f" (low {a0['low']:.2f}){more}; {where}")
     if st == "NOT_MET":
-        below = unr.get("below") or []
-        if below:
-            b0 = below[0]
-            sp = f"spot {spot:.2f} " if spot is not None else ""
-            return (f"U&R ✗ NOT MET — undercut {b0['name']} {b0['level']:.2f} "
-                    f"(low {b0['low']:.2f}) but {sp}is still under it")
         return f"U&R ✗ NOT MET — {unr.get('reason') or 'no support level undercut'}"
     return f"U&R ◌ not checked — {(unr or {}).get('reason') or 'no data'}"
 
@@ -1210,10 +1211,10 @@ def _trigger_line(live: dict) -> str | None:
     t = live.get("vwap_trigger") or {}
     st = t.get("state")
     if st == "TRIGGERED":
-        if t.get("was_below"):
-            return (f"Trigger ✓ — a 15-min candle closed above VWAP {t['vwap']:.2f} "
-                    f"at {t['at']} (entry ref {t['entry']:.2f})")
-        return f"Trigger ✓ — above VWAP {t['vwap']:.2f} since the open"
+        return (f"Trigger ✓ — a 15-min candle closed above VWAP {t['vwap']:.2f} "
+                f"at {t['at']} (entry ref {t['entry']:.2f})")
+    if st == "ABOVE":
+        return f"Trigger ◌ above VWAP {t['vwap']:.2f} since the open — no dip to reclaim"
     if st == "WAIT":
         return f"Trigger ◌ wait — below VWAP {t['vwap']:.2f}"
     if st == "NOT_READY":
@@ -1280,7 +1281,7 @@ def _fmt_levels(unr: dict) -> str | None:
     lv = (unr or {}).get("levels") or []
     if not lv:
         return None
-    hit = {h["name"] for h in (unr.get("hits") or [])} | {h["name"] for h in (unr.get("below") or [])}
+    hit = {h["name"] for h in (unr.get("armed") or [])}
     return "Levels: " + " · ".join(f"{'▼' if x['name'] in hit else ''}{x['name']} {x['level']:.2f}"
                                    for x in lv)
 
@@ -1290,7 +1291,7 @@ def _reference_lines(row: dict, live: dict) -> list[str]:
     out = []
     lv = _fmt_levels(live.get("unr"))
     if lv:
-        out.append(lv + "   (▼ = undercut today)")
+        out.append(lv + "   (▼ = undercut recently)")
     today = []
     orr = live.get("opening_range")
     if orr:
@@ -1348,23 +1349,36 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
     spot = live.get("price")
     primary = fired_states[0]
     st = unr.get("status")
-    verdict = {"MET": "🟢 U&R MET", "NOT_MET": "⚪ U&R NOT MET"}.get(st, "◌ U&R NOT CHECKED")
+    trig = (live.get("vwap_trigger") or {}).get("state") == "TRIGGERED"
     if "UNR_FAILED" in fired_states:
         verdict = "🟠 U&R FAILED"
-    elif "UNR_TRIGGER" in fired_states:
+    elif st == "ARMED" and (trig or "UNR_TRIGGER" in fired_states):
         verdict = "🟢 U&R MET · ENTRY TRIGGER"
+    elif st == "ARMED":
+        verdict = "🟡 U&R CANDIDATE"
+    elif st == "NOT_MET":
+        verdict = "⚪ U&R NOT MET"
+    else:
+        verdict = "◌ U&R NOT CHECKED"
     at = f" @ {spot:.2f}" if spot is not None else ""
     headline = f"{ticker}{at} · {verdict}"
     if row.get("class") == "HELD":
         headline += " · HELD"
     color = ("#d9a441" if "UNR_FAILED" in fired_states
-             else "#0a8a3a" if st == "MET" else _state_label(primary, row, eval_result, live)[1])
+             else "#0a8a3a" if verdict.startswith("🟢")
+             else "#b8860b" if st == "ARMED"
+             else _state_label(primary, row, eval_result, live)[1])
 
     lines = [_unr_line(unr, spot)]
-    if st == "MET":
+    if st == "ARMED" and "UNR_FAILED" not in fired_states:
         for extra in (_trigger_line(live), _stop_volume_line(unr, spot)):
             if extra:
                 lines.append(extra)
+    if "UNR_FAILED" in fired_states:
+        stop = eval_result.get("unr_stop")
+        lines.append(f"Spot {spot:.2f} is under the low-of-day stop"
+                     + (f" {stop:.2f}" if stop is not None else "") if spot is not None
+                     else "Spot is under the low-of-day stop")
     bl = _buy_line(row, eval_result, fired_states, live)
     if bl:
         lines.append(bl)

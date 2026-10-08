@@ -251,6 +251,9 @@ IMPL_GAP_MIN_PCT = 3.0                  # "Gaps": a gap-up that opened >= 3% ove
 IMPL_GAP_VOL_MULT = 1.5                 # high on >= 1.5x normal volume, within the last
 IMPL_GAP_LOOKBACK = 120                 # 120 sessions; the two most recent unfilled ones
 IMPL_GAP_MAX_LEVELS = 2
+IMPL_UNR_ARMED_SESSIONS = 3             # Valen's reclaim-day CANDIDATE: a support level was
+                                        # undercut within the last 3 sessions (or today) and
+                                        # the last close is still under it
 IMPL_UNR_RECLAIM_VOL_X = 1.0            # Valen: "above avg. buying vol." on the reclaim day
 IMPL_TREND_LOOKBACK = 60                # "Trendline support": a rising line through the last
 IMPL_TREND_MIN_SEPARATION = 5           # two confirmed swing lows (higher low, >= 5 sessions

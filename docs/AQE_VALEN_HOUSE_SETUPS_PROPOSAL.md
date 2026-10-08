@@ -192,3 +192,14 @@ the undercut may be yesterday (if it also closed under), the trigger is a 15-min
 candle (the feed's finest), stop = low of day, volume shown as two marks. New
 one-shot states UNR_TRIGGER and UNR_FAILED beside UNR_MET. Not built: a true 5-minute
 trigger (needs a faster feed than FMP Starter's delayed 15-minute bars).
+
+
+## Addendum 2026-10-09 — daily picks the stock, intraday picks the entry
+
+Review finding: the 10-08 build chained the two timeframes (the VWAP trigger only
+counted once spot was back above the daily level). Valen's chart does not: the
+daily chart gives the setup and the day, the intraday chart gives the entry. Rebuilt
+as candidate (daily, heads-up) -> trigger (15-min candle closes above VWAP after a
+close under it; fires regardless of the daily reclaim) -> failed (under the
+low-of-day stop set at trigger). The daily reclaim is a tick on the card. Undercut
+look-back: 3 sessions. A stock above VWAP since the first bar is not a trigger.

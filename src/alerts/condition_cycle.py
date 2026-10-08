@@ -155,7 +155,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 live["unr"] = LU.evaluate(histories.get(ticker), live["price"], day_low,
                                           vol_x=(vol_x or {}).get("so_far"), today=today)
             except Exception:  # noqa: BLE001
-                live["unr"] = {"status": "UNKNOWN", "hits": [], "below": [], "levels": [],
+                live["unr"] = {"status": "UNKNOWN", "armed": [], "levels": [],
                                "stop": None, "volume": {}, "reason": "error"}
             # Valen's entry trigger: a 15-min candle closing above VWAP.
             try:
@@ -166,10 +166,11 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:
                 continue
-            eval_result["unr_met"] = live["unr"]["status"] == "MET"
-            eval_result["unr_known"] = live["unr"]["status"] in ("MET", "NOT_MET")
-            eval_result["unr_trigger"] = (eval_result["unr_met"]
+            eval_result["unr_armed"] = live["unr"]["status"] == "ARMED"
+            eval_result["unr_trigger"] = (eval_result["unr_armed"]
                                           and live["vwap_trigger"].get("state") == "TRIGGERED")
+            eval_result["unr_spot"] = live["price"]
+            eval_result["unr_stop"] = live["unr"].get("stop")
 
             is_held = row.get("class") == "HELD"
             fired_states = CS.advance(state, run_date, ticker, eval_result, is_held=is_held)

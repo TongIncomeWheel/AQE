@@ -1,31 +1,27 @@
-"""Same-day Undercut-and-Rally read for the 15-min cards -- PM 2026-10-07:
-"What we need to know is if U&R took place (met or not met) ... I care if
-U&R daily has been met (within the day)."
+"""Valen's U&R across the two timeframes -- PM 2026-10-07/08/09.
 
-The question per name: did price undercut a DAILY reference level today and
-is it back above it now?
+THE DAILY CHART picks the stock and the day. THE INTRADAY CHART picks the
+entry. This module is the daily half; live_measures.vwap_trigger is the
+intraday half; condition_state joins them. They are deliberately NOT
+chained: the entry trigger does not wait for the daily level to be reclaimed
+(that was the first cut's mistake -- a VWAP candle that closed while spot was
+still just under the level sent nothing).
 
-  reference levels  (Valen's four support types, as of the last COMPLETED
-                    session so a level never moves with today's price):
-                    horizontal support (the latest confirmed swing low),
-                    trendline support (through the last two rising swing
-                    lows, projected to today), the key moving averages
-                    EMA9 / EMA21, and unfilled support gaps. Nothing else.
-  undercut          the session low is under the level by a real margin
-                    (spec.IMPL_UNR_MIN_UNDERCUT_ATR for the swing low,
-                    IMPL_MAUR_MIN_UNDERCUT_ATR for the rest): today's low, or
-                    yesterday's if it also closed under the level (Valen draws
-                    the reclaim as its own day after the dip).
-  reclaimed         spot is back above the level. Intraday that is spot, not
-                    a close -- the card says so.
-  trend gate        EMA21 is rising ("uptrend, rising EMAs"): a broken stock
-                    is not a U&R.
+  CANDIDATE ("armed")  a daily support level was undercut -- today, or within
+                       the last IMPL_UNR_ARMED_SESSIONS sessions with the
+                       last close still under it -- and EMA21 is rising.
+                       Levels are Valen's four: horizontal support (latest
+                       swing low), trendline support, EMA9 / EMA21, support
+                       gaps; all as of the last completed session.
+  reclaimed            spot is back above the level. A TICK on the card, not
+                       a gate. Judged on spot, not a close.
+  stop                 today's low of day (his stop).
+  volume marks         pullback ran on below-average volume; the reclaim day
+                       on above-average. Marks only.
 
-MET = at least one level undercut today AND reclaimed. Everything else is
-NOT_MET (with the reason), or UNKNOWN when the data to judge isn't there --
-never a silent "not met" on missing history. Pure; reuses the very helpers
-the nightly VALEN grader uses, so the two can never disagree about what a
-reference level is. Figures and a verdict, never a trade call.
+Status: ARMED / NOT_MET / UNKNOWN. Missing history is UNKNOWN, never a silent
+not-met. Pure; reuses the helpers the nightly VALEN grader uses. Figures and
+a state, never a trade call.
 """
 
 from __future__ import annotations
@@ -38,7 +34,7 @@ from src.valen import spec as S
 
 MIN_HISTORY = 80
 
-MET, NOT_MET, UNKNOWN = "MET", "NOT_MET", "UNKNOWN"
+ARMED, NOT_MET, UNKNOWN = "ARMED", "NOT_MET", "UNKNOWN"
 
 
 def _frame(history: list[dict]) -> pd.DataFrame | None:
@@ -73,25 +69,15 @@ def levels(b: "SU.Bars") -> list[dict]:
 
 def evaluate(history: list[dict] | None, spot: float | None, day_low: float | None,
              vol_x: float | None = None, today=None) -> dict:
-    """Valen's reclaim day. {status, hits, below, levels, stop, volume, reason}.
+    """{status, armed, levels, stop, volume, reason}.
 
-    A support level is UNDERCUT when the session low is under it by a real
-    margin -- today's low, or yesterday's low if yesterday also CLOSED under
-    it (so the reclaim happens today). It is RECLAIMED when spot is back
-    above. MET = at least one level undercut and reclaimed, with EMA21
-    rising. Valen's chart draws the reclaim as its own bar after the dip, so
-    an undercut yesterday that closed under the level counts; an undercut
-    yesterday that already closed back above does not (that reclaim day was
-    yesterday).
-
-    hits  = [{name, level, low, when: "today"|"yesterday", spot_pct}]
-    below = undercut, spot still under it
-    stop  = today's low (Valen: stop = low of day)
-    volume = {pullback_dry, reclaim_x, reclaim_ok}: his two volume marks --
-             the pullback ran on below-average volume, the reclaim day on
-             above-average. Marks only; they never decide MET.
-    levels = every support level (name, level) for the card's reference block."""
-    res = {"status": UNKNOWN, "hits": [], "below": [], "levels": [], "stop": None,
+    armed  = support levels undercut recently: [{name, level, low, when,
+             reclaimed, spot_pct}] where `when` is "today" or "N sessions ago"
+             and `reclaimed` says spot is back above (a tick, not a gate).
+    levels = every support level (name, level) for the card's reference block.
+    stop   = today's low (Valen: stop = low of day).
+    volume = {pullback_dry, reclaim_x, reclaim_ok}: marks only."""
+    res = {"status": UNKNOWN, "armed": [], "levels": [], "stop": None,
            "volume": {"pullback_dry": None, "reclaim_x": None, "reclaim_ok": None},
            "reason": None}
     if not history or spot is None or day_low is None or spot <= 0:
@@ -104,6 +90,7 @@ def evaluate(history: list[dict] | None, spot: float | None, day_low: float | No
     if df is None or len(df) < MIN_HISTORY:
         res["reason"] = "not enough daily history"
         return res
+    n_back = S.IMPL_UNR_ARMED_SESSIONS
     try:
         df = df.sort_values("date").reset_index(drop=True)
         b = SU.Bars(df)
@@ -113,7 +100,8 @@ def evaluate(history: list[dict] | None, spot: float | None, day_low: float | No
             res["reason"] = "no ATR"
             return res
         refs = levels(b)
-        prev_low, prev_close = float(b.l[t]), float(b.c[t])
+        recent_lows = [float(b.l[t - k]) for k in range(n_back)]       # newest first
+        last_close = float(b.c[t])
         if not np.isnan(b.vol50[t]) and b.vol50[t] > 0:
             res["volume"]["pullback_dry"] = bool(float(np.mean(b.v[t - 2:t + 1])) < b.vol50[t])
     except Exception as exc:  # noqa: BLE001
@@ -132,22 +120,27 @@ def evaluate(history: list[dict] | None, spot: float | None, day_low: float | No
         lvl = r["level"]
         thr = (S.IMPL_UNR_MIN_UNDERCUT_ATR if r["kind"] == "swing"
                else S.IMPL_MAUR_MIN_UNDERCUT_ATR) * atr
-        today_cut = day_low < lvl - thr
-        prior_cut = prev_low < lvl - thr and prev_close < lvl
-        if not (today_cut or prior_cut):
+        cut_today = day_low < lvl - thr
+        # an undercut in the last few sessions only counts while the last
+        # close is still under the level: a level already reclaimed at the
+        # close means that reclaim day has passed.
+        ago = next((k + 1 for k, lo in enumerate(recent_lows) if lo < lvl - thr), None)
+        cut_recent = ago is not None and last_close < lvl
+        if not (cut_today or cut_recent):
             continue
-        row = {"name": r["name"], "level": round(float(lvl), 2),
-               "low": round(float(day_low if today_cut else prev_low), 2),
-               "when": "today" if today_cut else "yesterday"}
+        low = float(day_low) if cut_today else float(recent_lows[ago - 1])
+        row = {"name": r["name"], "level": round(float(lvl), 2), "low": round(low, 2),
+               "when": "today" if cut_today else ("yesterday" if ago == 1
+                                                  else f"{ago} sessions ago"),
+               "reclaimed": bool(spot > lvl)}
         if spot > lvl:
             row["spot_pct"] = round(float((spot / lvl - 1.0) * 100.0), 2)
-            res["hits"].append(row)
         else:
-            res["below"].append(row)
-    if res["hits"]:
-        res["status"] = MET
+            row["spot_pct"] = round(float((spot / lvl - 1.0) * 100.0), 2)   # negative: under it
+        res["armed"].append(row)
+    if res["armed"]:
+        res["status"] = ARMED
     else:
         res["status"] = NOT_MET
-        res["reason"] = ("undercut a level, still below it" if res["below"]
-                         else "no support level undercut")
+        res["reason"] = f"no support level undercut in the last {n_back} sessions"
     return res
