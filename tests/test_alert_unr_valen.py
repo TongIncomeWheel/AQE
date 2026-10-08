@@ -263,7 +263,10 @@ def test_setup_forming_card_says_what_to_wait_for_in_plain_english():
     assert c["lines"][2] == ("Dipped below the 21-day average (851.40) yesterday; "
                              "price is still 0.3% under it")
     assert c["lines"][3] == "Volume confirms ✓"
-    assert len(c["lines"]) <= 5
+    # the committee / AQE-default conditions ride on the card, not just the U&R
+    assert "AQE default criteria: 1 of 2 met" in c["lines"]
+    assert "✓ hourly close above 858.87 (price 849.00, 1.1% below)" in c["lines"]
+    assert "◌ volume at least 1× normal" in c["lines"]
 
 
 def test_entry_signal_card_leads_with_what_triggered_the_stop_and_the_risk():
@@ -295,12 +298,13 @@ def test_nearby_levels_hide_the_levels_nobody_needs_and_use_plain_names():
     assert line == "Nearby levels: 21-day average 851.40"           # the 359.50 gap is 58% away
 
 
-def test_failed_card_is_one_plain_sentence():
+def test_failed_card_leads_with_one_plain_sentence_then_the_committee_state():
     ev = _evr()
     ev["unr_stop"] = 846.2
     c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], _live())
     assert c["headline"] == "CAT $849.00 · 🟠 U&R FAILED"
-    assert c["lines"] == ["Price 849.00 fell under the stop (846.20) that was set at the entry signal"]
+    assert c["lines"][0] == "Price 849.00 fell under the stop (846.20) that was set at the entry signal"
+    assert any(l.startswith("AQE default criteria:") for l in c["lines"][1:])
 
 
 def test_a_buy_card_leads_with_the_state_and_one_u_and_r_line():
@@ -308,7 +312,7 @@ def test_a_buy_card_leads_with_the_state_and_one_u_and_r_line():
                                _live(status="NOT_MET"))
     assert c["headline"] == "CAT $849.00 · 🟢 BUY CONDITIONS MET · AQE default criteria"
     assert c["lines"][-1] == "U&R: no setup"
-    assert len(c["lines"]) <= 4
+    assert "AQE default criteria: 1 of 2 met" in c["lines"]
 
 
 def test_the_card_has_none_of_the_jargon_the_pm_rejected():
@@ -317,8 +321,8 @@ def test_the_card_has_none_of_the_jargon_the_pm_rejected():
     for states in (["UNR_ARMED"], ["UNR_TRIGGER"]):
         c = E.build_condition_card("CAT", _row(), _evr(), states, _live(trig))
         text = "\n".join([c["headline"]] + c["lines"])
-        for gone in ("EMA", "Trendline", "◌", "ref ", "Ref:", "open-range", "MET ·", "CANDIDATE",
-                     "reclaim 0.", "Undercut"):
+        for gone in ("EMA", "Trendline", "ref ", "Ref:", "open-range", "MET ·", "CANDIDATE",
+                     "reclaim 0.", "Undercut", "pivot_high", "h1_close", "above_vwap_s", "vol_x_ge"):
             assert gone not in text, gone
 
 
@@ -355,7 +359,7 @@ def test_setups_forming_collapse_to_plain_one_line_rows_and_entry_signals_lead()
     assert plain.index("DOG $849.00 · 🟢 U&R ENTRY SIGNAL") < plain.index("U&R setups forming (16)")
     assert plain.count("🟡 T") == 16
     assert ("🟡 T0 $849.00 — dipped below the 21-day average (851.40), still under it; "
-            "stop would be 846.20") in plain
+            "stop would be 846.20 · AQE default criteria: 1 of 2 met") in plain
     assert "U&R setups forming (16)" in html
 
 
@@ -375,6 +379,81 @@ def test_digest_subject_counts_the_new_states():
          ("EEL", _row(), _evr(), ["UNR_FAILED"], _live())],
         datetime(2026, 10, 7, 11, 0, tzinfo=_ET))
     assert "U&R SETUP 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
+
+
+# ------------------------------- the committee's criteria are on every card
+
+def _committee_row():
+    return {"ticker": "AMD", "class": "HOLD_FOR_CONDITIONS",
+            "conditions": {"shared": {
+                "buy": [{"w": "h1_close_above", "level": 660.0,
+                         "plain": "an hourly candle closes above pivot_high 660"}],
+                "confirm": [{"w": "above_vwap_s"}, {"w": "vol_x_ge", "x": 1.4}]},
+                "exits": [{"w": "close_below", "value": 598.0, "plain": "closes below 598.00"}],
+                "analysts": []},
+            "levels": {"stop": 600.0, "tp": [680, 700, 730]}}
+
+
+def _committee_ev():
+    sh = _committee_row()["conditions"]["shared"]
+    return {"buy_met": False, "lit": [], "wrong_lit": [], "chased": False, "exit_warn": None,
+            "exit_hit": None, "n_counting": 0, "n_lit": 0, "no_shared_buy": False,
+            "analyst_detail": {},
+            "shared_buy_detail": [(sh["buy"][0], "NOT_YET")],
+            "shared_confirm_detail": [(sh["confirm"][0], "TRUE"), (sh["confirm"][1], "FALSE")]}
+
+
+def test_a_u_and_r_entry_card_carries_the_committee_hold_for_conditions():
+    """PM 2026-10-09: 'you have removed the committee criteria in entry or hold
+    for conditions'. They sit under the U&R timing, one plain line each."""
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
+    live = _live(trig)
+    live["vol_x"] = {"so_far": 0.6}
+    c = E.build_condition_card("AMD", _committee_row(), _committee_ev(), ["UNR_TRIGGER"], live)
+    lines = c["lines"]
+    assert "Committee (HOLD FOR CONDITIONS): 1 of 3 met" in lines
+    assert "◌ hourly close above 660.00 (price 849.00, 28.6% above)" in lines
+    assert "✓ holds above VWAP" in lines
+    assert "✗ volume at least 1.4× normal (now 0.6×)" in lines
+    assert "Exit line: closes below 598.00" in lines
+    assert "Committee stop 600.00 · target 700.00 (reward 0.7× the risk)" in lines
+    # U&R timing still leads
+    assert lines[0].startswith("A 15-min candle closed above VWAP at 10:15")
+
+
+def test_the_committee_block_uses_plain_words_never_the_raw_word_names():
+    c = E.build_condition_card("AMD", _committee_row(), _committee_ev(), ["UNR_ARMED"], _live())
+    text = "\n".join(c["lines"])
+    for raw in ("pivot_high", "h1_close_above", "above_vwap_s", "vol_x_ge"):
+        assert raw not in text
+
+
+def test_all_conditions_met_reads_all_met():
+    ev = _committee_ev()
+    ev["buy_met"] = True
+    ev["shared_buy_detail"] = [(ev["shared_buy_detail"][0][0], "TRUE")]
+    ev["shared_confirm_detail"] = [(e, "TRUE") for e, _r in ev["shared_confirm_detail"]]
+    c = E.build_condition_card("AMD", _committee_row(), ev, ["UNR_ARMED"], _live())
+    assert "Committee (HOLD FOR CONDITIONS): all met ✓" in c["lines"]
+
+
+def test_a_name_with_per_analyst_criteria_only_shows_the_analyst_tally():
+    row = _committee_row()
+    row["conditions"]["shared"] = {"buy": [], "confirm": [], "no_shared_buy": True}
+    ev = {"buy_met": False, "lit": ["a", "b"], "wrong_lit": [], "chased": False,
+          "exit_warn": None, "exit_hit": None, "n_counting": 3, "n_lit": 2,
+          "no_shared_buy": True, "analyst_detail": {}, "shared_buy_detail": [],
+          "shared_confirm_detail": []}
+    c = E.build_condition_card("AMD", row, ev, ["UNR_ARMED"], _live())
+    assert "Committee (HOLD FOR CONDITIONS): 2 of 3 analysts lit" in c["lines"]
+
+
+def test_a_setup_forming_row_shows_how_many_committee_conditions_are_met():
+    _s, plain, _h = E.build_condition_digest(
+        [("AMD", _committee_row(), _committee_ev(), ["UNR_ARMED"], _live())],
+        datetime(2026, 10, 9, 9, 47, tzinfo=_ET))
+    assert "· Committee (HOLD FOR CONDITIONS): 1 of 3 met" in plain
 
 
 # ----------------------------------------------- Drive-synced condition state

@@ -81,7 +81,7 @@ def test_the_cat_card_no_longer_says_back_under_when_spot_is_above_the_line():
     text = "\n".join([c["headline"]] + c["lines"])
     assert "BACK UNDER" not in text
     assert "CONFIRMATION LOST — price still above the line" in c["headline"]
-    assert "volume ✗" in text and "price ✓" in text
+    assert "✗ volume at least 1× normal" in text and "✓ hourly close above 858.87" in text
     low = E.build_condition_card("CAT", _row(), _ev(), ["FAILED_PUSH"], _live("NOT_MET", 850.0))
     assert "CONFIRMATION LOST" not in low["headline"]
 
@@ -97,15 +97,17 @@ def test_the_full_layout_also_stops_mislabelling_it():
     assert "Price is still above 858.87" in c["summary"]
 
 
-def test_buy_card_lines_are_the_marks_the_stop_and_the_one_target_that_matters():
+def test_buy_card_lists_each_committee_condition_the_stop_and_the_one_target():
     lines = _card(["CONDITION_MET"], vol="TRUE", status="NOT_MET")["lines"]
-    assert lines[0] == "price ✓ · volume ✓ · entry 858.87 (spot +0.7%)"
-    assert lines[1] == "Stop 822.64 · target 909.60 (reward 1.4× the risk)"
+    assert lines[0] == "AQE default criteria: all met ✓"
+    assert lines[1] == "✓ hourly close above 858.87 (price 864.99, 0.7% above)"
+    assert lines[2].startswith("✓ volume at least 1× normal")
+    assert "AQE stop 822.64 · target 909.60 (reward 1.4× the risk)" in lines
 
 
-def test_the_u_and_r_card_is_short():
+def test_the_u_and_r_card_stays_readable_with_the_committee_block():
     c = _card(["UNR_ARMED", "FAILED_PUSH"])
-    assert len(c["lines"]) <= 5
+    assert len(c["lines"]) <= 11
     text = "\n".join(c["lines"])
     for gone in ("Structure:", "Entry readiness", "Analysts:", "Live:", "Bracket:", "R:R",
                  "Elder", "chase"):

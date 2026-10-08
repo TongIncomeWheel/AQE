@@ -1404,6 +1404,87 @@ def _stop_text(unr: dict, spot: float | None, conditional: bool) -> str | None:
             else f"Stop: {stop:.2f} (today's low){pct}")
 
 
+_CLASS_LABEL = {"ADVANCE": "ADVANCE", "HOLD_FOR_CONDITIONS": "HOLD FOR CONDITIONS",
+                "HELD": "HELD", "WATCH": "WATCH"}
+
+
+def _who(row: dict) -> str:
+    if row.get("aqe_default"):
+        return "AQE default criteria"
+    return f"Committee ({_CLASS_LABEL.get(row.get('class'), row.get('class') or 'book')})"
+
+
+def _short_word(entry: dict) -> str:
+    """One committee condition in plain words (never the raw word name)."""
+    from .condition_evaluator import entry_level as _lvl
+    w, lv, x = entry.get("w"), _lvl(entry), entry.get("x")
+    L = f"{lv:.2f}" if lv is not None else "the level"
+    X = f"{float(x):g}" if isinstance(x, (int, float)) else None
+    table = {
+        "h1_close_above": f"hourly close above {L}", "close_above": f"daily close above {L}",
+        "trade_above": f"trades above {L}", "above_vwap_s": "holds above VWAP",
+        "vol_x_ge": f"volume at least {X}× normal" if X else "volume above normal",
+        "rs_today_gt_spy": "beating SPY today",
+    }
+    if w in table:
+        return table[w]
+    return _word_plain({k: v for k, v in entry.items() if k != "plain"})
+
+
+def _word_detail(entry: dict, live: dict) -> str:
+    """The live number that says how far a condition is from being met."""
+    from .condition_evaluator import entry_level as _lvl
+    w, spot, lv = entry.get("w"), live.get("price"), _lvl(entry)
+    if w in ("h1_close_above", "close_above", "trade_above") and spot is not None and lv:
+        pct = (spot / lv - 1) * 100
+        return f" (price {spot:.2f}, {abs(pct):.1f}% {'above' if pct >= 0 else 'below'})"
+    if w == "vol_x_ge":
+        vx = (live.get("vol_x") or {}).get("so_far")
+        if vx is not None:
+            return f" (now {vx:.1f}×)"
+    return ""
+
+
+def _committee_block(row: dict, eval_result: dict, live: dict) -> list[str]:
+    """The committee's (or AQE-default) entry / hold-for conditions, one plain
+    line per condition with a tick, plus the exit line for a held name and the
+    committee's stop and target. PM 2026-10-09: the U&R card had dropped these.
+    Facts and levels only."""
+    out = []
+    words = ((eval_result.get("shared_buy_detail") or [])
+             + (eval_result.get("shared_confirm_detail") or []))
+    n_counting = eval_result.get("n_counting") or 0
+    n_true = sum(1 for _e, r in words if r == "TRUE")
+    who = _who(row)
+    if words:
+        state = "all met ✓" if eval_result.get("buy_met") else f"{n_true} of {len(words)} met"
+        out.append(f"{who}: {state}")
+        seen = set()
+        for e, r in words:
+            line = f"{_MARK.get(r, '?')} {_short_word(e)}{_word_detail(e, live)}"
+            if line not in seen:
+                seen.add(line)
+                out.append(line)
+    elif n_counting:
+        out.append(f"{who}: {eval_result.get('n_lit') or 0} of {n_counting} analysts lit")
+    for ex in ((row.get("conditions") or {}).get("exits") or [])[:1]:
+        if ex.get("plain"):
+            out.append(f"Exit line: {ex['plain']}")
+    bs = _bracket_short(row)
+    if bs:
+        out.append(("AQE " if row.get("aqe_default") else "Committee ") + bs[0].lower() + bs[1:])
+    return out
+
+
+def _committee_tag(row: dict, eval_result: dict) -> str:
+    words = ((eval_result.get("shared_buy_detail") or [])
+             + (eval_result.get("shared_confirm_detail") or []))
+    if not words:
+        return ""
+    n_true = sum(1 for _e, r in words if r == "TRUE")
+    return f" · {_who(row)}: {n_true} of {len(words)} met"
+
+
 def _bracket_short(row: dict) -> str | None:
     """Committee/AQE stop and the one target that matters (TP2), with its
     reward as a multiple of the risk."""
@@ -1440,6 +1521,7 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
             lines = [f"Price {f'{spot:.2f} ' if spot is not None else ''}fell under the stop"
                      + (f" ({stop:.2f})" if stop is not None else "")
                      + " that was set at the entry signal"]
+            lines += _committee_block(row, eval_result, live)
             return {"headline": f"{ticker}{px} · 🟠 U&R FAILED{held}", "color": "#d9a441",
                     "summary": None, "lines": lines}
         lines = []
@@ -1462,9 +1544,13 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
             lines.append(st)
         if armed:
             lines.append(_setup_text(armed))
-        for extra in (_volume_plain(unr), _nearby_levels(unr, spot)):
-            if extra:
-                lines.append(extra)
+        vol = _volume_plain(unr)
+        if vol:
+            lines.append(vol)
+        lines += _committee_block(row, eval_result, live)
+        near = _nearby_levels(unr, spot)
+        if near:
+            lines.append(near)
         return {"headline": f"{ticker}{px} · {head}{held}", "color": color,
                 "summary": None, "lines": lines}
 
@@ -1479,14 +1565,7 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
         from .condition_evaluator import entry_level as _lvl
         cl = _lvl(((row.get("conditions") or {}).get("shared") or {}).get("chase") or {})
         lines.append(f"Price is past the chase line{f' ({cl:.2f})' if cl is not None else ''}")
-    bl = _buy_line(row, eval_result, fired_states, live)
-    if bl and primary in ("CONDITION_MET", "FAILED_PUSH"):
-        bl = bl.split(" — ", 1)[1] if " — " in bl else bl      # the headline already says the state
-    if bl:
-        lines.append(bl)
-    bs = _bracket_short(row)
-    if bs:
-        lines.append(bs)
+    lines += _committee_block(row, eval_result, live)
     if armed:
         lines.append("U&R setup forming: " + _setup_text(armed)[0].lower() + _setup_text(armed)[1:])
     else:
@@ -1767,7 +1846,7 @@ def _candidate_row(c: tuple) -> str:
     else:
         what = "dipped below a support level"
     stop = f"; stop would be {unr['stop']:.2f}" if unr.get("stop") is not None else ""
-    return f"🟡 {ticker}{px} — {what}{stop}"
+    return f"🟡 {ticker}{px} — {what}{stop}{_committee_tag(c[1], c[2])}"
 
 
 def send_condition_digest(cards: list[tuple], now_et,
