@@ -240,13 +240,14 @@ def _live(trigger=None, status="ARMED", reclaimed=False, spot=849.0):
             "vwap_trigger": trigger or {"state": "WAIT", "vwap": 865.28, "last_close": 862.0}}
 
 
-def test_candidate_card_says_watch_wait_and_not_reclaimed_yet():
+def test_candidate_card_is_short_and_says_wait_and_not_reclaimed_yet():
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], _live())
     assert c["headline"] == "CAT @ 849.00 · 🟡 U&R CANDIDATE"
-    assert c["lines"][0] == ("U&R candidate — undercut EMA21 851.40 yesterday (low 846.20); "
-                             "spot is 0.3% under it, not reclaimed yet ◌")
-    assert c["lines"][1] == "Trigger ◌ wait — below VWAP 865.28"
-    assert c["lines"][2].startswith("Stop = low of day 846.20")
+    assert c["lines"][0] == "Undercut EMA21 851.40 yesterday (low 846.20) · spot 0.3% under ◌"
+    assert c["lines"][1] == ("Entry ◌ wait for a 15-min close above VWAP 865.28 · "
+                             "Stop 846.20 (low of day, 0.3% under)")
+    assert c["lines"][2] == "Volume: pullback dry ✓ · reclaim 1.3× ✓"
+    assert len(c["lines"]) <= 6
 
 
 def test_trigger_card_fires_while_spot_is_still_under_the_daily_level():
@@ -254,34 +255,31 @@ def test_trigger_card_fires_while_spot_is_still_under_the_daily_level():
             "at": "10:15", "entry": 849.5}
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))
     assert c["headline"] == "CAT @ 849.00 · 🟢 U&R MET · ENTRY TRIGGER"
-    assert "not reclaimed yet ◌" in c["lines"][0]                    # shown, not required
-    assert c["lines"][1] == ("Trigger ✓ — a 15-min candle closed above VWAP 848.50 "
-                             "at 10:15 (entry ref 849.50)")
+    assert "not reclaimed" not in c["lines"][0] and "spot 0.3% under ◌" in c["lines"][0]
+    assert c["lines"][1].startswith("Entry ✓ 10:15: 15-min close above VWAP 848.50 (ref 849.50)")
 
 
 def test_reclaimed_is_a_tick_on_the_candidate_line():
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"],
                                _live(reclaimed=True, spot=864.99))
-    assert "spot is back above it ✓ (+1.6%)" in c["lines"][0]
+    assert c["lines"][0].endswith("spot back above ✓")
 
 
-def test_failed_card_names_the_stop_and_drops_trigger_and_stop_lines():
-    live = _live()
+def test_failed_card_names_the_stop_and_drops_the_entry_line():
     ev = _evr()
     ev["unr_stop"] = 846.2
-    c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], live)
+    c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], _live())
     assert c["headline"].endswith("🟠 U&R FAILED")
-    text = "\n".join(c["lines"])
-    assert "under the low-of-day stop 846.20" in text
-    assert "Trigger" not in text and "Stop = low of day" not in text
+    assert c["lines"][0] == "Spot 849.00 is under the low-of-day stop 846.20 set at the entry"
+    assert not any(l.startswith("Entry") for l in c["lines"])
 
 
-def test_not_met_card_stays_tight():
+def test_a_buy_card_leads_with_the_state_and_keeps_u_and_r_to_one_line():
     c = E.build_condition_card("CAT", _row(), _evr(("TRUE", "FALSE")), ["CONDITION_MET"],
                                _live(status="NOT_MET"))
-    assert c["headline"].endswith("⚪ U&R NOT MET")
-    text = "\n".join(c["lines"]).split("UnR reference")[0]
-    assert "Trigger" not in text and "low of day" not in text
+    assert c["headline"] == "CAT @ 849.00 · 🟢 BUY CONDITIONS MET · AQE default criteria"
+    assert c["lines"][-1] == "U&R ✗ not met"
+    assert len(c["lines"]) <= 4
 
 
 def test_buy_line_says_watching_while_words_are_pending_not_not_met():
@@ -291,11 +289,48 @@ def test_buy_line_says_watching_while_words_are_pending_not_not_met():
     assert failed.startswith("Buy conditions (AQE default) ✗ NOT MET")
 
 
+def test_duplicate_word_categories_are_merged_into_one_mark():
+    """Screenshot 2026-10-09: 'price ◌ · price ◌ · VWAP ◌'."""
+    row = _row()
+    sh = row["conditions"]["shared"]
+    sh["buy"] = [{"w": "h1_close_above", "level": 100.5}, {"w": "h1_close_above", "level": 99.0}]
+    ev = _evr()
+    ev["shared_buy_detail"] = [(sh["buy"][0], "NOT_YET"), (sh["buy"][1], "NOT_YET")]
+    ev["shared_confirm_detail"] = [({"w": "above_vwap_s"}, "NOT_YET")]
+    line = E._buy_line(row, ev, ["UNR_ARMED"], _live())
+    assert line.count("price") == 1 and "price ◌ · VWAP ◌" in line
+    ev["shared_buy_detail"] = [(sh["buy"][0], "TRUE"), (sh["buy"][1], "FALSE")]
+    assert "price ✗" in E._buy_line(row, ev, ["UNR_ARMED"], _live())
+
+
+# ------------------------------------------------------------------- digest
+
+def test_candidates_collapse_to_one_line_rows_and_triggers_lead():
+    cands = [(f"T{i}", _row(), _evr(), ["UNR_ARMED"], _live()) for i in range(16)]
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
+    cards = cands + [("DOG", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))]
+    subj, plain, html = E.build_condition_digest(cards, datetime(2026, 10, 8, 9, 47, tzinfo=_ET))
+    assert "17 cards" in subj and "U&R CANDIDATE 16" in subj and "U&R ENTRY 1" in subj
+    assert plain.index("DOG @ 849.00 · 🟢 U&R MET") < plain.index("U&R candidates (16)")
+    assert plain.count("🟡 T") == 16                      # one line each
+    assert "🟡 T0 @ 849.00 — Undercut EMA21 851.40 yesterday" in plain
+    assert "U&R candidates (16)" in html
+
+
+def test_a_candidate_that_also_has_a_buy_state_stays_a_full_card():
+    subj, plain, _ = E.build_condition_digest(
+        [("CAT", _row(), _evr(), ["UNR_ARMED", "CONDITION_MET"], _live())],
+        datetime(2026, 10, 8, 9, 47, tzinfo=_ET))
+    assert "U&R candidates" not in plain and plain.count("CAT @") == 1
+
+
 def test_digest_subject_counts_the_new_states():
     subj, _, _ = E.build_condition_digest(
         [("CAT", _row(), _evr(), ["UNR_ARMED"], _live()),
          ("DOG", _row(), _evr(), ["UNR_TRIGGER"], _live({"state": "TRIGGERED", "vwap": 1,
-                                                          "last_close": 2, "was_below": True, "at": "10:15", "entry": 2.0})),
+                                                          "last_close": 2, "was_below": True,
+                                                          "at": "10:15", "entry": 2.0})),
          ("EEL", _row(), _evr(), ["UNR_FAILED"], _live())],
         datetime(2026, 10, 7, 11, 0, tzinfo=_ET))
     assert "U&R CANDIDATE 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj

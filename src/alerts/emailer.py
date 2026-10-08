@@ -1263,9 +1263,19 @@ def _buy_line(row: dict, eval_result: dict, fired_states: list[str], live: dict)
     head = f"Buy conditions{default} " + ("✓ MET" if ok else ("◌ WATCHING" if pending else "✗ NOT MET"))
     bits = []
     if words:
-        for e, r in words:
+        merged: dict[str, str] = {}        # one mark per category: any FALSE -> ✗,
+        for e, r in words:                  # all TRUE -> ✓, else still pending
             cat = _SHORT_CAT.get(_word_category(e.get("w")), _word_category(e.get("w")).lower())
-            bits.append(f"{cat} {_MARK.get(r, '?')}")
+            prev = merged.get(cat)
+            if prev is None:
+                merged[cat] = r
+            elif "FALSE" in (prev, r):
+                merged[cat] = "FALSE"
+            elif prev == "TRUE" and r == "TRUE":
+                merged[cat] = "TRUE"
+            else:
+                merged[cat] = "NOT_YET"
+        bits = [f"{cat} {_MARK.get(r, '?')}" for cat, r in merged.items()]
     elif shared.get("no_shared_buy") and n_counting:
         bits.append(f"{eval_result.get('n_lit') or 0} of {n_counting} analysts lit")
     entry, spot = _effective_entry(row), live.get("price")
@@ -1339,68 +1349,159 @@ def _reference_lines(row: dict, live: dict) -> list[str]:
     return out
 
 
+def _reclaim_text(a0: dict) -> str:
+    pct = a0.get("spot_pct")
+    if a0.get("reclaimed"):
+        return "spot back above ✓"
+    return f"spot {abs(pct):.1f}% under ◌" if pct is not None else "spot under ◌"
+
+
+def _unr_short(unr: dict) -> str:
+    """One line: what was undercut, and the reclaim tick."""
+    armed = unr["armed"]
+    a0 = armed[0]
+    when = "" if a0["when"] == "today" else f" {a0['when']}"
+    more = f" · +{len(armed) - 1} more" if len(armed) > 1 else ""
+    return (f"Undercut {a0['name']} {a0['level']:.2f}{when} (low {a0['low']:.2f}) · "
+            f"{_reclaim_text(a0)}{more}")
+
+
+def _entry_stop_line(live: dict, unr: dict, spot: float | None) -> str:
+    """Entry (Valen: a 15-min candle closing above VWAP after the wait below it)
+    and stop (low of day), on one line."""
+    t = live.get("vwap_trigger") or {}
+    stop = unr.get("stop")
+    stop_txt = ""
+    if stop is not None:
+        pct = f", {(1 - stop / spot) * 100:.1f}% under" if spot else ""
+        stop_txt = f" · Stop {stop:.2f} (low of day{pct})"
+    st = t.get("state")
+    if st == "TRIGGERED":
+        head = (f"Entry ✓ {t['at']}: 15-min close above VWAP {t['vwap']:.2f} "
+                f"(ref {t['entry']:.2f})")
+    elif st == "WAIT":
+        head = f"Entry ◌ wait for a 15-min close above VWAP {t['vwap']:.2f}"
+    elif st == "ABOVE":
+        head = "Entry ◌ above VWAP since the open, no dip to reclaim"
+    else:
+        head = "Entry ◌ waiting for the first 15-min bars"
+    return head + stop_txt
+
+
+def _volume_marks(unr: dict) -> str | None:
+    v = (unr or {}).get("volume") or {}
+    vb = []
+    if v.get("pullback_dry") is not None:
+        vb.append(f"pullback dry {'✓' if v['pullback_dry'] else '✗'}")
+    if v.get("reclaim_x") is not None:
+        vb.append(f"reclaim {v['reclaim_x']:.1f}× {'✓' if v.get('reclaim_ok') else '✗'}")
+    return ("Volume: " + " · ".join(vb)) if vb else None
+
+
+def _ref_lines(live: dict) -> list[str]:
+    """The numbers, two short lines: the daily support levels, then VWAP /
+    opening range / 15-min EMA8-20."""
+    out = []
+    lv = _fmt_levels(live.get("unr"))
+    if lv:
+        out.append("Ref: " + lv[len("Levels: "):])
+    bits = []
+    vw = (live.get("vwap_trigger") or {}).get("vwap")
+    if vw is not None:
+        bits.append(f"VWAP {vw:.2f}")
+    orr = live.get("opening_range")
+    if orr:
+        bits.append(f"open-range {orr['high']:.2f}/{orr['low']:.2f}")
+    m15 = (live.get("ema") or {}).get("m15")
+    if m15:
+        bits.append(f"EMA8/20 15m {m15['ema8']:.2f}/{m15['ema20']:.2f}")
+    if bits:
+        out.append(" · ".join(bits))
+    return out
+
+
+def _bracket_short(row: dict) -> str | None:
+    """Stop and the one target that matters (TP2, the bracket gate's yardstick)
+    with its R. Everything else about the bracket is in the full layout."""
+    entry = _effective_entry(row)
+    levels = row.get("levels") or {}
+    stop = _n_or(levels.get("stop"), None)
+    tps = [_n_or(t, None) for t in (levels.get("tp") or [])]
+    if entry is None or stop is None or entry - stop <= 0:
+        return None
+    idx = 2 if len(tps) >= 2 and tps[1] is not None else next(
+        (i for i in range(len(tps), 0, -1) if tps[i - 1] is not None), None)
+    if idx is None:
+        return None
+    t = tps[idx - 1]
+    return f"Stop {stop:.2f} · target TP{idx} {t:.2f} ({(t - entry) / (entry - stop):.1f}R)"
+
+
 def _build_compact_card(ticker: str, row: dict, eval_result: dict,
                         fired_states: list[str], live: dict) -> dict:
-    """PM 2026-10-07: "too much info ... what we need to know is if U&R took
-    place (met or not met). Everything else is numbers for reference under
-    UnR reference." Headline = the U&R verdict; then one buy-conditions line,
-    one bracket line, then the reference numbers. Never a recommendation."""
+    """PM 2026-10-09: "too busy, like spaghetti". A U&R card is 4 to 6 short
+    lines: the verdict, what was undercut (+ the reclaim tick), entry + stop,
+    the two volume marks, then two lines of reference numbers. A card that
+    fired for a buy-condition reason is 3 to 4 lines. Never a recommendation."""
     unr = live.get("unr") or {}
     spot = live.get("price")
-    primary = fired_states[0]
-    st = unr.get("status")
-    trig = (live.get("vwap_trigger") or {}).get("state") == "TRIGGERED"
-    if "UNR_FAILED" in fired_states:
-        verdict = "🟠 U&R FAILED"
-    elif st == "ARMED" and (trig or "UNR_TRIGGER" in fired_states):
-        verdict = "🟢 U&R MET · ENTRY TRIGGER"
-    elif st == "ARMED":
-        verdict = "🟡 U&R CANDIDATE"
-    elif st == "NOT_MET":
-        verdict = "⚪ U&R NOT MET"
-    else:
-        verdict = "◌ U&R NOT CHECKED"
     at = f" @ {spot:.2f}" if spot is not None else ""
-    headline = f"{ticker}{at} · {verdict}"
-    if row.get("class") == "HELD":
-        headline += " · HELD"
-    color = ("#d9a441" if "UNR_FAILED" in fired_states
-             else "#0a8a3a" if verdict.startswith("🟢")
-             else "#b8860b" if st == "ARMED"
-             else _state_label(primary, row, eval_result, live)[1])
+    held = " · HELD" if row.get("class") == "HELD" else ""
+    is_unr = any(x.startswith("UNR_") for x in fired_states)
 
-    lines = [_unr_line(unr, spot)]
-    if st == "ARMED" and "UNR_FAILED" not in fired_states:
-        for extra in (_trigger_line(live), _stop_volume_line(unr, spot)):
-            if extra:
-                lines.append(extra)
-    if "UNR_FAILED" in fired_states:
-        stop = eval_result.get("unr_stop")
-        lines.append(f"Spot {spot:.2f} is under the low-of-day stop"
-                     + (f" {stop:.2f}" if stop is not None else "") if spot is not None
-                     else "Spot is under the low-of-day stop")
+    if is_unr:
+        trig = "UNR_TRIGGER" in fired_states
+        if "UNR_FAILED" in fired_states:
+            verdict, color = "🟠 U&R FAILED", "#d9a441"
+        elif trig:
+            verdict, color = "🟢 U&R MET · ENTRY TRIGGER", "#0a8a3a"
+        else:
+            verdict, color = "🟡 U&R CANDIDATE", "#b8860b"
+        lines = []
+        if "UNR_FAILED" in fired_states:
+            stop = eval_result.get("unr_stop")
+            lines.append(("Spot " + (f"{spot:.2f} " if spot is not None else "")
+                          + "is under the low-of-day stop"
+                          + (f" {stop:.2f}" if stop is not None else "") + " set at the entry"))
+        else:
+            if unr.get("status") == "ARMED":
+                lines.append(_unr_short(unr))
+            lines.append(_entry_stop_line(live, unr, spot))
+            vm = _volume_marks(unr)
+            if vm:
+                lines.append(vm)
+        lines += _ref_lines(live)
+        return {"headline": f"{ticker}{at} · {verdict}{held}", "color": color,
+                "summary": None, "lines": lines}
+
+    # a buy-condition / extension / exit card: the state leads
+    primary = fired_states[0]
+    label, color = _state_label(primary, row, eval_result, live)
+    lines = []
+    if primary == "EXIT_LINE_HELD":
+        ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
+        lines.append(ex.get("plain") or "held position through its exit line")
+    elif primary == "CHASED":
+        from .condition_evaluator import entry_level as _lvl
+        cl = _lvl(((row.get("conditions") or {}).get("shared") or {}).get("chase") or {})
+        lines.append(f"Past the chase line{f' {cl:.2f}' if cl is not None else ''}")
     bl = _buy_line(row, eval_result, fired_states, live)
+    if bl and primary in ("CONDITION_MET", "FAILED_PUSH"):
+        bl = bl.split(" — ", 1)[1] if " — " in bl else bl      # the headline already says the state
     if bl:
         lines.append(bl)
-    # why this card fired, when it was not the U&R itself
-    why = [x for x in fired_states if not x.startswith("UNR_")]
-    if why:
-        lbl, _c = _state_label(why[0], row, eval_result, live)
-        if why[0] == "FAILED_PUSH":
-            lines.append(f"State: {lbl}")
-        elif why[0] == "CHASED":
-            lines.append("State: 🟠 EXTENDED — past the chase line")
-        elif why[0] == "EXIT_LINE_HELD":
-            ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
-            lines.append("State: 🔴 EXIT LINE CROSSED — " + (ex.get("plain") or "held position"))
-        elif why[0] == "CONDITION_MET":
-            lines.append("State: 🟢 buy conditions just met")
-    br = _bracket_line(row)
-    if br:
-        lines.append(br[0] + (" · " + br[1] if len(br) > 1 and br[1].startswith("R:R") else ""))
-    lines.append("— UnR reference (levels as of the last close; U&R judged on spot, not a close) —")
-    lines += _reference_lines(row, live)
-    return {"headline": headline, "color": color, "summary": None, "lines": lines}
+    bs = _bracket_short(row)
+    if bs:
+        lines.append(bs)
+    if unr.get("status") == "ARMED":
+        lines.append("U&R candidate — " + _unr_short(unr))
+    elif unr.get("status") == "NOT_MET":
+        lines.append("U&R ✗ not met")
+    else:
+        lines.append("U&R ◌ not checked")
+    default = " · AQE default criteria" if row.get("aqe_default") else ""
+    return {"headline": f"{ticker}{at} · {label}{held}{default}", "color": color,
+            "summary": None, "lines": lines}
 
 
 def build_condition_card(ticker: str, row: dict, eval_result: dict,
@@ -1619,8 +1720,16 @@ def build_condition_digest(cards: list[tuple], now_et,
     `cards` = [(ticker, row, eval_result, fired_states, live), ...] — every
     name whose state changed this cycle, each rendered as its own card
     under one subject and one footer."""
+    from . import config as C
     held_events = held_events or []
-    built = [build_condition_card(*c) for c in cards]
+    compact = (C.CONDITION_CARD_STYLE or "compact") != "full"
+    # A name that is ONLY a U&R candidate (no trigger, no buy/exit state) is one
+    # line, not a card -- 16 candidates at the open must not be 16 cards.
+    rows = [c for c in cards if compact and c[3] == ["UNR_ARMED"]]
+    full = [c for c in cards if c not in rows]
+    rank = {"UNR_TRIGGER": 0, "UNR_FAILED": 1}
+    full.sort(key=lambda c: min(rank.get(x, 2) for x in c[3]))
+    built = [build_condition_card(*c) for c in full]
     counts: dict[str, int] = {}
     for _t, _r, _e, states, _l in cards:
         key = _DIGEST_SHORT.get(states[0], states[0])
@@ -1631,16 +1740,37 @@ def build_condition_digest(cards: list[tuple], now_et,
         counts["HELD"] = len(held_events)
     tally = " · ".join(f"{k} {v}" for k, v in counts.items())
     stamp = now_et.strftime("%H:%M ET")
-    n = len(built)
+    n = len(cards) + len(held_events)
     subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
     header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
 
+    row_text = [_candidate_row(c) for c in rows]
+    rows_head = (f"U&R candidates ({len(rows)}) — watch for a 15-min close above VWAP"
+                 if rows else "")
     plain = (header + "\n\n" + "\n\n".join(_card_plain(c) for c in built)
+             + (("\n\n" if built else "") + rows_head + "\n" + "\n".join(f"- {t}" for t in row_text)
+                if rows else "")
              + f"\n\n{_DISCLAIMER}")
     html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}</div>"
             + "".join(_card_html(c) for c in built)
+            + ((f"<div style='border-left:4px solid #b8860b;padding:8px 12px;background:#fafafa;"
+                f"border-radius:6px;color:#1a1a1a;margin-bottom:10px'><b style='font-size:14px'>"
+                f"{rows_head}</b>"
+                + "".join(f"<div style='font-size:13px;margin-top:3px'>{t}</div>" for t in row_text)
+                + "</div>") if rows else "")
             + f"<div style='font-size:11px;color:#999;margin-top:4px'>{_DISCLAIMER}</div>")
     return subject, plain, html
+
+
+def _candidate_row(c: tuple) -> str:
+    """One line for a name that is only a U&R candidate."""
+    ticker, _row, ev, _states, live = c
+    unr, spot = live.get("unr") or {}, live.get("price")
+    at = f" @ {spot:.2f}" if spot is not None else ""
+    armed = unr.get("armed") or []
+    what = _unr_short(unr) if armed else "undercut a support level"
+    stop = f" · stop {unr['stop']:.2f}" if unr.get("stop") is not None else ""
+    return f"🟡 {ticker}{at} — {what}{stop}"
 
 
 def send_condition_digest(cards: list[tuple], now_et,
