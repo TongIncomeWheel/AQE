@@ -63,7 +63,7 @@ def test_undercut_today_and_still_under_is_still_a_candidate_not_reclaimed():
     """PM 2026-10-09: the daily reclaim is a tick, not a gate."""
     h = _history()
     e = _ema21(h)
-    r = LU.evaluate(h, spot=e * 0.99, day_low=e * 0.97)
+    r = LU.evaluate(h, spot=e * 0.995, day_low=e * 0.985)
     a = next(x for x in r["armed"] if x["name"] == "EMA21")
     assert r["status"] == LU.ARMED and a["reclaimed"] is False and a["spot_pct"] < 0
 
@@ -96,6 +96,20 @@ def test_a_falling_ema21_is_not_an_uptrend_pullback():
     h = _history(a=100.0, b=60.0)
     r = LU.evaluate(h, spot=61.0, day_low=58.0)
     assert r["status"] == LU.NOT_MET and "EMA21" in r["reason"]
+
+
+def test_a_breakdown_is_not_a_flush():
+    """AMD, 2026-10-09: 'undercut Trendline 688.66 (low 632.46), spot 7.2% under'
+    went out as U&R ENTRY. A dip deeper than 2 daily ranges, or a level price is
+    still more than 1.5 daily ranges under, is a breakdown."""
+    h = _history()
+    e = _ema21(h)
+    deep = LU.evaluate(h, spot=e * 1.002, day_low=e * 0.93)          # 7% flush, back at the line
+    assert not [x for x in deep["armed"] if x["name"] == "EMA21"]
+    far = LU.evaluate(h, spot=e * 0.93, day_low=e * 0.92)            # still 7% under it
+    assert not [x for x in far["armed"] if x["name"] == "EMA21"]
+    ok = LU.evaluate(h, spot=e * 1.002, day_low=e * 0.985)
+    assert [x for x in ok["armed"] if x["name"] == "EMA21"]
 
 
 def test_unknown_never_a_silent_not_met_when_data_is_missing():
@@ -233,53 +247,79 @@ def _live(trigger=None, status="ARMED", reclaimed=False, spot=849.0):
         pct = round((spot / 851.4 - 1) * 100, 2)
         armed = [{"name": "EMA21", "level": 851.4, "low": 846.2, "when": "yesterday",
                   "reclaimed": reclaimed, "spot_pct": pct}]
-    unr = {"status": status, "reason": "no support level undercut in the last 3 sessions",
-           "armed": armed, "stop": 846.2, "levels": [{"name": "EMA21", "level": 851.4}],
+    unr = {"status": status, "reason": "no shallow dip under a support level in the last 3 sessions",
+           "armed": armed, "stop": 846.2,
+           "levels": [{"name": "EMA21", "level": 851.4}, {"name": "Gap", "level": 359.5}],
            "volume": {"pullback_dry": True, "reclaim_x": 1.3, "reclaim_ok": True}}
     return {"price": spot, "day_low": 846.2, "unr": unr,
             "vwap_trigger": trigger or {"state": "WAIT", "vwap": 865.28, "last_close": 862.0}}
 
 
-def test_candidate_card_is_short_and_says_wait_and_not_reclaimed_yet():
+def test_setup_forming_card_says_what_to_wait_for_in_plain_english():
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], _live())
-    assert c["headline"] == "CAT @ 849.00 · 🟡 U&R CANDIDATE"
-    assert c["lines"][0] == "Undercut EMA21 851.40 yesterday (low 846.20) · spot 0.3% under ◌"
-    assert c["lines"][1] == ("Entry ◌ wait for a 15-min close above VWAP 865.28 · "
-                             "Stop 846.20 (low of day, 0.3% under)")
-    assert c["lines"][2] == "Volume: pullback dry ✓ · reclaim 1.3× ✓"
-    assert len(c["lines"]) <= 6
+    assert c["headline"] == "CAT $849.00 · 🟡 U&R SETUP FORMING"
+    assert c["lines"][0] == "Entry signal comes when a 15-min candle closes above VWAP (865.28)"
+    assert c["lines"][1] == "Stop would be 846.20 (today's low), 0.3% below price"
+    assert c["lines"][2] == ("Dipped below the 21-day average (851.40) yesterday; "
+                             "price is still 0.3% under it")
+    assert c["lines"][3] == "Volume confirms ✓"
+    assert len(c["lines"]) <= 5
 
 
-def test_trigger_card_fires_while_spot_is_still_under_the_daily_level():
+def test_entry_signal_card_leads_with_what_triggered_the_stop_and_the_risk():
     trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
             "at": "10:15", "entry": 849.5}
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))
-    assert c["headline"] == "CAT @ 849.00 · 🟢 U&R MET · ENTRY TRIGGER"
-    assert "not reclaimed" not in c["lines"][0] and "spot 0.3% under ◌" in c["lines"][0]
-    assert c["lines"][1].startswith("Entry ✓ 10:15: 15-min close above VWAP 848.50 (ref 849.50)")
+    assert c["headline"] == "CAT $849.00 · 🟢 U&R ENTRY SIGNAL"
+    assert c["lines"][0] == "A 15-min candle closed above VWAP at 10:15 (price 849.50)"
+    assert c["lines"][1] == "Stop: 846.20 (today's low), 0.3% below price"
+    assert "price is still 0.3% under it" in c["lines"][2]        # the reclaim is info, not a gate
 
 
-def test_reclaimed_is_a_tick_on_the_candidate_line():
+def test_the_reclaim_is_a_tick_in_the_setup_sentence():
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"],
                                _live(reclaimed=True, spot=864.99))
-    assert c["lines"][0].endswith("spot back above ✓")
+    assert any(l.endswith("and is back above it ✓") for l in c["lines"])
 
 
-def test_failed_card_names_the_stop_and_drops_the_entry_line():
+def test_only_the_watch_outs_are_shown_for_volume():
+    live = _live()
+    live["unr"]["volume"] = {"pullback_dry": False, "reclaim_x": 0.6, "reclaim_ok": False}
+    c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], live)
+    assert "Watch: buying volume only 0.6× normal; the pullback ran on heavy volume" in c["lines"]
+
+
+def test_nearby_levels_hide_the_levels_nobody_needs_and_use_plain_names():
+    c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], _live())
+    line = next(l for l in c["lines"] if l.startswith("Nearby levels"))
+    assert line == "Nearby levels: 21-day average 851.40"           # the 359.50 gap is 58% away
+
+
+def test_failed_card_is_one_plain_sentence():
     ev = _evr()
     ev["unr_stop"] = 846.2
     c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], _live())
-    assert c["headline"].endswith("🟠 U&R FAILED")
-    assert c["lines"][0] == "Spot 849.00 is under the low-of-day stop 846.20 set at the entry"
-    assert not any(l.startswith("Entry") for l in c["lines"])
+    assert c["headline"] == "CAT $849.00 · 🟠 U&R FAILED"
+    assert c["lines"] == ["Price 849.00 fell under the stop (846.20) that was set at the entry signal"]
 
 
-def test_a_buy_card_leads_with_the_state_and_keeps_u_and_r_to_one_line():
+def test_a_buy_card_leads_with_the_state_and_one_u_and_r_line():
     c = E.build_condition_card("CAT", _row(), _evr(("TRUE", "FALSE")), ["CONDITION_MET"],
                                _live(status="NOT_MET"))
-    assert c["headline"] == "CAT @ 849.00 · 🟢 BUY CONDITIONS MET · AQE default criteria"
-    assert c["lines"][-1] == "U&R ✗ not met"
+    assert c["headline"] == "CAT $849.00 · 🟢 BUY CONDITIONS MET · AQE default criteria"
+    assert c["lines"][-1] == "U&R: no setup"
     assert len(c["lines"]) <= 4
+
+
+def test_the_card_has_none_of_the_jargon_the_pm_rejected():
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
+    for states in (["UNR_ARMED"], ["UNR_TRIGGER"]):
+        c = E.build_condition_card("CAT", _row(), _evr(), states, _live(trig))
+        text = "\n".join([c["headline"]] + c["lines"])
+        for gone in ("EMA", "Trendline", "◌", "ref ", "Ref:", "open-range", "MET ·", "CANDIDATE",
+                     "reclaim 0.", "Undercut"):
+            assert gone not in text, gone
 
 
 def test_buy_line_says_watching_while_words_are_pending_not_not_met():
@@ -305,24 +345,25 @@ def test_duplicate_word_categories_are_merged_into_one_mark():
 
 # ------------------------------------------------------------------- digest
 
-def test_candidates_collapse_to_one_line_rows_and_triggers_lead():
+def test_setups_forming_collapse_to_plain_one_line_rows_and_entry_signals_lead():
     cands = [(f"T{i}", _row(), _evr(), ["UNR_ARMED"], _live()) for i in range(16)]
     trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
             "at": "10:15", "entry": 849.5}
     cards = cands + [("DOG", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))]
     subj, plain, html = E.build_condition_digest(cards, datetime(2026, 10, 8, 9, 47, tzinfo=_ET))
-    assert "17 cards" in subj and "U&R CANDIDATE 16" in subj and "U&R ENTRY 1" in subj
-    assert plain.index("DOG @ 849.00 · 🟢 U&R MET") < plain.index("U&R candidates (16)")
-    assert plain.count("🟡 T") == 16                      # one line each
-    assert "🟡 T0 @ 849.00 — Undercut EMA21 851.40 yesterday" in plain
-    assert "U&R candidates (16)" in html
+    assert "17 cards" in subj and "U&R SETUP 16" in subj and "U&R ENTRY 1" in subj
+    assert plain.index("DOG $849.00 · 🟢 U&R ENTRY SIGNAL") < plain.index("U&R setups forming (16)")
+    assert plain.count("🟡 T") == 16
+    assert ("🟡 T0 $849.00 — dipped below the 21-day average (851.40), still under it; "
+            "stop would be 846.20") in plain
+    assert "U&R setups forming (16)" in html
 
 
-def test_a_candidate_that_also_has_a_buy_state_stays_a_full_card():
+def test_a_setup_that_also_has_a_buy_state_stays_a_full_card():
     subj, plain, _ = E.build_condition_digest(
         [("CAT", _row(), _evr(), ["UNR_ARMED", "CONDITION_MET"], _live())],
         datetime(2026, 10, 8, 9, 47, tzinfo=_ET))
-    assert "U&R candidates" not in plain and plain.count("CAT @") == 1
+    assert "setups forming" not in plain and plain.count("CAT $") == 1
 
 
 def test_digest_subject_counts_the_new_states():
@@ -333,7 +374,7 @@ def test_digest_subject_counts_the_new_states():
                                                           "at": "10:15", "entry": 2.0})),
          ("EEL", _row(), _evr(), ["UNR_FAILED"], _live())],
         datetime(2026, 10, 7, 11, 0, tzinfo=_ET))
-    assert "U&R CANDIDATE 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
+    assert "U&R SETUP 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
 
 
 # ----------------------------------------------- Drive-synced condition state
@@ -439,19 +480,19 @@ def test_candidate_then_trigger_while_still_under_the_level_then_failed(tmp_path
     h = _history(end=date(2026, 10, 6))
     e = _ema21(h)
     run, bars, sent = _cycle_env(tmp_path, monkeypatch, h)
-    bars["now"] = [_bar(9, 30, e * 0.985, e * 0.99, e * 0.975, e * 0.978, 9000),
-                   _bar(9, 45, e * 0.978, e * 0.982, e * 0.972, e * 0.974, 8000)]
-    s1 = run(10, 5, e * 0.976, e * 0.972)              # undercut today, candles under VWAP
+    bars["now"] = [_bar(9, 30, e * 0.995, e * 0.998, e * 0.985, e * 0.988, 9000),
+                   _bar(9, 45, e * 0.988, e * 0.99, e * 0.985, e * 0.986, 8000)]
+    s1 = run(10, 5, e * 0.987, e * 0.985)              # undercut today, candles under VWAP
     assert s1["fired"]["HPE"] == ["UNR_ARMED"]
     live1 = sent[-1][0][0][4]
     assert live1["vwap_trigger"]["state"] == "WAIT" and live1["unr"]["armed"][0]["reclaimed"] is False
-    bars["now"] = bars["now"] + [_bar(10, 0, e * 0.974, e * 0.995, e * 0.973, e * 0.99, 9000)]
-    s2 = run(10, 20, e * 0.99, e * 0.972)              # candle above VWAP; spot STILL under level
+    bars["now"] = bars["now"] + [_bar(10, 0, e * 0.986, e * 0.997, e * 0.985, e * 0.995, 9000)]
+    s2 = run(10, 20, e * 0.995, e * 0.985)             # candle above VWAP; spot STILL under level
     assert s2["fired"]["HPE"] == ["UNR_TRIGGER"]
     live2 = sent[-1][0][0][4]
     assert live2["unr"]["armed"][0]["reclaimed"] is False        # trigger did not wait for it
-    assert run(10, 35, e * 0.992, e * 0.972)["fired"] == {}
-    s4 = run(10, 50, e * 0.965, e * 0.965)             # trades under the stop set at the trigger
+    assert run(10, 35, e * 0.996, e * 0.985)["fired"] == {}
+    s4 = run(10, 50, e * 0.98, e * 0.98)               # trades under the stop set at the trigger
     assert s4["fired"]["HPE"] == ["UNR_FAILED"]
 
 

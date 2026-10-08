@@ -254,6 +254,9 @@ IMPL_GAP_MAX_LEVELS = 2
 IMPL_UNR_ARMED_SESSIONS = 3             # Valen's reclaim-day CANDIDATE: a support level was
                                         # undercut within the last 3 sessions (or today) and
                                         # the last close is still under it
+IMPL_UNR_MAX_DEPTH_ATR = 2.0            # a FLUSH, not a breakdown: the dip under the level is at
+IMPL_UNR_MAX_UNDER_ATR = 1.5            # most 2 daily ranges deep, and if price has not reclaimed
+                                        # it, it is at most 1.5 daily ranges under (within reach)
 IMPL_UNR_RECLAIM_VOL_X = 1.0            # Valen: "above avg. buying vol." on the reclaim day
 IMPL_TREND_LOOKBACK = 60                # "Trendline support": a rising line through the last
 IMPL_TREND_MIN_SEPARATION = 5           # two confirmed swing lows (higher low, >= 5 sessions

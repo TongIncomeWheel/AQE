@@ -129,6 +129,14 @@ def evaluate(history: list[dict] | None, spot: float | None, day_low: float | No
         if not (cut_today or cut_recent):
             continue
         low = float(day_low) if cut_today else float(recent_lows[ago - 1])
+        # AMD, 2026-10-09: "undercut Trendline 688.66 (low 632.46), spot 7.2%
+        # under" was headed U&R ENTRY. That is a breakdown, not a flush. The dip
+        # may be at most IMPL_UNR_MAX_DEPTH_ATR daily ranges deep, and a level
+        # not yet reclaimed must be within IMPL_UNR_MAX_UNDER_ATR of spot.
+        if lvl - low > S.IMPL_UNR_MAX_DEPTH_ATR * atr:
+            continue
+        if spot <= lvl and lvl - spot > S.IMPL_UNR_MAX_UNDER_ATR * atr:
+            continue
         row = {"name": r["name"], "level": round(float(lvl), 2), "low": round(low, 2),
                "when": "today" if cut_today else ("yesterday" if ago == 1
                                                   else f"{ago} sessions ago"),
@@ -142,5 +150,5 @@ def evaluate(history: list[dict] | None, spot: float | None, day_low: float | No
         res["status"] = ARMED
     else:
         res["status"] = NOT_MET
-        res["reason"] = f"no support level undercut in the last {n_back} sessions"
+        res["reason"] = f"no shallow dip under a support level in the last {n_back} sessions"
     return res

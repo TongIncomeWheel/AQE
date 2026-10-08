@@ -60,18 +60,18 @@ def _card(states, status="ARMED", spot=864.99, vol="FALSE", trigger=None):
 
 
 def test_headline_names_the_u_and_r_state_or_the_buy_state():
-    assert _card(["UNR_ARMED"])["headline"] == "CAT @ 864.99 · 🟡 U&R CANDIDATE"
+    assert _card(["UNR_ARMED"])["headline"] == "CAT $864.99 · 🟡 U&R SETUP FORMING"
     trig = {"state": "TRIGGERED", "vwap": 865.28, "last_close": 866.0, "was_below": True,
             "at": "10:15", "entry": 866.0}
-    assert _card(["UNR_TRIGGER"], trigger=trig)["headline"] == "CAT @ 864.99 · 🟢 U&R MET · ENTRY TRIGGER"
+    assert _card(["UNR_TRIGGER"], trigger=trig)["headline"] == "CAT $864.99 · 🟢 U&R ENTRY SIGNAL"
     assert _card(["CONDITION_MET"], status="NOT_MET")["headline"] == (
-        "CAT @ 864.99 · 🟢 BUY CONDITIONS MET · AQE default criteria")
+        "CAT $864.99 · 🟢 BUY CONDITIONS MET · AQE default criteria")
 
 
 def test_a_buy_card_says_u_and_r_in_one_line_whatever_its_state():
-    assert _card(["CONDITION_MET"], status="NOT_MET")["lines"][-1] == "U&R ✗ not met"
-    assert _card(["CONDITION_MET"], status="UNKNOWN")["lines"][-1] == "U&R ◌ not checked"
-    assert _card(["CONDITION_MET"])["lines"][-1].startswith("U&R candidate — Undercut EMA21")
+    assert _card(["CONDITION_MET"], status="NOT_MET")["lines"][-1] == "U&R: no setup"
+    assert _card(["CONDITION_MET"], status="UNKNOWN")["lines"][-1] == "U&R: no setup"
+    assert _card(["CONDITION_MET"])["lines"][-1].startswith("U&R setup forming: dipped below")
 
 
 def test_the_cat_card_no_longer_says_back_under_when_spot_is_above_the_line():
@@ -100,22 +100,15 @@ def test_the_full_layout_also_stops_mislabelling_it():
 def test_buy_card_lines_are_the_marks_the_stop_and_the_one_target_that_matters():
     lines = _card(["CONDITION_MET"], vol="TRUE", status="NOT_MET")["lines"]
     assert lines[0] == "price ✓ · volume ✓ · entry 858.87 (spot +0.7%)"
-    assert lines[1] == "Stop 822.64 · target TP2 909.60 (1.4R)"       # no TP1/TP3 ladder, no R:R essay
+    assert lines[1] == "Stop 822.64 · target 909.60 (reward 1.4× the risk)"
 
 
-def test_u_and_r_card_reference_is_two_short_lines_of_numbers():
-    lines = _card(["UNR_ARMED"])["lines"]
-    ref = [l for l in lines if l.startswith("Ref:") or l.startswith("VWAP ")]
-    assert ref[0] == "Ref: EMA9 858.90 · ▼EMA21 851.40 · Trendline 849.00"
-    assert ref[1] == "VWAP 865.28 · open-range 866.80/851.47 · EMA8/20 15m 865.63/864.66"
-
-
-def test_the_u_and_r_card_is_short_and_has_none_of_the_old_clutter():
+def test_the_u_and_r_card_is_short():
     c = _card(["UNR_ARMED", "FAILED_PUSH"])
-    assert len(c["lines"]) <= 6
+    assert len(c["lines"]) <= 5
     text = "\n".join(c["lines"])
     for gone in ("Structure:", "Entry readiness", "Analysts:", "Live:", "Bracket:", "R:R",
-                 "UnR reference", "Elder", "chase"):
+                 "Elder", "chase"):
         assert gone not in text
 
 
