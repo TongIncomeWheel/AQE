@@ -37,11 +37,26 @@ def _key(run_date: str, ticker: str) -> str:
     return f"{run_date}:{ticker}"
 
 
-def load_condition_state() -> dict:
-    """Local file only — this is a NEW, shadow-mode-only artifact with no
-    established Drive-sync precedent yet (handoff §7 scopes this build to
-    internal logging ahead of the 15 Oct review); publishing it alongside
-    the other alert state files is a fast-follow once the switch flips."""
+STATE_FILENAME = "aqe_condition_state.json"
+KEEP_DAYS = 5          # a key is "<run_date>:<ticker>"; older run dates are pruned
+_FLAGS = ("chased", "analyst_out", "exit_line", "unr", "unr_trigger", "unr_failed")
+
+
+def _drive_load() -> dict | None:
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            txt = gdrive_uploader.download_text(STATE_FILENAME)
+            if txt:
+                data = json.loads(txt)
+                if isinstance(data, dict):
+                    return data
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
+def _local_load() -> dict:
     try:
         if CONDITION_STATE_PATH.exists():
             data = json.loads(CONDITION_STATE_PATH.read_text(encoding="utf-8"))
@@ -52,10 +67,69 @@ def load_condition_state() -> dict:
     return {}
 
 
+def merge_states(a: dict, b: dict) -> dict:
+    """Per-name union of two pollers' states, so neither forgets what the
+    other already emailed: `emailed_today` is a union, every one-shot flag is
+    an OR, and the lifecycle stage prefers anything past WATCHING (a name the
+    other poller saw MET must not be 'WATCHING' here and fire MET again)."""
+    out: dict = {}
+    for key in set(a) | set(b):
+        x, y = a.get(key), b.get(key)
+        if x is None or y is None:
+            out[key] = dict(x or y)
+            continue
+        m = dict(y)
+        m["emailed_today"] = sorted(set(x.get("emailed_today") or []) | set(y.get("emailed_today") or []))
+        for f in _FLAGS:
+            m[f] = bool(x.get(f)) or bool(y.get(f))
+        sx, sy = x.get("stage", STAGE_WATCHING), y.get("stage", STAGE_WATCHING)
+        m["stage"] = sy if sy != STAGE_WATCHING else sx
+        out[key] = m
+    return out
+
+
+def _prune(state: dict) -> dict:
+    """Drop keys more than KEEP_DAYS older than the NEWEST run date present
+    (relative to the data, not the wall clock, so a state file is never
+    emptied by a skewed clock or a replayed date)."""
+    from datetime import date, timedelta
+    try:
+        dates = [date.fromisoformat(k.split(":", 1)[0]) for k in state]
+    except ValueError:
+        return state
+    if not dates:
+        return state
+    cutoff = (max(dates) - timedelta(days=KEEP_DAYS)).isoformat()
+    return {k: v for k, v in state.items() if k.split(":", 1)[0] >= cutoff}
+
+
+def load_condition_state() -> dict:
+    """Drive first (the shared source of truth between the in-app poller and
+    the GitHub Actions backstop -- PM 2026-10-08: the backstop starts from a
+    fresh checkout every run, so a local-only state made it re-send every
+    currently-true card as new), merged with the local mirror."""
+    drive, local = _drive_load(), _local_load()
+    if drive is None:
+        return local
+    return merge_states(drive, local) if local else drive
+
+
 def save_condition_state(state: dict) -> None:
+    """Local mirror + Drive, both best-effort. Drive is re-read and merged
+    first, so two pollers writing close together keep each other's keys."""
+    state = _prune(state)
     try:
         CONDITION_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
         CONDITION_STATE_PATH.write_text(json.dumps(state, indent=2), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            other = _drive_load() or {}
+            merged = merge_states(other, state) if other else state
+            gdrive_uploader.upload_or_replace(STATE_FILENAME, json.dumps(merged, indent=2),
+                                              mime="application/json")
     except Exception:  # noqa: BLE001
         pass
 
@@ -64,7 +138,8 @@ def _entry(state: dict, run_date: str, ticker: str) -> dict:
     key = _key(run_date, ticker)
     return state.setdefault(key, {"stage": STAGE_WATCHING, "emailed_today": [],
                                   "chased": False, "analyst_out": False,
-                                  "exit_line": False})
+                                  "exit_line": False, "unr": False,
+                                  "unr_trigger": False, "unr_failed": False})
 
 
 def advance(state: dict, run_date: str, ticker: str, eval_result: dict,
@@ -101,11 +176,29 @@ def advance(state: dict, run_date: str, ticker: str, eval_result: dict,
         e["analyst_out"] = True
         _fire_once("ANALYST_OUT")
 
-    # U&R (PM 2026-10-07): the daily-reference undercut-and-rally happened
-    # today. One-shot per name per day, independent of the buy lifecycle.
+    # U&R (PM 2026-10-07/08, Valen's setup). Three one-shots per name per day,
+    # independent of the buy lifecycle:
+    #   UNR_MET      the reclaim day: a support level was undercut and spot is
+    #                back above it.
+    #   UNR_TRIGGER  AFTER that card, the 15-min VWAP trigger (a candle closes
+    #                above VWAP) arrives -- his entry. If it is already true on
+    #                the same cycle as UNR_MET it rides on that card instead.
+    #   UNR_FAILED   AFTER UNR_MET, spot is back under every reclaimed level.
+    #                Only when U&R could actually be judged (never on missing
+    #                data).
+    unr_new = False
     if eval_result.get("unr_met") and not e.get("unr"):
         e["unr"] = True
+        unr_new = True
         _fire_once("UNR_MET")
+    if eval_result.get("unr_trigger") and e.get("unr") and not e.get("unr_trigger"):
+        e["unr_trigger"] = True
+        if not unr_new:
+            _fire_once("UNR_TRIGGER")
+    if (e.get("unr") and not eval_result.get("unr_met") and eval_result.get("unr_known")
+            and not e.get("unr_failed")):
+        e["unr_failed"] = True
+        _fire_once("UNR_FAILED")
 
     exit_fired = eval_result.get("exit_hit") or eval_result.get("exit_warn")
     if exit_fired and not e["exit_line"]:

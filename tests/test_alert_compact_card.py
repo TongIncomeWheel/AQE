@@ -46,7 +46,7 @@ def test_not_met_when_nothing_was_undercut_today():
     h = _history()
     e = _ema21(h)
     r = LU.evaluate(h, spot=e * 1.09, day_low=e * 1.065)     # never dipped under EMA9
-    assert r["status"] == LU.NOT_MET and "no reference level undercut" in r["reason"]
+    assert r["status"] == LU.NOT_MET and "no support level undercut" in r["reason"]
 
 
 def test_not_met_when_undercut_but_spot_is_still_under():
@@ -143,13 +143,13 @@ def test_headline_is_the_unr_verdict():
 
 def test_first_line_says_what_was_undercut_and_that_spot_is_back_above():
     line = _card(["UNR_MET"])["lines"][0]
-    assert line.startswith("U&R today ✓ MET — undercut EMA21 851.40")
+    assert line.startswith("U&R ✓ MET (reclaim day) — undercut EMA21 851.40")
     assert "spot 864.99 is back above" in line
 
 
 def test_not_met_says_why_in_plain_words():
     c = _card(["CONDITION_MET"], status="NOT_MET")
-    assert c["lines"][0] == "U&R today ✗ NOT MET — no daily level undercut today"
+    assert c["lines"][0] == "U&R ✗ NOT MET — no support level undercut"
     live = _live("NOT_MET", 849.0)
     live["unr"]["below"] = [{"name": "EMA21", "level": 851.4, "low": 846.2}]
     c2 = E.build_condition_card("CAT", _row(), _ev(), ["CONDITION_MET"], live)

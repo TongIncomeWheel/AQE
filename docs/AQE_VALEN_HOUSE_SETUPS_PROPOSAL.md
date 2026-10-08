@@ -180,3 +180,15 @@ rising confirmed swing lows, projected to today). The uptrend gate for these gra
 and the live same-day read is now simply "EMA21 rising". Horizontal support remains
 the handbook swing-low grade. The intraday EMA8/EMA20 reference figures on the cards
 are unchanged (a separate PM ask).
+
+
+## Addendum 2026-10-08 (2) — Valen's full flow in the alert
+
+From Valen's chart: daily uptrend with rising EMAs, pullback on drying volume,
+undercut of a support level, a **reclaim day** on above-average buying volume, then
+on the intraday chart wait below VWAP, enter on the first candle that closes above
+it, stop at the low of day. Built into the live alert (not the nightly grader):
+the undercut may be yesterday (if it also closed under), the trigger is a 15-min
+candle (the feed's finest), stop = low of day, volume shown as two marks. New
+one-shot states UNR_TRIGGER and UNR_FAILED beside UNR_MET. Not built: a true 5-minute
+trigger (needs a faster feed than FMP Starter's delayed 15-minute bars).

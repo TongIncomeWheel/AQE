@@ -220,6 +220,56 @@ def session_vwap(hourly_candles: list[dict]) -> dict:
     return out
 
 
+def vwap_trigger(bars_15m: list[dict]) -> dict:
+    """Valen's entry trigger on the finest bars we have (15-minute; his chart
+    uses 5-minute -- FMP's feed here is 15-minute and delayed). VWAP is
+    cumulative from the open over every bar so far. Reads the latest bar:
+
+      TRIGGERED  its close is above the VWAP at that point. `at` = the close
+                 time of the bar that first closed above (after the last bar
+                 that closed under it), `entry` = that bar's close,
+                 `was_below` = whether any earlier bar closed under VWAP.
+      WAIT       its close is under VWAP ("below VWAP: wait").
+      NOT_READY  no usable bars yet.
+    Figures and a state, never an instruction."""
+    from datetime import timedelta
+    rows = []
+    cum_pv = cum_v = 0.0
+    parsed = []
+    for b in bars_15m or []:
+        dt = _parse_bar_dt(b)
+        if dt is None:
+            continue
+        mins = dt.hour * 60 + dt.minute
+        if mins < S.SESSION_OPEN_MIN or mins >= S.SESSION_CLOSE_MIN:
+            continue
+        parsed.append((dt, b))
+    parsed.sort(key=lambda x: x[0])
+    for dt, b in parsed:
+        h, lo, c, v = (_f(b.get("high")), _f(b.get("low")), _f(b.get("close")),
+                       _f(b.get("volume")))
+        if None in (h, lo, c, v):
+            continue
+        cum_pv += (h + lo + c) / 3.0 * v
+        cum_v += v
+        if cum_v > 0:
+            rows.append((dt, c, cum_pv / cum_v))
+    if not rows:
+        return {"state": "NOT_READY"}
+    last_dt, last_c, last_vw = rows[-1]
+    out = {"vwap": round(last_vw, 2), "last_close": round(last_c, 2)}
+    if last_c <= last_vw:
+        out["state"] = "WAIT"
+        return out
+    i = len(rows) - 1
+    while i > 0 and rows[i - 1][1] > rows[i - 1][2]:
+        i -= 1
+    cross_dt, cross_c, _ = rows[i]
+    out.update({"state": "TRIGGERED", "was_below": i > 0, "entry": round(cross_c, 2),
+                "at": (cross_dt + timedelta(minutes=15)).strftime("%H:%M")})
+    return out
+
+
 def heat_row(today_bars: list[dict], profile: dict[int, float]) -> list[float | None]:
     """§4.5: each COMPLETED hour's volume ÷ its own normal hour (the sum
     of that hour's 4 profile slots) — one value per hourly bucket, for the
