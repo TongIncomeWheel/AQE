@@ -239,19 +239,21 @@ IMPL_UNR_RS_RANK_MIN = 70.0            # "relative strength still holding"
 # The handbook's own swing-low U&R (above) is unchanged and stays the signed-off
 # grade; each of these is its own, separately-named grade ("Undercut and
 # rally -- Daily EMA8" ...), never folded into it.
-PM_UNR_DAILY_EMA_SPANS = (8, 10, 21)    # "Daily 8 EMA / 10 EMA", "21 EMA"
-PM_UNR_DAILY_SMA_SPAN = 50              # "50 SMA"
-PM_UNR_WEEKLY_EMA_SPAN = 9              # "Weekly 9 EMA"
+# KEEP IT SIMPLE (PM 2026-10-08, from Valen's own list): "Support levels can be:
+# gaps, horizontal support, trendline support, key moving averages (EMA9/21)."
+# Exactly those four, nothing else. (The first cut also had EMA8/10, SMA50, weekly
+# EMA9 and round numbers -- removed.)
+PM_UNR_DAILY_EMA_SPANS = (9, 21)        # "Key Moving Averages (EMA9/21)"
 PM_UNR_STOP_BUFFER_PCT = (1.25, 3.5)    # "stops 1.25% to 3.5% below the reclaimed level"
 IMPL_MAUR_MIN_UNDERCUT_ATR = 0.10       # a moving average is pierced shallowly: a tenth
                                         # of a daily range under it counts as an undercut
-IMPL_GAP_MIN_PCT = 3.0                  # "gap up ... surged on high volume": the gap
-IMPL_GAP_VOL_MULT = 1.5                 # ... opens >= 3% over the prior high on >= 1.5x
-IMPL_GAP_LOOKBACK = 120                 # normal volume, within the last 120 sessions
-IMPL_GAP_MAX_LEVELS = 2                 # the two most recent unfilled gaps
-IMPL_ROUND_STEPS = ((20.0, 1.0), (50.0, 5.0), (200.0, 10.0), (500.0, 50.0),
-                    (float("inf"), 100.0))   # price < first -> step second: "$100, $500"
-IMPL_WEEKLY_MIN_WEEKS = 20              # a settled weekly EMA9 needs >2x its span
+IMPL_GAP_MIN_PCT = 3.0                  # "Gaps": a gap-up that opened >= 3% over the prior
+IMPL_GAP_VOL_MULT = 1.5                 # high on >= 1.5x normal volume, within the last
+IMPL_GAP_LOOKBACK = 120                 # 120 sessions; the two most recent unfilled ones
+IMPL_GAP_MAX_LEVELS = 2
+IMPL_TREND_LOOKBACK = 60                # "Trendline support": a rising line through the last
+IMPL_TREND_MIN_SEPARATION = 5           # two confirmed swing lows (higher low, >= 5 sessions
+                                        # apart, within the last 60 sessions), projected forward
 
 # 11 Episodic pivot, p.37.
 HB_EP_GAP_MIN_PCT = 10.0               # "opens 10% or more above yesterday's close"

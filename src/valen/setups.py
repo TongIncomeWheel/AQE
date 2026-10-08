@@ -459,15 +459,23 @@ def grade_unr(b: Bars, rs_rank: float | None = None, in_theme: bool | None = Non
 #       per reference level that was actually undercut in the window.
 # ---------------------------------------------------------------------------
 
-def _weekly_ema9(b: Bars) -> float | None:
-    """Weekly EMA9 of the weekly closes, the current (incomplete) week
-    included as its latest close -- the level a chartist sees today."""
-    if b.n < S.IMPL_WEEKLY_MIN_WEEKS * 5:
+def _trendline(b: Bars) -> np.ndarray | None:
+    """Rising trendline support: the straight line through the last two
+    confirmed swing lows (the later one HIGHER, at least
+    IMPL_TREND_MIN_SEPARATION sessions apart, inside IMPL_TREND_LOOKBACK),
+    as a per-bar array so a project-forward value exists for today. None when
+    there are not two such lows."""
+    t = b.n - 1
+    sw = _swing_lows(b.l, t - S.IMPL_TREND_LOOKBACK, t - S.IMPL_UNR_PIVOT_SIDE,
+                     S.IMPL_UNR_PIVOT_SIDE)
+    if len(sw) < 2:
         return None
-    w = (pd.Series(b.c, index=pd.to_datetime(b.dates)).resample("W-FRI").last().dropna())
-    if len(w) < S.IMPL_WEEKLY_MIN_WEEKS:
+    i2 = sw[-1]
+    i1 = next((i for i in reversed(sw[:-1]) if i2 - i >= S.IMPL_TREND_MIN_SEPARATION), None)
+    if i1 is None or b.l[i2] <= b.l[i1]:
         return None
-    return float(w.ewm(span=S.PM_UNR_WEEKLY_EMA_SPAN, adjust=False).mean().iloc[-1])
+    slope = (b.l[i2] - b.l[i1]) / (i2 - i1)
+    return b.l[i1] + slope * (np.arange(b.n + 1) - i1)       # n+1: today's projected value
 
 
 def _support_gaps(b: Bars, win0: int) -> list[float]:
@@ -494,24 +502,6 @@ def _support_gaps(b: Bars, win0: int) -> list[float]:
     return out
 
 
-def _round_level(b: Bars, win0: int, atr: float) -> float | None:
-    """The highest round number price dipped under (by a real margin) inside
-    the window after trading above it just before: "$100, $500"."""
-    t = b.n - 1
-    px = b.c[t]
-    step = next(st for lim, st in S.IMPL_ROUND_STEPS if px < lim)
-    lo_w = float(b.l[win0:t + 1].min())
-    k = int(px // step)
-    while k * step > lo_w:
-        r = k * step
-        if r < px and lo_w < r - S.IMPL_MAUR_MIN_UNDERCUT_ATR * atr and b.c[win0 - 1] > r:
-            return float(r)
-        k -= 1
-        if k <= 0:
-            break
-    return None
-
-
 def _grade_level_unr(b: Bars, name: str, kind: str, ref: np.ndarray, win0: int, atr: float,
                      rs_rank, in_theme) -> dict | None:
     """One reference level (per-bar array `ref`), undercut inside the window
@@ -535,7 +525,7 @@ def _grade_level_unr(b: Bars, name: str, kind: str, ref: np.ndarray, win0: int, 
     rs_ok = None if rs_rank is None else rs_rank >= S.IMPL_UNR_RS_RANK_MIN
     lo_b, hi_b = S.PM_UNR_STOP_BUFFER_PCT
     checks = [
-        _check("50-day still rising", _r(b.sma50[t]), PASS if b.rising(b.sma50, t) else FAIL,
+        _check("EMA21 still rising", _r(b.ema[21][t]), PASS if b.rising(b.ema[21], t) else FAIL,
                hard=True),
         _check("Young trend: 1st, 2nd or 3rd pullback", f"pullback #{pb_no}",
                PASS if pb_no <= S.HB_MAX_YOUNG_BASE else FAIL, hard=True),
@@ -563,44 +553,36 @@ def _grade_level_unr(b: Bars, name: str, kind: str, ref: np.ndarray, win0: int, 
 
 def grade_unr_levels(b: Bars, rs_rank: float | None = None,
                      in_theme: bool | None = None) -> list[dict]:
-    """Every OTHER U&R reference level that was undercut and is being (or has
-    been) reclaimed: daily EMA8/10/21 and SMA50, weekly EMA9, support gaps,
-    round numbers. Empty list = none is undercut-and-rally-shaped right now
-    (FAILED shapes are not recorded for these looser levels -- see below)."""
+    """Valen's four support types, each graded when undercut and reclaimed:
+    gaps, horizontal support is the handbook swing-low grade above, trendline
+    support, and the key moving averages EMA9 / EMA21. Empty list = none is
+    undercut-and-rally-shaped right now (FAILED shapes are not recorded for
+    these looser levels -- see below)."""
     t = b.n - 1
     if b.n < 80 or np.isnan(b.atr[t]):
         return []
-    above_50 = b.c[t] > b.sma50[t] and b.rising(b.sma50, t)
-    if not b.rising(b.sma50, t):
-        return []                                       # a falling 50-day is not an uptrend
+    if not b.rising(b.ema[21], t):
+        return []                                       # "Uptrend, rising EMAs"
     win0 = t - S.IMPL_UNR_WINDOW + 1
     atr = float(b.atr[t])
     refs: list[tuple[str, str, np.ndarray]] = []
     for n in S.PM_UNR_DAILY_EMA_SPANS:
         refs.append((f"Daily EMA{n}", "ma", b.ema[n]))
-    refs.append((f"Daily SMA{S.PM_UNR_DAILY_SMA_SPAN}", "ma", b.sma50))
-    w9 = _weekly_ema9(b)
-    if w9 is not None:
-        refs.append((f"Weekly EMA{S.PM_UNR_WEEKLY_EMA_SPAN}", "ma", np.full(b.n, w9)))
-    for k, g in enumerate(_support_gaps(b, win0), 1):
+    tl = _trendline(b)
+    if tl is not None:
+        refs.append(("Trendline", "trend", tl[:b.n]))
+    for g in _support_gaps(b, win0):
         refs.append((f"support gap {g:.2f}", "gap", np.full(b.n, g)))
-    rl = _round_level(b, win0, atr)
-    if rl is not None:
-        refs.append((f"round number {rl:g}", "round", np.full(b.n, rl)))
     out = []
     for name, kind, ref in refs:
         if np.any(np.isnan(ref[win0 - 1:])):
             continue
-        # an uptrend stock: above its 50-day, except when the 50-day IS the level
-        if name != f"Daily SMA{S.PM_UNR_DAILY_SMA_SPAN}" and not above_50:
-            continue
         g = _grade_level_unr(b, name, kind, ref, win0, atr, rs_rank, in_theme)
         # Only a LIVE shape is recorded for these looser levels. A stock pokes
-        # its EMA8 constantly; a FAILED grade there (stop wider than a daily
-        # range, an old trend) is the usual case, not a finding -- on 800
-        # random uptrends it was ~1,400 grades. The handbook's own swing-low
-        # U&R still records its FAILED grades. "No grade" here means "not
-        # undercut-and-rally-shaped", the same as for any other setup.
+        # its EMA9 constantly; a FAILED grade there (stop wider than a daily
+        # range, an old trend) is the usual case, not a finding. The handbook's
+        # own swing-low U&R still records its FAILED grades. "No grade" here
+        # means "not undercut-and-rally-shaped", the same as for any other setup.
         if g and g["status"] != FAILED:
             out.append(g)
     return out

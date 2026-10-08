@@ -285,16 +285,25 @@ def test_no_undercut_means_no_ma_grade():
     assert SU.grade_unr_levels(SU.Bars(_frame(c))) == []
 
 
-def test_a_falling_50_day_is_not_an_uptrend_for_any_reference_level():
+def test_a_falling_ema21_is_not_an_uptrend_for_any_reference_level():
     c = _ramp(100, 60, 160) + [61, 62, 61]
     assert SU.grade_unr_levels(SU.Bars(_frame(c))) == []
 
 
-def test_weekly_ema9_is_computed_from_resampled_weekly_closes():
-    b = SU.Bars(_frame(_uptrend(200)))
-    w = SU._weekly_ema9(b)
-    assert w is not None and 40 < w < 100
-    assert SU._weekly_ema9(SU.Bars(_frame(_uptrend(60)))) is None   # too little history
+def test_trendline_is_the_line_through_the_last_two_rising_swing_lows():
+    # a staircase of higher lows, 8 sessions apart
+    c = []
+    px = 50.0
+    for k in range(10):
+        c += [px + 4.0, px + 6.0, px + 5.0, px + 2.0, px + 0.0, px + 1.5, px + 3.0, px + 5.0]
+        px += 1.2
+    b = SU.Bars(_frame(c, wick=0.001))
+    tl = SU._trendline(b)
+    assert tl is not None and len(tl) == b.n + 1          # includes today's projection
+    assert tl[-1] > tl[-30]                               # rising
+    # falling lows give no trendline support
+    c2 = [100 - 0.5 * i + (3 if i % 8 in (1, 2, 3) else 0) for i in range(80)]
+    assert SU._trendline(SU.Bars(_frame(c2, wick=0.001))) is None
 
 
 def test_support_gap_found_only_when_it_gapped_on_volume_and_held():
@@ -314,15 +323,6 @@ def test_support_gap_found_only_when_it_gapped_on_volume_and_held():
     assert SU._support_gaps(b2, win0=b2.n - 10) == []
 
 
-def test_round_number_undercut_is_the_highest_one_dipped_under_and_reclaimed():
-    c = _ramp(60, 104, 150) + [103.0, 101.5, 102.0, 101.0, 102.5]
-    lows = list(np.asarray(c) * 0.997)
-    lows[-3] = 99.4                    # flushed through 100, closed back above
-    b = SU.Bars(_frame(c, lows=lows))
-    atr = float(b.atr[-1])
-    assert SU._round_level(b, win0=b.n - 10, atr=atr) == 100.0
-
-
 def test_grade_ticker_returns_the_new_grades_alongside_the_handbook_ones():
     base = _uptrend()
     ema21 = pd.Series(base).ewm(span=21, adjust=False).mean().iloc[-1]
@@ -337,8 +337,9 @@ def test_grade_ticker_returns_the_new_grades_alongside_the_handbook_ones():
 
 def test_new_thresholds_are_labelled_pm_or_impl_and_the_buffer_matches_the_writeup():
     assert S.PM_UNR_STOP_BUFFER_PCT == (1.25, 3.5)
-    assert S.PM_UNR_DAILY_EMA_SPANS == (8, 10, 21)
-    assert S.PM_UNR_WEEKLY_EMA_SPAN == 9
+    assert S.PM_UNR_DAILY_EMA_SPANS == (9, 21)          # Valen: "EMA9/21", nothing else
+    for gone in ("PM_UNR_DAILY_SMA_SPAN", "PM_UNR_WEEKLY_EMA_SPAN", "IMPL_ROUND_STEPS"):
+        assert not hasattr(S, gone)
 
 
 def test_failed_shapes_are_not_recorded_for_the_looser_levels():

@@ -1233,12 +1233,8 @@ def _fmt_levels(unr: dict) -> str | None:
     if not lv:
         return None
     hit = {h["name"] for h in (unr.get("hits") or [])} | {h["name"] for h in (unr.get("below") or [])}
-    def one(x):
-        mark = "▼" if x["name"] in hit else ""
-        # "Round 850" already carries its number
-        return f"{mark}{x['name']}" if x["name"].startswith("Round ") else \
-            f"{mark}{x['name']} {x['level']:.2f}"
-    return "Levels: " + " · ".join(one(x) for x in lv)
+    return "Levels: " + " · ".join(f"{'▼' if x['name'] in hit else ''}{x['name']} {x['level']:.2f}"
+                                   for x in lv)
 
 
 def _reference_lines(row: dict, live: dict) -> list[str]:

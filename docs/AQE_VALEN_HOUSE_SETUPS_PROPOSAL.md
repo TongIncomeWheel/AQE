@@ -168,3 +168,15 @@ The buffer-stop zone is shown as a reference figure; the handbook's "stop under 
 daily range" stays the hard rule. Intraday reference lines on the alert cards (all
 figures only, none feeds a condition): opening-range high/low (first 15 min — the
 feed is 15-minute, the write-up uses 5), low of day, VWAP reclaimed / lost.
+
+
+## Addendum 2026-10-08 — keep it simple
+
+PM: "Keep it simple is the mantra", after Valen's own list: *support levels can be
+gaps, horizontal support, trendline support, key moving averages (EMA9/21)*. The
+2026-10-06 build was cut back to exactly those. Removed: daily EMA8/EMA10, SMA50,
+weekly EMA9, round numbers. Added: trendline support (the line through the last two
+rising confirmed swing lows, projected to today). The uptrend gate for these grades
+and the live same-day read is now simply "EMA21 rising". Horizontal support remains
+the handbook swing-low grade. The intraday EMA8/EMA20 reference figures on the cards
+are unchanged (a separate PM ask).

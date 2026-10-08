@@ -45,7 +45,7 @@ def test_met_when_a_level_was_undercut_today_and_spot_is_back_above():
 def test_not_met_when_nothing_was_undercut_today():
     h = _history()
     e = _ema21(h)
-    r = LU.evaluate(h, spot=e * 1.09, day_low=e * 1.065)     # never dipped under EMA8
+    r = LU.evaluate(h, spot=e * 1.09, day_low=e * 1.065)     # never dipped under EMA9
     assert r["status"] == LU.NOT_MET and "no reference level undercut" in r["reason"]
 
 
@@ -63,17 +63,18 @@ def test_unknown_never_a_silent_not_met_when_data_is_missing():
     assert LU.evaluate(_history(), 100.0, None)["status"] == LU.UNKNOWN
 
 
-def test_a_falling_50_day_is_not_an_uptrend_pullback():
+def test_a_falling_ema21_is_not_an_uptrend_pullback():
     h = _history(a=100.0, b=60.0)
     r = LU.evaluate(h, spot=61.0, day_low=58.0)
-    assert r["status"] == LU.NOT_MET and "50-day" in r["reason"]
+    assert r["status"] == LU.NOT_MET and "EMA21" in r["reason"]
 
 
 def test_levels_are_listed_for_the_reference_block():
     r = LU.evaluate(_history(), spot=101.0, day_low=100.5)
     names = [x["name"] for x in r["levels"]]
-    assert {"EMA8", "EMA10", "EMA21", "SMA50"} <= set(names)
-    assert any(n.startswith("Wk EMA") for n in names)
+    assert {"EMA9", "EMA21"} <= set(names)
+    # Valen's four types only: swing low, trendline, EMA9/21, gaps
+    assert set(names) <= {"Swing low", "Trendline", "EMA9", "EMA21", "Gap"}
 
 
 # -------------------------------------------------------------- state machine
@@ -112,8 +113,8 @@ def _ev(vol="FALSE"):
 
 def _live(status="MET", spot=864.99):
     unr = {"status": status, "hits": [], "below": [], "reason": None,
-           "levels": [{"name": "EMA8", "level": 858.9}, {"name": "EMA21", "level": 851.4},
-                      {"name": "Round 850", "level": 850.0}]}
+           "levels": [{"name": "EMA9", "level": 858.9}, {"name": "EMA21", "level": 851.4},
+                      {"name": "Trendline", "level": 849.0}]}
     if status == "MET":
         unr["hits"] = [{"name": "EMA21", "level": 851.4, "low": 846.2, "spot_pct": 1.6}]
     return {"price": spot, "day_low": 846.2, "day_high": 876.95,
@@ -194,7 +195,7 @@ def test_reference_block_holds_the_numbers_and_marks_undercut_levels():
     lines = _card(["UNR_MET"])["lines"]
     i = next(k for k, l in enumerate(lines) if "UnR reference" in l)
     ref = "\n".join(lines[i + 1:])
-    assert "▼EMA21 851.40" in ref and "Round 850" in ref and "850.00" not in ref.split("Round 850")[1][:6]
+    assert "▼EMA21 851.40" in ref and "Trendline 849.00" in ref
     assert "open-range 866.80/851.47" in ref and "low 846.20" in ref and "high 876.95" in ref
     assert "VWAP 865.28 (spot below, hourly close reclaimed it)" in ref
     assert "EMA 8/20: 15m 865.63/864.66 · daily 836.78/824.13" in ref
