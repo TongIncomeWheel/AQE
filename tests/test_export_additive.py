@@ -81,6 +81,8 @@ def test_top_level_keys_are_additive_only():
         "spy_ret_63d", "hitrate_window",
         # VALEN Part 3 (2026-10-05): whether the five-setup grading ran
         "setups_status",
+        # U&R on the last completed trading day (2026-10-12)
+        "unr_summary",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
@@ -122,6 +124,8 @@ def test_v21_record_fields_is_additive_only():
         # VALEN Part 3 (2026-10-05): the measured setup grades, attached by
         # setups_daily.attach_setup_grades in build_export next to QS
         "setups",
+        # U&R last-day column, stamped by setups_daily.attach_setup_grades
+        "unr_status", "unr_note", "unr_as_of", "unr_level",
     }
     missing = (baseline_row_keys - current_keys) - OUT_OF_SCOPE - DS._NEW_ENGINE_NULL.keys()
     assert not missing, (

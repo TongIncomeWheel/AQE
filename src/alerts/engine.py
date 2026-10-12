@@ -354,6 +354,7 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     # rides in the SAME batch call — these bypass in_alert_universe entirely
     # (the committee picked them, not AQE's own strength gate).
     pma_doc = None
+    pma_stale_doc = None
     pma_reason = None
     pma_broker_stop_tickers: set[str] = set()
     summary["pma"] = {"enabled": C.PMA_LEVELS_ENABLED, "fresh": False, "new_triggers": 0}
@@ -361,6 +362,7 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         from src.alerts import pma_levels as PMA
         now_et = datetime.now(ZoneInfo("America/New_York"))
         pma_doc, pma_reason = PMA.load_pma_levels()
+        pma_stale_doc = pma_doc          # kept only to name its session in the digest header
         if pma_doc is not None and PMA.is_fresh(pma_doc, now_et):
             summary["pma"]["fresh"] = True
             pma_broker_stop_tickers = PMA.held_broker_stop_tickers(pma_doc)
@@ -497,7 +499,8 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         cc_summary = CC.run_condition_cycle(
             pma_doc, quotes, _now_et,
             run_date=((pma_doc or {}).get("run_date") or _now_et.date().isoformat()),
-            export=export, held_events=_held_events(fresh, fresh_pma))
+            export=export, held_events=_held_events(fresh, fresh_pma),
+            meta=CC.data_meta(pma_doc, pma_stale_doc, export, _now_et))
         summary["pma_conditions"] = cc_summary
         if cc_summary.get("enabled"):
             _phase(f"conditions evaluated ({cc_summary['rows']} rows, "

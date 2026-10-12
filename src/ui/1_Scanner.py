@@ -1552,6 +1552,7 @@ if _dq.get("flagged_count"):
 
 _EXPORT_COL_ORDER = [
     "rank", "ticker", "last_close", "source", "pe", "on_longlist", "on_elder",
+    "unr_status", "unr_note",     # U&R on the last completed trading day (PM 2026-10-12)
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",

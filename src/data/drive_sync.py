@@ -670,6 +670,18 @@ _FIELD_GLOSSARY.update({
               "fails (plain reasons). Absent key = not graded (no price history); "
               "empty list = graded, no setup present. Thresholds: src/valen/spec.py "
               "HB_* (handbook, page-cited) and IMPL_* (AQE's own measurement).",
+    "unr_status": "Undercut-and-rally on the LAST COMPLETED TRADING DAY (Valen's setup): "
+                  "MET = a support level (swing low, rising trendline, 9-day or 21-day average, "
+                  "gap) was undercut by a shallow dip and the last session CLOSED back above it "
+                  "(the reclaim day), 21-day average rising; SETUP = undercut within the last "
+                  "3 sessions and still under at the last close, so the reclaim day is the NEXT "
+                  "session; NO = no such dip; NA = not enough price history (never a silent NO). "
+                  "Same rules as the live alert cards (src/alerts/live_unr.py).",
+    "unr_note": "One plain sentence saying which level was undercut and what the last session did.",
+    "unr_as_of": "The last completed trading day the U&R status was judged on.",
+    "unr_level": "Price of the support level behind unr_status (null for NO / NA).",
+    "unr_summary": "Longlist + Elder names by U&R status on the last completed trading day: "
+                   "`met` and `setup` ticker lists, `as_of`, and how many were checked.",
     "setups_status": "'live' (setups graded), 'error' (reason given). With 'error' "
                      "every row's missing `setups` means nothing was checked, NOT a "
                      "quiet tape. Also lists names that could not be graded.",
@@ -2755,6 +2767,11 @@ def build_export(shortlist: dict | None = None) -> dict:
         export["setups_status"] = {"status": "error", "reason": str(_exc), "graded": 0}
     if export["setups_status"].get("status") != "live":
         print(f"  [WARN] VALEN setups not graded: {export['setups_status'].get('reason')}")
+    try:
+        from src.valen.setups_daily import unr_summary as _unr_summary
+        export["unr_summary"] = _unr_summary(list(_dl.values()))
+    except Exception as _exc:  # noqa: BLE001
+        export["unr_summary"] = {"error": str(_exc)}
 
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
@@ -2796,6 +2813,8 @@ def build_export(shortlist: dict | None = None) -> dict:
                              and not r.get("on_longlist") and not r.get("on_elder")),
         "qs_status": export.get("qs_status", "not_run"),
         "setups_status": (export.get("setups_status") or {}).get("status", "not_run"),
+        "unr_met_count": len((export.get("unr_summary") or {}).get("met") or []),
+        "unr_setup_count": len((export.get("unr_summary") or {}).get("setup") or []),
         "setups_triggered_or_ready": sum(
             1 for r in _daily_list for g in (r.get("setups") or [])
             if g.get("status") in ("TRIGGERED", "READY")),

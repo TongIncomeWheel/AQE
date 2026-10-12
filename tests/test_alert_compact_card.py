@@ -68,10 +68,11 @@ def test_headline_names_the_u_and_r_state_or_the_buy_state():
         "CAT $864.99 · 🟢 BUY CONDITIONS MET · AQE default criteria")
 
 
-def test_a_buy_card_says_u_and_r_in_one_line_whatever_its_state():
-    assert _card(["CONDITION_MET"], status="NOT_MET")["lines"][-1] == "U&R: no setup"
-    assert _card(["CONDITION_MET"], status="UNKNOWN")["lines"][-1] == "U&R: no setup"
-    assert _card(["CONDITION_MET"])["lines"][-1].startswith("U&R setup forming: dipped below")
+def test_a_buy_card_says_u_and_r_first_whatever_its_state():
+    assert _card(["CONDITION_MET"], status="NOT_MET")["lines"][0] == (
+        "U&R: ✗ none — no support level undercut in the last 3 sessions")
+    assert _card(["CONDITION_MET"], status="UNKNOWN")["lines"][0].startswith("U&R: ◌ not checked")
+    assert _card(["CONDITION_MET"])["lines"][0].startswith("U&R: setup forming")
 
 
 def test_the_cat_card_no_longer_says_back_under_when_spot_is_above_the_line():
@@ -99,9 +100,10 @@ def test_the_full_layout_also_stops_mislabelling_it():
 
 def test_buy_card_lists_each_committee_condition_the_stop_and_the_one_target():
     lines = _card(["CONDITION_MET"], vol="TRUE", status="NOT_MET")["lines"]
-    assert lines[0] == "AQE default criteria: all met ✓"
-    assert lines[1] == "✓ hourly close above 858.87 (price 864.99, 0.7% above)"
-    assert lines[2].startswith("✓ volume at least 1× normal")
+    assert lines[0].startswith("U&R: ✗ none")
+    assert lines[1] == "AQE default criteria: all met ✓"
+    assert lines[2] == "✓ hourly close above 858.87 (price 864.99, 0.7% above)"
+    assert lines[3].startswith("✓ volume at least 1× normal")
     assert "AQE stop 822.64 · target 909.60 (reward 1.4× the risk)" in lines
 
 

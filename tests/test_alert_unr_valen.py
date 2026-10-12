@@ -258,7 +258,8 @@ def _live(trigger=None, status="ARMED", reclaimed=False, spot=849.0):
 def test_setup_forming_card_says_what_to_wait_for_in_plain_english():
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], _live())
     assert c["headline"] == "CAT $849.00 · 🟡 U&R SETUP FORMING"
-    assert c["lines"][0] == "Entry signal comes when a 15-min candle closes above VWAP (865.28)"
+    assert c["lines"][0] == ("U&R: setup forming — entry signal comes when a 15-min candle "
+                             "closes above VWAP (865.28)")
     assert c["lines"][1] == "Stop would be 846.20 (today's low), 0.3% below price"
     assert c["lines"][2] == ("Dipped below the 21-day average (851.40) yesterday; "
                              "price is still 0.3% under it")
@@ -274,7 +275,8 @@ def test_entry_signal_card_leads_with_what_triggered_the_stop_and_the_risk():
             "at": "10:15", "entry": 849.5}
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))
     assert c["headline"] == "CAT $849.00 · 🟢 U&R ENTRY SIGNAL"
-    assert c["lines"][0] == "A 15-min candle closed above VWAP at 10:15 (price 849.50)"
+    assert c["lines"][0] == ("U&R: ✓ ENTRY SIGNAL — a 15-min candle closed above VWAP at 10:15 "
+                             "(price 849.50)")
     assert c["lines"][1] == "Stop: 846.20 (today's low), 0.3% below price"
     assert "price is still 0.3% under it" in c["lines"][2]        # the reclaim is info, not a gate
 
@@ -303,7 +305,8 @@ def test_failed_card_leads_with_one_plain_sentence_then_the_committee_state():
     ev["unr_stop"] = 846.2
     c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], _live())
     assert c["headline"] == "CAT $849.00 · 🟠 U&R FAILED"
-    assert c["lines"][0] == "Price 849.00 fell under the stop (846.20) that was set at the entry signal"
+    assert c["lines"][0] == ("U&R: 🟠 failed — price 849.00 fell under the stop (846.20) "
+                             "set at the entry signal")
     assert any(l.startswith("AQE default criteria:") for l in c["lines"][1:])
 
 
@@ -311,7 +314,8 @@ def test_a_buy_card_leads_with_the_state_and_one_u_and_r_line():
     c = E.build_condition_card("CAT", _row(), _evr(("TRUE", "FALSE")), ["CONDITION_MET"],
                                _live(status="NOT_MET"))
     assert c["headline"] == "CAT $849.00 · 🟢 BUY CONDITIONS MET · AQE default criteria"
-    assert c["lines"][-1] == "U&R: no setup"
+    assert c["lines"][0] == ("U&R: ✗ none — no shallow dip under a support level "
+                             "in the last 3 sessions")
     assert "AQE default criteria: 1 of 2 met" in c["lines"]
 
 
@@ -381,6 +385,46 @@ def test_digest_subject_counts_the_new_states():
     assert "U&R SETUP 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
 
 
+# ------------------------------------------- every card has the same shape
+
+def test_every_kind_of_card_carries_a_u_and_r_status_as_its_first_line():
+    """PM 2026-10-12: 'some cards are AQE only and don't give me whether the U&R
+    is fulfilled. Says none/blank.'"""
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
+    cases = [
+        (["UNR_ARMED"], _live()),
+        (["UNR_TRIGGER"], _live(trig)),
+        (["UNR_FAILED"], _live()),
+        (["CONDITION_MET"], _live(status="NOT_MET")),
+        (["CONDITION_MET"], _live(status="UNKNOWN")),
+        (["CHASED"], _live()),
+        (["FAILED_PUSH"], _live(status="NOT_MET")),
+    ]
+    for states, live in cases:
+        for row, ev in ((_row(), _evr()), (_committee_row(), _committee_ev())):
+            c = E.build_condition_card("X", row, ev, states, live)
+            assert c["lines"][0].startswith("U&R:"), (states, c["lines"][0])
+            assert c["lines"][0].strip() != "U&R:"
+
+
+def test_not_checked_says_why_never_blank():
+    live = _live(status="UNKNOWN")
+    live["unr"]["reason"] = "no daily history or live price"
+    c = E.build_condition_card("X", _row(), _evr(), ["CONDITION_MET"], live)
+    assert c["lines"][0] == "U&R: ◌ not checked — no daily price history for this name"
+    live["unr"]["reason"] = None
+    assert E.build_condition_card("X", _row(), _evr(), ["CONDITION_MET"], live)["lines"][0] \
+        == "U&R: ◌ not checked — no data"
+
+
+def test_the_committee_block_follows_the_u_and_r_block_in_the_same_order_every_time():
+    c = E.build_condition_card("AMD", _committee_row(), _committee_ev(), ["CONDITION_MET"],
+                               _live(status="NOT_MET"))
+    kinds = [l.split(":")[0] if l.startswith("U&R") or l.startswith("Committee") else "-" for l in c["lines"]]
+    assert kinds.index("U&R") == 0 and kinds.index("Committee (HOLD FOR CONDITIONS)") > 0
+
+
 # ------------------------------- the committee's criteria are on every card
 
 def _committee_row():
@@ -418,8 +462,8 @@ def test_a_u_and_r_entry_card_carries_the_committee_hold_for_conditions():
     assert "✗ volume at least 1.4× normal (now 0.6×)" in lines
     assert "Exit line: closes below 598.00" in lines
     assert "Committee stop 600.00 · target 700.00 (reward 0.7× the risk)" in lines
-    # U&R timing still leads
-    assert lines[0].startswith("A 15-min candle closed above VWAP at 10:15")
+    # the U&R status is always line one
+    assert lines[0].startswith("U&R: ✓ ENTRY SIGNAL — a 15-min candle closed above VWAP at 10:15")
 
 
 def test_the_committee_block_uses_plain_words_never_the_raw_word_names():

@@ -130,7 +130,9 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
     fill_classes = {"ADVANCE", "HOLD_FOR_CONDITIONS"}
     if C.CONDITION_DEFAULTS_INCLUDE_WATCH:
         fill_classes.add("WATCH")
-    for r in (pma_doc or {}).get("rows") or []:
+    from . import pma_levels as _PMA
+    latest = [r for r in (pma_doc or {}).get("rows") or [] if _PMA.is_latest_run_row(pma_doc, r)]
+    for r in latest:
         tk = r.get("ticker")
         if not tk:
             continue
@@ -157,7 +159,7 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
 
     # 2. Longlist / Elder names outside the committee book
     want = _sources()
-    pma_tickers = {r.get("ticker") for r in (pma_doc or {}).get("rows") or []}
+    pma_tickers = {r.get("ticker") for r in latest}
     for tk, rec in by_ticker.items():
         if tk in covered or tk in pma_tickers or tk in held or rec.get("held"):
             continue

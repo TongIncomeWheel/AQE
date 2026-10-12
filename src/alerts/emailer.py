@@ -1349,8 +1349,7 @@ def _reference_lines(row: dict, live: dict) -> list[str]:
     return out
 
 
-_PLAIN_LEVEL = {"EMA9": "9-day average", "EMA21": "21-day average", "Swing low": "recent low",
-                "Trendline": "rising trendline", "Gap": "gap support"}
+from .live_unr import PLAIN_LEVEL as _PLAIN_LEVEL, PLAIN_REASON as _UNR_REASON  # noqa: E402
 
 
 def _plain_level(name: str) -> str:
@@ -1502,62 +1501,78 @@ def _bracket_short(row: dict) -> str | None:
     return f"Stop {stop:.2f} · target {t:.2f} (reward {(t - entry) / (entry - stop):.1f}× the risk)"
 
 
+
+
+def _unr_status_line(unr: dict, live: dict, fired_states: list[str],
+                     eval_result: dict) -> str:
+    """THE line every card carries, second, always: is the U&R fulfilled?
+    (PM 2026-10-12: some cards said nothing about it.) Entry signal / setup
+    forming / failed / none / not checked -- never blank."""
+    spot = live.get("price")
+    t = live.get("vwap_trigger") or {}
+    st = (unr or {}).get("status")
+    if "UNR_FAILED" in fired_states:
+        stop = eval_result.get("unr_stop")
+        return (f"U&R: 🟠 failed — price {f'{spot:.2f} ' if spot is not None else ''}fell under "
+                f"the stop{f' ({stop:.2f})' if stop is not None else ''} set at the entry signal")
+    if st == "ARMED":
+        if t.get("state") == "TRIGGERED":
+            return (f"U&R: ✓ ENTRY SIGNAL — a 15-min candle closed above VWAP at {t['at']} "
+                    f"(price {t['entry']:.2f})")
+        if t.get("state") == "ABOVE":
+            return "U&R: setup forming — price has held above VWAP since the open, so no entry signal yet"
+        if t.get("state") == "WAIT" and t.get("vwap") is not None:
+            return (f"U&R: setup forming — entry signal comes when a 15-min candle closes "
+                    f"above VWAP ({t['vwap']:.2f})")
+        return "U&R: setup forming — waiting for the first 15-min candles"
+    if st == "NOT_MET":
+        r = (unr or {}).get("reason") or "no support level undercut"
+        return f"U&R: ✗ none — {_UNR_REASON.get(r, r)}"
+    r = (unr or {}).get("reason") or "no data"
+    return f"U&R: ◌ not checked — {_UNR_REASON.get(r, r)}"
+
+
 def _build_compact_card(ticker: str, row: dict, eval_result: dict,
                         fired_states: list[str], live: dict) -> dict:
-    """PM 2026-10-09: "not executive and actionable ... verbal vomit". The
-    answer first, in plain English: the state, the entry, the stop and the risk
-    to it, then why, then only the watch-outs. Facts and levels, never a
-    recommendation."""
+    """ONE constant shape for every card (PM 2026-10-12):
+
+        headline  : TICKER $price . the state that fired this card
+        line 1    : U&R status (always: entry signal / forming / failed / none / not checked)
+        U&R detail: stop, the dip in words, volume watch-outs   (only when a setup exists)
+        committee : Committee (HOLD FOR CONDITIONS) / AQE default criteria: n of m met,
+                    one line per condition, exit line, committee stop + target
+        levels    : nearby support levels                        (only when a setup exists)
+
+    The headline is the U&R state when a U&R state fired, else the committee /
+    buy state. Facts and levels, never a recommendation."""
     unr = live.get("unr") or {}
     spot = live.get("price")
     px = f" ${spot:.2f}" if spot is not None else ""
     held = " · HELD" if row.get("class") == "HELD" else ""
     armed = (unr.get("armed") or [None])[0]
+    primary = fired_states[0]
 
-    if any(x.startswith("UNR_") for x in fired_states):
-        t = live.get("vwap_trigger") or {}
-        if "UNR_FAILED" in fired_states:
-            stop = eval_result.get("unr_stop")
-            lines = [f"Price {f'{spot:.2f} ' if spot is not None else ''}fell under the stop"
-                     + (f" ({stop:.2f})" if stop is not None else "")
-                     + " that was set at the entry signal"]
-            lines += _committee_block(row, eval_result, live)
-            return {"headline": f"{ticker}{px} · 🟠 U&R FAILED{held}", "color": "#d9a441",
-                    "summary": None, "lines": lines}
-        lines = []
-        if "UNR_TRIGGER" in fired_states:
-            head, color = "🟢 U&R ENTRY SIGNAL", "#0a8a3a"
-            if t.get("state") == "TRIGGERED":
-                lines.append(f"A 15-min candle closed above VWAP at {t['at']} "
-                             f"(price {t['entry']:.2f})")
-            st = _stop_text(unr, spot, conditional=False)
-        else:
-            head, color = "🟡 U&R SETUP FORMING", "#b8860b"
-            if t.get("state") == "ABOVE":
-                lines.append("Price has held above VWAP since the open, so no entry signal yet")
-            elif t.get("state") == "WAIT" and t.get("vwap") is not None:
-                lines.append(f"Entry signal comes when a 15-min candle closes above VWAP ({t['vwap']:.2f})")
-            else:
-                lines.append("Waiting for the first 15-min candles")
-            st = _stop_text(unr, spot, conditional=True)
+    if "UNR_FAILED" in fired_states:
+        head, color = "🟠 U&R FAILED", "#d9a441"
+    elif "UNR_TRIGGER" in fired_states:
+        head, color = "🟢 U&R ENTRY SIGNAL", "#0a8a3a"
+    elif "UNR_ARMED" in fired_states:
+        head, color = "🟡 U&R SETUP FORMING", "#b8860b"
+    else:
+        head, color = _state_label(primary, row, eval_result, live)
+        head += " · AQE default criteria" if row.get("aqe_default") else ""
+
+    lines = [_unr_status_line(unr, live, fired_states, eval_result)]
+    if armed and "UNR_FAILED" not in fired_states:
+        st = _stop_text(unr, spot, conditional=(live.get("vwap_trigger") or {}).get("state") != "TRIGGERED")
         if st:
             lines.append(st)
-        if armed:
-            lines.append(_setup_text(armed))
+        lines.append(_setup_text(armed))
         vol = _volume_plain(unr)
         if vol:
             lines.append(vol)
-        lines += _committee_block(row, eval_result, live)
-        near = _nearby_levels(unr, spot)
-        if near:
-            lines.append(near)
-        return {"headline": f"{ticker}{px} · {head}{held}", "color": color,
-                "summary": None, "lines": lines}
 
-    # a buy-condition / extension / exit card: the state leads
-    primary = fired_states[0]
-    label, color = _state_label(primary, row, eval_result, live)
-    lines = []
+    # what else fired this card, when it is not the U&R
     if primary == "EXIT_LINE_HELD":
         ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
         lines.append(ex.get("plain") or "held position through its exit line")
@@ -1565,13 +1580,13 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
         from .condition_evaluator import entry_level as _lvl
         cl = _lvl(((row.get("conditions") or {}).get("shared") or {}).get("chase") or {})
         lines.append(f"Price is past the chase line{f' ({cl:.2f})' if cl is not None else ''}")
+
     lines += _committee_block(row, eval_result, live)
-    if armed:
-        lines.append("U&R setup forming: " + _setup_text(armed)[0].lower() + _setup_text(armed)[1:])
-    else:
-        lines.append("U&R: no setup")
-    default = " · AQE default criteria" if row.get("aqe_default") else ""
-    return {"headline": f"{ticker}{px} · {label}{held}{default}", "color": color,
+    if armed and "UNR_FAILED" not in fired_states:
+        near = _nearby_levels(unr, spot)
+        if near:
+            lines.append(near)
+    return {"headline": f"{ticker}{px} · {head}{held}", "color": color,
             "summary": None, "lines": lines}
 
 
@@ -1785,8 +1800,30 @@ def build_held_card(ev: dict) -> dict:
     return {"headline": headline, "color": color, "summary": summary, "lines": lines}
 
 
+def _data_line(meta: dict | None) -> str | None:
+    """Which PMA and AQE this mail is built on (PM 2026-10-12: "provide date of
+    PMA and AQE when you send the mail"). Loud when either is not current."""
+    if not meta:
+        return None
+    parts = []
+    if meta.get("pma_run"):
+        parts.append(f"PMA run {meta['pma_run']} for session {meta.get('pma_session') or '?'}")
+    elif meta.get("pma_missing"):
+        parts.append(f"⚠ PMA: no file for today's session (latest is session {meta['pma_missing']}) "
+                     "— no committee names")
+    if meta.get("aqe_date"):
+        txt = f"AQE export {meta['aqe_date']}"
+        if meta.get("aqe_covers"):
+            txt += f" (the {meta['aqe_covers']} close)"
+        if meta.get("aqe_current") is False:
+            txt += " ⚠ older than the last close — AQE-default names skipped"
+        parts.append(txt)
+    return ("Data: " + " · ".join(parts)) if parts else None
+
+
 def build_condition_digest(cards: list[tuple], now_et,
-                           held_events: list[dict] | None = None) -> tuple[str, str, str]:
+                           held_events: list[dict] | None = None,
+                           meta: dict | None = None) -> tuple[str, str, str]:
     """ONE email per 15-min cycle (PM 2026-10-03: no per-ticker alerts).
     `cards` = [(ticker, row, eval_result, fired_states, live), ...] — every
     name whose state changed this cycle, each rendered as its own card
@@ -1814,15 +1851,20 @@ def build_condition_digest(cards: list[tuple], now_et,
     n = len(cards) + len(held_events)
     subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
     header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
+    data_line = _data_line(meta)
+    if meta and meta.get("pma_run") and meta.get("aqe_date"):
+        subject += f" · PMA {meta['pma_run'][5:]} · AQE {meta['aqe_date'][5:]}"
 
     row_text = [_candidate_row(c) for c in rows]
     rows_head = (f"U&R setups forming ({len(rows)}) — entry signal = a 15-min candle closing above VWAP"
                  if rows else "")
-    plain = (header + "\n\n" + "\n\n".join(_card_plain(c) for c in built)
+    head_block = header + (f"\n{data_line}" if data_line else "")
+    plain = (head_block + "\n\n" + "\n\n".join(_card_plain(c) for c in built)
              + (("\n\n" if built else "") + rows_head + "\n" + "\n".join(f"- {t}" for t in row_text)
                 if rows else "")
              + f"\n\n{_DISCLAIMER}")
-    html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}</div>"
+    html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}"
+            + (f"<br>{data_line}" if data_line else "") + "</div>"
             + "".join(_card_html(c) for c in built)
             + ((f"<div style='border-left:4px solid #b8860b;padding:8px 12px;background:#fafafa;"
                 f"border-radius:6px;color:#1a1a1a;margin-bottom:10px'><b style='font-size:14px'>"
@@ -1850,13 +1892,14 @@ def _candidate_row(c: tuple) -> str:
 
 
 def send_condition_digest(cards: list[tuple], now_et,
-                          held_events: list[dict] | None = None) -> dict:
+                          held_events: list[dict] | None = None,
+                          meta: dict | None = None) -> dict:
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):
         return {"ok": False, "reason": "no email backend configured"}
     if not cards and not held_events:
         return {"ok": False, "reason": "no cards this cycle"}
-    subject, plain, html = build_condition_digest(cards, now_et, held_events)
+    subject, plain, html = build_condition_digest(cards, now_et, held_events, meta)
     if cfg["resend_key"]:
         return _send_resend(cfg, subject, plain, html)
     return _send_smtp(cfg, subject, plain, html)

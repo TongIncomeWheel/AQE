@@ -34,6 +34,15 @@ from src.valen import spec as S
 
 MIN_HISTORY = 80
 
+# One set of plain names for every surface (alert cards, the export column).
+PLAIN_LEVEL = {"EMA9": "9-day average", "EMA21": "21-day average", "Swing low": "recent low",
+               "Trendline": "rising trendline", "Gap": "gap support"}
+PLAIN_REASON = {
+    "no daily history or live price": "no daily price history for this name",
+    "not enough daily history": "not enough daily price history",
+    "EMA21 is not rising": "its 21-day average is not rising",
+}
+
 ARMED, NOT_MET, UNKNOWN = "ARMED", "NOT_MET", "UNKNOWN"
 
 

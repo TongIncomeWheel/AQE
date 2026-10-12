@@ -149,6 +149,17 @@ def pma_tickers(doc: dict) -> set[str]:
            if r.get("class") != "WATCH" and r.get("ticker")}
 
 
+def is_latest_run_row(doc: dict | None, row: dict) -> bool:
+    """True for a row that belongs to the LATEST committee run. The published
+    file also carries older rows forward (`carried`, `origin_run` earlier than
+    the file's `run_date`); PM 2026-10-12: "I only want to see things in the
+    latest AQE/PMA", so those never become cards."""
+    if row.get("carried"):
+        return False
+    origin, run = row.get("origin_run"), (doc or {}).get("run_date")
+    return origin is None or run is None or origin == run
+
+
 def held_broker_stop_tickers(doc: dict) -> set[str]:
     """Tickers carrying a `broker_stop` — the legacy engine's own held-name
     NEAR_STOP is suppressed for these so the PM never gets two stop alerts

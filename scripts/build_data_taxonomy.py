@@ -1379,6 +1379,27 @@ SCORE_TREE = [
       "an earlier bar, else WATCH if any rule FAIL/NOT_YET, else TRIGGERED "
       "(trigger on latest bar) or READY; thresholds valen/spec.py HB_*/IMPL_*",
       used_by="VALEN page Part 3"),
+    R("unr_status", "", "leaf", "label", "MET|SETUP|NO|NA",
+      "U&R on the last completed trading day: MET = a support level undercut by a shallow "
+      "dip and closed back above (reclaim day); SETUP = undercut in the last 3 sessions, "
+      "still under at the close; NO = no such dip; NA = too little history",
+      "valen/setups_daily.py:unr_last_day (via alerts/live_unr.py)",
+      "levels as of the prior session: swing low, rising trendline, 9/21-day average, "
+      "gaps; dip <= 2 daily ranges deep; 21-day average rising",
+      used_by="Scanner column; alert cards run the same rule live"),
+    R("unr_note", "unr_status", "leaf", "str", "",
+      "One plain sentence: which level was undercut and what the last session did",
+      "valen/setups_daily.py:unr_last_day", ""),
+    R("unr_as_of", "unr_status", "leaf", "date", "",
+      "The last completed trading day unr_status was judged on",
+      "valen/setups_daily.py:unr_last_day", ""),
+    R("unr_level", "unr_status", "leaf", "usd", "",
+      "Price of the support level behind unr_status (null for NO / NA)",
+      "valen/setups_daily.py:unr_last_day", ""),
+    R("unr_summary", "", "leaf", "dict", "",
+      "Longlist + Elder names by U&R status on the last completed trading day: "
+      "`met` / `setup` ticker lists, as_of, how many were checked",
+      "valen/setups_daily.py:unr_summary", ""),
     R("setups_status", "", "leaf", "dict", "live|error",
       "Whether the setup grading ran this export — distinguishes 'nothing "
       "checked' from 'nothing present'; lists names that could not be graded",
@@ -1788,6 +1809,10 @@ def classify_export_location(name: str) -> str:
                "dict carries a role/unit/side; not a scalar of its own")
     if name.startswith(QS_BLOCK_PREFIX) or name in QS_BLOCK_ONLY:
         return "qs{} block"
+    if name in ("unr_status", "unr_note", "unr_as_of", "unr_level"):
+        return "daily_list[] + held_positions[] (U&R last-day column)"
+    if name == "unr_summary":
+        return "export top level"
     if name == "setups":
         return "daily_list[] + held_positions[] (VALEN Part 3 grades)"
     if name == "setups_status":

@@ -24,14 +24,55 @@ _ET = ZoneInfo("America/New_York")
 
 
 def rows_with_conditions(pma_doc: dict | None) -> list[dict]:
+    """Rows of the LATEST committee run that carry a `conditions` block
+    (carried-forward rows from older runs are not watched -- PM 2026-10-12)."""
     if not pma_doc:
         return []
-    return [r for r in (pma_doc.get("rows") or []) if r.get("conditions")]
+    from . import pma_levels as PMA
+    return [r for r in (pma_doc.get("rows") or [])
+            if r.get("conditions") and PMA.is_latest_run_row(pma_doc, r)]
+
+
+def _last_weekday_before(d):
+    from datetime import timedelta
+    x = d - timedelta(days=1)
+    while x.weekday() >= 5:
+        x -= timedelta(days=1)
+    return x
+
+
+def data_meta(pma_doc: dict | None, pma_stale_doc: dict | None, export: dict | None,
+              now_et: datetime) -> dict:
+    """Which data this cycle is running on, for the digest header: the PMA run
+    and session, the AQE export date and the close it covers, and whether the
+    export is current (covers at least the last completed session). A stale
+    export means AQE-default names are skipped; a PMA file for another session
+    means no committee rows."""
+    from datetime import date
+    from . import condition_data as CD
+    meta: dict = {"pma_run": None, "pma_session": None, "pma_missing": None,
+                  "aqe_date": None, "aqe_covers": None, "aqe_current": None}
+    if pma_doc:
+        meta["pma_run"], meta["pma_session"] = pma_doc.get("run_date"), pma_doc.get("session")
+    else:
+        meta["pma_missing"] = (pma_stale_doc or {}).get("session") or "none"
+    raw = str((export or {}).get("date") or "")[:10]
+    if raw:
+        meta["aqe_date"] = raw
+        try:
+            d = date.fromisoformat(raw)
+            meta["aqe_covers"] = _last_weekday_before(d).isoformat()
+            meta["aqe_current"] = (meta["aqe_covers"]
+                                   >= CD._prior_session(now_et.date()).isoformat())
+        except ValueError:
+            meta["aqe_current"] = None
+    return meta
 
 
 def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                         run_date: str, export: dict | None = None,
-                        held_events: list[dict] | None = None) -> dict:
+                        held_events: list[dict] | None = None,
+                        meta: dict | None = None) -> dict:
     """Returns a summary dict for the caller's own cycle summary. Mutates
     and persists condition_state.json; appends one ledger line per row
     with `conditions`, every cycle, regardless of whether anything fired.
@@ -43,7 +84,10 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     rows = rows_with_conditions(pma_doc)
     try:
         from . import condition_defaults as DEF
-        defaults = DEF.synthesize_rows(export, pma_doc)
+        # AQE-default names come from the export; a stale export (older than
+        # the last completed close) must not seed them (PM 2026-10-12).
+        defaults = ([] if (meta or {}).get("aqe_current") is False
+                    else DEF.synthesize_rows(export, pma_doc))
     except Exception:  # noqa: BLE001 -- defaults must never take the committee rows down
         defaults = []
     rows = rows + defaults
@@ -54,7 +98,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         # same single mail (PM 2026-10-06).
         if held_events:
             summary["held_events"] = [e.get("ticker") for e in held_events]
-            _maybe_email_digest([], now_et, held_events)
+            _maybe_email_digest([], now_et, held_events, meta)
         return summary
     summary["enabled"] = True
     summary["rows"] = len(rows)
@@ -217,7 +261,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     if held_events:
         summary["held_events"] = [e.get("ticker") for e in held_events]
     if cards or held_events:
-        _maybe_email_digest(cards, now_et, held_events)
+        _maybe_email_digest(cards, now_et, held_events, meta)
 
     return summary
 
@@ -231,7 +275,8 @@ def _num(v) -> float | None:
 
 
 def _maybe_email_digest(cards: list[tuple], now_et: datetime,
-                        held_events: list[dict] | None = None) -> None:
+                        held_events: list[dict] | None = None,
+                        meta: dict | None = None) -> None:
     """§7: "In shadow, nothing in §6 is emailed." The config flag is the
     ONLY gate — everything above (evaluation, state, ledger) runs
     identically in both modes. `cards` = [(ticker, row, eval_result,
@@ -241,6 +286,6 @@ def _maybe_email_digest(cards: list[tuple], now_et: datetime,
         return
     try:
         from .emailer import send_condition_digest
-        send_condition_digest(cards, now_et, held_events)
+        send_condition_digest(cards, now_et, held_events, meta)
     except Exception:  # noqa: BLE001
         pass

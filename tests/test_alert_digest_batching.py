@@ -293,7 +293,7 @@ def test_a_held_near_stop_reaches_the_single_condition_digest(monkeypatch):
     import src.alerts.condition_cycle as CC
     seen = {}
     monkeypatch.setattr(CC, "_maybe_email_digest",
-                        lambda cards, now, held=None: seen.update(cards=cards, held=held))
+                        lambda cards, now, held=None, meta=None: seen.update(cards=cards, held=held))
     summary = E.run_alert_cycle(send_email=True)
     assert summary["emailed"] is False          # the old mail stays off
     assert [t["ticker"] for t in seen["held"]] == ["H"]
