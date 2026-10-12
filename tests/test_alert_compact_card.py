@@ -104,7 +104,8 @@ def test_buy_card_lists_each_committee_condition_the_stop_and_the_one_target():
     assert lines[1] == "AQE default criteria: all met ✓"
     assert lines[2] == "✓ hourly close above 858.87 (price 864.99, 0.7% above)"
     assert lines[3].startswith("✓ volume at least 1× normal")
-    assert "AQE stop 822.64 · target 909.60 (reward 1.4× the risk)" in lines
+    assert ("AQE trade: entry 858.87 · stop 822.64 · risk 4.2% (36.23/share) · "
+            "1R $2,250 = 62 shares · target 909.60 (1.4× the risk)") in lines
 
 
 def test_the_u_and_r_card_stays_readable_with_the_committee_block():

@@ -260,7 +260,8 @@ def test_setup_forming_card_says_what_to_wait_for_in_plain_english():
     assert c["headline"] == "CAT $849.00 · 🟡 U&R SETUP FORMING"
     assert c["lines"][0] == ("U&R: setup forming — entry signal comes when a 15-min candle "
                              "closes above VWAP (865.28)")
-    assert c["lines"][1] == "Stop would be 846.20 (today's low), 0.3% below price"
+    assert c["lines"][1] == ("U&R trade: entry if it triggers ≈ 865.28 · stop 846.20 (today's low) · "
+                             "risk 2.2% (19.08/share) · 1R $2,250 = 117 shares")
     assert c["lines"][2] == ("Dipped below the 21-day average (851.40) yesterday; "
                              "price is still 0.3% under it")
     assert c["lines"][3] == "Volume confirms ✓"
@@ -277,7 +278,8 @@ def test_entry_signal_card_leads_with_what_triggered_the_stop_and_the_risk():
     assert c["headline"] == "CAT $849.00 · 🟢 U&R ENTRY SIGNAL"
     assert c["lines"][0] == ("U&R: ✓ ENTRY SIGNAL — a 15-min candle closed above VWAP at 10:15 "
                              "(price 849.50)")
-    assert c["lines"][1] == "Stop: 846.20 (today's low), 0.3% below price"
+    assert c["lines"][1] == ("U&R trade: entry 849.50 · stop 846.20 (today's low) · "
+                             "risk 0.4% (3.30/share) · 1R $2,250 = 681 shares")
     assert "price is still 0.3% under it" in c["lines"][2]        # the reclaim is info, not a gate
 
 
@@ -363,7 +365,7 @@ def test_setups_forming_collapse_to_plain_one_line_rows_and_entry_signals_lead()
     assert plain.index("DOG $849.00 · 🟢 U&R ENTRY SIGNAL") < plain.index("U&R setups forming (16)")
     assert plain.count("🟡 T") == 16
     assert ("🟡 T0 $849.00 — dipped below the 21-day average (851.40), still under it; "
-            "stop would be 846.20 · AQE default criteria: 1 of 2 met") in plain
+            "entry ≈ 865.28 · stop 846.20 · risk 2.2% · AQE default criteria: 1 of 2 met") in plain
     assert "U&R setups forming (16)" in html
 
 
@@ -383,6 +385,50 @@ def test_digest_subject_counts_the_new_states():
          ("EEL", _row(), _evr(), ["UNR_FAILED"], _live())],
         datetime(2026, 10, 7, 11, 0, tzinfo=_ET))
     assert "U&R SETUP 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
+
+
+# ------------------------------- entry price, stop and risk (1R) on every card
+
+def test_one_r_is_three_percent_of_the_capital_and_shares_follow_from_the_stop():
+    m = E._r_math(638.04, 632.46)
+    assert round(m["risk"], 2) == 5.58 and m["budget"] == 2250.0 and m["shares"] == 403
+    assert E._r_math(100.0, 100.0) is None and E._r_math(100.0, 101.0) is None
+    assert E._r_math(None, 5.0) is None
+
+
+def test_the_capital_and_risk_percent_are_settings_not_constants(monkeypatch):
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "RISK_CAPITAL_USD", 70000.0)
+    m = E._r_math(100.0, 98.0)
+    assert m["budget"] == 2100.0 and m["shares"] == 1050            # the older $70K / $2,100
+
+
+def test_every_card_has_a_trade_line_with_entry_stop_risk_and_1r():
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
+    for states, live in ((["UNR_TRIGGER"], _live(trig)), (["UNR_ARMED"], _live()),
+                         (["CONDITION_MET"], _live(status="NOT_MET")),
+                         (["CONDITION_MET"], _live(status="UNKNOWN"))):
+        for row, ev in ((_row(), _evr()), (_committee_row(), _committee_ev())):
+            text = "\n".join(E.build_condition_card("X", row, ev, states, live)["lines"])
+            assert "trade: " in text and "1R $2,250" in text, (states, text)
+
+
+def test_a_row_without_published_levels_says_so_never_blank():
+    row = _committee_row()
+    row["levels"] = {}
+    c = E.build_condition_card("X", row, _committee_ev(), ["CONDITION_MET"], _live(status="NOT_MET"))
+    assert "Committee trade: no entry / stop levels published" in c["lines"]
+
+
+def test_the_u_and_r_entry_is_the_trigger_candle_close_the_forming_entry_is_vwap():
+    trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
+            "at": "10:15", "entry": 849.5}
+    assert "entry 849.50 ·" in E._unr_trade_line(_live(trig)["unr"], _live(trig))
+    assert "entry if it triggers ≈ 865.28 ·" in E._unr_trade_line(_live()["unr"], _live())
+    live = _live()
+    live["vwap_trigger"] = {"state": "NOT_READY"}
+    assert "entry ≈ price 849.00 ·" in E._unr_trade_line(live["unr"], live)
 
 
 # ------------------------------------------- every card has the same shape
@@ -461,7 +507,8 @@ def test_a_u_and_r_entry_card_carries_the_committee_hold_for_conditions():
     assert "✓ holds above VWAP" in lines
     assert "✗ volume at least 1.4× normal (now 0.6×)" in lines
     assert "Exit line: closes below 598.00" in lines
-    assert "Committee stop 600.00 · target 700.00 (reward 0.7× the risk)" in lines
+    assert ("Committee trade: entry 660.00 · stop 600.00 · risk 9.1% (60.00/share) · "
+            "1R $2,250 = 37 shares · target 700.00 (0.7× the risk)") in lines
     # the U&R status is always line one
     assert lines[0].startswith("U&R: ✓ ENTRY SIGNAL — a 15-min candle closed above VWAP at 10:15")
 

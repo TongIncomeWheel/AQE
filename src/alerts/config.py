@@ -114,6 +114,14 @@ PMA_CONDITIONS_LIVE = PMA_CONDITIONS_MODE == "live"
 # ledgered for the committee; only the email is off. Flip to true to restore.
 LEGACY_DIGEST_EMAIL = _b("LEGACY_DIGEST_EMAIL", False)
 
+# The risk arithmetic shown on every card (PM 2026-10-12: "missing entry price
+# and risk (1R of 75k risk)"). 1R = this fixed share of this capital; the card
+# divides it by the per-share risk (entry - stop) to show how many shares that
+# is. Arithmetic on the PM's own fixed 3% rule, never a recommendation.
+# CLAUDE.md's older "$70K / $2,100" figure predates the PM's 75k.
+RISK_CAPITAL_USD = _f("AQE_RISK_CAPITAL_USD", 75000.0)
+RISK_PCT = _f("AQE_RISK_PCT", 3.0)
+
 # Card layout (PM 2026-10-07: "too much info ... what we need to know is if U&R
 # took place (met or not met), everything else is numbers for reference").
 # "compact" = U&R verdict first, one buy-conditions line, one bracket line, then

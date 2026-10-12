@@ -1469,9 +1469,7 @@ def _committee_block(row: dict, eval_result: dict, live: dict) -> list[str]:
     for ex in ((row.get("conditions") or {}).get("exits") or [])[:1]:
         if ex.get("plain"):
             out.append(f"Exit line: {ex['plain']}")
-    bs = _bracket_short(row)
-    if bs:
-        out.append(("AQE " if row.get("aqe_default") else "Committee ") + bs[0].lower() + bs[1:])
+    out.append(_committee_trade_line(row))
     return out
 
 
@@ -1482,6 +1480,62 @@ def _committee_tag(row: dict, eval_result: dict) -> str:
         return ""
     n_true = sum(1 for _e, r in words if r == "TRUE")
     return f" · {_who(row)}: {n_true} of {len(words)} met"
+
+
+def _r_math(entry: float | None, stop: float | None) -> dict | None:
+    """Per-share risk and what 1R buys. 1R = RISK_PCT of RISK_CAPITAL_USD
+    (3% of 75k = $2,250); shares = 1R / (entry - stop), rounded down."""
+    if entry is None or stop is None or entry <= stop:
+        return None
+    from . import config as C
+    risk = entry - stop
+    budget = C.RISK_CAPITAL_USD * C.RISK_PCT / 100.0
+    return {"risk": risk, "pct": risk / entry * 100.0, "budget": budget,
+            "shares": int(budget // risk)}
+
+
+def _r_text(m: dict) -> str:
+    return (f"risk {m['pct']:.1f}% ({m['risk']:.2f}/share) · "
+            f"1R ${m['budget']:,.0f} = {m['shares']:,} shares")
+
+
+def _unr_trade_line(unr: dict, live: dict) -> str | None:
+    """Entry, stop, risk and 1R for the U&R trade. Entry = the trigger candle's
+    close once it has fired; before that, VWAP (the level it has to close
+    above), else the current price."""
+    stop = (unr or {}).get("stop")
+    t, spot = live.get("vwap_trigger") or {}, live.get("price")
+    if t.get("state") == "TRIGGERED":
+        entry, label = t.get("entry"), "entry"
+    elif t.get("state") in ("WAIT",) and t.get("vwap") is not None:
+        entry, label = t["vwap"], "entry if it triggers ≈"
+    else:
+        entry, label = spot, "entry ≈ price"
+    m = _r_math(entry, stop)
+    if m is None:
+        return None
+    return f"U&R trade: {label} {entry:.2f} · stop {stop:.2f} (today's low) · {_r_text(m)}"
+
+
+def _committee_trade_line(row: dict) -> str:
+    """The committee's (or AQE-default) entry, stop and target with the same
+    risk arithmetic. Always a line: when the levels are not published it says
+    so, never blank."""
+    who = "AQE trade" if row.get("aqe_default") else "Committee trade"
+    entry = _effective_entry(row)
+    levels = row.get("levels") or {}
+    stop = _n_or(levels.get("stop"), None)
+    tps = [_n_or(t, None) for t in (levels.get("tp") or [])]
+    m = _r_math(entry, stop)
+    if m is None:
+        return f"{who}: no entry / stop levels published"
+    idx = 2 if len(tps) >= 2 and tps[1] is not None else next(
+        (i for i in range(len(tps), 0, -1) if tps[i - 1] is not None), None)
+    tgt = ""
+    if idx is not None:
+        t = tps[idx - 1]
+        tgt = f" · target {t:.2f} ({(t - entry) / m['risk']:.1f}× the risk)"
+    return f"{who}: entry {entry:.2f} · stop {stop:.2f} · {_r_text(m)}{tgt}"
 
 
 def _bracket_short(row: dict) -> str | None:
@@ -1564,9 +1618,9 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
 
     lines = [_unr_status_line(unr, live, fired_states, eval_result)]
     if armed and "UNR_FAILED" not in fired_states:
-        st = _stop_text(unr, spot, conditional=(live.get("vwap_trigger") or {}).get("state") != "TRIGGERED")
-        if st:
-            lines.append(st)
+        tl = _unr_trade_line(unr, live)
+        if tl:
+            lines.append(tl)
         lines.append(_setup_text(armed))
         vol = _volume_plain(unr)
         if vol:
@@ -1887,7 +1941,11 @@ def _candidate_row(c: tuple) -> str:
         what = f"dipped below the {_plain_level(a0['name'])} ({a0['level']:.2f}), {state}"
     else:
         what = "dipped below a support level"
-    stop = f"; stop would be {unr['stop']:.2f}" if unr.get("stop") is not None else ""
+    t = live.get("vwap_trigger") or {}
+    entry = t.get("vwap") if t.get("state") == "WAIT" and t.get("vwap") is not None else spot
+    m = _r_math(entry, unr.get("stop"))
+    stop = (f"; entry ≈ {entry:.2f} · stop {unr['stop']:.2f} · risk {m['pct']:.1f}%"
+            if m else (f"; stop would be {unr['stop']:.2f}" if unr.get("stop") is not None else ""))
     return f"🟡 {ticker}{px} — {what}{stop}{_committee_tag(c[1], c[2])}"
 
 
