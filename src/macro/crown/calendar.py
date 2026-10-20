@@ -176,7 +176,7 @@ def fetch_macro_events(client=None, today: date | None = None,
         from src.data.fmp_client import FMP_BASE_STABLE, FMPClient
         c = client or FMPClient()
         payload = c._get_json(
-            f"{FMP_BASE_STABLE}/economics-calendar",
+            f"{FMP_BASE_STABLE}/economic-calendar",
             params={"from": today.isoformat(),
                     "to": (today + timedelta(days=days)).isoformat(),
                     "apikey": c.config.api_key})

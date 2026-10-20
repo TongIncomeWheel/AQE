@@ -48,19 +48,43 @@ def ensure_ma_panel(ma_panel_path) -> pd.DataFrame | None:
     `load_snapshot()`; if the freshest snapshot happens to live in the
     GitHub release instead, that call would miss it too — worth fixing
     there as well if this turns out to be the actual gap."""
-    if ma_panel_path.exists():
+    # Newest of: local file, GitHub release, Drive. A stale copy in one store
+    # must never shadow a fresher one in another (2026-10-20: the release copy
+    # froze breadth while the HF scan kept refreshing Drive).
+    def _read():
         try:
-            return pd.read_parquet(ma_panel_path)
+            return pd.read_parquet(ma_panel_path) if ma_panel_path.exists() else None
         except Exception:  # noqa: BLE001
-            pass
+            return None
+
+    def _last(df):
+        try:
+            return pd.to_datetime(df["date"]).max()
+        except Exception:  # noqa: BLE001
+            return pd.Timestamp.min
+
+    best = _read()
     try:
         from src.data import persist
-        res = persist.load_snapshot_best(only=["ma_panel.parquet"])
-        if res.get("ok") and ma_panel_path.exists():
-            return pd.read_parquet(ma_panel_path)
+        for loader in (persist.load_snapshot_github, persist.load_snapshot):
+            try:
+                if loader(only=["ma_panel.parquet"]).get("ok"):
+                    p = _read()
+                    if p is not None and (best is None or _last(p) > _last(best)):
+                        best = p
+            except Exception:  # noqa: BLE001
+                continue
     except Exception:  # noqa: BLE001
         pass
-    return None
+    # The loaders overwrite the local file, so leave the NEWEST on disk: CI's
+    # persist step re-uploads whatever sits here and must never re-publish a
+    # stale copy over a fresher one.
+    try:
+        if best is not None and (_read() is None or _last(_read()) < _last(best)):
+            best.to_parquet(ma_panel_path)
+    except Exception:  # noqa: BLE001
+        pass
+    return best
 
 
 def _unavailable(reason: str) -> dict:
@@ -176,7 +200,14 @@ def net_high_low(panel: pd.DataFrame, high_window: int) -> dict:
             "window_used": window}
 
 
-def compute_breadth(panel: pd.DataFrame | None) -> dict:
+def _expected_last_session() -> str:
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    d = datetime.now(ZoneInfo("America/New_York")).date()
+    return str(np.busday_offset(np.datetime64(d), 0, roll="backward"))
+
+
+def compute_breadth(panel: pd.DataFrame | None, expected_last_session: str | None = None) -> dict:
     """Returns the shape stance.py requires for its four keys, plus two
     extra instruments (ten_day_count, quarterly_movers, net_high_low) for
     display only — stance.py's flip rules only read the four named ones."""
@@ -202,7 +233,7 @@ def compute_breadth(panel: pd.DataFrame | None) -> dict:
         if daily.get("status") == "OK" else daily
     )
 
-    return {
+    out = {
         "pct_above_40d": pct40,
         "monthly_risers": month,
         "five_day_count": five_day,
@@ -211,6 +242,21 @@ def compute_breadth(panel: pd.DataFrame | None) -> dict:
         "quarterly_movers": quarter,
         "net_high_low": nhnl,
     }
+    # Staleness guard: the panel's last date must be within one session of the
+    # last completed US session, else every row reads STALE.
+    try:
+        as_of = str(pd.to_datetime(panel["date"]).max().date())
+        out["as_of"] = as_of
+        expected = expected_last_session or _expected_last_session()
+        out["stale"] = bool(np.busday_count(as_of, expected) > 1)
+        if out["stale"]:
+            for v in list(out.values()):
+                if isinstance(v, dict):
+                    v["status"] = "STALE"
+                    v["reason"] = f"panel last date {as_of} is older than {expected}"
+    except Exception:  # noqa: BLE001
+        pass
+    return out
 
 
 def compute_breadth_as_of(panel: pd.DataFrame | None, sessions_ago: int) -> dict:
@@ -219,4 +265,9 @@ def compute_breadth_as_of(panel: pd.DataFrame | None, sessions_ago: int) -> dict
     degrades exactly like compute_breadth(None): the honest UNAVAILABLE
     shape, never a fabricated reading."""
     from . import history as H
-    return compute_breadth(H.truncate_panel(panel, sessions_ago))
+    cut = H.truncate_panel(panel, sessions_ago)
+    # A historical view is judged against its own last date, never "today".
+    own = None
+    if cut is not None and not cut.empty:
+        own = str(pd.to_datetime(cut["date"]).max().date())
+    return compute_breadth(cut, expected_last_session=own)

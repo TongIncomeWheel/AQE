@@ -256,6 +256,21 @@ def vix_bars(client: FMPClient | None = None, *, refresh: bool = True) -> dict:
             out["vix"], out["source"] = df, "fmp_fallback"
         else:
             out["unavailable"].append(S.VIX_SYMBOL)
+    else:
+        # Cboe's CSV lags a session at the morning run; append any FMP ^VIX
+        # bars newer than Cboe's last date so the VIX leg is T-1, not T-2.
+        try:
+            fm = fetch_bars(S.VIX_SYMBOL, client=_client(client))
+            if len(fm):
+                fm = fm.reset_index() if "date" not in fm.columns else fm.copy()
+                fm["date"] = pd.to_datetime(fm["date"])
+                cb = out["vix"]
+                last = pd.to_datetime(cb["date"]).max()
+                newer = fm[fm["date"] > last][["date", "close"]]
+                if len(newer):
+                    out["vix"] = pd.concat([cb, newer], ignore_index=True)
+        except Exception:  # noqa: BLE001
+            pass
     return out
 
 

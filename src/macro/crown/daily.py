@@ -252,7 +252,10 @@ def run_crown(*, client=None, refresh_cot: bool = True,
         out["calendar"] = {"events": [], "count": 0,
                            "unavailable": [f"calendar failed: {exc}"]}
     for note in (out["calendar"].get("unavailable") or []):
-        degraded.append(note)
+        # A quiet calendar ("no US high-impact prints", "no held or listed
+        # name reports") is an answer, not a failure.
+        if any(k in note for k in ("unavailable", "failed", "plan-gated")):
+            degraded.append(note)
     out["degraded"] = degraded
 
     # The plain-English read is regenerated now that the new blocks exist, so

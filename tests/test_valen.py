@@ -526,7 +526,7 @@ def test_compute_breadth_feeds_stance_to_a_real_verdict():
         for d, v in zip(dates, series):
             rows.append({"date": d, "ticker": f"T{i}", "close": v})
     panel = pd.DataFrame(rows)
-    br = breadth.compute_breadth(panel)
+    br = breadth.compute_breadth(panel, expected_last_session=str(panel['date'].max())[:10])
     for key in ("pct_above_40d", "monthly_risers", "five_day_count", "daily_count_green"):
         assert br[key]["status"] == "OK", (key, br[key])
     out = stance.compute_stance({}, {}, br)
@@ -1082,7 +1082,7 @@ def test_compute_breadth_as_of_matches_a_manual_truncation():
         for tk in ("AAA", "BBB", "CCC"):
             rows.append({"ticker": tk, "date": d, "close": 100.0})
     panel = pd.DataFrame(rows)
-    manual = breadth.compute_breadth(panel[panel["date"] <= dates[-6]])
+    manual = breadth.compute_breadth(panel[panel["date"] <= dates[-6]], expected_last_session=str(dates[-6])[:10])
     as_of = breadth.compute_breadth_as_of(panel, 5)
     assert as_of["pct_above_40d"] == manual["pct_above_40d"]
 
