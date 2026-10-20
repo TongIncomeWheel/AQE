@@ -52,6 +52,7 @@ def run_crown(*, client=None, refresh_cot: bool = True,
               with_gamma: bool = True, write: bool = True) -> dict:
     """Run the hierarchy end to end and return the full Crown read."""
     degraded: list[str] = []
+    info: list[str] = []
     # Read the previous run BEFORE this one overwrites it — "what changed" is
     # the question a regime report should answer, and it needs both sides.
     previous = load_crown()
@@ -92,7 +93,9 @@ def run_crown(*, client=None, refresh_cot: bool = True,
             "prices are the fund's, so do not quote a flip level from them.")
     via_yahoo = sorted(k for k, v in fut_sources.items() if v["via"] == "yahoo_futures")
     if via_yahoo:
-        degraded.append(
+        # PM 2026-10-20: Yahoo is the working feed (FMP Starter denies these
+        # futures, no upgrade planned) -- a note, not a degraded read.
+        info.append(
             f"These markets came from Yahoo rather than our data provider "
             f"({', '.join(via_yahoo)}). They are the real futures contracts, so "
             "the flip levels are quotable, but Yahoo is a free feed with no "
@@ -239,6 +242,7 @@ def run_crown(*, client=None, refresh_cot: bool = True,
                     {"vol": vol_read, "divergence": div_read,
                      "freshness": freshness}, decision,
                     degraded, write=False)
+    out["info"] = info
 
     # ── 8. the three reading sections ────────────────────────────────────
     # Levels first, because `changes` and the calendar both read better once a
