@@ -90,6 +90,17 @@ def load_pma_levels(path: str | None = None) -> tuple[dict | None, str | None]:
     except Exception:  # noqa: BLE001
         pass
 
+    # Split publish (PM 2026-10-20): the committee session can only write to
+    # this repo through the GitHub connector, which cannot carry one ~130KB
+    # file reliably. It writes the same document as small parts plus a
+    # manifest with a sha256 per part. Used only when the single file is not
+    # today's; any missing/corrupt part rejects the whole set (never a
+    # partial book), and the caller falls through to the single file.
+    if path is None:
+        doc, _why = _load_parts(today)
+        if doc is not None:
+            return doc, None
+
     try:
         from src.data import github_sync
         if not github_sync.is_configured():
@@ -100,6 +111,62 @@ def load_pma_levels(path: str | None = None) -> tuple[dict | None, str | None]:
         return json.loads(result["text"]), None
     except Exception as exc:  # noqa: BLE001
         return None, f"{type(exc).__name__}: {exc}"
+
+
+PARTS_DIR = "aegis/output/pma/levels_parts"
+
+
+def _read_repo_text(rel: str) -> str | None:
+    """Local checkout first, GitHub contents API second. None on any miss."""
+    p = PROJECT_ROOT / rel
+    try:
+        if p.exists():
+            return p.read_text(encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from src.data import github_sync
+        if not github_sync.is_configured():
+            return None
+        r = github_sync.get_file(rel)
+        return r["text"] if r.get("ok") else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _load_parts(today: str) -> tuple[dict | None, str | None]:
+    """Reassemble a split levels file. All-or-nothing: the manifest must be
+    for today's session, every part must match its sha256, and the row count
+    must equal the manifest's. Returns (doc, None) or (None, reason)."""
+    import hashlib
+    txt = _read_repo_text(f"{PARTS_DIR}/manifest.json")
+    if txt is None:
+        return None, "no levels_parts manifest"
+    try:
+        man = json.loads(txt)
+    except Exception as exc:  # noqa: BLE001
+        return None, f"manifest unreadable: {exc}"
+    if man.get("session") != today:
+        return None, f"levels_parts manifest is for {man.get('session')}, not {today}"
+    rows: list = []
+    for part in man.get("parts") or []:
+        ptxt = _read_repo_text(f"{PARTS_DIR}/{part['file']}")
+        if ptxt is None:
+            return None, f"missing part {part['file']}"
+        if hashlib.sha256(ptxt.encode("utf-8")).hexdigest() != part.get("sha256"):
+            return None, f"part {part['file']} failed its sha256 check"
+        try:
+            pdoc = json.loads(ptxt)
+        except Exception as exc:  # noqa: BLE001
+            return None, f"part {part['file']} unreadable: {exc}"
+        if pdoc.get("session") != today:
+            return None, f"part {part['file']} is for another session"
+        rows.extend(pdoc.get("rows") or [])
+    if len(rows) != man.get("row_count"):
+        return None, f"row count {len(rows)} != manifest {man.get('row_count')}"
+    doc = dict(man.get("header") or {})
+    doc["rows"] = rows
+    return doc, None
 
 
 def is_fresh(doc: dict, now_et: datetime) -> bool:
