@@ -72,7 +72,9 @@ _The archive ledger books P&L off the journal's average cost (buy commission inc
 
 ## Flags
 
+- HNGE 2026-09-09: sell of 145 with no entry on record
+- GLD 2026-09-28: sell of 108 with no entry on record
+- WEAT 2026-10-16: sell of 545 with no entry on record
 - HNGE 2026-08-31: archive -406.37 vs fills net -627.91 (diff -221.54)
 - WEAT 2026-10-16: archive -1347.89 vs fills net +0.00 (diff +1347.89)
 - cross-check: trade journal Aegis net -7016.13 vs archive -9088.48 (diff +2072.35)
-- GLD 2026-09-28: sell of 108 with no entry on record
