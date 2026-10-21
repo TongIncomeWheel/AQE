@@ -1,0 +1,61 @@
+{
+ "voice": "seow",
+ "date": "2026-10-21",
+ "nominations": [
+  {
+   "ticker": "OKTA",
+   "reason": "Dip inside an up-move: ma_20=210.0 above ma_40=191.28, cci_20=-130.66 below -100, close (entry=194.02) under the 20MA but above the 40MA. Odds gate partial: rs_spy_20d=-0.76 lags SPY. 20MA slope unverified. Wrong on a close below ma_40=191.28.",
+   "conviction": 2,
+   "fields_cited": ["ma_20", "ma_40", "cci_20", "entry", "rs_spy_20d", "rs_rank_pct", "ret_63d", "pct_run_10d", "pct_from_52w_high", "sector_trend_state", "mp_state"],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": ["C1", "C2", "C6"],
+     "observed": "ma_20=210.0 > ma_40=191.28; no 20MA slope field (ma_50=181.6, ma_100=157.88 sit below). rs_spy_20d=-0.76, rs_rank_pct=99.76, ret_63d=41.94; index 63d return not served",
+     "verdict": "partial",
+     "fields": ["ma_20", "ma_40", "ma_50", "ma_100", "rs_spy_20d", "rs_rank_pct", "ret_63d"]
+    },
+    {
+     "step": 2,
+     "canon_ref": ["C4"],
+     "observed": "pct_run_10d=-11.27, pct_from_52w_high=-16.42, extension_atr_20=-1.46; close 194.02 holds above ma_40 191.28. Days since swing high and bar ranges not served; ret_6m=149.9 is a steep prior run",
+     "verdict": "partial",
+     "fields": ["pct_run_10d", "pct_from_52w_high", "extension_atr_20", "entry", "ma_40", "ret_6m"]
+    },
+    {
+     "step": 3,
+     "canon_ref": ["C3", "C7"],
+     "observed": "cci_20=-130.66 < -100; close 194.02 < ma_20 210.0 so low touched/pierced 20MA; close > ma_40 191.28; 20MA>40MA. Fifth leg (20MA slope) not served: 4 verified, 1 unverifiable",
+     "verdict": "partial",
+     "fields": ["cci_20", "entry", "ma_20", "ma_40"]
+    },
+    {
+     "step": 4,
+     "canon_ref": ["C5", "C8", "C15"],
+     "observed": "Prior-day high/low not served, so buy-stop trigger and chart stop cannot be set; own invalidation = close below ma_40 191.28. bracket.stop=181.6 noted as context only",
+     "verdict": "no_data",
+     "fields": ["ma_40", "bracket.stop"]
+    },
+    {
+     "step": 5,
+     "canon_ref": ["C17", "C18", "C20"],
+     "observed": "Filled: stock, long, entry 194.02, invalidation 191.28, 2-5d frame, set-up C3, trigger C5, source AQE 2026-10-21. No target/R:R/hit rate. sector_trend_state=Declining, mp_state=FADING",
+     "verdict": "partial",
+     "fields": ["entry", "ma_40", "sector_trend_state", "mp_state"]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "C14/C20 loss-side first: live_px=39.05 vs cost 53.0 (unreal_usd=-4185.0), below ma_20=44.94 and ma_50=50.62, sma_distance_pct=-22.86, rs_spy_20d=-22.93, hl_state=EXIT, mp=0.0; close is below support and no broker stop protects it."
+  }
+ ],
+ "lesson_applied": "No ledger memory block was injected this run; no standing lesson applies.",
+ "declared": {
+  "not_served": ["sma20_slope_5d (20MA slope)", "prior_bar_high / prior_bar_low", "days_since_swing_high / pullback_bar_range", "index_pct_change_63d / industry_group_pct_change_63d", "set-up hit rate (C18)", "weekly structure (C21)", "ma_40 and cci_20 for MP"]
+ },
+ "shortfall_reason": "Only one name in 328 rows has cci_20 below -100 (OKTA -130.66); the full C3 five-condition set-up cannot fire anywhere else, and taking every signal the criteria generate (C19) means taking that one and padding none."
+}

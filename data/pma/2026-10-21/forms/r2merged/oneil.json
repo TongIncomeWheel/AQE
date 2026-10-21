@@ -1,0 +1,700 @@
+{
+ "voice": "oneil",
+ "date": "2026-10-21",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "CNC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L pass rs_leadership=LEADER, XLV Momentum Building; base structure=86.3 BULLISH_BOS, pct_from_pivot=1.69 in buy zone. C16 FAIL today: day_vol=0.8 under 1.40, a break nobody bought. Buy only the volume day.",
+   "falsifier": "A volume day at or over 1.40 that closes back under pivot_high; or close below ma_50=65.54.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "L pass: LEADER, rank=13 tops XLV, lens.leadership=strong, lens.sector=strong. Base structure=83.2 ABOVE_STRUCTURE, pct_from_pivot=3.31 inside 5%. day_vol=1.0 short of 1.40 (C16): act only on volume. lens.coil=warn weighs.",
+   "falsifier": "Close back under pivot_high on heavy volume, or new high on day_vol under 1.0 (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L pass: LEADER, rank=27, lens.leadership=strong, sector strong. structure=82.1. day_vol=1.29 just short of 1.40. LATE BUY: pct_from_pivot=5.65 (C17 warning band, no adds per C21). Weight, not veto (R14).",
+   "falsifier": "Close under pivot_high, or a new high on shrinking volume (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+10pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "CME",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Was conv 3. BOS on day_vol=1.6 clears 1.40, pct_from_pivot=1.87, LEADER rank=16. But ma_50=275.0 under ma_200=278.92: base is a repair, not a prior uptrend (C12), and sector Fading tests Lone Ranger (C25).",
+   "falsifier": "Close back under pivot_high=289.9 after the break, or ma_50 failing to cross ma_200.",
+   "conviction_change": "Lowered 3->2: Steenbarger's context point stands; ma_50=275.0<ma_200=278.92 means no clean prior uptrend under this base.",
+   "challenge_reply": "Higher-timeframe trend: none clean. ma_50=275.0, ma_100=262.66, ma_200=278.92 is REPAIRING; this BOS continues a repair, so C12 prior-uptrend is partial and I cut conviction. Rogers' retest point accepted: buy zone ends at pivot+5%.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L: LEADER, rank=25, #3 lodging behind PEB/DRH so inside C9 top-3. structure=83.2, pct_from_pivot=4.15 near the 5% edge. day_vol=1.28 short of 1.40. Lens mostly '--', so base read is structure only.",
+   "falsifier": "Close under pivot_high, or PEB/DRH failing (group leader breaks).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2 FAIL: rs_leadership=IN-LINE, rs_down_day_20d=-0.24, not a leader. R9 Lone Ranger: sector_trend_state Declining \u2014 Avoid, lens.sector=warn. BOS on day_vol=1.42 passes C16 but nothing rescues a failed L.",
+   "opposing_case": "BULLISH_BOS through pivot on day_vol=1.42, structure=82.1, lens leadership/coil/structure/resistance strong.",
+   "falsifier": "rs_leadership turning LEADER with the sector off Declining."
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L pass: LEADER, rs_down_day_20d=0.89, lens.leadership=strong. structure=76.8, pct_from_pivot=3.06 in zone. day_vol=1.34 just short of 1.40. Sector Financials Fading weighs (C25). lens.coil=warn.",
+   "falsifier": "Close under pivot_high on volume, or sector peers failing.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "PEB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "L pass: rank=6, #1 lodging and #1 XLRE leader (C9 first man gets the oyster). LEADER, structure=82.1, sector Building. day_vol=1.36 short of 1.40. sma_distance_pct=11.88 extended: weight (R14), pivot distance UNSERVED.",
+   "falsifier": "Close under ma_20 on heavy volume, or new high on day_vol under 1.0.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+10pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L: LEADER, rank=15 #2 in XLP, lens.leadership=strong. structure=80.0, pct_from_pivot=3.78 in zone. day_vol=1.38 a hair short of 1.40. Sector Fading and lens.coil=warn weigh.",
+   "falsifier": "Close under pivot_high, or new high on lower volume (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "DRH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C25 sell test on entry: new-high run on day_vol=0.76 is a high on lower volume, buying has stopped; div_state=BEARISH. #2 lodging by rank=19 so L passes, but distribution shows before price. Weight, not extension.",
+   "opposing_case": "LEADER, rank=19, structure=84.2, mp 90 STRONG/ACCELERATING, lodging group confirming.",
+   "falsifier": "A new high on day_vol at or above 1.40 clears the C25 read."
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L pass: LEADER, rank=22, rs_down_day_20d=0.73. structure=80.0. day_vol=1.37 just short of 1.40. LATE: pct_from_pivot=5.11 (C17 warning, no adds). Sector Recovering, lens.coil=warn.",
+   "falsifier": "Close under pivot_high, or new high on shrinking volume.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+10pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C9: rank=28 is the #4 lodging name behind PEB/DRH/PK, the sympathy competitor I am told not to buy. day_vol=1.4 passes C16 and LEADER, but ma_50=16.12 under ma_100=16.24 weakens base.",
+   "opposing_case": "LEADER, day_vol=1.4 meets volume, structure=76.8, sector Building.",
+   "falsifier": "APLE out-ranking the lodging leaders while they hold."
+  },
+  {
+   "ticker": "SHO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C9: rank=34 is the #5 lodging name, sympathy not leadership. day_vol=1.6 passes C16 and LEADER, but ma_50=11.21 under ma_100=11.36, lens.coil=warn. Buy the first man, not the fifth.",
+   "opposing_case": "Best lodging volume day_vol=1.6, LEADER, mp 90, sector Building.",
+   "falsifier": "SHO rank rising into the group top three."
+  },
+  {
+   "ticker": "AEP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "No base, no prior uptrend: ma_50=122.73 < ma_100=126.97 < ma_200=127.57 inverted (C12). BOS on day_vol=0.69, a C16 hard reject. Utilities Fading. A break inside a downtrend is repair, not leadership.",
+   "opposing_case": "LEADER rs_down_day_20d=0.76, BULLISH_BOS, lens 4 strong incl leadership and structure, mp 86 STRONG.",
+   "falsifier": "ma_50 back over ma_200 and a breakout on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "L pass: LEADER, rank=18, structure=83.2, pct_from_pivot=3.19 in zone. C16 not met: day_vol=0.95, no expansion yet. Sector Financials Fading, lens.coil=warn. Buy only on volume.",
+   "falsifier": "Close under pivot_high, or a further high on day_vol under 1.0 (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "MET",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C25: at the high on day_vol=0.66, a high on lower volume. rank=69 is not a group leader in Financials; lens mostly '--' so no base read beyond structure=78.9. Not a buy under my method.",
+   "opposing_case": "LEADER, structure=78.9 ABOVE_STRUCTURE, sector strong, mp BUILDING/ACCELERATING.",
+   "falsifier": "A breakout day on day_vol of 1.40 or more with rank improving."
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C9: rank=76 is #5 in XLV behind CAH/HNGE/LLY/CNC, the competitor moving in sympathy. day_vol=1.06 under 1.40. lens.coil=warn. Leadership belongs to the group's top names.",
+   "opposing_case": "LEADER, structure=77.9, sector Building, mp 86 STRONG, lens.leadership=strong.",
+   "falsifier": "ABBV rank moving into the XLV top three on volume."
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R3: structure_shift=RANGE, no completed base and no pivot. R9 Lone Ranger: Technology Declining \u2014 Avoid, lens.sector=warn. div_state=BEARISH, div_bear_count=2. day_vol=0.89.",
+   "opposing_case": "LEADER, mp 93 STRONG, aligned ma_50=13.69 over ma_200=11.76.",
+   "falsifier": "A BOS on day_vol of 1.40 or more with the sector off Declining."
+  },
+  {
+   "ticker": "ROKU",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "R3: structure=57.9 RANGE, consolidation not complete, so no pivot yet. LEADER, lens.coil=strong is a forming base; day_vol=0.95. Watch, not buy.",
+   "falsifier": "Would SUPPORT on a BOS through pivot_high on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "O",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "R3 FAIL: structure=36.8 BEARISH_CHOCH, entry=56.34 under ma_200=61.7, ma_50=58.44 under ma_200. No base, no leadership; a sold-off name. I do not buy reclaims.",
+   "opposing_case": "lens.coil=strong, lens.insti_money=strong, LEADER tag, mp BUILDING/ACCELERATING.",
+   "falsifier": "A BOS with entry back over ma_200 on volume."
+  },
+  {
+   "ticker": "CCI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend base: entry=81.14 still under ma_200=82.31, ma_50=74.08 < ma_200 inverted. rs_leadership=IN-LINE fails R2. A rally into the long average is repair.",
+   "opposing_case": "rank=4, structure=78.9, mp 97 STRONG, Real Estate Building.",
+   "falsifier": "Close over ma_200 then a base and breakout on volume."
+  },
+  {
+   "ticker": "TDC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: rs_leadership=IN-LINE. R9: Technology Declining \u2014 Avoid, lens.sector=warn. ma_50=28.91 under ma_200=29.78. day_vol=0.84. Lone Ranger in a broken group.",
+   "opposing_case": "rank=17, structure=84.2, mp 76 STRONG.",
+   "falsifier": "LEADER tag with sector off Declining and a volume breakout."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "R2: rs_leadership=IN-LINE, rs_down_day_20d=0.05. Near climax: entry=107.51 vs ma_200=64.44, sma_distance_pct=14.27 (C24 watch). day_vol=1.99 is real demand, but L fails.",
+   "opposing_case": "day_vol=1.99 at a new high, lens.leadership=strong, structure=73.7, XLV Building.",
+   "falsifier": "rs_leadership turning LEADER while day_vol holds over 1.40."
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Textbook in room: LEADER rs_down_day_20d=1.43, structure=76.8, pct_from_pivot=2.76 in buy zone, day_vol=1.46 clears 1.40 (C16), lens.leadership=strong, resistance=strong. Eight-week rule watch if it vaults.",
+   "falsifier": "Close back under pivot_high on volume, or new high on day_vol under 1.0.",
+   "self_counter": "Sector Consumer Discretionary Fading: Lone Ranger risk (C25). lens.insti_money=warn. C/A/S/I untested; rank=63 not the room's top.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "KMI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No base: ma_50=31.77, ma_100=31.84, ma_200=31.81 flat, no prior uptrend (C12). day_vol=0.96, no breakout. LEADER tag alone is not CAN SLIM.",
+   "opposing_case": "LEADER rs_down_day_20d=0.91, ABOVE_STRUCTURE, sector strong.",
+   "falsifier": "A breakout over pivot_high on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Base forming: LEADER, structure=82.1 RANGE, lens.coil=strong, ma_50=159.86 over ma_200=134.85. Not yet broken out; day_vol=0.83. Buy only the pivot breakout on volume (C16).",
+   "falsifier": "Breakout over pivot_high on day_vol under 1.0, or close under ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "LNT",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "R3 FAIL: structure=54.7 BEARISH_CHOCH, ma_50=66.96 under ma_200=70.37. No base, no leader in group. Utilities Fading.",
+   "opposing_case": "LEADER tag, sector strong, elder_pattern CORRECTION_REENTRY.",
+   "falsifier": "BOS back over ma_200 on volume."
+  },
+  {
+   "ticker": "CMS",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "R3 FAIL: structure=54.7 BEARISH_CHOCH, ma_50=66.97 < ma_100=70.38 < ma_200=72.6. Lens 4 warns. Nothing CAN SLIM here.",
+   "opposing_case": "LEADER tag, sector strong, mp BUILDING.",
+   "falsifier": "BOS over ma_200 on volume."
+  },
+  {
+   "ticker": "CRM",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R9: Technology Declining \u2014 Avoid, lens.sector=warn. lens.resistance=warn is overhead supply. structure_shift=RANGE, no completed base. day_vol=0.92.",
+   "opposing_case": "LEADER, lens.coil=strong, lens.insti_money=strong, ma_50=232.01 over ma_200=198.88.",
+   "falsifier": "Sector off Declining and a breakout on volume."
+  },
+  {
+   "ticker": "KIM",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R3: structure=42.1, entry=23.0 under ma_50=23.15 and ma_200=23.4. A bounce in a sold-off name, not a base breakout.",
+   "opposing_case": "BULLISH_BOS, lens.insti_money=strong, day_vol=1.11.",
+   "falsifier": "Close over ma_200 then a sound base."
+  },
+  {
+   "ticker": "TRP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R3 FAIL: structure=54.7 BEARISH_CHOCH, ma_50=61.34 under ma_200=63.4. day_vol=0.66. Energy Fading.",
+   "opposing_case": "LEADER, lens.insti_money=strong.",
+   "falsifier": "BOS over ma_200 on volume."
+  },
+  {
+   "ticker": "REG",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "R2 and R3 fail: IN-LINE, structure=42.1 BEARISH_CHOCH, ma_50=74.1 under ma_200=76.51.",
+   "opposing_case": "lens.coil=strong, lens.insti_money=strong, mp BUILDING/ACCELERATING.",
+   "falsifier": "LEADER tag and a BOS over ma_200."
+  },
+  {
+   "ticker": "VTR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R3 FAIL: structure=44.2 BEARISH_CHOCH, entry=86.49 under ma_50=88.04. day_vol=0.59.",
+   "opposing_case": "LEADER, lens.insti_money=strong.",
+   "falsifier": "BOS over ma_50 on volume."
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "C24 climax: entry=45.57 vs ma_200=23.98, sma_distance_pct=59.65, day_vol=32.65 heaviest volume day. A name to sell into, not buy. R9: Technology Declining \u2014 Avoid. Extension alone is a weight (R14); the climax set is not.",
+   "opposing_case": "LEADER, rank=8, mp 93 STRONG, flow=100.0 real demand.",
+   "falsifier": "A tight base forming over several weeks above the gap."
+  },
+  {
+   "ticker": "AFL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No clean base: ma_50=116.39 under ma_100=118.55, lens.leadership=warn. BOS on day_vol=0.78, a C16 hard reject.",
+   "opposing_case": "LEADER tag, BULLISH_BOS, lens.structure=strong, sector strong.",
+   "falsifier": "Breakout on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: rs_leadership=IN-LINE, rs_down_day_20d=-0.12. structure=44.2 RANGE, day_vol=0.48.",
+   "opposing_case": "lens.coil=strong, lens.insti_money=strong, sector strong.",
+   "falsifier": "LEADER tag and a breakout on volume."
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Unchanged conv 2. L: LEADER, rank=9 #1 in XLP. structure=80.0, day_vol=1.65 clears 1.40 (C16). LATE BUY: pct_from_pivot=7.75 over pivot_high=32.14, C17 warning band, no adds. Sector Fading.",
+   "falsifier": "Close under pivot_high=32.14, or a new high on lower volume.",
+   "challenge_reply": "Not an ABSTAIN because L, base and volume all pass (rank=9, structure=80.0, day_vol=1.65); only the pivot distance fails, and C17 makes 5.1-10% a warning, not a rejection. Conv 2 prices that. Rogers' wait-for-pullback noted.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+10pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No prior uptrend under the base: ma_50=98.36 vs ma_200=96.94 flat (C12). day_vol=1.03 under 1.40. #3 XLP by rank=21 but sector Fading, lens.coil=warn.",
+   "opposing_case": "LEADER, structure=84.2, mp 94 STRONG, lens.leadership=strong.",
+   "falsifier": "A breakout on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "CL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16 hard reject: BULLISH_BOS on day_vol=0.73, a break nobody bought. Flat MAs ma_50=89.19, ma_200=89.15: no prior uptrend. rank=31 #4 in XLP (C9).",
+   "opposing_case": "LEADER, BOS, lens 4 strong, mp 90 STRONG.",
+   "falsifier": "Re-break on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "LYFT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R9: Technology Declining \u2014 Avoid, lens.sector=warn. structure_shift=RANGE, no completed base. day_vol=0.96. Lens '--' leaves no base read.",
+   "opposing_case": "LEADER, structure=84.2, rank=40.",
+   "falsifier": "Sector off Declining and a BOS on volume."
+  },
+  {
+   "ticker": "DOCS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Base is a repair: ma_100=24.19 under ma_200=25.97, lens.leadership=warn, lens.coil=warn. sma_distance_pct=23.46 extended. day_vol=1.4 meets volume but no sound base under it.",
+   "opposing_case": "LEADER rs_down_day_20d=1.16, day_vol=1.4, mp 92 STRONG, XLV Building.",
+   "falsifier": "A tight base above ma_200 then a volume breakout."
+  },
+  {
+   "ticker": "PBI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R3 FAIL: structure=63.2 BEARISH_CHOCH. day_vol=1.58 on a failed structure is not a base breakout.",
+   "opposing_case": "LEADER, lens.coil=strong, lens.leadership=strong.",
+   "falsifier": "BOS after a sound base."
+  },
+  {
+   "ticker": "KO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C9: rank=80 is #5 in XLP, sympathy not leadership. day_vol=0.97 under 1.40, lens.coil=warn.",
+   "opposing_case": "LEADER, ALIGNED MAs, lens.leadership=strong.",
+   "falsifier": "Rank into the XLP top three on volume."
+  },
+  {
+   "ticker": "OXY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "R3: structure_shift=RANGE, no completed base. day_vol=0.88. Energy Fading.",
+   "opposing_case": "LEADER rs_down_day_20d=1.23, lens.leadership=strong.",
+   "falsifier": "BOS through pivot_high on volume."
+  },
+  {
+   "ticker": "MRSH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "lens.leadership=warn, structure_shift=RANGE, day_vol=0.75: no breakout, no confirmed leadership.",
+   "opposing_case": "LEADER tag, mp 82 STRONG, sector strong.",
+   "falsifier": "BOS on day_vol of 1.40 or more."
+  },
+  {
+   "ticker": "HOMB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: IN-LINE. R3: structure=46.3 RANGE.",
+   "opposing_case": "lens.coil=strong, day_vol=1.3, sector strong.",
+   "falsifier": "LEADER tag and a breakout."
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "R3 FAIL: structure=46.3 BEARISH_CHOCH. R9: Technology Declining \u2014 Avoid. Lens 4 warns.",
+   "opposing_case": "LEADER rs_down_day_20d=1.81.",
+   "falsifier": "BOS with sector off Declining."
+  },
+  {
+   "ticker": "ZION",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: IN-LINE. structure=36.8, entry=64.59 under ma_50=66.12. day_vol=2.4 bounce in a sold-off name, not a base breakout.",
+   "opposing_case": "day_vol=2.4, BULLISH_BOS, lens 4 strong.",
+   "falsifier": "Close over ma_50 then a sound base."
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Tight base near highs: LEADER, BULLISH_BOS, structure=71.6, sma_distance_pct=1.05, lens 4 strong, 0 warns, ma_50=145.92 over ma_200=129.43. C16 not met: day_vol=0.95. Buy only on volume.",
+   "falsifier": "Close under ma_50, or a break on day_vol under 1.0.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I NOT_AVAILABLE (no EPS, sales, sponsor count); market_gate DELEGATED: void if index under distribution; RS via rs_leadership substitute"
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: IN-LINE, rs_spy_20d=-0.85. structure=43.2 RANGE.",
+   "opposing_case": "lens.coil=strong, lens.insti_money=strong.",
+   "falsifier": "LEADER tag and a BOS."
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: IN-LINE. structure=43.2 RANGE, no completed base.",
+   "opposing_case": "lens.coil=strong, lens.insti_money=strong.",
+   "falsifier": "LEADER tag and a BOS on volume."
+  },
+  {
+   "ticker": "MRK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "R2: IN-LINE, rs_spy_20d=-1.17. structure=46.3 RANGE.",
+   "opposing_case": "lens.coil=strong, lens.leadership=strong, ma_50=145.77 over ma_200=125.27.",
+   "falsifier": "LEADER tag and a BOS on volume."
+  },
+  {
+   "ticker": "OKTA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not a breakout: entry=194.02 under ma_20=210.0, IN-LINE, Technology Declining \u2014 Avoid. I do not buy pullbacks or reclaims.",
+   "opposing_case": "premove_setup only tag in room, lens.coil=strong, ma_50=181.6 over ma_200=119.59.",
+   "falsifier": "A new base and a BOS on volume."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD: NO. EXIT. Held qty 300.0 @ 53.0 at unrealised -4185.0: adding is averaging down, barred (C20), and the loss is past the C20 cost stop. structure=11.0 BEARISH_CHOCH, sma_distance_pct=-22.86, under ma_50=50.62 (R8).",
+   "opposing_case": "div_state=BULLISH is the only counter-read; day_vol=0.66 means the ma_50 loss was not on heavy volume.",
+   "falsifier": "A close back over ma_50 with structure off BEARISH_CHOCH."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of3.json",
+   "bytes": 11531,
+   "votes": 18,
+   "sha256": "263a4bfd9031"
+  },
+  {
+   "file": "oneil.part2of3.json",
+   "bytes": 7050,
+   "votes": 18,
+   "sha256": "d1124528434c"
+  },
+  {
+   "file": "oneil.part3of3.json",
+   "bytes": 6594,
+   "votes": 18,
+   "sha256": "c92f014097cf"
+  }
+ ]
+}

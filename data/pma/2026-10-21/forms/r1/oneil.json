@@ -1,0 +1,52 @@
+{
+ "voice": "oneil",
+ "date": "2026-10-21",
+ "nominations": [
+  {
+   "ticker": "CME",
+   "reason": "Group #2 leader (rank=16, rs_leadership=LEADER) breaking out: structure_shift=BULLISH_BOS, day_vol=1.6 clears 1.40, pct_from_pivot=1.87 inside the 5% buy zone over pivot_high=289.9. Sector Fading (sector_trend_state=3). C/A/S/I NOT_AVAILABLE; market_gate DELEGATED.",
+   "conviction": 3,
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "day_vol", "pivot_high", "pct_from_pivot", "ma_50", "ma_200", "entry", "sector_trend_state", "bracket.stop", "bracket.risk_pct"],
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership=LEADER, rank=16, 2nd in XLF behind V (rank=10); rs_spy_20d=11.08 reported only (20d horizon)", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_spy_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18", "C19"], "observed": "base_measure substitute: structure=77.9, structure_shift=BULLISH_BOS; entry=295.31 above ma_50=275.0 and ma_200=278.92; base stage NOT_AVAILABLE; bq.* not served", "verdict": "partial", "fields": ["structure", "structure_shift", "ma_50", "ma_200", "entry"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "day_vol=1.6 (vs 20d, substitute for 50d) >= 1.40; base dry-up not testable", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot=1.87 over pivot_high=289.9 (<5%); sma_distance_pct=7.39 context; entry=295.31 vs ma_200=278.92, far below 70% climax line", "verdict": "pass", "fields": ["pct_from_pivot", "pivot_high", "sma_distance_pct", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.stop=286.49, risk_pct=2.99, inside O'Neil 7-8% max; invalidation = close back under pivot_high=289.9. 8-week rule applies if +20% within 3 wks; no adds past +5% over pivot", "verdict": "pass", "fields": ["bracket.stop", "bracket.risk_pct", "pivot_high"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "sector_trend_state=Momentum Fading - Hold; group peers V, MA also LEADER so not a Lone Ranger; pct_from_52w_high=-9.54 so not a new high (C7 partial); div_state=NONE", "verdict": "partial", "fields": ["sector_trend_state", "gics_sector", "pct_from_52w_high", "div_state"]},
+    {"step": 7, "canon_ref": ["C4", "C6", "C8", "C11", "C1", "C23"], "observed": "fundamentals C,A,S,I NOT_AVAILABLE; market_gate DELEGATED (valid only into a confirmed uptrend); ranked #1 of 2 survivors", "verdict": "no_data", "fields": ["sc_momentum"]}
+   ]
+  },
+  {
+   "ticker": "KDP",
+   "reason": "Group #1 in XLP (rank=9, LEADER) at a new high (pct_from_52w_high=0.0), structure_shift=ABOVE_STRUCTURE, day_vol=1.65. LATE BUY: pct_from_pivot=7.75 over pivot_high=32.14 (5.1-10% warning, no adds). Sector Fading. C/A/S/I NOT_AVAILABLE; market_gate DELEGATED.",
+   "conviction": 2,
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "day_vol", "pivot_high", "pct_from_pivot", "pct_from_52w_high", "ma_50", "sector_trend_state"],
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership=LEADER, rank=9, 1st in XLP; rs_spy_20d=10.46 reported only", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_spy_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18", "C19"], "observed": "base_measure substitute: structure=80.0, structure_shift=ABOVE_STRUCTURE; entry=34.63 above ma_50=31.74; base stage NOT_AVAILABLE; bq.* not served", "verdict": "partial", "fields": ["structure", "structure_shift", "ma_50", "entry"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "day_vol=1.65 (vs 20d substitute) >= 1.40", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C21", "C24"], "observed": "pct_from_pivot=7.75 over pivot_high=32.14: late-buy warning band, no add-ons; sma_distance_pct=9.11; ma_200=29.7, far below 70% climax", "verdict": "partial", "fields": ["pct_from_pivot", "pivot_high", "sma_distance_pct", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22"], "observed": "engine bracket.valid=False (info only); own invalidation = close back under pivot_high=32.14, ma_50=31.74 below; O'Neil 7-8% max stop applies", "verdict": "partial", "fields": ["bracket.valid", "pivot_high", "ma_50"]},
+    {"step": 6, "canon_ref": ["C25", "C7"], "observed": "new high pct_from_52w_high=0.0 on day_vol=1.65 (not lower volume); sector_trend_state=Momentum Fading - Hold; peers ELF, CCEP also LEADER", "verdict": "partial", "fields": ["pct_from_52w_high", "day_vol", "sector_trend_state"]},
+    {"step": 7, "canon_ref": ["C4", "C6", "C8", "C11", "C1"], "observed": "fundamentals C,A,S,I NOT_AVAILABLE; market_gate DELEGATED; ranked #2 of 2 (extension)", "verdict": "no_data", "fields": ["sc_momentum"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "C20 breached: held_book.live_px=39.05 vs held_book.entry=53.0 (unreal_usd=-4185.0), far past the 7-8% automatic stop, and no broker stop exists. 10-week line failed (R8): ma_50=50.62, sma_distance_pct=-22.86; structure=11.0, BEARISH_CHOCH, day_vol=0.66. Never average down."}
+ ],
+ "lesson_applied": "No ledger memory block was injected this run; no standing lesson applies. Applied card rule R1: bracket fields stated as information only, never as a reason.",
+ "declared": {
+  "not_served": [
+   "fundamentals: C, A, S, I letters NOT_AVAILABLE (C4, C5, C6, C8, C11)",
+   "base_stage: NOT_AVAILABLE (C19)",
+   "market_gate: DELEGATED (C1-C3) - every nomination void if index is under distribution",
+   "rs_measure: rs_leadership substitute - no 12-month IBD RS Rating",
+   "volume_measure: day_vol vs 20-day substitute - canon says 50-day",
+   "base_measure: structure composite substitute",
+   "bq.bq_base_dur and bq.bq_range_tight absent from packet"
+  ]
+ },
+ "shortfall_reason": "Only 2 names pass leadership (group top 3), day_vol >= 1.40 and <=10% past pivot. Rejected: HLT pct_from_pivot=10.24, TRI 10.92, SHO 10.81, BOX 18.2, BRZE 30.13 (>10% past pivot); CNK, APLE, UL not top 3 in group; VERX, TMO, RTX below pivot with no breakout; MMM structure=46.3. Padding is the breach."
+}

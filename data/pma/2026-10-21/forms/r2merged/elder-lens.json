@@ -1,0 +1,945 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-10-21",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "CNC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 10, 7, 7, 10] CORRECTION_REENTRY, mp_state=BUILDING, mp=72.0. Permission on (not red, C3) but no <=6 bar lifted (no C4 event) and R8 needs mp_state STRONG. Not red: no censor. Idea is another seat's (C1).",
+   "falsifier": "A <=6 bar then >=7 would give me a C4 event.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: elder_5d=[10, 10, 10, 7, 10], CORRECTION_REENTRY, mp_state=STRONG, mp=87.0. Shallow dip to 7 and reclaim, no red lifted, so no C4 transition. Pullback timing per C6. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: elder_5d=[9, 10, 10, 7, 10], CORRECTION_REENTRY, mp_state=STRONG, mp=86.0. Dip to 7 reclaimed; no <=6 bar, so no C4 event. Buy the pullback into value (C10), not the print. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CME",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced) only: elder_5d=[10, 10, 10, 10, 10] SUSTAINED, mp_state=STRONG, mp=82.0. A flat high tail is summer (C20), not my trigger; sized at 2 as a desk read, not Elder's. Not red.",
+   "falsifier": "A single-bar drop in elder (C4 green going away) or elder<=6 at a close.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Red giving way, certain: elder_5d=[1, 9, 9, 10, 10] (1 is red, 9 is not; C3/C4) three bars ago, now ACCELERATION, mp_state=BUILDING, mp=68.0. Best colour event in the room on my menu; aged, so I buy the pullback (C6/C10). Trend leg unverifiable (C9).",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Red lifted three bars ago: elder_5d=[0, 5, 8, 10, 10], elder=10.0, ACCELERATION. mp_state=FADING (R13: not decay), mp=43.0. Real C4 event but aged and now a plateau; buy only a pullback (C6).",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TRV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 10, 10, 7, 10] CORRECTION_REENTRY, mp_state=BUILDING, mp=68.0. Not red (permission on, C3) but no <=6 bar lifted and R8 needs STRONG. No trigger of mine; no censor.",
+   "falsifier": "A <=6 bar then >=7 would be a C4 event.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PEB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d=[7, 7, 9, 10, 10], mp_state=STRONG, mp=84.0. No <=6 bar in window, so no C4 event; rising into a plateau. Desk read only, labelled. Not red.",
+   "falsifier": "A single-bar drop in elder or elder<=6 at a close.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d=[10, 10, 10, 10, 10] SUSTAINED, mp_state=STRONG, mp=84.0. Plateau is summer (C20), not Elder's buying season; filed as labelled desk read at 2.",
+   "falsifier": "A single-bar drop in elder or elder<=6 at a close.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DRH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d=[7, 10, 10, 10, 10], mp_state=STRONG, mp=90.0. No <=6 bar, no C4 event; plateau held four bars. Labelled desk read; I buy a pullback only.",
+   "falsifier": "A single-bar drop in elder or elder<=6 at a close.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: elder_5d=[10, 10, 10, 7, 10], CORRECTION_REENTRY, mp_state=STRONG, mp=78.0. Dip to 7 reclaimed; no red lifted, so weaker than a C4 transition. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Ambiguous bar lifted three bars ago: elder_5d=[6, 9, 10, 10, 10], ACCELERATION, mp_state=STRONG, mp=84.0. 6->9 is my permission proxy (C3/C4) but aged into a plateau; pullback only (C6).",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SHO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[6, 10, 10, 10, 10]: 6->10 permission proxy four bars back, ACCELERATION, mp_state=STRONG, mp=90.0. Aged event now a plateau; buy the pullback into value (C10), not the print.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AEP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission event on the last bar plus R8: elder_5d=[10, 7, 10, 6, 10] (6->10), CORRECTION_REENTRY, mp_state=STRONG, mp=86.0. Best transition read I hold (C4). Trend leg unverifiable on my menu (C9).",
+   "falsifier": "elder<=1 at a close (red returns) or a single-bar drop before fill; per C9 a falling average voids it.",
+   "conviction_change": "4->3: challenge reports the average stack inverted. C9/C10 need a rising average and my menu cannot confirm it, so the trend leg is now contested, not merely unverified.",
+   "challenge_reply": "Steenbarger: I cannot read the stack (off menu). Higher-timeframe read (C21/R6 weekly) is NOT_AVAILABLE. Reconciled by cutting 4->3: the colour event stands, the trend leg is challenged.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 10, 10, 7, 7], elder=7.0, mp_state=STRONG, mp=90.0. Green went away a bar ago and has not come back (C4: swing's end, not a buy). Not red, so no censor; no trigger of mine.",
+   "falsifier": "elder back >=9 after the dip would make it a dip-reclaim.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MET",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission event on the last bar: elder_5d=[7, 7, 9, 6, 9] (6->9), elder=9.0, CORRECTION_REENTRY, mp_state=BUILDING, mp=68.0. Pullback ending inside a reentry (C4/C6). Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: elder_5d=[10, 10, 10, 7, 10], CORRECTION_REENTRY, mp_state=STRONG, mp=86.0. Dip to 7 reclaimed, no red lifted; weaker than a C4 transition. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "R8 dip-reclaim: CORRECTION_REENTRY, mp_state=STRONG, mp=93.0; elder_5d=[4, 9, 6, 10, 10] shows a <=6 bar giving way two bars ago, elder=10.0 now. Transition real, not today's bar.",
+   "falsifier": "elder back <=6 at a close: the transition failed.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger: divergence is off my menu. My confirming observable is elder holding >=7 with no single-bar drop on the next closes; a print <=6 says the lift failed and I withdraw.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[3, 8, 8, 9, 9]: ambiguous 3 gave way four bars back, ACCELERATION, mp_state=BUILDING, mp=38.0. Aged C4 proxy, still rising; mp low. Pullback only (C6). Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "O",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Permission event on my menu: elder_5d=[8, 9, 9, 6, 9] CORRECTION_REENTRY, mp=61.0 BUILDING. But BEARISH_CHOCH (R11, off menu, raised in challenge) means the uptrend leg is gone; C22: stand aside, not size down.",
+   "falsifier": "A structure repair would leave a clean C4 event.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CCI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 7, 10, 7, 7], elder=7.0, mp_state=STRONG, mp=97.0. Oscillating at 7 with green gone on the last two bars; no lift from <=6. No trigger; not red.",
+   "falsifier": "elder back >=9 with no <=6 bar.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TDC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 dip-reclaim: CORRECTION_REENTRY, mp_state=STRONG, mp=76.0; elder_5d=[6, 10, 6, 10, 10], a <=6 bar gave way two bars ago, elder=10.0 now. Transition real, not today's bar.",
+   "falsifier": "elder back <=6 at a close: the lift failed.",
+   "conviction_change": "3->2: the trend leg Elder needs (C9) is reported mixed by challenge; I cannot verify it and will not size up on one leg.",
+   "challenge_reply": "Steenbarger: context is off my menu and the weekly screen (R6) is NOT_AVAILABLE. Named honestly: unverified. Cut to 2.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission event on the last bar: elder_5d=[10, 7, 5, 6, 10] (6->10), elder=10.0, CORRECTION_REENTRY, mp_state=BUILDING, mp=70.0. Pullback ending inside a reentry (C4/C6). Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "C24 plateau only: elder_5d=[10, 10, 10, 10, 10] SUSTAINED with mp_state=BUILDING, mp=70.0. Summer (C20), no transition, and the desk read is weaker off a STRONG mp. Stand aside (C22).",
+   "falsifier": "A dip to <=6 then >=7 would be my trigger.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KMI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 7, 10, 7, 7], elder=7.0, mp_state=BUILDING, mp=64.0. Green lost and not regained; no lift from <=6. No trigger; not red.",
+   "falsifier": "elder >=9 after a <=6 bar.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "A",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[7, 8, 5, 2, 7] gives a 2->7 lift, but elder_pattern=INTERRUPTED: card step 3 treats the trend leg as failed. One leg is a fragment (C9). mp=55.0 FADING (R13 noted).",
+   "falsifier": "Pattern leaving INTERRUPTED with elder >=7 held.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "LNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 7, 10, 6, 10] permission event, CORRECTION_REENTRY, mp=68.0 BUILDING. BEARISH_CHOCH (R11, off menu, challenge) removes the uptrend leg; C22 says stand aside.",
+   "falsifier": "Structure repaired with elder >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CMS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[9, 10, 10, 7, 10] CORRECTION_REENTRY, mp_state=BUILDING: no <=6 lift, no R8 (needs STRONG), and BEARISH_CHOCH (R11, challenge). Stand aside (C22).",
+   "falsifier": "Structure repair plus a C4 event.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CRM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[7, 10, 10, 10, 10], mp_state=BUILDING, mp=33.0: plateau (C20 summer) with weak mp. C24 desk read too thin here. Stand aside.",
+   "falsifier": "A dip <=6 then >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KIM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Permission event on the last bar: elder_5d=[8, 9, 9, 6, 9] (6->9), elder=9.0, CORRECTION_REENTRY, mp_state=BUILDING, mp=66.0. C4/C6 pullback end. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": "3->2: challenge places it under its longer averages; C10 needs a rising average I cannot verify. Colour event kept, size of belief cut.",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TRP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[9, 4, 9, 6, 9] permission event, CORRECTION_REENTRY, mp=51.0 BUILDING. BEARISH_CHOCH (R11, challenge) means the uptrend leg is gone; C22 stand aside.",
+   "falsifier": "Structure repaired with elder >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "REG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[5, 8, 9, 6, 9] permission event, CORRECTION_REENTRY, mp=57.0 BUILDING. BEARISH_CHOCH (R11, challenge) voids the trend leg (C9); stand aside (C22).",
+   "falsifier": "Structure repaired with elder >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "VTR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[8, 8, 9, 6, 9] permission event, CORRECTION_REENTRY, mp=47.0 BUILDING. BEARISH_CHOCH (R11, challenge): no uptrend to pull back in; stand aside (C22).",
+   "falsifier": "Structure repaired with elder >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: CORRECTION_REENTRY, mp_state=STRONG, mp=93.0; elder_5d=[7, 10, 7, 7, 10] shallow dip to 7 and reclaim, no red lifted, no C4 event. Pullback timing (C6) only: I do not buy the spike.",
+   "falsifier": "elder <=6 at a close or a single-bar drop: the burst was an event.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger: volume is off my menu; I cannot say what produced it and the event filter is not mine. Separator in my terms: elder holding >=7 through the next closes. Not ABSTAIN because R8 fired; I buy only a return to value (C10).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AFL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 10, 10, 7, 10] CORRECTION_REENTRY, mp_state=BUILDING, mp=74.0: dip to 7 reclaimed, no <=6 lift and R8 needs STRONG. No trigger; not red.",
+   "falsifier": "mp_state STRONG would make it R8.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[7, 8, 6, 9, 9]: a 6 gave way two bars ago, elder=9.0 held. mp_state=BUILDING, mp=18.0 is thin; pattern None. Real C4 proxy, low belief. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Green going away on the last bar: elder_5d=[10, 10, 10, 10, 7]. C4: green vanishing in an upswing marks the swing's approaching end, a profit-taking signal, not an entry. mp_state=STRONG, mp=80.0 noted.",
+   "opposing_case": "Still not red (elder=7.0), mp=80.0 STRONG: a one-bar dip in a strong name can be the pullback Elder buys if it reclaims.",
+   "falsifier": "elder back to >=9 next close (dip reclaimed) would flip me.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: CORRECTION_REENTRY, mp_state=STRONG, mp=94.0; elder_5d=[10, 10, 10, 7, 10] shallow dip to 7 and reclaim, no red lifted, no C4 event. Pullback timing per C6.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger: not ABSTAIN because R8 (the menu-legal dip-reclaim) fired; conviction 2 says it is weaker than a C4 transition.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 10, 10, 7, 7], elder=7.0, mp_state=STRONG, mp=90.0: green gone a bar ago, not regained. No trigger; not red.",
+   "falsifier": "elder back >=9.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "LYFT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[10, 10, 7, 7, 10] CORRECTION_REENTRY, mp_state=BUILDING, mp=67.0: no <=6 lift and R8 needs STRONG. No trigger; not red.",
+   "falsifier": "mp_state STRONG would make it R8.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "DOCS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 only: CORRECTION_REENTRY, mp_state=STRONG, mp=92.0; elder_5d=[7, 10, 7, 7, 10] shallow dip to 7 and reclaim, no red lifted. Pullback timing (C6); I buy value, not the stretch.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger: not ABSTAIN because R8 fired on my menu; 2 marks it below a C4 transition.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PBI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[4, 9, 6, 4, 9] permission event, CORRECTION_REENTRY, mp=48.0 BUILDING. BEARISH_CHOCH (R11, challenge) removes the uptrend leg; C22 stand aside.",
+   "falsifier": "Structure repaired with elder >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Green going away on the last bar: elder_5d=[10, 10, 10, 10, 7]. C4: the swing's approaching end, a profit-taking bar, not an entry bar. mp_state=BUILDING, mp=72.0.",
+   "opposing_case": "Not red (elder=7.0); a single dip in a steady name may be the pullback Elder buys once reclaimed.",
+   "falsifier": "elder back to >=9 next close flips me.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "OXY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Green going away on the last bar: elder_5d=[10, 7, 10, 10, 7]. Second fade in five bars; C4 reads it as a swing ending. mp_state=BUILDING, mp=68.0.",
+   "opposing_case": "Not red (elder=7.0) and it reclaimed once already; a second reclaim would be a dip-buy.",
+   "falsifier": "elder back to >=9 next close flips me.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MRSH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d=[9, 10, 10, 10, 10] SUSTAINED, mp_state=STRONG, mp=82.0. Plateau is summer (C20); labelled desk read at 2, pullback entry only.",
+   "falsifier": "A single-bar drop in elder or elder<=6 at a close.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOMB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[5, 7, 9, 9, 9]: a 5 gave way four bars back, ACCELERATION, mp_state=BUILDING, mp=53.0. Aged C4 proxy, held at 9. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[7, 10, 7, 10, 10] CORRECTION_REENTRY, mp_state=BUILDING: no <=6 lift, no R8, and BEARISH_CHOCH (R11, challenge). Stand aside (C22).",
+   "falsifier": "Structure repair plus a C4 event.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ZION",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[2, 7, 7, 8, 9]: ambiguous 2 gave way four bars back and has risen every bar since (spring shape, C20). mp_state=BUILDING, mp=62.0. Aged event. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[5, 5, 5, 8, 8]: three <=6 bars gave way two bars ago, ACCUMULATION_BASE, elder=8.0. mp_state=FADING (R13: not decay), mp=63.0. Real C4 proxy, low belief.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d=[5, 9, 9, 10, 10]: a 5 gave way four bars back, ACCELERATION, mp_state=BUILDING, mp=25.0 thin. Aged C4 proxy. Trend leg (rising average, C9/C10) is off my menu: disclosed, not assumed.",
+   "falsifier": "A single-bar drop in elder (R7) or a red print (elder<=1) before the buy fills.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[3, 8, 8, 5, 9] gives a 5->9 lift, but elder_pattern=INTERRUPTED: step 3 treats the trend leg as failed (C9). mp=26.0. Stand aside (C22).",
+   "falsifier": "Pattern leaves INTERRUPTED with elder >=7.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MRK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d=[6, 6, 7, 1, 9]: red (1) gave way on the last bar, the cleanest C3 lift here. But elder_pattern=INTERRUPTED fails the trend leg (step 3, C9); mp=23.0. Stand aside, not size down (C22).",
+   "falsifier": "Pattern leaving INTERRUPTED with elder >=7 would make this a SUPPORT.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "OKTA",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "CENSOR: elder=0.0, elder_5d=[3, 1, 0, 0, 0]. Red is certain (<=1) on four bars; Elder's rule forbids buying while red (C1/C3). Hard no-buy, whatever else looks good.",
+   "opposing_case": "Others see a premove coil after a deep pullback, mp=15.0; Elder's own lift rule says the ban ends the bar red stops, so a turn may be close.",
+   "falsifier": "First bar with elder >=2 lifts the ban (C3); >=7 confirms not red.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD question: no. elder=3.0 is unresolved permission (2-6 band), mp=0.0 FADING, elder_5d absent so R7 cannot be read. No colour event to buy. Held book: EXIT-CASE on my read; the add is refused, the exit is the PM's.",
+   "opposing_case": "Not red (elder=3.0 above 1), so buying is not strictly forbidden; a bullish divergence is reported in the packet.",
+   "falsifier": "elder >=7 after a <=6 bar (a C4 event) would turn the add question.",
+   "challenge_reply": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of3.json",
+   "bytes": 10131,
+   "votes": 18,
+   "sha256": "dadecf1b29b7"
+  },
+  {
+   "file": "elder-lens.part2of3.json",
+   "bytes": 7672,
+   "votes": 18,
+   "sha256": "79409cfc0dc3"
+  },
+  {
+   "file": "elder-lens.part3of3.json",
+   "bytes": 8122,
+   "votes": 18,
+   "sha256": "eb8d2450b04e"
+  }
+ ]
+}

@@ -1,0 +1,1005 @@
+{
+ "voice": "raschke",
+ "date": "2026-10-21",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "CNC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "setup=TEST (C2/C20): structure_shift=BULLISH_BOS, structure=86.3, mp_state=BUILDING, mp_accel_state=ACCELERATING, sma_distance_pct=8.05. Buy the retest of the cleared pivot, not the break. day_vol=0.8 thin participation caps conviction at 3.",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": "Rogers/Steenbarger: I buy the TEST, not the breakout: a reclaim of the pivot the BOS cleared (pivot_high=69.63 in the R1 row) is my double stop point (C20). Invalidation pre-stated: daily close below that pivot less half an ATR. day_vol=0.8 is why I hold 3 and do not add on crowding.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending (C2/C7, ADX NOT_SERVED; mp proxy): structure=83.2 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY. sma_distance_pct=9.53 is a weight: act only on the first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending (C7 approx): structure=82.1 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, day_vol=1.29. sma_distance_pct=8.56 extension is a weight; Holy-Grail-style entry on first pullback to ma_20, buy stop over bar_high.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "CME",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "setup=TEST/breakout (C2/C20): structure_shift=BULLISH_BOS, structure=77.9, mp_state=STRONG, mp_accel_state=ACCELERATING, day_vol=1.6 participation on the break, sma_distance_pct=7.39 not climactic. Entry on a retest of the cleared pivot.",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": "Steenbarger: the higher-timeframe trend is not fully served to me (ADX NOT_SERVED); mp_state=STRONG/ACCELERATING is my declared proxy and the stack being repaired is a weight I accept. I buy only the retest of pivot_high=289.9 (C20), wrong on a close back below it less half an ATR. Agrees with Rogers' retest advice.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=83.2 ABOVE_STRUCTURE, mp_state=BUILDING, mp_accel_state=ACCELERATING, day_vol=1.28, sma_distance_pct=7.66 (weight). One of the lodging cluster; act on first pullback to ma_20 only.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "setup=TEST (C2/C20): structure_shift=BULLISH_BOS, structure=82.1, day_vol=1.42 above-normal on the break, elder_pattern=ACCELERATION (advisory). mp_accel_state=FLAT tempers; mp_state=FADING is not a reason (R13). Buy the pivot retest.",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": "Steenbarger: I am buying the TEST of the cleared pivot (pct_from_pivot=1.11 in the R1 row), not chasing the breakout. Invalidation: daily close below the pivot less half an ATR. mp_accel_state=FLAT is why conviction stays 3.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=76.8 ABOVE_STRUCTURE, mp_state=BUILDING, mp_accel_state=ACCELERATING, day_vol=1.34, elder_pattern=CORRECTION_REENTRY, div_state=BULLISH. sma_distance_pct=7.04: wait for the first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "PEB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No named setup at this price: sma_distance_pct=11.88 after a range-expansion run, structure=82.1, mp_state=STRONG; lens all '--' except structure/sector ok. Neither test nor retracement; stand aside per C22 until a pullback forms.",
+   "falsifier": "A pullback to ma_20 holding with mp_accel_state=ACCELERATING would make it a retracement I would support.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=80.0 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, elder_pattern=SUSTAINED, day_vol=1.38. sma_distance_pct=7.72 is a weight; buy stop over bar_high only after a pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "DRH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_distance_pct=10.19 on day_vol=0.76 with div_state=BEARISH, div_bear_count=1 (caution flag). Thrust on fading participation is not one of my four setups; no test, no retracement yet. Stand aside (C22).",
+   "falsifier": "A pullback to ma_20 that holds and clears the divergence would give a retracement entry.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=80.0 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, day_vol=1.37, elder_pattern=CORRECTION_REENTRY, div_state=BULLISH. sma_distance_pct=7.01 weight; first pullback to ma_20 is the entry.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "APLE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_distance_pct=10.53, structure=76.8, mp_state=STRONG, day_vol=1.4: an extended leg of the lodging cluster, not a test or retracement. No named setup today; stand aside (C22).",
+   "falsifier": "A retracement to ma_20 with mp_accel_state still ACCELERATING would make it actionable.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "SHO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_distance_pct=10.6 on day_vol=1.6 is a range-expansion leg, structure=76.8, mp_state=STRONG. C19 says such bars mark climax risk, not entries. No named setup; stand aside.",
+   "falsifier": "A quiet pullback to ma_20 that holds would turn it into a retracement setup.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "AEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=TEST (C2/C20): structure_shift=BULLISH_BOS, structure=71.6, sma_distance_pct=3.66 near the level, mp_state=STRONG, mp_accel_state=ACCELERATING. day_vol=0.69 light break keeps conviction at 2; buy only a retest that reclaims the pivot.",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=83.2 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, div_state=BULLISH, day_vol=0.95. sma_distance_pct=7.37 weight; act on first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "MET",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "setup=RETRACEMENT (C2): structure=78.9 ABOVE_STRUCTURE, sma_distance_pct=4.32 close to the average, mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, div_state=BULLISH. Buy stop over bar_high; day_vol=0.66 quiet.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=77.9 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, day_vol=1.06. sma_distance_pct=9.5 weight; first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No setup type fits (C2): structure_shift=RANGE so no test or break, sma_distance_pct=11.28 inside the range, and the bearish_divergence caution fires (div_state=BEARISH, div_bear_count=2). Extension is a weight only; the divergence plus no setup is the basis.",
+   "falsifier": "A BULLISH_BOS out of the range with the divergence cleared would flip me.",
+   "opposing_case": "mp_state=STRONG with mp=93.0 and mp_accel_state=ACCELERATING, structure=77.9: persistent strength that may resolve the range upward.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "setup=BREAKOUT from contraction (C12/C13 approx, bar_range_history NOT_SERVED): structure_shift=RANGE, sma_distance_pct=1.73, lens.coil=strong, energy=84.9, day_vol=0.95 quiet, mp_accel_state=ACCELERATING, div_state=BULLISH. Straddle the range; buy the upside break.",
+   "falsifier": "Break fails: daily close below ma_20 less half an ATR after the trigger = false breakout (C23).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "O",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=36.8, sma_distance_pct=-3.6. The up-structure failed; a Turtle Soup test needs a fresh extreme failure I cannot see (n_day_extreme substitute only).",
+   "falsifier": "A BULLISH_BOS reclaiming the average with structure back above 60 would flip me.",
+   "opposing_case": "mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, div_state=BULLISH, lens coil and insti_money strong: a possible failed-breakdown test.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "CCI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_distance_pct=9.54 after a sharp leg, mp_state=STRONG but mp_accel_state=FLAT, day_vol=0.95; carried as PULLBACK but not pulled back. No named setup at this price (C22).",
+   "falsifier": "A pullback to ma_20 holding with acceleration resuming would make it a retracement.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "TDC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_distance_pct=12.24, mp_accel_state=FLAT, day_vol=0.84; structure=84.2 is strong but the price is not a retracement. Stand aside until a test or pullback forms (C22).",
+   "falsifier": "A pullback to ma_20 that holds would give a retracement entry.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Pullback lane but not pulled back: sma_distance_pct=14.27 on day_vol=1.99 is a range-expansion bar, mp_accel_state=DECELERATING. C19 reads that as climax risk, not entry; no retracement exists yet.",
+   "falsifier": "A quiet retrace to ma_20 that holds with structure intact would flip me to SUPPORT.",
+   "opposing_case": "structure=73.7 ABOVE_STRUCTURE, elder_pattern=CORRECTION_REENTRY, lens leadership and sector strong: a powerful trend the pullback may simply be skipping.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=76.8 ABOVE_STRUCTURE, mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=SUSTAINED, day_vol=1.46. sma_distance_pct=9.82 is a weight; first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "KMI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT (C2): structure=74.7 ABOVE_STRUCTURE, sma_distance_pct=5.68, div_state=BULLISH, day_vol=0.96. mp_accel_state=DECELERATING keeps it at 2; buy stop over bar_high after a hold of ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=BREAKOUT from contraction (C12 approx): structure=82.1, structure_shift=RANGE, lens.coil=strong, energy=84.0, day_vol=0.83 quiet. mp_state=FADING is not a reason (R13); mp_accel_state=DECELERATING and elder_pattern=INTERRUPTED cap at 2.",
+   "falsifier": "Break fails: daily close below ma_20 less half an ATR after the trigger (C23).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "LNT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=54.7, sma_distance_pct=1.95. Failed up-structure; nothing to test or retrace into.",
+   "falsifier": "A BULLISH_BOS with structure rebuilding above 70 would flip me.",
+   "opposing_case": "mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, div_state=BULLISH: a reversion bounce may be starting.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "CMS",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=54.7, sma_distance_pct=2.17, lens warns on structure, coil, insti_money and leadership. Failed up-structure.",
+   "falsifier": "A BULLISH_BOS with structure back above 70 would flip me.",
+   "opposing_case": "mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY: a short-term bounce is underway.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "CRM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=BREAKOUT from contraction (C12 approx): structure_shift=RANGE, structure=68.4, lens.coil=strong, energy=72.3, sma_distance_pct=4.49, mp_accel_state=ACCELERATING, day_vol=0.92 quiet. Lens resistance=warn caps it at 2.",
+   "falsifier": "Break fails: daily close below ma_20 less half an ATR after the trigger (C23).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "KIM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=BULLISH_BOS but structure=42.1 and sma_distance_pct=-0.63: a break inside a weak structure is not a clean test of a trend extreme. Not enough to classify (C2).",
+   "falsifier": "structure rising above 60 with the BOS holding would make it a test I support.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "TRP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=54.7, sma_distance_pct=0.74, day_vol=0.66. Failed up-structure.",
+   "falsifier": "A BULLISH_BOS with structure back above 70 would flip me.",
+   "opposing_case": "mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, lens insti_money strong.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "REG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=42.1, sma_distance_pct=-1.22. Failed up-structure, nothing to test.",
+   "falsifier": "A BULLISH_BOS with structure above 60 would flip me.",
+   "opposing_case": "mp_accel_state=ACCELERATING, div_state=BULLISH, lens coil and insti_money strong: a base may be forming.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "VTR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=44.2, sma_distance_pct=-1.76, day_vol=0.59. Failed up-structure.",
+   "falsifier": "A BULLISH_BOS with structure above 60 would flip me.",
+   "opposing_case": "mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, div_state=BULLISH, insti_money strong.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax, not setup: day_vol=32.65 range-expansion bar with sma_distance_pct=59.65. C19 says a parabolic or range-expansion bar marks a climax; I decline to call a visual climax entry (C10). Extension alone is a weight (R14); the climax bar is the basis.",
+   "falsifier": "Several quiet sessions holding the gap, then a pullback that holds, would make a retracement I could support.",
+   "opposing_case": "mp_state=STRONG, mp_accel_state=ACCELERATING, structure=70.9 ABOVE_STRUCTURE: a fundamental re-rating can trend for weeks after such a bar.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "AFL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=TEST (C2/C20): structure_shift=BULLISH_BOS, structure=63.2, sma_distance_pct=3.33 near the level, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY. day_vol=0.78 light; buy only a pivot reclaim.",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "EW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=RANGE, structure=44.2, sma_distance_pct=-0.01, day_vol=0.48 quiet, mp_accel_state=DECELERATING. Contraction is real but direction-neutral (C12 straddle); structure too soft to favour the long.",
+   "falsifier": "A BULLISH_BOS on above-normal day_vol would make it a breakout I support.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=80.0 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, div_state=BULLISH, day_vol=1.65. sma_distance_pct=9.11 is a weight; first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=84.2 ABOVE_STRUCTURE, mp_state=STRONG, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY, day_vol=1.03. sma_distance_pct=7.73 weight; first pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "CL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=TEST (C2/C20): structure_shift=BULLISH_BOS, structure=74.7, sma_distance_pct=6.0, mp_state=STRONG, mp_accel_state=ACCELERATING. day_vol=0.73 light participation on the break keeps it at 2; buy the retest only.",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": "Steenbarger: not an ABSTAIN because it fits a named type (TEST, C2) with a mechanical invalidation (C17): close below the cleared pivot less half an ATR. Light day_vol=0.73 is exactly why it stays at 2 and enters only on a retest reclaim.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "LYFT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT (C2): structure=84.2, structure_shift=RANGE inside the swing, sma_distance_pct=5.94, mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY (advisory). Lens mostly '--' caps it at 2.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": "Steenbarger: not an ABSTAIN because structure=84.2 with an accelerating mp is a named RETRACEMENT (C2), with the stop structural (close below ma_50). Lens blindness is why it is 2, not higher.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "DOCS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_distance_pct=23.46 after a range-expansion leg, mp_state=STRONG, structure=71.6. No test or retracement at this price; C19 treats such legs as climax risk. Stand aside (C22).",
+   "falsifier": "A pullback to ma_20 that holds would give a retracement entry.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "PBI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=63.2, day_vol=1.58 on a failed up-structure. Coil is strong but the shift is down.",
+   "falsifier": "A BULLISH_BOS reclaiming the swing would flip me.",
+   "opposing_case": "lens coil and leadership strong, energy=84.9, mp_accel_state=ACCELERATING, div_state=BULLISH: contraction could resolve upward.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT pending: structure=74.7 ABOVE_STRUCTURE, sma_distance_pct=5.4, mp_state=BUILDING, mp_accel_state=ACCELERATING, div_state=BULLISH, day_vol=0.97. Buy stop over bar_high after a pullback to ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "OXY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT (C2): structure=77.9, structure_shift=RANGE inside the swing, sma_distance_pct=5.67, mp_state=BUILDING, mp_accel_state=ACCELERATING, day_vol=0.88. Buy stop over bar_high on a hold of ma_20.",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "MRSH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=RETRACEMENT (C2): structure=69.5, structure_shift=RANGE, sma_distance_pct=5.54 holding above the average, mp_state=STRONG, mp_accel_state=ACCELERATING, elder_pattern=SUSTAINED, div_state=BULLISH (advisory).",
+   "falsifier": "Pullback to ma_20 fails: daily close below ma_50 = the retracement became a reversal (C2).",
+   "challenge_reply": "Steenbarger: not an ABSTAIN because it is a named RETRACEMENT (C2) in a STRONG/ACCELERATING mp with a structural stop (close below ma_50). Lens leadership, coil and insti_money warn, which is why it stays at 2.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "HOMB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=RANGE, structure=46.3, sma_distance_pct=-0.46, day_vol=1.3. Structure too soft to classify a retracement in a trend (C2); stand aside.",
+   "falsifier": "structure rising above 60 with a BULLISH_BOS would make it a test I support.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No long setup (C2): structure_shift=BEARISH_CHOCH, structure=46.3, lens warns on leadership, structure, resistance, sector. A failed up-structure is not a test, retracement or breakout.",
+   "falsifier": "A BULLISH_BOS with structure above 60 would flip me.",
+   "opposing_case": "mp_state=BUILDING, mp_accel_state=ACCELERATING, elder_pattern=CORRECTION_REENTRY: a sharp short-term rebound is running.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "ZION",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=BULLISH_BOS on day_vol=2.4, but structure=36.8 and sma_distance_pct=-2.32: a break inside a weak structure, not a test of a trend extreme (C2). Not classifiable today.",
+   "falsifier": "Structure rebuilding above 60 with the BOS holding would make it a test I support.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "setup=TEST at the base (C2/C20): structure_shift=BULLISH_BOS, sma_distance_pct=1.05 entry next to the level, atr_14d=0.47 contraction proxy, structure=71.6, elder_pattern=ACCUMULATION_BASE. mp_accel_state=DECELERATING caps at 2; FADING is not a reason (R13).",
+   "falsifier": "Retest fails: daily close back under the broken pivot less half an ATR (C17/C20).",
+   "challenge_reply": "Steenbarger: not an ABSTAIN because it is the cleanest double stop point in my book (C20): entry sits by construction next to the level being tested, so the invalidation is tight and mechanical. rank=224 and mp_accel_state=DECELERATING are why it stays at 2.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=RANGE, structure=43.2, sma_distance_pct=-0.73, day_vol=0.76. Too soft to classify a trend retracement (C2); stand aside.",
+   "falsifier": "A BULLISH_BOS with structure above 60 would make it actionable.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=RANGE, structure=43.2, elder_pattern=INTERRUPTED, mp_accel_state=DECELERATING, sma_distance_pct=0.22. No named setup; stand aside (C22).",
+   "falsifier": "A BULLISH_BOS out of the range on above-normal day_vol would make it a breakout.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "MRK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=RANGE, structure=46.3, elder_pattern=INTERRUPTED, mp_accel_state=DECELERATING, sma_distance_pct=1.73. Range without a classifiable trigger; stand aside (C22).",
+   "falsifier": "A BULLISH_BOS out of the range on above-normal day_vol would make it a breakout.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "OKTA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=RANGE, structure=49.5, mp_accel_state=DECELERATING, elder_pattern=None. No test, retracement or contraction trigger I can name; mp_state=FADING is not used as a reason (R13). Stand aside.",
+   "falsifier": "A BULLISH_BOS with mp_accel_state turning ACCELERATING would make it a setup.",
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD=no. Held, EXIT-CASE (R7/C1/C18): structure=11.0, structure_shift=BEARISH_CHOCH, sma_distance_pct=-22.86, mp_accel_state=DECELERATING. No setup type fits; no structural swing stop sits nearby, so risk is undefined. Keep is not supported: exit.",
+   "falsifier": "Structure_shift leaving BEARISH_CHOCH with a daily close back above ma_20 would prove the exit case wrong.",
+   "opposing_case": "div_state=BULLISH is the one counter-read; a deep selloff that stabilises can become a Big Picture News Reversal (C15) held for weeks.",
+   "challenge_reply": null,
+   "conviction_change": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of3.json",
+   "bytes": 11612,
+   "votes": 18,
+   "sha256": "a8776f726a71"
+  },
+  {
+   "file": "raschke.part2of3.json",
+   "bytes": 9496,
+   "votes": 18,
+   "sha256": "f34a42614125"
+  },
+  {
+   "file": "raschke.part3of3.json",
+   "bytes": 10215,
+   "votes": 18,
+   "sha256": "a27f91789d70"
+  }
+ ]
+}

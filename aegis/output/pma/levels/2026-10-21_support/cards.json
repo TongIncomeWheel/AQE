@@ -1,0 +1,1192 @@
+{
+ "advance": {
+  "CNC": {
+   "triggers": [
+    {
+     "id": "CNC-in0",
+     "kind": "trade_above",
+     "level": 70.97,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 70.97 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "CNC-buy0",
+     "kind": "close_above",
+     "level": 70.97,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 70.97 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CNC-dip1",
+     "kind": "trade_below",
+     "level": 69.63,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Dipped under 69.63 (the pivot). Reclaim setup live: the buy line is an hourly close back above 69.63."
+    },
+    {
+     "id": "CNC-kill",
+     "kind": "close_below",
+     "level": 68.53,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 68.53, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "holds above today's VWAP",
+   "kills": "daily close below 68.53; falls 1.5 ATR off the day's high"
+  },
+  "CAH": {
+   "triggers": [
+    {
+     "id": "CAH-buy0",
+     "kind": "close_above",
+     "level": 257.55,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 257.55 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CAH-kill",
+     "kind": "close_below",
+     "level": 246.455,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 246.455, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today",
+   "kills": "daily close below 246.455; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "PK": {
+   "triggers": [
+    {
+     "id": "PK-in0",
+     "kind": "trade_above",
+     "level": 16.63,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 16.63 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "PK-buy0",
+     "kind": "close_above",
+     "level": 16.63,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 16.63 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "PK-kill",
+     "kind": "close_below",
+     "level": 15.69,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 15.69, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 15.69; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "PRCH": {
+   "triggers": [
+    {
+     "id": "PRCH-in0",
+     "kind": "trade_above",
+     "level": 18.41,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 18.41 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "PRCH-buy0",
+     "kind": "close_above",
+     "level": 18.41,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 18.41 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "PRCH-kill",
+     "kind": "close_below",
+     "level": 17.565,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 17.565, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 17.565; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "PEB": {
+   "triggers": [
+    {
+     "id": "PEB-in0",
+     "kind": "trade_above",
+     "level": 20.92,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 20.92 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "PEB-buy0",
+     "kind": "close_above",
+     "level": 20.92,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 20.92 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "PEB-kill",
+     "kind": "close_below",
+     "level": 19.155,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 19.155, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 19.155; elder reading drops to 6 or less; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "MA": {
+   "triggers": [
+    {
+     "id": "MA-in0",
+     "kind": "trade_above",
+     "level": 624.29,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 624.29 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "MA-buy0",
+     "kind": "close_above",
+     "level": 624.29,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 624.29 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "MA-kill",
+     "kind": "close_below",
+     "level": 596.225,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 596.225, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 596.225; falls 1.5 ATR off the day's high"
+  },
+  "HNGE": {
+   "triggers": [
+    {
+     "id": "HNGE-in0",
+     "kind": "trade_above",
+     "level": 108.0,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 108.0 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "HNGE-buy0",
+     "kind": "close_above",
+     "level": 108.0,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 108.0 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "HNGE-kill",
+     "kind": "close_below",
+     "level": 99.32,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 99.32, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.2x normal for the time of day",
+   "kills": "daily close below 99.32; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "CNK": {
+   "triggers": [
+    {
+     "id": "CNK-in0",
+     "kind": "trade_above",
+     "level": 40.35,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 40.35 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "CNK-buy0",
+     "kind": "close_above",
+     "level": 40.35,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 40.35 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CNK-kill",
+     "kind": "close_below",
+     "level": 38.47,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 38.47, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.2x normal for the time of day; volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 38.47; structure turns bearish; falls 1.5 ATR off the day's high"
+  },
+  "A": {
+   "triggers": [
+    {
+     "id": "A-in0",
+     "kind": "trade_above",
+     "level": 174.8,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 174.8 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "A-buy0",
+     "kind": "close_above",
+     "level": 174.8,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 174.8 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "A-kill",
+     "kind": "close_below",
+     "level": 168.9,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 168.9, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 168.9; structure turns bearish"
+  }
+ },
+ "hold": {
+  "LLY": {
+   "triggers": [
+    {
+     "id": "LLY-in0",
+     "kind": "trade_above",
+     "level": 1311.75,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 1311.75 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "LLY-buy0",
+     "kind": "close_above",
+     "level": 1311.75,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 1311.75 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "LLY-kill",
+     "kind": "close_below",
+     "level": 1196.33,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 1196.33, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today",
+   "kills": "daily close below 1196.33; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "CME": {
+   "triggers": [
+    {
+     "id": "CME-zone0",
+     "kind": "trade_below",
+     "level": 275.07,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 275.07 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "CME-in1",
+     "kind": "trade_above",
+     "level": 299.92,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 299.92 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "CME-buy1",
+     "kind": "close_above",
+     "level": 299.92,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 299.92 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "CME-kill",
+     "kind": "close_below",
+     "level": 287.01,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 287.01, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "pullback to 275.07 (the 20-day) with the Elder reading 7+ or hourly close above 299.92 (yesterday's intraday high) on 1.4x+ volume",
+   "kills": "daily close below 287.01; elder reading drops to 6 or less; elder reading drops to 1 or less"
+  },
+  "TRV": {
+   "triggers": [
+    {
+     "id": "TRV-in0",
+     "kind": "trade_above",
+     "level": 396.46,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 396.46 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "TRV-buy0",
+     "kind": "close_above",
+     "level": 396.46,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 396.46 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "TRV-kill",
+     "kind": "close_below",
+     "level": 369.71,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 369.71, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "hourly close above 396.46 (yesterday's intraday high) on 1.2x+ volume",
+   "kills": "daily close below 369.71; structure turns bearish; falls 1.5 ATR off the day's high"
+  },
+  "CCEP": {
+   "triggers": [
+    {
+     "id": "CCEP-in0",
+     "kind": "trade_above",
+     "level": 113.51,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 113.51 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "CCEP-buy0",
+     "kind": "close_above",
+     "level": 113.51,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 113.51 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CCEP-kill",
+     "kind": "close_below",
+     "level": 108.26,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 108.26, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today",
+   "kills": "daily close below 108.26; structure turns bearish; elder reading drops to 6 or less; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "DRH": {
+   "triggers": [
+    {
+     "id": "DRH-in0",
+     "kind": "trade_above",
+     "level": 13.88,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 13.88 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "DRH-buy0",
+     "kind": "close_above",
+     "level": 13.88,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 13.88 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "DRH-kill",
+     "kind": "close_below",
+     "level": 12.745,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 12.745, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today",
+   "kills": "daily close below 12.745; elder reading drops to 6 or less; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "ADP": {
+   "triggers": [
+    {
+     "id": "ADP-in0",
+     "kind": "trade_above",
+     "level": 294.27,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 294.27 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "ADP-buy0",
+     "kind": "close_above",
+     "level": 294.27,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 294.27 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ADP-kill",
+     "kind": "close_below",
+     "level": 275.76,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 275.76, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 275.76; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "APLE": {
+   "triggers": [
+    {
+     "id": "APLE-in0",
+     "kind": "trade_above",
+     "level": 17.86,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 17.86 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "APLE-buy0",
+     "kind": "close_above",
+     "level": 17.86,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 17.86 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "APLE-kill",
+     "kind": "close_below",
+     "level": 16.52,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 16.52, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today",
+   "kills": "daily close below 16.52; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "SHO": {
+   "triggers": [
+    {
+     "id": "SHO-in0",
+     "kind": "trade_above",
+     "level": 12.47,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 12.47 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "SHO-buy0",
+     "kind": "close_above",
+     "level": 12.47,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 12.47 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "SHO-kill",
+     "kind": "close_below",
+     "level": 11.05,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 11.05, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today",
+   "kills": "daily close below 11.05; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "MET": {
+   "triggers": [
+    {
+     "id": "MET-in0",
+     "kind": "trade_above",
+     "level": 101.39,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 101.39 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "MET-buy0",
+     "kind": "close_above",
+     "level": 101.39,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 101.39 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "MET-kill",
+     "kind": "close_below",
+     "level": 96.99,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 96.99, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "hourly close above 101.39 (yesterday's intraday high) on 1.2x+ volume",
+   "kills": "daily close below 96.99; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "ABBV": {
+   "triggers": [
+    {
+     "id": "ABBV-in0",
+     "kind": "trade_above",
+     "level": 290.98,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 290.98 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "ABBV-buy0",
+     "kind": "close_above",
+     "level": 290.98,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 290.98 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "ABBV-kill",
+     "kind": "close_below",
+     "level": 272.03,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 272.03, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.2x normal for the time of day",
+   "kills": "daily close below 272.03; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "AVPT": {
+   "triggers": [
+    {
+     "id": "AVPT-zone0",
+     "kind": "trade_below",
+     "level": 14.18,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 14.18 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "AVPT-buy1",
+     "kind": "close_above",
+     "level": 15.43,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 15.43 (the pivot) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "AVPT-kill",
+     "kind": "close_below",
+     "level": 13.69,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 13.69, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "pullback to 14.18 (the 20-day) with the Elder reading 7+ or hourly close above 15.43 (the pivot) on 1.4x+ volume",
+   "kills": "daily close below 13.69; elder reading drops to 1 or less"
+  },
+  "ROKU": {
+   "triggers": [
+    {
+     "id": "ROKU-buy0",
+     "kind": "close_above",
+     "level": 157.57,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 157.57 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ROKU-zone1",
+     "kind": "trade_below",
+     "level": 153.27,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 153.27 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "ROKU-buy2",
+     "kind": "close_above",
+     "level": 158.85,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 158.85 (the pivot) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ROKU-kill",
+     "kind": "close_below",
+     "level": 153.27,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 153.27, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 153.27; structure turns bearish; elder reading drops to 1 or less"
+  },
+  "KMI": {
+   "triggers": [
+    {
+     "id": "KMI-in0",
+     "kind": "trade_above",
+     "level": 33.68,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 33.68 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "KMI-buy0",
+     "kind": "close_above",
+     "level": 33.68,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 33.68 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour)."
+    },
+    {
+     "id": "KMI-buy1",
+     "kind": "close_above",
+     "level": 33.68,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close above 33.68 (yesterday's intraday high) is the committee's buy line.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "KMI-kill",
+     "kind": "close_below",
+     "level": 31.77,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 31.77, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "hourly close above 33.68 (yesterday's intraday high) or daily close above 33.68 (yesterday's intraday high) on 1.4x+ volume",
+   "kills": "daily close below 31.77"
+  },
+  "CRM": {
+   "triggers": [
+    {
+     "id": "CRM-buy0",
+     "kind": "close_above",
+     "level": 262.33,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 262.33 (the pivot) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "CRM-kill",
+     "kind": "close_below",
+     "level": 232.01,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 232.01, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 232.01"
+  },
+  "BRZE": {
+   "triggers": [
+    {
+     "id": "BRZE-zone0",
+     "kind": "trade_below",
+     "level": 27.9,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 27.9 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "BRZE-in1",
+     "kind": "trade_above",
+     "level": 45.61,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 45.61 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "BRZE-buy1",
+     "kind": "close_above",
+     "level": 45.61,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 45.61 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "BRZE-kill",
+     "kind": "close_below",
+     "level": 33.765,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 33.765, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "pullback to 27.90 (the 20-day) with the Elder reading 7+ or hourly close above 45.61 (yesterday's intraday high) on 1.2x+ volume",
+   "kills": "daily close below 33.765; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "AFL": {
+   "triggers": [
+    {
+     "id": "AFL-dip0",
+     "kind": "trade_below",
+     "level": 118.09,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Dipped under 118.09 (the pivot). Reclaim setup live: the buy line is an hourly close back above 118.09."
+    },
+    {
+     "id": "AFL-buy1",
+     "kind": "close_above",
+     "level": 120.65,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close above 120.65 (yesterday's intraday high) is the committee's buy line."
+    },
+    {
+     "id": "AFL-kill",
+     "kind": "close_below",
+     "level": 117.05,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 117.05, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "dip under 118.09 (the pivot) then an hourly close back above it on 1.2x+ volume or daily close above 120.65 (yesterday's intraday high)",
+   "kills": "daily close below 117.05"
+  },
+  "EW": {
+   "triggers": [
+    {
+     "id": "EW-in0",
+     "kind": "trade_above",
+     "level": 88.34,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 88.34 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "EW-buy0",
+     "kind": "close_above",
+     "level": 88.34,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 88.34 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "EW-zone1",
+     "kind": "trade_below",
+     "level": 86.38,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 86.38 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "EW-dip2",
+     "kind": "trade_below",
+     "level": 88.29,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Dipped under 88.29 (the 50-day). Reclaim setup live: the buy line is an hourly close back above 88.29."
+    },
+    {
+     "id": "EW-kill",
+     "kind": "close_below",
+     "level": 85.16,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 85.16, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "hourly close above 88.34 (yesterday's intraday high) on 1.4x+ volume or pullback to 86.38 (the 20-day) with the Elder reading 7+ or dip under 88.29 (the 50-day) then an hourly close back above it",
+   "kills": "daily close below 85.16; structure turns bearish; elder reading drops to 1 or less"
+  },
+  "KDP": {
+   "triggers": [
+    {
+     "id": "KDP-in0",
+     "kind": "trade_above",
+     "level": 34.89,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 34.89 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "KDP-buy0",
+     "kind": "close_above",
+     "level": 34.89,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 34.89 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "KDP-kill",
+     "kind": "close_below",
+     "level": 32.02,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 32.02, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "outperforms SPY today; volume at least 1.2x normal for the time of day; volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 32.02; structure turns bearish; falls 1.5 ATR off the day's high"
+  },
+  "CHD": {
+   "triggers": [
+    {
+     "id": "CHD-in0",
+     "kind": "trade_above",
+     "level": 106.0,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 106.0 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "CHD-buy0",
+     "kind": "close_above",
+     "level": 106.0,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 106.0 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CHD-kill",
+     "kind": "close_below",
+     "level": 98.36,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 98.36, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.2x normal for the time of day; outperforms SPY today",
+   "kills": "daily close below 98.36; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "KO": {
+   "triggers": [
+    {
+     "id": "KO-in0",
+     "kind": "trade_above",
+     "level": 93.96,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 93.96 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "KO-buy0",
+     "kind": "close_above",
+     "level": 93.96,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 93.96 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "KO-buy1",
+     "kind": "close_above",
+     "level": 93.9,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close above 93.9 (the 52-week closing high) is the committee's buy line.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "KO-kill",
+     "kind": "close_below",
+     "level": 88.73,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 88.73, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "hourly close above 93.96 (yesterday's intraday high) on 1.2x+ volume or daily close above 93.90 (the 52-week closing high) on 1.2x+ volume",
+   "kills": "daily close below 88.73; structure turns bearish; falls 1.5 ATR off the day's high"
+  },
+  "OXY": {
+   "triggers": [
+    {
+     "id": "OXY-in0",
+     "kind": "trade_above",
+     "level": 63.63,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 63.63 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "OXY-buy0",
+     "kind": "close_above",
+     "level": 63.63,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 63.63 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "OXY-kill",
+     "kind": "close_below",
+     "level": 59.54,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 59.54, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "holds above today's VWAP",
+   "kills": "daily close below 59.54; structure turns bearish"
+  },
+  "HOMB": {
+   "triggers": [
+    {
+     "id": "HOMB-in0",
+     "kind": "trade_above",
+     "level": 29.69,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 29.69 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "HOMB-buy0",
+     "kind": "close_above",
+     "level": 29.69,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 29.69 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "HOMB-kill",
+     "kind": "close_below",
+     "level": 28.47,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 28.47, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 28.47; structure turns bearish; elder reading drops to 1 or less"
+  },
+  "ZION": {
+   "triggers": [
+    {
+     "id": "ZION-in0",
+     "kind": "trade_above",
+     "level": 65.61,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 65.61 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "ZION-buy0",
+     "kind": "close_above",
+     "level": 65.61,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 65.61 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ZION-zone1",
+     "kind": "trade_below",
+     "level": 62.88,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 62.88 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "ZION-buy2",
+     "kind": "close_above",
+     "level": 66.12,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close above 66.12 (the 50-day) is the committee's buy line.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ZION-kill",
+     "kind": "close_below",
+     "level": 63.85,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 63.85, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 63.85; structure turns bearish; elder reading drops to 1 or less"
+  },
+  "ACA": {
+   "triggers": [
+    {
+     "id": "ACA-in0",
+     "kind": "trade_above",
+     "level": 147.68,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 147.68 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "ACA-buy0",
+     "kind": "close_above",
+     "level": 147.68,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 147.68 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ACA-buy1",
+     "kind": "close_above",
+     "level": 146.82,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 146.82 (the pivot) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ACA-kill",
+     "kind": "close_below",
+     "level": 146.585,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 146.585, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 146.585; structure turns bearish; elder reading drops to 1 or less; falls 1.5 ATR off the day's high"
+  },
+  "TTEK": {
+   "triggers": [
+    {
+     "id": "TTEK-zone0",
+     "kind": "trade_below",
+     "level": 33.79,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Pulled back to 33.79 (the 20-day), the pullback entry area. Needs an Elder reading of 7+."
+    },
+    {
+     "id": "TTEK-buy1",
+     "kind": "close_above",
+     "level": 35.22,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 35.22 (the 50-day) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "TTEK-kill",
+     "kind": "close_below",
+     "level": 33.79,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 33.79, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "pullback to 33.79 (the 20-day) with the Elder reading 7+ or hourly close above 35.22 (the 50-day) on 1.4x+ volume",
+   "kills": "daily close below 33.79; elder reading drops to 1 or less"
+  },
+  "MRK": {
+   "triggers": [
+    {
+     "id": "MRK-in0",
+     "kind": "trade_above",
+     "level": 149.36,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "Traded through 149.36 (yesterday's intraday high). In play: the committee acts only on an hourly close above it."
+    },
+    {
+     "id": "MRK-buy0",
+     "kind": "close_above",
+     "level": 149.36,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 149.36 (yesterday's intraday high) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "MRK-buy1",
+     "kind": "close_above",
+     "level": 153.57,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "Hourly close above 153.57 (the pivot) is the committee's buy line (alert on the 15-minute close; confirm on the hour).",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "MRK-buy2",
+     "kind": "close_above",
+     "level": 149.36,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close above 149.36 (yesterday's intraday high) is the committee's buy line.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "MRK-kill",
+     "kind": "close_below",
+     "level": 145.77,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "Daily close below 145.77, the committee's most-shared exit line. The setup is dead."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "daily close below 145.77; structure turns bearish"
+  }
+ },
+ "held": {
+  "MP": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep case: a bullish divergence (RSI and MFI, 2 oscillators) on quiet 0.66x selling, and FY25 revenue +10% after −20%/−52% may mark the trough. It is the only counter-read on file.",
+   "against": "Release case: stage 4, 22.86% under its 20-day and under the 20/50/100/200-day, structure 11, AQE health EXIT, unrealised ≈ −$4.0k, and no broker stop. Every held review reads EXIT and no analyst would add."
+  }
+ }
+}

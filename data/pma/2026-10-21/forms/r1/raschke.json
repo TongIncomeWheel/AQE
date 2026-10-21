@@ -1,0 +1,520 @@
+{
+ "voice": "raschke",
+ "date": "2026-10-21",
+ "nominations": [
+  {
+   "ticker": "CME",
+   "reason": "TEST/breakout: structure_shift=BULLISH_BOS through a confirmed pivot, structure=77.9, rank=16; mp_state=STRONG, mp_accel_state=ACCELERATING, day_vol=1.6 participation on the break; sma_distance_pct=7.39 not climactic. Double-stop-point shape (C20).",
+   "conviction": 3,
+   "fields_cited": [
+    "structure_shift",
+    "structure",
+    "rank",
+    "mp_state",
+    "mp_accel_state",
+    "day_vol",
+    "sma_distance_pct"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift=BULLISH_BOS, structure=77.9, sma_distance_pct=7.39",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "structure",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3",
+      "C20"
+     ],
+     "observed": "break of confirmed pivot with day_vol=1.6, mp_state=STRONG, mp_accel_state=ACCELERATING; exact 20-day count not served",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid=True, bracket.stop=286.49 (fib_786); structural invalidation level",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "bracket.stop_type",
+      "bracket.valid"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CNC",
+   "reason": "RETRACEMENT resolving up: structure=86.3, structure_shift=BULLISH_BOS, rank=59; elder_pattern=CORRECTION_REENTRY (advisory) after a pullback; mp_state=BUILDING, mp_accel_state=ACCELERATING; sma_distance_pct=8.05.",
+   "conviction": 3,
+   "fields_cited": [
+    "structure",
+    "structure_shift",
+    "rank",
+    "mp_state",
+    "mp_accel_state",
+    "sma_distance_pct",
+    "elder_pattern"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=86.3, structure_shift=BULLISH_BOS, sma_distance_pct=8.05",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "Holy-Grail-shaped re-entry: mp_state=BUILDING, mp_accel_state=ACCELERATING proxy for trend; ADX gate not on menu",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False; my level: below the broken swing, reference bracket.atr_fallback_stop=68.61; not a reject (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "PRCH",
+   "reason": "TEST/breakout: structure_shift=BULLISH_BOS, structure=82.1, rank=47; day_vol=1.42 above-normal participation; elder_pattern=ACCELERATION (advisory); atr_14d=0.83. mp_accel_state=FLAT tempers it.",
+   "conviction": 3,
+   "fields_cited": [
+    "structure_shift",
+    "structure",
+    "rank",
+    "day_vol",
+    "atr_14d",
+    "mp_accel_state",
+    "elder_pattern"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift=BULLISH_BOS, structure=82.1, sma_distance_pct=7.14",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "structure",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C3"
+     ],
+     "observed": "break with day_vol=1.42, atr_14d=0.83; mp_state=FADING, mp_accel_state=FLAT; NR4/NR7 not computable",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False; my level: below the broken swing, reference bracket.atr_fallback_stop=17.35; not a reject (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CL",
+   "reason": "TEST: structure_shift=BULLISH_BOS, structure=74.7, rank=31; mp_state=STRONG, mp_accel_state=ACCELERATING; sma_distance_pct=6.0. day_vol=0.73 is light participation on the break.",
+   "conviction": 2,
+   "fields_cited": [
+    "structure_shift",
+    "structure",
+    "rank",
+    "mp_state",
+    "mp_accel_state",
+    "sma_distance_pct",
+    "day_vol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift=BULLISH_BOS, structure=74.7, sma_distance_pct=6.0",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "structure",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3",
+      "C20"
+     ],
+     "observed": "pivot break, mp_state=STRONG, mp_accel_state=ACCELERATING, but day_vol=0.73",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False; my level: below the broken swing, reference bracket.atr_fallback_stop=92.91; not a reject (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "ACA",
+   "reason": "TEST at the base: structure_shift=BULLISH_BOS with sma_distance_pct=1.05 (entry next to the level, C20 double stop point); atr_14d=0.47 contraction proxy; structure=71.6; elder_pattern=ACCUMULATION_BASE. mp_accel_state=DECELERATING, rank=224.",
+   "conviction": 2,
+   "fields_cited": [
+    "structure_shift",
+    "sma_distance_pct",
+    "atr_14d",
+    "structure",
+    "elder_pattern",
+    "mp_accel_state",
+    "rank"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift=BULLISH_BOS, sma_distance_pct=1.05, structure=71.6",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "structure"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C20",
+      "C12"
+     ],
+     "observed": "trigger and invalidation close by construction; atr_14d=0.47; mp_state=FADING, mp_accel_state=DECELERATING",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False; my level: below the broken swing, reference bracket.atr_fallback_stop=146.98; not a reject (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "LYFT",
+   "reason": "RETRACEMENT in trend: structure=84.2, rank=40, structure_shift=RANGE inside the swing with sma_distance_pct=5.94; mp_state=BUILDING, mp_accel_state=ACCELERATING; elder_pattern=CORRECTION_REENTRY (advisory).",
+   "conviction": 2,
+   "fields_cited": [
+    "structure",
+    "rank",
+    "structure_shift",
+    "sma_distance_pct",
+    "mp_state",
+    "mp_accel_state",
+    "elder_pattern"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=84.2, structure_shift=RANGE, sma_distance_pct=5.94",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "first-pullback shape; mp_state=BUILDING, mp_accel_state=ACCELERATING as trend proxy; ADX and %K/%D not on menu",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid=True, bracket.stop=16.28 (ma50); structural invalidation level",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "bracket.stop_type",
+      "bracket.valid"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "MRSH",
+   "reason": "RETRACEMENT in trend: structure=69.5, structure_shift=RANGE, sma_distance_pct=5.54 holding above average; mp_state=STRONG, mp_accel_state=ACCELERATING; elder_pattern=SUSTAINED, div_state=BULLISH (advisory).",
+   "conviction": 2,
+   "fields_cited": [
+    "structure",
+    "structure_shift",
+    "sma_distance_pct",
+    "mp_state",
+    "mp_accel_state",
+    "elder_pattern",
+    "div_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=69.5, structure_shift=RANGE, sma_distance_pct=5.54",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "pullback within trend; mp_state=STRONG, mp_accel_state=ACCELERATING; rank=103 mid-list",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C7",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED, stochastic NOT_SERVED, n-day extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED",
+     "verdict": "partial",
+     "fields": [
+      "sma_distance_pct",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False; my level: below the broken swing, reference bracket.atr_fallback_stop=187.32; not a reject (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "Up-structure failed: structure_shift=BEARISH_CHOCH, structure=11.0, sma_distance_pct=-22.86, mp_accel_state=DECELERATING; live_px=39.05 vs entry=53.0, unreal_usd=-4185.0 with NO broker stop. C17/C1/C21: the swing-low stop is long breached; cut the loss, do not let drawdown recovery eat the book."
+  }
+ ],
+ "lesson_applied": "No ledger memory block injected this run; none applied. Standing C1/C21: a held name with failed structure and no working stop is the drawdown the canon warns about.",
+ "declared": {
+  "not_served": [
+   "adx (C7,C8): adx_14 present in packet but off seat menu, not used as a gate",
+   "stochastic_kd (C6)",
+   "exact n_day_extreme (C3,C4): substituted sma_distance_pct+structure_shift",
+   "bar_range_history (C12,C13): atr_14d/day_vol single-bar proxies only",
+   "market_breadth (C16): out of scope",
+   "energy.squeeze_score: absent from packet",
+   "visual climax patterns (C10,C14): declined"
+  ],
+  "setup_types": {
+   "CME": "test",
+   "CNC": "retracement",
+   "PRCH": "breakout",
+   "CL": "test",
+   "ACA": "test",
+   "LYFT": "retracement",
+   "MRSH": "retracement"
+  }
+ },
+ "shortfall_reason": "7 names fit a named setup family with structure support; the rest are extended without a taxonomy fit (e.g. sma_distance_pct >15), structurally broken (BEARISH_CHOCH), or need ADX/stochastic/range-history gates I cannot see. Not padded."
+}

@@ -1,0 +1,72 @@
+{
+  "voice": "crown",
+  "date": "2026-10-21",
+  "status": "OK (every input available; oldest source 1 day behind; positioning as of 2026-10-13)",
+  "expression_family": "BROADENING_CARRY",
+  "match_quality": "partial",
+  "size_multiplier": 1.0,
+  "size_multiplier_note": "Artifact figure (CTA dial 1.00), applied to the PM's own risk per trade. Cross-check: R8 does not fire (share at extreme 0.167, below ~0.67), so no recogniser cuts it. But negative dealer gamma, SPY on a knife-edge and 2 unmet conditions mean there is no case for going above 1.00x.",
+  "conditions_met": [
+    "broadening: breadth regime broadening, gate passed, confidence 0.65",
+    "range_not_extreme: breadth position_in_12_month_range = mid",
+    "cta_low_flip: trend funds mixed, 3 of 18 markets at an extreme (0.167)"
+  ],
+  "conditions_not_met": [
+    "gamma_positive: option dealers NEGATIVE (SPY total GEX about -6.03bn, QQQ about -2.71bn). Dealers amplify moves instead of damping them, so the carry leg (short OTM calls) has no stable tape under it",
+    "dispersion_normal: dispersion ELEVATED (single-stock vs index vol gap 23.94, above 83% of the past 2 years)"
+  ],
+  "contested": "C37: CONTESTED, left for the PM to resolve. the_call picks BROADENING_CARRY (partial, 3 of 5 conditions). The scenario layer leads with DISPERSION_REGIME at 0.83 share of conditions, a stock-picker's tape where the index says little about the average name. Its own unmet condition (gamma_positive) and its dispersion_normal failure are exactly what DISPERSION_REGIME describes. The artifact marks the scenario contested=false. The family pick and the scenario read still point at different tapes.",
+  "headline": "Broadening but young (2 days, mid-range) on a negative-gamma tape. SPY sits 0.77% under its gamma flip (knife-edge). Vol gap wide but easing. Partial BROADENING_CARRY at 1.00x, contested by DISPERSION_REGIME.",
+  "recognisers_applied": [
+    "R1 broadening + mid range: own breadth, and it is not late. But it is only 2 days old, the 60d change is -3.59% and confidence is 0.65, so this is an early, unproven wave",
+    "R3 not triggered: passed_the_gate = true, status OK",
+    "R4 not triggered: range position mid, so neither a tired wave nor a bottom",
+    "R6 ELEVATED_EASING: gap 23.94 (83rd pctl) but gap_change_20d -0.93. Stress is leaving. Index downside here buys the end of the move. Do NOT route to HIDDEN_STRESS_DOWNSIDE",
+    "R7 crowded (context, never timing; CFTC data to 2026-10-13, 8 days old): spec long NQ, RTY, ZC, ZF, ZS, ZT; spec short NG",
+    "R8 not triggered: share_at_an_extreme 0.167 against the ~0.67 threshold",
+    "R9 KNIFE-EDGE: SPY spot 769.05 vs gamma_flip 774.95 = 0.77% (inside ~1%). Tape character can change without much price movement. QQQ flip 2.06% away is not a knife-edge. This rests on a dealer-side assumption (see limits)",
+    "R10 divergence: 1 aggregate warning (rsi: momentum lagging price) plus 8 on individual markets. They do NOT line up with breadth, which is broadening, and not with vol, which is easing. Straws, not a pile",
+    "R11 not triggered: VIX 17.31, well under ~25. Protection is not priced, but the easing gap says it is not needed for stress either"
+  ],
+  "data_points": [
+    {"name": "breadth.regime", "value": "broadening (2 days, conf 0.65, gate passed)", "reading": "average stock keeping up with the index; regime is young"},
+    {"name": "breadth.position_in_12_month_range", "value": "mid", "reading": "neither late nor exhausted (R4 off)"},
+    {"name": "breadth.change_5d / 20d / 60d pct", "value": "+2.38 / +2.01 / -3.59", "reading": "short-term turn up inside a 60-day decline; not yet a durable trend"},
+    {"name": "volatility.gap (single-stock 41.25 vs VIX 17.31)", "value": 23.94, "reading": "wide: wider than 83.3% of the past 2 years"},
+    {"name": "volatility.gap_change_20d", "value": -0.93, "reading": "narrowing, so state ELEVATED_EASING: stress leaving (R6)"},
+    {"name": "volatility.implied_correlation", "value": 8.35, "reading": "16th pctl, low correlation, which supports DISPERSION_REGIME"},
+    {"name": "volatility.vix", "value": 17.31, "reading": "calm index, lower than 45% of the past 2 years; term structure contango"},
+    {"name": "option_dealers.regime", "value": "NEGATIVE", "reading": "dealers amplify moves, so expect swings larger than the news"},
+    {"name": "SPY flip_distance_pct", "value": 0.77, "reading": "knife-edge (R9): under 1% from the flip"},
+    {"name": "trend_funds.share_at_an_extreme", "value": 0.1667, "reading": "3 of 18 markets stretched, bias mixed, size_dial 1.00 (R8 off)"},
+    {"name": "scenario.leading score_share_of_conditions", "value": "DISPERSION_REGIME 0.8333 (coverage 1.0)", "reading": "share of conditions met, NOT a probability; runner-up DOLLAR_SQUEEZE"},
+    {"name": "divergence.warnings_lit", "value": "9 (1 aggregate rsi + 8 per-market)", "reading": "not aligned with breadth or vol, so low weight (R10)"}
+  ],
+  "key_levels": [
+    {"market": "SPY (dealer gamma flip)", "level": 774.95, "distance_pct": 0.77, "meaning": "KNIFE-EDGE. Above it, dealers damp moves and the tape calms; below it, dealers amplify. Assumes customers are long calls and puts (not observed)"},
+    {"market": "Corn futures (trend-fund flip)", "level": 460.44, "distance_pct": -0.28, "meaning": "Trend funds turn seller below this, and their selling arrives together. Specs are already crowded long corn"},
+    {"market": "SPY (put wall)", "level": 760.0, "distance_pct": -1.18, "meaning": "Heaviest put positioning. Losing it removes the cushion in a negative-gamma tape"},
+    {"market": "SPY (call wall)", "level": 780.0, "distance_pct": 1.42, "meaning": "Rallies tend to meet dealer selling here unless momentum forces through"},
+    {"market": "Russell 2000 futures (trend-fund flip)", "level": 2831.36, "distance_pct": 1.49, "meaning": "Trend funds turn buyer above this. That would confirm the broadening; specs are already crowded long small caps"},
+    {"market": "RSP/SPY ratio (20-day average)", "level": 0.274758, "distance_pct": -2.11, "meaning": "Average stock crossing below its own trend against the index. It turns before the regime label does"},
+    {"market": "Vol gap elevated band", "level": 23.51, "distance_pct": -1.8, "meaning": "Gap sits just above the band. It only counts as a warning if it widens again"},
+    {"market": "QQQ (dealer gamma flip)", "level": 732.39, "distance_pct": 2.06, "meaning": "Above it, dealer damping. Not a knife-edge"}
+  ],
+  "what_would_change_it": [
+    "Vol gap starts widening again (gap_change_20d turns positive while the gap is above the 23.51 band). That moves the state to ELEVATED_RISING, R5 fires, and the route turns toward HIDDEN_STRESS_DOWNSIDE",
+    "RSP/SPY ratio drops below its 20-day average (0.2748, -2.11% away). The broadening thesis fails before the label flips",
+    "SPY reclaims its gamma flip at 774.95 (+0.77%). Dealer gamma turns positive, gamma_positive is met, and BROADENING_CARRY's match improves",
+    "Russell 2000 futures above 2831.36 (+1.49%). Trend funds join the broadening as buyers",
+    "SPY loses the 760 put wall (-1.18%) in negative gamma. Amplified downside; a broadening carry would be the wrong family",
+    "Corn under 460.44 (-0.28%). Trend-fund selling into a crowded spec long. A cross-asset tell, not an equity signal",
+    "Event risk ahead: claims 10-22, ISM Mfg/Services 10-23, FOMC 10-28, Core PCE/GDP 10-29"
+  ],
+  "limits": [
+    "A scenario score is the share of that story's conditions currently met. It is not a probability and was never fitted to history.",
+    "This layer does not size, does not name a ticker and places nothing. It produces a family of expressions and a multiplier on the PM's own risk budget.",
+    "Freshness (C28): oldest source 2026-10-20 (1 day behind); volatility as of 2026-10-20; positioning (CFTC) as of 2026-10-13, 8 days old. Crowding is context only and cannot time anything.",
+    "Dealer gamma readings (SPY/QQQ flip, walls, NEGATIVE regime) rest on an assumed convention: customers long calls and long puts. This is NOT observed data.",
+    "The packet also carries SRM, macro_weather, intermarket and thematic sections. Per charter §10.6 (Crown is standalone), they were not used in this read.",
+    "Breadth regime is 2 days old with confidence 0.65. The read is early and can reverse quickly."
+  ]
+}

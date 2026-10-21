@@ -1,0 +1,824 @@
+{
+ "voice": "thorp",
+ "date": "2026-10-21",
+ "universe_file": "/home/claude/pma/w/seat_packets/thorp.tsv",
+ "nominations": [
+  {
+   "ticker": "REG",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 1/25 in that cohort, atr_14d=1.08 on bracket.price=73.2 (atr_pct 1.48%, q1). Gapped worst case 5.33%.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 5.33,
+    "gap_basis": "(bracket.stop=70.38 minus atr_14d=1.08) vs bracket.price=73.2",
+    "loss_boundary": 73.2,
+    "loss_boundary_note": "losing below bracket.price=73.2; thesis wrong below bracket.stop=70.38",
+    "unwatched_loss": "floor 3.9 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=60.4; sc_m_gate_detail=10 (flow,mp,elder pass; energy,structure fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.stop=70.38, atr_14d=1.08: gap loss 5.33% vs exp gain 8.67% (bracket.rr=2.25)",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 1.48%, rank 1/25, q1; liquidity day_vol=0.75 (substitute); knn_prob=0.6 advisory, k=5, unused",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "O",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 3/25 in that cohort, atr_14d=0.9 on bracket.price=56.34 (atr_pct 1.60%, q1). Gapped worst case 4.24%.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 4.24,
+    "gap_basis": "(bracket.stop=54.85 minus atr_14d=0.9) vs bracket.price=56.34",
+    "loss_boundary": 56.34,
+    "loss_boundary_note": "losing below bracket.price=56.34; thesis wrong below bracket.stop=54.85",
+    "unwatched_loss": "floor 2.39 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=57.7; sc_m_gate_detail=10 (flow,mp,elder pass; energy,structure fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.stop=54.85, atr_14d=0.9: gap loss 4.24% vs exp gain 12.77% (bracket.rr=4.83)",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 1.60%, rank 3/25, q1; liquidity day_vol=0.61 (substitute); knn_prob=0.6 advisory, k=5, unused",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CMS",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 8/25 in that cohort, atr_14d=1.19 on bracket.price=68.42 (atr_pct 1.74%, q2). Gapped worst case 3.54%.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 3.54,
+    "gap_basis": "(bracket.stop=67.19 minus atr_14d=1.19) vs bracket.price=68.42",
+    "loss_boundary": 68.42,
+    "loss_boundary_note": "losing below bracket.price=68.42; thesis wrong below bracket.stop=67.19",
+    "unwatched_loss": "floor 2.42 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=62.5; sc_m_gate_detail=10 (flow,mp,elder pass; energy,structure fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.stop=67.19, atr_14d=1.19: gap loss 3.54% vs exp gain 5.88% (bracket.rr=3.27)",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 1.74%, rank 8/25, q2; liquidity day_vol=0.79 (substitute); knn_prob=0.6 advisory, k=5, unused",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "LNT",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 9/25 in that cohort, atr_14d=1.2 on bracket.price=68.27 (atr_pct 1.76%, q2). Gapped worst case 3.68%.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 3.68,
+    "gap_basis": "(bracket.stop=66.96 minus atr_14d=1.2) vs bracket.price=68.27",
+    "loss_boundary": 68.27,
+    "loss_boundary_note": "losing below bracket.price=68.27; thesis wrong below bracket.stop=66.96",
+    "unwatched_loss": "floor 2.51 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=64.0; sc_m_gate_detail=10 (flow,mp,elder pass; energy,structure fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.stop=66.96, atr_14d=1.2: gap loss 3.68% vs exp gain 4.68% (bracket.rr=2.44)",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 1.76%, rank 9/25, q2; liquidity day_vol=0.72 (substitute); knn_prob=0.2 advisory, k=5, unused",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "VTR",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 11/25 in that cohort, atr_14d=1.83 on bracket.price=86.49 (atr_pct 2.12%, q2). Gapped worst case 4.58%.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 4.58,
+    "gap_basis": "(bracket.stop=84.36 minus atr_14d=1.83) vs bracket.price=86.49",
+    "loss_boundary": 86.49,
+    "loss_boundary_note": "losing below bracket.price=86.49; thesis wrong below bracket.stop=84.36",
+    "unwatched_loss": "floor 3.96 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=58.8; sc_m_gate_detail=9 (flow,elder pass; energy,structure,mp fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.stop=84.36, atr_14d=1.83: gap loss 4.58% vs exp gain 9.26% (bracket.rr=3.76)",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 2.12%, rank 11/25, q2; liquidity day_vol=0.59 (substitute); knn_prob=0.6 advisory, k=5, unused",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "TRP",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 12/25 in that cohort, atr_14d=1.34 on bracket.price=61.79 (atr_pct 2.17%, q2). Gapped worst case 4.34%.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.atr_fallback_stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 4.34,
+    "gap_basis": "(bracket.atr_fallback_stop=60.45 minus atr_14d=1.34) vs bracket.price=61.79",
+    "loss_boundary": 61.79,
+    "loss_boundary_note": "losing below bracket.price=61.79; thesis wrong below bracket.atr_fallback_stop=60.45",
+    "unwatched_loss": "floor 2.68 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=60.6; sc_m_gate_detail=13 (flow,energy,elder pass; structure,mp fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.atr_fallback_stop=60.45, atr_14d=1.34: gap loss 4.34%; no rr, expected gain unstated (R1: context only)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.atr_fallback_stop",
+      "atr_14d",
+      "bracket.price"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 2.17%, rank 12/25, q2; liquidity day_vol=0.66 (substitute); knn_prob=0.0 advisory, k=5, unused",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "PBI",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 15/25 in that cohort, atr_14d=0.46 on bracket.price=17.37 (atr_pct 2.65%, q3). Gapped worst case 5.24%.",
+   "conviction": 2,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.atr_fallback_stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 5.24,
+    "gap_basis": "(bracket.atr_fallback_stop=16.92 minus atr_14d=0.46) vs bracket.price=17.37",
+    "loss_boundary": 17.37,
+    "loss_boundary_note": "losing below bracket.price=17.37; thesis wrong below bracket.atr_fallback_stop=16.92",
+    "unwatched_loss": "floor 0.91 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=74.5; sc_m_gate_detail=15 (flow,energy,structure,elder pass; mp fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.atr_fallback_stop=16.92, atr_14d=0.46: gap loss 5.24%; no rr, expected gain unstated (R1: context only)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.atr_fallback_stop",
+      "atr_14d",
+      "bracket.price"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 2.65%, rank 15/25, q3; liquidity day_vol=1.58 (substitute); knn_prob=0.6 advisory, k=5, unused",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "TTAN",
+   "reason": "Measured edge: signal_hit_rate_20d=57.0 over signal_n=251 (only cohort ~2 SE above coin-flip). Vol rank 25/25 in that cohort, atr_14d=3.84 on bracket.price=80.71 (atr_pct 4.76%, q4). Gapped worst case 10.23%.",
+   "conviction": 2,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "atr_14d",
+    "bracket.price",
+    "bracket.stop",
+    "day_vol",
+    "sc_momentum",
+    "sc_m_gate_detail"
+   ],
+   "price_at_nomination": null,
+   "worst_case": {
+    "gap_loss_pct": 10.23,
+    "gap_basis": "(bracket.stop=76.29 minus atr_14d=3.84) vs bracket.price=80.71",
+    "loss_boundary": 80.71,
+    "loss_boundary_note": "losing below bracket.price=80.71; thesis wrong below bracket.stop=76.29",
+    "unwatched_loss": "floor 8.26 USD/sh (stop gapped by 1 ATR); size to this, not to stop honoured"
+   },
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.0, signal_n=251; sc_momentum=64.2; sc_m_gate_detail=14 (flow,energy,mp,elder pass; structure fail)",
+     "verdict": "pass",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "57.0% implies losers counted (~43% of 251); no random-selection benchmark, no one-component ablation, not net of costs",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.stop=76.29, atr_14d=3.84: gap loss 10.23% vs exp gain 27.55% (bracket.rr=5.03)",
+     "verdict": "pass",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price",
+      "bracket.rr"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute) 4.76%, rank 25/25, q4; liquidity day_vol=0.75 (substitute); knn_prob=0.4 advisory, k=5, unused",
+     "verdict": "fail",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "edge condition held by 25/328 names at 57.0/251; no trailing edge median in packet",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "No measured edge: sc_momentum=22.7, sc_m_gate_detail=1 (all fail), held_book.hl_state=EXIT, hl_score=0.0, vwap BELOW; live_px=39.05 vs entry=53.0, unreal_usd=-4185.0. atr_14d=2.39 (6.12% of px, top-quartile vol). No broker stop: unwatched loss unbounded (C9)."
+  }
+ ],
+ "lesson_applied": "Card audit 2026-08-06: knn_prob/knn_significant advisory only, beta_30d not mine. No vote rests on either; edge = signal_hit_rate_20d with signal_n stated.",
+ "declared": {
+  "not_served": [
+   "high_52w/low_52w range (canon C5 measure) \u2014 atr_14d/bracket.price substitute used",
+   "avg_daily_volume/spread \u2014 day_vol substitute; round-trip cost unstated",
+   "signal edge trailing median (R7)",
+   "random-selection/ablation benchmark (C14)"
+  ]
+ },
+ "data_gaps": [
+  {
+   "field": "low_52w",
+   "impact": "C5 range-over-mid volatility not computable; ATR substitute"
+  },
+  {
+   "field": "avg_daily_volume",
+   "impact": "C24 cost tiebreak unpriced"
+  }
+ ],
+ "shortfall_reason": "8 filed. Only the signal_hit_rate_20d=57.0/signal_n=251 cohort clears coin-flip by ~2 SE; other cohorts are <50% or n too small to separate (e.g. 57.4/115, 55.6/133). Of its 25 names, filed those with sc_momentum>=57 and flow gate passing; rest are weak-momentum or flow-failing. Fewer is valid (C21)."
+}

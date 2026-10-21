@@ -1,0 +1,983 @@
+{
+ "voice": "minervini",
+ "date": "2026-10-21",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "CNC",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Trend Template stage 2: entry=70.81 > ma50=65.54 > ma100=64.99 > ma200=54.43, from_52w_hi=0.0, rs_rank_pct=94.86, rs LEADER downday=0.76; BULLISH_BOS at pct_from_pivot=1.69, not chased (C3,C5).",
+   "falsifier": "Close back below the pivot the BOS cleared, or a breakout day with no volume follow-through.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "self_counter": "Break printed on day_vol=0.8: C6 wants expanding volume on the breakout; ma20=65.28 sits just under ma50.",
+   "conviction_change": null,
+   "challenge_reply": "Field I read that livermore does not: rs_rank_pct vs the C3 criterion-8 floor of 70 and from_52w_hi vs the 25% ceiling; his read is group confirmation + mp_state. Buying the BREAKOUT, not the pullback; invalidation = close below pivot_high less 0.5 ATR. environment_match HALF_SERVED (no regime field); read valid only in a market where leaders are making new highs."
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 at a new high: entry=257.55 > ma50=235.13 > ma100=230.6 > ma200=220.36, from_52w_hi=0.0, rs_rank_pct=82.5, downday=1.18 (holds up on down days, C11), mp=87.0 ACCELERATING.",
+   "falsifier": "Close below ma_20 with volume, or rs_down_day turning negative.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "self_counter": "day_vol=1.0 ordinary participation; sma_dist=9.53 and ext_atr20=3.91 stretched; coil warn means no fresh base.",
+   "conviction_change": null,
+   "challenge_reply": "Field I read that livermore does not: rs_rank_pct vs the C3 criterion-8 floor of 70 and from_52w_hi vs the 25% ceiling; his read is group confirmation + mp_state. Invalidation: close below ma_20 or below pivot_high less 0.5 ATR."
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=1283.66 > ma50=1182.47 > ma100=1171.06 > ma200=1081.75, rs_rank_pct=90.21, day_vol=1.29 expansion; pct_from_pivot=5.65 is at the top of the chase band (C5).",
+   "falsifier": "Close back below pivot_high less 0.5 ATR.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": "Field I read that livermore does not: rs_rank_pct vs the C3 criterion-8 floor of 70 and from_52w_hi vs the 25% ceiling; his read is group confirmation + mp_state. Invalidation: close below pivot_high less 0.5 ATR; chase discipline keeps me at 3."
+  },
+  {
+   "ticker": "CME",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma50=275.0 < ma200=278.92 (criterion 4), rs_rank_pct=52.63 below the 70 floor (criterion 8), from_52w_hi=-9.54. Break inside a repairing range, not stage 2 (C2,C3).",
+   "falsifier": "ma50 crossing above ma200 with rs_rank_pct above 70.",
+   "opposing_case": "BULLISH_BOS on day_vol=1.6, flow=90.8, mp=82.0 ACCELERATING, elder SUSTAINED: a real thrust that could be the start of a new stage 2.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=16.57 > ma50=15.39 > ma100=14.91 > ma200=13.01, rs_rank_pct=91.31, day_vol=1.28; pct_from_pivot=4.15 inside the band (C3,C5).",
+   "falsifier": "Close below pivot_high less 0.5 ATR.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": "Field I read that livermore does not: rs_rank_pct vs the C3 criterion-8 floor of 70 and from_52w_hi vs the 25% ceiling; his read is group confirmation + mp_state. Lodging cluster acknowledged: PK is one exposure with PEB/DRH/APLE/SHO. Invalidation: close below pivot_high less 0.5 ATR."
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2: entry=18.18 > ma50=16.97 > ma100=14.97 > ma200=11.67, rs_rank_pct=99.39, BULLISH_BOS on day_vol=1.42 at pct_from_pivot=1.11. Weights: rs IN-LINE downday=-0.24, sector Declining.",
+   "falsifier": "Close back below the pivot the BOS cleared.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": "Buying the BREAKOUT the BOS printed, not a pullback. Invalidation: close below pivot_high less 0.5 ATR, or close below ma_50."
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 within from_52w_hi=-0.38: entry=395.73 > ma50=369.71 > ma100=354.06 > ma200=325.14, rs_rank_pct=85.68, LEADER downday=0.89, day_vol=1.34, tight vcp_tightness_pct=67.8 (C3,C4).",
+   "falsifier": "Close below pivot_high less 0.5 ATR.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "self_counter": "ma20=369.45 sits a hair under ma50; ext_atr20=3.31; coil warn means the base is not freshly tight.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PEB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=20.71 > ma50=18.51 > ma100=18.43 > ma200=15.72, rs_rank_pct=91.8, mp=84.0 ACCELERATING, day_vol=1.36. sma_dist=11.88 is a weight (R14).",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=113.41 > ma50=105.28 > ma100=103.84 > ma200=99.69, rs_rank_pct=75.52, day_vol=1.38, SUSTAINED. ext_atr20=4.43 is the room's most extended (weight, R14).",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": "4->3: rs_rank_pct=75.52 only just clears criterion 8 and ext_atr20=4.43 is far past a low-risk pivot (C5).",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "DRH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Stage 2 new high: entry=13.79 > ma50=12.51 > ma100=12.37 > ma200=11.12, rs_rank_pct=86.78, mp=90.0. But day_vol=0.76 (no C6 expansion) and div BEARISH/1.",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=292.75 > ma50=273.56 > ma100=257.59 > ma200=238.99, rs_rank_pct=90.58, day_vol=1.37, flow=92.1. pct_from_pivot=5.11 past the chase line (C5).",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": "4->3: pct_from_pivot=5.11 and ext_atr20=4.06 put it past a low-risk pivot (C5).",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "APLE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high, rs_rank_pct=88.0, day_vol=1.4, entry=17.82 > ma200=14.41, but ma50=16.12 < ma100=16.24: criterion 4 in doubt; sma_dist=10.53 (C3).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "SHO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high, rs_rank_pct=83.72, day_vol=1.6, entry=12.4 > ma200=10.42, but ma50=11.21 < ma100=11.36: criterion 4 in doubt; sma_dist=10.6 (C3).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AEP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails: ma50=122.73 < ma100=126.97 < ma200=127.57, entry=127.22 under ma200 (criteria 1,4), rs_rank_pct=38.19, from_52w_hi=-8.27. Not stage 2 (C2,C3).",
+   "falsifier": "ma50 back over ma200 with entry above ma200 and rs_rank_pct above 70.",
+   "opposing_case": "mp=86.0 ACCELERATING, BULLISH_BOS, LEADER downday=0.76, 4/6 lenses strong: a utility showing relative strength (C11).",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=620.42 > ma50=577.83 > ma100=550.35 > ma200=533.51, rs_rank_pct=79.19, mp=90.0. day_vol=0.95, no expansion yet (C6).",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MET",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes: entry=101.18 > ma50=96.99 > ma100=93.57 > ma200=84.84, from_52w_hi=0.0, rs_rank_pct=85.07. day_vol=0.66 no volume; buy only the breakout (C5,C6).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=289.08 > ma50=264.01 > ma100=252.87 > ma200=234.51, rs_rank_pct=89.6, mp=86.0, LEADER downday=0.84; day_vol=1.06 modest.",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes: entry=15.23 > ma50=13.69 > ma100=12.77 > ma200=11.76, from_52w_hi=0.0, rs_rank_pct=92.53. Weights: RANGE, div BEARISH/2, flow=52.6, sector Declining.",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 base near highs: entry=157.57 > ma50=154.89 > ma100=146.66 > ma200=125.88, from_52w_hi=-1.37, rs_rank_pct=88.62, RANGE with coil strong, energy=84.9: a contraction to break (C4).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "O",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Stage 4: BEARISH_CHOCH, entry=56.34 < ma50=58.44 < ma100=60.62 < ma200=61.7, rs_rank_pct=22.64, from_52w_hi=-16.61. Buying weakness (C2,C11).",
+   "falsifier": "Entry back above ma200 with ma50 turning up and rs_rank_pct above 70.",
+   "opposing_case": "flow=73.7, coil and insti_money strong, mp=61.0 ACCELERATING: early accumulation in a beaten REIT.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CCI",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: entry=81.14 < ma200=82.31, ma50=74.08 < ma100=77.76 < ma200, rs_rank_pct=36.47, from_52w_hi=-17.93. Rally into the long average (C2,C3).",
+   "falsifier": "Close above ma200 and ma50 turning up through ma100.",
+   "opposing_case": "mp=97.0, sc_mom 81.9, run_10d 18.83%: the sharpest thrust in the room, which can mark a stage 1 to 2 transition.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TDC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma50=28.91 < ma200=29.78 < ma100=30.51 (criterion 4), from_52w_hi=-14.33, rs IN-LINE, sector Declining (C3).",
+   "falsifier": "ma50 back above ma100 and ma200 with a new high.",
+   "opposing_case": "entry=32.45 above every average, structure 84.2, mp=76.0, rs_rank_pct=75.28: price is repairing quickly.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 new high: entry=107.51 > ma50=94.09 > ma100=85.11 > ma200=64.44, rs_rank_pct=99.51, day_vol=1.99, flow=97.4. sma_dist=14.27 extended; rs IN-LINE (C3,C11).",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 new high: entry=40.15 > ma50=36.56 > ma100=34.6 > ma200=30.65, rs_rank_pct=89.11, LEADER downday=1.43, day_vol=1.46 expansion, SUSTAINED (C3,C6,C11).",
+   "falsifier": "Close below pivot_high less 0.5 ATR.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "self_counter": "run_10d 13.8% is a fast leg; sector Fading; insti_money warn.",
+   "conviction_change": "3->4: expansion day_vol=1.46 plus downday=1.43 leadership is the C6/C11 pairing; lens exhaustion CLEAR.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KMI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No trend: ma50=31.77 < ma100=31.84 vs ma200=31.81 flat (criteria 3,4 unproven), rs_rank_pct=58.02 below 70 (C3).",
+   "falsifier": "ma stack fanning upward with rs_rank_pct above 70.",
+   "opposing_case": "from_52w_hi=-2.16, LEADER downday=0.91, flow=80.3: near highs with relative resilience.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 base near highs: entry=173.01 > ma50=159.86 > ma100=147.23 > ma200=134.85, from_52w_hi=-1.45, rs_rank_pct=89.84; RANGE, coil strong, ext_atr20=0.38 tight (C4).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "LNT",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: BEARISH_CHOCH, ma50=66.96 < ma100=70.27 < ma200=70.37, entry=68.27 below ma200, rs_rank_pct=37.58 (C2,C3).",
+   "falsifier": "Entry above ma200 and ma50 turning up.",
+   "opposing_case": "LEADER downday=0.61, mp=68.0 ACCELERATING, sector strong: defensive relative strength.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CMS",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: BEARISH_CHOCH, ma50=66.97 < ma100=70.38 < ma200=72.6, rs_rank_pct=26.38, from_52w_hi=-14.41 (C2,C3).",
+   "falsifier": "Entry above ma200 with rs_rank_pct above 70.",
+   "opposing_case": "mp=74.0 ACCELERATING, LEADER downday=0.71: utility outperforming on down days.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CRM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template mostly passes: entry=242.43 > ma50=232.01 > ma100=202.3 > ma200=198.88, from_52w_hi=-8.94, rs_rank_pct=84.15; RANGE with coil strong. Sector Declining; buy only the pivot break (C4,C5).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KIM",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: entry=23.0 < ma50=23.15 < ma200=23.4, ma100=24.16 above both, rs_rank_pct=40.45, structure 42.1 (C2,C3).",
+   "falsifier": "Entry above ma200 with ma50 turning up.",
+   "opposing_case": "BULLISH_BOS, insti_money strong, flow=78.9: possible bottoming.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TRP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: BEARISH_CHOCH, ma50=61.34 < ma200=63.4 < ma100=64.62, from_52w_hi=-12.86, rs_rank_pct=50.67 (C2,C3).",
+   "falsifier": "Entry above ma200 with rs_rank_pct above 70.",
+   "opposing_case": "insti_money strong, LEADER downday=0.71: defensive accumulation.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "REG",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: BEARISH_CHOCH, entry=73.2 < ma50=74.1 < ma200=76.51, rs_rank_pct=27.78, from_52w_hi=-11.47 (C2,C3).",
+   "falsifier": "Entry above ma200 and ma50 turning up.",
+   "opposing_case": "coil and insti_money strong, flow=76.3: quiet accumulation.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "VTR",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Not stage 2: BEARISH_CHOCH, entry=86.49 < ma50=88.04 < ma100=88.78, rs_rank_pct=56.06, from_52w_hi=-13.97 (C2,C3).",
+   "falsifier": "Entry above ma100 with ma50 turning up and rs_rank_pct above 70.",
+   "opposing_case": "entry still above ma200=86.18, insti_money strong, LEADER downday=0.62.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Template passes (ma50=28.54 > ma100=26.12 > ma200=23.98, rs_rank_pct=95.96) but entry=45.57 is sma_dist=59.65 off a day_vol=32.65 event: no pivot. A power play (C18) needs its flag first.",
+   "falsifier": "A tight flag forming above ma_20 on drying volume would turn this to SUPPORT.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AFL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma50=116.39 < ma100=118.55, rs_rank_pct=51.9 below 70, from_52w_hi=-7.16 (C3).",
+   "falsifier": "ma50 back over ma100 with rs_rank_pct above 70.",
+   "opposing_case": "BULLISH_BOS above ma200=115.4, LEADER downday=0.78, mp=74.0 ACCELERATING.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template fails criterion 8: rs_rank_pct=65.97 below 70; entry=88.29 sits on ma50=88.29, mp=18.0, day_vol=0.48, rs IN-LINE (C3,C11).",
+   "falsifier": "rs_rank_pct above 70 with a break out of the range on volume.",
+   "opposing_case": "ma50=88.29 > ma100=88.21 > ma200=85.16, coil strong: a quiet base that could tighten.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Stage 2 new high: entry=34.63 > ma50=31.74 > ma100=31.42 > ma200=29.7, rs_rank_pct=85.31, day_vol=1.65, flow=98.7. pct_from_pivot=7.75 is a chase (C5): wait for a fresh base.",
+   "falsifier": "Close below ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CHD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template criterion 8 fails: rs_rank_pct=69.77 under 70; ma50=98.36 / ma100=98.09 / ma200=96.94 nearly flat, ext_atr20=4.21 (C3,C5).",
+   "falsifier": "rs_rank_pct above 70 with a base forming above ma_50.",
+   "opposing_case": "New high, mp=94.0 ACCELERATING, LEADER downday=0.82: staples strength.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template fails: ma50=89.19 < ma100=90.14, ma200=89.15 flat (criteria 3,4), from_52w_hi=-4.64, day_vol=0.73 on the BOS (C3,C6).",
+   "falsifier": "ma50 over ma100 with a new high on volume.",
+   "opposing_case": "BULLISH_BOS, rs_rank_pct=73.32, mp=90.0, 4/6 lenses strong.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "LYFT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails criterion 7: from_52w_hi=-29.79, beyond 25% of the high; RANGE, sector Declining (C3).",
+   "falsifier": "Recovery to within 25% of the high with a base.",
+   "opposing_case": "ma50=16.28 > ma100=15.63 > ma200=15.22, rs_spy_20d=16.33, structure 84.2.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "DOCS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Broken leader (C13): from_52w_hi=-51.31, ret_12m=-50.64, ma100=24.19 under ma200=25.97. Criterion 7 fails (C3).",
+   "falsifier": "A full base to within 25% of the high with the stack aligned.",
+   "opposing_case": "rs_spy_20d=26.36, LEADER downday=1.16, mp=92.0, run_10d 20.01%: a strong repair.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PBI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not stage 2: BEARISH_CHOCH, ma50=16.81 < ma100=17.17 (criterion 4), mp=48.0 (C2,C3).",
+   "falsifier": "ma50 over ma100 with a close above pivot_high on volume.",
+   "opposing_case": "day_vol=1.58, flow=89.5, coil strong, rs_rank_pct=76.01.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 near high: entry=93.49 > ma50=88.7 > ma100=85.7 > ma200=81.2, from_52w_hi=-0.44, rs_rank_pct=82.13, LEADER downday=0.95. day_vol=0.97; buy the new-high break (C3,C5).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "OXY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template criterion 8 fails: rs_rank_pct=67.2 under 70; RANGE, from_52w_hi=-5.01 (C3,C11).",
+   "falsifier": "rs_rank_pct above 70 with a break out of the range on volume.",
+   "opposing_case": "ma50=59.54 > ma100=57.02 > ma200=55.24, LEADER downday=1.23.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MRSH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template criterion 8 fails: rs_rank_pct=59.24 under 70; RANGE, day_vol=0.75 (C3,C6).",
+   "falsifier": "rs_rank_pct above 70 with a new high on volume.",
+   "opposing_case": "ma50=181.22 > ma100=178.18 > ma200=176.76, mp=82.0, SUSTAINED.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "HOMB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not stage 2: entry=29.39 < ma50=29.52, structure 46.3, rs IN-LINE, rs_rank_pct=64.01 (C2,C3).",
+   "falsifier": "Entry above ma50 with rs_rank_pct above 70.",
+   "opposing_case": "coil strong, day_vol=1.3, mp=53.0 ACCELERATING.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not stage 2: BEARISH_CHOCH, entry=80.71 with ma50=76.29 above ma20=69.41, from_52w_hi=-26.83 fails criterion 7 (C2,C3).",
+   "falsifier": "Recovery to within 25% of the high with ma20 back over ma50.",
+   "opposing_case": "rs_spy_20d=31.67, downday=1.81, run_10d 17.53%.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ZION",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not stage 2: entry=64.59 < ma50=66.12 < ma100=67.23, rs_rank_pct=53.37, from_52w_hi=-11.89 (C2,C3).",
+   "falsifier": "Entry above ma100 with rs_rank_pct above 70.",
+   "opposing_case": "BULLISH_BOS on day_vol=2.4, 4/6 lenses strong.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes: entry=147.45 > ma50=145.92 > ma100=142.75 > ma200=129.43, from_52w_hi=0.0, rs_rank_pct=83.84; BOS at sma_dist=1.05, tight. day_vol=0.95, flow=48.7 weak (C6).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not stage 2: entry=34.96 < ma50=35.22, ma100=32.77 < ma200=33.01, from_52w_hi=-17.95, rs_spy_20d=-0.85 (C2,C3,C11).",
+   "falsifier": "Entry above ma50 with rs_rank_pct above 70.",
+   "opposing_case": "coil and insti_money strong, flow=78.9.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template criterion 8 fails: rs_rank_pct=62.0 under 70; mp=26.0, rs IN-LINE, elder INTERRUPTED (C3,C11).",
+   "falsifier": "rs_rank_pct above 70 with a new high on volume.",
+   "opposing_case": "entry=94.8 > ma50=94.59 > ma100=91.57 > ma200=90.44, coil and insti_money strong.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MRK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes: entry=148.3 > ma50=145.77 > ma100=134.92 > ma200=125.27, from_52w_hi=-5.21, rs_rank_pct=85.8; RANGE, coil strong. mp=23.0 and rs_spy_20d=-1.17 are weights (C4).",
+   "falsifier": "Close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (EPS growth/acceleration) NOT_SERVED; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "OKTA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Stack holds (ma50=181.6 > ma100=157.88 > ma200=119.59, rs_rank_pct=99.76) but entry=194.02 is under ma20=210.0 in an 11.27% pullback, elder 0.0: no pivot, I never buy weakness (C5,C11).",
+   "falsifier": "A tightening contraction above ma_50 with a pivot forming would make it a SUPPORT.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD: no; never average down (C9). Held name in stage 4: BEARISH_CHOCH, ma50=50.62 < ma100=51.74 < ma200=56.14, sma_dist=-22.86, rs_spy_20d=-22.93, structure 11.0, unrealised -4185.0. Keep/exit: EXIT (C7,C10).",
+   "falsifier": "A renewed Trend Template pass: price back above ma200 with ma50 turning up.",
+   "opposing_case": "div BULLISH/0 is the only counter-read; a deeply sold name can snap back sharply.",
+   "conviction_change": null,
+   "challenge_reply": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of3.json",
+   "bytes": 13071,
+   "votes": 18,
+   "sha256": "d7cefc3140a1"
+  },
+  {
+   "file": "minervini.part2of3.json",
+   "bytes": 8529,
+   "votes": 18,
+   "sha256": "1227c3e30e06"
+  },
+  {
+   "file": "minervini.part3of3.json",
+   "bytes": 7773,
+   "votes": 18,
+   "sha256": "f0fd9cab0ce1"
+  }
+ ]
+}
