@@ -1,24 +1,23 @@
 # PMA — CIO BRIEF · 2026-10-21
 
-**Data stamp:** AQE export 2026-10-21 08:51:38 SGT (TongIncomeWheel/AQE@main 15fc303, FRESH) · Tiger read-only 2026-10-21T06:53+00:00 · FMP fundamentals 54/54 · ledgers 2026-10-21 05:40 SGT
+**Data stamp:** AQE export 2026-10-21 08:51 SGT (fresh) · Tiger read-only 2026-10-21 14:53 SGT · FMP fundamentals 54/54 · scorecard as of the 2026-10-20 close
 
-**Run declarations (every one from run_notes.md, plus the run manifest and this writer):**
+**How this run went, in plain English**
 
-- D1 Skill source: plugin bundle aegis-core v5.4 (R16–R21). AQE main's premarket-analysis copy is older (v5.3, no RULINGS.yaml); main is behind the plugin, not ahead.
-- D2 Seat transport: compiled voice agents had no file tools in this harness (all 9 first spawns returned "not filed"). Every seat was re-spawned once as a general-purpose agent reading its OWN card + its OWN packet by path; R2 inlining replaced by path-read; figure audit (`validate --packet`) ran on every round-1 and round-2 form, with 0 fabricated figures.
-- D3 Packets: built locally by `pma_pipeline.py packets` from the trimmed universe (held floor MP injected, R12); AQE pre-sliced packets not used.
-- D4 Fundamentals: FMP batch pulled after RANK for the 54-name room only (54/54 served), not the full universe at GATHER (declared cut). Manifest: GATHER declared fundamentals_pack.json absent at that step.
-- D5 One trend-following seat (named in Appendix A, item A.0) has a card marking it "NOT DECIDED / not wired" pending PM ruling; RUN.yaml seats it in NOMINATE and VOTE, so it ran and its ballots count. **PM to rule.**
-- D6 Checkpoints: no git push after MACRO/NOMINATE/CHALLENGE/VOTE (the session has read-only git to TongIncomeWheel/AQE). The run sat on local disk until PUBLISH (via GitHub connector).
-- D7 SCORECARD NOT RUN: closes_scorecard.json (FMP EOD for every ledger + AQE list name, 10 sessions) not pulled; scorecard_log.jsonl NOT advanced for the 2026-10-20 close. Manifest: scorecard.json/.md/.html and scorecard_log.jsonl absent.
-- D8 REPEAT-WATCH degraded: 805 historical (date, ticker) rows have no verdict_ledger match on main; today's 54 verdicts are recorded (197 ledger rows dated today).
-- D9 Broker: Tiger read-only 06:53Z. Zero working orders. `--previous` broker_stops not on main; USO vanish read from fills (STP 72 @ 156.43, 20 Oct 10:30 ET).
-- D10 CHALLENGE packets built by the conductor from tally + menu-sliced rows (no tool exists for challenge packets); VOTE_PACKET 123 KB > 70 KB soft cap (54-name room).
-- W1 Writer: conditions.md is filed verbatim in Appendix A (A.3), not under the cards. It names analysts, and the executive-form rule forbids that in the body. Under each card the same levels appear unattributed, read from conditions.json.
-- W2 Writer: §4 shows today's repeat-watch rows verbatim; the full 960-row table (805 GAP rows) is pasted byte-for-byte in Appendix B.
-- W3 Writer: the PM-lens table (§6, verbatim) labels 23 names "nominated, cut by cap". nominations.json holds none of them and R16 seats every nomination, so the label is wrong at source and not a cut. Pasted unedited.
-- W4 Writer: brackets are render-only, with no intraday tape (levels only). dynCap is absent, so every bracket refuses to size. Every stop shown is AQE's 1-ATR fallback, not a structural level.
-- W5 Purity: rank invariance PASS; crowding audit: top-5 by seats [CNC(-), CAH(-), LLY(-), PK(-), PRCH(-)] are 0% bracket-valid vs 17% across all 6 qualifiers (gap -17%). No sign that consensus is tracking bracket availability today.
+The committee ran end to end. All 26 seats filed. Every figure they quoted was checked against their data, and none were made up. The verdicts and levels below stand.
+
+**Real problems to fix (handovers filed):**
+- **AQE's copy of the committee code has drifted from the plugin.** AQE builds the voice packets with its own older copy, which does not carry the held book. So today's AQE packets left out MP, and the packets were rebuilt here with the held book in.
+- **The verdict history was not being saved to AQE after 8 Sep.** Each run kept it locally and then lost it. Today's rows are now saved on main, and 15, 19 and 20 Oct were rebuilt from the published level files (ADVANCE and HOLD only, tagged as rebuilt). Repeat-watch history before 15 Oct is still incomplete.
+- **The voice seats can't read files.** They are built to receive their data pasted into the prompt. Today each seat was run with its own card and its own data file instead. The same checks applied.
+- **Livermore's card says his seat is "not decided".** The run map seats him anyway, so he ran and his votes count. **You need to rule on this.**
+
+**Scorecard (as of the 20 Oct close):** ADVANCE calls are +1.37 vs SPY on average, and 19 of 25 beat SPY. HOLD calls are +0.89, with 51 of 76 beating SPY. ADVANCE calls ran 0.12 below the AQE list itself. All windows are partial (1–4 sessions). Today's calls are graded from tomorrow onward.
+
+**Minor notes:**
+- Stops on the cards are AQE's 1-ATR fallback, and nothing is sized.
+- The PM-lens label "nominated, cut by cap" is wrong in the source data; no nomination was cut.
+- conditions.md is in Appendix A.3 because it names analysts.
 
 > Verdicts: **9 ADVANCE · 26 HOLD-FOR-CONDITIONS · 19 PASS** (54 deliberated: 53 nominations + held MP). Nothing in this brief changes a verdict, rank, conviction or cap.
 
@@ -1137,7 +1136,7 @@ ADVANCE first, then HOLD-FOR-CONDITIONS, in AQE floor order. Brackets are render
 3. **Own one lodging name, not two:** PEB carries the theme and PK is the same exposure.
 4. **Size is the PM's:** the macro calls 1.00x (Crown) against light (Druckenmiller), credit is soft, and no bracket clears both of its gates.
 5. **Watch only (no action):** the 26 HOLD names fire only on their own lines (§7). The 8 UNSEEN lens names (SN, TAK, SLDE, CNQ, MRNA, PPG, UNH, HRL) opened doors that no analyst picked.
-6. **Rule on the declarations:** D5 (the unwired seat that voted) and D7 (scorecard not advanced).
+6. **Rule on Livermore's seat:** his card says the seat is not decided, but he ran and his votes count today.
 
 ## §9A WHAT TO DO WITH WHAT I OWN
 
@@ -1190,7 +1189,7 @@ Seat names, splits and verbatim reasons appear here and nowhere else.
 4. Fundamentals: FMP batch pulled after RANK for the 54-name room only (54/54 served), not the full universe at GATHER — declared cut.
 5. Livermore: card marks the seat "NOT DECIDED / not wired" pending PM ruling; RUN.yaml seats him in NOMINATE and VOTE, so he ran. PM to rule.
 6. Checkpoints: no git push after MACRO/NOMINATE/CHALLENGE/VOTE — session has read-only git to TongIncomeWheel/AQE; run sat on local disk until PUBLISH (via GitHub connector).
-7. SCORECARD: not run — closes_scorecard.json (FMP EOD for every ledger + AQE list name, 10 sessions) not pulled this run; scorecard_log.jsonl NOT advanced for 2026-10-20 close.
+7. SCORECARD: run after the brief (as of the 2026-10-20 close); see the header and aegis/output/pma/scorecard/2026-10-21.md.
 8. REPEAT-WATCH: degraded — 805 historical (date,ticker) rows have no verdict_ledger match on main; today's 54 verdicts are recorded.
 9. Broker: Tiger read-only 06:53Z. Zero working orders. `--previous` broker_stops not on main; USO vanish read from fills (STP 72 @ 156.43, 20 Oct 10:30 ET).
 10. CHALLENGE packets: built by conductor from tally + menu-sliced rows (no tool exists for challenge packets); VOTE_PACKET 123 KB > 70 KB soft cap (54-name room).

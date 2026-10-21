@@ -1,0 +1,2665 @@
+{
+ "schema": "pma_scorecard/1",
+ "asof": "2026-10-20",
+ "horizon_sessions": 5,
+ "bench": "SPY",
+ "method": "base = last close before the run (checked against ledger ref_price, 0.5% tolerance); universe = equal-weight AQE daily list for that run over the same window; beta_adj = return - beta_30d x SPY return.",
+ "runs": {
+  "2026-10-15": {
+   "base": "2026-10-14",
+   "end": "2026-10-20",
+   "sessions": 4,
+   "full_horizon": false,
+   "spy": -0.07,
+   "universe_mean": 2.81,
+   "universe_n": 213,
+   "universe_size": 213,
+   "universe_beat_spy": 184
+  },
+  "2026-10-19": {
+   "base": "2026-10-16",
+   "end": "2026-10-20",
+   "sessions": 2,
+   "full_horizon": false,
+   "spy": 0.76,
+   "universe_mean": 1.13,
+   "universe_n": 277,
+   "universe_size": 288,
+   "universe_beat_spy": 139
+  },
+  "2026-10-20": {
+   "base": "2026-10-19",
+   "end": "2026-10-20",
+   "sessions": 1,
+   "full_horizon": false,
+   "spy": 0.34,
+   "universe_mean": 1.49,
+   "universe_n": 228,
+   "universe_size": 228,
+   "universe_beat_spy": 179
+  }
+ },
+ "pooled_all": {
+  "ADVANCE": {
+   "n": 25,
+   "mean": 1.69,
+   "median": 1.43,
+   "vs_spy_mean": 1.37,
+   "vs_spy_median": 1.09,
+   "beat_spy": 19,
+   "vs_universe_mean": -0.12,
+   "beat_universe": 11,
+   "n_universe": 25,
+   "beta_adj_mean": 1.62,
+   "n_beta": 25,
+   "beta_mean": 0.2,
+   "worst": [
+    {
+     "run": "2026-10-19",
+     "ticker": "M",
+     "vs_spy": -3.22,
+     "beta": 1.38
+    },
+    {
+     "run": "2026-10-20",
+     "ticker": "EQNR",
+     "vs_spy": -1.18,
+     "beta": -1.47
+    },
+    {
+     "run": "2026-10-19",
+     "ticker": "KDP",
+     "vs_spy": -0.73,
+     "beta": 0.12
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-15",
+     "ticker": "LLY",
+     "vs_spy": 6.27,
+     "beta": 0.1
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "ELF",
+     "vs_spy": 6.18,
+     "beta": 0.92
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "V",
+     "vs_spy": 3.94,
+     "beta": 0.67
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 0
+    },
+    "below": {
+     "n": 25,
+     "mean": 1.69,
+     "median": 1.43,
+     "vs_spy_mean": 1.37,
+     "vs_spy_median": 1.09,
+     "beat_spy": 19,
+     "vs_universe_mean": -0.12,
+     "beat_universe": 11,
+     "n_universe": 25,
+     "beta_adj_mean": 1.62,
+     "n_beta": 25,
+     "beta_mean": 0.2
+    },
+    "no_beta": 0
+   }
+  },
+  "HOLD-FOR-CONDITIONS": {
+   "n": 76,
+   "mean": 1.28,
+   "median": 1.31,
+   "vs_spy_mean": 0.89,
+   "vs_spy_median": 0.6,
+   "beat_spy": 51,
+   "vs_universe_mean": -0.41,
+   "beat_universe": 28,
+   "n_universe": 76,
+   "beta_adj_mean": 1.21,
+   "n_beta": 76,
+   "beta_mean": 0.09,
+   "worst": [
+    {
+     "run": "2026-10-19",
+     "ticker": "GM",
+     "vs_spy": -8.94,
+     "beta": 1.28
+    },
+    {
+     "run": "2026-10-19",
+     "ticker": "EQNR",
+     "vs_spy": -3.36,
+     "beta": -1.35
+    },
+    {
+     "run": "2026-10-19",
+     "ticker": "DHR",
+     "vs_spy": -2.86,
+     "beta": 0.69
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-19",
+     "ticker": "TREX",
+     "vs_spy": 5.93,
+     "beta": 1.45
+    },
+    {
+     "run": "2026-10-20",
+     "ticker": "SN",
+     "vs_spy": 4.84,
+     "beta": 0.49
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "USO",
+     "vs_spy": 4.66,
+     "beta": -1.86
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 0
+    },
+    "below": {
+     "n": 76,
+     "mean": 1.28,
+     "median": 1.31,
+     "vs_spy_mean": 0.89,
+     "vs_spy_median": 0.6,
+     "beat_spy": 51,
+     "vs_universe_mean": -0.41,
+     "beat_universe": 28,
+     "n_universe": 76,
+     "beta_adj_mean": 1.21,
+     "n_beta": 76,
+     "beta_mean": 0.09
+    },
+    "no_beta": 0
+   }
+  },
+  "PASS": {
+   "n": 0
+  },
+  "NEAR-MISS": {
+   "n": 0
+  }
+ },
+ "pooled_full_horizon": {
+  "ADVANCE": {
+   "n": 0
+  },
+  "HOLD-FOR-CONDITIONS": {
+   "n": 0
+  },
+  "PASS": {
+   "n": 0
+  },
+  "NEAR-MISS": {
+   "n": 0
+  }
+ },
+ "by_run": {
+  "2026-10-15": {
+   "ADVANCE": {
+    "n": 8,
+    "mean": 3.03,
+    "median": 2.7,
+    "vs_spy_mean": 3.1,
+    "vs_spy_median": 2.76,
+    "beat_spy": 7,
+    "vs_universe_mean": 0.22,
+    "beat_universe": 4,
+    "n_universe": 8,
+    "beta_adj_mean": 3.05,
+    "n_beta": 8,
+    "beta_mean": 0.27,
+    "worst": [
+     {
+      "run": "2026-10-15",
+      "ticker": "FAST",
+      "vs_spy": -0.6,
+      "beta": 0.34
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "CNC",
+      "vs_spy": 1.0,
+      "beta": 0.88
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "EOG",
+      "vs_spy": 2.48,
+      "beta": -0.59
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-15",
+      "ticker": "LLY",
+      "vs_spy": 6.27,
+      "beta": 0.1
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "ELF",
+      "vs_spy": 6.18,
+      "beta": 0.92
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "V",
+      "vs_spy": 3.94,
+      "beta": 0.67
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 20,
+    "mean": 1.71,
+    "median": 1.91,
+    "vs_spy_mean": 1.78,
+    "vs_spy_median": 1.98,
+    "beat_spy": 18,
+    "vs_universe_mean": -1.1,
+    "beat_universe": 4,
+    "n_universe": 20,
+    "beta_adj_mean": 1.7,
+    "n_beta": 20,
+    "beta_mean": -0.13,
+    "worst": [
+     {
+      "run": "2026-10-15",
+      "ticker": "PM",
+      "vs_spy": -2.69,
+      "beta": -0.85
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "AAPL",
+      "vs_spy": -0.94,
+      "beta": 0.48
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "HUM",
+      "vs_spy": 0.07,
+      "beta": 1.57
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-15",
+      "ticker": "USO",
+      "vs_spy": 4.66,
+      "beta": -1.86
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "ADP",
+      "vs_spy": 4.51,
+      "beta": 0.08
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "ACGL",
+      "vs_spy": 3.85,
+      "beta": -0.04
+     }
+    ]
+   },
+   "PASS": {
+    "n": 0
+   },
+   "NEAR-MISS": {
+    "n": 0
+   }
+  },
+  "2026-10-19": {
+   "ADVANCE": {
+    "n": 7,
+    "mean": 0.8,
+    "median": 1.0,
+    "vs_spy_mean": 0.04,
+    "vs_spy_median": 0.24,
+    "beat_spy": 5,
+    "vs_universe_mean": -0.33,
+    "beat_universe": 3,
+    "n_universe": 7,
+    "beta_adj_mean": 0.54,
+    "n_beta": 7,
+    "beta_mean": 0.35,
+    "worst": [
+     {
+      "run": "2026-10-19",
+      "ticker": "M",
+      "vs_spy": -3.22,
+      "beta": 1.38
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "KDP",
+      "vs_spy": -0.73,
+      "beta": 0.12
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "V",
+      "vs_spy": 0.22,
+      "beta": 0.62
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-19",
+      "ticker": "VEEV",
+      "vs_spy": 1.92,
+      "beta": 0.75
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "LLY",
+      "vs_spy": 1.36,
+      "beta": 0.19
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "ABBV",
+      "vs_spy": 0.52,
+      "beta": -0.08
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 30,
+    "mean": 0.76,
+    "median": 0.82,
+    "vs_spy_mean": 0.0,
+    "vs_spy_median": 0.07,
+    "beat_spy": 16,
+    "vs_universe_mean": -0.37,
+    "beat_universe": 12,
+    "n_universe": 30,
+    "beta_adj_mean": 0.65,
+    "n_beta": 30,
+    "beta_mean": 0.15,
+    "worst": [
+     {
+      "run": "2026-10-19",
+      "ticker": "GM",
+      "vs_spy": -8.94,
+      "beta": 1.28
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "EQNR",
+      "vs_spy": -3.36,
+      "beta": -1.35
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "DHR",
+      "vs_spy": -2.86,
+      "beta": 0.69
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-19",
+      "ticker": "TREX",
+      "vs_spy": 5.93,
+      "beta": 1.45
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "CNK",
+      "vs_spy": 3.58,
+      "beta": 0.37
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "PK",
+      "vs_spy": 3.39,
+      "beta": 0.49
+     }
+    ]
+   },
+   "PASS": {
+    "n": 0
+   },
+   "NEAR-MISS": {
+    "n": 0
+   }
+  },
+  "2026-10-20": {
+   "ADVANCE": {
+    "n": 10,
+    "mean": 1.24,
+    "median": 1.17,
+    "vs_spy_mean": 0.91,
+    "vs_spy_median": 0.83,
+    "beat_spy": 7,
+    "vs_universe_mean": -0.25,
+    "beat_universe": 4,
+    "n_universe": 10,
+    "beta_adj_mean": 1.23,
+    "n_beta": 10,
+    "beta_mean": 0.05,
+    "worst": [
+     {
+      "run": "2026-10-20",
+      "ticker": "EQNR",
+      "vs_spy": -1.18,
+      "beta": -1.47
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "LIN",
+      "vs_spy": -0.64,
+      "beta": 0.23
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "CVE",
+      "vs_spy": -0.52,
+      "beta": -0.8
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-20",
+      "ticker": "PEB",
+      "vs_spy": 2.7,
+      "beta": 0.38
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "PRCH",
+      "vs_spy": 2.67,
+      "beta": 2.13
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "PK",
+      "vs_spy": 2.52,
+      "beta": 0.56
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 26,
+    "mean": 1.55,
+    "median": 1.31,
+    "vs_spy_mean": 1.21,
+    "vs_spy_median": 0.97,
+    "beat_spy": 17,
+    "vs_universe_mean": 0.06,
+    "beat_universe": 12,
+    "n_universe": 26,
+    "beta_adj_mean": 1.48,
+    "n_beta": 26,
+    "beta_mean": 0.2,
+    "worst": [
+     {
+      "run": "2026-10-20",
+      "ticker": "VSXY",
+      "vs_spy": -2.52,
+      "beta": 1.17
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "M",
+      "vs_spy": -1.14,
+      "beta": 1.38
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "FANG",
+      "vs_spy": -0.68,
+      "beta": -0.63
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-20",
+      "ticker": "SN",
+      "vs_spy": 4.84,
+      "beta": 0.49
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "MTCH",
+      "vs_spy": 3.69,
+      "beta": 0.74
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "TDC",
+      "vs_spy": 3.17,
+      "beta": 0.98
+     }
+    ]
+   },
+   "PASS": {
+    "n": 0
+   },
+   "NEAR-MISS": {
+    "n": 0
+   }
+  }
+ },
+ "rows": [
+  {
+   "run": "2026-10-15",
+   "ticker": "FAST",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.67,
+   "vs_spy": -0.6,
+   "vs_universe": -3.48,
+   "beta": 0.34,
+   "beta_adj": -0.65
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "LLY",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 6.2,
+   "vs_spy": 6.27,
+   "vs_universe": 3.39,
+   "beta": 0.1,
+   "beta_adj": 6.21
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "V",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 3.87,
+   "vs_spy": 3.94,
+   "vs_universe": 1.06,
+   "beta": 0.67,
+   "beta_adj": 3.92
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "TEVA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.32,
+   "vs_spy": 0.39,
+   "vs_universe": -2.49,
+   "beta": 0.74,
+   "beta_adj": 0.37
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "AMGN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.01,
+   "vs_spy": 3.08,
+   "vs_universe": 0.2,
+   "beta": 0.72,
+   "beta_adj": 3.06
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "AAPL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.01,
+   "vs_spy": -0.94,
+   "vs_universe": -3.82,
+   "beta": 0.48,
+   "beta_adj": -0.97
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "MA",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.85,
+   "vs_spy": 2.92,
+   "vs_universe": 0.04,
+   "beta": 0.49,
+   "beta_adj": 2.88
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "CNC",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.93,
+   "vs_spy": 1.0,
+   "vs_universe": -1.88,
+   "beta": 0.88,
+   "beta_adj": 0.99
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "XOM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.45,
+   "vs_spy": 0.52,
+   "vs_universe": -2.36,
+   "beta": -1.01,
+   "beta_adj": 0.38
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "HUM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.0,
+   "vs_spy": 0.07,
+   "vs_universe": -2.81,
+   "beta": 1.57,
+   "beta_adj": 0.11
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "BDX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.6,
+   "vs_spy": 2.67,
+   "vs_universe": -0.21,
+   "beta": 0.35,
+   "beta_adj": 2.62
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "COP",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.54,
+   "vs_spy": 2.61,
+   "vs_universe": -0.27,
+   "beta": -0.63,
+   "beta_adj": 2.49
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "CVX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.65,
+   "vs_spy": 1.72,
+   "vs_universe": -1.16,
+   "beta": -0.73,
+   "beta_adj": 1.6
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ABBV",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.98,
+   "vs_spy": 2.05,
+   "vs_universe": -0.83,
+   "beta": -0.09,
+   "beta_adj": 1.97
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "GILD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.93,
+   "vs_spy": 2.01,
+   "vs_universe": -0.88,
+   "beta": 0.05,
+   "beta_adj": 1.94
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ELF",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 6.11,
+   "vs_spy": 6.18,
+   "vs_universe": 3.3,
+   "beta": 0.92,
+   "beta_adj": 6.18
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "SHEL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.89,
+   "vs_spy": 1.96,
+   "vs_universe": -0.92,
+   "beta": -0.49,
+   "beta_adj": 1.86
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "PM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -2.76,
+   "vs_spy": -2.69,
+   "vs_universe": -5.57,
+   "beta": -0.85,
+   "beta_adj": -2.82
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "IFF",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.8,
+   "vs_spy": 1.87,
+   "vs_universe": -1.01,
+   "beta": 0.1,
+   "beta_adj": 1.8
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "MO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.06,
+   "vs_spy": 2.14,
+   "vs_universe": -0.75,
+   "beta": -0.49,
+   "beta_adj": 2.03
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ADP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 4.43,
+   "vs_spy": 4.51,
+   "vs_universe": 1.62,
+   "beta": 0.08,
+   "beta_adj": 4.44
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "EQNR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.04,
+   "vs_spy": 1.11,
+   "vs_universe": -1.77,
+   "beta": -1.19,
+   "beta_adj": 0.95
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "EOG",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.41,
+   "vs_spy": 2.48,
+   "vs_universe": -0.4,
+   "beta": -0.59,
+   "beta_adj": 2.37
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "CVE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.69,
+   "vs_spy": 1.76,
+   "vs_universe": -1.12,
+   "beta": -0.5,
+   "beta_adj": 1.65
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "DLTR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.63,
+   "vs_spy": 2.7,
+   "vs_universe": -0.18,
+   "beta": 0.38,
+   "beta_adj": 2.66
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "TMO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.1,
+   "vs_spy": 2.18,
+   "vs_universe": -0.71,
+   "beta": 0.25,
+   "beta_adj": 2.12
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ACGL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.78,
+   "vs_spy": 3.85,
+   "vs_universe": 0.97,
+   "beta": -0.04,
+   "beta_adj": 3.78
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "USO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 4.59,
+   "vs_spy": 4.66,
+   "vs_universe": 1.78,
+   "beta": -1.86,
+   "beta_adj": 4.46
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "V",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.98,
+   "vs_spy": 0.22,
+   "vs_universe": -0.15,
+   "beta": 0.62,
+   "beta_adj": 0.51
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ABBV",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.28,
+   "vs_spy": 0.52,
+   "vs_universe": 0.15,
+   "beta": -0.08,
+   "beta_adj": 1.34
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "EOG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.06,
+   "vs_spy": -0.82,
+   "vs_universe": -1.19,
+   "beta": -0.74,
+   "beta_adj": 0.5
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "PG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.02,
+   "vs_spy": -0.78,
+   "vs_universe": -1.15,
+   "beta": -0.03,
+   "beta_adj": 0.0
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "LIN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.69,
+   "vs_spy": -0.07,
+   "vs_universe": -0.44,
+   "beta": 0.24,
+   "beta_adj": 0.51
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "MA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.49,
+   "vs_spy": -0.27,
+   "vs_universe": -0.64,
+   "beta": 0.55,
+   "beta_adj": 0.07
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "AMGN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.49,
+   "vs_spy": 0.73,
+   "vs_universe": 0.36,
+   "beta": 0.72,
+   "beta_adj": 0.94
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "XOM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.63,
+   "vs_spy": -1.39,
+   "vs_universe": -1.76,
+   "beta": -1.1,
+   "beta_adj": 0.21
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "LLY",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.12,
+   "vs_spy": 1.36,
+   "vs_universe": 0.99,
+   "beta": 0.19,
+   "beta_adj": 1.97
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "GILD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.2,
+   "vs_spy": -0.56,
+   "vs_universe": -0.93,
+   "beta": 0.11,
+   "beta_adj": 0.12
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "BRK-B",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.44,
+   "vs_spy": 0.68,
+   "vs_universe": 0.31,
+   "beta": -0.53,
+   "beta_adj": 1.85
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "DHR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -2.1,
+   "vs_spy": -2.86,
+   "vs_universe": -3.23,
+   "beta": 0.69,
+   "beta_adj": -2.62
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "BBY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.36,
+   "vs_spy": 0.6,
+   "vs_universe": 0.23,
+   "beta": 0.53,
+   "beta_adj": 0.96
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CNQ",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.71,
+   "vs_spy": -0.05,
+   "vs_universe": -0.42,
+   "beta": -0.58,
+   "beta_adj": 1.15
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "M",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -2.46,
+   "vs_spy": -3.22,
+   "vs_universe": -3.59,
+   "beta": 1.38,
+   "beta_adj": -3.51
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "SLDE",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.0,
+   "vs_spy": 0.24,
+   "vs_universe": -0.13,
+   "beta": -0.53,
+   "beta_adj": 1.4
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ROKU",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.96,
+   "vs_spy": 1.2,
+   "vs_universe": 0.83,
+   "beta": 0.14,
+   "beta_adj": 1.85
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "VEEV",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.68,
+   "vs_spy": 1.92,
+   "vs_universe": 1.55,
+   "beta": 0.75,
+   "beta_adj": 2.11
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "KDP",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.03,
+   "vs_spy": -0.73,
+   "vs_universe": -1.1,
+   "beta": 0.12,
+   "beta_adj": -0.06
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ELF",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.06,
+   "vs_spy": 0.3,
+   "vs_universe": -0.07,
+   "beta": 1.27,
+   "beta_adj": 0.09
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CHD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.37,
+   "vs_spy": 0.61,
+   "vs_universe": 0.24,
+   "beta": 0.15,
+   "beta_adj": 1.25
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CNC",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.39,
+   "vs_spy": 1.63,
+   "vs_universe": 1.26,
+   "beta": 0.9,
+   "beta_adj": 1.7
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ADP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.33,
+   "vs_spy": 0.57,
+   "vs_universe": 0.2,
+   "beta": -0.02,
+   "beta_adj": 1.35
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "PK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 4.15,
+   "vs_spy": 3.39,
+   "vs_universe": 3.02,
+   "beta": 0.49,
+   "beta_adj": 3.78
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "EQNR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -2.6,
+   "vs_spy": -3.36,
+   "vs_universe": -3.73,
+   "beta": -1.35,
+   "beta_adj": -1.57
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CRM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.72,
+   "vs_spy": -0.04,
+   "vs_universe": -0.41,
+   "beta": 0.19,
+   "beta_adj": 0.57
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "FBP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.77,
+   "vs_spy": 0.01,
+   "vs_universe": -0.36,
+   "beta": 0.23,
+   "beta_adj": 0.59
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "TREX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 6.69,
+   "vs_spy": 5.93,
+   "vs_universe": 5.56,
+   "beta": 1.45,
+   "beta_adj": 5.59
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "FTRE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.29,
+   "vs_spy": 0.53,
+   "vs_universe": 0.16,
+   "beta": 0.9,
+   "beta_adj": 0.61
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "TAK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.08,
+   "vs_spy": 1.32,
+   "vs_universe": 0.95,
+   "beta": 0.24,
+   "beta_adj": 1.9
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "AEP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.06,
+   "vs_spy": -0.7,
+   "vs_universe": -1.07,
+   "beta": 0.15,
+   "beta_adj": -0.05
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "GM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -8.18,
+   "vs_spy": -8.94,
+   "vs_universe": -9.31,
+   "beta": 1.28,
+   "beta_adj": -9.16
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CNK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 4.34,
+   "vs_spy": 3.58,
+   "vs_universe": 3.21,
+   "beta": 0.37,
+   "beta_adj": 4.06
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "NDAQ",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.88,
+   "vs_spy": 0.12,
+   "vs_universe": -0.25,
+   "beta": 0.93,
+   "beta_adj": 0.18
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CVE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.7,
+   "vs_spy": -0.06,
+   "vs_universe": -0.43,
+   "beta": -0.8,
+   "beta_adj": 1.31
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "SCI",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.02,
+   "vs_spy": 0.26,
+   "vs_universe": -0.11,
+   "beta": 0.2,
+   "beta_adj": 0.87
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "USO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.71,
+   "vs_spy": -1.47,
+   "vs_universe": -1.84,
+   "beta": -2.05,
+   "beta_adj": 0.85
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CME",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.61,
+   "vs_spy": 0.27,
+   "vs_universe": -0.88,
+   "beta": -0.24,
+   "beta_adj": 0.69
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "LIN",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.31,
+   "vs_spy": -0.64,
+   "vs_universe": -1.8,
+   "beta": 0.23,
+   "beta_adj": -0.39
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CAH",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.94,
+   "vs_spy": 1.6,
+   "vs_universe": 0.45,
+   "beta": -0.34,
+   "beta_adj": 2.05
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PK",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.86,
+   "vs_spy": 2.52,
+   "vs_universe": 1.37,
+   "beta": 0.56,
+   "beta_adj": 2.67
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SLDE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.77,
+   "vs_spy": 0.44,
+   "vs_universe": -0.72,
+   "beta": -0.55,
+   "beta_adj": 0.96
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PEB",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 3.03,
+   "vs_spy": 2.7,
+   "vs_universe": 1.54,
+   "beta": 0.38,
+   "beta_adj": 2.91
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PRCH",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 3.0,
+   "vs_spy": 2.67,
+   "vs_universe": 1.51,
+   "beta": 2.13,
+   "beta_adj": 2.29
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "EQNR",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.85,
+   "vs_spy": -1.18,
+   "vs_universe": -2.34,
+   "beta": -1.47,
+   "beta_adj": -0.35
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CNK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.95,
+   "vs_spy": 2.61,
+   "vs_universe": 1.46,
+   "beta": 0.4,
+   "beta_adj": 2.81
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SJM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.05,
+   "vs_spy": 1.71,
+   "vs_universe": 0.56,
+   "beta": -0.38,
+   "beta_adj": 2.17
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PFE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.28,
+   "vs_spy": 1.94,
+   "vs_universe": 0.79,
+   "beta": -0.13,
+   "beta_adj": 2.32
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SHO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.42,
+   "vs_spy": 3.08,
+   "vs_universe": 1.93,
+   "beta": 0.31,
+   "beta_adj": 3.32
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "AVPT",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.32,
+   "vs_spy": 2.99,
+   "vs_universe": 1.83,
+   "beta": 0.97,
+   "beta_adj": 3.0
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "BRK-B",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.43,
+   "vs_spy": 1.09,
+   "vs_universe": -0.06,
+   "beta": -0.55,
+   "beta_adj": 1.61
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "V",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.91,
+   "vs_spy": 0.57,
+   "vs_universe": -0.58,
+   "beta": 0.58,
+   "beta_adj": 0.71
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "MA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.65,
+   "vs_spy": 0.32,
+   "vs_universe": -0.84,
+   "beta": 0.5,
+   "beta_adj": 0.48
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "NOW",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.88,
+   "vs_spy": 2.54,
+   "vs_universe": 1.39,
+   "beta": 0.83,
+   "beta_adj": 2.6
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "LLY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.49,
+   "vs_spy": 3.16,
+   "vs_universe": 2.0,
+   "beta": 0.1,
+   "beta_adj": 3.46
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PGR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.29,
+   "vs_spy": 0.95,
+   "vs_universe": -0.2,
+   "beta": 0.23,
+   "beta_adj": 1.21
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SU",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.06,
+   "vs_spy": -0.27,
+   "vs_universe": -1.43,
+   "beta": -1.07,
+   "beta_adj": 0.42
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 5.18,
+   "vs_spy": 4.84,
+   "vs_universe": 3.69,
+   "beta": 0.49,
+   "beta_adj": 5.01
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "OXY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.32,
+   "vs_spy": -0.02,
+   "vs_universe": -1.17,
+   "beta": -0.65,
+   "beta_adj": 0.54
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "MTCH",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 4.02,
+   "vs_spy": 3.69,
+   "vs_universe": 2.53,
+   "beta": 0.74,
+   "beta_adj": 3.78
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "M",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.81,
+   "vs_spy": -1.14,
+   "vs_universe": -2.3,
+   "beta": 1.38,
+   "beta_adj": -1.27
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CNC",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.18,
+   "vs_spy": 2.84,
+   "vs_universe": 1.69,
+   "beta": 0.81,
+   "beta_adj": 2.9
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "TDC",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.51,
+   "vs_spy": 3.17,
+   "vs_universe": 2.02,
+   "beta": 0.98,
+   "beta_adj": 3.18
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "FANG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.34,
+   "vs_spy": -0.68,
+   "vs_universe": -1.83,
+   "beta": -0.63,
+   "beta_adj": -0.13
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "VSXY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -2.19,
+   "vs_spy": -2.52,
+   "vs_universe": -3.68,
+   "beta": 1.17,
+   "beta_adj": -2.58
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CVE",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.18,
+   "vs_spy": -0.52,
+   "vs_universe": -1.67,
+   "beta": -0.8,
+   "beta_adj": 0.09
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "EOG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.16,
+   "vs_spy": -0.17,
+   "vs_universe": -1.33,
+   "beta": -0.78,
+   "beta_adj": 0.43
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "KO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.07,
+   "vs_spy": -0.26,
+   "vs_universe": -1.42,
+   "beta": -0.43,
+   "beta_adj": 0.22
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "GDDY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.97,
+   "vs_spy": 1.63,
+   "vs_universe": 0.48,
+   "beta": 1.47,
+   "beta_adj": 1.48
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "UGI",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.34,
+   "vs_spy": 1.0,
+   "vs_universe": -0.15,
+   "beta": 0.01,
+   "beta_adj": 1.34
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CRM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.01,
+   "vs_spy": -0.34,
+   "vs_universe": -1.5,
+   "beta": 0.17,
+   "beta_adj": -0.07
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "ABNB",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.84,
+   "vs_spy": 0.51,
+   "vs_universe": -0.65,
+   "beta": 1.26,
+   "beta_adj": 0.42
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "USO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.12,
+   "vs_spy": -0.46,
+   "vs_universe": -1.61,
+   "beta": -2.09,
+   "beta_adj": 0.58
+  }
+ ],
+ "refused_ref_mismatch": [],
+ "ungraded": [
+  {
+   "run": "2026-10-21",
+   "ticker": "CNC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CAH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LLY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CME",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PRCH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TRV",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PEB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CCEP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DRH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ADP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "APLE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SHO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AEP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MA",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MET",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ABBV",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AVPT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ROKU",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "O",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CCI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TDC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HNGE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CNK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KMI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "A",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LNT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CMS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CRM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KIM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TRP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "REG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VTR",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BRZE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AFL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EW",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KDP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CHD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LYFT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DOCS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PBI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OXY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MRSH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HOMB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TTAN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ZION",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ACA",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TTEK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NDAQ",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MRK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OKTA",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BALL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AIG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HST",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KMB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ACGL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TMO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DVN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GILD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CVE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "REYN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "USB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FBP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ARMK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMZN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "V",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EBAY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SU",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CVX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PBR",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "COP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PBR-A",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WEC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMGN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SHEL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OUT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WELL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DRI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PRMB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BUD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BSX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ROST",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HLT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BOX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KVUE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BBWI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PFE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VEEV",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ED",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BRO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SPGI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "INFY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "UGI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SYK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NVS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CVS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WCN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FAST",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RF",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FITB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TFC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PSX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "IFF",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LTH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AZN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MDLZ",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GBCI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CELH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PFGC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MCD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CLX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMRZ",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VVV",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FHB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LEVI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CHYM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CRH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GPN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "JHX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EPD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MTCH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "COST",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CART",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ISRG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TEAM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MPC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HLN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KSS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PGR",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DINO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WTRG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RXO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WMT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "USFD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KR",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FRSH",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AON",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ORLY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GSK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AXP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LOW",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CMCSA",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ETSY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WAY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EOG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "XOM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BSY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SAP",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GDDY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RELX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DXC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CTAS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RYAN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LW",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ACN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ASAN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MAS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ALL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "YUM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WDAY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SCI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LHX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SBUX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VIA",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BROS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CCL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EQT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AWK",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KBR",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SJM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NWS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NKE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RCL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VERX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TRI",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ERIC",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KVYO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CXT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GWRE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OTIS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PINS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "YOU",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NAVN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ELS",
+   "why": "no session after the run yet"
+  }
+ ]
+}
