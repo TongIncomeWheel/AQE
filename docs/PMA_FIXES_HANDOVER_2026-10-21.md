@@ -81,9 +81,20 @@ Repo: TongIncomeWheel/AQE `main`. Plugin: `aegis-core` (installed copy, read-onl
 
 ---
 
-## 4. Livermore's seat status contradicts the run map
+## 4. Livermore's seat status contradicts the run map — RULED 22 Oct
 
-**Who fixes:** the PM rules; the plugin owner applies it.
+**PM ruling, 22 Oct 2026 (standing):** *"Livermore is a key voting seat. Lynch is not."*
+
+**Apply in the plugin:**
+- `agents/voice-livermore.md`: replace the "SEAT STATUS — NOT DECIDED" header with "Voting seat (PM ruling 2026-10-22)". Mark the canon signed.
+- `RUN.yaml` VOTE step: remove `lynch` from `seats`, so the spawn count goes from 11 to 10. Keep lynch in CHALLENGE as a consulted fundamentals voice whose findings go into the vote packet.
+- `pma_pipeline.py`: remove `lynch` from `PULLBACK_SEATS`, so `consensus` never counts a Lynch ballot even if one is filed.
+- `RULINGS.yaml`: add the ruling.
+- Tests: a filed Lynch ballot must not change any verdict.
+
+**Measured effect before the ruling:** recounting 21 and 22 Oct without Lynch's vote changed 0 of 97 verdicts.
+
+**Who fixes:** the plugin owner.
 
 **What is wrong**
 - `agents/voice-livermore.md` opens with "SEAT STATUS — NOT DECIDED … not wired into the premarket swarm".
