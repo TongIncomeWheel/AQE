@@ -1,0 +1,957 @@
+{
+ "voice": "detect-lens",
+ "date": "2026-10-22",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "lens_positive=5 lens_warnings=1 (only insti_money=warn); structure_shift=BULLISH_BOS; dual-MA filter met ma_50=160.42>ma_100=147.65>ma_200=135.02; runner_setup=false premove_setup=false; day_vol=0.93. Highest lens agreement in the room.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": "insti_money=warn is the one dissenting lens, day_vol=0.93 is below normal, and no runner or premove tag fires. Lane is PULLBACK but the name is at its high, so the entry is a return toward ma_20, not market.",
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": "Rogers/Steenbarger on A: the pullback this seat means is ma_20=171.86 (wait level, buy on reclaim). The observable that proves the break false is choch_bearish (close back under the up-swing anchor) or a close under ma_50.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (coil=warn); structure_shift=ABOVE_STRUCTURE; ma_50=579.05>ma_100=551.63>ma_200=533.78 filter met; no runner/premove tag; day_vol=0.92. MA and V read as one payments exposure.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PEB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "4 of 6 lenses unread ('--'): low lens_positive is missing data, not a weak read. Absence is neither agreement nor disagreement. Lens re-run owed before this seat can vote. Readable: sector=strong, structure=ok, ma_50=18.58>ma_200=15.77, day_vol=1.62.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "a lens re-run with leadership/coil/insti_money/resistance served",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "4 of 6 lenses unread ('--'): low lens_positive is missing data, not a weak read. Absence is neither agreement nor disagreement. Lens re-run owed before this seat can vote. Readable: structure=strong, sector=ok, structure_shift=BULLISH_BOS, day_vol=0.7.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "a lens re-run with leadership/coil/insti_money/resistance served",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "lens_positive=4 lens_warnings=1 (insti_money=warn); coil=strong, resistance=strong; structure_shift=RANGE (no break yet); ma_50=33.88>ma_100=31.99>ma_200=29.66; day_vol=1.08. Tied second for lens agreement.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=2 lens_warnings=1 (coil=warn); structure_shift=ABOVE_STRUCTURE; ma_50=375.12>ma_100=360.43>ma_200=340.02; no runner/premove tag; day_vol=0.92. Same exposure as MA: one slot, not two.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); structure_shift=ABOVE_STRUCTURE; ma_50=416.21>ma_100=390.68>ma_200=370.53; day_vol=0.82; no runner/premove tag.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SHO",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive=2 lens_warnings=1 (coil=warn); dual-MA filter partial: ma_50=11.25 under ma_100=11.38, over ma_200=10.44; day_vol=2.27 strongest participation; ABOVE_STRUCTURE. Partial trend step caps conviction at 1.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "4 of 6 lenses unread ('--'): low lens_positive is missing data, not a weak read. Absence is neither agreement nor disagreement. Lens re-run owed before this seat can vote. Readable: structure=strong, sector=strong, structure_shift=BULLISH_BOS, day_vol=0.74.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "a lens re-run with leadership/coil/insti_money/resistance served",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "W",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=2 lens_warnings=1 (leadership=warn); resistance=strong; ABOVE_STRUCTURE; ma_50=103.15>ma_100=95.47>ma_200=88.64; day_vol=0.58 thin participation.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=2 lens_warnings=1 (coil=warn); ABOVE_STRUCTURE; ma_50=1183.59>ma_100=1172.72>ma_200=1082.9; day_vol=0.81; no runner/premove tag.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive=2 lens_warnings=2 (insti_money, resistance=warn): net lens read is zero. structure_shift=RANGE; ma_50=89.7>ma_200=66.31; day_vol=0.66. No mechanical edge either way.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "lens_positive rises to 3+ with resistance clearing, or structure_shift prints BULLISH_BOS",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "HLT",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive=2 lens_warnings=1 (coil=warn); dual-MA partial: ma_50=321.43 under ma_100=326.5, over ma_200=318.95; day_vol=1.62 strong; ABOVE_STRUCTURE. Partial trend step caps conviction at 1.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=2 lens_warnings=1 (coil=warn); runner_conviction=3 (one of the two highest), runner_setup=false; ABOVE_STRUCTURE; ma_50=19.47>ma_100=18.54>ma_200=15.48; day_vol=1.43.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "4 of 6 lenses unread ('--'): low lens_positive is missing data, not a weak read. Absence is neither agreement nor disagreement. Lens re-run owed before this seat can vote. Readable: structure=ok, sector=ok, ABOVE_STRUCTURE, day_vol=1.19; ma_50=274.03>ma_200=239.18.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "a lens re-run with leadership/coil/insti_money/resistance served",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive=1 lens_warnings=1 (coil=warn): net zero. ABOVE_STRUCTURE; ma_50=41.48>ma_100=39.41>ma_200=36.15; day_vol=1.22. Trend clean, lens agreement absent.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "lens_positive rises to 2+ with coil no longer warn",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); coil=strong; structure_shift=RANGE; ma_50=641.93>ma_100=581.99>ma_200=548.71; day_vol=1.76 above normal.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DRH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (coil=warn); resistance=strong; ABOVE_STRUCTURE; ma_50=12.55>ma_100=12.4>ma_200=11.14; day_vol=0.88. Same lodging theme as PEB/SHO/PK.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=2 lens_warnings=1 (coil=warn); resistance=strong; ABOVE_STRUCTURE; ma_50=235.47>ma_100=231.21>ma_200=220.62; day_vol=0.85.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "4 of 6 lenses unread ('--'): low lens_positive is missing data, not a weak read. Absence is neither agreement nor disagreement. Lens re-run owed before this seat can vote. Readable: structure=ok, sector=strong, ABOVE_STRUCTURE, day_vol=0.91.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "a lens re-run with leadership/coil/insti_money/resistance served",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=2 (coil, insti_money=warn); resistance=strong; ABOVE_STRUCTURE; ma_50=15.44>ma_100=14.96>ma_200=13.04; day_vol=1.51. Lodging theme cluster.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (coil=warn); resistance=strong; ABOVE_STRUCTURE; ma_50=146.84>ma_100=142.28>ma_200=135.1; day_vol=0.75.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CTAS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive=1 lens_warnings=2 (coil, insti_money=warn): lens read net negative while trend is clean (ma_50=201.81>ma_200=189.24, ABOVE_STRUCTURE, day_vol=1.34). Mixed: no vote either way.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "lens_positive rises to 2+ with insti_money no longer warn",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=2 (coil, insti_money=warn); ABOVE_STRUCTURE; ma_50=164.92>ma_100=155.97>ma_200=152.55; day_vol=0.97.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DHR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); ABOVE_STRUCTURE; ma_50=215.12>ma_100=203.27>ma_200=201.26; day_vol=1.94 above normal.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TAK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (coil=warn); ABOVE_STRUCTURE; ma_50=18.48>ma_100=17.44>ma_200=17.4; day_vol=0.59 thin.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); ABOVE_STRUCTURE; ma_50=36.63>ma_100=34.72>ma_200=30.74; day_vol=1.04.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Dual-MA trend filter fails: ma_50=59.24 and ma_100=59.18 both under ma_200=63.45. lens_positive=2 lens_warnings=3 (leadership, coil, insti_money=warn), net negative. Momentum without the longer trend.",
+   "conviction_change": null,
+   "opposing_case": "structure=82.1 ABOVE_STRUCTURE, resistance and sector lenses strong, day_vol=0.99; the 20-day move is real and ma_20=60.88 sits over ma_50.",
+   "self_counter": null,
+   "falsifier": "ma_50 crosses back over ma_200 with lens_warnings at 1 or fewer",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ACA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive=3 lens_warnings=1, structure_shift=BULLISH_BOS, day_vol=2.22, ma_50=146.0>ma_200=129.63 would support; but atr_14d=0.56 is anomalously small for the price (possible pinned/event tape). Abstain until the EVENT-DRIVEN check clears.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "EVENT-DRIVEN check clears ACA as a free-trading name",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "DT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=2 lens_warnings=1 (insti_money=warn); resistance=strong; structure_shift=RANGE; ma_50=55.75>ma_100=49.77>ma_200=43.78; day_vol=1.23.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FRSH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive=1 lens_warnings=1 (coil=warn): net zero. ABOVE_STRUCTURE; ma_50=13.07>ma_200=10.31; day_vol=0.44 thinnest participation in the room.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "lens_positive rises to 2+ on day_vol above 1",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EQH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "lens_positive=4 lens_warnings=1 (insti_money=warn); coil=strong, resistance=strong; structure_shift=RANGE; ma_50=52.27>ma_100=49.25>ma_200=45.63; day_vol=1.59 above normal. Tied second for lens agreement.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive=3 lens_warnings=1 (leadership=warn); insti_money=strong (one of two in room), coil=strong; RANGE; dual-MA partial: ma_50=88.19 a hair under ma_100=88.23, over ma_200=85.19. Partial trend caps at 1.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_200"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TDC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Dual-MA trend filter fails: ma_50=29.04 under ma_200=29.80 and ma_100=30.50; and 4 of 6 lenses unread, so no lens reads strong. A MOMENTUM-lane name with no trend filter behind it.",
+   "conviction_change": null,
+   "opposing_case": "structure=86.3 ABOVE_STRUCTURE, day_vol=1.28, ma_20=30.2 over ma_50; the missing lenses may read strong once served.",
+   "self_counter": null,
+   "falsifier": "ma_50 closes back over ma_200 and a lens re-run shows 3+ strong",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PBI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Single-event test failed: structure_shift=BEARISH_CHOCH (close broke the up-swing anchor low), lens structure=warn, ma_50=16.83 under ma_100=17.19. lens_positive=3 does not override a failed structure.",
+   "conviction_change": null,
+   "opposing_case": "lens_positive=3 (leadership, coil, resistance strong), energy=87.4, ma_50 still over ma_200=14.63, day_vol=0.88 quiet.",
+   "self_counter": null,
+   "falsifier": "structure_shift returns to RANGE/BULLISH_BOS with ma_50 back over ma_100",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CNQ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (coil=warn); resistance=strong; ABOVE_STRUCTURE; ma_50=49.91>ma_100=46.9>ma_200=45.19; day_vol=1.06.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); ABOVE_STRUCTURE; ma_50=180.51>ma_100=164.23>ma_200=139.81; day_vol=1.21.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ILMN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (resistance=warn); coil=strong; runner_conviction=3 (tied highest), runner_setup=false; RANGE; ma_50=238.74>ma_100=210.27>ma_200=171.69; day_vol=0.81.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TRP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Failed up-structure: structure_shift=BEARISH_CHOCH, lens structure=warn; dual-MA filter broken (ma_50=61.31 under ma_200=63.43 and ma_100=64.57). lens_positive=1. Nothing in the detect machinery supports it.",
+   "conviction_change": null,
+   "opposing_case": "sector=strong, flow=78.9, day_vol=0.74 quiet; a mean-reversion read (not this seat's) may see value 12% off the high.",
+   "self_counter": null,
+   "falsifier": "structure_shift returns to RANGE/BULLISH_BOS and ma_50 recovers ma_200",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); coil=strong, resistance=strong; ABOVE_STRUCTURE; ma_50=50.37>ma_100=48.72>ma_200=46.85; day_vol=0.72 light. mp label not on this seat's menu.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ENB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Failed structure and inverted trend: structure_shift=BEARISH_CHOCH; ma_50=48.61<ma_100=51.82<ma_200=52.13 (C1 fails); lens_warnings=3 (leadership, structure, resistance=warn), net negative.",
+   "conviction_change": null,
+   "opposing_case": "insti_money=strong (one of two in the room), sector=strong, flow=78.9; a quiet day_vol=0.77 pullback may be accumulation.",
+   "self_counter": null,
+   "falsifier": "structure_shift leaves BEARISH_CHOCH and ma_50 turns up through ma_100",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MRK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive=3 lens_warnings=1 (insti_money=warn); coil=strong; premove_conviction=1 (only nonzero in room), premove_setup=false; RANGE; ma_50=146.16>ma_100=135.23>ma_200=125.49; day_vol=0.97.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "structure_shift turns BEARISH_CHOCH or lens_positive falls below 2 on the next run",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD question: no. structure_shift=BEARISH_CHOCH, ma_50=50.31<ma_100=51.48<ma_200=56.04 fully inverted, structure=11.0, day_vol=0.52; lens block not served. keep/exit: EXIT-CASE on mechanics; broker stop 36.66 stands (house law).",
+   "conviction_change": null,
+   "opposing_case": "Held at a loss with the stop already placed; a reversal from deep under ma_20=44.47 could be sharp, and the lens block may read better once served.",
+   "self_counter": null,
+   "falsifier": "structure_shift turns BULLISH_BOS with price back over ma_50",
+   "challenge_reply": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "detect-lens.part1of3.json",
+   "bytes": 9302,
+   "votes": 15,
+   "sha256": "15e95badca8d"
+  },
+  {
+   "file": "detect-lens.part2of3.json",
+   "bytes": 8332,
+   "votes": 15,
+   "sha256": "4d5665020c9a"
+  },
+  {
+   "file": "detect-lens.part3of3.json",
+   "bytes": 7653,
+   "votes": 13,
+   "sha256": "fa69e890e4ce"
+  }
+ ]
+}

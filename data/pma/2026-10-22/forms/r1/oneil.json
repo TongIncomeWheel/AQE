@@ -1,0 +1,53 @@
+{
+ "voice": "oneil",
+ "date": "2026-10-22",
+ "universe_file": "/home/claude/pma/d22/seat_packets/oneil.tsv",
+ "nominations": [
+  {
+   "ticker": "FTRE",
+   "reason": "Group #1 in XLV (rank=4), rs_leadership=LEADER, rs_rank_pct=99.26, at new high (pct_from_52w_high=0.0) out of structure=86.7 ABOVE_STRUCTURE on day_vol=1.43; buy zone pct_from_pivot=2.34. Caution: div_state=BEARISH, sector Fading. Market gate DELEGATED.",
+   "conviction": 3,
+   "fields_cited": ["rank", "gics_sector", "rs_leadership", "rs_rank_pct", "pct_from_52w_high", "structure", "structure_shift", "day_vol", "pivot_high", "pct_from_pivot", "entry", "ma_200", "ma_50", "div_state", "div_bear_count", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership=LEADER; rank=4, top XLV name in packet; rs_rank_pct=99.26 (substitute RS); rs_spy_20d=22.57 reported only", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_rank_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C12", "C18"], "observed": "structure=86.7, structure_shift=ABOVE_STRUCTURE, high_52w=24.06, pct_from_52w_high=0.0; base_measure substitute; base stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "high_52w", "pct_from_52w_high"]},
+    {"step": 3, "canon_ref": ["C16"], "observed": "day_vol=1.43 vs 20d avg (substitute for 50d), clears the 1.40 floor narrowly", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot_high=23.51, pct_from_pivot=2.34 (inside 5%); entry=24.06 vs ma_200=15.48, under the 70% climax line", "verdict": "pass", "fields": ["pivot_high", "pct_from_pivot", "entry", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22"], "observed": "bracket.valid=False, bracket.atr_fallback_stop=22.87; my invalidation is a close back under pivot_high=23.51. Info only (R1)", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "pivot_high"]},
+    {"step": 6, "canon_ref": ["C25"], "observed": "div_state=BEARISH, div_bear_count=3; sector_trend_state=Momentum Fading; XLV peers TMO rank=15, CAH rank=28", "verdict": "partial", "fields": ["div_state", "div_bear_count", "sector_trend_state"]},
+    {"step": 7, "canon_ref": ["C1", "C4", "C6", "C8", "C11", "C19"], "observed": "C,A,S,I NOT_AVAILABLE; base_stage NOT_AVAILABLE; market_gate DELEGATED; ranked #1 on leadership + buy-zone pivot", "verdict": "no_data", "fields": ["sc_momentum", "structure"]}
+   ]
+  },
+  {
+   "ticker": "PEB",
+   "reason": "Group #1 in XLRE (rank=1), rs_leadership=LEADER, rs_rank_pct=92.65, new high (pct_from_52w_high=0.0) from structure=84.2 ABOVE_STRUCTURE on day_vol=1.62, sector Momentum Building. Late buy: pct_from_pivot=8.21, no add-ons. Market gate DELEGATED.",
+   "conviction": 3,
+   "fields_cited": ["rank", "gics_sector", "rs_leadership", "rs_rank_pct", "pct_from_52w_high", "structure", "structure_shift", "day_vol", "pivot_high", "pct_from_pivot", "entry", "ma_200", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership=LEADER; rank=1, top XLRE name and top of packet; rs_rank_pct=92.65 (substitute RS)", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_rank_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C12", "C18"], "observed": "structure=84.2, structure_shift=ABOVE_STRUCTURE, high_52w=21.1, pct_from_52w_high=0.0; base_measure substitute; base stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "high_52w", "pct_from_52w_high"]},
+    {"step": 3, "canon_ref": ["C16"], "observed": "day_vol=1.62 vs 20d avg (substitute for 50d), above the 1.40 floor", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C21", "C24"], "observed": "pivot_high=19.5, pct_from_pivot=8.21: 5.1-10% late-buy warning, no add-ons; entry=21.1 vs ma_200=15.77, under 70% climax line", "verdict": "partial", "fields": ["pivot_high", "pct_from_pivot", "entry", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22"], "observed": "bracket.valid=False, bracket.atr_fallback_stop=20.42; my invalidation is a close back under pivot_high=19.5. Info only (R1)", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "pivot_high"]},
+    {"step": 6, "canon_ref": ["C25"], "observed": "sector_trend_state=Momentum Building; XLRE peers SHO rank=5, DRH rank=23 confirm the group; div_state=BULLISH, div_bear_count=0", "verdict": "pass", "fields": ["sector_trend_state", "div_state", "div_bear_count"]},
+    {"step": 7, "canon_ref": ["C1", "C4", "C6", "C8", "C11", "C19"], "observed": "C,A,S,I NOT_AVAILABLE; base_stage NOT_AVAILABLE; market_gate DELEGATED; ranked #2 behind FTRE on extension past pivot", "verdict": "no_data", "fields": ["sc_momentum", "structure"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "held_book.live_px=39.5 vs held_book.entry=53.0, far past the 7-8% loss rule (C20); under ma_50=50.31 and ma_200=56.04 with structure_shift=BEARISH_CHOCH, rs_spy_20d=-19.89: 10-week line failed (C25). Never average down."}
+ ],
+ "lesson_applied": "No ledger memory block was injected; none applied. Standing discipline: pivot distance now served (pct_from_pivot), used as the C17 test instead of sma_distance_pct.",
+ "declared": {
+  "fundamentals": "NOT_AVAILABLE - C, A, S, I letters untested (C4, C5, C6, C8, C11)",
+  "base_stage": "NOT_AVAILABLE (C19)",
+  "market_gate": "DELEGATED - valid only into a confirmed uptrend; void if the index is under distribution",
+  "rs_measure": "rs_leadership + rs_rank_pct (substitute - no IBD RS Rating)",
+  "volume_measure": "day_vol vs 20-day (substitute - canon says 50-day)",
+  "base_measure": "structure composite (substitute)",
+  "not_served": ["EPS/sales/ROE/cash flow (C, A)", "institutional sponsor counts (I)", "absolute average share volume (S)", "base-stage count (C19)", "handle depth/shape and volume dry-up in base (C14, C15)", "lens column order not decoded in packet DICT - lens not used", "MP row: rs_leadership, rank, sector_trend_state, pivot_high null"]
+ },
+ "shortfall_reason": "Only 2 names pass leadership (LEADER, top-3 of group, rs_rank_pct>=80), day_vol>=1.40 and pct_from_pivot<=10. Near-misses failed on C9 group position (PK, APLE, DHR, ACA, SAP), C10 RS<80 (KMI, RELX), C16 volume (TRV, CTAS, CAH) or C17 extension >10% (SHO, HLT, BOX). Padding is the breach."
+}

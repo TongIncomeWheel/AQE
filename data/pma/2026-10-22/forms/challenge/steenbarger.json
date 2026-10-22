@@ -1,0 +1,151 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-10-22",
+ "findings": [
+  {
+   "scope": "ROOM",
+   "axis": "PROCESS_INTEGRITY (C15, C17)",
+   "claim": "Convergence is thin: 37 of 42 nominated names carry a single seat and the top name has 3. Independence held, but there is no convergence theme; a wide single-seat list is breadth substituting for depth, not a signal.",
+   "evidence": "nomination_count: A=3; MA,PEB,AVPT,CRBG=2; 37 names=1; MP=0 (held)",
+   "severity": "flag",
+   "what_is_owed": "Deliberation should weight the five multi-seat names and require each solo to stand on a few deeply-read fields, not on door count."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "REGIME (C3, C4)",
+   "claim": "No regime or srm label reaches this packet, so no nomination can be shown valid inside a named environment and environment-match cannot justify size for any name today.",
+   "evidence": "regime=absent; srm=absent (packet keys: date, seat, tally, rows)",
+   "severity": "note",
+   "what_is_owed": "Desk to name the environment each lane (MOMENTUM 25 / PULLBACK 18) is valid inside before sizing."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING \u2014 SECTOR (C12, C17)",
+   "claim": "Healthcare is 12 of 42 nominated names across six seats (minervini 4, raschke 3, weis 3, wyckoff 2, oneil 1, elder-lens 1). The deliberation set risks one sector bet expressed many ways.",
+   "evidence": "gics_sector_name=Healthcare x12 (A, AMGN, CNC, CAH, LLY, TAK, TMO, ILMN, DHR, FTRE, EW, MRK); next: Technology/Industrials/Energy x5",
+   "severity": "flag",
+   "what_is_owed": "Room to state how many Healthcare names the plan may carry together."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING \u2014 SEAT CLUSTER (C12)",
+   "claim": "livermore's nine names put four in lodging-type Real Estate; that seat is effectively one theme bet. weis puts 3 of 10 in Energy.",
+   "evidence": "livermore: PEB, SHO, DRH, PK = Real Estate (4/9); weis: EOG, XOM, CNQ = Energy (3/10)",
+   "severity": "note",
+   "what_is_owed": "Treat PEB/SHO/DRH/PK as one exposure when counting slots."
+  },
+  {
+   "scope": "MA",
+   "axis": "CROWDING \u2014 PAIR (C12)",
+   "claim": "MA and V are the same payments exposure, both from livermore (MA also minervini). Two slots here would be one bet counted twice.",
+   "evidence": "MA: gics=Financials, sc_momentum=78.0, ma_50=579.05>ma_100=551.63>ma_200=533.78; V: gics=Financials, sc_momentum=78.7, ma_50=375.12>ma_100=360.43>ma_200=340.02",
+   "severity": "note",
+   "what_is_owed": "Pick one of MA/V for the plan, or state why both."
+  },
+  {
+   "scope": "A",
+   "axis": "CERTAINTY (C15)",
+   "claim": "Top-consensus name, context is clean (stacked MAs, BULLISH_BOS) but conviction falls across the three seats (4/3/2) and participation is below normal. Convergence is real; certainty is lower than the count suggests.",
+   "evidence": "convictions=[4,3,2]; structure=84.2; structure_shift=BULLISH_BOS; ma_50=160.42>ma_100=147.65>ma_200=135.02; day_vol=0.93; div_state=NONE",
+   "severity": "note",
+   "what_is_owed": "Seats to pre-state the observable that proves the break false (e.g. close back inside the prior swing)."
+  },
+  {
+   "scope": "ENB",
+   "axis": "CONTEXT (C5)",
+   "claim": "A PULLBACK nomination with no up-trend to pull back into: MAs stacked downward, structure 36.8, BEARISH_CHOCH. Pattern in isolation is not a setup.",
+   "evidence": "ma_50=48.61<ma_100=51.82<ma_200=52.13; structure=36.8; structure_shift=BEARISH_CHOCH; lens_warnings=3; sc_momentum=54.7; seat=thorp conv 2",
+   "severity": "flag",
+   "what_is_owed": "thorp to name the higher-timeframe trend this enters with, or stand aside (C16)."
+  },
+  {
+   "scope": "TRP",
+   "axis": "CONTEXT (C5)",
+   "claim": "PULLBACK lane on a name whose up-structure has failed and whose 50-day sits under its 100- and 200-day. Context does not support a pullback-in-trend read.",
+   "evidence": "ma_50=61.31<ma_200=63.43<ma_100=64.57; structure=54.7; structure_shift=BEARISH_CHOCH; day_vol=0.74; seat=thorp conv 2",
+   "severity": "flag",
+   "what_is_owed": "thorp to state the trend context or abstain."
+  },
+  {
+   "scope": "PBI",
+   "axis": "CONTEXT (C5)",
+   "claim": "Character change down on the swing (BEARISH_CHOCH) with 50-day under 100-day; the up-structure this pullback depends on has broken. thorp's three names are all PULLBACK and two of three carry BEARISH_CHOCH.",
+   "evidence": "ma_50=16.83<ma_100=17.19; ma_200=14.63; structure_shift=BEARISH_CHOCH; structure=63.2; thorp names PBI/TRP/ENB all lane=PULLBACK",
+   "severity": "note",
+   "what_is_owed": "thorp to state the observable that separates a pullback from a failed trend."
+  },
+  {
+   "scope": "KR",
+   "axis": "CONTEXT (C5)",
+   "claim": "MOMENTUM lane but price-trend context is below the 200-day average (50-day under 200-day) and three lenses warn. A momentum read without the longer trend behind it.",
+   "evidence": "ma_50=59.24; ma_100=59.18; ma_200=63.45 (50 and 100 both under 200); lens_warnings=3; structure=82.1; seat=elder-lens conv 3",
+   "severity": "flag",
+   "what_is_owed": "elder-lens to name the trend context it is exploiting."
+  },
+  {
+   "scope": "EQH",
+   "axis": "CERTAINTY (C17)",
+   "claim": "All five oscillators confirm a bearish divergence on a range-bound name; the caution flag is at its maximum while the seat nominates.",
+   "evidence": "div_state=BEARISH; div_bear_count=5; structure_shift=RANGE; sc_momentum=62.6; seat=wyckoff conv 2",
+   "severity": "note",
+   "what_is_owed": "wyckoff to state what in its read outweighs a 5-of-5 bearish divergence."
+  },
+  {
+   "scope": "TMO",
+   "axis": "CERTAINTY",
+   "claim": "Bearish divergence on 4 of 5 oscillators while nominated in the PULLBACK lane; ILMN carries the same 4 of 5 from the same seat (raschke).",
+   "evidence": "TMO: div_state=BEARISH, div_bear_count=4, structure_shift=RANGE, day_vol=1.76; ILMN: div_bear_count=4, structure_shift=RANGE",
+   "severity": "note",
+   "what_is_owed": "raschke to pre-state the disconfirming observable for both."
+  },
+  {
+   "scope": "FRSH",
+   "axis": "TIMING (C6)",
+   "claim": "Momentum name on the thinnest participation in the room with a 3-of-5 bearish divergence: alignment is weak exactly where it should be strongest.",
+   "evidence": "day_vol=0.44; div_state=BEARISH; div_bear_count=3; structure_shift=ABOVE_STRUCTURE; seat=elder-lens conv 2",
+   "severity": "note"
+  },
+  {
+   "scope": "AVPT",
+   "axis": "TIMING (C6)",
+   "claim": "Two-seat momentum name breaking structure on below-normal volume with a 2-of-5 bearish divergence; the break is not yet confirmed by participation.",
+   "evidence": "structure_shift=BULLISH_BOS; day_vol=0.7; div_state=BEARISH; div_bear_count=2; convictions=[3,3]",
+   "severity": "note"
+  },
+  {
+   "scope": "SHO",
+   "axis": "CONTEXT (C5)",
+   "claim": "Solo conviction-4 momentum name whose 50-day is under its 100-day; HLT (also livermore) has the same shape. Short-term strength sits inside an unresolved intermediate trend.",
+   "evidence": "SHO: ma_50=11.25<ma_100=11.38, ma_200=10.44, day_vol=2.27, conv 4 SOLO; HLT: ma_50=321.43<ma_100=326.50, ma_200=318.95",
+   "severity": "note",
+   "what_is_owed": "livermore to state the higher-timeframe context for both."
+  },
+  {
+   "scope": "MP",
+   "axis": "CONTEXT (C5, C7)",
+   "claim": "Held name with no seat reviewing it: every context field reads against the original thesis (MAs inverted, structure 11.0, BEARISH_CHOCH). The broker stop 36.66 stands; what is missing is a stated non-price observable for the hold.",
+   "evidence": "nomination_count=0; ma_50=50.31<ma_100=51.48<ma_200=56.04; structure=11.0; structure_shift=BEARISH_CHOCH; sc_momentum=19.9; day_vol=0.52; gics_sector_name=null; lens_warnings=null",
+   "severity": "flag",
+   "what_is_owed": "Committee to file a held_review line for MP naming what keeps the hold valid, and to source the null sector and lens_warnings fields."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "OVERLAP (special duty)",
+   "claim": "My standing overlap check with Lynch cannot run: lynch filed no nominations in this tally.",
+   "evidence": "seats in tally exclude lynch",
+   "severity": "note",
+   "what_is_owed": "Declare whether lynch abstained or was not served."
+  }
+ ],
+ "declared": {
+  "not_served": [
+   "regime/srm: absent from packet \u2014 C3/C4 environment match not assessable",
+   "edge_proven (C1): forward-return separation not measured for any cited field",
+   "invalidation observable (C7): not carried by the tally; requested per name above",
+   "psychology_claims: NONE \u2014 C18-C21 are PM-facing (R9)",
+   "price/bracket.price not in packet; bracket fields read as context only, never argued (R1)",
+   "rows carry off-menu fields (rs_rank_pct, ret_*, mp, adx_14, extension_atr_20 etc.) \u2014 not read",
+   "MP gics_sector_name and lens_warnings are null"
+  ]
+ }
+}

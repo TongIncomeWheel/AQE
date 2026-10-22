@@ -1,0 +1,152 @@
+{
+ "voice": "crown",
+ "date": "2026-10-22",
+ "expression_family": "BROADENING_CARRY",
+ "match_quality": "partial",
+ "size_multiplier": 1.0,
+ "conditions_met": [
+  "broadening (RSP/SPY +1.82% over 20d, +1.68% over 5d; gate passed, confidence 0.65)",
+  "range_not_extreme (breadth mid of its 12-month range)",
+  "cta_low_flip (trend-fund extremes 0.11 of 18 markets; size dial 1.00)"
+ ],
+ "conditions_not_met": [
+  "gamma_positive: dealer gamma is NEGATIVE on SPY and QQQ, so dealers amplify moves rather than damp them",
+  "dispersion_normal: single-stock vs index gap 23.94 vol pts, wider than 83% of two years (state ELEVATED_EASING)"
+ ],
+ "headline": "Broad but young rally (3 days) on a knife-edge: SPY 0.35% and QQQ 0.96% under their gamma flips, dealers amplifying. Closest family BROADENING_CARRY, partial (2 of 5 unmet), 1.00x.",
+ "data_points": [
+  {
+   "name": "Status / freshness",
+   "value": "OK; oldest input 2026-10-20 (2 days); volatility as of 2026-10-20; CFTC positioning as of 2026-10-13",
+   "reading": "Read is only as current as volatility (2 days old). Positioning is context only, cannot time anything."
+  },
+  {
+   "name": "Breadth (RSP/SPY)",
+   "value": "broadening, mid of 12-month range, 3 days in regime; 5d +1.68%, 20d +1.82%, 60d -4.63%; confidence 0.65, gate passed",
+   "reading": "R1: broadening from mid-range is early, not late. But only 3 days old and still recovering a 60-day loss, so it is fresh and unproven."
+  },
+  {
+   "name": "Intermarket cross-check",
+   "value": "20d: SPY +0.69% vs IWM -1.93% (spread 2.62); 5d: IWM +1.88%",
+   "reading": "Small caps lagged over the month and only turned this week. Supports 'young', not 'established' broadening."
+  },
+  {
+   "name": "Option dealers (gamma)",
+   "value": "NEGATIVE; SPY 773.09 vs flip 775.80 (0.35%); QQQ 725.20 vs flip 732.13 (0.96%)",
+   "reading": "R9 KNIFE-EDGE on both SPY and QQQ (inside ~1%). Character of the tape can flip without price moving much. Assumption: customers long calls and puts (convention, not observed data)."
+  },
+  {
+   "name": "Volatility complex",
+   "value": "VIX 16.68; single-stock vol 41.25; gap 23.94 (83rd pctl of 2y), 20d change -0.93; implied correlation 8.4 (16th pctl); contango",
+   "reading": "R6 ELEVATED_EASING: stress is leaving, not building. Index downside bets would be late. Low correlation means selection pays. R11 not triggered (VIX under 25)."
+  },
+  {
+   "name": "Trend funds (CTA)",
+   "value": "bias mixed; 18 markets; share at extreme 0.11; size dial 1.00; rates -0.74, fx +0.43, energy +0.24, equity +0.21",
+   "reading": "R8 not triggered (0.11 well under ~0.67). No CTA-driven size cut."
+  },
+  {
+   "name": "Large speculators (CFTC)",
+   "value": "crowded long NQ, RTY, ZC, ZF, ZS, ZT; crowded short NG (as of 2026-10-13)",
+   "reading": "R7: crowded long Nasdaq and small caps is context, never timing. A broadening read leaning on small caps is leaning into a crowded long."
+  },
+  {
+   "name": "Divergence",
+   "value": "warnings_lit 10, all RSI type (1 index-level, 9 individual markets)",
+   "reading": "R10: one type only, momentum lagging price. It does not line up with breadth (which is broadening), so a straw, not a pile."
+  },
+  {
+   "name": "Scenario layer",
+   "value": "leading DISPERSION_REGIME, share of conditions 0.83, coverage 1.0, not contested; runner-up INFLATION_SHOCK",
+   "reading": "Share of conditions met, not a probability. Points to a stock-picker's tape."
+  },
+  {
+   "name": "Cross-asset weather",
+   "value": "TLT 5d +1.71%; UUP 5d -0.69%; HYG under its 20d avg (20d -1.43%); USO 5d +4.06%; copper/gold 5d -1.08%",
+   "reading": "Falling rates and a soft dollar help breadth; weak credit over the month and oil up with copper/gold down are the inflation-shock runner-up's evidence."
+  }
+ ],
+ "key_levels": [
+  {
+   "market": "SPY gamma flip",
+   "level": 775.8,
+   "distance_pct": 0.35,
+   "meaning": "Knife-edge. Above it dealers damp moves; below (now) they amplify both ways."
+  },
+  {
+   "market": "Corn trend-fund flip",
+   "level": 462.91,
+   "distance_pct": -0.4,
+   "meaning": "Below it CTAs turn seller together; speculators already crowded long corn."
+  },
+  {
+   "market": "QQQ put wall",
+   "level": 720.0,
+   "distance_pct": -0.72,
+   "meaning": "Heaviest put positioning below; losing it removes the cushion."
+  },
+  {
+   "market": "SPY call wall",
+   "level": 780.0,
+   "distance_pct": 0.89,
+   "meaning": "Rallies tend to meet dealer selling here unless momentum forces through."
+  },
+  {
+   "market": "QQQ gamma flip",
+   "level": 732.13,
+   "distance_pct": 0.96,
+   "meaning": "Knife-edge (inside 1%). Above it swings should settle."
+  },
+  {
+   "market": "Russell 2000 trend-fund flip",
+   "level": 2819.41,
+   "distance_pct": 1.33,
+   "meaning": "Above it CTAs turn buyer, which would back the broadening read."
+  },
+  {
+   "market": "SPY put wall",
+   "level": 760.0,
+   "distance_pct": -1.69,
+   "meaning": "Main support from dealer positioning."
+  },
+  {
+   "market": "Single-stock vs index gap, elevated band",
+   "level": 23.51,
+   "distance_pct": -1.8,
+   "meaning": "Gap drops below its elevated band; dispersion moves toward normal, which would meet the unmet condition."
+  },
+  {
+   "market": "RSP/SPY 20-day average",
+   "level": 0.275009,
+   "distance_pct": -1.86,
+   "meaning": "Average stock crossing back under its own trend; turns before the regime label does."
+  },
+  {
+   "market": "S&P 500 trend-fund flip",
+   "level": 7413.73,
+   "distance_pct": -4.96,
+   "meaning": "Below it CTAs turn seller in equities together."
+  },
+  {
+   "market": "RSP/SPY 12-month high",
+   "level": 0.298794,
+   "distance_pct": 6.63,
+   "meaning": "Broadening into here would be late, not early."
+  }
+ ],
+ "what_would_change_it": [
+  "SPY back above 775.80 and QQQ above 732.13 (gamma turns positive): the gamma_positive condition is met and the match moves toward clean.",
+  "Single-stock vs index gap widening again (gap_change_20d turns positive): ELEVATED_RISING, hidden stress building, routes toward HIDDEN_STRESS_DOWNSIDE.",
+  "RSP/SPY closing under its 20-day average 0.275009: broadening fails after 3 days.",
+  "Russell 2000 futures above 2819.41: CTAs turn buyer of small caps and confirm breadth.",
+  "Corn below 462.91: trend-fund selling into a crowded long (commodity context, not equity)."
+ ],
+ "limits": [
+  "Status OK, but the read is only as current as volatility (2026-10-20, 2 days old); CFTC positioning is 9 days old and cannot time anything.",
+  "Partial match: 2 of 5 conditions unmet (gamma_positive, dispersion_normal). The artifact's playbook context text says 'gamma positive, dispersion normal'; both are false today, so the playbook describes the clean case, not today.",
+  "Contested between layers (C37): the_call family BROADENING_CARRY (a breadth trade) vs scenario lead DISPERSION_REGIME (a stock-picker's tape, low correlation). They overlap but are not the same story. Surfaced for the PM, not resolved here.",
+  "Internal inconsistency: read_me_first says 2 trend-fund positions are stretched and 'size guidance is cut', and calls it a 'fragile setup', but size_multiplier is 1.00 (CTA dial 1.00, extremes 0.11). Crown emits the computed 1.00; the PM should weigh the negative-gamma knife-edge separately.",
+  "Gamma readings rely on the dealer-side convention (customers long calls and puts), an assumption, not observed data.",
+  "Scenario scores are share of conditions met, not probabilities. Crown names no ticker, sizes nothing, places nothing."
+ ]
+}

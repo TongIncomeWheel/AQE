@@ -1,0 +1,4532 @@
+{
+ "schema": "pma_scorecard/1",
+ "asof": "2026-10-21",
+ "horizon_sessions": 5,
+ "bench": "SPY",
+ "method": "base = last close before the run (checked against ledger ref_price, 0.5% tolerance); universe = equal-weight AQE daily list for that run over the same window; beta_adj = return - beta_30d x SPY return.",
+ "runs": {
+  "2026-10-15": {
+   "base": "2026-10-14",
+   "end": "2026-10-21",
+   "sessions": 5,
+   "full_horizon": true,
+   "spy": 0.45,
+   "universe_mean": 2.75,
+   "universe_n": 213,
+   "universe_size": 213,
+   "universe_beat_spy": 167
+  },
+  "2026-10-19": {
+   "base": "2026-10-16",
+   "end": "2026-10-21",
+   "sessions": 3,
+   "full_horizon": false,
+   "spy": 1.29,
+   "universe_mean": 0.86,
+   "universe_n": 278,
+   "universe_size": 288,
+   "universe_beat_spy": 91
+  },
+  "2026-10-20": {
+   "base": "2026-10-19",
+   "end": "2026-10-21",
+   "sessions": 2,
+   "full_horizon": false,
+   "spy": 0.86,
+   "universe_mean": 1.41,
+   "universe_n": 228,
+   "universe_size": 228,
+   "universe_beat_spy": 128
+  },
+  "2026-10-21": {
+   "base": "2026-10-20",
+   "end": "2026-10-21",
+   "sessions": 1,
+   "full_horizon": false,
+   "spy": 0.53,
+   "universe_mean": -0.1,
+   "universe_n": 327,
+   "universe_size": 327,
+   "universe_beat_spy": 88
+  }
+ },
+ "pooled_all": {
+  "ADVANCE": {
+   "n": 34,
+   "mean": 1.73,
+   "median": 1.29,
+   "vs_spy_mean": 0.97,
+   "vs_spy_median": 0.45,
+   "beat_spy": 20,
+   "vs_universe_mean": 0.52,
+   "beat_universe": 18,
+   "n_universe": 34,
+   "beta_adj_mean": 1.49,
+   "n_beta": 34,
+   "beta_mean": 0.35,
+   "worst": [
+    {
+     "run": "2026-10-19",
+     "ticker": "M",
+     "vs_spy": -3.66,
+     "beta": 1.38
+    },
+    {
+     "run": "2026-10-19",
+     "ticker": "KDP",
+     "vs_spy": -1.72,
+     "beta": 0.12
+    },
+    {
+     "run": "2026-10-19",
+     "ticker": "ABBV",
+     "vs_spy": -1.53,
+     "beta": -0.08
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-15",
+     "ticker": "ELF",
+     "vs_spy": 4.77,
+     "beta": 0.92
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "LLY",
+     "vs_spy": 4.68,
+     "beta": 0.1
+    },
+    {
+     "run": "2026-10-20",
+     "ticker": "PK",
+     "vs_spy": 4.6,
+     "beta": 0.56
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 0
+    },
+    "below": {
+     "n": 34,
+     "mean": 1.73,
+     "median": 1.29,
+     "vs_spy_mean": 0.97,
+     "vs_spy_median": 0.45,
+     "beat_spy": 20,
+     "vs_universe_mean": 0.52,
+     "beat_universe": 18,
+     "n_universe": 34,
+     "beta_adj_mean": 1.49,
+     "n_beta": 34,
+     "beta_mean": 0.35
+    },
+    "no_beta": 0
+   }
+  },
+  "HOLD-FOR-CONDITIONS": {
+   "n": 102,
+   "mean": 1.05,
+   "median": 0.81,
+   "vs_spy_mean": 0.22,
+   "vs_spy_median": 0.01,
+   "beat_spy": 51,
+   "vs_universe_mean": -0.08,
+   "beat_universe": 46,
+   "n_universe": 102,
+   "beta_adj_mean": 0.93,
+   "n_beta": 102,
+   "beta_mean": 0.11,
+   "worst": [
+    {
+     "run": "2026-10-19",
+     "ticker": "GM",
+     "vs_spy": -10.64,
+     "beta": 1.28
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "PM",
+     "vs_spy": -4.4,
+     "beta": -0.85
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "CCEP",
+     "vs_spy": -3.28,
+     "beta": -0.13
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-20",
+     "ticker": "TDC",
+     "vs_spy": 5.84,
+     "beta": 0.98
+    },
+    {
+     "run": "2026-10-20",
+     "ticker": "AVPT",
+     "vs_spy": 5.79,
+     "beta": 0.97
+    },
+    {
+     "run": "2026-10-19",
+     "ticker": "FTRE",
+     "vs_spy": 5.69,
+     "beta": 0.9
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 1,
+     "mean": 0.24,
+     "median": 0.24,
+     "vs_spy_mean": -0.28,
+     "vs_spy_median": -0.28,
+     "beat_spy": 0,
+     "vs_universe_mean": 0.34,
+     "beat_universe": 1,
+     "n_universe": 1,
+     "beta_adj_mean": -1.58,
+     "n_beta": 1,
+     "beta_mean": 3.46
+    },
+    "below": {
+     "n": 101,
+     "mean": 1.05,
+     "median": 0.82,
+     "vs_spy_mean": 0.23,
+     "vs_spy_median": 0.03,
+     "beat_spy": 51,
+     "vs_universe_mean": -0.08,
+     "beat_universe": 45,
+     "n_universe": 101,
+     "beta_adj_mean": 0.96,
+     "n_beta": 101,
+     "beta_mean": 0.08
+    },
+    "no_beta": 0
+   }
+  },
+  "PASS": {
+   "n": 19,
+   "mean": 0.2,
+   "median": 0.13,
+   "vs_spy_mean": -0.32,
+   "vs_spy_median": -0.39,
+   "beat_spy": 7,
+   "vs_universe_mean": 0.3,
+   "beat_universe": 10,
+   "n_universe": 19,
+   "beta_adj_mean": -0.07,
+   "n_beta": 19,
+   "beta_mean": 0.52,
+   "worst": [
+    {
+     "run": "2026-10-21",
+     "ticker": "CCI",
+     "vs_spy": -3.59,
+     "beta": 1.49
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "LYFT",
+     "vs_spy": -3.19,
+     "beta": 0.94
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "O",
+     "vs_spy": -2.28,
+     "beta": 0.39
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-21",
+     "ticker": "OKTA",
+     "vs_spy": 7.01,
+     "beta": 1.25
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "TDC",
+     "vs_spy": 2.56,
+     "beta": 1.02
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "TTAN",
+     "vs_spy": 1.47,
+     "beta": 0.36
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 1,
+     "mean": 1.15,
+     "median": 1.15,
+     "vs_spy_mean": 0.63,
+     "vs_spy_median": 0.63,
+     "beat_spy": 1,
+     "vs_universe_mean": 1.25,
+     "beat_universe": 1,
+     "n_universe": 1,
+     "beta_adj_mean": -0.42,
+     "n_beta": 1,
+     "beta_mean": 3.0
+    },
+    "below": {
+     "n": 18,
+     "mean": 0.15,
+     "median": -0.12,
+     "vs_spy_mean": -0.37,
+     "vs_spy_median": -0.64,
+     "beat_spy": 6,
+     "vs_universe_mean": 0.25,
+     "beat_universe": 9,
+     "n_universe": 18,
+     "beta_adj_mean": -0.05,
+     "n_beta": 18,
+     "beta_mean": 0.38
+    },
+    "no_beta": 0
+   }
+  },
+  "NEAR-MISS": {
+   "n": 143,
+   "mean": -0.24,
+   "median": -0.23,
+   "vs_spy_mean": -0.77,
+   "vs_spy_median": -0.76,
+   "beat_spy": 33,
+   "vs_universe_mean": -0.14,
+   "beat_universe": 55,
+   "n_universe": 143,
+   "beta_adj_mean": -0.4,
+   "n_beta": 143,
+   "beta_mean": 0.3,
+   "worst": [
+    {
+     "run": "2026-10-21",
+     "ticker": "CELH",
+     "vs_spy": -6.03,
+     "beta": 1.23
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "ELS",
+     "vs_spy": -5.06,
+     "beta": 0.1
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "BROS",
+     "vs_spy": -4.09,
+     "beta": -0.28
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-21",
+     "ticker": "DXC",
+     "vs_spy": 4.74,
+     "beta": 0.89
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "KD",
+     "vs_spy": 2.79,
+     "beta": 1.21
+    },
+    {
+     "run": "2026-10-21",
+     "ticker": "ASAN",
+     "vs_spy": 2.55,
+     "beta": 1.52
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 1,
+     "mean": 1.93,
+     "median": 1.93,
+     "vs_spy_mean": 1.41,
+     "vs_spy_median": 1.41,
+     "beat_spy": 1,
+     "vs_universe_mean": 2.03,
+     "beat_universe": 1,
+     "n_universe": 1,
+     "beta_adj_mean": 0.46,
+     "n_beta": 1,
+     "beta_mean": 2.81
+    },
+    "below": {
+     "n": 142,
+     "mean": -0.26,
+     "median": -0.23,
+     "vs_spy_mean": -0.78,
+     "vs_spy_median": -0.76,
+     "beat_spy": 32,
+     "vs_universe_mean": -0.16,
+     "beat_universe": 54,
+     "n_universe": 142,
+     "beta_adj_mean": -0.41,
+     "n_beta": 142,
+     "beta_mean": 0.29
+    },
+    "no_beta": 0
+   }
+  }
+ },
+ "pooled_full_horizon": {
+  "ADVANCE": {
+   "n": 8,
+   "mean": 2.94,
+   "median": 2.8,
+   "vs_spy_mean": 2.49,
+   "vs_spy_median": 2.35,
+   "beat_spy": 7,
+   "vs_universe_mean": 0.19,
+   "beat_universe": 4,
+   "n_universe": 8,
+   "beta_adj_mean": 2.82,
+   "n_beta": 8,
+   "beta_mean": 0.27,
+   "worst": [
+    {
+     "run": "2026-10-15",
+     "ticker": "CNC",
+     "vs_spy": -0.34,
+     "beta": 0.88
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "FAST",
+     "vs_spy": 0.49,
+     "beta": 0.34
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "COP",
+     "vs_spy": 1.89,
+     "beta": -0.63
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-15",
+     "ticker": "ELF",
+     "vs_spy": 4.77,
+     "beta": 0.92
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "LLY",
+     "vs_spy": 4.68,
+     "beta": 0.1
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "V",
+     "vs_spy": 3.74,
+     "beta": 0.67
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 0
+    },
+    "below": {
+     "n": 8,
+     "mean": 2.94,
+     "median": 2.8,
+     "vs_spy_mean": 2.49,
+     "vs_spy_median": 2.35,
+     "beat_spy": 7,
+     "vs_universe_mean": 0.19,
+     "beat_universe": 4,
+     "n_universe": 8,
+     "beta_adj_mean": 2.82,
+     "n_beta": 8,
+     "beta_mean": 0.27
+    },
+    "no_beta": 0
+   }
+  },
+  "HOLD-FOR-CONDITIONS": {
+   "n": 20,
+   "mean": 1.51,
+   "median": 1.66,
+   "vs_spy_mean": 1.06,
+   "vs_spy_median": 1.2,
+   "beat_spy": 14,
+   "vs_universe_mean": -1.24,
+   "beat_universe": 6,
+   "n_universe": 20,
+   "beta_adj_mean": 1.57,
+   "n_beta": 20,
+   "beta_mean": -0.13,
+   "worst": [
+    {
+     "run": "2026-10-15",
+     "ticker": "PM",
+     "vs_spy": -4.4,
+     "beta": -0.85
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "HUM",
+     "vs_spy": -0.94,
+     "beta": 1.57
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "TEVA",
+     "vs_spy": -0.7,
+     "beta": 0.74
+    }
+   ],
+   "best": [
+    {
+     "run": "2026-10-15",
+     "ticker": "ADP",
+     "vs_spy": 4.61,
+     "beta": 0.08
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "USO",
+     "vs_spy": 3.61,
+     "beta": -1.86
+    },
+    {
+     "run": "2026-10-15",
+     "ticker": "TMO",
+     "vs_spy": 2.64,
+     "beta": 0.25
+    }
+   ],
+   "beta_split": {
+    "cap": 2.5,
+    "at_or_above": {
+     "n": 0
+    },
+    "below": {
+     "n": 20,
+     "mean": 1.51,
+     "median": 1.66,
+     "vs_spy_mean": 1.06,
+     "vs_spy_median": 1.2,
+     "beat_spy": 14,
+     "vs_universe_mean": -1.24,
+     "beat_universe": 6,
+     "n_universe": 20,
+     "beta_adj_mean": 1.57,
+     "n_beta": 20,
+     "beta_mean": -0.13
+    },
+    "no_beta": 0
+   }
+  },
+  "PASS": {
+   "n": 0
+  },
+  "NEAR-MISS": {
+   "n": 0
+  }
+ },
+ "by_run": {
+  "2026-10-15": {
+   "ADVANCE": {
+    "n": 8,
+    "mean": 2.94,
+    "median": 2.8,
+    "vs_spy_mean": 2.49,
+    "vs_spy_median": 2.35,
+    "beat_spy": 7,
+    "vs_universe_mean": 0.19,
+    "beat_universe": 4,
+    "n_universe": 8,
+    "beta_adj_mean": 2.82,
+    "n_beta": 8,
+    "beta_mean": 0.27,
+    "worst": [
+     {
+      "run": "2026-10-15",
+      "ticker": "CNC",
+      "vs_spy": -0.34,
+      "beta": 0.88
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "FAST",
+      "vs_spy": 0.49,
+      "beta": 0.34
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "COP",
+      "vs_spy": 1.89,
+      "beta": -0.63
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-15",
+      "ticker": "ELF",
+      "vs_spy": 4.77,
+      "beta": 0.92
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "LLY",
+      "vs_spy": 4.68,
+      "beta": 0.1
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "V",
+      "vs_spy": 3.74,
+      "beta": 0.67
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 20,
+    "mean": 1.51,
+    "median": 1.66,
+    "vs_spy_mean": 1.06,
+    "vs_spy_median": 1.2,
+    "beat_spy": 14,
+    "vs_universe_mean": -1.24,
+    "beat_universe": 6,
+    "n_universe": 20,
+    "beta_adj_mean": 1.57,
+    "n_beta": 20,
+    "beta_mean": -0.13,
+    "worst": [
+     {
+      "run": "2026-10-15",
+      "ticker": "PM",
+      "vs_spy": -4.4,
+      "beta": -0.85
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "HUM",
+      "vs_spy": -0.94,
+      "beta": 1.57
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "TEVA",
+      "vs_spy": -0.7,
+      "beta": 0.74
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-15",
+      "ticker": "ADP",
+      "vs_spy": 4.61,
+      "beta": 0.08
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "USO",
+      "vs_spy": 3.61,
+      "beta": -1.86
+     },
+     {
+      "run": "2026-10-15",
+      "ticker": "TMO",
+      "vs_spy": 2.64,
+      "beta": 0.25
+     }
+    ]
+   },
+   "PASS": {
+    "n": 0
+   },
+   "NEAR-MISS": {
+    "n": 0
+   }
+  },
+  "2026-10-19": {
+   "ADVANCE": {
+    "n": 7,
+    "mean": 0.39,
+    "median": 0.15,
+    "vs_spy_mean": -0.89,
+    "vs_spy_median": -1.14,
+    "beat_spy": 2,
+    "vs_universe_mean": -0.47,
+    "beat_universe": 3,
+    "n_universe": 7,
+    "beta_adj_mean": -0.05,
+    "n_beta": 7,
+    "beta_mean": 0.35,
+    "worst": [
+     {
+      "run": "2026-10-19",
+      "ticker": "M",
+      "vs_spy": -3.66,
+      "beta": 1.38
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "KDP",
+      "vs_spy": -1.72,
+      "beta": 0.12
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "ABBV",
+      "vs_spy": -1.53,
+      "beta": -0.08
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-19",
+      "ticker": "VEEV",
+      "vs_spy": 1.99,
+      "beta": 0.75
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "V",
+      "vs_spy": 0.01,
+      "beta": 0.62
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "LLY",
+      "vs_spy": -0.2,
+      "beta": 0.19
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 30,
+    "mean": 0.91,
+    "median": 0.7,
+    "vs_spy_mean": -0.38,
+    "vs_spy_median": -0.59,
+    "beat_spy": 12,
+    "vs_universe_mean": 0.05,
+    "beat_universe": 13,
+    "n_universe": 30,
+    "beta_adj_mean": 0.72,
+    "n_beta": 30,
+    "beta_mean": 0.15,
+    "worst": [
+     {
+      "run": "2026-10-19",
+      "ticker": "GM",
+      "vs_spy": -10.64,
+      "beta": 1.28
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "EQNR",
+      "vs_spy": -3.12,
+      "beta": -1.35
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "GILD",
+      "vs_spy": -2.97,
+      "beta": 0.11
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-19",
+      "ticker": "FTRE",
+      "vs_spy": 5.69,
+      "beta": 0.9
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "PK",
+      "vs_spy": 5.5,
+      "beta": 0.49
+     },
+     {
+      "run": "2026-10-19",
+      "ticker": "TREX",
+      "vs_spy": 5.49,
+      "beta": 1.45
+     }
+    ]
+   },
+   "PASS": {
+    "n": 0
+   },
+   "NEAR-MISS": {
+    "n": 0
+   }
+  },
+  "2026-10-20": {
+   "ADVANCE": {
+    "n": 10,
+    "mean": 2.0,
+    "median": 1.25,
+    "vs_spy_mean": 1.14,
+    "vs_spy_median": 0.39,
+    "beat_spy": 6,
+    "vs_universe_mean": 0.59,
+    "beat_universe": 4,
+    "n_universe": 10,
+    "beta_adj_mean": 1.96,
+    "n_beta": 10,
+    "beta_mean": 0.05,
+    "worst": [
+     {
+      "run": "2026-10-20",
+      "ticker": "LIN",
+      "vs_spy": -1.43,
+      "beta": 0.23
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "CVE",
+      "vs_spy": -1.16,
+      "beta": -0.8
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "EQNR",
+      "vs_spy": -0.93,
+      "beta": -1.47
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-20",
+      "ticker": "PK",
+      "vs_spy": 4.6,
+      "beta": 0.56
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "PRCH",
+      "vs_spy": 4.46,
+      "beta": 2.13
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "PEB",
+      "vs_spy": 4.11,
+      "beta": 0.38
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 26,
+    "mean": 1.59,
+    "median": 1.02,
+    "vs_spy_mean": 0.72,
+    "vs_spy_median": 0.15,
+    "beat_spy": 14,
+    "vs_universe_mean": 0.18,
+    "beat_universe": 10,
+    "n_universe": 26,
+    "beta_adj_mean": 1.42,
+    "n_beta": 26,
+    "beta_mean": 0.2,
+    "worst": [
+     {
+      "run": "2026-10-20",
+      "ticker": "FANG",
+      "vs_spy": -1.94,
+      "beta": -0.63
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "ABNB",
+      "vs_spy": -1.87,
+      "beta": 1.26
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "VSXY",
+      "vs_spy": -1.78,
+      "beta": 1.17
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-20",
+      "ticker": "TDC",
+      "vs_spy": 5.84,
+      "beta": 0.98
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "AVPT",
+      "vs_spy": 5.79,
+      "beta": 0.97
+     },
+     {
+      "run": "2026-10-20",
+      "ticker": "NOW",
+      "vs_spy": 4.48,
+      "beta": 0.83
+     }
+    ]
+   },
+   "PASS": {
+    "n": 0
+   },
+   "NEAR-MISS": {
+    "n": 0
+   }
+  },
+  "2026-10-21": {
+   "ADVANCE": {
+    "n": 9,
+    "mean": 1.39,
+    "median": 1.88,
+    "vs_spy_mean": 0.87,
+    "vs_spy_median": 1.36,
+    "beat_spy": 5,
+    "vs_universe_mean": 1.49,
+    "beat_universe": 7,
+    "n_universe": 9,
+    "beta_adj_mean": 1.0,
+    "n_beta": 9,
+    "beta_mean": 0.74,
+    "worst": [
+     {
+      "run": "2026-10-21",
+      "ticker": "CNC",
+      "vs_spy": -1.33,
+      "beta": 0.73
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "CNK",
+      "vs_spy": -1.1,
+      "beta": 0.61
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "CAH",
+      "vs_spy": -0.56,
+      "beta": -0.43
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-21",
+      "ticker": "HNGE",
+      "vs_spy": 3.65,
+      "beta": 1.57
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "A",
+      "vs_spy": 2.21,
+      "beta": 0.88
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "PK",
+      "vs_spy": 2.01,
+      "beta": 0.59
+     }
+    ]
+   },
+   "HOLD-FOR-CONDITIONS": {
+    "n": 26,
+    "mean": 0.3,
+    "median": 0.2,
+    "vs_spy_mean": -0.22,
+    "vs_spy_median": -0.32,
+    "beat_spy": 11,
+    "vs_universe_mean": 0.4,
+    "beat_universe": 17,
+    "n_universe": 26,
+    "beta_adj_mean": 0.22,
+    "n_beta": 26,
+    "beta_mean": 0.17,
+    "worst": [
+     {
+      "run": "2026-10-21",
+      "ticker": "CCEP",
+      "vs_spy": -3.28,
+      "beta": -0.13
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "ABBV",
+      "vs_spy": -2.03,
+      "beta": -0.29
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "LLY",
+      "vs_spy": -1.53,
+      "beta": 0.07
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-21",
+      "ticker": "AVPT",
+      "vs_spy": 2.69,
+      "beta": 0.96
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "APLE",
+      "vs_spy": 1.33,
+      "beta": 0.28
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "ZION",
+      "vs_spy": 1.21,
+      "beta": 0.59
+     }
+    ]
+   },
+   "PASS": {
+    "n": 19,
+    "mean": 0.2,
+    "median": 0.13,
+    "vs_spy_mean": -0.32,
+    "vs_spy_median": -0.39,
+    "beat_spy": 7,
+    "vs_universe_mean": 0.3,
+    "beat_universe": 10,
+    "n_universe": 19,
+    "beta_adj_mean": -0.07,
+    "n_beta": 19,
+    "beta_mean": 0.52,
+    "worst": [
+     {
+      "run": "2026-10-21",
+      "ticker": "CCI",
+      "vs_spy": -3.59,
+      "beta": 1.49
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "LYFT",
+      "vs_spy": -3.19,
+      "beta": 0.94
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "O",
+      "vs_spy": -2.28,
+      "beta": 0.39
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-21",
+      "ticker": "OKTA",
+      "vs_spy": 7.01,
+      "beta": 1.25
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "TDC",
+      "vs_spy": 2.56,
+      "beta": 1.02
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "TTAN",
+      "vs_spy": 1.47,
+      "beta": 0.36
+     }
+    ]
+   },
+   "NEAR-MISS": {
+    "n": 143,
+    "mean": -0.24,
+    "median": -0.23,
+    "vs_spy_mean": -0.77,
+    "vs_spy_median": -0.76,
+    "beat_spy": 33,
+    "vs_universe_mean": -0.14,
+    "beat_universe": 55,
+    "n_universe": 143,
+    "beta_adj_mean": -0.4,
+    "n_beta": 143,
+    "beta_mean": 0.3,
+    "worst": [
+     {
+      "run": "2026-10-21",
+      "ticker": "CELH",
+      "vs_spy": -6.03,
+      "beta": 1.23
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "ELS",
+      "vs_spy": -5.06,
+      "beta": 0.1
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "BROS",
+      "vs_spy": -4.09,
+      "beta": -0.28
+     }
+    ],
+    "best": [
+     {
+      "run": "2026-10-21",
+      "ticker": "DXC",
+      "vs_spy": 4.74,
+      "beta": 0.89
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "KD",
+      "vs_spy": 2.79,
+      "beta": 1.21
+     },
+     {
+      "run": "2026-10-21",
+      "ticker": "ASAN",
+      "vs_spy": 2.55,
+      "beta": 1.52
+     }
+    ]
+   }
+  }
+ },
+ "rows": [
+  {
+   "run": "2026-10-15",
+   "ticker": "AAPL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 0.3,
+   "vs_spy": -0.15,
+   "vs_universe": -2.45,
+   "beta": 0.48,
+   "beta_adj": 0.08
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ABBV",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 0.44,
+   "vs_spy": -0.02,
+   "vs_universe": -2.31,
+   "beta": -0.09,
+   "beta_adj": 0.48
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ACGL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 2.75,
+   "vs_spy": 2.29,
+   "vs_universe": -0.0,
+   "beta": -0.04,
+   "beta_adj": 2.76
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ADP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 5.06,
+   "vs_spy": 4.61,
+   "vs_universe": 2.31,
+   "beta": 0.08,
+   "beta_adj": 5.02
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "AMGN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 2.87,
+   "vs_spy": 2.42,
+   "vs_universe": 0.12,
+   "beta": 0.72,
+   "beta_adj": 2.54
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "BDX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 2.89,
+   "vs_spy": 2.43,
+   "vs_universe": 0.14,
+   "beta": 0.35,
+   "beta_adj": 2.73
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "CNC",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 0.11,
+   "vs_spy": -0.34,
+   "vs_universe": -2.64,
+   "beta": 0.88,
+   "beta_adj": -0.29
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "COP",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 2.34,
+   "vs_spy": 1.89,
+   "vs_universe": -0.41,
+   "beta": -0.63,
+   "beta_adj": 2.63
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "CVE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 1.56,
+   "vs_spy": 1.11,
+   "vs_universe": -1.19,
+   "beta": -0.5,
+   "beta_adj": 1.79
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "CVX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 2.13,
+   "vs_spy": 1.68,
+   "vs_universe": -0.62,
+   "beta": -0.73,
+   "beta_adj": 2.46
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "DLTR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 3.06,
+   "vs_spy": 2.6,
+   "vs_universe": 0.31,
+   "beta": 0.38,
+   "beta_adj": 2.88
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "ELF",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 5.23,
+   "vs_spy": 4.77,
+   "vs_universe": 2.48,
+   "beta": 0.92,
+   "beta_adj": 4.81
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "EOG",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 2.39,
+   "vs_spy": 1.94,
+   "vs_universe": -0.36,
+   "beta": -0.59,
+   "beta_adj": 2.66
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "EQNR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 1.83,
+   "vs_spy": 1.38,
+   "vs_universe": -0.92,
+   "beta": -1.19,
+   "beta_adj": 2.37
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "FAST",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 0.94,
+   "vs_spy": 0.49,
+   "vs_universe": -1.81,
+   "beta": 0.34,
+   "beta_adj": 0.79
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "GILD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 0.02,
+   "vs_spy": -0.43,
+   "vs_universe": -2.73,
+   "beta": 0.05,
+   "beta_adj": -0.0
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "HUM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": -0.48,
+   "vs_spy": -0.94,
+   "vs_universe": -3.23,
+   "beta": 1.57,
+   "beta_adj": -1.2
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "IFF",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 1.6,
+   "vs_spy": 1.14,
+   "vs_universe": -1.15,
+   "beta": 0.1,
+   "beta_adj": 1.55
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "LLY",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 5.13,
+   "vs_spy": 4.68,
+   "vs_universe": 2.38,
+   "beta": 0.1,
+   "beta_adj": 5.08
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "MA",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 3.21,
+   "vs_spy": 2.76,
+   "vs_universe": 0.46,
+   "beta": 0.49,
+   "beta_adj": 2.99
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "MO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 0.96,
+   "vs_spy": 0.5,
+   "vs_universe": -1.79,
+   "beta": -0.49,
+   "beta_adj": 1.18
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "PM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": -3.95,
+   "vs_spy": -4.4,
+   "vs_universe": -6.7,
+   "beta": -0.85,
+   "beta_adj": -3.56
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "SHEL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 1.72,
+   "vs_spy": 1.26,
+   "vs_universe": -1.03,
+   "beta": -0.49,
+   "beta_adj": 1.94
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "TEVA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": -0.25,
+   "vs_spy": -0.7,
+   "vs_universe": -3.0,
+   "beta": 0.74,
+   "beta_adj": -0.58
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "TMO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 3.09,
+   "vs_spy": 2.64,
+   "vs_universe": 0.34,
+   "beta": 0.25,
+   "beta_adj": 2.98
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "USO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 4.06,
+   "vs_spy": 3.61,
+   "vs_universe": 1.31,
+   "beta": -1.86,
+   "beta_adj": 4.91
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "V",
+   "verdict": "ADVANCE",
+   "full_horizon": true,
+   "ret": 4.19,
+   "vs_spy": 3.74,
+   "vs_universe": 1.44,
+   "beta": 0.67,
+   "beta_adj": 3.89
+  },
+  {
+   "run": "2026-10-15",
+   "ticker": "XOM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": true,
+   "ret": 0.57,
+   "vs_spy": 0.12,
+   "vs_universe": -2.18,
+   "beta": -1.01,
+   "beta_adj": 1.03
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ABBV",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.25,
+   "vs_spy": -1.53,
+   "vs_universe": -1.11,
+   "beta": -0.08,
+   "beta_adj": -0.14
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ADP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.94,
+   "vs_spy": 0.65,
+   "vs_universe": 1.08,
+   "beta": -0.02,
+   "beta_adj": 1.96
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "AEP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.2,
+   "vs_spy": -1.09,
+   "vs_universe": -0.66,
+   "beta": 0.15,
+   "beta_adj": 0.0
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "AMGN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.35,
+   "vs_spy": 0.06,
+   "vs_universe": 0.49,
+   "beta": 0.72,
+   "beta_adj": 0.42
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "BBY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.61,
+   "vs_spy": 0.32,
+   "vs_universe": 0.75,
+   "beta": 0.53,
+   "beta_adj": 0.93
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "BRK-B",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.29,
+   "vs_spy": -0.0,
+   "vs_universe": 0.43,
+   "beta": -0.53,
+   "beta_adj": 1.97
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CHD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.45,
+   "vs_spy": -0.84,
+   "vs_universe": -0.41,
+   "beta": 0.15,
+   "beta_adj": 0.26
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CNC",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.56,
+   "vs_spy": 0.27,
+   "vs_universe": 0.7,
+   "beta": 0.9,
+   "beta_adj": 0.4
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CNK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.74,
+   "vs_spy": 2.45,
+   "vs_universe": 2.88,
+   "beta": 0.37,
+   "beta_adj": 3.27
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CNQ",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.82,
+   "vs_spy": -0.47,
+   "vs_universe": -0.04,
+   "beta": -0.58,
+   "beta_adj": 1.57
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CRM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.45,
+   "vs_spy": -0.84,
+   "vs_universe": -0.41,
+   "beta": 0.19,
+   "beta_adj": 0.2
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "CVE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.58,
+   "vs_spy": -0.71,
+   "vs_universe": -0.28,
+   "beta": -0.8,
+   "beta_adj": 1.61
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "DHR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.1,
+   "vs_spy": 0.82,
+   "vs_universe": 1.24,
+   "beta": 0.69,
+   "beta_adj": 1.21
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ELF",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.21,
+   "vs_spy": -1.08,
+   "vs_universe": -0.65,
+   "beta": 1.27,
+   "beta_adj": -1.43
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "EOG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.08,
+   "vs_spy": -1.37,
+   "vs_universe": -0.94,
+   "beta": -0.74,
+   "beta_adj": 0.87
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "EQNR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.83,
+   "vs_spy": -3.12,
+   "vs_universe": -2.69,
+   "beta": -1.35,
+   "beta_adj": -0.09
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "FBP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.11,
+   "vs_spy": -1.4,
+   "vs_universe": -0.97,
+   "beta": 0.23,
+   "beta_adj": -0.41
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "FTRE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 6.98,
+   "vs_spy": 5.69,
+   "vs_universe": 6.12,
+   "beta": 0.9,
+   "beta_adj": 5.82
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "GILD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.68,
+   "vs_spy": -2.97,
+   "vs_universe": -2.54,
+   "beta": 0.11,
+   "beta_adj": -1.82
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "GM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -9.35,
+   "vs_spy": -10.64,
+   "vs_universe": -10.21,
+   "beta": 1.28,
+   "beta_adj": -11.0
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "KDP",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.43,
+   "vs_spy": -1.72,
+   "vs_universe": -1.29,
+   "beta": 0.12,
+   "beta_adj": -0.59
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "LIN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.43,
+   "vs_spy": -0.86,
+   "vs_universe": -0.43,
+   "beta": 0.24,
+   "beta_adj": 0.12
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "LLY",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.09,
+   "vs_spy": -0.2,
+   "vs_universe": 0.23,
+   "beta": 0.19,
+   "beta_adj": 0.85
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "M",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -2.38,
+   "vs_spy": -3.66,
+   "vs_universe": -3.24,
+   "beta": 1.38,
+   "beta_adj": -4.15
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "MA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.84,
+   "vs_spy": -0.45,
+   "vs_universe": -0.02,
+   "beta": 0.55,
+   "beta_adj": 0.13
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "NDAQ",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.29,
+   "vs_spy": 1.0,
+   "vs_universe": 1.43,
+   "beta": 0.93,
+   "beta_adj": 1.09
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "PG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.47,
+   "vs_spy": -2.76,
+   "vs_universe": -2.33,
+   "beta": -0.03,
+   "beta_adj": -1.44
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "PK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 6.79,
+   "vs_spy": 5.5,
+   "vs_universe": 5.93,
+   "beta": 0.49,
+   "beta_adj": 6.16
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "ROKU",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.1,
+   "vs_spy": 0.81,
+   "vs_universe": 1.24,
+   "beta": 0.14,
+   "beta_adj": 1.92
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "SCI",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.26,
+   "vs_spy": -1.55,
+   "vs_universe": -1.12,
+   "beta": 0.2,
+   "beta_adj": -0.52
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "SLDE",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.15,
+   "vs_spy": -1.14,
+   "vs_universe": -0.71,
+   "beta": -0.53,
+   "beta_adj": 0.83
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "TAK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.32,
+   "vs_spy": 0.03,
+   "vs_universe": 0.46,
+   "beta": 0.24,
+   "beta_adj": 1.01
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "TREX",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 6.78,
+   "vs_spy": 5.49,
+   "vs_universe": 5.92,
+   "beta": 1.45,
+   "beta_adj": 4.91
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "USO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.21,
+   "vs_spy": -2.5,
+   "vs_universe": -2.07,
+   "beta": -2.05,
+   "beta_adj": 1.43
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "V",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.3,
+   "vs_spy": 0.01,
+   "vs_universe": 0.44,
+   "beta": 0.62,
+   "beta_adj": 0.5
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "VEEV",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 3.28,
+   "vs_spy": 1.99,
+   "vs_universe": 2.42,
+   "beta": 0.75,
+   "beta_adj": 2.32
+  },
+  {
+   "run": "2026-10-19",
+   "ticker": "XOM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.51,
+   "vs_spy": -1.8,
+   "vs_universe": -1.37,
+   "beta": -1.1,
+   "beta_adj": 0.91
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "ABNB",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.01,
+   "vs_spy": -1.87,
+   "vs_universe": -2.42,
+   "beta": 1.26,
+   "beta_adj": -2.1
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "AVPT",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 6.65,
+   "vs_spy": 5.79,
+   "vs_universe": 5.24,
+   "beta": 0.97,
+   "beta_adj": 5.81
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "BRK-B",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.27,
+   "vs_spy": 0.41,
+   "vs_universe": -0.14,
+   "beta": -0.55,
+   "beta_adj": 1.74
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CAH",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.9,
+   "vs_spy": 1.04,
+   "vs_universe": 0.49,
+   "beta": -0.34,
+   "beta_adj": 2.2
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CME",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.77,
+   "vs_spy": -0.09,
+   "vs_universe": -0.64,
+   "beta": -0.24,
+   "beta_adj": 0.98
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CNC",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.35,
+   "vs_spy": 1.48,
+   "vs_universe": 0.94,
+   "beta": 0.81,
+   "beta_adj": 1.65
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CNK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.36,
+   "vs_spy": 1.5,
+   "vs_universe": 0.95,
+   "beta": 0.4,
+   "beta_adj": 2.01
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CRM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.28,
+   "vs_spy": -1.14,
+   "vs_universe": -1.69,
+   "beta": 0.17,
+   "beta_adj": -0.42
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "CVE",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.3,
+   "vs_spy": -1.16,
+   "vs_universe": -1.71,
+   "beta": -0.8,
+   "beta_adj": 0.39
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "EOG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.15,
+   "vs_spy": -0.72,
+   "vs_universe": -1.26,
+   "beta": -0.78,
+   "beta_adj": 0.82
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "EQNR",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.07,
+   "vs_spy": -0.93,
+   "vs_universe": -1.48,
+   "beta": -1.47,
+   "beta_adj": 1.2
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "FANG",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.08,
+   "vs_spy": -1.94,
+   "vs_universe": -2.49,
+   "beta": -0.63,
+   "beta_adj": -0.53
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "GDDY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.42,
+   "vs_spy": 0.56,
+   "vs_universe": 0.01,
+   "beta": 1.47,
+   "beta_adj": 0.16
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "KO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.79,
+   "vs_spy": -1.65,
+   "vs_universe": -2.2,
+   "beta": -0.43,
+   "beta_adj": -0.42
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "LIN",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.57,
+   "vs_spy": -1.43,
+   "vs_universe": -1.98,
+   "beta": 0.23,
+   "beta_adj": -0.77
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "LLY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 2.45,
+   "vs_spy": 1.59,
+   "vs_universe": 1.04,
+   "beta": 0.1,
+   "beta_adj": 2.37
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "M",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.72,
+   "vs_spy": -1.58,
+   "vs_universe": -2.13,
+   "beta": 1.38,
+   "beta_adj": -1.91
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "MA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.01,
+   "vs_spy": 0.15,
+   "vs_universe": -0.4,
+   "beta": 0.5,
+   "beta_adj": 0.58
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "MTCH",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.51,
+   "vs_spy": 2.65,
+   "vs_universe": 2.1,
+   "beta": 0.74,
+   "beta_adj": 2.87
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "NOW",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 5.34,
+   "vs_spy": 4.48,
+   "vs_universe": 3.93,
+   "beta": 0.83,
+   "beta_adj": 4.62
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "OXY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.03,
+   "vs_spy": -0.89,
+   "vs_universe": -1.44,
+   "beta": -0.65,
+   "beta_adj": 0.53
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PEB",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 4.98,
+   "vs_spy": 4.11,
+   "vs_universe": 3.57,
+   "beta": 0.38,
+   "beta_adj": 4.65
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PFE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.39,
+   "vs_spy": 0.53,
+   "vs_universe": -0.02,
+   "beta": -0.13,
+   "beta_adj": 1.5
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PGR",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.02,
+   "vs_spy": 0.16,
+   "vs_universe": -0.39,
+   "beta": 0.23,
+   "beta_adj": 0.82
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PK",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 5.46,
+   "vs_spy": 4.6,
+   "vs_universe": 4.05,
+   "beta": 0.56,
+   "beta_adj": 4.98
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "PRCH",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 5.33,
+   "vs_spy": 4.46,
+   "vs_universe": 3.92,
+   "beta": 2.13,
+   "beta_adj": 3.49
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SHO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 5.17,
+   "vs_spy": 4.31,
+   "vs_universe": 3.76,
+   "beta": 0.31,
+   "beta_adj": 4.9
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SJM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.58,
+   "vs_spy": -0.28,
+   "vs_universe": -0.83,
+   "beta": -0.38,
+   "beta_adj": 0.91
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SLDE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.07,
+   "vs_spy": -0.94,
+   "vs_universe": -1.48,
+   "beta": -0.55,
+   "beta_adj": 0.4
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SN",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 4.57,
+   "vs_spy": 3.71,
+   "vs_universe": 3.16,
+   "beta": 0.49,
+   "beta_adj": 4.15
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "SU",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.8,
+   "vs_spy": -0.06,
+   "vs_universe": -0.61,
+   "beta": -1.07,
+   "beta_adj": 1.73
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "TDC",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 6.7,
+   "vs_spy": 5.84,
+   "vs_universe": 5.29,
+   "beta": 0.98,
+   "beta_adj": 5.85
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "UGI",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.29,
+   "vs_spy": 0.42,
+   "vs_universe": -0.12,
+   "beta": 0.01,
+   "beta_adj": 1.28
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "USO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.63,
+   "vs_spy": -1.49,
+   "vs_universe": -2.04,
+   "beta": -2.09,
+   "beta_adj": 1.17
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "V",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.22,
+   "vs_spy": 0.36,
+   "vs_universe": -0.19,
+   "beta": 0.58,
+   "beta_adj": 0.72
+  },
+  {
+   "run": "2026-10-20",
+   "ticker": "VSXY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.92,
+   "vs_spy": -1.78,
+   "vs_universe": -2.33,
+   "beta": 1.17,
+   "beta_adj": -1.93
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "A",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.74,
+   "vs_spy": 2.21,
+   "vs_universe": 2.84,
+   "beta": 0.88,
+   "beta_adj": 2.28
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ABBV",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.51,
+   "vs_spy": -2.03,
+   "vs_universe": -1.41,
+   "beta": -0.29,
+   "beta_adj": -1.36
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ACA",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.07,
+   "vs_spy": 0.55,
+   "vs_universe": 1.17,
+   "beta": 0.11,
+   "beta_adj": 1.01
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ACGL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.0,
+   "vs_spy": -1.52,
+   "vs_universe": -0.9,
+   "beta": -0.5,
+   "beta_adj": -0.73
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ACN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.48,
+   "vs_spy": -0.05,
+   "vs_universe": 0.58,
+   "beta": -0.07,
+   "beta_adj": 0.51
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ADP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.6,
+   "vs_spy": 0.07,
+   "vs_universe": 0.7,
+   "beta": -0.24,
+   "beta_adj": 0.72
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AEP",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 0.13,
+   "vs_spy": -0.39,
+   "vs_universe": 0.23,
+   "beta": 0.16,
+   "beta_adj": 0.05
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AFL",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.1,
+   "vs_spy": -0.63,
+   "vs_universe": 0.0,
+   "beta": -0.39,
+   "beta_adj": 0.11
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AIG",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.16,
+   "vs_spy": -0.68,
+   "vs_universe": -0.06,
+   "beta": -0.37,
+   "beta_adj": 0.04
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ALL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.45,
+   "vs_spy": -0.07,
+   "vs_universe": 0.55,
+   "beta": -0.61,
+   "beta_adj": 0.77
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMGN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.14,
+   "vs_spy": -0.66,
+   "vs_universe": -0.04,
+   "beta": 0.23,
+   "beta_adj": -0.26
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMRZ",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.08,
+   "vs_spy": -0.6,
+   "vs_universe": 0.02,
+   "beta": 1.13,
+   "beta_adj": -0.67
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMT",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -3.23,
+   "vs_spy": -3.75,
+   "vs_universe": -3.13,
+   "beta": 0.95,
+   "beta_adj": -3.72
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AMZN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.1,
+   "vs_spy": -0.62,
+   "vs_universe": 0.0,
+   "beta": 1.95,
+   "beta_adj": -1.12
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AON",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.8,
+   "vs_spy": -1.32,
+   "vs_universe": -0.7,
+   "beta": -0.38,
+   "beta_adj": -0.6
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "APLE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.85,
+   "vs_spy": 1.33,
+   "vs_universe": 1.95,
+   "beta": 0.28,
+   "beta_adj": 1.7
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ARMK",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.73,
+   "vs_spy": -1.26,
+   "vs_universe": -0.63,
+   "beta": 0.6,
+   "beta_adj": -1.05
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ASAN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 3.07,
+   "vs_spy": 2.55,
+   "vs_universe": 3.17,
+   "beta": 1.52,
+   "beta_adj": 2.27
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AVPT",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 3.22,
+   "vs_spy": 2.69,
+   "vs_universe": 3.32,
+   "beta": 0.96,
+   "beta_adj": 2.71
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AWK",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.76,
+   "vs_spy": -1.28,
+   "vs_universe": -0.66,
+   "beta": -0.32,
+   "beta_adj": -0.59
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AXP",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.66,
+   "vs_spy": 1.13,
+   "vs_universe": 1.76,
+   "beta": 0.71,
+   "beta_adj": 1.28
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "AZN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.22,
+   "vs_spy": -0.74,
+   "vs_universe": -0.12,
+   "beta": 0.43,
+   "beta_adj": -0.45
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BALL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.02,
+   "vs_spy": -0.54,
+   "vs_universe": 0.08,
+   "beta": 0.0,
+   "beta_adj": -0.02
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BBWI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.63,
+   "vs_spy": -1.16,
+   "vs_universe": -0.53,
+   "beta": 1.5,
+   "beta_adj": -1.42
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BOX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.53,
+   "vs_spy": 0.0,
+   "vs_universe": 0.63,
+   "beta": -0.19,
+   "beta_adj": 0.63
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BP",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.93,
+   "vs_spy": 0.41,
+   "vs_universe": 1.03,
+   "beta": -1.26,
+   "beta_adj": 1.59
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BRO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.52,
+   "vs_spy": -1.05,
+   "vs_universe": -0.42,
+   "beta": -0.39,
+   "beta_adj": -0.32
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BROS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -3.56,
+   "vs_spy": -4.09,
+   "vs_universe": -3.46,
+   "beta": -0.28,
+   "beta_adj": -3.41
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BRZE",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.24,
+   "vs_spy": -0.28,
+   "vs_universe": 0.34,
+   "beta": 3.46,
+   "beta_adj": -1.58
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BSX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -2.35,
+   "vs_spy": -2.87,
+   "vs_universe": -2.25,
+   "beta": 0.16,
+   "beta_adj": -2.43
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BSY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.6,
+   "vs_spy": 0.08,
+   "vs_universe": 0.7,
+   "beta": 0.99,
+   "beta_adj": 0.08
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "BUD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.25,
+   "vs_spy": -1.77,
+   "vs_universe": -1.15,
+   "beta": 0.15,
+   "beta_adj": -1.33
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CAH",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.03,
+   "vs_spy": -0.56,
+   "vs_universe": 0.07,
+   "beta": -0.43,
+   "beta_adj": 0.19
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CART",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.89,
+   "vs_spy": -1.41,
+   "vs_universe": -0.79,
+   "beta": 1.08,
+   "beta_adj": -1.45
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CCEP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -2.75,
+   "vs_spy": -3.28,
+   "vs_universe": -2.65,
+   "beta": -0.13,
+   "beta_adj": -2.68
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CCI",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -3.07,
+   "vs_spy": -3.59,
+   "vs_universe": -2.97,
+   "beta": 1.49,
+   "beta_adj": -3.85
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CCL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.89,
+   "vs_spy": 0.36,
+   "vs_universe": 0.99,
+   "beta": 1.66,
+   "beta_adj": 0.01
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CELH",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -5.51,
+   "vs_spy": -6.03,
+   "vs_universe": -5.41,
+   "beta": 1.23,
+   "beta_adj": -6.15
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CHD",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.91,
+   "vs_spy": -1.43,
+   "vs_universe": -0.81,
+   "beta": 0.06,
+   "beta_adj": -0.94
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CHYM",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.3,
+   "vs_spy": -0.82,
+   "vs_universe": -0.2,
+   "beta": 1.15,
+   "beta_adj": -0.9
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CL",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -1.21,
+   "vs_spy": -1.73,
+   "vs_universe": -1.11,
+   "beta": -0.38,
+   "beta_adj": -1.01
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CLX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -3.06,
+   "vs_spy": -3.59,
+   "vs_universe": -2.96,
+   "beta": 1.1,
+   "beta_adj": -3.64
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CMCSA",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.25,
+   "vs_spy": -1.78,
+   "vs_universe": -1.15,
+   "beta": -0.0,
+   "beta_adj": -1.25
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CME",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.16,
+   "vs_spy": -0.36,
+   "vs_universe": 0.26,
+   "beta": -0.29,
+   "beta_adj": 0.31
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CMS",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -0.42,
+   "vs_spy": -0.95,
+   "vs_universe": -0.32,
+   "beta": -0.07,
+   "beta_adj": -0.39
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CNC",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.8,
+   "vs_spy": -1.33,
+   "vs_universe": -0.7,
+   "beta": 0.73,
+   "beta_adj": -1.19
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CNK",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": -0.57,
+   "vs_spy": -1.1,
+   "vs_universe": -0.47,
+   "beta": 0.61,
+   "beta_adj": -0.89
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "COP",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.19,
+   "vs_spy": -0.72,
+   "vs_universe": -0.09,
+   "beta": -0.92,
+   "beta_adj": 0.29
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "COST",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.37,
+   "vs_spy": -0.15,
+   "vs_universe": 0.47,
+   "beta": -0.02,
+   "beta_adj": 0.38
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CRH",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.95,
+   "vs_spy": 0.43,
+   "vs_universe": 1.05,
+   "beta": 1.07,
+   "beta_adj": 0.39
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CRM",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.27,
+   "vs_spy": -0.79,
+   "vs_universe": -0.17,
+   "beta": 0.0,
+   "beta_adj": -0.27
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CTAS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.44,
+   "vs_spy": 0.91,
+   "vs_universe": 1.54,
+   "beta": 0.24,
+   "beta_adj": 1.31
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CVE",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.12,
+   "vs_spy": -0.65,
+   "vs_universe": -0.02,
+   "beta": -0.71,
+   "beta_adj": 0.25
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CVS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.37,
+   "vs_spy": -1.9,
+   "vs_universe": -1.27,
+   "beta": 0.05,
+   "beta_adj": -1.4
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CVX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.47,
+   "vs_spy": -0.06,
+   "vs_universe": 0.57,
+   "beta": -1.0,
+   "beta_adj": 0.99
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "CXT",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.59,
+   "vs_spy": 0.07,
+   "vs_universe": 0.69,
+   "beta": 0.77,
+   "beta_adj": 0.19
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DG",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.54,
+   "vs_spy": -2.07,
+   "vs_universe": -1.44,
+   "beta": 0.6,
+   "beta_adj": -1.86
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DINO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.21,
+   "vs_spy": -0.32,
+   "vs_universe": 0.31,
+   "beta": -0.68,
+   "beta_adj": 0.56
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DOCS",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 0.69,
+   "vs_spy": 0.16,
+   "vs_universe": 0.79,
+   "beta": 1.23,
+   "beta_adj": 0.04
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DRH",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.09,
+   "vs_spy": 0.56,
+   "vs_universe": 1.19,
+   "beta": 0.07,
+   "beta_adj": 1.05
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DRI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.59,
+   "vs_spy": -2.12,
+   "vs_universe": -1.49,
+   "beta": 0.25,
+   "beta_adj": -1.72
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DVN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.01,
+   "vs_spy": -1.54,
+   "vs_universe": -0.91,
+   "beta": -0.78,
+   "beta_adj": -0.6
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "DXC",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 5.26,
+   "vs_spy": 4.74,
+   "vs_universe": 5.36,
+   "beta": 0.89,
+   "beta_adj": 4.8
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EBAY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.41,
+   "vs_spy": 0.89,
+   "vs_universe": 1.51,
+   "beta": 0.29,
+   "beta_adj": 1.26
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ED",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.14,
+   "vs_spy": -0.67,
+   "vs_universe": -0.04,
+   "beta": -0.15,
+   "beta_adj": -0.06
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ELS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -4.53,
+   "vs_spy": -5.06,
+   "vs_universe": -4.43,
+   "beta": 0.1,
+   "beta_adj": -4.59
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EOG",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.02,
+   "vs_spy": -0.54,
+   "vs_universe": 0.08,
+   "beta": -0.8,
+   "beta_adj": 0.4
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EPD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.05,
+   "vs_spy": -1.58,
+   "vs_universe": -0.95,
+   "beta": -0.11,
+   "beta_adj": -1.0
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EQT",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.37,
+   "vs_spy": -1.89,
+   "vs_universe": -1.27,
+   "beta": 0.4,
+   "beta_adj": -1.58
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ERIC",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -2.07,
+   "vs_spy": -2.59,
+   "vs_universe": -1.97,
+   "beta": 1.62,
+   "beta_adj": -2.92
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ETSY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.21,
+   "vs_spy": -0.73,
+   "vs_universe": -0.11,
+   "beta": 0.22,
+   "beta_adj": -0.32
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "EW",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.12,
+   "vs_spy": -0.4,
+   "vs_universe": 0.22,
+   "beta": -0.03,
+   "beta_adj": 0.14
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FAST",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.63,
+   "vs_spy": 1.1,
+   "vs_universe": 1.73,
+   "beta": 0.02,
+   "beta_adj": 1.62
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FBP",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.87,
+   "vs_spy": -1.4,
+   "vs_universe": -0.77,
+   "beta": 0.2,
+   "beta_adj": -0.98
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FHB",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.24,
+   "vs_spy": -0.76,
+   "vs_universe": -0.14,
+   "beta": 0.35,
+   "beta_adj": -0.42
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FITB",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.76,
+   "vs_spy": 0.24,
+   "vs_universe": 0.86,
+   "beta": 1.05,
+   "beta_adj": 0.21
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "FRSH",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.13,
+   "vs_spy": -0.66,
+   "vs_universe": -0.03,
+   "beta": 0.89,
+   "beta_adj": -0.6
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GBCI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.43,
+   "vs_spy": -0.1,
+   "vs_universe": 0.53,
+   "beta": 0.43,
+   "beta_adj": 0.2
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GDDY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.53,
+   "vs_spy": -1.06,
+   "vs_universe": -0.43,
+   "beta": 1.13,
+   "beta_adj": -1.13
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GILD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.88,
+   "vs_spy": -2.4,
+   "vs_universe": -1.78,
+   "beta": -0.05,
+   "beta_adj": -1.85
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GPN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.52,
+   "vs_spy": -2.05,
+   "vs_universe": -1.42,
+   "beta": 0.6,
+   "beta_adj": -1.84
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GSK",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.2,
+   "vs_spy": -1.73,
+   "vs_universe": -1.1,
+   "beta": -0.04,
+   "beta_adj": -1.18
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "GWRE",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.92,
+   "vs_spy": -1.44,
+   "vs_universe": -0.82,
+   "beta": 1.63,
+   "beta_adj": -1.77
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HLN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.47,
+   "vs_spy": -2.0,
+   "vs_universe": -1.37,
+   "beta": 0.05,
+   "beta_adj": -1.5
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HLT",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.82,
+   "vs_spy": 0.3,
+   "vs_universe": 0.92,
+   "beta": 0.19,
+   "beta_adj": 0.72
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HNGE",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 4.18,
+   "vs_spy": 3.65,
+   "vs_universe": 4.28,
+   "beta": 1.57,
+   "beta_adj": 3.35
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HOMB",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.07,
+   "vs_spy": -0.59,
+   "vs_universe": 0.03,
+   "beta": 0.16,
+   "beta_adj": -0.15
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "HST",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.17,
+   "vs_spy": 0.64,
+   "vs_universe": 1.27,
+   "beta": 0.72,
+   "beta_adj": 0.79
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "IFF",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.2,
+   "vs_spy": -0.72,
+   "vs_universe": -0.1,
+   "beta": 0.06,
+   "beta_adj": -0.23
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "INFY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.71,
+   "vs_spy": 0.19,
+   "vs_universe": 0.81,
+   "beta": -0.06,
+   "beta_adj": 0.74
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ISRG",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -2.26,
+   "vs_spy": -2.78,
+   "vs_universe": -2.16,
+   "beta": 0.43,
+   "beta_adj": -2.48
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "JHX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.57,
+   "vs_spy": -1.09,
+   "vs_universe": -0.47,
+   "beta": 1.26,
+   "beta_adj": -1.23
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KBR",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.28,
+   "vs_spy": 0.75,
+   "vs_universe": 1.38,
+   "beta": 0.09,
+   "beta_adj": 1.23
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 3.31,
+   "vs_spy": 2.79,
+   "vs_universe": 3.41,
+   "beta": 1.21,
+   "beta_adj": 2.68
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KDP",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.46,
+   "vs_spy": -0.99,
+   "vs_universe": -0.36,
+   "beta": 0.05,
+   "beta_adj": -0.49
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KIM",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -1.22,
+   "vs_spy": -1.74,
+   "vs_universe": -1.12,
+   "beta": 0.24,
+   "beta_adj": -1.34
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KMB",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.56,
+   "vs_spy": -2.09,
+   "vs_universe": -1.46,
+   "beta": 0.25,
+   "beta_adj": -1.69
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KMI",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.19,
+   "vs_spy": 0.67,
+   "vs_universe": 1.29,
+   "beta": 0.03,
+   "beta_adj": 1.18
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.87,
+   "vs_spy": -1.39,
+   "vs_universe": -0.77,
+   "beta": -0.43,
+   "beta_adj": -0.64
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KR",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.83,
+   "vs_spy": 1.3,
+   "vs_universe": 1.93,
+   "beta": -0.87,
+   "beta_adj": 2.28
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KSS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.93,
+   "vs_spy": 1.41,
+   "vs_universe": 2.03,
+   "beta": 2.81,
+   "beta_adj": 0.46
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KVUE",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.24,
+   "vs_spy": -1.77,
+   "vs_universe": -1.14,
+   "beta": 0.05,
+   "beta_adj": -1.27
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "KVYO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 2.96,
+   "vs_spy": 2.43,
+   "vs_universe": 3.06,
+   "beta": 1.45,
+   "beta_adj": 2.2
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LEVI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.38,
+   "vs_spy": -0.14,
+   "vs_universe": 0.48,
+   "beta": 0.98,
+   "beta_adj": -0.13
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LHX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.49,
+   "vs_spy": -1.02,
+   "vs_universe": -0.39,
+   "beta": -0.46,
+   "beta_adj": -0.25
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LLY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -1.01,
+   "vs_spy": -1.53,
+   "vs_universe": -0.91,
+   "beta": 0.07,
+   "beta_adj": -1.04
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LNT",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 0.18,
+   "vs_spy": -0.35,
+   "vs_universe": 0.28,
+   "beta": 0.17,
+   "beta_adj": 0.09
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LOW",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.0,
+   "vs_spy": -1.52,
+   "vs_universe": -0.9,
+   "beta": 0.17,
+   "beta_adj": -1.09
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LTH",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.0,
+   "vs_spy": -1.52,
+   "vs_universe": -0.9,
+   "beta": -0.2,
+   "beta_adj": -0.89
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LW",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.25,
+   "vs_spy": -1.77,
+   "vs_universe": -1.15,
+   "beta": 0.97,
+   "beta_adj": -1.76
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "LYFT",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -2.67,
+   "vs_spy": -3.19,
+   "vs_universe": -2.57,
+   "beta": 0.94,
+   "beta_adj": -3.16
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MA",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 0.35,
+   "vs_spy": -0.17,
+   "vs_universe": 0.45,
+   "beta": 0.44,
+   "beta_adj": 0.12
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MAS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.13,
+   "vs_spy": -0.66,
+   "vs_universe": -0.03,
+   "beta": 0.84,
+   "beta_adj": -0.58
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MCD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.11,
+   "vs_spy": -0.63,
+   "vs_universe": -0.01,
+   "beta": 0.33,
+   "beta_adj": -0.28
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MDLZ",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.95,
+   "vs_spy": -2.48,
+   "vs_universe": -1.85,
+   "beta": -0.45,
+   "beta_adj": -1.72
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MET",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.99,
+   "vs_spy": 0.46,
+   "vs_universe": 1.09,
+   "beta": 0.14,
+   "beta_adj": 0.91
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.09,
+   "vs_spy": -1.61,
+   "vs_universe": -0.99,
+   "beta": -0.72,
+   "beta_adj": -0.71
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MP",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 1.15,
+   "vs_spy": 0.63,
+   "vs_universe": 1.25,
+   "beta": 3.0,
+   "beta_adj": -0.42
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MPC",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.49,
+   "vs_spy": -2.01,
+   "vs_universe": -1.39,
+   "beta": -0.78,
+   "beta_adj": -1.08
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MRK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.07,
+   "vs_spy": 0.54,
+   "vs_universe": 1.17,
+   "beta": 0.24,
+   "beta_adj": 0.94
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MRSH",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -0.37,
+   "vs_spy": -0.89,
+   "vs_universe": -0.27,
+   "beta": -0.29,
+   "beta_adj": -0.21
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "MTCH",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.49,
+   "vs_spy": -1.02,
+   "vs_universe": -0.39,
+   "beta": 0.76,
+   "beta_adj": -0.89
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NAVN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.29,
+   "vs_spy": 0.77,
+   "vs_universe": 1.39,
+   "beta": 1.36,
+   "beta_adj": 0.58
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NDAQ",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 1.39,
+   "vs_spy": 0.87,
+   "vs_universe": 1.49,
+   "beta": 0.82,
+   "beta_adj": 0.96
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NKE",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.92,
+   "vs_spy": -1.45,
+   "vs_universe": -0.82,
+   "beta": 0.65,
+   "beta_adj": -1.27
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NVS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.19,
+   "vs_spy": -0.34,
+   "vs_universe": 0.29,
+   "beta": -0.09,
+   "beta_adj": 0.24
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "NWS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.37,
+   "vs_spy": -0.9,
+   "vs_universe": -0.27,
+   "beta": 0.38,
+   "beta_adj": -0.57
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "O",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -1.76,
+   "vs_spy": -2.28,
+   "vs_universe": -1.66,
+   "beta": 0.39,
+   "beta_adj": -1.96
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OKTA",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 7.54,
+   "vs_spy": 7.01,
+   "vs_universe": 7.64,
+   "beta": 1.25,
+   "beta_adj": 6.88
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ORLY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.91,
+   "vs_spy": -1.44,
+   "vs_universe": -0.81,
+   "beta": -0.15,
+   "beta_adj": -0.83
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OTIS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.39,
+   "vs_spy": -0.14,
+   "vs_universe": 0.49,
+   "beta": -0.32,
+   "beta_adj": 0.56
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OUT",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.58,
+   "vs_spy": -1.1,
+   "vs_universe": -0.48,
+   "beta": 0.44,
+   "beta_adj": -0.81
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "OXY",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": -0.35,
+   "vs_spy": -0.87,
+   "vs_universe": -0.25,
+   "beta": -0.61,
+   "beta_adj": -0.03
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PB",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.19,
+   "vs_spy": -0.72,
+   "vs_universe": -0.09,
+   "beta": 0.22,
+   "beta_adj": -0.31
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PBI",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 0.17,
+   "vs_spy": -0.35,
+   "vs_universe": 0.27,
+   "beta": 0.18,
+   "beta_adj": 0.08
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PBR",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.16,
+   "vs_spy": -0.68,
+   "vs_universe": -0.06,
+   "beta": -0.3,
+   "beta_adj": 0.0
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PBR-A",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.61,
+   "vs_spy": -1.13,
+   "vs_universe": -0.51,
+   "beta": -0.18,
+   "beta_adj": -0.51
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PEB",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 1.88,
+   "vs_spy": 1.36,
+   "vs_universe": 1.98,
+   "beta": 0.33,
+   "beta_adj": 1.71
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PFE",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.86,
+   "vs_spy": -1.39,
+   "vs_universe": -0.76,
+   "beta": -0.19,
+   "beta_adj": -0.76
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PFGC",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.96,
+   "vs_spy": -1.49,
+   "vs_universe": -0.86,
+   "beta": 0.37,
+   "beta_adj": -1.15
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PG",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.46,
+   "vs_spy": -1.98,
+   "vs_universe": -1.36,
+   "beta": -0.12,
+   "beta_adj": -1.39
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PGR",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.26,
+   "vs_spy": -0.79,
+   "vs_universe": -0.16,
+   "beta": 0.17,
+   "beta_adj": -0.35
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PINS",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.13,
+   "vs_spy": -0.66,
+   "vs_universe": -0.03,
+   "beta": 2.07,
+   "beta_adj": -1.22
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PK",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.53,
+   "vs_spy": 2.01,
+   "vs_universe": 2.63,
+   "beta": 0.59,
+   "beta_adj": 2.22
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PRCH",
+   "verdict": "ADVANCE",
+   "full_horizon": false,
+   "ret": 2.26,
+   "vs_spy": 1.73,
+   "vs_universe": 2.36,
+   "beta": 1.93,
+   "beta_adj": 1.24
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PRMB",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.15,
+   "vs_spy": -0.38,
+   "vs_universe": 0.25,
+   "beta": 0.13,
+   "beta_adj": 0.08
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "PSX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.33,
+   "vs_spy": -0.86,
+   "vs_universe": -0.23,
+   "beta": -0.61,
+   "beta_adj": -0.01
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RCL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.22,
+   "vs_spy": -0.3,
+   "vs_universe": 0.32,
+   "beta": 1.25,
+   "beta_adj": -0.43
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "REG",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -1.34,
+   "vs_spy": -1.86,
+   "vs_universe": -1.24,
+   "beta": 0.11,
+   "beta_adj": -1.4
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RELX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.66,
+   "vs_spy": -1.19,
+   "vs_universe": -0.56,
+   "beta": 0.16,
+   "beta_adj": -0.74
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "REYN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.39,
+   "vs_spy": -1.92,
+   "vs_universe": -1.29,
+   "beta": 0.05,
+   "beta_adj": -1.42
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RF",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.72,
+   "vs_spy": 0.19,
+   "vs_universe": 0.82,
+   "beta": 0.65,
+   "beta_adj": 0.38
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ROKU",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.13,
+   "vs_spy": -0.39,
+   "vs_universe": 0.23,
+   "beta": 0.14,
+   "beta_adj": 0.06
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ROST",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.29,
+   "vs_spy": -1.82,
+   "vs_universe": -1.19,
+   "beta": 0.23,
+   "beta_adj": -1.41
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RXO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.38,
+   "vs_spy": -0.14,
+   "vs_universe": 0.48,
+   "beta": 2.18,
+   "beta_adj": -0.76
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "RYAN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.47,
+   "vs_spy": -1.99,
+   "vs_universe": -1.37,
+   "beta": 0.3,
+   "beta_adj": -1.63
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SAP",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.59,
+   "vs_spy": 1.06,
+   "vs_universe": 1.69,
+   "beta": 0.23,
+   "beta_adj": 1.47
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SBUX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.29,
+   "vs_spy": -0.82,
+   "vs_universe": -0.19,
+   "beta": 0.04,
+   "beta_adj": -0.31
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SCI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.27,
+   "vs_spy": -1.79,
+   "vs_universe": -1.17,
+   "beta": 0.14,
+   "beta_adj": -1.34
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SHEL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.17,
+   "vs_spy": -0.7,
+   "vs_universe": -0.07,
+   "beta": -0.59,
+   "beta_adj": 0.14
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SHO",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.69,
+   "vs_spy": 1.17,
+   "vs_universe": 1.79,
+   "beta": 0.3,
+   "beta_adj": 1.54
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SJM",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.43,
+   "vs_spy": -1.96,
+   "vs_universe": -1.33,
+   "beta": -0.39,
+   "beta_adj": -1.23
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.35,
+   "vs_spy": -0.88,
+   "vs_universe": -0.25,
+   "beta": -0.01,
+   "beta_adj": -0.35
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SPGI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.15,
+   "vs_spy": 0.63,
+   "vs_universe": 1.25,
+   "beta": 0.35,
+   "beta_adj": 0.97
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SU",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.74,
+   "vs_spy": 0.21,
+   "vs_universe": 0.84,
+   "beta": -1.08,
+   "beta_adj": 1.31
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "SYK",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -2.23,
+   "vs_spy": -2.76,
+   "vs_universe": -2.13,
+   "beta": 0.28,
+   "beta_adj": -2.38
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 2.1,
+   "vs_spy": 1.58,
+   "vs_universe": 2.2,
+   "beta": 0.83,
+   "beta_adj": 1.67
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TDC",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 3.08,
+   "vs_spy": 2.56,
+   "vs_universe": 3.18,
+   "beta": 1.02,
+   "beta_adj": 2.55
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TEAM",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.99,
+   "vs_spy": 1.46,
+   "vs_universe": 2.09,
+   "beta": 1.07,
+   "beta_adj": 1.43
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TFC",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.85,
+   "vs_spy": 0.32,
+   "vs_universe": 0.95,
+   "beta": 0.58,
+   "beta_adj": 0.54
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TMO",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.97,
+   "vs_spy": 0.44,
+   "vs_universe": 1.07,
+   "beta": 0.12,
+   "beta_adj": 0.9
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TRI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 2.16,
+   "vs_spy": 1.64,
+   "vs_universe": 2.26,
+   "beta": -0.1,
+   "beta_adj": 2.22
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TRP",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 0.84,
+   "vs_spy": 0.32,
+   "vs_universe": 0.94,
+   "beta": -0.42,
+   "beta_adj": 1.06
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TRV",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.81,
+   "vs_spy": 0.29,
+   "vs_universe": 0.91,
+   "beta": -0.24,
+   "beta_adj": 0.94
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TTAN",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": 1.99,
+   "vs_spy": 1.47,
+   "vs_universe": 2.09,
+   "beta": 0.36,
+   "beta_adj": 1.81
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "TTEK",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 0.26,
+   "vs_spy": -0.27,
+   "vs_universe": 0.36,
+   "beta": 0.39,
+   "beta_adj": 0.05
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "UGI",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.05,
+   "vs_spy": -0.58,
+   "vs_universe": 0.05,
+   "beta": 0.09,
+   "beta_adj": -0.1
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "USB",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.07,
+   "vs_spy": -0.59,
+   "vs_universe": 0.03,
+   "beta": 0.59,
+   "beta_adj": -0.38
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "USFD",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.83,
+   "vs_spy": -1.35,
+   "vs_universe": -0.73,
+   "beta": 0.58,
+   "beta_adj": -1.13
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "V",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.31,
+   "vs_spy": -0.21,
+   "vs_universe": 0.41,
+   "beta": 0.51,
+   "beta_adj": 0.05
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VEEV",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.59,
+   "vs_spy": 0.06,
+   "vs_universe": 0.69,
+   "beta": 0.51,
+   "beta_adj": 0.32
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VERX",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 2.44,
+   "vs_spy": 1.92,
+   "vs_universe": 2.54,
+   "beta": 0.57,
+   "beta_adj": 2.14
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VIA",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 1.65,
+   "vs_spy": 1.12,
+   "vs_universe": 1.75,
+   "beta": 0.81,
+   "beta_adj": 1.22
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VTR",
+   "verdict": "PASS",
+   "full_horizon": false,
+   "ret": -1.28,
+   "vs_spy": -1.81,
+   "vs_universe": -1.18,
+   "beta": -0.29,
+   "beta_adj": -1.13
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "VVV",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.14,
+   "vs_spy": -1.67,
+   "vs_universe": -1.04,
+   "beta": 0.56,
+   "beta_adj": -1.44
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WAY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.1,
+   "vs_spy": -0.42,
+   "vs_universe": 0.2,
+   "beta": 0.46,
+   "beta_adj": -0.14
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WCN",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.71,
+   "vs_spy": -1.23,
+   "vs_universe": -0.61,
+   "beta": 0.01,
+   "beta_adj": -0.71
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WDAY",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.5,
+   "vs_spy": -1.03,
+   "vs_universe": -0.4,
+   "beta": 0.68,
+   "beta_adj": -0.86
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WEC",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.23,
+   "vs_spy": -0.76,
+   "vs_universe": -0.13,
+   "beta": 0.18,
+   "beta_adj": -0.32
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WELL",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -1.63,
+   "vs_spy": -2.16,
+   "vs_universe": -1.53,
+   "beta": 0.1,
+   "beta_adj": -1.69
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WM",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.93,
+   "vs_spy": -1.45,
+   "vs_universe": -0.83,
+   "beta": -0.31,
+   "beta_adj": -0.76
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WMT",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.04,
+   "vs_spy": -0.57,
+   "vs_universe": 0.06,
+   "beta": -0.16,
+   "beta_adj": 0.04
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "WTRG",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.59,
+   "vs_spy": -1.11,
+   "vs_universe": -0.49,
+   "beta": -0.33,
+   "beta_adj": -0.41
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "XOM",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": 0.12,
+   "vs_spy": -0.41,
+   "vs_universe": 0.22,
+   "beta": -1.2,
+   "beta_adj": 0.75
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "YOU",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.64,
+   "vs_spy": -1.16,
+   "vs_universe": -0.54,
+   "beta": 0.55,
+   "beta_adj": -0.93
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "YUM",
+   "verdict": "NEAR-MISS",
+   "full_horizon": false,
+   "ret": -0.24,
+   "vs_spy": -0.76,
+   "vs_universe": -0.14,
+   "beta": 0.32,
+   "beta_adj": -0.41
+  },
+  {
+   "run": "2026-10-21",
+   "ticker": "ZION",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "full_horizon": false,
+   "ret": 1.73,
+   "vs_spy": 1.21,
+   "vs_universe": 1.83,
+   "beta": 0.59,
+   "beta_adj": 1.42
+  }
+ ],
+ "refused_ref_mismatch": [],
+ "ungraded": [
+  {
+   "run": "2026-08-31",
+   "ticker": "CRWD",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "CXM",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "DT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "EFX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "ETSY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "FCX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "FROG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "GWRE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "ICE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "MO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "NFLX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "NOW",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "RELX",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "RELY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "RIO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "SLB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "SLDE",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "SN",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "STAG",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "T",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "TENB",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "TGT",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "UBS",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "UL",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "VLO",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "WAY",
+   "why": "no session after the run yet"
+  },
+  {
+   "run": "2026-08-31",
+   "ticker": "WTRG",
+   "why": "no session after the run yet"
+  }
+ ]
+}

@@ -1,0 +1,550 @@
+{
+ "voice": "weis",
+ "date": "2026-10-22",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "W21 hinge resolved: squeeze_breakout_state=BREAKOUT_UP, squeeze_breakout_volume_confirmed=False, day_vol=0.93 (W1 effort unconfirmed); W23 ma20=171.86>ma50=160.42>ma200=135.02, structure_shift=BULLISH_BOS. Small bet; I buy a test of ma_20, not 177.75.",
+   "falsifier": "A daily close more than 1 ATR (atr=4.88) under ma_20: too deep to be a spring (W8), the break has failed.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:entry+1atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "Rogers/Steenbarger: my level is ma_20=171.86, a dip-and-reclaim there (spring), not a market entry at 177.75. Proven false by a daily close under ma_20 minus 1 ATR. Non-price observable: no up-day effort above day_vol 1.0 on any push to a new high (effort stays absent). Healthcare: count A with LLY/TAK as one bet.",
+   "conviction_change": null
+  },
+  {
+   "ticker": "MA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Confirmed strength at the high: from_52w_hi=0.0%, ext_atr20=3.93, day_vol=0.92. No spring or hinge served for my menu; momentum-lane vote advisory, extension a weight (R14).",
+   "falsifier": "A pullback that springs off ma_20=584.04 (dip and reclaim) would give me a W6 setup and a SUPPORT.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PEB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "New high on day_vol=1.62 (effort with result, W1 healthy), sma_dist 13.58%, ext_atr20=2.74; 4 lenses unread. No spring or hinge for my menu; momentum-lane vote advisory (R14).",
+   "falsifier": "An inside bar or a shakeout under ma_20=19.24 that reclaims would be a W21/W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=BULLISH_BOS on day_vol=0.7 with div BEARISH/2: effort unconfirmed (W1), but W4 says low-volume progress is not bearish, so no OPPOSE. No hinge served; momentum-lane vote advisory.",
+   "falsifier": "A wide-range up day on volume would confirm effort; a close back under ma_20=14.31 would read as failed break.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "W21 contraction in a W23 uptrend: vcp_tightness_pct=100.0, base_range_pct=9.8, ma20=34.34>ma50=33.88>ma200=29.66, from_52w_hi 0.0%. structure_shift=RANGE so direction unread: a small bet on the up-break.",
+   "falsifier": "Contraction resolves down: daily close under ma_50, or an up-break that closes back inside the range (upthrust).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "V",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Confirmed strength at the high: from_52w_hi=0.0%, ext_atr20=4.05, day_vol=0.92. No spring or hinge served for my menu; momentum-lane vote advisory, extension a weight (R14).",
+   "falsifier": "A pullback that springs off ma_20=380.91 would give me a W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "W23 stack clean: ma20=418.02>ma50=416.21>ma200=370.53, structure 88.4, day_vol=0.82, from_52w_hi -1.3%. But no contraction or spring field is served on this row for my menu, so no Weis setup today.",
+   "falsifier": "An inside bar or a dip under ma_20 that reclaims would give me a W21/W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "SHO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "New high on day_vol=2.27 (effort with result, W1 healthy), but ma50=11.25<ma100=11.38: intermediate trend unresolved (W23 weight). No spring or hinge served; momentum-lane vote advisory.",
+   "falsifier": "ma50 crossing back above ma100 with a hinge would make it a setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CNC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift=BULLISH_BOS at from_52w_hi -0.8% on day_vol=0.74; ma20=65.69 barely over ma50=65.64. A low-effort break is what this seat does not buy; no spring served.",
+   "falsifier": "A failed dip under ma_50 that reclaims would be a spring I could back.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "W",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=105.27>ma50=103.15>ma200=88.64, structure_shift=ABOVE_STRUCTURE, day_vol=0.58 contraction (W4 not bearish), from_52w_hi -4.82%. Direction from trend; trigger a wide-range break.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=1194.2>ma50=1183.59>ma200=1082.9, structure_shift=ABOVE_STRUCTURE, day_vol=0.81 contraction (W4 not bearish), from_52w_hi -1.01%. Direction from trend; trigger a wide-range break.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "Rogers/Steenbarger XLV crowding: count LLY with A and TAK as one Healthcare bet. I still want it with the sector Fading only if the hinge resolves up on volume; trend is primary (W23), sector is context.",
+   "conviction_change": null
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Range with elder [7,1,4,6,8]: a shakeout-and-recover shape, but a spring needs pin-bar and penetration-depth fields (R7/R9) not served on this row. Pullback on day_vol=0.66 is quiet; stack ma20 93.51>ma50 89.7 intact.",
+   "falsifier": "A dip under ma_20 that reclaims on low volume would be a spring I could back.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "HLT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "ma50=321.43<ma100=326.5: intermediate trend unresolved (W23 weight); ext_atr20=4.7 at the high. Effort with result (day_vol=1.62). No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "ma50 back above ma100 plus a hinge would make it a setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_dist 23.59%, div BEARISH/3 at the high: W14 says an upthrust in an uptrend is a caution, not a reversal, and close-location (R8) is not served to confirm one. Not my buy; no OPPOSE either.",
+   "falsifier": "A close that erases the high bar's range would be an upthrust and move me to OPPOSE.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ADP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "ma20=271.86 under ma50=274.03 at the high, ext_atr20=4.09: a vertical run, not a contraction. No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "An inside bar holding over ma_20 would give me a W21 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "New high zone (from_52w_hi -0.49%) on day_vol=1.22, effort with result; sma_dist 11.63%. No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "A shakeout under ma_20=41.84 that reclaims would be a W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TMO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "R4 effort vs result: day_vol=1.76 with structure_shift=RANGE at from_52w_hi -0.35%: large effort, little progress at the high (W2), with div BEARISH/4. Possible absorption of buying; unconfirmable (R8/R11 not served), so low conviction.",
+   "opposing_case": "Trend intact: ma20=672.25>ma50=641.93>ma200=548.71, adx 37.37, flow 98.7. W3 warns against formulaic volume reads; heavy volume near a high can be accumulation.",
+   "falsifier": "A daily close above high_52w_close on volume: effort producing result.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "DRH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the high (from_52w_hi 0.0%) on day_vol=0.88, ext_atr20=3.36, elder SUSTAINED. W4: low-volume progress is not bearish. No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "A shakeout under ma_20=12.83 that reclaims would be a W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CAH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the high (from_52w_hi -0.03%) on day_vol=0.85, ext_atr20=3.63. No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "An inside bar holding over ma_20=237.21 would give me a W21 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=32.16>ma50=31.84>ma200=29.74, structure_shift=ABOVE_STRUCTURE, day_vol=0.91 contraction (W4 not bearish), from_52w_hi -0.46%. Direction from trend; trigger a wide-range break.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "PK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "New high on day_vol=1.51 (effort with result), ext_atr20=3.13, insti_money warn. No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "A shakeout under ma_20=15.58 that reclaims would be a W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EOG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=147.76>ma50=146.84>ma200=135.1, structure_shift=ABOVE_STRUCTURE, day_vol=0.75 contraction (W4 not bearish), from_52w_hi -0.08%. Trigger a wide-range break. days_to_earnings=10.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": "Earnings in 10 sessions: the hinge must resolve before the print; no hold through it unless the trade is in profit."
+   },
+   "challenge_reply": "Rogers: days_to_earnings=10 sits in the window. Intent: not held through the print unless the hinge has resolved up and is in profit. Steenbarger: EOG/XOM/CNQ are one Energy exposure; one slot, EOG or XOM first.",
+   "conviction_change": null
+  },
+  {
+   "ticker": "CTAS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the high (from_52w_hi 0.0%), ext_atr20=4.21, day_vol=1.34 effort with result. No spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "An inside bar holding over ma_20=203.41 would give me a W21 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=168.91>ma50=164.92>ma200=152.55, structure_shift=ABOVE_STRUCTURE, day_vol=0.97 contraction (W4 not bearish), from_52w_hi -0.51%. Direction from trend; trigger a wide-range break.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "Steenbarger seat cluster: EOG/XOM/CNQ are one Energy exposure; count one slot.",
+   "conviction_change": null
+  },
+  {
+   "ticker": "DHR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "day_vol=1.94 with structure_shift=ABOVE_STRUCTURE: effort with result, not W2. Elder [10,10,7,6,9] reentry; from_52w_hi -3.38%. No hinge or spring field served for my menu.",
+   "falsifier": "An inside bar holding over ma_20=222.67 would give me a W21 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TAK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=18.76>ma50=18.48>ma200=17.4, structure_shift=ABOVE_STRUCTURE, day_vol=0.59 contraction (W4 not bearish), from_52w_hi -0.75%. Direction from trend; trigger a wide-range break.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "XLV crowding: TAK counts with A and LLY as one Healthcare bet; I keep it only if the hinge resolves up on volume.",
+   "conviction_change": null
+  },
+  {
+   "ticker": "CNK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Elder SUSTAINED, from_52w_hi -0.57%, day_vol=1.04, stack ma20 37.54>ma50 36.63>ma200 30.74. No hinge or spring served for my menu; momentum-lane vote advisory.",
+   "falsifier": "A shakeout under ma_20 that reclaims would be a W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "W23 long trend unresolved: ma50=59.24<ma200=63.45, from_52w_hi -15.17%. Short-term stack up (ma20 60.88). No spring or hinge for my menu.",
+   "falsifier": "ma50 crossing above ma200 would settle the trend gate.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ACA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "BULLISH_BOS on day_vol=2.22 is effort with result, but atr 0.56 is flagged as a possible pinned or event tape; a hinge read means nothing on a pinned tape.",
+   "falsifier": "An event check showing a free-trading name would let me read it.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "DT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Range pullback on day_vol=1.23 (not quiet), sma_dist 16.2%, elder [7,3,4,7,8] INTERRUPTED. No hinge served; spring depth (R9) not served.",
+   "falsifier": "A dip under ma_20=61.11 that reclaims on low volume would be a spring.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "FRSH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "day_vol=0.44 with div BEARISH/3, sma_dist 13.48%. W4: low volume is not bearish alone; no spring or hinge for my menu; momentum-lane vote advisory.",
+   "falsifier": "A shakeout under ma_20=13.53 that reclaims would be a W6 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EQH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "R4 effort vs result: day_vol=1.59 with structure_shift=RANGE at from_52w_hi -0.24%: effort without progress at the range top (W2), div BEARISH/5. Absorption cannot be confirmed either way (R11), so low conviction.",
+   "opposing_case": "Wyckoff reads possible absorption; coil strong, energy 82.4, ma20=53.14>ma50=52.27>ma200=45.63. A spring or a break of the high on volume would reverse my read.",
+   "falsifier": "A daily close above high_52w_close on volume: effort producing result.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W23 gate not met: ma20=86.46<ma50=88.19, structure 43.2, structure_shift=RANGE, from_52w_hi -7.12%. Any spring here sits in a soft, sideways trend (W10 low case).",
+   "opposing_case": "ma50=88.19>ma200=85.19 keeps a longer uptrend; coil and insti_money strong, elder ACCELERATION. A reclaim of ma_50 would be a spring in that longer trend.",
+   "falsifier": "A daily close back above ma_50 with ma_20 turning up.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TDC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "W23 long trend unresolved: ma50=29.04<ma200=29.8<ma100=30.5, from_52w_hi -11.69%; 4 lenses unread. No spring or hinge for my menu.",
+   "falsifier": "ma50 back above ma200 would settle the trend gate.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PBI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "R5 change of behaviour down: structure_shift=BEARISH_CHOCH, ma20=16.77<ma50=16.83<ma100=17.19. W10: a spring against a turning trend is the lowest case in my book, short evidence, not long.",
+   "opposing_case": "ma200=14.63 sits below price 17.4, energy 87.4, coil strong, elder [9,6,4,9,9] recovered: it could be a spring of the CHoCH low.",
+   "falsifier": "A daily close above ma_100 that reverses the CHoCH.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CNQ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "W21 hinge in W23 uptrend: inside_bar=True, ma20=49.94 just over ma50=49.91, ma200=45.19, day_vol=1.06, from_52w_hi 0.0%. Thin MA margin keeps it a small bet. days_to_earnings=10.",
+   "falsifier": "Inside bar resolves down (daily close under bar_low), or a poke over bar_high that closes back under it (W13 upthrust).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": "Earnings in 10 sessions: the hinge must resolve before the print; no hold through it unless in profit."
+   },
+   "challenge_reply": "Rogers: days_to_earnings=10; not held through the print unless resolved up and in profit. Steenbarger: one Energy slot across EOG/XOM/CNQ; CNQ is the third choice.",
+   "conviction_change": null
+  },
+  {
+   "ticker": "SN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Clean stack ma20=185.73>ma50=180.51>ma200=139.81, day_vol=1.21, from_52w_hi -0.57%. No hinge or spring field served for my menu; momentum-lane vote advisory.",
+   "falsifier": "An inside bar holding over ma_20 would give me a W21 setup.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ILMN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Elder [1,0,0,5,7] recovering inside RANGE at ext_atr20=0.78: spring-shaped, but pin-bar and penetration-depth fields (R7/R9) are not served here, and div BEARISH/4. Cannot call it a spring.",
+   "falsifier": "A low-volume dip under ma_20=272.07 that reclaims would be a spring I could back.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TRP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W10/W23: structure_shift=BEARISH_CHOCH, ma50=61.31<ma200=63.43, ret_63d -10.96. A spring attempted against this trend is short evidence, never long.",
+   "opposing_case": "Price 62.31 is back over ma_20=59.95 and ma_50 (sma_dist 1.63%), elder 9 reentry: a successful test could start a new up-leg.",
+   "falsifier": "ma50 crossing back above ma200 with structure turning up.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "W21 hinge resolved: was_squeezed=True, squeeze_breakout_state=BREAKOUT_UP, squeeze_breakout_volume_confirmed=False, day_vol=0.72; W23 ma20=50.81>ma50=50.37>ma200=46.85, from_52w_hi 0.0%. Unconfirmed effort (W1) = small bet. mp FADING is not decay (R13).",
+   "falsifier": "Break fails: daily close under ma_20, or a new high that closes back inside the squeeze range.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": null,
+   "conviction_change": null
+  },
+  {
+   "ticker": "ENB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W10/W23: MA stack inverted ma50=48.61<ma100=51.82<ma200=52.13, structure 36.8 BEARISH_CHOCH, ret_63d -14.88. Downtrends are littered with failed springs; this is short evidence.",
+   "opposing_case": "insti_money strong, elder [4,9,6,9,9] reentry, flow 78.9: a mean-reversion bounce toward ma_50 is plausible.",
+   "falsifier": "ma50 crossing back above ma100 with structure turning up.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MRK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "ma20=145.41 under ma50=146.16, structure 46.3 RANGE; longer trend up (ma200=125.49). Elder [6,7,1,9,9] recovery is spring-shaped but unconfirmable (R7/R9 not served).",
+   "falsifier": "A low-volume dip under ma_50 that reclaims would be a spring I could back.",
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD: no. W23 fails: ma20=44.47<ma50=50.31<ma200=56.04, structure 11.0 BEARISH_CHOCH, rs_spy_20d -19.89, below vwap14 43.24. W10: a spring here is short evidence. Keep/exit: exit-case on trend; the placed broker stop 36.66 stands (house law).",
+   "opposing_case": "div BULLISH/0 and day_vol=0.52 say selling effort is drying up; a selling climax may be near, and a spring that holds above 36.66 would be the bull case.",
+   "falsifier": "A dip that reclaims ma_20 on low volume and then a close above ma_50: a spring and trend repair.",
+   "challenge_reply": "Rogers/Steenbarger held review: no Weis thesis remains, the trend gate fails. The only bull observable I would accept is a spring: undercut and reclaim on low volume, then a close above ma_50. Stop 36.66 is house law; I do not argue it."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "weis.part1of3.json",
+   "bytes": 7477,
+   "votes": 15,
+   "sha256": "c64da204c7f9"
+  },
+  {
+   "file": "weis.part2of3.json",
+   "bytes": 7240,
+   "votes": 15,
+   "sha256": "641a4289d7e0"
+  },
+  {
+   "file": "weis.part3of3.json",
+   "bytes": 6725,
+   "votes": 13,
+   "sha256": "66b8d8464e40"
+  }
+ ]
+}

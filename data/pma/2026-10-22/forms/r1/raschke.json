@@ -1,0 +1,425 @@
+{
+ "voice": "raschke",
+ "date": "2026-10-22",
+ "universe_file": "/home/claude/pma/d22/seat_packets/raschke.tsv",
+ "nominations": [
+  {
+   "ticker": "A",
+   "conviction": 3,
+   "reason": "Breakout family (C2/C12): was_squeezed=True, squeeze_breakout_state=BREAKOUT_UP, structure_shift=BULLISH_BOS at pct_from_52w_high=0.0, adx_14=36.9. Cautions: elder_pattern=INTERRUPTED, mp_accel_state=DECELERATING. Wrong below 172.87 (1xATR ref, no swing stop served).",
+   "fields_cited": [
+    "squeeze_breakout_state",
+    "was_squeezed",
+    "structure_shift",
+    "pct_from_52w_high",
+    "adx_14",
+    "elder_pattern",
+    "mp_accel_state",
+    "bracket.atr_fallback_stop",
+    "structure"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift=BULLISH_BOS, structure=84.2, pct_from_52w_high=0.0, sma_distance_pct=10.8: closed at a fresh high through structure -> breakout family",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "structure",
+      "pct_from_52w_high",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13",
+      "C7"
+     ],
+     "observed": "was_squeezed=True then squeeze_breakout_state=BREAKOUT_UP; volume_confirmed=False, day_vol=0.93; adx_14=36.9 (level only, slope unknown); no ID/NR4 count",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed",
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed",
+      "day_vol",
+      "adx_14"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "bar_range_history NOT_SERVED (no NR4/NR7, no 6/100 HV ratio); squeeze flag is the substitute; stochastic NOT_SERVED; elder_pattern=INTERRUPTED, mp_accel_state=DECELERATING",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed",
+      "elder_pattern",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid=False, bracket.stop=null; no swing-low field served; I use bracket.atr_fallback_stop=172.87 vs entry=177.75 as the invalidation level, declared substitute",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "TMO",
+   "conviction": 3,
+   "reason": "Retracement family, Holy-Grail shape (C7): adx_14=37.37 near pct_from_52w_high=-0.35, pullback inside swing structure_shift=RANGE, extension_atr_20=1.07, elder_pattern=CORRECTION_REENTRY. Caution div_state=BEARISH (div_bear_count=4). Wrong below 673.64 (1xATR ref).",
+   "fields_cited": [
+    "adx_14",
+    "pct_from_52w_high",
+    "structure_shift",
+    "extension_atr_20",
+    "elder_pattern",
+    "div_state",
+    "div_bear_count",
+    "bracket.atr_fallback_stop",
+    "rank"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=71.6, structure_shift=RANGE, pct_from_52w_high=-0.35, mp_accel_state=DECELERATING: a pullback inside the swing just off highs -> retracement family",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "adx_14=37.37 (>30; rising not testable); extension_atr_20=1.07 (near the 20-period mean); elder_pattern=CORRECTION_REENTRY; rank=15",
+     "verdict": "partial",
+     "fields": [
+      "adx_14",
+      "extension_atr_20",
+      "elder_pattern",
+      "rank"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "ADX slope NOT_SERVED; 20-EMA NOT_SERVED (extension_atr_20 substitute); stochastic_kd NOT_SERVED; div_state=BEARISH, div_bear_count=4 advisory caution",
+     "verdict": "partial",
+     "fields": [
+      "extension_atr_20",
+      "div_state",
+      "div_bear_count"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False, bracket.stop=null; no swing-low served; invalidation at bracket.atr_fallback_stop=673.64 vs entry=694.02, declared substitute",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "ESTC",
+   "conviction": 3,
+   "reason": "Retracement family, Holy-Grail shape (C7): adx_14=34.19, pct_from_52w_high=-1.1, quiet pullback (day_vol=0.66) inside structure_shift=RANGE, extension_atr_20=1.25, div_state=NONE. Caution elder_pattern=INTERRUPTED. Wrong below 94.57 (1xATR ref).",
+   "fields_cited": [
+    "adx_14",
+    "pct_from_52w_high",
+    "day_vol",
+    "structure_shift",
+    "extension_atr_20",
+    "div_state",
+    "elder_pattern",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=65.3, structure_shift=RANGE, pct_from_52w_high=-1.1, mp_state=BUILDING, mp_accel_state=DECELERATING: pullback after fresh highs -> retracement family",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high",
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "adx_14=34.19 (>30; rising not testable); extension_atr_20=1.25; day_vol=0.66 (light pullback volume); div_state=NONE",
+     "verdict": "partial",
+     "fields": [
+      "adx_14",
+      "extension_atr_20",
+      "day_vol",
+      "div_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "ADX slope NOT_SERVED; 20-EMA NOT_SERVED (extension_atr_20 substitute); stochastic_kd NOT_SERVED; elder_pattern=INTERRUPTED advisory caution",
+     "verdict": "partial",
+     "fields": [
+      "extension_atr_20",
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False, bracket.stop=null; no swing-low served; invalidation at bracket.atr_fallback_stop=94.57 vs entry=98.81, declared substitute",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "ILMN",
+   "conviction": 2,
+   "reason": "Retracement family, Holy-Grail shape (C7): adx_14=37.68, pct_from_52w_high=-3.69, pullback to the mean extension_atr_20=0.78 inside structure_shift=RANGE. Two cautions: div_state=BEARISH (div_bear_count=4), elder_pattern=INTERRUPTED. Wrong below 269.0 (1xATR ref).",
+   "fields_cited": [
+    "adx_14",
+    "pct_from_52w_high",
+    "extension_atr_20",
+    "structure_shift",
+    "div_state",
+    "div_bear_count",
+    "elder_pattern",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=64.2, structure_shift=RANGE, pct_from_52w_high=-3.69, mp_accel_state=DECELERATING: pullback inside the swing after highs -> retracement family",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "adx_14=37.68 (>30; rising not testable); extension_atr_20=0.78 (closest to the mean of the set); day_vol=0.81",
+     "verdict": "partial",
+     "fields": [
+      "adx_14",
+      "extension_atr_20",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "ADX slope NOT_SERVED; 20-EMA NOT_SERVED (extension_atr_20 substitute); stochastic_kd NOT_SERVED; div_state=BEARISH, div_bear_count=4; elder_pattern=INTERRUPTED",
+     "verdict": "partial",
+     "fields": [
+      "extension_atr_20",
+      "div_state",
+      "div_bear_count",
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False, bracket.stop=null; no swing-low served; invalidation at bracket.atr_fallback_stop=269.0 vs entry=282.86, declared substitute",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "DT",
+   "conviction": 2,
+   "reason": "Retracement family, Holy-Grail shape (C7): structure=82.1, adx_14=32.89, pct_from_52w_high=-0.72, structure_shift=RANGE, extension_atr_20=1.76. Pullback is on day_vol=1.23 (not quiet); div_state=BEARISH (div_bear_count=1), elder_pattern=INTERRUPTED. Wrong below 62.7 (1xATR ref).",
+   "fields_cited": [
+    "structure",
+    "adx_14",
+    "pct_from_52w_high",
+    "structure_shift",
+    "extension_atr_20",
+    "day_vol",
+    "div_state",
+    "div_bear_count",
+    "elder_pattern",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure=82.1, structure_shift=RANGE, pct_from_52w_high=-0.72, mp_state=FADING, mp_accel_state=DECELERATING: shallow pullback off highs -> retracement family",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high",
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "adx_14=32.89 (>30; rising not testable); extension_atr_20=1.76 (still above the mean); day_vol=1.23",
+     "verdict": "partial",
+     "fields": [
+      "adx_14",
+      "extension_atr_20",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "ADX slope NOT_SERVED; 20-EMA NOT_SERVED (extension_atr_20 substitute); stochastic_kd NOT_SERVED; div_state=BEARISH, div_bear_count=1; elder_pattern=INTERRUPTED",
+     "verdict": "partial",
+     "fields": [
+      "extension_atr_20",
+      "div_state",
+      "div_bear_count",
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid=False, bracket.stop=null; no swing-low served; invalidation at bracket.atr_fallback_stop=62.7 vs entry=64.78, declared substitute",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "No setup family fits (C2): structure=11.0, structure_shift=BEARISH_CHOCH, sma_distance_pct=-21.48, mp_state=FADING, mp_accel_state=DECELERATING; div_state=BULLISH is advisory only. Held at 53.0 with held_book.live_px=39.5 (held_book.unreal_usd=-4050.0): C1/C21 cut drawdowns, do not wait on the 36.66 stop."
+  }
+ ],
+ "lesson_applied": "No ledger memory block was injected this run, so no standing lesson applies; C21 (keep drawdowns small) applied to the MP review.",
+ "declared": {
+  "setup_types": {
+   "A": "breakout (C2/C12)",
+   "TMO": "retracement (C2/C7)",
+   "ESTC": "retracement (C2/C7)",
+   "ILMN": "retracement (C2/C7)",
+   "DT": "retracement (C2/C7)"
+  },
+  "adx": "adx_14 level served; slope (rising) NOT_SERVED, so the C7 'rising' half is untested",
+  "stochastic_kd": "NOT_SERVED (C6)",
+  "n_day_extreme": "pct_from_52w_high + structure_shift (substitute, C3/C4)",
+  "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/squeeze_breakout_state used as substitute",
+  "market_breadth": "OUT_OF_SERVED_SCOPE (C16)",
+  "not_served": [
+   "adx_slope",
+   "ema_20",
+   "stochastic_kd",
+   "bar_range_history",
+   "hv_6_100_ratio",
+   "exact_20day_extreme",
+   "market_breadth",
+   "energy.squeeze_score",
+   "swing_low_level"
+  ]
+ },
+ "data_gaps": [
+  {
+   "field": "energy.squeeze_score",
+   "impact": "on my menu but absent from the packet; squeeze read taken from was_squeezed/squeeze_breakout_state instead"
+  },
+  {
+   "field": "bracket.stop",
+   "impact": "null on every nominee (valid=False); invalidation named from bracket.atr_fallback_stop, not a swing extreme"
+  }
+ ],
+ "shortfall_reason": "Five names fit a named family with ADX above 30. Test (Turtle Soup) setups were not called: no N-day low field to verify them. Climax patterns were not called from composites (C10). The rest of the list fits no family."
+}

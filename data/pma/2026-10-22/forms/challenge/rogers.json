@@ -1,0 +1,152 @@
+{
+ "voice": "rogers",
+ "date": "2026-10-22",
+ "seat_kind": "challenge",
+ "findings": [
+  {
+   "scope": "ROOM",
+   "axis": "CERTAINTY",
+   "claim": "No Darling of the Mob today: the most-carried name is 3 of the 8 seats in the tally and no seat filed conviction 5. An unfound mob is a finding, not a pass: the consensus sits in the style (leaders at highs), not in any one name.",
+   "evidence": "max nomination_count=3 (A); distinct seats=8; convictions: 4x7, 3x26, 2x15, 5x0; rs_leadership LEADER=33/42",
+   "severity": "note",
+   "what_is_owed": "PM: read crowding at style/sector level below, not per name."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "Style crowding: the room is buying strength at its highs into sectors the engine itself grades as fading. 23 of 42 names sit in 'Momentum Fading — Hold, Don't Add' sectors and only 8 in 'Momentum Building — Add'. 16 of 42 are at a 52-week high.",
+   "evidence": "sector_trend_state Fading=23, Recovering=11, Building=8; pct_from_52w_high=0.0 on 16/42; median sma_distance_pct=8.69",
+   "severity": "flag",
+   "what_is_owed": "State which names the room would still want if their sector read stays Fading."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "Sector crowding in Healthcare: 12 of 42 names (29%) are XLV and every one of the 12 carries a Fading sector read. Seven different seats reached XLV independently, so the agreement is about the sector, not a stock; a sector-level reversal hits all 12 at once.",
+   "evidence": "gics_sector XLV=12 (A,AMGN,CNC,LLY,FTRE,TMO,CAH,DHR,TAK,EW,ILMN,MRK); sector_trend_state=Momentum Fading on all 12; next sector XLK/XLI/XLE=5 each",
+   "severity": "flag",
+   "what_is_owed": "Correlation check: treat the XLV names as one bet when counting shortlist slots."
+  },
+  {
+   "scope": "PEB/SHO/DRH/PK/HLT",
+   "axis": "CROWDING",
+   "claim": "One-seat thematic cluster: livermore alone carries five same-theme names (four Real Estate REITs plus HLT), all LEADER, all at a 52-week high, all with 11-13% 10-day runs. One idea filed five times; one theme reversal stops all five. (Theme grouping is from ticker identity, not a served field.)",
+   "evidence": "seats incl livermore on all 5; pct_from_52w_high=0.0 x5; pct_run_10d PEB 12.77 SHO 12.59 DRH 12.87 PK 11.78 HLT 13.02; gics_sector XLRE x4, HLT XLY",
+   "severity": "flag",
+   "what_is_owed": "Pick the strongest one or two; do not count five slots for one theme."
+  },
+  {
+   "scope": "A",
+   "axis": "CERTAINTY",
+   "claim": "Most-carried name (3 seats) has a hidden flaw in its own label: it is laned PULLBACK yet sits at its 52-week high, 10.8% above its SMA, in a sector graded Fading, on below-average volume. The 'pullback' the seats describe is not visible in these fields.",
+   "evidence": "nomination_count=3 (minervini 4, raschke 3, weis 2); lane=PULLBACK; pct_from_52w_high=0.0; sma_distance_pct=10.8; ma_20=171.86 entry=177.75; day_vol=0.93; sector_trend_state=Momentum Fading",
+   "severity": "flag",
+   "what_is_owed": "Seats to name the pullback level they mean (e.g. toward ma_20 171.86) rather than a market entry at 177.75."
+  },
+  {
+   "scope": "MA",
+   "axis": "TIMING",
+   "claim": "Two seats, at its high, nearly 4 ATRs extended after a 9% 10-day run on light volume. Late, not early, is the momentum book's error; wait for a pullback toward ma_20 or a fresh base before entry.",
+   "evidence": "nomination_count=2 (livermore 4, minervini 3); pct_from_52w_high=0.0; extension_atr_20=3.93; pct_run_10d=9.22; sma_distance_pct=7.52; ma_20=584.04 entry=622.62; day_vol=0.92",
+   "severity": "note",
+   "what_is_owed": "Defined trigger: pullback toward ma_20 584.04 or confirmation of a new base."
+  },
+  {
+   "scope": "V",
+   "axis": "TIMING",
+   "claim": "Solo high-conviction name, same shape as MA: at its high, about 4 ATRs extended, 9.6% in 10 days, volume below average. Examined for an unpriced upside per my method: none visible beyond what the crowd already pays for at a 52-week high.",
+   "evidence": "nomination_count=1 (livermore 4); pct_from_52w_high=0.0; extension_atr_20=4.05; pct_run_10d=9.61; ma_20=380.91 entry=407.85; day_vol=0.92",
+   "severity": "note",
+   "what_is_owed": "Pullback-or-confirmation trigger instead of market entry at 407.85."
+  },
+  {
+   "scope": "FTRE",
+   "axis": "TIMING",
+   "claim": "Most extended name in the room: 23.6% above its SMA after a 17% 10-day run, at a 52-week high, in a Fading sector. Entering here is entering late.",
+   "evidence": "sma_distance_pct=23.59; pct_run_10d=17.02; pct_from_52w_high=0.0; ma_20=21.02 entry=24.06; day_vol=1.43; sector_trend_state=Momentum Fading",
+   "severity": "flag",
+   "what_is_owed": "Wait for a pullback toward ma_20 21.02 or a tight base; no market entry."
+  },
+  {
+   "scope": "HLT/CTAS/ADP",
+   "axis": "TIMING",
+   "claim": "Three solo names more than 4 ATRs extended, each at a 52-week high after 11-13% in 10 days. Extension this far is the late-entry error, not strength to chase.",
+   "evidence": "extension_atr_20 HLT 4.70, CTAS 4.21, ADP 4.09; pct_run_10d HLT 13.02, CTAS 11.64, ADP 11.55; pct_from_52w_high=0.0 x3",
+   "severity": "note",
+   "what_is_owed": "Defined pullback-or-confirmation trigger for each before entry."
+  },
+  {
+   "scope": "DT/TDC/AVPT/FRSH/ILMN",
+   "axis": "TIMING",
+   "claim": "Five more names 13-18% above their SMA. AVPT and FRSH arrive on very light volume (0.70, 0.44), so the extension is not even backed by participation.",
+   "evidence": "sma_distance_pct DT 16.2, TDC 15.17, AVPT 14.43, FRSH 13.48, ILMN 18.48; day_vol AVPT 0.70, FRSH 0.44",
+   "severity": "note",
+   "what_is_owed": "Pullback toward ma_20 before entry."
+  },
+  {
+   "scope": "AVPT/CAH/EOG/CNQ/SHO",
+   "axis": "CATALYST",
+   "claim": "Earnings in 10-11 trading days for five names bought on extension. That is a scheduled event inside the holding window, not a catalyst of value recognition; the room should say whether the thesis is meant to survive it.",
+   "evidence": "days_to_earnings AVPT 10, CAH 10, EOG 10, CNQ 10, SHO 11; extension_atr_20 SHO 3.86, CAH 3.63, CNQ 3.36",
+   "severity": "note",
+   "what_is_owed": "Nominating seats to state hold-through-earnings intent."
+  },
+  {
+   "scope": "TRP/ENB/PBI",
+   "axis": "CATALYST",
+   "claim": "Thorp's three names are the room's sold-off, broken-structure picks: all BEARISH_CHOCH, TRP and ENB down 11-15% over 63 days and 12-17% off highs. Cheapness without a named catalyst is a dead asset, not a bargain, and no catalyst is named in the packet. I do not invent one from the chart.",
+   "evidence": "seats=thorp x3; structure_shift=BEARISH_CHOCH x3; ret_63d TRP -10.96, ENB -14.88, PBI -2.52; pct_from_52w_high TRP -12.13, ENB -17.28; ENB sma_distance_pct=-1.24",
+   "severity": "flag",
+   "what_is_owed": "Thorp or the PM to name the exact 12-36 month catalyst, or treat these as no-catalyst."
+  },
+  {
+   "scope": "KR/TDC",
+   "axis": "CATALYST",
+   "claim": "Two recovering names carried 11-15% under their highs with the 50-day still under the 200-day. A recovery argued on distance from the high needs a named catalyst; none is in the packet.",
+   "evidence": "KR pct_from_52w_high=-15.17, ma_50=59.24 < ma_200=63.45; TDC pct_from_52w_high=-11.69, ma_50=29.04 < ma_200=29.80",
+   "severity": "note",
+   "what_is_owed": "Name the catalyst or read them as momentum-only."
+  },
+  {
+   "scope": "MP",
+   "axis": "CROWDING",
+   "claim": "Held name that no seat carried today: zero nominations, structure 11, BEARISH_CHOCH, 21.5% under its SMA and 19.9% behind SPY over 20 days. Challenge to an existing long: who still holds the thesis, and what catalyst is it waiting for? Stop is house law; I do not argue the broker stop 36.66.",
+   "evidence": "held=true; nomination_count=0; structure=11.0; structure_shift=BEARISH_CHOCH; sma_distance_pct=-21.48; rs_spy_20d=-19.89; ma_20=44.47 ma_50=50.31 ma_200=56.04",
+   "severity": "flag",
+   "what_is_owed": "PM to state the catalyst for holding MP; stop_position DEFERRED_TO_HOUSE_LAW."
+  },
+  {
+   "scope": "MP",
+   "axis": "CERTAINTY",
+   "claim": "Data inconsistency on the held row: entry=53.0 sits above ma_20 44.47, which conflicts with sma_distance_pct -21.48; rank and sector_trend_state are null. The held read may be using a cost price, not the prior close.",
+   "evidence": "entry=53.0; ma_20=44.47; sma_distance_pct=-21.48; rank=null; sector_trend_state=null; gics_sector=XLB",
+   "severity": "note",
+   "what_is_owed": "Engine: confirm what 'entry' holds on held rows and fill rank/sector_trend_state."
+  }
+ ],
+ "declared": {
+  "seat_role": "CHALLENGE_ONLY (never nominates, no vote in the tally)",
+  "template_a": "NOT_COMPUTABLE",
+  "template_b": "NOT_COMPUTABLE",
+  "commodity_cycle": "NOT_SERVED",
+  "valuation_sanity": "NOT_TESTABLE",
+  "stop_position": "DEFERRED_TO_HOUSE_LAW",
+  "sector_read": "gics_sector + sector_trend_state (weak proxy, never a supply-demand read)",
+  "not_served": [
+   "sovereign/country data (C8, C24 Template A)",
+   "fundamentals: book value, EPS, dividend yield (C21)",
+   "filing/footnote text (C7)",
+   "news/press-release text (C9, C18)",
+   "commodity and input-cost series (C10, C15)",
+   "15-23 year commodity cycle history (C14)",
+   "named catalyst field on deliberation record (C23)"
+  ]
+ },
+ "asks": [
+  "1. Catalyst field on the deliberation record (PM-entered) so C23 can be answered, not only asked",
+  "2. News/filing text feed for the press-release language match",
+  "3. Fundamentals layer (unlocks C21 here and Lynch)",
+  "4. Commodity/input-cost series",
+  "5. Fix held-row 'entry' semantics and null rank/sector_trend_state for MP"
+ ]
+}

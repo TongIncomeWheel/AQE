@@ -1,0 +1,286 @@
+{
+ "voice": "thorp",
+ "date": "2026-10-22",
+ "universe_file": "/home/claude/pma/d22/seat_packets/thorp.tsv",
+ "nominations": [
+  {
+   "ticker": "ENB",
+   "reason": "Measured edge, not a shape: signal_hit_rate_20d=57.1 on signal_n=247, above coin and the packet's pooled class rate. Calmest of the six names in that class: vol_30d_ann=0.1984, atr_14d=0.8. Class stat, not name stat (C17), so conviction stays modest.",
+   "conviction": 2,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.1, signal_n=247; mispriced vs 50% coin and vs pooled class rate ~42.9 (n-weighted over packet classes). Stat is shared by 6 names.",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C14",
+      "C15"
+     ],
+     "observed": "No random-selection benchmark, no component-removed run, no cost/fill basis served; losers implied by n=247 only. Cannot restate net.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "loss_boundary=bracket.stop 46.89; gap one atr_14d=0.8 through it -> 46.09, gap_loss ~4.0% of 48.01; unwatched_loss sized to that, not to the stop. Expected gain magnitude not served.",
+     "verdict": "partial",
+     "fields": [
+      "bracket.stop",
+      "atr_14d",
+      "bracket.price"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure: atr_pct (substitute) ~1.67%, bottom quartile of sc_m-all-pass set (q1 ~1.98); vol_30d_ann=0.1984; liquidity_measure: day_vol=0.77 (substitute).",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "vol_30d_ann",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "sc_m_gate_detail flow+elder only; ret_63d=-14.88; edge condition is the class hit rate, no trailing series served to watch compression.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "ret_63d"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "TRP",
+   "reason": "Same measured class: signal_hit_rate_20d=57.1, signal_n=247. Second-calmest in it: vol_30d_ann=0.227, atr_14d=1.31. Class stat only (C17).",
+   "conviction": 2,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.1, signal_n=247; above 50% coin and pooled class ~42.9. Shared class statistic, not TRP-specific.",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C14",
+      "C15"
+     ],
+     "observed": "No random benchmark, ablation or cost basis served; cannot restate net of costs.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid=False; loss_boundary=atr_fallback_stop 61.0 (used); gap one atr_14d=1.31 -> 59.69, gap_loss ~4.2% of 62.31; size to unwatched loss.",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "atr_14d",
+      "bracket.price"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure: atr_pct (substitute) ~2.10%, second quartile of sc_m-all-pass set (median ~2.73); vol_30d_ann=0.227; day_vol=0.74 (substitute).",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "vol_30d_ann",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "sc_m_gate_detail structure=False; pct_from_52w_high=-12.13; no trailing edge series served to watch compression.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "pct_from_52w_high"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "PBI",
+   "reason": "Same measured class: signal_hit_rate_20d=57.1, signal_n=247, and the strongest momentum read in it (sc_momentum=74.5, rs_rank_pct=70.59). Mid-set volatility: vol_30d_ann=0.2324, atr_14d=0.45. Class stat only (C17).",
+   "conviction": 2,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "sc_momentum",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d=57.1, signal_n=247; above 50% coin and pooled class ~42.9. Shared class statistic, not PBI-specific.",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C14",
+      "C15"
+     ],
+     "observed": "No random benchmark, ablation or cost basis served; cannot restate net of costs.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid=False; loss_boundary=atr_fallback_stop 16.95 (used); gap one atr_14d=0.45 -> 16.50, gap_loss ~5.2% of 17.4; size to unwatched loss.",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "atr_14d",
+      "bracket.price"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure: atr_pct (substitute) ~2.59%, second quartile of sc_m-all-pass set (median ~2.73); vol_30d_ann=0.2324; day_vol=0.88 (substitute).",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "vol_30d_ann",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "sc_m_gate_detail all pass except mp; mp_state=BUILDING; no trailing edge series served to watch compression.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "mp_state"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "The entry condition is gone (C10/C19): sc_momentum=19.9, every sc_m gate false, mp_state=FADING, held_book.hl_state=EXIT, rs_spy_20d=-19.89, no measured edge (signal_n null). vol_30d_ann=0.5075, atr_14d=2.28; unwatched loss sizes it (C9). Price 39.5 vs entry 53.0."
+  }
+ ],
+ "lesson_applied": "2026-08-06 audit: knn_prob and beta_30d carried no vote; ranking is on the served hit rate with its n, then volatility, with substitutes declared.",
+ "declared": {
+  "not_served": [
+   "low_52w (canon C5 range measure; atr_pct substitute used)",
+   "avg_daily_volume and spread (round-trip cost; day_vol substitute)",
+   "random-selection / ablation benchmark for signal_hit_rate_20d",
+   "expected gain magnitude for R3",
+   "trailing edge series for R7"
+  ]
+ },
+ "shortfall_reason": "Only one served statistic clears both a 50% coin and the pooled class rate with n>=200: the 57.1/247 class (6 names). CBRE, DHI and TTAN share it but sit higher in volatility (C6) and the shared stat cannot separate them (C17); 103 rows carry signal_n=0, which is no edge to measure (C21). Three filed, not padded."
+}

@@ -1,0 +1,886 @@
+{
+ "voice": "minervini",
+ "date": "2026-10-22",
+ "round": 2,
+ "declarations": [
+  "trend_template: per-name PASS/FAIL on the 8 criteria; ma_100 used as proxy for the unserved ma_150; criterion 6 (30% off low) not served on most rows",
+  "vcp_detail: NOT_SERVED (structure/structure_shift composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20)",
+  "rs_proxy: rs_rank_pct/rs_leadership/rs_spy_20d substitute for IBD RS rank (C3/C11)",
+  "volume_signature: day_vol at breakout only (C6, partial); bracket read as information only (R1)"
+ ],
+ "votes": [
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Template PASS (entry=177.75>ma20=171.86>ma50=160.42>ma100=147.65>ma200=135.02); from_52w_hi=0.0%, rs_rank_pct=91.05 LEADER, structure=84.2 BULLISH_BOS. day_vol=0.93: breakout volume not yet expanding (C6).",
+   "falsifier": "Close back below pivot_high on rising volume, or a daily close below ma_50, proves the breakout false.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "self_counter": "day_vol=0.93 and lens insti_money=warn: no expansion behind the break; sector reads Momentum Fading.",
+   "challenge_reply": "Rogers/Steenbarger: I do not buy a pullback to ma_20 (C11). My entry is the hourly close above pivot_high on vol_x_ge:1.4; no expansion, no buy. Disproof: close back under pivot_high or below ma_50."
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (622.62>584.04>579.05>551.63>533.78), from_52w_hi=0.0%, rs_rank_pct=79.17 LEADER, mp=90.0 STRONG. Within payments V has the higher RS (rs_rank_pct=85.42), so MA is the follower (C11).",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "conviction_change": "3->2: MA/V are one payments bet; C11 takes the top-RS name, V (rs_rank_pct=85.42 vs 79.17).",
+   "challenge_reply": "Rogers: ext_atr20=3.93 is a weight (R14); I buy only a fresh pivot breakout on volume, never a chase past pivot_high+5pct. Steenbarger: one slot, V preferred over MA."
+  },
+  {
+   "ticker": "PEB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (21.1>19.24>18.58>18.49>15.77), from_52w_hi=0.0%, rs_rank_pct=92.65 LEADER, day_vol=1.62 expansion, flow=100.0. Top RS of the lodging cluster with PK (C11). sma_dist=13.58% extended: weight.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "challenge_reply": "Lodging cluster: I count PEB/PK as the one theme slot (top RS 92.65/92.28); SHO and HLT fail my template."
+  },
+  {
+   "ticker": "AVPT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (15.72>14.31>13.74>12.82>11.77), from_52w_hi=0.0%, rs_rank_pct=92.52 LEADER, structure=80.0 BULLISH_BOS. Cautions: day_vol=0.7 no expansion, div BEARISH/2 (advisory), sma_dist=14.43%.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "challenge_reply": "Rogers timing: extension is a weight (R14); buy needs vol_x_ge:1.4, which day_vol=0.7 does not show. Earnings in 10 days: no add into the print; the stop fixed before entry governs through it (C7)."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (35.3>34.34>33.88>31.99>29.66), from_52w_hi=0.0%, rs_rank_pct=86.52 but rs LAGGARD downday=-0.28; structure=72.6 RANGE, no break yet. Buy only the breakout on volume.",
+   "falsifier": "rs_down_day_20d stays negative on the break, or a close below ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (407.85>380.91>375.12>360.43>340.02), from_52w_hi=0.0%, rs_rank_pct=85.42 LEADER, structure=86.3, mp=94.0 STRONG. Top-RS name of the MA/V pair (C11). ext_atr20=4.05: weight.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "challenge_reply": "Steenbarger MA/V: one slot, V, on the higher RS."
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (438.34>418.02>416.21>390.68>370.53), from_52w_hi=-1.3%, rs_rank_pct=82.97 LEADER, downday=0.94, structure=88.4. mp DECELERATING; flow=44.7.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "conviction_change": "4->3: Healthcare is one bet (12 names); within it CNC (95.1) and A (91.05) carry higher RS (C11).",
+   "challenge_reply": "Healthcare crowding: I treat my XLV names as one slot, ranked by RS: CNC, A, then CAH/AMGN."
+  },
+  {
+   "ticker": "SHO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template FAIL criterion 4 by proxy: ma50=11.25 < ma100=11.38 (ma_150 not served). Intermediate trend unresolved; all-or-nothing gate (C3).",
+   "opposing_case": "rs_rank_pct=86.4 LEADER, day_vol=2.27, flow=100.0, elder SUSTAINED at from_52w_hi=0.0%: real strength and participation.",
+   "falsifier": "ma_50 crosses back above ma_100 while the name holds its high."
+  },
+  {
+   "ticker": "CNC",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Template PASS (70.24>65.69>65.64>65.09>54.56), rs_rank_pct=95.1 LEADER (top of my XLV names), structure=84.2 BULLISH_BOS, from_52w_hi=-0.8%. day_vol=0.74 not yet expansion.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "self_counter": "No breakout volume (day_vol=0.74), 4 of 6 lenses unread, sector Momentum Fading; ma20/ma50/ma100 bunched near 65.",
+   "challenge_reply": "Detect lens coverage: my read stands on the template and RS fields, not lenses; the dashes are missing data, not support."
+  },
+  {
+   "ticker": "W",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (113.31>105.27>103.15>95.47>88.64), rs_rank_pct=88.97 but IN-LINE downday=0.14; from_52w_hi=-4.82%, day_vol=0.58 dry-up (C6). Buy the pivot only.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "LLY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (1270.75>1194.2>1183.59>1172.72>1082.9), rs_rank_pct=88.24 LEADER, from_52w_hi=-1.01%, mp=82.0. structure=66.3 softer; one more XLV name.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (98.81>93.51>89.7>76.07>66.31), rs_rank_pct=96.94 but LAGGARD downday=-0.32; structure=65.3 RANGE, from_52w_hi=-1.1%. Breakout on volume only.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "HLT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Template FAIL: ma50=321.43 < ma100=326.5 (criterion 4 proxy) and rs_rank_pct=61.76 under 70 (criterion 8, C3/C11).",
+   "opposing_case": "mp=97.0 STRONG, elder SUSTAINED, day_vol=1.62, flow=100.0, from_52w_hi=0.0%: the strongest tape momentum in the room.",
+   "falsifier": "ma_50 back above ma_100 with rs_rank_pct above 70."
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (24.06>21.02>19.47>18.54>15.48), rs_rank_pct=99.26 LEADER (highest in room, C11), from_52w_hi=0.0%, day_vol=1.43. sma_dist=23.59% and div BEARISH/3: weights.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "challenge_reply": "Rogers: extension is a weight (R14); no chase past pivot_high+5pct, buy only a fresh pivot on volume."
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (294.5>ma50=274.03>258.32>239.18), rs_rank_pct=90.69 LEADER downday=0.95, from_52w_hi=0.0%, day_vol=1.19. ext_atr20=4.09: weight.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (46.3>41.84>41.48>39.41>36.15), rs_rank_pct=83.09 LEADER, day_vol=1.22 participation, from_52w_hi=-0.49%. sma_dist=11.63%: weight.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (694.02>672.25>641.93>581.99>548.71), rs_rank_pct=87.62 LEADER, from_52w_hi=-0.35%, day_vol=1.76. structure RANGE, div BEARISH/4 (advisory); XLV crowding.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "DRH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (13.94>12.83>12.55>12.4>11.14), rs_rank_pct=88.36 LEADER, from_52w_hi=0.0%, SUSTAINED. Follower to PEB/PK in the lodging theme (C11).",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (257.46>237.21>235.47>231.21>220.62), rs_rank_pct=84.56 LEADER, downday=1.26 holds on weak tape (C11), from_52w_hi=-0.03%. day_vol=0.85 no expansion.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "challenge_reply": "Earnings in 10 days: no add into the print; the pre-fixed stop governs through it (C7). XLV counted as one slot."
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (34.47>32.16>31.84>31.46>29.74), rs_rank_pct=84.68 but IN-LINE downday=0.22, from_52w_hi=-0.46%. Breakout on volume only.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (16.99>15.58>15.44>14.96>13.04), rs_rank_pct=92.28 LEADER, from_52w_hi=0.0%, day_vol=1.51. With PEB, the top-RS pair of the lodging theme.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "EOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (157.88>147.76>146.84>142.28>135.1), rs_rank_pct=75.0 LEADER downday=1.35, from_52w_hi=-0.08%. RS near the floor; energy rotation is a C15 caution.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "CTAS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (220.15>203.41>201.81>194.58>189.24), rs_rank_pct=82.11 LEADER, from_52w_hi=0.0%, day_vol=1.34. ext_atr20=4.21: weight.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (178.07>168.91>164.92>155.97>152.55), rs_rank_pct=75.37 LEADER downday=1.57, from_52w_hi=-0.51%. RS near floor; raw-materials rotation caution (C15).",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "DHR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (233.86>222.67>215.12>203.27>201.26), rs_rank_pct=83.46 LEADER, from_52w_hi=-3.38%, day_vol=1.94. mp DECELERATING; XLV crowding.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "TAK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "rs_spy_20d=5.27 thin, ma100=17.44 barely over ma200=17.4 (criterion 3 rising-200 doubtful), day_vol=0.59; another XLV follower. Cannot confirm the template cleanly.",
+   "falsifier": "A pivot breakout on volume with ma_100 pulling away from ma_200 would make it a candidate."
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (39.92>37.54>36.63>34.72>30.74), rs_rank_pct=88.73 LEADER downday=1.52 (C11 resilience), SUSTAINED, from_52w_hi=-0.57%.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "KR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Template FAIL: ma50=59.24 < ma200=63.45 (criterion 4) and rs_rank_pct=32.11 under 70 (criterion 8). ret_12m=-7.26: not a confirmed stage 2 (C2).",
+   "opposing_case": "mp=84.0 STRONG, structure=82.1, downday=1.53 and a valid bracket: a recovery is under way.",
+   "falsifier": "ma_50 crosses above ma_200 and rs_rank_pct rises above 70."
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (149.03>146.88>146.0>142.97>129.63), base_range_pct=2.2 tight, BULLISH_BOS on day_vol=2.22, from_52w_hi=0.0%. rs_spy_20d=1.04 thin.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   },
+   "conviction_change": "3->2: detect flags atr=0.56 as a possible pinned/event tape; a pinned price is not a VCP until the event check clears."
+  },
+  {
+   "ticker": "DT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (64.78>61.11>55.75>49.77>43.78), rs_rank_pct=94.98 but IN-LINE downday=0.03; structure RANGE, sma_dist=16.2%. Buy only a fresh pivot.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "FRSH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (14.83>13.53>13.07>11.7>10.31), rs_rank_pct=93.63 but IN-LINE, day_vol=0.44 (no participation), div BEARISH/3 advisory. Volume must expand.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "EQH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Template passes on MAs but rs_spy_20d=3.33 thin, IN-LINE downday=-0.25, structure RANGE, flow=50.0. No leadership to buy (C11).",
+   "falsifier": "A break of the range on volume with rs_down_day_20d turning positive."
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Template FAIL: ma50=88.19 < ma100=88.23 (criterion 4 proxy), rs_rank_pct=61.52 under 70, structure=43.2 RANGE, from_52w_hi=-7.12%.",
+   "opposing_case": "Sits on support (sma_dist=0.24%), elder ACCELERATION, lens coil and insti_money strong.",
+   "falsifier": "rs_rank_pct above 70 with ma_50 back over ma_100."
+  },
+  {
+   "ticker": "TDC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Template FAIL: ma50=29.04 < ma200=29.8 (criterion 4), from_52w_hi=-11.69%, rs IN-LINE. Not a confirmed stage 2 (C2).",
+   "opposing_case": "structure=86.3, mp=80.0 STRONG, ret_12m=60.35, day_vol=1.28: a strong recovery leg.",
+   "falsifier": "ma_50 crosses above ma_100 and ma_200 with price holding near its high."
+  },
+  {
+   "ticker": "PBI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Template FAIL: ma50=16.83 < ma100=17.19, ma20=16.77 under ma50, BEARISH_CHOCH, ret_63d=-2.52. Up-structure broken; no stage 2 (C2).",
+   "opposing_case": "energy=87.4, flow=84.2, rs LEADER downday=0.51, rs_rank_pct=70.59.",
+   "falsifier": "A new higher high with ma_50 back above ma_100."
+  },
+  {
+   "ticker": "CNQ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (54.24>49.94>49.91>46.9>45.19), rs_rank_pct=78.31 LEADER downday=1.4, from_52w_hi=0.0%. Earnings in 10 days; energy rotation caution (C15).",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template PASS (197.58>185.73>180.51>164.23>139.81), rs_rank_pct=93.75 LEADER, structure=85.3, from_52w_hi=-0.57%, day_vol=1.21.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "ILMN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (282.86>272.07>238.74>210.27>171.69), rs_rank_pct=98.53 LEADER, from_52w_hi=-3.69%. sma_dist=18.48%, RANGE, div BEARISH/4; XLV crowding.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "TRP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Template FAIL: ma50=61.31 < ma200=63.43, BEARISH_CHOCH, rs_rank_pct=51.96, ret_63d=-10.96. Buying weakness is the C11/C13 trap.",
+   "opposing_case": "rs LEADER downday=0.64, flow=78.9, a 4.0% yield stock that steadied; mean reversion is a different method.",
+   "falsifier": "ma_50 back above ma_200 and a new high."
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template PASS (52.49>50.81>50.37>48.72>46.85), from_52w_hi=0.0%, rs_rank_pct=73.41 LEADER but rs_spy_20d=2.25; squeeze broke up on day_vol=0.72 without volume.",
+   "falsifier": "A daily close below ma_50 breaks template criterion 5 and the stage 2 read.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth, C12) NOT_SERVED and not run; trend/RS/structure read only"
+   }
+  },
+  {
+   "ticker": "ENB",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Template FAIL: inverted stack ma50=48.61<ma100=51.82<ma200=52.13, BEARISH_CHOCH, rs_rank_pct=29.53, from_52w_hi=-17.28%. Stage 4, not stage 2 (C2).",
+   "opposing_case": "valid bracket, lens insti_money strong, low volatility and a measured class edge.",
+   "falsifier": "ma_50 back above ma_200 and price within 25% of its high on rising RS."
+  },
+  {
+   "ticker": "MRK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Template passes on MAs but structure=46.3 RANGE, rs_spy_20d=0.53, mp=28.0: no identifiable base or pivot (R2). XLV crowding.",
+   "falsifier": "A range break on volume lifting rs_spy_20d."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD: no. Inverted stack ma50=50.31<ma100=51.48<ma200=56.04, structure=11.0 BEARISH_CHOCH, sma_dist=-21.48%, rs_spy_20d=-19.89. Adding is averaging down (C9). HOLD: EXIT-CASE; keep broker stop 36.66 at minimum.",
+   "opposing_case": "elder 3.0 off lows with div BULLISH/0; a turnaround can base and a stage 1 can become stage 2.",
+   "falsifier": "A fresh base with price back above ma_50 and ma_200 rising would reopen it.",
+   "challenge_reply": "Rogers/Steenbarger: my method holds no thesis here; stage 4 on every template field. Exit is the PM's call; at minimum the stop at 36.66 stands, never lowered (C7, C10)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of3.json",
+   "bytes": 11690,
+   "votes": 15,
+   "sha256": "ec51cecd1086"
+  },
+  {
+   "file": "minervini.part2of3.json",
+   "bytes": 9832,
+   "votes": 15,
+   "sha256": "131519fa727e"
+  },
+  {
+   "file": "minervini.part3of3.json",
+   "bytes": 6832,
+   "votes": 13,
+   "sha256": "e6b0c1e84cc0"
+  }
+ ]
+}

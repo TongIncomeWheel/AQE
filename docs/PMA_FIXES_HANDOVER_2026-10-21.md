@@ -96,6 +96,69 @@ Repo: TongIncomeWheel/AQE `main`. Plugin: `aegis-core` (installed copy, read-onl
 
 ---
 
+## 5. The figure audit skips `field=value` (found 22 Oct)
+
+**Who fixes:** plugin owner, `skills/pma/tools/figure_audit.py`. It's a one-character change.
+
+**What is wrong**
+- The `QUOTED` regex reads `field value` and `field: value`, but not `field=value`.
+- The seat prompts on 21 and 22 Oct asked for `field=value`, so most quoted figures were never checked.
+- The audit passed every ballot, but it had very little to check.
+
+**What was checked instead**
+- Both days were re-run with `=` allowed: 1,609 claims on 21 Oct and 1,128 on 22 Oct.
+- The only figures that did not match the vote packet were Lynch's P/E ratios: 85 in all. Every one matches the FMP pack exactly; they only miss the packet because of item 6.
+- **No invented figures on either day.**
+
+**Fix**
+```diff
+-                    r")\b[\s:]+\$?(-?\d+\.\d+)", re.I)
++                    r")\b[\s:=]+\$?(-?\d+\.\d+)", re.I)
+```
+Also add a regression test: change one digit in a `field=value` reason, and the audit must flag it.
+
+---
+
+## 6. Fundamentals print blank in the vote packet (found 22 Oct)
+
+**Who fixes:** plugin owner, `pma_pipeline.py` (the `r2digest` function, around line 1443) or the data-steward contract.
+
+**What is wrong**
+- `r2digest` reads flat keys such as `pe_ratio`, `peg_ratio`, `free_cash_flow_yield`, `revenue_growth_yoy` and `eps_growth_yoy`.
+- The data-steward pack is nested instead: `profile`, `ratios_ttm.priceToEarningsRatioTTM` and so on, plus `growth_3y[]`.
+- So every `fundamentals:` line in VOTE_PACKET reads `None`. This happened on both days.
+- Voters saw the fundamentals only through Lynch's challenge section.
+
+**Fix:** pick one shape. Either the steward writes the flat keys `r2digest` expects, or `r2digest` maps the nested fields. Under R6 (no adapters), the cleaner route is to fix the steward contract.
+
+**Verify:** a fresh VOTE_PACKET shows real P/E and growth numbers on every `fundamentals:` line.
+
+---
+
+## 7. A stop-limit reads as "no stop" (found 22 Oct)
+
+**Who fixes:** plugin owner, `pma_levels.py stops`.
+
+**What is wrong**
+- MP's working SELL STP_LMT 300 at 36.66/36.66 was written to `broker_stops.json` with `stop: null` and the note `NO STOP ORDER`.
+- The cause: Tiger's connector returns `stop_price` as null.
+- The alert file would then send a false "no stop order" alert every session.
+
+**Fix:** when the order type is STP or STP_LMT, record the order as a working stop.
+- Set `stop` to `limit_price` for a stop-limit; the trigger is at or above the limit.
+- Set `note` to "trigger hidden by Tiger".
+- The stop-reconcile skill already handles it this way.
+
+**Interim:** corrected by hand for 22 Oct.
+
+---
+
+## 8. Seat prompts: write figures as `field value`
+
+Until item 5 ships, the conductor's prompts should tell seats to write figures as `field value`, so that the current audit can read them.
+
+---
+
 ## Not defects (for the record)
 
 - **Fundamentals:** pulled for the 54-name room after RANK, not the whole universe. This was a time choice, and coverage was 54/54.
