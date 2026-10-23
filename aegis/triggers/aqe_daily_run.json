@@ -1,6 +1,6 @@
 {
- "date": "2026-10-21",
- "triggered_at_utc": "2026-10-21T21:50:00Z",
+ "date": "2026-10-23",
+ "triggered_at_utc": "2026-10-23T21:47:37Z",
  "triggered_by": "aegis-daily (scheduled, unattended)",
- "note": "Post-market close for 2026-10-21 confirmed on main (connector push, commit 7411edae344379329a1d66dc58ab70b9002443aa): journal, portfolio_ledger, trade_journal, dyncap_ledger, EOD renders, broker_pull. Trigger requested per PM standing instruction; aqe_last_run.json will be watched for a run with date_sgt 2026-10-22 for up to 45 minutes. No retry will be made."
+ "note": "Post-market close for 2026-10-23 confirmed on main: journal (commit fbbae45f, cosmetic em-dash/double-hyphen diff in free-text notes only), all 4 broker_pull payloads (commits f6016b2e/2d3579da/ef25f93f + prior tiger_account_summary push). portfolio_ledger.json and trade_journal.json NOT pushed this run — both exceed what can be reliably hand-transcribed through the GitHub MCP connector's inline-content push_files tool in this sandbox (native git push and gh api both return 403, repo not in session's authorized set); post_market gate stamped partial for this reason. Trigger requested per PM standing instruction; aegis/output/aqe_last_run.json will be watched for a run with started_at after 2026-10-23T21:47:37Z for up to 45 minutes. No retry will be made."
 }
