@@ -71,6 +71,9 @@ def export_file(tmp_path):
     }
     p = tmp_path / "aqe_daily_export.json"
     p.write_text(json.dumps(export), encoding="utf-8")
+    # The plugin's packets step refuses to build without Crown's own artifact.
+    (tmp_path / "aqe_crown_macro.json").write_text(
+        json.dumps({"the_call": {}, "readings": {}, "status": "OK"}), encoding="utf-8")
     return p
 
 

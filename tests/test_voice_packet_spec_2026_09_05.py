@@ -112,7 +112,8 @@ def _load_voice_menus():
     one at aegis/contracts/, caught only while retiring both in favour of this) is gone. Each
     voice's menu now lives inside its own canon.lock.yaml; load it the same way pma_pipeline.py
     itself does, so this test can never again check a copy the real pipeline doesn't read."""
-    return _load_pma_pipeline_module().load_menus_from_canon("aegis/canon")
+    from src.pipeline.voice_packets import _load_menus_from_canon
+    return _load_menus_from_canon("aegis/canon")
 
 
 def test_every_menu_field_used_by_a_seat_is_carried_by_consumed():

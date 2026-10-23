@@ -106,6 +106,9 @@ VOICE_CANON_DIR = PROJECT_ROOT / "aegis" / "canon"
 # exactly the kind of ambiguity a committee reader should never have to
 # resolve. Overwritten in place each run like every other output; git history
 # holds the prior days.
+# Crown's own artifact: the plugin's packets step refuses to build a blind
+# crown packet without it (2026-09-25 incident), so it is passed explicitly.
+CROWN_MACRO_NAME = "aqe_crown_macro.json"
 PACKETS_DIRNAME = "packets"
 OUTPUT_PACKETS_IN_REPO = "aegis/output/packets"
 
@@ -141,12 +144,45 @@ def _run_date_of(export_path: Path) -> str:
     return str(d)
 
 
+def _load_menus_from_canon(canon_dir) -> dict:
+    """Each voice's menu = the top-level `menu:` block of its own
+    canon.lock.yaml (one file per voice, 2026-09-15). The vendored plugin
+    pma_pipeline (1.24.1) wants a menus JSON path, so the dict is built from
+    canon and handed over as a throwaway temp file -- never a committed
+    voice_menus.json."""
+    menus = {}
+    for path in sorted(Path(canon_dir).glob("*/canon.lock.yaml")):
+        fields = None
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for i, line in enumerate(lines):
+            if line == "menu:":
+                fields = []
+                for later in lines[i + 1:]:
+                    if later.startswith("- "):
+                        fields.append(later[2:].strip())
+                    elif later.strip() == "":
+                        continue
+                    else:
+                        break
+                break
+        if fields is not None:
+            menus[path.parent.name] = fields
+    if not menus:
+        raise FileNotFoundError(f"no voice under {canon_dir} carries a `menu:` "
+                                "block -- nothing to slice packets from")
+    return menus
+
+
 def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
                 quiet: bool = False) -> None:
     """trim -> packets, into `outdir`. Shared by build() and verify() so the
     two can never diverge in how they derive a packet set."""
     outdir.mkdir(parents=True, exist_ok=True)
     candidates = outdir.parent / "candidate_set.json"
+
+    menus_file = Path(tempfile.mkdtemp(prefix="aqe_menus_")) / "menus.json"
+    menus_file.write_text(json.dumps(_load_menus_from_canon(VOICE_CANON_DIR)),
+                          encoding="utf-8")
 
     real_stdout = sys.stdout
     if quiet:
@@ -156,7 +192,9 @@ def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
             export=str(export_path), date=run_date, out=str(candidates)))
         pma.cmd_packets(types.SimpleNamespace(
             candidates=str(candidates), export=str(export_path),
-            canon_dir=str(VOICE_CANON_DIR), date=run_date, outdir=str(outdir)))
+            menus=str(menus_file), date=run_date,
+            crown_macro=(str(OUTPUT_DIR / CROWN_MACRO_NAME)
+                         if (OUTPUT_DIR / CROWN_MACRO_NAME).exists() else None), outdir=str(outdir)))
     finally:
         if quiet:
             sys.stdout.close()

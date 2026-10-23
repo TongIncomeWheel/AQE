@@ -76,6 +76,10 @@ def export_file(tmp_path):
 @pytest.fixture(autouse=True)
 def _isolated_output_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(vp, "OUTPUT_DIR", tmp_path / "output")
+    # Plugin 1.24.1 refuses to build a crown packet without Crown's own artifact.
+    (tmp_path / "output").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "output" / vp.CROWN_MACRO_NAME).write_text(json.dumps(
+        {"the_call": {}, "readings": {}, "status": "OK"}), encoding="utf-8")
     yield
 
 
@@ -112,13 +116,17 @@ def test_no_packet_leaks_the_pm_only_qs_fields(export_file):
 def test_each_voice_gets_only_its_own_columns(export_file):
     """The selection rule's whole justification: a voice sees its own menu,
     not the union. elder-lens is the narrowest menu, wyckoff the widest."""
-    menus = json.loads(vp.VOICE_MENUS.read_text(encoding="utf-8"))
+    menus = vp._load_menus_from_canon(vp.VOICE_CANON_DIR)
     vp.build(export_file)
     outdir = vp.packets_dir("2026-08-24")
 
     for voice in NOMINATORS:
         header = _header_line((outdir / f"{voice}.tsv").read_text(encoding="utf-8"))
-        assert header.split("\t") == menus[voice], f"{voice} columns != its menu"
+        cols = header.split("\t")
+        # Plugin 1.24.1 serves the menu PLUS the held-book record and the
+        # shared derived columns, so the menu must be carried, not equal.
+        missing = [f for f in menus[voice] if f not in cols]
+        assert not missing, f"{voice} packet is missing menu fields {missing}"
 
 
 def test_the_packet_set_is_exactly_the_eleven_voices_with_a_file(export_file):
@@ -189,9 +197,12 @@ def test_verify_catches_a_tampered_packet(export_file):
     vp.build(export_file)
     p = vp.packets_dir("2026-08-24") / "wyckoff.tsv"
     lines = p.read_text(encoding="utf-8").split("\n")
-    cells = lines[1].split("\t")
+    i = next(k for k, l in enumerate(lines)
+             if l and not l.startswith("#") and k > 0 and "\t" in l
+             and not l.startswith("ticker\t"))
+    cells = lines[i].split("\t")
     cells[1] = "999.9"
-    lines[1] = "\t".join(cells)
+    lines[i] = "\t".join(cells)
     p.write_text("\n".join(lines), encoding="utf-8")
 
     res = vp.verify(export_file)
@@ -230,7 +241,7 @@ def test_verify_catches_master_data_changing_under_the_packets(export_file, tmp_
     res = vp.verify(changed)
     assert res["ok"] is False
     # only voices whose menu actually carries sc_momentum should be flagged
-    menus = json.loads(vp.VOICE_MENUS.read_text(encoding="utf-8"))
+    menus = vp._load_menus_from_canon(vp.VOICE_CANON_DIR)
     flagged = {d.split(":")[0].replace(".tsv", "") for d in res["drift"]}
     for voice in flagged:
         assert "sc_momentum" in menus[voice], f"{voice} flagged but has no sc_momentum"
@@ -303,7 +314,7 @@ def test_sync_republishes_only_what_actually_changed(export_file, tmp_path, monk
 
     res = vp.sync(changed_export)
     assert res["ok"] is True
-    menus = json.loads(vp.VOICE_MENUS.read_text(encoding="utf-8"))
+    menus = vp._load_menus_from_canon(vp.VOICE_CANON_DIR)
     for name in res["changed"]:
         voice = name.replace(".tsv", "").replace(".json", "")
         if voice in GROUP_A:
@@ -398,3 +409,25 @@ def test_publish_still_attempts_real_writes_when_the_permissions_signal_is_only_
     res = vp.publish("2026-08-24")
     assert res["ok"] is True
     assert calls, "a soft/ambiguous permissions signal must not block the real writes"
+
+
+def test_a_held_ticker_missing_from_the_daily_list_still_reaches_the_candidate_set(tmp_path):
+    """The old vendored trim never added the PM's book to the universe, so a
+    held name outside the curated list (MP, 2026-10-23) had no row. It must
+    arrive with held_book set, `entry` = last close, cost kept under held_book."""
+    p = tmp_path / "aqe_daily_export.json"
+    p.write_text(json.dumps({
+        "date": "2026-08-24",
+        "market": "US equities", "regime": {"vix": 15.0, "level": "GREEN"},
+        "intermarket": {}, "srm": [], "macro_weather": {}, "thematic_baskets": {},
+        "daily_list": [_row("AAA")],
+        "held_positions": [_row("HELDX", entry=53.0, last_close=38.56, live_px=38.56,
+                                source="held_book", hl_state="HOLD")],
+    }), encoding="utf-8")
+    vp.build(p)
+    cs = json.loads((vp.packets_dir("2026-08-24").parent / "candidate_set.json")
+                    .read_text(encoding="utf-8"))
+    row = next(r for r in cs["universe"] if r["ticker"] == "HELDX")
+    assert row["held"] is True and row["held_book"]
+    assert row["entry"] == 38.56
+    assert row["held_book"]["entry"] == 53.0

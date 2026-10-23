@@ -87,6 +87,31 @@ def sha256_file(path):
     return h.hexdigest()
 
 
+def _menus_from_canon(canon_dir):
+    """Each voice's `menu:` block from its own canon.lock.yaml. The vendored
+    plugin pma_pipeline (1.24.1) no longer reads canon itself; it takes a menus
+    JSON path, so the dict is resolved here and handed over as a temp file."""
+    import glob
+    menus = {}
+    for path in sorted(glob.glob(os.path.join(canon_dir, "*", "canon.lock.yaml"))):
+        lines = open(path, encoding="utf-8").read().splitlines()
+        for i, line in enumerate(lines):
+            if line == "menu:":
+                fields = []
+                for later in lines[i + 1:]:
+                    if later.startswith("- "):
+                        fields.append(later[2:].strip())
+                    elif later.strip() == "":
+                        continue
+                    else:
+                        break
+                menus[os.path.basename(os.path.dirname(path))] = fields
+                break
+    if not menus:
+        raise SystemExit(f"no voice under {canon_dir!r} carries a `menu:` block")
+    return menus
+
+
 def menus_fingerprint_sha256(pipeline_path, canon_dir):
     """Hash of the RESOLVED per-voice slicing menus (not any single file's bytes) -- changes if
     and only if a served field actually changes for some voice. Loads pma_pipeline.py's own
@@ -96,7 +121,7 @@ def menus_fingerprint_sha256(pipeline_path, canon_dir):
     spec = importlib.util.spec_from_file_location("pma_pipeline", pipeline_path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    menus = mod.load_menus_from_canon(canon_dir)
+    menus = _menus_from_canon(canon_dir)
     return hashlib.sha256(json.dumps(menus, sort_keys=True).encode()).hexdigest()
 
 
@@ -123,10 +148,13 @@ def main():
 
     with tempfile.TemporaryDirectory() as td:
         cs = os.path.join(td, "candidate_set.json")
+        menus_path = os.path.join(td, "menus.json")
+        with open(menus_path, "w", encoding="utf-8") as _mf:
+            json.dump(_menus_from_canon(a.canon_dir), _mf)
         pk = os.path.join(td, "packets")
         run([sys.executable, a.pipeline, "trim", "--export", a.export, "--date", a.date, "--out", cs])
         run([sys.executable, a.pipeline, "packets", "--candidates", cs, "--export", a.export,
-             "--canon-dir", a.canon_dir, "--date", a.date, "--outdir", pk])
+             "--menus", menus_path, "--date", a.date, "--outdir", pk])
 
         # Second lock, independent of pma_pipeline.py's own build-time checks:
         # R3 (qs_market) as a raw byte-scan -- that string never legitimately
