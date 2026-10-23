@@ -1,0 +1,181 @@
+{
+ "voice": "detect-lens",
+ "date": "2026-10-23",
+ "findings": [
+  {
+   "scope": "ROOM",
+   "axis": "LENS_CONSENSUS",
+   "claim": "The room's 2-seat MOMENTUM names are lens-thin while the two lens-richest names sit in the PULLBACK lane on 2 seats each. Consensus and lens agreement point at different names today.",
+   "evidence": "ROKU lens_positive 2; MA lens_positive 2; MTCH lens_positive 1; CRBG lens_positive 5; LTH lens_positive 5",
+   "severity": "flag",
+   "what_is_owed": "Desk to state why ROKU/MA/MTCH outrank CRBG/LTH on a lens read of 2/6 and 1/6 vs 5/6."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "DETECTION_TAGS",
+   "claim": "No name in the room carries a runner or premove detection tag. Nothing is mechanically tagged as 'another leg' or 'coiled to launch'; every momentum case rests on seat judgment, not the M15/M18 detectors.",
+   "evidence": "runner_setup false (all 38 rows); premove_setup false (all 38 rows); max runner_conviction 3 (RELY); max premove_conviction 3 (LTH)",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "LENS_COVERAGE",
+   "claim": "Six nominated names have no lens data on 4 of 6 lenses. Their low lens_positive is absence, not disagreement; it can't be read as confirmation or as a weak read.",
+   "evidence": "WRB lens leadership --, coil --, insti_money --, resistance --; same for WCN, KDP, CHD, SHO, CCEP",
+   "severity": "flag",
+   "what_is_owed": "Declare the lens read as NOT_SERVED for these six; do not count them as lens-checked."
+  },
+  {
+   "scope": "ADP",
+   "axis": "LENS_CONSENSUS",
+   "claim": "Solo conviction-4 nomination on zero strong lenses with a coil warning. The detect read gives it no mechanical support.",
+   "evidence": "convictions 4; lens_positive 0; lens_warnings 1; lens coil warn; runner_conviction 1",
+   "severity": "flag",
+   "what_is_owed": "Seat to name the non-lens reason carrying conviction 4."
+  },
+  {
+   "scope": "MA",
+   "axis": "LENS_WARNING",
+   "claim": "Two-seat name with coil warn and Elder exhaustion CAUTION at the 52-week high; only 2 of 6 lenses strong.",
+   "evidence": "lens_positive 2; lens_warnings 1; lens coil warn; exhaustion_flag CAUTION; pct_from_52w_high 0.0",
+   "severity": "note"
+  },
+  {
+   "scope": "MTCH",
+   "axis": "LENS_CONSENSUS",
+   "claim": "Two-seat MOMENTUM name with a single strong lens (leadership) and a coil warning.",
+   "evidence": "lens_positive 1; lens_warnings 1; lens coil warn; runner_conviction 2",
+   "severity": "note"
+  },
+  {
+   "scope": "ROKU",
+   "axis": "LENS_CONSENSUS",
+   "claim": "Lead consensus name: BULLISH_BOS on high participation, but only leadership and structure read strong and the MA stack reads ROLLING.",
+   "evidence": "lens_positive 2; structure_shift BULLISH_BOS; day_vol 2.8; stack_state ROLLING; runner_conviction 1",
+   "severity": "note"
+  },
+  {
+   "scope": "WCN",
+   "axis": "TREND_FILTER",
+   "claim": "Nominated in the MOMENTUM lane with an inverted MA stack (50 < 100 < 200) and zero strong lenses. Fails the dual-MA trend filter.",
+   "evidence": "ma_50 161.29; ma_100 162.88; ma_200 162.94; stack_state INVERTED; lens_positive 0; day_vol 2.87",
+   "severity": "flag",
+   "what_is_owed": "Seat to state what makes this momentum when the trend filter fails."
+  },
+  {
+   "scope": "AEP",
+   "axis": "TREND_FILTER",
+   "claim": "MOMENTUM lane, but the 50-day sits under both the 100- and 200-day. The MA spine reads repair, not trend.",
+   "evidence": "ma_50 122.92; ma_100 127.04; ma_200 127.72; stack_state REPAIRING; lens_warnings 2",
+   "severity": "flag"
+  },
+  {
+   "scope": "WMT",
+   "axis": "STRUCTURE_SHIFT",
+   "claim": "Character change down: BEARISH_CHOCH, a fully inverted MA stack and the room's highest warning count (3).",
+   "evidence": "structure_shift BEARISH_CHOCH; ma_50 109.35; ma_100 111.91; ma_200 118.39; lens_warnings 3; stack_state REPAIRING",
+   "severity": "flag",
+   "what_is_owed": "Thesis owner to name the structural level that proves the pullback case wrong."
+  },
+  {
+   "scope": "ETR",
+   "axis": "STRUCTURE_SHIFT",
+   "claim": "BEARISH_CHOCH with the 50-day under the 100- and 200-day; structure lens reads warn.",
+   "evidence": "structure_shift BEARISH_CHOCH; ma_50 104.28; ma_100 107.99; ma_200 107.05; lens structure warn; lens_warnings 2",
+   "severity": "flag"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "TREND_FILTER",
+   "claim": "Several nominations have the 50-day just under the 100-day (stack ROLLING/flat), so the dual-MA gate passes on the 200 only: EW, CP, EBC, M, AUB, SHO, WRB.",
+   "evidence": "EW ma_50 88.13 ma_100 88.25; CP ma_50 89.25 ma_100 89.45; EBC ma_50 21.78 ma_100 21.89; M ma_50 22.7 ma_100 23.36; AUB ma_50 39.49 ma_100 40.35; SHO ma_50 11.29 ma_100 11.4; WRB ma_50 70.11 ma_100 70.36",
+   "severity": "note"
+  },
+  {
+   "scope": "CRBG",
+   "axis": "LANE",
+   "claim": "Filed in the PULLBACK lane but sits at the 52-week high with BULLISH_BOS. Mechanically this reads as a momentum breakout; insti_money is its one warning.",
+   "evidence": "pct_from_52w_high 0.0; structure_shift BULLISH_BOS; lens_positive 5; lens insti_money warn; day_vol 0.72",
+   "severity": "note",
+   "what_is_owed": "Desk to confirm the lane label; the low day_vol 0.72 on a breakout is the open question."
+  },
+  {
+   "scope": "AMGN",
+   "axis": "LANE",
+   "claim": "PULLBACK lane at the 52-week high with 4 strong lenses; insti_money warn and exhaustion CAUTION.",
+   "evidence": "pct_from_52w_high 0.0; lens_positive 4; lens insti_money warn; exhaustion_flag CAUTION",
+   "severity": "note"
+  },
+  {
+   "scope": "LTH",
+   "axis": "LENS_CONSENSUS",
+   "claim": "Strongest combined detect read in the room: 5 strong lenses, the highest premove conviction, BULLISH_BOS. Resistance lens is its one warning.",
+   "evidence": "lens_positive 5; premove_conviction 3; structure_shift BULLISH_BOS; lens resistance warn; pct_from_52w_high -8.18",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "UNDER_SEATED",
+   "claim": "Lens-rich names on a single seat: PAYO and EBC (4 strong each), plus ESTC (3 strong with premove conviction 2). The lens tier is under-represented relative to its reading.",
+   "evidence": "PAYO lens_positive 4; EBC lens_positive 4; ESTC lens_positive 3; ESTC premove_conviction 2",
+   "severity": "note"
+  },
+  {
+   "scope": "PAYO",
+   "axis": "DATA_INTEGRITY",
+   "claim": "ATR is implausibly small for the price (ATR 0.03 vs a ~7.14 fallback-stop level, about 0.4%), with thin participation and exhaustion RISK. Volatility readings may be pinned or defective.",
+   "evidence": "atr_14d 0.03; bracket.atr_fallback_stop 7.14; day_vol 0.47; exhaustion_flag RISK",
+   "severity": "flag",
+   "what_is_owed": "Verify the ATR series before reading any ATR-scaled figure for this name."
+  },
+  {
+   "scope": "ACA",
+   "axis": "DATA_INTEGRITY",
+   "claim": "ATR is very small for the price (about 0.4%), which is unusual for a momentum nomination. Check whether the price series is pinned.",
+   "evidence": "atr_14d 0.54; bracket.atr_fallback_stop 148.61; lens_positive 2; lens coil warn",
+   "severity": "note",
+   "what_is_owed": "Verify the ATR series."
+  },
+  {
+   "scope": "CRM",
+   "axis": "LENS_CONSENSUS",
+   "claim": "PULLBACK nomination with zero strong lenses: every lens reads ok, structure RANGE.",
+   "evidence": "lens_positive 0; lens_warnings 0; structure_shift RANGE",
+   "severity": "note"
+  },
+  {
+   "scope": "CDW",
+   "axis": "LENS_WARNING",
+   "claim": "Zero strong lenses and two warnings (coil and insti_money), with exhaustion CAUTION.",
+   "evidence": "lens_positive 0; lens_warnings 2; exhaustion_flag CAUTION",
+   "severity": "note"
+  },
+  {
+   "scope": "V",
+   "axis": "HELD_REVIEW",
+   "claim": "Held. The detect read is unchanged-constructive (ALIGNED stack, above structure, 2 strong lenses) with coil warn and exhaustion CAUTION. Reading: KEEP. Broker stop 401.15 stands.",
+   "evidence": "lens_positive 2; lens_warnings 1; stack_state ALIGNED; structure_shift ABOVE_STRUCTURE; exhaustion_flag CAUTION; ma_50 376.22",
+   "severity": "note"
+  },
+  {
+   "scope": "MP",
+   "axis": "HELD_REVIEW",
+   "claim": "Held. Lens block is entirely null, so no detect read is possible. The served fields read weak: BEARISH_CHOCH and a fully inverted MA stack. Reading: EXIT-CASE on mechanics; broker stop 36.66 stands.",
+   "evidence": "lens_positive null; structure_shift BEARISH_CHOCH; ma_50 49.99; ma_100 51.18; ma_200 55.93",
+   "severity": "flag",
+   "what_is_owed": "Source MP's lens block (data gap) before the committee relies on any lens read for it."
+  }
+ ],
+ "declared": {
+  "not_served": [
+   "canon_status: HAND-TRANSCRIBED, UNGROUNDED - no lock, citations not re-verifiable",
+   "tape_read: NOT_APPLICABLE (premarket)",
+   "spread_read: NOT_APPLICABLE (premarket)",
+   "ranking_formula: Clenow regression slope x R2 NOT_SERVED",
+   "gap_filter: NOT_SERVED",
+   "sc_momentum, structure, energy, flow: menu fields absent from challenge packet rows",
+   "MP lens, lens_positive, lens_warnings, runner/premove_conviction: null in packet",
+   "lens block -- on 4 of 6 lenses for WRB, WCN, KDP, CHD, SHO, CCEP"
+  ]
+ }
+}

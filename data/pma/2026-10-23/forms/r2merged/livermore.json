@@ -1,0 +1,654 @@
+{
+ "voice": "livermore",
+ "date": "2026-10-23",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "C5 met: fresh high (from_52w_hi 0.0) out of a base, structure_shift BULLISH_BOS, sma_distance_pct 3.13 so not chased, day_vol 2.8, mp_state BUILDING/ACCELERATING. MTCH in the same group sits near its high, partial Key Price confirmation.",
+   "falsifier": "Break fails: a close back under ma_50 155.2, or a one-day fade beyond the danger line (translated from C7 via atr_14d, my multiplier not Livermore's points).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Payments Key Price pair with held V, both at from_52w_hi 0.0. structure 83.2 ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING. sma_distance_pct 9.08 and 4.6 ATR extension are weights under R14, not vetoes. Buy only on a further new high.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "Rogers/Steenbarger are right that MA and V are one payments bet. Under C14 the pair together is what confirms the group; MA adds no new driver, only a second unit of it. If the PM adds to payments, adding V on strength is the same call.",
+   "conviction_change": "4 to 3: MA is the same payments exposure as held V, so it is a second unit of one Key Price idea, not an independent leader."
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong trend (structure 81.1, mp_state STRONG/ACCELERATING) but not yet a new high: from_52w_hi -1.31. C5 says wait for the new high, never buy below it. I act only on a fresh closing high.",
+   "falsifier": "No new closing high and a close under ma_20 42.1: the trend has stalled short of its pivot (C20).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high (from_52w_hi 0.0) on structure_shift BULLISH_BOS, structure 73.7, mp_state BUILDING/ACCELERATING meets C5. But rank 269 is not a market leader (C12) and day_vol 0.72 is light; the break is unproven.",
+   "falsifier": "A close back under pivot_high or a fade beyond the danger line (translated from C7 via atr_14d, my multiplier not Livermore's points) ends it.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5: still inside the pullback, from_52w_hi -8.18, structure 51.6. The U&R reclaim of the 9-day average is a pullback buy, which my method forbids. No new high, no entry.",
+   "opposing_case": "Five strong lenses, structure_shift BULLISH_BOS, a volume-confirmed squeeze break and an aligned higher-timeframe trend: the pullback may be ending.",
+   "falsifier": "A new closing high would make it C5-eligible and flip me."
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5 fails: from_52w_hi -5.35, structure 55.8, day_vol 0.84 light; ma_50 88.13 under ma_100 88.25, so no established uptrend to pull back within. Nothing here is a leader at a new high.",
+   "opposing_case": "BULLISH_BOS out of a strong coil with elder 10 ACCELERATION; a clean break of the prior high would be a valid entry.",
+   "falsifier": "A new closing high on above-normal volume."
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Rank 3 leader at a fresh high, from_52w_hi 0.0, structure 86.3, mp 97 STRONG/ACCELERATING, day_vol 1.82. Industrials group confirms: WCN, ACA and FAST also at highs (C14). Extension 12.06 / 5.5 ATR is a weight under R14.",
+   "falsifier": "A one-day fade off the high beyond the danger line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a close under ma_20 274.1.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "self_counter": "It is far from its average (sma_distance_pct 12.06) in a market VALEN reads DOWNTREND; a late leader in a weak tape is where the danger signal fires first.",
+   "challenge_reply": "Thesis in one line: the market's strongest names make new highs and the leader in a confirmed group is bought on strength (C5, C12). The non-lens reason is price itself (C2). I do not buy a pullback (C5); the trigger is a further new high, with a chase cap."
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high (from_52w_hi 0.0) out of a tight base: structure_shift BULLISH_BOS, sma_distance_pct 2.1, mp_state STRONG though DECELERATING. atr_14d 0.54 looks implausibly small, so my danger-signal translation cannot be trusted here.",
+   "falsifier": "A close back under pivot_high, or the ATR series proves defective.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Not at a new high (from_52w_hi -3.27) on light day_vol 0.73 in a fading financials sector. mp 94 STRONG, but C5 waits for the new high itself; nothing to act on yet.",
+   "falsifier": "A new closing high on above-normal volume would make it eligible."
+  },
+  {
+   "ticker": "CRM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5: pullback lane, from_52w_hi -5.99, structure_shift RANGE. Livermore never buys the pullback; the entry comes only after a new high confirms the reaction is over.",
+   "opposing_case": "Aligned averages (ma_20 234.8 over ma_50 234.04 over ma_200 198.75), volume-confirmed squeeze break, ret_63d 52.93.",
+   "falsifier": "A new closing high above the prior swing would flip me."
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Healthcare leader at a new high, from_52w_hi 0.0, structure 90.5, mp_state STRONG. ELV also at from_52w_hi 0.0: two related names confirm the group (C14). mp_accel_state DECELERATING tempers it.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "First pause after highs (from_52w_hi -1.45, structure_shift RANGE). C5 forbids buying the pause; I want the new high. Not an oppose: trend structure 78.9 is intact.",
+   "falsifier": "A fresh closing high would make it eligible; a close under ma_50 265.42 would end the trend."
+  },
+  {
+   "ticker": "WCN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Rank 2 at a fresh high, from_52w_hi 0.0, structure 82.1, mp 97 STRONG/ACCELERATING on day_vol 2.87. But averages are stacked down (ma_20 159.16 under ma_200 162.94): a first leap, not an established uptrend.",
+   "falsifier": "A fade beyond the danger line (translated from C7 via atr_14d, my multiplier not Livermore's points) or a close under ma_200 162.94.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:ma_200"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "Conceded in part. C2/C21: price action is my only justification and I will not hunt or repeat the reason for the jump (C11). But C5 wants an established uptrend and the inverted stack shows none, so the danger signal is the context I watch.",
+   "conviction_change": "3 to 2: C5 needs an established uptrend before the new high; WCN's averages are inverted, so this is a first leap from a base."
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Fresh high in a staples group making highs together: from_52w_hi 0.0, structure 86.3, mp 90 STRONG/ACCELERATING, day_vol 2.42. CHD and CCEP also at from_52w_hi 0.0 confirm the group (C14).",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "C11/C21: I act on the price move, not on the reason given for it, and I will not name a cause the record does not show. The trigger is a further new high, not a market entry at the prior close."
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Staples Key Price partner to KDP and CCEP: from_52w_hi 0.0, structure 84.2, mp 94 STRONG/ACCELERATING, day_vol 1.55. 4.9 ATR extension is a weight (R14).",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SHO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Essentially at the high (from_52w_hi -0.08), structure 78.9, mp 94 STRONG/ACCELERATING. Single real-estate name with no group partner (C14), so low conviction; buy only on a new closing high.",
+   "falsifier": "A close under ma_20 11.6, or no new high before the earnings date.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Third staples name at a new high (from_52w_hi 0.0) beside KDP and CHD: group confirmed (C14). structure 76.8, mp 90 STRONG/ACCELERATING, sma_distance_pct 8.28.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Near the high (from_52w_hi -0.74), structure 81.1, mp 93 STRONG/ACCELERATING, healthcare group led by AMGN and ELV at highs. day_vol 0.81 shows no thrust; buy only on a new closing high.",
+   "falsifier": "A close under ma_20 238.86 without a new high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CDW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Tech name at a fresh high: from_52w_hi 0.0, structure 87.4, mp 93 STRONG/ACCELERATING, day_vol 1.35. sma_distance_pct 14.24 is a weight under R14: a leader at its high reads far from its average.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   },
+   "challenge_reply": "Extension is the price of a leader at its high (C5). I do not buy a pullback; the entry is a further new high with a chase cap, and the danger signal is the exit."
+  },
+  {
+   "ticker": "WMT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5 fails outright: structure_shift BEARISH_CHOCH, from_52w_hi -9.75, ma_20 111.6 under ma_200 118.39. No established uptrend, no new high.",
+   "opposing_case": "mp 94 STRONG and sma_distance_pct 10.77 show a sharp recovery thrust; staples are the group making highs.",
+   "falsifier": "A new closing high with the averages restacked would flip me."
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Consumer leader at a new high: from_52w_hi 0.0, structure 84.2, mp 80 STRONG/ACCELERATING, ext_atr20 1.92 not stretched. LTH in the group is still below its high, so the pair is unconfirmed.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ELV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Healthcare Key Price partner to AMGN, both at from_52w_hi 0.0 (C14). structure 77.9, mp 90 STRONG/ACCELERATING, sma_distance_pct 9.35.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AEP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5 fails: not at a high (from_52w_hi -5.8) and ma_20 122.99 sits under ma_200 127.72, so there is no established uptrend; this is a turn attempt.",
+   "opposing_case": "mp 90 STRONG/ACCELERATING and a recovery through the 20- and 50-day averages.",
+   "falsifier": "A new closing high with ma_20 above ma_200."
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5: inside a range (structure_shift RANGE, from_52w_hi -3.5), mp_state FADING. A resting stock is not a new high; I wait for price to prove the reaction is over.",
+   "opposing_case": "Far above ma_200 11.76, rs_rank_pct 98.78: a strong leader resting near its high.",
+   "falsifier": "A new closing high out of the range."
+  },
+  {
+   "ticker": "PAYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "atr_14d 0.03 is implausibly small; my danger-signal translation reads off atr_14d, so I cannot set it. Not at a new high either (from_52w_hi -0.14, RANGE).",
+   "falsifier": "A verified ATR series and a new closing high on volume."
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Insurance at a new high: from_52w_hi 0.0, structure 76.8, mp 72 BUILDING/ACCELERATING, day_vol 1.48. WRB near its high partly confirms the group; VALEN lists Insurance leading from its own highs.",
+   "falsifier": "A one-day fade off the high beyond the danger-signal line (translated from C7 via atr_14d, my multiplier not Livermore's points), or a daily close under ma_20.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C17: the flag failed and there is no follow-through; from_52w_hi -1.7, structure_shift RANGE, mp_accel_state FLAT. Lack of expected follow-through is itself a danger signal.",
+   "opposing_case": "ret_63d 67.37 and aligned averages; a new high would restart the trend.",
+   "falsifier": "A new closing high above the failed flag."
+  },
+  {
+   "ticker": "OKE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5 fails: rank 302, structure_shift RANGE, from_52w_hi -3.7, ma_20 90.2 under ma_50 92.73. Not a leader and no new high.",
+   "opposing_case": "Strong leadership and insti_money lenses and a U&R reclaim of the 9-day average.",
+   "falsifier": "A new closing high with ma_20 back above ma_50."
+  },
+  {
+   "ticker": "RELY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5: from_52w_hi -5.94, structure_shift RANGE, ma_20 23.26 under ma_50 23.91. A correction, not a new high.",
+   "opposing_case": "mp 85 STRONG/ACCELERATING with strong fundamentals; it may resume.",
+   "falsifier": "A new closing high."
+  },
+  {
+   "ticker": "AUB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5 fails: structure 43.2, from_52w_hi -7.58, ma_20 38.22 under ma_50 39.49 under ma_100 40.35. No uptrend, no leader.",
+   "opposing_case": "Volume-confirmed squeeze break and sector strong.",
+   "falsifier": "A new closing high with the averages restacked."
+  },
+  {
+   "ticker": "CP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5 fails: structure 46.3, from_52w_hi -6.28, ma_20 86.17 under ma_50 89.25. A range break below the high is not a new high.",
+   "opposing_case": "BULLISH_BOS on day_vol 1.87 with a volume-confirmed break.",
+   "falsifier": "A new closing high."
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5 fails: structure_shift RANGE, from_52w_hi -7.74, ma_20 165.71 under ma_50 172.27. Inside a reaction.",
+   "opposing_case": "rs_spy_20d 16.52 and strong coil; a break of the range high would be valid.",
+   "falsifier": "A new closing high."
+  },
+  {
+   "ticker": "ETR",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "C5 and C16: structure_shift BEARISH_CHOCH, from_52w_hi -8.24, ma_50 104.28 under ma_200 107.05. A broken up-structure is a warning, not a bargain.",
+   "opposing_case": "mp 60 BUILDING/ACCELERATING; utilities can turn.",
+   "falsifier": "A new closing high with the averages restacked."
+  },
+  {
+   "ticker": "EBC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5 fails: structure 46.3, from_52w_hi -6.51, ma_20 21.2 under ma_50 21.78. Not a leader at a high.",
+   "opposing_case": "Volume-confirmed squeeze break, four strong lenses.",
+   "falsifier": "A new closing high."
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "At the high (from_52w_hi 0.0), structure 71.6, in an industrials group making highs with ADP and WCN (C14). But mp 31 shows no thrust, so low conviction; act only on a further new high. The U&R reclaim is not my entry.",
+   "falsifier": "A close under ma_20 50.91.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "M",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5: from_52w_hi -7.78, mp_state BUILDING/FLAT, day_vol 0.8. A stock off its high is not bought on a low price (C16).",
+   "opposing_case": "Squeeze break, structure 76.8 and cheap fundamentals.",
+   "falsifier": "A new closing high on volume."
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "HELD: KEEP. Add question: at a new high (from_52w_hi 0.0), structure 86.3, mp 94 STRONG/ACCELERATING; entry 414.34 sits above the 413.26 buy, so the position is in profit. C6: add only at a higher price than the last buy, on a further new high.",
+   "falsifier": "A fade beyond the danger line (translated from C7 via atr_14d, my multiplier not Livermore's points) or a close under the broker stop 401.15.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1.5",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "HELD: EXIT-CASE. Add is forbidden by C4 (never average down). structure 11.0 BEARISH_CHOCH, sma_distance_pct -22.87, unrealised -4332.0. C3/C22: the loss is the market saying I am wrong; take it, review, wait.",
+   "opposing_case": "Deep drawdown in the tax-loss window; a turnaround story if verified intact.",
+   "falsifier": "A reclaim of ma_50 49.99 with a new structure, which the record does not show.",
+   "challenge_reply": "Rogers/Steenbarger: no catalyst kept it in my book; C22 says admit the error. The broker stop 36.66 is house law; my read is exit."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 13338,
+   "votes": 19,
+   "sha256": "4dcd21d328cb"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 8463,
+   "votes": 19,
+   "sha256": "0e1169bef826"
+  }
+ ]
+}

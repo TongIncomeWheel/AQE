@@ -1,0 +1,182 @@
+{
+ "voice": "rogers",
+ "seat_kind": "challenge",
+ "date": "2026-10-23",
+ "deliberation_file": "/home/claude/pma/d23/seat_packets/challenge_rogers.json",
+ "findings": [
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "No Darling of the Mob today: the most-carried names hold 2 seats each and 30 of 36 nominated names are single-seat. The room is fragmented, not crowded. C4: seat count is evidence about the crowd, never about the asset, so a 2-seat name is not 'confirmed'.",
+   "evidence": "nomination_count 2 max (ROKU, MA, MTCH, CRBG, LTH, EW); nomination_count 1 on 30 names; nomination_count 0 on held V, MP",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CERTAINTY",
+   "claim": "Certainty challenge run and no unanimity found: no name carries conviction 5 from any seat, none is above 2 seats. An unfound sure-bet is itself the finding. The flaw I hunt instead is the opposite one: thin agreement dressed up by door count (EW has 4 doors on convictions 2 and 2).",
+   "evidence": "convictions max 4; EW nomination_count 2 convictions [2, 2] doors SEATS, ELDER+LENS, AQE_LEADER, PM_LENS",
+   "severity": "note",
+   "what_is_owed": "Doors are not conviction; deliberation should weigh EW on its 2/2 seats, not its 4 doors."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "The set leans defensive: 24 of 37 rows sit in sectors reading 'Momentum Fading - Hold, Don't Add', with staples, health care and utilities heavily represented. Weak sector proxy only (C10 not served), but a momentum book filling with fading-sector defensives is a crowd hiding, not leading.",
+   "evidence": "sector_trend_state Momentum Fading - Hold, Don't Add on 24 rows; gics_sector XLP 4, XLV 5, XLU 2, XLF 7",
+   "severity": "note",
+   "what_is_owed": "PM: confirm the defensive tilt is intended rather than the residue of a thin momentum tape."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "TIMING",
+   "claim": "Ten names sit 10% or more above their SMA. In a momentum book the visible error is entering late; these should carry a pullback-or-confirmation trigger, not a market entry at the prior close.",
+   "evidence": "sma_distance_pct WCN 14.63, CDW 14.24, ADP 12.06, SHO 11.63, WMT 10.77, CHD 10.45, MTCH 10.22, SN 10.17, KDP 10.12, V 10.13",
+   "severity": "note",
+   "what_is_owed": "A defined trigger per extended name (e.g. a pullback toward ma_20 or a higher-low confirmation) in the plan."
+  },
+  {
+   "scope": "WCN",
+   "axis": "TIMING",
+   "claim": "Rank 2 arrives on a volume spike, 14.63% over its SMA, with the 20-day still below the 50 and the 50 below the 200: price leapt over every average in one burst. That is a late, event-shaped entry. Something changed; nobody has named what.",
+   "evidence": "rank 2; sma_distance_pct 14.63; day_vol 2.87; ma_20 159.16; ma_50 161.29; ma_200 162.94; entry 184.88; nomination_count 1 (livermore conviction 3)",
+   "severity": "flag",
+   "what_is_owed": "Name the catalyst behind the jump, and wait for a pullback that holds above ma_200 162.94 or a confirmation day before any entry."
+  },
+  {
+   "scope": "ROKU",
+   "axis": "TIMING",
+   "claim": "Two seats at conviction 4 on a fresh break of structure taken on heavy volume. Breaks on a volume spike are where late money enters; the question is whether the break holds, not whether it happened.",
+   "evidence": "nomination_count 2 (oneil 4, minervini 4); structure_shift BULLISH_BOS; day_vol 2.8; sma_distance_pct 3.13; ma_50 155.2; entry 160.06",
+   "severity": "note",
+   "what_is_owed": "Confirmation trigger: a retest that holds above ma_50 155.2 rather than chasing entry 160.06."
+  },
+  {
+   "scope": "MA",
+   "axis": "CROWDING",
+   "claim": "MA is the room's most-agreed financials idea and the book already holds V, its closest analogue, in the same fading sector. Two payment networks are one bet twice. C4: the room agreeing with the book is not independent evidence.",
+   "evidence": "MA nomination_count 2 (livermore 4, minervini 3); MA sma_distance_pct 9.08; V held true; V sma_distance_pct 10.13; both gics_sector XLF; sector_trend_state Momentum Fading - Hold, Don't Add",
+   "severity": "flag",
+   "what_is_owed": "Deliberation should state what MA adds that held V does not."
+  },
+  {
+   "scope": "MTCH",
+   "axis": "TIMING",
+   "claim": "Two seats on a name already 10.22% over its SMA. The agreement arrived after the move, not before it.",
+   "evidence": "nomination_count 2 (oneil 3, minervini 4); sma_distance_pct 10.22; ma_20 42.1; entry 45.92",
+   "severity": "note",
+   "what_is_owed": "Pullback toward ma_20 42.1 or a confirmation trigger in place of a market entry."
+  },
+  {
+   "scope": "ADP",
+   "axis": "CROWDING",
+   "claim": "Single seat at conviction 4 and rank 3: the solo-high-conviction case my canon examines for unpriced upside. The upside the crowd missed is hard to argue on a name 12.06% extended on above-normal volume; the solo seat owes a reason beyond strength.",
+   "evidence": "nomination_count 1 (livermore 4); rank 3; sma_distance_pct 12.06; day_vol 1.82; rs_spy_20d 17.46",
+   "severity": "note",
+   "what_is_owed": "Livermore's thesis stated in one line; entry on pullback or confirmation."
+  },
+  {
+   "scope": "KDP",
+   "axis": "TIMING",
+   "claim": "Staples name 10.12% extended on more than double normal volume. A defensive stock moving like this is an event, and the event is unnamed.",
+   "evidence": "sma_distance_pct 10.12; day_vol 2.42; gics_sector XLP; sector_trend_state Momentum Fading - Hold, Don't Add",
+   "severity": "note",
+   "what_is_owed": "Name the cause of the volume; wait for a pullback."
+  },
+  {
+   "scope": "CDW",
+   "axis": "TIMING",
+   "claim": "14.24% over its SMA, 24% over its 200-day, on a single seat. Late-stage extension.",
+   "evidence": "sma_distance_pct 14.24; ma_200 132.26; entry 164.62; nomination_count 1 (livermore 3)",
+   "severity": "note",
+   "what_is_owed": "Pullback-or-confirmation trigger."
+  },
+  {
+   "scope": "WMT",
+   "axis": "CATALYST",
+   "claim": "Filed in the PULLBACK lane, yet it shows a broken up-structure, a 20-day below the 200-day and a weak relative-strength rank while sitting 10.77% above its SMA. The read is contradictory; if the case is 'sold off, so cheap', the catalyst is unnamed.",
+   "evidence": "lane PULLBACK; structure_shift BEARISH_CHOCH; ma_20 111.6; ma_200 118.39; rs_rank_pct 27.87; sma_distance_pct 10.77; days_to_earnings 19",
+   "severity": "flag",
+   "what_is_owed": "C23: the exact catalyst of change, or the name is a dead asset. Earnings 2026-11-19 is a date, not a catalyst."
+  },
+  {
+   "scope": "ETR",
+   "axis": "CATALYST",
+   "claim": "Pullback-lane utility with a broken up-structure and the 20 below the 50 below the 200. Argued on weakness; no catalyst of change named.",
+   "evidence": "lane PULLBACK; structure_shift BEARISH_CHOCH; ma_20 102.75; ma_50 104.28; ma_200 107.05; rs_rank_pct 33.56; nomination_count 1 (thorp 2)",
+   "severity": "flag",
+   "what_is_owed": "Name the catalyst or treat as neglect without one."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CATALYST",
+   "claim": "Low-ranked pullback names carried by one seat at low participation are being argued on a sold-off or quiet condition. Neglect without a named catalyst is a dead asset, not a bargain. I will not invent one from the chart.",
+   "evidence": "CRBG rank 269 day_vol 0.72; PAYO rank 281 day_vol 0.47 rs_spy_20d 0.98; OKE rank 302; AUB structure 43.2; ESTC rs_leadership LAGGARD; CP structure 46.3",
+   "severity": "note",
+   "what_is_owed": "Each nominating seat names the catalyst, or the PM declares none."
+  },
+  {
+   "scope": "AEP",
+   "axis": "CERTAINTY",
+   "claim": "Utility nominated as strength while its 20-day sits below its 200-day and its relative-strength rank is low. Strength inside a long-term downtrend is the kind of certainty that hides a flaw.",
+   "evidence": "ma_20 122.99; ma_200 127.72; rs_rank_pct 37.9; sma_distance_pct 6.28; nomination_count 1 (elder-lens 3)",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CATALYST",
+   "claim": "Three names carry an earnings date inside 10 sessions. That is a known event inside the holding window; the committee should own it explicitly rather than let it arrive as a surprise.",
+   "evidence": "days_to_earnings CAH 9 (2026-11-05), ABNB 9 (2026-11-05), SHO 10 (2026-11-06)",
+   "severity": "note",
+   "what_is_owed": "State per name whether the thesis is meant to run through the print."
+  },
+  {
+   "scope": "PRCH",
+   "axis": "TIMING",
+   "claim": "Single-seat pullback idea trading over 50% above its 200-day with a near-top relative-strength rank. That is not a pullback in any long-term sense; it is a late-stage leader resting.",
+   "evidence": "entry 17.94; ma_200 11.76; rs_rank_pct 98.78; structure_shift RANGE; nomination_count 1 (wyckoff 3)",
+   "severity": "note"
+  },
+  {
+   "scope": "MP",
+   "axis": "CATALYST",
+   "claim": "Held long that no seat would nominate today: deep below all averages, broken up-structure, weakest structure in the set. Under R8 this is a challenge to holding, not a short. If the case is now neglect, the catalyst must be named. Stop is house law; I say nothing on it.",
+   "evidence": "held true; nomination_count 0; sma_distance_pct -22.87; structure 11.0; structure_shift BEARISH_CHOCH; rs_spy_20d -21.37; ma_20 43.93; ma_50 49.99; ma_200 55.93",
+   "severity": "flag",
+   "what_is_owed": "C23 and C20: name the catalyst that keeps MP in the book, or admit the mistake. Also: entry 53.0 sits far above ma_20 43.93 while sma_distance_pct reads -22.87; entry looks like cost basis, not prior close. Verify the field."
+  },
+  {
+   "scope": "V",
+   "axis": "CROWDING",
+   "claim": "Held name no seat nominated today, 10.13% extended in a fading sector, while the room's top financials pick (MA) is its twin. The book's existing exposure is being re-voted through MA.",
+   "evidence": "held true; nomination_count 0; sma_distance_pct 10.13; sector_trend_state Momentum Fading - Hold, Don't Add; rs_leadership LEADER",
+   "severity": "note"
+  }
+ ],
+ "declared": {
+  "seat_role": "CHALLENGE_ONLY (never nominates, no vote in the tally)",
+  "template_a": "NOT_COMPUTABLE",
+  "template_b": "NOT_COMPUTABLE",
+  "commodity_cycle": "NOT_SERVED",
+  "valuation_sanity": "NOT_TESTABLE",
+  "stop_position": "DEFERRED_TO_HOUSE_LAW",
+  "sector_read": "gics_sector + sector_trend_state (weak proxy, never a supply-demand read)",
+  "not_served": [
+   "sovereign/currency data (C8, C24 Template A)",
+   "book value, EPS, dividend yield (C21)",
+   "filing footnotes (C7)",
+   "news/press-release text (C9, C18)",
+   "commodity and input-cost series (C10, C15)",
+   "15-23 year cycle history (C14)",
+   "named catalyst field on deliberation record (C23)",
+   "ridicule signal: no seat-level bearish opinion served (C5)"
+  ]
+ },
+ "asks": [
+  "1. Catalyst/event field on the deliberation record (C23) - most names today fail the catalyst check by absence",
+  "2. News/filing text feed with phrase counter (C9, C18)",
+  "3. Fundamentals layer (C21; also unlocks Lynch)",
+  "4. Commodity and input-cost series (C10, C15)",
+  "5. Clarify held-row entry field (MP entry 53.0 inconsistent with prior close)"
+ ]
+}

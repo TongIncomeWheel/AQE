@@ -1,0 +1,716 @@
+{
+ "voice": "minervini",
+ "date": "2026-10-23",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 leader clearing its pivot: Trend Template passes on the MA stack (ma_50 155.2 > ma_100 147.24 > ma_200 126.32), from_52w_hi 0.0, BULLISH_BOS on day_vol 2.8, flow 100.0, rs LEADER, rs_rank_pct 87.65. sma_dist 3.13 is close to the pivot, not a chase.",
+   "falsifier": "A close back under the broken pivot within days on rising volume: a failed breakout, not a base clearing.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "self_counter": "One-day volume burst on a VALEN DOWNTREND tape (C14: few leaders launch in a falling market); stack ma_20 153.82 under ma_50 155.2, so the 50-day stack is not fully clean.",
+   "challenge_reply": "Steenbarger/Rogers: conviction rests on the stack ma_50 155.2 > ma_100 147.24 > ma_200 126.32 and the new high, not on day_vol 2.8 alone. My buy is an hourly close over pivot_high on volume; chase capped at pivot_high+5pct."
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend Template passes: ma_50 580.52 > ma_100 553.01 > ma_200 534.04, from_52w_hi 0.0, rs LEADER, rs_rank_pct 80.07, mp 90.0. But price is past the pivot (VALEN 4.6 ATR extended, sma_dist 9.08): wait for a tight pause, not a chase (C5). Same payments driver as held V.",
+   "falsifier": "A fade back under ma_20 on rising volume: the high was distribution, not a pause.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "challenge_reply": "Rogers/Steenbarger: MA adds nothing V does not already give the book; I lower it to 2 and would only act on a fresh tight pause, never as a second payments bet at full weight.",
+   "conviction_change": "3 to 2: room overlap with held V and extension past the pivot."
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 leader just over its pivot: ma_50 41.66 > ma_100 39.5 > ma_200 36.21, from_52w_hi -1.31, flow 98.7, rs LEADER, rs_rank_pct 82.15, mp 82.0 ACCELERATING. Not yet a new high, so the buy is the high itself on volume.",
+   "falsifier": "Rejection at the high and a close back under ma_20: the move was a one-leg pop, not a base breakout.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "self_counter": "sma_dist 10.22 says the rally from ma_20 42.1 is already well underway; coil lens warn means I cannot see a tight final contraction.",
+   "challenge_reply": "Rogers: agreed the move is underway; I do not buy at the prior close. Buy only on an hourly close over pivot_high on volume, chase capped at pivot_high+5pct; otherwise wait."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend Template passes on the stack (ma_50 33.92 > ma_100 32.08 > ma_200 29.68), from_52w_hi 0.0, BULLISH_BOS, rs_rank_pct 84.47. But the breakout volume is missing (day_vol 0.72, flow 31.6) and rs IN-LINE with downday -0.15: C6 not met yet.",
+   "falsifier": "Breakout fails back under pivot_high on any volume: C6 says the light-volume break was not genuine.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes narrowly: entry 41.99 just over ma_50 41.8, ma_100 40.91, ma_200 34.74; rs LEADER, rs_rank_pct 91.56, from_52w_hi -8.18. A base forming after ret_6m 54.55; pivot not yet cleared, so the buy is the pivot breakout only.",
+   "falsifier": "A close under ma_50: the base breaks down and the template fails.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma_50 88.13 under ma_100 88.25 (criterion 4 on my proxy) and rs_rank_pct 65.77 under the 70 floor (criterion 8). Both seats at conviction 2, day_vol 0.84 without expansion. Not a stage 2 leader yet.",
+   "falsifier": "rs_rank_pct back over 70 with ma_50 crossing above ma_100 and a breakout on volume would put it in.",
+   "opposing_case": "BULLISH_BOS from a coil (lens coil strong, energy 76.5), rs LEADER downday 0.44, elder 10.0 ACCELERATION: it may be early stage 2 emerging."
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes: ma_50 274.8 > ma_100 259.06 > ma_200 239.41, from_52w_hi 0.0, rs LEADER, rs_rank_pct 91.69, rs_spy_20d 17.46, mp 97.0. But it is far past any pivot (VALEN 5.5 ATR extended, sma_dist 12.06): strength is real, the entry is not here (C5).",
+   "falsifier": "A fade back under ma_20 on rising volume: a climax, not a pause.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Tight stage 2 breakout: BULLISH_BOS, ma_50 146.08 > ma_100 143.22 > ma_200 129.84, from_52w_hi 0.0, rs LEADER, rs_rank_pct 78.36, day_vol 1.37. RS modest (rs_spy_20d 2.21) and mp DECELERATING.",
+   "falsifier": "Price stays pinned in a sub-ATR range with no follow-through: the tightness is a held price, not a VCP.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "challenge_reply": "Steenbarger/detect-lens: atr 0.54 on entry 149.15 is out of character; a pinned price would make the tightness meaningless. I lower to 3 and want the PM to verify the series before acting.",
+   "conviction_change": "4 to 3: the atr anomaly may mean the tight range is not a contraction."
+  },
+  {
+   "ticker": "WRB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma_50 70.11 under ma_100 70.36 (criterion 4 proxy) and rs_rank_pct 62.71 under 70. ret_12m 0.73 says the stock has gone nowhere for a year: stage 1 range, not stage 2.",
+   "falsifier": "A breakout over the year's range with rs_rank_pct over 70 and the 50-day over the 100-day.",
+   "opposing_case": "rs_spy_20d 12.69, rs LEADER downday 1.6, mp 94.0: real short-term strength in an insurance group VALEN lists as leadership."
+  },
+  {
+   "ticker": "CRM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 confirmed: ret_63d 52.93, ma_50 234.04 > ma_100 203.21 > ma_200 198.75, rs LEADER, rs_rank_pct 89.24, from_52w_hi -5.99. Basing in a RANGE with day_vol 1.19; the buy is the pivot breakout.",
+   "falsifier": "A close under ma_50: the base fails and the template with it.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes: ma_50 416.83 > ma_100 391.86 > ma_200 371.12, from_52w_hi 0.0, structure 90.5, rs LEADER, rs_rank_pct 81.54. Flow 44.7 and mp DECELERATING mean the breakout lacks the volume half of C6.",
+   "falsifier": "Close back under ma_20 on rising volume: the high is being sold.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes: ma_50 265.42 > ma_100 254.26 > ma_200 235.14, from_52w_hi -1.45, rs LEADER, rs_rank_pct 88.51. RANGE just under the high: a pause that can become the pivot. Buy only the breakout.",
+   "falsifier": "A close under ma_50 ends the base and the setup.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "WCN",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails: ma_50 161.29 < ma_100 162.88 < ma_200 162.94, so the 200-day is not rising and the 50 is under it; rs_rank_pct 61.49 under 70. One burst on day_vol 2.87 leapt every average: a turn from stage 1, not a stage 2 leader.",
+   "falsifier": "Price holds above ma_200 162.94 while the 50-day crosses over the 200-day and a proper base forms.",
+   "opposing_case": "rs_spy_20d 18.99, mp 97.0, from_52w_hi 0.0, rs LEADER downday 1.81 and an Episodic pivot WATCH: an event-driven re-rating can start a new stage 2.",
+   "challenge_reply": "Rogers/detect-lens: agreed. The template fails on the averages, so from my seat this is not momentum yet."
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes: ma_50 31.96 > ma_100 31.51 > ma_200 29.78, from_52w_hi 0.0, rs LEADER, rs_rank_pct 77.63, day_vol 2.42. Extended (sma_dist 10.12) in a defensive group; Lynch reads a slow grower, which fails my C12 growth profile.",
+   "falsifier": "Fade back under ma_20 on rising volume.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "challenge_reply": "Rogers: the cause of the volume is unnamed and I cannot see it; I hold this at 2 and only on a fresh tight pause."
+  },
+  {
+   "ticker": "CHD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Trend Template fails narrowly: rs_rank_pct 69.32 under the 70 floor and the averages are flat (ma_100 98.32 vs ma_200 97.16). pct_from_pivot 12.18 is far past any buy point; Lynch reads a slowing grower.",
+   "falsifier": "rs_rank_pct back over 80 with a new tight base above ma_20.",
+   "opposing_case": "mp 94.0, from_52w_hi 0.0, rs LEADER downday 1.38: a staples name acting as a leader while the tape is weak."
+  },
+  {
+   "ticker": "SHO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Trend Template fails on my proxy: ma_50 11.29 under ma_100 11.4, so the 50-day stack is not clean. Earnings in 10 sessions is an event inside the window.",
+   "falsifier": "The 50-day crosses over the 100-day and a base breaks out with rs_rank_pct still over 80.",
+   "opposing_case": "rs_rank_pct 83.37, elder 10.0 SUSTAINED, from_52w_hi -0.08: real strength at the high."
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 at a new high: ma_50 105.5 > ma_100 104.28 > ma_200 99.95, from_52w_hi 0.0, rs LEADER, rs_down_day_20d 1.59 holds up on down days. rs_rank_pct 71.76 sits near the floor; pct_from_pivot 4.53 at the edge of the buy zone.",
+   "falsifier": "A close under ma_20 on rising volume.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 near its high: ma_50 235.9 > ma_100 231.81 > ma_200 220.86, from_52w_hi -0.74, pct_from_pivot 2.55, rs LEADER, rs_rank_pct 79.1. day_vol 0.81 shows no breakout expansion yet; earnings in 9 sessions.",
+   "falsifier": "A close under ma_50, or a breakout that reverses on rising volume.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "challenge_reply": "Rogers: the thesis is not meant to run through the 9-session print; a buy only on a pivot breakout with volume before it, otherwise wait."
+  },
+  {
+   "ticker": "CDW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on the stack: ma_50 144.1 > ma_100 140.1 > ma_200 132.26, from_52w_hi 0.0, rs_rank_pct 75.98, rs LEADER. But sma_dist 14.24 is late-stage extension (C5) and Lynch reads no earnings growth, which fails C12.",
+   "falsifier": "Fade back under ma_20 on rising volume.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "challenge_reply": "Rogers: agreed it is late; no entry at the prior close. Only a fresh tight pause would qualify."
+  },
+  {
+   "ticker": "WMT",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails outright: ma_50 109.35 < ma_100 111.91 < ma_200 118.39, BEARISH_CHOCH, rs_rank_pct 27.87. Stage 4 recovery, not stage 2; buying a former leader on a rally is the broken-leader trap (C13).",
+   "falsifier": "Price holds over ma_200 118.39 with the averages re-stacked and rs_rank_pct over 70.",
+   "opposing_case": "mp 94.0, rs_spy_20d 13.0, rs LEADER downday 1.25: short-term strength is real and could be the first leg of a new stage 2."
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Textbook stage 2 leader: ma_50 180.77 > ma_100 164.99 > ma_200 140.22, from_52w_hi 0.0, rs_rank_pct 94.01, rs LEADER, ret_12m 113.12, ext_atr20 1.92 not stretched. The top-RS name in its group (C11).",
+   "falsifier": "A close under ma_20 on rising volume: the leader is being distributed.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   },
+   "self_counter": "flow 63.2 and insti_money warn: the volume half of C6 is not clean, and sma_dist 10.17 means no fresh pivot."
+  },
+  {
+   "ticker": "ELV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes: ma_50 407.21 > ma_100 401.68 > ma_200 370.77, from_52w_hi 0.0, rs LEADER, rs_rank_pct 81.91, mp 90.0. Inside bar at the high is a tight pause; buy the break of yesterday's high on volume.",
+   "falsifier": "Close under ma_20 on rising volume.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "AEP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails: ma_50 122.92 < ma_100 127.04 < ma_200 127.72, rs_rank_pct 37.9, from_52w_hi -5.8. A repair inside a long-term downtrend is not stage 2 (C2).",
+   "falsifier": "A close over ma_200 127.72 that holds, with the 50-day turning over the 200-day.",
+   "opposing_case": "mp 90.0, rs LEADER downday 1.35, elder 10.0: utilities acting as a defensive leader on a weak tape."
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on the proxy: ma_50 17.06 > ma_100 15.12 > ma_200 11.76, from_52w_hi -3.5, rs_rank_pct 98.78, ret_6m 133.29. Resting in a RANGE with energy 84.9. But rs IN-LINE downday -0.22 and losses (Lynch) weigh.",
+   "falsifier": "A close under ma_50: the rest becomes a top.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "PAYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Cannot read a base: atr 0.03 on entry 7.17 with day_vol 0.47 looks like a pinned price, not a contraction. VALEN shows the U&R FAILED. Template on the stack passes (ma_50 7.13 > ma_100 7.0 > ma_200 6.07) but the series needs verifying.",
+   "falsifier": "A verified ATR series and a breakout over the high on expanding volume would make this a real setup."
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes: ma_50 370.89 > ma_100 356.3 > ma_200 326.3, from_52w_hi 0.0, rs LEADER, rs_rank_pct 83.5, flow 88.2. Past the pivot (pct_from_pivot 5.59, VALEN 4.1 ATR extended): wait for a tight pause. Lynch backs the price.",
+   "falsifier": "A fade under ma_20 on rising volume.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Stage 2 confirmed (ret_63d 67.37, ma_50 90.12 > ma_100 76.37 > ma_200 66.42, rs_rank_pct 98.17), but the high tight flag FAILED (VALEN), rs LAGGARD downday -0.27 and elder INTERRUPTED. Needs a new base and a fresh pivot.",
+   "falsifier": "A close under ma_50: the failed flag becomes a top.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "OKE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: rs_rank_pct 58.07 under 70, ma_20 90.2 under ma_50 92.73, ret_6m 7.67. Range-bound, not a stage 2 leader.",
+   "falsifier": "rs_rank_pct over 70 with a breakout over the range on volume.",
+   "opposing_case": "lens insti_money strong, U&R MET on the 9-day reclaim, price over ma_200 88.04: a constructive hold that could turn."
+  },
+  {
+   "ticker": "RELY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on the stack: ma_50 23.91 > ma_100 23.13 > ma_200 20.21, from_52w_hi -5.94, rs_rank_pct 77.75, rs_spy_20d 20.08. Basing in a RANGE on day_vol 0.64 (quiet). Lynch backs the growth. Buy only the pivot breakout.",
+   "falsifier": "A close under ma_50: the base fails.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "AUB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma_50 39.49 under ma_100 40.35, rs_rank_pct 54.52, structure 43.2, ret_63d -5.04. Not stage 2.",
+   "falsifier": "The averages re-stack with rs_rank_pct over 70 and a base breakout on volume.",
+   "opposing_case": "Squeeze resolved up on confirmed volume, flow 93.4, rs LEADER: a turn could be starting."
+  },
+  {
+   "ticker": "CP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma_50 89.25 under ma_100 89.45, ma_20 86.17 under both, rs_rank_pct 53.42, ret_63d -1.88. A range break, not a stage 2 leader.",
+   "falsifier": "rs_rank_pct over 70 with the 50-day over the 100-day after the break holds.",
+   "opposing_case": "BULLISH_BOS on day_vol 1.87 with flow 94.7 and rs LEADER: heavy demand at the break."
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on the proxy: ma_50 172.27 > ma_100 159.33 > ma_200 145.8, rs LEADER, rs_rank_pct 78.0, from_52w_hi -7.74. Base in a RANGE with ma_20 165.71 under ma_50; earnings in 9 sessions. Buy only a pivot breakout, not through the print.",
+   "falsifier": "A close under ma_20: the base breaks down.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "ETR",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails: ma_50 104.28 < ma_100 107.99, ma_200 107.05, BEARISH_CHOCH, rs_rank_pct 33.56. Weakness argued as a pullback; my method does not buy weakness (C11).",
+   "falsifier": "Price reclaims and holds over ma_100 107.99 with the averages re-stacked.",
+   "opposing_case": "rs LEADER downday 1.0, elder 10.0, mp BUILDING: a defensive utility holding up on down days."
+  },
+  {
+   "ticker": "EBC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails: ma_50 21.78 under ma_100 21.89, rs_rank_pct 58.8, ret_63d -3.53, structure 46.3. Not stage 2.",
+   "falsifier": "rs_rank_pct over 70 with the averages re-stacked after the break.",
+   "opposing_case": "BULLISH_BOS with squeeze resolved up on confirmed volume, elder 10.0 ACCELERATION, lens leadership strong."
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes narrowly: ma_50 50.38 > ma_100 48.81 > ma_200 46.91, from_52w_hi 0.0, rs LEADER, rs_rank_pct 70.48 at the floor. mp 31.0 FLAT and flow 51.3: the breakout has no thrust or volume behind it.",
+   "falsifier": "A close back under ma_50.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 (earnings growth) not served to this seat"
+   }
+  },
+  {
+   "ticker": "M",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Trend Template fails on my proxy: ma_50 22.7 under ma_100 23.36, from_52w_hi -7.78, day_vol 0.8 with no volume on the squeeze break. Lynch's case is value, which my method does not buy (C19).",
+   "falsifier": "The 50-day crosses over the 100-day and a breakout on volume with rs_rank_pct over 80.",
+   "opposing_case": "rs LEADER downday 0.96, structure 76.8, rs_rank_pct 74.94 over the floor."
+  },
+  {
+   "ticker": "V",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "HELD: KEEP. Template passes (ma_50 376.22 > ma_100 361.34 > ma_200 340.3, from_52w_hi 0.0, rs LEADER). ADD: no. Bought 22 Oct at 413.26 vs entry 414.34, barely in profit and 4.6 ATR extended; C9 adds only after a profit and a fresh pivot.",
+   "falsifier": "A close under ma_20 on rising volume would turn KEEP into tighten; broker stop 401.15 is house law."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "HELD: no add; EXIT case. Template fails on every criterion: ma_50 49.99 < ma_100 51.18 < ma_200 55.93, BEARISH_CHOCH, structure 11.0, sma_dist -22.87, rs_spy_20d -21.37. Stage 4. C10: do not hold a loser waiting to be proven right.",
+   "falsifier": "Price back over ma_50 49.99 with a fresh base would reopen the question.",
+   "opposing_case": "Lynch's Oct-Dec tax-loss window and revenue growth 10.1% could mark a depressed stock about to turn; broker stop 36.66 is in place.",
+   "challenge_reply": "Rogers/Steenbarger: I name no catalyst because my method needs none here; it is stage 4 and I would exit rather than wait for the 36.66 stop."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 13672,
+   "votes": 19,
+   "sha256": "559939d523c4"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 10027,
+   "votes": 19,
+   "sha256": "b104458eb568"
+  }
+ ]
+}

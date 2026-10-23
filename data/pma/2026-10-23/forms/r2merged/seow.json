@@ -1,0 +1,902 @@
+{
+ "voice": "seow",
+ "date": "2026-10-23",
+ "round": 2,
+ "declarations": [
+  "ma_40 and cci20 are not computed by AQE: C1/C3/R1 set-ups judged on ma_20, sma_dist and RS only; no 50/100/200 average used (C1).",
+  "RS gate C6/R8 read from rs_spy_20d and rs leadership as a 20-day proxy for the 63-day window."
+ ],
+ "data_gaps": [
+  {
+   "field": "ma_40",
+   "impact": "20MA-over-40MA and close-above-40MA legs unverifiable"
+  },
+  {
+   "field": "cci20",
+   "impact": "CCI below -100 timing leg unverifiable"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Up-trend above the 20MA: sma_dist 3.13, ma20 153.82, rs_spy_20d 4.81 LEADER passes the odds gate (C6). This is a breakout bar on day_vol 2.8, not a dip; my entry is a buy stop over the prior day's high once it rests toward ma20 (C3, C5).",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RS gate passes (rs_spy_20d 12.28 LEADER) but sma_dist 9.08 over ma20 587.39 is the extension, not the dip (C3). Set-up only on a measured pullback toward ma20, then a buy stop over the prior high (C5). Weight, not veto (R14).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 12.97 LEADER passes C6; sma_dist 10.22 over ma20 42.1 means no pullback set-up today (C3). I buy it only when it comes back toward ma20 and takes out the prior day's high (C5).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Price just above ma20 34.41 (sma_dist 4.92), rs_spy_20d 4.82 positive though IN-LINE. At a high on day_vol 0.72: not yet a graded pullback (C4). Buy stop over prior high after a measured dip toward ma20.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Closest to my set-up in the room: sma_dist 0.45 at ma20 40.43, VALEN U&R MET (dipped under the 9-day 40.59 and closed back above) = the low pierced the short average and the close held (C3). rs_spy_20d 5.76 LEADER passes C6. 40MA/CCI legs unverifiable, so 3 not 4.",
+   "falsifier": "Fails on a close under the prior day's low after the buy stop fires (C8), or a close back under ma20 40.43 that undoes the reclaim.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "sma_dist 2.22 near ma20 86.68, rs_spy_20d 5.51 LEADER passes C6. Pullback quality cannot be fully graded (40MA/CCI absent) and day_vol 0.84 is quiet; arm the buy stop over the prior high (C5).",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 17.46 LEADER passes C6, but sma_dist 12.06 over ma20 274.1 (VALEN 5.5 ATR extended) is the extension I never buy (C3). Support is conditional: only a measured dip toward ma20 arms my entry. Weight, not veto (R14).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "sma_dist 2.1 near ma20 147.01, rs_spy_20d 2.21 LEADER, a modest pass of C6. atr 0.54 is thin for sizing from a stop (C15), so the prior-day-low stop must be checked live. Buy stop over prior high (C5).",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 12.69 LEADER passes C6; sma_dist 7.75 over ma20 71.4 is extended for a dip entry (C3). Set-up arms only on a return toward ma20 and a break of the prior day's high (C5).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "CRM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 5.49 LEADER passes C6; sma_dist 6.94 over ma20 234.8 after run_10d 9.87 is not a dip yet (C3/C4). Arm on a measured pullback toward ma20 and a buy stop over prior high.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 10.58 LEADER passes C6; sma_dist 7.3 over ma20 420.09 at a fresh high is extension, not a pullback (C3). Entry only on a dip toward ma20 that then takes the prior day's high (C5).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "VALEN U&R MET: dipped under the 9-day 281.69 and closed back above, a short pullback inside the trend; rs_spy_20d 7.88 LEADER passes C6. But sma_dist 7.33 over ma20 274.01, so the 20MA touch of C3 is not met; wait for it.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "WCN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No set-up: sma_dist 14.63 over ma20 159.16 after run_10d 19.52 is near-vertical; C4 disqualifies the dip after a vertical run, and VALEN flags 5.7 ATR extended. rs_spy_20d 18.99 passes C6. Abstain, not a veto (R14).",
+   "falsifier": "I would support after a pullback of under 5 days with measured bars that holds above ma20 and then takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 14.38 LEADER passes C6; sma_dist 10.12 over ma20 32.38 on day_vol 2.42 is extension (C3). Conditional: buy only a measured pullback toward ma20 that takes out the prior day's high.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 14.61 LEADER passes C6; sma_dist 10.45 over ma20 99.43 (VALEN 4.9 ATR extended) is not a dip (C3). Entry arms only on a return toward ma20 and a buy stop over the prior high (C5).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "SHO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No set-up: sma_dist 11.63 over ma20 11.6 after run_10d 11.01 is extension (C3). rs_spy_20d 13.53 LEADER passes C6. Earnings in 10 sessions sits just past my 2-5 day swing band (C19). Abstain, not a veto (R14).",
+   "falsifier": "I would support on a measured dip toward ma20 that then takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 14.3 LEADER passes C6; sma_dist 8.28 over ma20 105.6 is extension (C3). Arm on a measured pullback toward ma20, buy stop over prior high (C5).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 15.25 LEADER passes C6; sma_dist 8.37 over ma20 238.86 is extension (C3). Arm on a dip toward ma20. Earnings in 9 sessions: my 2-5 day band (C19) must close before the print.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "CDW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No set-up: sma_dist 14.24 over ma20 143.12 after run_10d 17.69 is near-vertical; C4 rejects the dip that follows. rs_spy_20d 18.46 LEADER passes C6. Abstain, not a veto (R14).",
+   "falsifier": "I would support after a sub-5-day measured pullback toward ma20 that takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "WMT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Filed as a pullback but there is no pullback: sma_dist 10.77 over ma20 111.6, and rs_rank_pct 27.87 is weak. C3 needs the bar's low at a rising 20MA; nothing here meets it and the 40MA leg is unverifiable.",
+   "opposing_case": "rs_spy_20d 13.0 LEADER and mp 94 STRONG: short-term strength is real, and a dip toward ma20 could still form a set-up.",
+   "falsifier": "Wrong if it pulls back to ma20 on measured bars, holds, and takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 12.98 LEADER passes C6; sma_dist 10.17 over ma20 186.84 is extension (C3). Arm on a measured pullback toward ma20 and a buy stop over the prior high (C5).",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ELV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 12.23 LEADER passes C6; sma_dist 9.35 over ma20 411.74 after run_10d 11.06 is extension (C3). Arm on a return toward ma20, buy stop over the prior high.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "AEP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Price over ma20 122.99 (sma_dist 6.28), rs_spy_20d 11.54 passes C6, but rs_rank_pct 37.9 is low and whether the 20MA is above a rising 40MA cannot be verified (C2). The trend the averages give is unclear, so no set-up.",
+   "falsifier": "I would support if the 20MA is confirmed rising over the 40MA and a measured dip to ma20 takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "sma_dist 5.16 over ma20 17.32, rs_spy_20d 9.35 positive (IN-LINE), run_10d 2.34 not parabolic. A measured dip toward ma20 then a buy stop over the prior high is the set-up (C3, C5).",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "PAYO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C2 fails: VALEN says its 21-day average is not rising, and its undercut-and-rally FAILED. rs_spy_20d 0.98 barely passes C6, and atr 0.03 cannot size a stop credibly (C15). No set-up.",
+   "opposing_case": "sma_dist 0.53 sits right at ma20 7.14 with rs LEADER: if the average turns up, this is a textbook test of the 20MA.",
+   "falsifier": "Wrong if the 20-day average turns up and price takes out the prior day's high from ma20.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 12.3 LEADER passes C6; sma_dist 9.32 over ma20 373.53 (VALEN 4.1 ATR extended) is not the dip (C3). Pullback lane: arm only on a measured return toward ma20.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Conflict on the odds gate: rs_spy_20d 8.01 positive but rs LAGGARD, and VALEN shows its high tight flag FAILED. sma_dist 8.98 over ma20 93.85 is not a dip. C6 is an odds requirement, so I stand aside.",
+   "falsifier": "I would support if leadership turns LEADER and a measured dip to ma20 takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "OKE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "VALEN U&R MET: dipped under the 9-day 92.02 and closed back above; sma_dist 1.27 near ma20 90.2, rs_spy_20d 3.4 LEADER passes C6. Whether the 20MA is over a rising 40MA is unverifiable (C2), so only 2.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "RELY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 20.08 positive (IN-LINE), sma_dist 5.88 over ma20 23.26. Not yet a dip to the 20MA (C3); arm on a measured pullback toward ma20, buy stop over prior high.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "AUB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C2 fails: VALEN says its 21-day average is not rising. I go long only when the average slopes up; sma_dist 1.55 near ma20 38.22 is a test of a flat average, not a pullback in an up-trend.",
+   "opposing_case": "rs_spy_20d 4.52 LEADER and a squeeze resolved up: if the 20-day turns up, the near-ma20 position becomes a valid set-up.",
+   "falsifier": "Wrong if the 20-day average turns up and price takes out the prior day's high.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "sma_dist 1.53 just above ma20 86.17, rs_spy_20d 4.2 LEADER passes C6. A dip that holds over ma20 then a buy stop over prior high (C5). 40MA/CCI legs unverifiable.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 16.52 LEADER passes C6, sma_dist 2.02 with price over ma20 165.71. Earnings in 9 sessions: my 2-5 day swing band (C19) must close before the print.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "ETR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 10.64 LEADER passes C6, sma_dist 3.75 over ma20 102.75. Trend leg is unclear (rs_rank_pct 33.56, 40MA unverifiable), so a small conditional support on a dip to ma20.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "EBC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "sma_dist 1.5 near ma20 21.2, rs_spy_20d 4.17 LEADER passes C6. Measured dip to ma20 then buy stop over prior high (C5). 40MA/CCI legs unverifiable.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "VALEN U&R MET: dipped under the 9-day 51.36 and closed back above; sma_dist 4.67 over ma20 50.91, rs_spy_20d 4.36 LEADER passes C6, at a high after run_10d 4.44 (not parabolic, C4). 40MA/CCI unverifiable, so 3.",
+   "falsifier": "Fails if price closes under the prior day's low after the buy stop fires (C8), or RS turns negative (C6).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "M",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "rs_spy_20d 8.76 LEADER passes C6; sma_dist 6.46 over ma20 23.08 is a bit stretched for a dip entry (C3). Arm on a measured pullback toward ma20, buy stop over prior high.",
+   "falsifier": "Fails if price closes more than 1 ATR under ma20 (my stand-in for the unverifiable 40MA hold, C4) or RS turns negative.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "40MA and CCI legs not computed by AQE: set-up judged on 20MA, extension and RS only."
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "ADD question: C16 adds only when the trade has proved me right; bought 22 Oct at 413.26, entry 414.34 is barely above it, short of the 5% that moves the stop to breakeven (C9). sma_dist 10.13 adds a weight. KEEP the position, broker stop 401.15 stands.",
+   "opposing_case": "rs_spy_20d 13.02 LEADER, mp 94 STRONG and price over ma20 383.23: the trend is intact and an add could follow proof.",
+   "falsifier": "Wrong if V clears 5% over the 413.26 fill and holds: then the second 30% tranche is earned (C16).",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "ADD question: C16 forbids adding to a loser at any size. sma_dist -22.87, rs_spy_20d -21.37 fails C6, price under ma20 43.93 and VALEN says its 21-day average is not rising (C2). Hold review: EXIT-CASE under C14, broker stop 36.66 stands.",
+   "opposing_case": "Lynch flags the Oct-Dec tax-loss window, where depressed names can turn; a recovery over ma20 would change the read.",
+   "falsifier": "Wrong if price reclaims ma20 43.93, the 20-day turns up and RS turns positive.",
+   "conviction_change": null,
+   "challenge_reply": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of2.json",
+   "bytes": 16222,
+   "votes": 19,
+   "sha256": "567fa13a9d00"
+  },
+  {
+   "file": "seow.part2of2.json",
+   "bytes": 14729,
+   "votes": 19,
+   "sha256": "9676f8f5d1c5"
+  }
+ ]
+}

@@ -1,0 +1,391 @@
+{
+ "voice": "thorp",
+ "date": "2026-10-23",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calmest valid-ATR name in the set: atr_14d 2.07 on entry 160.06, deep liquidity day_vol 2.8, sc_momentum 77.5. Worst case written: atr_fallback_stop 157.99 gapped one more ATR (C4). Edge uncounted at name level (C11), so modest.",
+   "falsifier": "A close two ATRs under entry, i.e. the fallback stop gapped through.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calm: atr_14d 9.88 on entry 633.21 ranks in the calmest quartile; day_vol 1.3, sc_momentum 78.0. Worst case: atr_fallback_stop 623.34 gapped one ATR. No name-level counted edge (C11), so modest; overlap with held V is not a canon test of mine.",
+   "falsifier": "A close two ATRs under entry.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-quartile volatility: atr_14d 1.29 on entry 45.92. Under R1 it ranks below calmer equivalents (MA, ROKU) at similar sc_momentum 80.6. No counted edge served for the name (C11).",
+   "falsifier": "If its ATR compresses into the calmest half of the set with sc_momentum held, it becomes a candidate."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sc_momentum 59.5 sits well under the strong names, so bucket membership is doubtful; thin turnover day_vol 0.72 is a real cost (C24). Lens strength is a structure, not an edge (C11).",
+   "falsifier": "A counted hit rate for this setup with losers included, or day_vol back above normal."
+  },
+  {
+   "ticker": "LTH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Volatility sits in the top quartile: atr_14d 1.25 on entry 41.99; sc_momentum 63.3. Bracket stop 40.43 noted as information. R1: ranks below calmer names; no counted edge for the name.",
+   "falsifier": "ATR falling into the calm half while sc_momentum rises past the strong names."
+  },
+  {
+   "ticker": "EW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mid-set volatility (atr_14d 2.03 on entry 90.09), sc_momentum 65.8, light day_vol 0.84. Two conviction-2 reads do not make a counted edge (C13).",
+   "falsifier": "A counted hit rate on the BULLISH_BOS signal with losers included."
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calmest-half volatility: atr_14d 6.15 on entry 307.94, liquid day_vol 1.82, sc_momentum 85.3. Worst case: atr_fallback_stop 301.79 gapped one ATR. Extension is a weight in this lane (R14); edge not counted at name level, so modest.",
+   "falsifier": "A close two ATRs under entry.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "ACA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Cannot size from a worst case I do not trust: atr_14d 0.54 on entry 149.15 is out of character and flagged by two seats for verification. A loss boundary built on a suspect ATR is guessed, not sized (C2).",
+   "falsifier": "A verified ATR series; then judge on the calm-rank."
+  },
+  {
+   "ticker": "WRB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Calm volatility (atr_14d 1.48 on entry 75.55) but thin turnover day_vol 0.73 and four of six lenses not served. sc_momentum 70.2. Calm is not an edge (C11); cost unpriced (C24).",
+   "falsifier": "day_vol back above normal with sc_momentum holding."
+  },
+  {
+   "ticker": "CRM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-quartile volatility: atr_14d 8.85 on entry 250.29. Ranks below calmer names (R1) despite sc_momentum 72.9; no counted edge for the hinge (C11).",
+   "falsifier": "ATR compressing into the calm half."
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mid-set volatility (atr_14d 10.77 on entry 447.28), sc_momentum 69.9, day_vol 1.1. Structure 90.5 is a shape, not a measured mispricing (C11).",
+   "falsifier": "A counted hit rate for new-high continuation with losers included."
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sc_momentum 66.6 below the strong group; mid-set volatility (atr_14d 6.59 on entry 284.89). No counted edge served (C11).",
+   "falsifier": "sc_momentum back above the strong names with ATR steady."
+  },
+  {
+   "ticker": "WCN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mid-set volatility (atr_14d 4.52 on entry 184.88) after a one-day burst day_vol 2.87. The pricing condition behind the jump is unnamed, so the edge cannot be watched (C19).",
+   "falsifier": "A named cause for the jump plus a counted edge; then calm-rank decides."
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calmest-half volatility: atr_14d 0.79 on entry 35.19, liquid day_vol 2.42, sc_momentum 84.7. Worst case: atr_fallback_stop 34.4 gapped one ATR. Edge not counted at name level, so modest.",
+   "falsifier": "A close two ATRs under entry.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calmest quartile: atr_14d 1.94 on entry 108.86, day_vol 1.55, sc_momentum 82.7. Worst case: atr_fallback_stop 106.92 gapped one ATR. Extension a weight only (R14); modest because no name-level count.",
+   "falsifier": "A close two ATRs under entry.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "SHO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Earnings inside the hold window (days_to_earnings 10): a known overnight gap the stop cannot defend (C4). Calm-half volatility atr_14d 0.28 on entry 12.6 does not cover an event gap.",
+   "falsifier": "Thesis stated as running through the print with size cut to the gap case."
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calmest quartile: atr_14d 2.27 on entry 114.23, day_vol 1.25, sc_momentum 80.6. Worst case: atr_fallback_stop 111.96 gapped one ATR. Name-level edge uncounted, so modest.",
+   "falsifier": "A close two ATRs under entry.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Earnings inside the hold window (days_to_earnings 9): an event gap the stop cannot defend (C4). day_vol 0.81 below normal as well.",
+   "falsifier": "Thesis stated through the print with size cut to the gap case."
+  },
+  {
+   "ticker": "CDW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-quartile volatility: atr_14d 5.58 on entry 164.62. Ranks below calmer names (R1) at sc_momentum 77.2; no counted edge (C11).",
+   "falsifier": "ATR compressing into the calm half."
+  },
+  {
+   "ticker": "WMT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Bucket edge kept but cut: signal_hit_rate_20d 56.9 over signal_n 253 is a bucket rate, not benchmarked vs random (C14), and BEARISH_CHOCH means selecting on it shifts the distribution (C18). Calm-half atr_14d 2.42 on entry 121.12; fallback 118.7 gapped one ATR.",
+   "falsifier": "A close two ATRs under entry, or the bucket rate falling toward a coin flip on recount.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   },
+   "conviction_change": "Round 1 conviction 3 cut to 2: the counted rate is a bucket figure, untested against random, and the structure fields challenge the distribution I assumed (C18).",
+   "challenge_reply": "Trend context is not my test; I do not claim an uptrend. My case was a counted rate on a calm name. Fair point taken: BEARISH_CHOCH and rs_rank_pct 27.87 mean the bucket may not describe this name (C17), so conviction cut. No catalyst claimed; wrong at entry minus two ATRs."
+  },
+  {
+   "ticker": "SN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-quartile volatility: atr_14d 6.4 on entry 199.16. Ranks below calmer names (R1) at sc_momentum 74.5; no counted edge (C11).",
+   "falsifier": "ATR compressing into the calm half."
+  },
+  {
+   "ticker": "ELV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mid-set volatility (atr_14d 11.83 on entry 445.28), sc_momentum 71.3, day_vol 1.08. A shape with no counted edge (C11).",
+   "falsifier": "A counted hit rate for the setup with losers included."
+  },
+  {
+   "ticker": "AEP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Calm volatility (atr_14d 2.31 on entry 130.64) but sc_momentum 67.8 below the strong group and the stack is repairing; calm is not an edge (C11). Valid bracket stop 127.72 noted as information.",
+   "falsifier": "sc_momentum into the strong group with calm-rank held."
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Wildest name in the set: atr_14d 0.81 on entry 17.94 tops the volatility ranking, so it ranks last against calmer equivalents (C5, R1). The unwatched loss on a gap is the largest per dollar on the sheet (C9). No counted edge (C11).",
+   "opposing_case": "rs_rank_pct 98.78 and energy 84.9 say a strong leader resting near its high; a wide range is what leaders carry.",
+   "falsifier": "ATR compressing into the calm half while it holds the range."
+  },
+  {
+   "ticker": "PAYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "atr_14d 0.03 on entry 7.17 is flagged as a likely defective series by two seats. A worst case built on it is guessed, not sized (C2). day_vol 0.47 also thin.",
+   "falsifier": "A verified ATR series."
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Calmest quartile: atr_14d 7.86 on entry 405.44, liquid day_vol 1.48, sc_momentum 74.6. Worst case: atr_fallback_stop 397.58 gapped one ATR. Fundamentals read supports. Edge uncounted at name level, so modest.",
+   "falsifier": "A close two ATRs under entry.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "close_below:entry-2atr"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Edge is the counted bucket rate only; void if the bucket's hit rate drops toward a coin flip on recount."
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Top-quartile volatility: atr_14d 4.14 on entry 98.21, and the pricing condition has stopped paying: High tight flag FAILED with mp FLAT (C19). sc_momentum 64.1; no counted edge (C11).",
+   "opposing_case": "Five strong-lens read with rs_rank_pct 98.17 and a valid bracket stop 93.85: a strong grower resting near its high.",
+   "falsifier": "A fresh setup that triggers with ATR compressing."
+  },
+  {
+   "ticker": "OKE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sc_momentum 55.0 is the weakest of the pullback group; mid-set volatility atr_14d 2.32 on entry 93.9. A one-bar reclaim is a shape, not a counted edge (C11).",
+   "falsifier": "A counted hit rate for the reclaim with losers included."
+  },
+  {
+   "ticker": "RELY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-quartile volatility: atr_14d 0.95 on entry 25.32, thin day_vol 0.64. Ranks below calmer names (R1); turnover cost unpriced (C24).",
+   "falsifier": "ATR compressing and day_vol back above normal."
+  },
+  {
+   "ticker": "AUB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Calm-half volatility (atr_14d 0.83 on entry 40.1) but sc_momentum 68.9 and structure 43.2; calm is not an edge (C11). Valid bracket stop 38.99 noted as information.",
+   "falsifier": "sc_momentum into the strong group."
+  },
+  {
+   "ticker": "CP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Calmest quartile (atr_14d 1.64 on entry 90.62), liquid day_vol 1.87, but sc_momentum 68.8 below the strong group; no counted edge (C11).",
+   "falsifier": "sc_momentum into the strong group with calm-rank held."
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Earnings inside the hold window (days_to_earnings 9): an overnight event gap the stop cannot defend (C4). Mid-set volatility atr_14d 4.71 on entry 175.76.",
+   "falsifier": "Thesis stated through the print with size cut to the gap case."
+  },
+  {
+   "ticker": "ETR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Standing aside. signal_hit_rate_20d 56.9 over signal_n 253 is a bucket rate; with sc_momentum 64.4, adx 15.8 and BEARISH_CHOCH I cannot show this name belongs to the population it was counted on (C17).",
+   "falsifier": "Proof the name sits inside the counted bucket, with sc_momentum rising.",
+   "conviction_change": "Round 1 SUPPORT conviction 2 withdrawn to ABSTAIN: the bucket rate cannot be shown to describe this name (C17, C18).",
+   "challenge_reply": "Accepted. I cannot name an uptrend context and my method does not supply one; the counted rate is a bucket figure, and with the trend this thin I stand aside rather than defend it. No catalyst claimed."
+  },
+  {
+   "ticker": "EBC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mid-set volatility (atr_14d 0.45 on entry 22.11), sc_momentum 64.4 below the strong group; lens strength is a structure, not an edge (C11).",
+   "falsifier": "A counted hit rate for the squeeze resolution with losers included."
+  },
+  {
+   "ticker": "FAST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mid-set volatility (atr_14d 1.36 on entry 52.73), sc_momentum 64.1; no counted edge for the breakout (C11).",
+   "falsifier": "sc_momentum into the strong group with a counted edge."
+  },
+  {
+   "ticker": "M",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-quartile volatility: atr_14d 0.85 on entry 24.17 with day_vol 0.8 light. Ranks below calmer names (R1); fundamentals read is not mine to vote.",
+   "falsifier": "ATR compressing into the calm half with volume back."
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "ADD: no. KEEP the position. It is already sized to its worst case; adding loads the same unwatched gap loss again (C1, C9). Broker stop 401.15 stands. Calm atr_14d 6.71, sc_momentum 78.7 justify holding, not adding.",
+   "opposing_case": "Calmest-quartile volatility, sc_momentum 78.7, structure 86.3 at a new high: the cleanest held name for an add.",
+   "falsifier": "A fresh calm entry condition after a pullback that resets the worst case."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD: no. EXIT-CASE: the condition entered on is gone (C10, C19): sc_momentum 19.5, structure 11.0, BEARISH_CHOCH. Size to the unwatched loss, not a hoped recovery (C9). Broker stop 36.66 is the hard line; I would not wait for it.",
+   "opposing_case": "Lynch's tax-loss window frames deep drawdowns as entry season; revenue growth is positive and a BULLISH div is printed.",
+   "falsifier": "sc_momentum and structure recovering into the strong group."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "thorp.part1of2.json",
+   "bytes": 7733,
+   "votes": 19,
+   "sha256": "344c458312e8"
+  },
+  {
+   "file": "thorp.part2of2.json",
+   "bytes": 7960,
+   "votes": 19,
+   "sha256": "047651638e00"
+  }
+ ]
+}

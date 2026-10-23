@@ -1,0 +1,24 @@
+AEGIS PMA 2026-10-23 — WRITE. You are the brief-writer.
+
+STEP 1: Read in full and follow: /home/claude/pma/plugin/agents/brief-writer.md and /home/claude/pma/plugin/skills/cio-voice/SKILL.md. Section map (RUN.yaml WRITE): 0 verdicts, 0A executive consensus, 0B what these were picked on + momentum fit, 1 macro, **1A VALEN (new, see below)**, 2 sectors, 3 held book, 4 repeat watch, 5 QS, 6 PM lens, 7 cards (with conditions.md content under the cards), 8 near misses, 9A what to do with what I own, 9B what to trade today, 9C the day's plan (SGT), Scorecard, Appendix A vote record.
+
+STEP 2: Read ONLY these run files in /home/claude/pma/d23/: consensus.json, phase4.json, tally.json, pm_lens.json, repeat_watch.json, repeat_marks.json, purity_check.json, conditions.md, cards.json, brackets.json, broker_stops.json, scorecard.md, valen_section.json, aqe_crown_macro.json (read_me_first / plain_english only), aqe_macro_pack.json (headline fields only), forms/macro/*.json, forms/challenge/*.json, forms/r2merged/*.json, run_notes.md, and aqe_daily_export.json rows for room names only (use python to slice; never load it whole into your reply). The brief is built from these files only; every figure must come from them.
+
+PM INSTRUCTIONS FOR TODAY (binding):
+1. VALEN MUST TAKE REAL SPACE. The PM: "there is very little of Valen data available... I want to see it take space in the report." Add §1A "VALEN — market weather and setups" right after §1, built from valen_section.json:
+   - The stance in one line (NEUTRAL; 5 days ago RISK_OFF; 1 month ago RISK_OFF) and the so_what ("half size, best setups only, take profit sooner") — quote it as the VIV System's own doctrine, not an Aegis sizing rule (AQE makes no sizing decisions).
+   - A table: Trend (SPY/QQQ daily + weekly buy signal, above rising 5-day), Extension (SPY/QQQ ATRs vs 50-day, VIX/VIX3M), Breadth checklist (each row with value and pass/fail), the history column (now / 5 days ago / 1 month ago).
+   - Dealer gamma: flip 777.85, call wall 770, put wall 760, NEGATIVE regime, RED light, the plain commentary, and the stated assumption caveat in one line.
+   - Leadership: the neighbourhood lines + a table of the top themes this week (1w/1m %, off 52w high, quadrant) and the bottom 5.
+   - Watch-for list. Note honestly: one watch_for item ("5-day up/down 4% count clears 1.0 (now 4.38)") is already met — say AQE's text has a wording defect.
+   - Crown cockpit row (breadth range, CTA crowding, dispersion, divergence, COT crowded).
+   - House setups: the counts table (setup × status) and the execution-entry mix (47 break of structure / 30 squeeze breakout / 22 pattern triggered).
+   And in §0 verdict table add two columns: "Valen setup" (from the row's setups grades; '—' when none) and "U&R" (unr_status MET/SETUP/NO, from the export row). Flag any ADVANCE or HOLD name that is on Valen's no-buy list (valen_section.json no_buy_list) — e.g. CHD is 4.9 ATR extended and ADVANCED; MA, ADP, WCN too.
+2. Lynch is a CONSULTED voice with no vote (PM standing ruling 22 Oct). Show his fundamentals read per name as information. Note where an ADVANCE has Lynch CONTRADICT (KDP, CHD) — state it, don't change any verdict.
+3. Scorecard: carry scorecard.md and state plainly in §0A the uncomfortable finding: over 15–22 Oct the ADVANCE calls beat SPY (+1.76 mean, 31/39) but LAGGED the equal-weight AQE list (−1.41); PASS and near-miss names did better than ADVANCEs vs the list. Grading only, no verdict changed.
+4. Plain English, executive, tables over prose. Avoid jargon the PM rejected: don't say "line" for a price level (say "buy above 158.85", "exit if it closes under 155.20"), say "spot price"/"last close", "Buy? Yes/No". Every ADVANCE in §9B gets: buy above X, stop, first target, and what would cancel it.
+5. Held book: MP (300 at 53.00, last 38.56, broker stop 36.66, committee PASS on add 10 of 10 voting, EXIT-CASE) and V (38 at 413.26, last 414.34, broker stop 401.15, committee ADVANCE on the ADD question; every analyst exit is below the broker stop, so the broker stop is the tighter exit).
+6. Header must list today's declared items from run_notes.md and: seats ran as general-purpose agents reading card + packet by path; Lynch consulted-only (10 voters); fundamentals now print in the vote packet (flat keys added); Valen block added to the vote packet as context (levels omitted under R1); Tiger now returns stop triggers (MP and V stops read correctly).
+7. Footer: "DRAFT — PM approval required. Nothing is staged, nothing is armed."
+
+STEP 3: Write the brief to /home/claude/pma/d23/pma_brief_2026-10-23.md. Keep §0–§9C readable on a phone (the appendix vote record can be long). Final message: "WROTE brief <bytes>" plus a 5-line summary of what §0 says.

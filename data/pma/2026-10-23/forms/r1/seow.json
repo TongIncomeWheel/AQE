@@ -1,0 +1,30 @@
+{
+ "voice": "seow",
+ "date": "2026-10-23",
+ "universe_file": "/home/claude/pma/d23/universe.json",
+ "nominations": [],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "Tide is down (C2): ma_20 43.93 under ma_50 49.99, sma_distance_pct -22.87; fails the odds gate (C6) with rs_spy_20d -21.37; live_px 38.56 vs entry 53.0, mp_state FADING, hl_state EXIT. Loss side first (C20): no long case left in this method."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Tide up (C2): ma_20 383.23 over ma_40 377.63, live_px 414.34 above both; odds gate passes (C6) rs_spy_20d 13.02. Bought on extension not a dip (cci_20 122.12, sma_distance_pct 10.13) so no add; gain under 5% so no breakeven yet (C9); day-5 time stop from 2026-10-22 (C11)."
+  }
+ ],
+ "lesson_applied": "No ledger memory block was injected for this seat today; no standing lesson applies.",
+ "data_gaps": [
+  {"field": "low / high (daily bar)", "impact": "R1 condition 4 (bar low touching ma_20) and R2 prior-day-high trigger cannot be read directly"},
+  {"field": "sma20_slope_5d", "impact": "up-slope leg of C3 not directly verifiable"},
+  {"field": "prior_bar_low / most_recent_swing_low", "impact": "C8/C10 chart stop and daily trail for V cannot be set from the packet"},
+  {"field": "index_pct_change_63d", "impact": "R8 uses rs_spy_20d as the relative-strength read"},
+  {"field": "ma_40, cci_20 (MP row)", "impact": "MP held review read on ma_20/ma_50 and rs_spy_20d only"}
+ ],
+ "declared": {
+  "not_served": ["low", "high", "sma20_slope_5d", "prior_bar_high", "prior_bar_low", "most_recent_swing_low", "days_since_swing_high", "index_pct_change_63d", "industry_group_pct_change_63d", "MP.ma_40", "MP.cci_20"]
+ },
+ "shortfall_reason": "Zero names complete the five-condition set-up (C3/R1). The CCI leg requires cci_20 below -100; the lowest cci_20 in the whole packet is JEF at -6.98, then LMND -5.5, so no bar in the universe is a pullback by this author's timing tool. Four of five is not a set-up, and the method takes only the signals its criteria generate (C19). Nominating nothing is the valid output; padding would be the breach."
+}

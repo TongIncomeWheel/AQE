@@ -1,0 +1,58 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-10-23",
+ "universe_file": "/home/claude/pma/d23/universe.json",
+ "nominations": [
+  {
+   "ticker": "WRB",
+   "reason": "Permission event on the last bar: elder_5d [10, 7, 7, 6, 10], a 6 giving way to elder 10 (C3, C4). elder_pattern CORRECTION_REENTRY with mp_state STRONG, mp 94 (R8). Average stack rising, ma_20 71.4 over ma_50 70.11. Thesis wrong under ma_20 71.4.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "ma_20", "ma_50", "entry"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10 on the last bar: state not red, buying is not forbidden", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [10, 7, 7, 6, 10]: bar before last 6, last bar 10; pattern CORRECTION_REENTRY, mp_state STRONG", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "ma_20 71.4 over ma_50 70.11 (simple MAs, no slope field); entry 75.55 sits above ma_20, not under it", "verdict": "partial", "fields": ["ma_20", "ma_50", "entry"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation at the value-zone MA, ma_20 71.4, against entry 75.55; stop to rise only", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C20"], "observed": "transition, not plateau: 6 then 10 on the last two bars; mp 94; dip bar 6 is ambiguous, not a proven red", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not held; held-name drop test not applicable", "verdict": "no_data", "fields": ["held"]}
+   ]
+  },
+  {
+   "ticker": "AEP",
+   "reason": "Permission event on the last bar: elder_5d [10, 6, 10, 6, 10], a 6 giving way to elder 10 (C3, C4). CORRECTION_REENTRY with mp_state STRONG, mp 90 (R8). ma_20 122.99 just over ma_50 122.92 - stack barely rising and the tail is choppy. Thesis wrong under ma_50 122.92.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "ma_20", "ma_50", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10 on the last bar: not red, ban off", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [10, 6, 10, 6, 10]: last bar 10 after a 6; pattern CORRECTION_REENTRY, mp_state STRONG", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "ma_20 122.99 vs ma_50 122.92: stack only marginally rising; entry 130.64 well above ma_20", "verdict": "partial", "fields": ["ma_20", "ma_50", "entry"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation at the value zone, ma_50 122.92, against entry 130.64; stop to rise only", "verdict": "partial", "fields": ["ma_50", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition on last bar but tail alternates 6 and 10 twice - a whipsawing read, so conviction held at 3; mp 90", "verdict": "partial", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not held; held-name drop test not applicable", "verdict": "no_data", "fields": ["held"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "elder 3 (ambiguous, no buy permission), elder_5d null so no transition can be read; mp 0, mp_state FADING; structure_shift BEARISH_CHOCH (R11); ma_20 43.93 under ma_50 49.99; live_px 38.56 vs entry 53.0. No long case left; stop moves one way only (C18)."},
+  {"ticker": "V", "verdict": "KEEP", "line": "elder 10, elder_5d [10, 7, 7, 7, 10]: last bar rose, no single-bar drop (C4, R7). CORRECTION_REENTRY, mp_state STRONG, mp 94; ma_20 383.23 over ma_50 376.22. Keep; tighten on the first bar where elder_5d falls."}
+ ],
+ "lesson_applied": "No ledger memory block was injected for this seat today; no standing lesson applies. Applied the card's direction reversal: transitions (a 6 or lower giving way to 7 or higher) only, plateaus not nominated (C6, C24 not used).",
+ "data_gaps": [
+  {"field": "elder_5d (MP row)", "impact": "null: the single-bar drop test (R7) cannot be run on MP; held review read on elder, mp, mp_state, structure only"},
+  {"field": "elder_pattern (MP row)", "impact": "null: no pattern label for the held name"}
+ ],
+ "declared": {
+  "not_served": [
+   "per-bar Impulse colour (R1) - the dip bars at 6 are ambiguous, not proven red",
+   "colour on two consecutive bars (R2) - transition read via the 6-then-7+ proxy",
+   "signed Force Index and its 2-bar EMA (R3)",
+   "13-bar EMA of Force Index (R4)",
+   "fitted price channel (R5)",
+   "weekly resample read first (R6)",
+   "slope of the price average - ma_20 over ma_50 used as a stand-in only"
+  ]
+ },
+ "shortfall_reason": "Two nominations, not padded. Many names printed a permission event with CORRECTION_REENTRY, but most fail the trend leg on the stand-in stack (ma_20 under ma_50), e.g. WTRG ma_20 39.67 vs ma_50 40.45, DUK ma_20 117.19 vs ma_50 118.93, EVRG ma_20 80.81 vs ma_50 81.11, LNT ma_20 65.95 vs ma_50 66.96; Elder says stand aside rather than trade smaller (C22). D shows BEARISH_CHOCH (R11). Plateau names (e.g. elder_5d [10, 10, 10, 7, 10]) are not this seat's trigger. Censor duty: no name in the packet prints elder 1 or lower."
+}

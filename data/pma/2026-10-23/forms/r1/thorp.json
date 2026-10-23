@@ -1,0 +1,214 @@
+{
+ "voice": "thorp",
+ "date": "2026-10-23",
+ "universe_file": "/home/claude/pma/d23/universe.json",
+ "nominations": [
+  {
+   "ticker": "WMT",
+   "reason": "Counted edge, calm name: signal_hit_rate_20d 56.9 over signal_n 253, losers included, above a coin flip. All five momentum gates pass (sc_momentum 74.5). Calm: vol_30d_ann 0.2319, atr_14d 2.42 on price 121.12.",
+   "conviction": 3,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "sc_m_gate_detail",
+    "sc_momentum",
+    "atr_14d",
+    "bracket.price",
+    "vol_30d_ann",
+    "day_vol",
+    "knn_prob"
+   ],
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d 56.9, signal_n 253; measured against a coin flip; bucket-level stat, cause not stated",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "Rate counts losers over n 253; no random-selection or one-component-removed benchmark, no net-of-cost figure",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid False; I use atr_fallback_stop 118.7 as loss boundary; one more atr_14d 2.42 gapped through is the unwatched worst case",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "atr_14d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute): atr_14d 2.42 / price 121.12, lowest quartile of all-gate set; vol_30d_ann 0.2319; liquidity day_vol 1.27 (substitute)",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "vol_30d_ann",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "Gates all True today (sc_m_gate_detail all pass); knn_prob 0.75 advisory only, k=5, not a vote",
+     "verdict": "pass",
+     "fields": [
+      "sc_m_gate_detail",
+      "knn_prob"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "ETR",
+   "reason": "Same counted bucket: signal_hit_rate_20d 56.9 over signal_n 253. Calmest of my two: vol_30d_ann 0.1722, atr_14d 1.91 on price 108.19. All momentum gates pass but sc_momentum 64.4 and adx_14 15.8 say the trend is thin.",
+   "conviction": 2,
+   "fields_cited": [
+    "signal_hit_rate_20d",
+    "signal_n",
+    "sc_m_gate_detail",
+    "sc_momentum",
+    "atr_14d",
+    "bracket.price",
+    "vol_30d_ann",
+    "adx_14",
+    "day_vol",
+    "knn_prob"
+   ],
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d 56.9, signal_n 253; measured against a coin flip; bucket-level stat, cause not stated",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "Losers counted over n 253; no random benchmark, no net-of-cost restatement",
+     "verdict": "partial",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid False; loss boundary atr_fallback_stop 106.28; unwatched worst case = one atr_14d 1.91 gapped through it",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "atr_14d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_measure atr_pct (substitute): atr_14d 1.91 / price 108.19, lowest quartile; vol_30d_ann 0.1722; day_vol 1.39 (substitute)",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "vol_30d_ann",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19"
+     ],
+     "observed": "sc_momentum 64.4, adx_14 15.8: condition weak; knn_prob 0.0 advisory only, k=5, not a vote",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "adx_14",
+      "knn_prob"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "Entry condition gone (C10): sc_momentum 19.5, every momentum gate False, mp 0, hl_state EXIT, hl_score 0; live_px 38.56 vs entry 53.0, unreal_usd -4332. A gap of atr_14d 2.25 through the 36.66 stop is live (C4)."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Condition intact: sc_momentum 78.7, all gates pass, mp 94, hl_state HOLD, hl_score 73; live_px 414.34 vs entry 413.26. Stretched (extension_atr_20 4.64); a gap of atr_14d 6.71 through the 401.15 stop is the worst case."
+  }
+ ],
+ "lesson_applied": "No ledger block injected today. Standing audit lesson applied: knn_prob is advisory only (k=5) and beta_30d is not mine; neither ranks or carries a vote here.",
+ "declared": {
+  "not_served": [
+   "low_52w (canon C5 range measure; atr_pct substitute used)",
+   "avg_daily_volume and spread (round-trip cost, C24; day_vol substitute used)",
+   "expected_hold_days (R1 horizon)",
+   "implied_vol and monthly_high_11/monthly_low_11 (R5)",
+   "signal_edge_trailing_median (R7)",
+   "meaning of signal_hit_rate_20d bucket not defined in my glossary"
+  ]
+ },
+ "shortfall_reason": "Two names, without apology (C21). Of the gate-passing set, most signal buckets read below a coin flip (e.g. V at 40.9 over 1009). Buckets at 53.2 over 126 or 50.1 over 337 sit inside noise. Only the 56.9 over 253 bucket clears it; INTU in that bucket is high-vol (vol_30d_ann 0.4416) and pct_from_52w_high -48.07, so I rank it out."
+}

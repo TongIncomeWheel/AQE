@@ -1,0 +1,568 @@
+{
+ "voice": "raschke",
+ "date": "2026-10-23",
+ "universe_file": "/home/claude/pma/d23/seat_packets/raschke.tsv",
+ "nominations": [
+  {
+   "ticker": "ABBV",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2/C7 Holy Grail proxy): first pause after fresh highs, pct_from_52w_high -1.45, structure_shift RANGE inside the swing, extension_atr_20 1.65 near the average, adx_14 34.36 strong trend. Wrong on a close back under the range low.",
+   "fields_cited": [
+    "structure",
+    "structure_shift",
+    "pct_from_52w_high",
+    "extension_atr_20",
+    "adx_14",
+    "mp_state",
+    "sma_distance_pct"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure 78.9, structure_shift RANGE, pct_from_52w_high -1.45: pause inside swing just off highs = retracement",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "adx_14 34.36 (>30, rising not served); extension_atr_20 1.65, sma_distance_pct 7.33; mp_state FADING",
+     "verdict": "partial",
+     "fields": [
+      "adx_14",
+      "extension_atr_20",
+      "sma_distance_pct",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "adx rising, %K/%D not served; adx_14 level used, declared",
+     "verdict": "partial",
+     "fields": [
+      "adx_14"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid False; own level = swing low under range, ~1 atr_14d 6.59 below entry 284.89",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "atr_14d",
+      "entry"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2/C7 proxy): pct_from_52w_high -1.7, structure_shift RANGE, extension_atr_20 1.05 back near the average, adx_14 35.13. Impulse soft: mp_state FADING, mp_accel_state FLAT, elder_pattern INTERRUPTED. Wrong under the range low.",
+   "fields_cited": [
+    "structure_shift",
+    "pct_from_52w_high",
+    "extension_atr_20",
+    "adx_14",
+    "mp_state",
+    "mp_accel_state",
+    "elder_pattern"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure 65.3, structure_shift RANGE, pct_from_52w_high -1.7: pullback inside swing near highs",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7"
+     ],
+     "observed": "adx_14 35.13 (>30); extension_atr_20 1.05; mp_state FADING, mp_accel_state FLAT, elder_pattern INTERRUPTED",
+     "verdict": "partial",
+     "fields": [
+      "adx_14",
+      "extension_atr_20",
+      "mp_state",
+      "mp_accel_state",
+      "elder_pattern"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C7",
+      "C6"
+     ],
+     "observed": "adx rising, %K/%D not served; declared",
+     "verdict": "partial",
+     "fields": [
+      "adx_14"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid True, bracket.stop 93.85 on ma20 (bracket.stop_type), bracket.risk_pct 4.44",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.risk_pct"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  },
+  {
+   "ticker": "CRBG",
+   "conviction": 3,
+   "reason": "BREAKOUT from contraction (C2/C12/C13 proxy): was_squeezed True, structure_shift BULLISH_BOS to pct_from_52w_high 0.0, elder_pattern ACCELERATION, mp_accel_state ACCELERATING, extension_atr_20 1.31 not stretched. day_vol 0.72 light. Wrong back under pivot_high 35.57.",
+   "fields_cited": [
+    "was_squeezed",
+    "structure_shift",
+    "pct_from_52w_high",
+    "elder_pattern",
+    "mp_accel_state",
+    "extension_atr_20",
+    "day_vol",
+    "pivot_high"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure 73.7, structure_shift BULLISH_BOS, pct_from_52w_high 0.0: breakout type",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "was_squeezed True (contraction proxy), extension_atr_20 1.31; day_vol 0.72 below normal",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed",
+      "extension_atr_20",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12"
+     ],
+     "observed": "NR4/NR7 and HV ratio not served; was_squeezed used as substitute",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid False; own level just under pivot_high 35.57 (entry 35.59), atr_14d 0.9",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "pivot_high",
+      "atr_14d"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  },
+  {
+   "ticker": "FAST",
+   "conviction": 2,
+   "reason": "BREAKOUT from contraction (C2/C12 proxy): was_squeezed True, structure_shift ABOVE_STRUCTURE at pct_from_52w_high 0.0, elder_pattern ACCELERATION, extension_atr_20 1.34. Caution: mp_state FADING, mp_accel_state FLAT. Wrong back under pivot_high 51.41.",
+   "fields_cited": [
+    "was_squeezed",
+    "structure_shift",
+    "pct_from_52w_high",
+    "elder_pattern",
+    "extension_atr_20",
+    "mp_state",
+    "mp_accel_state",
+    "pivot_high"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure 71.6, structure_shift ABOVE_STRUCTURE, pct_from_52w_high 0.0: breakout type",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "pct_from_52w_high"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "was_squeezed True, extension_atr_20 1.34, day_vol 1.16; mp_state FADING, mp_accel_state FLAT",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed",
+      "extension_atr_20",
+      "day_vol",
+      "mp_state",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12"
+     ],
+     "observed": "NR4/NR7 and HV ratio not served; was_squeezed substitute",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid False; own level under pivot_high 51.41 (entry 52.73), atr_14d 1.36",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "pivot_high",
+      "atr_14d"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  },
+  {
+   "ticker": "M",
+   "conviction": 2,
+   "reason": "BREAKOUT from contraction (C2/C12 proxy): was_squeezed True, squeeze_breakout_state BREAKOUT_UP, structure 76.8 ABOVE_STRUCTURE, extension_atr_20 1.28. Not volume-confirmed (squeeze_breakout_volume_confirmed False, day_vol 0.8). Wrong under pivot_high 23.63.",
+   "fields_cited": [
+    "was_squeezed",
+    "squeeze_breakout_state",
+    "structure",
+    "structure_shift",
+    "extension_atr_20",
+    "squeeze_breakout_volume_confirmed",
+    "day_vol",
+    "pivot_high"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure 76.8, structure_shift ABOVE_STRUCTURE, squeeze_breakout_state BREAKOUT_UP: breakout type",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "squeeze_breakout_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "was_squeezed True, extension_atr_20 1.28; squeeze_breakout_volume_confirmed False, day_vol 0.8; mp_accel_state FLAT",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed",
+      "extension_atr_20",
+      "squeeze_breakout_volume_confirmed",
+      "day_vol",
+      "mp_accel_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12"
+     ],
+     "observed": "NR4/NR7 not served; squeeze flags used as substitute",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid False; own level under pivot_high 23.63 (entry 24.17), atr_14d 0.85",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "pivot_high",
+      "atr_14d"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  },
+  {
+   "ticker": "LTH",
+   "conviction": 2,
+   "reason": "BREAKOUT from contraction (C2/C12 proxy): was_squeezed True, squeeze_breakout_state BREAKOUT_UP with squeeze_breakout_volume_confirmed True, structure_shift BULLISH_BOS, extension_atr_20 1.25. Structure only 51.6, pct_from_52w_high -8.18. Wrong back inside the squeeze.",
+   "fields_cited": [
+    "was_squeezed",
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "structure_shift",
+    "structure",
+    "extension_atr_20",
+    "pct_from_52w_high"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift BULLISH_BOS, squeeze_breakout_state BREAKOUT_UP: breakout type; structure 51.6 mid",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "squeeze_breakout_state",
+      "structure"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "was_squeezed True, squeeze_breakout_volume_confirmed True, day_vol 1.16, extension_atr_20 1.25",
+     "verdict": "pass",
+     "fields": [
+      "was_squeezed",
+      "squeeze_breakout_volume_confirmed",
+      "day_vol",
+      "extension_atr_20"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12"
+     ],
+     "observed": "NR4/NR7 not served; squeeze flags substitute",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid True, bracket.stop 40.43 on ma20, bracket.risk_pct 3.72",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.risk_pct"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  },
+  {
+   "ticker": "EW",
+   "conviction": 2,
+   "reason": "BREAKOUT from contraction (C2/C12 proxy): was_squeezed True, squeeze_breakout_state BREAKOUT_UP, structure_shift BULLISH_BOS, elder_pattern ACCELERATION, extension_atr_20 1.68. Volume unconfirmed (day_vol 0.84), structure 55.8. Wrong under pivot_high 89.7.",
+   "fields_cited": [
+    "was_squeezed",
+    "squeeze_breakout_state",
+    "structure_shift",
+    "elder_pattern",
+    "extension_atr_20",
+    "day_vol",
+    "structure",
+    "pivot_high"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift BULLISH_BOS, squeeze_breakout_state BREAKOUT_UP: breakout type; structure 55.8",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "squeeze_breakout_state",
+      "structure"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "was_squeezed True, extension_atr_20 1.68; squeeze_breakout_volume_confirmed False, day_vol 0.84",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed",
+      "extension_atr_20",
+      "squeeze_breakout_volume_confirmed",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12"
+     ],
+     "observed": "NR4/NR7 not served; squeeze flags substitute",
+     "verdict": "partial",
+     "fields": [
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17"
+     ],
+     "observed": "bracket.valid False; own level under pivot_high 89.7 (entry 90.09), atr_14d 2.03",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "pivot_high",
+      "atr_14d"
+     ]
+    }
+   ],
+   "declared": {
+    "setup_type": "see per-name step 1",
+    "adx": "adx_14 level SERVED in packet; adx rising NOT_SERVED (C7)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift + pct_from_52w_high (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13); was_squeezed/atr_14d single-bar proxy",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   }
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "No setup type (C2): structure 11.0, structure_shift BEARISH_CHOCH, sma_distance_pct -22.87, mp_state FADING DECELERATING, held_book.hl_state EXIT, held_book.unreal_usd -4332.0 at held_book.live_px 38.56; C21 keep drawdowns small. div_state BULLISH is advisory only."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Trend intact: structure 86.3 ABOVE_STRUCTURE, mp_state STRONG ACCELERATING, adx_14 32.72, pct_from_52w_high 0.0. Stretched (extension_atr_20 4.64, pct_run_10d 10.46) so C19 watch, not a windfall yet (held_book.unreal_usd 41.03). Wrong back under pivot_high 385.57."
+  }
+ ],
+ "lesson_applied": "No ledger memory block injected this run; no standing lesson applied.",
+ "declared": {
+  "not_served": [
+   "adx rising (adx_14 level only, C7/C8)",
+   "stochastic_kd (C6)",
+   "exact 20-day high/low (C3/C4)",
+   "bar_range_history NR4/NR7/HV ratio (C12/C13)",
+   "market_breadth TICK/TRIN (C16)"
+  ]
+ },
+ "shortfall_reason": "7 names fit a Raschke setup family. No TEST (Turtle Soup) shape is readable without an N-day low field. Many high-structure names (CL, WRB, COST, WEC, DUK, SO, MA) carry adx_14 >30 but extension_atr_20 near 4 after 10-day runs: thrusts, not first pullbacks, so not Holy Grail entries today. AAPL breakout skipped on div_bear_count 4 with mp_accel_state DECELERATING."
+}

@@ -1,0 +1,3 @@
+- Data gap (Wyckoff, R1): the injected MP row carries entry 53.0 (= cost basis), not the last close 38.56. trim injects the held record's entry field into `entry`. Seats should read held_book.live_px. Handover item.
+- Isolation breach (declared by the seat): elder-lens ran `head` on seow's round-1 form after deciding. Its two nominations and held review were already set; no seow figures in its form. Held review flagged as possibly anchored. Seow filed 0 nominations, so no pick was copied.
+- Thorp ballot carries BRACKET_MENTION flags on 11 names (worst-case gap line uses the ATR fallback stop as information). Registrar accepted (OK); flagged, not a reason for any vote (R1).

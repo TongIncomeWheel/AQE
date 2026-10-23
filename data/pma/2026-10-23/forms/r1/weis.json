@@ -1,0 +1,679 @@
+{
+ "voice": "weis",
+ "date": "2026-10-23",
+ "nominations": [
+  {
+   "ticker": "ELV",
+   "reason": "Contraction in a confirmed uptrend (W21/W23): inside_bar True, stack_state ALIGNED, ma_20 411.74 > ma_50 407.21 > ma_200 370.77, structure_shift ABOVE_STRUCTURE, choch_state BULLISH. Bullish preceding read; hinge not yet resolved.",
+   "conviction": 3,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "inside_bar",
+    "stack_state",
+    "ma_20",
+    "ma_50",
+    "ma_200",
+    "structure_shift",
+    "choch_state",
+    "mp_state",
+    "sma_distance_pct",
+    "day_vol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: stack_state ALIGNED, ma_20 411.74 > ma_50 407.21 > ma_200 370.77, mp_state STRONG",
+     "verdict": "pass",
+     "fields": [
+      "stack_state",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge: inside_bar True, elder_context.vcp.base_range_pct 18.1; squeeze_breakout_state NONE so not yet resolved",
+     "verdict": "partial",
+     "fields": [
+      "inside_bar",
+      "elder_context.vcp.base_range_pct",
+      "squeeze_breakout_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2"
+     ],
+     "observed": "Effort vs result: day_vol 1.08 on an inside day, no heavy-effort/small-result warning; sma_distance_pct 9.35 stretched",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour: choch_state BULLISH, structure_shift ABOVE_STRUCTURE, no bearish break of rhythm",
+     "verdict": "pass",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "SHO",
+   "reason": "Contraction in an aligned uptrend (W21/W23): inside_bar True, stack_state ALIGNED, ma_20 11.6 > ma_50 11.29 > ma_200 10.45, structure_shift ABOVE_STRUCTURE, sc_momentum 80.9. Event: days_to_earnings 10.",
+   "conviction": 3,
+   "catalyst": "days_to_earnings 10 — earnings inside the hold window",
+   "fields_cited": [
+    "inside_bar",
+    "stack_state",
+    "ma_20",
+    "ma_50",
+    "ma_200",
+    "structure_shift",
+    "sc_momentum",
+    "sma_distance_pct",
+    "days_to_earnings"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: stack_state ALIGNED, ma_20 11.6 > ma_50 11.29 > ma_200 10.45, mp_state STRONG",
+     "verdict": "pass",
+     "fields": [
+      "stack_state",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "mp_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge: inside_bar True, elder_context.vcp.base_range_pct 14.6; squeeze_breakout_state NONE, trigger pending",
+     "verdict": "partial",
+     "fields": [
+      "inside_bar",
+      "elder_context.vcp.base_range_pct",
+      "squeeze_breakout_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C4"
+     ],
+     "observed": "Effort vs result: day_vol 1.37 into a narrow inside bar, no slippage; sma_distance_pct 11.63 extended",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour: choch_state BULLISH, structure_shift ABOVE_STRUCTURE",
+     "verdict": "pass",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CRM",
+   "reason": "Hinge resolved up with effort confirmed (W21/W1): squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, inside an aligned trend: stack_state ALIGNED, ma_20 234.8 > ma_50 234.04 > ma_200 198.75, choch_state BULLISH.",
+   "conviction": 3,
+   "catalyst": "days_to_earnings 28",
+   "fields_cited": [
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "stack_state",
+    "ma_20",
+    "ma_50",
+    "ma_200",
+    "choch_state",
+    "day_vol",
+    "days_to_earnings"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "Trend gate: stack_state ALIGNED, ma_20 234.8 > ma_50 234.04 > ma_200 198.75",
+     "verdict": "pass",
+     "fields": [
+      "stack_state",
+      "ma_20",
+      "ma_50",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge resolved: squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True; was_squeezed False so contraction was mild",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed",
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2"
+     ],
+     "observed": "Effort vs result: day_vol 1.19 with sma_distance_pct 6.94 progress, effort matched by result",
+     "verdict": "pass",
+     "fields": [
+      "day_vol",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour: choch_state BULLISH, structure_shift RANGE",
+     "verdict": "partial",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "LTH",
+   "reason": "Correction in a longer uptrend resolving up (W10/W21): ma_200 34.74 below entry 41.99, squeeze_breakout_state BREAKOUT_UP with squeeze_breakout_volume_confirmed True, structure_shift BULLISH_BOS, choch_state BULLISH. stack_state ROLLING caps it.",
+   "conviction": 3,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "ma_200",
+    "entry",
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "was_squeezed",
+    "structure_shift",
+    "choch_state",
+    "stack_state",
+    "sma_distance_pct"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: entry 41.99 above ma_50 41.8 and ma_200 34.74, but ma_20 40.43 under ma_50, stack_state ROLLING",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge resolved: was_squeezed True, squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True",
+     "verdict": "pass",
+     "fields": [
+      "was_squeezed",
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1"
+     ],
+     "observed": "Effort vs result: day_vol 1.16, price only sma_distance_pct 0.45 above the averages, early in the move",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour up: structure_shift BULLISH_BOS, choch_state BULLISH",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "choch_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "EBC",
+   "reason": "Squeeze resolved up on volume after a pullback held above ma_200 20.96 (W21/W10): was_squeezed True, squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, structure_shift BULLISH_BOS. stack_state ROLLING, sc_momentum 64.4.",
+   "conviction": 2,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "ma_200",
+    "was_squeezed",
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "structure_shift",
+    "stack_state",
+    "sc_momentum",
+    "day_vol"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: entry 22.11 above ma_50 21.78 and ma_200 20.96; ma_20 21.2 under ma_50, stack_state ROLLING",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge resolved: was_squeezed True, squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True",
+     "verdict": "pass",
+     "fields": [
+      "was_squeezed",
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1"
+     ],
+     "observed": "Effort vs result: day_vol 1.45 for sma_distance_pct 1.5 progress, effort ahead of result so far",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour up: structure_shift BULLISH_BOS, choch_state BULLISH",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "choch_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "AUB",
+   "reason": "Tight squeeze resolved up on volume (W21): was_squeezed True, elder_context.vcp.vcp_tightness_pct 87.1, squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, structure_shift ABOVE_STRUCTURE. stack_state ROLLING, structure 43.2.",
+   "conviction": 2,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "was_squeezed",
+    "elder_context.vcp.vcp_tightness_pct",
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "structure_shift",
+    "stack_state",
+    "structure",
+    "flow"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: entry 40.1 above ma_50 39.49 and ma_200 38.99; ma_20 38.22 lags, stack_state ROLLING",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge resolved: was_squeezed True, elder_context.vcp.vcp_tightness_pct 87.1, squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True",
+     "verdict": "pass",
+     "fields": [
+      "was_squeezed",
+      "elder_context.vcp.vcp_tightness_pct",
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1"
+     ],
+     "observed": "Effort vs result: day_vol 1.36, flow 93.4, sma_distance_pct 1.55 progress",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "flow",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour: choch_state BULLISH, structure_shift ABOVE_STRUCTURE",
+     "verdict": "pass",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "CP",
+   "reason": "Range break up on heavy effort (W21/W1): squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, day_vol 1.87, structure_shift BULLISH_BOS, entry 90.62 above ma_50 89.25 and ma_200 85.48. No prior squeeze; stack_state ROLLING.",
+   "conviction": 2,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "day_vol",
+    "structure_shift",
+    "entry",
+    "ma_50",
+    "ma_200",
+    "stack_state",
+    "was_squeezed"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: entry 90.62 above ma_50 89.25 and ma_200 85.48; ma_20 86.17 lags, stack_state ROLLING",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge: squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, but was_squeezed False",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed",
+      "was_squeezed"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2"
+     ],
+     "observed": "Effort vs result: day_vol 1.87 for sma_distance_pct 1.53; heavy effort, modest result so far, watch for absorption",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour up: structure_shift BULLISH_BOS, choch_state BULLISH",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "choch_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "OKE",
+   "reason": "Single-bar rejection (W6, DEGRADED proxy): pin_bar_state BULLISH_PIN with entry 93.9 above ma_200 88.04, sma_distance_pct 1.27. But choch_state BEARISH, structure_shift RANGE, stack_state ROLLING: unconfirmed spring, small bet.",
+   "conviction": 2,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "pin_bar_state",
+    "entry",
+    "ma_200",
+    "sma_distance_pct",
+    "choch_state",
+    "structure_shift",
+    "stack_state",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: entry 93.9 above ma_200 88.04 and ma_50 92.73; ma_20 90.2 under ma_50, stack_state ROLLING",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C6",
+      "C7"
+     ],
+     "observed": "Spring proxy: pin_bar_state BULLISH_PIN is a one-bar rejection only; follow-through and penetration depth not served",
+     "verdict": "partial",
+     "fields": [
+      "pin_bar_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1"
+     ],
+     "observed": "Effort vs result: day_vol 1.14 on the rejection bar, atr_14d 2.32",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "atr_14d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour: choch_state BEARISH, structure_shift RANGE, rhythm not yet repaired",
+     "verdict": "fail",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "RELY",
+   "reason": "Contraction inside a correction of a longer uptrend (W21/W10): inside_bar True, entry 25.32 above ma_50 23.91 and ma_200 20.21, mp_state STRONG, sc_momentum 74.6. structure_shift RANGE, choch_state BEARISH, stack_state ROLLING.",
+   "conviction": 2,
+   "catalyst": "NONE — price shape only",
+   "fields_cited": [
+    "inside_bar",
+    "entry",
+    "ma_50",
+    "ma_200",
+    "mp_state",
+    "sc_momentum",
+    "structure_shift",
+    "choch_state",
+    "stack_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend gate: entry 25.32 above ma_50 23.91 and ma_200 20.21; ma_20 23.26 under ma_50, stack_state ROLLING",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge: inside_bar True, elder_context.vcp.base_range_pct 20.2; squeeze_breakout_state NONE",
+     "verdict": "partial",
+     "fields": [
+      "inside_bar",
+      "elder_context.vcp.base_range_pct",
+      "squeeze_breakout_state"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C4"
+     ],
+     "observed": "Effort vs result: day_vol 0.64 dry-up on the inside day (contraction, not absorption)",
+     "verdict": "pass",
+     "fields": [
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "Change of behaviour: choch_state BEARISH, structure_shift RANGE",
+     "verdict": "fail",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "W10/W23 downtrend: ma_20 43.93 < ma_50 49.99 < ma_200 55.93, sma_distance_pct -22.87, structure_shift BEARISH_CHOCH, mp_state FADING, sc_momentum 19.5, held_book.hl_state EXIT, held_book.live_px 38.56. No spring read; failed-structure case."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Trend intact (W23): stack_state ALIGNED, ma_20 383.23 > ma_50 376.22 > ma_200 340.3, structure_shift ABOVE_STRUCTURE, choch_state BULLISH, mp_state STRONG, held_book.hl_state HOLD, held_book.vwap_14d_position ABOVE. No upthrust or change-of-behaviour warning."
+  }
+ ],
+ "lesson_applied": "W23 first on every name: no spring-shaped or squeeze read nominated under ma_200 or with stack_state INVERTED (HON, TPG, FHB, DHI passed over). Contraction is worded as dry-up, never absorption; pin bar is a one-bar proxy, never a confirmed spring.",
+ "declared": {
+  "not_served": [
+   "R8 upthrust confirmation (close-location value)",
+   "R9 spring penetration depth",
+   "R10 secondary test",
+   "R11 absorption sequence",
+   "R12 multi-timeframe degree (conviction 5 unreachable)",
+   "wave volume / up-down volume split (out of scope)"
+  ]
+ },
+ "shortfall_reason": "No shortfall: 9 nominations. Only one bullish pin bar (OKE) in the packet, so most reads are contraction/hinge (R1/R2), not spring calls. R6 and R7 are proxies."
+}

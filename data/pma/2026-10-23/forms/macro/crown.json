@@ -1,0 +1,61 @@
+{
+ "voice": "crown",
+ "date": "2026-10-23",
+ "status": "OK (artifact status OK, all inputs available; oldest leg positioning 2026-10-13, volatility 2026-10-21)",
+ "expression_family": "BROADENING_CARRY",
+ "match_quality": "partial",
+ "size_multiplier": 1.0,
+ "conditions_met": ["broadening", "range_not_extreme", "cta_low_flip"],
+ "conditions_not_met": ["gamma_positive", "dispersion_normal"],
+ "headline": "Young broadening (4 days, mid-range) inside a negative-gamma tape; carry family is a partial fit only, dealers amplify and single-stock vol stays wide. Contested, not clean.",
+ "data_points": [
+  {"name": "breadth regime (RSP/SPY)", "value": "broadening, 4 days, mid of 12m range, confidence 0.65, gate passed; 5d +2.54%, 20d +4.22%, 60d -3.41%", "reading": "R1: broadening from mid-range is early, not late (R4 not lit). R3 gate passed, so downstream reads count. But 60d still negative and only 4 days old: a young turn, not an established one."},
+  {"name": "option dealers", "value": "NEGATIVE; SPY total GEX -12.05B, QQQ -7.46B", "reading": "Dealers amplify moves: bigger swings both ways than news deserves. Directly contradicts the family's own playbook context ('gamma positive'). Assumption: customers long calls and puts; convention, not observed data."},
+  {"name": "SPY gamma flip distance", "value": "flip 777.85 vs spot 763.96 = 1.82%", "reading": "R9 checked: outside the ~1% knife-edge threshold, so NOT knife-edge, but close. QQQ flip 738.82 = 4.88% away, not knife-edge. Same dealer-side assumption applies."},
+  {"name": "volatility gap (single-stock vs index)", "value": "VIX 19.03, single-stock vol 40.72, gap 24.04, 83.5% of 2y history, 20d change -0.01", "reading": "R6 ELEVATED_EASING as labelled, but the easing is -0.01 pts, effectively flat. Gap sits only 2.0% above its elevated band (23.56). The label is marginal: stress is not leaving fast, it has stopped building. Index downside is not cheap-and-early here, but neither is the all-clear."},
+  {"name": "VIX level", "value": "19.03 (26th pct of 2y); term structure CONTANGO; implied correlation 10.88 (37.8 pct)", "reading": "R11 not lit (under 25). Index quiet, correlation below mid: selection still pays. Above 15, so not the premium-selling sweet spot."},
+  {"name": "trend funds (CTA replica)", "value": "bias neutral, 18 markets, share at extreme 0.00, size dial 1.00; equity +0.19, fx +0.38, rates -0.52, metals -0.23", "reading": "R8 not lit: CTA complex not crowded, no cut from this leg. The 1.00x multiplier comes from this dial alone."},
+  {"name": "large speculators (CFTC)", "value": "crowded long NQ, RTY, ZC, ZF, ZS, ZT; crowded short NG; as of 2026-10-13", "reading": "R7: context, never timing; 10 days old. Note specs crowded long small caps (RTY) while trend funds are sellers of RTY below 2,818.62: a crowded-long market under its CTA flip is fragile, not supportive."},
+  {"name": "divergence warnings", "value": "10 lit (1 index-level: momentum not keeping up with price; 9 on individual markets); type: rsi only", "reading": "R10: weigh by agreement. All one type (RSI), and breadth is broadening, so they do not line up with breadth. A straw pile of one kind, not a confirming pile."},
+  {"name": "macro scenario", "value": "DOLLAR_SQUEEZE leads at 0.58 share of conditions met, coverage 1.0, contested with GROWTH_SCARE (within 12%)", "reading": "C37 contested, not a call. Share of conditions, not a probability (F4/C34). The dollar story's core leg is missing (UUP roc5 -0.34%, below 20d average)."},
+  {"name": "freshness", "value": "oldest_source reported 2026-10-21 (2 days); positioning_as_of 2026-10-13 (10 days)", "reading": "C28/C29: the read is only as current as its oldest leg. how_current.oldest_source understates it; positioning is 10 days old."}
+ ],
+ "contested_points": [
+  "Family vs raw fields (C37): BROADENING_CARRY's playbook context assumes 'gamma positive, dispersion normal'; raw data shows dealers NEGATIVE and the vol gap at the 83.5th percentile. 2 of 5 conditions unmet. Partial match, not rounded up (C7).",
+  "Size multiplier 1.00 reflects the CTA dial only; it does not price the two unmet conditions or the negative-gamma regime. Surfaced for the PM; not resolved by this seat (F1).",
+  "read_me_first calls the setup 'fragile... a lot of money leaning the same way' while trend_funds share_at_an_extreme is 0.00 and labelled 'not crowded'. The crowding is in CFTC speculators (stale), not CTAs.",
+  "Scenario DOLLAR_SQUEEZE leads while the dollar itself is falling (UUP roc5 -0.34%, below 20d); runner-up GROWTH_SCARE fits almost as well."
+ ],
+ "key_levels": [
+  {"market": "SPY put wall", "level": 760.0, "distance_pct": -0.52, "meaning": "Heaviest put positioning below spot; usual support. Losing it removes the cushion, and in negative gamma the move can accelerate."},
+  {"market": "QQQ put wall", "level": 700.0, "distance_pct": -0.63, "meaning": "Same for Nasdaq; losing it removes the cushion."},
+  {"market": "SPY call wall", "level": 770.0, "distance_pct": 0.79, "meaning": "Heaviest call positioning above; rallies meet dealer selling unless momentum forces through."},
+  {"market": "Russell 2000 (RTY) CTA flip", "level": 2818.62, "distance_pct": 0.81, "meaning": "Trend funds turn from seller to buyer above here; with specs already crowded long RTY, it confirms or exposes the broadening."},
+  {"market": "SPY gamma flip", "level": 777.85, "distance_pct": 1.82, "meaning": "Above here dealers stop amplifying and start damping; the unmet gamma_positive condition would be met. Assumption-dependent."},
+  {"market": "Vol gap elevated band", "level": 23.56, "distance_pct": -2.0, "meaning": "Gap 24.04 falling under 23.56 would make the easing real; widening again would turn the fading warning live."},
+  {"market": "RSP/SPY 20-day average", "level": 0.275588, "distance_pct": -3.52, "meaning": "Average stock crossing below its own trend vs the index; turns before the regime label does."},
+  {"market": "S&P 500 (ES) CTA flip", "level": 7408.47, "distance_pct": -3.84, "meaning": "Trend funds turn seller together below here."},
+  {"market": "Nasdaq 100 (NQ) CTA flip", "level": 27804.09, "distance_pct": -4.53, "meaning": "Trend funds turn seller below here; specs crowded long NQ would be forced to reverse."},
+  {"market": "RSP/SPY 12-month high", "level": 0.298794, "distance_pct": 4.6, "meaning": "Broadening reaching the top of its range becomes late, not early (R1/R4)."},
+  {"market": "VIX already-priced threshold", "level": 25.0, "distance_pct": 31.37, "meaning": "Above this protection is already expensive; a spike through it is not a fresh reason to sell (R11)."}
+ ],
+ "what_would_change_it": [
+  "SPY closing above the 777.85 gamma flip (dealers flip to damping) would meet gamma_positive and firm the carry family.",
+  "Vol gap falling under 23.56 would meet dispersion easing for real; the gap widening again (20d change turning positive) would flip the state toward ELEVATED_RISING and route to HIDDEN_STRESS_DOWNSIDE (R5).",
+  "SPY losing the 760 put wall in negative gamma would make swings larger than the broadening read allows.",
+  "RSP/SPY dropping under its 20-day average (0.275588, 3.5% away) would end the 4-day broadening before the label changes.",
+  "RTY above 2,818.62 (0.8%) would add trend-fund buying behind small caps; failure there with specs crowded long is the fragile case.",
+  "Several divergence types lining up with a breadth roll (not RSI alone) would make the warnings a pile, not a straw.",
+  "Scheduled tests: ISM Manufacturing and Services today 09:45 ET (read vs copper, CPER roc5 -2.48%); FOMC 2026-10-28; Core PCE and GDP 2026-10-29."
+ ],
+ "limits": [
+  "Two macro scenarios (DOLLAR_SQUEEZE, GROWTH_SCARE) fit almost equally; the overlap is the honest read, not the winner.",
+  "Scenario scores are a share of conditions met, never a probability; nothing fitted or backtested.",
+  "Gamma readings rest on a dealer-side convention (customers long calls and puts), not observed data.",
+  "CFTC positioning is as of 2026-10-13 (10 days old) and cannot time anything; how_current.oldest_source (2026-10-21) understates the oldest leg.",
+  "Volatility leg as of 2026-10-21 (2 days behind).",
+  "ELEVATED_EASING rests on a 20d gap change of -0.01: a near-zero move; treat the state as borderline.",
+  "Standalone per charter: SRM, macro_weather and thematic basket figures present in the packet were not used in this read.",
+  "This seat does not size, names no ticker, places nothing; the multiplier applies to the PM's own risk budget."
+ ]
+}

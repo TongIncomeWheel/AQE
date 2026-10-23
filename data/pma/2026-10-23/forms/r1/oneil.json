@@ -1,0 +1,386 @@
+{
+ "voice": "oneil",
+ "date": "2026-10-23",
+ "universe_file": "/home/claude/pma/d23/seat_packets/oneil.tsv",
+ "nominations": [
+  {
+   "ticker": "ROKU",
+   "conviction": 4,
+   "reason": "Leader breaking out: structure_shift BULLISH_BOS at a new high (pct_from_52w_high 0.0), pct_from_pivot 0.76 inside the 5% buy zone, day_vol 2.8 clears the +40% test, rs_rank_pct 87.65. Market gate DELEGATED; C/A/S/I untested.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "rs_rank_pct",
+    "structure",
+    "structure_shift",
+    "day_vol",
+    "pivot_high",
+    "pct_from_pivot",
+    "pct_from_52w_high",
+    "ma_50",
+    "ma_200",
+    "bracket.valid",
+    "bracket.atr_fallback_stop",
+    "sector_trend_state",
+    "div_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership LEADER, rs_rank_pct 87.65, rank 38 = third of XLC names behind MTCH and SPOT (GICS sector, not industry group)",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_rank_pct",
+      "rank",
+      "gics_sector"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C18"
+     ],
+     "observed": "structure 66.3, structure_shift BULLISH_BOS, base_range_pct 6.5; base measure is the structure composite substitute, base stage unserved",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C16"
+     ],
+     "observed": "day_vol 2.8 (vs 20-day, substitute) is above 1.40",
+     "verdict": "pass",
+     "fields": [
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C24"
+     ],
+     "observed": "pivot_high 158.85, pct_from_pivot 0.76; entry 160.06 vs ma_200 126.32, far below the 70% climax line",
+     "verdict": "pass",
+     "fields": [
+      "pivot_high",
+      "pct_from_pivot",
+      "entry",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C22"
+     ],
+     "observed": "bracket.valid False, bracket.atr_fallback_stop 157.99; thesis wrong on a close back under pivot_high 158.85 / ma_50 155.2. Info only (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "ma_50"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C25"
+     ],
+     "observed": "new high on day_vol 2.8, not lower volume; div_state BULLISH; sector_trend_state Recovering From Weakness, MTCH and SPOT also strong in XLC",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "div_state",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C1",
+      "C4",
+      "C11"
+     ],
+     "observed": "market_gate DELEGATED; fundamentals NOT_AVAILABLE for C, A, S, I",
+     "verdict": "no_data",
+     "fields": [
+      "sc_momentum"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "MTCH",
+   "conviction": 3,
+   "reason": "Group leader (rank 17, top XLC name) with structure 81.1 above structure, pct_from_pivot 2.18 inside the 5% zone, day_vol 1.56 passes the volume test, rs_rank_pct 82.15. Not yet a new high (pct_from_52w_high -1.31). Gate DELEGATED.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "rs_rank_pct",
+    "structure",
+    "structure_shift",
+    "day_vol",
+    "pivot_high",
+    "pct_from_pivot",
+    "pct_from_52w_high",
+    "ma_50",
+    "ma_200",
+    "bracket.valid",
+    "bracket.atr_fallback_stop",
+    "sector_trend_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership LEADER, rank 17 top of XLC names, rs_rank_pct 82.15",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rank",
+      "rs_rank_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C18"
+     ],
+     "observed": "structure 81.1, structure_shift ABOVE_STRUCTURE, base_range_pct 17.6; substitute base measure, stage unserved",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C16"
+     ],
+     "observed": "day_vol 1.56 (vs 20-day, substitute) above 1.40",
+     "verdict": "pass",
+     "fields": [
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C7"
+     ],
+     "observed": "pivot_high 44.94, pct_from_pivot 2.18; pct_from_52w_high -1.31 so not quite a new high; entry 45.92 vs ma_200 36.21 well short of climax",
+     "verdict": "partial",
+     "fields": [
+      "pivot_high",
+      "pct_from_pivot",
+      "pct_from_52w_high",
+      "entry",
+      "ma_200"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "bracket.valid False, bracket.atr_fallback_stop 44.63; thesis wrong under pivot_high 44.94, then ma_50 41.66. Info only (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "ma_50"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C25"
+     ],
+     "observed": "sector_trend_state Recovering From Weakness; ROKU and SPOT also strong in XLC, not a Lone Ranger; div_state NONE",
+     "verdict": "partial",
+     "fields": [
+      "sector_trend_state",
+      "div_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C1",
+      "C4",
+      "C11"
+     ],
+     "observed": "market_gate DELEGATED; fundamentals NOT_AVAILABLE for C, A, S, I",
+     "verdict": "no_data",
+     "fields": [
+      "sc_momentum"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "TRV",
+   "conviction": 2,
+   "reason": "New high (pct_from_52w_high 0.0) on day_vol 1.48, structure 76.8, rs_rank_pct 83.5, ret_12m 50.53. Late buy: pct_from_pivot 5.59 is past 5%, so warning and no add-ons. XLF rank 68 is not a top-3 group name. Gate DELEGATED.",
+   "fields_cited": [
+    "rs_leadership",
+    "rank",
+    "rs_rank_pct",
+    "ret_12m",
+    "structure",
+    "structure_shift",
+    "day_vol",
+    "pivot_high",
+    "pct_from_pivot",
+    "pct_from_52w_high",
+    "ma_50",
+    "bracket.valid",
+    "bracket.atr_fallback_stop",
+    "sector_trend_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership LEADER, rs_rank_pct 83.5, but rank 68 trails CME, SPGI and V in XLF",
+     "verdict": "partial",
+     "fields": [
+      "rs_leadership",
+      "rs_rank_pct",
+      "rank"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C18"
+     ],
+     "observed": "structure 76.8, structure_shift ABOVE_STRUCTURE, base_range_pct 14.2; substitute base measure, stage unserved",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C16"
+     ],
+     "observed": "day_vol 1.48 (vs 20-day, substitute) above 1.40",
+     "verdict": "pass",
+     "fields": [
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C21"
+     ],
+     "observed": "pivot_high 383.99, pct_from_pivot 5.59: 5.1-10% late-buy warning, no add-ons permitted",
+     "verdict": "partial",
+     "fields": [
+      "pivot_high",
+      "pct_from_pivot"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "bracket.valid False, bracket.atr_fallback_stop 397.58; thesis wrong under pivot_high 383.99, ma_50 370.89 below. Info only (R1)",
+     "verdict": "partial",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "ma_50"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C25"
+     ],
+     "observed": "sector_trend_state Momentum Fading - Hold, Don't Add: group not confirming",
+     "verdict": "fail",
+     "fields": [
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C1",
+      "C4",
+      "C11"
+     ],
+     "observed": "market_gate DELEGATED; fundamentals NOT_AVAILABLE for C, A, S, I",
+     "verdict": "no_data",
+     "fields": [
+      "sc_momentum"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "bracket.price 38.56 vs held_book.entry 53.0 is far past the 7-8% max loss (C20); structure 11.0, structure_shift BEARISH_CHOCH, sma_distance_pct -22.87 under ma_50 49.99 and ma_200 55.93. Sell, never average down."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "New high (pct_from_52w_high 0.0), structure 86.3, rs_rank_pct 84.6, entry 414.34 well above ma_50 376.22. pct_from_pivot 7.46 is past 5%, so no add-ons (C21); day_vol 1.22 is no climax."
+  }
+ ],
+ "lesson_applied": "No ledger memory block was injected this run; no standing lesson applies.",
+ "declared": {
+  "fundamentals": "NOT_AVAILABLE (C, A, S, I letters untested)",
+  "base_stage": "NOT_AVAILABLE",
+  "market_gate": "DELEGATED - valid only into a confirmed uptrend; void if the index is under distribution",
+  "rs_measure": "rs_leadership + rs_rank_pct (substitute - no IBD RS Rating)",
+  "volume_measure": "day_vol vs 20-day (substitute - canon says 50-day)",
+  "base_measure": "structure composite (substitute)",
+  "not_served": [
+   "quarterly/annual EPS, sales, ROE (C, A)",
+   "absolute share volume, buybacks, insider % (S)",
+   "institutional sponsor counts (I)",
+   "IBD RS Rating (12-month weighted)",
+   "labelled base-stage count (C19)",
+   "index distribution / follow-through days (M)",
+   "50-day volume average"
+  ]
+ },
+ "data_gaps": [],
+ "shortfall_reason": "Three names pass leadership, volume and the 5% pivot zone together; most strong-volume leaders are 7-30% past their pivots (late or rejected under C17) or rank below the top of their group. Padding would break the method."
+}

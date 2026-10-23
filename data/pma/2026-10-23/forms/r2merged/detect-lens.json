@@ -1,0 +1,806 @@
+{
+ "voice": "detect-lens",
+ "date": "2026-10-23",
+ "round": 2,
+ "declarations": [
+  "canon_status: HAND-TRANSCRIBED, UNGROUNDED - no lock, no sealed extract; checklist steps cite UNGROUNDED.",
+  "tape_read NOT_APPLICABLE (premarket); spread_read NOT_APPLICABLE; gap_filter NOT_SERVED; ranking_formula: lens_positive rank, not Clenow slope x R2.",
+  "Rule: SUPPORT at ceil(lens_positive/1.5) when trend filter passes and no BEARISH_CHOCH, minus 1 at lens_warnings >= 2. Lens '--' = NOT_SERVED -> ABSTAIN. exit_philosophy: fixed stop (Kratter).",
+  "No round-1 detect-lens nominations in this set; conviction_change null throughout. No challenge addressed this seat by name."
+ ],
+ "data_gaps": [
+  {
+   "field": "lens (WRB, WCN, KDP, CHD, SHO, CCEP)",
+   "impact": "4 of 6 lenses '--': lens read NOT_SERVED, abstained where no other mechanical fact decided"
+  },
+  {
+   "field": "atr_14d (ACA)",
+   "impact": "implausibly small; verify before ATR-scaled reads"
+  },
+  {
+   "field": "lens (MP)",
+   "impact": "lens block null; held review on served structure fields only"
+  },
+  {
+   "field": "atr_14d (PAYO)",
+   "impact": "implausibly small; abstained"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 2, lens_warnings 0: leadership + structure strong. structure_shift BULLISH_BOS, day_vol 2.8, ma50 155.2 > ma100 147.24 > ma200 126.32 passes the trend filter. runner_conviction 1, no tag. Conviction = ceil(2/1.5).",
+   "falsifier": "choch_bearish, or a close back under ma20 153.82, proves the break failed.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 2 (leadership, sector), coil warn, exhaustion_flag CAUTION. Stack aligned: ma20 587.39 > ma50 580.52 > ma100 553.01 > ma200 534.04, ABOVE_STRUCTURE. Same lens profile as held V: one payments read, not two.",
+   "falsifier": "A daily close under ma20 587.39 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MTCH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "lens_positive 1 (leadership only), coil warn, runner_conviction 2, no tag. One strong lens is not a mechanical case on my rank; it sits in the bottom lens tier of the set.",
+   "falsifier": "A second and third lens turning strong (insti_money, structure) would flip me.",
+   "opposing_case": "Stack aligned ma20 42.1 > ma50 41.66 > ma100 39.5 > ma200 36.21, flow 98.7, rs_spy_20d 12.97, from_52w_hi -1.31%: strength is real, only the lens count is thin.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Top lens tier: lens_positive 5 (only insti_money warn). structure_shift BULLISH_BOS at from_52w_hi 0.0%, stack aligned ma20 34.41 > ma50 33.92 > ma100 32.08 > ma200 29.68. Mechanically a breakout; lane label PULLBACK disputed.",
+   "falsifier": "choch_bearish or a close under ma20 34.41 kills the break.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null,
+   "self_counter": "day_vol 0.72 on the break and insti_money warn: the break has no participation yet, and flow 31.6 is the weakest flow among my top tier."
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Top lens tier: lens_positive 5, premove_conviction 3 (room high), structure_shift BULLISH_BOS. ma50 41.8 > ma100 40.91 > ma200 34.74 passes; VALEN U&R MET at the 9-day average (40.59).",
+   "falsifier": "A close under ma20 40.43 or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null,
+   "self_counter": "Resistance lens warns, from_52w_hi -8.18% means overhead supply, and ma20 40.43 sits under ma50 41.8. No premove tag fired, only 3 of 4 legs."
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (coil, structure, sector), leadership warn. BULLISH_BOS; ma50 88.13 just under ma100 88.25, so the trend filter passes on ma200 85.21 only. Conviction = ceil(3/1.5).",
+   "falsifier": "choch_bearish or a close under ma200 85.21.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_200"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ADP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "lens_positive 0, lens_warnings 1 (coil warn), runner_conviction 1. No strong lens: the detect read gives this rank-3 name no mechanical support.",
+   "falsifier": "Any two lenses turning strong would flip me.",
+   "opposing_case": "rs_spy_20d 17.46, mp 97.0, flow 100.0, from_52w_hi 0.0%, structure 86.3, stack above every average: the strongest raw momentum on the sheet.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ACA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 2 (leadership, structure), coil warn. BULLISH_BOS, stack aligned ma20 147.01 > ma50 146.08 > ma100 143.22 > ma200 129.84. atr 0.54 flagged for verification (data gap).",
+   "falsifier": "choch_bearish or a close under ma20 147.01.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "WRB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED: leadership, coil, insti_money, resistance all '--'. lens_positive 1 is absence, not a read. I cannot rank it.",
+   "falsifier": "n/a - abstain until the lens block is served.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CRM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive 0 and lens_warnings 0: every lens ok, structure_shift RANGE. No mechanical signal either way.",
+   "falsifier": "Lenses turning strong would move me to SUPPORT.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AMGN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "lens_positive 4 (leadership, coil, resistance, sector), insti_money warn, exhaustion CAUTION. from_52w_hi 0.0%, stack aligned ma20 420.09 > ma50 416.83 > ma100 391.86 > ma200 371.12. Conviction = ceil(4/1.5).",
+   "falsifier": "A close under ma20 420.09 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive 3 (leadership, resistance, sector), lens_warnings 2 (coil, insti_money): docked one. Stack aligned ma20 274.01 > ma50 265.42 > ma100 254.26 > ma200 235.14; VALEN U&R MET at the 9-day average (281.69).",
+   "falsifier": "A close under ma50 265.42 or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "WCN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fails the trend filter: ma50 161.29 < ma100 162.88 < ma200 162.94, INVERTED stack. Lens block NOT_SERVED on 4 of 6, lens_positive 0. One day_vol 2.87 burst is not a lens read.",
+   "falsifier": "ma50 back above ma200 162.94 with lenses served strong.",
+   "opposing_case": "from_52w_hi 0.0%, mp 97.0, rs_spy_20d 18.99, flow 100.0 and a VALEN Episodic pivot WATCH (8/9): an event-driven repricing can be the start of a trend.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "KDP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED on leadership, coil, insti_money, resistance. lens_positive 1 (sector) is absence. Not lens-checked.",
+   "falsifier": "n/a - abstain until served.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CHD",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED on 4 of 6. lens_positive 1 (sector) is absence, not a read.",
+   "falsifier": "n/a - abstain until served.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "SHO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED on 4 of 6. lens_positive 1 (sector) is absence, not a read.",
+   "falsifier": "n/a - abstain until served.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED on 4 of 6. lens_positive 1 (sector) is absence, not a read.",
+   "falsifier": "n/a - abstain until served.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 2 (leadership, sector), coil warn. Stack aligned ma20 238.86 > ma50 235.9 > ma100 231.81 > ma200 220.86, from_52w_hi -0.74%. Earnings in 9 sessions per the packet.",
+   "falsifier": "A close under ma20 238.86 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CDW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "lens_positive 0 with lens_warnings 2 (coil, insti_money) and exhaustion CAUTION. No strong lens.",
+   "falsifier": "Two lenses strong and the warnings cleared.",
+   "opposing_case": "from_52w_hi 0.0%, structure 87.4, rs_spy_20d 18.46, mp 93.0: a fresh high with strong raw momentum.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "WMT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "structure_shift BEARISH_CHOCH, lens_warnings 3 (room high: coil, insti_money, structure), ma50 109.35 < ma100 111.91 < ma200 118.39. The up-structure failed; a pullback needs an uptrend.",
+   "falsifier": "A BULLISH_BOS with ma50 recovering over ma200 118.39.",
+   "opposing_case": "mp 94.0, rs_spy_20d 13.0, resistance and sector strong, day_vol 1.27: a sharp repair rally in progress.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (leadership, resistance, sector), insti_money warn. from_52w_hi 0.0%, ext_atr20 1.92, stack aligned ma20 186.84 > ma50 180.77 > ma100 164.99 > ma200 140.22.",
+   "falsifier": "A close under ma20 186.84 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ELV",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive 3 (leadership, resistance, sector), lens_warnings 2 (coil, insti_money): docked one. Stack aligned ma20 411.74 > ma50 407.21 > ma100 401.68 > ma200 370.77, from_52w_hi 0.0%.",
+   "falsifier": "A close under ma20 411.74 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AEP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Trend filter fails: ma50 122.92 < ma100 127.04 < ma200 127.72, a repair not a trend. lens_positive 2, lens_warnings 2 (coil, insti_money).",
+   "falsifier": "ma50 over ma200 127.72 with a lens turning strong.",
+   "opposing_case": "mp 90.0, rs_spy_20d 11.54, resistance and sector strong; price 130.64 is back above every average.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 2 (leadership, coil), insti_money warn. Stack aligned ma20 17.32 > ma50 17.06 > ma100 15.12 > ma200 11.76, structure_shift RANGE near the high (from_52w_hi -3.5%).",
+   "falsifier": "A close under ma50 17.06 or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "PAYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive 4 but data integrity open: atr 0.03 against price 7.17, day_vol 0.47, exhaustion RISK; coil may be a pinned-series artifact. VALEN Undercut and rally FAILED (6/9).",
+   "falsifier": "n/a - abstain until the ATR series is verified.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "TRV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (leadership, resistance, sector), coil warn. from_52w_hi 0.0%, stack aligned ma20 373.53 > ma50 370.89 > ma100 356.3 > ma200 326.3.",
+   "falsifier": "A close under ma20 373.53 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (leadership, coil, insti_money), resistance warn, premove_conviction 2. Stack aligned ma20 93.85 > ma50 90.12 > ma100 76.37 > ma200 66.42, RANGE at from_52w_hi -1.7%.",
+   "falsifier": "A close under ma50 90.12 or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "OKE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (leadership, insti_money, sector), lens_warnings 0. ma50 92.73 > ma100 91.01 > ma200 88.04 passes; VALEN U&R MET at the 9-day average (92.02). RANGE.",
+   "falsifier": "A close under the 20-day base low or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:base_low_20d"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "RELY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "lens_positive 1 (leadership), resistance warn, but runner_conviction 3 (room high). Thin lens count against the best runner read: no clear mechanical call.",
+   "falsifier": "Two more lenses strong -> SUPPORT; leadership lens lost -> OPPOSE.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "AUB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "lens_positive 1 (sector only), ma50 39.49 under ma100 40.35, structure 43.2 advisory-weak. One strong lens is not a case.",
+   "falsifier": "Leadership and coil turning strong.",
+   "opposing_case": "BULLISH squeeze resolved up on confirmed volume per the R1 seat, flow 93.4, mp 73.0, every lens ok with none warning.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "CP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (leadership, coil, structure), lens_warnings 0. BULLISH_BOS on day_vol 1.87; ma50 89.25 just under ma100 89.45, passes on ma200 85.48 only.",
+   "falsifier": "choch_bearish or a close under ma200 85.48.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_200"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive 3 (leadership, coil, sector), lens_warnings 2 (insti_money, resistance): docked one. ma20 165.71 under ma50 172.27; ma50 over ma200 145.8 passes. RANGE. Earnings in 9 sessions.",
+   "falsifier": "A close under the 20-day base low or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:base_low_20d"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "ETR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "structure_shift BEARISH_CHOCH, structure lens warn, ma50 104.28 < ma100 107.99 and ma200 107.05. Up-structure failed; lens_warnings 2.",
+   "falsifier": "BULLISH_BOS with ma50 back over ma200 107.05.",
+   "opposing_case": "mp 60.0 building, resistance and sector strong, day_vol 1.39, price 108.19 back above every average.",
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "EBC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "lens_positive 4 (leadership, coil, structure, sector), insti_money warn. BULLISH_BOS; ma50 21.78 just under ma100 21.89, passes on ma200 20.96. Conviction = ceil(4/1.5). Under-seated vs its lens read.",
+   "falsifier": "choch_bearish or a close under ma200 20.96.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_200"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "FAST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "lens_positive 3 (leadership, coil, resistance), insti_money warn. from_52w_hi 0.0%, stack aligned ma20 50.91 > ma50 50.38 > ma100 48.81 > ma200 46.91; VALEN U&R MET at the 9-day average (51.36).",
+   "falsifier": "A close under ma20 50.91 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "M",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "lens_positive 3 (coil, resistance, sector), lens_warnings 2 (leadership, insti_money): docked one. ma50 22.7 under ma100 23.36, passes on ma200 21.61 only.",
+   "falsifier": "A close under ma50 22.7 or choch_bearish.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "ADD question: lens_positive 2 (leadership, sector), coil warn, exhaustion CAUTION, VALEN NO-BUY 4.6 ATR extended. Stack aligned ma50 376.22 > ma100 361.34 > ma200 340.3. KEEP the held lot; broker stop 401.15 stands. Add only on the trigger.",
+   "falsifier": "A close under ma20 383.23 or choch_bearish.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "choch_bearish",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "conviction_change": null,
+   "challenge_reply": null
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "ADD question: no. Lens block null (data gap), structure 11.0 BEARISH_CHOCH, ma50 49.99 < ma100 51.18 < ma200 55.93, sma_dist -22.87%. EXIT-CASE on mechanics; broker stop 36.66 stands.",
+   "falsifier": "A BULLISH_BOS with price back over vwap14 42.64 and a served lens block.",
+   "opposing_case": "div BULLISH, day_vol 1.1; a deeply sold name can spring, and the lens block is missing rather than negative.",
+   "conviction_change": null,
+   "challenge_reply": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "detect-lens.part1of2.json",
+   "bytes": 10776,
+   "votes": 19,
+   "sha256": "fbd1243a016d"
+  },
+  {
+   "file": "detect-lens.part2of2.json",
+   "bytes": 11471,
+   "votes": 19,
+   "sha256": "64f6fc55ce3d"
+  }
+ ]
+}
