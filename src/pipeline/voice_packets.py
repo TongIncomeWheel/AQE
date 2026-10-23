@@ -95,6 +95,8 @@ PMA_PIPELINE = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
 # `load_menus_from_canon()` -- so the two can no longer read two different
 # menus for the same voice, which was the actual defect this replaces.
 VOICE_CANON_DIR = PROJECT_ROOT / "aegis" / "canon"
+VOICE_MENUS = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
+               / "contracts" / "voice_menus.json")
 
 # PM ruling 2026-08-25: the packets land beside the daily export and the Crown
 # file, not in a separate dated tree — one delivery destination for everything
@@ -144,33 +146,12 @@ def _run_date_of(export_path: Path) -> str:
     return str(d)
 
 
-def _load_menus_from_canon(canon_dir) -> dict:
-    """Each voice's menu = the top-level `menu:` block of its own
-    canon.lock.yaml (one file per voice, 2026-09-15). The vendored plugin
-    pma_pipeline (1.24.1) wants a menus JSON path, so the dict is built from
-    canon and handed over as a throwaway temp file -- never a committed
-    voice_menus.json."""
-    menus = {}
-    for path in sorted(Path(canon_dir).glob("*/canon.lock.yaml")):
-        fields = None
-        lines = path.read_text(encoding="utf-8").splitlines()
-        for i, line in enumerate(lines):
-            if line == "menu:":
-                fields = []
-                for later in lines[i + 1:]:
-                    if later.startswith("- "):
-                        fields.append(later[2:].strip())
-                    elif later.strip() == "":
-                        continue
-                    else:
-                        break
-                break
-        if fields is not None:
-            menus[path.parent.name] = fields
-    if not menus:
-        raise FileNotFoundError(f"no voice under {canon_dir} carries a `menu:` "
-                                "block -- nothing to slice packets from")
-    return menus
+def _load_menus(path=None) -> dict:
+    """Per-voice field menus. The live plugin (aegis-core 1.24.1) keeps them in
+    contracts/voice_menus.json, vendored here; the plugin is the source of
+    truth, so refresh this file when it releases."""
+    d = json.loads(Path(path or VOICE_MENUS).read_text(encoding="utf-8"))
+    return {k: v for k, v in d.items() if isinstance(v, list)}
 
 
 def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
@@ -180,10 +161,6 @@ def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
     outdir.mkdir(parents=True, exist_ok=True)
     candidates = outdir.parent / "candidate_set.json"
 
-    menus_file = Path(tempfile.mkdtemp(prefix="aqe_menus_")) / "menus.json"
-    menus_file.write_text(json.dumps(_load_menus_from_canon(VOICE_CANON_DIR)),
-                          encoding="utf-8")
-
     real_stdout = sys.stdout
     if quiet:
         sys.stdout = open("/dev/null", "w")          # noqa: SIM115
@@ -192,7 +169,7 @@ def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
             export=str(export_path), date=run_date, out=str(candidates)))
         pma.cmd_packets(types.SimpleNamespace(
             candidates=str(candidates), export=str(export_path),
-            menus=str(menus_file), date=run_date,
+            menus=str(VOICE_MENUS), date=run_date,
             crown_macro=(str(OUTPUT_DIR / CROWN_MACRO_NAME)
                          if (OUTPUT_DIR / CROWN_MACRO_NAME).exists() else None), outdir=str(outdir)))
     finally:

@@ -116,7 +116,7 @@ def test_no_packet_leaks_the_pm_only_qs_fields(export_file):
 def test_each_voice_gets_only_its_own_columns(export_file):
     """The selection rule's whole justification: a voice sees its own menu,
     not the union. elder-lens is the narrowest menu, wyckoff the widest."""
-    menus = vp._load_menus_from_canon(vp.VOICE_CANON_DIR)
+    menus = vp._load_menus()
     vp.build(export_file)
     outdir = vp.packets_dir("2026-08-24")
 
@@ -241,7 +241,7 @@ def test_verify_catches_master_data_changing_under_the_packets(export_file, tmp_
     res = vp.verify(changed)
     assert res["ok"] is False
     # only voices whose menu actually carries sc_momentum should be flagged
-    menus = vp._load_menus_from_canon(vp.VOICE_CANON_DIR)
+    menus = vp._load_menus()
     flagged = {d.split(":")[0].replace(".tsv", "") for d in res["drift"]}
     for voice in flagged:
         assert "sc_momentum" in menus[voice], f"{voice} flagged but has no sc_momentum"
@@ -314,7 +314,7 @@ def test_sync_republishes_only_what_actually_changed(export_file, tmp_path, monk
 
     res = vp.sync(changed_export)
     assert res["ok"] is True
-    menus = vp._load_menus_from_canon(vp.VOICE_CANON_DIR)
+    menus = vp._load_menus()
     for name in res["changed"]:
         voice = name.replace(".tsv", "").replace(".json", "")
         if voice in GROUP_A:
