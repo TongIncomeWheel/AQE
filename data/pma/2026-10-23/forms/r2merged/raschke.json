@@ -441,6 +441,319 @@
    "reason": "HELD, ADD question: oppose. EXIT-CASE on my method: structure 11.0, BEARISH_CHOCH, sma_distance_pct -22.87, ma20 43.93 under ma200 55.93. No test, retracement or breakout. C21: don't let a drawdown run. Broker stop 36.66 stands.",
    "falsifier": "Structure back to BULLISH_BOS and a reclaim of the 20-day.",
    "opposing_case": "div BULLISH/0 hints selling is losing force, and a big-picture reversal (C15) can start from a deep drawdown once price stabilises; Lynch notes the tax-loss window."
+  },
+  {
+   "ticker": "ACN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C2/C20): U&R MET trendline reclaim = double stop point, trigger near invalidation. adx 35.47, mp 97.0 ACCELERATING: trend real. Weights: sma_dist 33.09%, ext_atr20 5.11, parabolic WARNING, div BEARISH/2 = C19 climax risk.",
+   "falsifier": "A close back under the reclaimed trendline / yesterday's low: the test failed and the dip was a breakdown.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C2/C20): U&R MET reclaim of trendline, tight double-stop entry. Weak trend: adx 16.54, mp 58.0 BUILDING/DECELERATING, price near ma200 436.91. C5: a low-ADX market whipsaws, so low conviction; risk is defined.",
+   "falsifier": "Close under yesterday's low: the reclaim failed; no trend to carry it.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C7 substitute): first pullback to 9-day average reclaimed (U&R MET) at from_52w_hi -0.42%. adx 28.27 just under the 30 gate; mp 86.0 FADING is flat-at-high (R13), mp_accel ACCELERATING. Shallow: ext_atr20 2.26.",
+   "falsifier": "Close under yesterday's low or ma_20: pullback becomes reversal.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Momentum real: adx 32.83 > 30, from_52w_hi 0.0%, mp 97.0 ACCELERATING. Holy Grail (C7) wants the FIRST PULLBACK, not this bar: run_10d 61.14%, ext_atr20 7.2, parabolic WARNING = C19 climax risk. Support only on a pullback reclaim.",
+   "falsifier": "Pullback closes under fib_618: trend reversing, not retracing.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Holy Grail candidate (C7): adx 41.6, mp 100.0, from_52w_hi 0.0%, elder SUSTAINED: strongest trend read. Entry is the first pullback, not here: sma_dist 37.66%, ext_atr20 4.97, parabolic WARNING (C19).",
+   "falsifier": "Pullback closes under fib_618: the retracement is a reversal.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RXO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Cleanest Holy Grail (C7): adx 44.33 with the pullback already under way: run_10d -0.03%, day_vol 0.67 (quiet), from_52w_hi -1.3%. mp 96.0 FADING is flat-at-high (R13). Weight: flow 34.2.",
+   "falsifier": "Close under ma_20: the pullback has become a trend change.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend real: adx 36.09, from_52w_hi 0.0%, mp 97.0. But day_vol 2.12 on a new high with mp DECELERATING reads as a possible range-expansion climax (C19). Holy Grail entry on the first pullback.",
+   "falsifier": "Pullback closes under fib_618.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No trend to retrace: adx 23.59 under the 30 gate, structure 38.9 BEARISH_CHOCH, ma20 71.71 under ma50 76.04, from_52w_hi -22.76%. run_10d 16.82% with a parabolic WARNING reads as a climax run inside broken structure (C11/C19), not a test or a pullback.",
+   "falsifier": "Structure flips out of BEARISH_CHOCH and a pullback holds above ma_50: then it is a retracement I would buy.",
+   "opposing_case": "Real thrust: rs_spy_20d 42.47, mp 67.0 BUILDING, coil and insti_money lenses strong, elder 10.0, price 85.2 above every average. A turn this strong can be the start of a new trend.",
+   "self_counter": null
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT/test of the 50-day: price 26.03 back above ma50 24.75; ma50 is the structural line (C17). adx 27.86, mp 77.0 ACCELERATING, insti_money strong. Weights: structure 44.2, ma20 23.14 still under ma50.",
+   "falsifier": "Close under ma_50: the reclaim failed.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Holy Grail candidate (C7): adx 42.55, mp 100.0, elder SUSTAINED, structure 90.5, from_52w_hi 0.0%. Entry on the first pullback: ext_atr20 5.32, sma_dist 22.05%.",
+   "falsifier": "Pullback closes under fib_618.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT (C12 shape): ma20 77.68, ma50 77.7, ma100 77.76 flat = contracted base, broken with run_10d 20.87% to from_52w_hi 0.0%, adx 30.98. Bar-range history not served; buy the first retest, not ext_atr20 3.92.",
+   "falsifier": "Pullback closes under fib_618: the breakout failed back toward the base.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Recovery breakout: price 15.32 above ma200 13.43, structure 90.5, mp 93.0 ACCELERATING. But adx 26.39 under 30 and from_52w_hi -40.76%: young trend, not established. Buy a pullback, not ext_atr20 4.16.",
+   "falsifier": "Close under ma_200: the recovery failed.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_200"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Recovery breakout: price 15.2 above ma200 13.91, elder SUSTAINED, mp 87.0 ACCELERATING. adx 23.87 under 30, from_52w_hi -47.44%: trend young. Buy the pullback, not ext_atr20 4.45 after run_10d 27.95%.",
+   "falsifier": "Close under ma_200: the recovery failed.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_200"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
   }
  ],
  "merged_from": [
@@ -455,6 +768,12 @@
    "bytes": 8537,
    "votes": 19,
    "sha256": "38c425d4c454"
+  },
+  {
+   "file": "raschke.part3of3.json",
+   "bytes": 7660,
+   "votes": 13,
+   "sha256": "981b52350ac9"
   }
  ]
 }

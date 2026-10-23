@@ -787,6 +787,192 @@
    "opposing_case": "div BULLISH, day_vol 1.1; a deeply sold name can spring, and the lens block is missing rather than negative.",
    "conviction_change": null,
    "challenge_reply": null
+  },
+  {
+   "ticker": "ACN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Lens read: strong only on resistance; warn on leadership and coil. Warnings outnumber strong lenses. runner False. Trend filter passes on price (entry 258.74 over ma50 194.4, ma200 192.39) but ma100 173.79 sits under ma200. structure 80.4 advisory only.",
+   "falsifier": "Leadership and coil lenses flip from warn to ok/strong while price holds above ma20 209.89.",
+   "opposing_case": "mp 97.0 STRONG/ACCELERATING, rs_rank_pct 89.73, structure 80.4 and a Valen reclaim day: momentum is real by other reads; my lens count is unweighted and untested."
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens read is a tie: strong on resistance and sector, warn on leadership and insti_money. ma50 395.04 over ma100 393.46 but under ma200 436.91, so the dual-MA spine is not aligned. runner False. No mechanical edge either way.",
+   "falsifier": "insti_money lens turns strong with price holding above ma200 436.91 would move me to SUPPORT."
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Lens read: strong on leadership, resistance and sector; warn on coil and insti_money. Strong outnumber warnings. Aligned spine: ma50 165.29 over ma100 156.26 over ma200 152.83. from_52w_hi -0.42%. runner False.",
+   "falsifier": "A daily close more than one atr 3.76 under entry 178.23, or structure turning BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:entry-1atr",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED: leadership, coil, insti_money and resistance all read '--'; absence is never agreement, so no detect read is possible. Spine is aligned (ma50 29.26 over ma100 26.5 over ma200 24.12) and flow 96.1, but those are advisory only, never a vote.",
+   "falsifier": "Lens block served with strong leadership and insti_money would let me vote SUPPORT."
+  },
+  {
+   "ticker": "DXC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Lens read: strong only on leadership; warn on coil and insti_money. Warnings outnumber strong lenses. runner False. ma50 11.68 over ma100 10.67 but ma100 under ma200 11.54; price entry 16.08 above all.",
+   "falsifier": "insti_money lens turns ok/strong while price holds above ma20 12.55.",
+   "opposing_case": "mp 100.0 STRONG/ACCELERATING, adx 41.6, at the 52-week high (from_52w_hi 0.0%) with leadership strong: the momentum is real and lens counts are unweighted."
+  },
+  {
+   "ticker": "RXO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Lens read: strong on leadership and resistance; warn on insti_money only; coil ok. Strong outnumber warnings. ma50 23.1 under ma100 24.46, so the dual-MA gate passes on ma200 20.64 only. flow 34.2 (advisory) is the soft spot. runner False.",
+   "falsifier": "A daily close more than one atr 0.93 under entry 28.92, or structure turning BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:entry-1atr",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Lens read is a tie: strong on leadership and sector, warn on coil and insti_money. Tie broken by the trend spine: ma50 18.9 over ma100 18.33 over ma200 16.87, fully aligned; day_vol 2.12 above normal. runner False. Low conviction.",
+   "falsifier": "A daily close more than one atr 1.13 under entry 24.78, or structure turning BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:entry-1atr",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Lens read: strong on coil and insti_money; warn on leadership, structure and resistance. Warnings outnumber strong, and structure_shift reads BEARISH_CHOCH, the up-structure failed. runner False. ma50 76.04 over ma100 75.71 over ma200 72.95.",
+   "falsifier": "structure_shift returns to RANGE or BULLISH_BOS with the structure lens out of warn.",
+   "opposing_case": "coil and insti_money both strong is the coiled-with-money read; price entry 85.2 sits above an aligned spine and elder reads 10.0."
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Lens read is a tie: strong on insti_money, warn on resistance; leadership '--' (not served). Tie broken by the spine: ma50 24.75 over ma100 24.61 over ma200 19.19, aligned, price entry 26.03 above. runner False. Low conviction.",
+   "falsifier": "A daily close below ma50 24.75, or structure turning BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lens NOT_SERVED: leadership, coil, insti_money and resistance all read '--'; absence is never agreement. Spine aligned (ma50 35.05 over ma100 31.84 over ma200 28.31), structure 90.5 and flow 82.9 are advisory only, never a vote.",
+   "falsifier": "Lens block served with strong leadership and insti_money would let me vote SUPPORT."
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Lens read: strong on leadership and sector; warn on coil only. Strong outnumber warnings. ma50 77.7 a hair under ma100 77.76, so the dual-MA gate passes on ma200 67.42. At the 52-week high (from_52w_hi 0.0%). runner False.",
+   "falsifier": "A daily close more than one atr 3.35 under entry 90.82, or structure turning BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:entry-1atr",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Lens read: no lens strong; warn on leadership and coil. Zero mechanical support. runner False. ma50 12.91 and ma100 12.61 both under ma200 13.43: the spine reads repair, not trend, though price entry 15.32 is above all.",
+   "falsifier": "Leadership lens turns strong while price holds above ma200 13.43.",
+   "opposing_case": "mp 93.0 STRONG/ACCELERATING, flow 92.1, structure 90.5 and AQE rank 8: the composite engines see strength my lens block does not."
+  },
+  {
+   "ticker": "KD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Lens read: strong only on resistance; warn on leadership and coil. Warnings outnumber strong lenses. runner False. ma50 12.62 and ma100 12.43 under ma200 13.91: spine is repair, not trend.",
+   "falsifier": "Leadership lens turns strong while price holds above ma200 13.91.",
+   "opposing_case": "Elder 10.0 SUSTAINED, mp 87.0 STRONG/ACCELERATING, structure 84.2 and resistance strong: clear overhead and real thrust."
   }
  ],
  "merged_from": [
@@ -801,6 +987,12 @@
    "bytes": 11471,
    "votes": 19,
    "sha256": "64f6fc55ce3d"
+  },
+  {
+   "file": "detect-lens.part3of3.json",
+   "bytes": 7033,
+   "votes": 13,
+   "sha256": "d47a4bc46044"
   }
  ]
 }

@@ -3128,3 +3128,25 @@ Voting: support 0 (—) · oppose 10 (detect-lens, elder-lens, livermore, minerv
 ---
 
 **DRAFT — PM approval required. Nothing is staged, nothing is armed.**
+
+## Refresh 16:50 SGT — strongest names voted (R25/R27)
+
+| Ticker | How seated | Verdict | Lane | One-line why |
+|---|---|---|---|---|
+| XOM | Reserved reclaim seat (9-day average 175.22 reclaimed) | ADVANCE | MOMENTUM | 0.4% under its 52-week high, averages in order, 2.3 daily ranges above its 20-day; buy above yesterday's high 180.31, exit under 174.63. |
+| BRZE | Strength seat (#1, +86.3 vs SPY) | ADVANCE | MOMENTUM | Strongest name on the list, but 7.2 daily ranges above its 20-day and on Valen's no-buy list — needs a reset. |
+| RXO | Strength seat (+45.5 vs SPY) | ADVANCE | MOMENTUM | Quiet ten-day rest under its high on 0.67× volume; buy above 29.03, exit under 26.40. |
+| KSS | Strength seat (+44.2 vs SPY) | ADVANCE | MOMENTUM | New high on 2.1× volume, ETSY confirming; buy above 25.10, dead under 23.65. |
+| BOX | Strength seat (+32.8 vs SPY) | ADVANCE | MOMENTUM | Cleanest uptrend on the list, but 5.3 daily ranges above its 20-day and on Valen's no-buy list — needs a reset. |
+| ETSY | Strength seat (+32.1 vs SPY) | ADVANCE | MOMENTUM | Breakout from a long flat base; buy above 91.06, dead back in the base under 77.68. |
+| ACN | Reserved reclaim seat (trendline 241.71 reclaimed) | HOLD-FOR-CONDITIONS | MOMENTUM | Strong thrust but 10.3% under its high and 5.1 daily ranges stretched; needs an hourly close above 259.39 or a dip-and-reclaim of 239.33. |
+| ISRG | Reserved reclaim seat (trendline 436.54 reclaimed) | HOLD-FOR-CONDITIONS | PULLBACK | Back above its 200-day but 25% under its high; needs an hourly close above 444.15. |
+| DXC | Strength seat (+49.2 vs SPY) | HOLD-FOR-CONDITIONS | MOMENTUM | New high, but 5.0 daily ranges stretched and the 100-day under the 200-day; needs an hourly close above 16.14 or a pullback toward 12.55. |
+| NAVN | Strength seat (+34.4 vs SPY) | HOLD-FOR-CONDITIONS | MOMENTUM | Back above its 50-day, 20-day still under it, no 12-month history; needs an hourly close above 27.28. |
+| TTAN | Strength seat (+42.5 vs SPY) | PASS | MOMENTUM | Rally inside a broken chart, 22.8% under its high. |
+| VERX | Strength seat (+31.6 vs SPY) | PASS | MOMENTUM | Bounce inside a long decline, down 40.9% on the year. |
+| KD | Strength seat (+29.9 vs SPY) | PASS | MOMENTUM | Bounce inside a long decline, down 47.0% on the year. |
+
+- Morning verdicts unchanged. New totals: 15 ADVANCE · 21 HOLD-FOR-CONDITIONS · 15 PASS; 6 of the 15 advances came from the afternoon seats (5 strength, 1 reclaim).
+- The "too late" price fix is now applied to ADP, SN, CRM, ACN, XOM, RXO: where a voice's buy line sits under the current price and past its own too-late level, it is flagged, not treated as a signal.
+- ACN (PM pick): HOLD-FOR-CONDITIONS, momentum voices split — needs an hourly close above 259.39 holding VWAP, or a quiet dip to 239.33 that closes the hour back above it; dead on a daily close under 239.33.
