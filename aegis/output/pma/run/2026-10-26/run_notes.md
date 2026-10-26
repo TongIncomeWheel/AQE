@@ -25,3 +25,13 @@
 
 ## LEVELS declarations (2026-10-26)
 - pma_levels.py emit --window 3 with the dated files for 2026-10-23 and 2026-10-22 from AQE main as --history (origin/main == local HEAD 9aa00ee at fetch time) and --closes from the 10-23 closes. 89 rows: ADVANCE 20 (9 fresh + 11 carried), HELD 2, HOLD_FOR_CONDITIONS 57, WATCH 10; 39 carried, 44 retired. Not yet structured (AQE skips): COST, CTAS, FRSH, EW (COST is today's HOLD with no resolved buy level; the other three are carried).
+
+## PUBLISH declarations (2026-10-26)
+- Pushed to TongIncomeWheel/AQE main as 27a0f09, ONLY under aegis/output/pma/ (levels full + dated copy + levels_parts 8 parts + support cards/broker_stops + scorecard/2026-10-26.md + scorecard_log.jsonl + run/2026-10-26/ with the two ledgers, the brief and run_notes). Read-back from origin/main: 18 files byte-identical (sha256), pma_levels.json parsed-JSON equal, 0 paths outside aegis/output/pma/. AQE's own _load_parts reassembled the 8 parts to 89 rows equal to the full file minus conditions.analysts.
+- NOT pushed to the canonical record paths RUN.yaml PUBLISH names (aegis/reports/pma/<date>.md, aegis/reports/pma/latest.md, aegis/data/pma/{verdict,phase4}_ledger.json, data/pma/<date>/): those are outside aegis/output/** and a commit touching them rebuilds the HF Space. Ledgers, brief and run notes sit under aegis/output/pma/run/2026-10-26/ instead. Tomorrow's GATHER reads aegis/data/pma/verdict_ledger.json from main, which does not carry today's rows until the PM decides on the canonical push. PUBLISH ticked degraded for that reason.
+- Card report published to the fixed artifact Q6FAPeqn2g8kvQuFja89Z3 (version 8).
+
+## POST-RUN AMENDMENT (PM, Mon 2026-10-26 19:33 SGT): V broker stop 401.15 -> 391.80
+- The PM approved a Tiger preview and confirmed it: cancelled order 45061117211970560 (STP_LMT 38 V, 401.15/401.15) and placed STP_LMT sell 38 V, stop 391.80, limit 390.80, GTC (order 45103865188585470 in the open-orders list). Nothing else changed at the broker; MP stop 36.66 unchanged.
+- Levels refreshed through the run tools, no hand edit: V row of tiger_orders_raw.json updated from get_open_orders (19:35 SGT), then pma_levels.py stops, pma_cards.py triggers, pma_levels.py emit with the original arguments. Diff against the published file: broker_stop.stop/limit, keep_case, the near-stop trigger level and action on the V row, and generated_at. Nothing else moved (89 rows, 293 triggers; no verdict, rank or conviction changed). levels_parts rebuilt with make_parts.py.
+- The brief and the card report were written before the amend and still show 401.15 as the run-time stop; that is the record of the run, not corrected. Pre-amend copies are kept in d26/pre_amend/.
