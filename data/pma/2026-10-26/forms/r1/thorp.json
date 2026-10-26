@@ -1,0 +1,375 @@
+{
+ "voice": "thorp",
+ "date": "2026-10-26",
+ "nominations": [
+  {
+   "ticker": "ROKU",
+   "reason": "Calmest name in the all-five-gates-pass set: vol_30d_ann 0.1148, sc_m_gate_detail all five true, day_vol 1.54 (above-normal participation). Ordering is volatility first; the edge itself is unmeasured (signal_n 0), so conviction stays low.",
+   "conviction": 2,
+   "fields_cited": [
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample for this name, and no implied vol or spread served to show mispricing. A calm structure is not an edge.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No loser count, random-selection benchmark, yearly spread or net-of-cost series served; signal_n 0 leaves nothing to recount.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "Loss starts below entry bracket.price 158.58; own level bracket.atr_fallback_stop 156.53 (bracket.valid False, no structural level served); gap adds atr_14d 2.05. Gain not served.",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "vol_30d_ann 0.1148 is the lowest in the all-gates-pass set; atr_14d 2.05 over bracket.price 158.58 agrees (atr_pct substitute). Liquidity proxy day_vol 1.54 (substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "Condition today: sc_m_gate_detail all five true; sc_p_gate_detail lacks structure and k39. Outlier-quiet vol_30d_ann 0.1148 is not safety. No trailing edge median served.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "sc_p_gate_detail",
+      "vol_30d_ann"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "COST",
+   "reason": "Second calmest in the all-gates-pass set: vol_30d_ann 0.1787, atr_14d 16.16, day_vol 0.93, sc_m_gate_detail all five true. Volatility-first ordering only; signal_n 0 means no measured edge, so conviction is held low.",
+   "conviction": 2,
+   "fields_cited": [
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample for this name, and no implied vol or spread served to show mispricing. A calm structure is not an edge.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No loser count, random-selection benchmark, yearly spread or net-of-cost series served; signal_n 0 leaves nothing to recount.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "Loss starts below entry bracket.price 1003.32; thesis-wrong level bracket.stop 985.15 (bracket.valid True); gap adds atr_14d 16.16. Gain not served, so no gap-versus-gain test.",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "vol_30d_ann 0.1787 is second lowest in the all-gates-pass set; atr_14d 16.16 over bracket.price 1003.32 agrees (atr_pct substitute). Liquidity proxy day_vol 0.93 (substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "Condition today: sc_m_gate_detail all five true; sc_p_gate_detail lacks k39 (weekly confirmation). No trailing edge median or passing-count history served, so compression is untestable.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "sc_p_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "MA",
+   "reason": "Third calmest in the all-gates-pass set: vol_30d_ann 0.1803, atr_14d 10.14, day_vol 0.87; sc_m_gate_detail all five true and sc_p_gate_detail passes flow, energy, structure, mp and k39. Edge unmeasured (signal_n 0); ranked on calm only.",
+   "conviction": 2,
+   "fields_cited": [
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample for this name, and no implied vol or spread served to show mispricing. A calm structure is not an edge.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No loser count, random-selection benchmark, yearly spread or net-of-cost series served; signal_n 0 leaves nothing to recount.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "Loss starts below entry bracket.price 623.6; own level bracket.atr_fallback_stop 613.46 (bracket.valid False, no structural level served); gap adds atr_14d 10.14. Gain not served.",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "vol_30d_ann 0.1803 is third lowest in the all-gates-pass set; atr_14d 10.14 over bracket.price 623.6 agrees (atr_pct substitute). Liquidity proxy day_vol 0.87 (substitute), below normal.",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "Condition today: sc_m_gate_detail all five true and sc_p_gate_detail passes k39. No trailing edge median or passing-count history served, so compression is untestable.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "sc_p_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "HST",
+   "reason": "Seventh calmest in the all-gates-pass set (thin-volume APLE, held V and IFF sit ahead): vol_30d_ann 0.1962, atr_14d 0.52, day_vol 0.94, sc_m_gate_detail all five true. Edge unmeasured (signal_n 0); lowest conviction of the four.",
+   "conviction": 1,
+   "fields_cited": [
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "sc_m_gate_detail",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample for this name, and no implied vol or spread served to show mispricing. A calm structure is not an edge.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No loser count, random-selection benchmark, yearly spread or net-of-cost series served; signal_n 0 leaves nothing to recount.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "Loss starts below entry bracket.price 24.72; own level bracket.atr_fallback_stop 24.2 (bracket.valid False, no structural level served); gap adds atr_14d 0.52. Gain not served.",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6"
+     ],
+     "observed": "vol_30d_ann 0.1962 sits in the calm quartile of the all-gates-pass set; atr_14d 0.52 over bracket.price 24.72 agrees (atr_pct substitute). Liquidity proxy day_vol 0.94 (substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C21"
+     ],
+     "observed": "Condition today: sc_m_gate_detail all five true and sc_p_gate_detail passes k39. No trailing edge median or passing-count history served, so compression is untestable.",
+     "verdict": "partial",
+     "fields": [
+      "sc_m_gate_detail",
+      "sc_p_gate_detail"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "Entry condition gone: sc_m_gate_detail has every engine gate false, held_book.hl_state EXIT, held_book.hl_score 0.0, mp 0.0, held_book.vwap_14d_position BELOW; held_book.live_px 38.3 vs held_book.entry 53.0 (held_book.unreal_usd -4410.0). A stop-limit can gap past (atr_14d 2.22); exit on the condition, not the stop."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Entry condition intact: sc_m_gate_detail all five true, held_book.hl_state HOLD_ADD, held_book.hl_score 76.0, held_book.vwap_14d_position ABOVE, vol_30d_ann 0.1925 calm. Loss starts below held_book.entry 413.2602632 (held_book.live_px 407.92, held_book.unreal_usd -202.93); the GTC stop 401.15 is one atr_14d 6.77 under live price, so a normal day can reach it and a gap can pass it. No case to move it up."
+  }
+ ],
+ "lesson_applied": "Audit finding on knn-led votes: knn_prob, knn_threshold_clear and beta_30d are not used to rank, tiebreak or vote here. No ledger block was served to this seat, so no in-window past-pick lesson applies. Volatility ordered first, within the set where sc_m_gate_detail shows all five gates passing.",
+ "declared": {
+  "not_served": [
+   "low_52w (canon range-over-mid measure; atr_pct and vol_30d_ann used as declared substitutes)",
+   "implied_vol, monthly_high_11, monthly_low_11 (no mispricing measure for any name)",
+   "avg_daily_volume, bid/ask spread (day_vol is a participation proxy, not a cost)",
+   "expected_hold_days, monitoring_interval, expected_gain_r (gap-versus-gain test not run; bracket is not a gate)",
+   "signal_edge_trailing_median, trailing passing-count (edge compression untestable)",
+   "backtest_trade_count, rules_generated_count (signal_n cannot be recounted, so signal_hit_rate_20d is advisory)"
+  ]
+ },
+ "shortfall_reason": "Nothing in the packet measures a mispricing: signal_hit_rate_20d and signal_n are null or zero on the calmest names, and no implied vol or spread is served. Only four names are filed, ranked on calm alone at low conviction. Not filed: IFF, ED, CVX, CVBF (signal_hit_rate_20d under fifty on a stated signal_n), APLE and DRH (day_vol well under normal), MAR and CHD (atr_caution True, size first), and wilder names below the calm quartile."
+}
