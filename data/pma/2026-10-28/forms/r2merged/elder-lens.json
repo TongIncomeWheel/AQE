@@ -1,0 +1,607 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-10-28",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "DBX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No permission event: elder_5d [10, 10, 10, 7, 7] is green fading to blue and holding, never red. The ban is off but the Impulse forbids, it does not propose (C1). Entry 36.93 sits above value ma_20 35.43; his buy rests under the average (C10). Slope unverified.",
+   "falsifier": "A dip into ma_20 with elder_ge:7 held would make it a buy; elder at 6 or lower ends it."
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Red giving way, then held: elder_5d [6, 10, 10, 10, 10] ACCELERATION, mp 87 STRONG. Ban lifted at the 6-to-10 bar and green has held since, so a post-event hold, not a bare plateau. Entry 29.44 is above value ma_20 27.07: buy the dip, not the print. Slope leg unverified.",
+   "falsifier": "A last-bar drop in elder_5d then a close under ma_20; elder back to 6 or lower means the swing is ending.",
+   "conviction_change": "Not nominated in R1; now 3 on the post-event hold (6-to-10 bar) with ACCELERATION, entry only on a dip.",
+   "challenge_reply": "Steenbarger owed a non-price invalidation: a single-bar drop in elder_5d (green going away, C4) then elder 6 or lower. Rogers timing accepted: bid the give-back toward ma_20 27.07 and ma_50 27.04, no market entry at 29.44.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Non-price: elder_5d must not print a single-bar drop from green; Lynch shows shrinking sales, price leads fundamentals."
+   }
+  },
+  {
+   "ticker": "CSX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d [5, 10, 10, 10, 10] ACCELERATION, mp 84 STRONG: ban lifted at the 5-to-10 bar, green held since. BULLISH_BOS came on day_vol 0.9 and ma_20 48.42 sits under ma_50 48.77, so the trend leg is not clean. Buy the dip toward ma_20 only; no chase at 52.27.",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_20 48.42 on day_vol over 1.",
+   "conviction_change": "Not nominated in R1; now 2 on the post-event hold, held back by the thin break volume.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7",
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Lynch contradicts the story: three straight earnings declines at a growth multiple."
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [8, 10, 10, 10, 10] SUSTAINED is a plateau, summer not the buy season (C20); C24 only, unsourced. day_vol 0.68 at pct_from_52w_high -0.72 is volume contraction at a fresh extreme (C23). Permission holds; no entry. Rogers' pullback advisory stands.",
+   "falsifier": "A pullback to ma_20 96.32 with elder_ge:7 held and day_vol back above 1 would earn a SUPPORT."
+  },
+  {
+   "ticker": "RCL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Elder's best long signal: elder_5d [10, 7, 4, 5, 9], red giving way on the last bar (5 to 9), CORRECTION_REENTRY, mp 64. A reversal bounce into value, not trend continuation: ma_50 271.27 is under ma_200 286.21. mp_state FADING is a label (R13). Entry 295.92 is above ma_20 280.75; bid the dip.",
+   "falsifier": "A close under ma_50 271.27, or elder_5d back to 6 or lower.",
+   "challenge_reply": "Rogers and Steenbarger: agreed, this is reversal-repair, not an intact uptrend. LAGGARD and day_vol 2.17 are why I stay at 3 and bid only into ma_20 280.75. Slope leg unverified; wrong at ma_50.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Reversal thesis with no catalyst on record; day_vol 2.17 could be absorption or distribution, unread."
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Best lodging expression on my read: elder_5d [10, 10, 7, 7, 10] CORRECTION_REENTRY with mp 94 STRONG is the menu-legal dip-and-reclaim (R8), but the dip held at 7 and never went red, so incomplete. Extended (sma_dist 13.78%), days_to_earnings 6: bid toward ma_20 16.98 or stand aside.",
+   "falsifier": "elder_5d to 6 or lower, or a gap through ma_20 16.98 on the print.",
+   "conviction_change": "Not nominated in R1; now 2 as the best of the three lodging names, same incomplete form as FTRE and HNGE.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Earnings 2026-11-05 is an event, not a catalyst; one lodging bet with DRH and HST, count once."
+   }
+  },
+  {
+   "ticker": "DRH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 7, 7, 7, 7], pattern None: a dip to blue that never reclaimed green, no event and no CORRECTION_REENTRY. Same lodging bet as APLE, which has the better form; count the group once. Permission holds (not red).",
+   "falsifier": "elder_5d back to 10 with CORRECTION_REENTRY and mp STRONG would earn a read."
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Incomplete dip-and-reclaim: elder_5d [10, 10, 7, 7, 10] CORRECTION_REENTRY, mp 96 STRONG; the dip stayed at 7, never red, so no red-giving-way. Entry 24.43 chases ma_20 21.83. Bid only into value; bearish divergence is outside my menu.",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_50 19.95.",
+   "challenge_reply": "Steenbarger: divergence (div_state) is not on my menu and I am blind to it. Elder's own divergence (C8) is on Force Index, which I cannot compute (R3/R4 unavailable). Disclosed, not reconciled. Rogers accepted: pullback toward ma_20 21.83, no market entry.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Lynch contradicts the story (losses, leverage); this is a price-force read only."
+   }
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 10, 7]: last-bar drop from green, the profit-taking signal (C4), not a buy. mp 43 BUILDING is middling and there is no pattern label. BULLISH_BOS on day_vol 1.52 is not my instrument; days_to_earnings 15. No transition to nominate.",
+   "falsifier": "A reclaim of green with elder_ge:7 after a dip into ma_20 40.07 would reopen it."
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Red giving way, shallow: elder_5d [7, 9, 9, 6, 9], 6 to 9 on the last bar, CORRECTION_REENTRY. mp 49 BUILDING is not STRONG (R8 unmet) and the dip was one bar, so the form is thin. Entry 347.1 is close to value ma_20 340.07; wrong under ma_50 331.06.",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_50 331.06.",
+   "challenge_reply": "Steenbarger: divergence is not on my menu; I am blind to it, and C8 divergence is on Force Index, which I cannot compute. I hold it at the low end; VALEN theme AVOID and RISK OFF are noted, not mine to weigh.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "VALEN: theme graded AVOID and market RISK OFF, a tape leg I cannot see."
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [6, 7, 10, 10, 10] ACCELERATION: the 6-to-7 bar was the ban lifting, now a plateau. day_vol 0.51 is drastic volume shrinkage, which expires trends (C23); mp 43 BUILDING is weak. Wait for value at ma_20 34.96 and volume back; days_to_earnings 19.",
+   "falsifier": "A dip into ma_20 34.96 with day_vol back above 1 and elder_ge:7 held would earn a SUPPORT."
+  },
+  {
+   "ticker": "CART",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 7, 10, 10, 10]: no red-giving-way, a green plateau. day_vol 2.53 is a volume burst at the highs, how a trend expires (C23), and entry 60.08 is far above ma_20 49.49. Strength is real (mp 97 STRONG); no buy now, wait for a give-back to value.",
+   "falsifier": "A give-back to ma_20 49.49 with day_vol under 1 and elder_ge:7 held would earn a read."
+  },
+  {
+   "ticker": "DDOG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [5, 0, 6, 7, 8] INTERRUPTED: a certain red bar (0), ban lifted at 6 to 7, but INTERRUPTED fails the trend leg (step 3) and mp 55 BUILDING/DECELERATING is middling. The event is real but a bar stale; Elder never acts on force alone (C9).",
+   "falsifier": "Pattern clearing from INTERRUPTED with elder_ge:7 held would reopen it."
+  },
+  {
+   "ticker": "NTNX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Red giving way and holding: elder_5d [3, 3, 5, 7, 8] ACCUMULATION_BASE, ban lifted at the 5-to-7 bar, mp 50 BUILDING middling. Entry 72.74 is near value ma_20 71.37, and VALEN's note lacks the 'average not rising' flag FTNT and NET carry. Event a bar old; slope unverified by me.",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_50 69.25.",
+   "conviction_change": "Not nominated in R1; now 2 on the same ACCUMULATION_BASE shape as FTNT, with no falling-average flag from VALEN.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Lynch: P/E flattered by non-operating profit; days_to_earnings 19 is an event."
+   }
+  },
+  {
+   "ticker": "FTNT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Red giving way: elder_5d [3, 3, 5, 6, 8] ACCUMULATION_BASE, 6 to 8 on the last bar. Cut from 3: VALEN reads its 21-day average as not rising, so the trend leg (C10) is unmet, and mp 50 BUILDING is middling. Entry 185.0 is only a little above ma_20 182.18; wrong under ma_50 171.59.",
+   "falsifier": "A close under ma_50 171.59, or elder_5d back to 6 or lower.",
+   "conviction_change": "3 to 2: VALEN says the 21-day average is not rising, so the C10 trend leg is unmet.",
+   "challenge_reply": "Steenbarger: divergence is not on my menu; I am blind to it and say so. C8 divergence is on Force Index, which I cannot compute. The falling-average flag has already cut me from 3 to 2.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Lynch: stalwart priced as a fast grower; valuation is outside my method."
+   }
+  },
+  {
+   "ticker": "CNP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 10, 7, 7, 10] CORRECTION_REENTRY, mp 90 STRONG fits R8, but the dip stayed at 7 (incomplete) and ma_50 39.04 under ma_100 40.94 under ma_200 41.52 with rs_rank_pct 36.22 leaves the trend leg failing as I see it. Conflicting evidence: stand aside (C22). Repair, not continuation.",
+   "falsifier": "ma_50 back above ma_100 with the dip bought at ma_20 39.38 and elder_ge:7 held would reopen it."
+  },
+  {
+   "ticker": "BILL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 7, 7]: green faded two bars ago and sits at blue, never red, no event. ma_20 46.08 under ma_50 46.98 leaves the slope leg unmet; days_to_earnings 6. Permission only, no trigger (C1).",
+   "falsifier": "A reclaim of green after a dip into ma_20 46.08 with elder_ge:7 held would reopen it."
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [9, 10, 10, 10, 10] SUSTAINED, mp 84 STRONG: a plateau, summer (C20), C24 only and unsourced. Permission holds and day_vol 1.15 is steady (C23 clean), but entry 104.36 is far above value ma_20 95.13. No transition; I would bid a dip to ma_20.",
+   "falsifier": "A give-back to ma_20 95.13 with elder_ge:7 held would earn a SUPPORT."
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 10, 7]: single-bar drop from green on the last bar, the profit-taking signal (C4), not a buy. ma_20 34.43 sits under ma_50 35.28 and days_to_earnings is 10. No transition to nominate.",
+   "falsifier": "A reclaim of green with elder_ge:7 after a dip would reopen it."
+  },
+  {
+   "ticker": "A",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 4, 4, 7, 7] INTERRUPTED: ban lifted two bars ago, but INTERRUPTED fails the trend leg (step 3) and Elder never acts on force alone (C9). VALEN's trendline reclaim and the lens read are not my instruments. No nomination.",
+   "falsifier": "INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 172.09 would reopen it."
+  },
+  {
+   "ticker": "BBY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 7, 7], no pattern: green faded to blue and stayed, never red, no event. Entry 98.5 is well above value ma_20 91.11; days_to_earnings 19. Permission only, nothing to nominate.",
+   "falsifier": "A dip into ma_20 91.11 with elder_ge:7 held would reopen it."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [9, 10, 4, 3, 8] INTERRUPTED: ban lifted on the last bar (3 to 8), but INTERRUPTED fails the trend leg (step 3) and VALEN marks its undercut-and-rally FAILED. A real event on a failed leg is not a nomination (C9).",
+   "falsifier": "INTERRUPTED clearing with elder_ge:7 held for a second bar would reopen it."
+  },
+  {
+   "ticker": "EMR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [6, 1, 3, 3, 9] INTERRUPTED: a certain red bar (1), then 3 to 9 on the last bar, a genuine ban-lift. But INTERRUPTED fails the trend leg (step 3) and BULLISH_BOS came on day_vol 0.79. Re-check once the pattern clears.",
+   "falsifier": "INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 161.19 would reopen it."
+  },
+  {
+   "ticker": "NET",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [3, 3, 5, 6, 8] ACCUMULATION_BASE has the ban-lift, but I withdraw: mp 20 is weak, VALEN reads the 21-day average as not rising so C10 is unmet, and C22 says stand aside on murky ground. Entry 327.8 sits under ma_20 331.43; no catalyst on record.",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_50 319.97, proves the dip thesis wrong.",
+   "conviction_change": "Nominated at 3 in R1; now abstain after VALEN's not-rising flag, mp 20 and the divergence blind spot.",
+   "challenge_reply": "Steenbarger: divergence is not on my menu; I am blind to the full-count bearish divergence. My observable: elder_5d back to 6 or lower, or a close under ma_50 319.97. Rogers: no catalyst on record, accepted. Withdrawn."
+  },
+  {
+   "ticker": "BTI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 10, 7, 7, 7], no pattern: green faded and flat at blue, no event. Repair context (ma_50 56.23 under ma_200 59.08, rs_rank_pct 47.01), not continuation; trend leg unverified. Nothing to nominate.",
+   "falsifier": "A dip into ma_20 56.66 with a ban-lift and elder_ge:7 held would reopen it."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Incomplete dip-and-reclaim: elder_5d [10, 10, 10, 7, 10] CORRECTION_REENTRY, mp 85 STRONG; the dip bottomed at 7, never red. Entry 113.9 is far above ma_20 103.9, a chase; bid only into value. Extended (sma_dist 18.05%) is a weight (R14), the thin form is the reason.",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_50 96.48.",
+   "challenge_reply": "Rogers timing accepted: pullback toward ma_20 103.9, not a market entry at 113.9. Extension is a weight, not my reason; the incomplete form is.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Lynch: growth above the unsustainability marker and a thin history; price-force read only."
+   }
+  },
+  {
+   "ticker": "HST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 7, 7, 7, 7], no pattern: a dip to blue never reclaimed, no event. Same lodging bet as APLE, the better form; count the group once. Permission holds.",
+   "falsifier": "elder_5d back to 10 with CORRECTION_REENTRY and mp STRONG would earn a read."
+  },
+  {
+   "ticker": "FTV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [9, 10, 10, 10, 10] SUSTAINED plateau: C24 only, unsourced. ma_50 57.44 under ma_200 58.55 makes this repair, not continuation; slope unverified. day_vol 1.81 carries no direction for me. Permission holds; no trigger.",
+   "falsifier": "A dip into ma_20 57.95 with elder_ge:7 held and ma_50 back above ma_200 would reopen it."
+  },
+  {
+   "ticker": "AWK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 10, 10, 7, 7], no pattern: green faded to blue and stays, never red. mp 86 is strong but there is no transition to read, and entry 141.1 is above value ma_20 133.0. Permission only.",
+   "falsifier": "A dip into ma_20 133.0 with elder_ge:7 held would reopen it."
+  },
+  {
+   "ticker": "EQT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 7, 10, 7, 10] CORRECTION_REENTRY, but mp 72 is BUILDING, not STRONG, so R8 is unmet and the dip never went red. ma_50 53.09 under ma_200 55.51 with rs_rank_pct 30.12: repair with no named catalyst. Stand aside.",
+   "falsifier": "mp_state STRONG with the pattern intact and ma_50 back above ma_200 would reopen it."
+  },
+  {
+   "ticker": "TEL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [5, 0, 0, 5, 9] INTERRUPTED: two certain red bars (0), then 5 to 9 on the last bar, a real ban-lift. But INTERRUPTED fails the trend leg (step 3) and ma_50 210.09 sits under ma_200 213.06. Not a nomination (C9).",
+   "falsifier": "INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 215.05 would reopen it."
+  },
+  {
+   "ticker": "BKR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [5, 2, 7, 7, 9] INTERRUPTED: ban lifted two bars ago, now 9, but INTERRUPTED fails the trend leg (step 3); ma_50 58.68 under ma_200 60.16 and rs_rank_pct 21.16 say repair at best. Stand aside.",
+   "falsifier": "INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 55.97 would reopen it."
+  },
+  {
+   "ticker": "VG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh ban-lift near value: elder_5d [3, 3, 9, 10, 10] ACCELERATION, 3-to-9 bar two bars ago, entry 13.81 on ma_50 13.81. mp 48 BUILDING is middling and the slope leg is unverified. days_to_earnings 9; energy catalyst unreadable; Lynch flags leverage (debt_to_equity 4.99).",
+   "falsifier": "elder_5d to 6 or lower, or a close under ma_20 13.16.",
+   "conviction_change": "Not nominated in R1; now 2 on the 3-to-9 ban-lift two bars ago with entry sitting on ma_50.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_50"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "wait": [
+     "ma_50"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Earnings 2026-11-10 is an event; leverage is a Lynch contradiction I cannot weigh."
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "ADD question: no. elder 6 is the ambiguous band (red, blue or green), so no permission to add; elder_5d is None, so the single-bar drop test cannot run (data gap). KEEP on the broker stop V 391.80, raise only, never lower (C18). VALEN U&R SETUP: the reclaim day is the next session.",
+   "falsifier": "elder at 7 or higher at the next close lifts the objection; a close under ma_20 388.88 makes it an exit case.",
+   "opposing_case": "Best case to add: structure 69.0 ABOVE_STRUCTURE, mp 82, AQE health HOLD, and a U&R SETUP whose reclaim day is the next session. A reclaim close with elder at 7 or higher would give permission.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Stalwart at a full multiple per Lynch: a rotation question, not a target."
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD question: no, and EXIT-CASE. elder 5.0 is unresolved (no permission), elder_5d is None (data gap, drop test cannot run), and structure BEARISH_CHOCH with structure 14.0 breaks the up-structure (R11). Keep only on broker stop MP 36.66, raise only, never lower (C18); a loser gets no more room.",
+   "falsifier": "elder at 7 or higher with a close back above ma_20 42.73 would reverse the exit case.",
+   "opposing_case": "Best case for: price is under every average, so a snap-back toward ma_20 42.73 is plausible, and the broker stop 36.66 caps the loss. But a washed-out bounce is not a ban-lift.",
+   "conditions": {
+    "lane": "NONE",
+    "buy": [],
+    "confirm": [],
+    "wrong": [
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Lynch: served figures do not show an intact story; verification belongs to the PM."
+   }
+  },
+  {
+   "ticker": "IOT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 10, 7]: last-bar drop from green, C4 profit-taking, not a buy. VALEN's U&R reclaim is not my instrument. No red-giving-way, so no trigger. Wait a dip to ma_20 41.77 with elder_ge:7 held; mp 76 STRONG is real.",
+   "falsifier": "A dip into ma_20 41.77 with elder_ge:7 held and green back would earn a SUPPORT.",
+   "challenge_reply": "Rogers owed a seat-level reason for silence: this seat fires only on a ban-lift transition (red giving way) or the R8 dip-and-reclaim; none is present here, so no nomination. Silence is a rule outcome, not ridicule."
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 10, 7, 7, 7], no pattern: green faded and flat at blue, no event. mp_state FADING at mp 97 is a label (R13), not my reason. Strength is real but my trigger is a ban-lift, which is absent. Wait for value at ma_20 80.35.",
+   "falsifier": "A dip into ma_20 80.35 with elder_ge:7 held would earn a read.",
+   "challenge_reply": "Rogers owed a seat-level reason for silence: this seat fires only on a ban-lift transition (red giving way) or the R8 dip-and-reclaim; none is present here, so no nomination. Silence is a rule outcome, not ridicule."
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 7, 7, 7], no pattern: green faded two bars ago, flat at blue, no event. mp 86 STRONG, but ma_50 40.36 sits above ma_20 39.83 and I have no slope read. debt_to_equity 7.47 is Lynch's, not mine. Wait for a ban-lift or value.",
+   "falsifier": "A dip into ma_20 39.83 with a green reclaim would earn a read.",
+   "challenge_reply": "Rogers owed a seat-level reason for silence: this seat fires only on a ban-lift transition (red giving way) or the R8 dip-and-reclaim; none is present here, so no nomination. Silence is a rule outcome, not ridicule."
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C4, not extension alone: elder_5d [10, 10, 10, 7, 7] shows green going away at the most extended name in the set (sma_dist 51.23%, ext_atr20 6.98), and VALEN flags Parabolic WARNING. Momentum is real (mp 100), but Elder books profit there; he does not initiate. His buy sits under ma_20 33.29.",
+   "falsifier": "elder_5d back to 10 on rising volume with a hold above ma_20 33.29 would show the fade was a pause.",
+   "opposing_case": "Best case for: rs_spy_20d 97.04, mp 100 STRONG/ACCELERATING, rank 2; blue is still permission (C3) and R14 treats extension as weight. A leader can run longer than any channel allows."
+  },
+  {
+   "ticker": "DXC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C4 and C23: elder_5d [10, 10, 10, 7, 7] shows green going away two bars ago, with day_vol 0.62 shrinking near the high (pct_from_52w_high -2.82) and VALEN Parabolic WARNING. Extension (sma_dist 32.02%) is a weight only (R14); mp_state FADING is not used (R13). Bid value at ma_20 13.4.",
+   "falsifier": "elder_5d back to 10 with day_vol back above 1 would show a pause, not an ending.",
+   "opposing_case": "Best case for: rs_spy_20d 52.63 and mp 100 show real strength, elder 7 is still not red (C3), and the fade may be a pause. Lynch calls free_cash_flow_yield 0.487 unverified."
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [8, 10, 10, 10, 10] SUSTAINED, mp 97 STRONG/ACCELERATING: permission on and momentum real, but a plateau (C24 only) at sma_dist 47.77% with VALEN Parabolic WARNING. Elder buys under the average (C10): wait ma_20 20.54. No stand-alone trigger.",
+   "falsifier": "A give-back toward ma_20 20.54 with elder_ge:7 held would earn a read; elder at 6 or lower ends the case."
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C4: elder_5d [10, 10, 10, 10, 7], single-bar drop from green on the last bar, with VALEN Parabolic CRACKED and pct_from_52w_high -21.46. Strength is real (mp 97 STRONG) but Elder books profit on green going away. Entry 11.86 is above value ma_20 10.14; no initiate here.",
+   "falsifier": "elder_5d back to 10 on the next bar would show the drop was one-bar noise.",
+   "opposing_case": "Best case for: rs_spy_20d 43.39 and mp 97 accelerating; blue is still permission (C3), one bar can be a pause, and extension is a weight only (R14)."
+  },
+  {
+   "ticker": "TENB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 10, 10] SUSTAINED, mp 75 STRONG: a pure plateau, summer (C20), C24 only. sma_dist 31.08% with day_vol 0.89 is thin for a stretch this far. Permission is on; I would enter on a give-back to ma_20 40.28 with elder_ge:7 held.",
+   "falsifier": "A give-back to ma_20 40.28 with elder_ge:7 held would earn a read."
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [7, 10, 7, 7, 7], no pattern: no red-giving-way, green faded. mp 93 STRONG/FLAT is real momentum, but ma_50 18.41 under ma_100 19.33 under ma_200 19.81 is repair, not continuation; slope unverified. Wait for value at ma_20 18.91 or a ban-lift.",
+   "falsifier": "A dip into ma_20 18.91 with a green reclaim would earn a read."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 7, 7], no pattern: green faded and flat at blue, never red, no event. mp_state FADING at mp 93 is a label (R13), not my reason; my reason is no transition. pct_from_52w_high -42.32 leaves the trend leg unverified.",
+   "falsifier": "A dip into ma_20 13.36 with a green reclaim would earn a read."
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 10, 7, 7], no pattern: green faded two bars ago, no event. day_vol 0.54 is drastic shrinkage on a sharp run (run_10d 19.06%), a trend-expiry warning (C23). Momentum is real (mp 93 STRONG) but no entry; wait for value at ma_20 17.97.",
+   "falsifier": "day_vol back above 1 with green back, or a dip into ma_20 17.97, would earn a read."
+  },
+  {
+   "ticker": "RBLX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [10, 10, 7, 10, 7], no pattern: a whipsaw between green and blue, no red-giving-way; the last bar is a drop from green (C4). mp 85 STRONG, but ma_200 52.8 sits above ma_50 45.68: repair context, day_vol 0.67. No trigger.",
+   "falsifier": "A dip into ma_20 48.91 with a green reclaim would earn a read."
+  },
+  {
+   "ticker": "ZS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [8, 10, 10, 10, 10] SUSTAINED, mp 85 STRONG/ACCELERATING: permission on, momentum real, but plateau only (C24) at sma_dist 29.9%. I cannot compute the channel wall (R5), so extension is a weight. Enter on a give-back toward ma_20 222.39, not at 260.15.",
+   "falsifier": "A give-back toward ma_20 222.39 with elder_ge:7 held would earn a read; elder at 6 or lower ends it."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of3.json",
+   "bytes": 10993,
+   "votes": 16,
+   "sha256": "31ea23154b9e"
+  },
+  {
+   "file": "elder-lens.part2of3.json",
+   "bytes": 7035,
+   "votes": 16,
+   "sha256": "88024966bff5"
+  },
+  {
+   "file": "elder-lens.part3of3.json",
+   "bytes": 9410,
+   "votes": 16,
+   "sha256": "7a844047717b"
+  }
+ ]
+}

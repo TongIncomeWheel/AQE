@@ -1,0 +1,945 @@
+{
+ "voice": "raschke",
+ "date": "2026-10-28",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "DBX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Retracement family: structure 86.3 RANGE, mp_accel ACCELERATING hook, sma_distance_pct 5.22, day_vol 1.24. VALEN U&R MET: dipped under the 9-day average 36.69 and closed back above (reclaim day), a test at a double stop point. Holy Grail/Anti approximated, adx and stochastic not served.",
+   "falsifier": "Daily close under ma_20 35.43, or the reclaim fails on hourly closes.",
+   "challenge_reply": "Rogers: agreed, no market entry; trigger is an hourly close over bar_high. Detect-lens: lens insti_money warn and resistance warn hold this at 3; resistance is pivot_high 38.17 overhead, so no chase past it.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "New high (pct_from_52w_high 0.0), structure 86.3 ABOVE_STRUCTURE, mp 87 STRONG/ACCELERATING, elder ACCELERATION: the Holy Grail precondition, not the buy. Entry is the first pullback toward ma_20 27.07 / ma_50 27.04; sma_distance_pct 8.88 is a weight (R14).",
+   "falsifier": "Daily close under ma_50 27.04, or structure_shift turning BEARISH_CHOCH.",
+   "challenge_reply": "Rogers HOG TIMING adopted: pullback, or days above ma_20 on day_vol under 1, no market entry. Steenbarger: my invalidation observable is structure_shift turning BEARISH_CHOCH, apart from the stop. Detect-lens: the four '--' lenses are a feed gap; I read structure and mp, not lens.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20",
+     "ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CSX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout family day one: BULLISH_BOS, pct_from_pivot 0.23 over pivot_high 52.15, mp 84 STRONG, elder ACCELERATION. But day_vol 0.9, ma_20 48.42 under ma_50 48.77, VALEN Episodic pivot (delayed) FAILED (8/10): ignition without volume, so need follow-through.",
+   "falsifier": "Daily close back under pivot_high 52.15.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "age_ge:3"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strength is real (rs_rank_pct 98.05, mp 77 STRONG, elder SUSTAINED) but extended: sma_distance_pct 15.6 on day_vol 0.68, earnings in 16 sessions, VALEN High tight flag FAILED (8/11). No retracement yet: first pullback toward ma_20 96.32; stop beyond ma_50 91.28.",
+   "falsifier": "Daily close under ma_50 91.28.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RCL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test family, not trend continuation: ma_50 271.27 under ma_200 286.21, rs LAGGARD. VALEN U&R MET: undercut the 9-day average 281.27 and closed back above (reclaim day), a double stop point. Stop beyond ma_20 280.75. day_vol 2.17 direction unproven.",
+   "falsifier": "Hourly closes back under ma_20 280.75.",
+   "challenge_reply": "Reversal, not continuation (Steenbarger): I buy only the reclaim. Detect-lens day_vol 2.17: unproven direction, so the buy needs hourly closes above VWAP, not volume alone.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No retracement exists: sma_distance_pct 13.78, VALEN 4.3 ATR extended, mp_accel DECELERATING, earnings in 6 sessions (overnight gap risk, C9). Lodging trio is one idea; DRH is the better expression.",
+   "falsifier": "A pullback holding ma_20 16.98 on day_vol under 1 flips me.",
+   "opposing_case": "New high (pct_from_52w_high 0.0), mp 94 STRONG, leadership strong; lodging peers confirm."
+  },
+  {
+   "ticker": "DRH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Best lodging expression: not among the earnings-within-19-sessions names, structure 84.2 ABOVE_STRUCTURE, rs LEADER. Not yet a pullback (sma_distance_pct 11.34), so entry waits for the first retracement toward ma_20 13.11. mp FADING is the R13 default label, not decay.",
+   "falsifier": "Daily close under ma_20 13.11.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strength real: rs_rank_pct 98.17, mp 96 STRONG, new high. Most extended multi-seat name (sma_distance_pct 22.45) with div BEARISH/3 advisory: range-expansion climax risk (C19). No market entry; first pullback toward ma_20 21.83 only.",
+   "falsifier": "Daily close under ma_20 21.83.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Breakout family: BULLISH_BOS on day_vol 1.52, lens.coil strong, energy 86.6 (contraction proxy; bar_range_history not served), pct_from_pivot 1.81 over pivot_high 40.81. Thin: structure 57.9, VALEN Undercut and rally FAILED (6/9), earnings 15 sessions. Buy the retest, not day one.",
+   "falsifier": "Daily close under pivot_high 40.81.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "age_ge:3"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test family: VALEN U&R MET, dipped under the 9-day average 343.68 and closed back above (reclaim day); ma_20 340.07 over ma_50 331.06, structure 71.6 RANGE, lens.coil strong. Cautions: div BEARISH/4 (advisory), Theme graded AVOID, mp 49 BUILDING.",
+   "falsifier": "Daily close under ma_20 340.07.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Breakout via contraction: inside_bar True on day_vol 0.51, lens.coil strong, energy 79.0, elder ACCELERATION, div BULLISH/0. Range history not served, so no NR4 claim. Buy the break of bar_high on volume; stop at bar_low. VALEN Undercut and rally FAILED (6/9) noted.",
+   "falsifier": "Daily close under ma_20 34.96 before any break.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "age_ge:3"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CART",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leader is real: rank 1, mp 97 STRONG, structure 92.6, runner True. But sma_distance_pct 23.57 with day_vol 2.53 is a range-expansion climax signature (C19): no market entry. Wait for the pullback toward ma_20 49.49, or a tight range with day_vol under 1.",
+   "falsifier": "Daily close under ma_20 49.49.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DDOG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No read in my four types: the inside day is Weis's hinge, not a range history I can see (bar_range_history not served); mp_accel DECELERATING, elder INTERRUPTED, rs LAGGARD, VALEN Undercut and rally FAILED (7/9). Not enough to oppose."
+  },
+  {
+   "ticker": "NTNX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout from contraction: lens.coil strong, energy 70.6, structure_shift RANGE, mp 50 BUILDING/ACCELERATING, elder ACCUMULATION_BASE. Needs the break of pivot_high on volume. Earnings in 19 sessions. Stop beyond ma_20 71.37.",
+   "falsifier": "Daily close under ma_20 71.37.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Fits none of my four: VALEN VCP FAILED (3/10) and Undercut and rally FAILED (7/9), 21-day average not rising, div BEARISH/3 (advisory), structure 57.9 RANGE. No trigger to name; rs_rank_pct 97.32 keeps me from opposing."
+  },
+  {
+   "ticker": "CNP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Holy Grail needs an established uptrend: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, rs_rank_pct 36.22, leadership warn. day_vol 2.1 is a thrust off repair, not a retracement; no setup in my types.",
+   "falsifier": "ma_50 back over ma_200 and a first pullback holding ma_20 39.38 flips me.",
+   "opposing_case": "mp 90 STRONG/ACCELERATING, flow 100.0, rs_spy_20d 12.9, CORRECTION_REENTRY: a real thrust with participation."
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Retracement family: structure 86.3 RANGE, mp 93 STRONG/ACCELERATING, sma_distance_pct 5.18, quiet pullback on day_vol 0.83. Holy Grail approximated, adx and stochastic not served. Print in 6 sessions (C9 overnight risk) and VALEN stance RISK OFF cut it to 2.",
+   "falsifier": "Daily close under ma_20 46.08.",
+   "conviction_change": "R1 conv 3 to 2: VALEN stance RISK OFF and earnings 6 sessions out.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strength real: mp 84 STRONG/ACCELERATING, elder SUSTAINED, rank 15. No retracement: sma_distance_pct 9.65, run_10d 11.64%, VALEN Episodic pivot (delayed) FAILED (9/10). Wait for the first pullback toward ma_20 95.13; extension is a weight (R14).",
+   "falsifier": "Daily close under ma_20 95.13.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Retracement family: structure 74.7 RANGE, mp 72 BUILDING with mp_accel ACCELERATING hook, sma_distance_pct 4.51, day_vol 1.09 not drying, ma_20 34.43 under ma_50 35.28. Holy Grail approximated. Print in 10 sessions is timing only.",
+   "falsifier": "Daily close under ma_20 34.43.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Test family: VALEN U&R MET, dipped under the rising trendline 174.96 and closed back above (reclaim day); BULLISH_BOS, structure 84.2, lens positive 5 of 6. Cautions: elder INTERRUPTED, mp FADING (R13 label), earnings 18 sessions. Stop beyond ma_20 172.09.",
+   "falsifier": "Daily close under ma_20 172.09.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Through pivot_high on day_vol 0.86 with sma_distance_pct 9.75 and run_10d 11.98%: no contraction I can read and no pullback. Earnings 19 sessions. Fits no clean type; rs_rank_pct 93.17 keeps me from opposing."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test family: VALEN U&R MET, undercut the 9-day average 34.68 yesterday and closed back above; sma_distance_pct 4.11, lens.coil strong, div BULLISH/0. Weak links: day_vol 0.74, elder INTERRUPTED, VALEN Undercut and rally FAILED (5/9). Stop beyond ma_20 34.5.",
+   "falsifier": "Daily close under ma_20 34.5.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EMR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout family: BULLISH_BOS, pct_from_pivot 0.62 at a high (pct_from_52w_high 0.0), lens.coil strong, energy 77.3. Volume unproven: day_vol 0.79, volume_confirmed False; elder INTERRUPTED. Buy only a break that holds on volume.",
+   "falsifier": "Daily close back under pivot_high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "age_ge:3"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NET",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No retracement, a slide: entry sits under ma_20 331.43, run_10d -5.72%, mp 20, structure 49.5, rs_spy_20d -7.66, VALEN Undercut and rally FAILED (5/9), 21-day average not rising. div BEARISH/5 is advisory; no turn to buy and no catalyst.",
+   "falsifier": "Hourly closes back over ma_20 331.43 with mp rising flip me.",
+   "opposing_case": "rs_rank_pct 91.95 and ret_6m 57.22 with ma_20 over ma_50 319.97 intact: Elder's pullback-into-value buy at sma_distance_pct 2.45."
+  },
+  {
+   "ticker": "BTI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Holy Grail needs an established uptrend: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, rs_rank_pct 47.01, leadership warn, coil warn. mp_accel DECELERATING, sma_distance_pct 6.41 after run_10d 7.51%. Repair, not a retracement.",
+   "falsifier": "ma_50 back over ma_200 and a first pullback holding ma_20 56.66 flips me.",
+   "opposing_case": "mp 86 STRONG, sc_mom 76.6, rs LEADER spy20 8.36: a calm, real thrust."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strength real: rs_rank_pct 99.27, mp 85 STRONG/ACCELERATING, new high, elder CORRECTION_REENTRY. Climax-risk extension: sma_distance_pct 18.05 on day_vol 0.66 (weight, R14). Enter the first pullback toward ma_20 103.9, not at entry 113.9.",
+   "falsifier": "Daily close under ma_20 103.9.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Lodging is one idea (APLE, DRH, HST); I carry DRH as the expression. HST adds no separate Raschke setup: sma_distance_pct 10.54, mp FADING/DECELERATING, lens.resistance strong."
+  },
+  {
+   "ticker": "FTV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Holy Grail needs an established uptrend: ma_50 57.44 under ma_100 59.33 and ma_200 58.55, rs_rank_pct 42.2, coil warn, insti_money warn. day_vol 1.81 with sma_distance_pct 7.28 is a thrust off repair, not a retracement.",
+   "falsifier": "ma_50 back over ma_200 and a first pullback holding ma_20 57.95 flips me.",
+   "opposing_case": "elder SUSTAINED 10, mp 72 BUILDING/ACCELERATING, flow 88.2, rs LEADER spy20 10.49."
+  },
+  {
+   "ticker": "AWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Retracement family: structure 77.9 RANGE, sma_distance_pct 4.31, quiet pullback day_vol 0.79; mp FADING is the R13 label, mp_accel ACCELERATING the only hook. div BULLISH/0. Approximated; RISK OFF keeps it at 2.",
+   "falsifier": "Daily close under ma_20 133.0.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EQT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "R1 filed a retracement; the ma check shows ma_50 53.09 under ma_200 55.51 and rs_rank_pct 30.12: repair, not an established trend, so the Holy Grail read is void. Energy supply-demand not served. No Raschke setup remains.",
+   "challenge_reply": "Steenbarger/Rogers: reversal, not continuation; I cannot clear energy on supply and demand either, nor oppose rs_spy_20d 14.4 with day_vol 2.05.",
+   "conviction_change": "R1 conv 2 withdrawn: ma_50 under ma_200 makes it repair, not a retracement."
+  },
+  {
+   "ticker": "TEL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "BULLISH_BOS on day_vol 2.23 with ma_50 210.09 under ma_200 213.06, rs LAGGARD, div BEARISH/2 (advisory), elder INTERRUPTED, 21-day average not rising: a day-one thrust off repair with no clean type. Abstain, not oppose."
+  },
+  {
+   "ticker": "BKR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Day-one BULLISH_BOS on day_vol 2.16 with ma_50 58.68 under ma_100 59.03 under ma_200 60.16: chasing day one is what Turtle Soup Plus One fades (C3). VALEN Episodic pivot FAILED (7/9), Below the 200-day line, 21-day average not rising.",
+   "falsifier": "Daily close over ma_200 60.16 on day_vol over 1 flips me.",
+   "challenge_reply": "Detect-lens: ignition and trend disagree, agreed; I read a repair thrust to fade, not a Holy Grail. Steenbarger: reversal, not continuation. Rogers: energy supply-demand is not served to me either.",
+   "conviction_change": "R1 conv 2 to OPPOSE 2: VALEN Below the 200-day line, Episodic pivot FAILED (7/9), RISK OFF.",
+   "opposing_case": "BULLISH_BOS on day_vol 2.16, flow 100.0, lens.structure strong and coil strong: heavy participation."
+  },
+  {
+   "ticker": "VG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Price on ma_50 13.81 (sma_distance_pct 0.0), coil strong, div BULLISH/0, elder ACCELERATION, but day_vol 0.62, lens.resistance warn, earnings in 9 sessions and energy supply-demand not served. No clean test or breakout to name. Lynch CONTRADICT (debt_to_equity 4.99).",
+   "challenge_reply": "Rogers: agreed, energy supply-demand is not served to me either; I abstain rather than clear it."
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "ADD question: KEEP, do not ADD. Held 38.0 @ 413.2602632, unrealised -433.21; broker stop 391.80 stands. U&R SETUP: closed 0.2% under the 9-day average 402.58; reclaim day is the next session. C21: never scale up to recover a drawdown. Add only after a confirmed reclaim.",
+   "falsifier": "An hourly close over bar_high after the reclaim day on day_vol over 1 turns me to SUPPORT-add.",
+   "opposing_case": "structure 69.0 ABOVE_STRUCTURE, ma_50 378.73 over ma_100 363.99 over ma_200 341.08, price above vwap14 398.32, knn p=0.8: a healthy hold with a test in progress.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD question: no; EXIT-case. BEARISH_CHOCH, structure 14.0, sma_distance_pct -16.37, ma_20 42.73 under ma_50 48.87 under ma_200 55.59: the up-structure failed (C17). Unrealised -3639.0, AQE HEALTH EXIT. Broker stop 36.66 stands; never average down (C21).",
+   "falsifier": "Close back above ma_20 42.73 with structure_shift no longer BEARISH_CHOCH.",
+   "opposing_case": "mp 5.0 BUILDING/ACCELERATING and day_vol 1.21: a washed-out low can bounce."
+  },
+  {
+   "ticker": "IOT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Test family: VALEN U&R MET, undercut the 9-day average 42.99 on the last session and closed back above (reclaim day), a double stop point; mp 76 STRONG/ACCELERATING, sma_distance_pct 7.7, stack aligned. Weak: day_vol 0.84, lens.resistance warn, VALEN Undercut and rally FAILED (6/9).",
+   "falsifier": "Daily close under ma_20 41.77.",
+   "challenge_reply": "Rogers owed: no R1 nomination because my screen reads structure_shift and sma_distance_pct, not a daily undercut. The reclaim fits my test family (C20), so I support it.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Test family: VALEN U&R MET, undercut the 9-day average 85.35 and closed back above (reclaim day); structure 87.4 ABOVE_STRUCTURE, rs_spy_20d 25.82, day_vol 1.21; mp FADING/FLAT is the R13 label. Cost: sma_distance_pct 12.22 puts the stop beyond ma_20 80.35, wide.",
+   "falsifier": "Daily close under ma_20 80.35.",
+   "challenge_reply": "Rogers owed: same answer as IOT; my R1 screen does not read a daily undercut. Reclaim day fits my test family, so I support.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test family: VALEN U&R MET, undercut the 9-day average 42.24 and closed back above; mp 86 STRONG/ACCELERATING, day_vol 1.25, sma_distance_pct 4.99. lens_warnings 3, pct_from_52w_high -27.41 and debt_to_equity 7.47 hold it at 2. Stop beyond ma_20 39.83.",
+   "falsifier": "Daily close under ma_20 39.83.",
+   "challenge_reply": "Rogers owed: same answer as IOT; the daily undercut is not on my R1 screen. The reclaim fits my test family.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:3"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Momentum real (rs_spy_20d 97.04, mp 100 STRONG) but a climax signature, not a setup: sma_distance_pct 51.23, run_10d 58.24%, VALEN Parabolic WARNING (3/4), High tight flag FAILED (5/11). C19 says take profit, not buy. Only the first deep pullback toward ma_20 33.29 qualifies; extension is a weight (R14).",
+   "falsifier": "Daily close under ma_20 33.29.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Momentum real (rs_spy_20d 52.63, mp 100) on thin volume day_vol 0.62; sma_distance_pct 32.02, run_10d 24.04%, VALEN Parabolic WARNING (2/4), lens_warnings 3. No retracement exists; the only entry is the first pullback toward ma_20 13.4.",
+   "falsifier": "Daily close under ma_20 13.4.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Momentum real (rs_spy_20d 50.7, mp 97, new high) but parabolic: sma_distance_pct 47.77, VALEN Parabolic WARNING (2/4), High tight flag FAILED (7/12), div BEARISH/2 advisory, debt_to_equity 4.67. Entry only on the first pullback toward ma_20 20.54; extension is a weight (R14).",
+   "falsifier": "Daily close under ma_20 20.54.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "VALEN Parabolic CRACKED (2/4) is the failed form: sma_distance_pct 22.42 after run_10d 20.28%, pct_from_52w_high -21.46, day_vol 0.93, a vertical bounce with no structure to buy and no stop close by. The cracked read is the basis, not extension alone (R14).",
+   "falsifier": "A first pullback that holds ma_20 10.14 on day_vol under 1 flips me.",
+   "opposing_case": "rs_rank_pct 95.73, mp 97 STRONG/ACCELERATING, rs_spy_20d 43.39."
+  },
+  {
+   "ticker": "TENB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leadership real: rs_rank_pct 98.66, mp 75 STRONG, new high, elder SUSTAINED. sma_distance_pct 31.08 with div BEARISH/2 (advisory) is climax risk (C19): wait for the first pullback toward ma_20 40.28; stop beyond ma_50 37.11.",
+   "falsifier": "Daily close under ma_50 37.11.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A bounce off repair, not a retracement: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, ret_12m -18.7, run_10d 21.94% with sma_distance_pct 19.22. Holy Grail needs an established uptrend; climax risk (C19).",
+   "falsifier": "ma_50 back over ma_200 and a first pullback holding ma_20 18.91 flips me.",
+   "opposing_case": "mp 93 STRONG and rs LEADER spy20 36.56: real strength."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Reversal pop, no type: pct_from_52w_high -42.32, ma_20 13.36 level with ma_200 13.36, lens_warnings 3, sma_distance_pct 13.41, run_10d 16.35%; mp FADING is the R13 label. Strength is real (rs_spy_20d 32.02) but I see no test or breakout to name."
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Reversal pop on dry volume: day_vol 0.54, pct_from_52w_high -39.33, rs_rank_pct 44.76, ma_50 17.67 under ma_200 18.13, run_10d 19.06%. Strength is real (rs_spy_20d 31.61, mp 93) but no test or breakout to name; abstain, not oppose."
+  },
+  {
+   "ticker": "RBLX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Theme graded AVOID, rs_rank_pct 35.37, pct_from_52w_high -59.27, ret_12m -57.35, day_vol 0.67, sma_distance_pct 19.23: a bounce with ma_50 45.68 under ma_200 52.8. No Raschke type and no close stop.",
+   "falsifier": "ma_50 back over ma_200 and a first pullback holding ma_20 48.91 flips me.",
+   "opposing_case": "rs_spy_20d 31.56, mp 85 STRONG/ACCELERATING, lens.resistance strong."
+  },
+  {
+   "ticker": "ZS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leadership real: rs_rank_pct 96.1, mp 85 STRONG, elder SUSTAINED. Climax risk: sma_distance_pct 29.9, div BEARISH/3 advisory, lens.resistance strong overhead. Enter only the first pullback toward ma_20 222.39; stop beyond ma_50 200.27.",
+   "falsifier": "Daily close under ma_50 200.27.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "age_ge:5"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of3.json",
+   "bytes": 9561,
+   "votes": 16,
+   "sha256": "3638c8b4735a"
+  },
+  {
+   "file": "raschke.part2of3.json",
+   "bytes": 8380,
+   "votes": 16,
+   "sha256": "66701715566d"
+  },
+  {
+   "file": "raschke.part3of3.json",
+   "bytes": 9005,
+   "votes": 16,
+   "sha256": "2bb1d89e70c6"
+  }
+ ]
+}

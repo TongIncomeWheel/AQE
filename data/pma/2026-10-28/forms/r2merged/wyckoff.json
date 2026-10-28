@@ -1,0 +1,752 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-10-28",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "DBX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Range-top geography: structure_shift RANGE, structure 86.3, coil ok, energy 73.1, pct_from_pivot -3.25 under pivot_high 38.17. U&R MET (9-day average 36.69 undercut, reclaimed) is the nearest served penetration-recovery; dip volume unseen. Spring not detectable.",
+   "falsifier": "Close under ma_20 35.43, or an hourly close back under pivot_high 38.17 after trading above it (upthrust).",
+   "challenge_reply": "Detect-lens asked about insti_money warn and resistance warn: resistance warn is the overhead supply a range-top break must absorb; FORCE is unmeasurable so insti_money stays untested. Hence no market entry, only an hourly close above pivot_high on expanding volume.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr",
+     "reject:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+4pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Just through the edge: pct_from_pivot 2.01 over pivot_high 28.86, structure 86.3 ABOVE_STRUCTURE, day_vol 1.21 expanding, flow 89.5: old top turning support. sma_distance_pct 8.88 so not at market; the entry is a low-volume retest of the pivot.",
+   "falsifier": "Hourly close back under pivot_high 28.86 after trading above it.",
+   "challenge_reply": "Non-price invalidation: day_vol rising on down closes near the high while structure stops rising (effort without reward). Lynch's shrinking revenue_growth_yoy is consulted, not my method; the tape decides.",
+   "obligations": {
+    "o_a_hard_or_soft": null,
+    "o_a_note": null,
+    "o_b_stop_honored": null,
+    "o_c_invalidation": "Heavy day_vol on down closes at the high with no further structure progress."
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "reject:pivot_high"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+8pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CSX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Congestion just left: ma_20 48.42, ma_50 48.77, ma_100 48.92 tangled, BULLISH_BOS only 0.23 over pivot_high 52.15, structure 84.2. But day_vol 0.9 is thin effort and coil warn: an upthrust until a low-volume retest holds.",
+   "falsifier": "Hourly close back under pivot_high 52.15 after trading above it, or the retest comes on rising day_vol.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "reject:pivot_high"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Mid-move, not an edge: sma_distance_pct 15.6, ext_atr20 2.15, new high on day_vol 0.68 (light effort, direction unmeasured). Retest of ma_20 96.32 or a base is where I would look; earnings 2026-11-19 is an event.",
+   "opposing_case": "Leader: rs_rank_pct 98.05, ret_6m 122.38, mp 77 STRONG, elder 10 SUSTAINED; light volume near the high is not distribution by itself.",
+   "falsifier": "A pullback to ma_20 96.32 on day_vol well under 1 that holds, or a new high on day_vol above 1."
+  },
+  {
+   "ticker": "RCL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Effort with reward: day_vol 2.17, entry 295.92 through the ma_100 286.66 / ma_200 286.21 ceiling, coil strong, energy 85.7, U&R MET. Reversal from a range, ma_50 271.27 still under; only a low-volume retest of the old ceiling is an entry. rs LAGGARD caps it.",
+   "falsifier": "Close under ma_200 286.21 after the break, or the retest arrives on rising day_vol.",
+   "challenge_reply": "Reversal, not continuation (ma_50 271.27 under ma_200 286.21). day_vol 2.17 has no direction in my fields; a close through the ceiling on it reads absorption of supply, but only the light-volume retest proves it.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_200"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_200",
+     "ma_100"
+    ],
+    "chase": "close_above:ma_200+6pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No pullback to buy: sma_distance_pct 13.78, ext_atr20 4.32 at a new high, mp STRONG/DECELERATING, earnings 2026-11-05 six sessions out. Lodging APLE/DRH/HST is one idea; mid-move, no edge.",
+   "opposing_case": "Leader at the high: rs_rank_pct 87.93, structure 80.0, flow 84.2, mp 94 STRONG; lodging peers confirm.",
+   "falsifier": "A retest of ma_20 16.98 on day_vol under 1 that holds."
+  },
+  {
+   "ticker": "DRH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Same lodging idea as APLE, mid-move at the high: sma_distance_pct 11.34, ext_atr20 3.06, mp 94 FADING/DECELERATING (FADING alone is no signal), coil warn so contraction fails. No edge to buy.",
+   "opposing_case": "Best base of the lodging group: structure 84.2, rs_rank_pct 87.32, flow 78.9, new high at pct_from_52w_high 0.0.",
+   "falsifier": "A retest of ma_20 13.11 on light day_vol that holds."
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Most extended multi-seat name: sma_distance_pct 22.45, run_10d 16.78%, div BEARISH/3 (advisory) at a new high. Mid-move, the large-scale trade is not here; ma_20 21.83 sits far under entry 24.43.",
+   "opposing_case": "Strongest leader of the group: rs_rank_pct 98.17, mp 96 STRONG, ret_6m 127.04, resistance lens strong, four doors.",
+   "falsifier": "A base forms: several closes holding above ma_20 21.83 on day_vol under 1."
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Edge break with effort: BULLISH_BOS on day_vol 1.52, pct_from_pivot 1.81 past pivot_high 40.81, coil strong, ext_atr20 0.97 so still near the edge. Structure 57.9 is thin; earnings 2026-11-18. Enter on a low-volume retest, not the break.",
+   "falsifier": "Hourly close back under pivot_high 40.81 (failed breakout), or the retest comes on heavy volume.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "reject:pivot_high"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Best range geography in the set: structure_shift RANGE, pct_from_pivot -0.3, coil strong, energy 80.7, lenses 4 strong, tight base_range_pct 7.7. U&R MET reclaim of the 9-day average 343.68. div BEARISH/4 is advisory and flow 51.3 soft; buy the edge break on volume.",
+   "falsifier": "Upthrust: trades over pivot_high then hourly close back under it, or a close under ma_20 340.07.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Round 1 stands: RANGE, coil strong, energy 79.0, day_vol 0.51 dry-up (effort gone, not absorption). Terrain only, no spring visible; entry 37.13 is extended (sma_distance_pct 8.74), so wait for the test. Danger point ma_20 34.96.",
+   "falsifier": "Close under ma_20 34.96 on rising day_vol.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+10pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CART",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax profile: day_vol 2.53 (highest in the set), sma_distance_pct 23.57, run_10d 21.01%, ext_atr20 4.24. Heavy effort at a vertical extreme; the climax is not the entry, the failed low-volume test is.",
+   "opposing_case": "Rank 1, rs_spy_20d 37.43, flow 100.0, mp 97 STRONG, runner True: the strongest tape available, effort paired with reward.",
+   "falsifier": "A tight low-volume range holding above ma_20 49.49 (the test passes)."
+  },
+  {
+   "ticker": "DDOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RANGE at structure 62.9 with coil strong, energy 76.5, insti_money strong, pct_from_52w_high -4.24 near the range top. Terrain only, no spring visible; rs LAGGARD and elder INTERRUPTED cap it. Danger point ma_20 272.61.",
+   "falsifier": "Close under ma_20 272.61 on heavy day_vol.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+6pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NTNX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Round 1 stands: RANGE, coil strong, energy 70.6, ACCUMULATION_BASE elder 8, rising stack ma_20 71.37 / ma_50 69.25 / ma_200 52.18, day_vol 0.96. Spring not detectable; danger point ma_20 71.37. Earnings 2026-11-19 is an event.",
+   "falsifier": "Close under ma_20 71.37 on rising day_vol, or structure_shift turning BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Terrain fits only partly: RANGE at structure 57.9 but coil ok (not strong), div BEARISH/3 advisory, VCP and U&R setups FAILED, 21-day average not rising. Not a round-1 nominee; no spring visible and no independent edge read.",
+   "falsifier": "Coil turning strong with energy rising from 70.6 and a hold above ma_20 182.18."
+  },
+  {
+   "ticker": "CNP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Base repair, not trend: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, entry 41.97 just through the ceiling on day_vol 2.1 (effort with progress), flat ret_6m -2.69. Only a low-volume retest of ma_200 is an entry; coil warn, rs_rank_pct 36.22.",
+   "falsifier": "Close back under ma_100 40.94 after the break.",
+   "challenge_reply": "Reversal/repair, not continuation: a range exit through the 100- and 200-day cluster, one retest from proven. Not the HOG kind of setup and sized in conviction accordingly.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_200"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_100-0.5atr"
+    ],
+    "wait": [
+     "ma_200",
+     "ma_100"
+    ],
+    "chase": "close_above:ma_200+6pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Mid-range, not an edge: RANGE at structure 86.3 but pct_from_52w_high -12.25, ma_20 46.08 under ma_50 46.98 tangled, day_vol 0.83 quiet. Earnings 2026-11-05. No spring or range-edge event served.",
+   "opposing_case": "Rank 9, mp 93 STRONG, rs_spy_20d 17.15 LEADER; quiet day_vol 0.83 is a dry pullback, not supply.",
+   "falsifier": "A close back over ma_50 46.98 holding, then a range-high break on day_vol above 1."
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Mid-move after leaving a congestion: ma_20 95.13 and ma_50 95.17 sit far under entry 104.36, sma_distance_pct 9.65, ext_atr20 3.96, run_10d 11.64%. The edge is behind it, no retest in sight. Delayed EP FAILED.",
+   "opposing_case": "AQE_LEADER door, mp 84 STRONG, structure 81.1, flow 88.2, elder 10 SUSTAINED.",
+   "falsifier": "A pullback toward ma_20 95.13 on light day_vol that holds."
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Contraction test fails: coil warn, energy 65.5; RANGE but pct_from_52w_high -13.47 so mid-range, ma_20 34.43 under ma_50 35.28. Contraction is my only timing test and is not rescued. Earnings 2026-11-11.",
+   "opposing_case": "rs LEADER, flow 84.2, mp BUILDING/ACCELERATING hooking up, resistance lens strong.",
+   "falsifier": "Coil turning strong with a close above ma_50 35.28."
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Tight base at the pivot: pct_from_pivot 0.25, pct_from_52w_high -0.15, base_range_pct 9.2, BULLISH_BOS, structure 84.2, coil strong. U&R MET (dip under the rising trendline 174.96, reclaimed) is the nearest served penetration-recovery; dip volume unseen. Earnings 18 sessions out.",
+   "falsifier": "Close back under the rising trendline 174.96 or ma_20 172.09.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Weak effort at the edge: pct_from_pivot 2.04 past the pivot on day_vol 0.86 after run_10d 11.98%, wide base_range_pct 18.4, coil ok only. A thin break is an upthrust until a low-volume retest holds. Earnings 19 sessions out.",
+   "opposing_case": "rs_rank_pct 93.17 LEADER, insti_money strong, ret_6m 66.64, near the high.",
+   "falsifier": "A retest of the pivot on light day_vol that holds."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Round 1 stands: RANGE, coil strong, energy 79.0, insti_money strong, day_vol 0.74 quiet, above ma_20 34.5 and ma_50 33.97 so not the lows. U&R MET reclaim of the 9-day average 34.68. Spring not detectable; danger point ma_20 34.5.",
+   "falsifier": "Close under ma_20 34.5 on rising day_vol.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EMR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Tight base edge: BULLISH_BOS pct_from_pivot 0.62, base_range_pct 8.4, coil strong, pct_from_52w_high 0.0. But day_vol 0.79 and volume_confirmed False: thin effort, a break to be proven by a low-volume retest. mp 42 DECELERATING, elder INTERRUPTED.",
+   "falsifier": "Hourly close back under pivot_high after trading above it (upthrust).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "reject:pivot_high"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+4pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NET",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Contraction not shown: energy 49.6, structure 49.5, mp 20, div BEARISH/5 (advisory), rs_spy_20d -7.66, entry 327.8 under ma_20 331.43. A quiet pullback (day_vol 0.76) is not a test with no level held, and no catalyst is on record.",
+   "opposing_case": "Long-run leader: rs_rank_pct 91.95, lens leadership and insti_money strong, ACCUMULATION_BASE elder 8, rising stack ma_50 319.97 / ma_200 246.37.",
+   "falsifier": "Reclaim of ma_20 331.43 with coil strong and energy rising."
+  },
+  {
+   "ticker": "BTI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No effort and no contraction: day_vol 0.95, coil warn, energy 63.9; entry 59.83 only just over ma_200 59.08 with ma_50 56.23 and ma_100 58.28 under it. A base still being built; nothing to test and no independent edge read.",
+   "falsifier": "A retest of ma_200 59.08 that holds on light day_vol with coil turning strong.",
+   "challenge_reply": "Reversal/repair, not continuation: the inverted stack ma_50 56.23 under ma_100 58.28 under ma_200 59.08 is a base in progress; I would only act after a retest of ma_200 holds."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Mid-move on thin effort: sma_distance_pct 18.05, ext_atr20 2.35, new high on day_vol 0.66 with resistance lens strong. The edge is far under entry 113.9; ma_20 103.9 would be the retest. Revenue pace is Lynch's concern, not mine.",
+   "opposing_case": "Top-percentile RS: rs_rank_pct 99.27, ret_6m 154.58, mp 85 STRONG, elder 10 CORRECTION_REENTRY.",
+   "falsifier": "A pullback to ma_20 103.9 that holds on day_vol under 1."
+  },
+  {
+   "ticker": "HST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "One lodging idea with APLE and DRH (weigh as one): mid-move at a new high, sma_distance_pct 10.54, ext_atr20 3.27, mp 90 FADING/DECELERATING, coil warn. No independent edge read; the cluster is voted on APLE and DRH.",
+   "falsifier": "A retest of ma_20 23.52 that holds on light day_vol."
+  },
+  {
+   "ticker": "FTV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Base repair: entry 61.62 through ma_100 59.33 and ma_200 58.55 on day_vol 1.81 (effort with progress), flat ret_6m -0.24, flow 88.2. ma_50 57.44 still under; coil warn and insti_money warn, so only a low-volume retest of the cluster is an entry.",
+   "falsifier": "Close under ma_200 58.55 after the break.",
+   "challenge_reply": "Reversal/repair, not continuation (ma_50 57.44 under ma_100 59.33 and ma_200 58.55): a range exit one retest from proven; conviction held low for that reason.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_100"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_100",
+     "ma_200"
+    ],
+    "chase": "close_above:ma_100+6pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Long congestion left: ma_20 133.0, ma_50 135.27, ma_100 133.51, ma_200 132.23 stacked tight, entry 141.1 out of it, RANGE structure 77.9, pct_from_52w_high -1.49, div BULLISH/0. Effort light (day_vol 0.79), coil warn: enter only on a low-volume retest of ma_50.",
+   "falsifier": "Close back inside the congestion under ma_50 135.27.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_50"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_50-0.5atr"
+    ],
+    "wait": [
+     "ma_50"
+    ],
+    "chase": "close_above:ma_50+7pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EQT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Congestion exit: ma_20 53.12, ma_50 53.09, ma_100 52.51 tangled, entry 56.27 over ma_200 55.51 on day_vol 2.05 (effort with progress). Direction of volume unmeasured; commodity supply and demand is not my method. Only a light-volume retest of ma_200 is an entry.",
+   "falsifier": "Close back under ma_200 55.51 or a retest on rising day_vol.",
+   "challenge_reply": "Reversal/repair, not continuation (ma_50 53.09 under ma_200 55.51). No supply-demand series reaches me, so I read terrain only and name no catalyst; conviction is held low.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_200"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_200"
+    ],
+    "chase": "close_above:ma_200+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TEL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Coil then expansion: coil strong, energy 72.3, squeeze breakout up volume-confirmed, BULLISH_BOS on day_vol 2.23 (effort with progress) through ma_20 215.05 / ma_100 208.49 / ma_200 213.06. div BEARISH/2 is advisory. Entry 225.35 is past it: take the retest.",
+   "falsifier": "Close under ma_200 213.06, or the retest comes on rising day_vol.",
+   "challenge_reply": "Reversal from a base (ma_50 210.09 under ma_200 213.06), not continuation: coil-to-expansion is the evidence, the light-volume retest is the proof. Conviction capped at three for that reason.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_200"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_200",
+     "ma_20"
+    ],
+    "chase": "close_above:ma_200+8pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BKR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Ceiling not taken: entry 59.0 still under ma_100 59.03 and ma_200 60.16; BULLISH_BOS on day_vol 2.16 is first-day effort into overhead supply, direction unmeasured. Inverted stack ma_50 58.68; VALEN: below the 200-day. Chasing day one is not an entry.",
+   "opposing_case": "flow 100.0, coil strong, structure lens strong: a coiled first break with effort 2.16 behind a BOS.",
+   "falsifier": "Close above ma_200 60.16 followed by a low-volume retest that holds.",
+   "challenge_reply": "Reversal/repair at best: price has not cleared ma_200 60.16, so there is no range exit yet. No energy supply-demand series reaches me; terrain only, no catalyst claimed."
+  },
+  {
+   "ticker": "VG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Round 1 stands at low conviction: RANGE, coil strong, energy 68.9, flow 78.9, entry 13.81 on ma_50 13.81 above ma_20 13.16 and ma_200 12.6, day_vol 0.62. Resistance lens warn is overhead supply, pct_from_52w_high -21.22. Spring not detectable; danger point ma_20 13.16.",
+   "falsifier": "Close under ma_20 13.16 on rising day_vol.",
+   "challenge_reply": "Rogers' energy-catalyst gap is correct: commodity supply-demand is not served to me and I name no catalyst. I read terrain only; of the XLE trio I back VG on range terrain and EQT on a ceiling break, not BKR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+8pct",
+    "tf": "EOD",
+    "non_price": "Earnings 2026-11-10; a print is an event I cannot read from the tape."
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "KEEP, broker stop V 391.80 stands. ADD no: bought since 2026-10-22 at 413.2602632 and now under it; day_vol 1.36 with price falling is the effort-without-reward flag (absorption or distribution, direction unmeasured). U&R SETUP: reclaim day is next session. Add only after a reclaim holds.",
+   "opposing_case": "Quality trend: ABOVE_STRUCTURE, ma_20 388.88 over ma_50 378.73 over ma_200 341.08, no divergence; U&R SETUP is a shallow undercut of the 9-day average 402.58 that may reclaim.",
+   "falsifier": "Close back above the 9-day average 402.58 with day_vol under 1, or a loss of ma_20 388.88 on heavy day_vol (exit case)."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "EXIT-CASE; broker stop MP 36.66 stands. ADD no: BEARISH_CHOCH at structure 14.0, sma_distance_pct -16.37 under ma_20 42.73, ma_50 48.87, ma_200 55.59, day_vol 1.21 elevated. Heavy volume under every average with structure not improving is the bag-holding pattern, not accumulation.",
+   "opposing_case": "mp_accel_state ACCELERATING from mp 5.0, and a washout toward the stop could be a spring; but no penetration-and-recovery event is served.",
+   "falsifier": "Close back above ma_20 42.73 and structure_shift leaving BEARISH_CHOCH on light day_vol."
+  },
+  {
+   "ticker": "IOT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Why unnominated: coil ok, not strong, and no edge or spring reached my scan. Terrain now fits: RANGE at structure 80.0, energy 73.9, ext_atr20 0.88, U&R MET reclaim of the 9-day average 42.99. Dip volume unseen, spring grade unknown. Danger point is the dip low.",
+   "falsifier": "Hourly close under yesterday's low (bar_low) or a close under ma_20 41.77.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Why unnominated: contraction is untestable, all four lens reads are '--' (lens.coil no_data); geography is ABOVE_STRUCTURE with sma_distance_pct 12.22, mid-move. U&R MET reclaim of the 9-day average 85.35 on day_vol 1.21 is real; I would enter on that reclaim, wrong under the dip low.",
+   "falsifier": "Lens block returning with coil strong, or a retest of ma_20 80.35 that holds on light day_vol."
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Why unnominated: contraction fails, lens coil warn and energy 55.5, with resistance warn and pct_from_52w_high -27.41 of overhead supply. Tangled ma_20 39.83 / ma_50 40.36 / ma_100 40.14 is a congestion just left; U&R MET reclaim of the 9-day average 42.24 is not enough alone.",
+   "falsifier": "Coil turning strong and a low-volume retest of ma_50 40.36 that holds."
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Parabolic climax profile: sma_distance_pct 51.23, run_10d 58.24%, ext_atr20 6.98; VALEN Parabolic WARNING (3/4), high tight flag FAILED. Mid-move at the vertical extreme; the climax is not the entry. day_vol 0.97 shows no heavy test yet and I cannot see FORCE.",
+   "opposing_case": "Rank 2, rs_spy_20d 97.04, mp 100 STRONG, structure 86.7, flow 88.2: the strongest tape available.",
+   "falsifier": "A multi-session low-volume range far above ma_20 33.29 that holds, or a new high on day_vol well above 1 with follow-through."
+  },
+  {
+   "ticker": "DXC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Vertical on light effort: sma_distance_pct 32.02, run_10d 24.04%, ext_atr20 3.64 with day_vol 0.62, progress without participation. Parabolic WARNING (2/4); lens warns on coil, insti_money and resistance. Mid-move, no edge.",
+   "opposing_case": "rs_spy_20d 52.63, mp 100 (FADING is no signal), structure 79.4, adx 47.75: momentum is real.",
+   "falsifier": "A base above ma_20 13.4 on contracting day_vol that holds."
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Parabolic: sma_distance_pct 47.77, ret_63d 118.65, ext_atr20 4.28, div BEARISH/2 (advisory), VALEN Parabolic WARNING (2/4) and high tight flag FAILED. A climax is not an entry; the failed low-volume test is. Mid-move, no edge.",
+   "opposing_case": "Rank 6, rs_rank_pct 99.39, rs_spy_20d 50.7, mp 97 STRONG, elder 10 SUSTAINED.",
+   "falsifier": "A base holding above ma_20 20.54 on dry day_vol."
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Mid-move rebound under overhead supply: sma_distance_pct 22.42, run_10d 20.28%, pct_from_52w_high -21.46, Parabolic CRACKED (2/4), day_vol 0.93. No edge or retest level near entry 11.86; ma_20 10.14 is the first test.",
+   "opposing_case": "rs_spy_20d 43.39, mp 97 STRONG, ret_6m 87.36, structure 76.8: momentum is real.",
+   "falsifier": "A retest of ma_20 10.14 on light volume that holds."
+  },
+  {
+   "ticker": "TENB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Extended at a new high: sma_distance_pct 31.08, ext_atr20 3.56, run_10d 17.83%, div BEARISH/2 (advisory), resistance lens strong, adx 18.65 low for the run. Mid-move; entry only after a base or a retest of ma_20 40.28.",
+   "opposing_case": "AQE_LEADER, rank 40, rs_rank_pct 98.66, elder 10 SUSTAINED, structure 88.4.",
+   "falsifier": "A retest of ma_20 40.28 on light day_vol that holds."
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Mid-move spike: run_10d 21.94%, sma_distance_pct 19.22, ext_atr20 3.45, day_vol 0.94 (no climactic effort); entry 21.95 far over the ceiling ma_200 19.81 with ma_50 18.41 under it, never retested. The edge is behind it; wait for the retest.",
+   "opposing_case": "rs_spy_20d 36.56 LEADER, mp 93 STRONG, structure 78.9, sector strong.",
+   "falsifier": "A retest of ma_200 19.81 on light day_vol that holds."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Pop under heavy supply: pct_from_52w_high -42.32, sma_distance_pct 13.41, run_10d 16.35%, lens warns on leadership, coil and resistance, day_vol 0.98. The congestion ma_20 13.36 / ma_100 12.66 / ma_200 13.36 is the edge; entry 14.8 is past it. Wait for the retest.",
+   "opposing_case": "rs_spy_20d 32.02 LEADER, ABOVE_STRUCTURE 76.8, mp 93 (FADING is no signal), ret_63d 11.11.",
+   "falsifier": "A retest of ma_200 13.36 on light day_vol that holds."
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Pop on no effort: run_10d 19.06% on day_vol 0.54, sma_distance_pct 14.18, pct_from_52w_high -39.33, rs_rank_pct 44.76. Light-volume progress into heavy overhead supply is an upthrust risk, direction unmeasured. The edge is the congestion ma_100 17.07 to ma_200 18.13.",
+   "opposing_case": "rs_spy_20d 31.61 LEADER, mp 93 STRONG and ACCELERATING; light volume can mean a vacuum above.",
+   "falsifier": "A retest of ma_200 18.13 on light day_vol that holds, or the run repeating on day_vol above 1."
+  },
+  {
+   "ticker": "RBLX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "At the 200-day on no effort: entry 54.47 over ma_200 52.8 on day_vol 0.67, run_10d 10.02%, resistance lens strong, pct_from_52w_high -59.27, sma_distance_pct 19.23. A thin break of a long ceiling is an upthrust until a low-volume retest holds. Theme graded AVOID.",
+   "opposing_case": "rs_spy_20d 31.56 LEADER, mp 85 STRONG, ABOVE_STRUCTURE 70.3, revenue growth accelerating.",
+   "falsifier": "A retest of ma_200 52.8 on light day_vol that holds."
+  },
+  {
+   "ticker": "ZS",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Extended with divergence: sma_distance_pct 29.9, ext_atr20 3.25, div BEARISH/3 (advisory), resistance lens strong, pct_from_52w_high -22.64. Mid-move; the edge is ma_20 222.39, far under entry 260.15.",
+   "opposing_case": "Rank 87, rs_rank_pct 96.1, elder 10 SUSTAINED, AQE_LEADER; Cybersecurity is on VALEN's real-leadership list.",
+   "falsifier": "A pullback to ma_20 222.39 on light day_vol that holds."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of3.json",
+   "bytes": 10099,
+   "votes": 16,
+   "sha256": "10c8cfa910c5"
+  },
+  {
+   "file": "wyckoff.part2of3.json",
+   "bytes": 9249,
+   "votes": 16,
+   "sha256": "38d76b60a6c1"
+  },
+  {
+   "file": "wyckoff.part3of3.json",
+   "bytes": 8565,
+   "votes": 16,
+   "sha256": "bce4ccdcbaa7"
+  }
+ ]
+}

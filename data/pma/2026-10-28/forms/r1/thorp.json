@@ -1,0 +1,590 @@
+{
+ "voice": "thorp",
+ "date": "2026-10-28",
+ "nominations": [
+  {
+   "ticker": "CNP",
+   "reason": "Calmest name in the all-gates-pass set: vol_30d_ann 0.1784 with sc_momentum 82.0 and sc_m_gate_detail 17 (all five engines True); day_vol 2.1 shows above-normal turnover. Volatility orders it first, and it leads on all three ordering inputs. Momentum screen, not a measured edge.",
+   "conviction": 3,
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gate_detail",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "sc_momentum 82.0, sc_m_gate_detail 17: a screen, not a mispricing. signal_hit_rate_20d 39.8 over signal_n 888 has no stated hit rule or benchmark: advisory only.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail",
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No random benchmark, no one-component-removed run, no net-of-cost restatement, no loser count beside signal_n 888; evidence honesty cannot be tested here.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "Loss boundary bracket.stop 40.94 under bracket.price 41.97 (bracket.valid True); gap test is one atr_14d 0.68 past it. Unwatched loss = stop never touched; gain side is the PM bracket step.",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_30d_ann 0.1784 is in the calmest quartile of the all-gates set; atr_pct (substitute) agrees, atr_14d 0.68 on bracket.price 41.97; low_52w not served; day_vol 2.1 (liquidity substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C20",
+      "C21"
+     ],
+     "observed": "Entry condition intact today: sc_momentum 82.0, sc_m_gate_detail 17. No trailing edge median served, so compression of the edge is untested; this name passes, not the tape.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "APLE",
+   "reason": "Among the calmest passing names: vol_30d_ann 0.1847 with sc_momentum 79.0 and sc_m_gate_detail 17; day_vol 1.11 is normal turnover. Ranked on volatility before score and weighted as an equal of its peers; no measured edge, so conviction stays low.",
+   "conviction": 2,
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gate_detail",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "sc_momentum 79.0, sc_m_gate_detail 17: a screen, not a mispricing. signal_hit_rate_20d 39.8 over signal_n 888 has no stated hit rule or benchmark: advisory only.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail",
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No random benchmark, no one-component-removed run, no net-of-cost restatement, no loser count beside signal_n 888; evidence honesty cannot be tested here.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid False: no own structural level in packet, so declared boundary is atr_fallback_stop 18.25 under bracket.price 18.62; gap test is one atr_14d 0.38 past it.",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_30d_ann 0.1847 is in the calmest quartile of the all-gates set; atr_pct (substitute) agrees, atr_14d 0.38 on bracket.price 18.62; low_52w not served; day_vol 1.11 (liquidity substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C20",
+      "C21"
+     ],
+     "observed": "Entry condition intact today: sc_momentum 79.0, sc_m_gate_detail 17. No trailing edge median served, so compression of the edge is untested; this name passes, not the tape.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "HST",
+   "reason": "Calm passing name: vol_30d_ann 0.1935 with sc_momentum 75.5 and sc_m_gate_detail 17; day_vol 1.0 is normal turnover. Calmer than most of the set, ranked as an equal of its peers; no measured edge in the packet, so conviction stays low.",
+   "conviction": 2,
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gate_detail",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample to recount, no measured edge; sc_momentum 75.5 with sc_m_gate_detail 17 is a screen only.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "signal_n 0: no loser count, random benchmark, one-component-removed run or net-of-cost restatement served; evidence honesty cannot be tested.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid False: no own structural level in packet, so declared boundary is atr_fallback_stop 24.7 under bracket.price 25.22; gap test is one atr_14d 0.52 past it.",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_30d_ann 0.1935 is in the calmest quartile of the all-gates set; atr_pct (substitute) agrees, atr_14d 0.52 on bracket.price 25.22; low_52w not served; day_vol 1.0 (liquidity substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C20",
+      "C21"
+     ],
+     "observed": "Entry condition intact today: sc_momentum 75.5, sc_m_gate_detail 17. No trailing edge median served, so compression of the edge is untested; this name passes, not the tape.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "FTV",
+   "reason": "Calm passing name with strong participation: vol_30d_ann 0.2005, sc_momentum 75.0, sc_m_gate_detail 17, day_vol 1.81. signal_hit_rate_20d 46.3 over signal_n 579 is advisory only (no stated hit rule, no benchmark). Equal-ranked, conviction low.",
+   "conviction": 2,
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gate_detail",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "sc_momentum 75.0, sc_m_gate_detail 17: a screen, not a mispricing. signal_hit_rate_20d 46.3 over signal_n 579 has no stated hit rule or benchmark: advisory only.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail",
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "No random benchmark, no one-component-removed run, no net-of-cost restatement, no loser count beside signal_n 579; evidence honesty cannot be tested here.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid False: no own structural level in packet, so declared boundary is atr_fallback_stop 60.4 under bracket.price 61.62; gap test is one atr_14d 1.22 past it.",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_30d_ann 0.2005 is in the calmest quartile of the all-gates set; atr_pct (substitute) agrees, atr_14d 1.22 on bracket.price 61.62; low_52w not served; day_vol 1.81 (liquidity substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C20",
+      "C21"
+     ],
+     "observed": "Entry condition intact today: sc_momentum 75.0, sc_m_gate_detail 17. No trailing edge median served, so compression of the edge is untested; this name passes, not the tape.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "DRH",
+   "reason": "Calm passing name: vol_30d_ann 0.2006 with sc_momentum 78.5 and sc_m_gate_detail 17; day_vol 1.17 is normal turnover. Volatility settles the ordering; no sample behind it (signal_n 0), so no measured edge and low conviction.",
+   "conviction": 2,
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gate_detail",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample to recount, no measured edge; sc_momentum 78.5 with sc_m_gate_detail 17 is a screen only.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "signal_n 0: no loser count, random benchmark, one-component-removed run or net-of-cost restatement served; evidence honesty cannot be tested.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "bracket.valid False: no own structural level in packet, so declared boundary is atr_fallback_stop 13.79 under bracket.price 14.12; gap test is one atr_14d 0.33 past it.",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.atr_fallback_stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_30d_ann 0.2006 is in the calmest quartile of the all-gates set; atr_pct (substitute) agrees, atr_14d 0.33 on bracket.price 14.12; low_52w not served; day_vol 1.17 (liquidity substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C20",
+      "C21"
+     ],
+     "observed": "Entry condition intact today: sc_momentum 78.5, sc_m_gate_detail 17. No trailing edge median served, so compression of the edge is untested; this name passes, not the tape.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "BTI",
+   "reason": "Calm passing name: vol_30d_ann 0.2319 with sc_momentum 76.6 and sc_m_gate_detail 17; day_vol 0.95 is slightly below normal turnover, the weakest liquidity proxy of the six. No sample behind it (signal_n 0); conviction low.",
+   "conviction": 2,
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gate_detail",
+    "vol_30d_ann",
+    "atr_14d",
+    "day_vol",
+    "signal_hit_rate_20d",
+    "signal_n"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C11",
+      "C12",
+      "C13"
+     ],
+     "observed": "signal_hit_rate_20d null, signal_n 0: no sample to recount, no measured edge; sc_momentum 76.6 with sc_m_gate_detail 17 is a screen only.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n",
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C13",
+      "C14",
+      "C15"
+     ],
+     "observed": "signal_n 0: no loser count, random benchmark, one-component-removed run or net-of-cost restatement served; evidence honesty cannot be tested.",
+     "verdict": "no_data",
+     "fields": [
+      "signal_hit_rate_20d",
+      "signal_n"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C4",
+      "C9"
+     ],
+     "observed": "Loss boundary bracket.stop 58.28 under bracket.price 59.83 (bracket.valid True); gap test is one atr_14d 1.14 past it. Unwatched loss = stop never touched; gain side is the PM bracket step.",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "bracket.price",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C5",
+      "C6",
+      "C24"
+     ],
+     "observed": "vol_30d_ann 0.2319 is in the calmest quartile of the all-gates set; atr_pct (substitute) agrees, atr_14d 1.14 on bracket.price 59.83; low_52w not served; day_vol 0.95 (liquidity substitute).",
+     "verdict": "pass",
+     "fields": [
+      "vol_30d_ann",
+      "atr_14d",
+      "bracket.price",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C19",
+      "C20",
+      "C21"
+     ],
+     "observed": "Entry condition intact today: sc_momentum 76.6, sc_m_gate_detail 17. No trailing edge median served, so compression of the edge is untested; this name passes, not the tape.",
+     "verdict": "partial",
+     "fields": [
+      "sc_momentum",
+      "sc_m_gate_detail"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "Entry condition gone: sc_momentum 27.1 with sc_m_gate_detail 1 (all five engines False); held_book.hl_state EXIT, held_book.hl_score 0.0, held_book.vwap_14d_position BELOW; held_book.live_px 40.87 vs held_book.entry 53.0, held_book.unreal_usd -3639.0. vol_30d_ann 0.5606 and atr_14d 2.24 mean one bad day is wide, and a stop-limit can gap through; exit on the condition, not a target."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Calm and holding: vol_30d_ann 0.1949, held_book.hl_state HOLD, held_book.hl_score 60.0, held_book.vwap_14d_position ABOVE, held_book.live_px 401.86 vs held_book.entry 413.2602632. Caution: sc_momentum 65.5 with sc_m_gate_detail 8 has flow and elder False, so recheck next review; a trail at atr_fallback_stop 395.19 is only one atr_14d 6.67 under price, inside normal noise, so do not tighten into it."
+  }
+ ],
+ "lesson_applied": "No ledger block was injected this round. Standing audit finding applied: knn_prob and beta_30d carry no vote and break no tie; the ordering is vol_30d_ann, then atr_14d, then day_vol. No bracket field is a reason for or against any name.",
+ "declared": {
+  "not_served": [
+   "low_52w",
+   "avg_daily_volume",
+   "spread",
+   "expected_hold_days",
+   "signal_edge_trailing_median",
+   "benchmark_random_selection",
+   "hit_rule_for_signal_hit_rate_20d",
+   "sc_m_gate_detail (null on a subset of rows)"
+  ]
+ },
+ "shortfall_reason": "Six names, not ten: the screen is all five momentum gates True, high sc_momentum, and the lowest-volatility quartile of that passing set, where volatility settles order before horizon. No name has a measured edge with a benchmark and loser count in the packet, so conviction stays low and the list is not filled to a quota."
+}

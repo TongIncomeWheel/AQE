@@ -1,2192 +1,2127 @@
-# Aegis PMA — Monday 26 Oct 2026 (US session opens 21:30 SGT)
+# Aegis PMA — CIO brief for Wed 28 Oct 2026
 
-AQE data to the Friday 23 Oct close (export dated Sat 24 Oct, 08:52 SGT); US clocks are on daylight time until 1 Nov. Nine ADVANCE, 29 HOLD-FOR-CONDITIONS, 13 PASS across 51 names; held book MP and V.
+- **Session:** US cash session opens 21:30 SGT; FOMC decides Wed 14:00 ET = 02:00 SGT Thu 29 Oct, inside the session.
+- **Data:** AQE to the Tue 27 Oct close (export dated Wed 28 Oct 2026, 08:54 SGT); Tiger book read 06:42Z.
+- **Room:** 48 names, 10 voters: 7 ADVANCE, 19 HOLD-FOR-CONDITIONS, 22 PASS (including the two held names V and MP).
 
 ## §0 VERDICT TABLE
 
-| Ticker | AQE rank | Door | Lane | Verdict | Consensus case | Condition / invalidation | Valen setup | U&R |
+| Ticker | AQE rank | Door | Lane | Verdict | Consensus case (short) | Condition / invalidation | Valen setup | U&R |
 |---|---|---|---|---|---|---|---|---|
-| **CART** | 1 | Seats, Strength, PM lens | Momentum | **ADVANCE** (3) | Biggest volume spike in the room at a new 52-week high; carried over a real objection (the volume may be news-driven). | Buy above 57.98 (a close on 1.4x volume, above VWAP) · too late above 59.72 · dead on a daily close under 52.68 | ⛔ — (extension flag) | NO |
-| **CNQ** | 15 | Strength, Solo | Momentum | **ADVANCE** (3) | Best-ranked energy name at a fresh high; ordinary volume; the same oil bet as OXY. | Buy above 55.50 (a close on 1.4x volume, above VWAP) · too late above 56.49 · dead on a daily close under 52.31 | ⛔ — | NO |
-| **ESTC** | 45 | Seats, Elder+Lens, Strength | Momentum | **ADVANCE** (3) | Software leader through a fresh 52-week high; the strength-lane analysts were of one view. | Buy above 102.68 (a close on 1.4x volume, above VWAP) · too late above 104.43 · dead on a daily close under 99.27 | ⛔ High tight flag failed | NO |
-| **OXY** | 58 | Elder+Lens, Lens, Strength, PM lens, Nominated | Momentum | **ADVANCE** (3) | Energy reclaim day (trendline 63.04); narrow margin, earnings down three years running. | Buy above 64.96 (a close) · too late above 66.91 · dead on a daily close under 62.68 | ⛔ — | MET |
-| **SLDE** | 66 | Elder+Lens, Strength, PM lens, Nominated | Momentum | **ADVANCE** (3) | Financials leader at a new high and the one ADVANCE the fundamentals consult backs; overlaps held V. | Buy above 28.69 (a close on 1.4x volume, above VWAP) · too late above 29.55 · dead on a daily close under 25.31 | ⛔ — | NO |
-| **ROKU** | 83 | Seats | Pullback | **ADVANCE** (3) | Coiled 0.9% under its high, second day running; the analysts were close to one view; the fundamentals consult contradicts. | Buy above 158.85 (a close on 1.4x volume, above VWAP) · too late above 160.27 · dead on a daily close under 157.83 | ⛔ — | NO |
-| **DHR** | 160 | Elder+Lens, Lens, Nominated | Pullback | **ADVANCE** (3) | Healthcare reclaim day on quiet volume; carried over a real objection; the fundamentals consult contradicts. | Buy above 230.66 (a close, above VWAP) · too late above 235.27 · dead on a daily close under 225.60 | ⛔ Episodic pivot (delayed) failed | MET |
-| **LTH** | 183 | Seats, Elder+Lens, Lens, PM lens | Pullback | **ADVANCE** (3) | Broadest lens agreement in the room (5 of 6); fresh break from a tight base; second day running. | Buy above 42.08 (a close, above VWAP) · too late above 42.86 · dead on a daily close under 40.52 | ⛔ — | NO |
-| **RBRK** | 195 | Elder+Lens, Lens, Nominated | Pullback | **ADVANCE** (3) | Cybersecurity leader at a new high; carried over a real objection; the fundamentals consult contradicts. | Buy above 130.84 (a close, above VWAP) · too late above 131.74 · dead on a daily close under 127.90 | ⛔ — | NO |
-| **HLT** | 16 | Nominated | Pullback | **HOLD** (2) | Hotel franchise 3.5% under its high; needs the pullback to the 20-day average to hold first. | Dip to 332.71 (20-day average) and reclaim · too late above 355.00 · dead on a daily close under 329.00 | ⛔ — | NO |
-| **BOX** | 22 | Strength, Strong seat (rule) | Momentum | **HOLD** (2) | Seated for strength; no voice nominated it. New high, 39 points ahead of SPY; volume ordinary; came off the 23 Oct ADVANCE list. | Buy above 43.22 (a close on 1.4x volume, above VWAP) · too late above 44.52 · dead on a daily close under 37.36 | ⛔ — (extension flag) | NO |
-| **CVX** | 24 | Strength, PM lens, Nominated | Momentum | **HOLD** (2) | Energy name at a new high; moderate conviction; the same oil bet; no shared trigger. | No shared trigger; one analyst buys above 233.21 (volume at least 1.4x normal) · or a dip to 215.37 (20-day average) and reclaim · too late above 240.75 · dead on a daily close under 215.37 | ⛔ — | NO |
-| **EQNR** | 29 | Seats, Strength | Momentum | **HOLD** (2) | Energy name at a new high on 1.56x volume; moderate conviction; one more oil expression. | Buy above 49.08 (a close on 1.4x volume, above VWAP) · too late above 50.28 · dead on a daily close under 44.11 | ⛔ — | NO |
-| **VRNS** | 35 | Nominated | Pullback | **HOLD** (2) | Cybersecurity basing 22% under its high; five bearish divergence readings; no common buy window. | No shared trigger; one analyst buys above 50.31 (volume at least 1.4x normal; price above VWAP) · or a dip to 48.24 (20-day average) and reclaim · too late above 49.96 · dead on a daily close under 46.32 | ⛔ — | NO |
-| **CDW** | 42 | Strength, Solo | Momentum | **HOLD** (2) | Technology reseller at a new high; money-flow and lens reads do not confirm. | No shared trigger; one analyst buys above 165.11 (volume at least 1.4x normal) · or a dip to 144.60 (20-day average) and reclaim · too late above 168.94 · dead on a daily close under 154.99 | ⛔ — | NO |
-| **NTSK** | 51 | Strength, AQE leader, Strong seat (rule) | Momentum | **HOLD** (2) | Seated for strength; no voice nominated it. Highest relative strength in the room; deep losses and heavy debt. | No shared trigger; one analyst buys above 24.28 (volume at least 1.4x normal; price above VWAP) · or a dip to 19.73 (20-day average) and reclaim · too late above 25.13 · dead on a daily close under 19.73 | ⛔ — | NO |
-| **ZS** | 67 | Strength, AQE leader, Strong seat (rule) | Momentum | **HOLD** (2) | Seated for strength; no voice nominated it. Cybersecurity leader 24% under its high; no shared trigger. | No shared trigger; one analyst buys above 255.55 · or a dip to 216.25 (20-day average) and reclaim · too late above 263.22 · dead on a daily close under 216.25 | ⛔ — | NO |
-| **TENB** | 73 | Strength, AQE leader, Nominated | Momentum | **HOLD** (2) | Cybersecurity at a new high on 1.42x volume; earnings cannot value it; buy and too-late prices 0.2% apart. | Buy above 44.72 (a close on 1.4x volume, above VWAP) · too late above 44.82 · dead on a daily close under 42.69 | ⛔ — | NO |
-| **BBY** | 76 | Seats, PM lens | Pullback | **HOLD** (2) | Retailer at a new high on 1.42x volume; no dip to buy; buy and too-late prices 0.8% apart. | Buy above 100.58 (a close on 1.4x volume, above VWAP) · too late above 101.36 · dead on a daily close under 96.53 | ⛔ — | NO |
-| **EOG** | 77 | Seats, Elder+Lens, Strength, PM lens | Momentum | **HOLD** (2) | Energy leader at a new high; moderate conviction; earnings down three years; the same oil bet. | Buy above 165.11 (a close on 1.4x volume, above VWAP) · too late above 166.49 · dead on a daily close under 154.16 | ⛔ — | NO |
-| **HOG** | 81 | Elder+Lens, AQE leader, PM lens, Nominated | Momentum | **HOLD** (2) | Fresh breakout 0.35% over its pivot on ordinary volume; sales and earnings shrinking. | No shared trigger; one analyst buys above 29.11 (volume at least 1.4x normal) · or a dip to 26.63 (20-day average) and reclaim · too late above 29.60 · dead on a daily close under 28.86 | ⛔ — | NO |
-| **DBX** | 82 | Nominated | Pullback | **HOLD** (2) | Tight base at the 52-week high with the best structure score in the room; quiet volume; low conviction. | Buy above 38.17 (a close on 1.4x volume, above VWAP) · too late above 38.26 · dead on a daily close under 37.62 | ⛔ — | NO |
-| **DVN** | 92 | Nominated | Pullback | **HOLD** (2) | Reclaim day on the 9-day average; sixth energy name; earnings falling three years. | Buy above 51.69 (a close, above VWAP) · too late above 52.72 · dead on a daily close under 49.25 | ⛔ — | MET |
-| **LNG** | 103 | Nominated | Pullback | **HOLD** (2) | Energy name at a new high but trend strength is thin (ADX 10.4); later oil expression. | No shared trigger; one analyst buys above 298.67 (volume at least 1.4x normal) · or a dip to 279.22 (20-day average) and reclaim · too late above 303.04 · dead on a daily close under 279.22 | ⛔ — | NO |
-| **CNC** | 140 | Nominated | Pullback | **HOLD** (2) | Healthcare insurer 1.5% under its high; thin clear of its pivot; earnings swung to a loss. | Buy above 71.32 (a close) · too late above 72.42 · dead on a daily close under 69.63 | ⛔ — | NO |
-| **M** | 185 | Elder+Lens, Nominated | Pullback | **HOLD** (2) | Quiet drift inside a range on light volume; cheap, but sales shrinking three years. | No shared trigger; one analyst buys above 24.71 · or a dip to 23.16 (20-day average) and reclaim · too late above 25.68 · dead on a daily close under 22.74 | ⛔ — | NO |
-| **SAIL** | 189 | Seats | Pullback | **HOLD** (2) | Volume-confirmed software breakout but 11.1% above its 20-day average in a pullback-lane name; no earnings. | Buy above 22.21 (a close, above VWAP) · or a dip to 19.98 (20-day average) and reclaim · too late above 22.88 · dead on a daily close under 19.98 | ⛔ — | NO |
-| **GTLB** | 196 | Strength, Nominated | Momentum | **HOLD** (2) | Closing high on quiet volume; weakest money flow among the names here; four bearish divergence readings. | No shared trigger; one analyst buys above 56.28 · or a dip to 52.40 (20-day average) and reclaim · too late above 58.53 · dead on a daily close under 52.40 | ⛔ — | NO |
-| **GLBE** | 214 | Elder+Lens, Nominated | Pullback | **HOLD** (2) | Coiled 2.4% under its high on 1.42x volume; broad agreement but low conviction; narrow buy window. | Buy above 42.00 (a close on 1.4x volume, above VWAP) · too late above 42.03 · dead on a daily close under 39.87 | ⛔ — | NO |
-| **FIVN** | 224 | Seats, Elder+Lens, Lens | Pullback | **HOLD** (2) | Breakout fired but it lags the market on down days; reports 9 Nov (10 sessions). | Buy above 38.34 (a close, above VWAP) · or a dip to 34.65 (20-day average) and reclaim · too late above 39.49 · dead on a daily close under 34.65 | ⛔ Undercut and rally failed | NO |
-| **AAPL** | 239 | Elder+Lens, AQE leader, Nominated | Momentum | **HOLD** (2) | Coiled 0.14% under its high; momentum and money flow thin; four bearish divergence readings. | Buy above 348.22 (a close, above VWAP) · too late above 358.14 · dead on a daily close under 338.91 | ⛔ — | NO |
-| **SLB** | 244 | Lens, Nominated | Pullback | **HOLD** (2) | Weakest relative strength of the energy names; no trend to buy yet. | No shared trigger; one analyst buys above 53.45 (price above VWAP) · or a dip to 49.52 (20-day average) and reclaim · too late above 55.05 · dead on a daily close under 51.26 | ⛔ Episodic pivot failed | NO |
-| **BRZE** | 3 | Strength, Strong seat (rule) | Momentum | **HOLD** (1) | Seated for strength; no voice nominated it. Strongest 20-day move in the room; Valen grades it a parabolic warning; came off the 23 Oct list. | No shared trigger; one analyst buys above 45.88 (volume at least 1.4x normal; price above VWAP) · too late above 47.26 · dead on a daily close under 31.02 | ⛔ Episodic pivot (delayed) past pivot; Parabolic (risk warning) warning; High tight flag failed (extension flag) | NO |
-| **KSS** | 37 | Elder+Lens, Strength, PM lens, Strong seat (rule) | Momentum | **HOLD** (1) | Seated for strength; no voice nominated it. 38.8 points ahead of SPY; sales shrinking three years; came off the 23 Oct list. | No shared trigger; one analyst buys above 24.78 (volume at least 1.4x normal) · or a dip to 20.73 (20-day average) and reclaim · too late above 25.44 · dead on a daily close under 20.73 | ⛔ — | NO |
-| **HST** | 60 | Elder+Lens, Nominated | Pullback | **HOLD** (1) | Hotel REIT bouncing inside a repairing trend; 50-day still under the 100-day; light volume. | Dip to 23.26 (20-day average) and reclaim · too late above 24.82 · dead on a daily close under 23.00 | ⛔ — | NO |
-| **MAR** | 99 | Nominated | Pullback | **HOLD** (1) | Hotel franchise with middling relative strength; 50-day under the 100-day. | Dip to 372.81 (20-day average) and reclaim · too late above 396.21 · dead on a daily close under 368.91 | ⛔ — | NO |
-| **COST** | 100 | Seats | Pullback | **HOLD** (1) | Reclaiming a falling long-term average (50-day under the 200-day); relative strength 43.6th percentile. | Dip to 958.15 (20-day average) and reclaim · too late above 1006.63 · dead on a daily close under 969.35 | ⛔ — | NO |
-| **LIN** | 105 | Reclaim seat (rule) | Pullback | **HOLD** (1) | In the room on a reserved reclaim seat; no voice nominated it. Reclaimed trendline 506.72; weak relative strength. | Buy above 512.49 (a close) · too late above 524.10 · dead on a daily close under 505.29 | ⛔ — | MET |
-| **VG** | 141 | Lens, PM lens, Nominated | Pullback | **PASS** (3) | A bounce off lows, 20.1% under its high, weakest structure score in the room. | — | — | NO |
-| **VERX** | 6 | Strength, AQE leader, Strong seat (rule) | Momentum | **PASS** (2) | Seated for strength; no voice nominated it. 40% under its 52-week high: a bounce inside a broken trend. | — | — | NO |
-| **DXC** | 25 | Strength, AQE leader, Strong seat (rule) | Momentum | **PASS** (2) | Seated for strength; no voice nominated it. 52.6 points ahead on thin volume; Valen parabolic warning. | — | Parabolic (risk warning) warning | NO |
-| **KVYO** | 52 | Strength, Strong seat (rule) | Momentum | **PASS** (2) | Seated for strength; no voice nominated it. 36.5% under its high: a bounce, not leadership. | — | — | NO |
-| **V** | 61 | Elder+Lens, Strength, Held | Momentum | **PASS** (2) | Held. PASS on the add question: it trades under the PM's fill; advanced on five dates 15 to 23 Oct. | Add reopens only on strength above the 413.26 fill with above-normal volume, or a dry pullback holding the 20-day average 385.26 | — | NO |
-| **MA** | 64 | Strength, Nominated | Momentum | **PASS** (2) | Quality tape 1.5% under its high but the same Financials exposure as held V and SLDE. | — | — | NO |
-| **ACN** | 71 | Strength, Reclaim seat (rule) | Momentum | **PASS** (2) | In the room on a reserved reclaim seat; no voice nominated it. Reclaimed trendline 245.80; Valen parabolic read CRACKED. | — | Parabolic (risk warning) cracked | MET |
-| **TTAN** | 112 | Strength, AQE leader, Strong seat (rule) | Momentum | **PASS** (2) | Seated for strength; no voice nominated it. Snap-back inside broken structure; Valen parabolic warning. | — | Parabolic (risk warning) warning | NO |
-| **OUT** | 155 | Nominated | Pullback | **PASS** (2) | Mixed signals, weak relative strength (50th percentile) and light volume. | — | — | NO |
-| **HIW** | 210 | Elder+Lens, Lens, AQE leader, Nominated | Momentum | **PASS** (2) | 50-day under the 100-day; the breakout label sits on a weak structure score (43.2). | — | — | NO |
-| **MP** | — | Held | Pullback | **PASS** (2) | Held. Exit case: structure broke, every average points down, relative strength -20 points vs SPY. | Exit case lifts only on a close above the 20-day average 43.40 with structure repaired | Failed leader (risk warning) warning | n/a (off-list) |
-| **PBI** | 70 | Elder+Lens, Reclaim seat (rule) | Pullback | **PASS** (1) | In the room on a reserved reclaim seat; no voice nominated it. Reclaimed its 9-day average (17.17); structure broke. | — | — | MET |
-| **ASAN** | 102 | Strength, Strong seat (rule) | Momentum | **PASS** (1) | Seated for strength; no voice nominated it. Loss-making and levered; Valen parabolic warning. | — | Parabolic (risk warning) warning | NO |
+| **HOG** | 13 | Seats + Strength + AQE leader + PM lens | MOMENTUM | ADVANCE ⛔ | Leader printing a new 52-week high on expanding volume; the buy is a push through 29.63, not a retest. | Buy above 29.63 on at least 1.4x volume, holding above VWAP. Too late past 30.30. Dead on a daily close under 27.04. | — | NO |
+| **ESTC** | 14 | Seats + Strength | MOMENTUM | ADVANCE ⛔ | Software leader at a 52-week high; the buy is a close above 106.29 on volume, with earnings 16 sessions out. | Buy above 106.29 on 1.2 to 1.4x volume, holding above VWAP (or above yesterday's high 107.04). Too late past 110.80. Dead on a daily close under 96.32. | High tight flag FAILED | NO |
+| **TENB** | 40 | Strength + AQE leader + Strength seat (rule) | MOMENTUM | ADVANCE ⛔ | Cybersecurity leader at a new high, seated for strength; no voice nominated it. Narrow case. | Committee: buy above 49.17 on at least 1.4x volume, holding above VWAP; too late past 50.65; dead on a daily close under 47.26. PM standing order: cyber is not chased (see the day's plan). | — | NO |
+| **IOT** | 52 | Strength + Reclaim seat (rule) | MOMENTUM | ADVANCE ⛔ | Reclaim-seat name in a stacked uptrend; the buy is a close above 44.21 on at least 1.4x volume. | Buy above 44.21 on at least 1.4x volume (a close above 45.00, yesterday's high, is the stronger version). Too late past 46.42. Dead on a daily close under 41.77. | Undercut and rally FAILED | MET |
+| **DBX** | 72 | Seats | PULLBACK | ADVANCE ⛔ | Leader coiled under its 38.17 pivot after a reclaim of its 9-day average; the buy is the clear of 38.17 on volume. | Buy above 38.17 on at least 1.4x volume, holding above VWAP (a trade through 37.95 puts it in play). Too late past 39.09. Dead on a daily close under 35.43. | — | MET |
+| **GLBE** | 118 | Seats + Elder+Lens | PULLBACK | ADVANCE ⛔ | Broke its 40.81 pivot on 1.52x volume; the buy is above 40.81 on volume, or a quiet retest of 40.81 that holds. | Buy above 40.81 on at least 1.4x volume, or a retest of 40.81 that holds. Too late past 42.85. Dead on a daily close under 40.05. | Undercut and rally FAILED | NO |
+| **A** | 119 | Elder+Lens + Lens + Nominated | PULLBACK | ADVANCE ⛔ | Reclaim day on a rising trend with the highest lens agreement in the room; the buy is a close above 179.10. | Buy above 179.10, holding above VWAP. Too late past 182.36. Dead on a daily close under 172.09. | — | MET |
+| CART | 1 | Strength + PM lens + Nominated | MOMENTUM | HOLD ⛔ | Rank 1 on the AQE list, momentum 97, volume 2.53x at the highs; the hold is for a trigger: a close above 60.81 on 1.4x volume. | Buy above 60.81 on at least 1.4x volume, holding above VWAP. Too late past 62.06. Dead on a daily close under 58.83. | — | NO |
+| BRZE | 2 | Strength + Strength seat (rule) | MOMENTUM | HOLD ⛔ | Seated for strength; no voice nominated it. Momentum 100 and a 20-day return 97 points ahead of SPY, but Valen grades a Parabolic WARNING (3 of 4) and its high-tight-flag failed; the trigger is a close above 45.87 on 1.4x volume. | Buy above 45.87 on at least 1.4x volume, holding above VWAP. Too late past 47.25. Dead on a daily close under 45.77 (33.29 at the widest). | Episodic pivot (delayed) PAST_PIVOT (+2) | NO |
+| NTSK | 6 | Strength + AQE leader + Strength seat (rule) | MOMENTUM | HOLD ⛔ | Seated for strength; no voice nominated it. Momentum 97 and relative-strength rank 99 at a new high, but Valen grades a Parabolic WARNING (2 of 4) and its high-tight-flag failed (7 of 12); the trigger is a close above 26.43 on 1.4x volume. | Buy above 26.43 on at least 1.4x volume, holding above VWAP. Too late past 27.22. Dead on a daily close under 24.84. | Parabolic WARNING (+1) | NO |
+| CSX | 7 | Seats + Strength + AQE leader | MOMENTUM | HOLD ⛔ | Break of structure 0.23% over its 52.15 pivot on only 0.9x volume with the 20-day average still under the 50-day; it lacks volume and a close above 53.23. | No shared buy. Candidates: above 53.23 on at least 1.2x volume, or a pullback to the 20-day average 48.42. Too late past 54.76. Dead on a daily close under 51.64 for the breakout buy (47.91 for the pullback buy). | Episodic pivot (delayed) FAILED | NO |
+| APLE | 8 | Seats + PM lens | PULLBACK | HOLD ⛔ | Strongest lodging chart (new high, momentum 94) but no dip to buy and earnings on 5 Nov (6 sessions); lodging counts as one bet with DRH and HST. It lacks a pullback to 16.98 or a close above 18.66. | A pullback to the 20-day average 16.98 that holds (earnings 5 Nov, 6 sessions out), or a close above 18.66 on at least 1.2x volume. Too late past 19.22. Dead on a daily close under 16.98 (16.36 at the widest). | — | NO |
+| DRH | 11 | Seats | PULLBACK | HOLD ⛔ | Cleanest lodging stack at a new high but no dip behind its pullback tag; lodging counts as one bet. It lacks a pullback to 13.11 or a close above 14.16 on 1.2x volume. | Buy above 14.16 on at least 1.2x volume, holding above VWAP, or a pullback to the 20-day average 13.11. Too late past 14.58. Dead on a daily close under 13.11 (12.95 at the widest). | — | NO |
+| FTRE | 24 | Seats + Elder+Lens + Strength + PM lens | MOMENTUM | HOLD ⛔ | Leader at a new high (relative-strength rank 98, momentum 96) with three bearish divergences; it lacks a close above 24.52, and the fundamentals consult contradicts it (turnaround with heavy debt). | Buy above 24.52, holding above VWAP. Too late past 24.69. Dead on a daily close under 22.95 (19.95 at the widest). | — | NO |
+| HNGE | 31 | Elder+Lens + Strength + PM lens + Nominated | MOMENTUM | HOLD ⛔ | Elite momentum (relative-strength rank 99, momentum 85) at a new high on only 0.66x volume; it lacks volume: the trigger is a close above 114.41 on 1.4x. | Buy above 114.41 on at least 1.4x volume, holding above VWAP. Too late past 116.54. Dead on a daily close under 103.90 (96.48 at the widest). | — | NO |
+| HST | 33 | Elder+Lens + Nominated | PULLBACK | HOLD ⛔ | Third lodging name (one bet with APLE and DRH): no pivot yet and the 50-day under the 100-day; it lacks a close above 25.25. | No shared trigger; the closest is above 25.25 on at least 1.0x volume, holding above VWAP. Too late past 25.77. Dead on a daily close under 24.23 (22.82 at the widest). | — | NO |
+| ETSY | 60 | Strength + Reclaim seat (rule) | MOMENTUM | HOLD ⛔ | In the room on a reserved reclaim seat; no voice nominated it: it dipped under its 9-day average (85.35) on the last session and closed back above. Momentum 97 and 3.5% under its high; it lacks a close above 90.82 on 1.4x volume. | Buy above 90.82 on at least 1.4x volume. Too late past 92.04. Dead on a daily close under 83.57 (80.35 at the widest). | — | MET |
+| TEL | 78 | Nominated | PULLBACK | HOLD ⛔ | Break of structure on 2.23x volume but still under its 200-day average (213.06 against a 50-day of 210.09); it lacks repair: a dip to the 20-day (215.05) on light volume. | A pullback to the 20-day average 215.05 (or the 200-day 213.06) on volume at most 0.8x, holding above VWAP. Too late past 230.11. Dead on a daily close under 210.09. | — | NO |
+| BBY | 122 | Elder+Lens + Nominated | PULLBACK | HOLD ⛔ | Through its pivot by 2.0% on only 0.86x volume with earnings in 19 sessions; it lacks 1.2x volume on a close above 98.73. | Buy above 98.73 on at least 1.2x volume, holding above VWAP (pullback area 91.11 to 94.11; earnings 19 sessions out). Too late past 101.36. Dead on a daily close under 94.99 (89.75 at the widest). | — | NO |
+| RCL | 124 | Seats | PULLBACK | HOLD ⛔ | Reclaim-day bounce under its 200-day average (50-day 271.27 under 286.21); it lacks a repaired stack: the plan is a dip to the 20-day (280.75) on light volume. | A pullback to the 20-day average 280.75 on volume at most 0.8x, holding above VWAP (wait area 280.75 to 312.85). Too late past 303.38. Dead on a daily close under 271.27. | Episodic pivot FAILED | MET |
+| CRBG | 156 | Lens + Nominated | PULLBACK | HOLD ⛔ | Quiet near its high with a reclaim of its 9-day average (34.68); it lacks a trigger: a close above 35.44. | Buy above 35.44 (pullback area 34.50). Too late past 36.23. Dead on a daily close under 34.60 (33.60 at the widest). | Undercut and rally FAILED | MET |
+| EMR | 157 | Lens + Nominated | PULLBACK | HOLD ⛔ | New high on a break of structure on only 0.79x volume; it lacks volume confirmation and a close above 166.60, and the fundamentals consult contradicts it. | Buy above 166.60 (pullback area 161.19 to 165.24). Too late past 170.93. Dead on a daily close under 163.08 (156.40 at the widest). | — | NO |
+| AAPL | 158 | Seats + Lens | PULLBACK | HOLD ⛔ | Tightest base among the passers, at its high after a reclaim of its 9-day average (343.68), but momentum is only 49 and Valen grades its theme (Mag7) AVOID; it lacks a close above 347.78. | Buy above 347.78, holding above VWAP (pullback area 340.07). Too late past 354.14. Dead on a daily close under 344.97 (331.06 at the widest). | — | MET |
+| DDOG | 159 | Elder+Lens + Nominated | PULLBACK | HOLD ⛔ | Leader off a pullback (relative-strength rank 97) in a group Valen shows leading, but no pivot has cleared and no buy price is shared; the closest is 282.80. | No shared buy; the closest is above 282.80 on at least 1.2x volume, holding above VWAP (pullback area 272.61). Too late past 288.97. Dead on a daily close under 274.00 (249.92 at the widest). | Undercut and rally FAILED | NO |
+| NTNX | 171 | Nominated | PULLBACK | HOLD ⛔ | Rising stack with an accumulation base forming; it lacks a trigger: the plan is a dip to the 20-day (71.37) that holds, with earnings in 19 sessions. | A pullback to the 20-day average 71.37 that holds. Too late past 74.94. Dead on a daily close under 71.37 (69.25 at the widest). | — | NO |
+| FIVN | 173 | Seats + Elder+Lens | PULLBACK | HOLD ⛔ | Coiling inside day on dry volume (0.51x) in a strong uptrend; it lacks a trigger, and the fundamentals consult contradicts it (P/E 49.5 on 10% sales growth). | Buy above 37.84 (or above 37.34), holding above VWAP; pullback area 34.96. Too late past 38.46. Dead on a daily close under 36.95 (33.94 at the widest). | Undercut and rally FAILED | NO |
+| CNP | 3 | Strength + PM lens + Nominated | MOMENTUM | PASS | Rank 3 and momentum 90, but the 50-day (39.04) sits under the 100-day and the 200-day (41.52) with a relative-strength rank of 36: a rally under the long averages, not a new high after an uptrend. | Needs the 200-day (41.52) cleared, then a new high. | — | NO |
+| BILL | 9 | Strength + Nominated | MOMENTUM | PASS | Leader on a recovery (momentum 93, 17 points ahead of SPY) but 12.3% under its high with no pivot cleared and earnings on 5 Nov, six sessions out. | Needs a pivot cleared; earnings on 5 Nov come first. | — | NO |
+| NDAQ | 15 | Strength + AQE leader + PM lens + Nominated | MOMENTUM | PASS | At its high in a stacked uptrend (momentum 84) but its relative-strength rank of 69.9 is under the leadership floor and Valen's delayed episodic pivot failed; no trigger. | Needs a stronger relative-strength rank and a volume-backed pivot clear. | Episodic pivot (delayed) FAILED | NO |
+| BTI | 25 | Nominated | PULLBACK | PASS | Staples bounce under the 200-day (50-day 56.23 under 59.08): repair, not a pullback in an uptrend; relative-strength rank 47. | Needs the 200-day (59.08) cleared and held. | — | NO |
+| VERX | 35 | Strength + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. 42% under its 52-week high with the 50-day under the 200-day: a rebound inside a downtrend, with a P/E of 503 on thin profit. | Needs a new high after the 50-day reclaims the 200-day (13.36). | — | NO |
+| FTV | 38 | AQE leader + PM lens + Nominated | MOMENTUM | PASS | A base under its high with the 50-day (57.44) under the 100-day and 200-day, relative-strength rank 42 and sales down 17.5%: repair, not continuation. | Needs the base high cleared with the 50-day back over the 200-day. | — | NO |
+| AWK | 45 | Strength + Nominated | MOMENTUM | PASS | Utility stalling in a range near its high: 20-day under the 50-day, relative-strength rank 55 and volume 0.79x; no pivot. | Needs a pivot out of the range with the 20-day back over the 50-day (135.27). | — | NO |
+| ASAN | 47 | Strength + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. Momentum 97 and 43 points ahead of SPY, but 21% under its high with Valen's Parabolic CRACKED grade (2 of 4): a bounce, not leadership. | Needs the old pivot cleared; Valen's Parabolic CRACKED grade must clear. | Parabolic CRACKED | NO |
+| TTEK | 49 | Nominated | PULLBACK | PASS | The 20-day is under the 50-day, 13.5% under its high, no pivot and earnings on 11 Nov (10 sessions): a bounce inside a range. | Needs the 20-day back over the 50-day (35.28) and a pivot; earnings come first. | — | NO |
+| KVYO | 57 | Strength + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. 39% under its high, 50-day under the 200-day, relative-strength rank 45 and volume 0.54x on a 19% ten-day pop: a thin-volume rebound. | Needs the 200-day (18.13) cleared on real volume. | — | NO |
+| DXC | 61 | Strength + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. Momentum 100 and a 20-day return 52.6 points ahead of SPY, but the 100-day (10.86) is still under the 200-day (11.55), volume 0.62x, sales shrinking and Valen grades a Parabolic WARNING (2 of 4). | Needs the 100-day over the 200-day (11.55) and volume. | Parabolic WARNING | NO |
+| RYAN | 62 | Strength + Reclaim seat (rule) | MOMENTUM | PASS | In the room on a reserved reclaim seat; no voice nominated it: it dipped under its 9-day average (42.24) on the last session and closed back above. 27% under its 52-week high in a bunched stack, debt-to-equity 7.5. | Needs the stack to repair over 40.36 and the distance to the high to close. | — | MET |
+| EQT | 66 | Nominated | PULLBACK | PASS | The 50-day (53.09) is under the 200-day (55.51) and relative-strength rank is 30: a reversal bounce on 2.05x volume, not a pullback in an uptrend; the energy supply read is not served. | Needs the 50-day back over the 200-day (55.51). | — | NO |
+| RBLX | 75 | Strength + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. 59% under its high with the 50-day under the 200-day, volume 0.67x, and Valen grades its theme (Gaming and Streaming) AVOID: a bounce off the lows. | Needs the 200-day (52.80) reclaimed on volume. | — | NO |
+| ZS | 87 | Strength + AQE leader + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. Strong group (Cybersecurity) and relative-strength rank 96, but 22.6% under its high with three bearish divergences and negative earnings (P/E -654). | Needs the old high cleared. | — | NO |
+| BBWI | 99 | Strength + Strength seat (rule) | MOMENTUM | PASS | Seated for strength; no voice nominated it. Momentum 93 and a 22% ten-day pop, but the stack is inverted (50-day 18.41 under 100-day 19.33 under 200-day 19.81) and it is 16% under its high: repair under the long averages. | Needs the 200-day (19.81) cleared with the stack repaired. | — | NO |
+| BKR | 102 | Elder+Lens + Nominated | PULLBACK | PASS | Day-one break of structure on 2.16x volume, but the stack is fully inverted (50-day 58.68 under 100-day 59.03 under 200-day 60.16) and Valen's episodic pivot grade failed; price is still under its 200-day. | Needs the 200-day (60.16) cleared and held. | Episodic pivot FAILED | NO |
+| VG | 152 | Elder+Lens + AQE leader + Nominated | MOMENTUM | PASS | Sitting on its 50-day (13.81) in a range, 21% under its high, volume 0.62x, earnings on 10 Nov (9 sessions) and debt-to-equity of 5.0 with negative free cash flow: no base to buy. | Needs a base; earnings come first. | — | NO |
+| FTNT | 190 | Nominated | PULLBACK | PASS | Cyber laggard in a leading group: Valen's VCP and undercut-and-rally grades both failed, its 21-day average is not rising and it shows three bearish divergences; nothing to trigger. | Needs a base to complete. | VCP FAILED (+1) | NO |
+| NET | 221 | Nominated | PULLBACK | PASS | Rank 221 and momentum 20: losing to SPY by 7.7 points over 20 days, under its 20-day average, five bearish divergences; a slide, not a pullback. | Needs the slide to stop: back over the 20-day (331.43). | Undercut and rally FAILED | NO |
+| V | held | Held | PULLBACK | PASS | Held name, PASS on any add: averaging down is not the plan. Last close 401.86 is over a rising 20-day (388.88) and 2.5% above the broker stop 391.80; Valen's reclaim is a setup, not yet met. | No add. Reopens only on a reclaim of the 9-day average (402.58) on volume, and above cost 413.26 for the strictest. | — | SETUP |
+| MP | held | Held | PULLBACK | PASS | Held name, PASS on any add and an exit case: bearish change of character since 10 Sep, under its 20-, 50- and 200-day averages, structure 14, momentum 5. | Exit case voided only by a close over 42.73 (20-day) with the structure shift cleared. | — | NO |
 
-- ⛔ marks a name on Valen's no-buy list: all 301 names carry the market flag today because the market check reads RISK OFF; CART, BOX and BRZE (and PASS names DXC and VERX) also carry Valen's extension flag, which is a number, not a verdict on a momentum name.
-- The number after the verdict is the committee's conviction (1 to 5). U&R MET means a Valen support level was undercut and the last completed day closed back above it.
+- Door is how the name reached the vote. Lane: MOMENTUM verdicts were decided by the strength voices only, PULLBACK verdicts by the whole room.
+- Valen setup is the best grade the VIV handbook's own checklists give the name ("—" when none is graded); U&R is the short reclaim read. They can disagree: IOT reclaimed its 9-day average (U&R MET) while the full undercut-and-rally checklist grades FAILED.
+- ⛔ marks a name on Valen's no-buy list. Every ADVANCE and HOLD carries it for one market-wide reason ("Market check is RISK OFF"); extra labels follow.
+- Valen's extra labels, quoted as Valen's own and never a committee reason: ATR distance above the 20-day average of 4.3 (APLE), 4.2 (CART), 7.0 (BRZE) and 4.3 (NTSK); AAPL's theme (Mag7) is graded AVOID.
+- Seated by rule, not by any voice: TENB (seated for strength; no voice nominated it) and IOT (in the room on a reserved reclaim seat; no voice nominated it) are both ADVANCE. The full list of rule-seated names is in the lane section below.
+- HOLD means HOLD-FOR-CONDITIONS. (+n) in the Valen setup column counts further graded setups of lesser status. Every ADVANCE and HOLD is flagged ⛔: 26 of 26 names carry the market-wide no-buy label.
 
-### Header declarations (every item declared in the run files)
+## Run declarations (every declared item, in plain words)
 
-| Item | Declared | Effect on this brief |
+| # | Declaration | In plain words |
 |---|---|---|
-| Run location | The run sat on local disposable disk until PUBLISH; no mid-run checkpoint pushes, by design (git_sync maps outside aegis/output/pma/ and any other path redeploys the HF Space). Manifest: MACRO and NOMINATE checkpoint pushes skipped. | Nothing is on GitHub until the PM publishes. |
-| How the analysts ran | Analysts ran as general-purpose agents reading their card and packet by path (voice agent types have no file tools). | No effect on the figures; the packet is read whole. |
-| Plugin | aegis-core v1.30.0 (synced copy) replaced the v1.29 working copy, which had no R28 or R29. | Daily Weather (R28) and the group-turn view (R29) are present. |
-| Fundamentals consult | Consulted only (R22): no vote, no change to any verdict; the read is shown per name as information. Pack 81 of 81: 38 names carried from the 23 Oct pack, 43 pulled fresh from FMP on 26 Oct (profile, ratios, three annual growth rows). CNQ growth is in CAD; FMP figures are as served (DXC free-cash yield and VG revenue growth look extreme; not adjusted). | Where an ADVANCE is contradicted (ROKU, DHR, RBRK) the brief says so; no verdict moved. |
-| Fundamentals not served | Forward growth, net cash, inventory vs sales and ownership are not served to the consult. | Those tests are absent, not passed. |
-| Figure audit on challenge forms | The figure audit finds no auditable claims on challenge forms (it reads ballot-shaped forms), so it is not a clean bill. The conductor traced every decimal by hand: challenge analysts 81 of 81, 51 of 51 and 40 of 40 traced, none untraceable; fundamentals consult 346 of 349 traced. | The 3 untraced consult figures are labelled derived arithmetic: BBY implied payout 0.64, V growth-adjusted P/E 1.9 to 7.0, MP broker stop 36.66. |
-| Vote packet size | The vote packet is 133,075 bytes, over the 70,000-byte soft limit (the 23 Oct packet, 99,599 bytes, was also over). Per-name density unchanged (2.6 KB per name). Not trimmed. Ten analysts ran in parallel, ballots in 3 parts of 17 names. | Every voting analyst saw the full packet. |
-| Nominations | Manifest: 9 of 9 nominating voices filed; 47 nominations; one voice filed zero. | The nomination floor (R16) is 38 names; 36 nominated plus held V and MP. |
-| Purity check | Rank invariance to bracket and fundamentals fields: PASS. Crowding audit: the five most-carried names (ROKU, ESTC, EOG, CART, LTH) are 20% bracket-valid against 20% across all 10 qualifiers (gap 0 points). | No sign that consensus tracks bracket availability today. |
-| Scorecard closes | Graded as of the 23 Oct close, horizon 5, six runs. 738 rows graded; 263 not graded (233 are today's own run, 27 the 31 Aug run with no window, 3 are ACA). 186 closes were pulled from FMP by hand and typed into the scorecard file; where an export and an FMP close both existed they agreed within 0.2%. RHI +21.7% confirmed. | ACA has no close and drops out of three list means (universe 326 of 327, 276 of 277, 372 of 373). |
-| Data health | AQE voice-packet sync workflow failed again on 24 Oct (commit 9aa00ee); packets on main are the 24 Oct set committed before the failure. No packet stamp file on main; the md5 was recorded at PREPARE. 17 AQE alert mails were trashed by the inbox clean. Broker pull is read-only (Tiger, 25 Oct 16:15 UTC): V 38 sh and MP 300 sh, both stop-limit GTC; 6 non-Aegis positions out of scope. | Items for the AQE cleanup handover; no effect on today's figures. |
-| Freshness of the macro legs | Volatility leg dated 22 Oct; positioning (CFTC) dated 20 Oct; newest leg 23 Oct. Crown and the macro pack are a Friday-close read with no weekend news. | Positioning and volatility are older than prices. |
-| Card report wording | The code-rendered card report prints its own fixed wording for entry labels, first targets, the Valen no-buy note and the word stretched in the Valen extension table; those cells cannot follow the plain-English wording rules. | Read the buy price in the plan; this markdown brief is the archived record. |
-| Layout choice | Section 4 shows the room's repeat marks and points to Appendix B, which carries the repeat-watch table byte-for-byte (9,855 gap rows included) so the front of the brief stays readable on a phone. | Same content, different place. |
-| Body wording | The gate bans analyst names in the body, so the fundamentals analyst appears as "the fundamentals consult" in the body and is named only in Appendix A. | None. |
-| Known text defects in AQE files | Valen watch-for list: the 5-day count "clears 1.0" is already met (now 1.25); "monthly big risers clears 350" is a whole-market threshold that cannot be reached on 301 names (now 44). Valen's extension sentence reads "-1.09 ATRs above". Valen's management block cannot see broker stops (held stop null, status UNKNOWN). PM lens prints its QS edge as "+-23.3pp" (it is minus 23.3 points). Crown's volatility wording "lower than 24%" reads as the 76th percentile. Druckenmiller flags that the WTI level 103.44 equals the 2-year note flip exactly. The Valen funnel counts "Held 1" while two positions are held. | Declared; none changes a verdict. |
+| 1 | Ledger source (the data-gather step ticked degraded) | Yesterday's committee records came from AQE main under output/pma/run/2026-10-27, not the canonical data/pma path, because the 27 Oct canonical push is held for the PM's yes. The content is byte-identical to the local 27 Oct copies (checksums matched), so the repeat marks and the scorecard are sound. |
+| 2 | No mid-run checkpoint pushes, by design | The run sat on local disposable disk until publish. The default sync path would have pushed under aegis/data, which is held for the PM and would rebuild the HF Space; there is one consolidated push at publish, under aegis/output/pma/ only, with read-back verification. |
+| 3 | Canonical record push pending the PM's yes | reports/pma/2026-10-28.md and latest.md, the verdict and phase-4 ledgers and data/pma/2026-10-28/ are not on main yet. Until they are, tomorrow's gather reads the run/ copy again and repeat-watch keeps showing ledger gaps for older dates. |
+| 4 | Seat transport | Seats ran as general-purpose agents reading their own card and packet by path. The fundamentals analyst was consulted only and carries no vote (R22): ten voters. |
+| 5 | Fundamentals pack | 121 names: 98 carried from the 27 Oct pack and 23 newly seated names pulled fresh on 28 Oct after the ranking step; 0 gaps. The data vendor zero-fills HNGE's 2023 growth row (IPO in 2025) and it is left as returned. The vendor's quote tool is not on the plan. |
+| 6 | Challenge forms sit outside the figure audit | No validate mode exists for them, so the conductor traced every figure by hand. Untraced: the broker stops quoted in the fundamentals consult's prompt (V 391.80, MP 36.66), ETSY -2.21 (a 0.01 misround of -2.2048), and three derived room means in the lens read (2.09, 2.27, 0.46), which are labelled as computed from packet rows. |
+| 7 | Vote packet size | 133,534 bytes against a soft limit of 70,000. Normal (27 Oct was 135,776); not trimmed. |
+| 8 | V's live price | The export's live price for V (401.86) equals the 27 Oct close and matches the vendor close. Tiger's 397.25 at 06:42Z is a pre-market mark, not a data fault. |
+| 9 | Broker read (read-only, 06:42Z) | V 38 sh stop-limit 391.80 / 390.80 and MP 300 sh stop-limit 36.66 / 36.66, both good till cancelled. No entry was taken in the Tue 27 Oct session: the Aegis book is MP and V only. |
+| 10 | Tiger account outside the Aegis book | The broker file also lists CRCL, CRDO, KO, MARA, MCD and NVDA stock and an NVDA option stop. They are not in the Aegis held book and this committee did not review them. |
+| 11 | One voice filed no nominations in round 1 | Its CCI set-up leg failed on every row (a valid, declared output). At the vote it said its 40-day average and CCI are not served by AQE and capped its convictions at 3. |
+| 12 | Lens read feed gap | Nine rows had four of six lens fields blank (HOG, CART, ETSY, BBWI, BILL, BRZE, NTSK, ASAN, KVYO). Absence is not agreement, so the lens read stood aside on all but one of them (CART). |
+| 13 | Seat isolation | One voice opened the registrar code (head and a search) and listed filenames in forms/r2/; another read its first 60 lines. Neither changed a vote and every ballot passed the figure audit. A third voice's first part-1 filing was rejected for quoting another ticker's figure inside the APLE row and was re-filed. |
+| 14 | Scorecard | Eight runs (15 to 27 Oct) graded as of the 27 Oct close, five-session horizon, beta cap 2.5. 536 closes loaded; the 27 Oct closes for 501 symbols come from the export (80 of 80 spot-checks equal to the vendor close) plus single-symbol pulls. 0 rows refused; 178 rows are not graded yet (no session after the run). |
+| 15 | Repeat-watch ledger gaps | 452 rows for dates that predate the verdict ledger (normal). |
+| 16 | Packets | No stamp file shipped on main; the checksums were recorded at prepare (packets_manifest.json). Voice packets 12 of 12. |
+| 17 | Inbox clean | 20 AQE email threads trashed. One GitHub notification, "Run failed: AQE voice packets sync - main (9620f43)", was left untouched by rule and is flagged to the PM (open item 4). |
+| 18 | Purity | Rank invariance PASS. Crowding audit: the top five names by agreement are 40% bracket-valid against 18% across all 11 qualifiers (gap +22 points); no sign that consensus tracks bracket availability. |
+| 19 | Run manifest | All 14 steps done; only the gather step is ticked degraded (the ledger source above). No flags. |
+| 20 | AQE run and data health | AQE run succeeded (08:33 to 08:58 SGT): 11 of 13 artifacts written, none failed; qs_daily.json and options_scan.json absent. Export fresh (Tue 27 Oct close), 230 rows, 0 flagged by the data-quality guard; held positions, setups and QS all live; U&R as of 27 Oct on all 230 rows. Macro pack OK, Crown OK, oldest leg 26 Oct (volatility; positioning is weekly, 20 Oct). Valen OK, end-of-day basis. |
+| 21 | AQE text defects | Three wording defects are still present in AQE text and one pair reported on 27 Oct is clear; the check is in the Valen section below. None changes a number. |
+| 22 | PM-lens label | The PM-lens table labels twelve names "nominated, cut by cap". None was nominated by any voice: all twelve are door-openers flagged and not seated (R17). Pasted verbatim in the PM-lens section with this gap declared; no verdict is affected. |
 
 ## §0A EXECUTIVE CONSENSUS — WHY THESE ADVANCE
 
-**The book in three lines**
+### The book in three bullets
 
-- **In common:** nine names, five momentum (CART, CNQ, ESTC, OXY, SLDE) and four pullback (ROKU, DHR, LTH, RBRK); every one closed 0.1% to 2.7% under its buy price on Friday, two are energy (CNQ, OXY), and six come from sectors graded HOLD or TURNING rather than DEPLOY.
-- **Agreement:** strongest on ESTC and SLDE (the strength-lane analysts were of one view) and close to one view on ROKU and LTH; thinnest on OXY (narrow) and on CART, DHR and RBRK, which were carried over a real objection.
-- **What invalidates the group:** SPY closing under its 760 put wall (Friday close 759.97) and staying there with dealers short gamma; each name also dies on its own daily close under its dead price (section 9B).
+- **What the seven share.** All seven are long equity into FOMC (02:00 SGT Thursday), all beat SPY over 20 days (from +0.7 for A to +38.3 for TENB), and four of the seven are Technology (ESTC, TENB, IOT, DBX), a sector still graded TURNING (weakening).
+- **Where agreement was strongest and thinnest.** Strongest: DBX and A (near-unanimous) and HOG (broad, no objection). Thinnest: ESTC and TENB (narrow), GLBE (narrow, none against) and IOT (carried over a real objection).
+- **What invalidates the group.** SPY losing its 755 put wall (1.9% below spot) on a hot FOMC or Core PCE print: dealers are short gamma (SPY 0.65% under its 774.63 flip), so the floor going would hit all seven at once.
 
-### CART — ADVANCE · conviction 3
+### Seated by rule
 
-It closed at a new 52-week high of 56.44 on 5.0x normal volume, 32 points ahead of SPY over 20 days, AQE rank 1. It was carried over a real objection: the volume may be news-driven and the institutional-money read does not confirm it, so find out what drove it before acting. The plan's own limits are buy above 57.98 and too late above 59.72, and some analysts' own too-late price (57.95) already sits under the buy price.
+- **TENB** is an ADVANCE on a strength seat: seated for strength; no voice nominated it.
+- **IOT** is an ADVANCE on a reserved reclaim seat: in the room on a reserved reclaim seat; no voice nominated it. Reclaim: Dipped below the 9-day average (42.99) on the last session and closed back above it. Reclaim day.
 
-### CNQ — ADVANCE · conviction 3
+### HOG — ADVANCE · conviction 3
 
-It closed at a new 52-week high (55.06), 17.6 points ahead of SPY over 20 days, and it is the one the strength-lane analysts would carry if only one energy name is carried. Against it: volume was ordinary (1.08x) so the buy waits for volume, a dissenting analyst wants a dip and reclaim first, and it is the same oil bet as OXY and the rest. The fundamentals consult is mixed (earnings rebounded after two down years; one good year is not a trend).
+- Agreement: Broad agreement, no objection · Lane: MOMENTUM · Door: Seats + Strength + AQE leader + PM lens · AQE rank 13 · Readiness: Ready on trigger · Fundamentals consult: contradicts
+
+Broad agreement with no objection: a new 52-week high with structure 86.3, momentum 87 and a 20-day return 17.9 points ahead of SPY, trading 2.0% over its 28.86 pivot on 1.21x normal volume. The strongest argument against is the fundamentals consult, which contradicts it (sales down 13.8%, earnings per share down 18.5%, negative free cash flow), so price is running ahead of the business, and it lost because the tape and the volume are real today. It has to keep holding above 27.04, and the push through 29.63 needs at least 1.4x volume.
 
 ### ESTC — ADVANCE · conviction 3
 
-It cleared its old top (101.39) to close at 102.43, 17.7 points ahead of SPY over 20 days, in Enterprise Software, a group leading on both the week and the month; the strength-lane analysts were of one view. The strongest case against: volume was only 1.11x normal, so the break is not yet volume-proven. It has to hold above 101.39; the fundamentals consult is mixed (27.3 times earnings rests on a non-operating item).
+- Agreement: Narrow · Lane: MOMENTUM · Door: Seats + Strength · AQE rank 14 · Readiness: Ready on trigger · Fundamentals consult: neutral
 
-### OXY — ADVANCE · conviction 3
+Narrow: relative-strength rank 98.1, a 63.8% gain over 63 days and a 20-day return 18.1 points ahead of SPY, in the software group Valen shows leading. The strongest argument against is volume, which was only 0.68x normal at a fresh high, with Valen's high-tight-flag grade failed (8 of 11), so the move has no recent proof of buying. It has to hold above 96.32, and earnings on 19 Nov (16 sessions) sit inside any hold.
 
-U&R is MET: it dipped under the rising trendline (63.04) on the last session and closed back above it, structure recently broke above its last swing high and four of six lenses are strong. The case against is real and the margin narrow: its relative strength is the weakest of the energy leaders (67th percentile) and earnings have fallen three years running (-35%, -39%, -69%). The fundamentals consult is mixed (cheap at 9.6 times earnings, but earnings slipping).
+### TENB — ADVANCE · conviction 3
 
-### SLDE — ADVANCE · conviction 3
+- Agreement: Narrow · Lane: MOMENTUM · Door: Strength + AQE leader + Strength seat (rule) · AQE rank 40 · Readiness: Ready on trigger · Fundamentals consult: neutral
 
-It printed a new 52-week high (28.55) on 1.43x volume, 25 points ahead of SPY over 20 days, and the strength-lane analysts were of one view; the fundamentals read is the cleanest in the list (6.2 times earnings, revenue +36.5%, net margin 40%). Against it: revenue growth is fading (80% and 93% in the two prior years), margins look peak-like, and it doubles up on Financials next to held V. The plan's too-late price is 29.55.
+Narrow, and seated for strength with no voice nominating it: relative-strength rank 98.7, a 20-day return 38.3 points ahead of SPY and a new 52-week high with structure 88.4, in the Cybersecurity group Valen lists as leading on both horizons. The strongest argument against is that the high came on only 0.89x volume with two bearish divergences, and the fundamentals consult is neutral at a P/E of 712. It has to hold above 47.26, and the PM's standing instruction on cyber is in the day's plan.
 
-### ROKU — ADVANCE · conviction 3
+### IOT — ADVANCE · conviction 3
 
-Several analysts put it up independently and the room was close to one view: a tight coil 0.9% under its 52-week high, 1.54x volume and the averages in order. The fundamentals consult contradicts it (66.7 times earnings on 15% revenue growth and a 5% operating margin) and structure is still a range with no break yet, so the case is trend context, not a confirmed break. Buy above 158.85, too late above 160.27, dead on a daily close under 157.83.
+- Agreement: Carried over a real objection · Lane: MOMENTUM · Door: Strength + Reclaim seat (rule) · AQE rank 52 · Readiness: Ready on trigger · Fundamentals consult: contradicts
 
-### DHR — ADVANCE · conviction 3
+Carried over a real objection, and in the room on a reserved reclaim seat with no voice nominating it: it dipped below its 9-day average (42.99) on the last session and closed back above, with momentum 76 and relative-strength rank 90 in a stacked uptrend 3.8% under its high. The strongest argument against is that the AQE lens read finds no corroboration, volume was 0.84x, Valen's full undercut-and-rally checklist grades FAILED (6 of 9) and the fundamentals consult contradicts it (P/E 276 on a 4.9% net margin). It has to hold above 41.77, and the buy is a close above 44.21 on at least 1.4x volume.
 
-U&R is MET: it dipped under its 9-day average (226.85) and closed back above it inside a rising stack of averages, on 0.8x volume (a quiet dip). Against it: no volume demand, no earnings recovery (EPS -5%, -17%, -34% at 37.7 times earnings, so the fundamentals consult contradicts it) and Valen's delayed episodic-pivot grade is FAILED. It needs the buy above 230.66.
+### DBX — ADVANCE · conviction 3
 
-### LTH — ADVANCE · conviction 3
+- Agreement: Near-unanimous · Lane: PULLBACK · Door: Seats · AQE rank 72 · Readiness: Ready on trigger · Fundamentals consult: neutral
 
-Five of six lenses are strong and the break came on 1.66x volume with price sitting on its 50-day average (41.75). Against it: it is 8.3% under its 52-week high, structure is middling (51.6) and the 20-day average is still under the 50-day, so the trend is not proven; the fundamentals consult is mixed (earnings compounding, but cash-negative and debt-funded). The one ADVANCE with a dip alternative: back to 41.75, then a close back above it.
+Near-unanimous: a relative-strength leader (rank 91.6) coiled 3.3% under its 38.17 pivot above a rising stack of averages, with Valen's undercut-and-rally reclaim printed on the last session on 1.24x volume. The strongest argument against is that the AQE lens read found nothing to corroborate it and sales growth is unproven at -1.1%, which makes it a setup rather than a proven earner. It has to hold above its 20-day average at 35.43, and the buy is only the clear of 38.17 on at least 1.4x volume.
 
-### RBRK — ADVANCE · conviction 3
+### GLBE — ADVANCE · conviction 3
 
-It broke to a new 52-week high on 1.43x volume, 19 points ahead of SPY over 20 days, in a theme leading on both the week and the month. Against it: price sits 20.1% above its 20-day average, it does not beat the market on down days, it has no earnings (net margin -16.5%, so the fundamentals consult contradicts it) and one bearish divergence reading is lit. The plan's buy is above 130.84 and its own too-late price is 131.74.
+- Agreement: Narrow, with none against · Lane: PULLBACK · Door: Seats + Elder+Lens · AQE rank 118 · Readiness: Ready now · Fundamentals consult: fits the category
 
-### Scorecard (grading only; no verdict was changed)
+Narrow, with none against: a break of structure on 1.52x normal volume, 1.8% over its 40.81 pivot, relative-strength rank 83.4 and sales growing 27.8%, the one advance whose fundamentals fit their category. The strongest argument against is thin leadership: structure 57.9, only 3.0 points ahead of SPY over 20 days and Valen's undercut-and-rally grade failed (6 of 9), which makes it the weakest leadership case of the seven. It has to hold above 40.05, and earnings on 18 Nov (15 sessions) sit inside the hold.
 
-| Calls to the 23 Oct close, six runs 15 to 23 Oct | n | Mean | Beat SPY by (mean) | Names beating SPY | Versus the AQE equal-weight list |
+### A — ADVANCE · conviction 3
+
+- Agreement: Near-unanimous · Lane: PULLBACK · Door: Elder+Lens + Lens + Nominated · AQE rank 119 · Readiness: Ready on trigger · Fundamentals consult: contradicts
+
+Near-unanimous: Valen's undercut-and-rally printed on the last session (it dipped under its rising trend at 174.96 and closed back above), on a break of structure 0.25% over its pivot, with five of six AQE lenses positive. The strongest argument against is that it only just beats SPY (0.69 points over 20 days) with momentum at 50, and the fundamentals consult contradicts it (P/E 34.6 on earnings growth of 3%). It has to hold above 172.09, the 20-day average, and earnings land 23 Nov (18 sessions).
+
+### Fundamentals consult
+
+- **Fundamentals consult (information only, no vote, R22).** It contradicts three ADVANCE names: A (P/E 34.6 on 3% earnings growth), HOG (sales down 13.8%, earnings per share down 18.5%, negative free cash flow) and IOT (P/E 276 on a 4.9% net margin).
+- **Where it fits or stays neutral.** It fits GLBE's category (sales +27.8%, debt-to-equity 0.03) and is neutral on DBX (free cash flow yield 11.6%, sales -1.1%), ESTC (steady 17% sales growth) and TENB (P/E 712 on thin profit, free cash flow yield 5.5%).
+
+### Scorecard (grading only, no verdict changed)
+
+Source: scorecard.md, as of the 27 Oct close, eight runs from 15 to 27 Oct, five-session horizon. SPY against the equal-weight AQE list, by run:
+
+| Run | Base → end | Sessions | SPY | AQE list (equal weight) | List names beating SPY |
 |---|---|---|---|---|---|
-| ADVANCE | 54 | +0.50% | +1.14 | 33 of 54 | -0.88 |
-| HOLD-FOR-CONDITIONS | 152 | +1.30% | +2.08 | 120 of 152 | -0.36 |
-| PASS | 40 | +1.17% | +2.18 | 27 of 40 | +0.57 |
-| ADVANCE, full 5-session windows only | 15 | +2.43% | +2.39 | 14 of 15 | -0.11 |
-| HOLD, full 5-session windows only | 50 | +2.09% | +2.17 | 43 of 50 | -0.39 |
+| 2026-10-15 | 2026-10-14 → 2026-10-21 | 5 | +0.45% | +2.75% | 167/213 |
+| 2026-10-19 | 2026-10-16 → 2026-10-23 | 5 | -0.43% | +2.30% | 241/288 |
+| 2026-10-20 | 2026-10-19 → 2026-10-26 | 5 | -0.14% | +2.55% | 186/228 |
+| 2026-10-21 | 2026-10-20 → 2026-10-27 | 5 | +0.08% | +0.43% | 185/326 |
+| 2026-10-22 | 2026-10-21 → 2026-10-27 | 4 (partial) | -0.44% | +0.61% | 189/276 |
+| 2026-10-23 | 2026-10-22 → 2026-10-27 | 3 (partial) | +0.75% | -1.32% | 69/372 |
+| 2026-10-26 | 2026-10-23 → 2026-10-27 | 2 (partial) | +1.28% | -0.77% | 49/301 |
+| 2026-10-27 | 2026-10-26 → 2026-10-27 | 1 (partial) | +0.56% | -0.62% | 57/267 |
 
-- **What it shows:** the AQE list itself beat SPY in five of the six runs (on the two full windows +2.75% against +0.45% for the 15 Oct run and +2.30% against -0.43% for 19 Oct; the one-session 23 Oct run was -0.58% against -0.52%), and the names the room graded mostly beat SPY: ADVANCE by +1.14, HOLD by +2.08, PASS by +2.18 on average.
-- **What it does not show:** that the committee adds to the list. ADVANCE trailed the list by 0.88 points pooled and by 0.11 on full windows; HOLD trailed it by 0.36 (0.39 on full windows) and PASS beat it by 0.57 (n=40).
-- **Why it is thin:** most windows are partial (1 to 4 sessions), six runs overlap heavily, the full-window ADVANCE sample is 15 names, and the worst advances (ETSY -3.76, CHD -2.85, CCEP -2.45) are one session old and have left the room. Grading only; no verdict was changed.
+Every graded call, pooled:
 
-## §0B HOW TO READ THE TABLE
+| Verdict | n | Mean | Median | vs SPY (mean / median) | Beat SPY | vs list | Beta-adjusted | Avg beta |
+|---|---|---|---|---|---|---|---|---|
+| Advance | 72 | +0.49% | +0.16% | +0.14 / +0.08 | 36/72 | -0.04 | +0.43 | 0.32 |
+| Hold | 210 | +0.79% | +0.50% | +0.56 / +0.32 | 116/210 | +0.06 | +0.71 | 0.24 |
+| Pass | 65 | +0.25% | -0.33% | -0.27 / -0.64 | 26/65 | +0.64 | +0.07 | 0.44 |
+| Near-miss | 821 | -0.63% | -0.42% | -1.15 / -1.07 | 261/821 | -0.18 | -0.62 | 0.15 |
 
-- **Lane:** a Momentum verdict was decided by the five strength-lane analysts only; a Pullback verdict by the whole room (R14).
-- **Door:** how the name reached the room. Nominated names are admitted whole (R16). Strong seat and Reclaim seat names were put in by rule (R27, R25), voted like any other, and no voice nominated them.
-- **HOLD-FOR-CONDITIONS:** the room wants the stated condition met before it would act. Many are low-conviction HOLDs (conviction 2 or 1), not rejections.
-- **Fundamentals consult:** informational only, no vote (R22). Where an ADVANCE is contradicted the brief says so; no verdict moved.
-- **Momentum names above a buy price** are strength, not a flaw. The only limits are the plan's own: its too-late price, its volume and beat-SPY conditions, and the market floor.
-- **No share counts** appear on candidate trades: the per-trade risk figure is an open PM decision. Held-book quantities are facts.
+Full-horizon calls only:
 
-## §1A VALEN — THE MARKET WEATHER (VIV System, from AQE)
+| Verdict | n | Mean | Median | vs SPY (mean / median) | Beat SPY | vs list | Beta-adjusted | Avg beta |
+|---|---|---|---|---|---|---|---|---|
+| Advance | 34 | +1.60% | +1.31% | +1.60 / +1.75 | 25/34 | -0.38 | +1.59 | 0.35 |
+| Hold | 101 | +2.07% | +1.83% | +2.12 / +1.89 | 79/101 | +0.08 | +2.10 | 0.11 |
+| Pass | 19 | +2.64% | +1.48% | +2.56 / +1.40 | 13/19 | +2.21 | +2.60 | 0.52 |
+| Near-miss | 143 | +0.19% | +0.38% | +0.11 / +0.30 | 77/143 | -0.24 | +0.16 | 0.3 |
 
-- **Stance: RISK OFF.** SPY is below its short-term averages on both the daily and weekly charts, and the index is in a downtrend; the stance has read RISK OFF for 5 days (NEUTRAL a month ago).
-- **VIV System doctrine for this reading (quoted, not an Aegis rule):** "Breadth is against the tape — build the watchlist, do not push new entries." AQE makes no sizing decision.
+- **What the numbers say.** Pooled over eight runs, ADVANCE calls average +0.49% (n 72, median +0.16%), +0.14 points ahead of SPY and -0.04 points against the equal-weight AQE list they were picked from; on full five-session windows only, ADVANCE averages +1.60% (n 34), 25 of 34 beat SPY, and sits 0.38 points under the list.
+- **What they do not prove.** Most windows are still partial (the last four runs have one to four sessions), the sample is small, the windows overlap, and PASS names (n 19, +2.64% on full windows) did better than ADVANCE; ADVANCE has not yet beaten the list it was picked from.
+- **Worst advances so far:** ELV (23 Oct) -6.09%, MTCH (23 Oct) -5.60%, CVE (27 Oct) -5.14%. 178 rows are not graded yet. Grading only; no verdict was changed.
 
-**Stance now, 5 days ago, 1 month ago**
+## §0B LANES AND RULE-SEATED NAMES
+
+MOMENTUM-lane verdicts (HOG, ESTC, TENB, IOT among the ADVANCE names) were decided by the strength voices only; PULLBACK-lane verdicts (DBX, GLBE, A among the ADVANCE names) were decided by the whole room. A momentum name above its trigger is strength, not a flaw: the only limits are each plan's own too-late price, its volume and beat-SPY conditions, and the market floor.
+
+| Ticker | Rule | How it got in | Verdict | AQE rank | 20-day return vs SPY |
+|---|---|---|---|---|---|
+| BRZE | Strength seat (R27) | Seated for strength; no voice nominated it. | HOLD | 2 | +97.0 |
+| DXC | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 61 | +52.6 |
+| NTSK | Strength seat (R27) | Seated for strength; no voice nominated it. | HOLD | 6 | +50.7 |
+| ASAN | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 47 | +43.4 |
+| TENB | Strength seat (R27) | Seated for strength; no voice nominated it. | ADVANCE | 40 | +38.3 |
+| BBWI | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 99 | +36.6 |
+| VERX | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 35 | +32.0 |
+| KVYO | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 57 | +31.6 |
+| RBLX | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 75 | +31.6 |
+| ZS | Strength seat (R27) | Seated for strength; no voice nominated it. | PASS | 87 | +30.4 |
+| IOT | Reclaim seat (R25) | In the room on a reserved reclaim seat; no voice nominated it. Dipped below the 9-day average (42.99) on the last session and closed back above it. Reclaim day. | ADVANCE | 52 | +13.9 |
+| ETSY | Reclaim seat (R25) | In the room on a reserved reclaim seat; no voice nominated it. Dipped below the 9-day average (85.35) on the last session and closed back above it. Reclaim day. | HOLD | 60 | +25.8 |
+| RYAN | Reclaim seat (R25) | In the room on a reserved reclaim seat; no voice nominated it. Dipped below the 9-day average (42.24) on the last session and closed back above it. Reclaim day. | PASS | 62 | +11.2 |
+
+## §1A VALEN — THE VIV SYSTEM WEATHER CARD
+
+- **VIV System doctrine, quoted:** "Breadth is against the tape — build the watchlist, do not push new entries." This is the handbook's own reading of the tape, not an Aegis rule; AQE sizes nothing.
+- **Valen headline:** "Stance: RISK OFF. SPY's daily, weekly and 5-day trend checks disagree with each other — that is chop, and chop is where breakouts get sold."
+
+**Stance now, five days ago, one month ago**
 
 | Reading | Now | 5 days ago | 1 month ago |
 |---|---|---|---|
-| Stance | RISK OFF | RISK OFF | NEUTRAL |
-| Trend regime | DOWNTREND | DOWNTREND | CHOP |
-| VIX / VIX3M | 0.9292 | 0.8029 | 0.8237 |
-| T2108 | 40.2 | 26.0 | 18.3 |
-| SPY ATRs above 50-day | -1.09 | -0.75 | 0.9 |
+| Stance | RISK OFF | NEUTRAL | NEUTRAL |
+| Trend regime | CHOP | DOWNTREND | CHOP |
+| VIX over VIX3M | 0.94 | 0.97 | 0.82 |
+| Stocks above their 40-day average (%) | 40.6 | 37.8 | 28.9 |
+| SPY ATRs above its 50-day | 0.30 | 0.11 | 0.54 |
 
-**Trend, extension and breadth, pass or fail**
+**Trend, extension and breadth checks (pass or fail)**
 
 | Check | Value | Result |
 |---|---|---|
-| SPY 759.97 — daily buy signal | no | FAIL |
-| SPY — weekly buy signal | no | FAIL |
-| SPY — above a rising 5-day average | no | FAIL |
-| QQQ 704.4 — daily buy signal | no | FAIL |
-| QQQ — weekly buy signal | no | FAIL |
-| QQQ — above a rising 5-day average | no | FAIL |
-| Trend regime | DOWNTREND | FAIL |
-| SPY ATRs above 50-day | -1.09 | PASS (not extended) |
-| QQQ ATRs above 50-day | -1.86 | PASS (not extended) |
-| VIX / VIX3M | 0.9292 | PASS (not extended) |
-| Today's count green | no | FAIL |
-| 5-day up/down 4% count (1.00 or more to pass) | 1.25 | PASS |
-| Net highs minus lows, 8-day vs 20-day | 5.62 vs -10.9 | PASS |
-| Share of names above their 40-day average (AQE list of 301; Valen's watch level is 50) | 40.2 | below 50 |
-| 10-day up/down 4% count | 0.84 | weak spot |
-| Monthly big risers (whole-market bar is 350) | 44 | not testable on 301 names |
+| SPY 769.66: daily trend check | NO | FAIL |
+| SPY: weekly trend check | YES | PASS |
+| SPY: above its rising 5-day average | YES | PASS |
+| QQQ 721.25: daily trend check | NO | FAIL |
+| QQQ: weekly trend check | NO | FAIL |
+| QQQ: above its rising 5-day average | YES | PASS |
+| SPY ATRs above its 50-day (extension) | +0.30 | PASS (not extended) |
+| QQQ ATRs above its 50-day (extension) | -0.35 | PASS (not extended) |
+| VIX over VIX3M | 0.94 | PASS (neither calm nor stressed) |
+| Breadth checklist: today's count green | NO | FAIL |
+| Breadth checklist: 5-day up/down 4% count (needs 1.00) | 0.79 | FAIL |
+| Breadth checklist: net highs minus net lows, 8-day against 20-day | -0.75 vs -12.6 | PASS |
+| Breadth checklist: monthly big risers (25%+) (needs 350) | 49 | NOT TESTABLE (whole-market threshold) |
+| Stocks above their 40-day average (needs 50) | 40.6 | FAIL |
+| 10-day up/down 4% count (context) | 1.24 | context, no pass mark |
 
-**Dealer gamma (SPY options)**
+- Breadth numbers are AQE-list numbers (the curated panel), not the whole market. Of the four checklist items one passes, two fail and one cannot be tested.
 
-| Gamma flip | Call wall | Put wall | Spot | Gap to flip | Total GEX | Regime | Light |
-|---|---|---|---|---|---|---|---|
-| **776.36** | 780.00 | **760.00** | 759.97 | 2.16% above spot | -11.71B | NEGATIVE | RED |
+**Dealer gamma, the light and the short caveat**
 
-- **The put wall is 760 and SPY closed at 759.97; the gamma flip is 776.36.** Monday's live review uses them as the market floor and the flip.
-- VIV System doctrine on this light (quoted, not an Aegis rule): "Below flip: moves get amplified. Cut size, tighten stops."
-- Caveat: which side dealers are on is a standard convention, not observed data; exchange feeds publish open interest, never who is on which side.
-- QQQ: flip 735.73 (4.45% above spot 704.40), put wall 700 (0.62% below), call wall 720.
+| Item | Read |
+|---|---|
+| Light | RED (NEGATIVE) |
+| SPY spot / total dealer gamma | 769.66 / -4.81bn |
+| Valen commentary (VIV doctrine, not an Aegis rule) | Below flip: moves get amplified. Cut size, tighten stops. |
+| Dealer read | Volatile market — dealers are short gamma and amplify moves in both directions: floor ~755, breakout level ~775 (reclaiming it calms the market), resistance ~780. |
+| Caveat | Dealer side is the standard assumed convention (customers long calls and puts), not observed data: exchange feeds publish open interest, never who is on which side. |
 
-**Leadership themes, top and bottom**
+**Market floor, flip and call wall (tonight's live reviews use these)**
 
-| Group | Theme | 1 week | 1 month | From 52-week high | Rotation state |
+| Index | Spot | Put wall (floor) | Distance | Gamma flip | Distance | Call wall | Distance | Dealer gamma |
+|---|---|---|---|---|---|---|---|---|
+| SPY | 769.66 | 755 | -1.90% | 774.63 | +0.65% | 780 | +1.34% | -4.81bn |
+| QQQ | 721.25 | 700 | -2.95% | 730.11 | +1.23% | 730 | +1.21% | -2.24bn |
+
+- A break of the put wall means the floor is gone; a reclaim of the flip calms the tape; the call wall is where rallies meet dealer selling. SPY and QQQ walls and flips match the Valen file, the Crown artifact and the conductor cross-check (SPY 755 / 774.63 / 780; QQQ 700 / 730.11 / 730).
+
+**Leadership themes, top and bottom (one-month move, Valen)**
+
+| Theme | 1 week | 1 month | Off 52-week high | Valen state | Rotation |
 |---|---|---|---|---|---|
-| Top | Cybersecurity | +13.71% | +12.78% | -3.3% | leading (entering) |
-| Top | Enterprise Software | +10.83% | +16.43% | +0.0% | leading (deepening) |
-| Top | Insurance | +0.29% | +4.05% | -2.5% | leading (stable) |
-| Top | Homebuilders | +7.44% | +4.34% | -14.2% | improving (deepening) |
-| Top | AI Software | +6.60% | -1.15% | -31.7% | leading (entering) |
-| Top | Cloud Computing | +4.41% | -2.76% | -11.7% | weakening (entering) |
-| Bottom | Quantum Computing | +0.54% | -32.61% | -66.2% | lagging (exiting) |
-| Bottom | Crypto Digital | -4.50% | -32.43% | -51.0% | lagging (exiting) |
-| Bottom | Space eVTOL | -1.05% | -25.84% | -66.4% | lagging (exiting) |
-| Bottom | Nuclear Energy | -6.72% | -24.25% | -64.2% | lagging (deepening) |
-| Bottom | Chip Equipment | -6.90% | -23.40% | -44.0% | lagging (deepening) |
-| Bottom | Autonomous Robotics | -1.08% | -16.83% | -30.6% | lagging (exiting) |
+| Enterprise Software | +2.65% | +17.42% | -0.60% | leading | leading / deepening |
+| Cybersecurity | +17.51% | +15.24% | +0.00% | leading | leading / entering |
+| Defense Tech | +4.74% | +7.98% | -15.94% | off the floor | improving / deepening |
+| Insurance | -0.02% | +5.38% | -2.26% | leading | leading / exiting |
+| E Commerce | -0.14% | +5.18% | -5.65% | neither | improving / exiting |
+| … |  |  |  |  |  |
+| Space eVTOL | +8.33% | -15.32% | -63.68% | neither | lagging / exiting |
+| Nuclear Energy | -0.15% | -17.28% | -61.82% | neither | lagging / exiting |
+| Chip Equipment | +0.33% | -17.80% | -39.31% | neither | lagging / exiting |
+| Quantum Computing | +6.86% | -24.28% | -62.89% | neither | lagging / exiting |
+| Crypto Digital | -1.70% | -26.43% | -47.20% | neither | lagging / exiting |
 
-- On both the week and month lists (real leadership): Cybersecurity, Enterprise Software, Homebuilders, AI Software, Cloud Computing
-- Leading from their own highs, not just bouncing: Cybersecurity, Insurance, Enterprise Software
-- Strong numbers but still well off their highs (a bounce, not leadership yet): Infra Construction, Travel Leisure, Transport Logistics, Defense Tech, Payments
+- True leaders (strong on both horizons and at their highs): Cybersecurity and Enterprise Software. Space eVTOL and Quantum Computing are bounces in broken groups (see the text-defect check).
 
-**Valen's watch-for list (as published by AQE)**
+**Valen watch-for list**
 
-- Stocks above their 40-day average clears 50.0 (now 40.2) — live, not met
-- Monthly big risers (25%+) clears 350 (now 44) — text defect: a whole-market bar that cannot be reached on 301 names
-- 5-day up/down 4% count clears 1.0 (now 1.25) — text defect: already met (1.25) while still listed
-- 5-day up/down 4% count falls under 0.7 (now 1.25) — the downside tripwire
+| Item | Now | Status | Direction |
+|---|---|---|---|
+| Stocks above their 40-day average clear 50.0 | 40.6 | Not met | Improves the read |
+| 5-day up/down 4% count clears 1.0 | 0.79 | Not met | Improves the read |
+| 5-day up/down 4% count falls under 0.7 | 0.79 | Not triggered | Worsens the read |
+| Monthly big risers (25%+) clear 350 | 49 | Cannot be tested on AQE's list (350 is a whole-market number; see the text-defect check) | Improves the read |
 
-**Crown cockpit row, house-setup counts**
+**Crown cockpit row**
 
-| Breadth range | Trend-fund crowding | Dispersion | Divergence | Positioning (to 20 Oct) |
+| Breadth (RSP/SPY) | Trend-fund crowding | Dispersion | Divergence | Positioning (CFTC) |
 |---|---|---|---|---|
-| broadening, 50.2% of range, mid, confidence 0.65 | flip risk 0.0%, neutral, 18 markets | 78.3th percentile, normal, flat (implied) | 1 of 8 lit (rsi) | crowded long NQ, RTY, ZF, ZS, ZT; crowded short CL, NG, SI |
+| broadening, mid-range (41.9% of 12-month range), confidence 0.65 | neutral; 0.0% of 18 markets at an extreme | 82.7th percentile, ELEVATED_RISING (implied) | 1 of 8 checks fired (RSI) | as of 2026-10-20: crowded long NQ, RTY, ZF, ZS, ZT; crowded short CL, NG, SI |
 
-| House setup | Status | Names |
+**House-setup counts (VIV handbook Part 3, whole export list of 230 plus the held book)**
+
+| Setup | Status | Names | Which (when not FAILED) |
+|---|---|---|---|
+| Episodic pivot | TRIGGERED | 1 | SOFI |
+| Episodic pivot | FAILED | 4 |  |
+| Episodic pivot (delayed) | READY | 1 | WCN |
+| Episodic pivot (delayed) | WATCH | 1 | RHI |
+| Episodic pivot (delayed) | PAST_PIVOT | 2 | BRZE, ERIC |
+| Episodic pivot (delayed) | FAILED | 15 |  |
+| Failed leader | WARNING | 1 | CHRW |
+| High tight flag | FAILED | 5 |  |
+| Parabolic | WARNING | 3 | BRZE, NTSK, DXC |
+| Parabolic | CRACKED | 1 | ASAN |
+| Undercut and rally | FAILED | 14 |  |
+| Undercut and rally — Daily EMA9 | WATCH | 1 | CME |
+| VCP | FAILED | 4 |  |
+
+- U&R on the whole list: MET 22, SETUP 9 (as of 2026-10-27); held V is also a SETUP (reclaim day is the next session). MET names in the room: A, AAPL, CRBG, DBX, ETSY, IOT, RCL, RYAN.
+
+**Dated events for the next two sessions (Crown calendar)**
+
+| Date | Time | SGT | Event | What it tests |
+|---|---|---|---|---|
+| Wed 28 Oct | 14:00 ET | Thu 29 Oct 02:00 SGT | FOMC decision | The rate decision and the language around it. The statement usually moves the front end; the press conference moves the long end. |
+| Thu 29 Oct | 08:30 ET | Thu 29 Oct 20:30 SGT | Core PCE | The Fed's preferred inflation measure. It matters more than CPI for what the Fed does, and less for what the market does on the day. |
+| Thu 29 Oct | 08:30 ET | Thu 29 Oct 20:30 SGT | GDP | The growth backdrop the whole cross-asset reading sits on. |
+| Thu 29 Oct | 08:30 ET | Thu 29 Oct 20:30 SGT | Initial jobless claims | The highest-frequency labour signal there is. One week is noise, but a trend change here leads the monthly payroll number. |
+| Mon 2 Nov | 09:00 ET | Mon 02 Nov 22:00 SGT | ISM Manufacturing | The cyclical pulse. Read it against copper — if the two disagree, one of them is wrong about growth. |
+| Wed 4 Nov | 09:00 ET | Wed 04 Nov 22:00 SGT | ISM Services | The larger half of the economy, and the stickier inflation half. |
+| Thu 5 Nov | 08:30 ET | Thu 05 Nov 21:30 SGT | Initial jobless claims | The highest-frequency labour signal there is. One week is noise, but a trend change here leads the monthly payroll number. |
+| Fri 6 Nov | 08:30 ET | Fri 06 Nov 21:30 SGT | Non-farm payrolls | The single biggest input to rate expectations. Watch the revisions and the participation rate, not just the headline — unemployment can fall because people left the labour force. |
+
+- US clocks go back on Sunday 1 Nov: from then ET = SGT minus 13 hours (it is 12 hours until then).
+
+**Oldest data leg**
+
+| Source | As of | Note |
 |---|---|---|
-| Episodic pivot (delayed) | failed | 19 |
-| Undercut and rally | failed | 6 (FIVN, IOT, PAYO, PEB, SEDG, ZETA) |
-| High tight flag | failed | 4 (BRZE, DOCS, ESTC, WDAY) |
-| Parabolic (risk warning) | warning | 4 (ASAN, BRZE, DXC, TTAN) |
-| Episodic pivot | failed | 3 (AMT, CCI, SLB) |
-| Failed leader (risk warning) | warning | 3 (CFG, MP, VNO) |
-| Episodic pivot (delayed) | ready | 2 (SPOT, WCN) |
-| Episodic pivot | watch | 1 (RHI) |
-| Episodic pivot (delayed) | past pivot | 1 (BRZE) |
-| Episodic pivot (delayed) | watch | 1 (ERIC) |
-| Parabolic (risk warning) | cracked | 1 (ACN) |
+| Crown / macro pack oldest leg | 2026-10-26 (volatility) | 2 days behind today; pack status OK, Crown status OK, pack oldest leg 2026-10-26 |
+| Positioning (CFTC) | 2026-10-20 | Weekly, always at least three days old; it cannot time anything |
+| Valen | Tue 27 Oct close (end-of-day) | VIX3M cannot go live; breadth is AQE-list, not whole-market |
 
-- 43 names carry 45 grades; two are READY (SPOT and WCN, both delayed episodic pivots) and none is TRIGGERED. No name in today's room is READY or TRIGGERED.
-- U&R MET in the room: OXY, DHR, DVN, LIN, ACN, PBI. AQE list-wide MET: ABT, ACN, DHR, DVN, EC, FANG, KMI, LIN, OXY, PBI, PTON, SARO, VSXY, ZETA; SETUP: CAH, PBR.
+**Honest check of AQE text defects**
 
-## §1 MACRO
+| Where | What the text says | What the numbers say | Status today |
+|---|---|---|---|
+| Crown and the macro pack, "so what" sentence | "Size at 0.50x your normal risk (cut because the trend is crowded)" | Trend-fund crowding is 0.0 (no market at an extreme) and the size dial is 1.0; the 0.5x is the hidden-stress family cap, not a crowding cut | PRESENT (wording only; the 0.5x itself is right) |
+| Valen, "real leadership" sentence | Names Cybersecurity, Space eVTOL and Quantum Computing as real leadership this week | Space eVTOL is -15.32% over a month and 63.68% under its high; Quantum Computing is -24.28% and 62.89% under: bounces in broken groups | PRESENT |
+| Valen, watch-for list | "Monthly big risers (25%+) clears 350 (now 49)" | 350 is a whole-market threshold; AQE's list cannot reach it, so this item can never fire | PRESENT |
+| Crown, the two 27 Oct defects | Premium-collection advice in negative gamma; "single stocks move about as much as the index" | Today's playbook reads reduce gross and buy cheap downside; the text says single stocks are much more volatile than the index | CLEAR (checked in the Crown form and the Crown artifact) |
+
+## §1 MACRO — AS TABLES
+
+**Read, number, source**
 
 | Read | Number | Source |
 |---|---|---|
-| Volatility | VIX 19.45 (about the 76th percentile of two years); single-stock vol 42.36; gap 23.33 vs elevated band 23.56 (0.99% away); implied correlation 11.6 (43.7th percentile); curve in contango; data dated 22 Oct | Crown |
-| Breadth | Equal-weight vs cap-weight S&P: +1.58% over 5 days, +4.11% over 20, -1.88% over 60; broadening, 5 days old, mid-range; confidence 0.65; 3.08% above its 20-day average | Crown |
-| Rates | Long bonds +1.61% over 5 days, +2.55% over 20; above the 20-day average | AQE intermarket |
-| Dollar | +0.14% over 5 days, +1.19% over 20; trend-fund flip 99.04 is 2.67% below | AQE intermarket, Crown |
-| Commodities | Oil +4.8% over 5 days; gold -4.03%; copper -1.11%; high yield -1.04% over 20 days and under its 20-day average | AQE macro weather |
-| Positioning | Trend funds neutral (flip risk 0.0%, size dial 1.00); nearest flips S&P 500 7,452.56 (2.70% below), Russell 2000 2,824.67 (1.29% above); large speculators crowded long NQ, RTY, ZF, ZT, ZS and short CL, NG, SI (to 20 Oct) | Crown |
-| Dealer gamma | SPY: negative (GEX -11.71B), flip 776.36 (2.16% above), put wall 760 (at spot), call wall 780; QQQ flip 735.73, put wall 700, call wall 720; the dealer side is an assumption | Crown, Valen |
-| Scenario | DOLLAR_SQUEEZE 0.75 (a share of conditions met, not a probability), runner-up INFLATION_SHOCK, not contested; credit (high yield) is the missing confirmation | Scenario layer |
+| Volatility: the index is calm, single stocks are not | VIX 17.52 (about the 58th percentile of two years; Crown words it as lower than 42% of readings), curve in contango (VIX over VIX3M 0.94). Single-stock volatility 42.29 is 23.9 points over the VIX: wider than 83% of the past two years, still rising (+0.51 in 20 days) and 0.31 over its 23.594 elevated band. Implied correlation 9.58 (27.6th percentile). | Crown (volatility as of 26 Oct) |
+| Breadth: broadening, but young | Equal-weight over cap-weight (RSP/SPY) 0.2826: broadening for 7 days, +0.69% over 5 days, +3.09% over 20, -1.37% over 60; 1.96% above its 20-day average (0.2771), mid-range (41.9% of its 12-month range); confidence 0.65 against a 0.40 stop. | Crown |
+| Rates: bid into FOMC | TLT +1.87% over 5 days (+4.35% over 20). Trend-fund flips: 2-year note 103.28 (1.26% above price), 5-year 107.15 (2.66% above); trend funds' rates lean is the most negative group (-0.57). | Macro scenario layer; Crown key levels |
+| Dollar: bid, a defensive pairing with bonds | UUP +0.76% over 5 days (+1.29% over 20); the trend-fund dollar flip 99.34 sits 2.95% below. | Druckenmiller desk; Crown key levels |
+| Credit: firm, out-run by duration | HYG +1.00% over 5 days, +0.31% over 20; credit minus bonds -0.87 over 5 days. No credit stress. | Druckenmiller desk |
+| Commodities: oil is the inflation leg | Oil +2.04% over 5 days, +14.32% over 20; copper +0.75% over 5 days; copper/gold +2.21% (5 days) and +3.16% (20 days); gold -1.42% over 5 days. | Macro scenario layer |
+| Small caps: participating, not leading | Russell 2000 +0.42% over 20 days against S&P 500 +0.71%; its trend-fund flip 2808.64 is 0.61% below. | Druckenmiller desk; Crown key levels |
+| Positioning: crowded in places, not in trend funds | Trend funds are neutral across 18 markets, none at an extreme (crowding 0.0, dial 1.0). Big speculators (CFTC to 20 Oct) are crowded long Nasdaq-100 and Russell 2000 futures, the 5-year and 2-year notes and soybeans, and crowded short crude oil, natural gas and silver. | Crown |
+| Dealer gamma: moves are amplified both ways | SPY 769.66: flip 774.63 (+0.65%), put wall 755 (-1.90%), call wall 780 (+1.34%), dealer gamma -4.81bn (NEGATIVE). QQQ 721.25: flip 730.11 (+1.23%), put wall 700 (-2.95%), call wall 730 (+1.21%), -2.24bn. Dealer side is an assumed convention, not observed data. | Crown; Valen |
+| Divergence: one family only | Nine warnings lit, all in the RSI family; none from breadth or another family, and breadth is broadening, so they do not agree. | Crown |
 
-| Macro reader | Family | Size | One-line call |
+**Crown and Druckenmiller, side by side, unresolved**
+
+| Desk | Family / read | Size | Short call |
 |---|---|---|---|
-| Crown | BROADENING_CARRY (partial fit) | 1.00x on the PM's own risk, not an Aegis size | Breadth broadening but young, volatility normal; dealers short gamma so the carry leg is unmet; FOMC Wed can re-base it. |
-| Druckenmiller | Cautious-neutral | Tone: light | A defensive, duration-led tape with an oil inflation twist; credit and copper do not confirm risk-on; momentum entries in high-beta growth fight this rotation. |
+| Crown | HIDDEN_STRESS_DOWNSIDE (exact fit), status OK, contested | 0.5x, a multiplier on the PM's own normal risk (the family cap; trend crowding is 0.0) | Reduce gross; cheap downside in QQQ or ES through put debit spreads or long puts. Met by only 0.31 vol points; breadth and the benign scenario point the other way. |
+| Druckenmiller | Risk-on by level, defensive by composition; unconfirmed and event-gated | Sizing tone: light | A light posture through FOMC and Core PCE; every momentum entry carries whipsaw risk until SPY reclaims 774.63. Bonds say defensive, copper/gold says cyclical: an unreconciled pair. |
 
-The two are unresolved on three points: whether the dollar leg of the lead scenario is strong (Druckenmiller reads it as modest), whether the copper-to-gold ratio is risk-on (it rises only because gold is falling faster), and whether Energy's leadership is macro-aligned (the overlay says CAUTION).
+|  | Crown and Druckenmiller |
+|---|---|
+| Agree | Light posture through the event window; broadening is real (7 days, gate passed); dealer gamma negative with SPY 0.65% under 774.63; dispersion elevated and rising under a calm index; the scenario is contested with oil as the unmet leg; the data is fresh (oldest source 2 days). |
+| Differ | Source of risk: bonds, credit and gold do not corroborate stress, so Druckenmiller reads event risk plus fragile internals, not credit-led stress. Strength of the call: Crown's stress rule is met on a thin margin (+0.31 points) and one soft print flips it. Divergence: nine warnings, one family; Druckenmiller weights that low. |
+| What would lighten both | SPY losing the 755 put wall (1.90% below); the equal-weight/cap-weight ratio falling through its 20-day average (1.96% below); Russell 2000 losing 2808.64 (0.61% below); credit turning down while bonds keep rising; oil extending into a hot Core PCE. |
+| What would normalise both | SPY reclaiming 774.63 and clearing FOMC and Core PCE without a credit or dollar shock; Technology moving from WEAKENING to IMPROVING; oil rolling over (which makes the disinflation story clean). |
+
+**The leading story (macro scenario layer): a share of conditions met, not a probability**
+
+| Scenario | Share of conditions met | Coverage | Missing conditions |
+|---|---|---|---|
+| DISINFLATION_GOLDILOCKS | 0.83 | 1.00 | USO up (roc5 2.04%, roc20 14.32%) |
+| REFLATION | 0.77 | 1.00 | TLT up (roc5 1.87%, roc20 4.35%) |
+| DOLLAR_SQUEEZE | 0.59 | 1.00 | CPER up (roc5 0.75%, roc20 0.3%); HYG up (roc5 1.0%, roc20 0.31%) |
+| INFLATION_SHOCK | 0.50 | 1.00 | GLD down (roc5 -1.42%, roc20 -2.77%); TLT up (roc5 1.87%, roc20 4.35%) |
+| DISPERSION_REGIME | 0.50 | 1.00 | implied correlation 9.58 (28% pctl); VIX 17.52 |
+| LIQUIDITY_STRESS | 0.31 | 1.00 | GLD down (roc5 -1.42%, roc20 -2.77%); HYG up (roc5 1.0%, roc20 0.31%); implied correlation at 28% pctl; dispersion ELEVATED |
+| GROWTH_SCARE | 0.15 | 1.00 | CPER up (roc5 0.75%, roc20 0.3%); COPPER_GOLD up (roc5 2.21%, roc20 3.16%); HYG up (roc5 1.0%, roc20 0.31%); IWM up (roc5 1.6%, roc20 0.42%); CTA rates bias -0.57 |
+
+- DISINFLATION_GOLDILOCKS leads but REFLATION is within 12%. Two stories fit the same tape; treat the overlap as the honest read, not the winner.
+
+**So what for the book: help or headwind**
 
 | Held name | Help / Headwind / No read | Why |
 |---|---|---|
-| MP (Materials) | Headwind | The scenario layer implies a headwind for Materials (bias -5.00) while its grade reads bullish; copper is down 1.11% over 5 days and gold down 4.03%. |
-| V (Financials) | Help | The scenario layer implies a tailwind for Financials (bias +1.00); falling yields (long bonds +1.61% over 5 days) fit the group. |
+| V | Help (mild) | Financials (XLF) is graded HOLD, improving, with a macro tailwind (+1.10; scenario bias +1.5), 20-day move +3.46%, but the sector is exiting momentum (5-day +0.29%). The binding fact is the stop distance (2.5%), not the sector. |
+| MP | Help on paper, not being paid | Materials (XLB) is graded DEPLOY, improving and deepening, macro tailwind (+1.00; scenario bias +3.0, copper and copper/gold rising). MP is 16.4% under its 50-day with an exit case, so the sector help is not reaching the stock. |
 
-For the candidate set as a group: no help (Technology, Industrials and Communication Services are all graded TURNING with negative 20-day moves), and the Energy and Consumer Discretionary names meet a macro headwind; only Healthcare and Financials candidates sit with a neutral or tailwind read.
+**Nearest key levels (Crown): most are not prices**
+
+| What | Now | Trigger level | Distance | If it breaks |
+|---|---|---|---|---|
+| Russell 2000 flip | 2,825.90 | 2,808.64 | -0.61% | Trend-following funds turn from buyer to seller here, and they all use much the same rule, so the selling arrives together. |
+| SPY gamma flip | 769.66 | 774.63 | +0.65% | Above here dealers stop amplifying moves and start damping them, so swings should settle. |
+| QQQ call wall | 721.25 | 730.00 | +1.21% | The heaviest call positioning above the market. Rallies into it tend to meet dealer selling unless momentum forces through. |
+| QQQ gamma flip | 721.25 | 730.11 | +1.23% | Above here dealers stop amplifying moves and start damping them, so swings should settle. |
+| UST 2Y note flip | 102.00 | 103.28 | +1.26% | Trend-following funds turn from seller to buyer here. |
+| Single-stock vs index gap — elevated band | 23.90 | 23.59 | -1.28% | Above here the index is hiding what individual names are doing. It only counts as a warning while the gap is still widening. |
+| SPY call wall | 769.66 | 780.00 | +1.34% | The heaviest call positioning above the market. Rallies into it tend to meet dealer selling unless momentum forces through. |
+| SPY put wall | 769.66 | 755.00 | -1.90% | The heaviest put positioning below the market. It usually acts as a floor, and losing it removes the cushion. |
+| RSP/SPY 20-day average | 0.2826 | 0.2771 | -1.96% | The average stock crossing below its own recent trend against the index. It turns before the regime label does. |
+| UST 5Y note flip | 104.38 | 107.15 | +2.66% | Trend-following funds turn from seller to buyer here. |
+
+- The seven candidates sit four in Technology (graded TURNING; its macro tailwind of +1.04 is not being paid by price), two in Consumer Discretionary (DEPLOY, tailwind +1.18) and one in Healthcare (HOLD, macro neutral). The macro read allows entries only at their triggers, on volume, with SPY's put wall at 755 as the floor.
 
 ## §2 SECTORS
 
-| Sector | Grade | Rotation chart | Direction | 20-day | 5-day | Macro read | Room: ADVANCE / HOLD / PASS |
-|---|---|---|---|---|---|---|---|
-| Healthcare | DEPLOY | leading | deepening | +5.03% | +1.45% | no read | 1 / 1 / 0 |
-| Energy | DEPLOY | leading | deepening | +11.75% | +1.60% | headwind | 2 / 6 / 1 |
-| Consumer Staples | DEPLOY | leading | exiting | +7.56% | +0.73% | tailwind | 0 / 1 / 0 |
-| Utilities | DEPLOY | improving | exiting | +7.72% | +0.83% | tailwind | 0 / 0 / 0 |
-| Financials | HOLD | improving | exiting | +1.93% | +0.68% | tailwind | 1 / 0 / 2 |
-| Consumer Discretionary | HOLD | improving | exiting | +2.30% | +0.57% | headwind | 2 / 7 / 0 |
-| Real Estate | HOLD | improving | exiting | +2.43% | +0.97% | headwind | 0 / 1 / 2 |
-| Materials | HOLD | improving | deepening | +3.03% | +0.77% | headwind | 0 / 1 / 0 |
-| Technology | TURNING | weakening | exiting | -6.64% | -0.13% | no read | 2 / 12 / 6 |
-| Industrials | TURNING | lagging | deepening | -3.41% | -1.87% | no read | 0 / 0 / 1 |
-| Communication Services | TURNING | lagging | entering | -6.60% | -4.36% | no read | 1 / 0 / 0 |
+| ETF | Sector | Grade | Quadrant / direction | 20-day % | 5-day % | Macro overlay | Leading story agrees? | Today's names |
+|---|---|---|---|---|---|---|---|---|
+| XLE | Energy | DEPLOY | leading / exiting | +10.84 | +0.35 | neutral (+0.10) | disagrees | — |
+| XLY | Consumer Discretionary | DEPLOY | improving / exiting | +5.77 | -0.04 | tailwind (+1.18) | agrees | ADVANCE: HOG, GLBE; HOLD: CART, ETSY, BBY, RCL |
+| XLP | Consumer Staples | DEPLOY | leading / exiting | +6.48 | -0.68 | neutral (-0.10) | agrees | — |
+| XLU | Utilities | DEPLOY | leading / entering | +7.91 | +2.32 | neutral (-0.10) | agrees | — |
+| XLB | Materials | DEPLOY | improving / deepening | +5.46 | +1.07 | tailwind (+1.00) | agrees | held: MP |
+| XLV | Healthcare | HOLD (WATCH_UP) | leading / exiting | +4.95 | -0.36 | neutral (+0.44) | agrees | ADVANCE: A; HOLD: FTRE, HNGE |
+| XLF | Financials | HOLD | improving / exiting | +3.46 | +0.29 | tailwind (+1.10) | agrees | HOLD: CRBG; held: V |
+| XLRE | Real Estate | HOLD | improving / exiting | +2.66 | +0.14 | neutral (+0.14) | agrees | HOLD: APLE, DRH, HST |
+| XLK | Technology | TURNING | weakening / entering | -2.58 | +2.18 | tailwind (+1.04) | untested | ADVANCE: ESTC, TENB, IOT, DBX; HOLD: BRZE, NTSK, TEL, AAPL, DDOG, NTNX, FIVN |
+| XLI | Industrials | TURNING | improving / entering | -0.72 | +0.67 | tailwind (+0.74) | untested | HOLD: CSX, EMR |
+| XLC | Communication Services | TURNING | lagging / deepening | -7.08 | -6.00 | tailwind (+1.04) | untested | — |
 
-- (a) The table says the money is in Healthcare, Staples, Utilities and Energy (all graded DEPLOY) while Technology, Industrials and Communication Services are turning from weakness, and the macro story disagrees with Energy, Consumer Discretionary, Real Estate and Materials.
-- (b) Six of the nine ADVANCE names come from sectors graded HOLD or TURNING (CART and LTH Consumer Discretionary, ESTC and RBRK Technology, ROKU Communication Services, SLDE Financials); the uncomfortable version is that the two DEPLOY-sector picks are CNQ and OXY in Energy, where the macro read is a headwind, and DHR in Healthcare, with no macro read; held MP sits in Materials (a macro headwind) and held V in Financials.
+- What the table says about the macro read: eight of eleven sectors read bullish (DEPLOY or HOLD) and seven of those eight agree with the leading scenario, Energy being the one that disagrees; the three TURNING sectors (Technology, Industrials, Communication Services) are untested, and Technology's macro tailwind (+1.04) is not being paid by price (20-day -2.58%).
+- Where today's picks and the held book sit against it, uncomfortable version included: four of the seven advances are in Technology, a sector still graded TURNING and weakening, and the held name MP sits in a sector the scenario favours (Materials, +1.00) that is not paying it.
 
 ## §3 HELD BOOK
 
-| Name | Qty | Entry | Last close | Open P&L | Broker stop (Tiger read-only pull, 25 Oct) | AQE state | One-line read |
-|---|---|---|---|---|---|---|---|
-| **MP** | 300 | 53.00 | 38.3 | **-4,410.00** | 36.66 (stop-limit, GTC), 4.28% below | Off the scored list; momentum 25.5, structure 11, MP 0, Elder 3, bearish change of character, Valen failed-leader warning | Committee case is EXIT; no add. Void only on a close back above the 20-day average 43.40 with structure repaired. |
-| **V** | 38 | 413.26 | 407.92 | **-202.93** | 401.15 (stop-limit, GTC), 1.66% below | AQE rank 61, momentum 74.7, structure 81.0, Elder 7, above structure | Keep, no add: V is about 1.7% above its stop and every analyst exit sits below it. |
+| Name | Qty | Entry | Last close | Open P&L | Broker stop written | Last close above stop (% of last close) | AQE state | Read |
+|---|---|---|---|---|---|---|---|---|
+| V | 38 | 413.26 | 401.86 | -433.21 (-2.8%) | 391.80 (limit 390.80, GTC) | 10.06 (2.5%) | HOLD; above structure; structure 69, momentum 82 | Quality trend intact (above its rising 20- and 50-day averages), reclaim day is the next session. |
+| MP | 300 | 53.00 | 40.87 | -3,639.00 (-22.9%) | 36.66 (limit 36.66, GTC) | 4.21 (10.3%) | EXIT; bearish choch; structure 14, momentum 5 | Structure 14, momentum 5, beta 3.06, 16.4% under its 50-day: the position is 90% of the book's beta-adjusted exposure. |
 
-- **Concentration:** V is the only Financials name held; the candidate set adds SLDE (ADVANCE) and MA (PASS) in the same group, so an add to V or a buy of SLDE doubles one exposure. MP is Materials with a 30-day beta of 2.84.
+| Check | V | MP |
+|---|---|---|
+| Tiger pre-market mark (06:42Z) | 397.25, 5.45 above the stop (1.4%) | 40.89, 4.23 above the stop (10.3%) |
+| Analyst exit prices | 20-day average 388.88; 50-day average 378.73 | none named; the exit case is voided by a close over 42.73 (20-day) or, for some, 48.87 (50-day) |
+| Is the broker stop tighter than every analyst exit? | Yes. The broker stop 391.80 is tighter than every analyst exit (20-day average 388.88; 50-day average 378.73). | Yes in the only sense that can be tested: no analyst names an exit price at all, so the broker stop 36.66 is the only exit price on the table (AQE's own structural stop is 37.81, a higher price). |
+| AQE's own structural stop (information only) | 388.88 (ma20) | 37.81 (swing_low_1) |
+| Committee case | Keep, no add. The committee finds no case to add: the position is under cost (averaging down is not the plan) and Valen's reclaim is a setup, not yet met (reclaim day is the next session). | Exit case, no add. Every analyst reads an exit case (one an exit lean); none names an exit price tighter than the broker stop, which is the floor. The fundamentals consult finds no intact story in the served figures; verification goes to the PM. |
+| Earnings date | none on record in AQE | none on record in AQE |
+| Sector help or headwind | Help (mild): XLF tailwind +1.10 | Help on paper, not being paid: XLB tailwind +1.00 |
+
+- **Concentration:** total exposure $27,531.68; beta-adjusted $41,794.45 (MP $37,518.66, about 90%, beta 3.06). Sector weights: Financials 55.47%, Materials 44.53%. Loss per 1% market gap $417.94; a 3 / 5 / 7 / 10% gap costs $1,253.83 / $2,089.72 / $2,925.61 / $4,179.45.
+- **Open risk to the stops:** a further $382.28 on V and $1,263.00 on MP, about $1,645.28 from last close if both stops fill at their stop price; the book is already -4,072.21 against cost, so the loss at both stops would be about $5,717.49.
+- conditions.md carries no section for V or MP, so the analysts' exit wording is taken from their own ballots (Appendix A). Valen cannot see the broker stops (its held-stop field is empty for both names).
 
 ## §4 REPEAT WATCH
 
-| Name | Today | Mark | Plain reading |
-|---|---|---|---|
-| CART | ADVANCE | FRESH | first time the committee has advanced this name. |
-| CNQ | ADVANCE | FRESH | first time the committee has advanced this name. |
-| ESTC | ADVANCE | FRESH | first time the committee has advanced this name. |
-| OXY | ADVANCE | FRESH | first time the committee has advanced this name. |
-| SLDE | ADVANCE | RETURNED | advanced before (2026-10-19) and again today; +5.47% since the first call |
-| ROKU | ADVANCE | STANDING | 2nd consecutive advance at the same entry (-0.92% since 2026-10-23, inside its 1.29% risk). Not a new idea -- the same one, unacted. |
-| DHR | ADVANCE | FRESH | first time the committee has advanced this name. |
-| LTH | ADVANCE | STANDING | 2nd consecutive advance at the same entry (-0.14% since 2026-10-23, inside its 3.36% risk). Not a new idea -- the same one, unacted. |
-| RBRK | ADVANCE | FRESH | first time the committee has advanced this name. |
-| BOX | HOLD | REVERSED | advanced on 2026-10-23 and does not today -- now HOLD-FOR-CONDITIONS. The committee changed its mind and this is the note saying so. |
-| BRZE | HOLD | REVERSED | advanced on 2026-10-23 and does not today -- now HOLD-FOR-CONDITIONS. The committee changed its mind and this is the note saying so. |
-| KSS | HOLD | REVERSED | advanced on 2026-10-23 and does not today -- now HOLD-FOR-CONDITIONS. The committee changed its mind and this is the note saying so. |
-| V | PASS | REVERSED | advanced on 2026-10-23 and does not today -- now PASS. The committee changed its mind and this is the note saying so. |
-| EQNR | HOLD | NONE | advanced 10-20; not advanced today (total move since the first call +5.79%) |
-| EOG | HOLD | NONE | advanced 10-15; not advanced today (total move since the first call +5.73%) |
-| CNC | HOLD | NONE | advanced 10-15, 10-21; not advanced today (total move since the first call +0.01%) |
-| M | HOLD | NONE | advanced 10-19; not advanced today (total move since the first call +0.42%) |
-| LIN | HOLD | NONE | advanced 10-20; not advanced today (total move since the first call +1.07%) |
-| MA | PASS | NONE | advanced 10-15, 10-21; not advanced today (total move since the first call +3.38%) |
+**Today's ADVANCE names against the committee's own memory** (repeat_marks.json)
 
-- **Left the room entirely** (advanced 23 Oct, absent today): ETSY, AMGN, XOM, CHD, KDP, MTCH, CCEP, RXO, ELV.
-- **Downgraded since their last appearance:** BOX, BRZE and KSS (ADVANCE to HOLD) and V (ADVANCE to PASS) since 23 Oct; EOG, EQNR, CNC, MA, M and LIN advanced earlier this month and are HOLD or PASS today.
-- The full repeat-watch table, byte-for-byte, with all 301 repeat-flagged tickers, is in Appendix B.
+| Ticker | Mark | Advanced on (2026) | Last close | Own stop distance | Plain reading |
+|---|---|---|---|---|---|
+| HOG | STANDING | 10-27, 10-28 | 29.44 | 3.33% | 2nd consecutive advance at the same entry (+2.05% since 2026-10-27, inside its 3.33% risk). Not a new idea -- the same one, unacted. |
+| ESTC | STANDING | 10-26, 10-27, 10-28 | 105.52 | 4.05% | 3rd consecutive advance at the same entry (+3.02% since 2026-10-26, inside its 4.05% risk). Not a new idea -- the same one, unacted. |
+| TENB | FRESH | 10-28 | 48.65 | 4.83% | first time the committee has advanced this name. |
+| IOT | STANDING | 10-27, 10-28 | 43.51 | 4.53% | 2nd consecutive advance at the same entry (-2.55% since 2026-10-27, inside its 4.53% risk). Not a new idea -- the same one, unacted. |
+| DBX | STANDING | 10-27, 10-28 | 36.93 | 4.06% | 2nd consecutive advance at the same entry (-2.12% since 2026-10-27, inside its 4.06% risk). Not a new idea -- the same one, unacted. |
+| GLBE | FRESH | 10-28 | 41.55 | 3.66% | first time the committee has advanced this name. |
+| A | RETURNED | 10-21, 10-22, 10-28 | 177.49 | 2.78% | advanced before (2026-10-21, 2026-10-22) and again today; +2.59% since the first call |
+
+**Previously advanced, now HOLD**
+
+| Ticker | Advanced on (2026) | Today | Last close | Price since the first call |
+|---|---|---|---|---|
+| FTRE | 10-22 | HOLD | 24.43 | +1.54% |
+| CART | 10-26 | HOLD | 60.08 | +6.45% |
+| HNGE | 10-21 | HOLD | 113.90 | +5.94% |
+| ETSY | 10-23 | HOLD | 87.66 | -3.48% |
+| BRZE | 10-23 | HOLD | 45.78 | -0.17% |
+
+**Left the room (advanced on 27 Oct, not in today's room at all)**
+
+| Ticker | Advanced on (2026) | Today |
+|---|---|---|
+| CVE | 10-20, 10-27 | not in the room |
+| CNQ | 10-26, 10-27 | not in the room |
+| TEAM | 10-27 | flagged in the near-miss table, not voted |
+| TRV | 10-27 | not in the room |
+
+- The fifth name that left the room is named in the open items. V advanced five times between 15 and 23 Oct and is PASS on any add today.
+- The full repeat-watch table, every name flagged on the window, is pasted verbatim in Appendix B.
 
 ## §5 QS LIST
 
-| Ticker | QS signal | Odds | Conviction |
-|---|---|---|---|
-| — none — | QS list is empty: 0 names emitted | — | — |
+| Item | Value |
+|---|---|
+| QS list today (names with an emitted QS signal) | 0 — the list is empty |
+| Names scored by the QS engine | 230 (status live) |
+| Regime | T2V1 / NORMAL, GREEN: "Quiet, steady, unhurried climb"; the average stock hits its target 75.3% of the time; action: Normal selectivity. |
+| Closest, signal WATCH (none in the room) | TDC, LIN, WSC |
 
-- QS status is live and the engine scored all 301 names, so an empty list is a quiet read, not an outage. Market base rate 75.3% to touch +2 ATR in 20 sessions (quiet, steady, unhurried climb).
-- Across today's room: 18 names read SKIP (vetoed) and 32 read NONE; the per-name read is in section 7.
+| Ticker | Signal | Conviction | Odds of +2 ATR in 20 sessions | Market average | Edge | Price → +2 ATR target |
+|---|---|---|---|---|---|---|
+| TDC | WATCH | none | 55% | 75.3% | -20.3 points | 34.52 → 36.57 |
+| LIN | WATCH | none | 55% | 75.3% | -20.3 points | 508.65 → 523.42 |
+| WSC | WATCH | none | 55% | 75.3% | -20.3 points | 17.65 → 19.18 |
 
 ## §6 PM LENS
 
-| Ticker | Sector | Checks | Lenses strong | SC-mom | Elder | Structure | QS edge | Failed check |
-|---|---|---|---|---|---|---|---|---|
-| **CART** | Consumer Discretionary | **5/6** | 2/6 | 86.2 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **CME** | Financials | **5/6** | 2/6 | 79.3 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **ED** | Utilities | **5/6** | 1/6 | 77.8 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **CVX** | Energy | **5/6** | 2/6 | 77.6 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **KSS** | Consumer Discretionary | **5/6** | 3/6 | 76.4 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **HNGE** | Healthcare | **5/6** | 3/6 | 75.5 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **OXY** | Energy | **5/6** | 4/6 | 74.9 | 10.0 | BULLISH_BOS | +-23.3pp | lens |
-| **SLDE** | Financials | **5/6** | 3/6 | 74.4 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **NDAQ** | Financials | **5/6** | 2/6 | 74.2 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **BBY** | Consumer Discretionary | **5/6** | 2/6 | 73.3 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **EOG** | Energy | **5/6** | 3/6 | 73.2 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **HOG** | Consumer Discretionary | **5/6** | 3/6 | 73.0 | 10.0 | BULLISH_BOS | +-23.3pp | lens |
-| **ISRG** | Healthcare | **5/6** | 2/6 | 72.3 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **AWK** | Utilities | **5/6** | 3/6 | 70.0 | 10.0 | BULLISH_BOS | +-23.3pp | lens |
-| **IFF** | Materials | **5/6** | 3/6 | 68.9 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **WTRG** | Utilities | **5/6** | 3/6 | 68.7 | 10.0 | BULLISH_BOS | +-23.3pp | lens |
-| **PGR** | Financials | **5/6** | 2/6 | 68.3 | 10.0 | BULLISH_BOS | +-23.3pp | lens |
-| **VG** | Energy | **5/6** | 4/6 | 67.8 | 9.0 | BULLISH_BOS | +-23.3pp | lens |
-| **ZION** | Financials | **5/6** | 1/6 | 66.6 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens |
-| **LTH** | Consumer Discretionary | **5/6** | 5/6 | 64.8 | 10.0 | BULLISH_BOS | +-23.3pp | lists |
-| **VNO** | Real Estate | **5/6** | 4/6 | 60.8 | 9.0 | BULLISH_BOS | +-23.3pp | lists |
-| **COLD** | Real Estate | **5/6** | 4/6 | 53.9 | 9.0 | BULLISH_BOS | +-23.3pp | lists |
-| **PNC** | Financials | **5/6** | 4/6 | 45.6 | 9.0 | BULLISH_BOS | +-23.3pp | lists |
-| **KR** | Consumer Staples | **5/6** | 2/6 | 72.2 | 10.0 | ABOVE_STRUCTURE | +-24.3pp | lens |
-| **DUK** | Utilities | **5/6** | 2/6 | 66.3 | 10.0 | ABOVE_STRUCTURE | +-24.3pp | lens |
-| **KIM** | Real Estate | **5/6** | 2/6 | 65.3 | 10.0 | ABOVE_STRUCTURE | +-24.3pp | lens |
-| **BN** | Financials | **5/6** | 4/6 | 53.6 | 10.0 | BULLISH_BOS | +-24.3pp | lists |
+| Ticker | Sector | Checks | Lenses strong | SC-mom | Elder | Structure | QS edge | Failed check | Committee saw it? |
+|---|---|---|---|---|---|---|---|---|---|
+| **CART** | Consumer Discretionary | **5/6** | 1/6 | 88.3 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **CNP** | Utilities | **5/6** | 1/6 | 82.0 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **APLE** | Real Estate | **5/6** | 2/6 | 79.0 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **UPS** | Industrials | **5/6** | 1/6 | 78.7 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **HOG** | Consumer Discretionary | **5/6** | 1/6 | 78.4 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **NDAQ** | Financials | **5/6** | 1/6 | 77.9 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **FTRE** | Healthcare | **5/6** | 3/6 | 76.6 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **VSTS** | Industrials | **5/6** | 2/6 | 76.4 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **HNGE** | Healthcare | **5/6** | 3/6 | 75.6 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **KBR** | Industrials | **5/6** | 1/6 | 75.5 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **FTV** | Industrials | **5/6** | 1/6 | 75.0 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | yes — deliberated |
+| **PPG** | Materials | **5/6** | 2/6 | 72.8 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **LNG** | Energy | **5/6** | 3/6 | 72.0 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **LTH** | Consumer Discretionary | **5/6** | 1/6 | 70.6 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **EVRG** | Utilities | **5/6** | 1/6 | 70.4 | 10.0 | ABOVE_STRUCTURE | +-23.3pp | lens | nominated, cut by cap |
+| **COLB** | Financials | **5/6** | 2/6 | 65.9 | 10.0 | BULLISH_BOS | +-23.3pp | lens | nominated, cut by cap |
+| **PNC** | Financials | **5/6** | 4/6 | 50.2 | 9.0 | BULLISH_BOS | +-23.3pp | lists | nominated, cut by cap |
+| **LMT** | Industrials | **5/6** | 2/6 | 71.6 | 10.0 | ABOVE_STRUCTURE | +-24.3pp | lens | nominated, cut by cap |
+| **AMRZ** | Materials | **5/6** | 3/6 | 68.2 | 10.0 | BULLISH_BOS | +-24.3pp | lens | nominated, cut by cap |
+| **EPRT** | Real Estate | **5/6** | 4/6 | 54.8 | 10.0 | BULLISH_BOS | +-24.3pp | lists | nominated, cut by cap |
 
-- **UNSEEN (flagged at 5 of 6 checks, not in the room):** CME, ED, HNGE, NDAQ, ISRG, AWK, IFF, WTRG, PGR, ZION, VNO, COLD, PNC, KR, DUK, KIM, BN.
-- In the room: CART, CVX, KSS, OXY, SLDE, BBY, EOG, HOG, VG, LTH. The QS edge column prints "+-23.3pp"; it is minus 23.3 points (a formatting defect in the AQE text).
+- UNSEEN: none (zero names passed the PM's own checks and drew zero nominations).
+- Declared gap: the last column labels twelve names "nominated, cut by cap" (UPS, VSTS, KBR, PPG, LNG, LTH, EVRG, COLB, PNC, LMT, AMRZ, EPRT). None was nominated by any voice; they are door-openers flagged and not seated (R17), listed in the near-miss section. Eight names are "yes — deliberated" (CART, CNP, APLE, HOG, NDAQ, FTRE, HNGE, FTV).
 
 ## §7 CARDS
 
-One compact card per ADVANCE and HOLD name; PASS names get one line each. The bracket row is render-only and never a reason (R1); QS odds measure a +2 ATR touch in 20 sessions, not the structural target.
+One compact card per ADVANCE and HOLD name; PASS names get a short row each. Brackets are render-only and never a reason.
 
-#### CART — ADVANCE (3) · Momentum
+### HOG — ADVANCE (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 54.43 (3.56% under last close; 6.12% under the buy price) |
-| Tape | last close 56.44 · +0.0% from the 52-week high · +32.1 points vs SPY over 20 days · volume 4.99x normal |
-| Structure | score 89.5 · ABOVE_STRUCTURE · averages ROLLING · 2 of 6 lenses strong |
-| Effort | money flow 100.0 · MP 97.0 · Elder 10.0 · trend strength (ADX) 30.81 |
-| Fundamentals | Consult neutral · 29.7 times earnings · revenue +10.8% · EPS +1% · net margin 12.0% · free-cash yield 8.8% · debt-to-equity 0.01 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 28.46 (3.33% below last close 29.44; 1 ATR under the last close (fallback)); targets 29.63 / 30.49 / 31.58; reward-to-risk to the second target 1.07. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 29.44; traded 1.21x its normal volume; 0.0% under the 52-week high; 20-day return +17.9 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 86.3; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 27.07 / 27.04 / 23.84; pivot 28.86 (price +2.01% from it). |
+| Effort | Momentum score 87 (accelerating); SC momentum 78.4; Elder impulse 10; flow 90; energy 56. |
+| Fundamentals | turnaround, CONTRADICTS (consult, no vote; ratios as decimals): sales growth -0.138 after -0.111; EPS growth -0.185 after -0.302; free cash flow yield -0.044; net margin 0.049. Shrinking and cash-negative; P/E 17.4 and dividend yield 0.026 do not cure it. |
+| QS | QS signal SKIP (vetoed); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Closed at a new 52-week high (56.44) on 5.0x normal volume, 32 points ahead of SPY over 20 days; AQE rank 1.
-- **Against:** The volume may be news-driven and the institutional-money read does not confirm it; some analysts' own too-late price (57.95) already sits under the buy price.
-- **Condition:** Buy above 57.98 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 59.72 · dead on a daily close under 52.68
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind; theme E Commerce graded HOLD (improving)
+- **For:** Leader printing a new 52-week high on expanding volume; the buy is a push through 29.63, not a retest.
+- **Against:** The fundamentals consult contradicts it: sales down 13.8%, earnings per share down 18.5%, free cash flow yield -4.4%.
+- **Condition:** Buy above 29.63 on at least 1.4x volume, holding above VWAP. Too late past 30.30. Dead on a daily close under 27.04.
+- **Context:** Consumer Discretionary (XLY) graded DEPLOY, improving and exiting, macro overlay tailwind (+1.18); no earnings date on record; fundamentals consult: turnaround, contradicts.
 
-#### CNQ — ADVANCE (3) · Momentum
+### ESTC — ADVANCE (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 53.70 (2.47% under last close; 3.24% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 55.06 · +0.0% from the 52-week high · +17.6 points vs SPY over 20 days · volume 1.08x normal |
-| Structure | score 83.2 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 84.2 · MP 89.0 · Elder 7.0 · trend strength (ADX) 29.19 |
-| Fundamentals | Consult neutral · 13.6 times earnings · revenue +23.9% · EPS +81% · net margin 24.9% · free-cash yield 6.1% · debt-to-equity 0.37 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 101.25 (4.05% below last close 105.52; 1 ATR under the last close (fallback)); targets 108.00 / 115.95 / 126.05; reward-to-risk to the second target 2.44. Gates: ATR not met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 105.52; traded 0.68x its normal volume; 0.7% under the 52-week high; 20-day return +18.1 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 78.9; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 96.32 / 91.28 / 66.82; pivot 101.39 (price +4.07% from it). |
+| Effort | Momentum score 77 (accelerating); SC momentum 78.1; Elder impulse 10; flow 79; energy 77. |
+| Fundamentals | fast grower, NEUTRAL (consult, no vote; ratios as decimals): sales growth 0.173, 0.170, 0.186: steady 17 percent. P/E 27.3, but net margin 0.208 vs operating margin -0.015: profit is not operating. Read on free cash flow yield 0.034. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New 52-week high (55.06), 17.6 points ahead of SPY; the energy name the strength analysts would carry if only one is carried.
-- **Against:** Ordinary volume (1.08x), so the buy waits for volume; a dissenting analyst wants a dip and reclaim first; the same oil bet as OXY.
-- **Condition:** Buy above 55.50 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 56.49 · dead on a daily close under 52.31
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **For:** Software leader at a 52-week high; the buy is a close above 106.29 on volume, with earnings 16 sessions out.
+- **Against:** Volume was only 0.68x normal at the new high and Valen's high-tight-flag grade failed (8 of 11).
+- **Condition:** Buy above 106.29 on 1.2 to 1.4x volume, holding above VWAP (or above yesterday's high 107.04). Too late past 110.80. Dead on a daily close under 96.32.
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Enterprise Software graded DEPLOY; earnings 19 Nov (16 sessions); fundamentals consult: fast grower, neutral.
 
-#### ESTC — ADVANCE (3) · Momentum
+### TENB — ADVANCE (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 98.18 (4.15% under last close; 4.38% under the buy price) |
-| Tape | last close 102.43 · +0.0% from the 52-week high · +17.7 points vs SPY over 20 days · volume 1.11x normal |
-| Structure | score 70.5 · BULLISH_BOS · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 73.7 · MP 77.0 · Elder 10.0 · trend strength (ADX) 36.44 |
-| Fundamentals | Consult neutral · 27.3 times earnings · revenue +17.3% · EPS +436% · net margin 20.8% · free-cash yield 3.4% · debt-to-equity 0.46 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 46.30 (4.83% below last close 48.65; 1 ATR under the last close (fallback)); targets 49.17 / 52.62 / 57.01; reward-to-risk to the second target 1.69. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 48.65; traded 0.89x its normal volume; 0.0% under the 52-week high; 20-day return +38.3 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 88.4; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 40.28 / 37.11 / 28.34; pivot 42.69 (price +13.96% from it). |
+| Effort | Momentum score 75 (accelerating); SC momentum 74.8; Elder impulse 10; flow 79; energy 61. |
+| Fundamentals | stalwart, NEUTRAL (consult, no vote; ratios as decimals): sales growth 0.110 after 0.127, 0.169; P/E 712.3 on net margin 0.006, but free cash flow yield 0.055; debt/equity 2.13. Cash earnings fair, GAAP earnings absent, equity thin. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Cleared 101.39 to close at 102.43, 17.7 points ahead of SPY, in Enterprise Software, leading on both the week and the month.
-- **Against:** Volume only 1.11x, so the break is not yet volume-proven; Valen's high-tight-flag grade is FAILED; the fundamentals consult is mixed.
-- **Condition:** Buy above 102.68 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 104.43 · dead on a daily close under 99.27
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Enterprise Software graded DEPLOY (leading)
+- **Door:** seated for strength; no voice nominated it.
+- **For:** Cybersecurity leader at a new high, seated for strength; no voice nominated it. Narrow case.
+- **Against:** The new high came on 0.89x volume with two bearish divergences, and the P/E is 712.
+- **Condition:** Committee: buy above 49.17 on at least 1.4x volume, holding above VWAP; too late past 50.65; dead on a daily close under 47.26. PM standing order: cyber is not chased (see the day's plan).
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Cybersecurity graded DEPLOY; no earnings date on record; fundamentals consult: stalwart, neutral.
 
-#### OXY — ADVANCE (3) · Momentum
+### IOT — ADVANCE (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 62.54 (2.54% under last close; 3.73% under the buy price) |
-| Tape | last close 64.17 · -3.1% from the 52-week high · +14.3 points vs SPY over 20 days · volume 1.26x normal |
-| Structure | score 81.1 · BULLISH_BOS · averages ALIGNED · 4 of 6 lenses strong |
-| Effort | money flow 86.8 · MP 80.0 · Elder 10.0 · trend strength (ADX) 21.42 |
-| Fundamentals | Consult neutral · 9.6 times earnings · revenue -1.9% · EPS -35% · net margin 28.8% · free-cash yield 8.3% · debt-to-equity 0.35 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 41.54 (4.53% below last close 43.51; 1 ATR under the last close (fallback)); targets 44.21 / 45.32 / 47.07; reward-to-risk to the second target 0.92. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 43.51; traded 0.84x its normal volume; 3.8% under the 52-week high; 20-day return +13.9 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 80.0; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 41.77 / 40.40 / 34.13; pivot 44.21 (price -1.58% from it). |
+| Effort | Momentum score 76 (accelerating); SC momentum 73.9; Elder impulse 7; flow 68; energy 74. |
+| Fundamentals | fast grower, CONTRADICTS (consult, no vote; ratios as decimals): sales growth 0.296 after 0.333, 0.437 fits; P/E 276.3, free cash flow yield 0.010, net margin 0.049 do not. Price far ahead of earnings; debt/equity 0.043 is clean. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Reclaim day (U&R MET, trendline 63.04), structure recently broke above its last swing high, four of six lenses strong.
-- **Against:** Relative strength is the weakest of the energy leaders (67th percentile) and earnings fell three years running (-35%, -39%, -69%).
-- **Condition:** Buy above 64.96 (a close, not a touch) · too late above 66.91 · dead on a daily close under 62.68
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **Door:** in the room on a reserved reclaim seat; no voice nominated it. Reclaim: Dipped below the 9-day average (42.99) on the last session and closed back above it. Reclaim day.
+- **For:** Reclaim-seat name in a stacked uptrend; the buy is a close above 44.21 on at least 1.4x volume.
+- **Against:** No lens corroboration, volume 0.84x, Valen's full undercut-and-rally checklist FAILED (6 of 9), and the fundamentals consult contradicts it.
+- **Condition:** Buy above 44.21 on at least 1.4x volume (a close above 45.00, yesterday's high, is the stronger version). Too late past 46.42. Dead on a daily close under 41.77.
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); earnings 3 Dec (26 sessions); fundamentals consult: fast grower, contradicts.
 
-#### SLDE — ADVANCE (3) · Momentum
+### DBX — ADVANCE (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 27.71 (2.94% under last close; 3.42% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 28.55 · +0.0% from the 52-week high · +25.1 points vs SPY over 20 days · volume 1.43x normal |
-| Structure | score 70.9 · ABOVE_STRUCTURE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 81.6 · MP 93.0 · Elder 10.0 · trend strength (ADX) 31.08 |
-| Fundamentals | Consult backs it · 6.2 times earnings · revenue +36.5% · EPS +195% · net margin 40.0% · free-cash yield 31.0% · debt-to-equity 0.03 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 35.43 (4.06% below last close 36.93; structural level); targets 38.17 / 40.15 / 42.61; reward-to-risk to the second target 2.15. Gates: ATR met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 36.93; traded 1.24x its normal volume; 2.4% under the 52-week high; 20-day return +12.2 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 86.3; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 35.43 / 35.10 / 28.86; pivot 38.17 (price -3.25% from it). |
+| Effort | Momentum score 64 (accelerating); SC momentum 72.1; Elder impulse 7; flow 67; energy 73. |
+| Fundamentals | slow grower, NEUTRAL (consult, no vote; ratios as decimals): P/E 20.8, free cash flow yield 0.116, sales growth -0.011 after 0.019, 0.076. Cash yield is the case; sales stalled, dividend yield 0. debt/equity -1.82 voids the equity test. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New 52-week high (28.55) on 1.43x volume, 25 points ahead of SPY; the fundamentals consult backs it (6.2 times earnings, revenue +36.5%, net margin 40%).
-- **Against:** Revenue growth is fading (80% and 93% in the two prior years), margins look peak-like, and it doubles up on Financials next to held V.
-- **Condition:** Buy above 28.69 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 29.55 · dead on a daily close under 25.31
-- **Context:** Financials: graded HOLD, improving and exiting; macro read tailwind
+- **For:** Leader coiled under its 38.17 pivot after a reclaim of its 9-day average; the buy is the clear of 38.17 on volume.
+- **Against:** The AQE lens read found nothing to corroborate it, and sales growth is unproven at -1.1%.
+- **Condition:** Buy above 38.17 on at least 1.4x volume, holding above VWAP (a trade through 37.95 puts it in play). Too late past 39.09. Dead on a daily close under 35.43.
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Enterprise Software graded DEPLOY; no earnings date on record; fundamentals consult: slow grower, neutral.
 
-#### ROKU — ADVANCE (3) · Pullback
+### GLBE — ADVANCE (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 156.53 (1.29% under last close; 1.46% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 158.58 · -0.9% from the 52-week high · +5.3 points vs SPY over 20 days · volume 1.54x normal |
-| Structure | score 61.1 · RANGE · averages ROLLING · 2 of 6 lenses strong |
-| Effort | money flow 88.2 · MP 60.0 · Elder 7.0 · trend strength (ADX) 21.74 |
-| Fundamentals | Consult contradicts it · 66.7 times earnings · revenue +15.2% · EPS +167% · net margin 6.8% · free-cash yield 3.9% · debt-to-equity 0.17 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 40.03 (3.66% below last close 41.55; 1 ATR under the last close (fallback)); targets 42.39 / 43.99 / 46.74; reward-to-risk to the second target 1.61. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 41.55; traded 1.52x its normal volume; 1.9% under the 52-week high; 20-day return +3.0 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 57.9; broke out to a new high; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 40.07 / 39.40 / 35.61; pivot 40.81 (price +1.81% from it). |
+| Effort | Momentum score 43 (accelerating); SC momentum 67.5; Elder impulse 7; flow 71; energy 87. |
+| Fundamentals | fast grower, FITS (consult, no vote; ratios as decimals): sales growth 0.278 after 0.321, 0.393; net margin 0.139; debt/equity 0.028; free cash flow yield 0.042. Fits the category. Watch P/E 45.7 and the three-year deceleration. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Coiled 0.9% under its 52-week high on 1.54x volume with the averages in order; several analysts put it up independently.
-- **Against:** The fundamentals consult contradicts (66.7 times earnings on 15% revenue growth, 5% operating margin) and structure is still a range with no break yet.
-- **Condition:** Buy above 158.85 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 160.27 · dead on a daily close under 157.83
-- **Context:** Communication Services: graded TURNING, lagging and entering; macro read no read; theme Gaming Streaming graded HOLD (improving)
+- **For:** Broke its 40.81 pivot on 1.52x volume; the buy is above 40.81 on volume, or a quiet retest of 40.81 that holds.
+- **Against:** Structure 57.9, only 3.0 points ahead of SPY over 20 days, and Valen's undercut-and-rally grade FAILED (6 of 9).
+- **Condition:** Buy above 40.81 on at least 1.4x volume, or a retest of 40.81 that holds. Too late past 42.85. Dead on a daily close under 40.05.
+- **Context:** Consumer Discretionary (XLY) graded DEPLOY, improving and exiting, macro overlay tailwind (+1.18); earnings 18 Nov (15 sessions); fundamentals consult: fast grower, fits the category.
 
-#### DHR — ADVANCE (3) · Pullback
+### A — ADVANCE (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 223.27 (3.14% under last close; 3.20% under the buy price) |
-| Tape | last close 230.5 · -4.8% from the 52-week high · +4.2 points vs SPY over 20 days · volume 0.8x normal |
-| Structure | score 63.2 · BULLISH_BOS · averages ALIGNED · 4 of 6 lenses strong |
-| Effort | money flow 69.7 · MP 55.0 · Elder 7.0 · trend strength (ADX) 31.37 |
-| Fundamentals | Consult contradicts it · 37.7 times earnings · revenue +2.9% · EPS -5% · net margin 16.9% · free-cash yield 3.5% · debt-to-equity 0.49 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 172.55 (2.78% below last close 177.49; 1 ATR under the last close (fallback)); targets 179.10 / 181.69 / 184.98; reward-to-risk to the second target 0.85. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 177.49; traded 1.06x its normal volume; 0.1% under the 52-week high; 20-day return +0.7 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 84.2; broke out to a new high; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 172.09 / 162.54 / 135.57; pivot 177.05 (price +0.25% from it). |
+| Effort | Momentum score 50 (decelerating); SC momentum 67.3; Elder impulse 7; flow 57; energy 78. |
+| Fundamentals | stalwart, CONTRADICTS (consult, no vote; ratios as decimals): P/E 34.6 on EPS growth 0.03 and sales growth 0.067; free cash flow yield 0.029, dividend yield 0.006. Good margins (net margin 0.195), but a stalwart priced for growth it lacks. |
+| QS | QS signal SKIP (vetoed); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Reclaim day: dipped under its 9-day average (226.85) and closed back above it inside a rising stack of averages (U&R MET).
-- **Against:** Volume 0.8x; earnings down three years (-5%, -17%, -34%) at 37.7 times earnings, so the fundamentals consult contradicts; Valen's delayed episodic-pivot grade is FAILED.
-- **Condition:** Buy above 230.66 (a close, not a touch; price above VWAP) · too late above 235.27 · dead on a daily close under 225.60
-- **Context:** Healthcare: graded DEPLOY, leading and deepening; macro read no read
+- **For:** Reclaim day on a rising trend with the highest lens agreement in the room; the buy is a close above 179.10.
+- **Against:** It only just beats SPY (0.69 points over 20 days), momentum is 50, and the fundamentals consult contradicts it (P/E 34.6 on 3% earnings growth).
+- **Condition:** Buy above 179.10, holding above VWAP. Too late past 182.36. Dead on a daily close under 172.09.
+- **Context:** Healthcare (XLV) graded HOLD, leading and exiting, macro overlay neutral (+0.44); earnings 23 Nov (18 sessions); fundamentals consult: stalwart, contradicts.
 
-#### LTH — ADVANCE (3) · Pullback
+### CART — HOLD (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 40.52 (3.36% under last close; 3.71% under the buy price) |
-| Tape | last close 41.93 · -8.3% from the 52-week high · +6.4 points vs SPY over 20 days · volume 1.66x normal |
-| Structure | score 51.6 · BULLISH_BOS · averages ROLLING · 5 of 6 lenses strong |
-| Effort | money flow 81.6 · MP 48.0 · Elder 10.0 · trend strength (ADX) 16.6 |
-| Fundamentals | Consult neutral · 22.3 times earnings · revenue +14.3% · EPS +122% · net margin 13.0% · free-cash yield -1.6% · debt-to-equity 1.29 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 57.58 (4.16% below last close 60.08; 1 ATR under the last close (fallback)); targets 62.00 / 67.43 / 74.34; reward-to-risk to the second target 2.94. Gates: ATR met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 60.08; traded 2.53x its normal volume; 1.3% under the 52-week high; 20-day return +37.4 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 92.6; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 49.49 / 48.62 / 43.08; pivot 52.68 (price +14.05% from it). |
+| Effort | Momentum score 97 (accelerating); SC momentum 88.3; Elder impulse 10; flow 100; energy 68. |
+| Fundamentals | stalwart, FITS (consult, no vote; ratios as decimals): debt/equity 0.015, free cash flow yield 0.088, sales growth 0.108 (0.110, 0.192 prior), net margin 0.120. Cash earnings run ahead of P/E 29.7; EPS growth only 0.01. |
+| QS | QS signal SKIP (vetoed); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Five of six lenses strong; broke out of a tight base on 1.66x volume with price on its 50-day average (41.75).
-- **Against:** 8.3% under its 52-week high, structure score 51.6, the 20-day average still under the 50-day; cash-negative and debt-funded.
-- **Condition:** Buy above 42.08 (a close, not a touch; price above VWAP) · too late above 42.86 · dead on a daily close under 40.52
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
+- **For (what it is):** Rank 1 on the AQE list, momentum 97, volume 2.53x at the highs; the hold is for a trigger: a close above 60.81 on 1.4x volume.
+- **Against:** A 21% ten-day run on 2.53x volume, which some analysts read as climactic; the plan's own limits are what bind.
+- **Condition:** Buy above 60.81 on at least 1.4x volume, holding above VWAP. Too late past 62.06. Dead on a daily close under 58.83.
+- **Context:** Consumer Discretionary (XLY) graded DEPLOY, improving and exiting, macro overlay tailwind (+1.18); theme E Commerce graded HOLD; no earnings date on record; fundamentals consult: stalwart, fits the category.
 
-#### RBRK — ADVANCE (3) · Pullback
+### BRZE — HOLD (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 122.32 (4.99% under last close; 6.51% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 128.74 · +0.0% from the 52-week high · +19.0 points vs SPY over 20 days · volume 1.43x normal |
-| Structure | score 70.9 · BULLISH_BOS · averages ALIGNED · 4 of 6 lenses strong |
-| Effort | money flow 56.6 · MP 50.0 · Elder 8.0 · trend strength (ADX) 18.91 |
-| Fundamentals | Consult contradicts it · -101.4 times earnings · revenue +48.5% · EPS +76% · net margin -16.5% · free-cash yield 1.2% · debt-to-equity -2.27 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 43.99 (3.91% below last close 45.78; 1 ATR under the last close (fallback)); targets 45.95 / 52.39 / 60.58; reward-to-risk to the second target 3.69. Gates: ATR not met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 45.78; traded 0.97x its normal volume; 0.2% under the 52-week high; 20-day return +97.0 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 86.7; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 33.29 / 30.27 / 24.35; pivot 35.02 (price +30.73% from it). |
+| Effort | Momentum score 100 (accelerating); SC momentum 85.7; Elder impulse 7; flow 88; energy 73. |
+| Fundamentals | fast grower, CONTRADICTS (consult, no vote; ratios as decimals): sales growth 0.244 after 0.258, 0.327 decelerating; net margin -0.136, operating margin -0.134, P/E -44.5, free cash flow yield 0.016. No earnings; distance above the 20-day average (%) 51.23 is price, not business. |
+| QS | QS signal SKIP (vetoed); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New 52-week high on 1.43x volume, 19 points ahead of SPY, in a theme leading on both the week and the month.
-- **Against:** 20.1% above its 20-day average in a pullback-lane name; does not beat the market on down days; net margin -16.5% (the fundamentals consult contradicts); one bearish divergence reading lit.
-- **Condition:** Buy above 130.84 (a close, not a touch; price above VWAP) · too late above 131.74 · dead on a daily close under 127.90
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Cybersecurity graded DEPLOY (leading)
+- **Door:** seated for strength; no voice nominated it.
+- **For (what it is):** Seated for strength; no voice nominated it. Momentum 100 and a 20-day return 97 points ahead of SPY, but Valen grades a Parabolic WARNING (3 of 4) and its high-tight-flag failed; the trigger is a close above 45.87 on 1.4x volume.
+- **Against:** Valen's Parabolic WARNING (3 of 4) and a failed high-tight-flag, a 58% ten-day run on 0.97x volume, and the fundamentals consult contradicts it.
+- **Condition:** Buy above 45.87 on at least 1.4x volume, holding above VWAP. Too late past 47.25. Dead on a daily close under 45.77 (33.29 at the widest).
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Enterprise Software graded DEPLOY; earnings 8 Dec (29 sessions); fundamentals consult: fast grower, contradicts.
 
-#### HLT — HOLD (2) · Pullback
+### NTSK — HOLD (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 342.20 (2.13% under last close) |
-| Tape | last close 349.63 · -3.5% from the 52-week high · +12.8 points vs SPY over 20 days · volume 1.29x normal |
-| Structure | score 75.8 · ABOVE_STRUCTURE · averages ALIGNED · 1 of 6 lenses strong |
-| Effort | money flow 88.2 · MP 89.0 · Elder 7.0 · trend strength (ADX) 40.94 |
-| Fundamentals | Consult contradicts it · 50.8 times earnings · revenue +7.7% · EPS -0% · net margin 12.7% · free-cash yield 2.6% · debt-to-equity -2.22 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 24.84 (5.01% below last close 26.15; 1 ATR under the last close (fallback)); targets 26.43 / 28.61 / 31.39; reward-to-risk to the second target 1.88. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 26.15; traded 1.24x its normal volume; 0.0% under the 52-week high; 20-day return +50.7 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 68.4; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 20.54 / 17.70 / 13.04; pivot 21.30 (price +22.77% from it). |
+| Effort | Momentum score 97 (accelerating); SC momentum 79.6; Elder impulse 10; flow 87; energy 68. |
+| Fundamentals | fast grower, CONTRADICTS (consult, no vote; ratios as decimals): net margin -0.918, operating margin -0.947, debt/equity 4.67, beta 2.989; sales growth 0.317 after 0.323. Growth bought with losses; survival liquidity (cash) not served. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** 3.5% under its high, 12.8 points ahead of SPY, structure score 75.8.
-- **Against:** Relative strength only 52nd percentile and the 50-day still under the 100-day; the fundamentals consult contradicts (50.8 times earnings on flat EPS).
-- **Condition:** Dip to 332.71 (20-day average) and reclaim · too late above 355.00 · dead on a daily close under 329.00
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
+- **Door:** seated for strength; no voice nominated it.
+- **For (what it is):** Seated for strength; no voice nominated it. Momentum 97 and relative-strength rank 99 at a new high, but Valen grades a Parabolic WARNING (2 of 4) and its high-tight-flag failed (7 of 12); the trigger is a close above 26.43 on 1.4x volume.
+- **Against:** Valen's Parabolic WARNING (2 of 4), a failed high-tight-flag, two bearish divergences, and the fundamentals consult contradicts it (negative net margin, debt-to-equity 4.7).
+- **Condition:** Buy above 26.43 on at least 1.4x volume, holding above VWAP. Too late past 27.22. Dead on a daily close under 24.84.
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); earnings 11 Dec (32 sessions); fundamentals consult: fast grower, contradicts.
 
-#### BOX — HOLD (2) · Momentum
+### CSX — HOLD (MOMENTUM lane)
 
-- **Seating:** Seated for strength; no voice nominated it.
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 42.07 (2.57% under last close; 2.66% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 43.18 · +0.0% from the 52-week high · +39.0 points vs SPY over 20 days · volume 1.0x normal |
-| Structure | score 87.4 · ABOVE_STRUCTURE · averages ALIGNED · 1 of 6 lenses strong |
-| Effort | money flow 69.7 · MP 100.0 · Elder 7.0 · trend strength (ADX) 44.74 |
-| Fundamentals | Consult neutral · 61.0 times earnings · revenue +8.0% · EPS -57% · net margin 9.4% · free-cash yield 6.4% · debt-to-equity 0.50 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 51.24 (1.97% below last close 52.27; 1 ATR under the last close (fallback)); targets 53.60 / 55.90 / 58.82; reward-to-risk to the second target 3.52. Gates: ATR met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 52.27; traded 0.90x its normal volume; 1.8% under the 52-week high; 20-day return +10.7 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 84.2; broke out to a new high; the averages are still tangled; 20- / 50- / 200-day averages 48.42 / 48.77 / 45.36; pivot 52.15 (price +0.23% from it). |
+| Effort | Momentum score 84 (accelerating); SC momentum 79.0; Elder impulse 10; flow 88; energy 63. |
+| Fundamentals | cyclical, CONTRADICTS (consult, no vote; ratios as decimals): P/E 27.1 on EPS growth -0.140, after -0.022, -0.062: three straight FY declines; sales growth -0.031; free cash flow yield 0.033. Growth multiple on shrinking earnings; no trough evidence served. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New 52-week high, 39.0 points ahead of SPY over 20 days, structure score 87.4.
-- **Against:** Volume ordinary (1.0x) so the buy needs volume to confirm; the fundamentals consult is mixed (61.0 times earnings on 8% growth).
-- **Condition:** Buy above 43.22 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 44.52 · dead on a daily close under 37.36
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Enterprise Software graded DEPLOY (leading)
+- **For (what it is):** Break of structure 0.23% over its 52.15 pivot on only 0.9x volume with the 20-day average still under the 50-day; it lacks volume and a close above 53.23.
+- **Against:** A break without volume, a half-met trend gate, and the fundamentals consult contradicts it (earnings down three years running).
+- **Condition:** No shared buy. Candidates: above 53.23 on at least 1.2x volume, or a pullback to the 20-day average 48.42. Too late past 54.76. Dead on a daily close under 51.64 for the breakout buy (47.91 for the pullback buy).
+- **Context:** Industrials (XLI) graded TURNING, improving and entering, macro overlay tailwind (+0.74); theme Infra Construction graded TURNING; no earnings date on record; fundamentals consult: cyclical, contradicts.
 
-#### CVX — HOLD (2) · Momentum
+### APLE — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 228.43 (2.05% under last close; 2.05% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 233.21 · +0.0% from the 52-week high · +15.5 points vs SPY over 20 days · volume 1.11x normal |
-| Structure | score 76.8 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 84.2 · MP 93.0 · Elder 10.0 · trend strength (ADX) 29.45 |
-| Fundamentals | Consult neutral · 22.3 times earnings · revenue -4.6% · EPS -32% · net margin 9.9% · free-cash yield 5.9% · debt-to-equity 0.20 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 18.25 (1.99% below last close 18.62; 1 ATR under the last close (fallback)); targets 18.66 / 19.40 / 20.33; reward-to-risk to the second target 2.11. Gates: ATR not met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 18.62; traded 1.11x its normal volume; 0.0% under the 52-week high; 20-day return +13.7 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 80.0; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 16.98 / 16.36 / 14.56; pivot 16.70 (price +11.50% from it). |
+| Effort | Momentum score 94 (decelerating); SC momentum 79.0; Elder impulse 10; flow 84; energy 63. |
+| Fundamentals | slow grower, NEUTRAL (consult, no vote; ratios as decimals): dividend yield 0.053, free cash flow yield 0.078, sales growth -0.013, EPS growth -0.169. P/E is the wrong yardstick for a REIT; FFO, payout not served. debt/equity 0.036 unverified. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New high, 15.5 points ahead of SPY, structure score 76.8.
-- **Against:** Conviction stayed moderate; the same oil bet as CNQ and OXY; each analyst who backed it named a different trigger.
-- **Condition:** No shared trigger; one analyst buys above 233.21 (volume at least 1.4x normal) · or a dip to 215.37 (20-day average) and reclaim · too late above 240.75 · dead on a daily close under 215.37
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **For (what it is):** Strongest lodging chart (new high, momentum 94) but no dip to buy and earnings on 5 Nov (6 sessions); lodging counts as one bet with DRH and HST. It lacks a pullback to 16.98 or a close above 18.66.
+- **Against:** No dip exists at a new high, earnings are 6 sessions out, and the lodging cluster is one bet.
+- **Condition:** A pullback to the 20-day average 16.98 that holds (earnings 5 Nov, 6 sessions out), or a close above 18.66 on at least 1.2x volume. Too late past 19.22. Dead on a daily close under 16.98 (16.36 at the widest).
+- **Context:** Real Estate (XLRE) graded HOLD, improving and exiting, macro overlay neutral (+0.14); earnings 5 Nov (6 sessions); fundamentals consult: slow grower, neutral.
 
-#### EQNR — HOLD (2) · Momentum
+### DRH — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 47.47 (2.77% under last close; 3.28% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 48.82 · +0.0% from the 52-week high · +17.2 points vs SPY over 20 days · volume 1.56x normal |
-| Structure | score 80.0 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 94.7 · MP 75.0 · Elder 10.0 · trend strength (ADX) 17.44 |
-| Fundamentals | Consult neutral · 13.3 times earnings · revenue +3.6% · EPS -38% · net margin 7.9% · free-cash yield 8.1% · debt-to-equity 0.75 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 13.79 (2.34% below last close 14.12; 1 ATR under the last close (fallback)); targets 14.16 / 14.69 / 15.37; reward-to-risk to the second target 1.73. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 14.12; traded 1.17x its normal volume; 0.0% under the 52-week high; 20-day return +12.5 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 84.2; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 13.11 / 12.68 / 11.24; pivot 12.91 (price +9.37% from it). |
+| Effort | Momentum score 94 (decelerating); SC momentum 78.5; Elder impulse 7; flow 79; energy 64. |
+| Fundamentals | cyclical, NEUTRAL (consult, no vote; ratios as decimals): sales growth -0.008; EPS growth 1.44 after -0.50, -0.23: earnings swing with the lodging cycle. dividend yield 0.032 (thinnest of three hotel REITs), free cash flow yield 0.057, debt/equity 0.785. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New high on 1.56x volume, 17.2 points ahead of SPY.
-- **Against:** One more expression of the oil bet; earnings sliding (-38%, -21%, -57%).
-- **Condition:** Buy above 49.08 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 50.28 · dead on a daily close under 44.11
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **For (what it is):** Cleanest lodging stack at a new high but no dip behind its pullback tag; lodging counts as one bet. It lacks a pullback to 13.11 or a close above 14.16 on 1.2x volume.
+- **Against:** Late and unconfirmed: 9.4% over its pivot on 1.17x volume, and the lodging cluster is one bet.
+- **Condition:** Buy above 14.16 on at least 1.2x volume, holding above VWAP, or a pullback to the 20-day average 13.11. Too late past 14.58. Dead on a daily close under 13.11 (12.95 at the widest).
+- **Context:** Real Estate (XLRE) graded HOLD, improving and exiting, macro overlay neutral (+0.14); no earnings date on record; fundamentals consult: cyclical, neutral.
 
-#### VRNS — HOLD (2) · Pullback
+### FTRE — HOLD (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 47.48 (2.86% under last close; 5.63% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 48.88 · -22.4% from the 52-week high · +7.2 points vs SPY over 20 days · volume 0.69x normal |
-| Structure | score 71.6 · RANGE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 88.2 · MP 48.0 · Elder 7.0 · trend strength (ADX) 13.08 |
-| Fundamentals | Consult contradicts it · -40.1 times earnings · revenue +13.2% · EPS -31% · net margin -20.5% · free-cash yield 2.2% · debt-to-equity 1.16 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 23.31 (4.58% below last close 24.43; 1 ATR under the last close (fallback)); targets 24.84 / 26.41 / 28.42; reward-to-risk to the second target 1.77. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 24.43; traded 1.09x its normal volume; 0.0% under the 52-week high; 20-day return +23.0 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 74.1; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 21.83 / 19.95 / 15.61; pivot 23.51 (price +3.91% from it). |
+| Effort | Momentum score 96 (accelerating); SC momentum 76.6; Elder impulse 10; flow 79; energy 63. |
+| Fundamentals | turnaround, CONTRADICTS (consult, no vote; ratios as decimals): net margin -0.032, P/E -26.3, EPS growth -1.95 after -90.75; debt/equity 2.13 (debt about 68 percent of capital, my arithmetic); sales growth 0.010. Not a clean-balance-sheet turnaround. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Cybersecurity leader, 96.6th percentile relative strength, 7.2 points ahead of SPY.
-- **Against:** 22% under its high with all five oscillators showing bearish divergence on quiet volume (0.69x); one buy price (50.31) is above another analyst's too-late price (49.96); loss-making and levered.
-- **Condition:** No shared trigger; one analyst buys above 50.31 (volume at least 1.4x normal; price above VWAP) · or a dip to 48.24 (20-day average) and reclaim · too late above 49.96 · dead on a daily close under 46.32
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Cybersecurity graded DEPLOY (leading)
+- **For (what it is):** Leader at a new high (relative-strength rank 98, momentum 96) with three bearish divergences; it lacks a close above 24.52, and the fundamentals consult contradicts it (turnaround with heavy debt).
+- **Against:** Three bearish divergences at a new high, volume 1.09x, and a negative net margin with heavy debt.
+- **Condition:** Buy above 24.52, holding above VWAP. Too late past 24.69. Dead on a daily close under 22.95 (19.95 at the widest).
+- **Context:** Healthcare (XLV) graded HOLD, leading and exiting, macro overlay neutral (+0.44); no earnings date on record; fundamentals consult: turnaround, contradicts.
 
-#### CDW — HOLD (2) · Momentum
+### HNGE — HOLD (MOMENTUM lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 159.58 (3.35% under last close; 3.35% under the buy price) |
-| Tape | last close 165.11 · +0.0% from the 52-week high · +23.4 points vs SPY over 20 days · volume 1.14x normal |
-| Structure | score 89.3 · ABOVE_STRUCTURE · averages ALIGNED · 1 of 6 lenses strong |
-| Effort | money flow 67.1 · MP 97.0 · Elder 10.0 · trend strength (ADX) 30.09 |
-| Fundamentals | Consult contradicts it · 19.7 times earnings · revenue +6.8% · EPS +1% · net margin 4.6% · free-cash yield 5.4% · debt-to-equity 2.44 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 109.65 (3.73% below last close 113.90; 1 ATR under the last close (fallback)); targets 114.41 / 119.03 / 124.90; reward-to-risk to the second target 1.21. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 113.90; traded 0.66x its normal volume; 0.0% under the 52-week high; 20-day return +18.9 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 73.7; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 103.90 / 96.48 / 66.02; pivot 96.66 (price +17.84% from it). |
+| Effort | Momentum score 85 (accelerating); SC momentum 75.6; Elder impulse 10; flow 79; energy 67. |
+| Fundamentals | fast grower, NEUTRAL (consult, no vote; ratios as decimals): sales growth 0.506 after 0.334 (above 30 percent, the consult unsustainability marker); net margin 0.151, debt/equity 0.017, P/E 84.6. 2023 growth entries read 0: history thin. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New high, 23.4 points ahead of SPY, structure score 89.3.
-- **Against:** Money-flow and lens reads do not confirm; volume ordinary (1.14x); no EPS growth in three years and debt-to-equity 2.44.
-- **Condition:** No shared trigger; one analyst buys above 165.11 (volume at least 1.4x normal) · or a dip to 144.60 (20-day average) and reclaim · too late above 168.94 · dead on a daily close under 154.99
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read
+- **For (what it is):** Elite momentum (relative-strength rank 99, momentum 85) at a new high on only 0.66x volume; it lacks volume: the trigger is a close above 114.41 on 1.4x.
+- **Against:** A new high on 0.66x volume, and the vendor zero-fills its 2023 growth row (IPO in 2025).
+- **Condition:** Buy above 114.41 on at least 1.4x volume, holding above VWAP. Too late past 116.54. Dead on a daily close under 103.90 (96.48 at the widest).
+- **Context:** Healthcare (XLV) graded HOLD, leading and exiting, macro overlay neutral (+0.44); no earnings date on record; fundamentals consult: fast grower, neutral.
 
-#### NTSK — HOLD (2) · Momentum
+### HST — HOLD (PULLBACK lane)
 
-- **Seating:** Seated for strength; no voice nominated it.
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 23.01 (5.23% under last close; 5.23% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 24.28 · +0.0% from the 52-week high · +38.9 points vs SPY over 20 days · volume 1.3x normal |
-| Structure | score 68.4 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 78.9 · MP 93.0 · Elder 10.0 · trend strength (ADX) 35.39 |
-| Fundamentals | Consult contradicts it · -12.8 times earnings · revenue +31.7% · EPS -58% · net margin -91.8% · free-cash yield -0.7% · debt-to-equity 4.67 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 24.70 (2.06% below last close 25.22; 1 ATR under the last close (fallback)); targets 25.41 / 25.71 / 26.55; reward-to-risk to the second target 0.94. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 25.22; traded 1.00x its normal volume; 1.2% under the 52-week high; 20-day return +11.7 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 76.8; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 23.52 / 22.82 / 21.83; pivot 22.90 (price +10.13% from it). |
+| Effort | Momentum score 90 (decelerating); SC momentum 75.5; Elder impulse 7; flow 79; energy 61. |
+| Fundamentals | stalwart, NEUTRAL (consult, no vote; ratios as decimals): sales growth 0.076, 0.070, 0.082 steady; dividend yield 0.068, P/E 16.8, free cash flow yield 0.060, debt/equity 0.884. Best-behaved hotel REIT; (growth + yield) over P/E proxy 0.86, short of 1.0. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Highest relative strength in the room (99.4th percentile), +103% in 63 days.
-- **Against:** Operating margin -94.7%, debt-to-equity 4.67 (the fundamentals consult contradicts); two bearish divergence readings.
-- **Condition:** No shared trigger; one analyst buys above 24.28 (volume at least 1.4x normal; price above VWAP) · or a dip to 19.73 (20-day average) and reclaim · too late above 25.13 · dead on a daily close under 19.73
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read
+- **For (what it is):** Third lodging name (one bet with APLE and DRH): no pivot yet and the 50-day under the 100-day; it lacks a close above 25.25.
+- **Against:** No pivot, a 50-day under the 100-day, and momentum decelerating.
+- **Condition:** No shared trigger; the closest is above 25.25 on at least 1.0x volume, holding above VWAP. Too late past 25.77. Dead on a daily close under 24.23 (22.82 at the widest).
+- **Context:** Real Estate (XLRE) graded HOLD, improving and exiting, macro overlay neutral (+0.14); no earnings date on record; fundamentals consult: stalwart, neutral.
 
-#### ZS — HOLD (2) · Momentum
+### ETSY — HOLD (MOMENTUM lane)
 
-- **Seating:** Seated for strength; no voice nominated it.
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 243.42 (4.6% under last close; 4.75% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 255.15 · -24.1% from the 52-week high · +33.6 points vs SPY over 20 days · volume 1.37x normal |
-| Structure | score 76.8 · ABOVE_STRUCTURE · averages ALIGNED · 1 of 6 lenses strong |
-| Effort | money flow 81.6 · MP 83.0 · Elder 10.0 · trend strength (ADX) 23.65 |
-| Fundamentals | Consult neutral · -654.2 times earnings · revenue +25.4% · EPS -44% · net margin -1.9% · free-cash yield 2.0% · debt-to-equity 0.71 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 84.15 (4.00% below last close 87.66; 1 ATR under the last close (fallback)); targets 87.97 / 91.12 / 97.90; reward-to-risk to the second target 0.99. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 87.66; traded 1.21x its normal volume; 3.5% under the 52-week high; 20-day return +25.8 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 87.4; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 80.35 / 78.12 / 67.80; pivot 76.44 (price +14.68% from it). |
+| Effort | Momentum score 97 (flat); SC momentum 73.3; Elder impulse 7; flow 59; energy 62. |
+| Fundamentals | slow grower, CONTRADICTS (consult, no vote; ratios as decimals): sales growth 0.027 and EPS growth -0.36 yet P/E 40.3; debt/equity -2.21 (negative equity). free cash flow yield 0.079 is the only plus; dividend yield 0. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Cybersecurity leader, 33.6 points ahead of SPY over 20 days.
-- **Against:** 24% under its 52-week high, near GAAP breakeven; three bearish divergence readings; earnings 24 Nov.
-- **Condition:** No shared trigger; one analyst buys above 255.55 · or a dip to 216.25 (20-day average) and reclaim · too late above 263.22 · dead on a daily close under 216.25
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Cybersecurity graded DEPLOY (leading)
+- **Door:** in the room on a reserved reclaim seat; no voice nominated it. Reclaim: Dipped below the 9-day average (85.35) on the last session and closed back above it. Reclaim day.
+- **For (what it is):** In the room on a reserved reclaim seat; no voice nominated it: it dipped under its 9-day average (85.35) on the last session and closed back above. Momentum 97 and 3.5% under its high; it lacks a close above 90.82 on 1.4x volume.
+- **Against:** The fundamentals consult contradicts it (P/E 40 on earnings down 36%), the reclaim is a one-bar read, and the lens feed is blank so nothing corroborates it.
+- **Condition:** Buy above 90.82 on at least 1.4x volume. Too late past 92.04. Dead on a daily close under 83.57 (80.35 at the widest).
+- **Context:** Consumer Discretionary (XLY) graded DEPLOY, improving and exiting, macro overlay tailwind (+1.18); theme E Commerce graded HOLD; no earnings date on record; fundamentals consult: slow grower, contradicts.
 
-#### TENB — HOLD (2) · Momentum
+### TEL — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 42.31 (5.11% under last close; 5.39% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 44.59 · +0.0% from the 52-week high · +34.6 points vs SPY over 20 days · volume 1.42x normal |
-| Structure | score 88.4 · ABOVE_STRUCTURE · averages ALIGNED · 0 of 6 lenses strong |
-| Effort | money flow 73.7 · MP 75.0 · Elder 10.0 · trend strength (ADX) 13.89 |
-| Fundamentals | Consult contradicts it · 712.3 times earnings · revenue +11.0% · EPS +3% · net margin 0.6% · free-cash yield 5.5% · debt-to-equity 2.12 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 219.30 (2.68% below last close 225.35; 1 ATR under the last close (fallback)); targets 225.76 / 230.42 / 236.36; reward-to-risk to the second target 0.84. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 225.35; traded 2.23x its normal volume; 9.5% under the 52-week high; 20-day return +5.3 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 63.2; broke out to a new high; the averages are still mending; 20- / 50- / 200-day averages 215.05 / 210.09 / 213.06; pivot 223.52 (price +0.82% from it). |
+| Effort | Momentum score 48 (decelerating); SC momentum 71.1; Elder impulse 9; flow 91; energy 72. |
+| Fundamentals | cyclical, NEUTRAL (consult, no vote; ratios as decimals): sales growth 0.079 after -0.012, -0.015: cycle turning. P/E 21.9, debt/equity 0.425, free cash flow yield 0.056 are sound; EPS growth -0.40 then 0.72 is noisy. |
+| QS | QS signal SKIP (vetoed); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Cybersecurity at a new 52-week high on 1.42x volume, 34.6 points ahead of SPY.
-- **Against:** 712 times earnings, so earnings cannot value it (the fundamentals consult contradicts); the too-late price (44.82) is only 0.2% above the buy price.
-- **Condition:** Buy above 44.72 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 44.82 · dead on a daily close under 42.69
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Cybersecurity graded DEPLOY (leading)
+- **For (what it is):** Break of structure on 2.23x volume but still under its 200-day average (213.06 against a 50-day of 210.09); it lacks repair: a dip to the 20-day (215.05) on light volume.
+- **Against:** Still under its 200-day, Valen reads its 21-day average as not rising, and relative strength lags.
+- **Condition:** A pullback to the 20-day average 215.05 (or the 200-day 213.06) on volume at most 0.8x, holding above VWAP. Too late past 230.11. Dead on a daily close under 210.09.
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); no earnings date on record; fundamentals consult: cyclical, neutral.
 
-#### BBY — HOLD (2) · Pullback
+### BBY — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 96.75 (3.12% under last close; 3.81% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 99.87 · +0.0% from the 52-week high · +11.8 points vs SPY over 20 days · volume 1.42x normal |
-| Structure | score 77.9 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 86.8 · MP 64.0 · Elder 10.0 · trend strength (ADX) 16.99 |
-| Fundamentals | Consult neutral · 16.6 times earnings · revenue +0.4% · EPS +17% · net margin 3.0% · free-cash yield 8.4% · debt-to-equity 1.30 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 95.42 (3.13% below last close 98.50; 1 ATR under the last close (fallback)); targets 100.58 / 105.18 / 111.04; reward-to-risk to the second target 2.17. Gates: ATR not met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 98.50; traded 0.86x its normal volume; 1.4% under the 52-week high; 20-day return +10.3 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 69.5; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 91.11 / 89.75 / 74.78; pivot 96.53 (price +2.04% from it). |
+| Effort | Momentum score 64 (accelerating); SC momentum 67.2; Elder impulse 7; flow 74; energy 61. |
+| Fundamentals | slow grower, NEUTRAL (consult, no vote; ratios as decimals): P/E 16.6, dividend yield 0.038, free cash flow yield 0.084 fit a slow grower; sales growth 0.004 after -0.044, -0.061, net margin 0.030 and debt/equity 1.30 are thin. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New 52-week high on 1.42x volume, 11.8 points ahead of SPY.
-- **Against:** A pullback-lane name 11.9% above its 20-day average, so no dip to buy; the too-late price (101.36) is 0.8% above the buy price; earnings 24 Nov.
-- **Condition:** Buy above 100.58 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 101.36 · dead on a daily close under 96.53
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
+- **For (what it is):** Through its pivot by 2.0% on only 0.86x volume with earnings in 19 sessions; it lacks 1.2x volume on a close above 98.73.
+- **Against:** A break on 0.86x volume with earnings 19 sessions out.
+- **Condition:** Buy above 98.73 on at least 1.2x volume, holding above VWAP (pullback area 91.11 to 94.11; earnings 19 sessions out). Too late past 101.36. Dead on a daily close under 94.99 (89.75 at the widest).
+- **Context:** Consumer Discretionary (XLY) graded DEPLOY, improving and exiting, macro overlay tailwind (+1.18); earnings 24 Nov (19 sessions); fundamentals consult: slow grower, neutral.
 
-#### EOG — HOLD (2) · Momentum
+### RCL — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 159.05 (2.44% under last close; 3.67% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 163.03 · +0.0% from the 52-week high · +17.6 points vs SPY over 20 days · volume 1.16x normal |
-| Structure | score 84.2 · ABOVE_STRUCTURE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 73.7 · MP 87.0 · Elder 10.0 · trend strength (ADX) 23.8 |
-| Fundamentals | Consult neutral · 12.6 times earnings · revenue -3.1% · EPS -19% · net margin 25.7% · free-cash yield 7.7% · debt-to-equity 0.26 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 280.75 (5.13% below last close 295.92; structural level); targets 298.83 / 333.39 / 349.06; reward-to-risk to the second target 2.47. Gates: ATR met, reward-to-risk met, risk ceiling met. Information only. |
+| Tape | Last close 295.92; traded 2.17x its normal volume; 15.0% under the 52-week high; 20-day return +12.8 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 71.6; already trending, no fresh breakout; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 280.75 / 271.27 / 286.21; pivot 289.17 (price +2.33% from it). |
+| Effort | Momentum score 64 (decelerating); SC momentum 67.0; Elder impulse 9; flow 47; energy 86. |
+| Fundamentals | cyclical, NEUTRAL (consult, no vote; ratios as decimals): EPS growth 0.43 at P/E 17.5, but sales growth 0.088 after 0.186, 0.572: recovery growth fading. debt/equity 1.98, free cash flow yield 0.019 (capital heavy), beta 1.822. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Energy leader at a new high, 17.6 points ahead of SPY, structure score 84.2; advanced on 15 Oct.
-- **Against:** Moderate conviction because it is the same oil bet; earnings fell three years running (-19%, -13%, -2%); the too-late price (166.49) is 0.8% above the buy price.
-- **Condition:** Buy above 165.11 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 166.49 · dead on a daily close under 154.16
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **For (what it is):** Reclaim-day bounce under its 200-day average (50-day 271.27 under 286.21); it lacks a repaired stack: the plan is a dip to the 20-day (280.75) on light volume.
+- **Against:** The 50-day is under the 200-day and relative strength lags: a bounce in repair, not a pullback in an uptrend.
+- **Condition:** A pullback to the 20-day average 280.75 on volume at most 0.8x, holding above VWAP (wait area 280.75 to 312.85). Too late past 303.38. Dead on a daily close under 271.27.
+- **Context:** Consumer Discretionary (XLY) graded DEPLOY, improving and exiting, macro overlay tailwind (+1.18); theme Travel Leisure graded HOLD; no earnings date on record; fundamentals consult: cyclical, neutral.
 
-#### HOG — HOLD (2) · Momentum
+### CRBG — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 27.96 (3.45% under last close; 3.95% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 28.96 · -0.5% from the 52-week high · +15.3 points vs SPY over 20 days · volume 1.24x normal |
-| Structure | score 70.5 · BULLISH_BOS · averages ROLLING · 3 of 6 lenses strong |
-| Effort | money flow 86.8 · MP 71.0 · Elder 10.0 · trend strength (ADX) 18.84 |
-| Fundamentals | Consult contradicts it · 17.4 times earnings · revenue -13.8% · EPS -18% · net margin 4.9% · free-cash yield -4.4% · debt-to-equity 0.74 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 34.36 (2.83% below last close 35.36; 1 ATR under the last close (fallback)); targets 35.57 / 36.73 / 38.12; reward-to-risk to the second target 1.37. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 35.36; traded 0.74x its normal volume; 0.7% under the 52-week high; 20-day return +4.0 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 66.3; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 34.50 / 33.97 / 29.74; pivot 35.57 (price -0.59% from it). |
+| Effort | Momentum score 49 (accelerating); SC momentum 64.1; Elder impulse 8; flow 58; energy 79. |
+| Fundamentals | stalwart, NEUTRAL (consult, no vote; ratios as decimals): P/E 20.6, priceToBookRatioTTM 1.5, dividend yield 0.028; EPS growth -1.18 after 1.17, -0.86: earnings sign-flip. free cash flow yield 0.118 not meaningful for an insurer. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Fresh breakout 0.35% over its pivot, 15.3 points ahead of SPY.
-- **Against:** Ordinary volume (1.24x); sales and earnings both shrinking (the fundamentals consult contradicts); no valid structural bracket.
-- **Condition:** No shared trigger; one analyst buys above 29.11 (volume at least 1.4x normal) · or a dip to 26.63 (20-day average) and reclaim · too late above 29.60 · dead on a daily close under 28.86
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
+- **For (what it is):** Quiet near its high with a reclaim of its 9-day average (34.68); it lacks a trigger: a close above 35.44.
+- **Against:** Relative strength reads laggard, momentum is 49 and Valen's undercut-and-rally grade failed (5 of 9) despite the reclaim.
+- **Condition:** Buy above 35.44 (pullback area 34.50). Too late past 36.23. Dead on a daily close under 34.60 (33.60 at the widest).
+- **Context:** Financials (XLF) graded HOLD, improving and exiting, macro overlay tailwind (+1.10); no earnings date on record; fundamentals consult: stalwart, neutral.
 
-#### DBX — HOLD (2) · Pullback
+### EMR — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 36.72 (2.93% under last close; 3.80% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 37.83 · +0.0% from the 52-week high · +18.5 points vs SPY over 20 days · volume 0.92x normal |
-| Structure | score 93.7 · RANGE · averages ROLLING · 2 of 6 lenses strong |
-| Effort | money flow 61.8 · MP 71.0 · Elder 10.0 · trend strength (ADX) 16.18 |
-| Fundamentals | Consult backs it · 20.8 times earnings · revenue -1.1% · EPS +33% · net margin 17.5% · free-cash yield 11.6% · debt-to-equity -1.82 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 161.94 (2.60% below last close 166.27; 1 ATR under the last close (fallback)); targets 166.35 / 172.64 / 180.32; reward-to-risk to the second target 1.47. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 166.27; traded 0.79x its normal volume; 0.0% under the 52-week high; 20-day return +5.0 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 71.6; broke out to a new high; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 161.19 / 156.40 / 146.71; pivot 165.24 (price +0.62% from it). |
+| Effort | Momentum score 42 (decelerating); SC momentum 63.7; Elder impulse 9; flow 59; energy 77. |
+| Fundamentals | stalwart, CONTRADICTS (consult, no vote; ratios as decimals): P/E 36.2 against sales growth 0.030 and EPS growth 0.18 after -0.08, -0.19; free cash flow yield 0.037, dividend yield 0.013. Stalwart multiple well above stalwart growth. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Tight base at the 52-week high, structure score 93.7, 18.5 points ahead of SPY.
-- **Against:** Quiet volume (0.92x) and low conviction; the fundamentals consult backs it on cash, not growth; the too-late price (38.26) is only 0.2% above the buy price.
-- **Condition:** Buy above 38.17 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 38.26 · dead on a daily close under 37.62
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Enterprise Software graded DEPLOY (leading)
+- **For (what it is):** New high on a break of structure on only 0.79x volume; it lacks volume confirmation and a close above 166.60, and the fundamentals consult contradicts it.
+- **Against:** A new high on 0.79x volume with momentum 42, and the fundamentals consult contradicts it.
+- **Condition:** Buy above 166.60 (pullback area 161.19 to 165.24). Too late past 170.93. Dead on a daily close under 163.08 (156.40 at the widest).
+- **Context:** Industrials (XLI) graded TURNING, improving and entering, macro overlay tailwind (+0.74); theme Infra Power graded TURNING; no earnings date on record; fundamentals consult: stalwart, contradicts.
 
-#### DVN — HOLD (2) · Pullback
+### AAPL — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 49.88 (2.94% under last close; 3.50% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 51.39 · -1.3% from the 52-week high · +10.7 points vs SPY over 20 days · volume 1.52x normal |
-| Structure | score 76.8 · None · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 94.7 · MP 58.0 · Elder 9.0 · trend strength (ADX) 17.73 |
-| Fundamentals | Consult contradicts it · 12.1 times earnings · revenue +7.8% · EPS -8% · net margin 16.7% · free-cash yield 3.0% · debt-to-equity 0.28 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 340.74 (1.83% below last close 347.10; 1 ATR under the last close (fallback)); targets 348.15 / 351.73 / 355.27; reward-to-risk to the second target 0.73. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 347.10; traded 0.98x its normal volume; 0.3% under the 52-week high; 20-day return +4.7 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 71.6; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 340.07 / 331.06 / 295.28; pivot 348.15 (price -0.30% from it). |
+| Effort | Momentum score 49 (accelerating); SC momentum 63.7; Elder impulse 9; flow 51; energy 81. |
+| Fundamentals | stalwart, NEUTRAL (consult, no vote; ratios as decimals): net margin 0.276, sales growth 0.064, EPS growth 0.226, but P/E 39.7 and free cash flow yield 0.027. Quality stalwart at a full price; P/E history not served, so no rotation trigger. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Reclaim day: dipped under its 9-day average (49.67) and closed back above it (U&R MET).
-- **Against:** The sixth energy name; relative strength 59th percentile; free-cash yield 3.0% and earnings down three years (the fundamentals consult contradicts).
-- **Condition:** Buy above 51.69 (a close, not a touch; price above VWAP) · too late above 52.72 · dead on a daily close under 49.25
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **For (what it is):** Tightest base among the passers, at its high after a reclaim of its 9-day average (343.68), but momentum is only 49 and Valen grades its theme (Mag7) AVOID; it lacks a close above 347.78.
+- **Against:** Momentum 49, volume 0.98x, four bearish divergences, and Valen grades the Mag7 theme AVOID.
+- **Condition:** Buy above 347.78, holding above VWAP (pullback area 340.07). Too late past 354.14. Dead on a daily close under 344.97 (331.06 at the widest).
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Mag7 graded AVOID; no earnings date on record; fundamentals consult: stalwart, neutral.
 
-#### LNG — HOLD (2) · Pullback
+### DDOG — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 290.73 (2.66% under last close; 2.66% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 298.67 · +0.0% from the 52-week high · +12.7 points vs SPY over 20 days · volume 1.44x normal |
-| Structure | score 80.0 · ABOVE_STRUCTURE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 80.3 · MP 64.0 · Elder 10.0 · trend strength (ADX) 10.37 |
-| Fundamentals | Consult neutral · 22.1 times earnings · revenue +24.4% · EPS +70% · net margin 13.1% · free-cash yield 11.4% · debt-to-equity 4.29 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 266.52 (5.09% below last close 280.82; 1 ATR under the last close (fallback)); targets 292.72 / 300.68 / 327.18; reward-to-risk to the second target 1.39. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 280.82; traded 0.98x its normal volume; 4.2% under the 52-week high; 20-day return +3.9 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 62.9; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 272.61 / 249.92 / 196.32; pivot 300.68 (price -6.61% from it). |
+| Effort | Momentum score 55 (decelerating); SC momentum 63.5; Elder impulse 8; flow 57; energy 76. |
+| Fundamentals | fast grower, CONTRADICTS (consult, no vote; ratios as decimals): sales growth 0.277, 0.261, 0.271: category fits. Price does not: P/E 564.8, free cash flow yield 0.011, net margin 0.045. Every served growth proxy puts PEG far above 2.0; gate itself untested. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** New high, 12.7 points ahead of SPY, structure score 80.0.
-- **Against:** Trend strength thin (ADX 10.4) and a later expression of the oil bet; cash-rich but debt-to-equity 4.29.
-- **Condition:** No shared trigger; one analyst buys above 298.67 (volume at least 1.4x normal) · or a dip to 279.22 (20-day average) and reclaim · too late above 303.04 · dead on a daily close under 279.22
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind
+- **For (what it is):** Leader off a pullback (relative-strength rank 97) in a group Valen shows leading, but no pivot has cleared and no buy price is shared; the closest is 282.80.
+- **Against:** Relative strength reads laggard today, no pivot cleared, and Valen's undercut-and-rally grade failed (7 of 9).
+- **Condition:** No shared buy; the closest is above 282.80 on at least 1.2x volume, holding above VWAP (pullback area 272.61). Too late past 288.97. Dead on a daily close under 274.00 (249.92 at the widest).
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Enterprise Software graded DEPLOY; no earnings date on record; fundamentals consult: fast grower, contradicts.
 
-#### CNC — HOLD (2) · Pullback
+### NTNX — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 68.01 (3.08% under last close; 4.64% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 70.17 · -1.5% from the 52-week high · +15.0 points vs SPY over 20 days · volume 1.05x normal |
-| Structure | score 75.8 · BULLISH_BOS · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 59.2 · MP 72.0 · Elder 7.0 · trend strength (ADX) 18.61 |
-| Fundamentals | Consult neutral · -6.7 times earnings · revenue +19.4% · EPS -315% · net margin -2.6% · free-cash yield 25.9% · debt-to-equity 0.71 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 70.53 (3.04% below last close 72.74; 1 ATR under the last close (fallback)); targets 74.42 / 75.98 / 78.63; reward-to-risk to the second target 1.47. Gates: ATR not met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 72.74; traded 0.96x its normal volume; 2.5% under the 52-week high; 20-day return +3.1 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 60.0; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 71.37 / 69.25 / 52.18; pivot 75.98 (price -4.26% from it). |
+| Effort | Momentum score 50 (accelerating); SC momentum 60.5; Elder impulse 8; flow 58; energy 71. |
+| Fundamentals | stalwart, NEUTRAL (consult, no vote; ratios as decimals): sales growth 0.124 after 0.181, 0.153. P/E 13.1 is flattered: net margin 0.528 vs operating margin 0.098. Read on free cash flow yield 0.043. debt/equity 2.16. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Healthcare insurer 1.5% under its high, 15.0 points ahead of SPY.
-- **Against:** Thin clear of its pivot on ordinary volume (1.05x); earnings swung to a loss (EPS -315%).
-- **Condition:** Buy above 71.32 (a close, not a touch) · too late above 72.42 · dead on a daily close under 69.63
-- **Context:** Healthcare: graded DEPLOY, leading and deepening; macro read no read
+- **For (what it is):** Rising stack with an accumulation base forming; it lacks a trigger: the plan is a dip to the 20-day (71.37) that holds, with earnings in 19 sessions.
+- **Against:** Relative strength reads laggard, no pivot cleared, structure 60 in a range: a base forming, not a buy.
+- **Condition:** A pullback to the 20-day average 71.37 that holds. Too late past 74.94. Dead on a daily close under 71.37 (69.25 at the widest).
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); theme Enterprise Software graded DEPLOY; earnings 24 Nov (19 sessions); fundamentals consult: stalwart, neutral.
 
-#### M — HOLD (2) · Pullback
+### FIVN — HOLD (PULLBACK lane)
 
-
-| Item | Read |
+| Row | Read |
 |---|---|
-| Bracket (render-only) | stop 23.26 (3.49% under last close; 5.87% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 24.1 · -8.1% from the 52-week high · +7.9 points vs SPY over 20 days · volume 0.63x normal |
-| Structure | score 76.8 · RANGE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 50.0 · MP 48.0 · Elder 10.0 · trend strength (ADX) 10.64 |
-| Fundamentals | Consult neutral · 8.7 times earnings · revenue -1.7% · EPS +13% · net margin 3.3% · free-cash yield 23.6% · debt-to-equity 1.03 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
+| Bracket | Render-only stop 35.08 (5.52% below last close 37.13; 1 ATR under the last close (fallback)); targets 37.34 / 40.00 / 42.69; reward-to-risk to the second target 1.40. Gates: ATR met, reward-to-risk not met, risk ceiling met. Information only. |
+| Tape | Last close 37.13; traded 0.51x its normal volume; 3.9% under the 52-week high; 20-day return +8.5 points against SPY; 14-day VWAP: price above. |
+| Structure | Structure score 61.1; inside a range; the 20-, 50-, 100- and 200-day averages are stacked in order; 20- / 50- / 200-day averages 34.96 / 34.15 / 23.87; pivot 37.34 (price -0.56% from it). |
+| Effort | Momentum score 43 (accelerating); SC momentum 59.9; Elder impulse 10; flow 51; energy 79. |
+| Fundamentals | stalwart, CONTRADICTS (consult, no vote; ratios as decimals): P/E 49.5 on sales growth 0.103 (0.169, 0.144, 0.103: decelerating), net margin 0.049, debt/equity 1.03. EPS growth 4.0 is a tiny base. Growth multiple on stalwart growth. |
+| QS | QS signal NONE (none); odds of touching +2 ATR14 within 20 sessions 52% against the market average 75.3% (edge -23.3 points). Not on the QS list. |
 
-- **For:** Cheap at 8.7 times earnings; 7.9 points ahead of SPY.
-- **Against:** Quiet drift inside a range (volume 0.63x), 50-day under the 100-day, sales shrinking three years, two bearish divergence readings.
-- **Condition:** No shared trigger; one analyst buys above 24.71 · or a dip to 23.16 (20-day average) and reclaim · too late above 25.68 · dead on a daily close under 22.74
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
+- **For (what it is):** Coiling inside day on dry volume (0.51x) in a strong uptrend; it lacks a trigger, and the fundamentals consult contradicts it (P/E 49.5 on 10% sales growth).
+- **Against:** Volume has dried up to 0.51x, the P/E is 49.5, and Valen's undercut-and-rally grade failed.
+- **Condition:** Buy above 37.84 (or above 37.34), holding above VWAP; pullback area 34.96. Too late past 38.46. Dead on a daily close under 36.95 (33.94 at the widest).
+- **Context:** Technology (XLK) graded TURNING, weakening and entering, macro overlay tailwind (+1.04); no earnings date on record; fundamentals consult: stalwart, contradicts.
 
-#### SAIL — HOLD (2) · Pullback
+### PASS — short row each
 
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 20.64 (5.28% under last close; 7.07% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 21.79 · -4.3% from the 52-week high · +7.0 points vs SPY over 20 days · volume 1.36x normal |
-| Structure | score 55.2 · ABOVE_STRUCTURE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 71.1 · MP 43.0 · Elder 10.0 · trend strength (ADX) 11.84 |
-| Fundamentals | Consult neutral · -64.1 times earnings · revenue +24.4% · EPS +74% · net margin -16.9% · free-cash yield 1.5% · debt-to-equity 0.00 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Volume-confirmed breakout (1.36x), relative strength 95.5th percentile.
-- **Against:** 11.1% above its 20-day average in a pullback-lane name; the 21-day average is not yet rising; no earnings to value it (net margin -16.9%); earnings 8 Dec.
-- **Condition:** Buy above 22.21 (a close, not a touch; price above VWAP) · or a dip to 19.98 (20-day average) and reclaim · too late above 22.88 · dead on a daily close under 19.98
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme AI Software graded TURNING (leading)
-
-#### GTLB — HOLD (2) · Momentum
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 53.68 (4.62% under last close; 4.62% under the buy price) |
-| Tape | last close 56.28 · +0.0% from the 52-week high · +21.6 points vs SPY over 20 days · volume 0.82x normal |
-| Structure | score 76.8 · RANGE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 31.6 · MP 77.0 · Elder 10.0 · trend strength (ADX) 32.99 |
-| Fundamentals | Consult neutral · -178.4 times earnings · revenue +25.8% · EPS -775% · net margin -5.0% · free-cash yield 2.3% · debt-to-equity 0.00 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Closing high, 21.6 points ahead of SPY, relative strength 99.6th percentile.
-- **Against:** Quiet volume (0.82x), money flow 31.6, four bearish divergence readings; it needs a volume pick-up above 56.28.
-- **Condition:** No shared trigger; one analyst buys above 56.28 · or a dip to 52.40 (20-day average) and reclaim · too late above 58.53 · dead on a daily close under 52.40
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Enterprise Software graded DEPLOY (leading)
-
-#### GLBE — HOLD (2) · Pullback
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 39.82 (3.72% under last close; 5.19% under the buy price) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 41.36 · -2.4% from the 52-week high · +4.4 points vs SPY over 20 days · volume 1.42x normal |
-| Structure | score 55.8 · BULLISH_BOS · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 57.9 · MP 31.0 · Elder 10.0 · trend strength (ADX) 14.17 |
-| Fundamentals | Consult backs it · 45.7 times earnings · revenue +27.8% · EPS +189% · net margin 13.9% · free-cash yield 4.2% · debt-to-equity 0.03 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Coiled 2.4% under its high on 1.42x volume; the fundamentals consult backs it on growth.
-- **Against:** Low conviction; the too-late price (42.03) is only 0.1% above the buy price (42.00); earnings 18 Nov.
-- **Condition:** Buy above 42.00 (a close, not a touch; volume at least 1.4x normal; price above VWAP) · too late above 42.03 · dead on a daily close under 39.87
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
-
-#### FIVN — HOLD (2) · Pullback
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 35.46 (5.72% under last close; 7.51% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 37.61 · -2.7% from the 52-week high · +6.6 points vs SPY over 20 days · volume 1.37x normal |
-| Structure | score 43.6 · BULLISH_BOS · averages ALIGNED · 4 of 6 lenses strong |
-| Effort | money flow 56.6 · MP 43.0 · Elder 10.0 · trend strength (ADX) 17.12 |
-| Fundamentals | Consult contradicts it · 49.5 times earnings · revenue +10.3% · EPS +400% · net margin 4.9% · free-cash yield 7.1% · debt-to-equity 1.03 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Breakout fired 0.7% over its pivot on 1.37x volume; relative strength 98.3rd percentile.
-- **Against:** Lags the market on down days, the 21-day average is not rising, Valen's undercut-and-rally grade is FAILED; reports 9 Nov; the fundamentals consult contradicts.
-- **Condition:** Buy above 38.34 (a close, not a touch; price above VWAP) · or a dip to 34.65 (20-day average) and reclaim · too late above 39.49 · dead on a daily close under 34.65
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read
-
-#### AAPL — HOLD (2) · Momentum
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 341.32 (1.84% under last close; 1.98% under the buy price) · fails the reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 347.73 · -0.1% from the 52-week high · +3.4 points vs SPY over 20 days · volume 1.03x normal |
-| Structure | score 71.6 · RANGE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 44.7 · MP 38.0 · Elder 9.0 · trend strength (ADX) 20.0 |
-| Fundamentals | Consult contradicts it · 39.7 times earnings · revenue +6.4% · EPS +23% · net margin 27.6% · free-cash yield 2.7% · debt-to-equity 0.78 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Coiled 0.14% under its 52-week high.
-- **Against:** Momentum thin (3.4 points ahead of SPY), money flow 44.7, four bearish divergence readings; 39.7 times earnings with EPS flat two years.
-- **Condition:** Buy above 348.22 (a close, not a touch; price above VWAP) · too late above 358.14 · dead on a daily close under 338.91
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Mag7 graded TURNING (weakening)
-
-#### SLB — HOLD (2) · Pullback
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 51.26 (3.39% under last close; 4.10% under the buy price) |
-| Tape | last close 53.06 · -11.7% from the 52-week high · +4.4 points vs SPY over 20 days · volume 1.55x normal |
-| Structure | score 50.5 · RANGE · averages INVERTED · 4 of 6 lenses strong |
-| Effort | money flow 73.7 · MP 31.0 · Elder 10.0 · trend strength (ADX) 16.17 |
-| Fundamentals | Consult neutral · 25.5 times earnings · revenue -1.6% · EPS -24% · net margin 8.3% · free-cash yield 3.8% · debt-to-equity 0.35 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Four of six lenses strong.
-- **Against:** Weakest relative strength of the energy names (34th percentile) and Valen's episodic-pivot grade is FAILED.
-- **Condition:** No shared trigger; one analyst buys above 53.45 (price above VWAP) · or a dip to 49.52 (20-day average) and reclaim · too late above 55.05 · dead on a daily close under 51.26
-- **Context:** Energy: graded DEPLOY, leading and deepening; macro read headwind; theme Oil Services graded TURNING (improving)
-
-#### BRZE — HOLD (1) · Momentum
-
-- **Seating:** Seated for strength; no voice nominated it.
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 43.82 (4.49% under last close; 4.49% under the buy price) |
-| Tape | last close 45.88 · +0.0% from the 52-week high · +89.7 points vs SPY over 20 days · volume 1.0x normal |
-| Structure | score 86.7 · ABOVE_STRUCTURE · averages ALIGNED · 0 of 6 lenses strong |
-| Effort | money flow 88.2 · MP 97.0 · Elder 10.0 · trend strength (ADX) 35.85 |
-| Fundamentals | Consult neutral · -44.5 times earnings · revenue +24.4% · EPS -20% · net margin -13.6% · free-cash yield 1.6% · debt-to-equity 0.16 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** 89.7 points ahead of SPY over 20 days (the strongest in the room), up 57.9% in 10 days, MP score 97.
-- **Against:** The strength-lane analysts were split; Valen grades it parabolic (a risk warning on a long, never a short call); it came off the 23 Oct ADVANCE list.
-- **Condition:** No shared trigger; one analyst buys above 45.88 (volume at least 1.4x normal; price above VWAP) · too late above 47.26 · dead on a daily close under 31.02
-- **Context:** Technology: graded TURNING, weakening and exiting; macro read no read; theme Enterprise Software graded DEPLOY (leading)
-
-#### KSS — HOLD (1) · Momentum
-
-- **Seating:** Seated for strength; no voice nominated it.
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 23.47 (4.52% under last close; 5.29% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 24.58 · -0.8% from the 52-week high · +38.8 points vs SPY over 20 days · volume 1.18x normal |
-| Structure | score 84.6 · ABOVE_STRUCTURE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 72.4 · MP 97.0 · Elder 10.0 · trend strength (ADX) 38.28 |
-| Fundamentals | Consult contradicts it · 10.2 times earnings · revenue -4.3% · EPS +148% · net margin 1.7% · free-cash yield 35.5% · debt-to-equity 1.54 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** 38.8 points ahead of SPY over 20 days, MP score 97.
-- **Against:** Sales have shrunk three years (-4.3%, -7.2%, -3.4%); volume ordinary (1.18x); the fundamentals consult contradicts; it came off the 23 Oct ADVANCE list.
-- **Condition:** No shared trigger; one analyst buys above 24.78 (volume at least 1.4x normal) · or a dip to 20.73 (20-day average) and reclaim · too late above 25.44 · dead on a daily close under 20.73
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
-
-#### HST — HOLD (1) · Pullback
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 24.20 (2.1% under last close) · fails the ATR-distance, reward-to-risk 2.0 gate (a fact, not a reason) |
-| Tape | last close 24.72 · -3.2% from the 52-week high · +11.7 points vs SPY over 20 days · volume 0.94x normal |
-| Structure | score 68.4 · ABOVE_STRUCTURE · averages ALIGNED · 3 of 6 lenses strong |
-| Effort | money flow 78.9 · MP 90.0 · Elder 7.0 · trend strength (ADX) 31.42 |
-| Fundamentals | Consult neutral · 16.8 times earnings · revenue +7.6% · EPS +11% · net margin 16.5% · free-cash yield 6.0% · debt-to-equity 0.88 |
-| QS | NONE · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Hotel REIT 3.2% under its high, 11.7 points ahead of SPY.
-- **Against:** 50-day still under the 100-day and volume light (0.94x); the plan waits for a reclaim of 23.26.
-- **Condition:** Dip to 23.26 (20-day average) and reclaim · too late above 24.82 · dead on a daily close under 23.00
-- **Context:** Real Estate: graded HOLD, improving and exiting; macro read headwind
-
-#### MAR — HOLD (1) · Pullback
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 372.81 (4.58% under last close) |
-| Tape | last close 390.71 · -3.3% from the 52-week high · +12.5 points vs SPY over 20 days · volume 0.99x normal |
-| Structure | score 69.5 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 68.4 · MP 86.0 · Elder 7.0 · trend strength (ADX) 38.98 |
-| Fundamentals | Consult contradicts it · 40.7 times earnings · revenue +4.3% · EPS +14% · net margin 9.6% · free-cash yield 3.1% · debt-to-equity -3.93 |
-| QS | SKIP (vetoed: jumpy path + volume noise) · odds 51% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -24.3 points) |
-
-- **For:** 12.5 points ahead of SPY, 3.3% under its high.
-- **Against:** Relative strength 57th percentile, 50-day under the 100-day; 40.7 times earnings on 14% EPS growth (the fundamentals consult contradicts).
-- **Condition:** Dip to 372.81 (20-day average) and reclaim · too late above 396.21 · dead on a daily close under 368.91
-- **Context:** Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind
-
-#### COST — HOLD (1) · Pullback
-
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 985.15 (1.81% under last close) |
-| Tape | last close 1003.32 · -8.3% from the 52-week high · +10.2 points vs SPY over 20 days · volume 0.93x normal |
-| Structure | score 82.1 · ABOVE_STRUCTURE · averages REPAIRING · 2 of 6 lenses strong |
-| Effort | money flow 63.2 · MP 86.0 · Elder 7.0 · trend strength (ADX) 38.34 |
-| Fundamentals | Consult contradicts it · 48.3 times earnings · revenue +10.1% · EPS +14% · net margin 3.0% · free-cash yield 2.1% · debt-to-equity 0.24 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** 10.2 points ahead of SPY, structure score 82.1.
-- **Against:** 50-day (938.86) under the 200-day (969.35), relative strength 43.6th percentile; 48.3 times earnings on 14% growth; earnings 10 Dec.
-- **Condition:** Dip to 958.15 (20-day average) and reclaim · too late above 1006.63 · dead on a daily close under 969.35
-- **Context:** Consumer Staples: graded DEPLOY, leading and exiting; macro read tailwind
-
-#### LIN — HOLD (1) · Pullback
-
-- **Seating:** In the room on a reserved reclaim seat; no voice nominated it. Reclaim level: 506.72 (Dipped below the rising trendline (506.72) on the last session and closed back above it. Reclaim day.)
-
-| Item | Read |
-|---|---|
-| Bracket (render-only) | stop 500.93 (1.55% under last close; 2.26% under the buy price) · fails the ATR-distance gate (a fact, not a reason) |
-| Tape | last close 508.83 · -6.9% from the 52-week high · +9.8 points vs SPY over 20 days · volume 0.8x normal |
-| Structure | score 74.7 · ABOVE_STRUCTURE · averages ALIGNED · 2 of 6 lenses strong |
-| Effort | money flow 73.7 · MP 82.0 · Elder 7.0 · trend strength (ADX) 29.21 |
-| Fundamentals | Consult contradicts it · 32.7 times earnings · revenue +3.0% · EPS +7% · net margin 20.4% · free-cash yield 2.1% · debt-to-equity 0.72 |
-| QS | SKIP (vetoed: exhaustion footprint) · odds 52% to touch +2 ATR in 20 sessions vs 75% for the average name (edge -23.3 points) |
-
-- **For:** Reclaim day: dipped under its rising trendline (506.72) and closed back above it (U&R MET).
-- **Against:** 50-day under the 100- and 200-day, relative strength 44.8th percentile; 32.7 times earnings on 7% EPS growth (the fundamentals consult contradicts).
-- **Condition:** Buy above 512.49 (a close, not a touch) · too late above 524.10 · dead on a daily close under 505.29
-- **Context:** Materials: graded HOLD, improving and deepening; macro read headwind
-
-### PASS names, one line each
-
-- **VG** — A bounce off lows: 20.1% under its 52-week high with the weakest structure score in the room (37.9) and the 20-day under the 50-day. The fundamentals consult contradicts (free-cash yield -26.9%, debt-to-equity 4.99). Reports 10 Nov.
-- **VERX** — Seated for strength; no voice nominated it. 36.8 points ahead of SPY but 40% under its 52-week high with the 50-day under the 200-day: a bounce inside a broken trend. The fundamentals consult contradicts.
-- **DXC** — Seated for strength; no voice nominated it. 52.6 points ahead of SPY on thin volume (0.86x); the 100-day is still under the 200-day and Valen grades it parabolic (a risk warning on a long).
-- **KVYO** — Seated for strength; no voice nominated it. 35.1 points ahead of SPY but 36.5% under its 52-week high with the 50-day under the 200-day and relative strength at the 61st percentile: a bounce, not leadership.
-- **V** — Held. PASS on the add question only: it trades under the PM's fill (407.92 vs 413.26) and the committee does not add to a position that has not worked. Keep, with the broker stop 401.15.
-- **MA** — Quality tape 1.5% under its high, but the same Financials exposure as held V and SLDE, and volume is light (0.87x). No new idea in the group.
-- **ACN** — In the room on a reserved reclaim seat; no voice nominated it. It reclaimed its rising trendline (245.80) on the last session, but Valen's parabolic read is CRACKED, the 100-day is under the 200-day and volume is light (0.83x). Earnings 17 Dec.
-- **TTAN** — Seated for strength; no voice nominated it. Up-structure broke and the 20-day is under the 50-day: a 51-point snap-back inside broken structure, with Valen's parabolic warning on.
-- **OUT** — Force reading whipsaws every bar, the 50-day is under the 100- and 200-day, relative strength is at the 50th percentile and volume is light (0.69x). The fundamentals consult contradicts (debt-to-equity 5.96).
-- **HIW** — 50-day under the 100-day, 11.3% under its 52-week high, AQE rank 210; the breakout label sits on a weak structure score (43.2).
-- **MP** — Held. Exit case: structure broke, every average points down and relative strength is -20 points vs SPY over 20 days; nobody adds to a loser. The broker stop 36.66 stands.
-- **PBI** — In the room on a reserved reclaim seat; no voice nominated it. It reclaimed its 9-day average (17.17) but structure broke (a prior swing low was taken) and the 50-day is under the 100-day.
-- **ASAN** — Seated for strength; no voice nominated it. 34.7 points ahead of SPY but loss-making and levered, 20% under its 52-week high with a 12-month return of -16%, and Valen's parabolic warning is on.
-
-## §8 NEAR MISSES
-
-| Name | Door it nearly cleared | What it lacked |
+| Ticker | Why not | What would change it |
 |---|---|---|
-| AMPL | Strength, AQE leader (rank 13) | No voice nominated it; 32.45 points ahead of SPY is just under the last strong seat (ZS, 33.64). Flagged, not voted. |
-| GWRE | Strength (rank 123) | No voice nominated it; 31.32 points ahead of SPY; no lens strong. Flagged, not voted. |
-| PBR | Elder+Lens, Strength (rank 86) | No voice nominated it; U&R SETUP (reclaim day is the next session); 29.9 points ahead. Flagged, not voted. |
-| BBWI | Strength (rank 119) | No voice nominated it; 28.83 points ahead. Flagged, not voted. |
-| KD | Strength (rank 85) | No voice nominated it; 28.72 points ahead; no lens strong. Flagged, not voted. |
-| PBR-A | Elder+Lens, Strength (rank 121) | A second listing of PBR; no voice nominated it. Flagged, not voted. |
-| ETSY | Strength (rank 26) | Advanced on 23 Oct, then left the room: no voice nominated it today. Flagged, not voted. |
-| AVPT | Strength, AQE leader (rank 54) | No voice nominated it; 28.48 points ahead. Flagged, not voted. |
-| CCI | Strength (rank 135) | No voice nominated it; 28.2 points ahead. Flagged, not voted. |
-| DOCS | Strength (rank 144) | No voice nominated it; 28.19 points ahead. Flagged, not voted. |
-| HNGE | Elder+Lens, Strength, AQE leader, PM lens (rank 48) | Opened four doors, but no voice nominated it (dropped at the floor); PM lens 5 of 6. |
-| PNC | Elder+Lens, Lens, AQE leader, PM lens (rank 284) | Opened four doors but no voice nominated it; PM lens 5 of 6 (failed check: lists). |
-| AWK | Elder+Lens, Strength, PM lens (rank 111) | No voice nominated it (dropped at the floor); PM lens 5 of 6. |
-| IFF | Elder+Lens, Strength, PM lens (rank 124) | No voice nominated it (dropped at the floor); PM lens 5 of 6. |
-| WTRG | Elder+Lens, Strength, PM lens (rank 127) | No voice nominated it (dropped at the floor); PM lens 5 of 6. |
-| OKE | Elder+Lens, Lens, AQE leader (rank 220) | Not in today's room; no voice nominated it. |
-
-- 202 names opened at least one door and were not nominated; only the 10 strongest by 20-day strength are shown as flagged-not-voted (R17, R26).
-
-## §9 ACTION PLAN
-
-1. **Decide MP.** The committee case is exit with no add; the broker stop 36.66 is the floor. The PM chooses whether to act before the stop does.
-2. **Decide the per-trade risk figure.** It is an open PM decision, so no candidate trade carries a share count today.
-3. **Decide how many energy names are carried as one bet.** CNQ and OXY are ADVANCE, six more are HOLD and VG is PASS; the challenge analysts flag this as one oil bet counted nine times.
-4. **Decide the Financials overlap.** Held V, ADVANCE SLDE and PASS MA are the same group.
-5. **Find out what drove CART's 5x volume** before acting on it.
-6. **Watch-only, nearest to a buy price among the HOLD names:** BRZE (45.88), CDW (165.11), CVX (233.21), GTLB (56.28), LNG (298.67), NTSK (24.28) have a buy price equal to the last close, so any higher close meets the price part of the condition (the other conditions still apply); next are BOX (buy above 43.22, 0.09% over the last close), AAPL (buy above 348.22, 0.14% over the last close), ZS (buy above 255.55, 0.16% over the last close).
-7. **Surfaced by the doors that no voice picked:** the 10 strong-seat names flagged in section 8 (plus the PM-lens rows there) and the 17 UNSEEN names in section 6.
-8. **Calendar:** durable goods Tue 27 Oct 20:30 SGT; FOMC Wed 28 Oct 14:00 ET (02:00 SGT Thu); core PCE, GDP and claims Thu 29 Oct 20:30 SGT; ISM Manufacturing Mon 2 Nov.
+| CNP | Rank 3 and momentum 90, but the 50-day (39.04) sits under the 100-day and the 200-day (41.52) with a relative-strength rank of 36: a rally under the long averages, not a new high after an uptrend. | Needs the 200-day (41.52) cleared, then a new high. |
+| BILL | Leader on a recovery (momentum 93, 17 points ahead of SPY) but 12.3% under its high with no pivot cleared and earnings on 5 Nov, six sessions out. | Needs a pivot cleared; earnings on 5 Nov come first. |
+| NDAQ | At its high in a stacked uptrend (momentum 84) but its relative-strength rank of 69.9 is under the leadership floor and Valen's delayed episodic pivot failed; no trigger. | Needs a stronger relative-strength rank and a volume-backed pivot clear. |
+| BTI | Staples bounce under the 200-day (50-day 56.23 under 59.08): repair, not a pullback in an uptrend; relative-strength rank 47. | Needs the 200-day (59.08) cleared and held. |
+| VERX | Seated for strength; no voice nominated it. 42% under its 52-week high with the 50-day under the 200-day: a rebound inside a downtrend, with a P/E of 503 on thin profit. | Needs a new high after the 50-day reclaims the 200-day (13.36). |
+| FTV | A base under its high with the 50-day (57.44) under the 100-day and 200-day, relative-strength rank 42 and sales down 17.5%: repair, not continuation. | Needs the base high cleared with the 50-day back over the 200-day. |
+| AWK | Utility stalling in a range near its high: 20-day under the 50-day, relative-strength rank 55 and volume 0.79x; no pivot. | Needs a pivot out of the range with the 20-day back over the 50-day (135.27). |
+| ASAN | Seated for strength; no voice nominated it. Momentum 97 and 43 points ahead of SPY, but 21% under its high with Valen's Parabolic CRACKED grade (2 of 4): a bounce, not leadership. | Needs the old pivot cleared; Valen's Parabolic CRACKED grade must clear. |
+| TTEK | The 20-day is under the 50-day, 13.5% under its high, no pivot and earnings on 11 Nov (10 sessions): a bounce inside a range. | Needs the 20-day back over the 50-day (35.28) and a pivot; earnings come first. |
+| KVYO | Seated for strength; no voice nominated it. 39% under its high, 50-day under the 200-day, relative-strength rank 45 and volume 0.54x on a 19% ten-day pop: a thin-volume rebound. | Needs the 200-day (18.13) cleared on real volume. |
+| DXC | Seated for strength; no voice nominated it. Momentum 100 and a 20-day return 52.6 points ahead of SPY, but the 100-day (10.86) is still under the 200-day (11.55), volume 0.62x, sales shrinking and Valen grades a Parabolic WARNING (2 of 4). | Needs the 100-day over the 200-day (11.55) and volume. |
+| RYAN | In the room on a reserved reclaim seat; no voice nominated it: it dipped under its 9-day average (42.24) on the last session and closed back above. 27% under its 52-week high in a bunched stack, debt-to-equity 7.5. | Needs the stack to repair over 40.36 and the distance to the high to close. |
+| EQT | The 50-day (53.09) is under the 200-day (55.51) and relative-strength rank is 30: a reversal bounce on 2.05x volume, not a pullback in an uptrend; the energy supply read is not served. | Needs the 50-day back over the 200-day (55.51). |
+| RBLX | Seated for strength; no voice nominated it. 59% under its high with the 50-day under the 200-day, volume 0.67x, and Valen grades its theme (Gaming and Streaming) AVOID: a bounce off the lows. | Needs the 200-day (52.80) reclaimed on volume. |
+| ZS | Seated for strength; no voice nominated it. Strong group (Cybersecurity) and relative-strength rank 96, but 22.6% under its high with three bearish divergences and negative earnings (P/E -654). | Needs the old high cleared. |
+| BBWI | Seated for strength; no voice nominated it. Momentum 93 and a 22% ten-day pop, but the stack is inverted (50-day 18.41 under 100-day 19.33 under 200-day 19.81) and it is 16% under its high: repair under the long averages. | Needs the 200-day (19.81) cleared with the stack repaired. |
+| BKR | Day-one break of structure on 2.16x volume, but the stack is fully inverted (50-day 58.68 under 100-day 59.03 under 200-day 60.16) and Valen's episodic pivot grade failed; price is still under its 200-day. | Needs the 200-day (60.16) cleared and held. |
+| VG | Sitting on its 50-day (13.81) in a range, 21% under its high, volume 0.62x, earnings on 10 Nov (9 sessions) and debt-to-equity of 5.0 with negative free cash flow: no base to buy. | Needs a base; earnings come first. |
+| FTNT | Cyber laggard in a leading group: Valen's VCP and undercut-and-rally grades both failed, its 21-day average is not rising and it shows three bearish divergences; nothing to trigger. | Needs a base to complete. |
+| NET | Rank 221 and momentum 20: losing to SPY by 7.7 points over 20 days, under its 20-day average, five bearish divergences; a slide, not a pullback. | Needs the slide to stop: back over the 20-day (331.43). |
+| V | Held name, PASS on any add: averaging down is not the plan. Last close 401.86 is over a rising 20-day (388.88) and 2.5% above the broker stop 391.80; Valen's reclaim is a setup, not yet met. | No add. Reopens only on a reclaim of the 9-day average (402.58) on volume, and above cost 413.26 for the strictest. |
+| MP | Held name, PASS on any add and an exit case: bearish change of character since 10 Sep, under its 20-, 50- and 200-day averages, structure 14, momentum 5. | Exit case voided only by a close over 42.73 (20-day) with the structure shift cleared. |
 
 ## §9A WHAT TO DO WITH WHAT I OWN
 
 | Name | Qty | Entry | Mark | Unrealised | ACTION | Trigger that changes it | Stop today | Why |
 |---|---|---|---|---|---|---|---|---|
-| **MP** | 300 | 53.00 | 38.3 | -4,410.00 | **EXIT** | The case lifts only on a daily close above 43.40 (20-day average) with structure no longer broken; the broker stop 36.66 closes it if hit first. | Broker stop 36.66 (PM's order) | Structure broke, every average points down, relative strength is -20 points vs SPY; the whole room says no add. No earnings date served. |
-| **V** | 38 | 413.26 | 407.92 | -202.93 | **HOLD** | Exit on a daily close under the broker stop 401.15 (1.7% below). An add reopens only on a close above the 413.26 fill with above-normal volume, or a dry pullback that holds the 20-day average 385.26. | Broker stop 401.15 (PM's order) | Leader intact (structure 81.0) but it trades under the PM's fill, and adding to a position that has not worked is averaging down. No earnings date served. |
+| V | 38 | 413.26 | 401.86 (Tiger pre-market 397.25 at 06:42Z, 5.45 above the stop) | -433.21 | HOLD | Exit on a daily close under 391.80, or the stop firing. No add: it reopens only on a close over the 9-day average 402.58 on volume (the strictest reading: over cost 413.26). | 391.80 (limit 390.80, GTC) | Down 433.21 on 38 shares. Last close 401.86 is 10.06 (2.5%) above the stop; Tiger's pre-market mark of 397.25 (06:42Z) is 5.45 above it, so the stop is close and is the first thing to check at the open. |
+| MP | 300 | 53.00 | 40.87 | -3,639.00 | EXIT (the PM decides; nothing placed) | The exit case is voided only by a daily close over 42.73 (the 20-day average) with the bearish change of character cleared (some analysts ask for the 50-day, 48.87). Otherwise the broker stop 36.66 fires. | 36.66 (limit 36.66, GTC) | Down 3,639.00 on 300 shares (-22.9%). Last close 40.87 is 4.21 (10.3%) above the 36.66 stop, under its 20-, 50- and 200-day averages (42.73 / 48.87 / 55.59) with a bearish change of character since 10 Sep. |
 
-- **Concentration:** V is the only Financials name held; the room adds SLDE and MA in the same group. MP is Materials, beta 2.84.
-- **Open risk (arithmetic from the last close, gaps excluded):** MP is 4,410 under water now and a fill at its stop would make it 4,902 (a further 492); V is 203 under water and 460 at its stop (a further 257); both stops filling would cost a further 749. No sizing, no order language, nothing armed.
+- **Concentration:** MP is about 90% of the book's beta-adjusted exposure ($41,794.45 in total); Financials 55.47% and Materials 44.53% of exposure.
+- **Open risk:** $1,645.28 further to the stops from last close (V $382.28, MP $1,263.00). No earnings date on record for either name. Nothing is sized, placed or armed.
 
 ## §9B WHAT TO TRADE TODAY
 
-Ranked by how close each is to its buy price. Entry reference is the buy price from the plan; the stop is the render-only bracket; no share counts (the per-trade risk figure is an open PM decision).
+Ranked by how ready each name is to act on. Stops are render-only, shown with the percentage to the stop; 1R and share counts come from the live review.
 
 | Ticker | Entry reference | Stop (render-only) | What confirms | What kills it | Sector context | Ready now / needs reset |
 |---|---|---|---|---|---|---|
-| **DHR** | Buy above 230.66; too late above 235.27 | 223.27 (3.14% under last close; 3.20% under the buy price) | a close above 230.66; price holding above VWAP | A daily close under 225.60 | Healthcare: graded DEPLOY, leading and deepening; macro read no read | Ready on trigger: last close 230.5 is 0.07% under the buy price |
-| **ROKU** | Buy above 158.85; too late above 160.27 | 156.53 (1.29% under last close; 1.46% under the buy price) | a close above 158.85; volume at least 1.4x normal for the time of day; price holding above VWAP | A daily close under 157.83 | Communication Services: graded TURNING, lagging and entering; macro read no read; theme Gaming Streaming graded HOLD (improving) | Ready on trigger: last close 158.58 is 0.17% under the buy price |
-| **ESTC** | Buy above 102.68; too late above 104.43 | 98.18 (4.15% under last close; 4.38% under the buy price) | a close above 102.68; volume at least 1.4x normal for the time of day; price holding above VWAP | A daily close under 99.27 | Technology: graded TURNING, weakening and exiting; macro read no read; theme Enterprise Software graded DEPLOY (leading) | Ready on trigger: last close 102.43 is 0.24% under the buy price |
-| **LTH** | Buy above 42.08; too late above 42.86 | 40.52 (3.36% under last close; 3.71% under the buy price) | a close above 42.08; price holding above VWAP | A daily close under 40.52 | Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind | Ready on trigger: last close 41.93 is 0.36% under the buy price |
-| **SLDE** | Buy above 28.69; too late above 29.55 | 27.71 (2.94% under last close; 3.42% under the buy price) | a close above 28.69; volume at least 1.4x normal for the time of day; price holding above VWAP | A daily close under 25.31 | Financials: graded HOLD, improving and exiting; macro read tailwind | Ready on trigger: last close 28.55 is 0.49% under the buy price |
-| **CNQ** | Buy above 55.50; too late above 56.49 | 53.70 (2.47% under last close; 3.24% under the buy price) | a close above 55.50; volume at least 1.4x normal for the time of day; price holding above VWAP | A daily close under 52.31 | Energy: graded DEPLOY, leading and deepening; macro read headwind | Ready on trigger: last close 55.06 is 0.80% under the buy price |
-| **OXY** | Buy above 64.96; too late above 66.91 | 62.54 (2.54% under last close; 3.73% under the buy price) | a close above 64.96 | A daily close under 62.68 | Energy: graded DEPLOY, leading and deepening; macro read headwind | Ready on trigger: last close 64.17 is 1.23% under the buy price |
-| **RBRK** | Buy above 130.84; too late above 131.74 | 122.32 (4.99% under last close; 6.51% under the buy price) | a close above 130.84; price holding above VWAP | A daily close under 127.90 | Technology: graded TURNING, weakening and exiting; macro read no read; theme Cybersecurity graded DEPLOY (leading) | Ready on trigger: last close 128.74 is 1.63% under the buy price |
-| **CART** | Buy above 57.98; too late above 59.72 | 54.43 (3.56% under last close; 6.12% under the buy price) | a close above 57.98; volume at least 1.4x normal for the time of day; price holding above VWAP | A daily close under 52.68 | Consumer Discretionary: graded HOLD, improving and exiting; macro read headwind; theme E Commerce graded HOLD (improving) | Ready on trigger: last close 56.44 is 2.73% under the buy price; some analysts' own too-late price (57.95) is below it |
+| **GLBE** | Buy above 40.81 (last close 41.55, already 1.8% over it); too late past 42.85 | 40.03 (3.66% below last close) | At least 1.4x volume, or a retest of 40.81 that holds | Daily close under 40.05 | Consumer Discretionary: sector grade DEPLOY, improving but exiting; macro tailwind +1.18; earnings 18 Nov (15 sessions) | Ready now: inside the range between the buy and too-late prices |
+| **HOG** | Buy above 29.63 (last close 29.44, 0.65% under it); too late past 30.30 | 28.46 (3.33% below last close) | At least 1.4x volume, holding above VWAP | Daily close under 27.04 | Consumer Discretionary: sector grade DEPLOY, improving but exiting; macro tailwind +1.18; no earnings date on record | Ready on trigger |
+| **ESTC** | Buy above 106.29 (last close 105.52, 0.73% under it); alternative above yesterday's high 107.04; too late past 110.80 | 101.25 (4.05% below last close) | 1.2 to 1.4x volume, holding above VWAP | Daily close under 96.32 | Technology: sector grade TURNING (Enterprise Software theme DEPLOY); macro tailwind +1.04; earnings 19 Nov (16 sessions) | Ready on trigger |
+| **A** | Buy above 179.10 (last close 177.49, 0.91% under it); too late past 182.36 | 172.55 (2.78% below last close) | Holding above VWAP | Daily close under 172.09 | Healthcare: sector grade HOLD, leading but exiting; macro neutral; earnings 23 Nov (18 sessions) | Ready on trigger |
+| **IOT** | Buy above 44.21 (last close 43.51, 1.61% under it); a close above 45.00 is the stronger version; too late past 46.42 | 41.54 (4.53% below last close) | At least 1.4x volume | Daily close under 41.77 | Technology: sector grade TURNING; macro tailwind +1.04; earnings 26 sessions out | Ready on trigger |
+| **DBX** | Buy above 38.17 (last close 36.93, 3.36% under it); too late past 39.09 | 35.43 (4.06% below last close) | At least 1.4x volume, holding above VWAP | Daily close under 35.43 | Technology: sector grade TURNING (Enterprise Software theme DEPLOY); macro tailwind +1.04; no earnings date on record | Ready on trigger (the farthest from its trigger of the six) |
+| **TENB** | Not presented as a buy today (PM standing order). The committee verdict stands as ADVANCE in the verdict table. | — | — | — | Technology (Cybersecurity) | Held back by the PM standing order; see the day's plan |
 
-- The render-only bracket fails a gate for four names (ROKU and RBRK reward-to-risk below 2.0 to the second target, at 0.64 and 1.34; CNQ and SLDE ATR distance): facts, not reasons (R1). HOLD names do not appear here; their condition in section 0 is the whole story.
+- HOLD-FOR-CONDITIONS names are not in this list; their condition in the verdict table is the whole story. No sizing, no order language, nothing armed.
 
 ## §9C THE DAY'S PLAN
 
-1. Before 21:30 SGT: read SPY against its 760 put wall (Friday close 759.97) and the 776.36 flip, then check each of the nine buy prices against pre-market; if a name has already gapped past its too-late price, it is off for the day. Check what drove CART's 5x volume.
-2. At the open (21:30 SGT): nothing is bought at the open print. Each ADVANCE is a buy price to wait for: price must close above it with volume at least 1.4x normal for the time of day and hold above VWAP (ROKU 158.85, DHR 230.66, ESTC 102.68, LTH 42.08, SLDE 28.69, CNQ 55.50, OXY 64.96, RBRK 130.84, CART 57.98).
-3. First hour: if SPY holds 760, the nine stay live; if SPY closes under 760 and stays there, treat every trigger as unconfirmed in a short-gamma tape. A reclaim of 776.36 would calm dealer flows and meet Crown's missing condition.
-4. Plan-changers: V closing under its broker stop 401.15 (1.7% below); MP under 36.66; S&P futures under 7,452.56 (-2.70%) or the dollar under 99.04 (-2.67%), which would bring trend-fund selling; any ADVANCE closing under its dead price.
-5. Into the close and the week: decide the MP exit case (the broker stop 36.66 is the floor); keep V without adding. Tue 20:30 SGT durable goods; FOMC Wed 28 Oct 14:00 ET (02:00 SGT Thu); Thu 20:30 SGT core PCE, GDP and claims; Mon 2 Nov ISM. The per-trade risk figure is an open PM decision, so no share counts are given.
+1. **Before 21:30 SGT:** decide the five open items in the action plan. The ESTC lock (PM, 28 Oct 01:30 SGT) and the HOG and A focus (01:35 SGT) are dated to the 27 Oct session; nothing is armed and no order exists.
+2. **At the open (21:30 SGT):** check SPY against its 755 put wall (1.9% below spot) and its 774.63 flip (0.65% above) first. Entries are triggers only, each on its stated volume: GLBE above 40.81, HOG above 29.63, ESTC above 106.29, A above 179.10, IOT above 44.21, DBX above 38.17. 1R is $620 (1% of $62K, PM ruling 27 Oct); the live review turns it into share counts at the live price.
+3. **First hours:** V against its 391.80 stop (Tiger's pre-market mark was 397.25, 5.45 above it) and MP against 36.66; MP carries an exit case.
+4. **Cyber:** Cyber ran - not chasing (PM). FTNT reports Wed 28 Oct (FMP date; report time not confirmed), the same day as the FOMC.
+5. **Plan-changers:** FOMC decision Wed 14:00 ET = 02:00 SGT Thu 29 Oct. SPY under 755 removes the market floor; SPY over 774.63 calms dealer flows.
+6. **Next test:** Core PCE, GDP and jobless claims Thu 29 Oct 08:30 ET = 20:30 SGT Thu. Into the close: any open item still undecided stays unarmed.
 
-DRAFT — PM approval required. Nothing is staged, nothing is armed.
+## §8 NEAR MISSES
+
+| Name | Door it nearly cleared | Detail | What it lacked |
+|---|---|---|---|
+| CCI | Strength door (flagged for the PM) | AQE rank 63; 20-day return +30.3 points vs SPY; SC momentum 73.2; Longlist + Elder | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| BOX | Strength door (flagged for the PM) | AQE rank 29; 20-day return +29.1 points vs SPY; SC momentum 76.1; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| KSS | Strength door (flagged for the PM) | AQE rank 55; 20-day return +29.1 points vs SPY; SC momentum 73.6; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| NCNO | Strength door (flagged for the PM) | AQE rank 36; 20-day return +27.0 points vs SPY; SC momentum 75.3; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| AMPL | Strength door (flagged for the PM) | AQE rank 23; 20-day return +25.8 points vs SPY; SC momentum 76.6; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| BSY | Strength door (flagged for the PM) | AQE rank 22; 20-day return +25.6 points vs SPY; SC momentum 76.7; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| SLDE | Strength door (flagged for the PM) | AQE rank 21; 20-day return +25.5 points vs SPY; SC momentum 76.7; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| KD | Strength door (flagged for the PM) | AQE rank 76; 20-day return +24.7 points vs SPY; SC momentum 71.7; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| DOCS | Strength door (flagged for the PM) | AQE rank 41; 20-day return +24.6 points vs SPY; SC momentum 74.8; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| TEAM | Strength door (flagged for the PM) | AQE rank 93; 20-day return +24.0 points vs SPY; SC momentum 69.9; Longlist | No voice nominated it and it ranked below the ten strength seats, so it was flagged and not voted (R17, R26). |
+| UPS | Strength + PM lens | Door-opener; door rank 10; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| VSTS | Strength + PM lens | Door-opener; door rank 26; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| KBR | Strength + AQE leader + PM lens | Door-opener; door rank 34; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| PPG | PM lens | Door-opener; door rank 67; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| LNG | Elder+Lens + AQE leader + PM lens | Door-opener; door rank 74; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| LTH | AQE leader + PM lens | Door-opener; door rank 85; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| EVRG | PM lens | Door-opener; door rank 88; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| COLB | AQE leader + PM lens | Door-opener; door rank 137; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| PNC | Elder+Lens + Lens + AQE leader + PM lens | Door-opener; door rank 207; passed 5 of 6 of the PM's checks (the one it failed: lists) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| LMT | Strength + AQE leader + PM lens | Door-opener; door rank 77; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| AMRZ | Elder+Lens + PM lens | Door-opener; door rank 110; passed 5 of 6 of the PM's checks (the one it failed: lens) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+| EPRT | Elder+Lens + Lens + AQE leader + PM lens | Door-opener; door rank 194; passed 5 of 6 of the PM's checks (the one it failed: lists) | No voice nominated it, so it was flagged and not seated (R17). The PM-lens table calls it "cut by cap", which is wrong. |
+
+- 120 door-openers in all were not on the floor; ten Strength names are shown above and the twelve PM-lens names are shown with them. Nothing here is voted and no verdict is affected.
+
+## §9 ACTION PLAN
+
+1. **Decide the five open items** (last table below) before 21:30 SGT.
+2. **Entries are triggers only**, each on its stated volume, with SPY's 755 put wall as the floor (the trade list and the day's plan carry the levels).
+3. **ESTC is a locked plan, not armed.** Committee and PM lock compared below; no order exists.
+4. **HOG and A are on the PM focus list.** Committee and PM focus compared below; nothing placed, sized or armed.
+5. **Held book:** V HOLD with the 391.80 stop (Tiger's pre-market mark 397.25 is 5.45 above it); MP carries an exit case, the PM decides.
+6. **Watch-only:** the HOLD names, nearest trigger first (table below). **What the doors surfaced that no voice picked:** the near-miss section.
+
+**ESTC — committee today against the PM's locked plan (/home/claude/pma/live/arm_brackets.json)**
+
+| Item | Committee today (28 Oct run) | PM locked plan (dated to the 27 Oct session) |
+|---|---|---|
+| Verdict | ADVANCE, narrow, conviction 3 (MOMENTUM lane) | PM discretion tightening of the 27 Oct committee ADVANCE |
+| Buy | Above 106.29 on 1.2 to 1.4x volume, holding above VWAP (or above yesterday's high 107.04) | Window 106.29 to 106.62; buy limit 106.62 DAY; committee confirm 107.09 |
+| Stop | Render-only 101.25 (4.05% below last close 105.52) | After a fill: SELL STP_LMT GTC stop 101.95, limit 101.70 |
+| Dead / kill | Daily close under 96.32 | Daily-close kill 101.66 |
+| Too late | Past 110.80 | 110.303 |
+| Targets | 108.00 / 115.95 / 126.05 (render-only) | 108.00 / 115.95 / 126.05 |
+| Flag | Volume at least 1.2 to 1.4x, holding above VWAP | ESTC above 106.29, above VWAP, volume pace at least 1.4x, SPY above 760 |
+| Status | — | LOCKED PLAN - NOT ARMED, NO ORDER EXISTS (PM, 28 Oct 01:30 SGT) |
+
+- **Plainly:** the lock is dated to the 27 Oct session; no order exists; it is not armed; it needs the PM to re-date or release it. A preview and an order come only on the PM's word plus the explicit "confirm".
+- **Where today differs:** the committee's buy trigger is 106.29 (the lock carries 107.09 as its confirm), too late is 110.80 (110.303), the render-only stop is 101.25 (the lock's stop is 101.95), and the committee's dead level is a daily close under 96.32 against the PM's kill at 101.66. The targets are the same.
+
+**HOG — committee today against the PM focus (/home/claude/pma/live/pm_focus.json)**
+
+| Item | Committee today (28 Oct run) | PM focus (dated to the 27 Oct session) |
+|---|---|---|
+| Verdict | ADVANCE, broad agreement, no objection (MOMENTUM lane) | "Watch HOG and A" (PM, 28 Oct 01:35 SGT) |
+| Buy | Above 29.63 on at least 1.4x volume, holding above VWAP (alternative: a dip to the 20-day average 27.07 that closes back above it) | Buy above 28.86 |
+| Stop | Render-only 28.46 (3.33% below last close 29.44) | 27.88 |
+| Exit / dead | Daily close under 27.04 | Daily-close exit below 28.66 |
+| Too late | Past 30.30 | not stated |
+| Target | Render-only 29.63 / 30.49 / 31.58 | 29.35 (already passed: last close 29.44) |
+
+- **Where today differs:** the PM's buy 28.86 is the export's pivot high and sits 1.97% under last close 29.44, while today's committee trigger is higher at 29.63; the PM's exit 28.66 is tighter than the committee's dead level 27.04; the PM's stop 27.88 is wider than the render-only stop 28.46; the PM's target 29.35 has been passed.
+- The focus file's own note reads "Buy confirmed at 01:34 SGT"; the broker read at 06:42Z shows no HOG position or order. Nothing is placed, sized or armed.
+
+**A — committee today against the PM focus**
+
+| Item | Committee today (28 Oct run) | PM focus (dated to the 27 Oct session) |
+|---|---|---|
+| Verdict | ADVANCE, near-unanimous (PULLBACK lane); advanced 21 and 22 Oct, HOLD on 27 Oct, ADVANCE today (mark RETURNED) | "Watch HOG and A" (PM, 28 Oct 01:35 SGT); the file records it as a committee HOLD-FOR-CONDITIONS whose conditions were met at 11:27 ET (alert digest) |
+| Buy | Above 179.10, holding above VWAP | Buy above 177.05: a confirmed close above it, holding above VWAP |
+| Stop | Render-only 172.55 (2.78% below last close 177.49) | 171.03; reclaim stop = that day's low 174.03 |
+| Exit / dead | Daily close under 172.09 | Daily-close exit below 174.07 |
+| Too late | Past 182.36 | not stated |
+| Targets | Render-only 179.10 / 181.69 / 184.98 | 181.69 |
+
+- **Where today differs:** the PM's buy 177.05 sits 0.25% under last close 177.49 while the committee's trigger is higher at 179.10; the PM's exit 174.07 is tighter than the committee's dead level 172.09; the PM's stop 171.03 is wider than the render-only stop 172.55; the PM's target 181.69 is the committee's second target. Nothing is placed, sized or armed.
+
+**Watch-only: HOLD names, nearest trigger first (distance from last close)**
+
+| Name | Trigger type | Trigger | Last close | Distance | Also needs |
+|---|---|---|---|---|---|
+| HST | above | 25.25 | 25.22 | +0.12% | 1.0x volume, above VWAP |
+| AAPL | above | 347.78 | 347.10 | +0.20% | above VWAP |
+| BRZE | above | 45.87 | 45.78 | +0.20% | 1.4x volume, above VWAP |
+| EMR | above | 166.60 | 166.27 | +0.20% | no volume test named |
+| APLE | above | 18.66 | 18.62 | +0.21% | 1.2x volume, above VWAP (or a pullback to 16.98) |
+| CRBG | above | 35.44 | 35.36 | +0.23% | no volume test named |
+| BBY | above | 98.73 | 98.50 | +0.23% | 1.2x volume, above VWAP |
+| DRH | above | 14.16 | 14.12 | +0.28% | 1.2x volume, above VWAP (or a pullback to 13.11) |
+| FTRE | above | 24.52 | 24.43 | +0.37% | above VWAP |
+| HNGE | above | 114.41 | 113.90 | +0.45% | 1.4x volume, above VWAP |
+| DDOG | above | 282.80 | 280.82 | +0.71% | 1.2x volume, above VWAP |
+| NTSK | above | 26.43 | 26.15 | +1.07% | 1.4x volume, above VWAP |
+| CART | above | 60.81 | 60.08 | +1.22% | 1.4x volume, above VWAP |
+| CSX | above | 53.23 | 52.27 | +1.84% | 1.2x volume |
+| FIVN | above | 37.84 | 37.13 | +1.91% | above VWAP |
+| ETSY | above | 90.82 | 87.66 | +3.60% | 1.4x volume |
+| NTNX | pullback | 71.37 | 72.74 | -1.88% | holds |
+| TEL | pullback | 215.05 | 225.35 | -4.57% | volume at most 0.8x, above VWAP |
+| RCL | pullback | 280.75 | 295.92 | -5.13% | volume at most 0.8x, above VWAP |
+
+**Open items — PM decision needed**
+
+| # | PM decision needed | Detail |
+|---|---|---|
+| 1 | Push the canonical record paths to AQE main | reports/pma/2026-10-28.md and latest.md, the verdict and phase-4 ledgers and data/pma/2026-10-28/. The push rebuilds the HF Space. |
+| 2 | VSXY stop choice 91.60 vs committee 88.64 from 27 Oct, PM decision still open | Carried from the 27 Oct arm-ready file; the name is not in today's room. |
+| 3 | Whether to arm ESTC, or preview HOG / A | Nothing is armed. Any order goes only through the Tiger preview and the PM's explicit "confirm". |
+| 4 | The GitHub "AQE voice packets sync" failure (9620f43) is unchecked | Left untouched by the inbox clean by rule; this run did not check it. |
+| 5 | Re-date or release the ESTC lock and the HOG / A focus | Both are dated to the 27 Oct session (lock 28 Oct 01:30 SGT, focus 01:35 SGT) and need re-dating or release for tonight's reviews. |
 
 ## APPENDIX A — VOTE RECORD (audit only)
 
-This is the only place analyst names and vote counts appear. Lane Momentum: verdict from the five strength-lane analysts (livermore, oneil, minervini, elder-lens, detect-lens); Pullback: all voting analysts. Advisory ballots are shown and not counted.
-
-### CART — ADVANCE (3) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 0, oppose 2, abstain 3 · doors: Seats, Strength, PM lens
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens split: lens_positive 2 lens_warnings 2 (coil warn, insti_money warn). day_vol 4.99 is the largest spike in the packet and the insti_money lens does not confirm it. ma_50 48.16 over ma_100 46.82 over ma_200 42.9. Whether it is event-driven is not my check. | insti_money lens turning strong with day_vol back near 1 would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Not a transition: elder_5d [7, 7, 7, 7, 10] is blue jumping to green on day_vol 4.99, a volume burst at from_52w_hi 0.0. Elder reads a burst at a new extreme as how a run expires. ext_atr20 4.33 and sma_dist 17.2 leave no value-zone entry; ma_20 47.78 is far below. | Volume settles near normal while closes hold and elder stays at ten through a quiet pullback: then the burst was a base, not a climax. |
-| livermore | SUPPORT | 2 | Rank 1 leader at a high on day_vol 4.99, but the case is the spike: ma_20 47.78 sits under ma_50 48.16, so no uptrend before it. pct_from_pivot 7.14 over pivot_high 52.68 and ext_atr20 4.33 are a chase. Weight, not veto: mp 97.0, structure 89.5. | Close under pivot_high 52.68, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 3 | Out of a base on day_vol 4.99: pct_from_52w_high 0.0, structure 89.5 ABOVE_STRUCTURE, rs_rank_pct 85.54 LEADER, rs_spy_20d 32.15. Template served legs pass. Momentum is real, but pct_from_pivot 7.14 over pivot_high 52.68 is a chase: a weight under R14, so conviction 3, not a veto. | Close back under pivot_high 52.68 (breakout failed), or day_vol falling under 1 on the next up days. |
-| oneil | SUPPORT | 3 | Rank 1 group leader through the pivot on very heavy volume: day_vol 4.99, structure 89.5, rs_leadership LEADER, new high. Late buy: pct_from_pivot 7.14 over pivot_high 52.68, so no add-ons. Gate DELEGATED. | Closes back under pivot_high on a heavy red day, or the 10-week line ma_50 fails. |
-| raschke (advisory) | OPPOSE | 3 | Range-expansion bar on the packet's largest spike: day_vol 4.99, run_10d 18.17, sma_dist 17.2, ext_atr20 4.33. I do not buy an expansion bar; a visible reversal or a retest must come first. A no on this entry, not on the trend. | Closes hold above entry 56.44 with day_vol back near normal and no giveback: the bar was a start, not a climax. |
-| seow (advisory) | ABSTAIN | None | Rank 1, rs_spy_20d 32.15, structure 89.5, but ext_atr20 4.33, run_10d 18.17 and day_vol 4.99: no dip to grade, and my only entry (a ma_20 47.78 retest) is far under entry 56.44. R14: extension is a weight, so no OPPOSE. Event filter is not mine. | Wrong to stand aside if it digests on quiet volume above ma_20 and then clears the prior-day high. |
-| thorp (advisory) | OPPOSE | 2 | Buys the spike: day_vol 4.99, sma_dist 17.2, ext_atr20 4.33. Loss boundary ma_20 47.78 sits far under entry 56.44 against atr 2.0, so a position sized to the worst case is small. R14 weight only; my vote is advisory in this lane. | day_vol back near 1 with closes holding above entry 56.44 shows the spike was absorbed; I would withdraw. |
-| weis (advisory) | ABSTAIN | None | day_vol 4.99 is the largest effort in the packet with sma_dist 17.2 and ext_atr20 4.33: heavy effort at an extension, result not separable on one daily frame. No failed-weakness shape; I would not buy the spike. Momentum lane: advisory. | A retest of ma20 47.78 on quiet day_vol that holds would give a Weis entry. |
-| wyckoff (advisory) | ABSTAIN | None | Mid-move, no edge: structure_shift ABOVE_STRUCTURE, sma_distance_pct 17.2, lens.coil warn. Effort day_vol 4.99 is the largest in the room but its direction is not served: absorption and a buying climax look identical. I refuse the fork. My look is a back-up toward ma_20 47.78. | Closes holding above entry 56.44 with day_vol back near 1 would show the volume was demand. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · stalwart · Growth slowing to stalwart pace: growthRevenue 0.108 (0.192 two FYs back), growthEPS 0.01. Cash is the support: free_cash_flow_yield 0.088, debt_to_equity 0.01. priceToEarningsRatioTTM 29.7 is full for the growth.
-
-### CNQ — ADVANCE (3) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 1, oppose 0, abstain 4 · doors: Strength, Solo
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Energy cluster, mid lens: lens_positive 2, coil warn, sector strong. ma_50 50.19 over ma_100 47.05 over ma_200 45.42, ABOVE_STRUCTURE, day_vol 1.08. No second seat behind it, and the name-level lens cannot separate it from EOG or OXY. | Coil lens leaving warn with lens_positive above 2 would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Green is leaving while price prints highs: elder_5d [10, 10, 7, 7, 7] has sat in blue for three bars at from_52w_hi 0.0. Elder takes profit there, he does not initiate; the entry is a dip and reclaim, which has not happened. elder 7.0, mp 89.0 STRONG. | Force back to ten after a dip toward ma_20 holds (dip-and-reclaim). |
-| livermore | SUPPORT | 4 | Fresh high: from_52w_hi 0.0, structure 83.2, ABOVE_STRUCTURE, pct_from_pivot 5.26 over pivot_high 52.31, mp 89.0, rs_rank_pct 80.07, day_vol 1.08. Best AQE rank of the energy names (rank 15). Leader pair with EOG. | Close under pivot_high 52.31, EOG losing its high first, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 3 | Only energy name where trend and earnings agree: pct_from_52w_high 0.0, rs_rank_pct 80.07, mp 89.0, structure 83.2, pct_from_pivot 5.26 over pivot_high 52.31, with Lynch consulted growthEPS 0.81 and growthRevenue 0.239. If one energy name is carried, this one. | Close under pivot_high 52.31, or day_vol fading under 1 on the next push; the energy group rolling over. |
-| oneil | SUPPORT | 2 | Second energy leader by rank 15: structure 83.2, mp 89.0 STRONG, rs_leadership LEADER, new high at pct_from_pivot 5.26 over pivot_high 52.31, just past the buy line. day_vol 1.08 fails my volume test, so the buy waits for volume. Same energy bet as EQNR. | Closes under pivot_high on rising volume, or the sector loses strength. |
-| raschke (advisory) | ABSTAIN | None | Same energy factor. adx 29.19 nears a strong-trend read but no pullback has formed (sma_dist 9.71, pct_from_pivot 5.26). A first pullback toward ma20 50.62 would make it a retracement; OXY is the cleaner expression. | A pullback that holds ma20 50.62. |
-| seow (advisory) | SUPPORT | 1 | Fresh high with rs_spy_20d 17.61, mp 89.0 STRONG, structure 83.2, but ext_atr20 3.26, sma_dist 9.71 and no dip. In my method it is a wait for the ma_20 50.62 retest. Energy cluster, one bet. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | ABSTAIN | None | Energy duplicate. Solo livermore at conviction 4 with no second seat (Rogers). atr 1.36 against entry 55.06; loss boundary ma_20 50.62. Lynch: one up-year, growthEPS 0.81, is not a trend. Not in my gated set; edge unmeasured. | Close under ma_20 50.62. |
-| weis (advisory) | ABSTAIN | None | Fresh high with orderly effort, day_vol 1.08, sma_dist 9.71, mp 89. Sound strength but no failure-of-weakness read, and the same energy factor as EOG and OXY. Momentum lane: advisory. | A retest of ma20 50.62 that holds on dry-up volume. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 63.9. structure_shift ABOVE_STRUCTURE, sma_distance_pct 9.71, mid-move. Momentum is real (mp_state STRONG, flow 84.2) but it is part of the energy cluster, one bet. My look is a back-up to ma_20 50.62. | lens.coil strong on a pause near ma_20 50.62. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · E&P cyclical rebounding: growthRevenue 0.239, growthEPS 0.81 after two down FYs. priceToEarningsRatioTTM 13.6, dividendYieldTTM 0.032, debt_to_equity 0.37. One up-year is not a trend; peak test unserved.
-
-### ESTC — ADVANCE (3) · MOMENTUM
-
-Split: support 5 · oppose 0 · abstain 0 · advisory support 3, oppose 0, abstain 2 · doors: Seats, Elder+Lens, Strength
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens confirms the trend: strong on leadership, coil, structure; lens_positive 3 lens_warnings 1 (resistance warn, room above unread). ma_50 90.45 over ma_100 76.72 over ma_200 66.55, structure_shift BULLISH_BOS, day_vol 1.11. Supports strength, not room to run. | structure_shift BEARISH_CHOCH, or a daily close under ma_20 94.57. |
-| elder-lens | SUPPORT | 3 | Red gave way and the climb is clean: elder_5d [4, 6, 8, 10, 10] crossed from six to eight three bars back, now ACCELERATION at elder 10.0 with mp 77.0 STRONG. Summer now, so the entry is the first dip toward ma_20, not the plateau. Slope and weekly unread. | Close under ma_20 by half an ATR, or force falls back to red before a dip is bought. |
-| livermore | SUPPORT | 3 | Fresh high just cleared: from_52w_hi 0.0, structure_shift BULLISH_BOS, structure 70.5, pct_from_pivot 1.03 over pivot_high 101.39, mp 77.0, rs_rank_pct 97.81. Small margin, not a chase. Software leads per VALEN; stance RISK OFF caps it. | Close back under pivot_high 101.39, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 4 | Closing high pct_from_52w_high 0.0 with rs_rank_pct 97.81, rs_spy_20d 17.71; stack ma_50 90.45 over ma_100 76.72 over ma_200 66.55. structure_shift BULLISH_BOS, pct_from_pivot 1.03 over pivot_high 101.39: inside the buy zone. day_vol 1.11 is only mild expansion. Best template fit in the set. | Close under pivot_high 101.39 within days, or hourly closes back under ma_20 94.57 with day_vol under 1. |
-| oneil | SUPPORT | 3 | Fresh high out of a strong base: structure_shift BULLISH_BOS, entry 102.43 just over pivot_high 101.39, lens coil strong, leadership strong, mp 77.0 STRONG. Volume is the missing leg: day_vol 1.11. rs_leadership IN-LINE is a weight under R14. | Closes back under pivot_high, or the next push through it draws no volume. |
-| raschke (advisory) | SUPPORT | 3 | Fresh break: structure_shift BULLISH_BOS, pct_from_pivot 1.03 over pivot_high 101.39, adx 36.44, elder 10.0 ACCELERATION. Invalidation is two ticks under pivot_high 101.39. rs IN-LINE and sma_dist 13.25 mean I want a hold above the break, not a chase. | Daily close back under pivot_high 101.39 turns the break into a failed test. |
-| seow (advisory) | SUPPORT | 2 | Leader, not a dip: rs_spy_20d 17.71, from_52w_hi 0.0, mp 77.0 STRONG, but sma_dist 13.25 and rs_leadership IN-LINE. C3: never buy the extension. Act on a ma_20 94.57 retest with a buy stop over the prior high. ma_40/CCI unserved. | Close below ma_40 on the retest, or structure_shift flipping to BEARISH_CHOCH. |
-| thorp (advisory) | ABSTAIN | None | MOMENTUM lane, strength seats decide; not in my gated set. atr 4.25 against entry 102.43 is mid-range vol. Lynch says priceToEarningsRatioTTM 27.3 rests on a non-operating item, so I cannot name what it is mispriced against. Loss boundary ma_20 94.57. | Close under ma_20 94.57 would confirm my caution. |
-| weis (advisory) | ABSTAIN | None | Fresh high, structure_shift BULLISH_BOS, sma_dist 13.25, day_vol 1.11: modest effort for a new high and extended. Upthrust cannot be confirmed (no close-location field), so this is a W14 caution, not a call. Momentum lane: advisory. | A pullback that holds ma20 94.57 on dry-up volume would turn this into a support. |
-| wyckoff (advisory) | SUPPORT | 2 | Coiled then through: lens.coil strong, energy 80.7, structure_shift BULLISH_BOS, structure 70.5, flow 73.7. Role reversal says the old top now supports, so I want the back-up at pivot_high 101.39 on thin day_vol, not entry 102.43. lens.resistance warn is overhead supply. Danger point ma_20 94.57. | A close back under pivot_high 101.39 (a failed break reads as distribution), or ma_20 94.57 lost. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · ~17% grower (growthRevenue 0.173) but net_profit_margin 0.208 far above operatingProfitMarginTTM -0.015: priceToEarningsRatioTTM 27.3 rests on a non-operating item (cause unserved). free_cash_flow_yield 0.034.
-
-### OXY — ADVANCE (3) · MOMENTUM
-
-Split: support 2 · oppose 1 · abstain 2 · advisory support 3, oppose 0, abstain 2 · doors: Elder+Lens, Lens, Strength, PM lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 3 | Leads the energy cluster: lens_positive 4 lens_warnings 1 (coil warn); strong on leadership, structure, resistance, sector. ma_50 59.82 over ma_100 57.17 over ma_200 55.57, BULLISH_BOS, day_vol 1.26. Valen U&R MET: a reclaim day. One energy expression, not nine. | A daily close under ma_20 59.99, or structure_shift BEARISH_CHOCH. |
-| elder-lens | SUPPORT | 3 | Full dip-and-reclaim form: elder_5d [10, 7, 7, 7, 10], CORRECTION_REENTRY, mp 80.0 STRONG, structure 81.1 BULLISH_BOS. AQE's U&R read is MET: dipped under the rising trendline and closed back above, the reclaim day. Never red, so no permission event. | Close under ma_20 by half an ATR, or price rejects at the trendline again. |
-| livermore | ABSTAIN | None | Follower in the energy group: from_52w_hi -3.12 while EOG, CNQ and CVX print highs. structure 81.1 and BULLISH_BOS are good, but rs_rank_pct 67.07 is the weakest of the strong names. Flip on a close above high_52w_close. | Flips to SUPPORT on a close above high_52w_close with day_vol 1.26 or better. |
-| minervini | OPPOSE | 2 | Misses the leadership floor on my proxy: rs_rank_pct 67.07 against stronger energy peers. Second- and third-ranked names in a group are followers, not the trade. Lynch consulted: EPS slipping (growthEPS -0.35). Extension is not my reason (R14). | rs_rank_pct moving up among the energy leaders and a break of pivot_high on rising volume. |
-| oneil | ABSTAIN | None | Energy follower: rank 58, rs_rank_pct 67.07, day_vol 1.26 under my volume test, and the Valen trendline reclaim is a reclaim, not my entry. Best lens read of the cluster (structure 81.1 BULLISH_BOS) so no veto; the cluster is carried by EQNR. | OXY clears pivot_high on volume ahead of the other energy leaders. |
-| raschke (advisory) | SUPPORT | 3 | Test-and-reclaim at structure, my lowest-risk family: VALEN shows a dip under the rising trendline (63.04) on the last session and a close back above it, BULLISH_BOS, structure 81.1, CORRECTION_REENTRY, lens structure and resistance strong. Invalidation is the undercut low. sma_dist 7.27, adx 21.42. First choice of the energy factor. | Close under the undercut low (bar_low). |
-| seow (advisory) | SUPPORT | 2 | Dip shape: Valen U&R MET (under the rising trendline, closed back above), elder_pattern CORRECTION_REENTRY, ext_atr20 2.56, rs_spy_20d 14.33. But ma_20 59.99 is level with ma_50 59.82, so the trend leg is open. Of the energy pile OXY and DVN fit my pullback best. ma_40/CCI unserved. | A close below the prior-day low before the buy stop fires, or any close below ma_40. |
-| thorp (advisory) | ABSTAIN | None | Energy duplicate. U&R MET: dipped under the rising trendline 63.04 and closed back above (Valen). Lynch: priceToEarningsRatioTTM 9.6 but growthEPS -0.35; net_profit_margin 0.288 over operatingProfitMarginTTM 0.230. atr 1.63 against entry 64.17. No edge measured. | Close under ma_20 59.99. |
-| weis (advisory) | SUPPORT | 3 | Best single energy expression: U&R MET, dipped under the rising trendline (63.04) on the last session and closed back over; BULLISH_BOS, structure 81.1, ma50 59.82 over ma100 57.17 over ma200 55.57, lens_positive 4. Single-bar read, penetration depth unserved. The sector is one factor. | A close under yesterday's low, or a dip under ma20 59.99 that fails to reclaim. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction fails (lens.coil warn, energy 55.5). Noted: VALEN U&R MET, under the rising trendline 63.04 then closed back above, on day_vol 1.26 (not light, so a test is owed). If the PM carries one energy expression, OXY holds the only Demand Line reclaim. Danger point ma_20 59.99. | A close under ma_20 59.99, or the 63.04 trendline lost on rising day_vol. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · Cheap and slipping: priceToEarningsRatioTTM 9.6, growthEPS -0.35, -0.39, -0.69. net_profit_margin 0.288 exceeds operatingProfitMarginTTM 0.230: non-operating item in earnings. free_cash_flow_yield 0.083.
-
-### SLDE — ADVANCE (3) · MOMENTUM
-
-Split: support 5 · oppose 0 · abstain 0 · advisory support 2, oppose 0, abstain 3 · doors: Elder+Lens, Strength, PM lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens agrees: strong on leadership, resistance, sector; coil warn. ma_50 24.43 over ma_100 21.93 over ma_200 19.9, ABOVE_STRUCTURE, day_vol 1.43. Extended (sma_dist 16.88), and extension is a weight, not my veto. Financials overlap with held V. | A daily close under ma_20 25.31, or coil and insti_money both reading warn. |
-| elder-lens | SUPPORT | 2 | Dip-and-reclaim form: elder_5d [10, 10, 7, 7, 10], CORRECTION_REENTRY, mp 93.0 STRONG. Never red. sma_dist 16.88 and ext_atr20 3.86 make it a late move, so buy near ma_20 only. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | SUPPORT | 3 | Fresh high: from_52w_hi 0.0, structure 70.9, ABOVE_STRUCTURE, mp 93.0 ACCELERATING, rs_rank_pct 91.74, day_vol 1.43. Insurance leads from its own highs per VALEN. sma_dist 16.88 and run_10d 13.56 make it late, so three not four. | Close under ma_20 25.31, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 3 | Growth leader printing a new high: pct_from_52w_high 0.0, rs_rank_pct 91.74, rs_spy_20d 25.07, rs_down_day_20d 1.59, mp 93.0, day_vol 1.43. Lynch consulted pairs it: growthRevenue 0.365, net_profit_margin 0.400. Cautions: sma_distance_pct 16.88, no pivot in the packet, overlaps held V. | Close under ma_20 25.31, or the new high failing to hold on day_vol under 1. |
-| oneil | SUPPORT | 3 | Leader at a new high on volume: rank 66, day_vol 1.43 passes, rs_leadership LEADER, rs_spy_20d 25.07, structure 70.9, mp 93.0. Consulted read supports: growthRevenue 0.365, net_profit_margin 0.400. Extended at sma_distance_pct 16.88 (weight, R14); pivot distance not served. | Closes under ma_20 on heavy volume, or a new high prints on lower volume. |
-| raschke (advisory) | SUPPORT | 2 | Holy Grail candidate: adx 31.08, new high, CORRECTION_REENTRY, mp 93.0 STRONG, ABOVE_STRUCTURE. No pullback yet: sma_dist 16.88, run_10d 13.56, ext_atr20 3.86, so I wait for the first test of ma20 25.31. Same Financials sleeve as held V. | Close under ma20 25.31. |
-| seow (advisory) | SUPPORT | 1 | Overextended: sma_dist 16.88, ext_atr20 3.86, run_10d 13.56, though rs_spy_20d 25.07 and mp 93.0 STRONG are real. Financials, same sector as held V. No dip; entry only on a ma_20 25.31 retest. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | ABSTAIN | None | Nearest I see to a priced-against case: priceToEarningsRatioTTM 6.2 with growthRevenue 0.365 and debt_to_equity 0.03 (Lynch). But margins look peak-like, free_cash_flow_yield 0.310 may be float, ext_atr20 3.86, sma_dist 16.88. atr 0.84 against entry 28.55. Unmeasured, so I stand aside. | Close under ma_20 25.31 voids it; I need a measured edge before I vote. |
-| weis (advisory) | ABSTAIN | None | New high, run_10d 13.56, sma_dist 16.88, ext_atr20 3.86: an extended thrust with no failed-weakness shape. Financials overlap with held V; revenue growth is fading. Momentum lane: advisory. | A retest of ma20 25.31 that holds on low volume. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction fails: lens.coil warn, energy 57.1. structure_shift ABOVE_STRUCTURE, sma_distance_pct 16.88, day_vol 1.43: effort met by progress but mid-move. Momentum is real (mp_state STRONG, flow 81.6); no edge. A thin-volume back-up to ma_20 25.31 is the look. | lens.coil strong on a pause near ma_20 25.31. |
-
-Fundamentals consult (lynch, no vote): **SUPPORT** · fast grower · Passes served tests: priceToEarningsRatioTTM 6.2, growthRevenue 0.365, net_profit_margin 0.400, debt_to_equity 0.03. Caveat: revenue growth fading (prior FYs 0.807, 0.933); margins look peak-like; cycle unserved.
-
-### ROKU — ADVANCE (3) · PULLBACK
-
-Split: support 9 · oppose 0 · abstain 1 · doors: Seats
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens thin, not adverse: lens_positive 2 lens_warnings 0, runner_conviction 1, premove_conviction 0. ma_50 155.29 over ma_100 147.56 over ma_200 126.57, day_vol 1.54. Three seats carry it; the lens does not echo them. Held back, not opposed. | Coil or insti_money lens turning strong would move me to SUPPORT; structure_shift BEARISH_CHOCH would move me to OPPOSE. |
-| elder-lens | SUPPORT | 2 | Force dipped inside a rising stack: elder_5d [9, 9, 9, 10, 7] green faded to blue, never red, elder 7.0, so permission stands but there is no transition event. mp 60.0 BUILDING. Buy only in the value zone near ma_20; slope and weekly legs unverified. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | SUPPORT | 2 | Coiled at the high, not through it: structure_shift RANGE, pct_from_pivot -0.17 under pivot_high 158.85, from_52w_hi -0.92, day_vol 1.54, rs_rank_pct 87.36. Uptrend is established; I buy only the break. VALEN stance RISK OFF trims it. | A break that fades past my atr_14d danger multiple (my translation), or a close under ma_20 154.12 before any break. |
-| minervini | SUPPORT | 3 | Trend Template served legs pass: ma_50 155.29 over ma_100 147.56 over ma_200 126.57, pct_from_52w_high -0.92, rs_rank_pct 87.36 LEADER. Coiled under the pivot (pct_from_pivot -0.17 vs pivot_high 158.85), day_vol 1.54. Buy the break, not the anticipation. structure_shift RANGE. | Failed break of pivot_high 158.85 on light volume, or a close under ma_20 154.12; structure_shift staying RANGE with day_vol under 1. |
-| oneil | SUPPORT | 3 | Leader at the pivot, not through it: rs_leadership LEADER, rank 83, structure 61.1 RANGE, entry 158.58 under pivot_high 158.85, day_vol 1.54, lens coil ok. Buy the break on volume, not before. Gate DELEGATED; Valen RISK OFF is the open condition. | Rejects at pivot_high on weak volume, or structure_shift turns BEARISH_CHOCH. |
-| raschke | SUPPORT | 3 | Breakout type from a coil: structure_shift RANGE, entry 158.58 just under pivot_high 158.85, day_vol 1.54, sma_dist 2.12. Invalidation sits close at ma20 154.12. adx 21.74 is weak, so not a Holy Grail; I buy the break, not the range. | Close back under ma20 154.12, or a break that stalls on below-normal day_vol. |
-| seow | SUPPORT | 1 | Tight coil under the high: from_52w_hi -0.92, run_10d 3.75, ext_atr20 2.18, rs_spy_20d 5.34 passes C6. No dip (structure_shift RANGE) and ma_20 154.12 sits under ma_50 155.29, so the uptrend leg is open; ma_40/CCI unserved. Buy stop over the prior high only. | Close below ma_40 or below the 20-day base low before the buy stop over the prior-day high fires. |
-| thorp | SUPPORT | 2 | Calmest of my gated set: atr 2.05 against entry 158.58, day_vol 1.54, sc_m_gate_detail all five true. Volatility-first ordering only; edge unmeasured (signal_n 0), so conviction stays low. Loss boundary ma_20 154.12 / ma_50 155.29. | Close under ma_50 155.29, or the calm rank lost as atr widens. |
-| weis | SUPPORT | 3 | W21 contraction, hinge unresolved: structure_shift RANGE, structure 61.1, sma_dist 2.12 (not extended), ma50 155.29 over ma100 147.56 over ma200 126.57, div BULLISH, day_vol 1.54. Direction read from the bullish run (ret_12m 65.14), not the squeeze. Buy only the resolved hinge. | Hourly close back under pivot_high after the break, or a close under ma50 155.29 with day_vol rising. |
-| wyckoff | SUPPORT | 3 | Edge of a range: structure_shift RANGE, sma_distance_pct 2.12. Contraction proxy lens.coil ok, energy 73.1 (substitute, no Crabel count). Effort day_vol 1.54 met by mp_accel_state ACCELERATING, flow 88.2. No spring or upthrust is served. Danger point ma_20 154.12, ma_50 155.29. | A close under ma_20 154.12, or a push through the top of the range that closes back inside it on heavy day_vol. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · fast grower · Entertainment grower, thin margins: priceToEarningsRatioTTM 66.7 vs growthRevenue 0.152, operatingProfitMarginTTM 0.052. free_cash_flow_yield 0.039; debt_to_equity 0.17. Price outruns earnings, which only just inflected.
-
-### DHR — ADVANCE (3) · PULLBACK
-
-Split: support 6 · oppose 1 · abstain 3 · doors: Elder+Lens, Lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 3 | Lens agrees: lens_positive 4 lens_warnings 1 (insti_money warn); strong on leadership, coil, structure, sector. ma_50 216.13 over ma_100 204.32 over ma_200 201.2, BULLISH_BOS, day_vol 0.8 is quiet. Valen U&R MET: a reclaim day, market RISK OFF. | A daily close under ma_20 223.27, or lens_positive falling below 3. |
-| elder-lens | SUPPORT | 3 | Best Elder pullback here: elder_5d [7, 6, 9, 7, 7] dipped to six and came back to nine, stack rising (ma_20 223.27 over ma_50 216.13 over ma_100 204.32), and AQE's U&R read is MET: dipped under the 9-day average and closed back above. mp 55.0 BUILDING is the weak leg. | Close under ma_20 by half an ATR, or choch_bearish. |
-| livermore | ABSTAIN | None | Pullback in an intact stack (ma_20 223.27, ma_50 216.13, ma_100 204.32, ma_200 201.2) but from_52w_hi -4.77, day_vol 0.8 quiet, mp 55.0 DECELERATING. The U&R reclaim is a pullback read; I buy the new high, not the reclaim. | Flips to SUPPORT on a close above high_52w_close with day_vol above normal. |
-| minervini | ABSTAIN | None | Served template legs pass (ma_50 216.13 over ma_100 204.32 over ma_200 201.2, rs_rank_pct 84.08) but no readable base: structure 63.2, day_vol 0.8 shows no demand, Lynch consulted shows EPS falling (growthEPS -0.05). U&R reclaim day is not my buy. Neutral. | A break of pivot_high on rising volume would make me a supporter; a close under ma_50 216.13 an opponent. |
-| oneil | OPPOSE | 2 | No volume and no earnings recovery: day_vol 0.8, mp DECELERATING, consulted growthEPS -0.05, -0.17, -0.34. The Valen reclaim is a reclaim, which is not my entry; structure 63.2 is a base only in name. | A volume-backed break above pivot_high with insti_money improving. |
-| raschke | SUPPORT | 3 | Retracement with a test: clean stack (ma20 223.27, ma50 216.13, ma100 204.32, ma200 201.2), BULLISH_BOS, adx 31.37, and VALEN shows a dip under the 9-day average (226.85) with a close back above it, reclaim day. Invalidation is the undercut low. day_vol 0.8 is quiet. | Close under the undercut low (bar_low) ends the test. |
-| seow | SUPPORT | 3 | Closest fit to my set-up: ma_20 223.27 clearly over ma_50 216.13, ext_atr20 1.04, run_10d 4.86 on quiet day_vol 0.8, and Valen U&R MET (under the 9-day average, closed back above). rs_spy_20d 4.15 and ret_63d 17.3 pass C6. ma_40/CCI unserved so no full set-up. | A close below the prior-day low before the buy stop fires, or any close below ma_40. |
-| thorp | ABSTAIN | None | U&R MET: dipped under the 9-day average 226.85 and closed back above (Valen); Episodic pivot delayed FAILED (7/10). atr 6.92 against entry 230.5; loss boundary ma_20 223.27. Lynch: growthEPS -0.05 at priceToEarningsRatioTTM 37.7. Edge unmeasured. | Close under ma_20 223.27. |
-| weis | SUPPORT | 3 | Spring-shaped single-bar read: U&R MET, dipped under the 9-day average (226.85) and closed back over on day_vol 0.8 (low effort on the penetration, the W7 shape). Clean trend: ma20 223.27 over ma50 216.13 over ma100 204.32 over ma200 201.2; BULLISH_BOS, coil and structure lens strong. Penetration depth unserved. | A close under yesterday's low means follow-through: failed absorption, not a spring. |
-| wyckoff | SUPPORT | 2 | Light-volume dip and recover: VALEN U&R MET, under the 9-day average 226.85 then closed back above on day_vol 0.8. That is a trendline-type shakeout, not a range-low spring, and I do not call a spring. Contraction lens.coil strong, energy 73.1, BULLISH_BOS. Danger point ma_20 223.27. | A close under ma_20 223.27, or the reclaimed 226.85 average lost on rising day_vol. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Priced as if earnings recovered; they have not: growthEPS -0.05, -0.17, -0.34 and growthRevenue 0.029 at priceToEarningsRatioTTM 37.7. Sheet sound (debt_to_equity 0.49) but free_cash_flow_yield 0.035.
-
-### LTH — ADVANCE (3) · PULLBACK
-
-Split: support 7 · oppose 0 · abstain 3 · doors: Seats, Elder+Lens, Lens, PM lens
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 4 | Highest lens read in the tally: lens_positive 5 lens_warnings 1 (resistance warn). Strong on leadership, coil, insti_money, structure, sector. ma_50 41.75 over ma_100 41.01 over ma_200 34.82, structure_shift BULLISH_BOS, day_vol 1.66. premove_setup false; premove_conviction 3 is context only. | A daily close under ma_20 40.52, or lens_positive falling below 3. |
-| elder-lens | SUPPORT | 3 | Closest to Elder's buy: elder_5d [8, 9, 6, 9, 10] left the ambiguous band at six and gave way to nine two bars back, then green; elder_pattern CORRECTION_REENTRY. Price sits at value, sma_dist 0.42. mp 48.0 FADING is the default label, so I do not count it against. Slope and weekly unread. | Close under ma_20 by half an ATR, or a bearish structure break (choch_bearish). |
-| livermore | ABSTAIN | None | Not a new high: from_52w_hi -8.31 with the old high overhead; pct_from_pivot 0.77 over pivot_high 41.61 is a thin clear; structure 51.6, ma_20 40.52 under ma_50 41.75. day_vol 1.66 is real. I wait for a close above high_52w_close. | Flips to SUPPORT on a close above high_52w_close with day_vol holding; wrong if it loses ma_20 40.52. |
-| minervini | SUPPORT | 3 | Tight base breaking out: structure_shift BULLISH_BOS, pct_from_pivot 0.77 over pivot_high 41.61, day_vol 1.66, rs_rank_pct 91.37 LEADER, pct_from_52w_high -8.31. Cushion is thin: sma_distance_pct 0.42 over ma_50 41.75, structure 51.6 middling. | Close under ma_50 41.75 (cushion gone), or hourly closes back under pivot_high 41.61 on volume. |
-| oneil | SUPPORT | 3 | Breakout inside the buy zone on volume: structure_shift BULLISH_BOS, day_vol 1.66, entry 41.93 only pct_from_pivot 0.77 over pivot_high 41.61, rs_leadership LEADER, lens coil strong, insti_money strong. Weak legs: structure 51.6, from_52w_hi -8.31. | Falls back under pivot_high on rising volume, or structure_shift flips BEARISH_CHOCH. |
-| raschke | SUPPORT | 4 | Cleanest risk location in the set: structure_shift BULLISH_BOS, entry 41.93 pct_from_pivot 0.77 over pivot_high 41.61, sma_dist 0.42, day_vol 1.66, ma20 40.52 right underneath. A tight-base break with invalidation beside the entry; lens coil strong, CORRECTION_REENTRY. | Daily close under ma20 40.52, or the break failing on thin day_vol. |
-| seow | ABSTAIN | None | Right shape, unproven trend: sma_dist 0.42, ext_atr20 1.13, elder_pattern CORRECTION_REENTRY, BULLISH_BOS. But ret_63d -4.18 cannot be tested against the index and ma_20 40.52 sits under ma_50 41.75; ma_40/CCI unserved. Four of five is not a set-up (C3). | Wrong if ma_40 is served under an up-sloping ma_20 and CCI confirms the stretch. |
-| thorp | ABSTAIN | None | Nearest its average of any nominated name (sma_dist 0.42), so the worst case is small: atr 1.25 against entry 41.93, loss boundary ma_20 40.52. But not in my gated set; lens agreement is not a measured mispricing. Lynch: free_cash_flow_yield -0.016, debt_to_equity 1.29. | Close under ma_20 40.52 voids the small worst case. |
-| weis | SUPPORT | 3 | Fresh BULLISH_BOS hugging support: sma_dist 0.42, day_vol 1.66, elder_5d dips to 6 then reclaims 10, coil and insti_money lens strong. ma50 41.75 over ma100 41.01 over ma200 34.82 keeps W23 clean. mp 48 FADING is a default label (R13). Secondary test unserved. | A close under ma20 40.52, or a retest that comes back on rising volume rather than a dry-up. |
-| wyckoff | SUPPORT | 3 | Just through the top and sitting on the average: structure_shift BULLISH_BOS, sma_distance_pct 0.42. Contraction lens.coil strong, energy 68.1. Effort day_vol 1.66 met by progress, flow 81.6. mp_state FADING is a default label. lens.resistance warn: overhead supply unread. Danger point ma_20 40.52. | A close under ma_20 40.52, or BULLISH_BOS flipping to BEARISH_CHOCH. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Earnings compounding (growthEPS 1.22, 0.97), priceToEarningsRatioTTM 22.3. But debt_to_equity 1.29 (implied debt share 0.56), free_cash_flow_yield -0.016: debt-funded, cash-negative expansion. Debt kind unserved.
-
-### RBRK — ADVANCE (3) · PULLBACK
-
-Split: support 7 · oppose 2 · abstain 1 · doors: Elder+Lens, Lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 3 | Lens-clean on every reading: lens_positive 4 lens_warnings 0, runner_conviction 4 (runner_setup false). ma_50 107.23 over ma_100 93.0 over ma_200 75.08, BULLISH_BOS, day_vol 1.43. Lens evidence outweighs the one seat behind it. Extended off ma_20: wait for it. | structure_shift BEARISH_CHOCH, or a daily close under ma_20 118.79. |
-| elder-lens | SUPPORT | 3 | Red just gave way: elder_5d [0, 0, 5, 7, 8] left the forbidden zone, crossed to seven two bars back and still climbs, ACCUMULATION_BASE, stack aligned. mp 50.0 BUILDING is the weak leg and sma_dist 20.06 is wide, so buy near ma_20, not here. | Close under ma_20 by half an ATR, or elder back to red. |
-| livermore | SUPPORT | 3 | Fresh high: from_52w_hi 0.0, structure_shift BULLISH_BOS, structure 70.9, pct_from_pivot 0.66 over pivot_high 127.9, day_vol 1.43, rs_rank_pct 98.91; stack ma_20 118.79, ma_50 107.23, ma_100 93.0. mp 50.0 is the soft spot. sma_dist 20.06 is the 50-day gap. | Close under pivot_high 127.9, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 3 | Leader at a closing high: rs_rank_pct 98.91, rs_spy_20d 18.99, structure_shift BULLISH_BOS, pct_from_pivot 0.66 over pivot_high 127.9, day_vol 1.43 expanding. Cautions: sma_distance_pct 20.06, div_bear_count 1, rs_leadership IN-LINE, no earnings. Capped at 3. | Close under pivot_high 127.9, or hourly closes back under ma_20 118.79 on rising volume. |
-| oneil | OPPOSE | 3 | Climax reading by the canon: entry 128.74 sits far above ma_200 75.08, sma_distance_pct 20.06, rs_leadership IN-LINE, div BEARISH 1, elder ACCUMULATION_BASE. A name to sell into strength, not buy. The fresh BOS does not rescue it. | Price rebases toward ma_50 107.23 with a tight base, then breaks out again on volume. |
-| raschke | SUPPORT | 3 | Fresh break with invalidation beside it: BULLISH_BOS, pct_from_pivot 0.66 over pivot_high 127.9, day_vol 1.43, lens coil and structure strong. Extended (sma_dist 20.06) and rs IN-LINE, so I take a hold above the break, not a chase. div BEARISH/1 is advisory only. | Daily close under pivot_high 127.9. |
-| seow | SUPPORT | 1 | Overextended flag (sma_dist 20.06) though ext_atr20 1.55 and run_10d 2.88 are orderly; rs_spy_20d 18.99, ret_63d 72.07, rs_leadership IN-LINE. No dip: buy only on a ma_20 118.79 retest. div_bear_count 1; ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp | OPPOSE | 3 | Labelled pullback but sma_dist 20.06; rs IN-LINE. atr 6.42 against entry 128.74 is top-quartile vol and ma_20 118.79 is far. net_profit_margin -0.165 gives no earnings anchor. div_bear_count 1. | A retest of ma_20 118.79 that holds on quiet day_vol makes the worst case sizeable; I would withdraw. |
-| weis | ABSTAIN | None | sma_dist 20.06 on a new high, rs IN-LINE (did not out-hold on down days), div_bear_count 1. Lens-clean but an extended thrust; I want the retest of ma20 118.79, not a market entry. Price rests on no earnings. | A retest of ma20 118.79 on a dry-up that holds. |
-| wyckoff | SUPPORT | 2 | Coil then through: lens.coil strong, energy 73.9, structure_shift BULLISH_BOS, day_vol 1.43 expanding. But sma_distance_pct 20.06 is far from the averages, so I want the old top retested, not a market entry. div_bear_count 1 is advisory. Danger point ma_20 118.79. | A close under ma_20 118.79, or a close back under pivot_high 127.9. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · fast grower · Growth is real (growthRevenue 0.485) but the price rests on no earnings: net_profit_margin -0.165, free_cash_flow_yield 0.012, negative equity (debt_to_equity -2.27). Growth above 30% is a C17 fade signal.
-
-### HLT — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 3 · oppose 3 · abstain 4 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens block is -- on leadership, coil, insti_money, resistance (lens_positive 1 counts fewer lenses, not comparable). Readable: structure ok, sector strong; ma_50 322.72 under ma_100 326.92 but over ma_200 319.56; day_vol 1.29. Cannot corroborate or dissent. | A lens re-run with leadership and coil strong would move me to SUPPORT; ma_50 staying under ma_100 caps it. |
-| elder-lens | SUPPORT | 2 | Pullback in force: elder_5d [10, 10, 10, 7, 7] green faded to blue for two bars while price sits at from_52w_hi -3.48. Not red, so buying is permitted, but no reclaim yet. elder 7.0, mp 89.0 FADING is the default label. Wait for the dip to hold and green to return. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | OPPOSE | 2 | Not a leader and no new high: rs_rank_pct 51.88, from_52w_hi -3.48, ma_50 322.72 under ma_100 326.92. Price sits above all averages, but the intermediate trend is not up. I do not buy a rally inside a reaction. | Wrong if ma_50 retakes ma_100 and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Template gate fails: rs_rank_pct 51.88 is far under the leadership floor and ma_50 322.72 sits under ma_100 326.92, so the stack is not in order. A pullback in a mid-RS name is not a leader: buy strength, not weakness. mp FADING is not cited. | rs_rank_pct climbing back over the leadership floor and ma_50 retaking ma_100: the gate would then pass. |
-| oneil | OPPOSE | 2 | No base and no pivot: rs_rank_pct 51.88 is under any RS gate, ma_50 322.72 under ma_100 326.92, day_vol 1.29 under my volume test, mp DECELERATING. A pullback in a middling stack is not my entry; Lynch reads price above growth. | ma_50 turns back above ma_100 and price clears pivot_high on volume. |
-| raschke | SUPPORT | 2 | Retracement, Holy Grail shape: adx 40.94, ABOVE_STRUCTURE, from_52w_hi -3.48, but sma_dist 8.34 means no real pullback yet. ma50 322.72 under ma100 326.92 weakens the context, though price holds above ma200 319.56. Entry is the first test of ma20 332.71. | Close under ma50 322.72. |
-| seow | SUPPORT | 2 | Order intact (ma_20 332.71 over ma_50 322.72); rs_spy_20d 12.84 and ret_63d 5.68 pass C6. ext_atr20 2.28, run_10d 7.06, from_52w_hi -3.48 is an orderly shelf but no dip. mp FADING is an R13 label, not a reason. Buy stop over the prior high after a ma_20 touch; ma_40/CCI unserved. | Close below ma_40, or no hold at ma_20 on the touch. |
-| thorp | ABSTAIN | None | Calm on atr 7.43 against entry 349.63, but not in my gated set and edge unmeasured. Lynch: priceToEarningsRatioTTM 50.8 with growthEPS 0.00; ma_50 322.72 under ma_100 326.92 owes a trend context. mp FADING is not a reason (R13). | Close under ma_20 332.71. |
-| weis | ABSTAIN | None | Mixed stack: ma50 322.72 under ma100 326.92, over ma200 319.56 only. sma_dist 8.34, mp 89 FADING is a default label (R13). A pullback shape without a failed-weakness read; fundamentals read CONTRADICT on price versus growth. | A hold of ma50 322.72 on low volume with ma50 back over ma100. |
-| wyckoff | ABSTAIN | None | Data gap: lens.coil reads '--', so no contraction proxy. mp_accel_state DECELERATING with day_vol 1.29 elevated is the large-effort, small-reward fork: absorption near a top or a spent drive. Without a range edge I cannot tell which. sma_distance_pct 8.34. No edge. | lens.coil populated and strong near ma_20 332.71. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Franchise stalwart priced for more: priceToEarningsRatioTTM 50.8 vs growthRevenue 0.077 and growthEPS 0.00. free_cash_flow_yield 0.026. Negative equity (debt_to_equity -2.22) makes the balance test moot.
-
-### BOX — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 1, oppose 1, abstain 3 · doors: Strength, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens thin: strong on leadership only, coil warn. ma_50 35.24 over ma_100 32.0 over ma_200 28.37, ABOVE_STRUCTURE, day_vol 1.0 not expanding. No lens case to add; not adverse enough to oppose. | Coil and insti_money lenses turning strong would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Green leaves after four greens at a new high: elder_5d [10, 10, 10, 10, 7], Elder's profit-taking signal in a powerful upswing, with ext_atr20 5.24 and sma_dist 22.53. Not an entry. mp 100.0 STRONG shows the run is real; the entry is the dip and reclaim. | Force returns to ten after a dip toward ma_20 holds. |
-| livermore | SUPPORT | 2 | Clean stack at a high: from_52w_hi 0.0, structure 87.4, mp 100.0 ACCELERATING, rs_rank_pct 94.96, ma_20 37.36 over ma_50 35.24 over ma_100 32.0. Late: sma_dist 22.53, ext_atr20 5.24 (VALEN NO-BUY flag), day_vol 1.0 only normal. A weight, so two. | Close under ma_20 37.36, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 1 | Real strength: pct_from_52w_high 0.0, rs_rank_pct 94.96, rs_spy_20d 39.04, mp 100.0, adx 44.74. But sma_distance_pct 22.53 (ext_atr20 5.24) and day_vol 1.0 show no fresh demand; Lynch: slow grower at a fast-grower multiple. No chase; weak support. | Close under ma_20 37.36, or a new high on day_vol under 1. |
-| oneil | SUPPORT | 2 | The cleanest strength in the door-only set: rank 22, structure 87.4, rs_leadership LEADER, rs_rank_pct 94.96, mp 100.0, new high, ret_12m 28.93. Weights not vetoes: sma_distance_pct 22.53, 5.2 ATR extended. Legs unmet: day_vol 1.0, coil warn, consulted growthEPS -0.57. | Closes under ma_20 on heavy volume, or a new high prints on lower volume. |
-| raschke (advisory) | SUPPORT | 1 | Holy Grail candidate: adx 44.74, mp 100.0 STRONG, new high, ABOVE_STRUCTURE, structure 87.4. No pullback yet: sma_dist 22.53, ext_atr20 5.24, run_10d 18.66. I wait for the first test of ma20 37.36; no market entry. | Close under ma20 37.36 without a bounce. |
-| seow (advisory) | ABSTAIN | None | Strength is real (rs_spy_20d 39.04, ret_63d 43.22, mp 100.0 STRONG, stack up) but ext_atr20 5.24, sma_dist 22.53, run_10d 18.66: ma_20 37.36 is far under entry 43.18, so nothing to buy under C3. R14: extension is a weight, so ABSTAIN, not OPPOSE. | Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high. |
-| thorp (advisory) | OPPOSE | 2 | ext_atr20 5.24, sma_dist 22.53, run_10d 18.66; ma_20 37.36 under entry 43.18 against atr 1.11 is a wide worst case. Lynch: slow grower at priceToEarningsRatioTTM 61.0 against growthRevenue 0.080, growthEPS -0.57. | A hold above entry 43.18 on day_vol near 1.0, or a pullback to ma_20 37.36 that holds. |
-| weis (advisory) | ABSTAIN | None | sma_dist 22.53, ext_atr20 5.24, run_10d 18.66 with day_vol 1.0: an extended thrust on ordinary effort, no failed-weakness shape. A slow grower at a fast-grower multiple per the fundamentals read. Momentum lane: advisory. | A base above ma20 37.36 on dry-up volume with a resolved hinge. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, structure 87.4, flow 69.7) but contraction fails (lens.coil warn, energy 64.7) and sma_distance_pct 22.53 leaves no edge. day_vol 1.0 is normal effort. VALEN shows no house setup and 5.2 ATR extended. Look at ma_20 37.36; wrong under it. | lens.coil strong on a pause near ma_20 37.36. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · slow grower · Slow grower at a fast-grower P/E: priceToEarningsRatioTTM 61.0 vs growthRevenue 0.080 and growthEPS -0.57. free_cash_flow_yield 0.064 and debt_to_equity 0.50 keep it from failing; earnings and cash disagree.
-
-### CVX — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 0 · abstain 2 · advisory support 1, oppose 0, abstain 4 · doors: Strength, PM lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Energy cluster, mid lens: lens_positive 2, coil warn, sector strong. ma_50 210.42 over ma_100 197.1 over ma_200 191.63, ABOVE_STRUCTURE, day_vol 1.11. The name-level lens cannot separate it from OXY or SLB. | Coil lens leaving warn with lens_positive above 2 would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Dip-and-reclaim form: elder_5d [10, 7, 7, 7, 10], CORRECTION_REENTRY, mp 93.0 STRONG, the strongest mp of the reclaim set. Never red, no permission event. ext_atr20 3.73 means buy a dip near ma_20, not the reclaim bar. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | SUPPORT | 3 | Fresh high: from_52w_hi 0.0, structure 76.8, ABOVE_STRUCTURE, mp 93.0 ACCELERATING, rs_rank_pct 81.17, day_vol 1.11. Third clean leader in the energy group after EOG and CNQ. Same bet, so three. | Close under ma_20 215.37, the pair losing highs, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Second-best energy strength: pct_from_52w_high 0.0, rs_rank_pct 81.17, mp 93.0, rs_down_day_20d 1.61, stack ma_50 210.42 over ma_100 197.1 over ma_200 191.63. A follower to CNQ in a one-bet sector; Lynch consulted shows EPS falling (growthEPS -0.32), so no earnings pairing. | Close under ma_20 215.37, or the energy group rolling over together. |
-| oneil | ABSTAIN | None | Third energy name by rank 24 but day_vol 1.11 fails my volume test and the consulted read shows growthEPS -0.32, -0.14, -0.38. Cluster is carried by EQNR and CNQ; adding CVX widens one bet. No veto: structure 76.8, mp 93.0. | CVX takes volume above my test on a new high while EQNR stalls. |
-| raschke (advisory) | ABSTAIN | None | Energy factor again; OXY first. CVX is at a new high with sma_dist 10.83, run_10d 10.02, adx 29.45 and no pullback, so no setup of mine fires at market. A first pullback toward ma20 215.37 would qualify. | A pullback that holds ma20 215.37. |
-| seow (advisory) | SUPPORT | 1 | Strong tape (rs_spy_20d 15.54, mp 93.0 STRONG, from_52w_hi 0.0) but ext_atr20 3.73 and sma_dist 10.83: no dip. Energy cluster is one bet. Wait for a ma_20 215.37 retest. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | ABSTAIN | None | Energy is one cyclical bet. If the room carries one, volatility-first favours the calmest: atr 4.78 against entry 233.21. I do not vote it; not in my gated set, and Lynch: growthEPS -0.32 at priceToEarningsRatioTTM 22.3. ext_atr20 3.73. | Close under ma_20 215.37. |
-| weis (advisory) | ABSTAIN | None | Fresh high, run_10d 10.02, sma_dist 10.83, ext_atr20 3.73, day_vol 1.11. Strong but extended, and the same energy factor; I express it once through OXY. Momentum lane: advisory. | A retest of ma20 215.37 that holds on low volume. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 61.3. structure_shift ABOVE_STRUCTURE, sma_distance_pct 10.83, mid-move. Momentum is real (mp_state STRONG, flow 84.2) but it is one more name in the energy cluster. My look is a back-up to ma_20 215.37. | lens.coil strong on a pause near ma_20 215.37. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · Integrated major, strong sheet (debt_to_equity 0.20), dividendYieldTTM 0.030. But growthEPS -0.32, -0.14, -0.38 and priceToEarningsRatioTTM 22.3 is dearer than EQNR's; free_cash_flow_yield 0.059.
-
-### EQNR — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 4 · oppose 0 · abstain 1 · advisory support 1, oppose 0, abstain 4 · doors: Seats, Strength
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | One of nine energy names; the sector lens cannot rank them. Name-level read is mid: lens_positive 2, coil warn. ma_50 43.43 over ma_100 39.93 over ma_200 36.99, ABOVE_STRUCTURE, day_vol 1.56. OXY and SLB lead the cluster, not EQNR. | Coil lens leaving warn with lens_positive above 2 would move me to SUPPORT. |
-| elder-lens | SUPPORT | 1 | Dip-and-reclaim form: elder_5d [10, 7, 7, 7, 10], elder_pattern CORRECTION_REENTRY, mp 75.0 STRONG, the thinnest mp of the reclaim set, and ext_atr20 3.49 with ret_12m 103.67 is late. Never red; buy near ma_20 only. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | SUPPORT | 2 | Fresh high: from_52w_hi 0.0, structure 80.0, mp 75.0 only just STRONG, day_vol 1.56. But pct_from_pivot 6.5 is near my chase limit and ret_12m 103.67 is late. Third expression of the energy pair; EOG and CNQ come first. | Close under ma_20 44.11, the pair losing highs, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Best relative strength inside energy on my fields: rs_rank_pct 82.99, flow 94.7, day_vol 1.56, pct_from_52w_high 0.0, stack intact. Held to 2: Lynch consulted shows EPS sliding (growthEPS -0.38), so no earnings pairing, and oneil flags ret_12m 103.67 as late stage. | Close under ma_20 44.11, or structure_shift turning BEARISH_CHOCH; the energy group rolling over together. |
-| oneil | SUPPORT | 3 | Best single expression of the energy cluster: rank 29, rs_leadership LEADER, new high, day_vol 1.56 passes my volume test where peers do not, flow 94.7, structure 80.0. Late buy: pct_from_pivot 6.5, ret_12m 103.67 is a late-stage warning; no add-ons. | Closes under pivot_high on a heavy day, or the group loses its sector strength. |
-| raschke (advisory) | ABSTAIN | None | Energy is one factor counted many times; I rank OXY first for a fresh test-and-reclaim. EQNR runs sma_dist 12.4 with run_10d 13.51 at a new high and no pullback yet, so no setup of mine fires at market. | A retest of ma20 44.11 that holds. |
-| seow (advisory) | SUPPORT | 1 | Strong tape (rs_spy_20d 17.19, mp 75.0 STRONG) but ext_atr20 3.49, run_10d 13.51, sma_dist 12.4: no dip. Energy cluster, one bet. Entry only on a ma_20 44.11 retest; ret_12m 103.67 is late-stage. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | ABSTAIN | None | Same energy bet counted again. ret_12m 103.67 is a late-stage warning (oneil). atr 1.35 against entry 48.82; loss boundary ma_20 44.11. Lynch: EPS sliding, growthEPS -0.38. Not in my gated set; edge unmeasured. | Close under ma_20 44.11. |
-| weis (advisory) | ABSTAIN | None | New high, run_10d 13.51, sma_dist 12.4, ret_12m 103.67: late-stage extension, no failed-weakness shape. Energy is expressed once, via OXY. Momentum lane: advisory. | A dip toward ma20 44.11 that holds on low volume. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 59.7. structure_shift ABOVE_STRUCTURE, sma_distance_pct 12.4, mid-move. Momentum is real (mp_state STRONG, flow 94.7) but it is part of the energy cluster, one bet. My look is a back-up to ma_20 44.11 with a coil. | lens.coil strong on a pause near ma_20 44.11. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · Integrated cyclical, EPS sliding (growthEPS -0.38, -0.21, -0.57). priceToEarningsRatioTTM 13.3, dividendYieldTTM 0.032, debt_to_equity 0.75. net_profit_margin 0.079 vs operatingProfitMarginTTM 0.296; cause unserved.
-
-### VRNS — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 3 · oppose 3 · abstain 4 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens thin, not adverse: strong on leadership and coil, no warns. ma_50 46.32 over ma_100 43.56 over ma_200 35.14, structure_shift RANGE, day_vol 0.69 is quiet effort. div_state is not on my menu so I do not read it; that question is Wyckoff's. | A third strong lens with day_vol rising would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Blue, not green: elder_5d [6, 7, 7, 7, 7] ACCUMULATION_BASE has not turned green anywhere in the window, while div_bear_count 5 shows every oscillator diverging on day_vol 0.69. Force that cannot expand is a stand-aside. elder 7.0, mp 48.0 BUILDING. | elder_5d reaches ten on rising volume with price holding above ma_20. |
-| livermore | ABSTAIN | None | Pullback in an intact stack (ma_20 48.24, ma_50 46.32, ma_100 43.56) but from_52w_hi -22.41, structure_shift RANGE, run_10d -2.47, day_vol 0.69. Nothing to buy until it nears its high again. I read price, not div_state. | Flips to SUPPORT on a close above high_52w_close with day_vol at or above normal. |
-| minervini | SUPPORT | 2 | Leader in a base: rs_rank_pct 96.6, ma_50 46.32 over ma_100 43.56 over ma_200 35.14, day_vol 0.69 is the dry-up I want. But pct_from_52w_high -22.41 and structure_shift RANGE: no pivot to buy yet. div_bear_count 5 is advisory only. Watchlist grade. | Close under ma_50 46.32 on rising volume, or the base widening with no break of pivot_high. |
-| oneil | OPPOSE | 3 | A bounce in a damaged stock, not a breakout: from_52w_hi -22.41, ret_12m -20.18, day_vol 0.69, div BEARISH with div_bear_count 5, structure_shift RANGE. Quiet volume with all five oscillators diverging reads as distribution, not a base. | Clears pivot_high on strong volume with div_bear_count falling. |
-| raschke | ABSTAIN | None | Range, no break: structure_shift RANGE, day_vol 0.69 quiet, from_52w_hi -22.41. No test, retracement, climax or breakout fires. div BEARISH/5 is advisory for my seat and does not carry this abstain. | A break through pivot_high on rising day_vol. |
-| seow | SUPPORT | 2 | Nearest to a real touch: ext_atr20 0.46, run_10d -2.47, day_vol 0.69 quiet, stack up (ma_20 48.24 over ma_50 46.32), rs_spy_20d 7.16. But from_52w_hi -22.41 leaves the short-dip grade unproven; div_bear_count 5 is not my instrument and CCI is unserved. | Close below ma_40 or a volume-backed break under the dip low. |
-| thorp | OPPOSE | 2 | div_bear_count 5 on day_vol 0.69, ret_12m -20.18, from_52w_hi -22.41: the edge condition looks to be compressing, so the opposite exposure is a live hypothesis. atr 1.4 against entry 48.88. | div_bear_count falling from 5 with day_vol above 1 on closes over ma_20 48.24 would void my caution. |
-| weis | ABSTAIN | None | Quiet contraction, day_vol 0.69, ext_atr20 0.46, ma stack up, but div_bear_count 5 with from_52w_hi -22.41. A dry-up is not absorption (undetectable here) and the hinge is unresolved; direction is not implied. Stand aside. | A hinge resolved up on volume with the divergence count clearing. |
-| wyckoff | SUPPORT | 2 | Range with dry-up: structure_shift RANGE, lens.coil strong, energy 87.4, day_vol 0.69 quiet, so no supply is pressing. Volume direction is not served, so div_bear_count 5 cannot be resolved by me. No edge event is served. Danger point ma_50 46.32. | A close under ma_50 46.32, or day_vol rising on down days. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · turnaround · Loss-making and levered: operatingProfitMarginTTM -0.220, debt_to_equity 1.16 (implied debt share 0.54), free_cash_flow_yield 0.022. Sales re-accelerating (growthRevenue 0.132); cash and maturities unserved.
-
-### CDW — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 2 · abstain 0 · advisory support 2, oppose 0, abstain 3 · doors: Strength, Solo
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 2 | Lens does not back the strength: one strong lens (resistance), two warns (coil, insti_money). day_vol 1.14 is ordinary, not institutional. ma_50 144.56 over ma_100 140.36 over ma_200 132.44. Extension is not my reason; the lens read is. | insti_money and coil lenses both leaving warn. |
-| elder-lens | SUPPORT | 1 | Plateau-only, the unsourced read: elder_5d [7, 10, 10, 10, 10], never red, mp 97.0 STRONG ACCELERATING. Momentum is real but force is pinned at the top (summer), ext_atr20 3.71 and sma_dist 14.21. I would buy only the first dip toward ma_20. | Close under ma_20 by half an ATR, or force drops to red before a dip is bought. |
-| livermore | SUPPORT | 4 | Fresh high: from_52w_hi 0.0, structure 89.3, ABOVE_STRUCTURE, pct_from_pivot 6.53 over pivot_high 154.99, mp 97.0 ACCELERATING, rs_spy_20d 23.39, day_vol 1.14. Tech peers ESTC, TENB, GTLB, BOX at highs together. | Close back under pivot_high 154.99, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Strength is real: pct_from_52w_high 0.0, rs_spy_20d 23.39, mp 97.0, structure 89.3, stack intact. Held to 2: rs_rank_pct 77.64 is only modest, pct_from_pivot 6.53 over pivot_high 154.99 is a chase (weight), Lynch consulted shows no EPS growth (growthEPS 0.01). | Close under pivot_high 154.99, or participation fading to day_vol under 1 on the next push. |
-| oneil | OPPOSE | 2 | Volume and money legs fail: day_vol 1.14 under my test, lens insti_money warn, lens coil warn, late buy at pct_from_pivot 6.53 over pivot_high 154.99, sma_distance_pct 14.21. A high on thin volume is a breakout nobody bought. | A decisive high-volume close through the high with insti_money turning strong. |
-| raschke (advisory) | SUPPORT | 2 | Holy Grail shape at fresh highs: adx 30.09, mp 97.0 STRONG, structure_shift ABOVE_STRUCTURE, pct_from_pivot 6.53. No pullback yet (sma_dist 14.21, run_10d 16.14, ext_atr20 3.71), so I wait for the first one to ma20 144.6. ADX slope unseen. | Close under ma20 144.6 without a bounce. |
-| seow (advisory) | SUPPORT | 1 | ma_20 144.6 only just clears ma_50 144.56, so the trend is days old, then run_10d 16.14 and ext_atr20 3.71: a thrust, no dip. rs_spy_20d 23.39 passes C6. Entry only on a ma_20 retest. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | ABSTAIN | None | Solo livermore at conviction 4, no second seat. ext_atr20 3.71, run_10d 16.14, sma_dist 14.21; atr 5.53 against entry 165.11. Lynch: growthEPS 0.01 with debt_to_equity 2.44. Edge unmeasured; advisory lane. | Close under ma_20 144.6. |
-| weis (advisory) | ABSTAIN | None | New high, run_10d 16.14, sma_dist 14.21, day_vol 1.14: modest effort for the advance. Group strength is real but this is a thrust, not a failed breakdown; fundamentals read CONTRADICT on a levered sheet. Momentum lane: advisory. | A retest of ma20 144.6 that holds on low volume. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 62.2. structure_shift ABOVE_STRUCTURE, structure 89.3 but sma_distance_pct 14.21 leaves no edge, and day_vol 1.14 is only normal effort. Momentum is real (mp_state STRONG); my look is a back-up to ma_20 144.6. | lens.coil strong on a pause near ma_20 144.6. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · slow grower · No EPS growth in three FYs (growthEPS 0.01, -0.02, 0.00) at priceToEarningsRatioTTM 19.7; debt_to_equity 2.44 puts implied debt share at 0.71, over 50%. free_cash_flow_yield 0.054.
-
-### NTSK — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 2, oppose 2, abstain 1 · doors: Strength, AQE leader, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mid: lens_positive 2 (leadership, resistance strong), coil warn. ma_50 17.29 over ma_100 14.52 over ma_200 12.95, ABOVE_STRUCTURE, day_vol 1.3. A mover read without lens depth. div_state is not on my menu. | A third strong lens with coil leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Red-giving-way event: elder_5d [2, 2, 8, 10, 10] ACCELERATION climbed from the ambiguous band three bars back, mp 93.0 STRONG. But sma_dist 40.42, div_bear_count 2 and a stale event: no market buy, only a dip toward ma_20 19.73. | Close under ma_20 by half an ATR, or force back to the ambiguous band. |
-| livermore | SUPPORT | 2 | Leader at a high: from_52w_hi 0.0, structure 68.4, mp 93.0 ACCELERATING, rs_rank_pct 99.39, day_vol 1.3, stack ma_20 19.73 over ma_50 17.29 over ma_100 14.52. Late: sma_dist 40.42, run_10d 16.96. Lynch CONTRADICT noted; I weigh price. | Close under ma_20 19.73, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 1 | Highest rs_rank_pct in the set (99.39) with ret_63d 103.35, mp 93.0, elder 10.0 ACCELERATION and pct_from_52w_high 0.0. But sma_distance_pct 40.42, div_bear_count 2 and a deep-loss balance sheet in Lynch's consulted read make it a watchlist leader. No chase; weak support. | Close under ma_20 19.73, or new highs that print on day_vol under 1. |
-| oneil | OPPOSE | 3 | Climax reading: entry 24.28 against ma_200 12.95, sma_distance_pct 40.42, ret_63d 103.35, div_bear_count 2. Deep losses on the consulted read, operatingProfitMarginTTM -0.947, debt_to_equity 4.67. Sell into it, never buy it; wait for a new base. | Rebases tight and breaks a fresh pivot_high on strong volume. |
-| raschke (advisory) | SUPPORT | 1 | Holy Grail candidate: adx 35.39, new high, mp 93.0 STRONG, elder ACCELERATION. No pullback yet: sma_dist 40.42, ext_atr20 3.58, run_10d 16.96. div BEARISH/2 is advisory only. I wait for the first test of ma20 19.73; no market entry. | Close under ma20 19.73 without a bounce. |
-| seow (advisory) | SUPPORT | 1 | Real strength (rs_spy_20d 38.88, ret_63d 103.35, rs_rank_pct 99.39, stack up) but overextended: sma_dist 40.42, ext_atr20 3.58. No dip; entry only on a ma_20 19.73 retest, a deep one. div_bear_count 2 is not mine; deep losses are Lynch's. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | OPPOSE | 2 | sma_dist 40.42 and div_bear_count 2 on a name with operatingProfitMarginTTM -0.947 and debt_to_equity 4.67 (Lynch); ma_20 19.73 is far under entry 24.28. Growth history has a zero-filled row. Advisory lane. | div_bear_count back to 0 and a hold over ma_20 19.73. |
-| weis (advisory) | OPPOSE | 2 | Climactic: ret_63d 103.35, sma_dist 40.42, ext_atr20 3.58 with div_bear_count 2 and deep losses. A vertical advance into bearish divergence is a W14 caution at best and a spent thrust at worst. Not a Weis entry. Momentum lane is advisory. | A base above ma20 19.73 on dry-up volume with the divergence count clearing. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, day_vol 1.3) but sma_distance_pct 40.42 leaves no base in reach and lens.coil warn, energy 64.7. div_state BEARISH, div_bear_count 2 is advisory. Lynch finds deep losses and a levered sheet. No edge; look at ma_20 19.73, wrong under it. | A thin-volume return toward ma_20 19.73 that holds. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · fast grower · Deep losses: operatingProfitMarginTTM -0.947, free_cash_flow_yield -0.007, debt_to_equity 4.67 (implied debt share 0.82). growthRevenue 0.317 is real; the oldest FY row reads 0.000 (missing history).
-
-### ZS — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 2 · oppose 2 · abstain 1 · advisory support 1, oppose 1, abstain 3 · doors: Strength, AQE leader, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 2 | Lens does not back it: one strong lens (resistance), two warns (leadership, coil). ma_50 197.22 over ma_100 170.85 over ma_200 165.98, day_vol 1.37. The lens read is this seat's evidence; Valen has no house setup present and the market check is RISK OFF. | Leadership and coil lenses leaving warn. |
-| elder-lens | SUPPORT | 2 | Real event: elder_5d [0, 2, 8, 10, 10] ACCELERATION left red three bars back and holds at ten, mp 83.0 STRONG. But sma_dist 29.37, div_bear_count 3 and a stale event mean no market buy: wait for the dip toward ma_20 216.25. | Close under ma_20 by half an ATR, or force falls back to the ambiguous band. |
-| livermore | ABSTAIN | None | Cyber group leads per VALEN and the stack ascends (ma_20 216.25, ma_50 197.22, ma_100 170.85), but from_52w_hi -24.12 and sma_dist 29.37: the old high is far overhead. I buy the new high, not the bounce toward it. | Flips to SUPPORT on a close above high_52w_close. |
-| minervini | SUPPORT | 2 | rs_rank_pct 96.11, rs_spy_20d 33.64, mp 83.0, elder 10.0 ACCELERATION with day_vol 1.37, stack ma_50 197.22 over ma_100 170.85 over ma_200 165.98; pct_from_52w_high -24.12 is inside the template but at its edge. sma_distance_pct 29.37 and div_bear_count 3 hold it at 2. | Close under ma_20 216.25, or a failed push with day_vol under 1. |
-| oneil | OPPOSE | 2 | Recovering, not at highs: from_52w_hi -24.12, ret_12m -17.14, sma_distance_pct 29.37, div_bear_count 3, lens leadership and coil warn. day_vol 1.37 is just under my test. Group is leading (Valen cybersecurity) so the Lone Ranger test passes; the base is missing. | Closes within reach of the prior high on rising volume with div_bear_count falling. |
-| raschke (advisory) | ABSTAIN | None | No Holy Grail gate: adx 23.65, sma_dist 29.37, ext_atr20 3.32, from_52w_hi -24.12, a rebound with no pullback. div BEARISH/3 is advisory only. I would enter on a test of ma20 216.25 and be wrong on a close under it. | A test that holds ma20 216.25. |
-| seow (advisory) | SUPPORT | 1 | rs_spy_20d 33.64, ret_63d 73.22, stack up, but overextended: sma_dist 29.37, ext_atr20 3.32; no dip. Entry only on a ma_20 216.25 retest. div_bear_count 3 is not my instrument. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | OPPOSE | 2 | sma_dist 29.37 and atr 11.73 against entry 255.15; ma_20 216.25 is far, so the worst case is wide. div_bear_count 3, elder_5d [0, 2, 8, 10, 10] only just recovered; Lynch: operatingProfitMarginTTM -0.040, no P/E anchor. | div_bear_count back to 0 and a hold over ma_20 216.25. |
-| weis (advisory) | ABSTAIN | None | sma_dist 29.37, ext_atr20 3.32, div_bear_count 3, ret_12m -17.14, from_52w_hi -24.12, though the stack is up (ma50 197.22 over ma100 170.85 over ma200 165.98). Extended thrust into bearish divergence; no failed-weakness shape. Momentum lane: advisory. | A base over ma20 216.25 on dry-up volume with the divergence clearing. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, flow 81.6, day_vol 1.37) but sma_distance_pct 29.37, lens.coil warn, energy 59.7 give no coil. div_state BEARISH, div_bear_count 3 is advisory only. My look is a back-up to ma_20 216.25; wrong under it. | A thin-volume return toward ma_20 216.25 that holds. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Steady fast grower, growthRevenue 0.254, 0.233, 0.341, near GAAP breakeven (operatingProfitMarginTTM -0.040). free_cash_flow_yield 0.020 is thin; debt_to_equity 0.71. No P/E anchor.
-
-### TENB — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 4 · oppose 0 · abstain 1 · advisory support 1, oppose 1, abstain 3 · doors: Strength, AQE leader, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens block is -- on leadership, coil, insti_money, resistance, so the lens cannot corroborate or dissent; absence is not agreement. Readable: ma_50 36.65 over ma_100 35.13 over ma_200 28.09, ABOVE_STRUCTURE, day_vol 1.42. | A lens re-run with leadership and insti_money strong would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Genuine red-giving-way: elder_5d [2, 2, 10, 10, 10] ACCELERATION leapt from the ambiguous band three bars back, mp 75.0 STRONG. But sma_dist 21.67 and the event is stale, so no market entry: wait for ma_20 and mind div_bear_count 2. | Close under ma_20 by half an ATR, or force falls back to the ambiguous band. |
-| livermore | SUPPORT | 3 | Fresh high: from_52w_hi 0.0, structure 88.4, ABOVE_STRUCTURE, pct_from_pivot 4.45 over pivot_high 42.69, rs_rank_pct 98.06, mp 75.0, day_vol 1.42. Security group leads per VALEN. sma_dist 21.67 is the gap to the 50-day, not to the high. | Close under pivot_high 42.69, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Real leadership: rs_rank_pct 98.06, rs_spy_20d 34.62, pct_from_52w_high 0.0, structure 88.4, elder 10.0 ACCELERATION. Held to 2: sma_distance_pct 21.67 and pct_from_pivot 4.45 over pivot_high 42.69 are a chase (weight), div_bear_count 2, lens block mostly absent, no earnings. | Close under pivot_high 42.69, or hourly closes under ma_20 38.91 on rising volume. |
-| oneil | SUPPORT | 3 | Leader at a new high inside the buy zone: pct_from_pivot 4.45 over pivot_high 42.69, day_vol 1.42 meets my volume test, rs_leadership LEADER, structure 88.4, elder ACCELERATION. Caveats: sma_distance_pct 21.67 is a weight (R14), div_bear_count 2, four lenses unread. | Closes under pivot_high, or a new high prints on lower volume. |
-| raschke (advisory) | ABSTAIN | None | Most extended nominated name (sma_dist 21.67, ext_atr20 2.49) with adx 13.89: no trend-strength read and no pullback yet. Lens block is mostly absent, a declared gap. Stand aside until a retest of ma20 38.91. | A retest that holds ma20 38.91. |
-| seow (advisory) | SUPPORT | 1 | Real strength (rs_spy_20d 34.62, mp 75.0 STRONG) but overextended: sma_dist 21.67, ext_atr20 2.49; no dip. div_bear_count 2 is not my instrument. Entry only on a ma_20 38.91 retest with a buy stop over the prior high. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | OPPOSE | 2 | Most extended nominated name: sma_dist 21.67, ma_20 38.91 far under entry 44.59 against atr 2.28. div_bear_count 2; Lynch: priceToEarningsRatioTTM 712.3 on net_profit_margin 0.006, no earnings to value. Solo livermore; advisory lane. | A hold above entry 44.59 on quiet day_vol, or a pullback to ma_20 38.91, gives a smaller worst case and I would stand aside. |
-| weis (advisory) | ABSTAIN | None | Most extended nominated name: sma_dist 21.67, ext_atr20 2.49, new high, div_bear_count 2. A new high on day_vol 1.42 in an uptrend is a W14 caution, not a reversal call; I would not buy it here. | A pullback toward ma20 38.91 that holds on quiet volume. |
-| wyckoff (advisory) | ABSTAIN | None | Data gap: lens.coil and lens.resistance read '--', so the contraction proxy cannot run, and sma_distance_pct 21.67 is far from any average. div_state BEARISH, div_bear_count 2 is advisory. Momentum is real (mp_state STRONG, day_vol 1.42) but I have no edge to price. Look at ma_20 38.91. | lens.coil populated and strong on a pause near ma_20 38.91. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · No earnings to value: priceToEarningsRatioTTM 712.3 on net_profit_margin 0.006. Growth slowing (growthRevenue 0.110, 0.127, 0.169); debt_to_equity 2.12 (implied debt share 0.68); free_cash_flow_yield 0.055.
-
-### BBY — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 4 · oppose 1 · abstain 5 · doors: Seats, PM lens
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Trend corroborates, lens does not: lens_positive 2 lens_warnings 2 (leadership warn, coil warn). ma_50 89.25 over ma_100 84.91 over ma_200 74.51, day_vol 1.42, runner_conviction 2. The stack supports the name; the lens read splits. | Leadership lens leaving warn would move me to SUPPORT; a close under ma_50 89.25 would move me to OPPOSE. |
-| elder-lens | OPPOSE | 2 | No pullback to buy: elder_5d [7, 10, 10, 10, 10] is a summer plateau with price at from_52w_hi 0.0, sma_dist 11.89, ext_atr20 3.09, mp 64.0 BUILDING. Plateau-only is the unsourced read; Elder buys the dip, and this lane is PULLBACK. | A dip toward ma_20 with elder holding at seven or more on quiet volume would turn me. |
-| livermore | SUPPORT | 3 | New high: from_52w_hi 0.0, structure 77.9, ABOVE_STRUCTURE, pct_from_pivot 3.46 over pivot_high 96.53, day_vol 1.42, mp 64.0 BUILDING. Retail pair KSS is near its high (from_52w_hi -0.81). Soft sector_trend_state caps it. | Close under pivot_high 96.53, KSS losing its high first, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Fresh high pct_from_52w_high 0.0, rs_rank_pct 92.71 LEADER, structure 77.9, pct_from_pivot 3.46 over pivot_high 96.53, day_vol 1.42: a few percent past the pivot, tolerable. Not a growth leader on Lynch's consulted read (growthRevenue 0.004), so 2. | Close under pivot_high 96.53 (breakout failed), or day_vol fading under 1 on the next push. |
-| oneil | SUPPORT | 2 | New high 3.46 past pivot_high 96.53 with rs_leadership LEADER, structure 77.9, day_vol 1.42 (thin margin). Weak legs: lens leadership warn, lens coil warn, rank 76, sma_distance_pct 11.89. Late-ish buy, no add-ons. | Closes under pivot_high, or ma_50 fails on heavy volume. |
-| raschke | ABSTAIN | None | No named setup at market: new high with sma_dist 11.89 and run_10d 14.78 but adx 16.99 is weak and lens leadership and coil warn. A retest of ma20 90.22 would reclassify it as a retracement; until then I stand aside. | A retest of ma20 90.22 that holds on quiet day_vol. |
-| seow | SUPPORT | 1 | New high, rs_spy_20d 11.82, ret_63d 12.91, but run_10d 14.78, ext_atr20 3.09 and sma_dist 11.89: a thrust, not a dip. C3: never buy the extension. Take it only on a ma_20 90.22 retest and a buy stop over the prior high. ma_40/CCI unserved. | Close below ma_40 on the retest, or structure_shift flipping to BEARISH_CHOCH. |
-| thorp | ABSTAIN | None | Pullback lane but sma_dist 11.89 and ext_atr20 3.09 after run_10d 14.78; lens leadership and coil warn. Not in my gated set; edge unmeasured; Lynch: inventory vs sales unserved. atr 3.12 against entry 99.87. | A pullback toward ma_20 90.22 on quiet day_vol would give a nameable loss boundary. |
-| weis | ABSTAIN | None | New high, run_10d 14.78, sma_dist 11.89, ext_atr20 3.09; leadership and coil lens warn. A thrust without a failed-weakness shape; inventory test unserved. A retest of ma20 90.22 on dry-up volume is the only entry I would take. | A retest of ma20 90.22 that holds on low volume. |
-| wyckoff | ABSTAIN | None | Fresh high, mid-move: structure_shift ABOVE_STRUCTURE, sma_distance_pct 11.89, and the contraction proxy fails (lens.coil warn, energy 63.0). Effort day_vol 1.42 is met by progress but I have no edge here; I would look at ma_20 90.22. | lens.coil turning strong on a pause near ma_20 90.22. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · slow grower · Retail slow grower: growthRevenue 0.004, priceToEarningsRatioTTM 16.6, dividendYieldTTM 0.038 (implied payout 0.64), free_cash_flow_yield 0.084, debt_to_equity 1.30. Inventory vs sales, the key retail test, unserved.
-
-### EOG — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 4 · oppose 0 · abstain 1 · advisory support 2, oppose 0, abstain 3 · doors: Seats, Elder+Lens, Strength, PM lens
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens agrees: strong on leadership, resistance, sector; lens_positive 3 lens_warnings 1 (coil warn). ma_50 147.57 over ma_100 142.74 over ma_200 135.66, ABOVE_STRUCTURE, day_vol 1.16. One of nine energy names and the sector lens cannot rank them: carry as one energy expression. | A daily close under ma_20 149.65, or coil and insti_money both reading warn. |
-| elder-lens | SUPPORT | 2 | Dip-and-reclaim form: elder_5d [10, 7, 7, 7, 10] stepped down to blue and reclaimed green, elder_pattern CORRECTION_REENTRY, mp 87.0 STRONG. Never red, so no permission event; pullback volume unseen. Buy near ma_20, not the reclaim bar. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | SUPPORT | 4 | Fresh high after a pullback: from_52w_hi 0.0, structure 84.2, ABOVE_STRUCTURE, pct_from_pivot 5.75 over pivot_high 154.16, mp 87.0, day_vol 1.16. CNQ, CVX and EQNR also at highs: pair confirmation. I carry the leader pair, not nine. | Close under pivot_high 154.16, CNQ losing its high first, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Served template legs pass: ma_50 147.57 over ma_100 142.74 over ma_200 135.66, pct_from_52w_high 0.0, rs_rank_pct 78.13 LEADER, structure 84.2. One of nine energy tickers and a follower to CNQ on my read; Lynch consulted shows EPS falling (growthEPS -0.19), so no earnings pairing. | Close under pivot_high 154.16 (the breakout level), or structure_shift turning BEARISH_CHOCH. |
-| oneil | ABSTAIN | None | Energy is one bet and C9 says own the group leaders: by rank that is CNQ rank 15, CVX rank 24, EQNR rank 29. EOG rank 77 is the follower and day_vol 1.16 fails my volume test. No veto: structure 84.2, rs_leadership LEADER. | EOG outranks the other energy leaders with day_vol above my volume test. |
-| raschke (advisory) | SUPPORT | 2 | Continuation: elder_pattern CORRECTION_REENTRY after a dip, new high, structure_shift ABOVE_STRUCTURE, pct_from_pivot 5.75 over pivot_high 154.16. sma_dist 10.48, adx 23.8: I buy a hold above the break, not a chase. Energy is one factor; OXY is my first expression. | Close back under pivot_high 154.16 after the break. |
-| seow (advisory) | SUPPORT | 1 | Fresh high, rs_spy_20d 17.63, mp 87.0 STRONG, but ext_atr20 3.36 and sma_dist 10.48: no dip. One of nine energy tickers is one bet; if only one energy name is carried my pullback fits are DVN and OXY. Entry only on a ma_20 149.65 retest. ma_40/CCI unserved. | Close below ma_40 on the retest, or rs_spy_20d turning negative. |
-| thorp (advisory) | ABSTAIN | None | One of nine energy names is one cyclical bet, not nine. Not in my gated set; edge unmeasured. atr 3.98 against entry 163.03; loss boundary ma_20 149.65. Lynch: growthEPS -0.19, oil tests unserved. | Close under ma_20 149.65 ends the dip-and-reclaim read. |
-| weis (advisory) | ABSTAIN | None | Fresh high, structure_shift ABOVE_STRUCTURE, sma_dist 10.48, day_vol 1.16: ordinary. No failure-of-weakness read here, and it is one of nine energy names, so I express the sector once, through OXY's reclaim. Momentum lane: advisory. | A dip under ma20 149.65 that closes back above on low volume would earn support. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 56.3. structure_shift ABOVE_STRUCTURE, sma_distance_pct 10.48, mid-move. Momentum is real (mp_state STRONG, flow 73.7) but my entry is a back-up to ma_20 149.65, not here. One of nine energy tickers: one cyclical bet. | A coil forming (lens.coil strong) near ma_20 149.65 would give me an edge. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · E&P cyclical, sound sheet (debt_to_equity 0.26), priceToEarningsRatioTTM 12.6, dividendYieldTTM 0.025. But EPS fell three FYs (growthEPS -0.19, -0.13, -0.02); inventory and commodity tests unserved.
-
-### HOG — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 2, oppose 0, abstain 3 · doors: Elder+Lens, AQE leader, PM lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mixed: strong on structure, resistance, sector; leadership warn and coil warn. A mover with no leadership lens. ma_50 26.97 over ma_100 26.27 over ma_200 23.76, BULLISH_BOS, day_vol 1.24. The net lens read is thin. | Leadership lens leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Real transition: elder_5d [6, 5, 6, 10, 10] ACCELERATION lifted from the ambiguous band to ten two bars back. But mp 71.0 BUILDING is under the strong line, ma_20 26.63 sits under ma_50 26.97 so the average is not clearly rising, and sma_dist 7.38. Buy the dip near ma_20. | Close under ma_20 by half an ATR, or elder back to the ambiguous band. |
-| livermore | SUPPORT | 2 | Thin clear of the pivot: structure_shift BULLISH_BOS, pct_from_pivot 0.35 over pivot_high 28.86, from_52w_hi -0.52, day_vol 1.24, mp 71.0. Retail peers BBY and KSS are at highs. Not yet a new high; I want it through high_52w_close. | Close back under pivot_high 28.86, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Leader at the pivot: pct_from_52w_high -0.52, rs_rank_pct 80.92, structure_shift BULLISH_BOS, pct_from_pivot 0.35 over pivot_high 28.86, day_vol 1.24, flow 86.8. Cut from 3: Lynch consulted shows sales and EPS shrinking (growthRevenue -0.138, growthEPS -0.18), so no earnings pairing. | Close under pivot_high 28.86 (break failed), or hourly closes under ma_20 26.63. |
-| oneil | OPPOSE | 2 | Breakout is real but unfunded: BULLISH_BOS at pct_from_pivot 0.35 over pivot_high 28.86, yet day_vol 1.24 fails my test, lens leadership and coil warn, and the consulted read shows growthEPS -0.18 and growthRevenue -0.138. No new-earnings leg. | Volume expands on the break and the earnings read turns up. |
-| raschke (advisory) | SUPPORT | 2 | Breakout type, fresh: BULLISH_BOS, entry 28.96 pct_from_pivot 0.35 over pivot_high 28.86, elder 10.0 ACCELERATION, day_vol 1.24, sma_dist 7.38. Invalidation two ticks under pivot_high 28.86. adx 18.84 is weak and lens leadership and coil warn. | Daily close under pivot_high 28.86. |
-| seow (advisory) | SUPPORT | 1 | Fresh BULLISH_BOS at the high (from_52w_hi -0.52), rs_spy_20d 15.27, ret_63d 16.82; but ma_20 26.63 sits under ma_50 26.97 so the trend leg is open, ext_atr20 2.35. Base-break entry: buy stop over the prior high, stop under the breakout bar. ma_40/CCI unserved. | Close below the breakout bar low or below ma_40. |
-| thorp (advisory) | ABSTAIN | None | Shrinking business per Lynch (growthRevenue -0.138, growthEPS -0.18, free_cash_flow_yield -0.044) while the tape leads (rs_rank_pct 80.92). atr 0.99 against entry 28.96; loss boundary ma_20 26.63. No edge I can measure; advisory lane. | Close under ma_20 26.63. |
-| weis (advisory) | ABSTAIN | None | BULLISH_BOS, pct_from_pivot 0.35, day_vol 1.24, but ma20 26.63 is still under ma50 26.97 so the stack is repairing, and sales are shrinking. A fresh break is not a failed-weakness read; sector label is Momentum Fading. Momentum lane: advisory. | A retest that holds ma50 26.97 on low volume would earn support. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 62.2. structure_shift BULLISH_BOS and sma_distance_pct 7.38 put it near a fresh edge and day_vol 1.24 is met by progress, but a name that fails the coil test is not rescued by conviction. Lynch contradicts on shrinking sales. | lens.coil turning strong on a pause above ma_20 26.63. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · cyclical · Shrinking: growthRevenue -0.138, -0.111; growthEPS -0.18, -0.30, -0.01. priceToEarningsRatioTTM 17.4 on falling earnings; free_cash_flow_yield -0.044; debt_to_equity 0.74. Inventory vs sales unserved.
-
-### DBX — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 8 · oppose 0 · abstain 2 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mixed: strong on leadership and resistance, insti_money warn. ma_50 34.96 over ma_100 32.29 over ma_200 28.76, structure_shift RANGE, day_vol 0.92 not yet expanding. No lens case to add. | insti_money lens leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 1 | Plateau-only: elder_5d [7, 10, 10, 10, 10], mp 71.0 BUILDING, structure 93.7 RANGE pre-break. ma_20 34.93 and ma_50 34.96 are flat, so the channel is flat and Elder trades the walls, not the average. Light support: buy only a dip into value. | Close under ma_20 by half an ATR. |
-| livermore | SUPPORT | 2 | At the high, not through the pivot: from_52w_hi 0.0, structure 93.7 but structure_shift RANGE, pct_from_pivot -0.89 under pivot_high 38.17, day_vol 0.92 quiet, mp 71.0. ma_20 34.93 level with ma_50 34.96. I buy only the break on volume. | Break fails: a close back under pivot_high-0.5atr after the push, or a fade past my atr_14d danger multiple. |
-| minervini | SUPPORT | 3 | Pre-break leader at the high: structure 93.7, pct_from_52w_high 0.0, rs_rank_pct 92.35, rs_down_day_20d 1.46, pct_from_pivot -0.89 under pivot_high 38.17, day_vol 0.92 not yet expanding. The buy is the break on volume. Lynch SUPPORT (cash) is a consulted plus. | Break of pivot_high 38.17 fails: closes back under it, or the break prints on day_vol under 1. |
-| oneil | SUPPORT | 3 | Sound base at the pivot: structure 93.7 (best in the set), from_52w_hi 0.0, rs_leadership LEADER, entry 37.83 under pivot_high 38.17 at pct_from_pivot -0.89. day_vol 0.92 is quiet, right before a break; the buy is the break on volume. | Rejects at pivot_high, or ma_50 34.96 fails on heavy volume. |
-| raschke | SUPPORT | 2 | Breakout type, pre-break: structure 93.7 RANGE, entry 37.83 under pivot_high 38.17, day_vol 0.92 not yet expanding, sma_dist 8.21, adx 16.18. I buy the break on volume, not the coil; invalidation back under ma20 34.93. | Break closes back under pivot_high 38.17 on weak day_vol. |
-| seow | SUPPORT | 1 | Pre-break at the high: entry 37.83 under pivot_high 38.17, from_52w_hi 0.0, rs_spy_20d 18.52, ext_atr20 2.61, day_vol 0.92. ma_20 34.93 is level with ma_50 34.96 so the trend leg is open; ma_40/CCI unserved. Buy stop over the prior high, stop under the base. | Close below ma_40 or below the 20-day base low before the buy stop fires. |
-| thorp | ABSTAIN | None | Pre-break: entry 37.83 under pivot_high 38.17, day_vol 0.92 not expanding. atr 1.11 against entry; loss boundary ma_20 34.93. Lynch SUPPORT on free_cash_flow_yield 0.116 is a valuation read, not my measured edge; debt_to_equity -1.82. | Failure to clear pivot_high 38.17 on day_vol above 1. |
-| weis | SUPPORT | 2 | Contraction under the pivot with a bullish preceding read: structure 93.7 RANGE, pct_from_pivot -0.89, day_vol 0.92, rs LEADER, ret_6m 57.49, ma50 34.96 over ma100 32.29 over ma200 28.76. Hinge unresolved; squeeze fields not in packet, so contraction is unconfirmed. | A pivot break whose hour closes back under pivot_high, or a close under ma50 34.96. |
-| wyckoff | SUPPORT | 2 | Top of a range in quiet effort: structure_shift RANGE, structure 93.7, lens.resistance strong, day_vol 0.92. Contraction proxy lens.coil ok, energy 70.6. flow 61.8 is only fair. Nothing has broken yet, so the edge is the test. Danger point ma_20 34.93, ma_50 34.96. | A close under ma_20 34.93, or a break above that closes back inside the range. |
-
-Fundamentals consult (lynch, no vote): **SUPPORT** · slow grower · Cash cow: free_cash_flow_yield 0.116, operatingProfitMarginTTM 0.265, priceToEarningsRatioTTM 20.8. Story risk: growthRevenue -0.011, negative equity (debt_to_equity -1.82). Support rests on cash, not growth.
-
-### DVN — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 4 · oppose 1 · abstain 5 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens agrees on the five readable lenses: strong on leadership, resistance, sector, none warn; structure lens is --. ma_50 48.53 over ma_100 46.05 over ma_200 45.59, structure_shift null, day_vol 1.52. Valen U&R MET: a reclaim day. Same cluster: one energy expression. | A daily close under ma_20 48.8, or the structure lens reading warn on re-run. |
-| elder-lens | SUPPORT | 3 | Real permission event on the last bar: elder_5d [10, 7, 7, 4, 9] fell to four, in the ambiguous band, and came back to nine, CORRECTION_REENTRY; stack rising (ma_20 48.8 over ma_50 48.53 over ma_100 46.05). AQE U&R MET reclaim day. mp 58.0 BUILDING is half the form. | Close under ma_20 by half an ATR, or choch_bearish. |
-| livermore | ABSTAIN | None | structure_shift is missing for DVN (declared gap), so my trend-and-break read is blind. From the rest: from_52w_hi -1.31, rs_rank_pct 58.57, mp 58.0 BUILDING: a follower in a group already carried by EOG and CNQ. | Flips to SUPPORT if structure_shift prints BULLISH_BOS and it closes above high_52w_close. |
-| minervini | OPPOSE | 2 | Misses the leadership floor: rs_rank_pct 58.57, and structure_shift is null so there is no readable structure. Average strength inside energy. A U&R reclaim day is not a Minervini buy. Lynch CONTRADICT (thin free cash). | rs_rank_pct rising toward the energy leaders with a break of pivot_high on volume. |
-| oneil | ABSTAIN | None | Pullback and reclaim entries are not my method, and the base cannot be read: lens structure -- and structure_shift null. day_vol 1.52 passes. Energy cluster is carried by EQNR and CNQ. | structure_shift prints BULLISH_BOS with volume on a break of pivot_high. |
-| raschke | ABSTAIN | None | structure_shift is null on this record (lens structure absent), so I cannot classify the setup. VALEN shows a reclaim day at the 9-day average (49.67) and sma_dist 5.88 is moderate, but energy is one factor and OXY ranks first. Stand aside. | A populated structure_shift showing BULLISH_BOS with the reclaim holding. |
-| seow | SUPPORT | 2 | Dip shape: Valen U&R MET (under the 9-day average, closed back above), elder_pattern CORRECTION_REENTRY, ext_atr20 1.72, rs_spy_20d 10.7, from_52w_hi -1.31. ma_20 48.8 is level with ma_50 48.53 so the trend leg is open. Thin cash is Lynch's test. ma_40/CCI unserved. | A close below the prior-day low before the buy stop fires, or any close below ma_40. |
-| thorp | ABSTAIN | None | Energy duplicate. U&R MET on the 9-day average 49.67. Lynch: free_cash_flow_yield 0.030 is CapEx-heavy, growthEPS -0.08. atr 1.51 against entry 51.39; loss boundary ma_20 48.8. No edge I can measure. | Close under ma_20 48.8. |
-| weis | SUPPORT | 2 | Minor spring on a proxy: U&R MET, dipped under the 9-day average (49.67) and closed back over; elder_5d drops to 4 then reclaims 9. Stack up: ma50 48.53 over ma100 46.05 over ma200 45.59. day_vol 1.52. Rank is modest (rs_rank_pct 58.57) and it is the same energy factor. | A close under yesterday's low, or ma20 48.8 failing as support. |
-| wyckoff | ABSTAIN | None | Data gap: structure_shift null and lens.structure '--', so geography cannot be read. VALEN U&R MET, under the 9-day average 49.67 then recovered on day_vol 1.52, heavy so a test is owed. lens.coil ok, energy 55.5. Declared, not filled. | structure_shift populated as RANGE or BULLISH_BOS with a quiet retest of ma_20 48.8. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · cyclical · Low P/E hides weak cash: priceToEarningsRatioTTM 12.1 but free_cash_flow_yield 0.030 (CapEx-heavy, under the 5% line). growthEPS -0.08, -0.22, -0.36; growthRevenue 0.078. debt_to_equity 0.28.
-
-### LNG — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 4 · oppose 0 · abstain 6 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Energy cluster, lens mixed: strong on leadership, resistance, sector; coil warn and insti_money warn. ma_50 278.49 over ma_100 264.8 over ma_200 253.63, day_vol 1.44. Cannot separate it from the OXY and SLB leaders. | Coil and insti_money leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Permission event on the last bar: elder_5d [10, 7, 6, 6, 10] held at six for two bars then reclaimed ten, CORRECTION_REENTRY, stack rising. mp 64.0 BUILDING is half the form and ext_atr20 2.45 is moderate. Buy near ma_20. | Close under ma_20 by half an ATR, or a red bar (elder at or below one). |
-| livermore | SUPPORT | 2 | New high on thin trend strength: from_52w_hi 0.0, structure 80.0, day_vol 1.44, mp 64.0 BUILDING, adx 10.37. A later expression of the energy group, so low: EOG and CNQ lead. | Close under ma_20 279.22, the pair losing highs, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | New high pct_from_52w_high 0.0, structure 80.0, flow 80.3, day_vol 1.44, stack ma_50 278.49 over ma_100 264.8 over ma_200 253.63. Held to 2: rs_rank_pct 72.42 only just clears the floor, Lynch consulted calls it levered and lumpy, and it is one more energy name. | Close under ma_20 279.22, or structure_shift turning BEARISH_CHOCH. |
-| oneil | ABSTAIN | None | New high with day_vol 1.44 passes my test, but rank 103, rs_rank_pct 72.42, lens coil warn and insti_money warn, adx 10.37. Levered per consulted read (debt_to_equity 4.29). Energy cluster is carried by EQNR and CNQ. | LNG leads the group on rank with lens coil turning strong. |
-| raschke | ABSTAIN | None | Energy factor; adx 10.37 is the weakest trend read in the set and sma_dist 7.24 shows no pullback. No setup of mine fires. | A retest holding ma20 279.22 with adx rising. |
-| seow | SUPPORT | 1 | New high (from_52w_hi 0.0), rs_spy_20d 12.7, ret_63d 16.72, but ma_20 279.22 is level with ma_50 278.49 so the trend leg is open, ext_atr20 2.45, and CORRECTION_REENTRY is a half form. Energy cluster, one bet. Retest of ma_20 only. | Close below ma_40 on the retest. |
-| thorp | ABSTAIN | None | Energy duplicate. Lynch: debt_to_equity 4.29 and growthRevenue 0.244, -0.222, -0.399 (lumpy). atr 7.94 against entry 298.67; loss boundary ma_20 279.22. No edge I can measure. | Close under ma_20 279.22. |
-| weis | ABSTAIN | None | New high with elder reclaim to 10, but adx 10.37 shows little trend force; sma_dist 7.24, ext_atr20 2.45. Same energy factor and a levered, lumpy sheet. No failed-weakness read. | A retest that holds ma20 279.22 on low volume. |
-| wyckoff | ABSTAIN | None | Contraction fails: lens.coil warn, energy 59.7. structure_shift ABOVE_STRUCTURE, sma_distance_pct 7.24, day_vol 1.44 met by progress. Momentum is real but this is another energy name, one bet. A back-up to ma_20 279.22 is the look. | lens.coil strong on a pause near ma_20 279.22. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · Cash-rich, levered, lumpy: free_cash_flow_yield 0.114, yet debt_to_equity 4.29 (implied debt share 0.81) and growthRevenue 0.244, -0.222, -0.399. Debt kind unserved.
-
-### CNC — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 5 · oppose 1 · abstain 4 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens block is -- on leadership, coil, insti_money, resistance (lens_positive 2 counts only two lenses). Readable: structure and sector strong. ma_50 65.81 over ma_100 65.29 over ma_200 54.81, BULLISH_BOS, day_vol 1.05. Cannot corroborate or dissent. | A lens re-run with leadership and insti_money strong would move me to SUPPORT. |
-| elder-lens | SUPPORT | 1 | Blue pullback inside a rising stack (ma_20 66.57 over ma_50 65.81 over ma_100 65.29): elder_5d [7, 10, 7, 7, 7], never red, mp 72.0 FADING (default label). No dip-and-reclaim yet, so this is a wait; buy only when green returns near value. | Close under ma_20 by half an ATR. |
-| livermore | SUPPORT | 2 | Near the high, pivot cleared thinly: from_52w_hi -1.5, structure_shift BULLISH_BOS, pct_from_pivot 0.78 over pivot_high 69.63, rs_rank_pct 93.07, ascending stack, day_vol 1.05 ordinary. No healthcare partner at a high, so it needs the new high. | Close under pivot_high 69.63, or no second healthcare name confirming. |
-| minervini | SUPPORT | 2 | Genuine tape leader: rs_rank_pct 93.07, rs_down_day_20d 1.03, structure_shift BULLISH_BOS, pct_from_pivot 0.78 over pivot_high 69.63, day_vol 1.05, pct_from_52w_high -1.5. Cut from 3: Lynch consulted shows earnings swung to loss (growthEPS -3.15); sector Momentum Fading. | Close under pivot_high 69.63, or hourly closes under ma_20 66.57 on rising volume. |
-| oneil | OPPOSE | 3 | Two legs fail: day_vol 1.05 under my volume test at pct_from_pivot 0.78 over pivot_high 69.63, and the consulted read shows earnings swung to a loss, growthEPS -3.15, net_profit_margin -0.026. A breakout nobody bought, on a name with no earnings leg. | A volume-backed close through pivot_high with the earnings read recovering. |
-| raschke | SUPPORT | 2 | Breakout type, fresh: BULLISH_BOS, entry 70.17 pct_from_pivot 0.78 over pivot_high 69.63, clean stack (ma20 66.57, ma50 65.81, ma100 65.29), sma_dist 6.63, day_vol 1.05. Lens block mostly absent, a declared gap. mp FADING is a default label, not decay. | Daily close under pivot_high 69.63. |
-| seow | SUPPORT | 2 | Stack up (ma_20 66.57 over ma_50 65.81), rs_spy_20d 14.98, ret_63d 9.5, ext_atr20 1.67, run_10d 7.36 orderly, BULLISH_BOS. No dip: wait for a ma_20 66.57 touch and a buy stop over the prior high. Earnings swing to loss is Lynch's; ma_40/CCI unserved. | Close below ma_40, or no hold at ma_20 on the touch. |
-| thorp | ABSTAIN | None | Earnings swung to loss (growthEPS -3.15) while the tape leads (rs_rank_pct 93.07); free_cash_flow_yield 0.259 may be insurer cash timing (Lynch). atr 2.16 against entry 70.17; loss boundary ma_20 66.57. No edge I can measure. | Close under ma_20 66.57. |
-| weis | ABSTAIN | None | BULLISH_BOS, pct_from_pivot 0.78, day_vol 1.05, sma_dist 6.63, mp 72 FADING (default label, R13). Four of the lens blocks are blank so there is no corroboration; earnings swung to a loss. No failed-weakness read. | A retest that holds ma20 66.57 on quiet volume. |
-| wyckoff | ABSTAIN | None | Data gap: lens.coil reads '--', so contraction cannot run; energy 68.1 alone is not the test. structure_shift BULLISH_BOS, sma_distance_pct 6.63, day_vol 1.05 normal. The edge is plausible but unproven; I declare the gap and do not fill it. | lens.coil strong with day_vol dry near ma_20 66.57. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · turnaround · Earnings swung to loss (net_profit_margin -0.026, growthEPS -3.15); sales still growing (growthRevenue 0.194). free_cash_flow_yield 0.259 may be insurer cash timing, not proof. debt_to_equity 0.71. Liquidity unserved.
-
-### M — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 2 · oppose 3 · abstain 5 · doors: Elder+Lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mixed: strong on coil, resistance, sector; leadership warn and insti_money warn. premove_setup false, premove_conviction 3 is context, so no launch-timing claim. ma_50 22.71 under ma_100 23.39, day_vol 0.63 quiet. | Leadership and insti_money leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Permission event: elder_5d [7, 7, 6, 9, 10] crossed from six to nine two bars back and made ten. But ma_50 22.71 sits under ma_100 23.39 (turning, not trending), mp 48.0 BUILDING decelerating, div_bear_count 2. Buy near ma_20 only. | Close under ma_20 by half an ATR, or force back to the ambiguous band. |
-| livermore | OPPOSE | 2 | Laggard where peers lead: from_52w_hi -8.05, ma_50 22.71 under ma_100 23.39, day_vol 0.63 quiet, mp_accel_state DECELERATING, while BBY and KSS print highs. No new high, no volume. | Wrong if it closes above high_52w_close with day_vol above normal. |
-| minervini | OPPOSE | 2 | Template gate fails: ma_50 22.71 under ma_100 23.39. Quiet drift in a range (day_vol 0.63, structure_shift RANGE) with div_bear_count 2. A coil is not a pivot, and with no stage 2 stack there is no purchase. | ma_50 over ma_100 and a break of the range on day_vol over 1.4. |
-| oneil | OPPOSE | 3 | Quiet and unconfirmed: day_vol 0.63, lens leadership warn, ret_63d -3.45, ma_50 22.71 under ma_100 23.39, div_bear_count 2, mp DECELERATING. Coil is tight but nobody is buying; rank 185. | A high-volume close through pivot_high with leadership lens turning strong. |
-| raschke | ABSTAIN | None | Range with no break: structure_shift RANGE, day_vol 0.63 quiet, mp_accel DECELERATING, ma50 22.71 under ma100 23.39. The coil is real (lens coil strong) but nothing has triggered. div BEARISH/2 is advisory only. | A close through pivot_high on rising day_vol. |
-| seow | ABSTAIN | None | Open legs: ret_63d -3.45 untestable against the index, ma_20 23.16 under ma_100 23.39, mp BUILDING/DECELERATING, day_vol 0.63 quiet. The dip grade is orderly (ext_atr20 1.12, run_10d 6.31) but I cannot confirm the trend or RS gate. Inventory is Lynch's. | Wrong to stand aside if ma_40 is served under a rising ma_20 and the index test passes. |
-| thorp | ABSTAIN | None | Quiet day_vol 0.63, div_bear_count 2, mp DECELERATING. Lynch: priceToEarningsRatioTTM 8.7 and free_cash_flow_yield 0.236 are not a bargain until inventory vs sales is served. atr 0.84 against entry 24.1; loss boundary ma_50 22.71. No edge I can measure. | Close under ma_50 22.71. |
-| weis | ABSTAIN | None | Quiet range, day_vol 0.63, coil lens strong, but ma50 22.71 under ma100 23.39, div_bear_count 2 and mp DECELERATING. A dry-up is not absorption and no hinge has resolved. No failed-weakness shape. | A hinge resolved on volume with ma50 back over ma100. |
-| wyckoff | SUPPORT | 2 | Range with dry-up: structure_shift RANGE, lens.coil strong, energy 82.4, day_vol 0.63 quiet, lens.resistance strong. Price sits over ma_50 22.71 and ma_200 21.62. mp_accel_state DECELERATING and div_bear_count 2 are advisory flags. Danger point ma_50 22.71. | A close under ma_50 22.71, or a break up that fails back inside the range on rising day_vol. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · turnaround · Cheap: priceToEarningsRatioTTM 8.7, free_cash_flow_yield 0.236, dividendYieldTTM 0.031 (payout 0.27). But growthRevenue -0.017 (shrinking three FYs), debt_to_equity 1.03. Real-estate value, inventory vs sales unserved.
-
-### SAIL — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 5 · oppose 3 · abstain 2 · doors: Seats
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens agrees: strong on coil, insti_money, resistance; leadership warn. ma_50 19.61 over ma_100 17.62 over ma_200 16.01, ABOVE_STRUCTURE, day_vol 1.36. Extended off ma_20 19.98 but the trend spine is intact. | A daily close under ma_20 19.98, or structure_shift BEARISH_CHOCH. |
-| elder-lens | OPPOSE | 2 | Same fault as FIVN: elder_pattern INTERRUPTED, elder_5d [0, 3, 5, 6, 10] was red four bars back, and AQE says its 21-day average is not rising, so the trend leg is unmet. adx 11.84 is feeble. Wait for a rising average, not the first green bar. | The 21-day average turns up and a dip toward ma_20 holds with elder at seven or more. |
-| livermore | ABSTAIN | None | Below the high with thin trend strength: from_52w_hi -4.35, structure 55.2, mp 43.0, sma_dist 11.13, adx 11.84. Software leaders are already ahead of it. I wait for a close above high_52w_close. | Flips to SUPPORT on a close above high_52w_close with day_vol 1.36 or better. |
-| minervini | SUPPORT | 2 | rs_rank_pct 95.5 LEADER, pct_from_52w_high -4.35, stack ma_50 19.61 over ma_100 17.62 over ma_200 16.01, volume-confirmed squeeze break. Held back: sma_distance_pct 11.13 stretched, elder INTERRUPTED, lens leadership warn, structure 55.2 middling. | Close under ma_20 19.98, or a failed break with day_vol under 1. |
-| oneil | OPPOSE | 2 | Not a 12-month leader's base: ret_12m -0.95, structure 55.2, sma_distance_pct 11.13, elder INTERRUPTED, adx 11.84, day_vol 1.36 under my volume test. Valen U&R: its 21-day average is not rising. | Holds above ma_20 with day_vol rising and structure climbing. |
-| raschke | SUPPORT | 1 | Breakout type already fired (squeeze_breakout_state BREAKOUT_UP, day_vol 1.36) but extended: sma_dist 11.13, adx 11.84, elder_pattern INTERRUPTED, VALEN reads the 21-day average not rising. Retest of ma20 19.98 only, no market entry. | Close under ma20 19.98. |
-| seow | SUPPORT | 1 | RS pass (rs_spy_20d 7.05, ret_63d 42.05, ext_atr20 1.57) but Valen says its 21-day average is not rising (C2 slope), mp 43.0 BUILDING, elder_pattern INTERRUPTED. Wait for a ma_20 19.98 retest. ma_40/CCI unserved. | Close below ma_40, or no hold at the ma_20 retest. |
-| thorp | OPPOSE | 2 | Volatility rank: atr 1.15 against entry 21.79, sma_dist 11.13, elder_pattern INTERRUPTED, priceToEarningsRatioTTM -64.1 gives no earnings anchor. I cannot name what it is priced against; worst case to ma_20 19.98 is wide. | Closes holding above entry 21.79 on day_vol near 1 would show the move is absorbed. |
-| weis | SUPPORT | 2 | Hinge resolved up in a clean trend: was_squeezed True, squeeze_breakout_state BREAKOUT_UP with volume confirmation, stack ALIGNED, choch BULLISH. Weights: sma_dist 11.13, adx 11.84 (little trend force), elder INTERRUPTED, leadership lens warn. Upthrust unconfirmable; take the retest. | A close under ma20 19.98, or a retest on rising volume. |
-| wyckoff | ABSTAIN | None | Contraction is strong (lens.coil strong, energy 78.2) but the name is already out: structure_shift ABOVE_STRUCTURE, sma_distance_pct 11.13, structure 55.2 middling. No edge to act at. A thin-volume back-up toward ma_20 19.98 would reopen it; day_vol now 1.36. | A quiet return to ma_20 19.98 that holds. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Real growth, no earnings: growthRevenue 0.244, operatingProfitMarginTTM -0.189, priceToEarningsRatioTTM -64.1. Debt-free (debt_to_equity 0.001) but free_cash_flow_yield 0.015. No PEG possible; no earnings anchor.
-
-### GTLB — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 2, oppose 3, abstain 0 · doors: Strength, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mixed: strong on leadership and resistance, insti_money warn. flow 31.6 is low (advisory) and day_vol 0.82 is quiet, so money is not confirming. ma_50 48.63 over ma_100 40.46 over ma_200 33.54, structure_shift RANGE. div_state is not on my menu. | insti_money lens leaving warn with day_vol above 1 would move me to SUPPORT. |
-| elder-lens | SUPPORT | 2 | Dip-and-reclaim: elder_5d [5, 9, 10, 5, 10] fell to five and reclaimed ten, CORRECTION_REENTRY, mp 77.0 STRONG. Cut from three: day_vol 0.82 at from_52w_hi 0.0 is Elder's volume contraction at a fresh extreme, and four oscillators diverge. Slope unverified. | Close under ma_20 by half an ATR, or a red bar; or volume stays thin as price stalls at the high. |
-| livermore | SUPPORT | 2 | Closing high (from_52w_hi 0.0, rs_rank_pct 99.64, mp 77.0) but unconfirmed: structure_shift RANGE and day_vol 0.82 is quiet. Security and software lead per VALEN, which holds it up. I want the break on volume. | Close under ma_20 52.4, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 2 | Top relative strength in the set (rs_rank_pct 99.64, rs_spy_20d 21.6) at a closing high, but the high came on day_vol 0.82 with flow 31.6 and structure_shift RANGE: no volume-backed break yet. div_bear_count 4 is advisory. Wait for expansion. | Close under ma_20 52.4, or a push to new highs that again prints on day_vol under 1. |
-| oneil | OPPOSE | 3 | New high on lower volume: from_52w_hi 0.0 with day_vol 0.82 and flow 31.6; div BEARISH with div_bear_count 4. Institutional buying has stopped whatever rs_rank_pct 99.64 says. sma_distance_pct 15.73 adds to the lateness. | A push to a new high on strong volume with flow recovering. |
-| raschke (advisory) | SUPPORT | 1 | Holy Grail candidate: adx 32.99, 52-week high, CORRECTION_REENTRY, mp 77.0 STRONG, but structure_shift RANGE, sma_dist 15.73 and day_vol 0.82 mean no pullback or break yet. Wait for a retracement to ma20 52.4. flow 31.6 and div BEARISH/4 are cautions, advisory only. | Close under ma20 52.4, or day_vol staying thin on the next push. |
-| seow (advisory) | SUPPORT | 2 | Leader (rs_spy_20d 21.6, ret_63d 71.17, mp 77.0 STRONG) with a dip-reclaim (elder_pattern CORRECTION_REENTRY), ext_atr20 1.49, run_10d 2.16. Held to 2 by sma_dist 15.73, div_bear_count 4 and flow 31.6. Buy stop over the prior high after a ma_20 52.4 touch. ma_40/CCI unserved. | Close below ma_40, or no hold at ma_20 on the touch. |
-| thorp (advisory) | OPPOSE | 2 | flow 31.6 is weak while div_bear_count 4 on day_vol 0.82: the force is not confirmed by money. atr 2.6 against entry 56.28, sma_dist 15.73. Lynch: growth decelerating, growthRevenue 0.258. | flow rising and div_bear_count falling from 4 with closes over ma_20 52.4. |
-| weis (advisory) | OPPOSE | 2 | New high on day_vol 0.82 with flow 31.6 and div_bear_count 4: an advance without sponsorship, a narrow-effort high that W13 treats as suspect (range unreadable here). W14 makes it a caution flag, not a reversal call. sma_dist 15.73. | A rise on rising volume with flow recovering, or the divergence count falling. |
-| wyckoff (advisory) | OPPOSE | 2 | Weak force at a range: structure_shift RANGE, sma_distance_pct 15.73, but flow 31.6 is the lowest in the room and day_vol 0.82 is sub-normal: price advances without effort or net buying behind it. div_bear_count 4 is advisory. Distribution is not proven; demand is not shown. | day_vol rising above normal on up days with flow recovering would show demand is present. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Debt-free (debt_to_equity 0.00) fast grower but decelerating: growthRevenue 0.258, 0.309, 0.367. operatingProfitMarginTTM -0.085, free_cash_flow_yield 0.023. No P/E to anchor; C17 deceleration watch.
-
-### GLBE — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 8 · oppose 0 · abstain 2 · doors: Elder+Lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens agrees: strong on coil, structure, sector; insti_money warn. ma_50 39.4 over ma_100 37.96 over ma_200 35.6, BULLISH_BOS, day_vol 1.42. A contraction with a bullish read; the hinge is not yet resolved. | A daily close under ma_20 39.87, or structure_shift BEARISH_CHOCH. |
-| elder-lens | SUPPORT | 3 | Clean transition, still at value: elder_5d [6, 9, 10, 10, 10] ACCELERATION crossed from six to nine four bars back, stack aligned (ma_20 39.87 over ma_50 39.4 over ma_100 37.96), ext_atr20 0.97. Weak leg is mp 31.0 BUILDING decelerating. Weekly unread. | Close under ma_20 by half an ATR. |
-| livermore | ABSTAIN | None | Near the high (from_52w_hi -2.36) with an ascending stack (ma_20 39.87, ma_50 39.4, ma_100 37.96), but mp 31.0 is thin persistence and mp_accel_state DECELERATING. No thrust to follow; I wait for the new high. | Flips to SUPPORT on a close above high_52w_close with day_vol 1.42 or better. |
-| minervini | SUPPORT | 3 | Coiled near highs: pct_from_52w_high -2.36, rs_rank_pct 84.33, structure_shift BULLISH_BOS, energy 85.7, lens coil strong, elder 10.0 ACCELERATION; stack ma_50 39.4 over ma_100 37.96 over ma_200 35.6. Lynch SUPPORT (growthRevenue 0.278). mp 31.0 DECELERATING and IN-LINE keep it at 3. | Close under ma_20 39.87, or a break that prints on day_vol under 1. |
-| oneil | SUPPORT | 2 | Tight coil within reach of the high: from_52w_hi -2.36, lens coil strong, BULLISH_BOS, day_vol 1.42 passes. Consulted read is the best growth profile here: growthRevenue 0.278, net_profit_margin 0.139. Weak legs: rs_leadership IN-LINE, structure 55.8, mp 31.0, rank 214. | Rejects at pivot_high on weak volume, or structure_shift flips BEARISH_CHOCH. |
-| raschke | SUPPORT | 2 | Continuation: BULLISH_BOS, clean stack (ma20 39.87, ma50 39.4, ma100 37.96, ma200 35.6), elder 10.0 ACCELERATION, day_vol 1.42, sma_dist 4.98, lens coil strong. adx 14.17 and mp_accel DECELERATING cap it. Invalidation under ma20 39.87. | Close under ma20 39.87. |
-| seow | SUPPORT | 2 | Stack up (ma_20 39.87 over ma_50 39.4), ext_atr20 0.97, run_10d 2.4, from_52w_hi -2.36, elder 10.0 ACCELERATION; rs_spy_20d 4.44 passes C6 narrowly (rs_leadership IN-LINE). Near the average, no dip: buy stop over the prior high after a ma_20 touch. ma_40/CCI unserved. | Close below ma_40, or no hold at ma_20 on the touch. |
-| thorp | ABSTAIN | None | Lynch calls it among the best fast-grower profiles (growthRevenue 0.278, debt_to_equity 0.03) but priceToEarningsRatioTTM 45.7 is full and growth is decelerating; mp 31.0 DECELERATING. atr 1.54 against entry 41.36; loss boundary ma_20 39.87. A good company is not a measured mispricing. | Close under ma_20 39.87. |
-| weis | SUPPORT | 2 | W21 contraction with a bullish read, hinge unresolved: was_squeezed True, squeeze_breakout_state NONE, vcp_tightness_pct 66.3, BULLISH_BOS, stack_state ALIGNED, sma_dist 4.98, ext_atr20 0.97, elder ACCELERATION. mp DECELERATING is a proxy caution, so 2 not 3. | A close under ma20 39.87, or a break whose hour closes back under pivot_high. |
-| wyckoff | SUPPORT | 3 | Strong coil: lens.coil strong, energy 85.7, structure_shift BULLISH_BOS, sma_distance_pct 4.98 over ma_50 39.4. Effort day_vol 1.42 against mp_accel_state DECELERATING is the large-effort, small-reward fork; near a top it can be absorption. Flag, not verdict. Danger point ma_20 39.87. | A close under ma_20 39.87, or the squeeze resolving down on heavy day_vol. |
-
-Fundamentals consult (lynch, no vote): **SUPPORT** · fast grower · Among the best fast-grower profiles here: growthRevenue 0.278, net_profit_margin 0.139, debt_to_equity 0.03. priceToEarningsRatioTTM 45.7 gives PEG proxy 1.6 on sales growth: full, not stretched. Growth decelerating.
-
-### FIVN — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 5 · oppose 3 · abstain 2 · doors: Seats, Elder+Lens, Lens
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 3 | Best mover read this seat has: lens_positive 4 lens_warnings 0, runner_setup true, runner_conviction 4, premove_conviction 2. ma_50 33.95 over ma_100 29.32 over ma_200 23.69, BULLISH_BOS, day_vol 1.37. I trust lens.structure strong; structure 43.6 is advisory. A thrust, not a pullback. | A daily close under ma_20 34.65, or runner_setup turning false with structure_shift BEARISH_CHOCH. |
-| elder-lens | OPPOSE | 2 | Trend leg fails: elder_pattern INTERRUPTED, elder_5d [0, 5, 6, 7, 10] was red four bars back, and AQE's U&R read says its 21-day average is not rising. Elder trades only with a rising average; force alone is a fragment. elder 10.0 and runner True do not substitute. | The 21-day average turns up and a dip toward ma_20 holds with elder at seven or more. |
-| livermore | ABSTAIN | None | Fields conflict on exactly what I read: structure_shift BULLISH_BOS but structure 43.6; from_52w_hi -2.69, mp 43.0, sma_dist 10.79. I trust the weak score until a new high prints and stand aside rather than guess. | Flips to SUPPORT on a close above high_52w_close with day_vol 1.37 or better. |
-| minervini | SUPPORT | 2 | rs_rank_pct 98.3 and pct_from_52w_high -2.69 with a volume-confirmed squeeze break. But structure 43.6 against BULLISH_BOS gives no readable base; LAGGARD and INTERRUPTED are weights; sma_distance_pct 10.79 is stretched. Template served legs pass. | Close under ma_20 34.65, or the break failing to hold on day_vol under 1. |
-| oneil | OPPOSE | 3 | Fails the L and base tests: rs_leadership LAGGARD, structure 43.6 against structure_shift BULLISH_BOS, rank 224, sma_distance_pct 10.79, elder INTERRUPTED, days_to_earnings 10. A breakout without a sound base or down-day resilience. | rs_leadership turns LEADER with structure rising and BULLISH_BOS holding on rising volume. |
-| raschke | SUPPORT | 2 | Breakout type already fired: squeeze_breakout_state BREAKOUT_UP, BULLISH_BOS, day_vol 1.37. I trust the break flag for the event and the structure score 43.6 as the warning; elder_pattern INTERRUPTED, rs LAGGARD, sma_dist 10.79. Earnings ahead per packet. | Close under ma20 34.65 ends the retest case. |
-| seow | SUPPORT | 1 | Stack and RS pass (rs_spy_20d 6.62, ret_63d 47.2, ext_atr20 1.38) but the slope leg fails: Valen says its 21-day average is not rising. elder_pattern INTERRUPTED, structure 43.6 conflicts with BULLISH_BOS, rs_leadership LAGGARD. Wait for a ma_20 34.65 retest; days_to_earnings 10. | Close below ma_40, or no hold at the ma_20 retest. |
-| thorp | OPPOSE | 2 | Top-quartile vol ranks below calmer names: atr 2.15 against entry 37.61, sma_dist 10.79, rs LAGGARD, structure 43.6 conflicts with BULLISH_BOS. days_to_earnings 10 sits inside any hold. I stand aside from the thrust. | Structure score rising from 43.6 with closes above ma_20 34.65 would answer the conflict. |
-| weis | SUPPORT | 2 | Hinge resolved up: was_squeezed True, squeeze_breakout_state BREAKOUT_UP with volume confirmation, BULLISH_BOS, stack ALIGNED. Weights: sma_dist 10.79, rs LAGGARD, structure 43.6, elder INTERRUPTED, days_to_earnings 10. I buy a retest, not the thrust. | A close under ma20 34.65, or the retest failing on rising volume. |
-| wyckoff | ABSTAIN | None | Fields conflict: structure_shift BULLISH_BOS against structure 43.6, and the name is already moving at sma_distance_pct 10.79. Contraction is strong (lens.coil strong, energy 84.0) but I cannot tell which structure reading to trust. Standing aside; days_to_earnings 10. | Structure rising with BULLISH_BOS intact and a back-up held at ma_20 34.65 would resolve it. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Growth slowing (growthRevenue 0.103, 0.144, 0.169) yet priceToEarningsRatioTTM 49.5 on operatingProfitMarginTTM 0.049; debt_to_equity 1.03 (implied debt share 0.51). free_cash_flow_yield 0.071 is the only support.
-
-### AAPL — HOLD-FOR-CONDITIONS (2) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 3, oppose 0, abstain 2 · doors: Elder+Lens, AQE leader, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Lens agrees: strong on leadership, coil, resistance; insti_money warn. ma_50 329.47 over ma_100 319.37 over ma_200 294.41, structure_shift RANGE, day_vol 1.03 neutral. flow 44.7 is low (advisory): money is not leading. Support is for a break, not a buy here. | A daily close under ma_50 329.47, or structure_shift BEARISH_CHOCH. |
-| elder-lens | SUPPORT | 2 | Transition in progress: elder_5d [6, 4, 7, 9, 9] ACCELERATION crossed from four to seven three bars back and is not yet at ten; stack aligned (ma_20 338.91 over ma_50 329.47), price at from_52w_hi -0.14. Weak legs: mp 38.0 BUILDING and div_bear_count 4. Buy a dip near ma_20. | Close under ma_20 by half an ATR, or force back to red. |
-| livermore | ABSTAIN | None | At the high but no thrust: from_52w_hi -0.14, structure_shift RANGE, mp 38.0 BUILDING/FLAT, rs_spy_20d 3.43, AQE rank 239. A break would matter for the tape, but there is nothing to follow yet. | Flips to SUPPORT on a close above pivot_high with day_vol above normal. |
-| minervini | SUPPORT | 1 | Near the high (pct_from_52w_high -0.14) with rs_rank_pct 82.5 LEADER and stack ma_50 329.47 over ma_100 319.37 over ma_200 294.41, but momentum is thin: rs_spy_20d 3.43, mp 38.0, flow 44.7, div_bear_count 4. A large slow name is not a superperformance leader. Weak support only. | Close under ma_50 329.47, or new highs on day_vol under 1 with flow staying low. |
-| oneil | OPPOSE | 2 | Tight at the high but unfunded: from_52w_hi -0.14, structure 71.6 RANGE, yet flow 44.7, div_bear_count 4, mp 38.0 and day_vol 1.03. Closes at the high without institutional flow is a leader stalling, not launching. Rank 239. | A break of pivot_high on strong volume with flow recovering and div_bear_count falling. |
-| raschke (advisory) | SUPPORT | 1 | Breakout type, coiled at the highs: structure_shift RANGE, from_52w_hi -0.14, lens coil strong, sma_dist 5.54, day_vol 1.03. Not through structure yet, and flow 44.7 and mp 38.0 are thin. div BEARISH/4 is advisory only. I buy a close through the range top, not the coil. | A push through pivot_high that closes back inside the range. |
-| seow (advisory) | SUPPORT | 1 | Clean stack (ma_20 338.91 over ma_50 329.47), from_52w_hi -0.14, ext_atr20 1.38, but the RS gate is thin: rs_spy_20d 3.43, ret_63d 3.21, mp BUILDING/FLAT. div_bear_count 4 is not my instrument. RANGE, no break: buy stop over the prior high only. ma_40/CCI unserved. | Close below ma_40 or below the 20-day base low. |
-| thorp (advisory) | ABSTAIN | None | Calm on atr 6.41 against entry 347.73, but div_bear_count 4, flow 44.7, mp 38.0, and Lynch priceToEarningsRatioTTM 39.7 against growthRevenue 0.064. rs_rank_pct 82.5. No edge I can measure; loss boundary ma_20 338.91. | Close under ma_20 338.91. |
-| weis (advisory) | ABSTAIN | None | Range with a quiet contraction (structure_shift RANGE, coil lens strong) and a bullish run (ret_12m 34.54), but div_bear_count 4, flow 44.7 and mp BUILDING/FLAT leave effort and result unconfirmed. Hinge unresolved; direction is not implied. Fundamentals read CONTRADICT on price. | A hinge break up on volume with the divergence count falling; a close under ma50 329.47 refutes. |
-| wyckoff (advisory) | SUPPORT | 2 | Range edge with a flag: structure_shift RANGE, structure 71.6, sma_distance_pct 5.54, lens.coil strong, energy 72.3, lens.resistance strong. day_vol 1.03 is neutral and flow 44.7 is soft; div_bear_count 4 is advisory. Danger point ma_50 329.47. | A close under ma_50 329.47, or a break above the range that closes back inside on heavy day_vol (upthrust). |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Quality, expensive: priceToEarningsRatioTTM 39.7 vs growthRevenue 0.064; growthEPS 0.23 after -0.01, 0.00, so PEG proxy 1.8 on one year, far higher on three. free_cash_flow_yield 0.027, debt_to_equity 0.78.
-
-### SLB — HOLD-FOR-CONDITIONS (2) · PULLBACK
-
-Split: support 2 · oppose 7 · abstain 1 · doors: Lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 3 | Leads the energy cluster on name-level lens: lens_positive 4 lens_warnings 1 (resistance warn); strong on leadership, coil, insti_money, sector. ma_50 52.47 over ma_100 51.23, level with ma_200 51.26. structure_shift RANGE, day_vol 1.55. One energy expression, not nine. | A daily close under ma_200 51.26, or structure_shift BEARISH_CHOCH. |
-| elder-lens | OPPOSE | 2 | Permission event is real (elder_5d [5, 8, 9, 4, 10] dipped to four and reclaimed ten, CORRECTION_REENTRY) but the legs fail: mp 31.0 BUILDING, ma_20 49.52 under ma_50 52.47, and AQE says the 21-day average is not rising. Trend leg unmet; stand aside. | ma_20 back over ma_50 with the 21-day average rising and elder holding seven or more. |
-| livermore | OPPOSE | 3 | Group laggard: rs_rank_pct 33.78, from_52w_hi -11.71, structure_shift RANGE, ma_20 49.52 under ma_50 52.47. Producers lead, services do not. No leader's trend to buy. | Wrong if it closes above high_52w_close with ma_20 back over ma_50. |
-| minervini | OPPOSE | 3 | Template gate fails: rs_rank_pct 33.78, ma_100 51.23 under ma_200 51.26, pct_from_52w_high -11.71, structure_shift RANGE. Price merely sits on the long averages (sma_distance_pct 1.12): no stage 2, no purchase. | rs_rank_pct recovering and ma_100 closing back over ma_200 with a break of the range. |
-| oneil | OPPOSE | 3 | Group laggard: rs_rank_pct 33.78, rank 244, structure 50.5 RANGE, from_52w_hi -11.71, mp 31.0. Valen: Episodic pivot FAILED, 21-day average not rising. Never the cheaper competitor in sympathy. | Takes group leadership: rs_rank_pct climbs and price clears pivot_high on volume. |
-| raschke | SUPPORT | 1 | Breakout type: squeeze_breakout_state BREAKOUT_UP, day_vol 1.55, sma_dist 1.12 near the average, but structure_shift RANGE: still inside the swing. VALEN shows Episodic pivot FAILED and the 21-day average not rising; rs_rank_pct 33.78 is the energy laggard. Only a close through structure counts. | No close through pivot_high, or a close under ma20 49.52. |
-| seow | OPPOSE | 2 | No uptrend to buy: ma_20 49.52 is under ma_50 52.47, ma_100 51.23 and ma_200 51.26, Valen says its 21-day average is not rising, rs_rank_pct 33.78, ret_6m -5.5. A bounce under overhead averages, not a pullback (C2, C6). | Wrong if ma_20 turns up through ma_50 and rs_rank_pct climbs; then it is a pullback candidate. |
-| thorp | OPPOSE | 2 | Weakest leader in the energy set: rs_rank_pct 33.78, sc_mom 55.9, mp 31.0, structure 50.5 RANGE, Episodic pivot FAILED (6/9). Lynch: growthEPS -0.24, late-cycle. atr 1.68 against entry 53.06; one energy bet at best. | rs_rank_pct climbing and structure_shift leaving RANGE upward with closes over ma_50 52.47. |
-| weis | OPPOSE | 2 | W23 first: rs_rank_pct 33.78, ret_6m -5.5, from_52w_hi -11.71, ma50 52.47 against ma100 51.23 and ma200 51.26 is a flat tangle. A squeeze break with no trend behind it; contraction does not imply direction. Episodic pivot FAILED, 21-day average not rising. | ma50 and the 21-day average both rising with price holding ma200 51.26. |
-| wyckoff | ABSTAIN | None | Fork I refuse: structure_shift RANGE, sma_distance_pct 1.12, with day_vol 1.55 elevated at a cluster of averages. Heavy volume with little progress is absorption at a floor or the stepping-aside trap, and no range low is served. lens.coil strong, energy 58.2. Flag only. | A close above ma_50 52.47 with day_vol holding favours absorption; a close under ma_200 51.26 the trap. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · cyclical · Oilfield-services cyclical rolling over: growthRevenue -0.016, growthEPS -0.24 after 0.06, 0.21. priceToEarningsRatioTTM 25.5 looks late-cycle; dividendYieldTTM 0.022, free_cash_flow_yield 0.038, debt_to_equity 0.35.
-
-### BRZE — HOLD-FOR-CONDITIONS (1) · MOMENTUM
-
-Split: support 2 · oppose 2 · abstain 1 · advisory support 0, oppose 4, abstain 1 · doors: Strength, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens block is -- on leadership, coil, insti_money, resistance; lens_positive 0 is not comparable. Readable: ma_50 29.58 over ma_100 26.7 over ma_200 24.19, ABOVE_STRUCTURE, day_vol 1.0. Valen flags Parabolic WARNING and a 7.2 ATR extension. | A lens re-run with leadership and insti_money strong would move me to SUPPORT. |
-| elder-lens | OPPOSE | 3 | Force pinned at the top and price far from value: elder_5d [7, 10, 10, 10, 10], sma_dist 55.13, ext_atr20 7.21, run_10d 57.88, Valen Parabolic WARNING. Momentum is real (mp 97.0 STRONG) but the entry is the first dip toward ma_20 31.02, not here. | A dip toward ma_20 holds with elder at seven or more, or a base forms: then I would support. |
-| livermore | SUPPORT | 1 | Momentum is real (rs_rank_pct 96.35, mp 97.0, structure 86.7, from_52w_hi 0.0) but this is the chase: sma_dist 55.13, ext_atr20 7.21, run_10d 57.88, day_vol 1.0, VALEN Parabolic WARNING (3/4). Weakest support I file; a weight, not a veto. | A one-day fade past my atr_14d danger multiple (my translation), or a close under ma_20 31.02. |
-| minervini | SUPPORT | 1 | Top-tier leader (rs_rank_pct 96.35, rs_spy_20d 89.74, mp 97.0, pct_from_52w_high 0.0) but sma_distance_pct 55.13 and run_10d 57.88% make any entry now a chase; extension is a weight (R14), not a veto. VALEN: Parabolic WARNING. Weak support: act only on a fresh tight base. | Close under ma_20 31.02 ends the leadership case; a tight base then a pivot break on volume restarts it. |
-| oneil | OPPOSE | 3 | Climax reading: entry 45.88 sits far above ma_200 24.19, sma_distance_pct 55.13, run_10d 57.88, day_vol 1.0. Canon says sell into that, not buy it. Valen: Parabolic WARNING, Episodic pivot (delayed) PAST_PIVOT. Momentum real, entry is not; wait for a new base. | Rebases tight above ma_50 and breaks a fresh pivot_high on volume. |
-| raschke (advisory) | OPPOSE | 3 | Climax profile: run_10d 57.88, sma_dist 55.13, ext_atr20 7.21, rs_spy_20d 89.74. VALEN flags Parabolic WARNING and Episodic pivot PAST_PIVOT. I do not buy a parabolic bar; the reversal must be visible first, and the retracement entry is far below at ma20 31.02. | A shallow hold above entry 45.88 on contracting range and normal day_vol shows continuation, not climax. |
-| seow (advisory) | OPPOSE | 2 | Vertical run disqualifies the dip (C4): run_10d 57.88, ext_atr20 7.21, sma_dist 55.13, Valen parabolic risk warning WARNING. Not an extension veto (R14): the method rejects the pullback entry itself. I would look at a ma_20 31.02 retest only after a fresh base. | Wrong if it digests in a tight multi-day base above ma_20 and then clears the prior-day high. |
-| thorp (advisory) | OPPOSE | 3 | Largest extension in the packet: sma_dist 55.13, ext_atr20 7.21, run_10d 57.88. ma_20 31.02 is the loss boundary against entry 45.88 with atr 2.06, so a position sized to the unwatched loss is tiny. Valen: Parabolic WARNING (3/4). Advisory lane. | Consolidation near entry 45.88 on day_vol below 1 that keeps the loss boundary close would let me size it. |
-| weis (advisory) | OPPOSE | 2 | Vertical: run_10d 57.88, sma_dist 55.13, ext_atr20 7.21 on only day_vol 1.0. Effort is ordinary for that result, the look of a spent thrust and not a failure of weakness, and AQE flags the parabolic WARNING. A weight, not a veto (R14); momentum lane is advisory. | A multi-day base on dry-up volume above ma20 31.02 followed by a resolved hinge would earn support. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, flow 88.2, structure 86.7) but sma_distance_pct 55.13 leaves no base in reach and VALEN flags Parabolic WARNING (3/4). lens.coil reads '--': data gap. day_vol 1.0 is normal effort on a vertical run. My look is a back-up to ma_20 31.02; wrong under it. | A thin-volume return toward ma_20 31.02 that holds. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Unprofitable fast grower: growthRevenue 0.244 (0.258, 0.327 before), operatingProfitMarginTTM -0.134, free_cash_flow_yield 0.016. Low debt (debt_to_equity 0.16). No P/E or PEG to anchor the price; deceleration to watch.
-
-### KSS — HOLD-FOR-CONDITIONS (1) · MOMENTUM
-
-Split: support 3 · oppose 1 · abstain 1 · advisory support 2, oppose 0, abstain 3 · doors: Elder+Lens, Strength, PM lens, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mixed: lens_positive 3 lens_warnings 2 (coil, insti_money warn); runner_conviction 4 but runner_setup false. ma_50 19.0 over ma_100 18.41 over ma_200 16.89, ABOVE_STRUCTURE, day_vol 1.18. The net lens read is thin; no independent case to add. | Coil and insti_money leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 1 | Blue base turned green: elder_5d [7, 7, 7, 10, 10], never red, mp 97.0 STRONG FLAT. No red-giving-way event, only a thrust, and sma_dist 29.37 with run_10d 20.79 is late. Plateau-only, so buy a dip toward ma_20 or nothing. | Close under ma_20 by half an ATR. |
-| livermore | SUPPORT | 2 | Retail partner of BBY: from_52w_hi -0.81 (not quite a new high), structure 84.6, mp 97.0, rs_rank_pct 92.83, day_vol 1.18. Late: sma_dist 29.37, run_10d 20.79. Needs a close above high_52w_close. Lynch CONTRADICT noted. | Close under ma_20 20.73, BBY losing its high, or a one-day fade past my atr_14d danger multiple (my translation). |
-| minervini | SUPPORT | 1 | Strength is real (rs_rank_pct 92.83, rs_spy_20d 38.79, mp 97.0, pct_from_52w_high -0.81) but sma_distance_pct 29.37 and Lynch's consulted read (sales shrinking, growthRevenue -0.043, debt) say turnaround squeeze, not a leader. Weak support; no chase. | Close under ma_20 20.73, or a push that prints on day_vol under 1. |
-| oneil | OPPOSE | 2 | Three legs fail: day_vol 1.18 under my volume test, lens insti_money warn and coil warn, consulted growthRevenue -0.043, -0.072, -0.034. A retail turnaround up run_10d 20.79 at sma_distance_pct 29.37; strength real, no new-earnings leg. | A volume-backed break to a new high with sales turning up on the consulted read. |
-| raschke (advisory) | SUPPORT | 1 | Holy Grail candidate: adx 38.28, mp 97.0 STRONG, from_52w_hi -0.81, ABOVE_STRUCTURE. No pullback yet: sma_dist 29.37, run_10d 20.79, ext_atr20 3.47. The first test of ma20 20.73 is my entry; no market buy. | Close under ma20 20.73 without a bounce. |
-| seow (advisory) | SUPPORT | 1 | rs_spy_20d 38.79, ret_63d 32.94, stack up, mp 97.0 STRONG, but run_10d 20.79, sma_dist 29.37 and ext_atr20 3.47: a thrust, no dip. Entry only on a ma_20 20.73 retest. Shrinking sales and debt are Lynch's. ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | ABSTAIN | None | ext_atr20 3.47, sma_dist 29.37, run_10d 20.79; four doors and no seat (Rogers). Lynch: growthRevenue -0.043; free_cash_flow_yield 0.355 is no bargain without an OCF split. atr 1.11 against entry 24.58. No edge I can measure. | Close under ma_20 20.73. |
-| weis (advisory) | ABSTAIN | None | run_10d 20.79, sma_dist 29.37, ext_atr20 3.47, two lens warns (coil and insti_money). An extended thrust in a shrinking-sales retailer; free_cash_flow_yield 0.355 is not a bargain signal. No failed-weakness read. Momentum lane: advisory. | A base above ma20 20.73 on dry-up volume. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, structure 84.6, day_vol 1.18) but sma_distance_pct 29.37 and lens.coil warn, energy 61.3 give no edge or coil. Four doors and no seat: Rogers' one price read counted repeatedly. Look at ma_20 20.73; wrong under it. | A thin-volume return toward ma_20 20.73 that holds. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · turnaround · Shrinking sales (growthRevenue -0.043, -0.072, -0.034), net_profit_margin 0.017, debt_to_equity 1.54 (implied debt share 0.61). priceToEarningsRatioTTM 10.2, free_cash_flow_yield 0.355 cheap on paper; debt kind unserved.
-
-### HST — HOLD-FOR-CONDITIONS (1) · PULLBACK
-
-Split: support 3 · oppose 3 · abstain 4 · doors: Elder+Lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 1 | Lens agrees but spine partial: strong on leadership, resistance, sector; coil warn. ma_50 22.72 under ma_100 23.44 though over ma_200 21.76, so conviction is cut. ABOVE_STRUCTURE, day_vol 0.94 quiet. I act only once ma_50 is back over ma_100. | A daily close under ma_200 21.76, or structure_shift BEARISH_CHOCH. |
-| elder-lens | SUPPORT | 1 | Blue pullback: elder_5d [10, 10, 10, 7, 7], never red, mp 90.0 STRONG. But ma_50 22.72 is under ma_100 23.44, ext_atr20 2.81, and no reclaim yet. Wait for green to return near value. | Close under ma_20 by half an ATR. |
-| livermore | OPPOSE | 2 | No uptrend yet: ma_50 22.72 under ma_100 23.44, from_52w_hi -3.21, day_vol 0.94, mp_accel_state FLAT. A run_10d 9.14 rally inside a reaction; no real estate leader is at a high. | Wrong if ma_50 retakes ma_100 and it closes above high_52w_close. |
-| minervini | OPPOSE | 2 | Template gate not met: ma_50 22.72 still under ma_100 23.44 after a thrust (run_10d 9.14%) off a repair. Stage 2 is not confirmed, so buying is prediction, not trading. rs_rank_pct 74.0 clears the floor only just. | ma_50 closing over ma_100 and price holding above both on a break of the recent high. |
-| oneil | OPPOSE | 2 | Not a breakout: day_vol 0.94, ma_50 22.72 under ma_100 23.44, no pivot, rank 60. Consulted read shows the dividend yield 0.068 above free_cash_flow_yield 0.060. A calm REIT is not a leader. | ma_50 turns above ma_100 and price breaks out on strong volume. |
-| raschke | ABSTAIN | None | ma50 22.72 under ma100 23.44, so no trend to pull back within, and sma_dist 8.78 with run_10d 9.14 shows no retracement yet. adx 31.42 is a strength read only. No setup fires; stand aside. | ma50 back above ma100 with a test of ma20 23.26 holding. |
-| seow | ABSTAIN | None | Open legs: ret_63d -1.0 untestable against the index and ma_20 23.26 under ma_100 23.44. Strong tape (rs_spy_20d 11.73, mp 90.0 STRONG) but ext_atr20 2.81 and no dip. Thorp's calm ranking is not my test. No set-up to grade. | Wrong to stand aside if ma_40 is served under a rising ma_20 and the index test passes. |
-| thorp | SUPPORT | 1 | Seventh calmest in my gated set: atr 0.52 against entry 24.72, day_vol 0.94, gates all five true. Edge unmeasured (signal_n 0); lowest conviction of my four. Loss boundary ma_50 22.72. Calm ordering only, no pullback-in-uptrend claim. | Close under ma_50 22.72. |
-| weis | ABSTAIN | None | ma50 22.72 under ma100 23.44, sma_dist 8.78, ext_atr20 2.81, run_10d 9.14 on mp 90 (FLAT). Extended off a mixed stack with no failed-weakness read; a calm-volatility ordering is not my method. | A hold of ma20 23.26 on low volume with ma50 back over ma100. |
-| wyckoff | ABSTAIN | None | Contraction fails: lens.coil warn, energy 64.7. structure_shift ABOVE_STRUCTURE, sma_distance_pct 8.78, day_vol 0.94 quiet, mp_accel_state FLAT. Nothing to read at an edge; Lynch notes cash payout above cash flow. No edge. | lens.coil strong on a pause near ma_20 23.26. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · slow grower · Hotel REIT, growthRevenue 0.076, 0.070. dividendYieldTTM 0.068 exceeds free_cash_flow_yield 0.060: cash payout above 1. priceToEarningsRatioTTM 16.8, debt_to_equity 0.88.
-
-### MAR — HOLD-FOR-CONDITIONS (1) · PULLBACK
-
-Split: support 2 · oppose 3 · abstain 5 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens split: strong on leadership and sector; coil warn and insti_money warn. ma_50 356.38 under ma_100 365.56 but over ma_200 354.23; day_vol 0.99. Quiet, spine partial. No lens case to add. | ma_50 back over ma_100 with insti_money leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 1 | Blue pullback: elder_5d [10, 10, 10, 7, 7], never red, mp 86.0 FADING default label. But ma_50 356.38 sits under ma_100 365.56 and sma_dist 9.63, so the slope leg is soft; no reclaim yet. Wait for green near ma_20. | Close under ma_20 by half an ATR. |
-| livermore | OPPOSE | 2 | Not a leader and no new high: rs_rank_pct 56.99, from_52w_hi -3.29, ma_50 356.38 under ma_100 365.56, day_vol 0.99, mp_accel_state DECELERATING. A rally inside a reaction, not a trend resuming. | Wrong if ma_50 retakes ma_100 and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Template gate fails: ma_50 356.38 under ma_100 365.56 and rs_rank_pct 56.99. A pullback in a mid-RS franchise is not a leader; Lynch CONTRADICT on price versus growth. mp FADING is not cited. | ma_50 back over ma_100 and rs_rank_pct back toward the leaders. |
-| oneil | OPPOSE | 2 | Fails RS and volume: rs_rank_pct 56.99, day_vol 0.99, ma_50 356.38 under ma_100 365.56, mp DECELERATING. A shallow pullback in a middling stack, not a breakout; Lynch reads price above growth. | Price breaks the prior high on volume with ma_50 turning back up through ma_100. |
-| raschke | ABSTAIN | None | Holy Grail shape (adx 38.98, ABOVE_STRUCTURE) but sma_dist 9.63 with no retracement, ma50 356.38 under ma100 365.56, day_vol 0.99 and atr_caution True. Stand aside until a test of ma20 372.81. | A test of ma20 372.81 that holds on rising day_vol. |
-| seow | SUPPORT | 1 | rs_spy_20d 12.46 passes on 20 days but ret_63d 2.0 is thin; ext_atr20 2.29, order up (ma_20 372.81 over ma_50 356.38), no dip. mp FADING is an R13 label. Wait for a ma_20 touch; atr_caution True means a wide stop. ma_40/CCI unserved. | Close below ma_40, or no hold at ma_20 on the touch. |
-| thorp | ABSTAIN | None | atr_caution fired (wider swings), day_vol 0.99; Lynch priceToEarningsRatioTTM 40.7 against growthEPS 0.14; ma_50 356.38 under ma_100 365.56. atr 7.8 against entry 390.71. Not in my gated set; edge unmeasured. | Close under ma_20 372.81. |
-| weis | ABSTAIN | None | Pullback in a mixed stack: ma50 356.38 under ma100 365.56, sma_dist 9.63, mp 86 FADING (default label, R13), day_vol 0.99. No failed-weakness read; fundamentals read CONTRADICT on price versus growth. | A hold of ma20 372.81 on low volume with ma50 back over ma100. |
-| wyckoff | ABSTAIN | None | Contraction fails: lens.coil warn, energy 64.7. mp_state FADING with mp_accel_state DECELERATING on day_vol 0.99 normal; atr_caution True means wide swings. structure_shift ABOVE_STRUCTURE, sma_distance_pct 9.63. No edge. | lens.coil strong on a pause near ma_20 372.81. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Franchise stalwart priced for more: priceToEarningsRatioTTM 40.7 vs growthRevenue 0.043 and growthEPS 0.14 (PEG proxy near 2.9). free_cash_flow_yield 0.031. Negative equity (debt_to_equity -3.93).
-
-### COST — HOLD-FOR-CONDITIONS (1) · PULLBACK
-
-Split: support 2 · oppose 6 · abstain 2 · doors: Seats
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 2 | Trend spine fails: ma_50 938.86 under ma_100 944.73 under ma_200 969.35, so the 50 has not crossed back over the 200. lens_positive 2 lens_warnings 2 (coil warn, insti_money warn), day_vol 0.93. Detect gives little trend or lens corroboration. | ma_50 crossing back over ma_100 and ma_200, with coil or insti_money leaving warn. |
-| elder-lens | OPPOSE | 3 | Counter-trend bounce, not a pullback: ma_50 938.86 sits under ma_100 944.73 under ma_200 969.35, so the slope leg is unmet; elder_5d [10, 7, 7, 10, 7] drops from green on the last bar and mp 86.0 FADING is the default label. Transitional ground: take nothing. | ma_50 back above ma_100 and ma_200 with elder holding at seven or more. |
-| livermore | OPPOSE | 3 | No uptrend to buy into: ma_50 938.86 under ma_100 944.73 under ma_200 969.35, from_52w_hi -8.32, rs_rank_pct 43.62, day_vol 0.93. Entry 1003.32 is a reclaim of the long average, not a new high. I do not buy a rally inside a reaction. | Wrong if ma_50 crosses back over ma_200 and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Fails the all-or-nothing Trend Template: ma_50 938.86 under ma_100 944.73 under ma_200 969.35, rs_rank_pct 43.62 well under the leadership floor. Entry 1003.32 is a reclaim of the long average, not stage 2; no bottom-fishing. Lynch CONTRADICT adds. | ma_50 crosses back over ma_100 and ma_200 with rs_rank_pct rising back into leader territory: the template would then pass. |
-| oneil | OPPOSE | 3 | Not a leader's launchpad: rs_rank_pct 43.62, ma_50 938.86 under ma_200 969.35, day_vol 0.93, mp FADING with DECELERATING. A pullback inside a descending stack; I do not buy that. | ma_50 crosses back over ma_200 and price clears pivot_high on volume. |
-| raschke | ABSTAIN | None | Counter-trend bounce, not a retracement: ma50 938.86 under ma100 944.73 under ma200 969.35, entry 1003.32 only reclaims ma200. adx 38.34 measures strength, not direction. No setup in my taxonomy; stand aside. | ma50 crossing back above ma200 would restore the trend context. |
-| seow | SUPPORT | 1 | A rebound, not leadership: rs_rank_pct 43.62, ret_6m -0.77, from_52w_hi -8.32; rs_spy_20d 10.2 passes C6 on the 20-day window only. ma_20 958.15 is over ma_50 938.86 but ext_atr20 2.8: a thrust, no dip. Entry on a ma_20 retest; ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp | SUPPORT | 1 | Second calmest in my gated set: atr 16.16 against entry 1003.32, day_vol 0.93, gates all five true. Edge unmeasured (signal_n 0); Lynch priceToEarningsRatioTTM 48.3 is a price risk. Counter-trend conceded: ma_50 938.86 under ma_200 969.35. Size to the unwatched loss. | Close under ma_200 969.35 (entry 1003.32 was a reclaim) proves the read wrong. |
-| weis | OPPOSE | 2 | W23 first: ma50 938.86 under ma100 944.73 under ma200 969.35, rs_rank_pct 43.62, ret_6m -0.77. Entry 1003.32 reclaims the long average but is not an established uptrend; a bounce inside a flat trend is the weakest Weis case. Sector Momentum Fading. | A hold above ma200 969.35 on quiet volume with ma50 turning up would flip me. |
-| wyckoff | ABSTAIN | None | Price is back above a former floor: ma_200 969.35 sits over ma_50 938.86, and an old bottom once broken is a ceiling until closed through. The rally is on quiet effort (day_vol 0.93) with lens.coil warn, energy 61.3: no demand shown. No edge; holding ma_200 969.35 is the test. | Two closes holding above ma_200 969.35 on rising day_vol. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Quality stalwart at a growth price: priceToEarningsRatioTTM 48.3 vs growthEPS 0.14 gives PEG proxy near 3.5, over the 2.0 red line. free_cash_flow_yield 0.021; sheet sound (debt_to_equity 0.24).
-
-### LIN — HOLD-FOR-CONDITIONS (1) · PULLBACK
-
-Split: support 2 · oppose 3 · abstain 5 · doors: Reclaim seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mid, spine broken: strong on resistance and sector, coil warn. ma_50 480.65 under ma_100 495.8 and ma_200 491.28, day_vol 0.8 quiet. Valen U&R MET (reclaim day) is timing only. No lens case to add; not enough to oppose. | ma_50 back over ma_100 and ma_200 with coil leaving warn would move me to SUPPORT. |
-| elder-lens | SUPPORT | 1 | Reclaim day with a soft stack: elder_5d [10, 7, 7, 10, 7] never red, mp 82.0 STRONG decelerating, AQE's U&R read MET (dipped under the rising trendline, closed back above). But ma_50 480.65 is under ma_100 495.8 and ma_200 491.28, so the slope leg is unproven. Light support. | Close under ma_20 by half an ATR, or choch_bearish. |
-| livermore | OPPOSE | 3 | Not a leader: rs_rank_pct 44.84, ret_6m -0.29, ma_50 480.65 under ma_100 495.8, from_52w_hi -6.92, day_vol 0.8. The U&R reclaim is a pullback read; there is no new high to buy. | Wrong if ma_50 retakes ma_100 and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Template gate fails: ma_50 480.65 under ma_100 495.8 and under ma_200 491.28, rs_rank_pct 44.84. A U&R reclaim day on a stack that is not stage 2; Lynch CONTRADICT adds a rich price. No purchase. | ma_50 over ma_100 and ma_200 with rs_rank_pct rising. |
-| oneil | OPPOSE | 3 | Fails RS and the stack: rs_rank_pct 44.84, ma_50 480.65 under ma_100 495.8 and ma_200 491.28, day_vol 0.8, from_52w_hi -6.92. A reclaim of the trendline 506.72 is not a breakout; not my entry. | ma_50 moves back above ma_100 and price breaks pivot_high on volume. |
-| raschke | SUPPORT | 1 | Test type, seated by the U&R rule: VALEN shows a dip under the rising trendline (506.72) and a close back above it. But ma50 480.65 sits under ma100 495.8 and ma200 491.28, rs_rank_pct 44.84, mp_accel DECELERATING: a counter-trend test, not a retracement. Smallest weight; invalidation is the undercut low. | Close under the undercut low (bar_low). |
-| seow | ABSTAIN | None | Flat, not trending: ret_63d 0.36, ret_6m -0.29, rs_rank_pct 44.84, ma_20 488.98 under ma_100 495.8 and ma_200 491.28. Valen U&R MET (trendline reclaim) is not my test; C2 and C6 legs are open. Nothing to grade as a pullback. | Wrong to stand aside if ma_20 turns up over ma_40 and ret_63d turns clearly positive. |
-| thorp | ABSTAIN | None | Calm: atr 7.9 against entry 508.83, day_vol 0.8; U&R MET on the rising trendline 506.72. But rs_rank_pct 44.84, ret_63d 0.36, and Lynch priceToEarningsRatioTTM 32.7 on growthEPS 0.07: no momentum and nothing it is mispriced against. Seated by rule, not by me. | Close under ma_20 488.98. |
-| weis | ABSTAIN | None | U&R MET on the rising trendline (506.72), but ma50 480.65 sits under ma100 495.8 and ma200 491.28, rs_rank_pct 44.84, ret_6m -0.29. A reclaim without an uptrend is the weak Weis case, yet no downtrend is established either. Fundamentals read CONTRADICT on price. | ma50 turning back over ma100 with price holding ma200 491.28. |
-| wyckoff | ABSTAIN | None | VALEN U&R MET: under the rising trendline 506.72, closed back above on light day_vol 0.8, the nearest served thing to a light-volume spring, but a trendline is not a range low. Contraction fails (lens.coil warn, energy 58.0), mp_accel_state DECELERATING. Wrong under ma_200 491.28. | A close under ma_200 491.28, or lens.coil turning strong with the trendline 506.72 held. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · stalwart · Quality industrial, rich price: priceToEarningsRatioTTM 32.7 vs growthEPS 0.07, 0.08 (PEG proxy near 4.7) and growthRevenue 0.030. free_cash_flow_yield 0.021 (CapEx-heavy). Sheet fine (debt_to_equity 0.72).
-
-### VG — PASS (3) · PULLBACK
-
-Split: support 1 · oppose 6 · abstain 3 · doors: Lens, PM lens, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 3 | Lens agrees: lens_positive 4 lens_warnings 1 (resistance warn); strong on leadership, coil, structure, sector. ma_50 13.81 over ma_100 13.2 over ma_200 12.53, BULLISH_BOS, day_vol 1.67. I trust lens.structure strong; structure 37.9 is advisory. Same energy cluster. | A daily close under ma_50 13.81, or structure_shift BEARISH_CHOCH. |
-| elder-lens | OPPOSE | 2 | Ban just lifted but trend leg fails: elder_5d [0, 0, 3, 3, 9] INTERRUPTED was red two bars in, and AQE says the 21-day average is not rising; ma_20 13.05 is under ma_50 13.81. structure 37.9 is thin. Wait for a base, not the first green bar. | 21-day average rising, ma_20 back over ma_50, and elder holding seven or more through a dip. |
-| livermore | OPPOSE | 3 | Weakest structure in the set: structure 37.9, from_52w_hi -20.14, ma_20 13.05 under ma_50 13.81, mp 52.0. A bounce off lows in a group led by others, not a new high. I do not buy low prices. | Wrong if it clears ma_50 13.81 to a close above high_52w_close. |
-| minervini | OPPOSE | 3 | Not a leader: pct_from_52w_high -20.14, the weakest structure in the set (37.9), ma_20 13.05 under ma_50 13.81. BULLISH_BOS against that score is a conflict I do not trade. A repair off lows is a stage 1 to 2 transition: no purchase. | ma_20 back over ma_50, the structure score rebuilding and a break to new highs. |
-| oneil | OPPOSE | 3 | No sound base: structure 37.9, from_52w_hi -20.14, rank 141, elder INTERRUPTED, days_to_earnings 11. A bounce off a low in a levered build-out, not a leader's launch; flow 98.7 and day_vol 1.67 do not make a base. | Rebuilds structure and clears pivot_high on volume with from_52w_hi closing up. |
-| raschke | ABSTAIN | None | Fields conflict: structure_shift BULLISH_BOS against structure 37.9, the weakest in the set, with from_52w_hi -20.14. I trust the structure score: the break is small and sits inside a weak structure. Energy is one factor. | Structure score rising with the break holding ma50 13.81. |
-| seow | OPPOSE | 2 | No uptrend: ma_20 13.05 under ma_50 13.81 and ma_100 13.2, Valen says its 21-day average is not rising, structure 37.9 conflicts with BULLISH_BOS, from_52w_hi -20.14, elder_pattern INTERRUPTED. A repair bounce, not a pullback (C2, C6). | Wrong if ma_20 reclaims ma_50 and the 21-day average turns up. |
-| thorp | OPPOSE | 2 | ma_50 13.81 sits inside one atr 0.74 of entry 14.0, so a normal day crosses the loss boundary; structure 37.9 conflicts with BULLISH_BOS. Lynch: free_cash_flow_yield -0.269, debt_to_equity 4.99; days_to_earnings 11. No catalyst named (Rogers). | Structure score rising from 37.9 with closes holding above ma_50 13.81. |
-| weis | ABSTAIN | None | My round-1 shape (failure of weakness, sma_dist 1.35 back over ma50 13.81, squeeze BREAKOUT_UP) stands, but structure 37.9, from_52w_hi -20.14, stack_state ROLLING and days_to_earnings 11 leave too little trend behind it. Standing aside. | A close back over ma50 13.81 that holds for sessions with stack_state turning ALIGNED. |
-| wyckoff | ABSTAIN | None | Fork: structure_shift BULLISH_BOS against structure 37.9, a low score. Heavy day_vol 1.67 with flow 98.7 and sma_distance_pct 1.35 over ma_50 13.81 could be demand arriving or a bounce into supply (lens.resistance warn). I refuse the fork; no catalyst is named. | A hold above ma_50 13.81 on quiet day_vol with structure rising. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · cyclical · Build-out cash burn: free_cash_flow_yield -0.269, debt_to_equity 4.99 (implied debt share 0.83). priceToEarningsRatioTTM 10.3 looks cheap but growthRevenue swings (1.769, -0.370). Debt kind unserved.
-
-### VERX — PASS (2) · MOMENTUM
-
-Split: support 0 · oppose 4 · abstain 1 · advisory support 0, oppose 1, abstain 4 · doors: Strength, AQE leader, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens block is -- on leadership, coil, insti_money, resistance; lens_positive 0 is not comparable. Readable: ma_50 12.95 under ma_200 13.41, ABOVE_STRUCTURE, day_vol 0.86. Cannot corroborate or dissent; Valen flags a 4.0 ATR extension. | A lens re-run with several strong lenses and ma_50 back over ma_200 would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Pinned and far from value: elder_5d [10, 10, 10, 10, 10] SUSTAINED, ext_atr20 4.02, sma_dist 18.8, and price is still at from_52w_hi -40.02. A flat high tail is no transition; lens block is blank. mp 93.0 STRONG is real; the entry is a dip toward ma_20. | A dip toward ma_20 holds with elder at seven or more. |
-| livermore | OPPOSE | 3 | No uptrend yet: from_52w_hi -40.02, ret_12m -40.49, ma_200 13.41 still over ma_20 12.98 and ma_50 12.95, sma_dist 18.8. run_10d 18.84 is a rally off lows, not a new high. I do not buy a low price. | Wrong if the averages stack up and it closes above high_52w_close; that is far from here. |
-| minervini | OPPOSE | 4 | Template gate fails hard: pct_from_52w_high -40.02, ma_50 12.95 and ma_100 12.62 both under ma_200 13.41. A bounce inside a stage 4 structure is the broken-leader trap, whatever rs_spy_20d 36.83 and mp 93.0 say. Lynch: no earnings. | ma_100 and ma_50 closing over ma_200 and the drawdown from the high narrowing. |
-| oneil | OPPOSE | 3 | A bounce in a broken stock: from_52w_hi -40.02, ret_12m -40.49, day_vol 0.86, entry 15.39 just over a flat stack with ma_200 13.41. No completed base. Strength is real (rank 6, rs_spy_20d 36.83) but this is repair, not a launchpad. | Builds a base near the prior high and breaks pivot_high on strong volume. |
-| raschke (advisory) | ABSTAIN | None | No Holy Grail gate: adx 28.83, sma_dist 18.8, ext_atr20 4.02 and from_52w_hi -40.02, a rebound inside a larger drawdown. I would enter on a test of ma20 12.98 and be wrong on a close under ma50 12.95. | A test that holds ma20 12.98 on quiet day_vol. |
-| seow (advisory) | ABSTAIN | None | Rebound from a low, not a trend: from_52w_hi -40.02, ret_12m -40.49, ma_20 12.98 level with ma_50 12.95 and under ma_200 13.41, ext_atr20 4.02. Tape is strong (rs_spy_20d 36.83) but the trend leg is open and nothing sits near ma_20. R14: no extension veto. | Wrong to stand aside if ma_20 rises clearly over the slower averages and it holds a base. |
-| thorp (advisory) | ABSTAIN | None | Rank 6, structure 90.5, elder 10.0 SUSTAINED, but sma_dist 18.8, from_52w_hi -40.02, ext_atr20 4.02. atr 0.6 against entry 15.39 is calm; Lynch: priceToEarningsRatioTTM 502.9, debt_to_equity 1.45. No edge I can measure; extension is a weight (R14). | Close under ma_20 12.98. |
-| weis (advisory) | OPPOSE | 3 | Trend gate: ret_12m -40.49, from_52w_hi -40.02, ma200 13.41 above ma50 12.95 and ma100 12.62: an established downtrend with a violent bounce (run_10d 18.84, sma_dist 18.8) on day_vol 0.86. Rallies and reclaims inside a downtrend are short evidence, never long. | ma50 turning up through ma200 13.41 and a retest of ma20 12.98 that holds on dry-up volume. |
-| wyckoff (advisory) | ABSTAIN | None | Data gap: lens.coil and lens.resistance read '--'; contraction cannot run. Momentum is real (mp_state STRONG, structure 90.5, flow 84.2) but sma_distance_pct 18.8 on day_vol 0.86 sub-normal is thin effort. VALEN 4.0 ATR extended. Look at ma_20 12.98; wrong under it. | lens.coil populated and strong near ma_20 12.98. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · fast grower · No earnings (priceToEarningsRatioTTM 502.9, net_profit_margin 0.005), debt_to_equity 1.45 (implied debt share 0.59), free_cash_flow_yield 0.023. growthRevenue 0.122 down from 0.165, 0.164. Price has no support.
-
-### DXC — PASS (2) · MOMENTUM
-
-Split: support 1 · oppose 4 · abstain 0 · advisory support 0, oppose 2, abstain 3 · doors: Strength, AQE leader, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 2 | Lens does not back it: one strong lens (leadership), two warns (coil, insti_money). ma_100 10.73 under ma_200 11.54 though ma_50 11.78 over both; day_vol 0.86 quiet. Valen: Parabolic WARNING. Extension is not my reason. | insti_money and coil lenses both leaving warn, with ma_100 back over ma_200. |
-| elder-lens | OPPOSE | 2 | Summer pinned: elder_5d [10, 10, 10, 10, 10] SUSTAINED, sma_dist 36.6, ext_atr20 4.67, Valen Parabolic WARNING. A flat high tail is no transition and Elder does not name summer the buying season. mp 100.0 STRONG says the run is real; wait for the dip. | A dip toward ma_20 holds with elder at seven or more. |
-| livermore | SUPPORT | 2 | New high on a young uptrend: from_52w_hi 0.0, structure 86.7, mp 100.0 ACCELERATING, elder SUSTAINED, rs_rank_pct 86.27. Late: sma_dist 36.6, ext_atr20 4.67, run_10d 29.76, day_vol 0.86 quiet, VALEN Parabolic WARNING (2/4). A weight, so two. | A one-day fade past my atr_14d danger multiple (my translation), or a close under ma_20 12.82. |
-| minervini | OPPOSE | 3 | Template gate fails: ma_100 10.73 under ma_200 11.54, so the long averages have not turned; sma_distance_pct 36.6 and run_10d 29.76% is a violent rebound from stage 4. Lynch: sales shrinking, turnaround unproven. VALEN Parabolic WARNING. | ma_100 closing over ma_200 and a tight base forming above ma_50. |
-| oneil | OPPOSE | 2 | A spike on thin volume with no earnings leg: day_vol 0.86 after run_10d 29.76, sma_distance_pct 36.6, lens coil warn and insti_money warn, consulted growthRevenue -0.018, -0.058, -0.053. Strength real, but nobody is adding. | Pulls back and rebuilds a tight base, then breaks out on strong volume. |
-| raschke (advisory) | ABSTAIN | None | Late: sma_dist 36.6, run_10d 29.76, ext_atr20 4.67, and VALEN carries a Parabolic WARNING. adx 44.12 would make a first pullback a Holy Grail entry. I would enter on a test of ma20 12.82 and be wrong on a close under it. | A first pullback that holds ma20 12.82. |
-| seow (advisory) | ABSTAIN | None | Strength is real (rs_spy_20d 52.56, mp 100.0 STRONG, elder 10.0 SUSTAINED) but ext_atr20 4.67, sma_dist 36.6, run_10d 29.76 and Valen parabolic WARNING: C4 voids the dip entry; ma_20 12.82 is far below. R14 forbids an extension veto, so ABSTAIN. Cash yield 0.487 is untrusted (Lynch). | Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high. |
-| thorp (advisory) | OPPOSE | 3 | sma_dist 36.6, run_10d 29.76, ext_atr20 4.67; Valen: Parabolic WARNING (2/4). ma_20 12.82 is the loss boundary under entry 16.09, atr 0.7. Lynch: free_cash_flow_yield 0.487 too high to trust, growthRevenue -0.018; turnaround unproven. | A hold above entry 16.09 on quiet day_vol, or a pullback to ma_20 12.82 that holds. |
-| weis (advisory) | OPPOSE | 2 | Extended: run_10d 29.76, sma_dist 36.6, ext_atr20 4.67, AQE parabolic WARNING. free_cash_flow_yield 0.487 is too high to trust and sales shrank. A thrust is not a failed breakdown; I would wait for a base. A weight, not a veto; momentum lane is advisory. | A contraction above ma20 12.82 on dry-up volume, then a resolved hinge. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, structure 86.7) but sma_distance_pct 36.6 with day_vol 0.86 sub-normal is big reward on thin effort: the drive may be spent, volume direction not served. lens.coil warn, energy 67.2; VALEN Parabolic WARNING (2/4). Look at ma_20 12.82; wrong under it. | A thin-volume return toward ma_20 12.82 that holds. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · turnaround · Cheap on cash (free_cash_flow_yield 0.487, too high to trust without OCF/CapEx split) but sales shrank three FYs (growthRevenue -0.018, -0.058, -0.053); net_profit_margin 0.010; debt_to_equity 1.37. Turnaround unproven.
-
-### KVYO — PASS (2) · MOMENTUM
-
-Split: support 0 · oppose 5 · abstain 0 · advisory support 0, oppose 2, abstain 3 · doors: Strength, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 2 | Lens does not back it: leadership warn, coil warn, insti_money ok, resistance strong; structure lens is -- (gap, but the five readable lenses still do not support). ma_100 16.98 under ma_50 17.58 under ma_200 18.21; day_vol 0.84 quiet. | Leadership and coil lenses leaving warn, with ma_50 back over ma_200. |
-| elder-lens | OPPOSE | 2 | Plateau-only and stretched: elder_5d [7, 10, 10, 10, 10] never red, ext_atr20 3.61, sma_dist 20.11, from_52w_hi -36.53, rs_rank_pct 60.87 is modest. mp 87.0 STRONG is real but buying summer is not Elder's trade; wait for ma_20. | A dip toward ma_20 holds with elder at seven or more. |
-| livermore | OPPOSE | 3 | No uptrend: from_52w_hi -36.53, ret_12m -19.79, ma_20 17.46 and ma_50 17.58 under ma_200 18.21, rs_rank_pct 60.87. structure_shift is missing (declared gap). run_10d 21.88 is a rally off lows. | Wrong if the averages stack up and it closes above high_52w_close. |
-| minervini | OPPOSE | 4 | Template gate fails: pct_from_52w_high -36.53, rs_rank_pct 60.87, ma_50 17.58 and ma_100 16.98 under ma_200 18.21. A thrust inside a damaged long-term stack is the broken-leader trap. Lynch: breakeven earnings, price on the future. | ma_50 closing over ma_200 and rs_rank_pct rising into leader territory. |
-| oneil | OPPOSE | 3 | Fails RS and base: rs_rank_pct 60.87, from_52w_hi -36.53, ret_12m -19.79, day_vol 0.84, lens leadership warn and coil warn. A sharp run_10d 21.88 off a damaged chart is a bounce. | rs_rank_pct climbs and price breaks a fresh pivot_high on strong volume. |
-| raschke (advisory) | ABSTAIN | None | structure_shift is null on this record, so I cannot classify the setup. adx 24.56, sma_dist 20.11 and from_52w_hi -36.53 read as a rebound. I would enter on a test of ma20 17.46 and be wrong on a close under ma50 17.58. | A populated structure_shift plus a test that holds ma20 17.46. |
-| seow (advisory) | ABSTAIN | None | Rebound from a downtrend: from_52w_hi -36.53, ret_12m -19.79, ma_20 17.46 under ma_50 17.58 and ma_200 18.21; run_10d 21.88, ext_atr20 3.61. rs_spy_20d 35.08 is real but the trend leg is open and there is no dip to buy. rs_rank_pct 60.87 is middling. | Wrong to stand aside if ma_20 rises clearly over the slower averages and it holds a base. |
-| thorp (advisory) | OPPOSE | 2 | rs_rank_pct 60.87, ret_12m -19.79, from_52w_hi -36.53 after run_10d 21.88 and sma_dist 20.11: a bounce profile, not a leader. Lynch: net_profit_margin 0.005. atr 1.01 against entry 21.11; ma_20 17.46 is far. | rs_rank_pct climbing and a hold over ma_20 17.46. |
-| weis (advisory) | OPPOSE | 2 | Trend gate: ret_12m -19.79, from_52w_hi -36.53, ma200 18.21 above ma50 17.58 and ma100 16.98; run_10d 21.88, sma_dist 20.11 on day_vol 0.84. A thrust inside a long downtrend, with rs_rank_pct 60.87 only middling. A bounce, not a trend. | A retest of ma20 17.46 that holds on dry-up volume with ma50 turning up. |
-| wyckoff (advisory) | ABSTAIN | None | Data gap: structure_shift null and lens.structure '--', so geography cannot be read. lens.coil warn, energy 63.0; sma_distance_pct 20.11 on day_vol 0.84 sub-normal. Momentum is real (mp_state STRONG, flow 78.9). Look at ma_20 17.46; wrong under it. | structure_shift populated with a quiet retest of ma_20 17.46. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Growing over 30% (growthRevenue 0.316, down from 0.343, 0.477) at breakeven (net_profit_margin 0.005). free_cash_flow_yield 0.039, debt_to_equity 0.12. Clean sheet; price rests on future earnings; C17 fade watch.
-
-### V — PASS (2) · MOMENTUM
-
-Split: support 1 · oppose 4 · abstain 0 · advisory support 0, oppose 5, abstain 0 · doors: Elder+Lens, Strength, Held
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | KEEP the held position. ADD question: lens agrees, strong on leadership, resistance, sector; lens_positive 3 lens_warnings 1 (coil warn). ma_50 377.07 over ma_100 362.25 over ma_200 340.56, ABOVE_STRUCTURE, day_vol 0.85 quiet. Add only on participation; broker stop 401.15 stands. | A daily close under broker stop 401.15, or structure_shift BEARISH_CHOCH. |
-| elder-lens | OPPOSE | 3 | ADD question: no. Held V: elder_5d [7, 7, 7, 10, 7] lost green on the last bar, Elder's tighten signal for a held name (not red, elder 7.0). KEEP with the broker stop 401.15, raised only, never lowered; do not add into a fading bar. mp 90.0 FADING is the default label. | Force back to ten on a close above bar_high clears the tighten flag and reopens the add. |
-| livermore | OPPOSE | 4 | KEEP, do not add. Entry 407.92 sits under my fill and I never add to a loser. from_52w_hi -1.55, day_vol 0.85 quiet, mp_accel_state ACCELERATING. Add only on a close above high_52w_close with MA confirming. Broker stop 401.15 stands. | Wrong if a close above high_52w_close arrives with MA confirming; then pyramid on strength. |
-| minervini | OPPOSE | 3 | KEEP, no add. Leader intact: ma_50 377.07 over ma_100 362.25 over ma_200 340.56, rs_rank_pct 85.18, structure 81.1. But the add fails: entry 407.92 is under the PM's purchase price, and adding to a position not yet in profit is averaging down. Broker stop 401.15 stands. | A close under broker stop 401.15 is an exit with no review; a push to new highs on volume above the PM's price turns this into an add. |
-| oneil | OPPOSE | 3 | ADD: no. Never average down: entry 407.92 sits under my cost, and day_vol 0.85 is quiet. KEEP the position: structure 81.1, rs LEADER, ma_50 377.07 far below, and the PM's broker stop 401.15 stands. Exit case only on a ma_50 failure on heavy volume. | A close under the broker stop 401.15, or ma_50 failing on heavy volume, ends the hold. |
-| raschke (advisory) | OPPOSE | 3 | HELD, ADD question: no. KEEP while the broker stop 401.15 holds. entry 407.92 sits close above that stop, and sma_dist 8.18 with ext_atr20 3.35 gives no retracement to add into. Adding to a position that has not yet worked is scaling, not a setup. adx 34.4 supports holding. | A first pullback that holds ma20 385.26 would turn the add into a Holy Grail entry. |
-| seow (advisory) | OPPOSE | 3 | ADD: no. KEEP the held position. C16 adds only after the trade has proved you right, and entry 407.92 is under the fill; ext_atr20 3.35 is also an extension add (C3). Trend intact: rs_spy_20d 12.51, structure 81.1 ABOVE_STRUCTURE. Broker stop 401.15 stands. | Wrong if it holds ma_20 385.26 and closes back above the fill with rs_spy_20d rising; then an add is earned. |
-| thorp (advisory) | OPPOSE | 2 | ADD question. Held: KEEP, broker stop 401.15 is the loss boundary (atr 6.77, entry 407.92). OPPOSE the add: it raises the unwatched loss with no edge measured; Lynch priceToEarningsRatioTTM 34.7 against growthEPS 0.05. It overlaps MA. | A close under 401.15 ends the hold; strength with day_vol above 1 over entry 407.92 would reopen the add. |
-| weis (advisory) | OPPOSE | 2 | ADD question: KEEP, do not add. No failure-of-weakness read; ext_atr20 3.35 and sma_dist 8.18 are extended, and an add stacks Financials on the same exposure as MA and SLDE. Trend intact (ma20 385.26 over ma50 377.07 over ma100 362.25), so no exit case; broker stop 401.15 stands. | A quiet inside day holding over the broker stop 401.15, then a break of bar_high on volume, would flip me to support the add. |
-| wyckoff (advisory) | OPPOSE | 2 | ADD no, KEEP yes. Contraction fails (lens.coil warn, energy 66.4), sma_distance_pct 8.18, day_vol 0.85 quiet: no edge to add at. Danger point is the broker stop 401.15; entry 407.92 sits just above it. A dry return to ma_20 385.26 would reopen the add. | A close under the broker stop 401.15 ends the hold; a dry hold at ma_20 385.26 would flip me to add. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · stalwart · Held. Exceptional economics (operatingProfitMarginTTM 0.607) but priceToEarningsRatioTTM 34.7 vs growthEPS 0.05, 0.17, 0.18: PEG proxy 1.9 to 7.0 by FY. Rotation, not target, question; stop untouched.
-
-### MA — PASS (2) · MOMENTUM
-
-Split: support 1 · oppose 2 · abstain 2 · advisory support 3, oppose 0, abstain 2 · doors: Strength, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens mid: strong on resistance and sector, coil warn. ma_50 581.65 over ma_100 554.47 over ma_200 534.26, ABOVE_STRUCTURE, day_vol 0.87 quiet. Held V is also Financials, so an add stacks the same sector. No lens case to add. | Coil lens leaving warn with day_vol above 1 would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Mirror of held V: elder_5d [7, 7, 7, 10, 7] shows green and drops back to blue on the last bar, no transition event. mp 86.0 FADING is the default label. It would stack on held Financials exposure that I already read as a tighten case. | Green returns after a dip toward ma_20 that holds, elder at ten. |
-| livermore | ABSTAIN | None | Held V already carries this payments group. Near the high, not through it: from_52w_hi -1.52, day_vol 0.87 quiet, structure 84.2. Two payment names breaking together would be the confirmation; one alone is not. | Flips to SUPPORT if MA and V both close above their high_52w_close with volume. |
-| minervini | SUPPORT | 2 | Strength is real: pct_from_52w_high -1.52, rs_rank_pct 78.86 LEADER, structure 84.2, stack ma_50 581.65 over ma_100 554.47 over ma_200 534.26. But day_vol 0.87 shows no expansion, rank only modest, and it stacks on held V in Financials. Not mine to size. | Close under ma_20 590.19, or a push to new highs on day_vol under 1. |
-| oneil | OPPOSE | 2 | Same group as held V, which is the group's leader; C9 and the concentration rule say do not widen the book with the follower. day_vol 0.87 is thin, from_52w_hi -1.52 is not a new high, rank 64. | MA breaks to a new high on volume while V stalls. |
-| raschke (advisory) | SUPPORT | 2 | Holy Grail candidate: adx 33.8, ABOVE_STRUCTURE, from_52w_hi -1.52, mp 86.0 (FADING is a default label, not decay). No pullback yet: sma_dist 7.21, ext_atr20 3.29. Entry is the first test of ma20 590.19. Held V is the same sleeve; stacking is the PM's call. | Close under ma20 590.19 without a bounce. |
-| seow (advisory) | SUPPORT | 1 | Quality tape (rs_spy_20d 11.33, structure 84.2) but ext_atr20 3.29: no dip. Same sector as held V and SLDE: adding MA stacks Financials exposure on a name I would not add to. Entry only on a ma_20 590.19 retest; ma_40/CCI unserved. | Close below ma_40 on the retest. |
-| thorp (advisory) | SUPPORT | 1 | Third calmest in my gated set: atr 10.14 against entry 623.6, day_vol 0.87, gates all five true. Edge unmeasured (signal_n 0). Held V is also Financials: one expression, not two. Loss boundary ma_20 590.19. MOMENTUM lane, my vote advisory. | Close under ma_50 581.65, or V and MA falling together (one exposure, one loss). |
-| weis (advisory) | ABSTAIN | None | Held V is the same Financials exposure; MA would be a second expression. sma_dist 7.21, ext_atr20 3.29, day_vol 0.87, div BULLISH; mp 86 FADING is a default label (R13). No failed-weakness read on a stalwart priced full. | A hold of ma20 590.19 on dry-up volume. |
-| wyckoff (advisory) | ABSTAIN | None | Contraction proxy fails: lens.coil warn, energy 66.4. structure_shift ABOVE_STRUCTURE, sma_distance_pct 7.21, day_vol 0.87 quiet, div_state BULLISH. mp_state FADING is only a default label. No edge. Rogers flags overlap with held V in Financials: a second expression of one exposure. | lens.coil strong on a pause above ma_20 590.19. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · stalwart · Exceptional quality: operatingProfitMarginTTM 0.588, growthEPS 0.19, 0.17, 0.16. priceToEarningsRatioTTM 34.1 gives PEG proxy near 1.8, full. free_cash_flow_yield 0.029. debt_to_equity 4.39 not comparable for a network.
-
-### ACN — PASS (2) · MOMENTUM
-
-Split: support 0 · oppose 5 · abstain 0 · advisory support 0, oppose 3, abstain 2 · doors: Strength, Reclaim seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 3 | Lens is adverse: lens_positive 0 lens_warnings 3 (leadership, coil, resistance warn). ma_100 174.42 under ma_200 192.27 though ma_50 195.82 over both; day_vol 0.83 quiet. Valen: Parabolic risk warning CRACKED. U&R MET is timing, not lens support. | Leadership and coil lenses turning strong, with day_vol above 1. |
-| elder-lens | OPPOSE | 3 | Green is leaving a spent run: elder_5d [10, 10, 7, 10, 7] flips and drops on the last bar, run_10d 19.28, sma_dist 27.35, and Valen's Parabolic read is CRACKED. Two exhaustion reads. The U&R reclaim day is a support bounce, not a value-zone entry. | Force back to ten with price holding above ma_20 after a dip. |
-| livermore | OPPOSE | 2 | Danger signal on, no uptrend: VALEN Parabolic CRACKED (3/4), from_52w_hi -13.58, ma_100 174.42 under ma_200 192.27, ret_12m 0.09. run_10d 19.28 is a rally off lows, not a new high. I board only above the old high. | Wrong if it closes above high_52w_close; it flips to SUPPORT then. |
-| minervini | OPPOSE | 3 | Momentum is real (rs_spy_20d 43.07, mp 97.0) but the gate is not: ma_100 174.42 under ma_200 192.27, so the long averages have not turned. A rebound from stage 4, pct_from_52w_high -13.58; VALEN flags Parabolic CRACKED. Wait for the stack. | ma_100 closing over ma_200 and holding, with a base forming above ma_50: the gate would then pass. |
-| oneil | OPPOSE | 3 | A spike, not a base: ret_12m 0.09, from_52w_hi -13.58, run_10d 19.28 on day_vol 0.83. Lens leadership, coil and resistance warn; Valen Parabolic CRACKED. Strength is real (rs_spy_20d 43.07) but a 12-month flat name has no leader's base. | Builds a new base and breaks pivot_high on volume with ret_12m turning up. |
-| raschke (advisory) | OPPOSE | 2 | Parabolic move that has cracked: VALEN risk warning Parabolic CRACKED, run_10d 19.28, sma_dist 27.35, ext_atr20 3.56, day_vol 0.83 on the reclaim day. A cracked parabola marks the climax; I stand aside or exit, I do not add. The reclaim of the rising trendline (245.80) is only a short-term test. | The reclaim holds with day_vol expanding and a new closing high above entry 249.37. |
-| seow (advisory) | ABSTAIN | None | Strength is real (rs_spy_20d 43.07, ret_63d 61.87, mp 97.0 STRONG) but ext_atr20 3.56, sma_dist 27.35, run_10d 19.28 and Valen parabolic risk warning CRACKED: C4 voids the dip I would buy (ma_20 213.55 retest). R14: extension is a weight, so ABSTAIN, not OPPOSE. | Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high. |
-| thorp (advisory) | OPPOSE | 3 | Valen: Parabolic CRACKED (3/4). run_10d 19.28, sma_dist 27.35, ext_atr20 3.56 with atr 10.07 against entry 249.37; ma_20 213.55 is the real loss boundary, far below. ret_12m 0.09: the thrust is recent. Advisory lane. | Closes holding above trendline 245.80 on day_vol rising from 0.83 would void CRACKED. |
-| weis (advisory) | OPPOSE | 2 | Spike off a base: sma_dist 27.35, run_10d 19.28, ext_atr20 3.56; ma100 174.42 under ma200 192.27 so the long trend has only just turned, and AQE flags the parabolic CRACKED. The U&R MET trendline reclaim (245.80) is a single-bar read on a thrust; leadership and resistance lens warn. | A quiet retest toward ma20 213.55 that holds, with the parabolic flag clearing. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, flow 73.7) but VALEN flags Parabolic CRACKED (3/4) and sma_distance_pct 27.35 leaves no base near. U&R MET: under the rising trendline 245.80, closed back on light day_vol 0.83, but a trendline is not a range low. Look at ma_20 213.55; wrong under 245.80. | Two closes holding above the trendline 245.80 with day_vol rising. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · stalwart · Sound stalwart: debt_to_equity 0.42, free_cash_flow_yield 0.076, dividendYieldTTM 0.026, priceToEarningsRatioTTM 18.3. Modest growth (growthEPS 0.11, 0.06, 0.06), so the multiple needs the story intact; PM verifies.
-
-### TTAN — PASS (2) · MOMENTUM
-
-Split: support 0 · oppose 5 · abstain 0 · advisory support 0, oppose 5, abstain 0 · doors: Strength, AQE leader, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 3 | Tag and lens disagree: runner_setup true runner_conviction 3, but lens_positive 1 lens_warnings 3 and structure_shift BEARISH_CHOCH (up-swing anchor broken). ma_50 75.9 over ma_100 75.83 over ma_200 72.86, day_vol 0.93. Detect lens does not support promoting it. | structure_shift leaving BEARISH_CHOCH with the warns falling below the strong lenses. |
-| elder-lens | OPPOSE | 3 | Structure is broken: structure 51.6 BEARISH_CHOCH and ma_20 73.16 is under ma_50 75.9, so the uptrend leg is gone however high force reads. elder_5d [10, 10, 10, 10, 10] SUSTAINED is a pinned top over a failed swing; from_52w_hi -21.08. | Structure repaired (a higher high above the broken swing) and ma_20 back over ma_50. |
-| livermore | OPPOSE | 3 | Up-structure broke: structure_shift BEARISH_CHOCH, structure 51.6, from_52w_hi -21.08, ma_20 73.16 under ma_50 75.9. run_10d 19.93 is a bounce off the break, not a new high. VALEN Parabolic WARNING (2/4). | Wrong if structure_shift returns to BULLISH_BOS and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Not a clean stage 2: structure_shift BEARISH_CHOCH, pct_from_52w_high -21.08, ma_20 73.16 under ma_50 75.9, ma_50 only just over ma_100 75.83. A snapback inside a damaged structure; Detect lens also dissents. sma_distance_pct 14.7 is a weight. | structure_shift leaving BEARISH_CHOCH, ma_20 retaking ma_50 and a base breaking on volume. |
-| oneil | OPPOSE | 3 | Structure failed: structure_shift BEARISH_CHOCH at structure 51.6, from_52w_hi -21.08, ret_12m -8.15, day_vol 0.93, rank 112. Detect shows three warns. A sharp rally inside a broken up-swing is not a leader's base. | structure_shift reclaims BULLISH_BOS and price clears pivot_high on volume. |
-| raschke (advisory) | OPPOSE | 2 | Up-structure failed: structure_shift BEARISH_CHOCH, structure 51.6, from_52w_hi -21.08, ma50 75.9 and ma100 75.83 above ma20 73.16, sma_dist 14.7, run_10d 19.93, VALEN Parabolic WARNING. A bounce through a broken anchor is not a setup of mine; detect lens also dissents. | structure_shift leaving BEARISH_CHOCH with a hold above the prior swing high. |
-| seow (advisory) | OPPOSE | 2 | Counter-trend rip, not an uptrend: structure_shift BEARISH_CHOCH 51.6, ma_20 73.16 under ma_50 75.9 and ma_100 75.83, from_52w_hi -21.08, run_10d 19.93 with Valen parabolic WARNING. C2 leg fails and C4 voids the dip; rs_spy_20d 51.45 is real strength. | Wrong if ma_20 crosses above ma_50 and structure_shift repairs from BEARISH_CHOCH. |
-| thorp (advisory) | OPPOSE | 3 | structure_shift BEARISH_CHOCH, structure 51.6, from_52w_hi -21.08; Detect: three warns, the up-swing anchor broken. Valen: Parabolic WARNING (2/4), run_10d 19.93. atr 3.81 against entry 87.06; ma_20 73.16 is far. | structure_shift leaving BEARISH_CHOCH with closes above ma_20 73.16. |
-| weis (advisory) | OPPOSE | 2 | Trend-gate case: structure_shift BEARISH_CHOCH, from_52w_hi -21.08, ret_12m -8.15, ma50 75.9 against ma100 75.83. A thrust off broken structure is the lowest-conviction Weis case. Detect-lens shows three lens warns; runner True is a mover tag, not a trend. | Structure turning back to a bullish break with a hold over ma20 73.16 on quiet volume. |
-| wyckoff (advisory) | OPPOSE | 3 | Character change: structure_shift BEARISH_CHOCH, structure 51.6; the up-swing anchor broke, and a broken floor becomes a ceiling. The bounce to sma_distance_pct 14.7 comes on day_vol 0.93 sub-normal: no demand shown. lens.structure warn, lens.resistance warn. VALEN Parabolic WARNING (2/4). | A close back above the broken anchor on day_vol above normal, with structure_shift returning to BULLISH_BOS. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · fast grower · Unprofitable fast grower: growthRevenue 0.245, 0.256, 0.313 (slowing), operatingProfitMarginTTM -0.128, free_cash_flow_yield 0.015, debt_to_equity 0.03. Clean sheet, nothing to value on earnings.
-
-### OUT — PASS (2) · PULLBACK
-
-Split: support 0 · oppose 5 · abstain 5 · doors: Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | Lens block is -- on leadership, coil, insti_money, resistance, so no lens read. Trend spine is broken: ma_50 29.33 under ma_100 30.62 and under ma_200 29.41. BULLISH_BOS, day_vol 0.69 quiet. Abstain, not oppose, until the lens is re-run. | A lens re-run with several strong lenses and ma_50 back over ma_100 would move me to SUPPORT. |
-| elder-lens | OPPOSE | 2 | Whipsaw, not a signal: elder_5d [7, 10, 7, 10, 7] flips colour every bar, and ma_50 29.33 sits under ma_100 30.62, so the slope leg is unmet. Elder says transitional ground means take nothing. mp 94.0 STRONG is decelerating. | Force holds at ten for three closes with ma_50 back above ma_100. |
-| livermore | OPPOSE | 3 | No uptrend: ma_50 29.33 under ma_100 30.62, ret_63d -3.78, rs_rank_pct 50.06, from_52w_hi -8.47. mp 94.0 is a bounce from lows, not a new high, and no real estate peer is at a high. | Wrong if ma_50 retakes ma_100 and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Template gate fails: ma_50 29.33 under ma_100 30.62 and under ma_200 29.41, rs_rank_pct 50.06. BULLISH_BOS sits inside a stack that is not stage 2. A sideways REIT, not a leader. | ma_50 back over ma_100 and ma_200 with rs_rank_pct improving. |
-| oneil | OPPOSE | 3 | Fails RS and volume: rs_rank_pct 50.06, day_vol 0.69, ret_63d -3.78, from_52w_hi -8.47, ma_50 29.33 under ma_200 29.41. A bounce in a stalled stack, not a leader's base. | ma_50 moves above ma_200 and price breaks pivot_high on strong volume. |
-| raschke | ABSTAIN | None | Averages are tangled (ma20 29.62, ma50 29.33, ma100 30.62, ma200 29.41): a base, not a trend to pull back within. adx 31.79 reflects the recent thrust and BULLISH_BOS is a small break inside the base. No Holy Grail; stand aside. | ma50 back above ma100 with price holding ma20 29.62. |
-| seow | ABSTAIN | None | Trend and RS legs open: ret_63d -3.78 cannot be tested against the index, ma_20 29.62 sits under ma_100 30.62, rs_rank_pct 50.06. The pullback grade is fine (ext_atr20 2.14, run_10d 3.5, day_vol 0.69) but there is nothing to buy until C2 and C6 verify. | Wrong to stand aside if ma_40 is served under a rising ma_20 and the index test passes. |
-| thorp | ABSTAIN | None | debt_to_equity 5.96 and payout 0.87 (Lynch); mp DECELERATING. atr 0.66 against entry 31.03 is calm, but ma_50 29.33 under ma_100 30.62 and ma_200 29.41 owes a trend context. No edge I can measure. | Close under ma_50 29.33. |
-| weis | OPPOSE | 2 | W23 first: ma50 29.33 under ma100 30.62 and under ma200 29.41, ret_63d -3.78, rs_rank_pct 50.06. Entry 31.03 only reclaims a flat tangle of averages; there is no uptrend to pull back inside. mp 94 STRONG but DECELERATING. | ma50 turning back over ma100 with price holding ma200 29.41 on dry-up volume. |
-| wyckoff | ABSTAIN | None | Data gap: lens.coil reads '--'; energy 61.3 is weak and day_vol 0.69 is quiet. ma_50 29.33 sits under ma_200 29.41 with price only now over both, so a former ceiling was just reclaimed on no effort. No edge. | A hold above ma_200 29.41 on rising day_vol. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · slow grower · Flat sales (growthRevenue 0.000); debt_to_equity 5.96, implied debt share 0.86. dividendYieldTTM 0.040 with priceToEarningsRatioTTM 21.9 implies payout 0.87 on EPS (REIT cash basis unserved). free_cash_flow_yield 0.054.
-
-### HIW — PASS (2) · MOMENTUM
-
-Split: support 1 · oppose 4 · abstain 0 · advisory support 1, oppose 1, abstain 3 · doors: Elder+Lens, Lens, AQE leader, Nominated
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | SUPPORT | 2 | Strong lens agreement: lens_positive 4 (coil, insti_money, structure, sector), no warns. Spine partial: ma_50 30.26 under ma_100 30.72 though over ma_200 27.41, so conviction is cut one. BULLISH_BOS, day_vol 1.17. lens.structure strong; structure 43.2 is advisory. | A daily close under ma_50 30.26, or structure_shift BEARISH_CHOCH. |
-| elder-lens | OPPOSE | 2 | Trend leg fails despite a real event: elder_5d [0, 5, 5, 9, 10] ACCELERATION lifted from red, but AQE says the 21-day average is not rising and ma_20 29.34 sits below ma_50 30.26 and ma_100 30.72. Elder trades only with a rising average. structure 43.2 is thin. | 21-day average turns up and a dip toward ma_20 holds with elder at seven or more. |
-| livermore | OPPOSE | 3 | Not a leader: AQE rank 210, from_52w_hi -11.31, ret_63d -9.84, ma_50 30.26 under ma_100 30.72, structure 43.2. The BULLISH_BOS sits on a weak score; there is no uptrend to resume. | Wrong if it closes above high_52w_close with structure rising. |
-| minervini | OPPOSE | 3 | Template gate fails: entry 30.51 is under ma_100 30.72 and ma_50 30.26 sits under it, pct_from_52w_high -11.31, structure 43.2 conflicting with BULLISH_BOS. A stage 1 repair, not stage 2; stage 1 purchases are prohibited. | A close over ma_100 30.72 with ma_50 turning up through it and the structure score rebuilding. |
-| oneil | OPPOSE | 3 | BOS against a broken-down base: structure 43.2, from_52w_hi -11.31, ret_63d -9.84, ma_50 30.26 under ma_100 30.72, rank 210, day_vol 1.17. Valen: 21-day average not rising. Income vehicle, flat sales; no leader's profile. | Structure rebuilds and price clears pivot_high on strong volume. |
-| raschke (advisory) | ABSTAIN | None | Fields conflict: BULLISH_BOS against structure 43.2, with ma50 30.26 under ma100 30.72. sma_dist 0.84 and day_vol 1.17 put invalidation close, but a break inside a weak structure is not enough for my seat. Stand aside. | ma50 back above ma100 with the break holding. |
-| seow (advisory) | OPPOSE | 2 | No uptrend: ma_20 29.34 under ma_50 30.26 and ma_100 30.72, Valen says its 21-day average is not rising, ret_63d -9.84 lags, from_52w_hi -11.31, rs_spy_20d only 2.87 (C2, C6). Not a pullback within an uptrend. | Wrong if ma_20 crosses above ma_50 with the 21-day average rising and ret_63d turning positive. |
-| thorp (advisory) | ABSTAIN | None | structure 43.2 conflicts with BULLISH_BOS; ma_50 30.26 under ma_100 30.72; payout 1.32 not covered by EPS (Lynch). atr 0.83 against entry 30.51; loss boundary ma_20 29.34. I trust neither structure reading enough to vote; no edge. | Close under ma_20 29.34. |
-| weis (advisory) | SUPPORT | 2 | Failure of weakness inside a longer uptrend: price over ma200 27.41, ret_6m 27.71, correction ret_63d -9.84, sma_dist 0.84 over ma50 30.26. was_squeezed True, vcp_tightness_pct 95.3, BULLISH_BOS, div BULLISH, elder ACCELERATION. stack_state ROLLING, structure 43.2, pin_bar_state NONE, so no spring read. | A close back under ma50 30.26, or the correction deepening toward ma200 27.41. |
-| wyckoff (advisory) | ABSTAIN | None | Fork: structure_shift BULLISH_BOS against structure 43.2, a low score. sma_distance_pct 0.84 over ma_50 30.26 is a real edge and lens.coil strong, energy 68.9 is real contraction, but the fields disagree and I do not pick the flattering one. | Structure rising with BULLISH_BOS held above ma_50 30.26 would resolve the fork. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · slow grower · Office REIT, flat sales (growthRevenue -0.024). dividendYieldTTM 0.066 covered by free_cash_flow_yield 0.111, not by EPS (payout 1.32). debt_to_equity 1.47 (implied debt share 0.60). Income vehicle, no growth story.
-
-### MP — PASS (2) · PULLBACK
-
-Split: support 0 · oppose 10 · abstain 0 · doors: Held
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 4 | EXIT-CASE; do not add. Broker stop 36.66 stands, not contested. No lens block (declared gap, not agreement). What is readable is adverse: structure_shift BEARISH_CHOCH, ma_20 43.4 under ma_50 49.65 under ma_100 50.84 under ma_200 55.81, day_vol 0.61. | structure_shift turning from BEARISH_CHOCH to a bullish break, with ma_20 back over ma_50. |
-| elder-lens | OPPOSE | 4 | ADD question: no, and the read is EXIT-CASE. elder 3.0 sits in the ambiguous band (no permission), structure 11.0 BEARISH_CHOCH, price under every average (sma_dist -22.86) and under vwap14 42.2. elder_5d is absent for MP. Broker stop 36.66 stands; my method never lowers a stop. | Close back above ma_20 with elder at seven or more and structure no longer BEARISH_CHOCH ends the exit-case read. |
-| livermore | OPPOSE | 5 | EXIT, do not add. structure_shift BEARISH_CHOCH, structure 11.0, ma_20 43.4 under ma_50 49.65 under ma_100 50.84 under ma_200 55.81, rs_spy_20d -20.09, unrealised -4410.0. Never average down. Broker stop 36.66 is the PM's backstop, not my signal. | Wrong only if it reclaims ma_50 49.65 and structure_shift leaves BEARISH_CHOCH. |
-| minervini | OPPOSE | 5 | EXIT-CASE, never add. Stage 4: sma_distance_pct -22.86, ma_20 43.4 under ma_50 49.65 under ma_100 50.84 under ma_200 55.81, structure_shift BEARISH_CHOCH, structure 11.0, rs_spy_20d -20.09, unrealised -4410.0. Adding is averaging down. Broker stop 36.66 is the floor. | A weekly close back over ma_50 49.65 with structure_shift leaving BEARISH_CHOCH would void the exit case. |
-| oneil | OPPOSE | 5 | ADD: no, never average down. KEEP or EXIT: EXIT-CASE. BEARISH_CHOCH, structure 11.0, descending stack ma_20 43.4, ma_50 49.65, ma_100 50.84, ma_200 55.81, rs_spy_20d -20.09, AQE health exit score 0.0, day_vol 0.61. The 10-week line has failed. Broker stop 36.66 is the PM's. | Reclaims ma_50 on heavy volume with structure_shift back to BULLISH_BOS. |
-| raschke | OPPOSE | 5 | HELD, ADD question: no, and the case is EXIT-CASE. structure_shift BEARISH_CHOCH, structure 11.0, sma_dist -22.86, price under ma20 43.4, ma50 49.65, ma200 55.81 and under vwap14 42.2; AQE health exit. A deeper loss is never a reason to add. Broker stop 36.66 stays the PM's line. | A close back above ma20 43.4 with structure_shift leaving BEARISH_CHOCH. |
-| seow | OPPOSE | 5 | ADD: no. EXIT-CASE on my method; the PM's broker stop 36.66 stands. rs_spy_20d -20.09 fails C6, sma_dist -22.86, structure 11.0 BEARISH_CHOCH, under ma_20 43.4 and vwap14 42.2, AQE HEALTH EXIT. C16: never add to a loser (unrealised -4410.0); past the time stop (C11). | Wrong if it closes back above ma_20 43.4, structure_shift leaves BEARISH_CHOCH and rs_spy_20d turns positive. |
-| thorp | OPPOSE | 4 | ADD question. Held: EXIT-CASE on the hold. BEARISH_CHOCH, structure 11.0, sc_mom 25.5, AQE health exit score 0.0, price under vwap14 42.2 and ma_20 43.4. Broker stop 36.66 stays the loss boundary, but atr 2.22 means a gap can pass it. OPPOSE the add. | A close over ma_20 43.4 with structure_shift leaving BEARISH_CHOCH would void the exit case. |
-| weis | OPPOSE | 4 | ADD question: no add, lean EXIT. W23: structure_shift BEARISH_CHOCH, structure 11.0, sma_dist -22.86, ma20 43.4 under ma50 49.65 under ma100 50.84 under ma200 55.81, price below vwap14 42.2, AQE health exit score 0.0. Thesis not intact. Broker stop 36.66 stands as the exit line. | A close back over ma20 43.4 with no downside follow-through on quiet volume; a break of the stop 36.66 confirms the exit. |
-| wyckoff | OPPOSE | 4 | ADD no. EXIT-CASE: broker stop 36.66 stands. structure_shift BEARISH_CHOCH, structure 11.0, sma_distance_pct -22.86, price under ma_20 43.4, ma_50 49.65 and ma_200 55.81: markdown, no range edge. day_vol 0.61 shows no washout or spring. Not accumulation. | A heavy-volume washout that recovers above ma_20 43.4 would show a spring; absent that, a close under 36.66 confirms the exit. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · turnaround · Held. Served economics show no intact story: grossProfitMarginTTM -0.046, operatingProfitMarginTTM -0.331, free_cash_flow_yield -0.073; growthRevenue 0.101 after -0.196, -0.520. PM verifies story; stop untouched.
-
-### PBI — PASS (1) · PULLBACK
-
-Split: support 1 · oppose 5 · abstain 4 · doors: Elder+Lens, Reclaim seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | ABSTAIN | None | lens_positive 3 but the one warn is structure: structure_shift BEARISH_CHOCH, and ma_50 16.86 under ma_100 17.2. Valen U&R MET is a reclaim day, but the market check is RISK OFF. Spine broken, so no support; no lens case to oppose either. | structure_shift back to a bullish break with ma_50 over ma_100 would move me to SUPPORT. |
-| elder-lens | OPPOSE | 3 | Structure broke before force was consulted: structure 63.2 BEARISH_CHOCH means the prior swing low is taken, so Elder's uptrend is gone. elder_5d [4, 9, 9, 10, 7] also drops from green on the last bar. The U&R reclaim day does not repair a broken structure. | Structure turns bullish again (a higher low then a higher high) with elder at ten. |
-| livermore | OPPOSE | 3 | Up-structure failed: structure_shift BEARISH_CHOCH, from_52w_hi -6.27, ma_20 16.88 level with ma_50 16.86 under ma_100 17.2. The 9-day reclaim is a pullback read, not a new high. Nothing to trend-follow. | Wrong if structure_shift returns to BULLISH_BOS and it closes above high_52w_close. |
-| minervini | OPPOSE | 3 | Template gate fails: ma_50 16.86 under ma_100 17.2 and rs_rank_pct 65.49 under the floor; structure_shift BEARISH_CHOCH means the up-structure failed. A U&R reclaim day is not my buy: no reclaims, no weakness purchases. | Structure back above its swing, ma_50 over ma_100 and a break of pivot_high on volume. |
-| oneil | OPPOSE | 3 | Seated by rule, so judged on method: structure_shift BEARISH_CHOCH at structure 63.2 means the up-structure failed; ret_63d -4.41, from_52w_hi -6.27, growthRevenue -0.066. The Valen reclaim on the 9-day average 17.17 is a reclaim, not my entry. | structure_shift returns to BULLISH_BOS and price clears pivot_high on strong volume. |
-| raschke | SUPPORT | 1 | Test type, seated by the U&R rule: VALEN shows a dip under the 9-day average (17.17) and a close back above it, reclaim day; sma_dist 2.9, day_vol 1.04, lens coil strong. Against it: structure_shift BEARISH_CHOCH and ma50 16.86 under ma100 17.2. Invalidation is the undercut low. | Close under the undercut low (bar_low). |
-| seow | ABSTAIN | None | UNR_SEAT by rule. Valen U&R MET is a 9-day-average reclaim, not my ma_20/ma_40 test. structure_shift BEARISH_CHOCH 63.2, ma_20 16.88 level with ma_50 16.86 and under ma_100 17.2, ret_63d -4.41 untestable: trend and RS legs open. I would act only after structure repairs. | Wrong to stand aside if structure_shift repairs and ma_40 is served under a rising ma_20. |
-| thorp | ABSTAIN | None | U&R MET (Valen: dipped under the 9-day average 17.17 and closed back above); atr 0.45 against entry 17.35 is calm. But structure_shift BEARISH_CHOCH, and Lynch: growthRevenue -0.066, debt_to_equity -2.50. A reclaim-day read is not a measured edge. | Close under ma_20 16.88. |
-| weis | OPPOSE | 2 | Change of behaviour first: structure_shift BEARISH_CHOCH goes against the trend. U&R MET is only a reclaim of the 9-day average (17.17), a shallow level, not a structural low. ma50 16.86 under ma100 17.2, rs_rank_pct 65.49, ret_63d -4.41, elder_5d fading to 7. Turnaround with shrinking sales. | Structure turning back to a bullish read with a hold over ma20 16.88 on quiet volume. |
-| wyckoff | ABSTAIN | None | Fork: structure_shift BEARISH_CHOCH (the up-swing anchor broke) against a reclaim: VALEN U&R MET, under the 9-day average 17.17 then back above, day_vol 1.04. lens.coil strong, energy 80.7. A broken floor is a ceiling until closed through; I cannot say which. No spring is served. | A hold over ma_20 16.88 and ma_50 16.86 with structure_shift back to BULLISH_BOS. |
-
-Fundamentals consult (lynch, no vote): **NEUTRAL** · turnaround · Turnaround with cash, no clean sheet: free_cash_flow_yield 0.177, priceToEarningsRatioTTM 14.2. Negative equity (debt_to_equity -2.50), sales still shrinking (growthRevenue -0.066). Debt maturities unserved.
-
-### ASAN — PASS (1) · MOMENTUM
-
-Split: support 1 · oppose 3 · abstain 1 · advisory support 0, oppose 1, abstain 4 · doors: Strength, Strong seat (rule)
-
-| Seat | Vote | Conviction | Reason (verbatim) | Falsifier |
-|---|---|---|---|---|
-| detect-lens | OPPOSE | 2 | Lens does not back it: one strong lens (resistance), two warns (leadership, coil). ma_50 9.57 over ma_100 8.63 over ma_200 8.13, day_vol 0.9 quiet. Valen: Parabolic WARNING. Extension is a weight, not my reason. | Leadership and coil lenses leaving warn. |
-| elder-lens | OPPOSE | 2 | Plateau-only and stretched: elder_5d [7, 10, 10, 10, 10], sma_dist 25.6, ext_atr20 3.72, Valen Parabolic WARNING. mp 89.0 STRONG makes the run real, but Elder buys the dip, not the pinned top. Entry is a pullback toward ma_20 9.79. | A dip toward ma_20 holds with elder at seven or more. |
-| livermore | ABSTAIN | None | Stack ascending (ma_20 9.79, ma_50 9.57, ma_100 8.63) and rs_rank_pct 95.99, but from_52w_hi -20.4: the old high is overhead, and VALEN flags Parabolic WARNING (2/4). A rally inside a reaction; I wait for a close above high_52w_close. | Flips to SUPPORT on a close above high_52w_close with day_vol above normal. |
-| minervini | SUPPORT | 1 | Strong tape (rs_rank_pct 95.99, rs_spy_20d 34.73, mp 89.0) with the stack intact; pct_from_52w_high -20.4 is still inside the template. But sma_distance_pct 25.6, VALEN Parabolic WARNING and Lynch CONTRADICT (loss-making, levered): no entry here. Weak support only. | Close under ma_20 9.79, or a bounce that prints on day_vol under 1. |
-| oneil | OPPOSE | 3 | Rally in a loss-making, levered name with no base: ret_12m -16.06, from_52w_hi -20.4, sma_distance_pct 25.6, day_vol 0.9, Valen Parabolic WARNING, consulted operatingProfitMarginTTM -0.193 and growthRevenue 0.092. | Rebuilds a tight base and breaks pivot_high on volume with revenue growth accelerating. |
-| raschke (advisory) | ABSTAIN | None | No Holy Grail gate: adx 26.85, sma_dist 25.6, run_10d 19.36, VALEN Parabolic WARNING, from_52w_hi -20.4. I would enter on a test of ma20 9.79 and be wrong on a close under it. | A test that holds ma20 9.79 on quiet day_vol. |
-| seow (advisory) | ABSTAIN | None | Strength (rs_spy_20d 34.73, ret_63d 55.1, stack up) but Valen parabolic WARNING, ext_atr20 3.72, sma_dist 25.6, run_10d 19.36: C4 voids the dip entry. R14: extension is a weight, so ABSTAIN. ret_12m -16.06; Lynch: loss-making and levered. | Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high. |
-| thorp (advisory) | OPPOSE | 3 | Valen: Parabolic WARNING (2/4); sma_dist 25.6, run_10d 19.36, ret_12m -16.06. Lynch: operatingProfitMarginTTM -0.193, debt_to_equity 2.48, growthRevenue 0.092 slowing. atr 0.6 against entry 12.02; ma_20 9.79 is far. | A hold above entry 12.02 on quiet day_vol, or a pullback to ma_20 9.79 that holds. |
-| weis (advisory) | ABSTAIN | None | Recovery but extended: sma_dist 25.6, run_10d 19.36, ret_12m -16.06, AQE parabolic WARNING; the stack is up (ma50 9.57 over ma100 8.63 over ma200 8.13). Loss-making and levered. No failed-weakness shape. Momentum lane: advisory. | A base over ma20 9.79 on dry-up volume. |
-| wyckoff (advisory) | ABSTAIN | None | Momentum is real (mp_state STRONG, flow 68.4) but sma_distance_pct 25.6 on day_vol 0.9 sub-normal is thin effort, lens.coil warn, energy 63.0, and VALEN flags Parabolic WARNING (2/4). Lynch: loss-making and levered. Look at ma_20 9.79; wrong under it. | A thin-volume return toward ma_20 9.79 that holds. |
-
-Fundamentals consult (lynch, no vote): **CONTRADICT** · turnaround · Slowing, loss-making, levered: growthRevenue 0.092 (0.192 two FYs back), operatingProfitMarginTTM -0.193, debt_to_equity 2.48 (implied debt share 0.71), free_cash_flow_yield 0.043. Survival liquidity unserved.
-
-### Challenge findings (verbatim)
-
-#### rogers
-
-| Scope | Axis | Severity | Claim | Evidence | Owed |
+This is the only place seat names, vote counts and the words support, oppose and abstain appear. MOMENTUM verdicts are decided by detect-lens, elder-lens, livermore, minervini and oneil; the other seats are advisory on MOMENTUM names. Lynch is consulted and carries no vote (R22).
+
+| Seat / desk | Role | What it reads |
+|---|---|---|
+| livermore | Voter (strength voice) | Pivot and trend: buys the clear of a pivot in an established uptrend. |
+| minervini | Voter (strength voice) | Trend template and leadership: stacked averages, relative strength, volume at the pivot. |
+| oneil | Voter (strength voice) | Growth leaders at pivots on volume; sales and earnings must back the chart. |
+| elder-lens | Voter (strength voice) | Elder Impulse permission: green or blue bars, buys under value in an uptrend. |
+| detect-lens | Voter (strength voice) | AQE's own lens read: how many lenses corroborate the name; a reading aid. Also filed a challenge form. |
+| raschke | Voter (whole-room verdicts) | Short-term tape: bar-high triggers, reclaim and failed-move setups. |
+| seow | Voter (whole-room verdicts) | CCI and 40-day average pullback system; time stops. |
+| thorp | Voter (whole-room verdicts) | Edge and risk of ruin: only a quantified edge is a trade. |
+| weis | Voter (whole-room verdicts) | Wave and effort: buys the failure of weakness (springs), not confirmed strength. |
+| wyckoff | Voter (whole-room verdicts) | Effort versus result, accumulation and distribution, volume at the level. |
+| lynch | CONSULTED, no vote (R22) | Fundamentals: category, story fit and the figures that contradict or fit it. Shown in this brief as "the fundamentals consult". |
+| rogers | Challenge seat, no vote | Files challenges on crowding, certainty, entry timing and catalysts after the tally. |
+| steenbarger | Challenge seat, no vote | Files challenges on independence between voices, crowding, context and process. |
+| crown, druckenmiller | Macro desks, no vote | Regime and positioning read (Crown); cross-asset and rotation read (Druckenmiller). Shown in the macro section. |
+
+### HOG — ADVANCE (conviction 3) · MOMENTUM · Seats + Strength + AQE leader + PM lens
+
+- Split: support elder-lens, livermore, minervini, oneil; oppose none; abstain detect-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
 |---|---|---|---|---|---|
-| ROOM | CERTAINTY | note | No name is unanimous and none carries conviction 5, so the mandatory sure-bet challenge is not triggered by the tally. I hunted for a room-wide certainty flaw and found none at tally level. An unfound flaw is a finding, not a pass. | max nomination_count 3 (ROKU); max conviction 4 (ESTC, EOG, CNQ, CDW); conviction 5 entries 0; nominated names 36 of 51; names with nomination_count 1: 26 |  |
-| ROOM | CROWDING | flag | The crowd is a sector, not a name: 9 energy tickers from 5 seats, 6 of them elder-lens. Nine tickers on one sector read is one bet counted nine times. Oil supply-demand is NOT_SERVED to me, so I cannot say the sector is wrong, only that the room is piled in. | gics_sector XLE on 9 nominated names (EOG, EQNR, CNQ, SLB, CVX, OXY, DVN, LNG, VG); elder-lens names 6 of 9; seats elder-lens, livermore, oneil, raschke, weis; sector_trend_state Momentum Fading — Hold, Don't Add on all 9 | PM call on how many of the nine are carried as one energy expression; I hold no supply-demand series to settle it. |
-| ROOM | CROWDING | note | Three sectors supply 27 of 36 nominated names. 25 of the 36 sit in a sector the engine labels Momentum Fading. That label is context, not a gate call, and I do not argue gics_gate. Six seats agreeing on technology is breadth of crowd, not of evidence. | gics_sector XLK 10 names, XLE 9 names, XLY 8 names; XLK seats livermore, minervini, raschke, weis, wyckoff, elder-lens; sector_trend_state Momentum Fading — Hold, Don't Add on 25 of 36 nominated names |  |
-| ROOM | CROWDING | note | High conviction is not independent: livermore holds 3 of the 4 conviction-4 entries (EOG, CNQ, CDW) and 7 names in all. If that one seat's read is wrong, the room's top-conviction list moves together. CNQ and CDW have no second seat behind them. | conviction 4 entries ESTC minervini, EOG livermore, CNQ livermore, CDW livermore; livermore names 7; CNQ nomination_count 1; CDW nomination_count 1 |  |
-| ROOM | CROWDING | note | Four of the ten multi-seat names are two repeated pairs, which is weaker than independent agreement: raschke and weis on FIVN and SAIL, livermore and oneil on CART and BBY. I see only the repetition, not the seats' methods. | FIVN seats raschke, weis; SAIL seats raschke, weis; CART seats livermore, oneil; BBY seats livermore, oneil; names with nomination_count 2 or more: 10 |  |
-| ROOM | CERTAINTY | note | Door count is not extra confirmation unless the doors are independent, and the tally does not show that. OXY has 5 doors on one seat at conviction 2; KSS has 4 doors and no seat. Several doors may be one price read counted repeatedly. | OXY doors ELDER+LENS, LENS, STRENGTH, PM_LENS, NOMINATED; OXY nomination_count 1; OXY convictions 2; KSS doors ELDER+LENS, STRENGTH, PM_LENS, STRONG_SEAT; KSS nomination_count 0 |  |
-| ROOM | TIMING | note | Lane PULLBACK is not an extension credential. 8 of 21 nominated pullback-lane names sit 8 or more percent above their SMA (my cut): RBRK 20.06, BBY 11.89, SAIL 11.13, FIVN 10.79. Read them as extended and prefer a real pullback or confirmation to a market entry. | lane PULLBACK nominated names 21; sma_distance_pct RBRK 20.06, BBY 11.89, SAIL 11.13, FIVN 10.79, MAR 9.63, HST 8.78, HLT 8.34, DBX 8.21 |  |
-| ROOM | TIMING | note | Extended band below my 20 percent cut, still late-move profiles: SLDE, GTLB, CDW, ESTC, EQNR. Advisory only: a defined pullback toward ma_20 or a hold above entry on quiet day_vol beats a market entry. Nothing here blocks a name. | sma_distance_pct SLDE 16.88, GTLB 15.73, CDW 14.21, ESTC 13.25, EQNR 12.4; day_vol SLDE 1.43, GTLB 0.82, CDW 1.14, ESTC 1.11, EQNR 1.56 |  |
-| ROOM | TIMING | note | Ten names came in through STRONG_SEAT with no seat nominating them, including the three largest extensions in the packet. A name nobody carries at 55.13 over SMA is better read as late than as an omission. | STRONG_SEAT names with nomination_count 0: BRZE sma_distance_pct 55.13, NTSK 40.42, DXC 36.6, KSS 29.37, ZS 29.37, ASAN 25.6, BOX 22.53, KVYO 20.11, VERX 18.8, TTAN 14.7 |  |
-| ROOM | CATALYST | note | The tally carries no thesis text and no catalyst field, so I cannot tell which names are argued on cheapness or a pullback. For any such name the owed answer is the exact catalyst forcing recognition within 12 to 36 months. I name none and invent none. | tally fields nomination_count, seats, convictions, lane, doors, held; catalyst field absent; lane PULLBACK nominated names 21 | PM or an engine to name a catalyst for each pullback-lane name argued on neglect or a sold-off condition. |
-| CART | TIMING | flag | Rank 1 on the largest volume spike in the packet and 17.2 over SMA: the late-entry profile. A market entry at 56.44 buys the spike. Advisory: wait for a pullback toward ma_20 47.78 / ma_50 48.16, or for closes above 56.44 with day_vol back near 1. | day_vol 4.99; sma_distance_pct 17.2; rank 1; entry 56.44; ma_20 47.78; ma_50 48.16; rs_spy_20d 32.15; seats livermore, oneil; convictions 3, 3; sector_trend_state Momentum Fading — Hold, Don't Add |  |
-| TENB | TIMING | flag | 21.67 over SMA, the most extended name any seat nominated, solo at conviction 3. Late-move profile. Advisory: a pullback toward ma_20 38.91, or a hold above entry 44.59 on quiet day_vol, instead of a market entry. | sma_distance_pct 21.67; rs_spy_20d 34.62; ma_20 38.91; ma_50 36.65; entry 44.59; day_vol 1.42; structure_shift ABOVE_STRUCTURE; nomination_count 1; seats livermore |  |
-| RBRK | TIMING | flag | Lane says PULLBACK but the field says 20.06 over SMA, the second most extended nominated name. rs_leadership IN-LINE: it did not outperform on down days. Advisory: pullback toward ma_20 118.79 or confirmation above entry 128.74, not a market entry. | sma_distance_pct 20.06; lane PULLBACK; rs_leadership IN-LINE; rs_spy_20d 18.99; structure_shift BULLISH_BOS; ma_20 118.79; entry 128.74; day_vol 1.43; seats minervini; convictions 3 |  |
-| ESTC | CERTAINTY | note | Highest-conviction two-seat name (3 and 4). Flaw hunted and found: rs_spy_20d 17.71 yet rs_leadership IN-LINE, so the lead was earned on up days and not extended on down days. 13.25 over SMA on a BULLISH_BOS: prefer a ma_20 94.57 retest or a hold above 102.43. | seats livermore, minervini; convictions 3, 4; rs_spy_20d 17.71; rs_leadership IN-LINE; sma_distance_pct 13.25; structure_shift BULLISH_BOS; ma_20 94.57; entry 102.43; day_vol 1.11 |  |
-| EOG | CERTAINTY | note | Four doors and a conviction 4. Name-level flaw hunted and not found: sma_distance_pct 10.48 and day_vol 1.16 are ordinary. The flaw I can find is the cluster, one of nine energy tickers in a sector labelled Momentum Fading (see ROOM CROWDING XLE). | doors SEATS, ELDER+LENS, STRENGTH, PM_LENS; seats elder-lens, livermore; convictions 2, 4; sma_distance_pct 10.48; day_vol 1.16; structure_shift ABOVE_STRUCTURE; sector_trend_state Momentum Fading — Hold, Don't Add |  |
-| ROKU | CROWDING | note | Most-carried name in the room (3 seats), so the darling by count, though far from unanimous. Extension is not the flaw. The flaw I can find: structure_shift RANGE, no break of structure yet, so three seats lean on a pullback thesis the engine has not confirmed. | nomination_count 3; seats minervini, thorp, wyckoff; convictions 3, 2, 3; sma_distance_pct 2.12; structure_shift RANGE; structure 61.1; day_vol 1.54; rs_leadership LEADER; sector_trend_state Recovering From Weakness — Watch for Entry |  |
-| LTH | CROWDING | note | Timing challenge returns nothing: 0.42 over SMA is the closest to SMA of any nominated name, on a fresh BULLISH_BOS with day_vol 1.66. Examined for upside the crowd has not priced: rank 183 and structure 51.6 say the engine does not rank it, two seats do. Flaw: sector label. | sma_distance_pct 0.42; rank 183; structure 51.6; structure_shift BULLISH_BOS; day_vol 1.66; seats minervini, oneil; convictions 3, 3; sector_trend_state Momentum Fading — Hold, Don't Add |  |
-| FIVN | CERTAINTY | note | Two seats at 3 each on the lowest-ranked multi-seat name, and a LAGGARD: it underperformed the market on down days. Same raschke-weis pair as SAIL. Also 10.79 over SMA in a pullback lane. Hunted flaw found: rs_leadership LAGGARD. | rank 224; rs_leadership LAGGARD; structure 43.6; sma_distance_pct 10.79; rs_spy_20d 6.62; structure_shift BULLISH_BOS; lane PULLBACK; seats raschke, weis; convictions 3, 3 |  |
-| COST | CERTAINTY | note | Flaw hunted and found: ma_50 938.86 is still under ma_200 969.35, so the 50 has not crossed back over the 200. Entry 1003.32 is a reclaim of the long average, not an established trend. Sector labelled Momentum Fading. | ma_50 938.86; ma_200 969.35; ma_20 958.15; entry 1003.32; sma_distance_pct 6.87; seats raschke, thorp; convictions 3, 2; sector_trend_state Momentum Fading — Hold, Don't Add |  |
-| MA | CROWDING | note | Held V is XLF and the room nominates MA, also XLF, plus SLDE, XLF. Adding MA would stack same-sector exposure, probably same-industry, on a held name. The industry link is my reading, not a field. | V held true; V gics_sector XLF; V nomination_count 0; V sma_distance_pct 8.18; MA gics_sector XLF; MA seats thorp; MA convictions 2; MA sma_distance_pct 7.21; SLDE gics_sector XLF | PM to weigh MA against held V before any add. |
-| VG | CATALYST | note | Weakest structure of any nominated name (37.9), solo weis at conviction 2, sector labelled Momentum Fading. If argued on neglect or a failed move, no 12-to-36-month catalyst is named by the PM or an engine. I invent none. | structure 37.9; rank 141; sma_distance_pct 1.35; day_vol 1.67; structure_shift BULLISH_BOS; ma_20 13.05; ma_50 13.81; seats weis; convictions 2; sector_trend_state Momentum Fading — Hold, Don't Add | A named catalyst, or the name stays a dead-asset candidate by C23. |
-| MP | CATALYST | flag | Held MP has no seat behind it and every structure read negative. Neglect without a catalyst is a dead asset, not a bargain. None is named in the packet and I invent none. Broker stop 36.66 is deferred to house law and not argued. | held true; nomination_count 0; doors HELD; sma_distance_pct -22.86; ma_20 43.4; ma_50 49.65; ma_200 55.81; structure 11.0; structure_shift BEARISH_CHOCH; rs_spy_20d -20.09; day_vol 0.61; entry 38.3 | PM-stated catalyst that forces recognition within 12 to 36 months, or the PM records that none exists. |
+| detect-lens | ABSTAIN | — | decides | Lens read is a floor: leadership, coil, insti_money, resistance all '--' (no data), lens_positive 1 (sector), lens_warnings 0 is not agreement. Spine ma_50 27.04 over ma_100 26.37 over ma_200 23.84, day_vol 1.21. Cannot corroborate or oppose; wrong on close under ma_50 27.04. | Re-pull of the four '--' lenses showing three or more strong turns this to SUPPORT; two warns, to OPPOSE. |
+| elder-lens | SUPPORT | 3 | decides | Red giving way, then held: elder_5d [6, 10, 10, 10, 10] ACCELERATION, mp 87 STRONG. Ban lifted at the 6-to-10 bar and green has held since, so a post-event hold, not a bare plateau. Entry 29.44 is above value ma_20 27.07: buy the dip, not the print. Slope leg unverified. | A last-bar drop in elder_5d then a close under ma_20; elder back to 6 or lower means the swing is ending. |
+| livermore | SUPPORT | 4 | decides | New high with trend and volume: pct_from_52w_high 0.0, structure 86.3, ABOVE_STRUCTURE, mp_state STRONG with mp_accel_state ACCELERATING, day_vol 1.21, pct_from_pivot 2.01 over pivot_high 28.86, sma_distance_pct 8.88 not extended. Sector tag Momentum Fading is context only. | A close back under pivot_high 28.86 (my level; engine bracket INVALID, information only), or a one-day fade from the high that my atr_14d translation flags as abnormal. |
+| minervini | SUPPORT | 3 | decides | Stage 2 leader at a new high: pct_from_52w_high 0.0, structure 86.3 ABOVE_STRUCTURE, rs_rank_pct 80.85, rs_spy_20d 17.9, day_vol 1.21 expanding. pct_from_pivot 2.01 over pivot_high 28.86 is no chase. Lynch shows revenue_growth_yoy -0.138: earnings leg contradicted. | Close back under pivot_high 28.86, or the next push to a new high on day_vol under 1. |
+| oneil | SUPPORT | 2 | decides | Leader at a new high: rs LEADER, rs_rank_pct 80.85, from_52w_hi 0.0, structure 86.3 ABOVE_STRUCTURE, pct_from_pivot 2.01 over pivot_high 28.86, in the buy zone. Held back: day_vol 1.21 is under my volume test; Lynch shows revenue_growth_yoy -0.138, eps_growth_yoy -0.185: price leads earnings. | Close back under pivot_high 28.86, or another new high on day_vol under 1. |
+| raschke | SUPPORT | 3 | advisory | New high (pct_from_52w_high 0.0), structure 86.3 ABOVE_STRUCTURE, mp 87 STRONG/ACCELERATING, elder ACCELERATION: the Holy Grail precondition, not the buy. Entry is the first pullback toward ma_20 27.07 / ma_50 27.04; sma_distance_pct 8.88 is a weight (R14). | Daily close under ma_50 27.04, or structure_shift turning BEARISH_CHOCH. |
+| seow | ABSTAIN | — | advisory | Momentum is real: rs_spy_20d 17.9, ret_63d 18.57, mp 87.0 STRONG, from_52w_hi 0.0. But ext_atr20 2.42 at a new high is the extension C3 forbids and no dip bar exists. R14 makes that a weight, not a veto. Enter on a dip to ma_20 27.07 by a buy stop over bar_high; wrong on a close under ma_40. | Flips to SUPPORT when a bar's low reaches ma_20 and the close holds above ma_40 with ma_20 still rising. |
+| thorp | ABSTAIN | — | advisory | No measured edge, so no vote for. Mid range (atr 0.98 on entry 29.44); ma_20 27.07 is far under price (ext_atr20 2.42). Four lens fields are blank so nothing corroborates; Lynch contradicts (revenue_growth_yoy -0.138). Momentum lane: advisory. Sizing note only: macro 0.5. | A hold above ma_20 27.07 on day_vol under 1 would show a calm advance and move me to support. |
+| weis | SUPPORT | 2 | advisory | Trend gate passes (W23): ABOVE_STRUCTURE, ma_20 27.07 ma_50 27.04 ma_100 26.37 ma_200 23.84, mp 87.0 STRONG. But a new high at sma_dist 8.88 is no spring or failure; I buy the give-back toward ma_20, not 29.44. Momentum lane: advisory. | Close below ma_50 27.04 on day_vol above 1, or a new high that closes back under pivot_high. |
+| wyckoff | SUPPORT | 3 | advisory | Just through the edge: pct_from_pivot 2.01 over pivot_high 28.86, structure 86.3 ABOVE_STRUCTURE, day_vol 1.21 expanding, flow 89.5: old top turning support. sma_distance_pct 8.88 so not at market; the entry is a low-volume retest of the pivot. | Hourly close back under pivot_high 28.86 after trading above it. |
+| lynch (consult) | turnaround · CONTRADICT | — | no vote | revenue_growth_yoy -0.138 after -0.111; eps_growth_yoy -0.185 after -0.302; free_cash_flow_yield -0.044; net_profit_margin 0.049. Shrinking and cash-negative; pe_ratio 17.4 and dividendYieldTTM 0.026 do not cure it. | — |
 
-Declared: {"not_served": ["seat_role: CHALLENGE_ONLY; nothing filed is a nomination, conviction or vote", "template_a: NOT_COMPUTABLE (no sovereign data; out of scope for a US-equity book)", "template_b: NOT_COMPUTABLE (no fundamental or footnote data)", "commodity_cycle: NOT_SERVED (energy cluster read uses gics_sector and sector_trend_state as a weak proxy only, never a supply-demand read)", "valuation_sanity: NOT_TESTABLE (no book value, EPS or dividend yield)", "stop_position: DEFERRED_TO_HOUSE_LAW (MP broker stop 36.66 and V broker stop 401.15 not argued; no bracket field used as the basis of any finding)", "short_leg: OUT_OF_AEGIS_SCOPE", "catalyst_field: not served; the tally carries no thesis text, so cheapness arguments cannot be identified; no catalyst invented", "off_menu_fields: packet rows carry earnings-date and rs_rank_pct fields that are not on the rogers menu; not read"]}
+### ESTC — ADVANCE (conviction 3) · MOMENTUM · Seats + Strength
 
-#### steenbarger
+- Split: support livermore, minervini; oppose oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
 
-| Scope | Axis | Severity | Claim | Evidence | Owed |
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
 |---|---|---|---|---|---|
-| ROOM | CROWDING | flag | Three sectors carry the room: 27 of 36 nominated tickers, 35 of 47 nominations, and 8 of the 10 names with 2+ seats sit in Technology, Energy and Consumer Discretionary. Read the tally as three sector views first, name picks second. | gics_sector_name Technology 10 tickers 13 nominations; Energy 9 tickers 11 nominations; Consumer Discretionary 8 tickers 11 nominations; nomination_count 2 on ESTC, FIVN, SAIL, CART, LTH, BBY, EOG, EQNR | Committee states how many slots it will give each of the three sector views before ranking names inside them. |
-| ROOM | CROWDING | flag | Energy reads as one factor, not seven setups: seven names show near-identical structure, 8 of 9 share a clean MA stack, and one seat supplied 6 of the 9 tickers. EOG and EQNR reach count 2 partly because elder-lens repeats the sector. | structure EOG 84.2, CNQ 83.2, OXY 81.1, EQNR 80.0, LNG 80.0, CVX 76.8, DVN 76.8; ma_50 above ma_100 above ma_200 on 8 of 9 Energy rows; elder-lens seats EOG, EQNR, CVX, OXY, DVN, LNG; EQNR seats elder-lens, oneil | Before anything is sized, the committee says whether it wants one energy exposure or several, and which single name best expresses it. |
-| ROOM | CROWDING | note | Technology is 20 of 51 rows. Ten are nominated; ten more (ACN, BRZE, DXC, TTAN, BOX, NTSK, VERX, KVYO, ASAN, ZS) arrive only through doors, so the funnel can re-fill the theme after the seats have stopped. | gics_sector_name Technology 20 rows; tally doors STRONG_SEAT on BRZE, DXC, TTAN, BOX, NTSK, VERX, KVYO, ASAN, ZS; nomination_count 0 on all ten | Count sector exposure after the doors are merged, not on the seat tally alone. |
-| ROOM | CROWDING | note | Convergence is less independent than the count suggests: two seat pairs repeat. raschke and weis are together on both FIVN and SAIL; livermore and oneil on both CART and BBY. That is 4 of the 10 multi-seat names. | tally FIVN seats raschke, weis; SAIL seats raschke, weis; CART seats livermore, oneil; BBY seats livermore, oneil; ROKU seats minervini, thorp, wyckoff | Weigh a repeat pair as closer to one view when reading nomination_count; n is small, so a caution, not a finding of dependence. |
-| ROOM | CROWDING | note | Top conviction is concentrated: three of the four conviction-4 entries are livermore (EOG, CNQ, CDW), and CNQ and CDW have no second seat. Nobody has yet run the ticker-hidden test on them. | tally CNQ nomination_count 1 convictions 4 doors STRENGTH, SOLO; CDW nomination_count 1 convictions 4 doors STRENGTH, SOLO; EOG convictions 2, 4; ESTC convictions 3, 4 | Livermore states the case for CNQ and CDW with the ticker hidden and names what would prove each wrong. |
-| ROKU | CROWDING | note | No crowding objection: ROKU is the only three-seat name, the seats are distinct, it sits outside the clustered sectors and its MA stack is clean. Only note: structure is middling and structure_shift is RANGE, so agreement is on trend context, not a structure break. | tally ROKU nomination_count 3 seats minervini, thorp, wyckoff convictions 3, 2, 3; ma_50 155.29 ma_100 147.56 ma_200 126.57; structure 61.1; structure_shift RANGE; div_state BULLISH; lens_warnings 0 |  |
-| CART | CROWDING | note | Evidence-or-excitement check: CART's participation is far outside the room (about 5x its own 20-day average) and both seats cite strength. The event filter is not mine; I ask only that the case survive with the ticker hidden. | day_vol 4.99 (next highest in packet VG 1.67); sc_momentum 86.2; structure 89.5; lens_warnings 2; tally CART seats livermore, oneil convictions 3, 3 | Livermore and oneil say how much of the case rests on today's volume versus the existing trend (ma_50 48.16 ma_100 46.82 ma_200 42.9). |
-| COST | CONTEXT | flag | A pullback needs a trend to pull back within (C5). COST's MA stack is descending, 50 under 100 under 200, so the longer-timeframe context is not up. If this is a counter-trend bounce the seats should say so; if a pullback, name the context. | ma_50 938.86 ma_100 944.73 ma_200 969.35; structure 82.1; sc_momentum 71.0; lens_warnings 2; tally COST seats raschke, thorp convictions 3, 2 lane PULLBACK | Raschke and thorp name the higher-timeframe context the entry sits inside, or say it is counter-trend. |
-| ROOM | CONTEXT | note | Seven nominated names have ma_50 below ma_100, six in the PULLBACK lane (HIW is MOMENTUM); OUT also has ma_50 under ma_200. The intermediate trend is not clearly up on these, so the trend they pull back within is owed in words. | ma_50 against ma_100: COST 938.86 v 944.73; HLT 322.72 v 326.92; OUT 29.33 v 30.62; MAR 356.38 v 365.56; M 22.71 v 23.39; HIW 30.26 v 30.72; HST 22.72 v 23.44; OUT ma_50 29.33 ma_200 29.41 | Each nominating seat names the longer-timeframe trend or cycle for these seven; no context, no setup. |
-| VRNS | DIVERGENCE | flag | All five oscillators confirm bearish divergence while volume is below normal, on a single-seat conviction-3 nomination. This is the fired bearish_divergence caution at its maximum; the seat should say why it reads pullback and not exhaustion. | div_state BEARISH; div_bear_count 5; day_vol 0.69; structure_shift RANGE; sc_momentum 76.6; tally VRNS nomination_count 1 seats wyckoff convictions 3 doors NOMINATED | Wyckoff explains the 5-of-5 divergence against the conviction, in the seat's own terms. |
-| GTLB | DIVERGENCE | flag | Four of five oscillators confirm bearish divergence with below-normal volume, and GTLB reaches the room through one seat at conviction 3. Caution flag fired; reasoning owed. | div_state BEARISH; div_bear_count 4; day_vol 0.82; structure_shift RANGE; structure 76.8; lens_warnings 1; tally GTLB seats elder-lens convictions 3 | Elder-lens states how the force trajectory squares with 4 oscillators diverging. |
-| ROOM | DIVERGENCE | note | Smaller bearish-divergence readings sit on other names: AAPL 4 of 5 (conviction 2), TENB and M 2 each, RBRK 1; door-only ZS 3 and NTSK 2. Caution, never a gate; carry the flag into any ranking these names enter. | div_bear_count AAPL 4; TENB 2; M 2; RBRK 1; ZS 3; NTSK 2; div_state BEARISH on all six; tally ZS nomination_count 0; NTSK nomination_count 0; AAPL convictions 2 |  |
-| ROOM | ABSTAIN | note | Fields conflict on three names: structure_shift says BULLISH_BOS but the structure score is under 45. Seats relying on the break should say which reading they trust; standing aside is a legitimate answer (C16). | FIVN structure 43.6 structure_shift BULLISH_BOS; HIW structure 43.2 structure_shift BULLISH_BOS ma_50 30.26 ma_100 30.72; VG structure 37.9 structure_shift BULLISH_BOS; tally FIVN count 2, HIW count 1, VG count 1 | Raschke and weis name which of the two structure readings the thesis uses. |
-| MA | CROWDING | note | MA shares gics_sector_name with the held V and with SLDE; adding it would be a second expression of the held Financials exposure. Conviction is low (2, one seat), so passing costs little. | gics_sector_name Financials on MA, V, SLDE; tally V held true; MA seats thorp convictions 2; SLDE seats elder-lens convictions 2 | Held-book overlap is stated if MA is carried forward. |
-| MP | INVALIDATION | note | Held book; I am not arguing the broker stop 36.66. C7 asks for the thesis-disconfirming observable in writing; on MP the data already shows a character change and a descending MA stack, so thesis status should be recorded separately from the stop. | structure_shift BEARISH_CHOCH; structure 11.0; sc_momentum 25.5; ma_50 49.65 ma_100 50.84 ma_200 55.81; day_vol 0.61; tally MP held true nomination_count 0 | Held review states thesis status (intact or not), independent of the broker stop. |
-| ROOM | REGIME | note | The packet carries no regime or srm field, so environment match (C3, C4) is unserved here. With three sectors holding 35 of 47 nominations, size may not be justified on environment match alone; the regime label must come from outside this seat. | packet field regime absent; srm absent; gics_sector_name Technology 13, Consumer Discretionary 11, Energy 11 nominations | Committee names the regime these reads are valid inside before sizing leans on any sector cluster. |
-| ROOM | INVALIDATION | note | No seat's invalidation observable reaches this packet, only convictions. For the 12 BULLISH_BOS names a menu-grounded one exists: structure_shift flipping to BEARISH_CHOCH. Other names need the seat's own (a level, a structure break, a volume failure). Bracket state is not the reason. | structure_shift BULLISH_BOS on ESTC, LTH, FIVN, RBRK, HOG, CNC, OUT, DHR, OXY, VG, HIW, GLBE; RANGE on ROKU, VRNS, DBX, GTLB, SLB, M, AAPL; tally holds convictions only | Each seat's one-line disconfirming observable per carried name, written before entry. |
-| ROOM | UNPROVEN | note | Door labels (STRENGTH, ELDER+LENS, LENS, PM_LENS, AQE_LEADER, STRONG_SEAT, UNR_SEAT, SOLO) sit on many names, but no hit rate or forward-return separation for any door or field is in the packet. Describe them; do not lean on them as edge (C1). | tally doors STRENGTH, ELDER+LENS, LENS, PM_LENS, AQE_LEADER, STRONG_SEAT, UNR_SEAT, SOLO; no hit-rate or forward-return field in packet |  |
+| detect-lens | ABSTAIN | — | decides | One strong lens (leadership), no warns: lens_positive 1, lens_warnings 0, runner_conviction 2. Spine ma_50 91.28 over ma_100 77.54 over ma_200 66.82 clean, but day_vol 0.68 is under normal. Extension is a weight under R14; thin participation is a reading, not a verdict. | New high on day_vol over 1 with a second strong lens (coil or insti_money) turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [8, 10, 10, 10, 10] SUSTAINED is a plateau, summer not the buy season (C20); C24 only, unsourced. day_vol 0.68 at pct_from_52w_high -0.72 is volume contraction at a fresh extreme (C23). Permission holds; no entry. Rogers' pullback advisory stands. | A pullback to ma_20 96.32 with elder_ge:7 held and day_vol back above 1 would earn a SUPPORT. |
+| livermore | SUPPORT | 3 | decides | Leader at the high: pct_from_52w_high -0.72, structure 78.9, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING; software peers RBRK, TENB, AMPL confirm the group. Cost: day_vol 0.68 is thin and sma_distance_pct 15.6 is extended, so three. I buy a new high only on volume. | A close under ma_20 96.32, or a one-day fade from the high that my atr_14d translation flags as abnormal. Engine bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Superperformance profile: rs_rank_pct 98.05, ret_6m 122.38, entry 105.52 over ma_20 96.32, ma_50 91.28, ma_200 66.82, pct_from_52w_high -0.72. Costs: pct_from_pivot 4.07, day_vol 0.68 thin, days_to_earnings 16. Weight not veto (R14); buy needs a fresh high on expansion. | Close under ma_20 96.32, or a new high printed on day_vol under 1. |
+| oneil | OPPOSE | 2 | decides | Leader on rs_rank_pct 98.05, but on thin volume: day_vol 0.68, sma_dist 15.6, pct_from_pivot 4.07 already near the edge of the buy zone, rs_leadership IN-LINE, High tight flag FAILED (8/11). Earnings 2026-11-19 ahead. A near-high move nobody is buying. | A new high on heavy volume before the entry runs past the buy zone. |
+| raschke | SUPPORT | 2 | advisory | Strength is real (rs_rank_pct 98.05, mp 77 STRONG, elder SUSTAINED) but extended: sma_distance_pct 15.6 on day_vol 0.68, earnings in 16 sessions, VALEN High tight flag FAILED (8/11). No retracement yet: first pullback toward ma_20 96.32; stop beyond ma_50 91.28. | Daily close under ma_50 91.28. |
+| seow | ABSTAIN | — | advisory | Strong trend: rs_spy_20d 18.11, ret_63d 63.75, rs_rank_pct 98.05, adx 39.83. Buying now means ext_atr20 2.15 over ma_20 96.32 on day_vol 0.68, thin volume on an extended bar (C3). Weight not veto (R14). Plan: dip to ma_20, buy stop over bar_high; wrong on a close under ma_40. | Flips to SUPPORT on a measured pullback bar touching ma_20 and holding above ma_40. |
+| thorp | ABSTAIN | — | advisory | Wide range for the set (atr 4.27 on entry 105.52), thin turnover day_vol 0.68, and a print on 2026-11-19 that no stop covers overnight. Extension ext_atr20 2.15 is a weight, not a veto (R14). Nothing measured. Momentum lane: advisory. | A new high on day_vol back above 1 before the print. |
+| weis | SUPPORT | 2 | advisory | Inside-day hinge on dry effort (W21), not absorption: day_vol 0.68, ma_20 96.32 over ma_50 91.28 over ma_100 77.54, ret_6m 122.38. Direction from the lead-in is bullish. Cost: sma_dist 15.6 and ext_atr20 2.15, so entry only on the wide-range break, not at 105.52. | Close below the inside-day low, or a break that closes back under bar_high (failed breakout). |
+| wyckoff | OPPOSE | 2 | advisory | Mid-move, not an edge: sma_distance_pct 15.6, ext_atr20 2.15, new high on day_vol 0.68 (light effort, direction unmeasured). Retest of ma_20 96.32 or a base is where I would look; earnings 2026-11-19 is an event. | A pullback to ma_20 96.32 on day_vol well under 1 that holds, or a new high on day_vol above 1. |
+| lynch (consult) | fast grower · NEUTRAL | — | no vote | revenue_growth_yoy 0.173, 0.170, 0.186: steady 17 percent. pe_ratio 27.3, but net_profit_margin 0.208 vs operatingProfitMarginTTM -0.015: profit is not operating. Read on free_cash_flow_yield 0.034. Carried pack. | — |
 
-Declared: {"not_served": ["regime / srm: not in packet, environment match (C3, C4) unserved", "emotional / energy / ego state (C18-C21): not served by design, PM-only", "forward-return separation per field or door (C1, C2): not in packet", "seat-stated invalidation observables (C7): not in packet", "lynch overlap check: lynch not among the 8 seats in the tally", "structure_shift value ABOVE_STRUCTURE (16 nominated names) is not defined in my field glossary; not interpreted", "structure_shift null on DVN and KVYO (no swing detected); read as absent, not as RANGE", "MP gics_sector_name null and lens_warnings null; sector clustering and lens check not possible for MP", "off-menu fields present in rows (rs_rank_pct, pct_from_52w_high, bracket.atr_fallback_stop, bracket.invalid_reason) were not read or used", "R12 breadth-of-fields check: cited fields per seat not in packet"]}
+### TENB — ADVANCE (conviction 3) · MOMENTUM · Strength + AQE leader + Strength seat (rule)
 
-#### detect-lens
+- Split: support livermore, minervini; oppose oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
 
-| Scope | Axis | Severity | Claim | Evidence | Owed |
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
 |---|---|---|---|---|---|
-| ROOM | LENS_SUPPORT | note | Strongest lens agreement in the tally: LTH at 5, then FIVN, RBRK, DHR, SLB, OXY, VG, HIW at 4. Only LTH and FIVN also carry two seats; the other six sit at one seat each. | LTH lens_positive 5 nomination_count 2; FIVN lens_positive 4 nomination_count 2; RBRK lens_positive 4 nomination_count 1; DHR lens_positive 4 nomination_count 1; SLB lens_positive 4 nomination_count 1; OXY lens_positive 4 nomination_count 1; VG lens_positive 4 nomination_count 1; HIW lens_positive 4 nomination_count 1 |  |
-| ROKU | LENS_SUPPORT | note | The room's most-nominated name (3 seats) has thin lens agreement: two strong lenses, no warns, middling mover and pre-move counts. Nothing contradicts the seats, but the lens does not echo the consensus. | ROKU nomination_count 3 lens_positive 2 lens_warnings 0 runner_conviction 1 premove_conviction 0 structure_shift RANGE day_vol 1.54 |  |
-| LTH | LENS_SUPPORT | note | Highest lens read in the tally with two seats behind it. The one warn is the resistance lens; the packet gives no resistance level, so room above is unread. premove_conviction 3 is context only because premove_setup is false. | LTH lens_positive 5 lens_warnings 1 lens.resistance warn premove_setup false premove_conviction 3 structure_shift BULLISH_BOS day_vol 1.66 |  |
-| FIVN | TIMING | note | Best mover read this seat has: lens-clean with runner_setup true and BULLISH_BOS. Tally lane says PULLBACK, but the detect tags read an already-moving name; the two seats' entry framing should be checked against that. | FIVN lens_positive 4 lens_warnings 0 runner_setup true runner_conviction 4 premove_conviction 2 structure_shift BULLISH_BOS lane PULLBACK nomination_count 2 | Seats raschke and weis to say whether they are buying a pullback or the thrust itself. |
-| RBRK | LENS_SUPPORT | note | Lens-clean on every reading yet carried by one seat at conviction 3. The lens evidence is stronger than the weight the room has put on it. | RBRK lens_positive 4 lens_warnings 0 runner_conviction 4 structure_shift BULLISH_BOS nomination_count 1 convictions 3 |  |
-| ESTC | CERTAINTY | note | Lens confirms the trend (leadership, coil, structure strong; averages stacked; BULLISH_BOS) but the resistance lens is warn and runner_conviction is middling. Lens supports strength, not room to run. | ESTC lens_positive 3 lens_warnings 1 lens.resistance warn runner_conviction 2 structure_shift BULLISH_BOS ma_50 90.45 ma_100 76.72 ma_200 66.55 day_vol 1.11 |  |
-| CART | CATALYST | flag | Two seats at conviction 3, but the lens read is split: leadership and sector strong, coil and insti_money warn. day_vol is the largest participation spike in the packet while the institutional-money lens is warn, so the volume is not lens-confirmed. | CART lens_positive 2 lens_warnings 2 lens.coil warn lens.insti_money warn day_vol 4.99 runner_conviction 4 nomination_count 2 | Event filter to confirm whether the day_vol 4.99 session is event-driven; this seat does not run that check. |
-| COST | LENS_DISSENT | flag | Two seats nominate a name whose averages sit in descending order (ma_50 under ma_100 under ma_200) with two lens warns. Detect gives little trend or lens corroboration; the case rests on the seats' own frameworks. | COST lens_positive 2 lens_warnings 2 lens.coil warn lens.insti_money warn ma_50 938.86 ma_100 944.73 ma_200 969.35 day_vol 0.93 lane PULLBACK nomination_count 2 |  |
-| BBY | LENS_DISSENT | note | Two seats (3, 2). Trend averages are stacked and corroborate, but the leadership lens is warn alongside coil warn; the trend supports the name, the lens read does not. | BBY lens_positive 2 lens_warnings 2 lens.leadership warn lens.coil warn ma_50 89.25 ma_100 84.91 ma_200 74.51 day_vol 1.42 runner_conviction 2 |  |
-| ROOM | CROWDING | flag | Eight oil-and-gas tickers (grouped by ticker, not a packet field) are in the room, ten nominations in all. All read lens.sector strong, so the sector lens cannot rank them; six read lens.coil warn. Name-level lenses are the only separator: OXY and SLB lead, EQNR, CNQ, CVX trail. | EOG lens.sector strong lens.coil warn lens_positive 3; EQNR lens.sector strong lens.coil warn lens_positive 2; CNQ lens.sector strong lens.coil warn lens_positive 2; CVX lens.sector strong lens.coil warn lens_positive 2; OXY lens.sector strong lens.coil warn lens_positive 4; DVN lens.sector strong lens.coil ok lens_positive 3; SLB lens.sector strong lens.coil strong lens_positive 4; LNG lens.sector strong lens.coil warn lens_positive 3 | A cluster view before the slate is cut; this seat holds no sector-exposure data beyond lens.sector. |
-| ROOM | CROWDING | note | Seven software and cyber tickers (grouped by ticker, not a packet field) are nominated. All read lens.sector ok, not strong: their strength is name-level, not sector-backed, the opposite of the oil-and-gas cluster. | ESTC lens.sector ok; RBRK lens.sector ok; GTLB lens.sector ok; TENB lens.sector ok; VRNS lens.sector ok; DBX lens.sector ok; FIVN lens.sector ok |  |
-| ROOM | TREND_SPINE | note | Nominated names with ma_50 under ma_100: COST, HLT, MAR, HST, M, OUT, HIW. COST and OUT also have ma_50 under ma_200. HIW is lane MOMENTUM with ma_50 under ma_100; the rest are PULLBACK lane, where this is expected. | COST ma_50 938.86 ma_100 944.73 ma_200 969.35; OUT ma_50 29.33 ma_100 30.62 ma_200 29.41; HIW ma_50 30.26 ma_100 30.72 ma_200 27.41; HLT ma_50 322.72 ma_100 326.92; MAR ma_50 356.38 ma_100 365.56; HST ma_50 22.72 ma_100 23.44; M ma_50 22.71 ma_100 23.39 |  |
-| ROOM | COVERAGE | note | Lens block is -- on leadership, coil, insti_money and resistance for TENB, HLT, CNC, OUT, BRZE, VERX; structure is -- for DVN and KVYO. lens_positive there counts fewer lenses and is not comparable. Absence is not agreement; four of the six are nominated at one seat. | TENB lens.leadership -- lens_positive 0; HLT lens.leadership -- lens_positive 1; CNC lens.leadership -- lens_positive 2; OUT lens.leadership -- lens_positive 2; BRZE lens.leadership -- lens_positive 0; VERX lens.leadership -- lens_positive 0; DVN lens.structure -- structure_shift null; KVYO lens.structure -- structure_shift null | Lens re-run on those rows; until then this seat cannot corroborate or dissent on them. |
-| ROOM | TIMING | note | No row carries premove_setup true. premove_conviction 3 sits on LTH and M only and is context, not a tag, so no pre-move launch-timing claim stands for any name in the tally. | LTH premove_setup false premove_conviction 3; M premove_setup false premove_conviction 3; FIVN premove_setup false premove_conviction 2 |  |
-| ROOM | LENS_SUPPORT | note | No un-nominated door name has lens_positive above 3, so the lens has no independent case to add any of them. PBI reads BEARISH_CHOCH; KSS carries two warns. Scope is the tally only; the full lens_ranking is not in the packet. | PBI lens_positive 3 structure_shift BEARISH_CHOCH; KSS lens_positive 3 lens_warnings 2 runner_conviction 4; ACN lens_positive 0 lens_warnings 3; LIN lens_positive 2; NTSK lens_positive 2; BRZE lens_positive 0; VERX lens_positive 0 |  |
-| TTAN | LENS_DISSENT | note | runner_setup is true, but the lenses and structure disagree with the tag: three warns, one strong lens, and the up-swing anchor has broken. Detect lens does not support promoting it from the strong-seat door. | TTAN runner_setup true runner_conviction 3 lens_positive 1 lens_warnings 3 structure_shift BEARISH_CHOCH nomination_count 0 |  |
-| MP | HELD_REVIEW | flag | Held MP has no lens block, so the lens read is a declared gap, not agreement. What is readable is adverse: BEARISH_CHOCH and descending averages. Detect mechanics lean EXIT-CASE; the PM's broker stop 36.66 stands and is not contested. | MP lens null lens_positive null structure_shift BEARISH_CHOCH ma_50 49.65 ma_100 50.84 ma_200 55.81 day_vol 0.61 held true | Lens block for MP, so the read can be completed. |
-| V | HELD_REVIEW | note | Held V: lens read supports keeping it. Leadership, resistance and sector strong, averages stacked, structure above its swing. Quiet participation. No lens basis to contest the PM's broker stop 401.15. | V lens_positive 3 lens_warnings 1 lens.coil warn ma_50 377.07 ma_100 362.25 ma_200 340.56 structure_shift ABOVE_STRUCTURE day_vol 0.85 held true |  |
+| detect-lens | ABSTAIN | — | decides | Lens split: lens_positive 1 (resistance), lens_warnings 2 (leadership warn, coil warn). Spine ma_50 37.11 over ma_100 35.51 over ma_200 28.34 aligned, day_vol 0.89. Warns sit on the two lenses a momentum buy leans on; one short of OPPOSE, nothing to support. Wrong on close under ma_50 37.11. | A third warn with day_vol staying under 1 tilts to OPPOSE; both warns clearing, to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 10, 10] SUSTAINED, mp 75 STRONG: a pure plateau, summer (C20), C24 only. sma_dist 31.08% with day_vol 0.89 is thin for a stretch this far. Permission is on; I would enter on a give-back to ma_20 40.28 with elder_ge:7 held. | A give-back to ma_20 40.28 with elder_ge:7 held would earn a read. |
+| livermore | SUPPORT | 3 | decides | Cybersecurity leader at a new high: pct_from_52w_high 0.0, structure 88.4, ABOVE_STRUCTURE, mp 75.0 STRONG ACCELERATING, ma_20 40.28 over ma_50 37.11 over ma_200 28.34. NTSK and ESTC confirm the group. day_vol 0.89 and sma_distance_pct 31.08 are weights, so three. | A one-day fade from the high that my atr_14d translation flags as abnormal, or NTSK and ESTC losing their highs. My level is bar_low; bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Group leader at a new high: rs_rank_pct 98.66, rs_spy_20d 38.33, pct_from_52w_high 0.0, structure 88.4, SUSTAINED, ret_6m 138.01, ma_20 40.28, ma_50 37.11, ma_200 28.34; Valen lists Cybersecurity on both leadership lists. Costs: sma_distance_pct 31.08, day_vol 0.89, div_bear_count 2, revenue_growth_yoy 0.110. | Close under ma_20 40.28, or a new high on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | Strong group, wrong price: rs_rank_pct 98.66, from_52w_hi 0.0, elder SUSTAINED, but entry 48.65 against ma200 28.34 is past the climax line, sma_dist 31.08, day_vol 0.89 on a new high, div BEARISH/2. Buy the next base, not this extension. Lynch: pe_ratio 712.3. | A new base breaks on heavy volume with the group still on both VALEN lists. |
+| raschke | SUPPORT | 2 | advisory | Leadership real: rs_rank_pct 98.66, mp 75 STRONG, new high, elder SUSTAINED. sma_distance_pct 31.08 with div BEARISH/2 (advisory) is climax risk (C19): wait for the first pullback toward ma_20 40.28; stop beyond ma_50 37.11. | Daily close under ma_50 37.11. |
+| seow | ABSTAIN | — | advisory | Leader at the high: rs_rank_pct 98.66, ret_63d 54.54, Elder SUSTAINED, from_52w_hi 0.0. But ext_atr20 3.56 over ma_20 40.28, run_10d 17.83 and div BEARISH/2 is the extension. Weight not veto (R14). Buy only the dip to ma_20 by a stop over bar_high. | Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40. |
+| thorp | ABSTAIN | — | advisory | BEARISH divergence count 2 on sma_dist 31.08 at the high (from_52w_hi 0.0), but elder 10.0 SUSTAINED and mp 75.0 hold; range wide (atr 2.35 on entry 48.65). Lynch: pe_ratio 712.3, cash earnings fair. Nothing measured; not opposed. Advisory. | Divergence count rising to 3 or more. |
+| weis | OPPOSE | 2 | advisory | New high on thin effort at an extreme: pct_from_52w_high 0.0 on day_vol 0.89, sma_dist 31.08, ext_atr20 3.56, div BEARISH/2. A narrow-effort high is the suspect shape (W13; close-location not served, so unconfirmed). Real group leadership is context, not a trigger. | A close above the high on day_vol over 1 with div_state clearing voids this. |
+| wyckoff | OPPOSE | 2 | advisory | Extended at a new high: sma_distance_pct 31.08, ext_atr20 3.56, run_10d 17.83%, div BEARISH/2 (advisory), resistance lens strong, adx 18.65 low for the run. Mid-move; entry only after a base or a retest of ma_20 40.28. | A retest of ma_20 40.28 on light day_vol that holds. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | revenue_growth_yoy 0.110 after 0.127, 0.169; pe_ratio 712.3 on net_profit_margin 0.006, but free_cash_flow_yield 0.055; debt_to_equity 2.13. Cash earnings fair, GAAP earnings absent, equity thin. | — |
 
-Declared: {"not_served": ["Full lens_ranking: only the tally's names were read, so nothing is said about names outside it.", "Last price: not in the packet, so price against ma_50/ma_100/ma_200 is not assessed.", "Level 2, tape and spread reads: NOT_APPLICABLE premarket.", "gap_filter: NOT_SERVED. Ranking formula: sc_momentum, structure, energy, flow absent from the rows and not used.", "Packet fields stack_state, elder_context.exhaustion_check.exhaustion_flag, pct_from_52w_high are off this seat's data menu and were not read.", "Sector groupings (oil-and-gas, software) are by ticker, not a packet field.", "exit_philosophy: not exercised; broker stops MP 36.66 and V 401.15 are respected, not argued.", "canon_status: HAND-TRANSCRIBED, UNGROUNDED, no lock and citations not re-verifiable."]}
+### IOT — ADVANCE (conviction 3) · MOMENTUM · Strength + Reclaim seat (rule)
 
-#### lynch (fundamentals consult) — findings and declarations
+- Split: support livermore, minervini, oneil; oppose detect-lens; abstain elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
 
-- {"scope": "room", "axis": "valuation vs growth (C8)", "severity": "flag", "claim": "Stalwarts and franchise names are priced above their growth. PEG proxies (price-to-earnings over trailing growthEPS) clear the 2.0 red line for COST, LIN, MAR and AAPL; HLT and DHR carry a high multiple on flat or falling EPS. Quality is not in doubt, price is. True PEG is NOT_COMPUTABLE here.", "evidence": "priceToEarningsRatioTTM / growthEPS: COST 48.3 / 0.14, LIN 32.7 / 0.07, MAR 40.7 / 0.14, AAPL 39.7 / 0.23 (after -0.01, 0.00), HLT 50.8 / 0.00, DHR 37.7 / -0.05."}
-- {"scope": "room", "axis": "category mix (C5, C6)", "severity": "note", "claim": "Twelve software names have net_profit_margin under 0.01 or negative. Lynch cannot value what has no earnings: PEG and effective P/E are not computable and price rests on a future the packet does not show. Their clean or levered balance sheets are the only tests that run.", "evidence": "net_profit_margin: SAIL -0.169, RBRK -0.165, GTLB -0.050, BRZE -0.136, TTAN -0.121, NTSK -0.918, ASAN -0.186, VRNS -0.205, ZS -0.019, KVYO 0.005, VERX 0.005, TENB 0.006."}
-- {"scope": "energy cluster", "axis": "cyclical category (C17, C18)", "severity": "note", "claim": "Nine of 51 names are energy: one cyclical call, not nine independent ideas. Six of the nine report negative growthEPS in the latest FY. The tests that decide a cyclical (inventory vs sales, commodity price vs spot, new-capacity CapEx) are NOT_SERVED.", "evidence": "Energy: CNQ, CVX, DVN, EOG, EQNR, LNG, OXY, SLB, VG. growthEPS latest FY negative: EOG -0.19, EQNR -0.38, SLB -0.24, CVX -0.32, OXY -0.35, DVN -0.08."}
-- {"scope": "room", "axis": "balance sheet (C12, C15)", "severity": "flag", "claim": "Sixteen names carry debt_to_equity above 1.0 (implied debt share above 0.50, the C12 high-leverage line). Debt kind and maturities (C15) are NOT_SERVED, so fail gate 1 is NOT_TESTABLE and no name is reported as passing it. Five more have negative equity, where the C12 test cannot run.", "evidence": "debt_to_equity: LTH 1.29, FIVN 1.03, BBY 1.30, CDW 2.44, VRNS 1.16, TENB 2.12, OUT 5.96, LNG 4.29, VG 4.99, M 1.03, HIW 1.47, DXC 1.37, NTSK 4.67, KSS 1.54, VERX 1.45, ASAN 2.48. Negative equity: DBX, RBRK, HLT, MAR, PBI. MA 4.39 excluded (payments network, not comparable)."}
-- {"scope": "ESTC", "axis": "earnings quality", "severity": "flag", "claim": "ESTC net_profit_margin sits far above operatingProfitMarginTTM, so its multiple is built on a non-operating item, not the business; treat priceToEarningsRatioTTM as unreliable. The same wedge, smaller, shows in OXY, ROKU and HST. Cause is not served.", "evidence": "ESTC priceToEarningsRatioTTM 27.3, net_profit_margin 0.208, operatingProfitMarginTTM -0.015, growthEPS 4.36 after -2.68. OXY net_profit_margin 0.288 vs operatingProfitMarginTTM 0.230; ROKU 0.068 vs 0.052; HST 0.165 vs 0.144."}
-- {"scope": "DXC KSS SLDE CNC M PBI", "axis": "cash flow (C13, C16)", "severity": "flag", "claim": "Six names show free_cash_flow_yield above 0.15. C13 calls 0.10 terrific, but these are an insurer, department stores and shrinking-sales turnarounds where float, working capital or lease timing can inflate the figure. OCF and CapEx are NOT_SERVED: do not read these as bargains.", "evidence": "free_cash_flow_yield: DXC 0.487, KSS 0.355, SLDE 0.310, CNC 0.259, M 0.236, PBI 0.177. growthRevenue: DXC -0.018, KSS -0.043, M -0.017, PBI -0.066, CNC 0.194, SLDE 0.365."}
-- {"scope": "MP", "axis": "story intact (C22)", "severity": "flag", "claim": "MP (held) is the only name below its SMA. C22 makes a deep drawdown a buy only if the story is verified intact, and the served numbers do not show it. The story check goes to the PM; I do not endorse an add. Broker stop 36.66 stands, untouched by this read.", "evidence": "sma_distance_pct -22.86; grossProfitMarginTTM -0.046, operatingProfitMarginTTM -0.331, free_cash_flow_yield -0.073; growthRevenue 0.101 after -0.196, -0.520. Profile carried from the 2026-10-21 pack."}
-- {"scope": "V", "axis": "rotation, not target (C20)", "severity": "note", "claim": "V (held) is a rotation question, not a target question. Economics are top tier and steady, but the multiple is full against EPS growth. I cannot test it against its own P/E history (NOT_SERVED), so I give the discipline, not the trigger. Broker stop 401.15 stands.", "evidence": "priceToEarningsRatioTTM 34.7; growthEPS 0.05, 0.17, 0.18; operatingProfitMarginTTM 0.607; growthRevenue 0.113, 0.100, 0.114. Profile dated 2026-10-22, carried from the 2026-10-21 pack."}
-- {"scope": "room", "axis": "window (C23)", "severity": "note", "claim": "Today sits in the October-December tax-loss window (C23): context only. Served sma_distance_pct says the room is extended, not depressed, and the one depressed name (MP) fails the sound-company half. No name qualifies as a window entry on served data.", "evidence": "sma_distance_pct median 9.63 across 51 rows; MP -22.86; next lowest LTH 0.42."}
-- {"scope": "engine asks", "axis": "data asks, ranked", "severity": "note", "claim": "Ranked asks: (1) inventory and sales, two quarters (C14, fail gate 2); (2) OCF and CapEx split; (3) debt kind and maturities; (4) institutional ownership; (5) forward EPS growth, so PEG can be computed instead of proxied.", "evidence": "Inventory test decides BBY, M, KSS, HOG, COST. OCF/CapEx decides DXC, KSS, CNC, DVN, VG, LTH. Debt kind decides the 16 levered names. Ownership decides RBRK, KVYO, GLBE, ZS (C17, C24)."}
-- {"scope": "room", "axis": "packet quality", "severity": "note", "claim": "I do not use profile beta: several values look implausible. NTSK growth_3y has a zero-filled oldest row (missing history). Four entries are carried from the 2026-10-21 pack and dated in their own profiles.", "evidence": "beta: EQNR -0.661, LNG -0.008, SLDE -0.041, TTAN 0.025. Carried: ESTC, MA, V, MP."}
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 2 | decides | No lens corroboration: lens_positive 0, lens_warnings 2 (leadership warn, resistance warn). Spine ma_50 40.4 over ma_100 37.99 over ma_200 34.13 aligned, structure_shift RANGE, day_vol 0.84 under normal. VALEN U&R MET puts the entry on the reclaim; lens and participation do not back it. | Leadership and resistance off warn with a strong lens appearing, or day_vol over 1 on the reclaim. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 10, 7]: last-bar drop from green, C4 profit-taking, not a buy. VALEN's U&R reclaim is not my instrument. No red-giving-way, so no trigger. Wait a dip to ma_20 41.77 with elder_ge:7 held; mp 76 STRONG is real. | A dip into ma_20 41.77 with elder_ge:7 held and green back would earn a SUPPORT. |
+| livermore | SUPPORT | 3 | decides | Established uptrend in a normal reaction: ma_20 41.77 over ma_50 40.4 over ma_200 34.13, pct_from_52w_high -3.78, structure 80.0, mp_state STRONG ACCELERATING, ext_atr20 0.88, day_vol 0.84 dry on the dip. Software leads per VALEN. The new high is the entry, not yet printed. | A close under ma_50 40.4, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Leader near highs, not extended: rs_rank_pct 90.0, pct_from_52w_high -3.78, ext_atr20 0.88, ma_20 41.77, ma_50 40.4, ma_100 37.99, ma_200 34.13, mp 76.0 STRONG, structure 80.0 RANGE. Pivot not cleared, day_vol 0.84. Lynch revenue_growth_yoy 0.296 fits the growth leg; pe_ratio 276.3 is the cost. | Close under ma_50 40.4, or a clear of pivot_high on day_vol under 1. |
+| oneil | SUPPORT | 2 | decides | Momentum is real and not stretched: rs_rank_pct 90.0, mp 76 STRONG, ret_6m 48.35, ext_atr20 0.88, from_52w_hi -3.78, structure 80.0 RANGE. Nothing has cleared and day_vol 0.84 is thin, so I act only on a range-top clear on volume. Lynch: pe_ratio 276.3. | The range top fails on a thin clear, or a close under ma_50 40.4. |
+| raschke | SUPPORT | 3 | advisory | Test family: VALEN U&R MET, undercut the 9-day average 42.99 on the last session and closed back above (reclaim day), a double stop point; mp 76 STRONG/ACCELERATING, sma_distance_pct 7.7, stack aligned. Weak: day_vol 0.84, lens.resistance warn, VALEN Undercut and rally FAILED (6/9). | Daily close under ma_20 41.77. |
+| seow | SUPPORT | 3 | advisory | Clean dip by my grade: ext_atr20 0.88 over ma_20 41.77 after four Elder 10 bars and one 7, from_52w_hi -3.78, ret_63d 12.28, rs_rank_pct 90.0, rs_spy_20d 13.88, mp 76.0 STRONG/ACCELERATING. U&R MET reclaim day. Soft: rs_leadership IN-LINE, undercut-and-rally FAILED (6/9). ma_40/CCI unserved. | Close under ma_40 or trade under bar_low before the stop over bar_high fires. |
+| thorp | ABSTAIN | — | advisory | Why no thorp nomination: range is top-quartile (atr 1.97 on entry 43.51) and I file calm names; pe_ratio 276.3 runs far ahead of earnings. U&R MET on reclaim day and ma_20 41.77 near are noted, but the undercut-and-rally grade FAILED (6/9). Nothing measured. Advisory. | A hold above ma_20 41.77 on day_vol over 1. |
+| weis | SUPPORT | 3 | advisory | Minor spring in a clean uptrend, not extended: U&R MET (dipped under the 9-day average 42.99 on the last session, closed back above), ma_20 41.77 over ma_50 40.4 over ma_100 37.99 over ma_200 34.13, ext_atr20 0.88, day_vol 0.84 dry, mp 76.0 STRONG ACCELERATING. Single-bar read; VALEN Undercut and rally FAILED (6/9). | Close under the reclaim-day low or ma_20 41.77. |
+| wyckoff | SUPPORT | 2 | advisory | Why unnominated: coil ok, not strong, and no edge or spring reached my scan. Terrain now fits: RANGE at structure 80.0, energy 73.9, ext_atr20 0.88, U&R MET reclaim of the 9-day average 42.99. Dip volume unseen, spring grade unknown. Danger point is the dip low. | Hourly close under yesterday's low (bar_low) or a close under ma_20 41.77. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.296 after 0.333, 0.437 fits; pe_ratio 276.3, free_cash_flow_yield 0.010, net_profit_margin 0.049 do not. Price far ahead of earnings; debt_to_equity 0.043 is clean. | — |
 
-Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories are my placement from growthRevenue, growthEPS, dividendYieldTTM, marketCap and industry", "PEG, yield-adjusted PEG, effective P/E: NOT_COMPUTABLE (no forward or long-term growth served); PEG proxy in reads is trailing price-to-earnings over growthEPS or growthRevenue", "cash and net cash per share: NOT_SERVED (debt_to_equity only)", "inventory and sales (C14): NOT_SERVED", "bank vs funded debt and maturities (C15): NOT_SERVED", "OCF and CapEx split (C16): NOT_SERVED (free_cash_flow_yield only)", "institutional ownership (C17, C24): NOT_SERVED", "fail gates (C24): NOT_TESTABLE; none reported as passed", "two_minute_drill: NOT_POSSIBLE (no business description; stories are profile industry plus ratios)", "own-history P/E (C17, C20): NOT_SERVED", "stop_position: DEFERRED_TO_HOUSE_LAW (C21 overridden)", "currency: no profile currency field in the packet; ratios used are unitless", "carried entries: ESTC, MA, V, MP from the 2026-10-21 pack, dated in their own profiles; multi-FY lists in reads are latest FY first"]}
+### DBX — ADVANCE (conviction 3) · PULLBACK · Seats
+
+- Split: support livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff; oppose detect-lens; abstain elder-lens. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 2 | decides | No lens corroboration: lens_positive 0, lens_warnings 2 (insti_money warn, resistance warn). Spine ma_50 35.1 over ma_100 32.49 over ma_200 28.86 is intact, structure_shift RANGE, day_vol 1.24. Three seats agree on trend; the lens does not. | Next lens pull shows lens_warnings 0 with lens_positive 2 or more while day_vol stays over 1. |
+| elder-lens | ABSTAIN | — | decides | No permission event: elder_5d [10, 10, 10, 7, 7] is green fading to blue and holding, never red. The ban is off but the Impulse forbids, it does not propose (C1). Entry 36.93 sits above value ma_20 35.43; his buy rests under the average (C10). Slope unverified. | A dip into ma_20 with elder_ge:7 held would make it a buy; elder at 6 or lower ends it. |
+| livermore | SUPPORT | 3 | decides | Established uptrend in a normal reaction: structure 86.3, ma_20 35.43 over ma_50 35.1 over ma_200 28.86, pct_from_52w_high -2.38. pct_from_pivot -3.25 means no break yet, so I buy only the clear of pivot_high 38.17. sma_distance_pct 5.22 is no chase. Market is RISK OFF: no entry before the break. | A close back under pivot_high after the clear, or a one-day fade from the high that my atr_14d translation flags as abnormal. My level is pivot_high; the engine bracket is information only. |
+| minervini | SUPPORT | 3 | decides | Template passes: entry 36.93 over ma_20 35.43, ma_50 35.1, ma_200 28.86; rs_rank_pct 91.59 LEADER; structure 86.3. Coiled under pivot_high 38.17, pct_from_pivot -3.25: not a breakout, the buy is the clear. Earnings leg unrun. | Close back under ma_50 35.1, or a clear of pivot_high 38.17 on day_vol under 1. |
+| oneil | SUPPORT | 3 | decides | Leader coiled under its pivot, not yet triggered: rs_leadership LEADER, rs_rank_pct 91.59, structure 86.3, pct_from_pivot -3.25 under pivot_high 38.17, day_vol 1.24. Act only on a pivot clear on heavy volume. Lynch revenue_growth_yoy -0.011 leaves sales growth unproven. | Close back under ma_50 35.1 before a volume breakout, or a pivot clear on thin volume that fails within days. |
+| raschke | SUPPORT | 3 | decides | Retracement family: structure 86.3 RANGE, mp_accel ACCELERATING hook, sma_distance_pct 5.22, day_vol 1.24. VALEN U&R MET: dipped under the 9-day average 36.69 and closed back above (reclaim day), a test at a double stop point. Holy Grail/Anti approximated, adx and stochastic not served. | Daily close under ma_20 35.43, or the reclaim fails on hourly closes. |
+| seow | SUPPORT | 3 | decides | Dip in a leader: rs_spy_20d 12.22, rs_leadership LEADER, ret_63d 10.8 clear the odds gate. ext_atr20 1.3 over ma_20 35.43 after two Elder 7 bars, from_52w_hi -2.38, run_10d 3.74: measured, not parabolic. U&R MET reclaim day. ma_40/CCI unserved, so no full set-up; trigger is a buy stop over bar_high. | Trade under bar_low or a close under ma_40 before the buy stop fires; or a fill that cannot hold above ma_20. |
+| thorp | SUPPORT | 2 | decides | No measured edge; a setup only. Mid range (atr 1.15 on entry 36.93) with ma_20 35.43 close under price, so a gap through one day's range costs little and the loss boundary is named. Stack ma_20 35.43 over ma_50 35.1 over ma_200 28.86; U&R MET on reclaim day. Size at macro 0.5. | Daily close under ma_20 35.43, or a close more than one atr 1.15 under bar_low. |
+| weis | SUPPORT | 3 | decides | Minor spring in a clean stack (W6/W23): VALEN U&R MET, dipped under the 9-day average 36.69 and closed back above; ma_20 35.43 over ma_50 35.1 over ma_100 32.49; day_vol 1.24 on the reclaim. Single-bar read, structure_shift RANGE; RISK OFF caps it at 3. | Close back under the reclaim-day low, or a close below ma_20 35.43 on day_vol above 1. |
+| wyckoff | SUPPORT | 3 | decides | Range-top geography: structure_shift RANGE, structure 86.3, coil ok, energy 73.1, pct_from_pivot -3.25 under pivot_high 38.17. U&R MET (9-day average 36.69 undercut, reclaimed) is the nearest served penetration-recovery; dip volume unseen. Spring not detectable. | Close under ma_20 35.43, or an hourly close back under pivot_high 38.17 after trading above it (upthrust). |
+| lynch (consult) | slow grower · NEUTRAL | — | no vote | pe_ratio 20.8, free_cash_flow_yield 0.116, revenue_growth_yoy -0.011 after 0.019, 0.076. Cash yield is the case; top line stalled, dividendYieldTTM 0. debt_to_equity -1.82 voids the equity test. | — |
+
+### GLBE — ADVANCE (conviction 3) · PULLBACK · Seats + Elder+Lens
+
+- Split: support minervini, oneil, raschke, weis, wyckoff; oppose none; abstain detect-lens, elder-lens, livermore, seow, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens count hides a split: lens_positive 3 (coil, structure, sector) beside lens_warnings 2 (leadership warn, insti_money warn). Spine ma_50 39.4 over ma_100 38.15 over ma_200 35.61 aligned, BULLISH_BOS on day_vol 1.52. A break needs leadership and institutional money; both warn. | insti_money turning ok leaves lens_warnings 1 and makes this a clean SUPPORT; a third warn makes it OPPOSE. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 10, 7]: last-bar drop from green, the profit-taking signal (C4), not a buy. mp 43 BUILDING is middling and there is no pattern label. BULLISH_BOS on day_vol 1.52 is not my instrument; days_to_earnings 15. No transition to nominate. | A reclaim of green with elder_ge:7 after a dip into ma_20 40.07 would reopen it. |
+| livermore | ABSTAIN | — | decides | Not a leader: rs IN-LINE, structure 57.9, mp 43.0 BUILDING. BULLISH_BOS on day_vol 1.52 with pct_from_pivot 1.81 is a real break, but pct_from_52w_high -1.91 is no new high and the 2026-11-18 print is an event. Watch only. | A close above the high on volume with structure rising would move me to support. |
+| minervini | SUPPORT | 3 | decides | Break on real volume from a flat-base-sized range: day_vol 1.52, pct_from_pivot 1.81 over pivot_high 40.81, BULLISH_BOS, base_range_pct 12.8, rs_rank_pct 83.41, pct_from_52w_high -1.91. Lynch fits the growth leg: revenue_growth_yoy 0.278. Thin: structure 57.9, rs_spy_20d 3.0. | Close back under pivot_high 40.81, or day_vol under 1 on the follow-through. |
+| oneil | SUPPORT | 2 | decides | The one break with real volume: day_vol 1.52, structure_shift BULLISH_BOS, pct_from_pivot 1.81 over pivot_high 40.81, rs_rank_pct 83.41. Weak links: rs_leadership IN-LINE, structure 57.9. Lynch fits (revenue_growth_yoy 0.278). Earnings 2026-11-18 sit inside the hold. | Close back under pivot_high 40.81, or volume fades on the next push. |
+| raschke | SUPPORT | 3 | decides | Breakout family: BULLISH_BOS on day_vol 1.52, lens.coil strong, energy 86.6 (contraction proxy; bar_range_history not served), pct_from_pivot 1.81 over pivot_high 40.81. Thin: structure 57.9, VALEN Undercut and rally FAILED (6/9), earnings 15 sessions. Buy the retest, not day one. | Daily close under pivot_high 40.81. |
+| seow | ABSTAIN | — | decides | Odds gate unproven: ret_63d 3.2, rs_leadership IN-LINE, rs_spy_20d 3.0. BULLISH_BOS on day_vol 1.52 is a breakout, not my dip; ext_atr20 0.97 over ma_20 40.07 is close, but undercut-and-rally FAILED (6/9). ma_40 and CCI unserved, so nothing to arm. | Flips to SUPPORT if ret_63d and rs_spy_20d widen and a bar's low reaches ma_20 with the close above ma_40. |
+| thorp | ABSTAIN | — | decides | Fits Lynch's fast-grower test (revenue_growth_yoy 0.278) but structure 57.9 and rs_spy_20d 3.0 are the thinnest of the multi-seat names, lens warns 2, and its print on 2026-11-18 is 15 sessions out. Range mid-pack (atr 1.52 on entry 41.55). Nothing measured; stand aside. | A hold above ma_20 40.07 on day_vol over 1 after the print. |
+| weis | SUPPORT | 2 | decides | Hinge resolved up on effort (W21): BULLISH_BOS with day_vol 1.52, pct_from_pivot 1.81, ma_20 40.07 over ma_50 39.4 over ma_100 38.15 over ma_200 35.61. Thin: structure 57.9, rs_spy_20d 3.0, VALEN Undercut and rally FAILED (6/9). I want the retest of pivot_high 40.81 to hold, not the break. | Close back under pivot_high 40.81 (failed breakout, W13). |
+| wyckoff | SUPPORT | 3 | decides | Edge break with effort: BULLISH_BOS on day_vol 1.52, pct_from_pivot 1.81 past pivot_high 40.81, coil strong, ext_atr20 0.97 so still near the edge. Structure 57.9 is thin; earnings 2026-11-18. Enter on a low-volume retest, not the break. | Hourly close back under pivot_high 40.81 (failed breakout), or the retest comes on heavy volume. |
+| lynch (consult) | fast grower · SUPPORT | — | no vote | revenue_growth_yoy 0.278 after 0.321, 0.393; net_profit_margin 0.139; debt_to_equity 0.028; free_cash_flow_yield 0.042. Fits the category. Watch pe_ratio 45.7 and the three-year deceleration. | — |
+
+### A — ADVANCE (conviction 3) · PULLBACK · Elder+Lens + Lens + Nominated
+
+- Split: support detect-lens, livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff; oppose none; abstain elder-lens. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 4 | decides | Highest lens agreement in the packet: lens_positive 5 (leadership, coil, structure, resistance, sector), lens_warnings 1 (insti_money warn). Spine ma_50 162.54 over ma_100 149.19 over ma_200 135.57 aligned, BULLISH_BOS on day_vol 1.06. VALEN U&R MET: reclaimed the rising trendline 174.96. | A new warn on leadership or coil, a close under ma_50 162.54, or structure_shift BEARISH_CHOCH. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 4, 4, 7, 7] INTERRUPTED: ban lifted two bars ago, but INTERRUPTED fails the trend leg (step 3) and Elder never acts on force alone (C9). VALEN's trendline reclaim and the lens read are not my instruments. No nomination. | INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 172.09 would reopen it. |
+| livermore | SUPPORT | 2 | decides | Sitting on the pivot at the high: pct_from_52w_high -0.15, pct_from_pivot 0.25, structure 84.2, BULLISH_BOS, day_vol 1.06, ma_20 172.09 over ma_50 162.54. Healthcare peers FTRE and HNGE print highs. Weak: mp 50.0, so two. | A close back under pivot_high-0.5atr, or a fade my atr_14d translation flags as abnormal; the VALEN trendline reclaim 174.96 failing is the early tell. Bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Sits on the pivot of a tight base: pct_from_pivot 0.25, base_range_pct 9.2, BULLISH_BOS, pct_from_52w_high -0.15, rs_rank_pct 91.71, ma_20 172.09, ma_50 162.54, ma_200 135.57. Soft: rs_spy_20d 0.69, day_vol 1.06, INTERRUPTED. Lynch eps_growth_yoy 0.03: earnings leg weak. Buy needs expansion. | Close back under pivot_high, or the clear fades on day_vol under 1. |
+| oneil | SUPPORT | 2 | decides | Tight base at the pivot: pct_from_pivot 0.25, from_52w_hi -0.15, BULLISH_BOS, structure 84.2, base_range_pct 9.2, rs_rank_pct 91.71, lens.sector strong. But day_vol 1.06 is under my test and rs_leadership is IN-LINE. Earnings in 18 sessions. Lynch: pe_ratio 34.6 on thin growth. | Close back under pivot_high, or a clear on thin volume that fails. |
+| raschke | SUPPORT | 3 | decides | Test family: VALEN U&R MET, dipped under the rising trendline 174.96 and closed back above (reclaim day); BULLISH_BOS, structure 84.2, lens positive 5 of 6. Cautions: elder INTERRUPTED, mp FADING (R13 label), earnings 18 sessions. Stop beyond ma_20 172.09. | Daily close under ma_20 172.09. |
+| seow | SUPPORT | 3 | decides | Pullback at the pivot: ext_atr20 1.09 over ma_20 172.09, from_52w_hi -0.15, ret_63d 26.51, rs_rank_pct 91.71, BULLISH_BOS. Two Elder 4 bars then 7: a small dip; U&R MET on the rising trendline. Soft: rs_spy_20d 0.69 barely beats SPY, rs_leadership IN-LINE. ma_40/CCI unserved. | Close under ma_40 or trade under bar_low first; or rs_spy_20d going negative. |
+| thorp | SUPPORT | 2 | decides | No measured edge. Mid range (atr 4.94 on entry 177.49) with ma_20 172.09 close under price (ext_atr20 1.09), so gap-through cost is small. Stack ma_20 over ma_50 162.54 over ma_200 135.57, no divergence, U&R MET on reclaim day (trendline 174.96). Print is 18 sessions out. Size at macro 0.5. | Close under ma_20 172.09, or a close more than one atr 4.94 under bar_low. |
+| weis | SUPPORT | 3 | decides | Spring of a rising trendline in a clean stack (W6/W23): U&R MET, dipped under the trendline 174.96 and closed back above; ma_20 172.09 over ma_50 162.54 over ma_100 149.19 over ma_200 135.57; elder 7.0 trace [7, 4, 4, 7, 7] shakeout then recovery; day_vol 1.06. mp_state FADING is not a decay signal (R13). | Close back under the reclaim-day low or ma_20 172.09. |
+| wyckoff | SUPPORT | 3 | decides | Tight base at the pivot: pct_from_pivot 0.25, pct_from_52w_high -0.15, base_range_pct 9.2, BULLISH_BOS, structure 84.2, coil strong. U&R MET (dip under the rising trendline 174.96, reclaimed) is the nearest served penetration-recovery; dip volume unseen. Earnings 18 sessions out. | Close back under the rising trendline 174.96 or ma_20 172.09. |
+| lynch (consult) | stalwart · CONTRADICT | — | no vote | pe_ratio 34.6 on eps_growth_yoy 0.03 and revenue_growth_yoy 0.067; free_cash_flow_yield 0.029, dividendYieldTTM 0.006. Good margins (net_profit_margin 0.195), but a stalwart priced for growth it lacks. | — |
+
+### CART — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Strength + PM lens + Nominated
+
+- Split: support detect-lens, livermore, minervini, oneil; oppose none; abstain elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Only runner_setup true in the packet, runner_conviction 4, with day_vol 2.53 and spine ma_50 48.62 over ma_100 47.21 over ma_200 43.08. Lens is blind on 4 of 6 ('--'), so lens_positive 1 is a floor and the tag is my only detect support. A detection, not a win rate; extension is a weight (R14). | runner_setup turning false, a lens re-pull showing warns, or a close under ma_50 48.62. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 7, 10, 10, 10]: no red-giving-way, a green plateau. day_vol 2.53 is a volume burst at the highs, how a trend expires (C23), and entry 60.08 is far above ma_20 49.49. Strength is real (mp 97 STRONG); no buy now, wait for a give-back to value. | A give-back to ma_20 49.49 with day_vol under 1 and elder_ge:7 held would earn a read. |
+| livermore | SUPPORT | 2 | decides | Rank 1 leader at the high: structure 92.6, mp_state STRONG, pct_from_52w_high -1.31, day_vol 2.53. But pct_from_pivot 14.05 and sma_distance_pct 23.57 are weights (R14): no entry at market. A normal reaction then a fresh high is my entry; the danger signal watches the fade. | A one-day fade from the high that my atr_14d translation flags as abnormal, on heavy volume: the climax. My level is pivot_high; bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Real strength: AQE rank 1, rs_spy_20d 37.43, rs_rank_pct 88.9, structure 92.6, day_vol 2.53, flow 100.0, runner True. But pct_from_pivot 14.05 and sma_distance_pct 23.57 is a chase, not a buy. Weight not veto (R14). Enter only a tight pause breaking up. | The pause fails: close under the flag low, or a fade off the high with heavy volume and no recovery. |
+| oneil | SUPPORT | 2 | decides | Strength is real: AQE rank 1, rs LEADER, structure 92.6, flow 100.0, day_vol 2.53 clears my volume test. Cost: pct_from_pivot 14.05 and sma_dist 23.57, a weight not a veto here. Not a chase: buy a new high only after a pause. Lynch SUPPORT. | Close under yesterday's low on heavy volume, distribution on the heaviest day. |
+| raschke | SUPPORT | 2 | advisory | Leader is real: rank 1, mp 97 STRONG, structure 92.6, runner True. But sma_distance_pct 23.57 with day_vol 2.53 is a range-expansion climax signature (C19): no market entry. Wait for the pullback toward ma_20 49.49, or a tight range with day_vol under 1. | Daily close under ma_20 49.49. |
+| seow | ABSTAIN | — | advisory | Rank 1 momentum is real: rs_spy_20d 37.43, mp 97.0 STRONG, day_vol 2.53. But ext_atr20 4.24 and run_10d 21.01 make a vertical leg, and a dip after a vertical run is disqualified (C4). Weight not veto (R14). Only a rebuilt base with a bar at ma_20 49.49 arms me; no market entry. | Flips to SUPPORT on a multi-bar pullback to ma_20 on small bars after the run cools. |
+| thorp | ABSTAIN | — | advisory | Rank 1 composite, but sma_dist 23.57 and ext_atr20 4.24 on day_vol 2.53: ma_20 49.49 is far under entry 60.08, so unwatched loss, not the stop, sets size. Nothing measured. Momentum lane: advisory; macro size 0.5 at most. | Day_vol back under 1 in a tight range near ma_20. |
+| weis | OPPOSE | 2 | advisory | Climax-shaped, not a failure of weakness: ext_atr20 4.24, sma_dist 23.57, run_10d 21.01% on day_vol 2.53. The contraction (W21) I buy has not formed. I enter only after day_vol under 1 in a tight range near ma_20 49.49. Momentum lane: advisory. | A tight-range hold above ma_20 with day_vol under 1, then a close above the climax high, voids this. |
+| wyckoff | OPPOSE | 3 | advisory | Climax profile: day_vol 2.53 (highest in the set), sma_distance_pct 23.57, run_10d 21.01%, ext_atr20 4.24. Heavy effort at a vertical extreme; the climax is not the entry, the failed low-volume test is. | A tight low-volume range holding above ma_20 49.49 (the test passes). |
+| lynch (consult) | stalwart · SUPPORT | — | no vote | debt_to_equity 0.015, free_cash_flow_yield 0.088, revenue_growth_yoy 0.108 (0.110, 0.192 prior), net_profit_margin 0.120. Cash earnings run ahead of pe_ratio 29.7; eps_growth_yoy only 0.01. | — |
+
+### BRZE — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support livermore, minervini; oppose elder-lens, oneil; abstain detect-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance '--'; lens_positive 0 and lens_warnings 0 are not agreement. Spine ma_50 30.27 over ma_100 27.15 over ma_200 24.35 aligned, day_vol 0.97. Extension is a weight under R14 (VALEN parabolic WARNING). Wrong on close under ma_50 30.27. | Lens re-pull with three strong turns this to SUPPORT; two warns, to OPPOSE. |
+| elder-lens | OPPOSE | 2 | decides | C4, not extension alone: elder_5d [10, 10, 10, 7, 7] shows green going away at the most extended name in the set (sma_dist 51.23%, ext_atr20 6.98), and VALEN flags Parabolic WARNING. Momentum is real (mp 100), but Elder books profit there; he does not initiate. His buy sits under ma_20 33.29. | elder_5d back to 10 on rising volume with a hold above ma_20 33.29 would show the fade was a pause. |
+| livermore | SUPPORT | 2 | decides | Momentum is real: mp 100.0 STRONG ACCELERATING, structure 86.7, pct_from_52w_high -0.22, rs_spy_20d 97.04. But run_10d 58.24 and sma_distance_pct 51.23 are the weights (R14) and VALEN flags Parabolic WARNING. No entry at market; I buy only a new high after a normal reaction. | A one-day fade from the high that my atr_14d translation flags as abnormal is my danger signal and ends the idea. Bracket INVALID, information only. |
+| minervini | SUPPORT | 2 | decides | Momentum is real: rs_spy_20d 97.04, rs_rank_pct 96.71, ret_63d 70.63, mp 100.0 STRONG, pct_from_52w_high -0.22. But sma_distance_pct 51.23, run_10d 58.24 and Valen parabolic WARNING mean no entry now. Where I buy: a tight pause that breaks up on expansion. Wrong: the pause fails. | The pause breaks down: close under the pause low, or a fade off the high on heavy volume. |
+| oneil | OPPOSE | 4 | decides | Climax, not an entry: entry 45.78 against ma200 24.35 is past the climax line, sma_dist 51.23, ext_atr20 6.98, run_10d 58.24% on day_vol 0.97. VALEN: Parabolic WARNING (3/4), Episodic pivot (delayed) PAST_PIVOT. Sell into it if held. Lynch: net_profit_margin -0.136. | A new base forms well above ma_50 30.27 and breaks on heavy volume. |
+| raschke | SUPPORT | 1 | advisory | Momentum real (rs_spy_20d 97.04, mp 100 STRONG) but a climax signature, not a setup: sma_distance_pct 51.23, run_10d 58.24%, VALEN Parabolic WARNING (3/4), High tight flag FAILED (5/11). C19 says take profit, not buy. Only the first deep pullback toward ma_20 33.29 qualifies; extension is a weight (R14). | Daily close under ma_20 33.29. |
+| seow | OPPOSE | 4 | advisory | Parabolic: run_10d 58.24 is past my stand-in for C4's vertical run, AQE grades Parabolic WARNING (3/4), ext_atr20 6.98. A dip after a vertical run is disqualified however clean (R7). Momentum is real (rs_spy_20d 97.04, mp 100.0) but I will not call a set-up. Advisory under R14. | Wrong if it digests on small bars above ma_20 33.29 until the vertical run ages out of the window. |
+| thorp | OPPOSE | 2 | advisory | Worst case sets this: run_10d 58.24 and sma_dist 51.23 put ma_20 33.29 far under entry 45.78, and the parabolic grade is WARNING (3/4). No earnings under it (net_profit_margin -0.136). No measured edge; the move is the only evidence. Extension is a weight (R14); advisory. | Parabolic read clears on a quiet consolidation that keeps the move. |
+| weis | OPPOSE | 3 | advisory | Vertical, not a failure of weakness: sma_dist 51.23, ext_atr20 6.98, run_10d 58.24%, VALEN Parabolic WARNING (3/4) and High tight flag FAILED (5/11). Effort is flat at day_vol 0.97 while price runs; the contraction (W21) I buy has not formed. Only entry is a hinge well above ma_20 33.29; nothing to buy today. | A tight multi-day hinge on day_vol under 1 followed by a high-volume close above it voids this. |
+| wyckoff | OPPOSE | 3 | advisory | Parabolic climax profile: sma_distance_pct 51.23, run_10d 58.24%, ext_atr20 6.98; VALEN Parabolic WARNING (3/4), high tight flag FAILED. Mid-move at the vertical extreme; the climax is not the entry. day_vol 0.97 shows no heavy test yet and I cannot see FORCE. | A multi-session low-volume range far above ma_20 33.29 that holds, or a new high on day_vol well above 1 with follow-through. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.244 after 0.258, 0.327 decelerating; net_profit_margin -0.136, operatingProfitMarginTTM -0.134, pe_ratio -44.5, free_cash_flow_yield 0.016. No earnings; sma_distance_pct 51.23 is price, not business. | — |
+
+### NTSK — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Strength + AQE leader + Strength seat (rule)
+
+- Split: support livermore, minervini; oppose oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance '--'; lens_positive 0 and lens_warnings 0 are not agreement. Spine ma_50 17.7 over ma_100 14.81 over ma_200 13.04 aligned, day_vol 1.24. Extension is a weight under R14 (VALEN parabolic WARNING). Wrong on close under ma_50 17.7. | Lens re-pull with three strong turns this to SUPPORT; two warns, to OPPOSE. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [8, 10, 10, 10, 10] SUSTAINED, mp 97 STRONG/ACCELERATING: permission on and momentum real, but a plateau (C24 only) at sma_dist 47.77% with VALEN Parabolic WARNING. Elder buys under the average (C10): wait ma_20 20.54. No stand-alone trigger. | A give-back toward ma_20 20.54 with elder_ge:7 held would earn a read; elder at 6 or lower ends the case. |
+| livermore | SUPPORT | 2 | decides | At the high with a group: pct_from_52w_high 0.0, structure 68.4, mp 97.0 STRONG ACCELERATING, rs_spy_20d 50.7, day_vol 1.24; TENB prints a high too, so cybersecurity confirms (C14). Weights: sma_distance_pct 47.77, ext_atr20 4.28, VALEN Parabolic WARNING. | A one-day fade from the high that my atr_14d translation flags as abnormal, or TENB losing its high. My level is bar_low; bracket INVALID, information only. |
+| minervini | SUPPORT | 2 | decides | Top RS at a new high: rs_rank_pct 99.39, rs_spy_20d 50.7, ret_6m 162.02, pct_from_52w_high 0.0, ma_20 20.54, ma_50 17.7, ma_200 13.04, day_vol 1.24, SUSTAINED. But sma_distance_pct 47.77, parabolic WARNING, net_profit_margin -0.918. Only a tight pause breaking up on expansion; weight not veto (R14). | The pause breaks down: close under the pause low, or a fade off the high on heavy volume. |
+| oneil | OPPOSE | 4 | decides | Climax reading: entry 26.15 against ma200 13.04 is past the climax line, sma_dist 47.77, run_10d 23.64%, div BEARISH/2, High tight flag FAILED (7/12), Parabolic WARNING (2/4). Lynch: net_profit_margin -0.918, d/e 4.67. A name to sell into, not to buy. | A new tight base forms and breaks out on heavy volume. |
+| raschke | SUPPORT | 1 | advisory | Momentum real (rs_spy_20d 50.7, mp 97, new high) but parabolic: sma_distance_pct 47.77, VALEN Parabolic WARNING (2/4), High tight flag FAILED (7/12), div BEARISH/2 advisory, debt_to_equity 4.67. Entry only on the first pullback toward ma_20 20.54; extension is a weight (R14). | Daily close under ma_20 20.54. |
+| seow | ABSTAIN | — | advisory | Momentum real: rs_rank_pct 99.39, ret_63d 118.65, new high, mp 97.0. But ext_atr20 4.28 and run_10d 23.64 with div BEARISH/2 and Parabolic WARNING (2/4) make it the extension C3 forbids. Lynch: net_profit_margin -0.918. Weight not veto (R14). Dip to ma_20 only. | Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40. |
+| thorp | OPPOSE | 2 | advisory | Parabolic WARNING (2/4), high tight flag FAILED (7/12), BEARISH divergence count 2 on sma_dist 47.77, and net_profit_margin -0.918 with debt_to_equity 4.67 (Lynch). ma_20 20.54 is far under entry 26.15. Nothing measured; no near boundary to size to. Advisory. | Divergence clears and a base forms above ma_20 20.54. |
+| weis | OPPOSE | 3 | advisory | Parabolic with a divergence: sma_dist 47.77, ext_atr20 4.28, run_10d 23.64%, div BEARISH/2, VALEN Parabolic WARNING (2/4) and High tight flag FAILED (7/12). New high pct_from_52w_high 0.0 at this stretch is ending-action risk (W14/W15); nothing failed to buy. | A pullback to ma_20 20.54 on dry volume that holds, then a close to a new high. |
+| wyckoff | OPPOSE | 3 | advisory | Parabolic: sma_distance_pct 47.77, ret_63d 118.65, ext_atr20 4.28, div BEARISH/2 (advisory), VALEN Parabolic WARNING (2/4) and high tight flag FAILED. A climax is not an entry; the failed low-volume test is. Mid-move, no edge. | A base holding above ma_20 20.54 on dry day_vol. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | net_profit_margin -0.918, operatingProfitMarginTTM -0.947, debt_to_equity 4.67, beta 2.989; revenue_growth_yoy 0.317 after 0.323. Growth bought with losses; survival liquidity (cash) not served. | — |
+
+### CSX — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Seats + Strength + AQE leader
+
+- Split: support elder-lens, livermore, minervini; oppose oneil; abstain detect-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens split: lens_positive 2 (leadership, structure), lens_warnings 1 (coil warn). BULLISH_BOS printed on day_vol 0.9, below normal, and ma_50 48.77 sits a hair under ma_100 48.92 (ma_200 45.36): ignition on thin participation, spine not yet aligned. | A follow-through close with day_vol over 1 and ma_50 back over ma_100 lifts this to SUPPORT. |
+| elder-lens | SUPPORT | 2 | decides | elder_5d [5, 10, 10, 10, 10] ACCELERATION, mp 84 STRONG: ban lifted at the 5-to-10 bar, green held since. BULLISH_BOS came on day_vol 0.9 and ma_20 48.42 sits under ma_50 48.77, so the trend leg is not clean. Buy the dip toward ma_20 only; no chase at 52.27. | elder_5d to 6 or lower, or a close under ma_20 48.42 on day_vol over 1. |
+| livermore | SUPPORT | 3 | decides | BULLISH_BOS with structure 84.2 and mp_state STRONG ACCELERATING; pct_from_pivot 0.23 just clears pivot_high 52.15, but pct_from_52w_high -1.8 is no new high and day_vol 0.9 is thin. I act on a new high with volume. sma_distance_pct 7.17. | Close back under pivot_high 52.15 (my level; bracket INVALID, information only), or no fast follow-through on volume after the clear: the book's own lack-of-follow-through warning. |
+| minervini | SUPPORT | 2 | decides | Leader breaking its pivot: BULLISH_BOS, pct_from_pivot 0.23, structure 84.2, elder ACCELERATION. But day_vol 0.9 is a break without expansion, rs_rank_pct 71.46 barely clears the floor, Lynch shows eps_growth_yoy -0.140. Act only on a volume-backed close above. | Close back under pivot_high 52.15. |
+| oneil | OPPOSE | 3 | decides | Break on no volume: structure_shift BULLISH_BOS with pct_from_pivot 0.23 but day_vol 0.9, and rs_rank_pct 71.46 is under my leadership floor. ma_20 48.42 still under ma_50 48.77, lens.coil warn. Lynch: eps_growth_yoy -0.140 after earlier declines. | A second close above pivot_high 52.15 on heavy volume with ma_20 back over ma_50. |
+| raschke | SUPPORT | 2 | advisory | Breakout family day one: BULLISH_BOS, pct_from_pivot 0.23 over pivot_high 52.15, mp 84 STRONG, elder ACCELERATION. But day_vol 0.9, ma_20 48.42 under ma_50 48.77, VALEN Episodic pivot (delayed) FAILED (8/10): ignition without volume, so need follow-through. | Daily close back under pivot_high 52.15. |
+| seow | ABSTAIN | — | advisory | Odds gate thin: ret_63d 3.02 and day_vol 0.9 on the BULLISH_BOS print; ext_atr20 3.74 is extension, not a dip. rs_spy_20d 10.66 and mp 84.0 STRONG keep the momentum real, so weight not veto (R14). ma_20 48.42 trend leg is unproven with ma_40 unserved. Wait for a dip and a stop over bar_high. | Flips on a pullback bar reaching ma_20 while ret_63d improves; wrong on a close under ma_40. |
+| thorp | ABSTAIN | — | advisory | Calm range (atr 1.03 on entry 52.27) but the break printed on day_vol 0.9 with ma_20 48.42 still under ma_50 48.77, and Lynch shows falling earnings (eps_growth_yoy -0.140). A structure is not an edge; nothing measured. Momentum lane: advisory. | A second close above the break on day_vol over 1 would put the stack in order. |
+| weis | OPPOSE | 2 | advisory | Break without effort (W1/W13): BULLISH_BOS prints on day_vol 0.9 with ma_20 48.42 under ma_50 48.77 under ma_100 48.92, so the trend gate is only half met. pct_from_pivot 0.23 is a poke, not a failure of weakness. VALEN: Episodic pivot (delayed) FAILED (8/10). | A second close above pivot_high on day_vol over 1 with ma_20 crossing above ma_50 proves me wrong. |
+| wyckoff | SUPPORT | 2 | advisory | Congestion just left: ma_20 48.42, ma_50 48.77, ma_100 48.92 tangled, BULLISH_BOS only 0.23 over pivot_high 52.15, structure 84.2. But day_vol 0.9 is thin effort and coil warn: an upthrust until a low-volume retest holds. | Hourly close back under pivot_high 52.15 after trading above it, or the retest comes on rising day_vol. |
+| lynch (consult) | cyclical · CONTRADICT | — | no vote | pe_ratio 27.1 on eps_growth_yoy -0.140, after -0.022, -0.062: three straight FY declines; revenue_growth_yoy -0.031; free_cash_flow_yield 0.033. Growth multiple on shrinking earnings; no trough evidence served. | — |
+
+### APLE — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Seats + PM lens
+
+- Split: support elder-lens, livermore; oppose oneil, raschke, seow, weis, wyckoff; abstain detect-lens, minervini, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | lens_positive 2 (leadership, sector), lens_warnings 1 (coil warn), the same vector as DRH, so lodging counts once. ma_50 16.36 a hair under ma_100 16.4 (ma_200 14.56), day_vol 1.11. HST carries the best lodging vector; APLE adds no independent lens support. | A third strong lens with coil off warn and ma_50 back over ma_100 turns this to SUPPORT. |
+| elder-lens | SUPPORT | 2 | decides | Best lodging expression on my read: elder_5d [10, 10, 7, 7, 10] CORRECTION_REENTRY with mp 94 STRONG is the menu-legal dip-and-reclaim (R8), but the dip held at 7 and never went red, so incomplete. Extended (sma_dist 13.78%), days_to_earnings 6: bid toward ma_20 16.98 or stand aside. | elder_5d to 6 or lower, or a gap through ma_20 16.98 on the print. |
+| livermore | SUPPORT | 2 | decides | New high pct_from_52w_high 0.0, structure 80.0, ABOVE_STRUCTURE, mp_state STRONG, day_vol 1.11: the Key Price pair with DRH. Weights: ext_atr20 4.32, print in 6 sessions, mp_accel_state DECELERATING. DRH is the expression; APLE is the confirming peer. | A one-day fade from the high that my atr_14d translation flags as abnormal, or DRH failing to hold its high (C14). Bracket INVALID, information only. |
+| minervini | ABSTAIN | — | decides | Strong tape, wrong place to buy: new high pct_from_52w_high 0.0, rs_rank_pct 87.93, but pct_from_pivot 11.5 and ext_atr20 4.32 is the chase my method refuses; days_to_earnings 6; revenue_growth_yoy -0.013 leaves the earnings leg empty. One lodging bet with DRH and HST. | A new tight base under a fresh pivot_high, then a volume-backed clear. |
+| oneil | OPPOSE | 4 | decides | Too late: pct_from_pivot 11.5 is past the hard-rejection line for chasing, with ext_atr20 4.32 and earnings 2026-11-05 six sessions out. New high (from_52w_hi 0.0) and rs LEADER are real but the buy zone is gone. Lodging is one bet with DRH and HST. | A fresh tight base forms above the old pivot and breaks on heavy volume. |
+| raschke | OPPOSE | 2 | decides | No retracement exists: sma_distance_pct 13.78, VALEN 4.3 ATR extended, mp_accel DECELERATING, earnings in 6 sessions (overnight gap risk, C9). Lodging trio is one idea; DRH is the better expression. | A pullback holding ma_20 16.98 on day_vol under 1 flips me. |
+| seow | OPPOSE | 3 | decides | Tagged PULLBACK but no dip exists: ext_atr20 4.32 over ma_20 16.98, run_10d 12.51, new high from_52w_hi 0.0. Buying it is buying the extension (C3). APLE, DRH and HST are one lodging bet. Entry only after a real pullback to ma_20. | Wrong if it keeps making highs on bars that never reach ma_20; I accept missing it. |
+| thorp | ABSTAIN | — | decides | Same lodging bet as HST and DRH, counted once. Calmest of the three (vol_30d_ann 0.1847) but most extended (ext_atr20 4.32) and its print on 2026-11-05 is 6 sessions out: a gap event no stop covers. Nothing measured. Best single expression is HST. | A pullback toward ma_20 16.98 after the print. |
+| weis | OPPOSE | 2 | decides | Thrust shortening and nothing to buy: mp_accel_state DECELERATING (W20 proxy only) at sma_dist 13.78 and ext_atr20 4.32; lane says PULLBACK but price is far from ma_20 16.98. days_to_earnings 6. Lodging is one bet with DRH and HST; APLE is the worst on extension. | A pullback that holds ma_20 16.98 on dry volume (day_vol under 1) would void this. |
+| wyckoff | OPPOSE | 2 | decides | No pullback to buy: sma_distance_pct 13.78, ext_atr20 4.32 at a new high, mp STRONG/DECELERATING, earnings 2026-11-05 six sessions out. Lodging APLE/DRH/HST is one idea; mid-move, no edge. | A retest of ma_20 16.98 on day_vol under 1 that holds. |
+| lynch (consult) | slow grower · NEUTRAL | — | no vote | dividendYieldTTM 0.053, free_cash_flow_yield 0.078, revenue_growth_yoy -0.013, eps_growth_yoy -0.169. P/E is the wrong yardstick for a REIT; FFO, payout not served. debt_to_equity 0.036 unverified. | — |
+
+### DRH — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Seats
+
+- Split: support livermore, raschke; oppose oneil, seow, weis, wyckoff; abstain detect-lens, elder-lens, minervini, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Same lens vector as APLE: lens_positive 2 (leadership, sector), lens_warnings 1 (coil warn). Spine ma_50 12.68 over ma_100 12.51 over ma_200 11.24 aligned, day_vol 1.17. Short of my line of 3 strong; counts with APLE and HST as one lodging exposure. | A third strong lens with coil off warn turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 7, 7, 7, 7], pattern None: a dip to blue that never reclaimed green, no event and no CORRECTION_REENTRY. Same lodging bet as APLE, which has the better form; count the group once. Permission holds (not red). | elder_5d back to 10 with CORRECTION_REENTRY and mp STRONG would earn a read. |
+| livermore | SUPPORT | 3 | decides | Best base of the lodging group: new high pct_from_52w_high 0.0, structure 84.2, ABOVE_STRUCTURE, day_vol 1.17, ext_atr20 3.06. APLE and HST confirm the group. mp_accel_state DECELERATING and pct_from_pivot 9.37 are the cost, so three, not four. | A one-day fade from the high that my atr_14d translation flags as abnormal, or APLE failing to hold its high (C14). My level is ma_20 13.11; bracket INVALID, information only. |
+| minervini | ABSTAIN | — | decides | Cleanest lodging stack (ma_20 13.11, ma_50 12.68, ma_100 12.51, ma_200 11.24), rs_rank_pct 87.32, pct_from_52w_high 0.0, but pct_from_pivot 9.37 and ext_atr20 3.06 is past a few percent. eps_growth_yoy 1.44 is a cycle swing, not acceleration. Same bet as APLE and HST. | A fresh tight base and a volume-backed clear of the new pivot_high. |
+| oneil | OPPOSE | 3 | decides | Late and unconfirmed: pct_from_pivot 9.37 is a late buy carrying a warning and day_vol 1.17 is under my volume test. Best base of the lodging group (structure 84.2, from_52w_hi 0.0) but the same bet as APLE and HST. mp FADING is not my reason. | Pullback holds ma_20 13.11 and re-breaks the new pivot on heavy volume. |
+| raschke | SUPPORT | 2 | decides | Best lodging expression: not among the earnings-within-19-sessions names, structure 84.2 ABOVE_STRUCTURE, rs LEADER. Not yet a pullback (sma_distance_pct 11.34), so entry waits for the first retracement toward ma_20 13.11. mp FADING is the R13 default label, not decay. | Daily close under ma_20 13.11. |
+| seow | OPPOSE | 2 | decides | No dip behind the PULLBACK tag: ext_atr20 3.06 over ma_20 13.11, new high from_52w_hi 0.0, run_10d 7.29. Same lodging bet as APLE and HST, counted once. mp 94.0 FADING is R13, not a signal. Method waits for ma_20 and a buy stop over bar_high. | Wrong if it keeps climbing on bars that never reach ma_20. |
+| thorp | ABSTAIN | — | decides | Same lodging bet as HST and APLE, counted once. Widest of the three on range (vol_30d_ann 0.2006), no sample behind it (signal_n 0), thinnest yield per Lynch. Not additive to HST. Nothing measured. | A pullback toward ma_20 13.11 on calm day_vol. |
+| weis | OPPOSE | 2 | decides | Same lodging bet as APLE and HST. mp_accel_state DECELERATING (W20 proxy) at sma_dist 11.34 and ext_atr20 3.06, elder 7.0 with no pattern. A new high at pct_from_52w_high 0.0 is not a failure of weakness; there is no spring to buy. | A hold above ma_20 13.11 on day_vol under 1 followed by a fresh high on rising effort. |
+| wyckoff | OPPOSE | 2 | decides | Same lodging idea as APLE, mid-move at the high: sma_distance_pct 11.34, ext_atr20 3.06, mp 94 FADING/DECELERATING (FADING alone is no signal), coil warn so contraction fails. No edge to buy. | A retest of ma_20 13.11 on light day_vol that holds. |
+| lynch (consult) | cyclical · NEUTRAL | — | no vote | revenue_growth_yoy -0.008; eps_growth_yoy 1.44 after -0.50, -0.23: earnings swing with the lodging cycle. dividendYieldTTM 0.032 (thinnest of three hotel REITs), free_cash_flow_yield 0.057, debt_to_equity 0.785. | — |
+
+### FTRE — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Seats + Elder+Lens + Strength + PM lens
+
+- Split: support detect-lens, elder-lens, livermore, minervini; oppose oneil; abstain none. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Clean lens support: lens_positive 3 (leadership, resistance, sector), lens_warnings 1 (coil warn). Spine ma_50 19.95 over ma_100 18.85 over ma_200 15.61 aligned, day_vol 1.09. Extension is a weight under R14, not a veto; the coil warn holds conviction at 2. | lens_warnings rising to 2, a close under ma_50 19.95, or structure_shift BEARISH_CHOCH. |
+| elder-lens | SUPPORT | 2 | decides | Incomplete dip-and-reclaim: elder_5d [10, 10, 7, 7, 10] CORRECTION_REENTRY, mp 96 STRONG; the dip stayed at 7, never red, so no red-giving-way. Entry 24.43 chases ma_20 21.83. Bid only into value; bearish divergence is outside my menu. | elder_5d to 6 or lower, or a close under ma_50 19.95. |
+| livermore | SUPPORT | 3 | decides | Leader at a new high: pct_from_52w_high 0.0, structure 74.1, ABOVE_STRUCTURE, mp_state STRONG at mp 96.0 ACCELERATING, day_vol 1.09, pct_from_pivot 3.91. Healthcare peers HNGE and A sit at their highs. sma_distance_pct 22.45 is the extension weight (R14), not a veto. | A one-day fade from the high that my atr_14d translation flags as abnormal, or A and HNGE failing to hold their highs (C14). My level is pivot_high; bracket INVALID, information only. |
+| minervini | SUPPORT | 2 | decides | Top-tier leader at highs: rs_rank_pct 98.17, pct_from_52w_high 0.0, ma_20 21.83, ma_50 19.95, ma_200 15.61, mp 96.0 STRONG, pct_from_pivot 3.91. Costs: sma_distance_pct 22.45, div_bear_count 3 (advisory), net_profit_margin -0.032 so earnings leg fails. Momentum lane: weight not veto. | Close under ma_20 21.83, or a new high on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | Leader with a cost: rs_rank_pct 98.17, from_52w_hi 0.0, pct_from_pivot 3.91, but day_vol 1.09 fails my volume test, div BEARISH/3 says buying is thinning, sma_dist 22.45. Lynch: net_margin -0.032, eps_growth_yoy -1.95, d/e 2.13 contradict the earnings leg. | Divergence clears and a new high prints on heavy volume. |
+| raschke | SUPPORT | 2 | advisory | Strength real: rs_rank_pct 98.17, mp 96 STRONG, new high. Most extended multi-seat name (sma_distance_pct 22.45) with div BEARISH/3 advisory: range-expansion climax risk (C19). No market entry; first pullback toward ma_20 21.83 only. | Daily close under ma_20 21.83. |
+| seow | ABSTAIN | — | advisory | Real momentum: rs_spy_20d 23.04, ret_6m 127.04, mp 96.0 STRONG, from_52w_hi 0.0. But ext_atr20 2.32 over ma_20 21.83, run_10d 16.78 and div BEARISH/3 mark a late leg. Weight not veto (R14). Buy only the dip to ma_20 by a stop over bar_high; wrong on a close under ma_40. | Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40. |
+| thorp | OPPOSE | 2 | advisory | Top-quartile range for the set (atr 1.12 on entry 24.43) with BEARISH divergence count 3 and sma_dist 22.45: the condition behind the move is compressing (C19). Lynch flags leverage (debt_to_equity 2.13). No measured edge. Advisory in the momentum lane. | Divergence clears (div NONE) with a new high on day_vol over 1. |
+| weis | SUPPORT | 2 | advisory | Real strength but late: rs_rank_pct 98.17, mp 96.0 STRONG ACCELERATING, ma_20 21.83 over ma_50 19.95 over ma_100 18.85. div BEARISH/3 and sma_dist 22.45 make this an ending-action caution (W14/W15), not a reversal call. I buy only a give-back toward ma_20, never 24.43. | Close below ma_50 19.95, or a new high that closes back under the prior high on day_vol above 1. |
+| wyckoff | OPPOSE | 2 | advisory | Most extended multi-seat name: sma_distance_pct 22.45, run_10d 16.78%, div BEARISH/3 (advisory) at a new high. Mid-move, the large-scale trade is not here; ma_20 21.83 sits far under entry 24.43. | A base forms: several closes holding above ma_20 21.83 on day_vol under 1. |
+| lynch (consult) | turnaround · CONTRADICT | — | no vote | net_profit_margin -0.032, pe_ratio -26.3, eps_growth_yoy -1.95 after -90.75; debt_to_equity 2.13 (debt about 68 percent of capital, my arithmetic); revenue_growth_yoy 0.010. Not a clean-balance-sheet turnaround. | — |
+
+### HNGE — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Elder+Lens + Strength + PM lens + Nominated
+
+- Split: support detect-lens, elder-lens, livermore, minervini; oppose oneil; abstain none. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Lens agreement: lens_positive 3 (leadership, resistance, sector), lens_warnings 1 (coil warn). Spine ma_50 96.48 over ma_100 87.73 over ma_200 66.02 aligned. day_vol 0.66 is thin for a MOMENTUM-lane name at the high; extension is a weight under R14, thin participation holds conviction at 2. | lens_warnings rising to 2, or a close under ma_50 96.48. |
+| elder-lens | SUPPORT | 2 | decides | Incomplete dip-and-reclaim: elder_5d [10, 10, 10, 7, 10] CORRECTION_REENTRY, mp 85 STRONG; the dip bottomed at 7, never red. Entry 113.9 is far above ma_20 103.9, a chase; bid only into value. Extended (sma_dist 18.05%) is a weight (R14), the thin form is the reason. | elder_5d to 6 or lower, or a close under ma_50 96.48. |
+| livermore | SUPPORT | 3 | decides | Leader at a new high: pct_from_52w_high 0.0, structure 73.7, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING. FTRE and A in the same sector print highs: my group confirmation. Cost: day_vol 0.66 and sma_distance_pct 18.05 are weights, so three. | A fade from the high that my atr_14d translation flags as abnormal, or FTRE and A failing to hold their highs. My level is ma_20 103.9; bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Superperformer at its high: rs_rank_pct 99.27, ret_6m 154.58, pct_from_52w_high 0.0, ma_20 103.9, ma_50 96.48, ma_100 87.73, ma_200 66.02, mp 85.0 STRONG; revenue_growth_yoy 0.506 is a real earnings-leg candidate. Costs: sma_distance_pct 18.05, day_vol 0.66 thin, short history. Needs a new closing high on expansion. | A new high prints on day_vol under 1, or close under ma_20 103.9. |
+| oneil | OPPOSE | 2 | decides | A leader on thin volume: rs_rank_pct 99.27, from_52w_hi 0.0, but day_vol 0.66 means the new high is not being bought; sma_dist 18.05, structure 73.7. History is short and base stage is UNSERVED. Lynch: revenue_growth_yoy 0.506 is past the sustainable marker. | A new high on heavy volume without further extension. |
+| raschke | SUPPORT | 2 | advisory | Strength real: rs_rank_pct 99.27, mp 85 STRONG/ACCELERATING, new high, elder CORRECTION_REENTRY. Climax-risk extension: sma_distance_pct 18.05 on day_vol 0.66 (weight, R14). Enter the first pullback toward ma_20 103.9, not at entry 113.9. | Daily close under ma_20 103.9. |
+| seow | ABSTAIN | — | advisory | Elite momentum: rs_rank_pct 99.27, ret_63d 53.79, rs_spy_20d 18.92, mp 85.0 STRONG, from_52w_hi 0.0. But ext_atr20 2.35 over ma_20 103.9 on day_vol 0.66; the Elder 7 dip bar never turned red. Chasing is C3's extension. Weight not veto (R14). Dip to ma_20, buy stop over bar_high. | Flips to SUPPORT on a small-bar pullback that reaches ma_20 and holds above ma_40. |
+| thorp | ABSTAIN | — | advisory | Extended (sma_dist 18.05, ext_atr20 2.35) on thin turnover day_vol 0.66; ma_20 103.9 sits far under entry 113.9, so unwatched loss sets size. Lynch: growth above 30 percent is an unsustainability marker (revenue_growth_yoy 0.506). Nothing measured. Momentum lane: advisory. | A hold above ma_20 103.9 on day_vol over 1. |
+| weis | SUPPORT | 2 | advisory | Dry-volume dip inside a vertical uptrend: elder 10.0 trace [10, 10, 10, 7, 10] CORRECTION_REENTRY, day_vol 0.66; low volume with progress is not bearish (W4). Trend gate strong (ma_20 103.9 over ma_50 96.48 over ma_200 66.02). Cost: sma_dist 18.05. I buy ma_20, not 113.9. | Close below ma_20 103.9 on day_vol above 1. |
+| wyckoff | OPPOSE | 2 | advisory | Mid-move on thin effort: sma_distance_pct 18.05, ext_atr20 2.35, new high on day_vol 0.66 with resistance lens strong. The edge is far under entry 113.9; ma_20 103.9 would be the retest. Revenue pace is Lynch's concern, not mine. | A pullback to ma_20 103.9 that holds on day_vol under 1. |
+| lynch (consult) | fast grower · NEUTRAL | — | no vote | revenue_growth_yoy 0.506 after 0.334 (above 30 percent, Lynch unsustainability marker); net_profit_margin 0.151, debt_to_equity 0.017, pe_ratio 84.6. 2023 growth entries read 0: history thin. | — |
+
+### HST — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Elder+Lens + Nominated
+
+- Split: support detect-lens, thorp; oppose oneil, seow, weis; abstain elder-lens, livermore, minervini, raschke, wyckoff. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Best lodging vector: lens_positive 3 (leadership, resistance, sector), lens_warnings 1 (coil warn), against APLE and DRH at 2 each. ma_50 22.82 under ma_100 23.46 but over ma_200 21.83: partial, gate holds at ma_200. day_vol 1.0. Count lodging once; HST is the lens pick. | A close under ma_50 22.82, or lens_warnings rising to 2. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 7, 7, 7, 7], no pattern: a dip to blue never reclaimed, no event. Same lodging bet as APLE, the better form; count the group once. Permission holds. | elder_5d back to 10 with CORRECTION_REENTRY and mp STRONG would earn a read. |
+| livermore | ABSTAIN | — | decides | Third lodging name: pct_from_52w_high -1.25, structure 76.8 ABOVE_STRUCTURE, but mp 90.0 DECELERATING and no new high yet. Same bet as DRH and APLE; DRH is my expression. No second lodging position from this seat. | — |
+| minervini | ABSTAIN | — | decides | Lodging bet, no pivot: rs_rank_pct 76.59, pct_from_52w_high -1.25, but ma_50 22.82 under ma_100 23.46, sma_distance_pct 10.54, ext_atr20 3.27, no base to buy. Same idea as APLE and DRH; I will not stack three. Best-behaved on revenue_growth_yoy 0.076, but a REIT earnings leg is not mine to test. | ma_50 over ma_100 and a tight base clearing a fresh pivot_high on expansion. |
+| oneil | OPPOSE | 3 | decides | Not the best lodging expression: rs_rank_pct 76.59 is under my floor, ma_100 23.46 sits over ma_50 22.82, day_vol 1.0, sma_dist 10.54, and no pivot is shown. Same bet as APLE and DRH. mp FADING is not my reason. | rs_rank_pct into the top quintile and a clear of the group base on heavy volume. |
+| raschke | ABSTAIN | — | decides | Lodging is one idea (APLE, DRH, HST); I carry DRH as the expression. HST adds no separate Raschke setup: sma_distance_pct 10.54, mp FADING/DECELERATING, lens.resistance strong. | — |
+| seow | OPPOSE | 3 | decides | Fails the odds gate: ret_63d -1.25, with rs_rank_pct 76.59 resting on a 20-day burst (rs_spy_20d 11.67). ext_atr20 3.27 over ma_20 23.52 means no dip behind the PULLBACK tag. Lodging cluster with APLE and DRH, counted once. | Wrong if ret_63d turns positive and a bar holds ma_20. |
+| thorp | SUPPORT | 2 | decides | The single lodging expression. Calm range (vol_30d_ann 0.1935; atr 0.52 on entry 25.22), normal turnover (day_vol 1.0), no print inside the window Rogers listed. No measured edge. ma_20 23.52 is far under price (ext_atr20 3.27), so size to unwatched loss, not the stop. | Close under ma_20 23.52, or a close more than one atr 0.52 under bar_low. |
+| weis | OPPOSE | 2 | decides | Third leg of the lodging bet with APLE and DRH. mp_accel_state DECELERATING (W20 proxy) at sma_dist 10.54 and ext_atr20 3.27, elder 7.0 with no pattern, ma_100 23.46 over ma_50 22.82 so the stack is not fully aligned. Nothing failed to buy. | A hold above ma_20 23.52 on dry volume. |
+| wyckoff | ABSTAIN | — | decides | One lodging idea with APLE and DRH (weigh as one): mid-move at a new high, sma_distance_pct 10.54, ext_atr20 3.27, mp 90 FADING/DECELERATING, coil warn. No independent edge read; the cluster is voted on APLE and DRH. | A retest of ma_20 23.52 that holds on light day_vol. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | revenue_growth_yoy 0.076, 0.070, 0.082 steady; dividendYieldTTM 0.068, pe_ratio 16.8, free_cash_flow_yield 0.060, debt_to_equity 0.884. Best-behaved hotel REIT; (growth + yield) over P/E proxy 0.86, short of 1.0. | — |
+
+### ETSY — HOLD-FOR-CONDITIONS (conviction 2) · MOMENTUM · Strength + Reclaim seat (rule)
+
+- Split: support livermore, minervini, oneil; oppose none; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance '--'; lens_positive 1 (sector) is a floor. ma_50 78.12 a hair under ma_100 78.32 (ma_200 67.8), day_vol 1.21; VALEN U&R MET, reclaim day on the 9-day average 85.35. Cannot corroborate or oppose; wrong on close under ma_50 78.12. | Lens re-pull with three strong turns this to SUPPORT; two warns, to OPPOSE. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 10, 7, 7, 7], no pattern: green faded and flat at blue, no event. mp_state FADING at mp 97 is a label (R13), not my reason. Strength is real but my trigger is a ban-lift, which is absent. Wait for value at ma_20 80.35. | A dip into ma_20 80.35 with elder_ge:7 held would earn a read. |
+| livermore | SUPPORT | 3 | decides | Leader a step under its high: structure 87.4, ABOVE_STRUCTURE, mp 97.0 flat at the top, rs LEADER spy20 25.82, day_vol 1.21, pct_from_52w_high -3.48; ma_20 80.35 over ma_50 78.12 over ma_200 67.8. sma_distance_pct 12.22 is a weight. The clear of the high is the entry. | A close under ma_20 80.35, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only. |
+| minervini | SUPPORT | 2 | decides | Real strength: rs_rank_pct 87.68, rs_spy_20d 25.82 LEADER, structure 87.4 ABOVE_STRUCTURE, pct_from_52w_high -3.48, day_vol 1.21, ma_20 80.35, ma_50 78.12, ma_200 67.8. Earnings leg fails: eps_growth_yoy -0.36, revenue_growth_yoy 0.027. sma_distance_pct 12.22 is a weight (R14); mp FADING is not a reason (R13). | Close under ma_20 80.35, or a new high on day_vol under 1. |
+| oneil | SUPPORT | 2 | decides | Leader and strong: rs LEADER, rs_rank_pct 87.68, rs_spy_20d 25.82, structure 87.4 ABOVE_STRUCTURE, from_52w_hi -3.48. Pivot distance is UNSERVED and day_vol 1.21 is under my test, so I buy only a new high on volume. mp FADING at 97.0 is flat-at-high. Lynch: eps_growth_yoy -0.36, pe_ratio 40.3. | The new high fails on thin volume, or a close under ma_50 78.12. |
+| raschke | SUPPORT | 3 | advisory | Test family: VALEN U&R MET, undercut the 9-day average 85.35 and closed back above (reclaim day); structure 87.4 ABOVE_STRUCTURE, rs_spy_20d 25.82, day_vol 1.21; mp FADING/FLAT is the R13 label. Cost: sma_distance_pct 12.22 puts the stop beyond ma_20 80.35, wide. | Daily close under ma_20 80.35. |
+| seow | ABSTAIN | — | advisory | Real strength: rs_spy_20d 25.82, rs_leadership LEADER, mp 97.0, structure 87.4. But ret_63d 2.43 is thin, ext_atr20 2.08 over ma_20 80.35, run_10d 10.57: the U&R MET dip is under the 9-day average, not ma_20. No set-up bar. Weight not veto (R14); dip to ma_20 first. | Flips to SUPPORT if ret_63d widens and a bar's low reaches ma_20 with the close above ma_40. |
+| thorp | ABSTAIN | — | advisory | Mid-wide range (atr 3.51 on entry 87.66), sma_dist 12.22 so ma_20 80.35 is far under price; Lynch contradicts (pe_ratio 40.3 on eps_growth_yoy -0.36, negative equity). U&R MET on reclaim day is timing, not an edge. Nothing measured. Advisory. | A hold above ma_20 80.35 on day_vol over 1. |
+| weis | SUPPORT | 2 | advisory | Minor spring but extended: U&R MET (dipped under the 9-day average 85.35, closed back above); ma_20 80.35 over ma_50 78.12 over ma_200 67.8, rs LEADER spy20 25.82. Capped at 2: sma_dist 12.22, mp_accel_state FLAT so thrust is not building, Lynch CONTRADICT on pe_ratio 40.3. Single-bar read. | Close under the reclaim-day low or ma_20 80.35. |
+| wyckoff | ABSTAIN | — | advisory | Why unnominated: contraction is untestable, all four lens reads are '--' (lens.coil no_data); geography is ABOVE_STRUCTURE with sma_distance_pct 12.22, mid-move. U&R MET reclaim of the 9-day average 85.35 on day_vol 1.21 is real; I would enter on that reclaim, wrong under the dip low. | Lens block returning with coil strong, or a retest of ma_20 80.35 that holds on light day_vol. |
+| lynch (consult) | slow grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.027 and eps_growth_yoy -0.36 yet pe_ratio 40.3; debt_to_equity -2.21 (negative equity). free_cash_flow_yield 0.079 is the only support; dividendYieldTTM 0. | — |
+
+### TEL — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Nominated
+
+- Split: support weis, wyckoff; oppose livermore, minervini, oneil, seow; abstain detect-lens, elder-lens, raschke, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Clean lens but failed spine: lens_positive 3 (coil, structure, resistance), lens_warnings 1 (leadership warn); BULLISH_BOS on day_vol 2.23, yet ma_50 210.09 and ma_100 208.49 sit under ma_200 213.06. Ignition and trend disagree; my gate holds me at ABSTAIN. | ma_50 over ma_200 213.06 with leadership off warn turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [5, 0, 0, 5, 9] INTERRUPTED: two certain red bars (0), then 5 to 9 on the last bar, a real ban-lift. But INTERRUPTED fails the trend leg (step 3) and ma_50 210.09 sits under ma_200 213.06. Not a nomination (C9). | INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 215.05 would reopen it. |
+| livermore | OPPOSE | 2 | decides | Reversal attempt: ma_50 210.09 under ma_200 213.06, pct_from_52w_high -9.5, mp 48. BULLISH_BOS on day_vol 2.23 is ignition, but ignition under the 200-day is a rally to test, not a new high after an uptrend. | A close above ma_200 213.06, then a new high on volume. |
+| minervini | OPPOSE | 3 | decides | Template fails: ma_50 210.09 under ma_200 213.06, rs_rank_pct 63.29, LAGGARD, pct_from_52w_high -9.5, ret_12m -4.37. BULLISH_BOS on day_vol 2.23 is ignition over an inverted stack with div_bear_count 2 and INTERRUPTED. Repair, not leadership. | ma_50 over ma_200 with rs_rank_pct over 70. |
+| oneil | OPPOSE | 3 | decides | Repair under the long line: BULLISH_BOS and day_vol 2.23 are real, but rs_leadership LAGGARD, ma_200 213.06 over ma_50 210.09, from_52w_hi -9.5, div BEARISH/2, elder INTERRUPTED. A reversal bounce, not a base breakout. Lynch: eps_growth_yoy -0.40. | ma_50 back above ma_200 and rs_leadership turning LEADER. |
+| raschke | ABSTAIN | — | decides | BULLISH_BOS on day_vol 2.23 with ma_50 210.09 under ma_200 213.06, rs LAGGARD, div BEARISH/2 (advisory), elder INTERRUPTED, 21-day average not rising: a day-one thrust off repair with no clean type. Abstain, not oppose. | — |
+| seow | OPPOSE | 2 | decides | Slope leg out: VALEN U&R NO, its 21-day average is not rising. rs_leadership LAGGARD, from_52w_hi -9.5, Elder INTERRUPTED, div BEARISH/2. ext_atr20 1.7 over ma_20 215.05 on day_vol 2.23 is a bounce, not a set-up. | Wrong if the 21-day average turns up and a bar holds ma_20 with rs_leadership improving. |
+| thorp | ABSTAIN | — | decides | Range mid (atr 6.05 on entry 225.35), heavy turnover day_vol 2.23 of unknown direction, div BEARISH count 2, elder INTERRUPTED, and ma_50 210.09 under ma_200 213.06 on a BULLISH_BOS: ignition and trend disagree. rs LAGGARD. Nothing measured. | ma_50 back over ma_200 213.06 and divergence cleared. |
+| weis | SUPPORT | 2 | decides | Hinge resolved up on effort (W21): squeeze BREAKOUT_UP with volume confirmed, BULLISH_BOS, day_vol 2.23; elder 9.0 trace [5, 0, 0, 5, 9] is a sharp shakeout and recovery (proxy). Gate half met: ma_100 208.49 under ma_200 213.06. div BEARISH/2, rs LAGGARD: so a retest, not the break. | Close below ma_50 210.09, or the retest fails on heavy volume. |
+| wyckoff | SUPPORT | 3 | decides | Coil then expansion: coil strong, energy 72.3, squeeze breakout up volume-confirmed, BULLISH_BOS on day_vol 2.23 (effort with progress) through ma_20 215.05 / ma_100 208.49 / ma_200 213.06. div BEARISH/2 is advisory. Entry 225.35 is past it: take the retest. | Close under ma_200 213.06, or the retest comes on rising day_vol. |
+| lynch (consult) | cyclical · NEUTRAL | — | no vote | revenue_growth_yoy 0.079 after -0.012, -0.015: cycle turning. pe_ratio 21.9, debt_to_equity 0.425, free_cash_flow_yield 0.056 are sound; eps_growth_yoy -0.40 then 0.72 is noisy. | — |
+
+### BBY — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Elder+Lens + Nominated
+
+- Split: support detect-lens, livermore, minervini, weis; oppose oneil, seow, wyckoff; abstain elder-lens, raschke, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Lens support with one open warn: lens_positive 3 (insti_money, resistance, sector), lens_warnings 1 (leadership warn). Spine ma_50 89.75 over ma_100 85.45 over ma_200 74.78 aligned. day_vol 0.86 is under normal, so conviction is held at 2. | lens_warnings rising to 2, or a close under ma_50 89.75. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 7, 7], no pattern: green faded to blue and stayed, never red, no event. Entry 98.5 is well above value ma_20 91.11; days_to_earnings 19. Permission only, nothing to nominate. | A dip into ma_20 91.11 with elder_ge:7 held would reopen it. |
+| livermore | SUPPORT | 2 | decides | Through its pivot at the high: pct_from_pivot 2.04, pct_from_52w_high -1.37, structure 69.5, ABOVE_STRUCTURE, ma_20 91.11 over ma_50 89.75. Weak links: day_vol 0.86 on the break, mp 64.0, and XLY already carries HOG. Two, not three; I want volume on the next high. | A close back under pivot_high-0.5atr, or a fade from the high my atr_14d translation flags as abnormal. Bracket INVALID, information only. |
+| minervini | SUPPORT | 2 | decides | Top-tier RS just through the pivot: rs_rank_pct 93.17 LEADER, pct_from_pivot 2.04, pct_from_52w_high -1.37, ma_20 91.11, ma_50 89.75, ma_200 74.78. Soft: day_vol 0.86, structure 69.5, base_range_pct 18.4. Lynch shows revenue_growth_yoy 0.004 and net_profit_margin 0.030: earnings leg thin. | Close back under pivot_high, or the clear fades on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | Through the pivot on no volume: pct_from_pivot 2.04, rs LEADER, rs_rank_pct 93.17, but day_vol 0.86 fails my volume test, structure 69.5 is soft and base_range_pct 18.4 is wide. Earnings 19 sessions out. Lynch: revenue_growth_yoy 0.004. | A second close over pivot_high on heavy volume. |
+| raschke | ABSTAIN | — | decides | Through pivot_high on day_vol 0.86 with sma_distance_pct 9.75 and run_10d 11.98%: no contraction I can read and no pullback. Earnings 19 sessions. Fits no clean type; rs_rank_pct 93.17 keeps me from opposing. | — |
+| seow | OPPOSE | 2 | decides | ext_atr20 2.4 over ma_20 91.11 after run_10d 11.98: price is above the average, not at it, so the PULLBACK tag has no dip (C3). Strength is real (rs_rank_pct 93.17, ret_6m 66.64) but there is no pullback bar to arm. Wait for ma_20. | Wrong if it keeps rising on small bars that never reach ma_20. |
+| thorp | ABSTAIN | — | decides | Mid range (atr 3.08 on entry 98.5) after run_10d 11.98, ma_20 91.11 far under price (ext_atr20 2.4), light turnover day_vol 0.86, leadership lens warn, and a print 19 sessions out. Nothing measured. | A quiet retrace toward ma_20 91.11 on dry day_vol. |
+| weis | SUPPORT | 2 | decides | Orderly dry pullback inside an intact uptrend: ma_20 91.11 over ma_50 89.75 over ma_100 85.45 over ma_200 74.78, elder 7.0 trace [10, 10, 10, 7, 7], day_vol 0.86. Contraction with a bullish lead-in (W21), no spring. ext_atr20 2.4 means I wait for ma_20, not 98.5. | Close below ma_50 89.75. |
+| wyckoff | OPPOSE | 2 | decides | Weak effort at the edge: pct_from_pivot 2.04 past the pivot on day_vol 0.86 after run_10d 11.98%, wide base_range_pct 18.4, coil ok only. A thin break is an upthrust until a low-volume retest holds. Earnings 19 sessions out. | A retest of the pivot on light day_vol that holds. |
+| lynch (consult) | slow grower · NEUTRAL | — | no vote | pe_ratio 16.6, dividendYieldTTM 0.038, free_cash_flow_yield 0.084 fit a slow grower; revenue_growth_yoy 0.004 after -0.044, -0.061, net_profit_margin 0.030 and debt_to_equity 1.30 are thin. | — |
+
+### RCL — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Seats
+
+- Split: support elder-lens, raschke, weis, wyckoff; oppose livermore, minervini, oneil, seow, thorp; abstain detect-lens. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens 2 strong (coil, sector), 1 warn (insti_money): lens_positive 2, lens_warnings 1, runner_conviction 3. Spine fails: ma_50 271.27 under ma_100 286.66 and ma_200 286.21, repair not continuation. day_vol 2.17 beside insti_money warn is unresolved. | ma_50 back over ma_200 with insti_money off warn clears my gate and turns this to SUPPORT. |
+| elder-lens | SUPPORT | 3 | decides | Elder's best long signal: elder_5d [10, 7, 4, 5, 9], red giving way on the last bar (5 to 9), CORRECTION_REENTRY, mp 64. A reversal bounce into value, not trend continuation: ma_50 271.27 is under ma_200 286.21. mp_state FADING is a label (R13). Entry 295.92 is above ma_20 280.75; bid the dip. | A close under ma_50 271.27, or elder_5d back to 6 or lower. |
+| livermore | OPPOSE | 3 | decides | Reversal, not a pullback in an uptrend: ma_50 271.27 under ma_100 286.66 and ma_200 286.21, pct_from_52w_high -14.97. A bounce under the 200-day is a rally, not my entry. I need ma_200 cleared, then a new high. | A close above ma_200 286.21, then a new high on volume. |
+| minervini | OPPOSE | 3 | decides | Fails the stack: ma_50 271.27 under ma_100 286.66 and ma_200 286.21; pct_from_52w_high -14.97; rs_leadership LAGGARD. Stage 2 is not confirmed; this is a bounce in repair, and a reclaim is not a buy in my method. | ma_50 back above ma_200 with price holding over both. |
+| oneil | OPPOSE | 3 | decides | Reversal repair, not continuation: ma_50 271.27 under ma_200 286.21, from_52w_hi -14.97, rs_leadership LAGGARD. Heavy day_vol 2.17 is a bounce off the lows with no base or pivot under it. The U&R reclaim is not my entry. | ma_50 back above ma_200 and a close over a cleared pivot on volume. |
+| raschke | SUPPORT | 2 | decides | Test family, not trend continuation: ma_50 271.27 under ma_200 286.21, rs LAGGARD. VALEN U&R MET: undercut the 9-day average 281.27 and closed back above (reclaim day), a double stop point. Stop beyond ma_20 280.75. day_vol 2.17 direction unproven. | Hourly closes back under ma_20 280.75. |
+| seow | OPPOSE | 3 | decides | Fails my odds gate: ret_63d -8.55, rs_leadership LAGGARD, and from_52w_hi -14.97 means no recent high behind this dip (C4). ext_atr20 1.36 over ma_20 280.75 is a bounce. The U&R MET reclaim is too shallow to override that. | Wrong if ret_63d turns positive and a bar holds ma_20 while from_52w_hi closes toward 0. |
+| thorp | OPPOSE | 2 | decides | A pullback thesis needs an intact uptrend; here ma_50 271.27 sits under ma_200 286.21 and rs is LAGGARD, so the distribution I would size on is repair, not continuation. No measured edge. day_vol 2.17 gives no direction. | Close back above ma_200 286.21 with ma_50 turning up. |
+| weis | SUPPORT | 2 | decides | Repair, not continuation: ma_50 271.27 under ma_200 286.21, so W23 is only half met; U&R MET (dipped under the 9-day average 281.27, closed back above). Hinge already fired on day_vol 2.17, so I want a secondary test (W9, not served) holding above ma_20 280.75, not a chase. | Close below ma_50 271.27, or the retest fails on heavy volume (distribution). |
+| wyckoff | SUPPORT | 2 | decides | Effort with reward: day_vol 2.17, entry 295.92 through the ma_100 286.66 / ma_200 286.21 ceiling, coil strong, energy 85.7, U&R MET. Reversal from a range, ma_50 271.27 still under; only a low-volume retest of the old ceiling is an entry. rs LAGGARD caps it. | Close under ma_200 286.21 after the break, or the retest arrives on rising day_vol. |
+| lynch (consult) | cyclical · NEUTRAL | — | no vote | eps_growth_yoy 0.43 at pe_ratio 17.5, but revenue_growth_yoy 0.088 after 0.186, 0.572: recovery growth fading. debt_to_equity 1.98, free_cash_flow_yield 0.019 (capital heavy), beta 1.822. | — |
+
+### CRBG — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Lens + Nominated
+
+- Split: support detect-lens, minervini, raschke, seow, thorp, weis, wyckoff; oppose oneil; abstain elder-lens, livermore. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 3 | decides | Lens agreement with no warning: lens_positive 4 (coil, insti_money, resistance, sector), lens_warnings 0. Spine ma_50 33.97 over ma_100 32.32 over ma_200 29.74 aligned, structure_shift RANGE. day_vol 0.74 is quiet: a coil, not a break, so it needs a trigger. | A warn on coil or insti_money, or a close under ma_50 33.97. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [9, 10, 4, 3, 8] INTERRUPTED: ban lifted on the last bar (3 to 8), but INTERRUPTED fails the trend leg (step 3) and VALEN marks its undercut-and-rally FAILED. A real event on a failed leg is not a nomination (C9). | INTERRUPTED clearing with elder_ge:7 held for a second bar would reopen it. |
+| livermore | ABSTAIN | — | decides | Quiet near the high: pct_from_52w_high -0.65, structure 66.3 RANGE, mp 49.0, day_vol 0.74, rs LAGGARD. Insurance leads per VALEN, but there is no trigger and no volume. U&R MET is a reclaim, which I do not buy. Watch block filed. | — |
+| minervini | SUPPORT | 2 | decides | Quiet leader at highs: pct_from_52w_high -0.65, rs_rank_pct 84.02, ma_20 34.5, ma_50 33.97, ma_100 32.32, ma_200 29.74, day_vol 0.74 dry, lens coil strong. Weights: LAGGARD, rs_spy_20d 3.99, INTERRUPTED, structure 66.3 RANGE. No pivot cleared; buy is the clear. | Close under ma_50 33.97, or a clear of pivot_high on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | Laggard with no pivot: rs_leadership LAGGARD, structure 66.3 RANGE, elder INTERRUPTED, day_vol 0.74, Undercut and rally FAILED (5/9). Coil strong is a base forming, nothing cleared. Lynch: eps_growth_yoy -1.18, an earnings sign-flip. | rs_leadership turns LEADER and the range top clears on heavy volume. |
+| raschke | SUPPORT | 2 | decides | Test family: VALEN U&R MET, undercut the 9-day average 34.68 yesterday and closed back above; sma_distance_pct 4.11, lens.coil strong, div BULLISH/0. Weak links: day_vol 0.74, elder INTERRUPTED, VALEN Undercut and rally FAILED (5/9). Stop beyond ma_20 34.5. | Daily close under ma_20 34.5. |
+| seow | SUPPORT | 2 | decides | Tight dip at the high: ext_atr20 0.86 over ma_20 34.5, from_52w_hi -0.65, ret_63d 11.37, rs_rank_pct 84.02, div BULLISH/0; U&R MET reclaim day. Weak: rs_leadership LAGGARD, rs_spy_20d 3.99, day_vol 0.74, Elder INTERRUPTED. Low conviction; ma_40/CCI unserved. | Close under ma_40 or trade under bar_low before the stop over bar_high fires. |
+| thorp | SUPPORT | 2 | decides | No measured edge. Mid-calm range (atr 1.0 on entry 35.36) with ma_20 34.5 right under price (ext_atr20 0.86), so gap-through cost is small. Stack aligned, div BULLISH, U&R MET on reclaim day. Against it: day_vol 0.74 is light and the undercut-and-rally grade FAILED (5/9). Size small. | Close under ma_20 34.5, or a close more than one atr 1.0 under bar_low. |
+| weis | SUPPORT | 2 | decides | Shakeout-and-recovery shape: U&R MET (dipped under the 9-day average 34.68, closed back above), elder 8.0 trace [9, 10, 4, 3, 8], day_vol 0.74 dry, div BULLISH/0, ma_20 34.5 over ma_50 33.97 over ma_200 29.74. Capped at 2: proxy read (R7), VALEN Undercut and rally FAILED (5/9), rs LAGGARD. | Close under the reclaim-day low or ma_20 34.5. |
+| wyckoff | SUPPORT | 3 | decides | Round 1 stands: RANGE, coil strong, energy 79.0, insti_money strong, day_vol 0.74 quiet, above ma_20 34.5 and ma_50 33.97 so not the lows. U&R MET reclaim of the 9-day average 34.68. Spring not detectable; danger point ma_20 34.5. | Close under ma_20 34.5 on rising day_vol. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | pe_ratio 20.6, priceToBookRatioTTM 1.5, dividendYieldTTM 0.028; eps_growth_yoy -1.18 after 1.17, -0.86: earnings sign-flip. free_cash_flow_yield 0.118 not meaningful for an insurer. Carried pack. | — |
+
+### EMR — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Lens + Nominated
+
+- Split: support detect-lens, minervini, raschke, seow, thorp, wyckoff; oppose oneil, weis; abstain elder-lens, livermore. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Lens agreement: lens_positive 4 (leadership, coil, structure, resistance), lens_warnings 1 (insti_money warn). Spine ma_50 156.4 over ma_100 151.45 over ma_200 146.71 aligned. BULLISH_BOS but on day_vol 0.79, the thinner version of the signal, so conviction steps down from 3 to 2. | The break giving back: a close under ma_50 156.4 or structure_shift BEARISH_CHOCH; or a second lens turning warn. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [6, 1, 3, 3, 9] INTERRUPTED: a certain red bar (1), then 3 to 9 on the last bar, a genuine ban-lift. But INTERRUPTED fails the trend leg (step 3) and BULLISH_BOS came on day_vol 0.79. Re-check once the pattern clears. | INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 161.19 would reopen it. |
+| livermore | ABSTAIN | — | decides | New high pct_from_52w_high 0.0 and BULLISH_BOS, but on day_vol 0.79 with mp 42.0 BUILDING DECELERATING: the break lacks volume, my follow-through test. I watch for a fresh high on volume. | — |
+| minervini | SUPPORT | 2 | decides | Squeeze breakout from a tight base at the high: base_range_pct 8.4, BREAKOUT_UP, BULLISH_BOS, pct_from_52w_high 0.0, pct_from_pivot 0.62, rs_rank_pct 76.34. But day_vol 0.79 with volume_confirmed False is a break without expansion, and Lynch shows revenue_growth_yoy 0.030. Act only on a volume-backed close. | Close back under pivot_high, or the clear prints on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | A new high on thin volume: from_52w_hi 0.0, BULLISH_BOS, pct_from_pivot 0.62, but day_vol 0.79 with volume_confirmed False, rs IN-LINE, rs_rank_pct 76.34 under my floor, elder INTERRUPTED. Buyers have not shown up. Lynch: pe_ratio 36.2 on thin growth. | Close over pivot_high with heavy volume and rs_rank_pct into the top quintile. |
+| raschke | SUPPORT | 2 | decides | Breakout family: BULLISH_BOS, pct_from_pivot 0.62 at a high (pct_from_52w_high 0.0), lens.coil strong, energy 77.3. Volume unproven: day_vol 0.79, volume_confirmed False; elder INTERRUPTED. Buy only a break that holds on volume. | Daily close back under pivot_high. |
+| seow | SUPPORT | 2 | decides | Dip resolved near the high: ext_atr20 1.17 over ma_20 161.19, from_52w_hi 0.0, ret_63d 14.09, Elder 9.0 after 1 and 3 bars, BULLISH_BOS. Soft: adx 10.98 is a weak trend, rs_leadership IN-LINE, day_vol 0.79, mp 42.0. Low conviction; ma_40/CCI unserved. | Close under ma_40 or trade under bar_low before the stop over bar_high fires. |
+| thorp | SUPPORT | 2 | decides | No measured edge. Calm-tier range (atr 4.33 on entry 166.27) with ma_20 161.19 near (ext_atr20 1.17), stack aligned, no divergence, at the high (from_52w_hi 0.0). Against it: the break printed on day_vol 0.79 and adx 10.98 is low. Size small. | Close under ma_20 161.19, or a close more than one atr 4.33 under bar_low. |
+| weis | OPPOSE | 2 | decides | A narrow-effort new high is suspect (W13): BULLISH_BOS and squeeze BREAKOUT_UP at pct_from_52w_high 0.0 but day_vol 0.79, squeeze_breakout_volume_confirmed False, adx 10.98. Upthrust cannot be confirmed (R8 NOT SERVED), so I do not buy the break; a failure back under pivot_high is the setup. | A second close above pivot_high on day_vol over 1 with volume confirmed voids this. |
+| wyckoff | SUPPORT | 2 | decides | Tight base edge: BULLISH_BOS pct_from_pivot 0.62, base_range_pct 8.4, coil strong, pct_from_52w_high 0.0. But day_vol 0.79 and volume_confirmed False: thin effort, a break to be proven by a low-volume retest. mp 42 DECELERATING, elder INTERRUPTED. | Hourly close back under pivot_high after trading above it (upthrust). |
+| lynch (consult) | stalwart · CONTRADICT | — | no vote | pe_ratio 36.2 against revenue_growth_yoy 0.030 and eps_growth_yoy 0.18 after -0.08, -0.19; free_cash_flow_yield 0.037, dividendYieldTTM 0.013. Stalwart multiple well above stalwart growth. | — |
+
+### AAPL — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Seats + Lens
+
+- Split: support detect-lens, elder-lens, livermore, minervini, raschke, seow, weis, wyckoff; oppose oneil; abstain thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 3 | decides | Strong lens agreement: lens_positive 4 (leadership, coil, insti_money, resistance), lens_warnings 0. Spine ma_50 331.06 over ma_100 320.07 over ma_200 295.28 aligned. structure_shift RANGE, day_vol 0.98: a coil, not a break. VALEN RISK OFF argues for a trigger, not a market entry. | lens_positive falling under 3, any new insti_money or leadership warn, or a close under ma_50 331.06. |
+| elder-lens | SUPPORT | 2 | decides | Red giving way, shallow: elder_5d [7, 9, 9, 6, 9], 6 to 9 on the last bar, CORRECTION_REENTRY. mp 49 BUILDING is not STRONG (R8 unmet) and the dip was one bar, so the form is thin. Entry 347.1 is close to value ma_20 340.07; wrong under ma_50 331.06. | elder_5d to 6 or lower, or a close under ma_50 331.06. |
+| livermore | SUPPORT | 2 | decides | At the high in a stacked uptrend: pct_from_52w_high -0.32, pct_from_pivot -0.3, ma_20 340.07 over ma_50 331.06 over ma_200 295.28, structure 71.6. Weak links: mp 49.0 BUILDING, structure_shift RANGE, day_vol 0.98. I buy only the clear of pivot_high on volume. | Break fails: a close back under pivot_high-0.5atr, or a fade my atr_14d translation flags as abnormal. Bracket INVALID, information only. |
+| minervini | SUPPORT | 3 | decides | Tightest base among template passers: base_range_pct 7.7, pct_from_pivot -0.3, pct_from_52w_high -0.32, rs_rank_pct 82.2 LEADER, ma_20 340.07, ma_50 331.06, ma_200 295.28. No break yet (day_vol 0.98). Caution: div_bear_count 4, Valen theme AVOID, market RISK OFF. Act only on a volume clear. | Close under ma_50 331.06, or a clear of pivot_high on day_vol under 1. |
+| oneil | OPPOSE | 2 | decides | Close to a pivot, not through it: pct_from_pivot -0.3, day_vol 0.98, structure 71.6 RANGE. div BEARISH/4 says four oscillators show buying thinning, and sc_mom 63.7 is low for the set. VALEN: Theme graded AVOID. | A close above pivot_high on heavy volume with the divergence cleared. |
+| raschke | SUPPORT | 2 | decides | Test family: VALEN U&R MET, dipped under the 9-day average 343.68 and closed back above (reclaim day); ma_20 340.07 over ma_50 331.06, structure 71.6 RANGE, lens.coil strong. Cautions: div BEARISH/4 (advisory), Theme graded AVOID, mp 49 BUILDING. | Daily close under ma_20 340.07. |
+| seow | SUPPORT | 2 | decides | Shallow dip in a leader: ext_atr20 1.11 over ma_20 340.07, from_52w_hi -0.32, rs_spy_20d 4.66, rs_leadership LEADER, ret_63d 2.63 (thin). Last Elder bar 9 after 6, a small bar; U&R MET. AQE div BEARISH/4 and Theme AVOID are cautions. ma_40/CCI unserved, so conviction stays low. | Trade under bar_low or a close under ma_40 first; or ret_63d slipping negative. |
+| thorp | ABSTAIN | — | decides | Calm range (atr 6.36 on entry 347.1) and ma_20 340.07 is near, but div BEARISH count 4 and sc_momentum 63.7 leave only the stack carrying it; Theme graded AVOID. Calm range against a compressing condition nets to no measured edge. | Divergence count falling to 0 with a close above pivot_high. |
+| weis | SUPPORT | 2 | decides | Minor spring in an aligned stack: U&R MET (dipped under the 9-day average 343.68, closed back above); ma_20 340.07 over ma_50 331.06 over ma_200 295.28, ext_atr20 1.11. Capped at 2: single-bar read, div BEARISH/4, VALEN Theme graded AVOID, RISK OFF, sc_mom 63.7. | Close under the reclaim-day low or ma_20 340.07; no follow-through while div_bear_count stays 4. |
+| wyckoff | SUPPORT | 3 | decides | Best range geography in the set: structure_shift RANGE, pct_from_pivot -0.3, coil strong, energy 80.7, lenses 4 strong, tight base_range_pct 7.7. U&R MET reclaim of the 9-day average 343.68. div BEARISH/4 is advisory and flow 51.3 soft; buy the edge break on volume. | Upthrust: trades over pivot_high then hourly close back under it, or a close under ma_20 340.07. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | net_profit_margin 0.276, revenue_growth_yoy 0.064, eps_growth_yoy 0.226, but pe_ratio 39.7 and free_cash_flow_yield 0.027. Quality stalwart at a full price; P/E history not served, so no rotation trigger. | — |
+
+### DDOG — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Elder+Lens + Nominated
+
+- Split: support detect-lens, minervini, seow, weis, wyckoff; oppose oneil, thorp; abstain elder-lens, livermore, raschke. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Clean lens support: lens_positive 3 (leadership, coil, insti_money), lens_warnings 0, premove_conviction 2 (premove_setup not set). Spine ma_50 249.92 over ma_100 249.4 over ma_200 196.32, ma_50 barely clear of ma_100. structure_shift RANGE, day_vol 0.98: a coil, no break yet. | ma_50 slipping under ma_100 249.4, or any lens turning warn. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [5, 0, 6, 7, 8] INTERRUPTED: a certain red bar (0), ban lifted at 6 to 7, but INTERRUPTED fails the trend leg (step 3) and mp 55 BUILDING/DECELERATING is middling. The event is real but a bar stale; Elder never acts on force alone (C9). | Pattern clearing from INTERRUPTED with elder_ge:7 held would reopen it. |
+| livermore | ABSTAIN | — | decides | In a reaction: run_10d -0.89, mp 55.0 BUILDING, rs LAGGARD, pct_from_52w_high -4.24, structure 62.9 RANGE. The averages are stacked (ma_20 272.61, ma_50 249.92, ma_200 196.32) but there is no trigger; I wait for a new high. | — |
+| minervini | SUPPORT | 2 | decides | Leader with the software tape on Valen's leadership list: rs_rank_pct 97.2, ret_6m 113.47, ma_20 272.61, ma_50 249.92, ma_200 196.32, pct_from_52w_high -4.24. No pivot cleared; elder INTERRUPTED and LAGGARD are weights. Lynch pe_ratio 564.8. Buy only a volume clear. | Close under ma_50 249.92, or a clear of pivot_high on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | Not a leader: rs_leadership LAGGARD (downday -1.26), structure 62.9 RANGE, elder INTERRUPTED, day_vol 0.98. rs_rank_pct 97.2 comes from the six-month run; nothing has cleared a pivot. Undercut and rally FAILED (7/9). Lynch pe_ratio 564.8. | rs_leadership turns LEADER and a pivot clears on heavy volume. |
+| raschke | ABSTAIN | — | decides | No read in my four types: the inside day is Weis's hinge, not a range history I can see (bar_range_history not served); mp_accel DECELERATING, elder INTERRUPTED, rs LAGGARD, VALEN Undercut and rally FAILED (7/9). Not enough to oppose. | — |
+| seow | SUPPORT | 2 | decides | Orderly dip: ext_atr20 0.57 over ma_20 272.61, run_10d -0.89, from_52w_hi -4.24, ret_63d 6.29, rs_rank_pct 97.2. Weak: rs_leadership LAGGARD, rs_spy_20d 3.85, Elder INTERRUPTED. Lynch's CONTRADICT is price vs growth; my stop sets the loss. ma_40/CCI unserved. | Close under ma_40 or trade under bar_low; or rs_spy_20d going negative. |
+| thorp | OPPOSE | 2 | decides | Wide range (atr 14.3 on entry 280.82), rs LAGGARD, elder INTERRUPTED, and the undercut-and-rally grade FAILED (7/9): the dip is not being reclaimed. Lynch: pe_ratio 564.8 prices growth in full. No measured edge. | A reclaim of the 21-day average with rs back to LEADER shows the dip is bought. |
+| weis | SUPPORT | 2 | decides | Trend gate passes (ma_20 272.61 over ma_50 249.92 over ma_200 196.32), inside-day hinge in a rs_rank_pct 97.2 name. elder 8.0 trace [5, 0, 6, 7, 8] is a shakeout and recovery, a proxy read only (R7). Held at 2: INTERRUPTED, VALEN Undercut and rally FAILED (7/9), rs LAGGARD. | Close below ma_20 272.61, or a break that closes back under bar_high. |
+| wyckoff | SUPPORT | 2 | decides | RANGE at structure 62.9 with coil strong, energy 76.5, insti_money strong, pct_from_52w_high -4.24 near the range top. Terrain only, no spring visible; rs LAGGARD and elder INTERRUPTED cap it. Danger point ma_20 272.61. | Close under ma_20 272.61 on heavy day_vol. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.277, 0.261, 0.271: category fits. Price does not: pe_ratio 564.8, free_cash_flow_yield 0.011, net_profit_margin 0.045. Every served growth proxy puts PEG far above 2.0; gate itself untested. | — |
+
+### NTNX — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Nominated
+
+- Split: support elder-lens, minervini, raschke, seow, thorp, weis, wyckoff; oppose oneil; abstain detect-lens, livermore. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens leans positive but short: lens_positive 2 (coil, insti_money), lens_warnings 0. Spine ma_50 69.25 over ma_100 62.12 over ma_200 52.18 aligned, structure_shift RANGE, day_vol 0.96. One strong lens short of my line of 3; nothing opposes. | A third strong lens (leadership or structure) with day_vol over 1 makes this a SUPPORT. |
+| elder-lens | SUPPORT | 2 | decides | Red giving way and holding: elder_5d [3, 3, 5, 7, 8] ACCUMULATION_BASE, ban lifted at the 5-to-7 bar, mp 50 BUILDING middling. Entry 72.74 is near value ma_20 71.37, and VALEN's note lacks the 'average not rising' flag FTNT and NET carry. Event a bar old; slope unverified by me. | elder_5d to 6 or lower, or a close under ma_50 69.25. |
+| livermore | ABSTAIN | — | decides | Quiet reaction: pct_from_52w_high -2.53, structure 60.0 RANGE, mp 50.0 BUILDING, day_vol 0.96, rs LAGGARD. The stack is up but there is no new high and no strength read. The entry is the clear of pivot_high on volume, not the dip. | — |
+| minervini | SUPPORT | 2 | decides | Rising stack ma_20 71.37, ma_50 69.25, ma_100 62.12, ma_200 52.18 under entry 72.74; rs_rank_pct 94.51, ret_6m 76.13, pct_from_52w_high -2.53; ACCUMULATION_BASE, lens coil strong, day_vol 0.96. Base shape not countable (structure 60.0 RANGE). Buy is a volume clear; Lynch flags profit quality. | Close under ma_50 69.25, or a clear of pivot_high on day_vol under 1. |
+| oneil | OPPOSE | 2 | decides | No pivot cleared and a laggard tag: rs_leadership LAGGARD, structure 60.0 RANGE, day_vol 0.96, elder ACCUMULATION_BASE. Coil strong is a base forming, not a buy. Earnings 19 sessions out. Lynch flags a flattered pe_ratio 13.1. | Close above the range top on heavy volume with rs_leadership LEADER. |
+| raschke | SUPPORT | 2 | decides | Breakout from contraction: lens.coil strong, energy 70.6, structure_shift RANGE, mp 50 BUILDING/ACCELERATING, elder ACCUMULATION_BASE. Needs the break of pivot_high on volume. Earnings in 19 sessions. Stop beyond ma_20 71.37. | Daily close under ma_20 71.37. |
+| seow | SUPPORT | 2 | decides | Rising out of a base: ext_atr20 0.62 over ma_20 71.37, run_10d -0.19, from_52w_hi -2.53, ret_63d 22.11, rs_rank_pct 94.51; Elder ACCUMULATION_BASE. rs_leadership LAGGARD and rs_spy_20d 3.07 keep conviction low. ma_40/CCI unserved. | Close under ma_40 or trade under bar_low before the stop over bar_high fires. |
+| thorp | SUPPORT | 2 | decides | No measured edge. Mid range (atr 2.21 on entry 72.74) with ma_20 71.37 right under price, so gap-through cost is small and the loss boundary named. Stack ma_20 over ma_50 69.25 over ma_200 52.18, no divergence, print 19 sessions out. Size at macro 0.5. | Close under ma_20 71.37, or a close more than one atr 2.21 under bar_low. |
+| weis | SUPPORT | 2 | decides | Rising base with orderly dry-up: elder 8.0 [3, 3, 5, 7, 8] ACCUMULATION_BASE, ma_20 71.37 over ma_50 69.25 over ma_200 52.18, day_vol 0.96, structure_shift RANGE. No spring and no absorption call (R11); a trend-gate read only. days_to_earnings 19. | Close below ma_50 69.25. |
+| wyckoff | SUPPORT | 3 | decides | Round 1 stands: RANGE, coil strong, energy 70.6, ACCUMULATION_BASE elder 8, rising stack ma_20 71.37 / ma_50 69.25 / ma_200 52.18, day_vol 0.96. Spring not detectable; danger point ma_20 71.37. Earnings 2026-11-19 is an event. | Close under ma_20 71.37 on rising day_vol, or structure_shift turning BEARISH_CHOCH. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | revenue_growth_yoy 0.124 after 0.181, 0.153. pe_ratio 13.1 is flattered: net_profit_margin 0.528 vs operatingProfitMarginTTM 0.098. Read on free_cash_flow_yield 0.043. debt_to_equity 2.16. | — |
+
+### FIVN — HOLD-FOR-CONDITIONS (conviction 2) · PULLBACK · Seats + Elder+Lens
+
+- Split: support detect-lens, minervini, raschke, seow, weis, wyckoff; oppose oneil; abstain elder-lens, livermore, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | SUPPORT | 2 | decides | Clean lens support: lens_positive 3 (leadership, coil, insti_money), lens_warnings 0. Spine ma_50 34.15 over ma_100 29.59 over ma_200 23.87 aligned, structure_shift RANGE. day_vol 0.51 is a dry-up that fits a coil, not a break; conviction held at 2 until volume returns. | Coil lens turning warn, or a close under ma_50 34.15. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [6, 7, 10, 10, 10] ACCELERATION: the 6-to-7 bar was the ban lifting, now a plateau. day_vol 0.51 is drastic volume shrinkage, which expires trends (C23); mp 43 BUILDING is weak. Wait for value at ma_20 34.96 and volume back; days_to_earnings 19. | A dip into ma_20 34.96 with day_vol back above 1 and elder_ge:7 held would earn a SUPPORT. |
+| livermore | ABSTAIN | — | decides | Normal reaction on dry volume (day_vol 0.51) inside a stacked uptrend, but pct_from_52w_high -3.93, structure 61.1 RANGE, mp 43.0 BUILDING: no trigger. I never buy the reaction; the new high is the entry. Watch block filed. | — |
+| minervini | SUPPORT | 2 | decides | Leader coiling on dry volume: rs_rank_pct 97.8, ret_6m 121.54, entry 37.13 over ma_20 34.96, ma_50 34.15, ma_200 23.87, pct_from_52w_high -3.93, day_vol 0.51. Costs: structure 61.1 RANGE, no break, Lynch revenue_growth_yoy 0.103 decelerating. Buy is the clear on expansion. | Close under ma_20 34.96, or a clear of pivot_high on day_vol under 1. |
+| oneil | OPPOSE | 2 | decides | Dry-up without a trigger: day_vol 0.51 on an inside day, structure 61.1 RANGE, rs_leadership IN-LINE despite rs_rank_pct 97.8. Quiet volume is the right pre-breakout sign but nothing has cleared; Undercut and rally FAILED (6/9). Lynch: pe_ratio 49.5 on slowing growth. | A close above the range top on heavy volume. |
+| raschke | SUPPORT | 3 | decides | Breakout via contraction: inside_bar True on day_vol 0.51, lens.coil strong, energy 79.0, elder ACCELERATION, div BULLISH/0. Range history not served, so no NR4 claim. Buy the break of bar_high on volume; stop at bar_low. VALEN Undercut and rally FAILED (6/9) noted. | Daily close under ma_20 34.96 before any break. |
+| seow | SUPPORT | 3 | decides | Measured consolidation in a strong trend: inside day on day_vol 0.51, ret_63d 36.66, rs_rank_pct 97.8, rs_spy_20d 8.46, from_52w_hi -3.93, run_10d 4.86; ext_atr20 1.06 over ma_20 34.96. Small bars, no parabolic run (C4). Lynch's CONTRADICT is valuation; my stop sets the loss. ma_40/CCI unserved. | Close under ma_40 or trade under bar_low before the stop over bar_high fires; a wide high-volume bar down. |
+| thorp | ABSTAIN | — | decides | Widest range in the set (atr 2.05 on entry 37.13) on dry day_vol 0.51; wild names rank below calmer ones (R1). Lynch contradicts (pe_ratio 49.5). Nothing measured. Not opposed: ma_20 34.96 over ma_50 34.15 intact. | Volume back above normal (day_vol over 1) on a close above pivot_high. |
+| weis | SUPPORT | 3 | decides | Narrow inside day on dry volume in a strong uptrend (W21/W23): day_vol 0.51, ma_20 34.96 over ma_50 34.15 over ma_100 29.59 over ma_200 23.87, rs_rank_pct 97.8, div BULLISH/0. Contraction, not absorption. VALEN Undercut and rally FAILED (6/9) is the soft spot. | Wide-range break that closes back under bar_high, or a close under the inside-day low. |
+| wyckoff | SUPPORT | 2 | decides | Round 1 stands: RANGE, coil strong, energy 79.0, day_vol 0.51 dry-up (effort gone, not absorption). Terrain only, no spring visible; entry 37.13 is extended (sma_distance_pct 8.74), so wait for the test. Danger point ma_20 34.96. | Close under ma_20 34.96 on rising day_vol. |
+| lynch (consult) | stalwart · CONTRADICT | — | no vote | pe_ratio 49.5 on revenue_growth_yoy 0.103 (0.169, 0.144, 0.103: decelerating), net_profit_margin 0.049, debt_to_equity 1.03. eps_growth_yoy 4.0 is a tiny base. Growth multiple on stalwart growth. | — |
+
+### CNP — PASS (conviction 2) · MOMENTUM · Strength + PM lens + Nominated
+
+- Split: support none; oppose detect-lens, livermore, minervini, oneil; abstain elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 3 | decides | MOMENTUM lane contradicted by lens and spine: lens_positive 1 (sector), lens_warnings 2 (leadership warn, coil warn); ma_50 39.04 under ma_100 40.94 under ma_200 41.52, fully inverted. day_vol 2.1 shows participation, not direction. Leadership and coil are what this lane buys. | ma_50 back over ma_200 41.52 with leadership and coil both off warn. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 10, 7, 7, 10] CORRECTION_REENTRY, mp 90 STRONG fits R8, but the dip stayed at 7 (incomplete) and ma_50 39.04 under ma_100 40.94 under ma_200 41.52 with rs_rank_pct 36.22 leaves the trend leg failing as I see it. Conflicting evidence: stand aside (C22). Repair, not continuation. | ma_50 back above ma_100 with the dip bought at ma_20 39.38 and elder_ge:7 held would reopen it. |
+| livermore | OPPOSE | 2 | decides | A rally in a base, not a new high after an uptrend: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, pct_from_52w_high -6.82, ret_6m -2.69. Reversal, not continuation. I need ma_200 cleared, then a new high. day_vol 2.1 shows participation only. | A close above ma_200 41.52, then a new high on volume with AWK confirming. |
+| minervini | OPPOSE | 4 | decides | Fails stack and RS: ma_50 39.04 under ma_100 40.94 under ma_200 41.52; rs_rank_pct 36.22; ret_6m -2.69. A pop under the 200-day line is neglect, not stage 2. mp 90.0 STRONG and day_vol 2.1 are participation, not trend. Lynch free_cash_flow_yield -0.102. | ma_50 back above ma_200 and rs_rank_pct over 70. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 36.22, ma_50 39.04 under ma_100 40.94 under ma_200 41.52, from_52w_hi -6.82, lens.leadership warn. day_vol 2.1 is a reversal pop under the long averages, not continuation. Lynch: free_cash_flow_yield -0.102, d/e 2.12. | ma_50 back above ma_200 and rs_rank_pct into the top quintile. |
+| raschke | OPPOSE | 2 | advisory | Holy Grail needs an established uptrend: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, rs_rank_pct 36.22, leadership warn. day_vol 2.1 is a thrust off repair, not a retracement; no setup in my types. | ma_50 back over ma_200 and a first pullback holding ma_20 39.38 flips me. |
+| seow | OPPOSE | 2 | advisory | Odds gate not cleared: ret_63d -2.24, ret_6m -2.69, rs_rank_pct 36.22. A 20-day burst (rs_spy_20d 12.9, day_vol 2.1) off a base, ext_atr20 3.81 over ma_20 39.38: no dip and no established uptrend under it. | Wrong if ret_63d and rs_rank_pct turn up while a bar holds ma_20. |
+| thorp | SUPPORT | 2 | advisory | Calmest range in the set (vol_30d_ann 0.1784; atr 0.68 on entry 41.97), all five engine gates pass, day_vol 2.1. Context is repair, not continuation: ma_50 39.04 under ma_200 41.52, rs_rank_pct 36.22. Vote rests on a near loss boundary (ma_100 40.94) and small range only; no measured edge. | Close under ma_100 40.94, or a close more than one atr 0.68 under bar_low. |
+| weis | OPPOSE | 3 | advisory | W23 trend gate fails: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, rs_rank_pct 36.22, ret_6m -2.69. A day_vol 2.1 pop into the 200-day is a bounce in a repair, not a spring (W10). Ignition and trend disagree. | ma_50 crossing above ma_200 with a close above ma_200 41.52 on a dry-volume retest. |
+| wyckoff | SUPPORT | 2 | advisory | Base repair, not trend: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, entry 41.97 just through the ceiling on day_vol 2.1 (effort with progress), flat ret_6m -2.69. Only a low-volume retest of ma_200 is an entry; coil warn, rs_rank_pct 36.22. | Close back under ma_100 40.94 after the break. |
+| lynch (consult) | slow grower · CONTRADICT | — | no vote | dividendYieldTTM 0.022, pe_ratio 24.0, free_cash_flow_yield -0.102, debt_to_equity 2.12, revenue_growth_yoy 0.083 after -0.006, -0.067. Thin yield, negative cash, leverage; payout and peer P/E not served. | — |
+
+### BILL — PASS (conviction 2) · MOMENTUM · Strength + Nominated
+
+- Split: support minervini; oppose livermore, oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance all '--'; lens_positive 0 and lens_warnings 0 are not agreement. Spine ma_50 46.98 over ma_100 44.03 over ma_200 42.59 aligned, structure_shift RANGE, day_vol 0.83. Nothing to read; wrong on close under ma_50 46.98. | Lens re-pull with three or more strong turns this to SUPPORT; two warns, to OPPOSE. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 7, 7]: green faded two bars ago and sits at blue, never red, no event. ma_20 46.08 under ma_50 46.98 leaves the slope leg unmet; days_to_earnings 6. Permission only, no trigger (C1). | A reclaim of green after a dip into ma_20 46.08 with elder_ge:7 held would reopen it. |
+| livermore | OPPOSE | 2 | decides | A rally from a lower base, not a new high: pct_from_52w_high -12.25, ret_12m -3.51, ma_20 46.08 under ma_50 46.98. mp 93.0 STRONG and rs LEADER are real but no pivot is cleared, and the print is 6 sessions out. | A close above pivot_high on volume with ma_20 back over ma_50. |
+| minervini | SUPPORT | 2 | decides | Leader on a recovery: rs_rank_pct 83.78, rs_spy_20d 17.15, mp 93.0 STRONG, entry 49.41 over ma_50 46.98, ma_100 44.03, ma_200 42.59. Costs: pct_from_52w_high -12.25, structure 86.3 RANGE with no pivot cleared, day_vol 0.83, days_to_earnings 6. Buy is a volume clear. | Close under ma_100 44.03, or a clear of pivot_high on day_vol under 1. |
+| oneil | OPPOSE | 2 | decides | Leader tag but no pivot cleared: rs LEADER, rs_rank_pct 83.78, structure 86.3 RANGE, from_52w_hi -12.25, day_vol 0.83, ma_20 46.08 under ma_50 46.98. Earnings 2026-11-05 six sessions out. Lynch: revenue_growth_yoy 0.130 nearly halved in two years, pe_ratio -430.4. | A close above the range top on heavy volume with ma_20 back over ma_50. |
+| raschke | SUPPORT | 2 | advisory | Retracement family: structure 86.3 RANGE, mp 93 STRONG/ACCELERATING, sma_distance_pct 5.18, quiet pullback on day_vol 0.83. Holy Grail approximated, adx and stochastic not served. Print in 6 sessions (C9 overnight risk) and VALEN stance RISK OFF cut it to 2. | Daily close under ma_20 46.08. |
+| seow | ABSTAIN | — | advisory | Momentum real: rs_spy_20d 17.15, mp 93.0 STRONG, rs_leadership LEADER. But ret_63d 4.22 is thin and from_52w_hi -12.25 after run_10d 12.35 is a bounce, not a dip after a recent high (C4); ext_atr20 1.95 over ma_20 46.08. Weight not veto (R14). Dip to ma_20 plus a stop over bar_high. | Flips to SUPPORT if ret_63d widens and a bar's low reaches ma_20 while from_52w_hi closes toward 0. |
+| thorp | ABSTAIN | — | advisory | Quiet pullback (day_vol 0.83) with ma_20 46.08 under ma_50 46.98 and a print on 2026-11-05, 6 sessions out: a gap no stop covers. Range mid-pack (atr 1.71 on entry 49.41). Nothing measured. Momentum lane: advisory. | A close above ma_50 46.98 after the print on day_vol over 1. |
+| weis | ABSTAIN | — | advisory | Trend gate half met: ma_20 46.08 under ma_50 46.98, ma_100 44.03 and ma_200 42.59 below; pct_from_52w_high -12.25, ret_12m -3.51. structure_shift RANGE on day_vol 0.83 is a quiet pullback, not a spring. days_to_earnings 6 is an event. | ma_20 reclaiming ma_50 with a close above the range on day_vol over 1 would make me look again. |
+| wyckoff | OPPOSE | 2 | advisory | Mid-range, not an edge: RANGE at structure 86.3 but pct_from_52w_high -12.25, ma_20 46.08 under ma_50 46.98 tangled, day_vol 0.83 quiet. Earnings 2026-11-05. No spring or range-edge event served. | A close back over ma_50 46.98 holding, then a range-high break on day_vol above 1. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | revenue_growth_yoy 0.130 after 0.134, 0.219; pe_ratio -430.4, net_profit_margin -0.007, but free_cash_flow_yield 0.114. GAAP at break-even, cash strong; growth nearly halved in two years. debt_to_equity 0.537. | — |
+
+### NDAQ — PASS (conviction 3) · MOMENTUM · Strength + AQE leader + PM lens + Nominated
+
+- Split: support livermore; oppose oneil; abstain detect-lens, elder-lens, minervini. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens neutral: lens_positive 1 (sector), lens_warnings 1 (coil warn). Spine ma_50 95.17 over ma_100 92.19 over ma_200 90.51 aligned, day_vol 1.15. Extension is a weight under R14; the lens gives no lift and no warning that decides. Wrong on close under ma_50 95.17. | Coil turning strong plus a second strong lens (leadership or insti_money) turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [9, 10, 10, 10, 10] SUSTAINED, mp 84 STRONG: a plateau, summer (C20), C24 only and unsourced. Permission holds and day_vol 1.15 is steady (C23 clean), but entry 104.36 is far above value ma_20 95.13. No transition; I would bid a dip to ma_20. | A give-back to ma_20 95.13 with elder_ge:7 held would earn a SUPPORT. |
+| livermore | SUPPORT | 3 | decides | At the high in a stacked uptrend: pct_from_52w_high -0.34, structure 81.1, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING, day_vol 1.15, sma_distance_pct 9.65 not extended. CRBG in the same sector sits at pct_from_52w_high -0.65. The new high is not printed yet, so I wait for it. | A close back under ma_20 95.13, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only. |
+| minervini | ABSTAIN | — | decides | All gates pass but one: rs_rank_pct 69.94 sits under the floor and is a proxy, not IBD's rank. Leader at the top: pct_from_52w_high -0.34, ma_20 95.13, ma_50 95.17, ma_100 92.19, ma_200 90.51, structure 81.1. ext_atr20 3.96 is a weight. The gate is all-or-none: stand aside. | rs_rank_pct back over 70 with a new closing high on expansion. |
+| oneil | OPPOSE | 2 | decides | Fails the RS gate and the volume test: rs_rank_pct 69.94 and day_vol 1.15, though rs LEADER, structure 81.1 ABOVE_STRUCTURE and from_52w_hi -0.34. ext_atr20 3.96 is a weight only. Episodic pivot (delayed) FAILED (9/10). Lynch: pe_ratio 28.2 is full. | rs_rank_pct into the top quintile and a new high on heavy volume. |
+| raschke | SUPPORT | 2 | advisory | Strength real: mp 84 STRONG/ACCELERATING, elder SUSTAINED, rank 15. No retracement: sma_distance_pct 9.65, run_10d 11.64%, VALEN Episodic pivot (delayed) FAILED (9/10). Wait for the first pullback toward ma_20 95.13; extension is a weight (R14). | Daily close under ma_20 95.13. |
+| seow | ABSTAIN | — | advisory | Real strength: rs_spy_20d 12.91, mp 84.0 STRONG, Elder SUSTAINED, from_52w_hi -0.34. But ext_atr20 3.96 over ma_20 95.13 and run_10d 11.64 are the extension C3 forbids; Episodic pivot (delayed) FAILED (9/10). Weight not veto (R14). Enter only on a dip to ma_20 by a stop over bar_high. | Flips to SUPPORT on a small-bar pullback that reaches ma_20 and holds above ma_40. |
+| thorp | ABSTAIN | — | advisory | Calm tier (atr 2.33 on entry 104.36) but ma_20 95.13 is far under price (ext_atr20 3.96), so unwatched loss, not the stop, sets size. Delayed episodic pivot FAILED (9/10). Nothing measured. Momentum lane: advisory. | Several closes holding above ma_20 95.13 in a tight range. |
+| weis | SUPPORT | 2 | advisory | Trend gate passes: ma_20 95.13 ma_50 95.17 ma_100 92.19 ma_200 90.51, elder 10.0 SUSTAINED, mp 84.0 STRONG. But ext_atr20 3.96, pct_from_52w_high -0.34 and VALEN Episodic pivot (delayed) FAILED (9/10): nothing failed to buy. I take a give-back toward ma_20, not 104.36. Momentum lane: advisory. | Close below ma_100 92.19. |
+| wyckoff | OPPOSE | 2 | advisory | Mid-move after leaving a congestion: ma_20 95.13 and ma_50 95.17 sit far under entry 104.36, sma_distance_pct 9.65, ext_atr20 3.96, run_10d 11.64%. The edge is behind it, no retest in sight. Delayed EP FAILED. | A pullback toward ma_20 95.13 on light day_vol that holds. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | revenue_growth_yoy 0.111, net_profit_margin 0.228, debt_to_equity 0.775; pe_ratio 28.2 and free_cash_flow_yield 0.039 are full for a stalwart. eps_growth_yoy 0.61, -0.08, -0.08 is lumpy. | — |
+
+### BTI — PASS (conviction 2) · PULLBACK · Nominated
+
+- Split: support none; oppose detect-lens, livermore, minervini, oneil, raschke, seow, weis; abstain elder-lens, thorp, wyckoff. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 2 | decides | Lens warns match its strengths: lens_positive 2 (resistance, sector), lens_warnings 2 (leadership warn, coil warn), and ma_50 56.23 under ma_100 58.28 under ma_200 59.08, fully inverted. Dual-MA gate fails: repair, not continuation. day_vol 0.95 adds nothing. | ma_50 back over ma_200 with leadership and coil both off warn. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 10, 7, 7, 7], no pattern: green faded and flat at blue, no event. Repair context (ma_50 56.23 under ma_200 59.08, rs_rank_pct 47.01), not continuation; trend leg unverified. Nothing to nominate. | A dip into ma_20 56.66 with a ban-lift and elder_ge:7 held would reopen it. |
+| livermore | OPPOSE | 2 | decides | Inverted stack: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, pct_from_52w_high -10.3, ret_6m 2.33. A staples bounce under the 200-day is a rally, not trend continuation. I need ma_200 cleared, then a new high. | A close above ma_200 59.08, then a new high on volume. |
+| minervini | OPPOSE | 4 | decides | Template fails on stack and RS: ma_50 56.23 under ma_100 58.28 under ma_200 59.08; rs_rank_pct 47.01; ret_6m 2.33; pct_from_52w_high -10.3. Entry 59.83 is only just over ma_200. Yield and calm volatility are not stage 2; a defensive pop, not a leader. | ma_50 above ma_200 with rs_rank_pct over 70. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 47.01, ma_50 56.23 under ma_100 58.28 under ma_200 59.08, from_52w_hi -10.3, lens.leadership warn, day_vol 0.95. Reversal repair, not continuation, with no base under it. Lynch: revenue_growth_yoy -0.010. | ma_50 back above ma_200 and rs_rank_pct into the top quintile. |
+| raschke | OPPOSE | 2 | decides | Holy Grail needs an established uptrend: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, rs_rank_pct 47.01, leadership warn, coil warn. mp_accel DECELERATING, sma_distance_pct 6.41 after run_10d 7.51%. Repair, not a retracement. | ma_50 back over ma_200 and a first pullback holding ma_20 56.66 flips me. |
+| seow | OPPOSE | 3 | decides | Odds gate fails: ret_63d -5.14, rs_rank_pct 47.01, from_52w_hi -10.3. The 20-day pop (rs_spy_20d 8.36, ext_atr20 2.78 over ma_20 56.66, run_10d 7.51) is neglect repair, not a dip after a recent high. | Wrong if ret_63d turns positive and a bar holds ma_20. |
+| thorp | ABSTAIN | — | decides | Widest range of my round-1 names (vol_30d_ann 0.2319), weakest turnover (day_vol 0.95), no sample behind it (signal_n 0). Context is repair: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, rs_rank_pct 47.01. Nothing measured; yield 0.054 pays to wait, it is not an edge. | Close back above ma_200 59.08 with ma_50 turning up restores a trend to size on. |
+| weis | OPPOSE | 2 | decides | W23 gate fails: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, rs_rank_pct 47.01, ret_6m 2.33. A pop into the averages is repair, not an uptrend; mp_accel_state DECELERATING. No spring or failed break on my fields. | A close above ma_200 59.08 that holds on a retest with ma_50 turning up. |
+| wyckoff | ABSTAIN | — | decides | No effort and no contraction: day_vol 0.95, coil warn, energy 63.9; entry 59.83 only just over ma_200 59.08 with ma_50 56.23 and ma_100 58.28 under it. A base still being built; nothing to test and no independent edge read. | A retest of ma_200 59.08 that holds on light day_vol with coil turning strong. |
+| lynch (consult) | slow grower · NEUTRAL | — | no vote | dividendYieldTTM 0.054, pe_ratio 15.4, free_cash_flow_yield 0.056, net_profit_margin 0.250: the pay-you-to-wait shape. But revenue_growth_yoy -0.010, -0.052, -0.013; payout not served. | — |
+
+### VERX — PASS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support none; oppose detect-lens, livermore, minervini, oneil; abstain elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 4 | decides | Lens and spine both fail: lens_positive 0, lens_warnings 3 (leadership warn, coil warn, resistance warn); ma_50 13.05 under ma_200 13.36 and ma_100 12.66 under ma_200. day_vol 0.98 gives no participation case. Two independent checks against it. | ma_50 over ma_200 13.36 with two of the three warns cleared. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 7, 7], no pattern: green faded and flat at blue, never red, no event. mp_state FADING at mp 93 is a label (R13), not my reason; my reason is no transition. pct_from_52w_high -42.32 leaves the trend leg unverified. | A dip into ma_20 13.36 with a green reclaim would earn a read. |
+| livermore | OPPOSE | 2 | decides | Deep under the high: pct_from_52w_high -42.32, ret_12m -41.76, ma_200 13.36 level with ma_20 13.36. A rebound inside a downtrend; a low price alone is not my buy (C16). The missing new high is the reason. | A clear of the base high on volume; nothing short of it. |
+| minervini | OPPOSE | 4 | decides | Fails the within-band test and the stack: pct_from_52w_high -42.32, ret_12m -41.76, ma_50 13.05 under ma_200 13.36. A run_10d 16.35 rally off a broken chart is the broken-leader trap. pe_ratio 502.9 on net_profit_margin 0.005 leaves no earnings leg. | A new base above ma_200 clearing a pivot_high on expansion. |
+| oneil | OPPOSE | 4 | decides | Deep damage: from_52w_hi -42.32, ret_12m -41.76, rs_rank_pct 73.17 under my floor, three lens warnings, day_vol 0.98. A bounce inside a large drawdown, not a base-and-breakout. Lynch: pe_ratio 502.9 on revenue_growth_yoy 0.122. | The drawdown base completes and clears on heavy volume. |
+| raschke | ABSTAIN | — | advisory | Reversal pop, no type: pct_from_52w_high -42.32, ma_20 13.36 level with ma_200 13.36, lens_warnings 3, sma_distance_pct 13.41, run_10d 16.35%; mp FADING is the R13 label. Strength is real (rs_spy_20d 32.02) but I see no test or breakout to name. | — |
+| seow | OPPOSE | 2 | advisory | Desk C21 (not the author's): no daily long into a broken higher timeframe; from_52w_hi -42.32, ret_12m -41.76. Also ext_atr20 2.4 over ma_20 13.36, run_10d 16.35, lens_warnings 3. The burst is real (rs_spy_20d 32.02) but nothing to arm. | Wrong if from_52w_hi closes sharply and a quiet bar holds ma_20. |
+| thorp | ABSTAIN | — | advisory | Lens warns 3, from_52w_hi -42.32, pe_ratio 502.9 on net_profit_margin 0.005 (Lynch): no earnings under the multiple. Range wide (atr 0.6 on entry 14.8). Nothing measured; momentum is the whole case. Advisory. | A hold above ma_20 13.36 on day_vol over 1. |
+| weis | OPPOSE | 3 | advisory | W23/W10: pct_from_52w_high -42.32 and ret_12m -41.76; ma_20 13.36 equals ma_200 13.36 with ma_100 12.66 under both, so the primary trend is still down. run_10d 16.35% at sma_dist 13.41 and lens_warnings 3. Any spring here is short evidence, not long. | A close above ma_200 13.36 that holds on a dry-volume retest with ma_100 turning up. |
+| wyckoff | OPPOSE | 2 | advisory | Pop under heavy supply: pct_from_52w_high -42.32, sma_distance_pct 13.41, run_10d 16.35%, lens warns on leadership, coil and resistance, day_vol 0.98. The congestion ma_20 13.36 / ma_100 12.66 / ma_200 13.36 is the edge; entry 14.8 is past it. Wait for the retest. | A retest of ma_200 13.36 on light day_vol that holds. |
+| lynch (consult) | stalwart · CONTRADICT | — | no vote | pe_ratio 502.9, free_cash_flow_yield 0.023, net_profit_margin 0.005 on revenue_growth_yoy 0.122 after 0.165, 0.164; debt_to_equity 1.45. No earnings under the multiple; growth slowing. | — |
+
+### FTV — PASS (conviction 2) · MOMENTUM · AQE leader + PM lens + Nominated
+
+- Split: support none; oppose detect-lens, minervini, oneil; abstain elder-lens, livermore. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 3 | decides | MOMENTUM lane contradicted by lens and spine: lens_positive 1 (resistance), lens_warnings 2 (coil warn, insti_money warn); ma_50 57.44 under ma_100 59.33 and ma_200 58.55. Institutional-money warn on a lane built on it; day_vol 1.81 shows participation, not direction. | ma_50 back over ma_200 58.55 with coil and insti_money both off warn. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [9, 10, 10, 10, 10] SUSTAINED plateau: C24 only, unsourced. ma_50 57.44 under ma_200 58.55 makes this repair, not continuation; slope unverified. day_vol 1.81 carries no direction for me. Permission holds; no trigger. | A dip into ma_20 57.95 with elder_ge:7 held and ma_50 back above ma_200 would reopen it. |
+| livermore | ABSTAIN | — | decides | A base below its high, not a trend: pct_from_52w_high -3.85, ret_6m -0.24, ma_50 57.44 under ma_100 59.33 and ma_200 58.55. day_vol 1.81 is real participation. I act only on a clear of the base high, which would be a breakout, not a reversal. | — |
+| minervini | OPPOSE | 4 | decides | Fails the template twice: ma_50 57.44 under ma_200 58.55 and ma_100 59.33; rs_rank_pct 42.2; ret_6m -0.24. Lynch: revenue_growth_yoy -0.175, eps_growth_yoy -0.27. day_vol 1.81 and SUSTAINED are participation in a repair, not leadership. | ma_50 over ma_200 with rs_rank_pct over 70. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 42.2, ma_50 57.44 under ma_100 59.33 and ma_200 58.55, lens.coil warn and insti_money warn. day_vol 1.81 is a repair bounce, reversal not continuation. Lynch: revenue_growth_yoy -0.175, eps_growth_yoy -0.27. | ma_50 back above ma_200 and rs_rank_pct into the top quintile. |
+| raschke | OPPOSE | 2 | advisory | Holy Grail needs an established uptrend: ma_50 57.44 under ma_100 59.33 and ma_200 58.55, rs_rank_pct 42.2, coil warn, insti_money warn. day_vol 1.81 with sma_distance_pct 7.28 is a thrust off repair, not a retracement. | ma_50 back over ma_200 and a first pullback holding ma_20 57.95 flips me. |
+| seow | ABSTAIN | — | advisory | Odds gate thin: ret_63d 3.49, ret_6m -0.24, rs_rank_pct 42.2. The burst is rs_spy_20d 10.49 on day_vol 1.81, ext_atr20 3.01 over ma_20 57.95. Lynch CONTRADICT (revenue_growth_yoy -0.175). R14 weight, not veto: enter only on a dip to ma_20 by a stop over bar_high; wrong on a close under ma_40. | Flips to SUPPORT if ret_63d widens and a bar reaches ma_20 holding above ma_40. |
+| thorp | ABSTAIN | — | advisory | Only statistic held is signal_hit_rate_20d 46.3 over signal_n 579: n honest, rate under half, no benchmark, so no edge. Stack ma_50 57.44 under ma_100 59.33 and ma_200 58.55, rs_rank_pct 42.2, lens warns 2; Lynch contradicts (revenue_growth_yoy -0.175). A calm range alone is not an edge. | A benchmarked hit rate above half on the same n, plus ma_50 over ma_200. |
+| weis | OPPOSE | 2 | advisory | W23 gate fails: ma_50 57.44 under ma_100 59.33 and ma_200 58.55, rs_rank_pct 42.2, ret_6m -0.24. The day_vol 1.81 pop is repair, not trend; ext_atr20 3.01; lens_warnings 2 (coil, insti_money). No spring. | ma_50 reclaiming ma_200 with a close above ma_100 59.33. |
+| wyckoff | SUPPORT | 2 | advisory | Base repair: entry 61.62 through ma_100 59.33 and ma_200 58.55 on day_vol 1.81 (effort with progress), flat ret_6m -0.24, flow 88.2. ma_50 57.44 still under; coil warn and insti_money warn, so only a low-volume retest of the cluster is an entry. | Close under ma_200 58.55 after the break. |
+| lynch (consult) | stalwart · CONTRADICT | — | no vote | pe_ratio 35.8 with revenue_growth_yoy -0.175 and eps_growth_yoy -0.27; net_profit_margin 0.124, free_cash_flow_yield 0.051. The -17.5 percent step may be a perimeter change; packet cannot say. Ask PM. | — |
+
+### AWK — PASS (conviction 2) · MOMENTUM · Strength + Nominated
+
+- Split: support livermore; oppose minervini, oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens split: lens_positive 2 (resistance, sector), lens_warnings 2 (leadership warn, coil warn). Spine ma_50 135.27 over ma_100 133.51 over ma_200 132.23 aligned but compressed, structure_shift RANGE, day_vol 0.79. Leadership and coil are what a MOMENTUM buy needs; even split, no tilt. | A third strong lens with a warn cleared turns this to SUPPORT; a third warn turns it to OPPOSE. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 10, 10, 7, 7], no pattern: green faded to blue and stays, never red. mp 86 is strong but there is no transition to read, and entry 141.1 is above value ma_20 133.0. Permission only. | A dip into ma_20 133.0 with elder_ge:7 held would reopen it. |
+| livermore | SUPPORT | 2 | decides | Near the high of a flat year: pct_from_52w_high -1.49, structure 77.9 RANGE, mp 86.0, ma_50 135.27 over ma_100 133.51 over ma_200 132.23. Utilities rally with CNP, but CNP has not confirmed, so two. day_vol 0.79 is thin; buy the clear of the high only on volume. | A close back under ma_20 133.0, or CNP failing to clear ma_200 while AWK breaks (C14). Bracket INVALID, information only. |
+| minervini | OPPOSE | 3 | decides | Fails RS and slope: rs_rank_pct 55.37, ret_12m -0.35, ma_20 133.0 under ma_50 135.27, ma_200 132.23 flat against ma_100 133.51. Utility stalling in a range (structure 77.9 RANGE). mp FADING alone is not my reason (R13); the template is. | rs_rank_pct over 70 and a pivot clear on expansion. |
+| oneil | OPPOSE | 3 | decides | No pivot and a broken short line: ma_20 133.0 under ma_50 135.27, structure_shift RANGE, rs_rank_pct 55.37, day_vol 0.79, lens.coil warn. Utility strength is relative, not leadership. mp FADING is not my reason. Lynch: free_cash_flow_yield -0.037. | Close over the range top on heavy volume with rs_rank_pct into the top quintile. |
+| raschke | SUPPORT | 2 | advisory | Retracement family: structure 77.9 RANGE, sma_distance_pct 4.31, quiet pullback day_vol 0.79; mp FADING is the R13 label, mp_accel ACCELERATING the only hook. div BULLISH/0. Approximated; RISK OFF keeps it at 2. | Daily close under ma_20 133.0. |
+| seow | ABSTAIN | — | advisory | Trend leg unproven: ret_63d 2.18, ret_12m -0.35, rs_rank_pct 55.37; with ma_40 unserved I cannot show ma_20 133.0 above it. The rs_spy_20d 7.99 burst sits ext_atr20 2.78 over the average. Weight not veto (R14); nothing to arm. Wait for a dip and an up-sloping ma_20. | Flips to SUPPORT if ret_63d widens and a bar reaches ma_20 with the average rising. |
+| thorp | ABSTAIN | — | advisory | Calm tier (atr 2.91 on entry 141.1), ma_50 135.27 over ma_100 133.51 over ma_200 132.23, div BULLISH, but ma_20 133.0 is far under price (ext_atr20 2.78) on light turnover day_vol 0.79; leadership and coil lenses warn. Nothing measured; Lynch capital intensity (free_cash_flow_yield -0.037). Momentum lane: advisory. | A close above pivot_high on day_vol over 1. |
+| weis | ABSTAIN | — | advisory | No spring or failed break: ma_20 133.0 under ma_50 135.27, ma_200 132.23 flat, structure_shift RANGE, rs_rank_pct 55.37, day_vol 0.79. A quiet pullback in a range; trend gate unmet for a long call and no basis to oppose (div BULLISH/0). | A close above ma_50 135.27 on day_vol over 1, or below ma_200 132.23. |
+| wyckoff | SUPPORT | 2 | advisory | Long congestion left: ma_20 133.0, ma_50 135.27, ma_100 133.51, ma_200 132.23 stacked tight, entry 141.1 out of it, RANGE structure 77.9, pct_from_52w_high -1.49, div BULLISH/0. Effort light (day_vol 0.79), coil warn: enter only on a low-volume retest of ma_50. | Close back inside the congestion under ma_50 135.27. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | revenue_growth_yoy 0.097, 0.106, 0.117 and eps_growth_yoy 0.06 to 0.10 are steady; pe_ratio 24.4, dividendYieldTTM 0.024 full; free_cash_flow_yield -0.037 and debt_to_equity 1.38 are utility capital intensity. | — |
+
+### ASAN — PASS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support minervini; oppose elder-lens, oneil; abstain detect-lens, livermore. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance '--'; lens_positive 0 and lens_warnings 0 are not agreement. Spine ma_50 9.69 over ma_100 8.71 over ma_200 8.12 aligned, day_vol 0.93. VALEN parabolic CRACKED (2/4). Cannot corroborate; wrong on close under ma_50 9.69. | Lens re-pull with three strong turns this to SUPPORT; two warns, to OPPOSE. |
+| elder-lens | OPPOSE | 2 | decides | C4: elder_5d [10, 10, 10, 10, 7], single-bar drop from green on the last bar, with VALEN Parabolic CRACKED and pct_from_52w_high -21.46. Strength is real (mp 97 STRONG) but Elder books profit on green going away. Entry 11.86 is above value ma_20 10.14; no initiate here. | elder_5d back to 10 on the next bar would show the drop was one-bar noise. |
+| livermore | ABSTAIN | — | decides | Strong rebound, old pivotal point not cleared: pct_from_52w_high -21.46, ret_12m -18.66, mp 97.0 STRONG, structure 76.8, rs_spy_20d 43.39. VALEN shows Parabolic CRACKED. Enterprise software leads, but ASAN lags TENB at the high (C14). I watch for the clear of the prior high. | — |
+| minervini | SUPPORT | 2 | decides | Strength is real: rs_rank_pct 95.73, rs_spy_20d 43.39, mp 97.0 STRONG, ma_20 10.14, ma_50 9.69, ma_200 8.12 aligned, pct_from_52w_high -21.46 inside the band. But sma_distance_pct 22.42, Valen parabolic CRACKED, revenue_growth_yoy 0.092 halved, loss-making. Only a tight pause breaking up on expansion. | The pause breaks down: close under the pause low, or a fade off the high on heavy volume. |
+| oneil | OPPOSE | 3 | decides | A bounce, not leadership: ret_12m -18.66, from_52w_hi -21.46, sma_dist 22.42, day_vol 0.93, VALEN Parabolic CRACKED (2/4). rs_rank_pct 95.73 reflects the six-month rebound (ret_6m 87.36). Lynch: net_profit_margin -0.186, revenue_growth_yoy 0.092 halved. | The base repairs and clears the old high on heavy volume. |
+| raschke | OPPOSE | 2 | advisory | VALEN Parabolic CRACKED (2/4) is the failed form: sma_distance_pct 22.42 after run_10d 20.28%, pct_from_52w_high -21.46, day_vol 0.93, a vertical bounce with no structure to buy and no stop close by. The cracked read is the basis, not extension alone (R14). | A first pullback that holds ma_20 10.14 on day_vol under 1 flips me. |
+| seow | ABSTAIN | — | advisory | Strength real (rs_spy_20d 43.39, ret_63d 39.37) but AQE's Parabolic read is CRACKED (2/4), ext_atr20 2.97 over ma_20 10.14, run_10d 20.28, from_52w_hi -21.46. No dip bar to arm; weight not veto (R14). Re-test only after a quiet pullback to ma_20. | Flips to SUPPORT on a quiet pullback bar at ma_20 that holds above ma_40. |
+| thorp | OPPOSE | 2 | advisory | Parabolic CRACKED (2/4) after run_10d 20.28; loss-making (net_profit_margin -0.186) with debt_to_equity 2.48 and growth halved (Lynch). ma_20 10.14 is far under entry 11.86. Nothing measured. Advisory. | Parabolic read clears on a quiet consolidation. |
+| weis | OPPOSE | 2 | advisory | Parabolic already cracked: VALEN Parabolic CRACKED (2/4) after run_10d 20.28% at sma_dist 22.42; pct_from_52w_high -21.46, ret_12m -18.66. Ending action (W15) over a long downtrend; nothing failed to buy. | A hold above ma_20 10.14 on dry volume that then makes a new swing high. |
+| wyckoff | OPPOSE | 2 | advisory | Mid-move rebound under overhead supply: sma_distance_pct 22.42, run_10d 20.28%, pct_from_52w_high -21.46, Parabolic CRACKED (2/4), day_vol 0.93. No edge or retest level near entry 11.86; ma_20 10.14 is the first test. | A retest of ma_20 10.14 on light volume that holds. |
+| lynch (consult) | turnaround · CONTRADICT | — | no vote | revenue_growth_yoy 0.092 after 0.109, 0.192 (halved); net_profit_margin -0.186, debt_to_equity 2.48, free_cash_flow_yield 0.043. Loss-making with fading growth; no profit path served. | — |
+
+### TTEK — PASS (conviction 3) · PULLBACK · Nominated
+
+- Split: support raschke; oppose minervini, oneil, seow, wyckoff; abstain detect-lens, elder-lens, livermore, thorp, weis. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens neutral: lens_positive 1 (resistance), lens_warnings 1 (coil warn). Spine ma_50 35.28 over ma_100 33.21, which is barely over ma_200 33.05; structure_shift RANGE, day_vol 1.09. No lens case either way. | Coil turning strong and a second strong lens turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 10, 7]: single-bar drop from green on the last bar, the profit-taking signal (C4), not a buy. ma_20 34.43 sits under ma_50 35.28 and days_to_earnings is 10. No transition to nominate. | A reclaim of green with elder_ge:7 after a dip would reopen it. |
+| livermore | ABSTAIN | — | decides | A pullback name, not mine: pct_from_52w_high -13.47, ma_20 34.43 under ma_50 35.28, structure 74.7 RANGE. I buy a new high and none is near. The 2026-11-11 print is an event, not my thesis. | — |
+| minervini | OPPOSE | 2 | decides | Stage 2 not clean: ma_20 34.43 under ma_50 35.28, ma_200 33.05 flat against ma_100 33.21 (no sign of a rising 200-day), pct_from_52w_high -13.47, rs_rank_pct 73.48 just clears. No pivot cleared, days_to_earnings 10, Lynch eps_growth_yoy -0.25. | ma_20 back over ma_50 and price clearing pivot_high on expansion. |
+| oneil | OPPOSE | 2 | decides | Below the line it needs: from_52w_hi -13.47, ma_20 34.43 under ma_50 35.28, rs_rank_pct 73.48, structure 74.7 RANGE, day_vol 1.09. A bounce inside a range, not a pivot. Earnings 2026-11-11 ahead. Lynch: eps_growth_yoy -0.248. | A close over the range top on heavy volume with ma_20 back over ma_50. |
+| raschke | SUPPORT | 3 | decides | Retracement family: structure 74.7 RANGE, mp 72 BUILDING with mp_accel ACCELERATING hook, sma_distance_pct 4.51, day_vol 1.09 not drying, ma_20 34.43 under ma_50 35.28. Holy Grail approximated. Print in 10 sessions is timing only. | Daily close under ma_20 34.43. |
+| seow | OPPOSE | 2 | decides | PULLBACK tag without the premise: from_52w_hi -13.47 means no recent high behind the dip (C4), and ext_atr20 2.87 over ma_20 34.43 is a bounce (run_10d 9.93), not a touch of the average. ret_63d 9.15 and rs_spy_20d 8.69 pass the gate, but nothing to arm. | Wrong if it holds above ma_20 on small bars while from_52w_hi closes the gap. |
+| thorp | ABSTAIN | — | decides | Calm tier (atr 0.85 on entry 36.87) but a print on 2026-11-11, 10 sessions out, is a gap event, and ma_20 34.43 sits under ma_50 35.28 so the stack is not in order. Lynch: acquisition-era growth ran out (eps_growth_yoy -0.25). Nothing measured. | A close above ma_50 35.28 after the print. |
+| weis | ABSTAIN | — | decides | No setup on my recognisers: ma_20 34.43 under ma_50 35.28, pct_from_52w_high -13.47, structure_shift RANGE on day_vol 1.09 not drying. Trend gate unmet and no spring-shaped bar. days_to_earnings 10. | ma_20 reclaiming ma_50 35.28 on a close, then a dry-volume retest. |
+| wyckoff | OPPOSE | 2 | decides | Contraction test fails: coil warn, energy 65.5; RANGE but pct_from_52w_high -13.47 so mid-range, ma_20 34.43 under ma_50 35.28. Contraction is my only timing test and is not rescued. Earnings 2026-11-11. | Coil turning strong with a close above ma_50 35.28. |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | pe_ratio 22.1, free_cash_flow_yield 0.058, debt_to_equity 0.552 are sound, but revenue_growth_yoy 0.047 after 0.150, 0.595 and eps_growth_yoy -0.25: the acquisition-era growth has run out. | — |
+
+### KVYO — PASS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support none; oppose livermore, minervini, oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance '--'; lens_positive 0 and lens_warnings 0 are not agreement. Spine fails: ma_50 17.67 under ma_200 18.13; day_vol 0.54 is dry on a vertical run. Repair on thin participation; cannot corroborate. | ma_50 over ma_200 18.13 with day_vol over 1 and a lens re-pull showing three strong turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 10, 7, 7], no pattern: green faded two bars ago, no event. day_vol 0.54 is drastic shrinkage on a sharp run (run_10d 19.06%), a trend-expiry warning (C23). Momentum is real (mp 93 STRONG) but no entry; wait for value at ma_20 17.97. | day_vol back above 1 with green back, or a dip into ma_20 17.97, would earn a read. |
+| livermore | OPPOSE | 2 | decides | Deep under the high: pct_from_52w_high -39.33, ret_12m -23.15, rs_rank_pct 44.76, ma_200 18.13 above ma_20 17.97. A rebound inside a downtrend, not a new high after an uptrend. Dry day_vol 0.54 on a 19.06 run adds no confirmation. | A clear of the base high on volume; nothing short of it. |
+| minervini | OPPOSE | 4 | decides | Template fails: pct_from_52w_high -39.33, rs_rank_pct 44.76, ret_12m -23.15, ma_50 17.67 under ma_200 18.13. A run_10d 19.06 bounce on day_vol 0.54 is thin-volume strength, not sponsorship. Earnings leg absent: net_profit_margin 0.005. | ma_50 over ma_200 and rs_rank_pct over 70. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 44.76, ret_12m -23.15, from_52w_hi -39.33, ret_6m 1.2, day_vol 0.54 on a run_10d 19.06% pop. A rebound without volume or a base. Lynch: pe_ratio 981.9. | A base completes and clears on heavy volume with rs_rank_pct into the top quintile. |
+| raschke | ABSTAIN | — | advisory | Reversal pop on dry volume: day_vol 0.54, pct_from_52w_high -39.33, rs_rank_pct 44.76, ma_50 17.67 under ma_200 18.13, run_10d 19.06%. Strength is real (rs_spy_20d 31.61, mp 93) but no test or breakout to name; abstain, not oppose. | — |
+| seow | OPPOSE | 3 | advisory | Desk C21 (not the author's): from_52w_hi -39.33, ret_12m -23.15, rs_rank_pct 44.76, ret_63d 4.18 thin. A run_10d 19.06 burst on day_vol 0.54 has no volume behind it; ext_atr20 2.26 over ma_20 17.97. Reversal, not continuation. | Wrong if ret_63d and rs_rank_pct turn up and a quiet bar holds ma_20. |
+| thorp | ABSTAIN | — | advisory | Dry turnover day_vol 0.54, rs_rank_pct 44.76, from_52w_hi -39.33 and pe_ratio 981.9: a 19.06 ten-day run with neither volume nor earnings behind it. Range wide (atr 0.98 on entry 20.18). Nothing measured. Advisory. | Turnover back over normal (day_vol over 1) on a close above pivot_high. |
+| weis | OPPOSE | 3 | advisory | W23/W10: pct_from_52w_high -39.33, ret_12m -23.15, rs_rank_pct 44.76, ret_6m 1.2. run_10d 19.06% on day_vol 0.54 is thin effort, and price has only just cleared ma_200 18.13 (entry 20.18), so the primary trend is not yet up. | A dry-volume retest of ma_200 18.13 that holds, then a volume-expansion close. |
+| wyckoff | OPPOSE | 2 | advisory | Pop on no effort: run_10d 19.06% on day_vol 0.54, sma_distance_pct 14.18, pct_from_52w_high -39.33, rs_rank_pct 44.76. Light-volume progress into heavy overhead supply is an upthrust risk, direction unmeasured. The edge is the congestion ma_100 17.07 to ma_200 18.13. | A retest of ma_200 18.13 on light day_vol that holds, or the run repeating on day_vol above 1. |
+| lynch (consult) | fast grower · NEUTRAL | — | no vote | revenue_growth_yoy 0.316 after 0.343, 0.477; debt_to_equity 0.118; free_cash_flow_yield 0.039 at pe_ratio 981.9 (net_profit_margin 0.005). Clean balance sheet, GAAP earnings absent, growth cooling. | — |
+
+### DXC — PASS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support livermore; oppose detect-lens, elder-lens, minervini, oneil; abstain none. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 3 | decides | Lens warns with no strong lens: lens_positive 0, lens_warnings 3 (coil warn, insti_money warn, resistance warn). ma_50 12.0 over ma_200 11.55 but ma_100 10.86 under ma_200: unstable stack. day_vol 0.62 on a vertical run is thin participation. | Coil and insti_money off warn with day_vol over 1 on a new high. |
+| elder-lens | OPPOSE | 2 | decides | C4 and C23: elder_5d [10, 10, 10, 7, 7] shows green going away two bars ago, with day_vol 0.62 shrinking near the high (pct_from_52w_high -2.82) and VALEN Parabolic WARNING. Extension (sma_dist 32.02%) is a weight only (R14); mp_state FADING is not used (R13). Bid value at ma_20 13.4. | elder_5d back to 10 with day_vol back above 1 would show a pause, not an ending. |
+| livermore | SUPPORT | 2 | decides | A base-high test with real strength: pct_from_52w_high -2.82, structure 79.4, ABOVE_STRUCTURE, mp 100.0 flat at the top ACCELERATING, rs_spy_20d 52.63, ma_50 12.0 over ma_100 10.86. Weights: run_10d 24.04, sma_distance_pct 32.02, thin day_vol 0.62. Buy only a clear of the high on volume. | The clear fails: a close back under bar_low, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only. |
+| minervini | OPPOSE | 2 | decides | Fails on slope: ma_100 10.86 under ma_200 11.55 (no rising 200-day), revenue_growth_yoy -0.018 after three years of shrinkage. Thrust is real (rs_spy_20d 52.63, run_10d 24.04) but on day_vol 0.62 and a Valen parabolic WARNING. A recovery, not stage 2. | ma_200 turning up with ma_100 over it and the thrust holding on expansion. |
+| oneil | OPPOSE | 3 | decides | A turnaround spike on dry volume: run_10d 24.04%, sma_dist 32.02, day_vol 0.62, three lens warnings, VALEN Parabolic WARNING (2/4). rs LEADER and rs_rank_pct 87.13 are real, but the lows were just left (ma_200 11.55) with no base. Lynch: revenue_growth_yoy -0.018, three years of shrinkage. | A tight base forms and breaks on heavy volume. |
+| raschke | SUPPORT | 1 | advisory | Momentum real (rs_spy_20d 52.63, mp 100) on thin volume day_vol 0.62; sma_distance_pct 32.02, run_10d 24.04%, VALEN Parabolic WARNING (2/4), lens_warnings 3. No retracement exists; the only entry is the first pullback toward ma_20 13.4. | Daily close under ma_20 13.4. |
+| seow | ABSTAIN | — | advisory | Strong tape: rs_spy_20d 52.63, ret_63d 34.58, mp 100.0. But run_10d 24.04, ext_atr20 3.64 over ma_20 13.4 on day_vol 0.62 and Parabolic WARNING (2/4): a vertical leg, no dip. Weight not veto (R14). Lynch flags free_cash_flow_yield 0.487 as unverified. Wait for ma_20. | Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40. |
+| thorp | OPPOSE | 2 | advisory | Parabolic WARNING (2/4), run_10d 24.04 on dry turnover day_vol 0.62, lens warns 3, and free_cash_flow_yield 0.487 against thin margins is unverified (Lynch). ma_20 13.4 sits far under entry 15.84. Nothing measured. Advisory. | Turnover back over normal (day_vol over 1) on a new high. |
+| weis | OPPOSE | 2 | advisory | Vertical off a base that only just turned: sma_dist 32.02, run_10d 24.04%, ma_100 10.86 still under ma_200 11.55 (trend was down, W10), lens_warnings 3, VALEN Parabolic WARNING (2/4). day_vol 0.62 is dry, which is not bearish (W4) but gives me nothing to buy. free_cash_flow_yield 0.487 is unverified. | A hinge on dry volume that holds above ma_20 13.4 and then expands. |
+| wyckoff | OPPOSE | 3 | advisory | Vertical on light effort: sma_distance_pct 32.02, run_10d 24.04%, ext_atr20 3.64 with day_vol 0.62, progress without participation. Parabolic WARNING (2/4); lens warns on coil, insti_money and resistance. Mid-move, no edge. | A base above ma_20 13.4 on contracting day_vol that holds. |
+| lynch (consult) | turnaround · NEUTRAL | — | no vote | revenue_growth_yoy -0.018, -0.058, -0.053: three years of shrinkage; net_profit_margin 0.010, debt_to_equity 1.37, pe_ratio 21.2. free_cash_flow_yield 0.487 looks implausible against margins; unverified. | — |
+
+### RYAN — PASS (conviction 2) · MOMENTUM · Strength + Reclaim seat (rule)
+
+- Split: support none; oppose detect-lens, livermore, minervini, oneil; abstain elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 3 | decides | Lens warns outnumber: lens_positive 1 (sector), lens_warnings 3 (leadership warn, coil warn, resistance warn). Spine ma_50 40.36 over ma_100 40.14 over ma_200 39.08 aligned but compressed, day_vol 1.25. VALEN U&R MET reclaim day does not change the lens read. | Two of the three warns clearing, or a strong lens appearing. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 7, 7, 7], no pattern: green faded two bars ago, flat at blue, no event. mp 86 STRONG, but ma_50 40.36 sits above ma_20 39.83 and I have no slope read. debt_to_equity 7.47 is Lynch's, not mine. Wait for a ban-lift or value. | A dip into ma_20 39.83 with a green reclaim would earn a read. |
+| livermore | OPPOSE | 2 | decides | No uptrend to extend: pct_from_52w_high -27.41, ret_12m -20.37, ret_63d -8.82, with ma_20 39.83 under ma_50 40.36 and ma_200 39.08 bunched. A bounce through a flat stack, not a new high after a trend. mp STRONG here is a rally read. | A close above ma_100 40.14 with ma_50 turning up, then a clear of the base high on volume. |
+| minervini | OPPOSE | 3 | decides | Fails the within-band test: pct_from_52w_high -27.41, ret_12m -20.37. Averages bunched and flat (ma_20 39.83, ma_50 40.36, ma_100 40.14, ma_200 39.08): a base, not a stage 2 stack. rs_rank_pct 78.54 clears. Lynch debt_to_equity 7.47. | ma_50 clearly over ma_200 and a base breakout on expansion. |
+| oneil | OPPOSE | 3 | decides | A 12-month laggard: ret_12m -20.37, from_52w_hi -27.41, ret_63d -8.82, rs_rank_pct 78.54 under my floor, three lens warnings. The short pop (rs_spy_20d 11.25, mp 86 STRONG, day_vol 1.25) is a bounce without a base. Lynch: d/e 7.47. | A base completes near the old high and clears on heavy volume with rs_rank_pct into the top quintile. |
+| raschke | SUPPORT | 2 | advisory | Test family: VALEN U&R MET, undercut the 9-day average 42.24 and closed back above; mp 86 STRONG/ACCELERATING, day_vol 1.25, sma_distance_pct 4.99. lens_warnings 3, pct_from_52w_high -27.41 and debt_to_equity 7.47 hold it at 2. Stop beyond ma_20 39.83. | Daily close under ma_20 39.83. |
+| seow | OPPOSE | 3 | advisory | Odds gate fails: ret_63d -8.82, ret_12m -20.37, from_52w_hi -27.41, rs_rank_pct 78.54 resting on a 20-day burst (rs_spy_20d 11.25). ext_atr20 1.71 over ma_20 39.83 is a bounce in a damaged trend. Lynch: debt_to_equity 7.47. | Wrong if ret_63d turns positive and a bar holds ma_20 while from_52w_hi closes. |
+| thorp | ABSTAIN | — | advisory | Mid range (atr 1.49 on entry 42.38) and U&R MET on reclaim day, but lens warns 3, from_52w_hi -27.41, ret_12m -20.37 and debt_to_equity 7.47 (about 88 percent of capital, Lynch). Leverage turns a gap into the sizing case. Nothing measured. Advisory. | Lens warns falling to 1 or less with a close above pivot_high. |
+| weis | ABSTAIN | — | advisory | Trend gate unmet for a spring call: ma_20 39.83 under ma_50 40.36, with ma_100 40.14 and ma_200 39.08 tangled, pct_from_52w_high -27.41, ret_12m -20.37. U&R MET is a reclaim inside a repair, not an uptrend (W10). No basis to oppose: rs LEADER spy20 11.25, mp 86.0 STRONG ACCELERATING. | ma_20 reclaiming ma_50 40.36 on a close while the 9-day reclaim holds. |
+| wyckoff | ABSTAIN | — | advisory | Why unnominated: contraction fails, lens coil warn and energy 55.5, with resistance warn and pct_from_52w_high -27.41 of overhead supply. Tangled ma_20 39.83 / ma_50 40.36 / ma_100 40.14 is a congestion just left; U&R MET reclaim of the 9-day average 42.24 is not enough alone. | Coil turning strong and a low-volume retest of ma_50 40.36 that holds. |
+| lynch (consult) | fast grower · NEUTRAL | — | no vote | revenue_growth_yoy 0.213, 0.211, 0.204: steady 20 percent; free_cash_flow_yield 0.096. But debt_to_equity 7.47 (debt about 88 percent of capital), pe_ratio 44.5, net_profit_margin 0.058. | — |
+
+### EQT — PASS (conviction 2) · PULLBACK · Nominated
+
+- Split: support wyckoff; oppose detect-lens, livermore, minervini, oneil, seow, weis; abstain elder-lens, raschke, thorp. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 2 | decides | Lens warns match: lens_positive 2 (resistance, sector), lens_warnings 2 (leadership warn, coil warn); ma_50 53.09 and ma_100 52.51 both under ma_200 55.51, gate fails. day_vol 2.05 shows participation, not direction. Supply-demand is not in my fields. | ma_50 back over ma_200 55.51 with leadership and coil off warn. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 7, 10, 7, 10] CORRECTION_REENTRY, but mp 72 is BUILDING, not STRONG, so R8 is unmet and the dip never went red. ma_50 53.09 under ma_200 55.51 with rs_rank_pct 30.12: repair with no named catalyst. Stand aside. | mp_state STRONG with the pattern intact and ma_50 back above ma_200 would reopen it. |
+| livermore | OPPOSE | 2 | decides | Reversal, not continuation: ma_50 53.09 under ma_200 55.51, pct_from_52w_high -17.16, ret_6m -5.3. day_vol 2.05 shows participation, not direction. I buy a new high after an uptrend, and this has neither. | A close above ma_200 55.51, then a new high on volume with BKR confirming. |
+| minervini | OPPOSE | 4 | decides | Fails the template: ma_50 53.09 under ma_200 55.51, rs_rank_pct 30.12, pct_from_52w_high -17.16, ret_6m -5.3. Entry 56.27 only just over the 200-day. Heavy day_vol 2.05 and pe_ratio 12.4 after a surge are not stage 2 evidence. Energy tape unread by me. | ma_50 over ma_200 with rs_rank_pct over 70. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 30.12, ma_50 53.09 under ma_200 55.51, from_52w_hi -17.16, lens.leadership warn. day_vol 2.05 is a reversal pop. I cannot test energy supply and demand. Lynch: revenue_growth_yoy 0.737 is a commodity swing. | ma_50 back above ma_200 and rs_rank_pct into the top quintile. |
+| raschke | ABSTAIN | — | decides | R1 filed a retracement; the ma check shows ma_50 53.09 under ma_200 55.51 and rs_rank_pct 30.12: repair, not an established trend, so the Holy Grail read is void. Energy supply-demand not served. No Raschke setup remains. | — |
+| seow | OPPOSE | 2 | decides | Gate weak: rs_rank_pct 30.12, ret_6m -5.3, from_52w_hi -17.16. The rs_spy_20d 14.4 burst on day_vol 2.05 sits ext_atr20 2.02 over ma_20 53.12 with no recent high behind it. Energy supply is not my instrument. | Wrong if rs_rank_pct and ret_6m turn up while a bar holds ma_20. |
+| thorp | ABSTAIN | — | decides | Nothing nameable as mispriced: the energy supply-demand series is not served (Rogers). ma_50 53.09 under ma_200 55.51 and rs_rank_pct 30.12 make this repair, and day_vol 2.05 has unknown direction. Range mid (atr 1.56 on entry 56.27). Lynch: low P/E after a surge is the peak-earnings shape. | ma_50 back over ma_200 55.51. |
+| weis | OPPOSE | 3 | decides | W23/W10: ma_50 53.09 under ma_200 55.51, ret_6m -5.3, rs_rank_pct 30.12, pct_from_52w_high -17.16. The day_vol 2.05 pop is a bounce, not a spring; energy is outside my data (no commodity series). structure 84.2 RANGE does not repair the trend. | A close above ma_200 55.51 that holds on a dry retest. |
+| wyckoff | SUPPORT | 2 | decides | Congestion exit: ma_20 53.12, ma_50 53.09, ma_100 52.51 tangled, entry 56.27 over ma_200 55.51 on day_vol 2.05 (effort with progress). Direction of volume unmeasured; commodity supply and demand is not my method. Only a light-volume retest of ma_200 is an entry. | Close back under ma_200 55.51 or a retest on rising day_vol. |
+| lynch (consult) | cyclical · NEUTRAL | — | no vote | pe_ratio 12.4, free_cash_flow_yield 0.108, debt_to_equity 0.205 are strong; but revenue_growth_yoy 0.737 after 0.030, -0.582 is a commodity swing. Low P/E after a surge is the peak-earnings shape. | — |
+
+### RBLX — PASS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support none; oppose livermore, minervini, oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens neutral: lens_positive 1 (resistance), lens_warnings 1 (leadership warn). Spine fails, fully inverted: ma_50 45.68 under ma_100 46.35 under ma_200 52.8, though entry 54.47 has cleared ma_200; day_vol 0.67 thin. Repair, not continuation; VALEN theme graded AVOID. | ma_50 over ma_200 52.8 with two more strong lenses turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [10, 10, 7, 10, 7], no pattern: a whipsaw between green and blue, no red-giving-way; the last bar is a drop from green (C4). mp 85 STRONG, but ma_200 52.8 sits above ma_50 45.68: repair context, day_vol 0.67. No trigger. | A dip into ma_20 48.91 with a green reclaim would earn a read. |
+| livermore | OPPOSE | 2 | decides | Deepest under its high in the set: pct_from_52w_high -59.27, ret_12m -57.35, rs_rank_pct 35.37, ma_50 45.68 under ma_200 52.8. A rally in a downtrend, and VALEN grades the theme AVOID. A low price alone is not my buy (C16). | A clear of the base high on volume; nothing short of it. |
+| minervini | OPPOSE | 5 | decides | Broken-leader syndrome: pct_from_52w_high -59.27, ret_12m -57.35, rs_rank_pct 35.37, ma_50 45.68 under ma_200 52.8. The thrust (rs_spy_20d 31.56) is a bounce off the lows, which my method does not buy. Lynch: net_profit_margin -0.176, debt_to_equity 12.08. | A new base above ma_200 clearing a pivot_high on expansion. |
+| oneil | OPPOSE | 5 | decides | Disqualified: from_52w_hi -59.27 and ret_12m -57.35 mean the base corrected past half, and rs_rank_pct 35.37 fails the leadership gate. ma_200 52.8 sits above ma_50 45.68; day_vol 0.67. VALEN: Theme graded AVOID. Lynch: d/e 12.08, net_profit_margin -0.176. | A new base completes above ma_200 with rs_rank_pct into the top quintile. |
+| raschke | OPPOSE | 2 | advisory | Theme graded AVOID, rs_rank_pct 35.37, pct_from_52w_high -59.27, ret_12m -57.35, day_vol 0.67, sma_distance_pct 19.23: a bounce with ma_50 45.68 under ma_200 52.8. No Raschke type and no close stop. | ma_50 back over ma_200 and a first pullback holding ma_20 48.91 flips me. |
+| seow | OPPOSE | 3 | advisory | Desk C21 (not the author's): from_52w_hi -59.27, ret_12m -57.35, rs_rank_pct 35.37, Theme AVOID. The burst (rs_spy_20d 31.56, run_10d 10.02) on day_vol 0.67 sits ext_atr20 2.4 over ma_20 48.91. Reversal off a crater, not a dip in an uptrend. | Wrong if rs_rank_pct and ret_12m recover while a quiet bar holds ma_20. |
+| thorp | ABSTAIN | — | advisory | Stack inverted (ma_50 45.68 under ma_100 46.35 under ma_200 52.8), rs_rank_pct 35.37, from_52w_hi -59.27, debt_to_equity 12.08; Theme graded AVOID. Entry 54.47 is near ma_200 52.8 so the boundary is close, but repair is not continuation. Nothing measured. Advisory. | ma_50 back over ma_200 52.8. |
+| weis | OPPOSE | 3 | advisory | W23/W10: pct_from_52w_high -59.27, ret_12m -57.35, rs_rank_pct 35.37; ma_50 45.68 under ma_100 46.35 under ma_200 52.8, so a day_vol 0.67 thrust of run_10d 10.02% is a bounce in a downtrend. VALEN Theme graded AVOID. No spring. | A hold above ma_200 52.8 on a dry retest with ma_50 turning up through ma_100. |
+| wyckoff | OPPOSE | 2 | advisory | At the 200-day on no effort: entry 54.47 over ma_200 52.8 on day_vol 0.67, run_10d 10.02%, resistance lens strong, pct_from_52w_high -59.27, sma_distance_pct 19.23. A thin break of a long ceiling is an upthrust until a low-volume retest holds. Theme graded AVOID. | A retest of ma_200 52.8 on light day_vol that holds. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.358 after 0.287, 0.258 (accelerating); net_profit_margin -0.176, debt_to_equity 12.08, pe_ratio -38.1; free_cash_flow_yield 0.042. Growth real; earnings and balance sheet absent. | — |
+
+### ZS — PASS (conviction 2) · MOMENTUM · Strength + AQE leader + Strength seat (rule)
+
+- Split: support minervini; oppose oneil; abstain detect-lens, elder-lens, livermore. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens split: lens_positive 1 (resistance), lens_warnings 2 (leadership warn, coil warn). Spine ma_50 200.27 over ma_100 173.36 over ma_200 166.4 aligned, day_vol 0.93. runner_conviction 4 but runner_setup false, so the 4 is not a tag. One short of OPPOSE, nothing to support. | A third warn tilts to OPPOSE; both warns clearing with a second strong lens, to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [8, 10, 10, 10, 10] SUSTAINED, mp 85 STRONG/ACCELERATING: permission on, momentum real, but plateau only (C24) at sma_dist 29.9%. I cannot compute the channel wall (R5), so extension is a weight. Enter on a give-back toward ma_20 222.39, not at 260.15. | A give-back toward ma_20 222.39 with elder_ge:7 held would earn a read; elder at 6 or lower ends it. |
+| livermore | ABSTAIN | — | decides | Strong rebound, old pivotal point not cleared: pct_from_52w_high -22.64, ret_63d 69.18, mp 85.0 STRONG, structure 76.8. Cybersecurity leads per VALEN and TENB and NTSK print highs, but ZS lags them (C14). sma_distance_pct 29.9 is a weight. I watch for the clear of the prior high. | — |
+| minervini | SUPPORT | 2 | decides | Leader in the group Valen shows leading (Cybersecurity): rs_rank_pct 96.1, rs_spy_20d 30.44, ret_63d 69.18, ma_20 222.39, ma_50 200.27, ma_200 166.4, SUSTAINED. Costs: pct_from_52w_high -22.64 near the band edge, sma_distance_pct 29.9, div_bear_count 3. Needs a tight pause and a clear on expansion. | Close under ma_20 222.39, or a clear on day_vol under 1. |
+| oneil | OPPOSE | 3 | decides | Strong group, weak name: rs_rank_pct 96.1 and Cybersecurity leadership, but from_52w_hi -22.64, ret_12m -19.46, day_vol 0.93, div BEARISH/3, sma_dist 29.9. A rebound through a recovering base, no pivot cleared. Lynch: net_profit_margin -0.019. | The old high clears on heavy volume with the divergence cleared. |
+| raschke | SUPPORT | 2 | advisory | Leadership real: rs_rank_pct 96.1, mp 85 STRONG, elder SUSTAINED. Climax risk: sma_distance_pct 29.9, div BEARISH/3 advisory, lens.resistance strong overhead. Enter only the first pullback toward ma_20 222.39; stop beyond ma_50 200.27. | Daily close under ma_50 200.27. |
+| seow | ABSTAIN | — | advisory | Leader off a drawdown: rs_rank_pct 96.1, ret_63d 69.18, Elder SUSTAINED. But ext_atr20 3.25 over ma_20 222.39, run_10d 13.77, div BEARISH/3, from_52w_hi -22.64: no dip behind a recent high. Weight not veto (R14). Dip to ma_20 and a buy stop over bar_high. | Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40. |
+| thorp | OPPOSE | 2 | advisory | BEARISH divergence count 3 on sma_dist 29.9 and a wide range (atr 11.61 on entry 260.15): the condition behind the move is compressing (C19) and ma_20 222.39 is far under price. Lynch: pe_ratio -654.2, price needs years of growth. Nothing measured. Advisory. | Divergence clears with a hold above ma_20 222.39. |
+| weis | OPPOSE | 2 | advisory | Extended below the old high with divergence: sma_dist 29.9, ext_atr20 3.25, div BEARISH/3, pct_from_52w_high -22.64 after ret_6m 91.19. Effort flat at day_vol 0.93; I buy a hinge or a failed breakdown, and neither exists. Cybersecurity leadership is context, not a trigger. | A tight hinge holding above ma_20 222.39 on dry volume, then a close above the recent high. |
+| wyckoff | OPPOSE | 2 | advisory | Extended with divergence: sma_distance_pct 29.9, ext_atr20 3.25, div BEARISH/3 (advisory), resistance lens strong, pct_from_52w_high -22.64. Mid-move; the edge is ma_20 222.39, far under entry 260.15. | A pullback to ma_20 222.39 on light day_vol that holds. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.254 after 0.233, 0.341; net_profit_margin -0.019, pe_ratio -654.2, free_cash_flow_yield 0.020, debt_to_equity 0.714. Story fits; price needs growth to run for years. | — |
+
+### BBWI — PASS (conviction 2) · MOMENTUM · Strength + Strength seat (rule)
+
+- Split: support none; oppose livermore, minervini, oneil; abstain detect-lens, elder-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens is a feed gap: leadership, coil, insti_money, resistance '--'; lens_positive 1 (sector) is a floor. Spine fails: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, though entry 21.95 has cleared all three. day_vol 0.94. Repair, not continuation; cannot corroborate. | ma_50 over ma_200 with a lens re-pull showing three strong turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [7, 10, 7, 7, 7], no pattern: no red-giving-way, green faded. mp 93 STRONG/FLAT is real momentum, but ma_50 18.41 under ma_100 19.33 under ma_200 19.81 is repair, not continuation; slope unverified. Wait for value at ma_20 18.91 or a ban-lift. | A dip into ma_20 18.91 with a green reclaim would earn a read. |
+| livermore | OPPOSE | 2 | decides | A bounce through an inverted stack: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, pct_from_52w_high -15.87, ret_12m -18.7, run_10d 21.94. A rally under the old pivotal point, not a new high after an uptrend. | A close above ma_200 19.81, then a new high on volume. |
+| minervini | OPPOSE | 3 | decides | Template fails: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, rs_rank_pct 69.39, ret_12m -18.7, pct_from_52w_high -15.87. Entry 21.95 is a first pop above a falling 200-day, run_10d 21.94: a neglect rally, broken-leader risk. Lynch revenue_growth_yoy -0.002. | ma_50 over ma_200 with rs_rank_pct over 70. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 69.39, ret_12m -18.7, from_52w_hi -15.87, ma_50 18.41 under ma_100 19.33 under ma_200 19.81, day_vol 0.94 after run_10d 21.94%. A reversal pop under the long averages. Lynch: d/e -4.50, revenue_growth_yoy -0.002. | ma_50 back above ma_200 and rs_rank_pct into the top quintile. |
+| raschke | OPPOSE | 2 | advisory | A bounce off repair, not a retracement: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, ret_12m -18.7, run_10d 21.94% with sma_distance_pct 19.22. Holy Grail needs an established uptrend; climax risk (C19). | ma_50 back over ma_200 and a first pullback holding ma_20 18.91 flips me. |
+| seow | ABSTAIN | — | advisory | Burst from a downtrend: rs_spy_20d 36.56 but ret_12m -18.7, from_52w_hi -15.87, rs_rank_pct 69.39; ext_atr20 3.45 over ma_20 18.91, run_10d 21.94. Momentum is real (mp 93.0) but no dip follows a recent high. Weight not veto (R14); wait for ma_20. | Flips to SUPPORT if from_52w_hi closes toward 0 and a quiet bar holds ma_20. |
+| thorp | ABSTAIN | — | advisory | Cheap on paper (pe_ratio 5.9, free_cash_flow_yield 0.233) but negative equity and flat sales (revenue_growth_yoy -0.002) leave no measured mispricing; ma_50 18.41 under ma_100 19.33 under ma_200 19.81 is repair. Range mid-wide (atr 0.88 on entry 21.95). Advisory. | ma_50 back over ma_200 19.81. |
+| weis | OPPOSE | 3 | advisory | W23/W10: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, pct_from_52w_high -15.87, ret_12m -18.7. A run_10d 21.94% pop through an inverted stack at sma_dist 19.22 is repair into supply, with mp_accel_state FLAT and day_vol 0.94. No spring. | ma_50 crossing above ma_200 19.81 with a dry-volume retest of ma_20 18.91 holding. |
+| wyckoff | OPPOSE | 2 | advisory | Mid-move spike: run_10d 21.94%, sma_distance_pct 19.22, ext_atr20 3.45, day_vol 0.94 (no climactic effort); entry 21.95 far over the ceiling ma_200 19.81 with ma_50 18.41 under it, never retested. The edge is behind it; wait for the retest. | A retest of ma_200 19.81 on light day_vol that holds. |
+| lynch (consult) | slow grower · NEUTRAL | — | no vote | pe_ratio 5.9, free_cash_flow_yield 0.233, dividendYieldTTM 0.036: cheap. But revenue_growth_yoy -0.002, -0.016, -0.017 and debt_to_equity -4.50 (negative equity). Cheap for a reason? Cash not served. | — |
+
+### BKR — PASS (conviction 2) · PULLBACK · Elder+Lens + Nominated
+
+- Split: support none; oppose livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff; abstain detect-lens, elder-lens. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens support with a failed spine: lens_positive 3 (coil, structure, sector), lens_warnings 1 (resistance warn); BULLISH_BOS on day_vol 2.16, but ma_50 58.68 under ma_100 59.03 under ma_200 60.16, fully inverted. Ignition and trend disagree; ABSTAIN until the stack repairs. | ma_50 over ma_100 and ma_200 with resistance off warn turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [5, 2, 7, 7, 9] INTERRUPTED: ban lifted two bars ago, now 9, but INTERRUPTED fails the trend leg (step 3); ma_50 58.68 under ma_200 60.16 and rs_rank_pct 21.16 say repair at best. Stand aside. | INTERRUPTED clearing with elder_ge:7 held through a dip into ma_20 55.97 would reopen it. |
+| livermore | OPPOSE | 2 | decides | Fully inverted stack: ma_50 58.68 under ma_100 59.03 under ma_200 60.16, pct_from_52w_high -15.32, ret_6m -12.81. A day-one BULLISH_BOS on day_vol 2.16 is ignition only. I need ma_200 cleared and a new high. Not continuation. | A close above ma_200 60.16, then a new high on volume. |
+| minervini | OPPOSE | 4 | decides | A decline turning to a base, not stage two: entry 59.0 under ma_200 60.16, ma_50 58.68 under ma_100 59.03; rs_rank_pct 21.16; ret_6m -12.81; pct_from_52w_high -15.32. Day-one BULLISH_BOS on day_vol 2.16 starts nothing until the 200-day is cleared. Valen: below the 200-day line. | Close over ma_200 with ma_50 over ma_100. |
+| oneil | OPPOSE | 4 | decides | Fails the leadership gate: rs_rank_pct 21.16, ma_50 58.68 under ma_100 59.03 under ma_200 60.16, from_52w_hi -15.32; VALEN: Below the 200-day line, Episodic pivot FAILED (7/9). BOS on day_vol 2.16 is a reversal bounce. I cannot test energy supply and demand. | Reclaim of ma_200 and rs_rank_pct into the top quintile. |
+| raschke | OPPOSE | 2 | decides | Day-one BULLISH_BOS on day_vol 2.16 with ma_50 58.68 under ma_100 59.03 under ma_200 60.16: chasing day one is what Turtle Soup Plus One fades (C3). VALEN Episodic pivot FAILED (7/9), Below the 200-day line, 21-day average not rising. | Daily close over ma_200 60.16 on day_vol over 1 flips me. |
+| seow | OPPOSE | 3 | decides | Fails gates: rs_rank_pct 21.16, ret_6m -12.81, ret_63d 0.48, from_52w_hi -15.32, and VALEN U&R NO: its 21-day average is not rising. BULLISH_BOS day one on day_vol 2.16 at ext_atr20 1.7 is a bounce; nothing to arm. | Wrong if the 21-day average turns up and rs_rank_pct recovers while a bar holds ma_20. |
+| thorp | OPPOSE | 2 | decides | Reversal, not pullback: ma_50 58.68 under ma_100 59.03 under ma_200 60.16, entry 59.0 under the 200-day, rs_rank_pct 21.16, 21-day average not rising. Day_vol 2.16 on a day-one break gives no calm history to size on. Energy series not served, so nothing measurable is mispriced. | ma_50 back over ma_200 60.16 on a second close above the break. |
+| weis | OPPOSE | 3 | decides | W23/W10: ma_20 55.97 under ma_50 58.68 under ma_100 59.03 under ma_200 60.16, rs_rank_pct 21.16, ret_6m -12.81, VALEN Below the 200-day line and Episodic pivot FAILED (7/9). BULLISH_BOS on day_vol 2.16 at sma_dist 0.55 is a day-one poke that can fail; no spring. | A hold above the BOS pivot for several closes with ma_50 turning up through ma_100. |
+| wyckoff | OPPOSE | 2 | decides | Ceiling not taken: entry 59.0 still under ma_100 59.03 and ma_200 60.16; BULLISH_BOS on day_vol 2.16 is first-day effort into overhead supply, direction unmeasured. Inverted stack ma_50 58.68; VALEN: below the 200-day. Chasing day one is not an entry. | Close above ma_200 60.16 followed by a low-volume retest that holds. |
+| lynch (consult) | cyclical · NEUTRAL | — | no vote | revenue_growth_yoy -0.003 after 0.091, 0.206: growth rolled over. pe_ratio 20.1 is not a trough multiple; free_cash_flow_yield 0.060, debt_to_equity 0.757. Inventories not served. | — |
+
+### VG — PASS (conviction 2) · MOMENTUM · Elder+Lens + AQE leader + Nominated
+
+- Split: support elder-lens; oppose livermore, minervini, oneil; abstain detect-lens. Advisory only: raschke, seow, thorp, weis, wyckoff.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens count hides a split: lens_positive 3 (coil, insti_money, sector) beside lens_warnings 2 (leadership warn, resistance warn). Spine ma_50 13.81 over ma_100 13.22 over ma_200 12.6 aligned, structure_shift RANGE, day_vol 0.62 thin. No tilt. | One warn clearing leaves lens_warnings 1 and makes this a clean SUPPORT; both persisting with day_vol under 1 tilts to OPPOSE. |
+| elder-lens | SUPPORT | 2 | decides | Fresh ban-lift near value: elder_5d [3, 3, 9, 10, 10] ACCELERATION, 3-to-9 bar two bars ago, entry 13.81 on ma_50 13.81. mp 48 BUILDING is middling and the slope leg is unverified. days_to_earnings 9; energy catalyst unreadable; Lynch flags leverage (debt_to_equity 4.99). | elder_5d to 6 or lower, or a close under ma_20 13.16. |
+| livermore | OPPOSE | 2 | decides | Not near a high: pct_from_52w_high -21.22, structure 53.7 RANGE, mp 48.0 BUILDING, sma_distance_pct 0.0. A stock sitting on ma_50 13.81 in a range is not an uptrend in a normal reaction. The 2026-11-10 print is an event. Energy peers do not confirm. | A clear of pivot_high on volume with EQT and BKR confirming. |
+| minervini | OPPOSE | 3 | decides | Template fails: entry 13.81 sits on ma_50 13.81 (sma_distance_pct 0.0), pct_from_52w_high -21.22, rs_rank_pct 69.15 under the floor, day_vol 0.62 with no base. Lynch debt_to_equity 4.99, free_cash_flow_yield -0.269. ACCELERATION off a low base is a bounce. | Close over ma_50 on expansion with the stack repairing. |
+| oneil | OPPOSE | 4 | decides | No base: structure 53.7 RANGE, day_vol 0.62, from_52w_hi -21.22, rs_rank_pct 69.15 under my floor, lens.leadership warn and resistance warn. ma_50 13.81 sits on entry. Earnings 2026-11-10 nine sessions out. Lynch: d/e 4.99, free_cash_flow_yield -0.269. | A base completes and clears on heavy volume with rs_rank_pct into the top quintile. |
+| raschke | ABSTAIN | — | advisory | Price on ma_50 13.81 (sma_distance_pct 0.0), coil strong, div BULLISH/0, elder ACCELERATION, but day_vol 0.62, lens.resistance warn, earnings in 9 sessions and energy supply-demand not served. No clean test or breakout to name. Lynch CONTRADICT (debt_to_equity 4.99). | — |
+| seow | ABSTAIN | — | advisory | A dip is near: ext_atr20 0.93 over ma_20 13.16, Elder ACCELERATION, rs_spy_20d 9.41, div BULLISH/0. But from_52w_hi -21.22 means no recent high behind the dip (C4), ret_63d 5.82 is thin, day_vol 0.62; desk C21 (not the author's) flags the higher timeframe. Lynch: debt_to_equity 4.99. Not armed. | Flips to SUPPORT if from_52w_hi closes toward 0 and ret_63d widens with a bar holding ma_20. |
+| thorp | OPPOSE | 2 | advisory | Wide range (atr 0.7 on entry 13.81), thin turnover day_vol 0.62, a print on 2026-11-10 9 sessions out, and debt_to_equity 4.99 with free_cash_flow_yield -0.269: a gap through any stop is the loss to size on. Energy series not served, so nothing measurable is mispriced. Advisory. | Print passes with a hold above ma_20 13.16 on day_vol over 1. |
+| weis | SUPPORT | 2 | advisory | Dry-up at the 50-day after a vertical recovery: entry 13.81 sits on ma_50 13.81 (sma_dist 0.0), day_vol 0.62, elder 10.0 trace [3, 3, 9, 10, 10] ACCELERATION, div BULLISH/0. Contraction with a bullish lead-in (W21). Soft: pct_from_52w_high -21.22, lens resistance warn, days_to_earnings 9, debt_to_equity 4.99. | Close below ma_20 13.16. |
+| wyckoff | SUPPORT | 2 | advisory | Round 1 stands at low conviction: RANGE, coil strong, energy 68.9, flow 78.9, entry 13.81 on ma_50 13.81 above ma_20 13.16 and ma_200 12.6, day_vol 0.62. Resistance lens warn is overhead supply, pct_from_52w_high -21.22. Spring not detectable; danger point ma_20 13.16. | Close under ma_20 13.16 on rising day_vol. |
+| lynch (consult) | cyclical · CONTRADICT | — | no vote | debt_to_equity 4.99 (debt about 83 percent of capital, my arithmetic) with free_cash_flow_yield -0.269; revenue_growth_yoy 1.77 then -0.37 swings. pe_ratio 10.3 hides the build-out burden. | — |
+
+### FTNT — PASS (conviction 2) · PULLBACK · Nominated
+
+- Split: support elder-lens; oppose oneil, thorp; abstain detect-lens, livermore, minervini, raschke, seow, weis, wyckoff. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | lens_positive 1 (leadership), lens_warnings 0, premove_conviction 2 but premove_setup not set. Spine ma_50 171.59 over ma_100 163.32 over ma_200 127.3 aligned, structure_shift RANGE, day_vol 0.96. VALEN U&R NO (21-day average not rising). No lens corroboration and no warning. | Two more strong lenses, or premove_setup turning true, lifts this to SUPPORT. |
+| elder-lens | SUPPORT | 2 | decides | Red giving way: elder_5d [3, 3, 5, 6, 8] ACCUMULATION_BASE, 6 to 8 on the last bar. Cut from 3: VALEN reads its 21-day average as not rising, so the trend leg (C10) is unmet, and mp 50 BUILDING is middling. Entry 185.0 is only a little above ma_20 182.18; wrong under ma_50 171.59. | A close under ma_50 171.59, or elder_5d back to 6 or lower. |
+| livermore | ABSTAIN | — | decides | Cybersecurity is a VALEN leading group, but FTNT lags it: pct_from_52w_high -5.01, run_10d -3.02, structure 57.9 RANGE, mp 50.0 BUILDING, U&R 21-day average not rising. TENB at the high leads; FTNT not confirming is my C14 caution. | — |
+| minervini | ABSTAIN | — | decides | Stack passes (ma_20 182.18, ma_50 171.59, ma_200 127.3, rs_rank_pct 97.32) but nothing to buy: Valen VCP FAILED (3/10), 21-day average not rising, run_10d -3.02, div_bear_count 3. No pivot to clear. Cybersecurity leads; I wait for a base, not a bounce. | A tightening base forms under a fresh pivot_high and clears on expansion. |
+| oneil | OPPOSE | 3 | decides | Laggard with distribution: rs_leadership LAGGARD, div BEARISH/3, structure 57.9 RANGE, from_52w_hi -5.01, day_vol 0.96. VCP FAILED (3/10). Lynch: pe_ratio 64.7 on eps_growth_yoy 0.07. Nothing to buy until a base completes. | Divergence clears and a pivot breaks on heavy volume. |
+| raschke | ABSTAIN | — | decides | Fits none of my four: VALEN VCP FAILED (3/10) and Undercut and rally FAILED (7/9), 21-day average not rising, div BEARISH/3 (advisory), structure 57.9 RANGE. No trigger to name; rs_rank_pct 97.32 keeps me from opposing. | — |
+| seow | ABSTAIN | — | decides | The dip is in place (ext_atr20 0.42 over ma_20 182.18, ret_63d 20.74) but VALEN U&R NO says its 21-day average is not rising, so my up-sloping-average leg (C2) is failing; rs_leadership LAGGARD, div BEARISH/3. Four of five is not a set-up. Re-arm if the slope turns up. | Flips to SUPPORT when the 21-day average rises again and a bar reaches ma_20 holding above ma_40. |
+| thorp | OPPOSE | 2 | decides | BEARISH divergence count 3 on sc_momentum 57.0, with VCP and undercut-and-rally grades FAILED (7/9): the condition feeding the dip-buy is compressing (C19). Range mid-wide (atr 6.77 on entry 185.0). Lynch: pe_ratio 64.7. Nothing measured. | Divergence clears and the 21-day average turns up. |
+| weis | ABSTAIN | — | decides | No failure-of-weakness read: structure 57.9 RANGE, VALEN VCP FAILED (3/10) and Undercut and rally FAILED (7/9), 21-day average not rising, div BEARISH/3. Trend gate passes (ma_20 182.18 over ma_50 171.59) but nothing triggers. | A close above the range top on day_vol over 1 with div_state clearing would make me look again. |
+| wyckoff | ABSTAIN | — | decides | Terrain fits only partly: RANGE at structure 57.9 but coil ok (not strong), div BEARISH/3 advisory, VCP and U&R setups FAILED, 21-day average not rising. Not a round-1 nominee; no spring visible and no independent edge read. | Coil turning strong with energy rising from 70.6 and a hold above ma_20 182.18. |
+| lynch (consult) | stalwart · CONTRADICT | — | no vote | net_profit_margin 0.282 and revenue_growth_yoy 0.142 are quality; pe_ratio 64.7 with eps_growth_yoy 0.07 and free_cash_flow_yield 0.023 is not. Stalwart priced as a fast grower. | — |
+
+### NET — PASS (conviction 2) · PULLBACK · Nominated
+
+- Split: support none; oppose livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff; abstain detect-lens, elder-lens. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | Lens neutral: lens_positive 2 (leadership, insti_money), lens_warnings 1 (resistance warn). Spine ma_50 319.97 over ma_100 291.88 over ma_200 246.37 aligned, day_vol 0.76. runner_conviction 4 and premove_conviction 4 yet both tags false, so I do not read the 4s as a tag. | A third strong lens, or a tag actually set true, turns this to SUPPORT. |
+| elder-lens | ABSTAIN | — | decides | elder_5d [3, 3, 5, 6, 8] ACCUMULATION_BASE has the ban-lift, but I withdraw: mp 20 is weak, VALEN reads the 21-day average as not rising so C10 is unmet, and C22 says stand aside on murky ground. Entry 327.8 sits under ma_20 331.43; no catalyst on record. | elder_5d to 6 or lower, or a close under ma_50 319.97, proves the dip thesis wrong. |
+| livermore | OPPOSE | 3 | decides | A leader failing to hold: rs_spy_20d -7.66, run_10d -5.72, pct_from_52w_high -9.18, entry 327.8 under ma_20 331.43, mp 20.0, structure 49.5. No new high and losing ground: my C14 caution says revise the opinion. | A close back over ma_20 331.43 and a new high on volume. |
+| minervini | OPPOSE | 3 | decides | Buying weakness: rs_spy_20d -7.66, LAGGARD, run_10d -5.72, entry 327.8 under ma_20 331.43, mp 20.0, div_bear_count 5, sc_mom 44.6. Stack intact (ma_50 319.97, ma_200 246.37) and rs_rank_pct 91.95, but no strength today to buy; no base, no pivot. | rs_spy_20d turns positive and price clears ma_20 331.43 on expansion. |
+| oneil | OPPOSE | 4 | decides | Wrong shape: rs_spy_20d -7.66, rs_leadership LAGGARD, structure 49.5 RANGE, div BEARISH/5 (all five oscillators), rank 221, day_vol 0.76, mp 20.0. A long-run leader (rs_rank_pct 91.95) in a pause is not a buy. Lynch: net_profit_margin -0.082. | Divergence clears, rs_spy_20d turns positive and a pivot clears on heavy volume. |
+| raschke | OPPOSE | 3 | decides | No retracement, a slide: entry sits under ma_20 331.43, run_10d -5.72%, mp 20, structure 49.5, rs_spy_20d -7.66, VALEN Undercut and rally FAILED (5/9), 21-day average not rising. div BEARISH/5 is advisory; no turn to buy and no catalyst. | Hourly closes back over ma_20 331.43 with mp rising flip me. |
+| seow | OPPOSE | 3 | decides | Gate fails: rs_spy_20d -7.66 (losing to SPY), rs_leadership LAGGARD, run_10d -5.72, and VALEN U&R NO says its 21-day average is not rising, so my up-slope leg (C2) is out. div BEARISH/5, mp 20.0, sc_mom 44.6. Not a dip in an uptrend. | Wrong if rs_spy_20d turns positive and the 21-day average rises while a bar holds ma_20. |
+| thorp | OPPOSE | 3 | decides | Edge gone, not dipped: div BEARISH count 5, sc_momentum 44.6 (lowest of any non-held name), mp 20.0, rs_spy_20d -7.66, widest-range tier (atr 17.76 on entry 327.8). The condition behind a dip-buy has compressed (C19); no catalyst on record. Nothing measured. | Divergence count back to 0 and rs_spy_20d turning positive. |
+| weis | OPPOSE | 2 | decides | Change of behaviour (W22): run_10d -5.72%, rs_spy_20d -7.66, entry 327.8 under ma_20 331.43, div BEARISH/5, mp 20.0, sc_mom 44.6. Stack ma_50 319.97 over ma_100 291.88 over ma_200 246.37 is still up, but no spring and no catalyst on record. | A close back above ma_20 331.43 with div_bear_count falling. |
+| wyckoff | OPPOSE | 2 | decides | Contraction not shown: energy 49.6, structure 49.5, mp 20, div BEARISH/5 (advisory), rs_spy_20d -7.66, entry 327.8 under ma_20 331.43. A quiet pullback (day_vol 0.76) is not a test with no level held, and no catalyst is on record. | Reclaim of ma_20 331.43 with coil strong and energy rising. |
+| lynch (consult) | fast grower · CONTRADICT | — | no vote | revenue_growth_yoy 0.298, 0.288, 0.330 fits the category; net_profit_margin -0.082, pe_ratio -562.7, free_cash_flow_yield 0.003, debt_to_equity 2.18 do not. No earnings to compound; price is the story. | — |
+
+### V — PASS (conviction 2) · PULLBACK · Held
+
+- Split: support weis; oppose elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff; abstain detect-lens. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | ABSTAIN | — | decides | ADD question, HELD: KEEP, do not add on my read. Lens block is null, so no agreement or warning exists and absence is not agreement. Spine ma_50 378.73 over ma_100 363.99 over ma_200 341.08 aligned, day_vol 1.36; VALEN U&R SETUP, reclaim day is the next session. Broker stop 391.80 stands. | A close under ma_50 378.73 or structure_shift BEARISH_CHOCH would turn this to OPPOSE. |
+| elder-lens | OPPOSE | 2 | decides | ADD question: no. elder 6 is the ambiguous band (red, blue or green), so no permission to add; elder_5d is None, so the single-bar drop test cannot run (data gap). KEEP on the broker stop V 391.80, raise only, never lower (C18). VALEN U&R SETUP: the reclaim day is the next session. | elder at 7 or higher at the next close lifts the objection; a close under ma_20 388.88 makes it an exit case. |
+| livermore | OPPOSE | 4 | decides | ADD: no. Unrealised -433.21 on the 2026-10-22 fill at 413.2602632: adding is averaging down (C4); I pyramid only above cost on strength (C6). KEEP: structure 69.0 ABOVE_STRUCTURE, ma_20 388.88 over ma_50 378.73, broker stop 391.80 stands, no danger signal has fired. | A close back over cost 413.2602632 on a new high with volume would make an add valid under C6; not before. |
+| minervini | OPPOSE | 3 | decides | KEEP, NO ADD. Stack intact (ma_20 388.88, ma_50 378.73, ma_100 363.99, ma_200 341.08), structure 69.0, rs_spy_20d 9.12. But the position is under water, unrealised -433.21 since 2026-10-22: adding is averaging down, the inversion of the pyramiding rule. Broker stop 391.80 stands; I never widen it. | Close under broker stop 391.80 ends the keep. An add becomes valid only once the position shows profit over cost. |
+| oneil | OPPOSE | 4 | decides | ADD question: no. Never average down: unrealised -433.21 on qty 38.0 @ 413.2602632 since 2026-10-22; U&R is only a SETUP, reclaim day is next session. KEEP: structure 69.0 ABOVE_STRUCTURE, above ma_50 378.73, day_vol 1.36. Broker stop 391.80 stands. | A close over the 9-day average on heavy volume would make a small add of strength fair; a close under ma_50 378.73 on heavy volume makes it an exit. |
+| raschke | OPPOSE | 2 | decides | ADD question: KEEP, do not ADD. Held 38.0 @ 413.2602632, unrealised -433.21; broker stop 391.80 stands. U&R SETUP: closed 0.2% under the 9-day average 402.58; reclaim day is the next session. C21: never scale up to recover a drawdown. Add only after a confirmed reclaim. | An hourly close over bar_high after the reclaim day on day_vol over 1 turns me to SUPPORT-add. |
+| seow | OPPOSE | 3 | decides | ADD: no; KEEP. Unrealised -433.21 on qty 38.0 since 2026-10-22; I add only to a trade proved right (C16). U&R SETUP reclaim is next session. By my count the time stop (C11) is due at this close if tp1 414.6 is not reached; exits: red bar or close under support. Broker stop 391.80 stands. | Wrong to withhold the add if the next bar reclaims the 9-day average and tp1 414.6 is passed, proving the entry right. |
+| thorp | OPPOSE | 2 | decides | KEEP, do not ADD. Calm range (atr 6.67) and ma_20 388.88 over ma_50 378.73 over ma_200 341.08 support holding under the broker stop 391.80. An add lifts unwatched loss on a position already under water (unrealised -433.21) in a RISK OFF tape; U&R is only SETUP, reclaim day is the next session. No measured edge to add against. | U&R MET on a reclaim of the 9-day average 402.58 on day_vol over 1 would move me to support an add. |
+| weis | SUPPORT | 2 | decides | KEEP; ADD only after the spring confirms. U&R SETUP: dipped under the 9-day average 402.58 and closed 0.2% under it, so the reclaim day is the next session. ma_20 388.88 over ma_50 378.73 over ma_200 341.08, ABOVE_STRUCTURE, day_vol 1.36. Broker stop 391.80 stands; held since 2026-10-22. | The next session fails to close back above the 9-day average, or a close below the broker stop 391.80. |
+| wyckoff | OPPOSE | 2 | decides | KEEP, broker stop V 391.80 stands. ADD no: bought since 2026-10-22 at 413.2602632 and now under it; day_vol 1.36 with price falling is the effort-without-reward flag (absorption or distribution, direction unmeasured). U&R SETUP: reclaim day is next session. Add only after a reclaim holds. | Close back above the 9-day average 402.58 with day_vol under 1, or a loss of ma_20 388.88 on heavy day_vol (exit case). |
+| lynch (consult) | stalwart · NEUTRAL | — | no vote | HELD. net_profit_margin 0.508, grossProfitMarginTTM 0.802, revenue_growth_yoy 0.113: top quality. pe_ratio 34.7 on eps_growth_yoy 0.05 is full: a rotation question, not a target. Stop 391.80 stands. | — |
+
+### MP — PASS (conviction 2) · PULLBACK · Held
+
+- Split: support none; oppose detect-lens, elder-lens, livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff; abstain none. Advisory only: none.
+
+| Seat | Vote | Conv. | Weight | Reason | Falsifier |
+|---|---|---|---|---|---|
+| detect-lens | OPPOSE | 4 | decides | ADD question, HELD: no add. structure_shift BEARISH_CHOCH is the only one in the packet: the up-swing's anchor low broke. ma_50 48.87 under ma_100 50.28 under ma_200 55.59, fully inverted, day_vol 1.21. Lens block null. Held read EXIT-CASE on structure; broker stop 36.66 stands, not argued. | structure_shift back to RANGE or BULLISH_BOS with a close over ma_50 48.87. |
+| elder-lens | OPPOSE | 4 | decides | ADD question: no, and EXIT-CASE. elder 5.0 is unresolved (no permission), elder_5d is None (data gap, drop test cannot run), and structure BEARISH_CHOCH with structure 14.0 breaks the up-structure (R11). Keep only on broker stop MP 36.66, raise only, never lower (C18); a loser gets no more room. | elder at 7 or higher with a close back above ma_20 42.73 would reverse the exit case. |
+| livermore | OPPOSE | 5 | decides | ADD: never (C4). EXIT-CASE: BEARISH_CHOCH, structure 14.0, price under ma_20 42.73, ma_50 48.87 and ma_200 55.59, sma_distance_pct -16.37. The up-structure failed: my trend-ended signal (C20). Unrealised -3639.0 is the market saying I am wrong (C3, C22). Broker stop 36.66 is the floor, not the plan. | A close back over ma_20 42.73 with structure out of BEARISH_CHOCH would make my exit case wrong. |
+| minervini | OPPOSE | 5 | decides | EXIT-CASE, NO ADD. Every leg broken: BEARISH_CHOCH, structure 14.0, price under ma_20 42.73, ma_50 48.87, ma_200 55.59, rs_spy_20d -10.75, AQE HEALTH EXIT score 0.0, unrealised -3639.0. Never average down. Broker stop 36.66 stands and is honored instantly. | Reclaim of ma_50 48.87 with structure turning off BEARISH_CHOCH would void the exit case. |
+| oneil | OPPOSE | 5 | decides | ADD question: no, and the case is EXIT. BEARISH_CHOCH, structure 14.0, price under ma_20 42.73, ma_50 48.87 and ma_200 55.59, rs_spy_20d -10.75, AQE HEALTH EXIT, unrealised -3639.0. The ma_50 line has failed; never average down. Broker stop 36.66 stays as the backstop. | A reclaim of ma_50 48.87 on heavy volume, which is not in sight. |
+| raschke | OPPOSE | 5 | decides | ADD question: no; EXIT-case. BEARISH_CHOCH, structure 14.0, sma_distance_pct -16.37, ma_20 42.73 under ma_50 48.87 under ma_200 55.59: the up-structure failed (C17). Unrealised -3639.0, AQE HEALTH EXIT. Broker stop 36.66 stands; never average down (C21). | Close back above ma_20 42.73 with structure_shift no longer BEARISH_CHOCH. |
+| seow | OPPOSE | 5 | decides | ADD: no; EXIT case. Gates broken: BEARISH_CHOCH, structure 14.0, sma_distance_pct -16.37 under ma_20 42.73, rs_spy_20d -10.75. Held since 2026-10-08 at unrealised -3639.0: time stop long past, close under support (C11, C14). Never add to a loser (C16). Broker stop 36.66 stands. | Wrong to exit if price reclaims ma_20 42.73 and structure 14.0 repairs; I would still not add. |
+| thorp | OPPOSE | 4 | decides | EXIT-CASE, do not ADD. The entry condition is gone (C10): BEARISH_CHOCH, structure 14.0, sc_momentum 27.1, AQE HEALTH EXIT (score 0.0), under ma_20 42.73, ma_50 48.87 and ma_200 55.59, rs_spy_20d -10.75. Unrealised -3639.0. Broker stop 36.66 is the loss boundary and stays; do not average down. | A close back above ma_20 42.73 with structure out of BEARISH_CHOCH would reopen the case. |
+| weis | OPPOSE | 4 | decides | ADD: no. EXIT-lean; keep only until the broker stop 36.66 triggers. W23/W10: BEARISH_CHOCH, structure 14.0, ma_20 42.73 under ma_50 48.87 under ma_100 50.28 under ma_200 55.59, sma_dist -16.37, AQE HEALTH EXIT (score 0.0). A bounce here is the lowest-conviction case, short evidence, never long. | A close back above ma_20 42.73 with BEARISH_CHOCH cleared would void the exit lean. |
+| wyckoff | OPPOSE | 5 | decides | EXIT-CASE; broker stop MP 36.66 stands. ADD no: BEARISH_CHOCH at structure 14.0, sma_distance_pct -16.37 under ma_20 42.73, ma_50 48.87, ma_200 55.59, day_vol 1.21 elevated. Heavy volume under every average with structure not improving is the bag-holding pattern, not accumulation. | Close back above ma_20 42.73 and structure_shift leaving BEARISH_CHOCH on light day_vol. |
+| lynch (consult) | turnaround · CONTRADICT | — | no vote | HELD. grossProfitMarginTTM -0.046, operatingProfitMarginTTM -0.331, free_cash_flow_yield -0.073; revenue_growth_yoy 0.101 after -0.196, -0.520. Served figures do not show an intact story (C22). Stop 36.66 stands. | — |
+
+### Challenge round (no votes)
+
+#### rogers — challenge findings
+
+| Scope | Axis | Severity | Claim | Evidence |
+|---|---|---|---|---|
+| ROOM | CERTAINTY | note | No name trips the certainty trigger: top nomination_count is 3 (DBX), top conviction is 4 (HOG only), no conviction 5, no unanimity visible. I filed the flaw hunt on those two maxima anyway. The room is not calling a sure bet and I am not manufacturing one. | max nomination_count 3 DBX; max conviction 4 HOG convictions 4 4; conviction 5 count 0; conviction 3 count 26; conviction 2 count 17; conviction 4 count 2; names nominated 33; total nominations 45; names with nomination_count 0 are 15 |
+| ROOM | CROWDING | note | One factor counted many times. XLK holds 10 of 33 nominated names and 15 of 45 nominations, and 8 of those 10 are software or security names by ticker identity. Nominations overstate the number of independent ideas. | gics_sector XLK names 10 nominations 15; DBX 3 ESTC 2 AAPL 2 FIVN 2 DDOG 1 NTNX 1 FTNT 1 BILL 1 NET 1 TEL 1; XLY names 5 nominations 8; XLRE names 3 nominations 5; software identity read from ticker, not a packet field |
+| ROOM | CROWDING | flag | APLE, DRH and HST are all XLRE lodging REITs by ticker identity: five nominations on one lodging-demand bet, supplied only by livermore and thorp. Weigh as one idea, not three. All three sit in a sector tagged Momentum Fading (context only). | APLE nomination_count 2 seats livermore thorp; DRH nomination_count 2 seats livermore thorp; HST nomination_count 1 seat thorp; gics_sector XLRE; sector_trend_state Momentum Fading Hold Don't Add; sma_distance_pct APLE 13.78 DRH 11.34 HST 10.54 |
+| ROOM | CROWDING | note | Agreement is a two-seat phenomenon. livermore sits in 6 of the 11 multi-seat names and minervini in 5; the pairs livermore with minervini and livermore with thorp each repeat twice. Seat count is evidence about the crowd, not the asset (C4). | multi-seat names 11; appearances in multi-seat names livermore 6 minervini 5 weis 3 elder-lens 3 oneil 2 thorp 2 raschke 1 wyckoff 1; nominations overall minervini 8 livermore 8 raschke 6 elder-lens 6 thorp 6 weis 5 wyckoff 4 oneil 2 |
+| ROOM | CROWDING | note | All 33 nominated names sit in a sector tagged Momentum Fading (19 names, 25 nominations) or Recovering From Weakness (14 names, 20 nominations); none in a building state. Weak sector proxy only, not a supply-demand read. The sector gate is not argued. | sector_trend_state Momentum Fading Hold Don't Add names 19 nominations 25; sector_trend_state Recovering From Weakness Watch for Entry names 14 nominations 20; multi-seat split 6 and 5 |
+| ROOM | CROWDING | note | Room silence sits entirely on the MOMENTUM lane: 13 non-held STRENGTH-door names drew zero seats, and 8 of them are 19 or more above SMA. That reads as extension, not ridicule. Three UNR_SEAT names are far less extended (4.99 to 12.22) and drew no vote either. | nomination_count 0 on 13 non-held names all lane MOMENTUM; sma_distance_pct BRZE 51.23 NTSK 47.77 DXC 32.02 TENB 31.08 ZS 29.9 ASAN 22.42 RBLX 19.23 BBWI 19.22; IOT 7.7 ETSY 12.22 RYAN 4.99 doors UNR_SEAT; rank IOT 52 ETSY 60 RYAN 62 |
+| ROOM | TIMING | note | Late-move signatures among nominated names. Extended: CART 23.57, FTRE 22.45, HNGE 18.05, ESTC 15.6 above SMA. Spike: day_vol 2.0 or more on CART, TEL, RCL, BKR, CNP, EQT. Advisory: pullback or confirmation trigger instead of a market entry. Never a block. | sma_distance_pct CART 23.57 FTRE 22.45 HNGE 18.05 ESTC 15.6; day_vol CART 2.53 TEL 2.23 RCL 2.17 BKR 2.16 CNP 2.1 EQT 2.05; FTV day_vol 1.81 |
+| ROOM | TIMING | note | Nine nominated names print earnings within 19 sessions: APLE and BILL at 6, VG 9, TTEK 10, GLBE 15, ESTC 16, A 18, NTNX and BBY 19. A print is an event, not a named catalyst (C23). Entry-timing advisory only; the event filter is not argued. | days_to_earnings APLE 6 BILL 6 VG 9 TTEK 10 GLBE 15 ESTC 16 A 18 NTNX 19 BBY 19; next_earnings_date APLE 2026-11-05 BILL 2026-11-05 VG 2026-11-10 TTEK 2026-11-11 GLBE 2026-11-18 ESTC 2026-11-19 |
+| ROOM | CATALYST | note | 21 of 33 nominated names are PULLBACK-lane dip arguments. No record carries a catalyst field and 15 of the 21 have next_earnings_date null. By C23 each returns NO_CATALYST_NAMED; I invent none from a chart. Eight sit deep in the rank order. | lane PULLBACK nominated 21; PULLBACK with next_earnings_date null 15; rank NET 221 FTNT 190 FIVN 173 NTNX 171 DDOG 159 AAPL 158 EMR 157 CRBG 156; rs_rank_pct NET 91.95 FTNT 97.32 FIVN 97.8 DDOG 97.2 |
+| ROOM | CATALYST | note | Seven nominated names have ma_50 under ma_200: RCL, CNP, BTI, EQT, BKR, FTV, TEL. Five carry rs_rank_pct under 50. A 20-day pop under the 200-day line is neglect with no stated catalyst until someone names one. | ma_50 and ma_200 RCL 271.27 286.21; CNP 39.04 41.52; BTI 56.23 59.08; EQT 53.09 55.51; BKR 58.68 60.16; FTV 57.44 58.55; TEL 210.09 213.06; rs_rank_pct BKR 21.16 EQT 30.12 CNP 36.22 FTV 42.2 BTI 47.01; rs_spy_20d CNP 12.9 EQT 14.4 FTV 10.49 |
+| ROOM | CATALYST | note | EQT, BKR and VG are three XLE names from raschke and wyckoff. Energy is where my supply-demand test would speak, and it is NOT_SERVED: no commodity, inventory or input-cost series. I can neither clear nor challenge them on catalyst. Sector state is context only. | gics_sector XLE; EQT nomination_count 1 day_vol 2.05 rs_rank_pct 30.12; BKR nomination_count 1 day_vol 2.16 rs_rank_pct 21.16; VG nomination_count 1 next_earnings_date 2026-11-10 days_to_earnings 9; sector_trend_state Momentum Fading Hold Don't Add |
+| DBX | CROWDING | flag | Room's top count (3 seats at 3, 3, 3) yet only the SEATS door fires: no STRENGTH, AQE_LEADER or PM_LENS corroboration, and rank 72 against HOG 13 and CSX 7. Tagged PULLBACK but sits 5.22 above SMA, not at it. This is votes, not an independent reading. | nomination_count 3 seats minervini oneil raschke convictions 3 3 3; doors SEATS; rank 72; sma_distance_pct 5.22; structure_shift RANGE; rs_rank_pct 91.59; next_earnings_date null |
+| DBX | CERTAINTY | note | Flaw hunt on the room's top name found nothing in structure 86.3 or LEADER status; unfound is the finding. The only gap is confirmation: structure_shift RANGE, not BULLISH_BOS, on day_vol 1.24. Advisory: wait for a break close rather than a market entry at 36.93. | structure 86.3; rs_leadership LEADER; rs_spy_20d 12.22; structure_shift RANGE; day_vol 1.24; entry 36.93; ma_20 35.43 ma_50 35.1 ma_200 28.86; sector_trend_state Recovering From Weakness Watch for Entry |
+| HOG | CERTAINTY | note | Room maximum: the only conviction 4 pair, four doors firing. Flaw hunt finds none in structure 86.3, ABOVE_STRUCTURE, LEADER. Candidate flaw is context: ma_20 27.07 and ma_50 27.04 have converged while price is 8.88 above SMA, which reads as one leg, in an XLY sector tagged Momentum Fading. | nomination_count 2 seats livermore minervini convictions 4 4; doors SEATS STRENGTH AQE_LEADER PM_LENS; rank 13; structure 86.3; sma_distance_pct 8.88; ma_20 27.07 ma_50 27.04 ma_200 23.84; entry 29.44; sector_trend_state Momentum Fading Hold Don't Add; XLY nominated names 5 |
+| HOG | TIMING | note | Advisory trigger in place of a market entry at 29.44: a give-back toward the ma_20 27.07 and ma_50 27.04 zone, or several closes holding above ma_20 with day_vol back under 1. Today day_vol is 1.21 at 8.88 above SMA. Never a block. | entry 29.44; ma_20 27.07; ma_50 27.04; sma_distance_pct 8.88; day_vol 1.21; rs_spy_20d 17.9 |
+| CSX | TIMING | note | BULLISH_BOS printed on day_vol 0.9, below-normal participation, with ma_20 48.42 still under ma_50 48.77: an ignition without volume. Advisory: a second close above the break on day_vol over 1 before treating it as confirmed. | nomination_count 2 seats livermore minervini convictions 3 3; rank 7; structure_shift BULLISH_BOS; day_vol 0.9; ma_20 48.42 ma_50 48.77 ma_200 45.36; sma_distance_pct 7.17; entry 52.27; doors SEATS STRENGTH AQE_LEADER |
+| CART | TIMING | flag | Both late-move signatures at once on the rank 1 name: sma_distance_pct 23.57 and day_vol 2.53, the highest participation in the tally. One seat at conviction 3. Advisory: no market entry; wait for day_vol to fall back under 1 in a tight range. XLY is tagged Momentum Fading. | rank 1; sma_distance_pct 23.57; day_vol 2.53; rs_spy_20d 37.43; entry 60.08; ma_20 49.49; nomination_count 1 seat livermore conviction 3; doors STRENGTH PM_LENS NOMINATED; sector_trend_state Momentum Fading Hold Don't Add |
+| FTRE | TIMING | note | Most extended multi-seat name: sma_distance_pct 22.45 with rs_spy_20d 23.04, four doors firing including PM_LENS, so signal stacking is high exactly where the entry is latest. Advisory: pullback toward ma_20 21.83 or a base, not a market entry at 24.43. | nomination_count 2 seats elder-lens livermore convictions 2 3; doors SEATS ELDER+LENS STRENGTH PM_LENS; rank 24; sma_distance_pct 22.45; ma_20 21.83; entry 24.43; rs_spy_20d 23.04; day_vol 1.09; rs_rank_pct 98.17; sector_trend_state Momentum Fading |
+| ESTC | TIMING | note | Extension on thin participation: sma_distance_pct 15.6 with day_vol 0.68, and earnings on 2026-11-19, 16 sessions out. Seats at 3 and 2. Advisory: pullback, or a new high on day_vol back above 1, before entry. The print is an event, not a named catalyst. | nomination_count 2 seats livermore weis convictions 3 2; sma_distance_pct 15.6; day_vol 0.68; rs_spy_20d 18.11; rs_leadership IN-LINE; next_earnings_date 2026-11-19 days_to_earnings 16; entry 105.52; ma_20 96.32 |
+| APLE | TIMING | flag | Tagged PULLBACK yet sma_distance_pct is 13.78 (DRH 11.34 likewise): there is no pullback to buy, price is extended. Earnings on 2026-11-05 are 6 sessions out. Advisory: wait for an actual pullback toward ma_20 16.98, or take the event knowingly. Event filter not argued. | lane PULLBACK; sma_distance_pct 13.78; ma_20 16.98; entry 18.62; next_earnings_date 2026-11-05 days_to_earnings 6; nomination_count 2 seats livermore thorp convictions 3 2; DRH lane PULLBACK sma_distance_pct 11.34 rank 11 |
+| RCL | CERTAINTY | note | Flaw found in the record: rs_spy_20d 12.81 but rs_leadership LAGGARD, so it beats SPY on up days and gives ground on down days. It arrives on day_vol 2.17 and ma_50 271.27 is still under ma_200 286.21. Seats at 3 and 2; this reads as a bounce, not a trend. | nomination_count 2 seats elder-lens weis convictions 3 2; rank 124; rs_spy_20d 12.81; rs_leadership LAGGARD; day_vol 2.17; ma_50 271.27 ma_200 286.21; entry 295.92; sma_distance_pct 9.09; sector_trend_state Momentum Fading |
+| GLBE | CERTAINTY | note | Thinnest evidence among the 11 multi-seat names: lowest structure and lowest rs_spy_20d of the group. BULLISH_BOS on day_vol 1.52 is the only support, and earnings on 2026-11-18 are 15 sessions out. The count of 2 is not corroborated by the fields. | nomination_count 2 seats minervini oneil convictions 3 2; rank 118; structure 57.9; rs_spy_20d 3.0; rs_leadership IN-LINE; structure_shift BULLISH_BOS; day_vol 1.52; next_earnings_date 2026-11-18 days_to_earnings 15; AAPL rs_spy_20d 4.66 FIVN 8.46 |
+| NET | CATALYST | flag | Single seat (elder-lens, 3) on the lowest-ranked name in the tally and the only negative rs_spy_20d. Argued as a dip in a long-run leader, but no catalyst is on record and next_earnings_date is null. Neglect without a catalyst is a dead asset (C23). | rank 221; rs_spy_20d -7.66; structure 49.5; rs_leadership LAGGARD; rs_rank_pct 91.95; sma_distance_pct 2.45; day_vol 0.76; next_earnings_date null; nomination_count 1 seat elder-lens conviction 3; doors NOMINATED |
+| MP | CATALYST | flag | Held, zero seats, and the record reads as a failed up-structure: BEARISH_CHOCH, structure 14.0, price under ma_20, ma_50 and ma_200. The C23 question has no answer on record. This challenges the hold thesis only; broker stop MP 36.66 stands and is not argued. | nomination_count 0; held true; structure_shift BEARISH_CHOCH; structure 14.0; sma_distance_pct -16.37; entry 40.87; ma_20 42.73 ma_50 48.87 ma_200 55.59; rs_spy_20d -10.75; day_vol 1.21; rank null; sector_trend_state null |
+| V | CROWDING | note | Held, zero seats. Seat count says nothing about the asset (C4) and the fields give me nothing to challenge: ABOVE_STRUCTURE, entry above ma_20, day_vol 1.36. The gap is blind spots: rank, sector_trend_state and rs_leadership are null. Broker stop V 391.80 not argued. | nomination_count 0; held true; structure_shift ABOVE_STRUCTURE; structure 69.0; entry 401.86; ma_20 388.88 ma_50 378.73 ma_200 341.08; sma_distance_pct 6.11; rs_spy_20d 9.12; day_vol 1.36; rank null; sector_trend_state null; rs_leadership null |
+
+#### steenbarger — challenge findings
+
+| Scope | Axis | Severity | Claim | Evidence |
+|---|---|---|---|---|
+| ROOM | INDEPENDENCE | flag | The 11-name deliberation set (nomination_count 2+) leans on two seats: livermore is in 6 of 11, minervini in 5. Drop both and only DBX, RCL, FIVN still reach 2. HOG and CSX are both their joint picks. Read it as two seats agreeing, not 11 independent convergences (C15). | tally seats livermore HOG CSX ESTC APLE DRH FTRE; tally seats minervini DBX HOG CSX GLBE AAPL; nominations by seat minervini 8 livermore 8 of tally nomination_count total 45 |
+| ROOM | CROWDING | flag | 4 of elder-lens's 6 names carry div_state BEARISH. It is the second seat on FTRE and AAPL, and without it both leave the deliberation set. Of 33 nominees only 5 are BEARISH, and 4 of those 5 are elder-lens picks. | elder-lens names RCL FTRE AAPL FTNT NET HNGE; FTRE div_state BEARISH div_bear_count 3 convictions 2 3; AAPL div_state BEARISH div_bear_count 4 convictions 2 3; FTNT div_state BEARISH div_bear_count 3; NET div_state BEARISH div_bear_count 5; TEL (weis) div_state BEARISH div_bear_count 2 |
+| ROOM | CROWDING | flag | All three Real Estate rows (APLE, DRH, HST) were nominated: 5 of 45 nominations and 2 of the 11 deliberation slots. Their fields are near-identical, so this is one sector idea counted several times. Only livermore and thorp stand behind APLE and DRH. | APLE sc_momentum 79.0 rs_rank_pct 87.93 pct_from_52w_high 0.0 lens_warnings 1; DRH sc_momentum 78.5 rs_rank_pct 87.32 pct_from_52w_high 0.0 lens_warnings 1; HST sc_momentum 75.5 rs_rank_pct 76.59 pct_from_52w_high -1.25 lens_warnings 1; gics_sector_name Real Estate on APLE DRH HST |
+| MP | CONTEXT | flag | MP reads as a structure failure: structure_shift BEARISH_CHOCH, structure 14.0, sc_momentum 27.1, 50-day under 100-day under 200-day. nomination_count 0 and no held-review verdict in this packet. If the entry thesis named a structure break (C7), this is that print. No view on the broker stop. | MP structure_shift BEARISH_CHOCH structure 14.0 sc_momentum 27.1 ma_50 48.87 ma_100 50.28 ma_200 55.59 day_vol 1.21 div_state NONE nomination_count 0 doors HELD |
+| CNP | CONFLICT | flag | CNP's fields conflict: sc_momentum 82.0 and day_vol 2.1 against rs_rank_pct 36.22, 50-day under 100-day under 200-day, and lens_warnings 2. Single seat (thorp 3). C5 asks for the longer-timeframe context; C16 says conflicting evidence means stand aside and re-check. | CNP sc_momentum 82.0 day_vol 2.1 rs_rank_pct 36.22 ma_50 39.04 ma_100 40.94 ma_200 41.52 lens_warnings 2 pct_from_52w_high -6.82 lane MOMENTUM seats thorp convictions 3 |
+| NET | CONFLICT | flag | NET has div_bear_count 5 (all five oscillators confirm bearish divergence) and the lowest sc_momentum of any non-held name, 44.6, with structure 49.5. The intact ma stack conflicts with that. Single seat (elder-lens 3), outside deliberation. C16: re-check premises. | NET div_state BEARISH div_bear_count 5 sc_momentum 44.6 structure 49.5 ma_50 319.97 ma_100 291.88 ma_200 246.37 pct_from_52w_high -9.18 lens_warnings 1 seats elder-lens convictions 3 |
+| ROOM | CONTEXT | note | 7 of 33 nominees have ma_50 under ma_200 (RCL, CNP, BTI, FTV, EQT, TEL, BKR): thorp 3 of its 6, raschke 2 of 6. C5 wants the longer-timeframe trend named; for these the context is repair or reversal, not trend continuation. 5 of the 7 also have rs_rank_pct under 50. | ma_50 vs ma_200: RCL 271.27 286.21; CNP 39.04 41.52; BTI 56.23 59.08; FTV 57.44 58.55; EQT 53.09 55.51; TEL 210.09 213.06; BKR 58.68 60.16; rs_rank_pct CNP 36.22 BTI 47.01 FTV 42.2 EQT 30.12 BKR 21.16 |
+| RCL | CONTEXT | note | RCL is the only deliberation-set name with ma_50 under ma_200. Its 50-day also sits under the 100-day, 14.97% off the high, on day_vol 2.17. The ma stack does not show a pullback inside an intact uptrend; if the thesis is reversal, the seats should say so (C5). | RCL ma_50 271.27 ma_100 286.66 ma_200 286.21 pct_from_52w_high -14.97 day_vol 2.17 sc_momentum 67.0 structure_shift ABOVE_STRUCTURE seats elder-lens weis convictions 3 2 lane PULLBACK |
+| AAPL | PROCESS | note | Ticker-hidden test: AAPL's menu reads sc_momentum 63.7 (second-lowest in the deliberation set), structure_shift RANGE, div_bear_count 4, lens_warnings 0. Only the ma stack and rs_rank_pct 82.2 carry it. Re-read the case without the name before it ranks (C12, C17). | AAPL sc_momentum 63.7 structure_shift RANGE div_state BEARISH div_bear_count 4 day_vol 0.98 ma_50 331.06 ma_100 320.07 ma_200 295.28 rs_rank_pct 82.2 pct_from_52w_high -0.32 seats elder-lens minervini convictions 2 3 |
+| HOG | PROCESS | note | HOG passes my field walk: ma_50 over ma_100 over ma_200, structure 86.3, no divergence, lens_warnings 0. Only a process caution: its 4 doors are not 4 confirmations. STRENGTH co-occurs with PM_LENS on 6 of the 8 PM_LENS names and with AQE_LEADER on 6 of the 8 AQE_LEADER names. | HOG ma_50 27.04 ma_100 26.37 ma_200 23.84 structure 86.3 structure_shift ABOVE_STRUCTURE div_state NONE lens_warnings 0 day_vol 1.21 pct_from_52w_high 0.0 doors SEATS STRENGTH AQE_LEADER PM_LENS convictions 4 4 |
+| ROOM | OVERLAP | note | oneil filed 2 names and minervini filed both (DBX, GLBE): overlap 2 of 2, so oneil adds count but no independent name. Both shared names carry lens_warnings 2, the highest in the deliberation set. Treat DBX's 3-seat count as closer to 2 independent reads. | oneil names DBX GLBE; minervini names DBX GLBE; DBX nomination_count 3 seats minervini oneil raschke lens_warnings 2; GLBE nomination_count 2 lens_warnings 2 |
+| ROOM | CONVICTION | note | Conviction does not discriminate: 26 of 45 nominations are 3, 17 are 2, 2 are 4 (both HOG), none 5. DBX's three seats are all 3. Do not read the labels as a size signal (C4); nomination_count and conviction are agreement, not measured edge (C1). | convictions across tally: 2 count 17, 3 count 26, 4 count 2, 5 count 0; HOG convictions 4 4; DBX convictions 3 3 3 |
+| ROOM | REGIME | note | No regime or srm field reaches this packet, so environment match (C3, C4) cannot be assessed here. Lane is the only environment-flavoured label and it is not a regime. No size case from environment match can be built from this round. | regime absent from packet; srm absent from packet; lane MOMENTUM 25 PULLBACK 23 across 48 tally rows |
+| ROOM | CROWDING | note | Against the menu's own sector mix, Consumer Discretionary is over-represented in deliberation (3 of 11: HOG, RCL, GLBE vs 7 of 46 sector-tagged rows). Technology is not: 4 of 11 vs 20 of 46. Energy has 3 conviction-2 names (EQT, BKR, VG). | gics_sector_name rows Technology 20 Consumer Discretionary 7 Industrials 4 Real Estate 3; deliberation Technology 4 Consumer Discretionary 3 Real Estate 2; EQT BKR VG gics_sector_name Energy convictions 2 2 2 |
+| ROOM | LABEL | note | Lane does not track distance from the high: 6 PULLBACK-lane nominees sit within 1% of it (APLE, DRH, EMR at pct_from_52w_high 0.0, A -0.15, AAPL -0.32, CRBG -0.65) while MOMENTUM-lane BILL is -12.25 and VG -21.22. Lane definition is not in the packet; do not read PULLBACK as bought below the high. | APLE lane PULLBACK pct_from_52w_high 0.0; DRH 0.0; EMR 0.0; A -0.15; AAPL -0.32; CRBG -0.65; BILL lane MOMENTUM pct_from_52w_high -12.25; VG -21.22 |
+| ESTC | PARTICIPATION | note | Participation varies inside the MOMENTUM lane: ESTC (livermore 3, weis 2) sits at pct_from_52w_high -0.72 on day_vol 0.68, against HOG day_vol 1.21 at 0.0. day_vol is advisory, but a near-high momentum case on below-normal participation should be stated as such (C12). | ESTC day_vol 0.68 pct_from_52w_high -0.72 sc_momentum 78.1 rs_rank_pct 98.05; CSX day_vol 0.9; HOG day_vol 1.21 |
+| ROOM | DATA_GAP | note | V and MP carry null gics_sector_name, lens_warnings, rs_rank_pct and pct_from_52w_high here, so my sector-clustering check of new names against the held book cannot run. It is declared not served, not passed. | V gics_sector_name null lens_warnings null rs_rank_pct null; MP gics_sector_name null lens_warnings null rs_rank_pct null |
+| V | CONTEXT | note | V's context fields are intact and I have no process objection: 50-day over 100-day over 200-day, structure 69.0, no divergence. nomination_count 0 is normal for a held name; the gaps are sector and lens_warnings (null). | V ma_50 378.73 ma_100 363.99 ma_200 341.08 structure 69.0 structure_shift ABOVE_STRUCTURE div_state NONE day_vol 1.36 sc_momentum 65.5 nomination_count 0 |
+| ROOM | PROCESS | note | Nominations do not simply recite the composite, which is healthy: median sc_momentum 73.0 for nominees vs 73.4 for non-held names with nomination_count 0. BRZE (sc_momentum 85.7) drew 0 nominations; seats' pass reasons are not in my packet. | nominated median sc_momentum 73.0 min 44.6 max 88.3; non-nominated non-held median sc_momentum 73.4; BRZE sc_momentum 85.7 rs_rank_pct 96.71 lens_warnings 0 nomination_count 0 doors STRENGTH STRONG_SEAT |
+
+#### detect-lens — challenge findings
+
+| Scope | Axis | Severity | Claim | Evidence |
+|---|---|---|---|---|
+| DBX | LENS_AGREEMENT | flag | Room's only 3-seat name reads zero strong lenses and two warns, the lowest lens_positive of 11 multi-seat names; it holds the SEATS door only, no LENS door. Seats converge on trend structure; the lens offers no corroboration. Reading aid, untested as a predictor. | nomination_count 3; convictions 3,3,3; lens_positive 0; lens_warnings 2; lens.insti_money warn; lens.resistance warn; lens.leadership ok; lens.coil ok; lens.structure ok; lens.sector ok; runner_conviction 2; premove_conviction 0; structure_shift RANGE; day_vol 1.24; ma_50 35.1 ma_100 32.49 ma_200 28.86; doors SEATS |
+| HOG | LENS_COVERAGE | flag | Top-conviction room name (4,4) has 4 of 6 lenses at '--' (no data): leadership, coil, insti_money, resistance. lens_positive 1 is a floor set by missing data, and lens_warnings 0 is not agreement. This seat cannot corroborate HOG either way. | convictions 4,4; lens.leadership --; lens.coil --; lens.insti_money --; lens.resistance --; lens.structure ok; lens.sector strong; lens_positive 1; lens_warnings 0; runner_conviction 1; premove_conviction 0; day_vol 1.21; ma_50 27.04 ma_100 26.37 ma_200 23.84; doors SEATS STRENGTH AQE_LEADER PM_LENS |
+| ROOM | LENS_COVERAGE | flag | Nine rows collapse to two identical lens vectors with the same four lenses at '--': HOG, CART, ETSY, BBWI and BILL, BRZE, NTSK, ASAN, KVYO. That reads as a feed gap, not nine independent weak reads. Four nominations (HOG 2, CART 1, BILL 1) rest on it. | lens.leadership --, lens.coil --, lens.insti_money --, lens.resistance -- on HOG CART ETSY BBWI (lens.structure ok, lens.sector strong) and on BILL BRZE NTSK ASAN KVYO (lens.structure ok, lens.sector ok); lens_positive 0 or 1 on all nine; nomination_count HOG 2 CART 1 BILL 1, other six 0 |
+| ROOM | LENS_AGREEMENT | note | Clean lens support (lens_positive 3 or more, lens_warnings 1 or less) holds for 3 of 11 multi-seat names: AAPL, FIVN, FTRE. The other eight do not: DBX, HOG (4 lenses no data), ESTC, CSX, RCL, APLE, DRH, GLBE. | lens_positive/lens_warnings: AAPL 4/0; FIVN 3/0; FTRE 3/1; GLBE 3/2; CSX 2/1; RCL 2/1; APLE 2/1; DRH 2/1; HOG 1/0; ESTC 1/0; DBX 0/2 (counts computed from packet rows) |
+| ROOM | LENS_AGREEMENT | note | Tally depth does not track lens agreement: mean lens_positive is 2.09 on 11 multi-seat names and 2.27 on 22 single-seat names, against 0.46 on 13 zero-seat non-held names. The lens separates nominated from un-nominated, not deep tally from shallow. | mean lens_positive 2.09 (n 11, nomination_count 2 or 3); 2.27 (n 22, nomination_count 1); 0.46 (n 13, nomination_count 0, held excluded); computed from packet rows |
+| A | LENS_AGREEMENT | note | Highest lens agreement in the packet (5 of 6 strong) sits with one seat at conviction 3. The LENS door carries A, AAPL, CRBG, EMR, the four names at lens_positive 4 or more; three of the four are single-seat. Tally depth understates the lens read. A's lone warn is insti_money. | A: nomination_count 1; seats minervini; lens_positive 5; lens_warnings 1; lens.insti_money warn; structure_shift BULLISH_BOS; runner_conviction 1; premove_conviction 1; day_vol 1.06; ma_50 162.54 ma_100 149.19 ma_200 135.57; CRBG lens_positive 4 nomination_count 1; EMR lens_positive 4 nomination_count 1; AAPL lens_positive 4 nomination_count 2 |
+| CNP | TREND_SPINE | flag | MOMENTUM-lane name (thorp 3) has ma_50 below ma_100 below ma_200, leadership warn and coil warn, lens_positive 1. Trend spine and lens both read against the lane label. day_vol 2.1 shows participation, not direction. Reading only. | lane MOMENTUM; ma_50 39.04 ma_100 40.94 ma_200 41.52; lens.leadership warn; lens.coil warn; lens.insti_money ok; lens.structure ok; lens.sector strong; lens_positive 1; lens_warnings 2; runner_conviction 1; day_vol 2.1; doors STRENGTH PM_LENS NOMINATED |
+| FTV | TREND_SPINE | note | MOMENTUM-lane name with doors AQE_LEADER and PM_LENS has ma_50 57.44 under both ma_100 59.33 and ma_200 58.55; lens_positive 1 beside lens_warnings 2 (coil, insti_money). One seat, thorp 2. The trend spine does not read leadership here. | ma_50 57.44 ma_100 59.33 ma_200 58.55; lens.coil warn; lens.insti_money warn; lens.resistance strong; lens.leadership ok; lens_positive 1; lens_warnings 2; runner_conviction 1; day_vol 1.81; convictions 2; doors AQE_LEADER PM_LENS NOMINATED |
+| BKR | STRUCTURE_SHIFT | note | BULLISH_BOS (close above the nearest confirmed pivot high) on an inverted MA order: ignition and trend disagree. TEL shows the same shape, ma_200 above both shorter averages. BKR day_vol 2.16, TEL 2.23: heavy participation, direction not in my fields. | BKR structure_shift BULLISH_BOS; ma_50 58.68 ma_100 59.03 ma_200 60.16; lens_positive 3; lens_warnings 1; lens.resistance warn; day_vol 2.16; raschke 2. TEL structure_shift BULLISH_BOS; ma_50 210.09 ma_100 208.49 ma_200 213.06; lens_positive 3; lens_warnings 1; lens.leadership warn; day_vol 2.23; weis 2 |
+| ROOM | TREND_SPINE | note | 10 of 33 nominated names lack the aligned order (ma_50 above ma_100 above ma_200): CSX, RCL, APLE, CNP, BTI, HST, FTV, EQT, TEL, BKR; 3 of 12 MOMENTUM-lane names (CSX, CNP, FTV). Fully inverted on nominated CNP, BTI, BKR and held MP. BTI also carries two warns. | BTI ma_50 56.23 ma_100 58.28 ma_200 59.08; BTI lens.leadership warn; BTI lens.coil warn; BTI lens_positive 2; BTI lens_warnings 2; thorp 2; zero-seat inverted: BBWI ma_50 18.41 ma_100 19.33 ma_200 19.81; RBLX ma_50 45.68 ma_100 46.35 ma_200 52.8. Order of averages only; no price in rows |
+| MP | STRUCTURE_SHIFT | flag | The only BEARISH_CHOCH in the packet is on held MP: the close broke below the up-swing's anchor low, so the up-structure failed. ma_50 sits below ma_100 below ma_200. Lens block is null, so no lens read. A structure reading only; it makes no case against the broker stop MP 36.66. | structure_shift BEARISH_CHOCH; ma_50 48.87 ma_100 50.28 ma_200 55.59; day_vol 1.21; atr_14d 2.24; lens null; lens_positive null; runner_conviction null; nomination_count 0; doors HELD |
+| V | LENS_COVERAGE | note | Nothing on my menu contradicts held V: averages stack in order, day_vol is above 1. The lens block is null, so no lens agreement or warning exists to report; absence is not agreement. structure_shift ABOVE_STRUCTURE is undefined on my card, not read. Broker stop V 391.80 untouched by this read. | ma_50 378.73 ma_100 363.99 ma_200 341.08; day_vol 1.36; atr_14d 6.67; lens null; lens_positive null; structure_shift ABOVE_STRUCTURE; nomination_count 0; doors HELD |
+| CART | TAGS | note | The only runner_setup true in the packet (1 of 48) sits with one seat (livermore 3). runner_conviction 4 on day_vol 2.53. Its lens block is blind on 4 of 6, so the runner tag is the only detect support. Tag is a detection, not a win rate. | runner_setup true; runner_conviction 4; premove_setup false; premove_conviction 0; day_vol 2.53; lens.leadership --; lens.coil --; lens.insti_money --; lens.resistance --; lens_positive 1; ma_50 48.62 ma_100 47.21 ma_200 43.08; seats livermore; convictions 3 |
+| NET | TAGS | note | runner_conviction 4 and premove_conviction 4 at once, yet runner_setup false and premove_setup false: convictions and tags disagree, so no detect tag lights. Do not read the 4s as a tag. One seat (elder-lens 3), PULLBACK lane, thin day_vol 0.76. | runner_setup false; runner_conviction 4; premove_setup false; premove_conviction 4; lens_positive 2; lens_warnings 1; lens.resistance warn; day_vol 0.76; atr_14d 17.76; ma_50 319.97 ma_100 291.88 ma_200 246.37 |
+| ROOM | TAGS | note | Detect tags are nearly silent: runner_setup true on 1 of 48 rows (CART), premove_setup true on 0 of 48. premove_conviction above 0 on four names only. No name carries a premove tag, so none of the room's picks has pre-move radar support. | runner_setup true: CART; premove_setup true: none; premove_conviction NET 4; DDOG 2; FTNT 2; A 1; ZS runner_conviction 4 with nomination_count 0 |
+| ESTC | PARTICIPATION | note | Two seats (livermore 3, weis 2) on a MOMENTUM-lane name printing day_vol 0.68, below its own 20-day average. Lens reads only leadership strong. Momentum on thin participation is a reading to weigh, not a verdict. | day_vol 0.68; lens.leadership strong; lens_positive 1; lens_warnings 0; runner_conviction 2; premove_conviction 0; atr_14d 4.27; ma_50 91.28 ma_100 77.54 ma_200 66.82; lane MOMENTUM; doors SEATS STRENGTH |
+| CSX | PARTICIPATION | note | BULLISH_BOS printed on day_vol 0.9, with ma_50 48.77 a hair under ma_100 48.92 and coil warn. EMR shows BULLISH_BOS on day_vol 0.79 with insti_money warn. A break of structure on below-average participation is the thinner version of the signal. | CSX structure_shift BULLISH_BOS; day_vol 0.9; ma_50 48.77 ma_100 48.92 ma_200 45.36; lens.coil warn; lens_positive 2; lens_warnings 1; livermore 3, minervini 3. EMR structure_shift BULLISH_BOS; day_vol 0.79; lens.insti_money warn; lens_positive 4; lens_warnings 1; minervini 3 |
+| RCL | PARTICIPATION | note | Heavy participation (day_vol 2.17) beside an institutional-money lens warn on a PULLBACK name whose ma_50 271.27 sits under both ma_100 and ma_200. day_vol carries no direction, so this is a question for the seats, not a call. | day_vol 2.17; lens.insti_money warn; lens.coil strong; lens.sector strong; ma_50 271.27 ma_100 286.66 ma_200 286.21; atr_14d 11.12; lens_positive 2; lens_warnings 1; runner_conviction 3; elder-lens 3, weis 2 |
+| ROOM | WARNINGS | note | lens_positive hides splits: 8 of 33 nominated names carry lens_warnings 2 (DBX, GLBE, CNP, BTI, FTV, AWK, EQT, VG); GLBE and VG show lens_positive 3 beside it. Leadership warn sits on 8 nominated names: GLBE, CNP, BBY, BTI, AWK, EQT, TEL, VG. | GLBE lens_positive 3 lens_warnings 2 (lens.leadership warn, lens.insti_money warn); VG lens_positive 3 lens_warnings 2 (lens.leadership warn, lens.resistance warn); lens_warnings 2 also on AWK, EQT, BTI, FTV, CNP, DBX; counts computed from packet rows |
+| ROOM | LENS_AGREEMENT | note | None of the 13 non-held names with no nominations shows lens_positive above 1; RYAN, DXC and VERX carry lens_warnings 3. They reached the board by STRENGTH, UNR_SEAT or STRONG_SEAT doors; the lens gives them no corroboration. | lens_positive: IOT 0; ETSY 1; RYAN 1; BRZE 0; DXC 0; NTSK 0; ASAN 0; TENB 1; BBWI 1; VERX 0; KVYO 0; RBLX 1; ZS 1. lens_warnings: RYAN 3; DXC 3; VERX 3. |
+| APLE | INDEPENDENCE | note | APLE and DRH share one lens vector and one seat pair (livermore, thorp); thorp's HST differs only on resistance. Three names reading as one lens picture count as three tally entries, so tally depth overstates independent support. | APLE lens_positive 2 lens_warnings 1; DRH lens_positive 2 lens_warnings 1; both lens.leadership strong, lens.coil warn, lens.insti_money ok, lens.structure ok, lens.resistance ok, lens.sector strong; HST lens_positive 3 lens_warnings 1 (lens.resistance strong); APLE seats livermore thorp; DRH seats livermore thorp; HST seats thorp |
+| ROOM | INDEPENDENCE | note | Tally depth is carried by two seats: livermore or minervini sit on 9 of 11 multi-seat names, 16 of 45 nominations. HOG and CSX carry the same pair. Depth counts seat correlation as well as agreement; RCL and FIVN are the two multi-seat names with neither. | livermore nominations 8; minervini nominations 8; total nominations 45 (sum of nomination_count); HOG seats livermore minervini; CSX seats livermore minervini; RCL seats elder-lens weis; FIVN seats weis wyckoff; counts computed from the tally |
+
+#### lynch — findings (consult)
+
+| Scope | Axis | Severity | Claim | Evidence |
+|---|---|---|---|---|
+| room: 11 multi-seat names | story fit | flag | Of the 11 names with 2+ seats only GLBE has served figures that fit its category. HOG, CSX, FTRE, FIVN are contradicted; DBX, ESTC, RCL, APLE, DRH, AAPL are neutral. | GLBE revenue_growth_yoy 0.278, debt_to_equity 0.028, net_profit_margin 0.139. DBX (3 seats) has free_cash_flow_yield 0.116 but revenue_growth_yoy -0.011. |
+| HOG, CSX | growth | flag | Two momentum-lane multi-seat names have shrinking sales and earnings. Price is leading fundamentals; Lynch counts the story only once earnings turn. | HOG revenue_growth_yoy -0.138, free_cash_flow_yield -0.044. CSX eps_growth_yoy -0.140 at pe_ratio 27.1. |
+| FTRE, VG, NTSK, RYAN, RBLX | leverage | flag | Debt above 50 percent of capital (Lynch high leverage, C12) in five names, three with losses or negative cash. Bank-vs-funded split and maturities not served, so Fail Gate 1 stays untested. | debt_to_equity FTRE 2.13, VG 4.99, NTSK 4.67, RYAN 7.47, RBLX 12.08. FTRE net_profit_margin -0.032; VG free_cash_flow_yield -0.269; NTSK net_profit_margin -0.918. |
+| software and tech cluster | crowding | flag | 22 of 48 are profile sector Technology, 17 of them software: one valuation factor. A software de-rating hits them together; Lynch spreads across distinct businesses (C19). | P/FCF above 40: FTNT 43.5, DDOG 87.3, IOT 102.3, NET 308.5, BRZE 62.3, ZS 48.8, VERX 42.7 (priceToFreeCashFlowRatioTTM). |
+| ESTC, NTNX | earnings quality | note | P/E is flattered where GAAP profit exceeds operating profit. Read both on free_cash_flow_yield, not pe_ratio. | ESTC net_profit_margin 0.208 vs operatingProfitMarginTTM -0.015; NTNX 0.528 vs 0.098. free_cash_flow_yield ESTC 0.034, NTNX 0.043; pe_ratio 27.3 and 13.1. |
+| APLE, DRH, HST, RCL | crowding | note | Four names ride one lodging and travel demand cycle: three hotel REITs plus RCL. P/E and D/E are the wrong instruments for REITs; FFO and net debt not served. Count as one bet. | revenue_growth_yoy APLE -0.013, DRH -0.008, HST 0.076, RCL 0.088. dividendYieldTTM APLE 0.053, DRH 0.032, HST 0.068. |
+| V (held) | held book | note | Stalwart of top quality at a full multiple. Lynch discipline is rotation into same-category alternatives (C20), not a profit target; P/E history not served so no trigger. Broker stop 391.80 stands under house law. | net_profit_margin 0.508, grossProfitMarginTTM 0.802, pe_ratio 34.7, eps_growth_yoy 0.05, revenue_growth_yoy 0.113. Profile carried, dated 2026-10-22. |
+| MP (held) | held book | flag | C22 proviso: down is a buy only if the story is verified intact. Served figures do not evidence an intact story; verification goes to the PM. Broker stop 36.66 stands under house law. | grossProfitMarginTTM -0.046, operatingProfitMarginTTM -0.331, free_cash_flow_yield -0.073, revenue_growth_yoy 0.101 after -0.196, -0.520; sma_distance_pct -16.37. Profile carried, dated 2026-10-21. |
+| room | tax-loss window (C23) | note | The Oct-Dec window is the one place served data touches my method, but only MP has a negative sma_distance_pct. The room buys strength, so the window offers no depressed-quality candidate, and MP fails the sound-company half. | MP sma_distance_pct -16.37; the other 47 range 0.0 to 51.23 (BRZE 51.23, NTSK 47.77, DXC 32.02). |
+| BRZE, NTSK, ASAN, ZS, RBLX, NET | earnings | note | Unprofitable fast growers fill the strength doors. Lynch needs earnings to compound (C5); five of the six have no seat nomination. | net_profit_margin BRZE -0.136, NTSK -0.918, ASAN -0.186, ZS -0.019, RBLX -0.176, NET -0.082. |
+| data | provenance | note | ESTC, CRBG, V (profile 2026-10-22) and MP (2026-10-21) are carried from earlier packs; TTM ratios may pre-date coming reports (earnings dates not served). DXC and APLE carry anomalous figures, treated as unverified. | DXC free_cash_flow_yield 0.487 vs net_profit_margin 0.010; APLE debt_to_equity 0.036 for a REIT. |
 
 ## APPENDIX B — REPEAT WATCH (verbatim from repeat_watch.json)
 
@@ -2201,8 +2136,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **A** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **A** | 2026-10-21 | — (gap, see note) | ADVANCE |
 | **A** | 2026-10-22 | +2.74% | ADVANCE |
-| **AAPL** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **AAPL** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **A** | 2026-10-27 | -1.01% | HOLD-FOR-CONDITIONS |
+| **A** | 2026-10-28 | +0.87% | ADVANCE |
 | **AAPL** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AAPL** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AAPL** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2210,6 +2145,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **AAPL** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AAPL** | 2026-10-23 | +1.53% | NEAR-MISS |
 | **AAPL** | 2026-10-26 | -0.14% | HOLD-FOR-CONDITIONS |
+| **AAPL** | 2026-10-28 | -0.18% | HOLD-FOR-CONDITIONS |
 | **ABBV** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ABBV** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ABBV** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2221,7 +2157,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ABBV** | 2026-10-21 | +1.28% | HOLD-FOR-CONDITIONS |
 | **ABBV** | 2026-10-22 | -1.51% | NEAR-MISS |
 | **ABBV** | 2026-10-23 | +0.06% | HOLD-FOR-CONDITIONS |
-| **ACA** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ACA** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ACA** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ACA** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2240,6 +2175,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ACN** | 2026-10-22 | +0.48% | NEAR-MISS |
 | **ACN** | 2026-10-23 | +7.69% | HOLD-FOR-CONDITIONS |
 | **ACN** | 2026-10-26 | -3.62% | PASS |
+| **ACN** | 2026-10-27 | -0.86% | PASS |
 | **ADBE** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **ADBE** | 2026-10-23 | +6.07% | NEAR-MISS |
 | **ADBE** | 2026-10-26 | -2.49% | NEAR-MISS |
@@ -2250,17 +2186,19 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ADP** | 2026-10-22 | +0.60% | HOLD-FOR-CONDITIONS |
 | **ADP** | 2026-10-23 | +4.56% | HOLD-FOR-CONDITIONS |
 | **ADP** | 2026-10-26 | -1.23% | NEAR-MISS |
+| **ADP** | 2026-10-27 | -1.00% | NEAR-MISS |
+| **ADP** | 2026-10-28 | -2.66% | NEAR-MISS |
 | **AEE** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AEE** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **AEE** | 2026-10-26 | -0.83% | NEAR-MISS |
+| **AEE** | 2026-10-27 | +0.04% | NEAR-MISS |
+| **AEE** | 2026-10-28 | +0.61% | NEAR-MISS |
 | **AEP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AEP** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AEP** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **AEP** | 2026-10-21 | +0.06% | PASS |
 | **AEP** | 2026-10-23 | +2.69% | PASS |
 | **AEP** | 2026-10-26 | -0.73% | NEAR-MISS |
-| **AFL** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **AFL** | 2026-10-21 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **AIG** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AIG** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **AIG** | 2026-10-22 | -0.16% | NEAR-MISS |
@@ -2272,9 +2210,14 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ALL** | 2026-10-22 | +0.45% | NEAR-MISS |
 | **ALL** | 2026-10-23 | +3.21% | NEAR-MISS |
 | **ALL** | 2026-10-26 | -2.28% | NEAR-MISS |
+| **ALL** | 2026-10-27 | +1.09% | NEAR-MISS |
+| **ALL** | 2026-10-28 | -1.66% | NEAR-MISS |
 | **ALLY** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **ALLY** | 2026-10-23 | +1.60% | NEAR-MISS |
 | **ALLY** | 2026-10-26 | -0.64% | NEAR-MISS |
+| **AM** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **AM** | 2026-10-27 | — (gap, see note) | NEAR-MISS |
+| **AM** | 2026-10-28 | +1.49% | NEAR-MISS |
 | **AMCR** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AMCR** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
 | **AMCR** | 2026-10-23 | +2.23% | NEAR-MISS |
@@ -2288,6 +2231,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **AMGN** | 2026-10-22 | -0.14% | HOLD-FOR-CONDITIONS |
 | **AMGN** | 2026-10-23 | +2.04% | ADVANCE |
 | **AMGN** | 2026-10-26 | -1.79% | NEAR-MISS |
+| **AMGN** | 2026-10-28 | +1.98% | NEAR-MISS |
 | **AMPL** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AMPL** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AMPL** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
@@ -2296,34 +2240,40 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **AMRZ** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **AMRZ** | 2026-10-23 | +1.57% | NEAR-MISS |
 | **AMRZ** | 2026-10-26 | +0.00% | NEAR-MISS |
+| **AMRZ** | 2026-10-28 | +2.00% | NEAR-MISS |
 | **AMT** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AMT** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **AMT** | 2026-10-26 | +2.95% | NEAR-MISS |
+| **AMT** | 2026-10-27 | -0.37% | NEAR-MISS |
 | **AMX** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AMX** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
 | **AMX** | 2026-10-23 | +2.84% | NEAR-MISS |
 | **AMX** | 2026-10-26 | -1.64% | NEAR-MISS |
-| **AMZN** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **AMZN** | 2026-10-22 | -0.10% | NEAR-MISS |
-| **AON** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **AON** | 2026-10-23 | +3.40% | NEAR-MISS |
+| **AMX** | 2026-10-27 | -1.59% | NEAR-MISS |
+| **AMX** | 2026-10-28 | -0.50% | NEAR-MISS |
 | **APLE** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **APLE** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **APLE** | 2026-10-21 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **APLE** | 2026-10-23 | +1.91% | NEAR-MISS |
 | **APLE** | 2026-10-26 | -0.66% | NEAR-MISS |
+| **APLE** | 2026-10-27 | +1.22% | HOLD-FOR-CONDITIONS |
+| **APLE** | 2026-10-28 | +1.97% | HOLD-FOR-CONDITIONS |
 | **ARES** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **ARES** | 2026-10-26 | -1.31% | NEAR-MISS |
-| **ARMK** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **ARMK** | 2026-10-22 | -0.73% | NEAR-MISS |
 | **ASAN** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ASAN** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ASAN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **ASAN** | 2026-10-23 | +7.08% | NEAR-MISS |
 | **ASAN** | 2026-10-26 | +4.52% | PASS |
+| **ASAN** | 2026-10-27 | -0.08% | PASS |
+| **ASAN** | 2026-10-28 | -1.25% | PASS |
+| **ASB** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **ASB** | 2026-10-27 | +0.07% | NEAR-MISS |
+| **ASB** | 2026-10-28 | -0.07% | NEAR-MISS |
 | **AUB** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **AUB** | 2026-10-23 | +3.67% | PASS |
 | **AUB** | 2026-10-26 | -0.52% | NEAR-MISS |
+| **AUB** | 2026-10-27 | -0.38% | NEAR-MISS |
 | **AVPT** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AVPT** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AVPT** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2331,41 +2281,58 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **AVPT** | 2026-10-21 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **AVPT** | 2026-10-22 | +3.22% | ADVANCE |
 | **AVPT** | 2026-10-23 | +2.29% | NEAR-MISS |
+| **AVPT** | 2026-10-27 | +4.79% | NEAR-MISS |
+| **AVPT** | 2026-10-28 | -2.31% | NEAR-MISS |
 | **AWK** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AWK** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **AWK** | 2026-10-23 | +5.48% | NEAR-MISS |
 | **AWK** | 2026-10-26 | -0.34% | NEAR-MISS |
+| **AWK** | 2026-10-27 | -0.74% | NEAR-MISS |
+| **AWK** | 2026-10-28 | -0.42% | PASS |
 | **AXP** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **AXP** | 2026-10-22 | +1.66% | NEAR-MISS |
 | **AXP** | 2026-10-23 | +0.48% | NEAR-MISS |
-| **AZN** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AZN** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AZN** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **AZN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **AZN** | 2026-10-22 | -0.22% | NEAR-MISS |
 | **AZN** | 2026-10-26 | +1.80% | NEAR-MISS |
+| **AZN** | 2026-10-27 | +0.33% | NEAR-MISS |
+| **AZN** | 2026-10-28 | -1.15% | NEAR-MISS |
 | **BALL** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BALL** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **BALL** | 2026-10-22 | -0.02% | NEAR-MISS |
 | **BALL** | 2026-10-23 | +2.59% | NEAR-MISS |
 | **BALL** | 2026-10-26 | -1.60% | NEAR-MISS |
+| **BALL** | 2026-10-27 | -0.48% | NEAR-MISS |
+| **BALL** | 2026-10-28 | -0.54% | NEAR-MISS |
 | **BAM** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **BAM** | 2026-10-26 | -1.28% | NEAR-MISS |
 | **BANC** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **BANC** | 2026-10-26 | +1.01% | NEAR-MISS |
+| **BANC** | 2026-10-27 | +0.39% | NEAR-MISS |
 | **BBWI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BBWI** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **BBWI** | 2026-10-22 | -0.63% | NEAR-MISS |
 | **BBWI** | 2026-10-23 | +5.78% | NEAR-MISS |
+| **BBWI** | 2026-10-28 | +1.62% | PASS |
 | **BBY** | 2026-10-19 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **BBY** | 2026-10-26 | +7.82% | HOLD-FOR-CONDITIONS |
+| **BBY** | 2026-10-27 | -1.92% | HOLD-FOR-CONDITIONS |
+| **BBY** | 2026-10-28 | +0.56% | HOLD-FOR-CONDITIONS |
 | **BILL** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **BILL** | 2026-10-26 | +0.06% | NEAR-MISS |
+| **BILL** | 2026-10-27 | -1.52% | NEAR-MISS |
+| **BILL** | 2026-10-28 | -1.04% | PASS |
+| **BLDR** | 2026-10-27 | — (first appearance) | NEAR-MISS |
+| **BLDR** | 2026-10-28 | +0.87% | NEAR-MISS |
 | **BN** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **BN** | 2026-10-26 | +1.23% | NEAR-MISS |
 | **BNY** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **BNY** | 2026-10-23 | -0.36% | NEAR-MISS |
 | **BNY** | 2026-10-26 | -0.03% | NEAR-MISS |
+| **BNY** | 2026-10-27 | +1.31% | NEAR-MISS |
+| **BNY** | 2026-10-28 | +0.27% | NEAR-MISS |
 | **BOX** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BOX** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BOX** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2376,6 +2343,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **BOX** | 2026-10-22 | +0.53% | NEAR-MISS |
 | **BOX** | 2026-10-23 | +1.93% | ADVANCE |
 | **BOX** | 2026-10-26 | +0.94% | HOLD-FOR-CONDITIONS |
+| **BOX** | 2026-10-27 | +0.07% | HOLD-FOR-CONDITIONS |
 | **BP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BP** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **BP** | 2026-10-22 | +0.93% | NEAR-MISS |
@@ -2387,8 +2355,10 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **BRO** | 2026-10-22 | -0.52% | NEAR-MISS |
 | **BRO** | 2026-10-23 | +5.61% | NEAR-MISS |
 | **BRO** | 2026-10-26 | -2.04% | NEAR-MISS |
-| **BROS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **BROS** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **BRO** | 2026-10-27 | -2.59% | NEAR-MISS |
+| **BRX** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **BRX** | 2026-10-27 | -0.04% | NEAR-MISS |
+| **BRX** | 2026-10-28 | +2.10% | NEAR-MISS |
 | **BRZE** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BRZE** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BRZE** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2397,9 +2367,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **BRZE** | 2026-10-22 | +0.24% | NEAR-MISS |
 | **BRZE** | 2026-10-23 | +0.39% | ADVANCE |
 | **BRZE** | 2026-10-26 | +0.04% | HOLD-FOR-CONDITIONS |
-| **BSX** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **BSX** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **BSX** | 2026-10-23 | +0.94% | NEAR-MISS |
+| **BRZE** | 2026-10-27 | -0.09% | PASS |
+| **BRZE** | 2026-10-28 | -0.13% | HOLD-FOR-CONDITIONS |
 | **BSY** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **BSY** | 2026-10-22 | +0.60% | NEAR-MISS |
 | **BSY** | 2026-10-23 | +2.74% | NEAR-MISS |
@@ -2408,9 +2377,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **BTI** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BTI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **BTI** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
-| **BUD** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **BUD** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **BUD** | 2026-10-23 | +2.59% | NEAR-MISS |
+| **BTI** | 2026-10-28 | -1.06% | PASS |
 | **CAH** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CAH** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CAH** | 2026-10-21 | — (gap, see note) | ADVANCE |
@@ -2418,11 +2385,14 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CAH** | 2026-10-23 | -0.71% | HOLD-FOR-CONDITIONS |
 | **CALY** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **CALY** | 2026-10-23 | +2.21% | NEAR-MISS |
+| **CALY** | 2026-10-28 | +0.49% | NEAR-MISS |
 | **CART** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CART** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **CART** | 2026-10-22 | -0.89% | NEAR-MISS |
 | **CART** | 2026-10-23 | +2.72% | NEAR-MISS |
 | **CART** | 2026-10-26 | +9.21% | ADVANCE |
+| **CART** | 2026-10-27 | +7.87% | HOLD-FOR-CONDITIONS |
+| **CART** | 2026-10-28 | -1.31% | HOLD-FOR-CONDITIONS |
 | **CCEP** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CCEP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CCEP** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2431,10 +2401,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CCEP** | 2026-10-22 | -2.75% | NEAR-MISS |
 | **CCEP** | 2026-10-23 | +3.57% | ADVANCE |
 | **CCEP** | 2026-10-26 | -2.97% | NEAR-MISS |
-| **CCI** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CCI** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CCI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CCI** | 2026-10-21 | — (gap, see note) | PASS |
 | **CCL** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CCL** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CCL** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2442,10 +2408,12 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CCL** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **CCL** | 2026-10-22 | +0.89% | NEAR-MISS |
 | **CCL** | 2026-10-23 | -0.81% | NEAR-MISS |
+| **CDP** | 2026-10-27 | — (first appearance) | NEAR-MISS |
+| **CDP** | 2026-10-28 | -0.50% | NEAR-MISS |
 | **CDW** | 2026-10-23 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **CDW** | 2026-10-26 | +0.30% | HOLD-FOR-CONDITIONS |
-| **CELH** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CELH** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **CDW** | 2026-10-27 | -1.14% | NEAR-MISS |
+| **CDW** | 2026-10-28 | -1.11% | NEAR-MISS |
 | **CFG** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **CFG** | 2026-10-23 | +0.55% | NEAR-MISS |
 | **CFG** | 2026-10-26 | -0.15% | NEAR-MISS |
@@ -2467,9 +2435,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CL** | 2026-10-23 | +4.27% | NEAR-MISS |
 | **CLBT** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **CLBT** | 2026-10-26 | +2.63% | NEAR-MISS |
-| **CLX** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CLX** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CLX** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **CMCSA** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **CMCSA** | 2026-10-23 | +2.15% | NEAR-MISS |
 | **CMCSA** | 2026-10-26 | -0.66% | NEAR-MISS |
@@ -2480,10 +2445,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CME** | 2026-10-22 | +0.16% | NEAR-MISS |
 | **CME** | 2026-10-23 | +3.45% | NEAR-MISS |
 | **CME** | 2026-10-26 | -0.09% | NEAR-MISS |
-| **CMS** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CMS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CMS** | 2026-10-21 | — (gap, see note) | PASS |
-| **CMS** | 2026-10-23 | +2.75% | NEAR-MISS |
+| **CME** | 2026-10-27 | +0.77% | NEAR-MISS |
+| **CME** | 2026-10-28 | -4.73% | NEAR-MISS |
 | **CNC** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNC** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNC** | 2026-10-15 | — (gap, see note) | ADVANCE |
@@ -2492,30 +2455,29 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CNC** | 2026-10-22 | -0.80% | HOLD-FOR-CONDITIONS |
 | **CNC** | 2026-10-23 | +1.42% | NEAR-MISS |
 | **CNC** | 2026-10-26 | -1.50% | HOLD-FOR-CONDITIONS |
-| **CNK** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CNK** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CNK** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CNK** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CNK** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CNK** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
-| **CNK** | 2026-10-21 | +4.34% | ADVANCE |
-| **CNK** | 2026-10-22 | -0.57% | HOLD-FOR-CONDITIONS |
 | **CNP** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNP** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNP** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **CNP** | 2026-10-26 | -0.32% | NEAR-MISS |
+| **CNP** | 2026-10-27 | +0.32% | NEAR-MISS |
+| **CNP** | 2026-10-28 | +1.87% | PASS |
 | **CNQ** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNQ** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CNQ** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **CNQ** | 2026-10-22 | +0.82% | HOLD-FOR-CONDITIONS |
 | **CNQ** | 2026-10-23 | -0.59% | NEAR-MISS |
 | **CNQ** | 2026-10-26 | +2.11% | ADVANCE |
+| **CNQ** | 2026-10-27 | +0.09% | ADVANCE |
+| **CNQ** | 2026-10-28 | -1.89% | NEAR-MISS |
 | **COLB** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **COLB** | 2026-10-23 | +2.36% | NEAR-MISS |
 | **COLB** | 2026-10-26 | +3.25% | NEAR-MISS |
+| **COLB** | 2026-10-27 | +0.65% | NEAR-MISS |
+| **COLB** | 2026-10-28 | -0.06% | NEAR-MISS |
 | **COLD** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **COLD** | 2026-10-26 | +1.76% | NEAR-MISS |
+| **COLD** | 2026-10-27 | +0.90% | NEAR-MISS |
 | **COP** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **COP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **COP** | 2026-10-15 | — (gap, see note) | ADVANCE |
@@ -2523,6 +2485,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **COP** | 2026-10-22 | -0.19% | NEAR-MISS |
 | **COP** | 2026-10-23 | -0.03% | NEAR-MISS |
 | **COP** | 2026-10-26 | +3.55% | NEAR-MISS |
+| **COP** | 2026-10-27 | +0.38% | NEAR-MISS |
+| **COP** | 2026-10-28 | -2.25% | NEAR-MISS |
 | **COST** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **COST** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **COST** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2538,12 +2502,14 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CP** | 2026-10-26 | -1.22% | NEAR-MISS |
 | **CRBG** | 2026-10-22 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **CRBG** | 2026-10-23 | +0.82% | HOLD-FOR-CONDITIONS |
+| **CRBG** | 2026-10-28 | -0.65% | HOLD-FOR-CONDITIONS |
 | **CRH** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **CRH** | 2026-10-22 | +0.95% | NEAR-MISS |
 | **CRH** | 2026-10-23 | +0.46% | NEAR-MISS |
-| **CRM** | 2026-10-19 | — (first appearance) | HOLD-FOR-CONDITIONS |
-| **CRM** | 2026-10-21 | +0.72% | HOLD-FOR-CONDITIONS |
-| **CRM** | 2026-10-23 | +3.24% | HOLD-FOR-CONDITIONS |
+| **CSX** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **CSX** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
+| **CSX** | 2026-10-27 | +1.02% | NEAR-MISS |
+| **CSX** | 2026-10-28 | +1.87% | HOLD-FOR-CONDITIONS |
 | **CTAS** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CTAS** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CTAS** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2552,16 +2518,16 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CTAS** | 2026-10-22 | +1.44% | HOLD-FOR-CONDITIONS |
 | **CTAS** | 2026-10-23 | +1.77% | NEAR-MISS |
 | **CTAS** | 2026-10-26 | +0.03% | NEAR-MISS |
+| **CTAS** | 2026-10-27 | +0.82% | HOLD-FOR-CONDITIONS |
+| **CURB** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **CURB** | 2026-10-27 | -1.49% | NEAR-MISS |
 | **CUZ** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **CUZ** | 2026-10-26 | +0.70% | NEAR-MISS |
+| **CUZ** | 2026-10-27 | +1.07% | NEAR-MISS |
 | **CVBF** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **CVBF** | 2026-10-26 | -0.56% | NEAR-MISS |
-| **CVE** | 2026-10-15 | — (first appearance) | HOLD-FOR-CONDITIONS |
-| **CVE** | 2026-10-19 | +0.98% | HOLD-FOR-CONDITIONS |
-| **CVE** | 2026-10-21 | +0.70% | NEAR-MISS |
-| **CVS** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CVS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **CVS** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **CVBF** | 2026-10-27 | -0.04% | NEAR-MISS |
+| **CVBF** | 2026-10-28 | -0.44% | NEAR-MISS |
 | **CVX** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CVX** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CVX** | 2026-10-15 | — (gap, see note) | HOLD-FOR-CONDITIONS |
@@ -2570,8 +2536,12 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CVX** | 2026-10-22 | +0.47% | NEAR-MISS |
 | **CVX** | 2026-10-23 | -0.04% | NEAR-MISS |
 | **CVX** | 2026-10-26 | +2.88% | HOLD-FOR-CONDITIONS |
+| **CVX** | 2026-10-27 | -0.51% | NEAR-MISS |
+| **CVX** | 2026-10-28 | -1.63% | NEAR-MISS |
 | **CWK** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **CWK** | 2026-10-26 | -2.23% | NEAR-MISS |
+| **CWK** | 2026-10-27 | +0.59% | NEAR-MISS |
+| **CWK** | 2026-10-28 | +1.43% | NEAR-MISS |
 | **CXT** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CXT** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **CXT** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
@@ -2579,11 +2549,12 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **CXT** | 2026-10-23 | +3.61% | NEAR-MISS |
 | **D** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **D** | 2026-10-26 | -0.31% | NEAR-MISS |
-| **DG** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **DG** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **DG** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **DG** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **DG** | 2026-10-23 | +3.67% | NEAR-MISS |
+| **D** | 2026-10-27 | -0.15% | NEAR-MISS |
+| **DBX** | 2026-10-26 | — (first appearance) | HOLD-FOR-CONDITIONS |
+| **DBX** | 2026-10-27 | -0.26% | ADVANCE |
+| **DBX** | 2026-10-28 | -2.12% | ADVANCE |
+| **DHI** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **DHI** | 2026-10-27 | -0.65% | NEAR-MISS |
 | **DHR** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DHR** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DHR** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2593,19 +2564,19 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **DHR** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **DHR** | 2026-10-22 | +2.10% | HOLD-FOR-CONDITIONS |
 | **DHR** | 2026-10-26 | -1.44% | ADVANCE |
-| **DINO** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **DHR** | 2026-10-27 | +1.07% | NEAR-MISS |
+| **DHR** | 2026-10-28 | -0.42% | NEAR-MISS |
 | **DINO** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DINO** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DINO** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DINO** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DINO** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **DINO** | 2026-10-22 | +0.21% | NEAR-MISS |
+| **DINO** | 2026-10-27 | -0.25% | NEAR-MISS |
 | **DKNG** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **DKNG** | 2026-10-23 | +2.00% | NEAR-MISS |
 | **DKNG** | 2026-10-26 | -0.14% | NEAR-MISS |
-| **DLTR** | 2026-10-15 | — (first appearance) | HOLD-FOR-CONDITIONS |
-| **DLTR** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **DLTR** | 2026-10-23 | +7.62% | NEAR-MISS |
+| **DKNG** | 2026-10-27 | +1.48% | NEAR-MISS |
 | **DOCS** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DOCS** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DOCS** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2614,6 +2585,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **DOCS** | 2026-10-21 | — (gap, see note) | PASS |
 | **DOCS** | 2026-10-22 | +0.69% | NEAR-MISS |
 | **DOCS** | 2026-10-23 | +0.30% | NEAR-MISS |
+| **DOCS** | 2026-10-27 | -1.78% | NEAR-MISS |
 | **DRH** | 2026-09-26 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DRH** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DRH** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2623,18 +2595,21 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **DRH** | 2026-10-22 | +1.09% | HOLD-FOR-CONDITIONS |
 | **DRH** | 2026-10-23 | -0.36% | NEAR-MISS |
 | **DRH** | 2026-10-26 | -0.94% | NEAR-MISS |
-| **DRI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **DRI** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **DRH** | 2026-10-28 | +2.62% | HOLD-FOR-CONDITIONS |
 | **DUK** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DUK** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DUK** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **DUK** | 2026-10-26 | -0.33% | NEAR-MISS |
+| **DUK** | 2026-10-27 | -0.43% | NEAR-MISS |
+| **DUK** | 2026-10-28 | +0.29% | NEAR-MISS |
 | **DVN** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DVN** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DVN** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DVN** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DVN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **DVN** | 2026-10-26 | +2.00% | HOLD-FOR-CONDITIONS |
+| **DVN** | 2026-10-27 | +0.49% | NEAR-MISS |
+| **DVN** | 2026-10-28 | -0.79% | NEAR-MISS |
 | **DXC** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DXC** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **DXC** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2642,7 +2617,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **DXC** | 2026-10-22 | +5.26% | NEAR-MISS |
 | **DXC** | 2026-10-23 | +4.42% | HOLD-FOR-CONDITIONS |
 | **DXC** | 2026-10-26 | +0.06% | PASS |
-| **EBAY** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **DXC** | 2026-10-27 | +1.31% | PASS |
+| **DXC** | 2026-10-28 | -2.82% | PASS |
 | **EBAY** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EBAY** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EBAY** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2652,27 +2628,32 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **EBAY** | 2026-10-26 | -0.52% | NEAR-MISS |
 | **EBC** | 2026-10-23 | — (first appearance) | PASS |
 | **EBC** | 2026-10-26 | +1.31% | NEAR-MISS |
+| **EBC** | 2026-10-27 | +0.49% | NEAR-MISS |
+| **EBC** | 2026-10-28 | +0.31% | NEAR-MISS |
 | **ED** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ED** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ED** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **ED** | 2026-10-22 | -0.14% | NEAR-MISS |
 | **ED** | 2026-10-23 | +3.97% | NEAR-MISS |
 | **ED** | 2026-10-26 | -0.45% | NEAR-MISS |
+| **ED** | 2026-10-27 | -0.28% | NEAR-MISS |
 | **EFX** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **EFX** | 2026-10-23 | +6.59% | NEAR-MISS |
 | **EFX** | 2026-10-26 | -2.55% | NEAR-MISS |
+| **EFX** | 2026-10-27 | -2.08% | NEAR-MISS |
 | **EIX** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **EIX** | 2026-10-23 | +1.24% | NEAR-MISS |
 | **EL** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EL** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EL** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **EL** | 2026-10-26 | +0.88% | NEAR-MISS |
+| **EL** | 2026-10-27 | +0.14% | NEAR-MISS |
+| **EL** | 2026-10-28 | -0.43% | NEAR-MISS |
 | **ELF** | 2026-10-15 | — (first appearance) | ADVANCE |
 | **ELF** | 2026-10-19 | +5.00% | HOLD-FOR-CONDITIONS |
 | **ELF** | 2026-10-23 | +1.28% | NEAR-MISS |
 | **ELF** | 2026-10-26 | -0.65% | NEAR-MISS |
-| **ELS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ELS** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **ELF** | 2026-10-27 | -1.14% | NEAR-MISS |
 | **ELV** | 2026-10-23 | — (first appearance) | ADVANCE |
 | **ELV** | 2026-10-26 | -1.20% | NEAR-MISS |
 | **EOG** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2685,19 +2666,32 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **EOG** | 2026-10-22 | -0.02% | HOLD-FOR-CONDITIONS |
 | **EOG** | 2026-10-23 | +0.05% | NEAR-MISS |
 | **EOG** | 2026-10-26 | +3.21% | HOLD-FOR-CONDITIONS |
+| **EOG** | 2026-10-27 | +0.40% | HOLD-FOR-CONDITIONS |
+| **EOG** | 2026-10-28 | -1.58% | NEAR-MISS |
 | **EPD** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EPD** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **EPD** | 2026-10-22 | -1.05% | NEAR-MISS |
-| **EQH** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **EQH** | 2026-10-22 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **EPD** | 2026-10-27 | +1.12% | NEAR-MISS |
+| **EPD** | 2026-10-28 | +0.46% | NEAR-MISS |
+| **EPRT** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **EPRT** | 2026-10-27 | +1.87% | NEAR-MISS |
+| **EPRT** | 2026-10-28 | -1.18% | NEAR-MISS |
+| **EQH** | 2026-10-22 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **EQH** | 2026-10-23 | +1.23% | NEAR-MISS |
 | **EQNR** | 2026-10-15 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **EQNR** | 2026-10-19 | +3.73% | HOLD-FOR-CONDITIONS |
 | **EQNR** | 2026-10-23 | -1.19% | NEAR-MISS |
 | **EQNR** | 2026-10-26 | +5.17% | HOLD-FOR-CONDITIONS |
+| **EQNR** | 2026-10-27 | -1.47% | NEAR-MISS |
+| **EQNR** | 2026-10-28 | -2.16% | NEAR-MISS |
 | **ERIC** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **ERIC** | 2026-10-22 | -2.07% | NEAR-MISS |
 | **ERIC** | 2026-10-26 | +2.21% | NEAR-MISS |
+| **ERIC** | 2026-10-27 | +2.16% | PASS |
+| **ERIC** | 2026-10-28 | +1.74% | NEAR-MISS |
+| **ES** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **ES** | 2026-10-27 | +0.13% | NEAR-MISS |
+| **ES** | 2026-10-28 | +0.31% | NEAR-MISS |
 | **ESTC** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ESTC** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ESTC** | 2026-09-26 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2705,6 +2699,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ESTC** | 2026-10-22 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **ESTC** | 2026-10-23 | -0.61% | HOLD-FOR-CONDITIONS |
 | **ESTC** | 2026-10-26 | +4.30% | ADVANCE |
+| **ESTC** | 2026-10-27 | +3.77% | ADVANCE |
+| **ESTC** | 2026-10-28 | -0.72% | ADVANCE |
 | **ETSY** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ETSY** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ETSY** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2712,15 +2708,21 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ETSY** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **ETSY** | 2026-10-22 | -0.21% | NEAR-MISS |
 | **ETSY** | 2026-10-23 | +4.12% | ADVANCE |
+| **ETSY** | 2026-10-27 | -5.93% | HOLD-FOR-CONDITIONS |
+| **ETSY** | 2026-10-28 | +2.61% | HOLD-FOR-CONDITIONS |
 | **EVRG** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EVRG** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EVRG** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EVRG** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **EVRG** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **EVRG** | 2026-10-26 | -0.61% | NEAR-MISS |
+| **EVRG** | 2026-10-27 | +0.21% | NEAR-MISS |
+| **EVRG** | 2026-10-28 | +0.82% | NEAR-MISS |
 | **EW** | 2026-10-21 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **EW** | 2026-10-22 | +0.12% | HOLD-FOR-CONDITIONS |
 | **EW** | 2026-10-23 | +1.91% | PASS |
+| **EW** | 2026-10-27 | +0.52% | HOLD-FOR-CONDITIONS |
+| **EW** | 2026-10-28 | +0.29% | NEAR-MISS |
 | **FAST** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **FAST** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **FAST** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2728,14 +2730,13 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **FAST** | 2026-10-21 | -0.67% | NEAR-MISS |
 | **FAST** | 2026-10-22 | +1.63% | HOLD-FOR-CONDITIONS |
 | **FAST** | 2026-10-23 | +0.46% | HOLD-FOR-CONDITIONS |
+| **FAST** | 2026-10-27 | -0.49% | HOLD-FOR-CONDITIONS |
 | **FBIN** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **FBIN** | 2026-10-26 | -1.85% | NEAR-MISS |
-| **FBP** | 2026-10-19 | — (first appearance) | HOLD-FOR-CONDITIONS |
-| **FBP** | 2026-10-21 | +0.77% | NEAR-MISS |
-| **FHB** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **FHB** | 2026-10-22 | -0.24% | NEAR-MISS |
+| **FBIN** | 2026-10-28 | +0.26% | NEAR-MISS |
 | **FHN** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **FHN** | 2026-10-26 | -0.42% | NEAR-MISS |
+| **FHN** | 2026-10-27 | -0.04% | NEAR-MISS |
 | **FIG** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **FIG** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **FIG** | 2026-10-26 | +2.24% | NEAR-MISS |
@@ -2743,12 +2744,24 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **FITB** | 2026-10-22 | +0.76% | NEAR-MISS |
 | **FITB** | 2026-10-23 | +0.80% | NEAR-MISS |
 | **FITB** | 2026-10-26 | -0.47% | NEAR-MISS |
+| **FITB** | 2026-10-27 | +0.23% | NEAR-MISS |
+| **FITB** | 2026-10-28 | +0.92% | NEAR-MISS |
+| **FIVN** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **FIVN** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **FIVN** | 2026-10-26 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **FIVN** | 2026-10-27 | +0.35% | HOLD-FOR-CONDITIONS |
+| **FIVN** | 2026-10-28 | -1.62% | HOLD-FOR-CONDITIONS |
 | **FLUT** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **FLUT** | 2026-10-23 | +4.38% | NEAR-MISS |
 | **FLUT** | 2026-10-26 | -1.96% | NEAR-MISS |
+| **FLUT** | 2026-10-27 | +0.11% | NEAR-MISS |
 | **FNB** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **FNB** | 2026-10-23 | +2.13% | NEAR-MISS |
 | **FNB** | 2026-10-26 | +0.00% | NEAR-MISS |
+| **FNB** | 2026-10-27 | +0.83% | NEAR-MISS |
+| **FND** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **FND** | 2026-10-27 | -0.94% | NEAR-MISS |
+| **FND** | 2026-10-28 | +2.11% | NEAR-MISS |
 | **FNF** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **FNF** | 2026-10-23 | +1.87% | NEAR-MISS |
 | **FRSH** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2758,49 +2771,64 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **FRSH** | 2026-10-22 | -0.13% | HOLD-FOR-CONDITIONS |
 | **FRSH** | 2026-10-23 | +3.30% | NEAR-MISS |
 | **FRSH** | 2026-10-26 | +1.11% | NEAR-MISS |
+| **FRSH** | 2026-10-27 | -0.84% | NEAR-MISS |
+| **FRSH** | 2026-10-28 | -2.99% | NEAR-MISS |
 | **FTRE** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **FTRE** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **FTRE** | 2026-10-22 | +6.98% | ADVANCE |
 | **FTRE** | 2026-10-23 | -0.58% | NEAR-MISS |
 | **FTRE** | 2026-10-26 | -1.21% | NEAR-MISS |
+| **FTRE** | 2026-10-27 | +0.85% | NEAR-MISS |
+| **FTRE** | 2026-10-28 | +2.52% | HOLD-FOR-CONDITIONS |
 | **FTV** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **FTV** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **FTV** | 2026-10-26 | +0.33% | NEAR-MISS |
+| **FTV** | 2026-10-27 | +0.88% | NEAR-MISS |
+| **FTV** | 2026-10-28 | +1.38% | PASS |
 | **FULT** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **FULT** | 2026-10-26 | +5.06% | NEAR-MISS |
+| **FULT** | 2026-10-28 | -0.55% | NEAR-MISS |
 | **GBCI** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **GBCI** | 2026-10-22 | +0.43% | NEAR-MISS |
 | **GBCI** | 2026-10-23 | +2.91% | NEAR-MISS |
 | **GBCI** | 2026-10-26 | +3.96% | NEAR-MISS |
+| **GBCI** | 2026-10-27 | +2.49% | NEAR-MISS |
+| **GBCI** | 2026-10-28 | +0.12% | NEAR-MISS |
 | **GDDY** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **GDDY** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **GDDY** | 2026-10-22 | -0.53% | NEAR-MISS |
 | **GDDY** | 2026-10-23 | +6.02% | NEAR-MISS |
 | **GDDY** | 2026-10-26 | -1.69% | NEAR-MISS |
-| **GILD** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **GILD** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **GILD** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **GILD** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **GILD** | 2026-10-15 | — (gap, see note) | HOLD-FOR-CONDITIONS |
-| **GILD** | 2026-10-19 | +1.73% | HOLD-FOR-CONDITIONS |
-| **GILD** | 2026-10-21 | +0.20% | NEAR-MISS |
+| **GDDY** | 2026-10-27 | -2.63% | NEAR-MISS |
 | **GLBE** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **GLBE** | 2026-10-23 | +0.46% | NEAR-MISS |
 | **GLBE** | 2026-10-26 | +0.07% | HOLD-FOR-CONDITIONS |
+| **GLBE** | 2026-10-27 | +1.16% | HOLD-FOR-CONDITIONS |
+| **GLBE** | 2026-10-28 | -0.69% | ADVANCE |
+| **GPK** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **GPK** | 2026-10-27 | -0.11% | NEAR-MISS |
 | **GSK** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **GSK** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **GSK** | 2026-10-22 | -1.20% | NEAR-MISS |
 | **GSK** | 2026-10-23 | +2.38% | NEAR-MISS |
+| **GTLB** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **GTLB** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **GTLB** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **GTLB** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **GTLB** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **GTLB** | 2026-10-26 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **GTLB** | 2026-10-27 | +0.66% | HOLD-FOR-CONDITIONS |
+| **GTLB** | 2026-10-28 | +0.30% | NEAR-MISS |
 | **GWRE** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **GWRE** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **GWRE** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **GWRE** | 2026-10-22 | -0.92% | NEAR-MISS |
 | **GWRE** | 2026-10-23 | +4.26% | NEAR-MISS |
-| **HD** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **HD** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **HD** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
+| **HBAN** | 2026-10-23 | — (first appearance) | NEAR-MISS |
+| **HBAN** | 2026-10-27 | +0.45% | NEAR-MISS |
 | **HIW** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **HIW** | 2026-10-26 | +0.13% | PASS |
+| **HIW** | 2026-10-27 | -0.43% | NEAR-MISS |
 | **HLN** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HLN** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HLN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
@@ -2814,8 +2842,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **HLT** | 2026-10-22 | +0.82% | HOLD-FOR-CONDITIONS |
 | **HLT** | 2026-10-23 | -1.15% | NEAR-MISS |
 | **HLT** | 2026-10-26 | -2.36% | HOLD-FOR-CONDITIONS |
-| **HNGE** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **HNGE** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HNGE** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HNGE** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HNGE** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2825,37 +2851,55 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **HNGE** | 2026-10-21 | — (gap, see note) | ADVANCE |
 | **HNGE** | 2026-10-23 | +2.25% | NEAR-MISS |
 | **HNGE** | 2026-10-26 | +1.45% | NEAR-MISS |
+| **HNGE** | 2026-10-27 | +0.17% | NEAR-MISS |
+| **HNGE** | 2026-10-28 | +1.96% | HOLD-FOR-CONDITIONS |
+| **HOG** | 2026-10-26 | — (first appearance) | HOLD-FOR-CONDITIONS |
+| **HOG** | 2026-10-27 | -0.38% | ADVANCE |
+| **HOG** | 2026-10-28 | +2.05% | ADVANCE |
 | **HOMB** | 2026-10-21 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **HOMB** | 2026-10-23 | +2.59% | NEAR-MISS |
 | **HOMB** | 2026-10-26 | -0.17% | NEAR-MISS |
 | **HON** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HON** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **HON** | 2026-10-26 | +1.30% | NEAR-MISS |
+| **HON** | 2026-10-27 | -0.85% | NEAR-MISS |
+| **HON** | 2026-10-28 | -0.21% | NEAR-MISS |
+| **HR** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **HR** | 2026-10-27 | +0.17% | NEAR-MISS |
 | **HRL** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **HRL** | 2026-10-26 | -1.40% | NEAR-MISS |
 | **HST** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **HST** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **HST** | 2026-10-23 | +0.28% | NEAR-MISS |
 | **HST** | 2026-10-26 | -0.60% | HOLD-FOR-CONDITIONS |
+| **HST** | 2026-10-27 | +1.38% | HOLD-FOR-CONDITIONS |
+| **HST** | 2026-10-28 | +0.64% | HOLD-FOR-CONDITIONS |
 | **IBM** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **IBM** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **IBM** | 2026-10-26 | +0.58% | NEAR-MISS |
+| **IBM** | 2026-10-27 | -0.05% | NEAR-MISS |
+| **IBM** | 2026-10-28 | -1.26% | NEAR-MISS |
 | **IFF** | 2026-10-15 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **IFF** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **IFF** | 2026-10-21 | +1.80% | NEAR-MISS |
 | **IFF** | 2026-10-23 | +2.87% | NEAR-MISS |
 | **IFF** | 2026-10-26 | +0.34% | NEAR-MISS |
+| **IFF** | 2026-10-27 | -0.49% | NEAR-MISS |
+| **IFF** | 2026-10-28 | -0.51% | NEAR-MISS |
 | **INFY** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **INFY** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **INFY** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **INFY** | 2026-10-22 | +0.71% | NEAR-MISS |
 | **INFY** | 2026-10-23 | +3.69% | NEAR-MISS |
 | **INFY** | 2026-10-26 | -6.58% | NEAR-MISS |
+| **INFY** | 2026-10-27 | +0.65% | NEAR-MISS |
 | **INTU** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **INTU** | 2026-10-26 | -3.24% | NEAR-MISS |
 | **INVH** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **INVH** | 2026-10-26 | +0.04% | NEAR-MISS |
-| **ISRG** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **IOT** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **IOT** | 2026-10-27 | -0.60% | ADVANCE |
+| **IOT** | 2026-10-28 | -2.55% | ADVANCE |
 | **ISRG** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ISRG** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **ISRG** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2864,17 +2908,27 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **ISRG** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **ISRG** | 2026-10-23 | +1.34% | HOLD-FOR-CONDITIONS |
 | **ISRG** | 2026-10-26 | +1.90% | NEAR-MISS |
+| **ISRG** | 2026-10-27 | -0.15% | NEAR-MISS |
+| **JEF** | 2026-10-23 | — (first appearance) | NEAR-MISS |
+| **JEF** | 2026-10-28 | +1.21% | NEAR-MISS |
 | **JHX** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **JHX** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **JHX** | 2026-10-22 | -0.57% | NEAR-MISS |
 | **JHX** | 2026-10-23 | +0.91% | NEAR-MISS |
 | **JNJ** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **JNJ** | 2026-10-26 | -1.42% | NEAR-MISS |
+| **JNJ** | 2026-10-27 | +0.94% | NEAR-MISS |
+| **JNJ** | 2026-10-28 | +0.91% | NEAR-MISS |
+| **KBH** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **KBH** | 2026-10-27 | -1.49% | NEAR-MISS |
+| **KBH** | 2026-10-28 | +0.91% | NEAR-MISS |
 | **KBR** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KBR** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **KBR** | 2026-10-22 | +1.28% | NEAR-MISS |
 | **KBR** | 2026-10-23 | +5.95% | NEAR-MISS |
 | **KBR** | 2026-10-26 | -0.76% | NEAR-MISS |
+| **KBR** | 2026-10-27 | +2.01% | NEAR-MISS |
+| **KBR** | 2026-10-28 | +0.52% | NEAR-MISS |
 | **KD** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **KD** | 2026-10-22 | +3.31% | NEAR-MISS |
 | **KD** | 2026-10-23 | +5.92% | PASS |
@@ -2885,25 +2939,23 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **KDP** | 2026-10-22 | -0.46% | HOLD-FOR-CONDITIONS |
 | **KDP** | 2026-10-23 | +2.09% | ADVANCE |
 | **KDP** | 2026-10-26 | -1.45% | NEAR-MISS |
+| **KDP** | 2026-10-27 | +0.89% | NEAR-MISS |
+| **KDP** | 2026-10-28 | -0.37% | NEAR-MISS |
 | **KEY** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **KEY** | 2026-10-23 | +0.86% | NEAR-MISS |
+| **KEY** | 2026-10-27 | +0.00% | NEAR-MISS |
 | **KIM** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KIM** | 2026-10-21 | — (gap, see note) | PASS |
 | **KIM** | 2026-10-23 | +2.57% | NEAR-MISS |
 | **KIM** | 2026-10-26 | +0.13% | NEAR-MISS |
+| **KIM** | 2026-10-27 | +0.13% | NEAR-MISS |
 | **KKR** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **KKR** | 2026-10-26 | -1.88% | NEAR-MISS |
 | **KMB** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KMB** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **KMB** | 2026-10-23 | +3.68% | NEAR-MISS |
 | **KMB** | 2026-10-26 | -1.93% | NEAR-MISS |
-| **KMI** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **KMI** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **KMI** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **KMI** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **KMI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **KMI** | 2026-10-21 | — (gap, see note) | HOLD-FOR-CONDITIONS |
-| **KMI** | 2026-10-23 | +0.45% | NEAR-MISS |
+| **KMB** | 2026-10-27 | -0.47% | NEAR-MISS |
 | **KO** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KO** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KO** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2916,6 +2968,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **KR** | 2026-10-22 | +1.83% | PASS |
 | **KR** | 2026-10-23 | +5.83% | NEAR-MISS |
 | **KR** | 2026-10-26 | -1.62% | NEAR-MISS |
+| **KR** | 2026-10-27 | +0.00% | NEAR-MISS |
+| **KR** | 2026-10-28 | -1.35% | NEAR-MISS |
 | **KSS** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KSS** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KSS** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2930,6 +2984,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **KVUE** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **KVUE** | 2026-10-23 | +3.11% | NEAR-MISS |
 | **KVUE** | 2026-10-26 | -1.56% | NEAR-MISS |
+| **KVUE** | 2026-10-27 | -0.36% | NEAR-MISS |
+| **KVUE** | 2026-10-28 | -0.36% | NEAR-MISS |
 | **KVYO** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KVYO** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **KVYO** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2937,20 +2993,26 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **KVYO** | 2026-10-22 | +2.96% | NEAR-MISS |
 | **KVYO** | 2026-10-23 | +1.98% | NEAR-MISS |
 | **KVYO** | 2026-10-26 | +2.53% | PASS |
+| **KVYO** | 2026-10-28 | -4.41% | PASS |
 | **LEVI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LEVI** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **LEVI** | 2026-10-22 | +0.38% | NEAR-MISS |
 | **LEVI** | 2026-10-23 | +2.05% | NEAR-MISS |
+| **LEVI** | 2026-10-27 | +2.25% | NEAR-MISS |
 | **LHX** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **LHX** | 2026-10-23 | +2.19% | NEAR-MISS |
 | **LHX** | 2026-10-26 | -0.10% | NEAR-MISS |
+| **LHX** | 2026-10-27 | +2.46% | NEAR-MISS |
 | **LIN** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LIN** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **LIN** | 2026-10-22 | +0.43% | NEAR-MISS |
 | **LIN** | 2026-10-23 | +1.96% | NEAR-MISS |
 | **LIN** | 2026-10-26 | -0.30% | HOLD-FOR-CONDITIONS |
+| **LIN** | 2026-10-27 | -0.25% | HOLD-FOR-CONDITIONS |
 | **LION** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **LION** | 2026-10-26 | -1.65% | NEAR-MISS |
+| **LION** | 2026-10-27 | -2.80% | NEAR-MISS |
+| **LION** | 2026-10-28 | +0.41% | NEAR-MISS |
 | **LLY** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LLY** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LLY** | 2026-10-15 | — (gap, see note) | ADVANCE |
@@ -2958,24 +3020,31 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **LLY** | 2026-10-21 | +2.12% | HOLD-FOR-CONDITIONS |
 | **LLY** | 2026-10-22 | -1.01% | HOLD-FOR-CONDITIONS |
 | **LLY** | 2026-10-23 | +2.83% | NEAR-MISS |
-| **LNT** | 2026-10-21 | — (first appearance) | PASS |
-| **LNT** | 2026-10-23 | +2.97% | NEAR-MISS |
-| **LOW** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **LOW** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **LOW** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **LLY** | 2026-10-27 | -2.11% | NEAR-MISS |
+| **LLY** | 2026-10-28 | +0.22% | NEAR-MISS |
+| **LMT** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **LMT** | 2026-10-27 | +5.13% | NEAR-MISS |
+| **LMT** | 2026-10-28 | -1.92% | NEAR-MISS |
+| **LNG** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **LNG** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **LNG** | 2026-10-26 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **LNG** | 2026-10-27 | +0.64% | HOLD-FOR-CONDITIONS |
+| **LNG** | 2026-10-28 | -0.28% | NEAR-MISS |
 | **LTH** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LTH** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **LTH** | 2026-10-23 | +1.99% | ADVANCE |
 | **LTH** | 2026-10-26 | -0.14% | ADVANCE |
+| **LTH** | 2026-10-27 | +4.60% | NEAR-MISS |
+| **LTH** | 2026-10-28 | +0.50% | NEAR-MISS |
+| **LUV** | 2026-10-27 | — (first appearance) | PASS |
+| **LUV** | 2026-10-28 | +1.38% | NEAR-MISS |
 | **LW** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LW** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **LW** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **LW** | 2026-10-22 | -1.25% | NEAR-MISS |
 | **LW** | 2026-10-23 | +3.90% | NEAR-MISS |
 | **LW** | 2026-10-26 | -2.45% | NEAR-MISS |
-| **LYFT** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **LYFT** | 2026-10-21 | — (gap, see note) | PASS |
-| **LYFT** | 2026-10-23 | +1.04% | NEAR-MISS |
+| **LW** | 2026-10-27 | -0.30% | NEAR-MISS |
 | **LYV** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **LYV** | 2026-10-23 | +0.09% | NEAR-MISS |
 | **M** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -2988,10 +3057,12 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **MA** | 2026-10-22 | +0.35% | HOLD-FOR-CONDITIONS |
 | **MA** | 2026-10-23 | +1.70% | HOLD-FOR-CONDITIONS |
 | **MA** | 2026-10-26 | -1.52% | PASS |
+| **MA** | 2026-10-27 | -1.62% | HOLD-FOR-CONDITIONS |
 | **MAC** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MAC** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
 | **MAC** | 2026-10-23 | +3.10% | NEAR-MISS |
 | **MAC** | 2026-10-26 | +0.63% | NEAR-MISS |
+| **MAC** | 2026-10-27 | +1.12% | NEAR-MISS |
 | **MAS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MAS** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **MAS** | 2026-10-22 | -0.13% | NEAR-MISS |
@@ -2999,13 +3070,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **MCD** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **MCD** | 2026-10-22 | -0.11% | NEAR-MISS |
 | **MCD** | 2026-10-23 | +2.59% | NEAR-MISS |
-| **MDLZ** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MDLZ** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MDLZ** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **MDLZ** | 2026-10-23 | +1.88% | NEAR-MISS |
-| **MDT** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MDT** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MDT** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
 | **MET** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MET** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MET** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3015,16 +3079,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **MET** | 2026-10-23 | +1.36% | NEAR-MISS |
 | **MMM** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **MMM** | 2026-10-23 | +0.47% | NEAR-MISS |
-| **MNST** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MNST** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MNST** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MNST** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
-| **MO** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MO** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MO** | 2026-10-15 | — (gap, see note) | HOLD-FOR-CONDITIONS |
-| **MO** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MO** | 2026-10-21 | +2.06% | NEAR-MISS |
-| **MO** | 2026-10-23 | +1.92% | NEAR-MISS |
 | **MP** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MP** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3034,23 +3088,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **MP** | 2026-10-22 | +1.15% | PASS |
 | **MP** | 2026-10-23 | -2.38% | PASS |
 | **MP** | 2026-10-26 | -0.67% | PASS |
-| **MPC** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MPC** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MPC** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MPC** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MPC** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MPC** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **MPC** | 2026-10-22 | -1.49% | NEAR-MISS |
-| **MRK** | 2026-10-21 | — (first appearance) | HOLD-FOR-CONDITIONS |
-| **MRK** | 2026-10-22 | +1.07% | HOLD-FOR-CONDITIONS |
-| **MRNA** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **MRNA** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
+| **MP** | 2026-10-27 | -2.17% | PASS |
+| **MP** | 2026-10-28 | +9.07% | PASS |
 | **MRSH** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MRSH** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MRSH** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3059,25 +3098,38 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **MRSH** | 2026-10-22 | -0.37% | NEAR-MISS |
 | **MRSH** | 2026-10-23 | +4.57% | NEAR-MISS |
 | **MRSH** | 2026-10-26 | -0.90% | NEAR-MISS |
+| **MRSH** | 2026-10-27 | -1.40% | NEAR-MISS |
 | **MTCH** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **MTCH** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **MTCH** | 2026-10-22 | -0.49% | HOLD-FOR-CONDITIONS |
 | **MTCH** | 2026-10-23 | -0.82% | ADVANCE |
 | **MTCH** | 2026-10-26 | -0.41% | NEAR-MISS |
+| **MTCH** | 2026-10-27 | -1.14% | HOLD-FOR-CONDITIONS |
 | **NAVN** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NAVN** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NAVN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **NAVN** | 2026-10-22 | +1.29% | NEAR-MISS |
 | **NAVN** | 2026-10-23 | -2.22% | HOLD-FOR-CONDITIONS |
+| **NCNO** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **NCNO** | 2026-10-27 | +1.08% | NEAR-MISS |
 | **NDAQ** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NDAQ** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **NDAQ** | 2026-10-21 | +0.88% | PASS |
 | **NDAQ** | 2026-10-23 | +8.97% | NEAR-MISS |
 | **NDAQ** | 2026-10-26 | -0.72% | NEAR-MISS |
+| **NDAQ** | 2026-10-27 | +2.11% | NEAR-MISS |
+| **NDAQ** | 2026-10-28 | -0.34% | PASS |
 | **NEE** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NEE** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
-| **NTSK** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **NTSK** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **NEE** | 2026-10-27 | -0.07% | NEAR-MISS |
+| **NEE** | 2026-10-28 | +0.46% | NEAR-MISS |
+| **NNN** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **NNN** | 2026-10-27 | +0.74% | NEAR-MISS |
+| **NOW** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **NOW** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **NOW** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
+| **NOW** | 2026-10-27 | -0.49% | NEAR-MISS |
+| **NOW** | 2026-10-28 | -2.15% | NEAR-MISS |
 | **NTSK** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NTSK** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NTSK** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3088,6 +3140,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **NTSK** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NTSK** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **NTSK** | 2026-10-26 | +9.37% | HOLD-FOR-CONDITIONS |
+| **NTSK** | 2026-10-27 | +3.83% | HOLD-FOR-CONDITIONS |
+| **NTSK** | 2026-10-28 | +3.73% | HOLD-FOR-CONDITIONS |
 | **NVS** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NVS** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **NVS** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3098,16 +3152,14 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **NWBI** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **NWBI** | 2026-10-23 | +2.52% | NEAR-MISS |
 | **NWBI** | 2026-10-26 | +0.26% | NEAR-MISS |
-| **NWS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **NWS** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **O** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **O** | 2026-10-21 | — (gap, see note) | PASS |
+| **NWBI** | 2026-10-27 | +0.32% | NEAR-MISS |
+| **OHI** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **OHI** | 2026-10-27 | +1.69% | NEAR-MISS |
 | **OKE** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OKE** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OKE** | 2026-10-23 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **OKE** | 2026-10-26 | +2.06% | NEAR-MISS |
-| **ONB** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ONB** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
+| **OKE** | 2026-10-27 | +0.55% | NEAR-MISS |
 | **ORI** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **ORI** | 2026-10-23 | -0.12% | NEAR-MISS |
 | **OTIS** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3116,12 +3168,15 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **OTIS** | 2026-10-22 | +0.39% | NEAR-MISS |
 | **OTIS** | 2026-10-23 | +4.49% | NEAR-MISS |
 | **OTIS** | 2026-10-26 | -0.60% | NEAR-MISS |
+| **OTIS** | 2026-10-27 | +0.16% | NEAR-MISS |
+| **OTIS** | 2026-10-28 | -1.43% | NEAR-MISS |
 | **OUT** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OUT** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OUT** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OUT** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OUT** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **OUT** | 2026-10-26 | -0.48% | PASS |
+| **OUT** | 2026-10-27 | +2.16% | NEAR-MISS |
 | **OXY** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OXY** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **OXY** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3130,6 +3185,12 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **OXY** | 2026-10-22 | -0.35% | NEAR-MISS |
 | **OXY** | 2026-10-23 | -0.32% | NEAR-MISS |
 | **OXY** | 2026-10-26 | +2.67% | ADVANCE |
+| **OXY** | 2026-10-27 | -0.16% | HOLD-FOR-CONDITIONS |
+| **OXY** | 2026-10-28 | -2.09% | NEAR-MISS |
+| **PATH** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **PATH** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **PATH** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
+| **PATH** | 2026-10-27 | +1.20% | PASS |
 | **PAY** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **PAY** | 2026-10-23 | +3.06% | NEAR-MISS |
 | **PAYO** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3141,6 +3202,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **PB** | 2026-10-22 | -0.19% | NEAR-MISS |
 | **PB** | 2026-10-23 | +2.54% | NEAR-MISS |
 | **PB** | 2026-10-26 | -0.50% | NEAR-MISS |
+| **PB** | 2026-10-27 | +0.35% | NEAR-MISS |
 | **PBI** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PBI** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PBI** | 2026-10-21 | — (gap, see note) | PASS |
@@ -3155,13 +3217,6 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **PBR** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **PBR** | 2026-10-22 | -0.16% | NEAR-MISS |
 | **PBR** | 2026-10-23 | -0.16% | NEAR-MISS |
-| **PBR-A** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PBR-A** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PBR-A** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PBR-A** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PBR-A** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **PBR-A** | 2026-10-22 | -0.61% | NEAR-MISS |
-| **PEB** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PEB** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PEB** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PEB** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3172,30 +3227,18 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **PEB** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PEB** | 2026-10-21 | — (gap, see note) | ADVANCE |
 | **PEB** | 2026-10-22 | +1.88% | ADVANCE |
+| **PEB** | 2026-10-27 | -0.28% | NEAR-MISS |
+| **PEB** | 2026-10-28 | +1.28% | NEAR-MISS |
 | **PEP** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **PEP** | 2026-10-23 | +3.07% | NEAR-MISS |
-| **PFE** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PFE** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PFE** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PFE** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **PFE** | 2026-10-23 | +1.03% | NEAR-MISS |
-| **PFGC** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PFGC** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PFGC** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PFGC** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **PG** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PG** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PG** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PG** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
-| **PG** | 2026-10-21 | -0.02% | NEAR-MISS |
-| **PG** | 2026-10-23 | +3.94% | NEAR-MISS |
 | **PGR** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **PGR** | 2026-10-22 | -0.26% | NEAR-MISS |
 | **PGR** | 2026-10-23 | +3.74% | NEAR-MISS |
 | **PGR** | 2026-10-26 | -0.68% | NEAR-MISS |
-| **PINS** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PINS** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **PINS** | 2026-10-22 | -0.13% | NEAR-MISS |
+| **PGR** | 2026-10-27 | +0.52% | NEAR-MISS |
+| **PHM** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **PHM** | 2026-10-27 | +0.10% | NEAR-MISS |
+| **PHM** | 2026-10-28 | +0.26% | NEAR-MISS |
 | **PK** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PK** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **PK** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3203,24 +3246,34 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **PK** | 2026-10-21 | +4.15% | ADVANCE |
 | **PK** | 2026-10-22 | +2.53% | HOLD-FOR-CONDITIONS |
 | **PK** | 2026-10-23 | -1.94% | NEAR-MISS |
+| **PK** | 2026-10-28 | +0.66% | NEAR-MISS |
 | **PNC** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **PNC** | 2026-10-23 | +1.18% | NEAR-MISS |
 | **PNC** | 2026-10-26 | -0.47% | NEAR-MISS |
+| **PNC** | 2026-10-27 | +0.61% | NEAR-MISS |
+| **PNC** | 2026-10-28 | +0.75% | NEAR-MISS |
 | **PPG** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **PPG** | 2026-10-23 | +2.65% | NEAR-MISS |
-| **PRCH** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **PRCH** | 2026-10-21 | — (gap, see note) | ADVANCE |
-| **PRCH** | 2026-10-23 | -1.32% | HOLD-FOR-CONDITIONS |
-| **PRMB** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **PRMB** | 2026-10-22 | +0.15% | NEAR-MISS |
+| **PPG** | 2026-10-28 | +0.31% | NEAR-MISS |
+| **PRM** | 2026-10-27 | — (first appearance) | NEAR-MISS |
+| **PRM** | 2026-10-28 | +2.31% | NEAR-MISS |
 | **PTON** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **PTON** | 2026-10-26 | -1.65% | NEAR-MISS |
+| **RBRK** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **RBRK** | 2026-10-26 | — (gap, see note) | ADVANCE |
+| **RBRK** | 2026-10-27 | +3.62% | NEAR-MISS |
 | **RCL** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **RCL** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **RCL** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **RCL** | 2026-10-22 | +0.22% | NEAR-MISS |
-| **REG** | 2026-10-21 | — (first appearance) | PASS |
-| **REG** | 2026-10-26 | +1.07% | NEAR-MISS |
+| **RCL** | 2026-10-28 | +2.59% | HOLD-FOR-CONDITIONS |
 | **RELX** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **RELX** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **RELX** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3233,21 +3286,16 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **RELY** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
 | **RELY** | 2026-10-23 | -0.39% | PASS |
 | **RELY** | 2026-10-26 | -1.97% | NEAR-MISS |
-| **REYN** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **REYN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **RF** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **RF** | 2026-10-22 | +0.72% | NEAR-MISS |
 | **RF** | 2026-10-26 | +1.50% | NEAR-MISS |
+| **RF** | 2026-10-27 | +0.49% | NEAR-MISS |
+| **RHI** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **RHI** | 2026-10-27 | -1.94% | NEAR-MISS |
 | **ROKU** | 2026-10-19 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **ROKU** | 2026-10-21 | +1.96% | HOLD-FOR-CONDITIONS |
 | **ROKU** | 2026-10-23 | +1.58% | ADVANCE |
 | **ROKU** | 2026-10-26 | -0.92% | ADVANCE |
-| **ROST** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ROST** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ROST** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ROST** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ROST** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **ROST** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **RXO** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **RXO** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **RXO** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3264,6 +3312,13 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **RYAN** | 2026-10-22 | -1.47% | NEAR-MISS |
 | **RYAN** | 2026-10-23 | +5.28% | NEAR-MISS |
 | **RYAN** | 2026-10-26 | -1.82% | NEAR-MISS |
+| **RYAN** | 2026-10-27 | +1.81% | NEAR-MISS |
+| **RYAN** | 2026-10-28 | -4.70% | PASS |
+| **SAIL** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **SAIL** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **SAIL** | 2026-10-26 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **SAIL** | 2026-10-27 | -0.18% | HOLD-FOR-CONDITIONS |
+| **SAIL** | 2026-10-28 | +2.94% | NEAR-MISS |
 | **SAP** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SAP** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SAP** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3274,12 +3329,11 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **SBUX** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **SBUX** | 2026-10-22 | -0.29% | NEAR-MISS |
 | **SBUX** | 2026-10-23 | +2.86% | NEAR-MISS |
-| **SCI** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **SCI** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
-| **SCI** | 2026-10-21 | +1.02% | NEAR-MISS |
 | **SFNC** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **SFNC** | 2026-10-23 | +1.88% | NEAR-MISS |
 | **SFNC** | 2026-10-26 | -0.04% | NEAR-MISS |
+| **SFNC** | 2026-10-27 | +0.13% | NEAR-MISS |
+| **SFNC** | 2026-10-28 | -0.04% | NEAR-MISS |
 | **SHEL** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SHEL** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SHEL** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3287,6 +3341,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **SHEL** | 2026-10-21 | +1.89% | NEAR-MISS |
 | **SHEL** | 2026-10-23 | +0.25% | NEAR-MISS |
 | **SHEL** | 2026-10-26 | +2.25% | NEAR-MISS |
+| **SHEL** | 2026-10-27 | -1.17% | NEAR-MISS |
 | **SHO** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SHO** | 2026-09-26 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SHO** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3296,16 +3351,15 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **SHO** | 2026-10-22 | +1.69% | HOLD-FOR-CONDITIONS |
 | **SHO** | 2026-10-23 | -0.08% | PASS |
 | **SHO** | 2026-10-26 | -0.71% | NEAR-MISS |
-| **SJM** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **SJM** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **SJM** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **SJM** | 2026-10-23 | +2.87% | NEAR-MISS |
 | **SLB** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **SLB** | 2026-10-26 | +3.84% | HOLD-FOR-CONDITIONS |
+| **SLB** | 2026-10-27 | +0.04% | NEAR-MISS |
+| **SLB** | 2026-10-28 | +1.88% | NEAR-MISS |
 | **SLDE** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SLDE** | 2026-10-19 | — (gap, see note) | ADVANCE |
 | **SLDE** | 2026-10-23 | +2.51% | NEAR-MISS |
 | **SLDE** | 2026-10-26 | +2.88% | ADVANCE |
+| **SLDE** | 2026-10-27 | +1.86% | HOLD-FOR-CONDITIONS |
 | **SN** | 2026-09-26 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SN** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SN** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3314,22 +3368,30 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **SN** | 2026-10-22 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **SN** | 2026-10-23 | +0.80% | HOLD-FOR-CONDITIONS |
 | **SN** | 2026-10-26 | -1.40% | NEAR-MISS |
+| **SN** | 2026-10-27 | +1.15% | NEAR-MISS |
+| **SN** | 2026-10-28 | -0.55% | NEAR-MISS |
+| **SNY** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **SNY** | 2026-10-27 | +0.46% | NEAR-MISS |
 | **SO** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SO** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SO** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SO** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SO** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **SO** | 2026-10-23 | +3.43% | NEAR-MISS |
+| **SO** | 2026-10-27 | -1.33% | NEAR-MISS |
 | **SONY** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SONY** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SONY** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SONY** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **SONY** | 2026-10-26 | -0.46% | NEAR-MISS |
+| **SONY** | 2026-10-27 | -0.19% | NEAR-MISS |
 | **SPGI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SPGI** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **SPGI** | 2026-10-22 | +1.15% | NEAR-MISS |
 | **SPGI** | 2026-10-23 | +2.24% | NEAR-MISS |
 | **SPGI** | 2026-10-26 | -0.62% | NEAR-MISS |
+| **SPGI** | 2026-10-27 | +0.08% | NEAR-MISS |
+| **SPGI** | 2026-10-28 | -0.38% | NEAR-MISS |
 | **STAG** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **STAG** | 2026-10-26 | -0.22% | NEAR-MISS |
 | **SU** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3340,17 +3402,19 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **SU** | 2026-10-22 | +0.74% | NEAR-MISS |
 | **SU** | 2026-10-23 | -2.04% | NEAR-MISS |
 | **SU** | 2026-10-26 | +2.54% | NEAR-MISS |
+| **SW** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **SW** | 2026-10-27 | +0.93% | NEAR-MISS |
+| **SW** | 2026-10-28 | +0.71% | NEAR-MISS |
 | **SWK** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **SWK** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
-| **SYK** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **SYK** | 2026-10-23 | +0.88% | NEAR-MISS |
-| **TAK** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **SWK** | 2026-10-27 | +0.13% | NEAR-MISS |
 | **TAK** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TAK** | 2026-10-19 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **TAK** | 2026-10-22 | +1.32% | HOLD-FOR-CONDITIONS |
 | **TAK** | 2026-10-23 | +2.16% | NEAR-MISS |
 | **TAK** | 2026-10-26 | -0.59% | NEAR-MISS |
-| **TD** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TAK** | 2026-10-27 | +0.94% | NEAR-MISS |
+| **TAK** | 2026-10-28 | -0.78% | NEAR-MISS |
 | **TD** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TD** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **TD** | 2026-10-22 | +2.10% | NEAR-MISS |
@@ -3363,7 +3427,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **TDC** | 2026-10-22 | +3.08% | PASS |
 | **TDC** | 2026-10-23 | +2.27% | NEAR-MISS |
 | **TDC** | 2026-10-26 | +1.96% | NEAR-MISS |
-| **TEAM** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TDC** | 2026-10-27 | -0.09% | NEAR-MISS |
+| **TDC** | 2026-10-28 | -0.95% | NEAR-MISS |
 | **TEAM** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TEAM** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TEAM** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3373,12 +3438,19 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **TEAM** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TEAM** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **TEAM** | 2026-10-26 | +2.94% | NEAR-MISS |
+| **TEAM** | 2026-10-27 | -1.84% | ADVANCE |
+| **TENB** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TENB** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TENB** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TENB** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TENB** | 2026-10-26 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **TENB** | 2026-10-27 | +8.12% | HOLD-FOR-CONDITIONS |
+| **TENB** | 2026-10-28 | +0.91% | ADVANCE |
 | **TFC** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **TFC** | 2026-10-22 | +0.85% | NEAR-MISS |
 | **TFC** | 2026-10-23 | +1.45% | NEAR-MISS |
 | **TFC** | 2026-10-26 | +0.04% | NEAR-MISS |
-| **TMO** | 2026-09-21 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **TMO** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **TFC** | 2026-10-27 | +0.97% | NEAR-MISS |
 | **TMO** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TMO** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TMO** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3390,52 +3462,62 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **TMO** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TMO** | 2026-10-21 | +2.10% | NEAR-MISS |
 | **TMO** | 2026-10-22 | +0.97% | HOLD-FOR-CONDITIONS |
+| **TMO** | 2026-10-28 | -0.14% | NEAR-MISS |
 | **TPG** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **TPG** | 2026-10-26 | -3.31% | NEAR-MISS |
 | **TREX** | 2026-10-19 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **TREX** | 2026-10-22 | +6.78% | NEAR-MISS |
 | **TREX** | 2026-10-23 | +4.59% | NEAR-MISS |
 | **TREX** | 2026-10-26 | -1.35% | NEAR-MISS |
+| **TREX** | 2026-10-27 | -1.61% | NEAR-MISS |
+| **TREX** | 2026-10-28 | +0.56% | NEAR-MISS |
 | **TRI** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **TRI** | 2026-10-22 | +2.16% | NEAR-MISS |
 | **TRI** | 2026-10-23 | +6.94% | NEAR-MISS |
 | **TRI** | 2026-10-26 | -0.07% | NEAR-MISS |
-| **TRP** | 2026-10-21 | — (first appearance) | PASS |
-| **TRP** | 2026-10-22 | +0.84% | PASS |
+| **TRI** | 2026-10-27 | -0.88% | NEAR-MISS |
+| **TRI** | 2026-10-28 | -4.64% | NEAR-MISS |
 | **TRU** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **TRU** | 2026-10-26 | -2.37% | NEAR-MISS |
+| **TRU** | 2026-10-27 | -2.28% | NEAR-MISS |
 | **TRV** | 2026-10-21 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **TRV** | 2026-10-22 | +0.81% | NEAR-MISS |
 | **TRV** | 2026-10-23 | +1.63% | HOLD-FOR-CONDITIONS |
+| **TRV** | 2026-10-27 | -1.30% | ADVANCE |
+| **TRV** | 2026-10-28 | -0.78% | NEAR-MISS |
 | **TTAN** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TTAN** | 2026-10-21 | — (gap, see note) | PASS |
 | **TTAN** | 2026-10-22 | +1.99% | NEAR-MISS |
 | **TTAN** | 2026-10-23 | +3.50% | PASS |
 | **TTAN** | 2026-10-26 | +2.18% | PASS |
+| **TTAN** | 2026-10-27 | -4.53% | PASS |
 | **TTE** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TTE** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TTE** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **TTE** | 2026-10-26 | +2.00% | NEAR-MISS |
+| **TTE** | 2026-10-27 | +1.06% | NEAR-MISS |
 | **TTEK** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **TTEK** | 2026-10-21 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **TTEK** | 2026-10-23 | +5.29% | NEAR-MISS |
 | **TTEK** | 2026-10-26 | +0.46% | NEAR-MISS |
+| **TTEK** | 2026-10-27 | +0.41% | NEAR-MISS |
+| **TTEK** | 2026-10-28 | -0.70% | PASS |
 | **UDR** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **UDR** | 2026-10-23 | +3.25% | NEAR-MISS |
 | **UDR** | 2026-10-26 | -0.94% | NEAR-MISS |
 | **UGI** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **UGI** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **UGI** | 2026-10-22 | -0.05% | NEAR-MISS |
-| **UL** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **UL** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **UL** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
+| **UGI** | 2026-10-27 | +1.43% | HOLD-FOR-CONDITIONS |
 | **UNH** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **UNH** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **UNH** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **UNH** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **UNH** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
+| **UNH** | 2026-10-28 | -3.43% | NEAR-MISS |
 | **UPS** | 2026-10-23 | — (first appearance) | NEAR-MISS |
 | **UPS** | 2026-10-26 | -0.45% | NEAR-MISS |
+| **UPS** | 2026-10-28 | +4.98% | NEAR-MISS |
 | **USB** | 2026-10-21 | — (first appearance) | NEAR-MISS |
 | **USB** | 2026-10-22 | -0.07% | NEAR-MISS |
 | **USB** | 2026-10-23 | +1.64% | NEAR-MISS |
@@ -3453,6 +3535,8 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **V** | 2026-10-22 | +0.31% | ADVANCE |
 | **V** | 2026-10-23 | +1.59% | ADVANCE |
 | **V** | 2026-10-26 | -1.55% | PASS |
+| **V** | 2026-10-27 | -0.92% | PASS |
+| **V** | 2026-10-28 | -0.57% | PASS |
 | **VEEV** | 2026-09-29 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VEEV** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VEEV** | 2026-10-19 | — (gap, see note) | ADVANCE |
@@ -3460,6 +3544,7 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **VEEV** | 2026-10-22 | +0.59% | NEAR-MISS |
 | **VEEV** | 2026-10-23 | +0.62% | NEAR-MISS |
 | **VEEV** | 2026-10-26 | +0.15% | NEAR-MISS |
+| **VEEV** | 2026-10-27 | -1.50% | NEAR-MISS |
 | **VERX** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VERX** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VERX** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3467,6 +3552,11 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **VERX** | 2026-10-22 | +2.44% | NEAR-MISS |
 | **VERX** | 2026-10-23 | +4.43% | PASS |
 | **VERX** | 2026-10-26 | +0.46% | PASS |
+| **VERX** | 2026-10-27 | -1.43% | PASS |
+| **VERX** | 2026-10-28 | -2.44% | PASS |
+| **VG** | 2026-10-26 | — (first appearance) | PASS |
+| **VG** | 2026-10-27 | -1.71% | NEAR-MISS |
+| **VG** | 2026-10-28 | +0.36% | PASS |
 | **VIA** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VIA** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VIA** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3474,36 +3564,46 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **VIA** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VIA** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **VIA** | 2026-10-26 | +7.99% | NEAR-MISS |
+| **VIA** | 2026-10-27 | -3.24% | NEAR-MISS |
+| **VIA** | 2026-10-28 | +1.15% | NEAR-MISS |
 | **VLTO** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VLTO** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VLTO** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VLTO** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **VLTO** | 2026-10-26 | -0.54% | NEAR-MISS |
+| **VLTO** | 2026-10-27 | -0.94% | NEAR-MISS |
 | **VLY** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **VLY** | 2026-10-23 | +6.07% | NEAR-MISS |
 | **VLY** | 2026-10-26 | +1.81% | NEAR-MISS |
-| **VRNS** | 2026-09-22 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **VLY** | 2026-10-27 | -0.07% | NEAR-MISS |
+| **VLY** | 2026-10-28 | +0.85% | NEAR-MISS |
+| **VNO** | 2026-10-26 | — (first appearance) | NEAR-MISS |
+| **VNO** | 2026-10-27 | +0.00% | NEAR-MISS |
 | **VRNS** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRNS** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRNS** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRNS** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRNS** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **VRNS** | 2026-10-26 | -0.02% | HOLD-FOR-CONDITIONS |
+| **VRNS** | 2026-10-27 | +0.55% | PASS |
+| **VRNS** | 2026-10-28 | -0.08% | NEAR-MISS |
 | **VRSK** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRSK** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRSK** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **VRSK** | 2026-10-22 | — (gap, see note) | NEAR-MISS |
 | **VRSK** | 2026-10-23 | +5.71% | NEAR-MISS |
 | **VRSK** | 2026-10-26 | -3.66% | NEAR-MISS |
-| **VVV** | 2026-09-30 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **VVV** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **VVV** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **VVV** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
+| **VRSK** | 2026-10-27 | +0.16% | NEAR-MISS |
+| **VSXY** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **VSXY** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **VSXY** | 2026-10-26 | — (gap, see note) | NEAR-MISS |
+| **VSXY** | 2026-10-27 | +4.56% | ADVANCE |
 | **W** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **W** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **W** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **W** | 2026-10-22 | — (gap, see note) | HOLD-FOR-CONDITIONS |
 | **W** | 2026-10-23 | +0.16% | NEAR-MISS |
+| **W** | 2026-10-27 | -0.39% | NEAR-MISS |
 | **WAY** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WAY** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WAY** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3513,11 +3613,14 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **WAY** | 2026-10-22 | +0.10% | NEAR-MISS |
 | **WAY** | 2026-10-23 | +0.49% | NEAR-MISS |
 | **WAY** | 2026-10-26 | -0.45% | NEAR-MISS |
+| **WAY** | 2026-10-27 | -0.55% | NEAR-MISS |
+| **WAY** | 2026-10-28 | -2.34% | NEAR-MISS |
 | **WCN** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WCN** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **WCN** | 2026-10-22 | -0.71% | NEAR-MISS |
 | **WCN** | 2026-10-23 | +9.86% | PASS |
 | **WCN** | 2026-10-26 | +0.93% | NEAR-MISS |
+| **WCN** | 2026-10-27 | +0.06% | NEAR-MISS |
 | **WDAY** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WDAY** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **WDAY** | 2026-10-22 | -0.50% | NEAR-MISS |
@@ -3528,35 +3631,26 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **WEC** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **WEC** | 2026-10-23 | +3.13% | NEAR-MISS |
 | **WEC** | 2026-10-26 | -0.95% | NEAR-MISS |
+| **WEC** | 2026-10-27 | +0.03% | NEAR-MISS |
 | **WELL** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WELL** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WELL** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **WELL** | 2026-10-23 | -0.29% | NEAR-MISS |
+| **WELL** | 2026-10-27 | +1.35% | HOLD-FOR-CONDITIONS |
 | **WM** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WM** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **WM** | 2026-10-22 | -0.93% | NEAR-MISS |
 | **WM** | 2026-10-23 | +4.15% | NEAR-MISS |
-| **WMT** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WMT** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WMT** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WMT** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WMT** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WMT** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **WMT** | 2026-10-23 | +2.77% | PASS |
-| **WRB** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WRB** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WRB** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WRB** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WRB** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WRB** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **WRB** | 2026-10-23 | — (gap, see note) | PASS |
 | **WTRG** | 2026-10-19 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **WTRG** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
 | **WTRG** | 2026-10-23 | +5.66% | NEAR-MISS |
 | **WTRG** | 2026-10-26 | -0.44% | NEAR-MISS |
+| **WTRG** | 2026-10-27 | -0.81% | NEAR-MISS |
+| **WTRG** | 2026-10-28 | -0.28% | NEAR-MISS |
 | **XEL** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **XEL** | 2026-10-23 | — (gap, see note) | NEAR-MISS |
 | **XEL** | 2026-10-26 | -1.08% | NEAR-MISS |
+| **XEL** | 2026-10-27 | -0.24% | NEAR-MISS |
 | **XOM** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **XOM** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
 | **XOM** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
@@ -3566,19 +3660,23 @@ Declared: {"not_served": ["category: lynch_category field NOT_SERVED; categories
 | **XOM** | 2026-10-22 | +0.12% | HOLD-FOR-CONDITIONS |
 | **XOM** | 2026-10-23 | +0.09% | ADVANCE |
 | **XOM** | 2026-10-26 | +2.79% | NEAR-MISS |
+| **XOM** | 2026-10-27 | +0.73% | NEAR-MISS |
+| **XOM** | 2026-10-28 | -2.53% | NEAR-MISS |
 | **XYL** | 2026-10-22 | — (first appearance) | NEAR-MISS |
 | **XYL** | 2026-10-26 | +2.25% | NEAR-MISS |
-| **YOU** | 2026-10-01 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **YOU** | 2026-10-05 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **YOU** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **YOU** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
-| **YOU** | 2026-10-21 | — (gap, see note) | NEAR-MISS |
-| **YOU** | 2026-10-22 | -0.64% | NEAR-MISS |
-| **YUM** | 2026-10-21 | — (first appearance) | NEAR-MISS |
-| **YUM** | 2026-10-22 | -0.24% | NEAR-MISS |
 | **ZION** | 2026-10-21 | — (first appearance) | HOLD-FOR-CONDITIONS |
 | **ZION** | 2026-10-22 | +1.73% | NEAR-MISS |
 | **ZION** | 2026-10-23 | +1.03% | NEAR-MISS |
 | **ZION** | 2026-10-26 | -0.29% | NEAR-MISS |
+| **ZS** | 2026-09-23 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-09-24 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-09-25 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-10-08 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-10-09 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-10-12 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-10-13 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-10-15 | — (gap, see note) | GAP: no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger |
+| **ZS** | 2026-10-26 | — (gap, see note) | HOLD-FOR-CONDITIONS |
+| **ZS** | 2026-10-28 | +1.96% | PASS |
 
 DRAFT — PM approval required. Nothing is staged, nothing is armed.
