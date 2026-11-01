@@ -1,0 +1,8 @@
+# Steenbarger QA holds (one hold per ticket; reopens the floor on these tickets only)
+
+- MA: elder-lens, minervini and wyckoff wait for a pull-in toward ma_20, and oneil calls 6.12 past the pivot a late buy. Do you ratify a buy stop over bar_high 644.24 now (ADVANCE) or a pull-in first (WATCH)? Name the one trigger the PM should act on.
+- TTEK: minervini, wyckoff and elder-lens wait for a pull-in; oneil says it is not at a new high (from_52w_hi -9.29%) and the trade is the push to the high. Is TTEK an ADVANCE on today's break, or a WATCH, and on which single trigger?
+- V: Held name: elder-lens (first single-bar drop in elder_5d, now 9,9) and seow (red bar at the pivot, exit under its low next session) state TIGHTEN. Should the V ticket read KEEP or TIGHTEN, and with which trigger, beside the ADD-on-pivot_high line?
+
+## QA note
+Every seat read fields; none recited. But 151 messages moved no stance, and 105 ratification answers carry 0 objections and 30 reservations. Several reservations are disagreements filed softly: minervini and wyckoff call the MA and TTEK ADVANCE trigger a chase; oneil says TTEK is not at a high and MA is a late buy; raschke calls SN's break a chase; elder-lens's entry is dropped on ABBV, ECL, SN, CNQ; two seats' TIGHTEN line on held V is missing. Each trigger line lists every seat's own words, so each seat finds itself in it: that is breadth, not convergence. The ADVANCE/WATCH rule turns on whether oneil sits in the denominator (3 of 7 = ADVANCE, 3 of 6 = WATCH). Seats name a RISK OFF / DOWNTREND tape in their own againsts; the slate does not.

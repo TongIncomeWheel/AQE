@@ -1,0 +1,121 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-02",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "NEE",
+   "reason": "Permission event on the last bar: elder_5d [10, 10, 7, 6, 10] - a <=6 bar giving way to elder 10.0 (C4 transition, ban lifted per C3), with elder_pattern CORRECTION_REENTRY and mp_state STRONG (mp 78.0) - the menu-legal dip-and-reclaim (R8). Price-average slope unverifiable.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red; buying not forbidden)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [10, 10, 7, 6, 10]: prior bar 6, last bar 10 = permission event; elder_pattern CORRECTION_REENTRY, mp_state STRONG (R8)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "elder_pattern CORRECTION_REENTRY (not INTERRUPTED); no slope field on my menu, rising-average leg unverifiable", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "no stop/swing-low/value-zone MA field on my menu; PM names stop at last daily swing low or value-zone MA (R10)", "verdict": "no_data", "fields": []},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "clean single-bar transition 6->10 with R8 pattern and mp 78.0 STRONG; not a plateau", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-name drop trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Next bar elder falls back to <=6 (permission withdrawn) or <=1 (red, buying forbidden); or elder_pattern turns INTERRUPTED. Price invalidation = last daily swing low / value-zone MA, to be placed by PM (not on my menu)."
+  },
+  {
+   "ticker": "D",
+   "reason": "Permission event: elder_5d [10, 7, 6, 6, 10] - two <=6 bars then elder 10.0, red giving way after a pullback (C4, C6), elder_pattern CORRECTION_REENTRY with mp_state STRONG (mp 78.0) = R8 dip-and-reclaim. Rising-average leg unverifiable on my menu.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [10, 7, 6, 6, 10]: prior bar 6, last bar 10 = permission event; CORRECTION_REENTRY + STRONG (R8)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "elder_pattern CORRECTION_REENTRY (not INTERRUPTED); slope of price average not on my menu", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "no stop/swing-low field on my menu; PM names stop at last daily swing low or value-zone MA (R10)", "verdict": "no_data", "fields": []},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "two-bar dip then reclaim 6->10, R8 pattern, mp 78.0 STRONG", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-name drop trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Next bar elder back to <=6 or <=1 (red); elder_pattern turning INTERRUPTED. Price invalidation = last daily swing low / value-zone MA, PM to place (off my menu)."
+  },
+  {
+   "ticker": "VLTO",
+   "reason": "Permission event: elder_5d [7, 7, 6, 6, 10] - two <=6 bars giving way to elder 10.0 (C4 transition), mp_state STRONG with mp 97.0. elder_pattern is null, so the R8 confirmation and the trend leg are unconfirmed - disclosed, not assumed.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 6, 6, 10]: prior bar 6, last bar 10 = permission event; elder_pattern null", "verdict": "pass", "fields": ["elder_5d", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "elder_pattern null (not INTERRUPTED but unconfirmed); no slope field on my menu", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "no stop/swing-low field on my menu; PM names stop at last daily swing low or value-zone MA (R10)", "verdict": "no_data", "fields": []},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition 6->10 with mp 97.0 STRONG; pattern label missing", "verdict": "partial", "fields": ["elder_5d", "mp", "mp_state"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-name drop trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Next bar elder <=6 or <=1; elder_pattern populating as INTERRUPTED. Price invalidation = last daily swing low / value-zone MA, PM to place."
+  },
+  {
+   "ticker": "TAK",
+   "reason": "Permission event: elder_5d [7, 7, 7, 6, 10] - single <=6 dip bar then elder 10.0 (C4 transition, C3 ban lifted), mp_state STRONG, mp 97.0. elder_pattern null, so R8 and trend leg unconfirmed - disclosed.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 7, 6, 10]: prior bar 6, last bar 10 = permission event; elder_pattern null", "verdict": "pass", "fields": ["elder_5d", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "elder_pattern null; no slope field on my menu", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "no stop/swing-low field on my menu; PM names stop at last daily swing low or value-zone MA (R10)", "verdict": "no_data", "fields": []},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition 6->10, mp 97.0 STRONG; pattern label missing", "verdict": "partial", "fields": ["elder_5d", "mp", "mp_state"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-name drop trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Next bar elder <=6 or <=1; elder_pattern populating as INTERRUPTED. Price invalidation = last daily swing low / value-zone MA, PM to place."
+  },
+  {
+   "ticker": "CHD",
+   "reason": "Permission event after a three-bar dip: elder_5d [7, 6, 6, 6, 9] - <=6 bars giving way to elder 9.0 (C4 transition), mp_state STRONG, mp 96.0. elder_pattern null - R8 and trend leg unconfirmed, disclosed.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 9.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 6, 6, 6, 9]: prior bar 6, last bar 9 = permission event; elder_pattern null", "verdict": "pass", "fields": ["elder_5d", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "elder_pattern null; no slope field on my menu", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "no stop/swing-low field on my menu; PM names stop at last daily swing low or value-zone MA (R10)", "verdict": "no_data", "fields": []},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition 6->9 after 3-bar dip, mp 96.0 STRONG; pattern label missing", "verdict": "partial", "fields": ["elder_5d", "mp", "mp_state"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-name drop trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Next bar elder <=6 or <=1; elder_pattern populating as INTERRUPTED. Price invalidation = last daily swing low / value-zone MA, PM to place."
+  },
+  {
+   "ticker": "BALL",
+   "reason": "Permission event: elder_5d [7, 7, 6, 6, 10] - two <=6 bars giving way to elder 10.0 (C4 transition), mp_state STRONG, mp 93.0. elder_pattern null - R8 and trend leg unconfirmed, disclosed.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 6, 6, 10]: prior bar 6, last bar 10 = permission event; elder_pattern null", "verdict": "pass", "fields": ["elder_5d", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "elder_pattern null; no slope field on my menu", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "no stop/swing-low field on my menu; PM names stop at last daily swing low or value-zone MA (R10)", "verdict": "no_data", "fields": []},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition 6->10, mp 93.0 STRONG; pattern label missing", "verdict": "partial", "fields": ["elder_5d", "mp", "mp_state"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-name drop trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Next bar elder <=6 or <=1; elder_pattern populating as INTERRUPTED. Price invalidation = last daily swing low / value-zone MA, PM to place."
+  }
+ ],
+ "held_review": [
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "elder 2.0 (2-6 band: permission unresolved, red not excluded), elder_5d null so the single-bar test cannot be run, mp_state FADING with mp 0.0 - no Elder permission to keep holding on this read."},
+  {"ticker": "V", "verdict": "KEEP", "line": "elder 9.0, elder_5d [7, 6, 9, 10, 10] - no single-bar drop (last 10 = prior 10), elder_pattern ACCELERATION, mp_state STRONG mp 97.0; now a summer plateau (C20), so the first drop in elder_5d is the TIGHTEN trigger (R7)."}
+ ],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null on VLTO, TAK, CHD, BALL (and many other permission-event rows such as OXY, CCEP, KR, MAR, HRB, LIN): R8 confirmation and the INTERRUPTED trend-leg test cannot be run, so these sit at conviction 3 instead of the R8-confirmed NEE/D."},
+  {"field": "elder_5d", "impact": "null on held MP: the R7 single-bar-drop test for the held name cannot be evaluated; verdict rests on elder 2.0 and mp 0.0 alone."},
+  {"field": "elder_pattern", "impact": "null on held MP: trend-leg read unavailable for the held review."}
+ ],
+ "declarations": [
+  "No voice_memory ledger block was injected into this run; no standing lesson applies.",
+  "Censor duty (C1, C3): TEAM prints elder 0.0 (<=1, red) - buying is forbidden on TEAM; the committee owns this if any seat raises it.",
+  "Engine gaps R1-R6 (impulse colour, colour transition, signed Force Index, 13-bar force EMA, fitted channel, weekly resample) are NOT_AVAILABLE; the <=6 -> >=7 elder_5d decode is used as the transition proxy, not as the colour itself.",
+  "Step 3 (rising price average) and step 4 (stop/swing low) are unverifiable from my menu on every nomination; per R10/R1 these are disclosures for the PM's bracketing step, never a reason to withhold.",
+  "Transitions with elder_pattern INTERRUPTED (e.g. VRSK, SU, PEP, COST, CME, CL, GDDY, KO, PFE, SJM, AIG, SPOT, INFY, MRK) were set aside on step 3 (trend leg failed), not on any bracket field.",
+  "Read only my menu fields (ticker, elder, elder_5d, elder_pattern, mp_state, mp) plus the held flag for held review; other packet columns were not used."
+ ],
+ "shortfall_reason": null
+}
