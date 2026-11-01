@@ -57,7 +57,7 @@ BREAKOUT_MAX_PCT = _f("AQE_ALERT_BREAKOUT_MAX_PCT", 8.0)  # legacy, unused
 MAX_EXPORT_AGE_DAYS = int(_f("AQE_ALERT_MAX_EXPORT_AGE_DAYS", 4))
 
 # --- cadence ---
-ALERT_MINUTES = int(_f("AQE_ALERT_MINUTES", 15))     # FMP Starter = 15-min delay
+ALERT_MINUTES = int(_f("AQE_ALERT_MINUTES", 30))     # PM 2026-11-01: every 30 min from the US open (was 15; FMP Starter prices are 15-min delayed either way)
 
 # Hard floor between two digest EMAILS (not between trigger evaluations,
 # which still run every ALERT_MINUTES so nothing misses its window). A PM

@@ -1,7 +1,7 @@
 """In-app live-alert poller — the Trade Entry Menu's 15-min heartbeat.
 
 A daemon thread (started once per process) runs `alerts.engine.run_alert_cycle`
-every AQE_ALERT_MINUTES (default 15, matching FMP Starter's 15-min price delay)
+every AQE_ALERT_MINUTES (default 30 since 2026-11-01, PM ruling; FMP Starter prices are 15-min delayed)
 during the US cash session. Each cycle pulls live quotes for every monitored
 ticker (longlist / watchlist / PE / held), checks key levels, and emails the PM a
 digest of any NEW level hits (dedup'd once-per-level-per-day via shared state).

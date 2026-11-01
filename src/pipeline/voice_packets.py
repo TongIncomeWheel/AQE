@@ -81,6 +81,10 @@ from src.data.paths import EXPORT_JSON, OUTPUT_DIR, PROJECT_ROOT
 # ("premarket-analysis"), so it is not importable as a package — load it
 # from its path instead. Deliberately the same file the PMA skill runs by
 # hand, so the two can never disagree about what a packet contains.
+# ONE CODE TREE (2026-11-01): this path is a GENERATED copy of
+# aegis/plugin/aegis-core/skills/pma/tools/pma_pipeline.py, written by
+# aegis/plugin/sync_runtime.py and held identical by tests/test_one_code_tree.py.
+# Edit the plugin file, never this copy.
 PMA_PIPELINE = (PROJECT_ROOT / "aegis" / "skills" / "premarket-analysis"
                 / "tools" / "pma_pipeline.py")
 # MERGED 2026-09-15: the slicing menu now lives INSIDE each voice's own
@@ -147,9 +151,10 @@ def _run_date_of(export_path: Path) -> str:
 
 
 def _load_menus(path=None) -> dict:
-    """Per-voice field menus. The live plugin (aegis-core 1.24.1) keeps them in
-    contracts/voice_menus.json, vendored here; the plugin is the source of
-    truth, so refresh this file when it releases."""
+    """Per-voice field menus from contracts/voice_menus.json -- a GENERATED
+    copy of aegis/plugin/aegis-core/skills/pma/contracts/voice_menus.json
+    (one code tree, 2026-11-01; see aegis/plugin/README.md). Version in
+    aegis/skills/premarket-analysis/GENERATED.json."""
     d = json.loads(Path(path or VOICE_MENUS).read_text(encoding="utf-8"))
     return {k: v for k, v in d.items() if isinstance(v, list)}
 
@@ -167,9 +172,11 @@ def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
     try:
         pma.cmd_trim(types.SimpleNamespace(
             export=str(export_path), date=run_date, out=str(candidates)))
+        # R31 (PM 2026-10-30): TSVs for the seven deciders only; the macro packets (crown, druckenmiller)
+        # are retired -- the vote packet reads aqe_crown_macro.json directly. macro_seats=[] says so.
         pma.cmd_packets(types.SimpleNamespace(
             candidates=str(candidates), export=str(export_path),
-            menus=str(VOICE_MENUS), date=run_date,
+            menus=str(VOICE_MENUS), date=run_date, macro_seats=[],
             crown_macro=(str(OUTPUT_DIR / CROWN_MACRO_NAME)
                          if (OUTPUT_DIR / CROWN_MACRO_NAME).exists() else None), outdir=str(outdir)))
     finally:

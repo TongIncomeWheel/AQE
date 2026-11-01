@@ -1,0 +1,28 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Floor message -- one seat speaking to another on a contested name (R36 round 3)",
+ "x_version": "1.0.0",
+ "x_purpose": "The open floor. The Chair posts the board (pma_pipeline.py board) for each CONTESTED name; deciders message each other by name: challenge, answer, concede. One file per message under forms/floor/<ticker>/<msg_id>.json. Cap TWO messages per decider per name, counted across files by pma_pipeline.py floor-check; the registrar validates one message's shape. Steenbarger may be called on by name and answers with stance_now NO_VOTE. Independence is kept: the floor opens only after every decider's blind vote is on record.",
+ "type": "object",
+ "required": ["voice", "date", "ticker", "msg_id", "to", "text", "stance_now", "changed_mind"],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {"type": "string", "x_note": "a decider, or steenbarger when called on"},
+  "date": {"type": "string", "format": "date"},
+  "ticker": {"type": "string", "maxLength": 8, "x_note": "must be a CONTESTED name on the board"},
+  "msg_id": {"type": "string", "maxLength": 64, "x_note": "<voice>-<ticker>-<n>, n = 1 or 2"},
+  "to": {"type": "string", "x_note": "a decider by name, 'steenbarger', or 'room'; never the sender"},
+  "in_reply_to": {"type": ["string", "null"], "x_note": "the msg_id this answers, or null for an opening point"},
+  "text": {"type": "string", "minLength": 1, "maxLength": 600,
+   "x_note": "answer the point that was made, by name; concede when the evidence your own method cares about shows up; hold when it does not; say what would clear your objection"},
+  "stance_now": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN", "NO_VOTE"], "x_note": "the seat's stance after writing this; NO_VOTE for the QA seat"},
+  "changed_mind": {"type": "boolean"},
+  "what_moved_me": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED when changed_mind is true -- the evidence, by name (R35: recorded)"}
+ },
+ "x_registrar_extra_checks": [
+  "ticker in phase4 deliberation_set; with --board, ticker in board.contested",
+  "to != voice",
+  "text using a bracket as a disqualifier => REJECT (R1)",
+  "cross-file: floor-check rejects a third message by the same decider on the same name, and any message on a name that is not contested"
+ ]
+}

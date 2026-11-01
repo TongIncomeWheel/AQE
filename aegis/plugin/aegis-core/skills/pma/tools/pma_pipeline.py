@@ -1,0 +1,2565 @@
+#!/usr/bin/env python3
+"""PMA deterministic pipeline tool — v4.2 (PM-ratified 2026-08-17).
+All arithmetic between the model stages lives HERE: same inputs, same outputs, no model in the path.
+Subcommands:
+  trim       raw export -> candidate_set.json (CONSUMED trim; keeps source/on_longlist/in_ledger/elder*)
+  packets    candidate_set + voice_menus -> per-voice shuffled TSVs + crown/druck JSON packets (QS byte-stripped)
+  tally      nominations dir/file -> tally.json (seat_count, conviction_sum per ticker)
+  rank       tally + candidate_set + export srm -> qualify -> 5-key rank -> cap -> deliberation_set.json
+  consensus  round2 stances -> verdicts (support>oppose AND support>=2 AND median>=3)
+  ledger     append today's phase-4 list to phase4_ledger.json; emit REPEAT flags (>=2 of trailing 5)
+  gate       S7Q mechanical checks (quality/completeness families that are greppable)
+  record-verdicts  lock today's consensus verdicts + entry price + bracket into verdict_ledger.json,
+                    AND every cap-dropped Phase-4 name as a NEAR-MISS row (PM standing rule,
+                    2026-08-18: "lock this so we can see track record" -- WRITE-ONCE, a (date,ticker)
+                    row is never overwritten by a later run, only its grading sub-object is filled in
+                    later by `grade`). Every row this writes carries "record_source": "live" -- the
+                    mechanical marker that distinguishes a normal run from the one-time
+                    "backfilled_manual_2026-08-18" rows used to seed 2026-08-17 history before this
+                    command covered near-misses.
+  grade      revisit past locked verdicts against today's prices: fixed-horizon return grade (N sessions
+             after the call) + event-based grade (stop/TP hit, ADVANCE only -- see doc string on cmd_grade
+             for the honest HOLD-FOR-CONDITIONS gap)
+  repeat-watch     mechanical §4 generator (PM standing rule, 2026-08-18: "I want it automated, not by
+                    hand, which means gaps and forget will occur" otherwise) -- cross-references
+                    phase4_ledger.json's repeat_flags against verdict_ledger.json's row history to
+                    produce, per repeat ticker, one row per appearance date with % vs the previous
+                    appearance's ref_price and the verdict/state actually recorded that date. Zero hand
+                    transcription: if a repeat ticker's appearance has no matching verdict_ledger row
+                    (a real gap -- e.g. history predates this ledger), the row says so explicitly
+                    instead of silently omitting it or being invented from memory.
+Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
+"""
+import json, re, sys, os, io, csv, random, statistics, argparse, collections, datetime, subprocess
+
+SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}  # display/sizing only since 2026-09-07; NOT in any ranking key
+CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
+    "elder","elder_5d","elder_pattern","entry","beta_30d","day_vol","rs_spy_20d","rs_leadership",
+    "rs_down_day_20d","sma_distance_pct","ma_20","ma_50","ma_200","atr_14d","gics_sector","gics_sector_name",
+    "sector_trend_state","sector_rrg_quadrant","sector_rrg_direction","structure_shift","choch_state",
+    "div_state","div_bear_count","knn_prob","atr_caution","runner_setup","runner_conviction_label",
+    "premove_setup","mover_subtype","pin_bar_state","inside_bar","lens","lens_positive","lens_warnings",
+    "source","held","in_ledger","on_longlist","on_elder","thematic_basket","thematic_grade","thematic_rrg_quadrant",
+    "vol_30d_ann","gics_gate","bracket",
+    "ma_100","premove_conviction","runner_conviction","sc_m_gate_detail","sc_p_gate_detail",
+    "squeeze_breakout_state","was_squeezed","squeeze_breakout_volume_confirmed","squeeze_breakout_date",
+    "elder_context","knn_threshold_clear","pin_bar_level",
+    # 2026-09-05 voice packet spec (docs/specs/aqe_voice_packet_spec_2026-09-05.md
+    # §2) -- 18 new export fields, only the ones an actual seat menu references.
+    "high_52w","low_52w","pct_from_52w_high","ret_12m","rs_rank_pct",
+    "ma_150","ma_40","cci_20","pivot_high","pct_from_pivot","extension_atr_20",
+    "elder_hi7_streak","next_earnings_date","days_to_earnings","stack_state",
+    "signal_hit_rate_20d","signal_n",
+    # PM RULING 2026-09-22 (D120, THE MOMENTUM BOOK): the momentum numbers were in the export
+    # all along and this whitelist dropped them because no seat MENU had asked. Seven of nine
+    # seats never saw a return, a run length or an ADX. They are served to every nominator now.
+    "ret_63d","ret_6m","pct_run_10d","adx_14",
+    # R30 (PM 2026-10-30): Seow v2 position system + Wyckoff v2 (Wyckoff 2.0) read these. All are already
+    # in the export; without them here trim nulled every new menu column (found on the 2026-10-30 dry build).
+    "bar_open","bar_high","bar_low","bar_close","prior_bar_high","prior_bar_low","last_pivot_high","structure_shift_ref","fib_swing_low","base_low_20d","days_since_swing_high","bar_range_5d","subcomponents","rvol_20d","ma_20_slope_5d_pct","pvp_poc","pvp_vah","pvp_val","pvp_position","vwap_14d","vwap_14d_position","avwap_structure","avwap_swing","pos_in_50d_range_pct",
+    # QS -- the PM's own proprietary regime/signal read. Captured here (2026-08-17, PM request)
+    # SOLELY for the S7 card QS line, shown on every card after deliberation closes, whether or
+    # not that name was ever nominated. R3 is unchanged and still absolute: this field must never
+    # reach a seat packet. Enforced two ways -- (1) no voice_menus.json entry may name it (checked
+    # in cmd_packets, fails loudly), (2) it isn't in any menu today, so it never round-trips through
+    # _slice. "qs" is undocumented in aegis/contracts/*.schema.json despite being live in the daily
+    # export -- schema drift, flagged separately, not blocking.
+    "qs", "on_qs"]
+
+# ---------------------------------------------------------------- THE MOMENTUM FLOOR
+# PM ruling 2026-09-22 (D120). "We're looking for PMA to look for coil, strength, insti
+# money, momentum." On 2026-09-21 the committee advanced five names within 2 ATR of their
+# 20-day average and never saw ARM (5 of 6 lenses strong, squeeze breakout on confirmed
+# volume, +17% Monday), META (+11%) or MSTR (+9%). Only three of nine seats were served
+# 20-day relative strength; none was served a 3-month return, a 10-day run or ADX; the
+# runner flag reached one round-2 seat. Every nominator now gets these on every row.
+MOMENTUM_SERVED = ["rs_spy_20d","rs_rank_pct","ret_63d","ret_6m","ret_12m","pct_run_10d",
+    "adx_14","extension_atr_20","pct_from_52w_high","mp","mp_state","mp_state_plain",
+    "mp_accel_state","runner_setup","runner_conviction_label","lens_positive","lens"]
+
+# R13 -- FADING is a default label, not a decay signal. src/engines/mp.py: STRONG = score
+# higher than 3 bars ago AND >= 75; BUILDING = higher AND < 75; FADING = everything else,
+# i.e. simply "not higher than three bars ago". MSTR sat at mp 89 and read FADING on
+# 2026-09-19. Seats read the word and killed the name. The translation travels with the row.
+MP_STATE_PLAIN = {
+    "STRONG":   "score rising vs 3 bars ago and >= 75",
+    "BUILDING": "score rising vs 3 bars ago, < 75",
+    "FADING":   "score NOT higher than 3 bars ago (default label, includes flat-at-high; NOT a decay signal -- R13)",
+}
+
+# ---------------------------------------------------------------- THE HELD FLOOR
+# PM ruling 2026-09-16. On 2026-09-16 AQE served all 86 of its fields on every held
+# position, including hl_state -- its OWN health verdict on the PM's book. All three
+# positions read EXIT. Not one of the nine seats ever saw it: cmd_trim built the
+# universe from daily_list ONLY and sliced it to CONSUMED, so a held name that fails
+# the $2B/1.5M screen never entered the universe at all, and the held-only fields
+# were stripped from the ones that did. The brief then reported "no stop served" on
+# two names for which AQE had served atr_fallback_stop, and recommended STOP-TIGHTEN
+# and HOLD on two positions the engine had already called EXIT. The data was there.
+# The pipeline threw it away and the gap was reported as the data provider's.
+#
+# Two rules follow, and they are not menu questions:
+#   (a) a held row enters the universe WHOLE -- the complete served record is kept
+#       under `held_book`, unsliced, so nothing AQE computes can be lost again;
+#   (b) these columns are on EVERY nominating seat's packet for EVERY row, whatever
+#       that seat's menu says. A seat ruling on a position the PM owns sees the cost
+#       basis, the size, the unrealised, AQE's health verdict and its projected path.
+# The floor is namespaced under held_book precisely so it can never collide with a
+# candidate-side field of the same name -- `entry` means engine trigger on a
+# candidate row and cost basis on a held one, and merging them flat would have
+# silently redefined a field 14 seats read.
+HELD_FLOOR = ["held",
+              "held_book.qty", "held_book.entry", "held_book.trade_date",
+              "held_book.unreal_usd", "held_book.live_px",
+              "held_book.hl_state", "held_book.hl_score",
+              "held_book.held_sl", "held_book.held_tp1", "held_book.held_tp2",
+              "held_book.knn_prob", "held_book.knn_tp1", "held_book.knn_tp2",
+              "held_book.knn_tp3",
+              "held_book.bracket.atr_fallback_stop",
+              "held_book.vwap_14d_position"]
+
+# Any menu field naming these is a same-class breach as qs_market in the macro packets below --
+# checked once per nominator before packets are written, so a future menu edit fails the build
+# instead of shipping a leak that's only caught by grepping a TSV after the fact.
+QS_FORBIDDEN = ("qs", "on_qs")
+
+# Chart-pattern fields are OUT of every seat packet (PM ruling 2026-09-05, spec
+# docs/specs/aqe_voice_packet_spec_2026-09-05.md §0). No menu has ever named
+# one, so this has always been true in practice -- this makes it a checked
+# build-time invariant instead of an incidental fact of the current menus,
+# same discipline as QS_FORBIDDEN above.
+PATTERN_FORBIDDEN_PREFIX = "pattern"
+
+# NO-BLANK-DATA, 2026-08-17 (PM standing rule: "no blank data, all fields available and used").
+# Two independent per-ticker checks, both against the RAW export (not the trim), because a gap
+# that only shows up after CONSUMED/menu slicing is a gap the pipeline created, not one it found.
+#
+# CORE_TECHNICAL_FIELDS mirrors the export's own data_quality.flagged definition exactly (verified
+# 2026-08-17: the export flags 7 tickers -- AUB, ELS, EQR, FITB, KSS, NNN, OKTA, all source=="qs" --
+# on precisely this field set). A ticker null on ALL of these has nothing for any voice to assess
+# honestly, so it is held out of every nominator TSV entirely (not served as a wall of "null") and
+# written to no_technical_coverage.json instead. It stays in candidate_set.json -- it can still
+# carry a QS card line at S7 (PM request, render-only, regardless of deliberation).
+CORE_TECHNICAL_FIELDS = ["sc_momentum", "flow", "energy", "structure", "mp", "elder", "entry"]
+
+# PATTERN_FIELDS are NOT covered by the export's own data_quality self-check -- verified 2026-08-17
+# against the live export: 14 tickers (all source=="longlist", core fields present and real) come
+# back null on every field in this set. That is a real, undeclared upstream gap in the pattern-
+# detection engine, not a "no signal" state (contrast: elder_pattern/thematic_basket/thematic_grade/
+# ma_200 nulls elsewhere in the export ARE legitimate no-signal/structural states and are NOT
+# treated as gaps here). These tickers are NOT excluded -- they have real technical data on
+# everything else -- but the gap is reported loudly per run so it doesn't quietly undercount.
+PATTERN_FIELDS = ["pin_bar_state", "inside_bar", "choch_state", "div_state", "knn_prob",
+                   "squeeze_breakout_state", "was_squeezed"]
+
+SCHEMA_VERSION = 1
+
+def load(p, needs=None, shape=None):
+    """The ONE read chokepoint -- 29 call sites go through here.
+
+    Added 2026-09-07. Every failure on 2026-09-06 was a READ: a reader looked for a key the
+    writer does not produce, found nothing, and carried on with an empty result. cmd_consensus
+    looked for stances[] against forms that carry votes[] and emitted ZERO verdicts without a
+    murmur; r2digest looked for findings[] against a document that files challenges[] and dropped
+    the whole document from the vote packet. Both were silent. Neither was a hard problem -- both
+    were a reader guessing a shape nobody had written down.
+
+    `needs` makes the reader DECLARE what it requires. If it is not there, this raises and prints
+    the keys the file actually has, so a shape mismatch is a loud one-line error at the point of
+    read instead of a wrong answer three steps later.
+
+    `shape` checks the writer's own stamp when one is present. Files written before stamping
+    began carry none; those are accepted, because refusing them would break every historical
+    artifact and buy nothing."""
+    with open(p) as f:
+        d = json.load(f)
+    st = d.get("_schema") if isinstance(d, dict) else None
+    if shape and st and st.get("shape") != shape:
+        raise SystemExit(f"SHAPE MISMATCH reading {p}: expected '{shape}', file was written as "
+                         f"'{st.get('shape')}' by {st.get('written_by')} at {st.get('at')}.")
+    if needs:
+        probe = d[0] if isinstance(d, list) and d and isinstance(d[0], dict) else d
+        if isinstance(probe, dict):
+            missing = [k for k in needs if k not in probe]
+            if missing:
+                raise SystemExit(
+                    f"SHAPE MISMATCH reading {p}: required key(s) {missing} absent. "
+                    f"The file actually carries {sorted(probe.keys())[:14]}. "
+                    f"A reader and a writer disagree about this file's shape -- fix the contract, "
+                    f"do not work around it with an adapter.")
+    return d
+
+
+def save(p, o, shape=None):
+    """The ONE write chokepoint -- 12 call sites. Stamps what this file IS, so the next reader
+    can check instead of guess. The stamp is metadata only; no consumer field is touched."""
+    if shape and isinstance(o, dict):
+        o = {"_schema": {"shape": shape, "version": SCHEMA_VERSION,
+                         "written_by": os.path.basename(__file__),
+                         "at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")}, **o}
+    json.dump(o, open(p, "w"), indent=1)
+    print(f"wrote {p}" + (f" [{shape} v{SCHEMA_VERSION}]" if shape else ""))
+
+def cmd_trim(a):
+    """raw export -> candidate_set.json.
+
+    Candidates are sliced to CONSUMED. HELD POSITIONS ARE NOT (PM ruling 2026-09-16,
+    see HELD_FLOOR): AQE forces every ticker the PM owns through the scoring engines
+    whether or not it still clears the curated screen, and the complete served record
+    is carried onto the universe row under `held_book` with nothing dropped. A held
+    name absent from daily_list is ADDED (R5 forbids filtering the published set, not
+    adding the PM's own book to it); a held name already present keeps its candidate
+    row untouched and gains the namespaced block beside it.
+    """
+    D = load(a.export, needs=["daily_list"])
+    rows, by_t = [], {}
+    for r in D["daily_list"]:
+        row = {k: r.get(k) for k in CONSUMED}
+        # 2026-09-06 fix, RESTORED 2026-11-01: `on_longlist` is the row's OWN flag. Deriving it from `source`
+        # misreported false for any name whose primary source was elder_list/qs but which independently
+        # cleared the longlist screen (the plugin copy had regressed to the old derivation; the Cards'
+        # "Lists" column and the R17/R27 `on_longlist or on_elder` checks read this field).
+        row["on_longlist"] = bool(r["on_longlist"]) if r.get("on_longlist") is not None else (r.get("source") == "longlist")
+        row["mp_state_plain"] = MP_STATE_PLAIN.get(r.get("mp_state"), "unlabelled")
+        row["in_ledger"] = bool(r.get("in_ledger"))
+        rows.append(row); by_t[r.get("ticker")] = row
+
+    held_src = D.get("held_positions") or []
+    injected, already = [], []
+    for h in held_src:
+        t = h.get("ticker")
+        if not t:
+            raise SystemExit("trim: a held_positions row carries no ticker -- refusing to "
+                             "build a universe that silently omits a position the PM owns")
+        row = by_t.get(t)
+        if row is None:
+            row = {k: h.get(k) for k in CONSUMED}     # so every existing seat menu resolves
+            # FIX 2026-10-23: a held_positions record carries `entry` = the PM's COST. Copied as-is it
+            # made the injected row read "entry 53.0" on a 38.56 stock (MP); three seats flagged it.
+            # On the universe row `entry` means the last close, as on every other row. The cost
+            # stays authoritative under held_book.entry.
+            _px = h.get("live_px") if h.get("live_px") is not None else h.get("last_close")
+            if _px is not None:
+                row["entry"] = _px
+            row["on_longlist"] = False
+            row["in_ledger"] = bool(h.get("in_ledger"))
+            row["source"] = row.get("source") or "held_book"
+            rows.append(row); by_t[t] = row; injected.append(t)
+        else:
+            already.append(t)
+        row["held"] = True
+        row["held_book"] = h                          # WHOLE, unsliced, authoritative
+        row.setdefault("mp_state_plain", MP_STATE_PLAIN.get(row.get("mp_state", h.get("mp_state")), "unlabelled"))
+
+    # Self-verifying. A silent loss here is the exact failure this rule exists to stop,
+    # so the check is a refusal to write, not a warning nobody reads.
+    for h in held_src:
+        t = h["ticker"]; hb = by_t[t].get("held_book") or {}
+        lost = [k for k in h if k not in hb]
+        if lost:
+            raise SystemExit(f"trim: held row {t} lost served fields {lost} -- REFUSING to write. "
+                             f"AQE serves the held book complete; the universe carries it complete.")
+        if hb.get("hl_state") in (None, ""):
+            print(f"WARNING trim: {t} carries no hl_state -- AQE served no health verdict for this "
+                  f"position. Declared, not invented.")
+    save(a.out, {"run_date": a.date, "universe": rows})
+    print(f"receipt: {len(rows)} names trimmed; sources={dict(collections.Counter(r.get('source') for r in rows))}")
+    health = ", ".join(f"{h['ticker']}={(by_t[h['ticker']].get('held_book') or {}).get('hl_state')}"
+                       for h in held_src) or "n/a"
+    print(f"receipt: held book {len(held_src)} position(s) carried WHOLE "
+          f"({len(injected)} injected: {', '.join(injected) or 'none'}; "
+          f"{len(already)} already in universe: {', '.join(already) or 'none'}); "
+          f"AQE health verdict -> {health}")
+
+def _slice(row, menu):
+    """Resolve a menu field against a universe row.
+
+    Dotted names resolve into nested dicts at ANY depth. Before 2026-08-17 this
+    special-cased `bracket.` only, so every other dotted field on a menu
+    (energy.squeeze_score, bq.bq_base_dur, bq.bq_range_tight, lens.coil,
+    lens.structure, lens.resistance) silently resolved to None -- minervini,
+    oneil, raschke and wyckoff had been served blank columns for those fields.
+    Fixed generically; `missing_menu_fields` in the packets receipt now reports
+    any menu field that resolves to None for EVERY row, so a dead field is
+    loud instead of silent.
+    """
+    out = {}
+    for f in menu:
+        if "." in f:
+            cur = row
+            for part in f.split("."):
+                cur = cur.get(part) if isinstance(cur, dict) else None
+                if cur is None:
+                    break
+            out[f] = cur
+        else:
+            out[f] = row.get(f)
+    return out
+
+def _cell(x):
+    """TSV cell serializer. None must never render as a blank cell -- a blank cell is
+    indistinguishable from an empty string or a parsing glitch. Write the literal token
+    "null" instead, so a seat can never misread absence as an empty value (2026-08-17,
+    PM standing rule: no blank data)."""
+    if x is None:
+        return "null"
+    if isinstance(x, (dict, list)):
+        return json.dumps(x)
+    return x
+
+# ---- STRUCTURAL FLATTENERS (nested JSON -> compact scalar string, fully reversible) ----
+# decode_fn exists ONLY for the self-verification baked into cmd_packets below -- packets are
+# terminal output, never re-parsed by any AQE tool or by a voice's own tooling (voices run
+# tools:[]).
+#
+# bracket.targets' own field shape has ALREADY drifted once between AQE snapshots seen during
+# this work (an earlier sample carried type/price/date/atr_dist/vol_ratio/vol_validated; the
+# live 2026-08-17 export carries type/tp/price/r with tp and r null on every row). Rather than
+# hardcode a field list that broke the first time it was checked against real data, the encoder
+# DISCOVERS the field set from the actual targets being encoded, declares that order in the
+# packet's own DICT legend, and encodes generically. This is why the round-trip gate below is
+# non-negotiable, not a nice-to-have: a schema-agnostic encoder is exactly the kind of code that
+# looks right and silently isn't, without it.
+
+_TARGET_TYPE_CODE = {
+    "resistance": "R", "support": "S", "prior_high": "P",
+    "fib_1272": "A", "fib_1618": "B", "fib_2618": "C", "fib_2000": "D",
+}
+_TARGET_TYPE_DECODE = {v: k for k, v in _TARGET_TYPE_CODE.items()}
+# Extend this map if a new fib_/pivot type appears -- an unrecognized type still round-trips
+# via the '[type]' literal fallback below, it just doesn't compress as tightly.
+
+def _target_field_order(targets):
+    """Discover this run's actual bracket.targets field set, in first-seen order, 'type' pinned
+    first (it gets its own short code). Never hardcoded -- see module docstring above."""
+    order, seen = ["type"], {"type"}
+    for t in targets:
+        for k in t:
+            if k not in seen:
+                order.append(k); seen.add(k)
+    return order
+
+def _target_val_token(v):
+    if v is True: return "T"
+    if v is False: return "F"
+    if v is None: return "n"
+    if isinstance(v, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", v):
+        s = v.replace("-", "")
+        return s[2:8]  # YYYY-MM-DD -> YYMMDD
+    return str(v)
+
+def _target_val_untoken(s):
+    if s == "T": return True
+    if s == "F": return False
+    if s == "n": return None
+    if re.match(r"^\d{6}$", s):
+        return f"20{s[:2]}-{s[2:4]}-{s[4:]}"
+    try:
+        return float(s) if "." in s else int(s)
+    except ValueError:
+        return s
+
+def _encode_targets(targets, field_order):
+    """[{type, ...whatever fields this run's export actually carries}, ...] -> a pipe-joined,
+    @-delimited compact string. 'type' is compressed via _TARGET_TYPE_CODE; every other field
+    is written positionally per field_order (declared once in the packet's DICT legend, so a
+    human or voice can reconstruct any row without a separate lookup). None -> 'n', True/False
+    -> 'T'/'F', an ISO date -> YYMMDD. Nothing is silently dropped -- an unmapped type falls
+    back to a literal '[type]' token instead of losing information."""
+    if not targets:
+        return ""
+    parts = []
+    for t in targets:
+        vals = []
+        for f in field_order:
+            if f == "type":
+                vals.append(_TARGET_TYPE_CODE.get(t.get("type"), f"[{t.get('type')}]"))
+            else:
+                vals.append(_target_val_token(t.get(f)))
+        parts.append("@".join(vals))
+    return "|".join(parts)
+
+def _decode_targets(s, field_order):
+    """Inverse of _encode_targets. Self-verification only -- never called by a voice or any
+    downstream consumer; packets are terminal output."""
+    if not s:
+        return []
+    out = []
+    for part in s.split("|"):
+        vals = part.split("@")
+        if len(vals) != len(field_order):
+            raise ValueError(f"_decode_targets: expected {len(field_order)} fields, got {len(vals)}: {part!r}")
+        t = {}
+        for f, v in zip(field_order, vals):
+            if f == "type":
+                t["type"] = v[1:-1] if v.startswith("[") else _TARGET_TYPE_DECODE.get(v, v)
+            else:
+                t[f] = _target_val_untoken(v)
+        out.append(t)
+    return out
+
+_LENS_KEYS = ["leadership", "coil", "insti_money", "structure", "resistance", "extension", "sector"]
+_LENS_CODE = {"strong": "s", "ok": "o", "warn": "w"}
+_LENS_DECODE = {v: k for k, v in _LENS_CODE.items()}
+# Verified against the live export (2026-08-17): a fourth literal value '--' also occurs
+# alongside strong/ok/warn/null. It is intentionally NOT given a short code -- the fallback
+# below writes it out literally, so it round-trips correctly without the legend needing to
+# anticipate every value a future lens revision might emit.
+
+def _encode_lens(lens):
+    """lens: {leadership,coil,insti_money,structure,resistance,extension,sector} -> fixed-order
+    comma string, e.g. 'w,s,w,o,w,-,s'. null -> '-'. Any value outside {strong,ok,warn} (e.g.
+    the literal '--' seen in real data) is written out literally -- never silently dropped."""
+    if not lens:
+        return ""
+    out = []
+    for k in _LENS_KEYS:
+        v = lens.get(k)
+        out.append("-" if v is None else _LENS_CODE.get(v, v))
+    return ",".join(out)
+
+def _decode_lens(s):
+    """Inverse of _encode_lens. Self-verification only."""
+    if not s:
+        return {}
+    vals = s.split(",")
+    if len(vals) != len(_LENS_KEYS):
+        raise ValueError(f"_decode_lens: expected {len(_LENS_KEYS)} fields, got {len(vals)}: {s!r}")
+    return {k: (None if v == "-" else _LENS_DECODE.get(v, v)) for k, v in zip(_LENS_KEYS, vals)}
+
+# ---- CODEBOOK ENCODING (repeated long strings -> short per-field codes + a legend) ----
+DICT_MAX_CARD_RATIO = 0.6   # encode a field only if distinct-values <= this fraction of rows
+DICT_MIN_AVG_LEN = 6        # and only if its values average longer than this many characters
+# Both are named constants so they can be tuned without touching the algorithm, per PM
+# direction that this should "self-tune as the universe changes," not be hand-guessed per field.
+
+def _build_codebook(values):
+    """values: a field's stringified values across every row being served (post-flatten,
+    pre-shuffle). Returns None if the field doesn't clear the encoding threshold, else
+    (code_map: value->code, legend_line). null values are never encoded -- the existing
+    no-blank-data 'null' token stays untouched so absence is never ambiguous with a code."""
+    real = [v for v in values if v not in (None, "", "null")]
+    if not real:
+        return None
+    distinct = sorted(set(real))
+    n = len(real)
+    avg_len = sum(len(v) for v in real) / n
+    if len(distinct) > n * DICT_MAX_CARD_RATIO or avg_len <= DICT_MIN_AVG_LEN:
+        return None
+    code_map = {v: str(i + 1) for i, v in enumerate(distinct)}
+    legend = "; ".join(f"{c}={v}" for v, c in code_map.items())
+    return code_map, legend
+
+def cmd_packets(a):
+    CS, menus, D = (load(a.candidates, needs=["universe"]), load(a.menus),
+                    load(a.export, needs=["daily_list"]))
+    os.makedirs(a.outdir, exist_ok=True)
+    rng = random.Random(a.date)
+    # R31 (PM 2026-10-30): packets are built for the seven DECIDERS only. A menu for any other seat
+    # (archived cards, the QA seat, the retired macro pair) is left unserved -- never a stray universe file.
+    nominators = [v for v in menus if v in DECIDERS]
+    macro_seats = list(getattr(a, "macro_seats", None) or [])   # R31: none by default; --macro-seats crown druckenmiller re-enables
+
+    # --- THE HELD FLOOR IS ADDED TO EVERY MENU (PM ruling 2026-09-16) ------------------
+    # Not negotiable per seat and not editable in voice_menus.json. Before this, only 6
+    # of 14 menus carried even the bare `held` flag and NOT ONE carried hl_state, so a
+    # seat could rule on a position the PM owns without knowing he owned it, what it
+    # cost, what it is down, or that AQE had already called it EXIT. Menus decide which
+    # ANALYTICS a seat may use; they do not get to hide the book.
+    for v in list(menus):
+        if v == "~~CONFIG_NOTE~~":
+            continue
+        menus[v] = list(dict.fromkeys(list(menus[v]) + HELD_FLOOR + MOMENTUM_SERVED))
+
+    for v in menus:
+        if v == "~~CONFIG_NOTE~~":
+            continue
+        breach = [f for f in menus[v] if f in QS_FORBIDDEN or f.startswith("qs.")]
+        assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
+        pat_breach = [f for f in menus[v]
+                      if f == PATTERN_FORBIDDEN_PREFIX or f.startswith(PATTERN_FORBIDDEN_PREFIX + "_")
+                      or f.startswith(PATTERN_FORBIDDEN_PREFIX + ".")]
+        assert not pat_breach, (f"pattern-field breach: {v}'s menu names {pat_breach} -- "
+                                 "chart-pattern fields are out of every seat packet (PM ruling 2026-09-05)")
+
+    raw_by_ticker = {r["ticker"]: r for r in D["daily_list"]}
+    no_coverage = sorted(t for t, r in raw_by_ticker.items()
+                          if all(r.get(f) is None for f in CORE_TECHNICAL_FIELDS))
+    pattern_gap = sorted(t for t, r in raw_by_ticker.items()
+                          if t not in no_coverage and all(r.get(f) is None for f in PATTERN_FIELDS))
+    if no_coverage:
+        save(os.path.join(a.outdir, "no_technical_coverage.json"),
+             {"excluded_from_nominator_tsvs": no_coverage,
+              "reason": f"all of {CORE_TECHNICAL_FIELDS} null -- nothing for any voice to honestly assess",
+              "note": "still present in candidate_set.json; may still carry a QS card line at S7"})
+
+    universe = [r for r in CS["universe"] if r["ticker"] not in no_coverage]
+
+    # --- A HELD POSITION IS NEVER HELD OUT (PM ruling 2026-09-16) ---------------------
+    # no_technical_coverage legitimately drops a candidate no voice could honestly assess.
+    # It must never drop a position the PM owns: "we could not read it" is itself the
+    # finding, and the seat still has to rule on the book. Equally, a held row that
+    # reached here without its `held_book` block means cmd_trim was bypassed or an older
+    # candidate_set is on disk -- that is the 2026-09-16 failure exactly, and it stops
+    # the run rather than producing packets that look complete.
+    held_tickers = [r["ticker"] for r in (D.get("held_positions") or [])]
+    uni_t = {r["ticker"] for r in universe}
+    absent = [t for t in held_tickers if t not in uni_t]
+    if absent:
+        raise SystemExit(f"packets: held position(s) {absent} are not in the universe served to the "
+                         f"seats -- REFUSING to build. Re-run `pma_pipeline.py trim`; a name the PM "
+                         f"owns is never screened out of its own committee.")
+    naked = [r["ticker"] for r in universe if r.get("held") and not r.get("held_book")]
+    if naked:
+        raise SystemExit(f"packets: held row(s) {naked} carry no held_book block -- REFUSING to build. "
+                         f"The candidate_set on disk predates the held-floor ruling (2026-09-16) or was "
+                         f"built by hand. Re-run trim against the export.")
+
+    # --- PHASE 1 COMPRESSION (2026-08-26) ---
+    # Two mechanical, content-preserving steps, both self-verified before any byte reaches
+    # disk. This changes ENCODING ONLY: every fact a voice could read before, it can still
+    # read -- same tickers, same rows, same information, fewer bytes carrying it. Neither step
+    # touches which rows exist or which columns a voice's menu grants it (D-29 untouched).
+    #
+    # Step A -- flatten nested JSON fields (bracket.targets, lens) to compact scalar strings.
+    #           bracket.targets' field SET is discovered from this run's own data (see
+    #           _target_field_order docstring: the schema already drifted once between two
+    #           real snapshots seen during development, which is exactly why this is
+    #           discovered, not hardcoded, and why every encode is immediately decoded and
+    #           asserted equal to the original before use. A mismatch raises and the run
+    #           stops -- there is no path from "encoded" to "on disk" that skips this check.
+    # Step B -- dictionary-encode any remaining scalar column whose values repeat heavily
+    #           (see _build_codebook). Each voice's TSV gets a "# DICT <field>: legend" line
+    #           for every encoded field it actually has on its own menu.
+    all_targets = [t for r in universe for t in ((r.get("bracket") or {}).get("targets") or [])]
+    target_field_order = _target_field_order(all_targets)
+
+    all_fields = sorted({f for v in nominators for f in menus[v]})
+    raw_bytes_by_ticker = {}   # true pre-compression size, captured before any encoding touches it
+    flat_cache = {}
+    for r in universe:
+        sliced = _slice(r, all_fields)
+        raw_bytes_by_ticker[r["ticker"]] = {f: len(str(_cell(v))) for f, v in sliced.items()}
+        flat = {}
+        for f, v in sliced.items():
+            if f == "bracket.targets" and v is not None:
+                encoded = _encode_targets(v, target_field_order)
+                decoded = _decode_targets(encoded, target_field_order) if encoded else []
+                # bracket.targets' own key-set varies PER TARGET, even within one type on one
+                # day (e.g. fib_1272 carries r/tp on some rows, not others -- confirmed against
+                # real 2026-08-25 data). Encoding can't tell "key absent" from "key present as
+                # None" -- both write the 'n' token -- so decode always reconstructs the full
+                # discovered field_order. Compare against v padded the same way: this changes
+                # nothing about what's encoded or written, only what "equal" means for a source
+                # dict that legitimately never had some of these keys.
+                padded = [{**{k: None for k in target_field_order}, **t} for t in v]
+                assert decoded == padded, (f"FLATTEN ROUND-TRIP FAILED on {f} for {r['ticker']}: "
+                                      f"{v!r} -> {encoded!r} -> {decoded!r}")
+                flat[f] = encoded
+            elif f == "lens" and v is not None:
+                encoded = _encode_lens(v)
+                decoded = _decode_lens(encoded) if encoded else {}
+                assert decoded == v, (f"FLATTEN ROUND-TRIP FAILED on {f} for {r['ticker']}: "
+                                      f"{v!r} -> {encoded!r} -> {decoded!r}")
+                flat[f] = encoded
+            else:
+                flat[f] = v
+        flat_cache[r["ticker"]] = flat
+
+    codebooks = {}
+    for f in all_fields:
+        vals = [str(flat_cache[r["ticker"]][f]) if flat_cache[r["ticker"]].get(f) is not None else None
+                for r in universe]
+        cb = _build_codebook(vals)
+        codebooks[f] = cb
+        if cb:
+            code_map, _ = cb
+            reverse = {c: val for val, c in code_map.items()}
+            for r in universe:
+                v = flat_cache[r["ticker"]].get(f)
+                if v is not None and str(v) in code_map:
+                    coded = code_map[str(v)]
+                    assert reverse[coded] == str(v), f"DICT ROUND-TRIP FAILED on {f} for {r['ticker']}"
+                    flat_cache[r["ticker"]][f] = coded
+    # --- END PHASE 1 COMPRESSION ---
+
+    dead = {}
+    total_before = total_after = 0
+    for v in nominators:
+        menu = menus[v]
+        used_dicts = {f: codebooks[f][1] for f in menu if codebooks.get(f)}
+        rows = [{f: flat_cache[r["ticker"]].get(f) for f in menu} for r in universe]
+        d = [f for f in menu if all(r.get(f) is None for r in rows)]
+        if d:
+            dead[v] = d
+        before_bytes = sum(raw_bytes_by_ticker[r["ticker"]].get(f, 0) for r in universe for f in menu)
+        rng.shuffle(rows)
+        p = os.path.join(a.outdir, f"{v}.tsv")
+        with open(p, "w", newline="") as f_out:
+            if "bracket.targets" in menu:
+                f_out.write(f"# DICT bracket.targets fields (in order): {','.join(target_field_order)}; "
+                            f"type codes: {_TARGET_TYPE_CODE}\n")
+            for field, legend in sorted(used_dicts.items()):
+                f_out.write(f"# DICT {field}: {legend}\n")
+            w = csv.DictWriter(f_out, fieldnames=menu, delimiter="\t")
+            w.writeheader()
+            for r in rows:
+                w.writerow({k: _cell(x) for k, x in r.items()})
+        after_bytes = os.path.getsize(p)
+        total_before += before_bytes; total_after += after_bytes
+        pct = (1 - after_bytes / max(before_bytes, 1)) * 100
+        n_flat = len([f for f in menu if f in ("bracket.targets", "lens")])
+        print(f"  {v}.tsv: ~{before_bytes} -> {after_bytes} bytes ({pct:.1f}% smaller), "
+              f"{n_flat} field(s) flattened, {len(used_dicts)} field(s) dict-encoded, round-trip OK")
+
+        # PROOF, not intent (2026-09-16). The floor is only real if it is in the bytes the
+        # seat receives. Read the file back and check it there.
+        with open(p, newline="") as f_in:
+            body = [ln for ln in f_in if not ln.startswith("#")]
+        rdr = list(csv.DictReader(io.StringIO("".join(body)), delimiter="\t"))
+        seen_held = [row for row in rdr if str(row.get("held", "")).strip().lower()
+                     in ("true", "1", "yes")]
+        if len(seen_held) != len(held_tickers):
+            raise SystemExit(f"packets: {v}.tsv carries {len(seen_held)} held row(s), expected "
+                             f"{len(held_tickers)} ({', '.join(held_tickers)}) -- REFUSING. A seat "
+                             f"cannot rule on a book it was not shown.")
+        blind = [row.get("ticker") for row in seen_held
+                 if not str(row.get("held_book.hl_state", "")).strip()]
+        if blind and any((r.get("held_book") or {}).get("hl_state")
+                         for r in universe if r.get("held")):
+            raise SystemExit(f"packets: {v}.tsv serves no hl_state on held row(s) {blind} though AQE "
+                             f"served one -- REFUSING. This is the 2026-09-16 defect; it does not "
+                             f"get to happen twice.")
+
+    # ---- THE MACRO PACKETS. Crown gets its OWN ARTIFACT, not a slice of the equity export. -------
+    # DEFECT FOUND 2026-09-25, and it was the conductor's, not AQE's. Both macro packets were built
+    # from the same seven export blocks, so crown.json and druckenmiller.json came out BYTE-IDENTICAL
+    # and crown never received aqe_crown_macro.json -- the file its entire card is written against.
+    # Consequence that morning: 7 of crown's 11 recognisers could not run, including R4
+    # (breadth.position_in_12_month_range, which its own form called "the most consequential blind
+    # spot") and the WHOLE positioning plane -- trend funds, large speculators, option dealers. The
+    # seat declared the artifact "NOT DELIVERED" and reasoned from surrogates, while the real file sat
+    # in the run root, generated the same minute as the export. It mattered: the artifact read breadth
+    # at the BOTTOM of its 12-month range, volatility ELEVATED_RISING, gold AND wheat among the
+    # crowded longs, and a gold trend-flip 0.03% away -- i.e. the two held names the committee keeps
+    # voting to release were crowded-long positions, and the GREEN/VIX contradiction both macro seats
+    # spent their forms on was answered on disk. A challenge seat caught it (steenbarger, HIGH).
+    # So: the crown artifact is served WHOLE when present, and its absence is a HARD FAILURE of this
+    # step rather than a quiet fallback -- a seat must never again declare a file missing that is
+    # sitting beside it.
+    if macro_seats:   # retired by R31 unless asked for explicitly
+        crown_art, cerr = None, None
+        # Look ONLY at the explicit flag or the file beside the export it belongs to. An earlier cut also
+        # accepted any aqe_crown_macro.json in the working directory, which let a stray file from another
+        # run satisfy the lookup silently -- caught 2026-09-26 when the regression test for this very check
+        # passed in the plugin tree and failed inside a run folder that held a real artifact.
+        for cand in (a.crown_macro, os.path.join(os.path.dirname(os.path.abspath(a.export)), "aqe_crown_macro.json")):
+            if cand and os.path.exists(cand):
+                crown_art = load(cand, needs=["the_call", "readings", "status"]); break
+        else:
+            cerr = ("packets: aqe_crown_macro.json NOT FOUND (looked at --crown-macro, beside the export, "
+                    "and in the run root). Crown's card is written against that artifact; a slice of the "
+                    "equity export is NOT a substitute and produced a 7-of-11 dark run on 2026-09-25. "
+                    "Fetch it at GATHER or pass --crown-macro. REFUSING to build a blind crown packet.")
+        if cerr:
+            raise SystemExit(cerr)
+        shared = ["date", "market", "regime", "intermarket", "srm", "macro_weather", "thematic_baskets"]
+        for name in macro_seats:
+            pk = {b: D.get(b) for b in shared}
+            if name == "crown":
+                pk["crown_artifact"] = crown_art          # served WHOLE, never sliced (R12's principle)
+                for k in ("the_call", "readings", "key_levels", "scenario", "status", "limits",
+                          "what_changed", "what_is_coming", "generated_at", "how_current"):
+                    if k in crown_art:
+                        pk[k] = crown_art[k]              # also at top level, where the card looks
+            txt = json.dumps(pk)
+            assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
+            save(os.path.join(a.outdir, f"{name}.json"), pk)
+        assert len(macro_seats) < 2 or json.dumps({k: v for k, v in load(os.path.join(a.outdir, "crown.json")).items()}) != \
+               json.dumps(load(os.path.join(a.outdir, "druckenmiller.json"))), \
+               ("packets: crown.json and druckenmiller.json are identical -- crown did not get its "
+                "artifact. This is the 2026-09-25 defect; it does not get to happen twice.")
+
+    pct_total = (1 - total_after / max(total_before, 1)) * 100
+    print(f"receipt: {len(nominators)} nominator TSVs ({', '.join(nominators)}) + {len(macro_seats)} macro packets; R3 assertion passed; "
+          f"{len(universe)}/{len(CS['universe'])} names served to nominators ({len(no_coverage)} held out, no coverage); "
+          f"total packet bytes {total_before} -> {total_after} ({pct_total:.1f}% smaller), all encodings round-trip verified")
+    if dead:
+        print("WARNING missing_menu_fields (null on every row, seat is served a blank column):")
+        for v, fs in sorted(dead.items()):
+            print(f"  {v}: {', '.join(fs)}")
+    else:
+        print("receipt: missing_menu_fields none -- every menu field resolved on at least one row")
+    if no_coverage:
+        print(f"WARNING no_technical_coverage ({len(no_coverage)} tickers, excluded from nominator TSVs, see no_technical_coverage.json): {', '.join(no_coverage)}")
+    if pattern_gap:
+        print(f"WARNING pattern_field_gap ({len(pattern_gap)} tickers, NOT excluded, upstream pattern-detection engine gap, undeclared by export data_quality): {', '.join(pattern_gap)}")
+
+def cmd_tally(a):
+    noms = load(a.nominations, needs=["voice", "nominations"])  # [{voice, nominations:[...]}]
+    T = {}
+    for vr in noms:
+        for n in vr.get("nominations", []):
+            t = T.setdefault(n["ticker"], {"ticker": n["ticker"], "seats": [], "conv": [], "reasons": []})
+            t["seats"].append(vr["voice"]); t["conv"].append(n["conviction"])
+            t["reasons"].append({"voice": vr["voice"], "reason": n.get("reason"), "conviction": n["conviction"], "fields": n.get("fields", [])})
+    out = []
+    for t in T.values():
+        t["count"], t["maxc"], t["sumc"] = len(t["seats"]), max(t["conv"]), sum(t["conv"])
+        out.append(t)
+    save(a.out, sorted(out, key=lambda x: (-x["count"], -x["sumc"])))
+    print(f"receipt: {len(out)} tickers nominated across {len(noms)} seats")
+
+def _lens_strong_count(row):
+    l = row.get("lens") or {}
+    return sum(1 for v in l.values() if v == "strong")
+
+def _elder_hi7_streak(row, bars=2):
+    """elder >= 7 on each of the last `bars` bars. PM ruling 2026-09-22 (D120): 3 -> 2. On
+    2026-09-19 ARM read 2, 7, 10 and missed the door by the one bar that preceded its breakout."""
+    e = row.get("elder_5d") or []
+    return len(e) >= bars and all(isinstance(x, (int, float)) and x >= 7 for x in e[-bars:])
+
+def _elder_hi7_streak3(row):   # kept for callers/tests that name the old rule
+    return _elder_hi7_streak(row, 3)
+
+def _aqe_leader(row):
+    """PM ruling 2026-09-22 (D120, R13): mp_state STRONG is NO LONGER required. FADING means
+    'score not higher than 3 bars ago' (src/engines/mp.py) -- MSTR at mp 89 read FADING. A
+    default label is not a gate."""
+    return (row.get("elder_pattern") in ("SUSTAINED", "ACCELERATION")
+            and row.get("rs_leadership") == "LEADER")
+
+def _strength_door(row, rs_top, mp_min=75.0):
+    """STRENGTH door (D120). Opens on either momentum read AQE already computes:
+      (a) rs_spy_20d in the top decile of today's list (threshold passed in, computed per run), or
+      (b) mp >= 75 AND mp_accel_state ACCELERATING (high momentum, second derivative rising).
+    Neither test looks at extension, a pattern label or the LEADER tag -- those are what the
+    committee is for. On 2026-09-19 this door opens for MSTR (#2 on 20-day RS), META, DELL."""
+    rs = row.get("rs_spy_20d")
+    if isinstance(rs, (int, float)) and rs_top is not None and rs >= rs_top:
+        return True
+    mp = row.get("mp")
+    return isinstance(mp, (int, float)) and mp >= mp_min and row.get("mp_accel_state") == "ACCELERATING"
+
+# Which doors put a name in the MOMENTUM lane. LENS is deliberately NOT here: the six lenses
+# (leadership, coil, insti_money, structure, resistance, sector) describe a coil with money
+# behind it -- the whole committee's book -- and on the 2026-09-21 replay ANET (SEATS+LENS,
+# nominated by two pullback seats) went ADVANCE 6-3 under all seats and 2-2 under the strength
+# seats alone. A lens name is judged by every seat; a name that is here on strength alone is
+# judged by the seats whose method buys strength.
+MOMENTUM_DOORS = ("STRENGTH", "AQE_LEADER")
+# ---- THE ROSTER (R31, PM 2026-10-30). Seven deciders shortlist, vote, deliberate and ratify. ----
+# Steenbarger is the QA seat (challenge before the vote, QA note + one hold per ticket after; no vote).
+# Detect-lens is an independent top-10 LIST read off lens_ranking.ranked, not a voice. Weis and Thorp
+# are benched; Rogers, Lynch, Crown and Druckenmiller stood down. `board` / `ratify-count` count the
+# DECIDERS and nobody else, loudly ignoring any other ballot.
+DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+QA_SEAT = "steenbarger"
+BENCH_SEATS = ["weis", "thorp"]
+STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
+R33_EFFECTIVE = "2026-11-01"   # ballots dated from here carry the shortlist cap (6) and the case form
+SHORTLIST_CAP = 6              # R33: at most six nominations per decider (fewer is valid, never padded)
+SLATE_CAP = 15                 # R34: at most fifteen tickets across ADVANCE and WATCH
+FLOOR_MSG_CAP = 2              # R36: two floor messages per decider per name
+# ---- LEGACY LABELS (R32). All seven deciders count on every name; the lane tag is a reading aid. ----
+# These two lists are read ONLY by the superseded `consensus` blind tally (kept so the 2026-09-06
+# regression fixtures still reproduce). Seow removed 2026-11-01 per BUILD_PLAN Phase 4 item 2.
+STRENGTH_SEATS = ["livermore", "oneil", "minervini", "elder-lens", "detect-lens"]
+PULLBACK_SEATS = ["raschke", "seow", "thorp", "weis", "wyckoff"]
+# R22 (superseded by R31, kept for the legacy tally): a Lynch ballot was consulted, never counted.
+CONSULTED_SEATS = ["lynch"]
+
+def _lane(doors):
+    """Two lanes (PM ruling 2026-09-22, D120 decision 7). A name that opened any momentum door
+    is voted in the MOMENTUM lane -- its verdict is computed from the strength seats only. Every
+    other name is PULLBACK lane, verdict from all eleven. All eleven still file a vote on every
+    name; the off-lane votes are recorded as advisory."""
+    # R27 (PM 2026-10-23): "it is completely stupid that we apply pullback lens onto a momentum book,
+    # the 2 lanes should still stay". A name seated for its strength is a MOMENTUM-lane name. A reserved
+    # U&R seat takes the ordinary rule -- a leader's reclaim (ACN) opens STRENGTH and is MOMENTUM.
+    if "STRONG_SEAT" in doors:
+        return "MOMENTUM"
+    return "MOMENTUM" if any(d in MOMENTUM_DOORS for d in doors) else "PULLBACK"
+
+
+
+
+def cmd_repeatmarks(a):
+    """REPEAT MARKS — put the committee's own memory on the FACE of every verdict.
+
+    PM, 2026-09-25: "you'd realise at least 5 names are repeat picks for advance that has appeared
+    consecutive days."
+
+    He was right, and the count was six. The run already computed the history -- repeat_watch.json held
+    272 rows across 84 tickers -- and buried it in a verbatim paste in section 4, where it reads as a
+    data dump rather than a warning. So every morning the brief presented 24 names as if they were all
+    new. DT and ACA had been ADVANCE for four consecutive sessions; TWLO, OKTA, FTNT, PANW, MU, IRDM,
+    IQV, TH and CNK had all advanced before. Eleven of 24.
+
+    Re-presenting a name without saying it is a repeat fails in two OPPOSITE ways, so one label cannot
+    cover both:
+      * THE ENTRY IS STILL THERE. ACA advanced four sessions running and moved 0.21%. That is not a
+        stale call -- it is the same entry the PM was shown on Tuesday, and saying so is the useful
+        thing. Presenting it as news is what makes it easy to ignore.
+      * THE ENTRY HAS GONE. TWLO is +22.89% since its first advance on 09-21. Re-advancing it at a
+        price nearly a quarter higher without saying so is the report lying by omission.
+
+    The test that separates them is the name's OWN risk budget, not a number picked here: if the price
+    has drifted further than the bracket's computed stop distance, the entry the committee showed is
+    gone by the system's own measure. On 2026-09-25 that flags exactly one of the six -- DT at 1.3x its
+    own risk -- and confirms the other five are still standing. No threshold was fitted.
+
+    TWO drift numbers are carried, because they answer different questions:
+      * streak_drift_pct  -- from the first advance of the CURRENT consecutive run. Is today's card the
+        same entry as the start of the streak?
+      * total_drift_pct   -- from the FIRST EVER advance. What has ignoring this name cost? TWLO reads
+        +3.08% on the streak and +22.89% since the committee first called it.
+
+    Also marked: REVERSED, a name the committee advanced on the previous run and no longer does. On
+    2026-09-25 that was APH, GILD, TMO and TSM, none of which carried a note anywhere.
+
+    Nothing here changes a verdict, a conviction or an ordering. It is memory, rendered."""
+    LED = load(a.ledger, needs=["rows"])
+    C = load(a.consensus)
+    verdicts = {c["ticker"]: c for c in (C if isinstance(C, list) else C.get("names", []))}
+    BR = {}
+    if a.brackets and os.path.exists(a.brackets):
+        BR = (load(a.brackets).get("brackets") or {})
+    by = collections.defaultdict(dict)
+    for r in LED["rows"]:
+        by[r["ticker"]][r["date"]] = r
+    dates = sorted({r["date"] for r in LED["rows"]})
+    if a.date not in dates:
+        raise SystemExit(f"repeatmarks: {a.date} is not in the ledger -- record-verdicts must run first")
+    prev = dates[dates.index(a.date) - 1] if dates.index(a.date) > 0 else None
+
+    def px(tk, d):
+        return ((by[tk].get(d)) or {}).get("ref_price")
+
+    def ordinal(n):
+        return "%d%s" % (n, "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th"))
+
+    marks, counts = {}, collections.Counter()
+    for tk, v in verdicts.items():
+        hist = [d for d in dates if ((by[tk].get(d)) or {}).get("verdict") == "ADVANCE"]
+        streak = 0
+        for d in reversed(dates):
+            if ((by[tk].get(d)) or {}).get("verdict") == "ADVANCE":
+                streak += 1
+            else:
+                break
+        p_now = px(tk, a.date)
+        m = {"verdict": v["verdict"], "advance_streak": streak,
+             "advanced_on": hist, "times_advanced": len(hist),
+             "first_advance_ever": hist[0] if hist else None,
+             "streak_started": dates[len(dates) - streak] if streak else None,
+             "ref_price_now": p_now, "risk_pct": ((BR.get(tk) or {}).get("stop") or {}).get("stop_pct")}
+        for key, anchor in (("streak", m["streak_started"]), ("total", m["first_advance_ever"])):
+            p0 = px(tk, anchor) if anchor else None
+            m[f"{key}_drift_pct"] = (round(100 * (p_now - p0) / p0, 2)
+                                     if (p0 and p_now and anchor != a.date) else None)
+            m[f"{key}_anchor_price"] = p0
+        # the label. Ordered so the strongest statement wins.
+        prev_v = ((by[tk].get(prev)) or {}).get("verdict") if prev else None
+        d, risk = m["streak_drift_pct"], m["risk_pct"]
+        # When the name advanced earlier than the current streak, the streak number understates what
+        # ignoring it has cost -- TWLO reads +3.08% on its streak and +22.89% since the committee first
+        # called it. Carry the bigger number into the sentence rather than letting the label hide it.
+        tot = m["total_drift_pct"]
+        older = (m["first_advance_ever"] and m["streak_started"]
+                 and m["first_advance_ever"] != m["streak_started"] and tot is not None)
+        tail = (f" It first advanced on {m['first_advance_ever']} and is {tot:+.2f}% since then."
+                if older else "")
+        if v["verdict"] == "ADVANCE" and streak >= 2:
+            if risk and abs(d or 0) > risk:
+                m["mark"] = "DRIFTED"
+                m["mark_plain"] = (f"{ordinal(streak)} consecutive advance, but the price has moved "
+                                   f"{d:+.2f}% since {m['streak_started']} -- "
+                                   f"{abs(d)/risk:.1f}x its own risk. The entry you were shown is gone." + tail)
+            else:
+                m["mark"] = "STANDING"
+                m["mark_plain"] = (f"{ordinal(streak)} consecutive advance at the same entry "
+                                   f"({d:+.2f}% since {m['streak_started']}"
+                                   + (f", inside its {risk:.2f}% risk" if risk else "")
+                                   + "). Not a new idea -- the same one, unacted." + tail)
+        elif v["verdict"] == "ADVANCE" and len(hist) >= 2:
+            m["mark"] = "RETURNED"
+            m["mark_plain"] = (f"advanced before ({', '.join(hist[:-1])}) and again today; "
+                               f"{m['total_drift_pct']:+.2f}% since the first call"
+                               if m["total_drift_pct"] is not None else "advanced before and again today")
+        elif v["verdict"] == "ADVANCE":
+            m["mark"] = "FRESH"
+            m["mark_plain"] = "first time the committee has advanced this name."
+        elif prev_v == "ADVANCE":
+            m["mark"] = "REVERSED"
+            m["mark_plain"] = (f"advanced on {prev} and does not today -- now {v['verdict']}. "
+                               f"The committee changed its mind and this is the note saying so.")
+        else:
+            m["mark"] = "NONE"
+            m["mark_plain"] = None
+        counts[m["mark"]] += 1
+        marks[tk] = m
+    # names that advanced last run and are not in the room at all today
+    gone = {}
+    for tk, d in by.items():
+        if tk in verdicts:
+            continue
+        if prev and ((d.get(prev)) or {}).get("verdict") == "ADVANCE":
+            gone[tk] = {"mark": "LEFT_THE_ROOM",
+                        "mark_plain": f"advanced on {prev} and is not in today's room at all.",
+                        "advanced_on": [x for x in dates if ((d.get(x)) or {}).get("verdict") == "ADVANCE"]}
+            counts["LEFT_THE_ROOM"] += 1
+    save(a.out, {"schema": "repeat_marks.v1", "date": a.date, "previous_run": prev,
+                 "rule": ("A repeat ADVANCE is STANDING while the price has drifted less than the name's own "
+                          "computed stop distance, and DRIFTED once it has moved further -- the entry the "
+                          "committee showed is then gone by the system's own measure. No threshold is fitted. "
+                          "streak_drift_pct measures from the start of the current consecutive run; "
+                          "total_drift_pct from the first advance ever."),
+                 "counts": dict(counts), "marks": marks, "left_the_room": gone})
+    rep = [(m["advance_streak"], tk) for tk, m in marks.items() if m["mark"] in ("STANDING", "DRIFTED")]
+    rep.sort(reverse=True)
+    print(f"receipt: {counts['FRESH']} fresh advances, "
+          f"{counts['STANDING']} standing repeats (same entry, unacted), "
+          f"{counts['DRIFTED']} drifted repeats (entry gone), {counts['RETURNED']} returned after a gap, "
+          f"{counts['REVERSED']} reversed since {prev}, {counts['LEFT_THE_ROOM']} left the room.")
+    if rep:
+        print("  consecutive advances: " + ", ".join(f"{tk} x{n}" for n, tk in rep))
+    for tk, m in sorted(marks.items()):
+        if m["mark"] == "DRIFTED":
+            print(f"  DRIFTED {tk}: {m['mark_plain']}")
+
+
+def _bracket_calc_path():
+    """bracket_calc.py lives in the PLUGIN-ROOT tools/ (it is shared with /bracket and /market_hours),
+    not in skills/pma/tools/ where the committee's own tools sit. Look in both, and say so loudly if
+    it is nowhere -- a silent fallback here would print hand-picked levels as computed stops, which is
+    the exact defect this step exists to end."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    for cand in (os.path.join(here, "bracket_calc.py"),
+                 os.path.join(here, "..", "..", "..", "tools", "bracket_calc.py"),
+                 os.path.join(here, "..", "..", "tools", "bracket_calc.py")):
+        if os.path.exists(cand):
+            return os.path.abspath(cand)
+    raise SystemExit("brackets: bracket_calc.py not found in skills/pma/tools/ or the plugin-root "
+                     "tools/. REFUSING to emit levels that were not computed by it.")
+
+
+def cmd_brackets(a):
+    """BRACKET — queue levels for every ADVANCE and HOLD-FOR-CONDITIONS name, after the vote.
+
+    PM ruling 2026-09-25: "#5 is already in bracket skill. We can add the bracket skill as an
+    additional step into daily pma report for the advance and hold for condition ticker names."
+
+    This finally gives brackets.json a PRODUCER. It had been declared a gap on five consecutive runs
+    (09-21 through 09-25), which meant every level printed on a card was a structural or volatility
+    reference the conductor had picked out by hand, never a computed stop. The arithmetic already
+    existed in tools/bracket_calc.py and nothing called it from the committee run.
+
+    Two rules that make this safe to run inside PMA:
+      * R1 IS NOT WEAKENED. Brackets attach AFTER the vote and are render-only. Nothing here can
+        reach a seat, a door, the tally, the ranking or a verdict, and purity_check still proves
+        rank invariance to every bracket field. This step reads consensus.json; consensus.json has
+        never read this step.
+      * A HELD name gets NO bracket. You do not bracket something you already own -- that is the
+        trailing-stop path, and bracket_calc's own docstring refuses it. Held names are skipped with
+        a stated reason so the omission is visible rather than silent.
+
+    Sizing needs dynCap, which the committee run does not carry (it lives in the journal, on the
+    daily side). Absent it, bracket_calc returns levels and refuses to size -- which is exactly what
+    the card needs and is recorded per name as `sized: false` rather than passed off as a position."""
+    C = load(a.consensus)
+    P = load(a.phase4, needs=["deliberation_set", "held_seated"])
+    D = load(a.export, needs=["daily_list"])
+    rows = {r["ticker"]: r for r in D["daily_list"]}
+    held = set(P.get("held_seated") or [])
+    regime = D.get("regime") if isinstance(D.get("regime"), dict) else None
+    ceiling = D.get("regime_stop_pct_ceiling")
+    dyncap = None
+    if a.dyncap and os.path.exists(a.dyncap):
+        try:
+            j = load(a.dyncap)
+            dyncap = {"value": j.get("value") or j.get("dyncap"), "one_r": j.get("one_r")}
+        except Exception:
+            dyncap = None
+    want = {"ADVANCE", "HOLD-FOR-CONDITIONS"}
+    verdicts = {c["ticker"]: c for c in (C if isinstance(C, list) else C.get("names", []))}
+    targets = [t for t in P["deliberation_set"] if verdicts.get(t, {}).get("verdict") in want]
+    out, skipped, failed = {}, {}, {}
+    for tk in targets:
+        if tk in held:
+            skipped[tk] = ("HELD — a position the PM already owns is not bracketed; that is the "
+                           "trailing-stop path, not an entry queue")
+            continue
+        r = rows.get(tk)
+        if not r:
+            skipped[tk] = "no served row in daily_list — cannot compute levels"
+            continue
+        px = r.get("entry") or r.get("live_px") or r.get("close")
+        if not isinstance(px, (int, float)):
+            skipped[tk] = "no served price on the row — refusing to invent one"
+            continue
+        inp = {"ticker": tk, "date": a.date,
+               "price": {"value": float(px), "source": "aqe_export"},
+               "authority": ("COMMITTEE_ADVANCE" if verdicts[tk]["verdict"] == "ADVANCE"
+                             else "COMMITTEE_HOLD_FOR_CONDITIONS"),
+               "tier": "aqe", "aqe_record": r, "history_20d": None, "intraday_bars": None,
+               "regime": regime, "regime_stop_pct_ceiling": ceiling,
+               "dyncap": dyncap or {"value": None, "one_r": None},
+               "r_multiple": 1.0, "vol_30d_ann": r.get("vol_30d_ann"),
+               "sector": r.get("gics_sector"), "sector_tone": None,
+               "open_positions": [], "stop_override": None}
+        try:
+            proc = subprocess.run([sys.executable, _bracket_calc_path()],
+                                  input=json.dumps(inp), capture_output=True, text=True, timeout=60)
+            if proc.returncode != 0:
+                failed[tk] = (proc.stderr or "bracket_calc non-zero exit")[-300:]
+                continue
+            b = json.loads(proc.stdout)
+        except Exception as e:                      # a bad row must never take the run down
+            failed[tk] = f"{type(e).__name__}: {e}"[:300]
+            continue
+        b["verdict"] = verdicts[tk]["verdict"]
+        b["lane"] = verdicts[tk].get("lane")
+        b["sized"] = bool(b.get("size"))
+        out[tk] = b
+    save(a.out, {"schema": "brackets.v1", "date": a.date,
+                 "produced_by": "pma_pipeline.py brackets (PM ruling 2026-09-25)",
+                 "render_only": ("R1: brackets attach AFTER the vote and are information only. They never "
+                                 "reach a seat, a door, the tally, the ranking or a verdict."),
+                 "sizing_note": ("dynCap lives in the journal on the daily side and is not carried by the "
+                                 "committee run, so a bracket without it returns LEVELS and refuses to SIZE. "
+                                 "`sized` says which."),
+                 "counts": {"requested": len(targets), "produced": len(out),
+                            "skipped": len(skipped), "failed": len(failed)},
+                 "brackets": out, "skipped": skipped, "failed": failed})
+    # count off the shape bracket_calc actually returns: a stop dict with a price, and its own gate
+    # flags. (The first cut of this receipt counted a `bracket_valid` key that does not exist and
+    # reported 0 definable stops on a run where every one of them had computed -- fixed here.)
+    with_stop = sum(1 for b in out.values() if (b.get("stop") or {}).get("price") is not None)
+    gates_ok = sum(1 for b in out.values()
+                   if all((b.get("stop") or {}).get("flags", {}).get(k) for k in ("atr_ok", "rr_ok")))
+    print(f"receipt: brackets for {len(out)} of {len(targets)} ADVANCE/HOLD names "
+          f"({with_stop} with a computed stop, {gates_ok} clearing the atr and reward gates, "
+          f"{sum(1 for b in out.values() if b.get('sized'))} sized); "
+          f"{len(skipped)} skipped ({sum(1 for k in skipped if k in held)} held — not bracketed by design), "
+          f"{len(failed)} failed. R1: render-only, attached after the vote.")
+    if failed:
+        print("WARNING bracket failures (declared, not silent):")
+        for tk, why in sorted(failed.items()):
+            print(f"  {tk}: {why}")
+
+
+def cmd_rank(a):
+    """RANK + ADMIT. R16 (PM ruling 2026-09-24): the doors are ADDITIVE. They never gate or remove
+    an analyst pick. Every nomination is seated unconditionally; the doors add on top, in their own
+    budget. See the R16 block below for the measured reason this changed.
+
+    Four doors into the deliberation set, union, then a cap:
+      DOOR 1  SEATS       nominated by >= 2 seats. ALWAYS kept -- these are the committee's own picks.
+      DOOR 2  ELDER+LENS  elder >= 7 on each of the last 3 bars AND >= 3 of 6 lenses strong.
+      DOOR 3  PM_LENS     >= pm_lens_min checks on the PM's own six (read from pm_lens.json, so
+                          PM-LENS now runs BEFORE this step; it still never reaches any seat).
+      DOOR 4  AQE_LEADER  elder_pattern in {SUSTAINED, ACCELERATION} AND rs_leadership LEADER AND mp_state STRONG.
+    Doors 2-4 fill the remaining slots to --cap by AQE rank. The one-seat-at-conviction-4 exception
+    is CLOSED (--solo-min retired). Every admitted name carries its doors so Round 2 can see how it
+    arrived. Ordering of DOOR-1 names keeps the v4.2 key (seat_count > conviction_sum > srm > thematic
+    > sc_momentum); door 2-4 names follow, by AQE rank.
+
+    Why: on 2026-09-04, 32 names carried SUSTAINED/ACCELERATION, 10 were nominated, 3 voted, 0
+    advanced -- leaders died at nomination because every card's "am I chasing" test had a precise
+    field and its "is this a leader" test did not. The doors make the committee LOOK at what AQE,
+    Elder and the PM's own checks flag; the committee still votes on every name the same way.
+    Bracket fields play no part in any door (R1)."""
+    tally, CS, D = load(a.tally), load(a.candidates, needs=["universe"]), load(a.export, needs=["daily_list", "srm"])
+    uni = {r["ticker"]: r for r in CS["universe"]}
+    srm = {s["sector"]: s for s in D["srm"]}
+    tal = {t["ticker"]: t for t in tally}
+    doors = collections.defaultdict(list)
+    for t in tally:
+        if t["count"] >= 2: doors[t["ticker"]].append("SEATS")
+    # STRENGTH threshold: top decile of today's rs_spy_20d across the served list (no fitted number).
+    rs_vals = sorted([r["rs_spy_20d"] for r in uni.values() if isinstance(r.get("rs_spy_20d"), (int, float))], reverse=True)
+    rs_top = rs_vals[max(int(len(rs_vals) * a.strength_decile) - 1, 0)] if rs_vals else None
+    for tk, r in uni.items():
+        if _elder_hi7_streak(r, a.elder_bars) and _lens_strong_count(r) >= 3: doors[tk].append("ELDER+LENS")
+        if _lens_strong_count(r) >= a.lens_min: doors[tk].append("LENS")
+        if _strength_door(r, rs_top): doors[tk].append("STRENGTH")
+        if _aqe_leader(r): doors[tk].append("AQE_LEADER")
+    # SOLO route (D120 decision 8): one seat at conviction >= solo_min is enough when the name
+    # ALSO opened a momentum door. Livermore is the only strength seat; its picks got zero
+    # co-nominations on 2026-09-21 because every other card caps extension.
+    for t in tally:
+        tk = t["ticker"]
+        if t["count"] == 1 and t.get("sumc", 0) >= a.solo_min and tk in uni and any(d in ("LENS", "STRENGTH", "AQE_LEADER") for d in doors.get(tk, [])):
+            doors[tk].append("SOLO")
+    pm_flagged = []
+    if a.pm_lens and os.path.exists(a.pm_lens):
+        PL = load(a.pm_lens)   # flagged|rows|names — any of the three is accepted below
+        for row in (PL.get("flagged") or PL.get("rows") or PL.get("names") or []):
+            tk = row.get("ticker") if isinstance(row, dict) else row
+            score = row.get("check_score", row.get("checks_passed", a.pm_lens_min)) if isinstance(row, dict) else a.pm_lens_min
+            if tk in uni and score >= a.pm_lens_min:
+                doors[tk].append("PM_LENS"); pm_flagged.append(tk)
+    def key1(tk):
+        t = tal.get(tk, {"count": 0, "sumc": 0}); r = uni.get(tk, {})
+        s = srm.get(r.get("gics_sector_name"), {})
+        them = 1 if (r.get("thematic_grade") == "DEPLOY" or r.get("thematic_rrg_quadrant") in ("LEADING", "IMPROVING")) else 0
+        # PM RULING 2026-09-07 (SECTOR IS NOT A GATE): srm entry_gate REMOVED from the ranking key.
+        return (t["count"], t["sumc"], them, r.get("sc_momentum") or 0, tk)
+
+    # ============================ R16 — THE NOMINATION FLOOR ============================
+    # PM ruling 2026-09-24, in the PM's own words: "I never asked to leave 5 seats. It is ADDITIVE
+    # and not to gate or remove voice (analyst) picks."
+    #
+    # Every ticker any seat nominated is admitted. Unconditionally. No conviction test, no second
+    # door, no ordering, no cap. The doors exist ONLY to ADD names the seats did not find, and they
+    # fill a SEPARATE budget (--machine-add) that sits on top of the nomination floor and can never
+    # displace one nomination.
+    #
+    # What this replaces and why. Until today the cap was a single shared pool: SEATS/SOLO first,
+    # then five reserved STRENGTH slots ordered by mp, then everything else -- so machine finds and
+    # seat picks competed for the same 24 chairs and the machine won. Measured over three runs:
+    #   2026-09-22  46 nominated ->  16 seated, 30 BINNED; 8 chairs to names nobody nominated
+    #   2026-09-23  32 nominated ->  15 seated, 17 BINNED; 9 chairs to names nobody nominated
+    #   2026-09-24  29 nominated ->  12 seated, 17 BINNED; 12 chairs to names nobody nominated
+    # 107 nominations, 43 seated, 64 binned, 29 chairs handed to names no analyst asked for. And the
+    # verdict record says the pool was resolved exactly backwards: conviction-4/5 nominations ADVANCE
+    # 70% of the time (n=23) while no-nominator machine admits ADVANCE 10% (n=29, 14 passed outright).
+    # The cap was never a judgment rule the PM set -- it was 20, then 24 on the conductor's own change,
+    # and its real ceiling was MAX_FORM_BYTES in registrar.py: at ~953 bytes per name a seat's single
+    # round-2 file cannot hold more than ~25 names. A file size limit was deciding which of the PM's
+    # analysts got heard. Split ballots (registrar --part/--of) remove that ceiling; R16 removes the
+    # competition.
+    #
+    # The STRENGTH RESERVE IS RETIRED. --strength-reserve is accepted and ignored, so old command
+    # lines still run; the receipt says it was ignored.
+    # The floor is every nomination PLUS the PM's own positions. R12 already forces the held book
+    # through every seat's held_review, but a held name left out of the candidate set never gets the
+    # DIFFERENT question asked -- "should I add to this?" Replayed on 2026-09-24, held FTNT was
+    # ADVANCED by the room as an add and then fell out of a doors-opened ordering because it had
+    # opened only one door. The PM's own money does not queue behind a machine heuristic.
+    held = [tk for tk, r in uni.items() if r.get("held")]
+    floor = [tk for tk in sorted(tal, key=key1, reverse=True) if tk in uni]
+    floor += [tk for tk in sorted(held, key=key1, reverse=True) if tk not in floor]
+    for tk in floor:
+        if "SEATS" not in doors[tk] and "SOLO" not in doors[tk]:
+            doors[tk].append("HELD" if (tk in held and tk not in tal) else "NOMINATED")
+    floor_set = set(floor)
+    # ================ R17 — A DOOR OPENS A FLAG, NOT A SEAT ================
+    # PM ruling 2026-09-25, in the PM's own words: "If a name gets added through a door, it should be
+    # highlighted for PM even if there no voice supporting for it. It's largely INFORMATIONAL,
+    # otherwise we end up superseding the committee consensus (aka the voice) which makes no sense or
+    # discipline at all."
+    #
+    # So a door-opener that no seat nominated NO LONGER ENTERS THE DELIBERATION SET. It is not voted,
+    # it gets no verdict, and it cannot compete with or override the committee. It is surfaced to the
+    # PM as a flagged watch list carrying its doors and AQE's own reads, and nothing else.
+    #
+    # What this replaces. R16 (yesterday) stopped the doors DISPLACING a pick; it still let a machine
+    # find collect a full committee verdict beside the seats' own work. On 2026-09-25 that produced
+    # INTC as an ADVANCE off the STRENGTH door with no seat behind it, while over 09-22/23/24/25 the
+    # unnominated admits returned 4 ADVANCE, 22 HOLD and 8 PASS across 37 names -- the room mostly
+    # spent its votes rejecting names it never asked to see. A verdict on a name no voice proposed is
+    # the machine speaking in the committee's voice, which is the thing the committee exists to stop.
+    #
+    # The PM also declined the "served quality floor" three seats proposed, and the reasoning is his:
+    # if a seat says it lacks the data to grade a name, that is an AQE data gap to fix upstream, not a
+    # reason to bolt another gate onto admission. Recorded here so the proposal is not re-litigated.
+    #
+    # NOTE ON ONE JUDGMENT I MADE: the ruling says "informational". I read that as OUT OF THE VOTE
+    # entirely rather than voted-and-labelled, because a name that is voted can still come out ADVANCE
+    # and that is precisely the superseding the ruling forbids. Flagged in the brief so the PM can
+    # reverse it if he meant the softer reading.
+    door_only = sorted([tk for tk, d in doors.items() if tk not in floor_set],
+                       key=lambda tk: (-len(doors[tk]), -_lens_strong_count(uni[tk]), uni[tk].get("rank") or 9999, tk))
+    n_flag = a.machine_add if a.machine_add is not None else min(a.door_budget, a.cap)
+    flagged, rest_doors = door_only[:n_flag], door_only[n_flag:]
+    # ================ R25 -- UP TO 3 RESERVED U&R SEATS (PM 2026-10-23) ================
+    # PM: "yes i think we can give up to 3 reserved seats for Valen UnR". Raised by ACN: on both of
+    # AQE's lists, strength rank 51, Valen undercut-and-rally MET, PM's own manual pick -- and never
+    # voted, because no seat nominated it and R17 lets a door flag a name but never seat it.
+    # The ONE exception to R17: a name AQE marks unr_status == MET on its last completed session
+    # (the reclaim day) AND on the Longlist or Elder list, not already in the room, ordered by AQE
+    # rank, at most --unr-seats (3). It is VOTED like any other name, so the committee still decides;
+    # it simply cannot be invisible. SETUP (still under the level) does not qualify -- no reclaim yet.
+    exp_rows = {r.get("ticker"): r for r in D.get("daily_list", [])}
+    unr_pool = sorted([tk for tk, r in exp_rows.items()
+                       if tk in uni and tk not in floor_set and r.get("unr_status") == "MET"
+                       and (r.get("on_longlist") or r.get("on_elder"))],
+                      key=lambda tk: (uni[tk].get("rank") or 9999, tk))
+    unr_seated = unr_pool[:max(0, a.unr_seats)]
+    for tk in unr_seated:
+        doors[tk].append("UNR_SEAT")
+    door_only = [tk for tk in door_only if tk not in unr_seated]
+    flagged = [tk for tk in flagged if tk not in unr_seated]
+    rest_doors = [tk for tk in rest_doors if tk not in unr_seated]
+    admitted = floor + unr_seated          # THE ROOM IS THE FLOOR, plus the R25 U&R seats.
+    # ================ R26 -- THE FLAG LIST IS THE STRONGEST NAMES, NOT THE MOST DOORS ================
+    # PM 2026-10-23: "our objective is to NOT miss strong momentum picks". Until today the flag list
+    # was door-openers ordered by doors opened, so ACN (both lists, 3rd strongest vs SPY over 20 days
+    # of everything not in the room) opened one door and never made the 8 shown. Now: every name on the
+    # Longlist or Elder list that is not in the room, ordered by 20-day strength vs SPY, then AQE rank.
+    # Still R17: flagged for the PM, never seated, never voted. Replayed: ACN 7th on 22 Oct, 3rd on 23 Oct.
+    room = set(admitted)
+    def _rs(tk):
+        v = uni[tk].get("rs_spy_20d")
+        return v if isinstance(v, (int, float)) else float("-inf")
+    watch_pool = sorted([tk for tk in uni if tk not in room
+                         and (exp_rows.get(tk, {}).get("on_longlist") or exp_rows.get(tk, {}).get("on_elder"))],
+                        key=lambda tk: (-_rs(tk), uni[tk].get("rank") or 9999, tk))
+    # ================ R27 -- THE STRONGEST NAMES ARE VOTED, NOT JUST SHOWN (PM 2026-10-23) ================
+    # PM: "its not just to pick the strongest names, but also let committee review these strongest and
+    # vote on it ... theyre applying their methodology and voice to these names and forming a consensus
+    # on which is worth it. if they dont do this, it is equivalent to me scanning aqe manually which
+    # defeats the purpose." The top --strong-seats of the R26 pool are SEATED and voted in the MOMENTUM
+    # lane (strength seats decide). This reverses R17 for these names only; the rest stay flagged.
+    strong_seated = watch_pool[:max(0, a.strong_seats)]
+    for tk in strong_seated:
+        doors[tk].append("STRONG_SEAT")
+    admitted = admitted + strong_seated
+    rest_pool = watch_pool[len(strong_seated):]
+    flagged = rest_pool[:n_flag]
+    rest_doors = [tk for tk in door_only if tk not in flagged and tk not in strong_seated]
+    dropped = [f"{tk}({'+'.join(doors[tk])} rank{uni[tk].get('rank')})" for tk in rest_doors]
+
+    # R16's invariant, unchanged and still asserted: a nomination is IMPOSSIBLE to cut, because the
+    # floor IS the room. The one legitimate exclusion stays a declared DATA GAP -- a nomination the
+    # served universe carries no row for, which cannot be voted because there is nothing to vote on.
+    off_universe = sorted(tk for tk in tal if tk not in uni)
+    no_door = [tk for tk in tal if tk in uni and tk not in admitted]
+    def row(tk):
+        t = tal.get(tk, {}); r = uni.get(tk, {})
+        return {"ticker": tk, "doors": doors[tk], "lane": _lane(doors[tk]), "seats": t.get("count", 0), "sumc": t.get("sumc", 0),
+                "aqe_rank": r.get("rank"), "srm": srm.get(r.get("gics_sector_name"), {}).get("entry_gate"),
+                "sc_m": r.get("sc_momentum"), "elder_5d": r.get("elder_5d"), "elder_pattern": r.get("elder_pattern"),
+                "lens_strong": _lens_strong_count(r)}
+    save(a.out, {"cap": a.cap, "admitted": len(admitted), "union": len(doors),
+                 "nomination_floor": floor, "nominations_seated": len([t for t in floor if t in tal]),
+                 "held_seated": [t for t in floor if t in held], "floor_size": len(floor),
+                 "nominations_cut_by_machinery": no_door,
+                 "nominations_off_universe": off_universe,
+                 "unr_seats": [{"ticker": tk, "aqe_rank": uni[tk].get("rank"),
+                                "unr_note": exp_rows[tk].get("unr_note"), "unr_level": exp_rows[tk].get("unr_level")}
+                               for tk in unr_seated],
+                 "unr_seat_pool": len(unr_pool),
+                 "strong_seats": [{"ticker": tk, "aqe_rank": uni[tk].get("rank"), "rs_spy_20d": uni[tk].get("rs_spy_20d"),
+                                   "sc_momentum": uni[tk].get("sc_momentum"), "extension_atr_20": uni[tk].get("extension_atr_20"),
+                                   "on_longlist": bool(exp_rows.get(tk, {}).get("on_longlist")),
+                                   "on_elder": bool(exp_rows.get(tk, {}).get("on_elder"))} for tk in strong_seated],
+                 "strong_seat_rule": ("R27 (PM 2026-10-23): the top --strong-seats Longlist/Elder names not otherwise in "
+                                      "the room, by 20-day strength vs SPY, are seated and voted in the MOMENTUM lane."),
+                 "unr_seat_rule": ("R25 (PM 2026-10-23): up to --unr-seats names with AQE unr_status MET on the "
+                                   "Longlist or Elder list, not otherwise in the room, by AQE rank. Voted like any "
+                                   "name, PULLBACK lane (whole room)."),
+                 "machine_additions": [],   # R17: a door no longer seats anybody. Kept as an empty
+                                            # key so every downstream reader's contract still holds.
+                 "informational": [{"ticker": tk, "doors": doors.get(tk, []), "lane": _lane(doors.get(tk, [])),
+                                    "on_longlist": bool(exp_rows.get(tk, {}).get("on_longlist")),
+                                    "on_elder": bool(exp_rows.get(tk, {}).get("on_elder")),
+                                    "sc_momentum": uni[tk].get("sc_momentum"),
+                                    "unr_status": exp_rows.get(tk, {}).get("unr_status"),
+                                    "aqe_rank": uni[tk].get("rank"), "mp": uni[tk].get("mp"),
+                                    "rs_spy_20d": uni[tk].get("rs_spy_20d"),
+                                    "extension_atr_20": uni[tk].get("extension_atr_20"),
+                                    "pct_from_pivot": uni[tk].get("pct_from_pivot"),
+                                    "lens_strong": _lens_strong_count(uni[tk]),
+                                    "gics_sector_name": uni[tk].get("gics_sector_name"),
+                                    "runner_conviction_label": uni[tk].get("runner_conviction_label")}
+                                   for tk in flagged],
+                 "informational_rule": ("R17 (PM ruling 2026-09-25): a name no seat nominated is FLAGGED FOR THE "
+                                        "PM, never seated. It is not voted, gets no verdict, and cannot supersede "
+                                        "committee consensus. R26 (2026-10-23): the flag list is every Longlist/Elder "
+                                        "name not in the room, ordered by 20-day strength vs SPY > AQE rank."),
+                 "watch_pool": len(watch_pool),
+                 "informational_shown": len(flagged),
+                 "door_openers_not_on_the_floor": len(door_only),
+                 "machine_add_budget": n_flag,
+                 "doors_rule": {"NOMINATED": "R16: nominated by ANY seat at ANY conviction. ADMITTED UNCONDITIONALLY -- never cut, never ordered against a machine find, never subject to the cap.",
+                                "HELD": "R16 + R12: a position the PM owns. On the floor unconditionally, so the ADD question is asked and not only the keep/exit question.",
+                                "SEATS": "nominated by >=2 seats (a NOMINATED name; the count is kept for ordering and for the lane)",
+                                "SOLO": f"nominated by 1 seat at conviction >={a.solo_min} (a NOMINATED name; retained as a label only -- R16 made the second-door requirement moot)",
+                                "ELDER+LENS": f"elder>=7 on each of last {a.elder_bars} bars AND >=3/6 lenses strong (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+                                "LENS": f">={a.lens_min}/6 lenses strong (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+                                "STRENGTH": f"rs_spy_20d in top {int(a.strength_decile*100)}% of today's list (>= {rs_top}) OR mp>=75 AND mp_accel_state ACCELERATING (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+                                "PM_LENS": f">={a.pm_lens_min} of the PM's 6 checks (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+                                "AQE_LEADER": "elder_pattern SUSTAINED|ACCELERATION AND rs_leadership LEADER (FLAG ONLY -- R17: surfaces to the PM, never seats a name; mp_state not consulted -- R13)"},
+                 "lanes_rule": {"MOMENTUM": f"opened any of {list(MOMENTUM_DOORS)}; verdict from {STRENGTH_SEATS}",
+                                "PULLBACK": f"all other admitted names; verdict from all voting seats"},
+                 "ranking_key": ("R16 (PM ruling 2026-09-24): the NOMINATION FLOOR is admitted whole and first -- "
+                                 "every nomination, any conviction, no cap. It is ordered seat_count > conviction_sum > "
+                                 "thematic_support > sc_momentum for reading only; ordering never removes a name. "
+                                 f"R17 (2026-09-25): the doors seat NOBODY. {len(flagged)} door-openers are FLAGGED for "
+                                 "the PM as information, ordered doors_opened > lenses_strong > AQE rank; they are not "
+                                 "voted and carry no verdict. The strength reserve is RETIRED."),
+                 "deliberation_set": admitted,
+                 "ranked": [row(tk) for tk in admitted],
+                 "dropped": dropped})
+    by_door = collections.Counter(d for tk in admitted for d in doors[tk])
+    never_nominated = sum(1 for tk in admitted if tal.get(tk, {}).get("count", 0) == 0)
+    lanes = collections.Counter(_lane(doors[tk]) for tk in admitted)
+    assert not no_door, f"R16 VIOLATED: nominations cut by machinery: {no_door}"
+    print(f"receipt: R16 floor {len(floor)} = {len([t for t in floor if t in tal])} of {len(tal)} nominated (0 cut) "
+          f"+ {len([t for t in floor if t in held and t not in tal])} held "
+          f"+ {len(unr_seated)} R25 U&R seats {unr_seated} (pool {len(unr_pool)}) "
+          f"+ {len(strong_seated)} R27 strength seats {strong_seated} "
+          f"-> {len(admitted)} IN THE ROOM (R17: the doors seat nobody else); "
+          f"{len(door_only)} door-openers flagged for the PM as information, {len(flagged)} shown; "
+          f"by door {dict(by_door)}; lanes {dict(lanes)}; "
+          f"{never_nominated} names no seat nominated; pm_lens flagged {len(pm_flagged)}; strength rs_top={rs_top}"
+          + (f"; {len(off_universe)} nominations have NO SERVED ROW and cannot be voted (declared data gap): {off_universe}" if off_universe else "")
+          + ("; --strength-reserve IGNORED (retired by R16)" if a.strength_reserve else ""))
+
+R2_VOTING_SEATS = list(DECIDERS)   # R31: the seven deciders vote; nobody else
+
+def _load_document(path, label):
+    """A whole-deliberation-set document (Rogers'/Steenbarger's challenge doc, Lynch's fundamentals
+    memo, Detect-lens's technical memo) captured VERBATIM from that voice's own S5a/S5b spawn output
+    -- the orchestrator reads it once and saves it as-is to this file, never retypes or summarizes it
+    (Phase 2, D-106: a courier that regenerates text while relaying it is where drift becomes
+    possible; a courier that copies a file's exact bytes cannot misremember a value). Missing is a
+    declared degradation, not a silently empty string -- S6's obligation register (O1-O8) depends on
+    this content actually existing for every seat to answer against."""
+    if not os.path.exists(path):
+        return None, f"{label} document missing ({path}) -- S5a/S5b did not file, or wasn't saved before this step ran"
+    d = load(path)
+    text = d.get("document_text")
+    if text:
+        return text, None
+
+    # SHAPE-TOLERANT since 2026-09-16 (R6). This reader demanded document_text and nothing else,
+    # while the CHALLENGE seats file STRUCTURED output -- findings[] / challenges[] /
+    # catalyst_check[] / obligations[] / verdicts[] -- which is what their own cards specify and
+    # what r2digest has read correctly since 2026-09-07. One file type, two readers, two different
+    # contracts: on 2026-09-15 the run had to serialise the structured fields into a document_text
+    # field by hand before this step would accept a document that was already complete and valid.
+    # R6 forbids answering that with an adapter at the call site, so the CONTRACT is fixed here --
+    # this reader now understands the shape the seats actually produce, using the same aliases
+    # r2digest proved. A document is empty only when it carries no content in ANY known shape.
+    parts = []
+    for fd in (list(d.get("findings") or []) + list(d.get("challenges") or [])
+               + list(d.get("catalyst_check") or []) + list(d.get("entries") or [])):
+        scope = fd.get("scope", "")
+        tag = fd.get("id") or fd.get("axis") or fd.get("kind") or ""
+        claim = fd.get("claim") or fd.get("challenge") or fd.get("question") or fd.get("read") or ""
+        parts.append(f"[{scope}{(' ' + tag) if tag else ''}] {claim}")
+        ev = fd.get("evidence") or fd.get("basis") or fd.get("data")
+        if ev:
+            parts.append(f"    evidence: {ev}")
+        owed = fd.get("what_is_owed") or fd.get("addressed_to")
+        if owed:
+            parts.append(f"    owed: {owed}")
+    for ob in (d.get("obligations") or []):
+        parts.append(f"OBLIGATION {ob.get('seat')} on {ob.get('ticker')} "
+                     f"[{ob.get('class') or ob.get('obligation')}]: {ob.get('what_is_owed')}")
+    for v in (d.get("verdicts") or []):
+        parts.append(f"{v.get('ticker')}: {v.get('grade')} ({v.get('category')}) -- {v.get('read', '')}")
+    if parts:
+        return "\n".join(parts), None
+    return None, (f"{label} document at {path} is empty in every known shape -- no document_text, "
+                  f"findings[], challenges[], catalyst_check[], obligations[] or verdicts[]. "
+                  f"Keys present: {sorted(d.keys())}")
+
+def cmd_round2packets(a):
+    """Assembles the Round-2 evidence pack for all 11 voting seats, deterministically -- this is the
+    single biggest remaining cost point in a run (the R2 pack was measured at ~75% of a run's token
+    cost) and, until now, the ONE place in the whole pipeline still assembled BY HAND by the
+    orchestrating session, retyping the same material into 11 separate spawn prompts (exactly the
+    'courier should just be a courier' problem, D-106) -- this closes it with the same
+    round-trip-verified, assert-hard-gate discipline as Phase 1's cmd_packets.
+
+    Inputs (all produced by earlier pipeline stages -- nothing new needs to be captured elsewhere):
+      --candidates   candidate_set.json          full universe rows
+      --menus        voice_menus.json            same per-voice field menus R1 uses
+      --phase4       rank/deliberation output    deliberation_set: [ticker, ...]
+      --tally        tally.json                  per-ticker "reasons": [{voice, reason, conviction,
+                                                  fields}, ...] -- this already IS the attributed R1
+                                                  case; nothing new needs to be captured for it either.
+      --rogers / --steenbarger / --lynch / --detectlens
+                     {"voice": <name>, "document_text": "<verbatim S5a/S5b output>"} -- ONE document
+                     per voice, covering the whole deliberation set, exactly as that voice already
+                     produces it today. No new output contract on any of these 4 voices was needed:
+                     the orchestrator saves their existing free-text document to this file, unedited,
+                     instead of retyping it into 11 prompts by hand.
+
+    Per-seat field slicing (1.4, REFINED beyond the plan's literal wording -- flagged, not hidden).
+    Pure own-menu-only slicing (the plan's literal wording) would let a voting seat receive another
+    seat's attributed R1 argument citing a field ("bracket.stop", "rs_leadership", ...) that isn't on
+    the reading seat's OWN menu -- meaning it could be handed a citation it has no way to check. That
+    is a live reasoning-quality risk (a seat can't honestly rebut a number it can't see), not just a
+    byte count, so each seat's row is sliced to the UNION of (a) its own R1 menu fields and (b) every
+    field any OTHER seat's attributed R1 reason cites for that name. This is still strictly smaller
+    than today's practice (the complete, unsliced CONSUMED row for every seat on every name) on every
+    real row exercised during this build, and it costs some of the theoretical -176KB estimate in
+    exchange for removing that risk entirely -- flagged here for visibility, not decided silently.
+
+    Self-case exclusion (1.5, held to the APPROVED SCOPE -- Round-1 case only). A seat's own R1
+    reason is dropped from its own packet (it already knows what it argued -- no committee member
+    needs their own words served back to them to vote). This does NOT extend to the S5a/S5b
+    documents (Lynch's own fundamentals memo, Detect-lens's own technical memo) -- those are single
+    whole-deliberation-set documents, not per-seat-attributable the way an R1 nomination is, and the
+    approved plan scoped 1.5 to 'Round-1 case' specifically. Extending self-exclusion to those two
+    documents would require a NEW per-ticker structured-output contract on 2 more voice agents --
+    a real footprint increase this build deliberately avoided. Revisit only if the PM wants it.
+
+    R3 defense-in-depth: re-asserts the QS_FORBIDDEN check against every seat's own menu AND against
+    every field any R1 reason cites -- own_menu alone would miss a forbidden field that only reaches
+    a packet via a citation. The same check cmd_packets already runs at R1, re-verified here rather
+    than assumed still true, because this is a second serving of the same universe rows through a
+    second code path.
+
+    Degradation handling: a missing rogers/steenbarger/lynch/detect-lens file is NOT silently treated
+    as an empty string -- it is a declared gap, because Round 2 without a challenge/memo pass
+    materially changes what the obligation register requires seats to answer (e.g., a Rogers-challenge
+    reply, O5, cannot be honestly filed against a challenge that was never delivered).
+
+    Orchestrator note (binds how this tool's OUTPUT is used, not this tool itself): per F1, every
+    seat's packet must still be INLINED into that seat's spawn prompt -- read this file's JSON and
+    paste it, never hand a voice a path. This tool removes the hand-assembly step; it does not
+    change the inlining rule.
+    """
+    CS, menus = load(a.candidates, needs=["universe"]), load(a.menus)
+    P4 = load(a.phase4, needs=["deliberation_set"])
+    tally = load(a.tally)   # accepted as a bare list OR {tally: [...]} — both shapes handled below
+    deliberation_set = P4["deliberation_set"]
+    uni = {r["ticker"]: r for r in CS["universe"]}
+    missing_rows = [t for t in deliberation_set if t not in uni]
+    assert not missing_rows, f"round2packets: deliberation-set ticker(s) not found in candidate_set.json: {missing_rows}"
+
+    reasons_by_ticker = {t["ticker"]: t["reasons"] for t in tally}
+
+    # R3, full depth: the earlier per-seat check below only re-verifies each seat's OWN
+    # menu. What actually reaches disk is own_menu UNION cited_fields (any field another
+    # seat's R1 reason names) -- a forbidden field could in principle reach a packet through
+    # a citation even with a clean menu. R1's cmd_packets already prevents a nominator from
+    # ever seeing a QS field to cite in the first place, so this is currently a no-op against
+    # real data (checked 2026-08-26: every real reason's "fields" list is empty) -- but it is
+    # the actual defense-in-depth the docstring below claims, not just the menu-only half of it.
+    all_cited_fields = sorted({f for reasons in reasons_by_ticker.values()
+                                for r in reasons for f in (r.get("fields") or [])})
+    cited_breach = [f for f in all_cited_fields if f in QS_FORBIDDEN or f.startswith("qs.")]
+    assert not cited_breach, (f"R3 breach: R1 reason(s) cite QS-forbidden field(s) {cited_breach} "
+                              f"-- a nominator's own R1 packet should never have contained one")
+
+    rogers_doc, rogers_gap = _load_document(a.rogers, "rogers challenge")
+    steenbarger_doc, steenbarger_gap = _load_document(a.steenbarger, "steenbarger challenge")
+    lynch_doc, lynch_gap = _load_document(a.lynch, "lynch fundamentals memo")
+    detectlens_doc, detectlens_gap = _load_document(a.detectlens, "detect-lens technical memo")
+    degradations = [g for g in (rogers_gap, steenbarger_gap, lynch_gap, detectlens_gap) if g]
+
+    os.makedirs(a.outdir, exist_ok=True)
+    missing_seats = [v for v in R2_VOTING_SEATS if v not in menus]
+    assert not missing_seats, f"round2packets: voice_menus.json is missing menu(s) for voting seat(s) {missing_seats}"
+    voting_seats = [v for v in R2_VOTING_SEATS if v in menus]
+
+    total_naive = total_actual = 0
+    for v in voting_seats:
+        own_menu = menus[v]
+        breach = [f for f in own_menu if f in QS_FORBIDDEN or f.startswith("qs.")]
+        assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
+        names_out = []
+        for t in deliberation_set:
+            row = uni[t]
+            all_reasons = reasons_by_ticker.get(t, [])
+            reasons = [r for r in all_reasons if r["voice"] != v]  # 1.5: own R1 case only, approved scope
+            cited_fields = sorted({f for r in all_reasons for f in (r.get("fields") or [])})
+            field_union = sorted(set(own_menu) | set(cited_fields))
+            sliced = _slice(row, field_union)
+
+            naive_row = {f: row.get(f) for f in CONSUMED}
+            total_naive += len(json.dumps({"row": naive_row, "r1_reasons": all_reasons}))
+            total_actual += len(json.dumps({"row": sliced, "r1_reasons": reasons}))
+
+            names_out.append({"ticker": t, "row": sliced, "r1_reasons": reasons})
+        out = {
+            "date": a.date, "voice": v, "deliberation_cap": len(deliberation_set),
+            "rogers_challenge_doc": rogers_doc, "steenbarger_challenge_doc": steenbarger_doc,
+            "lynch_memo_doc": lynch_doc, "detect_lens_memo_doc": detectlens_doc,
+            "names": names_out,
+        }
+        save(os.path.join(a.outdir, f"{v}.json"), out)
+
+    pct = (1 - total_actual / max(total_naive, 1)) * 100
+    print(f"receipt: {len(voting_seats)} Round-2 packets written to {a.outdir}; "
+          f"{len(deliberation_set)} names each; per-name row+reasons bytes {total_naive} -> {total_actual} "
+          f"({pct:.1f}% smaller vs today's full-row/full-reasons practice, per-voice-menu+cited-fields "
+          f"union, own R1 case dropped). Challenge/memo documents inlined verbatim, unchanged, "
+          f"identically across all {len(voting_seats)} seats.")
+    for g in degradations:
+        print(f"WARNING {g}")
+
+def _flat_fundamentals(f):
+    """FIX 2026-10-23 (handover 21 Oct item 6): the data-steward pack is NESTED (profile,
+    ratios_ttm.*TTM, growth_3y[]) but this digest read flat keys, so every fundamentals line in the
+    vote packet printed None on 21 and 22 Oct. Read the flat key when present, else map from the
+    nested FMP fields. No value is invented: a field neither shape carries stays None."""
+    if not isinstance(f, dict):
+        return f
+    r = f.get("ratios_ttm") or {}; g = (f.get("growth_3y") or [{}])[0] or {}
+    pfcf = r.get("priceToFreeCashFlowRatioTTM")
+    fill = {"pe_ratio": r.get("priceToEarningsRatioTTM"), "debt_to_equity": r.get("debtToEquityRatioTTM"),
+            "net_profit_margin": r.get("netProfitMarginTTM"),
+            "free_cash_flow_yield": (round(1 / pfcf, 4) if pfcf else None),
+            "revenue_growth_yoy": g.get("growthRevenue"), "eps_growth_yoy": g.get("growthEPS")}
+    out = dict(f)
+    for k, v in fill.items():
+        if out.get(k) is None and v is not None:
+            out[k] = v
+    return out
+
+
+VALEN_LEVEL_FREE = True   # R1: no Valen pivot/stop number ever reaches a seat
+
+
+def _valen_lines(path, rows, room):
+    """VALEN BLOCK (PM 2026-10-23: "very little of Valen data available ... I want to see it take
+    space"). AQE's VIV-System dashboard (aqe_valen_dashboard.json) + each room name's house-setup
+    grades and U&R read from the export row. Context only. Setup pivot/stop LEVELS are omitted (R1);
+    status and checklist pass counts are shown. Missing file -> a declared one-line gap, never silence."""
+    L = ["", "==== VALEN (AQE's VIV-System market weather + house setups; context, levels omitted under R1) ===="]
+    if not path or not os.path.exists(path):
+        L.append(f"VALEN NOT SERVED: {path or 'no --valen given'} -- declared gap, not a neutral reading.")
+        return L
+    v = json.load(open(path)); rm = v.get("read_me_first") or {}
+    L.append(f"Market weather (as of {rm.get('as_of')}): stance {(v.get('stance') or {}).get('word')} | "
+             f"trend regime {v.get('regime')} | doctrine: {rm.get('so_what')}")
+    for t in v.get("trend") or []:
+        L.append(f"  trend {t.get('symbol')}: daily_buy_signal {t.get('daily_buy_signal')} weekly_buy_signal "
+                 f"{t.get('weekly_buy_signal')} above_rising_5d {t.get('above_rising_5d')}")
+    for e in v.get("extension") or []:
+        L.append(f"  extension {e.get('label')}: {e.get('value')}")
+    for b in v.get("breadth") or []:
+        L.append(f"  breadth {b.get('label')}: {b.get('display') or b.get('value')}")
+    g = v.get("gex") or {}
+    if g:
+        L.append(f"  gamma {g.get('ticker')}: regime {g.get('regime')} flip {g.get('flip')} call_wall {g.get('call_wall')} "
+                 f"put_wall {g.get('put_wall')} ({g.get('commentary')})")
+    if v.get("neighbourhood"):
+        L.append("  leadership: " + " / ".join(v["neighbourhood"]))
+    nb = {r["ticker"]: [f["label"] for f in r.get("flags") or []] for r in (v.get("selection") or {}).get("no_buy_list") or []}
+    # R37 (PM 2026-11-01, weather-spec item 7): the parabolic warning and the no-buy flags used to sit INSIDE every
+    # per-name row and were cited in ~26% of oppositions -- a shared anchor. They now print ONCE, in a RISK block
+    # after the rows, labelled information beside the verdict. A per-name row carries setup status + checks and U&R only.
+    def _is_warning(x):
+        return "parabolic" in str(x.get("setup", "")).lower() or "failed leader" in str(x.get("setup", "")).lower()
+    risk = []
+    L.append("Per-name house setups (status + checklist passes) and U&R (undercut-and-rally):")
+    for t in room:
+        r = rows.get(t) or {}
+        gr = r.get("setups") or []
+        if isinstance(gr, dict):
+            gr = gr.get("grades") or []
+        warn = [x for x in gr if _is_warning(x)]
+        gr = [x for x in gr if not _is_warning(x)]
+        s = [f"{x.get('setup')} {x.get('status')} ({sum(1 for c in x.get('checks') or [] if c.get('result') == 'PASS')}/{len(x.get('checks') or [])})" for x in gr]
+        u = f"U&R {r.get('unr_status')}" + (f": {r.get('unr_note')}" if r.get("unr_note") else "")
+        L.append(f"  {t}: setups " + ("; ".join(s) if s else "no house setup present") + f" | {u}")
+        if t in nb:
+            risk.append(f"  {t}: no-buy flags -- {', '.join(nb[t])}")
+        for x in warn:
+            risk.append(f"  {t}: {x.get('setup')} {x.get('status')} (long-only risk warning, never a short call)")
+    L.append("==== RISK (Valen, information beside the verdict -- R37: never a reason to oppose, judge the name on your own method) ====")
+    L.extend(risk or ["  none flagged in the room"])
+    return L
+
+
+
+def cmd_challenge_packets(a):
+    """CHALLENGE PACKETS, TOOL-BUILT (2026-10-23). Until today the conductor hand-built these every
+    run (no tool existed -- 21 Oct declaration 10). Per challenge seat: the room's tally (who
+    nominated, convictions, lane, doors, held) and each room name's row sliced to THAT seat's menu
+    from voice_menus.json; lynch also gets the fundamentals pack entry per name. Nothing ranked,
+    nothing filtered: every deliberation-set name, in phase4 order."""
+    import glob as _g
+    menus = load(a.menus)
+    U = load(a.universe, needs=["universe"]); urows = {r["ticker"]: r for r in U["universe"]}
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"]); rk = {r["ticker"]: r for r in P4["ranked"]}
+    noms = collections.defaultdict(list)
+    for f in sorted(_g.glob(os.path.join(a.forms, "*.json"))):
+        d = json.load(open(f))
+        for n in d.get("nominations") or []:
+            noms[n["ticker"]].append((d.get("voice"), n.get("conviction")))
+    def get(r, f):
+        x = r
+        for part in f.split("."):
+            x = x.get(part) if isinstance(x, dict) else None
+        return x
+    tally = [{"ticker": t, "nomination_count": len(noms[t]), "seats": [v for v, _ in noms[t]],
+              "convictions": [c for _, c in noms[t]], "lane": rk[t]["lane"], "doors": rk[t]["doors"],
+              "held": bool((urows.get(t) or {}).get("held"))} for t in P4["deliberation_set"]]
+    missing = [t for t in P4["deliberation_set"] if t not in urows]
+    if missing:
+        raise SystemExit(f"challenge-packets: room names with no universe row {missing} -- refusing a silent gap")
+    fund = (load(a.fundamentals).get("tickers") if a.fundamentals and os.path.exists(a.fundamentals) else None)
+    os.makedirs(a.outdir, exist_ok=True)
+    for seat in a.seats:
+        if seat not in menus:
+            raise SystemExit(f"challenge-packets: no menu for {seat}")
+        d = {"date": a.date, "seat": seat, "tally": tally,
+             "rows": [[t, {"ticker": t, **{f: get(urows[t], f) for f in menus[seat]}}] for t in P4["deliberation_set"]]}
+        if seat == "lynch":
+            if fund is None:
+                raise SystemExit("challenge-packets: lynch needs --fundamentals (fundamentals_pack.json)")
+            d["fundamentals"] = [[t, fund.get(t) or {"unserved": True}] for t in P4["deliberation_set"]]
+        out = os.path.join(a.outdir, f"challenge_{seat}.json"); json.dump(d, open(out, "w"))
+        print(f"wrote {out}: {os.path.getsize(out)} bytes, {len(tally)} names")
+
+def cmd_r2digest(a):
+    """ROUND-2 PACKET, TOOL-BUILT (v5.3, PM ruling 2026-09-05). One text file every voting seat reads.
+
+    Replaces the hand-assembled deliberation brief + raw-JSON challenge paste that ran 183KB on
+    2026-09-04. Two rules: (1) every data field comes straight from the export under its REAL
+    name -- the hand-built version printed `stop_basis` (does not exist) and manufactured a data
+    gap; (2) the four challenge documents are reduced to what a voter acts on: findings and
+    obligations in full, per-name grades as one line each, declarations/method-limits dropped.
+    Target <= 70KB. Bracket fields are printed for information; the header restates PM ruling R1."""
+    D = load(a.export, needs=["daily_list"]); rows = {r["ticker"]: r for r in D["daily_list"]}
+    for r in D.get("held_positions", []) or []:
+        rows.setdefault(r["ticker"], r)
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"]); T = load(a.tally); TL = T["tally"] if isinstance(T, dict) and "tally" in T else T
+    tal = {x["ticker"]: x for x in TL}
+    FP = (load(a.fundamentals, needs=["tickers"])["tickers"]
+          if a.fundamentals and os.path.exists(a.fundamentals) else {})
+    ds = P4["deliberation_set"]; doors = {r["ticker"]: r.get("doors", []) for r in P4.get("ranked", [])}
+    L = [f"AEGIS {a.run_id} -- ROUND 2 VOTE PACKET (tool-built, identical for every voting seat)",
+         f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
+         "PM RULING R1 (binding): bracket validity, risk% and R:R are INFORMATION, never a reason to reject. Judge on signals.",
+         "DOORS: how each name reached this vote -- SEATS (>=2 nominators) | SOLO (1 nominator at conviction>=4 + a momentum door) | ELDER+LENS (elder>=7 x2 bars AND >=3 lenses strong) | LENS (>=4/6 lenses strong) | STRENGTH (top-decile 20d RS, or mp>=75 accelerating) | PM_LENS (>=5/6) | AQE_LEADER (SUSTAINED/ACCELERATION + LEADER). A name with no SEATS/SOLO door was nominated by nobody.",
+         "LANES (PM ruling 2026-09-22 D120; R32 2026-10-30): every name carries lane=MOMENTUM or lane=PULLBACK as a LABEL -- how it reached the room. ALL seven deciders vote on ALL names and every ratification counts on every ticket (R32). No seat list decides a verdict.",
+         "R13 (binding): mp_state FADING means 'momentum score not higher than 3 bars ago' -- a default label that includes flat-at-high. It is NOT a decay signal and is NEVER on its own a reason to oppose. Read mp, mp_accel_state and the returns.",
+         "R25/R27 (binding): a name with door STRONG_SEAT (among today's strongest on AQE's lists) or UNR_SEAT (Valen reclaim day) was seated by rule -- NO voice nominated it. That is not a reason to oppose. Apply YOUR method to it: is the momentum real, where would you enter, where would you be wrong. Do not PASS it only because it does not match your own scan's setup shape -- the PM wants the committee's verdict on the strongest names, not a re-run of each seat's screen.",
+         "R27 (binding; R14's momentum point, R32 counting): on a MOMENTUM-lane name extension above the 20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a WEIGHT, never a veto. A momentum-lane name is judged on strength, institutional money, coil and momentum -- the book this lane exists to buy. Your vote counts whatever the lane; say your case BOTH ways in the case form (R36).",
+         ""]
+    if a.macro:
+        for mf in a.macro:
+            if os.path.exists(mf):
+                m = load(mf)
+                L.append(f"MACRO [{m.get('voice')}] family={m.get('expression_family')} size={m.get('size_multiplier', m.get('size_posture'))} | {str(m.get('so_what',''))[:400]}")
+        L.append("")
+    if getattr(a, "crown", None):
+        # R31 (PM 2026-10-30): Crown and Druckenmiller stood down as voices. The weather is read from AQE's
+        # own Crown file (aegis/output/aqe_crown_macro.json): the_call, the leading scenario, the plain-English
+        # headline and what would change it (which lives under read_me_first, never top level).
+        if os.path.exists(a.crown):
+            C = load(a.crown); call = C.get("the_call") or {}; sc = C.get("scenario") or {}; rm = C.get("read_me_first") or {}
+            L.append(f"MACRO (from AQE's Crown file, generated {C.get('generated_at')}, status {C.get('status')}): "
+                     f"call {call.get('expression_family')} (match {call.get('match_quality')}, size x{call.get('size_multiplier')}) | "
+                     f"scenario {sc.get('leading')}" + (f" (runner-up {sc.get('runner_up')}, contested)" if sc.get('contested') else "")
+                     + f" | {str(rm.get('headline') or '')[:300]}")
+            for w in (rm.get("what_would_change_it") or [])[:3]:
+                L.append(f"  would change it: {str(w)[:200]}")
+            L.append("")
+        else:
+            L.append(f"MACRO: Crown file {a.crown} NOT FOUND -- declared gap; no seat may invent the weather"); L.append("")
+    L.append("=" * 90)
+    for t in ds:
+        r = rows.get(t, {}); x = tal.get(t, {}); f = FP.get(t, {}); b = r.get("bracket") or {}
+        lane = next((rr.get("lane", "PULLBACK") for rr in P4.get("ranked", []) if rr["ticker"] == t), "PULLBACK")
+        L.append(f"### {t}  lane={lane}  doors={','.join(doors.get(t, [])) or 'SEATS'}  seats={x.get('count', 0)} conv_sum={x.get('sumc', 0)}")
+        L.append(f"  momentum: rs_spy_20d {r.get('rs_spy_20d')} | rs_rank_pct {r.get('rs_rank_pct')} | ret_63d {r.get('ret_63d')} ret_6m {r.get('ret_6m')} ret_12m {r.get('ret_12m')} | run_10d {r.get('pct_run_10d')}% | adx {r.get('adx_14')} | ext_atr20 {r.get('extension_atr_20')} | from_52w_hi {r.get('pct_from_52w_high')}% | mp {r.get('mp')} {r.get('mp_state')} ({MP_STATE_PLAIN.get(r.get('mp_state'), 'unlabelled')}) | runner {r.get('runner_setup')}")
+        L.append(f"  AQE rank {r.get('rank')} | sc_mom {r.get('sc_momentum')} | {r.get('gics_sector_name')} / {r.get('sector_trend_state')} | entry {r.get('entry')} | source {r.get('source')}")
+        L.append(f"  structure {r.get('structure')} {r.get('structure_shift')} | sma_dist {r.get('sma_distance_pct')}% | ma20 {r.get('ma_20')} ma50 {r.get('ma_50')} ma100 {r.get('ma_100')} ma200 {r.get('ma_200')}")
+        L.append(f"  atr {r.get('atr_14d')} | day_vol {r.get('day_vol')} | flow {r.get('flow')} | energy {r.get('energy')} | mp {r.get('mp_state')}/{r.get('mp_accel_state')} | rs {r.get('rs_leadership')} spy20 {r.get('rs_spy_20d')} downday {r.get('rs_down_day_20d')}")
+        L.append(f"  elder {r.get('elder')} {r.get('elder_5d')} {r.get('elder_pattern')} | div {r.get('div_state')}/{r.get('div_bear_count')} | lens {r.get('lens')}")
+        hb = r.get("held_book") or (r if r.get("held") and "hl_state" in r else None)
+        if hb:
+            # 2026-09-16: round 2 merged held_positions into `rows` since 2026-09-05 but printed
+            # only the candidate field block, so the vote packet was as blind to hl_state as the
+            # nominating TSVs were. A voting seat sees the position, the cost and the verdict.
+            L.append(f"  *** HELD POSITION -- qty {hb.get('qty')} @ {hb.get('entry')} since "
+                     f"{hb.get('trade_date')} | unrealised {hb.get('unreal_usd')} | "
+                     f"AQE HEALTH {hb.get('hl_state')} (score {hb.get('hl_score')}) | "
+                     f"written stop {hb.get('held_sl')} tp1 {hb.get('held_tp1')} tp2 {hb.get('held_tp2')} | "
+                     f"knn p={hb.get('knn_prob')} path {hb.get('knn_tp1')}/{hb.get('knn_tp2')}/{hb.get('knn_tp3')} | "
+                     f"vwap14 {hb.get('vwap_14d')} price is {hb.get('vwap_14d_position')} it ***")
+        if b.get("valid"):
+            L.append(f"  bracket VALID: stop {b.get('stop')} ({b.get('stop_type')}) risk {b.get('risk_pct')}% rr_tp1 {b.get('rr_tp1')} rr_tp2 {b.get('rr_tp2')}   [information only -- R1]")
+        else:
+            L.append(f"  bracket INVALID ({b.get('invalid_reason')}) atr_fallback_stop {b.get('atr_fallback_stop')}   [information only -- R1]")
+        if f:
+            f = _flat_fundamentals(f)
+            L.append(f"  fundamentals: pe {f.get('pe_ratio')} peg {f.get('peg_ratio')} fwd_peg {f.get('forward_peg')} fcf_yld {f.get('free_cash_flow_yield')} d/e {f.get('debt_to_equity')} net_margin {f.get('net_profit_margin')} rev_g {f.get('revenue_growth_yoy')} eps_g {f.get('eps_growth_yoy')} piotroski {f.get('piotroski_score')} altman {f.get('altman_z')}" + (f" | NOTE: {f['note'][:160]}" if f.get('note') else ""))
+        for rs in (x.get("reasons") or []):
+            L.append(f"   R1 [{rs.get('voice')} conv {rs.get('conviction')}] {rs.get('reason')}")
+        L.append("")
+    L.append("=" * 90)
+    L.append("CHALLENGE ROUND -- findings and obligations in full; per-name grades one line each; method declarations omitted.")
+    def digest(name, path):
+        if path is None and name in ("rogers", "lynch", "detect-lens"):
+            L.append(f"--- {name.upper()}: retired seat (R31, PM 2026-10-30) -- not part of this committee ---"); return
+        if not path or not os.path.exists(path):
+            L.append(f"--- {name.upper()}: NOT FILED ---"); return
+        c = load(path)
+        L.append(f"--- {name.upper()} ---")
+        before = len(L)
+        # SHAPE-TOLERANT since 2026-09-07. Challenge seats do not all file findings[]: the crowding
+        # seat files challenges[]/catalyst_check[]. This reader looked only for findings[] and emitted
+        # a SILENT EMPTY SECTION -- a whole challenge document dropped out of the vote packet with no
+        # error. Alias the known equivalents; refuse to emit an empty section for a filed document.
+        fnd = list(c.get("findings") or []) + list(c.get("challenges") or []) \
+            + list(c.get("catalyst_check") or []) + list(c.get("entries") or [])
+        for fd in fnd:
+            sc = fd.get("scope", ""); tag = fd.get("id") or fd.get("axis") or fd.get("kind") or ""
+            claim = fd.get("claim") or fd.get("challenge") or fd.get("question") or fd.get("read") or ""
+            L.append(f"  [{sc}{(' ' + tag) if tag else ''}] {str(claim)[:a.claim_chars]}")
+            ev = fd.get("evidence") or fd.get("basis") or fd.get("data")
+            if ev: L.append(f"      evidence: {str(ev)[:a.evidence_chars]}")
+            owed = fd.get("what_is_owed") or fd.get("addressed_to")
+            if owed: L.append(f"      owed: {owed}")
+        for ob in c.get("obligations", []) or []:
+            L.append(f"  OBLIGATION {ob.get('seat')} on {ob.get('ticker')} [{ob.get('class') or ob.get('obligation')}]: {str(ob.get('what_is_owed'))[:a.evidence_chars]}")
+        for v in c.get("verdicts", []) or []:
+            L.append(f"  {v.get('ticker')}: {v.get('grade')} ({v.get('category')}) -- {str(v.get('read', ''))[:220]}")
+        for rd in c.get("reads", []) or []:
+            L.append(f"  {rd.get('ticker')}: {rd.get('grade')} -- {str(rd.get('structure_read') or rd.get('structure') or '')[:200]}")
+        if len(L) == before:
+            raise SystemExit(f"r2digest: challenge document '{name}' ({path}) produced ZERO lines -- "
+                             f"its top-level keys are {sorted(c.keys())}. Refusing to build a vote "
+                             f"packet with a silently empty challenge section.")
+        L.append("")
+    digest("rogers", a.rogers); digest("steenbarger", a.steenbarger); digest("lynch", a.lynch); digest("detect-lens", a.detectlens)
+    if getattr(a, "valen", None) is not None:
+        L.extend(_valen_lines(a.valen, rows, P4["deliberation_set"]))
+    txt = "\n".join(L); open(a.out, "w").write(txt)
+    import hashlib
+    print(f"wrote {a.out}: {len(txt)} bytes, {txt.count(chr(10)) + 1} lines, md5 {hashlib.md5(txt.encode()).hexdigest()}")
+    if len(txt) > a.max_bytes:
+        print(f"WARNING r2digest exceeds --max-bytes {a.max_bytes}: trim per-name reads or findings evidence")
+
+
+def cmd_consensus(a):
+    """SUPERSEDED (R34, PM 2026-10-30). This is the BLIND TALLY reader under the retired rule
+    (support > oppose AND support >= 2 AND median conviction >= 3, momentum lane counted by the
+    legacy STRENGTH_SEATS label). It is no longer the verdict: RUN.yaml's DECIDE step runs
+    `ratify-count` on the deciders' final ratification of the Chair's slate. Kept so the 2026-09-06
+    regression fixtures keep reproducing and so a reader of old run dirs still works."""
+    print("consensus: SUPERSEDED by R34 (PM 2026-10-30) -- blind tally under the retired rule, NOT the "
+          "verdict. The verdict is `ratify-count` on the final ratification.")
+    # SHAPE-TOLERANT since 2026-09-07. The v5.3 vote schema is votes[]/vote; this reader shipped
+    # against the legacy stances[]/stance and silently returned an EMPTY tally on real forms --
+    # a silent wrong answer, the worst failure class. It now accepts either shape natively.
+    R2 = load(a.round2, needs=["voice"])  # {voice, votes:[...]}; legacy shape carried stances[]
+    by_t = collections.defaultdict(lambda: {"support": [], "oppose": [], "abstain": [], "conv": []})
+    ignored = [vr.get("voice") for vr in R2 if vr.get("voice") in CONSULTED_SEATS]
+    R2 = [vr for vr in R2 if vr.get("voice") not in CONSULTED_SEATS]   # R22
+    if ignored:
+        print(f"consensus: R22 -- ballot(s) from consulted seat(s) {ignored} ignored; they carry no vote")
+    for vr in R2:
+        rows = vr.get("votes")
+        if rows is None:
+            rows = vr.get("stances") or []
+        for s in rows:
+            raw = s.get("vote", s.get("stance"))
+            if raw is None:
+                raise SystemExit(f"consensus: {vr.get('voice')} row for {s.get('ticker')} has neither 'vote' nor 'stance'")
+            st = str(raw).lower()
+            by_t[s["ticker"]][st if st in ("support", "oppose", "abstain") else "abstain"].append(vr["voice"])
+            if st == "support":
+                by_t[s["ticker"]]["conv"].append(s.get("conviction", 3))
+    if not by_t:
+        raise SystemExit(f"consensus: read {len(R2)} forms and found ZERO votes -- refusing to emit "
+                         f"an empty tally. Check the vote form shape (expected votes[] or stances[]).")
+    # TWO LANES (PM ruling 2026-09-22, D120 decision 7). phase4.json carries a lane per admitted
+    # name. MOMENTUM-lane verdicts are computed from STRENGTH_SEATS only; the other seats' votes
+    # are kept on the row as `advisory` and change nothing. PULLBACK-lane verdicts use every vote.
+    # Why: on 2026-09-21 every extended name admitted was voted HOLD or PASS by the same bloc
+    # (wyckoff, seow, oneil, raschke, minervini, lynch) citing extension -- rules that are correct
+    # for a pullback book and wrong for a momentum one. A door can admit a runner; only a lane
+    # lets the vote keep it.
+    lanes = {}
+    if getattr(a, "phase4", None) and os.path.exists(a.phase4):
+        P4 = load(a.phase4, needs=["ranked"])
+        lanes = {r["ticker"]: r.get("lane", "PULLBACK") for r in P4["ranked"]}
+    out = []
+    for t, d in by_t.items():
+        lane = lanes.get(t, "PULLBACK")
+        if lane == "MOMENTUM":
+            counted = {k: [v for v in d[k] if v in STRENGTH_SEATS] for k in ("support", "oppose", "abstain")}
+            advisory = {k: [v for v in d[k] if v not in STRENGTH_SEATS] for k in ("support", "oppose", "abstain")}
+            conv = [c for v, c in zip(d["support"], d["conv"]) if v in STRENGTH_SEATS]
+        else:
+            counted = {k: list(d[k]) for k in ("support", "oppose", "abstain")}
+            advisory = {"support": [], "oppose": [], "abstain": []}
+            conv = list(d["conv"])
+        sup, opp = len(counted["support"]), len(counted["oppose"])
+        med = statistics.median(conv) if conv else 0
+        if sup > opp and sup >= 2 and med >= 3:
+            verdict = "ADVANCE"
+        elif sup >= 2:
+            verdict = "HOLD-FOR-CONDITIONS"
+        else:
+            verdict = "PASS"
+        conviction = min(int(med) if med else 2, 4 if sup < 3 else 5, 3 if verdict != "ADVANCE" else 5)
+        out.append({"ticker": t, "verdict": verdict, "conviction": conviction, "lane": lane,
+                    "split": counted, "advisory": advisory})
+    save(a.out, out)
+    print("receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}" for c in sorted(out, key=lambda x: x['ticker'])))
+
+# =====================================================================================================
+# THE COMMITTEE ROUNDS (R34-R36, PM 2026-10-30). Three tool steps: `board` marks the contested names
+# after the blind vote (no verdict), `floor-check` counts the floor caps across message files, and
+# `ratify-count` counts OBJECT answers on the deciders' final ratification and writes consensus.json
+# in the SAME SHAPE every downstream reader already consumes (ticker / verdict / conviction / lane /
+# split) plus `status`, the objections and the per-voice record (R35). Code counts; it never judges.
+# =====================================================================================================
+def _load_forms(spec, label):
+    """A directory, a glob, or one file holding a list or an object. Every form is a dict with
+    `voice`. Refuses an empty read loudly -- an empty room is a failure, never a quiet tally."""
+    import glob as _g
+    paths = []
+    if spec and os.path.isdir(spec):
+        paths = sorted(_g.glob(os.path.join(spec, "*.json")))
+    elif spec and any(ch in spec for ch in "*?["):
+        paths = sorted(_g.glob(spec))
+    elif spec and os.path.exists(spec):
+        paths = [spec]
+    out = []
+    for p in paths:
+        d = json.load(open(p, encoding="utf-8"))
+        items = d if isinstance(d, list) else [d]
+        for it in items:
+            if not isinstance(it, dict) or "voice" not in it:
+                raise SystemExit(f"{label}: {p} holds a form without `voice` -- refusing to count it")
+            it.setdefault("_file", p)
+            out.append(it)
+    if not out:
+        raise SystemExit(f"{label}: no forms found at {spec!r} -- refusing to count an empty room")
+    return out
+
+
+def _split_deciders(forms, label):
+    """Deciders count; anybody else is ignored LOUDLY (printed), never silently."""
+    keep = [f for f in forms if f.get("voice") in DECIDERS]
+    ignored = sorted({f.get("voice") for f in forms if f.get("voice") not in DECIDERS})
+    if ignored:
+        print(f"{label}: R31 -- form(s) from non-decider seat(s) {ignored} IGNORED; only {DECIDERS} count")
+    return keep, ignored
+
+
+def _case_summary(v):
+    c = v.get("case") or {}
+    return {"vote": str(v.get("vote", v.get("stance", ""))).upper(), "conviction": v.get("conviction"),
+            "reason": v.get("reason"), "for": c.get("for"), "against": c.get("against"),
+            "entry_trigger": c.get("entry_trigger"), "wrong_if": c.get("wrong_if"),
+            "horizon_sessions": c.get("horizon_sessions"), "would_change_my_mind": c.get("would_change_my_mind"),
+            "cannot_see": c.get("cannot_see"), "opposing_case": v.get("opposing_case"), "self_counter": v.get("self_counter")}
+
+
+def cmd_board(a):
+    """R36 round 3, the Chair's BOARD. From the deciders' blind votes (and Steenbarger's challenge):
+    per room name, the blind split, every decider's case, and whether the name is CONTESTED -- both
+    SUPPORT and OPPOSE present among the deciders, or named in the challenge document. The floor
+    opens on contested names only. NO VERDICT IS COMPUTED HERE (asserted): the board is what the
+    seats said, laid out for them to argue over."""
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"])
+    ds = list(P4["deliberation_set"])
+    lanes = {r["ticker"]: r.get("lane", "PULLBACK") for r in P4["ranked"]}
+    forms, ignored = _split_deciders(_load_forms(a.round2, "board"), "board")
+    present = sorted({f["voice"] for f in forms})
+    absent = [v for v in DECIDERS if v not in present]
+    by_t = {t: {"support": [], "oppose": [], "abstain": [], "convictions": {}, "cases": {}} for t in ds}
+    off_room = []
+    for f in forms:
+        for v in (f.get("votes") if f.get("votes") is not None else f.get("stances") or []):
+            t = v.get("ticker")
+            if t not in by_t:
+                off_room.append((f["voice"], t)); continue
+            st = str(v.get("vote", v.get("stance", "abstain"))).lower()
+            by_t[t][st if st in ("support", "oppose", "abstain") else "abstain"].append(f["voice"])
+            by_t[t]["convictions"][f["voice"]] = v.get("conviction")
+            by_t[t]["cases"][f["voice"]] = _case_summary(v)
+    challenged = {}
+    if a.challenge and os.path.exists(a.challenge):
+        C = load(a.challenge)
+        for fd in list(C.get("findings") or []) + list(C.get("challenges") or []):
+            tk = fd.get("ticker") or (fd.get("scope") if fd.get("scope") in by_t else None)
+            if tk in by_t:
+                challenged.setdefault(tk, []).append(str(fd.get("claim") or fd.get("challenge") or "")[:200])
+    elif a.challenge:
+        print(f"board: challenge document {a.challenge} not found -- declared; contested set from the blind split alone")
+    names = []
+    for t in ds:
+        d = by_t[t]
+        split_contest = bool(d["support"]) and bool(d["oppose"])
+        why = []
+        if split_contest:
+            why.append(f"blind split {len(d['support'])} support / {len(d['oppose'])} oppose")
+        if t in challenged:
+            why.append(f"named in Steenbarger's challenge ({len(challenged[t])} finding(s))")
+        names.append({"ticker": t, "lane": lanes.get(t, "PULLBACK"),
+                      "split": {k: list(d[k]) for k in ("support", "oppose", "abstain")},
+                      "convictions": d["convictions"], "contested": bool(why), "why_contested": why,
+                      "challenge_claims": challenged.get(t, []), "cases": d["cases"]})
+    out = {"schema": "board.v1", "date": a.date, "deliberation_set": ds,
+           "deciders_present": present, "deciders_absent": absent, "ignored_ballots": ignored,
+           "ballots_off_room": [f"{v}:{t}" for v, t in off_room],
+           "contested": [n["ticker"] for n in names if n["contested"]],
+           "uncontested_support": [n["ticker"] for n in names if not n["contested"] and n["split"]["support"] and not n["split"]["oppose"]],
+           "uncontested_oppose": [n["ticker"] for n in names if not n["contested"] and n["split"]["oppose"] and not n["split"]["support"]],
+           "challenged": sorted(challenged), "names": names,
+           "floor_rule": f"two messages per decider per contested name (floor-check counts); the Chair posts, never votes"}
+    assert "verdict" not in json.dumps(out), "board must never carry a verdict"
+    save(a.out, out)
+    print(f"board: {len(ds)} names, {len(present)} deciders present{(' (absent: ' + ', '.join(absent) + ')') if absent else ''}; "
+          f"CONTESTED {len(out['contested'])}: {' '.join(out['contested']) or 'none'}; "
+          f"unanimous support {len(out['uncontested_support'])}, unanimous oppose {len(out['uncontested_oppose'])}")
+
+
+def cmd_floor_check(a):
+    """R36: the floor caps, counted by code across the message files. Two messages per seat per name;
+    messages only on names open on the floor (the board's contested set, or -- after a hold -- the
+    held tickets only); every reply points at a message that exists. Exit 1 on any breach, with the
+    list. Also writes the floor record: who spoke on what, who changed their mind and what moved them."""
+    import collections as _c
+    B = load(a.board, needs=["contested"])
+    if a.qa:
+        Q = load(a.qa, needs=["holds"])
+        allowed = sorted({h["ticker"] for h in Q["holds"]})
+        basis = "held tickets (QA hold round)"
+    else:
+        allowed = list(B["contested"]); basis = "board.contested"
+    try:
+        msgs = _load_forms(a.messages, "floor-check")
+    except SystemExit:
+        msgs = []   # a silent floor is allowed: a seat may have nothing to add. Recorded as such.
+    errs, counts, ids = [], _c.Counter(), {}
+    for m in msgs:
+        v, t, mid = m.get("voice"), m.get("ticker"), m.get("msg_id")
+        if v not in DECIDERS and v != QA_SEAT:
+            errs.append(f"{mid}: voice {v!r} may not speak on the floor (R31)")
+        if t not in allowed:
+            errs.append(f"{mid}: {t} is not open on the floor ({basis}: {allowed})")
+        if mid in ids:
+            errs.append(f"{mid}: duplicate msg_id")
+        ids[mid] = m
+        counts[(v, t)] += 1
+    for (v, t), n in sorted(counts.items()):
+        if n > FLOOR_MSG_CAP:
+            errs.append(f"{v} sent {n} messages on {t} -- cap is {FLOOR_MSG_CAP} per seat per name (R36)")
+    for m in msgs:
+        irt = m.get("in_reply_to")
+        if irt is not None and irt not in ids:
+            errs.append(f"{m.get('msg_id')}: in_reply_to {irt!r} is not a message on this floor")
+    per = {}
+    for t in allowed:
+        ms = [m for m in msgs if m.get("ticker") == t]
+        per[t] = {"messages": len(ms), "speakers": sorted({m["voice"] for m in ms}),
+                  "changed_mind": [{"voice": m["voice"], "stance_now": m.get("stance_now"),
+                                    "what_moved_me": m.get("what_moved_me")} for m in ms if m.get("changed_mind")],
+                  "msg_ids": [m.get("msg_id") for m in ms]}
+    out = {"schema": "floor_check.v1", "ok": not errs, "errors": errs, "basis": basis, "allowed": allowed,
+           "messages": len(msgs), "per_name": per, "cap_per_seat_per_name": FLOOR_MSG_CAP}
+    save(a.out, out)
+    print(f"floor-check: {len(msgs)} messages on {len(allowed)} open name(s); "
+          + ("OK" if not errs else f"{len(errs)} BREACH(ES):\n  " + "\n  ".join(errs)))
+    if errs:
+        raise SystemExit(1)
+
+
+def cmd_ratify_count(a):
+    """R34, the CLOSE. Counts OBJECT answers per slate ticket on the deciders' FINAL ratification:
+    0 = AGREED; 1..thr-1 = CONTESTED; >= thr = DROPPED, thr = ceil(n/2) of the n deciders present
+    (4 of 7). Writes consensus.json in the shape every downstream reader consumes -- verdict in the
+    machine words (slate ADVANCE -> ADVANCE, slate WATCH -> HOLD-FOR-CONDITIONS, DROPPED and never-
+    slated room names -> PASS) with `status`, the objections (and what would clear them), the
+    reservations, and a conviction that is an ORDERING figure only. Writes committee_record.json
+    (R35): per voice, per ticket -- blind vote, horizon, floor messages, change of mind, ratification.
+    After a QA hold, --ratifications2 answers replace the first ones for the HELD tickets only."""
+    import math
+    S = load(a.slate, needs=["tickets"])
+    tickets = S["tickets"]
+    if len(tickets) > SLATE_CAP:
+        raise SystemExit(f"ratify-count: slate carries {len(tickets)} tickets > {SLATE_CAP} (R34) -- refusing; the registrar should have rejected it")
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"])
+    ds = list(P4["deliberation_set"]); lanes = {r["ticker"]: r.get("lane", "PULLBACK") for r in P4["ranked"]}
+    slate_t = [x["ticker"] for x in tickets]
+    off = [t for t in slate_t if t not in ds]
+    if off:
+        raise SystemExit(f"ratify-count: slate tickets not in the deliberation set {off} -- the Chair may not add a name the room never voted")
+    R1, ignored = _split_deciders(_load_forms(a.ratifications, "ratify-count"), "ratify-count")
+    answers = {t: {} for t in slate_t}
+    for f in R1:
+        for r in f.get("tickets") or []:
+            if r.get("ticker") in answers:
+                answers[r["ticker"]][f["voice"]] = dict(r, _round=1)
+    held = set()
+    if a.qa and os.path.exists(a.qa):
+        Q = load(a.qa, needs=["holds"]); held = {h["ticker"] for h in Q["holds"]}
+    if a.ratifications2:
+        R2, ign2 = _split_deciders(_load_forms(a.ratifications2, "ratify-count (after hold)"), "ratify-count (after hold)")
+        ignored = sorted(set(ignored) | set(ign2))
+        for f in R2:
+            for r in f.get("tickets") or []:
+                if r.get("ticker") not in held:
+                    raise SystemExit(f"ratify-count: {f['voice']} re-ratified {r.get('ticker')}, which was NOT held -- after a hold only the held tickets are ratified again (R36)")
+                answers[r["ticker"]][f["voice"]] = dict(r, _round=2)
+    present = sorted({f["voice"] for f in R1})
+    n = len(present)
+    if n < 4:
+        raise SystemExit(f"ratify-count: only {n} decider(s) ratified ({present}) -- fewer than 4 is no committee; halt and declare")
+    thr = math.ceil(n / 2)
+    board = load(a.board, needs=["names"]) if a.board and os.path.exists(a.board) else None
+    bnames = {x["ticker"]: x for x in (board or {}).get("names", [])}
+    out, record = [], []
+    for x in tickets:
+        t = x["ticker"]; rows = answers[t]
+        missing = [v for v in present if v not in rows]
+        objectors = sorted(v for v, r in rows.items() if r.get("answer") == "OBJECT")
+        reservers = sorted(v for v, r in rows.items() if r.get("answer") == "AGREE_WITH_RESERVATION")
+        agreers = sorted(v for v, r in rows.items() if r.get("answer") == "AGREE")
+        n_obj = len(objectors)
+        status = "AGREED" if n_obj == 0 else ("DROPPED" if n_obj >= thr else "CONTESTED")
+        verdict = ("PASS" if status == "DROPPED"
+                   else {"ADVANCE": "ADVANCE", "WATCH": "HOLD-FOR-CONDITIONS"}[x["verdict"]])
+        conviction = 5 if (status == "AGREED" and not reservers) else 4 if status == "AGREED" else 3 if status == "CONTESTED" else 2
+        out.append({"ticker": t, "verdict": verdict, "status": status, "slate_verdict": x["verdict"],
+                    "conviction": conviction, "conviction_basis": "ordering only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate",
+                    "lane": lanes.get(t, "PULLBACK"),
+                    "split": {"support": agreers + reservers, "oppose": objectors, "abstain": []},
+                    "advisory": {"support": [], "oppose": [], "abstain": []},
+                    "objections": [{"voice": v, "objection": rows[v].get("objection"), "would_clear": rows[v].get("would_clear")} for v in objectors],
+                    "reservations": [{"voice": v, "reservation": rows[v].get("reservation")} for v in reservers],
+                    "held": t in held, "n_deciders": n, "drop_threshold": thr,
+                    "entry_trigger": x.get("entry_trigger"), "wrong_if": x.get("wrong_if"),
+                    "horizon_sessions": x.get("horizon_sessions"), "why_agreed": x.get("why_agreed"),
+                    "dissent": x.get("dissent") or [],
+                    "gaps": [f"no ratification from {v}" for v in missing]})
+    for t in ds:
+        if t in answers:
+            continue
+        b = bnames.get(t) or {}
+        bs = b.get("split") or {"support": [], "oppose": [], "abstain": []}
+        out.append({"ticker": t, "verdict": "PASS", "status": "NOT_SLATED", "slate_verdict": None, "conviction": 1,
+                    "conviction_basis": "ordering only (R34)", "lane": lanes.get(t, "PULLBACK"),
+                    "split": {k: list(bs.get(k, [])) for k in ("support", "oppose", "abstain")},
+                    "advisory": {"support": [], "oppose": [], "abstain": []}, "objections": [], "reservations": [],
+                    "held": False, "n_deciders": n, "drop_threshold": thr, "gaps": [] if b else ["no board row -- blind split unknown"]})
+    save(a.out, out)
+    # ---- R35: the record. Per voice, per ticket. ----
+    msgs = []
+    if a.messages:
+        try:
+            msgs = _load_forms(a.messages, "ratify-count record")
+        except SystemExit:
+            msgs = []
+    if a.messages2:
+        try:
+            msgs += _load_forms(a.messages2, "ratify-count record (hold round)")
+        except SystemExit:
+            pass
+    final = {c["ticker"]: c for c in out}
+    for v in present:
+        for t in ds:
+            b = (bnames.get(t) or {}).get("cases", {}).get(v) or {}
+            mine = [m for m in msgs if m.get("voice") == v and m.get("ticker") == t]
+            r = answers.get(t, {}).get(v)
+            moved = [m for m in mine if m.get("changed_mind")]
+            record.append({"date": a.date, "voice": v, "ticker": t,
+                           "blind_vote": b.get("vote"), "blind_conviction": b.get("conviction"),
+                           "horizon_sessions": b.get("horizon_sessions"), "entry_trigger": b.get("entry_trigger"),
+                           "wrong_if": b.get("wrong_if"),
+                           "floor_messages": [m.get("msg_id") for m in mine],
+                           "changed_mind": bool(moved), "what_moved_me": [m.get("what_moved_me") for m in moved],
+                           "stance_after_floor": (mine[-1].get("stance_now") if mine else b.get("vote")),
+                           "ratification": (r or {}).get("answer"), "ratification_round": (r or {}).get("_round"),
+                           "objection": (r or {}).get("objection"), "would_clear": (r or {}).get("would_clear"),
+                           "reservation": (r or {}).get("reservation"),
+                           "final_status": final[t]["status"], "final_verdict": final[t]["verdict"]})
+    rec = {"schema": "committee_record.v1", "date": a.date, "deciders_present": present, "deciders_absent": [v for v in DECIDERS if v not in present],
+           "ignored_ballots": ignored, "n_deciders": n, "drop_threshold": thr, "slate": slate_t, "held": sorted(held),
+           "qa": (load(a.qa) if a.qa and os.path.exists(a.qa) else None), "rows": record}
+    save(a.record, rec)
+    by = collections.Counter(c["status"] for c in out)
+    print(f"ratify-count: {n} deciders, drop at >= {thr} objections; "
+          + ", ".join(f"{k} {by[k]}" for k in ("AGREED", "CONTESTED", "DROPPED", "NOT_SLATED") if by.get(k))
+          + " | receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}/{c['status']}" for c in out if c["status"] != "NOT_SLATED")
+          + f" | record {len(record)} rows -> {a.record}")
+
+
+def cmd_ledger(a):
+    led = load(a.ledger, needs=["entries"]) if os.path.exists(a.ledger) else {"window_sessions": 5, "retention_sessions": 20, "repeat_threshold": 2, "entries": []}
+    _p4 = load(a.phase4, needs=["deliberation_set", "dropped"])
+    tickers = _p4["deliberation_set"] + [d.split("(")[0] for d in _p4["dropped"]]
+    led["entries"] = [e for e in led["entries"] if e["date"] != a.date] + [{"date": a.date, "tickers": tickers}]
+    led["entries"] = sorted(led["entries"], key=lambda e: e["date"])[-led["retention_sessions"]:]
+    window = led["entries"][-led["window_sessions"]:]
+    counts = collections.Counter(t for e in window for t in set(e["tickers"]))
+    repeats = sorted([(t, c) for t, c in counts.items() if c >= led["repeat_threshold"]], key=lambda x: -x[1])
+    led["repeat_flags"] = [{"ticker": t, "appearances": c, "window": len(window)} for t, c in repeats]
+    save(a.ledger, led)
+    print(f"receipt: {len(tickers)} logged for {a.date}; REPEAT flags: " + (", ".join(f"{t} {c}x/{len(window)}" for t, c in repeats) or "none (window has " + str(len(window)) + " sessions)"))
+
+def _bdays_between(d1, d2):
+    """Simple Mon-Fri business-day count between two YYYY-MM-DD dates. No market-holiday calendar
+    wired in (a real, disclosed gap) -- this will occasionally overcount by a day around a US
+    holiday. Good enough for a 5-session horizon check; flagged here rather than silently assumed
+    exact."""
+    a, b = datetime.date.fromisoformat(d1), datetime.date.fromisoformat(d2)
+    if b < a:
+        return 0
+    n = 0
+    cur = a
+    while cur < b:
+        cur += datetime.timedelta(days=1)
+        if cur.weekday() < 5:
+            n += 1
+    return n
+
+def _ref_px(row):
+    """Reference close for the verdict ledger (fix 2026-09-27). On a screened universe row `entry` is
+    the EOD close, but on a HELD-ONLY row (the PM owns it and the curated screen did not carry it)
+    trim copies the position's COST BASIS into `entry`. The ledger then graded GLD/USO/WEAT/MRVL/
+    CRWD/FTNT against what the PM paid, labelled eod_close. Prefer the bracket's own close, then
+    the held book's close, and fall back to `entry` only when neither is served."""
+    if not row:
+        return None, None
+    b = row.get("bracket") or {}
+    if isinstance(b.get("price"), (int, float)):
+        return b["price"], b.get("price_source") or "bracket.price"
+    hb = row.get("held_book") or {}
+    for k in ("cob_price", "live_px"):
+        if isinstance(hb.get(k), (int, float)):
+            return hb[k], "held_book." + k
+    if isinstance(row.get("entry"), (int, float)):
+        return row["entry"], "entry"
+    return None, None
+
+def cmd_record_verdicts(a):
+    """PM standing rule (2026-08-18): 'lock this so we can see track record' -- and (2026-08-18,
+    second ruling, same day): 'I want it automated, not by hand, which means gaps and forget will
+    occur' otherwise. Locks EVERY Phase-4 name today, not just the deliberated ones:
+      - names that reached consensus get their real verdict (ADVANCE/HOLD-FOR-CONDITIONS/PASS),
+        WITH the reference price and full bracket the verdict was actually made against.
+      - names that qualified for Phase 4 but were CUT BY THE CAP before deliberation (never voted
+        on) get a NEAR-MISS row instead -- ref_price pulled from candidate_set.json's `entry` (or
+        `bracket.price` if entry is null), no conviction/support/oppose/abstain (not applicable,
+        never argued).
+    This is the accountability ledger -- deliberately separate from phase4_ledger.json (which only
+    tracks ticker repetition, never a verdict or an outcome). Every row gets "record_source": "live"
+    so a downstream reader (repeat-watch, a human) can always tell a normal automated run from the
+    one-time "backfilled_manual_2026-08-18" rows used to seed 2026-08-17 history before this command
+    covered near-misses.
+
+    WRITE-ONCE per (date, ticker): if this is re-run for a date already in the ledger, existing
+    rows are left untouched (not overwritten) -- a verdict, once locked, does not move. Re-running
+    only adds rows for tickers not already present that date. This is what "lock" means here.
+    """
+    cons = load(a.consensus, needs=["ticker", "verdict"])
+    CS = load(a.candidates, needs=["universe"])
+    uni = {r["ticker"]: r for r in CS["universe"]}
+    led = load(a.ledger, needs=["rows"]) if os.path.exists(a.ledger) else {"schema": "verdict_ledger.v1", "horizon_sessions_default": a.horizon_sessions, "rows": []}
+    existing = {(r["date"], r["ticker"]) for r in led["rows"]}
+    added, skipped, no_ref = [], [], []
+    for c in cons:
+        key = (a.date, c["ticker"])
+        if key in existing:
+            skipped.append(c["ticker"])
+            continue
+        row = uni.get(c["ticker"])
+        ref_price, ref_src = _ref_px(row)
+        bracket = row.get("bracket") if row else None
+        if ref_price is None:
+            no_ref.append(c["ticker"])  # locked anyway -- a missing reference price is itself a fact worth keeping, never silently dropped
+        led["rows"].append({
+            "date": a.date,
+            "ticker": c["ticker"],
+            "verdict": c["verdict"],
+            "conviction": c["conviction"],
+            "support": len(c["split"]["support"]), "oppose": len(c["split"]["oppose"]), "abstain": len(c["split"]["abstain"]),
+            "ref_price": ref_price,
+            "ref_price_source": ref_src,
+            "bracket": bracket,
+            "record_source": "live",
+            # R35 (2026-11-01): a slated ticket is graded at the horizon the agreeing seats stated (ratify-count
+            # carries it onto the row); a never-slated name keeps the run default. Per-voice horizons are in
+            # committee_record.json for the 20-run review.
+            "fixed_horizon": {"horizon_sessions": (c.get("horizon_sessions") if isinstance(c.get("horizon_sessions"), int) and c.get("horizon_sessions") > 0 else a.horizon_sessions),
+                              "status": "pending", "horizon_source": ("slate" if isinstance(c.get("horizon_sessions"), int) and c.get("horizon_sessions") > 0 else "run_default")},
+            "event_based": {"status": "pending" if bracket and bracket.get("valid") and c["verdict"] == "ADVANCE"
+                             else "not_applicable",
+                             "note": None if (bracket and bracket.get("valid") and c["verdict"] == "ADVANCE")
+                                     else ("no valid bracket -- event grading needs a stop/TP to check against" if c["verdict"] == "ADVANCE"
+                                           else "HOLD-FOR-CONDITIONS event grading needs the condition text in structured form -- not wired yet, see KNOWN GAP in cmd_grade" if c["verdict"] == "HOLD-FOR-CONDITIONS"
+                                           else "PASS has no bracket to event-grade; fixed-horizon return is the only check")}
+        })
+        added.append(c["ticker"])
+    near_miss_added = []
+    if os.path.exists(a.phase4):
+        p4 = load(a.phase4, needs=["dropped"])
+        dropped_tickers = [d.split("(")[0] for d in p4.get("dropped", [])]
+        for t in dropped_tickers:
+            key = (a.date, t)
+            if key in existing:
+                skipped.append(t)
+                continue
+            row = uni.get(t)
+            ref_price, ref_src = _ref_px(row)
+            if ref_price is None:
+                no_ref.append(t)
+            led["rows"].append({
+                "date": a.date, "ticker": t, "verdict": "NEAR-MISS", "conviction": None,
+                "support": None, "oppose": None, "abstain": None,
+                "ref_price": ref_price,
+                "ref_price_source": ref_src,
+                "bracket": (row or {}).get("bracket"),
+                "record_source": "live",
+                "fixed_horizon": {"horizon_sessions": a.horizon_sessions, "status": "pending"},
+                "event_based": {"status": "not_applicable", "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."}
+            })
+            near_miss_added.append(t)
+    else:
+        print(f"WARNING: {a.phase4} not found -- NEAR-MISS rows for cap-dropped names were NOT recorded this run. "
+              f"Pass --phase4 explicitly if it lives elsewhere; repeat-watch will show a gap for any cap-dropped ticker until this is fixed.")
+    save(a.ledger, led)
+    print(f"receipt: {len(added)} verdicts locked for {a.date} ({', '.join(added) if added else 'none'}); "
+          f"{len(near_miss_added)} NEAR-MISS rows locked for cap-dropped names ({', '.join(near_miss_added) if near_miss_added else 'none'}); "
+          f"{len(skipped)} already locked, left untouched; "
+          f"{len(no_ref)} locked with no reference price found ({', '.join(no_ref) if no_ref else 'none'})")
+
+def cmd_repeat_watch(a):
+    """PM standing rule (2026-08-18): '[I want it] automated, not by hand, which means gaps and
+    forget will occur [otherwise].' Generates the CIO brief's REPEAT WATCH section (§4) mechanically
+    from phase4_ledger.json (which tickers repeated, and on which dates) cross-referenced against
+    verdict_ledger.json (what price/verdict was actually locked on each of those dates). No hand
+    transcription, no re-typing numbers into brief prose.
+
+    For each repeat-flagged ticker, one output row per appearance date (oldest first), each carrying:
+      - pct_vs_last_close: % change of that date's ref_price vs the PREVIOUS appearance's ref_price
+        (null, with a reason, on a ticker's first appearance or if either price is missing)
+      - state: the verdict actually locked for that (date, ticker) in verdict_ledger.json --
+        ADVANCE / HOLD-FOR-CONDITIONS / PASS / NEAR-MISS
+      - a "gap" field, populated (not blank) whenever verdict_ledger.json has NO row for that
+        (date, ticker) at all -- this happens for history older than either ledger, or if
+        record-verdicts was never run for that date. A gap is reported as a gap, never silently
+        skipped and never invented.
+
+    Emits both a JSON structure (--out) and a ready-to-paste markdown table (printed to stdout and
+    included in the JSON under "markdown") so the brief section can be generated by copying tool
+    output, not by manual cross-referencing.
+    """
+    led = load(a.ledger, needs=["entries"]) if os.path.exists(a.ledger) else {"entries": [], "repeat_flags": []}
+    vled = load(a.verdicts, needs=["rows"]) if os.path.exists(a.verdicts) else {"rows": []}
+    vrows = {(r["date"], r["ticker"]): r for r in vled.get("rows", [])}
+    repeat_tickers = [f["ticker"] for f in led.get("repeat_flags", [])]
+    out_rows = []
+    gaps = []
+    for t in sorted(repeat_tickers):
+        dates = sorted(e["date"] for e in led["entries"] if t in e.get("tickers", []))
+        prev_price = None
+        for i, d in enumerate(dates):
+            vrow = vrows.get((d, t))
+            if vrow is None:
+                out_rows.append({"ticker": t, "date": d, "pct_vs_last_close": None, "state": None,
+                                  "gap": "no verdict_ledger row for this (date,ticker) -- record-verdicts was not run, or predates the ledger"})
+                gaps.append(f"{t}@{d}")
+                continue
+            price = vrow.get("ref_price")
+            if i == 0 or prev_price is None or price is None:
+                pct = None
+            else:
+                pct = round((price - prev_price) / prev_price * 100, 2)
+            out_rows.append({"ticker": t, "date": d, "pct_vs_last_close": pct, "state": vrow.get("verdict"), "gap": None})
+            if price is not None:
+                prev_price = price
+    md_lines = ["| Ticker | Date Appeared | % vs last COB | State |", "|---|---|---|---|"]
+    for r in out_rows:
+        pct_s = "— (first appearance)" if r["pct_vs_last_close"] is None and r["gap"] is None and not any(
+            x["ticker"] == r["ticker"] and x["date"] < r["date"] for x in out_rows) else (
+            f"{r['pct_vs_last_close']:+.2f}%" if r["pct_vs_last_close"] is not None else "— (gap, see note)")
+        state_s = r["state"] or f"GAP: {r['gap']}"
+        md_lines.append(f"| **{r['ticker']}** | {r['date']} | {pct_s} | {state_s} |")
+    markdown = "\n".join(md_lines)
+    result = {"as_of": a.date, "rows": out_rows, "markdown": markdown, "gaps": gaps}
+    save(a.out, result)
+    print(markdown)
+    print(f"receipt: {len(out_rows)} rows across {len(repeat_tickers)} repeat ticker(s); "
+          f"{len(gaps)} gap(s) with no verdict_ledger match ({', '.join(gaps) if gaps else 'none'})")
+
+def cmd_grade(a):
+    """Revisit every 'pending' row in verdict_ledger.json against a supplied current-price map and
+    grade it two ways:
+
+    FIXED-HORIZON (all verdict types): once >= horizon_sessions business days have passed since the
+    row's date, compute return_pct off ref_price. ADVANCE is graded correct/wrong on direction
+    (>+1% = correct, <-1% = wrong, else inconclusive); PASS is graded on whether it avoided a real
+    rally (return < +5% = correct pass, >= +5% = missed move); HOLD-FOR-CONDITIONS is recorded
+    informationally only (return_pct, no correct/wrong label) because a HOLD is not a directional
+    bet by itself.
+
+    EVENT-BASED (ADVANCE with a valid bracket only, today): checks the supplied price against the
+    row's own locked stop and TP2. Price <= stop -> stopped_out. Price >= TP2 -> tp2_hit. Otherwise
+    stays in_progress (left pending for the next grade run, never force-closed early).
+
+    KNOWN GAP, stated plainly rather than faked: HOLD-FOR-CONDITIONS event grading (did the actual
+    stated condition -- e.g. 'close through the ma200 stop' -- trigger?) is NOT implemented here.
+    The condition line is synthesized as free text in the CIO brief, not captured as a structured
+    field anywhere in the pipeline today, so there is nothing machine-checkable to grade it against.
+    Closing this needs the condition captured as a structured {field, operator, level} at the point
+    the brief is built, not reverse-parsed from prose later. Flagged, not silently skipped.
+    """
+    led = load(a.ledger, needs=["rows"])
+    prices = load(a.prices)  # {"TICKER": price, ...}
+    fixed_graded, event_graded, still_pending = [], [], []
+    for r in led["rows"]:
+        px = prices.get(r["ticker"])
+        # --- fixed horizon ---
+        if r["fixed_horizon"]["status"] == "pending":
+            bdays = _bdays_between(r["date"], a.date)
+            if bdays >= r["fixed_horizon"]["horizon_sessions"] and px is not None and r["ref_price"]:
+                ret = round((px - r["ref_price"]) / r["ref_price"] * 100, 2)
+                if r["verdict"] == "ADVANCE":
+                    assess = "correct" if ret > 1.0 else ("wrong" if ret < -1.0 else "inconclusive")
+                elif r["verdict"] == "PASS":
+                    assess = "correct" if ret < 5.0 else "missed_move"
+                else:
+                    assess = "informational"
+                r["fixed_horizon"].update({"status": "graded", "grade_date": a.date, "price_then": r["ref_price"],
+                                            "price_now": px, "return_pct": ret, "assessment": assess})
+                fixed_graded.append(f"{r['ticker']}:{assess}({ret:+.1f}%)")
+            elif px is None:
+                still_pending.append(r["ticker"])
+        # --- event based (ADVANCE + valid bracket only) ---
+        if r["event_based"]["status"] == "pending" and px is not None:
+            stop, tp2 = r["bracket"]["stop"], r["bracket"]["rr_tp2"] and next((t["price"] for t in r["bracket"]["targets"] if t.get("tp") == "TP2"), None)
+            if stop is not None and px <= stop:
+                r["event_based"].update({"status": "graded", "grade_date": a.date, "event": "stopped_out", "price_at_event": px})
+                event_graded.append(f"{r['ticker']}:stopped_out")
+            elif tp2 is not None and px >= tp2:
+                r["event_based"].update({"status": "graded", "grade_date": a.date, "event": "tp2_hit", "price_at_event": px})
+                event_graded.append(f"{r['ticker']}:tp2_hit")
+            else:
+                r["event_based"]["last_checked"] = {"date": a.date, "price": px}
+    save(a.ledger, led)
+    print(f"receipt: fixed-horizon graded {len(fixed_graded)} ({', '.join(fixed_graded) or 'none'}); "
+          f"event triggers {len(event_graded)} ({', '.join(event_graded) or 'none'}); "
+          f"{len(still_pending)} still waiting on a price ({', '.join(still_pending) if still_pending else 'none'})")
+
+def cmd_gate(a):
+    brief = open(a.brief).read()
+    cons = load(a.consensus, needs=["ticker", "verdict"])
+    fails = []
+    def chk(ok, code, msg):
+        print(f"[{'PASS' if ok else 'FAIL'}] {code} {msg}")
+        if not ok: fails.append(code)
+    for c in cons:
+        if c["verdict"] == "ADVANCE":
+            chk(len(c["split"]["support"]) > len(c["split"]["oppose"]), "Q2r", f"{c['ticker']}: ADVANCE has support>oppose")
+        if c["verdict"] == "HOLD-FOR-CONDITIONS":
+            chk(("Condition" in brief and c["ticker"] in brief), "Q2h", f"{c['ticker']}: HOLD carries a Condition line in brief")
+    for token, label in [("MACRO", "S1 macro"), ("SECTOR", "S2 sector"), ("HELD", "S3 held book"),
+                          ("NEAR MISS", "S5 near misses"), ("ACTION", "S6 action plan"),
+                          ("List", "list membership"), ("Elder", "elder field"),
+                          ("QS", "QS read (PM-only, render-only, every card)"),
+                          ("DRAFT", "draft footer")]:
+        chk(token.lower() in brief.lower(), "Q4", f"brief carries {label}")
+    chk("persuad" not in brief.lower(), "Q4n", "zero persuasion narration")
+    # Q6r: REPEAT WATCH (§4) must come from repeat-watch's own output, never hand-typed (PM standing
+    # rule, 2026-08-18). If phase4_ledger.json currently has any repeat_flags, repeat_watch.json must
+    # exist AND every flagged ticker's rows must actually appear in the brief text -- a brief that
+    # hand-writes its own repeat table without running the tool fails this even if the numbers happen
+    # to be right, because the point is the source, not just the output looking correct today.
+    if os.path.exists(a.ledger_phase4):
+        p4l = load(a.ledger_phase4)
+        flagged = [f["ticker"] for f in p4l.get("repeat_flags", [])]
+        if flagged:
+            if not os.path.exists(a.repeat_watch):
+                chk(False, "Q6r", f"repeat_watch.json exists ({a.repeat_watch} not found -- run `pma_pipeline.py repeat-watch` before rendering §4)")
+            else:
+                rw = load(a.repeat_watch, needs=["markdown"])
+                rw_tickers = {r["ticker"] for r in rw.get("rows", [])}
+                missing = [t for t in flagged if t not in rw_tickers]
+                chk(not missing, "Q6r", f"repeat_watch.json covers every phase4_ledger repeat flag (missing: {missing or 'none'})")
+                for t in flagged:
+                    chk(t in brief, "Q6r", f"{t}: repeat-flagged ticker appears in brief §4")
+    # ---- Q-EXEC: EXECUTIVE FORM (PM ruling 2026-09-05 -- tables and one-liners, never prose;
+    # consensus view, never who voted what). Mechanical presence/absence checks only.
+    body, _, appendix = brief.partition("APPENDIX A")
+    lines = body.split("\n")
+    # QX1: the first table on the page is the verdict table and names every deliberated ticker
+    first_tbl = []
+    for i, ln in enumerate(lines):
+        if ln.strip().startswith("|"):
+            j = i
+            while j < len(lines) and lines[j].strip().startswith("|"):
+                first_tbl.append(lines[j]); j += 1
+            break
+    ft = "\n".join(first_tbl)
+    chk(bool(first_tbl) and "verdict" in ft.lower(), "QX1", "first table on the page is the VERDICT table")
+    for c in cons:
+        chk(c["ticker"] in ft, "QX1", f"{c['ticker']} appears in the verdict table")
+    # QX2: no roll-call language in the body. Seat names and vote-count words belong in Appendix A only.
+    seats = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp", "weis", "wyckoff",
+             "lynch", "detect-lens", "rogers", "steenbarger"]
+    low = body.lower()
+    leaked = [w for w in seats if re.search(r"\b" + re.escape(w) + r"\b", low)]
+    chk(not leaked, "QX2", f"no seat names in the body (found: {leaked or 'none'})")
+    # FIX 2026-09-16: "support"/"supports"/"supported" have legitimate, frequent NON-vote meanings in
+    # a trading brief -- a price "support level", "no fundamental support for the move", "no structural
+    # support clears the 3 gates". A bare word-ban cannot tell those from committee roll-call language,
+    # so the gate FAILED a correct brief on 2026-09-15 and needed a human to adjudicate. A barrier that
+    # cries wolf every run is a barrier that gets waved through. "oppose"/"abstain" have no legitimate
+    # use in this document and stay banned outright; "support" is banned only in the shapes a roll-call
+    # actually takes -- a count beside it, "supported by N", or paired with oppose/abstain in the same
+    # sentence (a real split always names more than one side).
+    bare_banned = [w for w in ("oppose", "abstain", "supporters", "opposers")
+                   if re.search(r"\b" + w + r"s?\b", low)]
+    tally_patterns = [
+        r"\b\d+\s*[-x/]?\s*support(?:s|ed)?\b",                    # "6 support", "6-support"
+        r"\bsupport(?:s|ed)?\s*[:=]\s*\d+\b",                       # "support: 6"
+        r"\bsupported by\s+\d+",                                    # "supported by 6"
+        r"\bsupport(?:s|ed)?\b[^.\n]{0,40}\boppose(?:s|d)?\b",      # "support ... oppose"
+        r"\boppose(?:s|d)?\b[^.\n]{0,40}\bsupport(?:s|ed)?\b",      # "oppose ... support"
+    ]
+    tally_words = bare_banned + (["support (roll-call pattern)"]
+                                 if any(re.search(pat, low) for pat in tally_patterns) else [])
+    chk(not tally_words, "QX2", f"no vote-tally words in the body (found: {tally_words or 'none'})")
+    # QX3: no paragraph longer than two sentences (tables, headings, bullets exempt).
+    # EXEMPTION, declared 2026-09-07: sections 0A and 0B are exempt at THREE sentences. They exist
+    # because the PM could not tell from the brief what the committee based a pick on or why it
+    # suits a momentum book, and the answer does not fit in two sentences: the winning argument,
+    # the losing argument, and what must stay true. Every other section keeps the two-sentence
+    # limit. The exemption is bounded by section and by count so it cannot become licence for
+    # prose creep -- a fourth sentence in 0A still fails.
+    paras, cur = [], []
+    in_exempt = False
+    for ln in lines:
+        st = ln.strip()
+        if re.match(r"#{1,2}\s", st):          # only a TOP-LEVEL heading changes section;
+            in_exempt = bool(re.match(          # ### per-name blocks inside 0A/0B stay exempt
+                r"#{1,2}\s*§?\s*0[AB]\b", st, re.I))
+        if not st:
+            if cur: paras.append((" ".join(cur), in_exempt)); cur = []
+            continue
+        if st.startswith(("|", "#", "-", "*", ">")) or re.match(r"^\d+[.)]", st):
+            if cur: paras.append((" ".join(cur), in_exempt)); cur = []
+            continue
+        cur.append(st)
+    if cur: paras.append((" ".join(cur), in_exempt))
+    long_paras = [pp[:60] for pp, ex in paras
+                  if len(re.findall(r"[.!?](\s|$)", pp)) > (3 if ex else 2)]
+    chk(not long_paras, "QX3", f"no paragraph exceeds two sentences (offenders: {len(long_paras)}; first: {long_paras[:1]})")
+    # QX4: macro section is tabular -- at least two tables between the §1 heading and the §2 heading
+    m1 = re.search(r"^#+\s*(§?\s*1\b|1\.|.*MACRO)", body, re.M | re.I)
+    m2 = re.search(r"^#+\s*(§?\s*2\b|2\.|.*SECTOR)", body, re.M | re.I)
+    if m1 and m2 and m2.start() > m1.start():
+        sec1 = body[m1.start():m2.start()]
+        n_tbl = len(re.findall(r"(?:^\|.*\n)+", sec1, re.M))
+        chk(n_tbl >= 2, "QX4", f"macro section is tabular (tables found: {n_tbl}, need >=2)")
+    else:
+        chk(False, "QX4", "macro (§1) and sector (§2) headings found in order")
+    # ---- Q9D (PM RULING 2026-09-08): the deliverable sections -------------------------
+    # The PM reads for five things: market shape, sector signal, what to do with what he owns,
+    # what to trade today, and the day's plan. Sections 9A/9B/9C are the last three and they are
+    # the deliverable -- everything above them is the evidence for them. A brief that stops at
+    # "approve or reject the nine as a block" makes the PM do the work the committee was for.
+    for tok, label in [("§9A", "9A what to do with what I own"),
+                       ("§9B", "9B what to trade today"),
+                       ("§9C", "9C the day's plan")]:
+        chk(tok in brief, "Q9D", f"{label} is present")
+    if "§9A" in brief:
+        held = brief.split("§9A")[1].split("§9B")[0]
+        acts = [w for w in ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN") if w in held]
+        chk(bool(acts), "Q9D", f"9A carries a named action per held name (found: {acts})")
+        chk("monitor" not in held.lower() and "watch closely" not in held.lower(),
+            "Q9D", "9A has no unactionable 'monitor' / 'watch closely' rows")
+    if "§9B" in brief:
+        trade = brief.split("§9B")[1].split("§9C")[0]
+        # FIX 2026-09-16: a raw substring test on a 2-4 letter ticker false-positives two ways -- it
+        # matches inside unrelated words, and it cannot tell "a row in the trade table" from "named in
+        # the footnote that explains why the HOLD names are absent". On 2026-09-15 the table was
+        # correct and the gate failed anyway, on the sentence declaring the exclusion. Section 9B is a
+        # table by contract (brief-writer card), so require an actual row: "| TICKER |", bold allowed.
+        def _row(ticker, text):
+            return re.search(rf"(?m)^\s*\|\s*\*{{0,2}}{re.escape(ticker)}\*{{0,2}}\s*\|", text) is not None
+        adv = [c["ticker"] for c in cons if c["verdict"] == "ADVANCE"]
+        miss = [t for t in adv if not _row(t, trade)]
+        chk(not miss, "Q9D", f"every ADVANCE name appears in the trade list" + (f" -- MISSING {miss}" if miss else ""))
+        hold = [c["ticker"] for c in cons if c["verdict"] == "HOLD-FOR-CONDITIONS"]
+        leaked = [t for t in hold if _row(t, trade)]
+        chk(not leaked, "Q9D", "no HOLD name leaks into the trade list" + (f" -- {leaked}" if leaked else ""))
+
+    # ---- Q8L (PM RULING R8, 2026-09-07) -------------------------------------------------
+    # Ten sessions had run and three left a ledger row; history was being reconstructed by
+    # re-reading 300KB briefs, which is expensive and lossy. DECIDE writes the verdict rows
+    # BEFORE any narrative step. This refuses to pass a brief whose day is not on the record:
+    # a run that produces a report but no record is a FAILED run, not a partial one.
+    vlp = getattr(a, "verdict_ledger", None)
+    if vlp and os.path.exists(vlp):
+        vl = load(vlp, needs=["rows"])
+        if a.date:
+            dated = {r["ticker"] for r in vl["rows"] if r.get("date") == a.date}
+            missing = [c["ticker"] for c in cons if c["ticker"] not in dated]
+            chk(not missing, "Q8L",
+                f"R8: every deliberated name is on the record for {a.date} before the brief passes"
+                + (f" -- MISSING {missing}" if missing else f" ({len(dated)} rows)"))
+        else:
+            chk(False, "Q8L", "R8: --date not given, cannot verify today's ledger rows")
+    else:
+        chk(False, "Q8L", f"R8: no verdict ledger at {vlp!r} -- the day's decisions were never "
+                          f"written. Run `record-verdicts` at DECIDE, before WRITE.")
+
+    print(f"RESULT: {len(fails)} FAIL")
+    sys.exit(1 if fails else 0)
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    sub = p.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
+    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)")
+    s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
+    s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
+    s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--consensus", default="consensus.json")
+    s.add_argument("--brackets", default="brackets.json"); s.add_argument("--date", required=True)
+    s.add_argument("--out", default="repeat_marks.json")
+    s = sub.add_parser("brackets", help="R1-safe, render-only queue levels for every ADVANCE and HOLD name, after the vote (PM ruling 2026-09-25). Gives brackets.json its first producer.")
+    s.add_argument("--consensus", default="consensus.json"); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--export", required=True); s.add_argument("--date", required=True)
+    s.add_argument("--dyncap", default=None, help="optional journal dynCap file; absent means levels are produced and sizing is refused")
+    s.add_argument("--out", default="brackets.json")
+    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json"); s.add_argument("--elder-bars", type=int, default=2); s.add_argument("--lens-min", type=int, default=4); s.add_argument("--strength-decile", type=float, default=0.10); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--strength-reserve", type=int, default=0, help="RETIRED by R16 (PM ruling 2026-09-24): accepted and ignored so old command lines still run."); s.add_argument("--door-budget", type=int, default=10, help="R16: the ADDITIVE allowance for machine finds on top of the nomination floor. Read off the verdict record: 29 unnominated admits over three runs produced 3 ADVANCE, so the doors earn ~1 useful name per run and 8 is generous."); s.add_argument("--strong-seats", type=int, default=10, help="R27 (PM 2026-10-23): the strongest Longlist/Elder names not nominated are seated and voted, MOMENTUM lane. 0 = flag only (R17/R26)."); s.add_argument("--unr-seats", type=int, default=3, help="R25 (PM 2026-10-23): reserved seats for Valen U&R MET names on the Longlist/Elder list that no seat nominated. 0 turns it off."); s.add_argument("--machine-add", type=int, default=None, help="R16: exact override for the additive door allowance. Default is --door-budget (8), bounded by --cap. --cap NEVER bounds the nomination floor.")
+    s = sub.add_parser("round2packets")
+    s.add_argument("--candidates", default="candidate_set.json")
+    s.add_argument("--menus", required=True)
+    s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--tally", default="tally.json")
+    s.add_argument("--rogers", required=True)
+    s.add_argument("--steenbarger", required=True)
+    s.add_argument("--lynch", required=True)
+    s.add_argument("--detectlens", required=True)
+    s.add_argument("--date", required=True)
+    s.add_argument("--outdir", default="round2")
+    s = sub.add_parser("challenge-packets", help="tool-built challenge packets (2026-10-23)")
+    s.add_argument("--universe", default="universe.json"); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--forms", default="forms/r1"); s.add_argument("--menus", required=True)
+    s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--date", required=True)
+    s.add_argument("--outdir", default="seat_packets")
+    s.add_argument("--seats", nargs="*", default=[QA_SEAT], help="R31: Steenbarger is the only challenge seat")
+    s = sub.add_parser("r2digest"); s.add_argument("--export", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--tally", default="tally.json"); s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--rogers"); s.add_argument("--steenbarger"); s.add_argument("--lynch"); s.add_argument("--detectlens"); s.add_argument("--macro", nargs="*", default=[]); s.add_argument("--run-id", default="pma"); s.add_argument("--max-bytes", type=int, default=70000); s.add_argument("--claim-chars", type=int, default=400); s.add_argument("--evidence-chars", type=int, default=300); s.add_argument("--out", default="VOTE_PACKET.txt"); s.add_argument("--valen", help="aqe_valen_dashboard.json (PM 2026-10-23); omitted = no Valen block"); s.add_argument("--crown", default=None, help="aqe_crown_macro.json (R31, 2026-10-30): the weather from AQE's Crown file, replacing the macro seats; omitted = declared gap")
+    s = sub.add_parser("consensus", help="SUPERSEDED (R34): blind tally under the retired rule; not the verdict"); s.add_argument("--round2", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--out", default="consensus.json")
+    s = sub.add_parser("board", help="R36 round 3: the Chair's board -- blind split + every case per room name; marks CONTESTED names; no verdict")
+    s.add_argument("--round2", required=True, help="forms/r2 dir, glob, or one file"); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--challenge", default=None, help="forms/challenge/steenbarger.json (names it flags are contested)")
+    s.add_argument("--date", required=True); s.add_argument("--out", default="board.json")
+    s = sub.add_parser("floor-check", help="R36: count the floor caps across message files (2 per seat per name; open names only); exit 1 on breach")
+    s.add_argument("--messages", default="forms/floor"); s.add_argument("--board", default="board.json")
+    s.add_argument("--qa", default=None, help="forms/qa/steenbarger.json -- when given, only the HELD tickets are open (hold round)")
+    s.add_argument("--out", default="floor_check.json")
+    s = sub.add_parser("ratify-count", help="R34 CLOSE: count OBJECT answers on the final ratification -> consensus.json (+ committee_record.json, R35)")
+    s.add_argument("--slate", default="slate.json"); s.add_argument("--ratifications", default="forms/ratify")
+    s.add_argument("--ratifications2", default=None, help="forms/ratify2 -- after a QA hold; held tickets only")
+    s.add_argument("--qa", default=None, help="forms/qa/steenbarger.json"); s.add_argument("--board", default="board.json")
+    s.add_argument("--messages", default=None, help="forms/floor (for the record)"); s.add_argument("--messages2", default=None, help="forms/floor2 (hold round, for the record)")
+    s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
+    s.add_argument("--out", default="consensus.json"); s.add_argument("--record", default="committee_record.json")
+    s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
+    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
+    s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
+    s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
+    s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
+    a = p.parse_args()
+    {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+     "round2packets": cmd_round2packets,
+     "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
+     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count,
+     "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
+     "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

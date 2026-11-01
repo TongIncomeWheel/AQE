@@ -128,8 +128,9 @@ def test_every_menu_field_used_by_a_seat_is_carried_by_consumed():
     pp = _load_pma_pipeline_module()
     menus = _load_voice_menus()
     consumed = set(pp.CONSUMED)
-    group_a = {"elder-lens", "livermore", "minervini", "oneil", "raschke",
-               "seow", "thorp", "weis", "wyckoff"}
+    # R31 (PM 2026-10-30, built 2026-11-01): Group A is the seven DECIDERS. weis and thorp are benched
+    # (archived cards, no packet); the macro pair is retired. Same CONSUMED check, smaller roster.
+    group_a = {"oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"}
     missing = set()
     for seat, cols in menus.items():
         if seat not in group_a:

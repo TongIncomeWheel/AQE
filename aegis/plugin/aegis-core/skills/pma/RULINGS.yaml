@@ -1,0 +1,837 @@
+# AEGIS STANDING RULINGS — the machine-readable constitution.
+#
+# WHY THIS FILE EXISTS. Until 2026-09-07 every ruling lived as a paragraph inside a card or a
+# brief. Prose cannot be checked, cannot be diffed, and does not survive an operator whose context
+# gets compacted mid-run. On 2026-09-06 three rulings were followed and three were not, and the
+# difference was never authority — it was whether the rule had been compiled into something that
+# could fail. Rulings live here now. Cards may explain a ruling; they may not BE one.
+#
+# HOW TO CHANGE A RULING: never edit in place, never delete. Set status: superseded and add the
+# replacement with a new id. History is the point.
+#
+# ENFORCEMENT: preflight_run.py reads this file before every run and asserts each ruling whose
+# `check` is not null. A ruling with check: null is advisory and is PRINTED to the conductor at
+# the step named in `binds_at`, so it cannot be lost to compaction.
+
+schema: aegis_rulings.v1
+updated: 2026-11-01
+
+rulings:
+
+  - id: R1
+    title: Bracket state is never a reason to reject
+    status: active
+    date: 2026-08-31
+    binds_at: [NOMINATE, CHALLENGE, VOTE]
+    rule: >
+      Bracket validity, risk percent, stop type, reward-to-risk and the ATR fallback stop are
+      INFORMATION. No seat may reject, oppose, abstain or cap conviction on bracket grounds, in
+      any round. Brackets attach AFTER the vote and are render-only.
+    rationale: >
+      PM, 2026-09-06 — "the committee chooses ticker ideas on a momentum book: strongest momentum
+      and structures. Brackets are the last step for the PM to narrow a trade idea further."
+    check: registrar.validate.bracket_basis_lint
+
+  - id: R2
+    title: Packets are inlined, never handed over as a path
+    status: active
+    date: 2026-08-19
+    binds_at: [MACRO, NOMINATE, CHALLENGE, VOTE]
+    rule: >
+      Every spawned seat receives its packet pasted into its prompt, never a path. Every figure a
+      seat quotes as a served field must be present in the packet row it was given; a ballot citing
+      a field value the row does not carry is REJECTED on arrival, one respawn, then absent. A
+      verbatim proof line is still returned. The packet md5 is requested but NOT relied on.
+    rationale: >
+      2026-08-19 and again 2026-09-03: seats handed a path invented the file's contents. The
+      read-proof gate caught 100 percent of a three-seat fabrication on 09-03. This rule is the
+      only reason that was a caught incident rather than a corrupted tally.
+
+      AMENDED 2026-09-16 (PM). The md5 half of this rule never ran. No spawned seat has a hashing
+      or shell tool, so on 2026-09-15 all eleven returned NOT_VERIFIED and substituted a quoted
+      line -- a 100 percent non-compliance rate that had become routine and was therefore invisible.
+      The PM's ruling: a tamper check is overkill here, since AQE writes the packet and the voices
+      read it and nobody is attacking the file; and it never addressed the real exposure anyway --
+      a seat can hash a file correctly and still fabricate every figure in its reasoning. What is
+      checkable is the claim a seat makes when it writes "ma50 218.30": that the row it was handed
+      says so. figure_audit.py checks exactly that, scoped to that ticker's own row. Measured
+      before it was given teeth: zero findings across all 231 real votes of 2026-09-15, and it
+      catches a single altered digit. A check that cannot fail is not a check; a check that fires
+      on correct work every run gets waved through. This one does neither.
+    check: registrar.validate.figure_audit
+
+  - id: R3
+    title: Seats are spawned directly by the conductor, never by a delegate
+    status: active
+    date: 2026-08-28
+    binds_at: [MACRO, NOMINATE, CHALLENGE, VOTE]
+    rule: >
+      Every seat is spawned by the top-level conductor as a general-purpose agent. A delegated
+      stage is INVALID and is re-run.
+    rationale: A delegate cannot spawn subagents on this platform and fabricates instead of failing.
+    check: gate.Q3S
+
+  - id: R4
+    title: Sector is not a gate
+    status: active
+    date: 2026-09-07
+    binds_at: [RANK, WRITE]
+    rule: >
+      srm entry_gate plays no part in admission or in the ranking key. Sector is CONTEXT and a
+      SIZING input only: rendered on every row, card and in brief section 2, weighted by individual
+      seats at their own discretion, never consulted by selection or ordering.
+    rationale: >
+      PM, 2026-09-07 — "I'm not sure I want sector to be hard gates." Verified on 2026-09-06 data:
+      removing it produced an identical 20-name deliberation set and an identical 13-name cut list.
+      It was inert as a tiebreaker and its BLOCKED/CAUTION labels read as authority it does not have.
+    check: preflight.ranking_key_has_no_srm
+
+  - id: R5
+    title: The candidate set is consumed as published, never re-filtered
+    status: active
+    date: 2026-09-07
+    supersedes: R5-draft-momentum-floor
+    binds_at: [PREPARE]
+    rule: >
+      AQE publishes aegis/output/candidate_set.json already Layer-0 filtered. The pipeline consumes
+      it AS PUBLISHED. No local momentum floor, no local screen, no column stripping, no second
+      filter of any kind. If the universe looks wrong, that is an AQE issue and is declared, not
+      corrected downstream.
+    rationale: >
+      PM, 2026-09-07 — "you should now already be getting AQE files feeding you only Layer 0
+      filtered." Two filters in two places is how the 2026-09-06 run ended up arguing with itself
+      about whether the universe was 131 names or 56.
+    check: preflight.no_local_filter_between_gather_and_rank
+
+  - id: R6
+    title: A reader declares the shape it requires
+    status: active
+    date: 2026-09-07
+    binds_at: [ALL]
+    rule: >
+      Every read of another component's output passes through load() with an explicit needs=[...]
+      list. A missing key raises immediately, naming both the required keys and the keys the file
+      actually carries. Adapters that translate one component's shape into another's are FORBIDDEN
+      as a fix; the contract is fixed instead.
+    rationale: >
+      All three tool failures on 2026-09-06 were reads. The pipeline reads 15 distinct file shapes
+      and only 2 had a written contract. Two readers guessed wrong, found nothing, and carried on
+      silently — one of them emitting zero verdicts.
+    check: tests.test_shape_contracts
+
+  - id: R7
+    title: The run verifies the tools it is about to execute
+    status: active
+    date: 2026-09-07
+    binds_at: [GATHER]
+    rule: >
+      GATHER hashes every tool it is about to run and records the hashes on the scoreboard. A tool
+      whose hash is not recorded, or which changes mid-run, halts the run.
+    rationale: >
+      On 2026-09-06 GATHER was degraded to a shortcut and the committee executed a pipeline one
+      commit stale, missing a ruling committed that morning. Nothing noticed for a day.
+    check: preflight.tool_hashes_recorded
+
+  - id: R8
+    title: Verdicts are written before the brief, always
+    status: active
+    date: 2026-09-07
+    binds_at: [DECIDE]
+    rule: >
+      DECIDE writes the verdict rows to the ledger as a small structured file BEFORE any narrative
+      step runs. A run that produces a brief without a ledger row for every deliberated name is a
+      failed run.
+    rationale: >
+      Ten sessions have run; three left a ledger row. History was being reconstructed by re-reading
+      300KB briefs, which is both expensive and lossy. Enforced 2026-09-07: `gate` now refuses a
+      brief whose deliberated names are not on the record for that date, and 2026-09-02 and
+      2026-09-03 were backfilled from their own briefs, completing the 5-session window.
+    check: gate.Q8L
+
+  - id: R11
+    title: Every figure must say what it changes
+    status: active
+    date: 2026-09-08
+    binds_at: [WRITE]
+    rule: >
+      A number, state or data block earns its place in a PM-facing report only by answering what it
+      MEANS and what it CHANGES. The shape is figure -> meaning -> consequence. A figure that alters
+      no decision is not written. This binds the macro and sector sections as hard as the name cards:
+      a macro table that stops at "VIX 14.53, breadth neutral" has told the PM nothing.
+    rationale: >
+      PM, 2026-09-08 -- "I'm ok with highlighting the data/block but it has to explain what it means
+      for action/decision making relative to the market." Report writing is deliberately NOT governed
+      by a canon of numbered principles the way a voice seat is: a seat must be reproducible, a report
+      must be understood by one person at 6am before an open. The shaping lives in skills/cio-voice.
+    check: gate.Q9D
+
+  - id: R9
+    title: The conductor forms no market opinion
+    status: active
+    date: 2026-08-28
+    binds_at: [ALL]
+    rule: >
+      Judgment lives in spawned seats. Arithmetic lives in the tools. Validation lives in the
+      registrar. The conductor schedules and holds nothing but the scoreboard. It never hand-tallies,
+      never estimates a verdict from a summary, and never authors a seat's content.
+    check: null
+
+  - id: R10
+    title: Nothing is staged, nothing is armed
+    status: active
+    date: 2026-08-14
+    binds_at: [PUBLISH]
+    rule: >
+      PMA is analysis only. No broker is touched, no order is sized, nothing is staged. Every brief
+      carries the footer verbatim.
+    check: gate.footer
+
+  - id: R12
+    title: The held book reaches every seat, whole
+    status: active
+    date: 2026-09-16
+    binds_at: [GATHER, PREPARE, NOMINATE, VOTE]
+    rule: >
+      A position the PM owns is never screened out of its own committee, and its served record is
+      never sliced. AQE forces every held ticker through the scoring engines regardless of the
+      curated screen and publishes the complete read under export.held_positions. cmd_trim carries
+      that record onto the universe row WHOLE, namespaced under `held_book`, and sets held=True.
+      The HELD FLOOR — held, qty, entry (cost basis), trade_date, unreal_usd, live_px, hl_state,
+      hl_score, held_sl, held_tp1, held_tp2, knn_prob, knn_tp1/2/3, bracket.atr_fallback_stop,
+      vwap_14d_position — is appended to EVERY seat menu and is not editable in voice_menus.json.
+      cmd_packets REFUSES to build if a held ticker is absent from the universe, if a held row
+      carries no held_book block, or if a seat TSV would be served without hl_state where AQE
+      served one. r2digest prints the same block into the round-2 vote packet.
+    rationale: >
+      2026-09-16. AQE served all 86 fields on all three held positions, including hl_state — its
+      own health verdict — and ALL THREE READ EXIT. Not one of the nine seats saw it. cmd_trim
+      built the universe from daily_list only and sliced it to CONSUMED, so a held name failing the
+      $2B/1.5M screen never entered the universe and the held-only fields were stripped from any
+      that did; only 6 of 14 menus carried even the bare `held` flag and none carried hl_state. The
+      brief then reported "no stop served" on two names AQE had served atr_fallback_stop for, and
+      recommended STOP-TIGHTEN and HOLD on two positions the engine had already called EXIT. The
+      gap was then reported to the PM as the data provider's. It was not: the data was served in
+      full and the pipeline discarded it. PM, 2026-09-16 — "They serve u data. u orchestrate across
+      committee for consensus action." The floor is namespaced precisely so it can never collide
+      with a candidate-side field of the same name: `entry` means engine trigger on a candidate row
+      and cost basis on a held one, and a flat merge would have silently redefined a field every
+      seat reads.
+    check: tests.test_a_position_the_pm_owns_reaches_every_seat
+
+  - id: R13
+    title: FADING is a label, not a verdict
+    status: active
+    date: 2026-09-22
+    binds_at: [RANK, NOMINATE, VOTE, WRITE]
+    rule: >
+      AQE's mp_state is computed in src/engines/mp.py as STRONG (momentum score higher than three
+      bars ago AND >= 75), BUILDING (higher AND < 75) and FADING (everything else -- i.e. the score
+      is simply not higher than it was three bars ago). A name flat at 89 reads FADING. The label is
+      therefore never, on its own, a gate, a door condition or a reason to oppose. cmd_trim stamps
+      mp_state_plain on every row; the AQE_LEADER door no longer consults mp_state; the round-2
+      packet restates this ruling in its header. The read a seat may act on is mp, mp_accel_state
+      and the served returns.
+    rationale: >
+      2026-09-22, PM: "the fading is absolutely stupid, both at AQE level and at committee level."
+      On 2026-09-19 MSTR (mp 89, #2 on 20-day RS, +9.5% the next session) and GME (mp 85) read
+      FADING; the AQE_LEADER door required STRONG and the seats read the word as decay. Relabelling
+      at source is AQE's to do (handoff filed); the committee stops misreading it today.
+    check: tests.test_fading_is_not_a_gate
+
+  - id: R14
+    title: Two lanes -- a name admitted on strength is judged by the seats that buy strength
+    status: superseded
+    superseded_by: [R32]
+    superseded_note: >
+      PM 2026-10-30: all seven deciders count on every name. The lane tag stays as a LABEL on every row (written at RANK, shown on cards); it no longer selects which seats count.
+    date: 2026-09-22
+    binds_at: [RANK, VOTE, DECIDE, WRITE]
+    rule: >
+      Every admitted name carries lane MOMENTUM or lane PULLBACK in phase4.json. MOMENTUM = the
+      name opened the STRENGTH door (rs_spy_20d in the top decile of today's list, or mp >= 75 with
+      mp_accel_state ACCELERATING) or the AQE_LEADER door. Every voting seat still files a vote on
+      every name. cmd_consensus computes a MOMENTUM-lane verdict from the strength seats only
+      (livermore, oneil, minervini, elder-lens, detect-lens) and records the other seats' votes as
+      advisory; a PULLBACK-lane verdict counts every seat. In the MOMENTUM lane, extension above the
+      20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a weight,
+      never a veto. The brief states the lane on every verdict row.
+    rationale: >
+      2026-09-21: every extended name admitted was voted HOLD or PASS by the same bloc (wyckoff,
+      seow, oneil, raschke, minervini, lynch) citing extension -- VLO 6 opposes, MPC 7, AMD 8,
+      SDGR 11. Those rules are right for a pullback book and wrong for the momentum book the PM
+      asked for ("coil, strength, insti money, momentum"). A door can admit a runner; only a lane
+      lets the vote keep it. PM chose lanes over rewriting eight cards, 2026-09-22.
+    check: tests.test_a_momentum_lane_name_is_judged_by_the_strength_seats
+
+  - id: R15
+    title: The momentum floor -- every nominator is served the momentum numbers
+    status: active
+    date: 2026-09-22
+    binds_at: [PREPARE, NOMINATE, VOTE]
+    rule: >
+      MOMENTUM_SERVED (rs_spy_20d, rs_rank_pct, ret_63d, ret_6m, ret_12m, pct_run_10d, adx_14,
+      extension_atr_20, pct_from_52w_high, mp, mp_state, mp_state_plain, mp_accel_state,
+      runner_setup, runner_conviction_label, lens_positive, lens) is appended to every seat menu by
+      cmd_packets and is not editable in voice_menus.json. The round-2 packet prints the same block
+      on every name. Admission doors widened the same day: ELDER+LENS needs elder >= 7 on the last
+      2 bars (was 3); a LENS door opens on >= 4 of 6 lenses strong with no elder-bar test; a STRENGTH
+      door opens as defined in R14; a SOLO route admits a single nomination at conviction >= 4 when
+      the name also opened LENS, STRENGTH or AQE_LEADER; the cap fills first with up to five
+      STRENGTH-door names by mp then rs_spy_20d, then by doors opened > lenses strong > AQE rank;
+      cap raised 20 -> 24 to hold the wider doors.
+    rationale: >
+      2026-09-21: ret_63d, ret_6m, pct_run_10d and adx_14 existed in the export and were dropped by
+      the CONSUMED whitelist because no seat menu had asked; only three of nine seats saw
+      rs_spy_20d; the runner flag reached one round-2 seat. ARM (5 of 6 lenses strong, squeeze
+      breakout on confirmed volume, +17% Monday) was nominated by one seat and missed the ELDER+LENS
+      door by one bar; COHR and MRVL (5 strong) were cut at the cap by AQE rank while SDGR, NTSK and
+      UMC (ranks 7-9, nominated by nobody) took the slots and were rejected 11-0. Replay of the
+      09-19 export under the new doors admits ARM, COHR, MRVL, PENG, EQH, META, MSTR, DELL and drops
+      NTSK and UMC.
+    check: tests.test_every_nominator_is_served_the_momentum_floor
+
+  - id: R16
+    title: The nomination floor -- the doors are ADDITIVE and never remove an analyst pick
+    status: active
+    date: 2026-09-24
+    binds_at: [RANK, VOTE, DECIDE]
+    pm_words: >
+      "I never asked to leave 5 seats or whatever that means. It is additive and not to gate or
+      remove voice (analyst) picks."
+    rule: >
+      Every ticker any seat nominates, at ANY conviction, is admitted to the deliberation set
+      UNCONDITIONALLY. No conviction threshold, no second door, no ordering contest, no cap. The
+      seven admission doors exist ONLY to ADD names the seats did not find; they fill a separate
+      budget (rank --machine-add, default whatever is left under --cap once every nomination is
+      seated) that sits ON TOP of the nomination floor and can never displace a nomination. cmd_rank
+      asserts the invariant and ABORTS THE RUN if a nomination is ever cut. The one legitimate
+      exclusion is a nomination the served universe carries no row for -- nothing to vote on -- and
+      that is reported under nominations_off_universe as a declared DATA GAP, never as a cut. The
+      STRENGTH RESERVE is RETIRED: --strength-reserve is accepted and ignored so old command lines
+      still run, and the receipt says it was ignored. Support: because the room is now as large as
+      the seats made it, a seat may split its round-2 ballot (registrar validate --part N --of M,
+      then registrar merge, which proves the parts cover the deliberation set exactly).
+    rationale: >
+      Three consecutive runs shared one 24-seat pool between seat picks and machine finds, and the
+      machine won. 2026-09-22: 46 nominated, 16 seated, 30 BINNED, 8 chairs to names nobody
+      nominated. 09-23: 32 / 15 / 17 / 9. 09-24: 29 / 12 / 17 / 12. Across the three runs 107
+      nominations produced 43 seats and 64 binned picks, while 29 chairs went to names no analyst
+      asked for. The verdict record says the pool was resolved exactly backwards: nominations at
+      conviction 4-5 ADVANCE 70% of the time (n=23); no-nominator machine admits ADVANCE 10% (n=29)
+      and 14 of the 29 were PASSED outright. Four conviction-4 picks reached no door at all across
+      the three runs -- NWG, SSRM, TEAM, APLE -- and every one was a low-extension coil (0.83, 0.84,
+      0.86, 0.32 ATR), which is the first thing the PM's book asks for. Root cause: the cap was
+      never a judgment rule the PM set. It was 20, then 24 on the conductor's own change under D120,
+      and its true ceiling was MAX_FORM_BYTES in registrar.py -- at a measured ~953 bytes per name
+      over eleven real 2026-09-24 ballots, one round-2 file holds about 25 names. A FILE SIZE LIMIT
+      WAS DECIDING WHICH OF THE PM'S ANALYSTS WERE HEARD. Split ballots removed that ceiling; this
+      ruling removed the competition. Replay of the 2026-09-24 tally under R16 seats all 29
+      nominations including TEAM, APLE, QCOM, MSFT, TENB, ETN and OUST, and demotes GME and SDGR --
+      both PASSED by the room -- to additions behind the floor.
+    check: tests.test_every_nomination_is_seated
+
+  - id: R16.1
+    title: A split ballot is validated per part and merged with proof of coverage
+    status: active
+    date: 2026-09-24
+    binds_at: [VOTE, DECIDE]
+    rule: >
+      A seat whose round-2 votes do not fit one MAX_FORM_BYTES file files parts. Each part is
+      validated on its own and must stay inside the deliberation set, but is NOT required to cover
+      it (registrar validate --part N --of M). registrar merge then stitches the parts and proves
+      coverage EXACTLY -- refusing a missing name, a name voted twice across parts, and a vote on a
+      name outside the set -- before DECIDE computes any verdict. Coverage is proved exactly once,
+      in one place.
+    rationale: >
+      Under R16 the room is as large as the seats made it, so the single-file byte cap can no longer
+      be allowed to bound it. Per-part validation is deliberately permissive about coverage, which
+      is precisely why coverage must be proved in merge rather than assumed.
+    check: tests.test_a_split_ballot_is_validated_per_part_and_merged
+
+  - id: R17
+    title: A door opens a FLAG, not a seat -- the machine never speaks in the committee's voice
+    status: active
+    date: 2026-09-25
+    binds_at: [RANK, VOTE, DECIDE, WRITE]
+    pm_words: >
+      "If a name gets added through a door, it should be highlighted for PM even if there no voice
+      supporting for it. It's largely informational otherwise we end up superseding the committee
+      consensus (aka the voice) which makes no sense or discipline at all. If the committee is saying
+      they don't have the necessary data, then that's a different AQE enhancement to make. However
+      that is unlikely as voice pack already provides."
+    rule: >
+      A name that opened an admission door but NO seat nominated does not enter the deliberation set.
+      It is not voted, it receives no verdict, and it cannot compete with or override committee
+      consensus. It is surfaced to the PM under phase4.informational[] as a flagged watch list
+      carrying its doors, lane, AQE rank, momentum reads and lens count, ordered doors_opened >
+      lenses_strong > AQE rank, capped for readability by --door-budget with the full count recorded
+      under door_openers_not_on_the_floor. The deliberation set is therefore EXACTLY the R16 floor:
+      every nomination plus the PM's own positions. machine_additions is retained as an empty key so
+      downstream reader contracts still hold.
+    also_ruled: >
+      The PM DECLINED the served quality floor three seats proposed on 2026-09-25 (admit an
+      unnominated name only if a name-specific leg reads strong). His reasoning, recorded so it is
+      not re-litigated: if a seat says it lacks the data to grade a name, that is an AQE data gap to
+      fix upstream, not grounds for another admission gate -- and the voice packet already serves the
+      fields in question. R17 makes the proposal moot in any case: an unnominated name no longer
+      takes a seat to be gated for.
+    rationale: >
+      R16 (2026-09-24) stopped the doors DISPLACING an analyst pick but still let a machine find
+      collect a full committee verdict alongside the seats' own work. On 2026-09-25 that produced INTC
+      as an ADVANCE off the STRENGTH door with no seat behind it. Over the four runs 09-22 to 09-25
+      the unnominated admits returned 4 ADVANCE, 22 HOLD and 8 PASS across 37 names -- the room spent
+      most of those votes rejecting names it had never asked to see, and one in ten came back carrying
+      the committee's authority without a single voice behind it. A verdict on a name no voice
+      proposed is the machine speaking in the committee's voice, which is the thing the committee
+      exists to prevent.
+    conductor_judgment_declared: >
+      The ruling says "informational". The conductor read that as OUT OF THE VOTE ENTIRELY rather than
+      voted-and-labelled, because a voted name can still return ADVANCE and that is precisely the
+      superseding the ruling forbids. Flagged in the brief so the PM can reverse it if he meant the
+      softer reading.
+    check: tests.test_a_door_opener_is_flagged_and_never_voted
+
+  - id: R18
+    title: Brackets are produced by the run, after the vote, and are render-only
+    status: active
+    date: 2026-09-25
+    binds_at: [BRACKET, WRITE]
+    pm_words: >
+      "#5 is already in bracket skill. We can add the bracket skill as an additional step into daily
+      pma report for the advance and hold for condition ticker names."
+    rule: >
+      A BRACKET step runs after REPEAT-WATCH over every ADVANCE and HOLD-FOR-CONDITIONS name and
+      writes brackets.json. A HELD name is skipped by design with a stated reason -- you do not
+      bracket what you already own. Sizing needs dynCap from the journal, which the committee run does
+      not carry, so a bracket without it returns LEVELS and REFUSES to size; the per-name `sized` flag
+      says which, and a refusal is never dressed as a position. R1 IS NOT WEAKENED: brackets attach
+      AFTER the vote, are information only, cannot reach a seat, a door, the tally, the ranking or a
+      verdict, and purity_check continues to prove rank invariance to every bracket field.
+    rationale: >
+      brackets.json was a declared gap on five consecutive runs (2026-09-21 to 09-25), which meant
+      every level printed on every card was hand-picked by the conductor and presented beside computed
+      figures. The arithmetic already existed in tools/bracket_calc.py and nothing in the committee run
+      called it. First live run on 2026-09-25 data: 48 of 52 ADVANCE/HOLD names produced a computed
+      stop, 20 cleared the ATR and reward gates, 4 skipped as held, 0 failed.
+    check: tests.test_brackets_are_produced_for_advance_and_hold_and_never_for_held
+
+  - id: R19
+    title: A repeat is marked as a repeat, on the face of the report
+    status: active
+    date: 2026-09-25
+    binds_at: [BRACKET, WRITE, PUBLISH]
+    pm_words: >
+      "youd realise at least 5 names are repeat picks for advance that has appeared consecutive days"
+    rule: >
+      Every verdict carries a repeat mark rendered on the FACE of the verdict table, the cards and the
+      trade list -- never only in an appendix or a verbatim paste. FRESH (first ever advance), STANDING
+      (consecutive repeat, price still inside the name's own computed stop distance -- the same unacted
+      idea), DRIFTED (consecutive repeat, price moved further than that risk -- the entry the committee
+      showed is gone), RETURNED (advanced before, after a gap), REVERSED (advanced on the previous run
+      and no longer does), LEFT_THE_ROOM (advanced on the previous run and is absent today). Two drift
+      figures are carried: from the start of the current streak, and from the first advance ever, because
+      the streak figure understates what ignoring a name has cost. Nothing in this step changes a
+      verdict, a conviction or an ordering.
+    rationale: >
+      The PM read the 2026-09-25 brief and saw what the report did not say: six names had been ADVANCE on
+      consecutive runs -- DT and ACA for four sessions each -- and eleven of the twenty-four had advanced
+      before. The history was already computed (repeat_watch.json, 272 rows across 84 tickers) and buried
+      in a verbatim section-4 paste, so every morning presented 24 names as if all were new. The failure
+      has two opposite shapes and needed two labels: ACA advanced four sessions and moved 0.21%, so the
+      entry is still there and the useful thing to say is "this is the same idea, unacted"; TWLO is
+      +22.89% since its first call, so re-advancing it silently is the report lying by omission. The
+      separator is the name's own bracket stop distance, which on 2026-09-25 flagged exactly one of the
+      six (DT at 1.3x its own risk) and confirmed the other five still standing. No threshold was fitted.
+    check: tests.test_a_repeat_advance_is_marked_standing_or_drifted
+
+  - id: R20
+    title: The committee's levels are published as numbers for AQE's live alerts
+    status: active
+    date: 2026-09-30
+    binds_at: [GATHER, WRITE, LEVELS, PUBLISH]
+    pm_words: >
+      "I want to handover to AQE engine to adapt their 15min AQE alerts to monitor the levels committee PMA
+      produces, and trigger actionable items in my mailbox during live market hours" ... "add step for PMA
+      to write card to github location"
+    rule: >
+      Every run ends with pma_levels.json: one row per ADVANCE, HOLD-FOR-CONDITIONS, HELD and WATCH name,
+      each carrying machine-readable triggers (trade/close above/below a number, on a 15m or daily basis,
+      with an optional volume multiple). WRITE puts each committee condition into cards.json as structured
+      triggers, not prose; a condition that cannot be a number yet carries a stated not_structured_yet
+      reason and AQE skips it rather than guess. The PM's broker stop, read read-only at GATHER, is the level
+      in force on every held name; a committee exit line below it is refused. WATCH rows never alert (R17).
+      PUBLISH pushes the file to AQE main under aegis/output/pma/ only. Alerts only: nothing in this path
+      places, changes, cancels or sizes an order, and nothing observed intraday feeds back into a vote (R1).
+    rationale: >
+      On 2026-09-29 the committee's conditions ("PK closes above 16.20", "A: never above 178.78") existed only
+      as sentences in the brief and the cards, so no machine could watch them; the only machine-readable
+      stop on a held name was AQE's held_sl, null on all seven, which is why the 2026-09-26 brief told the PM
+      he had no stops when he had six -- and hid the one position (WEAT) that truly had none. AQE already runs
+      a 15-minute alert loop with email and dedup (src/alerts/, .github/workflows/alerts.yml); what it lacked
+      was the committee's levels in a form it can read.
+    check: tests.test_the_committee_levels_are_emitted_for_aqe_and_never_loosen_a_stop
+
+  - id: R20.1
+    title: Committee levels stay live for three sessions, additively
+    status: active
+    date: 2026-09-30
+    binds_at: [LEVELS, PUBLISH]
+    pm_words: >
+      "I want AQE alerts to look at last 3 days - alternatively it is for PMA to write the levels additively
+      for the last 3 days. reason is sometimes the levels and the alerts dont occur IMMEDIATELY and have some
+      time lag due to market conditions"
+    rule: >
+      pma_levels.json carries the last three runs, not only today's. PMA owns the merge, so AQE reads one
+      file: today's verdict on a name supersedes older ones; a name PASSED today, a row whose own kill or
+      invalidation close is already broken by today's served close, any HELD or WATCH row from an earlier run,
+      and anything older than three runs are retired with a stated reason; every other ADVANCE and
+      HOLD-FOR-CONDITIONS row is carried, marked carried with its origin run and age. Trigger ids are stamped
+      with the origin run so a fire is remembered for the row's whole life and never re-sent each morning.
+    rationale: >
+      The merge sits with PMA because only PMA knows which verdict superseded which; three separate files
+      read by AQE would show a name as ADVANCE and PASS side by side. Carrying HELD rows would resurrect
+      stale broker stops, so the broker read stays today-only.
+    check: tests.test_levels_roll_forward_three_sessions_and_today_wins
+
+
+  - id: R21
+    title: The committee's conditions are written in words AQE can watch (D123)
+    status: active
+    date: 2026-10-02
+    binds_at: [VOTE, CONDITIONS, LEVELS]
+    pm_words: >
+      "what is clear is there is NO CHANGE to what committee looks at and lands at as recommend or advance.
+      it is simply printing it in a format AQE alert can pick it up." / "yes start - i want to work on the
+      committee first, then AQE, then run PMA"
+    rule: >
+      Every round-2 SUPPORT dated 2026-10-02 or later carries a `conditions` block -- buy, confirm, wrong,
+      wait, chase, timeframe -- in the words of contracts/condition_vocab.json, levels named by field and
+      never typed as numbers, inside the seat's own method (contracts/voice_primitives.json). The vote, the
+      verdict rule and the lanes are unchanged. pma_conditions.py compiles the blocks without judgment and
+      pma_levels.py attaches them to every alert row beside the existing triggers. A trade-through line
+      sitting on yesterday's close is refused.
+    rationale: >
+      Free-text falsifiers reached AQE only through hand transcription at WRITE. On 2026-10-01 that pinned
+      HPE's ACTION entry to Wednesday's close (AQE's high_52w is a closing high), and the six HPE supporters
+      held three different exit lines while the card showed one. Shared words remove the transcription.
+    check: tests.test_conditions_are_written_in_shared_words_and_compiled_without_judgment
+
+
+  - id: R22
+    title: Livermore votes; Lynch is consulted only
+    status: superseded
+    superseded_by: [R31]
+    superseded_note: >
+      PM 2026-10-30: Lynch stood down as a voice (with Rogers, Crown, Druckenmiller). Livermore remains a decider. The consulted-seat mechanism is retired with the roster.
+    date: 2026-10-22
+    binds_at: [NOMINATE, CHALLENGE, VOTE, DECIDE]
+    pm_words: >
+      "Livermore is a key voting seat. Lynch is not. This is standing."
+    rule: >
+      Livermore nominates and votes (a strength seat in the MOMENTUM lane, R14). Lynch files the CHALLENGE
+      fundamentals read, printed in the vote packet; he is not spawned at VOTE and pma_pipeline.py
+      consensus ignores any round-2 ballot he files (CONSULTED_SEATS). Ten voters.
+    rationale: >
+      Recounting 21 and 22 Oct without Lynch's ballot changed 0 of 97 verdicts; the PM's book is momentum,
+      and fundamentals stay visible as information without deciding a vote.
+    check: tests.test_consulted_seat_ballot_never_counts
+
+
+  - id: R23
+    title: One fixed card-report format, built by a tool
+    status: active
+    date: 2026-10-23
+    binds_at: [CONDITIONS, WRITE, REPORT]
+    pm_words: >
+      "why is the PMA report format always changing, the cards form always works the best" / "the cards for
+      refers to the professionally looking PMA report"
+    rule: >
+      The PM's primary read is the Committee Cards report rendered by tools/pma_cards.py render from the run
+      files plus cards_text.json (words only, fixed schema). Its layout is code, not a per-run choice. Trigger
+      levels come from pma_cards.py triggers at CONDITIONS. render refuses a words file missing any ADVANCE
+      card, HOLD line or PASS line. Published to ONE fixed artifact URL (RUN.yaml parameters) every run.
+    rationale: >
+      The old build_report.py held 25-Sep prose hard-coded and was rewritten by hand each morning, so the page
+      drifted run to run. Fixing the layout in code makes every day's report the same shape.
+    check: tests.test_card_report_layout_is_fixed_and_refuses_gaps
+
+
+  - id: R24
+    title: Trash the AQE alert emails at the start of every PMA run
+    status: active
+    date: 2026-10-23
+    binds_at: [INBOX-CLEAN]
+    pm_words: >
+      "add one step when we run daily PMA ... search my mailbox for emails with "[AQE]" in subject line or
+      from "AQE Alerts" as sender.. move all these mails to trash."
+    rule: >
+      INBOX-CLEAN trashes (never deletes) every thread from "AQE Alerts" and every thread whose subject starts
+      with "[AQE]". Gmail's subject:"[AQE]" also matches "[TongIncomeWheel/AQE] ..." GitHub mail; those are
+      skipped by the literal prefix test. Failure is declared, never blocking.
+    check: manual (connector step; counts written to inbox_clean.json)
+
+
+  - id: R25
+    title: Up to 3 reserved seats for a Valen undercut-and-rally reclaim
+    status: active
+    date: 2026-10-23
+    binds_at: [RANK, VOTE, WRITE]
+    pm_words: >
+      "yes i think we can give up to 3 reserved seats for Valen UnR, but take note, this wasnt just because of
+      Valen, this is simply my own manual scan and surprised it didnt make it" (on ACN, 23 Oct)
+    rule: >
+      The one exception to R17. rank seats up to --unr-seats (default 3) names that no seat nominated, where
+      AQE marks unr_status MET on the last completed session (the reclaim day) AND the name is on the Longlist
+      or Elder list, ordered by AQE rank. They carry the door UNR_SEAT, are voted like every other name, and sit
+      in the PULLBACK lane (whole room) because the strength seats already passed on them in round 1. SETUP
+      does not qualify. A nominated name never uses a reserved seat. R16 is unchanged.
+    rationale: >
+      ACN (both lists, strength rank 51, U&R MET, the PM's manual pick) was flagged three sessions running and
+      never voted: R17 lets a door flag a name but never seat it, and ACN opened only one door so it missed even
+      the flag list. A reserved seat makes the committee answer for a name like this instead of not seeing it.
+      Open question for the PM: the wider gap (a strong both-lists name with no U&R reclaim) is not covered.
+    check: tests.test_up_to_three_reserved_seats_for_a_valen_reclaim
+
+
+  - id: R26
+    title: The flag list is the strongest names the room did not see
+    status: active
+    date: 2026-10-23
+    binds_at: [RANK, REPORT]
+    pm_words: >
+      "my pick is manual - our objective is to NOT miss strong momentum picks - so #2 sounds more logical. PMs
+      pick can always be adhoc added"
+    rule: >
+      rank flags every Longlist/Elder name that is not in the room, ordered by 20-day strength vs SPY then AQE
+      rank, and shows the top --door-budget (now 10). The card report renders them, with the R25 reserved
+      seats, in a fixed code-rendered section "Strong names no voice picked". Still R17: flagged, never seated,
+      never voted. PM picks stay ad hoc, by hand, outside the rule.
+    rationale: >
+      The old list ordered door-openers by doors opened. ACN opened one door and missed the 8 shown three
+      sessions running, and the card report did not render the list at all. Replayed: ACN 7th on 22 Oct and
+      3rd on 23 Oct by the new order.
+    check: tests.test_the_flag_list_leads_with_the_strongest_names
+
+
+  - id: R27
+    title: The strongest names are voted, in the momentum lane
+    status: active
+    date: 2026-10-23
+    binds_at: [RANK, VOTE, CONSENSUS, REPORT]
+    pm_words: >
+      "its not just to pick the strongest names, but also let committee review these strongest and vote on it.
+      meaning theyre not looking for things fitting to perfection to their scan, but theyre applying their
+      methodology and voice to these names and forming a consensus on which is worth it. if they dont do this, it
+      is equivalent to me scanning aqe manually which defeats the purpose.... at times it is completely stupid
+      that we apply pullback lens onto a momentum book, the 2 lanes should still stay"
+    rule: >
+      Reverses R17 for the strongest names only. rank SEATS the top --strong-seats (10) of the R26 pool -- Longlist/
+      Elder names not otherwise in the room, by 20-day strength vs SPY -- with door STRONG_SEAT, MOMENTUM lane
+      (verdict from the strength seats). The next --door-budget names stay flagged. R25 U&R seats take the ordinary
+      lane rule (R25's PULLBACK override is withdrawn). The vote packet tells every seat that a rule-seated name is
+      not a reason to oppose and must be judged by the seat's own method, not by whether it matches the seat's scan.
+      R16 unchanged.
+    check: tests.test_the_strongest_names_are_voted_in_the_momentum_lane
+
+
+  - id: R28
+    title: Part 1 of the card report is the Daily Weather
+    status: active
+    date: 2026-10-23
+    binds_at: [WRITE, REPORT]
+    pm_words: >
+      "Part 1 = DAily Weather...I want to see situational awareness and stance, I want to see GEX traffic light,,
+      I want to see Macro cockpit.I want to see a short write up on COT cwoded positions Long and short.. we also
+      have market checklist and instruments all available, we also have weather turning, we also have theme
+      leaders and rotation. these numbers are all available, yuo just to to explain them"
+    rule: >
+      pma_cards.py render puts "Part 1 · Daily weather" straight after the bottom line: seven code-rendered blocks
+      (stance, GEX light for SPY and QQQ, the Crown macro layer as five panels -- heartbeat, positioning, volatility
+      incl. VIXEQ, divergence, the call + macro story + calendar (PM 19:06) -- COT crowded long/short, direction of the wind + checklist and instruments,
+      weather turning, theme leaders and rotation) from aqe_valen_dashboard.json + aqe_crown_macro.json, each
+      with one plain-English paragraph from cards_text.json `weather`. Thresholds already met are dropped from
+      "what would change the stance". "Part 2 · Your book and the committee" follows.
+    check: tests.test_card_report_layout_is_fixed_and_refuses_gaps
+
+
+  - id: R29
+    title: Strong stocks riding a group turn (information only)
+    status: active
+    date: 2026-10-23
+    binds_at: [REPORT]
+    pm_words: >
+      "what is missing is an easy section to see the strong stocks in supportive and/or turning sectors. This is info only
+      as basically it's a signal of where stocks are early in the riding their sector turn and strengthen"
+    rule: >
+      Part 1 block 8, code-rendered from the export alone. Turning groups = AQE sector or theme grade TURNING or rotation
+      quadrant IMPROVING; already-leading groups = quadrant LEADING with grade DEPLOY/HOLD. A strong name is on the
+      Longlist or Elder list, beating SPY over 20 days and above its 50-day average; up to six shown per group, strongest
+      first, with today's committee verdict if voted. Sectors lead; a theme shows only with two or more strong names.
+      Information only: it seats nobody and changes no verdict.
+    check: manual (rendered in pma_cards render)
+
+
+  - id: R30
+    title: Seow counts in the momentum lane; Seow and Wyckoff rebuilt from their sources
+    status: superseded
+    superseded_by: [R31, R32]
+    superseded_note: >
+      PM 2026-10-30 (later the same day): Seow is removed from STRENGTH_SEATS -- all seven deciders count on every name, so no strength-seat list decides a verdict. The Seow and Wyckoff canon v2 rebuilds STAND (restated in R31).
+    date: 2026-10-30
+    binds_at: [VOTE, DECIDE]
+    amends: R14
+    pm_words: >
+      "I agree to rebuild" (2026-10-30), with the choices: add Seow to the momentum-lane seats; move the
+      Weis-duplicate lines out of Wyckoff; keep the two non-author rules as labelled house rules; deliver the
+      AQE packet wiring as a handoff and patch, not a push.
+    rule: >
+      STRENGTH_SEATS gains seow (livermore, oneil, minervini, elder-lens, detect-lens, seow). Seow's canon v2 carries
+      two systems: the position system (deck Part I, breakout above resistance, pyramid on strength) judges MOMENTUM
+      lane names and is why he counts there; the swing system (deck Part II) judges PULLBACK lane names, so seow also
+      stays in PULLBACK_SEATS. Wyckoff's canon v2 is re-anchored on Wyckoff 2.0; it is NOT a strength seat: on a
+      momentum name that has run away from value it votes HOLD-FOR-CONDITIONS with a test level, never OPPOSE on
+      extension alone. R14's other terms are unchanged.
+    rationale: >
+      Source re-reads on 2026-10-30 (docs/seow_seat_enrichment_2026-10-30.md, docs/wyckoff_seat_enrichment_2026-10-30.md)
+      found Seow's v1 card carried only his swing system and Wyckoff's v1 card was a 12-page Weis digest. Neither seat
+      had been given its author's trend method.
+    check: tests.test_seow_counts_in_the_momentum_lane
+
+
+  # ------------------------------------------------------------------------------------------------
+  # THE 30 OCT 2026 REDESIGN (docs/DECISIONS_2026-10-30.md in the handover kernel wins over any card).
+  # Recorded 2026-11-01 as data so preflight can bind them. Code that implements them lands in the
+  # same release (aegis-core 1.32.0): rosters in RUN.yaml, `board` / `floor-check` / `ratify-count`
+  # in pma_pipeline.py, the case / challenge / floor / slate / ratification / QA forms in the registrar.
+  # ------------------------------------------------------------------------------------------------
+
+  - id: R31
+    title: The roster -- seven deciders, Steenbarger as quality assurance, Detect-lens as an independent list
+    status: active
+    date: 2026-10-30
+    binds_at: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, DECIDE, WRITE]
+    supersedes: [R22]
+    pm_words: >
+      "15 voices is too many." Settled 19:06 and 19:11 SGT, 2026-10-30.
+    rule: >
+      DECIDERS (7): oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff -- they shortlist, vote,
+      deliberate on the floor and ratify. QA SEAT (1): steenbarger -- files the challenge document before the
+      vote and one QA note after ratification; may HOLD a ticket for one more round of deliberation (one hold
+      per ticket); never votes, never vetoes. DETECT-LENS is an independent top-10 LIST, not a voice: no vote,
+      no deliberation; the Cards show lens_ranking.ranked[0:10] from AQE's export, labelled independent, with
+      a marker where a name is also in the room or on the slate. BENCH: weis, thorp. STOOD DOWN: rogers, lynch,
+      crown, druckenmiller (the weather is read from AQE's Crown file and the Valen dashboard, never from a seat).
+      Voices are not assigned to lanes. The Seow and Wyckoff canon v2 rebuilds (R30) stand.
+    rationale: >
+      The 29 Oct autopsy (docs/evidence/deliberation_autopsy_2026-10-29.md): shared packet text made seats
+      agree; the room's PASS names beat its ADVANCE names. Fewer, independent, accountable seats.
+    check: tests.test_roster_is_seven_deciders_plus_qa
+
+  - id: R32
+    title: All seven deciders count on every name; the lane tag is a label only
+    status: active
+    date: 2026-10-30
+    binds_at: [RANK, VOTE, DECIDE, WRITE]
+    supersedes: [R14, R30]
+    pm_words: >
+      Settled 19:18 SGT, 2026-10-30. The MOMENTUM / PULLBACK tag stays as a label only.
+    rule: >
+      No strength-seat list selects which ballots count. Every decider's ratification counts on every ticket.
+      RANK still writes lane=MOMENTUM|PULLBACK on every phase4 row and the cards still show it, as a reading
+      aid. STRENGTH_SEATS / PULLBACK_SEATS in pma_pipeline.py are legacy labels read only by the superseded
+      `consensus` blind tally; `board` and `ratify-count` never read them. Seow is removed from STRENGTH_SEATS
+      (BUILD_PLAN Phase 4 item 2) and the Seow card's R10 picks his system from the name's own picture, not
+      from the lane tag.
+    check: tests.test_all_seven_deciders_count_on_every_name
+
+  - id: R33
+    title: Each decider shortlists at most six
+    status: active
+    date: 2026-10-30
+    binds_at: [NOMINATE]
+    amends: R16
+    pm_words: >
+      Settled 19:18 SGT, 2026-10-30. "At most 6 (fewer is valid; never padded). At most 42 nominations."
+    rule: >
+      A round-1 ballot dated on or after 2026-11-01 from a decider carries at most 6 nominations; the registrar
+      REJECTS a seventh. Fewer is valid and is never padded. R16's floor is unchanged: every nomination that IS
+      filed is seated unconditionally. A round-1 ballot from a seat that is not a decider is rejected.
+    rationale: >
+      The room is bounded by what the seven methods find, not by a file size (R16) and not by a cap on the
+      room (R16 again); the cap is on how many names one seat may put forward.
+    check: tests.test_shortlist_cap_is_six
+
+  - id: R34
+    title: The slate is at most 15; the objection rule replaces the consensus verdict rule; code counts
+    status: active
+    date: 2026-10-30
+    binds_at: [SLATE, RATIFY, QA, DECIDE, WRITE]
+    pm_words: >
+      Settled 19:18 and 19:21 SGT, 2026-10-30. "Nobody objects = AGREED. 1 to 3 object = CONTESTED (stays
+      listed, objections printed). 4 or more (half or more) = DROPPED (off the list, still tracked)."
+    rule: >
+      The Chair drafts a slate of at most 15 tickets across ADVANCE and WATCH (a ceiling, not a target; never
+      padded), each with its entry trigger, where it is wrong, horizon, why the room agrees and who dissents.
+      Each decider ratifies every ticket: AGREE, AGREE_WITH_RESERVATION, or OBJECT with the one thing that
+      would clear it. `pma_pipeline.py ratify-count` counts OBJECT answers per ticket on the FINAL
+      ratification: 0 = AGREED; 1..(ceil(n/2)-1) = CONTESTED (listed, objections and what-would-clear printed);
+      >= ceil(n/2) of the n deciders present (4 of 7) = DROPPED (off the list, still recorded and tracked).
+      Machine verdict words are unchanged for every downstream reader: slate ADVANCE -> ADVANCE, slate WATCH ->
+      HOLD-FOR-CONDITIONS (rendered "WATCH"), DROPPED and not-slated room names -> PASS, each row carrying
+      `status` AGREED|CONTESTED|DROPPED|NOT_SLATED. `conviction` on the row is an ORDERING figure derived from
+      the ratification (AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 / NOT_SLATED 1) and is never
+      a gate. The old rule (support > oppose AND support >= 2 AND median conviction >= 3) is retired; `consensus`
+      remains only as the blind-tally reader and prints that it is superseded.
+    check: tests.test_objection_rule_counts_the_final_ratification
+
+  - id: R35
+    title: Everything is recorded so each voice is accountable; graded on its own horizon
+    status: active
+    date: 2026-10-30
+    binds_at: [DECIDE, SCORECARD, PUBLISH]
+    pm_words: >
+      Settled 19:21 SGT, 2026-10-30.
+    rule: >
+      Per voice, per ticket, per run: the shortlist, the blind vote (with its horizon in sessions), every floor
+      message, whether it changed its mind and what moved it, its ratification and any objection or reservation,
+      Steenbarger's holds and QA note. Dropped and contested tickets are tracked too. `ratify-count` writes
+      committee_record.json beside consensus.json; record-verdicts and the scorecard read the horizon each
+      voice stated, not one 5-session clock. A per-voice review every 20 runs.
+    check: tests.test_the_record_is_written_per_voice_per_ticket
+
+  - id: R36
+    title: The rounds -- blind shortlist, challenge, blind vote both ways, open floor, slate, ratify, QA and hold, close
+    status: active
+    date: 2026-10-30
+    binds_at: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, DECIDE]
+    pm_words: >
+      "One hearing round is not a committee." (18:59 SGT, 2026-10-30) The 12 Aug deliberation ruling, rebuilt.
+    rule: >
+      1 NOMINATE blind (R33). 1b CHALLENGE: Steenbarger's crowding / extension / overlap document on the room.
+      2 VOTE blind, on an identical packet, with the CASE FORM on every name: stance, reason, the case AGAINST,
+      entry trigger, wrong-if, horizon in sessions, what would change my mind, what I cannot see. 3 FLOOR: code
+      (`board`) marks the contested names -- a blind split with both SUPPORT and OPPOSE present, or a name
+      Steenbarger's challenge names; the Chair posts the board; deciders message each other by name; cap TWO
+      messages per decider per name, counted by code (`floor-check`); Steenbarger may be called on by name.
+      4 SLATE: the Chair drafts from what the seats said, never adds a view. 5 RATIFY per ticket. 6 QA: one note
+      (did every decider read evidence; are reasons leaning on the same anchors; did a point go unanswered; does
+      the slate say what the deciders said) and at most one HOLD per ticket, which reopens the floor and the
+      ratification for that ticket only, once. 7 CLOSE: code counts (R34) and writes the record (R35).
+      Rounds 1 and 2 are blind; discussion starts only after every decider is on record. The Chair is not a
+      voice: no vote, no view, never judges the quality of a reason, only that every question was answered.
+    check: tests.test_floor_caps_are_counted_by_code
+
+  - id: R37
+    title: Valen's risk warnings sit beside the verdict, not inside every vote row
+    status: active
+    date: 2026-11-01
+    binds_at: [VOTE, WRITE, REPORT]
+    pm_words: >
+      "makes sense" (2026-11-01), on weather-spec item 7: the parabolic / no-buy text in every vote row was cited in
+      about 26% of oppositions in the 29 Oct grading -- a shared anchor, the problem the redesign exists to remove.
+    rule: >
+      In the vote packet (r2digest VALEN block) a per-name row carries setup status, checklist passes and the U&R read
+      only. The parabolic / failed-leader warnings and the no-buy flags print ONCE in a RISK block after the rows,
+      labelled information beside the verdict and never a reason to oppose. The Cards keep the warning beside the
+      verdict as today. A voice judges the name on its own method; the warning is a risk the PM reads.
+    check: tests.test_valen_warnings_are_a_risk_block_not_a_vote_row

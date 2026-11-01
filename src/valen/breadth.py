@@ -218,6 +218,8 @@ def compute_breadth(panel: pd.DataFrame | None, expected_last_session: str | Non
         out["ten_day_count"] = _unavailable(reason)
         out["quarterly_movers"] = _unavailable(reason)
         out["net_high_low"] = _unavailable(reason)
+        for w in (20, 50, 200):                       # PM 2026-11-01 (weather-spec item 6)
+            out[f"pct_above_{w}d"] = _unavailable(reason)
         return out
 
     pct40 = pct_above_ma(panel, S.T2108_MA_WINDOW)
@@ -241,6 +243,11 @@ def compute_breadth(panel: pd.DataFrame | None, expected_last_session: str | Non
         "ten_day_count": ten_day,
         "quarterly_movers": quarter,
         "net_high_low": nhnl,
+        # PM 2026-11-01 (weather-spec item 6): the handbook's % above the 20/50/200-day lines, same panel,
+        # same population label -- display instruments, never read by stance.py's flip rules.
+        "pct_above_20d": pct_above_ma(panel, 20),
+        "pct_above_50d": pct_above_ma(panel, 50),
+        "pct_above_200d": pct_above_ma(panel, 200),
     }
     # Staleness guard: the panel's last date must be within one session of the
     # last completed US session, else every row reads STALE.

@@ -1,0 +1,31 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Case form -- the block every decider adds to every round-2 vote (R36, PM 2026-10-30)",
+ "x_version": "1.0.0",
+ "x_effective": "2026-11-01",
+ "x_purpose": "Reasons BOTH ways on every name. Today's vote carried the case FOR on a SUPPORT and the case FOR the name (opposing_case) on an OPPOSE; the case AGAINST a supported name existed nowhere. The floor, the slate and the scorecard need both sides, the entry trigger, where the seat is wrong and its own horizon. This block sits at votes[i].case on the round-2 form (contracts/vote_round2.schema.json); registrar.py validate --round 2 REJECTS a ballot dated from 2026-11-01 that lacks it. Earlier ballots validate as filed.",
+ "type": "object",
+ "required": ["for", "against", "entry_trigger", "wrong_if", "horizon_sessions", "would_change_my_mind", "cannot_see"],
+ "additionalProperties": false,
+ "properties": {
+  "for": {"type": "string", "minLength": 1, "maxLength": 400,
+   "x_note": "the case FOR the name in this seat's own method terms -- filled on every stance, including OPPOSE"},
+  "against": {"type": "string", "minLength": 1, "maxLength": 400,
+   "x_note": "the case AGAINST the name in this seat's own method terms -- filled on every stance, including SUPPORT"},
+  "entry_trigger": {"type": "string", "minLength": 1, "maxLength": 200,
+   "x_note": "the trigger this seat would use to act (or would need to see before it could support). Levels as numbers from the packet; words from contracts/condition_vocab.json where a level is conditional"},
+  "wrong_if": {"type": "string", "minLength": 1, "maxLength": 200,
+   "x_note": "where this seat's read is proven wrong -- an observable, a level or both"},
+  "horizon_sessions": {"type": "integer", "minimum": 1, "maximum": 120,
+   "x_note": "R35: the seat's OWN horizon in trading sessions. The scorecard grades this seat's call at this horizon, not one 5-session clock"},
+  "would_change_my_mind": {"type": "string", "minLength": 1, "maxLength": 250,
+   "x_note": "the evidence this method updates on. Read by the Chair and by peers on the floor"},
+  "cannot_see": {"type": "array", "maxItems": 12, "items": {"type": "string", "maxLength": 80},
+   "x_note": "fields or facts this seat's method needs and the packet does not carry. [] when nothing is missing. Declared, never guessed"}
+ },
+ "x_registrar_extra_checks": [
+  "every string non-empty: reasons both ways are never blank",
+  "ballot voice must be a decider (R31); the QA seat and benched or stood-down voices file no vote",
+  "the existing round-2 checks still run: OPPOSE => opposing_case; SUPPORT@>=4 => self_counter; SUPPORT => conditions block (D123); bracket-as-reject => REJECT (R1); figure audit against the packet"
+ ]
+}

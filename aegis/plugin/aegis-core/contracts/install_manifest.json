@@ -1,0 +1,98 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Aegis Install Manifest",
+ "x_version": "1.0.0",
+ "x_note": "Machine-readable twin of aegis/INSTALL.md — a fresh AI executor can iterate `phases` in order, run each step by `actor`, and verify `check` before advancing. Prose rationale lives in INSTALL.md; this is the executable spine. actor: AI = executor runs it; PM = human gate, STOP and ask.",
+ "conventions": {
+  "actors": {"AI": "executor runs the cmd/tool", "PM": "human-only gate: STOP, state need, wait"},
+  "idempotent": true,
+  "on_check_fail": "STOP; report the failing check verbatim; never loosen a check to proceed",
+  "state_file": "aegis/data/persistent/install_state.json",
+  "load_first": ["aegis/CONTEXT.md", "aegis/charter/constitution.md", "aegis/charter/rulebook.yaml", "aegis/charter/parameters.yaml", "aegis/charter/decisions_log.md"]
+ },
+ "state_schema": {
+  "type": "object",
+  "required": ["phase", "status"],
+  "properties": {
+   "phase": {"type": "integer"},
+   "status": {"enum": ["pending", "in_progress", "passed", "blocked_pm", "failed"]},
+   "checks": {"type": "array", "items": {"type": "object", "required": ["name", "pass"], "properties": {"name": {"type": "string"}, "pass": {"type": "boolean"}, "evidence": {"type": "string"}}}},
+   "pm_gate": {"type": ["string", "null"], "description": "what human input is awaited"},
+   "notes": {"type": "string"},
+   "ts_from_env": {"type": "string", "description": "timestamp taken from the environment, not invented"}
+  }
+ },
+ "phases": [
+  {"phase": 0, "title": "Preconditions", "actor": "AI",
+   "steps": [
+    {"cmd": "git --version; python3 --version; node --version"},
+    {"cmd": "pip install pyyaml jsonschema pyarrow pandas --break-system-packages", "note": "pyarrow/pandas only if reseeding the historical store"},
+    {"tool": "ToolSearch", "for": ["FMP", "Tiger", "Google Drive"], "note": "record which connectors resolve"}
+   ],
+   "check": "git + python3 present AND >=2 of {FMP,Drive} connectors resolvable"},
+
+  {"phase": 1, "title": "Get the kernel", "actor": "AI",
+   "steps": [
+    {"cmd": "git clone https://github.com/TongIncomeWheel/AQE.git  # or: git -C AQE pull"},
+    {"cmd": "test -f aegis/charter/rulebook.yaml && git rev-parse --short HEAD"}
+   ],
+   "check": "aegis/charter/rulebook.yaml exists AND decisions_log.md contains 'D-43'"},
+
+  {"phase": 2, "title": "Build packages", "actor": "AI",
+   "steps": [
+    {"cmd": "python3 aegis/packaging/build_claude.py"},
+    {"cmd": "python3 aegis/packaging/build_kimi.py  # Kimi deployment only"}
+   ],
+   "check": "dist/claude-plugin/aegis-v4/agents/ has 12 files (10 voice-* + committee-desk + staging-gatekeeper); Kimi build (if run) excludes staging-gatekeeper; D-45 self-heal layer present in the package: tools/{notify,self_heal,ops_status}.py, skills/{ops-status,recover}/SKILL.md, contracts/{self_heal,ops_status}.schema.json -- these are tools/skills NOT agents, so agent count stays 12"},
+
+  {"phase": 3, "title": "Config & secrets", "actor": "PM+AI",
+   "steps": [
+    {"actor": "AI", "cmd": "python3 aegis/tools/fund_config.py", "note": "confirm it parses"},
+    {"actor": "PM", "gate": "FMP_API_KEY + GitHub token into gitignored aegis/config/.env (copy env.example)"},
+    {"actor": "PM", "gate": "tiger_mcp.url into aegis/config/endpoints.json (for headless runs)"},
+    {"actor": "PM", "gate": "allocated_capital_usd in aegis/config/aegis_fund.md if null (BL-030)"},
+    {"actor": "AI", "note": "D-46: PILOT notifications are Cowork-NATIVE (notifications.channel=cowork) -- nothing to configure. WhatsApp/WATCHDOG_URL secrets are POST-MIGRATION (local box/Kimi) only; leave blank for the pilot, do NOT wire them"}
+   ],
+   "check": "fund_config.allocated_capital() is a number; git check-ignore aegis/config/.env returns path; no secret in tracked files"},
+
+  {"phase": 4, "title": "Data bridge & shelf", "actor": "AI",
+   "steps": [
+    {"cmd": "python3 aegis/tools/historical_store.py  # record n_tickers, date_range"},
+    {"cmd": "python3 -c \"import json,glob; [json.load(open(f)) for f in glob.glob('aegis/contracts/*.json')]\""},
+    {"tool": "connectors", "do": "pull today's AQE export (validate vs aqe_export.schema.json; run tools/tripwires.py) and latest Aegis PTJ from RB:data_sources.ptj.drive_folder_id"},
+    {"cmd": "python3 aegis/tools/dyncap_ledger.py update <ptj.json>"}
+   ],
+   "check": "historical n_tickers>500; tripwires PASS; dyncap get_dyncap() non-null AND marked_asof==today"},
+
+  {"phase": 5, "title": "Install as running workspace", "actor": "AI+PM",
+   "steps": [
+    {"actor": "AI", "do": "package aegis/dist/claude-plugin/aegis-v4/ into a .plugin file and deliver to PM"},
+    {"actor": "PM", "gate": "HARD PLATFORM GATE: open the delivered .plugin file in the Cowork DESKTOP app and install it (replaces/supersedes any older plugin build live on the account). A remote/cloud container CANNOT install a plugin -- no /mnt/.local-plugins or /mnt/.plugins mount exists there; do not attempt a workaround."},
+    {"actor": "AI", "do": "Kimi only: register voice subagents from aegis-agent.yaml (no desktop-only constraint on this path)"}
+   ],
+   "check": "a skill loads AND both /fa AND /ops (D-45 liveness) render from state without error, confirmed against the NEWLY installed plugin (check skill/version, not just that a plugin responds); /ops shows the channel as cowork-native (D-46 pilot default) -- only a first-run/git-head PARTIAL is expected, not a channel problem"},
+
+  {"phase": 6, "title": "Standing clock (scheduled tasks)", "actor": "PM",
+   "steps": [
+    {"tool": "create_trigger", "tasks": ["premarket (plan 16:00 SGT)", "market-hours watch (~21:25 SGT)", "post-market (~04:05 SGT)", "design & review", "weekly (Sunday)", "nightly janitor"], "note": "app scheduler, NOT in-process cron; each fires a fresh session that pulls->runs->commits"},
+    {"tool": "create_trigger", "note": "D-46 PILOT: enable each loop task's notifications:{push:true} so run_ok/run_fail rides the Cowork NATIVE push. OPTIONAL pre-run heartbeat task: notify.py pre_run before each key run. The external watchdog + Windows schtasks/batch in NOTIFICATIONS_SETUP.md are POST-MIGRATION (local box) ONLY -- not wired on Cowork"}
+   ],
+   "check": "list_triggers shows the loop tasks (and any optional heartbeat) with push notifications enabled; NO external watchdog is required on the Cowork pilot"},
+
+  {"phase": 7, "title": "Smoke test / UAT", "actor": "AI",
+   "steps": [
+    {"do": "one SUPERVISED premarket run -> schema-valid plan, 10 nomination files, committee.json, sizing+gates vs live dynCap"},
+    {"cmd": "python3 aegis/tools/daily_flow_audit.py <DATE> --render"},
+    {"do": "forced-failure: tripwire block stands down + pages; gatekeeper refuses a no-consensus dummy and logs it"},
+    {"do": "D-45/D-46 self-heal UAT (Cowork-native): /ops renders and shows channel=cowork-native; notify.py run_fail --dry-run failure page is visibly distinct; a run_ok/pre_run emits the message that rides the scheduled-task push (confirm a test task's push reaches the phone); self_heal.py --failure ptj_pull => healed, --failure tripwire => stand_down/not healed; confirm /heal /recover /repull /reseed cannot place an order (execution still previews at the gate). SKIP the external-watchdog check -- POST-MIGRATION only"}
+   ],
+   "check": "DEPLOY.md section C acceptance checklist passes item-by-item AND the D-45 self-heal UAT passes each item; results written to install_state.json"},
+
+  {"phase": 8, "title": "Go-live gating", "actor": "PM",
+   "steps": [
+    {"gate": "shadow/practice week hand-staged"},
+    {"gate": "then /arm within RB:autopilot caps (<=1R, <=3/session, 05:30 SGT expiry, preauthorised only); one deployment armed at a time"}
+   ],
+   "check": "NONE — installer STOPS here; arming is the PM's decision, never automated"}
+ ]
+}

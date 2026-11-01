@@ -13,6 +13,9 @@ on:
     # never trigger a deploy; only source changes do.
     paths-ignore:
       - 'aegis/output/**'
+      # 2026-11-01: the 05:30 SGT /daily task pushes the Aegis journal here every morning. It is
+      # data, not source -- without this line every journal push rebuilt the Space too.
+      - 'aegis/data/journal/**'
   workflow_dispatch: {}
 
 concurrency:
@@ -84,9 +87,13 @@ jobs:
           # seen -- the exact "must be LOUD, never silently empty" failure
           # mode CLAUDE.md warns about, just in the deploy pipeline instead
           # of a data fetch.
+          # 2026-11-01: voice_packets.py reads contracts/voice_menus.json (the generated copy of the plugin's
+          # menus) beside pma_pipeline.py; GENERATED.json is the drift manifest tests read. Both small text.
           git add -f aegis/skills/premarket-analysis/tools/pma_pipeline.py \
+                     aegis/skills/premarket-analysis/contracts/voice_menus.json \
+                     aegis/skills/premarket-analysis/GENERATED.json \
                      aegis/canon
-          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded except pma_pipeline.py + aegis/canon/, which voice_packets.py needs at runtime — HF storage rejects the rest of aegis/'s binary content)"
+          git commit -q -m "Deploy ${ORIG_SHA} (aegis/ excluded except pma_pipeline.py + voice_menus.json + GENERATED.json + aegis/canon/, which voice_packets.py needs at runtime — HF storage rejects the rest of aegis/'s binary content)"
 
           echo "Pushing ${ORIG_SHA} (aegis/ excluded) to HF Space..."
           ok=0

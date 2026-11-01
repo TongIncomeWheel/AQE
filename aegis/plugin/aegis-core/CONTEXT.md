@@ -205,7 +205,7 @@ Dated folders immutable at day close → after `retention.raw_days` (30, tunable
    each = ONE fresh subagent · ONE compiled agent file (identity+canon+data menu+process
    +own memory+output contract+forbidden) · NO tools · NO session · NO sight of the others
       │       │       │       │       │       │       │       │       │       │
-      └── nomination.json ×10 (schema-validated on receipt) ──────────────────────────────┘
+      └── nomination.json ×10 (schema-validated on receipt) ──────────────────┘
                        ▼
         TALLY (count votes; stamp prices) → EVENT FILTER (nominated names only, D-11)
         → deliberation set (2+ votes / lens top tier) → single-context deliberation

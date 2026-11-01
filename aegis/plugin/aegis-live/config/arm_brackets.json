@@ -1,0 +1,50 @@
+{
+ "session": "2026-10-27",
+ "note": "PM 2026-10-27 19:35 SGT: arm-ready brackets for the two picks he likes. NOTHING IS PLACED. Orders go only through the Tiger preview and the PM's explicit 'confirm'. Valid for the 27 Oct session only. qty is a reference sized at the worst-case fill (limit): recompute floor(620/(limit-stop)) at the live price in each review.",
+ "one_r_usd": 620,
+ "brackets": {
+  "ESTC": {
+   "authority": "PM_DISCRETION tightening of the committee ADVANCE (committee buy above 107.09 stays as the confirm level)",
+   "stop": 101.95,
+   "stop_type": "aqe_atr_fallback (1.0 ATR under the last close)",
+   "daily_close_kill": 101.66,
+   "window_low": 106.29,
+   "window_high": 106.62,
+   "window_high_why": "above 106.62 the reward-to-risk to the second target (115.95) falls under 2.0 with this stop; at the committee's 107.09 it is 1.72",
+   "flag": "ESTC trades above 106.29 (last close) and holds above today's VWAP, volume pace at least 1.4x normal, SPY above 760",
+   "committee_confirm": 107.09,
+   "committee_too_late": 110.303,
+   "targets": [
+    108.0,
+    115.95,
+    126.05
+   ],
+   "order_if_armed": {
+    "entry": "BUY LMT 106.62 DAY",
+    "qty_ref": 132,
+    "after_fill": "SELL STP_LMT GTC stop 101.95 limit 101.70 (same pattern as V: limit a little under the stop)"
+   }
+  },
+  "VSXY": {
+   "authority": "COMMITTEE_ADVANCE",
+   "stop": 91.6,
+   "stop_type": "just under 26 Oct low 91.67 (PM may instead choose the committee level 88.64, which clears the three gates only for entries up to 95.77)",
+   "daily_close_kill": 93.39,
+   "window_low": 93.39,
+   "window_high": 97.75,
+   "window_high_why": "above 97.75 the reward-to-risk to the second target (110.04) falls under 2.0 with the 91.60 stop; the committee's too-late price is 98.0595",
+   "flag": "VSXY holds above 93.39 and today's VWAP, volume pace at least 1.2x normal, SPY above 760",
+   "committee_too_late": 98.0595,
+   "targets": [
+    102.46,
+    110.04,
+    119.68
+   ],
+   "order_if_armed": {
+    "entry": "BUY LMT 97.75 DAY",
+    "qty_ref": 100,
+    "after_fill": "SELL STP_LMT GTC stop 91.60 limit 91.35"
+   }
+  }
+ }
+}

@@ -1,0 +1,284 @@
+meta:
+  version: 1.1.0-draft
+  ratified: false
+  review_by: '2026-10-18'
+  note: 'LAW: doctrines and structures — committee + PM ratification to change. Numbers
+    live in parameters.yaml.'
+identity:
+  doctrine: 'Aegis is ONE of THREE strategies sharing co-mingled capital on Tiger,
+    the sole broker (D-17, amended D-98 — IBKR retired, PM confirmed no residual
+    capital there). The other two (Income Wheel, Protege9) are out of scope for this
+    kernel entirely — Aegis must never read, size against, or risk-gate their positions,
+    and must never assume a broker account''s totals belong to it alone.'
+  strategy_tag: AEGIS
+  other_strategies_for_context_only: [income_wheel, protege9]
+  brokers: [tiger]
+  order_tagging:
+    internal: 'ACHIEVABLE NOW, our own audit trail: every staging-gatekeeper record
+      (preview, confirm, refusal) is stamped strategy_tag=AEGIS and broker=tiger,
+      cross-referenced to the broker''s own returned order id once filled. This is
+      law regardless of what the broker itself displays.'
+    broker_native: 'BLOCKED as of 18 Jul — the current Tiger MCP tool wrappers
+      (place_stock_order, create_order_instruction) expose no client-order-tag, remark,
+      or reference field; the underlying broker API likely supports one but the MCP
+      surface Aegis is required to reuse (PM ruling: do not rebuild Tiger/Alpaca MCPs)
+      does not pass it through. Interim (Phase 1 only, PM stages personally per RB:orders.phase_1):
+      the staging preview MUST instruct the PM to add an AEGIS tag/memo manually in
+      the broker''s own app at submission. Real fix is BL-028 (MCP passthrough param
+      — needs the PM, as owner of that hosting relationship, to request it) or Phase
+      2 auto-staging simply cannot claim broker-native tagging until it ships.'
+  capital_segregation: 'Aegis''s dynCap (RB:capital.dyncap_method) is computed from
+    the AEGIS book ONLY, never from co-mingled broker account totals. RB:risk.gates
+    (beta/VaR/leverage/combined-stop) apply to the Aegis sub-fund book exclusively.
+    SOURCE OF TRUTH for the Aegis book = the Aegis PTJ file (D-21) — it is already
+    AEGIS-filtered, so attribution of current open positions is ALREADY DONE (this
+    closes the old BL-027 concern). The only PM input still required is the capital
+    allocation number (parameters.yaml sub_fund.allocated_capital_usd), which anchors
+    dynCap. Any risk-gate reading taken from raw broker totals instead of the PTJ
+    is provisional and must say so.'
+  sub_fund_config: 'The Aegis sub-fund config is a plain editable Markdown file —
+    config/aegis_fund.md (D-23) — read via tools/fund_config.py; the PM edits it
+    by hand or through the cockpit. Sibling MD files if the other strategies are ever
+    onboarded. Aegis reads ONLY its own — it never sizes against, gates on, or reports
+    the other strategies'' capital or positions.'
+capital:
+  dyncap_method: 'D-41 (PM ruling 2026-07-19, revises D-21) — MARK-TO-MARKET. dynCap =
+    allocated_capital + realised P&L (closed AEGIS trades) + UNREALISED P&L (open AEGIS
+    positions, marked to current price) = current Aegis sub-fund EQUITY. Sizing tracks what
+    is actually held; procyclical by design (de-sizes in drawdown) — the PM''s explicit choice.
+    Computed on the AEGIS-tagged book ONLY (RB:identity.capital_segregation), never co-mingled
+    broker totals; the Aegis PTJ is the mark source. Because it moves with unrealised P&L it is
+    REFRESHED each premarket from the fresh PTJ (never a stale mark).'
+  sizing_steps: 'two-step mandatory: R-size then vol-cap; take the smaller (tools/calculators/sizing.py)'
+risk:
+  beta_gate_window: beta_30d (D-6 FINAL; beta_60d = monitoring colour only, never
+    a gate input)
+  breach_rule: combined stop risk breach leads every output until resolved
+universe:
+  frequency: daily_premarket
+  ledger_continuity: names that leave the screen remain tracked in the Nomination
+    Ledger until their 15-day window closes
+  pm_rationale: 'PM rationale on record: if a name drops out, the signal was not strong
+    or persistent'
+committee:
+  voices_active:
+  - lynch
+  - oneil
+  - wyckoff
+  - raschke
+  - steenbarger
+  - thorp
+  - seow
+  - minervini
+  - druckenmiller
+  voices_reserve:
+  - demark
+  - pardo
+  - elder
+  - dalio
+  - murphy
+  detect_lens_seat: true
+  non_deliberated_output: ranked watch table in the daily plan; all nominations recorded
+    in ledger regardless
+  macro_brief_first: druckenmiller
+  bear_case_mandatory: true
+  unanimity_challenge: preliminary >= 6/7 agreement triggers rotating adversarial
+    challenge (thorp/pardo/steenbarger)
+  event_filter:
+    mna: announced or rumoured bid / strategic review -> EVENT-DRIVEN, cannot advance
+    activist: hostile campaign / board action -> EVENT-DRIVEN, cannot advance
+    single_catalyst: '>15% move in <10 days on one announcement -> EVENT-DRIVEN, cannot
+      advance'
+  anti_anchoring: voices nominate from the same universe file in isolation; no pipeline
+    tags, no detect reveals, no ordering hints pre-nomination
+  event_filter_timing: post-nomination, pre-deliberation, on nominated names only
+    (D-11); flagged names visible but cannot advance
+brackets:
+  source: AQE export bracket object, verbatim; never recomputed by an agent
+  quality_flags: 'D-38 — atr>=RB:risk.per_trade.stop_atr_distance_min, rr>=RB:risk.per_trade.rr_min_to_tp2,
+    risk% <= RB:regime.stop_pct_ceiling are SOFT QUALITY FLAGS surfaced at deliberation,
+    NOT hard gates. A high-beta breakout with a wide stop (low RR) is a valid momentum
+    setup — the committee/PM weigh the flag and may advance it. Bracket quality never
+    mechanically cuts a name.'
+  hard_floor: 'the ONLY hard requirement — a stop must be DEFINABLE (structural stop, else
+    the AQE atr_fallback_stop) so dollar-risk is bounded, and the position is R-sized on the
+    ACTUAL (possibly wide) stop so risk stays within the R budget + portfolio gates. Risk is
+    controlled by SIZE, not by refusing the trade.'
+  entry_orders: LIMIT
+  exit_orders: MARKET
+  stop_staging: only after fill confirmed, at actual fill price; post-fill actual-risk
+    check, flag if delta > $50
+orders:
+  sole_path: staging-gatekeeper is the ONLY agent that may produce previews, confirm
+    orders, or run post-fill; orchestrators may only request
+  default_mode: PREVIEW — every passing request ends as a preview for the PM to act
+    on
+  autopilot: PM-owned switch, default OFF. When the PM arms it (tools/autopilot.py,
+    logged, with expiry), the gatekeeper — and no other agent — may execute the Tiger
+    two-step (place preview -> confirm) for APPROVED preauthorised plan names, inside
+    RB:autopilot window and caps. Any auto_off condition disarms immediately. Tiger
+    is default execution broker.
+  arming: only the PM can arm; arming is a dated, logged, auto-expiring state — never
+    a standing default
+  phase_1: 'pre-authorised conditional brackets: PM approves exact if/then orders
+    by 21:00 SGT and stages them personally in the broker; the system monitors only
+    unless autopilot is armed'
+regime:
+  red_rule: no new entries
+  hurst_note: MEAN_REVERT label is surfaced to committee as caveat; throttles deployment
+    posture, never the list
+srm:
+  role: context_only
+  layers: 11 GICS sector ETFs + thematic baskets, RRG quadrants; full trend_state
+    label always shown with grade
+model_tiers:
+  doctrine: 'three planes, three cost tiers (D-16), scope-not-capability (D-18 correction).
+    Judgment plane (the 10 voices, the 5 Engineering Bench seats, committee-desk
+    deliberation, the Intraday Review Pod) ALWAYS runs RB:model_tiers.judgment —
+    pinned explicitly inside every compiled agent file itself, never left to inherit
+    whatever tier the orchestrator session happens to be running that day; its job
+    is open-ended multi-framework analysis with no fixed ruleset. Control plane (the
+    orchestrator executing each process skill, the exception ladder, staging-gatekeeper''s
+    checklist relay) runs RB:model_tiers.control — a genuinely capable model, not
+    the cheapest available, because it exercises real autonomous judgment inside
+    a BOUNDED ruleset (which degradation path applies, whether an anomaly warrants
+    disarm-first, how to phrase a page or summary for the PM) — this is different
+    scope from judgment plane, not less intelligence. Data plane (tools/*.py) runs
+    no model at all — plain deterministic code, zero LLM cost, unchanged by this
+    doctrine.'
+  never_silent_downgrade: 'a judgment-plane agent tier is pinned in its own file
+    at build time (inline_rb), so a PM switching the cockpit or orchestrator session
+    to a cheaper model for cost reasons can never accidentally downgrade a voice,
+    a bench seat, or a deliberation without a deliberate parameters.yaml change'
+  verify_not_assume: 'model pinning is a documented capability on both platforms
+    but community reports exist of it being silently ignored on Claude Code in some
+    versions; confirm actual behaviour via the usage/cost dashboard in the practice
+    week (BL-026), not by assumption'
+topology:
+  engines: 'TWO FULLY INDEPENDENT deployments of the same kernel (D-19, corrects
+    D-15). Claude and Kimi each get their OWN complete wrapper — own cockpit, own
+    scheduler, own phases, own order path, identical requirements and expectations.
+    Neither reads the other; there is NO cross-vendor diff, no shadow-feeds-primary,
+    no merged summary. "Parallel run" = the PM runs both independently and stays
+    vendor-agnostic, NOT two halves of one system. Each is built from the same kernel
+    by its own packager (build_claude / build_kimi) and is a self-sufficient Aegis
+    on its own.'
+  vendor_separation: 'the kernel is shared (one source of truth in git); the DEPLOYMENTS
+    are separate. A change lands in the kernel once and both packagers regenerate —
+    but a running Claude deployment and a running Kimi deployment never talk to each
+    other at runtime. This is the anti-spaghetti line: shared kernel, isolated
+    runtimes.'
+  one_armed_at_a_time: 'THE ONE HARD SAFETY INVARIANT across the two deployments —
+    because both point at the same broker accounts, only ONE engine may have autopilot
+    armed for live orders at any moment. Running both in preview/analysis simultaneously
+    is fine and expected; two armed engines on one account = double orders. This is
+    a PM discipline enforced by the arming state being per-deployment and the PM
+    never arming both.'
+  pc_role: AQE feed server + intraday alert watcher; pushes every export/alert to
+    GitHub on write so EITHER deployment can pull a fresh feed (BL-022). The PC serves
+    both equally and belongs to neither.
+  kimi_credentials: 'Kimi stays READ-ONLY until the PM explicitly confirms migration
+    into production (D-30). Until then the Kimi package ships NO order path — no
+    staging-gatekeeper, no broker write credential, no /arm — it is an analysis /
+    shadow deployment only. On explicit PM production-migration confirmation, the
+    order path is added and the one_armed_at_a_time invariant governs. This makes the
+    one_armed_at_a_time rule moot for now (only Claude can arm), which is the safe
+    default while Kimi is still being proven.'
+gate_doctrine:
+  principle: 'D-37 — gates are FEW, LATE and NAMED; everything else is a SOFT FLAG that
+    travels WITH the name into the ONE holistic deliberation and removes nothing beforehand.
+    Fixes "cut too early" (nothing is removed before the committee sees the whole picture,
+    except safety/data-integrity and the daily screen — whose near-misses are now surfaced
+    for revival) and "flip-flop" (a single judgment point; no verdict reversal after
+    deliberation except an explicit PM decision or a logged intraday re-review — the pod).'
+  hard_gates_only:
+  - feed missing/stale or tripwire BLOCK -> stand down (data integrity)
+  - universe screen (data scope; near-misses surfaced for revival D-37, not a silent cut)
+  - regime RED -> no new entries (book safety)
+  - event filter -> EVENT-DRIVEN cannot advance (kept HARD by PM ruling; stays VISIBLE in the tally)
+  - a DEFINABLE stop (structural or ATR-fallback) so risk is bounded + R-sizing on the actual stop (D-38 — NOT the RR/ATR quality thresholds; those are soft flags)
+  - portfolio gates HARD breach (beta/VaR/leverage/combined-stop) -> blocks new entry
+  - staging-gatekeeper 7 checks at order time
+  soft_flags_travel:
+  - SRM/macro (weather, D-4) · regime YELLOW/ORANGE · Hurst mean-revert
+  - portfolio gates SOFT (beta 1.8 / VaR 16 / leverage 2.5 / sector 25) -> flag only
+  - detect lens warnings · staleness-acknowledge · the near-miss list · single-voice conviction
+  - bracket QUALITY (RR / ATR-distance / risk%) — D-38: surfaced at deliberation, never a cut; a wide-stop high-beta breakout is sized down, not filtered out
+  one_judgment_point: 'the committee deliberation is where every flag converges into ONE
+    verdict. Nothing re-litigates or reverses a name after it except the PM, or a logged
+    intraday re-review (the pod, D-13). Context is an INPUT to the one decision, never a
+    gate applied after it — that is what stops the flip-flop.'
+data_sources:
+  scores_and_analytics: AQE export (GitHub repo engine) — verbatim
+  equity_spot_live: Tiger MCP (cloud-hosted, reuse) -> FMP fallback (D-98 — IBKR retired, was the prior fallback)
+  options_chain_greeks: Alpaca MCP (cloud-hosted, reuse; 15-min delayed) — never for
+    spot
+  bars_and_screen: FMP
+  positions_fills: Tiger connector/MCP (sole broker, D-98); broker pull is execution truth
+  currency: USD_only
+  staleness: export older than T-1 must be flagged and PM-acknowledged before use
+journal:
+  naming: aegis_journal_YYYY-MM-DD.json; one canonical current file; dated files immutable;
+    no CORRECTED/SUPERSEDED/Copy-of suffixes ever again
+  retention: current + dated archive; Drive sync is replication, not the access path
+audit:
+  completeness: every voice ran; every deliberated name addressed; every data pull
+    tagged source+time
+  breach_classes:
+  - PROTOCOL_FAILURE
+  - FIELD_MISREAD
+  - FABRICATION
+  - CONDUCT_FAILURE
+exceptions:
+  ladder: DETECT (checks are built into every step) -> RETRY ONCE (transient service
+    pulls only, never validation failures) -> DEGRADE along a NAMED safe path only
+    -> STAND DOWN fail-closed when no safe path exists -> DISARM FIRST if autopilot
+    is armed and anything is in doubt -> RECORD an exception file always -> NOTIFY
+    by severity
+  classes:
+  - DATA_MISSING_OR_STALE
+  - DATA_INVALID
+  - SERVICE_UNREACHABLE
+  - AGENT_FAILURE
+  - STATE_CORRUPT
+  - MISSED_CLOCK
+  - HUMAN_ABSENT
+  gate_refusals_are_not_exceptions: a gatekeeper refusal is a designed outcome with
+    its own record, never an error
+  page_now:
+  - tripwire BLOCK
+  - journal fails validation or is PROVISIONAL
+  - any fabrication finding
+  - any anomaly during an armed session
+  - alert engine not alive at watch-window start
+  - broker unreachable while armed
+  morning_summary:
+  - voice shortfall (ran with 8-9 of 10)
+  - hedge check skipped on tool failure
+  - GitHub push queued after retry
+  - single-name data gaps
+  - CS Weekly missing
+  named_degradations:
+    voice_fails: re-spawn once; still invalid -> proceed with the remaining voices
+      (minimum 8), tally notes the empty seats, the session is flagged INCOMPLETE
+    hedge_tools_fail: plan ships WITHOUT the hedge block, flagged in the plan headline
+    broker_pulls_down_at_reconcile: journal built from gatekeeper records only, marked
+      PROVISIONAL -> downstream mutations HALT (ledger, held-list emit), page; engine
+      reuses last GOOD journal
+    github_push_fails: retry once, then queue the commit locally and note in the morning
+      summary
+    spot_fails_at_revalidation: that trigger stands down, logged MISSED_BY_FAILURE
+      (distinct from MISSED-BY-DESIGN); never confirm on stale spot
+  no_safe_degradation:
+  - 'feed missing/stale or tripwire BLOCK -> the whole premarket stands down: no plan,
+    no alerts loaded, nothing armed; held book protected by broker-side stops'
+  - universe screen cannot run -> premarket stands down (voices have nothing lawful
+    to read)
+  - journal invalid -> everything downstream of it halts
+  - autopilot state unreadable -> OFF (already in the tool)
+  missed_clock: 'a run that never fired or overran is itself an exception: next run
+    detects the gap via freshness checks; a stood-down trading day = no new trades,
+    broker stops still protect the book; post-market NEVER skips — it records the
+    quiet day'
+  recovery: next scheduled run self-heals where a fresh input fixes it; anything else
+    becomes a backlog item automatically

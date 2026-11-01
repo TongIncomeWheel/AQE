@@ -1,27 +1,18 @@
-"""Tests for the 2026-09-06 PM ruling: Layer 0 -- the committee (PMA) only
-ever sees tickers on BOTH the Longlist and the Elder list, the same
-intersection already surfaced to the AIC as the export's own
-elder_and_longlist_tickers view.
+"""The 2026-09-06 "Layer 0" ruling (the committee sees only names on BOTH the Longlist and the Elder
+list) was RETIRED by R16 (2026-09-24: every nomination is seated, the room is as large as the seats
+make it) and R27 (2026-10-23: the strongest names are voted). `pma_pipeline.py trim` therefore
+carries EVERY daily_list row onto the universe and the list memberships ride as FLAGS. Rewritten
+2026-11-01 (the four old tests encoded the retired rule and had been red since October).
 
-Motivation (verbatim from the PM): observed runners were disproportionately
-names on both lists; the wider single-list candidate pool was diluting the
-committee's attention rather than sharpening it.
-
-Two things are tested end to end against real subprocess invocations (not
-imports) -- this is the actual CLI contract both pma_pipeline.py and
-emit_packets.py are invoked through in production:
-
-1. pma_pipeline.py's cmd_trim() applies the actual filter, and fixes a real
-   bug caught in the same pass: `on_longlist` used to be derived from
-   `source == "longlist"` (which list first produced the row), not the
-   row's own real on_longlist flag -- silently misreporting on_longlist=false
-   for any name whose primary source was elder_list/qs but which also
-   independently cleared the longlist screen.
-2. emit_packets.py's Layer 0 assurance check: candidate_set.json's own
-   universe, and every seat packet's actual served ticker set, must match
-   elder_and_longlist_tickers exactly, or it refuses to stamp -- the daily
-   proof the two never drift apart."""
-
+What still holds, and is tested here end to end through the real CLI:
+1. the bug fix the 2026-09-06 pass found -- `on_longlist` is the row's OWN flag, never derived
+   from `source` (the plugin copy had regressed this; restored 2026-11-01);
+2. no Layer-0 filter: every row survives trim, with its flags intact, so a seat's menu decides what
+   it reads and the nominations decide the room;
+3. the export's `elder_and_longlist_tickers` view is consistent with the carried flags (a view, not
+   a filter).
+emit_packets.py (the old PMA-side emitter) is not used by the nightly run (AQE_CODE_AGENT_SPEC §5)
+and is no longer tested here."""
 from __future__ import annotations
 
 import json
@@ -32,149 +23,76 @@ import pytest
 
 ROOT = "/home/user/AQE"
 PMA_PIPELINE = f"{ROOT}/aegis/skills/premarket-analysis/tools/pma_pipeline.py"
-EMIT_PACKETS = f"{ROOT}/aegis/skills/premarket-analysis/tools/emit_packets.py"
 
 
 def _run(cmd):
     return subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
 
 
-def _row(ticker, on_longlist, on_elder, source="longlist", **extra):
-    row = {
-        "ticker": ticker, "rank": 1, "sc_momentum": 80.0, "source": source,
-        "on_longlist": on_longlist, "on_elder": on_elder, "in_ledger": False,
-        "held": False, "entry": 100.0, "elder": 8.0, "elder_5d": [8, 8, 8, 8, 8],
-        "flow": 70.0, "energy": 70.0, "structure": 70.0, "mp": 70.0,
-        "mp_state": "STRONG", "bracket": {"valid": True, "stop": 90.0},
-    }
-    row.update(extra)
-    return row
+def _row(ticker, on_longlist, on_elder, source="longlist"):
+    return {"ticker": ticker, "source": source, "on_longlist": on_longlist, "on_elder": on_elder,
+            "sc_momentum": 70.0, "flow": 80.0, "energy": 65.0, "structure": 60.0, "mp": 60.0,
+            "elder": 8.0, "entry": 50.0, "atr_14d": 1.5, "in_ledger": False,
+            "bracket": {"stop": 47.0, "targets": []}}
 
 
 @pytest.fixture
 def export_file(tmp_path):
     daily_list = [
         _row("BOTH1", True, True),
-        _row("BOTH2", True, True, source="elder_list"),  # the bug-fix case:
-        # primary source is elder_list, but on_longlist is independently True
+        _row("BOTH2", True, True, source="elder_list"),   # the bug-fix case
         _row("LONGLIST_ONLY", True, False),
         _row("ELDER_ONLY", False, True, source="elder_list"),
         _row("NEITHER", False, False, source="qs"),
     ]
-    export = {
-        "date": "2026-09-06",
-        "exported_at": "2026-09-06 08:00:00 SGT",
-        "daily_list": daily_list,
-        "held_positions": [],
-        "srm": [],
-        "elder_and_longlist_tickers": ["BOTH1", "BOTH2"],
-    }
+    export = {"date": "2026-11-01", "exported_at": "2026-11-01 08:00:00 SGT", "daily_list": daily_list,
+              "held_positions": [], "srm": [], "elder_and_longlist_tickers": ["BOTH1", "BOTH2"]}
     p = tmp_path / "aqe_daily_export.json"
     p.write_text(json.dumps(export), encoding="utf-8")
-    # The plugin's packets step refuses to build without Crown's own artifact.
-    (tmp_path / "aqe_crown_macro.json").write_text(
-        json.dumps({"the_call": {}, "readings": {}, "status": "OK"}), encoding="utf-8")
     return p
 
 
-@pytest.fixture
-def canon_dir(tmp_path):
-    """2026-09-15: the standalone voice_menus.json fixture this replaces is gone -- each voice's
-    menu now lives inside its own canon.lock.yaml as a `menu:` block. Build the minimal two-voice
-    version of that here so this test still exercises the real --canon-dir CLI contract
-    emit_packets.py/pma_pipeline.py actually run in production, not a mocked-out shortcut."""
-    menus = {
-        "elder-lens": ["ticker", "elder", "elder_5d", "mp_state", "mp"],
-        "livermore": ["ticker", "rank", "held", "entry", "bracket.valid", "bracket.stop"],
-    }
-    root = tmp_path / "canon"
-    for voice, fields in menus.items():
-        d = root / voice
-        d.mkdir(parents=True)
-        lines = ["voice: " + voice, "menu:"] + [f"- {f}" for f in fields]
-        (d / "canon.lock.yaml").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return root
-
-
-# ── cmd_trim: the actual filter ─────────────────────────────────────────────
-
-def test_cmd_trim_keeps_only_names_on_both_lists(export_file, tmp_path):
+def _trim(export_file, tmp_path):
     out = tmp_path / "candidate_set.json"
-    r = _run([sys.executable, PMA_PIPELINE, "trim", "--export", str(export_file),
-              "--date", "2026-09-06", "--out", str(out)])
+    r = _run([sys.executable, PMA_PIPELINE, "trim", "--export", str(export_file), "--date", "2026-11-01", "--out", str(out)])
     assert r.returncode == 0, r.stderr
+    return json.loads(out.read_text()), r
 
-    cs = json.loads(out.read_text())
+
+def test_trim_carries_every_row_the_layer0_filter_is_retired(export_file, tmp_path):
+    cs, r = _trim(export_file, tmp_path)
     tickers = {row["ticker"] for row in cs["universe"]}
-    assert tickers == {"BOTH1", "BOTH2"}, (
-        "only names with on_longlist AND on_elder both true may survive Layer 0")
-    assert "LAYER 0" in r.stdout
-    assert "3 of 5 excluded" in r.stdout
+    assert tickers == {"BOTH1", "BOTH2", "LONGLIST_ONLY", "ELDER_ONLY", "NEITHER"}, (
+        "R16/R27: trim filters nothing -- the room is bounded by nominations, not by a list intersection")
+    assert "LAYER 0" not in r.stdout
 
 
-def test_cmd_trim_on_longlist_reflects_the_real_flag_not_the_source(export_file, tmp_path):
-    """The 2026-09-06 bug fix: BOTH2's primary source is elder_list, but it
-    independently clears on_longlist=True -- the old `source == "longlist"`
-    derivation would have misreported on_longlist=false for it and, before
-    Layer 0 even existed, silently misclassified this exact class of runner
-    everywhere on_longlist was read downstream."""
-    out = tmp_path / "candidate_set.json"
-    _run([sys.executable, PMA_PIPELINE, "trim", "--export", str(export_file),
-          "--date", "2026-09-06", "--out", str(out)])
-    cs = json.loads(out.read_text())
-    both2 = next(row for row in cs["universe"] if row["ticker"] == "BOTH2")
-    assert both2["on_longlist"] is True
-    assert both2["on_elder"] is True
+def test_on_longlist_is_the_rows_own_flag_not_derived_from_source(export_file, tmp_path):
+    """BOTH2's primary source is elder_list but it independently clears the longlist. The old
+    `source == "longlist"` derivation reported on_longlist=False for it -- misclassifying exactly the
+    runners the committee most wants, everywhere on_longlist is read downstream."""
+    cs, _ = _trim(export_file, tmp_path)
+    by = {row["ticker"]: row for row in cs["universe"]}
+    assert by["BOTH2"]["on_longlist"] is True and by["BOTH2"]["on_elder"] is True
+    assert by["ELDER_ONLY"]["on_longlist"] is False and by["ELDER_ONLY"]["on_elder"] is True
+    assert by["LONGLIST_ONLY"]["on_longlist"] is True and by["LONGLIST_ONLY"]["on_elder"] is False
+    assert by["NEITHER"]["on_longlist"] is False
 
 
-def test_cmd_trim_matches_elder_and_longlist_tickers_exactly(export_file, tmp_path):
-    """Layer 0's own output must agree with the export's independently-
-    computed elder_and_longlist_tickers view -- the same invariant
-    emit_packets.py enforces at stamp time, checked here at the source."""
-    out = tmp_path / "candidate_set.json"
-    _run([sys.executable, PMA_PIPELINE, "trim", "--export", str(export_file),
-          "--date", "2026-09-06", "--out", str(out)])
-    cs = json.loads(out.read_text())
+def test_trim_falls_back_to_source_only_when_the_flag_is_absent(tmp_path):
+    """An old export without the on_longlist field still gets a value, derived from source -- never null."""
+    rows = [_row("A", True, True), _row("B", False, True, source="elder_list")]
+    for r in rows:
+        r.pop("on_longlist")
+    p = tmp_path / "old_export.json"
+    p.write_text(json.dumps({"date": "2026-11-01", "daily_list": rows, "held_positions": []}), encoding="utf-8")
+    cs, _ = _trim(p, tmp_path)
+    by = {row["ticker"]: row for row in cs["universe"]}
+    assert by["A"]["on_longlist"] is True and by["B"]["on_longlist"] is False
+
+
+def test_the_both_lists_view_matches_the_carried_flags(export_file, tmp_path):
+    cs, _ = _trim(export_file, tmp_path)
+    both = {row["ticker"] for row in cs["universe"] if row.get("on_longlist") and row.get("on_elder")}
     export = json.loads(export_file.read_text())
-    assert {row["ticker"] for row in cs["universe"]} == set(export["elder_and_longlist_tickers"])
-
-
-# ── emit_packets.py: the daily assurance check ──────────────────────────────
-
-def test_emit_packets_layer0_scan_is_clean_on_a_correct_export(export_file, canon_dir, tmp_path):
-    outdir = tmp_path / "voice_packets"
-    r = _run([sys.executable, EMIT_PACKETS,
-              "--export", str(export_file), "--canon-dir", str(canon_dir),
-              "--pipeline", PMA_PIPELINE, "--outdir", str(outdir), "--date", "2026-09-06"])
-    assert r.returncode == 0, r.stderr
-
-    stamp = json.loads((outdir / "packet_stamp.json").read_text())
-    assert stamp["layer0_scan"] == "clean"
-    assert stamp["layer0_count"] == 2
-
-    cs = json.loads((outdir / "candidate_set.json").read_text())
-    assert {row["ticker"] for row in cs["universe"]} == {"BOTH1", "BOTH2"}
-
-    livermore = (outdir / "livermore.tsv").read_text().splitlines()
-    served = {ln.split("\t")[0] for ln in livermore[1:] if ln}
-    assert served == {"BOTH1", "BOTH2"}
-
-
-def test_emit_packets_refuses_to_stamp_on_a_layer0_drift(export_file, canon_dir, tmp_path):
-    """Corrupt elder_and_longlist_tickers so it disagrees with what
-    cmd_trim's own on_longlist/on_elder flags would produce -- this is
-    exactly the class of drift the assurance check exists to catch."""
-    export = json.loads(export_file.read_text())
-    export["elder_and_longlist_tickers"] = ["BOTH1"]  # drops BOTH2 -- a lie
-    export_file.write_text(json.dumps(export), encoding="utf-8")
-
-    outdir = tmp_path / "voice_packets"
-    r = _run([sys.executable, EMIT_PACKETS,
-              "--export", str(export_file), "--canon-dir", str(canon_dir),
-              "--pipeline", PMA_PIPELINE, "--outdir", str(outdir), "--date", "2026-09-06"])
-
-    assert r.returncode == 1
-    assert "FATAL LAYER 0 BREACH" in r.stderr
-    assert "BOTH2" in r.stderr
-    assert not outdir.exists() or not (outdir / "packet_stamp.json").exists(), (
-        "a Layer 0 breach must never publish a stamped (falsely trustworthy) packet set")
+    assert both == set(export["elder_and_longlist_tickers"])

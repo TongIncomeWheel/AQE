@@ -117,6 +117,15 @@ def breadth_rows(valen: dict) -> list[dict]:
                "section": "instrument", "kind": "pct_0_100", "status": t2108.get("status"),
                "value": t2108.get("value") if t2108.get("status") == "OK" else None,
                "reason": t2108.get("reason")})
+    # PM 2026-11-01 (weather-spec item 6): % above the 20/50/200-day lines as instruments (panel population).
+    for w in (20, 50, 200):
+        pa = _get(f"pct_above_{w}d")
+        out.append({"label": f"Stocks above their {w}-day line (%)", "section": "instrument", "kind": "pct_0_100",
+                   "status": pa.get("status"), "value": pa.get("value") if pa.get("status") == "OK" else None,
+                   "reason": pa.get("reason"), "population": pa.get("population")})
+    qm = _get("quarterly_movers")
+    out.append({"label": "Quarterly big risers (25%+ up-count, 3 months)", "section": "instrument", "kind": "count",
+               "status": qm.get("status"), "value": qm.get("value") if qm.get("status") == "OK" else None, "reason": qm.get("reason")})
     out.append({"label": "5-day up/down 4% count", "section": "instrument",
                "kind": "mover_ratio", "status": five.get("status"),
                "value": five.get("value") if five_ok else None,
@@ -376,4 +385,7 @@ def management_block(valen: dict) -> dict:
     mg = valen.get("management") or {}
     return {"held_facts": mg.get("held_facts") or [],
            "streak": mg.get("streak") or {"status": "UNAVAILABLE",
-                                          "reason": "not computed"}}
+                                          "reason": "not computed"},
+           "manage_note": mg.get("manage_note") or {"status": "UNAVAILABLE", "reason": "not computed", "is_decision": False},
+           "trim_trail": mg.get("trim_trail") or [],
+           "last_five": mg.get("last_five") or {"status": "UNAVAILABLE", "reason": "not computed", "is_decision": False}}

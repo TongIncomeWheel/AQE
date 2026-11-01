@@ -1,0 +1,12 @@
+{ "$schema": "https://json-schema.org/draft/2020-12/schema", "title": "Nomination Ledger Entry", "x_version": "1.0.0",
+  "type": "object", "required": ["date", "voice", "ticker", "price_at_nomination"],
+  "properties": {"date": {"type": "string", "format": "date"}, "voice": {"type": "string"},
+    "ticker": {"type": "string"}, "conviction": {"type": "integer"},
+    "price_at_nomination": {"type": "number"}, "reason": {"type": "string"},
+    "deliberated": {"type": "boolean"}, "committee_position": {"type": ["string", "null"]},
+    "actioned": {"type": "boolean"}, "in_universe": {"type": "boolean"},
+    "tracking": {"type": "object", "properties": {
+      "d1": {"type": ["number", "null"]}, "d3": {"type": ["number", "null"]}, "d5": {"type": ["number", "null"]},
+      "d10": {"type": ["number", "null"]}, "d15": {"type": ["number", "null"]},
+      "max_gain_pct": {"type": ["number", "null"]}, "max_drawdown_pct": {"type": ["number", "null"]},
+      "closed": {"type": "boolean", "default": false}}}}}

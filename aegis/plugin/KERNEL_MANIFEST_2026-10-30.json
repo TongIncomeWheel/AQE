@@ -1,0 +1,1527 @@
+{
+ "package": "aegis-kernel",
+ "date": "2026-10-30",
+ "kernel_build": "cf837be",
+ "plugins": {
+  "aegis-core": "1.31.0",
+  "aegis-voices": "1.9.0",
+  "aegis-daily": "1.2.1",
+  "aegis-stops": "0.1.0",
+  "aegis-live": "0.1.0"
+ },
+ "entry": "START_HERE.md",
+ "design_docs": "operating_model v0.6, seat_skills_design, DECISIONS (30 Oct 2026)",
+ "files": 302,
+ "manifest": [
+  {
+   "path": "AGENTS.md",
+   "sha256": "e6c6f09b048eb1e43ce9ce5335bfc1f072fc4f773ff4bde0ea2eec84814b9772",
+   "bytes": 99
+  },
+  {
+   "path": "BUILD_PLAN.md",
+   "sha256": "9f27715300726bffd9f3e464699adca0a84ac0824b63c4a424566fb3bcb491de",
+   "bytes": 6930
+  },
+  {
+   "path": "CLAUDE.md",
+   "sha256": "e6c6f09b048eb1e43ce9ce5335bfc1f072fc4f773ff4bde0ea2eec84814b9772",
+   "bytes": 99
+  },
+  {
+   "path": "OPERATING_RULES.md",
+   "sha256": "e28884c33f206c30b839c6a294078b51633c562ea98d03a97b4a64e8b3e49d47",
+   "bytes": 5753
+  },
+  {
+   "path": "START_HERE.md",
+   "sha256": "62d3fb0fb521a0c56b6e970e46e9ec3316ce1acadf94576c9dd6b1782f4ed207",
+   "bytes": 11038
+  },
+  {
+   "path": "docs/DECISIONS_2026-10-30.md",
+   "sha256": "ff684b1fb6a6af9eaf8387826b0524104597450e9119ad4125ca1b8271b36aca",
+   "bytes": 7371
+  },
+  {
+   "path": "docs/DRYRUN.md",
+   "sha256": "f67ddd28e4d9c8157eb78831e9be0cf6a337326bb6b999ccbcebe2403a0e58c7",
+   "bytes": 6017
+  },
+  {
+   "path": "docs/PLATFORM_SWITCH.md",
+   "sha256": "58b3552dc9d889f21c47868ea682eed2d534fe3fc7dae577c92899dfa40d6360",
+   "bytes": 6218
+  },
+  {
+   "path": "docs/SCHEDULERS.md",
+   "sha256": "c4c4aaac16c01c3488ebf7e0bf18e30255de315031320e98c67c4e52310d37a4",
+   "bytes": 4940
+  },
+  {
+   "path": "docs/aqe_engineer_readout_2026-10-30.md",
+   "sha256": "931b78a7c7ab0f6499861f9570454c1fe4f8290682ee82abe288541cb4800301",
+   "bytes": 7902
+  },
+  {
+   "path": "docs/aqe_handoff_seow_wyckoff_packets_2026-10-30.md",
+   "sha256": "c964cc32ebfd439ee0a32c389be4cc0b54443c011351cb06769437a601ee93e6",
+   "bytes": 3808
+  },
+  {
+   "path": "docs/evidence/deliberation_autopsy_2026-10-29.md",
+   "sha256": "63f997b8f3f4ce3823cbd0c0069d4a52c30412299116c06225183f3948107277",
+   "bytes": 6488
+  },
+  {
+   "path": "docs/evidence/method_process_fit_2026-10-29.md",
+   "sha256": "698e9f407dc8f712bd4d004fccbf5c69a39b694c4eea583a77344f2c15898fee",
+   "bytes": 5717
+  },
+  {
+   "path": "docs/operating_model_2026-10-30.md",
+   "sha256": "f67ab6eb006591c1db2998b96a3283aae51a6be78d800fe91b022532c56d22e2",
+   "bytes": 44673
+  },
+  {
+   "path": "docs/patches/aqe_seow_wyckoff_menus_2026-10-30.patch",
+   "sha256": "4f98f2fe548a1c384558e7dcfa9ca8fe3a102c9c902f83f61bf331129216624d",
+   "bytes": 3084
+  },
+  {
+   "path": "docs/pma_architecture_claude_code_assessment_2026-10-29.md",
+   "sha256": "f711247045bf8479b375742d9eacc4e67f2695bfe8b2f8c769ad688c8b75686a",
+   "bytes": 22280
+  },
+  {
+   "path": "docs/seat_skills_design_2026-10-30.md",
+   "sha256": "de49b15bbef42a2392d07c59db245e19390d62bf34dd29a6a477b0e224c13dcd",
+   "bytes": 15613
+  },
+  {
+   "path": "docs/seow_seat_enrichment_2026-10-30.md",
+   "sha256": "87a95252ec9846a80a8f70d7f5a3653a1122124cb698132892f9156131bf7463",
+   "bytes": 9878
+  },
+  {
+   "path": "docs/spot_check_seow_wyckoff_2026-10-30.md",
+   "sha256": "f4046f32a359d1e4524adf759e76f0d5b67d9478447bf597ca7bed134df63b12",
+   "bytes": 3429
+  },
+  {
+   "path": "docs/voice_data_flow_design_2026-10-30.md",
+   "sha256": "cfc6440797b58ab5c55109b49658a2ad9b500665bd172c6de70b07836d7e8b50",
+   "bytes": 11444
+  },
+  {
+   "path": "docs/wyckoff_seat_enrichment_2026-10-30.md",
+   "sha256": "2387df0a7b007f970dab8e1d9cff66ef17769fd5d44a8289731ce469ba8f367d",
+   "bytes": 11488
+  },
+  {
+   "path": "plugins/aegis-core/.claude-plugin/plugin.json",
+   "sha256": "0be4f21f04d4373d6030677324f3c132de9ca32d0aa971e65e4c5b1aad268b08",
+   "bytes": 54565
+  },
+  {
+   "path": "plugins/aegis-core/.in_use/128",
+   "sha256": "7db4a43fe5c200ac0f3f637764a7e37a71fc281a369284836dd9368e7c7fdeef",
+   "bytes": 29
+  },
+  {
+   "path": "plugins/aegis-core/.mcp.json",
+   "sha256": "3464a2fadbf50f660e6ba607eff12ab7fbdf53c826b9d297054a4cef416d6172",
+   "bytes": 442
+  },
+  {
+   "path": "plugins/aegis-core/.pytest_cache/.gitignore",
+   "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+   "bytes": 37
+  },
+  {
+   "path": "plugins/aegis-core/.pytest_cache/CACHEDIR.TAG",
+   "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+   "bytes": 191
+  },
+  {
+   "path": "plugins/aegis-core/.pytest_cache/README.md",
+   "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+   "bytes": 302
+  },
+  {
+   "path": "plugins/aegis-core/.pytest_cache/v/cache/lastfailed",
+   "sha256": "7156ff2aec1effe326576364e59db5d805a07aeb3a0d6ba7382861e3ef44639e",
+   "bytes": 2401
+  },
+  {
+   "path": "plugins/aegis-core/.pytest_cache/v/cache/nodeids",
+   "sha256": "10eeac59bede6e57d1469263ab72e4563f3e736e904c3cd4607b5ade24f5936b",
+   "bytes": 2331
+  },
+  {
+   "path": "plugins/aegis-core/CONTEXT.md",
+   "sha256": "5ea8c5c624101f443dc466f66c23b554aa5584a8cee57e67aeb39a24d1f457d7",
+   "bytes": 30306
+  },
+  {
+   "path": "plugins/aegis-core/README.md",
+   "sha256": "7d9e215e26289de8308eb76aa9eb979a5997e08d701c60d714b082a630f58760",
+   "bytes": 184
+  },
+  {
+   "path": "plugins/aegis-core/README_SPLIT.md",
+   "sha256": "1ca6a0bb4fd36e283069e55a8ee6b99cf7a451ac3ea67ca5bdb1fa992c06b8a5",
+   "bytes": 705
+  },
+  {
+   "path": "plugins/aegis-core/agents/brief-writer.md",
+   "sha256": "bf56b3e1b2fd09262324ba30d7856043db2388f75eef12ba84ebd160ac74f322",
+   "bytes": 17581
+  },
+  {
+   "path": "plugins/aegis-core/agents/committee-desk.md",
+   "sha256": "02b89a032d4098cc1d6cb09adabe75ef688eb6b69c8b32ce0630fc48e78a5353",
+   "bytes": 11655
+  },
+  {
+   "path": "plugins/aegis-core/agents/data-steward.md",
+   "sha256": "cbb349eb0642cadd254bad69ab589bfe304f72faa2de94ceba936c86ed9525a8",
+   "bytes": 5115
+  },
+  {
+   "path": "plugins/aegis-core/agents/staging-gatekeeper.md",
+   "sha256": "cd454daef1c81c4a33e5525a7adf578d6d2483186fd0071216ea5e908fc152f4",
+   "bytes": 9778
+  },
+  {
+   "path": "plugins/aegis-core/charter/commands.md",
+   "sha256": "faf723204ce2e30b6f34ca63440558b7c721ed662121861bb30dc571e362dd9a",
+   "bytes": 4399
+  },
+  {
+   "path": "plugins/aegis-core/charter/constitution.md",
+   "sha256": "6162f0a0d6c691398e12eef657d62710f489523d9716036c42a7b980e2338ebd",
+   "bytes": 5597
+  },
+  {
+   "path": "plugins/aegis-core/charter/decisions_log.md",
+   "sha256": "0da9653eff9c68f507c081640139d0dd7c5a7166e08ff7edf4a00e1e285006a9",
+   "bytes": 151643
+  },
+  {
+   "path": "plugins/aegis-core/charter/parameters.yaml",
+   "sha256": "238c021ba3748c4cccccfdbf8af9e8aec7f3cfb73a242b1f263875b7cff888b5",
+   "bytes": 24640
+  },
+  {
+   "path": "plugins/aegis-core/charter/rulebook.yaml",
+   "sha256": "6e4330fe204458d110a85f1e056f25b5da09f219546122b91bbf5cc39915a392",
+   "bytes": 16839
+  },
+  {
+   "path": "plugins/aegis-core/config/aegis_fund.md",
+   "sha256": "5f124ea3df98379cfc2587a80b855f192eac789ae5d734ce05357617df13d2df",
+   "bytes": 2314
+  },
+  {
+   "path": "plugins/aegis-core/config/endpoints.json",
+   "sha256": "f2189ae24d05571bcd95ffed1ec9ee7b5eb5566a66a19d57045426c2d083bdd3",
+   "bytes": 1667
+  },
+  {
+   "path": "plugins/aegis-core/config/env.example",
+   "sha256": "d7ccda886bdb5d019d1e812d351e00d9b6cbcf84ccbcd7f0fca8422659cb8ed8",
+   "bytes": 998
+  },
+  {
+   "path": "plugins/aegis-core/contracts/alert_ledger.schema.json",
+   "sha256": "ab15ba3544e89ef6ffb8542ced2a0a3a05f26d0200fe7ac7fb27f92cf73860e8",
+   "bytes": 4871
+  },
+  {
+   "path": "plugins/aegis-core/contracts/aqe_export.schema.json",
+   "sha256": "8d34db35da2bf646aa29fb1a590f222af7b9af415731ce4e64f4ace52307a29c",
+   "bytes": 147916
+  },
+  {
+   "path": "plugins/aegis-core/contracts/autopilot.schema.json",
+   "sha256": "d1a015f81163a8bc5d27b30c40e27d6f71fb65a2d54987854b0804a8dbb0453c",
+   "bytes": 938
+  },
+  {
+   "path": "plugins/aegis-core/contracts/backlog.schema.json",
+   "sha256": "7c55f4f21ee0957c19110c5e12834ae3702f394292a7812e4da5160e2029d57c",
+   "bytes": 921
+  },
+  {
+   "path": "plugins/aegis-core/contracts/canon_index.json",
+   "sha256": "2c8c4c5b957ee249198ec0a81339668d5e0da6a24b2daf734b3c7b6e98f4288b",
+   "bytes": 9058
+  },
+  {
+   "path": "plugins/aegis-core/contracts/committee.schema.json",
+   "sha256": "f0b7ef2c124a576739e850e70946662192a7b7f19d5de3968a854f21cb63f543",
+   "bytes": 7337
+  },
+  {
+   "path": "plugins/aegis-core/contracts/dyncap_ledger.schema.json",
+   "sha256": "70fd784a0a1b662ac7ac6208551e27ccc7a5f85ed8c27c9921e48eeb54034bf9",
+   "bytes": 1351
+  },
+  {
+   "path": "plugins/aegis-core/contracts/exception.schema.json",
+   "sha256": "01d423e7ae5fe0ee10a5f8430c7c0213f05f417ef75fdab96bdb146f579ae0f5",
+   "bytes": 1047
+  },
+  {
+   "path": "plugins/aegis-core/contracts/field_dictionary.json",
+   "sha256": "4c0eb00220fad0b1c9f1e3526eb58e6cd2f9bdb2d02cb0013c15913977ae0076",
+   "bytes": 40383
+  },
+  {
+   "path": "plugins/aegis-core/contracts/historical_store.schema.json",
+   "sha256": "50c5a5f6e1dba464d59b38a3b480419a298b99250053b14ab0c2dbf98cd24944",
+   "bytes": 1724
+  },
+  {
+   "path": "plugins/aegis-core/contracts/install_manifest.json",
+   "sha256": "ce2e567674c43d089cced9a0aac812ef0a034846128a79bcd092ed326056ce0f",
+   "bytes": 7867
+  },
+  {
+   "path": "plugins/aegis-core/contracts/journal.schema.json",
+   "sha256": "61f8f7669e20567b21fbe842197b3fab6899e1f87a9aa51a2d894992c07ac3d7",
+   "bytes": 11720
+  },
+  {
+   "path": "plugins/aegis-core/contracts/ledger.schema.json",
+   "sha256": "a13159ca69ed1b09b52dd45a452e30b60e6377bb89a624b1823ee593711eb45c",
+   "bytes": 1011
+  },
+  {
+   "path": "plugins/aegis-core/contracts/nomination.schema.json",
+   "sha256": "85887a93e905b93426ad11d75a16f7a54198bd1739344e5355f26ade79e5d373",
+   "bytes": 4619
+  },
+  {
+   "path": "plugins/aegis-core/contracts/ops_status.schema.json",
+   "sha256": "dfb8d3199ce6e7b10b2ce3995f349789ec21adc76c541e83b480015ebcbf7a79",
+   "bytes": 1324
+  },
+  {
+   "path": "plugins/aegis-core/contracts/pipeline_ledger.schema.json",
+   "sha256": "0a83aadafab4e2f5e4e71373852edb632596afa4ffed163c7a39f16b73090ff2",
+   "bytes": 4011
+  },
+  {
+   "path": "plugins/aegis-core/contracts/plan.schema.json",
+   "sha256": "2c3e4b1893b4e992d9220ed1a456e17130f83be20dafb947c651f3b34c1658c2",
+   "bytes": 4098
+  },
+  {
+   "path": "plugins/aegis-core/contracts/scorecard.schema.json",
+   "sha256": "9331816f5d7b153ddd56d105f3c8be1dbd8d9c9320631f7be35ceba7bdbf2a07",
+   "bytes": 1040
+  },
+  {
+   "path": "plugins/aegis-core/contracts/self_heal.schema.json",
+   "sha256": "1ac8824e62c6745c49cd2362e338d40eab8e9f3958f43094adda0b0d6f7433de",
+   "bytes": 1527
+  },
+  {
+   "path": "plugins/aegis-core/contracts/staging.schema.json",
+   "sha256": "417d1efa0dae420881d851d7bb5e0289fd1ba7b168f25204efee2ebe1a9078af",
+   "bytes": 1853
+  },
+  {
+   "path": "plugins/aegis-core/contracts/steer.schema.json",
+   "sha256": "53d4149d728fb9f16228ca46245d1b01150f0799d41209e9175f9046c521424c",
+   "bytes": 1943
+  },
+  {
+   "path": "plugins/aegis-core/contracts/universe.schema.json",
+   "sha256": "eab08a9e605d0864d19fa1601f67a3e70121bafcebf5b4f5bf19c8604869ea9a",
+   "bytes": 2525
+  },
+  {
+   "path": "plugins/aegis-core/contracts/vote_round2.schema.json",
+   "sha256": "109f0fc4c35cec2889509a333b258283cd27b2380bf7aeec15191c35bf4a3bad",
+   "bytes": 4760
+  },
+  {
+   "path": "plugins/aegis-core/data/README.md",
+   "sha256": "70c8beb905de795330d5ad26202367ee18769897a375e653dd5fd649a775994b",
+   "bytes": 826
+  },
+  {
+   "path": "plugins/aegis-core/data/persistent/cs_weekly/.keep",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "path": "plugins/aegis-core/skills/bracket/SKILL.md",
+   "sha256": "e6c39c86108ce47211c5e5aa2aac607ba47b3c87e652195c304ea284d307ec2d",
+   "bytes": 8715
+  },
+  {
+   "path": "plugins/aegis-core/skills/cio-voice/SKILL.md",
+   "sha256": "256f900e4e3bc01fa3190c540aad57268ac82dcd85ca21875477041cc1279263",
+   "bytes": 9167
+  },
+  {
+   "path": "plugins/aegis-core/skills/committee-desk/SKILL.md",
+   "sha256": "fe5ac918b6993ccda70011aaa02a390e0751645ff942efc2624ddfff7d0625b1",
+   "bytes": 11721
+  },
+  {
+   "path": "plugins/aegis-core/skills/committee-pm/SKILL.md",
+   "sha256": "c2f4e1b9f0b5b642f200e0a13fef660305008e51839c77545e3cb926820daa94",
+   "bytes": 48027
+  },
+  {
+   "path": "plugins/aegis-core/skills/committee-pm/commands.md",
+   "sha256": "faf723204ce2e30b6f34ca63440558b7c721ed662121861bb30dc571e362dd9a",
+   "bytes": 4399
+  },
+  {
+   "path": "plugins/aegis-core/skills/market_hours/SKILL.md",
+   "sha256": "675e5903d06d81932e4ef05d5462d726cd98ab7b45c2ec044c830ebcc38ea915",
+   "bytes": 11028
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/.pytest_cache/.gitignore",
+   "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+   "bytes": 37
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/.pytest_cache/CACHEDIR.TAG",
+   "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+   "bytes": 191
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/.pytest_cache/README.md",
+   "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+   "bytes": 302
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/.pytest_cache/v/cache/lastfailed",
+   "sha256": "d185deca7dfa43a79b27fdf9b52dbd895a6483729e3264c7ad5d90e2ae9d1360",
+   "bytes": 4122
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/.pytest_cache/v/cache/nodeids",
+   "sha256": "0ff9771ada894fc17aa6062d71ccbf9fb5ed9d35aa4a3c8d27afc477e99d4bdd",
+   "bytes": 3903
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/README.md",
+   "sha256": "fe75b96db121edbcd95db5e9d4ef29bdf61bd542bea79472275fdaae7a7ab32e",
+   "bytes": 906
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/RULINGS.yaml",
+   "sha256": "d72836dd2510ac404e5d2f8473c133058de75fb2d753cf4501085f4914a9cd92",
+   "bytes": 42891
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/RUN.yaml",
+   "sha256": "b9ace28e5429b9c979595e82936ab11388901fae0aa26c34587e5bee831af392",
+   "bytes": 29878
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/SKILL.md",
+   "sha256": "34e5772db756d5b72762fa780b978159e6e1b1bb1244528520ff64322323cadb",
+   "bytes": 11352
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/SKILL_v53_prose.md.bak",
+   "sha256": "7eea38e00fe4a24641a1617df926d2c87e18a69ae198461199be42f4ad1b5407",
+   "bytes": 29491
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/build_report.py",
+   "sha256": "fc4b06b3e6c12f17d105fdc34f9cfb7c39ebe6bb6b038dc7d923816887bc91c3",
+   "bytes": 539
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/contracts/condition_vocab.json",
+   "sha256": "e0d20425ae4b111fd029a1a7c6539b4665996a0c3d514124301d58c327ee008d",
+   "bytes": 7565
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/contracts/conditions_block.md",
+   "sha256": "92d7c3d3d19e773d62af1ba6b9757bff261abae762015d6437c0e5a92aa1b74f",
+   "bytes": 3281
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/contracts/voice_menus.json",
+   "sha256": "dfe65d693043a94f5b9764ea1a218c47d7d48f99ce490bff0c085281ba1c6e5a",
+   "bytes": 13344
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/contracts/voice_primitives.json",
+   "sha256": "f4735b192c8a4a396cb6371f16ed526672004b4ea12f035293631e6a7ec10f5c",
+   "bytes": 1330
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/contracts/vote_round2.schema.json",
+   "sha256": "109f0fc4c35cec2889509a333b258283cd27b2380bf7aeec15191c35bf4a3bad",
+   "bytes": 4760
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S0_5_voice_activation.md",
+   "sha256": "9636ffc63a898dd9777f39528c9ee24396424307bd8c3ddad11ad251bf2e14df",
+   "bytes": 11065
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S0_preflight.md",
+   "sha256": "de55c4fba9cee3fb5c2f114b63a8cb72a3798035f1eedc11e7ce7c6715dbeac2",
+   "bytes": 5021
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S1_ingest.md",
+   "sha256": "43cc166d5fd89ceff7c777c2c550842fcc49fe789f4692e82c5c64f5414ecb43",
+   "bytes": 5574
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S2_market_frame.md",
+   "sha256": "4051f98289d753d11d67eaf321e469a09961b14b796c66ca395252071ddaecc1",
+   "bytes": 3760
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S3H_held_book.md",
+   "sha256": "239f602b87348ce9ff2fd54e166c0473bc2d054a9194ce940261c62f507a7f57",
+   "bytes": 8795
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S3_candidate_frame.md",
+   "sha256": "ba60ffb6d0f4a98cee406c24cfa7fe61ad7098c128a48a469d2cba0b009fd989",
+   "bytes": 1225
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S4_voice_swarm.md",
+   "sha256": "fb602f5a253abb85a10132ff8803a4abf2f62b2ebbe7c85666eedc0ddd3402df",
+   "bytes": 3986
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S5_challenge_weather.md",
+   "sha256": "7d97fd6962a9e99f2f1e0b3e9fc5652b18dc153aeb0a38210dd53f155bc41447",
+   "bytes": 3751
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S6B_post_committee.md",
+   "sha256": "9b93b3b0bfa615ece7b7e691934a57c962eb0e2a76dc91aa2ae5cd4fafd52be2",
+   "bytes": 26668
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S6_deliberation.md",
+   "sha256": "82d8d1be3fc57b3c7668474039d79e4e9f5998152d03adc50be2d72fc709dbd1",
+   "bytes": 9099
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S7_cio_output.md",
+   "sha256": "2d022c1f2315d81cc3b3227a31c6296fb9b88a61236a6d53db58eaa970f34751",
+   "bytes": 8117
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/stages/S8_audit.md",
+   "sha256": "4382c7d6ef0affb389bbc8155ffae4b8049e7ed06af0656a94b37310183d8892",
+   "bytes": 1508
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/bracket_row_ACA.json",
+   "sha256": "29c0dba2b90e231a1009c402d9336666fabe7bbe65b7a3edd00f66217382cc7b",
+   "bytes": 9243
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/candidate_set.json",
+   "sha256": "0efe7ededd64b0b0fc23601f50b662ea5152ba0cab8828e23b7e32c6a0daa3fb",
+   "bytes": 54039
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/challenge_detect-lens.json",
+   "sha256": "345f63c4bb36e08847c24ddec3f34f87bf85cec13d94669296452a613080c676",
+   "bytes": 5052
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/challenge_lynch.json",
+   "sha256": "4e9d8993ac6d63046c6187faa63ba0d1bed7b4568c3933204ba00046421611c4",
+   "bytes": 5793
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/challenge_rogers.json",
+   "sha256": "759f637ffee912d139873869bca96f582191ed1f81f67a1f1623133da7f491f8",
+   "bytes": 6144
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/challenge_steenbarger.json",
+   "sha256": "a6f9717b01db0daf6e9622a31192749c50ab04c3e2b21cdcbcdd6fd0ccbb49f5",
+   "bytes": 6181
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/consensus.json",
+   "sha256": "da000e00d67cbf7b3a194cca135efb3c34c28355e0220cbfe722c97142937519",
+   "bytes": 4264
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/export.json",
+   "sha256": "19eb648232015943baaa82a0de0ac9339b978f89c9693922c75331aba6d9245e",
+   "bytes": 194629
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/fundamentals.json",
+   "sha256": "2f76e050a01a1a52c89f93ab6d4b9d7be50f0804a753c2403ad1e142311e5f32",
+   "bytes": 40726
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/phase4.json",
+   "sha256": "474ce0b0342be4b6b026ef89498445b65642021901457ce90ec065a6b670ed2c",
+   "bytes": 4349
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/pm_lens.json",
+   "sha256": "81c392b3db3565b907f20f4b9d4fea4c0f514bb4366a5b818649273d5c3e0945",
+   "bytes": 147
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/round2_votes.json",
+   "sha256": "7fb48163d51a1767ec1a2d3b9c5a9a4ce43334a021c9fc9b75c7bb50aeda434e",
+   "bytes": 11445
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/tally.json",
+   "sha256": "7ce2534d69973ff3cfe2d76ee485e00bbfc49d1f51c5a6bedd68f68bc372a48b",
+   "bytes": 21820
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/fixtures/verdict_ledger.json",
+   "sha256": "81f19de672906dabb124a09092e34dd73a8d41b393f7411ef5b3fc04248c0619",
+   "bytes": 104283
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tests/test_pipeline.py",
+   "sha256": "8d5fbd5afb81d5b9f7114c08f208b949c5514b0b4ed0028da0ace1d423ebcf77",
+   "bytes": 125298
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/conditions.py",
+   "sha256": "7b56569cc1008235e4e49fdc33af947cfea61f065b5e2b488f1f5e2aeca6a4ce",
+   "bytes": 8761
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/emit_packets.py",
+   "sha256": "d04b6a4bf99f0ce7e7bcd6491bf516c4f8410ada8556e535a9eb3e4f6eac3aee",
+   "bytes": 7998
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/field_derive.py",
+   "sha256": "d45a953aae333ce08342865ae9e736a2ec951e72f04c7e541092e715ef3d1180",
+   "bytes": 4663
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/figure_audit.py",
+   "sha256": "b12a92324dc039218aefeaf3ced94e48148cde6156786dda301eb55c208b06ee",
+   "bytes": 10801
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/git_sync.py",
+   "sha256": "a71d1db1839303e293b71c5cab1e73b86340b2bea60aaaa841f0fb07cb94a5e0",
+   "bytes": 11946
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/momentum_floor.py",
+   "sha256": "94cdbfe3e33094f56a965e8998848f75c4dc6039173c5740155653b6176914c5",
+   "bytes": 4275
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/patches/apply_2026_09_07.py",
+   "sha256": "d4c029f1359e19011ba03a0d8311748f0bd62d0348d9cd4fb51d60a270f5dcd0",
+   "bytes": 25590
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/pm_lens.py",
+   "sha256": "0016b82852531f37cde861c4ab0661434b6d3acef3c318fd24d5cf8915e14cd2",
+   "bytes": 18160
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/pma_cards.py",
+   "sha256": "f647b774460ca49e27bab5f09bf84894f02ddc10c863b94bfffd7206c886a55e",
+   "bytes": 68043
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/pma_conditions.py",
+   "sha256": "f1f1acd3e14fcc6ea2b077ab8778d791d345c69777f333fbb632d6c76db28266",
+   "bytes": 16182
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/pma_levels.py",
+   "sha256": "d9b0a680490d46b60803f2f492cdf7f572a2d3ac58242d121c7e4f705cb3f8bc",
+   "bytes": 25204
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/pma_pipeline.py",
+   "sha256": "95b6566a5f17c2a7c1a1ca6002a685bd8904e07464c68eb120a57041697b1266",
+   "bytes": 152846
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/pma_scorecard.py",
+   "sha256": "edeec6deef162c2ef7e0fb5fa381cb76567330565e82ddbd205f98f39681e597",
+   "bytes": 17671
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/preflight_run.py",
+   "sha256": "36913c9474c9a8f31e6d59e2b1089ba476bbadeddd8dbe7f26e8759a6bd0725f",
+   "bytes": 12325
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/purity_check.py",
+   "sha256": "49eec73fd313bbd8f10c971528257b1bbe4a7cffa264f1c0b4812e51fd6cd64c",
+   "bytes": 9555
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/registrar.py",
+   "sha256": "bef9e0f59575db8ea5d429f3709b7bd0dc36730431e7f6cd4de3ff937228954a",
+   "bytes": 34516
+  },
+  {
+   "path": "plugins/aegis-core/skills/pma/tools/voice_preflight.py",
+   "sha256": "a7fb433a9c387fd1893283c73539fcd30daaf9109439d9ea53fe8b1ba6d5e13d",
+   "bytes": 14786
+  },
+  {
+   "path": "plugins/aegis-core/skills/recover/SKILL.md",
+   "sha256": "33fa2a69b122905ac263211bfc2d04ff95c5b2aff4e012eb62e5948e32af7486",
+   "bytes": 3733
+  },
+  {
+   "path": "plugins/aegis-core/skills/staging-gatekeeper/SKILL.md",
+   "sha256": "c482849f861d253b3c3c73f0d10431011f77f861ff52dcb1c97f16cd0a0141ee",
+   "bytes": 9670
+  },
+  {
+   "path": "plugins/aegis-core/tools/alert_ledger.py",
+   "sha256": "903d58644208a6d53d0e9e634340fb56568bb3e6b3afa6e3cca6414f269498a5",
+   "bytes": 12539
+  },
+  {
+   "path": "plugins/aegis-core/tools/alert_list.py",
+   "sha256": "111b84699688664cb0247671efe952d2b1dd76a9ac0141a6675e1826d2d73fb7",
+   "bytes": 25189
+  },
+  {
+   "path": "plugins/aegis-core/tools/alert_universe.py",
+   "sha256": "b4330a005f1b26e6f21032086150f3acd82b8a1e1373652f3370e7b1f7187e3b",
+   "bytes": 10627
+  },
+  {
+   "path": "plugins/aegis-core/tools/aqe_coverage.py",
+   "sha256": "b3dec2ae09d6941154af8c6f281556beab71fdc3dc1f911402eee0365576cafb",
+   "bytes": 22911
+  },
+  {
+   "path": "plugins/aegis-core/tools/archive_ledger.py",
+   "sha256": "d24fc1b67b44b77e19f80e3cf6a1ac5d904b177b8db9bed9b98e4cfd5dd8f720",
+   "bytes": 13208
+  },
+  {
+   "path": "plugins/aegis-core/tools/artefact_check.py",
+   "sha256": "fb79d42421ba7f7690f9f188d56551a8320258561f14a51489f974091b8d7051",
+   "bytes": 29055
+  },
+  {
+   "path": "plugins/aegis-core/tools/autopilot.py",
+   "sha256": "09e5570e7e985613bf5a6b8e379bd647f4f0a5612d77ac9506f9833b629629ab",
+   "bytes": 3943
+  },
+  {
+   "path": "plugins/aegis-core/tools/bootstrap.py",
+   "sha256": "57215cc679b5c5ac65cae762632b1f5993930a7cad6db4d0f7248da072a423e7",
+   "bytes": 5268
+  },
+  {
+   "path": "plugins/aegis-core/tools/bracket_calc.py",
+   "sha256": "10fa31c24f408df69ac434d75280659cbcd75f5c2c82ea4f8017c52fdd5fa33c",
+   "bytes": 14177
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/alpaca_client.py",
+   "sha256": "bb59818a97353a77b3b7d994513fc3ee53cd0b52754b923750347a5c6d4f68af",
+   "bytes": 10338
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/book_sim.py",
+   "sha256": "cfda3fa8e5ca0ad1ddc801b44fc5fa18bad51b72262bd50448af39af3424a4c1",
+   "bytes": 4935
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/bs_price.py",
+   "sha256": "5a98eaada69ca3e6950fe9552b5313d04616226f9de8411c30acdbdea4d4c6e3",
+   "bytes": 3501
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/hedge_engine.py",
+   "sha256": "1af244464638caed4acbf48347060152cbcd6975253b42b13b929c7a82ab885f",
+   "bytes": 14482
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/sizing.py",
+   "sha256": "fa274051b19e283cca43e9c5fefec9e65c9205f3126c6f174bff17dd6003dc76",
+   "bytes": 1979
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/trailing_stop.py",
+   "sha256": "b24041f635c5c4e45a0b94d9dda3d665d5964c7120a3ac8c5fc4d93af2a81703",
+   "bytes": 7022
+  },
+  {
+   "path": "plugins/aegis-core/tools/calculators/var_parametric.py",
+   "sha256": "45e641ad732f71439de0a90f54ceb74e02153b7d21367b7d29e5c74dd12d9e4a",
+   "bytes": 5413
+  },
+  {
+   "path": "plugins/aegis-core/tools/canon_build.py",
+   "sha256": "e0580fc33290c46bc2bc5c84bde0cf7eb6cf03ef3f04e6b2edbf53f59e0b56b4",
+   "bytes": 38828
+  },
+  {
+   "path": "plugins/aegis-core/tools/canon_digest_import.py",
+   "sha256": "a1ac9b7a4babfb69c8d7de41ff8532815cc74895f26d545bd4cd66e85acea77d",
+   "bytes": 8594
+  },
+  {
+   "path": "plugins/aegis-core/tools/canon_handoff.py",
+   "sha256": "c1deb35a8c463947aa57bb8f12dee8e1730c76058d1df622e6cba570de4ef4c4",
+   "bytes": 26431
+  },
+  {
+   "path": "plugins/aegis-core/tools/canon_validate.py",
+   "sha256": "6f1a9c6e86e289654adc1bdb5ec166ccb5eb19f5f9a5f0c005a8b7cfbe147046",
+   "bytes": 21879
+  },
+  {
+   "path": "plugins/aegis-core/tools/catalog.md",
+   "sha256": "c1900b75067d0fbd66ee6fe14c72ab40009aa9596611f4bc261a24e20d9b86c3",
+   "bytes": 1527
+  },
+  {
+   "path": "plugins/aegis-core/tools/conditions.py",
+   "sha256": "7b56569cc1008235e4e49fdc33af947cfea61f065b5e2b488f1f5e2aeca6a4ce",
+   "bytes": 8761
+  },
+  {
+   "path": "plugins/aegis-core/tools/conviction_funnel.py",
+   "sha256": "1b086b203d5039db97b9f4e2c29c000fc1cb3b403f1b377dbdd66a4919f01106",
+   "bytes": 13027
+  },
+  {
+   "path": "plugins/aegis-core/tools/daily_flow_audit.py",
+   "sha256": "a1138a400fc6449a8cd32628be3c2bb58e4f8a3cdcbbfb9e5a1934502d1bab7c",
+   "bytes": 14519
+  },
+  {
+   "path": "plugins/aegis-core/tools/drive_ptj_check.py",
+   "sha256": "3d01d0ae05a40c4c9805c236031c8d050e5d23bf568843beb0b2a941dfcedb62",
+   "bytes": 6275
+  },
+  {
+   "path": "plugins/aegis-core/tools/dryrun.py",
+   "sha256": "eac5bb80b674fae234a6781dbe880df3d7a5dac4bd933c46af47e8725623dc87",
+   "bytes": 4220
+  },
+  {
+   "path": "plugins/aegis-core/tools/dyncap_ledger.py",
+   "sha256": "7a6a616a146bba6ee811440aabf6a5193c84399e869797b7e12c2bd589d4fdd6",
+   "bytes": 7136
+  },
+  {
+   "path": "plugins/aegis-core/tools/figure_audit.py",
+   "sha256": "b12a92324dc039218aefeaf3ced94e48148cde6156786dda301eb55c208b06ee",
+   "bytes": 10801
+  },
+  {
+   "path": "plugins/aegis-core/tools/fund_config.py",
+   "sha256": "c532ee0241ef7735c8dd587c86fc1cdb30a0f73330d76214f39c6e5a1ee8d80a",
+   "bytes": 1843
+  },
+  {
+   "path": "plugins/aegis-core/tools/gate_check.py",
+   "sha256": "6b540cd8c42efa343119b5a5a815d3af6a2ae04d511264db37062f04631b34a9",
+   "bytes": 5622
+  },
+  {
+   "path": "plugins/aegis-core/tools/git_sync.py",
+   "sha256": "a71d1db1839303e293b71c5cab1e73b86340b2bea60aaaa841f0fb07cb94a5e0",
+   "bytes": 11946
+  },
+  {
+   "path": "plugins/aegis-core/tools/held_book_refresh.py",
+   "sha256": "f9722d5230b2523d976570273d3c1cf63a6e6bc9e7df6688da28647c5ee2a26c",
+   "bytes": 43428
+  },
+  {
+   "path": "plugins/aegis-core/tools/historical_store.py",
+   "sha256": "cd5e819df4d4c4e054fbefbc8599fee902bdd376408e50812fef7751a845cbe6",
+   "bytes": 13693
+  },
+  {
+   "path": "plugins/aegis-core/tools/intraday_read.py",
+   "sha256": "7b80d20dec96a8323ce1a28bd77b5296bd47b5a432cac090d8b160e36b82098a",
+   "bytes": 9128
+  },
+  {
+   "path": "plugins/aegis-core/tools/janitor.py",
+   "sha256": "5d1219dad4b3b8ec066d9b1e56e7f4ce724283202a5d8755582609299f12f91b",
+   "bytes": 2894
+  },
+  {
+   "path": "plugins/aegis-core/tools/journal_build.py",
+   "sha256": "5fe1d499dad1e4465588e6def162f3b44c25c0a0b21a90776a1f27e7776c533d",
+   "bytes": 59319
+  },
+  {
+   "path": "plugins/aegis-core/tools/lanes.py",
+   "sha256": "ee17eed65f3026684bec3d9d3ac68735aa8563138ceeb4831e3db35a33f78531",
+   "bytes": 6927
+  },
+  {
+   "path": "plugins/aegis-core/tools/mcp/ibkr_mcp/server.py",
+   "sha256": "7edf5c39b413772eafaf5cdce3de0665c74e83cd9b5c18a776a8aefc7b84ec65",
+   "bytes": 3690
+  },
+  {
+   "path": "plugins/aegis-core/tools/measure_proposal.py",
+   "sha256": "8743e86680109e5ac4d0842258c67a1991148bd0590ef875441eceab30487f4e",
+   "bytes": 2291
+  },
+  {
+   "path": "plugins/aegis-core/tools/migrate_legacy.py",
+   "sha256": "cdb4825ec3e6594c9d3e210d927a163559e8a7c857d24878582df69f5a38c6b0",
+   "bytes": 2114
+  },
+  {
+   "path": "plugins/aegis-core/tools/morning_summary.py",
+   "sha256": "e04e89264b31be1dff9f64a7d95820e58eab2106e796de354801adafeede42a6",
+   "bytes": 6042
+  },
+  {
+   "path": "plugins/aegis-core/tools/nomination_ledger.py",
+   "sha256": "3d56189ab82c0725f0d70b8cd927b8749584644e5736ba5d6292a7049a9c6077",
+   "bytes": 5568
+  },
+  {
+   "path": "plugins/aegis-core/tools/notify.py",
+   "sha256": "f10ed2c878c646c8725bdd44874a7cbe7c2ec916fe0da9308d09413e594d3b11",
+   "bytes": 10421
+  },
+  {
+   "path": "plugins/aegis-core/tools/ops_status.py",
+   "sha256": "b30c33c45dcf918ccf2b83ca4dc49d8b72246c8b86380a8b32aec8f87c91c572",
+   "bytes": 8422
+  },
+  {
+   "path": "plugins/aegis-core/tools/option_book.py",
+   "sha256": "aded416a911b192d5cb071a7ea8938c2b56de4b0b78dc83411531cf167656bf8",
+   "bytes": 39334
+  },
+  {
+   "path": "plugins/aegis-core/tools/overnight_brief.py",
+   "sha256": "5bfb013563664dfe5473fbfcdad0a0677cc33b380f7401da2e9fb6c86951e884",
+   "bytes": 17703
+  },
+  {
+   "path": "plugins/aegis-core/tools/phase_gate.py",
+   "sha256": "e56c9b14fdb19a311244506af44054771124c3daef7209cf54d52218ee165ae1",
+   "bytes": 30448
+  },
+  {
+   "path": "plugins/aegis-core/tools/pipeline_ledger.py",
+   "sha256": "14779aa152bef9be8cb98818a22d600e86c178df25c0bdaf9791d4cd78987f96",
+   "bytes": 23681
+  },
+  {
+   "path": "plugins/aegis-core/tools/pma_cards.py",
+   "sha256": "f647b774460ca49e27bab5f09bf84894f02ddc10c863b94bfffd7206c886a55e",
+   "bytes": 68043
+  },
+  {
+   "path": "plugins/aegis-core/tools/pma_conditions.py",
+   "sha256": "f1f1acd3e14fcc6ea2b077ab8778d791d345c69777f333fbb632d6c76db28266",
+   "bytes": 16182
+  },
+  {
+   "path": "plugins/aegis-core/tools/pma_levels.py",
+   "sha256": "d9b0a680490d46b60803f2f492cdf7f572a2d3ac58242d121c7e4f705cb3f8bc",
+   "bytes": 25204
+  },
+  {
+   "path": "plugins/aegis-core/tools/pma_pipeline.py",
+   "sha256": "95b6566a5f17c2a7c1a1ca6002a685bd8904e07464c68eb120a57041697b1266",
+   "bytes": 152846
+  },
+  {
+   "path": "plugins/aegis-core/tools/pma_scorecard.py",
+   "sha256": "edeec6deef162c2ef7e0fb5fa381cb76567330565e82ddbd205f98f39681e597",
+   "bytes": 17671
+  },
+  {
+   "path": "plugins/aegis-core/tools/portfolio_metrics.py",
+   "sha256": "7e09db0bb13dce52d4b9493384659cffb8ccb2c1e89511fc2f2070f1651d1831",
+   "bytes": 13862
+  },
+  {
+   "path": "plugins/aegis-core/tools/preflight.py",
+   "sha256": "260ed4ae2a422319278d44966e54e1ab89b9805b4c90b9f9898e46918dc3fab1",
+   "bytes": 4905
+  },
+  {
+   "path": "plugins/aegis-core/tools/preflight_run.py",
+   "sha256": "9513e36345d17a3a6b9378bb968f70c513b5ad819929ac0019443440214d2595",
+   "bytes": 12263
+  },
+  {
+   "path": "plugins/aegis-core/tools/purity_check.py",
+   "sha256": "49eec73fd313bbd8f10c971528257b1bbe4a7cffa264f1c0b4812e51fd6cd64c",
+   "bytes": 9555
+  },
+  {
+   "path": "plugins/aegis-core/tools/quality_flags.py",
+   "sha256": "187ff941a2ab6212f7e1b5ddec0ad2ad6def280732af21d6665a2fb3cb5cef00",
+   "bytes": 10709
+  },
+  {
+   "path": "plugins/aegis-core/tools/recompute_dyncap.py",
+   "sha256": "0e02d49dd6c7f93d3100c8c3f567b79b3188d84a099696ad870606cb5fe40bb6",
+   "bytes": 8207
+  },
+  {
+   "path": "plugins/aegis-core/tools/registrar.py",
+   "sha256": "bef9e0f59575db8ea5d429f3709b7bd0dc36730431e7f6cd4de3ff937228954a",
+   "bytes": 34516
+  },
+  {
+   "path": "plugins/aegis-core/tools/self_heal.py",
+   "sha256": "20aaa5b88e920cd1cdbb0dcdb41b9642dc1c879390544550e5eb65b7110c7f7c",
+   "bytes": 14312
+  },
+  {
+   "path": "plugins/aegis-core/tools/set_param.py",
+   "sha256": "93be306fdef22d64d64cee750c381c1e0cf0a7e28b2b6fd0a5f918bb323c2546",
+   "bytes": 2559
+  },
+  {
+   "path": "plugins/aegis-core/tools/srm_live.py",
+   "sha256": "83bfefe2b99d8587500af295290a71d9cba113b7238d4a9356a7e540bb351b3c",
+   "bytes": 2602
+  },
+  {
+   "path": "plugins/aegis-core/tools/subscore_board.py",
+   "sha256": "a0533b1cabb79d0115e85076c70204568cad47883c4780162043e5372205ce30",
+   "bytes": 9318
+  },
+  {
+   "path": "plugins/aegis-core/tools/tripwires.py",
+   "sha256": "d5d33639f1fd0331bd01dda51f87778f59e3695300bf62bf3275057ae714e2ac",
+   "bytes": 4340
+  },
+  {
+   "path": "plugins/aegis-core/tools/universe_build.py",
+   "sha256": "f03584bf2cb6d0ef06f67d621958c01e1e238c6eb82b45b7edd851c61b16e655",
+   "bytes": 7064
+  },
+  {
+   "path": "plugins/aegis-core/tools/universe_screen.py",
+   "sha256": "01ff56bf13d7d478fe98cca5a1addcad955957a2dde23f0f08a136253ed80297",
+   "bytes": 6347
+  },
+  {
+   "path": "plugins/aegis-core/tools/voice_analysis.py",
+   "sha256": "1288901639f8438a24b932ba4da1ba3a955971ab81dc278099f1e2374dffccfd",
+   "bytes": 5798
+  },
+  {
+   "path": "plugins/aegis-core/tools/voice_memory.py",
+   "sha256": "a5e0eb8712226f630c3ac09636cf3d1e10597c396c0094b41e37059d60811580",
+   "bytes": 5954
+  },
+  {
+   "path": "plugins/aegis-core/tools/waivers.json",
+   "sha256": "118d708af0cb1709680c95f24edc0a4114f98820f0095151fcad17e7ff38a4dd",
+   "bytes": 331
+  },
+  {
+   "path": "plugins/aegis-daily/.claude-plugin/plugin.json",
+   "sha256": "7503b4c7ace3fca3f71d41515a56219242c092645304518885dc580c7bcb6f91",
+   "bytes": 3760
+  },
+  {
+   "path": "plugins/aegis-daily/.in_use/128",
+   "sha256": "7db4a43fe5c200ac0f3f637764a7e37a71fc281a369284836dd9368e7c7fdeef",
+   "bytes": 29
+  },
+  {
+   "path": "plugins/aegis-daily/skills/daily/SKILL.md",
+   "sha256": "c23b4e2b7cca264de8acf33f826c0a804510466e72bd158e65a16d002349a3b9",
+   "bytes": 10176
+  },
+  {
+   "path": "plugins/aegis-daily/skills/premarket/SKILL.md",
+   "sha256": "ef14c81fe738c55edf0813e6ee26d127eefcbebc21a1dc459c7cfd9a009e1d39",
+   "bytes": 28061
+  },
+  {
+   "path": "plugins/aegis-daily/skills/print-trade-journal/SKILL.md",
+   "sha256": "508fe8f7a97810a2dca537fcef33233736bcfbdb38e9ac1bb1a8cb4a6af62bca",
+   "bytes": 20398
+  },
+  {
+   "path": "plugins/aegis-daily/skills/ptj/SKILL.md",
+   "sha256": "d10c0265b6daa75ef4bd4a36f7a1d94b94b4483ae74be467d81ffc980d1e3503",
+   "bytes": 33459
+  },
+  {
+   "path": "plugins/aegis-live/.claude-plugin/plugin.json",
+   "sha256": "8d1754c6fa67418526230dd9e6d773d9ceef6c1fed76de076f29985df47b3464",
+   "bytes": 478
+  },
+  {
+   "path": "plugins/aegis-live/BOOTSTRAP.md",
+   "sha256": "9d621607c96379a138d134e9a9b8b84bdca8c337b81f6794ab1954d23f865500",
+   "bytes": 770
+  },
+  {
+   "path": "plugins/aegis-live/config/arm_brackets.json",
+   "sha256": "8e3801913ac34878fbd829133d8a81f7f1d6ff62df2d9e13de5677f76773f7e8",
+   "bytes": 2123
+  },
+  {
+   "path": "plugins/aegis-live/config/ibkr_conids.json",
+   "sha256": "5be349b443f1a43c6a0ca9e06c2d5c41ecae144196e5de8ee67c3e352b7a5451",
+   "bytes": 857
+  },
+  {
+   "path": "plugins/aegis-live/config/pm_watch.json",
+   "sha256": "462314ee56f75825323e4b143a1b67c5d670cc6b8c6b1b4c991ef37097fdd78b",
+   "bytes": 2217
+  },
+  {
+   "path": "plugins/aegis-live/hooks/hooks.json",
+   "sha256": "a775a58919c8f823b2c3904cd6927590854d68cf78a30860a7a204e53bfa95c1",
+   "bytes": 183
+  },
+  {
+   "path": "plugins/aegis-live/skills/live-review/REVIEW_SPEC.md",
+   "sha256": "99aab66425373f3e74d112595c7a0b1a3cfd11841122a29f93edbf455433003c",
+   "bytes": 10489
+  },
+  {
+   "path": "plugins/aegis-live/skills/live-review/SKILL.md",
+   "sha256": "18d51b62867303622aed3fe95c9b5325456a97af60cb8064fbde3672fa852e87",
+   "bytes": 2312
+  },
+  {
+   "path": "plugins/aegis-live/tools/exec_review.py",
+   "sha256": "0f381677e67d893c30e45f7e15dc4e7ee4cf7cc1f9132106c63a32915caf0072",
+   "bytes": 15842
+  },
+  {
+   "path": "plugins/aegis-stops/.claude-plugin/plugin.json",
+   "sha256": "7e1db721058af2c5383c29203cc2e09bcfcdb7f774fc65d5154196d116cfde5f",
+   "bytes": 593
+  },
+  {
+   "path": "plugins/aegis-stops/.in_use/128",
+   "sha256": "7db4a43fe5c200ac0f3f637764a7e37a71fc281a369284836dd9368e7c7fdeef",
+   "bytes": 29
+  },
+  {
+   "path": "plugins/aegis-stops/README.md",
+   "sha256": "3439c7dd23e560a3a386117a88d9bb09847483d614c9c55f18f5e180b5a9d702",
+   "bytes": 1408
+  },
+  {
+   "path": "plugins/aegis-stops/skills/stop-reconcile/SKILL.md",
+   "sha256": "23bb2901a63ab472c6e297e39ba0dfe0199883aaed431f39725db9ff89bf535e",
+   "bytes": 9584
+  },
+  {
+   "path": "plugins/aegis-stops/skills/stop-reconcile/references/contract-and-rules.md",
+   "sha256": "5cd901908fd7623cee18a95922c33517a4344b13b6a685cf88f9a011dfe6212a",
+   "bytes": 3133
+  },
+  {
+   "path": "plugins/aegis-stops/skills/stop-reconcile/scripts/stop_reconcile.py",
+   "sha256": "25dc7b13eb197404aed2abdb8808b62f87f8c689d0f9e560ac8b05a95034cd34",
+   "bytes": 12868
+  },
+  {
+   "path": "plugins/aegis-voices/.claude-plugin/plugin.json",
+   "sha256": "f8d4f4bcc39aa2db6be4b1b5e788e6b477d979e834f5167c4727feba6ffa6f72",
+   "bytes": 11296
+  },
+  {
+   "path": "plugins/aegis-voices/.in_use/128",
+   "sha256": "7db4a43fe5c200ac0f3f637764a7e37a71fc281a369284836dd9368e7c7fdeef",
+   "bytes": 29
+  },
+  {
+   "path": "plugins/aegis-voices/README.md",
+   "sha256": "95cc8e5f91120e48f303d0e8ab9f3a88fb03eb969705ed18752f7657990dff1b",
+   "bytes": 5538
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-crown.md",
+   "sha256": "0e01425b805cdae932f1aa874d9d013aa29c2352541a9ca63b79e1887b55ec10",
+   "bytes": 7804
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-detect-lens.md",
+   "sha256": "a9ddf673daeb5b5f0b5bc980995f7fafe19563a5fbcc562aa2058a926872a0fc",
+   "bytes": 21863
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-druckenmiller.md",
+   "sha256": "7b92919f5c9d181077388da0bfecc8380e5d4b1b2ccb80e682ccb754a9e1e332",
+   "bytes": 14347
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-elder-lens.md",
+   "sha256": "f72b090e3d8fca8aae3765c1856b30647575b31e13c419ae9937a10f6a1f3426",
+   "bytes": 37918
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-livermore.md",
+   "sha256": "400f4b234b255868042689b4befe6de4de604c9f6a5e1ff7bf1e3b0cd7a6cdfb",
+   "bytes": 39399
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-lynch.md",
+   "sha256": "e43b8f8f4f715f7ff75e9435523582f81148c2fe13946e53e040c80c77678721",
+   "bytes": 38244
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-minervini.md",
+   "sha256": "ae8160b321ce612387d5731ea31bf9b87423b9c046e6f1f410b51a449d015af6",
+   "bytes": 48525
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-oneil.md",
+   "sha256": "beca09c526387f5e3c600112ba500d94e410f8b6d8410a6595cae39881735a54",
+   "bytes": 39101
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-raschke.md",
+   "sha256": "065da8ea8e1afc25b44d0d2086b54af288e9e879bbe785c115a23339b1cb4437",
+   "bytes": 42808
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-rogers.md",
+   "sha256": "561f710075c084b95acae8ae730ed9a77f1e58d5de3bd0162c1f1171060f4654",
+   "bytes": 47722
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-seow.md",
+   "sha256": "09084f1917a9ffc032ba777b8119bc13d8de2ce4b71795e8115139dba42e1c8e",
+   "bytes": 42519
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-steenbarger.md",
+   "sha256": "a35ad17cf730b6f2807e3e0921502d0ab08a4f7b1b0f9e9a8ff0ce7a6d6c542a",
+   "bytes": 28701
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-thorp.md",
+   "sha256": "f29906bd06a120599e31aa7d097939fd45473d15fb1b9045b7651f2be3f550ba",
+   "bytes": 32233
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-weis.md",
+   "sha256": "f01cb2284e439e29dc83da0b19e481d1821319da1fe72ad4ac4efd2362b3e14e",
+   "bytes": 14671
+  },
+  {
+   "path": "plugins/aegis-voices/agents/voice-wyckoff.md",
+   "sha256": "d244e6f3207661858eb1e83411d4ab6c36795328638cd42dc4333b8c9c153a7e",
+   "bytes": 42587
+  },
+  {
+   "path": "plugins/aegis-voices/canon/crown/CROWN_VOICE_CHARTER.md",
+   "sha256": "01fac5016fd8dfedd1fef313ed01e6a793f1d028610cf1e6396bec2e16aaeddc",
+   "bytes": 28624
+  },
+  {
+   "path": "plugins/aegis-voices/canon/crown/canon.lock.yaml",
+   "sha256": "5372f442249feafdabd44d97c15420929d12b10a5b1322664ec14bfd6fcc6e7e",
+   "bytes": 27076
+  },
+  {
+   "path": "plugins/aegis-voices/canon/detect-lens/DETECT_LENS_VOICE_CHARTER.md",
+   "sha256": "29897978070bb23ac2d1faa149d8b0b181d4d4d02fb3ba1e46f5bdbbb199d04f",
+   "bytes": 18651
+  },
+  {
+   "path": "plugins/aegis-voices/canon/detect-lens/canon.lock.yaml",
+   "sha256": "37f4f96e30cb15e56b7554a8596ea2c2f317101f93c668e69bcc37c4ef2e48cd",
+   "bytes": 31979
+  },
+  {
+   "path": "plugins/aegis-voices/canon/detect-lens/spotcheck.json",
+   "sha256": "bb8a41ae8f78501a80e9b79547028aae0bad9093bcb370ea2cb2e41608e3e31c",
+   "bytes": 2919
+  },
+  {
+   "path": "plugins/aegis-voices/canon/druckenmiller/DRUCKENMILLER_VOICE_CHARTER.md",
+   "sha256": "5edc6469fcfa64b72d90c19cf0ee5f6262066a7283f86124af27d096d07fa603",
+   "bytes": 19056
+  },
+  {
+   "path": "plugins/aegis-voices/canon/druckenmiller/canon.lock.yaml",
+   "sha256": "97736e2da18df377ce0feb6b69383c283029e3aa69a2ca0ff2bc4e19f21f43c6",
+   "bytes": 34913
+  },
+  {
+   "path": "plugins/aegis-voices/canon/druckenmiller/spotcheck.json",
+   "sha256": "4481df6146fbc77ed3298d2250d6966bce1ccb5ec713b1aab712ccb8098b5433",
+   "bytes": 1801
+  },
+  {
+   "path": "plugins/aegis-voices/canon/elder-lens/canon.lock.yaml",
+   "sha256": "66dc48bc0f06d10e040a7416fb7b3256eab329d84618a5290997208c1ad3f7fe",
+   "bytes": 28535
+  },
+  {
+   "path": "plugins/aegis-voices/canon/elder-lens/spotcheck.json",
+   "sha256": "84aa3b0d26c57b7f792eaddecebb1be44b56db0d498f849997f15dd3714df1a5",
+   "bytes": 500
+  },
+  {
+   "path": "plugins/aegis-voices/canon/livermore/canon.lock.yaml",
+   "sha256": "ab18907b6daf70a32076272a6b60f86db2f38ade5e2d67e0515310a4f5690bfe",
+   "bytes": 25213
+  },
+  {
+   "path": "plugins/aegis-voices/canon/livermore/spotcheck.json",
+   "sha256": "9c17c93e60072dddf760c071dee713f5b6f53af3ec5f169422b6588af7834c4b",
+   "bytes": 481
+  },
+  {
+   "path": "plugins/aegis-voices/canon/lynch/canon.lock.yaml",
+   "sha256": "49a319d2c94b4c34a52af621615e8a30a3ea4fba01325ec3efd5deb421df3d67",
+   "bytes": 20711
+  },
+  {
+   "path": "plugins/aegis-voices/canon/lynch/spotcheck.json",
+   "sha256": "8d2845096fe3f8b80d354fd1a2ef08ce3a1f3fa8c508bbc75b53debcc6d9a640",
+   "bytes": 428
+  },
+  {
+   "path": "plugins/aegis-voices/canon/minervini/canon.lock.yaml",
+   "sha256": "2ddb4e535d16f8c739a8e707a63b71b27920f03d02ee6d5935491f584bab6f8d",
+   "bytes": 29961
+  },
+  {
+   "path": "plugins/aegis-voices/canon/minervini/spotcheck.json",
+   "sha256": "dcb3b83aacb70826d1047a29add5cbe417f047462580cdb64236c7f7518e871f",
+   "bytes": 462
+  },
+  {
+   "path": "plugins/aegis-voices/canon/oneil/canon.lock.yaml",
+   "sha256": "d28d1c1959d7e4c36e5975d175f63a01769da5731becb22e41c68676532f446f",
+   "bytes": 18961
+  },
+  {
+   "path": "plugins/aegis-voices/canon/oneil/spotcheck.json",
+   "sha256": "b4cb3b0c825e15b6bd157bf4989a22ede3e054f65d34a6a40db25091a9456aa4",
+   "bytes": 964
+  },
+  {
+   "path": "plugins/aegis-voices/canon/raschke/canon.lock.yaml",
+   "sha256": "de5e3cc03f52dd7ada27c60c2092733cf69a4ada2e578ced1b9e24c9ee29042e",
+   "bytes": 24308
+  },
+  {
+   "path": "plugins/aegis-voices/canon/raschke/spotcheck.json",
+   "sha256": "d7f4310f208016c7b64dc3cf14ec1bf2ba1873f2c9854db312d436cd1a095f90",
+   "bytes": 827
+  },
+  {
+   "path": "plugins/aegis-voices/canon/rogers/canon.lock.yaml",
+   "sha256": "f87c0f62ddf5f3a4164668c4de36ea1a16acfb936de0b23438d4acfb5d7355d8",
+   "bytes": 27724
+  },
+  {
+   "path": "plugins/aegis-voices/canon/rogers/spotcheck.json",
+   "sha256": "a269ae96f069363e4bca17cada9690e52e6e0dacdcaf77087293fe49a2516ad0",
+   "bytes": 766
+  },
+  {
+   "path": "plugins/aegis-voices/canon/seow/canon.lock.yaml",
+   "sha256": "1537464b56abefd4bf7043d3ed3cd0b2e3687c28598c34b7dc730dd7fd0756ae",
+   "bytes": 30925
+  },
+  {
+   "path": "plugins/aegis-voices/canon/seow/spotcheck.json",
+   "sha256": "2bdc6114ac40f40fe0baa7581598fe94e5eb7c9e8b1a1b207e440a2d77bacff8",
+   "bytes": 433
+  },
+  {
+   "path": "plugins/aegis-voices/canon/steenbarger/canon.lock.yaml",
+   "sha256": "1c2d03584c7b826d97b5c7d812c0fc1d44fcdeca72af00aafbfc19b25862edc9",
+   "bytes": 13848
+  },
+  {
+   "path": "plugins/aegis-voices/canon/steenbarger/spotcheck.json",
+   "sha256": "a1661ca61d152fbdd565a08fc8b94df42ccd112ba138f1b0fd951188533fcce7",
+   "bytes": 423
+  },
+  {
+   "path": "plugins/aegis-voices/canon/thorp/canon.lock.yaml",
+   "sha256": "59eb50999893d5f9531ae62d36fb24b3b1495ac976d48ff936f8fb7866309ecc",
+   "bytes": 19073
+  },
+  {
+   "path": "plugins/aegis-voices/canon/thorp/spotcheck.json",
+   "sha256": "486d6db61cdb82e1a5aadcc75e708fe74080eae73fd5095f805919be6453f173",
+   "bytes": 410
+  },
+  {
+   "path": "plugins/aegis-voices/canon/weis/canon.lock.yaml",
+   "sha256": "5d199d3ae5d2cc82da6cdc6cbafcb289a1507b877598555c3e7f14fb406c5a24",
+   "bytes": 17350
+  },
+  {
+   "path": "plugins/aegis-voices/canon/wyckoff/canon.lock.yaml",
+   "sha256": "bd426f5c3693675530004716160e5b798644b34f82edf4ab28607bb002989580",
+   "bytes": 25997
+  },
+  {
+   "path": "plugins/aegis-voices/canon/wyckoff/spotcheck.json",
+   "sha256": "28333f9a0a4de7cdd1136e6d1954689fc967e94625c62bc4b4a3df4f2ad4b0da",
+   "bytes": 797
+  },
+  {
+   "path": "plugins/aegis-voices/contracts/canon_index.json",
+   "sha256": "c93e5f9cfcf149b376dca7829cd1e340af00818c8f88224da0404c4f72bb875d",
+   "bytes": 9702
+  },
+  {
+   "path": "plugins/aegis-voices/contracts/field_dictionary.json",
+   "sha256": "9e50d8875b1da7833543ffb07b9c8e1cb77b172dc732a1f01e959e8c799790f0",
+   "bytes": 40674
+  },
+  {
+   "path": "plugins/aegis-voices/contracts/nomination.schema.json",
+   "sha256": "85887a93e905b93426ad11d75a16f7a54198bd1739344e5355f26ade79e5d373",
+   "bytes": 4619
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-common/SKILL.md",
+   "sha256": "a27865f2bc6a1776096c48bc70162fbb2aa634ea28afe8b2e0d5c1c71a777f02",
+   "bytes": 5357
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-detect-lens/SKILL.md",
+   "sha256": "072101a93f7502540d3bd802367313ee4bd98b7d7d1accb4a239635531f8a07f",
+   "bytes": 12110
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-druckenmiller/SKILL.md",
+   "sha256": "75df3f1f27c75ae6d8f0fd8bd3d5b1dc81f0342d85ceaddfbc8601e6d042aef0",
+   "bytes": 7531
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-elder-lens/SKILL.md",
+   "sha256": "003dc85956a94a9ea0972d182184479171e493309bbbdffbdaff70fffa53d0ab",
+   "bytes": 19460
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-livermore/SKILL.md",
+   "sha256": "d569af3481b8895a6762d17bc1a165af679fd894611116b871c7ef95bfa2ba0f",
+   "bytes": 18475
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-lynch/SKILL.md",
+   "sha256": "df9a769a6f4a5fa3c6b10101bbf618bfc8d117b74362584aaa58d2549365e170",
+   "bytes": 18765
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-minervini/SKILL.md",
+   "sha256": "3b999c16a2c68a9f7a5bcf69edc70a7e0c7ec40e2cc934d1ff091bc004b76384",
+   "bytes": 20541
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-oneil/SKILL.md",
+   "sha256": "2eb74a0f0e918b948ad66ace4e2b2938ee5ca779545f98d256d591f5f7f69fb6",
+   "bytes": 17576
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-raschke/SKILL.md",
+   "sha256": "f27a586abb5aeb58b4a782162873211ea3dce2ecc9b1dd1a49db29c1dcde0d21",
+   "bytes": 18011
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-rogers/SKILL.md",
+   "sha256": "e7d5bb88ebe19c503d313230ad60ed1c57ea92f3fc6a268407e9ebb76dfd7f4f",
+   "bytes": 23546
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-seow/SKILL.md",
+   "sha256": "caae91a10b63a002d617e0953900b3004251bc79f2102d32949e1610d71c91a6",
+   "bytes": 6245
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-steenbarger/SKILL.md",
+   "sha256": "bc2fd1291915f7157a26f9747c14beb7f2452a5a0a4ea82f88b7c4bec97ec8f9",
+   "bytes": 11904
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-thorp/SKILL.md",
+   "sha256": "54359b6fa9c11cfc233b01cc3607996a58282aa3bc4499312a4d240f19af7f96",
+   "bytes": 15412
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-weis/SKILL.md",
+   "sha256": "f3c4c0c4c74ae62f2795ce1e41e60dd25facc24a7edb952e76e01700d2e23e1a",
+   "bytes": 13659
+  },
+  {
+   "path": "plugins/aegis-voices/skills/voice-wyckoff/SKILL.md",
+   "sha256": "b9c5daf1e0bfe53d313e03afdd153ca3ab549ca2a30be2f96b0773d8e2f09130",
+   "bytes": 5361
+  },
+  {
+   "path": "plugins/aegis-voices/tools/canon_check.py",
+   "sha256": "be3e289ad5969184b3e435b92ead37da8d70430df26a1ed37b0b0222104308cf",
+   "bytes": 9835
+  },
+  {
+   "path": "plugins/aegis-voices/tools/canon_validate.py",
+   "sha256": "6f1a9c6e86e289654adc1bdb5ec166ccb5eb19f5f9a5f0c005a8b7cfbe147046",
+   "bytes": 21879
+  },
+  {
+   "path": "plugins/aegis-voices/tools/field_derive.py",
+   "sha256": "d45a953aae333ce08342865ae9e736a2ec951e72f04c7e541092e715ef3d1180",
+   "bytes": 4663
+  },
+  {
+   "path": "plugins/aegis-voices/tools/voice_preflight.py",
+   "sha256": "65bb25da67b5a75040478ccb551d09ac63a0686cc146871713084cdf2ceee142",
+   "bytes": 14823
+  },
+  {
+   "path": "prototypes/one_dataset/README.md",
+   "sha256": "39439835884a8ba1117179d87ec26c0a27e09fd3b4682e237674cb2f3a35b0aa",
+   "bytes": 757
+  },
+  {
+   "path": "prototypes/one_dataset/build_dataset.py",
+   "sha256": "a3b07b47d8b01ffdc44543f74348f8b6e49c69c3ab93fb49c34275ebb5840337",
+   "bytes": 1503
+  },
+  {
+   "path": "prototypes/one_dataset/vq.py",
+   "sha256": "d247e87e69b030e2e03f043d01abc5c51fd447495ac71a74a9b8f1f8c87b0764",
+   "bytes": 4485
+  }
+ ]
+}

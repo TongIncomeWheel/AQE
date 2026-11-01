@@ -1,0 +1,30 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "QA note -- Steenbarger's read of the whole record after ratification, with optional holds (R36 round 6)",
+ "x_version": "1.0.0",
+ "x_purpose": "One note: did every decider read evidence; are reasons leaning on the same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may HOLD a ticket: the Chair reopens the floor on that ticket only, with his question; the deciders discuss once more and ratify again. ONE hold per ticket, then the result stands. He cannot vote or veto.",
+ "type": "object",
+ "required": ["voice", "date", "evidence_read", "shared_anchors", "unanswered_points", "slate_says_what_deciders_said", "note", "holds"],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {"const": "steenbarger"},
+  "date": {"type": "string", "format": "date"},
+  "evidence_read": {"type": "array", "items": {"type": "object", "required": ["voice", "read"],
+                    "properties": {"voice": {"type": "string"}, "read": {"type": "boolean"}, "note": {"type": "string", "maxLength": 200}}},
+                    "x_note": "one row per decider, every decider once"},
+  "shared_anchors": {"type": "array", "items": {"type": "string", "maxLength": 200},
+                     "x_note": "the few fields or phrases many cases lean on; [] when none"},
+  "unanswered_points": {"type": "array", "items": {"type": "object", "required": ["voice", "ticker", "point"],
+                        "properties": {"voice": {"type": "string"}, "ticker": {"type": "string"}, "point": {"type": "string", "maxLength": 300}}}},
+  "slate_says_what_deciders_said": {"type": "boolean"},
+  "note": {"type": "string", "minLength": 1, "maxLength": 800},
+  "holds": {"type": "array", "items": {"type": "object", "required": ["ticker", "question"],
+            "properties": {"ticker": {"type": "string"}, "question": {"type": "string", "maxLength": 300}}},
+            "x_note": "each slate ticket at most once; [] for no hold"}
+ },
+ "x_registrar_extra_checks": [
+  "with --slate: every held ticker is on the slate",
+  "a ticker held twice in one note => REJECT (one hold per ticket, R36)",
+  "evidence_read covers exactly the seven deciders"
+ ]
+}

@@ -478,7 +478,10 @@ def test_the_hf_mirror_still_carries_what_voice_packets_needs_at_runtime():
     wf = open(".github/workflows/deploy-hf.yml", encoding="utf-8").read()
     assert ":!aegis" in wf, "the broad exclusion this re-add must run after"
     assert "git add -f aegis/skills/premarket-analysis/tools/pma_pipeline.py" in wf
-    assert "aegis/canon/*/canon.lock.yaml" in wf
+    # 2026-11-01: the menus live in the generated contracts/voice_menus.json (one code tree), and the whole
+    # aegis/canon directory is re-added (a superset of every canon.lock.yaml).
+    assert "aegis/skills/premarket-analysis/contracts/voice_menus.json" in wf
+    assert "aegis/canon" in wf
     # the re-add must come AFTER the exclusion, or a later `git add -A` could
     # re-exclude what was just carved back in
     assert wf.index(":!aegis") < wf.index("git add -f aegis/skills")
@@ -544,7 +547,8 @@ def test_no_dated_run_folder_holds_a_daily_aqe_artifact():
 def test_the_pma_contract_points_at_the_surviving_destination():
     """S1 is the boundary that moves the day's data into the repo. If it still
     names the retired path, the committee reads a folder nothing writes."""
-    s1 = open("aegis/skills/premarket-analysis/stages/S1_ingest.md",
+    # one code tree (2026-11-01): the live stage file is the plugin's; aegis/skills/premarket-analysis/stages is a stale copy
+    s1 = open("aegis/plugin/aegis-core/skills/pma/stages/S1_ingest.md",
               encoding="utf-8").read()
     assert "aegis/output/" in s1
     assert "data/aqe/<date>/" not in s1 and "data/aqe/<YYYY-MM-DD>/" not in s1
@@ -553,7 +557,7 @@ def test_the_pma_contract_points_at_the_surviving_destination():
 def test_the_fixed_path_freshness_check_is_still_mandated():
     """A dated path fails loudly when a day is missing. A fixed path always
     reads, so staleness is the only guard left and it must not be optional."""
-    s1 = open("aegis/skills/premarket-analysis/stages/S1_ingest.md",
+    s1 = open("aegis/plugin/aegis-core/skills/pma/stages/S1_ingest.md",   # one code tree: the live stage
               encoding="utf-8").read()
     assert "Freshness" in s1
     assert "not optional" in s1

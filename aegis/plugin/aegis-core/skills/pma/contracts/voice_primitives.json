@@ -1,0 +1,18 @@
+{
+  "schema": "pma_voice_primitives.v1",
+  "purpose": "Card-grounded limits on which condition words each analyst may use, so a seat's conditions stay inside its own method. Source: design/voice_condition_map.md (all 15 cards read 2026-10-01). Only restrictions a card states outright are encoded; everything else is allowed.",
+  "default": {"buy_required": true, "wrong_required": true, "forbid_in_buy": [], "forbid_levels": []},
+  "seats": {
+    "livermore": {"forbid_in_buy": ["in_zone", "reclaim"], "why": "C5: 'Never buy on the pullback itself'; the trigger is a new high"},
+    "minervini": {"forbid_in_buy": ["reclaim"], "why": "C2: bottom-fishing is futile; C11 buy strength, never weakness"},
+    "oneil": {"forbid_in_buy": ["reclaim"], "why": "C16: buy the pivot breakout on volume"},
+    "seow": {"forbid_levels": ["ma_50", "ma_100", "ma_150", "ma_200"], "why": "C1: 'No 50, 100 or 200 period average is this author's'"},
+    "lynch": {"buy_required": false, "why": "card: entry and sell signals are fundamental, never a price level -- files wrong and non_price"},
+    "thorp": {"buy_required": false, "why": "card: a measured mispricing, not a shape -- no price trigger; files wrong (gap-through) and non_price"},
+    "elder-lens": {},
+    "raschke": {},
+    "weis": {},
+    "wyckoff": {},
+    "detect-lens": {}
+  }
+}

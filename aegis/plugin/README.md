@@ -1,19 +1,26 @@
-# aegis plugin source (v5.3, 2026-09-05)
+# aegis/plugin — THE ONE CODE TREE for the Aegis plugins
 
-This directory IS the source of truth for the two installed Cowork plugins, `aegis-core` and `aegis-voices`.
+**PM ruling 2026-10-30 (BUILD_PLAN Phase 1): this directory is the truth. The installed plugins are generated from it, and so are the runtime copies AQE reads.** Refreshed 2026-11-01 from the handover kernel `aegis-kernel-2026-10-30.zip` (file list + sha256 in `KERNEL_MANIFEST_2026-10-30.json`).
 
-Why it exists: on 2026-09-05 the installed plugin was found to have drifted from `aegis/skills/` — the `premarket`, `ptj`
-and `committee-pm` cards that actually run had been edited after being derived from repo files and never committed back
-(111 and 432 lines of difference). `packaging/build_claude.py` builds an older `aegis-v4` layout and cannot reproduce the
-installed plugin. So the installed trees were copied in here verbatim, patched for v5.3, and committed.
+| Tree | Version | What it is |
+|---|---|---|
+| `aegis-core/` | 1.31.0 | Charter, `/pma` conductor (`skills/pma/RUN.yaml`, `RULINGS.yaml`), agents, contracts, tools, the 307-test self-check |
+| `aegis-voices/` | 1.9.0 | 15 seat cards, canon locks, shared voice engine |
+| `aegis-daily/` | 1.2.1 | `/daily`, `/ptj`, `/premarket`, print-trade-journal |
+| `aegis-stops/` | 0.1.0 | `/stops` reconcile |
+| `aegis-live/` | 0.1.0 | 30-minute live review + session bootstrap hook |
 
-Rules:
-- Edit HERE. Then `python3 aegis/plugin/build.py` zips `aegis-core.plugin` and `aegis-voices.plugin` into `dist/`.
-- `aegis-core/skills/pma/` mirrors `aegis/skills/premarket-analysis/` (card, tools, contracts, brief-writer). Keep them
-  identical — `build.py` copies premarket-analysis in before zipping, so premarket-analysis stays the editable original.
-- Voice cards under `aegis-voices/agents/` are the only copy. There is no `skills/voice-*/` equivalent for the agents.
+## Rules
+1. **Edit here, never the generated copies.** The nightly run imports `aegis/skills/premarket-analysis/tools/pma_pipeline.py` and `contracts/voice_menus.json` by path, and reads `aegis/canon/<voice>/canon.lock.yaml`. Those paths must not move (`src/pipeline/voice_packets.py`, `.github/workflows/deploy-hf.yml`), so they are **generated**:
+   ```
+   python3 aegis/plugin/sync_runtime.py          # plugin -> runtime copies + GENERATED.json
+   python3 aegis/plugin/sync_runtime.py --check  # exit 1 on drift
+   ```
+   `tests/test_one_code_tree.py` fails the suite on drift. Before this existed AQE ran 1.24.1 / 1.8.0 against a live 1.31.0 / 1.9.0 for a week.
+2. **Build installable zips:** `python3 aegis/plugin/build.py` → `dist/*.plugin` (gitignored). It refuses to build on drift.
+3. **Plugin self-test:** `cd aegis/plugin/aegis-core/skills/pma && python3 tests/test_pipeline.py` → `307 passed, 0 failed` (self-running script, not pytest).
+4. **No caches in the tree:** `.in_use`, `.pytest_cache`, `__pycache__`, `*.pyc`, `*.bak` are stripped on import and asserted absent.
+5. `aegis-core/.mcp.json` is a Tiger placeholder (`REPLACE:` URL). claude.ai sessions use the account's `Tiger_MCPv7` connector; the placeholder is why the `aegis-core:tiger` MCP shows a connection error — harmless.
 
-v5.3 changes carried here: snapshot-every-tick, verified-read seat spawn (general-purpose + MD5 + line-N), two-wave vote,
-four admission doors (SEATS / ELDER+LENS / PM_LENS / AQE_LEADER, cap 30, one-seat exception closed), tool-built Round-2
-digest (`pma_pipeline.py r2digest`), executive-form brief (brief-writer v5.3 + gate QX1–QX4), preflight PAT optional,
-connector push path documented, bracket-reject lines deleted from oneil/raschke/wyckoff, Livermore sma_distance misread fixed.
+## The rest of `aegis/skills/premarket-analysis/`
+Only the two generated files above are live. `SKILL.md`, `stages/`, `agents/`, the other `tools/` are the pre-1.24 vendored copies and are superseded by `aegis-core/skills/pma/`. Cleanup (archive, not delete) is on the Phase 4 list in `docs/BUILD_STATE.md`.

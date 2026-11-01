@@ -1,0 +1,71 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Nightly Scorecard",
+ "x_version": "1.0.0",
+ "type": "object",
+ "required": [
+  "date",
+  "voices",
+  "committee",
+  "plan",
+  "execution",
+  "system"
+ ],
+ "properties": {
+  "date": {
+   "type": "string"
+  },
+  "voices": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "n",
+     "hit_d5_pct",
+     "excess_d5_pct",
+     "verdict"
+    ],
+    "properties": {
+     "n": {
+      "type": "integer"
+     },
+     "hit_d5_pct": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "excess_d5_pct": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "verdict": {
+      "enum": [
+       "PASS",
+       "WATCH",
+       "FAIL",
+       "INSUFFICIENT_DATA"
+      ]
+     },
+     "note": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "committee": {
+   "type": "object"
+  },
+  "plan": {
+   "type": "object"
+  },
+  "execution": {
+   "type": "object"
+  },
+  "system": {
+   "type": "object"
+  }
+ }
+}

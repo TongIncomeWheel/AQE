@@ -27,17 +27,17 @@ def _header_line(text: str) -> str:
 
 from src.pipeline import voice_packets as vp
 
-# The full 14-voice roster, per voice_packet_file_instruction v2 (2026-08-25).
-# GROUP_A + GROUP_B are the 11 voices that get a real file; GROUP_C's 4 get
-# none BY DESIGN — they activate only after the Phase-4 cap, on a bundle
-# compiled during that morning's own run, so there is no static file to name.
-# Asserting Group C's absence matters as much as Group A's presence: adding
-# one of them to the nominator list would quietly serve it the 199-name
-# universe it is specifically not supposed to see.
-GROUP_A = ["elder-lens", "livermore", "minervini", "oneil", "raschke",
-           "seow", "thorp", "weis", "wyckoff"]
-GROUP_B = ["crown", "druckenmiller"]
-GROUP_C = ["rogers", "steenbarger", "lynch", "detect-lens"]
+# THE ROSTER (R31, PM 2026-10-30; built 2026-11-01). GROUP_A = the seven DECIDERS, the only seats
+# that get a nightly packet file. GROUP_B (the macro pair crown + druckenmiller) is RETIRED: the
+# weather is read straight from aqe_crown_macro.json by the vote packet (r2digest --crown), so no
+# macro packet is built -- GROUP_B stays as a name so the "never built" assertion below is explicit.
+# GROUP_C get no file BY DESIGN: steenbarger (the QA seat) works off the post-rank room, and the
+# benched / stood-down voices (weis, thorp, rogers, lynch, detect-lens) are archived cards.
+# Asserting Group C's absence matters as much as Group A's presence: adding one of them to the
+# nominator list would quietly serve it the whole universe it is specifically not supposed to see.
+GROUP_A = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+GROUP_B = ["crown", "druckenmiller"]            # retired (R31): asserted NEVER built
+GROUP_C = ["steenbarger", "rogers", "lynch", "detect-lens", "weis", "thorp"]
 
 NOMINATORS = GROUP_A
 
@@ -129,13 +129,13 @@ def test_each_voice_gets_only_its_own_columns(export_file):
         assert not missing, f"{voice} packet is missing menu fields {missing}"
 
 
-def test_the_packet_set_is_exactly_the_eleven_voices_with_a_file(export_file):
-    """v2's tally, asserted mechanically: 9 nominators + 2 macro = 11 files,
-    no more and no fewer. A new name appearing here is a voice being served
+def test_the_packet_set_is_exactly_the_seven_deciders_with_a_file(export_file):
+    """R31's tally, asserted mechanically: 7 decider TSVs, no macro packets = 7 files, no more and
+    no fewer (was 9 + 2 = 11 until 2026-11-01). A new name appearing here is a voice being served
     data nobody signed off on; one disappearing is a voice left blind."""
     res = vp.build(export_file)
-    expected = {f"{v}.tsv" for v in GROUP_A} | {f"{v}.json" for v in GROUP_B}
-    assert set(res["files"]) == expected
+    expected = {f"{v}.tsv" for v in GROUP_A}
+    assert set(res["files"]) == expected, sorted(res["files"])
 
 
 def test_group_c_voices_never_get_a_packet_file(export_file):
@@ -149,19 +149,17 @@ def test_group_c_voices_never_get_a_packet_file(export_file):
             f"{voice} must not get a static packet file"
 
 
-def test_macro_packets_carry_the_macro_blocks_and_never_qs_market(export_file):
-    """Group B's R3: the macro pair reads global blocks, but `qs_market` is
-    PM-only and must never appear in either packet."""
+def test_macro_packets_are_no_longer_built(export_file):
+    """R31 (PM 2026-10-30): Crown and Druckenmiller stood down as voices. The weather reaches the
+    committee from aqe_crown_macro.json directly (r2digest --crown), so the nightly build produces
+    no crown.json / druckenmiller.json. Exactly the seven decider TSVs plus the coverage note."""
     vp.build(export_file)
     outdir = vp.packets_dir("2026-08-24")
-
+    names = {p.name for p in outdir.iterdir()}
     for voice in GROUP_B:
-        raw = (outdir / f"{voice}.json").read_text(encoding="utf-8")
-        assert "qs_market" not in raw, f"R3 breach: qs_market in {voice}.json"
-        pk = json.loads(raw)
-        for block in ("date", "market", "regime", "intermarket", "srm",
-                      "macro_weather", "thematic_baskets"):
-            assert block in pk, f"{voice}.json missing the {block} block"
+        assert f"{voice}.json" not in names, f"{voice}.json built -- the macro seats are retired (R31)"
+    assert {f"{v}.tsv" for v in GROUP_A} <= names
+    assert len([n for n in names if n.endswith(".tsv")]) == 7, sorted(names)
 
 
 def test_everything_inside_packets_is_seat_safe(export_file):
