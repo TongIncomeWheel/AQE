@@ -11,6 +11,12 @@
  "flags": [],
  "run_id": "pma-2026-11-02",
  "seats": {
+  "CHALLENGE/steenbarger": {
+   "file": "forms/challenge/steenbarger.json",
+   "flags": [],
+   "sha256": "4b8bc68db9fa769f42c3e129486ba431c743c9c3705b5a61fe87e2e4890f6203",
+   "status": "committed"
+  },
   "NOMINATE/elder-lens": {
    "file": "forms/r1/elder-lens.json",
    "flags": [],
@@ -55,6 +61,23 @@
   }
  },
  "steps": {
+  "CHALLENGE": {
+   "cost": {
+    "inlined_bytes": 81445,
+    "returned_bytes": 11743,
+    "spawns": 1
+   },
+   "files": {
+    "forms/challenge/steenbarger.json": "4b8bc68db9fa769f42c3e129486ba431c743c9c3705b5a61fe87e2e4890f6203"
+   },
+   "finished": "2026-11-01T22:31:55Z",
+   "notes": [
+    "17 findings, 5 obligations, 39 names read"
+   ],
+   "started": "2026-11-01T22:31:55Z",
+   "status": "done",
+   "tokens": 0
+  },
   "GATHER": {
    "cost": {
     "inlined_bytes": 0,
@@ -107,9 +130,9 @@
   },
   "NOMINATE": {
    "cost": {
-    "inlined_bytes": 0,
-    "returned_bytes": 102746,
-    "spawns": 0
+    "inlined_bytes": 1281324,
+    "returned_bytes": 205492,
+    "spawns": 7
    },
    "files": {
     "forms/r1/elder-lens.json": "4ce4d509c4049e0f0e1feb9819bcf2ca04e3fc9ff0fb2b54d680257ee9d3723c",
@@ -157,6 +180,22 @@
     "7 packets md5 recorded, voice_menus copied, qs_market grep 0"
    ],
    "started": "2026-11-01T22:22:07Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T22:29:44Z",
+   "notes": [
+    "39 in room: 24 nominated (0 cut) + 2 held + 3 U&R + 10 strength"
+   ],
+   "started": "2026-11-01T22:29:44Z",
    "status": "done",
    "tokens": 0
   }
