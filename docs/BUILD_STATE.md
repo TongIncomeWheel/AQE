@@ -9,7 +9,9 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 | Date | Ask | Status |
 |---|---|---|
 | 2026-11-02 | Bridge the COB-report gap: the committee and AQE must pick up the held book **and its stops** from the daily close | **BUILT on `claude/aegis-engineering`, awaiting release on the PM's word** (see "The book and its stops" below). PM ruled: Tiger is the stop source, read at the close AND before the AQE run; new names are picked up automatically, the PM excludes on review. 05:30 task prompt updated (live from Tue 3 Nov). 06:20 pre-AQE read task created but DISABLED — needs the Tiger + GitHub connectors attached in the routines UI. |
-| 2026-11-02 | Capital line: 1R in the journal ($928.50 = 1.5% of dynCap) vs the fixed $620; `aegis_fund.md` allocated 75,000 | Open — PM's call (sizing) |
+| 2026-11-02 | PM: the 05:30 trade report's Tiger read is enough; the 06:20 second read is optional (left DISABLED, PM may connect Tiger later). "No second read" is a note, not a warning. | Done on branch |
+| 2026-11-02 | PM: bring the daily Aegis close (05:30 `/daily`, `aegis/tools` + `aegis/scripts`) into the one plugin automation set instead of a separate process — also ends the two diverged tool trees | Queued — next change-set |
+| 2026-11-02 | PM ruling: **1R is dynamic, off the journal's dynamic capital** (replaces the fixed $620). Open: which % — 1% (= $619 today, matches the 27 Oct $620) or the journal's current 1.5% (= $928.50)? | Awaiting the % from the PM, then build |
 | 2026-11-02 | Two diverged book-close trees (`aegis/tools` runs; plugin copy lacks the stop reader) | Logged — own change-set after the stops bridge |
 
 ## The book and its stops — one checked source (2026-11-02, branch `claude/aegis-engineering`)

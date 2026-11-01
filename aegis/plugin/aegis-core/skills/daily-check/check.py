@@ -257,7 +257,7 @@ def check_book(journal_dir, run_date, export=None, broker_stops_path=None):
             for t, why in sorted((hs.get("differs") or {}).items()):
                 fails.append(f"{t}: the two Tiger reads disagree -- {why}")
             if not hs.get("second_read_at"):
-                notes.append(f"WARN no pre-AQE Tiger read ({hs.get('second_read_reason')}) -- stops are the close's only")
+                notes.append(f"stops from the close's journal only (no pre-AQE Tiger read: {hs.get('second_read_reason')}) -- normal; the second read is optional (PM 2026-11-02)")
         for t, h in sorted(held.items()):
             if t not in book:
                 continue
