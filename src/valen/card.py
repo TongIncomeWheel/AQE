@@ -376,4 +376,6 @@ def management_block(valen: dict) -> dict:
     mg = valen.get("management") or {}
     return {"held_facts": mg.get("held_facts") or [],
            "streak": mg.get("streak") or {"status": "UNAVAILABLE",
-                                          "reason": "not computed"}}
+                                          "reason": "not computed"},
+           "manage_note": mg.get("manage_note") or {"status": "UNAVAILABLE", "reason": "not computed", "is_decision": False},
+           "trim_trail": mg.get("trim_trail") or []}

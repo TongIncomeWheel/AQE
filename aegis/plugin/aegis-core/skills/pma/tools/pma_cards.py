@@ -711,6 +711,31 @@ def _detect_lens_panel(D, cons):
             + rows + '</tbody></table></div><p class="cond">Where the lens and the committee disagree, both are shown; neither overrides the other.</p></section>')
 
 
+
+def _valen_management_html(V, held):
+    """PM 2026-11-01 (weather-spec item 6): Valen's management switch and per-position trim/trail FACTS under
+    the book table. Readings + the handbook quoted as doctrine -- the trim/trail/add call is the PM's. Rendered
+    from aqe_valen_dashboard.json's management block only; absent = one declared line, never blank."""
+    mg = (V or {}).get("management") or {}
+    mn = mg.get("manage_note") or {}
+    out = []
+    if mn.get("status") == "OK":
+        out.append(f'<p class="cond"><b>Valen management switch:</b> {E(mn.get("note", ""))} <i>{E(mn.get("doctrine", ""))}</i></p>')
+    else:
+        out.append(f'<p class="cond">Valen management switch not served ({E(str(mn.get("reason") or "no Valen management block"))}) &mdash; declared gap.</p>')
+    tt = [r for r in (mg.get("trim_trail") or []) if r.get("ticker") in held] if held else (mg.get("trim_trail") or [])
+    if tt:
+        def _f(v, fmt="{:g}"):
+            return fmt.format(v) if isinstance(v, (int, float)) else "&mdash;"
+        def _b(v):
+            return "yes" if v is True else ("no" if v is False else "&mdash;")
+        out.append('<div class="tbl"><table><thead><tr><th>Name</th><th>R (approx.)</th><th>2R+</th><th>First target printed</th><th>vs 20-day line</th><th>Stop distance</th><th>Days held</th><th>Gaps</th></tr></thead><tbody>'
+                   + "".join(f'<tr><td><b>{E(str(r.get("ticker")))}</b></td><td class="num">{_f(r.get("r_multiple"), "{:+.2f}")}</td><td>{_b(r.get("r_multiple_2r_or_more"))}</td>'
+                             f'<td>{_b(r.get("tp1_printed"))}</td><td class="num">{_f(r.get("pct_vs_ma_20"), "{:+.1f}%")}</td><td class="num">{_f(r.get("dist_from_stop_pct"), "{:.1f}%")}</td>'
+                             f'<td class="num">{_f(r.get("days_held"), "{:d}")}</td><td>{E(", ".join(r.get("gaps") or []) or "&mdash;")}</td></tr>' for r in tt)
+                   + '</tbody></table></div><p class="cond">Facts beside the handbook: <i>trim into strength; trail the rest on one moving average, daily closes; add only when a winner proves itself again</i> (pieces 17&ndash;19, quoted). R is approximate (current stop as the risk). The call is yours.</p>')
+    return "".join(out)
+
 def cmd_render(a):
     T = load(a.text); cons = load(a.consensus)
     gaps = _validate_text(T, cons)
@@ -766,7 +791,7 @@ def cmd_render(a):
                if h.get("qty") else "—")
         o.append(f'<tr><td><b>{E(t)}</b></td><td>{pos}</td><td>{E(str(s.get("stop") if s else "NONE"))}{(" " + E(str(s.get("order")))) if s else ""}</td>'
                  f'<td><span class="pill {TONE.get(b.get("tone"), "p-n")}">{E(b["read_pill"])}</span></td><td>{E(b["why"])}</td></tr>')
-    o.append("</tbody></table></div>" + (f'<div class="flag">{E(T["book_flag"])}</div>' if T.get("book_flag") else "") + "</section>")
+    o.append("</tbody></table></div>" + (f'<div class="flag">{E(T["book_flag"])}</div>' if T.get("book_flag") else "") + _valen_management_html(V, held) + "</section>")
     o.append('<section class="card"><div class="eyebrow">What changed since yesterday</div><ul>' + "".join(f"<li>{E(x)}</li>" for x in T["changed"]) + "</ul></section>")
     o.append('<div class="section-title"><h2>Committee recommendations</h2><span class="eyebrow">Ordered by readiness · act on the trigger · nothing at market</span></div><div class="names">')
     for c in adv:

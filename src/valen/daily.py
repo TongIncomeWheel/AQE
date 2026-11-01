@@ -243,6 +243,16 @@ def run_playbook(export: dict, valen_artifact: dict | None = None) -> dict:
         held_facts = management.held_book_facts(held_positions)
     except Exception:  # noqa: BLE001
         held_facts = []
+    # PM 2026-11-01 (weather-spec item 6): the handbook's management switch and the per-position
+    # trim/trail FACTS -- readings beside quoted doctrine, never a call.
+    try:
+        mnote = management.manage_note(valen_artifact)
+    except Exception as exc:  # noqa: BLE001
+        mnote = {"status": "UNAVAILABLE", "reason": str(exc), "is_decision": False}
+    try:
+        trim_trail = management.trim_trail_rows(held_positions)
+    except Exception:  # noqa: BLE001
+        trim_trail = []
     try:
         from src.data import trade_history
         streak = trade_history.load_streak()
@@ -254,7 +264,7 @@ def run_playbook(export: dict, valen_artifact: dict | None = None) -> dict:
                      "no_buy_list": no_buy},
         "house": {"setups": setups, "status": setups_status},
         "execution": {"entries": entries, "stop_breaches": breaches},
-        "management": {"held_facts": held_facts, "streak": streak},
+        "management": {"held_facts": held_facts, "streak": streak, "manage_note": mnote, "trim_trail": trim_trail},
     }
 
 

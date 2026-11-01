@@ -2327,6 +2327,24 @@ def test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10(t
              "Committee recommendations", "HOLD for conditions", "PASS · off the list", "Detect-lens top 10", "The plan", "Read with care", "DRAFT"]
     pos = [h.find(x) for x in order]
     check("the fixed section order still holds, with the lens panel before the plan", all(p >= 0 for p in pos) and pos == sorted(pos), str(list(zip(order, pos))))
+    # weather-spec item 6 (PM 2026-11-01): Valen's management switch + trim/trail facts render under the book table
+    vfile = os.path.join(d, "valen_mgmt.json")
+    json.dump({"read_me_first": {"as_of": "2026-11-01", "headline": "h", "so_what": "half size", "because": [], "watch_for": []}, "stance": {"word": "NEUTRAL", "status": "OK"},
+               "regime": "CHOP", "trend": [], "extension": [], "breadth": [], "gex": {}, "history": [], "neighbourhood": [], "theme_leaders": [], "rotation": [],
+               "selection": {"no_buy_list": [], "relative_strength": [], "funnel": []}, "house": {"setups": []},
+               "management": {"manage_note": {"status": "OK", "state": "ABOVE", "note": "Net new highs: the 8-day average (12.5) is above the 20-day (8.0) -- breakouts are being rewarded.", "doctrine": "quoted doctrine"},
+                              "trim_trail": [{"ticker": "AAA", "r_multiple": 2.1, "r_multiple_2r_or_more": True, "tp1_printed": True, "pct_vs_ma_20": 5.2, "dist_from_stop_pct": 9.1, "days_held": 12, "gaps": []}]}}, open(vfile, "w"))
+    words["weather"] = {k: f"Read: {k}." for k in ("stance", "gex", "heartbeat", "positioning", "volatility", "divergence", "call", "cot", "checklist", "turning", "themes", "groups")}
+    json.dump(words, open(tw, "w"))        # R28: with a Valen file served, all 12 weather paragraphs must exist
+    exp2 = json.load(open(os.path.join(d, "export.json"))); exp2["held_positions"] = [{"ticker": "AAA", "qty": 100, "entry": 9.0, "live_px": 10.0, "unreal_usd": 100.0}]
+    json.dump(exp2, open(os.path.join(d, "export.json"), "w"))
+    rc, log = run([CARDS, "render", "--text", tw, "--consensus", os.path.join(d, "consensus.json"), "--export", os.path.join(d, "export.json"),
+                   "--cards", os.path.join(d, "cards.json"), "--phase4", os.path.join(d, "phase4.json"), "--brackets", os.path.join(d, "nob.json"),
+                   "--broker-stops", os.path.join(d, "nobs.json"), "--valen", vfile, "--scorecard", os.path.join(d, "nosc.md"), "--out", out])
+    hv = open(out).read() if rc == 0 else ""
+    check("the Valen management switch renders under the book table", rc == 0 and "Valen management switch" in hv and "breakouts are being rewarded" in hv, log[-300:])
+    check("the held name's trim/trail facts render (R, 2R+, first target, 20-day line) with the doctrine quoted",
+          "First target printed" in hv and "+2.10" in hv and "pieces 17" in hv and "The call is yours" in hv)
     # pre-redesign rows (no status) render with none of the new text
     for c in cons:
         for k in ("status", "objections", "reservations", "n_deciders"):

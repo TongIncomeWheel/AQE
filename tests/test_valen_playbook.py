@@ -237,3 +237,55 @@ def test_held_book_facts_maps_every_row():
     rows = [{"ticker": "A"}, {"ticker": "B"}]
     out = management.held_book_facts(rows)
     assert [f["ticker"] for f in out] == ["A", "B"]
+
+
+
+# ---- PM 2026-11-01, weather-spec item 6 (items 1-2): readings + quoted doctrine, never a call ----
+def _art(green, status="OK"):
+    return {"breadth": {"net_high_low": {"status": status, "avg8": 12.5 if green else 3.0, "avg20": 8.0, "green": green,
+                                          "latest_net": 15, "population": "aqe_panel", "reason": None if status == "OK" else "fewer than 40 sessions"}}}
+
+
+def test_manage_note_reads_the_net_new_highs_switch_both_ways():
+    g = management.manage_note(_art(True)); r = management.manage_note(_art(False))
+    assert g["status"] == "OK" and g["state"] == "ABOVE" and "rewarded" in g["note"] and g["avg8"] == 12.5
+    assert r["status"] == "OK" and r["state"] == "BELOW" and "tighten side" in r["note"]
+    for x in (g, r):
+        assert x["is_decision"] is False and "quoted doctrine" in x["doctrine"] and "panel" in x["note"]
+
+
+def test_manage_note_is_loud_when_the_row_is_missing():
+    assert management.manage_note(None)["status"] == "UNAVAILABLE"
+    u = management.manage_note(_art(True, status="UNAVAILABLE"))
+    assert u["status"] == "UNAVAILABLE" and "40 sessions" in u["reason"]
+
+
+def test_trim_trail_facts_are_facts_plus_doctrine():
+    row = {"ticker": "MP", "entry": 53.0, "live_px": 61.0, "held_sl": 49.0, "held_tp1": 60.0, "ma_20": 58.0, "qty": 300, "trade_date": "2026-10-01"}
+    f = management.trim_trail_facts(row)
+    assert f["r_multiple"] == 2.0 and f["r_multiple_2r_or_more"] is True
+    assert f["tp1_printed"] is True and f["above_ma_20"] is True and abs(f["pct_vs_ma_20"] - 5.17) < 0.01
+    assert f["is_decision"] is False and set(f["doctrine"]) == {"trim", "trail", "add"} and f["gaps"] == []
+    bare = management.trim_trail_facts({"ticker": "X", "entry": 10.0, "live_px": 11.0})
+    assert bare["tp1_printed"] is None and bare["above_ma_20"] is None and sorted(bare["gaps"]) == ["held_sl", "held_tp1", "ma_20"]
+
+
+def test_management_text_never_recommends():
+    import inspect
+    src = inspect.getsource(management)
+    # the module docstring explains that it never recommends (and so uses the word); the doctrine quotes are the
+    # handbook's words -- check the computing code between them
+    body = src.split("def _days_held")[1].split("TRIM_TRAIL_DOCTRINE")[0]
+    for word in ("should trim", "should trail", "recommend", "we advise", "cut the position"):
+        assert word not in body.lower()
+
+
+def test_run_playbook_carries_manage_note_and_trim_trail():
+    from src.valen import daily
+    export = {"daily_list": [], "held_positions": [{"ticker": "MP", "entry": 53.0, "live_px": 61.0, "held_sl": 49.0, "held_tp1": 60.0, "ma_20": 58.0}]}
+    out = daily.run_playbook(export, valen_artifact=_art(True))
+    mg = out["management"]
+    assert mg["manage_note"]["status"] == "OK" and mg["trim_trail"][0]["ticker"] == "MP"
+    from src.valen import card
+    blk = card.management_block({"management": mg})
+    assert blk["manage_note"]["state"] == "ABOVE" and len(blk["trim_trail"]) == 1
