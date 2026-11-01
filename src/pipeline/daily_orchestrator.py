@@ -57,9 +57,24 @@ PIPE_RANK_CUTOFF = 60
 SIGNAL_MAX_AGE = 2          # only show picks where cross-up fired within last N trading days
 
 
+def _sgt_today() -> date:
+    """The run's calendar date, in SINGAPORE time -- never the container clock.
+
+    2026-11-02 incident (AQE run 127): the GitHub Actions runner is UTC, so a
+    run started at 01:51 SGT stamped the export, candidate_set.json and the
+    SRM cache with the naive system date (2026-11-01) while
+    src/ui/daily_job.py's marker (SGT) said 2026-11-02. `feed_today` read
+    False, the run was marked `partial`, the workflow failed and the voices'
+    handoff gate refused the data -- all on a pipeline that had actually
+    completed. Every 06:30 SGT run (22:30 UTC the day before) would trip the
+    same wire. CLAUDE.md: all timestamps use ZoneInfo("Asia/Singapore") --
+    this is that rule applied to the one stamp every downstream reader keys on."""
+    return datetime.now(ZoneInfo("Asia/Singapore")).date()
+
+
 def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     """Execute the full daily pipeline. Returns the shortlist dict."""
-    run_date = run_date or date.today()
+    run_date = run_date or _sgt_today()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"[daily] AQE Daily Pipeline - {run_date}")
@@ -825,7 +840,7 @@ def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
     try:
         client = FMPClient()
         from datetime import timedelta
-        to_d = run_date or date.today()
+        to_d = run_date or _sgt_today()
         from_d = to_d - timedelta(days=90)
         for inst in MACRO_INSTRUMENTS:
             bars = client.get_daily_bars(inst, from_date=from_d, to_date=to_d)
@@ -844,12 +859,12 @@ def _compute_srm(panel: pd.DataFrame, trend_days: int = 10,
         spy_rows = panel.loc[panel["ticker"] == "SPY"].sort_values("date")
         spy_closes = spy_rows["close"].astype(float).to_numpy() if not spy_rows.empty else None
         sector_grades["_intermarket"] = compute_intermarket(
-            macro_data, spy_closes, str(run_date or date.today())
+            macro_data, spy_closes, str(run_date or _sgt_today())
         )
     except Exception as exc:
         print(f"  [WARN] Intermarket brief: {exc}")
 
-    save_intermarket_cache(sector_grades, run_date or date.today())
+    save_intermarket_cache(sector_grades, run_date or _sgt_today())
 
     return sector_grades
 
