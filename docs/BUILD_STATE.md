@@ -79,7 +79,18 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 
 **Full AQE suite at hand-off (run after Commit F, 7m55s):** 1708 passed, 1 skipped, 7 failed = the known baseline at that point. **Then O'Neil R6 was fixed** (its trigger line named the barred bracket fields — the caution stays, reworded; lock + compiled card) → the known baseline is now **6**: 2× HF-mirror `test_github_sync.py` (stale assertions from the 2026-09-15 canon merge — cleanup item) and 4× Layer-0 `test_layer0_committee_filter_2026_09_06.py` (encode the retired both-lists rule). No new failure anywhere on the branch.
 
-## End-state daily schedule (PM 2026-11-01 — a DESIGN TARGET; the multi-agent sequencing is deferred by the PM)
+## The daily chain as scheduled tasks (built 2026-11-01 evening; PM: "resume and complete")
+| SGT | Task (id) | State | Notes |
+|---|---|---|---|
+| 05:30 Tue–Sat | `AEGIS Daily` (`trig_01SCdZcq9vmF9HpDU4pmM2xm`) | enabled | `/daily`; trigger-file push removed |
+| **06:30** Tue–Sat | `AQE daily pipeline trigger (06:30 SGT)` (`trig_01EFjk2zPDG1VnzhPyR1GuYt`) | enabled | moved from 08:30 per the PM; dispatches `daily-run.yml`, verifies the dated output |
+| 07:10 Tue–Sat | `AEGIS READY post (Checker)` (`trig_01CQvuMH8BzUHtTnyr83puZX`) | **enabled** | fresh session; reads `aqe_last_run.json` from origin/main; posts READY / NOT READY; push notification; never starts anything |
+| 07:20 Tue–Sat | `AEGIS pma-auto` (`trig_01Rhb3tZXFtEz88Cf3QW2wGa`) | **DISABLED** | the full `/pma` chain unattended, progress only when stuck or done, due 14:00; ceiling 1.5× baseline. **Enabling it is the PM's tap** (guard rail: no committee without his word). |
+| 18:00 Tue–Sat | `AEGIS 18:00 approve-or-load gate` (`trig_01SXtDSVZ4oskfL5BB47KyBS`) | **DISABLED** | read-only Checker: confirms today's levels are live ("load by default") or says the PMA did not publish. Enable with pma-auto. |
+| US session | `alerts.yml` cron → **every 30 min** (`*/30 13-21 * * 1-5`); in-app poller `ALERT_MINUTES` → 30 | code change on this branch | takes effect on release to main |
+**Caveat from the task creator:** the three new tasks store **no connectors** (the creating session had none to pass). The READY post and the 18:00 gate need only git, so they work. `pma-auto` needs Gmail (INBOX-CLEAN — declares and continues without it) and a GitHub push path (`git_sync.py` needs a PAT in the environment, or the GitHub connector). **Before enabling pma-auto, recreate it from the claude.ai routines UI with the Gmail + GitHub connectors attached, or confirm `GITHUB_PAT` is in the environment.** The Oct 29 run pushed via the connector.
+
+## End-state daily schedule (PM 2026-11-01 — the design target the tasks above implement)
 | SGT | What | State today |
 |---|---|---|
 | 06:30 | AQE daily run starts (US close is in; no need to wait for 08:30) | task fires 08:30 — move the cron when the PM says |

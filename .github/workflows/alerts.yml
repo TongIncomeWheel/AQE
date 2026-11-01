@@ -10,7 +10,7 @@ name: AQE live alerts
 # off-session ticks, so the extra UTC padding is harmless.
 on:
   schedule:
-    - cron: "*/15 13-21 * * 1-5"   # every 15 min, 13:00–21:00 UTC, Mon–Fri
+    - cron: "*/30 13-21 * * 1-5"   # every 30 min, 13:00–21:00 UTC, Mon–Fri (PM 2026-11-01; was */15)
   workflow_dispatch:
     inputs:
       force:
