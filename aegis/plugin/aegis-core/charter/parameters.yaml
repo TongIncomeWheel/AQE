@@ -8,6 +8,8 @@ sub_fund:
     (PM ruling: a simple MD I can adjust). That file is the ONE place; read it via
     tools/fund_config.py. Not duplicated here.'
 capital:
+  # ONE RISK FIGURE (2026-11-01): while config/aegis_fund.md carries one_r_usd (PM 2026-10-27: $620 fixed),
+  # the percent below is NOT used -- bracket_calc.load_params() reports one_r_source. Set one_r_usd null to revert.
   one_r_pct_of_dyncap: 1.5
   sizes:
     standard_r: 1.0

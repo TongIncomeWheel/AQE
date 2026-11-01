@@ -50,14 +50,32 @@ MIN_ATR_RATIO = 1.0
 MIN_RR_TP2 = 2.0
 
 
-def load_params():
+def load_params(dyncap=None):
+    """Sizing parameters. ONE RISK FIGURE (BUILD_PLAN Phase 1, 2026-11-01): when config/aegis_fund.md carries
+    one_r_usd (PM 2026-10-27: $620 fixed), the R budget is that dollar figure, expressed here as the percent of
+    dynCap that reproduces it exactly so sizing.size() needs no second code path. Otherwise the legacy
+    parameters.yaml percent rule applies. `one_r_source` says which was used -- never silent."""
     p = yaml.safe_load(open(os.path.join(ROOT, "charter", "parameters.yaml")))
     cap = p.get("capital", {})
-    return {
+    out = {
         "one_r_pct": cap.get("one_r_pct_of_dyncap", 1.5),
+        "one_r_source": "parameters.yaml capital.one_r_pct_of_dyncap",
+        "one_r_usd": None,
         "sizes": cap.get("sizes", {"standard_r": 1.0, "high_conviction_r": 2.0}),
         "vol_cap_pct": cap.get("vol_cap_pct_of_dyncap", {}),
     }
+    try:
+        import fund_config
+        fixed = fund_config.one_r_usd()
+    except Exception as e:                       # a missing/broken fund file is reported, not hidden
+        out["one_r_source"] += f" (fund config unreadable: {e.__class__.__name__})"
+        fixed = None
+    if fixed is not None:
+        out["one_r_usd"] = fixed
+        out["one_r_source"] = "config/aegis_fund.md one_r_usd (PM 2026-10-27, fixed $)"
+        if dyncap:
+            out["one_r_pct"] = fund_config.one_r_pct_equivalent(dyncap)
+    return out
 
 
 def _num(v):
@@ -186,7 +204,7 @@ def tp_ladder(aqe_record: dict | None, history_20d: list | None, entry: float) -
 
 
 def build_bracket(inp: dict) -> dict:
-    params = load_params()
+    params = load_params(dyncap=(inp.get("dyncap") or {}).get("value"))
     ticker = inp["ticker"]
     entry = inp["price"]["value"]
     price_source = inp["price"].get("source")
@@ -256,6 +274,7 @@ def build_bracket(inp: dict) -> dict:
                               vol_30d_ann=vol_30d_ann if vol_30d_ann else 0.30,
                               vol_cap_pct=vol_cap_pct)
             sz["vol_30d_ann_used"] = vol_30d_ann if vol_30d_ann else "0.30 (default — vol_30d_ann unavailable, flagged)"
+            sz["one_r_source"] = params["one_r_source"]      # which risk figure sized this -- never silent
             out["size"] = sz
             out["r_ladder"] = book_sim.size_scenarios(entry=entry, stop=default_stop["price"],
                                                         dyncap=dyncap, one_r_pct=params["one_r_pct"])

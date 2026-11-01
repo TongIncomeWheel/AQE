@@ -15,12 +15,18 @@
 
 ## The seats
 
-**Nominators (9)** — elder-lens, livermore, minervini, oneil, raschke, seow, thorp, wyckoff, weis.
-**Challenge (2)** — rogers, steenbarger. They do not nominate and are not in the tally.
-**Fundamentals + lens (2)** — lynch, detect-lens. Both also vote in Round 2.
-**Macro (2)** — crown, druckenmiller. Neither ever returns a ticker.
+**THE 30 OCT 2026 REDESIGN (RULINGS R31–R36; `docs/DECISIONS_2026-10-30.md` wins).**
 
-Round-2 voting roster is 11: the 9 nominators plus lynch and detect-lens. Quorum floor 8.
+**Deciders (7)** — oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff. They shortlist (at most 6 each, R33),
+vote blind with the case form (R36), argue on the floor (`skills/voice-deliberate`), and ratify the slate (R34).
+**QA seat (1)** — steenbarger. Files the challenge document before the vote and one QA note after ratification;
+may hold a ticket once; never votes.
+**Independent list** — detect-lens is no longer a voice: the Cards show AQE's `lens_ranking.ranked[0:10]`.
+**Bench** — weis, thorp (`archive/`). **Stood down** — rogers, lynch, crown, druckenmiller (`archive/`); the weather is
+read from AQE's Crown file and the Valen dashboard.
+
+Ratification roster is the 7 deciders; barrier 6 of 7; `ratify-count` refuses fewer than 4. All seven count on every
+name — the lane tag is a label (R32). Nothing was deleted: `archive/README.md` says how to re-seat a bench voice.
 
 ## S0.5 — run this before every committee
 

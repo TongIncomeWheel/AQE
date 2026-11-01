@@ -54,7 +54,14 @@ parameters:
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --paths run_manifest.json forms/ *.json"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json slate.json floor_check.json consensus.json committee_record.json"
+  path_rule: >
+    THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
+    aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
+    run-dir names landed at the repo root and every checkpoint push would have rebuilt the HF Space and killed
+    the AQE container; which is why the 29 Oct run held everything on disposable disk until the end. git_sync.py
+    now REFUSES (exit 1, reason printed) to stage anything outside aegis/output/ unless --allow-outside-output
+    is passed explicitly. /pma resume reads the pushed run dir back from that path.
   tool_note: >
     git_sync.py ships INSIDE skills/pma/tools/ as well as at the plugin root. The run's working set
     copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy

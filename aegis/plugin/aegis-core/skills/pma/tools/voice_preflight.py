@@ -268,9 +268,12 @@ def main():
 
         report["seats"][seat] = s
 
-    NOMINATORS = ["elder-lens", "livermore", "minervini", "oneil", "raschke",
-                  "seow", "thorp", "wyckoff", "weis"]
-    VOTING = NOMINATORS + ["lynch", "detect-lens"]
+    # R31 (PM 2026-10-30): seven deciders nominate AND vote; steenbarger is the QA seat (challenge + QA
+    # note, no vote); detect-lens is an independent list; weis/thorp benched; rogers/lynch/crown/
+    # druckenmiller stood down. Barrier 6 of 7 (RUN.yaml); ratify-count refuses fewer than 4.
+    DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+    NOMINATORS = list(DECIDERS)
+    VOTING = list(DECIDERS)
     off = [x for x in VOTING if report["seats"].get(x, {}).get("status") == "NOT ACTIVATED"]
     blocked = [x for x in VOTING
                if report["seats"].get(x, {}).get("data", "").startswith("BLOCKED")]
@@ -279,8 +282,8 @@ def main():
         "voices_activated": len(VOTING) - len(off),
         "not_activated": off,
         "blocked_on_data": blocked,
-        "quorum_floor": 8,
-        "quorum_ok": (len(VOTING) - len(off)) >= 8,
+        "quorum_floor": 6,          # R31: 6 of 7 deciders
+        "quorum_ok": (len(VOTING) - len(off)) >= 6,
         "ready_to_run": not off and not blocked,
     }
 

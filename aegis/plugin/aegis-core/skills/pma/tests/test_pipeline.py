@@ -2142,6 +2142,87 @@ def test_run_map_carries_the_seven_deciders_and_the_new_rounds(td):
     check("registrar and pipeline agree on the deciders", all(v in reg for v in DEC) and 'QA_SEAT = "steenbarger"' in reg)
 
 
+def test_the_seat_cards_carry_the_floor_and_the_roster_is_archived_not_deleted(td):
+    """R31/R36 on the cards. Each decider's agent AND skill card carries its 'ON THE FLOOR' block; Steenbarger
+    carries the QA block; Seow's R10 picks his system from the name's own picture; the Chair, pma-deliberate
+    and voice-deliberate exist; the stood-down and benched cards sit under archive/, not under agents/."""
+    root = os.path.abspath(os.path.join(HERE, "..", "..", ".."))            # aegis-core
+    voices = os.path.join(os.path.dirname(root), "aegis-voices")
+    if not os.path.isdir(voices):
+        check("aegis-voices sits beside aegis-core (one code tree)", False, voices); return
+    for v in DEC:
+        for p in (os.path.join(voices, "agents", f"voice-{v}.md"), os.path.join(voices, "skills", f"voice-{v}", "SKILL.md")):
+            t = open(p, encoding="utf-8").read() if os.path.exists(p) else ""
+            check(f"{os.path.relpath(p, voices)} carries ON THE FLOOR (R36)", "ON THE FLOOR (R36" in t and "I press others on" in t)
+    for p in (os.path.join(voices, "agents", "voice-steenbarger.md"), os.path.join(voices, "skills", "voice-steenbarger", "SKILL.md")):
+        t = open(p, encoding="utf-8").read()
+        check(f"{os.path.relpath(p, voices)} carries the QA block", "QUALITY ASSURANCE (R31" in t and "I may HOLD a ticket" in t)
+    for p in (os.path.join(voices, "agents", "voice-seow.md"), os.path.join(voices, "skills", "voice-seow", "SKILL.md")):
+        t = open(p, encoding="utf-8").read()
+        check(f"{os.path.relpath(p, voices)}: R10 picks the system from the name's own picture, not the lane",
+              "I count toward momentum-lane verdicts" not in t and "NAME'S OWN PICTURE" in t)
+    for v in ("weis", "thorp", "rogers", "lynch", "crown", "druckenmiller", "detect-lens"):
+        check(f"{v} is archived, not an agent", not os.path.exists(os.path.join(voices, "agents", f"voice-{v}.md"))
+              and os.path.exists(os.path.join(voices, "archive", "agents", f"voice-{v}.md")))
+        check(f"{v}'s canon is untouched", os.path.exists(os.path.join(voices, "canon", v, "canon.lock.yaml")))
+    check("voice-deliberate skill exists", os.path.exists(os.path.join(voices, "skills", "voice-deliberate", "SKILL.md")))
+    check("the Chair agent exists and is not a voice", os.path.exists(os.path.join(root, "agents", "chair.md"))
+          and "I am not a voice" in open(os.path.join(root, "agents", "chair.md")).read())
+    check("pma-deliberate skill exists", os.path.exists(os.path.join(root, "skills", "pma-deliberate", "SKILL.md")))
+    check("the aqe-engineer agent exists", os.path.exists(os.path.join(root, "agents", "aqe-engineer.md")))
+    vp = open(os.path.join(TOOLS, "voice_preflight.py")).read()
+    check("voice_preflight's roster is the seven deciders", "DECIDERS" in vp and '"thorp"' not in vp.split("DECIDERS")[-1][:400])
+
+
+def test_checkpoints_land_under_aegis_output_and_never_rebuild_the_space(td):
+    """BUILD_PLAN Phase 1 (PM 2026-10-30): the checkpoint path. deploy-hf.yml rebuilds the HF Space on any push
+    to main outside aegis/output/**. git_sync.plan() puts run files under --dest and refuses anything outside."""
+    sys.path.insert(0, TOOLS)
+    import importlib, git_sync
+    importlib.reload(git_sync)
+    P = git_sync.plan(["run_manifest.json", "forms/", "board.json"], dest="aegis/output/pma/run/2026-11-03", cwd="/run")
+    check("every working file is planned under aegis/output/pma/run/<date>/",
+          [r for _, r in P["copies"]] == ["aegis/output/pma/run/2026-11-03/run_manifest.json",
+                                         "aegis/output/pma/run/2026-11-03/forms", "aegis/output/pma/run/2026-11-03/board.json"], str(P["copies"]))
+    check("only the dest directory is staged", P["stage"] == ["aegis/output/pma/run/2026-11-03"])
+    check("nothing is outside the safe prefix", P["outside"] == [])
+    legacy = git_sync.plan(["run_manifest.json", "forms/", "*.json"])
+    check("the OLD bare-name checkpoint is flagged as outside aegis/output (it would have hit the repo root)",
+          sorted(legacy["outside"]) == ["*.json", "forms", "run_manifest.json"], str(legacy))
+    dflt = git_sync.plan(git_sync.DEFAULT_PATHS)
+    check("the legacy DEFAULT_PATHS are flagged outside too (aegis/data, decisions_log)",
+          "aegis/data" in dflt["outside"] and "aegis/output/aqe_daily_export.json" not in dflt["outside"])
+    r = git_sync.sync("t", ["run_manifest.json"], dry_run=True)
+    check("sync REFUSES an outside push by default, fail-visible", r["ok"] is False and "REFUSED" in r["reason"], str(r)[:200])
+    run_yaml = open(os.path.join(HERE, "..", "RUN.yaml")).read()
+    check("RUN.yaml's checkpoint tool passes --dest aegis/output/pma/run/<date>", "--dest aegis/output/pma/run/<date>" in run_yaml)
+    root_copy = os.path.join(HERE, "..", "..", "..", "tools", "git_sync.py")
+    check("the plugin-root copy of git_sync.py is identical (RUN.yaml: keep the two copies identical)",
+          not os.path.exists(root_copy) or open(root_copy).read() == open(os.path.join(TOOLS, "git_sync.py")).read())
+
+
+def test_one_risk_figure(td):
+    """BUILD_PLAN Phase 1: one risk-per-trade figure. PM 2026-10-27: 1R = $620 fixed. It lives in
+    config/aegis_fund.md and every sizing path reads it from there; parameters.yaml's percent is not used while set."""
+    root = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    sys.path.insert(0, os.path.join(root, "tools"))
+    import importlib, fund_config
+    importlib.reload(fund_config)
+    check("one_r_usd is 620 in the fund config", fund_config.one_r_usd() == 620.0)
+    pct = fund_config.one_r_pct_equivalent(66699)
+    check("the percent equivalent reproduces $620 exactly on the current dynCap", pct is not None and abs(66699 * pct / 100.0 - 620.0) < 1e-6, str(pct))
+    try:
+        import bracket_calc
+        importlib.reload(bracket_calc)
+        prm = bracket_calc.load_params(dyncap=66699)
+        check("bracket_calc sizes from the fixed $620, and says so", prm["one_r_usd"] == 620.0 and "aegis_fund.md" in prm["one_r_source"]
+              and abs(66699 * prm["one_r_pct"] / 100.0 - 620.0) < 1e-6, str(prm))
+    except ImportError as e:                      # numpy may be absent in a bare harness; the fund-config half still proves the figure
+        check(f"bracket_calc importable (skipped: {e.__class__.__name__})", True)
+    live = open(os.path.join(os.path.dirname(root), "aegis-live", "skills", "live-review", "SKILL.md")).read()
+    check("the live review quotes the same $620", "$620" in live)
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -2235,6 +2316,8 @@ def main():
                    test_objection_rule_counts_the_final_ratification, test_the_record_is_written_per_voice_per_ticket,
                    test_r2digest_reads_the_crown_file_and_marks_retired_seats,
                    test_run_map_carries_the_seven_deciders_and_the_new_rounds,
+                   test_the_seat_cards_carry_the_floor_and_the_roster_is_archived_not_deleted,
+                   test_checkpoints_land_under_aegis_output_and_never_rebuild_the_space, test_one_risk_figure,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

@@ -192,10 +192,60 @@ def check():
             "remote": base, "detail": _scrub(p.stderr, token) if not ok else "ls-remote ok"}
 
 
-def sync(message, paths=None, dry_run=False):
+SAFE_PREFIX = "aegis/output/"
+
+
+def plan(paths, dest=None, cwd=None):
+    """THE CHECKPOINT PATH (BUILD_PLAN Phase 1, PM 2026-10-30). Decide where each working file lands in the
+    checkout and whether the push is HF-safe, with no git and no network, so it can be tested.
+
+    .github/workflows/deploy-hf.yml rebuilds the HF Space on every push to main EXCEPT one whose changed files
+    all sit under aegis/output/**. A rebuild kills the AQE container mid-run. RUN.yaml's checkpoint used to pass
+    `--paths run_manifest.json forms/ *.json` -- bare run-dir names that would have landed at the REPO ROOT --
+    so the 29 Oct run held everything on disposable disk rather than push. With --dest aegis/output/pma/run/<date>
+    each working path p is copied to <repo>/<dest>/<p> and <dest> is what gets staged.
+
+    Returns {"copies": [(src_abs, rel_in_repo)], "stage": [rel paths to `git add`], "outside": [rel paths NOT
+    under aegis/output/]} -- the caller refuses to push when `outside` is non-empty unless told otherwise."""
+    cwd = cwd or os.getcwd()
+    copies, stage = [], []
+    if dest:
+        dest = dest.strip("/")
+        for p in paths:
+            rel = os.path.normpath(os.path.join(dest, p.strip("/")))
+            copies.append((os.path.abspath(os.path.join(cwd, p)), rel))
+        stage = [dest]
+    else:
+        stage = [p.strip("/") for p in paths]
+    outside = [s for s in stage if not (s + "/").startswith(SAFE_PREFIX)]
+    return {"copies": copies, "stage": stage, "outside": outside}
+
+
+def _apply_copies(repo, copies):
+    done = []
+    for src, rel in copies:
+        dst = os.path.join(repo, rel)
+        if os.path.isdir(src):
+            shutil.copytree(src, dst, dirs_exist_ok=True); done.append(rel)
+        elif os.path.isfile(src):
+            os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.copy2(src, dst); done.append(rel)
+    return done
+
+
+def sync(message, paths=None, dry_run=False, dest=None, allow_outside_output=False):
     token = _token()
     paths = paths or DEFAULT_PATHS
     base = _remote_base()
+
+    P = plan(paths, dest)
+    if P["outside"] and not allow_outside_output:
+        # FAIL-VISIBLE, never a quiet rebuild of the Space. The legacy DEFAULT_PATHS (aegis/data, the decisions
+        # log) are outside the safe prefix on purpose: a caller that really means to push them says so.
+        return {"ok": False, "pushed": False, "reason":
+                f"REFUSED: {P['outside']} would be pushed OUTSIDE {SAFE_PREFIX} -- deploy-hf.yml rebuilds the HF "
+                f"Space on any such push to main (kills the AQE container mid-run). Use --dest {SAFE_PREFIX}pma/run/<date> "
+                f"for run checkpoints, or --allow-outside-output if this push is a deliberate source release.",
+                "plan": P, "remote": base}
 
     repo = _repo_root()
     healed = False
@@ -209,15 +259,24 @@ def sync(message, paths=None, dry_run=False):
         if repo is None:
             return {"ok": False, "pushed": False, "reason": err, "remote": base}
         healed = True
-        _mirror_state(repo, paths)
+        if not dest:
+            _mirror_state(repo, paths)
+    if dest:
+        copied = _apply_copies(repo, P["copies"])
+        if not copied:
+            return {"ok": False, "pushed": False, "reason":
+                    f"nothing to checkpoint: none of {paths} exists in {os.getcwd()}", "remote": base}
 
     # identity (pinned, idempotent)
     _run(repo, ["config", "user.name", COMMIT_NAME])
     _run(repo, ["config", "user.email", COMMIT_EMAIL])
 
-    # stage
-    existing = [p for p in paths if os.path.exists(os.path.join(repo, p))]
-    _run(repo, ["add", "--"] + existing) if existing else _run(repo, ["add", "-A"])
+    # stage -- ONLY the planned paths, never `add -A` (a stray file at the root would rebuild the Space)
+    existing = [p for p in P["stage"] if os.path.exists(os.path.join(repo, p))]
+    if not existing:
+        return {"ok": False, "pushed": False, "reason": f"planned paths {P['stage']} do not exist in the checkout",
+                "remote": base}
+    _run(repo, ["add", "--"] + existing)
 
     # anything to commit? (guard against a fatal masquerading as clean — the D-56 bug)
     rc, out, err = _run(repo, ["status", "--porcelain"])
@@ -255,12 +314,20 @@ def _main(argv=None):
     ap = argparse.ArgumentParser(description="Aegis autonomous git state sync (order-blind, D-48/D-56)")
     ap.add_argument("--message", "-m", default="aegis state sync")
     ap.add_argument("--paths", nargs="*")
+    ap.add_argument("--dest", default=None,
+                    help="repo-relative directory the working paths are copied under before staging, e.g. "
+                         "aegis/output/pma/run/2026-11-03 (the ONLY HF-safe home for run checkpoints)")
+    ap.add_argument("--allow-outside-output", action="store_true",
+                    help="permit staging paths outside aegis/output/ (a deliberate source release; rebuilds the HF Space)")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
     if a.check:
         print(json.dumps(check(), indent=2)); return
-    print(json.dumps(sync(a.message, a.paths, a.dry_run), indent=2))
+    out = sync(a.message, a.paths, a.dry_run, dest=a.dest, allow_outside_output=a.allow_outside_output)
+    print(json.dumps(out, indent=2))
+    if not out.get("ok"):
+        sys.exit(1)
 
 
 if __name__ == "__main__":
