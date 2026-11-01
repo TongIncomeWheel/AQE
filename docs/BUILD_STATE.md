@@ -129,6 +129,10 @@ One **blocker**: the last checkpoint push was after WRITE, so CHECK/LEVELS/REPOR
 | US session | alerts every 30 min | live on main |
 Connector caveat unchanged: pma-auto needs Gmail + a GitHub push path (PAT or connector) — **recreate it from the routines UI with connectors before enabling.** The READY watcher and the 18:00 gate need only git.
 
+### 4b. Two loose ends checked, neither blocks
+- **`voice-packets-sync.yml` (the 12:00 SGT packet backstop) failed on 29–31 Oct**: the pre-release code refused to build a blind `crown.json` (macro seat, no Crown file beside the export). With the released code, rebuilding the packets from run 128's export reproduces the 7 decider files exactly (content-identical; the only byte difference is CRLF locally vs LF on main, because the publisher reads in text mode — the `unchanged` check hashes the LF body, so the backstop is a daily no-op, never churn). Expect it green from its next scheduled run.
+- **Blank columns the seats are served** (builder warning, unchanged): `held_book.held_sl` is null on every row for every seat (the broker stop is read at GATHER into `broker_stops.json` — the carried PM item on the `held_sl/tp` source), and Elder-lens's `pin_bar_level` (carried Elder backlog). Both are declared, not silent.
+
 ### 5. Pilot — what the PM decides at 05:00
 1. **Tuesday 3 Nov dry pilot (recommended):** leave pma-auto DISABLED. At 06:30 AQE runs; the READY watcher posts READY/NOT READY with the gate's lines; the PM taps `/pma` himself when he wants the committee (first live committee = the floor test). The 18:00 gate stays off.
 2. Or **enable pma-auto + the 18:00 gate** for an unattended run — only after recreating pma-auto with connectors.
