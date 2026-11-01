@@ -1,0 +1,46 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Challenge document -- Steenbarger's QA read on the room before the vote (R36 round 1b)",
+ "x_version": "1.0.0",
+ "x_purpose": "Until 2026-11-01 this form had no schema (BUILD_PLAN Phase 1). The shape below is the one the seat has filed since 2026-09-06 (tests/fixtures/challenge_steenbarger.json), written down so registrar.py validate --kind challenge can refuse an incomplete one on arrival. Crowding, extension and overlap reads on the room; obligations addressed to named seats; never a nomination, never a vote. From 2026-11-01 only steenbarger files it (R31).",
+ "type": "object",
+ "required": ["voice", "date", "seat_kind", "findings", "names_read"],
+ "properties": {
+  "voice": {"const": "steenbarger"},
+  "date": {"type": "string", "format": "date"},
+  "seat_kind": {"const": "challenge"},
+  "names_read": {"type": "integer", "minimum": 0, "x_note": "how many room names the seat actually read; 0 with findings filed is rejected"},
+  "packet_md5": {"type": ["string", "null"]},
+  "proof": {"type": ["object", "null"], "x_note": "a line number + text from the packet, proving it was read"},
+  "findings": {
+   "type": "array", "maxItems": 40,
+   "items": {
+    "type": "object",
+    "required": ["scope", "kind", "claim", "evidence"],
+    "properties": {
+     "scope": {"type": "string", "x_note": "committee | lane | sector | <TICKER>"},
+     "kind": {"type": "string", "x_note": "CROWDING | EXTENSION | OVERLAP | UNPROVEN | ANCHOR | PROCESS -- the seat's own labels; not an enum so the card can grow"},
+     "ticker": {"type": ["string", "null"], "x_note": "when the finding is about one name; must be in the universe"},
+     "canon_ref": {"type": "array", "items": {"type": "string"}},
+     "claim": {"type": "string", "maxLength": 500},
+     "evidence": {"type": "string", "maxLength": 400, "x_note": "served fields and values, by name"},
+     "addressed_to": {"type": ["string", "null"], "maxLength": 120, "x_note": "the seat(s) that owe an answer"}
+    }
+   }
+  },
+  "obligations": {
+   "type": "array", "maxItems": 40,
+   "items": {"type": "object", "required": ["seat", "ticker", "what_is_owed"],
+             "properties": {"seat": {"type": "string"}, "ticker": {"type": "string"},
+                            "class": {"type": "string"}, "what_is_owed": {"type": "string", "maxLength": 300}}}
+  },
+  "declarations": {"type": ["array", "string"]},
+  "data_gaps": {"type": "array", "items": {"type": "object", "required": ["field"],
+                "properties": {"field": {"type": "string"}, "impact": {"type": "string", "maxLength": 200}}}}
+ },
+ "x_registrar_extra_checks": [
+  "a claim or evidence that uses a bracket term as a disqualifier => REJECT (R1)",
+  "names_read == 0 with findings filed => REJECT",
+  "r2digest refuses a filed document that renders to zero lines (silent-empty guard, unchanged)"
+ ]
+}

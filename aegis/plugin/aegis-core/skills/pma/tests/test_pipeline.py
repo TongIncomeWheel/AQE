@@ -1727,6 +1727,169 @@ def test_roster_is_seven_deciders_plus_qa(td):
           all(f"id: {r}" in rul for r in ("R14", "R22", "R30")) and rul.count("status: superseded") >= 3)
 
 
+def _r1_ballot(voice, date, names):
+    return {"voice": voice, "date": date, "round": 1,
+            "nominations": [{"ticker": t, "conviction": 3, "reason": "coil at a high on rising volume",
+                             "checklist_trace": [{"step": 1, "canon_ref": ["C1"], "observed": "x", "verdict": "pass"}],
+                             "falsifier": "loses ma_50"} for t in names],
+            "held_review": [], "declarations": [], "shortfall_reason": None}
+
+
+def _case(**over):
+    c = {"for": "break above the base high on volume", "against": "extended 2 ATR from the 20-day",
+         "entry_trigger": "h1 close above 61.20", "wrong_if": "close back under 58.90",
+         "horizon_sessions": 10, "would_change_my_mind": "a failed test of 61.20 on heavy volume",
+         "cannot_see": []}
+    c.update(over)
+    return c
+
+
+def _r2_ballot(voice, date, tickers, case=True, **vote_over):
+    votes = []
+    for t in tickers:
+        v = {"ticker": t, "vote": "SUPPORT", "conviction": 3, "reason": "structure and momentum aligned",
+             "conditions": {"lane": "BREAKOUT", "buy": ["h1_close_above:pivot_high", "vol_x_ge:1.4"],
+                            "confirm": ["above_vwap_s"], "wrong": ["close_below:pivot_high"], "tf": "1H"}}
+        v.update(vote_over)
+        if case:
+            v["case"] = _case()
+        votes.append(v)
+    return {"voice": voice, "date": date, "round": 2, "votes": votes}
+
+
+def test_shortlist_cap_is_six(td):
+    """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
+    is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
+    A ballot from a non-decider is rejected under the new regime (R31)."""
+    names = ["S%02d" % i for i in range(8)]
+    cs = os.path.join(td, "r33_cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in names]}))
+    def val(ballot, tag):
+        f = os.path.join(td, f"r33_{tag}.json"); open(f, "w").write(json.dumps(ballot))
+        return run([REG, "validate", "--file", f, "--round", "1", "--candidates", cs])
+    rc, log = val(_r1_ballot("oneil", "2026-11-01", names[:7]), "seven")
+    check("7 nominations from a decider on 2026-11-01 are REJECTED", rc != 0 and "R33" in log, log[-300:])
+    rc, log = val(_r1_ballot("oneil", "2026-11-01", names[:6]), "six")
+    check("6 nominations are accepted", rc == 0, log[-300:])
+    rc, log = val(_r1_ballot("oneil", "2026-11-01", names[:2]), "two")
+    check("fewer is valid, never padded", rc == 0, log[-300:])
+    rc, log = val(_r1_ballot("weis", "2026-11-01", names[:3]), "bench")
+    check("a benched seat's ballot is rejected (R31)", rc != 0 and "not a decider" in log, log[-300:])
+    rc, log = val(_r1_ballot("weis", "2026-10-29", names[:7]), "history")
+    check("a 2026-10-29 ballot validates as it was filed (no cap, any seat)", rc == 0, log[-300:])
+
+
+def test_case_form_is_required_both_ways(td):
+    """R36. From 2026-11-01 every vote carries the case form: for, against, entry trigger, wrong-if,
+    horizon in sessions, what would change my mind, what I cannot see. The 2026-09-06 fixtures still
+    validate without it."""
+    names = ["GNW", "BBY"]
+    cs = os.path.join(td, "r36_cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in names]}))
+    p4 = os.path.join(td, "r36_p4.json"); json.dump({"deliberation_set": names, "ranked": [{"ticker": t, "lane": "MOMENTUM", "doors": ["STRENGTH"]} for t in names], "dropped": []}, open(p4, "w"))
+    def val(ballot, tag):
+        f = os.path.join(td, f"r36_{tag}.json"); open(f, "w").write(json.dumps(ballot))
+        return run([REG, "validate", "--file", f, "--round", "2", "--candidates", cs, "--phase4", p4])
+    rc, log = val(_r2_ballot("minervini", "2026-11-01", names, case=False), "nocase")
+    check("a vote without the case form is REJECTED", rc != 0 and "case" in log, log[-300:])
+    rc, log = val(_r2_ballot("minervini", "2026-11-01", names), "case")
+    check("a vote with the case form is accepted", rc == 0, log[-400:])
+    b = _r2_ballot("minervini", "2026-11-01", names); b["votes"][0]["case"]["against"] = ""
+    rc, log = val(b, "blank")
+    check("a blank case AGAINST is rejected -- reasons both ways, never blank", rc != 0 and "against" in log, log[-300:])
+    b = _r2_ballot("minervini", "2026-11-01", names); b["votes"][0]["case"]["horizon_sessions"] = "two weeks"
+    rc, log = val(b, "horizon")
+    check("horizon must be an integer number of sessions (R35)", rc != 0 and "horizon_sessions" in log, log[-300:])
+    rc, log = val(_r2_ballot("thorp", "2026-11-01", names), "bench")
+    check("a benched seat's vote is rejected (R31)", rc != 0 and "not a decider" in log, log[-300:])
+    one = json.load(open(fx("round2_votes.json")))[0]          # a real 2026-09-06 ballot, no case form
+    f = os.path.join(td, "r36_hist.json"); open(f, "w").write(json.dumps(one))
+    rc, log = run([REG, "validate", "--file", f, "--round", "2"])
+    check("a 2026-09-06 ballot is never asked for the case form", "R36 case form" not in log and ".case" not in log, log[-300:])
+
+
+def test_deliberation_forms_are_validated_on_arrival(td):
+    """R34/R36. The challenge document, a floor message, the slate, a ratification and the QA note each
+    have a contract and are REJECTED when incomplete -- membership and completeness only, never the
+    reasoning. Cross-file counting is floor-check / ratify-count (tested separately)."""
+    room = ["GNW", "BBY", "VRNS", "MFG"]
+    cs = os.path.join(td, "df_cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in room]}))
+    p4 = os.path.join(td, "df_p4.json"); json.dump({"deliberation_set": room, "ranked": [{"ticker": t, "lane": "PULLBACK", "doors": ["SEATS"]} for t in room], "dropped": []}, open(p4, "w"))
+    def val(form, tag, *extra):
+        f = os.path.join(td, f"df_{tag}.json"); open(f, "w").write(json.dumps(form))
+        return run([REG, "validate", "--file", f, *extra])
+    # challenge
+    ch = {"voice": "steenbarger", "date": "2026-11-01", "seat_kind": "challenge", "names_read": 4,
+          "findings": [{"scope": "committee", "kind": "CROWDING", "claim": "three cases lean on rs_rank_pct alone",
+                        "evidence": "rs_rank_pct cited by oneil, minervini, livermore on GNW", "addressed_to": "oneil"}],
+          "obligations": [], "data_gaps": []}
+    rc, log = val(ch, "ch_ok", "--kind", "challenge", "--candidates", cs)
+    check("a complete challenge document is accepted", rc == 0, log[-300:])
+    rc, log = val(dict(ch, voice="rogers"), "ch_rogers", "--kind", "challenge", "--candidates", cs)
+    check("from 2026-11-01 only steenbarger files the challenge (R31)", rc != 0 and "steenbarger" in log, log[-300:])
+    rc, log = val(dict(ch, names_read=0), "ch_zero", "--kind", "challenge", "--candidates", cs)
+    check("findings with names_read 0 are rejected", rc != 0 and "names_read" in log, log[-300:])
+    # floor message
+    board = os.path.join(td, "df_board.json"); json.dump({"contested": ["BBY"]}, open(board, "w"))
+    fm = {"voice": "oneil", "date": "2026-11-01", "ticker": "BBY", "msg_id": "oneil-BBY-1", "to": "wyckoff",
+          "in_reply_to": None, "text": "Where is the test? The break held three closes above 61.20 on rising volume.",
+          "stance_now": "SUPPORT", "changed_mind": False}
+    rc, log = val(fm, "fm_ok", "--kind", "floor", "--phase4", p4, "--board", board)
+    check("a floor message on a contested name is accepted", rc == 0, log[-300:])
+    rc, log = val(dict(fm, ticker="GNW", msg_id="oneil-GNW-1"), "fm_uncontested", "--kind", "floor", "--phase4", p4, "--board", board)
+    check("a message on an uncontested name is rejected", rc != 0 and "CONTESTED" in log, log[-300:])
+    rc, log = val(dict(fm, changed_mind=True), "fm_moved", "--kind", "floor", "--phase4", p4, "--board", board)
+    check("changed_mind without what_moved_me is rejected (R35)", rc != 0 and "what_moved_me" in log, log[-300:])
+    rc, log = val(dict(fm, to="oneil"), "fm_self", "--kind", "floor", "--phase4", p4, "--board", board)
+    check("a seat does not address itself", rc != 0, log[-300:])
+    rc, log = val(dict(fm, voice="steenbarger", msg_id="sb-BBY-1", stance_now="NO_VOTE"), "fm_qa", "--kind", "floor", "--phase4", p4, "--board", board)
+    check("steenbarger may answer when called on, with NO_VOTE", rc == 0, log[-300:])
+    # slate
+    def ticket(t, v="ADVANCE"):
+        return {"ticker": t, "verdict": v, "entry_trigger": "h1 close above 61.20", "wrong_if": "close under 58.90",
+                "horizon_sessions": 10, "why_agreed": "oneil, minervini: base break on volume", "dissent": []}
+    sl = {"date": "2026-11-01", "chair": "chair", "tickets": [ticket("GNW"), ticket("BBY", "WATCH")]}
+    rc, log = val(sl, "sl_ok", "--kind", "slate", "--phase4", p4)
+    check("a two-ticket slate is accepted", rc == 0, log[-300:])
+    big = dict(sl, tickets=[dict(ticket("GNW"), ticker=f"T{i:02d}") for i in range(16)])
+    p4big = os.path.join(td, "df_p4big.json"); json.dump({"deliberation_set": [f"T{i:02d}" for i in range(20)], "ranked": [], "dropped": []}, open(p4big, "w"))
+    rc, log = val(big, "sl_16", "--kind", "slate", "--phase4", p4big)
+    check("a 16-ticket slate is REJECTED (R34 cap 15)", rc != 0 and "15" in log, log[-300:])
+    rc, log = val(dict(big, tickets=big["tickets"][:15]), "sl_15", "--kind", "slate", "--phase4", p4big)
+    check("a 15-ticket slate is accepted", rc == 0, log[-300:])
+    rc, log = val(dict(sl, tickets=[ticket("ZZZZ")]), "sl_out", "--kind", "slate", "--phase4", p4)
+    check("a slate ticket outside the room is rejected", rc != 0 and "deliberation set" in log, log[-300:])
+    rc, log = val(dict(sl, chair="oneil"), "sl_voice", "--kind", "slate", "--phase4", p4)
+    check("the Chair is not a voice", rc != 0, log[-300:])
+    slate_path = os.path.join(td, "df_sl_ok.json")
+    # ratification
+    rt = {"voice": "raschke", "date": "2026-11-01", "tickets": [
+        {"ticker": "GNW", "answer": "AGREE"},
+        {"ticker": "BBY", "answer": "OBJECT", "objection": "no test of the break yet", "would_clear": "a hold above 61.20 on a down day"}]}
+    rc, log = val(rt, "rt_ok", "--kind", "ratify", "--slate", slate_path)
+    check("a complete ratification is accepted", rc == 0, log[-300:])
+    rc, log = val(dict(rt, tickets=rt["tickets"][:1]), "rt_missing", "--kind", "ratify", "--slate", slate_path)
+    check("a ratification missing a slate ticket is rejected", rc != 0 and "no answer" in log, log[-300:])
+    bad = dict(rt); bad["tickets"] = [rt["tickets"][0], {"ticker": "BBY", "answer": "OBJECT", "objection": "too extended"}]
+    rc, log = val(bad, "rt_noclear", "--kind", "ratify", "--slate", slate_path)
+    check("OBJECT without would_clear is rejected", rc != 0 and "would_clear" in log, log[-300:])
+    rc, log = val(dict(rt, voice="lynch"), "rt_lynch", "--kind", "ratify", "--slate", slate_path)
+    check("a stood-down voice cannot ratify", rc != 0 and "not a decider" in log, log[-300:])
+    # qa note
+    qa = {"voice": "steenbarger", "date": "2026-11-01",
+          "evidence_read": [{"voice": v, "read": True} for v in ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]],
+          "shared_anchors": ["rs_rank_pct"], "unanswered_points": [], "slate_says_what_deciders_said": True,
+          "note": "Every decider cited served fields. Three cases lean on rs_rank_pct.", "holds": [{"ticker": "BBY", "question": "Has the break been tested?"}]}
+    rc, log = val(qa, "qa_ok", "--kind", "qa", "--slate", slate_path)
+    check("a complete QA note with one hold is accepted", rc == 0, log[-300:])
+    rc, log = val(dict(qa, holds=qa["holds"] * 2), "qa_twice", "--kind", "qa", "--slate", slate_path)
+    check("the same ticket held twice is rejected (one hold per ticket)", rc != 0 and "twice" in log, log[-300:])
+    rc, log = val(dict(qa, evidence_read=qa["evidence_read"][:6]), "qa_cover", "--kind", "qa", "--slate", slate_path)
+    check("evidence_read must cover every decider", rc != 0 and "every decider" in log, log[-300:])
+    rc, log = val(dict(qa, holds=[{"ticker": "VRNS", "question": "?"}]), "qa_offslate", "--kind", "qa", "--slate", slate_path)
+    check("a hold on a name not on the slate is rejected", rc != 0 and "not on the slate" in log, log[-300:])
+    rc, log = val(qa, "qa_both", "--kind", "qa", "--round", "2", "--slate", slate_path)
+    check("exactly one of --round / --kind", rc != 0, log[-300:])
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -1814,6 +1977,8 @@ def main():
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
                    test_roster_is_seven_deciders_plus_qa, test_all_seven_deciders_count_on_every_name,
+                   test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
+                   test_deliberation_forms_are_validated_on_arrival,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

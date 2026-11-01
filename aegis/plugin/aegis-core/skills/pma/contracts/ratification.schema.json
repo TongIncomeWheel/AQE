@@ -1,0 +1,34 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Ratification -- one decider's answer on every slate ticket (R34, R36 round 5)",
+ "x_version": "1.0.0",
+ "x_purpose": "Each decider answers per ticket: AGREE, AGREE_WITH_RESERVATION (say the reservation), or OBJECT with the ONE thing that would clear it. Code counts OBJECT answers on the FINAL ratification (pma_pipeline.py ratify-count): 0 = AGREED; 1 to 3 = CONTESTED (listed, objections printed); 4 or more of 7 (half or more of the deciders present) = DROPPED (off the list, still tracked). After a Steenbarger hold the held tickets are ratified again once (forms/ratify2/), and those answers replace the first for those tickets only.",
+ "type": "object",
+ "required": ["voice", "date", "tickets"],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {"type": "string", "x_note": "a decider (R31)"},
+  "date": {"type": "string", "format": "date"},
+  "round": {"enum": [1, 2, null], "x_note": "1 = first ratification, 2 = after a hold (held tickets only)"},
+  "tickets": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "answer"],
+    "additionalProperties": false,
+    "properties": {
+     "ticker": {"type": "string", "maxLength": 8},
+     "answer": {"enum": ["AGREE", "AGREE_WITH_RESERVATION", "OBJECT"]},
+     "reservation": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED on AGREE_WITH_RESERVATION"},
+     "objection": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED on OBJECT: the one thing wrong with the ticket as written"},
+     "would_clear": {"type": ["string", "null"], "maxLength": 200, "x_note": "REQUIRED on OBJECT: the one thing that would clear the objection"}
+    }
+   }
+  }
+ },
+ "x_registrar_extra_checks": [
+  "with --slate: the ticker set equals the slate's exactly (no missing, no extra)",
+  "OBJECT using a bracket as the disqualifier => REJECT (R1)",
+  "a ratification from a non-decider is REJECTED here and ignored loudly by ratify-count"
+ ]
+}
