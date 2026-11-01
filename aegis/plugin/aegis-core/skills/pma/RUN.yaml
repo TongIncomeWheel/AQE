@@ -271,6 +271,8 @@ steps:
     split_ballots: >
       R16.1 -- under R16 the room is as large as the seats made it, so a seat's votes may not fit one
       24,576-byte form (measured ~953 bytes per name over eleven real 2026-09-24 ballots, so about 25
+      names per file THEN; with the R36 case form the dry run of 2026-11-01 measured ~750 bytes per name on a
+      50-name room, so about 30 names per part NOW -- a room over 30 ALWAYS splits; tell each seat its parts up front
       names per file). A seat then files parts: validate each with
       `registrar.py validate --file forms/r2/<seat>.partNofM.json --round 2 --part N --of M` (a
       declared part need not cover the set), then
