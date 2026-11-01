@@ -1604,10 +1604,10 @@ def cmd_r2digest(a):
          f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
          "PM RULING R1 (binding): bracket validity, risk% and R:R are INFORMATION, never a reason to reject. Judge on signals.",
          "DOORS: how each name reached this vote -- SEATS (>=2 nominators) | SOLO (1 nominator at conviction>=4 + a momentum door) | ELDER+LENS (elder>=7 x2 bars AND >=3 lenses strong) | LENS (>=4/6 lenses strong) | STRENGTH (top-decile 20d RS, or mp>=75 accelerating) | PM_LENS (>=5/6) | AQE_LEADER (SUSTAINED/ACCELERATION + LEADER). A name with no SEATS/SOLO door was nominated by nobody.",
-         "LANES (PM ruling 2026-09-22, D120): every name carries lane=MOMENTUM or lane=PULLBACK. ALL seats vote on ALL names. A MOMENTUM-lane verdict is computed from the strength seats only (" + ", ".join(STRENGTH_SEATS) + "); other seats' votes on those names are recorded as advisory. A PULLBACK-lane verdict counts every seat.",
+         "LANES (PM ruling 2026-09-22 D120; R32 2026-10-30): every name carries lane=MOMENTUM or lane=PULLBACK as a LABEL -- how it reached the room. ALL seven deciders vote on ALL names and every ratification counts on every ticket (R32). No seat list decides a verdict.",
          "R13 (binding): mp_state FADING means 'momentum score not higher than 3 bars ago' -- a default label that includes flat-at-high. It is NOT a decay signal and is NEVER on its own a reason to oppose. Read mp, mp_accel_state and the returns.",
          "R25/R27 (binding): a name with door STRONG_SEAT (among today's strongest on AQE's lists) or UNR_SEAT (Valen reclaim day) was seated by rule -- NO voice nominated it. That is not a reason to oppose. Apply YOUR method to it: is the momentum real, where would you enter, where would you be wrong. Do not PASS it only because it does not match your own scan's setup shape -- the PM wants the committee's verdict on the strongest names, not a re-run of each seat's screen.",
-         "R14 (binding, MOMENTUM lane): extension above the 20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a WEIGHT in a momentum-lane vote, never a veto. A momentum-lane name is judged on strength, institutional money, coil and momentum -- the book this lane exists to buy.",
+         "R27 (binding; R14's momentum point, R32 counting): on a MOMENTUM-lane name extension above the 20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a WEIGHT, never a veto. A momentum-lane name is judged on strength, institutional money, coil and momentum -- the book this lane exists to buy. Your vote counts whatever the lane; say your case BOTH ways in the case form (R36).",
          ""]
     if a.macro:
         for mf in a.macro:
@@ -1615,6 +1615,21 @@ def cmd_r2digest(a):
                 m = load(mf)
                 L.append(f"MACRO [{m.get('voice')}] family={m.get('expression_family')} size={m.get('size_multiplier', m.get('size_posture'))} | {str(m.get('so_what',''))[:400]}")
         L.append("")
+    if getattr(a, "crown", None):
+        # R31 (PM 2026-10-30): Crown and Druckenmiller stood down as voices. The weather is read from AQE's
+        # own Crown file (aegis/output/aqe_crown_macro.json): the_call, the leading scenario, the plain-English
+        # headline and what would change it (which lives under read_me_first, never top level).
+        if os.path.exists(a.crown):
+            C = load(a.crown); call = C.get("the_call") or {}; sc = C.get("scenario") or {}; rm = C.get("read_me_first") or {}
+            L.append(f"MACRO (from AQE's Crown file, generated {C.get('generated_at')}, status {C.get('status')}): "
+                     f"call {call.get('expression_family')} (match {call.get('match_quality')}, size x{call.get('size_multiplier')}) | "
+                     f"scenario {sc.get('leading')}" + (f" (runner-up {sc.get('runner_up')}, contested)" if sc.get('contested') else "")
+                     + f" | {str(rm.get('headline') or '')[:300]}")
+            for w in (rm.get("what_would_change_it") or [])[:3]:
+                L.append(f"  would change it: {str(w)[:200]}")
+            L.append("")
+        else:
+            L.append(f"MACRO: Crown file {a.crown} NOT FOUND -- declared gap; no seat may invent the weather"); L.append("")
     L.append("=" * 90)
     for t in ds:
         r = rows.get(t, {}); x = tal.get(t, {}); f = FP.get(t, {}); b = r.get("bracket") or {}
@@ -1649,6 +1664,8 @@ def cmd_r2digest(a):
     L.append("=" * 90)
     L.append("CHALLENGE ROUND -- findings and obligations in full; per-name grades one line each; method declarations omitted.")
     def digest(name, path):
+        if path is None and name in ("rogers", "lynch", "detect-lens"):
+            L.append(f"--- {name.upper()}: retired seat (R31, PM 2026-10-30) -- not part of this committee ---"); return
         if not path or not os.path.exists(path):
             L.append(f"--- {name.upper()}: NOT FILED ---"); return
         c = load(path)
@@ -1690,6 +1707,13 @@ def cmd_r2digest(a):
 
 
 def cmd_consensus(a):
+    """SUPERSEDED (R34, PM 2026-10-30). This is the BLIND TALLY reader under the retired rule
+    (support > oppose AND support >= 2 AND median conviction >= 3, momentum lane counted by the
+    legacy STRENGTH_SEATS label). It is no longer the verdict: RUN.yaml's DECIDE step runs
+    `ratify-count` on the deciders' final ratification of the Chair's slate. Kept so the 2026-09-06
+    regression fixtures keep reproducing and so a reader of old run dirs still works."""
+    print("consensus: SUPERSEDED by R34 (PM 2026-10-30) -- blind tally under the retired rule, NOT the "
+          "verdict. The verdict is `ratify-count` on the final ratification.")
     # SHAPE-TOLERANT since 2026-09-07. The v5.3 vote schema is votes[]/vote; this reader shipped
     # against the legacy stances[]/stance and silently returned an EMPTY tally on real forms --
     # a silent wrong answer, the worst failure class. It now accepts either shape natively.
@@ -1749,6 +1773,287 @@ def cmd_consensus(a):
                     "split": counted, "advisory": advisory})
     save(a.out, out)
     print("receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}" for c in sorted(out, key=lambda x: x['ticker'])))
+
+# =====================================================================================================
+# THE COMMITTEE ROUNDS (R34-R36, PM 2026-10-30). Three tool steps: `board` marks the contested names
+# after the blind vote (no verdict), `floor-check` counts the floor caps across message files, and
+# `ratify-count` counts OBJECT answers on the deciders' final ratification and writes consensus.json
+# in the SAME SHAPE every downstream reader already consumes (ticker / verdict / conviction / lane /
+# split) plus `status`, the objections and the per-voice record (R35). Code counts; it never judges.
+# =====================================================================================================
+def _load_forms(spec, label):
+    """A directory, a glob, or one file holding a list or an object. Every form is a dict with
+    `voice`. Refuses an empty read loudly -- an empty room is a failure, never a quiet tally."""
+    import glob as _g
+    paths = []
+    if spec and os.path.isdir(spec):
+        paths = sorted(_g.glob(os.path.join(spec, "*.json")))
+    elif spec and any(ch in spec for ch in "*?["):
+        paths = sorted(_g.glob(spec))
+    elif spec and os.path.exists(spec):
+        paths = [spec]
+    out = []
+    for p in paths:
+        d = json.load(open(p, encoding="utf-8"))
+        items = d if isinstance(d, list) else [d]
+        for it in items:
+            if not isinstance(it, dict) or "voice" not in it:
+                raise SystemExit(f"{label}: {p} holds a form without `voice` -- refusing to count it")
+            it.setdefault("_file", p)
+            out.append(it)
+    if not out:
+        raise SystemExit(f"{label}: no forms found at {spec!r} -- refusing to count an empty room")
+    return out
+
+
+def _split_deciders(forms, label):
+    """Deciders count; anybody else is ignored LOUDLY (printed), never silently."""
+    keep = [f for f in forms if f.get("voice") in DECIDERS]
+    ignored = sorted({f.get("voice") for f in forms if f.get("voice") not in DECIDERS})
+    if ignored:
+        print(f"{label}: R31 -- form(s) from non-decider seat(s) {ignored} IGNORED; only {DECIDERS} count")
+    return keep, ignored
+
+
+def _case_summary(v):
+    c = v.get("case") or {}
+    return {"vote": str(v.get("vote", v.get("stance", ""))).upper(), "conviction": v.get("conviction"),
+            "reason": v.get("reason"), "for": c.get("for"), "against": c.get("against"),
+            "entry_trigger": c.get("entry_trigger"), "wrong_if": c.get("wrong_if"),
+            "horizon_sessions": c.get("horizon_sessions"), "would_change_my_mind": c.get("would_change_my_mind"),
+            "cannot_see": c.get("cannot_see"), "opposing_case": v.get("opposing_case"), "self_counter": v.get("self_counter")}
+
+
+def cmd_board(a):
+    """R36 round 3, the Chair's BOARD. From the deciders' blind votes (and Steenbarger's challenge):
+    per room name, the blind split, every decider's case, and whether the name is CONTESTED -- both
+    SUPPORT and OPPOSE present among the deciders, or named in the challenge document. The floor
+    opens on contested names only. NO VERDICT IS COMPUTED HERE (asserted): the board is what the
+    seats said, laid out for them to argue over."""
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"])
+    ds = list(P4["deliberation_set"])
+    lanes = {r["ticker"]: r.get("lane", "PULLBACK") for r in P4["ranked"]}
+    forms, ignored = _split_deciders(_load_forms(a.round2, "board"), "board")
+    present = sorted({f["voice"] for f in forms})
+    absent = [v for v in DECIDERS if v not in present]
+    by_t = {t: {"support": [], "oppose": [], "abstain": [], "convictions": {}, "cases": {}} for t in ds}
+    off_room = []
+    for f in forms:
+        for v in (f.get("votes") if f.get("votes") is not None else f.get("stances") or []):
+            t = v.get("ticker")
+            if t not in by_t:
+                off_room.append((f["voice"], t)); continue
+            st = str(v.get("vote", v.get("stance", "abstain"))).lower()
+            by_t[t][st if st in ("support", "oppose", "abstain") else "abstain"].append(f["voice"])
+            by_t[t]["convictions"][f["voice"]] = v.get("conviction")
+            by_t[t]["cases"][f["voice"]] = _case_summary(v)
+    challenged = {}
+    if a.challenge and os.path.exists(a.challenge):
+        C = load(a.challenge)
+        for fd in list(C.get("findings") or []) + list(C.get("challenges") or []):
+            tk = fd.get("ticker") or (fd.get("scope") if fd.get("scope") in by_t else None)
+            if tk in by_t:
+                challenged.setdefault(tk, []).append(str(fd.get("claim") or fd.get("challenge") or "")[:200])
+    elif a.challenge:
+        print(f"board: challenge document {a.challenge} not found -- declared; contested set from the blind split alone")
+    names = []
+    for t in ds:
+        d = by_t[t]
+        split_contest = bool(d["support"]) and bool(d["oppose"])
+        why = []
+        if split_contest:
+            why.append(f"blind split {len(d['support'])} support / {len(d['oppose'])} oppose")
+        if t in challenged:
+            why.append(f"named in Steenbarger's challenge ({len(challenged[t])} finding(s))")
+        names.append({"ticker": t, "lane": lanes.get(t, "PULLBACK"),
+                      "split": {k: list(d[k]) for k in ("support", "oppose", "abstain")},
+                      "convictions": d["convictions"], "contested": bool(why), "why_contested": why,
+                      "challenge_claims": challenged.get(t, []), "cases": d["cases"]})
+    out = {"schema": "board.v1", "date": a.date, "deliberation_set": ds,
+           "deciders_present": present, "deciders_absent": absent, "ignored_ballots": ignored,
+           "ballots_off_room": [f"{v}:{t}" for v, t in off_room],
+           "contested": [n["ticker"] for n in names if n["contested"]],
+           "uncontested_support": [n["ticker"] for n in names if not n["contested"] and n["split"]["support"] and not n["split"]["oppose"]],
+           "uncontested_oppose": [n["ticker"] for n in names if not n["contested"] and n["split"]["oppose"] and not n["split"]["support"]],
+           "challenged": sorted(challenged), "names": names,
+           "floor_rule": f"two messages per decider per contested name (floor-check counts); the Chair posts, never votes"}
+    assert "verdict" not in json.dumps(out), "board must never carry a verdict"
+    save(a.out, out)
+    print(f"board: {len(ds)} names, {len(present)} deciders present{(' (absent: ' + ', '.join(absent) + ')') if absent else ''}; "
+          f"CONTESTED {len(out['contested'])}: {' '.join(out['contested']) or 'none'}; "
+          f"unanimous support {len(out['uncontested_support'])}, unanimous oppose {len(out['uncontested_oppose'])}")
+
+
+def cmd_floor_check(a):
+    """R36: the floor caps, counted by code across the message files. Two messages per seat per name;
+    messages only on names open on the floor (the board's contested set, or -- after a hold -- the
+    held tickets only); every reply points at a message that exists. Exit 1 on any breach, with the
+    list. Also writes the floor record: who spoke on what, who changed their mind and what moved them."""
+    import collections as _c
+    B = load(a.board, needs=["contested"])
+    if a.qa:
+        Q = load(a.qa, needs=["holds"])
+        allowed = sorted({h["ticker"] for h in Q["holds"]})
+        basis = "held tickets (QA hold round)"
+    else:
+        allowed = list(B["contested"]); basis = "board.contested"
+    try:
+        msgs = _load_forms(a.messages, "floor-check")
+    except SystemExit:
+        msgs = []   # a silent floor is allowed: a seat may have nothing to add. Recorded as such.
+    errs, counts, ids = [], _c.Counter(), {}
+    for m in msgs:
+        v, t, mid = m.get("voice"), m.get("ticker"), m.get("msg_id")
+        if v not in DECIDERS and v != QA_SEAT:
+            errs.append(f"{mid}: voice {v!r} may not speak on the floor (R31)")
+        if t not in allowed:
+            errs.append(f"{mid}: {t} is not open on the floor ({basis}: {allowed})")
+        if mid in ids:
+            errs.append(f"{mid}: duplicate msg_id")
+        ids[mid] = m
+        counts[(v, t)] += 1
+    for (v, t), n in sorted(counts.items()):
+        if n > FLOOR_MSG_CAP:
+            errs.append(f"{v} sent {n} messages on {t} -- cap is {FLOOR_MSG_CAP} per seat per name (R36)")
+    for m in msgs:
+        irt = m.get("in_reply_to")
+        if irt is not None and irt not in ids:
+            errs.append(f"{m.get('msg_id')}: in_reply_to {irt!r} is not a message on this floor")
+    per = {}
+    for t in allowed:
+        ms = [m for m in msgs if m.get("ticker") == t]
+        per[t] = {"messages": len(ms), "speakers": sorted({m["voice"] for m in ms}),
+                  "changed_mind": [{"voice": m["voice"], "stance_now": m.get("stance_now"),
+                                    "what_moved_me": m.get("what_moved_me")} for m in ms if m.get("changed_mind")],
+                  "msg_ids": [m.get("msg_id") for m in ms]}
+    out = {"schema": "floor_check.v1", "ok": not errs, "errors": errs, "basis": basis, "allowed": allowed,
+           "messages": len(msgs), "per_name": per, "cap_per_seat_per_name": FLOOR_MSG_CAP}
+    save(a.out, out)
+    print(f"floor-check: {len(msgs)} messages on {len(allowed)} open name(s); "
+          + ("OK" if not errs else f"{len(errs)} BREACH(ES):\n  " + "\n  ".join(errs)))
+    if errs:
+        raise SystemExit(1)
+
+
+def cmd_ratify_count(a):
+    """R34, the CLOSE. Counts OBJECT answers per slate ticket on the deciders' FINAL ratification:
+    0 = AGREED; 1..thr-1 = CONTESTED; >= thr = DROPPED, thr = ceil(n/2) of the n deciders present
+    (4 of 7). Writes consensus.json in the shape every downstream reader consumes -- verdict in the
+    machine words (slate ADVANCE -> ADVANCE, slate WATCH -> HOLD-FOR-CONDITIONS, DROPPED and never-
+    slated room names -> PASS) with `status`, the objections (and what would clear them), the
+    reservations, and a conviction that is an ORDERING figure only. Writes committee_record.json
+    (R35): per voice, per ticket -- blind vote, horizon, floor messages, change of mind, ratification.
+    After a QA hold, --ratifications2 answers replace the first ones for the HELD tickets only."""
+    import math
+    S = load(a.slate, needs=["tickets"])
+    tickets = S["tickets"]
+    if len(tickets) > SLATE_CAP:
+        raise SystemExit(f"ratify-count: slate carries {len(tickets)} tickets > {SLATE_CAP} (R34) -- refusing; the registrar should have rejected it")
+    P4 = load(a.phase4, needs=["deliberation_set", "ranked"])
+    ds = list(P4["deliberation_set"]); lanes = {r["ticker"]: r.get("lane", "PULLBACK") for r in P4["ranked"]}
+    slate_t = [x["ticker"] for x in tickets]
+    off = [t for t in slate_t if t not in ds]
+    if off:
+        raise SystemExit(f"ratify-count: slate tickets not in the deliberation set {off} -- the Chair may not add a name the room never voted")
+    R1, ignored = _split_deciders(_load_forms(a.ratifications, "ratify-count"), "ratify-count")
+    answers = {t: {} for t in slate_t}
+    for f in R1:
+        for r in f.get("tickets") or []:
+            if r.get("ticker") in answers:
+                answers[r["ticker"]][f["voice"]] = dict(r, _round=1)
+    held = set()
+    if a.qa and os.path.exists(a.qa):
+        Q = load(a.qa, needs=["holds"]); held = {h["ticker"] for h in Q["holds"]}
+    if a.ratifications2:
+        R2, ign2 = _split_deciders(_load_forms(a.ratifications2, "ratify-count (after hold)"), "ratify-count (after hold)")
+        ignored = sorted(set(ignored) | set(ign2))
+        for f in R2:
+            for r in f.get("tickets") or []:
+                if r.get("ticker") not in held:
+                    raise SystemExit(f"ratify-count: {f['voice']} re-ratified {r.get('ticker')}, which was NOT held -- after a hold only the held tickets are ratified again (R36)")
+                answers[r["ticker"]][f["voice"]] = dict(r, _round=2)
+    present = sorted({f["voice"] for f in R1})
+    n = len(present)
+    if n < 4:
+        raise SystemExit(f"ratify-count: only {n} decider(s) ratified ({present}) -- fewer than 4 is no committee; halt and declare")
+    thr = math.ceil(n / 2)
+    board = load(a.board, needs=["names"]) if a.board and os.path.exists(a.board) else None
+    bnames = {x["ticker"]: x for x in (board or {}).get("names", [])}
+    out, record = [], []
+    for x in tickets:
+        t = x["ticker"]; rows = answers[t]
+        missing = [v for v in present if v not in rows]
+        objectors = sorted(v for v, r in rows.items() if r.get("answer") == "OBJECT")
+        reservers = sorted(v for v, r in rows.items() if r.get("answer") == "AGREE_WITH_RESERVATION")
+        agreers = sorted(v for v, r in rows.items() if r.get("answer") == "AGREE")
+        n_obj = len(objectors)
+        status = "AGREED" if n_obj == 0 else ("DROPPED" if n_obj >= thr else "CONTESTED")
+        verdict = ("PASS" if status == "DROPPED"
+                   else {"ADVANCE": "ADVANCE", "WATCH": "HOLD-FOR-CONDITIONS"}[x["verdict"]])
+        conviction = 5 if (status == "AGREED" and not reservers) else 4 if status == "AGREED" else 3 if status == "CONTESTED" else 2
+        out.append({"ticker": t, "verdict": verdict, "status": status, "slate_verdict": x["verdict"],
+                    "conviction": conviction, "conviction_basis": "ordering only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate",
+                    "lane": lanes.get(t, "PULLBACK"),
+                    "split": {"support": agreers + reservers, "oppose": objectors, "abstain": []},
+                    "advisory": {"support": [], "oppose": [], "abstain": []},
+                    "objections": [{"voice": v, "objection": rows[v].get("objection"), "would_clear": rows[v].get("would_clear")} for v in objectors],
+                    "reservations": [{"voice": v, "reservation": rows[v].get("reservation")} for v in reservers],
+                    "held": t in held, "n_deciders": n, "drop_threshold": thr,
+                    "entry_trigger": x.get("entry_trigger"), "wrong_if": x.get("wrong_if"),
+                    "horizon_sessions": x.get("horizon_sessions"), "why_agreed": x.get("why_agreed"),
+                    "dissent": x.get("dissent") or [],
+                    "gaps": [f"no ratification from {v}" for v in missing]})
+    for t in ds:
+        if t in answers:
+            continue
+        b = bnames.get(t) or {}
+        bs = b.get("split") or {"support": [], "oppose": [], "abstain": []}
+        out.append({"ticker": t, "verdict": "PASS", "status": "NOT_SLATED", "slate_verdict": None, "conviction": 1,
+                    "conviction_basis": "ordering only (R34)", "lane": lanes.get(t, "PULLBACK"),
+                    "split": {k: list(bs.get(k, [])) for k in ("support", "oppose", "abstain")},
+                    "advisory": {"support": [], "oppose": [], "abstain": []}, "objections": [], "reservations": [],
+                    "held": False, "n_deciders": n, "drop_threshold": thr, "gaps": [] if b else ["no board row -- blind split unknown"]})
+    save(a.out, out)
+    # ---- R35: the record. Per voice, per ticket. ----
+    msgs = []
+    if a.messages:
+        try:
+            msgs = _load_forms(a.messages, "ratify-count record")
+        except SystemExit:
+            msgs = []
+    if a.messages2:
+        try:
+            msgs += _load_forms(a.messages2, "ratify-count record (hold round)")
+        except SystemExit:
+            pass
+    final = {c["ticker"]: c for c in out}
+    for v in present:
+        for t in ds:
+            b = (bnames.get(t) or {}).get("cases", {}).get(v) or {}
+            mine = [m for m in msgs if m.get("voice") == v and m.get("ticker") == t]
+            r = answers.get(t, {}).get(v)
+            moved = [m for m in mine if m.get("changed_mind")]
+            record.append({"date": a.date, "voice": v, "ticker": t,
+                           "blind_vote": b.get("vote"), "blind_conviction": b.get("conviction"),
+                           "horizon_sessions": b.get("horizon_sessions"), "entry_trigger": b.get("entry_trigger"),
+                           "wrong_if": b.get("wrong_if"),
+                           "floor_messages": [m.get("msg_id") for m in mine],
+                           "changed_mind": bool(moved), "what_moved_me": [m.get("what_moved_me") for m in moved],
+                           "stance_after_floor": (mine[-1].get("stance_now") if mine else b.get("vote")),
+                           "ratification": (r or {}).get("answer"), "ratification_round": (r or {}).get("_round"),
+                           "objection": (r or {}).get("objection"), "would_clear": (r or {}).get("would_clear"),
+                           "reservation": (r or {}).get("reservation"),
+                           "final_status": final[t]["status"], "final_verdict": final[t]["verdict"]})
+    rec = {"schema": "committee_record.v1", "date": a.date, "deciders_present": present, "deciders_absent": [v for v in DECIDERS if v not in present],
+           "ignored_ballots": ignored, "n_deciders": n, "drop_threshold": thr, "slate": slate_t, "held": sorted(held),
+           "qa": (load(a.qa) if a.qa and os.path.exists(a.qa) else None), "rows": record}
+    save(a.record, rec)
+    by = collections.Counter(c["status"] for c in out)
+    print(f"ratify-count: {n} deciders, drop at >= {thr} objections; "
+          + ", ".join(f"{k} {by[k]}" for k in ("AGREED", "CONTESTED", "DROPPED", "NOT_SLATED") if by.get(k))
+          + " | receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}/{c['status']}" for c in out if c["status"] != "NOT_SLATED")
+          + f" | record {len(record)} rows -> {a.record}")
+
 
 def cmd_ledger(a):
     led = load(a.ledger, needs=["entries"]) if os.path.exists(a.ledger) else {"window_sessions": 5, "retention_sessions": 20, "repeat_threshold": 2, "entries": []}
@@ -2203,9 +2508,24 @@ if __name__ == "__main__":
     s.add_argument("--forms", default="forms/r1"); s.add_argument("--menus", required=True)
     s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--date", required=True)
     s.add_argument("--outdir", default="seat_packets")
-    s.add_argument("--seats", nargs="*", default=["rogers", "steenbarger", "detect-lens", "lynch"])
-    s = sub.add_parser("r2digest"); s.add_argument("--export", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--tally", default="tally.json"); s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--rogers"); s.add_argument("--steenbarger"); s.add_argument("--lynch"); s.add_argument("--detectlens"); s.add_argument("--macro", nargs="*", default=[]); s.add_argument("--run-id", default="pma"); s.add_argument("--max-bytes", type=int, default=70000); s.add_argument("--claim-chars", type=int, default=400); s.add_argument("--evidence-chars", type=int, default=300); s.add_argument("--out", default="VOTE_PACKET.txt"); s.add_argument("--valen", help="aqe_valen_dashboard.json (PM 2026-10-23); omitted = no Valen block")
-    s = sub.add_parser("consensus"); s.add_argument("--round2", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--out", default="consensus.json")
+    s.add_argument("--seats", nargs="*", default=[QA_SEAT], help="R31: Steenbarger is the only challenge seat")
+    s = sub.add_parser("r2digest"); s.add_argument("--export", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--tally", default="tally.json"); s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--rogers"); s.add_argument("--steenbarger"); s.add_argument("--lynch"); s.add_argument("--detectlens"); s.add_argument("--macro", nargs="*", default=[]); s.add_argument("--run-id", default="pma"); s.add_argument("--max-bytes", type=int, default=70000); s.add_argument("--claim-chars", type=int, default=400); s.add_argument("--evidence-chars", type=int, default=300); s.add_argument("--out", default="VOTE_PACKET.txt"); s.add_argument("--valen", help="aqe_valen_dashboard.json (PM 2026-10-23); omitted = no Valen block"); s.add_argument("--crown", default=None, help="aqe_crown_macro.json (R31, 2026-10-30): the weather from AQE's Crown file, replacing the macro seats; omitted = declared gap")
+    s = sub.add_parser("consensus", help="SUPERSEDED (R34): blind tally under the retired rule; not the verdict"); s.add_argument("--round2", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--out", default="consensus.json")
+    s = sub.add_parser("board", help="R36 round 3: the Chair's board -- blind split + every case per room name; marks CONTESTED names; no verdict")
+    s.add_argument("--round2", required=True, help="forms/r2 dir, glob, or one file"); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--challenge", default=None, help="forms/challenge/steenbarger.json (names it flags are contested)")
+    s.add_argument("--date", required=True); s.add_argument("--out", default="board.json")
+    s = sub.add_parser("floor-check", help="R36: count the floor caps across message files (2 per seat per name; open names only); exit 1 on breach")
+    s.add_argument("--messages", default="forms/floor"); s.add_argument("--board", default="board.json")
+    s.add_argument("--qa", default=None, help="forms/qa/steenbarger.json -- when given, only the HELD tickets are open (hold round)")
+    s.add_argument("--out", default="floor_check.json")
+    s = sub.add_parser("ratify-count", help="R34 CLOSE: count OBJECT answers on the final ratification -> consensus.json (+ committee_record.json, R35)")
+    s.add_argument("--slate", default="slate.json"); s.add_argument("--ratifications", default="forms/ratify")
+    s.add_argument("--ratifications2", default=None, help="forms/ratify2 -- after a QA hold; held tickets only")
+    s.add_argument("--qa", default=None, help="forms/qa/steenbarger.json"); s.add_argument("--board", default="board.json")
+    s.add_argument("--messages", default=None, help="forms/floor (for the record)"); s.add_argument("--messages2", default=None, help="forms/floor2 (hold round, for the record)")
+    s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
+    s.add_argument("--out", default="consensus.json"); s.add_argument("--record", default="committee_record.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
     s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
@@ -2215,5 +2535,6 @@ if __name__ == "__main__":
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
+     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
      "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

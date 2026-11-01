@@ -417,7 +417,7 @@ def test_a_step_cannot_close_without_its_declared_artifacts(td):
     check("the refusal forbids re-pointing the next tool (R6)",
           "adapter" in log.lower() or "R6" in log, log[-200:])
 
-    for f in ("consensus.json", "verdict_ledger.json"):   # brackets.json is BRACKET's (R18), not DECIDE's
+    for f in ("consensus.json", "committee_record.json", "verdict_ledger.json"):   # brackets.json is BRACKET's (R18), not DECIDE's; committee_record.json is R35's
         open(os.path.join(work, f), "w").write("{}")
     rc2, log2 = rrun(["tick", "--step", "DECIDE", "--status", "done"])
     check("tick ALLOWS done once every declared artifact is at its declared path", rc2 == 0, log2[-200:])
@@ -1890,6 +1890,258 @@ def test_deliberation_forms_are_validated_on_arrival(td):
     check("exactly one of --round / --kind", rc != 0, log[-300:])
 
 
+ROOM = ["GNW", "BBY", "VRNS", "MFG", "LNG"]          # real tickers from the 2026-09-06 fixtures
+DEC = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+
+
+def _committee_fixture(td, tag):
+    """Seven blind ballots on five room names, Steenbarger's challenge naming LNG, and phase4.
+       GNW: 7 support (unanimous)      -> not contested
+       BBY: 4 support / 3 oppose       -> contested (split)
+       VRNS: 7 oppose                  -> not contested
+       MFG: 5 support / 2 abstain      -> not contested (no OPPOSE)
+       LNG: 7 support, but challenged  -> contested (challenge)"""
+    d = os.path.join(td, tag); os.makedirs(os.path.join(d, "forms", "r2"), exist_ok=True)
+    os.makedirs(os.path.join(d, "forms", "challenge"), exist_ok=True)
+    p4 = os.path.join(d, "phase4.json")
+    json.dump({"deliberation_set": ROOM, "ranked": [{"ticker": t, "lane": ("MOMENTUM" if t in ("GNW", "LNG") else "PULLBACK"), "doors": ["SEATS"]} for t in ROOM], "dropped": []}, open(p4, "w"))
+    for i, v in enumerate(DEC):
+        b = _r2_ballot(v, "2026-11-01", ROOM)
+        for row in b["votes"]:
+            t = row["ticker"]
+            if t == "VRNS" or (t == "BBY" and i >= 4):
+                row.update({"vote": "OPPOSE", "opposing_case": "the base is tight and volume is rising", "conditions": None})
+            if t == "MFG" and i >= 5:
+                row.update({"vote": "ABSTAIN", "conviction": None, "conditions": None})
+            row["case"]["horizon_sessions"] = 5 + 3 * i      # each voice its own horizon (R35)
+        json.dump(b, open(os.path.join(d, "forms", "r2", f"{v}.json"), "w"))
+    # a benched seat's stray ballot: must be IGNORED loudly, never counted
+    json.dump(_r2_ballot("thorp", "2026-11-01", ROOM), open(os.path.join(d, "forms", "r2", "thorp.json"), "w"))
+    ch = {"voice": "steenbarger", "date": "2026-11-01", "seat_kind": "challenge", "names_read": 5, "obligations": [], "data_gaps": [],
+          "findings": [{"scope": "LNG", "ticker": "LNG", "kind": "CROWDING", "claim": "all seven lean on rs_rank_pct", "evidence": "rs_rank_pct cited 7 times"}]}
+    json.dump(ch, open(os.path.join(d, "forms", "challenge", "steenbarger.json"), "w"))
+    return d, p4
+
+
+def _ticket(t, v="ADVANCE"):
+    return {"ticker": t, "verdict": v, "entry_trigger": "h1 close above the base high", "wrong_if": "close back inside the base",
+            "horizon_sessions": 10, "why_agreed": "oneil, minervini, livermore: base break on volume", "dissent": []}
+
+
+def _ratify(d, sub, voice, answers):
+    os.makedirs(os.path.join(d, "forms", sub), exist_ok=True)
+    rows = []
+    for t, ans in answers.items():
+        r = {"ticker": t, "answer": ans}
+        if ans == "OBJECT": r.update({"objection": "no test of the break yet", "would_clear": "a hold above the pivot on a down day"})
+        if ans == "AGREE_WITH_RESERVATION": r["reservation"] = "size it small until the test"
+        rows.append(r)
+    json.dump({"voice": voice, "date": "2026-11-01", "tickets": rows}, open(os.path.join(d, "forms", sub, f"{voice}.json"), "w"))
+
+
+def test_board_marks_contested_names_and_never_a_verdict(td):
+    """R36 round 3. The board is what the seats said, laid out: blind split, every case, CONTESTED where
+    SUPPORT and OPPOSE both appear or Steenbarger named the name. It computes no verdict."""
+    d, p4 = _committee_fixture(td, "board")
+    out = os.path.join(d, "board.json")
+    rc, log = run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4,
+                   "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", out])
+    check("board exits clean", rc == 0, log[-400:])
+    if rc != 0: return
+    B = json.load(open(out))
+    check("contested = the split name and the challenged name, in room order", B["contested"] == ["BBY", "LNG"], str(B["contested"]))
+    check("a unanimous-oppose name is not contested (nothing to argue)", "VRNS" in B["uncontested_oppose"])
+    check("support + abstain is not contested", "MFG" not in B["contested"])
+    check("the benched seat's ballot is ignored LOUDLY", B["ignored_ballots"] == ["thorp"] and "IGNORED" in log, log[-300:])
+    check("all seven deciders present", B["deciders_present"] == sorted(DEC) and B["deciders_absent"] == [])
+    bby = next(n for n in B["names"] if n["ticker"] == "BBY")
+    check("the blind split is recorded per name", (len(bby["split"]["support"]), len(bby["split"]["oppose"])) == (4, 3))
+    check("every decider's case (for/against/trigger/wrong-if/horizon) is on the board",
+          all(set(("for", "against", "entry_trigger", "wrong_if", "horizon_sessions")) <= set(bby["cases"][v]) for v in DEC))
+    check("the board carries NO verdict", "verdict" not in json.dumps(B))
+
+
+def test_floor_caps_are_counted_by_code(td):
+    """R36. Two messages per seat per name, on open names only, replies to real messages -- counted across
+    files by floor-check, which exits 1 and names every breach."""
+    d, p4 = _committee_fixture(td, "floor")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    fl = os.path.join(d, "forms", "floor"); os.makedirs(fl, exist_ok=True)
+    def msg(voice, t, n, to="room", reply=None, changed=False):
+        m = {"voice": voice, "date": "2026-11-01", "ticker": t, "msg_id": f"{voice}-{t}-{n}", "to": to, "in_reply_to": reply,
+             "text": "Where is the test? Three closes above the pivot on rising volume.", "stance_now": "SUPPORT", "changed_mind": changed}
+        if changed: m["what_moved_me"] = "the hold above the pivot on a down day"
+        json.dump(m, open(os.path.join(fl, m["msg_id"] + ".json"), "w")); return m["msg_id"]
+    a1 = msg("oneil", "BBY", 1, to="wyckoff"); msg("wyckoff", "BBY", 1, to="oneil", reply=a1, changed=True); msg("oneil", "BBY", 2, to="wyckoff")
+    out = os.path.join(d, "floor_check.json")
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--out", out])
+    check("two messages each on a contested name pass", rc == 0, log[-400:])
+    F = json.load(open(out)) if os.path.exists(out) else {}
+    check("the record shows who changed their mind and what moved them",
+          F.get("per_name", {}).get("BBY", {}).get("changed_mind", [{}])[0].get("voice") == "wyckoff", str(F.get("per_name")))
+    msg("oneil", "BBY", 3, to="room")
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--out", out])
+    check("a THIRD message by the same seat on the same name is a breach (exit 1, named)", rc != 0 and "oneil sent 3" in log, log[-300:])
+    os.remove(os.path.join(fl, "oneil-BBY-3.json"))
+    msg("seow", "GNW", 1)
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--out", out])
+    check("a message on an uncontested name is a breach", rc != 0 and "not open on the floor" in log, log[-300:])
+    os.remove(os.path.join(fl, "seow-GNW-1.json"))
+    msg("raschke", "LNG", 1, reply="ghost-LNG-9")
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--out", out])
+    check("a reply to a message that does not exist is a breach", rc != 0 and "ghost-LNG-9" in log, log[-300:])
+    os.remove(os.path.join(fl, "raschke-LNG-1.json"))
+    # hold round: only the held ticket is open
+    qa = os.path.join(d, "qa.json"); json.dump({"voice": "steenbarger", "holds": [{"ticker": "GNW", "question": "tested?"}]}, open(qa, "w"))
+    fl2 = os.path.join(d, "forms", "floor2"); os.makedirs(fl2, exist_ok=True)
+    json.dump({"voice": "seow", "date": "2026-11-01", "ticker": "GNW", "msg_id": "seow-GNW-h1", "to": "room", "in_reply_to": None,
+               "text": "Answering Steenbarger: the test came on day 3.", "stance_now": "SUPPORT", "changed_mind": False}, open(os.path.join(fl2, "a.json"), "w"))
+    rc, log = run([PIPE, "floor-check", "--messages", fl2, "--board", board, "--qa", qa, "--out", os.path.join(d, "fc2.json")])
+    check("after a hold the floor is open on the HELD ticket only, contested or not", rc == 0, log[-300:])
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--qa", qa, "--out", os.path.join(d, "fc3.json")])
+    check("the first round's BBY messages are not valid on the hold round", rc != 0, log[-300:])
+
+
+def test_objection_rule_counts_the_final_ratification(td):
+    """R34 (PM 2026-10-30). 0 objections AGREED; 1-3 CONTESTED; 4+ of 7 DROPPED. Machine verdicts keep
+    every downstream reader working: ADVANCE / HOLD-FOR-CONDITIONS / PASS, split, conviction, lane.
+    A non-decider's ratification is ignored loudly. A hold's re-ratification replaces the first for the
+    held ticket only. record-verdicts consumes the result unchanged."""
+    d, p4 = _committee_fixture(td, "ratify")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    slate = os.path.join(d, "slate.json")
+    json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH"), _ticket("LNG"), _ticket("MFG")]}, open(slate, "w"))
+    # GNW 0 objections; BBY 2; LNG 4; MFG 3 (with reservations on GNW from two seats)
+    for i, v in enumerate(DEC):
+        _ratify(d, "ratify", v, {"GNW": "AGREE_WITH_RESERVATION" if i < 2 else "AGREE",
+                                 "BBY": "OBJECT" if i < 2 else "AGREE",
+                                 "LNG": "OBJECT" if i < 4 else "AGREE",
+                                 "MFG": "OBJECT" if i < 3 else "AGREE"})
+    _ratify(d, "ratify", "lynch", {"GNW": "OBJECT", "BBY": "OBJECT", "LNG": "OBJECT", "MFG": "OBJECT"})   # stood down: ignored
+    out = os.path.join(d, "consensus.json"); rec = os.path.join(d, "committee_record.json")
+    args = [PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratify"), "--board", board,
+            "--phase4", p4, "--date", "2026-11-01", "--out", out, "--record", rec]
+    rc, log = run(args)
+    check("ratify-count exits clean", rc == 0, log[-400:])
+    if rc != 0: return
+    C = {c["ticker"]: c for c in json.load(open(out))}
+    check("0 objections = AGREED -> ADVANCE", (C["GNW"]["status"], C["GNW"]["verdict"]) == ("AGREED", "ADVANCE"), str(C["GNW"]))
+    check("AGREED with reservations orders at 4, not 5", C["GNW"]["conviction"] == 4 and len(C["GNW"]["reservations"]) == 2)
+    check("2 objections = CONTESTED; slate WATCH -> HOLD-FOR-CONDITIONS", (C["BBY"]["status"], C["BBY"]["verdict"]) == ("CONTESTED", "HOLD-FOR-CONDITIONS"), str(C["BBY"]))
+    check("3 objections = CONTESTED (stays listed)", C["MFG"]["status"] == "CONTESTED" and C["MFG"]["verdict"] == "ADVANCE")
+    check("4 of 7 = DROPPED -> PASS, still recorded", (C["LNG"]["status"], C["LNG"]["verdict"]) == ("DROPPED", "PASS"), str(C["LNG"]))
+    check("the objections and what would clear them are on the row",
+          C["BBY"]["objections"][0]["would_clear"] and sorted(o["voice"] for o in C["BBY"]["objections"]) == ["minervini", "oneil"])
+    check("a never-slated room name is PASS / NOT_SLATED with its blind split", C["VRNS"]["status"] == "NOT_SLATED" and len(C["VRNS"]["split"]["oppose"]) == 7)
+    check("the stood-down voice's ratification was ignored LOUDLY", "lynch" in log and "IGNORED" in log and all("lynch" not in c["split"]["oppose"] for c in C.values()))
+    check("every ADVANCE row has support > oppose (the publish gate's Q2r holds by construction)",
+          all(len(c["split"]["support"]) > len(c["split"]["oppose"]) for c in C.values() if c["verdict"] == "ADVANCE"))
+    check("the lane rides along as a label", C["GNW"]["lane"] == "MOMENTUM" and C["BBY"]["lane"] == "PULLBACK")
+    check("n deciders and the drop threshold are stated on every row", all(c["n_deciders"] == 7 and c["drop_threshold"] == 4 for c in C.values()))
+    # downstream smoke: the ledger writer reads this consensus.json as-is
+    led = os.path.join(d, "verdict_ledger.json")
+    rc, log = run([PIPE, "record-verdicts", "--consensus", out, "--candidates", fx("candidate_set.json"), "--phase4", p4, "--ledger", led, "--date", "2026-11-01"])
+    check("record-verdicts consumes the new consensus.json unchanged", rc == 0 and os.path.exists(led), log[-300:])
+    if rc == 0:
+        rows = {r["ticker"]: r for r in json.load(open(led))["rows"] if r["date"] == "2026-11-01"}
+        check("the ledger locks ADVANCE / HOLD / PASS for every room name", {rows[t]["verdict"] for t in ROOM} == {"ADVANCE", "HOLD-FOR-CONDITIONS", "PASS"})
+    # hold round: Steenbarger holds LNG; after discussion only 2 object -> CONTESTED, back on the list
+    qa = os.path.join(d, "forms", "qa", "steenbarger.json"); os.makedirs(os.path.dirname(qa), exist_ok=True)
+    json.dump({"voice": "steenbarger", "date": "2026-11-01", "evidence_read": [{"voice": v, "read": True} for v in DEC], "shared_anchors": [],
+               "unanswered_points": [], "slate_says_what_deciders_said": True, "note": "ok", "holds": [{"ticker": "LNG", "question": "crowded?"}]}, open(qa, "w"))
+    for i, v in enumerate(DEC):
+        _ratify(d, "ratify2", v, {"LNG": "OBJECT" if i < 2 else "AGREE"})
+    rc, log = run(args + ["--ratifications2", os.path.join(d, "forms", "ratify2"), "--qa", qa])
+    C2 = {c["ticker"]: c for c in json.load(open(out))}
+    check("after the hold, LNG's re-ratification replaces the first: 2 objections -> CONTESTED", rc == 0 and C2["LNG"]["status"] == "CONTESTED" and C2["LNG"]["held"], log[-300:])
+    check("the other tickets are unchanged by the hold round", C2["GNW"]["status"] == "AGREED" and C2["MFG"]["status"] == "CONTESTED")
+    _ratify(d, "ratify2", "oneil", {"LNG": "AGREE", "GNW": "OBJECT"})
+    rc, log = run(args + ["--ratifications2", os.path.join(d, "forms", "ratify2"), "--qa", qa])
+    check("re-ratifying a ticket that was NOT held is refused", rc != 0 and "NOT held" in log, log[-300:])
+    # a 16-ticket slate is refused even if the registrar were bypassed
+    big = os.path.join(d, "slate16.json"); json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket(t) for t in ROOM] * 4}, open(big, "w"))
+    rc, log = run([PIPE, "ratify-count", "--slate", big, "--ratifications", os.path.join(d, "forms", "ratify"), "--phase4", p4, "--date", "2026-11-01", "--out", os.path.join(d, "x.json"), "--record", os.path.join(d, "y.json")])
+    check("a slate over 15 is refused by the counter too (R34, defence in depth)", rc != 0 and "15" in log, log[-300:])
+    # fewer than 4 deciders ratifying is no committee
+    few = os.path.join(d, "forms", "few"); os.makedirs(few, exist_ok=True)
+    for v in DEC[:3]:
+        json.dump(json.load(open(os.path.join(d, "forms", "ratify", f"{v}.json"))), open(os.path.join(few, f"{v}.json"), "w"))
+    rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", few, "--phase4", p4, "--date", "2026-11-01", "--out", os.path.join(d, "x.json"), "--record", os.path.join(d, "y.json")])
+    check("3 ratifications is no committee -- halt", rc != 0 and "no committee" in log, log[-300:])
+
+
+def test_the_record_is_written_per_voice_per_ticket(td):
+    """R35. committee_record.json: for every decider and every room name -- blind vote, horizon, floor
+    messages, change of mind and what moved it, ratification and objection, final status."""
+    d, p4 = _committee_fixture(td, "record")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    slate = os.path.join(d, "slate.json"); json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate, "w"))
+    fl = os.path.join(d, "forms", "floor"); os.makedirs(fl, exist_ok=True)
+    json.dump({"voice": "wyckoff", "date": "2026-11-01", "ticker": "BBY", "msg_id": "wyckoff-BBY-1", "to": "oneil", "in_reply_to": None,
+               "text": "Conceding: the test held.", "stance_now": "SUPPORT", "changed_mind": True, "what_moved_me": "the hold above the pivot"}, open(os.path.join(fl, "w1.json"), "w"))
+    for i, v in enumerate(DEC):
+        _ratify(d, "ratify", v, {"GNW": "AGREE", "BBY": "OBJECT" if i == 0 else "AGREE"})
+    out = os.path.join(d, "consensus.json"); rec = os.path.join(d, "committee_record.json")
+    rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratify"), "--board", board, "--messages", fl,
+                   "--phase4", p4, "--date", "2026-11-01", "--out", out, "--record", rec])
+    check("ratify-count writes the record", rc == 0 and os.path.exists(rec), log[-300:])
+    if not os.path.exists(rec): return
+    R = json.load(open(rec)); rows = {(r["voice"], r["ticker"]): r for r in R["rows"]}
+    check("one row per decider per room name (7 x 5)", len(R["rows"]) == 35 and set(r["voice"] for r in R["rows"]) == set(DEC))
+    w = rows[("wyckoff", "BBY")]
+    check("the blind vote and the seat's OWN horizon are recorded", w["blind_vote"] == "OPPOSE" and w["horizon_sessions"] == 5 + 3 * DEC.index("wyckoff"))
+    check("the floor message, the change of mind and what moved it are recorded",
+          w["floor_messages"] == ["wyckoff-BBY-1"] and w["changed_mind"] and w["what_moved_me"] == ["the hold above the pivot"] and w["stance_after_floor"] == "SUPPORT")
+    check("the ratification and the final status sit on the same row", w["ratification"] == "AGREE" and w["final_status"] == "CONTESTED")
+    o = rows[("oneil", "BBY")]
+    check("an objector's objection and what would clear it are recorded", o["ratification"] == "OBJECT" and o["would_clear"])
+    check("horizons differ per voice -- no single 5-session clock", len({r["horizon_sessions"] for r in R["rows"] if r["ticker"] == "GNW"}) == 7)
+
+
+def test_r2digest_reads_the_crown_file_and_marks_retired_seats(td):
+    """R31. The weather comes from AQE's Crown file (what_would_change_it lives under read_me_first);
+    Rogers, Lynch and Detect-lens render as retired seats, never as a silent 'NOT FILED' gap."""
+    crown = os.path.join(td, "crown.json")
+    json.dump({"generated_at": "2026-10-30T08:54:02+08:00", "status": "OK",
+               "the_call": {"expression_family": "HIDDEN_STRESS_DOWNSIDE", "match_quality": "exact", "size_multiplier": 0.5},
+               "scenario": {"leading": "REFLATION", "runner_up": "GROWTH_SCARE", "contested": False},
+               "read_me_first": {"headline": "Breadth is narrowing under a rising tape.", "what_would_change_it": ["RSP/SPY reclaims its 20-day average"]}}, open(crown, "w"))
+    out = os.path.join(td, "vp_crown.txt")
+    rc, log = run([PIPE, "r2digest", "--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--crown", crown, "--run-id", "t", "--out", out])
+    check("r2digest runs with only Steenbarger's document and the Crown file", rc == 0, log[-300:])
+    if rc != 0: return
+    txt = open(out).read()
+    check("the Crown call, scenario and headline are in the packet", "HIDDEN_STRESS_DOWNSIDE" in txt and "REFLATION" in txt and "Breadth is narrowing" in txt)
+    check("what would change it is read from read_me_first", "RSP/SPY reclaims" in txt)
+    check("retired seats are marked retired, not 'NOT FILED'", "ROGERS: retired seat" in txt and "LYNCH: retired seat" in txt and "DETECT-LENS: retired seat" in txt and "NOT FILED" not in txt)
+    check("the lane header says all seven count (R32)", "ALL seven deciders vote on ALL names" in txt)
+
+
+def test_run_map_carries_the_seven_deciders_and_the_new_rounds(td):
+    """R31/R34/R36 in RUN.yaml: rosters, the FLOOR/SLATE/RATIFY/QA steps, DECIDE on ratify-count, no MACRO."""
+    import yaml
+    M = yaml.safe_load(open(os.path.join(HERE, "..", "RUN.yaml")))
+    S = {s["name"]: s for s in M["steps"]}
+    check("no MACRO step", "MACRO" not in S)
+    check("NOMINATE, VOTE and RATIFY seat exactly the seven deciders",
+          all(sorted(S[n]["seats"]) == sorted(DEC) for n in ("NOMINATE", "VOTE", "RATIFY")), str({n: S[n]["seats"] for n in ("NOMINATE", "VOTE", "RATIFY")}))
+    check("CHALLENGE and QA seat steenbarger alone", S["CHALLENGE"]["seats"] == ["steenbarger"] and S["QA"]["seats"] == ["steenbarger"])
+    check("the rounds run in order", [n for n in S if n in ("NOMINATE", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY", "QA", "DECIDE")]
+          == ["NOMINATE", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY", "QA", "DECIDE"])
+    check("DECIDE counts with ratify-count, not consensus", "ratify-count" in S["DECIDE"]["command"] and not any(
+          str(s.get("command", "")).startswith("pma_pipeline.py consensus") for s in M["steps"]))
+    check("FLOOR builds the board and counts the caps", "board" in S["FLOOR"]["command"] and "floor-check" in S["FLOOR"]["then"])
+    check("the vote packet reads the Crown file and only Steenbarger's challenge", "--crown" in S["VOTE"]["packet"] and "--rogers" not in S["VOTE"]["packet"] and "--lynch" not in S["VOTE"]["packet"])
+    check("every model round is checkpointed", all(S[n].get("checkpoint_after") for n in ("NOMINATE", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY", "QA")))
+    check("parameters carry the caps", M["parameters"]["shortlist_cap"] == 6 and M["parameters"]["slate_cap"] == 15 and M["parameters"]["floor_messages_per_seat_per_name"] == 2)
+    reg = open(REG).read()
+    check("registrar and pipeline agree on the deciders", all(v in reg for v in DEC) and 'QA_SEAT = "steenbarger"' in reg)
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -1979,6 +2231,10 @@ def main():
                    test_roster_is_seven_deciders_plus_qa, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
+                   test_board_marks_contested_names_and_never_a_verdict, test_floor_caps_are_counted_by_code,
+                   test_objection_rule_counts_the_final_ratification, test_the_record_is_written_per_voice_per_ticket,
+                   test_r2digest_reads_the_crown_file_and_marks_retired_seats,
+                   test_run_map_carries_the_seven_deciders_and_the_new_rounds,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

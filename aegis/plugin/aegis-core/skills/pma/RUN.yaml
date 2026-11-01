@@ -15,9 +15,22 @@
 # not ticked done.
 
 schema: aegis_run.v1
-updated: 2026-10-23
+updated: 2026-11-01
+# THE 30 OCT 2026 REDESIGN (RULINGS R31-R36; docs/DECISIONS_2026-10-30.md wins). Seven deciders +
+# Steenbarger as QA; Detect-lens an independent list; the weather from AQE's Crown file and the Valen
+# dashboard, never from a seat. Rounds: blind NOMINATE (cap 6) -> CHALLENGE (Steenbarger) -> blind VOTE
+# with the case form -> FLOOR (Chair + deciders, on contested names) -> SLATE (Chair, <= 15) -> RATIFY
+# -> QA (note + at most one hold per ticket, reopening FLOOR/RATIFY for that ticket once) -> DECIDE
+# (ratify-count: 0 objections AGREED / 1-3 CONTESTED / >= 4 of 7 DROPPED). Code counts; voices judge.
 parameters:
   deliberation_cap: 20
+  deciders: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
+  qa_seat: steenbarger
+  shortlist_cap: 6
+  slate_cap: 15
+  floor_messages_per_seat_per_name: 2
+  holds_per_ticket: 1
+  case_form_effective: 2026-11-01
   pm_lens_min_checks: 5
   phase4_window: 5
   repeat_threshold: 2
@@ -47,7 +60,7 @@ checkpoint:
     copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy
     would not resolve during an actual run -- the same duplication the pma tools already carry, for
     the same reason. Keep the two copies identical.
-  after: [MACRO, NOMINATE, CHALLENGE, VOTE, WRITE]
+  after: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, WRITE]
   rule: >
     A checkpointed step is not closed until its artifacts are pushed. Tool steps are not
     checkpointed -- re-running consensus or repeat-watch costs nothing and pushing after each
@@ -136,32 +149,26 @@ steps:
   # own packet by path, write its form, and self-validate with registrar.py validate --packet. R2's
   # inlining is replaced by path-read; the figure audit is the check. Seats write figures as
   # "field value" (the audit also reads field=value since 2026-10-23).
-  - name: MACRO
-    kind: model
-    spawns: 2
-    seats: [crown, druckenmiller]
-    reads: [aqe_crown_macro.json, aqe_daily_export.json]
-    produces: [forms/macro/*.json]
-    barrier: "2 of 2"
-    rulings: [R2, R3]
-    must_also: druckenmiller sees Crown's DATA POINTS only, never Crown's prose, and never returns a ticker.
-    checkpoint_after: true        # 2 seats
-    meter: "--spawns 2"
+  # MACRO step RETIRED 2026-11-01 (R31): Crown and Druckenmiller stood down as voices. The weather is
+  # read by code from AQE's Crown file (aqe_crown_macro.json: the_call, scenario, read_me_first) and the
+  # Valen dashboard -- `r2digest --crown` puts it in the vote packet, the card report renders it in Part 1.
 
   - name: NOMINATE
     kind: model
-    spawns: 9
-    seats: [elder-lens, livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff]
+    spawns: 7
+    seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
     reads: [packets/<seat>.tsv, cards/voice-<seat>.md]
     produces: [forms/r1/*.json]
-    barrier: "8 of 9"
+    barrier: "6 of 7"
     on_fail: "halt and report - no committee"
-    rulings: [R1, R2, R3]
+    rulings: [R1, R2, R3, R31, R33]
     must_also: >
       Blind and isolated. No seat sees the tally, another seat, or any ordering hint.
       Validate each return on arrival; one respawn, then absent.
-    checkpoint_after: true        # 9 seats
-    meter: "--spawns 9"
+      R33: at most SIX nominations per decider (fewer is valid, never padded); the registrar REJECTS a
+      seventh. R16's floor is unchanged -- every nomination filed is seated.
+    checkpoint_after: true        # 7 seats
+    meter: "--spawns 7"
 
   - name: RANK
     kind: tool
@@ -208,34 +215,39 @@ steps:
 
   - name: CHALLENGE
     kind: model
-    spawns: 4
-    seats: [rogers, steenbarger, lynch, detect-lens]
-    command: "pma_pipeline.py challenge-packets --menus contracts/voice_menus.json --date <date> --outdir seat_packets"
-    reads: [phase4.json, fundamentals_pack.json, forms/r1/*.json, universe.json]
-    produces: [forms/challenge/*.json]
-    barrier: "4 of 4"
-    rulings: [R1, R2, R3]
+    spawns: 1
+    seats: [steenbarger]
+    command: "pma_pipeline.py challenge-packets --menus contracts/voice_menus.json --date <date> --outdir seat_packets --seats steenbarger"
+    reads: [phase4.json, forms/r1/*.json, universe.json]
+    produces: [forms/challenge/steenbarger.json]
+    barrier: "1 of 1"
+    on_fail: "declare it; the floor's contested set then comes from the blind split alone"
+    rulings: [R1, R2, R3, R31, R36]
+    validate_with: "registrar.py validate --file forms/challenge/steenbarger.json --kind challenge --candidates candidate_set.json"
     must_also: >
-      R22: lynch is a CONSULTED voice -- he files here and is NOT spawned at VOTE.
-      lynch judges from fundamentals_pack.json only — unserved names are declared unserved,
-      never fetched mid-run, never invented.
-    checkpoint_after: true        # 4 seats
-    meter: "--spawns 4"
+      Crowding, extension and overlap reads on the room BEFORE anyone votes (contracts/challenge.schema.json).
+      Never a nomination, never a vote. Names it flags are CONTESTED on the board.
+    checkpoint_after: true        # 1 seat
+    meter: "--spawns 1"
 
   - name: VOTE
     kind: model
-    spawns: 10
-    seats: [elder-lens, livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff, detect-lens]   # R22: no lynch
+    spawns: 7
+    seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
     reads: [VOTE_PACKET.txt]
-    packet: "pma_pipeline.py r2digest --export <export> --fundamentals fundamentals_pack.json --rogers forms/challenge/rogers.json --steenbarger forms/challenge/steenbarger.json --lynch forms/challenge/lynch.json --detectlens forms/challenge/detect-lens.json --macro forms/macro/crown.json forms/macro/druckenmiller.json --valen aqe_valen_dashboard.json --out VOTE_PACKET.txt"
+    packet: "pma_pipeline.py r2digest --export <export> --fundamentals fundamentals_pack.json --steenbarger forms/challenge/steenbarger.json --crown aqe_crown_macro.json --valen aqe_valen_dashboard.json --out VOTE_PACKET.txt"
     produces: [forms/r2/*.json]
-    barrier: "8 of 10"
+    barrier: "6 of 7"
     on_fail: "watch-table-only run, declared"
-    rulings: [R1, R2, R3]
+    rulings: [R1, R2, R3, R31, R32, R36]
     validate_with: "registrar.py validate --file <form> --round 2 --packet VOTE_PACKET.txt"
     must_also: >
       Packet is built by `pma_pipeline.py r2digest` and is IDENTICAL for every seat.
       Every seat votes on EVERY deliberation-set name. Commit per vote, not at end of stage.
+      R36 CASE FORM (contracts/case_form.schema.json): every vote carries `case` -- for, against, entry
+      trigger, wrong-if, horizon in sessions, what would change my mind, cannot see. Reasons BOTH ways;
+      the registrar rejects a vote without it. R32: all seven count on every name; the lane is a label.
+      BLIND: no seat sees another's vote until the board is posted at FLOOR.
       VALIDATE WITH --packet, ALWAYS (R2, amended 2026-09-16). Without it the figure audit does
       not run and a seat that invented its numbers is committed as if it had read the row. The
       md5 half of R2 never ran once -- no seat has a hashing tool, so all eleven declared
@@ -260,17 +272,95 @@ steps:
       outsider -- before DECIDE runs. Tell each seat its part and the names in it. A FILE SIZE LIMIT
       MUST NEVER AGAIN DECIDE WHICH OF THE PM'S ANALYSTS ARE HEARD.
 
+  - name: FLOOR
+    kind: model
+    spawns: 8
+    seats: [chair, oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
+    command: "pma_pipeline.py board --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --date <date> --out board.json"
+    then: "pma_pipeline.py floor-check --messages forms/floor --board board.json --out floor_check.json"
+    reads: [board.json, forms/r2/*.json, forms/challenge/steenbarger.json]
+    produces: [board.json, forms/floor/*.json, floor_check.json]
+    barrier: "floor-check exits 0 (caps hold; messages only on contested names)"
+    on_fail: "a cap breach is a REJECT of that message (one re-file); a silent floor is allowed and recorded"
+    rulings: [R1, R31, R32, R35, R36]
+    validate_with: "registrar.py validate --file <msg> --kind floor --phase4 phase4.json --board board.json"
+    must_also: >
+      THE OPEN FLOOR (R36, the PM's 12 Aug deliberation ruling rebuilt). `board` marks each CONTESTED name
+      (both SUPPORT and OPPOSE among the deciders, or named in Steenbarger's challenge) and lays out every
+      decider's case -- it computes NO verdict. The Chair (agents/chair.md; skills/pma-deliberate) posts the
+      board per contested name; deciders message each other BY NAME (contracts/floor_message.schema.json):
+      answer the point that was made, concede when the evidence your own method cares about shows up, hold
+      when it does not, say what would clear your objection. Steenbarger may be called on by name
+      (stance NO_VOTE). Cap TWO messages per seat per name, counted by `floor-check`. The Chair never votes,
+      never adds a view, never judges the quality of a reason -- only that every question was answered.
+    checkpoint_after: true
+    meter: "--spawns 8"
+
+  - name: SLATE
+    kind: model
+    spawns: 1
+    seats: [chair]
+    reads: [board.json, forms/floor/*.json, floor_check.json, forms/r2/*.json]
+    produces: [slate.json]
+    barrier: "registrar.py validate --file slate.json --kind slate --phase4 phase4.json exits 0"
+    on_fail: "fix the slate (one re-file); a slate that cannot validate halts the run and is declared"
+    rulings: [R1, R34, R36]
+    must_also: >
+      The Chair drafts the committee's AGREED BEST (contracts/slate.schema.json): at most 15 tickets across
+      ADVANCE and WATCH -- a ceiling, not a target, never padded. Each ticket: entry trigger, where it is
+      wrong, horizon (as the agreeing seats stated it), why the room agrees (in the seats' words, attributed)
+      and who dissents and why. Built ONLY from what the seats said in their case forms and floor messages.
+    checkpoint_after: true
+    meter: "--spawns 1"
+
+  - name: RATIFY
+    kind: model
+    spawns: 7
+    seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
+    reads: [slate.json]
+    produces: [forms/ratify/*.json]
+    barrier: "6 of 7"
+    on_fail: "halt and declare -- fewer than 4 ratifications is no committee (ratify-count refuses)"
+    rulings: [R31, R34, R35]
+    validate_with: "registrar.py validate --file <form> --kind ratify --slate slate.json"
+    must_also: >
+      Each decider answers EVERY ticket (contracts/ratification.schema.json): AGREE, AGREE_WITH_RESERVATION
+      (say the reservation), or OBJECT with the one thing that would clear it. Commit per form on arrival.
+    checkpoint_after: true
+    meter: "--spawns 7"
+
+  - name: QA
+    kind: model
+    spawns: 1
+    seats: [steenbarger]
+    reads: [board.json, forms/floor/*.json, slate.json, forms/ratify/*.json, floor_check.json]
+    produces: [forms/qa/steenbarger.json]
+    barrier: "registrar.py validate --file forms/qa/steenbarger.json --kind qa --slate slate.json exits 0"
+    on_fail: "declare it and CONTINUE to DECIDE without a hold -- a missing QA note never blocks the count"
+    rulings: [R31, R35, R36]
+    must_also: >
+      ONE note (contracts/qa_note.schema.json): did every decider read evidence; are reasons leaning on the
+      same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may
+      HOLD a ticket (at most once per ticket). ON A HOLD: the conductor reopens the floor on the held tickets
+      only -- messages to forms/floor2/, `floor-check --messages forms/floor2 --qa forms/qa/steenbarger.json`,
+      then the deciders ratify the held tickets again to forms/ratify2/ (validate --kind ratify against a slate
+      cut to the held tickets). One hold, one re-ratification, then the result stands. He cannot vote or veto.
+    checkpoint_after: true
+    meter: "--spawns 1"
+
   - name: DECIDE
     kind: tool
-    command: "pma_pipeline.py consensus --round2 <votes> --phase4 phase4.json --out consensus.json"
+    command: "pma_pipeline.py ratify-count --slate slate.json --ratifications forms/ratify --ratifications2 forms/ratify2 --qa forms/qa/steenbarger.json --board board.json --messages forms/floor --messages2 forms/floor2 --phase4 phase4.json --date <date> --out consensus.json --record committee_record.json"
     then: pma_pipeline.py record-verdicts
-    reads: [forms/r2/*.json]
-    produces: [consensus.json, verdict_ledger.json]
-    rule: "ADVANCE = support > oppose AND support >= 2 AND median support conviction >= 3; else support >= 2 = HOLD-FOR-CONDITIONS; else PASS. MOMENTUM-lane names count the strength seats only (R14); other votes are advisory."
-    rulings: [R1, R8, R9, R14]
+    reads: [slate.json, forms/ratify/*.json, forms/ratify2/*.json, forms/qa/steenbarger.json, board.json, forms/floor/*.json]
+    produces: [consensus.json, committee_record.json, verdict_ledger.json]
+    rule: "R34: count OBJECT answers per slate ticket on the FINAL ratification of the deciders present (n). 0 = AGREED; 1..ceil(n/2)-1 = CONTESTED (listed, objections and what-would-clear printed); >= ceil(n/2) (4 of 7) = DROPPED (off the list, still tracked). Slate ADVANCE -> ADVANCE; slate WATCH -> HOLD-FOR-CONDITIONS (shown as WATCH); DROPPED and never-slated room names -> PASS. `conviction` is an ordering figure only, never a gate. All seven count on every name (R32)."
+    rulings: [R1, R8, R9, R32, R34, R35]
     must_also: >
-      NEVER hand-tallied. Every HOLD gets an observable condition line. Brackets attach AFTER
-      the vote, render-only. The ledger row is written HERE, before any narrative step (R8).
+      NEVER hand-tallied. --ratifications2 / --messages2 are optional and only exist after a QA hold. The
+      ledger row is written HERE, before any narrative step (R8). committee_record.json (R35) carries every
+      decider's blind vote, horizon, floor messages, change of mind and ratification per ticket; the scorecard
+      grades each voice at its own horizon from it. Brackets attach AFTER, render-only.
     meter: "--tool-only"
 
   - name: CONDITIONS

@@ -208,6 +208,9 @@ CHECKS = {
     "tests.test_roster_is_seven_deciders_plus_qa": run_tests,
     "tests.test_all_seven_deciders_count_on_every_name": run_tests,
     "tests.test_shortlist_cap_is_six": run_tests,                      # R33
+    "tests.test_objection_rule_counts_the_final_ratification": run_tests,   # R34
+    "tests.test_the_record_is_written_per_voice_per_ticket": run_tests,     # R35
+    "tests.test_floor_caps_are_counted_by_code": run_tests,                 # R36
 }
 
 
