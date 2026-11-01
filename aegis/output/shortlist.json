@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-31",
-  "refreshed_at": "2026-10-31 08:52:34 SGT",
+  "date": "2026-11-01",
+  "refreshed_at": "2026-11-02 02:13:14 SGT",
   "regime": {
     "vix": 19.4,
     "level": "YELLOW"
@@ -8,6 +8,58 @@
   "candidates": [
     {
       "rank": 1,
+      "ticker": "PSX",
+      "sc_momentum": 57.9,
+      "sc_momentum_raw": 57.9,
+      "sc_position": 49.4,
+      "mp_state": "BUILDING",
+      "pipe_rank": 0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 47.4,
+        "energy": 63.9,
+        "structure": 70.5,
+        "mp": 52.0,
+        "elder": 5.0,
+        "bq": 25.0
+      },
+      "levels": {
+        "entry": 282.83,
+        "stop": 263.0,
+        "r_size": 19.83,
+        "be_trigger": 292.75,
+        "target_1r": 302.66,
+        "target_2r": 322.49,
+        "target_3r": 342.32,
+        "shares": 105,
+        "risk_dollars": 2100.0
+      },
+      "signal": {
+        "date": "2026-10-28",
+        "age": 2,
+        "sc_at_signal": 51.6,
+        "direction": "RISING"
+      },
+      "diagnostics": {
+        "mp_state": "BUILDING",
+        "close": 282.83,
+        "atr14": 9.917,
+        "earn_days": null,
+        "earn_warning": false
+      },
+      "context": {
+        "sector": "XLE",
+        "sector_grade": "DEPLOY",
+        "sh": 0,
+        "ra": 0,
+        "rl": 0,
+        "cm": 0
+      },
+      "precision_edge": false
+    },
+    {
+      "rank": 2,
       "ticker": "WELL",
       "sc_momentum": 57.6,
       "sc_momentum_raw": 57.6,
@@ -50,58 +102,6 @@
       },
       "context": {
         "sector": "XLRE",
-        "sector_grade": "DEPLOY",
-        "sh": 0,
-        "ra": 0,
-        "rl": 0,
-        "cm": 0
-      },
-      "precision_edge": false
-    },
-    {
-      "rank": 2,
-      "ticker": "PSX",
-      "sc_momentum": 57.1,
-      "sc_momentum_raw": 57.1,
-      "sc_position": 49.1,
-      "mp_state": "BUILDING",
-      "pipe_rank": 0,
-      "fip_spike_excluded": false,
-      "fip_window_effective": 252,
-      "engines": {
-        "flow": 44.7,
-        "energy": 63.9,
-        "structure": 70.5,
-        "mp": 52.0,
-        "elder": 5.0,
-        "bq": 25.0
-      },
-      "levels": {
-        "entry": 282.83,
-        "stop": 263.0,
-        "r_size": 19.83,
-        "be_trigger": 292.75,
-        "target_1r": 302.66,
-        "target_2r": 322.49,
-        "target_3r": 342.32,
-        "shares": 105,
-        "risk_dollars": 2100.0
-      },
-      "signal": {
-        "date": "2026-10-28",
-        "age": 2,
-        "sc_at_signal": 51.6,
-        "direction": "RISING"
-      },
-      "diagnostics": {
-        "mp_state": "BUILDING",
-        "close": 282.83,
-        "atr14": 9.917,
-        "earn_days": null,
-        "earn_warning": false
-      },
-      "context": {
-        "sector": "XLE",
         "sector_grade": "DEPLOY",
         "sh": 0,
         "ra": 0,
@@ -525,6 +525,66 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
+      "ticker": "GDDY",
+      "levels": {
+        "entry": 117.24,
+        "stop": 107.56,
+        "r_size": 9.68,
+        "be_trigger": 122.08,
+        "target_1r": 126.92,
+        "target_2r": 136.6,
+        "target_3r": 146.28,
+        "shares": 216,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 88.2,
+        "energy": 47.1,
+        "structure": 84.2,
+        "mp": 97.0,
+        "elder": 10.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.17,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 95.41,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
       "ticker": "AMX",
       "levels": {
         "entry": 24.48,
@@ -559,66 +619,6 @@
         },
         "k39_value": {
           "value": 50.88,
-          "threshold": 50.0,
-          "engine": "Scoring",
-          "label": "K39 Gate",
-          "meaning": "Composite gate confirmed",
-          "pass": true
-        },
-        "pr_rsi_score": {
-          "value": 20.0,
-          "threshold": 20.0,
-          "engine": "PipeRank",
-          "label": "Relative RSI",
-          "meaning": "RSI outperforms peer universe",
-          "pass": true
-        },
-        "rel_mom_score": {
-          "value": 25.0,
-          "threshold": 18.0,
-          "engine": "Scoring",
-          "label": "Relative Momentum",
-          "meaning": "Trend strength confirmed",
-          "pass": true
-        }
-      },
-      "note": "Passes Precision Edge but not on fresh-signal shortlist"
-    },
-    {
-      "ticker": "GDDY",
-      "levels": {
-        "entry": 117.24,
-        "stop": 107.56,
-        "r_size": 9.68,
-        "be_trigger": 122.08,
-        "target_1r": 126.92,
-        "target_2r": 136.6,
-        "target_3r": 146.28,
-        "shares": 216,
-        "risk_dollars": 2100.0
-      },
-      "engines": {
-        "flow": 85.5,
-        "energy": 47.1,
-        "structure": 84.2,
-        "mp": 97.0,
-        "elder": 10.0
-      },
-      "mp_state": "STRONG",
-      "pipe_rank": 0,
-      "signal": {},
-      "context": {},
-      "subcomp_values": {
-        "roc_zscore": {
-          "value": 2.17,
-          "threshold": 1.94,
-          "engine": "Energy",
-          "label": "ROC Z-Score",
-          "meaning": "Momentum 2sigma above normal",
-          "pass": true
-        },
-        "k39_value": {
-          "value": 95.41,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -2584,7 +2584,7 @@
         "mp": 94.0,
         "elder": 6.0
       },
-      "mp_state": "STRONG",
+      "mp_state": "FADING",
       "pipe_rank": 0,
       "signal": {},
       "context": {},
@@ -3967,7 +3967,7 @@
         "mp": 94.0,
         "elder": 6.0
       },
-      "mp_state": "STRONG",
+      "mp_state": "FADING",
       "squeeze": 0,
       "on_shortlist": true,
       "pe_qualified": true,
@@ -4324,14 +4324,14 @@
     },
     {
       "ticker": "GDDY",
-      "sc_momentum": 76.0,
-      "sc_momentum_raw": 76.0,
+      "sc_momentum": 76.8,
+      "sc_momentum_raw": 76.8,
       "pipe_rank": 56.7,
       "fip_quality": 0.0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
-        "flow": 85.5,
+        "flow": 88.2,
         "energy": 47.1,
         "structure": 84.2,
         "mp": 97.0,
@@ -5295,7 +5295,7 @@
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
       "roc20": -8.84,
-      "roc5": -5.37,
+      "roc5": -5.38,
       "divergence": 3.46,
       "above_sma20": false,
       "coverage": "13/13",
@@ -5314,7 +5314,7 @@
         "DBX",
         "AKAM"
       ],
-      "rrg_rs_ratio": 99.71,
+      "rrg_rs_ratio": 99.7,
       "rrg_rs_momentum": 99.7,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING",
@@ -5336,7 +5336,7 @@
           "rs_momentum": 99.57
         },
         {
-          "rs_ratio": 99.71,
+          "rs_ratio": 99.7,
           "rs_momentum": 99.7
         }
       ]
@@ -6035,16 +6035,16 @@
           "rs_momentum": 104.07
         },
         {
-          "rs_ratio": 96.76,
-          "rs_momentum": 103.07
+          "rs_ratio": 97.09,
+          "rs_momentum": 103.42
         },
         {
-          "rs_ratio": 95.88,
-          "rs_momentum": 103.01
+          "rs_ratio": 96.31,
+          "rs_momentum": 103.47
         },
         {
-          "rs_ratio": 96.47,
-          "rs_momentum": 106.39
+          "rs_ratio": 96.85,
+          "rs_momentum": 106.81
         },
         {
           "rs_ratio": 98.21,
@@ -6067,8 +6067,8 @@
       "pattern_fit": null,
       "parent_gics": "XLB",
       "parent_grade": "DEPLOY",
-      "roc20": -10.23,
-      "roc5": 0.14,
+      "roc20": -10.22,
+      "roc5": 0.15,
       "divergence": 10.37,
       "above_sma20": false,
       "coverage": "11/11",
@@ -7018,7 +7018,7 @@
     "copper_gold_roc5": 2.86,
     "copper_gold_roc20": 5.41,
     "regime_description": "Falling rates, dollar bid, credit tightening, broad tape, gold soft, copper weak (slowing), oil easing, copper/gold reflation tilt (risk-on).",
-    "snapshot_date": "2026-10-31"
+    "snapshot_date": "2026-11-01"
   },
   "meta": {
     "total_universe": 671,
