@@ -99,7 +99,7 @@ The direct push was refused twice by the session's permission classifier; the PM
 
 ## 05:00 SGT REPORT — 2026-11-02 (for the PM's check-in)
 
-**Bottom line: the AQE → voices handoff is proven clean on a real run, and the whole PMA chain passes its no-model integration test on that run's actual files. The committee has NOT been run (guard rail). Two releases went to main overnight; one more (the contract fixes) is pending the full suite.**
+**Bottom line: the AQE → voices handoff is proven clean on a real run, and the whole PMA chain passes its no-model integration test on that run's actual files. The committee has NOT been run (guard rail). Three releases went to main overnight: PR 8 `aa808f57` (run-127 fixes + review fixes), PR 9 `8e5c4398` (contract fixes + this report). Full suite 1726/0 before each; main == this branch.**
 
 ### 1. AQE run 128 — the first clean run on the redesigned main
 | Item | Result |
