@@ -1,9 +1,164 @@
 {
  "created": "2026-11-01T22:12:17Z",
  "date": "2026-11-02",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-01T22:22:07Z",
+   "note": "closes_in_flight",
+   "step": "GATHER"
+  }
+ ],
  "flags": [],
  "run_id": "pma-2026-11-02",
- "seats": {},
- "steps": {}
+ "seats": {
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "4ce4d509c4049e0f0e1feb9819bcf2ca04e3fc9ff0fb2b54d680257ee9d3723c",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "82b94fba70591d7f99d4d4eadbd72d44b93c9a0b0528696573230e0aead8f7e2",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "a1632aa511ec4e80ac0467a86daf16565abab97b4ddd807502d4e57efc4dafa9",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "0eaf9b7b262cc16cecb19818cbdbd102cba9f94e23db791b53804e1f16300faf",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "b8a6764327134b39f392a6635b9c5e09f4ec32da1dab343ce697363307131d10",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "59d012f3472e262d9f2e4748c93b74a496de70edc5f40e26e688a2b3dc2b45d5",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "a6454bb54838c9c3641683f1761b331c85f5d0013f53a92a41caaaa3c4a05831",
+   "status": "committed"
+  }
+ },
+ "steps": {
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 1,
+    "tool_only": true
+   },
+   "finished": "2026-11-01T22:22:07Z",
+   "notes": [
+    "export 2026-11-02 (30 Oct COB), held MP+V live, broker read Tiger; fundamentals deferred to post-RANK; closes in flight; ledgers from 29 Oct run dir"
+   ],
+   "started": "2026-11-01T22:22:07Z",
+   "status": "degraded",
+   "tokens": 411931,
+   "tool_hashes": {
+    "conditions.py": "7b56569cc1008235e4e49fdc33af947cfea61f065b5e2b488f1f5e2aeca6a4ce",
+    "dryrun_chain.py": "6efcb62bfe287255c7c6487e328737c3c43c0c26335dd6f1db8d7df81fdceb30",
+    "emit_packets.py": "d04b6a4bf99f0ce7e7bcd6491bf516c4f8410ada8556e535a9eb3e4f6eac3aee",
+    "field_derive.py": "d45a953aae333ce08342865ae9e736a2ec951e72f04c7e541092e715ef3d1180",
+    "figure_audit.py": "b12a92324dc039218aefeaf3ced94e48148cde6156786dda301eb55c208b06ee",
+    "git_sync.py": "6eb076c13d3e19ea188d112670c7cebcf1363c6b493eb7047cb3e62780614594",
+    "momentum_floor.py": "94cdbfe3e33094f56a965e8998848f75c4dc6039173c5740155653b6176914c5",
+    "pm_lens.py": "0016b82852531f37cde861c4ab0661434b6d3acef3c318fd24d5cf8915e14cd2",
+    "pma_cards.py": "478f4bfd328e1dfa791e27ef18010f685e2a5b81476aa7f32598e93a1ec3e11c",
+    "pma_conditions.py": "f1f1acd3e14fcc6ea2b077ab8778d791d345c69777f333fbb632d6c76db28266",
+    "pma_levels.py": "d9b0a680490d46b60803f2f492cdf7f572a2d3ac58242d121c7e4f705cb3f8bc",
+    "pma_pipeline.py": "fc24ef425c5df509b4cbb05d2c6bfdf24da31299af5e4d7d5889f1dbc144a53f",
+    "pma_scorecard.py": "edeec6deef162c2ef7e0fb5fa381cb76567330565e82ddbd205f98f39681e597",
+    "preflight_run.py": "8cc2cf6d0c5ac217990f73bd5358b705a0927cf4fee9db7a14c835c8cee8fb89",
+    "purity_check.py": "49eec73fd313bbd8f10c971528257b1bbe4a7cffa264f1c0b4812e51fd6cd64c",
+    "registrar.py": "3eb595fa09570c9ea19b97544958b20a767084c28262962b85beb7f042c0789c",
+    "voice_preflight.py": "3b3c7ed1b19a8228fcf96dadfeaae9d3e94fc727cc70e2976d19fc2f82d6fcf5"
+   }
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T22:22:07Z",
+   "notes": [
+    "37 trashed (36 AQE Alerts + 1 [AQE] self-forward), 6 GitHub skipped, 0 remaining"
+   ],
+   "started": "2026-11-01T22:22:07Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 102746,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "4ce4d509c4049e0f0e1feb9819bcf2ca04e3fc9ff0fb2b54d680257ee9d3723c",
+    "forms/r1/livermore.json": "82b94fba70591d7f99d4d4eadbd72d44b93c9a0b0528696573230e0aead8f7e2",
+    "forms/r1/minervini.json": "a1632aa511ec4e80ac0467a86daf16565abab97b4ddd807502d4e57efc4dafa9",
+    "forms/r1/oneil.json": "0eaf9b7b262cc16cecb19818cbdbd102cba9f94e23db791b53804e1f16300faf",
+    "forms/r1/raschke.json": "b8a6764327134b39f392a6635b9c5e09f4ec32da1dab343ce697363307131d10",
+    "forms/r1/seow.json": "59d012f3472e262d9f2e4748c93b74a496de70edc5f40e26e688a2b3dc2b45d5",
+    "forms/r1/wyckoff.json": "a6454bb54838c9c3641683f1761b331c85f5d0013f53a92a41caaaa3c4a05831"
+   },
+   "finished": "2026-11-01T22:28:57Z",
+   "notes": [
+    "7/7 deciders filed, all validated OK (raschke bracket-mention flags informational); wyckoff 5 with shortfall"
+   ],
+   "started": "2026-11-01T22:28:56Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T22:23:42Z",
+   "notes": [
+    "full export, 257 rows"
+   ],
+   "started": "2026-11-01T22:23:42Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T22:22:07Z",
+   "notes": [
+    "7 packets md5 recorded, voice_menus copied, qs_market grep 0"
+   ],
+   "started": "2026-11-01T22:22:07Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
 }
