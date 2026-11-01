@@ -97,6 +97,15 @@ Then dispatch `daily-run.yml` on `main` with `force: true` (Actions → daily-ru
 ## RELEASED to main 2026-11-01 17:50 UTC (PR #7, merge `faf27899`); fresh AQE run dispatched (run 127, force)
 The direct push was refused twice by the session's permission classifier; the PM's explicit instruction ("trigger a fresh AQE pipeline") was carried out through a pull request merged with the GitHub tools — auditable, no history rewritten. `daily-run.yml` dispatched on `main` with `force: true` at 17:50 UTC (run 127) to rebuild the 30 Oct close on the new code.
 
+## SESSION MAP (PM 2026-11-02: "keep the threads clean and easy to read")
+| Role | Session | Model | What the PM does there |
+|---|---|---|---|
+| **PMA desk** (this thread) | `session_012zhnXnQA5r7e7u5j5RDBqe` | Sonnet 5.5 | Reads the daily committee output and status; asks about the run. Watches the conductor; does not build. |
+| **Conductor** (runs the committee) | `session_012zhnXmroh5pRKKX1aRvSRL` | Opus 5.5 | Nothing routine. Fired by the `AEGIS pma-auto` task; posts to his phone when stuck or done. |
+| **Checker** (READY watcher + 18:00 gate) | `session_012zhnXjmnGQ7TABEUUiAmiV` | Sonnet 5.5 | Nothing. Posts READY / gate lines to his phone. |
+| **Engineering** | `session_012zhnXoZ7NZpvuEC4oxrvEZ` | Opus 5.5 | Gives feedback and change requests; reads change-sets ready for review. Works on branch `claude/aegis-engineering`; no push to main during a run. |
+First engineering task: bridge the COB-report gap so the committee and the AQE export pick up the Aegis held book and its stop losses from one dated, checked source (today `held_sl/tp` are null everywhere and the conductor re-pulls Tiger itself at GATHER).
+
 ## PILOT GO — 2026-11-02 05:50 SGT (PM: "Yes, fire it today"; conductor model Opus 5.5)
 **What the probes found (05:33–05:40 SGT), and why the task wiring changed.** Firing a scheduled task into a *fresh* session gave a session with NO repository checkout, NO scheduler tools (the `claude-code-remote` connector is not attached to API-created tasks, and this organisation does not allow attaching connectors by API), the default Sonnet model, and none of the voice agents. Every `git fetch` in the three prompts failed on arrival; the hand-off tool did not exist. A session created with `create_session` + the repo URL has everything: clone, scheduler tools, GitHub + Gmail connectors, Agent tool with model choice, PushNotification, Artifact.
 **New wiring (the AQE 06:30 task already works this way):** two dedicated persistent sessions, and the scheduled tasks fire INTO them.
