@@ -2053,6 +2053,10 @@ def test_objection_rule_counts_the_final_ratification(td):
     if rc == 0:
         rows = {r["ticker"]: r for r in json.load(open(led))["rows"] if r["date"] == "2026-11-01"}
         check("the ledger locks ADVANCE / HOLD / PASS for every room name", {rows[t]["verdict"] for t in ROOM} == {"ADVANCE", "HOLD-FOR-CONDITIONS", "PASS"})
+        check("a slated ticket is graded at the horizon the room stated (R35); a never-slated name keeps the run default",
+              rows["GNW"]["fixed_horizon"]["horizon_sessions"] == 10 and rows["GNW"]["fixed_horizon"]["horizon_source"] == "slate"
+              and rows["VRNS"]["fixed_horizon"]["horizon_sessions"] == 5 and rows["VRNS"]["fixed_horizon"]["horizon_source"] == "run_default",
+              str({t: rows[t]["fixed_horizon"] for t in ("GNW", "VRNS")}))
     # hold round: Steenbarger holds LNG; after discussion only 2 object -> CONTESTED, back on the list
     qa = os.path.join(d, "forms", "qa", "steenbarger.json"); os.makedirs(os.path.dirname(qa), exist_ok=True)
     json.dump({"voice": "steenbarger", "date": "2026-11-01", "evidence_read": [{"voice": v, "read": True} for v in DEC], "shared_anchors": [],
@@ -2275,6 +2279,68 @@ def test_the_checker_catches_a_seeded_failure(td):
     rc, log = run(base); check("yesterday's levels file is named -- today's levels are not being watched", rc != 0 and "NOT being watched" in log, log[-300:])
 
 
+def test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10(td):
+    """R34/R31 on the PM's own read. A CONTESTED ticket prints its objections and what would clear them;
+    a DROPPED name says so on the PASS row; the Detect-lens top 10 renders from lens_ranking.ranked with a
+    marker where a name is also in the room; the fixed section order (R23) still holds. Rows WITHOUT
+    `status` (pre-redesign runs) render exactly as before."""
+    CARDS = os.path.join(TOOLS, "pma_cards.py")
+    d = os.path.join(td, "cards_r34"); os.makedirs(d, exist_ok=True)
+    cons = [{"ticker": "AAA", "verdict": "ADVANCE", "status": "CONTESTED", "conviction": 3, "lane": "MOMENTUM", "n_deciders": 7,
+             "split": {"support": DEC[1:], "oppose": DEC[:1], "abstain": []}, "advisory": {},
+             "objections": [{"voice": "oneil", "objection": "no test of the break yet", "would_clear": "a hold above the pivot on a down day"}], "reservations": []},
+            {"ticker": "BBB", "verdict": "HOLD-FOR-CONDITIONS", "status": "AGREED", "conviction": 4, "lane": "PULLBACK", "n_deciders": 7,
+             "split": {"support": DEC, "oppose": [], "abstain": []}, "advisory": {}, "objections": [], "reservations": [{"voice": "seow", "reservation": "size it small"}]},
+            {"ticker": "CCC", "verdict": "PASS", "status": "DROPPED", "conviction": 2, "lane": "PULLBACK", "n_deciders": 7,
+             "split": {"support": DEC[4:], "oppose": DEC[:4], "abstain": []}, "advisory": {},
+             "objections": [{"voice": v, "objection": "x", "would_clear": "y"} for v in DEC[:4]], "reservations": []}]
+    exp = {"daily_list": [{"ticker": t, "entry": 10.0, "rank": i, "gics_sector_name": "Tech", "setups": [], "unr_status": "NO"} for i, t in enumerate(["AAA", "BBB", "CCC"], 1)],
+           "held_positions": [],
+           "lens_ranking": {"ranked": [{"rank": 1, "ticker": "ZZZ", "positive": 5, "warnings": 0}, {"rank": 2, "ticker": "AAA", "positive": 4, "warnings": 1}]}}
+    cards = {"advance": {"AAA": {"triggers": [{"id": "AAA-buy0", "kind": "close_above", "level": 10.5}, {"id": "AAA-dead", "kind": "close_below", "level": 9.5}], "confirms": "x", "kills": "y"}},
+             "hold": {"BBB": {"triggers": [], "confirms": "", "kills": "", "not_structured_yet": "none"}}, "held": {}}
+    p4 = {"ranked": [{"ticker": t, "lane": c["lane"]} for t, c in zip(["AAA", "BBB", "CCC"], cons)], "deliberation_set": ["AAA", "BBB", "CCC"]}
+    for n, x in (("consensus.json", cons), ("export.json", exp), ("cards.json", cards), ("phase4.json", p4)):
+        json.dump(x, open(os.path.join(d, n), "w"))
+    words = {"session_label": "s", "stance_pill": "NEUTRAL", "bottom_line": {"headline": "h", "paragraph": "p", "stats": [{"value": "1", "label": "l"}] * 4},
+             "market": {"what_happened": [{"lead": "a", "text": "b"}], "weather": [{"lead": "c", "text": "d"}]},
+             "money": [{"group": "g", "read": "r", "meaning": "m"}], "book": [], "changed": ["c"],
+             "cards": {"AAA": {"case": "c", "why": "w", "readiness": "Ready now", "readiness_tone": "ok"}}, "holds": {"BBB": "waits"}, "passes": {"CCC": "no"}, "plan": ["p"], "caveats": ["c"]}
+    tw = os.path.join(d, "words.json"); json.dump(words, open(tw, "w"))
+    out = os.path.join(d, "r.html")
+    rc, log = run([CARDS, "render", "--text", tw, "--consensus", os.path.join(d, "consensus.json"), "--export", os.path.join(d, "export.json"),
+                   "--cards", os.path.join(d, "cards.json"), "--phase4", os.path.join(d, "phase4.json"), "--brackets", os.path.join(d, "nob.json"),
+                   "--broker-stops", os.path.join(d, "nobs.json"), "--valen", os.path.join(d, "nov.json"), "--scorecard", os.path.join(d, "nosc.md"), "--out", out])
+    check("the card report renders with status rows", rc == 0, log[-300:])
+    if rc != 0: return
+    h = open(out).read()
+    check("the head pills count AGREED / CONTESTED / DROPPED", "1 AGREED" in h and "1 CONTESTED" in h and "1 DROPPED" in h)
+    check("HOLD is labelled WATCH for the PM", "HOLD &middot; WATCH" in h)
+    check("a CONTESTED ticket prints the objection and what would clear it",
+          "Contested &middot; 1 of 7 object" in h and "no test of the break yet" in h and "a hold above the pivot on a down day" in h)
+    check("an AGREED ticket prints its reservations", "Agreed, with reservations" in h and "size it small" in h)
+    check("a DROPPED name says so on the PASS row", "DROPPED</b> by 4 of 7 objections" in h)
+    check("the Detect-lens top 10 renders from lens_ranking.ranked", "Detect-lens top 10" in h and "ZZZ" in h)
+    check("a lens name that is also in the room carries the marker", "ADVANCE &middot; CONTESTED (in the room)" in h)
+    order = ["Bottom line", "Part 1 · Daily weather", "Cross-asset · what happened", "Where money is moving",
+             "Part 2 · Your book and the committee", "What it means for your book",
+             "Committee recommendations", "HOLD for conditions", "PASS · off the list", "Detect-lens top 10", "The plan", "Read with care", "DRAFT"]
+    pos = [h.find(x) for x in order]
+    check("the fixed section order still holds, with the lens panel before the plan", all(p >= 0 for p in pos) and pos == sorted(pos), str(list(zip(order, pos))))
+    # pre-redesign rows (no status) render with none of the new text
+    for c in cons:
+        for k in ("status", "objections", "reservations", "n_deciders"):
+            c.pop(k, None)
+    exp.pop("lens_ranking")
+    json.dump(cons, open(os.path.join(d, "consensus.json"), "w")); json.dump(exp, open(os.path.join(d, "export.json"), "w"))
+    rc, log = run([CARDS, "render", "--text", tw, "--consensus", os.path.join(d, "consensus.json"), "--export", os.path.join(d, "export.json"),
+                   "--cards", os.path.join(d, "cards.json"), "--phase4", os.path.join(d, "phase4.json"), "--brackets", os.path.join(d, "nob.json"),
+                   "--broker-stops", os.path.join(d, "nobs.json"), "--valen", os.path.join(d, "nov.json"), "--scorecard", os.path.join(d, "nosc.md"), "--out", out])
+    h2 = open(out).read() if rc == 0 else ""
+    check("rows without status render as before (no contest text) and a missing lens_ranking is a declared gap",
+          rc == 0 and "Contested" not in h2 and "DROPPED</b>" not in h2 and "declared gap" in h2, log[-300:])
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -2371,6 +2437,7 @@ def main():
                    test_the_seat_cards_carry_the_floor_and_the_roster_is_archived_not_deleted,
                    test_checkpoints_land_under_aegis_output_and_never_rebuild_the_space, test_one_risk_figure,
                    test_the_checker_catches_a_seeded_failure,
+                   test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

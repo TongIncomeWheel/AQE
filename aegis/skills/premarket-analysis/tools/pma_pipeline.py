@@ -2153,7 +2153,11 @@ def cmd_record_verdicts(a):
             "ref_price_source": ref_src,
             "bracket": bracket,
             "record_source": "live",
-            "fixed_horizon": {"horizon_sessions": a.horizon_sessions, "status": "pending"},
+            # R35 (2026-11-01): a slated ticket is graded at the horizon the agreeing seats stated (ratify-count
+            # carries it onto the row); a never-slated name keeps the run default. Per-voice horizons are in
+            # committee_record.json for the 20-run review.
+            "fixed_horizon": {"horizon_sessions": (c.get("horizon_sessions") if isinstance(c.get("horizon_sessions"), int) and c.get("horizon_sessions") > 0 else a.horizon_sessions),
+                              "status": "pending", "horizon_source": ("slate" if isinstance(c.get("horizon_sessions"), int) and c.get("horizon_sessions") > 0 else "run_default")},
             "event_based": {"status": "pending" if bracket and bracket.get("valid") and c["verdict"] == "ADVANCE"
                              else "not_applicable",
                              "note": None if (bracket and bracket.get("valid") and c["verdict"] == "ADVANCE")
