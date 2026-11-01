@@ -16,3 +16,8 @@ First automated pilot, fired on the PM's direct instruction in the conductor ses
 ## Actual subagent tokens
 - data-steward closes (sonnet): 411,931
 - NOMINATE: oneil 190,459 · minervini 213,374 · livermore 175,177 · elder-lens 171,508 · seow 208,584 · raschke 181,673 · wyckoff 200,187
+- CHALLENGE: steenbarger 127,563
+- FUNDAMENTALS steward (sonnet): 284,871 (39/39 served; ABBV ratios + FLYW growth spot-checked exact vs FMP)
+- VOTE: oneil 217,505 · minervini 209,093 · livermore 206,347 · elder-lens 194,459 · seow 219,122 · raschke 210,665 · wyckoff 204,037
+- VOTE seat notes: room 39 > 30-vote cap, every seat filed 2 parts (20+19); merge proves coverage. Size-cap re-files (text trimmed, no vote changed): livermore p1 x2, raschke p1 x1, oneil p1 x2, seow p1 x4 (over the 3-attempt brief, declared). Wyckoff: vote packet carries pvp_/bar_ fields only for its own nominees; other reads declared in cannot_see. O'Neil declared the fundamentals line off its menu. VOTE_PACKET 78,412B over the 70,000 soft cap, not trimmed.
+- METER: commit adds each form's bytes to returned_bytes and the meter call adds them again, so NOMINATE/VOTE returned bytes are double-counted (conservative).
