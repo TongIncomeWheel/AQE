@@ -174,11 +174,30 @@ _FIELD_GLOSSARY = {
                "Aegis journal's own live-price field was retired in its D-84 "
                "restructure, so AQE now supplies this from its own data instead of "
                "leaving it empty.",
-    "held_sl": "(held_positions only) The trade's OWN stop as tracked by the PM/broker "
+    "held_sl": "(held_positions only) PM 2026-11-02: the stop in force at Tiger — the latest of "
+              "the two daily Tiger reads (see held_stop_source / held_stop_check). "
+              "Previously: the trade's OWN stop as tracked by the PM/broker "
               "in the Aegis journal — `stop_live_broker` if the broker confirms one, "
               "else the journal's `stop_reference`. This is the position's actual "
               "working stop, NOT AQE's structural read (that's `bracket.stop`); the "
               "two can legitimately disagree — `stop_match` upstream flags it.",
+    "held_stop_status": "(held_positions only) PM 2026-11-02. LIVE = Tiger shows a working "
+                        "SELL stop order; NO_STOP_ORDER = the orders were read and none protects "
+                        "this name (UNPROTECTED); NOT_PULLED = the orders were not read, so held_sl "
+                        "is not today's answer.",
+    "held_stop_order": "(held_positions only) The working stop order itself, as Tiger holds it: "
+                       "type (STP / STP_LMT / TRAIL), stop, limit, qty covered, time_in_force, "
+                       "status, order_id. Null when there is none.",
+    "held_stop_source": "(held_positions only) Which Tiger read held_sl came from: "
+                        "'tiger_pre_aqe_read' (the read taken just before this run) or "
+                        "'journal <date>' (the close).",
+    "held_stop_as_of": "(held_positions only) The date of the journal (the close) the stop was read at.",
+    "held_stop_journal": "(held_positions only) The stop the close read (the journal).",
+    "held_stop_second_read": "(held_positions only) The stop the pre-AQE Tiger read saw; null "
+                             "when that read is absent/stale or shows no stop.",
+    "held_stop_check": "(held_positions only) AGREES when the two Tiger reads match; DIFFERS: "
+                       "<what> when they do not (stop moved, stop gone, partial cover, name not "
+                       "held); NO_SECOND_READ: <why> when only the close was read.",
     "held_tp1": "(held_positions only) PM ruling 2026-07-29: the Aegis journal's own "
                "tp1 is unpopulated on held names, so this is AQE's own computed "
                "bracket.targets TP1 price instead of an empty field. Null when the "
@@ -1890,6 +1909,27 @@ def _held_sc_gates(s) -> dict:
             "sc_p_gates": _gp["pass"], "sc_p_gate_detail": _gp["detail"]}
 
 
+def _attach_held_stops(held, rows):
+    """Write each held row's stop fields from the two Tiger reads; return the summary block.
+    Never raises: a failure here is a named status on the export, not a missing export."""
+    try:
+        from src.data import broker_stops
+        from src.data.ptj import load_ptj_cache
+        cache = load_ptj_cache()
+        jdate = cache.get("modified")
+        pulled = cache.get("open_orders_pull_ran")
+        second = cache.get("second_read")
+        src = {str(p.get("ticker") or "").upper(): p for p in held or []}
+        for r in rows or []:
+            pos = src.get(str(r.get("ticker") or "").upper()) or {}
+            r.update(broker_stops.resolve(dict(pos, ticker=r.get("ticker")), jdate, pulled, second))
+        out = broker_stops.summarise(rows or [], jdate, pulled, second)
+        out["journal_flags"] = cache.get("stop_flags") or []
+        return out
+    except Exception as e:  # noqa: BLE001
+        return {"status": "ERROR", "reason": f"{e.__class__.__name__}: {e}"}
+
+
 def _build_held_positions(held, dsl_all, betas, lk, sm, sector_grades,
                           regime_level=None):
     """Merge each PTJ held position with AQE's current engine read on it.
@@ -2170,6 +2210,9 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["held_positions"] = _build_held_positions(
         _held, dsl_all, betas, _v21_lk, sm, sector_grades,
         regime_level=regime_level)
+    # PM 2026-11-02: the stops — Tiger's working orders, read at the close (journal) and again
+    # right before this run (pre-AQE read). Never AQE's opinion; that is bracket.stop.
+    export["held_stops"] = _attach_held_stops(_held, export["held_positions"])
 
     # Portfolio Hedge Layer (Charter §4C) — beta-adj book exposure + gap losses.
     try:
@@ -2820,6 +2863,7 @@ def build_export(shortlist: dict | None = None) -> dict:
             if g.get("status") in ("TRIGGERED", "READY")),
         "held_count": len(export.get("held_positions") or []),
         "held_positions_status": export.get("held_positions_status", "unknown"),
+        "held_stops_status": (export.get("held_stops") or {}).get("status", "unknown"),
     }
 
     # ---- Standalone Signal Radar block (M14-M18) — the one place AIC scans the

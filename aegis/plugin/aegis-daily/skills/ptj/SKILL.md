@@ -75,6 +75,7 @@ Save each response **verbatim** to `data/eod/<DATE>/broker_pull/` under these ex
 | `tiger_option_positions.json` | `get_option_positions` | current option book (D-89 — this call existed on the connector but was never made by any loop, which is why the hedge was invisible) |
 | `tiger_filled_orders.json` | `get_filled_orders` | **this is the day's fills list.** `days=2` covers a session that straddles the date line |
 | `tiger_account_summary.json` | `get_account_summary` | balances / NAV |
+| `tiger_open_orders.json` | `get_open_orders` | **REQUIRED — the stops** (PM 2026-11-02). Tiger's working orders; the batch writes each held name's live stop (`stop_live_broker` + the whole `stop_order`: type, stop, limit, shares covered, time in force) into the journal, flags a name with no working stop `no_live_stop` and a stop covering fewer shares `stop_partial_cover`. Missing file = the close reports DEGRADED. AQE's export (`held_sl`) and the committee read the stops from this journal. |
 
 **`tiger_order_transactions.json` is optional and normally absent.** `get_order_transactions` is a **per-order** call — it requires an `order_id` and errors without one. It is NOT a daily fills list; `get_filled_orders` is. The batch treats the file as absent and carries on. Only save it if you pulled specific orders for a reason.
 

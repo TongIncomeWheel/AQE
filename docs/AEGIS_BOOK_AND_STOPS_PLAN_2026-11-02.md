@@ -1,6 +1,6 @@
 # The Aegis book and its stops — one source of truth (plan for PM review, 2 Nov 2026)
 
-**Status: PLAN ONLY. Nothing built, nothing changed on main, no scheduled task edited.** Branch `claude/aegis-engineering`.
+**Status (later on 2 Nov): BUILT on branch `claude/aegis-engineering` after the PM's ruling** — "Stop from Tiger is correct ... ask for the stops then, both from the trade report and also during the AQE run ... if there are new names traded, let it be picked up anyway; I will say so when reviewing the PMA report." COIN: picked up automatically, the PM excludes on review. No-stop: WARN (default kept). What was built: `docs/BUILD_STATE.md` → "The book and its stops".
 
 ## What is actually wrong (verified against code and files, not the summary)
 
