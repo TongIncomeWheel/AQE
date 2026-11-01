@@ -101,7 +101,7 @@ spend-agent/
 *.log
 .idea/
 .vscode/
-.claude/
+.claude/*
 
 # --- KEEP these (negate the broader rules above) ---------------------------
 # The cloud Scanner reads only these committed JSONs:
@@ -113,4 +113,7 @@ spend-agent/
 !data/sector_map.json
 !data/universe.txt
 !data/earnings_calendar.json
+# Project permission rules for the Aegis sessions that clone this repo (PM 2026-11-02:
+# INBOX-CLEAN's Gmail trash is one standing approval, not one prompt per mail).
+!.claude/settings.json
 aegis/dist/
