@@ -1,52 +1,268 @@
 {
- "name": "aegis-core",
- "version": "1.7.2",
- "description": "Aegis committee and orchestration — the analytics side only: /pma (Premarket Analysis committee, v5.3 CONDUCTOR), /committee-pm, committee-desk, /bracket, /market_hours, /recover, staging-gatekeeper. The book close and premarket data prep (/daily, /ptj, /premarket, print-trade-journal) live in the aegis-daily plugin; the voices live in aegis-voices. Same kernel_build across all three.",
- "kernel_build": "cf837be",
- "layer": "process",
- "changelog": [
-  {
-   "version": "1.7.2",
-   "date": "2026-09-06",
-   "changes": [
-    "R1 made mechanical — bracket is never a reject. registrar.py validate now REJECTS (a) any Round-2 OPPOSE whose reason/opposing_case uses a bracket term (bracket.valid/rr/risk_pct/stop_type, 'no usable stop', 'stop too wide', 'R:R too thin'...) as the disqualifier, and (b) any Round-1 shortfall_reason that cites a bracket. One re-spawn carrying the R1 text, then absent — same ladder as any REJECT. Other bracket mentions are flagged BRACKET_BASIS / BRACKET_MENTION on the scoreboard, never rejected. Conductor card discipline #7 updated to match. PM: 'the AIC chooses ticker ideas on a momentum book — strongest momentum and structures. Brackets are the last step for the PM to narrow a trade idea further.'"
-   ]
-  },
-  {
-   "version": "1.7.1",
-   "date": "2026-09-06",
-   "changes": [
-    "PM ruling 2026-09-06: aegis-core is the analytics/orchestration plugin only. /ptj, /premarket and print-trade-journal (everything PTJ and premarket-data-prep) moved to the aegis-daily plugin. Remaining committee skills still cite the premarket stamp as a prerequisite gate — they check it, they never perform the data fetch. aegis-voices untouched."
-   ]
-  },
-  {
-   "version": "1.6.0",
-   "date": "2026-09-06",
-   "changes": [
-    "D-106: unrecognized equity fills AUTO-INCLUDE as confirmed Aegis positions (flagged auto_included_unrecognized, high severity) instead of parking in pending_review; PM's only lever is held_book_refresh.py reject, which now also strips the persistent membership file.",
-    "D-107: WTD realized P&L rollup added to archive_ledger.py, keyed by ISO calendar week, alongside the existing MTD/YTD rollups.",
-    "D-108: new tools/overnight_brief.py — pure read+assemble step (PTJ CLOSE job 10.5) producing overnight opened/closed/stop-changed, realised MTD/WTD/YTD, open risk (equity-only, Aegis-confirmed-only, unknown-stop names named not zeroed), and book beta/exposure — closing a relay gap, not a computation gap. ptj/SKILL.md's job table and Step 3 print spec updated to require it.",
-    "D-109: phase_gate.py's freshness checks now compare against last-trading-day close-of-book (weekend + optional charter-declared-holiday aware) instead of the literal calendar date, so /pma run on a weekend or Monday correctly expects Friday's close instead of demanding same-day data it cannot have. Never grants forward grace into an ordinary trading day. New --holidays flag.",
-    "D-109 (pma side): the PMA GATHER step now calls phase_gate.py check --for premarket_build as its Step 0 and halts with a PM prompt on NOT_READY/BLOCKED instead of silently proceeding on stale premarket data.",
-    "D-110: mandatory, unconditional GitHub-connector push + independent verify checklist after every PTJ CLOSE run, closing a real incident (2026-09-04) where a clean run sat gate-stamped partial for two days because the re-stamp step was skipped.",
-    "D-111: run_post_market.sh now recognizes the exact, routine, always-self-healing sandbox git-proxy-403 push block by its literal error signature and records it as expected (self-stamping the gate ok) instead of FAIL — a genuinely different push failure still records FAIL and still degrades the run. D-110's push-verify checklist still runs every time; its only remaining manual lever is downgrading the gate to partial if verification itself ever fails.",
-    "D-112: new Step 2b in ptj/SKILL.md — after PTJ CLOSE, dispatch the AQE daily pipeline (daily-run.yml workflow_dispatch) and poll to completion, paging the PM on failure/timeout and never auto-retrying. Currently degrades to an explicit manual-fallback flag in the Step 3 report, since no available GitHub connector or session-authorized path can call the Actions API yet — this is documented so it fails loud, not silently, until Actions-API access exists."
-   ]
-  },
-  {
-   "version": "1.5.2",
-   "date": "2026-09-05",
-   "changes": [
-    "dynCap single-writer fix: tools/recompute_dyncap.py (PTJ CLOSE job 3.5, runs right after Aegis-membership classify) now writes the complete, schema-conformant ledger straight to data/persistent/dyncap_ledger.json — allocation, realised, unrealised, dyncap_usd, counts, mark timestamp, all in one shape, validated against contracts/dyncap_ledger.schema.json before write (fail-closed).",
-    "premarket step 8 no longer recomputes dynCap via tools/dyncap_ledger.py update — that path's from_ptj() summed unrealised P&L over ALL open positions with no aegis_status filter, i.e. could reintroduce the exact D-99 co-mingled-book bug this ledger exists to close. Step 8 now only reads the file job 3.5 already wrote. PM ruling 2026-09-05: \"should be done as part of the PTJ step.\""
-   ]
-  },
-  {
-   "version": "1.5.1",
-   "date": "2026-09-05",
-   "changes": [
-    "Re-synced contracts/voice_menus.json, pma_pipeline.py and emit_packets.py against the 2026-09-05 AQE voice-packet-spec build: 18 new export fields routed onto seat menus; chart-pattern fields excluded as a checked build-time invariant."
-   ]
-  }
- ]
+  "name": "aegis-core",
+  "version": "1.31.0",
+  "description": "Aegis committee and orchestration — the analytics side only: /pma (Premarket Analysis committee, v5.3 CONDUCTOR), /committee-pm, committee-desk, /bracket, /market_hours, /recover, staging-gatekeeper. The book close and premarket data prep (/daily, /ptj, /premarket, print-trade-journal) live in the aegis-daily plugin; the voices live in aegis-voices. Same kernel_build across all three.",
+  "kernel_build": "cf837be",
+  "layer": "process",
+  "changelog": [
+    "1.31.0 (2026-10-30) R30: seow added to STRENGTH_SEATS (both pma_pipeline.py copies) -- his v2 position system judges momentum-lane names; he stays in PULLBACK_SEATS for his swing system. Wyckoff stays advisory in the momentum lane (entry-location votes). pma_pipeline.py CONSUMED (trim whitelist) +24 export keys -- without them trim nulled every new menu column (dry build 2026-10-30). voice_menus.json: seow +23 columns, wyckoff +23 columns (profile, VWAPs, daily bars, structure refs) -- all already in AQE's export; the AQE packet sync needs the same menus (handoff in docs/aqe_handoff_seow_wyckoff_packets_2026-10-30.md). condition_vocab.json: +6 levels (pvp_poc, pvp_vah, pvp_val, structure_shift_ref, avwap_structure, avwap_swing) so the rebuilt seats' conditions are expressible; AQE evaluates numbers, so no AQE change is needed for them. RULINGS R30; tests: test_seow_counts_in_the_momentum_lane, test_rebuilt_seow_and_wyckoff_canons_are_sound. 307 tests pass.",
+    "1.24.0 (2026-10-23) PM rulings R22-R24. R22: Livermore votes, Lynch consulted only (VOTE 10 seats; consensus ignores a Lynch ballot). R23: ONE fixed Committee Cards report -- tools/pma_cards.py (triggers for LEVELS + render from run files and a words-only cards_text.json, refuses gaps), REPORT step publishes to one fixed artifact URL; build_report.py retired. R24: INBOX-CLEAN step trashes [AQE]/AQE Alerts mail at the start of every run (GitHub [TongIncomeWheel/AQE] mail skipped). Valen: GATHER fetches aqe_valen_dashboard.json, r2digest --valen adds a VALEN block (levels omitted, R1), brief §1A. Fixes: figure audit reads field=value; vote-packet fundamentals map the nested FMP pack; injected held row entry = last price not cost; pma_pipeline.py challenge-packets; seat transport recorded (general-purpose + card by path). 270 tests pass.",
+    "1.23.0 (2026-10-02) R21/D123: analysts' conditions in shared words AQE can watch. contracts/condition_vocab.json (the shared dictionary), voice_primitives.json (card-grounded limits), conditions_block.md (seat prompt text); tools/conditions.py (grammar), pma_conditions.py (compile, no judgment) + CONDITIONS step after DECIDE; registrar rejects a SUPPORT from 2026-10-02 without a valid block; pma_levels.py attaches conditions to every alert row and refuses a trade-through pinned to yesterday's close. Verdict rule unchanged. 261 tests pass.",
+    "1.22.0 (2026-10-01) D122.1 monitoring: SCORECARD runs every /pma; scorecard_log.jsonl (one line per close, re-run replaces) pushed at PUBLISH to AQE main aegis/output/pma/ with blob read-back; --html block embedded in the card report; `pma_scorecard.py trend`. Review due 2026-10-15. 243 tests pass.",
+    "1.21.0 (2026-10-01) D122.1: pma_scorecard.py + SCORECARD step before WRITE. Grades every ledger call vs SPY, vs the equal-weight AQE list it was picked from, and net of beta_30d, with median and share-that-beat; refuses a row whose ledger ref_price disagrees with its base close. 240 tests pass.",
+    "1.20.1 (2026-10-01): pma_levels emit --closes. A carried row whose name left today's room is usually absent from the served universe, so its own kill line was never checked (BE carried through a broken 288.00 kill). --closes supplies last closes for those; names with no close are declared under window.kill_unchecked. Regression test added (232 pass).",
+    {
+      "version": "1.20.0",
+      "date": "2026-09-30",
+      "pm_ruling": "R20.1 — levels written additively for the last 3 sessions because alerts often trigger with a lag.",
+      "changes": [
+        "pma_levels.py emit --window 3 --history <yesterday's published file, or dated archives>: carries earlier runs' ADVANCE/HOLD rows the committee did not vote today; today wins; retires PASS-today, broken kill lines, earlier HELD/WATCH rows and anything older than the window, each with a reason in doc.window.retired. The window is cut on each row's ORIGIN run, so chaining from yesterday's single published file is exact.",
+        "Every trigger id stamped <origin_run>:<id>; carried rows marked carried/origin_run/age_sessions.",
+        "RUN.yaml LEVELS command and text; RULINGS.yaml R20.1 (22 rulings).",
+        "TESTS: 228 pass, 0 fail (new: levels roll forward three sessions and today wins, incl. chaining from one file)."
+      ]
+    },
+    {
+      "version": "1.19.0",
+      "date": "2026-09-30",
+      "pm_ruling": "R20 — \"add step for PMA to write card to github location\" so AQE's 15-min alerts monitor the committee's levels and email actionable items in market hours.",
+      "changes": [
+        "NEW tool skills/pma/tools/pma_levels.py (mirrored to tools/): `stops` normalises the broker's open orders + positions (read-only) into broker_stops.json, flagging no-stop positions, limits above stops, partial cover and positions that vanished since yesterday; `emit` builds pma_levels.json (schema pma_levels.v1) from consensus, brackets, repeat_marks, cards, broker_stops, candidate_set and phase4.",
+        "emit REFUSES on a broken contract: a HOLD condition with no trigger and no not_structured_yet reason; a WATCH row with a trigger (R17); a committee exit line below the PM's broker stop; a non-numeric level; duplicate trigger ids.",
+        "RUN.yaml: new LEVELS step after CHECK; GATHER must_also does the broker read; PUBLISH pushes to TongIncomeWheel/AQE main at aegis/output/pma/ ONLY (deploy-hf.yml ignores that path, anywhere else redeploys the HF Space) and must read the file back and compare before ticking.",
+        "WRITE contract: cards.json carries structured `triggers` per ADVANCE/HOLD name and `committee_exit` / `committee_exit_range` per held name.",
+        "RULINGS.yaml: R20 (21 rulings). SKILL.md: map and a THE LEVELS FILE section.",
+        "TESTS: 217 pass, 0 fail (new: the committee levels are emitted for AQE and never loosen a stop)."
+      ],
+      "measured_finding": "First levels file published 2026-09-30 for run 2026-09-29: 36 rows (2 ADVANCE, 19 HOLD, 7 HELD, 8 WATCH), 52 triggers; 8 conditions not yet structurable (two-legged or 'holds'). First connector push carried one transcription slip, caught by read-back."
+    },
+    {
+      "version": "1.18.1",
+      "date": "2026-09-27",
+      "pm_ruling": null,
+      "changes": [
+        "FIX (record): record-verdicts graded HELD-ONLY names at the PM's COST BASIS. trim copies the position's cost into `entry` on a held-only row, and record-verdicts read `entry` as the reference close (labelled eod_close). GLD, USO, WEAT, MRVL, CRWD, FTNT were locked at what the PM paid — 10 rows over 2026-09-25/26. New _ref_px(): bracket close, then held_book.cob_price/live_px, then entry. Rows corrected in the run's ledger with the old value kept on each; no verdict moved.",
+        "FIX: cmd_packets crown lookup — no longer falls back to any aqe_crown_macro.json in the working directory; only --crown-macro or the file beside the export. The 09-26 preflight failed on the fallback.",
+        "FIX (contract): RUN.yaml DECIDE no longer declares brackets.json; R18 moved it to BRACKET, and the stale contract refused DECIDE's tick.",
+        "QUEUED, not fixed: purity_check crowding audit compares the top five against the same five (gap always 0); ledger PASS on a held name does not separate don't-add from exit, so AQE-vs-committee cannot yet be graded.",
+        "TESTS: 207 pass, 0 fail (new: a held name is graded from its close, not its cost)."
+      ],
+      "measured_finding": "First observable AQE-vs-committee disagreement: USO, AQE EXIT at +148 on day one, committee held, now −194.65. On 2026-09-26 all eleven voters said no add and converged unprompted on one exit line (close < 148.26)."
+    },
+    {
+      "version": "1.18.0",
+      "date": "2026-09-25",
+      "pm_ruling": "R19 — \"youd realise at least 5 names are repeat picks for advance that has appeared consecutive days\". It was six, and nothing on the face of the report said so.",
+      "changes": [
+        "NEW: pma_pipeline.py repeatmarks -> repeat_marks.json, run in the BRACKET step after brackets. Puts the committee's own memory on the FACE of every verdict.",
+        "Six marks: FRESH, STANDING (consecutive repeat, price still inside the name's own computed stop distance — the same unacted idea), DRIFTED (repeat past that risk — the entry the committee showed is gone), RETURNED (advanced before, after a gap), REVERSED (advanced last run, no longer does), LEFT_THE_ROOM (advanced last run, absent today).",
+        "TWO drift figures per name: from the start of the current streak, and from the first advance ever — because the streak figure understates what ignoring a name has cost. TWLO read +3.08% on its streak and +22.89% since its first call.",
+        "The STANDING/DRIFTED separator is each name's own bracket stop distance. Nothing fitted. On 2026-09-25 it flagged exactly one of six (DT at 1.3x its own risk) and confirmed the other five standing.",
+        "Report: a mark chip and the computed stop/risk/reward line now render on every advance card, plus a new 'What you have already been told' section — the repeat ledger on the face, not buried in the section-4 verbatim paste.",
+        "RULINGS.yaml: R19 added, mechanically checked (20 rulings, 14 steps).",
+        "TESTS: 203 pass, 0 fail."
+      ],
+      "measured_finding": "Of 24 ADVANCE names on 2026-09-25, 11 had advanced before and 6 on consecutive runs: DT x4, ACA x4, TWLO x2, PANW x2, FTNT x2, CNK x2. ACA had moved 0.21% across four sessions (same entry, unacted); DT +4.04%, past its own 3.14% risk. Four names the committee advanced on 09-24 carried no note anywhere that it had changed its mind: APH and TSM to HOLD, GILD and TMO out of the room entirely."
+    },
+    {
+      "version": "1.17.0",
+      "date": "2026-09-25",
+      "pm_rulings": [
+        "R17 — a door opens a FLAG, not a seat. \"It's largely informational otherwise we end up superseding the committee consensus (aka the voice) which makes no sense or discipline at all.\"",
+        "R18 — the bracket skill becomes a step of the daily PMA for the ADVANCE and HOLD names."
+      ],
+      "changes": [
+        "RANK: a name that opened a door but no seat nominated NO LONGER ENTERS the deliberation set. Not voted, no verdict, cannot override the room. Surfaced under phase4.informational[] with its doors, lane, AQE rank and momentum reads, ordered doors_opened > lenses_strong > AQE rank; the full door-opener count is recorded separately. machine_additions kept as an empty key so reader contracts hold.",
+        "RANK: the deliberation set is now EXACTLY the R16 floor — every nomination plus the PM's own positions.",
+        "NEW STEP BRACKET (after REPEAT-WATCH): pma_pipeline.py brackets runs bracket_calc over every ADVANCE and HOLD-FOR-CONDITIONS name and writes brackets.json. FIRST PRODUCER for a file declared missing on five consecutive runs. A HELD name is skipped by design with a stated reason. Without dynCap it returns levels and refuses to size; `sized` says which per name. R1 unweakened — render-only, attached after the vote, purity_check still proves rank invariance.",
+        "The served quality floor three seats proposed is DECLINED per the PM and recorded in RULINGS so it is not re-litigated; R17 makes it moot.",
+        "RULINGS.yaml: R17 and R18 added, both mechanically checked in preflight (19 rulings, 14 steps).",
+        "TESTS: 191 pass, 0 fail. The bracket test runs against a REAL served row (ACA, 171 fields) rather than a stub, because a stub omits the AQE bracket block and would assert against a shape the run never sees."
+      ],
+      "measured_reason": "Over 2026-09-22 to 09-25 the unnominated admits returned 4 ADVANCE, 22 HOLD and 8 PASS across 37 names — the room spent most of those votes rejecting names it never asked to see, and one in ten came back carrying committee authority with no voice behind it. On 09-25 that was INTC, an ADVANCE off the strength door with no seat.",
+      "first_live_bracket_run": "48 of 52 ADVANCE/HOLD names produced a computed stop, 20 cleared the ATR and reward gates, 4 skipped as held, 0 failed. Best reward ratios: AMAT 11.76, ACA 7.97, GRND 4.46, IRDM 4.15."
+    },
+    {
+      "version": "1.16.0",
+      "date": "2026-09-24",
+      "pm_ruling": "R16 — the nomination floor. PM: \"I never asked to leave 5 seats or whatever that means. It is additive and not to gate or remove voice (analyst) picks.\"",
+      "changes": [
+        "RANK: every nomination is seated UNCONDITIONALLY — no conviction test, no second door, no ordering contest, no cap. cmd_rank asserts the invariant and ABORTS the run if a nomination is ever cut.",
+        "RANK: the PM's held positions join the floor (R16+R12), so the ADD question is asked and not only keep/exit.",
+        "RANK: the seven doors become ADDITIONS ONLY, filling a separate additive --door-budget (default 8, read off the verdict record) on top of the floor. --cap now bounds the doors alone, never the seats.",
+        "RANK: the STRENGTH RESERVE is RETIRED. --strength-reserve is accepted and ignored so old command lines still run; the receipt says so.",
+        "RANK: a nomination the served universe has no row for is reported under nominations_off_universe as a declared DATA GAP, never as a cut.",
+        "REGISTRAR: split round-2 ballots. validate --part N --of M validates one part without requiring full coverage; new `merge` stitches the parts and PROVES exact coverage, refusing a gap, a duplicate across parts, and a vote on an outsider.",
+        "RULINGS.yaml: R16 and R16.1 added, both mechanically checked in preflight (not advisory).",
+        "TESTS: 158 pass, 0 fail — six new tests covering the floor, the additive budget, the held floor and split-ballot merge."
+      ],
+      "measured_reason": "Three runs shared one 24-seat pool between seat picks and machine finds and the machine won: 107 nominations -> 43 seated, 64 BINNED, 29 chairs to names no analyst asked for. Conviction-4/5 nominations ADVANCE 70% (n=23); no-nominator admits ADVANCE 10% (n=29, 14 passed outright). Root cause: the cap was never a PM rule — its true ceiling was MAX_FORM_BYTES in registrar.py, so a FILE SIZE LIMIT was deciding which of the PM's analysts were heard.",
+      "replay_2026_09_24": "Room 24 -> 44 (29 nominations + 7 held + 8 door additions). All 29 nominations seated including TEAM, APLE, QCOM, MSFT, TENB, MU, VRNS, TXN, ADI, ETN, RAL, OUST, STX, LSCC, TER, TEL, HPE. Only GME (PASS), SDGR (PASS) and META (HOLD) drop out — all three unnominated machine finds the room did not want. Ballots need 2 parts per seat."
+    },
+    {
+      "version": "1.15.0",
+      "date": "2026-09-22",
+      "changes": [
+        "THE MOMENTUM BOOK (PM ruling D120, 2026-09-22). On 2026-09-21 the committee advanced five names within 2 ATR of their 20-day average and never saw ARM (5 of 6 lenses strong, squeeze breakout on confirmed volume, +17% Monday), META (+11%) or MSTR (+9%). Only one of nine seats buys strength; seven cap extension; the SEATS door needed two nominators and the solo route was closed; the ELDER+LENS door needed three straight bars and ARM had two; COHR and MRVL (5 strong) were cut at the cap by AQE rank while SDGR, NTSK and UMC (no seat) took the slots and were rejected 11-0; the AQE_LEADER door required mp_state STRONG, and FADING -- which src/engines/mp.py defines as 'score not higher than 3 bars ago' -- read as decay; and ret_63d, ret_6m, pct_run_10d and adx_14 were in the export and dropped by CONSUMED because no menu had asked.",
+        "R13 FADING IS A LABEL, NOT A VERDICT. cmd_trim stamps mp_state_plain on every row; AQE_LEADER no longer consults mp_state; the round-2 packet header restates the rule; brief-writer may not write 'momentum fading'.",
+        "R14 TWO LANES. Every phase4 row carries lane MOMENTUM (opened STRENGTH or AQE_LEADER) or PULLBACK. All seats vote on all names; cmd_consensus --phase4 computes a MOMENTUM-lane verdict from livermore, oneil, minervini, elder-lens, detect-lens only and records the rest as advisory. Replay of 09-21 votes: TH -> ADVANCE, ANET unchanged (lens names are PULLBACK lane by design), nothing else moved.",
+        "R15 THE MOMENTUM FLOOR. MOMENTUM_SERVED appended to every seat menu (rs_spy_20d, rs_rank_pct, ret_63d, ret_6m, ret_12m, pct_run_10d, adx_14, extension_atr_20, pct_from_52w_high, mp, mp_state, mp_state_plain, mp_accel_state, runner_setup, runner_conviction_label, lens_positive, lens). Doors: ELDER+LENS 3 bars -> 2; new LENS door (>=4/6 strong, no elder test); new STRENGTH door (top-decile rs_spy_20d OR mp>=75 accelerating); SOLO route (1 seat at conviction>=4 + a momentum door); cap 20 -> 24; cap order = SEATS/SOLO, then up to 5 STRENGTH names by mp > rs_spy_20d, then lenses_strong > doors > AQE rank. Replay of the 09-19 export admits ARM, COHR, MRVL, PENG, EQH, META, MSTR, DELL and drops NTSK, UMC, MPC, AMD.",
+        "Tests 105 -> 123 (three new: fading is not a gate; momentum lane counts strength seats; every nominator is served the floor). preflight maps R12-R15 checks to the suite. Voice cards untouched -- PM chose lanes over rewriting eight cards; the strength seats' own extension caps (oneil C17, minervini C5) remain a known drag on the MOMENTUM lane and are declared in RULINGS R14."
+      ]
+    },
+    {
+      "version": "1.14.0",
+      "date": "2026-09-16",
+      "changes": [
+        "THE HELD BOOK REACHED NO SEAT, AND THE HOLE WAS BLAMED ON THE DATA PROVIDER. AQE serves export.held_positions complete -- 86 fields per position, including hl_state, its OWN health verdict on what the PM owns -- and forces every held ticker through the scoring engines whether or not it still clears the $2B/1.5M curated screen. On 2026-09-16 all three positions read EXIT. NOT ONE OF THE NINE SEATS SAW IT. cmd_trim built the universe from daily_list alone and sliced it to CONSUMED, so a held name failing the screen never entered the universe at all and the held-only fields were stripped from any that did; 42 served fields were discarded per position. Only 6 of 14 voice menus carried even the bare `held` flag and none carried hl_state, so the floor would have been missing even had the rows survived. The brief then reported 'no stop served' on two names for which AQE had served atr_fallback_stop (CRDO 134.99, PAVE 51.94), recommended STOP-TIGHTEN on PAVE and HOLD on WEAT against an engine that had already called both EXIT, and the resulting gap was reported to the PM as AQE's. It was not AQE's.",
+        "RULING R12 -- THE HELD BOOK REACHES EVERY SEAT, WHOLE. cmd_trim now merges export.held_positions onto the universe UNSLICED under a namespaced `held_book` block, sets held=True, injects held names the curated screen dropped (R5 forbids filtering the published set, not adding the PM's own book to it), and REFUSES to write if any served field is lost. The namespace is deliberate: `entry` means engine trigger on a candidate row and cost basis on a held one, so a flat merge would have silently redefined a field every seat reads.",
+        "THE HELD FLOOR is appended to EVERY seat menu in cmd_packets and is NOT editable in voice_menus.json -- held, qty, entry, trade_date, unreal_usd, live_px, hl_state, hl_score, held_sl, held_tp1, held_tp2, knn_prob, knn_tp1/2/3, bracket.atr_fallback_stop, vwap_14d_position. Menus decide which ANALYTICS a seat may use; they do not get to hide the book. A seat ruling on a position the PM owns now sees the size, the cost, the unrealised, AQE's verdict and its projected path.",
+        "THREE REFUSALS, not warnings. cmd_packets exits 1 and writes nothing if (a) a ticker in export.held_positions is absent from the universe served to the seats, (b) a held row carries no held_book block -- i.e. a candidate_set predating this ruling or built by hand, or (c) a written TSV would serve a held row without hl_state though AQE served one. (c) is verified by reading the file back off disk after writing, because the floor is only real if it is in the bytes the seat receives.",
+        "r2digest prints the same block into the ROUND-2 VOTE PACKET. It had merged held_positions into its rows since 2026-09-05 but printed only the candidate field block, so the vote packet was exactly as blind as the nominating TSVs.",
+        "tests 96 -> 105. test_a_position_the_pm_owns_reaches_every_seat asserts the book enters whole (not one of 86 fields dropped), reaches every nominating seat with its health verdict, carries into the vote packet, and that both refusals fire on a stripped and on a screened-out candidate_set.",
+        "OPEN, NOT FIXED HERE, and upstream of this plugin: the trade journal misclassifies the book. aegis_journal_2026-09-15.json tags CRDO aegis_status 'confirmed' when it is not an Aegis position, and omits GLD which is. AQE reads that journal, so it scored the wrong three names correctly. Fix belongs in the journal's book classification, not here."
+      ]
+    },
+    {
+      "version": "1.13.0",
+      "date": "2026-09-16",
+      "changes": [
+        "THE MD5 HALF OF R2 NEVER RAN ONCE, AND NOBODY NOTICED. R2 asks every seat to return a computed packet md5. No spawned seat has a hashing or shell tool, so on 2026-09-15 all eleven declared NOT_VERIFIED and substituted a quoted line -- a 100% non-compliance rate routine enough to be invisible. PM ruling 2026-09-16: a tamper check is overkill here (AQE writes the packet, the voices read it, nobody is attacking the file) and it never addressed the real exposure anyway -- a seat can hash a file perfectly and still fabricate every figure in its reasoning, which R2's own rationale records happening twice (2026-08-19, 2026-09-03). REPLACED with tools/figure_audit.py: every figure a seat presents as a served field (\"ma50 218.30\") is checked against that ticker's own packet row. registrar.py validate --packet rejects a ballot citing data the row does not carry -- one respawn, then absent, same ladder as any REJECT. RUN.yaml's VOTE step now carries validate_with, because the check only runs if the flag is passed.",
+        "THE AUDIT WAS MEASURED BEFORE IT WAS GIVEN TEETH, AND THE FIRST TWO BUILDS WERE THROWN AWAY. Build 1 matched a figure against every number anywhere in the packet: on the real 61KB packet that is 765 distinct numbers, and a ballot whose figures had been replaced wholesale still came back clean -- a check that cannot fail. Build 2 scoped to the ticker's own row (52 numbers) and caught the fabrication, but flagged 50 figures across the 231 real votes of 2026-09-15, and inspection showed all 50 were correct derived work: thorp's ATR-as-percent, oneil's own 1.40 volume floor, a stop shown as '7-8% below the 32.00 entry'. Blocking on those would reject the two most quantitative seats every run. Build 3 audits only QUOTED-FIELD claims and excludes bracket fields (R1 makes them information-only, so auditing them protects nothing). Final measurement: ZERO findings across all 231 real votes and across the 220-vote 2026-09-06 fixture, and it catches a single altered digit. audit() also reports how many claims it examined, so a clean result on an unauditable ballot reads as 'nothing was verified', never as a clean bill.",
+        "DURABILITY RESTORED -- THE v5.4 REWRITE HAD DROPPED IT ENTIRELY. stages/S0_preflight.md has always said 'local disk is disposable -- it has been wiped five times in one build, and every artifact that survived did so because it was pushed', and S7 requires the brief to reach a fixed GitHub path. The v5.4 conductor carried NO git action at any of its 13 steps, so the 2026-09-15 run -- 27 spawns, ~115k model tokens -- existed only inside a container that gets reclaimed. The capability was never missing: tools/git_sync.py has shipped since D-48, self-healing, order-blind, idempotent, and was simply never called. RUN.yaml now carries a checkpoint policy with checkpoint_after on all five MODEL steps (MACRO, NOMINATE, CHALLENGE, VOTE, WRITE) and on no tool step -- re-running consensus is cheaper than a push. A push failure declares a degradation and CONTINUES; it never halts a committee that has already done the expensive work. git_sync.py now also ships inside skills/pma/tools/, because the run's working set copies skills/ and not the plugin root, so a checkpoint pointed at the root copy would not have resolved at run time.",
+        "A STEP CAN NO LONGER CLOSE WITHOUT THE ARTIFACTS IT DECLARED. GATHER declares it produces phase4_ledger.json and verdict_ledger.json at the run root; on 2026-09-15 they landed under data/. Nothing noticed. GATHER ticked done, eleven seats ran at real token cost, and the first complaint came four steps later at REPEAT-WATCH -- recovered by hand-passing data/... paths to record-verdicts, repeat-watch and gate: the adapter R6 forbids, applied three times in one run. registrar.py tick --status done now reads that step's produces[] from RUN.yaml and REFUSES to close it if the artifacts are not at their declared paths, naming them and forbidding the re-point. --status degraded or --force-incomplete writes the gap to the scoreboard as a declared degradation, never silently. This also catches that DECIDE declares brackets.json, which the 2026-09-15 run never produced and closed clean anyway.",
+        "THE PATH COLLISION BEHIND ALL OF THAT, FIXED AT THE CONTRACT (R6). RUN.yaml's GATHER produces[] and 10+ tool argparse defaults agree on flat filenames at the run root. agents/data-steward.md declared only the REMOTE repo paths (data/pma/...) and never said where they land locally, so the steward mirrored the remote layout. The card now states the local destination explicitly and records why: everything fetched is written under its BARE filename at the run root, the remote structure is mirrored nowhere, and a file that cannot be written at its declared path is a declared degradation, never a quiet relocation.",
+        "THE PUBLISH GATE COULD NOT RUN WITHOUT AN OPERATOR KNOWING A WORKAROUND. purity_check.py defaulted --pipeline to the bare name 'pma_pipeline.py', which resolves against the run root rather than tools/, so the invariance test that decides whether a run may publish died instantly when invoked the documented way. Same class as the v1.8.0 --solo-min skew, and the second time this exact gate has shipped needing a manual flag. It now defaults to the pipeline sitting beside it.",
+        "THE GATE STOPPED CRYING WOLF ON CORRECT BRIEFS. QX2 banned the bare word 'support', which collides with ordinary trading English -- a price support level, 'no structural support clears the 3 gates' -- so the 2026-09-15 brief FAILED the publish gate on correct output and needed a human to adjudicate. It now bans oppose/abstain outright and 'support' only in the shapes a roll-call takes (a count beside it, 'supported by N', or paired with oppose/abstain in one sentence). Q9D substring-matched tickers anywhere in S9B, so the footnote explaining WHY the HOLD names are absent read as those names leaking in; it now requires a real table row, which S9B is by contract. Both directions are pinned by tests: ordinary English passes, real roll-call language and a genuine HOLD row still fail.",
+        "THE RUN MAP WAS BEING READ AS CHARACTERS, NOT DATA. RUN.yaml's WRITE step wraps its reads: list across two lines. The mini-YAML reader only understood a bracket list that opened and closed on one line, so WRITE's reads came back as a STRING and preflight's missing-input check iterated it CHARACTER BY CHARACTER, printing a wall of single letters. An input report nobody can read is an input report nobody honours -- and this was the step whose missing inputs were dismissed on 2026-09-15. The reader now joins wrapped flow lists; a test asserts every step's reads parses as a list.",
+        "BRIEF-WRITER: THE ROOT CAUSE, NOT THE WORKAROUND. The agent returned tool_uses:0 twice on 2026-09-02, printing unexecuted tool syntax, and was worked around by spawning general-purpose instead -- a note carried in RUN.yaml ever since. The cause was in the card the whole time: tools: []. An agent with no tools cannot read a step output or write a brief, so it printed what it would have run. It now declares the five tools the work needs (Read, Write, Glob, Grep, Bash). The general-purpose spawn remains the tested path, and is noted as the LOOSER of the two -- it carries every tool in the session where this card carries five. NOTE FOR A FOLLOW-UP: data-steward and committee-desk also declare tools: [] while their jobs require fetching and file access; same contradiction, not touched here.",
+        "ONE CHALLENGE DOCUMENT, TWO READERS, TWO CONTRACTS (R6). round2packets' _load_document demanded document_text while the CHALLENGE seats file structured output -- findings[]/challenges[]/catalyst_check[]/obligations[]/verdicts[] -- which is what their cards specify and what r2digest has read correctly since 2026-09-07. On 2026-09-15 the structured fields had to be serialised into document_text by hand before the step would accept a document that was already complete. The reader now understands the filed shape using the same aliases r2digest proved; a document is empty only when it carries content in NO known shape, and the error then prints the keys it does carry.",
+        "TESTS 65 -> 96, and the suite earned itself twice during this work: it caught that the stricter Q9D table-row rule broke a fixture that rendered S9B as bare space-separated tickers (a shape the brief-writer card does not allow -- fixture corrected to the contract form), and it caught that the injected leak case had silently stopped injecting anything. New groups: the gate does not cry wolf, the run map parses as data, the publish gate runs with no override, a step cannot close without its declared artifacts, a seat that invents its numbers is refused, and the expensive steps are checkpointed. Verified end to end from a faithful run layout: 96/96, preflight exit 0, all 20 verdicts and convictions of the 2026-09-06 run reproduced with ZERO moved, invariance PASS unpatched.",
+        "The duplicate tool copies at tools/ and skills/pma/tools/ -- flagged in 1.8.0 as 'the same disease that had the 2026-09-06 run execute on a stale pipeline' -- were verified identical before and after every change here, and git_sync.py was added to both. Collapsing them to one path remains the open follow-up."
+      ]
+    },
+    {
+      "version": "1.12.0",
+      "date": "2026-09-08",
+      "changes": [
+        "NEW SKILL skills/cio-voice -- the standing writing instruction for every report a PM reads. PM ruling 2026-09-08: 'I'm ok with highlighting the data/block but it has to explain what it means for action/decision making relative to the market.' Deliberately a SKILL, not a canon: a voice seat must be reproducible and auditable, so it gets numbered principles and recognisers; a report must be understood by one person at 6am before an open, so it gets shaping, guardrails and worked contrasts instead. Report writing is not mechanical and is not scored like one.",
+        "THE SO-WHAT RULE, now the governing rule of every PM-facing section (R11): figure -> what it means -> what it changes. A number that alters no decision is not written. It binds the macro and sector sections as hard as the name cards -- a macro table that stops at 'VIX 14.53, breadth neutral' has told the PM nothing; it must land on what this tape permits, what it forbids, and what would change it, naming the held positions and candidates sitting on the wrong side.",
+        "FRAMING VOCABULARY: the five states a name can actually be in -- ready now / right name wrong price / right price missing proof / needs a trigger / no read. 'No read' is a real answer and must be used; an unmeasured tape is not a calm tape.",
+        "PLAIN ENGLISH ENFORCED, NOT HOPED FOR. An 11-row translation table (BULLISH_BOS -> broke out to a new high; stack ALIGNED -> the averages line up in order; day_vol 1.37 -> traded 37% more than its own average; and so on). Engine field names may appear inside a data table where the column is the label; never in a sentence the PM is meant to act on. This existed only inside a one-off prompt on 2026-09-08 -- the quality the PM approved would not have survived to the next run.",
+        "WORKED CONTRASTS from this book, not invented examples: the 2026-09-06 action plan ('approve or reject the 9 as a block') against a per-name readiness table; V's held-book decision buried as item 4 of a process list against its own row with a verb and a trigger; a compressed one-liner against the same evidence written so a PM can act on it.",
+        "HELD-BOOK DISCIPLINE: every held name takes a verb -- HOLD / ADD / TRIM / EXIT / STOP-TIGHTEN -- and a named observable trigger. 'Monitor', 'watch closely' and 'keep an eye on' are refused: they are not decisions, they hand the work back to the PM.",
+        "SPAWN PATTERN RECORDED. The brief-writer agent type returned tool_uses:0 twice on 2026-09-02, printing unexecuted tool syntax as plain text. RUN.yaml's WRITE step now carries spawn_as: general-purpose with the brief-writer card AND cio-voice inlined. Recorded so it is not rediscovered each run.",
+        "brief-writer.md now opens by deferring to cio-voice on all language; where the two disagree, cio-voice wins. The card says WHAT goes in each section, the skill says HOW it is written.",
+        "R11 added to RULINGS.yaml (11 rulings). TESTS 56 -> 65: the skill ships, carries the so-what rule, translates at least six engine terms, names the five states, forbids unactionable rows, records the spawn pattern, and is wired into both the card and the WRITE step."
+      ]
+    },
+    {
+      "version": "1.11.0",
+      "date": "2026-09-08",
+      "changes": [
+        "THE BRIEF NOW ANSWERS THE PM'S FIVE QUESTIONS, IN ORDER, AND THE LAST THREE ARE THE DELIVERABLE. PM ruling 2026-09-08: (1) what is the market shape/regime/macro telling us -> S1; (2) which sectors and thematics show signal -> S2; (3) what to do with what I own -> S3 plus NEW S9A; (4) what to trade today -> S0/S0A/S0B plus NEW S9B; (5) what does the day's plan look like -> NEW S9C. The brief-writer card now opens with that mapping: everything above S9A/S9B/S9C is the EVIDENCE, those three are the deliverable.",
+        "S9A WHAT TO DO WITH WHAT I OWN -- one row per held name, no exceptions, even when the answer is nothing. Name, qty, entry, mark, unrealised, ACTION (exactly one of HOLD / ADD / TRIM / EXIT / STOP-TIGHTEN), the named observable trigger that would change it, today's stop, and one line of why. Plus book concentration and total open risk. On 2026-09-06 the held-book decisions were scattered across a numbered process list -- V in item 4, BRZE's earnings print in item 5 -- which is not a book review.",
+        "S9B WHAT TO TRADE TODAY -- one row per ADVANCE, ranked by readiness rather than by rank: entry reference, render-only stop, what confirms, what kills it, sector context, and READY NOW vs NEEDS RESET. HOLD-FOR-CONDITIONS names are excluded by design; their condition line in S0 is the whole story. On 2026-09-06 the action plan said 'approve or reject the nine as a block', which makes the PM do the work the committee exists to do.",
+        "S9C THE DAY'S PLAN -- six lines maximum, in time order: what to do at the open, what to watch in session, what would change the plan mid-day, what needs a decision before the close.",
+        "Q9D GATE, MECHANICAL. The gate refuses a brief missing any of S9A/S9B/S9C; refuses a S9A row with no named action; refuses 'monitor' or 'watch closely' as a S9A action; requires EVERY ADVANCE name to appear in the trade list; and refuses any HOLD name that leaks into it. Verified against the 2026-09-06 brief, which now correctly fails with 3 FAIL because it predates these sections.",
+        "CONSTITUTION UNCHANGED: S9A and S9B carry levels and actions only. No sizing, no order language, nothing staged, nothing armed (R10).",
+        "TESTS: 49 -> 56. The new group proves each missing section is refused, a complete brief passes, a HOLD name leaking into the trade list is caught, and both unactionable-row cases fail.",
+        "RUN.yaml WRITE step now lists all 15 sections plus an explicit the_five_questions map, so the section list and the PM's actual reading order cannot drift apart."
+      ]
+    },
+    {
+      "version": "1.10.0",
+      "date": "2026-09-07",
+      "changes": [
+        "EVERY READER NOW DECLARES ITS SHAPE (R6). 18 read sites across the pipeline state the keys they will dereference, up from 3. On 2026-09-06 all three tool failures were reads: a reader looked for a key the writer does not produce, found nothing, and carried on -- consensus emitted ZERO verdicts silently, r2digest dropped an entire challenge document. A mismatch now raises at the point of read, naming both the required keys and the keys the file actually carries. The ledger readers, record-verdicts, repeat-watch, the packet builder and the grader are all covered. Verified: candidates without 'universe', export without 'daily_list' and phase4 without 'deliberation_set' are each refused, and all four subcommands still reproduce the 2026-09-06 run byte-for-byte.",
+        "Q8L WIRED INTO THE GATE (PM RULING R8). The gate now REFUSES a brief whose deliberated names are not already on the verdict ledger for that date. Ten sessions had run and only three left a record, so history was being reconstructed by re-reading 300KB briefs. A run that produces a report but no record is a FAILED run, not a partial one. `gate --verdict-ledger <path> --date <date>`.",
+        "LEDGER BACKFILLED TO A COMPLETE 5-SESSION WINDOW. 2026-09-02 (20 rows) and 2026-09-03 (15 rows) recovered from their own briefs and tagged record_source: backfilled_from_brief_2026-09-07 -- verdicts, conviction and vote splits only, no invented prices. Ledger is now 08-31, 09-02, 09-03, 09-04, 09-06: 113 rows across 5 sessions. Effect on repeat-watch, measured: 14 GAP rows -> ZERO. Every repeat now resolves to a real prior verdict.",
+        "QX3 EXEMPTION, DECLARED AND BOUNDED. Sections 0A and 0B are exempt at THREE sentences; every other section keeps the two-sentence limit. They exist because the PM could not tell from the brief what the committee based a pick on or why it suits a momentum book, and that answer does not fit in two sentences: the winning argument, the losing argument, and what must stay true. The exemption is bounded by section AND by count -- a fourth sentence in 0A still fails the gate, and there is a test that proves it. Only top-level headings switch the exemption on, so the per-name blocks inside 0A/0B inherit it.",
+        "TESTS: 40 -> 49 assertions, still zero dependencies, still fixtured on the real 2026-09-06 committee outputs. New groups cover Q8L (fires on an empty ledger and on a missing one), shape declaration across three different readers, and the bounded QX3 exemption in both directions.",
+        "COST WORK DROPPED AFTER MEASUREMENT. The plan was to slice the Round-2 pack per voice. Measured on real data: Saturday's 68,811-byte pack is 1,757 header + 32,570 rows/reasons + 34,304 condensed challenge documents. Per-voice slicing takes the middle line from 358,270 to 329,144 across eleven voices -- 8%, not the 40% estimated. The four challenge documents must be identical for all eleven or they are not arguing against the same evidence. The earlier 1.3M -> 800k claim was an estimate and was wrong; it is withdrawn rather than shipped."
+      ]
+    },
+    {
+      "version": "1.9.0",
+      "date": "2026-09-07",
+      "changes": [
+        "THE CONSTITUTION IS NOW DATA, NOT PROSE. PM, 2026-09-07: 'half of the problem is you write prose and can't understand your own prose and it gets unstructured messy.' Correct. On 2026-09-06 three rulings held and three did not, and the difference was never authority -- only whether the rule had been compiled into something that could fail. Two new files replace the essay: RULINGS.yaml (10 standing rulings, each with the step it binds at and the check that enforces it -- 9 of 10 machine-checked, 1 advisory and PRINTED to the conductor so it cannot be lost to compaction) and RUN.yaml (13 steps, each with its command, required inputs, produced outputs, barrier, on-fail policy and meter call). SKILL.md drops from a 117-line prose essay to a 101-line operating page that explains but does not decide; where the card and the data files disagree, the FILES WIN.",
+        "tools/preflight_run.py -- the gate before every step. 'preflight_run.py run' asserts the mechanical rulings and runs the regression suite; the run does not start if it fails. 'preflight_run.py step <NAME>' prints that step's command, barrier, on-fail, meter call, missing inputs, and every ruling binding there, so a compacted operator re-reads the rules instead of re-deriving them. 'preflight_run.py stamp' records the sha256 of every tool the run will execute (R7). Zero external dependencies -- includes a purpose-built minimal YAML reader so it runs on any box, like registrar.py.",
+        "R7 ENFORCED: tool hashes are stamped at GATHER and re-verified at every preflight. Tamper-tested -- editing a tool mid-run now fails preflight by name. On 2026-09-06 the committee executed a pipeline one commit stale and nothing noticed for a day; that class is now closed.",
+        "R5 RECORDED (PM ruling 2026-09-07): AQE publishes candidate_set.json already Layer-0 filtered and the pipeline consumes it AS PUBLISHED -- no local momentum floor, no second screen, no column stripping. Preflight asserts no local filter exists between GATHER and RANK. Two filters in two places is how the 2026-09-06 run ended up arguing with itself about whether the universe was 131 names or 56.",
+        "FIRST TESTS IN THE PLUGIN'S HISTORY. tests/test_pipeline.py -- 40 assertions, zero dependencies, fixtures are the REAL trimmed 2026-09-06 committee outputs and the expected answers are what that run actually produced. It reproduces all 20 verdicts and convictions, asserts the 9/11/0 split, proves each challenge document renders, proves rank is stable and sector-blind, proves purity_check runs unpatched, and proves each of the three 2026-09-06 silent failures now HALTS with a named diagnosis. Previously: 17,148 lines of python, zero tests.",
+        "The suite immediately earned itself: it caught a DEAD GUARD in the 1.8.0 r2digest fix -- a blank-line append sat above the empty-section check, so len(L) was always before+1 and the guard could never fire. Fixed and re-verified. That is exactly the defect class that shipped silently for weeks.",
+        "Verified end to end on the real 2026-09-06 run: 40/40 tests pass, preflight passes, verdicts identical, same 20-name deliberation set, same 13-name cut list."
+      ]
+    },
+    {
+      "version": "1.8.1",
+      "date": "2026-09-07",
+      "changes": [
+        "SHAPE CHECKS AT THE READ CHOKEPOINT. Every failure on 2026-09-06 was a READ, not a write: a reader looked for a key the writer does not produce, found nothing, and carried on. cmd_consensus looked for stances[] against forms carrying votes[] and emitted ZERO verdicts silently; r2digest looked for findings[] against a document filing challenges[] and dropped the entire document from the vote packet. Both silent. The pipeline reads 15 distinct file shapes and only 2 of them had a written contract.",
+        "load() -- one line, 29 call sites -- now takes needs=[...] so a reader DECLARES the keys it requires. A mismatch raises immediately and prints the keys the file actually carries, instead of returning a wrong answer three steps downstream. Verified by replaying the exact 2026-09-06 bug: it now stops with a one-line diagnosis naming both shapes.",
+        "save() -- 12 call sites -- now stamps _schema {shape, version, written_by, at} so the next reader can check rather than guess. Metadata only; no consumer field is touched. Files written before stamping carry none and are accepted, so no historical artifact breaks.",
+        "The three readers that broke now declare their requirements: consensus needs voice; rank needs universe, daily_list and srm; r2digest needs deliberation_set and ranked.",
+        "Verified on the real 2026-09-06 run: verdicts identical, same 20-name deliberation set, same 13-name cut list."
+      ]
+    },
+    {
+      "version": "1.8.0",
+      "date": "2026-09-07",
+      "changes": [
+        "PM RULING 2026-09-07 -- SECTOR IS NOT A GATE. srm_entry_gate removed from the DOOR-1 ranking key in pma_pipeline.py cmd_rank. It never gated admission (there is no sector door); as the 3rd tiebreaker inside a cap that admits every DOOR-1 name it was inert, and AQE's BLOCKED/CAUTION labels read as authority the layer does not have. Measured on real 2026-09-06 data: neutralising it gives an IDENTICAL 20-name deliberation set and an IDENTICAL 13-name cut list -- only the display order of ranks 10-16 moves, and verdicts come from votes, not rank. Sector remains context and a SIZING input: rendered on every row and card and in brief S2, weighted by individual seats at their own discretion, never consulted by selection or ordering.",
+        "DEFECT (silent wrong answer) -- pma_pipeline.py cmd_consensus read the legacy stances[]/stance shape while the installed v5.3 vote schema is votes[]/vote, so it returned an EMPTY tally on real forms and the 2026-09-06 run needed a hand-built key-rename adapter to get any verdicts at all. Now shape-tolerant on both, and it RAISES rather than emitting an empty tally. Verified: reproduces the committed 20 verdicts and convictions exactly from the raw v5.3 forms, no adapter.",
+        "DEFECT (silent data loss) -- pma_pipeline.py cmd_r2digest's challenge reader looked only for findings[]. The crowding seat files challenges[]/catalyst_check[], so its ENTIRE challenge document was dropped from the Round-2 vote packet with no error on 2026-09-06 -- caught only by eyeballing the output. Now aliases the known shapes and REFUSES to emit an empty section for a document that was filed. Verified: 49 lines rendered from the raw file, no adapter.",
+        "DEFECT (publish gate could not run) -- purity_check.py hard-coded --solo-min, which the v5.3 four-door rank RETIRED, so rank exited 2 and the invariance test -- the gate deciding whether a run may publish -- could not execute at all; 2026-09-06 needed a locally patched copy. It now probes rank's own --help and passes exactly the flags that exist, and forwards --pm-lens/--pm-lens-min so BOTH runs use the command RANK actually used. A tool/pipeline version skew now degrades to a weaker test, never to no test. Crowding base rate also fixed: with solo_min defaulting to 0, 'maxc >= 0' swept in every tallied name and diluted it. Verified: invariance PASS out of the box, unpatched.",
+        "COST METER -- registrar.py's tokens field existed and nothing ever wrote it, so the PM's token meter read 0 for a run costing over a million. New 'registrar.py meter' records spawns, bytes inlined into spawn prompts and bytes returned; --tool-only marks steps that move bytes between files without entering a model context (counting those read GATHER at 933k, which is arithmetic, not cost). 'status' now prints est_tokens and wall-clock minutes per step with its basis stated. 'started' is write-once -- a re-tick used to reset it, which is why 2026-09-06 reported GATHER as an eight-hour step. Measured on that run: 39 spawns, ~1.11M model tokens, VOTE the largest single line at 352k.",
+        "BRIEF -- agents/brief-writer.md gains a MANDATORY S0A EXECUTIVE CONSENSUS section: three lines on the book, then 2-3 sentences per ADVANCE name giving the winning argument with its figures and the strongest losing argument. The S0 one-liner says what a name is; S0A says why it was rated ADVANCE. Same body rules: no seat name, no vote count, no bracket-based reason.",
+        "SINGLE VERSION -- registrar.py, purity_check.py and pma_pipeline.py existed as DIVERGENT duplicates at both tools/ and skills/pma/tools/ (root registrar.py was an older 13,304-byte build). Both paths now carry the identical patched file. This duplication is the same disease that had the 2026-09-06 run execute on a stale pipeline; it should be collapsed to one path in a follow-up.",
+        "skills/pma/SKILL.md carries the v5.4 ordering key and a new COST METER section with the measured per-step budget and the two levers (VOTE inlines the ~69KB packet 11 times; WRITE hands brief-writer all eleven vote forms).",
+        "skills/pma/tools/patches/apply_2026_09_07.py ships with the plugin -- the assert-anchored, idempotent migration that produced all of the above. It applies or fails loudly, never half-applies, and refuses any file that has diverged from its expected base."
+      ]
+    },
+    {
+      "version": "1.7.2",
+      "date": "2026-09-06",
+      "changes": [
+        "R1 made mechanical — bracket is never a reject. registrar.py validate now REJECTS (a) any Round-2 OPPOSE whose reason/opposing_case uses a bracket term (bracket.valid/rr/risk_pct/stop_type, 'no usable stop', 'stop too wide', 'R:R too thin'...) as the disqualifier, and (b) any Round-1 shortfall_reason that cites a bracket. One re-spawn carrying the R1 text, then absent — same ladder as any REJECT. Other bracket mentions are flagged BRACKET_BASIS / BRACKET_MENTION on the scoreboard, never rejected. Conductor card discipline #7 updated to match. PM: 'the AIC chooses ticker ideas on a momentum book — strongest momentum and structures. Brackets are the last step for the PM to narrow a trade idea further.'"
+      ]
+    },
+    {
+      "version": "1.7.1",
+      "date": "2026-09-06",
+      "changes": [
+        "PM ruling 2026-09-06: aegis-core is the analytics/orchestration plugin only. /ptj, /premarket and print-trade-journal (everything PTJ and premarket-data-prep) moved to the aegis-daily plugin. Remaining committee skills still cite the premarket stamp as a prerequisite gate — they check it, they never perform the data fetch. aegis-voices untouched."
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "date": "2026-09-06",
+      "changes": [
+        "D-106: unrecognized equity fills AUTO-INCLUDE as confirmed Aegis positions (flagged auto_included_unrecognized, high severity) instead of parking in pending_review; PM's only lever is held_book_refresh.py reject, which now also strips the persistent membership file.",
+        "D-107: WTD realized P&L rollup added to archive_ledger.py, keyed by ISO calendar week, alongside the existing MTD/YTD rollups.",
+        "D-108: new tools/overnight_brief.py — pure read+assemble step (PTJ CLOSE job 10.5) producing overnight opened/closed/stop-changed, realised MTD/WTD/YTD, open risk (equity-only, Aegis-confirmed-only, unknown-stop names named not zeroed), and book beta/exposure — closing a relay gap, not a computation gap. ptj/SKILL.md's job table and Step 3 print spec updated to require it.",
+        "D-109: phase_gate.py's freshness checks now compare against last-trading-day close-of-book (weekend + optional charter-declared-holiday aware) instead of the literal calendar date, so /pma run on a weekend or Monday correctly expects Friday's close instead of demanding same-day data it cannot have. Never grants forward grace into an ordinary trading day. New --holidays flag.",
+        "D-109 (pma side): the PMA GATHER step now calls phase_gate.py check --for premarket_build as its Step 0 and halts with a PM prompt on NOT_READY/BLOCKED instead of silently proceeding on stale premarket data.",
+        "D-110: mandatory, unconditional GitHub-connector push + independent verify checklist after every PTJ CLOSE run, closing a real incident (2026-09-04) where a clean run sat gate-stamped partial for two days because the re-stamp step was skipped.",
+        "D-111: run_post_market.sh now recognizes the exact, routine, always-self-healing sandbox git-proxy-403 push block by its literal error signature and records it as expected (self-stamping the gate ok) instead of FAIL — a genuinely different push failure still records FAIL and still degrades the run. D-110's push-verify checklist still runs every time; its only remaining manual lever is downgrading the gate to partial if verification itself ever fails.",
+        "D-112: new Step 2b in ptj/SKILL.md — after PTJ CLOSE, dispatch the AQE daily pipeline (daily-run.yml workflow_dispatch) and poll to completion, paging the PM on failure/timeout and never auto-retrying. Currently degrades to an explicit manual-fallback flag in the Step 3 report, since no available GitHub connector or session-authorized path can call the Actions API yet — this is documented so it fails loud, not silently, until Actions-API access exists."
+      ]
+    },
+    {
+      "version": "1.5.2",
+      "date": "2026-09-05",
+      "changes": [
+        "dynCap single-writer fix: tools/recompute_dyncap.py (PTJ CLOSE job 3.5, runs right after Aegis-membership classify) now writes the complete, schema-conformant ledger straight to data/persistent/dyncap_ledger.json — allocation, realised, unrealised, dyncap_usd, counts, mark timestamp, all in one shape, validated against contracts/dyncap_ledger.schema.json before write (fail-closed).",
+        "premarket step 8 no longer recomputes dynCap via tools/dyncap_ledger.py update — that path's from_ptj() summed unrealised P&L over ALL open positions with no aegis_status filter, i.e. could reintroduce the exact D-99 co-mingled-book bug this ledger exists to close. Step 8 now only reads the file job 3.5 already wrote. PM ruling 2026-09-05: \"should be done as part of the PTJ step.\""
+      ]
+    },
+    {
+      "version": "1.5.1",
+      "date": "2026-09-05",
+      "changes": [
+        "Re-synced contracts/voice_menus.json, pma_pipeline.py and emit_packets.py against the 2026-09-05 AQE voice-packet-spec build: 18 new export fields routed onto seat menus; chart-pattern fields excluded as a checked build-time invariant."
+      ]
+    }
+  ]
 }

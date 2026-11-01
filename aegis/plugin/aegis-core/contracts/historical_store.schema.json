@@ -1,0 +1,39 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Historical Data Store (per ticker) — the layered anchoring store (D-32)",
+ "x_version": "1.0.0",
+ "x_note": "A data-objects store LAYERED AWAY from the daily feed. Pulled from FMP. Serves anchoring purposes (empirical return distribution / DoR, kNN & CHoCH context, forward-return ledger tracking, backtests) — queried on demand, NEVER streamed into the agents' daily 177-name feed. Monthly granularity keeps it compact; daily is an optional deeper archive.",
+ "type": "object",
+ "required": ["ticker", "source", "as_of", "monthly", "stats"],
+ "properties": {
+  "ticker": {"type": "string"},
+  "source": {"const": "FMP"},
+  "as_of": {"type": "string"},
+  "from_date": {"type": "string"},
+  "to_date": {"type": "string"},
+  "monthly": {
+   "type": "array",
+   "description": "one row per calendar month",
+   "items": {
+    "type": "object",
+    "required": ["month", "o", "h", "l", "c"],
+    "properties": {
+     "month": {"type": "string", "description": "YYYY-MM"},
+     "o": {"type": "number"}, "h": {"type": "number"}, "l": {"type": "number"}, "c": {"type": "number"},
+     "ret_pct": {"type": ["number", "null"], "description": "month-over-month close return %"},
+     "range_pct": {"type": ["number", "null"], "description": "(high-low)/prior close %"}
+    }
+   }
+  },
+  "stats": {
+   "type": "object",
+   "description": "anchoring stats for DoR / sizing sanity",
+   "properties": {
+    "n_months": {"type": "integer"},
+    "monthly_ret_mean_pct": {"type": ["number", "null"]},
+    "monthly_ret_std_pct": {"type": ["number", "null"]},
+    "ann_vol_pct": {"type": ["number", "null"], "description": "monthly_ret_std * sqrt(12)"}
+   }
+  }
+ }
+}

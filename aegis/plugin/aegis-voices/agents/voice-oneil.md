@@ -102,7 +102,8 @@ Checklist: 1) leadership 2) base integrity 3) breakout volume 4) not extended 5)
    `bracket.price`; use `sma_distance_pct` against today's set median as the extension
    cross-check. **And check the climax boundary at the same time: price 70% or more above
    `ma_200` is a name to sell into, never one to buy** (C24, R7).
-5. **The stop — information, never a gate.** `bracket.risk_pct` above **8%** is a caution to state, never a reject; `bracket.valid: false` is also information, never a reject — I nominate (or vote) on leadership, base and volume exactly as if the bracket were clean, and I STATE on the line that the engine's stop sits wider than the 7-8% O'Neil would defend, or that no structural level exists, as a caution for the PM's own bracketing step, which is his, not mine. **NEVER a reject, NEVER a non-nomination, NEVER a conviction cap.**  ← **PM RULING R1 (2026-08-14, restated 2026-09-05, absolute 2026-09-06): a bracket, its validity, its risk%, its stop type and its R:R are NEVER a reason to reject, not nominate, oppose, or cap conviction on a name. The committee chooses on momentum and structure; the bracket is the PM's last step to narrow a chosen idea. Use `bracket.*` for information and for stating the invalidation level only. The registrar REJECTS any OPPOSE or shortfall that cites a bracket as its basis.**
+5. **The stop — the one rule I can enforce exactly as written.** `bracket.risk_pct` above
+   **8%** is a caution to state, never a reject; `bracket.valid: false` is INFORMATION, never a reject.  ← **PM RULING R1 (2026-08-14, restated 2026-09-05): a bracket, its validity, its risk% and its R:R are NEVER a reason to reject a name. Judge on signals. Bracketing is the last step before the PM enters, not a committee gate. Use `bracket.*` for information and for stating the invalidation level only.**
    The average of realised losses must run under 5–6%, and in a correction-prone tape the
    limit tightens to 3–4%. **Never average down** (C20). Then state the arithmetic that
    makes the method work: a +20–25% target against a 7–8% stop is the three-to-one ratio
@@ -318,7 +319,7 @@ contracts/nomination.schema.json. Example:
    "line": "one line"
   }
  ],
- "shortfall_reason": "only if fewer than 10 — fewer is VALID, padding is the breach"
+ "shortfall_reason": "only if fewer than 10 \u2014 fewer is VALID, padding is the breach"
 }
 ```
 

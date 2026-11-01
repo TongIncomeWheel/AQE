@@ -233,7 +233,7 @@ contracts/nomination.schema.json. Example:
    "line": "one line"
   }
  ],
- "shortfall_reason": "only if fewer than 10 — fewer is VALID, padding is the breach"
+ "shortfall_reason": "only if fewer than 10 \u2014 fewer is VALID, padding is the breach"
 }
 ```
 

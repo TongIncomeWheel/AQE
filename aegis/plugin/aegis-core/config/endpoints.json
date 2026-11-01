@@ -1,0 +1,33 @@
+{
+  "_comment": "Cowork-native deploy: FMP/Tiger/Drive are account-level MCP connectors (see install_state.json) -- tiger_mcp.url/alpaca_mcp.url REPLACE placeholders are the legacy raw-REST fallback path, not required for this deployment. Revisit only if a headless scheduled-task session is ever found NOT to inherit account connectors. IBKR retired D-98 (no residual capital) -- the former ibkr_gateway block is removed; see charter/decisions_log.md.",
+  "tiger_mcp": {
+    "url": "REPLACE: https://<your-cloud-run-tiger-mcp>",
+    "auth": "REPLACE: header or none",
+    "reused": true
+  },
+  "alpaca_mcp": {
+    "url": "REPLACE: https://<your-cloud-run-alpaca-mcp>",
+    "auth": "REPLACE",
+    "reused": true
+  },
+  "fmp": {
+    "base": "https://financialmodelingprep.com/stable",
+    "key_env": "FMP_API_KEY"
+  },
+  "aqe_repo": {
+    "url": "https://github.com/TongIncomeWheel/AQE.git",
+    "export_path": "output/aqe_daily_export.json"
+  },
+  "drive_sync": {
+    "method": "rclone",
+    "remote": "REPLACE: gdrive:Aegis",
+    "direction": "bidirectional data/ only"
+  },
+  "notifications": {
+    "active_channel": "cowork -- PILOT native push via scheduled-task notifications (D-46); no endpoint needed",
+    "_migration_only": "the entries below activate ONLY post-pilot on the local box / Kimi, when AEGIS_NOTIFY_CHANNEL=whatsapp -- NOT wired for the Cowork pilot",
+    "whatsapp_api": "https://graph.facebook.com/v20.0",
+    "provider": "meta OR twilio -- keys live in config/.env, never here",
+    "watchdog": "external dead-man's-switch (healthchecks.io / cloud cron); ping URL in WATCHDOG_URL env -- only meaningful when we run the infra (local box)"
+  }
+}

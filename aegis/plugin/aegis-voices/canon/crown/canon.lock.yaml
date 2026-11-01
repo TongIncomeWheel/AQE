@@ -1,0 +1,552 @@
+voice: crown
+grounded: false
+pm_signed: Ash
+pm_signed_date: '2026-08-11'
+pm_signed_note: 'Ash: ''I sign off on crown, yes natural partner to drunkenmiller'' (2026-08-11, chat).
+  Confirms the seat AND its committee placement — delivered after nominations, paired with druckenmiller,
+  now-versus-next (crown = now/regime, druckenmiller = next/forecast). This sign-off authorises the canon
+  lock and skill card below. It does NOT authorise a source-registry decision (none exists for Crown to
+  decide) and it does NOT mean an executable engine exists — see build_status.'
+build_status: 'CORRECTED 2026-08-11 (same day as the first pass). The first version of this
+  field said "NOT BUILT" — that was wrong, and PM-corrected in chat: "you dont need the crown
+  engines, that is already incorporated into AQE. what you need is the Nickcrown output from
+  AQE, and the methodology. everything else is calculated for you." A git-repo search had found
+  no src/macro/crown/ and concluded no engine existed; that search only covered this git checkout
+  and missed that AQE runs and publishes to Google Drive, not to this repo. Checked directly
+  against Drive (Google_Drive connector, 2026-08-11): file `aqe_crown_macro.json`
+  (id 1LTwT8Tg9T4bBPnQLwNozbxrXKT625Yb7, 24,545 bytes), same parent folder as the live
+  `aqe_daily_export.json` (parentId 1CJMoI19Zf_ZFeU5_5uhW9l92IB8fVger, the AQE Drive folder),
+  generated_at 2026-08-11T08:49:23+08:00 — today, real, live. AQE-side the engine is BUILT and
+  RUNNING; that part needed no work. What is still genuinely missing, verified by absence in
+  this repo: no `contracts/crown_macro.schema.json`, no ingestion tool that pulls
+  `aqe_crown_macro.json` alongside the main AQE pull (premarket step 3 only fetches/validates
+  `aqe_daily_export.json` against `contracts/aqe_export.schema.json` — this second file is not
+  in that path), and committee-pm step 8 is not wired to inject it (it currently only references
+  a separate, simpler "Crown Macro Letter" bellwether text per D-59 — see committee_placement
+  below, that is a different, already-built thing). So: compute done, ingestion not done. The
+  recognisers below are now grounded in the REAL schema (read live from the artifact itself,
+  not proposed) — see extract_sha and the aqe_crown_macro_json source entry.'
+extract_sha:
+  crown_voice_charter_md: 01fac5016fd8dfedd1fef313ed01e6a793f1d028610cf1e6396bec2e16aaeddc
+  aqe_crown_macro_json_2026-08-11: c8521d12495169232ef3e9f390192dbc25c73cc8299dccf5e77d0a22e4b122d4
+diff_sha: null
+diff_sha_note: 'Not applicable. This file was hand-authored directly from the PM-supplied charter, not
+  produced by tools/canon_build.py''s automated lock pipeline — that pipeline requires on-disk extraction
+  chunks under canon/crown/<source>/chunks/, which do not exist and cannot exist for a chat-upload-only
+  source (see sources below). No diff was computed because there is no prior extracted version to diff
+  against.'
+sources:
+- key: cipdk14
+  title: Crown Institutional Process — Deployment Kernel v1.4
+  author: null
+  year: null
+  code: CIPDK14
+  weight: foundational
+  kind: chat_upload_not_in_repo
+  in_repo: false
+  note: 'The primary source. Referenced throughout the charter by section number (kernel s2.2, s2.3,
+    s2.4, s2.5, s3, s4, s5, s6) but the document itself was never added to this repo — chat upload only.
+    A reviewer can check the charter against the (not-yet-built) code; neither can be checked against
+    this document.'
+- key: crown_letter
+  title: One Nick Crown macro letter (PDF), Aug 2026
+  author: Nick Crown
+  year: 2026
+  code: CROWN_LETTER
+  weight: adjacent
+  kind: chat_upload_not_in_repo
+  in_repo: false
+- key: crown_voice_charter
+  title: Crown — Voice Charter (the build''s own transcription of CIPDK14 + CROWN_LETTER, PM-supplied
+    as a chat upload, dfdc9a83-CROWN_VOICE_CHARTER.md)
+  author: null
+  year: 2026
+  code: CVC
+  weight: foundational
+  kind: chat_upload_charter_document
+  in_repo: false
+  sha256: 01fac5016fd8dfedd1fef313ed01e6a793f1d028610cf1e6396bec2e16aaeddc
+  note: 'This is the actual document C1-C39 and R1-R11 below are transcribed from — the charter, not
+    the kernel or the letter. It is one remove from the primary sources.'
+- key: aqe_crown_macro_json
+  title: aqe_crown_macro.json — the live AQE compute output (Google Drive, AQE folder, same
+    parentId as aqe_daily_export.json)
+  author: null
+  year: 2026
+  code: ACM
+  weight: foundational
+  kind: live_drive_artifact
+  in_repo: false
+  file_id: 1LTwT8Tg9T4bBPnQLwNozbxrXKT625Yb7
+  folder_id: 1CJMoI19Zf_ZFeU5_5uhW9l92IB8fVger
+  generated_at_checked: '2026-08-11T08:49:23+08:00'
+  status_at_check: DEGRADED
+  sha256: c8521d12495169232ef3e9f390192dbc25c73cc8299dccf5e77d0a22e4b122d4
+  note: 'This is the REAL, RUNNING output the charter''s §11 field map was describing — proof the
+    AQE-side engine exists and is live, not a proposal. Downloaded and inspected directly (Google_Drive
+    connector) on 2026-08-11 after Ash corrected the initial NOT_BUILT finding. Top-level keys:
+    artifact, version, kernel_version, what_this_is, generated_at, status, status_means,
+    read_me_first, the_call, how_current, scenario, readings (breadth/positioning/volatility/divergence),
+    what_changed, what_is_coming, key_levels, how_to_read, limits. The recognisers below cite REAL
+    dotted paths into this structure, verified by direct inspection, not proposed placeholders.
+    Not schema-locked — AQE could change this shape without notice, and no
+    contracts/crown_macro.schema.json exists yet to catch a breaking change (see build_status).'
+pm_spot_check:
+  sampled: 0
+  confirmed: 0
+  by: Ash
+  basis: 'CHARTER-LEVEL confirmation, one step below every other voice in this canon and below even the
+    O''Neil digest pattern (canon/oneil/spotcheck.json) — flagged explicitly rather than dressed up as
+    equivalent. O''Neil''s digest was an independent third-party extraction that the PM then checked
+    against the book. Crown has no independent extraction to check: the charter IS the PM-supplied build
+    document, and no page, digest chunk or extract sample exists anywhere to sample against — canon_build.py''s
+    lock command could not run here even in principle (see diff_sha_note). The grounding this voice rests
+    on is PM authorship/supply of the charter itself, plus the explicit sign-off quoted in pm_signed_note.
+    No principle below should be described as ''verified'' or ''digest-verified'' — every one carries
+    status: unsourced_retained, and that status is accurate, not conservative. ADDED 2026-08-11 after
+    live corroboration: the principles'' TEXT is still unverified against a page (CIPDK14 remains chat-upload-only),
+    but the mechanism they describe is no longer speculative — a live AQE artifact
+    (aqe_crown_macro_json, see sources) independently confirms the same structure: a `read_me_first`
+    block matching this card''s 4-block output shape headline/why/so_what/what_would_change_it, a
+    `the_call` block carrying `expression_family` + `size_multiplier` capped in practice at or below
+    1.15x (observed 1.0x on 2026-08-11), a `scenario` block scoring "share of conditions met" rather
+    than a probability (C34), and a `status`/`limits` field pair that refuses degraded inputs by name
+    rather than silently zeroing them (C29/C30/C33 in practice, not just in principle). This is
+    structural corroboration, not textual verification — status stays unsourced_retained throughout.'
+  per_source: {}
+principles:
+- id: C1
+  text: Positioning, breadth and regime come before price. Price lags all three.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C2
+  text: The hierarchy is the method, not a table of contents. Reading a later step without an earlier
+    one is a different process, not a shortcut.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C3
+  text: An unreadable market stops the process. Low confidence is not small size. Nothing downstream is
+    computed, and that is a result rather than a failure.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C4
+  text: The regime dictates the allowed family. The individual setup comes after and is not this voice''s
+    job.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C5
+  text: Size is a multiplier on someone else''s budget, never an absolute, and the arithmetic behind it
+    is always shown.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C6
+  text: Tactical families cap size rather than compounding it. Multiplying two independent size opinions
+    understates by design rather than by evidence.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C7
+  text: 'A partial match reported with its unmet conditions beats a clean "no match". Name the closest
+    family and what it failed.'
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On sequence and authority'
+- id: C8
+  text: The index and the average stock tell different stories. The ratio between them is the question
+    worth asking.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On breadth'
+- id: C9
+  text: Read the chart before the label. A range position means nothing without the range it refers to.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On breadth'
+- id: C10
+  text: Regime and range position are one reading. Either alone is half a statement.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On breadth'
+- id: C11
+  text: A tired trend is more actionable than a live one. The end of a range tells you to prepare for
+    the turn; the start only tells you to go with it.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On breadth'
+- id: C12
+  text: Breadth deterioration shows in the ratio''s own move before the regime label flips. A gap to a
+    moving average is self-damping, because the average chases the ratio.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On breadth'
+- id: C13
+  text: Trend funds all run broadly the same rule, so their selling arrives together. That is what makes
+    it anticipable.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C14
+  text: The tradeable output of a trend model is the flip level, not the positioning estimate. The level
+    is arithmetic; the estimate is a guess about someone''s book.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C15
+  text: Crowding is fragility, not conviction. When two thirds of the complex is stretched, the process
+    cuts size even though the bias looks clean.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C16
+  text: 'Positioning data is context, never timing. It is stale by construction and answers exactly one
+    question: is the crowd already positioned the way price is moving?'
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C17
+  text: Read the percentile, never the raw contract count. A number without its own range means nothing.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C18
+  text: Dealer hedging sets the short-term character of the tape. Positive gamma damps moves; negative
+    gamma amplifies them.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C19
+  text: A dealer map is a model, not a measurement. Who is long and who is short is never published, so
+    the convention used is an assumption and ships as one.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On positioning'
+- id: C20
+  text: Index calm can hide single-stock stress. The gap between the two is the tell, not the level of
+    either one.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On volatility'
+- id: C21
+  text: Level and direction are separate questions and both must be stated. An extreme reading that is
+    easing is stress leaving the market; buying downside into it buys the end of the move.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On volatility'
+- id: C22
+  text: A high VIX is not a sell. It means protection is already expensive.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On volatility'
+- id: C23
+  text: Two instruments that must move opposite each other are a cross-check. Agreement is evidence; disagreement
+    is a warning to distrust the primary reading.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On volatility'
+- id: C24
+  text: Divergence is momentum failing behind price, in exactly three forms - classic oscillator, cross-asset
+    non-confirmation, and positioning against price. Widening what each type reads is fine; adding a fourth
+    type is not.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On divergence'
+- id: C25
+  text: Divergence earns its weight by agreement, not by existence. One is a straw; four that line up are
+    a pile.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On divergence'
+- id: C26
+  text: A single-horizon reading is a readout, not a trigger. Measure the false positive rate before promoting
+    any detector to a warning.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On divergence'
+- id: C27
+  text: A bounded oscillator drifting off its plateau is what a healthy trend looks like. Do not read the
+    normal state of a trend as a warning.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On divergence'
+- id: C28
+  text: The read is only as current as its oldest input. A run stamped today built on three-week-old data
+    is a three-week-old read, whatever the timestamp says.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C29
+  text: Stale-but-present is the sneaky half of a failed fetch. Guard freshness by recency, never by size
+    - a file that stopped updating still has plenty of rows.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C30
+  text: 'A missing input is refused, not zeroed. "Unavailable" and "neutral" are different claims, and
+    a map of zeros reads as the second.'
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C31
+  text: An assumption ships as an assumption, in its own field, on every reading that depends on it.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C32
+  text: A proxy is labelled and kept, never silently substituted and never dropped. Dropping it shrinks
+    the denominator and silently re-rates everything else.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C33
+  text: A skipped check must never look like a passed check. Report coverage alongside the result.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C34
+  text: A share of conditions met is not a probability. Nothing fitted, nothing backtested, no base rate
+    measured.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C35
+  text: A thin reading cannot lead. A story scoring on two of seven conditions is not comparable to one
+    scoring on seven of seven, and ranking them together lets a reading win on the strength of the data
+    that is missing.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C36
+  text: What is not true is as informative as what is. Carry the falsifiers - the conditions that would
+    have to change for the reading to become right.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C37
+  text: Two stories fitting one tape is contested, not a call.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C38
+  text: Where the publisher gives the data away, go to the publisher. Paying a reseller for a public file
+    is the wrong call.
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+- id: C39
+  text: 'No jargon without its meaning, and no claim without its number. "Breadth is weak" cannot be checked;
+    "0.328" cannot be understood.'
+  status: unsourced_retained
+  cite:
+  - code: CVC
+    section: '5 - Principles - On honesty about data'
+recognisers:
+  note: 'VERIFIED field mappings — corrected 2026-08-11. The `fields` below are dotted paths read
+    directly out of the live aqe_crown_macro.json artifact (see sources.aqe_crown_macro_json), inspected
+    via the Google_Drive connector, not proposed. Top-level artifact keys: artifact, version,
+    kernel_version, what_this_is, generated_at, status, status_means, read_me_first, the_call,
+    how_current, scenario, readings{breadth, positioning{trend_funds, large_speculators,
+    option_dealers}, volatility, divergence}, what_changed, what_is_coming, key_levels, how_to_read,
+    limits. Field names differ in several places from the earlier (wrong) PROPOSED draft — e.g. there
+    is no `heartbeat.*` or `cta.*` namespace; breadth lives at `readings.breadth.*`, trend-fund
+    positioning at `readings.positioning.trend_funds.*`. Not schema-locked: no
+    contracts/crown_macro.schema.json exists yet, so AQE could reshape this artifact without an Aegis-side
+    contract catching it — flagged in build_status, not yet fixed.'
+  items:
+  - id: R1
+    if: readings.breadth.regime resolves to broadening (equal-weight S&P gaining on cap-weight)
+    then: Own breadth, but check readings.breadth.position_in_12_month_range first - broadening into
+      the top of its own 12-month range is late rather than early (C9, C10, C11).
+    fields:
+    - readings.breadth.regime
+    - readings.breadth.position_in_12_month_range
+    - readings.breadth.confidence
+  - id: R2
+    if: readings.breadth.regime resolves to narrowing (a handful of large names carrying the index)
+    then: Stay with the leaders and keep risk defined - this is the NARROWING_CONCENTRATED family territory,
+      not a reason to fade the move.
+    fields:
+    - readings.breadth.regime
+    - readings.breadth.position_in_12_month_range
+  - id: R3
+    if: readings.breadth.passed_the_gate is false (no clear breadth lead, or insufficient history) —
+      the artifact carries this as a direct boolean, not a threshold Aegis has to compute itself
+    then: STOP. The artifact''s own status/limits mechanism reports degraded/EARLY_EXIT rather than
+      a clean read (C3, C30, C33). Nothing computed downstream may be read as if it ran cleanly.
+    fields:
+    - readings.breadth.passed_the_gate
+    - readings.breadth.confidence
+    - status
+    - limits
+  - id: R4
+    if: readings.breadth.position_in_12_month_range sits at top or bottom rather than mid
+    then: This is the most actionable read Crown produces - a tired wave, not a live one. Prepare for
+      rotation (top) or hunt breadth trades (bottom) rather than extrapolating the current trend (C11).
+    fields:
+    - readings.breadth.regime
+    - readings.breadth.position_in_12_month_range
+    - readings.breadth.change_5d_pct
+    - readings.breadth.change_20d_pct
+  - id: R5
+    if: readings.volatility.state resolves to ELEVATED_RISING (single-stock-vs-index vol gap elevated
+      AND widening, i.e. gap_change_20d positive on an already-wide gap)
+    then: Hidden stress is building. Route toward HIDDEN_STRESS_DOWNSIDE - buy cheap index downside,
+      small tactical size, capped not compounded (C6, C21).
+    fields:
+    - readings.volatility.state
+    - readings.volatility.gap
+    - readings.volatility.gap_vs_history
+    - readings.volatility.gap_change_20d
+  - id: R6
+    if: readings.volatility.state resolves to ELEVATED_EASING (gap_vs_history high but gap_change_20d
+      negative — observed live 2026-08-11 8:49am SGT, gap_vs_history 0.8648, gap_change_20d -8.44)
+    then: 'Stress is leaving, not building. This looks identical to R5 on a level chart alone and means
+      the opposite - buying downside into an unwinding spread buys the end of the move (C21). The
+      artifact''s own read_me_first.why said exactly this on the observed run: "index puts would be
+      late here."'
+    fields:
+    - readings.volatility.state
+    - readings.volatility.gap_vs_history
+    - readings.volatility.gap_change_20d
+  - id: R7
+    if: a market appears in readings.positioning.large_speculators.crowded_long or .crowded_short
+    then: 'Crowded in that market, in the direction the list names. Context, never timing - the
+      artifact states its own staleness directly (large_speculators.note: CFTC data covering Tuesday,
+      published Friday, "always at least three days old. It cannot time anything") (C16, C17).'
+    fields:
+    - readings.positioning.large_speculators.crowded_long
+    - readings.positioning.large_speculators.crowded_short
+    - readings.positioning.large_speculators.as_of
+    - readings.positioning.large_speculators.note
+  - id: R8
+    if: readings.positioning.trend_funds.share_at_an_extreme is high, roughly two thirds (0.67) or
+      more of the readings.positioning.trend_funds.markets_read markets
+    then: Fragile trend complex. Cut size even though readings.positioning.trend_funds.bias looks
+      clean and directional - apply readings.positioning.trend_funds.size_dial rather than reading
+      the bias at face value (C15). Per-sector detail in .by_sector.
+    fields:
+    - readings.positioning.trend_funds.share_at_an_extreme
+    - readings.positioning.trend_funds.bias
+    - readings.positioning.trend_funds.size_dial
+    - readings.positioning.trend_funds.by_sector
+  - id: R9
+    if: spot sits within roughly 1 percent of readings.positioning.option_dealers.detail.<TICKER>.gamma_flip
+      (flip_distance_pct near zero) — the artifact carries this per underlying, observed for SPY and
+      QQQ on 2026-08-11
+    then: Knife-edge. The character of the tape can change without price moving much - state
+      gamma_flip itself, not a support/resistance framing, and carry .assumption on every reading
+      that depends on it (C18, C19). Call/put wall levels (.call_wall.strike, .put_wall.strike) are
+      the adjacent dealer-positioning context, listed separately in key_levels as kind="dealer positioning".
+    fields:
+    - readings.positioning.option_dealers.regime
+    - readings.positioning.option_dealers.detail.SPY.gamma_flip
+    - readings.positioning.option_dealers.detail.SPY.flip_distance_pct
+    - readings.positioning.option_dealers.detail.SPY.assumption
+    - readings.positioning.option_dealers.detail.QQQ.gamma_flip
+  - id: R10
+    if: readings.divergence.warnings_lit is greater than zero, cross-referenced against
+      readings.breadth.regime and readings.volatility.state for agreement
+    then: 'Non-confirmation warnings exist. Weigh by agreement, not existence - one flag (.which) is
+      a straw, several that line up with the breadth/volatility read is a pile (C24, C25). The
+      artifact''s own divergence.note states this directly: "No single warning is a reason to sell.
+      They matter when several point the same way."'
+    fields:
+    - readings.divergence.warnings_lit
+    - readings.divergence.which
+    - readings.breadth.regime
+    - readings.volatility.state
+  - id: R11
+    if: readings.volatility.vix sits at or above roughly 25 (protection already expensive) — key_levels
+      carries this explicitly as kind="volatility", what="VIX - already-priced threshold", level 25.0
+    then: Already priced. A fresh spike from here is not itself a reason to act - state that the cost
+      of protection, not just its presence, is the read (C22).
+    fields:
+    - readings.volatility.vix
+    - key_levels[kind=volatility, what contains 'already-priced']
+methods: []
+refusals:
+- id: F1
+  text: He does not size. He emits a multiplier on the operator's own risk budget. Risk per trade stays
+    the operator's decision and the operator's rule.
+- id: F2
+  text: He does not name a ticker. He emits a family. The setup belongs to someone else.
+- id: F3
+  text: He places nothing.
+- id: F4
+  text: 'He emits no probabilities. Scenario scores are a share of conditions met - nothing fitted, nothing
+    backtested, no base rate. A calibrated probability and a share of conditions must never be read as
+    the same kind of number.'
+seat: top-down macro regime
+emits:
+- expression_family
+- size_multiplier
+never_emits:
+- ticker
+- position
+- order
+- probability
+reads_from:
+- aqe_crown_macro.json
+reads_from_note: 'Standalone from the other seats by PM directive (charter s10.6) — reads nothing from
+  SRM, Macro Weather or the Thematic RRG; nothing there reads Crown. CORRECTED 2026-08-11: does read
+  one thing — AQE''s own live `aqe_crown_macro.json` (Drive, AQE folder, see sources.aqe_crown_macro_json).
+  That artifact is the compute layer; this canon is the methodology layer that tells a reader how to
+  interpret it. Neither exists without the other, but they are built by different people — AQE built
+  and runs the compute, this canon documents how the committee should read the result. What is NOT yet
+  built: the Aegis-side ingestion — no contracts/crown_macro.schema.json, no premarket pull step
+  alongside the aqe_daily_export.json fetch, no committee-pm step-8 wiring. Until that exists, a voice
+  or orchestrator using this card must fetch aqe_crown_macro.json from Drive directly (same folder as
+  the daily export) rather than assume it arrives automatically.'
+committee_placement: 'Weather/context voice, delivered AFTER nominations and alongside druckenmiller (committee-pm
+  step 8, "Macro & SRM weather") - never a nominator, never part of the tally. PM-confirmed pairing, 2026-08-11:
+  now-versus-next - crown reads the regime as it stands NOW, druckenmiller forecasts what comes NEXT. Step
+  8''s skill card has not yet been edited to wire crown in alongside druckenmiller; that edit is a separate,
+  not-yet-requested task.'
+counts:
+  principles: 39
+  unsourced: 39
+  recognisers: 11
+  refusals: 4
+  methods: 0

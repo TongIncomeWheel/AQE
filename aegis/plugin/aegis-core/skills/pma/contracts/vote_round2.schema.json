@@ -1,0 +1,76 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Round-2 Vote Form (v5)",
+ "x_version": "1.0.0",
+ "x_purpose": "S6 Round-2 returns are FORMS, not essays (v5 design, PM-approved 2026-08-28). The seat's thinking is its own; the reporting format is the house's. Every bound below exists so that checkpoints, packets and the conductor's context stay small enough that the run survives. registrar.py enforces this schema in pure python on arrival — a return that is not a single valid JSON object matching this schema is rejected the moment it lands (one re-spawn, then the seat is marked absent).",
+ "type": "object",
+ "required": ["voice", "date", "round", "votes"],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {"type": "string"},
+  "date": {"type": "string", "format": "date"},
+  "round": {"const": 2},
+  "votes": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 30,
+   "x_note": "One entry per deliberation-set ticker. A seat MUST file on every name in the set — registrar cross-checks the ticker list against phase4.json's deliberation_set and rejects a form with missing or extra tickers.",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "vote", "reason"],
+    "additionalProperties": false,
+    "properties": {
+     "ticker": {"type": "string", "maxLength": 8},
+     "vote": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN"]},
+     "conviction": {"type": ["integer", "null"], "minimum": 1, "maximum": 5,
+      "x_note": "required (non-null) for SUPPORT and OPPOSE; null allowed only on ABSTAIN"},
+     "reason": {"type": "string", "maxLength": 500,
+      "x_note": "the vote's basis in the seat's own method terms. Cite field values, not vibes."},
+     "conviction_change": {"type": ["string", "null"], "maxLength": 250,
+      "x_note": "O4: if this differs from the seat's Round-1 position on the name, why. null = unchanged or seat did not nominate it."},
+     "opposing_case": {"type": ["string", "null"], "maxLength": 300,
+      "x_note": "O1: REQUIRED (non-null) on every OPPOSE — the best case FOR the name, stated fairly."},
+     "self_counter": {"type": ["string", "null"], "maxLength": 300,
+      "x_note": "O2: REQUIRED (non-null) on SUPPORT at conviction >= 4 — what the seat itself finds weakest."},
+     "falsifier": {"type": ["string", "null"], "maxLength": 250,
+      "x_note": "O3: the observation that would prove this vote wrong."},
+     "challenge_reply": {"type": ["string", "null"], "maxLength": 400,
+      "x_note": "O5/O6: direct answer to Rogers'/Steenbarger's challenge where one was addressed to this seat on this name. null only when no challenge named this seat+name."},
+     "obligations": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "x_note": "Steenbarger register, bounded. Populate the members a challenge bound this seat to; others null.",
+      "properties": {
+       "o_a_hard_or_soft": {"type": ["string", "null"], "enum": ["HARD_WITHDRAW", "SOFT_WEIGHT", null],
+        "x_note": "if the seat declared its own framework condition UNMET in Round 1 and filed anyway: is that condition hard (nomination withdrawn) or a weight (state what would make it hard in o_a_note)."},
+       "o_a_note": {"type": ["string", "null"], "maxLength": 250},
+       "o_b_stop_honored": {"type": ["string", "null"], "maxLength": 150,
+        "x_note": "if the seat quoted a moving-average stop: the level actually honored N sessions out."},
+       "o_c_invalidation": {"type": ["string", "null"], "maxLength": 250,
+        "x_note": "one NON-PRICE observable that would prove the read wrong."}
+      }
+     }
+    }
+   }
+  },
+  "declarations": {
+   "type": "array", "maxItems": 6,
+   "items": {"type": "string", "maxLength": 300},
+   "x_note": "seat-level statements: substitutions used, method limits, memory status. Bounded — this is where the essays used to live."
+  },
+  "data_gaps": {
+   "type": "array", "maxItems": 12,
+   "items": {
+    "type": "object", "required": ["field"], "additionalProperties": false,
+    "properties": {"field": {"type": "string", "maxLength": 80},
+                   "impact": {"type": "string", "maxLength": 200}}
+   }
+  }
+ },
+ "x_registrar_extra_checks": [
+  "vote-specific requireds: OPPOSE => opposing_case non-null AND conviction non-null; SUPPORT => conviction non-null; SUPPORT with conviction>=4 => self_counter non-null",
+  "ticker set == phase4.json deliberation_set exactly (no missing, no extra, no invented names — F1)",
+  "bracket-basis lint (v5 §6b): a reason/opposing_case whose ONLY stated basis is bracket validity is flagged BRACKET_BASIS on the scoreboard — counted, not rejected",
+  "total serialized form size <= 24KB — a form over the cap is treated as malformed (essay leak)"
+ ]
+}

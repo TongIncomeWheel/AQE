@@ -1,0 +1,125 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Committee Deliberation Record",
+ "x_version": "1.0.0",
+ "type": "object",
+ "required": ["date", "deliberation_set", "verdicts"],
+ "properties": {
+  "date": {"type": "string"},
+  "held_verdicts": {
+   "type": "array",
+   "description": "D-34: full deliberation of each HELD position (not just a fold of voice lines)",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "held_verdict", "bear_case"],
+    "properties": {
+     "ticker": {"type": "string"},
+     "held_verdict": {"enum": ["RUN", "TAKE-PARTIAL", "TIGHTEN", "EXIT"]},
+     "bear_case": {"type": "string", "minLength": 1},
+     "data_anchors": {"type": ["object", "null"], "description": "price vs ATR range, distance to structural levels, sc_momentum/mp_state, unrealised/R-multiple"},
+     "canon_refs": {
+      "type": "array",
+      "description": "§8b, held book. Same rule as new-idea verdicts, one grade softer: an EXIT or TAKE-PARTIAL is a decision to give up compounding and it should rest on something a voice actually said today, not on the desk's mood.",
+      "items": {
+       "type": "object",
+       "required": ["voice", "id", "weighed"],
+       "properties": {
+        "voice": {"type": "string"},
+        "id": {"type": "string", "pattern": "^C[0-9]{1,2}$"},
+        "weighed": {"enum": ["supported", "outweighed", "conflicted"]},
+        "note": {"type": "string", "maxLength": 160}
+       }
+      }
+     },
+     "dissent": {"type": "array", "items": {"type": "object"}}
+    }
+   }
+  },
+  "sector_exposure_note": {"type": ["string", "null"], "description": "D-34: committee flag on held-book sector concentration for the Risk over-exposure check"},
+  "deliberation_set": {
+   "type": "array",
+   "items": {"type": "string"},
+   "description": "Every ticker that reached >=2 nominations (D-2) or lens top tier, event-filter-cleared, entering deliberation"
+  },
+  "verdicts": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "verdict", "conviction", "nominators", "bear_case", "dissent", "canon_refs"],
+    "properties": {
+     "canon_refs": {
+      "type": "array",
+      "minItems": 1,
+      "description": "CIO NEUTRALITY, ENFORCED (§8b). This seat is deliberately UNANCHORED — it is given no canon of its own, because an anchored desk is a biased desk, and the bias would be invisible. But a merely-declared neutrality is worthless: with nothing to cite, the desk falls back on unauditable model priors and quietly grows a house view. So the desk may weigh ONLY principles a nominating voice actually cited for this ticker today, and must record each one and what it did with it. tools/canon_validate.py desk <DATE> checks: every ref was really cited by that voice today; an ADVANCE rests on >=2 distinct voices; where nominators disagreed at least one ref is 'outweighed' or 'conflicted'; and — the check that matters most — no general principle is asserted in the verdict prose that maps to no ref here. The desk IS anchored: to the charter's own process rules, not to a person.",
+      "items": {
+       "type": "object",
+       "required": ["voice", "id", "weighed"],
+       "properties": {
+        "voice": {"type": "string", "description": "the nominating voice whose canon this is"},
+        "id": {"type": "string", "pattern": "^C[0-9]{1,2}$"},
+        "weighed": {
+         "enum": ["supported", "outweighed", "conflicted"],
+         "description": "supported = it carried the verdict · outweighed = considered and set aside for a stated reason · conflicted = it cut against another voice's principle and the desk had to choose"
+        },
+        "note": {"type": "string", "maxLength": 160, "description": "one line: what this principle did to the decision"}
+       }
+      }
+     },
+     "ticker": {"type": "string"},
+     "verdict": {"enum": ["ADVANCE", "HOLD-FOR-CONDITIONS", "PASS"]},
+     "conviction": {"type": "integer", "minimum": 1, "maximum": 5},
+     "nominators": {"type": "array", "items": {"type": "string"}},
+     "bear_case": {
+      "type": "string",
+      "minLength": 1,
+      "description": "MANDATORY (RB:committee.bear_case_mandatory; performance.committee.bear_case_present_pct_min=100) — the strongest reason NOT to take this name, stated plainly, even on an ADVANCE"
+     },
+     "dissent": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": ["voice", "note"],
+       "properties": {"voice": {"type": "string"}, "note": {"type": "string"}}
+      },
+      "description": "Recorded, never suppressed — empty array is a valid outcome (true unanimity), not an assumed default"
+     },
+     "unanimity_challenge_triggered": {
+      "type": "boolean",
+      "description": "RB:committee.unanimity_challenge — preliminary >=6/7 agreement triggers rotating adversarial challenge (thorp/pardo/steenbarger)"
+     },
+     "conditions": {
+      "type": ["string", "null"],
+      "description": "Required (non-null) when verdict is HOLD-FOR-CONDITIONS; null otherwise"
+     },
+     "data_anchors": {
+      "type": ["object", "null"],
+      "description": "D-20 anti-black-box: the decisive field values behind this verdict, carried up from the nominations' field_values (e.g. {\"nomination_count\": 4, \"lens_positive\": 7, \"bracket.rr\": 2.79, \"bracket.stop\": 17.82, \"day_vol\": 1.4}). The PM reads the numbers that drove the call, not just the prose. committee-desk populates it from what the voices cited."
+     },
+     "ledger_proposal": {
+      "type": ["object", "null"],
+      "description": "D-83: the committee's OWN call on whether this name is worth keeping in the Pipeline Ledger after today. Only names the committee proposes are filed — post-market does NOT sweep everything that failed to advance. Omit or set null to propose nothing (the default for a genuinely dead name). Made once, here, at deliberation time — no extra spawn, no second judgement pass later.",
+      "required": ["propose", "classification", "reason"],
+      "properties": {
+       "propose": {"type": "boolean", "description": "true = file it. false/absent = drop it (logged in committee.json, not carried forward)."},
+       "classification": {
+        "enum": ["daily_reconsider", "trigger_silent"],
+        "description": "daily_reconsider = re-fed into tomorrow's tally so it is re-scored fresh every morning. trigger_silent = parked and silent; only resurfaces when `trigger` fires on the market-hours sweep."
+       },
+       "trigger": {
+        "type": ["object", "null"],
+        "required": ["field", "op", "value"],
+        "properties": {
+         "field": {"type": "string", "description": "an AQE export field (e.g. sc_momentum, structure, price) — must be a field the daily export actually carries"},
+         "op": {"enum": [">=", "<=", ">", "<", "=="]},
+         "value": {"type": "number"}
+        },
+        "description": "REQUIRED when classification is trigger_silent; null otherwise. A trigger_silent row with no trigger is a contradiction and pipeline_ledger.py rejects it."
+       },
+       "reason": {"type": "string", "minLength": 1, "maxLength": 400, "description": "why this setup is worth carrying — the committee's own words, stored as case_snapshot so re-surfacing never needs a re-nomination"}
+      }
+     }
+    }
+   }
+  }
+ }
+}

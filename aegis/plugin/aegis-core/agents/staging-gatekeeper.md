@@ -2,7 +2,8 @@
 name: staging-gatekeeper
 description: The ONLY order-capable agent (constitution law 1). Spawned ISOLATED (D-27 reason III) so an armed, order-capable component is sealed from untrusted text in the orchestrator context. Relays gate_check.py's signed record; executes the Tiger two-step only under an armed switch within caps.
 model: sonnet
-tools: ["Bash"]
+tools:
+- "Bash"
 ---
 # SKILL: STAGING GATEKEEPER (order placement agent)
 

@@ -1,0 +1,294 @@
+meta:
+  version: 1.0.0
+  note: PM-TUNABLE parameters. Change via tools/set_param.py (plain-English through
+    the agent) — every change auto-logged to decisions_log.md. Law lives in rulebook.yaml
+    and needs committee.
+sub_fund:
+  note: 'D-21/D-23: Aegis sub-fund capital moved to a plain editable file — config/aegis_fund.md
+    (PM ruling: a simple MD I can adjust). That file is the ONE place; read it via
+    tools/fund_config.py. Not duplicated here.'
+capital:
+  one_r_pct_of_dyncap: 1.5
+  sizes:
+    standard_r: 1.0
+    high_conviction_r: 2.0
+    runner_hedge_addon_r: 0.5
+    catalyst_unconfirmed_r: 0.5
+  vol_cap_pct_of_dyncap:
+    GREEN: 2.0
+    YELLOW: 1.5
+trailing:
+  note: 'D-33 exit lifecycle — PM-tunable. Hybrid trail (breakeven then structure ratchet),
+    milestone locks, scale-out. Engine: tools/calculators/trailing_stop.py; owner: Risk desk.'
+  breakeven_trigger_r: 1.0        # move stop to breakeven after +1R
+  breakeven_buffer_pct: 0.0       # optional cushion above entry at breakeven
+  ratchet: true                   # a trailing stop NEVER lowers — invariant
+  structure_source: AQE operative stop (fresh daily) — never below current stop
+  milestone_locks: true           # after TP1 -> stop>=entry; after TP2 -> stop>=TP1
+  structural_buffer: 0.3          # D-35: when price CLEARS a structural level (20MA/fib), tuck the
+                                  # stop this % BELOW the reclaimed level (the "just below" cushion)
+  scale_out:
+    tp1_fraction: 0.33            # take 1/3 of original at TP1
+    tp2_fraction: 0.33            # take 1/3 of original at TP2
+    remainder: runs on the trail  # the last third rides the trailing stop
+  cadence: daily post-market recompute for next session + intraday tighten on a target hit
+risk:
+  gates:
+    portfolio_beta:                       # BL-030 (PM 2026-07-19): weighted-beta soft 2.0 / hard 2.5
+      soft: 2.0
+      hard: 2.5
+    var_95_1m_pct_of_dyncap:              # BL-030: PM set 1-month VaR 20% as the HARD cap; soft warning 18
+      soft: 18
+      hard: 20
+      method: parametric                  # D-42 (PM ruling): single-factor variance-covariance VaR,
+      #                                     95% one-month, z=1.645, computed by tools/calculators/var_parametric.py
+      #                                     from per-name exposure (PTJ) + beta/vol (AQE export) + SPY vol (historical store).
+      #                                     NOT historical/simulated. Checked on the POST-ADD book -> var_ok for gate_check.
+    leverage_x_dyncap:
+      soft: 2.5
+      hard: 3.0
+    combined_stop_risk_pct_of_dyncap_max: 12   # BL-030: PM "total known risk 12%" (sum of open distance-to-stop)
+    sector_exposure_pct_of_dyncap:      # D-34: single-sector concentration on the held book
+      soft: 25                          # flag for rotation review
+      hard: 35                          # over-exposed — rotation candidate
+  per_trade:
+    rr_min_to_tp2: 2.0
+    stop_atr_distance_min: 1.0
+regime:
+  vix_bands:
+    GREEN: <18
+    YELLOW: 18-25
+    ORANGE: 25-30
+    RED: '>30'
+  stop_pct_ceiling:
+    GREEN: 12
+    YELLOW: 8
+    ORANGE: 6
+  atr_stop_multiple_base:
+    GREEN: 1.5
+    YELLOW: 2.0
+    ORANGE: 2.5
+  elder_adjustment:
+    8-10: -0.25
+    5-7: 0.0
+    1-4: 0.5
+  atr_multiple_clamp:
+  - 1.0
+  - 3.5
+universe:
+  screen:
+    market: US primary listings, common stock only
+    price_vs_ema: close at/above ANY of EMA20, EMA50, EMA100
+    market_cap_min_usd: 2000000000
+    volume_rule: current volume >= 30-day average volume
+  near_miss:                 # D-37: names just outside the screen are SURFACED (not nominated) for PM/committee revival
+    ema_band_pct: 2.0        # close within 2% below the nearest EMA
+    vol_band_pct: 10.0       # volume within 10% below the 30-day average
+committee:
+  nominations_per_voice: 10
+  deliberation_threshold: nomination_count >= 2 OR lens top tier OR (single nominator AND
+    conviction >= solo_high_conviction_min)   # D-37: a strong lone signal isn't cut early
+  solo_high_conviction_min: 4                  # a single voice at >=4/5 earns full deliberation
+  conviction_high: 7            # D-55: >=7 voices nominating a name = high conviction (roster now 11; supersedes stale "5 of 9")
+quality_flags:                 # D-39: thresholds for the restored voice quality-evaluation flags
+  # SOFT signals surfaced at deliberation (D-37/D-38) — never a gate. tools/quality_flags.py reads these.
+  squeeze_min: 5.0             # energy.squeeze_score at/above -> volatility squeeze (breakout pending)
+  base_dur_min: 10             # bq.bq_base_dur (days) minimum for a "tight base"
+  range_tight_min: 12          # bq.bq_range_tight minimum (paired with base_dur) for a tight base
+  overextended_sma_pct: 25.0   # sma_distance_pct at/above -> extended, late to chase
+  rs_down_day_min: 2.0         # rs_down_day_20d at/above -> resilient on down days
+  knn_prob_min: 0.6            # knn_prob at/above (AND knn_significant) -> favorable historical edge
+data_sources:
+  ptj:                                    # D-21/D-41, retired-Drive form D-84: the Aegis book source of truth (held book + dynCap mark)
+    store: >-
+      local git file, data/journal/aegis_journal_YYYY-MM-DD.json, committed+pushed by tools/git_sync.py.
+      D-84 RETIRED the separate Drive PTJ copy (folder 15PR74ws_kTXTqCcEfRGga_jjHrMvbCEM) — same JSON, no
+      upside duplicated across two stores.
+    read: latest dated file at data/journal/aegis_journal_YYYY-MM-DD.json — plain local read, no folder search, no modifiedTime guessing
+    archive_master: data/persistent/aegis_trade_journal_ARCHIVE_master.json (local git file, same D-84 move)
+    written_by: post_market step 2 (journal) + step 4 (archive) — the kernel is the sole writer, one file, one place
+    used_for: premarket step 4 held-book read + mark-to-market dynCap refresh (dyncap_ledger.py update)
+  staleness: plan/export/journal older than the current session date is stale — fix or stand down (premarket step 1)
+schedule:
+  weekly_run: Sunday
+  premarket_plan_ready: '16:00'
+  pm_approval_deadline: '21:00'
+  autonomous_window: 21:30-05:30 SGT (US session to the fixed 05:30 autopilot expiry, D-7a; the old 10:00 cap is RETIRED — MED-2 fix)
+  us_market_hours_sgt: 21:30-04:00 (summer)
+  morning_summary: '10:00'
+  market_watch_mode: code watches (AQE alert engine); committee wakes on trigger only
+    — no timed AI polling loops
+  alert_feed_minutes: null                  # 2026-08-06: RETIRED as a promise. AQE rewrites the ledger when its run finishes, not on a fixed clock — 5 Aug produced FOUR writes (11:07, 12:51, 14:15, 15:55 ET), not a 30-min cadence. Do not schedule off this key; read `updated` in the ledger itself.
+  alert_scope: aqe_self_scoped              # 2026-08-06: scope is stamped AT SOURCE. Every entry carries lists{on_longlist,on_elder,on_qs,held}. Aegis READS those flags; it never re-derives membership from alert_list.json.
+  alert_ledger_path: data/alerts/DATE/aqe_alert_ledger.json   # 2026-08-06: THE one intraday alert artifact (Drive "AQE" folder -> here). Single JSON object, newest first, 30-day window, pre-enriched. Contract contracts/alert_ledger.schema.json; reader tools/alert_ledger.py. REPLACES the retired inbox.jsonl / alert_inbox.py / alert_inbox.schema.json trio — AQE never emitted that shape.
+  market_watch_sweep_minutes: 30            # session sweep cadence over the ledger. Idempotent by construction: dedupe key is (ticker, event, time_et), no cursor and no state file, so a re-read costs nothing and a missed cycle loses nothing.
+  market_watch_events: [BOS, NEAR_BREAKOUT, NEAR_TARGET, NEAR_STOP, MOVE, VETO_HELD]   # 2026-08-06: the SIX real AQE events, verbatim. The ledger defines them in its own `events` map and that map is authoritative — this list is only the drift tripwire (tools/alert_ledger.py reports any event AQE emits that Aegis does not know). Routing: MOVE drops (the file itself says "no entry claim") · NEAR_STOP/VETO_HELD on a held name pages · NEAR_TARGET on a held name is trim-or-run · BOS/NEAR_BREAKOUT on a listed name with a valid bracket wakes the pod · everything else is logged, visible, not podded.
+  phase_zero:                             # D-83/D-91: the cheap dependency gate in FRONT of premarket. Deliberately tiny (one command, one exit code, no models, no swarm).
+                                          # D-91 — IT NOW GATES TWO PROCESSES, NOT ONE. Premarket split into a cheap data half (premarket_data) and an
+                                          # expensive judgement half (premarket_build). They have DIFFERENT prerequisites, so Phase 0's job changed from
+                                          # "is it ready?" to "which of the two is next?" — see skills/phase_zero/SKILL.md step 2.
+                                          # HONESTY NOTE (standing PM rule, not a technicality): NO SCHEDULED TASK EXISTS FOR ANY OF THIS. The keys below
+                                          # describe the cadence Phase 0 WOULD run at. Nothing here is wired to a live schedule; every run is started by hand.
+                                          # Do not read first_check_sgt/repeat_minutes as evidence that something is running unattended. It is not.
+    first_check_sgt: '09:30'              # set by what the gate READS, not by habit: post-market runs 05:05 SGT and AQE's daily job finishes ~08:44 SGT, so on a normal morning both are on disk by 09:30
+    repeat_minutes: 30                    # would fire repeatedly; tools/phase_gate.py claim is the exactly-once latch PER PHASE, so a repeat can never double-fire either half
+    page_after_sgt: '12:00'               # still NOT_READY past this time = the retry budget is spent -> page the PM. 4h before the 16:00 plan deadline: room to kick AQE or re-run post-market by hand and still ship
+    sequence: [premarket_data, premarket_build]   # D-91: the order Phase 0 walks. The data half is checked first; the build half only becomes checkable once the data half has stamped ok for today.
+    fires: premarket_build                # the TERMINAL target — what the whole gate exists to protect. Retained under its old name for readers/tools that keyed on it before the split.
+    fires_trigger_id: trig_01CNrP3NWF5EqNyyuRyViy2U   # D-91: the id RECORDED for the judgement half. The task behind it is NOT enabled. This is a recorded target, not a live wire.
+    fires_data_trigger_id: null           # D-91: the data half has no recorded id because no such task has ever been created. null is the honest value — a placeholder id here would read as "wired" to the next person. While it is null Phase 0 cannot fire the data half, and says so plainly instead of pretending.
+flag_condition:                  # D-57: RATIFIED replacement for the rudimentary sc_momentum>70. Builds the SOD quality WATCH SET; the live price then TRIGGERS (D-54). Everything except event_clear is a SCORE, never a gate (D-4/D-52 doctrine).
+  hard_gate: event_clear         # the ONLY binary exclusion (D-11). An earnings/event name cannot flag.
+  score_factors:                 # weighted, not all-or-nothing
+    - structure_integrity        # structure, structure_shift (reward BOS/tight base; penalise CHoCH)
+    - participation              # DISCRIMINATING combo: day_vol>=1.5 (was rvol) AND flow>0 AND rs_spy_20d>0 (rs_leadership==LEADER is table-stakes, weak alone)
+    - detect_lens                # lens_positive >= 4 of 6
+    - elder_force                # elder_5d rising; elder_pattern in {ACCELERATION, CORRECTION_REENTRY}; penalise INTERRUPTED
+    - bracket_exercisable        # a workable stop exists via the bracket exercise (D-52) — soft
+    - extension_penalty          # large sma_distance_pct penalised in mean-revert tape
+    - sector_rotation_alignment  # sector_rrg in {LEADING, IMPROVING} rewarded; the de-rate engine penalised
+  composite_rank: tiebreak_only  # sc_momentum/rank DEMOTED from driver to floor/tiebreak — a high score is a caution in a de-rate
+  profile: robust_first          # D-57 (Pardo guard): ship ONE robust profile now (structure+participation+event_clear+extension). The regime-adaptive/sector-rotation reweighting is BEHIND walk-forward validation before it goes live — no shipping an in-sample fit.
+  tiers: {WATCH_A: high_threshold, WATCH_B: lower_threshold_visible_not_discarded}  # filtered names stay VISIBLE (WATCH_B), never silently dropped — use all the data (PM)
+alert_universe:                   # D-77: the WIRED implementation of the flag_condition doctrine (above) for the intraday AQE alert feed — the "casting mat". tools/alert_universe.py, deterministic (law 4). Replaces the raw sc_momentum>70 feed AND the too-narrow committee hand-pick.
+  sc_floor: 70                   # core momentum membership floor (a name must have real momentum first)
+  min_lanes: 2                   # minimum detection lanes to enter the universe at all
+  t1_lanes: 5                    # Tier 1 = high-confirmation (priority alerts)
+  t2_lanes: 3                    # Tier 2 = confirmed (second priority); below t2 = Tier 3 watch-only
+  lane_structure: 72             # 'struct' lane threshold
+  lane_flow: 68                  # 'flow' lane threshold
+  lane_detect: 4                 # 'detect' lane threshold (6-lens positive count) — an OR-booster, NEVER a gate
+  lanes:                         # the 8 momentum-incoming detection lanes counted per name (D-77 enrichment over D-57 score_factors)
+    - sc_m_gates                 # all 5 momentum sub-gates pass (flow/energy/structure/mp/elder)
+    - choch_bullish              # choch_state == BULLISH (Wyckoff structural turn) — the key add BILL had that detect-lens missed
+    - knn_significant            # 2026-08-06 RENAMED: was labelled "Thorp quant edge fired". It is NOT Thorp's and never was — a 5-analogue hit rate is the exact object his C13/R6 reject, and this nameplate is what drifted the voice into voting on knn for all ten 22-Jul nominations. This is a DETECTION LANE ONLY: an analogue-history flag that helps a name into the casting mat. It carries no voice's vote (charter §0.9: knn is informational).
+    - detect_lens                # 6-lens positive >= lane_detect (one lane, not the gate)
+    - rs_leadership              # LEADER
+    - structure                  # >= lane_structure
+    - flow                       # >= lane_flow
+    - mp_accel                   # not DECELERATING (momentum arriving, not rolling over)
+  event_overlay: strike          # event-driven names (M&A etc., D-11) are STRUCK from the universe regardless of lanes
+  calibration_note: "21 Jul 2026: validated BILL(6 lanes) & ETSY(5) -> Tier1; DINO(2 lanes, 25% ext) -> Tier3 watch. 56 names (40/10/6) vs old sc70=57 flat / sc80=2 / committee-pick=37."
+  pod_contract: "every fired alert carries lane_count + lanes_fired into the market-hours pod (D-63) — the same numbers the voices read to call runner-or-not"
+alert_list:                       # D-82: the DAILY AQE ALERT LONGLIST = A u B u C (tools/alert_list.py, deterministic, law 4). REUSES the casting mat (List A) + voice nominations (List C); List B (5d-elder) is the one thin new piece. The amalgam is what the AQE engine monitors intraday and the market-hours agent sweeps.
+  list_a_top: 50                 # List A: top 50 by tier, Data+Detect lens (the alert_universe casting mat)
+  list_b_elder_top: 15           # List B: strongest 5-day Elder, top 15 (falls back to `elder` while elder_5d ships empty)
+  list_c_per_voice: 10           # List C: up to 10 ideas per committee voice (read-only reuse of nominations/<voice>.json)
+  breakout_pct: 2.0              # +2% over prior COB = breakout trigger (breakout_level = round(prior_cob*1.02, 2))
+  intraday_cadence_min: null     # 2026-08-06: RETIRED. AQE writes the ledger when its run finishes, not on a clock (see schedule.alert_feed_minutes). The longlist thresholds above still govern MEMBERSHIP; cadence is no longer ours to state.
+pipeline_ledger:                  # D-83: the lifecycle store for ideas that have NOT fired yet (tools/pipeline_ledger.py, deterministic, law 4). Distinct from the Nomination Ledger (ledger.jsonl), which scores OUTCOMES of names already nominated. Only names the COMMITTEE proposed (committee.schema.json ledger_proposal) land here — post-market files, it never judges.
+  ttl_days: 30                   # bounded TTL — an idea dies stale unless a later committee re-proposes it (which extends the TTL). Same die-stale discipline as voice memory.
+  max_rows: 60                   # hard ceiling on ACTIVE rows; oldest are expired out and named in the run outcome (never a silent truncation). A ledger the PM cannot read in one glance has stopped being a ledger.
+  classifications:               # set per-name by the committee, not by post-market
+    daily_reconsider: "re-fed into the next premarket's tally and re-scored fresh every morning — for a setup that is live and could change tomorrow"
+    trigger_silent: "parked and silent until its {field, op, value} condition fires on the market-hours sweep — for a setup that is real but needs one specific thing first"
+  doctrine: "The committee decides what is worth keeping, once, at deliberation time (no extra spawn). Post-market's job is purely mechanical filing. A trigger_silent row with no trigger is REJECTED (it would be parked forever); a proposal on an ADVANCE name is REJECTED (it belongs in the plan). A missing export field NEVER counts as a satisfied trigger."
+conviction_funnel:               # D-78/79/80: the DAILY PREMARKET three-axis funnel. tools/conviction_funnel.py, deterministic (law 4). Runs after the tally, focuses deliberation.
+  doctrine_locked: "DATA leads · LENS seconds · VOICES corroborate or challenge → consensus for HIGH CONVICTION (D-80). Data/lens (mechanical) set the shortlist; voices corroborate, stay silent, or challenge; high conviction = mechanical confirmation AND voice corroboration, synthesised by the committee. Voices never buy a seat alone."
+  axes: [data, lens, consensus]  # D-79 ORDER: DATA=8-lane casting mat (D-77) FIRST; LENS=6-lens detect; CONSENSUS=voices = ADVISORY overlay, never the entry ticket (PM: "data but lens first before we anchor on voices advisory")
+  primary_axes: [data, lens]     # a name enters the shortlist iff DATA strong OR LENS strong (mechanical); voices only CONFIRM or read advisory-silent
+  target_min: 10                 # PM: "always start from approx 10-15 names to filter down into a high conviction plan"
+  target_max: 15
+  cons_strong_votes: 3           # consensus grade S/M/W cutoffs (votes)
+  cons_med_votes: 2
+  data_strong_lanes: 5           # DATA grade cutoffs (lane_count, D-77)
+  data_med_lanes: 3
+  lens_strong: 4                 # LENS grade cutoffs (detect positive /6)
+  lens_med: 2
+  shortlist_rule: "D-79: DATA strong OR LENS strong -> shortlist (mechanical entry); ranked by lanes+detect FIRST, votes as advisory tiebreak; trimmed to target_max. Each name tagged TRIPLE (all 3 agree) / CONFIRMED (data-led + swarm backed, votes>=cons_med) / DATA_LED (data-led, voices advisory-silent — promoted anyway)."
+  contradictions:                # surfaced separately to DEEPEN deliberation (PM: 'highlight contradictory or positive overlaps')
+    consensus_only: "voted >= cons_strong_votes but data & lens both NOT strong -> voices ADVISORY only; fresh or stale? committee must rule run/drop (e.g. DINO/CSX/UNP 21 Jul)"
+  data_lens_only_cap: 6          # retained param; the former missed-runner set is now PROMOTED into the shortlist as DATA_LED (D-79)
+  wiring: "premarket step 6b — runs after tally (step 6), its shortlist + contradictions frame the deliberation packet (step 9); the committee deliberates the shortlist and must explicitly RESOLVE each contradiction (run or drop)"
+retention:
+  raw_days: 30
+  ledger_window_days: 15
+  learning_lookback_days: 5
+  archive: monthly zip to Drive after raw_days; rollup summary kept forever
+autopilot:
+  default: OFF — preview only, always
+  max_r_per_order: 1.0
+  max_orders_per_session: 3
+  scope: ONLY tickers on today's PM-APPROVED plan with preauthorised=true
+  auto_deliberate_execute: OFF   # D-58: when the PM ARMS this, an intraday mover is auto-deliberated (judgment tier) and, if it clears the consensus bar, auto-executed within caps via the gatekeeper. Default OFF — routine watch is haiku, preview-only.
+  auto_execute_consensus_min: 6  # D-58 (PM): auto-execute only if the quick deliberation reaches >=6 voices in consensus. Below 6 -> page the PM, never auto-fire.
+  auto_off_on:
+  - tripwire block
+  - any portfolio gate breach
+  - broker error
+  - window end
+  - expiry
+  expiry: fixed 05:30 SGT next occurrence — definitive, no timezone math (D-7a)
+  window: arm at/after plan approval; expires 05:30 SGT — covers the full US session
+    summer or winter
+performance:
+  note: 'Success criteria evaluated EVERY post-market by the scorer (D-14). Verdicts:
+    PASS / WATCH / FAIL. All bands PM-tunable.'
+  voice:
+    eval_window_sessions: 15
+    hit_d5_min_pct: 45
+    excess_d5_vs_universe_min_pct: 0.0
+    watch_band_pct: 5
+    fail_consecutive_windows: 2
+    detect_seat_eval_horizon_months: 12
+  committee:
+    advanced_vs_watchtable_excess_d5_min_pct: 0.5
+    bear_case_present_pct_min: 100
+  plan:
+    trigger_fire_rate_band_pct:
+    - 10
+    - 60
+    missed_by_design_avg_move_tracked: true
+  execution:
+    slippage_vs_plan_max_bps: 50
+    unjustified_refusals_max_per_week: 0
+  system:
+    runs_on_time_pct_min: 95
+    page_exceptions_max_per_week: 3
+    journal_validation_fail_max: 0
+  memory:
+    standing_lessons_max_per_voice: 5
+    lesson_expiry_sessions: 30
+    open_nominations_shown_max: 10
+model_tiers:
+  note: 'PM-tunable per D-16. Judgment = analysis/deliberation, always the top reasoning
+    tier. Control = orchestration/sequencing, the economy tier. Cockpit = the phone
+    chat surface. Data plane tools/*.py take no model at all, unaffected by this
+    block.'
+  judgment: opus
+  control: sonnet
+  cockpit: sonnet
+  watch: haiku                   # D-58: the CHEAP tier. The 30-min market-hours poll (held-book checks + off-plan scan) runs here by default. Escalate to judgment ONLY on PM request or an armed auto-deliberate. Anti-overfit/anti-cost: never spend opus on a routine poll.
+  kimi_judgment: kimi-for-coding-highspeed
+  kimi_control: kimi-for-coding
+notifications:   # D-45/D-46: PM-tunable — which operational events ping the phone. Emitter tools/notify.py (order-blind).
+  channel: cowork              # D-46 (PM): PILOT runs on Claude Cowork — the run's message rides the scheduled-task NATIVE push; no external service. whatsapp is the POST-MIGRATION channel, OFF until AEGIS_NOTIFY_CHANNEL=whatsapp.
+  pre_run_minutes: 15          # heartbeat lead time (used by the pre-run heartbeat task)
+  on:                          # events that ping (PM: all pings on, 2026-07-19)
+    pre_run: true
+    run_ok: true
+    run_fail: true             # ALWAYS on and visually unmistakable — the failure page is the point
+    healed: true
+    alert: true
+  key_runs:                    # the runs that get a T-minus pre-run heartbeat
+  - premarket
+  - ptj
+  - post_market
+  quiet_hours: none            # no suppression — PM wants all pings (2026-07-19)
+  migration:                   # D-46: activated only AFTER the pilot, on the local box / Kimi — NOT wired for the Cowork pilot
+    whatsapp: WHATSAPP_* / TWILIO_* in config/.env
+    watchdog: external dead-man's-switch (healthchecks.io / cloud cron) in WATCHDOG_URL — only meaningful when WE run the infra (local box), not on Cowork
+self_heal:       # D-45: PM-tunable — the OPERATIONAL self-heal net (tools/self_heal.py, Engineering & Change). Extends D-40 data self-heal; never places an order (constitution law 1).
+  max_retries: 3               # bounded retries for transient failures (feed/ptj/store)
+  auto_heal:                   # failure classes the system may fix WITHOUT the PM (data plane only)
+  - feed_pull                  # transient — re-fetch + revalidate + tripwires
+  - ptj_pull                   # transient — re-pull both brokers, refresh dynCap
+  - store_stale                # transient — reseed via D-40 historical_store
+  escalate_only:               # NEVER auto-healed — page the PM with the manual fix (/recover)
+  - schema
+  - config
+  - logic
+  stand_down:                  # a hard gate is stood down, never healed; PM clears/overrides (recorded)
+  - tripwire
+  - gate
+  log: data/eod/<date>/self_heal_<date>.jsonl

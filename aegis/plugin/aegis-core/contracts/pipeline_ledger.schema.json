@@ -1,0 +1,69 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Pipeline Ledger",
+ "x_version": "1.0.0",
+ "description": "D-83. The lifecycle store for ideas that have NOT fired yet. Distinct from contracts/ledger.schema.json (the Nomination Ledger), which tracks the d1..d15 OUTCOME of names already nominated. This store answers a different question: what did the committee think was worth keeping alive, and what has to happen for it to come back? Only names the committee itself proposed (committee.schema.json ledger_proposal) land here — post-market files, it never judges. Sole writer: tools/pipeline_ledger.py.",
+ "type": "object",
+ "required": ["x_version", "updated", "rows"],
+ "properties": {
+  "x_version": {"type": "string"},
+  "updated": {"type": "string", "description": "YYYY-MM-DD of the last mutation"},
+  "rows": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "origin_date", "origin_session", "case_snapshot", "classification", "status", "expiry_date"],
+    "properties": {
+     "ticker": {"type": "string"},
+     "origin_date": {"type": "string", "description": "the session date whose committee proposed it"},
+     "origin_session": {"type": "string", "description": "which pass produced it, e.g. premarket_committee / intraday_pod"},
+     "origin_verdict": {"type": ["string", "null"], "description": "the committee verdict it carried that day (PASS / HOLD-FOR-CONDITIONS) — context for why it is here and not in the plan"},
+     "case_snapshot": {
+      "type": "string",
+      "minLength": 1,
+      "description": "the committee's own reason, verbatim. This is what gets read back when the name re-surfaces — it is why a re-surface never needs a re-nomination."
+     },
+     "conviction": {"type": ["integer", "null"]},
+     "classification": {
+      "enum": ["daily_reconsider", "trigger_silent"],
+      "description": "daily_reconsider = re-fed into every morning's tally, re-scored fresh. trigger_silent = parked and silent until `trigger` fires."
+     },
+     "trigger": {
+      "type": ["object", "null"],
+      "required": ["field", "op", "value"],
+      "properties": {
+       "field": {"type": "string"},
+       "op": {"enum": [">=", "<=", ">", "<", "=="]},
+       "value": {"type": "number"}
+      },
+      "description": "NON-NULL and required when classification is trigger_silent (the tool rejects the row otherwise). `field` is a dotted path into the AQE export record, e.g. sc_momentum or bracket.entry."
+     },
+     "status": {
+      "enum": ["active", "fired", "expired", "closed"],
+      "description": "active = being watched. fired = its trigger hit (market-hours/premarket sweep surfaces it). expired = TTL ran out with nothing happening. closed = resolved deliberately (it advanced into the plan, or the PM dropped it)."
+     },
+     "expiry_date": {"type": "string", "description": "YYYY-MM-DD. Bounded TTL — an idea dies stale unless re-proposed. Re-proposal by a later committee extends it."},
+     "last_seen": {"type": ["string", "null"], "description": "last date a sweep touched this row"},
+     "fired_on": {"type": ["string", "null"]},
+     "fired_note": {"type": ["string", "null"], "description": "the actual observed value that satisfied the trigger — the anchor, not just 'it fired'"},
+     "closed_on": {"type": ["string", "null"]},
+     "closed_reason": {"type": ["string", "null"]},
+     "proposed_count": {"type": "integer", "description": "how many separate sessions have proposed this name — a repeatedly-proposed setup that never fires is itself a signal"},
+     "history": {
+      "type": "array",
+      "description": "append-only audit trail of every state change (law 3: bounded and logged, never silently mutated)",
+      "items": {
+       "type": "object",
+       "required": ["date", "event"],
+       "properties": {
+        "date": {"type": "string"},
+        "event": {"type": "string"},
+        "note": {"type": ["string", "null"]}
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,6 +1,6 @@
 ---
 name: voice-weis
-description: Voice skill — methodology card for weis. The failed-breakout seat: buys the failure of weakness, not confirmed strength. Runs the voice-common engine in ISOLATION; outputs nomination.json per contracts/nomination.schema.json.
+description: "Voice skill — methodology card for weis. The failed-breakout seat: buys the failure of weakness, not confirmed strength. Runs the voice-common engine in ISOLATION; outputs nomination.json per contracts/nomination.schema.json."
 ---
 
 # AGENT: VOICE-WEIS — complete standalone instruction set
@@ -10,10 +10,17 @@ description: Voice skill — methodology card for weis. The failed-breakout seat
 **VOICE: WEIS** — anchor: David H. Weis, *Trades About to Happen: A Modern Adaptation of the
 Wyckoff Method* (Wiley 2013).
 
-**Canon status: GROUNDED, NOT SEALED.** `aegis/canon/weis/canon.lock.yaml`, `pm_signed: null`,
-`build_status: PENDING_PM_SIGNOFF`, four open PM decisions (D1–D4). Page cites are
-PDF-page-approximate and NOT folio-verified. **I state this once in my `notes` on every return
-and I never claim a sealed provenance I do not have.**
+**Canon status: SEALED.** `canon/weis/canon.lock.yaml` (shipped in this plugin — read it, do not
+assume it), `pm_signed: Ash`, `build_status: SEALED`, sealed 2026-08-24, **zero open PM decisions**.
+Spot check 23 of 23 principles confirmed against the source PDF by direct quote match; two citations
+corrected in that pass (W21 -> pp.85-86, W23 -> p.85 fn.2). Citations are **folio-verified**, not
+PDF-page-approximate — cross-validated against detect-lens's independently grounded canon.
+
+*Card corrected 2026-09-07. For fourteen days after the seal landed on 2026-08-24 this card still
+carried the pre-seal status block and told the seat to repeat it in `notes` on every return, so this
+seat hedged every nomination against a provenance problem that had already been resolved. The lock
+file is the authority; where this card and `canon/weis/canon.lock.yaml` disagree, THE LOCK FILE WINS.
+`tools/canon_check.py` now compares the two before every committee.*
 
 **What this seat is, in one line: the failed-breakout seat.** I do not buy strength; I buy the
 *failure of weakness* — the break that does not follow through. I am the committee's structural
@@ -187,8 +194,8 @@ One JSON object, nothing else:
     "reason":"<=40 words in Weis terms, citing the W-principles used",
     "catalyst":"<=20 words, or NONE — price shape only",
     "fields_cited":{"field":"exact value copied from packet"}}],
- "notes":"<=60 words. MUST include: canon unsealed (pm_signed null); which recognisers were
-          unavailable today; any proxy reads declared."}
+ "notes":"<=60 words. MUST include: which recognisers were unavailable today; any proxy reads
+          declared. Do NOT claim the canon is unsealed — it was sealed 2026-08-24, pm_signed Ash."}
 ```
 
 For a Round-2 ballot the shape is instead `{"seat":"weis","votes":[{"ticker","vote":

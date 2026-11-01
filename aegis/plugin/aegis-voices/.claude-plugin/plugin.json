@@ -1,39 +1,67 @@
 {
- "name": "aegis-voices",
- "version": "1.5.1",
- "kernel_build": "86525f9",
- "layer": "knowledge",
- "description": "Aegis committee voices — 15 isolated agents (9 S4 nominators incl. weis, 2 challenge, 2 fundamentals+lens, crown + druckenmiller macro), their methodology cards, the nomination contract, and the S0.5 voice activation + data readiness check. No process loops, no order path.",
- "changelog": [
-  {
-   "version": "1.5.1",
-   "date": "2026-09-06",
-   "changes": [
-    "R1 closed everywhere it was still open — bracket is never a reject. A sweep found four cards still turning a bracket into a reject somewhere a seat can read it: oneil R6 ('cannot be taken as mine at any size'), elder-lens R10 ('do not nominate the name at all' — never on the 09-05 list), raschke R6 and wyckoff R6 ('hard reject at any conviction') in their skill cards and canon locks, and steenbarger R5 ('block', citing bracket.valid). Every one rewritten: nominate/vote on momentum and structure as if the bracket were clean; STATE the engine's stop as information; when the engine bracket is invalid or missing, name your own invalidation level from structure. Never a reject, never a non-nomination, never a conviction cap.",
-    "HOUSE RULE R1 block inserted at the top of all 13 voting seats' runtime cards (agents/voice-*.md) — it binds the seat and overrides any card line below it, so a stale line can no longer win. Same rule written into skills/voice-common/SKILL.md (the shared engine).",
-    "canon/{oneil,raschke,wyckoff,elder-lens}/canon.lock.yaml rule text corrected to match (governance layer; extract hashes untouched — the lock hashes the source extract, not the derived rules).",
-    "Enforced mechanically on the aegis-core side by registrar.py (aegis-core 1.7.2)."
-   ]
-  },
-  {
-   "version": "1.2.0",
-   "date": "2026-08-24",
-   "changes": [
-    "ADD tools/field_derive.py — fills numbers the engine leaves null but that are fully determined by numbers it does emit. First case: bracket.stop_type was null on 78% of rows, which read as a data gap and blocked six seats. It is not a gap: on every one of those rows bracket.valid is false and bracket.atr_fallback_stop is populated 100%, so the stop in force is the ATR fallback and the engine simply never wrote the label. The orchestrator now writes it at packet build, tagged stop_type_source=derived so the seat can see it was not measured. Also emits bracket.stop_eff, the stop actually in force.",
-    "voice_preflight.py now classifies every missing number into one of four outcomes, each with an action: DERIVED (orchestrator fills it, no engine change), SUBSTITUTE_LIVE (a populated fallback is already on the seat's menu), MENU_BUG (fallback exists but is not on the menu — one line in voice_menus.json), ENGINE_TICKET (nothing anywhere, engine must emit). Only the last two block.",
-    "voice_preflight.py prints READY TO RUN: YES/NO and exits non-zero under --strict. As of 2026-08-24 against the live export: 11/11 voices ACTIVATED, zero blockers, READY TO RUN: YES.",
-    "voice_preflight.py --apply writes the derived fields back into the export in place, so the gate that finds the gap is the step that closes it. Everything downstream sees the filled fields with no further wiring."
-   ]
-  },
-  {
-   "version": "1.1.0",
-   "date": "2026-08-24",
-   "changes": [
-    "ADD agents/voice-weis.md + skills/voice-weis/SKILL.md — the weis seat had NO agent file and was being run as a general-purpose spawn with its canon pasted in by hand every run, differently each time. This is the fix for that.",
-    "ADD tools/voice_preflight.py — the voice activation check. Answers two separate questions per seat: (1) can this voice run at all (agent file + readable book) and (2) is today's export complete for it. Mixing those two is what allowed a half-served voice to return ten confident nominations with nothing flagging it.",
-    "canon_index.json now carries weis (UNSIGNED — pm_signed null, 4 open PM decisions).",
-    "Description corrected: said '13 isolated nominator agents', there were 14 agent files and not all of them are nominators."
-   ]
-  }
- ]
+  "name": "aegis-voices",
+  "version": "1.9.0",
+  "kernel_build": "86525f9",
+  "layer": "knowledge",
+  "description": "Aegis committee voices — 15 isolated agents (9 S4 nominators incl. weis, 2 challenge, 2 fundamentals+lens, crown + druckenmiller macro), their methodology cards, the nomination contract, and the S0.5 voice activation + data readiness check. No process loops, no order path.",
+  "changelog": [
+    "1.9.0 (2026-10-30) R30 source rebuilds. SEOW canon v2: the 2015/16 course deck re-read in full; it teaches two systems and v1 carried one. Part I position system added (C22-C32: timeframe, horizon RS, top-down cycle, liquidity, resistance-line breakout entry, fund-flow confirmation, support-line exits, pyramid, mechanical, shorts out of scope); C1/C3/C11/C12 scoped to the swing system; C21 relabelled house rule; R10-R15 added and recogniser fields renamed to AQE's served names. WYCKOFF canon v2: re-anchored on Villahermosa's Wyckoff 2.0 read in full (C2-C16); the 20 Weis-digest lines moved out (the Weis seat reads the full book); C1 scoped to range context; danger-point line amended to obey R1; scorecard kept as house rule; v1 R6 (hard reject on bracket.stop_type, an R1 breach) removed; R1-R11 rewritten on served fields (pvp_*, vwap, structure_shift). Cards and agent files recompiled; canon_index regenerated. Spot-check of 5 new lines per seat pending (PM).",
+    "1.8.0 (2026-10-23) R22: Livermore card marked VOTING SEAT (PM standing ruling 2026-10-22); Lynch card marked CONSULTED, NO VOTE.",
+    {
+      "version": "1.7.0",
+      "date": "2026-09-07",
+      "changes": [
+        "ALL 15 CANON LOCK FILES NOW SHIP WITH THE PLUGIN (canon/<seat>/canon.lock.yaml, 360KB, plus spotchecks and the three voice charters). Previously the plugin carried only principle LABELS in canon_index.json and none of their content, so the running system cited an authority it could not reach. 378 principles (324 book-verified, 54 house doctrine), 159 recognisers, all 15 pm_signed Ash. GitHub is the archive; this is what runs.",
+        "R1 VIOLATION FOUND AND FIXED IN elder-lens. Recogniser R10 read: IF bracket.valid == false THEN 'do not nominate the name at all'. That is exactly what PM RULING R1 forbids. The 2026-09-05 sweep corrected oneil, raschke and wyckoff and MISSED this seat, so elder-lens kept refusing names for an unusable stop for two more days. R10 now follows the ruled pattern used by oneil R6: nominate on trend/force/three-screen as if the bracket were clean, state the limitation as a caution for the PM's bracketing step, NEVER a reject, non-nomination or conviction cap. Nothing else in elder-lens's canon was touched.",
+        "tools/canon_check.py -- new. Before every committee it verifies, per seat: the lock parses; declared counts match actual; principle ids are contiguous (no rule silently dropped); every principle is cited OR explicitly labelled unsourced_retained / pm_override; R1 holds; and THE CARD'S STATED SEAL STATUS MATCHES THE LOCK'S. That last check is what would have caught the stale weis card on day one instead of day fourteen. Result: 15 seats, 0 failed.",
+        "The R1 check judges the instruction, not the vocabulary. oneil R6 contains the word 'reject' only to forbid rejecting ('NEVER a reject, non-nomination or conviction cap') and is correctly passed; weis R7's 'single-bar rejection read' (price rejecting a level) and R9's note that bracket.stop is a proposed stop rather than a broken level are both passed. That false-positive class cost a repair cycle on wyckoff on 2026-09-06.",
+        "canon_index.json IS NOW GENERATED, NOT TYPED (tools/canon_check.py --reindex). The hand-maintained version reported detect-lens and druckenmiller as grounded:false with zero principles; both carry full signed canon -- detect-lens's is in fact the independent reference weis's own folio verification cross-validates against. The index had drifted from the thing it indexed.",
+        "SHAPE TOLERANCE: crown wraps its recognisers as {note, items:[...]} while every other seat uses a bare list. The checker accepts both. Same defect class as the pipeline's silent shape mismatches, caught here before it could mis-report.",
+        "weis card corrected (from 1.6.0) and its lock file replaced with the byte-exact copy from the archive rather than a transcription.",
+        "No seat's METHODOLOGY was altered beyond the elder-lens R10 amendment, which executes a standing PM ruling. Menus, packets, principles, conviction scales untouched."
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "date": "2026-09-07",
+      "changes": [
+        "WEIS CARD CORRECTED -- it was fourteen days stale. The card declared 'Canon status: GROUNDED, NOT SEALED, pm_signed: null, build_status: PENDING_PM_SIGNOFF, four open PM decisions (D1-D4), page cites PDF-page-approximate and NOT folio-verified', and instructed the seat to repeat that in `notes` on EVERY return. The canon was in fact SEALED on 2026-08-24: pm_signed Ash, 23 of 23 citations spot-checked by direct quote match against the source PDF, two citations corrected in that pass (W21 -> pp.85-86, W23 -> p.85 fn.2), citations folio-verified by cross-validation against detect-lens's independent canon, zero open PM decisions. For two weeks this seat hedged every nomination it made against a provenance problem that had already been fixed.",
+        "canon/weis/canon.lock.yaml IS NOW SHIPPED WITH THE PLUGIN. 23 principles with page citations, 12 recognisers (7 live, 4 not-available, 1 pending an engine ticket), 4 out-of-scope items, the conviction scale, and the PM's four 2026-08-24 rulings. Previously the plugin carried only the principle LABELS (W1..W23) in canon_index.json and none of their content, so nothing at runtime could check a card against its own canon -- the running system cited an authority it could not reach.",
+        "tools/canon_check.py -- new. Compares every seat CARD against its shipped LOCK FILE before a committee runs: declared counts match actual, principle ids contiguous, every principle cited, and the card's stated seal status matches the lock's real one. That last check is the one that would have caught the stale weis card on day one. Zero dependencies.",
+        "R1 ENFORCED AT CANON LEVEL: canon_check asserts no recogniser uses a bracket field (bracket.valid / risk_pct / rr / stop_type / atr_fallback_stop) as a DISQUALIFIER. It deliberately distinguishes acting on a bracket from merely naming one as a limitation -- weis R7's 'single-bar rejection read' and R9's note that bracket.stop is a proposed stop, not a broken level, are both correctly passed, not flagged. That false-positive class cost a repair cycle on wyckoff on 2026-09-06.",
+        "canon_index.json CORRECTED. It reported detect-lens and druckenmiller as grounded:false with zero principles. Both have full canon in AQE@main -- detect-lens 31,979 bytes plus a voice charter and spotcheck, druckenmiller 34,913 bytes plus the same. The INDEX was stale, not the canon. detect-lens's canon is in fact the independent reference weis's own folio verification cross-validates against. An index_note now warns against reading grounded:false from this file as evidence a seat lacks canon.",
+        "No seat card's METHODOLOGY was altered. The only change to any card is weis's canon-status block and the matching `notes` instruction. Menus, packets, principles, recognisers and conviction scales are untouched."
+      ]
+    },
+    {
+      "version": "1.5.1",
+      "date": "2026-09-06",
+      "changes": [
+        "R1 closed everywhere it was still open — bracket is never a reject. A sweep found four cards still turning a bracket into a reject somewhere a seat can read it: oneil R6 ('cannot be taken as mine at any size'), elder-lens R10 ('do not nominate the name at all' — never on the 09-05 list), raschke R6 and wyckoff R6 ('hard reject at any conviction') in their skill cards and canon locks, and steenbarger R5 ('block', citing bracket.valid). Every one rewritten: nominate/vote on momentum and structure as if the bracket were clean; STATE the engine's stop as information; when the engine bracket is invalid or missing, name your own invalidation level from structure. Never a reject, never a non-nomination, never a conviction cap.",
+        "HOUSE RULE R1 block inserted at the top of all 13 voting seats' runtime cards (agents/voice-*.md) — it binds the seat and overrides any card line below it, so a stale line can no longer win. Same rule written into skills/voice-common/SKILL.md (the shared engine).",
+        "canon/{oneil,raschke,wyckoff,elder-lens}/canon.lock.yaml rule text corrected to match (governance layer; extract hashes untouched — the lock hashes the source extract, not the derived rules).",
+        "Enforced mechanically on the aegis-core side by registrar.py (aegis-core 1.7.2)."
+      ]
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-08-24",
+      "changes": [
+        "ADD tools/field_derive.py — fills numbers the engine leaves null but that are fully determined by numbers it does emit. First case: bracket.stop_type was null on 78% of rows, which read as a data gap and blocked six seats. It is not a gap: on every one of those rows bracket.valid is false and bracket.atr_fallback_stop is populated 100%, so the stop in force is the ATR fallback and the engine simply never wrote the label. The orchestrator now writes it at packet build, tagged stop_type_source=derived so the seat can see it was not measured. Also emits bracket.stop_eff, the stop actually in force.",
+        "voice_preflight.py now classifies every missing number into one of four outcomes, each with an action: DERIVED (orchestrator fills it, no engine change), SUBSTITUTE_LIVE (a populated fallback is already on the seat's menu), MENU_BUG (fallback exists but is not on the menu — one line in voice_menus.json), ENGINE_TICKET (nothing anywhere, engine must emit). Only the last two block.",
+        "voice_preflight.py prints READY TO RUN: YES/NO and exits non-zero under --strict. As of 2026-08-24 against the live export: 11/11 voices ACTIVATED, zero blockers, READY TO RUN: YES.",
+        "voice_preflight.py --apply writes the derived fields back into the export in place, so the gate that finds the gap is the step that closes it. Everything downstream sees the filled fields with no further wiring."
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-08-24",
+      "changes": [
+        "ADD agents/voice-weis.md + skills/voice-weis/SKILL.md — the weis seat had NO agent file and was being run as a general-purpose spawn with its canon pasted in by hand every run, differently each time. This is the fix for that.",
+        "ADD tools/voice_preflight.py — the voice activation check. Answers two separate questions per seat: (1) can this voice run at all (agent file + readable book) and (2) is today's export complete for it. Mixing those two is what allowed a half-served voice to return ten confident nominations with nothing flagging it.",
+        "canon_index.json now carries weis (UNSIGNED — pm_signed null, 4 open PM decisions).",
+        "Description corrected: said '13 isolated nominator agents', there were 14 agent files and not all of them are nominators."
+      ]
+    }
+  ]
 }

@@ -1,0 +1,456 @@
+# AEGIS PMA — THE RUN MAP, AS DATA.
+#
+# WHY THIS FILE EXISTS. The conductor card used to be a 117-line prose essay. An operator whose
+# context is compacted mid-run cannot reliably re-derive a step's inputs, barrier and meter call
+# from a paragraph. Every step below states its command, what it must read, what it must produce,
+# what must be true to pass, and what it costs. Read this file, not a narrative.
+#
+# THE LOOP, for every step, without exception:
+#   1. preflight_run.py step <NAME>      -- asserts inputs exist and rulings binding here
+#   2. run `command` (tool) or spawn `spawns` seats (model)
+#   3. registrar.py commit each produced artifact as it lands
+#   4. registrar.py meter --step <NAME> [--tool-only]
+#   5. registrar.py tick --step <NAME> --status done|degraded
+# A finished step is NEVER re-run. `/pma resume` reads the scoreboard and restarts the first step
+# not ticked done.
+
+schema: aegis_run.v1
+updated: 2026-10-23
+parameters:
+  deliberation_cap: 20
+  pm_lens_min_checks: 5
+  phase4_window: 5
+  repeat_threshold: 2
+  seat_budget_minutes: 15
+  respawns: 1
+  form_max_bytes: 24576
+  brief_deadline_hours: 4
+  card_report_artifact: "https://claude.ai/artifact/Q6FAPeqn2g8kvQuFja89Z3"   # R23: ONE fixed URL, updated in place every run
+  max_quality_loops: 2
+
+# ---------------------------------------------------------------------------- durability
+# RESTORED 2026-09-16. stages/S0_preflight.md has always said it plainly -- "local disk is
+# disposable -- it has been wiped five times in one build, and every artifact that survived did so
+# because it was pushed" -- and stages/S7_cio_output.md requires the brief to reach a fixed GitHub
+# path "so it is durable and diffable". The v5.4 conductor rewrite carried neither: not one of the
+# 13 steps had a git action, so the 2026-09-15 run existed only inside a container that gets
+# reclaimed. Twenty-seven model spawns and ~115k tokens of committee work sat on disposable disk.
+#
+# The capability was never missing -- tools/git_sync.py has been in this plugin since D-48, is
+# self-healing (clones if the checkout is absent), order-blind, idempotent and fail-visible. It was
+# simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
+# rather than a cheap tool re-run; those are the only ones worth the push.
+checkpoint:
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --paths run_manifest.json forms/ *.json"
+  tool_note: >
+    git_sync.py ships INSIDE skills/pma/tools/ as well as at the plugin root. The run's working set
+    copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy
+    would not resolve during an actual run -- the same duplication the pma tools already carry, for
+    the same reason. Keep the two copies identical.
+  after: [MACRO, NOMINATE, CHALLENGE, VOTE, WRITE]
+  rule: >
+    A checkpointed step is not closed until its artifacts are pushed. Tool steps are not
+    checkpointed -- re-running consensus or repeat-watch costs nothing and pushing after each
+    would only add failure surface. `/pma resume` reads the scoreboard, so what has to survive is
+    run_manifest.json plus the committed forms; with those, a reclaimed container costs the step
+    in flight, never the run.
+  on_fail: >
+    Declare the degradation and CONTINUE -- a push failure must never halt a committee that has
+    already done the expensive work. The run is then knowingly on disposable disk and the brief
+    header says so.
+
+steps:
+
+  - name: INBOX-CLEAN
+    kind: tool
+    connector: Gmail (ash.tzl@gmail.com)
+    queries: ['from:"AQE Alerts"', 'subject:"[AQE]"']
+    command: >
+      TWO searches, because Gmail drops the brackets in subject:"[AQE]" and matches any subject containing
+      the word AQE -- on 2026-10-23 that query also returned GitHub "[TongIncomeWheel/AQE] Run failed"
+      notifications, which are NOT alerts and must never be trashed.
+      (1) search_threads from:"AQE Alerts" -> trash_thread on every thread returned.
+      (2) search_threads subject:"[AQE]" -> trash_thread ONLY where the subject literally starts with
+      "[AQE]" (case-sensitive, after stripping whitespace); every other hit is left untouched and counted
+      as skipped. Page with nextPageToken until each search is empty of matches. Then re-run both and
+      confirm zero matching threads remain.
+    produces: [inbox_clean.json]
+    barrier: "re-search finds 0 matching threads"
+    on_fail: "declare it in the brief header (count trashed, count left) and CONTINUE -- never block the committee"
+    rulings: [R24]
+    must_also: >
+      R24 (PM 2026-10-23): "add one step when we run daily PMA ... search my mailbox for emails with
+      "[AQE]" in subject line or from "AQE Alerts" as sender.. move all these mails to trash." Trash only
+      (recoverable for 30 days) -- never permanently delete, never touch any other mail. Write
+      inbox_clean.json {queries, found, trashed, skipped_not_aqe, remaining, at} and report it in one line.
+      Run it at the START of the morning run: the overnight check-ins have already read the session's alerts.
+    meter: "--tool-only"
+
+  - name: GATHER
+    kind: tool
+    reads: []
+    produces: [aqe_daily_export.json, aqe_crown_macro.json, aqe_valen_dashboard.json, candidate_set.json, packets/, fundamentals_pack.json, phase4_ledger.json, verdict_ledger.json, data_health.json]
+    source: "TongIncomeWheel/AQE@main aegis/output/"
+    barrier: "aqe_daily_export.json present and parses"
+    on_fail: "FATAL - halt and page the PM. No export, no run."
+    rulings: [R7, R12]
+    must_also: >
+      BROKER READ (R20, read-only): pull the broker's open orders and stock positions and normalise them
+      with `pma_levels.py stops --orders <o> --positions <p> --held <held book> --previous <yesterday's
+      broker_stops.json> --out broker_stops.json`. The PM's broker stop is the level in force on every held
+      name; AQE's held_sl is null on every row and must never again be reported as "no stops". A position
+      that vanished since yesterday is listed for the PM to confirm -- the broker's fill query has missed
+      a stop-out (GLD 2026-09-28).
+      Record the sha256 of every tool this run will execute onto the scoreboard (R7).
+      THE HELD BOOK IS AN INPUT, NOT AN AFTERTHOUGHT (R12). aqe_daily_export.json carries
+      export.held_positions — AQE forces every ticker the PM owns through the scoring engines
+      whether or not it still clears the curated screen, so the read is complete and includes
+      hl_state, its own health verdict. `pma_pipeline.py trim` carries that record onto the
+      universe WHOLE under `held_book`; it is never sliced and a held name is never screened out.
+      VALEN (PM 2026-10-23): fetch aegis/output/aqe_valen_dashboard.json beside the export. It feeds the
+      vote packet's VALEN block (r2digest --valen) and the card report's Valen panel. Missing = declared gap.
+      Pull the FMP fundamentals batch HERE — it was lost on 2026-09-06 when this step was
+      shortcut, and surfaced only after RANK.
+    meter: "--tool-only"
+
+  - name: PREPARE
+    kind: tool
+    reads: [candidate_set.json, packets/]
+    produces: [packets_manifest.json]
+    barrier: "every seat has a packet and its md5 is recorded"
+    rulings: [R5, R12]
+    must_also: >
+      VERIFY ONLY. AQE publishes candidate_set.json already Layer-0 filtered; consume it as
+      published. No local filter, no screen, no column stripping (R5). One grep for qs_market
+      across seat packets; a hit is FATAL.
+      THE HELD FLOOR (R12): every seat packet carries held, the cost basis, the size, the
+      unrealised, AQE's hl_state/hl_score, the written stop and target, the kNN path and the
+      ATR fallback stop on every held row. cmd_packets REFUSES to build without them — on
+      2026-09-16 all three positions read EXIT and no seat was shown it.
+    meter: "--tool-only"
+
+  # SEAT TRANSPORT (standard since 2026-10-21, recorded 2026-10-23): in this harness the compiled
+  # aegis-voices:voice-* agent types carry NO file tools (tools: []), so on 2026-10-21 all nine first
+  # spawns correctly refused to work blind. Every seat at MACRO / NOMINATE / CHALLENGE / VOTE is spawned
+  # as a general-purpose agent told to read ONLY its own card (aegis-voices agents/voice-<seat>.md) and its
+  # own packet by path, write its form, and self-validate with registrar.py validate --packet. R2's
+  # inlining is replaced by path-read; the figure audit is the check. Seats write figures as
+  # "field value" (the audit also reads field=value since 2026-10-23).
+  - name: MACRO
+    kind: model
+    spawns: 2
+    seats: [crown, druckenmiller]
+    reads: [aqe_crown_macro.json, aqe_daily_export.json]
+    produces: [forms/macro/*.json]
+    barrier: "2 of 2"
+    rulings: [R2, R3]
+    must_also: druckenmiller sees Crown's DATA POINTS only, never Crown's prose, and never returns a ticker.
+    checkpoint_after: true        # 2 seats
+    meter: "--spawns 2"
+
+  - name: NOMINATE
+    kind: model
+    spawns: 9
+    seats: [elder-lens, livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff]
+    reads: [packets/<seat>.tsv, cards/voice-<seat>.md]
+    produces: [forms/r1/*.json]
+    barrier: "8 of 9"
+    on_fail: "halt and report - no committee"
+    rulings: [R1, R2, R3]
+    must_also: >
+      Blind and isolated. No seat sees the tally, another seat, or any ordering hint.
+      Validate each return on arrival; one respawn, then absent.
+    checkpoint_after: true        # 9 seats
+    meter: "--spawns 9"
+
+  - name: RANK
+    kind: tool
+    command: "pma_pipeline.py tally --nominations <dir> --out tally.json"
+    then: "pma_pipeline.py rank --tally tally.json --candidates candidate_set.json --export <export> --cap 24 --door-budget 8 --pm-lens pm_lens.json --pm-lens-min 5 --out phase4.json"
+    reads: [forms/r1/*.json, candidate_set.json, aqe_daily_export.json, pm_lens.json]
+    produces: [tally.json, phase4.json, phase4_ledger.json]
+    floor:
+      NOMINATED: "R16 -- nominated by ANY seat at ANY conviction. Seated UNCONDITIONALLY. Never cut, never ordered against a machine find, never bounded by --cap."
+      HELD: "R16 + R12 -- a position the PM owns. Seated unconditionally so the ADD question is asked, not only keep/exit."
+    doors:
+      note: "ADDITIONS ONLY (R16). These fill --door-budget (default 8) ON TOP of the floor and can never displace a nomination or a held position. --cap bounds the doors alone."
+      SEATS: "nominated by >= 2 seats (a floor name; the count orders the floor for reading and sets the lane)"
+      SOLO: "nominated by 1 seat at conviction >= 4 (a floor name; label retained, its second-door requirement made moot by R16)"
+      ELDER+LENS: "elder >= 7 on each of the last 2 bars AND >= 3 of 6 lenses strong"
+      LENS: ">= 4 of 6 lenses strong, no elder-bar test"
+      STRENGTH: "rs_spy_20d in top decile of today's list OR mp >= 75 AND mp_accel_state ACCELERATING"
+      PM_LENS: ">= 5 of the PM's 6 checks"
+      AQE_LEADER: "elder_pattern SUSTAINED|ACCELERATION AND rs_leadership LEADER (R13: mp_state not consulted)"
+    lanes: "MOMENTUM if STRENGTH or AQE_LEADER opened, else PULLBACK (R14); written on every phase4 row"
+    ordering_key: >
+      R16: the floor is admitted WHOLE and FIRST, ordered seat_count > conviction_sum >
+      thematic_support > sc_momentum for READING ONLY -- ordering never removes a name. Door
+      additions then fill --door-budget by doors_opened > lenses_strong > AQE rank. The STRENGTH
+      RESERVE IS RETIRED (--strength-reserve accepted and ignored).
+    rulings: [R4, R12, R13, R14, R15, R16]
+    must_also: >
+      run `ledger` immediately after, so names the doors did not add are logged too. cmd_rank ASSERTS
+      the R16 invariant and aborts the run if any nomination is cut. A nomination the served universe
+      carries no row for is reported under nominations_off_universe as a declared DATA GAP -- never as
+      a cut, never silently dropped.
+    meter: "--tool-only"
+
+  - name: PM-LENS
+    kind: tool
+    command: "pm_lens.py --export <export> --phase4 phase4.json --out pm_lens.json"
+    reads: [aqe_daily_export.json]
+    produces: [pm_lens.json]
+    lane: independent
+    must_also: >
+      Runs on the FULL export, not the top 20. BLOCKS NOTHING, FEEDS NOTHING UPSTREAM.
+      Rejoins the run only at WRITE.
+    meter: "--tool-only"
+
+  - name: CHALLENGE
+    kind: model
+    spawns: 4
+    seats: [rogers, steenbarger, lynch, detect-lens]
+    command: "pma_pipeline.py challenge-packets --menus contracts/voice_menus.json --date <date> --outdir seat_packets"
+    reads: [phase4.json, fundamentals_pack.json, forms/r1/*.json, universe.json]
+    produces: [forms/challenge/*.json]
+    barrier: "4 of 4"
+    rulings: [R1, R2, R3]
+    must_also: >
+      R22: lynch is a CONSULTED voice -- he files here and is NOT spawned at VOTE.
+      lynch judges from fundamentals_pack.json only — unserved names are declared unserved,
+      never fetched mid-run, never invented.
+    checkpoint_after: true        # 4 seats
+    meter: "--spawns 4"
+
+  - name: VOTE
+    kind: model
+    spawns: 10
+    seats: [elder-lens, livermore, minervini, oneil, raschke, seow, thorp, weis, wyckoff, detect-lens]   # R22: no lynch
+    reads: [VOTE_PACKET.txt]
+    packet: "pma_pipeline.py r2digest --export <export> --fundamentals fundamentals_pack.json --rogers forms/challenge/rogers.json --steenbarger forms/challenge/steenbarger.json --lynch forms/challenge/lynch.json --detectlens forms/challenge/detect-lens.json --macro forms/macro/crown.json forms/macro/druckenmiller.json --valen aqe_valen_dashboard.json --out VOTE_PACKET.txt"
+    produces: [forms/r2/*.json]
+    barrier: "8 of 10"
+    on_fail: "watch-table-only run, declared"
+    rulings: [R1, R2, R3]
+    validate_with: "registrar.py validate --file <form> --round 2 --packet VOTE_PACKET.txt"
+    must_also: >
+      Packet is built by `pma_pipeline.py r2digest` and is IDENTICAL for every seat.
+      Every seat votes on EVERY deliberation-set name. Commit per vote, not at end of stage.
+      VALIDATE WITH --packet, ALWAYS (R2, amended 2026-09-16). Without it the figure audit does
+      not run and a seat that invented its numbers is committed as if it had read the row. The
+      md5 half of R2 never ran once -- no seat has a hashing tool, so all eleven declared
+      NOT_VERIFIED on 2026-09-15 and nobody noticed it had become routine. This is the check
+      that replaced it, and it only runs if the flag is passed.
+      D123 (PM 2026-10-02): paste contracts/conditions_block.md into every round-2 seat prompt. Every
+      SUPPORT carries a `conditions` block in the shared words of contracts/condition_vocab.json; the
+      registrar rejects one that is missing, types a level as a number, uses a word outside the
+      vocabulary, or steps outside the seat's own method (contracts/voice_primitives.json). The vote,
+      the verdict rule and the lanes are UNCHANGED -- the block only writes down what the seat already
+      judged, in a form AQE's live alerts can watch.
+    checkpoint_after: true        # 11 seats, the single largest model line in the run
+    meter: "--spawns 10"
+    split_ballots: >
+      R16.1 -- under R16 the room is as large as the seats made it, so a seat's votes may not fit one
+      24,576-byte form (measured ~953 bytes per name over eleven real 2026-09-24 ballots, so about 25
+      names per file). A seat then files parts: validate each with
+      `registrar.py validate --file forms/r2/<seat>.partNofM.json --round 2 --part N --of M` (a
+      declared part need not cover the set), then
+      `registrar.py merge --glob 'forms/r2/<seat>.part*.json' --out forms/r2/<seat>.json --phase4 phase4.json`
+      which PROVES the parts cover the deliberation set exactly -- refusing a gap, a duplicate and an
+      outsider -- before DECIDE runs. Tell each seat its part and the names in it. A FILE SIZE LIMIT
+      MUST NEVER AGAIN DECIDE WHICH OF THE PM'S ANALYSTS ARE HEARD.
+
+  - name: DECIDE
+    kind: tool
+    command: "pma_pipeline.py consensus --round2 <votes> --phase4 phase4.json --out consensus.json"
+    then: pma_pipeline.py record-verdicts
+    reads: [forms/r2/*.json]
+    produces: [consensus.json, verdict_ledger.json]
+    rule: "ADVANCE = support > oppose AND support >= 2 AND median support conviction >= 3; else support >= 2 = HOLD-FOR-CONDITIONS; else PASS. MOMENTUM-lane names count the strength seats only (R14); other votes are advisory."
+    rulings: [R1, R8, R9, R14]
+    must_also: >
+      NEVER hand-tallied. Every HOLD gets an observable condition line. Brackets attach AFTER
+      the vote, render-only. The ledger row is written HERE, before any narrative step (R8).
+    meter: "--tool-only"
+
+  - name: CONDITIONS
+    kind: tool
+    command: "pma_conditions.py compile --consensus consensus.json --forms 'forms/r2/*.json' --export aqe_daily_export.json --candidates candidate_set.json --date <date> --out conditions.json --md conditions.md --html conditions.html"
+    reads: [consensus.json, "forms/r2/*.json", aqe_daily_export.json, candidate_set.json]
+    then: "pma_cards.py triggers --conditions conditions.json --export aqe_daily_export.json --broker-stops broker_stops.json --out cards.json"
+    produces: [conditions.json, conditions.md, conditions.html, cards.json]
+    barrier: "pma_conditions.py exits 0"
+    on_fail: "declare it; LEVELS then runs without --conditions and the alert file carries triggers only"
+    meter: "--tool-only"
+    must_also: >
+      D123: copies the verdicts, decides nothing. Puts numbers on every analyst's named levels, lists what
+      the supporters share and every exit line highest first. conditions.md goes in the brief;
+      conditions.html (ticker -> block) goes under each card in the report. Unresolved levels are declared.
+
+  - name: REPEAT-WATCH
+    kind: tool
+    command: pma_pipeline.py repeat-watch
+    then: "purity_check.py --export <export>"
+    reads: [phase4_ledger.json, verdict_ledger.json]
+    produces: [repeat_watch.json, purity_check.json]
+    barrier: "purity_check invariance == PASS"
+    on_fail: "do not publish on that ranking; fix at RANK, max 2 loops, else watch-table-only declared"
+    meter: "--tool-only"
+
+  - name: BRACKET
+    kind: tool
+    command: "pma_pipeline.py brackets --consensus consensus.json --phase4 phase4.json --export <export> --date <date> --out brackets.json"
+    reads: [consensus.json, phase4.json, aqe_daily_export.json]
+    then: "pma_pipeline.py repeatmarks --ledger verdict_ledger.json --consensus consensus.json --brackets brackets.json --date <date> --out repeat_marks.json"
+    produces: [brackets.json, repeat_marks.json]
+    rulings: [R1, R19]
+    must_also: >
+      PM ruling 2026-09-25: queue levels for every ADVANCE and HOLD-FOR-CONDITIONS name. This gives
+      brackets.json its FIRST PRODUCER -- it had been a declared gap on five consecutive runs, which
+      meant every level on every card was hand-picked rather than computed. R1 IS NOT WEAKENED:
+      brackets attach AFTER the vote, are render-only, and can never reach a seat, a door, the tally,
+      the ranking or a verdict; purity_check still proves rank invariance to every bracket field. A
+      HELD name is skipped by design with a stated reason -- you do not bracket what you already own.
+      Sizing needs dynCap from the journal, which the committee run does not carry, so a bracket
+      without it returns LEVELS and refuses to SIZE; `sized` says which, per name.
+    repeat_marks: >
+      R19 (PM 2026-09-25): the same step also writes repeat_marks.json, which puts the committee's own
+      memory on the FACE of every verdict -- consecutive-advance streak, drift since the streak started
+      AND since the first call ever, plus REVERSED and LEFT_THE_ROOM for names the committee has turned
+      on. It runs after brackets because the STANDING/DRIFTED separator is the name's own computed stop
+      distance. Nothing here changes a verdict, a conviction or an ordering.
+    meter: "--tool-only"
+
+  - name: SCORECARD
+    kind: tool
+    command: "pma_scorecard.py grade --ledger verdict_ledger.json --closes closes_scorecard.json --export <run_date>=<that run's aqe_daily_export.json> (one per graded run) --asof <last close> --horizon 5 --beta-cap 2.5 --out scorecard.json --md scorecard.md --html scorecard.html --log scorecard_log.jsonl"
+    reads: [verdict_ledger.json, closes_scorecard.json, aqe_daily_export.json,
+            "scorecard_log.jsonl (yesterday's, read from AQE main aegis/output/pma/scorecard_log.jsonl BEFORE today's push)"]
+    produces: [scorecard.json, scorecard.md, scorecard.html, scorecard_log.jsonl]
+    barrier: "pma_scorecard.py exits 0 -- exit 3 means a ledger price disagrees with the close it would be graded from"
+    on_fail: "re-pull the disagreeing closes once; if still refused, publish the scorecard with the refused rows declared"
+    meter: "--tool-only"
+    must_also: >
+      D122.1 (PM 2026-10-01): every call is graded three ways -- vs SPY, vs the equal-weight AQE list it
+      was picked from, and net of beta -- with median and share-that-beat beside the mean. closes_scorecard.json
+      is FMP historical-price-eod-light (one symbol per call; batch quote is not on the plan) for every ledger
+      name and every AQE list name over the last ten sessions plus SPY. The brief and the card report carry
+      scorecard.md in place of any hand-built performance table; the card report embeds scorecard.html.
+      MONITORING (PM 2026-10-01: "add this scorecard into daily PMA output, keep it running so we can log
+      and monitor ... will review after 2 weeks"): scorecard_log.jsonl gains one line per close (a re-run
+      replaces that close's line) and is pushed at PUBLISH to AQE main aegis/output/pma/scorecard_log.jsonl,
+      read back and blob-verified like the levels file. A run that cannot push declares it; the log is never
+      rebuilt from memory. Review due 2026-10-15. Grading only: it changes no verdict.
+
+  - name: WRITE
+    kind: model
+    spawns: 1
+    seats: [brief-writer]
+    reads: [consensus.json, phase4.json, tally.json, pm_lens.json, repeat_watch.json,
+            purity_check.json, forms/**, skills/cio-voice/SKILL.md]
+    spawn_as: >-
+      general-purpose with agents/brief-writer.md AND skills/cio-voice/SKILL.md inlined.
+      The brief-writer agent type returned tool_uses:0 twice on 2026-09-02 -- it printed
+      unexecuted tool syntax as plain text and produced nothing. This is the pattern that
+      works, recorded so it is not rediscovered every run.
+    d123: >
+      R21: put conditions.md in the brief under the cards, and conditions.html's block under each card in the
+      report (who said what, in plain words). Any trade_above entry in cards.json uses yesterday's INTRADAY
+      high (bar_high), never yesterday's close or high_52w (a closing high) -- LEVELS refuses a line pinned
+      to the close.
+    produces: [pma_brief_<date>.md, cards_text.json]
+    cards_text: >
+      R23: the writer ALSO writes cards_text.json -- WORDS ONLY, schema in agents/brief-writer.md
+      (bottom line, market reads, money, book, changed, one case+why+readiness per ADVANCE, one line per
+      HOLD and PASS, plan, caveats). Every number on the card report comes from the run files, not this file.
+      The trigger levels in cards.json are tool-built at CONDITIONS; WRITE never hand-builds triggers.
+    sections: ["0 verdicts", "0A executive consensus", "0B what these were picked on + momentum fit",
+               "1 macro", "1A valen", "2 sectors", "3 held book", "4 repeat watch", "5 QS", "6 PM lens",
+               "7 cards", "8 near misses", "9A what to do with what I own", "9B what to trade today",
+               "9C the day's plan", "A vote record"]
+    the_five_questions:
+      1: "market shape / regime / macro -> S1"
+      2: "sectors and thematics showing signal -> S2"
+      3: "what to do with what I own -> S3 + S9A"
+      4: "what to trade today -> S0/S0A/S0B + S9B"
+      5: "the day's plan -> S9C"
+    rulings: [R1, R9]
+    must_also: >
+      Narrative only — changes no verdict, ranking, conviction or cap. A missing input renders as
+      a one-line declared gap. THE BRIEF ALWAYS LANDS.
+    checkpoint_after: true        # the brief itself; S7 requires it to reach a fixed GitHub path
+    meter: "--spawns 1"
+
+  - name: CHECK
+    kind: tool
+    command: pma_pipeline.py gate
+    barrier: "0 FAIL"
+    on_fail: "fix at the owning stage, max 2 loops, residuals declared in the footer"
+    meter: "--tool-only"
+
+  - name: LEVELS
+    kind: tool
+    command: "pma_levels.py emit --date <date> --window 3 --conditions conditions.json --history <yesterday's aegis/output/pma/pma_levels.json from AQE main, read BEFORE today's push> --out pma_levels.json"
+    reads: [consensus.json, brackets.json, repeat_marks.json, cards.json, broker_stops.json, candidate_set.json, phase4.json, conditions.json]
+    produces: [pma_levels.json]
+    barrier: "pma_levels.py exits 0 -- it REFUSES to write on a broken contract"
+    on_fail: "fix cards.json at WRITE (the conditions must be numbers), max 2 loops; if still refused, publish nothing to AQE and declare it"
+    rulings: [R1, R17, R20, R21]
+    must_also: >
+      R20 (PM 2026-09-30): the committee's levels leave the run as numbers AQE's 15-minute alert loop
+      watches, so actionable items reach the PM's inbox in market hours. One row per ADVANCE,
+      HOLD-FOR-CONDITIONS, HELD and WATCH name. The tool REFUSES if a HOLD condition has no trigger and
+      no stated not_structured_yet reason, if a WATCH row carries a trigger (R17), or if a committee exit
+      line sits BELOW the PM's broker stop (a committee line may never loosen a stop he has).
+      Render-only: nothing here places, changes, cancels or sizes an order.
+      R20.1 ROLLING WINDOW (PM 2026-09-30): the file carries the last THREE runs additively, because a
+      committee level often triggers a session or two late. Read yesterday's published pma_levels.json from
+      AQE main (git fetch is read-only and works) BEFORE pushing today's, and pass it as --history; it already
+      carries its own window, and the cut is made on each row's origin run. Dated archives are also accepted. Today wins on any name voted
+      today; PASS today, a broken kill line, HELD/WATCH from earlier runs and anything older than the
+      window are retired with a reason; every trigger id is stamped <origin_run>:<id> so AQE remembers a
+      fire for the row's whole life. A missing history file is declared, never fatal.
+    meter: "--tool-only"
+
+  - name: REPORT
+    kind: tool
+    command: "pma_cards.py render --text cards_text.json --out pma_cards_<date>.html"
+    reads: [cards_text.json, consensus.json, aqe_daily_export.json, cards.json, brackets.json, broker_stops.json, phase4.json, aqe_valen_dashboard.json, aqe_crown_macro.json, scorecard.md]
+    produces: [pma_cards_<date>.html]
+    barrier: "pma_cards.py exits 0 -- it REFUSES (exit 2) a words file missing any ADVANCE card, HOLD line or PASS line"
+    on_fail: "fix cards_text.json at WRITE, max 2 loops; the markdown brief still lands"
+    rulings: [R23]
+    must_also: >
+      R23 (PM 2026-10-23: "why is the PMA report format always changing, the cards form always works the
+      best"). The card report is the PM's primary read and its LAYOUT IS FIXED IN CODE (pma_cards.py render);
+      never hand-write or restyle the HTML. Publish it with the Artifact tool to the ONE fixed URL in
+      parameters.card_report_artifact (update in place, never a new artifact per day), then print the link.
+    meter: "--tool-only"
+
+  - name: PUBLISH
+    kind: tool
+    produces: [aegis/reports/pma/<date>.md, latest.md, data/pma/<date>/, aegis/output/pma/scorecard_log.jsonl]
+    rulings: [R10, R20]
+    push_levels: >
+      R20: push pma_levels.json to TongIncomeWheel/AQE branch main at BOTH
+      aegis/output/pma/pma_levels.json (the file AQE's alert loop reads) and
+      aegis/output/pma/levels/<date>.json (the dated record), with cards.json and broker_stops.json
+      beside the dated copy. Use the GitHub connector (push_files, one commit) or tools/git_sync.py.
+      THE PATH MUST STAY UNDER aegis/output/ -- .github/workflows/deploy-hf.yml rebuilds the HF Space on
+      every push to main EXCEPT aegis/output/**, so a levels file written anywhere else would redeploy the
+      Space every morning and kill the container mid-run. A failed push is declared in the brief header and
+      the PM is told plainly that today's levels are NOT being watched.
+      READ-BACK, ALWAYS: after the push, fetch aegis/output/pma/pma_levels.json from origin/main and compare it
+      with the run's file (parsed JSON equality). The connector takes the file as inline text; on 2026-09-30
+      the first push carried one transcription slip (APH mp 56.0 for 60.0) that only the read-back caught.
+      Mismatch -> re-push, then re-verify; never tick PUBLISH on an unverified file. The durable fix is a
+      byte-exact git push (tools/git_sync.py), which needs TongIncomeWheel/AQE added to the session's
+      authorised repositories -- a PM action.
+    push_scorecard: >
+      D122.1: push scorecard_log.jsonl to aegis/output/pma/scorecard_log.jsonl and scorecard.md to
+      aegis/output/pma/scorecard/<date>.md in the same commit as the levels (scorecard.json, ~150KB, is too large to transcribe through the connector and is rebuildable from the ledger and closes). Same path rule (stay under
+      aegis/output/), same read-back (fetch, compare blob sha to `git hash-object`), same declaration on failure.
+    must_also: >
+      Print the full brief on screen — the brief in chat is the deliverable, not the files.
+      Report the run's est_tokens and wall clock from `registrar.py status` in one line.
+    meter: "--tool-only"

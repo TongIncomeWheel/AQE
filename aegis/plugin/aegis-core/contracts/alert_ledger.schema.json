@@ -1,0 +1,107 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "AQE intraday alert ledger",
+ "description": "The ONE intraday alert artifact. Written by the AQE alert engine to the Drive 'AQE' folder as aqe_alert_ledger.json and mirrored to aegis/data/alerts/DATE/aqe_alert_ledger.json. Replaces the retired inbox.jsonl / alert_inbox.schema.json pair (2026-08-06): AQE never emitted that shape and never will. Single JSON object, newest first, self-documenting via its own `events` map. Already enriched at source — the sweep does NOT join back to the daily export.",
+ "type": "object",
+ "required": ["updated", "events", "entries"],
+ "properties": {
+  "updated": {"type": "string", "description": "Human timestamp of the last write, SGT."},
+  "retention_days": {"type": "integer", "description": "Rolling window AQE keeps in the file."},
+  "sorted": {"type": "string"},
+  "slice_on": {"type": "array", "items": {"type": "string"}, "description": "Fields AQE guarantees are present and safe to group/slice on."},
+  "events": {
+   "type": "object",
+   "description": "Event vocabulary, defined by AQE itself. Authoritative — Aegis reads these keys, it does not invent its own.",
+   "additionalProperties": {"type": "string"}
+  },
+  "entries": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["ts", "date", "time_et", "session", "ticker", "event", "live_px", "is_held", "lists", "scores", "levels"],
+    "properties": {
+     "ts": {"type": "string", "description": "ISO8601 with ET offset."},
+     "date": {"type": "string"},
+     "time_et": {"type": "string"},
+     "weekday": {"type": "string"},
+     "iso_week": {"type": "string"},
+     "session": {"type": "string", "enum": ["am", "pm"]},
+     "ticker": {"type": "string"},
+     "event": {
+      "type": "string",
+      "enum": ["BOS", "NEAR_BREAKOUT", "NEAR_TARGET", "NEAR_STOP", "MOVE", "VETO_HELD"],
+      "description": "BOS = closed above last confirmed pivot high. NEAR_BREAKOUT = climbing into that level from below. NEAR_TARGET = approaching TP1 from below. NEAR_STOP = within 5% above the stop/live SL. MOVE = +/-2% vs last close, REFERENCE ONLY, carries no entry claim. VETO_HELD = a QS veto struck a held name."
+     },
+     "label": {"type": "string"},
+     "note": {"type": "string"},
+     "level_price": {"type": ["number", "null"]},
+     "live_px": {"type": ["number", "null"]},
+     "chg_pct_vs_cob": {"type": ["number", "null"]},
+     "prev_close": {"type": ["number", "null"]},
+     "is_held": {"type": "boolean"},
+     "lists": {
+      "type": "object",
+      "description": "Membership stamped at source. Aegis reads these flags; it does NOT re-derive membership from alert_list.json.",
+      "properties": {
+       "on_longlist": {"type": "boolean"},
+       "on_elder": {"type": "boolean"},
+       "on_qs": {"type": "boolean"},
+       "held": {"type": "boolean"}
+      }
+     },
+     "qs": {
+      "type": ["object", "null"],
+      "properties": {
+       "conviction": {"type": ["number", "null"]},
+       "state": {"type": ["string", "null"]},
+       "p": {"type": ["number", "null"]},
+       "n_analogues": {"type": ["number", "null"]},
+       "recipe_hits": {"type": ["number", "null"]}
+      }
+     },
+     "scores": {
+      "type": "object",
+      "properties": {
+       "sc_momentum": {"type": ["number", "null"]},
+       "ptrs": {"type": ["number", "null"]},
+       "elder": {"type": ["number", "null"]},
+       "flow": {"type": ["number", "null"]},
+       "energy": {"type": ["number", "null"]},
+       "mp": {"type": ["number", "null"]},
+       "mp_state": {"type": ["string", "null"]},
+       "lens_positive": {"type": ["number", "null"]}
+      }
+     },
+     "levels": {
+      "type": "object",
+      "properties": {
+       "bracket_stop": {"type": ["number", "null"]},
+       "bracket_valid": {"type": "boolean"},
+       "tp1": {"type": ["number", "null"]},
+       "last_pivot_high": {"type": ["number", "null"]},
+       "atr_14d": {"type": ["number", "null"]}
+      }
+     },
+     "structure_shift": {"type": ["string", "null"]},
+     "intraday": {
+      "type": ["object", "null"],
+      "properties": {
+       "elapsed": {"type": ["number", "null"]},
+       "position_in_range": {"type": ["number", "null"]},
+       "range_pct": {"type": ["number", "null"]},
+       "range_ratio": {"type": ["number", "null"]},
+       "vol_pace": {"type": ["number", "null"]},
+       "move_from_open_pct": {"type": ["number", "null"]},
+       "gap_pct": {"type": ["number", "null"]},
+       "signature": {"type": ["string", "null"]}
+      }
+     },
+     "outcome": {
+      "type": ["object", "null"],
+      "description": "WRITE-BACK SLOT. Null at source on every entry. Aegis stamps what the alert became (routed / podded / verdict / paged / dropped + reason) so the day is auditable and the learning loop closes. AQE never writes this."
+     }
+    }
+   }
+  }
+ }
+}

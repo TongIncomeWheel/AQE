@@ -1,5 +1,3 @@
-# VENDORED from aegis-core plugin 1.24.1 (skills/pma/tools/pma_pipeline.py), 2026-10-23.
-# The live plugin in Claude is the source of truth; refresh this file on plugin release.
 #!/usr/bin/env python3
 """PMA deterministic pipeline tool — v4.2 (PM-ratified 2026-08-17).
 All arithmetic between the model stages lives HERE: same inputs, same outputs, no model in the path.
@@ -56,6 +54,9 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     # all along and this whitelist dropped them because no seat MENU had asked. Seven of nine
     # seats never saw a return, a run length or an ADX. They are served to every nominator now.
     "ret_63d","ret_6m","pct_run_10d","adx_14",
+    # R30 (PM 2026-10-30): Seow v2 position system + Wyckoff v2 (Wyckoff 2.0) read these. All are already
+    # in the export; without them here trim nulled every new menu column (found on the 2026-10-30 dry build).
+    "bar_open","bar_high","bar_low","bar_close","prior_bar_high","prior_bar_low","last_pivot_high","structure_shift_ref","fib_swing_low","base_low_20d","days_since_swing_high","bar_range_5d","subcomponents","rvol_20d","ma_20_slope_5d_pct","pvp_poc","pvp_vah","pvp_val","pvp_position","vwap_14d","vwap_14d_position","avwap_structure","avwap_swing","pos_in_50d_range_pct",
     # QS -- the PM's own proprietary regime/signal read. Captured here (2026-08-17, PM request)
     # SOLELY for the S7 card QS line, shown on every card after deliberation closes, whether or
     # not that name was ever nominated. R3 is unchanged and still absolute: this field must never
@@ -740,7 +741,7 @@ def _strength_door(row, rs_top, mp_min=75.0):
 # seats alone. A lens name is judged by every seat; a name that is here on strength alone is
 # judged by the seats whose method buys strength.
 MOMENTUM_DOORS = ("STRENGTH", "AQE_LEADER")
-STRENGTH_SEATS = ["livermore", "oneil", "minervini", "elder-lens", "detect-lens"]
+STRENGTH_SEATS = ["livermore", "oneil", "minervini", "elder-lens", "detect-lens", "seow"]  # R30 (PM 2026-10-30): seow added with his position system
 PULLBACK_SEATS = ["raschke", "seow", "thorp", "weis", "wyckoff"]
 # R22 (PM standing ruling 2026-10-22): "Livermore is a key voting seat. Lynch is not."
 # Lynch is a CONSULTED fundamentals voice: his CHALLENGE read goes into the vote packet, and any
@@ -752,6 +753,11 @@ def _lane(doors):
     is voted in the MOMENTUM lane -- its verdict is computed from the strength seats only. Every
     other name is PULLBACK lane, verdict from all eleven. All eleven still file a vote on every
     name; the off-lane votes are recorded as advisory."""
+    # R27 (PM 2026-10-23): "it is completely stupid that we apply pullback lens onto a momentum book,
+    # the 2 lanes should still stay". A name seated for its strength is a MOMENTUM-lane name. A reserved
+    # U&R seat takes the ordinary rule -- a leader's reclaim (ACN) opens STRENGTH and is MOMENTUM.
+    if "STRONG_SEAT" in doors:
+        return "MOMENTUM"
     return "MOMENTUM" if any(d in MOMENTUM_DOORS for d in doors) else "PULLBACK"
 
 
@@ -1147,7 +1153,52 @@ def cmd_rank(a):
                        key=lambda tk: (-len(doors[tk]), -_lens_strong_count(uni[tk]), uni[tk].get("rank") or 9999, tk))
     n_flag = a.machine_add if a.machine_add is not None else min(a.door_budget, a.cap)
     flagged, rest_doors = door_only[:n_flag], door_only[n_flag:]
-    admitted = floor                       # THE ROOM IS THE FLOOR. Nothing else.
+    # ================ R25 -- UP TO 3 RESERVED U&R SEATS (PM 2026-10-23) ================
+    # PM: "yes i think we can give up to 3 reserved seats for Valen UnR". Raised by ACN: on both of
+    # AQE's lists, strength rank 51, Valen undercut-and-rally MET, PM's own manual pick -- and never
+    # voted, because no seat nominated it and R17 lets a door flag a name but never seat it.
+    # The ONE exception to R17: a name AQE marks unr_status == MET on its last completed session
+    # (the reclaim day) AND on the Longlist or Elder list, not already in the room, ordered by AQE
+    # rank, at most --unr-seats (3). It is VOTED like any other name, so the committee still decides;
+    # it simply cannot be invisible. SETUP (still under the level) does not qualify -- no reclaim yet.
+    exp_rows = {r.get("ticker"): r for r in D.get("daily_list", [])}
+    unr_pool = sorted([tk for tk, r in exp_rows.items()
+                       if tk in uni and tk not in floor_set and r.get("unr_status") == "MET"
+                       and (r.get("on_longlist") or r.get("on_elder"))],
+                      key=lambda tk: (uni[tk].get("rank") or 9999, tk))
+    unr_seated = unr_pool[:max(0, a.unr_seats)]
+    for tk in unr_seated:
+        doors[tk].append("UNR_SEAT")
+    door_only = [tk for tk in door_only if tk not in unr_seated]
+    flagged = [tk for tk in flagged if tk not in unr_seated]
+    rest_doors = [tk for tk in rest_doors if tk not in unr_seated]
+    admitted = floor + unr_seated          # THE ROOM IS THE FLOOR, plus the R25 U&R seats.
+    # ================ R26 -- THE FLAG LIST IS THE STRONGEST NAMES, NOT THE MOST DOORS ================
+    # PM 2026-10-23: "our objective is to NOT miss strong momentum picks". Until today the flag list
+    # was door-openers ordered by doors opened, so ACN (both lists, 3rd strongest vs SPY over 20 days
+    # of everything not in the room) opened one door and never made the 8 shown. Now: every name on the
+    # Longlist or Elder list that is not in the room, ordered by 20-day strength vs SPY, then AQE rank.
+    # Still R17: flagged for the PM, never seated, never voted. Replayed: ACN 7th on 22 Oct, 3rd on 23 Oct.
+    room = set(admitted)
+    def _rs(tk):
+        v = uni[tk].get("rs_spy_20d")
+        return v if isinstance(v, (int, float)) else float("-inf")
+    watch_pool = sorted([tk for tk in uni if tk not in room
+                         and (exp_rows.get(tk, {}).get("on_longlist") or exp_rows.get(tk, {}).get("on_elder"))],
+                        key=lambda tk: (-_rs(tk), uni[tk].get("rank") or 9999, tk))
+    # ================ R27 -- THE STRONGEST NAMES ARE VOTED, NOT JUST SHOWN (PM 2026-10-23) ================
+    # PM: "its not just to pick the strongest names, but also let committee review these strongest and
+    # vote on it ... theyre applying their methodology and voice to these names and forming a consensus
+    # on which is worth it. if they dont do this, it is equivalent to me scanning aqe manually which
+    # defeats the purpose." The top --strong-seats of the R26 pool are SEATED and voted in the MOMENTUM
+    # lane (strength seats decide). This reverses R17 for these names only; the rest stay flagged.
+    strong_seated = watch_pool[:max(0, a.strong_seats)]
+    for tk in strong_seated:
+        doors[tk].append("STRONG_SEAT")
+    admitted = admitted + strong_seated
+    rest_pool = watch_pool[len(strong_seated):]
+    flagged = rest_pool[:n_flag]
+    rest_doors = [tk for tk in door_only if tk not in flagged and tk not in strong_seated]
     dropped = [f"{tk}({'+'.join(doors[tk])} rank{uni[tk].get('rank')})" for tk in rest_doors]
 
     # R16's invariant, unchanged and still asserted: a nomination is IMPOSSIBLE to cut, because the
@@ -1166,9 +1217,26 @@ def cmd_rank(a):
                  "held_seated": [t for t in floor if t in held], "floor_size": len(floor),
                  "nominations_cut_by_machinery": no_door,
                  "nominations_off_universe": off_universe,
+                 "unr_seats": [{"ticker": tk, "aqe_rank": uni[tk].get("rank"),
+                                "unr_note": exp_rows[tk].get("unr_note"), "unr_level": exp_rows[tk].get("unr_level")}
+                               for tk in unr_seated],
+                 "unr_seat_pool": len(unr_pool),
+                 "strong_seats": [{"ticker": tk, "aqe_rank": uni[tk].get("rank"), "rs_spy_20d": uni[tk].get("rs_spy_20d"),
+                                   "sc_momentum": uni[tk].get("sc_momentum"), "extension_atr_20": uni[tk].get("extension_atr_20"),
+                                   "on_longlist": bool(exp_rows.get(tk, {}).get("on_longlist")),
+                                   "on_elder": bool(exp_rows.get(tk, {}).get("on_elder"))} for tk in strong_seated],
+                 "strong_seat_rule": ("R27 (PM 2026-10-23): the top --strong-seats Longlist/Elder names not otherwise in "
+                                      "the room, by 20-day strength vs SPY, are seated and voted in the MOMENTUM lane."),
+                 "unr_seat_rule": ("R25 (PM 2026-10-23): up to --unr-seats names with AQE unr_status MET on the "
+                                   "Longlist or Elder list, not otherwise in the room, by AQE rank. Voted like any "
+                                   "name, PULLBACK lane (whole room)."),
                  "machine_additions": [],   # R17: a door no longer seats anybody. Kept as an empty
                                             # key so every downstream reader's contract still holds.
-                 "informational": [{"ticker": tk, "doors": doors[tk], "lane": _lane(doors[tk]),
+                 "informational": [{"ticker": tk, "doors": doors.get(tk, []), "lane": _lane(doors.get(tk, [])),
+                                    "on_longlist": bool(exp_rows.get(tk, {}).get("on_longlist")),
+                                    "on_elder": bool(exp_rows.get(tk, {}).get("on_elder")),
+                                    "sc_momentum": uni[tk].get("sc_momentum"),
+                                    "unr_status": exp_rows.get(tk, {}).get("unr_status"),
                                     "aqe_rank": uni[tk].get("rank"), "mp": uni[tk].get("mp"),
                                     "rs_spy_20d": uni[tk].get("rs_spy_20d"),
                                     "extension_atr_20": uni[tk].get("extension_atr_20"),
@@ -1177,10 +1245,11 @@ def cmd_rank(a):
                                     "gics_sector_name": uni[tk].get("gics_sector_name"),
                                     "runner_conviction_label": uni[tk].get("runner_conviction_label")}
                                    for tk in flagged],
-                 "informational_rule": ("R17 (PM ruling 2026-09-25): a name that opened a door but no seat "
-                                        "nominated is FLAGGED FOR THE PM, never seated. It is not voted, gets "
-                                        "no verdict, and cannot supersede committee consensus. Ordered by "
-                                        "doors_opened > lenses_strong > AQE rank."),
+                 "informational_rule": ("R17 (PM ruling 2026-09-25): a name no seat nominated is FLAGGED FOR THE "
+                                        "PM, never seated. It is not voted, gets no verdict, and cannot supersede "
+                                        "committee consensus. R26 (2026-10-23): the flag list is every Longlist/Elder "
+                                        "name not in the room, ordered by 20-day strength vs SPY > AQE rank."),
+                 "watch_pool": len(watch_pool),
                  "informational_shown": len(flagged),
                  "door_openers_not_on_the_floor": len(door_only),
                  "machine_add_budget": n_flag,
@@ -1210,7 +1279,9 @@ def cmd_rank(a):
     assert not no_door, f"R16 VIOLATED: nominations cut by machinery: {no_door}"
     print(f"receipt: R16 floor {len(floor)} = {len([t for t in floor if t in tal])} of {len(tal)} nominated (0 cut) "
           f"+ {len([t for t in floor if t in held and t not in tal])} held "
-          f"-> {len(admitted)} IN THE ROOM (R17: the doors seat nobody); "
+          f"+ {len(unr_seated)} R25 U&R seats {unr_seated} (pool {len(unr_pool)}) "
+          f"+ {len(strong_seated)} R27 strength seats {strong_seated} "
+          f"-> {len(admitted)} IN THE ROOM (R17: the doors seat nobody else); "
           f"{len(door_only)} door-openers flagged for the PM as information, {len(flagged)} shown; "
           f"by door {dict(by_door)}; lanes {dict(lanes)}; "
           f"{never_nominated} names no seat nominated; pm_lens flagged {len(pm_flagged)}; strength rs_top={rs_top}"
@@ -1522,6 +1593,7 @@ def cmd_r2digest(a):
          "DOORS: how each name reached this vote -- SEATS (>=2 nominators) | SOLO (1 nominator at conviction>=4 + a momentum door) | ELDER+LENS (elder>=7 x2 bars AND >=3 lenses strong) | LENS (>=4/6 lenses strong) | STRENGTH (top-decile 20d RS, or mp>=75 accelerating) | PM_LENS (>=5/6) | AQE_LEADER (SUSTAINED/ACCELERATION + LEADER). A name with no SEATS/SOLO door was nominated by nobody.",
          "LANES (PM ruling 2026-09-22, D120): every name carries lane=MOMENTUM or lane=PULLBACK. ALL seats vote on ALL names. A MOMENTUM-lane verdict is computed from the strength seats only (" + ", ".join(STRENGTH_SEATS) + "); other seats' votes on those names are recorded as advisory. A PULLBACK-lane verdict counts every seat.",
          "R13 (binding): mp_state FADING means 'momentum score not higher than 3 bars ago' -- a default label that includes flat-at-high. It is NOT a decay signal and is NEVER on its own a reason to oppose. Read mp, mp_accel_state and the returns.",
+         "R25/R27 (binding): a name with door STRONG_SEAT (among today's strongest on AQE's lists) or UNR_SEAT (Valen reclaim day) was seated by rule -- NO voice nominated it. That is not a reason to oppose. Apply YOUR method to it: is the momentum real, where would you enter, where would you be wrong. Do not PASS it only because it does not match your own scan's setup shape -- the PM wants the committee's verdict on the strongest names, not a re-run of each seat's screen.",
          "R14 (binding, MOMENTUM lane): extension above the 20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a WEIGHT in a momentum-lane vote, never a veto. A momentum-lane name is judged on strength, institutional money, coil and momentum -- the book this lane exists to buy.",
          ""]
     if a.macro:
@@ -2101,7 +2173,7 @@ if __name__ == "__main__":
     s.add_argument("--export", required=True); s.add_argument("--date", required=True)
     s.add_argument("--dyncap", default=None, help="optional journal dynCap file; absent means levels are produced and sizing is refused")
     s.add_argument("--out", default="brackets.json")
-    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json"); s.add_argument("--elder-bars", type=int, default=2); s.add_argument("--lens-min", type=int, default=4); s.add_argument("--strength-decile", type=float, default=0.10); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--strength-reserve", type=int, default=0, help="RETIRED by R16 (PM ruling 2026-09-24): accepted and ignored so old command lines still run."); s.add_argument("--door-budget", type=int, default=8, help="R16: the ADDITIVE allowance for machine finds on top of the nomination floor. Read off the verdict record: 29 unnominated admits over three runs produced 3 ADVANCE, so the doors earn ~1 useful name per run and 8 is generous."); s.add_argument("--machine-add", type=int, default=None, help="R16: exact override for the additive door allowance. Default is --door-budget (8), bounded by --cap. --cap NEVER bounds the nomination floor.")
+    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json"); s.add_argument("--elder-bars", type=int, default=2); s.add_argument("--lens-min", type=int, default=4); s.add_argument("--strength-decile", type=float, default=0.10); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--strength-reserve", type=int, default=0, help="RETIRED by R16 (PM ruling 2026-09-24): accepted and ignored so old command lines still run."); s.add_argument("--door-budget", type=int, default=10, help="R16: the ADDITIVE allowance for machine finds on top of the nomination floor. Read off the verdict record: 29 unnominated admits over three runs produced 3 ADVANCE, so the doors earn ~1 useful name per run and 8 is generous."); s.add_argument("--strong-seats", type=int, default=10, help="R27 (PM 2026-10-23): the strongest Longlist/Elder names not nominated are seated and voted, MOMENTUM lane. 0 = flag only (R17/R26)."); s.add_argument("--unr-seats", type=int, default=3, help="R25 (PM 2026-10-23): reserved seats for Valen U&R MET names on the Longlist/Elder list that no seat nominated. 0 turns it off."); s.add_argument("--machine-add", type=int, default=None, help="R16: exact override for the additive door allowance. Default is --door-budget (8), bounded by --cap. --cap NEVER bounds the nomination floor.")
     s = sub.add_parser("round2packets")
     s.add_argument("--candidates", default="candidate_set.json")
     s.add_argument("--menus", required=True)

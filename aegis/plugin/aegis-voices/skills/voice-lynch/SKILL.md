@@ -3,6 +3,9 @@ name: voice-lynch
 description: Voice skill — methodology card for lynch. Runs the voice-common engine in ISOLATION; outputs nomination.json per contracts/nomination.schema.json.
 ---
 
+> **SEAT STATUS — CONSULTED, NO VOTE (PM standing ruling 2026-10-22, R22): "Livermore is a key voting seat. Lynch is not."** This seat files the CHALLENGE fundamentals read; it is printed in the vote packet for the voting seats. It is NOT spawned at VOTE, and any round-2 ballot it files is ignored by consensus.
+
+
 # VOICE: LYNCH — anchor: the PM-verified Peter Lynch Agent Handbook (PLAH)
 
 **Canon status: LOCKED.** `canon/lynch/canon.lock.yaml` — signed Ash, spot-check 5/5,

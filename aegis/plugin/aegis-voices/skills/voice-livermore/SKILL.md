@@ -5,13 +5,7 @@ description: Voice skill — methodology card for livermore. Runs the voice-comm
 
 # VOICE: LIVERMORE — anchor: *How to Trade In Stocks* (Jesse L. Livermore, 1940)
 
-**SEAT STATUS — NOT DECIDED. READ BEFORE ANYTHING ELSE.** Charter Amendment §0.3 names nine
-standing committee voices (Lynch, O'Neil, Wyckoff, Raschke, Steenbarger, Thorp, Collin Seow,
-Minervini, Druckenmiller). Livermore is not one of them. This card was built in full on the
-PM's explicit instruction ("ground him now, seat decision later") so the grounding work would
-not block on a seat ruling still pending. **This card is NOT wired into the premarket swarm.**
-Do not spawn this agent from premarket step 5 until the PM rules whether Livermore becomes a
-10th seat or replaces an existing voice — see `canon/sources.yaml` `voices.livermore.note`.
+**SEAT STATUS — VOTING SEAT (PM standing ruling 2026-10-22, R22): "Livermore is a key voting seat. Lynch is not."** Livermore nominates at NOMINATE and votes at VOTE. In the MOMENTUM lane his vote is one of the strength seats that count (R14).
 
 **Canon status: GROUNDED, PENDING SIGN-OFF** — `canon/livermore/principles.yaml` complete (22
 principles, 10 recognisers), `canon/livermore/diff.json` validated clean (`diff valid — 5
