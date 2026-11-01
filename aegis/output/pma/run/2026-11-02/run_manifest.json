@@ -107,10 +107,58 @@
    "sha256": "a6454bb54838c9c3641683f1761b331c85f5d0013f53a92a41caaaa3c4a05831",
    "status": "committed"
   },
+  "QA/elder-lens": {
+   "file": "forms/ratify2/elder-lens.json",
+   "flags": [],
+   "sha256": "7ca89c1215c169342d028a5e9be772a5574ba31dd9043c818a72d67cc09b50fe",
+   "status": "committed"
+  },
+  "QA/livermore": {
+   "file": "forms/ratify2/livermore.json",
+   "flags": [],
+   "sha256": "f5995ca3ff6449f3af15ee24a889742910112ec2c77b276ed5d9c5475eb3bffc",
+   "status": "committed"
+  },
+  "QA/minervini": {
+   "file": "forms/ratify2/minervini.json",
+   "flags": [],
+   "sha256": "648645c5aea463dcfd3c0521dbbfc1a9b3f83e3df237633d6c469eea065c0b45",
+   "status": "committed"
+  },
+  "QA/oneil": {
+   "file": "forms/ratify2/oneil.json",
+   "flags": [],
+   "sha256": "5d4c945f3df50a6f65e4f96818c5b21ceb90a8e204a46834c9aaeba70ecddfcb",
+   "status": "committed"
+  },
+  "QA/raschke": {
+   "file": "forms/ratify2/raschke.json",
+   "flags": [],
+   "sha256": "bd57e498d751c518f2627fb7ff6395d8399d87a7abdb0133f96f71160d88f859",
+   "status": "committed"
+  },
+  "QA/seow": {
+   "file": "forms/ratify2/seow.json",
+   "flags": [],
+   "sha256": "5e735f7c982bc284233f336424fd1d8e348068a80f1f15491a54e23c345eef6a",
+   "status": "committed"
+  },
   "QA/steenbarger": {
    "file": "forms/qa/steenbarger.json",
    "flags": [],
    "sha256": "e0c2bd1e96f4f0965b37b15c55e85d19f995ef8eb60dfdd0bc15b50b7378fc36",
+   "status": "committed"
+  },
+  "QA/wyckoff": {
+   "file": "forms/ratify2/wyckoff.json",
+   "flags": [],
+   "sha256": "fc08a958655909174b1eb05f77cff981594ad2b71017cd1293d1b90b6dd6ccd0",
+   "status": "committed"
+  },
+  "QA/x": {
+   "file": "forms/floor2/wyckoff-V-1.json",
+   "flags": [],
+   "sha256": "23ee29842fe67cf1a4c8302a4ac7fd3057d545d47debcd49b34b4cb0f229e70a",
    "status": "committed"
   },
   "RATIFY/elder-lens": {
@@ -205,6 +253,22 @@
   }
  },
  "steps": {
+  "BRACKET": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T23:12:43Z",
+   "notes": [
+    "14/15 bracketed (V held, skipped); CNQ DRIFTED"
+   ],
+   "started": "2026-11-01T23:12:43Z",
+   "status": "done",
+   "tokens": 0
+  },
   "CHALLENGE": {
    "cost": {
     "inlined_bytes": 81445,
@@ -219,6 +283,38 @@
     "17 findings, 5 obligations, 39 names read"
    ],
    "started": "2026-11-01T22:31:55Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CONDITIONS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T23:12:43Z",
+   "notes": [
+    "39 compiled, 15 live, 0 unresolved"
+   ],
+   "started": "2026-11-01T23:12:43Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "DECIDE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T23:12:27Z",
+   "notes": [
+    "AGREED 12 (9 ADV, 3 HOLD), CONTESTED 3 (MA, TTEK ADV; V HOLD), PASS 24"
+   ],
+   "started": "2026-11-01T23:12:27Z",
    "status": "done",
    "tokens": 0
   },
@@ -498,16 +594,47 @@
   },
   "QA": {
    "cost": {
-    "inlined_bytes": 0,
-    "returned_bytes": 5342,
-    "spawns": 0
+    "inlined_bytes": 112605,
+    "returned_bytes": 27680,
+    "spawns": 15
    },
    "files": {
-    "forms/qa/steenbarger.json": "e0c2bd1e96f4f0965b37b15c55e85d19f995ef8eb60dfdd0bc15b50b7378fc36"
+    "forms/floor2/elder-lens-MA-1.json": "da54e64e31c97fb4e0a916504ba5f214cdce9ead9ed7204d602d1f3f3e0aa7ce",
+    "forms/floor2/elder-lens-TTEK-1.json": "8c05db633791dda1eae53ebeb3d675f236f2ecd52ebb2527e4a2189acdd5f0fc",
+    "forms/floor2/elder-lens-V-1.json": "b5a78f35bd786f12871c9d42d4956002faad7793886d1fac9efc94982cd8fc9d",
+    "forms/floor2/livermore-MA-1.json": "0af35d36dc7c37ab33437d6286b71030f4860caddd29522b3b76cf1fe9b6bbf1",
+    "forms/floor2/livermore-TTEK-1.json": "64a9e7b72e150efc11fb5ea2e0be5727446cf4dfcadd6a0cedc3d11a0c68fc8b",
+    "forms/floor2/livermore-V-1.json": "40c37c5669b0d60736f91f25bb0915ab011e07759699e7bfd856ed0f6c17eff2",
+    "forms/floor2/minervini-MA-1.json": "c907dd23ab6338da12c6d5bc1c10dccf295cd42027c7054231ab81566e592feb",
+    "forms/floor2/minervini-TTEK-1.json": "6273d2b0ddc3d3c815cba158e93fa47939fa1607c3e7534ab0589514bf1fbc9b",
+    "forms/floor2/minervini-V-1.json": "23d302e9cbbfc8566dc490ec6b3b9bf7a2dae7ea9242c0caa82904bc23d54680",
+    "forms/floor2/oneil-MA-1.json": "e865c4cb007727c99fabd2fc704842e0e84c40347600fc68de2609a21dd7f3c6",
+    "forms/floor2/oneil-TTEK-1.json": "6d70dfb9368e92b79177d4d761d1e512f6b3a5b02cfb4c8fcbf8788e420ab6dd",
+    "forms/floor2/oneil-V-1.json": "a6235eb67e8c35ba5c5038180fe5e357313cc087dbdee20759816a8ac912e3f1",
+    "forms/floor2/raschke-MA-1.json": "0c37b754c4694416c81d64894fbaa824e53f15373e6ed436221660106802c99c",
+    "forms/floor2/raschke-TTEK-1.json": "83ab96649ce38beee38c2dc079767838644c274d897811d0edfafd8c4e5642fc",
+    "forms/floor2/raschke-V-1.json": "7fc8e20e98ab35555a229b56958d513471f8113f5b80a3315c65519544d9181b",
+    "forms/floor2/seow-MA-1.json": "e48b4124209a26d6da9be51b7e142f8a5559f8da17a2e9eca446c5b8953df504",
+    "forms/floor2/seow-TTEK-1.json": "fad5915b82866db8de561605ffa15efba9120f05dc8eed8f61da54d78d9bca26",
+    "forms/floor2/seow-V-1.json": "efc2919d88941200368c376853f904978caf9a61337e3060128bd144f996deb2",
+    "forms/floor2/wyckoff-MA-1.json": "c2f5eced0deb4b468292d39c5ce81adb38b13bd8045b83f3cb6519a5896a9faf",
+    "forms/floor2/wyckoff-TTEK-1.json": "fdbccde16af72b1aa5412fead7209928281b93ae61fb08996ce17fad93781393",
+    "forms/floor2/wyckoff-V-1.json": "23ee29842fe67cf1a4c8302a4ac7fd3057d545d47debcd49b34b4cb0f229e70a",
+    "forms/qa/steenbarger.json": "e0c2bd1e96f4f0965b37b15c55e85d19f995ef8eb60dfdd0bc15b50b7378fc36",
+    "forms/ratify2/elder-lens.json": "7ca89c1215c169342d028a5e9be772a5574ba31dd9043c818a72d67cc09b50fe",
+    "forms/ratify2/livermore.json": "f5995ca3ff6449f3af15ee24a889742910112ec2c77b276ed5d9c5475eb3bffc",
+    "forms/ratify2/minervini.json": "648645c5aea463dcfd3c0521dbbfc1a9b3f83e3df237633d6c469eea065c0b45",
+    "forms/ratify2/oneil.json": "5d4c945f3df50a6f65e4f96818c5b21ceb90a8e204a46834c9aaeba70ecddfcb",
+    "forms/ratify2/raschke.json": "bd57e498d751c518f2627fb7ff6395d8399d87a7abdb0133f96f71160d88f859",
+    "forms/ratify2/seow.json": "5e735f7c982bc284233f336424fd1d8e348068a80f1f15491a54e23c345eef6a",
+    "forms/ratify2/wyckoff.json": "fc08a958655909174b1eb05f77cff981594ad2b71017cd1293d1b90b6dd6ccd0"
    },
-   "notes": [],
+   "finished": "2026-11-01T23:12:17Z",
+   "notes": [
+    "QA note + 3 holds (MA, TTEK, V); hold floor 21 msgs; ratify2 7/7"
+   ],
    "started": "2026-11-01T23:07:48Z",
-   "status": "pending",
+   "status": "done",
    "tokens": 0
   },
   "RANK": {
@@ -546,6 +673,38 @@
     "7/7, 0 OBJECT; 105 answers"
    ],
    "started": "2026-11-01T23:04:50Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "REPEAT-WATCH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T23:12:43Z",
+   "notes": [
+    "purity invariance PASS"
+   ],
+   "started": "2026-11-01T23:12:43Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "SCORECARD": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-01T23:12:43Z",
+   "notes": [
+    "10 runs graded as of 2026-10-30, 0 refused"
+   ],
+   "started": "2026-11-01T23:12:43Z",
    "status": "done",
    "tokens": 0
   },
