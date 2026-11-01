@@ -64,5 +64,20 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 | 5 | Checker `daily-check` + seeded-failure proof | DONE (Commit F) |
 | 6 | Dry run on saved day (code only) → shadow run → floor test (PM's word) → test PMA (PM's word) | TODO |
 
+## Where the build stands at hand-off (2026-11-01, end of Session 1)
+**Built and tested (plugin suite 476/0; `build.py` produces all five `.plugin` zips; drift CLEAN):** the roster, rulings R31–R36, the case form, the five deliberation forms, `board` / `floor-check` / `ratify-count` with the objection rule and the per-voice record, RUN.yaml's FLOOR/SLATE/RATIFY/QA rounds, the Chair + `pma-deliberate` + `voice-deliberate`, the seven decider cards' floor blocks, Steenbarger's QA block, Seow R10 off the lane, archived cards, `aqe-engineer`, the checkpoint path with the outside-output refusal, the one risk figure, the packet roster (7), the HF ignore for the journal push, the Checker with a seeded-failure proof, the Cards (status, objections, DROPPED, Detect-lens top 10). **Nothing has run a committee. Nothing is on `main`.**
+
+**Not done (in order of value):**
+1. **Phase 1b floor test** — two real seats, one contested name, floor + ratify + hold on real forms. PM's word only (costs tokens). This is the untested mechanism (agent messaging proven on trivial agents only).
+2. **Dry run on a saved day** (`docs/DRYRUN.md`, code only, no model) → **shadow run** publishing to `aegis/output/assess/shadow/` → the **test PMA**. Each on the PM's word.
+3. **Release to `main`** (`aqe-release`): PM's word; safe window (not during a run / US session); it WILL rebuild the HF Space once (source change); then the Checker confirms the next nightly run.
+4. Scorecard at each voice's own horizon (`pma_scorecard.py` still grades one `--horizon`; the ledger row and `committee_record.json` already carry the per-ticket / per-voice horizons).
+5. The one voice dataset + query helper (Phase 2; prototype in the kernel's `prototypes/one_dataset/`) — packets stay the data path until then.
+6. AQE engineer backlog #2: Elder's missing fields (`impulse_state`, force index EMAs, channel, weekly resample).
+7. PM decisions pending: `held_sl`/`held_tp*` source; capital base 75K vs 62K in `aegis_fund.md`.
+8. The installed plugins on the PM's machine are still 1.31.0 / 1.9.0 — install `aegis/plugin/dist/*.plugin` (rebuilt by `build.py`) once the PM accepts the branch.
+
+**Full AQE suite at hand-off:** a second full run was in flight when this was written (first run: 1707 pass / 8 fail = known 7 + the weekend test, since fixed). Expected now: known 7 only. Amend this line with the result.
+
 ## Where the Aegis code lives in this repo
 Decision pending in step 1: the plugin tree is vendored under `aegis/` (today only `skills/premarket-analysis/` + `canon/`). Plan: bring the full kernel plugins in under `aegis/plugins/<name>/` as the one truth, and make `aegis/skills/premarket-analysis/tools/pma_pipeline.py` + `contracts/voice_menus.json` thin copies with a drift test.
