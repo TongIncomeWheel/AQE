@@ -81,7 +81,7 @@ the run files — I never type a level into this file except inside a sentence t
  "bottom_line": {"headline": "one sentence", "paragraph": "2-3 sentences",
                  "stats": [{"value": "+1.1%", "label": "what it is", "tone": "pos|neg|wrn"} x EXACTLY 4]},
  "market": {"what_happened": [{"lead": "bold lead", "text": "1-2 sentences"}],    // 3-4 items
-            "weather": [{"lead": "...", "text": "..."}]},                         // Crown, Druckenmiller, Valen, gamma; end with "Our read:"
+            "weather": [{"lead": "...", "text": "..."}]},                         // Crown (file), Valen (file), gamma; end with "Our read:"
  "money": [{"group": "Staples, Healthcare", "read": "...", "meaning": "what it means for today"}],
  "book": [{"ticker": "V", "read_pill": "KEEP · ADD ON TRIGGER", "tone": "up|down|warn|n", "why": "one line"}],  // every held name
  "book_flag": "optional one-line concentration warning or null",
@@ -105,6 +105,14 @@ The markdown brief below is still written (it is the archived record and the gat
 second read; keep §0-§9C tight and put long verbatim tables in appendices.
 
 ## PART 1 · DAILY WEATHER (R28, PM 2026-10-23) — `weather` in cards_text.json
+**Read the two WEATHER CARDS before writing a weather paragraph (2026-11-01, PM memory made persistent):**
+`aegis-voices/skills/weather-crown/SKILL.md` and `aegis-voices/skills/weather-valen/SKILL.md` — purpose, the order of
+reading, every field, the guardrails (Crown never sizes or names a ticker; Valen's stance is a reading, never a size; no
+Valen level ever reaches a voice; a missing file is a declared gap, never a neutral reading) and the writing style
+(Crown: headline / why / so what / what would change it, with the percentile trap; Valen: doctrine quoted as the
+handbook's, silence on U&R NO). The full specification is `aegis-voices/skills/weather_spec_2026-11-01.md`; its §4
+says which card supplies each of the 12 keys below. Crown and Druckenmiller are no longer voices (R31): the weather
+is written from `aqe_crown_macro.json` and `aqe_valen_dashboard.json` directly.
 PM: "Part 1 = Daily Weather ... these numbers are all available, you just have to explain them."
 The code renders every number from aqe_valen_dashboard.json and aqe_crown_macro.json. You write ONE short
 paragraph per block under `weather` — keys exactly: stance, gex, heartbeat, positioning, volatility, divergence, call, cot, checklist, turning, themes, groups.

@@ -137,8 +137,12 @@ def _vol_reason(vol: dict) -> str | None:
 
     vix, vpctl = vol.get("vix"), vol.get("vix_percentile")
     if vix is not None:
-        s += f" The index itself is quiet, with VIX at {vix:.1f}"
-        s += (f", lower than {_pct(1 - (vpctl or 0))} of the past two years."
+        # Percentile trap (weather spec 2026-11-01 §2.5 / §6.4): vix_percentile is the share of the past two years
+        # BELOW today's VIX. "lower than 26%" read as the 26th percentile and misled one brief. Say "higher than X% of
+        # days" and call VIX quiet only below the median.
+        quiet = vpctl is None or vpctl < 0.5
+        s += f" The index itself is {'quiet' if quiet else 'not quiet'}, with VIX at {vix:.1f}"
+        s += (f", higher than {_pct(vpctl)} of days in the past two years."
               if vpctl is not None else ".")
     return s
 

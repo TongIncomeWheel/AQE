@@ -38,6 +38,8 @@
 
 Every model round is checkpointed to `aegis/output/pma/run/<date>/`; a crash costs one step, never the run (`/pma resume`).
 
+**Target end state (PM, 1 Nov; built after the pilot):** AQE at **06:30** (US close is in) → PMA starts itself on READY and reports progress when stuck or done, **due 14:00** → the PM approves by **18:00**, or it **loads by default** if he is busy → AQE alerts every **30 min** from the US open. Today the AQE task fires 08:30, the PM taps `/pma`, and alerts run every 15 min.
+
 ---
 
 ## 3 · Architecture — the rules that hold it together

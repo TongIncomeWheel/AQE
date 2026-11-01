@@ -2341,6 +2341,28 @@ def test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10(t
           rc == 0 and "Contested" not in h2 and "DROPPED</b>" not in h2 and "declared gap" in h2, log[-300:])
 
 
+def test_the_weather_cards_exist_and_are_wired(td):
+    """PM 2026-11-01: Crown and Valen are READING SOURCES, not voices (R31). Their rules lived in the PM's
+    memory; they now live in two persistent cards beside the voices, and the brief-writer / WRITE step read them."""
+    root = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    voices = os.path.join(os.path.dirname(root), "aegis-voices")
+    for v in ("weather-crown", "weather-valen"):
+        p = os.path.join(voices, "skills", v, "SKILL.md")
+        t = open(p, encoding="utf-8").read() if os.path.exists(p) else ""
+        check(f"{v} card exists and says it is not a voice", "not a voice" in t and "declared gap" in t)
+    spec = os.path.join(voices, "skills", "weather_spec_2026-11-01.md")
+    check("the full weather spec ships beside the cards", os.path.exists(spec))
+    cr = open(os.path.join(voices, "skills", "weather-crown", "SKILL.md")).read()
+    check("Crown card carries the gate, the percentile trap and 'never sizes'", "Stop." in cr and "Percentile trap" in cr and "Never sizes" in cr)
+    va = open(os.path.join(voices, "skills", "weather-valen", "SKILL.md")).read()
+    check("Valen card: stance is a reading, no levels to the voices, silence on U&R NO",
+          "never a size" in va and "no levels to the voices" in va and "say nothing on NO or NA" in va)
+    bw = open(os.path.join(root, "agents", "brief-writer.md")).read()
+    check("brief-writer reads both cards before the weather paragraphs", "weather-crown" in bw and "weather-valen" in bw)
+    run_yaml = open(os.path.join(HERE, "..", "RUN.yaml")).read()
+    check("the WRITE step lists both cards as inputs", "weather-crown/SKILL.md" in run_yaml and "weather-valen/SKILL.md" in run_yaml)
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -2438,6 +2460,7 @@ def main():
                    test_checkpoints_land_under_aegis_output_and_never_rebuild_the_space, test_one_risk_figure,
                    test_the_checker_catches_a_seeded_failure,
                    test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
+                   test_the_weather_cards_exist_and_are_wired,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

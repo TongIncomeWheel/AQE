@@ -444,9 +444,11 @@ steps:
     spawns: 1
     seats: [brief-writer]
     reads: [consensus.json, phase4.json, tally.json, pm_lens.json, repeat_watch.json,
-            purity_check.json, forms/**, skills/cio-voice/SKILL.md]
+            purity_check.json, forms/**, skills/cio-voice/SKILL.md,
+            aegis-voices/skills/weather-crown/SKILL.md, aegis-voices/skills/weather-valen/SKILL.md]
     spawn_as: >-
-      general-purpose with agents/brief-writer.md AND skills/cio-voice/SKILL.md inlined.
+      general-purpose with agents/brief-writer.md AND skills/cio-voice/SKILL.md inlined, plus the two WEATHER
+      cards (aegis-voices skills/weather-crown + weather-valen, 2026-11-01) read by path before the weather paragraphs.
       The brief-writer agent type returned tool_uses:0 twice on 2026-09-02 -- it printed
       unexecuted tool syntax as plain text and produced nothing. This is the pattern that
       works, recorded so it is not rediscovered every run.
