@@ -820,3 +820,18 @@ rulings:
       Rounds 1 and 2 are blind; discussion starts only after every decider is on record. The Chair is not a
       voice: no vote, no view, never judges the quality of a reason, only that every question was answered.
     check: tests.test_floor_caps_are_counted_by_code
+
+  - id: R37
+    title: Valen's risk warnings sit beside the verdict, not inside every vote row
+    status: active
+    date: 2026-11-01
+    binds_at: [VOTE, WRITE, REPORT]
+    pm_words: >
+      "makes sense" (2026-11-01), on weather-spec item 7: the parabolic / no-buy text in every vote row was cited in
+      about 26% of oppositions in the 29 Oct grading -- a shared anchor, the problem the redesign exists to remove.
+    rule: >
+      In the vote packet (r2digest VALEN block) a per-name row carries setup status, checklist passes and the U&R read
+      only. The parabolic / failed-leader warnings and the no-buy flags print ONCE in a RISK block after the rows,
+      labelled information beside the verdict and never a reason to oppose. The Cards keep the warning beside the
+      verdict as today. A voice judges the name on its own method; the warning is a risk the PM reads.
+    check: tests.test_valen_warnings_are_a_risk_block_not_a_vote_row

@@ -2363,6 +2363,34 @@ def test_the_weather_cards_exist_and_are_wired(td):
     check("the WRITE step lists both cards as inputs", "weather-crown/SKILL.md" in run_yaml and "weather-valen/SKILL.md" in run_yaml)
 
 
+def test_valen_warnings_are_a_risk_block_not_a_vote_row(td):
+    """R37 (PM 2026-11-01). The parabolic warning and the no-buy flags were inside every per-name row of the vote
+    packet and anchored ~26% of oppositions. They now print once, in a RISK block after the rows."""
+    ex = json.load(open(fx("export.json"))); p4 = json.load(open(fx("phase4.json")))
+    t0 = p4["deliberation_set"][0]
+    for row in ex["daily_list"]:
+        if row["ticker"] == t0:
+            row["setups"] = [{"setup": "Parabolic", "status": "WATCH", "checks": [{"result": "PASS"}]},
+                             {"setup": "VCP", "status": "READY", "checks": [{"result": "PASS"}, {"result": "FAIL"}]}]
+    exp = os.path.join(td, "r37_export.json"); json.dump(ex, open(exp, "w"))
+    val = os.path.join(td, "r37_valen.json")
+    json.dump({"read_me_first": {"as_of": "2026-11-01", "so_what": "half size"}, "stance": {"word": "NEUTRAL"}, "regime": "CHOP",
+               "selection": {"no_buy_list": [{"ticker": t0, "flags": [{"label": "4.2 ATR extended"}]}]}}, open(val, "w"))
+    out = os.path.join(td, "r37_packet.txt")
+    rc, log = run([PIPE, "r2digest", "--export", exp, "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--valen", val, "--run-id", "t", "--out", out])
+    check("r2digest runs with a Valen file", rc == 0, log[-300:])
+    if rc != 0: return
+    txt = open(out).read()
+    row = next(l for l in txt.splitlines() if l.strip().startswith(f"{t0}: setups"))
+    check("the per-name row carries the real setup and U&R only", "VCP READY (1/2)" in row and "U&R" in row)
+    check("no warning text in the per-name row", "NO-BUY" not in row and "no-buy" not in row and "arabolic" not in row, row)
+    i = txt.find("==== RISK (Valen")
+    check("a single RISK block follows the rows", i > 0 and txt.count("==== RISK (Valen") == 1)
+    check("the no-buy flag and the parabolic warning are in the RISK block", "4.2 ATR extended" in txt[i:] and "Parabolic WATCH" in txt[i:])
+    check("R37 is on the record", "id: R37" in open(os.path.join(HERE, "..", "RULINGS.yaml")).read())
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -2461,6 +2489,7 @@ def main():
                    test_the_checker_catches_a_seeded_failure,
                    test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
                    test_the_weather_cards_exist_and_are_wired,
+                   test_valen_warnings_are_a_risk_block_not_a_vote_row,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

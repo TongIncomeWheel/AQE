@@ -211,6 +211,7 @@ CHECKS = {
     "tests.test_objection_rule_counts_the_final_ratification": run_tests,   # R34
     "tests.test_the_record_is_written_per_voice_per_ticket": run_tests,     # R35
     "tests.test_floor_caps_are_counted_by_code": run_tests,                 # R36
+    "tests.test_valen_warnings_are_a_risk_block_not_a_vote_row": run_tests,  # R37
 }
 
 

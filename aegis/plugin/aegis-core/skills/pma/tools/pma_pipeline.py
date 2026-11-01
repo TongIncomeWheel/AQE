@@ -1533,16 +1533,29 @@ def _valen_lines(path, rows, room):
     if v.get("neighbourhood"):
         L.append("  leadership: " + " / ".join(v["neighbourhood"]))
     nb = {r["ticker"]: [f["label"] for f in r.get("flags") or []] for r in (v.get("selection") or {}).get("no_buy_list") or []}
+    # R37 (PM 2026-11-01, weather-spec item 7): the parabolic warning and the no-buy flags used to sit INSIDE every
+    # per-name row and were cited in ~26% of oppositions -- a shared anchor. They now print ONCE, in a RISK block
+    # after the rows, labelled information beside the verdict. A per-name row carries setup status + checks and U&R only.
+    def _is_warning(x):
+        return "parabolic" in str(x.get("setup", "")).lower() or "failed leader" in str(x.get("setup", "")).lower()
+    risk = []
     L.append("Per-name house setups (status + checklist passes) and U&R (undercut-and-rally):")
     for t in room:
         r = rows.get(t) or {}
         gr = r.get("setups") or []
         if isinstance(gr, dict):
             gr = gr.get("grades") or []
+        warn = [x for x in gr if _is_warning(x)]
+        gr = [x for x in gr if not _is_warning(x)]
         s = [f"{x.get('setup')} {x.get('status')} ({sum(1 for c in x.get('checks') or [] if c.get('result') == 'PASS')}/{len(x.get('checks') or [])})" for x in gr]
         u = f"U&R {r.get('unr_status')}" + (f": {r.get('unr_note')}" if r.get("unr_note") else "")
-        L.append(f"  {t}: setups " + ("; ".join(s) if s else "no house setup present") + f" | {u}"
-                 + (f" | NO-BUY flags: {', '.join(nb[t])}" if t in nb else ""))
+        L.append(f"  {t}: setups " + ("; ".join(s) if s else "no house setup present") + f" | {u}")
+        if t in nb:
+            risk.append(f"  {t}: no-buy flags -- {', '.join(nb[t])}")
+        for x in warn:
+            risk.append(f"  {t}: {x.get('setup')} {x.get('status')} (long-only risk warning, never a short call)")
+    L.append("==== RISK (Valen, information beside the verdict -- R37: never a reason to oppose, judge the name on your own method) ====")
+    L.extend(risk or ["  none flagged in the room"])
     return L
 
 
