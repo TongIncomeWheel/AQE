@@ -267,6 +267,17 @@ def _fake_publisher(monkeypatch, seen):
         return {"ok": True, "unchanged": prior == content}
     monkeypatch.setattr(github_sync, "put_file", _put)
 
+    def _list(path):
+        pref = path.rstrip("/") + "/"
+        return {"ok": True, "files": [{"name": k[len(pref):], "sha": "x"}
+                                      for k in seen if k.startswith(pref) and "/" not in k[len(pref):]]}
+    monkeypatch.setattr(github_sync, "list_dir", _list)
+
+    def _delete(path, message, sha=None):
+        seen.pop(path, None)
+        return {"ok": True, "path": path}
+    monkeypatch.setattr(github_sync, "delete_file", _delete)
+
 
 def test_sync_repairs_packets_a_stale_pipeline_never_wrote(export_file, monkeypatch):
     """THE 2026-08-25 failure: the export is published but the packets were
@@ -403,10 +414,48 @@ def test_publish_still_attempts_real_writes_when_the_permissions_signal_is_only_
     calls = []
     monkeypatch.setattr(github_sync, "put_file",
                          lambda *a, **k: calls.append(a) or {"ok": True})
+    monkeypatch.setattr(github_sync, "list_dir", lambda path: {"ok": True, "files": []})
 
     res = vp.publish("2026-08-24")
     assert res["ok"] is True
     assert calls, "a soft/ambiguous permissions signal must not block the real writes"
+
+
+def test_publish_retires_packet_files_today_did_not_write(export_file, monkeypatch):
+    """AQE run 127 (2026-11-02): the roster went from 11 seats to 7 deciders
+    (R31) but crown.json / druckenmiller.json / thorp.tsv / weis.tsv from the
+    old roster stayed in aegis/output/packets/ because the publisher only ever
+    PUT today's files. A stale file serves a seat the universe it must not
+    see; the handoff gate refused the run. The folder must equal today's set."""
+    seen: dict = {}
+    _fake_publisher(monkeypatch, seen)
+    for stale in ("crown.json", "druckenmiller.json", "thorp.tsv", "weis.tsv"):
+        seen[f"{vp.OUTPUT_PACKETS_IN_REPO}/{stale}"] = "old"
+    seen["aegis/output/candidate_set.json"] = "old"   # outside packets/: never touched
+
+    built = vp.build(export_file)
+    res = vp.publish(built["run_date"])
+
+    assert res["ok"] is True
+    assert sorted(res["removed"]) == ["crown.json", "druckenmiller.json", "thorp.tsv", "weis.tsv"]
+    remote = {k.split("/")[-1] for k in seen if k.startswith(vp.OUTPUT_PACKETS_IN_REPO + "/")}
+    local = {p.name for p in vp.packets_dir().iterdir() if p.is_file()}
+    assert remote == local, "the published folder must be exactly today's set"
+    assert "aegis/output/candidate_set.json" in seen
+
+
+def test_publish_reports_a_failed_listing_rather_than_claiming_the_folder_clean(
+        export_file, monkeypatch):
+    seen: dict = {}
+    _fake_publisher(monkeypatch, seen)
+    from src.data import github_sync
+    monkeypatch.setattr(github_sync, "list_dir",
+                         lambda path: {"ok": False, "reason": "HTTP 500"})
+    built = vp.build(export_file)
+    res = vp.publish(built["run_date"])
+    assert res["ok"] is False
+    assert "retire stale packets" in res["reason"]
+    assert res["written"] == res["total"], "the writes themselves still landed"
 
 
 def test_a_held_ticker_missing_from_the_daily_list_still_reaches_the_candidate_set(tmp_path):

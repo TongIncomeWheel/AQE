@@ -148,7 +148,7 @@ def test_registrar_meter_records_cost(td):
     run([REG, "--manifest", m, "tick", "--step", "VOTE", "--status", "in_flight"])
     run([REG, "--manifest", m, "meter", "--step", "VOTE", "--spawns", "11", "--inlined-bytes", "759000"])
     run([REG, "--manifest", m, "tick", "--step", "VOTE", "--status", "in_flight"])
-    run([REG, "--manifest", m, "tick", "--step", "VOTE", "--status", "done"])
+    run([REG, "--manifest", m, "tick", "--step", "VOTE", "--status", "done", "--force-incomplete"])   # no forms here; tick now refuses an empty glob (review finding 7)
     s = json.load(open(m))["steps"]["VOTE"]
     check("meter records spawns and bytes", s["cost"]["spawns"] == 11 and s["cost"]["inlined_bytes"] == 759000)
     check("est_tokens is non-zero (2026-09-06 reported 0 for every step)",
@@ -2425,7 +2425,7 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
         cs = {"run_date": D, "universe": [row("AAA"), row("BBB"), row("CCC"), {"ticker": "HLD", "held": True}]}
         crown = {"generated_at": f"{D}T06:55:00+08:00", "status": "OK", "the_call": {"expression_family": "X"}, "read_me_first": {"headline": "h"}}
         valen = {"read_me_first": {"as_of": f"{D[:4]}-{D[5:7]}-{int(D[8:])-1:02d}T23:05:00Z"}, "stance": {"word": "NEUTRAL"}}   # UTC evening = the run date in SGT
-        pk = {v: "# DICT x: 1=a\nticker\tsc_momentum\nAAA\t70\nBBB\t60\nHLD\t50\n" for v in DEC}
+        pk = {v: "# DICT x: 1=a\nticker\tsc_momentum\nAAA\t70\nBBB\t60\nCCC\t55\nHLD\t50\n" for v in DEC}
         for k, v in over.items():
             if k == "pk": pk.update(v)
             else: locals()[k].update(v) if isinstance(v, dict) else None
@@ -2444,7 +2444,9 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
     write_all()
     rc, log = gate(); check("a clean handoff reads Healthy", rc == 0 and "DATA HANDOFF: Healthy" in log, log[-400:])
     write_all(pk={"seow": "# DICT\nticker\tsc_momentum\n"}); rc, log = gate(); check("an EMPTY decider packet is named", rc != 0 and "seow.tsv has a header but NO rows" in log, log[-300:])
-    write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\nZZZ\t1\n"}); rc, log = gate(); check("a packet serving a name outside the candidate set is named", rc != 0 and "not in the candidate set" in log, log[-300:])
+    write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\nBBB\t60\nCCC\t55\nHLD\t50\nZZZ\t1\n"}); rc, log = gate(); check("a packet serving a name outside the candidate set is named", rc != 0 and "not in the candidate set" in log, log[-300:])
+    write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\n"}); rc, log = gate(); check("a packet blind to most of the candidate set is named (yesterday's packet?)", rc != 0 and "blind to" in log, log[-300:])
+    write_all(pk={"raschke": "ticker\tsc_momentum\tstructure\nAAA\t\t\nBBB\t\t\nCCC\t\t\nHLD\t\t\n"}); rc, log = gate(); check("a packet of blank cells is named", rc != 0 and "blank cells" in log, log[-300:])
     write_all(pk={"oneil": "ticker\tqs_market\nAAA\t1\n"}); rc, log = gate(); check("a PM-only field in a packet is named (R3)", rc != 0 and "qs_market" in log, log[-300:])
     write_all(pk={"weis": "ticker\tsc_momentum\nAAA\t70\n"}); rc, log = gate(); check("a stray packet for a non-decider is named (R31)", rc != 0 and "NON-decider" in log, log[-300:])
     write_all(); os.remove(os.path.join(od, "packets", "wyckoff.tsv")); rc, log = gate(); check("a missing decider packet is named", rc != 0 and "packet MISSING for decider wyckoff" in log, log[-300:])
@@ -2454,6 +2456,72 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
     write_all(exp={"date": "2026-11-02"}); rc, log = gate(); check("an export dated differently from the run is named", rc != 0 and "export date" in log, log[-300:])
     write_all(cs={"universe": [row("AAA"), row("BBB"), row("CCC")]}); rc, log = gate(); check("a held position missing from the candidate set is named (R12)", rc != 0 and "held position(s) missing" in log, log[-300:])
     write_all(last={"status": "partial"}); rc, log = gate(); check("a partial run is named", rc != 0 and "did not finish clean" in log, log[-300:])
+
+
+def test_review_fixes_count_only_validated_forms_and_never_double_count(td):
+    """Independent review 2026-11-01, findings 1, 2, 3, 7, 8, 9: the counter refuses an unvalidated or partial
+    ratification; split-ballot parts beside the merged file are not double-counted; a silent open floor fails;
+    tick requires a glob to match; the plugin-root tool copies are identical to the live ones; slate-cut exists."""
+    d, p4 = _committee_fixture(td, "review")
+    # finding 2: leave parts beside the merged ballot -> board must count each voice once
+    r2 = os.path.join(d, "forms", "r2"); src = json.load(open(os.path.join(r2, "oneil.json")))
+    json.dump(dict(src, votes=src["votes"][:2]), open(os.path.join(r2, "oneil.part1of2.json"), "w"))
+    json.dump(dict(src, votes=src["votes"][2:]), open(os.path.join(r2, "oneil.part2of2.json"), "w"))
+    board = os.path.join(d, "board.json")
+    rc, log = run([PIPE, "board", "--round2", r2, "--phase4", p4, "--date", "2026-11-01", "--out", board])
+    B = json.load(open(board)) if rc == 0 else {"names": []}
+    gnw = next((n for n in B["names"] if n["ticker"] == "GNW"), {"split": {"support": []}})
+    check("split-ballot parts beside the merged file are NOT double-counted", rc == 0 and gnw["split"]["support"].count("oneil") == 1, str(gnw["split"]))
+    # finding 1: a bad answer and a partial ratification are refused by the counter
+    slate = os.path.join(d, "slate.json"); json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate, "w"))
+    for v in DEC:
+        _ratify(d, "ratify", v, {"GNW": "AGREE", "BBY": "AGREE"})
+    json.dump({"voice": "seow", "date": "2026-11-01", "tickets": [{"ticker": "GNW", "answer": "Object"}, {"ticker": "BBY", "answer": "AGREE"}]}, open(os.path.join(d, "forms", "ratify", "seow.json"), "w"))
+    args = [PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratify"), "--board", board, "--phase4", p4, "--date", "2026-11-01",
+            "--out", os.path.join(d, "c.json"), "--record", os.path.join(d, "r.json")]
+    rc, log = run(args); check("a misspelled answer is REFUSED by the counter, never a silent non-objection", rc != 0 and "not a valid answer" in log, log[-300:])
+    json.dump({"voice": "seow", "date": "2026-11-01", "tickets": [{"ticker": "GNW", "answer": "AGREE"}]}, open(os.path.join(d, "forms", "ratify", "seow.json"), "w"))
+    rc, log = run(args); check("a ratification that does not cover the slate is REFUSED", rc != 0 and "must cover exactly" in log, log[-300:])
+    _ratify(d, "ratify", "seow", {"GNW": "AGREE", "BBY": "AGREE"})
+    rc, log = run(args); check("a clean set counts", rc == 0, log[-300:])
+    # finding 9: slate-cut
+    qa = os.path.join(d, "qa.json"); json.dump({"voice": "steenbarger", "holds": [{"ticker": "BBY", "question": "q"}]}, open(qa, "w"))
+    rc, log = run([PIPE, "slate-cut", "--slate", slate, "--qa", qa, "--out", os.path.join(d, "slate_held.json")])
+    check("slate-cut writes the held-tickets slate", rc == 0 and [x["ticker"] for x in json.load(open(os.path.join(d, "slate_held.json")))["tickets"]] == ["BBY"], log[-200:])
+    # finding 3: a silent open floor fails unless allowed
+    fl = os.path.join(d, "forms", "floor"); os.makedirs(fl, exist_ok=True)
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--out", os.path.join(d, "fc.json")])
+    check("zero messages on an open floor is a FAIL", rc != 0 and "silent floor" in log, log[-300:])
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--allow-silent", "--out", os.path.join(d, "fc.json")])
+    check("--allow-silent accepts it explicitly", rc == 0, log[-200:])
+    # nested layout forms/floor/<ticker>/<msg>.json is read
+    os.makedirs(os.path.join(fl, "BBY"), exist_ok=True)
+    json.dump({"voice": "oneil", "date": "2026-11-01", "ticker": "BBY", "msg_id": "oneil-BBY-1", "to": "room", "in_reply_to": None, "text": "x", "stance_now": "SUPPORT", "changed_mind": False}, open(os.path.join(fl, "BBY", "oneil-BBY-1.json"), "w"))
+    rc, log = run([PIPE, "floor-check", "--messages", fl, "--board", board, "--out", os.path.join(d, "fc.json")])
+    check("a nested forms/floor/<ticker>/ message is counted", rc == 0 and json.load(open(os.path.join(d, "fc.json")))["messages"] == 1, log[-200:])
+    # finding 7: tick requires a glob to match
+    import shutil
+    work = os.path.join(d, "tick"); os.makedirs(os.path.join(work, "tools"), exist_ok=True)
+    for f in ("RUN.yaml", "RULINGS.yaml"): shutil.copy(os.path.join(HERE, "..", f), os.path.join(work, f))
+    for f in ("registrar.py", "preflight_run.py"): shutil.copy(os.path.join(TOOLS, f), os.path.join(work, "tools", f))
+    reg = os.path.join(work, "tools", "registrar.py")
+    subprocess.run([sys.executable, reg, "init", "--date", "2026-11-01"], cwd=work, capture_output=True, text=True)
+    r = subprocess.run([sys.executable, reg, "tick", "--step", "NOMINATE", "--status", "done"], cwd=work, capture_output=True, text=True)
+    check("tick REFUSES a NOMINATE with zero forms (the glob matched nothing)", r.returncode != 0 and "matched nothing" in r.stdout + r.stderr, (r.stdout + r.stderr)[-200:])
+    os.makedirs(os.path.join(work, "forms", "r1")); open(os.path.join(work, "forms", "r1", "oneil.json"), "w").write("{}")
+    r = subprocess.run([sys.executable, reg, "tick", "--step", "NOMINATE", "--status", "done"], cwd=work, capture_output=True, text=True)
+    check("tick allows it once a form exists", r.returncode == 0, (r.stdout + r.stderr)[-200:])
+    # finding 8: root copies identical
+    root = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    for f in ("registrar.py", "pma_pipeline.py", "pma_cards.py", "preflight_run.py", "git_sync.py"):
+        rp = os.path.join(root, "tools", f)
+        check(f"plugin-root tools/{f} is identical to the live copy", not os.path.exists(rp) or open(rp).read() == open(os.path.join(TOOLS, f)).read())
+    # finding 4/6/10/11: the run map's commands name real flags
+    run_yaml = open(os.path.join(HERE, "..", "RUN.yaml")).read()
+    check("VOTE validates room and universe", "--round 2 --candidates candidate_set.json --phase4 phase4.json --packet" in run_yaml)
+    check("record-verdicts / repeat-watch / gate carry their required flags", "record-verdicts --consensus" in run_yaml and "repeat-watch --ledger" in run_yaml and "gate --brief" in run_yaml)
+    check("PM-LENS runs before RANK and RANK reads it", run_yaml.index("name: PM-LENS") < run_yaml.index("name: RANK"))
+    check("CHALLENGE reads the candidate set as its universe", "--universe candidate_set.json" in run_yaml)
 
 
 def test_all_seven_deciders_count_on_every_name(td):
@@ -2556,6 +2624,7 @@ def main():
                    test_the_weather_cards_exist_and_are_wired,
                    test_valen_warnings_are_a_risk_block_not_a_vote_row,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
+                   test_review_fixes_count_only_validated_forms_and_never_double_count,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

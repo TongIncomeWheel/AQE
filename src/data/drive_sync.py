@@ -2144,7 +2144,7 @@ def build_export(shortlist: dict | None = None) -> dict:
         _v21_lk["thematic"] = {}
     export["thematic_baskets"] = _v21_lk["thematic"]
     from datetime import date as _date
-    export["sector_map_version"] = _date.today().isoformat()
+    export["sector_map_version"] = datetime.now(ZoneInfo("Asia/Singapore")).date().isoformat()
     # HARD GUARD (machine-readable, keyed off structure) + prose glossary so the
     # AIC can never read a stop as a target or a ratio as a price. Every nested
     # level item (structural_levels/targets, optimal_stop) also carries role/side.
@@ -3081,7 +3081,7 @@ def _build_sector_map_rich() -> dict:
     user does not curate by hand; AQE fills the gaps.
     """
     from datetime import date as _date
-    _ver = _date.today().isoformat()
+    _ver = datetime.now(ZoneInfo("Asia/Singapore")).date().isoformat()
 
     # Auto-fill blanks: resolve GICS for unmapped universe tickers via FMP
     # (incremental — only the gaps are fetched). Best-effort.

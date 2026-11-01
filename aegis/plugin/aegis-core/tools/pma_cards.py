@@ -650,6 +650,92 @@ def _valen_card(v, rows, room):
     return "\n".join(o)
 
 
+
+# ---- R34 / R31 (PM 2026-10-30): the slate's status, its objections, and the Detect-lens list. -------
+# Rendered from consensus.json / the export only -- never from the words file. Rows without `status`
+# (pre-redesign runs) render exactly as before: every helper returns "" when the field is absent.
+def _status_pills(cons):
+    by = collections.Counter(c.get("status") for c in cons if c.get("status"))
+    if not by:
+        return ""
+    return '<span class="pill p-n">' + " · ".join(f"{by[k]} {k}" for k in ("AGREED", "CONTESTED", "DROPPED") if by.get(k)) + "</span>"
+
+
+def _contest_html(c):
+    st = c.get("status")
+    if not st:
+        return ""
+    n = c.get("n_deciders") or 7
+    if st == "CONTESTED":
+        objs = c.get("objections") or []
+        items = "".join(f"<li><b>{E(str(o.get('voice', '')))}</b>: {E(str(o.get('objection') or ''))}"
+                        + (f" &mdash; <i>would clear:</i> {E(str(o.get('would_clear')))}" if o.get("would_clear") else "") + "</li>"
+                        for o in objs)
+        return f'<div class="flag">Contested &middot; {len(objs)} of {n} object &middot; stays listed (R34)<ul>{items}</ul></div>'
+    res = c.get("reservations") or []
+    if st == "AGREED" and res:
+        return '<p class="cond">Agreed, with reservations: ' + "; ".join(
+            f"<b>{E(str(r.get('voice', '')))}</b> &mdash; {E(str(r.get('reservation') or ''))}" for r in res) + "</p>"
+    if st == "AGREED":
+        return '<p class="cond">Agreed &middot; no objections</p>'
+    return ""
+
+
+def _dropped_prefix(c):
+    st = c.get("status")
+    if st == "DROPPED":
+        return f"<b>DROPPED</b> by {len(c.get('objections') or [])} of {c.get('n_deciders') or 7} objections (R34) &middot; "
+    if st == "NOT_SLATED":
+        return "Not slated by the Chair &middot; "
+    return ""
+
+
+def _detect_lens_panel(D, cons):
+    """R31: Detect-lens is an independent top-10 LIST, not a voice. AQE already ranks it
+    (lens_ranking.ranked, sorted lens_positive desc, warnings asc, sc_momentum desc); the row field
+    `rank` is NOT the lens rank. A name here that the room passed on is visible by design."""
+    ranked = ((D.get("lens_ranking") or {}).get("ranked") or [])[:10]
+    head = '<section class="card"><div class="eyebrow">Detect-lens top 10 &middot; AQE\'s own lens count &middot; an independent list, not a vote</div>'
+    if not ranked:
+        return head + '<p class="cond">lens_ranking is not served in today\'s export &mdash; declared gap, nothing invented.</p></section>'
+    room = {c["ticker"]: c for c in cons}
+    def marker(t):
+        c = room.get(t)
+        if not c:
+            return "&mdash;"
+        return E(c.get("verdict", "")) + (f" &middot; {E(c['status'])}" if c.get("status") else "") + " (in the room)"
+    rows = "".join(f'<tr><td class="num">{E(str(x.get("rank", i)))}</td><td><b>{E(str(x.get("ticker")))}</b></td>'
+                   f'<td class="num">{E(str(x.get("positive", "")))}</td><td class="num">{E(str(x.get("warnings", "")))}</td><td>{marker(x.get("ticker"))}</td></tr>'
+                   for i, x in enumerate(ranked, 1))
+    return (head + '<div class="tbl"><table><thead><tr><th>#</th><th>Ticker</th><th>Strong lenses</th><th>Warnings</th><th>Committee</th></tr></thead><tbody>'
+            + rows + '</tbody></table></div><p class="cond">Where the lens and the committee disagree, both are shown; neither overrides the other.</p></section>')
+
+
+
+def _valen_management_html(V, held):
+    """PM 2026-11-01 (weather-spec item 6): Valen's management switch and per-position trim/trail FACTS under
+    the book table. Readings + the handbook quoted as doctrine -- the trim/trail/add call is the PM's. Rendered
+    from aqe_valen_dashboard.json's management block only; absent = one declared line, never blank."""
+    mg = (V or {}).get("management") or {}
+    mn = mg.get("manage_note") or {}
+    out = []
+    if mn.get("status") == "OK":
+        out.append(f'<p class="cond"><b>Valen management switch:</b> {E(mn.get("note", ""))} <i>{E(mn.get("doctrine", ""))}</i></p>')
+    else:
+        out.append(f'<p class="cond">Valen management switch not served ({E(str(mn.get("reason") or "no Valen management block"))}) &mdash; declared gap.</p>')
+    tt = [r for r in (mg.get("trim_trail") or []) if r.get("ticker") in held] if held else (mg.get("trim_trail") or [])
+    if tt:
+        def _f(v, fmt="{:g}"):
+            return fmt.format(v) if isinstance(v, (int, float)) else "&mdash;"
+        def _b(v):
+            return "yes" if v is True else ("no" if v is False else "&mdash;")
+        out.append('<div class="tbl"><table><thead><tr><th>Name</th><th>R (approx.)</th><th>2R+</th><th>First target printed</th><th>vs 20-day line</th><th>Stop distance</th><th>Days held</th><th>Gaps</th></tr></thead><tbody>'
+                   + "".join(f'<tr><td><b>{E(str(r.get("ticker")))}</b></td><td class="num">{_f(r.get("r_multiple"), "{:+.2f}")}</td><td>{_b(r.get("r_multiple_2r_or_more"))}</td>'
+                             f'<td>{_b(r.get("tp1_printed"))}</td><td class="num">{_f(r.get("pct_vs_ma_20"), "{:+.1f}%")}</td><td class="num">{_f(r.get("dist_from_stop_pct"), "{:.1f}%")}</td>'
+                             f'<td class="num">{_f(r.get("days_held"), "{:d}")}</td><td>{E(", ".join(r.get("gaps") or []) or "&mdash;")}</td></tr>' for r in tt)
+                   + '</tbody></table></div><p class="cond">Facts beside the handbook: <i>trim into strength; trail the rest on one moving average, daily closes; add only when a winner proves itself again</i> (pieces 17&ndash;19, quoted). R is approximate (current stop as the risk). The call is yours.</p>')
+    return "".join(out)
+
 def cmd_render(a):
     T = load(a.text); cons = load(a.consensus)
     gaps = _validate_text(T, cons)
@@ -681,8 +767,8 @@ def cmd_render(a):
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">',
          f"<style>{CSS}</style></head><body><div class=\"wrap\">"]
     o.append(f'<div class="head"><div><div class="eyebrow">{E(T["session_label"])}</div><h1>Committee Cards</h1></div><div>'
-             f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD</span>'
-             f'<span class="pill p-n">{len(by["PASS"])} PASS</span><span class="pill p-down">{E(T["stance_pill"])}</span></div></div>')
+             f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD &middot; WATCH</span>'
+             f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span></div></div>')
     bl = T["bottom_line"]
     o.append(f'<section class="card bottom"><div class="eyebrow">Bottom line</div><h2>{E(bl["headline"])}</h2><p>{E(bl.get("paragraph", ""))}</p><div class="grid4">'
              + "".join(f'<div class="stat"><div class="v {TONE.get(s.get("tone"), "")}">{E(str(s["value"]))}</div><div class="l">{E(s["label"])}</div></div>' for s in bl["stats"])
@@ -705,7 +791,7 @@ def cmd_render(a):
                if h.get("qty") else "—")
         o.append(f'<tr><td><b>{E(t)}</b></td><td>{pos}</td><td>{E(str(s.get("stop") if s else "NONE"))}{(" " + E(str(s.get("order")))) if s else ""}</td>'
                  f'<td><span class="pill {TONE.get(b.get("tone"), "p-n")}">{E(b["read_pill"])}</span></td><td>{E(b["why"])}</td></tr>')
-    o.append("</tbody></table></div>" + (f'<div class="flag">{E(T["book_flag"])}</div>' if T.get("book_flag") else "") + "</section>")
+    o.append("</tbody></table></div>" + (f'<div class="flag">{E(T["book_flag"])}</div>' if T.get("book_flag") else "") + _valen_management_html(V, held) + "</section>")
     o.append('<section class="card"><div class="eyebrow">What changed since yesterday</div><ul>' + "".join(f"<li>{E(x)}</li>" for x in T["changed"]) + "</ul></section>")
     o.append('<div class="section-title"><h2>Committee recommendations</h2><span class="eyebrow">Ordered by readiness · act on the trigger · nothing at market</span></div><div class="names">')
     for c in adv:
@@ -720,7 +806,7 @@ def cmd_render(a):
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
                  f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
                  f'<span class="pill {TONE.get(w["readiness_tone"], "p-n")}">{E(w["readiness"])}</span></header>'
-                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{noby}'
+                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{noby}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Stop (render-only)</dt><dd>{E(stop)}</dd></div>'
                  f'<div><dt>First target</dt><dd>{E(str(tp)) if tp else "—"}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
@@ -733,10 +819,10 @@ def cmd_render(a):
     for c in sorted(by["HOLD-FOR-CONDITIONS"], key=lambda c: c["ticker"]):
         t = c["ticker"]; card = CD["hold"].get(t) or {}; r = rows.get(t) or {}
         o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span><span class="num">#{r.get("rank", "—")}</span></div>'
-                 f'<p>{E(T["holds"][t])}</p><p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
+                 f'<p>{E(T["holds"][t])}</p>{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
     o.append("</div></section>")
     o.append('<section class="card"><div class="eyebrow">PASS · off the list</div><div class="tbl"><table><thead><tr><th>Ticker</th><th>Why not</th></tr></thead><tbody>'
-             + "".join(f'<tr><td><b>{c["ticker"]}</b></td><td>{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted(by["PASS"], key=lambda c: c["ticker"]))
+             + "".join(f'<tr><td><b>{c["ticker"]}</b></td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted(by["PASS"], key=lambda c: c["ticker"]))
              + "</tbody></table></div></section>")
     # R26 (PM 2026-10-23): "our objective is to NOT miss strong momentum picks". Code-rendered from
     # phase4.json, never from words: the strongest Longlist/Elder names no voice nominated, and the R25
@@ -766,6 +852,7 @@ def cmd_render(a):
                      + '</tbody></table></div><p class="cond">Stretch = distance above the 20-day average in average daily ranges. '
                        'Add any of these by hand as a PM pick if you want the committee to vote it.</p>')
         o.append("</section>")
+    o.append(_detect_lens_panel(D, cons))      # R31: independent top-10 list, before the plan
     o.append('<section class="card"><div class="eyebrow">The plan (SGT)</div><ol>' + "".join(f"<li>{E(x)}</li>" for x in T["plan"]) + "</ol></section>")
     if SC:
         lines = [l for l in SC.splitlines() if l.startswith("|")]

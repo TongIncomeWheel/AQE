@@ -204,6 +204,14 @@ CHECKS = {
     # R22/R23 (PM 2026-10-22/23): Lynch consulted only; one fixed card-report format.
     "tests.test_consulted_seat_ballot_never_counts": run_tests,
     "tests.test_card_report_layout_is_fixed_and_refuses_gaps": run_tests,
+    # R31/R32 (PM 2026-10-30, the redesign): seven deciders + QA; all seven count on every name.
+    "tests.test_roster_is_seven_deciders_plus_qa": run_tests,
+    "tests.test_all_seven_deciders_count_on_every_name": run_tests,
+    "tests.test_shortlist_cap_is_six": run_tests,                      # R33
+    "tests.test_objection_rule_counts_the_final_ratification": run_tests,   # R34
+    "tests.test_the_record_is_written_per_voice_per_ticket": run_tests,     # R35
+    "tests.test_floor_caps_are_counted_by_code": run_tests,                 # R36
+    "tests.test_valen_warnings_are_a_risk_block_not_a_vote_row": run_tests,  # R37
 }
 
 

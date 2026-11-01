@@ -53,6 +53,26 @@ import argparse, datetime, glob, hashlib, json, os, re, sys
 
 MAX_FORM_BYTES = 24 * 1024
 R1_REASON_MAX = 300
+# ---- THE REDESIGN (PM 2026-10-30; RULINGS R31-R36). Duplicated from pma_pipeline.py on purpose: the
+# registrar is copied on its own into run dirs (the tick tests do exactly that) and must not import
+# the pipeline. tests.test_roster_is_seven_deciders_plus_qa asserts the two copies agree.
+DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+QA_SEAT = "steenbarger"
+R33_EFFECTIVE = "2026-11-01"   # forms dated from here: shortlist cap, decider-only ballots, the case form
+SHORTLIST_CAP = 6              # R33
+SLATE_CAP = 15                 # R34
+FLOOR_MSG_CAP = 2              # R36 (counted across files by `pma_pipeline.py floor-check`)
+CASE_LIMITS = {"for": 400, "against": 400, "entry_trigger": 200, "wrong_if": 200,
+               "would_change_my_mind": 250}
+CASE_REQUIRED = ("for", "against", "entry_trigger", "wrong_if", "horizon_sessions",
+                 "would_change_my_mind", "cannot_see")
+RATIFY_ANSWERS = ("AGREE", "AGREE_WITH_RESERVATION", "OBJECT")
+
+
+def _new_regime(form):
+    """True when the form is dated on/after R33_EFFECTIVE: the 30 Oct redesign binds. Earlier forms
+    (the 2026-09-06 fixtures, the Oct runs) are validated exactly as they were filed."""
+    return str(form.get("date", "")) >= R33_EFFECTIVE
 R2_LIMITS = {"reason": 500, "conviction_change": 250, "opposing_case": 300,
              "self_counter": 300, "falsifier": 250, "challenge_reply": 400,
              "o_a_note": 250, "o_b_stop_honored": 150, "o_c_invalidation": 250}
@@ -166,6 +186,16 @@ def validate_round1(form, universe):
     if not isinstance(noms, list):
         errs.append("nominations: must be a list")
         noms = noms if isinstance(noms, list) else []
+    # R31 + R33 (PM 2026-10-30), binding on ballots dated from 2026-11-01. The R16 floor stands: every
+    # nomination that IS filed is seated. The cap is on how many one decider may put forward.
+    if _new_regime(form):
+        if form.get("voice") not in DECIDERS:
+            errs.append(f"voice {form.get('voice')!r} is not a decider seat (R31: {', '.join(DECIDERS)}); "
+                        f"the QA seat and benched or stood-down voices do not nominate")
+        if len(noms) > SHORTLIST_CAP:
+            errs.append(f"nominations: {len(noms)} > {SHORTLIST_CAP} -- R33 (PM 2026-10-30): a decider shortlists at "
+                        f"most {SHORTLIST_CAP}; fewer is valid and is never padded. Re-file the {SHORTLIST_CAP} your "
+                        f"method ranks highest; the rest are not lost -- say in `declarations` which names you cut and why.")
     for i, n in enumerate(noms):
         w = f"nominations[{i}]"
         for req in ("ticker", "reason", "conviction", "checklist_trace"):
@@ -202,6 +232,34 @@ def _cond():
 # (and the 2026-09-06 regression fixtures) are validated as they were filed.
 D123_EFFECTIVE = "2026-10-02"
 
+def _validate_case(case, where):
+    """R36 (PM 2026-10-30): the CASE FORM on every name -- reasons both ways. Stance and the vote's own
+    reason live on the vote row; this block carries what a seat must also say so the floor, the slate
+    and the scorecard can read it: the case FOR, the case AGAINST, the entry trigger it would use,
+    where it is wrong, its horizon in sessions, what would change its mind, what it cannot see."""
+    errs = []
+    if not isinstance(case, dict):
+        return [f"{where}.case: required on every vote from 2026-11-01 (R36 case form) -- "
+                f"{{for, against, entry_trigger, wrong_if, horizon_sessions, would_change_my_mind, cannot_see}}"]
+    for k in CASE_REQUIRED:
+        if k not in case:
+            errs.append(f"{where}.case: missing {k}")
+    for k, cap in CASE_LIMITS.items():
+        v = case.get(k)
+        if k in case and (not isinstance(v, str) or not v.strip()):
+            errs.append(f"{where}.case.{k}: must be a non-empty string (reasons both ways -- never blank)")
+        elif isinstance(v, str) and len(v) > cap:
+            errs.append(f"{where}.case.{k}: {len(v)} chars > cap {cap} (essay leak)")
+    h = case.get("horizon_sessions")
+    if "horizon_sessions" in case and (not isinstance(h, int) or isinstance(h, bool) or not (1 <= h <= 120)):
+        errs.append(f"{where}.case.horizon_sessions: integer 1-120 trading sessions (R35: each voice is graded on its own horizon)")
+    cs = case.get("cannot_see")
+    if "cannot_see" in case:
+        if not isinstance(cs, list) or any(not isinstance(x, str) or len(x) > 80 for x in cs):
+            errs.append(f"{where}.case.cannot_see: list of short strings (<=80 chars; [] when nothing is missing)")
+    return errs
+
+
 def validate_round2(form, universe, deliberation_set, partial=False):
     errs, flags = [], []
     for req in ("voice", "date", "round", "votes"):
@@ -213,6 +271,9 @@ def validate_round2(form, universe, deliberation_set, partial=False):
     if not isinstance(votes, list):
         errs.append("votes: must be a list")
         votes = []
+    new_regime = _new_regime(form)
+    if new_regime and form.get("voice") not in DECIDERS:
+        errs.append(f"voice {form.get('voice')!r} is not a decider seat (R31: {', '.join(DECIDERS)}); only deciders vote")
     seen = set()
     for i, v in enumerate(votes):
         w = f"votes[{i}]"
@@ -220,6 +281,8 @@ def validate_round2(form, universe, deliberation_set, partial=False):
         if not t:
             errs.append(f"{w}: missing ticker")
             continue
+        if new_regime:
+            errs.extend(_validate_case(v.get("case"), w + f" {t}"))
         if t in seen:
             errs.append(f"{w}: duplicate ticker {t}")
         seen.add(t)
@@ -274,6 +337,252 @@ def validate_round2(form, universe, deliberation_set, partial=False):
                         f"proves the parts cover the set)")
     return errs, flags
 
+
+
+# ---------------------------------------------------------------------------
+# THE DELIBERATION FORMS (R34-R36, PM 2026-10-30). Shapes documented in contracts/*.schema.json;
+# validated here in pure python like every other form. The registrar checks ONE file's shape and
+# membership; cross-file counting (floor caps, objection totals, hold-once) is pma_pipeline.py's
+# `floor-check` and `ratify-count`. Nothing here judges a reason -- only that the form is complete.
+# ---------------------------------------------------------------------------
+def _str(errs, obj, field, cap, where, required=True):
+    v = obj.get(field)
+    if v is None:
+        if required:
+            errs.append(f"{where}: missing {field}")
+        return
+    if not isinstance(v, str) or (required and not v.strip()):
+        errs.append(f"{where}.{field}: must be a non-empty string")
+    elif len(v) > cap:
+        errs.append(f"{where}.{field}: {len(v)} chars > cap {cap} (essay leak)")
+
+
+def validate_challenge(form, universe):
+    """Steenbarger's challenge document (R36 round 1b): crowding, extension and overlap reads on the
+    room BEFORE anyone votes. The shape the seat has filed since 2026-09-06, now written down."""
+    errs, flags = [], []
+    for req in ("voice", "date", "seat_kind", "findings", "names_read"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    if form.get("seat_kind") != "challenge":
+        errs.append("seat_kind: must be 'challenge'")
+    if _new_regime(form) and form.get("voice") != QA_SEAT:
+        errs.append(f"voice {form.get('voice')!r}: from 2026-11-01 the challenge document is filed by {QA_SEAT} only (R31)")
+    fnd = form.get("findings")
+    if not isinstance(fnd, list):
+        errs.append("findings: must be a list"); fnd = []
+    for i, f in enumerate(fnd):
+        w = f"findings[{i}]"
+        if not isinstance(f, dict):
+            errs.append(f"{w}: must be an object"); continue
+        for req in ("scope", "kind", "claim", "evidence"):
+            if not f.get(req):
+                errs.append(f"{w}: missing {req}")
+        _str(errs, f, "claim", 500, w); _str(errs, f, "evidence", 400, w)
+        _str(errs, f, "addressed_to", 120, w, required=False)
+        tk = f.get("ticker")
+        if tk and universe is not None and tk not in universe:
+            errs.append(f"{w}: ticker {tk} NOT IN UNIVERSE")
+        if _bracket_as_reject([f.get("claim", ""), f.get("evidence", "")]):
+            errs.append(f"{w}: uses a bracket as a disqualifier. {R1_TEXT}")
+    for i, ob in enumerate(form.get("obligations") or []):
+        w = f"obligations[{i}]"
+        for req in ("seat", "ticker", "what_is_owed"):
+            if not ob.get(req):
+                errs.append(f"{w}: missing {req}")
+        _str(errs, ob, "what_is_owed", 300, w)
+    nr = form.get("names_read")
+    if "names_read" in form and (not isinstance(nr, int) or nr < 0):
+        errs.append("names_read: integer >= 0 (how many room names the seat actually read)")
+    if "names_read" in form and nr == 0 and fnd:
+        errs.append("names_read is 0 but findings were filed -- a challenge on names not read is not evidence")
+    return errs, flags
+
+
+def validate_floor_message(form, deliberation_set, contested=None):
+    """One floor message (R36 round 3). Addressed to a seat by name or to the room; answers a point,
+    concedes or holds; says what moved it when it changed its mind."""
+    errs, flags = [], []
+    for req in ("voice", "date", "ticker", "msg_id", "to", "text", "stance_now", "changed_mind"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    v = form.get("voice")
+    if v not in DECIDERS and v != QA_SEAT:
+        errs.append(f"voice {v!r}: only a decider, or {QA_SEAT} when called on by name, speaks on the floor (R31)")
+    t = form.get("ticker")
+    if deliberation_set is not None and t not in set(deliberation_set):
+        errs.append(f"ticker {t} is not in the deliberation set")
+    if contested is not None and t not in set(contested):
+        errs.append(f"ticker {t} is not a CONTESTED name on the board -- the floor opens on contested names only (R36)")
+    to = form.get("to")
+    if to != "room" and to not in DECIDERS and to != QA_SEAT:
+        errs.append(f"to: must be a decider by name, '{QA_SEAT}', or 'room'")
+    if to == v:
+        errs.append("to: a seat does not address itself")
+    _str(errs, form, "text", 600, "message")
+    _str(errs, form, "msg_id", 64, "message")
+    irt = form.get("in_reply_to")
+    if irt is not None and not isinstance(irt, str):
+        errs.append("in_reply_to: msg_id string or null")
+    if form.get("stance_now") not in ("SUPPORT", "OPPOSE", "ABSTAIN", "NO_VOTE"):
+        errs.append("stance_now: SUPPORT/OPPOSE/ABSTAIN (a decider) or NO_VOTE (the QA seat)")
+    if v == QA_SEAT and form.get("stance_now") != "NO_VOTE":
+        errs.append(f"{QA_SEAT} carries stance_now NO_VOTE -- the QA seat never votes (R31)")
+    cm = form.get("changed_mind")
+    if "changed_mind" in form and not isinstance(cm, bool):
+        errs.append("changed_mind: true/false")
+    if cm is True:
+        _str(errs, form, "what_moved_me", 300, "message")
+    if _bracket_as_reject([form.get("text", "")]):
+        errs.append(f"text uses a bracket as a disqualifier. {R1_TEXT}")
+    return errs, flags
+
+
+def validate_slate(form, deliberation_set):
+    """The Chair's slate (R34/R36 round 4): at most 15 tickets across ADVANCE and WATCH, each with its
+    trigger, wrong-if, horizon, why the room agrees and who dissents. The Chair uses only what the
+    seats said; the registrar checks completeness and membership, never the reasoning."""
+    errs, flags = [], []
+    for req in ("date", "chair", "tickets"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    if form.get("chair") != "chair":
+        errs.append("chair: must be 'chair' -- the Chair is not a voice (R36)")
+    tk = form.get("tickets")
+    if not isinstance(tk, list):
+        errs.append("tickets: must be a list"); tk = []
+    if len(tk) > SLATE_CAP:
+        errs.append(f"tickets: {len(tk)} > {SLATE_CAP} -- R34 (PM 2026-10-30): the slate is at most {SLATE_CAP} across "
+                    f"ADVANCE and WATCH. A ceiling, not a target; nothing is padded to reach it either.")
+    seen = set()
+    ds = set(deliberation_set) if deliberation_set is not None else None
+    for i, x in enumerate(tk):
+        w = f"tickets[{i}]"
+        if not isinstance(x, dict):
+            errs.append(f"{w}: must be an object"); continue
+        t = x.get("ticker")
+        if not t:
+            errs.append(f"{w}: missing ticker"); continue
+        if t in seen:
+            errs.append(f"{w}: duplicate ticker {t}")
+        seen.add(t)
+        if ds is not None and t not in ds:
+            errs.append(f"{w}: {t} is not in the deliberation set -- the Chair may not add a name the room never voted")
+        if x.get("verdict") not in ("ADVANCE", "WATCH"):
+            errs.append(f"{w}: verdict must be ADVANCE or WATCH")
+        for f_, cap in (("entry_trigger", 200), ("wrong_if", 200), ("why_agreed", 400)):
+            _str(errs, x, f_, cap, w)
+        h = x.get("horizon_sessions")
+        if not isinstance(h, int) or isinstance(h, bool) or not (1 <= h <= 120):
+            errs.append(f"{w}: horizon_sessions integer 1-120")
+        dis = x.get("dissent")
+        if not isinstance(dis, list):
+            errs.append(f"{w}: dissent must be a list ([] when nobody dissents)")
+        else:
+            for j, d in enumerate(dis):
+                if not isinstance(d, dict) or d.get("voice") not in DECIDERS or not d.get("why"):
+                    errs.append(f"{w}.dissent[{j}]: {{voice: a decider, why: text}}")
+                elif len(str(d.get("why"))) > 300:
+                    errs.append(f"{w}.dissent[{j}].why: > 300 chars")
+        if _bracket_as_reject([x.get("why_agreed", ""), x.get("wrong_if", "")]):
+            errs.append(f"{w}: uses a bracket as a disqualifier. {R1_TEXT}")
+    return errs, flags
+
+
+def validate_ratification(form, slate):
+    """A decider's ratification (R34/R36 round 5): one answer per slate ticket -- AGREE,
+    AGREE_WITH_RESERVATION (say the reservation) or OBJECT (say the objection and the ONE thing that
+    would clear it). Covers the slate exactly."""
+    errs, flags = [], []
+    for req in ("voice", "date", "tickets"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    if form.get("voice") not in DECIDERS:
+        errs.append(f"voice {form.get('voice')!r} is not a decider (R31); only deciders ratify")
+    rows = form.get("tickets")
+    if not isinstance(rows, list):
+        errs.append("tickets: must be a list"); rows = []
+    seen = set()
+    for i, r in enumerate(rows):
+        w = f"tickets[{i}]"
+        t = r.get("ticker") if isinstance(r, dict) else None
+        if not t:
+            errs.append(f"{w}: missing ticker"); continue
+        if t in seen:
+            errs.append(f"{w}: duplicate ticker {t}")
+        seen.add(t)
+        ans = r.get("answer")
+        if ans not in RATIFY_ANSWERS:
+            errs.append(f"{w} {t}: answer must be one of {list(RATIFY_ANSWERS)}")
+        if ans == "AGREE_WITH_RESERVATION":
+            _str(errs, r, "reservation", 300, f"{w} {t}")
+        if ans == "OBJECT":
+            _str(errs, r, "objection", 300, f"{w} {t}")
+            _str(errs, r, "would_clear", 200, f"{w} {t}")
+            if _bracket_as_reject([r.get("objection", "")]):
+                errs.append(f"{w} {t}: OBJECT uses a bracket as the disqualifier. {R1_TEXT}")
+    if slate is not None:
+        st = {x["ticker"] for x in slate.get("tickets", []) if isinstance(x, dict) and x.get("ticker")}
+        missing, extra = st - seen, seen - st
+        if missing:
+            errs.append(f"no answer for slate tickets {sorted(missing)} -- every decider answers every ticket (R34)")
+        if extra:
+            errs.append(f"answers on names not on the slate: {sorted(extra)}")
+    return errs, flags
+
+
+def validate_qa_note(form, slate):
+    """Steenbarger's QA note (R36 round 6): did every decider read evidence; are reasons leaning on the
+    same anchors; did a point go unanswered; does the slate say what the deciders said. May HOLD a
+    ticket -- once per ticket -- which reopens the floor and the ratification for that ticket only."""
+    errs, flags = [], []
+    for req in ("voice", "date", "evidence_read", "shared_anchors", "unanswered_points",
+                "slate_says_what_deciders_said", "note", "holds"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    if form.get("voice") != QA_SEAT:
+        errs.append(f"voice: the QA note is {QA_SEAT}'s (R31)")
+    er = form.get("evidence_read")
+    if not isinstance(er, list):
+        errs.append("evidence_read: list of {voice, read: bool, note}")
+    else:
+        for j, e in enumerate(er):
+            if not isinstance(e, dict) or e.get("voice") not in DECIDERS or not isinstance(e.get("read"), bool):
+                errs.append(f"evidence_read[{j}]: {{voice: a decider, read: true/false, note}}")
+        covered = {e.get("voice") for e in er if isinstance(e, dict)}
+        if isinstance(er, list) and covered != set(DECIDERS):
+            errs.append(f"evidence_read must cover every decider once; missing {sorted(set(DECIDERS) - covered)}, "
+                        f"extra {sorted(covered - set(DECIDERS))}")
+    sa = form.get("shared_anchors")
+    if not isinstance(sa, list) or any(not isinstance(x, str) or len(x) > 200 for x in sa):
+        errs.append("shared_anchors: list of short strings ([] when none)")
+    up = form.get("unanswered_points")
+    if not isinstance(up, list):
+        errs.append("unanswered_points: list of {voice, ticker, point}")
+    else:
+        for j, u in enumerate(up):
+            if not isinstance(u, dict) or not u.get("voice") or not u.get("ticker") or not u.get("point"):
+                errs.append(f"unanswered_points[{j}]: {{voice, ticker, point}}")
+    if not isinstance(form.get("slate_says_what_deciders_said"), bool):
+        errs.append("slate_says_what_deciders_said: true/false")
+    _str(errs, form, "note", 800, "qa")
+    holds = form.get("holds")
+    if not isinstance(holds, list):
+        errs.append("holds: list of {ticker, question} ([] for no hold)"); holds = []
+    st = ({x["ticker"] for x in slate.get("tickets", []) if isinstance(x, dict) and x.get("ticker")}
+          if slate is not None else None)
+    held = set()
+    for j, h in enumerate(holds):
+        w = f"holds[{j}]"
+        if not isinstance(h, dict) or not h.get("ticker") or not h.get("question"):
+            errs.append(f"{w}: {{ticker, question}}"); continue
+        if h["ticker"] in held:
+            errs.append(f"{w}: {h['ticker']} held twice -- ONE hold per ticket, then the result stands (R36)")
+        held.add(h["ticker"])
+        if st is not None and h["ticker"] not in st:
+            errs.append(f"{w}: {h['ticker']} is not on the slate; a hold reopens a slate ticket only")
+        _str(errs, h, "question", 300, w)
+    return errs, flags
 
 
 def cmd_merge(a):
@@ -353,17 +662,47 @@ def cmd_validate(a):
             print(json.dumps({"result": "REJECT", "errors": [err]}))
             return 1
         universe = {r["ticker"] for r in cs.get("universe", [])}
+    kind = getattr(a, "kind", None)
+    if (a.round is None) == (kind is None):
+        print(json.dumps({"result": "REJECT", "errors": ["pass exactly one of --round 1|2 or --kind challenge|floor|slate|ratify|qa"]}))
+        return 1
     dset = None
-    if a.round == 2 and a.phase4:
+    if (a.round == 2 or kind in ("floor", "slate")) and a.phase4:
         p4, err = load_json(a.phase4, "phase4")
         if err:
             print(json.dumps({"result": "REJECT", "errors": [err]}))
             return 1
         dset = p4.get("deliberation_set")
+    slate = None
+    if kind in ("ratify", "qa"):
+        if not getattr(a, "slate", None):
+            print(json.dumps({"result": "REJECT", "errors": [f"--slate slate.json is required to validate a {kind} form"]}))
+            return 1
+        slate, err = load_json(a.slate, "slate")
+        if err:
+            print(json.dumps({"result": "REJECT", "errors": [err]}))
+            return 1
+    contested = None
+    if kind == "floor" and getattr(a, "board", None):
+        board, err = load_json(a.board, "board")
+        if err:
+            print(json.dumps({"result": "REJECT", "errors": [err]}))
+            return 1
+        contested = board.get("contested")
     if a.round == 1:
         errs, flags = validate_round1(form, universe)
-    else:
+    elif a.round == 2:
         errs, flags = validate_round2(form, universe, dset, partial=bool(getattr(a, "of", None) and a.of > 1))
+    elif kind == "challenge":
+        errs, flags = validate_challenge(form, universe)
+    elif kind == "floor":
+        errs, flags = validate_floor_message(form, dset, contested)
+    elif kind == "slate":
+        errs, flags = validate_slate(form, dset)
+    elif kind == "ratify":
+        errs, flags = validate_ratification(form, slate)
+    else:
+        errs, flags = validate_qa_note(form, slate)
 
     # --- did this seat read the packet, or invent the numbers? (PM ruling 2026-09-16) ------------
     # R2 asks a seat to prove it read the packet by returning its md5. No seat has a hashing tool,
@@ -527,7 +866,10 @@ def _declared_produces(step_name):
     if not step:
         return []
     out = step.get("produces") or []
-    return [f for f in out if isinstance(f, str) and "<" not in f and "*" not in f]
+    # review finding 7 (2026-11-01): globs used to be dropped, so a model round with ZERO forms ticked done.
+    # A glob now stays in the list and must match at least one file; a <placeholder> or remote: path is declared
+    # on the scoreboard but not checked here (the tool that writes it verifies its own read-back).
+    return [f for f in out if isinstance(f, str) and "<" not in f and not f.startswith("remote:")]
 
 
 def _missing_produces(step_name):
@@ -535,7 +877,10 @@ def _missing_produces(step_name):
     missing = []
     for f in _declared_produces(step_name):
         target = f.rstrip("/")
-        if not os.path.exists(target):
+        if any(ch in target for ch in "*?["):
+            if not glob.glob(target, recursive=True):
+                missing.append(f + " (glob matched nothing)")
+        elif not os.path.exists(target):
             missing.append(f)
     return missing
 
@@ -632,7 +977,13 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("init"); s.add_argument("--date", required=True)
     s = sub.add_parser("validate")
-    s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), required=True)
+    s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
+                   help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")
+    s.add_argument("--kind", choices=("challenge", "floor", "slate", "ratify", "qa"), default=None,
+                   help="R34-R36 deliberation forms: Steenbarger's challenge document, one floor message, "
+                        "the Chair's slate, a decider's ratification, the QA note. Exactly one of --round/--kind.")
+    s.add_argument("--slate", default=None, help="slate.json (required for --kind ratify|qa)")
+    s.add_argument("--board", default=None, help="board.json (optional for --kind floor: proves the name is contested)")
     s.add_argument("--candidates", default=None); s.add_argument("--phase4", default=None)
     s.add_argument("--part", type=int, default=None, help="R16 split ballot: which part of a seat's round-2 ballot this file is.")
     s.add_argument("--of", type=int, default=None, help="R16 split ballot: how many parts the seat filed. With --of >1 this part is validated on its own and need not cover the whole deliberation set; `merge` proves the coverage.")

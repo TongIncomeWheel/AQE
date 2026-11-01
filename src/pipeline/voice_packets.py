@@ -296,9 +296,36 @@ def publish(run_date: str) -> dict:
             failed.append(f"{local.name}: {res.get('reason')}")
         elif not res.get("unchanged"):
             changed.append(local.name)
-    return {"ok": not failed, "written": len(items) - len(failed),
-            "total": len(items), "changed": changed, "failed": failed,
-            "reason": "; ".join(failed) if failed else None}
+
+    # Retire what today did NOT write. 2026-11-02 (AQE run 127): the roster
+    # moved from 11 seats to 7 deciders (R31) and the publisher only ever
+    # PUT today's files, so crown.json / druckenmiller.json / thorp.tsv /
+    # weis.tsv from the old roster sat in aegis/output/packets/ beside the
+    # fresh set -- a stale file that still serves a seat the universe it must
+    # not see, and the handoff gate rightly refused the run. The folder must
+    # equal today's set, nothing more. Deletion failures are reported, never
+    # swallowed, but a listing failure does not undo a publish that succeeded.
+    today = {p.name for p in outdir.iterdir() if p.is_file()}
+    removed: list[str] = []
+    listing = github_sync.list_dir(OUTPUT_PACKETS_IN_REPO)
+    if listing.get("ok"):
+        for f in listing.get("files") or []:
+            name = f.get("name")
+            if not name or name in today:
+                continue
+            res = github_sync.delete_file(f"{OUTPUT_PACKETS_IN_REPO}/{name}",
+                                          f"data: retire stale packet {name} ({run_date})",
+                                          sha=f.get("sha"))
+            if res.get("ok"):
+                removed.append(name)
+            else:
+                failed.append(f"stale {name} not removed: {res.get('reason')}")
+    else:
+        failed.append(f"could not list {OUTPUT_PACKETS_IN_REPO} to retire stale packets: "
+                      f"{listing.get('reason')}")
+    return {"ok": not failed, "written": len(items) - len([f for f in failed if not f.startswith(('stale ', 'could not list'))]),
+            "total": len(items), "changed": changed, "removed": removed,
+            "failed": failed, "reason": "; ".join(failed) if failed else None}
 
 
 def sync(export_path: Path | None = None) -> dict:
