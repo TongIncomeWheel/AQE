@@ -517,6 +517,30 @@
    ],
    "confirms": "an hourly candle closes above bar_high 29.24",
    "kills": "A daily close under 28.4 (1 analyst's exit line)."
+  },
+  "V": {
+   "triggers": [
+    {
+     "id": "V-buy0",
+     "kind": "close_above",
+     "level": 414.6,
+     "basis": "daily",
+     "priority": "ACTION",
+     "action": "V (held): closes above pivot_high 414.6 (2 analysts' shared add line). ADD question only; your decision."
+    },
+    {
+     "id": "V-buy1",
+     "kind": "close_above",
+     "level": 414.6,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "V (held): an hourly candle closes above pivot_high 414.6 (2 analysts' shared add line). ADD question only; your decision.",
+     "volume_min_x": 1.4
+    }
+   ],
+   "confirms": "closes above pivot_high 414.6; an hourly candle closes above pivot_high 414.6 (add line, held name)",
+   "kills": "Held name: the broker stop 391.8 is the level in force; committee exit and tighten lines are on the held row.",
+   "conductor_patch": "2026-11-02: pma_cards.py triggers builds no hold card for a HELD name on HOLD-FOR-CONDITIONS (same gap as 29 Oct). Triggers transcribed by code from conditions.json shared.buy for V; no level typed by hand."
   }
  },
  "held": {
