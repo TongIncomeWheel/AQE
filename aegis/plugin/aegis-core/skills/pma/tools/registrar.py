@@ -866,7 +866,10 @@ def _declared_produces(step_name):
     if not step:
         return []
     out = step.get("produces") or []
-    return [f for f in out if isinstance(f, str) and "<" not in f and "*" not in f]
+    # review finding 7 (2026-11-01): globs used to be dropped, so a model round with ZERO forms ticked done.
+    # A glob now stays in the list and must match at least one file; a <placeholder> or remote: path is declared
+    # on the scoreboard but not checked here (the tool that writes it verifies its own read-back).
+    return [f for f in out if isinstance(f, str) and "<" not in f and not f.startswith("remote:")]
 
 
 def _missing_produces(step_name):
@@ -874,7 +877,10 @@ def _missing_produces(step_name):
     missing = []
     for f in _declared_produces(step_name):
         target = f.rstrip("/")
-        if not os.path.exists(target):
+        if any(ch in target for ch in "*?["):
+            if not glob.glob(target, recursive=True):
+                missing.append(f + " (glob matched nothing)")
+        elif not os.path.exists(target):
             missing.append(f)
     return missing
 

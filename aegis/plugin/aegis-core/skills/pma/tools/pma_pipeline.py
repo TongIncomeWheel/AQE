@@ -696,7 +696,14 @@ def cmd_packets(a):
         print(f"WARNING pattern_field_gap ({len(pattern_gap)} tickers, NOT excluded, upstream pattern-detection engine gap, undeclared by export data_quality): {', '.join(pattern_gap)}")
 
 def cmd_tally(a):
-    noms = load(a.nominations, needs=["voice", "nominations"])  # [{voice, nominations:[...]}]
+    # RUN.yaml says `--nominations <dir>`: a directory or glob of forms/r1/*.json, or one file holding the list.
+    if os.path.isdir(a.nominations) or any(ch in a.nominations for ch in "*?["):
+        noms = _load_forms(a.nominations, "tally")
+        for vr in noms:
+            if "nominations" not in vr:
+                raise SystemExit(f"tally: {vr.get('_file')} has no `nominations` key")
+    else:
+        noms = load(a.nominations, needs=["voice", "nominations"])  # [{voice, nominations:[...]}]
     T = {}
     for vr in noms:
         for n in vr.get("nominations", []):
@@ -1805,14 +1812,17 @@ def cmd_consensus(a):
 def _load_forms(spec, label):
     """A directory, a glob, or one file holding a list or an object. Every form is a dict with
     `voice`. Refuses an empty read loudly -- an empty room is a failure, never a quiet tally."""
-    import glob as _g
+    import glob as _g, re as _re
     paths = []
     if spec and os.path.isdir(spec):
-        paths = sorted(_g.glob(os.path.join(spec, "*.json")))
+        paths = sorted(_g.glob(os.path.join(spec, "**", "*.json"), recursive=True))   # forms/floor/<ticker>/<msg>.json too
     elif spec and any(ch in spec for ch in "*?["):
-        paths = sorted(_g.glob(spec))
+        paths = sorted(_g.glob(spec, recursive=True))
     elif spec and os.path.exists(spec):
         paths = [spec]
+    # R16.1 split-ballot PARTS stay beside the merged file; the merged file is the ballot. Reading both
+    # double-counted a seat (review finding 2, 2026-11-01). Same rule pma_conditions._ballots applies.
+    paths = [p for p in paths if not _re.search(r"\.part\d+of\d+\.json$", os.path.basename(p))]
     out = []
     for p in paths:
         d = json.load(open(p, encoding="utf-8"))
@@ -1827,9 +1837,16 @@ def _load_forms(spec, label):
     return out
 
 
-def _split_deciders(forms, label):
-    """Deciders count; anybody else is ignored LOUDLY (printed), never silently."""
+def _split_deciders(forms, label, one_per_voice=True):
+    """Deciders count; anybody else is ignored LOUDLY (printed), never silently. With one_per_voice a
+    seat present in two files is a REFUSAL (a stray duplicate would inflate every count)."""
     keep = [f for f in forms if f.get("voice") in DECIDERS]
+    if one_per_voice:
+        seen = {}
+        for f in keep:
+            if f["voice"] in seen:
+                raise SystemExit(f"{label}: voice {f['voice']} appears in two files ({seen[f['voice']]} and {f.get('_file')}) -- refusing to count a duplicate")
+            seen[f["voice"]] = f.get("_file")
     ignored = sorted({f.get("voice") for f in forms if f.get("voice") not in DECIDERS})
     if ignored:
         print(f"{label}: R31 -- form(s) from non-decider seat(s) {ignored} IGNORED; only {DECIDERS} count")
@@ -1933,6 +1950,9 @@ def cmd_floor_check(a):
             errs.append(f"{mid}: duplicate msg_id")
         ids[mid] = m
         counts[(v, t)] += 1
+    if allowed and not msgs and not getattr(a, "allow_silent", False):
+        errs.append(f"the floor is open on {allowed} but NO messages were found under {a.messages} -- a silent floor is "
+                    f"not a deliberation (review finding 3, 2026-11-01); pass --allow-silent only when every seat explicitly passed")
     for (v, t), n in sorted(counts.items()):
         if n > FLOOR_MSG_CAP:
             errs.append(f"{v} sent {n} messages on {t} -- cap is {FLOOR_MSG_CAP} per seat per name (R36)")
@@ -1978,10 +1998,31 @@ def cmd_ratify_count(a):
         raise SystemExit(f"ratify-count: slate tickets not in the deliberation set {off} -- the Chair may not add a name the room never voted")
     R1, ignored = _split_deciders(_load_forms(a.ratifications, "ratify-count"), "ratify-count")
     answers = {t: {} for t in slate_t}
+
+    def _strict(f, rows, must_cover, label):
+        """Review finding 1 (2026-11-01): the counter trusted whatever sat in the directory. Now a misspelled
+        answer, an OBJECT without its two texts, or a ratification that does not cover its set is a REFUSAL --
+        the same rule validate_ratification applies on arrival, enforced again at the count."""
+        seen = set()
+        for r in rows:
+            t = r.get("ticker"); ans = r.get("answer")
+            if ans not in ("AGREE", "AGREE_WITH_RESERVATION", "OBJECT"):
+                raise SystemExit(f"ratify-count ({label}): {f['voice']} answered {ans!r} on {t} -- not a valid answer; the form was not validated")
+            if ans == "OBJECT" and not (r.get("objection") and r.get("would_clear")):
+                raise SystemExit(f"ratify-count ({label}): {f['voice']} OBJECTs on {t} without objection + would_clear")
+            if ans == "AGREE_WITH_RESERVATION" and not r.get("reservation"):
+                raise SystemExit(f"ratify-count ({label}): {f['voice']} AGREE_WITH_RESERVATION on {t} without the reservation")
+            if t in seen:
+                raise SystemExit(f"ratify-count ({label}): {f['voice']} answered {t} twice")
+            seen.add(t)
+        if seen != set(must_cover):
+            raise SystemExit(f"ratify-count ({label}): {f['voice']} covers {sorted(seen)} but must cover exactly {sorted(must_cover)}")
+
     for f in R1:
-        for r in f.get("tickets") or []:
-            if r.get("ticker") in answers:
-                answers[r["ticker"]][f["voice"]] = dict(r, _round=1)
+        rows = f.get("tickets") or []
+        _strict(f, rows, slate_t, "ratify")
+        for r in rows:
+            answers[r["ticker"]][f["voice"]] = dict(r, _round=1)
     held = set()
     if a.qa and os.path.exists(a.qa):
         Q = load(a.qa, needs=["holds"]); held = {h["ticker"] for h in Q["holds"]}
@@ -1989,9 +2030,12 @@ def cmd_ratify_count(a):
         R2, ign2 = _split_deciders(_load_forms(a.ratifications2, "ratify-count (after hold)"), "ratify-count (after hold)")
         ignored = sorted(set(ignored) | set(ign2))
         for f in R2:
-            for r in f.get("tickets") or []:
+            rows = f.get("tickets") or []
+            for r in rows:
                 if r.get("ticker") not in held:
                     raise SystemExit(f"ratify-count: {f['voice']} re-ratified {r.get('ticker')}, which was NOT held -- after a hold only the held tickets are ratified again (R36)")
+            _strict(f, rows, held, "ratify2")
+            for r in rows:
                 answers[r["ticker"]][f["voice"]] = dict(r, _round=2)
     present = sorted({f["voice"] for f in R1})
     n = len(present)
@@ -2048,7 +2092,8 @@ def cmd_ratify_count(a):
         except SystemExit:
             pass
     final = {c["ticker"]: c for c in out}
-    for v in present:
+    took_part = sorted(set(present) | set((board or {}).get("deciders_present") or []))
+    for v in took_part:
         for t in ds:
             b = (bnames.get(t) or {}).get("cases", {}).get(v) or {}
             mine = [m for m in msgs if m.get("voice") == v and m.get("ticker") == t]
@@ -2074,6 +2119,19 @@ def cmd_ratify_count(a):
           + ", ".join(f"{k} {by[k]}" for k in ("AGREED", "CONTESTED", "DROPPED", "NOT_SLATED") if by.get(k))
           + " | receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}/{c['status']}" for c in out if c["status"] != "NOT_SLATED")
           + f" | record {len(record)} rows -> {a.record}")
+
+
+def cmd_slate_cut(a):
+    """R36 hold round: the slate cut to the HELD tickets, so `registrar.py validate --kind ratify --slate slate_held.json`
+    can validate forms/ratify2 exactly like round one (review finding 9: no tool produced this cut)."""
+    S = load(a.slate, needs=["tickets"]); Q = load(a.qa, needs=["holds"])
+    held = {h["ticker"] for h in Q["holds"]}
+    cut = dict(S); cut["tickets"] = [t for t in S["tickets"] if t.get("ticker") in held]; cut["hold_round"] = True
+    missing = sorted(held - {t["ticker"] for t in cut["tickets"]})
+    if missing:
+        raise SystemExit(f"slate-cut: held ticket(s) {missing} are not on the slate")
+    save(a.out, cut)
+    print(f"slate-cut: {len(cut['tickets'])} held ticket(s) -> {a.out}: {' '.join(sorted(held)) or 'none'}")
 
 
 def cmd_ledger(a):
@@ -2543,7 +2601,10 @@ if __name__ == "__main__":
     s = sub.add_parser("floor-check", help="R36: count the floor caps across message files (2 per seat per name; open names only); exit 1 on breach")
     s.add_argument("--messages", default="forms/floor"); s.add_argument("--board", default="board.json")
     s.add_argument("--qa", default=None, help="forms/qa/steenbarger.json -- when given, only the HELD tickets are open (hold round)")
+    s.add_argument("--allow-silent", action="store_true", help="accept zero messages on an open floor (every seat explicitly passed)")
     s.add_argument("--out", default="floor_check.json")
+    s = sub.add_parser("slate-cut", help="R36 hold round: slate cut to the held tickets, for validating forms/ratify2")
+    s.add_argument("--slate", default="slate.json"); s.add_argument("--qa", default="forms/qa/steenbarger.json"); s.add_argument("--out", default="slate_held.json")
     s = sub.add_parser("ratify-count", help="R34 CLOSE: count OBJECT answers on the final ratification -> consensus.json (+ committee_record.json, R35)")
     s.add_argument("--slate", default="slate.json"); s.add_argument("--ratifications", default="forms/ratify")
     s.add_argument("--ratifications2", default=None, help="forms/ratify2 -- after a QA hold; held tickets only")
@@ -2560,6 +2621,6 @@ if __name__ == "__main__":
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
-     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count,
+     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
      "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

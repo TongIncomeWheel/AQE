@@ -113,9 +113,7 @@ def main():
     if a.date >= "2026-11-01" and res.get("result") != "REJECT":
         FAILS.append("R33 cap: a 7-nomination ballot was ACCEPTED")
     # ---- 2. RANK. tally reads ONE file holding the list of forms (the conductor stitches forms/r1/*.json) ----
-    forms = [json.load(open(f)) for f in sorted(glob.glob(os.path.join(rd, "forms", "r1", "*.json")))]
-    json.dump(forms, open(os.path.join(rd, "nominations.json"), "w"))
-    step("tally", [sys.executable, PIPE, "tally", "--nominations", "nominations.json", "--out", "tally.json"], rd)
+    step("tally", [sys.executable, PIPE, "tally", "--nominations", "forms/r1", "--out", "tally.json"], rd)   # as RUN.yaml
     step("pm-lens", [sys.executable, PMLENS, "--export", "aqe_daily_export.json", "--out", "pm_lens.json"], rd)
     step("rank", [sys.executable, PIPE, "rank", "--tally", "tally.json", "--candidates", "candidate_set.json", "--export", "aqe_daily_export.json",
                   "--cap", "24", "--door-budget", "8", "--pm-lens", "pm_lens.json", "--pm-lens-min", "5", "--out", "phase4.json"], rd)
@@ -176,8 +174,7 @@ def main():
                 if res.get("result") != "OK":
                     FAILS.append(f"VOTE {v} part {k}: registrar REJECT {res.get('errors')[:3]}")
             step(f"registrar merge {v}", [sys.executable, REG, "merge", "--glob", f"forms/r2/{v}.part*.json", "--out", f"forms/r2/{v}.json", "--phase4", "phase4.json"], rd)
-            for f in glob.glob(os.path.join(rd, "forms", "r2", f"{v}.part*.json")):
-                os.replace(f, os.path.join(rd, "forms", "r2_parts_" + os.path.basename(f)))   # keep the parts beside, out of the glob board/conditions read
+            # the parts STAY beside the merged file, exactly as RUN.yaml leaves them -- board/ratify-count skip .partNofM.json
     # ---- 5. FLOOR ----
     step("board", [sys.executable, PIPE, "board", "--round2", "forms/r2", "--phase4", "phase4.json", "--challenge", cf, "--date", a.date, "--out", "board.json"], rd)
     B = json.load(open(os.path.join(rd, "board.json")))
@@ -228,11 +225,15 @@ def main():
     if res.get("result") != "OK":
         FAILS.append(f"QA: REJECT {res.get('errors')}")
     if qa["holds"]:
+        step("slate-cut", [sys.executable, PIPE, "slate-cut", "--slate", "slate.json", "--qa", qf, "--out", "slate_held.json"], rd)
         os.makedirs(os.path.join(rd, "forms", "ratify2"), exist_ok=True)
         for i, v in enumerate(DECIDERS):
             r = {"ticker": split_name, "answer": "OBJECT" if i < 1 else "AGREE"}
             if i < 1: r.update({"objection": "dry run", "would_clear": "x"})
-            json.dump({"voice": v, "date": a.date, "round": 2, "tickets": [r]}, open(os.path.join(rd, "forms", "ratify2", f"{v}.json"), "w"))
+            f = os.path.join(rd, "forms", "ratify2", f"{v}.json"); json.dump({"voice": v, "date": a.date, "round": 2, "tickets": [r]}, open(f, "w"))
+            res = validate(f, rd, "--kind", "ratify", "--slate", "slate_held.json")
+            if res.get("result") != "OK":
+                FAILS.append(f"RATIFY2 {v}: REJECT {res.get('errors')}")
     # ---- 9. DECIDE ----
     cmd = [sys.executable, PIPE, "ratify-count", "--slate", "slate.json", "--ratifications", "forms/ratify", "--board", "board.json", "--messages", "forms/floor",
            "--qa", qf, "--phase4", "phase4.json", "--date", a.date, "--out", "consensus.json", "--record", "committee_record.json"]
@@ -252,7 +253,7 @@ def main():
     json.dump({"schema": "broker_stops.v1", "date": a.date, "positions": [], "note": "dry run: no broker read"}, open(os.path.join(rd, "broker_stops.json"), "w"))
     step("cards triggers", [sys.executable, CARDS, "triggers", "--conditions", "conditions.json", "--export", "aqe_daily_export.json", "--broker-stops", "broker_stops.json", "--out", "cards.json"], rd)
     step("repeat-watch", [sys.executable, PIPE, "repeat-watch", "--ledger", "phase4_ledger.json", "--verdicts", "verdict_ledger.json", "--date", a.date, "--out", "repeat_watch.json"], rd)
-    step("purity_check", [sys.executable, PURITY, "--export", "aqe_daily_export.json", "--tally", "tally.json", "--candidates", "candidate_set.json", "--pm-lens", "pm_lens.json", "--out", "purity_check.json"], rd, must_exit0=False)
+    step("purity_check", [sys.executable, PURITY, "--export", "aqe_daily_export.json", "--tally", "tally.json", "--candidates", "candidate_set.json", "--pm-lens", "pm_lens.json", "--out", "purity_check.json"], rd)
     step("brackets", [sys.executable, PIPE, "brackets", "--consensus", "consensus.json", "--phase4", "phase4.json", "--export", "aqe_daily_export.json", "--date", a.date, "--out", "brackets.json"], rd)
     step("repeatmarks", [sys.executable, PIPE, "repeatmarks", "--ledger", "verdict_ledger.json", "--consensus", "consensus.json", "--brackets", "brackets.json", "--date", a.date, "--out", "repeat_marks.json"], rd)
     step("levels emit", [sys.executable, LEVELS, "emit", "--date", a.date, "--window", "3", "--conditions", "conditions.json", "--out", "pma_levels.json"], rd)

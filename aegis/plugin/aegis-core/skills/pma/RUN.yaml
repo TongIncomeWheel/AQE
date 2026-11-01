@@ -15,7 +15,7 @@
 # not ticked done.
 
 schema: aegis_run.v1
-updated: 2026-11-01
+updated: 2026-11-01   # contract fixes from the independent review of 2026-11-01 (findings 3,4,6,7,9,10,11)
 # THE 30 OCT 2026 REDESIGN (RULINGS R31-R36; docs/DECISIONS_2026-10-30.md wins). Seven deciders +
 # Steenbarger as QA; Detect-lens an independent list; the weather from AQE's Crown file and the Valen
 # dashboard, never from a seat. Rounds: blind NOMINATE (cap 6) -> CHALLENGE (Steenbarger) -> blind VOTE
@@ -136,11 +136,12 @@ steps:
   - name: PREPARE
     kind: tool
     reads: [candidate_set.json, packets/]
-    produces: [packets_manifest.json]
-    barrier: "every seat has a packet and its md5 is recorded"
+    produces: [packets_manifest.json, voice_menus.json]
+    barrier: "every seat has a packet and its md5 is recorded; voice_menus.json copied to the run root"
     rulings: [R5, R12]
     must_also: >
-      VERIFY ONLY. AQE publishes candidate_set.json already Layer-0 filtered; consume it as
+      Copy the skill's contracts/voice_menus.json to the run root as voice_menus.json (CHALLENGE and the
+      packet verify read it there). VERIFY ONLY otherwise. AQE publishes candidate_set.json; consume it as
       published. No local filter, no screen, no column stripping (R5). One grep for qs_market
       across seat packets; a hit is FATAL.
       THE HELD FLOOR (R12): every seat packet carries held, the cost basis, the size, the
@@ -177,9 +178,20 @@ steps:
     checkpoint_after: true        # 7 seats
     meter: "--spawns 7"
 
+  - name: PM-LENS
+    kind: tool
+    command: "pm_lens.py --export <export> --out pm_lens.json"
+    reads: [aqe_daily_export.json]
+    produces: [pm_lens.json]
+    lane: independent
+    must_also: >
+      Runs on the FULL export, not the top 20, BEFORE RANK (review finding 10, 2026-11-01: RANK reads
+      pm_lens.json for the PM_LENS door, so it cannot run after RANK). Blocks nothing; rejoins at WRITE.
+    meter: "--tool-only"
+
   - name: RANK
     kind: tool
-    command: "pma_pipeline.py tally --nominations <dir> --out tally.json"
+    command: "pma_pipeline.py tally --nominations forms/r1 --out tally.json"
     then: "pma_pipeline.py rank --tally tally.json --candidates candidate_set.json --export <export> --cap 24 --door-budget 8 --pm-lens pm_lens.json --pm-lens-min 5 --out phase4.json"
     reads: [forms/r1/*.json, candidate_set.json, aqe_daily_export.json, pm_lens.json]
     produces: [tally.json, phase4.json, phase4_ledger.json]
@@ -209,22 +221,11 @@ steps:
       a cut, never silently dropped.
     meter: "--tool-only"
 
-  - name: PM-LENS
-    kind: tool
-    command: "pm_lens.py --export <export> --phase4 phase4.json --out pm_lens.json"
-    reads: [aqe_daily_export.json]
-    produces: [pm_lens.json]
-    lane: independent
-    must_also: >
-      Runs on the FULL export, not the top 20. BLOCKS NOTHING, FEEDS NOTHING UPSTREAM.
-      Rejoins the run only at WRITE.
-    meter: "--tool-only"
-
   - name: CHALLENGE
     kind: model
     spawns: 1
     seats: [steenbarger]
-    command: "pma_pipeline.py challenge-packets --menus contracts/voice_menus.json --date <date> --outdir seat_packets --seats steenbarger"
+    command: "pma_pipeline.py challenge-packets --menus voice_menus.json --universe candidate_set.json --phase4 phase4.json --forms forms/r1 --date <date> --outdir seat_packets --seats steenbarger"
     reads: [phase4.json, forms/r1/*.json, universe.json]
     produces: [forms/challenge/steenbarger.json]
     barrier: "1 of 1"
@@ -247,7 +248,7 @@ steps:
     barrier: "6 of 7"
     on_fail: "watch-table-only run, declared"
     rulings: [R1, R2, R3, R31, R32, R36]
-    validate_with: "registrar.py validate --file <form> --round 2 --packet VOTE_PACKET.txt"
+    validate_with: "registrar.py validate --file <form> --round 2 --candidates candidate_set.json --phase4 phase4.json --packet VOTE_PACKET.txt"
     must_also: >
       Packet is built by `pma_pipeline.py r2digest` and is IDENTICAL for every seat.
       Every seat votes on EVERY deliberation-set name. Commit per vote, not at end of stage.
@@ -286,7 +287,7 @@ steps:
     spawns: 8
     seats: [chair, oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
     command: "pma_pipeline.py board --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --date <date> --out board.json"
-    then: "pma_pipeline.py floor-check --messages forms/floor --board board.json --out floor_check.json"
+    then: "pma_pipeline.py floor-check --messages forms/floor --board board.json --out floor_check.json"   # reads forms/floor/**/*.json; zero messages on an open floor FAILS unless --allow-silent
     reads: [board.json, forms/r2/*.json, forms/challenge/steenbarger.json]
     produces: [board.json, forms/floor/*.json, floor_check.json]
     barrier: "floor-check exits 0 (caps hold; messages only on contested names)"
@@ -352,15 +353,16 @@ steps:
       same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may
       HOLD a ticket (at most once per ticket). ON A HOLD: the conductor reopens the floor on the held tickets
       only -- messages to forms/floor2/, `floor-check --messages forms/floor2 --qa forms/qa/steenbarger.json`,
-      then the deciders ratify the held tickets again to forms/ratify2/ (validate --kind ratify against a slate
-      cut to the held tickets). One hold, one re-ratification, then the result stands. He cannot vote or veto.
+      then `pma_pipeline.py slate-cut --slate slate.json --qa forms/qa/steenbarger.json --out slate_held.json` and the
+      deciders ratify the held tickets again to forms/ratify2/, each validated with `registrar.py validate --file <f>
+      --kind ratify --slate slate_held.json`. One hold, one re-ratification, then the result stands. He cannot vote or veto.
     checkpoint_after: true
     meter: "--spawns 1"
 
   - name: DECIDE
     kind: tool
     command: "pma_pipeline.py ratify-count --slate slate.json --ratifications forms/ratify --ratifications2 forms/ratify2 --qa forms/qa/steenbarger.json --board board.json --messages forms/floor --messages2 forms/floor2 --phase4 phase4.json --date <date> --out consensus.json --record committee_record.json"
-    then: pma_pipeline.py record-verdicts
+    then: "pma_pipeline.py record-verdicts --consensus consensus.json --candidates candidate_set.json --phase4 phase4.json --ledger verdict_ledger.json --date <date>"
     reads: [slate.json, forms/ratify/*.json, forms/ratify2/*.json, forms/qa/steenbarger.json, board.json, forms/floor/*.json]
     produces: [consensus.json, committee_record.json, verdict_ledger.json]
     rule: "R34: count OBJECT answers per slate ticket on the FINAL ratification of the deciders present (n). 0 = AGREED; 1..ceil(n/2)-1 = CONTESTED (listed, objections and what-would-clear printed); >= ceil(n/2) (4 of 7) = DROPPED (off the list, still tracked). Slate ADVANCE -> ADVANCE; slate WATCH -> HOLD-FOR-CONDITIONS (shown as WATCH); DROPPED and never-slated room names -> PASS. `conviction` is an ordering figure only, never a gate. All seven count on every name (R32)."
@@ -388,7 +390,7 @@ steps:
 
   - name: REPEAT-WATCH
     kind: tool
-    command: pma_pipeline.py repeat-watch
+    command: "pma_pipeline.py repeat-watch --ledger phase4_ledger.json --verdicts verdict_ledger.json --date <date> --out repeat_watch.json"
     then: "purity_check.py --export <export>"
     reads: [phase4_ledger.json, verdict_ledger.json]
     produces: [repeat_watch.json, purity_check.json]
@@ -484,7 +486,7 @@ steps:
 
   - name: CHECK
     kind: tool
-    command: pma_pipeline.py gate
+    command: "pma_pipeline.py gate --brief pma_brief_<date>.md --consensus consensus.json --verdict-ledger verdict_ledger.json --date <date>"
     barrier: "0 FAIL"
     on_fail: "fix at the owning stage, max 2 loops, residuals declared in the footer"
     meter: "--tool-only"
@@ -530,7 +532,7 @@ steps:
 
   - name: PUBLISH
     kind: tool
-    produces: [aegis/reports/pma/<date>.md, latest.md, data/pma/<date>/, aegis/output/pma/scorecard_log.jsonl]
+    produces: [publish_receipt.json, remote:aegis/output/pma/pma_levels.json, remote:aegis/output/pma/levels/<date>.json, remote:aegis/output/pma/scorecard_log.jsonl]
     rulings: [R10, R20]
     push_levels: >
       R20: push pma_levels.json to TongIncomeWheel/AQE branch main at BOTH
@@ -552,6 +554,8 @@ steps:
       aegis/output/pma/scorecard/<date>.md in the same commit as the levels (scorecard.json, ~150KB, is too large to transcribe through the connector and is rebuildable from the ledger and closes). Same path rule (stay under
       aegis/output/), same read-back (fetch, compare blob sha to `git hash-object`), same declaration on failure.
     must_also: >
+      Write publish_receipt.json in the run dir: {pushed: [paths], read_back: {path: sha_match}, at} -- the tick
+      checks THAT file; the remote paths are declared and proven by the read-back, not by a local existence test.
       Print the full brief on screen — the brief in chat is the deliverable, not the files.
       Report the run's est_tokens and wall clock from `registrar.py status` in one line.
     meter: "--tool-only"

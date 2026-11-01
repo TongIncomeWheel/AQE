@@ -100,7 +100,14 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
         est = 0
         for s, row in st.items():
             c = row.get("cost") or {}
-            est += int(c.get("est_tokens") or row.get("tokens") or 0)
+            # review finding 5 (2026-11-01): the registrar stores spawns/inlined_bytes/returned_bytes and derives
+            # est_tokens only when printing -- mirror registrar._est_tokens (bytes / 4) so the ceiling can trip.
+            if c.get("est_tokens"):
+                est += int(c["est_tokens"])
+            elif c and not c.get("tool_only"):
+                est += int((int(c.get("inlined_bytes") or 0) + int(c.get("returned_bytes") or 0)) / 4.0)
+            else:
+                est += int(row.get("tokens") or 0)
         notes.append(f"spend est {est:,} tokens (ceiling {ceiling:,})")
         if est > ceiling:
             fails.append(f"SPEND OVER CEILING: est {est:,} > {ceiling:,} tokens -- tell the PM")
@@ -200,13 +207,17 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML):
         if not daily:
             fails.append("export daily_list is EMPTY")
         if run_date and _date_of(EX.get("date")) != run_date:
-            fails.append(f"export date {EX.get('date')} != run date {run_date}")
+            same_write = bool(EX.get("exported_at")) and EX.get("exported_at") == LR.get("exported_at")
+            fails.append(f"export date {EX.get('date')} != run date {run_date}"
+                         + (" -- same write (exported_at matches), so the pipeline stamped the container's UTC day, not SGT (run 127, 2026-11-02)" if same_write else ""))
         dq = EX.get("data_quality") or {}
         if dq.get("flagged_count"):
             fails.append(f"data_quality flagged {dq.get('flagged_count')} record(s) with null core fields: {[f.get('ticker') if isinstance(f, dict) else f for f in (dq.get('flagged') or [])][:8]}")
         hps = EX.get("held_positions_status")
         if hps != "live":
             fails.append(f"held_positions_status is {hps!r}, not live -- the PM's book may be stale or empty (real-money incident class)")
+        elif not (EX.get("held_positions") or []):
+            notes.append("held book is live but EMPTY (zero positions) -- correct only if the PM holds nothing; confirm")
         if not (EX.get("lens_ranking") or {}).get("ranked"):
             fails.append("export carries no lens_ranking.ranked -- the Detect-lens top 10 cannot render")
         for r in daily:
@@ -219,7 +230,9 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML):
         uni = {r.get("ticker"): r for r in CS.get("universe") or []}
         if not uni:
             fails.append("candidate_set universe is EMPTY")
-        if run_date and CS.get("run_date") and str(CS.get("run_date"))[:10] != run_date:
+        if not CS.get("run_date"):
+            fails.append("candidate_set carries no run_date -- cannot prove it belongs to this run")
+        elif run_date and str(CS.get("run_date"))[:10] != run_date:
             fails.append(f"candidate_set run_date {CS.get('run_date')} != run date {run_date}")
         if EX is not None and daily:
             exp_t = {r.get("ticker") for r in daily} | {h.get("ticker") for h in (EX.get("held_positions") or [])}
@@ -251,15 +264,25 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML):
             for fld in PM_ONLY_FIELDS:
                 if fld in txt:
                     fails.append(f"packet {v}.tsv carries PM-only field {fld!r} (R3 breach)")
+            cells = [l.split("\t") for l in body[1:]]
+            blank = sum(1 for row in cells for x in row[1:] if x.strip() in ("", "null", "None"))
+            total = sum(max(0, len(row) - 1) for row in cells) or 1
+            if blank / total > 0.5:
+                fails.append(f"packet {v}.tsv is {blank / total:.0%} blank cells -- served columns are empty (review finding 13)")
             if uni:
-                tick = {l.split("\t")[0] for l in body[1:]}
+                tick = {row[0] for row in cells}
                 out = sorted(t for t in tick if t not in uni)
                 if out:
                     fails.append(f"packet {v}.tsv serves {len(out)} ticker(s) not in the candidate set: {out[:5]}")
-            notes.append(f"packet {v}: {len(body) - 1} rows, {len(hdr)} columns")
+                if len(tick) < 0.9 * len(uni):
+                    fails.append(f"packet {v}.tsv serves {len(tick)} of {len(uni)} candidate names -- a seat is blind to {len(uni) - len(tick)} (yesterday's packet?)")
+            notes.append(f"packet {v}: {len(body) - 1} rows, {len(hdr)} columns, {blank / total:.0%} blank")
         extra = [f for f in present if f[:-4] not in deciders]
         if extra:
             fails.append(f"packets for NON-decider seats present (R31 -- a stray file serves a seat the universe it must not see): {extra}")
+        stray_json = [f for f in os.listdir(pk) if f.endswith(".json") and f != "no_technical_coverage.json"]
+        if stray_json:
+            fails.append(f"stray packet files (retired macro seats or unknown): {stray_json} (R31)")
     # --- the weather files ---
     if CR is not None:
         if run_date and _date_of(CR.get("generated_at")) != run_date:
