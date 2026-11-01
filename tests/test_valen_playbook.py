@@ -289,3 +289,24 @@ def test_run_playbook_carries_manage_note_and_trim_trail():
     from src.valen import card
     blk = card.management_block({"management": mg})
     assert blk["manage_note"]["state"] == "ABOVE" and len(blk["trim_trail"]) == 1
+
+
+
+def test_last_five_trades_are_facts():
+    from src.data import trade_history as th
+    trades = [{"tag": "aegis", "net_pnl_usd": p, "exit_time_utc": f"2026-10-{20+i:02d}T20:00:00Z", "ticker": f"T{i}"} for i, p in enumerate([100, -50, 30, -20, 60, 999])]
+    lf = th.compute_last_five(trades)
+    assert lf["status"] == "OK" and lf["n"] == 5 and lf["wins"] == 3 and lf["losses"] == 2 and lf["is_decision"] is False
+    assert "T0" not in lf["tickers"] and lf["tickers"][0] == "T5"
+    assert th.compute_last_five([])["status"] == "UNAVAILABLE"
+
+
+def test_breadth_carries_pct_above_20_50_200_as_instruments():
+    from src.valen import breadth, card
+    b = breadth.compute_breadth(None)
+    for w in (20, 50, 200):
+        assert b[f"pct_above_{w}d"]["status"] == "UNAVAILABLE"
+    rows = card.breadth_rows({"breadth": b})
+    labels = [r["label"] for r in rows]
+    assert "Stocks above their 50-day line (%)" in labels and "Quarterly big risers (25%+ up-count, 3 months)" in labels
+    assert all(r["status"] == "UNAVAILABLE" for r in rows if "above their" in r["label"] and "line (%)" in r["label"])

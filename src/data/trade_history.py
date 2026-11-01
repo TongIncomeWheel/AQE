@@ -68,3 +68,26 @@ def load_streak() -> dict:
     if data is None:
         return {"status": "UNAVAILABLE", "reason": "trade journal not reachable on GitHub"}
     return compute_streak(data.get("trades") or [])
+
+
+def compute_last_five(trades: list[dict]) -> dict:
+    """PM 2026-11-01 (weather-spec item 6): the handbook's 'last five trades' check -- how the most recent five
+    closed Aegis trades went, as FACTS (wins, losses, net P&L). Never a size or a stance."""
+    closed = [t for t in trades if t.get("tag") == "aegis" and t.get("net_pnl_usd") is not None]
+    if not closed:
+        return {"status": "UNAVAILABLE", "reason": "no closed aegis trades in the journal"}
+    ordered = sorted(closed, key=lambda t: t.get("exit_time_utc") or "", reverse=True)[:5]
+    wins = sum(1 for t in ordered if t["net_pnl_usd"] > 0)
+    losses = sum(1 for t in ordered if t["net_pnl_usd"] < 0)
+    return {"status": "OK", "n": len(ordered), "wins": wins, "losses": losses,
+            "net_pnl_usd": round(sum(t["net_pnl_usd"] for t in ordered), 2),
+            "tickers": [t.get("ticker") or t.get("symbol") for t in ordered],
+            "doctrine": "Check your last five trades before you size the next one. -- The VIV System (quoted doctrine, not an Aegis rule)",
+            "is_decision": False}
+
+
+def load_last_five() -> dict:
+    data = fetch_trade_journal()
+    if data is None:
+        return {"status": "UNAVAILABLE", "reason": "trade journal not reachable on GitHub"}
+    return compute_last_five(data.get("trades") or [])
