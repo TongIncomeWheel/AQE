@@ -1,0 +1,713 @@
+{
+ "voice": "weis",
+ "date": "2026-10-28",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "DBX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Minor spring in a clean stack (W6/W23): VALEN U&R MET, dipped under the 9-day average 36.69 and closed back above; ma_20 35.43 over ma_50 35.1 over ma_100 32.49; day_vol 1.24 on the reclaim. Single-bar read, structure_shift RANGE; RISK OFF caps it at 3.",
+   "falsifier": "Close back under the reclaim-day low, or a close below ma_20 35.43 on day_vol above 1.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend gate passes (W23): ABOVE_STRUCTURE, ma_20 27.07 ma_50 27.04 ma_100 26.37 ma_200 23.84, mp 87.0 STRONG. But a new high at sma_dist 8.88 is no spring or failure; I buy the give-back toward ma_20, not 29.44. Momentum lane: advisory.",
+   "falsifier": "Close below ma_50 27.04 on day_vol above 1, or a new high that closes back under pivot_high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CSX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Break without effort (W1/W13): BULLISH_BOS prints on day_vol 0.9 with ma_20 48.42 under ma_50 48.77 under ma_100 48.92, so the trend gate is only half met. pct_from_pivot 0.23 is a poke, not a failure of weakness. VALEN: Episodic pivot (delayed) FAILED (8/10).",
+   "opposing_case": "Rank 7, sc_mom 79.0, flow 88.2, mp 84.0 STRONG ACCELERATING, elder 10.0 ACCELERATION, LEADER rs_spy_20d 10.66, two strength seats at 3. Real momentum if the break holds.",
+   "falsifier": "A second close above pivot_high on day_vol over 1 with ma_20 crossing above ma_50 proves me wrong."
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Inside-day hinge on dry effort (W21), not absorption: day_vol 0.68, ma_20 96.32 over ma_50 91.28 over ma_100 77.54, ret_6m 122.38. Direction from the lead-in is bullish. Cost: sma_dist 15.6 and ext_atr20 2.15, so entry only on the wide-range break, not at 105.52.",
+   "challenge_reply": "Rogers/detect-lens: I read day_vol 0.68 as contraction and dry-up, not absorption (R11 not served). Thin effort with progress is not bearish (W4) but is not confirmation: I buy only a close above bar_high with vol_x_ge, never at the market.",
+   "falsifier": "Close below the inside-day low, or a break that closes back under bar_high (failed breakout).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": "Earnings print days_to_earnings 16 is an event, not a catalyst."
+   }
+  },
+  {
+   "ticker": "RCL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Repair, not continuation: ma_50 271.27 under ma_200 286.21, so W23 is only half met; U&R MET (dipped under the 9-day average 281.27, closed back above). Hinge already fired on day_vol 2.17, so I want a secondary test (W9, not served) holding above ma_20 280.75, not a chase.",
+   "challenge_reply": "Steenbarger/Rogers/detect-lens: this is reversal, not continuation. day_vol 2.17 on one daily bar cannot be called absorption or distribution (R11 NOT SERVED), so I stay at 2 and enter only on a low-volume retest of ma_20.",
+   "falsifier": "Close below ma_50 271.27, or the retest fails on heavy volume (distribution).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Thrust shortening and nothing to buy: mp_accel_state DECELERATING (W20 proxy only) at sma_dist 13.78 and ext_atr20 4.32; lane says PULLBACK but price is far from ma_20 16.98. days_to_earnings 6. Lodging is one bet with DRH and HST; APLE is the worst on extension.",
+   "opposing_case": "Rank 8, sc_mom 79.0, new high pct_from_52w_high 0.0, mp 94.0 STRONG, LEADER rs_spy_20d 13.73, elder 10.0 CORRECTION_REENTRY: strength is real and the sector grade is strong.",
+   "falsifier": "A pullback that holds ma_20 16.98 on dry volume (day_vol under 1) would void this."
+  },
+  {
+   "ticker": "DRH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Same lodging bet as APLE and HST. mp_accel_state DECELERATING (W20 proxy) at sma_dist 11.34 and ext_atr20 3.06, elder 7.0 with no pattern. A new high at pct_from_52w_high 0.0 is not a failure of weakness; there is no spring to buy.",
+   "opposing_case": "Rank 11, sc_mom 78.5, mp 94.0, LEADER rs_spy_20d 12.52, structure 84.2 ABOVE_STRUCTURE; the best base of the lodging group.",
+   "falsifier": "A hold above ma_20 13.11 on day_vol under 1 followed by a fresh high on rising effort."
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Real strength but late: rs_rank_pct 98.17, mp 96.0 STRONG ACCELERATING, ma_20 21.83 over ma_50 19.95 over ma_100 18.85. div BEARISH/3 and sma_dist 22.45 make this an ending-action caution (W14/W15), not a reversal call. I buy only a give-back toward ma_20, never 24.43.",
+   "falsifier": "Close below ma_50 19.95, or a new high that closes back under the prior high on day_vol above 1.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": "Net margin negative; fundamentals contradict, price-only seat."
+   }
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Hinge resolved up on effort (W21): BULLISH_BOS with day_vol 1.52, pct_from_pivot 1.81, ma_20 40.07 over ma_50 39.4 over ma_100 38.15 over ma_200 35.61. Thin: structure 57.9, rs_spy_20d 3.0, VALEN Undercut and rally FAILED (6/9). I want the retest of pivot_high 40.81 to hold, not the break.",
+   "falsifier": "Close back under pivot_high 40.81 (failed breakout, W13).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:pivot_high",
+     "above_vwap_s"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "tf": "EOD",
+    "non_price": "Earnings days_to_earnings 15 is an event."
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Minor spring in an aligned stack: U&R MET (dipped under the 9-day average 343.68, closed back above); ma_20 340.07 over ma_50 331.06 over ma_200 295.28, ext_atr20 1.11. Capped at 2: single-bar read, div BEARISH/4, VALEN Theme graded AVOID, RISK OFF, sc_mom 63.7.",
+   "falsifier": "Close under the reclaim-day low or ma_20 340.07; no follow-through while div_bear_count stays 4.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Narrow inside day on dry volume in a strong uptrend (W21/W23): day_vol 0.51, ma_20 34.96 over ma_50 34.15 over ma_100 29.59 over ma_200 23.87, rs_rank_pct 97.8, div BULLISH/0. Contraction, not absorption. VALEN Undercut and rally FAILED (6/9) is the soft spot.",
+   "falsifier": "Wide-range break that closes back under bar_high, or a close under the inside-day low.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CART",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Climax-shaped, not a failure of weakness: ext_atr20 4.24, sma_dist 23.57, run_10d 21.01% on day_vol 2.53. The contraction (W21) I buy has not formed. I enter only after day_vol under 1 in a tight range near ma_20 49.49. Momentum lane: advisory.",
+   "opposing_case": "Rank 1, sc_mom 88.3, flow 100.0, mp 97.0 STRONG ACCELERATING, runner True, rs_spy_20d 37.43: the strongest tape in the set; extension is a weight, not a veto (R14).",
+   "falsifier": "A tight-range hold above ma_20 with day_vol under 1, then a close above the climax high, voids this."
+  },
+  {
+   "ticker": "DDOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend gate passes (ma_20 272.61 over ma_50 249.92 over ma_200 196.32), inside-day hinge in a rs_rank_pct 97.2 name. elder 8.0 trace [5, 0, 6, 7, 8] is a shakeout and recovery, a proxy read only (R7). Held at 2: INTERRUPTED, VALEN Undercut and rally FAILED (7/9), rs LAGGARD.",
+   "conviction_change": "3 to 2: VALEN Undercut and rally FAILED (7/9) and rs LAGGARD were not weighed in round 1; the hinge itself is unchanged.",
+   "falsifier": "Close below ma_20 272.61, or a break that closes back under bar_high.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.0"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NTNX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Rising base with orderly dry-up: elder 8.0 [3, 3, 5, 7, 8] ACCUMULATION_BASE, ma_20 71.37 over ma_50 69.25 over ma_200 52.18, day_vol 0.96, structure_shift RANGE. No spring and no absorption call (R11); a trend-gate read only. days_to_earnings 19.",
+   "falsifier": "Close below ma_50 69.25.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No failure-of-weakness read: structure 57.9 RANGE, VALEN VCP FAILED (3/10) and Undercut and rally FAILED (7/9), 21-day average not rising, div BEARISH/3. Trend gate passes (ma_20 182.18 over ma_50 171.59) but nothing triggers.",
+   "falsifier": "A close above the range top on day_vol over 1 with div_state clearing would make me look again."
+  },
+  {
+   "ticker": "CNP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23 trend gate fails: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, rs_rank_pct 36.22, ret_6m -2.69. A day_vol 2.1 pop into the 200-day is a bounce in a repair, not a spring (W10). Ignition and trend disagree.",
+   "opposing_case": "Rank 3, sc_mom 82.0, flow 100.0, mp 90.0 STRONG ACCELERATING, rs LEADER spy20 12.9: genuine thrust with participation; extension is a weight (R14).",
+   "falsifier": "ma_50 crossing above ma_200 with a close above ma_200 41.52 on a dry-volume retest."
+  },
+  {
+   "ticker": "BILL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend gate half met: ma_20 46.08 under ma_50 46.98, ma_100 44.03 and ma_200 42.59 below; pct_from_52w_high -12.25, ret_12m -3.51. structure_shift RANGE on day_vol 0.83 is a quiet pullback, not a spring. days_to_earnings 6 is an event.",
+   "falsifier": "ma_20 reclaiming ma_50 with a close above the range on day_vol over 1 would make me look again."
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend gate passes: ma_20 95.13 ma_50 95.17 ma_100 92.19 ma_200 90.51, elder 10.0 SUSTAINED, mp 84.0 STRONG. But ext_atr20 3.96, pct_from_52w_high -0.34 and VALEN Episodic pivot (delayed) FAILED (9/10): nothing failed to buy. I take a give-back toward ma_20, not 104.36. Momentum lane: advisory.",
+   "falsifier": "Close below ma_100 92.19.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_100"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup on my recognisers: ma_20 34.43 under ma_50 35.28, pct_from_52w_high -13.47, structure_shift RANGE on day_vol 1.09 not drying. Trend gate unmet and no spring-shaped bar. days_to_earnings 10.",
+   "falsifier": "ma_20 reclaiming ma_50 35.28 on a close, then a dry-volume retest."
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Spring of a rising trendline in a clean stack (W6/W23): U&R MET, dipped under the trendline 174.96 and closed back above; ma_20 172.09 over ma_50 162.54 over ma_100 149.19 over ma_200 135.57; elder 7.0 trace [7, 4, 4, 7, 7] shakeout then recovery; day_vol 1.06. mp_state FADING is not a decay signal (R13).",
+   "falsifier": "Close back under the reclaim-day low or ma_20 172.09.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "days_to_earnings 18 is an event, not a catalyst."
+   }
+  },
+  {
+   "ticker": "BBY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Orderly dry pullback inside an intact uptrend: ma_20 91.11 over ma_50 89.75 over ma_100 85.45 over ma_200 74.78, elder 7.0 trace [10, 10, 10, 7, 7], day_vol 0.86. Contraction with a bullish lead-in (W21), no spring. ext_atr20 2.4 means I wait for ma_20, not 98.5.",
+   "falsifier": "Close below ma_50 89.75.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "EOD",
+    "non_price": "days_to_earnings 19 is an event."
+   }
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Shakeout-and-recovery shape: U&R MET (dipped under the 9-day average 34.68, closed back above), elder 8.0 trace [9, 10, 4, 3, 8], day_vol 0.74 dry, div BULLISH/0, ma_20 34.5 over ma_50 33.97 over ma_200 29.74. Capped at 2: proxy read (R7), VALEN Undercut and rally FAILED (5/9), rs LAGGARD.",
+   "falsifier": "Close under the reclaim-day low or ma_20 34.5.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EMR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A narrow-effort new high is suspect (W13): BULLISH_BOS and squeeze BREAKOUT_UP at pct_from_52w_high 0.0 but day_vol 0.79, squeeze_breakout_volume_confirmed False, adx 10.98. Upthrust cannot be confirmed (R8 NOT SERVED), so I do not buy the break; a failure back under pivot_high is the setup.",
+   "opposing_case": "lens_positive 4, ma_20 161.19 over ma_50 156.4 over ma_200 146.71, elder 9.0 reclaim from [6, 1, 3, 3, 9], rs_rank_pct 76.34: a tight base breaking out at the high.",
+   "falsifier": "A second close above pivot_high on day_vol over 1 with volume confirmed voids this."
+  },
+  {
+   "ticker": "NET",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Change of behaviour (W22): run_10d -5.72%, rs_spy_20d -7.66, entry 327.8 under ma_20 331.43, div BEARISH/5, mp 20.0, sc_mom 44.6. Stack ma_50 319.97 over ma_100 291.88 over ma_200 246.37 is still up, but no spring and no catalyst on record.",
+   "opposing_case": "rs_rank_pct 91.95, ret_6m 57.22, elder 8.0 trace [3, 3, 5, 6, 8] ACCUMULATION_BASE recovering under ma_20: a leader dipping inside an intact stack.",
+   "falsifier": "A close back above ma_20 331.43 with div_bear_count falling."
+  },
+  {
+   "ticker": "BTI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W23 gate fails: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, rs_rank_pct 47.01, ret_6m 2.33. A pop into the averages is repair, not an uptrend; mp_accel_state DECELERATING. No spring or failed break on my fields.",
+   "opposing_case": "sc_mom 76.6, mp 86.0 STRONG, LEADER rs_spy_20d 8.36, dividendYieldTTM 0.054 at pe_ratio 15.4 per Lynch; the strength is real.",
+   "falsifier": "A close above ma_200 59.08 that holds on a retest with ma_50 turning up."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Dry-volume dip inside a vertical uptrend: elder 10.0 trace [10, 10, 10, 7, 10] CORRECTION_REENTRY, day_vol 0.66; low volume with progress is not bearish (W4). Trend gate strong (ma_20 103.9 over ma_50 96.48 over ma_200 66.02). Cost: sma_dist 18.05. I buy ma_20, not 113.9.",
+   "falsifier": "Close below ma_20 103.9 on day_vol above 1.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HST",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Third leg of the lodging bet with APLE and DRH. mp_accel_state DECELERATING (W20 proxy) at sma_dist 10.54 and ext_atr20 3.27, elder 7.0 with no pattern, ma_100 23.46 over ma_50 22.82 so the stack is not fully aligned. Nothing failed to buy.",
+   "opposing_case": "Best-behaved hotel REIT: revenue_growth_yoy 0.076 steady, dividendYieldTTM 0.068, LEADER rs_spy_20d 11.67, sc_mom 75.5, ma_20 23.52 supports.",
+   "falsifier": "A hold above ma_20 23.52 on dry volume."
+  },
+  {
+   "ticker": "FTV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W23 gate fails: ma_50 57.44 under ma_100 59.33 and ma_200 58.55, rs_rank_pct 42.2, ret_6m -0.24. The day_vol 1.81 pop is repair, not trend; ext_atr20 3.01; lens_warnings 2 (coil, insti_money). No spring.",
+   "opposing_case": "AQE_LEADER door, sc_mom 75.0, elder 10.0 SUSTAINED, flow 88.2, LEADER rs_spy_20d 10.49, ma_20 57.95 over ma_50: strong participation.",
+   "falsifier": "ma_50 reclaiming ma_200 with a close above ma_100 59.33."
+  },
+  {
+   "ticker": "AWK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No spring or failed break: ma_20 133.0 under ma_50 135.27, ma_200 132.23 flat, structure_shift RANGE, rs_rank_pct 55.37, day_vol 0.79. A quiet pullback in a range; trend gate unmet for a long call and no basis to oppose (div BULLISH/0).",
+   "falsifier": "A close above ma_50 135.27 on day_vol over 1, or below ma_200 132.23."
+  },
+  {
+   "ticker": "EQT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23/W10: ma_50 53.09 under ma_200 55.51, ret_6m -5.3, rs_rank_pct 30.12, pct_from_52w_high -17.16. The day_vol 2.05 pop is a bounce, not a spring; energy is outside my data (no commodity series). structure 84.2 RANGE does not repair the trend.",
+   "opposing_case": "LEADER rs_spy_20d 14.4, elder 10.0 CORRECTION_REENTRY, flow 82.9, mp 72.0 BUILDING ACCELERATING; pe_ratio 12.4 and free_cash_flow_yield 0.108 per Lynch.",
+   "falsifier": "A close above ma_200 55.51 that holds on a dry retest."
+  },
+  {
+   "ticker": "TEL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Hinge resolved up on effort (W21): squeeze BREAKOUT_UP with volume confirmed, BULLISH_BOS, day_vol 2.23; elder 9.0 trace [5, 0, 0, 5, 9] is a sharp shakeout and recovery (proxy). Gate half met: ma_100 208.49 under ma_200 213.06. div BEARISH/2, rs LAGGARD: so a retest, not the break.",
+   "challenge_reply": "Steenbarger/detect-lens/Rogers: reversal and repair, not continuation. Ignition and trend disagree (ma_100 208.49 under ma_200 213.06) and day_vol 2.23 is a spike; I stay at 2 and enter only a dry-volume retest of ma_20 215.05.",
+   "falsifier": "Close below ma_50 210.09, or the retest fails on heavy volume.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "above_vwap_s"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BKR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23/W10: ma_20 55.97 under ma_50 58.68 under ma_100 59.03 under ma_200 60.16, rs_rank_pct 21.16, ret_6m -12.81, VALEN Below the 200-day line and Episodic pivot FAILED (7/9). BULLISH_BOS on day_vol 2.16 at sma_dist 0.55 is a day-one poke that can fail; no spring.",
+   "opposing_case": "flow 100.0, lens structure strong, BOS on day_vol 2.16 and elder 9.0 recovery from [5, 2, 7, 7, 9]: heavy participation on a structure break.",
+   "falsifier": "A hold above the BOS pivot for several closes with ma_50 turning up through ma_100."
+  },
+  {
+   "ticker": "VG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Dry-up at the 50-day after a vertical recovery: entry 13.81 sits on ma_50 13.81 (sma_dist 0.0), day_vol 0.62, elder 10.0 trace [3, 3, 9, 10, 10] ACCELERATION, div BULLISH/0. Contraction with a bullish lead-in (W21). Soft: pct_from_52w_high -21.22, lens resistance warn, days_to_earnings 9, debt_to_equity 4.99.",
+   "falsifier": "Close below ma_20 13.16.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_50",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_50"
+    ],
+    "tf": "EOD",
+    "non_price": "days_to_earnings 9 is an event; debt_to_equity 4.99 is a fundamental blind spot for a price-only seat."
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "KEEP; ADD only after the spring confirms. U&R SETUP: dipped under the 9-day average 402.58 and closed 0.2% under it, so the reclaim day is the next session. ma_20 388.88 over ma_50 378.73 over ma_200 341.08, ABOVE_STRUCTURE, day_vol 1.36. Broker stop 391.80 stands; held since 2026-10-22.",
+   "falsifier": "The next session fails to close back above the 9-day average, or a close below the broker stop 391.80.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD: no. EXIT-lean; keep only until the broker stop 36.66 triggers. W23/W10: BEARISH_CHOCH, structure 14.0, ma_20 42.73 under ma_50 48.87 under ma_100 50.28 under ma_200 55.59, sma_dist -16.37, AQE HEALTH EXIT (score 0.0). A bounce here is the lowest-conviction case, short evidence, never long.",
+   "opposing_case": "Washout read: sma_dist -16.37 is where a spring (W6) could form, revenue_growth_yoy 0.101 after -0.196 is turning, and the broker stop 36.66 caps the loss.",
+   "falsifier": "A close back above ma_20 42.73 with BEARISH_CHOCH cleared would void the exit lean."
+  },
+  {
+   "ticker": "IOT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Minor spring in a clean uptrend, not extended: U&R MET (dipped under the 9-day average 42.99 on the last session, closed back above), ma_20 41.77 over ma_50 40.4 over ma_100 37.99 over ma_200 34.13, ext_atr20 0.88, day_vol 0.84 dry, mp 76.0 STRONG ACCELERATING. Single-bar read; VALEN Undercut and rally FAILED (6/9).",
+   "challenge_reply": "Rogers: silence is not ridicule. My nominating recognisers (inside_bar, squeeze state, pin_bar_state) are not shown for IOT in this packet; the AQE U&R reclaim is a spring-shaped read and I take it at 3 on its merits.",
+   "falsifier": "Close under the reclaim-day low or ma_20 41.77.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Minor spring but extended: U&R MET (dipped under the 9-day average 85.35, closed back above); ma_20 80.35 over ma_50 78.12 over ma_200 67.8, rs LEADER spy20 25.82. Capped at 2: sma_dist 12.22, mp_accel_state FLAT so thrust is not building, Lynch CONTRADICT on pe_ratio 40.3. Single-bar read.",
+   "challenge_reply": "Rogers: silence is not ridicule. My nominating recognisers are not shown for ETSY in this packet; I take the AQE U&R reclaim at 2 because sma_dist 12.22 leaves no cushion.",
+   "falsifier": "Close under the reclaim-day low or ma_20 80.35.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend gate unmet for a spring call: ma_20 39.83 under ma_50 40.36, with ma_100 40.14 and ma_200 39.08 tangled, pct_from_52w_high -27.41, ret_12m -20.37. U&R MET is a reclaim inside a repair, not an uptrend (W10). No basis to oppose: rs LEADER spy20 11.25, mp 86.0 STRONG ACCELERATING.",
+   "challenge_reply": "Rogers: the stack is tangled (ma_20 39.83 under ma_50 40.36) and the 12-month is negative, so under W23 the reclaim alone is not enough for me to nominate.",
+   "falsifier": "ma_20 reclaiming ma_50 40.36 on a close while the 9-day reclaim holds."
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Vertical, not a failure of weakness: sma_dist 51.23, ext_atr20 6.98, run_10d 58.24%, VALEN Parabolic WARNING (3/4) and High tight flag FAILED (5/11). Effort is flat at day_vol 0.97 while price runs; the contraction (W21) I buy has not formed. Only entry is a hinge well above ma_20 33.29; nothing to buy today.",
+   "opposing_case": "Rank 2, sc_mom 85.7, rs_rank_pct 96.71, mp 100.0 STRONG ACCELERATING, structure 86.7 ABOVE_STRUCTURE: the tape is real and extension is a weight, not a veto (R14).",
+   "falsifier": "A tight multi-day hinge on day_vol under 1 followed by a high-volume close above it voids this."
+  },
+  {
+   "ticker": "DXC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Vertical off a base that only just turned: sma_dist 32.02, run_10d 24.04%, ma_100 10.86 still under ma_200 11.55 (trend was down, W10), lens_warnings 3, VALEN Parabolic WARNING (2/4). day_vol 0.62 is dry, which is not bearish (W4) but gives me nothing to buy. free_cash_flow_yield 0.487 is unverified.",
+   "opposing_case": "Rank 61, sc_mom 73.3, rs_spy_20d 52.63, mp 100.0, adx 47.75, ma_20 13.4 over ma_50 12.0: a violent, genuine breakout from a base.",
+   "falsifier": "A hinge on dry volume that holds above ma_20 13.4 and then expands."
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Parabolic with a divergence: sma_dist 47.77, ext_atr20 4.28, run_10d 23.64%, div BEARISH/2, VALEN Parabolic WARNING (2/4) and High tight flag FAILED (7/12). New high pct_from_52w_high 0.0 at this stretch is ending-action risk (W14/W15); nothing failed to buy.",
+   "opposing_case": "Rank 6, sc_mom 79.6, rs_rank_pct 99.39, ret_63d 118.65, mp 97.0 STRONG ACCELERATING, elder 10.0 SUSTAINED.",
+   "falsifier": "A pullback to ma_20 20.54 on dry volume that holds, then a close to a new high."
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Parabolic already cracked: VALEN Parabolic CRACKED (2/4) after run_10d 20.28% at sma_dist 22.42; pct_from_52w_high -21.46, ret_12m -18.66. Ending action (W15) over a long downtrend; nothing failed to buy.",
+   "opposing_case": "Rank 47, sc_mom 74.3, rs_rank_pct 95.73, rs_spy_20d 43.39, mp 97.0 STRONG ACCELERATING, ma_20 10.14 over ma_50 9.69 over ma_100 8.71.",
+   "falsifier": "A hold above ma_20 10.14 on dry volume that then makes a new swing high."
+  },
+  {
+   "ticker": "TENB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "New high on thin effort at an extreme: pct_from_52w_high 0.0 on day_vol 0.89, sma_dist 31.08, ext_atr20 3.56, div BEARISH/2. A narrow-effort high is the suspect shape (W13; close-location not served, so unconfirmed). Real group leadership is context, not a trigger.",
+   "opposing_case": "Rank 40, sc_mom 74.8, rs_rank_pct 98.66, rs_spy_20d 38.33, elder 10.0 [10, 10, 10, 10, 10] SUSTAINED, structure 88.4; Cybersecurity is on both the week and month lists.",
+   "falsifier": "A close above the high on day_vol over 1 with div_state clearing voids this."
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23/W10: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, pct_from_52w_high -15.87, ret_12m -18.7. A run_10d 21.94% pop through an inverted stack at sma_dist 19.22 is repair into supply, with mp_accel_state FLAT and day_vol 0.94. No spring.",
+   "opposing_case": "Rank 99, sc_mom 69.2, rs LEADER spy20 36.56, mp 93.0 STRONG, structure 78.9 ABOVE_STRUCTURE, free_cash_flow_yield 0.233 at pe_ratio 5.9 per Lynch.",
+   "falsifier": "ma_50 crossing above ma_200 19.81 with a dry-volume retest of ma_20 18.91 holding."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23/W10: pct_from_52w_high -42.32 and ret_12m -41.76; ma_20 13.36 equals ma_200 13.36 with ma_100 12.66 under both, so the primary trend is still down. run_10d 16.35% at sma_dist 13.41 and lens_warnings 3. Any spring here is short evidence, not long.",
+   "opposing_case": "Rank 35, sc_mom 75.5, rs_spy_20d 32.02, mp 93.0 with mp_accel_state ACCELERATING, structure 76.8 ABOVE_STRUCTURE: a violent recovery tagged LEADER.",
+   "falsifier": "A close above ma_200 13.36 that holds on a dry-volume retest with ma_100 turning up."
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23/W10: pct_from_52w_high -39.33, ret_12m -23.15, rs_rank_pct 44.76, ret_6m 1.2. run_10d 19.06% on day_vol 0.54 is thin effort, and price has only just cleared ma_200 18.13 (entry 20.18), so the primary trend is not yet up.",
+   "opposing_case": "Rank 57, sc_mom 73.4, rs_spy_20d 31.61, mp 93.0 STRONG ACCELERATING, LEADER, revenue_growth_yoy 0.316 per Lynch.",
+   "falsifier": "A dry-volume retest of ma_200 18.13 that holds, then a volume-expansion close."
+  },
+  {
+   "ticker": "RBLX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "W23/W10: pct_from_52w_high -59.27, ret_12m -57.35, rs_rank_pct 35.37; ma_50 45.68 under ma_100 46.35 under ma_200 52.8, so a day_vol 0.67 thrust of run_10d 10.02% is a bounce in a downtrend. VALEN Theme graded AVOID. No spring.",
+   "opposing_case": "Rank 75, sc_mom 71.8, rs_spy_20d 31.56, mp 85.0 STRONG ACCELERATING, LEADER, revenue_growth_yoy 0.358 accelerating per Lynch.",
+   "falsifier": "A hold above ma_200 52.8 on a dry retest with ma_50 turning up through ma_100."
+  },
+  {
+   "ticker": "ZS",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Extended below the old high with divergence: sma_dist 29.9, ext_atr20 3.25, div BEARISH/3, pct_from_52w_high -22.64 after ret_6m 91.19. Effort flat at day_vol 0.93; I buy a hinge or a failed breakdown, and neither exists. Cybersecurity leadership is context, not a trigger.",
+   "opposing_case": "Rank 87, sc_mom 70.5, rs_rank_pct 96.1, rs_spy_20d 30.44, mp 85.0 STRONG ACCELERATING, elder 10.0 SUSTAINED, ma_20 222.39 over ma_50 200.27; real group leadership.",
+   "falsifier": "A tight hinge holding above ma_20 222.39 on dry volume, then a close above the recent high."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "weis.part1of3.json",
+   "bytes": 10247,
+   "votes": 16,
+   "sha256": "a8b69a70f378"
+  },
+  {
+   "file": "weis.part2of3.json",
+   "bytes": 8799,
+   "votes": 16,
+   "sha256": "224cf068be4e"
+  },
+  {
+   "file": "weis.part3of3.json",
+   "bytes": 10012,
+   "votes": 16,
+   "sha256": "af3a5777f09f"
+  }
+ ]
+}

@@ -536,6 +536,375 @@
    "falsifier": "A close back above ma20 43.93 with structure_shift turning bullish.",
    "challenge_reply": null,
    "conviction_change": null
+  },
+  {
+   "ticker": "ACN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Momentum real: mp 97.0 ACCELERATING, structure 80.4. Valen U&R MET = dip under a rising line and close back above, nearest served thing to a spring; no range object, so turning point not served. Weights: sma_dist 33.09%, div BEARISH/2 (thrust may be shortening), coil warn.",
+   "falsifier": "A low-volume test of the reclaim low that fails, i.e. a daily close back under yesterday's low: the reclaim was a shakeout that did not hold.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "in_zone:bar_low"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:bar_low-0.5atr"
+    ],
+    "wait": [
+     "bar_low"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Edge geography: entry 443.85 sits just over ma200 436.91, a broken ceiling now tested as support (role reversal). energy 73.9 + coil ok = best contraction proxy here. Effort day_vol 1.25 vs mp DECELERATING is a flag I cannot resolve without a level object. U&R MET.",
+   "falsifier": "Daily close back under ma_200: the role reversal failed and the old ceiling still holds supply.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_200"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_200",
+     "bar_low"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Top edge of range: from_52w_hi -0.42%, resistance strong, structure 77.9. mp 86.0 FADING is flat-at-high (R13), accel ACCELERATING. U&R MET on the 9-day average. Effort day_vol 1.01 is ordinary; energy 58.8 and coil warn mean contraction is not measured.",
+   "falsifier": "A push through the closing high that closes back under it on heavy volume: an upthrust, supply in control at the edge.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "reject:high_52w_close"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Momentum is real (mp 97.0 ACCELERATING, flow 96.1, day_vol 1.54) but this is mid-move, not a range edge: run_10d 61.14%, sma_dist 56.76%, Valen parabolic warning. I would not buy the vertical; I enter only on a first low-volume test of a pullback level. Lens mostly not served.",
+   "falsifier": "The first pullback comes on expanding volume and closes weak: that is supply after a climax, not a test.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:fib_382"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382",
+     "fib_500"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Real trend: mp 100.0 ACCELERATING, adx 41.6, elder SUSTAINED, at from_52w_hi 0.0%. Mid-move by my geography (sma_dist 37.66%, run_10d 29.99%), so entry is a low-volume test of a pullback, not the close. energy 69.7 but coil warn.",
+   "falsifier": "Pullback that arrives on heavy volume and closes in the bottom of the range: distribution, not a test.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:fib_382"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382",
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RXO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Closest to my shape: run_10d -0.03% at from_52w_hi -1.3% is a lateral pause atop a prior run, on dry effort day_vol 0.67, coil ok, resistance strong. A shallow range on top of a markup can be absorption. Caution: flow 34.2 and mp DECELERATING may mean force is spent.",
+   "falsifier": "A break of the pause on heavy volume to the downside: the pause was distribution, not absorption.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "clv_ge:0.6"
+    ],
+    "wrong": [
+     "close_below:base_low_20d"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Large effort day_vol 2.12 at from_52w_hi 0.0% with mp 97.0 DECELERATING and energy 52.1: the effort-without-reward fork. At a top it may be absorption or a buying climax; net volume is not served, so I cannot tell which and refuse the flattering read.",
+   "falsifier": "A low-volume secondary test that holds would resolve the fork toward absorption and flip me to SUPPORT.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:bar_low"
+    ],
+    "confirm": [
+     "vol_x_le:0.8"
+    ],
+    "wrong": [
+     "close_below:bar_low-0.5atr"
+    ],
+    "wait": [
+     "bar_low",
+     "fib_382"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Coil strong and insti_money strong: contraction measured, footprint present. Price entry 85.2 back over ma50 76.04 (old ceiling, role reversal). But structure 38.9 BEARISH_CHOCH and from_52w_hi -22.76% put it mid-structure, not at an edge.",
+   "falsifier": "Daily close back under ma_50: the role reversal failed and the character change down stands.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_50"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "The one name with a structural danger point: bracket stop 24.75 (ma50), the line it just retook (role reversal). sma_dist 5.16% = near its averages, not mid-move. mp 77.0 ACCELERATING, insti_money strong. Weights: structure 44.2, resistance warn (overhead supply).",
+   "falsifier": "Daily close under ma_50: the danger point is breached and the retaken line was not support.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_50"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:ma_50-0.5atr"
+    ],
+    "wait": [
+     "ma_50"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Real trend: mp 100.0 ACCELERATING, structure 90.5, adx 42.55, elder SUSTAINED, at from_52w_hi 0.0%. Mid-move by geography (sma_dist 22.05%), so I wait for a low-volume test. Coil, resistance and insti lenses not served, so contraction is not measured.",
+   "falsifier": "Pullback on expanding volume with weak closes: supply entering, not a test.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:fib_382"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382",
+     "fib_500"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Horizontal cause: ma20 77.68, ma50 77.7, ma100 77.76 flat together = a long range, now left upward to from_52w_hi 0.0%. A former top surpassed becomes support; the trade is the backup to it on light volume. mp 97.0 FLAT, structure 85.3, coil warn.",
+   "falsifier": "A backup that closes back inside the old range on heavy volume: the breakout was an upthrust.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr"
+    ],
+    "wait": [
+     "pivot_high",
+     "fib_382"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Markup out of a long flat base: ma20 12.78, ma50 12.91, ma100 12.61 bunched, entry 15.32 now over ma200 13.43 (old ceiling). from_52w_hi -40.76% = leaving a low range. Effort day_vol 1.3 with flow 92.1 behind it. Turning point itself not served.",
+   "falsifier": "Daily close back under ma_200: the move out of the base failed and the ceiling still holds.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:fib_382"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:ma_200"
+    ],
+    "wait": [
+     "fib_382",
+     "ma_200"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Same geography as a base exit: ma20 12.31, ma50 12.62, ma100 12.43 bunched, entry 15.2 over ma200 13.91. from_52w_hi -47.44%. mp 87.0 ACCELERATING, elder SUSTAINED, resistance strong (little overhead supply). Effort day_vol 1.0 ordinary; coil warn.",
+   "falsifier": "Daily close back under ma_200: the role reversal failed.",
+   "opposing_case": null,
+   "self_counter": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:fib_382"
+    ],
+    "confirm": [
+     "vol_x_le:0.8",
+     "clv_ge:0.5"
+    ],
+    "wrong": [
+     "close_below:ma_200"
+    ],
+    "wait": [
+     "fib_382",
+     "ma_200"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
   }
  ],
  "merged_from": [
@@ -550,6 +919,12 @@
    "bytes": 9875,
    "votes": 19,
    "sha256": "c437c447e0b3"
+  },
+  {
+   "file": "wyckoff.part3of3.json",
+   "bytes": 11037,
+   "votes": 13,
+   "sha256": "31468d5d28e5"
   }
  ]
 }

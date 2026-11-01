@@ -1,0 +1,172 @@
+{
+ "voice": "crown",
+ "date": "2026-10-26",
+ "expression_family": "BROADENING_CARRY",
+ "match_quality": "partial",
+ "size_multiplier": 1.0,
+ "conditions_met": [
+  "broadening (equal-weight/cap-weight ratio +4.11% 20d, 5 days in regime, confidence 0.65, gate passed)",
+  "range_not_extreme (12-month range position: mid; 4.87% under the high, 4.90% over the low)",
+  "dispersion_normal (state NORMAL, but only 0.23 vol pts under the elevated band)",
+  "cta_low_flip (trend funds neutral, 0 of 18 markets at an extreme, dial 1.00)"
+ ],
+ "conditions_not_met": [
+  "gamma_positive: dealers NEGATIVE (S&P 500 options GEX -11.71B, spot 2.16% under the flip; Nasdaq-100 -5.72B, 4.45% under). The carry (short OTM calls) leg of the playbook is where this gap bites."
+ ],
+ "headline": "BROADENING_CARRY, partial fit: breadth broadening (young, mid-range), vol normal, but dealers are short gamma so gamma_positive is unmet. Size 1.00x. FOMC Wed 10-28 can re-base this.",
+ "data_points": [
+  {
+   "name": "breadth",
+   "value": "broadening; ratio +1.58% 5d, +4.11% 20d, -1.88% 60d; 5 days old; mid-range; confidence 0.65; gate passed",
+   "reading": "R1: mid-range so not late. But the 20d gain sits inside a 60d decline and the regime is 5 days old: young, unconfirmed. Artifact says 'the rally is broad'; the numbers show a short rebound, not a mature broad advance. Contested wording, not resolved."
+  },
+  {
+   "name": "volatility",
+   "value": "VIX 19.45; single-stock vol 42.36; gap 23.33 (gap_vs_history 0.78); 20d change -0.16; state NORMAL; CONTANGO; implied correlation 11.6 (43.7th pct)",
+   "reading": "R5/R6 not triggered. Elevated band is 23.56, only 0.23 pts (0.99%) away. A cross with a positive 20d change reads ELEVATED_RISING (hidden stress); the split is hairline. R11 not met (VIX under 25)."
+  },
+  {
+   "name": "dealer_gamma",
+   "value": "NEGATIVE. S&P 500 options: GEX -11.71B, flip 776.36 (2.16% above spot 759.97). Nasdaq-100 options: GEX -5.72B, flip 735.73 (4.45% above spot 704.40)",
+   "reading": "R9: flip distances exceed ~1%, so not knife-edge. Dealers amplify moves until spot is back above the flip. Dealer side is a convention, not observed data."
+  },
+  {
+   "name": "option_walls",
+   "value": "S&P 500 put wall 760 (0.00% from spot), call wall 780 (+2.64%); Nasdaq-100 put wall 700 (-0.62%), call wall 720 (+2.21%)",
+   "reading": "Spot sits on the heaviest S&P put-gamma strike. Artifact reads losing it as removing the cushion; with dealers short gamma that matters more. Context, not a trigger."
+  },
+  {
+   "name": "trend_funds",
+   "value": "neutral; 18 markets; 0.0 at an extreme; size dial 1.00; sector bias rates -0.57, fx +0.46, energy +0.41, metals -0.24, equity +0.15, ags +0.12",
+   "reading": "R8 not met (0.0 vs ~0.67), so no size cut. Not a crowded complex. Nearest flips: Russell 2000 +1.29%, 2-year note +1.33% (buy above); S&P 500 -2.70% (sell below)."
+  },
+  {
+   "name": "large_speculators",
+   "value": "as of 2026-10-20. Crowded long: Nasdaq-100, Russell 2000, 5-year note, 2-year note, soybeans. Crowded short: crude, natural gas, silver",
+   "reading": "R7: context only, 6 days old, cannot time anything. Conflict: crude is crowded short here but trend funds are long crude (+0.52 WTI, +0.60 Brent; WTI 103.44). Two positioning sources disagree; not resolved."
+  },
+  {
+   "name": "fragility_claim",
+   "value": "Artifact: 'a fragile setup, not a confident one' while trend funds show 0.0 at an extreme",
+   "reading": "Contested (C37). The fragility rests on the CFTC leg (10-20) plus negative gamma, not on trend-fund crowding. Treat as a flag to hold, not a measured state."
+  },
+  {
+   "name": "divergence",
+   "value": "10 warnings lit: 1 at index level plus 9 on individual markets; all RSI",
+   "reading": "R10: single type, and breadth, volatility and trend funds do not corroborate. A straw, not a pile."
+  },
+  {
+   "name": "scenario",
+   "value": "DOLLAR_SQUEEZE, share of conditions met 0.75 (not a probability), coverage 1.0, not flagged contested; runner-up INFLATION_SHOCK",
+   "reading": "Evidence: UUP roc5 +0.14%/roc20 +1.19%, CPER -1.11%/-3.82%, GLD -4.03%/-6.81%, CTA fx +0.46. Credit (HYG flat) not confirming. The dollar leg is modest; the runner-up score is not in the packet so the gap cannot be judged."
+  },
+  {
+   "name": "trend_flip_dollar_equity",
+   "value": "US dollar 101.75 vs flip 99.04 (-2.67%); S&P 500 futures 7659.75 vs flip 7452.56 (-2.70%); Nasdaq-100 futures -4.52%",
+   "reading": "Both dollar and equity trend funds are long and about 2.7% above their sell lines. A drop through either would bring synchronized selling per the artifact."
+  },
+  {
+   "name": "event_window",
+   "value": "Tue 10-27 durable goods; Wed 10-28 14:00 ET FOMC; Thu 10-29 08:30 ET core PCE, GDP, jobless claims; Mon 11-02 ISM Manufacturing",
+   "reading": "Six scheduled releases across six sessions while dealers are short gamma. This reading is a snapshot; expect it to be re-based after FOMC and core PCE."
+  },
+  {
+   "name": "freshness",
+   "value": "generated 2026-10-24 08:52 SGT; oldest leg volatility 2026-10-22; newest 2026-10-23; positioning 2026-10-20; status OK; what_changed empty",
+   "reading": "A Friday-close read; volatility is one session older than the others. Weekend news is not in it."
+  }
+ ],
+ "key_levels": [
+  {
+   "market": "S&P 500 options put wall",
+   "level": 760.0,
+   "distance_pct": 0.0,
+   "meaning": "Heaviest put-gamma strike, at spot. Losing it removes the cushion the artifact describes."
+  },
+  {
+   "market": "Nasdaq-100 options put wall",
+   "level": 700.0,
+   "distance_pct": -0.62,
+   "meaning": "Heaviest put-gamma strike below spot."
+  },
+  {
+   "market": "Single-stock vs index vol gap, elevated band",
+   "level": 23.56,
+   "distance_pct": 0.99,
+   "meaning": "Above it the index hides single-name stress; counts as a warning only while the gap is widening."
+  },
+  {
+   "market": "Russell 2000 trend-fund flip",
+   "level": 2824.67,
+   "distance_pct": 1.29,
+   "meaning": "Trend funds turn from seller to buyer above."
+  },
+  {
+   "market": "2-year note trend-fund flip",
+   "level": 103.44,
+   "distance_pct": 1.33,
+   "meaning": "Trend funds turn from seller to buyer above."
+  },
+  {
+   "market": "S&P 500 options gamma flip",
+   "level": 776.36,
+   "distance_pct": 2.16,
+   "meaning": "Above it dealers damp moves; this would meet gamma_positive and upgrade the match."
+  },
+  {
+   "market": "S&P 500 options call wall",
+   "level": 780.0,
+   "distance_pct": 2.64,
+   "meaning": "Heaviest call-gamma strike above spot."
+  },
+  {
+   "market": "US dollar trend-fund flip",
+   "level": 99.04,
+   "distance_pct": -2.67,
+   "meaning": "Trend funds turn from buyer to seller below; would undercut the DOLLAR_SQUEEZE lead."
+  },
+  {
+   "market": "S&P 500 futures trend-fund flip",
+   "level": 7452.56,
+   "distance_pct": -2.7,
+   "meaning": "Trend funds turn from buyer to seller below, together."
+  },
+  {
+   "market": "Equal-weight/cap-weight ratio, 20-day average",
+   "level": 0.27615,
+   "distance_pct": -3.08,
+   "meaning": "Ratio crossing under its own trend turns before the regime label does."
+  },
+  {
+   "market": "Nasdaq-100 options gamma flip",
+   "level": 735.73,
+   "distance_pct": 4.45,
+   "meaning": "Above it dealers damp moves."
+  },
+  {
+   "market": "VIX already-priced threshold",
+   "level": 25.0,
+   "distance_pct": 28.53,
+   "meaning": "Above it protection is expensive; a spike through is not a fresh reason to act."
+  }
+ ],
+ "what_would_change_it": [
+  "Upgrade to a clean match: S&P 500 options spot back above the 776.36 gamma flip (+2.16%) turns gamma_positive on and removes the unmet condition.",
+  "Downgrade: loss of the 760 put wall (at spot) with dealers short gamma, or S&P 500 futures under the 7452.56 trend flip (-2.70%) bringing trend-fund selling.",
+  "Breadth: the ratio falling under its 20-day average (0.27615, -3.08%), or the regime flipping to narrowing, moves the family toward NARROWING_CONCENTRATED (R2). The ratio nearing its 12-month high (+4.87%) would make broadening late (R4).",
+  "Volatility: gap above 23.56 with a positive 20d change reads ELEVATED_RISING (R5, hidden stress); above it while falling reads ELEVATED_EASING (R6, stress leaving). VIX through 25 is already priced (R11).",
+  "Scenario: US dollar under its 99.04 trend flip, or credit confirming, would change the DOLLAR_SQUEEZE lead; the runner-up INFLATION_SHOCK is tested by core PCE on Thu 10-29.",
+  "Trend funds start buying if Russell 2000 trades above 2824.67 or the 2-year note above 103.44 (about 1.3% each).",
+  "Scheduled: FOMC Wed 10-28 14:00 ET, core PCE and GDP Thu 10-29, ISM Mon 11-02."
+ ],
+ "limits": [
+  "Status OK, breadth gate passed, no degraded legs reported. Weather and context only: no ticker, position, order or probability (F1-F4).",
+  "Multiplier 1.00 is the artifact's trend-fund dial, kept because R8 (0.0 vs ~0.67), R9 (2.16% vs ~1%) and R11 (VIX 19.45 vs 25) are all unmet. The unmet gamma_positive condition and the contested items below are not a recogniser cut; the PM weighs them.",
+  "Freshness: oldest leg 2026-10-22 (volatility), newest 2026-10-23, CFTC 2026-10-20. Run date is 2026-10-26, so this is a Friday-close read with no weekend news. The dealer gamma map carries no own date stamp.",
+  "Scenario score is a share of conditions met, never a probability; the runner-up's score is not provided.",
+  "Dealer sign (customers long calls and puts) is a standard convention, not observed data.",
+  "Contested, left for the PM: (1) 'rally is broad' vs a 5-day-old regime inside a -1.88% 60d ratio move; (2) carry leg vs negative gamma; (3) crude crowded short in CFTC vs long in trend funds; (4) 'fragile' with trend funds at 0.0 extreme.",
+  "VIX percentile wording in the artifact ('lower than 24% of the past two years') is ambiguous, so the level and thresholds are used instead.",
+  "Charter 10.6 standalone: the packet also carried sector, thematic, intermarket and macro-weather blocks; none were read into this output."
+ ]
+}

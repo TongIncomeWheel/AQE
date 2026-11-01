@@ -1,0 +1,294 @@
+{
+ "voice": "oneil",
+ "date": "2026-10-28",
+ "nominations": [
+  {
+   "ticker": "DBX",
+   "reason": "Pre-breakout leader, NOT triggered: rs_leadership LEADER, rs_rank_pct 91.59, structure 86.3, pct_from_52w_high -2.38, pct_from_pivot -3.25 under pivot_high 38.17. Buy only on a clear of the pivot on C16 volume. Gate DELEGATED: void if index is under distribution.",
+   "conviction": 3,
+   "fields_cited": [
+    "rs_leadership",
+    "rs_rank_pct",
+    "structure",
+    "structure_shift",
+    "pct_from_52w_high",
+    "pct_from_pivot",
+    "pivot_high",
+    "day_vol",
+    "sma_distance_pct",
+    "ma_50",
+    "ma_200",
+    "entry",
+    "sector_trend_state",
+    "div_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership LEADER, rs_rank_pct 91.59, rank 72, rs_down_day_20d 1.55 (holds up on SPY down days). Industry-group rank UNSERVED (gics_sector XLK only).",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_rank_pct",
+      "rank",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C14",
+      "C18",
+      "C19"
+     ],
+     "observed": "structure 86.3, structure_shift RANGE, base_range_pct 16.4, vcp_tightness_pct 31.2, ret_12m 25.78 (prior run short of C12). Base stage UNSERVED (C19). Substitute base measure.",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "elder_context.vcp.base_range_pct",
+      "elder_context.vcp.vcp_tightness_pct",
+      "ret_12m"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C15",
+      "C16"
+     ],
+     "observed": "day_vol 1.24 with price under pivot_high 38.17: no breakout day yet, so the C16 floor is untested; volume is not at dry-up either. Trigger unmet.",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "pivot_high"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C24"
+     ],
+     "observed": "pct_from_pivot -3.25 (below pivot_high 38.17), sma_distance_pct 5.22, entry 36.93 vs ma_200 28.86, pct_from_52w_high -2.38: not extended, no climax.",
+     "verdict": "pass",
+     "fields": [
+      "pct_from_pivot",
+      "pivot_high",
+      "sma_distance_pct",
+      "ma_200",
+      "entry",
+      "pct_from_52w_high"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C21",
+      "C22"
+     ],
+     "observed": "bracket.valid True is information only (R1). Own line: close under ma_50 35.1 voids it; C20 loss cap from cost; adds inside C21 limit; eight-week rule if it vaults inside three weeks.",
+     "verdict": "pass",
+     "fields": [
+      "ma_50",
+      "pivot_high",
+      "atr_14d",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C25",
+      "C24"
+     ],
+     "observed": "div_state NONE, div_bear_count 0; sector_trend_state Recovering From Weakness - Watch for Entry (partial group confirmation, XLK). No distribution print in the row.",
+     "verdict": "partial",
+     "fields": [
+      "div_state",
+      "div_bear_count",
+      "sector_trend_state",
+      "gics_sector"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "Declared: C/A/S/I fundamentals NOT_AVAILABLE, base stage NOT_AVAILABLE, market gate DELEGATED, rs_rank_pct horizon undocumented. Ranked first on leadership.",
+     "verdict": "partial",
+     "fields": [
+      "rs_rank_pct",
+      "sc_momentum"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "GLBE",
+   "reason": "The one name clearing volume, extension and RS together: day_vol 1.52, pct_from_pivot 1.81 past pivot_high 40.81, rs_rank_pct 83.41, pct_from_52w_high -1.91, structure_shift BULLISH_BOS. Not a leader (rs_leadership IN-LINE, structure 57.9). Gate DELEGATED: void if index is under distribution.",
+   "conviction": 2,
+   "fields_cited": [
+    "day_vol",
+    "pct_from_pivot",
+    "pivot_high",
+    "rs_rank_pct",
+    "pct_from_52w_high",
+    "structure_shift",
+    "structure",
+    "rs_leadership",
+    "sector_trend_state",
+    "ma_50",
+    "ma_200",
+    "entry",
+    "sma_distance_pct"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C9",
+      "C10"
+     ],
+     "observed": "rs_leadership IN-LINE, rs_rank_pct 83.41 clears the C10 gate but not the target band, rank 118, rs_down_day_20d -0.03. Industry-group rank UNSERVED.",
+     "verdict": "partial",
+     "fields": [
+      "rs_leadership",
+      "rs_rank_pct",
+      "rank",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C14",
+      "C18",
+      "C19"
+     ],
+     "observed": "structure 57.9 (middling), structure_shift BULLISH_BOS, base_range_pct 12.8, vcp_tightness_pct 44.9, ret_12m 19.91 (thin prior run). Base stage UNSERVED (C19). Substitute base measure.",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "elder_context.vcp.base_range_pct",
+      "elder_context.vcp.vcp_tightness_pct",
+      "ret_12m"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C15",
+      "C16"
+     ],
+     "observed": "day_vol 1.52 clears the C16 floor (twenty-day substitute for the fifty-day measure).",
+     "verdict": "pass",
+     "fields": [
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C24"
+     ],
+     "observed": "pct_from_pivot 1.81 past pivot_high 40.81, pct_from_52w_high -1.91, sma_distance_pct 5.47, entry 41.55 vs ma_200 35.61: inside the buy zone, no climax.",
+     "verdict": "pass",
+     "fields": [
+      "pct_from_pivot",
+      "pivot_high",
+      "pct_from_52w_high",
+      "sma_distance_pct",
+      "ma_200",
+      "entry"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C20",
+      "C21",
+      "C22"
+     ],
+     "observed": "bracket.valid False is information only (R1). Own line: close back under pivot_high 40.81 voids the breakout; ma_50 39.4 second line. Adds inside C21 limit; eight-week rule watch.",
+     "verdict": "pass",
+     "fields": [
+      "pivot_high",
+      "ma_50",
+      "atr_14d",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C25",
+      "C24"
+     ],
+     "observed": "sector_trend_state Momentum Fading - Hold, Don't Add (XLY) is non-confirming: Lone Ranger risk (R9), eased by other XLY names near highs. div_state NONE, div_bear_count 0.",
+     "verdict": "partial",
+     "fields": [
+      "sector_trend_state",
+      "gics_sector",
+      "div_state",
+      "div_bear_count"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C23"
+     ],
+     "observed": "Declared: C/A/S/I fundamentals NOT_AVAILABLE, base stage NOT_AVAILABLE, market gate DELEGATED, rs_rank_pct horizon undocumented. Ranked below DBX on leadership.",
+     "verdict": "partial",
+     "fields": [
+      "rs_rank_pct",
+      "sc_momentum"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "structure 14.0, structure_shift BEARISH_CHOCH; entry 40.87 under ma_50 48.87 and ma_200 55.59 (sma_distance_pct -16.37), day_vol 1.21; held_book.unreal_usd -3639.0 on held_book.entry 53.0 is far past the C20 loss limit (R8 failed). Resting broker stop is a disaster backstop, not the O'Neil exit."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "entry 401.86 above ma_50 378.73 and ma_200 341.08 (sma_distance_pct 6.11), structure 69.0, structure_shift ABOVE_STRUCTURE; held_book.unreal_usd -433.21 on held_book.qty 38.0 is inside the C20 loss limit, PM stop tighter still. No add under cost; exit case is a close under ma_50."
+  }
+ ],
+ "lesson_applied": "No ledger block was injected for oneil this round, so no standing lesson applies. Guards applied: R1 (bracket never a reject), R2 leadership label, R4 volume floor, R5 now computed because pivot_high and pct_from_pivot are served, R9 sector state.",
+ "declared": {
+  "not_served": [
+   "fundamentals_C_A_S_I",
+   "base_stage_count",
+   "bq.bq_base_dur",
+   "bq.bq_range_tight",
+   "rvol",
+   "industry_group_rank",
+   "avg_volume_50d",
+   "lens_positional_order",
+   "rs_rank_pct_definition",
+   "held_rows_null_pivot_high_rs_rank_pct_rs_leadership_rank"
+  ],
+  "market_gate": "DELEGATED",
+  "base_measure": "elder_context.vcp.base_range_pct and vcp_tightness_pct plus structure composite (substitute)",
+  "rs_measure": "rs_leadership and rs_rank_pct (substitute, no IBD RS Rating)",
+  "volume_measure": "day_vol vs 20d (substitute, canon says 50d)"
+ },
+ "shortfall_reason": "Two names, not padded. Volume-confirmed breakouts are scarce: only GLBE clears day_vol, extension and the RS gate together. Excluded: CART and RHI past the C17 extension ceiling; BRZE, NTSK, TEAM, OKTA, AMPL in the C24 climax zone; CNP, UPS, EQT, BKR, RCL, FTV fail the C10 RS gate; IFF is a Lone Ranger in a fading group; PK trails group leaders (sympathy, C9); near-pivot leaders such as A, HOG, TRV, BBY lack C16 volume."
+}

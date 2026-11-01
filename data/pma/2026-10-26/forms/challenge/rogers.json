@@ -1,0 +1,178 @@
+{
+ "voice": "rogers",
+ "date": "2026-10-26",
+ "findings": [
+  {
+   "scope": "ROOM",
+   "axis": "CERTAINTY",
+   "claim": "No name is unanimous and none carries conviction 5, so the mandatory sure-bet challenge is not triggered by the tally. I hunted for a room-wide certainty flaw and found none at tally level. An unfound flaw is a finding, not a pass.",
+   "evidence": "max nomination_count 3 (ROKU); max conviction 4 (ESTC, EOG, CNQ, CDW); conviction 5 entries 0; nominated names 36 of 51; names with nomination_count 1: 26",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "The crowd is a sector, not a name: 9 energy tickers from 5 seats, 6 of them elder-lens. Nine tickers on one sector read is one bet counted nine times. Oil supply-demand is NOT_SERVED to me, so I cannot say the sector is wrong, only that the room is piled in.",
+   "evidence": "gics_sector XLE on 9 nominated names (EOG, EQNR, CNQ, SLB, CVX, OXY, DVN, LNG, VG); elder-lens names 6 of 9; seats elder-lens, livermore, oneil, raschke, weis; sector_trend_state Momentum Fading — Hold, Don't Add on all 9",
+   "severity": "flag",
+   "what_is_owed": "PM call on how many of the nine are carried as one energy expression; I hold no supply-demand series to settle it."
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "Three sectors supply 27 of 36 nominated names. 25 of the 36 sit in a sector the engine labels Momentum Fading. That label is context, not a gate call, and I do not argue gics_gate. Six seats agreeing on technology is breadth of crowd, not of evidence.",
+   "evidence": "gics_sector XLK 10 names, XLE 9 names, XLY 8 names; XLK seats livermore, minervini, raschke, weis, wyckoff, elder-lens; sector_trend_state Momentum Fading — Hold, Don't Add on 25 of 36 nominated names",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "High conviction is not independent: livermore holds 3 of the 4 conviction-4 entries (EOG, CNQ, CDW) and 7 names in all. If that one seat's read is wrong, the room's top-conviction list moves together. CNQ and CDW have no second seat behind them.",
+   "evidence": "conviction 4 entries ESTC minervini, EOG livermore, CNQ livermore, CDW livermore; livermore names 7; CNQ nomination_count 1; CDW nomination_count 1",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CROWDING",
+   "claim": "Four of the ten multi-seat names are two repeated pairs, which is weaker than independent agreement: raschke and weis on FIVN and SAIL, livermore and oneil on CART and BBY. I see only the repetition, not the seats' methods.",
+   "evidence": "FIVN seats raschke, weis; SAIL seats raschke, weis; CART seats livermore, oneil; BBY seats livermore, oneil; names with nomination_count 2 or more: 10",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CERTAINTY",
+   "claim": "Door count is not extra confirmation unless the doors are independent, and the tally does not show that. OXY has 5 doors on one seat at conviction 2; KSS has 4 doors and no seat. Several doors may be one price read counted repeatedly.",
+   "evidence": "OXY doors ELDER+LENS, LENS, STRENGTH, PM_LENS, NOMINATED; OXY nomination_count 1; OXY convictions 2; KSS doors ELDER+LENS, STRENGTH, PM_LENS, STRONG_SEAT; KSS nomination_count 0",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "TIMING",
+   "claim": "Lane PULLBACK is not an extension credential. 8 of 21 nominated pullback-lane names sit 8 or more percent above their SMA (my cut): RBRK 20.06, BBY 11.89, SAIL 11.13, FIVN 10.79. Read them as extended and prefer a real pullback or confirmation to a market entry.",
+   "evidence": "lane PULLBACK nominated names 21; sma_distance_pct RBRK 20.06, BBY 11.89, SAIL 11.13, FIVN 10.79, MAR 9.63, HST 8.78, HLT 8.34, DBX 8.21",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "TIMING",
+   "claim": "Extended band below my 20 percent cut, still late-move profiles: SLDE, GTLB, CDW, ESTC, EQNR. Advisory only: a defined pullback toward ma_20 or a hold above entry on quiet day_vol beats a market entry. Nothing here blocks a name.",
+   "evidence": "sma_distance_pct SLDE 16.88, GTLB 15.73, CDW 14.21, ESTC 13.25, EQNR 12.4; day_vol SLDE 1.43, GTLB 0.82, CDW 1.14, ESTC 1.11, EQNR 1.56",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "TIMING",
+   "claim": "Ten names came in through STRONG_SEAT with no seat nominating them, including the three largest extensions in the packet. A name nobody carries at 55.13 over SMA is better read as late than as an omission.",
+   "evidence": "STRONG_SEAT names with nomination_count 0: BRZE sma_distance_pct 55.13, NTSK 40.42, DXC 36.6, KSS 29.37, ZS 29.37, ASAN 25.6, BOX 22.53, KVYO 20.11, VERX 18.8, TTAN 14.7",
+   "severity": "note"
+  },
+  {
+   "scope": "ROOM",
+   "axis": "CATALYST",
+   "claim": "The tally carries no thesis text and no catalyst field, so I cannot tell which names are argued on cheapness or a pullback. For any such name the owed answer is the exact catalyst forcing recognition within 12 to 36 months. I name none and invent none.",
+   "evidence": "tally fields nomination_count, seats, convictions, lane, doors, held; catalyst field absent; lane PULLBACK nominated names 21",
+   "severity": "note",
+   "what_is_owed": "PM or an engine to name a catalyst for each pullback-lane name argued on neglect or a sold-off condition."
+  },
+  {
+   "scope": "CART",
+   "axis": "TIMING",
+   "claim": "Rank 1 on the largest volume spike in the packet and 17.2 over SMA: the late-entry profile. A market entry at 56.44 buys the spike. Advisory: wait for a pullback toward ma_20 47.78 / ma_50 48.16, or for closes above 56.44 with day_vol back near 1.",
+   "evidence": "day_vol 4.99; sma_distance_pct 17.2; rank 1; entry 56.44; ma_20 47.78; ma_50 48.16; rs_spy_20d 32.15; seats livermore, oneil; convictions 3, 3; sector_trend_state Momentum Fading — Hold, Don't Add",
+   "severity": "flag"
+  },
+  {
+   "scope": "TENB",
+   "axis": "TIMING",
+   "claim": "21.67 over SMA, the most extended name any seat nominated, solo at conviction 3. Late-move profile. Advisory: a pullback toward ma_20 38.91, or a hold above entry 44.59 on quiet day_vol, instead of a market entry.",
+   "evidence": "sma_distance_pct 21.67; rs_spy_20d 34.62; ma_20 38.91; ma_50 36.65; entry 44.59; day_vol 1.42; structure_shift ABOVE_STRUCTURE; nomination_count 1; seats livermore",
+   "severity": "flag"
+  },
+  {
+   "scope": "RBRK",
+   "axis": "TIMING",
+   "claim": "Lane says PULLBACK but the field says 20.06 over SMA, the second most extended nominated name. rs_leadership IN-LINE: it did not outperform on down days. Advisory: pullback toward ma_20 118.79 or confirmation above entry 128.74, not a market entry.",
+   "evidence": "sma_distance_pct 20.06; lane PULLBACK; rs_leadership IN-LINE; rs_spy_20d 18.99; structure_shift BULLISH_BOS; ma_20 118.79; entry 128.74; day_vol 1.43; seats minervini; convictions 3",
+   "severity": "flag"
+  },
+  {
+   "scope": "ESTC",
+   "axis": "CERTAINTY",
+   "claim": "Highest-conviction two-seat name (3 and 4). Flaw hunted and found: rs_spy_20d 17.71 yet rs_leadership IN-LINE, so the lead was earned on up days and not extended on down days. 13.25 over SMA on a BULLISH_BOS: prefer a ma_20 94.57 retest or a hold above 102.43.",
+   "evidence": "seats livermore, minervini; convictions 3, 4; rs_spy_20d 17.71; rs_leadership IN-LINE; sma_distance_pct 13.25; structure_shift BULLISH_BOS; ma_20 94.57; entry 102.43; day_vol 1.11",
+   "severity": "note"
+  },
+  {
+   "scope": "EOG",
+   "axis": "CERTAINTY",
+   "claim": "Four doors and a conviction 4. Name-level flaw hunted and not found: sma_distance_pct 10.48 and day_vol 1.16 are ordinary. The flaw I can find is the cluster, one of nine energy tickers in a sector labelled Momentum Fading (see ROOM CROWDING XLE).",
+   "evidence": "doors SEATS, ELDER+LENS, STRENGTH, PM_LENS; seats elder-lens, livermore; convictions 2, 4; sma_distance_pct 10.48; day_vol 1.16; structure_shift ABOVE_STRUCTURE; sector_trend_state Momentum Fading — Hold, Don't Add",
+   "severity": "note"
+  },
+  {
+   "scope": "ROKU",
+   "axis": "CROWDING",
+   "claim": "Most-carried name in the room (3 seats), so the darling by count, though far from unanimous. Extension is not the flaw. The flaw I can find: structure_shift RANGE, no break of structure yet, so three seats lean on a pullback thesis the engine has not confirmed.",
+   "evidence": "nomination_count 3; seats minervini, thorp, wyckoff; convictions 3, 2, 3; sma_distance_pct 2.12; structure_shift RANGE; structure 61.1; day_vol 1.54; rs_leadership LEADER; sector_trend_state Recovering From Weakness — Watch for Entry",
+   "severity": "note"
+  },
+  {
+   "scope": "LTH",
+   "axis": "CROWDING",
+   "claim": "Timing challenge returns nothing: 0.42 over SMA is the closest to SMA of any nominated name, on a fresh BULLISH_BOS with day_vol 1.66. Examined for upside the crowd has not priced: rank 183 and structure 51.6 say the engine does not rank it, two seats do. Flaw: sector label.",
+   "evidence": "sma_distance_pct 0.42; rank 183; structure 51.6; structure_shift BULLISH_BOS; day_vol 1.66; seats minervini, oneil; convictions 3, 3; sector_trend_state Momentum Fading — Hold, Don't Add",
+   "severity": "note"
+  },
+  {
+   "scope": "FIVN",
+   "axis": "CERTAINTY",
+   "claim": "Two seats at 3 each on the lowest-ranked multi-seat name, and a LAGGARD: it underperformed the market on down days. Same raschke-weis pair as SAIL. Also 10.79 over SMA in a pullback lane. Hunted flaw found: rs_leadership LAGGARD.",
+   "evidence": "rank 224; rs_leadership LAGGARD; structure 43.6; sma_distance_pct 10.79; rs_spy_20d 6.62; structure_shift BULLISH_BOS; lane PULLBACK; seats raschke, weis; convictions 3, 3",
+   "severity": "note"
+  },
+  {
+   "scope": "COST",
+   "axis": "CERTAINTY",
+   "claim": "Flaw hunted and found: ma_50 938.86 is still under ma_200 969.35, so the 50 has not crossed back over the 200. Entry 1003.32 is a reclaim of the long average, not an established trend. Sector labelled Momentum Fading.",
+   "evidence": "ma_50 938.86; ma_200 969.35; ma_20 958.15; entry 1003.32; sma_distance_pct 6.87; seats raschke, thorp; convictions 3, 2; sector_trend_state Momentum Fading — Hold, Don't Add",
+   "severity": "note"
+  },
+  {
+   "scope": "MA",
+   "axis": "CROWDING",
+   "claim": "Held V is XLF and the room nominates MA, also XLF, plus SLDE, XLF. Adding MA would stack same-sector exposure, probably same-industry, on a held name. The industry link is my reading, not a field.",
+   "evidence": "V held true; V gics_sector XLF; V nomination_count 0; V sma_distance_pct 8.18; MA gics_sector XLF; MA seats thorp; MA convictions 2; MA sma_distance_pct 7.21; SLDE gics_sector XLF",
+   "severity": "note",
+   "what_is_owed": "PM to weigh MA against held V before any add."
+  },
+  {
+   "scope": "VG",
+   "axis": "CATALYST",
+   "claim": "Weakest structure of any nominated name (37.9), solo weis at conviction 2, sector labelled Momentum Fading. If argued on neglect or a failed move, no 12-to-36-month catalyst is named by the PM or an engine. I invent none.",
+   "evidence": "structure 37.9; rank 141; sma_distance_pct 1.35; day_vol 1.67; structure_shift BULLISH_BOS; ma_20 13.05; ma_50 13.81; seats weis; convictions 2; sector_trend_state Momentum Fading — Hold, Don't Add",
+   "severity": "note",
+   "what_is_owed": "A named catalyst, or the name stays a dead-asset candidate by C23."
+  },
+  {
+   "scope": "MP",
+   "axis": "CATALYST",
+   "claim": "Held MP has no seat behind it and every structure read negative. Neglect without a catalyst is a dead asset, not a bargain. None is named in the packet and I invent none. Broker stop 36.66 is deferred to house law and not argued.",
+   "evidence": "held true; nomination_count 0; doors HELD; sma_distance_pct -22.86; ma_20 43.4; ma_50 49.65; ma_200 55.81; structure 11.0; structure_shift BEARISH_CHOCH; rs_spy_20d -20.09; day_vol 0.61; entry 38.3",
+   "severity": "flag",
+   "what_is_owed": "PM-stated catalyst that forces recognition within 12 to 36 months, or the PM records that none exists."
+  }
+ ],
+ "declared": {
+  "not_served": [
+   "seat_role: CHALLENGE_ONLY; nothing filed is a nomination, conviction or vote",
+   "template_a: NOT_COMPUTABLE (no sovereign data; out of scope for a US-equity book)",
+   "template_b: NOT_COMPUTABLE (no fundamental or footnote data)",
+   "commodity_cycle: NOT_SERVED (energy cluster read uses gics_sector and sector_trend_state as a weak proxy only, never a supply-demand read)",
+   "valuation_sanity: NOT_TESTABLE (no book value, EPS or dividend yield)",
+   "stop_position: DEFERRED_TO_HOUSE_LAW (MP broker stop 36.66 and V broker stop 401.15 not argued; no bracket field used as the basis of any finding)",
+   "short_leg: OUT_OF_AEGIS_SCOPE",
+   "catalyst_field: not served; the tally carries no thesis text, so cheapness arguments cannot be identified; no catalyst invented",
+   "off_menu_fields: packet rows carry earnings-date and rs_rank_pct fields that are not on the rogers menu; not read"
+  ]
+ }
+}

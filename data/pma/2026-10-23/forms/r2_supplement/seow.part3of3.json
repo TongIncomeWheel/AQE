@@ -1,0 +1,230 @@
+{
+ "voice": "seow",
+ "date": "2026-10-23",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "ACN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C2/C6: ma_20 209.89 under price, rs_spy_20d 46.26 beats index; run_10d 24.18% not parabolic by R7. But sma_dist 33.09% is extension, not a dip (C3). Act only on a measured pullback to ma_20 then a buy stop over bar_high. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "A close well under ma_20 on the pullback, or the dip runs past 5 sessions (C4), voids the set-up.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C6 passes on rs_spy_20d 11.52 though rs_rank_pct 29.52 is middling; price 443.85 sits sma_dist 12.36% over ma_20 418.24. Momentum building (mp 58.0), not yet a dip to the 20. Wait for ma_20, enter on buy stop over bar_high. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "Close under ma_20 by an ATR, or rs_spy_20d turning negative (C6 fails).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Closest to C3/C4: from_52w_hi -0.42%, a short measured dip under the 9-day reclaimed (U&R), run_10d 5.77% not parabolic, rs_spy_20d 10.34 beats index, price above ma_20 169.72. Buy stop over bar_high; stop under bar_low (C8). 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "A close under bar_low after entry, or a red candle then a break of its low (C14).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C4/R7: run_10d 61.14% is a near-vertical advance; the author disqualifies any dip that follows a parabolic run. sma_dist 56.76% off ma_20 29.95. Momentum is real (rs_spy_20d 86.31) but my method has no entry here. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "opposing_case": "Strongest name on the list: AQE rank 1, rs_spy_20d 86.31, from_52w_hi 0.0%, ret_63d 110.75. A momentum seat can buy this strength; I cannot grade a dip after it.",
+   "falsifier": "A base of 10+ sessions that lets ma_20 catch up and a measured dip to it would requalify the name.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend up: ma_20 12.55 under price 16.08, from_52w_hi 0.0%, rs_spy_20d 49.17 beats index (C6). run_10d 29.99% is steep but under the R7 line; sma_dist 37.66% means no dip yet (C3). Wait for ma_20, buy stop over bar_high. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "The pullback closes an ATR under ma_20, or turns into big-bar selling (C4).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RXO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Orderly rest at the high: run_10d -0.03%, from_52w_hi -1.3%, day_vol 0.67 quiet bars (C4 measured). rs_spy_20d 45.53 beats index. Price 28.92 over ma_20 26.4. Buy stop over bar_high, stop under bar_low (C8). 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "A close under bar_low after entry, or the rest extending past 5 sessions with lower lows (C4).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend up: ma_20 20.39 under price 24.78, from_52w_hi 0.0%, rs_spy_20d 44.16 beats index (C6). run_10d 23.22% not parabolic, but sma_dist 31.11% on day_vol 2.12 is a thrust, not a dip. Wait for ma_20, buy stop over bar_high. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "Pullback closes an ATR under ma_20, or big red bars on heavy volume in the dip (C4).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C2 fails on what is served: ma_20 71.71 sits under ma_100 75.71 and ma_200 72.95, structure BEARISH_CHOCH, ret_12m -11.69. No up-trend for a dip to sit inside; C21 says no daily long against a broken higher frame. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "opposing_case": "rs_spy_20d 42.47 and rs_rank_pct 87.9 are real leadership; coil and insti_money lenses read strong; price 85.2 is over every average, so a turn may be underway.",
+   "falsifier": "ma_20 rising through the longer averages with price holding above it would make this a long."
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend leg unproven: ma_20 23.14 still under the longer averages while price 26.03 is only sma_dist 5.16% above. rs_spy_20d 34.39 passes C6. Cannot confirm C2 direction; 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "ma_20 turning up through the longer averages would let me grade a dip to it."
+  },
+  {
+   "ticker": "BOX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend up: ma_20 36.77 under price 42.78, from_52w_hi 0.0%, rs_spy_20d 32.78 beats index (C6). run_10d 17.82% measured, but sma_dist 22.05% is extension (C3). Wait for ma_20, buy stop over bar_high. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "Pullback closes an ATR under ma_20, or lasts past 5 sessions (C4).",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "ma_20 77.68 is flat against the longer averages, so the two-average direction (C2) is not yet up, though price 90.82 at from_52w_hi 0.0% and rs_spy_20d 32.08 show strength. 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "falsifier": "ma_20 sloping up clear of the longer averages, then a measured dip to it, would make it a set-up."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Higher frame broken (C21): from_52w_hi -40.76%, ret_12m -40.94, ma_20 12.78 still under ma_200 13.43. A sharp bounce (run_10d 19.97%) inside a long decline is not a pullback in an up-trend (C2/C3). 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "opposing_case": "rs_spy_20d 31.58 beats the index, AQE rank 8, price 15.32 now above every average: an early turn a momentum seat can own.",
+   "falsifier": "ma_20 rising above the longer averages and holding through a measured dip would prove me wrong."
+  },
+  {
+   "ticker": "KD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Higher frame broken (C21): from_52w_hi -47.44%, ret_12m -46.95, ma_20 12.31 under ma_200 13.91. run_10d 27.95% is a bounce in a long decline, not a dip in an up-trend (C2/C3). 40MA and CCI legs unverifiable (not served); trend read from ma_20 only.",
+   "opposing_case": "rs_spy_20d 29.89 beats the index, elder SUSTAINED, price 15.2 above every average: a recovery leader in its early leg.",
+   "falsifier": "ma_20 rising above the longer averages and holding through a measured dip would prove me wrong."
+  }
+ ]
+}

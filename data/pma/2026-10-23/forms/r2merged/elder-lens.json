@@ -569,6 +569,324 @@
    "reason": "ADD: elder 3.0 is in the ambiguous band, permission unresolved (C3); elder_5d not served, so no transition is readable; VALEN reads the 21-day average not rising, so longs are not the permitted side (C10). HOLD: EXIT-CASE; broker stop 36.66 is never lowered (C18).",
    "opposing_case": "elder 3.0 is not proven red (that needs 1 or under), so buying is not strictly forbidden; a capitulation low could still form under a held name bought at 53.0.",
    "falsifier": "elder 7 or over after a bar at 6 or under, with the 21-day average turning up."
+  },
+  {
+   "ticker": "ACN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "R8 dip-and-reclaim: elder_pattern CORRECTION_REENTRY with mp_state STRONG (mp 97.0); elder_5d 10,10,10,7,10 = force softened then recovered, ban off (elder 10.0). Buy the pullback into value, not in front of price (C10).",
+   "falsifier": "elder slips back to the ambiguous zone and stays there, or prints red; or price closes under yesterday's low by more than an ATR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "self_counter": "The dip bar read 7, not 6 or below, so this is a proxy for red giving way, not the event; weekly tide (C21) and EMA slope are unverifiable on my menu."
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "PULLBACK lane, Elder's own shape: elder_pattern CORRECTION_REENTRY, elder_5d 7,10,10,7,10 = second dip-and-recover, elder 10.0 not red. mp_state BUILDING (mp 58.0), so R8 is incomplete - weight, not veto.",
+   "falsifier": "elder drops to the ambiguous zone and holds there, or price loses yesterday's low by more than an ATR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20",
+     "vwap_14d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XOM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d 10,7,7,7,7: green went away four bars ago (C4 profit-taking read) and force has sat flat at elder 7.0 since - no fresh transition. mp 86.0 FADING is not decay (R13). Not red, but murky: stand aside (C22).",
+   "falsifier": "elder returns to 10 with mp holding, which would be a fresh lift worth buying.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:10",
+     "reclaim:ma_20"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Momentum real: mp 97.0 STRONG; elder_5d 7,7,10,10,10 = force lifted to full green three bars ago and held. Lift is no longer fresh; now a summer plateau (C20), so I want a dip to value, not a chase.",
+   "falsifier": "elder falls back to the ambiguous zone or red, or price closes under yesterday's low by more than an ATR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d 10,10,10,10,10 SUSTAINED plateau with mp 100.0 STRONG. Momentum is real, but a pinned reading is summer, not Elder's buying season (C20); I buy only the first dip into value.",
+   "falsifier": "a single-bar drop in elder (green going away, C4) before any pullback entry; or elder red.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RXO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d 7,7,7,7,7: flat in the ambiguous band for five bars, no transition and no green. mp 96.0 FADING is not decay (R13), but my force read gives no signal: stand aside (C22).",
+   "falsifier": "elder lifts to 10 with mp holding high - a fresh lift I would buy on a dip.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:10",
+     "reclaim:bar_low"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Freshest lift on my menu: elder_5d 7,7,7,7,10 - force jumped to full green on the last bar after four ambiguous bars, mp 97.0 STRONG. Proxy for a colour change, not a proven red-to-blue event.",
+   "falsifier": "elder falls straight back to the ambiguous zone, or price closes under yesterday's low by more than an ATR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d 7,10,10,10,10 lifted four bars ago, but mp_state BUILDING (mp 67.0) and the packet shows structure BEARISH_CHOCH - R11 says suppress the long; it sits outside my menu, so flagged, not assumed. Stand aside (C22).",
+   "falsifier": "structure recovers and mp turns STRONG while elder holds green."
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d 10,7,10,7,7: colour flipping back and forth, green gone the last two bars - transitional ground, where Elder takes nothing (C22). mp 77.0 STRONG keeps the name on watch.",
+   "falsifier": "elder returns to 10 and holds two bars with mp STRONG.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:10",
+     "reclaim:bar_low"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d 10,10,10,10,10 SUSTAINED with mp 100.0 STRONG - real momentum, but a summer plateau, not a transition (C20). Buy only the first dip into value.",
+   "falsifier": "a single-bar drop in elder (green going away) before entry, or elder red.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "elder_5d 7,7,7,7,10: force lifted to full green on the last bar after four ambiguous bars, mp 97.0 STRONG. Closest proxy I own to a colour transition (C4); buy the dip, not the bar.",
+   "falsifier": "elder falls straight back to the ambiguous zone, or price closes under yesterday's low by more than an ATR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d 7,10,10,10,10: lift four bars ago, now plateau; mp 93.0 STRONG. Momentum real, transition stale - summer reading (C20). Dip-into-value entry only.",
+   "falsifier": "elder falls back to the ambiguous zone or red, or price closes under yesterday's low by more than an ATR.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "C24 (unsourced): elder_5d 10,10,10,10,10 SUSTAINED, mp 87.0 STRONG - momentum real, plateau not transition (C20). First dip into value only.",
+   "falsifier": "a single-bar drop in elder (green going away) before entry, or elder red.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:bar_low-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
   }
  ],
  "merged_from": [
@@ -583,6 +901,12 @@
    "bytes": 10233,
    "votes": 19,
    "sha256": "b1a8898dafac"
+  },
+  {
+   "file": "elder-lens.part3of3.json",
+   "bytes": 9137,
+   "votes": 13,
+   "sha256": "87e1c1bb582d"
   }
  ]
 }

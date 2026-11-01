@@ -1,0 +1,892 @@
+{
+ "voice": "seow",
+ "date": "2026-10-28",
+ "round": 2,
+ "declarations": [
+  "Engine gap: ma_40 and CCI are not served, so no name can show the full five-condition set-up. No SUPPORT above conviction 3; ma_50 is never used as a stand-in for ma_40.",
+  "Dip gauge is ext_atr20 (ATRs over ma_20). The ma_20 slope leg is read only through VALEN's 21-day-average-rising flag, a near-proxy and not my SMA.",
+  "Round 1: seow filed no nomination. The index 63-day return is not served, so rs_spy_20d, rs_rank_pct and rs_leadership stand in and ret_63d is read in absolute terms.",
+  "Lane doctrine: PULLBACK-lane names with no dip get OPPOSE; MOMENTUM-lane extension is a weight (R14), so strong extended names are ABSTAIN with a dip plan, never a veto.",
+  "C21 (higher-timeframe structure) is a desk principle, not the author's; used only where from_52w_hi is extreme."
+ ],
+ "data_gaps": [
+  {
+   "field": "ma_40",
+   "impact": "20-over-40 trend leg and the close-above-ma_40 leg cannot be verified for any name."
+  },
+  {
+   "field": "cci20",
+   "impact": "CCI below the oversold line cannot be checked; no full set-up can be confirmed."
+  },
+  {
+   "field": "sma20_slope_5d",
+   "impact": "Up-sloping ma_20 leg read only via VALEN 21-day-average flag."
+  },
+  {
+   "field": "index_pct_change_63d",
+   "impact": "R8 63-day comparison against the index is not testable; proxies used."
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "DBX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Dip in a leader: rs_spy_20d 12.22, rs_leadership LEADER, ret_63d 10.8 clear the odds gate. ext_atr20 1.3 over ma_20 35.43 after two Elder 7 bars, from_52w_hi -2.38, run_10d 3.74: measured, not parabolic. U&R MET reclaim day. ma_40/CCI unserved, so no full set-up; trigger is a buy stop over bar_high.",
+   "falsifier": "Trade under bar_low or a close under ma_40 before the buy stop fires; or a fill that cannot hold above ma_20.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Momentum is real: rs_spy_20d 17.9, ret_63d 18.57, mp 87.0 STRONG, from_52w_hi 0.0. But ext_atr20 2.42 at a new high is the extension C3 forbids and no dip bar exists. R14 makes that a weight, not a veto. Enter on a dip to ma_20 27.07 by a buy stop over bar_high; wrong on a close under ma_40.",
+   "falsifier": "Flips to SUPPORT when a bar's low reaches ma_20 and the close holds above ma_40 with ma_20 still rising.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "CSX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Odds gate thin: ret_63d 3.02 and day_vol 0.9 on the BULLISH_BOS print; ext_atr20 3.74 is extension, not a dip. rs_spy_20d 10.66 and mp 84.0 STRONG keep the momentum real, so weight not veto (R14). ma_20 48.42 trend leg is unproven with ma_40 unserved. Wait for a dip and a stop over bar_high.",
+   "falsifier": "Flips on a pullback bar reaching ma_20 while ret_63d improves; wrong on a close under ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strong trend: rs_spy_20d 18.11, ret_63d 63.75, rs_rank_pct 98.05, adx 39.83. Buying now means ext_atr20 2.15 over ma_20 96.32 on day_vol 0.68, thin volume on an extended bar (C3). Weight not veto (R14). Plan: dip to ma_20, buy stop over bar_high; wrong on a close under ma_40.",
+   "falsifier": "Flips to SUPPORT on a measured pullback bar touching ma_20 and holding above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "RCL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fails my odds gate: ret_63d -8.55, rs_leadership LAGGARD, and from_52w_hi -14.97 means no recent high behind this dip (C4). ext_atr20 1.36 over ma_20 280.75 is a bounce. The U&R MET reclaim is too shallow to override that.",
+   "opposing_case": "Best case for: Elder CORRECTION_REENTRY after a red bar, rs_spy_20d 12.81, day_vol 2.17 breakout volume, U&R MET reclaim day, structure 71.6 ABOVE_STRUCTURE.",
+   "falsifier": "Wrong if ret_63d turns positive and a bar holds ma_20 while from_52w_hi closes toward 0.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages."
+  },
+  {
+   "ticker": "APLE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Tagged PULLBACK but no dip exists: ext_atr20 4.32 over ma_20 16.98, run_10d 12.51, new high from_52w_hi 0.0. Buying it is buying the extension (C3). APLE, DRH and HST are one lodging bet. Entry only after a real pullback to ma_20.",
+   "opposing_case": "Best case for: rs_spy_20d 13.73, rs_leadership LEADER, mp 94.0 STRONG, ret_63d 10.77, structure 80.0 at a fresh high with lodging peers confirming.",
+   "falsifier": "Wrong if it keeps making highs on bars that never reach ma_20; I accept missing it."
+  },
+  {
+   "ticker": "DRH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No dip behind the PULLBACK tag: ext_atr20 3.06 over ma_20 13.11, new high from_52w_hi 0.0, run_10d 7.29. Same lodging bet as APLE and HST, counted once. mp 94.0 FADING is R13, not a signal. Method waits for ma_20 and a buy stop over bar_high.",
+   "opposing_case": "Best case for: rs_leadership LEADER, rs_spy_20d 12.52, ret_63d 7.46, structure 84.2 ABOVE_STRUCTURE, best base of the lodging group.",
+   "falsifier": "Wrong if it keeps climbing on bars that never reach ma_20."
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Real momentum: rs_spy_20d 23.04, ret_6m 127.04, mp 96.0 STRONG, from_52w_hi 0.0. But ext_atr20 2.32 over ma_20 21.83, run_10d 16.78 and div BEARISH/3 mark a late leg. Weight not veto (R14). Buy only the dip to ma_20 by a stop over bar_high; wrong on a close under ma_40.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Odds gate unproven: ret_63d 3.2, rs_leadership IN-LINE, rs_spy_20d 3.0. BULLISH_BOS on day_vol 1.52 is a breakout, not my dip; ext_atr20 0.97 over ma_20 40.07 is close, but undercut-and-rally FAILED (6/9). ma_40 and CCI unserved, so nothing to arm.",
+   "falsifier": "Flips to SUPPORT if ret_63d and rs_spy_20d widen and a bar's low reaches ma_20 with the close above ma_40."
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Shallow dip in a leader: ext_atr20 1.11 over ma_20 340.07, from_52w_hi -0.32, rs_spy_20d 4.66, rs_leadership LEADER, ret_63d 2.63 (thin). Last Elder bar 9 after 6, a small bar; U&R MET. AQE div BEARISH/4 and Theme AVOID are cautions. ma_40/CCI unserved, so conviction stays low.",
+   "falsifier": "Trade under bar_low or a close under ma_40 first; or ret_63d slipping negative.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Measured consolidation in a strong trend: inside day on day_vol 0.51, ret_63d 36.66, rs_rank_pct 97.8, rs_spy_20d 8.46, from_52w_hi -3.93, run_10d 4.86; ext_atr20 1.06 over ma_20 34.96. Small bars, no parabolic run (C4). Lynch's CONTRADICT is valuation; my stop sets the loss. ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low before the stop over bar_high fires; a wide high-volume bar down.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "CART",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Rank 1 momentum is real: rs_spy_20d 37.43, mp 97.0 STRONG, day_vol 2.53. But ext_atr20 4.24 and run_10d 21.01 make a vertical leg, and a dip after a vertical run is disqualified (C4). Weight not veto (R14). Only a rebuilt base with a bar at ma_20 49.49 arms me; no market entry.",
+   "falsifier": "Flips to SUPPORT on a multi-bar pullback to ma_20 on small bars after the run cools.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "DDOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Orderly dip: ext_atr20 0.57 over ma_20 272.61, run_10d -0.89, from_52w_hi -4.24, ret_63d 6.29, rs_rank_pct 97.2. Weak: rs_leadership LAGGARD, rs_spy_20d 3.85, Elder INTERRUPTED. Lynch's CONTRADICT is price vs growth; my stop sets the loss. ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low; or rs_spy_20d going negative.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "NTNX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Rising out of a base: ext_atr20 0.62 over ma_20 71.37, run_10d -0.19, from_52w_hi -2.53, ret_63d 22.11, rs_rank_pct 94.51; Elder ACCUMULATION_BASE. rs_leadership LAGGARD and rs_spy_20d 3.07 keep conviction low. ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low before the stop over bar_high fires.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "FTNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "The dip is in place (ext_atr20 0.42 over ma_20 182.18, ret_63d 20.74) but VALEN U&R NO says its 21-day average is not rising, so my up-sloping-average leg (C2) is failing; rs_leadership LAGGARD, div BEARISH/3. Four of five is not a set-up. Re-arm if the slope turns up.",
+   "falsifier": "Flips to SUPPORT when the 21-day average rises again and a bar reaches ma_20 holding above ma_40."
+  },
+  {
+   "ticker": "CNP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Odds gate not cleared: ret_63d -2.24, ret_6m -2.69, rs_rank_pct 36.22. A 20-day burst (rs_spy_20d 12.9, day_vol 2.1) off a base, ext_atr20 3.81 over ma_20 39.38: no dip and no established uptrend under it.",
+   "opposing_case": "Best case for: mp 90.0 STRONG/ACCELERATING, structure 76.8 ABOVE_STRUCTURE, rs_leadership LEADER, flow 100.0 with heavy day_vol 2.1.",
+   "falsifier": "Wrong if ret_63d and rs_rank_pct turn up while a bar holds ma_20.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages."
+  },
+  {
+   "ticker": "BILL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Momentum real: rs_spy_20d 17.15, mp 93.0 STRONG, rs_leadership LEADER. But ret_63d 4.22 is thin and from_52w_hi -12.25 after run_10d 12.35 is a bounce, not a dip after a recent high (C4); ext_atr20 1.95 over ma_20 46.08. Weight not veto (R14). Dip to ma_20 plus a stop over bar_high.",
+   "falsifier": "Flips to SUPPORT if ret_63d widens and a bar's low reaches ma_20 while from_52w_hi closes toward 0.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Real strength: rs_spy_20d 12.91, mp 84.0 STRONG, Elder SUSTAINED, from_52w_hi -0.34. But ext_atr20 3.96 over ma_20 95.13 and run_10d 11.64 are the extension C3 forbids; Episodic pivot (delayed) FAILED (9/10). Weight not veto (R14). Enter only on a dip to ma_20 by a stop over bar_high.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback that reaches ma_20 and holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "PULLBACK tag without the premise: from_52w_hi -13.47 means no recent high behind the dip (C4), and ext_atr20 2.87 over ma_20 34.43 is a bounce (run_10d 9.93), not a touch of the average. ret_63d 9.15 and rs_spy_20d 8.69 pass the gate, but nothing to arm.",
+   "opposing_case": "Best case for: rs_leadership LEADER, mp BUILDING/ACCELERATING hooking back up, day_vol 1.09, structure 74.7, flow 84.2.",
+   "falsifier": "Wrong if it holds above ma_20 on small bars while from_52w_hi closes the gap."
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Pullback at the pivot: ext_atr20 1.09 over ma_20 172.09, from_52w_hi -0.15, ret_63d 26.51, rs_rank_pct 91.71, BULLISH_BOS. Two Elder 4 bars then 7: a small dip; U&R MET on the rising trendline. Soft: rs_spy_20d 0.69 barely beats SPY, rs_leadership IN-LINE. ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low first; or rs_spy_20d going negative.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "BBY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "ext_atr20 2.4 over ma_20 91.11 after run_10d 11.98: price is above the average, not at it, so the PULLBACK tag has no dip (C3). Strength is real (rs_rank_pct 93.17, ret_6m 66.64) but there is no pullback bar to arm. Wait for ma_20.",
+   "opposing_case": "Best case for: rs_leadership LEADER, rs_spy_20d 10.27, ret_63d 9.24, from_52w_hi -1.37, pct_from_pivot 2.04 just through the pivot.",
+   "falsifier": "Wrong if it keeps rising on small bars that never reach ma_20."
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Tight dip at the high: ext_atr20 0.86 over ma_20 34.5, from_52w_hi -0.65, ret_63d 11.37, rs_rank_pct 84.02, div BULLISH/0; U&R MET reclaim day. Weak: rs_leadership LAGGARD, rs_spy_20d 3.99, day_vol 0.74, Elder INTERRUPTED. Low conviction; ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low before the stop over bar_high fires.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "EMR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Dip resolved near the high: ext_atr20 1.17 over ma_20 161.19, from_52w_hi 0.0, ret_63d 14.09, Elder 9.0 after 1 and 3 bars, BULLISH_BOS. Soft: adx 10.98 is a weak trend, rs_leadership IN-LINE, day_vol 0.79, mp 42.0. Low conviction; ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low before the stop over bar_high fires.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "NET",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Gate fails: rs_spy_20d -7.66 (losing to SPY), rs_leadership LAGGARD, run_10d -5.72, and VALEN U&R NO says its 21-day average is not rising, so my up-slope leg (C2) is out. div BEARISH/5, mp 20.0, sc_mom 44.6. Not a dip in an uptrend.",
+   "opposing_case": "Best case for: ret_63d 21.24, ret_6m 57.22, rs_rank_pct 91.95, Elder ACCUMULATION_BASE lifting out of 3, entry under ma_20 331.43 is Elder's buy under value.",
+   "falsifier": "Wrong if rs_spy_20d turns positive and the 21-day average rises while a bar holds ma_20."
+  },
+  {
+   "ticker": "BTI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Odds gate fails: ret_63d -5.14, rs_rank_pct 47.01, from_52w_hi -10.3. The 20-day pop (rs_spy_20d 8.36, ext_atr20 2.78 over ma_20 56.66, run_10d 7.51) is neglect repair, not a dip after a recent high.",
+   "opposing_case": "Best case for: mp 86.0 STRONG, rs_leadership LEADER, flow 84.2, structure 74.7, a calm name with dividendYieldTTM 0.054.",
+   "falsifier": "Wrong if ret_63d turns positive and a bar holds ma_20.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Elite momentum: rs_rank_pct 99.27, ret_63d 53.79, rs_spy_20d 18.92, mp 85.0 STRONG, from_52w_hi 0.0. But ext_atr20 2.35 over ma_20 103.9 on day_vol 0.66; the Elder 7 dip bar never turned red. Chasing is C3's extension. Weight not veto (R14). Dip to ma_20, buy stop over bar_high.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback that reaches ma_20 and holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "HST",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fails the odds gate: ret_63d -1.25, with rs_rank_pct 76.59 resting on a 20-day burst (rs_spy_20d 11.67). ext_atr20 3.27 over ma_20 23.52 means no dip behind the PULLBACK tag. Lodging cluster with APLE and DRH, counted once.",
+   "opposing_case": "Best case for: rs_leadership LEADER, mp 90.0, structure 76.8 ABOVE_STRUCTURE, run_10d 8.61, steadiest hotel REIT with dividendYieldTTM 0.068.",
+   "falsifier": "Wrong if ret_63d turns positive and a bar holds ma_20."
+  },
+  {
+   "ticker": "FTV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Odds gate thin: ret_63d 3.49, ret_6m -0.24, rs_rank_pct 42.2. The burst is rs_spy_20d 10.49 on day_vol 1.81, ext_atr20 3.01 over ma_20 57.95. Lynch CONTRADICT (revenue_growth_yoy -0.175). R14 weight, not veto: enter only on a dip to ma_20 by a stop over bar_high; wrong on a close under ma_40.",
+   "falsifier": "Flips to SUPPORT if ret_63d widens and a bar reaches ma_20 holding above ma_40.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "AWK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend leg unproven: ret_63d 2.18, ret_12m -0.35, rs_rank_pct 55.37; with ma_40 unserved I cannot show ma_20 133.0 above it. The rs_spy_20d 7.99 burst sits ext_atr20 2.78 over the average. Weight not veto (R14); nothing to arm. Wait for a dip and an up-sloping ma_20.",
+   "falsifier": "Flips to SUPPORT if ret_63d widens and a bar reaches ma_20 with the average rising."
+  },
+  {
+   "ticker": "EQT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Gate weak: rs_rank_pct 30.12, ret_6m -5.3, from_52w_hi -17.16. The rs_spy_20d 14.4 burst on day_vol 2.05 sits ext_atr20 2.02 over ma_20 53.12 with no recent high behind it. Energy supply is not my instrument.",
+   "opposing_case": "Best case for: ret_63d 7.04, mp 72.0 BUILDING/ACCELERATING, rs_leadership LEADER, Elder CORRECTION_REENTRY, flow 82.9, pe_ratio 12.4.",
+   "falsifier": "Wrong if rs_rank_pct and ret_6m turn up while a bar holds ma_20.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages."
+  },
+  {
+   "ticker": "TEL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Slope leg out: VALEN U&R NO, its 21-day average is not rising. rs_leadership LAGGARD, from_52w_hi -9.5, Elder INTERRUPTED, div BEARISH/2. ext_atr20 1.7 over ma_20 215.05 on day_vol 2.23 is a bounce, not a set-up.",
+   "opposing_case": "Best case for: ret_63d 8.89, BULLISH_BOS on day_vol 2.23, flow 90.8, energy 72.3, lens coil strong.",
+   "falsifier": "Wrong if the 21-day average turns up and a bar holds ma_20 with rs_leadership improving.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages."
+  },
+  {
+   "ticker": "BKR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fails gates: rs_rank_pct 21.16, ret_6m -12.81, ret_63d 0.48, from_52w_hi -15.32, and VALEN U&R NO: its 21-day average is not rising. BULLISH_BOS day one on day_vol 2.16 at ext_atr20 1.7 is a bounce; nothing to arm.",
+   "opposing_case": "Best case for: flow 100.0, lens structure strong, lens coil strong, lens sector strong, BOS ignition on heavy day_vol 2.16.",
+   "falsifier": "Wrong if the 21-day average turns up and rs_rank_pct recovers while a bar holds ma_20.",
+   "challenge_reply": "Reversal or repair, not trend continuation: I read ma_20 and the 63-day return, not the longer averages."
+  },
+  {
+   "ticker": "VG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A dip is near: ext_atr20 0.93 over ma_20 13.16, Elder ACCELERATION, rs_spy_20d 9.41, div BULLISH/0. But from_52w_hi -21.22 means no recent high behind the dip (C4), ret_63d 5.82 is thin, day_vol 0.62; desk C21 (not the author's) flags the higher timeframe. Lynch: debt_to_equity 4.99. Not armed.",
+   "falsifier": "Flips to SUPPORT if from_52w_hi closes toward 0 and ret_63d widens with a bar holding ma_20."
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "ADD: no; KEEP. Unrealised -433.21 on qty 38.0 since 2026-10-22; I add only to a trade proved right (C16). U&R SETUP reclaim is next session. By my count the time stop (C11) is due at this close if tp1 414.6 is not reached; exits: red bar or close under support. Broker stop 391.80 stands.",
+   "opposing_case": "Best case to add: structure 69.0 ABOVE_STRUCTURE, rs_spy_20d 9.12, day_vol 1.36, AQE HEALTH HOLD, knn p=0.8, price above vwap14 398.32, U&R SETUP with the reclaim day next.",
+   "falsifier": "Wrong to withhold the add if the next bar reclaims the 9-day average and tp1 414.6 is passed, proving the entry right."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD: no; EXIT case. Gates broken: BEARISH_CHOCH, structure 14.0, sma_distance_pct -16.37 under ma_20 42.73, rs_spy_20d -10.75. Held since 2026-10-08 at unrealised -3639.0: time stop long past, close under support (C11, C14). Never add to a loser (C16). Broker stop 36.66 stands.",
+   "opposing_case": "Best case to add: mean reversion from sma_distance_pct -16.37 and revenue_growth_yoy 0.101 after -0.196 and -0.520. The record gives little more.",
+   "falsifier": "Wrong to exit if price reclaims ma_20 42.73 and structure 14.0 repairs; I would still not add."
+  },
+  {
+   "ticker": "IOT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Clean dip by my grade: ext_atr20 0.88 over ma_20 41.77 after four Elder 10 bars and one 7, from_52w_hi -3.78, ret_63d 12.28, rs_rank_pct 90.0, rs_spy_20d 13.88, mp 76.0 STRONG/ACCELERATING. U&R MET reclaim day. Soft: rs_leadership IN-LINE, undercut-and-rally FAILED (6/9). ma_40/CCI unserved.",
+   "falsifier": "Close under ma_40 or trade under bar_low before the stop over bar_high fires.",
+   "challenge_reply": "My Round-1 scan filed nothing: ma_40 and CCI are unserved, so no set-up could be shown. By ext_atr20 0.88 this is the best-shaped dip among the zero-seat names.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "trade_above:bar_high+1atr",
+    "tf": "EOD",
+    "non_price": "CCI oversold leg and ma_40 are not served by AQE: pull both before arming. After a fill the fifth-day time stop applies."
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Real strength: rs_spy_20d 25.82, rs_leadership LEADER, mp 97.0, structure 87.4. But ret_63d 2.43 is thin, ext_atr20 2.08 over ma_20 80.35, run_10d 10.57: the U&R MET dip is under the 9-day average, not ma_20. No set-up bar. Weight not veto (R14); dip to ma_20 first.",
+   "falsifier": "Flips to SUPPORT if ret_63d widens and a bar's low reaches ma_20 with the close above ma_40.",
+   "challenge_reply": "No Round-1 nomination from me: ma_40/CCI unserved, ext_atr20 2.08 is not at the average, ret_63d 2.43 is thin.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Odds gate fails: ret_63d -8.82, ret_12m -20.37, from_52w_hi -27.41, rs_rank_pct 78.54 resting on a 20-day burst (rs_spy_20d 11.25). ext_atr20 1.71 over ma_20 39.83 is a bounce in a damaged trend. Lynch: debt_to_equity 7.47.",
+   "opposing_case": "Best case for: U&R MET reclaim day, rs_leadership LEADER, mp 86.0 STRONG/ACCELERATING, flow 84.2, run_10d 11.97.",
+   "falsifier": "Wrong if ret_63d turns positive and a bar holds ma_20 while from_52w_hi closes.",
+   "challenge_reply": "No Round-1 nomination from me: ret_63d -8.82 fails the odds gate; ma_40/CCI unserved."
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Parabolic: run_10d 58.24 is past my stand-in for C4's vertical run, AQE grades Parabolic WARNING (3/4), ext_atr20 6.98. A dip after a vertical run is disqualified however clean (R7). Momentum is real (rs_spy_20d 97.04, mp 100.0) but I will not call a set-up. Advisory under R14.",
+   "opposing_case": "Best case for: rank 2, rs_rank_pct 96.71, structure 86.7, ret_63d 70.63, flow 88.2, Episodic pivot (delayed) PAST_PIVOT (9/10). Strength this large rarely gives a clean dip.",
+   "falsifier": "Wrong if it digests on small bars above ma_20 33.29 until the vertical run ages out of the window."
+  },
+  {
+   "ticker": "DXC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strong tape: rs_spy_20d 52.63, ret_63d 34.58, mp 100.0. But run_10d 24.04, ext_atr20 3.64 over ma_20 13.4 on day_vol 0.62 and Parabolic WARNING (2/4): a vertical leg, no dip. Weight not veto (R14). Lynch flags free_cash_flow_yield 0.487 as unverified. Wait for ma_20.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Momentum real: rs_rank_pct 99.39, ret_63d 118.65, new high, mp 97.0. But ext_atr20 4.28 and run_10d 23.64 with div BEARISH/2 and Parabolic WARNING (2/4) make it the extension C3 forbids. Lynch: net_profit_margin -0.918. Weight not veto (R14). Dip to ma_20 only.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength real (rs_spy_20d 43.39, ret_63d 39.37) but AQE's Parabolic read is CRACKED (2/4), ext_atr20 2.97 over ma_20 10.14, run_10d 20.28, from_52w_hi -21.46. No dip bar to arm; weight not veto (R14). Re-test only after a quiet pullback to ma_20.",
+   "falsifier": "Flips to SUPPORT on a quiet pullback bar at ma_20 that holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "TENB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Leader at the high: rs_rank_pct 98.66, ret_63d 54.54, Elder SUSTAINED, from_52w_hi 0.0. But ext_atr20 3.56 over ma_20 40.28, run_10d 17.83 and div BEARISH/2 is the extension. Weight not veto (R14). Buy only the dip to ma_20 by a stop over bar_high.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Burst from a downtrend: rs_spy_20d 36.56 but ret_12m -18.7, from_52w_hi -15.87, rs_rank_pct 69.39; ext_atr20 3.45 over ma_20 18.91, run_10d 21.94. Momentum is real (mp 93.0) but no dip follows a recent high. Weight not veto (R14); wait for ma_20.",
+   "falsifier": "Flips to SUPPORT if from_52w_hi closes toward 0 and a quiet bar holds ma_20.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Desk C21 (not the author's): no daily long into a broken higher timeframe; from_52w_hi -42.32, ret_12m -41.76. Also ext_atr20 2.4 over ma_20 13.36, run_10d 16.35, lens_warnings 3. The burst is real (rs_spy_20d 32.02) but nothing to arm.",
+   "opposing_case": "Best case for: mp 93.0, rs_leadership LEADER, ret_63d 11.11, structure 76.8 ABOVE_STRUCTURE, revenue_growth_yoy 0.122.",
+   "falsifier": "Wrong if from_52w_hi closes sharply and a quiet bar holds ma_20."
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Desk C21 (not the author's): from_52w_hi -39.33, ret_12m -23.15, rs_rank_pct 44.76, ret_63d 4.18 thin. A run_10d 19.06 burst on day_vol 0.54 has no volume behind it; ext_atr20 2.26 over ma_20 17.97. Reversal, not continuation.",
+   "opposing_case": "Best case for: rs_spy_20d 31.61, mp 93.0 STRONG/ACCELERATING, rs_leadership LEADER, structure 73.1, revenue_growth_yoy 0.316.",
+   "falsifier": "Wrong if ret_63d and rs_rank_pct turn up and a quiet bar holds ma_20."
+  },
+  {
+   "ticker": "RBLX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Desk C21 (not the author's): from_52w_hi -59.27, ret_12m -57.35, rs_rank_pct 35.37, Theme AVOID. The burst (rs_spy_20d 31.56, run_10d 10.02) on day_vol 0.67 sits ext_atr20 2.4 over ma_20 48.91. Reversal off a crater, not a dip in an uptrend.",
+   "opposing_case": "Best case for: mp 85.0 STRONG/ACCELERATING, rs_leadership LEADER, revenue_growth_yoy 0.358 accelerating, structure 70.3 ABOVE_STRUCTURE.",
+   "falsifier": "Wrong if rs_rank_pct and ret_12m recover while a quiet bar holds ma_20."
+  },
+  {
+   "ticker": "ZS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Leader off a drawdown: rs_rank_pct 96.1, ret_63d 69.18, Elder SUSTAINED. But ext_atr20 3.25 over ma_20 222.39, run_10d 13.77, div BEARISH/3, from_52w_hi -22.64: no dip behind a recent high. Weight not veto (R14). Dip to ma_20 and a buy stop over bar_high.",
+   "falsifier": "Flips to SUPPORT on a small-bar pullback to ma_20 that holds above ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "trade_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "EOD",
+    "non_price": "No set-up bar yet. CCI oversold leg and ma_40 are not served by AQE. Arm only after a bar's low reaches ma_20 and the close holds above ma_40."
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of3.json",
+   "bytes": 14294,
+   "votes": 16,
+   "sha256": "f1819dca0163"
+  },
+  {
+   "file": "seow.part2of3.json",
+   "bytes": 12127,
+   "votes": 16,
+   "sha256": "718aed1728ae"
+  },
+  {
+   "file": "seow.part3of3.json",
+   "bytes": 12617,
+   "votes": 16,
+   "sha256": "8d247b41b925"
+  }
+ ]
+}

@@ -426,6 +426,242 @@
    "reason": "ADD: never (C20, never average down). EXIT: structure 11.0 BEARISH_CHOCH, sma_dist -22.87%, under ma50 49.99 and ma200 55.93, unrealised -4332.0: the loss is far past the stop C20 allows and the 10-week line has failed (R8).",
    "opposing_case": "div BULLISH, day_vol 1.1; broker stop 36.66 is in place. Entry 53.0 may be cost basis, not prior close (field to verify).",
    "falsifier": "A close back above ma50 49.99 on heavy volume."
+  },
+  {
+   "ticker": "ACN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not at a new high (from_52w_hi -10.33%) and a V-shaped run (ret_63d 76.03) is not a sound base (C12). day_vol 1.03 fails the C16 volume test; div BEARISH/2 and Parabolic WARNING read as climax signs (C24). LEADER, but no pivot to buy.",
+   "falsifier": "A tight handle forms below the prior high and price breaks out to a new high on volume at or above the C16 bar.",
+   "opposing_case": "Real thrust: mp 97.0 accelerating, rs_spy_20d 46.26, rs LEADER downday 2.96, structure 80.4, resistance lens strong, and a U&R reclaim day on the trendline. A leader recovering hard can build a base fast."
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Pullback lane with from_52w_hi -25.13%, ret_6m -7.3 and rs_rank_pct 29.52: not a leader making new highs (C7, C10). The U&R trendline reclaim is a reclaim buy, which my method does not take (C16 buys the pivot breakout). No measurable base.",
+   "falsifier": "Price builds a base and breaks to a new high on volume at or above the C16 bar with rs_rank_pct back in the top tier.",
+   "opposing_case": "flow 88.2, energy 73.9, structure 73.7, rs LEADER downday 1.08, sector lens strong, elder 10.0, and price back above ma200 436.91 with day_vol 1.25. A quality franchise turning up."
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Near a new high (from_52w_hi -0.42%) on an aligned stack ma20 169.72 > ma50 165.29 > ma100 156.26 > ma200 152.83; rs LEADER, leadership and sector lenses strong (C7, C9). day_vol 1.01 is not yet breakout volume (C16): buy only the volume break.",
+   "falsifier": "A new high prints on volume under the C16 bar and fails, or price closes under ma50 165.29.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "close_below:pivot_high-8pct"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Real leadership: rank 1, new high (from_52w_hi 0.0%), day_vol 1.54 clears C16, flow 96.1. But sma_dist 56.76% over ma200 24.12 with run_10d 61.14% reads as climax (C24, a weight under R14). Buy only a new high tight flag breakout (C18).",
+   "falsifier": "Price breaks the flag on heavy volume, or the next new high comes on lower volume (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_high-8pct",
+     "fade_atr_ge:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high (from_52w_hi 0.0%), elder SUSTAINED, mp 100.0, structure 86.7, rs LEADER spy20 49.17. day_vol 1.09 is short of C16 breakout volume and sma_dist 37.66% after run_10d 29.99% is extended (C17, a weight). Buy a fresh base breakout only.",
+   "falsifier": "Next push to a new high on lower volume (C25), or a close back under the breakout area.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_high-8pct",
+     "fade_atr_ge:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "RXO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Closest to my shape: just under the high (from_52w_hi -1.3%), flat run_10d -0.03% with day_vol 0.67 is volume drying up in a tight area (C15). rs LEADER, structure 86.7, adx 44.33. flow 34.2 is the weak leg. Buy the pivot break on volume.",
+   "falsifier": "Breakout through the pivot on volume under the C16 bar, or a close back inside the base after the break.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "New high (from_52w_hi 0.0%) on day_vol 2.12, clearing C16: institutions showed up. rs LEADER downday 2.29, leadership and sector lenses strong. sma_dist 31.11% after run_10d 23.22% is extended (C17, a weight): buy a continuation over bar_high, not the gap.",
+   "falsifier": "The breakout volume day fails: price closes back under it, or the next high comes on lower volume (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_high-8pct",
+     "fade_atr_ge:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No sound base: structure 38.9 BEARISH_CHOCH, from_52w_hi -22.76%, ret_12m -11.69 (R3, C12). ma20 71.71 under ma50 76.04. Price ran off a damaged chart; there is no pivot to buy and nothing downstream rescues it.",
+   "falsifier": "Structure repairs (choch clears), a base completes and price breaks to a new high on volume.",
+   "opposing_case": "coil and insti_money lenses strong, rs LEADER downday 2.63, rs_spy_20d 42.47, elder 10.0, run_10d 16.82%: money is coming in and the tape is tightening."
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "structure 44.2 with ma20 23.14 under ma50 24.75: no completed base (R3). No 52-week history (ret_12m None), so no new-high test. Price back over ma50 is a reclaim, which I do not buy. resistance lens warn.",
+   "falsifier": "A base completes above ma50 24.75 and price breaks the pivot on volume at or above the C16 bar.",
+   "opposing_case": "Possibly a new issue (C7 something new): ret_6m 68.04, insti_money lens strong, rs LEADER downday 2.11, and mp 77.0 accelerating with flow 78.9."
+  },
+  {
+   "ticker": "BOX",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Best CAN SLIM read here: new high (from_52w_hi 0.0%), stack ma20 36.77 > ma50 35.05 > ma100 31.84 > ma200 28.31, structure 90.5, elder SUSTAINED, mp 100.0, rs LEADER downday 2.14. Enterprise Software is on VALEN's real-leadership list (C9).",
+   "falsifier": "Next new high on lower volume (C25) or a heavy-volume close under ma50 35.05 (R8).",
+   "self_counter": "day_vol 1.35 is just short of the C16 bar, sma_dist 22.05% means I am likely past the C17 buy zone, four lenses read --, and base depth/stage are not served (C19).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_high-8pct",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Breakout from a long flat base: ma20 77.68, ma50 77.7, ma100 77.76 sit level, price now at a new high (from_52w_hi 0.0%) (C18 flat base). rs LEADER, leadership and sector lenses strong, structure 85.3. day_vol 1.02 is short of C16.",
+   "falsifier": "Price falls back into the base under ma50 77.7, or the next high comes on lower volume (C25).",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_high-8pct",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "C/A/S/I letters NOT_AVAILABLE (no fundamentals served); market_gate DELEGATED: valid only into a confirmed uptrend, void if the index is under distribution."
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Repairing damage, not leading: from_52w_hi -40.76%, ret_12m -40.94 (C13). A stock that must climb back that far has no sound base; the C9 leader is making new highs, not recovering. day_vol 1.3 is short of C16.",
+   "falsifier": "Price completes a sound base and breaks to a new 52-week high on volume.",
+   "opposing_case": "rank 8, structure 90.5, flow 92.1, mp 93.0 accelerating, elder 10.0, rs LEADER, run_10d 19.97%: a strong turn with money flowing in."
+  },
+  {
+   "ticker": "KD",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Repairing damage: from_52w_hi -47.44%, ret_12m -46.95 (C13), rs_rank_pct 66.26 is not leader-grade (C10). Recovering off the lows is not a new high out of a sound base. day_vol 1.0 fails C16.",
+   "falsifier": "Price builds a base and breaks to a new high on volume with leader-grade relative strength.",
+   "opposing_case": "elder SUSTAINED, mp 87.0 accelerating, structure 84.2, resistance lens strong, run_10d 27.95%, rs LEADER: momentum is real on the turn."
   }
  ],
  "merged_from": [
@@ -440,6 +676,12 @@
    "bytes": 8285,
    "votes": 19,
    "sha256": "6f3c7f7996c0"
+  },
+  {
+   "file": "oneil.part3of3.json",
+   "bytes": 10544,
+   "votes": 13,
+   "sha256": "6a7292ba1923"
   }
  ]
 }

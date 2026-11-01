@@ -1,0 +1,876 @@
+{
+ "voice": "livermore",
+ "date": "2026-10-28",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "DBX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Established uptrend in a normal reaction: structure 86.3, ma_20 35.43 over ma_50 35.1 over ma_200 28.86, pct_from_52w_high -2.38. pct_from_pivot -3.25 means no break yet, so I buy only the clear of pivot_high 38.17. sma_distance_pct 5.22 is no chase. Market is RISK OFF: no entry before the break.",
+   "falsifier": "A close back under pivot_high after the clear, or a one-day fade from the high that my atr_14d translation flags as abnormal. My level is pivot_high; the engine bracket is information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "New high with trend and volume: pct_from_52w_high 0.0, structure 86.3, ABOVE_STRUCTURE, mp_state STRONG with mp_accel_state ACCELERATING, day_vol 1.21, pct_from_pivot 2.01 over pivot_high 28.86, sma_distance_pct 8.88 not extended. Sector tag Momentum Fading is context only.",
+   "self_counter": "ma_20 27.07 and ma_50 27.04 have converged: one leg, not a base. XLY is tagged Momentum Fading Hold Don't Add and VALEN stance is RISK OFF, so the tape does not help a new-high entry.",
+   "falsifier": "A close back under pivot_high 28.86 (my level; engine bracket INVALID, information only), or a one-day fade from the high that my atr_14d translation flags as abnormal.",
+   "challenge_reply": "My reason rests on structure 86.3, ABOVE_STRUCTURE, pct_from_52w_high 0.0, day_vol 1.21 and sma_distance_pct 8.88. minervini adds rank and base width, so the second vote is a shared new-high read plus his base read. The lens gaps are not my fields.",
+   "obligations": {
+    "o_c_invalidation": "A second consumer-discretionary leader failing to make a new high alongside HOG (group confirmation, C14)."
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CSX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BULLISH_BOS with structure 84.2 and mp_state STRONG ACCELERATING; pct_from_pivot 0.23 just clears pivot_high 52.15, but pct_from_52w_high -1.8 is no new high and day_vol 0.9 is thin. I act on a new high with volume. sma_distance_pct 7.17.",
+   "falsifier": "Close back under pivot_high 52.15 (my level; bracket INVALID, information only), or no fast follow-through on volume after the clear: the book's own lack-of-follow-through warning.",
+   "challenge_reply": "Agreed, the break printed on day_vol 0.9. I make a second close above it on volume a confirm condition, not an assumption. My own-field basis is BULLISH_BOS, structure 84.2, mp_state STRONG; the rank read is minervini's.",
+   "obligations": {
+    "o_c_invalidation": "A related transport name failing to hold its highs while CSX breaks (C14)."
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader at the high: pct_from_52w_high -0.72, structure 78.9, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING; software peers RBRK, TENB, AMPL confirm the group. Cost: day_vol 0.68 is thin and sma_distance_pct 15.6 is extended, so three. I buy a new high only on volume.",
+   "falsifier": "A close under ma_20 96.32, or a one-day fade from the high that my atr_14d translation flags as abnormal. Engine bracket INVALID, information only.",
+   "challenge_reply": "Thin day_vol 0.68 is stated and is why I demand volume on the new high. The 2026-11-19 print is an event, not my thesis; I do not argue the event filter.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": "Print 2026-11-19 is an event, not a catalyst I can see."
+   }
+  },
+  {
+   "ticker": "RCL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Reversal, not a pullback in an uptrend: ma_50 271.27 under ma_100 286.66 and ma_200 286.21, pct_from_52w_high -14.97. A bounce under the 200-day is a rally, not my entry. I need ma_200 cleared, then a new high.",
+   "opposing_case": "Heavy day_vol 2.17 on a reclaim day (VALEN U&R MET, 9-day average 281.27), structure 71.6 ABOVE_STRUCTURE and ma_20 280.75 over ma_50 271.27: a real turn is possible.",
+   "falsifier": "A close above ma_200 286.21, then a new high on volume.",
+   "challenge_reply": "Reversal, not continuation. The averages show no intact uptrend, and day_vol 2.17 carries no direction for me. I need the pivotal point (ma_200) cleared first."
+  },
+  {
+   "ticker": "APLE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high pct_from_52w_high 0.0, structure 80.0, ABOVE_STRUCTURE, mp_state STRONG, day_vol 1.11: the Key Price pair with DRH. Weights: ext_atr20 4.32, print in 6 sessions, mp_accel_state DECELERATING. DRH is the expression; APLE is the confirming peer.",
+   "conviction_change": "Lowered from three to two: one lodging bet counted twice. DRH is the better expression; APLE is more extended and its print is 6 sessions out.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal, or DRH failing to hold its high (C14). Bracket INVALID, information only.",
+   "challenge_reply": "The single best expression of the lodging bet is DRH: structure 84.2 against 80.0, ext_atr20 3.06 against 4.32, and no print inside the window Rogers lists. APLE confirms the group; it is not a second position.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Print 2026-11-05 sits inside the window; event filter not argued."
+   }
+  },
+  {
+   "ticker": "DRH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Best base of the lodging group: new high pct_from_52w_high 0.0, structure 84.2, ABOVE_STRUCTURE, day_vol 1.17, ext_atr20 3.06. APLE and HST confirm the group. mp_accel_state DECELERATING and pct_from_pivot 9.37 are the cost, so three, not four.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal, or APLE failing to hold its high (C14). My level is ma_20 13.11; bracket INVALID, information only.",
+   "challenge_reply": "Chosen as the single lodging expression: highest structure of the three and least extended. Treat DRH, APLE and HST as one exposure; I do not ask for a second position.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTRE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader at a new high: pct_from_52w_high 0.0, structure 74.1, ABOVE_STRUCTURE, mp_state STRONG at mp 96.0 ACCELERATING, day_vol 1.09, pct_from_pivot 3.91. Healthcare peers HNGE and A sit at their highs. sma_distance_pct 22.45 is the extension weight (R14), not a veto.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal, or A and HNGE failing to hold their highs (C14). My level is pivot_high; bracket INVALID, information only.",
+   "challenge_reply": "I do not buy the pullback; I buy a new high after a reaction. The extension is priced by a chase line above bar_high, and this seat sizes nothing.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:pivot_high-0.5atr"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Not a leader: rs IN-LINE, structure 57.9, mp 43.0 BUILDING. BULLISH_BOS on day_vol 1.52 with pct_from_pivot 1.81 is a real break, but pct_from_52w_high -1.91 is no new high and the 2026-11-18 print is an event. Watch only.",
+   "falsifier": "A close above the high on volume with structure rising would move me to support.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "At the high in a stacked uptrend: pct_from_52w_high -0.32, pct_from_pivot -0.3, ma_20 340.07 over ma_50 331.06 over ma_200 295.28, structure 71.6. Weak links: mp 49.0 BUILDING, structure_shift RANGE, day_vol 0.98. I buy only the clear of pivot_high on volume.",
+   "falsifier": "Break fails: a close back under pivot_high-0.5atr, or a fade my atr_14d translation flags as abnormal. Bracket INVALID, information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Normal reaction on dry volume (day_vol 0.51) inside a stacked uptrend, but pct_from_52w_high -3.93, structure 61.1 RANGE, mp 43.0 BUILDING: no trigger. I never buy the reaction; the new high is the entry. Watch block filed.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CART",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Rank 1 leader at the high: structure 92.6, mp_state STRONG, pct_from_52w_high -1.31, day_vol 2.53. But pct_from_pivot 14.05 and sma_distance_pct 23.57 are weights (R14): no entry at market. A normal reaction then a fresh high is my entry; the danger signal watches the fade.",
+   "conviction_change": "Lowered from three to two: Rogers and detect-lens show both late-move signatures at once, so entry waits for a reaction and a fresh new high.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal, on heavy volume: the climax. My level is pivot_high; bracket INVALID, information only.",
+   "challenge_reply": "Agreed: no market entry. The buy stays a fresh high after a reaction, with a chase line above bar_high. Heavy day_vol 2.53 on the way up is strength to me; the same volume on a fade is the exit.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DDOG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "In a reaction: run_10d -0.89, mp 55.0 BUILDING, rs LAGGARD, pct_from_52w_high -4.24, structure 62.9 RANGE. The averages are stacked (ma_20 272.61, ma_50 249.92, ma_200 196.32) but there is no trigger; I wait for a new high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NTNX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Quiet reaction: pct_from_52w_high -2.53, structure 60.0 RANGE, mp 50.0 BUILDING, day_vol 0.96, rs LAGGARD. The stack is up but there is no new high and no strength read. The entry is the clear of pivot_high on volume, not the dip.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Cybersecurity is a VALEN leading group, but FTNT lags it: pct_from_52w_high -5.01, run_10d -3.02, structure 57.9 RANGE, mp 50.0 BUILDING, U&R 21-day average not rising. TENB at the high leads; FTNT not confirming is my C14 caution.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A rally in a base, not a new high after an uptrend: ma_50 39.04 under ma_100 40.94 under ma_200 41.52, pct_from_52w_high -6.82, ret_6m -2.69. Reversal, not continuation. I need ma_200 cleared, then a new high. day_vol 2.1 shows participation only.",
+   "opposing_case": "structure 76.8 ABOVE_STRUCTURE, mp_state STRONG at mp 90.0 ACCELERATING on day_vol 2.1, and AWK in the same group is at pct_from_52w_high -1.49: a utilities group move is real.",
+   "falsifier": "A close above ma_200 41.52, then a new high on volume with AWK confirming.",
+   "challenge_reply": "Reversal, not continuation (Steenbarger ROOM CONTEXT). The group pair is AWK; CNP must confirm by clearing ma_200 before I would call it a trend."
+  },
+  {
+   "ticker": "BILL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A rally from a lower base, not a new high: pct_from_52w_high -12.25, ret_12m -3.51, ma_20 46.08 under ma_50 46.98. mp 93.0 STRONG and rs LEADER are real but no pivot is cleared, and the print is 6 sessions out.",
+   "opposing_case": "structure 86.3, mp 93.0 STRONG ACCELERATING, rs_spy_20d 17.15 and run_10d 12.35: strength is real, and a clear of the prior high would be a textbook entry.",
+   "falsifier": "A close above pivot_high on volume with ma_20 back over ma_50."
+  },
+  {
+   "ticker": "NDAQ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At the high in a stacked uptrend: pct_from_52w_high -0.34, structure 81.1, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING, day_vol 1.15, sma_distance_pct 9.65 not extended. CRBG in the same sector sits at pct_from_52w_high -0.65. The new high is not printed yet, so I wait for it.",
+   "falsifier": "A close back under ma_20 95.13, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A pullback name, not mine: pct_from_52w_high -13.47, ma_20 34.43 under ma_50 35.28, structure 74.7 RANGE. I buy a new high and none is near. The 2026-11-11 print is an event, not my thesis."
+  },
+  {
+   "ticker": "A",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Sitting on the pivot at the high: pct_from_52w_high -0.15, pct_from_pivot 0.25, structure 84.2, BULLISH_BOS, day_vol 1.06, ma_20 172.09 over ma_50 162.54. Healthcare peers FTRE and HNGE print highs. Weak: mp 50.0, so two.",
+   "falsifier": "A close back under pivot_high-0.5atr, or a fade my atr_14d translation flags as abnormal; the VALEN trendline reclaim 174.96 failing is the early tell. Bracket INVALID, information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Through its pivot at the high: pct_from_pivot 2.04, pct_from_52w_high -1.37, structure 69.5, ABOVE_STRUCTURE, ma_20 91.11 over ma_50 89.75. Weak links: day_vol 0.86 on the break, mp 64.0, and XLY already carries HOG. Two, not three; I want volume on the next high.",
+   "falsifier": "A close back under pivot_high-0.5atr, or a fade from the high my atr_14d translation flags as abnormal. Bracket INVALID, information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CRBG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Quiet near the high: pct_from_52w_high -0.65, structure 66.3 RANGE, mp 49.0, day_vol 0.74, rs LAGGARD. Insurance leads per VALEN, but there is no trigger and no volume. U&R MET is a reclaim, which I do not buy. Watch block filed.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EMR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "New high pct_from_52w_high 0.0 and BULLISH_BOS, but on day_vol 0.79 with mp 42.0 BUILDING DECELERATING: the break lacks volume, my follow-through test. I watch for a fresh high on volume.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NET",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "A leader failing to hold: rs_spy_20d -7.66, run_10d -5.72, pct_from_52w_high -9.18, entry 327.8 under ma_20 331.43, mp 20.0, structure 49.5. No new high and losing ground: my C14 caution says revise the opinion.",
+   "opposing_case": "ret_6m 57.22 and ma_20 331.43 over ma_50 319.97 over ma_200 246.37: a long-run leader in a cloud group VALEN lists as real leadership. The dip may be a normal reaction.",
+   "falsifier": "A close back over ma_20 331.43 and a new high on volume."
+  },
+  {
+   "ticker": "BTI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Inverted stack: ma_50 56.23 under ma_100 58.28 under ma_200 59.08, pct_from_52w_high -10.3, ret_6m 2.33. A staples bounce under the 200-day is a rally, not trend continuation. I need ma_200 cleared, then a new high.",
+   "opposing_case": "mp 86.0 STRONG, structure 74.7 ABOVE_STRUCTURE, rs_spy_20d 8.36 and run_10d 7.51: the bounce has real momentum and the sector tag is strong.",
+   "falsifier": "A close above ma_200 59.08, then a new high on volume.",
+   "challenge_reply": "Reversal, not continuation: the stack shows no intact uptrend."
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader at a new high: pct_from_52w_high 0.0, structure 73.7, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING. FTRE and A in the same sector print highs: my group confirmation. Cost: day_vol 0.66 and sma_distance_pct 18.05 are weights, so three.",
+   "falsifier": "A fade from the high that my atr_14d translation flags as abnormal, or FTRE and A failing to hold their highs. My level is ma_20 103.9; bracket INVALID, information only.",
+   "challenge_reply": "Extension 18.05 is a weight, not a veto (R14). I buy a new high on volume after a reaction; thin day_vol 0.66 is why not at market.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Third lodging name: pct_from_52w_high -1.25, structure 76.8 ABOVE_STRUCTURE, but mp 90.0 DECELERATING and no new high yet. Same bet as DRH and APLE; DRH is my expression. No second lodging position from this seat."
+  },
+  {
+   "ticker": "FTV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A base below its high, not a trend: pct_from_52w_high -3.85, ret_6m -0.24, ma_50 57.44 under ma_100 59.33 and ma_200 58.55. day_vol 1.81 is real participation. I act only on a clear of the base high, which would be a breakout, not a reversal.",
+   "challenge_reply": "Base-breakout watch, not continuation: ma_50 under ma_200. Entry only if it clears the base high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Near the high of a flat year: pct_from_52w_high -1.49, structure 77.9 RANGE, mp 86.0, ma_50 135.27 over ma_100 133.51 over ma_200 132.23. Utilities rally with CNP, but CNP has not confirmed, so two. day_vol 0.79 is thin; buy the clear of the high only on volume.",
+   "falsifier": "A close back under ma_20 133.0, or CNP failing to clear ma_200 while AWK breaks (C14). Bracket INVALID, information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EQT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Reversal, not continuation: ma_50 53.09 under ma_200 55.51, pct_from_52w_high -17.16, ret_6m -5.3. day_vol 2.05 shows participation, not direction. I buy a new high after an uptrend, and this has neither.",
+   "opposing_case": "structure 84.2, mp 72.0 BUILDING ACCELERATING, rs_spy_20d 14.4 and day_vol 2.05: a heavy-volume turn in a group where BKR and VG also stir.",
+   "falsifier": "A close above ma_200 55.51, then a new high on volume with BKR confirming.",
+   "challenge_reply": "Reversal. The energy trio EQT, BKR and VG all sit well under their highs; none confirms the others."
+  },
+  {
+   "ticker": "TEL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Reversal attempt: ma_50 210.09 under ma_200 213.06, pct_from_52w_high -9.5, mp 48. BULLISH_BOS on day_vol 2.23 is ignition, but ignition under the 200-day is a rally to test, not a new high after an uptrend.",
+   "opposing_case": "BULLISH_BOS on day_vol 2.23 with structure 63.2 and ma_20 215.05 over ma_50 210.09: the break is on heavy volume.",
+   "falsifier": "A close above ma_200 213.06, then a new high on volume.",
+   "challenge_reply": "Reversal, not continuation: ma_50 is under ma_200 and the high is far off."
+  },
+  {
+   "ticker": "BKR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fully inverted stack: ma_50 58.68 under ma_100 59.03 under ma_200 60.16, pct_from_52w_high -15.32, ret_6m -12.81. A day-one BULLISH_BOS on day_vol 2.16 is ignition only. I need ma_200 cleared and a new high. Not continuation.",
+   "opposing_case": "BULLISH_BOS on day_vol 2.16 with entry above ma_20 55.97: a first break on heavy volume can start a turn, and EQT and VG stir too.",
+   "falsifier": "A close above ma_200 60.16, then a new high on volume.",
+   "challenge_reply": "Reversal, not continuation: all three averages are stacked against it."
+  },
+  {
+   "ticker": "VG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not near a high: pct_from_52w_high -21.22, structure 53.7 RANGE, mp 48.0 BUILDING, sma_distance_pct 0.0. A stock sitting on ma_50 13.81 in a range is not an uptrend in a normal reaction. The 2026-11-10 print is an event. Energy peers do not confirm.",
+   "opposing_case": "ret_12m 45.52, rs LEADER spy20 9.41 and mp_accel_state ACCELERATING with dry day_vol 0.62: a quiet base near its average could resolve upward.",
+   "falsifier": "A clear of pivot_high on volume with EQT and BKR confirming."
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "ADD: no. Unrealised -433.21 on the 2026-10-22 fill at 413.2602632: adding is averaging down (C4); I pyramid only above cost on strength (C6). KEEP: structure 69.0 ABOVE_STRUCTURE, ma_20 388.88 over ma_50 378.73, broker stop 391.80 stands, no danger signal has fired.",
+   "opposing_case": "VALEN U&R SETUP: it dipped under the 9-day average 402.58 and closed 0.2% under, reclaim day next session; day_vol 1.36, stacked averages and rs_spy_20d 9.12 favour the position.",
+   "falsifier": "A close back over cost 413.2602632 on a new high with volume would make an add valid under C6; not before."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD: never (C4). EXIT-CASE: BEARISH_CHOCH, structure 14.0, price under ma_20 42.73, ma_50 48.87 and ma_200 55.59, sma_distance_pct -16.37. The up-structure failed: my trend-ended signal (C20). Unrealised -3639.0 is the market saying I am wrong (C3, C22). Broker stop 36.66 is the floor, not the plan.",
+   "opposing_case": "mp_accel_state ACCELERATING from mp 5.0 BUILDING, day_vol 1.21 and revenue_growth_yoy 0.101 after -0.196: a turn is possible, with ma_20 42.73 the bounce level. It does not repair the structure.",
+   "falsifier": "A close back over ma_20 42.73 with structure out of BEARISH_CHOCH would make my exit case wrong.",
+   "challenge_reply": "This seat has no hold thesis to offer and does not wait for a catalyst against a price signal (C21). The broker stop stands under house law."
+  },
+  {
+   "ticker": "IOT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Established uptrend in a normal reaction: ma_20 41.77 over ma_50 40.4 over ma_200 34.13, pct_from_52w_high -3.78, structure 80.0, mp_state STRONG ACCELERATING, ext_atr20 0.88, day_vol 0.84 dry on the dip. Software leads per VALEN. The new high is the entry, not yet printed.",
+   "falsifier": "A close under ma_50 40.4, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only.",
+   "challenge_reply": "No nomination because pct_from_52w_high -3.78 was short of a new high, and I do not buy the U&R reclaim itself. Not ridicule: a stacked name on dry volume at the doorstep of its high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader a step under its high: structure 87.4, ABOVE_STRUCTURE, mp 97.0 flat at the top, rs LEADER spy20 25.82, day_vol 1.21, pct_from_52w_high -3.48; ma_20 80.35 over ma_50 78.12 over ma_200 67.8. sma_distance_pct 12.22 is a weight. The clear of the high is the entry.",
+   "falsifier": "A close under ma_20 80.35, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only.",
+   "challenge_reply": "No nomination because pct_from_52w_high -3.48 was short of my trigger, and the U&R reclaim is a pullback buy my method does not take. Silence was not ridicule.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:2"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No uptrend to extend: pct_from_52w_high -27.41, ret_12m -20.37, ret_63d -8.82, with ma_20 39.83 under ma_50 40.36 and ma_200 39.08 bunched. A bounce through a flat stack, not a new high after a trend. mp STRONG here is a rally read.",
+   "opposing_case": "mp 86.0 STRONG ACCELERATING, structure 70.5, rs_spy_20d 11.25, day_vol 1.25 and a VALEN U&R MET reclaim day: real buying, and the sector tag is strong.",
+   "falsifier": "A close above ma_100 40.14 with ma_50 turning up, then a clear of the base high on volume.",
+   "challenge_reply": "No nomination: pct_from_52w_high -27.41 with a flat stack gives no uptrend to extend, and the U&R reclaim is a pullback buy my method does not take."
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Momentum is real: mp 100.0 STRONG ACCELERATING, structure 86.7, pct_from_52w_high -0.22, rs_spy_20d 97.04. But run_10d 58.24 and sma_distance_pct 51.23 are the weights (R14) and VALEN flags Parabolic WARNING. No entry at market; I buy only a new high after a normal reaction.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal is my danger signal and ends the idea. Bracket INVALID, information only.",
+   "challenge_reply": "Silence was the extension: no reaction to buy. Weight, not veto, so I support at low conviction with the entry after a reaction.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "A base-high test with real strength: pct_from_52w_high -2.82, structure 79.4, ABOVE_STRUCTURE, mp 100.0 flat at the top ACCELERATING, rs_spy_20d 52.63, ma_50 12.0 over ma_100 10.86. Weights: run_10d 24.04, sma_distance_pct 32.02, thin day_vol 0.62. Buy only a clear of the high on volume.",
+   "falsifier": "The clear fails: a close back under bar_low, or a fade from the high that my atr_14d translation flags as abnormal. Bracket INVALID, information only.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": "A single name; no group peer in the packet to confirm (C14)."
+   }
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "At the high with a group: pct_from_52w_high 0.0, structure 68.4, mp 97.0 STRONG ACCELERATING, rs_spy_20d 50.7, day_vol 1.24; TENB prints a high too, so cybersecurity confirms (C14). Weights: sma_distance_pct 47.77, ext_atr20 4.28, VALEN Parabolic WARNING.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal, or TENB losing its high. My level is bar_low; bracket INVALID, information only.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "net_profit_margin -0.918 is price-blind to me; I read the tape only (C21)."
+   }
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strong rebound, old pivotal point not cleared: pct_from_52w_high -21.46, ret_12m -18.66, mp 97.0 STRONG, structure 76.8, rs_spy_20d 43.39. VALEN shows Parabolic CRACKED. Enterprise software leads, but ASAN lags TENB at the high (C14). I watch for the clear of the prior high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TENB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Cybersecurity leader at a new high: pct_from_52w_high 0.0, structure 88.4, ABOVE_STRUCTURE, mp 75.0 STRONG ACCELERATING, ma_20 40.28 over ma_50 37.11 over ma_200 28.34. NTSK and ESTC confirm the group. day_vol 0.89 and sma_distance_pct 31.08 are weights, so three.",
+   "falsifier": "A one-day fade from the high that my atr_14d translation flags as abnormal, or NTSK and ESTC losing their highs. My level is bar_low; bracket INVALID, information only.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A bounce through an inverted stack: ma_50 18.41 under ma_100 19.33 under ma_200 19.81, pct_from_52w_high -15.87, ret_12m -18.7, run_10d 21.94. A rally under the old pivotal point, not a new high after an uptrend.",
+   "opposing_case": "mp 93.0 STRONG, structure 78.9, rs_spy_20d 36.56 and the sector tag is strong: a run on this force can carry through ma_200 19.81.",
+   "falsifier": "A close above ma_200 19.81, then a new high on volume."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Deep under the high: pct_from_52w_high -42.32, ret_12m -41.76, ma_200 13.36 level with ma_20 13.36. A rebound inside a downtrend; a low price alone is not my buy (C16). The missing new high is the reason.",
+   "opposing_case": "mp 93.0 STRONG, structure 76.8, rs_spy_20d 32.02 and run_10d 16.35: the rebound is violent and entry sits above every average.",
+   "falsifier": "A clear of the base high on volume; nothing short of it."
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Deep under the high: pct_from_52w_high -39.33, ret_12m -23.15, rs_rank_pct 44.76, ma_200 18.13 above ma_20 17.97. A rebound inside a downtrend, not a new high after an uptrend. Dry day_vol 0.54 on a 19.06 run adds no confirmation.",
+   "opposing_case": "mp 93.0 STRONG ACCELERATING, structure 73.1, rs_spy_20d 31.61: the rebound is strong and entry sits above every average.",
+   "falsifier": "A clear of the base high on volume; nothing short of it."
+  },
+  {
+   "ticker": "RBLX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Deepest under its high in the set: pct_from_52w_high -59.27, ret_12m -57.35, rs_rank_pct 35.37, ma_50 45.68 under ma_200 52.8. A rally in a downtrend, and VALEN grades the theme AVOID. A low price alone is not my buy (C16).",
+   "opposing_case": "mp 85.0 STRONG ACCELERATING, structure 70.3, rs_spy_20d 31.56 and entry 54.47 above ma_200 52.8: price has cleared the long average.",
+   "falsifier": "A clear of the base high on volume; nothing short of it."
+  },
+  {
+   "ticker": "ZS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strong rebound, old pivotal point not cleared: pct_from_52w_high -22.64, ret_63d 69.18, mp 85.0 STRONG, structure 76.8. Cybersecurity leads per VALEN and TENB and NTSK print highs, but ZS lags them (C14). sma_distance_pct 29.9 is a weight. I watch for the clear of the prior high.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of3.json",
+   "bytes": 12857,
+   "votes": 16,
+   "sha256": "be08a59aae74"
+  },
+  {
+   "file": "livermore.part2of3.json",
+   "bytes": 9158,
+   "votes": 16,
+   "sha256": "860bb7f52dad"
+  },
+  {
+   "file": "livermore.part3of3.json",
+   "bytes": 10790,
+   "votes": 16,
+   "sha256": "5cba9cf52b67"
+  }
+ ]
+}

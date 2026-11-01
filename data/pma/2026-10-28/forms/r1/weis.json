@@ -1,0 +1,674 @@
+{
+ "voice": "weis",
+ "date": "2026-10-28",
+ "nominations": [
+  {
+   "ticker": "DDOG",
+   "reason": "Trend gate passes: stack_state ALIGNED, sma_distance_pct 12.37, ma_200 196.32. Inside day is a hinge pause, not a break: inside_bar True, pct_run_10d -0.89, extension_atr_20 0.57, div_state NONE; ret_6m 113.47 is the bullish lead-in. Catalyst NONE — price shape only.",
+   "conviction": 3,
+   "fields_cited": [
+    "stack_state",
+    "sma_distance_pct",
+    "ma_200",
+    "inside_bar",
+    "pct_run_10d",
+    "extension_atr_20",
+    "div_state",
+    "ret_6m"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend first: ma_20 272.61, ma_50 249.92, ma_200 196.32 stacked up; stack_state ALIGNED; sma_distance_pct 12.37; sector_trend_state Recovering From Weakness — Watch for Entry.",
+     "verdict": "pass",
+     "fields": [
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state",
+      "sma_distance_pct",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Contraction is one bar: inside_bar True; elder_context.vcp.vcp_tightness_pct 53.4 and elder_context.vcp.base_range_pct 21.0 are middling; was_squeezed False.",
+     "verdict": "partial",
+     "fields": [
+      "inside_bar",
+      "was_squeezed",
+      "elder_context.vcp.vcp_tightness_pct",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "squeeze_breakout_state NONE: hinge unresolved, so direction comes from the lead-in, not the contraction: pct_run_10d -0.89, ret_6m 113.47, up_bar_vol_ratio 1.07.",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "pct_run_10d",
+      "ret_6m",
+      "elder_context.volume.up_bar_vol_ratio"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C1",
+      "C2",
+      "C5"
+     ],
+     "observed": "Effort vs result: day_vol 0.98 against atr_14d 14.3 with pct_run_10d -0.89; no heavy effort with small result, so no sign the trend side is being absorbed.",
+     "verdict": "pass",
+     "fields": [
+      "day_vol",
+      "atr_14d",
+      "pct_run_10d"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "choch_state BULLISH, structure_shift RANGE: no bearish change of behaviour, no fresh structure break either.",
+     "verdict": "partial",
+     "fields": [
+      "choch_state",
+      "structure_shift"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "Thrust-decay proxy only: mp_accel_state DECELERATING, mp_state BUILDING, sc_momentum 63.5; mild, and a proxy cannot lift the read.",
+     "verdict": "partial",
+     "fields": [
+      "mp_accel_state",
+      "mp_state",
+      "sc_momentum"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C6",
+      "C7"
+     ],
+     "observed": "pin_bar_state NONE; elder_5d [5, 0, 6, 7, 8] is the only multi-day texture. No spring read today, single-day snapshot.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state",
+      "elder_5d"
+     ]
+    },
+    {
+     "step": 8,
+     "canon_ref": [
+      "C13",
+      "C8",
+      "C9",
+      "C16",
+      "C11"
+     ],
+     "observed": "Upthrust confirmation, penetration depth, secondary test, absorption sequence and degree scaling are not served; none is asserted.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "FIVN",
+   "reason": "Narrow inside day on dry volume in a strong uptrend: inside_bar True, was_squeezed True, day_vol 0.51, stack_state ALIGNED, sma_distance_pct 8.74, ret_6m 121.54, pct_from_52w_high -3.93. Contraction and dry-up, not absorption. Catalyst NONE — price shape only.",
+   "conviction": 3,
+   "fields_cited": [
+    "inside_bar",
+    "was_squeezed",
+    "day_vol",
+    "stack_state",
+    "sma_distance_pct",
+    "ret_6m",
+    "pct_from_52w_high"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend first: ma_20 34.96, ma_50 34.15, ma_200 23.87 stacked up; stack_state ALIGNED; sma_distance_pct 8.74; mp_state BUILDING; sector_trend_state Recovering From Weakness — Watch for Entry.",
+     "verdict": "pass",
+     "fields": [
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state",
+      "sma_distance_pct",
+      "mp_state",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge: inside_bar True, was_squeezed True, elder_context.vcp.vcp_tightness_pct 66.4, elder_context.vcp.base_range_pct 18.9; day_vol 0.51 is a dry-up, not absorption.",
+     "verdict": "pass",
+     "fields": [
+      "inside_bar",
+      "was_squeezed",
+      "elder_context.vcp.vcp_tightness_pct",
+      "elder_context.vcp.base_range_pct",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "squeeze_breakout_state NONE: hinge unresolved. Lead-in is bullish: ret_63d 36.66, rs_rank_pct 97.8, elder_pattern ACCELERATION, elder_5d [6, 7, 10, 10, 10].",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "ret_63d",
+      "rs_rank_pct",
+      "elder_pattern",
+      "elder_5d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C1"
+     ],
+     "observed": "Low day_vol 0.51 with pct_run_10d 4.86 and extension_atr_20 1.06: progress on thin volume is not bearish; no heavy-volume stall.",
+     "verdict": "pass",
+     "fields": [
+      "day_vol",
+      "pct_run_10d",
+      "extension_atr_20"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "choch_state BULLISH, structure_shift RANGE, div_state BULLISH: no bearish change of behaviour.",
+     "verdict": "pass",
+     "fields": [
+      "choch_state",
+      "structure_shift",
+      "div_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "Proxy only: mp_accel_state ACCELERATING, sc_momentum 59.9 is modest; no thrust shortening visible.",
+     "verdict": "partial",
+     "fields": [
+      "mp_accel_state",
+      "sc_momentum"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C6",
+      "C7"
+     ],
+     "observed": "pin_bar_state NONE; no single-bar rejection read. Single-day snapshot, so no follow-through sequence.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    },
+    {
+     "step": 8,
+     "canon_ref": [
+      "C13",
+      "C8",
+      "C9",
+      "C16",
+      "C11"
+     ],
+     "observed": "Upthrust confirmation, penetration depth, secondary test, absorption sequence and degree scaling are not served; none is asserted.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "ESTC",
+   "reason": "Leader pausing on an inside day: inside_bar True, stack_state ALIGNED, mp_state STRONG, sc_momentum 78.1, ret_6m 122.38. Held low because extension_atr_20 2.15 and pct_run_10d 11.87 leave no cushion. Catalyst: earnings, days_to_earnings 16.",
+   "conviction": 2,
+   "fields_cited": [
+    "inside_bar",
+    "stack_state",
+    "mp_state",
+    "sc_momentum",
+    "ret_6m",
+    "extension_atr_20",
+    "pct_run_10d",
+    "days_to_earnings"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "Trend first: ma_20 96.32, ma_50 91.28, ma_200 66.82 stacked up; stack_state ALIGNED; sma_distance_pct 15.6; mp_state STRONG; sector_trend_state Recovering From Weakness — Watch for Entry.",
+     "verdict": "pass",
+     "fields": [
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state",
+      "sma_distance_pct",
+      "mp_state",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Hinge is one bar: inside_bar True; elder_context.vcp.vcp_tightness_pct 61.8, elder_context.vcp.base_range_pct 18.6; was_squeezed False.",
+     "verdict": "partial",
+     "fields": [
+      "inside_bar",
+      "was_squeezed",
+      "elder_context.vcp.vcp_tightness_pct",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "squeeze_breakout_state NONE: unresolved. Lead-in is bullish but vertical: ret_63d 63.75, pct_run_10d 11.87, pct_from_52w_high -0.72.",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "ret_63d",
+      "pct_run_10d",
+      "pct_from_52w_high"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C1",
+      "C4"
+     ],
+     "observed": "day_vol 0.68 against atr_14d 4.27 and extension_atr_20 2.15: a pause after a thrust; thin volume alone is not bearish, but there is no cushion under it.",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "atr_14d",
+      "extension_atr_20"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "choch_state BULLISH, structure_shift ABOVE_STRUCTURE, div_state NONE: no bearish change of behaviour.",
+     "verdict": "pass",
+     "fields": [
+      "choch_state",
+      "structure_shift",
+      "div_state"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "Proxy only: mp_accel_state ACCELERATING, sc_momentum 78.1; no thrust shortening, but extension is the risk here.",
+     "verdict": "partial",
+     "fields": [
+      "mp_accel_state",
+      "sc_momentum"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C6",
+      "C7"
+     ],
+     "observed": "pin_bar_state NONE; elder_5d [8, 10, 10, 10, 10] is flat at the top. No spring read, single-day snapshot.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state",
+      "elder_5d"
+     ]
+    },
+    {
+     "step": 8,
+     "canon_ref": [
+      "C13",
+      "C8",
+      "C9",
+      "C16",
+      "C11"
+     ],
+     "observed": "Upthrust confirmation, penetration depth, secondary test, absorption sequence and degree scaling are not served; none is asserted.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "RCL",
+   "reason": "Correction re-entry with the hinge resolved on effort: squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, day_vol 2.17, elder_pattern CORRECTION_REENTRY. Held low: mp_state FADING, sector fading, trigger already fired. Catalyst NONE — price shape only.",
+   "conviction": 2,
+   "fields_cited": [
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "day_vol",
+    "elder_pattern",
+    "mp_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "ma_20 280.75, ma_50 271.27, ma_200 286.21: stack_state ALIGNED though ma_200 sits above both; sma_distance_pct 9.09; mp_state FADING; sector_trend_state Momentum Fading — Hold, Don't Add.",
+     "verdict": "partial",
+     "fields": [
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state",
+      "sma_distance_pct",
+      "mp_state",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Contraction preceded the move: was_squeezed True; elder_context.vcp.vcp_tightness_pct 67.5, elder_context.vcp.base_range_pct 17.4.",
+     "verdict": "pass",
+     "fields": [
+      "was_squeezed",
+      "elder_context.vcp.vcp_tightness_pct",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "squeeze_breakout_state BREAKOUT_UP with squeeze_breakout_volume_confirmed True: effort backs the break, but the trigger has fired, so this is whipsaw-exposed, not a failed-weakness entry.",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C1",
+      "C2"
+     ],
+     "observed": "day_vol 2.17 with structure_shift ABOVE_STRUCTURE and sma_distance_pct 9.09: heavy effort with progress. Close location is not served, so an upthrust bar cannot be excluded.",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "choch_state BULLISH, structure_shift ABOVE_STRUCTURE, div_state NONE; elder_5d [10, 7, 4, 5, 9] troughed then recovered.",
+     "verdict": "pass",
+     "fields": [
+      "choch_state",
+      "structure_shift",
+      "div_state",
+      "elder_5d"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "Proxy only: mp_accel_state DECELERATING, mp_state FADING, sc_momentum 67.0 hint at a shortening thrust; this is why the read stays low.",
+     "verdict": "partial",
+     "fields": [
+      "mp_accel_state",
+      "mp_state",
+      "sc_momentum"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C6",
+      "C7"
+     ],
+     "observed": "pin_bar_state NONE; no single-bar rejection read. Single-day snapshot.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    },
+    {
+     "step": 8,
+     "canon_ref": [
+      "C13",
+      "C8",
+      "C9",
+      "C16",
+      "C11"
+     ],
+     "observed": "Upthrust confirmation, penetration depth, secondary test, absorption sequence and degree scaling are not served; none is asserted.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    }
+   ]
+  },
+  {
+   "ticker": "TEL",
+   "reason": "Hinge resolved up on effort: squeeze_breakout_state BREAKOUT_UP, squeeze_breakout_volume_confirmed True, day_vol 2.23, structure_shift BULLISH_BOS, vcp_tightness_pct 100.0. Held low: div_state BEARISH, div_bear_count 2, stack_state REPAIRING. Catalyst NONE — price shape only.",
+   "conviction": 2,
+   "fields_cited": [
+    "squeeze_breakout_state",
+    "squeeze_breakout_volume_confirmed",
+    "day_vol",
+    "structure_shift",
+    "elder_context.vcp.vcp_tightness_pct",
+    "div_state",
+    "div_bear_count",
+    "stack_state"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C23",
+      "C10"
+     ],
+     "observed": "ma_20 215.05, ma_50 210.09, ma_200 213.06; stack_state REPAIRING; sma_distance_pct 7.27; ret_12m -4.37; sector_trend_state Recovering From Weakness — Watch for Entry.",
+     "verdict": "partial",
+     "fields": [
+      "ma_20",
+      "ma_50",
+      "ma_200",
+      "stack_state",
+      "sma_distance_pct",
+      "ret_12m",
+      "sector_trend_state"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "Tight hinge: was_squeezed True; elder_context.vcp.vcp_tightness_pct 100.0, elder_context.vcp.base_range_pct 9.8.",
+     "verdict": "pass",
+     "fields": [
+      "was_squeezed",
+      "elder_context.vcp.vcp_tightness_pct",
+      "elder_context.vcp.base_range_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C21"
+     ],
+     "observed": "squeeze_breakout_state BREAKOUT_UP with squeeze_breakout_volume_confirmed True: effort backs the break, but the trigger has already fired.",
+     "verdict": "partial",
+     "fields": [
+      "squeeze_breakout_state",
+      "squeeze_breakout_volume_confirmed"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C1",
+      "C2"
+     ],
+     "observed": "day_vol 2.23 with structure_shift BULLISH_BOS and sma_distance_pct 7.27: effort rewarded. Close location is not served, so an upthrust bar cannot be excluded.",
+     "verdict": "partial",
+     "fields": [
+      "day_vol",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C22"
+     ],
+     "observed": "choch_state BULLISH, structure_shift BULLISH_BOS; but div_state BEARISH with div_bear_count 2 is an early warning, flagged though not yet actionable.",
+     "verdict": "partial",
+     "fields": [
+      "choch_state",
+      "structure_shift",
+      "div_state",
+      "div_bear_count"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C20"
+     ],
+     "observed": "Proxy only: mp_accel_state DECELERATING, mp_state BUILDING, sc_momentum 71.1; thrust may be shortening.",
+     "verdict": "partial",
+     "fields": [
+      "mp_accel_state",
+      "mp_state",
+      "sc_momentum"
+     ]
+    },
+    {
+     "step": 7,
+     "canon_ref": [
+      "C6",
+      "C7"
+     ],
+     "observed": "pin_bar_state NONE; elder_5d [5, 0, 0, 5, 9] rebuilt from lows. No spring read, single-day snapshot.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state",
+      "elder_5d"
+     ]
+    },
+    {
+     "step": 8,
+     "canon_ref": [
+      "C13",
+      "C8",
+      "C9",
+      "C16",
+      "C11"
+     ],
+     "observed": "Upthrust confirmation, penetration depth, secondary test, absorption sequence and degree scaling are not served; none is asserted.",
+     "verdict": "no_data",
+     "fields": [
+      "pin_bar_state"
+     ]
+    }
+   ]
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "Trend gate fails: held_book.live_px 40.87 sits under ma_20 42.73, ma_50 48.87, ma_200 55.59; sma_distance_pct -16.37, choch_state BEARISH, structure_shift BEARISH_CHOCH, held_book.hl_state EXIT, held_book.hl_score 0.0, sc_momentum 27.1, held_book.unreal_usd -3639.0. No spring read (pin_bar_state NONE); a bounce here is short evidence."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Trend gate holds: held_book.live_px 401.86 is over ma_20 388.88, ma_50 378.73, ma_200 341.08; sma_distance_pct 6.11, choch_state BULLISH, structure_shift ABOVE_STRUCTURE, held_book.hl_state HOLD, held_book.hl_score 60.0, held_book.vwap_14d_position ABOVE. mp_state FADING is a proxy only. Own invalidation: a close under ma_20 388.88."
+  }
+ ],
+ "lesson_applied": "Trend gate first on every name; no spring claimed without a pin read; hinge-resolved names with fading momentum or bearish divergence held to low conviction; extended inside days not promoted; bracket fields never used as a reason.",
+ "declared": {
+  "not_served": [
+   "close_location_value (upthrust confirmation)",
+   "penetration_depth_vs_support",
+   "secondary_test",
+   "absorption_sequence (dry-up read only, worded as such)",
+   "multi_timeframe_degree",
+   "wave_volume"
+  ]
+ },
+ "shortfall_reason": "No bullish spring candidates: the only pin_bar_state read in the packet is GLBE BEARISH_PIN, an upthrust-side caution. Nominations rest on contraction and hinge reads only; inverted-stack, below-ma_200 and divergence-heavy names were left out."
+}

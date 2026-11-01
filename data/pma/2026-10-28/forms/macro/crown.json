@@ -1,0 +1,185 @@
+{
+ "voice": "crown",
+ "date": "2026-10-28",
+ "expression_family": "HIDDEN_STRESS_DOWNSIDE",
+ "match_quality": "exact",
+ "size_multiplier": 0.5,
+ "conditions_met": [
+  "hidden_stress (R5): single-stock vs index gap 23.9 > elevated band 23.594 AND gap_change_20d +0.51 (ELEVATED_RISING). Met, but by only 0.31 vol pts and +0.51 pts",
+  "breadth gate passed (R3 clear): regime broadening, confidence 0.65 vs 0.40 stop line",
+  "R9 knife-edge: S&P 500 ETF spot 769.66 is 0.65% below its gamma flip 774.63 (inside ~1%); dealer regime NEGATIVE (amplifying)",
+  "coverage complete (C33): artifact status OK = every input available; 18 trend markets read; gamma map available"
+ ],
+ "conditions_not_met": [
+  "trend-fund crowding (R8): share_at_an_extreme 0.0 vs ~0.67 trigger, size_dial 1.0. The 0.5x is the family cap, NOT a crowding cut",
+  "breadth confirmation of stress: regime is broadening (R1), 12m range position mid (R4); no narrowing, no range extreme",
+  "divergence agreement (R10): 9 warnings lit but all one family (rsi); no breadth or other-family flag alongside",
+  "VIX already-priced (R11): 17.52 vs 25; protection not yet expensive on VIX",
+  "uncontested read (C37): the call (downside hedge) and the breadth/scenario fields (broadening; benign Goldilocks leads, Reflation within 12%) point different ways",
+  "Nasdaq 100 ETF knife-edge: flip 1.23% away, just outside the ~1% line (call wall sits 0.1 pt below the flip)"
+ ],
+ "headline": "Broad market, calm index, but single-stock vol gap elevated and rising: HIDDEN_STRESS_DOWNSIDE at 0.5x. CONTESTED vs breadth/scenario; S&P dealer flip 0.65% away; FOMC today.",
+ "data_points": [
+  {
+   "name": "Breadth (RSP/SPY)",
+   "value": "broadening 7d; ratio 0.2826 (~42% up its 12m range, mid); 5d +0.69%, 20d +3.09%, 60d -1.37%; conf 0.65; gate passed",
+   "reading": "R1: own breadth, and not late (R4 not triggered). But young (7 sessions) and 60d still negative, so a recovery leg, not an established trend."
+  },
+  {
+   "name": "Vol gap (single-stock minus index)",
+   "value": "23.9 pts (single-stock 42.29 vs VIX 17.52); 83rd pct of 2y; 20d change +0.51; ELEVATED_RISING; as of 2026-10-26",
+   "reading": "R5 met on the rule, but marginal: 0.31 pts above the 23.594 band and growing only 0.51. A small move lapses it or flips it to R6 (easing = stress leaving)."
+  },
+  {
+   "name": "VIX level and shape",
+   "value": "VIX 17.52 (artifact: lower than 42% of 2y readings); CONTANGO; implied correlation 9.58 = 27.6th pct",
+   "reading": "R11 not triggered (<25, not priced); above the 15 premium-selling line. Low implied correlation and wide gap are the same vol-complex evidence, not two independent confirmations."
+  },
+  {
+   "name": "Dealer gamma, S&P 500 ETF",
+   "value": "spot 769.66; flip 774.63 (+0.65%); call wall 780 (+1.34%); put wall 755 (-1.90%); total GEX -4.81bn; NEGATIVE",
+   "reading": "R9 KNIFE-EDGE. Spot is on the amplifying side of the flip; tape character can change without much price move. Dealer side is a convention, NOT observed data."
+  },
+  {
+   "name": "Dealer gamma, Nasdaq 100 ETF",
+   "value": "spot 721.25; flip 730.11 (+1.23%); call wall 730.0 (+1.21%); put wall 700 (-2.95%); total GEX -2.24bn",
+   "reading": "Outside the ~1% R9 line but flip and call wall coincide, so a rally into 730 meets both a regime change and heavy call positioning. Same dealer-side assumption."
+  },
+  {
+   "name": "Trend-following funds",
+   "value": "bias neutral; 18 markets; share_at_an_extreme 0.0; size_dial 1.0; sector signal fx +0.53, energy +0.35, equity +0.21, ags -0.02, metals -0.15, rates -0.57",
+   "reading": "R8 not triggered: complex is not crowded or fragile. Funds lean long dollar/energy/equity and short rates."
+  },
+  {
+   "name": "Large speculators (CFTC to 2026-10-20)",
+   "value": "crowded long: Nasdaq 100, Russell 2000, 5Y and 2Y notes, soybeans. Crowded short: crude, natural gas, silver",
+   "reading": "R7: context, never timing; data is 8 days old. Crowd leans long small caps/growth equity while the nearest trend-flip line is in small caps."
+  },
+  {
+   "name": "Nearest trend-flip line",
+   "value": "Russell 2000 futures 2825.90 vs flip 2808.64 (-0.61%); trend signal -0.0014 (about zero); 2Y note flip 103.28 (+1.26%)",
+   "reading": "Nearest line in the whole list. A break means trend selling arrives together, from a flat signal; coincides with specs crowded long (context only) and negative dealer gamma."
+  },
+  {
+   "name": "Divergence",
+   "value": "warnings_lit 9, all type rsi (1 headline: momentum not keeping up with price; 8 on individual markets)",
+   "reading": "R10: one family, not a pile. Agrees with the vol gap, disagrees with broadening breadth. Weigh as a straw."
+  },
+  {
+   "name": "Scenario layer",
+   "value": "DISINFLATION_GOLDILOCKS 0.8333 (share of conditions met, NOT a probability); runner-up REFLATION within 12%; coverage 1.0; contested",
+   "reading": "C37 contested. Missing Goldilocks condition: crude-oil proxy rising (+14.32% 20d, +2.04% 5d) is the inflation tell that feeds Reflation. Do not pick a winner."
+  },
+  {
+   "name": "Calendar",
+   "value": "FOMC 10-28 14:00 ET (today); Core PCE, GDP, claims 10-29 08:30 ET; ISM mfg 11-02; ISM services 11-04; claims 11-05; payrolls 11-06",
+   "reading": "4 of 8 listed events land within 2 sessions, inside a negative-gamma, knife-edge window. The artifact (built 08:54 SGT) is pre-FOMC."
+  },
+  {
+   "name": "Freshness (C28/C29)",
+   "value": "generated 2026-10-28T08:54+08:00; vol as_of 10-26 (2d behind); CFTC as_of 10-20 (8d behind); artifact oldest_source says 10-26",
+   "reading": "oldest_source excludes the CFTC leg, so true oldest leg is 10-20. The leg driving the call (vol gap) is two sessions old and has not seen today's FOMC."
+  }
+ ],
+ "key_levels": [
+  {
+   "market": "Russell 2000 futures (trend flip)",
+   "level": 2808.64,
+   "distance_pct": -0.61,
+   "meaning": "Below: trend funds turn buyer to seller together. Nearest line; specs crowded long (context)."
+  },
+  {
+   "market": "S&P 500 ETF (gamma flip)",
+   "level": 774.63,
+   "distance_pct": 0.65,
+   "meaning": "Above: dealers stop amplifying and start damping. Spot is below, on the amplifying side."
+  },
+  {
+   "market": "Nasdaq 100 ETF (call wall)",
+   "level": 730.0,
+   "distance_pct": 1.21,
+   "meaning": "Heaviest call positioning; rallies tend to meet dealer selling. Flip at 730.11 (+1.23%) sits on top of it."
+  },
+  {
+   "market": "2Y note (trend flip)",
+   "level": 103.28,
+   "distance_pct": 1.26,
+   "meaning": "Above: trend funds turn seller to buyer (they are net short rates, signal -0.57)."
+  },
+  {
+   "market": "Single-stock vs index gap (elevated band)",
+   "level": 23.594,
+   "distance_pct": -1.28,
+   "meaning": "Gap is 23.9. Below 23.594 the hidden-stress state lapses; it only warns while still widening."
+  },
+  {
+   "market": "S&P 500 ETF (call wall)",
+   "level": 780.0,
+   "distance_pct": 1.34,
+   "meaning": "Cap above the flip: even after the regime calms, the heaviest call strike sits just overhead."
+  },
+  {
+   "market": "S&P 500 ETF (put wall)",
+   "level": 755.0,
+   "distance_pct": -1.9,
+   "meaning": "Usual support; losing it removes the cushion while dealers are on the amplifying side."
+  },
+  {
+   "market": "RSP/SPY breadth (20-day average)",
+   "level": 0.277071,
+   "distance_pct": -1.96,
+   "meaning": "Ratio is 0.2826. Crossing below turns before the regime label does; would corroborate stress."
+  },
+  {
+   "market": "Nasdaq 100 ETF (put wall)",
+   "level": 700.0,
+   "distance_pct": -2.95,
+   "meaning": "Usual support; losing it removes the cushion."
+  },
+  {
+   "market": "S&P 500 futures (trend flip)",
+   "level": 7419.66,
+   "distance_pct": -4.36,
+   "meaning": "Below: trend funds turn buyer to seller together. Far enough that it is a regime line, not a today line."
+  },
+  {
+   "market": "VIX (already-priced threshold)",
+   "level": 25.0,
+   "distance_pct": 42.69,
+   "meaning": "Above: protection already expensive (R11); a spike through it is not a fresh reason to act."
+  },
+  {
+   "market": "VIX (premium-selling threshold)",
+   "level": 15.0,
+   "distance_pct": -14.38,
+   "meaning": "Below, with dealers damping, tape favours selling premium over chasing breakouts."
+  },
+  {
+   "market": "RSP/SPY breadth (12m high)",
+   "level": 0.298794,
+   "distance_pct": 5.72,
+   "meaning": "Broadening reaching the top of its range is late, not early (R1/R4)."
+  }
+ ],
+ "what_would_change_it": [
+  "Gap falls below 23.594 (0.31 pts) or gap_change_20d turns negative: hidden_stress lapses; negative change reads ELEVATED_EASING (R6), where stress is leaving and buying downside buys the end of the move.",
+  "S&P 500 ETF trades above 774.63 (+0.65%): dealers damp instead of amplify; the knife-edge resolves up, with call wall 780 overhead. Below put wall 755 (-1.9%) the cushion is gone.",
+  "RSP/SPY slips under its 20-day average 0.277071 (-1.96%) with warnings lighting in a second family: the stress call is corroborated (a pile, not a straw).",
+  "Russell 2000 futures below 2808.64 (-0.61%): trend selling arrives together; 2Y note above 103.28 (+1.26%): trend buying in rates.",
+  "VIX through 25: protection already priced (R11). VIX under 15 with dealers damping: premium-selling tape.",
+  "Scenario contest resolves: oil keeps rising and Reflation overtakes Goldilocks, or oil fades and Goldilocks leads cleanly. Either removes the C37 tension.",
+  "Today's FOMC (14:00 ET) and 10-29 PCE/GDP: vol leg (as of 10-26) must be re-read after them; the call is pre-event."
+ ],
+ "limits": [
+  "Artifact status OK (every input available) = LIVE. No degraded leg. Read still carries the limits below.",
+  "Artifact limit: two macro scenarios fit today's data almost equally well; treat the overlap as the honest read, not the winner.",
+  "Artifact limit: a scenario score is the share of that story's conditions met; not a probability, never fitted to history.",
+  "Artifact limit: this layer does not size, name a ticker or place anything; it gives a family and a multiplier on the PM's own risk budget.",
+  "INTERNAL INCONSISTENCY: artifact so_what says 0.5x is 'cut because the trend is crowded', but trend share_at_an_extreme is 0.0, size_dial 1.0 and its own why says positioning is not crowded. how_the_size_was_reached shows CTA dial 1.00 capped at 0.50 by the family. Carried 0.5 as the family cap; no card rule cuts further.",
+  "CONTESTED (C37): the call (hedge the downside) vs breadth broadening, mid-range, gate passed, and a Goldilocks-led, contested scenario. Surfaced, not resolved; Crown does not pick.",
+  "Classification is marginal: 0.31 pts over the elevated band, +0.51 growth. Vol leg is 2 sessions old; CFTC leg is 8 days old and omitted from the artifact's oldest_source.",
+  "Gamma map rests on a stated convention (customers long calls and puts), not observed side; every dealer reading inherits that assumption.",
+  "Standalone rule (charter 10.6): the packet also carried srm, macro_weather, thematic_baskets, intermarket and regime blocks; none were read into this form.",
+  "Weather only: no ticker, position, order or probability. The multiplier applies to the PM's own risk per trade."
+ ]
+}

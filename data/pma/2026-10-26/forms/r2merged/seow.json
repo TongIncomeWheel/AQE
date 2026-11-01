@@ -1,0 +1,1274 @@
+{
+ "voice": "seow",
+ "date": "2026-10-26",
+ "round": 2,
+ "declarations": [
+  "Method limit: ma_40 and CCI are not served, so no full five-condition set-up (C3) is verified for any name; every SUPPORT is capped at conviction 3 and most sit at 1 or 2.",
+  "Substitution: the C6 gate is read from rs_spy_20d (20-day) because the index return over the longer window is not served; ma_50 is a caution on slow-average order only, never a stand-in for ma_40.",
+  "Valen reads RISK OFF with SPY and QQQ daily_buy_signal False; loss side first (C20), so waits and retests are preferred to market entries. This seat nominated nothing in Round 1."
+ ],
+ "data_gaps": [
+  {
+   "field": "ma_40",
+   "impact": "C1/C2 slow-average leg unverifiable; conviction capped"
+  },
+  {
+   "field": "cci20",
+   "impact": "C3 stretch leg unverifiable; no full set-up for any name"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "ROKU",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Tight coil under the high: from_52w_hi -0.92, run_10d 3.75, ext_atr20 2.18, rs_spy_20d 5.34 passes C6. No dip (structure_shift RANGE) and ma_20 154.12 sits under ma_50 155.29, so the uptrend leg is open; ma_40/CCI unserved. Buy stop over the prior high only.",
+   "falsifier": "Close below ma_40 or below the 20-day base low before the buy stop over the prior-day high fires.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:base_low_20d",
+     "close_below:ma_40"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": "CCI stretch leg not exported; valuation is Lynch's call, not mine."
+   }
+  },
+  {
+   "ticker": "ESTC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leader, not a dip: rs_spy_20d 17.71, from_52w_hi 0.0, mp 77.0 STRONG, but sma_dist 13.25 and rs_leadership IN-LINE. C3: never buy the extension. Act on a ma_20 94.57 retest with a buy stop over the prior high. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest, or structure_shift flipping to BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CART",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Rank 1, rs_spy_20d 32.15, structure 89.5, but ext_atr20 4.33, run_10d 18.17 and day_vol 4.99: no dip to grade, and my only entry (a ma_20 47.78 retest) is far under entry 56.44. R14: extension is a weight, so no OPPOSE. Event filter is not mine.",
+   "falsifier": "Wrong to stand aside if it digests on quiet volume above ma_20 and then clears the prior-day high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EOG",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Fresh high, rs_spy_20d 17.63, mp 87.0 STRONG, but ext_atr20 3.36 and sma_dist 10.48: no dip. One of nine energy tickers is one bet; if only one energy name is carried my pullback fits are DVN and OXY. Entry only on a ma_20 149.65 retest. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest, or rs_spy_20d turning negative.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Right shape, unproven trend: sma_dist 0.42, ext_atr20 1.13, elder_pattern CORRECTION_REENTRY, BULLISH_BOS. But ret_63d -4.18 cannot be tested against the index and ma_20 40.52 sits under ma_50 41.75; ma_40/CCI unserved. Four of five is not a set-up (C3).",
+   "falsifier": "Wrong if ma_40 is served under an up-sloping ma_20 and CCI confirms the stretch.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FIVN",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Stack and RS pass (rs_spy_20d 6.62, ret_63d 47.2, ext_atr20 1.38) but the slope leg fails: Valen says its 21-day average is not rising. elder_pattern INTERRUPTED, structure 43.6 conflicts with BULLISH_BOS, rs_leadership LAGGARD. Wait for a ma_20 34.65 retest; days_to_earnings 10.",
+   "falsifier": "Close below ma_40, or no hold at the ma_20 retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SAIL",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "RS pass (rs_spy_20d 7.05, ret_63d 42.05, ext_atr20 1.57) but Valen says its 21-day average is not rising (C2 slope), mp 43.0 BUILDING, elder_pattern INTERRUPTED. Wait for a ma_20 19.98 retest. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40, or no hold at the ma_20 retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBY",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "New high, rs_spy_20d 11.82, ret_63d 12.91, but run_10d 14.78, ext_atr20 3.09 and sma_dist 11.89: a thrust, not a dip. C3: never buy the extension. Take it only on a ma_20 90.22 retest and a buy stop over the prior high. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest, or structure_shift flipping to BEARISH_CHOCH.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "COST",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "A rebound, not leadership: rs_rank_pct 43.62, ret_6m -0.77, from_52w_hi -8.32; rs_spy_20d 10.2 passes C6 on the 20-day window only. ma_20 958.15 is over ma_50 938.86 but ext_atr20 2.8: a thrust, no dip. Entry on a ma_20 retest; ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EQNR",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Strong tape (rs_spy_20d 17.19, mp 75.0 STRONG) but ext_atr20 3.49, run_10d 13.51, sma_dist 12.4: no dip. Energy cluster, one bet. Entry only on a ma_20 44.11 retest; ret_12m 103.67 is late-stage. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNQ",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Fresh high with rs_spy_20d 17.61, mp 89.0 STRONG, structure 83.2, but ext_atr20 3.26, sma_dist 9.71 and no dip. In my method it is a wait for the ma_20 50.62 retest. Energy cluster, one bet. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CDW",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "ma_20 144.6 only just clears ma_50 144.56, so the trend is days old, then run_10d 16.14 and ext_atr20 3.71: a thrust, no dip. rs_spy_20d 23.39 passes C6. Entry only on a ma_20 retest. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VRNS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Nearest to a real touch: ext_atr20 0.46, run_10d -2.47, day_vol 0.69 quiet, stack up (ma_20 48.24 over ma_50 46.32), rs_spy_20d 7.16. But from_52w_hi -22.41 leaves the short-dip grade unproven; div_bear_count 5 is not my instrument and CCI is unserved.",
+   "falsifier": "Close below ma_40 or a volume-backed break under the dip low.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TENB",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Real strength (rs_spy_20d 34.62, mp 75.0 STRONG) but overextended: sma_dist 21.67, ext_atr20 2.49; no dip. div_bear_count 2 is not my instrument. Entry only on a ma_20 38.91 retest with a buy stop over the prior high. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DBX",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Pre-break at the high: entry 37.83 under pivot_high 38.17, from_52w_hi 0.0, rs_spy_20d 18.52, ext_atr20 2.61, day_vol 0.92. ma_20 34.93 is level with ma_50 34.96 so the trend leg is open; ma_40/CCI unserved. Buy stop over the prior high, stop under the base.",
+   "falsifier": "Close below ma_40 or below the 20-day base low before the buy stop fires.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:base_low_20d",
+     "close_below:ma_40"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Overextended flag (sma_dist 20.06) though ext_atr20 1.55 and run_10d 2.88 are orderly; rs_spy_20d 18.99, ret_63d 72.07, rs_leadership IN-LINE. No dip: buy only on a ma_20 118.79 retest. div_bear_count 1; ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GTLB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leader (rs_spy_20d 21.6, ret_63d 71.17, mp 77.0 STRONG) with a dip-reclaim (elder_pattern CORRECTION_REENTRY), ext_atr20 1.49, run_10d 2.16. Held to 2 by sma_dist 15.73, div_bear_count 4 and flow 31.6. Buy stop over the prior high after a ma_20 52.4 touch. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40, or no hold at ma_20 on the touch.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HLT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Order intact (ma_20 332.71 over ma_50 322.72); rs_spy_20d 12.84 and ret_63d 5.68 pass C6. ext_atr20 2.28, run_10d 7.06, from_52w_hi -3.48 is an orderly shelf but no dip. mp FADING is an R13 label, not a reason. Buy stop over the prior high after a ma_20 touch; ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40, or no hold at ma_20 on the touch.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Fresh BULLISH_BOS at the high (from_52w_hi -0.52), rs_spy_20d 15.27, ret_63d 16.82; but ma_20 26.63 sits under ma_50 26.97 so the trend leg is open, ext_atr20 2.35. Base-break entry: buy stop over the prior high, stop under the breakout bar. ma_40/CCI unserved.",
+   "falsifier": "Close below the breakout bar low or below ma_40.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_40"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Stack up (ma_20 66.57 over ma_50 65.81), rs_spy_20d 14.98, ret_63d 9.5, ext_atr20 1.67, run_10d 7.36 orderly, BULLISH_BOS. No dip: wait for a ma_20 66.57 touch and a buy stop over the prior high. Earnings swing to loss is Lynch's; ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40, or no hold at ma_20 on the touch.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OUT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend and RS legs open: ret_63d -3.78 cannot be tested against the index, ma_20 29.62 sits under ma_100 30.62, rs_rank_pct 50.06. The pullback grade is fine (ext_atr20 2.14, run_10d 3.5, day_vol 0.69) but there is nothing to buy until C2 and C6 verify.",
+   "falsifier": "Wrong to stand aside if ma_40 is served under a rising ma_20 and the index test passes.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DHR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Closest fit to my set-up: ma_20 223.27 clearly over ma_50 216.13, ext_atr20 1.04, run_10d 4.86 on quiet day_vol 0.8, and Valen U&R MET (under the 9-day average, closed back above). rs_spy_20d 4.15 and ret_63d 17.3 pass C6. ma_40/CCI unserved so no full set-up.",
+   "falsifier": "A close below the prior-day low before the buy stop fires, or any close below ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": "CCI stretch leg not exported; valuation (Lynch CONTRADICT) is not my test."
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Quality tape (rs_spy_20d 11.33, structure 84.2) but ext_atr20 3.29: no dip. Same sector as held V and SLDE: adding MA stacks Financials exposure on a name I would not add to. Entry only on a ma_20 590.19 retest; ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SLB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No uptrend to buy: ma_20 49.52 is under ma_50 52.47, ma_100 51.23 and ma_200 51.26, Valen says its 21-day average is not rising, rs_rank_pct 33.78, ret_6m -5.5. A bounce under overhead averages, not a pullback (C2, C6).",
+   "falsifier": "Wrong if ma_20 turns up through ma_50 and rs_rank_pct climbs; then it is a pullback candidate.",
+   "opposing_case": "Best case: elder 10.0 CORRECTION_REENTRY, lens_positive 4 and squeeze_breakout_state BREAKOUT_UP on day_vol 1.55 with sma_dist 1.12: a fresh turn off the lows on volume."
+  },
+  {
+   "ticker": "CVX",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Strong tape (rs_spy_20d 15.54, mp 93.0 STRONG, from_52w_hi 0.0) but ext_atr20 3.73 and sma_dist 10.83: no dip. Energy cluster is one bet. Wait for a ma_20 215.37 retest. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OXY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Dip shape: Valen U&R MET (under the rising trendline, closed back above), elder_pattern CORRECTION_REENTRY, ext_atr20 2.56, rs_spy_20d 14.33. But ma_20 59.99 is level with ma_50 59.82, so the trend leg is open. Of the energy pile OXY and DVN fit my pullback best. ma_40/CCI unserved.",
+   "falsifier": "A close below the prior-day low before the buy stop fires, or any close below ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SLDE",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Overextended: sma_dist 16.88, ext_atr20 3.86, run_10d 13.56, though rs_spy_20d 25.07 and mp 93.0 STRONG are real. Financials, same sector as held V. No dip; entry only on a ma_20 25.31 retest. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DVN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Dip shape: Valen U&R MET (under the 9-day average, closed back above), elder_pattern CORRECTION_REENTRY, ext_atr20 1.72, rs_spy_20d 10.7, from_52w_hi -1.31. ma_20 48.8 is level with ma_50 48.53 so the trend leg is open. Thin cash is Lynch's test. ma_40/CCI unserved.",
+   "falsifier": "A close below the prior-day low before the buy stop fires, or any close below ma_40.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MAR",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "rs_spy_20d 12.46 passes on 20 days but ret_63d 2.0 is thin; ext_atr20 2.29, order up (ma_20 372.81 over ma_50 356.38), no dip. mp FADING is an R13 label. Wait for a ma_20 touch; atr_caution True means a wide stop. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40, or no hold at ma_20 on the touch.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LNG",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "New high (from_52w_hi 0.0), rs_spy_20d 12.7, ret_63d 16.72, but ma_20 279.22 is level with ma_50 278.49 so the trend leg is open, ext_atr20 2.45, and CORRECTION_REENTRY is a half form. Energy cluster, one bet. Retest of ma_20 only.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No uptrend: ma_20 13.05 under ma_50 13.81 and ma_100 13.2, Valen says its 21-day average is not rising, structure 37.9 conflicts with BULLISH_BOS, from_52w_hi -20.14, elder_pattern INTERRUPTED. A repair bounce, not a pullback (C2, C6).",
+   "falsifier": "Wrong if ma_20 reclaims ma_50 and the 21-day average turns up.",
+   "opposing_case": "Best case: flow 98.7, lens_positive 4, sma_dist 1.35 back over the average and squeeze_breakout_state BREAKOUT_UP on day_vol 1.67: a failed-weakness turn."
+  },
+  {
+   "ticker": "M",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Open legs: ret_63d -3.45 untestable against the index, ma_20 23.16 under ma_100 23.39, mp BUILDING/DECELERATING, day_vol 0.63 quiet. The dip grade is orderly (ext_atr20 1.12, run_10d 6.31) but I cannot confirm the trend or RS gate. Inventory is Lynch's.",
+   "falsifier": "Wrong to stand aside if ma_40 is served under a rising ma_20 and the index test passes.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HIW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No uptrend: ma_20 29.34 under ma_50 30.26 and ma_100 30.72, Valen says its 21-day average is not rising, ret_63d -9.84 lags, from_52w_hi -11.31, rs_spy_20d only 2.87 (C2, C6). Not a pullback within an uptrend.",
+   "falsifier": "Wrong if ma_20 crosses above ma_50 with the 21-day average rising and ret_63d turning positive.",
+   "opposing_case": "Best case: elder 10.0 ACCELERATION, lens_positive 4, lens coil strong, div BULLISH and BULLISH_BOS: a base turning up off the lows."
+  },
+  {
+   "ticker": "GLBE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Stack up (ma_20 39.87 over ma_50 39.4), ext_atr20 0.97, run_10d 2.4, from_52w_hi -2.36, elder 10.0 ACCELERATION; rs_spy_20d 4.44 passes C6 narrowly (rs_leadership IN-LINE). Near the average, no dip: buy stop over the prior high after a ma_20 touch. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40, or no hold at ma_20 on the touch.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Clean stack (ma_20 338.91 over ma_50 329.47), from_52w_hi -0.14, ext_atr20 1.38, but the RS gate is thin: rs_spy_20d 3.43, ret_63d 3.21, mp BUILDING/FLAT. div_bear_count 4 is not my instrument. RANGE, no break: buy stop over the prior high only. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 or below the 20-day base low.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:base_low_20d",
+     "close_below:ma_40"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Open legs: ret_63d -1.0 untestable against the index and ma_20 23.26 under ma_100 23.44. Strong tape (rs_spy_20d 11.73, mp 90.0 STRONG) but ext_atr20 2.81 and no dip. Thorp's calm ranking is not my test. No set-up to grade.",
+   "falsifier": "Wrong to stand aside if ma_40 is served under a rising ma_20 and the index test passes.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "ADD: no. KEEP the held position. C16 adds only after the trade has proved you right, and entry 407.92 is under the fill; ext_atr20 3.35 is also an extension add (C3). Trend intact: rs_spy_20d 12.51, structure 81.1 ABOVE_STRUCTURE. Broker stop 401.15 stands.",
+   "falsifier": "Wrong if it holds ma_20 385.26 and closes back above the fill with rs_spy_20d rising; then an add is earned.",
+   "opposing_case": "Best case: LEADER, rs_rank_pct 85.18, div BULLISH, quiet day_vol 0.85 on the pullback; mp FADING is only an R13 label. A strong name worth adding on a hold."
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "ADD: no. EXIT-CASE on my method; the PM's broker stop 36.66 stands. rs_spy_20d -20.09 fails C6, sma_dist -22.86, structure 11.0 BEARISH_CHOCH, under ma_20 43.4 and vwap14 42.2, AQE HEALTH EXIT. C16: never add to a loser (unrealised -4410.0); past the time stop (C11).",
+   "falsifier": "Wrong if it closes back above ma_20 43.4, structure_shift leaves BEARISH_CHOCH and rs_spy_20d turns positive.",
+   "opposing_case": "Best case: far under its averages, vwap14 42.2 is a mean-reversion target and the broker stop 36.66 caps the loss; Lynch C22 buys only if the story is intact."
+  },
+  {
+   "ticker": "PBI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "UNR_SEAT by rule. Valen U&R MET is a 9-day-average reclaim, not my ma_20/ma_40 test. structure_shift BEARISH_CHOCH 63.2, ma_20 16.88 level with ma_50 16.86 and under ma_100 17.2, ret_63d -4.41 untestable: trend and RS legs open. I would act only after structure repairs.",
+   "falsifier": "Wrong to stand aside if structure_shift repairs and ma_40 is served under a rising ma_20.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ACN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength is real (rs_spy_20d 43.07, ret_63d 61.87, mp 97.0 STRONG) but ext_atr20 3.56, sma_dist 27.35, run_10d 19.28 and Valen parabolic risk warning CRACKED: C4 voids the dip I would buy (ma_20 213.55 retest). R14: extension is a weight, so ABSTAIN, not OPPOSE.",
+   "falsifier": "Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LIN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Flat, not trending: ret_63d 0.36, ret_6m -0.29, rs_rank_pct 44.84, ma_20 488.98 under ma_100 495.8 and ma_200 491.28. Valen U&R MET (trendline reclaim) is not my test; C2 and C6 legs are open. Nothing to grade as a pullback.",
+   "falsifier": "Wrong to stand aside if ma_20 turns up over ma_40 and ret_63d turns clearly positive.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Vertical run disqualifies the dip (C4): run_10d 57.88, ext_atr20 7.21, sma_dist 55.13, Valen parabolic risk warning WARNING. Not an extension veto (R14): the method rejects the pullback entry itself. I would look at a ma_20 31.02 retest only after a fresh base.",
+   "falsifier": "Wrong if it digests in a tight multi-day base above ma_20 and then clears the prior-day high.",
+   "opposing_case": "Best case: rs_spy_20d 89.74, AQE rank 3, mp 97.0 STRONG, structure 86.7: the strongest tape on the list, and parabolic runs can keep going."
+  },
+  {
+   "ticker": "DXC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength is real (rs_spy_20d 52.56, mp 100.0 STRONG, elder 10.0 SUSTAINED) but ext_atr20 4.67, sma_dist 36.6, run_10d 29.76 and Valen parabolic WARNING: C4 voids the dip entry; ma_20 12.82 is far below. R14 forbids an extension veto, so ABSTAIN. Cash yield 0.487 is untrusted (Lynch).",
+   "falsifier": "Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Counter-trend rip, not an uptrend: structure_shift BEARISH_CHOCH 51.6, ma_20 73.16 under ma_50 75.9 and ma_100 75.83, from_52w_hi -21.08, run_10d 19.93 with Valen parabolic WARNING. C2 leg fails and C4 voids the dip; rs_spy_20d 51.45 is real strength.",
+   "falsifier": "Wrong if ma_20 crosses above ma_50 and structure_shift repairs from BEARISH_CHOCH.",
+   "opposing_case": "Best case: rs_spy_20d 51.45, mp 77.0 STRONG, elder 10.0 SUSTAINED, runner True: a violent turn off a low that can run further."
+  },
+  {
+   "ticker": "BOX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength is real (rs_spy_20d 39.04, ret_63d 43.22, mp 100.0 STRONG, stack up) but ext_atr20 5.24, sma_dist 22.53, run_10d 18.66: ma_20 37.36 is far under entry 43.18, so nothing to buy under C3. R14: extension is a weight, so ABSTAIN, not OPPOSE.",
+   "falsifier": "Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NTSK",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Real strength (rs_spy_20d 38.88, ret_63d 103.35, rs_rank_pct 99.39, stack up) but overextended: sma_dist 40.42, ext_atr20 3.58. No dip; entry only on a ma_20 19.73 retest, a deep one. div_bear_count 2 is not mine; deep losses are Lynch's. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "rs_spy_20d 38.79, ret_63d 32.94, stack up, mp 97.0 STRONG, but run_10d 20.79, sma_dist 29.37 and ext_atr20 3.47: a thrust, no dip. Entry only on a ma_20 20.73 retest. Shrinking sales and debt are Lynch's. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Rebound from a low, not a trend: from_52w_hi -40.02, ret_12m -40.49, ma_20 12.98 level with ma_50 12.95 and under ma_200 13.41, ext_atr20 4.02. Tape is strong (rs_spy_20d 36.83) but the trend leg is open and nothing sits near ma_20. R14: no extension veto.",
+   "falsifier": "Wrong to stand aside if ma_20 rises clearly over the slower averages and it holds a base.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Rebound from a downtrend: from_52w_hi -36.53, ret_12m -19.79, ma_20 17.46 under ma_50 17.58 and ma_200 18.21; run_10d 21.88, ext_atr20 3.61. rs_spy_20d 35.08 is real but the trend leg is open and there is no dip to buy. rs_rank_pct 60.87 is middling.",
+   "falsifier": "Wrong to stand aside if ma_20 rises clearly over the slower averages and it holds a base.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ASAN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength (rs_spy_20d 34.73, ret_63d 55.1, stack up) but Valen parabolic WARNING, ext_atr20 3.72, sma_dist 25.6, run_10d 19.36: C4 voids the dip entry. R14: extension is a weight, so ABSTAIN. ret_12m -16.06; Lynch: loss-making and levered.",
+   "falsifier": "Wrong to stand aside if it builds a multi-day base above ma_20 and clears the prior-day high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ZS",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "rs_spy_20d 33.64, ret_63d 73.22, stack up, but overextended: sma_dist 29.37, ext_atr20 3.32; no dip. Entry only on a ma_20 216.25 retest. div_bear_count 3 is not my instrument. ma_40/CCI unserved.",
+   "falsifier": "Close below ma_40 on the retest.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_40",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_40",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of3.json",
+   "bytes": 11338,
+   "votes": 17,
+   "sha256": "66b558ea5641"
+  },
+  {
+   "file": "seow.part2of3.json",
+   "bytes": 11272,
+   "votes": 17,
+   "sha256": "f3ca5753728a"
+  },
+  {
+   "file": "seow.part3of3.json",
+   "bytes": 11500,
+   "votes": 17,
+   "sha256": "a1d3a8a809ac"
+  }
+ ]
+}

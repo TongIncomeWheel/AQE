@@ -1,0 +1,289 @@
+{
+ "voice": "weis",
+ "date": "2026-10-23",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "ACN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "W23 uptrend gate passes: ma20 209.89 over ma50 194.4 over ma200 192.39. U&R MET: trendline undercut and closed back above, a minor spring (W6) in an uptrend (W10). Single-bar read, follow-through not served; div BEARISH/2 and ext_atr20 5.11 weigh.",
+   "falsifier": "A close back under the undercut trendline or under bar_low next sessions: downward follow-through means the dip was a break, not a spring.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ISRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "U&R MET: rising trendline undercut and reclaimed near ma200 436.91, a spring read. Trend gate mixed (W23): ma20 418.24 over ma50 395.04 rising but ret_12m -4.08 and ma200 still above both. Small bet; day_vol 1.25 on the reclaim, flow 88.2.",
+   "falsifier": "A daily close under ma_200 or bar_low: in a longer downtrend a failed spring is short evidence (W10).",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_200"
+    ],
+    "wait": [
+     "bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XOM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Cleanest W23 gate here: ma20 169.72 over ma50 165.29 over ma100 156.26 over ma200 152.83, from_52w_hi -0.42. U&R MET: shallow dip under the 9-day average closed back above, an ordinary minor spring in an uptrend correction (W10). mp FADING is R13 default, not decay.",
+   "falsifier": "Downward follow-through: a close under bar_low after the reclaim, or a close under ma_20, means the spring failed.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Momentum is real: rs_spy_20d 86.31, at from_52w_hi 0.0, uptrend gate passes. But run_10d 61.14% and ext_atr20 7.2: I do not buy the breakout (anti-chase). My entry is a shallow undercut of bar_low that fails to follow through (W6/W10). Weight, not veto (R14).",
+   "falsifier": "A penetration of bar_low too deep to be a spring (W8), or a heavy-volume down day with real downward progress (W2).",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low-0.5atr"
+    ],
+    "wait": [
+     "bar_low",
+     "prior_bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Uptrend gate passes: ma20 12.55 over ma50 11.68 over ma200 11.54, elder SUSTAINED, adx 41.6, from_52w_hi 0.0. Real momentum, but ext_atr20 4.97 and parabolic warning: my entry is a failed dip under bar_low (spring), not the high.",
+   "falsifier": "A break under bar_low that keeps going on the next bar (no spring), or a heavy-volume bar with no upward progress at the high (W2).",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low-0.5atr"
+    ],
+    "wait": [
+     "bar_low",
+     "prior_bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RXO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Uptrend gate passes: ma20 26.4 over ma50 23.1, ma200 20.64. run_10d -0.03% with day_vol 0.67 near from_52w_hi -1.3: a quiet pause after the run, read as contraction (W21) with a bullish preceding read; W4, low volume is not bearish. Proxy read, inside_bar not served.",
+   "falsifier": "The hinge resolves down: a wide-range close under ma_20 means the pause was distribution, not contraction.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "bar_low"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KSS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Momentum real: rs_spy_20d 44.16, from_52w_hi 0.0, uptrend gate passes (ma20 20.39 over ma50 18.9 over ma200 16.87). day_vol 2.12 is heavy effort at the high; result not served, so W2 cannot be cleared. Entry on a failed dip under bar_low, not the high.",
+   "falsifier": "A heavy-volume day at the high with little upward progress then a close under bar_low: effort without result, the leg is spent (W2).",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low-0.5atr"
+    ],
+    "wait": [
+     "bar_low",
+     "prior_bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W23 trend gate fails: structure 38.9 BEARISH_CHOCH, ma20 71.71 under ma50 76.04, ret_12m -11.69, from_52w_hi -22.76. A rally inside an unconfirmed trend; W14 says rallies against a down structure fail more often. Advisory in the momentum lane.",
+   "falsifier": "The structure flips up: ma_20 crosses above ma_50 and the choch clears while price holds over ma_200.",
+   "opposing_case": "Strong short-term thrust: rs_spy_20d 42.47, elder 10.0, coil and insti_money lenses strong, price above every average. A turn may already be under way."
+  },
+  {
+   "ticker": "NAVN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Long trend up: ma200 19.19 far below, ret_6m 68.04. ma20 23.14 under ma50 24.75 marks a correction now being repaired; price back over ma50 with mp STRONG/ACCELERATING and ext_atr20 2.7. A correction ending inside an uptrend (W10). No spring bar served.",
+   "falsifier": "A daily close back under ma_50 after the reclaim: the correction did not end, it resumed.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_50"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_50-0.5atr"
+    ],
+    "wait": [
+     "ma_50"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Uptrend gate passes cleanly: ma20 36.77 over ma50 35.05 over ma100 31.84 over ma200 28.31, elder SUSTAINED, structure 90.5. Momentum real; ext_atr20 5.32 is a weight. Entry on a failed dip under bar_low, not at the high.",
+   "falsifier": "A break under bar_low with downward follow-through on the next bar, or a heavy-volume bar at the high with small progress (W2).",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low-0.5atr"
+    ],
+    "wait": [
+     "bar_low",
+     "prior_bar_low"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "W21 hinge resolved up: ma20 77.68, ma50 77.7, ma100 77.76 sat flat (a contraction) and price broke out to from_52w_hi 0.0 over ma200 67.42. Contraction with a bullish preceding read. ext_atr20 3.92 weighs; entry on the first failed dip.",
+   "falsifier": "Price falls back into the old flat range: a close under ma_20 means the break failed (an upthrust).",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "bar_low",
+     "ma_20"
+    ],
+    "chase": "close_above:entry+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W23 primary trend still down: ret_12m -40.94, from_52w_hi -40.76, ma20 12.78 under ma50 12.91 and under ma200 13.43. A sharp rally (run_10d 19.97%) inside a long downtrend; W14, rallies there fail more often. Advisory in the momentum lane.",
+   "falsifier": "Price holds over ma_200 on a pullback and ma_20 crosses above ma_50 and ma_200: the primary trend has turned.",
+   "opposing_case": "Thrust is broad: mp STRONG/ACCELERATING, flow 92.1, structure 90.5, elder 10.0, AQE rank 8. Price is above every average; a primary trend change may be starting."
+  },
+  {
+   "ticker": "KD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "W23 primary trend still down: ret_12m -46.95, from_52w_hi -47.44, ma20 12.31 under ma50 12.62 and under ma200 13.91. run_10d 27.95% is a rally against the trend; W14 says those fail more often. Advisory in the momentum lane.",
+   "falsifier": "Price holds over ma_200 on the first pullback and ma_20 crosses above ma_200: the primary trend has turned.",
+   "opposing_case": "elder SUSTAINED, mp STRONG/ACCELERATING, structure 84.2, price above every average: a base-turn rally that could become a new uptrend."
+  }
+ ]
+}

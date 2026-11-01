@@ -1,0 +1,248 @@
+{
+"voice": "livermore",
+"date": "2026-10-23",
+"round": 2,
+"votes": [
+{
+"ticker": "ACN",
+"vote": "SUPPORT",
+"conviction": 3,
+"reason": "Trend real: ret_63d 76.03, mp 97.0 STRONG/ACCELERATING, adx 35.47. U&R MET = a normal reaction to the trendline, closed back above. Not yet a new high: from_52w_hi -10.33, ret_12m 3.29. I buy only when it clears the pivot (C5, C19).",
+"falsifier": "A one-day fade of 1.5 ATR off the day's high, or a close under yesterday's low, before the pivot is cleared: the reaction was not normal.",
+"conditions": {
+"lane": "CONTINUATION",
+"buy": [
+"close_above:pivot_high"
+],
+"confirm": [
+"vol_x_ge:1.2"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:bar_low"
+],
+"wait": [],
+"chase": "close_above:pivot_high+5pct",
+"tf": "EOD",
+"non_price": null
+}
+},
+{
+"ticker": "ISRG",
+"vote": "OPPOSE",
+"conviction": 2,
+"reason": "No established uptrend to resume (C5): from_52w_hi -25.13, ret_6m -7.3, rs_rank_pct 29.52, ma50 395.04 under ma200 436.91. The reclaim is a natural rally inside a down column (C18), not a new high.",
+"opposing_case": "U&R MET at the rising trendline, flow 88.2, elder 10.0, ret_63d 31.51 and a sector reading strong: a turn could be starting and the reclaim day is a defined place to be wrong.",
+"falsifier": "A daily close above the 52-week closing high with rising volume would show the down column is over and I was wrong to stand against it."
+},
+{
+"ticker": "XOM",
+"vote": "SUPPORT",
+"conviction": 4,
+"reason": "My shape: established trend (ret_12m 58.13, ma20 169.72 > ma50 165.29 > ma200 152.83), a normal reaction to the 9-day average reclaimed (U&R MET), sitting from_52w_hi -0.42. Buy the new closing high. mp FADING is flat-at-high (R13).",
+"self_counter": "day_vol 1.01 and energy 58.8 show no urgency; insti_money warn; Energy reads Momentum Fading. One name is not a group call (C14) and I have no second energy name confirming.",
+"falsifier": "A 1.5 ATR fade off a new-high day, or a close back under ma_20: the breakout failed and the trend column ended (C20).",
+"conditions": {
+"lane": "BREAKOUT",
+"buy": [
+"close_above:high_52w_close"
+],
+"confirm": [
+"vol_x_ge:1.2",
+"rs_today_gt_spy"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:ma_20"
+],
+"wait": [],
+"chase": "close_above:high_52w_close+4pct",
+"tf": "EOD",
+"non_price": null
+}
+},
+{
+"ticker": "BRZE",
+"vote": "SUPPORT",
+"conviction": 3,
+"reason": "Leader at its high: rank 1, from_52w_hi 0.0, ret_63d 110.75, mp 97.0 STRONG/ACCELERATING, day_vol 1.54. Momentum is real. Weight (R14): run_10d 61.14 and ext_atr20 7.2 is an abnormal run; enter only on a fresh high, step off fast.",
+"falsifier": "A single-day fade of 1.5 ATR off the high, or a close under yesterday's low: the danger signal on a vertical run (C7).",
+"conditions": {
+"lane": "CONTINUATION",
+"buy": [
+"h1_close_above:bar_high"
+],
+"confirm": [
+"vol_x_ge:1.4",
+"above_vwap_s"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:bar_low"
+],
+"wait": [],
+"chase": "close_above:bar_high+5pct",
+"tf": "1H",
+"non_price": null
+}
+},
+{
+"ticker": "DXC",
+"vote": "SUPPORT",
+"conviction": 4,
+"reason": "New-high leader: from_52w_hi 0.0, mp 100.0 STRONG/ACCELERATING, adx 41.6, elder SUSTAINED, ret_12m 21.18, structure 86.7. The tape says up; I add only on higher prices (C6).",
+"self_counter": "run_10d 29.99 and sma_dist 37.66 make this late in the leg; Parabolic warning 2/4; insti_money warn. My danger-signal translation is coarse on a low-priced name (atr 0.71).",
+"falsifier": "A 1.5 ATR fade off a new-high day, or a close under yesterday's low.",
+"conditions": {
+"lane": "CONTINUATION",
+"buy": [
+"h1_close_above:bar_high"
+],
+"confirm": [
+"vol_x_ge:1.2",
+"above_vwap_s"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:bar_low"
+],
+"wait": [],
+"chase": "close_above:bar_high+5pct",
+"tf": "1H",
+"non_price": null
+}
+},
+{
+"ticker": "RXO",
+"vote": "SUPPORT",
+"conviction": 4,
+"reason": "Textbook C5/C8: established trend (ret_12m 57.09, adx 44.33), now a quiet normal reaction (run_10d -0.03, day_vol 0.67) just under the high (from_52w_hi -1.3). Buy the new closing high, not the rest. mp FADING is R13 flat-at-high.",
+"self_counter": "flow 34.2 is weak, rank 197, mp DECELERATING and insti_money warn: the rest may be distribution, not a pause. Industrials has no second name here to confirm (C14).",
+"falsifier": "A close under ma_20 before a new high: the reaction stopped being normal (C8, C20).",
+"conditions": {
+"lane": "BREAKOUT",
+"buy": [
+"close_above:high_52w_close"
+],
+"confirm": [
+"vol_x_ge:1.4"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:ma_20"
+],
+"wait": [],
+"chase": "close_above:high_52w_close+5pct",
+"tf": "EOD",
+"non_price": null
+}
+},
+{
+"ticker": "KSS",
+"vote": "SUPPORT",
+"conviction": 4,
+"reason": "New high on volume: from_52w_hi 0.0, day_vol 2.12, mp 97.0 STRONG, ret_12m 51.1, ma20 20.39 > ma50 18.9 > ma200 16.87. ETSY in the same group also at from_52w_hi 0.0: two-stock confirmation (C14).",
+"self_counter": "sma_dist 31.11 and run_10d 23.22 are stretched; mp DECELERATING; sector reads Momentum Fading. A volume burst at a high can be the final 48 hours (C15).",
+"falsifier": "A 1.5 ATR fade off a new-high day or a close under yesterday's low; or ETSY failing to hold its high alongside it (C14).",
+"conditions": {
+"lane": "CONTINUATION",
+"buy": [
+"h1_close_above:bar_high"
+],
+"confirm": [
+"vol_x_ge:1.2",
+"rs_today_gt_spy"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:bar_low"
+],
+"wait": [],
+"chase": "close_above:bar_high+5pct",
+"tf": "1H",
+"non_price": null
+}
+},
+{
+"ticker": "TTAN",
+"vote": "OPPOSE",
+"conviction": 2,
+"reason": "No trend to resume (C5, C18): structure 38.9 BEARISH_CHOCH, from_52w_hi -22.76, ret_12m -11.69, ma20 71.71 under ma50 76.04. run_10d 16.82 is a natural rally in a down column, not a new high.",
+"opposing_case": "rs_spy_20d 42.47, elder 10.0, coil and insti_money both strong, price back over every average: a base may be completing and a turn could be under way.",
+"falsifier": "A daily close above its last pivot high with the up-structure repaired would show the trend turned and I was wrong."
+},
+{
+"ticker": "NAVN",
+"vote": "ABSTAIN",
+"conviction": null,
+"reason": "Cannot test my core rule: from_52w_hi None and ret_12m None, so no new-high read. ma20 23.14 under ma50 24.75, structure 44.2. mp 77.0 STRONG/ACCELERATING says something is starting; I wait for price to confirm (C2).",
+"falsifier": "A close above the pivot high on rising volume with the 20-day back over the 50-day would make this a buy."
+},
+{
+"ticker": "BOX",
+"vote": "SUPPORT",
+"conviction": 4,
+"reason": "Leader at its high: from_52w_hi 0.0, mp 100.0 STRONG/ACCELERATING, adx 42.55, elder SUSTAINED, ret_6m 81.73, MAs stacked ma20 36.77 > ma50 35.05 > ma200 28.31, day_vol 1.35. Buy the next new high (C5, C6).",
+"self_counter": "ext_atr20 5.32 is a NO-BUY flag and most lenses are missing; the run is mature. A failed follow-through above the high is my danger signal (C17).",
+"falsifier": "A 1.5 ATR fade off a new-high day or a close under yesterday's low.",
+"conditions": {
+"lane": "CONTINUATION",
+"buy": [
+"h1_close_above:bar_high"
+],
+"confirm": [
+"vol_x_ge:1.2",
+"above_vwap_s"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:bar_low"
+],
+"wait": [],
+"chase": "close_above:bar_high+5pct",
+"tf": "1H",
+"non_price": null
+}
+},
+{
+"ticker": "ETSY",
+"vote": "SUPPORT",
+"conviction": 3,
+"reason": "Breaking out of a flat base to a new high (C16): from_52w_hi 0.0, ma20 77.68 = ma50 77.7 = ma100 77.76, mp 97.0 STRONG, adx 30.98. KSS confirms in the group (C14). day_vol 1.02 is ordinary.",
+"falsifier": "A 1.5 ATR fade off a new-high day, or a close back under ma_20 into the old base: the breakout failed.",
+"conditions": {
+"lane": "BREAKOUT",
+"buy": [
+"close_above:bar_high"
+],
+"confirm": [
+"vol_x_ge:1.4"
+],
+"wrong": [
+"fade_atr_ge:1.5",
+"close_below:ma_20"
+],
+"wait": [],
+"chase": "close_above:bar_high+5pct",
+"tf": "EOD",
+"non_price": null
+}
+},
+{
+"ticker": "VERX",
+"vote": "OPPOSE",
+"conviction": 2,
+"reason": "A rally inside a down trend (C18): from_52w_hi -40.76, ret_12m -40.94, ma20 12.78 under ma50 12.91 under ma200 13.43. run_10d 19.97 is a natural rally, not a new high; never buy on a low price (C5).",
+"opposing_case": "rank 8, structure 90.5, flow 92.1, mp 93.0 STRONG/ACCELERATING and price above every average: the turn may be real and early.",
+"falsifier": "Price holding above ma_200 while the 20-day crosses above it and a new pivot high is cleared."
+},
+{
+"ticker": "KD",
+"vote": "OPPOSE",
+"conviction": 2,
+"reason": "A rally inside a down trend (C18): from_52w_hi -47.44, ret_12m -46.95, ma20 12.31 under ma50 12.62 under ma200 13.91. run_10d 27.95 is a natural rally, not a new high after an established uptrend (C5).",
+"opposing_case": "elder SUSTAINED, mp 87.0 STRONG/ACCELERATING, structure 84.2 and price above all averages: the down column may be ending.",
+"falsifier": "The 20-day crossing back over the 200-day with a new pivot high cleared on volume."
+}
+]
+}

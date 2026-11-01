@@ -1,0 +1,149 @@
+{
+ "voice": "druckenmiller",
+ "date": "2026-10-28",
+ "regime": {
+  "read": "Risk-on by level, defensive by composition; call is risk-on but UNCONFIRMED and event-gated. GREEN, VIX 17.5, contango. The markets that speak first show no stress (bonds, credit, copper all firm). But this is a rotation tape, not a momentum-leadership advance: S&P 500 is +0.71% in 20d (+5.51% in 63d), Technology is Weakening, and all 8 sectors graded DEPLOY/HOLD read 'Momentum Fading'. Event gate: FOMC 10-28 14:00 ET, then Core PCE, GDP and claims 10-29 08:30 ET.",
+  "momentum_caveat": "Hurst and trend are NOT in this packet (regime block carries vix and level only), so I cannot call TRENDING vs MEAN_REVERT and will not infer it. Proxy evidence leans mean-reverting at sector level: leaders decelerate (divergence -2.5 to -10.5 across the 8 graded sectors) while beaten-down themes bounce. Dealer gamma is negative with spot below the flip, so moves are amplified both ways: every momentum entry carries whipsaw risk until the S&P 500 ETF reclaims 774.63."
+ },
+ "cross_asset": [
+  {
+   "asset": "US dollar [intermarket.uup]",
+   "value": "close 29.12; 5d +0.76%; 20d +1.29%; above 20d avg; Crown dollar flip 99.34 sits 2.95% below",
+   "read": "Bid. A rising dollar beside a bond rally is a quality/defensive pairing, not a reflation pairing; it tightens offshore liquidity at the margin."
+  },
+  {
+   "asset": "Long bonds [intermarket.tlt]",
+   "value": "close 81.63; 5d +1.87%; 20d +4.35%; above 20d avg",
+   "read": "Strongest leg in the cross-asset set: rates falling hard into FOMC. Bonds speak first and say growth-scare/defensive. Crown 2Y and 5Y note flips sit 1.26% and 2.66% above price; trend funds' rates lean is the most negative group (-0.57), so a further rally meets their model changing side."
+  },
+  {
+   "asset": "Credit [intermarket.hyg, hyg_tlt_spread]",
+   "value": "close 77.60; 5d +1.00%; 20d +0.31%; above 20d avg; credit-minus-bonds 5d spread -0.87",
+   "read": "Firm but out-run by duration (20d +0.31% vs +4.35%). No credit stress. A real risk-off needs credit to lead down; it is not."
+  },
+  {
+   "asset": "Gold [macro_weather.gld]",
+   "value": "FALLING; 5d -1.42%",
+   "read": "Soft despite falling yields: the dollar bid is winning and no safe-haven demand is priced. That does not corroborate a stress call."
+  },
+  {
+   "asset": "Copper and copper/gold [macro_weather.cper, copper_gold]",
+   "value": "copper RISING 5d +0.75%; copper/gold RISING 5d +2.21%, 20d +3.16%",
+   "read": "Growth/reflation tilt. Sits awkwardly beside the bond rally: bonds say defensive, copper/gold says cyclical. Unreconciled pair; this is the core of the macro tension."
+  },
+  {
+   "asset": "Oil [macro_weather.uso]",
+   "value": "RISING; 5d +2.04%; 20d +14.32%; large specs crowded SHORT crude as of 10-20 (8 days stale)",
+   "read": "The inflation impulse and the one unmet leg of Crown's leading scenario. Energy is the top-ranked sector on 20d. A crowded-short market that is ripping is a squeeze set-up that works against the crowded-long duration trade if FOMC or PCE runs hot."
+  },
+  {
+   "asset": "Small caps vs large [intermarket.spy_iwm, macro_weather.iwm]",
+   "value": "20d: S&P 500 +0.71% vs Russell 2000 +0.42% (spread +0.29); Russell 5d +1.6%, RISING; Crown Russell flip 2808.64 only 0.61% below",
+   "read": "Small caps are participating but not leading; no risk-appetite surge. Russell is 0.61% above the level where the trend-fund model changes side."
+  },
+  {
+   "asset": "Volatility surface [Crown data points]",
+   "value": "VIX 17.52 CONTANGO; single-stock vol 42.3; gap 23.90 vs elevated line 23.594 (only 1.28% over); 20d change +0.51; implied correlation 9.58",
+   "read": "Index vol calm, single-stock vol high: dispersion, not index panic. The stress flag rests on a thin margin (1.28% over its line, +0.51 in 20d). Volatility data as of 10-26."
+  }
+ ],
+ "rotation": [
+  {
+   "group": "Energy (sector)",
+   "state": "LEADING / EXITING; macro NEUTRAL",
+   "read": "20d +10.84, 5d +0.35: leader decelerating. Carries the oil leg that contests the disinflation story. Oil Services and Midstream themes are IMPROVING / ENTERING."
+  },
+  {
+   "group": "Utilities (sector)",
+   "state": "LEADING / ENTERING; macro NEUTRAL",
+   "read": "20d +7.91, 5d +2.32: the only leading sector still accelerating. Fits falling yields."
+  },
+  {
+   "group": "Staples and Healthcare (sectors)",
+   "state": "LEADING / EXITING; macro NEUTRAL",
+   "read": "20d +6.48 and +4.95, 5d both slightly negative: defensive leadership fading. Healthcare carries an RRG upgrade override (WATCH_UP). Biotech and Insurance themes LEADING / EXITING."
+  },
+  {
+   "group": "Materials (sector)",
+   "state": "IMPROVING / DEEPENING; macro TAILWIND 1.00",
+   "read": "RS-momentum 105.27, best-confirmed cyclical tailwind: copper and copper/gold both rising. Critical Minerals, Gold Miners and Agri themes still LAGGING."
+  },
+  {
+   "group": "Discretionary, Financials, Real Estate (sectors)",
+   "state": "IMPROVING / EXITING; macro TAILWIND 1.18, 1.10, neutral",
+   "read": "Discretionary just upgraded to DEPLOY after 9 sessions at HOLD. All three improving but losing momentum. Homebuilders theme IMPROVING / DEEPENING (RS-momentum 110.80, 7 of 7 above 20d avg), matching falling yields."
+  },
+  {
+   "group": "Industrials (sector)",
+   "state": "IMPROVING / ENTERING; macro TAILWIND 0.74",
+   "read": "Early and unconfirmed: below 20d avg, 20d -0.72. Defense Tech theme IMPROVING / DEEPENING (12 of 13 above 20d avg). Power, Construction and Robotics themes LAGGING."
+  },
+  {
+   "group": "Technology (sector)",
+   "state": "WEAKENING / ENTERING; macro TAILWIND 1.04",
+   "read": "20d -2.58, 5d +2.18, below 20d avg. The macro tailwind is not being paid by price. Mega-cap theme graded AVOID, WEAKENING, 3 of 7 above 20d avg."
+  },
+  {
+   "group": "Inside tech: software and security lead, hardware lags",
+   "state": "themes",
+   "read": "Enterprise Software LEADING (20d +17.42); Cybersecurity LEADING / ENTERING (20d +15.24, 5d +17.51, 11 of 12 above 20d avg). Semiconductors WEAKENING (20d -7.66); Chip Equipment LAGGING (20d -17.80, 2 of 11 above 20d avg); AI Infrastructure LAGGING (20d -7.71)."
+  },
+  {
+   "group": "Speculative high-beta themes",
+   "state": "LAGGING",
+   "read": "Quantum -24.28, Crypto -26.43 (0 of 12 above 20d avg), Space -15.32, Nuclear -17.28, Solar -12.78 over 20d. Bounces in Quantum and Space (5d +6.86, +8.33); Crypto, Nuclear, Solar flat to down. None is above its 20d average: too early to call a turn."
+  },
+  {
+   "group": "Communication Services (sector)",
+   "state": "LAGGING / DEEPENING; macro TAILWIND 1.04",
+   "read": "Weakest sector: 20d -7.08, 5d -6.00. Tailwind unpaid. Social Media and Gaming/Streaming themes graded AVOID."
+  },
+  {
+   "group": "Net rotation read",
+   "state": "overlay vs price disagree",
+   "read": "No sector carries a macro headwind (6 tailwind, 5 neutral). The overlay favors cyclicals and growth; price leadership is defensives plus energy. Tailwind confirmed by price in Materials, Discretionary, Financials, Industrials; not confirmed in Technology or Communication Services."
+  }
+ ],
+ "breadth": {
+  "read": "PROXIES ONLY. S&P 500 vs Russell 2000 20d spread +0.29: not narrow. Crown: broadening day 7, gate passed; equal-weight over cap-weight +3.09% 20d, +0.69% 5d, still -1.37% 60d, and ratio sits 1.96% above its 20d average (the line that fails the broadening call). Sectors: 8 of 11 above 20d avg, 9 of 11 LEADING/IMPROVING. Themes: 16 of 35 above 20d avg (12 IMPROVING, 4 LEADING, 3 WEAKENING, 16 LAGGING). Quality of the broadening: it is led by defensives, energy and financials while mega-cap tech stalls, and small caps trail large; healthy rotation, not a risk-appetite surge. No literal advance-decline line exists here.",
+  "label": "proxy"
+ },
+ "lean_18m": "Falling yields, firm copper and a broadening tape favor a cyclical hand-off (financials, industrials, housing, materials) from crowded mega-cap growth. Oil's surge and crowded duration are the thorns: a hot-oil, rate-reversal path ends the rotation.",
+ "sizing_tone": "light",
+ "crown_agreement": {
+  "agrees_on": [
+   "Tone: Crown's call is hidden-stress downside; I land on a light posture too, through the event window.",
+   "Broadening is real: regime broadening 7 days, gate passed, equal-weight ahead of cap-weight over 20d.",
+   "Dealer gamma negative: S&P 500 ETF 0.65% under its 774.63 flip, Nasdaq-100 ETF 1.23% under 730.11; corridor 755 to 780 amplifies moves.",
+   "Dispersion elevated and rising under a calm index (VIX 17.52, contango, implied correlation 9.58).",
+   "Scenario is contested and oil is the unmet leg; copper/gold supports the reflation runner-up.",
+   "Freshness is OK; oldest source 2 days."
+  ],
+  "differs_on": [
+   "Source of risk: bonds, credit and gold do not corroborate stress (credit above 20d avg, gold falling). I read this as event risk plus fragile internals (FOMC/PCE/GDP, negative gamma, fading leaders), not credit-led stress.",
+   "Strength of the stress call: it is met on a thin margin (gap 1.28% over its elevated line, +0.51 in 20d); one soft print flips it. I treat it as a caution flag.",
+   "Divergence: 9 warnings lit but RSI type only; I weight a single-type readout low.",
+   "Macro overlay: six sectors get TAILWIND, including Technology and Communication Services, but price says Weakening and Lagging. I discount those two until RRG confirms.",
+   "Goldilocks label: with oil +14.32% in 20d and a bid dollar I would call the scenario a transition, not disinflation-clean.",
+   "Positioning (as of 10-20, 8 days stale) predates the latest oil and bond moves; I treat crowding as dated."
+  ]
+ },
+ "what_would_change_it": [
+  "Toward lighter: credit turns down while bonds keep rising (credit-confirmed stress); or the S&P 500 ETF loses the 755 put wall (1.90% below).",
+  "Toward lighter: equal-weight over cap-weight falls back through its 20d average (1.96% below), ending the broadening call.",
+  "Toward lighter: Russell 2000 loses its 2808.64 flip (0.61% below), or oil extends while the dollar keeps rising into a hot PCE.",
+  "Toward normal/aggressive: S&P 500 ETF reclaims 774.63 (gamma flips to stabilizing) and clears FOMC and PCE without a credit or dollar shock.",
+  "Toward normal/aggressive: Technology moves from WEAKENING to IMPROVING and Semiconductors / Chip Equipment leave the lagging side.",
+  "Toward normal/aggressive: oil rolls over, which would make the disinflation scenario clean rather than contested.",
+  "Hurst and trend, once served, could move the momentum caveat either way."
+ ],
+ "declared": {
+  "not_served": [
+   "regime.hurst and regime.trend: absent from this packet (regime block carries vix and level only); impact: momentum caveat made from proxies, no TRENDING/MEAN_REVERT call",
+   "fundamental_driver: NOT_SERVED",
+   "positioning_survey: NOT_SERVED (Crown large-speculator positioning used as a dated data point only, as of 10-20)",
+   "literal advance-decline line: does not exist; breadth read is proxy only",
+   "canon: HAND-WRITTEN, UNGROUNDED, no lock, no sealed extract, no spotcheck"
+  ]
+ }
+}
