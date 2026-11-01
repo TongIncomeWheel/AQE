@@ -42,8 +42,10 @@ def step(name, cmd, cwd, must_exit0=True, env=None):
     return r
 
 
-def validate(path, cwd, *args):
-    r = step(f"registrar validate {os.path.relpath(path, cwd)}", [sys.executable, REG, "validate", "--file", path, *args], cwd)
+def validate(path, cwd, *args, expect_reject=False):
+    """A seeded-bad form is SUPPOSED to be refused (rc=1); only an unexpected verdict is a failure."""
+    r = step(f"registrar validate {os.path.relpath(path, cwd)}" + (" (seeded bad, must REJECT)" if expect_reject else ""),
+             [sys.executable, REG, "validate", "--file", path, *args], cwd, must_exit0=not expect_reject)
     try:
         return json.loads(r.stdout.strip().splitlines()[-1])
     except Exception:
@@ -104,13 +106,14 @@ def main():
         res = validate(f, rd, "--round", "1", "--candidates", "candidate_set.json")
         if res.get("result") != "OK":
             FAILS.append(f"NOMINATE {v}: registrar REJECT {res.get('errors')}")
-    # cap check: an 8th nomination must be refused
+    # cap check (R33): a 7th nomination must be refused -- the cap is 6 per decider
     bad = json.load(open(os.path.join(rd, "forms", "r1", "oneil.json"))); bad["nominations"] = (bad["nominations"] * 3)[:7]
     for i, n in enumerate(bad["nominations"]):
         n["ticker"] = list(uni)[i]
     bf = os.path.join(rd, "forms", "oneil_7.json"); json.dump(bad, open(bf, "w"))
-    res = validate(bf, rd, "--round", "1", "--candidates", "candidate_set.json")
-    if a.date >= "2026-11-01" and res.get("result") != "REJECT":
+    cap_live = a.date >= "2026-11-01"           # the registrar date-gates the cap on R33's effective date
+    res = validate(bf, rd, "--round", "1", "--candidates", "candidate_set.json", expect_reject=cap_live)
+    if cap_live and res.get("result") != "REJECT":
         FAILS.append("R33 cap: a 7-nomination ballot was ACCEPTED")
     # ---- 2. RANK. tally reads ONE file holding the list of forms (the conductor stitches forms/r1/*.json) ----
     step("tally", [sys.executable, PIPE, "tally", "--nominations", "forms/r1", "--out", "tally.json"], rd)   # as RUN.yaml

@@ -23,7 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_RUN_YAML = os.path.abspath(os.path.join(HERE, "..", "pma", "RUN.yaml"))
 DEFAULT_CEILING = int(1.5 * 905_000)          # 1.5x the measured baseline (DECISIONS s4, design default)
 SLATE_CAP = 15
-KNOWN_STEPS = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "RANK", "PM-LENS", "CHALLENGE", "VOTE", "FLOOR",
+KNOWN_STEPS = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "PM-LENS", "RANK", "CHALLENGE", "VOTE", "FLOOR",
                "SLATE", "RATIFY", "QA", "DECIDE", "CONDITIONS", "REPEAT-WATCH", "BRACKET", "SCORECARD", "WRITE",
                "CHECK", "LEVELS", "REPORT", "PUBLISH"]
 
@@ -87,6 +87,13 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
     fails, notes = [], []
     steps = _steps_from_run_yaml(run_yaml)
     M = _load(os.path.join(run_dir, "run_manifest.json"), "run_manifest.json", fails)
+    obj = os.path.join(run_dir, "PM_OBJECTION.md")
+    if os.path.exists(obj):
+        try:
+            first = open(obj, encoding="utf-8", errors="replace").read().strip().splitlines()[:2]
+        except Exception:
+            first = []
+        fails.append("PM OBJECTION on file (PM_OBJECTION.md): " + (" / ".join(first) or "(empty file)") + " -- today's levels are NOT confirmed; no default load")
     if M is not None:
         st = M.get("steps") or {}
         for s in steps:

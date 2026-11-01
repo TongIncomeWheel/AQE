@@ -61,16 +61,18 @@ preflight_run.py stamp   # records the sha256 of every tool this run will execut
 If preflight fails, **the run does not start.** On 2026-09-06 the committee executed a pipeline one
 commit stale and nothing noticed for a day; `stamp` plus the R7 check is why that cannot recur.
 
-## THE MAP
+## THE MAP (R31–R36, 2026-10-30; the authoritative sequence is RUN.yaml — this is the picture)
 
 ```
-INBOX-CLEAN → GATHER → PREPARE → [MACRO ∥ NOMINATE] → RANK ─┬→ CHALLENGE → VOTE → DECIDE → CONDITIONS → REPEAT-WATCH → BRACKET → SCORECARD ─┬→ WRITE → CHECK → LEVELS → REPORT → PUBLISH
-                                              └→ PM-LENS (independent lane, feeds nothing) ─┘
+INBOX-CLEAN → GATHER (registrar init → run lock pushed) → PREPARE → NOMINATE (7 deciders) → PM-LENS → RANK → CHALLENGE (Steenbarger)
+→ VOTE (case form, 7) → FLOOR (board → deciders message by name → floor-check) → SLATE (Chair, ≤15) → RATIFY (7) → QA (Steenbarger, one hold per ticket)
+→ DECIDE (ratify-count) → CONDITIONS → REPEAT-WATCH → BRACKET → SCORECARD → WRITE → CHECK → LEVELS → REPORT → PUBLISH (final checkpoint → manifest on main)
 ```
 
-26 model spawns across 5 spawn steps (VOTE is 10 seats since R22: Lynch is consulted, not voting). Everything else is a tool step and costs no model tokens.
-Measured budget: **~905k model tokens for a clean run** (VOTE 352k · NOMINATE 172k · WRITE 240k ·
-CHALLENGE 107k · MACRO 34k) plus conductor overhead. `registrar.py status` prints the live number.
+Model spawn steps: NOMINATE 7 · CHALLENGE 1 · VOTE 7 · FLOOR 8 (Chair + 7) · SLATE 1 · RATIFY 7 · QA 1 · WRITE 1 — **33 spawns**. Everything
+else is a tool step and costs no model tokens. The macro seats are retired (R31): the weather comes from AQE's Crown and Valen files
+through `r2digest --crown --valen` and the weather cards. Measured budget of the LAST design: ~905k model tokens for a clean run; the new
+chain has not been measured yet — `registrar.py status` prints the live number and `check.py chain` compares it to the 1,357,500 ceiling.
 
 
 ## WHAT CHANGED 2026-10-23 (PM rulings R22–R24)
@@ -137,11 +139,13 @@ beta — and appends one line per close to `scorecard_log.jsonl` on AQE main. Th
 report carry it. `pma_scorecard.py trend --log scorecard_log.jsonl` prints the monitored trend.
 Grading only; it never moves a verdict. PM review due 2026-10-15.
 
-## THE VERDICT RULE (DECIDE)
+## THE VERDICT RULE (DECIDE) — R34
 
-`ADVANCE` = support > oppose AND support ≥ 2 AND median support conviction ≥ 3.
-Else support ≥ 2 → `HOLD-FOR-CONDITIONS`, with a mandatory observable condition line.
-Else `PASS`. **Never hand-tallied** — `pma_pipeline.py consensus` computes it or the run is invalid.
+The Chair's slate (≤ 15 tickets) goes to every decider for ratification, then Steenbarger may hold at most one ticket per name
+for QA. `pma_pipeline.py ratify-count` reads the ratification forms: **0 objections → AGREED; 1–3 → CONTESTED; objections ≥ ⌈n/2⌉
+(n ≥ 4 deciders answering) → DROPPED; not on the slate → NOT_SLATED.** Invalid answers, partial coverage, or an OBJECT without its
+text are refused, never guessed. **Never hand-tallied** — ratify-count computes it or the run is invalid. `pma_pipeline.py consensus`
+(the old support/oppose rule) is SUPERSEDED and refuses to run.
 
 ## THE LEVELS FILE (R20) — what AQE watches live
 
@@ -159,8 +163,10 @@ HF Space. Alerts only; the file places nothing.
 | No export | FATAL. Halt, page the PM. |
 | Packet stamp mismatch | Local slice fallback at PREPARE, declared, continue. |
 | Seat malformed / off-universe / hangs past 15 min | Reject on arrival, one respawn, then absent. |
-| NOMINATE < 8 of 9 | Halt and report — no committee. |
-| VOTE < 8 of 11 | Watch-table-only run, declared. |
+| NOMINATE < 6 of 7 deciders | Halt and report — no committee (RUN.yaml barrier). |
+| VOTE < 6 of 7 deciders | Watch-table-only run, declared. |
+| FLOOR silent on contested names | floor-check FAILS; `--allow-silent` only when every decider explicitly passed. |
+| `PM_OBJECTION.md` in the run dir on main | `check.py chain` FAILS; the 18:00 gate refuses the default load. |
 | Purity invariance FAIL | Do not publish on that ranking. Fix at RANK, max 2 loops. |
 | Shape mismatch on any read | **Fix the contract. An adapter is not a fix (R6).** |
 | Held position absent from the universe, or served without `hl_state` | **PREPARE refuses to build packets (R12).** Re-run `trim`. A name the PM owns is never screened out of its own committee. |
