@@ -77,7 +77,7 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 7. PM decisions pending: `held_sl`/`held_tp*` source; capital base 75K vs 62K in `aegis_fund.md`.
 8. The installed plugins on the PM's machine are still 1.31.0 / 1.9.0 — install `aegis/plugin/dist/*.plugin` (rebuilt by `build.py`) once the PM accepts the branch.
 
-**Full AQE suite at hand-off:** a second full run was in flight when this was written (first run: 1707 pass / 8 fail = known 7 + the weekend test, since fixed). Expected now: known 7 only. Amend this line with the result.
+**Full AQE suite at hand-off (run after Commit F, 7m55s):** 1708 passed, 1 skipped, **7 failed = exactly the known baseline** (2× HF-mirror, 4× Layer-0, 1× O'Neil R6). No new failure anywhere on the branch. The weekend-only Crown test is fixed.
 
 ## Where the Aegis code lives in this repo
 Decision pending in step 1: the plugin tree is vendored under `aegis/` (today only `skills/premarket-analysis/` + `canon/`). Plan: bring the full kernel plugins in under `aegis/plugins/<name>/` as the one truth, and make `aegis/skills/premarket-analysis/tools/pma_pipeline.py` + `contracts/voice_menus.json` thin copies with a drift test.
