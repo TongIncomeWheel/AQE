@@ -94,6 +94,12 @@ git fetch origin && git checkout claude/upbeat-curie-s7i1ut && git pull && git p
 ```
 Then dispatch `daily-run.yml` on `main` with `force: true` (Actions → daily-run → Run workflow) so Friday's close is rebuilt on the new code; confirm `aegis/output/aqe_last_run.json` (status success, packets 7/7). Install `aegis/plugin/dist/*.plugin` (rebuilt from this tree). The pilot's first READY post fires Tue 03 Nov 07:10 SGT.
 
+## Event-driven chain + the data handoff gate (PM 2026-11-01 evening)
+PM: "multi agent auto means small pings to check once ready, not fixed times" and "before we run PMA we need the data agent to check data delivery and integrity from AQE to voices handoff".
+- **READY watcher** (`trig_01CQvuMH8BzUHtTnyr83puZX`): first wake 07:15 SGT; each ping is one `git show origin/main:aegis/output/aqe_last_run.json`; if not finished it re-arms itself with `send_later` +10 min (cut-off 09:30). On READY-RUN it runs **`check.py data`** on origin/main's `aegis/output/` and posts READY only when the gate is Healthy ("READY-RUN but DATA NOT CLEAN — …" otherwise). Hand-off: fires `pma-auto` **only if `get_trigger` shows it enabled**.
+- **pma-auto** (`trig_01Rhb3tZXFtEz88Cf3QW2wGa`, DISABLED): first action is to read its own enabled flag and stop if false; then re-runs the data gate itself before any model spend; the 08:20 cron is a backstop, the watcher's `fire_trigger` is the normal start.
+- **`check.py data`** (daily-check): the handoff gate; 13 seeded failures tested (empty packet, ticker outside the candidate set, PM-only field, stray non-decider packet, missing decider packet, null core fields, held book not live, stale Crown, export/run date mismatch, held name missing from the candidate set, partial run, …). On the live 31 Oct files it flags the stray `thorp.tsv`/`weis.tsv` (old code — resolves on release).
+
 ## The daily chain as scheduled tasks (built 2026-11-01 evening; PM: "resume and complete")
 | SGT | Task (id) | State | Notes |
 |---|---|---|---|

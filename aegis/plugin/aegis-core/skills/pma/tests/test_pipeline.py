@@ -2409,6 +2409,53 @@ def test_valen_warnings_are_a_risk_block_not_a_vote_row(td):
     check("R37 is on the record", "id: R37" in open(os.path.join(HERE, "..", "RULINGS.yaml")).read())
 
 
+def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
+    """PM 2026-11-01: 'before we run PMA we need the data agent to check data delivery and integrity from AQE
+    to voices handoff. Else we run with shit data and not aware.' check.py data proves the published files
+    agree with each other and with the run; each seeded defect is named."""
+    CHK = os.path.abspath(os.path.join(HERE, "..", "..", "daily-check", "check.py"))
+    od = os.path.join(td, "aegis", "output"); os.makedirs(os.path.join(od, "packets"), exist_ok=True)
+    os.makedirs(os.path.join(td, "aegis", "skills", "premarket-analysis"), exist_ok=True)
+    D = "2026-11-03"
+    def row(t): return {"ticker": t, "on_longlist": True, "on_elder": t != "CCC", "entry": 10.0}
+    def write_all(**over):
+        last = {"date_sgt": D, "status": "success", "started_at": f"{D} 06:31 SGT", "exported_at": f"{D} 06:58 SGT", "finished_at": f"{D} 07:12 SGT", "packets_status": "Voice packets published: 8/8"}
+        exp = {"date": D, "daily_list": [row("AAA"), row("BBB"), row("CCC")], "held_positions": [{"ticker": "HLD", "qty": 1}], "held_positions_status": "live",
+               "data_quality": {"flagged_count": 0, "flagged": []}, "lens_ranking": {"ranked": [{"rank": 1, "ticker": "AAA"}]}}
+        cs = {"run_date": D, "universe": [row("AAA"), row("BBB"), row("CCC"), {"ticker": "HLD", "held": True}]}
+        crown = {"generated_at": f"{D}T06:55:00+08:00", "status": "OK", "the_call": {"expression_family": "X"}, "read_me_first": {"headline": "h"}}
+        valen = {"read_me_first": {"as_of": f"{D[:4]}-{D[5:7]}-{int(D[8:])-1:02d}T23:05:00Z"}, "stance": {"word": "NEUTRAL"}}   # UTC evening = the run date in SGT
+        pk = {v: "# DICT x: 1=a\nticker\tsc_momentum\nAAA\t70\nBBB\t60\nHLD\t50\n" for v in DEC}
+        for k, v in over.items():
+            if k == "pk": pk.update(v)
+            else: locals()[k].update(v) if isinstance(v, dict) else None
+        if "exp" in over: exp.update(over["exp"])
+        if "cs" in over: cs.update(over["cs"])
+        if "crown" in over: crown.update(over["crown"])
+        if "last" in over: last.update(over["last"])
+        for name, obj in (("aqe_last_run.json", last), ("aqe_daily_export.json", exp), ("candidate_set.json", cs), ("aqe_crown_macro.json", crown), ("aqe_valen_dashboard.json", valen)):
+            json.dump(obj, open(os.path.join(od, name), "w"))
+        for f in os.listdir(os.path.join(od, "packets")):
+            os.remove(os.path.join(od, "packets", f))
+        for v, txt in pk.items():
+            open(os.path.join(od, "packets", f"{v}.tsv"), "w").write(txt)
+    def gate():
+        return run([CHK, "data", "--output-dir", od])
+    write_all()
+    rc, log = gate(); check("a clean handoff reads Healthy", rc == 0 and "DATA HANDOFF: Healthy" in log, log[-400:])
+    write_all(pk={"seow": "# DICT\nticker\tsc_momentum\n"}); rc, log = gate(); check("an EMPTY decider packet is named", rc != 0 and "seow.tsv has a header but NO rows" in log, log[-300:])
+    write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\nZZZ\t1\n"}); rc, log = gate(); check("a packet serving a name outside the candidate set is named", rc != 0 and "not in the candidate set" in log, log[-300:])
+    write_all(pk={"oneil": "ticker\tqs_market\nAAA\t1\n"}); rc, log = gate(); check("a PM-only field in a packet is named (R3)", rc != 0 and "qs_market" in log, log[-300:])
+    write_all(pk={"weis": "ticker\tsc_momentum\nAAA\t70\n"}); rc, log = gate(); check("a stray packet for a non-decider is named (R31)", rc != 0 and "NON-decider" in log, log[-300:])
+    write_all(); os.remove(os.path.join(od, "packets", "wyckoff.tsv")); rc, log = gate(); check("a missing decider packet is named", rc != 0 and "packet MISSING for decider wyckoff" in log, log[-300:])
+    write_all(exp={"data_quality": {"flagged_count": 2, "flagged": [{"ticker": "AAA"}, {"ticker": "BBB"}]}}); rc, log = gate(); check("null core fields are named", rc != 0 and "flagged 2" in log, log[-300:])
+    write_all(exp={"held_positions_status": "cache_fallback"}); rc, log = gate(); check("a non-live held book is named (the real-money incident class)", rc != 0 and "not live" in log, log[-300:])
+    write_all(crown={"generated_at": "2026-11-02T06:55:00+08:00"}); rc, log = gate(); check("a stale Crown file is named", rc != 0 and "not the run date" in log, log[-300:])
+    write_all(exp={"date": "2026-11-02"}); rc, log = gate(); check("an export dated differently from the run is named", rc != 0 and "export date" in log, log[-300:])
+    write_all(cs={"universe": [row("AAA"), row("BBB"), row("CCC")]}); rc, log = gate(); check("a held position missing from the candidate set is named (R12)", rc != 0 and "held position(s) missing" in log, log[-300:])
+    write_all(last={"status": "partial"}); rc, log = gate(); check("a partial run is named", rc != 0 and "did not finish clean" in log, log[-300:])
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -2508,6 +2555,7 @@ def main():
                    test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
                    test_the_weather_cards_exist_and_are_wired,
                    test_valen_warnings_are_a_risk_block_not_a_vote_row,
+                   test_the_data_handoff_gate_catches_bad_data_before_a_committee,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

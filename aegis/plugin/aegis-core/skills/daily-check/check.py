@@ -4,7 +4,8 @@
   check.py ready --last-run aegis/output/aqe_last_run.json [--today YYYY-MM-DD]
   check.py chain --run-dir aegis/output/pma/run/<date> --date <date> [--levels pma_levels.json]
                  [--run-yaml <RUN.yaml>] [--ceiling-tokens 1357500]
-  check.py all   (both)
+  check.py data  --output-dir aegis/output [--run-yaml <RUN.yaml>]     (the AQE -> voices HANDOFF gate)
+  check.py all   (ready + data + chain)
 
 Exit 0 = Healthy. Exit 1 = at least one FAIL line. Exit 2 = could not even read an input (also a failure --
 a checker that cannot see is not green). Zero dependencies beyond the standard library; RUN.yaml is read with
@@ -144,6 +145,154 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
     return fails, notes
 
 
+PM_ONLY_FIELDS = ("qs_market",)          # R3: PM-only, must never reach a seat packet
+
+
+def _date_of(v):
+    """YYYY-MM-DD of an ISO timestamp (UTC ones are shifted to SGT first) or a date string."""
+    if not v:
+        return None
+    v = str(v)
+    try:
+        if "T" in v or "+" in v or v.endswith("Z"):
+            ts = _dt.datetime.fromisoformat(v.replace("Z", "+00:00"))
+            if ts.tzinfo is not None:
+                ts = ts.astimezone(_dt.timezone(_dt.timedelta(hours=8)))
+            return ts.date().isoformat()
+    except Exception:
+        pass
+    return v[:10]
+
+
+def _deciders(run_yaml):
+    try:
+        sys.path.insert(0, os.path.join(os.path.dirname(run_yaml), "tools"))
+        import preflight_run
+        M = preflight_run.mini_yaml(open(run_yaml, encoding="utf-8").read())
+        d = (M.get("parameters") or {}).get("deciders")
+        if isinstance(d, list) and d:
+            return [str(x) for x in d]
+    except Exception:
+        pass
+    return ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+
+
+def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML):
+    """THE HANDOFF GATE (PM 2026-11-01: 'before we run PMA we need the data agent to check data delivery and
+    integrity from AQE to voices handoff'). Everything the seats will read, proven consistent with each other
+    and with the run that produced them. Read-only; a FAIL line per defect; never 'probably fine'."""
+    fails, notes = [], []
+    od = output_dir
+    LR = _load(os.path.join(od, "aqe_last_run.json"), "aqe_last_run.json", fails)
+    EX = _load(os.path.join(od, "aqe_daily_export.json"), "aqe_daily_export.json", fails)
+    CS = _load(os.path.join(od, "candidate_set.json"), "candidate_set.json", fails)
+    CR = _load(os.path.join(od, "aqe_crown_macro.json"), "aqe_crown_macro.json", fails)
+    VA = _load(os.path.join(od, "aqe_valen_dashboard.json"), "aqe_valen_dashboard.json", fails)
+    run_date = (LR or {}).get("date_sgt")
+    if LR is not None:
+        if str(LR.get("status", "")).lower() != "success":
+            fails.append(f"aqe_last_run status {LR.get('status')!r} -- the run did not finish clean")
+        notes.append(f"run {run_date}: started {LR.get('started_at')}, exported {LR.get('exported_at')}, finished {LR.get('finished_at')}")
+    # --- the export ---
+    daily = []
+    if EX is not None:
+        daily = EX.get("daily_list") or []
+        if not daily:
+            fails.append("export daily_list is EMPTY")
+        if run_date and _date_of(EX.get("date")) != run_date:
+            fails.append(f"export date {EX.get('date')} != run date {run_date}")
+        dq = EX.get("data_quality") or {}
+        if dq.get("flagged_count"):
+            fails.append(f"data_quality flagged {dq.get('flagged_count')} record(s) with null core fields: {[f.get('ticker') if isinstance(f, dict) else f for f in (dq.get('flagged') or [])][:8]}")
+        hps = EX.get("held_positions_status")
+        if hps != "live":
+            fails.append(f"held_positions_status is {hps!r}, not live -- the PM's book may be stale or empty (real-money incident class)")
+        if not (EX.get("lens_ranking") or {}).get("ranked"):
+            fails.append("export carries no lens_ranking.ranked -- the Detect-lens top 10 cannot render")
+        for r in daily:
+            if r.get("on_longlist") is None or r.get("on_elder") is None:
+                fails.append(f"export row {r.get('ticker')} lacks on_longlist/on_elder flags"); break
+        notes.append(f"export: {len(daily)} rows, {len(EX.get('held_positions') or [])} held ({hps}), data_quality flagged {dq.get('flagged_count')}")
+    # --- the candidate set the packets are sliced from ---
+    uni = {}
+    if CS is not None:
+        uni = {r.get("ticker"): r for r in CS.get("universe") or []}
+        if not uni:
+            fails.append("candidate_set universe is EMPTY")
+        if run_date and CS.get("run_date") and str(CS.get("run_date"))[:10] != run_date:
+            fails.append(f"candidate_set run_date {CS.get('run_date')} != run date {run_date}")
+        if EX is not None and daily:
+            exp_t = {r.get("ticker") for r in daily} | {h.get("ticker") for h in (EX.get("held_positions") or [])}
+            stray = sorted(t for t in uni if t not in exp_t)
+            if stray:
+                fails.append(f"candidate_set carries {len(stray)} ticker(s) not in the export: {stray[:6]}")
+            missing_held = sorted(h.get("ticker") for h in (EX.get("held_positions") or []) if h.get("ticker") not in uni)
+            if missing_held:
+                fails.append(f"held position(s) missing from the candidate set: {missing_held} (R12: the book is an input)")
+        notes.append(f"candidate_set: {len(uni)} names")
+    # --- the packets: one per decider, non-empty, inside the candidate set, no PM-only field ---
+    pk = os.path.join(od, "packets")
+    deciders = _deciders(run_yaml)
+    if not os.path.isdir(pk):
+        fails.append(f"packets dir MISSING ({pk})")
+    else:
+        present = sorted(f for f in os.listdir(pk) if f.endswith(".tsv"))
+        for v in deciders:
+            f = os.path.join(pk, f"{v}.tsv")
+            if not os.path.exists(f):
+                fails.append(f"packet MISSING for decider {v}"); continue
+            txt = open(f, encoding="utf-8", errors="replace").read()
+            body = [l for l in txt.split("\n") if l and not l.startswith("#")]
+            if len(body) < 2:
+                fails.append(f"packet {v}.tsv has a header but NO rows"); continue
+            hdr = body[0].split("\t")
+            if hdr[0] != "ticker":
+                fails.append(f"packet {v}.tsv first column is {hdr[0]!r}, not ticker")
+            for fld in PM_ONLY_FIELDS:
+                if fld in txt:
+                    fails.append(f"packet {v}.tsv carries PM-only field {fld!r} (R3 breach)")
+            if uni:
+                tick = {l.split("\t")[0] for l in body[1:]}
+                out = sorted(t for t in tick if t not in uni)
+                if out:
+                    fails.append(f"packet {v}.tsv serves {len(out)} ticker(s) not in the candidate set: {out[:5]}")
+            notes.append(f"packet {v}: {len(body) - 1} rows, {len(hdr)} columns")
+        extra = [f for f in present if f[:-4] not in deciders]
+        if extra:
+            fails.append(f"packets for NON-decider seats present (R31 -- a stray file serves a seat the universe it must not see): {extra}")
+    # --- the weather files ---
+    if CR is not None:
+        if run_date and _date_of(CR.get("generated_at")) != run_date:
+            fails.append(f"aqe_crown_macro generated {CR.get('generated_at')} is not the run date {run_date}")
+        if str(CR.get("status", "")).upper() in ("EARLY_EXIT", "UNAVAILABLE"):
+            fails.append(f"Crown status {CR.get('status')} -- the gate stopped the read; the Cards will declare it")
+        elif CR.get("status") != "OK":
+            notes.append(f"Crown status {CR.get('status')} (degraded input declared, not a block)")
+        if not (CR.get("the_call") and CR.get("read_me_first")):
+            fails.append("aqe_crown_macro lacks the_call / read_me_first -- the vote packet's weather line would be blank")
+    if VA is not None:
+        va_as_of = (VA.get("read_me_first") or {}).get("as_of") or VA.get("as_of")
+        if run_date and _date_of(va_as_of) != run_date:
+            fails.append(f"aqe_valen_dashboard as_of {va_as_of} is not the run date {run_date}")
+        if not (VA.get("stance") or {}).get("word") and not (VA.get("stance") or {}).get("stance"):
+            fails.append("aqe_valen_dashboard carries no stance word")
+    # --- one code tree: the generated runtime copies the packets were sliced with ---
+    gen = os.path.join(os.path.dirname(od), "skills", "premarket-analysis", "GENERATED.json")
+    if os.path.exists(gen):
+        try:
+            import hashlib
+            man = json.load(open(gen, encoding="utf-8"))
+            root = os.path.dirname(os.path.dirname(od))
+            for e in man.get("files", []):
+                gp = os.path.join(root, e["generated"])
+                if os.path.exists(gp) and hashlib.sha256(open(gp, "rb").read()).hexdigest() != e["sha256"]:
+                    fails.append(f"generated runtime copy drifted from the plugin: {e['generated']}")
+            notes.append(f"plugin versions in GENERATED.json: {man.get('plugin_versions')}")
+        except Exception as ex:
+            notes.append(f"GENERATED.json unreadable ({ex.__class__.__name__})")
+    return fails, notes
+
+
 def _report(label, fails, notes):
     if fails:
         print(f"{label}: {len(fails)} PROBLEM(S)")
@@ -163,13 +312,17 @@ def main(argv=None):
     c = sub.add_parser("chain"); c.add_argument("--run-dir", required=True); c.add_argument("--date", required=True)
     c.add_argument("--levels", default=None); c.add_argument("--run-yaml", default=DEFAULT_RUN_YAML)
     c.add_argument("--ceiling-tokens", type=int, default=DEFAULT_CEILING)
+    d_ = sub.add_parser("data"); d_.add_argument("--output-dir", required=True); d_.add_argument("--run-yaml", default=DEFAULT_RUN_YAML)
     a_ = sub.add_parser("all"); a_.add_argument("--last-run", required=True); a_.add_argument("--today", default=None)
+    a_.add_argument("--output-dir", default=None)
     a_.add_argument("--run-dir", required=True); a_.add_argument("--date", required=True); a_.add_argument("--levels", default=None)
     a_.add_argument("--run-yaml", default=DEFAULT_RUN_YAML); a_.add_argument("--ceiling-tokens", type=int, default=DEFAULT_CEILING)
     a = ap.parse_args(argv)
     rc = 0
     if a.cmd in ("ready", "all"):
         f, n = check_ready(a.last_run, a.today); rc |= _report("READY", f, n)
+    if a.cmd == "data" or (a.cmd == "all" and getattr(a, "output_dir", None)):
+        f, n = check_data(a.output_dir, a.run_yaml); rc |= _report("DATA HANDOFF", f, n)
     if a.cmd in ("chain", "all"):
         f, n = check_chain(a.run_dir, a.date, a.levels, a.run_yaml, a.ceiling_tokens); rc |= _report("CHAIN", f, n)
     return rc

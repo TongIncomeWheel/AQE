@@ -15,7 +15,8 @@ output file is. **Owner agent:** the Checker — a fresh session or agent that d
 | After `/pma` publishes | `check.py chain --run-dir aegis/output/pma/run/<date> --date <date> --levels aegis/output/pma/pma_levels.json` | every RUN.yaml step ticked done/degraded; consensus + record + slate present and dated; floor-check ok; slate <= 15; levels for today; spend <= ceiling |
 | Evening | both | nothing silently stale for tomorrow |
 
-`check.py all --last-run … --run-dir … --date … --levels …` runs both and prints one combined line.
+`check.py data --output-dir aegis/output` — **the AQE → voices HANDOFF GATE** (PM 2026-11-01: never run the committee on data nobody checked): export dated to the run, no null core fields, held book LIVE, lens ranking present, candidate set inside the export and carrying every held name, one packet per decider (7) each non-empty, every packet ticker inside the candidate set, no PM-only field, no stray packet, Crown + Valen dated to the run, generated runtime copies not drifted. READY means run finished **and** this gate Healthy.
+`check.py all --last-run … --output-dir … --run-dir … --date … --levels …` runs ready + data + chain and prints one line each.
 
 ## What "Healthy" means (every line must hold)
 1. `aqe_last_run.json`: `date_sgt == today (SGT)` and `status == "success"`.
