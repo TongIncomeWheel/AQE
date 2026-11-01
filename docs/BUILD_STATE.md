@@ -5,6 +5,13 @@
 Branch: `claude/upbeat-curie-s7i1ut` (push here only; `main` release needs the PM's explicit word).
 Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 
+## PM feedback queue (Aegis engineering session, from 2026-11-02)
+| Date | Ask | Status |
+|---|---|---|
+| 2026-11-02 | Bridge the COB-report gap: the committee and AQE must pick up the held book **and its stops** from the daily close | **PLAN with the PM** — `docs/AEGIS_BOOK_AND_STOPS_PLAN_2026-11-02.md`. Root cause: the 05:30 close never saves `get_open_orders`; the reader is already on main. Awaiting: COIN membership (assigned 100 sh, auto-includes Tue 05:30), no-stop = WARN or FAIL, approval of the 05:30 prompt line. |
+| 2026-11-02 | Capital line: 1R in the journal ($928.50 = 1.5% of dynCap) vs the fixed $620; `aegis_fund.md` allocated 75,000 | Open — PM's call (sizing) |
+| 2026-11-02 | Two diverged book-close trees (`aegis/tools` runs; plugin copy lacks the stop reader) | Logged — own change-set after the stops bridge |
+
 ## Guard rails (never bend)
 1. Do NOT run `/pma` or the committee until the PM says so (~905k tokens).
 2. Pushes to `main` outside `aegis/output/**` rebuild the HF Space. Branch pushes are safe (`deploy-hf.yml` fires on `main` only).
