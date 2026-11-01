@@ -79,6 +79,13 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 
 **Full AQE suite at hand-off (run after Commit F, 7m55s):** 1708 passed, 1 skipped, 7 failed = the known baseline at that point. **Then O'Neil R6 was fixed** (its trigger line named the barred bracket fields — the caution stays, reworded; lock + compiled card) → the known baseline is now **6**: 2× HF-mirror `test_github_sync.py` (stale assertions from the 2026-09-15 canon merge — cleanup item) and 4× Layer-0 `test_layer0_committee_filter_2026_09_06.py` (encode the retired both-lists rule). No new failure anywhere on the branch.
 
+## RELEASE-READY, awaiting the PM's push (2026-11-01 ~17:00 UTC)
+Final full AQE suite on the finished tree: **1716 passed, 6 failed = the known baseline only.** Plugin suite 491/0. `origin/main` = `d6fef9dd`; this branch is 21 commits ahead and a **fast-forward**. The push `git push origin HEAD:main` was refused by the session's permission classifier (Production Deploy) — correct: it rebuilds the HF Space and goes live. **The PM runs it** (or allows it), in a safe window (not during a run or the US session):
+```
+git fetch origin && git checkout claude/upbeat-curie-s7i1ut && git pull && git push origin HEAD:main
+```
+Then dispatch `daily-run.yml` on `main` with `force: true` (Actions → daily-run → Run workflow) so Friday's close is rebuilt on the new code; confirm `aegis/output/aqe_last_run.json` (status success, packets 7/7). Install `aegis/plugin/dist/*.plugin` (rebuilt from this tree). The pilot's first READY post fires Tue 03 Nov 07:10 SGT.
+
 ## The daily chain as scheduled tasks (built 2026-11-01 evening; PM: "resume and complete")
 | SGT | Task (id) | State | Notes |
 |---|---|---|---|
