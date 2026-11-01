@@ -559,9 +559,7 @@ threshold or removes a gate.
 
 ## 10 · Known limits — read as caveats on everything above
 
-1. **Dealer positioning is off in the daily run.** It needs an options feed
-   carrying open interest. Nothing accounts for hedging flows unless it is run on
-   demand.
+1. **Dealer positioning is ON in the daily run (amended 2026-11-01, PM ruling on weather-spec item 3).** Earlier text said it was off; the 29 Oct `aqe_crown_macro.json` shows `readings.positioning.option_dealers.available: true`, with SPY/QQQ spot, gamma flip, flip distance and call/put walls. It runs on FMP open interest; the dealer SIDE is a stated assumption, not observed data, and must be said so on every gamma read. A map without open interest is UNAVAILABLE, never flat. Open question (PM 2026-11-01): whether the read can be sourced from Tiger or the PMA instead of FMP — engineer backlog.
 2. **No scenario reads dealer positioning**, for the same reason. It is the
    largest hole in the layer.
 3. **Most trend markets run on ETF proxies**, because the futures symbols are
