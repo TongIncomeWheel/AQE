@@ -88,6 +88,16 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 | US open | AQE alerts run **every 30 min** | `alerts.yml` runs every 15 min 21:00–05:45 SGT; cadence + content cleanup = backlog 2 |
 Build order when the PM says go: (1) move the AQE task to 06:30; (2) schedule the Checker READY post; (3) a `pma-auto` scheduled task that starts the chain on READY and posts progress; (4) the 18:00 approve-or-load gate; (5) alerts cadence 15 → 30 min.
 
+## PM rulings on the weather-spec conflicts (2026-11-01, ~15:30 SGT) — NEXT WORK, in this order
+| # | Ruling | Build |
+|---|---|---|
+| 3 | **Agreed**: update Crown's canon text to say dealer gamma is ON in the daily run — *unless* the gamma read can be sourced from Tiger or the PMA instead of FMP. | Wording fix in the Crown canon/charter now; engineer assesses a Tiger/PMA gamma source as a backlog note. |
+| 5 | **Keep Valen's breadth on AQE's panel for now.** Whole-market only if it can run without breaking the FMP Starter plan. | Engineer assessment: call budget for a whole-tape daily scan vs Starter limits; report, don't build. |
+| 6 | **Build** the missing Valen items. | Priority: (1) the manage note driven by net new highs, (2) per-position trim/trail rows — both act on the held book; then 3-month 25% count, last-5-trades check, % above 20/50/200, NAAIM, the three risk limits, the drawdown ladder. AQE side (`src/valen/`), additive export fields, Cards Part 1. |
+| 7 | **Agreed**: move the Valen parabolic/no-buy text out of every vote row into a risk block beside the verdict. | Record as R37; change `pma_pipeline.py r2digest` (`_valen_lines`) so per-name rows carry setup status + checks only and the warnings print once in a RISK block; Cards show ⛔ beside the verdict; test that no vote row carries the warning text. |
+| then | **Complete the multi-agent build** (the end-state schedule above): 06:30 AQE task → scheduled READY post → `pma-auto` chain with progress reports (due 14:00) → 18:00 approve-or-default-load gate → alerts every 30 min. | After 3/5/6/7. Floor test still gates the first live committee. |
+**State at this note:** everything through `39217aae` is pushed; tree clean; plugin 483/0; AQE known baseline 6. If this session is cut, resume here.
+
 ## `main` moved under this branch (2026-11-01 13:02 UTC)
 The `pma-levels-alerts` session (`session_01JpH6G9mKRHcVAqWcm5fxAD`) merged its branch `claude/password-google-drive-access-GtUhV` into `main` (`77baded8..d6fef9dd`, "ahead 202"; 2,830 commits of that branch's history; one source commit that mattered — the agent spec — and the 1.24.1/1.8.0 vendoring already in our base). A trial merge was clean; `origin/main` is merged into this branch (merge commit, no rewrite). That push also rebuilt the HF Space (source change outside `aegis/output/`). Release of this branch is now a plain merge.
 
