@@ -54,7 +54,7 @@ parameters:
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json slate.json floor_check.json consensus.json committee_record.json"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json slate.json floor_check.json consensus.json committee_record.json publish_receipt.json"
   path_rule: >
     THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
     aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
@@ -67,7 +67,14 @@ checkpoint:
     copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy
     would not resolve during an actual run -- the same duplication the pma tools already carry, for
     the same reason. Keep the two copies identical.
-  after: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, WRITE]
+  after: [GATHER, NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, WRITE, PUBLISH]
+  first_and_last: >
+    GATHER's checkpoint is the RUN LOCK: it pushes run_manifest.json (written by `registrar.py init`) before any
+    model spawn, so the READY watcher and the pma-auto backstop see `aegis/output/pma/run/<date>/run_manifest.json`
+    on main and never start a second committee the same day. PUBLISH's checkpoint runs AFTER the PUBLISH tick and
+    is the LAST push of the run: the 18:00 gate reads the manifest from origin/main and `check.py chain` FAILs any
+    step still pending there (contract audit 2026-11-02 -- before this, the last push was after WRITE and CHECK /
+    LEVELS / REPORT / PUBLISH never reached main, so the gate would have failed every clean run).
   rule: >
     A checkpointed step is not closed until its artifacts are pushed. Tool steps are not
     checkpointed -- re-running consensus or repeat-watch costs nothing and pushing after each
@@ -109,11 +116,19 @@ steps:
   - name: GATHER
     kind: tool
     reads: []
-    produces: [aqe_daily_export.json, aqe_crown_macro.json, aqe_valen_dashboard.json, candidate_set.json, packets/, fundamentals_pack.json, phase4_ledger.json, verdict_ledger.json, data_health.json]
+    produces: [run_manifest.json, aqe_daily_export.json, aqe_crown_macro.json, aqe_valen_dashboard.json, candidate_set.json, packets/, fundamentals_pack.json, phase4_ledger.json, verdict_ledger.json, data_health.json, closes_scorecard.json]
+    producers: >
+      run_manifest.json <- registrar.py init. The AQE files, candidate_set.json, packets/ and the two ledgers <- fetched
+      from main by the data-steward. fundamentals_pack.json and data_health.json <- WRITTEN BY THE DATA-STEWARD
+      (agents/data-steward.md steps 2-3), not by a tool; closes_scorecard.json <- the data-steward's close pull for
+      SCORECARD (the closes every graded run is marked against). The tick refuses on any missing file, so an
+      unserved one is written with `"unserved": true`, never skipped.
     source: "TongIncomeWheel/AQE@main aegis/output/"
     barrier: "aqe_daily_export.json present and parses"
     on_fail: "FATAL - halt and page the PM. No export, no run."
     rulings: [R7, R12]
+    checkpoint_after: true        # the run lock -- run_manifest.json on main before any seat is spawned
+    first: "registrar.py init --date <date>   # writes run_manifest.json (the scoreboard); every later tick needs it"
     must_also: >
       BROKER READ (R20, read-only): pull the broker's open orders and stock positions and normalise them
       with `pma_levels.py stops --orders <o> --positions <p> --held <held book> --previous <yesterday's
@@ -226,7 +241,7 @@ steps:
     spawns: 1
     seats: [steenbarger]
     command: "pma_pipeline.py challenge-packets --menus voice_menus.json --universe candidate_set.json --phase4 phase4.json --forms forms/r1 --date <date> --outdir seat_packets --seats steenbarger"
-    reads: [phase4.json, forms/r1/*.json, universe.json]
+    reads: [phase4.json, forms/r1/*.json, candidate_set.json]
     produces: [forms/challenge/steenbarger.json]
     barrier: "1 of 1"
     on_fail: "declare it; the floor's contested set then comes from the blind split alone"
@@ -267,8 +282,8 @@ steps:
       vocabulary, or steps outside the seat's own method (contracts/voice_primitives.json). The vote,
       the verdict rule and the lanes are UNCHANGED -- the block only writes down what the seat already
       judged, in a form AQE's live alerts can watch.
-    checkpoint_after: true        # 11 seats, the single largest model line in the run
-    meter: "--spawns 10"
+    checkpoint_after: true        # 7 seats (R31), the single largest model line in the run
+    meter: "--spawns 7"
     split_ballots: >
       R16.1 -- under R16 the room is as large as the seats made it, so a seat's votes may not fit one
       24,576-byte form (measured ~953 bytes per name over eleven real 2026-09-24 ballots, so about 25
@@ -291,7 +306,7 @@ steps:
     reads: [board.json, forms/r2/*.json, forms/challenge/steenbarger.json]
     produces: [board.json, forms/floor/*.json, floor_check.json]
     barrier: "floor-check exits 0 (caps hold; messages only on contested names)"
-    on_fail: "a cap breach is a REJECT of that message (one re-file); a silent floor is allowed and recorded"
+    on_fail: "a cap breach is a REJECT of that message (one re-file). A SILENT floor (zero messages on contested names) fails the check; re-run floor-check with --allow-silent ONLY when every decider explicitly passed in its floor form, and the pass is then recorded -- never tick FLOOR on ok:false"
     rulings: [R1, R31, R32, R35, R36]
     validate_with: "registrar.py validate --file <msg> --kind floor --phase4 phase4.json --board board.json"
     must_also: >
@@ -532,6 +547,7 @@ steps:
 
   - name: PUBLISH
     kind: tool
+    checkpoint_after: true        # the LAST push: the manifest with every step ticked reaches main for the 18:00 gate
     produces: [publish_receipt.json, remote:aegis/output/pma/pma_levels.json, remote:aegis/output/pma/levels/<date>.json, remote:aegis/output/pma/scorecard_log.jsonl]
     rulings: [R10, R20]
     push_levels: >
@@ -553,6 +569,11 @@ steps:
       D122.1: push scorecard_log.jsonl to aegis/output/pma/scorecard_log.jsonl and scorecard.md to
       aegis/output/pma/scorecard/<date>.md in the same commit as the levels (scorecard.json, ~150KB, is too large to transcribe through the connector and is rebuildable from the ledger and closes). Same path rule (stay under
       aegis/output/), same read-back (fetch, compare blob sha to `git hash-object`), same declaration on failure.
+    objection_channel: >
+      PM 2026-11-01 ("by 6pm I approve, or by default it loads"): the levels stand unless the PM objects by 18:00 SGT.
+      The objection is a FILE -- aegis/output/pma/run/<date>/PM_OBJECTION.md on main, any content -- or a message in
+      the project. `check.py chain` FAILs when that file exists, so the 18:00 gate refuses the default load; the REPORT
+      line tells the PM the path. Nothing in the run writes or deletes that file.
     must_also: >
       Write publish_receipt.json in the run dir: {pushed: [paths], read_back: {path: sha_match}, at} -- the tick
       checks THAT file; the remote paths are declared and proven by the read-back, not by a local existence test.

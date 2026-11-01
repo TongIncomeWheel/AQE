@@ -646,8 +646,19 @@ def test_the_expensive_steps_are_checkpointed(td):
           model_steps.issubset(set(after)), f"model={sorted(model_steps)} after={sorted(after)}")
     check("the policy list and the per-step markers agree", set(after) == set(marked),
           f"policy={sorted(after)} marked={sorted(marked)}")
-    check("no tool step is checkpointed (a re-run is cheaper than a push)",
-          not [s["name"] for s in M["steps"] if s.get("kind") == "tool" and s.get("checkpoint_after")])
+    # Contract audit 2026-11-02: two tool steps ARE checkpointed, for reasons other than token cost.
+    # GATHER's push is the RUN LOCK (run_manifest.json on main before any seat is spawned, read by the
+    # READY watcher and the pma-auto backstop so two committees never start the same day); PUBLISH's
+    # push is the LAST write, so the manifest the 18:00 gate reads from origin/main shows CHECK /
+    # LEVELS / REPORT / PUBLISH done (before this, the last push was after WRITE and `check.py chain`
+    # would have FAILed every clean run). Every other tool step stays un-checkpointed: a re-run is
+    # cheaper than a push.
+    tool_cp = sorted(s["name"] for s in M["steps"] if s.get("kind") == "tool" and s.get("checkpoint_after"))
+    check("the only checkpointed tool steps are the run lock (GATHER) and the final manifest push (PUBLISH)",
+          tool_cp == ["GATHER", "PUBLISH"], f"tool steps checkpointed: {tool_cp}")
+    check("PUBLISH's checkpoint pushes the receipt the tick checks", "publish_receipt.json" in (cp.get("tool") or ""))
+    check("the policy says why the first and last pushes exist", "lock" in (cp.get("first_and_last") or "").lower()
+          and "18:00" in (cp.get("first_and_last") or ""))
     check("a push failure does not halt a committee that already did the work",
           "continue" in (cp.get("on_fail") or "").lower(), cp.get("on_fail", "")[:120])
     check("the checkpoint names the tool that performs it",
