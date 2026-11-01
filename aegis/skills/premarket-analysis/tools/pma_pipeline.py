@@ -39,7 +39,7 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "sector_trend_state","sector_rrg_quadrant","sector_rrg_direction","structure_shift","choch_state",
     "div_state","div_bear_count","knn_prob","atr_caution","runner_setup","runner_conviction_label",
     "premove_setup","mover_subtype","pin_bar_state","inside_bar","lens","lens_positive","lens_warnings",
-    "source","held","in_ledger","on_longlist","thematic_basket","thematic_grade","thematic_rrg_quadrant",
+    "source","held","in_ledger","on_longlist","on_elder","thematic_basket","thematic_grade","thematic_rrg_quadrant",
     "vol_30d_ann","gics_gate","bracket",
     "ma_100","premove_conviction","runner_conviction","sc_m_gate_detail","sc_p_gate_detail",
     "squeeze_breakout_state","was_squeezed","squeeze_breakout_volume_confirmed","squeeze_breakout_date",
@@ -215,7 +215,11 @@ def cmd_trim(a):
     rows, by_t = [], {}
     for r in D["daily_list"]:
         row = {k: r.get(k) for k in CONSUMED}
-        row["on_longlist"] = (r.get("source") == "longlist")
+        # 2026-09-06 fix, RESTORED 2026-11-01: `on_longlist` is the row's OWN flag. Deriving it from `source`
+        # misreported false for any name whose primary source was elder_list/qs but which independently
+        # cleared the longlist screen (the plugin copy had regressed to the old derivation; the Cards'
+        # "Lists" column and the R17/R27 `on_longlist or on_elder` checks read this field).
+        row["on_longlist"] = bool(r["on_longlist"]) if r.get("on_longlist") is not None else (r.get("source") == "longlist")
         row["mp_state_plain"] = MP_STATE_PLAIN.get(r.get("mp_state"), "unlabelled")
         row["in_ledger"] = bool(r.get("in_ledger"))
         rows.append(row); by_t[r.get("ticker")] = row

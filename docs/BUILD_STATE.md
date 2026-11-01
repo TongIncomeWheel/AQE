@@ -79,6 +79,14 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 
 **Full AQE suite at hand-off (run after Commit F, 7m55s):** 1708 passed, 1 skipped, 7 failed = the known baseline at that point. **Then O'Neil R6 was fixed** (its trigger line named the barred bracket fields — the caution stays, reworded; lock + compiled card) → the known baseline is now **6**: 2× HF-mirror `test_github_sync.py` (stale assertions from the 2026-09-15 canon merge — cleanup item) and 4× Layer-0 `test_layer0_committee_filter_2026_09_06.py` (encode the retired both-lists rule). No new failure anywhere on the branch.
 
+## The six "baseline" failures — FIXED 2026-11-01 (PM: "high impact, explain and fix")
+| Test(s) | What it really was | Fix |
+|---|---|---|
+| 4× `test_layer0_committee_filter_2026_09_06.py` | They encoded the **retired** both-lists rule (R16/R27 replaced it) — but one of them guarded a real fix, and that fix had **regressed in the live plugin**: `trim` derived `on_longlist` from `source`, so an Elder-sourced name that also cleared the Longlist read as NOT on the Longlist (feeds the Cards' "Lists" column and the R17/R27 strong-seat / reclaim-seat checks). Also `on_elder` was not in the `CONSUMED` whitelist, so the flag never reached the universe at all. | `pma_pipeline.py`: `on_longlist` = the row's own flag (fallback to `source` only when absent); `on_elder` added to `CONSUMED`. Tests rewritten to the live rule (every row carried; flags intact; both-lists view consistent). |
+| `test_the_hf_mirror_still_carries_what_voice_packets_needs_at_runtime` | Stale assertion (a glob literal) — but underneath, the HF mirror re-added `pma_pipeline.py` and `aegis/canon` and **not** `contracts/voice_menus.json`, which `voice_packets.py` now reads. On the Space a packet build would have failed with FileNotFound. | `deploy-hf.yml` re-adds `voice_menus.json` + `GENERATED.json` too; test asserts the three. |
+| `test_the_fixed_path_freshness_check_is_still_mandated` | The test read the stale vendored stage copy; the wording "not optional" was never in either copy. | Live stage `S1_ingest.md` now says the freshness check is not optional; both readers in the test point at the live stage (one code tree). |
+**Known AQE baseline is now ZERO.** Timing: READY post moved to **07:45** with re-checks at 08:00 / 08:15 (AQE has taken 45+ min); `pma-auto` at **08:20** (disabled).
+
 ## RELEASE-READY, awaiting the PM's push (2026-11-01 ~17:00 UTC)
 Final full AQE suite on the finished tree: **1716 passed, 6 failed = the known baseline only.** Plugin suite 491/0. `origin/main` = `d6fef9dd`; this branch is 21 commits ahead and a **fast-forward**. The push `git push origin HEAD:main` was refused by the session's permission classifier (Production Deploy) — correct: it rebuilds the HF Space and goes live. **The PM runs it** (or allows it), in a safe window (not during a run or the US session):
 ```

@@ -34,7 +34,7 @@ aegis/output/
   a Drive tool.** Enforceable by review: grep for Drive tool names outside S1.
 - **Nothing hardcodes a date, because no path contains one.** The indirection
   that `latest.json` used to provide is gone along with the need for it.
-- **Freshness is a check, not a lookup.** With a fixed path, reading the file
+- **Freshness is a check, not a lookup, and it is not optional.** With a fixed path, reading the file
   always succeeds — so the `date` inside it must be compared against the run
   date on every read. A stale file at a fixed path is the one failure this
   layout can produce that the dated layout could not, and it is silent unless
