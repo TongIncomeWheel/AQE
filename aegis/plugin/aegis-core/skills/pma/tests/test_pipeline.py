@@ -1155,8 +1155,14 @@ def test_crown_is_served_its_own_artifact(td):
     open(menus, "w").write(json.dumps({"crown": [], "druckenmiller": [], "weis": ["ticker", "mp"]}))
     out = os.path.join(d, "packets")
     # 1. artifact ABSENT -> hard failure, not a quiet fallback
+    # R31 (2026-11-01): the macro packets are RETIRED by default -- a plain build makes none and needs no artifact.
+    rc0, log0 = run([PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus,
+                     "--date", "2026-09-25", "--outdir", out + "_default"])
+    check("by default no macro packet is built and the Crown artifact is not required (R31)",
+          rc0 == 0 and not os.path.exists(os.path.join(out + "_default", "crown.json")), log0[-300:])
+    # The artifact logic stays testable behind --macro-seats, for a re-seat.
     rc, log = run([PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus,
-                   "--date", "2026-09-25", "--outdir", out])
+                   "--date", "2026-09-25", "--outdir", out, "--macro-seats", "crown", "druckenmiller"])
     check("packets REFUSES to build a blind crown packet", rc != 0 and "NOT FOUND" in log, log[-300:])
     # 2. artifact present -> served whole, and the two macro packets differ
     art = os.path.join(d, "aqe_crown_macro.json")
@@ -1167,7 +1173,7 @@ def test_crown_is_served_its_own_artifact(td):
                                                   "volatility": {"state": "ELEVATED_RISING"}},
                                      "key_levels": [], "generated_at": "2026-09-25T09:06:15+08:00"}))
     rc, log = run([PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus,
-                   "--date", "2026-09-25", "--outdir", out, "--crown-macro", art])
+                   "--date", "2026-09-25", "--outdir", out, "--crown-macro", art, "--macro-seats", "crown", "druckenmiller"])
     check("packets builds once the artifact is there", rc == 0, log[-400:])
     if rc != 0: return
     c = json.load(open(os.path.join(out, "crown.json")))
@@ -2223,6 +2229,52 @@ def test_one_risk_figure(td):
     check("the live review quotes the same $620", "$620" in live)
 
 
+def test_the_checker_catches_a_seeded_failure(td):
+    """Operating model E1 / BUILD_PLAN Phase 1 gate: 'Checker catches a seeded failure'. A healthy fixture reads
+    Healthy; a stale AQE marker, a pending step, a 16-ticket slate and an over-ceiling spend are each named."""
+    CHK = os.path.abspath(os.path.join(HERE, "..", "..", "daily-check", "check.py"))
+    check("daily-check/check.py ships", os.path.exists(CHK), CHK)
+    if not os.path.exists(CHK): return
+    d = os.path.join(td, "chk"); os.makedirs(d, exist_ok=True)
+    steps = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "RANK", "PM-LENS", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY",
+             "QA", "DECIDE", "CONDITIONS", "REPEAT-WATCH", "BRACKET", "SCORECARD", "WRITE", "CHECK", "LEVELS", "REPORT", "PUBLISH"]
+    def write(name, obj): json.dump(obj, open(os.path.join(d, name), "w"))
+    healthy_manifest = {"date": "2026-11-03", "steps": {s: {"status": "done", "cost": {"est_tokens": 20000}} for s in steps}}
+    write("run_manifest.json", healthy_manifest)
+    write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE", "status": "AGREED"}, {"ticker": "BBY", "verdict": "PASS", "status": "DROPPED"}])
+    write("committee_record.json", {"deciders_present": DEC, "rows": [{"voice": v, "ticker": t} for v in DEC for t in ("GNW", "BBY")]})
+    write("slate.json", {"tickets": [{"ticker": "GNW"}]})
+    write("floor_check.json", {"ok": True, "errors": []})
+    write("pma_levels.json", {"run_date": "2026-11-03"})
+    write("aqe_last_run.json", {"date_sgt": "2026-11-03", "status": "success", "packets_status": "Voice packets published: 8/8"})
+    base = [CHK, "all", "--last-run", os.path.join(d, "aqe_last_run.json"), "--today", "2026-11-03",
+            "--run-dir", d, "--date", "2026-11-03", "--levels", os.path.join(d, "pma_levels.json")]
+    rc, log = run(base)
+    check("a healthy chain reads Healthy on both checks", rc == 0 and log.count("Healthy") == 2, log[-400:])
+    # seeded failures, one at a time
+    write("aqe_last_run.json", {"date_sgt": "2026-11-02", "status": "success"})
+    rc, log = run(base); check("a stale AQE marker is NOT READY", rc != 0 and "stale" in log, log[-300:])
+    write("aqe_last_run.json", {"date_sgt": "2026-11-03", "status": "partial"})
+    rc, log = run(base); check("status partial is named (export current, tail step failed)", rc != 0 and "partial" in log, log[-300:])
+    write("aqe_last_run.json", {"date_sgt": "2026-11-03", "status": "success"})
+    m = json.loads(json.dumps(healthy_manifest)); m["steps"]["VOTE"]["status"] = "pending"; write("run_manifest.json", m)
+    rc, log = run(base); check("a step still pending is named", rc != 0 and "step VOTE: pending" in log, log[-300:])
+    m = json.loads(json.dumps(healthy_manifest)); m["steps"]["VOTE"]["cost"]["est_tokens"] = 2_000_000; write("run_manifest.json", m)
+    rc, log = run(base); check("spend over the ceiling is named for the PM", rc != 0 and "SPEND OVER CEILING" in log, log[-300:])
+    write("run_manifest.json", healthy_manifest)
+    write("slate.json", {"tickets": [{"ticker": f"T{i}"} for i in range(16)]})
+    rc, log = run(base); check("a 16-ticket slate is named (R34)", rc != 0 and "16 tickets > 15" in log, log[-300:])
+    write("slate.json", {"tickets": [{"ticker": "GNW"}]})
+    write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE"}])
+    rc, log = run(base); check("a consensus without `status` (the retired rule) is named", rc != 0 and "retired rule" in log, log[-300:])
+    write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE", "status": "AGREED"}])
+    os.remove(os.path.join(d, "floor_check.json"))
+    rc, log = run(base); check("a missing file is a FAIL, never 'probably fine'", rc != 0 and "floor_check.json: MISSING" in log, log[-300:])
+    write("floor_check.json", {"ok": True, "errors": []})
+    write("pma_levels.json", {"run_date": "2026-11-02"})
+    rc, log = run(base); check("yesterday's levels file is named -- today's levels are not being watched", rc != 0 and "NOT being watched" in log, log[-300:])
+
+
 def test_all_seven_deciders_count_on_every_name(td):
     """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
@@ -2318,6 +2370,7 @@ def main():
                    test_run_map_carries_the_seven_deciders_and_the_new_rounds,
                    test_the_seat_cards_carry_the_floor_and_the_roster_is_archived_not_deleted,
                    test_checkpoints_land_under_aegis_output_and_never_rebuild_the_space, test_one_risk_figure,
+                   test_the_checker_catches_a_seeded_failure,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,

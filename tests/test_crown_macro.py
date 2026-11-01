@@ -890,8 +890,12 @@ def _dated(end, n=400, start_price=100.0):
 def test_staleness_reports_the_last_bar_and_the_lag_to_today():
     from src.macro.crown import data as F
     today = pd.Timestamp.today().normalize()
+    # _dated() builds a BUSINESS-day frame, so on a weekend its last bar is Friday, not today. The lag
+    # is calendar days to today (that is what staleness measures), so assert against the last business
+    # day rather than assuming the test runs on a trading day (it failed every Sat/Sun before 2026-11-01).
+    last_bday = pd.bdate_range(end=today, periods=1)[0]
     s = F.staleness(_dated(today))
-    assert s["as_of"] == today.date().isoformat() and s["days_stale"] == 0
+    assert s["as_of"] == last_bday.date().isoformat() and s["days_stale"] == (today - last_bday).days
     old = F.staleness(_dated(today - pd.Timedelta(days=60)))
     assert old["days_stale"] >= 59
 

@@ -13,6 +13,9 @@ on:
     # never trigger a deploy; only source changes do.
     paths-ignore:
       - 'aegis/output/**'
+      # 2026-11-01: the 05:30 SGT /daily task pushes the Aegis journal here every morning. It is
+      # data, not source -- without this line every journal push rebuilt the Space too.
+      - 'aegis/data/journal/**'
   workflow_dispatch: {}
 
 concurrency:

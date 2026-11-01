@@ -172,9 +172,11 @@ def _build_into(pma, export_path: Path, run_date: str, outdir: Path,
     try:
         pma.cmd_trim(types.SimpleNamespace(
             export=str(export_path), date=run_date, out=str(candidates)))
+        # R31 (PM 2026-10-30): TSVs for the seven deciders only; the macro packets (crown, druckenmiller)
+        # are retired -- the vote packet reads aqe_crown_macro.json directly. macro_seats=[] says so.
         pma.cmd_packets(types.SimpleNamespace(
             candidates=str(candidates), export=str(export_path),
-            menus=str(VOICE_MENUS), date=run_date,
+            menus=str(VOICE_MENUS), date=run_date, macro_seats=[],
             crown_macro=(str(OUTPUT_DIR / CROWN_MACRO_NAME)
                          if (OUTPUT_DIR / CROWN_MACRO_NAME).exists() else None), outdir=str(outdir)))
     finally:

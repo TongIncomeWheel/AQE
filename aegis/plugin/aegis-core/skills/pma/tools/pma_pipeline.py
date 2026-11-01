@@ -451,7 +451,10 @@ def cmd_packets(a):
                     load(a.export, needs=["daily_list"]))
     os.makedirs(a.outdir, exist_ok=True)
     rng = random.Random(a.date)
-    nominators = [v for v in menus if v not in ("rogers", "lynch", "druckenmiller", "steenbarger", "detect-lens", "~~CONFIG_NOTE~~")]
+    # R31 (PM 2026-10-30): packets are built for the seven DECIDERS only. A menu for any other seat
+    # (archived cards, the QA seat, the retired macro pair) is left unserved -- never a stray universe file.
+    nominators = [v for v in menus if v in DECIDERS]
+    macro_seats = list(getattr(a, "macro_seats", None) or [])   # R31: none by default; --macro-seats crown druckenmiller re-enables
 
     # --- THE HELD FLOOR IS ADDED TO EVERY MENU (PM ruling 2026-09-16) ------------------
     # Not negotiable per seat and not editable in voice_menus.json. Before this, only 6
@@ -640,40 +643,41 @@ def cmd_packets(a):
     # So: the crown artifact is served WHOLE when present, and its absence is a HARD FAILURE of this
     # step rather than a quiet fallback -- a seat must never again declare a file missing that is
     # sitting beside it.
-    crown_art, cerr = None, None
-    # Look ONLY at the explicit flag or the file beside the export it belongs to. An earlier cut also
-    # accepted any aqe_crown_macro.json in the working directory, which let a stray file from another
-    # run satisfy the lookup silently -- caught 2026-09-26 when the regression test for this very check
-    # passed in the plugin tree and failed inside a run folder that held a real artifact.
-    for cand in (a.crown_macro, os.path.join(os.path.dirname(os.path.abspath(a.export)), "aqe_crown_macro.json")):
-        if cand and os.path.exists(cand):
-            crown_art = load(cand, needs=["the_call", "readings", "status"]); break
-    else:
-        cerr = ("packets: aqe_crown_macro.json NOT FOUND (looked at --crown-macro, beside the export, "
-                "and in the run root). Crown's card is written against that artifact; a slice of the "
-                "equity export is NOT a substitute and produced a 7-of-11 dark run on 2026-09-25. "
-                "Fetch it at GATHER or pass --crown-macro. REFUSING to build a blind crown packet.")
-    if cerr:
-        raise SystemExit(cerr)
-    shared = ["date", "market", "regime", "intermarket", "srm", "macro_weather", "thematic_baskets"]
-    for name in ("crown", "druckenmiller"):
-        pk = {b: D.get(b) for b in shared}
-        if name == "crown":
-            pk["crown_artifact"] = crown_art          # served WHOLE, never sliced (R12's principle)
-            for k in ("the_call", "readings", "key_levels", "scenario", "status", "limits",
-                      "what_changed", "what_is_coming", "generated_at", "how_current"):
-                if k in crown_art:
-                    pk[k] = crown_art[k]              # also at top level, where the card looks
-        txt = json.dumps(pk)
-        assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
-        save(os.path.join(a.outdir, f"{name}.json"), pk)
-    assert json.dumps({k: v for k, v in load(os.path.join(a.outdir, "crown.json")).items()}) != \
-           json.dumps(load(os.path.join(a.outdir, "druckenmiller.json"))), \
-           ("packets: crown.json and druckenmiller.json are identical -- crown did not get its "
-            "artifact. This is the 2026-09-25 defect; it does not get to happen twice.")
+    if macro_seats:   # retired by R31 unless asked for explicitly
+        crown_art, cerr = None, None
+        # Look ONLY at the explicit flag or the file beside the export it belongs to. An earlier cut also
+        # accepted any aqe_crown_macro.json in the working directory, which let a stray file from another
+        # run satisfy the lookup silently -- caught 2026-09-26 when the regression test for this very check
+        # passed in the plugin tree and failed inside a run folder that held a real artifact.
+        for cand in (a.crown_macro, os.path.join(os.path.dirname(os.path.abspath(a.export)), "aqe_crown_macro.json")):
+            if cand and os.path.exists(cand):
+                crown_art = load(cand, needs=["the_call", "readings", "status"]); break
+        else:
+            cerr = ("packets: aqe_crown_macro.json NOT FOUND (looked at --crown-macro, beside the export, "
+                    "and in the run root). Crown's card is written against that artifact; a slice of the "
+                    "equity export is NOT a substitute and produced a 7-of-11 dark run on 2026-09-25. "
+                    "Fetch it at GATHER or pass --crown-macro. REFUSING to build a blind crown packet.")
+        if cerr:
+            raise SystemExit(cerr)
+        shared = ["date", "market", "regime", "intermarket", "srm", "macro_weather", "thematic_baskets"]
+        for name in macro_seats:
+            pk = {b: D.get(b) for b in shared}
+            if name == "crown":
+                pk["crown_artifact"] = crown_art          # served WHOLE, never sliced (R12's principle)
+                for k in ("the_call", "readings", "key_levels", "scenario", "status", "limits",
+                          "what_changed", "what_is_coming", "generated_at", "how_current"):
+                    if k in crown_art:
+                        pk[k] = crown_art[k]              # also at top level, where the card looks
+            txt = json.dumps(pk)
+            assert "qs_market" not in txt and "STAND_DOWN" not in txt.replace(json.dumps(pk.get("regime") or {}), ""), f"R3 breach in {name} packet"
+            save(os.path.join(a.outdir, f"{name}.json"), pk)
+        assert len(macro_seats) < 2 or json.dumps({k: v for k, v in load(os.path.join(a.outdir, "crown.json")).items()}) != \
+               json.dumps(load(os.path.join(a.outdir, "druckenmiller.json"))), \
+               ("packets: crown.json and druckenmiller.json are identical -- crown did not get its "
+                "artifact. This is the 2026-09-25 defect; it does not get to happen twice.")
 
     pct_total = (1 - total_after / max(total_before, 1)) * 100
-    print(f"receipt: {len(nominators)} nominator TSVs + 2 macro packets; R3 assertion passed; "
+    print(f"receipt: {len(nominators)} nominator TSVs ({', '.join(nominators)}) + {len(macro_seats)} macro packets; R3 assertion passed; "
           f"{len(universe)}/{len(CS['universe'])} names served to nominators ({len(no_coverage)} held out, no coverage); "
           f"total packet bytes {total_before} -> {total_after} ({pct_total:.1f}% smaller), all encodings round-trip verified")
     if dead:
@@ -2480,7 +2484,7 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
-    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets")
+    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
     s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--consensus", default="consensus.json")

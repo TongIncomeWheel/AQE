@@ -11,7 +11,7 @@ Production daily scanner for US equities. Scores 600+ tickers nightly through 5 
 ## Critical user constraints — NEVER violate
 
 - **No terminal interaction.** Everything is double-click `.bat` or in-app Streamlit buttons. The user does not use terminals.
-- **Risk per trade is ALWAYS 3%.** $70K capital base. Risk budget = $2,100 per FULL trade. No Kelly, no quarter-Kelly, no academic sizing. *(PM 2026-10-12: the alert cards show 1R on **$75K** = $2,250 via `RISK_CAPITAL_USD` / `RISK_PCT` in `src/alerts/config.py`; the $70K figure predates it — confirm which is current and update the other.)*
+- **Risk per trade in AQE's alert cards is 3% of $75K = $2,250** (`RISK_CAPITAL_USD` / `RISK_PCT` in `src/alerts/config.py`, PM 2026-10-12). No Kelly, no quarter-Kelly, no academic sizing. **The Aegis committee sizes on a different, fixed figure: 1R = $620** (PM 2026-10-27, 1% of the $62K portfolio), the ONE place for it being `aegis/plugin/aegis-core/config/aegis_fund.md` → `one_r_usd`; the PM has ruled the alert-email share counts are to be ignored for Aegis sizing. *(The old "$70K / $2,100" figure is retired as of 2026-11-01. Open PM question: `aegis_fund.md` still carries `allocated_capital_usd: 75000`, `dyncap_usd: 66699` — confirm against the "$62K portfolio".)*
 - **MAX_POSITIONS = 6** in `src/research/backtest/sizing.py`.
 - **FMP API key** is in `.env` which is `.gitignored`. NEVER commit `.env` or expose the key. Cloud copy lives in HF Space secrets + the GitHub Actions repo secret (both named `FMP_API_KEY` — update both when it rotates).
 - **Pine is the spec, Python is the implementation, FMP is the data.** No TradingView dependency.
@@ -114,7 +114,7 @@ Streamlit multi-page app: regime, SRM, Thematic Rotation, Detect Lens Ranking, t
 Longlist: SC >= 75, Flow >= 80, Energy >= 64, Structure >= 60, MP >= 60, Elder >= 7, Phase = ANY. Stored in `data/active_recipe.json` (`longlist` + `precision` sections). Full watchlist/Precision-Edge thresholds: reference doc §Part I §14.
 
 ### Sizing chain
-Fixed: risk per trade is always 3% ($2,100 on the $70K base). AQE does not compute or export a VIX/regime-driven size tier (the old FULL/HALF/QUARTER `max_new_size` concept, and PTRS disposition before it, were both removed as violations of "AQE makes no decisions, no sizing" — 2026-08-13 and earlier respectively). Sizing modulation is the PM/AIC's call outside AQE.
+Fixed: AQE's alert cards compute 1R as 3% of $75K = $2,250 (`src/alerts/config.py`); the Aegis committee's 1R is the fixed $620 in `aegis/plugin/aegis-core/config/aegis_fund.md` (see the constraints list above). AQE does not compute or export a VIX/regime-driven size tier (the old FULL/HALF/QUARTER `max_new_size` concept, and PTRS disposition before it, were both removed as violations of "AQE makes no decisions, no sizing" — 2026-08-13 and earlier respectively). Sizing modulation is the PM/AIC's call outside AQE.
 - Shares = risk_budget / bracket.risk (1R)
 
 ### Intraday Momentum & Bracket / Options scanner
