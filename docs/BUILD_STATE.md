@@ -23,13 +23,22 @@ Started 2026-11-01. Model: Fable 5.1 for committee/registrar work.
 - `aegis-core:tiger` plugin MCP fails to connect (ERR_INVALID_ARG_VALUE); `Tiger_MCPv7` connector works.
 - Risk config decision (default applied): 1R = $620 lives Aegis-side only. AQE alert config ($75K/3%) untouched — spec hard-stop on sizing changes; PM rule says ignore alert share counts anyway.
 
+## Test baseline (full `pytest -q`, 2026-11-01, 8 min)
+1707 passed, **8 failed**: the known 7 (2× HF-mirror `test_github_sync.py`, 4× Layer-0 `test_layer0_committee_filter_2026_09_06.py`, 1× O'Neil R6 `test_voice_packet_spec_2026_09_05.py`) **plus** `test_crown_macro.py::test_staleness_reports_the_last_bar_and_the_lag_to_today`, which assumes today is a trading day and fails on weekends (ran Sunday). Not a regression; cleanup item (make the test use the last business day).
+
+## Commits on this branch (newest first)
+- Commit A — rulings R31–R36 recorded; R14/R22/R30 superseded; roster constants (`DECIDERS`, `QA_SEAT`, caps); seow out of `STRENGTH_SEATS`; `R2_VOTING_SEATS = DECIDERS`; tests 315/0. **RUN.yaml still shows the OLD 9/10/4 rosters** — it changes in Commit C together with the `board` / `floor-check` / `ratify-count` commands it will call, so the run map never points at a command that does not exist.
+- `290ef63a` one code tree (step 1).
+- `ed0a1f31` BUILD_STATE; `f0603128` AQE_CODE_AGENT_SPEC doc.
+
 ## Plan and status
 | # | Step | Status |
 |---|---|---|
 | 0 | BUILD_STATE.md pushed | DONE |
-| 1 | One code tree: sync vendored pipeline/menus/canon to 1.31.0/1.9.0 + drift test | TODO |
-| 2a | `RUN.yaml` rosters → 7 deciders + Steenbarger QA; shortlist cap 6; macro seats removed | TODO |
-| 2b | Revert conflicts: Seow out of `STRENGTH_SEATS`; Seow card R10 off the lane tag; all 7 count on every name | TODO |
+| 1 | One code tree: sync vendored pipeline/menus/canon to 1.31.0/1.9.0 + drift test | DONE `290ef63a` |
+| 2a | Rulings R31–R36 as data + roster constants (Commit A) | DONE |
+| 2a' | `RUN.yaml` rosters → 7 deciders + Steenbarger QA; MACRO step removed; FLOOR/SLATE/RATIFY/QA steps; DECIDE → ratify-count (Commit C, with the commands) | TODO |
+| 2b | Revert conflicts: Seow out of `STRENGTH_SEATS` (DONE, Commit A); Seow card R10 off the lane tag (Phase 3b, card edit) | PARTIAL |
 | 2c | Objection rule replaces `consensus` (0 agreed / 1–3 contested / ≥4 dropped); slate cap 15; code counts | TODO |
 | 2d | Schemas: case form, challenge form, floor message, slate, ratification; registrar validates them | TODO |
 | 2e | Checkpoint path → `aegis/output/pma/run/<date>/` | TODO |

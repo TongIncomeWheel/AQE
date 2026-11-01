@@ -204,7 +204,9 @@ CHECKS = {
     # R22/R23 (PM 2026-10-22/23): Lynch consulted only; one fixed card-report format.
     "tests.test_consulted_seat_ballot_never_counts": run_tests,
     "tests.test_card_report_layout_is_fixed_and_refuses_gaps": run_tests,
-    "tests.test_seow_counts_in_the_momentum_lane": run_tests,
+    # R31/R32 (PM 2026-10-30, the redesign): seven deciders + QA; all seven count on every name.
+    "tests.test_roster_is_seven_deciders_plus_qa": run_tests,
+    "tests.test_all_seven_deciders_count_on_every_name": run_tests,
 }
 
 

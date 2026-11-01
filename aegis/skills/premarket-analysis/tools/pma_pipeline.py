@@ -741,11 +741,25 @@ def _strength_door(row, rs_top, mp_min=75.0):
 # seats alone. A lens name is judged by every seat; a name that is here on strength alone is
 # judged by the seats whose method buys strength.
 MOMENTUM_DOORS = ("STRENGTH", "AQE_LEADER")
-STRENGTH_SEATS = ["livermore", "oneil", "minervini", "elder-lens", "detect-lens", "seow"]  # R30 (PM 2026-10-30): seow added with his position system
+# ---- THE ROSTER (R31, PM 2026-10-30). Seven deciders shortlist, vote, deliberate and ratify. ----
+# Steenbarger is the QA seat (challenge before the vote, QA note + one hold per ticket after; no vote).
+# Detect-lens is an independent top-10 LIST read off lens_ranking.ranked, not a voice. Weis and Thorp
+# are benched; Rogers, Lynch, Crown and Druckenmiller stood down. `board` / `ratify-count` count the
+# DECIDERS and nobody else, loudly ignoring any other ballot.
+DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+QA_SEAT = "steenbarger"
+BENCH_SEATS = ["weis", "thorp"]
+STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
+R33_EFFECTIVE = "2026-11-01"   # ballots dated from here carry the shortlist cap (6) and the case form
+SHORTLIST_CAP = 6              # R33: at most six nominations per decider (fewer is valid, never padded)
+SLATE_CAP = 15                 # R34: at most fifteen tickets across ADVANCE and WATCH
+FLOOR_MSG_CAP = 2              # R36: two floor messages per decider per name
+# ---- LEGACY LABELS (R32). All seven deciders count on every name; the lane tag is a reading aid. ----
+# These two lists are read ONLY by the superseded `consensus` blind tally (kept so the 2026-09-06
+# regression fixtures still reproduce). Seow removed 2026-11-01 per BUILD_PLAN Phase 4 item 2.
+STRENGTH_SEATS = ["livermore", "oneil", "minervini", "elder-lens", "detect-lens"]
 PULLBACK_SEATS = ["raschke", "seow", "thorp", "weis", "wyckoff"]
-# R22 (PM standing ruling 2026-10-22): "Livermore is a key voting seat. Lynch is not."
-# Lynch is a CONSULTED fundamentals voice: his CHALLENGE read goes into the vote packet, and any
-# round-2 ballot he files is ignored by consensus (never counted, never advisory).
+# R22 (superseded by R31, kept for the legacy tally): a Lynch ballot was consulted, never counted.
 CONSULTED_SEATS = ["lynch"]
 
 def _lane(doors):
@@ -1288,8 +1302,7 @@ def cmd_rank(a):
           + (f"; {len(off_universe)} nominations have NO SERVED ROW and cannot be voted (declared data gap): {off_universe}" if off_universe else "")
           + ("; --strength-reserve IGNORED (retired by R16)" if a.strength_reserve else ""))
 
-R2_VOTING_SEATS = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp",
-                   "weis", "wyckoff", "detect-lens"]   # R22: lynch consulted, no vote
+R2_VOTING_SEATS = list(DECIDERS)   # R31: the seven deciders vote; nobody else
 
 def _load_document(path, label):
     """A whole-deliberation-set document (Rogers'/Steenbarger's challenge doc, Lynch's fundamentals

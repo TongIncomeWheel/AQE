@@ -693,7 +693,9 @@ def test_fading_is_not_a_gate(td):
 
 
 def test_a_momentum_lane_name_is_judged_by_the_strength_seats(td):
-    """R14. All seats vote; a MOMENTUM-lane verdict counts the strength seats only."""
+    """R14 (SUPERSEDED by R32, 2026-10-30) -- this pins the LEGACY `consensus` blind tally, which is
+    no longer the verdict (R34: ratify-count is). Kept so the 2026-09-06 fixtures keep reproducing and
+    so a change to the legacy reader is noticed. Seow left STRENGTH_SEATS on 2026-11-01 (R32)."""
     V = json.load(open(fx("round2_votes.json")))
     tk = V[0]["votes"][0]["ticker"]
     p4 = os.path.join(td, "p4_lane.json")
@@ -704,7 +706,7 @@ def test_a_momentum_lane_name_is_judged_by_the_strength_seats(td):
     if rc != 0: return
     C = {c["ticker"]: c for c in json.load(open(out))}
     row = C[tk]
-    strength = {"livermore", "oneil", "minervini", "elder-lens", "detect-lens", "seow"}   # R30
+    strength = {"livermore", "oneil", "minervini", "elder-lens", "detect-lens"}   # R32: seow removed
     counted = set(row["split"]["support"] + row["split"]["oppose"] + row["split"]["abstain"])
     advisory = set(row["advisory"]["support"] + row["advisory"]["oppose"] + row["advisory"]["abstain"])
     check("the momentum-lane row is stamped lane=MOMENTUM", row.get("lane") == "MOMENTUM")
@@ -1696,21 +1698,52 @@ def test_the_figure_audit_reads_field_equals_value(td):
     check("figure audit reads 'field=value'", bool(m) and m.group(2) == "86.3", repr(m))
 
 
-def test_seow_counts_in_the_momentum_lane(td):
-    """R30. Seow's momentum-lane ballot is counted; Wyckoff's stays advisory; both rebuilt canons are sound."""
+def _pipeline_source():
+    return open(PIPE, encoding="utf-8").read()
+
+
+def _const_list(name):
+    """Read a top-level list constant out of pma_pipeline.py's source without importing it."""
+    m = re.search(rf"^{name}\s*=\s*\[([^\]]*)\]", _pipeline_source(), re.M)
+    return [x.strip().strip('"\'') for x in m.group(1).split(",") if x.strip()] if m else None
+
+
+def test_roster_is_seven_deciders_plus_qa(td):
+    """R31 (PM 2026-10-30). Seven deciders, Steenbarger as QA, Detect-lens a list not a voice, Weis and
+    Thorp benched, Rogers / Lynch / Crown / Druckenmiller stood down. The constants are the roster the
+    code counts; RUN.yaml's seats must agree with them (checked once the run map carries the new rounds)."""
+    deciders = _const_list("DECIDERS")
+    check("DECIDERS is exactly the seven the PM named",
+          sorted(deciders or []) == sorted(["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]),
+          str(deciders))
+    check("Steenbarger is the QA seat", 'QA_SEAT = "steenbarger"' in _pipeline_source())
+    check("Weis and Thorp are benched", sorted(_const_list("BENCH_SEATS") or []) == ["thorp", "weis"])
+    check("Rogers, Lynch, Crown, Druckenmiller and Detect-lens are not voices",
+          sorted(_const_list("STOOD_DOWN") or []) == ["crown", "detect-lens", "druckenmiller", "lynch", "rogers"])
+    check("the round-2 voting seats ARE the deciders", "R2_VOTING_SEATS = list(DECIDERS)" in _pipeline_source())
+    rul = open(os.path.join(HERE, "..", "RULINGS.yaml")).read()
+    check("R31..R36 are on the record", all(f"id: R{n}" in rul for n in range(31, 37)))
+    check("R14, R22 and R30 are marked superseded, never deleted",
+          all(f"id: {r}" in rul for r in ("R14", "R22", "R30")) and rul.count("status: superseded") >= 3)
+
+
+def test_all_seven_deciders_count_on_every_name(td):
+    """R32. Seow is out of STRENGTH_SEATS; no strength list decides a verdict. Under the legacy blind
+    tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
+    opposite of R30, which the PM reversed the same day. Both rebuilt canons still stand."""
+    check("seow is not in STRENGTH_SEATS", "seow" not in (_const_list("STRENGTH_SEATS") or ["seow"]))
+    check("detect-lens is not a decider", "detect-lens" not in (_const_list("DECIDERS") or ["detect-lens"]))
     V = json.load(open(fx("round2_votes.json")))
     tk = V[0]["votes"][0]["ticker"]
-    p4 = os.path.join(td, "p4_r30.json")
+    p4 = os.path.join(td, "p4_r32.json")
     json.dump({"deliberation_set": [tk], "ranked": [{"ticker": tk, "doors": ["STRENGTH"], "lane": "MOMENTUM"}], "dropped": []}, open(p4, "w"))
-    out = os.path.join(td, "c30.json")
+    out = os.path.join(td, "c32.json")
     rc, log = run([PIPE, "consensus", "--round2", fx("round2_votes.json"), "--phase4", p4, "--out", out])
-    check("consensus exits clean (R30)", rc == 0, log[-300:])
+    check("legacy consensus still exits clean", rc == 0, log[-300:])
     if rc != 0: return
     row = {c["ticker"]: c for c in json.load(open(out))}[tk]
     counted = set(row["split"]["support"] + row["split"]["oppose"] + row["split"]["abstain"])
-    advisory = set(row["advisory"]["support"] + row["advisory"]["oppose"] + row["advisory"]["abstain"])
-    check("seow's momentum-lane ballot is counted", "seow" in counted, str(counted))
-    check("wyckoff's momentum-lane ballot stays advisory", "wyckoff" in advisory and "wyckoff" not in counted, str(advisory))
+    check("legacy tally no longer counts seow as a strength seat", "seow" not in counted, str(counted))
 
 
 def test_rebuilt_seow_and_wyckoff_canons_are_sound(td):
@@ -1780,7 +1813,8 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_seow_counts_in_the_momentum_lane, test_rebuilt_seow_and_wyckoff_canons_are_sound,
+                   test_roster_is_seven_deciders_plus_qa, test_all_seven_deciders_count_on_every_name,
+                   test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,
                    test_up_to_three_reserved_seats_for_a_valen_reclaim,

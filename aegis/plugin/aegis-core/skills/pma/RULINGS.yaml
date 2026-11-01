@@ -14,7 +14,7 @@
 # the step named in `binds_at`, so it cannot be lost to compaction.
 
 schema: aegis_rulings.v1
-updated: 2026-09-07
+updated: 2026-11-01
 
 rulings:
 
@@ -240,7 +240,10 @@ rulings:
 
   - id: R14
     title: Two lanes -- a name admitted on strength is judged by the seats that buy strength
-    status: active
+    status: superseded
+    superseded_by: [R32]
+    superseded_note: >
+      PM 2026-10-30: all seven deciders count on every name. The lane tag stays as a LABEL on every row (written at RANK, shown on cards); it no longer selects which seats count.
     date: 2026-09-22
     binds_at: [RANK, VOTE, DECIDE, WRITE]
     rule: >
@@ -516,7 +519,10 @@ rulings:
 
   - id: R22
     title: Livermore votes; Lynch is consulted only
-    status: active
+    status: superseded
+    superseded_by: [R31]
+    superseded_note: >
+      PM 2026-10-30: Lynch stood down as a voice (with Rogers, Crown, Druckenmiller). Livermore remains a decider. The consulted-seat mechanism is retired with the roster.
     date: 2026-10-22
     binds_at: [NOMINATE, CHALLENGE, VOTE, DECIDE]
     pm_words: >
@@ -667,7 +673,10 @@ rulings:
 
   - id: R30
     title: Seow counts in the momentum lane; Seow and Wyckoff rebuilt from their sources
-    status: active
+    status: superseded
+    superseded_by: [R31, R32]
+    superseded_note: >
+      PM 2026-10-30 (later the same day): Seow is removed from STRENGTH_SEATS -- all seven deciders count on every name, so no strength-seat list decides a verdict. The Seow and Wyckoff canon v2 rebuilds STAND (restated in R31).
     date: 2026-10-30
     binds_at: [VOTE, DECIDE]
     amends: R14
@@ -688,3 +697,126 @@ rulings:
       had been given its author's trend method.
     check: tests.test_seow_counts_in_the_momentum_lane
 
+
+  # ------------------------------------------------------------------------------------------------
+  # THE 30 OCT 2026 REDESIGN (docs/DECISIONS_2026-10-30.md in the handover kernel wins over any card).
+  # Recorded 2026-11-01 as data so preflight can bind them. Code that implements them lands in the
+  # same release (aegis-core 1.32.0): rosters in RUN.yaml, `board` / `floor-check` / `ratify-count`
+  # in pma_pipeline.py, the case / challenge / floor / slate / ratification / QA forms in the registrar.
+  # ------------------------------------------------------------------------------------------------
+
+  - id: R31
+    title: The roster -- seven deciders, Steenbarger as quality assurance, Detect-lens as an independent list
+    status: active
+    date: 2026-10-30
+    binds_at: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, DECIDE, WRITE]
+    supersedes: [R22]
+    pm_words: >
+      "15 voices is too many." Settled 19:06 and 19:11 SGT, 2026-10-30.
+    rule: >
+      DECIDERS (7): oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff -- they shortlist, vote,
+      deliberate on the floor and ratify. QA SEAT (1): steenbarger -- files the challenge document before the
+      vote and one QA note after ratification; may HOLD a ticket for one more round of deliberation (one hold
+      per ticket); never votes, never vetoes. DETECT-LENS is an independent top-10 LIST, not a voice: no vote,
+      no deliberation; the Cards show lens_ranking.ranked[0:10] from AQE's export, labelled independent, with
+      a marker where a name is also in the room or on the slate. BENCH: weis, thorp. STOOD DOWN: rogers, lynch,
+      crown, druckenmiller (the weather is read from AQE's Crown file and the Valen dashboard, never from a seat).
+      Voices are not assigned to lanes. The Seow and Wyckoff canon v2 rebuilds (R30) stand.
+    rationale: >
+      The 29 Oct autopsy (docs/evidence/deliberation_autopsy_2026-10-29.md): shared packet text made seats
+      agree; the room's PASS names beat its ADVANCE names. Fewer, independent, accountable seats.
+    check: tests.test_roster_is_seven_deciders_plus_qa
+
+  - id: R32
+    title: All seven deciders count on every name; the lane tag is a label only
+    status: active
+    date: 2026-10-30
+    binds_at: [RANK, VOTE, DECIDE, WRITE]
+    supersedes: [R14, R30]
+    pm_words: >
+      Settled 19:18 SGT, 2026-10-30. The MOMENTUM / PULLBACK tag stays as a label only.
+    rule: >
+      No strength-seat list selects which ballots count. Every decider's ratification counts on every ticket.
+      RANK still writes lane=MOMENTUM|PULLBACK on every phase4 row and the cards still show it, as a reading
+      aid. STRENGTH_SEATS / PULLBACK_SEATS in pma_pipeline.py are legacy labels read only by the superseded
+      `consensus` blind tally; `board` and `ratify-count` never read them. Seow is removed from STRENGTH_SEATS
+      (BUILD_PLAN Phase 4 item 2) and the Seow card's R10 picks his system from the name's own picture, not
+      from the lane tag.
+    check: tests.test_all_seven_deciders_count_on_every_name
+
+  - id: R33
+    title: Each decider shortlists at most six
+    status: active
+    date: 2026-10-30
+    binds_at: [NOMINATE]
+    amends: R16
+    pm_words: >
+      Settled 19:18 SGT, 2026-10-30. "At most 6 (fewer is valid; never padded). At most 42 nominations."
+    rule: >
+      A round-1 ballot dated on or after 2026-11-01 from a decider carries at most 6 nominations; the registrar
+      REJECTS a seventh. Fewer is valid and is never padded. R16's floor is unchanged: every nomination that IS
+      filed is seated unconditionally. A round-1 ballot from a seat that is not a decider is rejected.
+    rationale: >
+      The room is bounded by what the seven methods find, not by a file size (R16) and not by a cap on the
+      room (R16 again); the cap is on how many names one seat may put forward.
+    check: tests.test_shortlist_cap_is_six
+
+  - id: R34
+    title: The slate is at most 15; the objection rule replaces the consensus verdict rule; code counts
+    status: active
+    date: 2026-10-30
+    binds_at: [SLATE, RATIFY, QA, DECIDE, WRITE]
+    pm_words: >
+      Settled 19:18 and 19:21 SGT, 2026-10-30. "Nobody objects = AGREED. 1 to 3 object = CONTESTED (stays
+      listed, objections printed). 4 or more (half or more) = DROPPED (off the list, still tracked)."
+    rule: >
+      The Chair drafts a slate of at most 15 tickets across ADVANCE and WATCH (a ceiling, not a target; never
+      padded), each with its entry trigger, where it is wrong, horizon, why the room agrees and who dissents.
+      Each decider ratifies every ticket: AGREE, AGREE_WITH_RESERVATION, or OBJECT with the one thing that
+      would clear it. `pma_pipeline.py ratify-count` counts OBJECT answers per ticket on the FINAL
+      ratification: 0 = AGREED; 1..(ceil(n/2)-1) = CONTESTED (listed, objections and what-would-clear printed);
+      >= ceil(n/2) of the n deciders present (4 of 7) = DROPPED (off the list, still recorded and tracked).
+      Machine verdict words are unchanged for every downstream reader: slate ADVANCE -> ADVANCE, slate WATCH ->
+      HOLD-FOR-CONDITIONS (rendered "WATCH"), DROPPED and not-slated room names -> PASS, each row carrying
+      `status` AGREED|CONTESTED|DROPPED|NOT_SLATED. `conviction` on the row is an ORDERING figure derived from
+      the ratification (AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 / NOT_SLATED 1) and is never
+      a gate. The old rule (support > oppose AND support >= 2 AND median conviction >= 3) is retired; `consensus`
+      remains only as the blind-tally reader and prints that it is superseded.
+    check: tests.test_objection_rule_counts_the_final_ratification
+
+  - id: R35
+    title: Everything is recorded so each voice is accountable; graded on its own horizon
+    status: active
+    date: 2026-10-30
+    binds_at: [DECIDE, SCORECARD, PUBLISH]
+    pm_words: >
+      Settled 19:21 SGT, 2026-10-30.
+    rule: >
+      Per voice, per ticket, per run: the shortlist, the blind vote (with its horizon in sessions), every floor
+      message, whether it changed its mind and what moved it, its ratification and any objection or reservation,
+      Steenbarger's holds and QA note. Dropped and contested tickets are tracked too. `ratify-count` writes
+      committee_record.json beside consensus.json; record-verdicts and the scorecard read the horizon each
+      voice stated, not one 5-session clock. A per-voice review every 20 runs.
+    check: tests.test_the_record_is_written_per_voice_per_ticket
+
+  - id: R36
+    title: The rounds -- blind shortlist, challenge, blind vote both ways, open floor, slate, ratify, QA and hold, close
+    status: active
+    date: 2026-10-30
+    binds_at: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, DECIDE]
+    pm_words: >
+      "One hearing round is not a committee." (18:59 SGT, 2026-10-30) The 12 Aug deliberation ruling, rebuilt.
+    rule: >
+      1 NOMINATE blind (R33). 1b CHALLENGE: Steenbarger's crowding / extension / overlap document on the room.
+      2 VOTE blind, on an identical packet, with the CASE FORM on every name: stance, reason, the case AGAINST,
+      entry trigger, wrong-if, horizon in sessions, what would change my mind, what I cannot see. 3 FLOOR: code
+      (`board`) marks the contested names -- a blind split with both SUPPORT and OPPOSE present, or a name
+      Steenbarger's challenge names; the Chair posts the board; deciders message each other by name; cap TWO
+      messages per decider per name, counted by code (`floor-check`); Steenbarger may be called on by name.
+      4 SLATE: the Chair drafts from what the seats said, never adds a view. 5 RATIFY per ticket. 6 QA: one note
+      (did every decider read evidence; are reasons leaning on the same anchors; did a point go unanswered; does
+      the slate say what the deciders said) and at most one HOLD per ticket, which reopens the floor and the
+      ratification for that ticket only, once. 7 CLOSE: code counts (R34) and writes the record (R35).
+      Rounds 1 and 2 are blind; discussion starts only after every decider is on record. The Chair is not a
+      voice: no vote, no view, never judges the quality of a reason, only that every question was answered.
+    check: tests.test_floor_caps_are_counted_by_code
