@@ -130,12 +130,21 @@ steps:
     checkpoint_after: true        # the run lock -- run_manifest.json on main before any seat is spawned
     first: "registrar.py init --date <date>   # writes run_manifest.json (the scoreboard); every later tick needs it"
     must_also: >
-      BROKER READ (R20, read-only): pull the broker's open orders and stock positions and normalise them
-      with `pma_levels.py stops --orders <o> --positions <p> --held <held book> --previous <yesterday's
-      broker_stops.json> --out broker_stops.json`. The PM's broker stop is the level in force on every held
-      name; AQE's held_sl is null on every row and must never again be reported as "no stops". A position
-      that vanished since yesterday is listed for the PM to confirm -- the broker's fill query has missed
-      a stop-out (GLD 2026-09-28).
+      THE BOOK AND ITS STOPS (R20, PM 2026-11-02: "Stop from Tiger is correct. That's the dependency").
+      The book of record is the close's journal on main, aegis/data/journal/aegis_journal_<last close>.json
+      (Tiger positions + Tiger's working orders, read at 05:30); AQE's export carries the same stops
+      (held_sl / held_stop_order / held_stop_check, merged with the 06:20 pre-AQE Tiger read). Build
+      broker_stops.json FROM THE JOURNAL: `pma_levels.py stops --journal <journal> --previous <yesterday's
+      broker_stops.json> --out broker_stops.json`. If this session has the Tiger connector, ALSO pull
+      get_open_orders + get_stock_positions (read-only) and run instead `pma_levels.py stops --journal
+      <journal> --orders <o> --positions <p> --previous <...> --out broker_stops.json` -- the live read is
+      restricted to the journal's book and every disagreement is written to `disagreements`. Then run
+      `check.py data --output-dir aegis/output --broker-stops broker_stops.json`: a missing, stale or
+      unread-orders journal, or any disagreement, is a FAIL -- page the PM, do not guess which is right.
+      A held name with NO stop order is a WARN the Cards must show as UNPROTECTED. A name the close
+      auto-included is in the book (PM: he says on review if it is not Aegis). A position that vanished
+      since yesterday is listed for the PM to confirm -- the broker's fill query has missed a stop-out
+      (GLD 2026-09-28).
       Record the sha256 of every tool this run will execute onto the scoreboard (R7).
       THE HELD BOOK IS AN INPUT, NOT AN AFTERTHOUGHT (R12). aqe_daily_export.json carries
       export.held_positions — AQE forces every ticker the PM owns through the scoring engines

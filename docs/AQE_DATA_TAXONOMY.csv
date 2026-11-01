@@ -282,7 +282,14 @@ gics_sector_name,gics_sector,leaf,str,,Human-readable name for gics_sector,src/d
 held,,leaf,bool,true|false,Ticker is in the PM's live book,src/data/drive_sync.py:1113,ticker in the set of tickers on held_positions,,,daily_list
 in_ledger,held,leaf,bool,true|false,Ticker has an open entry in the signal ledger,src/data/signal_ledger.py,ticker present in the ledger's open-position table,,,daily_list
 live_px,held,leaf,usd,,"Current mark for a held ticker — the SAME FMP close every other field on the record is scored against, not a separate live quote","src/EXTERNAL: FMP quote endpoint, via src/data/fmp_client.py",,,,held_positions only
-held_sl,held,leaf,usd,,Stop-loss recorded in the PTJ broker journal for this held position,"src/EXTERNAL: PTJ trade journal, read by src/data/ptj.py",,,,held_positions only
+held_sl,held,leaf,usd,,"The stop in force at Tiger for this held position: the later of the two daily Tiger reads (the close's journal, the pre-AQE read)","src/EXTERNAL: Tiger working orders, via the journal and aegis/output/broker/tiger_read_latest.json; src/data/broker_stops.py:resolve","pre-AQE read's stop when that read is fresh, else journal stop_live_broker",,,held_positions only
+held_stop_status,held,leaf,enum,LIVE|NO_STOP_ORDER|NOT_PULLED,"Whether Tiger shows a working stop for this name, none, or was not read",src/data/broker_stops.py:resolve,LIVE if the read used found a SELL stop order; NO_STOP_ORDER if the orders were read and none protects the name; NOT_PULLED if the close did not read the orders,,,held_positions only
+held_stop_order,held,object,object,,"The working stop order as Tiger holds it (type, stop, limit, qty, time in force)",src/data/broker_stops.py:stops_from_orders,,,,held_positions only
+held_stop_source,held,leaf,string,,Which Tiger read held_sl came from,src/data/broker_stops.py:resolve,,,,held_positions only
+held_stop_as_of,held,leaf,date,,Date of the close (journal) the stop was read at,src/data/broker_stops.py:resolve,,,,held_positions only
+held_stop_journal,held,leaf,usd,,The stop the close read (journal stop_live_broker),src/data/broker_stops.py:resolve,,,,held_positions only
+held_stop_second_read,held,leaf,usd,,The stop the pre-AQE Tiger read saw,src/data/broker_stops.py:resolve,,,,held_positions only
+held_stop_check,held,leaf,string,AGREES|DIFFERS: …|NO_SECOND_READ: …,"Whether the two Tiger reads agree, and what differs",src/data/broker_stops.py:resolve,"compare journal vs pre-AQE read: stop price (0.005 tolerance), presence, shares covered, still held",,,held_positions only
 held_tp1,held,leaf,usd,,First take-profit recorded in the PTJ journal,"src/EXTERNAL: PTJ trade journal, read by src/data/ptj.py",,,,held_positions only
 held_tp2,held,leaf,usd,,Second take-profit recorded in the PTJ journal,"src/EXTERNAL: PTJ trade journal, read by src/data/ptj.py",,,,held_positions only
 unreal_usd,held,leaf,usd,,Unrealised P&L. NOT YET WIRED — currently reads a journal field the 2026-07-28 journal restructure renamed; kept as its own row so this stays visible rather than silently reading zero.,src/data/drive_sync.py,,,,held_positions only

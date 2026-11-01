@@ -253,6 +253,16 @@ PAYLOADS=$(find "$PULL" -maxdepth 1 -name '*.json' | wc -l | tr -d ' ')
 record "broker payloads" pass "$PAYLOADS file(s) in $PULL"
 say "$PAYLOADS payload file(s) found in $PULL"
 
+# PM 2026-11-02: the stops come from Tiger's working orders every close. Without the file the
+# journal cannot say where any stop is today — the close goes DEGRADED (loud), never blank.
+if [[ -f "$PULL/tiger_open_orders.json" ]]; then
+  record "open orders (stops)" pass "tiger_open_orders.json present"
+else
+  record "open orders (stops)" DEGRADED "tiger_open_orders.json MISSING — no stop on this journal is today's; pull get_open_orders and re-run"
+  say "DEGRADED: tiger_open_orders.json is missing from $PULL — the stops were not read."
+  worse 1
+fi
+
 # --------------------------------------------------------- 0.5 (D-100) reconcile
 # HARD GATE: diff yesterday's held equity tickers against today's stock_positions pull.
 # Any ticker that vanished with NO matching fill in tiger_filled_orders.json halts the run —

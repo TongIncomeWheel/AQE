@@ -45,7 +45,62 @@ def _load(p, default=None):
 
 
 # --------------------------------------------------------------------------------------- stops
+def _journal_book(path):
+    """PM 2026-11-02: the close's journal is the book of record for the stops (Tiger's working
+    orders read at 05:30). -> ({ticker: row}, journal_date, orders_pulled)."""
+    j = _load(path)
+    pulled = (j.get("broker_sync") or {}).get("open_orders_pull_ran")
+    book = {}
+    for p in j.get("open_positions") or []:
+        so = p.get("stop_order") or {}
+        stop = p.get("stop_live_broker")
+        book[p["ticker"]] = {"qty": p.get("qty"), "avg_cost": p.get("entry"), "mark": p.get("mark_price"),
+                             "order": so.get("type") if stop is not None else None, "stop": stop,
+                             "limit": so.get("limit") if stop is not None else None,
+                             "order_qty": so.get("qty"), "tif": so.get("time_in_force")}
+    return book, j.get("date"), pulled
+
+
+def _compare(journal, live):
+    """Every way the live broker read disagrees with the journal, in plain words."""
+    out = []
+    for t in sorted(set(journal) | set(live)):
+        j, l = journal.get(t), live.get(t)
+        if j and not l:
+            out.append(f"{t}: in the journal, NOT held at the live broker read")
+        elif l and not j:
+            out.append(f"{t}: held at the broker, NOT in the journal (new since the close?)")
+        else:
+            if j.get("qty") is not None and l.get("qty") is not None and abs(float(j["qty"]) - float(l["qty"])) > 1e-6:
+                out.append(f"{t}: shares journal {j['qty']} vs broker {l['qty']}")
+            js, ls = j.get("stop"), l.get("stop")
+            if (js is None) != (ls is None):
+                out.append(f"{t}: stop journal {js} vs broker {ls}")
+            elif js is not None and abs(float(js) - float(ls)) > 0.005:
+                out.append(f"{t}: stop moved, journal {js} -> broker {ls}")
+    return out
+
+
 def cmd_stops(a):
+    if a.journal and not (a.orders and a.positions):
+        book, jdate, pulled = _journal_book(a.journal)
+        for t, p in book.items():
+            if pulled is False:
+                p["note"] = "STOPS NOT READ at the close (open orders not pulled) -- not today's answer"
+            elif p["stop"] is None:
+                p["note"] = "NO STOP ORDER"
+        out = {"source": f"journal {jdate} (Tiger working orders read at the close); "
+                         "no live broker read this run; nothing placed, changed or cancelled",
+               "journal_date": jdate, "journal_orders_pulled": pulled, "positions": book,
+               "disagreements": []}
+        with open(a.out, "w") as f:
+            json.dump(out, f, indent=1)
+        print(f"wrote {a.out} from journal {jdate}: {len(book)} positions, "
+              f"{sum(1 for p in book.values() if p['stop'] is None)} with no stop"
+              + ("" if pulled is not False else " -- WARNING: the close did not read the orders"))
+        return
+    if not (a.orders and a.positions):
+        sys.exit("stops: give --journal, or --orders and --positions (or all three)")
     orders = _load(a.orders)
     positions = _load(a.positions)
     orders = orders.get("result", orders) if isinstance(orders, dict) else orders
@@ -82,6 +137,14 @@ def cmd_stops(a):
     out = {"source": f"broker read-only ({a.broker}), pulled {datetime.now(timezone.utc).isoformat(timespec='minutes')}; "
                      "nothing placed, changed or cancelled",
            "positions": pos}
+    if a.journal:
+        jbook, jdate, pulled = _journal_book(a.journal)
+        if held is None:      # the Aegis book is the journal's, never the whole account
+            pos = {t: p for t, p in pos.items() if t in jbook}
+            out["positions"] = pos
+        out["journal_date"] = jdate
+        out["journal_orders_pulled"] = pulled
+        out["disagreements"] = _compare(jbook, pos)
     if a.previous and os.path.exists(a.previous):
         prev = _load(a.previous).get("positions", {})
         gone = sorted(set(prev) - set(pos))
@@ -428,7 +491,10 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("stops", help="broker orders+positions (read-only) -> broker_stops.json")
-    s.add_argument("--orders", required=True); s.add_argument("--positions", required=True)
+    s.add_argument("--orders", default=None); s.add_argument("--positions", default=None)
+    s.add_argument("--journal", default=None,
+                   help="the close's journal (book of record for stops); alone = build from it, "
+                        "with --orders/--positions = live read cross-checked against it")
     s.add_argument("--held", default=None, help="comma list: restrict to the committee's held book")
     s.add_argument("--previous", default=None, help="yesterday's broker_stops.json, to catch vanished positions")
     s.add_argument("--broker", default="Tiger"); s.add_argument("--out", default="broker_stops.json")
