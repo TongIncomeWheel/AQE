@@ -21,3 +21,4 @@ First automated pilot, fired on the PM's direct instruction in the conductor ses
 - VOTE: oneil 217,505 · minervini 209,093 · livermore 206,347 · elder-lens 194,459 · seow 219,122 · raschke 210,665 · wyckoff 204,037
 - VOTE seat notes: room 39 > 30-vote cap, every seat filed 2 parts (20+19); merge proves coverage. Size-cap re-files (text trimmed, no vote changed): livermore p1 x2, raschke p1 x1, oneil p1 x2, seow p1 x4 (over the 3-attempt brief, declared). Wyckoff: vote packet carries pvp_/bar_ fields only for its own nominees; other reads declared in cannot_see. O'Neil declared the fundamentals line off its menu. VOTE_PACKET 78,412B over the 70,000 soft cap, not trimmed.
 - METER: commit adds each form's bytes to returned_bytes and the meter call adds them again, so NOMINATE/VOTE returned bytes are double-counted (conservative).
+- HALTED before FLOOR at 06:43 SGT: est 1,219,340 vs ceiling 1,357,500; FLOOR (8 seats x 277KB board) projected to cross it. Awaiting PM.
