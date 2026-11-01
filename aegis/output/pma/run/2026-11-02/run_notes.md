@@ -27,5 +27,6 @@ First automated pilot, fired on the PM's direct instruction in the conductor ses
 - FLOOR notes: 2 waves (open + reply) + Steenbarger called on by name 10x (8 replies, MP/MA each answered once for two askers). One reply per ticker per wave meant some messages went unanswered (e.g. raschke-CHD-1 and seow-WMT-1 to livermore). Steenbarger reports NTSK divergence caution unread by any seat.
 - FLOOR result: 151 msgs, floor-check OK, changed_mind 0 of 151 (QA observation), silent name: VG
 - SLATE: chair (tokens in final report). 15 = cap; WATCH rule = >=half of supporters' triggers wait on a condition (Chair's counting rule, declared; TAK/GEN even split). Chair ran one stray wc -c.
-- RATIFY: oneil ~(final) · minervini 103,342 · livermore 112,581 · elder-lens 107,852 · seow 125,393 · raschke 124,198 · wyckoff 117,305 · SLATE chair 210,813
+- RATIFY: oneil 125,063 · minervini 103,342 · livermore 112,581 · elder-lens 107,852 · seow 125,393 · raschke 124,198 · wyckoff 117,305 · SLATE chair 210,813
 - RATIFY result: 0 OBJECT across 105 answers. Recurring reservations: ADVANCE triggers read as a chase on MA/TTEK/SN (minervini, wyckoff, raschke); WATCH-vs-buy-stop-now on HOG/TAK (seow); missing seat entries on the ticket (elder-lens pullback-to-ma_20; elder-lens + seow V TIGHTEN line; raschke HOG reclaim and ABBV session-3 exit; oneil market-gate on FLYW).
+- QA: steenbarger 177,502. slate_says_what_deciders_said=false; holds MA, TTEK, V. Hold round: floor2 (7) then ratify2 (7).
